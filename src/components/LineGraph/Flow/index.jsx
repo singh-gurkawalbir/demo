@@ -108,6 +108,7 @@ const Chart = ({ attribute, flowId, range, selectedResources: selected }) => {
       endDate: range.endDate,
     };
   }, shallowEqual);
+  const dateFormat = useSelector(state => selectors.userProfilePreferencesProps(state)?.dateFormat);
   const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
   // Selected resources are read from previously saved resources in preferences which may not be valid anymore. pick only valid resources.
   const selectedResources = selected.filter(r => flowResources.find(res => res._id === r));
@@ -233,7 +234,7 @@ const Chart = ({ attribute, flowId, range, selectedResources: selected }) => {
             type="number"
             ticks={ticks}
             allowDuplicatedCategory={false}
-            tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
+            tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range, dateFormat)) : ''}
           />
           <YAxis
             yAxisId={attribute}
@@ -248,7 +249,7 @@ const Chart = ({ attribute, flowId, range, selectedResources: selected }) => {
             domain={[() => 0, dataMax => dataMax + 10]}
           />
 
-          <Tooltip data-public content={<CustomTooltip />} />
+          <Tooltip content={<CustomTooltip />} />
           <Legend content={<CustomLegend />} />
           {lineData.map((r, i) => (
             <Line

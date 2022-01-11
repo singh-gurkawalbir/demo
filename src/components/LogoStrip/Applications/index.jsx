@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { makeStyles, Tooltip } from '@material-ui/core';
 import ApplicationImg from '../../icons/ApplicationImg';
 import { getApp } from '../../../constants/applications';
+import { logoSizes } from '../index';
 
 const useStyles = makeStyles(theme => ({
   logoStripWrapper: {
@@ -10,12 +11,12 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     padding: 0,
     maxWidth: 300,
-    gridTemplateColumns: styleProps => `repeat(${styleProps.applicationsCount > 5 ? 5 : styleProps.applicationsCount}, ${styleProps.appWidth}px)`,
+    gridTemplateColumns: styleProps => `repeat(${styleProps.applicationsCount > 5 ? 5 : styleProps.applicationsCount}, ${styleProps.logoSizeApp}px)`,
     '& > *': {
       justifyContent: 'center',
       position: 'relative',
       display: 'flex',
-      height: styleProps => styleProps.appWidth,
+      height: styleProps => styleProps.logoSizeApp,
       border: '1px solid',
       borderColor: theme.palette.secondary.lightest,
       alignItems: 'center',
@@ -41,12 +42,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Applications({apps, children, className}) {
+export default function Applications({apps, children, className, logoSize = 'small', type = 'other', value = ''}) {
   const applicationsCount = apps?.length;
-  const appWidth = 30;
+  // const appWidth = 30;
+  const logoSizeApp = logoSizes[logoSize];
   const styleProps = {
     applicationsCount,
-    appWidth,
+    logoSizeApp,
   };
   const classes = useStyles(styleProps);
 
@@ -57,11 +59,11 @@ export default function Applications({apps, children, className}) {
         // you may want to check with the dev who manages the /constants/applications.js file. There is a lot
         // or new code since i wrote the original. Possibly `getApp` is not working or not the correct fn to use
         // to get the application display name.
-        <Tooltip title={getApp(null, application).name || application} key={application}>
+        <Tooltip title={getApp(null, application).name || 'other'} key={application || value}>
           <li>
             <ApplicationImg
               markOnly
-              type="other"
+              type={type || 'other'}
               assistant={application} />
           </li>
         </Tooltip>

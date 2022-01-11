@@ -108,6 +108,7 @@ export default {
       inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
+      helpKey: 'anaplan.connection.http.auth.token.token',
     },
     application: {
       fieldId: 'application',

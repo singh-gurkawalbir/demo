@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {makeStyles} from '@material-ui/core';
 import actions from '../../actions';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
@@ -43,9 +44,17 @@ export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, 
     remountForm();
   }, [fieldMeta, remountForm]);
 
+  const useStyles = makeStyles({
+    formNotLoadedSpinner: {
+      marginTop: 60,
+    },
+  });
+
+  const classes = useStyles();
+
   if (!formState.initComplete) {
     return (
-      <Spinner centerAll />
+      <Spinner centerAll className={classes.formNotLoadedSpinner} />
     );
   }
 

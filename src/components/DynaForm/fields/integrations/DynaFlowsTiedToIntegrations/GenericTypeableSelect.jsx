@@ -1,10 +1,18 @@
-import { FormControl, FormLabel, fade, makeStyles, useTheme } from '@material-ui/core';
+import { FormControl, FormLabel, makeStyles } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import Select, { components } from 'react-select';
+import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 import { DoneButton } from '../../../../CeligoSelect';
 import SearchIcon from '../../../../icons/SearchIcon';
 import FieldHelp from '../../../FieldHelp';
 import FieldMessage from '../../FieldMessage';
+import { CustomReactSelectStyles } from '../../reactSelectStyles/styles';
+
+const useStyles = makeStyles({
+  fullWidth: {
+    width: '100%',
+  },
+});
 
 const REACT_SELECT_ACTION_TYPES = {
   CLEAR: 'clear',
@@ -13,12 +21,6 @@ const REACT_SELECT_ACTION_TYPES = {
 };
 
 Object.freeze(REACT_SELECT_ACTION_TYPES);
-
-const useStyles = makeStyles({
-  fullWidth: {
-    width: '100%',
-  },
-});
 
 const Option = props => {
   const classes = useStyles();
@@ -105,132 +107,11 @@ export const GenericTypeableSelect = props => {
     // these prop give you the ability to provide the dropdown options jsx implementations
     SelectedOptionImpl,
     unSearchable,
+    isLoggable,
     defaultMenuIsOpen,
   } = props;
-  const theme = useTheme();
   const classes = useStyles();
-  // TODO: (Azhar) most important to remove all the repeated code from all the react select
-  const customStylesMultiselect = {
-    option: (provided, state) => ({
-      ...provided,
-      color: state.isSelected
-        ? theme.palette.secondary.main
-        : theme.palette.secondary.light,
-      backgroundColor:
-        state.isSelected || state.isFocused
-          ? theme.palette.background.paper2
-          : theme.palette.background.paper,
-      border: 'none',
-      minHeight: '38px',
-      display: 'flex',
-      cursor: 'pointer',
-      alignItems: 'flex-start',
-      padding: 6,
-      borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-      '&:active': {
-        backgroundColor: theme.palette.background.paper,
-        color: theme.palette.secondary.light,
-      },
-      '& > .MuiCheckbox-root': {
-        marginRight: theme.spacing(0.5),
-      },
-    }),
-    control: () => ({
-      minWidth: 365,
-      border: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-      borderRadius: '2px',
-      backgroundColor: theme.palette.background.paper,
-      alignItems: 'flex-start',
-      cursor: 'default',
-      display: 'flex',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      minHeight: '38px',
-      position: 'relative',
-      boxSizing: 'borderBox',
-      transition: 'all 100ms ease 0s',
-      outline: '0px !important',
-      '&:hover': {
-        borderColor: theme.palette.primary.main,
-      },
-    }),
-    indicatorsContainer: () => ({
-      height: '38px',
-      display: 'flex',
-      alignItems: 'center',
-    }),
-    menu: () => ({
-      zIndex: 2,
-      border: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-      position: 'absolute',
-      backgroundColor: theme.palette.background.paper,
-      width: '100%',
-    }),
-    input: () => ({
-      color: theme.palette.secondary.light,
-      minWidth: theme.spacing(10),
-    }),
-    placeholder: () => ({
-      color: theme.palette.secondary.light,
-      position: 'absolute',
-
-    }),
-    indicatorSeparator: () => ({
-      display: 'none',
-    }),
-    menuList: () => ({
-      padding: '0px',
-      maxHeight: '260px',
-      overflowY: 'auto',
-    }),
-    valueContainer: () => ({
-      minHeight: '38px',
-      maxHeight: '100%',
-      alignItems: 'center',
-      display: 'flex',
-      flex: '1',
-      padding: '2px 8px',
-      position: 'relative',
-      overflow: 'hidden',
-      flexWrap: 'wrap',
-    }),
-    dropdownIndicator: () => ({
-      color: theme.palette.secondary.light,
-      padding: theme.spacing(0.5, 1, 0, 1),
-      cursor: 'pointer',
-      '&:hover': {
-        color: fade(theme.palette.secondary.light, 0.8),
-      },
-    }),
-    multiValue: styles => ({
-      ...styles,
-      backgroundColor: 'white',
-      borderRadius: theme.spacing(3),
-      height: 28,
-      minWidth: 'unset',
-      padding: '1px 8px',
-      border: `1px solid ${theme.palette.secondary.lightest}`,
-      '& > * .MuiChip-root': {
-        border: 'none',
-        height: 'unset',
-      },
-    }),
-    multiValueLabel: styles => ({
-      ...styles,
-      borderRadius: 0,
-      padding: 0,
-    }),
-    multiValueRemove: styles => ({
-      ...styles,
-      paddingRight: 'unset',
-      color: theme.palette.text.secondary,
-      ':hover': {
-        color: theme.palette.secondary.main,
-      },
-    }),
-  };
+  const customStyles = CustomReactSelectStyles();
   const handleChange = useCallback((all, optionAction) => {
     if (optionAction.action === REACT_SELECT_ACTION_TYPES.CLEAR) {
       return onFieldChange(id, []);
@@ -263,7 +144,7 @@ export const GenericTypeableSelect = props => {
   return (
 
     <>
-      <div className={classes.fullWidth} >
+      <div className={classes.fullWidth}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}
         </FormLabel>
@@ -274,20 +155,22 @@ export const GenericTypeableSelect = props => {
         error={!isValid}
         disabled={disabled}
         required={required}>
-        <Select
-          isDisabled={disabled}
-          isMulti
-          placeholder={placeholder}
-          components={{DropdownIndicator: dropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl, MenuList: menuListImpl}}
-          options={options}
-          value={value}
-          onChange={handleChange}
-          closeMenuOnSelect={false}
-          hideSelectedOptions={false}
-          styles={customStylesMultiselect}
-          isSearchable={!unSearchable}
-          defaultMenuIsOpen={defaultMenuIsOpen}
+        <span {...isLoggableAttr(isLoggable)}>
+          <Select
+            isDisabled={disabled}
+            isMulti
+            placeholder={placeholder}
+            components={{DropdownIndicator: dropdownIndicator, MultiValueLabel: MultiValueLabelImpl, Option: OptionImpl, MenuList: menuListImpl}}
+            options={options}
+            value={value}
+            onChange={handleChange}
+            closeMenuOnSelect={false}
+            hideSelectedOptions={false}
+            styles={customStyles}
+            isSearchable={!unSearchable}
+            defaultMenuIsOpen={defaultMenuIsOpen}
      />
+        </span>
 
         <FieldMessage {...props} />
       </FormControl>

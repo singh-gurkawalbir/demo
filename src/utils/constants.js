@@ -631,6 +631,8 @@ export const C_LOCKED_FIELDS = Object.freeze({
     '_keepDeltaBehindExportId',
     'settings',
   ],
+  // According to the backend, none of the async helper fields are editable
+  asyncHelpers: [],
 });
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];
 export const ALLOWED_HTML_TAGS =
@@ -647,6 +649,7 @@ export const CONNECTORS_TO_IGNORE = [
   'concurv4',
   'constantcontactv2',
   'constantcontactv3',
+  'amazonsellingpartner',
   'ebayfinance',
 ];
 
@@ -682,9 +685,6 @@ export const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
 export const UNASSIGNED_SECTION_ID = 'unassigned';
 export const UNASSIGNED_SECTION_NAME = 'Unassigned';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
-
-export const SENSITIVE_DATA = ['token', 'password'];
-
 export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
   'accesstokens',
   'agents',
@@ -709,6 +709,7 @@ export const SUITESCRIPT_MAPPINGS_FORM_KEY = 'suitescriptmappingsformkey';
 export const CATEGORY_MAPPING_ASYNC_KEY = 'categorymappingdrawer';
 export const HOME_PAGE_PATH = '/home';
 export const ERROR_DETAIL_ACTIONS_ASYNC_KEY = 'ERROR_DETAIL_ACTIONS_ASYNC_KEY';
+export const NO_RESULT_SEARCH_MESSAGE = 'Your search didn’t return any matching results. Try expanding your search criteria.';
 
 export const MAPPING_SAVE_STATUS = {
   REQUESTED: 'requested',
@@ -731,6 +732,7 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
   'amazonmws',
   'ebay',
   'ebayfinance',
+  'amazonsellingpartner',
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];

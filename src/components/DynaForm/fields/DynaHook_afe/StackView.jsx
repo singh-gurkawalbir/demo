@@ -30,7 +30,7 @@ export default function StackView({
   stackId,
   isValidHookField,
   handleFieldChange,
-  dataPublic,
+  isLoggable,
 }) {
   const classes = useStyles();
 
@@ -55,7 +55,7 @@ export default function StackView({
           value={stackId}
           placeholder="None"
           disabled={disabled}
-          dataPublic={dataPublic}
+          isLoggable={isLoggable}
           required={required}
           isValid={isValidHookField('_stackId')}
           onFieldChange={handleFieldChange('_stackId')}

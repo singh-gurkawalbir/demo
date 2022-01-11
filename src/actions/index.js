@@ -1015,7 +1015,7 @@ const integrationApp = {
       }),
   },
   templates: {
-    intsaller: {
+    installer: {
       verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
         action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
           id,

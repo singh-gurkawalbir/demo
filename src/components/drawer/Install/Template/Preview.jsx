@@ -207,7 +207,7 @@ export default function TemplatePreview() {
 
   return (
     <>
-      <div data-public className={classes.appLogosContainer}>
+      <div className={classes.appLogosContainer}>
         <div className={classes.applogos}>
           <ApplicationImg markOnly size="small" type={template.applications[0]} />
           {template.applications[1] && (
@@ -221,10 +221,10 @@ export default function TemplatePreview() {
           </>
           )}
         </div>
-        <Typography data-public variant="h3" className={classes.appsTitle}>{name}</Typography>
+        <Typography variant="h3" className={classes.appsTitle}>{name}</Typography>
       </div>
 
-      <div data-public className={classes.container}>
+      <div className={classes.container}>
         <div className={classes.appDetails}>
           <OutlinedButton
             onClick={handleInstallIntegration}>
@@ -238,16 +238,16 @@ export default function TemplatePreview() {
             </OutlinedButton>
           )}
           <Divider variant="middle" className={classes.divider} />
-          <Typography>{description}</Typography>
+          <Typography data-private>{description}</Typography>
 
           <Divider variant="middle" className={classes.divider} />
           <div className={classes.listItem}>
             <Typography variant="h4" className={classes.keyName}>Created by: </Typography>
-            <Typography>{username}</Typography>
+            <Typography data-private>{username}</Typography>
           </div>
           <div className={classes.listItem}>
             <Typography variant="h4" className={classes.keyName}>Company: </Typography>
-            <Typography>{company}</Typography>
+            <Typography data-private>{company}</Typography>
           </div>
 
         </div>

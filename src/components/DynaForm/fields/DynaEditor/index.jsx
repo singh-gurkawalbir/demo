@@ -8,6 +8,7 @@ import ExpandWindowIcon from '../../../icons/ExpandWindowIcon';
 import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import ExpandModeEditor from './ExpandModeEditor';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -63,6 +64,7 @@ export default function DynaEditor(props) {
     isValid,
     skipJsonParse,
     customHandleUpdate,
+    isLoggable,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
@@ -131,6 +133,7 @@ export default function DynaEditor(props) {
       <div className={classes.dynaEditorWrapper}>
         {/* Below Component deals with showing editor in Modal/Drawer mode when user clicks on expand icon */}
         <ExpandModeEditor
+          isLoggable={isLoggable}
           saveProps={{resourceId, resourceType, patchKey}}
           expandMode={expandMode}
           show={showEditor}
@@ -150,7 +153,7 @@ export default function DynaEditor(props) {
           <FieldHelp {...props} />
         </div>
 
-        <div className={clsx(classes.inlineEditorContainer, editorClassName)}>
+        <div className={clsx(classes.inlineEditorContainer, editorClassName)} {...isLoggableAttr(isLoggable)}>
           <CodeEditor
             readOnly={disabled}
             name={`${id}-inline`}

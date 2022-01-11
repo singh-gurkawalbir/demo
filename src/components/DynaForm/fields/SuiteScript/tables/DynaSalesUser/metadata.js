@@ -13,6 +13,8 @@ export default {
     {
       key: 'inSalesforce',
       heading: 'In Salesforce',
+      // is sfName okay?
+      isLoggable: true,
       Value: ({rowData: r}) => r?.inSalesforce ? <><CheckmarkIcon color="primary" />{r?.sfName} </> : <CancelIcon color="error" />,
     },
     {
@@ -23,11 +25,14 @@ export default {
     {
       key: 'inNetsuite',
       heading: 'In Netsuite',
+      // is sfName okay?
+      isLoggable: true,
       Value: ({rowData: r}) => r?.inNetSuite ? <><CheckmarkIcon color="primary" />{r?.sfName} </> : <CancelIcon color="error" />,
     },
     {
       key: 'salesRole',
       heading: 'Sales Role',
+      isLoggable: true,
       Value: ({rowData: r}) => r?.salesRole,
     },
   ],

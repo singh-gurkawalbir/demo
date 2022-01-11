@@ -1,6 +1,6 @@
 export default {
   'import.salesforce.sObjectType': {
-    loggable: true,
+    isLoggable: true,
     label: 'sObject type',
     type: 'refreshableselect',
     filterKey: 'salesforce-sObjects',
@@ -14,7 +14,7 @@ export default {
     helpKey: 'import.salesforce.sObjectType',
   },
   'import.salesforce.operation': {
-    loggable: true,
+    isLoggable: true,
     type: 'radiogroupforresetfields',
     label: 'Operation',
     required: true,
@@ -30,7 +30,7 @@ export default {
     helpKey: 'import.salesforce.operation',
   },
   'import.salesforce.update.jsField': {
-    loggable: true,
+    isLoggable: true,
     label: 'Which NetSuite field should be used to update?',
     type: 'suitescriptnetsuiteupsertfield',
     visibleWhen: [
@@ -44,7 +44,7 @@ export default {
     helpKey: 'import.salesforce.update.jsField',
   },
   'import.salesforce.update.externalField': {
-    loggable: true,
+    isLoggable: true,
     label: 'Which Salesforce field should be used to update?',
     type: 'refreshableselect',
     filterKey: 'salesforce-recordType',
@@ -63,7 +63,7 @@ export default {
     helpKey: 'import.salesforce.update.externalField',
   },
   'import.salesforce.upsert.jsField': {
-    loggable: true,
+    isLoggable: true,
     label: 'Which NetSuite field should be used to upsert?',
     type: 'suitescriptnetsuiteupsertfield',
     visibleWhen: [
@@ -77,7 +77,7 @@ export default {
     helpKey: 'import.salesforce.upsert.jsField',
   },
   'import.salesforce.upsert.externalField': {
-    loggable: true,
+    isLoggable: true,
     label: 'Which Salesforce field should be used to upsert?',
     type: 'refreshableselect',
     filterKey: 'salesforce-externalIdFields',
@@ -96,7 +96,7 @@ export default {
     helpKey: 'import.salesforce.upsert.externalField',
   },
   'import.salesforce.salesforceIdField': {
-    loggable: true,
+    isLoggable: true,
     label: 'Store Salesforce ID back in NetSuite field',
     type: 'refreshableselect',
     filterKey: 'suitescript-salesforce-id-field',

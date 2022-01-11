@@ -6,6 +6,7 @@ export default {
   type: 'flowTransform',
   label: 'Define transformation',
   description: 'Transforms raw data to desired structure',
+  helpKey: 'lookup.transform',
   panels: ({ activeProcessor }) => {
     if (activeProcessor === 'javascript') {
       return javascriptMetadata.panels;

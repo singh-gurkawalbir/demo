@@ -16,23 +16,27 @@ export default {
     {
       key: 'name',
       heading: 'Name',
+      isLoggable: true,
       Value: ({rowData: r}) => <ResourceDrawerLink resourceType="stacks" resource={r} />,
       orderBy: 'name',
     },
     {
       key: 'type',
       heading: 'Type',
+      isLoggable: true,
       Value: ({rowData: r}) => r.type,
       orderBy: 'type',
     },
     {
       key: 'host',
       heading: 'Host',
+      isLoggable: true,
       Value: ({rowData: r}) => r.server && r.server.hostURI,
     },
     {
       key: 'functionName',
       heading: 'Function name',
+      isLoggable: true,
       Value: ({rowData: r}) => r.lambda && r.lambda.functionName,
     },
     {
@@ -43,6 +47,7 @@ export default {
     {
       key: 'lastUpdated',
       heading: 'Last updated',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },

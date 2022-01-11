@@ -1,8 +1,15 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
 import CodeEditor from '../../../CodeEditor';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+
+const useStyles = makeStyles(() => ({
+  container: {
+    flexGrow: 1,
+  },
+}));
 
 export default function EditRetryData({
   retryId,
@@ -10,6 +17,7 @@ export default function EditRetryData({
   resourceId,
   onChange,
 }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
 
   const retryStatus = useSelector(state =>
@@ -32,12 +40,14 @@ export default function EditRetryData({
   }, [dispatch, flowId, resourceId, retryId, retryStatus]);
 
   return (
-    <CodeEditor
-      name={`${retryId}-edit`}
-      value={retryData}
-      mode="json"
-      onChange={onChange}
-      readOnly={isFlowDisabled}
+    <div className={classes.container} data-private>
+      <CodeEditor
+        name={`${retryId}-edit`}
+        value={retryData}
+        mode="json"
+        onChange={onChange}
+        readOnly={isFlowDisabled}
     />
+    </div>
   );
 }

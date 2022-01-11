@@ -71,13 +71,13 @@ describe('getErrorReqResFields util', () => {
 
     expect(getErrorReqResFields(httpPayloadWithBody, 'previewPanel')).toEqual(expectedHttpPreviewPanelFields);
   });
-  test('should return httpPayload if httpPayload is a string for netsuite error', () => {
+  test('should return httpPayload if it is a netsuite error request', () => {
     const httpPayload = 'netsuite error';
     const expectedHttpFields = httpPayload;
 
-    expect(getErrorReqResFields(httpPayload, null, true)).toEqual(expectedHttpFields);
+    expect(getErrorReqResFields(httpPayload, null, true, true)).toEqual(expectedHttpFields);
   });
-  test('should return httpPayload.body if httpPayload is an object for netsuite error', () => {
+  test('should return httpPayload.body if it is a netsuite error response', () => {
     const httpPayload = {
       body: 'r = nlapiLoadRecord("inventoryitem", 97, {});\r\nr.setFieldValue("internalid", 97);',
     };

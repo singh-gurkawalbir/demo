@@ -166,6 +166,7 @@ export default function ProfilePanel() {
         helpKey: 'myaccount.name',
         noApi: true,
         defaultValue: preferences && preferences.name,
+        isLoggable: false,
       },
       email: {
         id: 'email',
@@ -176,6 +177,7 @@ export default function ProfilePanel() {
         noApi: true,
         readOnly: isUserAllowedOnlySSOSignIn,
         value: preferences && preferences.email,
+        isLoggable: false,
       },
       password: {
         id: 'password',
@@ -185,6 +187,7 @@ export default function ProfilePanel() {
         noApi: true,
         type: 'userpassword',
         visible: !isUserAllowedOnlySSOSignIn,
+        isLoggable: false,
       },
       company: {
         id: 'company',
@@ -194,6 +197,7 @@ export default function ProfilePanel() {
         helpKey: 'myaccount.company',
         noApi: true,
         defaultValue: preferences && preferences.company,
+        isLoggable: false,
       },
       phone: {
         id: 'phone',
@@ -203,6 +207,7 @@ export default function ProfilePanel() {
         helpKey: 'myaccount.phone',
         noApi: true,
         defaultValue: preferences && preferences.phone,
+        isLoggable: false,
       },
       role: {
         id: 'role',
@@ -212,6 +217,7 @@ export default function ProfilePanel() {
         noApi: true,
         label: 'Role',
         defaultValue: preferences && preferences.role,
+        isLoggable: false,
       },
       timezone: {
         id: 'timezone',
@@ -223,6 +229,7 @@ export default function ProfilePanel() {
         noApi: true,
         defaultValue: preferences && preferences.timezone,
         options: dateTimeZonesList,
+        isLoggable: false,
       },
       dateFormat: {
         id: 'dateFormat',
@@ -234,6 +241,7 @@ export default function ProfilePanel() {
         label: 'Date format',
         defaultValue: preferences && preferences.dateFormat,
         options: dateFormatList,
+        isLoggable: true,
       },
       timeFormat: {
         id: 'timeFormat',
@@ -245,6 +253,7 @@ export default function ProfilePanel() {
         label: 'Time format',
         defaultValue: preferences && preferences.timeFormat,
         options: timeFormatList,
+        isLoggable: true,
       },
       showRelativeDateTime: {
         id: 'showRelativeDateTime',
@@ -254,6 +263,7 @@ export default function ProfilePanel() {
         noApi: true,
         label: 'Show timestamps as relative',
         defaultValue: preferences?.showRelativeDateTime,
+        isLoggable: true,
       },
       developer: {
         id: 'developer',
@@ -263,6 +273,8 @@ export default function ProfilePanel() {
         noApi: true,
         label: 'Developer Mode',
         defaultValue: preferences && preferences.developer,
+        // is this loggable
+        isLoggable: true,
       },
     },
     layout: {

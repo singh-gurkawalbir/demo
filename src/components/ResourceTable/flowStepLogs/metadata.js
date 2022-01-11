@@ -4,7 +4,7 @@ import { addDays, startOfDay } from 'date-fns';
 import actions from '../../../actions';
 import DateFilter from '../commonCells/DateFilter';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
-import { FLOWSTEP_LOGS_RANGE_FILTERS, FILTER_KEY, FLOWSTEP_LOGS_STATUS_CODES, FLOWSTEP_LOGS_STAGE_OPTIONS } from '../../../utils/flowStepLogs';
+import { FLOWSTEP_LOGS_RANGE_FILTERS, FILTER_KEY, FLOWSTEP_LOGS_STATUS_CODES, FLOWSTEP_LOGS_STAGE_OPTIONS, FLOWSTEP_LOGS_METHOD_OPTIONS } from '../../../utils/flowStepLogs';
 import TrashIcon from '../../icons/TrashIcon';
 import LogDetailsLink from './cells/LogDetailsLink';
 import { useGetTableContext } from '../../CeligoTable/TableContext';
@@ -45,7 +45,23 @@ export default {
       },
       {
         key: 'method',
-        heading: 'Method',
+        HeaderValue: () => {
+          const dispatch = useDispatch();
+          const handleSave = useCallback(() => {
+            dispatch(actions.logs.flowStep.request({flowId, resourceId}));
+          },
+          [dispatch],
+          );
+
+          return (
+            <MultiSelectColumnFilter
+              title="Method"
+              filterBy="method"
+              filterKey={FILTER_KEY}
+              handleSave={handleSave}
+              options={FLOWSTEP_LOGS_METHOD_OPTIONS} />
+          );
+        },
         Value: ({rowData: log}) => log.method,
       },
       ...(isImport
@@ -67,7 +83,7 @@ export default {
                 options={FLOWSTEP_LOGS_STAGE_OPTIONS} />
             );
           },
-          Value: ({rowData: log}) => log.statusCode }]
+          Value: ({rowData: log}) => log.stage }]
         : []),
       {
         key: 'codes',

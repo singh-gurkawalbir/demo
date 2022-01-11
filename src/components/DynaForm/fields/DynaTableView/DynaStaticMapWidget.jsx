@@ -51,6 +51,7 @@ export default function DynaStaticMapWidget(props) {
     generateFieldHeader,
     supportsExtractsRefresh,
     supportsGeneratesRefresh,
+    isLoggable,
   } = props;
   const classes = useStyles();
   const [allowFailures, setAllowFailures] = useState(props.allowFailures);
@@ -223,6 +224,7 @@ export default function DynaStaticMapWidget(props) {
           />
           {showDefault && (
             <DynaSelect
+              isLoggable={isLoggable}
               label="Default Lookup Value"
               name="defaultValue"
               onFieldChange={handleDefaultValueChange}
