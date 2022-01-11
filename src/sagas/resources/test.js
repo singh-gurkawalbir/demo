@@ -1,7 +1,8 @@
 /* global describe, test, expect, beforeEach, jest */
-import { call, put, select, take, race } from 'redux-saga/effects';
+import { call, put, select, take, race, fork, cancel } from 'redux-saga/effects';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { expectSaga } from 'redux-saga-test-plan';
+import { createMockTask } from '@redux-saga/testing-utils';
 import { throwError } from 'redux-saga-test-plan/providers';
 import actions, { availableResources } from '../../actions';
 import {
@@ -34,6 +35,9 @@ import {
   eventReportCancel,
   downloadReport,
   downloadAuditlogs,
+  commitStagedChangesWrapper,
+  startPollingForQueuedJobs,
+  startPollingForConnectionStatus,
 } from '.';
 import { apiCallWithRetry, apiCallWithPaging } from '..';
 import { selectors } from '../../reducers';
@@ -497,6 +501,46 @@ describe('commitStagedChanges saga', () => {
 
       expect(finalEffect).toEqual({ done: true, value: undefined });
     });
+  });
+});
+
+describe('commitStagedChangesWrapper saga', () => {
+  const props = { resourceType: 'someResource', id: 'i1', scope: SCOPES.VALUE };
+
+  test('should call commitStagedChanges if no asyncKey is present', () => expectSaga(commitStagedChangesWrapper, { asyncKey: undefined, ...props})
+    .provide([[call(commitStagedChanges, props)]])
+    .call(commitStagedChanges, props)
+    .run()
+  );
+  test('On successful commitStagedChanges should dispatch async task success if asyncKey is present', () => {
+    const asyncKey = 'k1';
+    const response = { done: true, value: undefined };
+
+    return expectSaga(commitStagedChangesWrapper, { asyncKey, ...props})
+      .provide([
+        [call(commitStagedChanges, props), response],
+      ])
+      .put(actions.asyncTask.start(asyncKey))
+      .call(commitStagedChanges, props)
+      .put(actions.asyncTask.success(asyncKey))
+      .returns(response)
+      .run();
+  });
+  test('If commitStagedChanges returns response with error should dispatch async task failed if asyncKey is present', () => {
+    const asyncKey = 'k1';
+    const response = { error: {
+      message: 'something',
+    } };
+
+    return expectSaga(commitStagedChangesWrapper, { asyncKey, ...props})
+      .provide([
+        [call(commitStagedChanges, props), response],
+      ])
+      .put(actions.asyncTask.start(asyncKey))
+      .call(commitStagedChanges, props)
+      .put(actions.asyncTask.failed(asyncKey))
+      .returns(response)
+      .run();
   });
 });
 
@@ -1133,6 +1177,7 @@ describe('updateTileNotifications saga', () => {
   const integrationId = 'int-123';
   const childId = 'child-123';
   const userEmail = 'abc@celigo.com';
+  const asyncKey = 'k1';
 
   test('should make notification API call with notifications array and dispatch requestCollection action is call succeeds', () => {
     const selectorResponse = {
@@ -1162,11 +1207,12 @@ describe('updateTileNotifications saga', () => {
       },
     ];
 
-    return expectSaga(updateTileNotifications, { resourcesToUpdate, integrationId, childId, userEmail })
+    return expectSaga(updateTileNotifications, { resourcesToUpdate, integrationId, childId, userEmail, asyncKey })
       .provide([
         [select(selectors.integrationNotificationResources, integrationId, { childId, userEmail }), selectorResponse],
         [matchers.call.fn(apiCallWithRetry), {success: true}],
       ])
+      .put(actions.asyncTask.start(asyncKey))
       .call(apiCallWithRetry, {
         path: '/notifications',
         opts: {
@@ -1176,6 +1222,7 @@ describe('updateTileNotifications saga', () => {
         message: 'Updating notifications',
       })
       .put(actions.resource.requestCollection('notifications'))
+      .put(actions.asyncTask.success(asyncKey))
       .run();
   });
   test('should make notification API call with notifications array and not dispatch action if API fails', () => {
@@ -1184,12 +1231,14 @@ describe('updateTileNotifications saga', () => {
       connections: [{_id: 'conn1'}],
     };
 
-    return expectSaga(updateTileNotifications, { resourcesToUpdate, integrationId, childId, userEmail })
+    return expectSaga(updateTileNotifications, { resourcesToUpdate, integrationId, childId, userEmail, asyncKey })
       .provide([
         [select(selectors.integrationNotificationResources, integrationId, { childId, userEmail }), selectorResponse],
         [matchers.call.fn(apiCallWithRetry), apiError],
       ])
+      .put(actions.asyncTask.start(asyncKey))
       .call.fn(apiCallWithRetry)
+      .put(actions.asyncTask.failed(asyncKey))
       .not.put.actionType('RESOURCE_REQUEST_COLLECTION')
       .returns(undefined)
       .run();
@@ -1476,6 +1525,42 @@ describe('requestQueuedJobs saga', () => {
     .not.put.actionType('QUEUED_JOBS_RECEIVED')
     .returns(undefined)
     .run());
+});
+
+describe('startPollingForQueuedJobs saga', () => {
+  const connectionId = 'c1';
+
+  test('should fork requestQueuedJobs, waits for applicable action and then cancels requestQueuedJobs', () => {
+    const mockTask = createMockTask();
+
+    const saga = startPollingForQueuedJobs({connectionId});
+
+    expect(saga.next().value).toEqual(fork(requestQueuedJobs, {connectionId}));
+
+    expect(saga.next(mockTask).value).toEqual(
+      take(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL)
+    );
+    expect(saga.next().value).toEqual(cancel(mockTask));
+    expect(saga.next().done).toEqual(true);
+  });
+});
+
+describe('startPollingForConnectionStatus saga', () => {
+  const integrationId = 'i1';
+
+  test('should fork requestQueuedJobs, waits for applicable action and then cancels requestQueuedJobs', () => {
+    const mockTask = createMockTask();
+
+    const saga = startPollingForConnectionStatus({integrationId});
+
+    expect(saga.next().value).toEqual(fork(refreshConnectionStatus, {integrationId}));
+
+    expect(saga.next(mockTask).value).toEqual(
+      take(actionTypes.CONNECTION.STATUS_CANCEL_POLL)
+    );
+    expect(saga.next().value).toEqual(cancel(mockTask));
+    expect(saga.next().done).toEqual(true);
+  });
 });
 
 describe('cancelQueuedJob saga', () => {

@@ -1008,14 +1008,14 @@ export function* requestQueuedJobs({ connectionId }) {
   yield put(actions.connection.receivedQueuedJobs(response, connectionId));
 }
 
-function* startPollingForQueuedJobs({ connectionId }) {
+export function* startPollingForQueuedJobs({ connectionId }) {
   const watcher = yield fork(requestQueuedJobs, { connectionId });
 
   yield take(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL);
   yield cancel(watcher);
 }
 
-function* startPollingForConnectionStatus({ integrationId }) {
+export function* startPollingForConnectionStatus({ integrationId }) {
   const watcher = yield fork(refreshConnectionStatus, { integrationId });
 
   yield take(actionTypes.CONNECTION.STATUS_CANCEL_POLL);
