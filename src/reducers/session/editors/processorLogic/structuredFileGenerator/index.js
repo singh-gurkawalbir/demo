@@ -2,9 +2,9 @@ import isEqual from 'lodash/isEqual';
 import util from '../../../../../utils/json';
 
 export default {
-  init: ({options, fieldState, fileDefinitionData}) => {
+  init: ({options, fieldState, fileDefinitionData, resource}) => {
     const {sampleData, rule} = fileDefinitionData || {};
-    const data = sampleData || JSON.stringify(fieldState?.sampleData, null, 2);
+    const data = JSON.stringify(resource?.sampleData, null, 2) || sampleData;
 
     return {
       ...options,
