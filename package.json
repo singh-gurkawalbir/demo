@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git://github.com/celigo/integrator-ui.git"
   },
-  "gitRevision": "master",
+  "gitRevision": "release/v8.2.1.0",
   "scripts": {
     "start": "webpack-dev-server --mode=development",
     "start-optimized": "env NODE_ENV=production webpack-dev-server --mode=production",
@@ -111,7 +111,7 @@
     "@babel/plugin-proposal-optional-chaining": "^7.10.4",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-transform-modules-commonjs": "^7.10.4",
-    "@babel/plugin-transform-runtime": "7.15.8",
+    "@babel/plugin-transform-runtime": "^7.15.8",
     "@babel/preset-env": "^7.10.4",
     "@babel/preset-react": "^7.10.4",
     "@babel/register": "^7.10.5",
