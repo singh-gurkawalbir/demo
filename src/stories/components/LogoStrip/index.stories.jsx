@@ -42,12 +42,12 @@ withTenImages.parameters = {
   },
 };
 
-export const withTwelveImages = Template.bind({});
+export const withElevenImages = Template.bind({});
 
-withTwelveImages.args = {
-  applications: ['3dcart', 'docusign', 'salesforce', 'magento', 'oracle', '4castplus', 'amazonmws', 'accelo', 'asana', 'http', 'surveymonkey', 'rest'],
+withElevenImages.args = {
+  applications: ['3dcart', 'docusign', 'salesforce', 'magento', 'oracle', '4castplus', 'amazonmws', 'accelo', 'asana', 'http', 'surveymonkey'],
 };
-withTwelveImages.parameters = {
+withElevenImages.parameters = {
   design: {
     url: 'https://www.figma.com/file/xdzlBzxEc9OgsH9unzMsKr/List-view-for-%22Integrations%22-(Home)-page---IO-20667-%2F-DES-668?node-id=1102%3A4020',
   },
@@ -76,3 +76,27 @@ withMax.parameters = {
   },
 };
 
+export const custom1x5 = Template.bind({});
+
+custom1x5.args = {
+  size: 'medium',
+  rows: 1,
+  applications: ['3dcart', 'docusign', 'salesforce', 'magento', 'oracle', '4castplus', 'amazonmws', 'accelo', 'asana', 'http', 'surveymonkey', 'rest', 'redshift', 'dynamodb', 'bigquery', 'mongodb'],
+};
+
+export const custom2x6 = Template.bind({});
+
+custom2x6.args = {
+  size: 'medium',
+  columns: 6,
+  applications: ['3dcart', 'docusign', 'salesforce', 'magento', 'oracle', '4castplus', 'amazonmws', 'accelo', 'asana', 'http', 'surveymonkey', 'rest', 'redshift', 'dynamodb', 'bigquery', 'mongodb'],
+};
+
+export const custom3x2 = Template.bind({});
+
+custom3x2.args = {
+  size: 'medium',
+  rows: 3,
+  columns: 2,
+  applications: ['3dcart', 'docusign', 'salesforce', 'magento', 'oracle', '4castplus', 'amazonmws', 'accelo', 'asana', 'http', 'surveymonkey', 'rest', 'redshift', 'dynamodb', 'bigquery', 'mongodb'],
+};
