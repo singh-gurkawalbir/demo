@@ -26,10 +26,13 @@ export default (state = {}, action) => {
         break;
       case actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED_FAMILY:
         {
+          if (!job || !job.children) {
+            break;
+          }
           const index = draft[job?._flowId]?.data?.findIndex(j => j._id === job._id);
           const parsedJobFamily = parseJobFamily(job);
 
-          if (job.children?.length === 0) {
+          if (job?.children?.length === 0) {
             parsedJobFamily.children = [];
           }
 
