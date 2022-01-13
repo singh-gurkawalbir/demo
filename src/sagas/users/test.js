@@ -541,7 +541,7 @@ describe('all modal sagas', () => {
         };
         const response = { _id: 'something' };
         const saga = createUser({ user, asyncKey: 'asyncKey' });
-        const requestOptions = getRequestOptions(actionTypes.USER_CREATE);
+        const requestOptions = getRequestOptions(actionTypes.USER.CREATE);
         const { path, opts } = requestOptions;
 
         opts.body = user;
@@ -569,7 +569,7 @@ describe('all modal sagas', () => {
           accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
         };
         const saga = createUser({ user, asyncKey: 'asyncKey' });
-        const requestOptions = getRequestOptions(actionTypes.USER_CREATE);
+        const requestOptions = getRequestOptions(actionTypes.USER.CREATE);
         const { path, opts } = requestOptions;
 
         opts.body = user;
@@ -597,7 +597,7 @@ describe('all modal sagas', () => {
         };
         const response = { _id: 'something' };
         const saga = updateUser({ _id: userId, user, asyncKey: 'asyncKey' });
-        const requestOptions = getRequestOptions(actionTypes.USER_UPDATE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.UPDATE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -628,7 +628,7 @@ describe('all modal sagas', () => {
           accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
         };
         const saga = updateUser({ _id: userId, user, asyncKey: 'asyncKey' });
-        const requestOptions = getRequestOptions(actionTypes.USER_UPDATE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.UPDATE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -653,7 +653,7 @@ describe('all modal sagas', () => {
       test('should delete user successfully', () => {
         const userId = 'something';
         const saga = deleteUser({ _id: userId });
-        const requestOptions = getRequestOptions(actionTypes.USER_DELETE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.DELETE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -674,7 +674,7 @@ describe('all modal sagas', () => {
       test('should handle api error properly while deleting user', () => {
         const userId = 'something';
         const saga = deleteUser({ _id: userId });
-        const requestOptions = getRequestOptions(actionTypes.USER_DELETE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.DELETE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -696,7 +696,7 @@ describe('all modal sagas', () => {
         const userId = 'something';
         const disabled = false;
         const saga = disableUser({ _id: userId, disabled });
-        const requestOptions = getRequestOptions(actionTypes.USER_DISABLE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.DISABLE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -717,7 +717,7 @@ describe('all modal sagas', () => {
         const userId = 'something';
         const disabled = true;
         const saga = disableUser({ _id: userId, disabled });
-        const requestOptions = getRequestOptions(actionTypes.USER_DISABLE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.DISABLE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -738,7 +738,7 @@ describe('all modal sagas', () => {
         const userId = 'something';
         const disabled = false;
         const saga = disableUser({ _id: userId, disabled });
-        const requestOptions = getRequestOptions(actionTypes.USER_DISABLE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.DISABLE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -758,7 +758,7 @@ describe('all modal sagas', () => {
       test('should request account transfer successfully', () => {
         const email = 'something@something.com';
         const saga = makeOwner({ email });
-        const requestOptions = getRequestOptions(actionTypes.USER_MAKE_OWNER);
+        const requestOptions = getRequestOptions(actionTypes.USER.MAKE_OWNER);
         const { path, opts } = requestOptions;
 
         opts.body = { email, account: true };
@@ -776,7 +776,7 @@ describe('all modal sagas', () => {
       test('should handle api error properly while requesting an account transfer', () => {
         const email = 'something@something.com';
         const saga = makeOwner({ email });
-        const requestOptions = getRequestOptions(actionTypes.USER_MAKE_OWNER);
+        const requestOptions = getRequestOptions(actionTypes.USER.MAKE_OWNER);
         const { path, opts } = requestOptions;
 
         opts.body = { email, account: true };
@@ -797,7 +797,7 @@ describe('all modal sagas', () => {
       test('should reinvite user successfully', () => {
         const userId = 'something';
         const saga = reinviteUser({ _id: userId });
-        const requestOptions = getRequestOptions(actionTypes.USER_REINVITE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.REINVITE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -817,7 +817,7 @@ describe('all modal sagas', () => {
       test('should handle api error properly while reinviting user', () => {
         const userId = 'something';
         const saga = reinviteUser({ _id: userId });
-        const requestOptions = getRequestOptions(actionTypes.USER_REINVITE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.REINVITE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;

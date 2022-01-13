@@ -316,7 +316,7 @@ describe('apiCallWithRetry saga', () => {
 
       const raceBetweenApiCallAndTimeoutEffect = race([
         call(sendRequest, request),
-        take(actionsTypes.USER_LOGOUT),
+        take(actionsTypes.AUTH.USER.LOGOUT),
       ]);
 
       try {
@@ -758,7 +758,7 @@ describe('rootSaga', () => {
       expect(saga.next(forkEffectRes).value).toEqual(
         race({
           logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-          logout: take(actionsTypes.USER_LOGOUT),
+          logout: take(actionsTypes.AUTH.USER.LOGOUT),
           switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
           )})
       );
@@ -786,7 +786,7 @@ describe('rootSaga', () => {
       expect(saga.next(forkEffectRes).value).toEqual(
         race({
           logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-          logout: take(actionsTypes.USER_LOGOUT),
+          logout: take(actionsTypes.AUTH.USER.LOGOUT),
           switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
           )})
       );
@@ -812,7 +812,7 @@ describe('rootSaga', () => {
       expect(saga.next(forkEffectRes).value).toEqual(
         race({
           logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-          logout: take(actionsTypes.USER_LOGOUT),
+          logout: take(actionsTypes.AUTH.USER.LOGOUT),
           switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
           )})
       );

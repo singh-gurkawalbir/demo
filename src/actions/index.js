@@ -102,7 +102,7 @@ const auth = {
   failure: message => action(actionTypes.AUTH.FAILURE, { message }),
   warning: () => action(actionTypes.AUTH.WARNING),
   logout: isExistingSessionInvalid =>
-    action(actionTypes.USER_LOGOUT, {
+    action(actionTypes.AUTH.USER.LOGOUT, {
       isExistingSessionInvalid,
     }),
   userAlreadyLoggedIn: () => action(actionTypes.AUTH.USER_ALREADY_LOGGED_IN),
@@ -111,9 +111,9 @@ const auth = {
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
-    action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
+    action(actionTypes.AUTH.USER.CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
-    action(actionTypes.USER_CHANGE_EMAIL, { updatedEmail }),
+    action(actionTypes.AUTH.USER.CHANGE_EMAIL, { updatedEmail }),
   defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
   sessionTimestamp: () => action(actionTypes.AUTH.TIMESTAMP),
 };
@@ -1261,19 +1261,19 @@ const user = {
     users: {
       requestCollection: message =>
         resource.requestCollection('ashares', message),
-      create: (user, asyncKey) => action(actionTypes.USER_CREATE, { user, asyncKey }),
-      created: user => action(actionTypes.USER_CREATED, { user }),
-      update: (_id, user, asyncKey) => action(actionTypes.USER_UPDATE, { _id, user, asyncKey }),
-      updated: user => action(actionTypes.USER_UPDATED, { user }),
-      delete: _id => action(actionTypes.USER_DELETE, { _id }),
-      deleted: _id => action(actionTypes.USER_DELETED, { _id }),
+      create: (user, asyncKey) => action(actionTypes.USER.CREATE, { user, asyncKey }),
+      created: user => action(actionTypes.USER.CREATED, { user }),
+      update: (_id, user, asyncKey) => action(actionTypes.USER.UPDATE, { _id, user, asyncKey }),
+      updated: user => action(actionTypes.USER.UPDATED, { user }),
+      delete: _id => action(actionTypes.USER.DELETE, { _id }),
+      deleted: _id => action(actionTypes.USER.DELETED, { _id }),
       disable: (_id, disabled) =>
-        action(actionTypes.USER_DISABLE, { _id, disabled }),
-      disabled: _id => action(actionTypes.USER_DISABLED, { _id }),
-      reinvited: _id => action(actionTypes.USER_REINVITED, { _id }),
-      makeOwner: email => action(actionTypes.USER_MAKE_OWNER, { email }),
-      reinvite: _id => action(actionTypes.USER_REINVITE, { _id }),
-      reinviteError: _id => action(actionTypes.USER_REINVITE_ERROR, { _id }),
+        action(actionTypes.USER.DISABLE, { _id, disabled }),
+      disabled: _id => action(actionTypes.USER.DISABLED, { _id }),
+      reinvited: _id => action(actionTypes.USER.REINVITED, { _id }),
+      makeOwner: email => action(actionTypes.USER.MAKE_OWNER, { email }),
+      reinvite: _id => action(actionTypes.USER.REINVITE, { _id }),
+      reinviteError: _id => action(actionTypes.USER.REINVITE_ERROR, { _id }),
     },
     accounts: {
       requestCollection: message =>

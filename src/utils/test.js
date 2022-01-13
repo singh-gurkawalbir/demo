@@ -79,27 +79,27 @@ describe('getRequestOptions util method', () => {
   const testCases = [
     [
       { path: '/invite', opts: { method: 'POST' } },
-      actionTypes.USER_CREATE,
+      actionTypes.USER.CREATE,
       {},
     ],
     [
       { path: '/ashares/someId', opts: { method: 'PUT' } },
-      actionTypes.USER_UPDATE,
+      actionTypes.USER.UPDATE,
       { resourceId: 'someId' },
     ],
     [
       { path: '/ashares/someId', opts: { method: 'DELETE' } },
-      actionTypes.USER_DELETE,
+      actionTypes.USER.DELETE,
       { resourceId: 'someId' },
     ],
     [
       { path: '/ashares/someId/disable', opts: { method: 'PUT' } },
-      actionTypes.USER_DISABLE,
+      actionTypes.USER.DISABLE,
       { resourceId: 'someId' },
     ],
     [
       { path: '/transfers/invite', opts: { method: 'POST' } },
-      actionTypes.USER_MAKE_OWNER,
+      actionTypes.USER.MAKE_OWNER,
       {},
     ],
     [
