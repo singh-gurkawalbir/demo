@@ -80,7 +80,7 @@ export function* updatePreferences() {
 }
 
 export function* requestTrialLicense() {
-  const { path, opts } = getRequestOptions(actionTypes.LICENSE_TRIAL_REQUEST);
+  const { path, opts } = getRequestOptions(actionTypes.LICENSE.TRIAL_REQUEST);
   let response;
 
   try {
@@ -97,7 +97,7 @@ export function* requestTrialLicense() {
 }
 
 export function* requestLicenseUpgrade() {
-  const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPGRADE_REQUEST);
+  const { path, opts } = getRequestOptions(actionTypes.LICENSE.UPGRADE_REQUEST);
   let response;
 
   try {
@@ -114,7 +114,7 @@ export function* requestLicenseUpgrade() {
 }
 
 export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
-  const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPDATE_REQUEST, {
+  const { path, opts } = getRequestOptions(actionTypes.LICENSE.UPDATE_REQUEST, {
     actionType, connectorId, licenseId,
   });
   let response;
@@ -476,7 +476,7 @@ export function* rejectSharedInvite({ resourceType, id }) {
 
 export function* requestNumEnabledFlows() {
   const { path, opts } = getRequestOptions(
-    actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST
+    actionTypes.LICENSE.NUM_ENABLED_FLOWS_REQUEST
   );
   let response;
 
@@ -493,7 +493,7 @@ export function* requestNumEnabledFlows() {
 }
 export function* requestLicenseEntitlementUsage() {
   const { path, opts } = getRequestOptions(
-    actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST
+    actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST
   );
   let response;
 
@@ -559,8 +559,8 @@ export const userSagas = [
   takeLatest([actionTypes.UPDATE_PREFERENCES,
     actionTypes.PIN_INTEGRATION,
     actionTypes.UNPIN_INTEGRATION], updatePreferences),
-  takeEvery(actionTypes.LICENSE_TRIAL_REQUEST, requestTrialLicense),
-  takeEvery(actionTypes.LICENSE_UPGRADE_REQUEST, requestLicenseUpgrade),
+  takeEvery(actionTypes.LICENSE.TRIAL_REQUEST, requestTrialLicense),
+  takeEvery(actionTypes.LICENSE.UPGRADE_REQUEST, requestLicenseUpgrade),
   takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
   takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
   takeEvery(actionTypes.ACCOUNT_LEAVE_REQUEST, leaveAccount),
@@ -574,14 +574,14 @@ export const userSagas = [
   takeEvery(actionTypes.SHARED_NOTIFICATION_ACCEPT, acceptSharedInvite),
   takeEvery(actionTypes.SHARED_NOTIFICATION_REJECT, rejectSharedInvite),
   takeEvery(
-    actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST,
+    actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST,
     requestLicenseEntitlementUsage
   ),
   takeEvery(
-    actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST,
+    actionTypes.LICENSE.NUM_ENABLED_FLOWS_REQUEST,
     requestNumEnabledFlows
   ),
-  takeLatest(actionTypes.LICENSE_UPDATE_REQUEST, requestLicenseUpdate),
+  takeLatest(actionTypes.LICENSE.UPDATE_REQUEST, requestLicenseUpdate),
   takeEvery(
     actionTypes.ACCOUNT_ADD_SUITESCRIPT_LINKED_CONNECTION,
     addSuiteScriptLinkedConnection

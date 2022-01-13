@@ -69,7 +69,7 @@ describe('session.resource reducers', () => {
       expect(state.new123).toEqual(dbId);
     });
   });
-  describe('LICENSE_TRIAL_ISSUED action', () => {
+  describe('LICENSE.TRIAL_ISSUED action', () => {
     test('should store the license trial issued message', () => {
       const state = reducer(
         undefined,
@@ -80,7 +80,7 @@ describe('session.resource reducers', () => {
       expect(state).toEqual(expected);
     });
   });
-  describe('LICENSE_UPGRADE_REQUEST_SUBMITTED action', () => {
+  describe('LICENSE.UPGRADE_REQUEST_SUBMITTED action', () => {
     test('should store the license upgrade request submitted message', () => {
       const state = reducer(
         undefined,
@@ -91,7 +91,7 @@ describe('session.resource reducers', () => {
       expect(state).toEqual(expected);
     });
   });
-  describe('LICENSE_NUM_ENABLED_FLOWS_RECEIVED action', () => {
+  describe('LICENSE.NUM_ENABLED_FLOWS_RECEIVED action', () => {
     test('should store the number of enabled flows info', () => {
       const response = {numEnabledPaidFlows: 2, numEnabledSandboxFlows: 2, numEnabledFreeFlows: 1 };
       const state = reducer(
@@ -102,7 +102,7 @@ describe('session.resource reducers', () => {
       expect(state.numEnabledFlows).toEqual(response);
     });
   });
-  describe('LICENSE_ENTITLEMENT_USAGE_RECEIVED action', () => {
+  describe('LICENSE.ENTITLEMENT_USAGE_RECEIVED action', () => {
     test('should store the license entitlement usage info', () => {
       const response = {production: {agentUsage: {numActive: 2}, flowUsage: {numEnabled: 2}, endpointUsage: {numConsumed: 11}, tradingPartnerUsage: {numConsumed: 4} }, sandbox: {agentUsage: {numActive: 2}, flowUsage: {numEnabled: 2}, endpointUsage: {numConsumed: 11}, tradingPartnerUsage: {numConsumed: 4} }};
 

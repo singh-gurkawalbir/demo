@@ -48,7 +48,7 @@ export default (state = [], action) => {
       return state;
     }
 
-    case actionTypes.LICENSE_TRIAL_ISSUED: {
+    case actionTypes.LICENSE.TRIAL_ISSUED: {
       const ownAccount = state.find(a => a._id === ACCOUNT_IDS.OWN);
 
       if (
@@ -79,7 +79,7 @@ export default (state = [], action) => {
       });
     }
 
-    case actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED: {
+    case actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED: {
       const ownAccount = state.find(a => a._id === ACCOUNT_IDS.OWN);
 
       if (

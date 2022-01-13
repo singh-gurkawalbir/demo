@@ -104,12 +104,12 @@ describe('getRequestOptions util method', () => {
     ],
     [
       { path: '/licenses/startTrial', opts: { method: 'POST' } },
-      actionTypes.LICENSE_TRIAL_REQUEST,
+      actionTypes.LICENSE.TRIAL_REQUEST,
       {},
     ],
     [
       { path: '/licenses/upgradeRequest', opts: { method: 'POST' } },
-      actionTypes.LICENSE_UPGRADE_REQUEST,
+      actionTypes.LICENSE.UPGRADE_REQUEST,
       {},
     ],
     [

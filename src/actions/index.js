@@ -87,25 +87,25 @@ const form = {
 };
 // #endregion
 const auth = {
-  requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
+  requestReducer: () => action(actionTypes.AUTH.REQUEST_REDUCER),
   request: (email, password, showAuthError) =>
-    action(actionTypes.AUTH_REQUEST, { email, password, showAuthError }),
+    action(actionTypes.AUTH.REQUEST, { email, password, showAuthError }),
   signInWithGoogle: returnTo =>
-    action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
+    action(actionTypes.AUTH.SIGNIN_WITH_GOOGLE, { returnTo }),
   reSignInWithGoogle: email =>
-    action(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, { email }),
+    action(actionTypes.AUTH.RE_SIGNIN_WITH_GOOGLE, { email }),
   reSignInWithSSO: () =>
-    action(actionTypes.AUTH_RE_SIGNIN_WITH_SSO),
+    action(actionTypes.AUTH.RE_SIGNIN_WITH_SSO),
   linkWithGoogle: returnTo =>
-    action(actionTypes.AUTH_LINK_WITH_GOOGLE, { returnTo }),
-  complete: () => action(actionTypes.AUTH_SUCCESSFUL),
-  failure: message => action(actionTypes.AUTH_FAILURE, { message }),
-  warning: () => action(actionTypes.AUTH_WARNING),
+    action(actionTypes.AUTH.LINK_WITH_GOOGLE, { returnTo }),
+  complete: () => action(actionTypes.AUTH.SUCCESSFUL),
+  failure: message => action(actionTypes.AUTH.FAILURE, { message }),
+  warning: () => action(actionTypes.AUTH.WARNING),
   logout: isExistingSessionInvalid =>
     action(actionTypes.USER_LOGOUT, {
       isExistingSessionInvalid,
     }),
-  userAlreadyLoggedIn: () => action(actionTypes.AUTH_USER_ALREADY_LOGGED_IN),
+  userAlreadyLoggedIn: () => action(actionTypes.AUTH.USER_ALREADY_LOGGED_IN),
   clearStore: () => action(actionTypes.CLEAR_STORE),
   abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
@@ -115,7 +115,7 @@ const auth = {
   changeEmail: updatedEmail =>
     action(actionTypes.USER_CHANGE_EMAIL, { updatedEmail }),
   defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
-  sessionTimestamp: () => action(actionTypes.AUTH_TIMESTAMP),
+  sessionTimestamp: () => action(actionTypes.AUTH.TIMESTAMP),
 };
 
 const asyncTask = {
@@ -1280,25 +1280,25 @@ const user = {
         resource.requestCollection('shared/ashares', undefined, message),
       requestLicenses: message =>
         resource.requestCollection('licenses', undefined, message),
-      requestTrialLicense: () => action(actionTypes.LICENSE_TRIAL_REQUEST, {}),
+      requestTrialLicense: () => action(actionTypes.LICENSE.TRIAL_REQUEST, {}),
       trialLicenseIssued: message =>
-        action(actionTypes.LICENSE_TRIAL_ISSUED, message),
+        action(actionTypes.LICENSE.TRIAL_ISSUED, message),
       requestLicenseUpgrade: () =>
-        action(actionTypes.LICENSE_UPGRADE_REQUEST, {}),
+        action(actionTypes.LICENSE.UPGRADE_REQUEST, {}),
       requestUpdate: (actionType, connectorId, licenseId) =>
-        action(actionTypes.LICENSE_UPDATE_REQUEST, { actionType, connectorId, licenseId }),
+        action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId }),
       licenseUpgradeRequestSubmitted: message =>
-        action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
+        action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message }),
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
       switchTo: ({ id }) => action(actionTypes.ACCOUNT_SWITCH, { id }),
       requestLicenseEntitlementUsage: () =>
-        action(actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST),
+        action(actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST),
       requestNumEnabledFlows: () =>
-        action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST, {}),
+        action(actionTypes.LICENSE.NUM_ENABLED_FLOWS_REQUEST, {}),
       receivedNumEnabledFlows: response =>
-        action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED, { response }),
+        action(actionTypes.LICENSE.NUM_ENABLED_FLOWS_RECEIVED, { response }),
       receivedLicenseEntitlementUsage: response =>
-        action(actionTypes.LICENSE_ENTITLEMENT_USAGE_RECEIVED, { response }),
+        action(actionTypes.LICENSE.ENTITLEMENT_USAGE_RECEIVED, { response }),
       addLinkedConnectionId: connectionId =>
         action(actionTypes.ACCOUNT_ADD_SUITESCRIPT_LINKED_CONNECTION, {
           connectionId,

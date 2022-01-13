@@ -61,17 +61,17 @@ export default function getRequestOptions(
       };
     case actionTypes.USER_MAKE_OWNER:
       return { path: '/transfers/invite', opts: { method: 'POST' } };
-    case actionTypes.LICENSE_TRIAL_REQUEST:
+    case actionTypes.LICENSE.TRIAL_REQUEST:
       return {
         path: '/licenses/startTrial',
         opts: { method: 'POST' },
       };
-    case actionTypes.LICENSE_UPGRADE_REQUEST:
+    case actionTypes.LICENSE.UPGRADE_REQUEST:
       return {
         path: '/licenses/upgradeRequest',
         opts: { method: 'POST' },
       };
-    case actionTypes.LICENSE_UPDATE_REQUEST:
+    case actionTypes.LICENSE.UPDATE_REQUEST:
       if (actionType === 'trial') {
         path = '/licenses/startTrial';
       } else if (actionType === 'reTrial') {
@@ -280,12 +280,12 @@ export default function getRequestOptions(
             : `/ui/assistants/${resourceId}`,
         opts: { method: 'GET' },
       };
-    case actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST:
+    case actionTypes.LICENSE.NUM_ENABLED_FLOWS_REQUEST:
       return {
         path: '/numEnabledFlows',
         opts: { method: 'GET' },
       };
-    case actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST:
+    case actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST:
       return {
         path: '/licenseEntitlementUsage',
         opts: { method: 'GET' },

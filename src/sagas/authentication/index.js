@@ -443,10 +443,10 @@ export function* linkWithGoogle({ returnTo }) {
 
 export const authenticationSagas = [
   takeEvery(actionTypes.INIT_SESSION, initializeSession),
-  takeEvery(actionTypes.AUTH_REQUEST, auth),
+  takeEvery(actionTypes.AUTH.REQUEST, auth),
   takeEvery(actionTypes.UI_VERSION_FETCH, fetchUIVersion),
-  takeEvery(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, signInWithGoogle),
-  takeEvery(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
-  takeEvery(actionTypes.AUTH_RE_SIGNIN_WITH_SSO, reSignInWithSSO),
-  takeEvery(actionTypes.AUTH_LINK_WITH_GOOGLE, linkWithGoogle),
+  takeEvery(actionTypes.AUTH.SIGNIN_WITH_GOOGLE, signInWithGoogle),
+  takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
+  takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_SSO, reSignInWithSSO),
+  takeEvery(actionTypes.AUTH.LINK_WITH_GOOGLE, linkWithGoogle),
 ];

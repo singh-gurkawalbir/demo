@@ -30,19 +30,19 @@ export default function reducer(state = {}, action) {
         delete draft.references;
         break;
 
-      case actionTypes.LICENSE_TRIAL_ISSUED:
+      case actionTypes.LICENSE.TRIAL_ISSUED:
         draft.platformLicenseActionMessage = LICENSE_TRIAL_ISSUED_MESSAGE;
         break;
 
-      case actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED:
+      case actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED:
         draft.platformLicenseActionMessage = LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE;
         break;
 
-      case actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED:
+      case actionTypes.LICENSE.NUM_ENABLED_FLOWS_RECEIVED:
         draft.numEnabledFlows = response;
         break;
 
-      case actionTypes.LICENSE_ENTITLEMENT_USAGE_RECEIVED:
+      case actionTypes.LICENSE.ENTITLEMENT_USAGE_RECEIVED:
         draft.licenseEntitlementUsage = response;
         break;
 

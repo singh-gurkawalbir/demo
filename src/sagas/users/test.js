@@ -487,7 +487,7 @@ describe('all modal sagas', () => {
       test('should start trial successfully', () => {
         const saga = requestTrialLicense();
         const requestOptions = getRequestOptions(
-          actionTypes.LICENSE_TRIAL_REQUEST,
+          actionTypes.LICENSE.TRIAL_REQUEST,
         );
         const { path, opts } = requestOptions;
 
@@ -517,7 +517,7 @@ describe('all modal sagas', () => {
       test('should handle api error properly while starting license trial', () => {
         const saga = requestTrialLicense();
         const requestOptions = getRequestOptions(
-          actionTypes.LICENSE_TRIAL_REQUEST,
+          actionTypes.LICENSE.TRIAL_REQUEST,
         );
         const { path, opts } = requestOptions;
 
