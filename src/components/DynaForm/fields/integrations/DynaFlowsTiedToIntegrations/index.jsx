@@ -12,7 +12,7 @@ import LoadResources from '../../../../LoadResources';
 import { useResetWhenParentIntegrationChanges } from '../hooks';
 import { GenericTypeableSelect } from './GenericTypeableSelect';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   optionContainer: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -28,7 +28,10 @@ const useStyles = makeStyles({
   optionFlowGroupUnassigned: {
     fontStyle: 'italic',
   },
-});
+  optionCheckbox: {
+    padding: theme.spacing(1),
+  },
+}));
 
 const OptionCheckbox = props => {
   const classes = useStyles();
@@ -45,6 +48,7 @@ const OptionCheckbox = props => {
         onClick={onClick}
         checked={checked}
         color="primary"
+        className={classes.optionCheckbox}
       />
       <span className={classes.optionLabel}>{label}</span>
       <span className={clsx(classes.optionFlowGroupName, flowGroupName === UNASSIGNED_SECTION_NAME ? classes.optionFlowGroupUnassigned : '')}>
