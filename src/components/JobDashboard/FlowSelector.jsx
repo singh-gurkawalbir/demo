@@ -29,7 +29,7 @@ const OptionIml = ({ item, integrationId, childId, isIntegrationApp}) => {
   if (isIntegrationApp) {
     sectionName = flowSections.find(flowSection => flowSection.flows?.some(flow => flow._id === item._id))?.title;
   } else {
-    groupName = getFlowGroup(flowGroupings, '', item._flowGroupingId).name;
+    groupName = getFlowGroup(flowGroupings, '', item._flowGroupingId)?.name;
   }
 
   return (

@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import { dataAsString, getFormSaveStatusFromCommStatus, getUniqueFieldId, getFormSaveStatusFromEditorStatus } from './index';
+import { dataAsString, getFormSaveStatusFromCommStatus, getUniqueFieldId, getFormSaveStatusFromEditorStatus, resolveValue } from './index';
 
 describe('editor utils test cases', () => {
   describe('dataAsString util', () => {
@@ -99,6 +99,27 @@ describe('editor utils test cases', () => {
       expect(getUniqueFieldId('http.bodyUpdate')).toEqual('http.body.0');
       expect(getUniqueFieldId('http.relativeURIUpdate')).toEqual('http.relativeURI.0');
       expect(getUniqueFieldId('http.relativeURICreate')).toEqual('http.relativeURI.1');
+    });
+  });
+
+  describe('resolveValue util', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(resolveValue()).toBeUndefined();
+    });
+    test('should call value with editorContext as a parameter if value is a function', () => {
+      const value = editorContext => editorContext;
+      const editorContext = {value: 123};
+
+      expect(resolveValue(value, editorContext)).toEqual(editorContext);
+      expect(resolveValue(value)).toBeUndefined();
+    });
+
+    test('should return value if value is not a function', () => {
+      const value = 'helpKey';
+      const editorContext = {value: 123};
+
+      expect(resolveValue(value, editorContext)).toEqual(value);
+      expect(resolveValue(value)).toEqual(value);
     });
   });
 });

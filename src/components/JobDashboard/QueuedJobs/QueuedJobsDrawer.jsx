@@ -20,36 +20,43 @@ const metadata = {
     {
       key: 'integration',
       heading: 'Integration',
+      isLoggable: true,
       Value: ({rowData: job}) => job._integrationId && job._integrationId.name,
     },
     {
       key: 'flow',
       heading: 'Flow',
+      isLoggable: true,
       Value: ({rowData: job}) => job._flowId && job._flowId.name,
     },
     {
       key: 'status',
       heading: 'Status',
+      isLoggable: true,
       Value: ({rowData: job}) => getStatus({ ...job, uiStatus: job.status }),
     },
     {
       key: 'success',
       heading: 'Success',
+      isLoggable: true,
       Value: ({rowData: job}) => job.numSuccess,
     },
     {
       key: 'ignore',
       heading: 'Ignore',
+      isLoggable: true,
       Value: ({rowData: job}) => job.numIgnore,
     },
     {
       key: 'error',
       heading: 'Error',
+      isLoggable: true,
       Value: ({rowData: job}) => job.numError,
     },
     {
       key: 'pages',
       heading: 'Pages',
+      isLoggable: true,
       Value: ({rowData: job}) => getPages(job),
     },
   ],

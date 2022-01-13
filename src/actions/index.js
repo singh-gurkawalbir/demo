@@ -262,10 +262,6 @@ const resource = {
 
   requestCollection: (resourceType, message, refresh) =>
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
-  startCollectionPoll: resourceType =>
-    action(actionTypes.RESOURCE.START_COLLECTION_POLL, { resourceType }),
-  stopCollectionPoll: resourceType =>
-    action(actionTypes.RESOURCE.STOP_COLLECTION_POLL, { resourceType }),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
@@ -346,9 +342,6 @@ const resource = {
     action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id, scope }),
 
   integrations: {
-    fetchIfAnyUnloadedFlows: integrationId => action(actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS, { integrationId }),
-    resolveUnloadedResources: integrationId => action(actionTypes.INTEGRATION.RESOLVE_UNLOADED_RESOURCES, { integrationId }),
-    updateResources: (resourceType, response) => action(actionTypes.INTEGRATION.UPDATE_RESOURCES, { subCollection: response, resourceType }),
     delete: integrationId =>
       action(actionTypes.INTEGRATION.DELETE, { integrationId }),
     redirectTo: (integrationId, redirectTo) =>
@@ -497,6 +490,12 @@ const auditLogs = {
   request: (resourceType, resourceId, message) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
     resourceType: auditResourceTypePath(resourceType, resourceId),
     message,
+  }),
+  download: ({resourceType, resourceId, childId, filters}) => action(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, {
+    resourceType,
+    resourceId,
+    childId,
+    filters,
   }),
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
@@ -1016,7 +1015,7 @@ const integrationApp = {
       }),
   },
   templates: {
-    intsaller: {
+    installer: {
       verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
         action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
           id,
@@ -2299,22 +2298,22 @@ const logs = {
     startDebug: (connectionId, value) =>
       action(actionTypes.LOGS.CONNECTIONS.START_DEBUG, { connectionId, value }),
   },
-  listener: {
-    startDebug: (flowId, exportId, minutes) => action(actionTypes.LOGS.LISTENER.DEBUG.START, { flowId, exportId, minutes }),
-    stopDebug: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.DEBUG.STOP, { flowId, exportId }),
-    requestLogDetails: (flowId, exportId, logKey) => action(actionTypes.LOGS.LISTENER.LOG.REQUEST, { flowId, exportId, logKey }),
-    receivedLogDetails: (exportId, logKey, logDetails) => action(actionTypes.LOGS.LISTENER.LOG.RECEIVED, { exportId, logKey, logDetails }),
-    removeLog: (flowId, exportId, logsToRemove) => action(actionTypes.LOGS.LISTENER.LOG.REMOVE, { flowId, exportId, logsToRemove }),
-    logDeleted: (exportId, deletedLogKey) => action(actionTypes.LOGS.LISTENER.LOG.DELETED, { exportId, deletedLogKey }),
-    request: ({ flowId, exportId, loadMore }) => action(actionTypes.LOGS.LISTENER.REQUEST, { flowId, exportId, loadMore }),
-    received: ({ exportId, logs, nextPageURL, loadMore }) => action(actionTypes.LOGS.LISTENER.RECEIVED, { exportId, logs, nextPageURL, loadMore }),
-    failed: (exportId, error) => action(actionTypes.LOGS.LISTENER.FAILED, { exportId, error }),
-    clear: exportId => action(actionTypes.LOGS.LISTENER.CLEAR, { exportId }),
-    startLogsPoll: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.START_POLL, { flowId, exportId }),
-    stopLogsPoll: (exportId, hasNewLogs) => action(actionTypes.LOGS.LISTENER.STOP_POLL, { exportId, hasNewLogs }),
-    setActiveLog: (exportId, activeLogKey) => action(actionTypes.LOGS.LISTENER.ACTIVE_LOG, { exportId, activeLogKey }),
-    setFetchStatus: (exportId, status) => action(actionTypes.LOGS.LISTENER.FETCH_STATUS, { exportId, status }),
-    pauseFetch: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.PAUSE_FETCH, { flowId, exportId }),
+  flowStep: {
+    startDebug: (flowId, resourceId, resourceType, minutes) => action(actionTypes.LOGS.FLOWSTEP.DEBUG.START, { flowId, resourceId, resourceType, minutes }),
+    stopDebug: (flowId, resourceId, resourceType) => action(actionTypes.LOGS.FLOWSTEP.DEBUG.STOP, { flowId, resourceId, resourceType }),
+    requestLogDetails: (flowId, resourceId, logKey) => action(actionTypes.LOGS.FLOWSTEP.LOG.REQUEST, { flowId, resourceId, logKey }),
+    receivedLogDetails: (resourceId, logKey, logDetails) => action(actionTypes.LOGS.FLOWSTEP.LOG.RECEIVED, { resourceId, logKey, logDetails }),
+    removeLog: (flowId, resourceId, logsToRemove) => action(actionTypes.LOGS.FLOWSTEP.LOG.REMOVE, { flowId, resourceId, logsToRemove }),
+    logDeleted: (resourceId, deletedLogKey) => action(actionTypes.LOGS.FLOWSTEP.LOG.DELETED, { resourceId, deletedLogKey }),
+    request: ({ flowId, resourceId, loadMore }) => action(actionTypes.LOGS.FLOWSTEP.REQUEST, { flowId, resourceId, loadMore }),
+    received: ({ resourceId, logs, nextPageURL, loadMore }) => action(actionTypes.LOGS.FLOWSTEP.RECEIVED, { resourceId, logs, nextPageURL, loadMore }),
+    failed: (resourceId, error) => action(actionTypes.LOGS.FLOWSTEP.FAILED, { resourceId, error }),
+    clear: resourceId => action(actionTypes.LOGS.FLOWSTEP.CLEAR, { resourceId }),
+    startLogsPoll: (flowId, resourceId) => action(actionTypes.LOGS.FLOWSTEP.START_POLL, { flowId, resourceId }),
+    stopLogsPoll: (resourceId, hasNewLogs) => action(actionTypes.LOGS.FLOWSTEP.STOP_POLL, { resourceId, hasNewLogs }),
+    setActiveLog: (resourceId, activeLogKey) => action(actionTypes.LOGS.FLOWSTEP.ACTIVE_LOG, { resourceId, activeLogKey }),
+    setFetchStatus: (resourceId, status) => action(actionTypes.LOGS.FLOWSTEP.FETCH_STATUS, { resourceId, status }),
+    pauseFetch: (flowId, resourceId) => action(actionTypes.LOGS.FLOWSTEP.PAUSE_FETCH, { flowId, resourceId }),
   },
 };
 

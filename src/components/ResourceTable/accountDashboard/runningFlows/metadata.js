@@ -48,6 +48,7 @@ export default {
               options={integrationOptions.map(({ _id, name, children}) => ({_id, name, children }))} />
           );
         },
+        isLoggable: true,
         Value: ({rowData: al}) => {
           const tableContext = useGetTableContext();
 
@@ -68,6 +69,7 @@ export default {
               options={flowOptions.map(({ _id, name}) => ({_id, name }))} />
           );
         },
+        isLoggable: true,
         Value: ({rowData: al}) => (<FlowNameWithFlowGroupCell integrationId={al._integrationId} flowId={al._flowId} />),
         width: '10%',
       },
@@ -83,12 +85,14 @@ export default {
               options={RUNNNING_STATUS_OPTIONS.map(({ _id, name}) => ({_id, name }))} />
           );
         },
+        isLoggable: true,
         Value: ({rowData: al}) => <JobStatus job={al} />,
         width: '10%',
       },
       {
         key: 'startedAt',
         heading: 'Started',
+        isLoggable: true,
         Value: ({rowData: r}) => <CeligoTimeAgo date={r.startedAt} />,
         orderBy: 'startedAt',
         width: '10%',
@@ -96,6 +100,7 @@ export default {
       {
         key: 'numSuccess',
         heading: 'Success',
+        isLoggable: true,
         Value: ({rowData: r}) => getSuccess(r),
         width: '10%',
         orderBy: 'numSuccess',
@@ -103,6 +108,7 @@ export default {
       {
         key: 'numIgnore',
         heading: 'Ignored',
+        isLoggable: true,
         Value: ({rowData: r}) => r.numIgnore,
         width: '10%',
         orderBy: 'numIgnore',
@@ -110,6 +116,7 @@ export default {
       {
         key: 'numError',
         heading: 'Errors',
+        isLoggable: true,
         Value: ({rowData: r}) => r.numError,
         width: '10%',
         orderBy: 'numError',
@@ -117,6 +124,7 @@ export default {
       {
         key: 'numResolved',
         HeaderValue: () => <HeaderWithHelpText title="Auto-resolved" helpKey="accountdashboard.numResolvedByAuto" />,
+        isLoggable: true,
         Value: ({rowData: r}) => r.numResolved,
         width: '10%',
         orderBy: 'numResolved',
@@ -124,6 +132,7 @@ export default {
       {
         key: 'numPagesGenerated',
         heading: 'Pages',
+        isLoggable: true,
         Value: ({rowData: r}) => getPages(r),
         width: '10%',
         orderBy: 'numPagesGenerated',

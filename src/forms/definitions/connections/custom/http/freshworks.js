@@ -53,6 +53,8 @@ export default {
       label: 'API key',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'freshworks.connection.http.encrypted.apiKey',
     },
     application: {

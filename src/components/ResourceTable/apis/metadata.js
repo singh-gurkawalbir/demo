@@ -12,21 +12,26 @@ export default {
       key: 'name',
       heading: 'Name',
       Value: ({rowData: r}) => <ResourceDrawerLink resourceType="apis" resource={r} />,
+      isLoggable: true,
       orderBy: 'name',
     },
     {
       key: 'function',
       heading: 'Function',
+      // check if it is loggable
+      isLoggable: true,
       Value: ({rowData: r}) => r.function,
     },
     {
       key: 'script',
       heading: 'Script',
+      isLoggable: true,
       Value: ({rowData: r}) => <ResourceName resourceType="scripts" resourceId={r._scriptId} />,
     },
     {
       key: 'lastUpdated',
       heading: 'Last updated',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },

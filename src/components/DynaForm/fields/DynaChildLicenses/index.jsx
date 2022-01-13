@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 12, 3),
   },
 }));
-
+// its basically a celigo table, so the table metadata should control it
 export default function DynaChildLicense({ connectorId, resourceId, id, formKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();

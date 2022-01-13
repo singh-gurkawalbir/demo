@@ -1,7 +1,7 @@
 import { call, put, takeEvery, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import { apiCallWithRetry } from '../index';
+import { apiCallWithRetry, apiCallWithPaging } from '../index';
 import { selectors } from '../../reducers';
 
 export function* requestConnectors() {
@@ -9,7 +9,7 @@ export function* requestConnectors() {
   let response;
 
   try {
-    response = yield call(apiCallWithRetry, {
+    response = yield call(apiCallWithPaging, {
       path,
       message: 'Requesting integration apps',
     });
@@ -25,7 +25,7 @@ export function* requestTemplates() {
   let response;
 
   try {
-    response = yield call(apiCallWithRetry, {
+    response = yield call(apiCallWithPaging, {
       path,
       message: 'Requesting Templates',
     });

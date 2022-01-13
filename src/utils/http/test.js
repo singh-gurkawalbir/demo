@@ -1,10 +1,10 @@
 /* global expect, describe, test */
-import { getContentType, getHttpReqResFields } from '.';
+import { getContentType, getErrorReqResFields } from '.';
 
-describe('getHttpReqResFields util', () => {
+describe('getErrorReqResFields util', () => {
   test('should return empty object in case of null/undefined httpPayload', () => {
-    expect(getHttpReqResFields()).toEqual({});
-    expect(getHttpReqResFields(null)).toEqual({});
+    expect(getErrorReqResFields()).toEqual({});
+    expect(getErrorReqResFields(null)).toEqual({});
   });
   test('should return undefined body with headers and all other fields as others in case of httpPayload without body', () => {
     const httpPayload = {
@@ -21,7 +21,7 @@ describe('getHttpReqResFields util', () => {
       },
     };
 
-    expect(getHttpReqResFields(httpPayload)).toEqual(expectedHttpFields);
+    expect(getErrorReqResFields(httpPayload)).toEqual(expectedHttpFields);
   });
   test('should return with body, headers and all other properties from httpPayload included in others ', () => {
     const httpPayloadWithBody = {
@@ -39,7 +39,7 @@ describe('getHttpReqResFields util', () => {
       },
     };
 
-    expect(getHttpReqResFields(httpPayloadWithBody)).toEqual(expectedHttpFields);
+    expect(getErrorReqResFields(httpPayloadWithBody)).toEqual(expectedHttpFields);
   });
   test('should exclude URL from the others if the variant is previewPanel', () => {
     const httpPayloadWithBody = {
@@ -56,7 +56,7 @@ describe('getHttpReqResFields util', () => {
       },
     };
 
-    expect(getHttpReqResFields(httpPayloadWithBody, 'previewPanel')).toEqual(expectedHttpPreviewPanelFields);
+    expect(getErrorReqResFields(httpPayloadWithBody, 'previewPanel')).toEqual(expectedHttpPreviewPanelFields);
   });
   test('should return others as undefined if there are no fields to show from the payload under others', () => {
     const httpPayloadWithBody = {
@@ -69,7 +69,21 @@ describe('getHttpReqResFields util', () => {
       others: undefined,
     };
 
-    expect(getHttpReqResFields(httpPayloadWithBody, 'previewPanel')).toEqual(expectedHttpPreviewPanelFields);
+    expect(getErrorReqResFields(httpPayloadWithBody, 'previewPanel')).toEqual(expectedHttpPreviewPanelFields);
+  });
+  test('should return httpPayload if it is a netsuite error request', () => {
+    const httpPayload = 'netsuite error';
+    const expectedHttpFields = httpPayload;
+
+    expect(getErrorReqResFields(httpPayload, null, true, true)).toEqual(expectedHttpFields);
+  });
+  test('should return httpPayload.body if it is a netsuite error response', () => {
+    const httpPayload = {
+      body: 'r = nlapiLoadRecord("inventoryitem", 97, {});\r\nr.setFieldValue("internalid", 97);',
+    };
+    const expectedHttpFields = httpPayload.body;
+
+    expect(getErrorReqResFields(httpPayload, null, true)).toEqual(expectedHttpFields);
   });
 });
 

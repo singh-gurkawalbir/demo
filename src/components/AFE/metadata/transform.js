@@ -14,6 +14,7 @@ export default {
       title: 'Rules',
       area: 'rule',
       Panel: TransformPanel,
+      isLoggable: true,
     },
     {
       title: 'Input',

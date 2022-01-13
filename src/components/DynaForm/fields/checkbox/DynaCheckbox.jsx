@@ -5,6 +5,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles({
   dynaLabelWrapper: {
@@ -20,7 +21,7 @@ const useStyles = makeStyles({
     props.hideLabelSpacing ? 0 : 12;
   },
 });
-
+// can this be loggable in all circumstances? since it is a checkbox
 export default function DynaCheckbox(props) {
   const classes = useStyles(props);
   const {
@@ -34,7 +35,7 @@ export default function DynaCheckbox(props) {
     required,
     isValid,
     className,
-    dataPublic,
+    isLoggable,
   } = props;
 
   return (
@@ -48,6 +49,7 @@ export default function DynaCheckbox(props) {
           <Checkbox
             key={id}
             name={name}
+            {...isLoggableAttr(isLoggable)}
             className={classes.dynaCheckbox}
             // isInvalid={!isValid}
             data-test={id}
@@ -60,7 +62,6 @@ export default function DynaCheckbox(props) {
               )}
           />
         )}
-        data-public={!!dataPublic}
         className={classes.dynaCheckControlLabel}
         label={label}
 

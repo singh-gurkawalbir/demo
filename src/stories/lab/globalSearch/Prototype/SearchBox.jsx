@@ -4,8 +4,8 @@ import { isEqual } from 'lodash';
 import FloatingPaper from './FloatingPaper';
 import MarketplaceIcon from '../../../../components/icons/MarketplaceIcon';
 import CloseIcon from '../../../../components/icons/CloseIcon';
-import { useGlobalSearchContext } from '../GlobalSearchContext';
-import { filterMap, shortcutMap } from './filterMeta';
+import { useGlobalSearchContext } from './GlobalSearchContext';
+import { filterMap } from './filterMeta';
 import Results from './Results';
 import TextButton from '../../../../components/Buttons/TextButton';
 
@@ -103,7 +103,27 @@ function getFilters(searchString) {
 
   const filterShortcuts = parts[0].split(',');
 
-  return filterShortcuts.map(s => shortcutMap[s.trim()]).filter(f => f);
+  const selectedFilters = [];
+  const allFilters = Object.keys(filterMap);
+
+  filterShortcuts.forEach(s => {
+    const shortcut = s.trim().toLowerCase();
+
+    if (shortcut.length === 0) return;
+
+    allFilters.forEach(f => {
+      const label = filterMap[f].label.toLowerCase();
+      const filter = filterMap[f].type;
+
+      if (label.startsWith(shortcut) && !selectedFilters.includes(filter)) {
+        selectedFilters.push(filter);
+      }
+    });
+  });
+
+  // console.log(filterShortcuts, selectedFilters);
+
+  return selectedFilters;
 }
 
 function getKeyword(searchString) {
@@ -179,7 +199,12 @@ export default function SearchBox() {
   useEffect(() => {
     if (skip) return setSkip(false);
 
-    setSearchString(buildSearchString(filters, keyword));
+    // we only want to rebuild the search string IFF it already has
+    // the filter shorthand. The filter syntax is advanced feature,
+    // and may confuse non-developer or first time users.
+    if (searchString.includes(':')) {
+      setSearchString(buildSearchString(filters, keyword));
+    }
 
     // The ref of <InputBase> is actually a div wrapper.
     // We want the first child, which is the input element.
@@ -210,7 +235,7 @@ export default function SearchBox() {
       <Paper component="form" className={classes.searchBox} variant="outlined">
         <InputBase
           ref={inputRef}
-          spellcheck="false"
+          spellCheck="false"
           value={searchString}
           classes={{input: classes.inputBase}}
           className={classes.input}

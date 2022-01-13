@@ -13,6 +13,7 @@ import DynaText from '../../DynaText';
 import {operators, operatorsByFieldType} from './operators';
 import Spinner from '../../../../Spinner';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { useIsLoggable } from '../../../../IsLoggableContextProvider';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -68,8 +69,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, disabled, handleDelete, index}) =>
-  useMemo(() => {
+const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, disabled, handleDelete, index}) => {
+  const isLoggable = useIsLoggable();
+
+  return useMemo(() => {
     const fieldType = fieldId => fields?.find(f => f.value === fieldId)?.type;
     const field = obj.join ? [obj.join, obj.field].join('.') : obj.field;
 
@@ -88,6 +91,7 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
               [classes.disabled]: disabled,
             })}>
             <DynaTypeableSelect
+              isLoggable
               id={`field-${index}`}
               labelName="label"
               valueName="value"
@@ -103,6 +107,7 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
               />
             {r.showFormulaField && (
             <DynaText
+              isLoggable
               id={`formula-${index}`}
               value={r.formula}
               multiline
@@ -122,6 +127,7 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
               [classes.disabled]: disabled,
             })}>
             <DynaSelect
+              isLoggable
               id={`operator-${index}`}
               value={r.operator}
               options={[{ items: operators.filter(op => (operatorsByFieldType[r.fieldType] || operatorsByFieldType.text).includes(op.value)) }]}
@@ -138,6 +144,7 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
               [classes.disabled]: disabled,
             })}>
             <DynaTypeableSelect
+              isLoggable={isLoggable}
               id={`searchValue-${index}`}
               onBlur={(_id, _value) => {
                 handleFieldUpdate(index, _value, 'searchValue');
@@ -152,6 +159,7 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
               [classes.disabled]: disabled || !r.searchValue2Enabled,
             })}>
             <DynaTypeableSelect
+              isLoggable={isLoggable}
               id={`searchValue2-${index}`}
               disabled={disabled || !r.searchValue2Enabled}
               onBlur={(_id, _value) => {
@@ -180,7 +188,8 @@ const TableRowMemo = ({obj, classes, handleFieldUpdate, invalidFields, fields, d
         </div>
       </div>
     );
-  }, [obj, classes, handleFieldUpdate, invalidFields, fields, disabled, handleDelete, index]);
+  }, [obj, classes, handleFieldUpdate, invalidFields, fields, disabled, handleDelete, index, isLoggable]);
+};
 
 const emptyObject = {};
 const emptyArray = [];

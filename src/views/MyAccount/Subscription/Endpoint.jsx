@@ -323,7 +323,7 @@ export default function Endpoint() {
                 'request-upgrade'
               ) > -1 || licenseActionDetails.subscriptionActions.actions.indexOf(
                 'request-subscription'
-              ) > -1) && (
+              ) > -1) && !licenseActionDetails.upgradeRequested && (
               <FilledButton
                 onClick={onRequestUpgradeClick}
                 disabled={upgradeRequested}

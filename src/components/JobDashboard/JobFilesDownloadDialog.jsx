@@ -16,7 +16,10 @@ const isDownloadButtonDisabled = selected => {
   return disabled;
 };
 
-const useColumns = () => [{ key: 'name', heading: 'Name', Value: ({rowData: r}) => r.name }];
+const useColumns = () => [{ key: 'name',
+  heading: 'Name',
+  isLoggable: true,
+  Value: ({rowData: r}) => r.name }];
 
 export default function JobFilesDownloadDialog({
   job,

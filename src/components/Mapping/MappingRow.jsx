@@ -164,7 +164,6 @@ export default function MappingRow({
 
   const RightIcon = ({title, Icon, className}) => (
     <Tooltip
-      data-public
       title={title}
       placement="bottom">
       <span className={clsx(classes.lockIcon, className)}>
@@ -228,12 +227,12 @@ export default function MappingRow({
         <div className={classes.innerRow}>
           <SortableHandle isVisible={showGripper} />
           <div
-            data-public
             className={clsx(classes.childHeader, classes.mapField, {
               [classes.disableChildRow]:
               isSubRecordMapping || isNotEditable || disabled,
             })}>
             <DynaTypeableSelect
+              isLoggable
               key={extractValue}
               id={`fieldMappingExtract-${index}`}
               labelName="name"
@@ -253,12 +252,12 @@ export default function MappingRow({
           </div>
           <span className={classes.mappingIcon} />
           <div
-            data-public
             className={clsx(classes.childHeader, classes.mapField, {
               [classes.disableChildRow]:
               isSubRecordMapping || isRequired || disabled,
             }, {[classes.hasLockHardCodeIcons]: isLookup || isMultiField || isHardCodedValue})}>
             <DynaTypeableSelect
+              isLoggable
               key={generate}
               id={`fieldMappingGenerate-${index}`}
               value={generate}

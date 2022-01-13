@@ -114,7 +114,6 @@ export default function DynaSelectLookup(props) {
           <EllipsisActionMenu actionsMenu={actionsMenu} onAction={handleManageLookupsClick} />
         </ActionGroup>
       </div>
-
       <ManageLookupDrawer
         disabled={disabled}
         id={id}
@@ -124,7 +123,6 @@ export default function DynaSelectLookup(props) {
         flowId={flowId}
         hideBackButton={false}
         onSave={handleManageLookupsSave} />
-
       <LookupDrawer
         disabled={disabled}
         importId={importId}

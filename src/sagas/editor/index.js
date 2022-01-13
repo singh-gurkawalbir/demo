@@ -79,6 +79,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
 
     if (editorType === 'mappings') {
       const mappings = (yield select(selectors.mapping))?.mappings;
+      const lookups = (yield select(selectors.mapping))?.lookups;
       const importResource = yield select(selectors.resource, 'imports', resourceId);
       const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
 
@@ -89,6 +90,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
         importResource,
         exportResource,
       });
+      _mappings = {..._mappings, lookups};
     } else if (editorType === 'responseMappings') {
       const mappings = (yield select(selectors.responseMapping))?.mappings;
 
@@ -125,6 +127,21 @@ export function* requestPreview({ id }) {
 
   if (violations) {
     return yield put(actions.editor.validateFailure(id, violations));
+  }
+
+  // since mappings are stored in separate state
+  // we validate the same here
+  if (editor.editorType === 'mappings') {
+    const {mappings, lookups} = yield select(selectors.mapping);
+    const {errMessage} = mappingUtil.validateMappings(mappings, lookups);
+
+    if (errMessage) {
+      const violations = {
+        ruleError: errMessage,
+      };
+
+      return yield put(actions.editor.validateFailure(id, violations));
+    }
   }
 
   let result;
@@ -334,7 +351,7 @@ export function* autoEvaluateProcessor({ id }) {
   // while a user is typing.
   yield delay(500);
 
-  return yield call(requestPreview, { id });
+  return yield put(actions.editor.previewRequest(id));
 }
 
 export function* autoEvaluateProcessorWithCancel(params) {

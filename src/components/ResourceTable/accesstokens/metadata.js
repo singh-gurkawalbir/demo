@@ -18,17 +18,20 @@ export default {
     {
       key: 'name',
       heading: 'Name',
+      isLoggable: true,
       Value: ({rowData: r}) => <ResourceDrawerLink resourceType="accesstokens" resource={r} />,
       orderBy: 'name',
     },
     {
       key: 'status',
       heading: 'Status',
+      isLoggable: true,
       Value: ({rowData: r}) => (r.revoked ? 'Revoked' : 'Active'),
     },
     {
       key: 'scope',
       heading: 'Scope',
+      isLoggable: true,
       Value: ({rowData: r}) =>
         r.fullAccess ||
         (r._connectorId &&
@@ -42,11 +45,13 @@ export default {
     {
       key: 'autoPurge',
       heading: 'Auto purge',
+      isLoggable: true,
       Value: ({rowData: r}) => getAutoPurgeAt(r),
     },
     {
       key: 'lastUpdates',
       heading: 'Last updated',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },

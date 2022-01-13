@@ -14,6 +14,7 @@ export default {
       title: 'CSV parser options',
       area: 'rule',
       Panel: CsvParseRules,
+      isLoggable: true,
     },
     {
       title: ({editorId}) => <FileDataPanelTitle editorId={editorId} fileType="csv" />,

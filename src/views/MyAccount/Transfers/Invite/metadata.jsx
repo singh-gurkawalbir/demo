@@ -8,6 +8,8 @@ export default {
     {
       key: 'type',
       heading: 'Type',
+      // transfer name is it safe?
+      isLoggable: true,
       Value: ({rowData: r}) =>
         RESOURCE_TYPE_SINGULAR_TO_LABEL[
           RESOURCE_TYPE_PLURAL_TO_SINGULAR[r.type]
@@ -18,6 +20,8 @@ export default {
     {
       key: 'name',
       heading: 'Name',
+      // verify this transfer name
+      isLoggable: true,
       Value: ({rowData: r}) => r.name || r._id,
     },
   ],

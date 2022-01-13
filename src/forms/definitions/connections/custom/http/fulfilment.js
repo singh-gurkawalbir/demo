@@ -32,6 +32,8 @@ export default {
       label: 'Client secret',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       required: true,
       helpKey: 'fulfilment.connection.http.encrypted.clientSecret',
     },
@@ -47,6 +49,8 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       label: 'Password',
       required: true,
       helpKey: 'fulfilment.connection.http.encrypted.password',

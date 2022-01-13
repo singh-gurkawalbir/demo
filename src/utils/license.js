@@ -73,7 +73,7 @@ export function upgradeButtonText(license, integration = {}, upgradeRequested) {
   return '';
 }
 
-export function expiresInfo(license) {
+export function expiresInfo(license, dateFormat) {
   const { expires } = license || {};
   const hasExpired = moment(expires) - moment() < 0;
   let expiresText = '';
@@ -81,9 +81,9 @@ export function expiresInfo(license) {
 
   if (expires) {
     if (hasExpired) {
-      expiresText = `Expired on ${dtExpires.format('MMM Do, YYYY')}`;
+      expiresText = `Expired on ${dtExpires.format(dateFormat || 'MMM Do, YYYY')}`;
     } else {
-      expiresText = `Expires on ${dtExpires.format('MMM Do, YYYY')}`;
+      expiresText = `Expires on ${dtExpires.format(dateFormat || 'MMM Do, YYYY')}`;
       const dtEoDToday = moment().endOf('day');
 
       if (dtExpires.diff(dtEoDToday, 'seconds') <= 0) {

@@ -1,31 +1,22 @@
 export default {
-  preSave: formValues => {
-    const newValues = { ...formValues};
-
-    if (newValues['/mode'] === 'cloud') {
-      newValues['/_agentId'] = undefined;
-    }
-
-    return {
-      ...newValues,
-      '/type': 'http',
-      '/assistant': 'bartender',
-      '/http/auth/type': 'token',
-      '/http/mediaType': 'json',
-      '/http/baseURI': `${formValues['/http/unencrypted/printPortalBaseURL']}/BarTender/api/v1`,
-      '/http/auth/token/location': 'header',
-      '/http/auth/token/scheme': 'Bearer',
-      '/http/auth/token/headerName': 'Authorization',
-      '/http/ping/method': 'GET',
-      '/http/ping/relativeURI': '/libraries',
-      '/http/auth/token/refreshMethod': 'POST',
-      '/http/auth/token/refreshMediaType': 'json',
-      '/http/auth/token/refreshRelativeURI': `${formValues['/http/unencrypted/printPortalBaseURL']}/BarTender/api/v1/Authenticate`,
-      '/http/auth/token/refreshBody': '{ "userName": "{{{connection.http.unencrypted.userName}}}", "password": "{{{connection.http.encrypted.password}}}" }',
-      '/http/auth/token/refreshTokenPath': 'token',
-
-    };
-  },
+  preSave: formValues => ({
+    ...formValues,
+    '/type': 'http',
+    '/assistant': 'bartender',
+    '/http/auth/type': 'token',
+    '/http/mediaType': 'json',
+    '/http/baseURI': `${formValues['/http/unencrypted/printPortalBaseURL']}/BarTender/api/v1`,
+    '/http/auth/token/location': 'header',
+    '/http/auth/token/scheme': 'Bearer',
+    '/http/auth/token/headerName': 'Authorization',
+    '/http/ping/method': 'GET',
+    '/http/ping/relativeURI': '/libraries',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'json',
+    '/http/auth/token/refreshRelativeURI': `${formValues['/http/unencrypted/printPortalBaseURL']}/BarTender/api/v1/Authenticate`,
+    '/http/auth/token/refreshBody': '{ "userName": "{{{connection.http.unencrypted.userName}}}", "password": "{{{connection.http.encrypted.password}}}" }',
+    '/http/auth/token/refreshTokenPath': 'token',
+  }),
   fieldMap: {
     name: { fieldId: 'name' },
     _agentId: {
@@ -41,7 +32,7 @@ export default {
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
-          message: 'Subdomain should not contain spaces.',
+          message: 'Base URL should not contain spaces.',
         },
       },
       helpKey: 'bartender.connection.http.unencrypted.printPortalBaseURL',
@@ -58,6 +49,8 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       label: 'Password',
       required: true,
       helpKey: 'bartender.connection.http.encrypted.password',
