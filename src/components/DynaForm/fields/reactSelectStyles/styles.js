@@ -7,9 +7,6 @@ export const ReactSelectUseStyles = makeStyles(theme => ({
   },
   optionRoot: {
     display: 'flex',
-    // borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    // wordBreak: 'break-word',
-    // padding: '0px',
   },
   optionImg: {
     width: '120px',
@@ -178,6 +175,10 @@ export function CustomReactSelectStyles() {
       minWidth: 'unset',
       padding: '1px 8px',
       border: `1px solid ${theme.palette.secondary.lightest}`,
+      '& > * .MuiChip-root': {
+        border: 'none',
+        height: 'unset',
+      },
     }),
     multiValueLabel: styles => ({
       ...styles,
