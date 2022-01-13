@@ -7,8 +7,8 @@ import InstallBase from './actions/InstallBase';
 import Licenses from './actions/Licenses';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import OnOffCell from './cells/OnOffCell';
-import ApplicationLogostrip from '../../ApplicationLogostrip';
 import TextOverflowCell from '../../TextOverflowCell';
+import LogoStrip from '../../LogoStrip';
 
 export default {
   useColumns: () => [
@@ -16,7 +16,7 @@ export default {
       key: 'applications',
       heading: 'Applications',
       isLoggable: true,
-      Value: ({rowData: r}) => <ApplicationLogostrip applications={r.applications} />,
+      Value: ({rowData: r}) => <LogoStrip rows={1} columns={4} size="medium" applications={r.applications} />,
     },
     {
       key: 'name',
