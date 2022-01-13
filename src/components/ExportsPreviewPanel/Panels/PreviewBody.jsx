@@ -73,7 +73,7 @@ export default function PreviewBody(props) {
           resourceType={resourceType} />
         <CeligoTabWrapper>
           <CeligoPillTabs tabs={availablePreviewStages} defaultTab={defaultTab} />
-          <CeligoTabPanel panelId="preview"> <DefaultPanel /> </CeligoTabPanel>
+          <CeligoTabPanel panelId="preview"> <DefaultPanel isLoggable={false} /> </CeligoTabPanel>
           <CeligoTabPanel panelId="request"> <RequestResponsePanel variant="previewPanel" /> </CeligoTabPanel>
           <CeligoTabPanel panelId="raw"> <RequestResponsePanel variant="previewPanel" /> </CeligoTabPanel>
         </CeligoTabWrapper>
@@ -94,11 +94,11 @@ export default function PreviewBody(props) {
             resourceType={resourceType}
           />
           <CeligoTabWrapper>
-            <CeligoPillTabs dataPublic tabs={availablePreviewStages} defaultTab={defaultTab} />
+            <CeligoPillTabs tabs={availablePreviewStages} defaultTab={defaultTab} />
             <CeligoTabPanel panelId="preview">
               { resourceSampleData.status === 'error'
                 ? <Templates.ErrorPanel resourceId={resourceId} />
-                : <DefaultPanel value={wrapExportFileSampleData(previewStageDataList.preview?.data)} /> }
+                : <DefaultPanel isLoggable={false} value={wrapExportFileSampleData(previewStageDataList.preview?.data)} /> }
             </CeligoTabPanel>
             <CeligoTabPanel panelId="request">
               <RequestResponsePanel value={previewStageDataList.request?.data?.[0]} variant="previewPanel" />

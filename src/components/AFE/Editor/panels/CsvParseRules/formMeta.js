@@ -11,6 +11,7 @@ export default function getForm(options) {
         helpKey: 'export.file.csv.columnDelimiter',
         defaultValue: options?.columnDelimiter,
         options: csvOptions.ColumnDelimiterOptions,
+        isLoggable: true,
         required: true,
       },
       rowDelimiter: {
@@ -22,6 +23,7 @@ export default function getForm(options) {
         defaultValue: options?.rowDelimiter,
         options: [{items: csvOptions.RowDelimiterOptions}],
         skipDefault: true,
+        isLoggable: true,
         required: true,
       },
       trimSpaces: {
@@ -30,6 +32,7 @@ export default function getForm(options) {
         label: 'Trim spaces',
         type: 'checkbox',
         helpKey: 'export.file.csv.trimSpaces',
+        isLoggable: true,
         defaultValue: !!options?.trimSpaces,
       },
       rowsToSkip: {
@@ -40,6 +43,7 @@ export default function getForm(options) {
         inputType: 'number',
         helpKey: 'export.file.csv.rowsToSkip',
         defaultValue: options?.rowsToSkip || 0,
+        isLoggable: true,
         required: true,
       },
       hasHeaderRow: {
@@ -50,6 +54,7 @@ export default function getForm(options) {
         fieldToReset: 'keyColumns',
         fieldResetValue: [],
         helpKey: 'export.file.csv.hasHeaderRow',
+        isLoggable: true,
         defaultValue: !!options?.hasHeaderRow,
       },
       rowsPerRecord: {
@@ -63,6 +68,7 @@ export default function getForm(options) {
         required: true,
         defaultDisabled: !options?.ignoreSortAndGroup,
         showDeprecatedMessage: !options?.ignoreSortAndGroup,
+        isLoggable: true,
         ignoreSortAndGroup: options?.ignoreSortAndGroup,
       },
       keyColumns: {
@@ -75,6 +81,7 @@ export default function getForm(options) {
         helpKey: 'export.file.csv.keyColumns',
         defaultValue: options?.keyColumns || [],
         resourceType: options.resourceType,
+        isLoggable: true,
         refreshOptionsOnChangesTo: [
           'columnDelimiter',
           'rowDelimiter',

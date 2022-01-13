@@ -73,7 +73,7 @@ export default function DrawerHeader({
   const showBackButton = !isExact && !hideBackButton;
 
   return (
-    <div data-public className={clsx(classes.drawerHeader, className)}>
+    <div className={clsx(classes.drawerHeader, className)}>
       {showBackButton && (
         <IconButton
           size="small"

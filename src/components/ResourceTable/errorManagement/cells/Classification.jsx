@@ -24,7 +24,7 @@ export default function Classification({ error }) {
     return (
       <span className={classes.wrapper}>
         {classification}
-        <Tooltip data-public title={<><span>Next Auto-retry: </span><TimeAgo date={retryAt} formatter={formatter} /></>} >
+        <Tooltip title={<><span>Next Auto-retry: </span><TimeAgo date={retryAt} formatter={formatter} /></>} >
           <span><AutoRetryIcon /></span>
         </Tooltip>
       </span>

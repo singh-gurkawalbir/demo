@@ -9,6 +9,7 @@ import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
 import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -53,6 +54,7 @@ export default function DynaNSSavedSearchInternalID(props) {
     value = '',
     label,
     connectionId,
+    isLoggable,
   } = props;
   const handleFieldChange = event => {
     const { value } = event.target;
@@ -92,6 +94,7 @@ export default function DynaNSSavedSearchInternalID(props) {
         <div className={classes.dynaNetsuiteFieldLookupWrapper}>
           <div className={classes.dynaNSSearchInternalIDField}>
             <TextField
+              {...isLoggableAttr(isLoggable)}
               key={id}
               name={name}
               className={classes.dynaNSSearchInternalIDField}

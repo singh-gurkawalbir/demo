@@ -10,42 +10,50 @@ export default {
     {
       key: 'status',
       heading: 'Status',
+      isLoggable: true,
       Value: ({rowData: r}) => <JobStatusWithTag job={r} />,
       width: '10%',
     },
     {
       key: 'duration',
       heading: 'Duration',
+      isLoggable: true,
       Value: ({rowData: r}) => getJobDuration(r),
     },
     {
       key: 'started',
       heading: 'Started',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.startedAt} />,
     },
     {
       key: 'completed',
       heading: 'Completed',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.endedAt} />,
     },
     {
       key: 'success',
       heading: 'Success',
+      isLoggable: true,
       Value: ({rowData: r}) => r.numSuccess,
     },
     {
       key: 'Ignored',
       heading: 'Ignored',
+      isLoggable: true,
       Value: ({rowData: r}) => r.numIgnore,
     },
     {
       key: 'errors',
       heading: 'Errors',
+      isLoggable: true,
       Value: ({rowData: r}) => r.numError,
     },
     {
       key: 'pages',
       heading: 'Pages',
+      isLoggable: true,
       Value: ({rowData: r}) => r.numPagesGenerated,
     },
 

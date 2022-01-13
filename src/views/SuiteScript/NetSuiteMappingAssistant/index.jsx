@@ -176,11 +176,11 @@ export default function NetSuiteMappingAssistant({
   return (
     <>
       {netSuiteFormIsLoading && (
-        <Typography>
-          Loading
-          {/** TODO Azhar to fix the Spinner to show as an overlay/mask. */}
-          <Spinner />
-        </Typography>
+      <Typography>
+        Loading
+        {/** TODO Azhar to fix the Spinner to show as an overlay/mask. */}
+        <Spinner />
+      </Typography>
       )}
       {suiteletUrl && (
         <Iframe

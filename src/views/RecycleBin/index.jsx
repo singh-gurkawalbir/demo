@@ -13,10 +13,11 @@ import KeywordSearch from '../../components/KeywordSearch';
 import LoadResources from '../../components/LoadResources';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
-import { PERMISSIONS } from '../../utils/constants';
+import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
 import infoText from '../ResourceList/infoText';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
+import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -29,7 +30,7 @@ const useStyles = makeStyles(theme => ({
 
 export const LoadingMask = ({message}) => (
   <Loader open>
-    <Typography data-public variant="h4">{message}</Typography>
+    <Typography variant="h4">{message}</Typography>
     <Spinner />
   </Loader>
 );
@@ -95,11 +96,11 @@ export default function RecycleBin(props) {
         <div className={classes.resultContainer}>
           <LoadResources required resources="recycleBinTTL">
             {list.count === 0 ? (
-              <Typography>
+              <div>
                 {list.total === 0
-                  ? 'Recycle bin is empty.'
-                  : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
-              </Typography>
+                  ? <NoResultMessageWrapper>Recycle bin is empty.</NoResultMessageWrapper>
+                  : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+              </div>
             ) : (
               <ResourceTable resources={list.resources} resourceType="recycleBinTTL" />
             )}

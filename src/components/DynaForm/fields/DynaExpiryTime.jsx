@@ -3,6 +3,7 @@ import moment from 'moment';
 import DynaSelect from './DynaSelect';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 
+// this can be loggable
 export default function DynaExpiryTime(props) {
   const {value} = props;
   let timeValue;

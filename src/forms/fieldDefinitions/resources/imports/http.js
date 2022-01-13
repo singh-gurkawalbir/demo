@@ -1,6 +1,6 @@
 export default {
   'http.method': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'HTTP method',
     required: true,
@@ -40,7 +40,7 @@ export default {
     },
   },
   'http.blobMethod': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     helpKey: 'import.http.method',
     label: 'HTTP method',
@@ -69,13 +69,13 @@ export default {
     label: 'Configure HTTP headers',
   },
   'http.requestMediaType': {
-    loggable: true,
+    isLoggable: true,
     type: 'selectoverridemediatype',
     label: 'Override request media type',
     placeholder: 'Do not override',
   },
   'http.compositeType': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'Composite type',
     options: [
@@ -135,7 +135,7 @@ export default {
     },
   },
   'http.requestType': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'Request type',
     options: [
@@ -163,7 +163,7 @@ export default {
       r && r.http && r.http.requestType && r.http.requestType[0],
   },
   'http.relativeURI': {
-    loggable: true,
+    isLoggable: true,
     type: 'relativeuri',
     fieldType: 'relativeUri',
     label: 'Relative URI',
@@ -183,7 +183,7 @@ export default {
       r && r.http && r.http.relativeURI && r.http.relativeURI[0],
   },
   'http.body': {
-    loggable: true,
+    isLoggable: true,
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
     arrayIndex: 0,
@@ -204,7 +204,7 @@ export default {
     ],
   },
   'http.response.successPath': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Path to success field in HTTP response body',
     delimiter: ',',
@@ -220,7 +220,7 @@ export default {
     ],
   },
   'http.response.successValues': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Success values',
     delimiter: ',',
@@ -238,7 +238,7 @@ export default {
     ],
   },
   'http.response.resourceIdPath': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     helpKey: r => {
       if (r?.resourceType === 'transferFiles' || r?.blob) { return 'import.http.response.file.resourceIdPath'; }
@@ -259,7 +259,7 @@ export default {
     ],
   },
   'http.response.failPath': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Path to error field in HTTP response body',
     delimiter: ',',
@@ -275,7 +275,7 @@ export default {
     ],
   },
   'http.response.failValues': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Error values',
@@ -291,7 +291,7 @@ export default {
     ],
   },
   'http.response.resourcePath': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Path to records in HTTP response body',
@@ -307,7 +307,7 @@ export default {
     ],
   },
   'http.response.errorPath': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Path to detailed error message field in HTTP response body',
     visibleWhenAll: [
@@ -322,7 +322,7 @@ export default {
     ],
   },
   'http.batchSize': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Number of records per HTTP request',
     defaultValue: r => r?.http?.batchSize || 1,
@@ -341,7 +341,7 @@ export default {
     ],
   },
   'http.successMediaType': {
-    loggable: true,
+    isLoggable: true,
     type: 'selectoverridemediatype',
     label: 'Override media type for success responses',
     placeholder: 'Do not override',
@@ -358,7 +358,7 @@ export default {
     dependentFieldForMediaType: '/http/requestMediaType',
   },
   'http.errorMediaType': {
-    loggable: true,
+    isLoggable: true,
     type: 'selectoverridemediatype',
     label: 'Override media type for error responses',
     placeholder: 'Do not override',
@@ -375,7 +375,7 @@ export default {
     dependentFieldForMediaType: '/http/requestMediaType',
   },
   'http.ignoreEmptyNodes': {
-    loggable: true,
+    isLoggable: true,
     type: 'checkbox',
     label: 'Remove empty fields from HTTP request body',
     visibleWhen: [
@@ -386,7 +386,7 @@ export default {
     ],
   },
   'http.configureAsyncHelper': {
-    loggable: true,
+    isLoggable: true,
     type: 'checkbox',
     label: 'Configure async helper',
     defaultValue: r => !!(r && r.http && r.http._asyncHelperId),
@@ -404,7 +404,7 @@ export default {
   },
 
   'http._asyncHelperId': {
-    loggable: true,
+    isLoggable: true,
     label: 'Async helper',
     type: 'selectresource',
     resourceType: 'asyncHelpers',
@@ -421,7 +421,7 @@ export default {
     ],
   },
   'http.existingLookupType': {
-    loggable: true,
+    isLoggable: true,
     id: 'http.existingLookupType',
     type: 'select',
     label: 'How would you like to identify existing records?',
@@ -465,7 +465,7 @@ export default {
     ],
   },
   'http.ignoreExistingExtract': {
-    loggable: true,
+    isLoggable: true,
     id: 'http.ignoreExistingExtract',
     label: 'Which field?',
     omitWhenHidden: true,
@@ -494,7 +494,7 @@ export default {
     defaultValue: r => r.http?.ignoreExtract,
   },
   'http.ignoreExistingLookupName': {
-    loggable: true,
+    isLoggable: true,
     id: 'http.ignoreExistingLookupName',
     omitWhenHidden: true,
     label: 'Lookup',
@@ -523,7 +523,7 @@ export default {
     ],
   },
   'http.newLookupType': {
-    loggable: true,
+    isLoggable: true,
     id: 'http.newLookupType',
     type: 'select',
     label: 'How would you like to identify existing records?',
@@ -567,7 +567,7 @@ export default {
     ],
   },
   'http.ignoreNewExtract': {
-    loggable: true,
+    isLoggable: true,
     id: 'http.ignoreNewExtract',
     label: 'Which field?',
     omitWhenHidden: true,
@@ -596,7 +596,7 @@ export default {
     defaultValue: r => r.http?.ignoreExtract,
   },
   'http.ignoreNewLookupName': {
-    loggable: true,
+    isLoggable: true,
     id: 'http.ignoreNewLookupName',
     omitWhenHidden: true,
     label: 'Lookup',
@@ -725,7 +725,7 @@ export default {
     ],
   },
   'unencrypted.apiType': {
-    loggable: true,
+    isLoggable: true,
     type: 'selectAmazonSellerCentralAPIType',
     label: 'API type',
     helpKey: 'export.unencrypted.apiType',

@@ -8,6 +8,7 @@ export default {
     {
       key: 'flow',
       heading: 'Flow',
+      isLoggable: true,
       Value: ({rowData: r}) => (
         <NameCell
           flowId={r._id}
@@ -23,6 +24,7 @@ export default {
     {
       key: 'integration',
       heading: 'Integration',
+      isLoggable: true,
       Value: ({rowData: r}) => (
         <div>
           <Link to={getRoutePath(`/integrations/${r?.integrationId || 'none'}`)}>{r?.integrationName}</Link>

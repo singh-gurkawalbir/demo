@@ -76,6 +76,7 @@ export function KeyValueComponent(props) {
     showHeaderLabels = false,
     keyLabel,
     valueLabel,
+    isLoggable,
   } = props;
 
   const preUpdate = useCallback(val => val.filter(
@@ -221,6 +222,7 @@ export function KeyValueComponent(props) {
               hideSortableGhost={false}
               value={(
                 <KeyValueRow
+                  isLoggable={isLoggable}
                   suggestionConfig={suggestionConfig}
                   isDragInProgress={dragItemIndex !== undefined}
                   isRowDragged={dragItemIndex === index}

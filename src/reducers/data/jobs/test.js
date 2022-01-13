@@ -4277,6 +4277,11 @@ describe('jobErrors selector', () => {
         type: 'path',
         _jobId,
       },
+      {
+        _id: 'r5',
+        type: 'file_batch_import',
+        _jobId,
+      },
     ];
     const errors = [
       {
@@ -4313,6 +4318,13 @@ describe('jobErrors selector', () => {
         message: 'something',
         _jobId,
         _retryId: 'r5',
+      },
+      {
+        source: 's2',
+        code: 'c1',
+        message: 'something',
+        _jobId,
+        _retryId: 'r6',
       },
     ];
     const state = reducer(
@@ -4351,6 +4363,7 @@ describe('jobErrors selector', () => {
             RETRY_OBJECT_TYPES.FILE,
             RETRY_OBJECT_TYPES.OBJECT,
             RETRY_OBJECT_TYPES.PAGE,
+            RETRY_OBJECT_TYPES.FILE_BATCH_IMPORT,
           ].includes(ro.type),
           isDownloadable: ro.type === RETRY_OBJECT_TYPES.FILE,
         },

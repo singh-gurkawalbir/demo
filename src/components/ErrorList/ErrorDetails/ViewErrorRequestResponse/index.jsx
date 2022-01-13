@@ -45,7 +45,7 @@ export default function ViewErrorRequestResponse({ flowId, resourceId, reqAndRes
   );
 
   const formattedErrorHttpDoc = useMemo(() =>
-    getErrorReqResFields(errorHttpDoc, 'basic', isResourceNetsuite), [errorHttpDoc, isResourceNetsuite]);
+    getErrorReqResFields(errorHttpDoc, 'basic', isResourceNetsuite, isRequest), [errorHttpDoc, isRequest, isResourceNetsuite]);
 
   const errorHttpDocError = useSelector(state =>
     selectors.errorHttpDocError(state, reqAndResKey)
@@ -79,7 +79,7 @@ export default function ViewErrorRequestResponse({ flowId, resourceId, reqAndRes
   }
 
   return (
-    <div className={classes.container}>
+    <div className={classes.container} data-private>
       <CeligoTabWrapper>
         <CeligoPillTabs tabs={TABS} />
         <CeligoTabPanel panelId="body">

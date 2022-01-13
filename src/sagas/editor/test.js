@@ -190,6 +190,7 @@ describe('editor sagas', () => {
                 ],
               },
             ],
+            lookups: [],
           }],
         },
         data: [[{id: '123'}]],
@@ -198,7 +199,90 @@ describe('editor sagas', () => {
       return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
-          [select(selectors.mapping), {mappings}],
+          [select(selectors.mapping), {mappings, lookups: []}],
+          [select(selectors.editor, editorId), editorState],
+          [select(selectors.resource, 'imports', 'res-123'), importRes],
+          [select(selectors.firstFlowPageGenerator, 'flow-123'), exportRes],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/mapperProcessor',
+          opts: {
+            method: 'POST',
+            body: expectedBody,
+          },
+          hidden: true })
+        .run();
+    });
+    test('should set correct request body and make api call if processor is mapperProcessor for mappings editor type with lookups', () => {
+      const editorState = {
+        resourceId: 'res-123',
+        flowId: 'flow-123',
+        resourceType: 'imports',
+        data: '[{"id": "123"}]',
+        editorType: 'mappings',
+      };
+      const importRes = {
+        _id: 'res-123',
+        adaptorType: 'FTPImport',
+        _connectionId: 'conn-123',
+        file: {type: 'csv'},
+      };
+      const exportRes = {
+        _id: 'exp-123',
+        adaptorType: 'NetSuiteExport',
+        _connectionId: 'conn-456',
+        netsuite: {type: 'search'},
+      };
+      const mappings = [{
+        extract: 'id',
+        generate: 'id',
+        key: '17RxsaFmJW',
+        lookupName: 'test-lookup',
+      }];
+      const lookups = [
+        {
+          allowFailures: false,
+          isConditionalLookup: false,
+          map: {nnn: '444',
+            yyy: '888'},
+          name: 'test-lookup',
+        },
+      ];
+
+      const expectedBody = {
+        rules: {
+          rules: [{
+            fields: [],
+            lists: [
+              {generate: '',
+                fields: [
+                  {
+                    extract: '*.id',
+                    generate: 'id',
+                    key: '17RxsaFmJW',
+                    lookupName: 'test-lookup',
+                  },
+                ],
+              },
+            ],
+            lookups: [
+              {
+                allowFailures: false,
+                isConditionalLookup: false,
+                map: {nnn: '444',
+                  yyy: '888'},
+                name: 'test-lookup',
+              },
+            ],
+          }],
+        },
+        data: [[{id: '123'}]],
+      };
+
+      return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), undefined],
+          [select(selectors.mapping), {mappings, lookups}],
           [select(selectors.editor, editorId), editorState],
           [select(selectors.resource, 'imports', 'res-123'), importRes],
           [select(selectors.firstFlowPageGenerator, 'flow-123'), exportRes],
@@ -624,7 +708,7 @@ describe('editor sagas', () => {
       .provide([
         [select(selectors.editor, editorId), undefined],
       ])
-      .not.call(requestPreview, { id: editorId })
+      .not.put(actions.editor.previewRequest(editorId))
       .returns(undefined)
       .run());
 
@@ -632,10 +716,10 @@ describe('editor sagas', () => {
       .provide([
         [select(selectors.editor, editorId), {autoEvaluate: false}],
       ])
-      .not.call(requestPreview, { id: editorId })
+      .not.put(actions.editor.previewRequest(editorId))
       .returns(undefined)
       .run());
-    test('should add delay of 500ms and then call requestPreview', () => {
+    test('should add delay of 500ms and then disptach previewRequest action', () => {
       const editor = {
         id: editorId,
         editorType: 'handlebars',
@@ -648,7 +732,7 @@ describe('editor sagas', () => {
           [select(selectors.editor, editorId), editor],
         ])
         .delay(500)
-        .call(requestPreview, { id: editorId })
+        .put(actions.editor.previewRequest(editorId))
         .run(500); // increasing the default saga timeout to 500 (from 250)
     });
   });

@@ -2040,6 +2040,60 @@ describe('Accounts region selector testcases', () => {
 
       expect(selectors.tileLicenseDetails(orgOwnerState, tile)).toEqual(expected);
     });
+
+    test('should return valid tile license details for expired accounts with proper date format', () => {
+      const orgOwnerState = {
+        user: {
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN, dateFormat: 'MM/DD/YY' },
+          profile: {
+            _id: '4534534534',
+            name: 'Raghu',
+            email: 'rr@celigo.com',
+          },
+          org: {
+            users: [
+            ],
+            accounts: [
+              {
+                _id: ACCOUNT_IDS.OWN,
+                accessLevel: 'owner',
+                ownerUser: {
+                  licenses: [
+                    {_id: '58da63d9ca6b9323e99d61f7', created: '2017-03-28T13:23:37.001Z', lastModified: '2017-03-28T13:23:37.002Z', type: 'diy', usageTier: 'free', resumable: false, usageTierName: 'Free', inTrial: false, hasSubscription: true, isFreemium: false, currentUsage: {milliseconds: 0, usagePercent: 0, usedHours: 0}, usageTierHours: 1},
+                    {_id: '605ac7251562e664f50e712b', created: '2021-03-24T04:59:17.384Z', lastModified: '2021-03-24T06:04:02.667Z', type: 'integrationApp', _connectorId: '605ac5301562e664f50e70fd', sandbox: false, trialEndDate: '2021-09-24T18:29:59.999Z'},
+                    {_id: '605b100f1562e664f50e8a23',
+                      created: '2021-03-24T10:10:23.492Z',
+                      lastModified: '2021-03-24T15:50:42.569Z',
+                      type: 'integrationApp',
+                      _connectorId: '605b0c867904202f317413c2',
+                      _integrationId: '605b5fd2fddc8259d923d23d',
+                      sandbox: false,
+                      expires: moment()
+                        .subtract(20, 'days')
+                        .toISOString()},
+                  ],
+                },
+              },
+            ],
+          },
+          debug: false,
+        },
+      };
+      const tile = {_integrationId: '605b5fd2fddc8259d923d23d', numError: 0, offlineConnections: [], _connectorId: '605b0c867904202f317413c2', name: 'IA Testing', sandbox: false, numFlows: 0, _parentId: null, status: 'is_pending_setup', integration: {mode: 'install', permissions: {accessLevel: 'owner', connections: {edit: true}}}, connector: {owner: 'Celigo', applications: ['netsuite']}};
+      const expected = {
+        expired: true,
+        trialExpired: false,
+        showTrialLicenseMessage: false,
+        licenseId: '605b100f1562e664f50e8a23',
+        licenseMessageContent: `Your subscription expired on ${moment(moment()
+          .subtract(20, 'days')
+          .toISOString()).format('MM/DD/YY')}. Contact sales to renew your subscription.`,
+        listViewLicenseMesssage: 'Expired 20 days ago',
+        resumable: undefined,
+      };
+
+      expect(selectors.tileLicenseDetails(orgOwnerState, tile)).toEqual(expected);
+    });
     test('should return valid tile license details for resumable connector', () => {
       const orgOwnerState = {
         user: {

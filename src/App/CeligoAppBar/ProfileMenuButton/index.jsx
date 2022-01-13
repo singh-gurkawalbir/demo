@@ -125,23 +125,27 @@ function ProfileMenuButton() {
         placement="bottom-end"
         open={open}
         onClose={handleClose}>
-        <div data-public className={classes.profileArea}>
-          <div>
+        {/* private to logrocket because user email and avatar can be disclosed */}
+        <div className={classes.profileArea}>
+          <div data-private>
             <Avatar alt={name} src={avatarUrl} className={classes.bigAvatar} />
           </div>
           <div>
-            <Typography variant="body1">{name}</Typography>
-            <Typography className={classes.email} variant="body2">
-              {email}
-            </Typography>
-            <Typography className={classes.email}>
-              {accountOwnerEmail && (
+            <span data-private>
+              <Typography variant="body1">{name}</Typography>
+              <Typography className={classes.email} variant="body2">
+                {email}
+              </Typography>
+              <Typography className={classes.email}>
+                {accountOwnerEmail && (
                 <>
                   Account owner
                   {!isAccountOwner && `: ${accountOwnerEmail}`}
                 </>
-              )}
-            </Typography>
+                )}
+              </Typography>
+            </span>
+
             <div>
               <div className={classes.actions}>
                 <OutlinedButton
