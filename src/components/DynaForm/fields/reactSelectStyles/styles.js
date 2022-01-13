@@ -27,6 +27,7 @@ export const ReactSelectUseStyles = makeStyles(theme => ({
     alignItems: 'center',
     paddingLeft: '10px',
     height: '100%',
+    width: '100%',
   },
   optionLabelMultiSelect: {
     width: '100%',
@@ -108,7 +109,6 @@ export function CustomReactSelectStyles() {
       borderColor: theme.palette.secondary.lightest,
       marginTop: 0,
       borderRadius: '0px 0px 2px 2px',
-      maxHeight: 380,
       overflowY: 'auto',
     }),
     input: () => ({
@@ -129,7 +129,7 @@ export function CustomReactSelectStyles() {
     }),
     menuList: () => ({
       padding: '0px',
-      maxHeight: 'calc(100vh - 480px)',
+      maxHeight: 380,
       overflowY: 'auto',
     }),
     group: () => ({
