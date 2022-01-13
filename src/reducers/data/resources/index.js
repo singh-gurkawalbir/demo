@@ -96,7 +96,7 @@ const rootDataReducer = (state = {}, action) => {
         }
 
         return;
-      case actionTypes.ACCESSTOKEN_DELETE_PURGED:
+      case actionTypes.ACCESSTOKEN.DELETE_PURGED:
 
         draft.accesstokens = draft.accesstokens.filter(
           token =>

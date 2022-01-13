@@ -113,56 +113,29 @@ describe('getRequestOptions util method', () => {
       {},
     ],
     [
-      { path: '/accesstokens', opts: { method: 'POST' } },
-      actionTypes.ACCESSTOKEN_CREATE,
-      {},
-    ],
-    [
-      {
-        path: '/integrations/someIntegrationId1/accesstokens',
-        opts: { method: 'POST' },
-      },
-      actionTypes.ACCESSTOKEN_CREATE,
-      { integrationId: 'someIntegrationId1' },
-    ],
-    [
       { path: '/accesstokens/someId', opts: { method: 'PUT' } },
-      actionTypes.ACCESSTOKEN_UPDATE,
+      actionTypes.ACCESSTOKEN.REVOKE,
       {
         resourceId: 'someId',
       },
     ],
     [
       { path: '/accesstokens/someId', opts: { method: 'PUT' } },
-      actionTypes.ACCESSTOKEN_REVOKE,
-      {
-        resourceId: 'someId',
-      },
-    ],
-    [
-      { path: '/accesstokens/someId', opts: { method: 'PUT' } },
-      actionTypes.ACCESSTOKEN_ACTIVATE,
-      {
-        resourceId: 'someId',
-      },
-    ],
-    [
-      { path: '/accesstokens/someId', opts: { method: 'DELETE' } },
-      actionTypes.ACCESSTOKEN_DELETE,
+      actionTypes.ACCESSTOKEN.ACTIVATE,
       {
         resourceId: 'someId',
       },
     ],
     [
       { path: '/accesstokens/someId/display', opts: { method: 'GET' } },
-      actionTypes.ACCESSTOKEN_TOKEN_DISPLAY,
+      actionTypes.ACCESSTOKEN.DISPLAY,
       {
         resourceId: 'someId',
       },
     ],
     [
       { path: '/accesstokens/someId/generate', opts: { method: 'POST' } },
-      actionTypes.ACCESSTOKEN_TOKEN_GENERATE,
+      actionTypes.ACCESSTOKEN.GENERATE,
       {
         resourceId: 'someId',
       },

@@ -90,31 +90,18 @@ export default function getRequestOptions(
         path,
         opts: { method: 'POST' },
       };
-    case actionTypes.ACCESSTOKEN_CREATE:
-      return {
-        path: integrationId
-          ? `/integrations/${integrationId}/accesstokens`
-          : '/accesstokens',
-        opts: { method: 'POST' },
-      };
-    case actionTypes.ACCESSTOKEN_UPDATE:
-    case actionTypes.ACCESSTOKEN_REVOKE:
-    case actionTypes.ACCESSTOKEN_ACTIVATE:
+    case actionTypes.ACCESSTOKEN.REVOKE:
+    case actionTypes.ACCESSTOKEN.ACTIVATE:
       return {
         path: `/accesstokens/${resourceId}`,
         opts: { method: 'PUT' },
       };
-    case actionTypes.ACCESSTOKEN_DELETE:
-      return {
-        path: `/accesstokens/${resourceId}`,
-        opts: { method: 'DELETE' },
-      };
-    case actionTypes.ACCESSTOKEN_TOKEN_DISPLAY:
+    case actionTypes.ACCESSTOKEN.DISPLAY:
       return {
         path: `/accesstokens/${resourceId}/display`,
         opts: { method: 'GET' },
       };
-    case actionTypes.ACCESSTOKEN_TOKEN_GENERATE:
+    case actionTypes.ACCESSTOKEN.GENERATE:
       return {
         path: `/accesstokens/${resourceId}/generate`,
         opts: { method: 'POST' },

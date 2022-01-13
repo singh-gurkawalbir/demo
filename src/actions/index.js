@@ -1639,16 +1639,16 @@ const resourceForm = {
     action(actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION, { resourceType, resourceId }),
 };
 const accessToken = {
-  displayToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),
-  generateToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_GENERATE, { id }),
+  displayToken: id => action(actionTypes.ACCESSTOKEN.DISPLAY, { id }),
+  generateToken: id => action(actionTypes.ACCESSTOKEN.GENERATE, { id }),
   tokenReceived: accessToken =>
-    action(actionTypes.ACCESSTOKEN_TOKEN_RECEIVED, { accessToken }),
+    action(actionTypes.ACCESSTOKEN.RECEIVED, { accessToken }),
   maskToken: accessToken =>
-    action(actionTypes.ACCESSTOKEN_TOKEN_MASK, { accessToken }),
-  revoke: id => action(actionTypes.ACCESSTOKEN_REVOKE, { id }),
-  activate: id => action(actionTypes.ACCESSTOKEN_ACTIVATE, { id }),
-  deletePurged: () => action(actionTypes.ACCESSTOKEN_DELETE_PURGED),
-  updatedCollection: () => action(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION),
+    action(actionTypes.ACCESSTOKEN.MASK, { accessToken }),
+  revoke: id => action(actionTypes.ACCESSTOKEN.REVOKE, { id }),
+  activate: id => action(actionTypes.ACCESSTOKEN.ACTIVATE, { id }),
+  deletePurged: () => action(actionTypes.ACCESSTOKEN.DELETE_PURGED),
+  updatedCollection: () => action(actionTypes.ACCESSTOKEN.UPDATED_COLLECTION),
 };
 const job = {
   dashboard: {
