@@ -24,7 +24,8 @@ const useStyles = makeStyles(theme => ({
     },
   },
   emptyMessage: {
-    margin: theme.spacing(3, 2),
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(0, 2, 2),
   },
   root: {
     backgroundColor: theme.palette.common.white,
@@ -53,11 +54,9 @@ export default function CompletedFlows() {
       <div className={classes.root}>
         {isCompletedJobsCollectionLoading ? (<Spinner centerAll />) : (
           <>
-            <span data-public>
-              <Filters
-                filterKey={filterKey}
+            <Filters
+              filterKey={filterKey}
               />
-            </span>
             <ResourceTable
               resources={jobs}
               className={clsx(classes.jobTable, !showEmptyMessage && classes.scrollTable)}

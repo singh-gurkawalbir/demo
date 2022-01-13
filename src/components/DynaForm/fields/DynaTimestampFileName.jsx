@@ -8,6 +8,7 @@ import { IMPORT_FLOW_DATA_STAGE } from '../../../utils/flowData';
 import { selectors } from '../../../reducers';
 import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
 const useStyles = makeStyles(theme => ({
@@ -47,6 +48,7 @@ export default function DynaTimestampFileName(props) {
     name,
     label,
     required,
+    isLoggable,
   } = props;
   const classes = useStyles();
   const userTimezone = useSelector(state => selectors.userTimezone(state));
@@ -186,6 +188,7 @@ export default function DynaTimestampFileName(props) {
         <FieldHelp {...props} />
       </div>
       <TextField
+        {...isLoggableAttr(isLoggable)}
         autoComplete="off"
         key={id}
         data-test={id}

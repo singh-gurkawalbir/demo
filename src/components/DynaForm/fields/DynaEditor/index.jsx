@@ -9,6 +9,7 @@ import ExpandWindowIcon from '../../../icons/ExpandWindowIcon';
 import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import ExpandEditorModal from './ExpandModeEditor/Modal';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -61,6 +62,7 @@ export default function DynaEditor(props) {
     isValid,
     skipJsonParse,
     customHandleUpdate,
+    isLoggable,
   } = props;
   const history = useHistory();
   const match = useRouteMatch();
@@ -153,7 +155,7 @@ export default function DynaEditor(props) {
           <FieldHelp {...props} />
         </div>
 
-        <div className={clsx(classes.inlineEditorContainer, editorClassName)}>
+        <div className={clsx(classes.inlineEditorContainer, editorClassName)} {...isLoggableAttr(isLoggable)}>
           <CodeEditor
             readOnly={disabled}
             name={`${id}-inline`}

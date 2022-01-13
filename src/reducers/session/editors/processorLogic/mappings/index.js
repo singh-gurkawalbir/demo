@@ -12,9 +12,7 @@ export default {
   requestBody: () => ({
     // handled in invokeProcessor saga
   }),
-  validate: () => ({
-    dataError: '',
-  }),
+  validate: editor => editor.violations || {},
   processResult: (editor, result) => {
     const errors = result?.data?.[0]?.errors;
 

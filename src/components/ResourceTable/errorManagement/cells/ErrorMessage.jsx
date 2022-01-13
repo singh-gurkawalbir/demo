@@ -77,7 +77,7 @@ export default function ErrorMessage({errorId, message, flowId, resourceId, expo
 
   return (
     <div className={classes.wrapper}>
-      <div className={classes.message}>
+      <div className={classes.message} data-private>
         {isErrorRetryFailed && retryFailedTag}
         <RawHtml html={message} options={options} className={classes.htmlMessage} />
         <div>

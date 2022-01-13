@@ -47,7 +47,7 @@ export default (state = {}, action) => {
           draft.runningJobs = [];
         }
         collection?.forEach(job => {
-          const index = getParentJobIndex(state.runningJobs, job._id);
+          const index = getParentJobIndex(state.runningJobs, job?._id);
 
           if (index > -1) {
             draft.runningJobs[index] = {...job};

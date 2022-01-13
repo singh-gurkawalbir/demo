@@ -14,6 +14,7 @@ export default {
       title: 'Type your handlebars template here',
       area: 'rule',
       Panel: HandlebarsPanel,
+      isLoggable: true,
       // Example key: possibly some help is field specific
       // helpKey: `afe.handlebar.rule.${fieldId}`,
     },

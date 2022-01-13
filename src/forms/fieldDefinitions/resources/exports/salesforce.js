@@ -2,7 +2,7 @@ const batchSizePattern = /^([4-9]|[1-8][0-9]|9[0-9]|1[0-9]{2}|200)$/; // Regular
 
 export default {
   'salesforce.sObjectType': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'sObject type',
     required: true,
@@ -18,7 +18,7 @@ export default {
     ],
   },
   'salesforce.distributed.batchSize': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Batch size',
     validWhen: {
@@ -39,7 +39,7 @@ export default {
     ],
   },
   'salesforce.distributed.skipExportFieldId': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Skip export field ID',
     visibleWhenAll: [
@@ -54,7 +54,7 @@ export default {
     ],
   },
   'salesforce.distributed.sObjectType': {
-    loggable: true,
+    isLoggable: true,
     label: 'sObject type',
     required: true,
     visibleWhenAll: [
@@ -69,7 +69,7 @@ export default {
     ],
   },
   'salesforce.executionType': {
-    loggable: true,
+    isLoggable: true,
     type: 'radiogroup',
     required: true,
     label: 'Execution type',
@@ -89,7 +89,7 @@ export default {
     visible: false,
   },
   'salesforce.soql.query': { // todo: this is probably a dead field, remove
-    loggable: true,
+    isLoggable: true,
     type: 'editor',
     mode: 'sql',
     label: 'SOQL query',
@@ -111,7 +111,7 @@ export default {
     },
   },
   'salesforce.distributed.referencedFields': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     keyName: 'name',
     multiline: true,
@@ -131,7 +131,7 @@ export default {
     ],
   },
   'salesforce.distributed.requiredTrigger': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Required trigger',
     multiline: true,
@@ -149,7 +149,7 @@ export default {
     ],
   },
   'salesforce.distributed.qualifier': {
-    loggable: true,
+    isLoggable: true,
     label: 'Field specific qualification criteria',
     omitWhenHidden: true,
     visibleWhenAll: [
@@ -167,7 +167,7 @@ export default {
     connectionId: r => r && r._connectionId,
   },
   'salesforce.distributed.relatedLists': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Related lists',
@@ -185,7 +185,7 @@ export default {
     ],
   },
   'salesforce.id': {
-    loggable: true,
+    isLoggable: true,
     type: 'uri',
     label: 'Id',
     required: true,
@@ -199,7 +199,7 @@ export default {
     ],
   },
   'salesforce.objectType': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     required: true,
     defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,

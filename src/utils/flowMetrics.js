@@ -209,7 +209,7 @@ export const getTicks = (domainRange, srange, isValue) => {
 
   return ticks;
 };
-export const getXAxisFormat = range => {
+export const getXAxisFormat = (range, dateFormat) => {
   if (!range || typeof range !== 'object') {
     return '';
   }
@@ -218,10 +218,8 @@ export const getXAxisFormat = range => {
 
   if (hours <= 24) {
     xAxisFormat = 'HH:mm';
-  // } else if (hours > 24 && hours < 4 * 24) {
-  //   xAxisFormat = 'ddd HH:mm';
   } else if (hours < 90 * 24) {
-    xAxisFormat = 'MM/DD/YY';
+    xAxisFormat = dateFormat || 'MM/DD/YY';
   } else {
     xAxisFormat = 'MMMM';
   }
@@ -333,7 +331,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
   
     resolvedBaseData = baseData
         |> filter(fn: (r) => r._measurement == "r")
-        |> map(fn: (r) => ({ r with by: if r.by == "autopilot" then "autopilot" else "users"}))
+        |> map(fn: (r) => ({ r with by: if r.by == "auto" then "auto" else "users"}))
         |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
         |> fill(value: 0.0)
         
@@ -432,7 +430,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
 
     resolvedData = flowData
         |> filter(fn: (r) => r._measurement == "r")
-        |> map(fn: (r) => ({ r with by: if r.by == "autopilot" then "autopilot" else "users"}))
+        |> map(fn: (r) => ({ r with by: if r.by == "auto" then "auto" else "users"}))
         |> aggregateWindow(every: ${duration}, fn: sum${timeSrcExpression})
         |> group(columns: ["_time", "u", "_measurement", "by"], mode: "by")
         |> sum()

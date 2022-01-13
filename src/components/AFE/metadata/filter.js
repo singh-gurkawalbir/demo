@@ -11,6 +11,7 @@ export default {
     {
       title: 'Rules',
       area: 'rule',
+      isLoggable: true,
       Panel: FilterPanel,
     },
     {

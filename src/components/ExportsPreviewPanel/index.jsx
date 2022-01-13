@@ -97,7 +97,7 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
   return (
     <div
       className={classes.previewPanelWrapper}>
-      <Typography data-public className={classes.previewDataHeading}>
+      <Typography className={classes.previewDataHeading}>
         Preview data
       </Typography>
       <div className={classes.container}>

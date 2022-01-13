@@ -13,6 +13,7 @@ import { FilledButton } from '../../../../Buttons';
 import SaveAndCloseButtonGroupAuto from '../../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import useFormOnCancelContext from '../../../../FormOnCancelContext';
 import { getFormSaveStatusFromCommStatus } from '../../../../../utils/editor';
+import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 
 /**
  * Only Used for editing script content currently
@@ -22,7 +23,7 @@ function ExpandModeDrawerContent() {
   const history = useHistory();
   const dispatch = useDispatch();
   const fieldState = useSelector(state => selectors.fieldState(state, formKey, fieldId));
-  const { value, disabled, resourceId, resourceType } = fieldState || {};
+  const { value, disabled, resourceId, resourceType, isLoggable } = fieldState || {};
   const [editorContent, setEditorContent] = useState(value);
   const resourceCommStatus = useSelector(state => selectors.commStatusPerPath(state, `/${resourceType}/${resourceId}`, 'put'));
   const isNewResource = isNewId(resourceId);
@@ -50,6 +51,7 @@ function ExpandModeDrawerContent() {
       <DrawerHeader title="Edit content" handleClose={isNewResource ? handleClose : setCancelTriggered} />
       <DrawerContent>
         <CodeEditor
+          {...isLoggableAttr(isLoggable)} // TODO: verify
           name={fieldId}
           value={editorContent}
           mode="javascript"

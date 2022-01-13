@@ -56,7 +56,7 @@ export default function DynaHook_afe({
   resourceId,
   label: propsLabel,
   helpKey: propsHelpKey,
-  dataPublic,
+  isLoggable,
   isValid = true,
 }) {
   const classes = useStyles();
@@ -143,7 +143,7 @@ export default function DynaHook_afe({
         <div className={classes.wrapper}>
           <div className={classes.field}>
             <DynaText
-              dataPublic={dataPublic}
+              isLoggable={isLoggable}
               key={id}
               name={name}
               label="Function"
@@ -160,7 +160,7 @@ export default function DynaHook_afe({
           </div>
           {hookType === 'stack' && (
             <StackView
-              dataPublic={dataPublic}
+              isLoggable={isLoggable}
               disabled={disabled}
               required={required}
               stackId={value?._stackId}
@@ -173,7 +173,7 @@ export default function DynaHook_afe({
               id={id}
               flowId={flowId}
               disabled={disabled}
-              dataPublic={dataPublic}
+              isLoggable={isLoggable}
               onFieldChange={onFieldChange}
               required={required}
               value={value}

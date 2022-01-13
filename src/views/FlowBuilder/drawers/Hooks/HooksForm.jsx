@@ -21,6 +21,7 @@ import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 import LoadResources from '../../../../components/LoadResources';
 import SaveAndCloseButtonGroupForm from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
+import IsLoggableContextProvider from '../../../../components/IsLoggableContextProvider';
 
 const useStyles = makeStyles(theme => ({
   paperDefault: {
@@ -164,7 +165,9 @@ export default function HooksForm({flowId, integrationId, formKey}) {
     <LoadResources resources="scripts,stacks">
       <DrawerContent>
         <Paper elevation={0} className={classes.paperDefault}>
-          <DynaForm dataPublic formKey={formKey} />
+          <IsLoggableContextProvider isLoggable>
+            <DynaForm formKey={formKey} />
+          </IsLoggableContextProvider>
         </Paper>
       </DrawerContent>
 

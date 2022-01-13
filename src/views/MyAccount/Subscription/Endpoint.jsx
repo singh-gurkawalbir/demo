@@ -120,6 +120,12 @@ const useStyles = makeStyles(theme => ({
   enableIconSandbox: {
     color: '#836A49',
   },
+  root: {
+    padding: theme.spacing(0, 2),
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    backgroundColor: theme.palette.common.white,
+  },
 }));
 
 export default function Endpoint() {
@@ -262,226 +268,228 @@ export default function Endpoint() {
         </NotificationToaster>
       </div>
       )}
-      <PanelHeader title="Subscription" className={classes.heading} />
-      <div className={classes.subscriptionBox}>
-        <div className={classes.subscriptionBoxInner}>
-          <div className={classes.subscriptionBoxInnerLeft}>
-            <Typography className={classes.subscriptionHeading}>
-              {licenseActionDetails.subscriptionName} plan
-            </Typography>
-            <ul className={classes.itemsList}>
-              <li>
-                <span className={classes.bold}>Status:</span>
-                {capitalize(licenseActionDetails.status)}
-              </li>
-              <li>
-                <span className={classes.bold}> Expires on:</span>
-                {licenseActionDetails.expirationDate || 'N/A'} <span>{} </span>
-              </li>
-              <li>
-                <span className={classes.bold}> Customer success plan:</span>
-                {capitalize(licenseActionDetails.supportTier || 'N/A')}
-              </li>
-            </ul>
-            <div className={classes.subscriptionFeatures}>
-              <Typography variant="h6" className={classes.subscriptionSubHeading}>
-                Features Include:
+      <div className={classes.root}>
+        <PanelHeader title="Subscription" className={classes.heading} />
+        <div className={classes.subscriptionBox}>
+          <div className={classes.subscriptionBoxInner}>
+            <div className={classes.subscriptionBoxInnerLeft}>
+              <Typography className={classes.subscriptionHeading}>
+                {licenseActionDetails.subscriptionName} plan
+              </Typography>
+              <ul className={classes.itemsList}>
+                <li>
+                  <span className={classes.bold}>Status:</span>
+                  {capitalize(licenseActionDetails.status)}
+                </li>
+                <li>
+                  <span className={classes.bold}> Expires on:</span>
+                  {licenseActionDetails.expirationDate || 'N/A'} <span>{} </span>
+                </li>
+                <li>
+                  <span className={classes.bold}> Customer success plan:</span>
+                  {capitalize(licenseActionDetails.supportTier || 'N/A')}
+                </li>
+              </ul>
+              <div className={classes.subscriptionFeatures}>
+                <Typography variant="h6" className={classes.subscriptionSubHeading}>
+                  Features Include:
+                </Typography>
+                <div className={classes.subscriptionFeaturesList} >
+                  <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
+                    <li>
+                      {licenseActionDetails?.sandbox && (<CheckMarkIcon className={classes.enableIcon} />)}
+                      <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.sandbox)})}>Sandbox</Typography>
+                    </li>
+                    <li>
+                      {licenseActionDetails?.endpoint?.apiManagement && (<CheckMarkIcon className={classes.enableIcon} />)}
+                      <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.endpoint?.apiManagement)})}>API Management</Typography>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            {licenseActionDetails?.subscriptionActions?.actions?.length > 0 && (
+            <div>
+              {licenseActionDetails.subscriptionActions.actions.indexOf(
+                'start-free-trial'
+              ) > -1 && (
+              <FilledButton
+                onClick={onStartFreeTrialClick}
+                className={classes.subscriptionUpgradeBtn}>
+                Get unlimited flows
+              </FilledButton>
+              )}
+              {(licenseActionDetails.subscriptionActions.actions.indexOf(
+                'request-upgrade'
+              ) > -1 || licenseActionDetails.subscriptionActions.actions.indexOf(
+                'request-subscription'
+              ) > -1) && !licenseActionDetails.upgradeRequested && (
+              <FilledButton
+                onClick={onRequestUpgradeClick}
+                disabled={upgradeRequested}
+                className={classes.subscriptionUpgradeBtn}
+             >
+                Upgrade now
+              </FilledButton>
+              )}
+              {licenseActionDetails.subscriptionActions.actions.indexOf(
+                'add-more-flows'
+              ) > -1 && (
+              <FilledButton
+                onClick={onRequestUpgradeClick}
+                disabled={upgradeRequested}
+                className={classes.subscriptionUpgradeBtn}
+             >
+                Add more flows
+              </FilledButton>
+              )}
+            </div>
+          )}
+          </div>
+        </div>
+        <div className={classes.subscriptionBox}>
+          <div className={classes.subscriptionBoxInner}>
+            <div className={classes.subscriptionBoxInnerLeft}>
+              <Typography className={classes.subscriptionHeading}>
+                Production entitlements
               </Typography>
               <div className={classes.subscriptionFeaturesList} >
                 <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
                   <li>
-                    {licenseActionDetails?.sandbox && (<CheckMarkIcon className={classes.enableIcon} />)}
-                    <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.sandbox)})}>Sandbox</Typography>
+                    {!!(licenseActionDetails?.totalNumberofProductionEndpoints) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                    <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionEndpoints)})}>
+                      <Typography>{licenseActionDetails?.endpoint?.production?.numEndpoints} endpoint apps</Typography>
+                      <Typography>{licenseActionDetails?.endpoint?.production?.numAddOnEndpoints > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnEndpoints} add-on endpoint apps` : ''}</Typography>
+                    </Typography>
                   </li>
                   <li>
-                    {licenseActionDetails?.endpoint?.apiManagement && (<CheckMarkIcon className={classes.enableIcon} />)}
-                    <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.endpoint?.apiManagement)})}>API Management</Typography>
+                    {!!(licenseActionDetails?.totalNumberofProductionTradingPartners) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                    <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionTradingPartners)})}>
+                      <Typography>{licenseActionDetails?.endpoint?.production?.numTradingPartners} trading partners</Typography>
+                      <Typography>{licenseActionDetails?.endpoint?.production?.numAddOnTradingPartners > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnTradingPartners} add-on trading partners` : ''}</Typography>
+                    </Typography>
+                  </li>
+                  <li>
+                    {!!(licenseActionDetails?.totalNumberofProductionFlows) && <CheckMarkIcon className={classes.enableIcon} />}
+                    <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionFlows)})}>
+                      <Typography>{licenseActionDetails?.endpoint?.production?.numFlows} integration flows</Typography>
+                      <Typography>{licenseActionDetails?.endpoint?.production?.numAddOnFlows > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnFlows} add-on integration flows` : ''}</Typography>
+                    </Typography>
+                  </li>
+                  <li>
+                    {!!(licenseActionDetails?.totalNumberofProductionAgents) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                    <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionAgents)})}>
+                      <Typography>{licenseActionDetails?.endpoint?.production?.numAgents} on-premise agents</Typography>
+                      <Typography>{licenseActionDetails?.endpoint?.production?.numAddOnAgents > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnAgents} add-on on-premise agents` : ''}</Typography>
+                    </Typography>
                   </li>
                 </ul>
               </div>
-            </div>
-          </div>
-          {licenseActionDetails?.subscriptionActions?.actions?.length > 0 && (
-          <div>
-            {licenseActionDetails.subscriptionActions.actions.indexOf(
-              'start-free-trial'
-            ) > -1 && (
-            <FilledButton
-              onClick={onStartFreeTrialClick}
-              className={classes.subscriptionUpgradeBtn}>
-              Get unlimited flows
-            </FilledButton>
-            )}
-            {(licenseActionDetails.subscriptionActions.actions.indexOf(
-              'request-upgrade'
-            ) > -1 || licenseActionDetails.subscriptionActions.actions.indexOf(
-              'request-subscription'
-            ) > -1) && (
-            <FilledButton
-              onClick={onRequestUpgradeClick}
-              disabled={upgradeRequested}
-              className={classes.subscriptionUpgradeBtn}
-             >
-              Upgrade now
-            </FilledButton>
-            )}
-            {licenseActionDetails.subscriptionActions.actions.indexOf(
-              'add-more-flows'
-            ) > -1 && (
-            <FilledButton
-              onClick={onRequestUpgradeClick}
-              disabled={upgradeRequested}
-              className={classes.subscriptionUpgradeBtn}
-             >
-              Add more flows
-            </FilledButton>
-            )}
-          </div>
-          )}
-        </div>
-      </div>
-      <div className={classes.subscriptionBox}>
-        <div className={classes.subscriptionBoxInner}>
-          <div className={classes.subscriptionBoxInnerLeft}>
-            <Typography className={classes.subscriptionHeading}>
-              Production entitlements
-            </Typography>
-            <div className={classes.subscriptionFeaturesList} >
-              <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
-                <li>
-                  {!!(licenseActionDetails?.totalNumberofProductionEndpoints) && (<CheckMarkIcon className={classes.enableIcon} />)}
-                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionEndpoints)})}>
-                    <Typography>{licenseActionDetails?.endpoint?.production?.numEndpoints} endpoint apps</Typography>
-                    <Typography>{licenseActionDetails?.endpoint?.production?.numAddOnEndpoints > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnEndpoints} add-on endpoint apps` : ''}</Typography>
-                  </Typography>
-                </li>
-                <li>
-                  {!!(licenseActionDetails?.totalNumberofProductionTradingPartners) && (<CheckMarkIcon className={classes.enableIcon} />)}
-                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionTradingPartners)})}>
-                    <Typography>{licenseActionDetails?.endpoint?.production?.numTradingPartners} trading partners</Typography>
-                    <Typography>{licenseActionDetails?.endpoint?.production?.numAddOnTradingPartners > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnTradingPartners} add-on trading partners` : ''}</Typography>
-                  </Typography>
-                </li>
-                <li>
-                  {!!(licenseActionDetails?.totalNumberofProductionFlows) && <CheckMarkIcon className={classes.enableIcon} />}
-                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionFlows)})}>
-                    <Typography>{licenseActionDetails?.endpoint?.production?.numFlows} integration flows</Typography>
-                    <Typography>{licenseActionDetails?.endpoint?.production?.numAddOnFlows > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnFlows} add-on integration flows` : ''}</Typography>
-                  </Typography>
-                </li>
-                <li>
-                  {!!(licenseActionDetails?.totalNumberofProductionAgents) && (<CheckMarkIcon className={classes.enableIcon} />)}
-                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionAgents)})}>
-                    <Typography>{licenseActionDetails?.endpoint?.production?.numAgents} on-premise agents</Typography>
-                    <Typography>{licenseActionDetails?.endpoint?.production?.numAddOnAgents > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnAgents} add-on on-premise agents` : ''}</Typography>
-                  </Typography>
-                </li>
-              </ul>
-            </div>
-            <Progressbar
-              usedCount={numberofUsedEndpoints}
-              totalCount={licenseActionDetails?.totalNumberofProductionEndpoints}
-              env="production"
-              type="endpoints"
-              setTitle={setTitle}
+              <Progressbar
+                usedCount={numberofUsedEndpoints}
+                totalCount={licenseActionDetails?.totalNumberofProductionEndpoints}
+                env="production"
+                type="endpoints"
+                setTitle={setTitle}
             />
-            <Progressbar
-              usedCount={numberofUsedFlows}
-              totalCount={licenseActionDetails?.totalNumberofProductionFlows}
-              env="production"
-              type="flows"
-              setTitle={setTitle}
+              <Progressbar
+                usedCount={numberofUsedFlows}
+                totalCount={licenseActionDetails?.totalNumberofProductionFlows}
+                env="production"
+                type="flows"
+                setTitle={setTitle}
                     />
-            <Progressbar
-              usedCount={numberofUsedTradingPartners}
-              totalCount={licenseActionDetails?.totalNumberofProductionTradingPartners}
-              env="production"
-              type="tradingpartners"
-              setTitle={setTitle}
+              <Progressbar
+                usedCount={numberofUsedTradingPartners}
+                totalCount={licenseActionDetails?.totalNumberofProductionTradingPartners}
+                env="production"
+                type="tradingpartners"
+                setTitle={setTitle}
                     />
-            <Progressbar
-              usedCount={numberofUsedAgents}
-              totalCount={licenseActionDetails?.totalNumberofProductionAgents}
-              env="production"
-              type="agents"
-              setTitle={setTitle}
+              <Progressbar
+                usedCount={numberofUsedAgents}
+                totalCount={licenseActionDetails?.totalNumberofProductionAgents}
+                env="production"
+                type="agents"
+                setTitle={setTitle}
                     />
-          </div>
-        </div>
-      </div>
-      {licenseActionDetails?.sandbox && (
-      <div className={clsx(classes.subscriptionBox, classes.sandboxSubscriptionBox)}>
-        <div className={classes.subscriptionBoxInner}>
-          <div className={classes.subscriptionBoxInnerLeft}>
-            <Typography className={classes.subscriptionHeading}>
-              Sandbox entitlements
-            </Typography>
-            <div className={classes.subscriptionFeaturesList} >
-              <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
-                <li>
-                  {!!(licenseActionDetails?.totalNumberofSandboxEndpoints) && (<CheckMarkIcon className={classes.enableIconSandbox} />)}
-                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxEndpoints)})}>
-                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numEndpoints} endpoint apps</Typography>
-                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAddOnEndpoints > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnEndpoints} add-on endpoint apps` : ''}</Typography>
-                  </Typography>
-                </li>
-                <li>
-                  {!!(licenseActionDetails?.totalNumberofSandboxTradingPartners) && (<CheckMarkIcon className={classes.enableIconSandbox} />)}
-                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxTradingPartners)})}>
-                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numTradingPartners} trading partners</Typography>
-                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAddOnTradingPartners > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnTradingPartners
-                    } add-on trading partners` : ''}
-                    </Typography>
-                  </Typography>
-                </li>
-                <li>
-                  {!!(licenseActionDetails?.totalNumberofSandboxFlows) && <CheckMarkIcon className={classes.enableIconSandbox} />}
-                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxFlows)})}>
-                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numFlows} integration flows</Typography>
-                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAddOnFlows > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnFlows} add-on integration flows` : ''}</Typography>
-                  </Typography>
-                </li>
-                <li>
-                  {!!(licenseActionDetails?.totalNumberofSandboxAgents) && (<CheckMarkIcon className={classes.enableIconSandbox} />)}
-                  <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxAgents)})}>
-                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAgents} on-premise agents</Typography>
-                    <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAddOnAgents > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnAgents} add-on on-premise agents` : ''}</Typography>
-                  </Typography>
-                </li>
-              </ul>
             </div>
-            <Progressbar
-              usedCount={numberofUsedSandboxEndpoints}
-              totalCount={licenseActionDetails?.totalNumberofSandboxEndpoints}
-              env="sandbox"
-              type="endpoints"
-              setTitle={setTitle}
-                    />
-            <Progressbar
-              usedCount={numberofUsedSandboxFlows}
-              totalCount={licenseActionDetails.totalNumberofSandboxFlows}
-              env="sandbox"
-              type="flows"
-              setTitle={setTitle}
-                    />
-            <Progressbar
-              usedCount={numberofUsedSandboxTradingPartners}
-              totalCount={licenseActionDetails.totalNumberofSandboxTradingPartners}
-              env="sandbox"
-              type="tradingpartners"
-              setTitle={setTitle}
-                    />
-            <Progressbar
-              usedCount={numberofUsedSandboxAgents}
-              totalCount={licenseActionDetails.totalNumberofSandboxAgents}
-              env="sandbox"
-              type="agents"
-              setTitle={setTitle}
-                    />
           </div>
         </div>
-      </div>
+        {licenseActionDetails?.sandbox && (
+        <div className={clsx(classes.subscriptionBox, classes.sandboxSubscriptionBox)}>
+          <div className={classes.subscriptionBoxInner}>
+            <div className={classes.subscriptionBoxInnerLeft}>
+              <Typography className={classes.subscriptionHeading}>
+                Sandbox entitlements
+              </Typography>
+              <div className={classes.subscriptionFeaturesList} >
+                <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
+                  <li>
+                    {!!(licenseActionDetails?.totalNumberofSandboxEndpoints) && (<CheckMarkIcon className={classes.enableIconSandbox} />)}
+                    <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxEndpoints)})}>
+                      <Typography>{licenseActionDetails?.endpoint?.sandbox?.numEndpoints} endpoint apps</Typography>
+                      <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAddOnEndpoints > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnEndpoints} add-on endpoint apps` : ''}</Typography>
+                    </Typography>
+                  </li>
+                  <li>
+                    {!!(licenseActionDetails?.totalNumberofSandboxTradingPartners) && (<CheckMarkIcon className={classes.enableIconSandbox} />)}
+                    <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxTradingPartners)})}>
+                      <Typography>{licenseActionDetails?.endpoint?.sandbox?.numTradingPartners} trading partners</Typography>
+                      <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAddOnTradingPartners > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnTradingPartners
+                      } add-on trading partners` : ''}
+                      </Typography>
+                    </Typography>
+                  </li>
+                  <li>
+                    {!!(licenseActionDetails?.totalNumberofSandboxFlows) && <CheckMarkIcon className={classes.enableIconSandbox} />}
+                    <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxFlows)})}>
+                      <Typography>{licenseActionDetails?.endpoint?.sandbox?.numFlows} integration flows</Typography>
+                      <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAddOnFlows > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnFlows} add-on integration flows` : ''}</Typography>
+                    </Typography>
+                  </li>
+                  <li>
+                    {!!(licenseActionDetails?.totalNumberofSandboxAgents) && (<CheckMarkIcon className={classes.enableIconSandbox} />)}
+                    <Typography variant="body2" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxAgents)})}>
+                      <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAgents} on-premise agents</Typography>
+                      <Typography>{licenseActionDetails?.endpoint?.sandbox?.numAddOnAgents > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnAgents} add-on on-premise agents` : ''}</Typography>
+                    </Typography>
+                  </li>
+                </ul>
+              </div>
+              <Progressbar
+                usedCount={numberofUsedSandboxEndpoints}
+                totalCount={licenseActionDetails?.totalNumberofSandboxEndpoints}
+                env="sandbox"
+                type="endpoints"
+                setTitle={setTitle}
+                    />
+              <Progressbar
+                usedCount={numberofUsedSandboxFlows}
+                totalCount={licenseActionDetails.totalNumberofSandboxFlows}
+                env="sandbox"
+                type="flows"
+                setTitle={setTitle}
+                    />
+              <Progressbar
+                usedCount={numberofUsedSandboxTradingPartners}
+                totalCount={licenseActionDetails.totalNumberofSandboxTradingPartners}
+                env="sandbox"
+                type="tradingpartners"
+                setTitle={setTitle}
+                    />
+              <Progressbar
+                usedCount={numberofUsedSandboxAgents}
+                totalCount={licenseActionDetails.totalNumberofSandboxAgents}
+                env="sandbox"
+                type="agents"
+                setTitle={setTitle}
+                    />
+            </div>
+          </div>
+        </div>
       )}
+      </div>
       <LoadResources required resources="connections,flows,integrations,agents" />
     </>
   );

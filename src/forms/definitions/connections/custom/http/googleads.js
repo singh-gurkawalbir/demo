@@ -40,6 +40,8 @@ export default {
       label: 'Developer token',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       required: true,
       helpKey: 'googleads.connection.http.encrypted.developerToken',
     },
