@@ -13,7 +13,8 @@ const useStyles = makeStyles(theme => ({
     minHeight: 42,
     margin: 0,
     padding: 0,
-    border: '1px solid',
+    border: '1px solid ',
+    borderColor: theme.palette.secondary.lightest,
     borderRadius: 0,
   },
   select: {
