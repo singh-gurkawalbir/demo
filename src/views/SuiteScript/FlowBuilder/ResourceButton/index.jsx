@@ -6,7 +6,7 @@ import ListenerIcon from '../../../../components/icons/ListenerIcon';
 import ImportIcon from '../../../../components/icons/ImportsIcon';
 import TransferDownIcon from '../../../../components/icons/TransferDownIcon';
 import TransferUpIcon from '../../../../components/icons/TransferUpIcon';
-import { OutlinedButton } from '../../../../components/Buttons';
+import { TextButton } from '../../../../components/Buttons';
 
 const blockMap = {
   export: { label: 'Export', Icon: ExportIcon },
@@ -17,25 +17,11 @@ const blockMap = {
   importTransfer: { label: 'Transfer', Icon: TransferUpIcon },
 };
 const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'relative',
-  },
-  blockButton: {
-    padding: 0,
-    marginRight: theme.spacing(2),
-    textTransform: 'none',
-    '&:hover': {
-      backgroundColor: 'transparent',
-      '& svg': {
-        color: theme.palette.primary.main,
-      },
+  resourceButton: {
+    marginRight: theme.spacing(1),
+    '& >* svg': {
+      fontSize: `${theme.spacing(6)}px !important`,
     },
-  },
-  blockIcon: {
-    width: 48,
-    height: 48,
   },
 }));
 
@@ -44,14 +30,13 @@ export default function ResourceButton({ onClick, variant = 'export', isFileTran
   const block = blockMap[isFileTransfer ? `${variant}Transfer` : variant];
 
   return (
-    <OutlinedButton
-      size="small"
-      color="secondary"
-      className={classes.blockButton}
+    <TextButton
+      isVertical
+      className={classes.resourceButton}
       data-test={block.label}
-      startIcon={<block.Icon className={classes.blockIcon} />}
+      startIcon={<block.Icon />}
       onClick={onClick}>
       {block.label}
-    </OutlinedButton>
+    </TextButton>
   );
 }

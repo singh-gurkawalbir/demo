@@ -22,30 +22,12 @@ const blockMap = {
   importTransfer: { label: 'Transfer', Icon: TransferUpIcon },
 };
 const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'relative',
-  },
-  blockButton: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: 0,
-    marginRight: theme.spacing(2),
-    textTransform: 'none',
-    alignItems: 'center',
-    '&:hover': {
-      backgroundColor: 'transparent',
-      '& svg': {
-        color: theme.palette.primary.main,
-      },
+  resourceButton: {
+    marginRight: theme.spacing(1),
+    '& >* svg': {
+      fontSize: `${theme.spacing(6)}px !important`,
     },
   },
-  blockIcon: {
-    width: 48,
-    height: 48,
-  },
-
 }));
 
 export default function ResourceButton({ onClick, variant }) {
@@ -55,12 +37,11 @@ export default function ResourceButton({ onClick, variant }) {
   return (
     <TextButton
       data-test={block.label}
-      onClick={onClick}>
-      <div className={classes.blockButton}>
-        <block.Icon className={classes.blockIcon} />
-        {block.label}
-      </div>
-
+      onClick={onClick}
+      className={classes.resourceButton}
+      isVertical
+      startIcon={<block.Icon />}>
+      {block.label}
     </TextButton>
   );
 }

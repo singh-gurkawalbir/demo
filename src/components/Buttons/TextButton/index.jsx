@@ -17,16 +17,21 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.error.main,
     },
   },
+  vertical: {
+    '& > .MuiButton-label': {
+      flexDirection: 'column',
+    },
+  },
 }));
 export default function TextButton(props) {
   const classes = useStyles(props);
-  const {children, error, bold, ...rest} = props;
+  const {children, error, className, isVertical = 'false', bold, ...rest} = props;
 
   return (
     <Button
       variant="text"
       color="secondary"
-      className={clsx(classes.root, {[classes.error]: error})}
+      className={clsx(classes.root, {[classes.error]: error}, {[classes.vertical]: isVertical}, className)}
       disableElevation
       {...rest}>
       {children}
