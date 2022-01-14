@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default React.forwardRef(({type, result, includeDivider, focussed}, ref) => {
+function MarketPlaceRow({type, result, includeDivider, focussed}, ref) {
   const classes = useStyles({focussed});
   const history = useHistory();
 
@@ -68,4 +68,10 @@ export default React.forwardRef(({type, result, includeDivider, focussed}, ref) 
       </Accordion>
     </>
   );
-});
+}
+
+const MarketPlaceRowWithForwardedRef = React.forwardRef(MarketPlaceRow);
+
+const MemoizedMarketPlaceRow = React.memo(MarketPlaceRowWithForwardedRef);
+
+export default MemoizedMarketPlaceRow;

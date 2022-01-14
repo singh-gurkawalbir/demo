@@ -4,9 +4,10 @@ const KEYCODE = {
   UP: 38,
   DOWN: 40,
 };
+const initialFocusIndex = 0;
 
 function useKeyboardNavigation({listLength = 0, containerRef = null, listItemRef = null}) {
-  const [currentFocussed, setCurrentFocussed] = useState(-1);
+  const [currentFocussed, setCurrentFocussed] = useState(initialFocusIndex);
 
   function onKeyDown(event) {
     switch (event.keyCode) {
@@ -23,7 +24,11 @@ function useKeyboardNavigation({listLength = 0, containerRef = null, listItemRef
     }
   }
   const keyDownHandler = useCallback(onKeyDown, [listLength]);
+  const resetKeyboardFocus = useCallback(() => {
+    setCurrentFocussed(initialFocusIndex);
+  }, []);
 
+  // Adding listener to parent for key down events
   useEffect(() => {
     let current;
 
@@ -37,12 +42,13 @@ function useKeyboardNavigation({listLength = 0, containerRef = null, listItemRef
     };
   }, [containerRef, keyDownHandler]);
 
+  // for auto scrolling the container when focussed element is out of screen
   useEffect(() => {
     if (listItemRef?.current && currentFocussed) {
         listItemRef?.current?.scrollIntoView({behavior: 'smooth', block: 'end', inline: 'nearest'});
     }
   }, [currentFocussed, listItemRef]);
 
-  return {currentFocussed};
+  return {currentFocussed, resetKeyboardFocus};
 }
 export default useKeyboardNavigation;

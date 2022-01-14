@@ -1,37 +1,19 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { makeStyles, Paper, InputBase, Tabs, Tab, Typography, IconButton } from '@material-ui/core';
+import { makeStyles, Tabs, Tab, Typography, IconButton } from '@material-ui/core';
 import { isEqual } from 'lodash';
 import FloatingPaper from './FloatingPaper';
 import MarketplaceIcon from '../../../../components/icons/MarketplaceIcon';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import { useGlobalSearchContext } from './GlobalSearchContext';
-import { filterMap } from './filterMeta';
 import Results from './Results';
 import TextButton from '../../../../components/Buttons/TextButton';
 import useKeyboardNavigation from './Results/useKeyboardNavigation';
+import MemoizedSearchInput from './SearchInput';
+import { buildSearchString, getFilters, getKeyword, getTabResults } from './utils';
 
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
-  },
-  searchBox: {
-    width: '100%',
-    padding: [[5, 8]],
-    display: 'flex',
-    alignItems: 'center',
-    border: `1px solid ${theme.palette.secondary.contrastText}`,
-    borderRadius: 24,
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
-    borderLeft: 0,
-    flexGrow: 1,
-  },
-  input: {
-    marginLeft: theme.spacing(1),
-    flex: 1,
-  },
-  inputBase: {
-    padding: 0,
   },
   resultsPaper: {
     width: 550,
@@ -67,11 +49,6 @@ const useStyles = makeStyles(theme => ({
     borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
 
   },
-  searchCloseButton: {
-    padding: 0,
-    margin: -6,
-    marginLeft: 4,
-  },
 }));
 
 function TabPanel({ children, value, index}) {
@@ -86,73 +63,6 @@ function TabPanel({ children, value, index}) {
   );
 }
 
-function buildSearchString(filters, keyword) {
-  if (!filters?.length) {
-    return keyword;
-  }
-  const filterPrefix = filters.map(f => filterMap[f]?.shortcut).filter(s => s).join(',');
-
-  return `${filterPrefix}: ${keyword}`;
-}
-
-function getFilters(searchString) {
-  if (!searchString?.length) return [];
-
-  const parts = searchString.split(':');
-
-  if (parts.length === 1) return [];
-
-  const filterShortcuts = parts[0].split(',');
-
-  const selectedFilters = [];
-  const allFilters = Object.keys(filterMap);
-
-  filterShortcuts.forEach(s => {
-    const shortcut = s.trim().toLowerCase();
-
-    if (shortcut.length === 0) return;
-
-    allFilters.forEach(f => {
-      const label = filterMap[f].label.toLowerCase();
-      const filter = filterMap[f].type;
-
-      if (label.startsWith(shortcut) && !selectedFilters.includes(filter)) {
-        selectedFilters.push(filter);
-      }
-    });
-  });
-
-  // console.log(filterShortcuts, selectedFilters);
-
-  return selectedFilters;
-}
-
-function getKeyword(searchString) {
-  const parts = searchString.split(':');
-
-  if (parts.length > 1) {
-    return parts[1].trim();
-  }
-
-  return searchString;
-}
-
-function getResultCount(results, isResource) {
-  if (!results || typeof results !== 'object') return 0;
-
-  return Object.keys(results)?.reduce((count, r) => {
-    const match = filterMap[r]?.isResource === isResource;
-
-    return match ? count + (results[r].length) : count;
-  }, 0);
-}
-
-function getTabResults(results, isResource) {
-  return Object?.keys(filterMap)
-    ?.filter(key => filterMap[key]?.isResource === isResource && results[key] !== undefined)
-    ?.map(key => ({type: key, results: results[key]}));
-}
-
 export default function SearchBox() {
   const classes = useStyles();
   const [skip, setSkip] = useState(false);
@@ -160,13 +70,15 @@ export default function SearchBox() {
   const [searchString, setSearchString] = useState('');
   const [resultsOpen, setResultsOpen] = useState(false);
   const inputRef = useRef();
-  const { results, keyword, setKeyword, filters, setFilters, setOpen, onKeywordChange, onFiltersChange } = useGlobalSearchContext();
+  const { results, keyword, setKeyword, filters, setFilters, onKeywordChange, onFiltersChange } = useGlobalSearchContext();
 
-  const resourceResults = useMemo(() => getTabResults(results, true), [results]);
-  const marketplaceResults = useMemo(() => getTabResults(results, false), [results]);
-  const resourceResultCount = getResultCount(results, true);
-  const marketplaceResultCount = getResultCount(results, false);
+  const {resourceResults, marketplaceResults, resourceResultCount, marketplaceResultCount} = useMemo(() => getTabResults(results), [results]);
   const containerRef = useRef();
+  const currentResults = activeTab === 1 ? marketplaceResults : resourceResults;
+  const listItemLength = currentResults?.reduce((oldState, action) => oldState + action?.results?.length, 0);
+  const listItemRef = useRef();
+  const {currentFocussed, resetKeyboardFocus} = useKeyboardNavigation({listLength: listItemLength, containerRef, listItemRef});
+
   const handleSearchStringChange = e => {
     const newSearchString = e.target.value;
 
@@ -192,8 +104,8 @@ export default function SearchBox() {
       setResultsOpen(false);
     }
   };
-
   const handleTabChange = (event, newValue) => {
+    resetKeyboardFocus();
     setActiveTab(newValue);
   };
 
@@ -230,28 +142,10 @@ export default function SearchBox() {
   // when the result counts change.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resourceResultCount, marketplaceResultCount]);
-  const currentResults = activeTab === 1 ? marketplaceResults : resourceResults;
-  const listItemLength = currentResults?.reduce((oldState, action) => oldState + action?.results?.length, 0);
-  const listItemRef = useRef();
-  const {currentFocussed} = useKeyboardNavigation({listLength: listItemLength, containerRef, listItemRef});
 
   return (
     <div ref={containerRef} className={classes.root}>
-      <Paper component="form" className={classes.searchBox} variant="outlined">
-        <InputBase
-          ref={inputRef}
-          spellcheck="false"
-          value={searchString}
-          classes={{input: classes.inputBase}}
-          className={classes.input}
-          placeholder="Search integrator.io"
-          inputProps={{ 'aria-label': 'Search integrator.io', tabIndex: 0 }}
-          onChange={handleSearchStringChange}
-      />
-        <IconButton size="small" onClick={() => setOpen(false)} className={classes.searchCloseButton}>
-          <CloseIcon />
-        </IconButton>
-      </Paper>
+      <MemoizedSearchInput value={searchString} onChange={handleSearchStringChange} ref={inputRef} />
       {resultsOpen && ( // We could/should use <Popover/> component if possible..
         <FloatingPaper className={classes.resultsPaper}>
           <div className={classes.tabsContainer}>
@@ -261,7 +155,7 @@ export default function SearchBox() {
               aria-label="Global search results"
               indicatorColor="primary"
           >
-              <Tab label={`Resources (${getResultCount(results, true)})`} />
+              <Tab label={`Resources (${resourceResultCount})`} />
               <Tab label={`Marketplace: Apps & templates (${marketplaceResultCount})`} />
             </Tabs>
             <IconButton size="small" onClick={() => setResultsOpen(false)}>

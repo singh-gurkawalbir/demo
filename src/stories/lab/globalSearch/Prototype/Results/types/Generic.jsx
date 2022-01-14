@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default React.forwardRef(({result, children, includeDivider, focussed}, ref) => {
+function GenericRow({result, children, includeDivider, focussed}, ref) {
   const classes = useStyles({focussed});
   const history = useHistory();
 
@@ -41,7 +41,7 @@ export default React.forwardRef(({result, children, includeDivider, focussed}, r
       {includeDivider && <Divider orientation="horizontal" />}
       <div ref={ref} className={classes.root} onClick={handleRowClick}>
         <Typography variant="body2">{result.name || result.id}</Typography>
-        {result.description && <InfoIconButton size="xs" info={result.description} />}
+        {result.description && <InfoIconButton tabIndex={-1} size="xs" info={result.description} />}
 
         {children && <Divider orientation="vertical" className={classes.dataDivider} />}
         {children}
@@ -52,4 +52,10 @@ export default React.forwardRef(({result, children, includeDivider, focussed}, r
       </div>
     </>
   );
-});
+}
+
+const GenericRowWithForwardedRef = React.forwardRef(GenericRow);
+
+const MemoizedRow = React.memo(GenericRowWithForwardedRef);
+
+export default MemoizedRow;

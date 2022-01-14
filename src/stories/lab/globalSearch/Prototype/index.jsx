@@ -48,28 +48,24 @@ function GlobalSearch() {
   useKeyboardShortcut(['Escape'], handleEscapeKeypress, true);
 
   return (
-    <>
-      {!open && (
-      <Tooltip
-        classes={{tooltip: classes.muiTooltip}}
-        title={<TooltipTitle />}
-        placement="bottom"
-        aria-label="Global search">
-        <IconButton size="small" onClick={() => setOpen(true)}>
-          <SearchIcon />
-        </IconButton>
-      </Tooltip>
-      )}
-
-      <div className={clsx(classes.root, {[classes.closed]: !open})}>
-        {open && (
+    <div className={clsx(classes.root, {[classes.closed]: !open})}>
+      {!open ? (
+        <Tooltip
+          classes={{tooltip: classes.muiTooltip}}
+          title={<TooltipTitle />}
+          placement="bottom"
+          aria-label="Global search">
+          <IconButton size="small" onClick={() => setOpen(true)}>
+            <SearchIcon />
+          </IconButton>
+        </Tooltip>
+      ) : (
         <>
           <ResourceFilter />
           <SearchBox />
         </>
-        )}
-      </div>
-    </>
+      )}
+    </div>
   );
 }
 

@@ -104,6 +104,7 @@ import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
 import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
+import { filterMap } from '../stories/lab/globalSearch/Prototype/filterMeta';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -6533,4 +6534,36 @@ selectors.httpDeltaValidationError = (state, formKey, deltaFieldsToValidate) => 
       return 'Delta exports must use {{lastExportDateTime}} in either the relative URI or HTTP request body.';
     }
   }
+};
+
+const resultsCache = new Map();
+
+selectors.globalSearchResults = (state, keyword) => {
+  if (keyword?.length < 2) return {};
+  // the results are filtered using case insensitive keyword, hence caching also is done using case insenitive keyword
+  const keyWordLowerCased = keyword?.toLowerCase();
+
+  if (resultsCache.has(keyWordLowerCased)) {
+    return resultsCache.get(keyWordLowerCased);
+  }
+  const resourceIds = Object.keys(filterMap);
+
+  const results = resourceIds.reduce((acc, id) => {
+    const resourceId = filterMap[id]?.resourceURL;
+    const resourceResults = selectors.makeResourceListSelector()(state, {type: resourceId, take: 3, keyword});
+    let resourcesList = resourceResults?.resources;
+
+    if (id === 'connections') {
+      resourcesList = resourcesList.map(connection => ({...connection, isOnline: selectors.isConnectionOffline(state, connection?._id)}));
+    }
+    if (resourcesList?.length > 0) {
+      acc[id] = resourcesList;
+    }
+
+    return acc;
+  }, {});
+
+  resultsCache.set(keyWordLowerCased, results);
+
+  return results;
 };

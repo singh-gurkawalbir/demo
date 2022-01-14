@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default React.forwardRef(({ results, currentFocussed }, ref) => {
+function ResultsList({ results, currentFocussed }, ref) {
   const classes = useStyles();
 
   if (!results?.length) {
@@ -55,6 +55,8 @@ export default React.forwardRef(({ results, currentFocussed }, ref) => {
       </div>
     );
   }
+  // Since the foccussed items fall in different sections
+  // we keep the row index count from each section for proper focus
   let currentRowIndex = -1;
 
   return (
@@ -62,16 +64,16 @@ export default React.forwardRef(({ results, currentFocussed }, ref) => {
       {results.map(({type, results: typeResults}) => (
         <div key={type} className={classes.typeContainer}>
           <Typography color="textSecondary" variant="overline">{filterMap[type]?.label}</Typography>
-          {typeResults.map((r, i) => {
+          {typeResults.map((result, index) => {
             currentRowIndex += 1;
             const Row = rowTypeMap[type];
-            const includeDivider = typeResults.length > 1 && i > 0;
+            const includeDivider = typeResults.length > 1 && index > 0;
 
             return (
               <Row
                 ref={currentRowIndex === currentFocussed ? ref : null}
                 focussed={currentRowIndex === currentFocussed}
-                key={r.id} result={r} type={type}
+                key={result.id} result={result} type={type}
                 includeDivider={includeDivider} />
             );
           })}
@@ -79,5 +81,6 @@ export default React.forwardRef(({ results, currentFocussed }, ref) => {
       ))}
     </div>
   );
-});
+}
 
+export default React.forwardRef(ResultsList);
