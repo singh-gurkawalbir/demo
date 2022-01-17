@@ -82,6 +82,11 @@ function DynaAssistantOptions(props) {
     value: queryParams,
     paramMeta: queryParamsMeta,
   } = useSelector(state => selectors.fieldState(state, props.formKey, 'assistantMetadata.queryParams'), shallowEqual) || emptyObject;
+  const {
+    value: bodyParams,
+    paramMeta: bodyParamsMeta,
+  } = useSelector(state => selectors.fieldState(state, props.formKey, 'assistantMetadata.bodyParams'), shallowEqual) || emptyObject;
+
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
       adaptorType: formContext.adaptorType,
@@ -203,12 +208,17 @@ function DynaAssistantOptions(props) {
 
       if (id === 'assistantMetadata.exportType') {
         const newParams = {};
+        const newBodyParams = {};
 
         if (value === 'delta') {
           const anyParamValuesSet = queryParamsMeta?.fields?.some(field => !field.readOnly && Object.prototype.hasOwnProperty.call(queryParams, field.id) && queryParams[field.id] !== field.defaultValue);
+          const anyBodyParamValuesSet = bodyParamsMeta?.fields?.some(field => !field.readOnly && Object.prototype.hasOwnProperty.call(bodyParams, field.id) && bodyParams[field.id] !== field.defaultValue);
 
           if (!anyParamValuesSet) {
             allTouchedFields.push({id: 'assistantMetadata.queryParams', value: {...queryParams, ...queryParamsMeta?.defaultValuesForDeltaExport}});
+          }
+          if (!anyBodyParamValuesSet) {
+            allTouchedFields.push({id: 'assistantMetadata.bodyParams', value: {...bodyParams, ...bodyParamsMeta?.defaultValuesForDeltaExport}});
           }
         } else {
           Object.keys(queryParams || emptyObject).forEach(param => {
@@ -219,6 +229,15 @@ function DynaAssistantOptions(props) {
           });
 
           allTouchedFields.push({id: 'assistantMetadata.queryParams', value: newParams});
+
+          Object.keys(bodyParams || emptyObject).forEach(param => {
+            // When export type is changed to all, delete body params with delta attributes in them
+            if (!bodyParams[param]?.includes?.('lastExportDateTime')) {
+              newBodyParams[param] = bodyParams[param];
+            }
+          });
+
+          allTouchedFields.push({id: 'assistantMetadata.bodyParams', value: newBodyParams});
         }
       }
       dispatch(
