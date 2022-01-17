@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import CodeEditor from '../../../../CodeEditor';
@@ -15,6 +16,12 @@ import useFormOnCancelContext from '../../../../FormOnCancelContext';
 import { getFormSaveStatusFromCommStatus } from '../../../../../utils/editor';
 import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 
+const useStyles = makeStyles(() => ({
+  content: {
+    height: '100%',
+  },
+}));
+
 /**
  * Only Used for editing script content currently
  */
@@ -22,6 +29,7 @@ function ExpandModeDrawerContent() {
   const { formKey, fieldId } = useParams();
   const history = useHistory();
   const dispatch = useDispatch();
+  const classes = useStyles();
   const fieldState = useSelector(state => selectors.fieldState(state, formKey, fieldId));
   const { value, disabled, resourceId, resourceType, isLoggable } = fieldState || {};
   const [editorContent, setEditorContent] = useState(value);
@@ -50,14 +58,16 @@ function ExpandModeDrawerContent() {
     <>
       <DrawerHeader title="Edit content" handleClose={isNewResource ? handleClose : setCancelTriggered} />
       <DrawerContent>
-        <CodeEditor
-          {...isLoggableAttr(isLoggable)} // TODO: verify
-          name={fieldId}
-          value={editorContent}
-          mode="javascript"
-          readOnly={disabled}
-          onChange={setEditorContent}
+        <div className={classes.content} {...isLoggableAttr(isLoggable)} >
+          <CodeEditor
+            name={fieldId}
+            value={editorContent}
+            mode="javascript"
+            readOnly={disabled}
+            onChange={setEditorContent}
         />
+        </div>
+
       </DrawerContent>
       <DrawerFooter>
         {
