@@ -6550,7 +6550,7 @@ selectors.globalSearchResults = (state, keyword) => {
 
   const results = resourceIds.reduce((acc, id) => {
     const resourceId = filterMap[id]?.resourceURL;
-    const resourceResults = selectors.makeResourceListSelector()(state, {type: resourceId, take: 3, keyword});
+    const resourceResults = selectors.makeResourceListSelector()(state, {type: resourceId, take: 3, keyword, searchBy: ['name']});
     let resourcesList = resourceResults?.resources;
 
     if (id === 'connections') {
