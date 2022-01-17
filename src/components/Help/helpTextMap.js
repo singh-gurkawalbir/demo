@@ -873,7 +873,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.rdbms.database': 'The database schema to connect to.',
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
-  'snowflake.import.rdbms.queryType': 'Select one of the following options: <br><b> • Use SQL query</b> – Insert, update, or delete per record. <br><b> • Use bulk INSERT SQL query</b> – Insert multiple records. With this type, you must also configure import mapping. <br><b> • Use SQL query once per page of data </b>– Execute the query once per page, such as in a MERGE statement. <br><b> • Use SQL query once per flow run</b> – Execute the query only once on the first page.',
+  'snowflake.import.rdbms.queryType': "'Use bulk insert SQL query' to quickly insert batches of data efficiently. </br>'Use SQL query once per record' to execute a custom query per record. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
   'connection.rdbms.snowflake.warehouse':
 'Warehouse used for executing compute process.',
   'connection.rdbms.snowflake.schema':
