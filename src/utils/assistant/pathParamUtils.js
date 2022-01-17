@@ -48,13 +48,8 @@ function mapParamsToValues(relativeTokens, actualTokens, pathParametersInfo) {
         ?.replaceAll(idTokenInRelativeURL, '');
       const item = pathParametersInfo.find(param => param?.id === itemId);
 
-      if (relToken?.includes('(')) {
-        const regexToExtractValueBetweenPrefixAndSuffix = new RegExp(
-          `${item?.config?.prefix}(.*)${item?.config?.suffix}`
-        );
-        const valueTokens = regexToExtractValueBetweenPrefixAndSuffix.exec(actualToken);
-
-        actualValue = valueTokens && valueTokens[valueTokens?.length - 1];
+      if (relToken?.includes(item?.config?.prefix)) {
+        actualValue = actualToken.substring(actualToken.indexOf(item?.config?.prefix) + item?.config?.prefix?.length, actualToken.indexOf(item?.config?.suffix));
       }
 
       const id = relToken
