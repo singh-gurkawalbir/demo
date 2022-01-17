@@ -1428,19 +1428,19 @@ const resourceFormSampleData = {
 };
 const app = {
   polling: {
-    start: (pollAction, duration) => action(actionTypes.POLLING.START, {pollAction, duration}),
-    slowDown: () => action(actionTypes.POLLING.SLOW),
-    resume: () => action(actionTypes.POLLING.RESUME),
-    stop: () => action(actionTypes.POLLING.STOP),
-    stopSpecificPollProcess: pollActionToStop => action(actionTypes.POLLING.STOP_SPECIFIC_POLL, {pollActionToStop}),
+    start: (pollAction, duration) => action(actionTypes.APP.POLLING.START, {pollAction, duration}),
+    slowDown: () => action(actionTypes.APP.POLLING.SLOW),
+    resume: () => action(actionTypes.APP.POLLING.RESUME),
+    stop: () => action(actionTypes.APP.POLLING.STOP),
+    stopSpecificPollProcess: pollActionToStop => action(actionTypes.APP.POLLING.STOP_SPECIFIC_POLL, {pollActionToStop}),
   },
-  fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
-  updateUIVersion: version => action(actionTypes.UI_VERSION_UPDATE, { version }),
-  reload: () => action(actionTypes.APP_RELOAD),
-  deleteDataState: () => action(actionTypes.APP_DELETE_DATA_STATE),
-  errored: () => action(actionTypes.APP_ERRORED),
-  clearError: () => action(actionTypes.APP_CLEAR_ERROR),
-  userAcceptedAccountTransfer: () => action(actionTypes.USER_ACCEPTED_ACCOUNT_TRANSFER),
+  fetchUiVersion: () => action(actionTypes.APP.UI_VERSION_FETCH),
+  updateUIVersion: version => action(actionTypes.APP.UI_VERSION_UPDATE, { version }),
+  reload: () => action(actionTypes.APP.RELOAD),
+  deleteDataState: () => action(actionTypes.APP.DELETE_DATA_STATE),
+  errored: () => action(actionTypes.APP.ERRORED),
+  clearError: () => action(actionTypes.APP.CLEAR_ERROR),
+  userAcceptedAccountTransfer: () => action(actionTypes.APP.USER_ACCEPTED_ACCOUNT_TRANSFER),
 };
 const postFeedback = (resourceType, fieldId, helpful, feedback) =>
   action(actionTypes.POST_FEEDBACK, {
@@ -1449,8 +1449,6 @@ const postFeedback = (resourceType, fieldId, helpful, feedback) =>
     helpful,
     feedback,
   });
-const toggleBanner = () => action(actionTypes.APP_TOGGLE_BANNER);
-const toggleDrawer = () => action(actionTypes.APP_TOGGLE_DRAWER);
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
@@ -2329,8 +2327,6 @@ export default {
   form,
   postFeedback,
   app,
-  toggleBanner,
-  toggleDrawer,
   metadata,
   fileDefinitions,
   connectors,

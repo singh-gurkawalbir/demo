@@ -133,7 +133,7 @@ const rootReducer = (state, action) => {
 
         break;
 
-      case actionTypes.APP_DELETE_DATA_STATE:
+      case actionTypes.APP.DELETE_DATA_STATE:
         delete draft.data;
 
         break;
