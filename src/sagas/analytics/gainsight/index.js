@@ -266,7 +266,7 @@ function trackConnDebug(a) {
 }
 
 export const gainsightSagas = [
-  takeEvery(actionTypes.DEFAULT_ACCOUNT_SET, identifyUser),
+  takeEvery(actionTypes.AUTH.DEFAULT_ACCOUNT_SET, identifyUser),
   takeEvery(actionTypes.RESOURCE.CREATED, trackResourceCreatedEvent),
   takeEvery(actionTypes.ANALYTICS.GAINSIGHT.TRACK_EVENT, trackEvent),
   takeEvery(actionTypes.JOB.RESOLVE_SELECTED, trackResolve),

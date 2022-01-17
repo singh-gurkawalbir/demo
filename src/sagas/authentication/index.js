@@ -442,7 +442,7 @@ export function* linkWithGoogle({ returnTo }) {
 }
 
 export const authenticationSagas = [
-  takeEvery(actionTypes.INIT_SESSION, initializeSession),
+  takeEvery(actionTypes.AUTH.INIT_SESSION, initializeSession),
   takeEvery(actionTypes.AUTH.REQUEST, auth),
   takeEvery(actionTypes.APP.UI_VERSION_FETCH, fetchUIVersion),
   takeEvery(actionTypes.AUTH.SIGNIN_WITH_GOOGLE, signInWithGoogle),

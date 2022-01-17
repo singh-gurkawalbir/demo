@@ -554,11 +554,11 @@ export function* deleteSuiteScriptLinkedConnection({ connectionId }) {
 }
 
 export const userSagas = [
-  takeLatest(actionTypes.UNLINK_WITH_GOOGLE, unlinkWithGoogle),
-  takeLatest(actionTypes.UPDATE_PROFILE, updateProfile),
-  takeLatest([actionTypes.UPDATE_PREFERENCES,
-    actionTypes.PIN_INTEGRATION,
-    actionTypes.UNPIN_INTEGRATION], updatePreferences),
+  takeLatest(actionTypes.USER.PROFILE.UNLINK_WITH_GOOGLE, unlinkWithGoogle),
+  takeLatest(actionTypes.USER.PROFILE.UPDATE, updateProfile),
+  takeLatest([actionTypes.USER.PREFERENCES.UPDATE,
+    actionTypes.USER.PREFERENCES.PIN_INTEGRATION,
+    actionTypes.USER.PREFERENCES.UNPIN_INTEGRATION], updatePreferences),
   takeEvery(actionTypes.LICENSE.TRIAL_REQUEST, requestTrialLicense),
   takeEvery(actionTypes.LICENSE.UPGRADE_REQUEST, requestLicenseUpgrade),
   takeEvery(actionTypes.AUTH.USER.CHANGE_EMAIL, changeEmail),
@@ -570,9 +570,9 @@ export const userSagas = [
   takeEvery(actionTypes.USER.DISABLE, disableUser),
   takeEvery(actionTypes.USER.DELETE, deleteUser),
   takeEvery(actionTypes.USER.MAKE_OWNER, makeOwner),
-  takeEvery(actionTypes.DEFAULT_ACCOUNT_SET, requestSharedStackNotifications),
-  takeEvery(actionTypes.SHARED_NOTIFICATION_ACCEPT, acceptSharedInvite),
-  takeEvery(actionTypes.SHARED_NOTIFICATION_REJECT, rejectSharedInvite),
+  takeEvery(actionTypes.AUTH.DEFAULT_ACCOUNT_SET, requestSharedStackNotifications),
+  takeEvery(actionTypes.USER.SHARED_NOTIFICATION_ACCEPT, acceptSharedInvite),
+  takeEvery(actionTypes.USER.SHARED_NOTIFICATION_REJECT, rejectSharedInvite),
   takeEvery(
     actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST,
     requestLicenseEntitlementUsage

@@ -31,7 +31,7 @@ describe('comms reducers', () => {
       // now wipe out the comms store
       const wipedOutCommsState = reducer(
         completedApiActionState,
-        actions.clearComms()
+        actions.api.clearComms()
       );
 
       expect(wipedOutCommsState).not.toMatchObject({
@@ -130,7 +130,7 @@ describe('comms reducers', () => {
   describe('clear comm by key', () => {
     test('should not change the state when key not found', () => {
       const state = reducer(undefined, 'some action');
-      const newState = reducer(state, actions.clearCommByKey('something'));
+      const newState = reducer(state, actions.api.clearCommByKey('something'));
 
       expect(newState).toEqual(state);
     });
@@ -142,7 +142,7 @@ describe('comms reducers', () => {
         },
         'some action'
       );
-      const newState = reducer(state, actions.clearCommByKey('something'));
+      const newState = reducer(state, actions.api.clearCommByKey('something'));
 
       expect(newState).toEqual({ somethingelse: { test: 'somethingelse' } });
     });

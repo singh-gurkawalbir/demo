@@ -106,15 +106,15 @@ const auth = {
       isExistingSessionInvalid,
     }),
   userAlreadyLoggedIn: () => action(actionTypes.AUTH.USER_ALREADY_LOGGED_IN),
-  clearStore: () => action(actionTypes.CLEAR_STORE),
-  abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
-  abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
-  initSession: () => action(actionTypes.INIT_SESSION),
+  clearStore: () => action(actionTypes.AUTH.CLEAR_STORE),
+  abortAllSagasAndInitLR: opts => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
+  abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
+  initSession: () => action(actionTypes.AUTH.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.AUTH.USER.CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
     action(actionTypes.AUTH.USER.CHANGE_EMAIL, { updatedEmail }),
-  defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
+  defaultAccountSet: () => action(actionTypes.AUTH.DEFAULT_ACCOUNT_SET),
   sessionTimestamp: () => action(actionTypes.AUTH.TIMESTAMP),
 };
 
@@ -126,12 +126,14 @@ const asyncTask = {
 };
 const api = {
   request: (path, method, message, hidden, refresh) =>
-    action(actionTypes.API_REQUEST, { path, message, hidden, method, refresh }),
-  retry: (path, method) => action(actionTypes.API_RETRY, { path, method }),
+    action(actionTypes.API.REQUEST, { path, message, hidden, method, refresh }),
+  retry: (path, method) => action(actionTypes.API.RETRY, { path, method }),
   complete: (path, method, message) =>
-    action(actionTypes.API_COMPLETE, { path, method, message }),
+    action(actionTypes.API.COMPLETE, { path, method, message }),
   failure: (path, method, message, hidden) =>
-    action(actionTypes.API_FAILURE, { path, method, message, hidden }),
+    action(actionTypes.API.FAILURE, { path, method, message, hidden }),
+  clearComms: () => action(actionTypes.API.CLEAR_COMMS),
+  clearCommByKey: key => action(actionTypes.API.CLEAR_COMM_BY_KEY, { key }),
 };
 // #region Resource Actions
 const connection = {
@@ -1252,10 +1254,10 @@ const user = {
   toggleDebug: () => action(actionTypes.TOGGLE_DEBUG),
   profile: {
     request: message => resource.request('profile', undefined, message),
-    delete: () => action(actionTypes.DELETE_PROFILE),
-    update: profile => action(actionTypes.UPDATE_PROFILE, { profile }),
-    unlinkWithGoogle: () => action(actionTypes.UNLINK_WITH_GOOGLE),
-    unlinkedWithGoogle: () => action(actionTypes.UNLINKED_WITH_GOOGLE),
+    delete: () => action(actionTypes.USER.PROFILE.DELETE),
+    update: profile => action(actionTypes.USER.PROFILE.UPDATE, { profile }),
+    unlinkWithGoogle: () => action(actionTypes.USER.PROFILE.UNLINK_WITH_GOOGLE),
+    unlinkedWithGoogle: () => action(actionTypes.USER.PROFILE.UNLINKED_WITH_GOOGLE),
   },
   org: {
     users: {
@@ -1312,17 +1314,17 @@ const user = {
   preferences: {
     request: message => resource.request('preferences', undefined, message),
     update: preferences =>
-      action(actionTypes.UPDATE_PREFERENCES, { preferences }),
-    pinIntegration: integrationKey => action(actionTypes.PIN_INTEGRATION, { integrationKey }),
-    unpinIntegration: integrationKey => action(actionTypes.UNPIN_INTEGRATION, { integrationKey }),
+      action(actionTypes.USER.PREFERENCES.UPDATE, { preferences }),
+    pinIntegration: integrationKey => action(actionTypes.USER.PREFERENCES.PIN_INTEGRATION, { integrationKey }),
+    unpinIntegration: integrationKey => action(actionTypes.USER.PREFERENCES.UNPIN_INTEGRATION, { integrationKey }),
   },
   sharedNotifications: {
     acceptInvite: (resourceType, id, isAccountTransfer) =>
-      action(actionTypes.SHARED_NOTIFICATION_ACCEPT, { resourceType, id, isAccountTransfer }),
+      action(actionTypes.USER.SHARED_NOTIFICATION_ACCEPT, { resourceType, id, isAccountTransfer }),
     acceptedInvite: id =>
-      action(actionTypes.SHARED_NOTIFICATION_ACCEPTED, { id }),
+      action(actionTypes.USER.SHARED_NOTIFICATION_ACCEPTED, { id }),
     rejectInvite: (resourceType, id) =>
-      action(actionTypes.SHARED_NOTIFICATION_REJECT, { resourceType, id }),
+      action(actionTypes.USER.SHARED_NOTIFICATION_REJECT, { resourceType, id }),
   },
 };
 const importSampleData = {
@@ -1452,9 +1454,6 @@ const postFeedback = (resourceType, fieldId, helpful, feedback) =>
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
-const clearComms = () => action(actionTypes.CLEAR_COMMS);
-const clearCommByKey = key => action(actionTypes.CLEAR_COMM_BY_KEY, { key });
-const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
 
 // #region Editor actions
 const editor = {
@@ -2330,10 +2329,7 @@ export default {
   metadata,
   fileDefinitions,
   connectors,
-  cancelTask,
   integrationApp,
-  clearComms,
-  clearCommByKey,
   patchFilter,
   clearFilter,
   editor,
