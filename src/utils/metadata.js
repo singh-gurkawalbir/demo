@@ -42,6 +42,7 @@ export const isTransactionWSRecordType = recordId => {
 };
 
 export const getWSRecordId = record => {
+  if (!record) return '';
   const recordId = record.scriptId || record.metadataId || record.internalId;
 
   return recordId.toLowerCase();
@@ -298,6 +299,7 @@ const getFormattedNSCustomerSampleData = metadata => {
 };
 
 export const filterSubListProperties = eFields => {
+  if (!eFields) return;
   let filteredSubLists = [];
   const sublists = [];
 
