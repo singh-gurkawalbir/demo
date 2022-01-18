@@ -15,6 +15,7 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import { isMetaRequiredValuesMet } from '../../../../utils/assistant';
 import actions from '../../../../actions';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
+import IsLoggableContextProvider from '../../../IsLoggableContextProvider';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
@@ -55,7 +56,10 @@ const ApiParametersModal = props => {
   return (
     <ModalDialog show onClose={onClose}>
       <span>API parameters</span>
-      <DynaForm formKey={formKey} />
+      {/* lets not log these fields */}
+      <IsLoggableContextProvider isLoggable={false}>
+        <DynaForm formKey={formKey} />
+      </IsLoggableContextProvider>
       <div>
         <DynaSubmit onClick={onSaveClick}>Save</DynaSubmit>
         <Button

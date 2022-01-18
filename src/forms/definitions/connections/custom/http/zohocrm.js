@@ -208,6 +208,7 @@ export default {
         'ZohoCRM.functions.execute.read',
         'ZohoCRM.functions.execute.create',
         'ZohoCRM.settings.layout_rules.read',
+        'ZohoCRM.coql.READ',
       ],
     },
     application: {

@@ -1,6 +1,6 @@
 /* global expect, describe, test */
 import sortBy from 'lodash/sortBy';
-import { getAllApplications, getStatusSortableProp, getTileId, sortTiles, tileStatus } from '.';
+import { getAllApplications, getTileId, sortTiles, tileCompare, tileStatus } from '.';
 import { applicationsList } from '../../constants/applications';
 import {TILE_STATUS} from '../constants';
 
@@ -180,7 +180,7 @@ describe('tileStatus util', () => {
   });
   test('should return correct label and variant if tile has errors', () => {
     expect(tileStatus(tiles[1])).toEqual({
-      label: '4 Errors',
+      label: '4 errors',
       variant: 'error' });
   });
   test('should return correct label and variant if tile status is success', () => {
@@ -207,17 +207,82 @@ describe('getTileId util', () => {
   });
 });
 
-describe('getStatusSortableProp util', () => {
-  test('should not throw error for invalid arguments', () => {
-    expect(getStatusSortableProp()).toEqual(0);
+describe('tileCompare function test', () => {
+  test('should return string compare if sortProperty is not status', () => {
+    const tileA = {
+      name: 'a',
+    };
+    const tileB = {
+      name: 'b',
+    };
+
+    expect(tileCompare('name', false)(tileA, tileB)).toEqual(-1);
   });
-  test('should return -2 if tile status is uninstall', () => {
-    expect(getStatusSortableProp(tiles[3])).toEqual(-2);
+  test('should give higher priority to tile with connection errors', () => {
+    const tileA = {
+      offlineConnections: ['a', 'b'],
+    };
+    const tileB = {
+      numError: 2,
+    };
+
+    expect(tileCompare('status', false)(tileA, tileB)).toEqual(2);
+    expect(tileCompare('status', true)(tileA, tileB)).toEqual(-2);
+    expect(tileCompare('status', false)(tileB, tileA)).toEqual(-2);
+    expect(tileCompare('status', true)(tileB, tileA)).toEqual(2);
   });
-  test('should return -1 if tile status is pending setup', () => {
-    expect(getStatusSortableProp(tiles[0])).toEqual(-1);
+  test('should give higher priority to tile with more errors', () => {
+    const tileA = {
+      offlineConnections: ['a', 'b', 'c'],
+      status: TILE_STATUS.SUCCESS,
+    };
+    const tileB = {
+      numError: 2,
+      status: TILE_STATUS.HAS_ERRORS,
+    };
+
+    expect(tileCompare('status', false)(tileA, tileB)).toEqual(1);
+    expect(tileCompare('status', true)(tileA, tileB)).toEqual(-1);
   });
-  test('should return correct value if tile has errors', () => {
-    expect(getStatusSortableProp(tiles[6])).toEqual(50);
+  test('should give higher priority to tile with more errors if the status of tiles is same', () => {
+    const tileA = {
+      offlineConnections: ['a', 'b'],
+      numError: 1,
+      status: TILE_STATUS.HAS_ERRORS,
+    };
+    const tileB = {
+      numError: 2,
+      status: TILE_STATUS.HAS_ERRORS,
+    };
+
+    expect(tileCompare('status', false)(tileA, tileB)).toEqual(1);
+    expect(tileCompare('status', true)(tileA, tileB)).toEqual(-1);
+  });
+
+  test('should give higher priority to successful tiles than continue setup/uninstall', () => {
+    const tileA = {
+      status: TILE_STATUS.SUCCESS,
+    };
+    const tileB = {
+      status: TILE_STATUS.IS_PENDING_SETUP,
+    };
+
+    expect(tileCompare('status', false)(tileA, tileB)).toEqual(1);
+    expect(tileCompare('status', true)(tileA, tileB)).toEqual(-1);
+    expect(tileCompare('status', false)(tileB, tileA)).toEqual(-1);
+    expect(tileCompare('status', true)(tileB, tileA)).toEqual(1);
+  });
+  test('should give higher priority to continue setup tiles than continue uninstall', () => {
+    const tileA = {
+      status: TILE_STATUS.IS_PENDING_SETUP,
+    };
+    const tileB = {
+      status: TILE_STATUS.UNINSTALL,
+    };
+
+    expect(tileCompare('status', false)(tileA, tileB)).toEqual(1);
+    expect(tileCompare('status', true)(tileA, tileB)).toEqual(-1);
+    expect(tileCompare('status', false)(tileB, tileA)).toEqual(-1);
+    expect(tileCompare('status', true)(tileB, tileA)).toEqual(1);
   });
 });

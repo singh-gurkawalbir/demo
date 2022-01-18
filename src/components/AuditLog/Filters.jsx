@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useCallback } from 'react';
+import moment from 'moment';
+import { useSelector, useDispatch } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core';
+import { endOfDay } from 'date-fns';
 import { AUDIT_LOG_SOURCE_LABELS } from '../../constants/auditLog';
 import { selectors } from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter } from './ResourceFilters';
 import CeligoSelect from '../CeligoSelect';
+import ActionGroup from '../ActionGroup';
+import DateRangeSelector from '../DateRangeSelector';
+import { AUDIT_LOGS_RANGE_FILTERS } from '../../utils/resource';
+import actions from '../../actions';
+import Help from '../Help';
+import { getSelectedRange } from '../../utils/flowMetrics';
 
 const OPTION_ALL = { id: 'all', label: 'All' };
 
@@ -24,6 +32,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap',
+    width: '100%',
   },
   formControl: {
     marginRight: theme.spacing(1),
@@ -45,10 +54,27 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  downloadButton: {
+    '& .MuiButton-root': {
+      marginRight: 0,
+    },
+  },
+
+  helpTextButton: {
+    padding: 0,
+  },
 }));
+const defaultRange = {
+  startDate: new Date(),
+  endDate: endOfDay(new Date()),
+  preset: null,
+};
 
 export default function Filters(props) {
-  const {resourceType, resourceId, resourceDetails, onFiltersChange} = props;
+  const [date, setDate] = useState(defaultRange);
+
+  const {resourceType, resourceId, resourceDetails, onFiltersChange, childId} = props;
+  const dispatch = useDispatch();
   const classes = useStyles();
   const {
     users,
@@ -58,6 +84,23 @@ export default function Filters(props) {
     resourceType,
     resourceId
   ));
+  const handleDateFilter = useCallback(
+    dateFilter => {
+      setDate(dateFilter);
+      const selectedRange = getSelectedRange(dateFilter);
+
+      const fromDate = selectedRange.startDate && moment(selectedRange.startDate).startOf('day').toISOString();
+      const toDate = selectedRange.endDate && moment(selectedRange.endDate).endOf('day').toISOString();
+
+      dispatch(actions.auditLogs.download(
+        {
+          resourceType,
+          resourceId,
+          childId,
+          filters: { fromDate, toDate },
+        }
+      ));
+    }, [childId, dispatch, resourceId, resourceType]);
 
   const [filters, setFilters] = useState(
     {
@@ -68,6 +111,14 @@ export default function Filters(props) {
       source: OPTION_ALL.id,
     }
   );
+  const canDownloadLogs = useSelector(state =>
+    selectors.auditLogs(
+      state,
+      resourceType,
+      resourceId,
+      undefined,
+      {childId}
+    ).totalCount);
 
   const getResource = () => {
     const resource =
@@ -103,64 +154,85 @@ export default function Filters(props) {
   return (
     <div className={classes.filterContainer}>
       <form className={classes.root} autoComplete="off">
-        <ResourceTypeFilter
-          {...props}
-          classes={classes}
-          affectedResources={affectedResources}
-          filters={filters}
-          onChange={handleChange}
-        />
-        <ResourceIdFilter
-          {...props}
-          classes={classes}
-          affectedResources={affectedResources}
-          filters={filters}
-          onChange={handleChange}
-        />
-        <FormControl className={classes.formControl}>
-          <CeligoSelect
-            inputProps={userInput}
+        <ActionGroup >
+          <ResourceTypeFilter
+            {...props}
+            classes={classes}
+            affectedResources={affectedResources}
+            filters={filters}
             onChange={handleChange}
-            value={byUser}>
-            <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
-              Select user
-            </MenuItem>
-            {users.map(opt => (
-              <MenuItem key={opt._id} value={opt._id}>
-                {opt.name || opt.email}
-              </MenuItem>
-            ))}
-          </CeligoSelect>
-        </FormControl>
-        <FormControl className={classes.formControl}>
-          <CeligoSelect
-            inputProps={sourceInput}
+        />
+          <ResourceIdFilter
+            {...props}
+            classes={classes}
+            affectedResources={affectedResources}
+            filters={filters}
             onChange={handleChange}
-            value={source}>
-            <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
-              Select source
-            </MenuItem>
-            {[
-              ...Object.keys(AUDIT_LOG_SOURCE_LABELS)
-                .filter(k => {
-                  if (!resource) {
-                    return true;
-                  }
-
-                  if (resource._connectorId) {
-                    return k !== 'stack';
-                  }
-
-                  return k !== 'connector';
-                })
-                .map(k => [k, AUDIT_LOG_SOURCE_LABELS[k]]),
-            ].map(opt => (
-              <MenuItem key={opt[0]} value={opt[0]}>
-                {opt[1]}
+        />
+          <FormControl className={classes.formControl}>
+            <CeligoSelect
+              isLoggable={false}
+              inputProps={userInput}
+              onChange={handleChange}
+              value={byUser}>
+              <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
+                Select user
               </MenuItem>
-            ))}
-          </CeligoSelect>
-        </FormControl>
+              {users.map(opt => (
+                <MenuItem key={opt._id} value={opt._id} data-private>
+                  {opt.name || opt.email}
+                </MenuItem>
+              ))}
+            </CeligoSelect>
+          </FormControl>
+          <FormControl className={classes.formControl}>
+            <CeligoSelect
+              isLoggable
+              inputProps={sourceInput}
+              onChange={handleChange}
+              value={source}>
+              <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
+                Select source
+              </MenuItem>
+              {[
+                ...Object.keys(AUDIT_LOG_SOURCE_LABELS)
+                  .filter(k => {
+                    if (!resource) {
+                      return true;
+                    }
+
+                    if (resource._connectorId) {
+                      return k !== 'stack';
+                    }
+
+                    return k !== 'connector';
+                  })
+                  .map(k => [k, AUDIT_LOG_SOURCE_LABELS[k]]),
+              ].map(opt => (
+                <MenuItem key={opt[0]} value={opt[0]}>
+                  {opt[1]}
+                </MenuItem>
+              ))}
+            </CeligoSelect>
+          </FormControl>
+        </ActionGroup>
+        <ActionGroup position="right" className={classes.downloadButton}>
+          <DateRangeSelector
+            disabled={!canDownloadLogs}
+            primaryButtonLabel="Download"
+            placement="right"
+            fixedPlaceholder="Download"
+            clearValue={defaultRange}
+            onSave={handleDateFilter}
+            value={date}
+            customPresets={AUDIT_LOGS_RANGE_FILTERS}
+         />
+          <Help
+            title="Download"
+            className={classes.helpTextButton}
+            helpKey="auditlogs.download"
+      />
+        </ActionGroup>
       </form>
     </div>
   );

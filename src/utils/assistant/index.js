@@ -14,6 +14,7 @@ import {
   isNumber,
   get,
 } from 'lodash';
+import { getPathParams } from './pathParamUtils';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
   'allowUndefinedResource',
@@ -600,7 +601,9 @@ export function getImportOperationDetails({
   });
 }
 
-export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
+export function convertFromExport({ exportDoc: exportDocOrig, assistantData: assistantDataOrig, adaptorType }) {
+  const exportDoc = cloneDeep(exportDocOrig);
+  const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
@@ -673,7 +676,7 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
     [operationDetails.url],
     exportAdaptorSubSchema.relativeURI || ''
   );
-  const pathParams = {};
+  let pathParams = {};
   let queryParams = {};
   let bodyParams = {};
 
@@ -681,34 +684,7 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
     operationDetails.pathParameters &&
     operationDetails.pathParameters.length > 0
   ) {
-    operationDetails.pathParameters.forEach((p, index) => {
-      if (urlMatch && urlMatch.urlParts && urlMatch.urlParts[index]) {
-        pathParams[p.id] = urlMatch.urlParts[index];
-      }
-
-      if (pathParams[p.id]) {
-        if (p.config) {
-          if (p.config.prefix) {
-            pathParams[p.id] = pathParams[p.id].replace(p.config.prefix, '');
-          }
-
-          if (p.config.suffix) {
-            pathParams[p.id] = pathParams[p.id].replace(p.config.suffix, '');
-          }
-        }
-
-        /* IO-3665 */
-        if (
-          pathParams[p.id].indexOf('(') === 0 &&
-          pathParams[p.id].indexOf(')') === pathParams[p.id].length - 1
-        ) {
-          pathParams[p.id] = pathParams[p.id].substring(
-            1,
-            pathParams[p.id].length - 1
-          );
-        }
-      }
-    });
+    pathParams = getPathParams({relativePath: operationDetails.url, actualPath: exportAdaptorSubSchema.relativeURI, pathParametersInfo: operationDetails?.pathParameters});
   }
 
   if (
@@ -1502,7 +1478,11 @@ export function updateFormValues({
   return updatedFormValues;
 }
 
-export function convertFromImport({ importDoc, assistantData, adaptorType }) {
+export function convertFromImport({ importDoc: importDocOrig, assistantData: assistantDataOrig, adaptorType }) {
+  // mutating of args so we are cloning of objects to allow this operation
+  const importDoc = cloneDeep(importDocOrig);
+
+  const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation, lookupType } =
     importDoc.assistantMetadata || {};
   const { dontConvert, lookups } = importDoc.assistantMetadata || {};
@@ -2178,6 +2158,8 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     '/assistantMetadata': assistantMetadata,
     '/ignoreExisting': !!ignoreExisting,
     '/ignoreMissing': !!ignoreMissing,
+    // AdaptorType will be added by backend. UI shouldnt set/update adaptorType
+    '/adaptorType': undefined,
   };
 }
 

@@ -30,7 +30,7 @@ export default function CeligoTable({
   return (
     <div className={className}>
       <TableContextWrapper value={actionProps}>
-        <Table data-public size={size || 'medium'}>
+        <Table size={size || 'medium'}>
           <TableHeader
             data={data}
             onSelectChange={onSelectChange}

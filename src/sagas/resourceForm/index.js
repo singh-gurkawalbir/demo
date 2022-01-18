@@ -1,5 +1,6 @@
 import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
-import { isEmpty } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
+
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -140,6 +141,12 @@ function* updateFileAdaptorSampleData({ resourceId, resourceType, values }) {
     isAS2Resource(resourceObj) ||
     (resourceType === 'exports' && (isRestCsvMediaTypeExport(resourceObj, connectionObj)))
   ) {
+    // IO-23787 The latest sample data which is edited, is available on the resourceObject
+    // Handled in DynaFileDefintionEditor_afe when user updates the sample data and saves it
+    if (['filedefinition', 'fixed', 'delimited/edifact'].includes(resourceObj?.file?.type)) {
+      if (resourceObj?.sampleData) return { ...values, '/sampleData': resourceObj?.sampleData };
+    }
+
     const sampleData = yield call(_fetchRawDataForFileAdaptors, {
       resourceId,
       resourceType,
@@ -178,14 +185,27 @@ export function* deleteUISpecificValues({ values, resourceId }) {
   });
 
   // TO DO: This logic should be revisited
-  if (valuesCopy['/file/sortByFields'] || valuesCopy['/file/groupByFields']) {
+  const csvKeyColumns = valuesCopy['/file/csv']?.keyColumns;
+  const xlsxKeyColumns = valuesCopy['/file/xlsx/keyColumns'];
+  const groupByFields = valuesCopy['/file/groupByFields'];
+  let canDeprecateOldFields = !!valuesCopy['/file/sortByFields'];
+
+  if ((csvKeyColumns && !isEqual(csvKeyColumns, groupByFields)) || (xlsxKeyColumns && !isEqual(xlsxKeyColumns, groupByFields))) {
+    canDeprecateOldFields = true;
+  }
+  // Existing keycolumns should be removed if any changes are done in group by fields or sort by fields.
+  if (canDeprecateOldFields) {
     if (valuesCopy['/file/csv']?.keyColumns) {
       valuesCopy['/file/csv'].keyColumns = undefined;
     }
+    if (valuesCopy['/file/xlsx/keyColumns']) {
+      valuesCopy['/file/xlsx/keyColumns'] = undefined;
+    }
+  } else if ((csvKeyColumns && isEqual(csvKeyColumns, groupByFields)) || (xlsxKeyColumns && isEqual(xlsxKeyColumns, groupByFields))) {
+    // Group by fields is initial copy of key columns, If group by fields is not modified and it is same as key columns, then it should be removed.
+    valuesCopy['/file/groupByFields'] = undefined;
   }
-  if (valuesCopy['/file/xlsx/keyColumns']) {
-    valuesCopy['/file/xlsx/keyColumns'] = undefined;
-  }
+
   // remove any staged values tied to it the ui fields
   const predicateForPatchFilter = patch =>
     !UI_FIELD_VALUES.includes(patch.path);

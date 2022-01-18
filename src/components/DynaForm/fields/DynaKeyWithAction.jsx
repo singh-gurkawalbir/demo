@@ -5,6 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 import FieldMessage from './FieldMessage';
 import EditIcon from '../../icons/EditIcon';
 import DeleteOutlinedIcon from '../../icons/TrashIcon';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles({
   container: {
@@ -32,6 +33,7 @@ export default function DynaKeyWithAction(props) {
     onClick,
     keyName = 'key',
     id,
+    isLoggable,
   } = props;
   const classes = useStyles(props);
   const [values, setValues] = useState([]);
@@ -48,7 +50,7 @@ export default function DynaKeyWithAction(props) {
     <div data-test={id} className={classes.container}>
       {tableData.map(r => (
         <div className={classes.rowContainer} key={r.row}>
-          <Typography onClick={onClick} className={classes.label}>
+          <Typography onClick={onClick} className={classes.label} {...isLoggableAttr(isLoggable)}>
             {r[keyName]}
           </Typography>
           <div>

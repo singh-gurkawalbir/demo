@@ -1,12 +1,12 @@
 export default {
   'export.ftp.directoryPath': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Directory path',
     required: true,
   },
   'export.file.skipDelete': {
-    loggable: true,
+    isLoggable: true,
     type: 'checkbox',
     label: 'Leave file on server',
     helpKey: 'export.file.skipDelete',

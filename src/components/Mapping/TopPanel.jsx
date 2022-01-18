@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     flex: 1,
-    marginLeft: theme.spacing(3),
+    marginLeft: theme.spacing(4),
   },
   headerChildRight: {
     marginLeft: theme.spacing(2),
@@ -63,7 +63,6 @@ export default function TopPanel({
   importId,
   disabled,
   subRecordMappingId,
-  dataPublic,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -117,7 +116,6 @@ export default function TopPanel({
     <div className={classes.header}>
       <div className={classes.headerChild}>
         <Typography
-          data-public={!!dataPublic}
           variant="h5"
           className={clsx(classes.topHeading, {
           // [classes.topHeadingCustomWidth]: mappingPreviewType,
@@ -139,7 +137,6 @@ export default function TopPanel({
       <div className={clsx(classes.headerChild, classes.headerChildRight)}>
 
         <Typography
-          data-public={!!dataPublic}
           variant="h5"
           className={clsx(classes.topHeading)}>
           {generateLabel}

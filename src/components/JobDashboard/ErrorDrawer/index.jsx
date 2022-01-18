@@ -111,7 +111,7 @@ export default function ErrorDrawer({
       helpKey="jobErrors.helpSummary"
       helpTitle="Job errors"
       onClose={handleClose}>
-      <DrawerHeader data-public title={title} />
+      <DrawerHeader title={title} />
       <DrawerContent>
         <div className={classes.wrapperErrorDrawer}>
           {(!flowJobChildrenLoaded || anyChildJobsAreInProgress) && (

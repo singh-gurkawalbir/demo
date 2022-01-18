@@ -7,7 +7,8 @@ export default {
     '/http/mediaType': 'json',
     '/http/baseURI': `https://api.businesscentral.dynamics.com/v2.0/${
       formValues['/http/unencrypted/environmentName']
-    }/api/v1.0`,
+    }/api`,
+    '/http/ping/relativeURI': '/v1.0/companies',
     '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',
     '/http/auth/oauth/tokenURI':

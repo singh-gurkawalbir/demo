@@ -95,7 +95,9 @@ export default function TokenGenerator(props) {
         <GenerateTokenButton {...props} className={classes.children} />
       </div>
       <div className={classes.dynaTokenField}>
-        <MaterialUiTextField {...props} label={inputboxLabel || label} disabled={false} required />
+        <MaterialUiTextField
+          {...props} label={inputboxLabel || label} disabled={false} required
+          isLoggable={false} />
       </div>
     </div>
   );

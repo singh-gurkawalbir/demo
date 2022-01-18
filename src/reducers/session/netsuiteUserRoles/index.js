@@ -17,7 +17,7 @@ export default (state = {}, action) => {
     case actionTypes.NETSUITE_USER_ROLES.REQUEST:
       if (!newState[connectionId]) newState[connectionId] = {};
 
-      newState[connectionId].hideNotificationMessage = hideNotificationMessage;
+      newState[connectionId] = {...newState[connectionId], hideNotificationMessage};
 
       return newState;
     case actionTypes.NETSUITE_USER_ROLES.RECEIVED:

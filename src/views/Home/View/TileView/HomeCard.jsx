@@ -76,7 +76,7 @@ export default function HomeCard({ sortedTiles }) {
             index={index}
             hideSortableGhost={false}
             value={(
-              <div data-public>
+              <>
                 {t.ssLinkedConnectionId ? (
                   <SuiteScriptTile
                     tile={t}
@@ -92,7 +92,7 @@ export default function HomeCard({ sortedTiles }) {
                     isTileDragged={dragItemIndex === index}
                   />
                 )}
-              </div>
+              </>
             )}
           />
         ))}

@@ -33,7 +33,7 @@ export const useIsFreshLoadData = errorConfig => {
   return !!((!errorObj.status || errorObj.status === 'requested') && !errorObj.nextPageURL);
 };
 
-export default function ErrorTable({ flowId, resourceId, isResolved }) {
+export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }) {
   const classes = useStyles();
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
@@ -70,6 +70,7 @@ export default function ErrorTable({ flowId, resourceId, isResolved }) {
     <div className={clsx(classes.errorTableWrapper)}>
       <FetchErrorsHook
         flowId={flowId}
+        flowJobId={flowJobId}
         resourceId={resourceId}
         isResolved={isResolved}
         filterKey={filterKey}

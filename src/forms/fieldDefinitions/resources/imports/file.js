@@ -2,7 +2,7 @@ export default {
   // Todo why helpKey is it named csv file id like to change it to
   // something meaningful
   'file.type': {
-    loggable: true,
+    isLoggable: true,
     type: 'filetypeselect',
     label: 'File type',
     required: true,
@@ -27,7 +27,7 @@ export default {
       r.file.fileDefinition._fileDefinitionId,
   },
   'file.fileName': {
-    loggable: true,
+    isLoggable: true,
     type: 'ftpfilenamewitheditor',
     label: r => r?.adaptorType === 'S3Import' ? 'File key' : 'File name',
     helpKey: r => {
@@ -76,7 +76,7 @@ export default {
     },
   },
   'edix12.format': {
-    loggable: true,
+    isLoggable: true,
     type: 'filedefinitionselect',
     label: 'EDI x12 format',
     format: 'edi',
@@ -89,7 +89,7 @@ export default {
     ],
   },
   'fixed.format': {
-    loggable: true,
+    isLoggable: true,
     type: 'filedefinitionselect',
     label: 'Format',
     format: 'fixed',
@@ -102,7 +102,7 @@ export default {
     ],
   },
   'edifact.format': {
-    loggable: true,
+    isLoggable: true,
     type: 'filedefinitionselect',
     label: 'EDIFACT format',
     format: 'ediFact',
@@ -115,7 +115,7 @@ export default {
     ],
   },
   'file.filedefinition.rules': {
-    loggable: true,
+    isLoggable: true,
     type: 'filedefinitioneditor',
     label: 'File generator helper',
     helpKey: 'import.file.filedefinition.rules',
@@ -154,7 +154,7 @@ export default {
     ],
   },
   'file.csv': {
-    loggable: true,
+    isLoggable: true,
     type: 'csvgenerate',
     label: 'CSV generator helper',
     helpKey: 'file.csvGenerate',
@@ -175,7 +175,7 @@ export default {
     ],
   },
   'file.xlsx.includeHeader': {
-    loggable: true,
+    isLoggable: true,
     type: 'checkbox',
     label: 'Include header',
     visibleWhenAll: [
@@ -186,7 +186,7 @@ export default {
     ],
   },
   'file.compressionFormat': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'Compression format',
     options: [{ items: [{ label: 'gzip', value: 'gzip' }, { label: 'zip', value: 'zip' }] }],
@@ -204,7 +204,7 @@ export default {
     ],
   },
   'file.encrypt': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'Encryption algorithm',
     connectionId: r => r && r._connectionId,
@@ -215,7 +215,7 @@ export default {
     requiredWhen: [{ field: 'pgpencrypt', is: [true] }],
   },
   'file.pgp.symmetricKeyAlgorithm': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'Encryption symmetric key algorithm',
     requiredWhenAll: [
@@ -236,7 +236,7 @@ export default {
     options: [{ items: [{ label: 'twofish', value: 'twofish' }, { label: 'cast5', value: 'cast5' }, { label: '3des', value: '3des' }, { label: 'aes128', value: 'aes128' }, { label: 'aes192', value: 'aes192' }, { label: 'aes256', value: 'aes256' }] }],
   },
   'file.pgp.hashAlgorithm': {
-    loggable: true,
+    isLoggable: true,
     type: 'hashalgorithm',
     label: 'Signing hash algorithm',
     connectionId: r => r && r._connectionId,
@@ -262,7 +262,7 @@ export default {
     },
   },
   'file.backupPath': {
-    loggable: true,
+    isLoggable: true,
     type: 'uri',
     label: r => r?.adaptorType === 'S3Import' ? 'Backup bucket name' : 'Backup files path',
     helpKey: r => {
@@ -279,7 +279,7 @@ export default {
     showLookup: false,
   },
   'file.skipAggregation': {
-    loggable: true,
+    isLoggable: true,
     type: 'checkbox',
     label: 'Skip aggregation',
     visibleWhenAll: [
@@ -290,12 +290,12 @@ export default {
     ],
   },
   'file.fileDefinition._fileDefinitionId': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'File file definition _file definition id',
   },
   'file.encoding': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'File encoding',
     visibleWhenAll: [

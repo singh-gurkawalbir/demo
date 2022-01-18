@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -111,6 +112,15 @@ export default {
 
         retValues['/ignoreExisting'] = false;
         retValues['/ignoreMissing'] = false;
+
+        if (retValues['/http/existingLookupName']) {
+          retValues['/http/existingExtract'] = undefined;
+        } else if (retValues['/http/existingExtract']) {
+          retValues['/http/existingLookupName'] = undefined;
+        } else {
+          retValues['/http/existingLookupName'] = undefined;
+          retValues['/http/existingExtract'] = undefined;
+        }
       } else if (retValues['/http/compositeType'] === 'createandignore') {
         retValues['/http/relativeURI'] = [retValues['/http/relativeURICreate']];
         retValues['/http/method'] = [retValues['/http/compositeMethodCreate']];
@@ -118,6 +128,8 @@ export default {
         retValues['/http/resourceId'] = undefined;
         retValues['/http/ignoreLookupName'] = undefined;
         retValues['/http/ignoreExtract'] = undefined;
+        retValues['/http/existingLookupName'] = undefined; // for create and update composite type
+        retValues['/http/existingExtract'] = undefined;
 
         if (retValues['/http/resourceIdPathCreate']) {
           retValues['/http/response/resourceIdPath'] = [
@@ -191,6 +203,8 @@ export default {
         retValues['/http/resourceId'] = undefined;
         retValues['/http/ignoreLookupName'] = undefined;
         retValues['/http/ignoreExtract'] = undefined;
+        retValues['/http/existingLookupName'] = undefined; // for create and update composite type
+        retValues['/http/existingExtract'] = undefined;
 
         if (retValues['/http/resourceIdPathUpdate']) {
           retValues['/http/response/resourceIdPath'] = [
@@ -267,6 +281,8 @@ export default {
         : [];
       retValues['/http/ignoreLookupName'] = undefined;
       retValues['/http/ignoreExtract'] = undefined;
+      retValues['/http/existingLookupName'] = undefined; // for create and update composite type
+      retValues['/http/existingExtract'] = undefined;
       retValues['/http/existingDataId'] = undefined;
       retValues['/http/update/existingDataId'] = undefined;
     }
@@ -293,6 +309,7 @@ export default {
     delete retValues['/inputMode'];
     delete retValues['/http/existingLookupType'];
     delete retValues['/http/newLookupType'];
+    delete retValues['/http/lookupType'];
     delete retValues['/http/ignoreExistingExtract'];
     delete retValues['/http/ignoreNewExtract'];
     delete retValues['/http/ignoreExistingLookupName'];
@@ -329,10 +346,9 @@ export default {
       ];
 
       // checking if requestMediaType value changed. Reset body value when requestMediaType changes. Also, store requestMediaType value to check for change
-      bodyFields.forEach(field => {
-        const f = field;
-
-        if (f && f.requestMediaType !== requestMediaTypeField.value) {
+      bodyFields.forEach(f => {
+        if (!f) return;
+        if (f.requestMediaType && requestMediaTypeField.value && f.requestMediaType !== requestMediaTypeField.value) {
           f.value = '';
           f.requestMediaType = requestMediaTypeField.value;
         }
@@ -1218,6 +1234,15 @@ export default {
     'http.ignoreNewLookupName': {
       fieldId: 'http.ignoreNewLookupName',
     },
+    'http.lookupType': {
+      fieldId: 'http.lookupType',
+    },
+    'http.existingExtract': {
+      fieldId: 'http.existingExtract',
+    },
+    'http.existingLookupName': {
+      fieldId: 'http.existingLookupName',
+    },
     'http.successMediaType': { fieldId: 'http.successMediaType' },
     blobKeyPath: { fieldId: 'blobKeyPath' },
     'http.errorMediaType': { fieldId: 'http.errorMediaType' },
@@ -1328,6 +1353,11 @@ export default {
                 collapsed: true,
                 label: 'Identify existing records',
                 fields: ['http.newLookupType', 'http.ignoreNewExtract', 'http.ignoreNewLookupName'],
+              },
+              {
+                collapsed: true,
+                label: 'Identify existing records',
+                fields: ['http.lookupType', 'http.existingExtract', 'http.existingLookupName'],
               },
               {
                 collapsed: true,

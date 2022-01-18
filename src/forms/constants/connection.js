@@ -135,6 +135,7 @@ export default {
     'sapbusinessone',
     'bartender',
     'jazzhr',
+    'segment',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -142,6 +143,7 @@ export default {
     'squareup',
     'shipbob',
     'ebay',
+    'ebayfinance',
     'vend',
     'google',
     'salesforce',

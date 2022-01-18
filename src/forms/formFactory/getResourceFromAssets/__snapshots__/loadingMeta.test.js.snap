@@ -52,6 +52,7 @@ Object {
       },
       "http.encrypted.clientSecret": Object {
         "defaultValue": "",
+        "description": "Note: for security reasons this field must always be re-entered.",
         "helpKey": "adp.connection.http.encrypted.clientSecret",
         "id": "http.encrypted.clientSecret",
         "inputType": "password",
@@ -236,6 +237,7 @@ Object {
       },
       "http.encrypted.apiKey": Object {
         "defaultValue": "",
+        "description": "Note: for security reasons this field must always be re-entered.",
         "helpKey": "certify.connection.http.encrypted.apiKey",
         "id": "http.encrypted.apiKey",
         "inputType": "password",
@@ -245,6 +247,7 @@ Object {
       },
       "http.encrypted.apiSecret": Object {
         "defaultValue": "",
+        "description": "Note: for security reasons this field must always be re-entered.",
         "helpKey": "certify.connection.http.encrypted.apiSecret",
         "id": "http.encrypted.apiSecret",
         "inputType": "password",
@@ -7238,7 +7241,6 @@ Object {
               "helpscout",
               "mailparser-io",
               "sapariba",
-              "segment",
               "travis",
               "travis-org",
               "webhook",
@@ -7327,6 +7329,7 @@ Object {
               "parseur",
               "postmark",
               "recurly",
+              "segment",
               "shipwire",
               "shopify",
               "slack",
@@ -8794,6 +8797,12 @@ Object {
       "http.errorMediaType": Object {
         "fieldId": "http.errorMediaType",
       },
+      "http.existingExtract": Object {
+        "fieldId": "http.existingExtract",
+      },
+      "http.existingLookupName": Object {
+        "fieldId": "http.existingLookupName",
+      },
       "http.existingLookupType": Object {
         "fieldId": "http.existingLookupType",
       },
@@ -8928,6 +8937,9 @@ Object {
       },
       "http.ignoreNewLookupName": Object {
         "fieldId": "http.ignoreNewLookupName",
+      },
+      "http.lookupType": Object {
+        "fieldId": "http.lookupType",
       },
       "http.lookups": Object {
         "fieldId": "http.lookups",
@@ -9369,6 +9381,15 @@ Object {
                     Object {
                       "collapsed": true,
                       "fields": Array [
+                        "http.lookupType",
+                        "http.existingExtract",
+                        "http.existingLookupName",
+                      ],
+                      "label": "Identify existing records",
+                    },
+                    Object {
+                      "collapsed": true,
+                      "fields": Array [
                         "http.compositeMethodUpdate",
                         "http.relativeURIUpdate",
                         "http.bodyUpdate",
@@ -9781,6 +9802,12 @@ Object {
       "http.compositeType": Object {
         "fieldId": "http.compositeType",
       },
+      "http.existingExtract": Object {
+        "fieldId": "http.existingExtract",
+      },
+      "http.existingLookupName": Object {
+        "fieldId": "http.existingLookupName",
+      },
       "http.existingLookupType": Object {
         "fieldId": "http.existingLookupType",
       },
@@ -9798,6 +9825,9 @@ Object {
       },
       "http.ignoreNewLookupName": Object {
         "fieldId": "http.ignoreNewLookupName",
+      },
+      "http.lookupType": Object {
+        "fieldId": "http.lookupType",
       },
       "http.lookups": Object {
         "fieldId": "http.lookups",
@@ -10135,6 +10165,15 @@ Object {
                     "http.newLookupType",
                     "http.ignoreNewExtract",
                     "http.ignoreNewLookupName",
+                  ],
+                  "label": "Identify existing records",
+                },
+                Object {
+                  "collapsed": true,
+                  "fields": Array [
+                    "http.lookupType",
+                    "http.existingExtract",
+                    "http.existingLookupName",
                   ],
                   "label": "Identify existing records",
                 },
@@ -12651,7 +12690,6 @@ Object {
               "helpscout",
               "mailparser-io",
               "sapariba",
-              "segment",
               "travis",
               "travis-org",
               "webhook",
