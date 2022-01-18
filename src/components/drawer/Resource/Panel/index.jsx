@@ -10,6 +10,7 @@ import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
 import EditorDrawer from '../../../AFE/Drawer';
+import ExpandModeEditorDrawer from '../../../DynaForm/fields/DynaEditor/ExpandModeEditor/Drawer';
 import ExportsPreviewPanel from '../../../ExportsPreviewPanel';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import Back from '../../../icons/BackArrowIcon';
@@ -402,6 +403,7 @@ export default function Panel(props) {
         </LoadResources>
       </div>
       <EditorDrawer />
+      <ExpandModeEditorDrawer />
       <FlowStepRequestLogsDrawer flowId={flowId} resourceType={resourceType} resourceId={id} />
     </>
   );
