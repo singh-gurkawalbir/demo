@@ -43,6 +43,27 @@ export const useSetInitializeFormData = ({
   ]);
 };
 
+function setDefaultValuesForDelta(paramName, paramsMeta, params, result) {
+  const anyParamValuesSet = paramsMeta?.fields?.some(field => !field.readOnly && Object.prototype.hasOwnProperty.call(params, field.id) && params[field.id] !== field.defaultValue);
+
+  if (!anyParamValuesSet) {
+    result.push({id: `assistantMetadata.${paramName}`, value: {...params, ...paramsMeta?.defaultValuesForDeltaExport}});
+  }
+}
+
+function deleteDeltaValues(paramName, params, result) {
+  const newParams = {};
+
+  Object.keys(params || emptyObject).forEach(param => {
+    // When export type is changed to all, delete body params with delta attributes in them
+    if (!params[param]?.includes?.('lastExportDateTime')) {
+      newParams[param] = params[param];
+    }
+  });
+
+  result.push({id: `assistantMetadata.${paramName}`, value: newParams});
+}
+
 function DynaAssistantOptions(props) {
   const {
     label,
@@ -82,6 +103,11 @@ function DynaAssistantOptions(props) {
     value: queryParams,
     paramMeta: queryParamsMeta,
   } = useSelector(state => selectors.fieldState(state, props.formKey, 'assistantMetadata.queryParams'), shallowEqual) || emptyObject;
+  const {
+    value: bodyParams,
+    paramMeta: bodyParamsMeta,
+  } = useSelector(state => selectors.fieldState(state, props.formKey, 'assistantMetadata.bodyParams'), shallowEqual) || emptyObject;
+
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
       adaptorType: formContext.adaptorType,
@@ -202,23 +228,12 @@ function DynaAssistantOptions(props) {
       allTouchedFields.push({ id, value });
 
       if (id === 'assistantMetadata.exportType') {
-        const newParams = {};
-
         if (value === 'delta') {
-          const anyParamValuesSet = queryParamsMeta?.fields?.some(field => !field.readOnly && Object.prototype.hasOwnProperty.call(queryParams, field.id) && queryParams[field.id] !== field.defaultValue);
-
-          if (!anyParamValuesSet) {
-            allTouchedFields.push({id: 'assistantMetadata.queryParams', value: {...queryParams, ...queryParamsMeta?.defaultValuesForDeltaExport}});
-          }
+          setDefaultValuesForDelta('queryParams', queryParamsMeta, queryParams, allTouchedFields);
+          setDefaultValuesForDelta('bodyParams', bodyParamsMeta, bodyParams, allTouchedFields);
         } else {
-          Object.keys(queryParams || emptyObject).forEach(param => {
-            // When export type is changed to all, delete query params with delta attributes in them
-            if (!queryParams[param]?.includes?.('lastExportDateTime')) {
-              newParams[param] = queryParams[param];
-            }
-          });
-
-          allTouchedFields.push({id: 'assistantMetadata.queryParams', value: newParams});
+          deleteDeltaValues('queryParams', queryParams, allTouchedFields);
+          deleteDeltaValues('bodyParams', bodyParams, allTouchedFields);
         }
       }
       dispatch(
