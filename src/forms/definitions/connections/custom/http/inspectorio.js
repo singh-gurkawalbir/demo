@@ -52,6 +52,8 @@ export default {
       label: 'API Key',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'inspectorio.connection.http.encrypted.apiKey',
     },
     application: {

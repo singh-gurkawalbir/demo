@@ -16,6 +16,7 @@ import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
 import CalendarIcon from '../../../icons/CalendarIcon';
 import actions from '../../../../actions';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   dynaDateTimeLabelWrapper: {
@@ -90,7 +91,7 @@ const useTimePickerProps = removePickerDialog => {
 };
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, timeLabel, dateLabel, required, formKey, onFieldChange, value = '', disabled, removePickerDialog, resourceContext, ssLinkedConnectionId, skipTimezoneConversion} = props;
+  const { id, label, timeLabel, dateLabel, required, formKey, onFieldChange, value = '', disabled, removePickerDialog, resourceContext, ssLinkedConnectionId, skipTimezoneConversion, isLoggable} = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -196,6 +197,7 @@ export default function DateTimePicker(props) {
         <div className={classes.dateTimeWrapper}>
           <div className={classes.fieldWrapper}>
             <KeyboardDatePicker
+              {...isLoggableAttr(isLoggable)}
               disabled={disabled}
               variant="inline"
               data-test="date"
@@ -225,6 +227,7 @@ export default function DateTimePicker(props) {
           </div>
           <div className={classes.fieldWrapper}>
             <KeyboardTimePicker
+              {...isLoggableAttr(isLoggable)}
               disabled={disabled}
               variant="inline"
               data-test="time"

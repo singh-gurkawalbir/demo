@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import Retry from '../actions/Retry';
 import ViewErrorDetails from '../actions/ViewErrorDetails';
 import ViewHttpRequest from '../actions/ViewHttpRequest';
@@ -14,6 +15,9 @@ import Classification from '../cells/Classification';
 import SelectDate from '../cells/SelectDate';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import EditRetryData from '../actions/EditRetry';
+import { selectors } from '../../../../reducers';
+import ViewNetsuiteRequest from '../actions/ViewNetsuiteRequest';
+import ViewNetsuiteResponse from '../actions/ViewNetsuiteResponse';
 
 const options = {allowedTags: ['a']};
 export default {
@@ -22,6 +26,7 @@ export default {
     {
       key: 'selectAll',
       width: 24,
+      isLoggable: true,
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
@@ -63,11 +68,13 @@ export default {
 
         return <SelectClassification {...tableContext} />;
       },
+      isLoggable: true,
       Value: ({rowData: r}) => <Classification error={r} />,
       width: '10%',
     },
     {
       key: 'selectDate',
+      isLoggable: true,
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
@@ -88,6 +95,7 @@ export default {
     },
     {
       key: 'resolvedAt',
+      isLoggable: true,
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
@@ -103,7 +111,8 @@ export default {
     },
   ],
   useRowActions: ({ retryDataKey, reqAndResKey }) => {
-    const {actionInProgress} = useGetTableContext();
+    const {actionInProgress, resourceId} = useGetTableContext();
+    const isResourceNetsuite = useSelector(state => selectors.isResourceNetsuite(state, resourceId));
     const actions = [];
 
     if (actionInProgress) return actions;
@@ -116,7 +125,9 @@ export default {
       actions.push(EditRetryData);
     }
     if (reqAndResKey) {
-      actions.push(ViewHttpRequest, ViewHttpResponse);
+      isResourceNetsuite
+        ? actions.push(ViewNetsuiteRequest, ViewNetsuiteResponse)
+        : actions.push(ViewHttpRequest, ViewHttpResponse);
     }
 
     return actions;

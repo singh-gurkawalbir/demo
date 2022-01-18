@@ -15,6 +15,7 @@ import SettingsDrawer from './drawers/Settings';
 import EditorDrawer from '../../components/AFE/Drawer';
 import loadable from '../../utils/loadable';
 import retry from '../../utils/retry';
+import IsLoggableContextProvider from '../../components/IsLoggableContextProvider';
 
 const FlowBuilderBody = loadable(() =>
   retry(() => import(/* webpackChunkName: 'FlowBuilderBody' */ './FlowBuilderBody'))
@@ -60,12 +61,13 @@ export default function FlowBuilder() {
         <QueuedJobsDrawer />
         <EditorDrawer />
         <ErrorDetailsDrawer flowId={flowId} />
-        <SettingsDrawer
-          dataPublic
-          integrationId={integrationId}
-          resourceType="flows"
-          resourceId={flowId}
-          flowId={flowId} />
+        <IsLoggableContextProvider isLoggable>
+          <SettingsDrawer
+            integrationId={integrationId}
+            resourceType="flows"
+            resourceId={flowId}
+            flowId={flowId} />
+        </IsLoggableContextProvider>
         <ReplaceConnectionDrawer
           flowId={flowId}
           integrationId={integrationId}

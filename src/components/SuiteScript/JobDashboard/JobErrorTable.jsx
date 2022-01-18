@@ -85,6 +85,7 @@ const useColumns = () => [
   {
     key: 'time',
     heading: 'Time',
+    isLoggable: true,
     // eslint-disable-next-line react/display-name
     Value: ({rowData: r}) => <DateTimeDisplay dateTime={r.createdAt} />,
   },

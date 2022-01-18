@@ -1,6 +1,6 @@
 export default {
   'mongodb.method': {
-    loggable: true,
+    isLoggable: true,
     type: 'radiogroupforresetfields',
     fieldsToReset: [
       { id: 'ignoreExisting', type: 'checkbox' },
@@ -26,7 +26,7 @@ export default {
     ],
   },
   'mongodb.collection': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Collection',
     required: true,
@@ -38,7 +38,7 @@ export default {
     ],
   },
   'mongodb.lookupType': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'How would you like to identify existing records?',
     required: true,
@@ -71,7 +71,7 @@ export default {
     ],
   },
   'mongodb.document': {
-    loggable: true,
+    isLoggable: true,
     id: 'mongodb.document',
     type: 'sqlquerybuilder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
@@ -84,7 +84,7 @@ export default {
     ],
   },
   'mongodb.update': {
-    loggable: true,
+    isLoggable: true,
     id: 'mongodb.update',
     type: 'sqlquerybuilder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
@@ -97,7 +97,7 @@ export default {
     ],
   },
   'mongodb.ignoreLookupFilter': {
-    loggable: true,
+    isLoggable: true,
     id: 'mongodb.ignoreLookupFilter',
     type: 'sqlquerybuilder',
     label: 'MongoDB filter',
@@ -117,7 +117,7 @@ export default {
     ],
   },
   'mongodb.filter': {
-    loggable: true,
+    isLoggable: true,
     id: 'mongodb.filter',
     type: 'sqlquerybuilder',
     label: 'MongoDB filter',
@@ -130,7 +130,7 @@ export default {
     required: true,
   },
   'mongodb.ignoreExtract': {
-    loggable: true,
+    isLoggable: true,
     type: 'textwithflowsuggestion',
     showSuggestionsWithoutHandlebar: true,
     showLookup: false,
@@ -154,7 +154,7 @@ export default {
     ],
   },
   'mongodb.upsert': {
-    loggable: true,
+    isLoggable: true,
     type: 'checkbox',
     label: 'Upsert',
     visibleWhen: [

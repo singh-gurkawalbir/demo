@@ -2,7 +2,7 @@ import { AWS_REGIONS_LIST } from '../../../../utils/constants';
 
 export default {
   'dynamodb.region': {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'Region',
     required: true,
@@ -14,7 +14,7 @@ export default {
     ],
   },
   'dynamodb.method': {
-    loggable: true,
+    isLoggable: true,
     type: 'radiogroupforresetfields',
     label: 'Method',
     required: true,
@@ -39,13 +39,13 @@ export default {
     ],
   },
   'dynamodb.tableName': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Table name',
     required: true,
   },
   'dynamodb.partitionKey': {
-    loggable: true,
+    isLoggable: true,
     type: 'textwithflowsuggestion',
     showSuggestionsWithoutHandlebar: true,
     showLookup: false,
@@ -58,14 +58,14 @@ export default {
     ],
   },
   'dynamodb.sortKey': {
-    loggable: true,
+    isLoggable: true,
     type: 'textwithflowsuggestion',
     showSuggestionsWithoutHandlebar: true,
     showLookup: false,
     label: 'Sort key',
   },
   'dynamodb.itemDocument': {
-    loggable: true,
+    isLoggable: true,
     type: 'sqlquerybuilder',
     arrayIndex: 0,
     label: 'DynamoDB query',
@@ -77,7 +77,7 @@ export default {
     ],
   },
   'dynamodb.updateExpression': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Update expression',
     required: true,
@@ -89,12 +89,12 @@ export default {
     ],
   },
   'dynamodb.conditionExpression': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Key condition expression',
   },
   'dynamodb.expressionAttributeNames': {
-    loggable: true,
+    isLoggable: true,
     type: 'editor',
     label: 'Expression attribute names',
     mode: 'json',
@@ -113,7 +113,7 @@ export default {
     ],
   },
   'dynamodb.expressionAttributeValues': {
-    loggable: true,
+    isLoggable: true,
     type: 'sqlquerybuilder',
     label: 'Expression attribute values',
     defaultValue: r => r?.dynamodb?.expressionAttributeValues,
@@ -129,7 +129,7 @@ export default {
     ],
   },
   'dynamodb.ignoreExtract': {
-    loggable: true,
+    isLoggable: true,
     type: 'textwithflowsuggestion',
     showLookup: false,
     showSuggestionsWithoutHandlebar: true,

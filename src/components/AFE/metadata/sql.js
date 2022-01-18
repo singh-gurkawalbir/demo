@@ -32,6 +32,7 @@ export default {
       panels.push({
         title: 'Type your handlebars template here',
         area: 'rule',
+        isLoggable: true,
         Panel: HandlebarsPanel,
       });
     } else {
@@ -42,11 +43,13 @@ export default {
           {
             key: 'query',
             name: 'Type your handlebars template here',
+            isLoggable: true,
             Panel: HandlebarsPanel,
           },
           {
             key: 'default',
             name: 'Defaults',
+            // is this loggable?
             Panel: FeaturePanel,
             props: {
               mode: 'json',

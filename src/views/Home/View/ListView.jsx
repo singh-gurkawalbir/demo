@@ -1,11 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Typography, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
 import ResourceTable from '../../../components/ResourceTable';
 import ShowMoreDrawer from '../../../components/drawer/ShowMore';
 import { FILTER_KEY } from '../../../utils/home';
+import NoResultMessageWrapper from '../../../components/NoResultMessageWrapper';
+import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   textWrapper: {
@@ -39,9 +41,7 @@ export default function ListView() {
         count={perPageCount}
         maxCount={filteredCount} />
       {!filteredTiles?.length && totalCount && (
-      <Typography className={classes.textWrapper}>
-        Your search didn’t return any matching results. Try expanding your search criteria.
-      </Typography>
+      <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
       )}
     </div>
   );

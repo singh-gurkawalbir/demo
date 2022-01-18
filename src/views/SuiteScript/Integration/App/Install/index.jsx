@@ -272,7 +272,12 @@ export default function SuiteScriptIntegrationAppInstallation() {
     }
   }, [NETSUITE_CONNECTION, SALESFORCE_CONNECTION, connectorId, dispatch, history, match.url, ssLinkedConnectionId, verifyNSBundle, verifySFBundle]);
 
-  const handleSubmitComplete = useCallback((connectionId, isAuthorized, skipDrawerClose) => {
+  // const handleBackClick = useCallback(e => {
+  //   e.preventDefault();
+  //   history.push(getRoutePath('/marketplace'));
+  // }, [history]);
+
+  const handleSubmitComplete = useCallback((connectionId, isAuthorized, connectionDoc, skipDrawerClose) => {
     dispatch(
       actions.suiteScript.installer.updateSSLinkedConnectionId(
         connectorId,
@@ -312,7 +317,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
 
   useEffect(() => {
     if (installSteps && installSteps.length > 0 && !ssLinkedConnectionId && paramSSLinkedConnId) {
-      handleSubmitComplete(paramSSLinkedConnId, true, true);
+      handleSubmitComplete(paramSSLinkedConnId, true, null, true);
     }
   }, [handleSubmitComplete, installSteps, paramSSLinkedConnId, ssLinkedConnectionId]);
 

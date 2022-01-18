@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
+import { cloneDeep } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
@@ -37,11 +38,13 @@ export default function DynaMultiSubsidiaryMapping(props) {
   }, [_integrationId, dispatch, id]);
 
   const metadata = useMemo(() => {
-    if (data && data.optionsMap && Array.isArray(data.optionsMap)) {
-      data.optionsMap = data.optionsMap.map(addSupportsRefreshToOptions);
+    const formattedData = cloneDeep(data);
+
+    if (formattedData && formattedData.optionsMap && Array.isArray(formattedData.optionsMap)) {
+      formattedData.optionsMap = formattedData.optionsMap.map(addSupportsRefreshToOptions);
     }
 
-    return data;
+    return formattedData;
   }, [data]);
   const isLoadingMap = useMemo(() => ({[fieldType]: isLoading}), [fieldType, isLoading]);
 
