@@ -631,6 +631,8 @@ export const C_LOCKED_FIELDS = Object.freeze({
     '_keepDeltaBehindExportId',
     'settings',
   ],
+  // According to the backend, none of the async helper fields are editable
+  asyncHelpers: [],
 });
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];
 export const ALLOWED_HTML_TAGS =
@@ -740,9 +742,5 @@ export const POLLING_STATUS = {
   RESUME: 'resume polling',
   STOP: 'stop polling',
 };
-
-export const MAX_APPLICATIONS = 10;
-export const MAX_APPLICATIONS_IN_A_ROW = 5;
-export const APP_WIDTH = 30;
 
 Object.freeze(POLLING_STATUS);

@@ -51,6 +51,7 @@ export default {
       defaultValue: '',
       inputboxLabel: 'Token',
       required: true,
+      helpKey: 'concurinvoice.connection.http.auth.token.token',
     },
     'http.auth.token.refreshToken': {
       id: 'http.auth.token.refreshToken',

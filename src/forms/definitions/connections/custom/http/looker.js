@@ -64,6 +64,7 @@ export default {
       inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
+      helpKey: 'looker.connection.http.auth.token.token',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
     application: {
