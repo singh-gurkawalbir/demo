@@ -114,7 +114,7 @@ describe('session.resource reducers', () => {
       expect(state.licenseEntitlementUsage).toEqual(response);
     });
   });
-  describe('UPDATE_CHILD_INTEGRATION action', () => {
+  describe('RESOURCE.UPDATE_CHILD_INTEGRATION action', () => {
     test('should store the parent child integration map info', () => {
       const parentId = 'parentId';
       const childId = 'childId';
@@ -128,7 +128,7 @@ describe('session.resource reducers', () => {
       expect(state).toEqual(expected);
     });
   });
-  describe('CLEAR_CHILD_INTEGRATION action', () => {
+  describe('RESOURCE.CLEAR_CHILD_INTEGRATION action', () => {
     test('should be able to clear parent child integration map if any', () => {
       const parentId = 'parentId';
       const childId = 'childId';

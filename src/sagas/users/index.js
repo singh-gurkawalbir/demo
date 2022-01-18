@@ -563,8 +563,8 @@ export const userSagas = [
   takeEvery(actionTypes.LICENSE.UPGRADE_REQUEST, requestLicenseUpgrade),
   takeEvery(actionTypes.AUTH.USER.CHANGE_EMAIL, changeEmail),
   takeEvery(actionTypes.AUTH.USER.CHANGE_PASSWORD, changePassword),
-  takeEvery(actionTypes.ACCOUNT_LEAVE_REQUEST, leaveAccount),
-  takeEvery(actionTypes.ACCOUNT_SWITCH, switchAccount),
+  takeEvery(actionTypes.USER.ACCOUNT.LEAVE_REQUEST, leaveAccount),
+  takeEvery(actionTypes.USER.ACCOUNT.SWITCH, switchAccount),
   takeEvery(actionTypes.USER.CREATE, createUser),
   takeEvery(actionTypes.USER.UPDATE, updateUser),
   takeEvery(actionTypes.USER.DISABLE, disableUser),
@@ -583,11 +583,11 @@ export const userSagas = [
   ),
   takeLatest(actionTypes.LICENSE.UPDATE_REQUEST, requestLicenseUpdate),
   takeEvery(
-    actionTypes.ACCOUNT_ADD_SUITESCRIPT_LINKED_CONNECTION,
+    actionTypes.USER.ACCOUNT.ADD_SUITESCRIPT_LINKED_CONNECTION,
     addSuiteScriptLinkedConnection
   ),
   takeEvery(
-    actionTypes.ACCOUNT_DELETE_SUITESCRIPT_LINKED_CONNECTION,
+    actionTypes.USER.ACCOUNT.DELETE_SUITESCRIPT_LINKED_CONNECTION,
     deleteSuiteScriptLinkedConnection
   ),
   takeLatest(actionTypes.USER.REINVITE, reinviteUser),

@@ -259,8 +259,8 @@ const resource = {
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
   validate: (resourceType, resourceId) => action(actionTypes.RESOURCE.VALIDATE_RESOURCE, { resourceType, resourceId }),
   updateChildIntegration: (parentId, childId) =>
-    action(actionTypes.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
-  clearChildIntegration: () => action(actionTypes.CLEAR_CHILD_INTEGRATION),
+    action(actionTypes.RESOURCE.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
+  clearChildIntegration: () => action(actionTypes.RESOURCE.CLEAR_CHILD_INTEGRATION),
 
   requestCollection: (resourceType, message, refresh) =>
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
@@ -499,7 +499,7 @@ const auditLogs = {
     childId,
     filters,
   }),
-  clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
+  clear: () => action(actionTypes.RESOURCE.AUDIT_LOGS_CLEAR),
 };
 const connectors = {
   refreshMetadata: (fieldType, fieldName, _integrationId, options) =>
@@ -1291,8 +1291,8 @@ const user = {
         action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId }),
       licenseUpgradeRequestSubmitted: message =>
         action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message }),
-      leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
-      switchTo: ({ id }) => action(actionTypes.ACCOUNT_SWITCH, { id }),
+      leave: id => action(actionTypes.USER.ACCOUNT.LEAVE_REQUEST, { id }),
+      switchTo: ({ id }) => action(actionTypes.USER.ACCOUNT.SWITCH, { id }),
       requestLicenseEntitlementUsage: () =>
         action(actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST),
       requestNumEnabledFlows: () =>
@@ -1302,11 +1302,11 @@ const user = {
       receivedLicenseEntitlementUsage: response =>
         action(actionTypes.LICENSE.ENTITLEMENT_USAGE_RECEIVED, { response }),
       addLinkedConnectionId: connectionId =>
-        action(actionTypes.ACCOUNT_ADD_SUITESCRIPT_LINKED_CONNECTION, {
+        action(actionTypes.USER.ACCOUNT.ADD_SUITESCRIPT_LINKED_CONNECTION, {
           connectionId,
         }),
       deleteLinkedConnectionId: connectionId =>
-        action(actionTypes.ACCOUNT_DELETE_SUITESCRIPT_LINKED_CONNECTION, {
+        action(actionTypes.USER.ACCOUNT.DELETE_SUITESCRIPT_LINKED_CONNECTION, {
           connectionId,
         }),
     },
@@ -2194,48 +2194,6 @@ const exportData = {
     }),
 };
 
-const editorSampleData = {
-  request: ({
-    flowId,
-    resourceId,
-    resourceType,
-    stage,
-    formKey,
-    fieldType,
-    requestedTemplateVersion,
-    isEditorV2Supported,
-  }) =>
-    action(actionTypes.EDITOR_SAMPLE_DATA.REQUEST, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-      formKey,
-      fieldType,
-      requestedTemplateVersion,
-      isEditorV2Supported,
-    }),
-  received: ({ flowId, resourceId, fieldType, sampleData, templateVersion }) =>
-    action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED, {
-      flowId,
-      resourceId,
-      fieldType,
-      sampleData,
-      templateVersion,
-    }),
-  failed: ({ flowId, resourceId, fieldType }) =>
-    action(actionTypes.EDITOR_SAMPLE_DATA.FAILED, {
-      resourceId,
-      flowId,
-      fieldType,
-    }),
-  clear: ({ resourceId, flowId }) =>
-    action(actionTypes.EDITOR_SAMPLE_DATA.CLEAR, {
-      resourceId,
-      flowId,
-    }),
-};
-
 const hooks = {
   save: context => action(actionTypes.HOOKS.SAVE, context),
 };
@@ -2365,7 +2323,6 @@ export default {
   suiteScript,
   customSettings,
   exportData,
-  editorSampleData,
   hooks,
   logs,
   sso,

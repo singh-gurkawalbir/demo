@@ -46,12 +46,12 @@ export default function reducer(state = {}, action) {
         draft.licenseEntitlementUsage = response;
         break;
 
-      case actionTypes.CLEAR_CHILD_INTEGRATION:
+      case actionTypes.RESOURCE.CLEAR_CHILD_INTEGRATION:
         draft.parentChildMap = undefined;
         delete draft.parentChildMap;
         break;
 
-      case actionTypes.UPDATE_CHILD_INTEGRATION:
+      case actionTypes.RESOURCE.UPDATE_CHILD_INTEGRATION:
         draft.parentChildMap = {};
         draft.parentChildMap[parentId] = childId;
         break;
