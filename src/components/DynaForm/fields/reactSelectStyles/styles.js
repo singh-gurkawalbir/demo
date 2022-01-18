@@ -126,7 +126,7 @@ export function CustomReactSelectStyles() {
     }),
     menuList: () => ({
       padding: '0px',
-      maxHeight: 380,
+      maxHeight: 'calc(100vh - 320px)',
       overflowY: 'auto',
     }),
     group: () => ({
