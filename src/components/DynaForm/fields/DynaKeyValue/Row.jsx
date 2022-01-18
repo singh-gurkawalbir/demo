@@ -1,4 +1,4 @@
-import { makeStyles, TextField, Select, MenuItem } from '@material-ui/core';
+import { makeStyles, TextField, MenuItem } from '@material-ui/core';
 import React, { useCallback, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import TrashIcon from '../../../icons/TrashIcon';
@@ -6,6 +6,7 @@ import AutoSuggest from '../DynaAutoSuggest';
 import ActionButton from '../../../ActionButton';
 import SortableHandle from '../../../Sortable/SortableHandle';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
+import CeligoSelect from '../../../CeligoSelect';
 
 const emptySet = {};
 
@@ -13,8 +14,9 @@ const useStyles = makeStyles({
   rowWrapper: {
     display: 'flex',
   },
-  rowContainer: {
+  textFieldRowContainer: {
     flexGrow: 1,
+    display: 'flex !important',
   },
 });
 
@@ -46,7 +48,7 @@ export default function KeyValueRow(props) {
     valueConfig: suggestValueConfig,
   } = suggestionConfig;
 
-  const compClasses = useStyles();
+  const rowComponentClasses = useStyles();
   const [showGripper, setShowGripper] = useState(false);
   const handleOnMouseEnter = useCallback(() => {
     if (enableSorting && !isDragInProgress) {
@@ -68,16 +70,14 @@ export default function KeyValueRow(props) {
   return (
     <div
       {...isLoggableAttr(isLoggable)}
-      className={compClasses.rowWrapper}
+      className={rowComponentClasses.rowWrapper}
       onMouseEnter={handleOnMouseEnter}
       onMouseLeave={handleOnMouseLeave}
     >
       {enableSorting && (
         <SortableHandle isVisible={showGripper} />
       )}
-      <div
-        className={clsx(classes.rowContainer, compClasses.rowContainer)}
-        >
+      <div className={clsx(classes.rowContainer, rowComponentClasses.textFieldRowContainer)}>
         {suggestKeyConfig && (
         <AutoSuggest
           disabled={disabled}
@@ -142,13 +142,11 @@ export default function KeyValueRow(props) {
               />
         )}
         {showSortOrder && (
-        <Select
+        <CeligoSelect
           disabled={disabled}
           id={`${valueName}-${index}`}
           data-test={`${valueName}-${index}`}
           defaultValue={!!r[valueName]}
-          variant="filled"
-          fullWidth
           className={clsx(classes.dynaField, classes.dynaValueField)}
           onChange={handleValueUpdate(r.key)}>
           <MenuItem key="ascending" data-test="ascendingSort" value={false}>
@@ -157,7 +155,7 @@ export default function KeyValueRow(props) {
           <MenuItem key="descending" data-test="descendingSort" value>
             Descending
           </MenuItem>
-        </Select>
+        </CeligoSelect>
         )}
 
         {showDelete && (
