@@ -137,7 +137,7 @@ export default function LookupDrawer({
     },
     [history, lookupIndex, onSave, value]
   );
-  const selectedLookup = (lookupIndex && value && lookupIndex >= 0 && lookupIndex < value.length) ? value[lookupIndex] : {};
+  const selectedLookup = (value && lookupIndex >= 0 && lookupIndex < value.length) ? value[lookupIndex] : {};
   const {setCancelTriggered} = useFormOnCancelContext(LOOKUP_DRAWER_FORM_KEY);
   const handleClose = isExact ? history.goBack : setCancelTriggered;
 
