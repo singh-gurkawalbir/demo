@@ -39,6 +39,7 @@ const getParserValue = ({rowsToSkip, multipleRowsPerRecord, ...rest}) => ({
   ...rest,
   rowsToSkip: Number.isInteger(rowsToSkip) ? rowsToSkip : 0,
 });
+// afe editors should control if its loggable or not...the form metadata controls the rule fields if they are loggable or not
 
 export default function DynaCsvParse_afe(props) {
   const {

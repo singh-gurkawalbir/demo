@@ -13,6 +13,7 @@ import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
 import CalendarIcon from '../../../icons/CalendarIcon';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   dynaDateLabelWrapper: {
@@ -52,10 +53,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-
 export default function DynaDate(props) {
   const classes = useStyles();
-  const { id, label, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId, closeOnSelect } = props;
+  const { id, label, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId, closeOnSelect, isLoggable } = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -103,6 +103,7 @@ export default function DynaDate(props) {
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils} variant="filled">
 
         <KeyboardDatePicker
+          {...isLoggableAttr(isLoggable)}
           autoOk={closeOnSelect}
           disableToolbar
           disabled={disabled}

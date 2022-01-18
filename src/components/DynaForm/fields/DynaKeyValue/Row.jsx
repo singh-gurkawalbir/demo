@@ -5,6 +5,7 @@ import TrashIcon from '../../../icons/TrashIcon';
 import AutoSuggest from '../DynaAutoSuggest';
 import ActionButton from '../../../ActionButton';
 import SortableHandle from '../../../Sortable/SortableHandle';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const emptySet = {};
 
@@ -37,6 +38,7 @@ export default function KeyValueRow(props) {
     classes,
     enableSorting,
     showSortOrder,
+    isLoggable,
   } = props;
 
   const {
@@ -65,6 +67,7 @@ export default function KeyValueRow(props) {
 
   return (
     <div
+      {...isLoggableAttr(isLoggable)}
       className={compClasses.rowWrapper}
       onMouseEnter={handleOnMouseEnter}
       onMouseLeave={handleOnMouseLeave}
@@ -148,10 +151,10 @@ export default function KeyValueRow(props) {
           fullWidth
           className={clsx(classes.dynaField, classes.dynaValueField)}
           onChange={handleValueUpdate(r.key)}>
-          <MenuItem key="ascending" value={false}>
+          <MenuItem key="ascending" data-test="ascendingSort" value={false}>
             Ascending
           </MenuItem>
-          <MenuItem key="descending" value>
+          <MenuItem key="descending" data-test="descendingSort" value>
             Descending
           </MenuItem>
         </Select>

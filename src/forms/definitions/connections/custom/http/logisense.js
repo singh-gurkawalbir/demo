@@ -121,6 +121,7 @@ export default {
       inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
+      helpKey: 'logisense.connection.http.auth.token.token',
     },
     application: {
       fieldId: 'application',

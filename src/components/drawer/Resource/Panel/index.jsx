@@ -14,7 +14,7 @@ import ResourceFormActionsPanel from './ResourceFormActionsPanel';
 import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
 import useHandleResourceFormFlowSampleData from './useHandleResourceFormFlowSampleData';
 import { getParentResourceContext } from '../../../../utils/connections';
-import ListenerRequestLogsDrawer from '../../ListenerRequestLogs';
+import FlowStepRequestLogsDrawer from '../../FlowStepDebugLogs';
 import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 import TitleBar from './TitleBar';
@@ -227,7 +227,7 @@ export default function Panel(props) {
         onCancel={abortAndClose}
         />
       <EditorDrawer />
-      <ListenerRequestLogsDrawer flowId={flowId} exportId={id} />
+      <FlowStepRequestLogsDrawer flowId={flowId} resourceType={resourceType} resourceId={id} />
     </>
   );
 }

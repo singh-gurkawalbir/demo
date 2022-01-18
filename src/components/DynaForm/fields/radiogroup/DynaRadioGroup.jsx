@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core';
 import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   columnFlexWrapper: {
@@ -63,8 +64,9 @@ export default function DynaRadio(props) {
     label,
     isValid,
     onFieldChange,
-    dataPublic,
+    isLoggable,
   } = props;
+
   const classes = useStyles();
   const items = options.reduce(
     (itemsSoFar, option) =>
@@ -112,7 +114,7 @@ export default function DynaRadio(props) {
             />
           </div>
           <RadioGroup
-            data-public={!!dataPublic}
+            {...isLoggableAttr(isLoggable)}
             data-test={id}
             aria-label={label}
             className={clsx(classes.radioGroup, {

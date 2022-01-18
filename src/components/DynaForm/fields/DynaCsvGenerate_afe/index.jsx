@@ -59,6 +59,7 @@ export const useUpdateParentForm = (secondaryFormKey, handleFormChange) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [secondaryFormValue, fields, isValid]);
 };
+// afe editors should control if its loggable or not...the form metadata controls the rule fields if they are loggable or not
 export default function DynaCsvGenerate_afe(props) {
   const classes = useStyles();
   const {

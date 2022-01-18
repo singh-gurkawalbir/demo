@@ -17,13 +17,12 @@ const useStyles = makeStyles(theme => ({
   },
   guideWrapper: {
     display: 'flex',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   guideLink: {
     marginRight: theme.spacing(2),
     display: 'flex',
     alignItems: 'center',
-    marginBottom: theme.spacing(0.5),
   },
   guideLinkIcon: {
     marginRight: theme.spacing(0.5),
@@ -51,13 +50,13 @@ export default function TitleActions({ flowId }) {
   const history = useHistory();
   const applications = applicationsList();
   const isNew = operation === 'add';
-  const hasListenerLogsAccess = useSelector(state => selectors.hasLogsAccess(state, id, resourceType, isNew, flowId));
+  const hasFlowStepLogsAccess = useSelector(state => selectors.hasLogsAccess(state, id, resourceType, isNew, flowId));
   const applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
   const showApplicationLogo =
     ['exports', 'imports', 'connections'].includes(resourceType) &&
     !!applicationType;
   const app = applications.find(a => a.id === applicationType) || {};
-  const listenerDrawerHandler = useCallback(() => {
+  const flowStepDrawerHandler = useCallback(() => {
     history.push(`${match.url}/logs`);
   }, [match.url, history]);
 
@@ -71,12 +70,12 @@ export default function TitleActions({ flowId }) {
           {app.name || applicationType} connection guide
         </a>
         )}
-        {hasListenerLogsAccess && (
+        {hasFlowStepLogsAccess && (
         <TextButton
-          onClick={listenerDrawerHandler}
+          onClick={flowStepDrawerHandler}
           startIcon={<DebugIcon />}
           className={classes.debugLogButton}
-          data-test="listenerLogs">
+          data-test="flowStepLogs">
           View debug logs
         </TextButton>
         )}

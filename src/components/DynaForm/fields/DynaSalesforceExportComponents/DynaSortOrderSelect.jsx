@@ -36,6 +36,7 @@ export default function DynaSortOrderSelect(props) {
     label,
     value,
     onFieldChange,
+    isLoggable,
   } = props;
   const fieldValue = value?.split(' ')?.[0];
   const fieldOrder = value?.split(' ')?.[1];
@@ -75,6 +76,7 @@ export default function DynaSortOrderSelect(props) {
           value={fieldValue}
           onFieldChange={onFieldChangeFn} />
         <DynaSelect
+          isLoggable={isLoggable}
           label="Order"
           onFieldChange={onOrderChange}
           value={fieldOrder}

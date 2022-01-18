@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(0.5),
   },
 }));
-
+// Afe will decide loggable aspects
 export default function DynaFileDefinitionEditor_afe(props) {
   const classes = useStyles();
   const dispatch = useDispatch();

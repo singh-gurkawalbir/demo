@@ -43,7 +43,7 @@ function ResourceDrawerContent(props) {
         onClose={handleClose}
             />
       {isAsyncHelper
-        ? <ResourceDrawer />
+        ? <ResourceDrawer integrationId={integrationId} />
         : (
           <ResourceDrawer flowId={flowId} integrationId={integrationId} />
         )}

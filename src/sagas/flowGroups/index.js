@@ -38,7 +38,7 @@ export function* updateFlowsWithFlowGroupId({ flowIds, flowGroupId }) {
       message: 'Updating flow group',
     });
 
-    yield call(getResourceCollection, { resourceType: 'flows' });
+    yield call(getResourceCollection, { resourceType: 'flows', refresh: true});
   } catch (error) {
     return {error};
   }

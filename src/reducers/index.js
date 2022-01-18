@@ -82,7 +82,7 @@ import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersio
 import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
-import { stringCompare, comparer} from '../utils/sort';
+import { stringCompare, comparer } from '../utils/sort';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
@@ -98,11 +98,11 @@ import { getApp } from '../constants/applications';
 import { HOOK_STAGES } from '../utils/editor';
 import { getTextAfterCount, capitalizeFirstLetter } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
-import { FILTER_KEY as LISTENER_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as LISTENER_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/listenerLogs';
+import { FILTER_KEY as FLOWSTEP_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as FLOWSTEP_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/flowStepLogs';
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
 import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
-import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getStatusSortableProp, getTileId } from '../utils/home';
+import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
 
 const emptyArray = [];
@@ -559,7 +559,9 @@ selectors.mkTileApplications = () => {
         integration?._registeredConnectionIds?.forEach(r => {
           const connection = connections.find(c => c._id === r);
 
-          applications.push(connection ? (connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type || '') : '');
+          if (connection) {
+            applications.push(connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type);
+          }
         });
 
         return uniq(applications);
@@ -1092,12 +1094,15 @@ selectors.getAllAccountDashboardIntegrations = state => {
 
   allIntegrations = uniqBy(allIntegrations, '_id').sort(stringCompare('name'));
   allIntegrations = [...defaultFilter, ...allIntegrations];
-  allIntegrations.forEach(i => {
+
+  allIntegrations = allIntegrations.map(i => {
     const { supportsMultiStore, sections: children = [] } = i.settings || {};
 
     if (supportsMultiStore) {
-      i.children = children.map(({id, title}) => ({_id: `store${id}pid${i._id}`, name: title}));
+      return {...i, children: children.map(({id, title}) => ({_id: `store${id}pid${i._id}`, name: title}))};
     }
+
+    return i;
   });
 
   return allIntegrations;
@@ -1711,7 +1716,6 @@ selectors.mkTiles = () => createSelector(
           status,
           flowsNameAndDescription,
           sortablePropType: -1,
-          totalErrorCount: getStatusSortableProp({...t, status}),
           integration: {
             mode: integration.mode,
             permissions: integration.permissions,
@@ -1740,7 +1744,6 @@ selectors.mkTiles = () => createSelector(
         status,
         flowsNameAndDescription,
         sortablePropType: t.numFlows || 0,
-        totalErrorCount: getStatusSortableProp({...t, status}),
         integration: {
           permissions: integration.permissions,
         },
@@ -1778,8 +1781,10 @@ selectors.mkFilteredHomeTiles = () => {
         return !isPendingSVB;
       });
       const homeTiles = tiles.concat(suiteScriptLinkedTiles);
+      const comparer = ({ order = 'asc', orderBy = 'name' }) =>
+        order === 'desc' ? tileCompare(orderBy, true) : tileCompare(orderBy);
 
-      let filteredTiles = filterAndSortResources(homeTiles, filterConfig, !isListView);
+      let filteredTiles = filterAndSortResources(homeTiles, filterConfig, !isListView, comparer);
 
       if (isListView && applications && !applications.includes('all')) {
         // filter on applications
@@ -2354,36 +2359,59 @@ selectors.mkChildIntegration = () => {
   );
 };
 
-selectors.mkDIYIntegrationFlowList = () => createSelector(
-  state => state?.data?.resources?.integrations,
-  state => state?.data?.resources?.flows,
-  (state, integrationId) => selectors.latestJobMap(state, integrationId || 'none')?.data,
-  (state, integrationId) => integrationId,
-  (_1, _2, childId) => childId,
-  (_1, _2, _3, isUserInErrMgtTwoDotZero) => isUserInErrMgtTwoDotZero,
-  (_1, _2, _3, _4, options) => options,
-  selectors.openErrorsMap,
-  selectors.currentEnvironment,
-  (integrations = emptyArray, flows = emptyArray, latestFlowJobs,
-    integrationId, childId, isUserInErrMgtTwoDotZero, options, errorMap, currentEnvironment) => {
-    const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
-    let integrationFlows = flows.filter(f => {
-      if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
-        return !f._integrationId && !!f.sandbox === (currentEnvironment === 'sandbox');
-      }
-      if (childId && childId !== integrationId) return f._integrationId === childId;
+selectors.mkFlowGroupMap = () => {
+  const flowGroupsSelector = selectors.mkIntegrationFlowGroups();
 
-      return childIntegrationIds.includes(f._integrationId);
-    });
+  return createSelector(
+    (state, integrationId) => flowGroupsSelector(state, integrationId),
+    flowGroups => flowGroups.reduce((infoMap, { title, sectionId}) => ({
+      ...infoMap,
+      [sectionId]: title,
+    }), {})
+  );
+};
 
-    integrationFlows = integrationFlows.map(f => ({...f, errors: errorMap?.[f._id] || 0}));
+selectors.mkDIYIntegrationFlowList = () => {
+  const flowGroupsMapSelector = selectors.mkFlowGroupMap();
 
-    return filterAndSortResources(addLastExecutedAtSortableProp({
-      flows: integrationFlows,
-      isUserInErrMgtTwoDotZero,
-      latestFlowJobs}), options);
-  }
-);
+  return createSelector(
+    state => state?.data?.resources?.integrations,
+    state => state?.data?.resources?.flows,
+    (state, integrationId) => selectors.latestJobMap(state, integrationId || 'none')?.data,
+    (state, integrationId) => integrationId,
+    (_1, _2, childId) => childId,
+    (_1, _2, _3, isUserInErrMgtTwoDotZero) => isUserInErrMgtTwoDotZero,
+    (_1, _2, _3, _4, options) => options,
+    selectors.openErrorsMap,
+    selectors.currentEnvironment,
+    flowGroupsMapSelector,
+    (integrations = emptyArray, flows = emptyArray, latestFlowJobs,
+      integrationId, childId, isUserInErrMgtTwoDotZero, options, errorMap, currentEnvironment, flowGroupsMap) => {
+      const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
+      let integrationFlows = flows.filter(f => {
+        if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+          return !f._integrationId && !!f.sandbox === (currentEnvironment === 'sandbox');
+        }
+        if (childId && childId !== integrationId) return f._integrationId === childId;
+
+        return childIntegrationIds.includes(f._integrationId);
+      });
+      const customSearchableText = r => {
+        if (!options?.keyword) return;
+
+        return `${r._id}|${r.name}|${r.description}|${flowGroupsMap[r._flowGroupingId || UNASSIGNED_SECTION_ID]}`;
+      };
+
+      integrationFlows = integrationFlows.map(f => ({...f, errors: errorMap?.[f._id] || 0, searchKey: customSearchableText(f)}));
+
+      return filterAndSortResources(addLastExecutedAtSortableProp({
+        flows: integrationFlows,
+        isUserInErrMgtTwoDotZero,
+        latestFlowJobs}), options
+      );
+    }
+  );
+};
 
 selectors.mkIntegrationFlowGroups = () => {
   const integrationAppFlowSections = selectors.mkIntegrationAppFlowSections();
@@ -2755,14 +2783,13 @@ selectors.integrationAppLicense = (state, id) => {
   const userLicenses = fromUser.licenses(state && state.user) || [];
   const license = userLicenses.find(l => l._integrationId === id) || {};
   const upgradeRequested = selectors.checkUpgradeRequested(state, license._id);
+  const dateFormat = selectors.userProfilePreferencesProps(state)?.dateFormat;
   const { expires, created } = license;
   const hasExpired = moment(expires) - moment() < 0;
-  const createdFormatted = `Started on ${moment(created).format(
-    'MMM Do, YYYY'
-  )}`;
+  const createdFormatted = `Started on ${moment(created).format(dateFormat || 'MMM Do, YYYY')}`;
   const isExpiringSoon =
     moment.duration(moment(expires) - moment()).as('days') <= 15;
-  const expiresText = expiresInfo(license);
+  const expiresText = expiresInfo(license, dateFormat);
   const upgradeText = upgradeButtonText(
     license,
     integrationResource,
@@ -2778,6 +2805,19 @@ selectors.integrationAppLicense = (state, id) => {
     showLicenseExpiringWarning: hasExpired || isExpiringSoon,
   };
 };
+
+selectors.isIntegrationAppLicenseExpired = (state, id) => {
+  if (!state) return true;
+  const userLicenses = fromUser.licenses(state && state.user) || [];
+  const license = userLicenses.find(l => l._integrationId === id);
+
+  if (!license) {
+    return true;
+  }
+
+  return moment(license.expires) - moment() < 0;
+};
+
 selectors.makeIntegrationSectionFlows = () => createSelector(
   (state, integrationId) => selectors.integrationAppSettings(state, integrationId) || emptyObject,
   (_1, _2, childId) => childId,
@@ -2967,15 +3007,23 @@ selectors.makeIntegrationAppSectionFlows = () =>
         sectionFlows = options.excludeHiddenFlows ? (sec.flows || []).filter(f => !f.hidden) : sec.flows;
         (sectionFlows || []).forEach(f => {
           const flow = requiredFlows.find(fi => fi.id === f._id);
+          const selectedFlow = flows.find(fi => fi._id === f._id);
+          const customSearchableText = (flow, sec) => {
+            if (!options?.keyword) return;
+
+            if (!sec.title) return `${flow._id}|${flow.name}|${flow.description}`;
+
+            return `${flow._id}|${flow.name}|${flow.description}|${sec.title}`;
+          };
 
           if (flow) {
             // If flow is present in two children, then it is a common flow and does not belong to any single child, so remove child information from flow
             delete flow.childId;
             delete flow.childName;
-          } else if (flows.find(fi => fi._id === f._id)) {
+          } else if (selectedFlow) {
             // Add only valid flows, the flow must be present in flows collection. This is possible when child is in uninstall mode.
             // Flow may be deleted but child structure is intact on integration json.
-            requiredFlows.push({id: f._id, childId: sec.childId, childName: sec.childName});
+            requiredFlows.push({id: f._id, childId: sec.childId, childName: sec.childName, searchKey: customSearchableText(selectedFlow, sec)});
           }
         });
       });
@@ -2985,7 +3033,7 @@ selectors.makeIntegrationAppSectionFlows = () =>
         .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
         .sort(
           (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
-        ).map(f => ({...f, errors: errorMap?.[f._id] || 0}));
+        ).map(f => ({...f, errors: errorMap?.[f._id] || 0, searchKey: requiredFlows.find(flow => flow.id === f._id)?.searchKey}));
 
       return filterAndSortResources(addLastExecutedAtSortableProp({
         flows,
@@ -3047,7 +3095,9 @@ selectors.mkIntegrationAppFlowSections = () => {
           // filteredFlows contains flows which have name or description starting with keyword in flowsFilterConfig
           // a section is selected if atleast one of the flows in the section is present in filteredFlows
 
-          return !!sec.title && sec.flows.some(flow => filteredFlows.some(selectedFlow => selectedFlow._id === flow._id));
+          return !!sec.title && (
+            sec.flows.some(flow => filteredFlows.some(selectedFlow => selectedFlow._id === flow._id)) ||
+            sec.title.toUpperCase().includes(flowsFilterConfig.keyword.toUpperCase()));
         })
         .map(sec => ({
           ...sec,
@@ -3306,7 +3356,8 @@ function getTierToFlowsMap(license) {
 }
 selectors.platformLicenseWithMetadata = createSelector(
   selectors.platformLicense,
-  license => {
+  state => selectors.userProfilePreferencesProps(state)?.dateFormat,
+  (license, dateFormat) => {
     const licenseActionDetails = { ...license };
     const nameMap = {
       none: 'None',
@@ -3393,7 +3444,7 @@ selectors.platformLicenseWithMetadata = createSelector(
     if (licenseActionDetails.expirationDate) {
       licenseActionDetails.expirationDate = moment(
         licenseActionDetails.expirationDate
-      ).format('MMM Do, YYYY');
+      ).format(dateFormat || 'MMM Do, YYYY');
     }
 
     const names = {
@@ -4285,7 +4336,6 @@ selectors.suiteScriptLinkedTiles = createSelector(
     return tiles.map(t => ({ ...t,
       key: getTileId(t), // for Celigo Table unique key
       name: t.displayName,
-      totalErrorCount: getStatusSortableProp(t),
       sortablePropType: t._connectorId ? -1 : (t.numFlows || 0),
       pinned: pinnedIntegrations.includes(getTileId(t)) }));
   });
@@ -6292,6 +6342,7 @@ selectors.tileLicenseDetails = (state, tile) => {
   const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
   const expiresInDays = license && remainingDays(license.expires);
   const trialExpiresInDays = license && remainingDays(license.trialEndDate);
+  const dateFormat = selectors.userProfilePreferencesProps(state)?.dateFormat;
 
   let licenseMessageContent = '';
   let listViewLicenseMesssage = '';
@@ -6303,7 +6354,7 @@ selectors.tileLicenseDetails = (state, tile) => {
   if (resumable) {
     licenseMessageContent = 'Your subscription has been renewed. Click Reactivate to continue.';
   } else if (!license?.expires && license?.trialEndDate && trialExpiresInDays <= 0) {
-    licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format('MMM Do, YYYY')}`;
+    licenseMessageContent = `Trial expired on ${moment(license.trialEndDate).format(dateFormat || 'MMM Do, YYYY')}`;
     listViewLicenseMesssage = `Expired ${Math.abs(trialExpiresInDays)} days ago`;
     showTrialLicenseMessage = true;
     trialExpired = true;
@@ -6313,7 +6364,7 @@ selectors.tileLicenseDetails = (state, tile) => {
     showTrialLicenseMessage = true;
   } else if (expiresInDays <= 0) {
     expired = true;
-    licenseMessageContent = `Your subscription expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your subscription.`;
+    licenseMessageContent = `Your subscription expired on ${moment(license.expires).format(dateFormat || 'MMM Do, YYYY')}. Contact sales to renew your subscription.`;
     listViewLicenseMesssage = `Expired ${Math.abs(expiresInDays)} days ago`;
   } else if (expiresInDays > 0 && expiresInDays <= 30) {
     licenseMessageContent = `Your subscription will expire in ${getTextAfterCount('day', expiresInDays)}. Contact sales to renew your subscription.`;
@@ -6323,14 +6374,17 @@ selectors.tileLicenseDetails = (state, tile) => {
   return {licenseMessageContent, expired, trialExpired, showTrialLicenseMessage, resumable, licenseId: license?._id, listViewLicenseMesssage};
 };
 
-// #region listener request logs selectors
+// #region flow step debug logs selectors
 selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
-  if (resourceType !== 'exports' || !flowId) return false;
-  const resource = selectors.resource(state, 'exports', resourceId);
+  if (!['exports', 'imports'].includes(resourceType) || !flowId || isNew) return false;
+  const resource = selectors.resource(state, resourceType, resourceId);
 
-  if (!isRealtimeExport(resource)) return false;
+  // It should return false for all http file providers
+  if (resource?.http?.type === 'file') {
+    return false;
+  }
 
-  return !isNew;
+  return isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType);
 };
 
 selectors.canEnableDebug = (state, exportId, flowId) => {
@@ -6356,15 +6410,15 @@ selectors.canEnableDebug = (state, exportId, flowId) => {
 
 selectors.mkLogsInCurrPageSelector = () => createSelector(
   selectors.logsSummary,
-  state => selectors.filter(state, LISTENER_LOG_FILTER_KEY),
+  state => selectors.filter(state, FLOWSTEP_LOG_FILTER_KEY),
   (debugLogsList, filterOptions) => {
     const { currPage = 0 } = filterOptions.paging || {};
 
-    return debugLogsList.slice(currPage * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE, (currPage + 1) * LISTENER_LOG_DEFAULT_ROWS_PER_PAGE);
+    return debugLogsList.slice(currPage * FLOWSTEP_LOG_DEFAULT_ROWS_PER_PAGE, (currPage + 1) * FLOWSTEP_LOG_DEFAULT_ROWS_PER_PAGE);
   }
 );
 
-// #endregion listener request logs selectors
+// #endregion flow step debug logs selectors
 
 selectors.assistantName = (state, resourceType, resourceId) => {
   const _resource = selectors.resource(state, resourceType, resourceId);

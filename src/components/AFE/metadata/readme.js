@@ -8,6 +8,7 @@ export default {
     {
       title: 'Data',
       area: 'rule',
+      isLoggable: true,
       Panel: RulePanel,
       props: {
         attrName: 'readme',

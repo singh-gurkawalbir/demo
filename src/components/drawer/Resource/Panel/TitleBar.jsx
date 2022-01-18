@@ -91,7 +91,7 @@ const ResourceTitle = ({ flowId, onClose }) => {
         </IconButton>
         )}
 
-        <div data-public className={classes.titleImgBlock}>
+        <div className={classes.titleImgBlock}>
           <Typography variant="h4" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: showBackButton})}>
             {title}
           </Typography>

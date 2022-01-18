@@ -37,7 +37,7 @@ export default function WarningGridItem({ editorId }) {
     <div className={classes.gridItem}>
       <div className={classes.flexContainer}>
         <PanelTitle className={classes.title} title="Warning" />
-        <div className={classes.panel}>
+        <div className={classes.panel} data-private>
           <CodePanel
             readOnly
             overrides={overrides}

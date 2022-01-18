@@ -7,6 +7,7 @@ import { shallowEqual, useSelector } from 'react-redux';
 import DateTimeDisplay from '../../../components/DateTimeDisplay';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const flowsConfig = {type: 'flows'};
 
@@ -14,12 +15,14 @@ const eventReportDetailRows = [
 
   {
     heading: 'Integration',
+    isLoggable: true,
     value: function IntegrationName(r) {
       return useSelector(state => selectors.getEventReportIntegrationName(state, r));
     },
   },
   {
     heading: 'Stores',
+    isLoggable: true,
     value: function StoreNames(r) {
       const foundFlow = useSelector(state => selectors.getAnyValidFlowFromEventReport(state, r));
 
@@ -36,6 +39,7 @@ const eventReportDetailRows = [
   },
   {
     heading: 'Flows',
+    isLoggable: true,
     value: function FlowsPertainingToEventReport(r) {
       const allFlows = useSelectorMemo(
         selectors.makeResourceListSelector,
@@ -58,6 +62,7 @@ const eventReportDetailRows = [
   },
   {
     heading: 'Date range',
+    isLoggable: true,
     value: function EventReportStartDate(r) {
       return <Typography> <DateTimeDisplay dateTime={r.startTime} /> -  <DateTimeDisplay dateTime={r.endTime} /></Typography>;
     },
@@ -66,6 +71,7 @@ const eventReportDetailRows = [
 
   {
     heading: 'Last run',
+    isLoggable: true,
     value: function EventReportLastRun(r) {
       // check if this is the last run value
       return <DateTimeDisplay dateTime={r?.startedAt} />;
@@ -74,6 +80,7 @@ const eventReportDetailRows = [
   },
   {
     heading: 'Status',
+    isLoggable: true,
     value: function EventReportStatus(r) {
       return capitalize(r?.status);
     },
@@ -119,10 +126,10 @@ function Details({resource}) {
 
   return (
     <List className={classes.listRoot} >
-      {eventReportDetailRows.map(({heading, value}) => (
+      {eventReportDetailRows.map(({heading, isLoggable, value}) => (
         <ListItem key={heading} >
           <ListItemText>
-            <div className={classes.listItem}><Typography className={classes.listHeading}>{heading}:</Typography>  <Typography className={classes.listValue}>{value(resource)}</Typography></div>
+            <div className={classes.listItem}><Typography className={classes.listHeading}>{heading}:</Typography>  <Typography {...isLoggableAttr(isLoggable)} className={classes.listValue}>{value(resource)}</Typography></div>
           </ListItemText>
         </ListItem>
       ))}
