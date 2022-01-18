@@ -147,7 +147,7 @@ export default function JobDetail({
 
       {expanded &&
         job.children &&
-        job.children.map(cJob => (
+        job.children.filter(cJob => !!cJob).map(cJob => (
           <ChildJobDetail
             key={cJob._id}
             job={cJob}
