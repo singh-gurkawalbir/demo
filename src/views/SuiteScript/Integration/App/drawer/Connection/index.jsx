@@ -83,6 +83,11 @@ export default function ConnectionDrawer({
     handleSubmitComplete(linkedConnectionId);
   }, [handleSubmitComplete, linkedConnectionId]);
 
+  const onSubmitComplete = useCallback((...args) => {
+    handleSubmitComplete(...args);
+    setAccount(null);
+  }, [handleSubmitComplete]);
+
   useEffect(() => {
     if (account && !linkedConnectionId) {
       const newId = generateNewId();
@@ -158,7 +163,7 @@ export default function ConnectionDrawer({
       </RightDrawer>
       <ResourceSetupDrawer
         onClose={handleConnectionClose}
-        onSubmitComplete={handleSubmitComplete}
+        onSubmitComplete={onSubmitComplete}
         mode="ss-install"
         />
     </>

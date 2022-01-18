@@ -89,7 +89,7 @@ function ResourceDrawer(props) {
       {open && (
       <Route
         path={`${match.url}${DRAWER_PATH}`}>
-        {isAsyncHelper ? <ResourceDrawer /> : (
+        {isAsyncHelper ? <ResourceDrawer integrationId={integrationId} /> : (
           <ResourceDrawer
             flowId={flowId}
             integrationId={integrationId}

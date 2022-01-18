@@ -630,6 +630,9 @@ selectors.hasSuiteScriptData = (
   if (resourceType === 'flows') {
     return resources.filter(r => r._integrationId === integrationId).length > 0;
   }
+  if (resourceType === 'nextFlows') {
+    return !!resources;
+  }
 
   return resources.length > 0;
 };

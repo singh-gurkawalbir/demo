@@ -631,6 +631,8 @@ export const C_LOCKED_FIELDS = Object.freeze({
     '_keepDeltaBehindExportId',
     'settings',
   ],
+  // According to the backend, none of the async helper fields are editable
+  asyncHelpers: [],
 });
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];
 export const ALLOWED_HTML_TAGS =
@@ -683,9 +685,6 @@ export const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
 export const UNASSIGNED_SECTION_ID = 'unassigned';
 export const UNASSIGNED_SECTION_NAME = 'Unassigned';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
-
-export const SENSITIVE_DATA = ['token', 'password'];
-
 export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
   'accesstokens',
   'agents',
@@ -743,9 +742,5 @@ export const POLLING_STATUS = {
   RESUME: 'resume polling',
   STOP: 'stop polling',
 };
-
-export const MAX_APPLICATIONS = 10;
-export const MAX_APPLICATIONS_IN_A_ROW = 5;
-export const APP_WIDTH = 30;
 
 Object.freeze(POLLING_STATUS);

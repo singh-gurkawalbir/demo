@@ -182,8 +182,21 @@ function DynaAssistantOptions(props) {
         )
       );
 
+      // this is the to maintain not only the touched state of the form but also transient field state values
+      // for example if you change the name of a export we want the value to be carried forward after reinitializing
+      // but we certainly don't want to persist it
       const allTouchedFields = fields
         .filter(field => !!field.touched)
+        .filter(field => {
+          // non assistant metadata touched values allow them
+          if (!field.id.includes('assistantMetadata.')) {
+            return true;
+          }
+
+          // only include the assistantoptions fields in the init data they are the ones which trigger form initialization
+          // these are the fields that need to be indicated as touched and the remaining metadata field values are set by the patch stage operation
+          return field.type === 'assistantoptions';
+        })
         .map(field => ({ id: field.id, value: field.value }));
 
       allTouchedFields.push({ id, value });

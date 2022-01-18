@@ -3060,7 +3060,9 @@ selectors.makeIntegrationAppSectionFlows = () =>
           const customSearchableText = (flow, sec) => {
             if (!options?.keyword) return;
 
-            return `${flow._id}|${flow.name}|${flow.description}|${getTitleIdFromSection(sec)}`;
+            if (!sec.title) return `${flow._id}|${flow.name}|${flow.description}`;
+
+            return `${flow._id}|${flow.name}|${flow.description}|${sec.title}`;
           };
 
           if (flow) {
@@ -3080,7 +3082,7 @@ selectors.makeIntegrationAppSectionFlows = () =>
         .filter(f => f._integrationId === integrationId && requiredFlowIds.includes(f._id))
         .sort(
           (a, b) => requiredFlowIds.indexOf(a._id) - requiredFlowIds.indexOf(b._id)
-        ).map(f => ({...f, errors: errorMap?.[f._id] || 0}));
+        ).map(f => ({...f, errors: errorMap?.[f._id] || 0, searchKey: requiredFlows.find(flow => flow.id === f._id)?.searchKey}));
 
       return filterAndSortResources(addLastExecutedAtSortableProp({
         flows,
@@ -3142,7 +3144,9 @@ selectors.mkIntegrationAppFlowSections = () => {
           // filteredFlows contains flows which have name or description starting with keyword in flowsFilterConfig
           // a section is selected if atleast one of the flows in the section is present in filteredFlows
 
-          return !!sec.title && sec.flows.some(flow => filteredFlows.some(selectedFlow => selectedFlow._id === flow._id));
+          return !!sec.title && (
+            sec.flows.some(flow => filteredFlows.some(selectedFlow => selectedFlow._id === flow._id)) ||
+            sec.title.toUpperCase().includes(flowsFilterConfig.keyword.toUpperCase()));
         })
         .map(sec => ({
           ...sec,
