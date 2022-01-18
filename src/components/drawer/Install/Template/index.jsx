@@ -4,7 +4,6 @@ import RightDrawer from '../../Right';
 import DrawerHeader from '../../Right/DrawerHeader';
 import DrawerContent from '../../Right/DrawerContent';
 import Preview from './Preview';
-import Setup from '../common/Setup';
 
 const rootPath = 'installTemplate';
 
@@ -34,9 +33,6 @@ export default function InstallTemplateDrawer() {
         <Switch>
           <Route path={`${match.url}/${rootPath}/preview/:templateId`}>
             <Preview />
-          </Route>
-          <Route path={`${match.url}/${rootPath}/setup/:templateId`}>
-            <Setup handleClose={handleClose} />
           </Route>
         </Switch>
       </DrawerContent>
