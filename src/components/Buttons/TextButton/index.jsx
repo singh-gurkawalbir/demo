@@ -25,13 +25,13 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function TextButton(props) {
   const classes = useStyles(props);
-  const {children, className, isVertical = false, error, bold, ...rest} = props;
+  const {children, className, vertical = false, error, bold, ...rest} = props;
 
   return (
     <Button
       variant="text"
       color="secondary"
-      className={clsx(classes.root, {[classes.error]: error}, {[classes.vertical]: isVertical}, className)}
+      className={clsx(classes.root, {[classes.error]: error}, {[classes.vertical]: vertical}, className)}
       disableElevation
       {...rest}>
       {children}
@@ -46,7 +46,7 @@ TextButton.propTypes = {
   bold: PropTypes.bool,
   color: PropTypes.oneOf(['primary', 'secondary']),
   error: PropTypes.bool,
-  isVertical: PropTypes.bool,
+  vertical: PropTypes.bool,
 };
 
 TextButton.defaultProps = {

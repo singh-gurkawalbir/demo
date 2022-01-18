@@ -39,7 +39,7 @@ export default function ResourceButton({ onClick, variant }) {
       data-test={block.label}
       onClick={onClick}
       className={classes.resourceButton}
-      isVertical
+      vertical
       startIcon={<block.Icon />}>
       {block.label}
     </TextButton>
