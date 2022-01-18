@@ -1,9 +1,6 @@
-import { Drawer } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Route, useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import DynaForm from '../../..';
 import actions from '../../../../../actions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
@@ -11,46 +8,14 @@ import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPerm
 import { selectors } from '../../../../../reducers';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import { TextButton } from '../../../../Buttons';
-import DrawerTitleBar from '../../../../drawer/TitleBar';
 import DynaSubmit from '../../../DynaSubmit';
 import getFormFieldMetadata from './util';
-
-const useStyles = makeStyles(theme => ({
-  drawerPaper: {
-    width: 624,
-    marginTop: theme.appBarHeight,
-    paddingBottom: theme.appBarHeight,
-    border: 'solid 1px',
-    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
-    zIndex: theme.zIndex.drawer + 1,
-  },
-  root: {
-    padding: theme.spacing(0),
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    backgroundColor: theme.palette.common.white,
-  },
-  container: {
-    display: 'flex',
-    height: '100%',
-  },
-  content: {
-    width: '100%',
-    height: '100%',
-    padding: theme.spacing(3, 3, 1, 3),
-    overflowX: 'auto',
-  },
-  subRecordDynaForm: {
-    minHeight: 'calc(100% - 56px)',
-    padding: '0px !important',
-  },
-  dynaSubmit: {
-    marginRight: theme.spacing(1),
-  },
-}));
+import RightDrawer from '../../../../drawer/Right';
+import DrawerHeader from '../../../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../../../drawer/Right/DrawerFooter';
 
 function SubRecordDrawer(props) {
-  const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const dispatch = useDispatch();
@@ -154,54 +119,35 @@ function SubRecordDrawer(props) {
   });
 
   return (
-    <Drawer
-      anchor="right"
-      open={!!match}
-      classes={{
-        paper: clsx(classes.drawerPaper),
-      }}
-      onClose={handleClose}>
-      <DrawerTitleBar
-        title={fieldId ? 'Edit subrecord import' : 'Add subrecord import'}
-        backToParent
-      />
-
-      <div className={classes.container}>
-        <div className={classes.content}>
-          {fieldMeta && (
-            <>
-              <DynaForm
-                formKey={formKey}
-                className={classes.subRecordDynaForm}
-              />
-              <DynaSubmit
-                formKey={formKey}
-                data-test="save-subrecord"
-                className={classes.dynaSubmit}
-                onClick={handleSubmit}>
-                Save
-              </DynaSubmit>
-              <TextButton
-                data-test="cancel-subrecord"
-                onClick={handleClose}>
-                Cancel
-              </TextButton>
-            </>
-          )}
-        </div>
-      </div>
-    </Drawer>
+    <>
+      <DrawerHeader title={fieldId ? 'Edit subrecord import' : 'Add subrecord import'} />
+      <DrawerContent>
+        <DynaForm formKey={formKey} />
+      </DrawerContent>
+      <DrawerFooter>
+        <DynaSubmit
+          formKey={formKey}
+          data-test="save-subrecord"
+          onClick={handleSubmit}>
+          Save
+        </DynaSubmit>
+        <TextButton
+          data-test="cancel-subrecord"
+          onClick={handleClose}>
+          Cancel
+        </TextButton>
+      </DrawerFooter>
+    </>
   );
 }
 
 export default function SubRecordDrawerRoute(props) {
-  const match = useRouteMatch();
-
   return (
-    <Route
-      exact
-      path={[`${match.url}/subrecords/`, `${match.url}/subrecords/:fieldId`]}>
+    <RightDrawer
+      path={['subrecords/:fieldId', 'subrecords']}
+      variant="temporary"
+      height="tall">
       <SubRecordDrawer {...props} />
-    </Route>
+    </RightDrawer>
   );
 }
