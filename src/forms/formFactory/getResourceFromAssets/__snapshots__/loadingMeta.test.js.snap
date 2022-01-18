@@ -11842,19 +11842,19 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "Use bulk INSERT SQL Query",
+                "label": "Use bulk insert SQL query",
                 "value": "BULK INSERT",
               },
               Object {
-                "label": "Use SQL Query",
+                "label": "Use SQL query once per record",
                 "value": "INSERT",
               },
               Object {
-                "label": "Use SQL Query once per page of data",
+                "label": "Use SQL query once per page of records",
                 "value": "MERGE",
               },
               Object {
-                "label": "Use SQL Query once per flow run",
+                "label": "Use SQL query on first page only",
                 "value": "COPY",
               },
             ],

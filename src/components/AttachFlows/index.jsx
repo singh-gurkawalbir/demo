@@ -7,8 +7,9 @@ import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import {OutlinedButton, TextButton} from '../Buttons';
+import {FilledButton, TextButton} from '../Buttons';
 import { UNASSIGNED_SECTION_ID } from '../../utils/constants';
+import ActionGroup from '../ActionGroup';
 
 const flowsFilterConfig = { type: 'flows' };
 
@@ -101,17 +102,17 @@ export default function AttachFlows({ integrationId, flowGroupingId }) {
           </div>
           )}
           {hasFlows ? (
-            <div>
-              <OutlinedButton
+            <ActionGroup>
+              <FilledButton
                 data-test="attachFlows"
                 onClick={handleAttachFlowsClick}>
                 Attach
-              </OutlinedButton>
+              </FilledButton>
               <TextButton
                 onClick={toggleDialog}>
                 Cancel
               </TextButton>
-            </div>
+            </ActionGroup>
           ) : <div>No flows found</div>}
         </ModalDialog>
       )}

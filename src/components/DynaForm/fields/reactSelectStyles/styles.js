@@ -7,9 +7,6 @@ export const ReactSelectUseStyles = makeStyles(theme => ({
   },
   optionRoot: {
     display: 'flex',
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    wordBreak: 'break-word',
-    padding: '0px',
   },
   optionImg: {
     width: '120px',
@@ -27,6 +24,7 @@ export const ReactSelectUseStyles = makeStyles(theme => ({
     alignItems: 'center',
     paddingLeft: '10px',
     height: '100%',
+    width: '100%',
   },
   optionLabelMultiSelect: {
     width: '100%',
@@ -83,7 +81,10 @@ export function CustomReactSelectStyles() {
           ? theme.palette.background.paper2
           : theme.palette.background.paper,
       border: 'none',
-      minHeight: '38px',
+      minHeight: '48px',
+      display: 'flex',
+      alignItems: 'center',
+      borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
       '&:active': {
         backgroundColor: theme.palette.background.paper,
         color: theme.palette.secondary.light,
@@ -105,6 +106,7 @@ export function CustomReactSelectStyles() {
       borderColor: theme.palette.secondary.lightest,
       marginTop: 0,
       borderRadius: '0px 0px 2px 2px',
+      overflowY: 'auto',
     }),
     input: () => ({
       color: theme.palette.secondary.light,
@@ -116,13 +118,15 @@ export function CustomReactSelectStyles() {
       color: theme.palette.secondary.light,
       position: 'absolute',
       height: '100%',
+      display: 'flex',
+      alignItems: 'center',
     }),
     indicatorSeparator: () => ({
       display: 'none',
     }),
     menuList: () => ({
       padding: '0px',
-      maxHeight: 'calc(100vh - 320px)',
+      maxHeight: '380px',
       overflowY: 'auto',
     }),
     group: () => ({
@@ -171,6 +175,10 @@ export function CustomReactSelectStyles() {
       minWidth: 'unset',
       padding: '1px 8px',
       border: `1px solid ${theme.palette.secondary.lightest}`,
+      '& > * .MuiChip-root': {
+        border: 'none',
+        height: 'unset',
+      },
     }),
     multiValueLabel: styles => ({
       ...styles,

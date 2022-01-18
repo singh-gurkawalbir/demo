@@ -3904,6 +3904,20 @@ describe('getPathParams util function cases', () => {
         prefix: '/action3/',
       },
     },
+    {
+      id: 'action4',
+      config: {
+        prefix: '(',
+        suffix: ')',
+      },
+    },
+    {
+      id: 'action5',
+      config: {
+        prefix: '#',
+        suffix: '$',
+      },
+    },
   ];
 
   test('should return empty when invalid arguments are sent', () => {
@@ -3953,6 +3967,41 @@ describe('getPathParams util function cases', () => {
       action2: 'sdf',
       action3: 'sdfa',
       action: 'XYZ',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: pathParams,
+    })).toMatchObject(expected);
+  });
+  test('should return both required and optional params when both are present with different prefixes', () => {
+    const relativePath = 'some/lists:_id/thing:_action2:_action3/some/other/:_action/OnlineDelivery:_action4';
+    const actualPath = 'some/list(guid\'ABC\')/thing/action2/sdf/action3/sdfa/some/other/XYZ/OnlineDelivery(4)';
+    const expected = {
+      id: 'ABC',
+      action2: 'sdf',
+      action3: 'sdfa',
+      action: 'XYZ',
+      action4: '4',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: pathParams,
+    })).toMatchObject(expected);
+  });
+  test('should return both required and optional params when both are present with different prefixes which includes special characters', () => {
+    const relativePath = 'some/lists:_id/thing:_action2:_action3/some/other/:_action/OnlineDelivery:_action4/guid:_action5';
+    const actualPath = 'some/list(guid\'ABC\')/thing/action2/sdf/action3/sdfa/some/other/XYZ/OnlineDelivery(4)/guid#45$';
+    const expected = {
+      id: 'ABC',
+      action2: 'sdf',
+      action3: 'sdfa',
+      action: 'XYZ',
+      action4: '4',
+      action5: '45',
     };
 
     expect(getPathParams({

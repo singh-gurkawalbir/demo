@@ -785,6 +785,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
     },
     http: {
       ...cloneDeep(DEFAULT_PROPS.EXPORT.HTTP),
+      requestMediaType: operationDetails.requestMediaType,
       successMediaType: operationDetails.successMediaType,
       errorMediaType: operationDetails.errorMediaType,
       customeTemplateEval: operationDetails.customeTemplateEval,
