@@ -1443,14 +1443,15 @@ const app = {
   errored: () => action(actionTypes.APP.ERRORED),
   clearError: () => action(actionTypes.APP.CLEAR_ERROR),
   userAcceptedAccountTransfer: () => action(actionTypes.APP.USER_ACCEPTED_ACCOUNT_TRANSFER),
+  postFeedback: (resourceType, fieldId, helpful, feedback) =>
+    action(actionTypes.APP.POST_FEEDBACK, {
+      resourceType,
+      fieldId,
+      helpful,
+      feedback,
+    }),
 };
-const postFeedback = (resourceType, fieldId, helpful, feedback) =>
-  action(actionTypes.POST_FEEDBACK, {
-    resourceType,
-    fieldId,
-    helpful,
-    feedback,
-  });
+
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
@@ -2282,7 +2283,6 @@ const sso = {
 export default {
   asyncTask,
   form,
-  postFeedback,
   app,
   metadata,
   fileDefinitions,
