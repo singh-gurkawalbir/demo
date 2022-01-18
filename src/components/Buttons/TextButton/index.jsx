@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function TextButton(props) {
   const classes = useStyles(props);
-  const {children, className, isVertical = 'false', error, bold, ...rest} = props;
+  const {children, className, isVertical = false, error, bold, ...rest} = props;
 
   return (
     <Button
