@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import {
   USER_ACCESS_LEVELS,
@@ -27,6 +28,7 @@ export default function UserForm({
   onCancelClick,
   disableSave,
 }) {
+  const history = useHistory();
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
     integrationsFilterConfig
@@ -45,7 +47,7 @@ export default function UserForm({
     [
       USER_ACCESS_LEVELS.TILE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-    ].includes(data.accessLevel) &&
+    ].includes(data?.accessLevel) &&
     // integrationAccessLevel is expected to be an array but can be undefined
     data.integrationAccessLevel?.length
   ) {
@@ -65,7 +67,7 @@ export default function UserForm({
         type: 'text',
         label: 'Email',
         isLoggable: false,
-        defaultValue: isEditMode ? data.sharedWithUser.email : '',
+        defaultValue: isEditMode ? data?.sharedWithUser.email : '',
         required: true,
         defaultDisabled: isEditMode,
         helpText:
@@ -83,7 +85,7 @@ export default function UserForm({
         name: 'accessLevel',
         type: 'select',
         label: 'Access level',
-        defaultValue: isEditMode ? data.accessLevel || 'tile' : '',
+        defaultValue: isEditMode ? data?.accessLevel || 'tile' : '',
         required: true,
         skipSort: true,
         options: [
@@ -186,7 +188,7 @@ export default function UserForm({
         id: 'accountSSORequired',
         name: 'accountSSORequired',
         label: 'Require account Single sign-on(SSO)?',
-        defaultValue: isEditMode ? !!data.accountSSORequired : true,
+        defaultValue: isEditMode ? !!data?.accountSSORequired : true,
         visible: !isEditMode && isAccountOwnerOrAdmin && isSSOEnabled,
         // Incase of invite, this field should not be passed if the owner has not enabled SSO
         omitWhenHidden: !isEditMode,
@@ -204,6 +206,12 @@ export default function UserForm({
     },
   };
   const formKey = useFormInitWithPermissions({ fieldMeta });
+
+  if (!data) {
+    history.goBack();
+
+    return null;
+  }
 
   return (
     <LoadResources required resources="integrations,ssoclients">
