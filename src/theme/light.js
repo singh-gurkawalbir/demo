@@ -370,7 +370,6 @@ export default {
       },
       overline: {
         fontFamily: 'source sans pro',
-        fontWeight: '700',
         fontSize: '14px',
         lineHeight: '16px',
         letterSpacing: 0.5,

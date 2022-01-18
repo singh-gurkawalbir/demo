@@ -1,6 +1,6 @@
 import React from 'react';
 import Spinner from '../Spinner';
-import { OutlinedButton, TextButton } from '../Buttons';
+import { FilledButton, TextButton } from '../Buttons';
 
 export default function SaveAndCloseMiniButtons({
   isDirty,
@@ -15,13 +15,13 @@ export default function SaveAndCloseMiniButtons({
 }) {
   return (
     <>
-      <OutlinedButton
+      <FilledButton
         data-test="save"
         disabled={!isDirty || inProgress || disabled}
         className={className}
         onClick={handleSave}>
         {inProgress && !disabled ? <Spinner size="small">{submitTransientLabel}</Spinner> : submitButtonLabel}
-      </OutlinedButton>
+      </FilledButton>
       {shouldNotShowCancelButton ? null : (
         <TextButton
           data-test="cancel"
