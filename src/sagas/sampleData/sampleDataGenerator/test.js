@@ -307,17 +307,26 @@ describe('Sample data generator sagas', () => {
   });
   describe('realTimeSampleData related sagas', () => {
     describe('realTimeSampleData saga', () => {
-      test('should do nothing in case of invalid resource', () => expectSaga(realTimeSampleData, { resource: null })
-        .not.call.fn(fetchMetadata)
-        .returns(undefined)
-        .run());
+      test('should do nothing in case of invalid resource', () => {
+        const test1 = expectSaga(realTimeSampleData, { resource: null })
+          .not.call.fn(fetchMetadata)
+          .returns(undefined)
+          .run();
+        const restResource = {
+          _id: 'id-123',
+          adaptorType: 'RESTExport',
+        };
+        const test2 = expectSaga(realTimeSampleData, { resource: restResource })
+          .not.call.fn(fetchMetadata)
+          .returns(undefined)
+          .run();
+
+        return test1 && test2;
+      });
       test('should do nothing incase of NS resource without recordType', () => {
         const nsResource = {
           _id: '123',
           adaptorType: 'NetSuiteExport',
-          netsuite: {
-            distributed: {},
-          },
         };
 
         return expectSaga(realTimeSampleData, { resource: nsResource })
@@ -329,9 +338,6 @@ describe('Sample data generator sagas', () => {
         const sfResource = {
           _id: '123',
           adaptorType: 'SalesforceExport',
-          salesforce: {
-            distributed: {},
-          },
         };
 
         return expectSaga(realTimeSampleData, { resource: sfResource })
@@ -454,10 +460,7 @@ describe('Sample data generator sagas', () => {
           adaptorType: 'SalesforceExport',
           salesforce: {
             sObjectType,
-            distributed: {
-              referenceFields: [],
-              relatedLists: [],
-            },
+            distributed: {},
           },
         };
         const metadata = {
@@ -546,9 +549,16 @@ describe('Sample data generator sagas', () => {
       });
     });
     describe('_attachRelatedLists saga', () => {
-      test('should return passed metadata if there are no relatedLists', () => expectSaga(_attachRelatedLists, { metadata: sfAccountMetadata, relatedLists: [] })
-        .returns(sfAccountMetadata)
-        .run());
+      test('should return passed metadata if there are no relatedLists', () => {
+        const test1 = expectSaga(_attachRelatedLists, { metadata: sfAccountMetadata, relatedLists: [] })
+          .returns(sfAccountMetadata)
+          .run();
+        const test2 = expectSaga(_attachRelatedLists, { metadata: sfAccountMetadata })
+          .returns(sfAccountMetadata)
+          .run();
+
+        return test1 && test2;
+      });
       test('should call fetchMetadata for all the relatedLists and add its metadata against relationShipName passed in childRelationships', () => {
         const connectionId = 'conn-123';
         const refresh = false;
@@ -627,6 +637,38 @@ describe('Sample data generator sagas', () => {
           relatedLists,
           connectionId,
           childRelationships: sfAccountMetadata.childRelationships,
+          refresh,
+        })
+          .provide([
+            [call(fetchMetadata, {
+              connectionId,
+              commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/Customer`,
+              refresh,
+            }), { data: sfCustomerMetadata}],
+          ])
+          .returns(expectedRealtimeSampleData)
+          .run();
+      });
+      test('should return empty list when there is no metadata  fetched and also no dependencies', () => {
+        const connectionId = 'conn-123';
+        const refresh = false;
+        const sfCustomerMetadata = undefined;
+        const relatedLists = [{
+          parentField: 'AccountId',
+          sObjectType: 'Customer',
+        }];
+
+        const metadata = getSalesforceRealTimeSampleData(sfAccountMetadata);
+
+        const expectedRealtimeSampleData = {
+          ...metadata,
+          Customer: [{}],
+        };
+
+        return expectSaga(_attachRelatedLists, {
+          metadata,
+          relatedLists,
+          connectionId,
           refresh,
         })
           .provide([
