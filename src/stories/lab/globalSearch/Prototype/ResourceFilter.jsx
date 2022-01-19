@@ -75,11 +75,9 @@ export default function ResourceFilter() {
   const classes = useStyles();
   const { filters, setFilters, filterBlacklist = [], onFiltersChange } = useGlobalSearchContext();
   const [open, setOpen] = useState(false);
-  const itemRef = useRef();
   const containerRef = useRef();
 
   const handleArrowClick = () => setOpen(o => !o);
-  let rowIndex = -1;
   const FilterLabel = () => {
     if (filters?.length === 0) {
       return (
@@ -115,8 +113,6 @@ export default function ResourceFilter() {
       setFilters(newFilters);
       onFiltersChange?.(newFilters);
     };
-
-    rowIndex += 1;
 
     return (
       <div>
