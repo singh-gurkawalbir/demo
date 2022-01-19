@@ -206,7 +206,7 @@ export default function TabRedirection({children: componentChildren}) {
 
   if (currentChildMode === 'uninstall') {
     redirectToPage = getRoutePath(
-      `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
+      `integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${childId}`
     );
   } else if (installSteps?.length && mode === 'install') {
     redirectToPage = getRoutePath(
@@ -215,7 +215,7 @@ export default function TabRedirection({children: componentChildren}) {
   } else if (uninstallSteps?.length && mode === 'uninstall') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall${
-        childId ? `/${childId}` : ''
+        childId ? `/child/${childId}` : ''
       }`
     );
   }

@@ -325,27 +325,60 @@ selectors.isUninstallComplete = (state, { integrationId, childId }) => {
   return !!isSetupComplete;
 };
 
-selectors.integrationInstallSteps = (state, integrationId) => {
-  if (!state) return null;
-  const integrationInstallSteps = fromData.integrationInstallSteps(
-    state.data,
-    integrationId
-  );
-  const installStatus = fromSession.integrationAppsInstaller(
-    state.session,
-    integrationId
-  );
+selectors.integrationInstallSteps = createSelector(
+  (state, integrationId) => fromData.integrationInstallSteps(state?.data, integrationId),
+  (state, integrationId) => fromSession.integrationAppsInstaller(state?.session, integrationId),
+  (state, integrationId) => selectors.integrationAppSettings(state, integrationId)?._connectorId,
+  (integrationInstallSteps, installStatus, _connectorId) => {
+    const visibleSteps = integrationInstallSteps.filter(s => s.type !== 'hidden');
 
-  const visibleSteps = integrationInstallSteps.filter(s => s.type !== 'hidden');
+    const installSteps = visibleSteps.map(step => {
+      if (step.isCurrentStep) {
+        return { ...step, ...installStatus };
+      }
 
-  return visibleSteps.map(step => {
-    if (step.isCurrentStep) {
-      return { ...step, ...installStatus };
-    }
+      return step;
+    });
 
-    return step;
-  });
-};
+    // Incase of IAs, return the install steps
+    if (_connectorId) return installSteps;
+    // Else do below changes to the install steps incase of a template
+    // @Sravan review the logic below - moved from the component
+    const bundleInstallationForNetsuiteConnections = installSteps.filter(step => step.sourceConnection?.type === 'netsuite');
+    const bundleInstallationForSalesforceConnections = installSteps.filter(step => step.sourceConnection?.type === 'salesforce');
+
+    let netsuiteConnIndex = 0;
+    let salesforceConnIndex = 0;
+
+    return installSteps.map(step => {
+      if (step.installURL || step.url) {
+        if (
+          step.name.includes('Integrator Bundle')
+        ) {
+          const connectionId = bundleInstallationForNetsuiteConnections[netsuiteConnIndex]?._connectionId;
+
+          netsuiteConnIndex += 1;
+
+          return {
+            ...step,
+            connectionId,
+          };
+        } if (step.name.includes('Integrator Adaptor Package')) {
+          const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
+
+          salesforceConnIndex += 1;
+
+          return {
+            ...step,
+            connectionId,
+          };
+        }
+      }
+
+      return step;
+    });
+  }
+);
 
 const emptyStepsArr = [];
 
@@ -394,6 +427,22 @@ selectors.addNewChildSteps = (state, integrationId) => {
   });
 
   return { steps: modifiedSteps };
+};
+
+selectors.currentStepPerMode = (state, { mode, integrationId, cloneResourceId, cloneResourceType }) => {
+  let steps = [];
+
+  if (mode === 'install') {
+    steps = selectors.integrationInstallSteps(state, integrationId);
+  } else if (mode === 'child') {
+    steps = selectors.addNewChildSteps(state, integrationId)?.steps;
+  } else if (mode === 'uninstall') {
+    steps = selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true })?.steps;
+  } else if (mode === 'clone') {
+    steps = selectors.cloneInstallSteps(state, cloneResourceType, cloneResourceId);
+  }
+
+  return (steps || []).find(s => !!s.isCurrentStep);
 };
 
 selectors.isIAV2UninstallComplete = (state, { integrationId }) => {
@@ -5109,6 +5158,15 @@ selectors.isPreviewPanelAvailableForResource = (
   }
 
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
+};
+
+selectors.showFullDrawerWidth = (state, drawerProps, urlProps) => {
+  const { width, flowId } = drawerProps;
+
+  if (width === 'full') return true;
+  const { resourceType, id } = urlProps;
+
+  return selectors.isPreviewPanelAvailableForResource(state, id, resourceType, flowId);
 };
 
 selectors.applicationType = (state, resourceType, id) => {
