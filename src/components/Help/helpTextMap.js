@@ -2192,9 +2192,8 @@ When you select <b>Apply only the first row’s value and map the Visits</b>, th
 'Perform this mapping when <br> <b>Record is created </b> </br> Perform the field mapping only when the record is being created. Otherwise, ignore this mapping.</br> <b>Record is updated</b> </br>Perform the field mapping only when the record is being updated. Otherwise, ignore this mapping.</br><b>Source is not empty</b> </br>Perform the field mapping when the extract resolves to a truthy value. Otherwise, ignore this mapping.</br> <b>Lookup is not empty</b> </br>Perform the field mapping when the lookup defined finds a record and it the return field’s value is not empty. Otherwise, ignore this mapping.</br><b>Lookup is empty</b> </br>Perform the field mapping when the lookup defined does not find a record or the found records field value is empty. Otherwise, ignore this mapping.</br><b>Field is not set</b> </br>Perform this field mapping if the record to be updated in NS does not have a value set. Otherwise, ignore the mapping.</br>By default, if none of the condition is specified the mapping is always considered.',
   'mapping.relativeURI':
 'This json path used to set the lookup in the URI itself. Ex: search.json?query=type:organization name:{customer.name}',
-  'mapping.lookup.method': 'Operation method to be performed. Ex: GET or POST',
-  'mapping.lookup.extract':
-`Resource Identifier Path is the JSON path (in the JSON data received in the Lookup Response) that points to the location at which the expected 'value' from lookup is available. This is the 'value' that would be set on the import application. For example, Results[0].email. For more information, click  <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/226810287-Field-Mapping-Options-in-integrator-io#h_8238065521401516195542221" target="_blank">here.</a>`,
+  'mapping.lookup.method': 'Select the HTTP method to use when performing the lookup query.',
+  'mapping.lookup.extract': 'Enter the JSON path in the lookup response body where the expected lookup value, to be set in the import application, will be found, such as "products[0].name".',
   'mapping.netsuite.lookup.recordType':
 'Record type on the Netsuite for which we are defining the import.',
   'mapping.netsuite.lookup.expressionText':
