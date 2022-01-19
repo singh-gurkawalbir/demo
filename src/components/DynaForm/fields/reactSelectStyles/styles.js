@@ -178,6 +178,7 @@ export function CustomReactSelectStyles() {
       '& > * .MuiChip-root': {
         border: 'none',
         height: 'unset',
+        lineHeight: 1,
       },
     }),
     multiValueLabel: styles => ({
