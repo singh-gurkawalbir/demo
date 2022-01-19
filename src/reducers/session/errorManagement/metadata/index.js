@@ -14,6 +14,9 @@ export default (state = {}, action) => {
       case actionTypes.ERROR_MANAGER.FILTER_METADATA.REQUEST:
         draft.status = 'requested';
         break;
+      case actionTypes.ERROR_MANAGER.FILTER_METADATA.CLEAR_STATUS:
+        delete draft.status;
+        break;
       case actionTypes.ERROR_MANAGER.FILTER_METADATA.RECEIVED:
         draft.status = 'received';
         draft.data = metadata.reduce((filterMetadata, filter) => {
@@ -30,6 +33,7 @@ export default (state = {}, action) => {
 export const selectors = {};
 
 selectors.isErrorFilterMetadataRequested = state => !!state?.status;
+selectors.isErrorFilterMetadataReceived = state => state?.status === 'received';
 
 selectors.getSourceMetadata = state => {
   if (!state) return;
