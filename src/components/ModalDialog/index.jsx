@@ -69,6 +69,7 @@ export default function ModalDialog({
   className,
   disableEnforceFocus,
   disableClose,
+  paperClassName,
 }) {
   const classes = useStyles();
 
@@ -78,7 +79,7 @@ export default function ModalDialog({
       open={show}
       maxWidth={maxWidth}
       fullScreen={fullScreen}
-      PaperProps={{ className: classes.paper }}>
+      PaperProps={{ className: [classes.paper, paperClassName] }}>
       {children[0] && (
         <DialogTitle
           className={clsx(classes.dialogTitle, classes[minWidth])}
