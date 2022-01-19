@@ -6,7 +6,7 @@ import CloseIcon from '../../../../components/icons/CloseIcon';
 import { useGlobalSearchContext } from './GlobalSearchContext';
 import Results from './Results';
 import TextButton from '../../../../components/Buttons/TextButton';
-import useKeyboardNavigation from './Results/useKeyboardNavigation';
+import useKeyboardNavigation from './useKeyboardNavigation';
 import {getTabResults } from './utils';
 
 const useStyles = makeStyles(theme => ({

@@ -16,7 +16,6 @@ import CloseIcon from '../../../../components/icons/CloseIcon';
 import { useGlobalSearchContext } from './GlobalSearchContext';
 import FilterIcon from '../../../../components/icons/FilterIcon';
 import { filterMap } from './filterMeta';
-import useKeyboardNavigation from './Results/useKeyboardNavigation';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -78,7 +77,6 @@ export default function ResourceFilter() {
   const [open, setOpen] = useState(false);
   const itemRef = useRef();
   const containerRef = useRef();
-  const {currentFocussed} = useKeyboardNavigation({listLength: filterBlacklist?.length + 1, listItemRef: itemRef, containerRef});
 
   const handleArrowClick = () => setOpen(o => !o);
   let rowIndex = -1;
@@ -123,8 +121,6 @@ export default function ResourceFilter() {
     return (
       <div>
         <FormControlLabel
-          ref={rowIndex === currentFocussed ? itemRef : null}
-          tabIndex={rowIndex === currentFocussed ? 0 : -1}
           classes={{root: classes.itemRoot}}
           onClick={() => handleMenuItemClick(type)}
           control={(
