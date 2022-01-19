@@ -25,6 +25,7 @@ import {
   convertToImport,
   isMetaRequiredValuesMet,
   isAppConstantContact,
+  isAmazonHybridConnection,
 } from '..';
 import { getPathParams } from '../pathParamUtils';
 
@@ -4009,5 +4010,20 @@ describe('getPathParams util function cases', () => {
       actualPath,
       pathParametersInfo: pathParams,
     })).toMatchObject(expected);
+  });
+});
+
+describe('isAmazonHybridConnection util test cases', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(isAmazonHybridConnection()).toBeFalsy();
+  });
+  test('should return true if connection assistant is amazonmws and http type is Amazon-Hybrid', () => {
+    expect(isAmazonHybridConnection({assistant: 'amazonmws', http: {type: 'Amazon-Hybrid'}})).toBeTruthy();
+  });
+  test('should return false if connection assistant is not amazonmws and http type is Amazon-Hybrid', () => {
+    expect(isAmazonHybridConnection({assistant: 'amazonsellercentral', http: {type: 'Amazon-Hybrid'}})).toBeFalsy();
+  });
+  test('should return false if connection assistant is amazonmws and http type is Amazon-SP-API', () => {
+    expect(isAmazonHybridConnection({assistant: 'amazonsellercentral', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
   });
 });

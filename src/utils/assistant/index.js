@@ -2191,3 +2191,7 @@ export function getRecordTypeForAutoMapper(uri) {
 export function isAppConstantContact(application) {
   return application === 'constantcontact';
 }
+
+export function isAmazonHybridConnection(connection) {
+  return connection?.assistant === 'amazonmws' && connection?.http?.type === 'Amazon-Hybrid';
+}
