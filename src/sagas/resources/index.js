@@ -276,6 +276,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     // violates some API business rules?
 
     if (options && options.action === 'flowEnableDisable') {
+      yield put(actions.resource.undoStaged(id));
       yield put(actions.flow.isOnOffActionInprogress(false, id));
     }
 
