@@ -38,6 +38,7 @@ export default function UserForm({
   const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
 
   const isEditMode = !!id;
+  // isValidUser is used to check if the id entered is corrupted through URL . Reference : IO-24595
   const isValidUser = !!users.find(u => u._id === id);
   const data = isEditMode ? users.find(u => u._id === id) : undefined;
   let integrationsToManage = [];
