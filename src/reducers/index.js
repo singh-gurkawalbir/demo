@@ -6536,20 +6536,22 @@ selectors.httpDeltaValidationError = (state, formKey, deltaFieldsToValidate) => 
   }
 };
 
-const resultsCache = new Map();
+const resultsCache = {};
 
-selectors.globalSearchResults = (state, keyword) => {
+selectors.globalSearchResults = (state, keyword, filters) => {
   if (keyword?.length < 2) return {};
   // the results are filtered using case insensitive keyword, hence caching also is done using case insenitive keyword
-  const keyWordLowerCased = keyword?.toLowerCase();
+  const cacheKey = keyword?.toLowerCase() + filters?.join(',').toLowerCase();
 
-  if (resultsCache.has(keyWordLowerCased)) {
-    return resultsCache.get(keyWordLowerCased);
+  if (resultsCache[cacheKey]) {
+    return resultsCache[cacheKey];
   }
   const resourceIds = Object.keys(filterMap);
 
   const results = resourceIds.reduce((acc, id) => {
     const resourceId = filterMap[id]?.resourceURL;
+
+    if (filters?.length > 0 && !(filters.includes(resourceId))) return acc;
     const resourceResults = selectors.makeResourceListSelector()(state, {type: resourceId, take: 3, keyword, searchBy: ['name']});
     let resourcesList = resourceResults?.resources;
 
@@ -6563,7 +6565,7 @@ selectors.globalSearchResults = (state, keyword) => {
     return acc;
   }, {});
 
-  resultsCache.set(keyWordLowerCased, results);
+  resultsCache[cacheKey] = results;
 
   return results;
 };

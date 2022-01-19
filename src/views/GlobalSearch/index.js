@@ -7,17 +7,19 @@ import { selectors } from '../../reducers/index';
 
 export default function GSearch() {
   const [searchString, setSearchString] = useState('');
+  const [filters, setFilter] = useState([]);
   const resources = useSelector(state =>
-    selectors.globalSearchResults(state, searchString)
+    selectors.globalSearchResults(state, searchString, filters)
   );
 
   const handleKeywordChange = useCallback(keyword => setSearchString(keyword), []);
+  const handleFilterChange = useCallback(filters => setFilter(filters), []);
 
   const resourcesToLoad = Object.values(filterMap)?.map(filter => filter?.resourceURL)?.join(',');
 
   return (
     <LoadResources required={false} resources={resourcesToLoad}>
-      <GlobalSearch results={resources} onKeywordChange={handleKeywordChange} />
+      <GlobalSearch results={resources} onKeywordChange={handleKeywordChange} onFiltersChange={handleFilterChange} />
     </LoadResources>
   );
 }

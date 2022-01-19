@@ -35,10 +35,13 @@ function useKeyboardNavigation({listLength = 0, containerRef = null, listItemRef
     if (containerRef?.current) {
           containerRef?.current?.addEventListener('keydown', keyDownHandler);
           current = containerRef?.current;
+    } else {
+      window.addEventListener('keydown', keyDownHandler);
     }
 
     return () => {
         current?.removeEventListener('keydown', keyDownHandler);
+        window.removeEventListener('keydown', keyDownHandler);
     };
   }, [containerRef, keyDownHandler]);
 
