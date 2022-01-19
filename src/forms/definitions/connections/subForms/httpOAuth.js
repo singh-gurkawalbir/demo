@@ -45,7 +45,7 @@ export default {
     'http.auth.oauth.clientCredentialsLocation': {
       fieldId: 'http.auth.oauth.clientCredentialsLocation',
       visibleWhenAll: [
-        { field: 'http.auth.oauth.grantType', is: ['clientcredentials'] },
+        { field: 'http.auth.oauth.grantType', isNot: [''] },
       ],
       required: true,
     },
