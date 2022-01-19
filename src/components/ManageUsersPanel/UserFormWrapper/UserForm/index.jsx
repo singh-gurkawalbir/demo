@@ -38,16 +38,18 @@ export default function UserForm({
   const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
 
   const isEditMode = !!id;
+  const isValidUser = !!users.find(u => u._id === id);
   const data = isEditMode ? users.find(u => u._id === id) : undefined;
   let integrationsToManage = [];
   let integrationsToMonitor = [];
 
   if (
     isEditMode &&
+    isValidUser &&
     [
       USER_ACCESS_LEVELS.TILE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-    ].includes(data?.accessLevel) &&
+    ].includes(data.accessLevel) &&
     // integrationAccessLevel is expected to be an array but can be undefined
     data.integrationAccessLevel?.length
   ) {
@@ -67,7 +69,7 @@ export default function UserForm({
         type: 'text',
         label: 'Email',
         isLoggable: false,
-        defaultValue: isEditMode ? data?.sharedWithUser.email : '',
+        defaultValue: isEditMode && isValidUser ? data.sharedWithUser.email : '',
         required: true,
         defaultDisabled: isEditMode,
         helpText:
@@ -85,7 +87,7 @@ export default function UserForm({
         name: 'accessLevel',
         type: 'select',
         label: 'Access level',
-        defaultValue: isEditMode ? data?.accessLevel || 'tile' : '',
+        defaultValue: isEditMode && isValidUser ? data.accessLevel || 'tile' : '',
         required: true,
         skipSort: true,
         options: [
@@ -188,7 +190,7 @@ export default function UserForm({
         id: 'accountSSORequired',
         name: 'accountSSORequired',
         label: 'Require account Single sign-on(SSO)?',
-        defaultValue: isEditMode ? !!data?.accountSSORequired : true,
+        defaultValue: isEditMode && isValidUser ? !!data.accountSSORequired : true,
         visible: !isEditMode && isAccountOwnerOrAdmin && isSSOEnabled,
         // Incase of invite, this field should not be passed if the owner has not enabled SSO
         omitWhenHidden: !isEditMode,
@@ -207,7 +209,7 @@ export default function UserForm({
   };
   const formKey = useFormInitWithPermissions({ fieldMeta });
 
-  if (!data) {
+  if (isEditMode && !isValidUser) {
     history.goBack();
 
     return null;
