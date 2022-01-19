@@ -90,12 +90,6 @@ export default function getRequestOptions(
         path,
         opts: { method: 'POST' },
       };
-    case actionTypes.ACCESSTOKEN.REVOKE:
-    case actionTypes.ACCESSTOKEN.ACTIVATE:
-      return {
-        path: `/accesstokens/${resourceId}`,
-        opts: { method: 'PUT' },
-      };
     case actionTypes.ACCESSTOKEN.DISPLAY:
       return {
         path: `/accesstokens/${resourceId}/display`,

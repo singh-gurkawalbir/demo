@@ -113,20 +113,6 @@ describe('getRequestOptions util method', () => {
       {},
     ],
     [
-      { path: '/accesstokens/someId', opts: { method: 'PUT' } },
-      actionTypes.ACCESSTOKEN.REVOKE,
-      {
-        resourceId: 'someId',
-      },
-    ],
-    [
-      { path: '/accesstokens/someId', opts: { method: 'PUT' } },
-      actionTypes.ACCESSTOKEN.ACTIVATE,
-      {
-        resourceId: 'someId',
-      },
-    ],
-    [
       { path: '/accesstokens/someId/display', opts: { method: 'GET' } },
       actionTypes.ACCESSTOKEN.DISPLAY,
       {

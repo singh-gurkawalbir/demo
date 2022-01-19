@@ -87,7 +87,6 @@ const form = {
 };
 // #endregion
 const auth = {
-  requestReducer: () => action(actionTypes.AUTH.REQUEST_REDUCER),
   request: (email, password, showAuthError) =>
     action(actionTypes.AUTH.REQUEST, { email, password, showAuthError }),
   signInWithGoogle: returnTo =>
@@ -185,8 +184,6 @@ const connection = {
     action(actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_REQUEST, { connectionId }),
   madeOnline: connectionId =>
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
-  requestQueuedJobs: connectionId =>
-    action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, { connectionId }),
   requestQueuedJobsPoll: connectionId =>
     action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST_POLL, { connectionId }),
   cancelQueuedJobsPoll: connectionId =>
@@ -198,7 +195,6 @@ const connection = {
     }),
   cancelQueuedJob: jobId =>
     action(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, { jobId }),
-  enableDebug: ({ id, debugDurInMins, match }) => action(actionTypes.CONNECTION.ENABLE_DEBUG, { id, debugDurInMins, match }),
 };
 const marketplace = {
   requestConnectors: () =>
@@ -310,9 +306,6 @@ const resource = {
   clearStaged: (id, scope) =>
     action(actionTypes.RESOURCE.STAGE_CLEAR, { id, scope }),
 
-  undoStaged: (id, scope) =>
-    action(actionTypes.RESOURCE.STAGE_UNDO, { id, scope }),
-
   patchAndCommitStaged: (resourceType, resourceId, patch, { scope, context, asyncKey, parentContext, options } = {}) => action(actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT, {
     resourceType,
     id: resourceId,
@@ -339,9 +332,6 @@ const resource = {
 
   commitConflict: (id, conflict, scope) =>
     action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id, scope }),
-
-  clearConflict: (id, scope) =>
-    action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id, scope }),
 
   integrations: {
     delete: integrationId =>
@@ -425,11 +415,6 @@ const resource = {
       }),
     authorized: connectionId =>
       action(actionTypes.CONNECTION.AUTHORIZED, { connectionId }),
-    commitAndAuthorize: resourceId =>
-      action(actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE, {
-        resourceId,
-      }),
-
     requestToken: (resourceId, fieldId, values) =>
       action(actionTypes.TOKEN.REQUEST, {
         resourceId,
@@ -746,23 +731,6 @@ const integrationApp = {
             newValue,
           }
         ),
-      setVisibility: (integrationId, flowId, id, value) =>
-        action(
-          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-            .SET_VISIBILITY,
-          {
-            integrationId,
-            flowId,
-            id,
-            value,
-          }
-        ),
-      updateGenerates: (integrationId, flowId, id, generateFields) =>
-        action(
-          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-            .UPDATE_GENERATES,
-          { integrationId, flowId, id, generateFields }
-        ),
       saveVariationMappings: (integrationId, flowId, id, data = {}) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
@@ -795,15 +763,6 @@ const integrationApp = {
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_FAILED,
           { integrationId, flowId, id }
-        ),
-      saveComplete: (integrationId, flowId, id) =>
-        action(
-          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_COMPLETE,
-          {
-            integrationId,
-            flowId,
-            id,
-          }
         ),
       loadFailed: (integrationId, flowId, id) =>
         action(
@@ -1127,10 +1086,6 @@ const integrationApp = {
   },
 
 };
-const ashare = {
-  receivedCollection: ashares =>
-    resource.receivedCollection('ashares', ashares),
-};
 const clone = {
   requestPreview: (resourceType, resourceId) =>
     action(actionTypes.CLONE.PREVIEW_REQUEST, { resourceType, resourceId }),
@@ -1321,8 +1276,6 @@ const user = {
   sharedNotifications: {
     acceptInvite: (resourceType, id, isAccountTransfer) =>
       action(actionTypes.USER.SHARED_NOTIFICATION_ACCEPT, { resourceType, id, isAccountTransfer }),
-    acceptedInvite: id =>
-      action(actionTypes.USER.SHARED_NOTIFICATION_ACCEPTED, { id }),
     rejectInvite: (resourceType, id) =>
       action(actionTypes.USER.SHARED_NOTIFICATION_REJECT, { resourceType, id }),
   },
@@ -1365,13 +1318,6 @@ const flowData = {
       resourceId,
       previewType,
     }),
-  requestProcessorData: (flowId, resourceId, resourceType, processor) =>
-    action(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, {
-      flowId,
-      resourceId,
-      resourceType,
-      processor,
-    }),
   receivedProcessorData: (flowId, resourceId, processor, processedData) =>
     action(actionTypes.FLOW_DATA.PROCESSOR_DATA_RECEIVED, {
       flowId,
@@ -1397,7 +1343,6 @@ const flowData = {
     }),
   resetStages: (flowId, resourceId, stages = [], statusToUpdate) =>
     action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate }),
-  clearStages: flowId => action(actionTypes.FLOW_DATA.CLEAR_STAGES, { flowId }),
   resetFlowSequence: (flowId, updatedFlow) =>
     action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
   updateFlowsForResource: (resourceId, resourceType, stagesToReset = []) =>
@@ -1503,8 +1448,6 @@ const mapping = {
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { oldValue, newValue, isConditionalLookup }),
   patchSettings: (key, value) =>
     action(actionTypes.MAPPING.PATCH_SETTINGS, { key, value }),
-  setVisibility: value =>
-    action(actionTypes.MAPPING.SET_VISIBILITY, { value }),
   patchIncompleteGenerates: (key, value) =>
     action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value }),
   delete: key => action(actionTypes.MAPPING.DELETE, { key }),
@@ -1643,8 +1586,6 @@ const accessToken = {
     action(actionTypes.ACCESSTOKEN.RECEIVED, { accessToken }),
   maskToken: accessToken =>
     action(actionTypes.ACCESSTOKEN.MASK, { accessToken }),
-  revoke: id => action(actionTypes.ACCESSTOKEN.REVOKE, { id }),
-  activate: id => action(actionTypes.ACCESSTOKEN.ACTIVATE, { id }),
   deletePurged: () => action(actionTypes.ACCESSTOKEN.DELETE_PURGED),
   updatedCollection: () => action(actionTypes.ACCESSTOKEN.UPDATED_COLLECTION),
 };
@@ -1694,11 +1635,6 @@ const job = {
     action(actionTypes.JOB.RECEIVED_COLLECTION, {
       collection,
     }),
-  requestLatestJobs: ({ integrationId, flowId }) =>
-    action(actionTypes.JOB.REQUEST_LATEST, {
-      integrationId,
-      flowId,
-    }),
   requestFamily: ({ jobId }) =>
     action(actionTypes.JOB.REQUEST_FAMILY, { jobId }),
   receivedFamily: ({ job }) => action(actionTypes.JOB.RECEIVED_FAMILY, { job }),
@@ -1739,8 +1675,6 @@ const job = {
     action(actionTypes.JOB.RETRY_ALL, { flowId, childId, integrationId, match }),
   retryAllUndo: () => action(actionTypes.JOB.RETRY_ALL_UNDO),
   retryAllCommit: () => action(actionTypes.JOB.RETRY_ALL_COMMIT),
-  requestRetryObjects: ({ jobId }) =>
-    action(actionTypes.JOB.REQUEST_RETRY_OBJECTS, { jobId }),
   receivedRetryObjects: ({ collection, jobId }) =>
     action(actionTypes.JOB.RECEIVED_RETRY_OBJECT_COLLECTION, {
       collection,
@@ -1854,10 +1788,6 @@ const errorManager = {
     received: ({ flowId, latestJobs }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED, {
         flowId, latestJobs,
-      }),
-    requestJobFamily: ({ flowId, jobId }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST_JOB_FAMILY, {
-        flowId, jobId,
       }),
     receivedJobFamily: ({ flowId, job }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED_JOB_FAMILY, {
@@ -2058,7 +1988,6 @@ const errorManager = {
   retryStatus: {
     requestPoll: ({ flowId, resourceId }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST_FOR_POLL, { flowId, resourceId }),
-    clear: flowId => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.CLEAR, { flowId }),
     stopPoll: () => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.STOP_POLL),
     request: ({ flowId, resourceId }) => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST, ({ flowId, resourceId })),
     received: ({ flowId, resourceId, status }) => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.RECEIVED, ({ flowId, resourceId, status })),
@@ -2110,8 +2039,6 @@ const flow = {
     }),
 };
 const assistantMetadata = {
-  request: ({ adaptorType, assistant }) =>
-    action(actionTypes.METADATA.ASSISTANT_REQUEST, { adaptorType, assistant }),
   received: ({ adaptorType, assistant, metadata }) =>
     action(actionTypes.METADATA.ASSISTANT_RECEIVED, {
       adaptorType,
@@ -2295,7 +2222,6 @@ export default {
   resource,
   user,
   api,
-  ashare,
   auth,
   auditLogs,
   accessToken,

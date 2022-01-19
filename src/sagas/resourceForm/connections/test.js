@@ -7,8 +7,7 @@ import actions from '../../../actions';
 import { apiCallWithRetry } from '../../index';
 import {newIAFrameWorkPayload, submitFormValues, createFormValuesPatchSet} from '../index';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
-import { pingConnectionWithAbort, requestToken, requestIClients, pingAndUpdateConnection, pingConnectionWithId, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection, netsuiteUserRoles, requestTradingPartnerConnections } from '.';
-import { commitStagedChanges } from '../../resources';
+import { pingConnectionWithAbort, requestToken, requestIClients, pingAndUpdateConnection, pingConnectionWithId, pingConnection, createPayload, openOAuthWindowForConnection, saveAndAuthorizeConnection, netsuiteUserRoles, requestTradingPartnerConnections } from '.';
 import { selectors } from '../../../reducers/index';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import actionTypes from '../../../actions/types';
@@ -322,26 +321,6 @@ describe('requestTradingPartnerConnections saga tests', () => {
       .not.put(actions.connection.receivedTradingPartnerConnections())
       .run();
   });
-});
-
-describe('Commit and authorize connection saga', () => {
-  const resourceId = 'C1';
-  const resp = {name: 'conn1'};
-  const errorResponse = {error: 'error'};
-
-  test('should be able to commit and authorize connection successfully ', () => expectSaga(commitAndAuthorizeConnection, { resourceId })
-    .provide([
-      [matchers.call.fn(commitStagedChanges), resp],
-    ])
-    .call.fn(commitStagedChanges)
-    .call.fn(openOAuthWindowForConnection)
-    .run());
-  test('should not authorize connection if there is any error in response', () => expectSaga(commitAndAuthorizeConnection, { resourceId })
-    .provide([
-      [matchers.call.fn(commitStagedChanges), errorResponse],
-    ])
-    .call.fn(commitStagedChanges)
-    .run());
 });
 
 describe('Save and authorize connection saga', () => {
