@@ -9,9 +9,6 @@ const useStyles = makeStyles(() => ({
   auditLogModalContainer: {
     padding: 0,
   },
-  auditLogDialogContainer: {
-    overflow: 'visible',
-  },
 }));
 export default function AuditLogDialog({ resourceType, resourceId, onClose }) {
   const classes = useStyles();
@@ -22,8 +19,7 @@ export default function AuditLogDialog({ resourceType, resourceId, onClose }) {
 
   return (
     <ModalDialog
-      onClose={onClose} show maxWidth="xl" className={classes.auditLogModalContainer}
-      paperClassName={classes.auditLogDialogContainer}>
+      onClose={onClose} show maxWidth="xl" className={classes.auditLogModalContainer}>
       <div>Audit log{name}</div>
       <AuditLog
         onClick={onClose}
