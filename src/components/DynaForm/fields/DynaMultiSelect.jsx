@@ -10,8 +10,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FieldMessage from './FieldMessage';
 import CeligoSelect from '../../CeligoSelect';
 import FieldHelp from '../FieldHelp';
-import Tag from '../../HomePageCard/Footer/Tag';
-import shouldUnmaskInLogRocket from '../../../utils/shouldUnmaskInLogRocket';
+import IntegrationTag from '../../tags/IntegrationTag';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -65,7 +64,7 @@ const ChipLabel = ({label, tag}) => {
   return (
     <>
       {label}
-      <Tag className={classes.tagWrapper} label={tag} />
+      <IntegrationTag className={classes.tagWrapper} label={tag} />
     </>
   );
 };
@@ -98,7 +97,8 @@ export default function DynaMultiSelect(props) {
     required,
     removeInvalidValues = false,
     selectAllIdentifier,
-    dataPublic,
+    isLoggable,
+    SelectedOptionIml,
   } = props;
   const classes = useStyles();
   let processedValue = value || [];
@@ -115,6 +115,20 @@ export default function DynaMultiSelect(props) {
     (itemsSoFar, option) =>
       itemsSoFar.concat(
         option.items.map(item => {
+          if (SelectedOptionIml) {
+            return (
+              <MenuItem
+                key={item.value}
+                value={item.value}
+                disabled={item.disabled}
+                className={classes.menuItems}>
+                <SelectedOptionIml
+                  item={item}
+                  processedValue={processedValue}
+                />
+              </MenuItem>
+            );
+          }
           if (typeof item === 'string') {
             return (
               <MenuItem key={item} value={item} className={classes.menuItems}>
@@ -140,7 +154,7 @@ export default function DynaMultiSelect(props) {
                 />
               )}
               <ListItemText primary={item.label || item.value} />
-              {item.tag && <Tag className={classes.tagWrapper} label={item.tag} />}
+              {item.tag && <IntegrationTag className={classes.tagWrapper} label={item.tag} />}
             </MenuItem>
           );
         })
@@ -209,7 +223,7 @@ export default function DynaMultiSelect(props) {
         className={classes.multiselectWrapper}>
         <CeligoSelect
           multiple
-          data-public={shouldUnmaskInLogRocket(id, dataPublic)}
+          isLoggable={isLoggable}
           data-test={id}
           disabled={disabled}
           value={processedValue}

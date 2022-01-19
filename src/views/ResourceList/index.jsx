@@ -3,14 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { Link, useLocation, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { MODEL_PLURAL_TO_LABEL, generateNewId,
   isTradingPartnerSupported,
 } from '../../utils/resource';
 import infoText from './infoText';
-import IconTextButton from '../../components/IconTextButton';
 import { selectors } from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../../components/ResourceTable';
@@ -18,13 +16,15 @@ import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
 import CheckPermissions from '../../components/CheckPermissions';
-import { PERMISSIONS } from '../../utils/constants';
+import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
 import { connectorFilter } from './util';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import StackShareDrawer from '../../components/StackShare/Drawer';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
+import { TextButton } from '../../components/Buttons';
+import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -37,6 +37,9 @@ const useStyles = makeStyles(theme => ({
   },
   noShowMoreContainer: {
     paddingBottom: theme.spacing(3),
+  },
+  noResultWrapper: {
+    padding: theme.spacing(1),
   },
 }));
 const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
@@ -113,8 +116,6 @@ export default function ResourceList(props) {
   [dispatch, resourceType]);
 
   useEffect(() => {
-    let int;
-
     dispatch(actions.resource.connections.refreshStatus());
 
     // TODO: discus with team how to best handle this feature (and as future feature pattern)...
@@ -127,13 +128,11 @@ export default function ResourceList(props) {
     // user activity and stop polling if there is none, etc?
     // For connections resource table, we need to poll the connection status and queueSize
     if (resourceType === 'connections') {
-      int = setInterval(() => {
-        dispatch(actions.resource.connections.refreshStatus());
-      }, 10 * 1000);
+      dispatch(actions.app.polling.start(actions.resource.connections.refreshStatus(), 10 * 1000));
     }
 
     return () => {
-      clearInterval(int);
+      dispatch(actions.app.polling.stopSpecificPollProcess(actions.resource.connections.refreshStatus()));
     };
   }, [dispatch, resourceType]);
 
@@ -161,24 +160,23 @@ export default function ResourceList(props) {
           <KeywordSearch
             filterKey={resourceType}
           />
-          <IconTextButton
+          <TextButton
             data-test="addNewResource"
             component={Link}
             to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
-            variant="text"
-            color="primary">
-            <AddIcon /> Create {createResourceLabel}
-          </IconTextButton>
+            startIcon={<AddIcon />}>
+            Create {createResourceLabel}
+          </TextButton>
         </div>
       </CeligoPageBar>
-      <div className={clsx(classes.resultContainer, {[classes.noShowMoreContainer]: list.filtered === list.count })}>
+      <div className={clsx(classes.resultContainer, {[classes.noShowMoreContainer]: list.filtered === list.count }, {[classes.noResultWrapper]: list.count === 0})}>
         <LoadResources required resources={resourcesToLoad(resourceType)}>
           {list.count === 0 ? (
-            <Typography>
+            <>
               {list.total === 0
-                ? `You don't have any ${createResourceLabel}s.`
-                : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
-            </Typography>
+                ? <NoResultMessageWrapper>You don&apos;t have any ${createResourceLabel}s.</NoResultMessageWrapper>
+                : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+            </>
           ) : (
             <ResourceTable
               resourceType={resourceType}

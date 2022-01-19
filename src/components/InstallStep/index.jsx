@@ -10,8 +10,9 @@ import ApplicationImg from '../icons/ApplicationImg';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import InfoIconButton from '../InfoIconButton';
-import IconTextButton from '../IconTextButton';
 import Spinner from '../Spinner';
+import { TextButton } from '../Buttons';
+import getImageUrl from '../../utils/image';
 
 const useStyles = makeStyles(theme => ({
   step: {
@@ -144,7 +145,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function InstallationStep(props) {
   const classes = useStyles(props.step || {});
-  const { step, index, handleStepClick, mode = 'install', templateId } = props;
+  const { step, index, handleStepClick, mode = 'install', templateId, integrationId, isTemplate, isFrameWork2 } = props;
   const dispatch = useDispatch();
   const [verified, setVerified] = useState(false);
   const connection = useSelector(state => {
@@ -160,29 +161,50 @@ export default function InstallationStep(props) {
   });
 
   useEffect(() => {
-    if (
-      connection &&
-      step &&
-      step.type === INSTALL_STEP_TYPES.INSTALL_PACKAGE &&
-      !step.completed &&
-      !verified
-    ) {
-      dispatch(
-        actions.template.updateStep(
-          { ...step, status: 'verifying' },
-          templateId
-        )
-      );
-      dispatch(
-        actions.template.verifyBundleOrPackageInstall(
-          step,
-          connection,
-          templateId
-        )
-      );
-      setVerified(true);
+    if (step && !step.completed && !verified) {
+      if (
+        connection &&
+        step.type === INSTALL_STEP_TYPES.INSTALL_PACKAGE
+      ) {
+        dispatch(
+          actions.template.updateStep(
+            { ...step, status: 'verifying' },
+            templateId
+          )
+        );
+        dispatch(
+          actions.template.verifyBundleOrPackageInstall(
+            step,
+            connection,
+            templateId
+          )
+        );
+        setVerified(true);
+      } else if (
+        step.isCurrentStep &&
+        (step.installURL || step.url) &&
+        isTemplate &&
+        step.connectionId
+      ) {
+        dispatch(
+          actions.integrationApp.installer.updateStep(
+            integrationId,
+            step.installerFunction,
+            'verify'
+          )
+        );
+        dispatch(
+          actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
+            integrationId,
+            step.connectionId,
+            step.installerFunction,
+            isFrameWork2
+          )
+        );
+        setVerified(true);
+      }
     }
-  }, [connection, dispatch, step, templateId, verified]);
+  }, [connection, dispatch, integrationId, isFrameWork2, isTemplate, step, templateId, verified]);
 
   if (!step) {
     return null;
@@ -219,7 +241,7 @@ export default function InstallationStep(props) {
             {step.imageURL && (
             <img
               alt=""
-              src={process.env.CDN_BASE_URI + step.imageURL.replace(/^\//g, '')}
+              src={getImageUrl(step.imageURL)}
             />
             )}
             {(step.type === INSTALL_STEP_TYPES.CONNECTION || step?.sourceConnection) && (
@@ -234,16 +256,14 @@ export default function InstallationStep(props) {
           </div>
           <div className={classes.installActionBtnWrapper}>
             {!step.completed && (
-            <IconTextButton
+            <TextButton
               data-test={stepText}
               disabled={!step.isCurrentStep}
               onClick={onStepClick}
-              variant="text"
-              color="primary"
               className={clsx(classes.installActionBtn, {[classes.installBtn]: (step.isCurrentStep && !step.completed)})}
               >
               {showSpinner && <Spinner size="small" />} {stepText}
-            </IconTextButton>
+            </TextButton>
             )}
             {step.completed && (
             <>

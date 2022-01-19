@@ -1,6 +1,6 @@
 import 'url-search-params-polyfill';
 import * as smoothscroll from 'smoothscroll-polyfill';
-import React from 'react';
+import React, { StrictMode } from 'react';
 import { render } from 'react-dom';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
@@ -43,7 +43,6 @@ middleware.push(LogRocket.reduxMiddleware({
 if (env === 'development' && process.env.REDUX_LOGGER === 'true') {
   // redux-logger options reference: https://www.npmjs.com/package/redux-logger#options
   const logOptions = {
-    predicate: (getState, action) => !['API_WATCHER_SUCCESS', 'API_COMPLETE'].includes(action.type),
     diff: true,
     duration: true,
     collapsed: (getState, action, logEntry) => !logEntry.error,
@@ -92,6 +91,7 @@ if (env !== 'development' && GAKey1?.length > 1) {
           }
         });
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.warn('GA initialization failed');
     }
 
@@ -106,7 +106,7 @@ if (env !== 'development' && GAKey1?.length > 1) {
   // We don't need to register Google Analytics here.
   render(
     <Provider store={store}>
-      <App />
+      <StrictMode> <App /> </StrictMode>
     </Provider>,
     document.getElementById('root')
   );

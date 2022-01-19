@@ -1,8 +1,8 @@
-import { Button } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../reducers';
 import { FORM_SAVE_STATUS } from '../../../utils/constants';
+import { FilledButton } from '../../Buttons';
 import useHandleIntegrationSettings from './Groups/hooks/useHandleIntegrationSettings';
 
 export default function IntegrationSettingsSaveButton(props) {
@@ -39,12 +39,10 @@ export default function IntegrationSettingsSaveButton(props) {
   });
 
   return (
-    <Button
-      variant="outlined"
-      color="primary"
+    <FilledButton
       disabled={disabled || !isDirty || isSaving}
       onClick={onSave}>
       {isSaving ? 'Saving...' : 'Save'}
-    </Button>
+    </FilledButton>
   );
 }

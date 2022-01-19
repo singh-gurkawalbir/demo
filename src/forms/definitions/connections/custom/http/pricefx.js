@@ -63,6 +63,8 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       label: 'Password',
       required: true,
       helpKey: 'pricefx.connection.http.encrypted.password',

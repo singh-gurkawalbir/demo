@@ -322,7 +322,7 @@ selectors.mappingChanged = state => {
     return false;
   }
 
-  const { mappings, mappingsCopy, lookups, lookupsCopy } = state.mapping;
+  const { mappings = [], mappingsCopy = [], lookups = [], lookupsCopy = [] } = state.mapping;
   let isMappingsChanged = !isMappingEqual(mappings, mappingsCopy);
 
   if (!isMappingsChanged) {

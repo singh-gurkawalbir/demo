@@ -1,5 +1,6 @@
 export default {
   'rdbms.query': {
+    isLoggable: true,
     type: 'sqlquerybuilder',
     label: 'SQL query',
     validWhen: {
@@ -24,6 +25,7 @@ export default {
     required: true,
   },
   'rdbms.once.query': {
+    isLoggable: true,
     type: 'sqlquerybuilder',
     label: 'SQL once query',
     required: true,

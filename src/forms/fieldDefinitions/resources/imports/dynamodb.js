@@ -2,6 +2,7 @@ import { AWS_REGIONS_LIST } from '../../../../utils/constants';
 
 export default {
   'dynamodb.region': {
+    isLoggable: true,
     type: 'select',
     label: 'Region',
     required: true,
@@ -13,6 +14,7 @@ export default {
     ],
   },
   'dynamodb.method': {
+    isLoggable: true,
     type: 'radiogroupforresetfields',
     label: 'Method',
     required: true,
@@ -37,11 +39,13 @@ export default {
     ],
   },
   'dynamodb.tableName': {
+    isLoggable: true,
     type: 'text',
     label: 'Table name',
     required: true,
   },
   'dynamodb.partitionKey': {
+    isLoggable: true,
     type: 'textwithflowsuggestion',
     showSuggestionsWithoutHandlebar: true,
     showLookup: false,
@@ -54,12 +58,14 @@ export default {
     ],
   },
   'dynamodb.sortKey': {
+    isLoggable: true,
     type: 'textwithflowsuggestion',
     showSuggestionsWithoutHandlebar: true,
     showLookup: false,
     label: 'Sort key',
   },
   'dynamodb.itemDocument': {
+    isLoggable: true,
     type: 'sqlquerybuilder',
     arrayIndex: 0,
     label: 'DynamoDB query',
@@ -71,6 +77,7 @@ export default {
     ],
   },
   'dynamodb.updateExpression': {
+    isLoggable: true,
     type: 'text',
     label: 'Update expression',
     required: true,
@@ -82,10 +89,12 @@ export default {
     ],
   },
   'dynamodb.conditionExpression': {
+    isLoggable: true,
     type: 'text',
     label: 'Key condition expression',
   },
   'dynamodb.expressionAttributeNames': {
+    isLoggable: true,
     type: 'editor',
     label: 'Expression attribute names',
     mode: 'json',
@@ -104,6 +113,7 @@ export default {
     ],
   },
   'dynamodb.expressionAttributeValues': {
+    isLoggable: true,
     type: 'sqlquerybuilder',
     label: 'Expression attribute values',
     defaultValue: r => r?.dynamodb?.expressionAttributeValues,
@@ -119,6 +129,7 @@ export default {
     ],
   },
   'dynamodb.ignoreExtract': {
+    isLoggable: true,
     type: 'textwithflowsuggestion',
     showLookup: false,
     showSuggestionsWithoutHandlebar: true,

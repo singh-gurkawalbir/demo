@@ -52,11 +52,12 @@ const useStyles = makeStyles(theme => ({
   lockIcon: {
     position: 'absolute',
     right: 10,
-    top: 6,
+    top: '50%',
+    transform: 'translateY(-50%)',
     color: theme.palette.text.hint,
   },
   lockedIcon: {
-    right: 40,
+    right: theme.spacing(5),
   },
   deleteBtn: {
     border: 'none',
@@ -89,9 +90,9 @@ const useStyles = makeStyles(theme => ({
     height: 1,
     flexGrow: 1,
   },
-  rowContainer: {
-    '&:hover': {
-
+  hasLockHardCodeIcons: {
+    '& .MuiFilledInput-multiline': {
+      paddingRight: theme.spacing(8),
     },
   },
 }));
@@ -102,7 +103,7 @@ export default function MappingRow({
   index,
   importId,
   flowId,
-  mappingKey,
+  rowData,
   subRecordMappingId,
   isDragInProgress = false,
   isRowDragged = false,
@@ -111,6 +112,7 @@ export default function MappingRow({
   const classes = useStyles();
   const [showGripper, setShowGripper] = useState(false);
 
+  const { key: mappingKey } = rowData;
   const mapping = useSelector(state => {
     const {mappings} = selectors.mapping(state);
     const mapping = mappings.find(({key}) => key === mappingKey);
@@ -162,7 +164,6 @@ export default function MappingRow({
 
   const RightIcon = ({title, Icon, className}) => (
     <Tooltip
-      data-public
       title={title}
       placement="bottom">
       <span className={clsx(classes.lockIcon, className)}>
@@ -226,12 +227,12 @@ export default function MappingRow({
         <div className={classes.innerRow}>
           <SortableHandle isVisible={showGripper} />
           <div
-            data-public
             className={clsx(classes.childHeader, classes.mapField, {
               [classes.disableChildRow]:
               isSubRecordMapping || isNotEditable || disabled,
             })}>
             <DynaTypeableSelect
+              isLoggable
               key={extractValue}
               id={`fieldMappingExtract-${index}`}
               labelName="name"
@@ -251,12 +252,12 @@ export default function MappingRow({
           </div>
           <span className={classes.mappingIcon} />
           <div
-            data-public
             className={clsx(classes.childHeader, classes.mapField, {
               [classes.disableChildRow]:
               isSubRecordMapping || isRequired || disabled,
-            })}>
+            }, {[classes.hasLockHardCodeIcons]: isLookup || isMultiField || isHardCodedValue})}>
             <DynaTypeableSelect
+              isLoggable
               key={generate}
               id={`fieldMappingGenerate-${index}`}
               value={generate}

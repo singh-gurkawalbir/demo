@@ -17,15 +17,16 @@ import LoadResources from '../../../LoadResources';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
 import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
+import useHandleResourceFormFlowSampleData from './useHandleResourceFormFlowSampleData';
 import {applicationsList} from '../../../../constants/applications';
 import InstallationGuideIcon from '../../../icons/InstallationGuideIcon';
 import { KBDocumentation, getParentResourceContext } from '../../../../utils/connections';
 import DebugIcon from '../../../icons/DebugIcon';
-import IconTextButton from '../../../IconTextButton';
-import ListenerRequestLogsDrawer from '../../ListenerRequestLogs';
+import FlowStepRequestLogsDrawer from '../../FlowStepDebugLogs';
 import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 import CloseButton from './CloseButton';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
+import { TextButton } from '../../../Buttons';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 export const isNestedDrawer = url => !!matchPath(url, {
@@ -52,7 +53,7 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplateColumns: '50% 48%',
     gridColumnGap: theme.spacing(1),
-    padding: theme.spacing(3),
+    padding: theme.spacing(3, 3, 1),
     '& > div:first-child': {
       padding: 0,
       paddingRight: theme.spacing(2),
@@ -206,6 +207,7 @@ export default function Panel(props) {
 
   const isNew = operation === 'add';
 
+  useHandleResourceFormFlowSampleData(formKey);
   useResourceFormRedirectionToParentRoute(resourceType, id);
   const classes = useStyles({
     ...props,
@@ -213,7 +215,7 @@ export default function Panel(props) {
     match,
   });
 
-  const hasListenerLogsAccess = useSelector(state => selectors.hasLogsAccess(state, id, resourceType, isNew, flowId));
+  const hasFlowStepLogsAccess = useSelector(state => selectors.hasLogsAccess(state, id, resourceType, isNew, flowId));
   const resourceLabel = useSelector(state =>
     selectors.getCustomResourceLabel(state, {
       resourceId: id,
@@ -292,7 +294,7 @@ export default function Panel(props) {
     return shouldShow && !isFirstStep;
   });
 
-  const listenerDrawerHandler = useCallback(() => {
+  const flowStepDrawerHandler = useCallback(() => {
     history.push(`${match.url}/logs`);
   }, [match.url, history]);
   const isReportType = VALID_REPORT_TYPES.some(({value}) => value === resourceType);
@@ -310,7 +312,7 @@ export default function Panel(props) {
           </IconButton>
           )}
 
-          <div data-public className={classes.titleImgBlock}>
+          <div className={classes.titleImgBlock}>
             <Typography variant="h4" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
               {title}
             </Typography>
@@ -322,15 +324,14 @@ export default function Panel(props) {
                 {app.name || applicationType} connection guide
               </a>
               )}
-              {hasListenerLogsAccess && (
-                <IconTextButton
-                  onClick={listenerDrawerHandler}
-                  color="primary"
+              {hasFlowStepLogsAccess && (
+                <TextButton
+                  onClick={flowStepDrawerHandler}
+                  startIcon={<DebugIcon />}
                   className={classes.debugLogButton}
-                  data-test="listenerLogs">
-                  <DebugIcon />
+                  data-test="flowStepLogs">
                   View debug logs
-                </IconTextButton>
+                </TextButton>
               )}
               <div className={classes.appLogoWrapper}>
                 <ApplicationImg
@@ -401,7 +402,7 @@ export default function Panel(props) {
         </LoadResources>
       </div>
       <EditorDrawer />
-      <ListenerRequestLogsDrawer flowId={flowId} exportId={id} />
+      <FlowStepRequestLogsDrawer flowId={flowId} resourceType={resourceType} resourceId={id} />
     </>
   );
 }

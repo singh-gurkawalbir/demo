@@ -1,12 +1,17 @@
 import { uniqBy } from 'lodash';
+import Browser from 'bowser';
 import mappingUtil from '..';
 
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
 const wrapTextForSpecialCharsNetsuite = (extract, isSS2) => {
   let toReturn = extract;
+  const isExtractAlreadyWrappedByUser = /^\[.*\]$/.test(extract) && // If extract is wrapped in square braces i,e starts with [ and ends with ]
+  /\W/.test(extract.replace(/^\[|]$/g, '')) && // and the wrapped content contains special character
+  !/\./.test(extract.replace(/^\[|]$/g, '')); // and none of the special characters is a dot
 
   if (
     extract.indexOf('[*].') === -1 &&
+    !isExtractAlreadyWrappedByUser &&
     extract.indexOf("'") === -1 &&
     extract.indexOf('.') === -1 &&
     /\W/.test(extract)
@@ -58,10 +63,10 @@ export default {
             tempFm.generate += '.internalid';
           }
 
-          if (/^\['.*']$/.test(tempFm.extract)) {
+          if (/^\['.*']$/.test(tempFm.extract) && !/^\['".*"']$/.test(tempFm.extract)) {
             // Remove [' in the start and  remove '] in the end
             tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2');
-          } else if (/^\[.*]$/.test(tempFm.extract) && /\W/.test(tempFm.extract.replace(/^\[|]$/g, ''))) {
+          } else if (/^\[.*]$/.test(tempFm.extract) && !/^\[".*"]$/.test(tempFm.extract) && /\W/.test(tempFm.extract.replace(/^\[|]$/g, ''))) {
             // If extract is wrapped with [ and ] and the wrapped content has a special character then
             // Remove [ in the start and  remove ] in the end in case of SS 2.0 imports
             tempFm.extract = tempFm.extract.replace(/^(\[)(.*)(])$/, '$2');
@@ -429,5 +434,17 @@ export default {
     });
 
     return generatedMapping;
+  },
+  isNSMappingAssistantSupported: () => {
+    const browser = Browser.getParser(window.navigator.userAgent);
+    const { name, version } = browser.getBrowser();
+
+    // Chrome browser with versions >= 91 are not supported for NS Assistant to launch Iframe
+    // Ref https://celigo.atlassian.net/browse/IO-21921
+    if (name === 'Chrome' && parseInt(version, 10) >= 91) {
+      return false;
+    }
+
+    return true;
   },
 };

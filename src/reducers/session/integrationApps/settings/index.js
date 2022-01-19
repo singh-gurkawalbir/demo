@@ -961,4 +961,39 @@ selectors.checkUpgradeRequested = (state, licenseId) => {
   return !!state[licenseId];
 };
 
+selectors.subscribedAddOns = (state, integrationId, supportsMultiStore, childId) => {
+  if (!state) {
+    return null;
+  }
+
+  const addOnKey = `${integrationId}-addOns`;
+
+  const addOnState = state[addOnKey] || emptyObj;
+
+  const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => supportsMultiStore && childId ? model.storeId === childId : true);
+  let subscribedAddOnsModified;
+
+  if (subscribedAddOns) {
+    subscribedAddOnsModified = subscribedAddOns.map((f, i) => {
+      const addon = addOnState?.addOns?.addOnMetaData?.find(addOn => addOn.id === f.id);
+      const addOnObj = {...f};
+
+      addOnObj._id = i;
+      addOnObj.integrationId = integrationId;
+      addOnObj.name = addon ? addon.name : f.id;
+      addOnObj.description = addon ? addon.description : '';
+      addOnObj.uninstallerFunction = addon
+        ? addon.uninstallerFunction
+        : '';
+      addOnObj.installerFunction = addon
+        ? addon.installerFunction
+        : '';
+
+      return addOnObj;
+    });
+  }
+
+  return subscribedAddOnsModified;
+};
+
 // #endregion

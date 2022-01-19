@@ -1,27 +1,20 @@
 import React, {useCallback} from 'react';
-import { makeStyles, IconButton, Typography, Button } from '@material-ui/core';
+import { makeStyles, IconButton, Typography } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import CopyIcon from '../icons/CopyIcon';
 import AccessToken from '../MaskToken';
+import { TextButton } from '../Buttons';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    alignItems: 'center',
-  },
+const useStyles = makeStyles({
   copyTokenIcon: {
     padding: 0,
   },
   showToken: {
     padding: 0,
     minWidth: 'unset',
-    '&:hover': {
-      color: theme.palette.primary.main,
-      background: 'transparent',
-    },
   },
-}));
+});
 
 export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr }) {
   const classes = useStyles();
@@ -30,7 +23,7 @@ export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr })
     enquesnackbar({ message: 'Token copied to clipboard.' }), [enquesnackbar]);
 
   return (
-    <div className={classes.root}>
+    <div>
       {token ? (
         <>
           <Typography data-private variant="caption">
@@ -50,12 +43,12 @@ export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr })
           </CopyToClipboard>
         </>
       ) : (
-        <Button
+        <TextButton
           data-test={showTokenTestAttr || 'showToken'}
           className={classes.showToken}
           onClick={onShowToken}>
           Show token
-        </Button>
+        </TextButton>
       )}
     </div>
   );

@@ -2,13 +2,15 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Button, FormLabel } from '@material-ui/core';
+import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
 import FieldHelp from '../../FieldHelp';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDefinitionChange from './FileDefinitionChange';
+import { OutlinedButton } from '../../../Buttons';
+import { safeParse } from '../../../../utils/string';
 
 /*
  * This editor is shown in case of :
@@ -26,7 +28,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(0.5),
   },
 }));
-
+// Afe will decide loggable aspects
 export default function DynaFileDefinitionEditor_afe(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -46,18 +48,28 @@ export default function DynaFileDefinitionEditor_afe(props) {
   const editorType = resourceType === 'imports' ? 'structuredFileGenerator' : 'structuredFileParser';
 
   const handleSave = useCallback(editorValues => {
-    const { rule } = editorValues;
+    const { rule, lastValidData } = editorValues;
 
-    // todo: On change of rules, trigger sample data update
+    // Trigger sample Data update on resource
+    const patchSet = [
+      {
+        op: 'replace',
+        path: '/sampleData',
+        value: resourceType === 'imports' ? safeParse(lastValidData) : lastValidData,
+      },
+    ];
+
+    dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+
     // It calls processor on final rules to parse file
     // @raghu this would also need to be removed once auto sample data update changes are done
-    dispatch(actions.resourceFormSampleData.request(formKey));
 
+    dispatch(actions.resourceFormSampleData.request(formKey));
     // update rules against this field each time it gets saved
     if (rule) {
       onFieldChange(id, rule);
     }
-  }, [dispatch, formKey, onFieldChange, id]);
+  }, [resourceType, dispatch, resourceId, formKey, onFieldChange, id]);
 
   const handleEditorClick = useCallback(() => {
     dispatch(actions.editor.init(editorId, editorType, {
@@ -66,7 +78,6 @@ export default function DynaFileDefinitionEditor_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
       onSave: handleSave,
     }));
 
@@ -91,13 +102,12 @@ export default function DynaFileDefinitionEditor_afe(props) {
               </FormLabel>
               <FieldHelp {...props} />
             </div>
-            <Button
-              variant="outlined"
+            <OutlinedButton
               color="secondary"
               className={classes.fileDefinitionBtn}
               onClick={handleEditorClick}>
               Launch
-            </Button>
+            </OutlinedButton>
           </div>
         </LoadResources>
       </div>

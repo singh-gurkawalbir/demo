@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import EditIcon from '../../../icons/EditIcon';
 import DynaText from '../DynaText';
 import { selectors } from '../../../../reducers';
@@ -12,6 +11,7 @@ import Spinner from '../../../Spinner';
 import ActionButton from '../../../ActionButton';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   refrencedFieldWrapper: {
@@ -60,6 +60,7 @@ const FirstLevelModal = props => {
         helpKey: 'parentSObjectType',
         filterKey: 'salesforce-sObjects-referenceFields',
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
+        isLoggable: true,
         removeRefresh: true,
       },
       referencedFields: {
@@ -72,6 +73,7 @@ const FirstLevelModal = props => {
         type: 'salesforcetreemodal',
         errorMsg: 'Please select a parent sObject Type',
         disabledWhen: [{ field: 'parentSObjectType', is: [''] }],
+        isLoggable: true,
         defaultValue: props.value,
       },
     },
@@ -97,13 +99,11 @@ const FirstLevelModal = props => {
         }}>
         Save
       </DynaSubmit>
-      <Button
+      <TextButton
         data-test="closeReferencedFields"
-        onClick={handleClose}
-        variant="text"
-        color="primary">
+        onClick={handleClose}>
         Cancel
-      </Button>
+      </TextButton>
     </ModalDialog>
   );
 };

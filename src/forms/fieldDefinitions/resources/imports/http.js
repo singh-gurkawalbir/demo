@@ -1,5 +1,6 @@
 export default {
   'http.method': {
+    isLoggable: true,
     type: 'select',
     label: 'HTTP method',
     required: true,
@@ -39,6 +40,7 @@ export default {
     },
   },
   'http.blobMethod': {
+    isLoggable: true,
     type: 'select',
     helpKey: 'import.http.method',
     label: 'HTTP method',
@@ -67,27 +69,28 @@ export default {
     label: 'Configure HTTP headers',
   },
   'http.requestMediaType': {
-    type: 'selectrequestmediatype',
+    isLoggable: true,
+    type: 'selectoverridemediatype',
     label: 'Override request media type',
     placeholder: 'Do not override',
-    defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'json'),
   },
   'http.compositeType': {
+    isLoggable: true,
     type: 'select',
     label: 'Composite type',
     options: [
       {
         items: [
           {
-            label: 'Create New Data & Update Existing Data',
+            label: 'Create new records & update existing records',
             value: 'createandupdate',
           },
           {
-            label: 'Create New Data & Ignore Existing Data',
+            label: 'Create new records & ignore existing records',
             value: 'createandignore',
           },
           {
-            label: 'Update Existing Data & Ignore New Data',
+            label: 'Ignore new records & update existing records',
             value: 'updateandignore',
           },
         ],
@@ -132,6 +135,7 @@ export default {
     },
   },
   'http.requestType': {
+    isLoggable: true,
     type: 'select',
     label: 'Request type',
     options: [
@@ -159,6 +163,7 @@ export default {
       r && r.http && r.http.requestType && r.http.requestType[0],
   },
   'http.relativeURI': {
+    isLoggable: true,
     type: 'relativeuri',
     fieldType: 'relativeUri',
     label: 'Relative URI',
@@ -178,6 +183,7 @@ export default {
       r && r.http && r.http.relativeURI && r.http.relativeURI[0],
   },
   'http.body': {
+    isLoggable: true,
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
     arrayIndex: 0,
@@ -198,6 +204,7 @@ export default {
     ],
   },
   'http.response.successPath': {
+    isLoggable: true,
     type: 'text',
     label: 'Path to success field in HTTP response body',
     delimiter: ',',
@@ -213,6 +220,7 @@ export default {
     ],
   },
   'http.response.successValues': {
+    isLoggable: true,
     type: 'text',
     label: 'Success values',
     delimiter: ',',
@@ -230,6 +238,7 @@ export default {
     ],
   },
   'http.response.resourceIdPath': {
+    isLoggable: true,
     type: 'text',
     helpKey: r => {
       if (r?.resourceType === 'transferFiles' || r?.blob) { return 'import.http.response.file.resourceIdPath'; }
@@ -250,6 +259,7 @@ export default {
     ],
   },
   'http.response.failPath': {
+    isLoggable: true,
     type: 'text',
     label: 'Path to error field in HTTP response body',
     delimiter: ',',
@@ -265,6 +275,7 @@ export default {
     ],
   },
   'http.response.failValues': {
+    isLoggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Error values',
@@ -280,6 +291,7 @@ export default {
     ],
   },
   'http.response.resourcePath': {
+    isLoggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Path to records in HTTP response body',
@@ -295,6 +307,7 @@ export default {
     ],
   },
   'http.response.errorPath': {
+    isLoggable: true,
     type: 'text',
     label: 'Path to detailed error message field in HTTP response body',
     visibleWhenAll: [
@@ -309,6 +322,7 @@ export default {
     ],
   },
   'http.batchSize': {
+    isLoggable: true,
     type: 'text',
     label: 'Number of records per HTTP request',
     defaultValue: r => r?.http?.batchSize || 1,
@@ -327,7 +341,8 @@ export default {
     ],
   },
   'http.successMediaType': {
-    type: 'select',
+    isLoggable: true,
+    type: 'selectoverridemediatype',
     label: 'Override media type for success responses',
     placeholder: 'Do not override',
     visibleWhenAll: [
@@ -337,16 +352,14 @@ export default {
       },
     ],
     options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'JSON', value: 'json' },
-        ],
-      },
+      { label: 'XML', value: 'xml' },
+      { label: 'JSON', value: 'json' },
     ],
+    dependentFieldForMediaType: '/http/requestMediaType',
   },
   'http.errorMediaType': {
-    type: 'select',
+    isLoggable: true,
+    type: 'selectoverridemediatype',
     label: 'Override media type for error responses',
     placeholder: 'Do not override',
     visibleWhen: [
@@ -356,15 +369,13 @@ export default {
       },
     ],
     options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'JSON', value: 'json' },
-        ],
-      },
+      { label: 'XML', value: 'xml' },
+      { label: 'JSON', value: 'json' },
     ],
+    dependentFieldForMediaType: '/http/requestMediaType',
   },
   'http.ignoreEmptyNodes': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Remove empty fields from HTTP request body',
     visibleWhen: [
@@ -375,6 +386,7 @@ export default {
     ],
   },
   'http.configureAsyncHelper': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Configure async helper',
     defaultValue: r => !!(r && r.http && r.http._asyncHelperId),
@@ -392,6 +404,7 @@ export default {
   },
 
   'http._asyncHelperId': {
+    isLoggable: true,
     label: 'Async helper',
     type: 'selectresource',
     resourceType: 'asyncHelpers',
@@ -408,11 +421,13 @@ export default {
     ],
   },
   'http.existingLookupType': {
+    isLoggable: true,
     id: 'http.existingLookupType',
     type: 'select',
     label: 'How would you like to identify existing records?',
     required: true,
     helpKey: 'import.lookupType',
+    noApi: true,
     defaultValue: r => {
       if (r.http?.ignoreLookupName) {
         return 'lookup';
@@ -450,6 +465,7 @@ export default {
     ],
   },
   'http.ignoreExistingExtract': {
+    isLoggable: true,
     id: 'http.ignoreExistingExtract',
     label: 'Which field?',
     omitWhenHidden: true,
@@ -478,6 +494,7 @@ export default {
     defaultValue: r => r.http?.ignoreExtract,
   },
   'http.ignoreExistingLookupName': {
+    isLoggable: true,
     id: 'http.ignoreExistingLookupName',
     omitWhenHidden: true,
     label: 'Lookup',
@@ -506,11 +523,13 @@ export default {
     ],
   },
   'http.newLookupType': {
+    isLoggable: true,
     id: 'http.newLookupType',
     type: 'select',
     label: 'How would you like to identify existing records?',
     required: true,
     helpKey: 'import.lookupType',
+    noApi: true,
     defaultValue: r => {
       if (r.http?.ignoreLookupName) {
         return 'lookup';
@@ -548,6 +567,7 @@ export default {
     ],
   },
   'http.ignoreNewExtract': {
+    isLoggable: true,
     id: 'http.ignoreNewExtract',
     label: 'Which field?',
     omitWhenHidden: true,
@@ -576,6 +596,7 @@ export default {
     defaultValue: r => r.http?.ignoreExtract,
   },
   'http.ignoreNewLookupName': {
+    isLoggable: true,
     id: 'http.ignoreNewLookupName',
     omitWhenHidden: true,
     label: 'Lookup',
@@ -603,7 +624,108 @@ export default {
       },
     ],
   },
+  'http.lookupType': {
+    loggable: true,
+    id: 'http.lookupType',
+    type: 'select',
+    label: 'How would you like to identify existing records?',
+    required: true,
+    helpKey: 'import.lookupType',
+    noApi: true,
+    defaultValue: r => {
+      if (r.http?.existingLookupName) {
+        return 'lookup';
+      }
+
+      return 'source';
+    },
+    options: [
+      {
+        items: [
+          {
+            label: 'Records have a specific field populated',
+            value: 'source',
+          },
+          {
+            label: 'Run a dynamic lookup',
+            value: 'lookup',
+          },
+        ],
+      },
+    ],
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['createandupdate'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'http.existingExtract': {
+    loggable: true,
+    id: 'http.existingExtract',
+    label: 'Which field?',
+    omitWhenHidden: true,
+    helpKey: 'import.existingExtract',
+    type: 'textwithflowsuggestion',
+    showSuggestionsWithoutHandlebar: true,
+    showLookup: false,
+    required: true,
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['createandupdate'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      }, {
+        field: 'http.lookupType',
+        is: ['source'],
+      },
+    ],
+  },
+  'http.existingLookupName': {
+    loggable: true,
+    id: 'http.existingLookupName',
+    omitWhenHidden: true,
+    label: 'Lookup',
+    type: 'selectlookup',
+    helpKey: 'import.existingLookupName',
+    adaptorType: r => r.adaptorType,
+    importId: r => r._id,
+    required: true,
+    visibleWhenAll: [
+      {
+        field: 'http.compositeType',
+        is: ['createandupdate'],
+      },
+      {
+        field: 'http.method',
+        is: ['COMPOSITE'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      }, {
+        field: 'http.lookupType',
+        is: ['lookup'],
+      },
+    ],
+  },
   'unencrypted.apiType': {
+    isLoggable: true,
     type: 'selectAmazonSellerCentralAPIType',
     label: 'API type',
     helpKey: 'export.unencrypted.apiType',

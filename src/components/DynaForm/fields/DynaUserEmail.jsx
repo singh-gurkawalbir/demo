@@ -7,6 +7,7 @@ import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
 import EditIcon from '../../icons/EditIcon';
 import FieldHelp from '../FieldHelp';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles({
   formWrapper: {
@@ -37,7 +38,7 @@ export default function DynaUserEmail(props) {
   const handleModalClose = useCallback(() => {
     setShowChangeEmailModal(false);
   }, []);
-  const { id, value, label, readOnly = false } = props;
+  const { id, value, label, readOnly = false, isLoggable } = props;
 
   return (
     <FormControl className={classes.field}>
@@ -47,6 +48,7 @@ export default function DynaUserEmail(props) {
       </div>
       <div className={classes.fieldWrapper}>
         <TextField
+          {...isLoggableAttr(isLoggable)}
           id={id}
           type="email"
           value={value}

@@ -6,7 +6,7 @@ import {
   MenuItem,
   FormControl,
   FormLabel,
-  Button } from '@material-ui/core';
+} from '@material-ui/core';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import LoadResources from '../../../../LoadResources';
 import CodePanel from '../Code';
@@ -16,6 +16,7 @@ import { hooksLabelMap, getScriptHookStub } from '../../../../../utils/hooks';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import Spinner from '../../../../Spinner';
 import CeligoSelect from '../../../../CeligoSelect';
+import OutlinedButton from '../../../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -143,12 +144,13 @@ export default function JavaScriptPanel({ editorId }) {
   return (
     <LoadResources required resources={['scripts']}>
       <div className={classes.container}>
-        <div data-public className={classes.headerContainer}>
+        <div className={classes.headerContainer}>
           <FormControl className={classes.jsPanelFormControl}>
             <FormLabel htmlFor="scriptId">
               Script
             </FormLabel>
             <CeligoSelect
+              isLoggable
               id="scriptId"
               margin="dense"
               value={scriptId}
@@ -174,18 +176,18 @@ export default function JavaScriptPanel({ editorId }) {
           />
           </FormControl>
           {scriptId && insertStubKey && (
-          <Button
-            variant="outlined"
+          <OutlinedButton
             color="secondary"
             onClick={handleInsertStubClick}
             disabled={disabled}
             className={classes.btnAction}
             data-test={insertStubKey}>
             {`Insert ${hooksLabelMap[insertStubKey].toLowerCase()} stub`}
-          </Button>
+          </OutlinedButton>
           )}
         </div>
-        <div className={classes.scriptPanel}>
+        {/* hide the script content */}
+        <div className={classes.scriptPanel} data-private>
           {scriptContent === undefined && scriptId ? (
             <Spinner centerAll />
           ) : (

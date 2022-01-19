@@ -2,7 +2,7 @@ import jsonPatch, { deepClone } from 'fast-json-patch';
 import { get, sortBy } from 'lodash';
 import { C_LOCKED_FIELDS } from '../../../utils/constants';
 
-export const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
+const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
   if (!meta) return null;
 
   const { fieldMap } = meta;
@@ -127,7 +127,7 @@ export const isAnyFieldVisibleForMeta = ({ layout, fieldMap }, fields) =>
 export const fieldsTouchedForMeta = ({ layout, fieldMap }, fields) =>
   fields.filter(({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id));
 
-export const getFieldByNameFromLayout = (layout, fieldMap, name) => {
+const getFieldByNameFromLayout = (layout, fieldMap, name) => {
   if (!layout) return null;
   const { fields, containers } = layout;
 
@@ -342,6 +342,9 @@ export const refGeneration = field => {
 export const getFieldConfig = (field = {}, resource = {}, isSuiteScript) => {
   const newField = { ...field };
 
+  if (newField.value === undefined) {
+    newField.value = (newField.type === 'multiselect') ? [] : null;
+  }
   if (!newField.type || newField.type === 'input') {
     if (!newField.type && newField?.supportsRefresh) {
       // specific to suitescript

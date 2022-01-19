@@ -146,7 +146,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.myshopify.com',
       type: 'text',
-      label: 'Store url',
+      label: 'Store URL',
       helpKey: 'shopify.connection.http.storeURL',
       required: true,
       validWhen: {
@@ -180,9 +180,9 @@ export default {
       options: [
         {
           items: [
-            { label: '2021-04', value: '2021-04' },
             { label: '2021-07', value: '2021-07' },
             { label: '2021-10', value: '2021-10' },
+            { label: '2022-01', value: '2022-01' },
           ],
         },
       ],

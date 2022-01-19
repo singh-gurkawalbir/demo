@@ -15,8 +15,8 @@ const stateTiedToAccountType = (state, selectedAccountType) => state?.find(ele =
 
 const allOptionKeys = (values, key) => values?.[key] && Object.keys(values?.[key]);
 
-export const DynaMatchingCriteria = props => {
-  const { allValues, accountTypeOptions, setAllValues, required, disabled, id, onFieldChange} = props;
+const DynaMatchingCriteria = props => {
+  const { allValues, accountTypeOptions, setAllValues, required, disabled, id, onFieldChange, isLoggable} = props;
 
   const accountTypeSelectOptions = useMemo(
     () => withItemsWrapper(generateOptionsFormLabelValueAr(accountTypeOptions)), [accountTypeOptions]);
@@ -25,6 +25,7 @@ export const DynaMatchingCriteria = props => {
   return (
     <>
       <DynaSelect
+        isLoggable={isLoggable}
         required={required}
         disabled={disabled}
         value={selectedAccountType}
@@ -43,6 +44,7 @@ export const DynaMatchingCriteria = props => {
         return (
 
           <DynaMultiSelect
+            isLoggable={isLoggable}
             required={required}
             disabled={disabled}
             isValid

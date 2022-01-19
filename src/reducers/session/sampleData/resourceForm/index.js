@@ -14,7 +14,15 @@ export function extractStages(sampleData) {
     stageMap.parse = sampleData;
   } else {
     stagesInSampleData.forEach(stage => {
-      stageMap[stage.name] = stage.data;
+      let stageData = stage.data;
+
+      if (stage.name === 'transform') {
+        stageData = stage.data?.[0].data;
+      }
+      if (stage.name === 'preSavePageHook') {
+        stageData = stage.data?.[0].data?.[0];
+      }
+      stageMap[stage.name] = stageData;
     });
   }
 
@@ -22,7 +30,7 @@ export function extractStages(sampleData) {
 }
 
 export default function (state = {}, action) {
-  const { type, resourceId, status = 'requested', previewData, previewStagesData, previewError, parseData, rawData, csvData, recordSize } = action;
+  const { type, resourceId, status = 'requested', previewData, previewStagesData, previewError, parseData, rawData, csvData, recordSize, processor, processorData } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -69,6 +77,14 @@ export default function (state = {}, action) {
         }
         draft[resourceId].data.csv = csvData;
         break;
+      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PROCESSOR_DATA:
+        if (!processor) break;
+        draft[resourceId] = draft[resourceId] || {};
+        if (!draft[resourceId].data) {
+          draft[resourceId].data = {};
+        }
+        draft[resourceId].data[processor] = processorData;
+        break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE:
         draft[resourceId] = draft[resourceId] || {};
         draft[resourceId].recordSize = recordSize;
@@ -101,6 +117,8 @@ export const getResourceSampleData = (resourceIdSampleData, stage) => {
       return resourceData.parse?.[0] || DEFAULT_VALUE;
     case 'preview':
       return resourceData.preview || resourceData.parse || DEFAULT_VALUE;
+    case 'preSavePageHook':
+      return resourceData.preSavePageHook || resourceData.transform || resourceData.parse?.[0] || DEFAULT_VALUE;
     default:
       return resourceData[stage] || DEFAULT_VALUE;
   }
@@ -135,4 +153,15 @@ selectors.getResourceSampleDataStages = (state, resourceId) => {
     name: stage,
     data: sampleData[stage],
   }));
+};
+
+selectors.getAllParsableErrors = (state, resourceId) => {
+  const data = selectors.getResourceSampleDataStages(state, resourceId);
+
+  const {errors, stages} = data.find(val => val.name === 'parse')?.data || {};
+
+  if (stages) { return null; }
+
+  // if there are no stages return all errors and the complete error list would be visible in the preview editor
+  return errors;
 };

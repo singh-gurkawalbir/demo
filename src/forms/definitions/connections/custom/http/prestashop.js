@@ -59,6 +59,8 @@ export default {
       label: 'API key',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'prestashop.connection.http.encrypted.apiKey',
     },
     mode: {

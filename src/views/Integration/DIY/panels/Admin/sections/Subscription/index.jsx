@@ -4,7 +4,7 @@ import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import { Button, Grid, Divider, Typography } from '@material-ui/core';
+import { Grid, Divider, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import actions from '../../../../../../../actions';
 import { selectors } from '../../../../../../../reducers';
@@ -13,16 +13,19 @@ import AddonInstallerButton from './AddonInstallerButton';
 import InfoIconButton from '../../../../../../../components/InfoIconButton';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
+import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 
 const emptyObject = {};
 const metadata = {
   useColumns: () => {
     const { supportsChild, childId, children } = useGetTableContext();
 
+    const dateFormat = useSelector(state => selectors.userProfilePreferencesProps(state)?.dateFormat);
     let columns = [
       {
         key: 'name',
         heading: 'Name',
+        isLoggable: true,
         Value: ({rowData: r}) => (
           <>
             {r && r.name}
@@ -33,16 +36,19 @@ const metadata = {
       {
         key: 'child',
         heading: 'Child',
+        isLoggable: true,
         Value: ({rowData: r}) => children.find(c => c._id === r.childId)?.label || r.childId,
       },
       {
         key: 'installedOn',
         heading: 'Installed on',
-        Value: ({rowData: r}) => r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
+        Value: ({rowData: r}) => r.installedOn ? moment(r.installedOn).format(dateFormat || 'MMM D, YYYY') : '',
+        isLoggable: true,
       },
       {
         key: 'action',
         heading: 'Action',
+        isLoggable: true,
         Value: ({rowData: r}) => <AddonInstallerButton resource={r} />,
       },
     ];
@@ -139,28 +145,31 @@ export default function SubscriptionSection({ childId, integrationId }) {
       return true;
     });
 
-  if (subscribedAddOns) {
-    subscribedAddOns.forEach((f, i) => {
-      const addon =
-        addOnState &&
-        addOnState.addOns &&
-        addOnState.addOns.addOnMetaData &&
-        addOnState.addOns.addOnMetaData.find(addOn => addOn.id === f.id);
+  let subscribedAddOnsModified;
 
-      subscribedAddOns[i]._id = i;
-      subscribedAddOns[i].integrationId = integrationId;
-      subscribedAddOns[i].name = addon ? addon.name : f.id;
-      subscribedAddOns[i].description = addon ? addon.description : '';
-      subscribedAddOns[i].uninstallerFunction = addon
+  if (subscribedAddOns) {
+    subscribedAddOnsModified = subscribedAddOns.map((f, i) => {
+      const addon = addOnState?.addOns?.addOnMetaData?.find(addOn => addOn.id === f.id);
+      const addOnObj = {...f};
+
+      addOnObj._id = i;
+      addOnObj.integrationId = integrationId;
+      addOnObj.name = addon ? addon.name : f.id;
+      addOnObj.description = addon ? addon.description : '';
+      addOnObj.uninstallerFunction = addon
         ? addon.uninstallerFunction
         : '';
-      subscribedAddOns[i].installerFunction = addon
+      addOnObj.installerFunction = addon
         ? addon.installerFunction
         : '';
+
+      return addOnObj;
     });
   }
 
-  const hasSubscribedAddOns = subscribedAddOns && subscribedAddOns.length > 0;
+  const hasSubscribedAddOns = subscribedAddOnsModified && subscribedAddOnsModified.length > 0;
+  const isLicenseExpired = useSelector(state => selectors.isIntegrationAppLicenseExpired(state, integrationId));
+
   const hasAddOns =
     addOnState &&
     addOnState.addOns &&
@@ -211,14 +220,12 @@ export default function SubscriptionSection({ childId, integrationId }) {
               </Grid>
               <Grid item xs={3}>
                 {upgradeText && (
-                  <Button
-                    variant="contained"
-                    color="primary"
+                  <FilledButton
                     className={classes.button}
-                    disabled={upgradeRequested}
+                    disabled={upgradeRequested || isLicenseExpired}
                     onClick={handleUpgrade}>
                     {upgradeText}
-                  </Button>
+                  </FilledButton>
                 )}
               </Grid>
             </Grid>
@@ -242,14 +249,13 @@ export default function SubscriptionSection({ childId, integrationId }) {
               </Typography>
             </div>
             <div>
-              <Button
-                variant="outlined"
-                color="primary"
+              <FilledButton
                 className={classes.button}
                 component={Link}
+                disabled={isLicenseExpired}
                 to={match.url.replace('admin/subscription', 'addons')}>
                 GET ADD-ONS
-              </Button>
+              </FilledButton>
             </div>
           </div>
         )}
@@ -266,7 +272,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
               </Typography>
             </div>
 
-            <CeligoTable data={subscribedAddOns} {...metadata} actionProps={{ supportsChild, children }} />
+            <CeligoTable data={subscribedAddOnsModified} {...metadata} actionProps={{ supportsChild, children }} />
           </>
         )}
       </div>

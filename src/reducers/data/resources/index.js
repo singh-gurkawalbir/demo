@@ -1,6 +1,7 @@
 import produce from 'immer';
 import reduceReducers from 'reduce-reducers';
 import { createSelector } from 'reselect';
+import { adaptorTypeMap } from '../../../utils/resource';
 import actionTypes from '../../../actions/types';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
 import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
@@ -141,13 +142,13 @@ selectors.resource = (state, resourceType, id) => {
   // I don't know why this code is here. Either the RECEIVE_RESOURCE_* should do this, or
   // the components) using this property should be smart enough to work with an undefined prop.
   // Could you find the best solution for this? I favour the latter if that approach is easy.
-  if (['exports', 'imports'].includes(resourceType)) {
-    if (match.assistant && !match.assistantMetadata) {
-      // TODO:mutating a reference of the redux state..we have to fix this
-      // if this reducer was implemented in immer ...it would have pointed this error
-      match.assistantMetadata = {};
-    }
-  }
+  // if (['exports', 'imports'].includes(resourceType)) {
+  //   if (match.assistant && !match.assistantMetadata) {
+  //     // TODO:mutating a reference of the redux state..we have to fix this
+  //     // if this reducer was implemented in immer ...it would have pointed this error
+  //     match.assistantMetadata = {};
+  //   }
+  // }
 
   return match;
 };
@@ -177,7 +178,7 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
     const importResource = selectors.resource(state, 'imports', resourceId);
     const importConn = selectors.resource(state, 'connections', importResource?._connectionId);
 
-    return `Import field (${mappingUtil.getApplicationName(
+    return `Destination record field (${mappingUtil.getApplicationName(
       importResource,
       importConn
     )})`;
@@ -191,7 +192,7 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
       const exportResource = selectors.resource(state, 'exports', _exportId);
       const exportConn = selectors.resource(state, 'connections', exportResource?._connectionId);
 
-      return `Export field (${mappingUtil.getApplicationName(
+      return `Source record field (${mappingUtil.getApplicationName(
         exportResource,
         exportConn
       )})`;
@@ -325,6 +326,15 @@ selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
 
   // give precedence to netsuite_da
   return importResource.netsuite_da?.recordType || importResource.netsuite?.recordType;
+};
+
+selectors.isResourceNetsuite = (state, resourceId) => {
+  if (!state || !resourceId) return false;
+  let adaptorType = selectors.resource(state, 'exports', resourceId)?.adaptorType;
+
+  if (!adaptorType) adaptorType = selectors.resource(state, 'imports', resourceId)?.adaptorType;
+
+  return adaptorTypeMap[adaptorType] === 'netsuite';
 };
 
 selectors.isIntegrationApp = (state, integrationId) => {

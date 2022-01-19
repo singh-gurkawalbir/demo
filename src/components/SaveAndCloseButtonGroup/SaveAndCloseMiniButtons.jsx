@@ -1,6 +1,6 @@
-import { Button } from '@material-ui/core';
 import React from 'react';
 import Spinner from '../Spinner';
+import { FilledButton, TextButton } from '../Buttons';
 
 export default function SaveAndCloseMiniButtons({
   isDirty,
@@ -15,25 +15,21 @@ export default function SaveAndCloseMiniButtons({
 }) {
   return (
     <>
-      <Button
-        variant="outlined"
+      <FilledButton
         data-test="save"
         disabled={!isDirty || inProgress || disabled}
-        color="primary"
         className={className}
         onClick={handleSave}>
         {inProgress && !disabled ? <Spinner size="small">{submitTransientLabel}</Spinner> : submitButtonLabel}
-      </Button>
+      </FilledButton>
       {shouldNotShowCancelButton ? null : (
-        <Button
-          variant="text"
-          color="primary"
+        <TextButton
           data-test="cancel"
           disabled={inProgress}
           className={className}
           onClick={handleCancel}>
           Close
-        </Button>
+        </TextButton>
       )}
     </>
   );

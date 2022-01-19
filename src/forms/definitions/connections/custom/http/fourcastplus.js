@@ -60,6 +60,8 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       label: 'Password',
       helpKey: '4castplus.connection.http.encrypted.password',
     },

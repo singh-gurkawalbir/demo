@@ -14,6 +14,7 @@ import {
   isNumber,
   get,
 } from 'lodash';
+import { getPathParams } from './pathParamUtils';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
   'allowUndefinedResource',
@@ -121,7 +122,7 @@ export const AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE = Object.freeze(
     'microsoftbusinesscentral',
   ]
 );
-export function routeToRegExp(route) {
+export function routeToRegExp(route = '') {
   const optionalParam = /\((.*?)\)/g;
   const namedParam = /(\(\?)?:\w+/g;
   const splatParam = /\*\w+/g;
@@ -211,7 +212,7 @@ export function mergeQueryParameters(queryParameters = [], overwrites = []) {
   return unionBy(overwrites, queryParameters, 'id');
 }
 
-export function populateDefaults({
+function populateDefaults({
   child = {},
   parent = {},
   isChildAnOperation = false,
@@ -331,7 +332,7 @@ export function getExportVersionAndResource({
   return versionAndResource;
 }
 
-export function getImportVersionAndResource({
+function getImportVersionAndResource({
   assistantVersion,
   assistantOperation,
   assistantData,
@@ -530,7 +531,7 @@ export function getImportOperationDetails({
       if (operationDetails.howToFindIdentifier.lookup) {
         const lookupOperationDetails = getExportOperationDetails({
           version,
-          resource,
+          resource: operationDetails.howToFindIdentifier.lookup.resource || resource,
           operation:
             operationDetails.howToFindIdentifier.lookup.id ||
             operationDetails.howToFindIdentifier.lookup.url,
@@ -547,6 +548,9 @@ export function getImportOperationDetails({
                 qp.defaultValue.includes('{{export.')
               )
           );
+        }
+        if (operationDetails.howToFindIdentifier.lookup.resource) {
+          lookupOperationDetails.resource = operationDetails.howToFindIdentifier.lookup.resource;
         }
 
         if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
@@ -597,7 +601,9 @@ export function getImportOperationDetails({
   });
 }
 
-export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
+export function convertFromExport({ exportDoc: exportDocOrig, assistantData: assistantDataOrig, adaptorType }) {
+  const exportDoc = cloneDeep(exportDocOrig);
+  const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
@@ -665,11 +671,12 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
   }
 
   const exportAdaptorSubSchema = exportDoc[adaptorType] || {};
+
   const urlMatch = getMatchingRoute(
     [operationDetails.url],
     exportAdaptorSubSchema.relativeURI || ''
   );
-  const pathParams = {};
+  let pathParams = {};
   let queryParams = {};
   let bodyParams = {};
 
@@ -677,34 +684,7 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
     operationDetails.pathParameters &&
     operationDetails.pathParameters.length > 0
   ) {
-    operationDetails.pathParameters.forEach((p, index) => {
-      if (urlMatch && urlMatch.urlParts && urlMatch.urlParts[index]) {
-        pathParams[p.id] = urlMatch.urlParts[index];
-      }
-
-      if (pathParams[p.id]) {
-        if (p.config) {
-          if (p.config.prefix) {
-            pathParams[p.id] = pathParams[p.id].replace(p.config.prefix, '');
-          }
-
-          if (p.config.suffix) {
-            pathParams[p.id] = pathParams[p.id].replace(p.config.suffix, '');
-          }
-        }
-
-        /* IO-3665 */
-        if (
-          pathParams[p.id].indexOf('(') === 0 &&
-          pathParams[p.id].indexOf(')') === pathParams[p.id].length - 1
-        ) {
-          pathParams[p.id] = pathParams[p.id].substring(
-            1,
-            pathParams[p.id].length - 1
-          );
-        }
-      }
-    });
+    pathParams = getPathParams({relativePath: operationDetails.url, actualPath: exportAdaptorSubSchema.relativeURI, pathParametersInfo: operationDetails?.pathParameters});
   }
 
   if (
@@ -715,6 +695,20 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
       queryParams = qs.parse(urlMatch.urlParts[urlMatch.urlParts.length - 1], {
         delimiter: /[?&]/,
         depth: 0,
+        decoder(str, defaultDecoder) {
+          if (exportDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
+
+          // a unique case where query name contains '=' operator
+          // IO-1683
+          if (str === 'filter[]') {
+            return 'filter[]=name';
+          }
+          if (str.startsWith('name=')) {
+            return defaultDecoder(str.substring(5));
+          }
+
+          return defaultDecoder(str);
+        },
       }); /* depth should be 0 to handle IO-1683 */
     }
   }
@@ -791,6 +785,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
     },
     http: {
       ...cloneDeep(DEFAULT_PROPS.EXPORT.HTTP),
+      requestMediaType: operationDetails.requestMediaType,
       successMediaType: operationDetails.successMediaType,
       errorMediaType: operationDetails.errorMediaType,
       customeTemplateEval: operationDetails.customeTemplateEval,
@@ -819,6 +814,8 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
 
   let { url: relativeURI } = { ...operationDetails };
 
+  let pagingRelativeURI = operationDetails.paging?.nextPageRelativeURI || operationDetails.paging?.relativeURI;
+
   operationDetails.pathParameters.forEach(pathParam => {
     if (pathParams) {
       let pathParamValue = pathParams[pathParam.id];
@@ -837,6 +834,12 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
         new RegExp(`:_${pathParam.id}`, 'g'),
         pathParamValue
       );
+      if (pagingRelativeURI) {
+        pagingRelativeURI = pagingRelativeURI.replace(
+          new RegExp(`:_${pathParam.id}`, 'g'),
+          pathParamValue
+        );
+      }
     }
   });
 
@@ -879,9 +882,19 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
 
   if (queryString) {
     relativeURI += (relativeURI.includes('?') ? '&' : '?') + queryString;
+    if (pagingRelativeURI) {
+      pagingRelativeURI += (pagingRelativeURI.includes('?') ? '&' : '?') + queryString;
+    }
   }
 
   exportDoc.relativeURI = relativeURI;
+  if (pagingRelativeURI) {
+    if (adaptorType === 'rest') {
+      exportDoc.nextPageRelativeURI = pagingRelativeURI;
+    } else if (adaptorType === 'http') {
+      exportDoc.paging.relativeURI = pagingRelativeURI;
+    }
+  }
 
   if (adaptorType === 'rest') {
     if (['POST', 'PUT'].includes(exportDoc.method)) {
@@ -1134,6 +1147,7 @@ export function convertToReactFormFields({
   value = {},
   flowId,
   resourceContext = {},
+  operationChanged,
 }) {
   const fields = [];
   const fieldDetailsMap = {};
@@ -1141,7 +1155,9 @@ export function convertToReactFormFields({
   const paramValues = { ...value };
   let anyParamValuesSet = false;
 
-  paramMeta.fields && paramMeta.fields.forEach(field => {
+  const paramMetaFields = paramMeta?.fields?.map(fld => {
+    const field = {...fld};
+
     if (field.type === 'repeat' && field.indexed) {
       const fieldValue = [];
 
@@ -1158,10 +1174,12 @@ export function convertToReactFormFields({
         field.defaultValue = [];
       }
     }
+
+    return field;
   });
 
-  paramMeta.fields &&
-    paramMeta.fields.forEach(field => {
+  paramMetaFields &&
+    paramMetaFields.forEach(field => {
       if (!field.readOnly && Object.prototype.hasOwnProperty.call(paramValues, field.id) && paramValues[field.id] !== field.defaultValue) {
         anyParamValuesSet = true;
       }
@@ -1208,8 +1226,8 @@ export function convertToReactFormFields({
       fieldDetailsMap[fieldId].inputType = fieldType;
     });
 
-  paramMeta.fields &&
-    paramMeta.fields.forEach(field => {
+  paramMetaFields &&
+    paramMetaFields.forEach(field => {
       const fieldId = actualFieldIdToGeneratedFieldIdMap[field.id];
       const { inputType, type } = fieldDetailsMap[fieldId];
       const paramValue = getParamValue({
@@ -1223,7 +1241,7 @@ export function convertToReactFormFields({
       /**
        * Set default values only if there are no values for any params set.(IO-12293)
        */
-      let { defaultValue } = !anyParamValuesSet ? field : {};
+      let { defaultValue } = (!anyParamValuesSet && operationChanged) ? field : {};
 
       if (
         !anyParamValuesSet &&
@@ -1461,7 +1479,11 @@ export function updateFormValues({
   return updatedFormValues;
 }
 
-export function convertFromImport({ importDoc, assistantData, adaptorType }) {
+export function convertFromImport({ importDoc: importDocOrig, assistantData: assistantDataOrig, adaptorType }) {
+  // mutating of args so we are cloning of objects to allow this operation
+  const importDoc = cloneDeep(importDocOrig);
+
+  const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation, lookupType } =
     importDoc.assistantMetadata || {};
   const { dontConvert, lookups } = importDoc.assistantMetadata || {};
@@ -1709,7 +1731,23 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
           ) {
             lookupQueryParams = qs.parse(
               lookupUrlInfo.urlParts[lookupUrlInfo.urlParts.length - 1],
-              { delimiter: /[?&]/, depth: 0 }
+              { delimiter: /[?&]/,
+                depth: 0,
+                decoder(str, defaultDecoder) {
+                  if (importDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
+
+                  // a unique case where query name contains '=' operator
+                  // IO-1683
+                  if (str === 'filter[]') {
+                    return 'filter[]=name';
+                  }
+                  if (str.startsWith('name=')) {
+                    return defaultDecoder(str.substring(5));
+                  }
+
+                  return defaultDecoder(str);
+                },
+              }
             ); /* depth should be 0 to handle IO-1683 */
           }
 
@@ -1729,6 +1767,20 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
       queryParams = qs.parse(url1Info.urlParts[url1Info.urlParts.length - 1], {
         delimiter: /[?&]/,
         depth: 0,
+        decoder(str, defaultDecoder) {
+          if (importDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
+
+          // a unique case where query name contains '=' operator
+          // IO-1683
+          if (str === 'filter[]') {
+            return 'filter[]=name';
+          }
+          if (str.startsWith('name=')) {
+            return defaultDecoder(str.substring(5));
+          }
+
+          return defaultDecoder(str);
+        },
       }); /* depth should be 0 to handle IO-1683 */
       url1Info.urlParts.splice(
         url1Info.urlParts.length - 1
@@ -1889,6 +1941,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
   const lookupConfigMetadata = operationDetails.howToFindIdentifier
     ? operationDetails.howToFindIdentifier.lookup
     : undefined;
+
   const { lookupOperationDetails = {} } = operationDetails;
   const luConfig = {
     method: lookupOperationDetails.method || 'GET',
@@ -1954,6 +2007,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
       if (lookupOperationDetails.id) {
         luMetadata[luConfig.name] = {
           operation: lookupOperationDetails.id,
+          ...(lookupOperationDetails.resource ? {resource: lookupOperationDetails.resource} : {}),
         };
       }
 
@@ -2105,6 +2159,8 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     '/assistantMetadata': assistantMetadata,
     '/ignoreExisting': !!ignoreExisting,
     '/ignoreMissing': !!ignoreMissing,
+    // AdaptorType will be added by backend. UI shouldnt set/update adaptorType
+    '/adaptorType': undefined,
   };
 }
 
@@ -2134,4 +2190,8 @@ export function getRecordTypeForAutoMapper(uri) {
 }
 export function isAppConstantContact(application) {
   return application === 'constantcontact';
+}
+
+export function isAmazonHybridConnection(connection) {
+  return connection?.assistant === 'amazonmws' && connection?.http?.type === 'Amazon-Hybrid';
 }

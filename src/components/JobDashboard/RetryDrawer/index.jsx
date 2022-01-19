@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-handler-names */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles, Button, Typography } from '@material-ui/core';
@@ -37,13 +37,6 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
   const [error, setError] = useState();
   const [touched, setTouched] = useState(false);
   const status = useSelector(state => selectors.asyncTaskStatus(state, asyncKey));
-  const isResolvedError = useSelector(state => {
-    const jobErrors = selectors.jobErrors(state, jobId) || [];
-    const currentError = jobErrors.find(e => e._retryId === retryId);
-
-    return !!currentError?.resolved;
-  });
-
   const retryData = useSelector(state => {
     if (!retryId) return undefined;
 
@@ -53,7 +46,17 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
   });
 
   const [data, setData] = useState(retryData?.data);
-  const isDirty = typeof data === 'string' ? !isEqual(JSON.parse(data), retryData?.data) : !isEqual(data, retryData?.data);
+  const isDirty = useMemo(() => {
+    let valueChanged;
+
+    try {
+      valueChanged = typeof data === 'string' ? !isEqual(JSON.parse(data), retryData?.data) : !isEqual(data, retryData?.data);
+    } catch (e) {
+      valueChanged = false;
+    }
+
+    return valueChanged;
+  }, [data, retryData?.data]);
 
   const handleSave = useCallback(() => {
     const parsedData = JSON.parse(data);
@@ -126,9 +129,7 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
           onSave={handleSave}
           shouldHandleCancel
           />
-        { !isResolvedError && (
         <Button disabled={!!error || touched} variant="outlined" color="secondary" onClick={handleRetry}>Retry</Button>
-        )}
       </DrawerFooter>
     </>
   );

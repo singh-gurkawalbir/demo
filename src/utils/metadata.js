@@ -47,7 +47,7 @@ export const getWSRecordId = record => {
   return recordId.toLowerCase();
 };
 
-export const getFormattedNSSalesOrderMetadataData = metadata => {
+const getFormattedNSSalesOrderMetadataData = metadata => {
   const addressFields = [
     'addr1',
     'addr2',
@@ -281,7 +281,7 @@ export const getFormattedNSSalesOrderMetadataData = metadata => {
   return metadata;
 };
 
-export const getFormattedNSCustomerSampleData = metadata => {
+const getFormattedNSCustomerSampleData = metadata => {
   let results = filter(metadata, m => m.id === 'currency.internalid');
 
   if (results && results.length > 0) {

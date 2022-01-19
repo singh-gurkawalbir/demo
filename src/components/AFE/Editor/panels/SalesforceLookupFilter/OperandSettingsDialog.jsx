@@ -1,12 +1,13 @@
 import React, { useCallback, useMemo } from 'react';
-import { Button } from '@material-ui/core';
 import ModalDialog from '../../../../ModalDialog';
 import DynaForm from '../../../../DynaForm';
 import DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import { TextButton } from '../../../../Buttons';
+import { emptyObject } from '../../../../../utils/constants';
 
 export default function OperandSettingsDialog({
-  ruleData,
+  ruleData = emptyObject,
   onClose,
   onSubmit,
   disabled,
@@ -59,13 +60,11 @@ export default function OperandSettingsDialog({
         <DynaSubmit formKey={formKey} data-test="saveOperandSettings" onClick={handleSubmit}>
           Save
         </DynaSubmit>
-        <Button
+        <TextButton
           data-test="cancelOperandSettings"
-          variant="text"
-          color="primary"
           onClick={onClose}>
           Cancel
-        </Button>
+        </TextButton>
       </>
     </ModalDialog>
   );

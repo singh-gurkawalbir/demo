@@ -29,12 +29,23 @@ function LocalDateTime({ date }) {
 }
 
 export default function CeligoTimeAgo(props) {
+  const showRelativeDateTime = useSelector(state => selectors.userOwnPreferences(state).showRelativeDateTime);
+
   if (!props.date) {
     return null;
   }
+  if (!showRelativeDateTime) {
+    return (
+      <Tooltip title={<TimeAgo {...props} formatter={formatter} />} aria-label="relative date time">
+        <span>
+          <LocalDateTime date={props.date} />
+        </span>
+      </Tooltip>
+    );
+  }
 
   return (
-    <Tooltip data-public title={<LocalDateTime date={props.date} />} aria-label="local date time">
+    <Tooltip title={<LocalDateTime date={props.date} />} aria-label="local date time">
       <TimeAgo {...props} formatter={formatter} />
     </Tooltip>
   );

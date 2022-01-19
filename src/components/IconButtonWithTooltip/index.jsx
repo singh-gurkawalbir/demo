@@ -1,6 +1,6 @@
 import React from 'react';
-import { IconButton, Tooltip } from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
+import { IconButton, Tooltip, makeStyles } from '@material-ui/core';
+import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   actionButtonWithTooltip: {
@@ -16,18 +16,19 @@ export default function IconButtonWithTooltip({
   tooltipProps = {},
   children,
   buttonSize,
+  className,
   ...buttonProps
 }) {
   const classes = useStyles();
 
   return (
-    <Tooltip data-public key={tooltipProps.title} {...tooltipProps}>
+    <Tooltip key={tooltipProps.title} {...tooltipProps}>
       {/* Icon button also accepts disabled property. Tooltip expects its children to be in active state and listen to events.
       Hence wrapping it with div */}
 
       <span>
         <IconButton
-          className={classes.actionButtonWithTooltip}
+          className={clsx(classes.actionButtonWithTooltip, className)}
           {...buttonProps}
           size={buttonSize?.size || 'medium'}>
           {children}

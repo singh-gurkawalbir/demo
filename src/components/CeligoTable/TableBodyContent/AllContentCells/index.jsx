@@ -1,31 +1,50 @@
-import {TableCell } from '@material-ui/core';
+import { TableCell } from '@material-ui/core';
 import React from 'react';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
+import IsLoggableContextProvider from '../../../IsLoggableContextProvider';
 
+export const BaseCellWrapper = ({isLoggable, children, ...rest}) => (
+  <IsLoggableContextProvider isLoggable={isLoggable}>
+    <TableCell
+      {...isLoggableAttr(isLoggable)}
+      {...rest}
+      >
+      {children}
+    </TableCell>
+  </IsLoggableContextProvider>
+);
 const ContentCell = ({
   meta,
   rowData,
   index,
 }) => {
-  const { Value, align} = meta;
+  const { Value, align, isLoggable, useGetCellStyling = () => {}} = meta;
   const val = Value({rowData});
-
+  const className = useGetCellStyling({rowData});
   const cellValue = val === undefined ? null : val;
 
   if (index === 0) {
     return (
-      <TableCell
+      <BaseCellWrapper
+        isLoggable={isLoggable}
         component="th"
         scope="row"
-        align={align || 'left'}>
+        align={align || 'left'}
+        className={className}
+        >
         {cellValue}
-      </TableCell>
+      </BaseCellWrapper>
     );
   }
 
   return (
-    <TableCell align={align || 'left'}>
+    <BaseCellWrapper
+      isLoggable={isLoggable}
+      align={align || 'left'}
+      className={className}
+    >
       {cellValue}
-    </TableCell>
+    </BaseCellWrapper>
   );
 };
 

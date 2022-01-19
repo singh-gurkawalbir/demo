@@ -1,5 +1,6 @@
 export default {
   'wrapper.function': {
+    isLoggable: true,
     type: 'text',
     label: 'Function',
     required: true,

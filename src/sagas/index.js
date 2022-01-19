@@ -11,8 +11,6 @@ import {
   fork,
   cancelled,
 } from 'redux-saga/effects';
-import { createRequestInstance, sendRequest } from 'redux-saga-requests';
-import { createDriver } from 'redux-saga-requests-fetch';
 import actions from '../actions';
 import actionsTypes from '../actions/types';
 import { resourceSagas } from './resources';
@@ -24,13 +22,7 @@ import { flowMetricSagas } from './flowMetrics';
 import integrationAppsSagas from './integrationApps';
 import { flowSagas } from './flows';
 import editor from './editor';
-import {
-  onRequestSaga,
-  onSuccessSaga,
-  onErrorSaga,
-  onAbortSaga,
-} from './api/requestInterceptors';
-import { authenticationSagas, initializeApp, initializeLogrocket } from './authentication';
+import { authenticationSagas, initializeApp, initializeLogrocket, invalidateSession } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
@@ -63,9 +55,13 @@ import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
 import {logsSagas} from './logs';
 import ssoSagas from './sso';
-import { APIException } from './api';
+import { APIException } from './api/requestInterceptors/utils';
 import { bottomDrawerSagas } from './bottomDrawer';
 import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
+import { getNextLinkRelativeUrl } from '../utils/resource';
+import flowGroupSagas from './flowGroups';
+import { appSagas } from './app';
+import { sendRequest } from './api';
 
 export function* unauthenticateAndDeleteProfile() {
   const authFailure = yield select(selectors.authenticationErrored);
@@ -100,42 +96,32 @@ export const CANCELLED_REQ = {
 // TODO: decide if we this saga has to have takeLatest
 // api call
 export function* apiCallWithRetry(args) {
-  const { path, timeout = 2 * 60 * 1000, opts } = args;
-  const apiRequestAction = {
-    type: 'API_WATCHER',
-    request: { url: path, args },
-  };
+  const { path, timeout = 2 * 60 * 1000, opts, requireHeaders } = args;
+  const apiRequestPayload = { url: path, args };
 
   try {
     let apiResp;
-    let logout;
     let timeoutEffect;
 
     if (path !== logoutParams.path) {
-      ({ apiResp, logout, timeoutEffect } = yield race({
-        apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: false,
-        }),
-        logout: take(actionsTypes.USER_LOGOUT),
+      ({ apiResp, timeoutEffect } = yield race({
+        apiResp: call(sendRequest, apiRequestPayload),
         timeoutEffect: delay(timeout),
       }));
     } else {
-      apiResp = yield call(sendRequest, apiRequestAction, {
-        dispatchRequestAction: false,
-      });
+      apiResp = yield call(sendRequest, apiRequestPayload);
     }
-
     if (timeoutEffect) {
       yield call(requestCleanup, path, opts?.method);
 
       throw new APIException(CANCELLED_REQ);
     }
 
-    // logout effect succeeded then the apiResp would be undefined
+    const { data, headers } = apiResp?.response || {};
 
-    if (logout) { return null; }
-
-    const { data } = apiResp.response || {};
+    if (requireHeaders) {
+      return { data, headers};
+    }
 
     return data;
   } finally {
@@ -145,8 +131,48 @@ export function* apiCallWithRetry(args) {
   }
 }
 
+export function* apiCallWithPaging(args) {
+  const response = yield call(apiCallWithRetry, {...args, requireHeaders: true});
+
+  if (!response) return response;
+
+  const { data, headers } = response;
+
+  // BE only supports 'link' pagination for now
+  const link = headers ? headers.get('link') : undefined;
+
+  const nextLinkPath = getNextLinkRelativeUrl(link);
+
+  if (nextLinkPath) {
+    try {
+      // if 'next' url exists, recursively call for next page data
+      let nextPageData = yield call(apiCallWithPaging, {
+        ...args,
+        path: nextLinkPath,
+      });
+
+      if (nextPageData !== undefined && !Array.isArray(nextPageData) && !nextLinkPath.includes('/ui/assistants')) {
+        // eslint-disable-next-line no-console
+        console.warn('Getting unexpected collection values: ', nextPageData);
+        nextPageData = undefined;
+      }
+
+      // push next page data to original data
+      return [...(data || []), ...(nextPageData || [])];
+    } catch (e) {
+      // once UI pagination is supported, we can handle this error case better
+      // right now we should return the data so far so user is not blocked
+      return data;
+    }
+  }
+
+  // return the total accumulated data to parent saga
+  return data;
+}
+
 export function* allSagas() {
   yield all([
+    ...appSagas,
     ...resourceSagas,
     ...connectorSagas,
     ...templateSagas,
@@ -187,32 +213,20 @@ export function* allSagas() {
     ...logsSagas,
     ...ssoSagas,
     ...bottomDrawerSagas,
+    ...flowGroupSagas,
   ]);
 }
 
 export default function* rootSaga() {
-  yield createRequestInstance({
-    driver: createDriver(window.fetch, {
-      // AbortController Not supported in IE installed this polyfill package
-      // that it would resort to
-      // TODO: Have to check if it works in an IE explorer
-      AbortController: window.AbortController,
-    }),
-    onRequest: onRequestSaga,
-    onSuccess: onSuccessSaga,
-    onError: onErrorSaga,
-    onAbort: onAbortSaga,
-  });
   const t = yield fork(allSagas);
   const {logrocket, logout, switchAcc} = yield race({
     logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-    logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+    logout: take(actionsTypes.USER_LOGOUT),
     switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC),
   });
 
   // stop the main sagas
   t.cancel();
-
   if (logrocket) {
     // initializeLogrocket init must be done prior to redux-saga-requests fetch wrapping and must be done synchronously
     yield call(initializeLogrocket);
@@ -223,8 +237,9 @@ export default function* rootSaga() {
     yield call(initializeApp, logrocket.opts);
   }
   if (logout) {
-    // logout requires also reset the store
-    yield put(actions.auth.clearStore());
+    // invalidate the session and clear the store
+    yield call(invalidateSession, { isExistingSessionInvalid: logout.isExistingSessionInvalid });
+
     // restart the root saga again
     yield spawn(rootSaga);
   }
@@ -252,3 +267,4 @@ export default function* rootSaga() {
     yield put(actions.auth.initSession());
   }
 }
+

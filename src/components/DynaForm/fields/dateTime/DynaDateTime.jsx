@@ -16,6 +16,7 @@ import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
 import CalendarIcon from '../../../icons/CalendarIcon';
 import actions from '../../../../actions';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   dynaDateTimeLabelWrapper: {
@@ -68,31 +69,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const FIXED_TIME_FORMAT = 'hh:mm:ss a';
-
-export const FIXED_DATE_FORMAT = 'MM/DD/YYYY';
-export const getDateMask = dateFormat => {
-  if (!dateFormat) { return ''; }
-
-  return dateFormat.split('').map(char => {
-    if (char === 'D' || char === 'M' || char === 'Y') return '_';
-
-    return char;
-  }).join('');
-};
-
-const getTimeMask = timeMask => {
-  if (!timeMask) { return ''; }
-
-  // time format with meridian
-  if (timeMask === 'h:mm:ss a' || timeMask === 'hh:mm:ss a') {
-    return '__:__:__ _m';
-  }
-
-  // 24 hours format time
-  return '__:__:__';
-};
-
 const useDatePickerProps = removePickerDialog => {
   const classes = useStyles();
 
@@ -115,7 +91,7 @@ const useTimePickerProps = removePickerDialog => {
 };
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, timeLabel, dateLabel, required, formKey, onFieldChange, value = '', disabled, removePickerDialog, resourceContext, ssLinkedConnectionId, skipTimezoneConversion} = props;
+  const { id, label, timeLabel, dateLabel, required, formKey, onFieldChange, value = '', disabled, removePickerDialog, resourceContext, ssLinkedConnectionId, skipTimezoneConversion, isLoggable} = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -221,35 +197,61 @@ export default function DateTimePicker(props) {
         <div className={classes.dateTimeWrapper}>
           <div className={classes.fieldWrapper}>
             <KeyboardDatePicker
+              {...isLoggableAttr(isLoggable)}
               disabled={disabled}
               variant="inline"
-              format={FIXED_DATE_FORMAT}
-              placeholder={FIXED_DATE_FORMAT}
-              mask={getDateMask(FIXED_DATE_FORMAT)}
+              data-test="date"
+              format={dateFormat}
+              placeholder={dateFormat}
               value={dateValue}
               label={dateLabel || 'Date'}
+              onKeyDown={e => {
+                // this is specifically for qa to inject their date time string
+                // they should alter the input dom to add a qa attribute prior to injection for date time
+                if (e.target.hasAttribute('qa')) return;
+
+                e.preventDefault();
+              }}
+              onKeyPress={e => {
+                if (e.target.hasAttribute('qa')) return;
+
+                e.preventDefault();
+              }}
               onChange={setFormatDateValue}
               disableToolbar
               className={classes.keyBoardDateTimeWrapper}
               fullWidth
-              InputProps={{ className: classes.inputDateTime }}
+              InputProps={{ className: classes.inputDateTime, readOnly: true}}
               {...datePickerProps}
       />
           </div>
           <div className={classes.fieldWrapper}>
             <KeyboardTimePicker
+              {...isLoggableAttr(isLoggable)}
               disabled={disabled}
               variant="inline"
+              data-test="time"
               label={timeLabel || 'Time'}
               views={['hours', 'minutes', 'seconds']}
-              format={FIXED_TIME_FORMAT}
-              placeholder={FIXED_TIME_FORMAT}
-              mask={getTimeMask(FIXED_TIME_FORMAT)}
+              format={timeFormat}
+              placeholder={timeFormat}
+              onKeyDown={e => {
+                // this is specifically for qa to inject their date time string
+                // they should alter the input dom to add a qa attribute prior to injection for date time
+                if (e.target.hasAttribute('qa')) return;
+
+                e.preventDefault();
+              }}
+              onKeyPress={e => {
+                if (e.target.hasAttribute('qa')) return;
+
+                e.preventDefault();
+              }}
               value={timeValue}
               onChange={setFormatTimeValue}
               fullWidth
               className={classes.keyBoardDateTimeWrapper}
-              InputProps={{ className: classes.inputDateTime }}
+              InputProps={{ className: classes.inputDateTime, readOnly: true}}
               {...timePickerProps}
       />
           </div>

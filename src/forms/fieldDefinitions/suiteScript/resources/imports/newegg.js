@@ -1,5 +1,6 @@
 export default {
   'import.newegg.method': {
+    isLoggable: true,
     type: 'suitescriptapimethod',
     label: 'API',
     _connectionId: r => r?.import?._connectionId,

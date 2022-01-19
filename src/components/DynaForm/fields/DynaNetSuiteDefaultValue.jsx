@@ -39,6 +39,7 @@ export default function DynaNetSuiteDefaultValue(props) {
     disabled,
     onFieldChange,
     filterKey,
+    isLoggable,
     options = {},
   } = props;
   const classes = useStyles();
@@ -107,6 +108,7 @@ export default function DynaNetSuiteDefaultValue(props) {
             value={value}
             options={data}
             hideDropdownOnChange
+            isLoggable={isLoggable}
             disabled={disabled}
             onBlur={handleBlur}
     />

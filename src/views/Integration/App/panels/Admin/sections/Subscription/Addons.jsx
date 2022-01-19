@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import moment from 'moment';
-import { Button, makeStyles, Typography } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
@@ -9,15 +9,18 @@ import InfoIconButton from '../../../../../../../components/InfoIconButton';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../../../reducers';
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
+import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 
 const metadata = {
   useColumns: () => {
     const { supportsMultiStore, childId, storeLabel, children } = useGetTableContext();
+    const dateFormat = useSelector(state => selectors.userProfilePreferencesProps(state)?.dateFormat);
 
     let columns = [
       {
         key: 'name',
         heading: 'Name',
+        isLoggable: true,
         Value: ({rowData: r}) => (
           <>
             {r?.name}
@@ -28,16 +31,19 @@ const metadata = {
       {
         key: 'storeLabel',
         heading: storeLabel,
+        isLoggable: true,
         Value: ({rowData: r}) => children.find(c => c.value === r.storeId)?.label || r.storeId,
       },
       {
         key: 'installedOn',
         heading: 'Installed on',
-        Value: ({rowData: r}) => r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
+        Value: ({rowData: r}) => r.installedOn ? moment(r.installedOn).format(dateFormat || 'MMM D, YYYY') : '',
+        isLoggable: true,
       },
       {
         key: 'action',
         heading: 'Action',
+        isLoggable: true,
         Value: ({rowData: r}) => <AddonInstallerButton resource={r} />,
       },
     ];
@@ -118,30 +124,11 @@ export default function AddOns({integrationId, childId}) {
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
-  const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => {
-    if (supportsMultiStore) {
-      return childId ? model.storeId === childId : true;
-    }
+  const subscribedAddOns = useSelector(state =>
+    selectors.subscribedAddOns(state, integrationId, supportsMultiStore, childId)
+  );
 
-    return true;
-  });
-
-  if (subscribedAddOns) {
-    subscribedAddOns.forEach((f, i) => {
-      const addon = addOnState?.addOns?.addOnMetaData?.find(addOn => addOn.id === f.id);
-
-      subscribedAddOns[i]._id = i;
-      subscribedAddOns[i].integrationId = integrationId;
-      subscribedAddOns[i].name = addon ? addon.name : f.id;
-      subscribedAddOns[i].description = addon ? addon.description : '';
-      subscribedAddOns[i].uninstallerFunction = addon
-        ? addon.uninstallerFunction
-        : '';
-      subscribedAddOns[i].installerFunction = addon
-        ? addon.installerFunction
-        : '';
-    });
-  }
+  const isLicenseExpired = useSelector(state => selectors.isIntegrationAppLicenseExpired(state, integrationId));
 
   const hasSubscribedAddOns = subscribedAddOns?.length > 0;
   const hasAddOns = addOnState?.addOns?.addOnMetaData?.length > 0;
@@ -160,14 +147,13 @@ export default function AddOns({integrationId, childId}) {
           </Typography>
         </div>
         <div>
-          <Button
-            variant="outlined"
-            color="primary"
+          <FilledButton
             className={classes.button}
             component={Link}
+            disabled={isLicenseExpired}
             to={match.url.replace('admin/subscription', 'addons')}>
             GET ADD-ONS
-          </Button>
+          </FilledButton>
         </div>
       </div>
       )}

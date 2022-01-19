@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
 
 export const SavingMask = () => (
   <Loader open>
-    <Typography data-public variant="h4">Saving...</Typography>
+    <Typography variant="h4">Saving...</Typography>
     <Spinner />
   </Loader>
 );
@@ -61,7 +61,7 @@ const SettingsForm = props => {
   );
 };
 
-export const SuiteScriptForm = props => {
+const SuiteScriptForm = props => {
   const dispatch = useDispatch();
 
   const {ssLinkedConnectionId, integrationId } = props;

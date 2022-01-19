@@ -2,14 +2,6 @@ import { COMM_STATES } from '../../reducers/comms/networkComms';
 import { AFE_SAVE_STATUS, FORM_SAVE_STATUS } from '../constants';
 import { isOldRestAdaptor } from '../resource';
 
-export const FLOW_STAGES = [
-  'outputFilter',
-  'exportFilter',
-  'inputFilter',
-  'transform',
-  'sampleResponse',
-  'importMappingExtract',
-];
 export const HOOK_STAGES = [
   'postResponseMapHook',
   'preSavePage',
@@ -35,6 +27,14 @@ export const getFormSaveStatusFromCommStatus = resourceCommStatus => {
     default: return FORM_SAVE_STATUS.COMPLETE;
   }
 };
+
+export function resolveValue(value, editorContext) {
+  if (typeof value === 'function') {
+    return value(editorContext);
+  }
+
+  return value;
+}
 
 export function dataAsString(data) {
   return typeof data === 'string'

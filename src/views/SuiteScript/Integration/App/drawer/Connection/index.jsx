@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-handler-names */
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
@@ -17,7 +16,8 @@ import jsonUtil from '../../../../../../utils/json';
 import { SCOPES } from '../../../../../../sagas/resourceForm';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
-import ButtonGroup from '../../../../../../components/ButtonGroup';
+import TextButton from '../../../../../../components/Buttons/TextButton';
+import ActionGroup from '../../../../../../components/ActionGroup';
 
 export default function ConnectionDrawer({
   connectorId,
@@ -85,6 +85,12 @@ export default function ConnectionDrawer({
     handleSubmitComplete(linkedConnectionId);
   }, [handleSubmitComplete, linkedConnectionId]);
 
+  const onSubmitComplete = useCallback((...args) => {
+    handleSubmitComplete(...args);
+    setConnection(null);
+    setAccount(null);
+  }, [handleSubmitComplete]);
+
   useEffect(() => {
     if (account && !linkedConnectionId) {
       const newId = generateNewId();
@@ -120,7 +126,7 @@ export default function ConnectionDrawer({
           },
           {
             label: 'No, go back',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });
@@ -148,7 +154,7 @@ export default function ConnectionDrawer({
         </DrawerContent>
 
         <DrawerFooter>
-          <ButtonGroup>
+          <ActionGroup>
             <DynaSubmit
               formKey={formKey}
               onClick={handleAccountSubmit}
@@ -156,10 +162,10 @@ export default function ConnectionDrawer({
               variant="outlined">
               Continue
             </DynaSubmit>
-            <Button onClick={handleDrawerClose} variant="text" color="primary">
+            <TextButton onClick={handleDrawerClose}>
               Cancel
-            </Button>
-          </ButtonGroup>
+            </TextButton>
+          </ActionGroup>
         </DrawerFooter>
       </RightDrawer>
       {connection && (
@@ -168,7 +174,7 @@ export default function ConnectionDrawer({
           resource={connection.doc}
           resourceType="connections"
           onClose={handleConnectionClose}
-          onSubmitComplete={handleSubmitComplete}
+          onSubmitComplete={onSubmitComplete}
           manageOnly
           addOrSelect
           />

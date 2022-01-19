@@ -1,5 +1,6 @@
 import React from 'react';
-import {makeStyles, Button, Typography, Snackbar, LinearProgress} from '@material-ui/core';
+import {makeStyles, Typography, Snackbar, LinearProgress} from '@material-ui/core';
+import { TextButton } from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -17,7 +18,6 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     marginTop: theme.spacing(-0.5),
-    fontWeight: 'bold',
   },
 }));
 
@@ -35,13 +35,13 @@ export default function TestConnectionSnackbar({onCancel}) {
       <div className={classes.container}>
         <div className={classes.content}>
           <Typography>Testing your connection...</Typography>
-          <Button
+          <TextButton
+            bold
             className={classes.button}
             data-test="cancelTestCall"
-            variant="text"
             onClick={onCancel}>
             Cancel
-          </Button>
+          </TextButton>
         </div>
         <LinearProgress />
       </div>

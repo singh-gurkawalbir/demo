@@ -31,6 +31,7 @@ export function getFormFieldMetadata(
             ),
           },
         ],
+        isLoggable: true,
         defaultDisabled: !!referenceFieldId,
         defaultValue: subrecord?.referenceFieldId,
         required: true,
@@ -39,6 +40,7 @@ export function getFormFieldMetadata(
         id: 'recordType',
         name: 'recordType',
         label: 'Record type',
+        isLoggable: true,
         required: true,
         type: 'refreshableselect',
         filterKey: 'suitescript-recordTypes',
@@ -58,6 +60,7 @@ export function getFormFieldMetadata(
         ],
         label: 'Operation',
         required: true,
+        isLoggable: true,
         options: [
           {
             items: [
@@ -74,6 +77,7 @@ export function getFormFieldMetadata(
         name: 'ignoreExisting',
         type: 'checkbox',
         label: 'Ignore existing records',
+        isLoggable: true,
         defaultValue: subrecord?.ignoreExisting,
         visibleWhen: [
           {
@@ -87,6 +91,7 @@ export function getFormFieldMetadata(
         name: 'ignoreMissing',
         type: 'checkbox',
         label: 'Ignore missing records',
+        isLoggable: true,
         defaultValue: subrecord?.ignoreMissing,
         visibleWhen: [
           {
@@ -100,6 +105,7 @@ export function getFormFieldMetadata(
         name: 'internalIdLookupExpression',
         type: 'suitescriptnetsuitelookup',
         label: 'How can we find existing records?',
+        isLoggable: true,
         required: true,
         visibleWhen: [
           {

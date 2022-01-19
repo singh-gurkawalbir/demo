@@ -16,12 +16,11 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
   },
-  title: {
-    marginBottom: theme.spacing(2),
-    float: 'left',
-  },
   tableContainer: {
     height: 'calc(100% - 69px)',
+  },
+  spinnerContainer: {
+    margin: theme.spacing(1),
   },
 }));
 
@@ -40,11 +39,11 @@ export default function AuditLog({
   const clearAuditLogs = () => {
     dispatch(actions.auditLogs.clear());
   };
+  const [filters, handleFiltersChange] = useState({});
+
   const requestAuditLogs = (resourceType, resourceId) => {
     dispatch(actions.auditLogs.request(resourceType, resourceId));
   };
-
-  const [filters, handleFiltersChange] = useState({});
 
   useEffect(() => {
     if (!isNewId(resourceId)) { requestAuditLogs(resourceType, resourceId); }
@@ -64,12 +63,13 @@ export default function AuditLog({
       resources="integrations, flows, exports, imports, connections">
       <>
         {isLoadingAuditLog
-          ? <Spinner loading size="large" /> : (
+          ? <Spinner loading size="large" className={classes.spinnerContainer} /> : (
             <div className={clsx(classes.root, className)}>
               <Filters
                 affectedResources={affectedResources}
                 resourceDetails={resourceDetails}
                 users={users}
+                childId={childId}
                 onFiltersChange={handleFiltersChange}
                 resourceType={resourceType}
                 resourceId={resourceId}

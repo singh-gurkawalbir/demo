@@ -19,9 +19,10 @@ import latestJobs from './latestJobs/metadata';
 import runHistory from './runHistory/metadata';
 import orgOwnerUsers from './users/Metadata/orgOwnerUsers';
 import orgUsers from './users/Metadata/orgUsers';
-import listenerLogs from './listenerLogs/metadata';
+import flowStepLogs from './flowStepLogs/metadata';
 import runningFlows from './accountDashboard/runningFlows/metadata';
 import completedFlows from './accountDashboard/completedFlows/metadata';
+import homeTiles from './homeTiles/metadata';
 
 const metadata = {
   agents,
@@ -44,9 +45,10 @@ const metadata = {
   orgOwnerUsers,
   orgUsers,
   eventreports,
-  listenerLogs,
+  flowStepLogs,
   runningFlows,
   completedFlows,
+  homeTiles,
 };
 
 export default function (resourceType) {

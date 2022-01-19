@@ -92,7 +92,7 @@ export function getPages(job, parentJob) {
   return pages;
 }
 
-export function getFlowJobStatusDetails(job) {
+function getFlowJobStatusDetails(job) {
   if (job.uiStatus === JOB_STATUS.RETRYING) {
     return {
       showSpinner: true,
@@ -158,7 +158,7 @@ export function getFlowJobStatusDetails(job) {
   };
 }
 
-export function getExportJobStatusDetails(job) {
+function getExportJobStatusDetails(job) {
   if (job.uiStatus === JOB_STATUS.RETRYING) {
     return {
       showSpinner: true,
@@ -214,7 +214,7 @@ export function getExportJobStatusDetails(job) {
   };
 }
 
-export function getImportJobStatusDetails(job) {
+function getImportJobStatusDetails(job) {
   if (job.uiStatus === JOB_STATUS.RETRYING) {
     return {
       showSpinner: true,

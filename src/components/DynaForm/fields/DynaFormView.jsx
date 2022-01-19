@@ -11,11 +11,12 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../utils/constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
+import { isAmazonHybridConnection } from '../../../utils/assistant';
 
 const emptyObj = {};
 const isParent = true;
 
-export function FormView(props) {
+export default function FormView(props) {
   const { resourceType, flowId, resourceId, value, formKey } = props;
   const formContext = useFormContext(formKey);
   const dispatch = useDispatch();
@@ -128,7 +129,7 @@ export function FormView(props) {
   };
 
   const isFlowBuilderAssistant =
-    flowId && assistantName && assistantName !== 'financialforce';
+    flowId && assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection);
 
   return isFlowBuilderAssistant ? (
     <DynaSelect
@@ -139,5 +140,3 @@ export function FormView(props) {
     />
   ) : null;
 }
-
-export default FormView;

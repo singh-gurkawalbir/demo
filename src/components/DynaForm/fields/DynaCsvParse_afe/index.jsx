@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, FormLabel } from '@material-ui/core';
+import { FormLabel } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
@@ -14,6 +14,7 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowValidations';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDataChange from './FileDataChange';
+import { OutlinedButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -38,6 +39,7 @@ const getParserValue = ({rowsToSkip, multipleRowsPerRecord, ...rest}) => ({
   ...rest,
   rowsToSkip: Number.isInteger(rowsToSkip) ? rowsToSkip : 0,
 });
+// afe editors should control if its loggable or not...the form metadata controls the rule fields if they are loggable or not
 
 export default function DynaCsvParse_afe(props) {
   const {
@@ -117,7 +119,6 @@ export default function DynaCsvParse_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
       onSave: handleSave,
     }));
 
@@ -134,14 +135,13 @@ export default function DynaCsvParse_afe(props) {
           <FormLabel className={classes.label}>{label}</FormLabel>
           <FieldHelp {...props} />
         </div>
-        <Button
+        <OutlinedButton
           data-test={id}
-          variant="outlined"
           color="secondary"
           className={classes.button}
           onClick={handleEditorClick}>
           Launch
-        </Button>
+        </OutlinedButton>
 
       </div>
       <DynaForm

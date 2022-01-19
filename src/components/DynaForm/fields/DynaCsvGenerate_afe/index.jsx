@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Button, FormLabel } from '@material-ui/core';
+import { FormLabel, makeStyles } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
@@ -15,6 +14,7 @@ import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowVal
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
 import { emptyObject } from '../../../../utils/constants';
+import OutlinedButton from '../../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   csvContainer: {
@@ -41,17 +41,25 @@ const getParserValue = ({customHeaderRows, resourceId, resourceType, ...rest}) =
 
 export const useUpdateParentForm = (secondaryFormKey, handleFormChange) => {
   const { value: secondaryFormValue, fields, isValid} = useFormContext(secondaryFormKey);
+  const [componentMounted, setComponentMounted] = useState(false);
 
   useEffect(() => {
     if (secondaryFormValue) {
+      // let parent component state settle after that we can decide if the child form is touched or not
+      // this is to prevent it from considering the previous child form touched state
+      if (!componentMounted) {
+        return handleFormChange(secondaryFormValue, isValid, true);
+      }
       const isFormTouched = Object.values(fields).some(val => val.touched);
 
       // skip updates till secondary form is touched
       handleFormChange(secondaryFormValue, isValid, !isFormTouched);
     }
+    setComponentMounted(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [secondaryFormValue, fields, isValid]);
 };
+// afe editors should control if its loggable or not...the form metadata controls the rule fields if they are loggable or not
 export default function DynaCsvGenerate_afe(props) {
   const classes = useStyles();
   const {
@@ -133,7 +141,7 @@ export default function DynaCsvGenerate_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'flowInput',
+      stage: 'inputFilter',
       onSave: handleSave,
     }));
 
@@ -147,14 +155,13 @@ export default function DynaCsvGenerate_afe(props) {
           <FormLabel className={classes.csvLabel}>{label}</FormLabel>
           <FieldHelp {...props} />
         </div>
-        <Button
-          data-test={id}
-          variant="outlined"
+        <OutlinedButton
           color="secondary"
+          data-test={id}
           className={classes.csvBtn}
           onClick={handleEditorClick}>
           Launch
-        </Button>
+        </OutlinedButton>
       </div>
       <DynaForm
         formKey={formKeyComponent}

@@ -1,13 +1,9 @@
-
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ResourceDrawer from '../../components/drawer/Resource';
-import { selectors } from '../../reducers';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import LoadResources from '../../components/LoadResources';
-import ResponseMappingDrawer from '../../components/ResponseMapping/Drawer';
 import MappingDrawerRoute from '../MappingDrawer';
 import BottomDrawer from './drawers/BottomDrawer';
 import ErrorDetailsDrawer from './drawers/ErrorsDetails';
@@ -17,10 +13,16 @@ import ReplaceConnectionDrawer from './drawers/ReplaceConnection';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
 import EditorDrawer from '../../components/AFE/Drawer';
-import FlowBuilderBody from './FlowBuilderBody';
-import Redirection from './Redirection';
-import Spinner from '../../components/Spinner';
-import actions from '../../actions';
+import loadable from '../../utils/loadable';
+import retry from '../../utils/retry';
+import IsLoggableContextProvider from '../../components/IsLoggableContextProvider';
+
+const FlowBuilderBody = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'FlowBuilderBody' */ './FlowBuilderBody'))
+);
+const Redirection = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'FlowBuilderRedirection' */ './Redirection'))
+);
 
 function FBComponent({flowId, integrationId, childId}) {
   return (
@@ -40,18 +42,8 @@ function FBComponent({flowId, integrationId, childId}) {
 }
 export default function FlowBuilder() {
   const match = useRouteMatch();
-  const dispatch = useDispatch();
+
   const { flowId, integrationId, childId } = match.params;
-  const dependenciesResolved = useSelector(state => selectors.resolvedIntegrationDependencies(state, integrationId));
-
-  useEffect(() => {
-    dispatch(actions.resource.integrations.fetchIfAnyUnloadedFlows(integrationId));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (!dependenciesResolved) {
-    return <Spinner centerAll loading size="large" />;
-  }
 
   // Initializes a new flow (patch, no commit)
   // and replaces the url to reflect the new temp flow id.
@@ -69,12 +61,13 @@ export default function FlowBuilder() {
         <QueuedJobsDrawer />
         <EditorDrawer />
         <ErrorDetailsDrawer flowId={flowId} />
-        <SettingsDrawer
-          dataPublic
-          integrationId={integrationId}
-          resourceType="flows"
-          resourceId={flowId}
-          flowId={flowId} />
+        <IsLoggableContextProvider isLoggable>
+          <SettingsDrawer
+            integrationId={integrationId}
+            resourceType="flows"
+            resourceId={flowId}
+            flowId={flowId} />
+        </IsLoggableContextProvider>
         <ReplaceConnectionDrawer
           flowId={flowId}
           integrationId={integrationId}
@@ -82,7 +75,6 @@ export default function FlowBuilder() {
 
         <FBComponent flowId={flowId} integrationId={integrationId} childId={childId} />
         <MappingDrawerRoute integrationId={integrationId} />
-        <ResponseMappingDrawer integrationId={integrationId} />
       </Redirection>
     </LoadResources>
   );

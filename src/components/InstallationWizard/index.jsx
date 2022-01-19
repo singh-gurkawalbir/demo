@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import jsonPatch from 'fast-json-patch';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -21,11 +22,12 @@ import {
   generateNewId,
 } from '../../utils/resource';
 import jsonUtil from '../../utils/json';
-import { INSTALL_STEP_TYPES } from '../../utils/constants';
+import { emptyObject, INSTALL_STEP_TYPES } from '../../utils/constants';
 import { SCOPES } from '../../sagas/resourceForm';
 import Loader from '../Loader';
 import Spinner from '../Spinner';
 import { getApplication } from '../../utils/template';
+import { defaultPatchSetConverter, sanitizePatchSet } from '../../forms/formFactory/utils';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,6 +51,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const oAuthApplications = [
+  ...resourceConstants.OAUTH_APPLICATIONS,
+  'netsuite-oauth',
+  'shopify-oauth',
+  'acumatica-oauth',
+  'hubspot-oauth',
+  'amazonmws-oauth',
+];
+
 export default function InstallationWizard(props) {
   const classes = useStyles();
   const {
@@ -62,17 +73,7 @@ export default function InstallationWizard(props) {
     handleSetupComplete,
     variant,
   } = props;
-  const oAuthApplications = useMemo(
-    () => [
-      ...resourceConstants.OAUTH_APPLICATIONS,
-      'netsuite-oauth',
-      'shopify-oauth',
-      'acumatica-oauth',
-      'hubspot-oauth',
-      'amazonmws-oauth',
-    ],
-    []
-  );
+
   const [installInProgress, setInstallInProgress] = useState(false);
   const [connection, setSelectedConnectionId] = useState(null);
   const [stackId, setShowStackDialog] = useState(null);
@@ -88,13 +89,20 @@ export default function InstallationWizard(props) {
         resourceType,
         resourceId,
       })
-    ) || {};
-  const {redirectTo, isInstallFailed, environment: destinationEnvironment } = useSelector(state =>
-    selectors.redirectToOnInstallationComplete(state, {
+    ) || emptyObject;
+  const { redirectTo, isInstallFailed, destinationEnvironment } = useSelector(state => {
+    const redirectOptions = selectors.redirectToOnInstallationComplete(state, {
       resourceType,
       resourceId,
       templateId,
-    })
+    });
+
+    return {
+      redirectTo: redirectOptions.redirectTo,
+      isInstallFailed: redirectOptions.isInstallFailed,
+      destinationEnvironment: redirectOptions.destinationEnvironment,
+    };
+  }, shallowEqual
   );
 
   useEffect(() => {
@@ -222,12 +230,14 @@ export default function InstallationWizard(props) {
   };
 
   const handleSubmitComplete = (connectionId, isAuthorized, createdConnectionDoc) => {
-    if (
-      oAuthApplications.includes(
-        getConnectionType(createdConnectionDoc)
-      ) &&
-      !isAuthorized
-    ) {
+    const patchSet = sanitizePatchSet({
+      patchSet: defaultPatchSetConverter(createdConnectionDoc || {}),
+      resource: {},
+    });
+    const connectionJson = jsonPatch.applyPatch({}, patchSet)?.newDocument;
+
+    if (oAuthApplications.includes(getConnectionType(connectionJson)) && !isAuthorized) {
+      // Step should not be marked as completed until Oauth application authorization is completed on other window.
       return;
     }
 

@@ -2,8 +2,8 @@
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select } from 'redux-saga/effects';
 import moment from 'moment';
+import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
-import { APIException } from '../../api';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { requestReferences } from '../../resources';
@@ -15,6 +15,7 @@ import {
   startDebug,
 } from '.';
 import { apiCallWithRetry } from '../..';
+import { APIException } from '../../api/requestInterceptors/utils';
 
 function get1000Logs() {
   const logs = [{key: 'key1', others: {}}];
@@ -258,6 +259,7 @@ describe('Scripts logs sagas', () => {
           }), {
             nextPageURL: '/nextPage1',
           }],
+          [matchers.call.fn(retryToFetchLogs), {errorMsg: 'Request failed'}],
         ]).put(actions.logs.scripts.requestFailed({
           scriptId,
           flowId,

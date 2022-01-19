@@ -11,12 +11,13 @@ import AccountList from './AccountList';
 import EnvironmentToggle from './EnvironmentToggle';
 // import ThemeToggle from './ThemeToggle';
 import CeligoBreadcrumb from './CeligoBreadcrumb';
+import getImageUrl from '../../utils/image';
 
 const useStyles = makeStyles(theme => ({
   celigoLogo: {
     height: 36,
     width: 120,
-    background: `url(${process.env.CDN_BASE_URI}images/flow-builder/celigo-product-logo.svg) no-repeat center left`,
+    background: `url(${getImageUrl('images/flow-builder/celigo-product-logo.svg')}) no-repeat center left`,
   },
   appBar: {
     background: theme.palette.background.default,
@@ -87,7 +88,6 @@ export default function CeligoAppBar() {
 
   return (
     <AppBar
-      data-public
       color="inherit"
       position="fixed"
       elevation={0}

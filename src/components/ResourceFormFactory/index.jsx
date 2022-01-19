@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {makeStyles} from '@material-ui/core';
 import actions from '../../actions';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../reducers';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
-import { multiStepSaveResourceTypes } from '../../utils/resource';
 import DynaForm from '../DynaForm';
 import Spinner from '../Spinner';
 
@@ -44,16 +44,24 @@ export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, 
     remountForm();
   }, [fieldMeta, remountForm]);
 
+  const useStyles = makeStyles({
+    formNotLoadedSpinner: {
+      marginTop: 60,
+    },
+  });
+
+  const classes = useStyles();
+
   if (!formState.initComplete) {
     return (
-      <Spinner centerAll />
+      <Spinner centerAll className={classes.formNotLoadedSpinner} />
     );
   }
 
   return <Form {...props} {...formState} key={count} />;
 };
 
-export const ResourceFormFactory = props => {
+const ResourceFormFactory = props => {
   const { resourceType, resourceId, isNew, flowId, integrationId } = props;
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, resourceId)
@@ -125,10 +133,12 @@ export const ResourceFormFactory = props => {
     },
     [connection, isNew, resource, resourceType, integrationId]
   );
-  const { fieldMeta } = formState;
+  const { fieldMeta, skipClose } = formState;
 
-  // do not reinitialize the form on submit if it is a multistep save resource
-  const skipInitFormOnSubmit = isNew && multiStepSaveResourceTypes.includes(resourceType);
+  // do not reinitialize the form on submit if it is a multistep save resource..during these transitions skipClose is false
+  // operations like saveAndClose should also skip initialization...its only when ur performing just save do you perform initialization
+  // during that case does skipClose become false
+  const skipInitFormOnSubmit = !skipClose;
 
   return (
     <FormStateManager

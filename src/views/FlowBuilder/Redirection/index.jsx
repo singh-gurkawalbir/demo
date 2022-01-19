@@ -31,6 +31,7 @@ export default function Redirection({children}) {
     dispatch(actions.user.preferences.update({ environment: flow?.sandbox ? 'sandbox' : 'production' }));
   }
   const location = useLocation();
+  const flowGroupingId = match.url.toLowerCase().includes('flows/sections') && match.params.sectionId;
   const rewriteUrl = useCallback(
     id => {
       const parts = match.url.split('/');
@@ -59,18 +60,18 @@ export default function Redirection({children}) {
     // NEW DATA LOADER REDIRECTION
     if (isNewId(flowId)) {
       if (match.url.toLowerCase().includes('dataloader')) {
-        patchNewFlow(flowId, 'New data loader flow', {
+        patchNewFlow(flowId, flowGroupingId, 'New data loader flow', {
           application: 'dataLoader',
         });
       } else {
-        patchNewFlow(flowId);
+        patchNewFlow(flowId, flowGroupingId);
       }
     }
 
     return () => {
       dispatch(actions.resource.clearStaged(flowId, 'values'));
     };
-  }, [dispatch, flowId, match.url, patchNewFlow]);
+  }, [dispatch, flowGroupingId, flowId, match.url, patchNewFlow]);
 
   // NEW FLOW REDIRECTION
   if (flowId === 'new') {

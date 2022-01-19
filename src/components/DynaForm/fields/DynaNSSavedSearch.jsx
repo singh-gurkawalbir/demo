@@ -14,6 +14,7 @@ import { isNewId } from '../../../utils/resource';
 import DynaNSSavedSearchInternalID from './DynaNSSavedSearchInternalID';
 import FieldHelp from '../FieldHelp';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   nsSavedSearch: {
@@ -50,6 +51,9 @@ const useStyles = makeStyles(theme => ({
       color: 'inherit',
     },
   },
+  labelSpace: {
+    marginRight: 0,
+  },
 }));
 
 export default function DynaNSSavedSearch(props) {
@@ -68,6 +72,7 @@ export default function DynaNSSavedSearch(props) {
     required,
     disabled,
     commMetaPath,
+    isLoggable,
   } = props;
   const searchIdOptions = {
     placeholder: 'Please select a saved search',
@@ -122,7 +127,8 @@ export default function DynaNSSavedSearch(props) {
             <FormLabel component="legend" className={classes.radioGroupLabel}>
               Saved search type:
             </FormLabel>
-            <div className={classes.radioGroupWrapper}>
+            {/* can be loggable in all circumstances? */}
+            <div className={classes.radioGroupWrapper} {...isLoggableAttr(isLoggable)}>
               <RadioGroup
                 name="searchType"
                 defaultValue="public"
@@ -138,6 +144,7 @@ export default function DynaNSSavedSearch(props) {
                   value="private"
                   control={<Radio color="primary" />}
                   label="Private"
+                  className={classes.labelSpace}
                 />
               </RadioGroup>
               <FieldHelp {...props} helpKey="export.netsuite.restlet.searchType" label="Saved search type" />

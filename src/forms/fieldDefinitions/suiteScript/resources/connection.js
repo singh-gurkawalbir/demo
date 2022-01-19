@@ -1,5 +1,6 @@
 export default {
   name: {
+    isLoggable: true,
     type: 'text',
     label: 'Name',
     required: true,
@@ -30,6 +31,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   'salesforce.sandbox': {
+    isLoggable: true,
     type: 'select',
     label: 'Account type',
     required: true,
@@ -64,11 +66,13 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.hostURI': {
+    isLoggable: true,
     type: 'text',
     label: 'Host',
     required: true,
   },
   'ftp.useSFTP': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Use SFTP',
     defaultValue: r => !!(r && r.type === 'sftp'),
@@ -110,11 +114,13 @@ export default {
     ],
   },
   'ftp.usePassiveMode': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Use passive mode',
     defaultValue: r => !!(r && r.ftp && r.ftp.usePassiveMode),
   },
   'ftp.userDirectoryIsRoot': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'User directory is root',
     defaultValue: r => !!(r && r.ftp && r.ftp.userDirectoryIsRoot),
@@ -134,6 +140,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   'ofxserver.sandbox': {
+    isLoggable: true,
     type: 'select',
     label: 'OFX server type',
     required: true,
@@ -147,6 +154,7 @@ export default {
     ],
   },
   'magento.hostURI': {
+    isLoggable: true,
     type: 'text',
     label: 'SOAP URL',
     required: true,
@@ -203,6 +211,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   'netsuite.authType': {
+    isLoggable: true,
     type: 'select',
     label: 'Authentication type',
     required: true,
@@ -218,6 +227,7 @@ export default {
     defaultDisabled: r => r.id === 'CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION',
   },
   'netsuite.role': {
+    isLoggable: true,
     type: 'text',
     label: 'Role ID',
     required: true,
@@ -315,6 +325,7 @@ export default {
     ],
   },
   'other.hostURI': {
+    isLoggable: true,
     type: 'text',
     label: 'Address',
     required: true,
@@ -334,6 +345,7 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
   },
   'ebay.notSupported': {
+    isLoggable: true,
     type: 'labeltitle',
     label:
       'Editing an eBay connection is not supported at this time. Please navigate to your SuiteScript integrator in NetSuite to edit this connection.',

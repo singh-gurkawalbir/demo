@@ -1,5 +1,6 @@
 /* global describe, test, expect, jest */
 import shortid from 'shortid';
+import cloneDeep from 'lodash/cloneDeep';
 import reducer, {selectors} from '.';
 import actions from '../../../../actions';
 import {HOME_PAGE_PATH} from '../../../../utils/constants';
@@ -1796,15 +1797,17 @@ describe('integrationApps reducer test cases', () => {
           sectionId: 'autoaccessorymisc',
           variation: 'itempackagequantity',
         }));
-        state['flowId-integrationId'].mappings['flowId-autoaccessorymisc-1-itempackagequantity'].mappings = [{
+        let state1 = cloneDeep(state);
+
+        state1['flowId-integrationId'].mappings['flowId-autoaccessorymisc-1-itempackagequantity'].mappings = [{
           extract: 'yes',
           generate: 'no',
         }];
-        state['flowId-integrationId'].mappings['flowId-autoaccessorymisc-1-itempackagequantity'].lookups = [{
+        state1['flowId-integrationId'].mappings['flowId-autoaccessorymisc-1-itempackagequantity'].lookups = [{
           lookupName: 'yes',
           map: {yes: 'no'},
         }];
-        state = reducer(state, actions.integrationApp.settings.categoryMappings.saveVariationMappings(
+        state1 = reducer(state1, actions.integrationApp.settings.categoryMappings.saveVariationMappings(
           'integrationId',
           'flowId',
           'flowId-autoaccessorymisc-itempackagequantity',
@@ -1815,7 +1818,7 @@ describe('integrationApps reducer test cases', () => {
             depth: 1,
           }
         ));
-        expect(state).toEqual({
+        expect(state1).toEqual({
           'flow1-integration1': {
             dummy: 'value',
           },
@@ -10399,8 +10402,9 @@ describe('integrationApps selectors test cases', () => {
 
     test('should return correct data for amazon category mappings', () => {
       const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
+      const state1 = cloneDeep(state);
 
-      state['flow-integration'].mappings = {
+      state1['flow-integration'].mappings = {
         'flow-commonAttributes-0': {
           mappings: [{
             extract: 'first',
@@ -10414,7 +10418,7 @@ describe('integrationApps selectors test cases', () => {
           }],
         },
       };
-      expect(selector(state, 'integration', 'flow')).toEqual(
+      expect(selector(state1, 'integration', 'flow')).toEqual(
         {
           basicMappings: {
             recordMappings: [
@@ -10504,8 +10508,9 @@ describe('integrationApps selectors test cases', () => {
 
     test('should return true when mappings changed', () => {
       const state = reducer({}, actions.integrationApp.settings.receivedCategoryMappingMetadata('integration', 'flow', amazonCategoryMappings));
+      const state1 = cloneDeep(state);
 
-      state['flow-integration'].mappings = {
+      state1['flow-integration'].mappings = {
         'flow-commonAttributes-0': {
           mappings: [{
             extract: 'first',
@@ -10519,7 +10524,7 @@ describe('integrationApps selectors test cases', () => {
           }],
         },
       };
-      expect(selector(state, 'integration', 'flow')).toEqual(true);
+      expect(selector(state1, 'integration', 'flow')).toEqual(true);
     });
   });
 
@@ -10610,6 +10615,63 @@ describe('integrationApps selectors test cases', () => {
 
       expect(selectors.checkUpgradeRequested(state, 'licenseId')).toEqual(true);
       expect(selectors.checkUpgradeRequested(state, 'licenseId2')).toEqual(false);
+    });
+  });
+  describe('integrationApps settings subscribedAddOns test', () => {
+    test('should not throw exception for bad params', () => {
+      expect(selectors.subscribedAddOns()).toEqual(null);
+      expect(selectors.subscribedAddOns({})).toEqual(undefined);
+      expect(selectors.subscribedAddOns(null)).toEqual(null);
+    });
+
+    test('should return correct subscribedAddOns value for valid integrationid', () => {
+      const state = reducer({
+        '1-3': { initComplete: true},
+        '1-2': { formSaveStatus: 'loading'},
+        'integrationId-addOns': { status: 'requested'},
+      }, actions.integrationApp.settings.addOnLicenseMetadataUpdate('integrationId', {
+        addOns: {
+          addOnMetaData: [{ data: 'dummy', id: 'a'}],
+          addOnLicenses: [{_id: 'license', id: 'a'}],
+        },
+      }));
+
+      const expectedState = [{_id: 0, id: 'a', integrationId: 'integrationId'}];
+
+      expect(selectors.subscribedAddOns(state, 'integrationId')).toEqual(expectedState);
+    });
+
+    test('should return empty array if it supports multiStore and does not find store id', () => {
+      const state = reducer({
+        '1-3': { initComplete: true},
+        '1-2': { formSaveStatus: 'loading'},
+        'integrationId-addOns': { status: 'requested'},
+      }, actions.integrationApp.settings.addOnLicenseMetadataUpdate('integrationId', {
+        addOns: {
+          addOnMetaData: [{ data: 'dummy', id: 'a'}],
+          addOnLicenses: [{_id: 'license', id: 'a'}],
+        },
+      }));
+
+      const expectedState = [];
+
+      expect(selectors.subscribedAddOns(state, 'integrationId', true, '123')).toEqual(expectedState);
+    });
+    test('should return correct subscribedAddOns value if it supports multiStore and does not find store id', () => {
+      const state = reducer({
+        '1-3': { initComplete: true},
+        '1-2': { formSaveStatus: 'loading'},
+        'integrationId-addOns': { status: 'requested'},
+      }, actions.integrationApp.settings.addOnLicenseMetadataUpdate('integrationId', {
+        addOns: {
+          addOnMetaData: [{ data: 'dummy', id: 'a'}],
+          addOnLicenses: [{_id: 'license', id: 'a', storeId: '123'}],
+        },
+      }));
+
+      const expectedState = [{_id: 0, id: 'a', integrationId: 'integrationId', storeId: '123' }];
+
+      expect(selectors.subscribedAddOns(state, 'integrationId', true, '123')).toEqual(expectedState);
     });
   });
 });

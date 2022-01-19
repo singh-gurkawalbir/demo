@@ -25,6 +25,7 @@ import {
 import { selectors } from '../../../../../reducers';
 import OperandSettingsDialog from './OperandSettingsDialog';
 import actions from '../../../../../actions';
+import { useIsLoggable } from '../../../../IsLoggableContextProvider';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -36,7 +37,7 @@ const useStyles = makeStyles(theme => ({
 }));
 const defaultData = [];
 const defaultFilters = [];
-
+const isLoggableStr = isLoggable => isLoggable ? '' : 'data-private=true';
 export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propFilters, onFieldChange }) {
   const qbuilder = useRef(null);
   const classes = useStyles();
@@ -48,6 +49,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
   const data = useSelector(state => selectors.editorData(state, editorId) || defaultData);
   const rule = useSelector(state => selectors.editorRule(state, editorId));
   const filters = useSelector(state => selectors.editor(state, editorId).filters || propFilters || defaultFilters);
+  const isEditorDirty = useSelector(state => selectors.isEditorDirty(state, editorId));
 
   const dispatch = useDispatch();
   const patchEditor = useCallback(
@@ -56,10 +58,10 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
         dispatch(actions.editor.patchRule(editorId, value || []));
       }
       if (onFieldChange) {
-        onFieldChange(id, JSON.stringify(value));
+        onFieldChange(id, JSON.stringify(value), !isEditorDirty);
       }
     },
-    [dispatch, editorId, id, onFieldChange]
+    [dispatch, editorId, id, isEditorDirty, onFieldChange]
   );
   const jsonPathsFromData = useMemo(
     () =>
@@ -117,6 +119,14 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
       patchEditor(rule);
     }
   }, [patchEditor]);
+
+  // useEffect to call handleFilterRulesChange with the updated value of isEditorDirty
+  // when the filter has changed, to make the form dirty
+  useEffect(() => {
+    isEditorDirty && handleFilterRulesChange();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditorDirty]);
+
   const showOperandSettings = ({ rule, rhs }) => {
     setShowOperandSettingsFor({ rule, rhs });
   };
@@ -138,8 +148,10 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
         );
 
         if (rulesState[ruleId].data && rulesState[ruleId].data.lhs) {
+          const expressionValue = rulesState[ruleId].data.lhs.expression;
+
           expressionField
-            .val(JSON.stringify(rulesState[ruleId].data.lhs.expression))
+            .val(typeof expressionValue !== 'string' ? JSON.stringify(expressionValue) : expressionValue)
             .trigger('change');
         }
 
@@ -171,6 +183,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
       }
     }
   };
+  const isLoggable = useIsLoggable();
 
   const updateUIForRHSRule = ({ name, rule = {} }) => {
     function updateUIForField(rule) {
@@ -178,11 +191,12 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
         rule.$el.find('.rule-value-container select[name=field]').length === 0
       ) {
         const selectHtml = [
-          '<select name="field" class="io-filter-type form-control">',
+          `<select name="field" ${isLoggableStr(isLoggable)} class="io-filter-type form-control">`,
         ];
 
+        // check if isLoggable works
         data.forEach(v => {
-          selectHtml.push(`<option value="${v.id}">${v.name || v.id}</option>`);
+          selectHtml.push(`<option ${isLoggableStr(isLoggable)} value="${v.id}">${v.name || v.id}</option>`);
         });
         selectHtml.push('</select>');
         rule.$el.find('.rule-value-container').prepend(selectHtml.join(''));
@@ -213,7 +227,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
         rule.$el
           .find('.rule-value-container')
           .prepend(
-            '<textarea name="expression" class="io-filter-type form-control"></textarea>'
+            `<textarea name="expression" ${isLoggableStr(isLoggable)} class="io-filter-type form-control"></textarea>`
           );
 
         const ruleId = getFilterRuleId(rule);
@@ -356,7 +370,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
           }
           const rhsValue = rulesState[ruleId].data.rhs.value === undefined ? '' : rulesState[ruleId].data.rhs.value;
 
-          return `<input class="form-control" name="${name}" value="${rhsValue}">${
+          return `<input class="form-control" ${isLoggableStr(isLoggable)} name="${name}" value="${rhsValue}">${
             disabled
               ? ''
               : '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
@@ -377,6 +391,11 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
             lhsValue = rule.$el
               .find('.rule-filter-container [name=expression]')
               .val();
+          } else if (r.lhs.type !== 'value') {
+            r.lhs.type = 'field';
+            lhsValue = rule.$el
+              .find('.rule-filter-container [name=field]')
+              .val();
           }
 
           let rhsValue = rule.$el
@@ -393,7 +412,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
             rhsValue = r.rhs[r.rhs.type];
           }
 
-          r.lhs[r.lhs.type || 'field'] = lhsValue;
+          r.lhs[r.lhs.type || 'field'] = lhsValue || r.lhs[r.lhs.type || 'field'];
           r.rhs[r.rhs.type || 'value'] = rhsValue;
           rule.data = r;
 
@@ -423,7 +442,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
                 .val();
             }
 
-            r.lhs[r.lhs.type || 'field'] = lhsValue;
+            r.lhs[r.lhs.type || 'field'] = lhsValue || r.lhs[r.lhs.type || 'field'];
             r.rhs[r.rhs.type || 'value'] = rhsValue;
             rule.data = r;
 
@@ -468,6 +487,15 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
           handleFilterRulesChange();
         });
       qbContainer.queryBuilder('setFilters', true, filtersConfig);
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const ruleId in rulesState) {
+        if (Object.hasOwnProperty.call(rulesState, ruleId) && rulesState[ruleId]?.rule) {
+          if (rulesState[ruleId].data?.lhs?.type === 'expression') {
+            updateUIForLHSRule({rule: rulesState[ruleId].rule});
+          }
+        }
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersMetadata]);

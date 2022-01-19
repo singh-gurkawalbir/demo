@@ -1,5 +1,6 @@
 export default {
   'ftp.directoryPath': {
+    isLoggable: true,
     type: 'uri',
     label: 'Directory path',
     placeholder: 'Enter FTP folder path, such as: MySite/Orders',
@@ -8,6 +9,7 @@ export default {
     showLookup: false,
   },
   'ftp.useTempFile': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Use temp file while upload in progress',
     defaultValue: r => !!(r && r.ftp && r.ftp.inProgressFileName),
@@ -19,6 +21,7 @@ export default {
     ],
   },
   'ftp.inProgressFileName': {
+    isLoggable: true,
     type: 'ftpfilenamewitheditor',
     label: 'In progress file name',
     showAllSuggestions: true,
@@ -37,6 +40,7 @@ export default {
     ],
   },
   'ftp.blobFileName': {
+    isLoggable: true,
     type: 'ftpfilenamewitheditor',
     label: 'File name',
     required: true,
@@ -69,6 +73,7 @@ export default {
     ],
   },
   'ftp.blobUseTempFile': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Use temp file while upload in progress',
     defaultValue: r => !!(r && r.ftp && r.ftp.inProgressFileName),
@@ -80,6 +85,7 @@ export default {
     ],
   },
   'ftp.blobInProgressFileName': {
+    isLoggable: true,
     type: 'ftpfilenamewitheditor',
     label: 'In progress file name',
     defaultValue: r => r && r.ftp && r.ftp.inProgressFileName,

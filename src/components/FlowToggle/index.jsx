@@ -88,20 +88,17 @@ export default function FlowToggle({
 
               dispatch(actions.flow.isOnOffActionInprogress(true, flow._id));
 
-              dispatch(
-                actions.resource.patchStaged(flow._id, patchSet, 'value')
-              );
-              dispatch(
-                actions.resource.commitStaged('flows', flow._id, 'value', {
+              dispatch(actions.resource.patchAndCommitStaged('flows', flow?._id, patchSet, {
+                options: {
                   action: 'flowEnableDisable',
-                })
-              );
+                },
+              }));
             }
           },
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });
@@ -112,7 +109,7 @@ export default function FlowToggle({
   return onOffInProgressStatus ? (
     <Spinner className={classes.spinnerFlowToggle} />
   ) : (
-    <Tooltip data-public title="Off/On" placement="bottom">
+    <Tooltip title="Off/On" placement="bottom">
       <div>
         <CeligoSwitch
           disabled={disabled}

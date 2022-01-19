@@ -3,8 +3,9 @@ import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import Select from '@material-ui/core/Select';
 import clsx from 'clsx';
-import { Button } from '@material-ui/core';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
+import OutlinedButton from '../Buttons/OutlinedButton';
+import isLoggableAttr from '../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   doneButton: {
@@ -12,8 +13,8 @@ const useStyles = makeStyles(theme => ({
     minHeight: 42,
     margin: 0,
     padding: 0,
-    border: '1px solid',
-    borderColor: `${theme.palette.secondary.lightest} !important`,
+    border: '1px solid ',
+    borderColor: theme.palette.secondary.lightest,
     borderRadius: 0,
   },
   select: {
@@ -40,6 +41,9 @@ const useStyles = makeStyles(theme => ({
       },
       '&.Mui-disabled': {
         borderColor: theme.palette.secondary.lightest,
+        '&:hover': {
+          borderColor: theme.palette.secondary.lightest,
+        },
       },
     },
     '& >.MuiSelect-selectMenu': {
@@ -61,15 +65,14 @@ export const DoneButton = ({onClose}) => {
 
   return (
 
-    <Button
+    <OutlinedButton
       id="select-close"
-      data-test="closeSelect"
-      variant="outlined"
       color="secondary"
+      data-test="closeSelect"
       onClick={onClose}
       className={classes.doneButton}>
       Done
-    </Button>
+    </OutlinedButton>
   );
 };
 const MenuComponent = React.forwardRef((props, ref) => {
@@ -86,7 +89,7 @@ const MenuComponent = React.forwardRef((props, ref) => {
   );
 });
 
-export default function CeligoSelect({ className, maxHeightOfSelect, children, ...props }) {
+export default function CeligoSelect({ className, maxHeightOfSelect, children, isLoggable, ...props }) {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
   const openSelect = useCallback(() => {
@@ -132,6 +135,7 @@ export default function CeligoSelect({ className, maxHeightOfSelect, children, .
 
   return (
     <Select
+      {...isLoggableAttr(isLoggable)}
       IconComponent={ArrowDownIcon}
       className={clsx(classes.select, className)}
       open={open}

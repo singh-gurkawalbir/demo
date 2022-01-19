@@ -57,12 +57,11 @@ export default function OnOffCell({
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
 
-      dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-      dispatch(
-        actions.resource.commitStaged('flows', flowId, 'value', {
+      dispatch(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, {
+        options: {
           action: 'flowEnableDisable',
-        })
-      );
+        },
+      }));
     },
     [dispatch, flowId]
   );
@@ -109,7 +108,7 @@ export default function OnOffCell({
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         }],
     });
   }, [

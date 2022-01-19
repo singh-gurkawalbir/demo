@@ -1,12 +1,12 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Button } from '@material-ui/core';
 import ExportIcon from '../../../../components/icons/ExportsIcon';
 import DataLoaderIcon from '../../../../components/icons/DataLoaderIcon';
 import ListenerIcon from '../../../../components/icons/ListenerIcon';
 import ImportIcon from '../../../../components/icons/ImportsIcon';
 import TransferDownIcon from '../../../../components/icons/TransferDownIcon';
 import TransferUpIcon from '../../../../components/icons/TransferUpIcon';
+import { TextButton } from '../../../../components/Buttons';
+import { resourceButtonStyles } from '../../../FlowBuilder/ResourceButton';
 
 const blockMap = {
   export: { label: 'Export', Icon: ExportIcon },
@@ -16,43 +16,18 @@ const blockMap = {
   exportTransfer: { label: 'Transfer', Icon: TransferDownIcon },
   importTransfer: { label: 'Transfer', Icon: TransferUpIcon },
 };
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'relative',
-  },
-  blockButton: {
-    padding: 0,
-    marginRight: theme.spacing(2),
-    textTransform: 'none',
-    '&:hover': {
-      backgroundColor: 'transparent',
-      '& svg': {
-        color: theme.palette.primary.main,
-      },
-    },
-  },
-  blockIcon: {
-    width: 48,
-    height: 48,
-  },
-}));
 
 export default function ResourceButton({ onClick, variant = 'export', isFileTransfer }) {
-  const classes = useStyles();
+  const classes = resourceButtonStyles();
   const block = blockMap[isFileTransfer ? `${variant}Transfer` : variant];
 
   return (
-    <Button
-      size="small"
-      className={classes.blockButton}
+    <TextButton
+      className={classes.resourceButton}
       data-test={block.label}
+      startIcon={<block.Icon />}
       onClick={onClick}>
-      <div>
-        <block.Icon className={classes.blockIcon} />
-        <Typography variant="body2">{block.label}</Typography>
-      </div>
-    </Button>
+      {block.label}
+    </TextButton>
   );
 }

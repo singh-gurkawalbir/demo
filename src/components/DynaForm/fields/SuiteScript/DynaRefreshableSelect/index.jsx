@@ -9,7 +9,9 @@ import { DynaGenericSelect } from './RefreshGenericResource';
 
 const useStyles = makeStyles(() => ({
   validationError: {
-    display: 'inline-block !important',
+    '&:empty': {
+      display: 'none',
+    },
   },
 }));
 
@@ -28,6 +30,7 @@ export default function DynaSelectOptionsGenerator(props) {
     commMetaPath,
     disableFetch,
     ignoreCache,
+    isLoggable,
   } = props;
   const disableOptionsLoad = options.disableFetch || disableFetch;
   const classes = useStyles();
@@ -87,7 +90,7 @@ export default function DynaSelectOptionsGenerator(props) {
         {...props}
       />
       {!ignoreValidation && (
-        <RawHtml className={classes.validationError} html={validationError} />
+        <RawHtml className={classes.validationError} html={validationError} isLoggable={isLoggable} />
       )}
     </>
   );

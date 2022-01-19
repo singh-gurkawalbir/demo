@@ -2,13 +2,13 @@ import React, { useMemo, useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import IconTextButton from '../../IconTextButton';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
 import { getPreviewDataPageSizeInfo } from '../../../utils/exportPanel';
 import FieldMessage from '../../DynaForm/fields/FieldMessage';
 import SelectPreviewRecordsSize from '../SelectPreviewRecordsSize';
 import { selectors } from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import {OutlinedButton} from '../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {
@@ -95,16 +95,15 @@ export default function PreviewInfo(props) {
   const sampleDataStatus = useMemo(() => {
     const { status, error } = resourceSampleData;
 
-    if (status === 'requested') return <Typography data-public variant="body2"> Testing </Typography>;
+    if (status === 'requested') return <Typography variant="body2"> Testing </Typography>;
 
-    if (status === 'received') return <Typography data-public variant="body2"> Success! </Typography>;
+    if (status === 'received') return <Typography variant="body2"> Success! </Typography>;
 
     if (status === 'error') {
       const errorCount = error?.length || 0;
 
       return (
         <FieldMessage
-          dataPublic
           errorMessages={`${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`}
         />
       );
@@ -153,15 +152,14 @@ export default function PreviewInfo(props) {
     <div className={classes.previewContainer}>
       <div className={classes.previewData}>
         <div className={classes.previewDataLeft}>
-          <IconTextButton
-            variant="outlined"
+          <OutlinedButton
             color="secondary"
             className={classes.previewBtn}
             onClick={handlePreview}
             disabled={disablePreview}
             data-test="fetch-preview">
             Preview <ArrowRightIcon />
-          </IconTextButton>
+          </OutlinedButton>
         </div>
         { canSelectRecords &&
           (

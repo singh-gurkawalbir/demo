@@ -25,15 +25,18 @@ const useColumns = () => [
   {
     key: 'retry',
     heading: 'Retry #',
+    isLoggable: true,
     Value: ({rowData: r}) => r.index + 1,
   },
   {
     key: 'duration',
     heading: 'Duration',
+    isLoggable: true,
     Value: ({rowData: r}) => r.duration },
   {
     key: 'completed',
     heading: 'Completed',
+    isLoggable: true,
     // eslint-disable-next-line react/display-name
     Value: ({rowData: r}) => <DateTimeDisplay dateTime={r.endedAt} />,
   },
@@ -48,13 +51,10 @@ export default function JobRetriesDialog({
   let { retries } = job;
 
   retries = reverse(
-    retries
-      .filter(r =>
-        [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED].includes(
-          r.status
-        )
-      )
-      .map((r, index) => ({ ...r, index }))
+    retries?.filter(r =>
+      [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED].includes(
+        r.status
+      )).map((r, index) => ({ ...r, index }))
   );
 
   return (

@@ -6,7 +6,7 @@ import {
   PARAMETER_LOCATION,
 } from '../../../../../utils/assistant';
 
-export function hiddenFieldsMeta({ values }) {
+function hiddenFieldsMeta({ values }) {
   return ['assistant', 'adaptorType', 'assistantData'].map(fieldId => ({
     id: `assistantMetadata.${fieldId}`,
     type: 'text',
@@ -15,7 +15,7 @@ export function hiddenFieldsMeta({ values }) {
   }));
 }
 
-export function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
+function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
   const fieldDefinitions = {
     version: {
       fieldId: 'assistantMetadata.version',
@@ -57,7 +57,8 @@ export function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
     return fieldDefinitions[fieldId];
   });
 }
-export function headerFieldsMeta({operationDetails, headers = []}) {
+
+function headerFieldsMeta({operationDetails, headers = []}) {
   const editableHeaders = Object.keys(operationDetails?.headers || {})
     .filter(key => !operationDetails.headers[key]);
   const userEditableHeaderValues = headers.filter(header => editableHeaders.includes(header.name));
@@ -86,7 +87,8 @@ export function headerFieldsMeta({operationDetails, headers = []}) {
 
   return [];
 }
-export function pathParameterFieldsMeta({ operationParameters = [], values }) {
+
+function pathParameterFieldsMeta({ operationParameters = [], values }) {
   return operationParameters.map(pathParam => {
     const pathParamField = {
       id: `assistantMetadata.pathParams.${pathParam.id}`,
@@ -126,7 +128,7 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
   });
 }
 
-export function exportTypeFieldsMeta({
+function exportTypeFieldsMeta({
   supportedExportTypes = [],
   exportType,
 }) {
@@ -158,12 +160,13 @@ export function exportTypeFieldsMeta({
   ];
 }
 
-export function searchParameterFieldsMeta({
+function searchParameterFieldsMeta({
   label,
   paramLocation,
   parameters = [],
   oneMandatoryQueryParamFrom,
   value,
+  operationChanged,
   deltaDefaults = {},
   isDeltaExport,
 }) {
@@ -171,7 +174,7 @@ export function searchParameterFieldsMeta({
   const defaultValue = {};
 
   parameters.forEach(p => {
-    if (Object.prototype.hasOwnProperty.call(p, 'defaultValue')) {
+    if (Object.prototype.hasOwnProperty.call(p, 'defaultValue') && operationChanged) {
       if (p.type === 'array' && p.defaultValue && typeof p.defaultValue === 'string') {
         try {
           defaultValue[p.id] = JSON.parse(p.defaultValue);
@@ -270,7 +273,7 @@ export function fieldMeta({ resource, assistantData }) {
       });
       pathParameterFields = pathParameterFieldsMeta({
         operationParameters: operationDetails.pathParameters,
-        values: assistantConfig.pathParams,
+        values: resource.assistantMetadata?.dontConvert ? {} : assistantConfig.pathParams,
       });
       exportTypeFields = exportTypeFieldsMeta({
         supportedExportTypes: operationDetails.supportedExportTypes,
@@ -288,6 +291,7 @@ export function fieldMeta({ resource, assistantData }) {
           oneMandatoryQueryParamFrom:
             operationDetails.oneMandatoryQueryParamFrom,
           value: resource.assistantMetadata?.dontConvert ? {} : assistantConfig.queryParams,
+          operationChanged: resource.assistantMetadata?.operationChanged,
           isDeltaExport: assistantConfig.exportType === 'delta',
           deltaDefaults:
             operationDetails.delta &&
@@ -306,6 +310,7 @@ export function fieldMeta({ resource, assistantData }) {
           parameters: operationDetails.bodyParameters,
           value: resource.assistantMetadata?.dontConvert ? {} : assistantConfig.bodyParams,
           isDeltaExport: assistantConfig.exportType === 'delta',
+          operationChanged: resource.assistantMetadata?.operationChanged,
           deltaDefaults:
             operationDetails.delta &&
             operationDetails.delta.defaults

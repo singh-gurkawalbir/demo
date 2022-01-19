@@ -51,8 +51,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
 
-      dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
+      dispatch(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
     },
     [dispatch, flowId]
   );
@@ -130,7 +129,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
               },
               {
                 label: 'Cancel',
-                color: 'secondary',
+                variant: 'text',
               },
             ],
           });
@@ -168,7 +167,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
               },
               {
                 label: 'Cancel',
-                color: 'secondary',
+                variant: 'text',
               },
             ],
           });

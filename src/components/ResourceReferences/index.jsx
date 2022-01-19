@@ -1,4 +1,4 @@
-import { makeStyles, Typography, Button } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CeligoTable from '../CeligoTable';
@@ -9,6 +9,7 @@ import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import ModalDialog from '../ModalDialog';
 import metadata from './metadata';
 import Loader from '../Loader';
+import { TextButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   referenceLink: {
@@ -41,7 +42,7 @@ export default function ResourceReferences({ onClose, resourceType, resourceId, 
     <>
       {!resourceReferences && (
         <Loader open>
-          <Typography data-public variant="h4">
+          <Typography variant="h4">
             {`Retrieving ${resourceTypeLabel} references`}
           </Typography>
           <Spinner />
@@ -49,12 +50,12 @@ export default function ResourceReferences({ onClose, resourceType, resourceId, 
       )}
       {resourceReferences && resourceReferences.length === 0 && (
         <Loader open>
-          <Typography data-public variant="h4">
+          <Typography variant="h4">
             This resource is not being used anywhere
           </Typography>
-          <Button onClick={onClose} variant="outlined" color="primary">
+          <TextButton onClick={onClose}>
             Close
-          </Button>
+          </TextButton>
         </Loader>
       )}
       {resourceReferences && resourceReferences.length !== 0 && (

@@ -1,13 +1,17 @@
 import Iframe from 'react-iframe';
 import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { getDomain } from '../../utils/resource';
+import { NETSUITE_ASSISTANT_LAUNCH_ERROR } from '../../utils/messageStore';
+import nsMappingUtils from '../../utils/mapping/application/netsuite';
 import Spinner from '../Spinner';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import { FilledButton } from '../Buttons';
 
 const useStyles = makeStyles({
   NetsuiteRules: {
@@ -23,6 +27,7 @@ export default function NetSuiteMappingAssistant({
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', netSuiteConnectionId)
   );
@@ -73,12 +78,13 @@ export default function NetSuiteMappingAssistant({
       if (
         !e.data ||
         !e.data.op ||
-        !['loadCompleted', 'clicked'].includes(e.data.op)
+        !['loadCompleted', 'clicked', 'loadError'].includes(e.data.op)
       ) {
         return true;
       }
-
-      if (e.data.op === 'loadCompleted') {
+      if (e.data.op === 'loadError') {
+        enquesnackbar({ message: NETSUITE_ASSISTANT_LAUNCH_ERROR, variant: 'error' });
+      } else if (e.data.op === 'loadCompleted') {
         setNSAssistantFormLoaded(true);
         document
           .getElementById('netsuiteFormFrame')
@@ -98,7 +104,7 @@ export default function NetSuiteMappingAssistant({
         onFieldClick && onFieldClick(e.data.field);
       }
     },
-    [connection, onFieldClick, setNSAssistantFormLoaded]
+    [connection, onFieldClick, setNSAssistantFormLoaded, enquesnackbar]
   );
 
   useEffect(() => {
@@ -142,6 +148,9 @@ export default function NetSuiteMappingAssistant({
   }, [connection, data, isNSAssistantFormLoaded]);
 
   const handleLaunchAssistantClick = () => {
+    if (!nsMappingUtils.isNSMappingAssistantSupported()) {
+      return enquesnackbar({ message: NETSUITE_ASSISTANT_LAUNCH_ERROR, variant: 'error' });
+    }
     setNetSuiteFormIsLoading(true);
     const ioDomain = getDomain();
     let ioEnvironment = 'production';
@@ -210,13 +219,10 @@ export default function NetSuiteMappingAssistant({
       {!isNSAssistantFormLoaded && (
         <>
           <div className={classes.NetsuiteRules}>
-            <Button
-              onClick={handleLaunchAssistantClick}
-              variant="outlined"
-              color="primary">
+            <FilledButton onClick={handleLaunchAssistantClick}>
               Launch NetSuite assistant
-            </Button>
-            <ol data-public>
+            </FilledButton>
+            <ol>
               <li>
                 Please make sure that you have &quot;Celigo integrator.io&quot;
                 bundle (ID: 20038) version 1.7.4.5 or higher.

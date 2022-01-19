@@ -1,9 +1,10 @@
 import React, { useMemo, useCallback } from 'react';
-import { Button } from '@material-ui/core';
 import ModalDialog from '../../../../ModalDialog';
 import DynaForm from '../../../../DynaForm';
 import DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import { TextButton } from '../../../../Buttons';
+import { emptyObject } from '../../../../../utils/constants';
 
 const transformations = {
   number: [
@@ -31,7 +32,7 @@ const optionsHandler = (fieldId, fields) => {
 };
 
 export default function OperandSettingsDialog({
-  ruleData,
+  ruleData = emptyObject,
   onClose,
   onSubmit,
   disabled,
@@ -143,11 +144,11 @@ export default function OperandSettingsDialog({
           onClick={handleSubmit}>
           Save
         </DynaSubmit>
-        <Button
+        <TextButton
           data-test="cancelOperandSettings"
           onClick={onClose}>
           Cancel
-        </Button>
+        </TextButton>
       </>
     </ModalDialog>
   );

@@ -1,10 +1,12 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
+import Status from '../../../../components/Buttons/Status';
 import StatusCircle from '../../../../components/StatusCircle';
+import CeligoTruncate from '../../../../components/CeligoTruncate';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   errorStatus: {
     justifyContent: 'center',
     height: 'unset',
@@ -14,20 +16,20 @@ const useStyles = makeStyles(() => ({
   },
   gridContainer: {
     display: 'grid',
-    gridColumnGap: '10px',
-    gridTemplateColumns: 'auto 38%',
+    gridColumnGap: theme.spacing(1),
+    gridTemplateColumns: `auto ${theme.spacing(7)}px`,
     position: 'relative',
     '& > div:first-child': {
       wordBreak: 'break-word',
     },
-    '& > div:last-child': {
-      position: 'relative',
-      right: -12,
-    },
   },
 }));
 
-export default function FlowSectionTitle({ title, errorCount = 0 }) {
+const NoFlowsSection = () => (
+  <Typography variant="caption" color="textSecondary">No flows</Typography>
+);
+
+export default function FlowSectionTitle({ title, errorCount = 0, groupHasNoFlows }) {
   const classes = useStyles();
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
@@ -39,10 +41,9 @@ export default function FlowSectionTitle({ title, errorCount = 0 }) {
     }
 
     return (
-      <div>
-        <StatusCircle size="mini" variant="error" />
+      <Status size="mini" variant="error" >
         <span>{errorCount > 9999 ? '9999+' : errorCount}</span>
-      </div>
+      </Status>
     );
   }, [errorCount]);
 
@@ -51,9 +52,11 @@ export default function FlowSectionTitle({ title, errorCount = 0 }) {
   }
 
   return (
-    <div className={classes.gridContainer}>
-      <div> { title }</div>
-      <div> {errorStatus} </div>
-    </div>
+    <span className={classes.gridContainer}>
+      <CeligoTruncate placement="right" lines={3}>
+        {title}
+      </CeligoTruncate>
+      <span> { groupHasNoFlows ? <NoFlowsSection /> : errorStatus} </span>
+    </span>
   );
 }

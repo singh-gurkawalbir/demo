@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Button } from '@material-ui/core';
 import LookupDialog from '../../Lookup/index';
 import actions from '../../../actions';
+import { OutlinedButton } from '../../Buttons';
 
 export default function DynaLookupEditor(props) {
   const dispatch = useDispatch();
@@ -34,6 +34,7 @@ export default function DynaLookupEditor(props) {
   return (
     <>
       {showEditor && (
+        // should this be redacted?
         <LookupDialog
           id={id}
           lookups={value}
@@ -45,13 +46,12 @@ export default function DynaLookupEditor(props) {
           onSave={handleUpdate}
         />
       )}
-      <Button
+      <OutlinedButton
         data-test={id}
-        variant="outlined"
         color="secondary"
         onClick={handleEditorClick}>
         {label}
-      </Button>
+      </OutlinedButton>
     </>
   );
 }

@@ -3,14 +3,14 @@ import format from 'xml-formatter';
 import { deepClone } from 'fast-json-patch';
 import { stringCompare } from '../../../../utils/sort';
 
-export function versionOptions({ assistantData }) {
+function versionOptions({ assistantData }) {
   return assistantData.versions.map(vesrion => ({
     label: vesrion.version,
     value: vesrion.version,
   }));
 }
 
-export function resourceOptions({ versionData = { resources: [] } }) {
+function resourceOptions({ versionData = { resources: [] } }) {
   return versionData.resources
     .map(resource => ({
       label: resource.name,
@@ -19,14 +19,14 @@ export function resourceOptions({ versionData = { resources: [] } }) {
     .sort(stringCompare('label'));
 }
 
-export function exportOperationOptions({ resourceData = { endpoints: [] } }) {
+function exportOperationOptions({ resourceData = { endpoints: [] } }) {
   return resourceData.endpoints.map(operation => ({
     label: operation.name,
     value: operation.id || operation.url,
   }));
 }
 
-export function importOperationKey(operation) {
+function importOperationKey(operation) {
   if (operation.id) {
     return operation.id;
   }
@@ -38,14 +38,14 @@ export function importOperationKey(operation) {
   return [operation.method, operation.url].join(':');
 }
 
-export function importOperationOptions({ resourceData = { operations: [] } }) {
+function importOperationOptions({ resourceData = { operations: [] } }) {
   return resourceData.operations.map(operation => ({
     label: operation.name,
     value: importOperationKey(operation),
   }));
 }
 
-export function versionData({ versions = [], versionId }) {
+function versionData({ versions = [], versionId }) {
   let version = versions.find(v => v.version === versionId);
 
   if (!version && versions.length === 1) {
@@ -55,7 +55,7 @@ export function versionData({ versions = [], versionId }) {
   return version;
 }
 
-export function resourceData({ resources = [], resourceId }) {
+function resourceData({ resources = [], resourceId }) {
   return resources.find(r => r.id === resourceId);
 }
 
@@ -108,7 +108,7 @@ export function selectOptions({
   return [];
 }
 
-export function semiAssistantOperationOptions(endpoints = [], parent = {key: []}) {
+function semiAssistantOperationOptions(endpoints = [], parent = {key: []}) {
   let options = [];
   let endpointName;
 
@@ -142,7 +142,7 @@ export function semiAssistantExportOperationOptions(assistantData) {
   }];
 }
 
-export function deepObjectExtend(target, source) {
+function deepObjectExtend(target, source) {
   Object.keys(source).forEach(prop => {
     if (Object.keys(target).includes(prop) && isObject(target[prop])) {
       deepObjectExtend(target[prop], source[prop]);

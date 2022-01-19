@@ -78,7 +78,14 @@ export default function MappingDrawerRoute(props) {
               `${match.url}/mapping/:flowId/:importId/:subRecordMappingId/view`,
               `${match.url}/mapping/:flowId/:importId/view`,
             ]} >
-            <DrawerHeader title={title} handleClose={setCancelTriggered} disableClose={closeDisabled} />
+            <DrawerHeader
+            // for new mappings afe, pass old drawer dataTest as dummy for automation
+              closeDataTest={!isMappingPreviewAvailable && 'oldRightDrawer'}
+              title={title}
+              helpTitle={title}
+              helpKey="afe.import.mapping"
+              handleClose={setCancelTriggered}
+              disableClose={closeDisabled} />
             <MappingWrapper
               integrationId={integrationId}
               {...props} />
@@ -94,6 +101,8 @@ export default function MappingDrawerRoute(props) {
             <SelectImport />
           </Route>
         </Switch>
+        <EditorDrawer />
+
       </RightDrawer>
 
       <RightDrawer

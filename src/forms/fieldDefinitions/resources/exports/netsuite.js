@@ -1,6 +1,7 @@
 export default {
   // record types
   'netsuite.distributed.recordType': {
+    isLoggable: true,
     label: 'Record type',
     required: true,
     type: 'refreshableselect',
@@ -14,6 +15,7 @@ export default {
     connectionId: r => r && r._connectionId,
   },
   'netsuite.restlet.recordType': {
+    isLoggable: true,
     label: 'Record type',
     required: true,
     type: 'refreshableselect',
@@ -30,6 +32,7 @@ export default {
     ],
   },
   'netsuite.webservices.recordType': {
+    isLoggable: true,
     label: 'Record type',
     required: true,
     type: 'refreshableselect',
@@ -53,6 +56,7 @@ export default {
   },
   // execution context
   'netsuite.distributed.executionContext': {
+    isLoggable: true,
     type: 'multiselect',
     label: 'Execution context',
     visibleWhen: [{ field: 'netsuite.execution.type', is: ['distributed'] }],
@@ -88,6 +92,7 @@ export default {
   },
   // executiontype
   'netsuite.distributed.executionType': {
+    isLoggable: true,
     type: 'multiselect',
     label: 'Execution type',
     options: [
@@ -119,6 +124,7 @@ export default {
   },
   // sublists
   'netsuite.distributed.sublists': {
+    isLoggable: true,
     label: 'Sublists to include',
     type: 'refreshableselect',
     filterKey: 'suitescript-sublists',
@@ -133,6 +139,7 @@ export default {
   },
   // search id
   'netsuite.restlet.searchId': {
+    isLoggable: true,
     type: 'nssavedsearch',
     required: true,
     visibleWhenAll: [
@@ -146,6 +153,7 @@ export default {
   },
   // search id
   'netsuite.webservices.searchId': {
+    isLoggable: true,
     label: 'Saved searches',
     type: 'nswssavedsearch',
     required: true,
@@ -169,6 +177,7 @@ export default {
   // TODO(Mounika): Check if this is a ghost code. There is reference for type in subForms/netsuite/search.js
 
   type: {
+    isLoggable: true,
     type: 'select',
     label: 'Export type',
     options: [
@@ -185,6 +194,7 @@ export default {
   },
   // skip grouping
   'netsuite.skipGrouping': {
+    isLoggable: true,
     type: 'checkbox',
     inverse: true,
     label: 'Group rows',
@@ -196,6 +206,7 @@ export default {
     },
   },
   'netsuite.netsuiteExportlabel': {
+    isLoggable: true,
     label: r => {
       if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
         return 'What would you like to transfer?';
@@ -209,6 +220,7 @@ export default {
     type: 'labeltitle',
   },
   'netsuite.searches': {
+    isLoggable: true,
     type: 'text',
     keyName: 'name',
     valueName: 'value',
@@ -217,26 +229,32 @@ export default {
     validWhen: [],
   },
   'netsuite.metadata': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite metadata',
   },
   'netsuite.export.forceReload': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Reload record before export',
   },
   'netsuite.selectoption': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite selectoption',
   },
   'netsuite.customFieldMetadata': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite custom field metadata',
   },
   'netsuite.statsOnly': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'NetSuite stats only',
   },
   'netsuite.internalId': {
+    isLoggable: true,
     type: 'uri',
     required: true,
     label: 'File internal id',
@@ -244,30 +262,37 @@ export default {
     showLookup: false,
   },
   'netsuite.blob.purgeFileAfterExport': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Purge file after export',
   },
   'netsuite.restlet.criteria.field': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite restlet criteria field',
   },
   'netsuite.restlet.criteria.join': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite restlet criteria join',
   },
   'netsuite.restlet.criteria.operator': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite restlet criteria operator',
   },
   'netsuite.restlet.criteria.searchValue': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite restlet criteria search value',
   },
   'netsuite.restlet.criteria.searchValue2': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite restlet criteria search value2',
   },
   'netsuite.restlet.batchSize': {
+    isLoggable: true,
     type: 'text',
     label: 'Batch size limit',
     validWhen: [
@@ -277,6 +302,7 @@ export default {
     ],
   },
   'netsuite.restlet.criteria': {
+    isLoggable: true,
     helpKey: 'export.netsuite.restlet.criteria',
     type: 'nssearchcriteria',
     label: 'Define search criteria',
@@ -285,6 +311,7 @@ export default {
     connectionId: r => r && r._connectionId,
   },
   'netsuite.webservices.criteria': {
+    isLoggable: true,
     helpKey: 'export.netsuite.restlet.criteria',
     type: 'nssearchcriteria',
     label: 'Define search criteria',
@@ -303,6 +330,7 @@ export default {
       [],
   },
   'netsuite.restlet.hooks.batchSize': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite restlet hooks batch size',
     validWhen: [
@@ -312,10 +340,12 @@ export default {
     ],
   },
   'netsuite.restlet.hooks.preSend.fileInternalId': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite restlet hooks pre send file internal ID',
   },
   'netsuite.restlet.hooks.preSend.function': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite restlet hooks pre send function',
   },
@@ -324,10 +354,12 @@ export default {
     label: 'NetSuite restlet hooks pre send configuration',
   },
   'netsuite.distributed.disabled': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'NetSuite distributed disabled',
   },
   'netsuite.distributed.qualifier': {
+    isLoggable: true,
     label: 'Field specific qualification criteria',
     type: 'netsuitequalifier',
     placeholder: 'Define Qualification Criteria',
@@ -339,10 +371,12 @@ export default {
     ],
   },
   'netsuite.distributed.hooks.preSend.fileInternalId': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite distributed hooks pre send file internal ID',
   },
   'netsuite.distributed.hooks.preSend.function': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite distributed hooks pre send function',
   },
@@ -351,18 +385,22 @@ export default {
     label: 'NetSuite distributed hooks pre send configuration',
   },
   'netsuite.distributed.forceReload': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Reload record before export',
   },
   'netsuite.distributed.skipExportFieldId': {
+    isLoggable: true,
     type: 'text',
     label: 'Skip export field ID',
   },
   'netsuite.distributed.ioEnvironment': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite distributed io environment',
   },
   'netsuite.distributed.lastSyncedDate': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite distributed last synced date',
   },
@@ -371,22 +409,27 @@ export default {
     label: 'NetSuite distributed settings',
   },
   'netsuite.getList[].typeId': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite get list type ID',
   },
   'netsuite.getList.internalId': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite get list internal ID',
   },
   'netsuite.getList.externalId': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite get list external ID',
   },
   'netsuite.searchPreferences.bodyFieldsOnly': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'NetSuite search preferences body fields only',
   },
   'netsuite.searchPreferences.pageSize': {
+    isLoggable: true,
     type: 'text',
     label: 'NetSuite search preferences page size',
     validWhen: [
@@ -396,6 +439,7 @@ export default {
     ],
   },
   'netsuite.searchPreferences.returnSearchColumns': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'NetSuite search preferences return search columns',
   },

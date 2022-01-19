@@ -1,10 +1,8 @@
 import React from 'react';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
-import { getJobDuration, FILTER_KEYS } from '../../../utils/errorManagement';
+import { getJobDuration } from '../../../utils/errorManagement';
 import DownloadFiles from './actions/DownloadFiles';
 import DownloadDiagnostics from './actions/DownloadDiagnostics';
-import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
-import {COMPLETED_STATUS_OPTIONS} from '../../../utils/accountDashboard';
 import JobStatusWithTag from './JobStatusWithTag';
 
 export default {
@@ -12,50 +10,50 @@ export default {
     {
       key: 'status',
       heading: 'Status',
-      HeaderValue: function FlowSearchFilter() {
-        return (
-          <MultiSelectColumnFilter
-            title="Status"
-            filterBy="status"
-            filterKey={FILTER_KEYS.RUN_HISTORY}
-            options={COMPLETED_STATUS_OPTIONS.map(({ _id, name}) => ({_id, name }))} />
-        );
-      },
+      isLoggable: true,
       Value: ({rowData: r}) => <JobStatusWithTag job={r} />,
       width: '10%',
     },
     {
       key: 'duration',
       heading: 'Duration',
+      isLoggable: true,
       Value: ({rowData: r}) => getJobDuration(r),
     },
     {
       key: 'started',
       heading: 'Started',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.startedAt} />,
     },
     {
       key: 'completed',
       heading: 'Completed',
+      isLoggable: true,
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.endedAt} />,
     },
     {
       key: 'success',
       heading: 'Success',
+      isLoggable: true,
       Value: ({rowData: r}) => r.numSuccess,
     },
     {
       key: 'Ignored',
       heading: 'Ignored',
+      isLoggable: true,
       Value: ({rowData: r}) => r.numIgnore,
     },
     {
       key: 'errors',
       heading: 'Errors',
-      Value: ({rowData: r}) => r.numOpenError },
+      isLoggable: true,
+      Value: ({rowData: r}) => r.numError,
+    },
     {
       key: 'pages',
       heading: 'Pages',
+      isLoggable: true,
       Value: ({rowData: r}) => r.numPagesGenerated,
     },
 

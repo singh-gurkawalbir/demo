@@ -21,6 +21,7 @@ import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 import LoadResources from '../../../../components/LoadResources';
 import SaveAndCloseButtonGroupForm from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
+import IsLoggableContextProvider from '../../../../components/IsLoggableContextProvider';
 
 const useStyles = makeStyles(theme => ({
   paperDefault: {
@@ -54,8 +55,11 @@ export default function HooksForm({flowId, integrationId, formKey}) {
     selectedHooks => {
       const patchSet = getSelectedHooksPatchSet(selectedHooks, resource);
 
-      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value', null, { flowId }, formKey));
+      dispatch(actions.resource.patchAndCommitStaged(resourceType, resourceId, patchSet, {
+        context: { flowId },
+        asyncKey: formKey,
+      }));
+
       dispatch(actions.hooks.save({ resourceType, resourceId, flowId, match }));
     },
     [resource, dispatch, resourceId, resourceType, flowId, match, formKey]
@@ -161,7 +165,9 @@ export default function HooksForm({flowId, integrationId, formKey}) {
     <LoadResources resources="scripts,stacks">
       <DrawerContent>
         <Paper elevation={0} className={classes.paperDefault}>
-          <DynaForm dataPublic formKey={formKey} />
+          <IsLoggableContextProvider isLoggable>
+            <DynaForm formKey={formKey} />
+          </IsLoggableContextProvider>
         </Paper>
       </DrawerContent>
 

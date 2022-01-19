@@ -4,17 +4,20 @@ import { MULTIPLE_EMAILS, ABS_URL_VALIDATION_PATTERN } from '../../../utils/cons
 
 export default {
   name: {
+    isLoggable: true,
     type: 'text',
     label: 'Name',
     required: true,
   },
   description: {
+    isLoggable: true,
     type: 'text',
     multiline: true,
     maxRows: 5,
     label: 'Description',
   },
   websiteURL: {
+    isLoggable: true,
     type: 'text',
     label: 'Website URL',
     validWhen: {
@@ -37,12 +40,14 @@ export default {
     },
   },
   framework: {
+    isLoggable: true,
     type: 'text',
     label: 'Framework',
     defaultValue: r => (isNewId(r._id) || r.framework === 'twoDotZero') ? 'twoDotZero' : '',
     visible: false,
   },
   installerFunction: {
+    isLoggable: true,
     type: 'text',
     label: 'Installer function',
     requiredWhen: [
@@ -59,6 +64,7 @@ export default {
     ],
   },
   _integrationId: {
+    isLoggable: true,
     type: 'selectresource',
     label: 'Source integration',
     placeholder: 'Choose integration',
@@ -81,6 +87,7 @@ export default {
     ],
   },
   _stackId: {
+    isLoggable: true,
     type: 'selectresource',
     label: 'Stack',
     resourceType: 'stacks',
@@ -98,6 +105,7 @@ export default {
     ],
   },
   uninstallerFunction: {
+    isLoggable: true,
     type: 'text',
     label: 'Uninstaller function',
     required: [
@@ -114,6 +122,7 @@ export default {
     ],
   },
   updateFunction: {
+    isLoggable: true,
     type: 'text',
     label: 'Update function',
     requiredWhen: [
@@ -130,6 +139,7 @@ export default {
     ],
   },
   applications: {
+    isLoggable: true,
     type: 'selectmultiapplication',
     placeholder: 'Choose applications',
     label: 'Applications',
@@ -147,12 +157,14 @@ export default {
     ],
   },
   trialEnabled: {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Enable trials',
     defaultDisabled: r => isNewId(r._id),
     helpKey: 'license.trialEnabled',
   },
   trialPeriod: {
+    isLoggable: true,
     type: 'select',
     label: 'Trial period',
     defaultValue: r => r?.trialPeriod || 30,
@@ -167,6 +179,7 @@ export default {
     ],
   },
   _trialLicenseId: {
+    isLoggable: true,
     type: 'triallicense',
     label: 'Trial license template',
     resourceType: 'connectorLicenses',

@@ -31,7 +31,7 @@ export const WEEK_DAYS = {
   SUNDAY: 'Sunday',
 };
 
-export const getHoursExpression = scheduleDetails => {
+const getHoursExpression = scheduleDetails => {
   const period =
     scheduleDetails.frequency.substring(
       0,

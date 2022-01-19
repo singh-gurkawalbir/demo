@@ -32,7 +32,8 @@ export default {
     importResource,
     isGroupedSampleData,
   }) => {
-    const {generate, lookupName} = value;
+    const { generate, extract, lookupName } = value;
+
     const {_connectionId: connectionId, _id: resourceId } = importResource;
     const isComposite = importResource.netsuite_da?.operation === 'addupdate' || importResource.netsuite?.operation === 'addupdate';
 
@@ -104,6 +105,7 @@ export default {
           label: 'Data type',
           defaultValue: value.dataType,
           helpKey: 'mapping.dataType',
+          noApi: true,
           options: [
             {
               items: [
@@ -122,6 +124,7 @@ export default {
           type: 'checkbox',
           defaultValue: value.discardIfEmpty || false,
           helpKey: 'mapping.discardIfEmpty',
+          noApi: true,
           label: 'Discard if empty',
         },
         immutable: {
@@ -130,6 +133,7 @@ export default {
           type: 'checkbox',
           defaultValue: value.immutable || false,
           helpKey: 'mapping.immutable',
+          noApi: true,
           label: 'Immutable (Advanced)',
         },
         useFirstRow: {
@@ -137,6 +141,7 @@ export default {
           name: 'useFirstRow',
           type: 'checkbox',
           helpKey: 'mapping.useFirstRow',
+          noApi: true,
           defaultValue: value.useFirstRow || false,
           // helpText not present
           label: 'Use first row',
@@ -150,6 +155,7 @@ export default {
           type: 'checkbox',
           defaultValue: value.useAsAnInitializeValue || false,
           helpKey: 'mapping.useAsInitializeValue',
+          noApi: true,
           // TODO check when this field is hidden
           label: 'Use this field for NetSuite record initialization',
         },
@@ -161,6 +167,7 @@ export default {
           defaultValue: mappingUtil.getFieldMappingType(value),
           fullWidth: true,
           helpKey: 'mapping.fieldMappingType',
+          noApi: true,
           options: [
             {
               items: [
@@ -177,6 +184,7 @@ export default {
           name: 'isKey',
           type: 'checkbox',
           helpKey: 'mapping.isKey',
+          noApi: true,
           label: 'Use as a key field to find existing lines',
           visibleWhen: [
             { field: 'fieldMappingType', is: ['standard'] },
@@ -196,6 +204,7 @@ export default {
           requiredWhen: isCategoryMapping ? [] : [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           helpKey: 'mapping.lookup.mode',
+          noApi: true,
           options: [
             {
               items: [
@@ -216,6 +225,7 @@ export default {
           connectionId,
           required: true,
           helpKey: 'mapping.netsuite.lookup.recordType',
+          noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -252,6 +262,7 @@ export default {
             { field: 'lookup.recordType', isNot: [''] },
           ],
           helpKey: 'mapping.netsuite.lookup.expressionText',
+          noApi: true,
           defaultValue: lookup.expression,
         },
         'lookup.resultField': {
@@ -272,6 +283,7 @@ export default {
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           helpKey: 'mapping.netsuite.lookup.resultField',
+          noApi: true,
           requiredWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -318,6 +330,7 @@ export default {
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only please',
           helpKey: 'import.lookups.name',
+          noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic', 'static'] },
@@ -335,6 +348,7 @@ export default {
           type: 'fieldexpressionselect',
           label: 'Function',
           helpKey: 'mapping.functions',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         extract: {
@@ -354,6 +368,7 @@ export default {
             },
           ],
           helpKey: 'mapping.extract',
+          noApi: true,
         },
         expression: {
           id: 'expression',
@@ -364,6 +379,7 @@ export default {
           label: 'Expression',
           defaultValue: mappingUtil.getDefaultExpression(value),
           helpKey: 'mapping.expression',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         hardcodedAction: {
@@ -391,6 +407,7 @@ export default {
             },
           ],
           helpKey: 'mapping.options',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
         lookupAction: {
@@ -409,6 +426,7 @@ export default {
               { field: 'fieldMappingType', is: ['lookup'] },
             ],
           helpKey: 'mapping.lookupAction',
+          noApi: true,
         },
         hardcodedDefault: {
           id: 'hardcodedDefault',
@@ -423,6 +441,7 @@ export default {
             { field: 'fieldMappingType', is: ['hardCoded'] },
           ],
           helpKey: 'mapping.hardcodedDefault',
+          noApi: true,
           defaultValue: value.hardCodedValue,
         },
         lookupDefault: {
@@ -440,6 +459,7 @@ export default {
             { field: 'fieldMappingType', is: ['lookup'] },
           ],
           helpKey: 'mapping.lookupDefault',
+          noApi: true,
           defaultValue: lookup.default,
         },
         extractDateFormat: {
@@ -454,6 +474,7 @@ export default {
           label: 'Date format',
           defaultValue: value.extractDateFormat,
           helpKey: 'mapping.extractDateFormat',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
         extractDateTimezone: {
@@ -474,6 +495,7 @@ export default {
             },
           ],
           helpKey: 'mapping.extractDateTimezone',
+          noApi: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
         'conditional.when': {
@@ -482,6 +504,7 @@ export default {
           type: 'select',
           label: 'Only perform mapping when:',
           helpKey: 'mapping.conditional.when',
+          noApi: true,
           defaultValue: value.conditional && value.conditional.when,
           options: [
             {
@@ -667,7 +690,7 @@ export default {
     }
 
     // removing useFirstRow in case of non-grouped sample data or non-list field
-    if (!isGroupedSampleData || generate.indexOf('[*].') === -1) {
+    if (!isGroupedSampleData || generate.indexOf('[*].') === -1 || extract?.indexOf('[*].') > -1) {
       delete fieldMeta.fieldMap.useFirstRow;
       fields = fields.filter(el => el !== 'useFirstRow');
     }

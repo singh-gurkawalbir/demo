@@ -3,7 +3,7 @@ import sortBy from 'lodash/sortBy';
 import { createSelector } from 'reselect';
 import {COMM_STATES } from '../../comms/networkComms';
 import actionTypes from '../../../actions/types';
-import { emptyList, emptyObject, LINE_GRAPH_TYPES, LINE_GRAPH_TYPE_SHORTID, RESOLVED_GRAPH_DATAPOINTS } from '../../../utils/constants';
+import { emptyList, emptyObject, LINE_GRAPH_TYPES, LINE_GRAPH_TYPE_SHORTID, RESOLVED_GRAPH_DATAPOINTS, AUTO_PILOT_DATA_POINT } from '../../../utils/constants';
 
 function updateStatus(draft, flowId, status) {
   if (!draft[flowId]) {
@@ -49,7 +49,6 @@ export default (state = {}, action) => {
 
 // #region PUBLIC SELECTORS
 export const selectors = {};
-const AUTO_PILOT = 'autopilot';
 
 selectors.flowMetricsData = createSelector(
   state => state,
@@ -75,9 +74,18 @@ selectors.mkLineGraphData = () => createSelector(
 
     if (Array.isArray(data)) {
       if (attribute === LINE_GRAPH_TYPES.RESOLVED) {
-        RESOLVED_GRAPH_DATAPOINTS.forEach(user => {
-          flowData[user] = data.filter(d => ((user === AUTO_PILOT ? d.by === AUTO_PILOT : d.by !== AUTO_PILOT) && d.attribute === LINE_GRAPH_TYPE_SHORTID[LINE_GRAPH_TYPES.RESOLVED]));
-          flowData[user] = sortBy(flowData[user], ['timeInMills']);
+        RESOLVED_GRAPH_DATAPOINTS.forEach(dataPoint => {
+          flowData[dataPoint] = data.filter(d => {
+            const isResolvedAttr = d.attribute === LINE_GRAPH_TYPE_SHORTID[LINE_GRAPH_TYPES.RESOLVED];
+
+            if (!isResolvedAttr) return false;
+            if (dataPoint === AUTO_PILOT_DATA_POINT) {
+              return d.by === AUTO_PILOT_DATA_POINT;
+            }
+
+            return d.by !== AUTO_PILOT_DATA_POINT;
+          });
+          flowData[dataPoint] = sortBy(flowData[dataPoint], ['timeInMills']);
         });
       } else {
         resources.forEach(r => {

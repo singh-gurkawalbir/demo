@@ -35,16 +35,19 @@ const dateTimeOptions = [
 export default {
   // #region common
   name: {
+    isLoggable: true,
     type: 'text',
     label: 'Name',
     required: true,
   },
 
   description: {
+    isLoggable: true,
     type: 'text',
     label: 'Description',
   },
   _connectionId: {
+    isLoggable: true,
     type: 'replaceconnection',
     resourceType: 'connections',
     parentResourceType: 'exports',
@@ -60,6 +63,7 @@ export default {
 
   // UI Specific field
   formView: {
+    isLoggable: true,
     id: 'formView',
     type: 'formview',
     label: 'Form view',
@@ -68,10 +72,12 @@ export default {
     helpKey: 'formView',
   },
   semiassistantoperationselect: {
+    isLoggable: true,
     id: 'semiassistantoperationselect',
     type: 'semiassistantoperationselect',
   },
   asynchronous: {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Asynchronous',
   },
@@ -82,10 +88,12 @@ export default {
     visible: r => r && !isNewId(r._id),
   },
   configureAsyncHelper: {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Configure async helper',
   },
   type: {
+    isLoggable: true,
     type: 'select',
     label: 'Type',
     options: [
@@ -104,6 +112,7 @@ export default {
     ],
   },
   pageSize: {
+    isLoggable: true,
     type: 'text',
     label: 'Page size',
     validWhen: [
@@ -113,12 +122,16 @@ export default {
     ],
   },
   dataURITemplate: {
+    isLoggable: true,
     type: 'uri',
     label: 'Data URI template',
+    stage: 'responseMappingExtract',
     showLookup: false,
   },
   traceKeyTemplate: {
+    isLoggable: true,
     id: 'traceKeyTemplate',
+    stage: 'responseMappingExtract',
     type: 'uri',
     label: r => !(r?.isLookup) ? 'Override trace key template' : 'Override child record trace key template',
     helpKey: r => r?.isLookup && 'import.traceKeyTemplate',
@@ -139,6 +152,7 @@ export default {
     showLookup: false,
   },
   oneToMany: {
+    isLoggable: true,
     type: 'radiogroup',
     label: 'One to many',
     defaultValue: r => ((r?.oneToMany && r?.oneToMany !== 'false') ? 'true' : 'false'),
@@ -153,6 +167,7 @@ export default {
     ],
   },
   pathToMany: {
+    isLoggable: true,
     type: 'text',
     label: 'Path to many',
     helpKey: 'pathToMany',
@@ -184,18 +199,22 @@ export default {
     label: 'Assistant metadata',
   },
   isLookup: {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Is lookup',
   },
   useTechAdaptorForm: {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Use tech adaptor form',
   },
   adaptorType: {
+    isLoggable: true,
     type: 'text',
     label: 'Adaptor type',
   },
   parsers: {
+    isLoggable: true,
     label: 'XML parser helper',
     type: 'xmlparse',
     required: true,
@@ -203,25 +222,30 @@ export default {
   // #endregion common
   // #region inputFilter
   'inputFilter.expression.version': {
+    isLoggable: true,
     type: 'radiogroup',
     label: 'Input filter expression version',
     options: [{ items: [{ label: '1', value: '1' }] }],
   },
   'inputFilter.expression.rules': {
+    isLoggable: true,
     type: 'text',
     label: 'Input filter expression rules',
   },
   'inputFilter.script._scriptId': {
+    isLoggable: true,
     type: 'text',
     label: 'Input filter script _script id',
   },
   'inputFilter.script.function': {
+    isLoggable: true,
     type: 'text',
     label: 'Input filter script function',
   },
   // #endregion inputFilter
   // #region test
   'test.limit': {
+    isLoggable: true,
     type: 'text',
     label: 'Test limit',
     validWhen: [
@@ -233,12 +257,14 @@ export default {
   // #endregion test
   // #region delta
   'delta.dateField': {
+    isLoggable: true,
     type: 'text',
     label: 'Date fields to use in delta search',
     required: true,
     visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.dateFormat': {
+    isLoggable: true,
     type: 'toggleSelectToText',
     selectHrefLabel: 'Use custom format',
     textHrefLabel: 'Use presets',
@@ -261,16 +287,19 @@ export default {
     visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.startDate': {
+    isLoggable: true,
     type: 'text',
     label: 'Delta start date',
     visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.lagOffset': {
+    isLoggable: true,
     type: 'textwithflowcontext',
     label: 'Delta date lag offset',
     visibleWhenAll: [{ field: 'type', is: ['delta'] }],
   },
   'delta.endDateField': {
+    isLoggable: true,
     type: 'text',
     label: 'Delta end date field',
     visibleWhen: [{ field: 'type', is: ['delta'] }],
@@ -278,6 +307,7 @@ export default {
   // #endregion delta
   // #region once
   'once.booleanField': {
+    isLoggable: true,
     type: 'text',
     label: 'Boolean field to mark records as exported',
     required: true,
@@ -286,10 +316,12 @@ export default {
   // #endregion once
   // #region valueDelta
   'valueDelta.exportedField': {
+    isLoggable: true,
     type: 'text',
     label: 'Value delta exported field',
   },
   'valueDelta.pendingField': {
+    isLoggable: true,
     type: 'text',
     label: 'Value delta pending field',
   },
@@ -302,6 +334,7 @@ export default {
   // #endregion distributed
   // #region hooks
   hookType: {
+    isLoggable: true,
     type: 'radiogroup',
     label: 'Hook type',
     defaultValue: r => {
@@ -325,10 +358,12 @@ export default {
     ],
   },
   'hooks.preSavePage.function': {
+    isLoggable: true,
     type: 'text',
     label: 'Pre save page',
   },
   'hooks.preSavePage._scriptId': {
+    isLoggable: true,
     type: 'selectresource',
     resourceType: 'scripts',
     label: 'Pre save page script',
@@ -340,6 +375,7 @@ export default {
     ],
   },
   'hooks.preSavePage._stackId': {
+    isLoggable: true,
     type: 'selectresource',
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
@@ -355,15 +391,18 @@ export default {
   // #endregion hooks
   // #region transform
   transform: {
+    isLoggable: true,
     type: 'transformeditor',
     label: 'Transform expression rules',
     defaultValue: r => r && r.transform,
   },
   'transform.script._scriptId': {
+    isLoggable: true,
     type: 'text',
     label: 'Transform script _script id',
   },
   'transform.script.function': {
+    isLoggable: true,
     type: 'text',
     label: 'Transform script function',
   },
@@ -371,19 +410,23 @@ export default {
 
   // #region filter
   'filter.expression.version': {
+    isLoggable: true,
     type: 'radiogroup',
     label: 'Filter expression version',
     options: [{ items: [{ label: '1', value: '1' }] }],
   },
   'filter.expression.rules': {
+    isLoggable: true,
     type: 'text',
     label: 'Filter expression rules',
   },
   'filter.script._scriptId': {
+    isLoggable: true,
     type: 'text',
     label: 'Filter script _script id',
   },
   'filter.script.function': {
+    isLoggable: true,
     type: 'text',
     label: 'Filter script function',
   },
@@ -396,6 +439,7 @@ export default {
     label: 'Sample data',
   },
   skipRetries: {
+    isLoggable: true,
     type: 'skipRetries',
     label: 'Do not store retry data',
     visible: r => !(r && r.isLookup),

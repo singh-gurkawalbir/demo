@@ -1,25 +1,22 @@
 import React, { useEffect, Fragment } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
+import {useRouteMatch} from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Filters from '../Filters';
 import ResourceTable from '../../../ResourceTable';
 import { hashCode } from '../../../../utils/string';
 import Spinner from '../../../Spinner';
-import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
+import {FILTER_KEYS_AD, getDashboardIntegrationId} from '../../../../utils/accountDashboard';
 
 const useStyles = makeStyles(theme => ({
-  jobTable: {
-    height: '100%',
-    overflow: 'auto',
-  },
   emptyMessage: {
-    margin: theme.spacing(3, 2),
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(0, 2, 2),
   },
   root: {
     backgroundColor: theme.palette.common.white,
-    overflow: 'auto',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
@@ -31,8 +28,17 @@ export default function RunningFlows() {
 
   const dispatch = useDispatch();
 
-  const filters = useSelector(state => selectors.filter(state, filterKey));
-  const { paging, sort, ...nonPagingFilters } = filters;
+  const match = useRouteMatch();
+  let { integrationId } = match.params;
+  const { childId } = match.params;
+
+  integrationId = getDashboardIntegrationId(integrationId, childId);
+  const integrationFilterKey = `${integrationId || ''}${filterKey}`;
+
+  const filters = useSelector(state => selectors.filter(state, integrationFilterKey));
+
+  const { paging, sort, ...nonPagingFilters } = filters || {};
+
   const filterHash = hashCode(nonPagingFilters);
 
   const jobs = useSelector(state => selectors.accountDashboardRunningJobs(state));
@@ -50,24 +56,21 @@ export default function RunningFlows() {
 
   useEffect(() => {
     dispatch(
-      actions.job.dashboard.running.requestCollection()
+      actions.job.dashboard.running.requestCollection({ integrationId})
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, filterHash]);
+  }, [dispatch, filterHash, integrationId]);
 
   return (
     <>
       <div className={classes.root}>
         {isRunningJobsCollectionLoading ? (<Spinner centerAll />) : (
           <>
-            <span data-public>
-              <Filters
-                filterKey={filterKey} />
-            </span>
+            <Filters
+              filterKey={filterKey} />
             <ResourceTable
               resources={jobs}
-              className={classes.jobTable}
               resourceType={filterKey}
           />
           </>

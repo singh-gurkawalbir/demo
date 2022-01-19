@@ -1,4 +1,6 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+import {selectors} from '../../../../reducers';
 import Retry from '../actions/Retry';
 import Resolve from '../actions/Resolve';
 import ViewErrorDetails from '../actions/ViewErrorDetails';
@@ -10,11 +12,14 @@ import SelectError from '../cells/SelectError';
 import SelectSource from '../cells/SelectSource';
 import SelectClassification from '../cells/SelectClassification';
 import SelectDate from '../cells/SelectDate';
+import Classification from '../cells/Classification';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import TextOverflowCell from '../../../TextOverflowCell';
 import ErrorMessage from '../cells/ErrorMessage';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
+import ViewNetsuiteRequest from '../actions/ViewNetsuiteRequest';
+import ViewNetsuiteResponse from '../actions/ViewNetsuiteResponse';
 
 export default {
   rowKey: 'errorId',
@@ -27,6 +32,7 @@ export default {
         return <SelectAllErrors {...tableContext} />;
       },
       heading: 'Select All',
+      isLoggable: true,
       Value: ({rowData: error}) => {
         const tableContext = useGetTableContext();
 
@@ -75,11 +81,13 @@ export default {
 
         return <SelectClassification {...tableContext} />;
       },
-      Value: ({rowData: r}) => <TextOverflowCell message={r.classification} />,
+      isLoggable: true,
+      Value: ({rowData: r}) => <Classification error={r} />,
       width: '10%',
     },
     {
       key: 'selectDate',
+      isLoggable: true,
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
@@ -90,7 +98,8 @@ export default {
     },
   ],
   useRowActions: ({retryDataKey, source, reqAndResKey}) => {
-    const {actionInProgress} = useGetTableContext();
+    const {actionInProgress, resourceId} = useGetTableContext();
+    const isResourceNetsuite = useSelector(state => selectors.isResourceNetsuite(state, resourceId));
 
     if (actionInProgress) return [];
     const actions = [
@@ -104,7 +113,9 @@ export default {
     ];
 
     if (reqAndResKey) {
-      actions.push(ViewHttpRequest, ViewHttpResponse);
+      isResourceNetsuite
+        ? actions.push(ViewNetsuiteRequest, ViewNetsuiteResponse)
+        : actions.push(ViewHttpRequest, ViewHttpResponse);
     }
 
     return actions;

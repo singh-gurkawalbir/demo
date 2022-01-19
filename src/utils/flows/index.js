@@ -11,7 +11,7 @@ import {
   isValidResourceReference,
   isFileAdaptor,
 } from '../resource';
-import { emptyList, emptyObject, STANDALONE_INTEGRATION, JOB_STATUS } from '../constants';
+import { emptyList, emptyObject, STANDALONE_INTEGRATION, JOB_STATUS, UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../constants';
 import { JOB_UI_STATUS } from '../jobdashboard';
 import getRoutePath from '../routePaths';
 import {HOOKS_IN_IMPORT_EXPORT_RESOURCE} from '../scriptHookStubs';
@@ -316,17 +316,19 @@ export function isSimpleImportFlow(flow, exports, flowExports) {
   return !!(exp && exp.type === 'simple');
 }
 
-export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationApp, isDataLoader, appName}) {
+export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationApp, isDataLoader, appName, sectionId}) {
   const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
 
   let flowBuilderTo;
 
   if (isIntegrationApp) {
     if (childId) {
-      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/${flowBuilderPathName}/${flowId}`);
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/flows/sections/${sectionId}/${flowBuilderPathName}/${flowId}`);
     } else {
-      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`);
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/flows/sections/${sectionId}/${flowBuilderPathName}/${flowId}`);
     }
+  } else if (sectionId && integrationId !== 'none') {
+    flowBuilderTo = getRoutePath(`/integrations/${integrationId}/flows/sections/${sectionId}/${flowBuilderPathName}/${flowId}`);
   } else {
     flowBuilderTo = getRoutePath(`/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`);
   }
@@ -1193,3 +1195,50 @@ export function flowLastModifiedPatch(flow, resource) {
     value: resource.lastModified,
   }];
 }
+
+// when there are flowGroupings and there are uncategorized flows do you have a UnassignedSection
+export const shouldHaveUnassignedSection = (flowGroupingsSections, flows) => !!(flowGroupingsSections && flows?.some(flow => !flow._flowGroupingId));
+export const getFlowGroup = (flowGroupings, name, id) => {
+  if (!flowGroupings?.length) return null;
+
+  const unassignedFlowGroup = {
+    _id: UNASSIGNED_SECTION_ID,
+    name: UNASSIGNED_SECTION_NAME,
+  };
+  const requiredFlowGroup = flowGroupings.find(flowGroup => flowGroup.name === name || flowGroup._id === id);
+
+  return requiredFlowGroup || unassignedFlowGroup;
+};
+
+// for every flowGroup pushing the linked flows into finalObject
+// adding isLastFlowInFlowGroup flag for every last flow in the flow group
+export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects = [], objectsLength) => {
+  if (!flowGroupings?.length) {
+    return flowObjects;
+  }
+
+  const shouldHaveUnassignedSection = flowObjects.some(flowObject => !flowObject.doc?._flowGroupingId);
+  const allFlowGroupings = shouldHaveUnassignedSection ? [...flowGroupings, {
+    name: UNASSIGNED_SECTION_NAME,
+    _id: UNASSIGNED_SECTION_ID,
+  }] : flowGroupings;
+
+  const finalFlowObjects = allFlowGroupings.map(({_id: groupId, name}, index) => {
+    const flowGroupObject = {
+      groupName: name,
+      _id: index + objectsLength,
+    };
+    const flowObjetsOfAFlowGroup = flowObjects.filter(flowObject =>
+      (name === UNASSIGNED_SECTION_NAME && !flowObject.doc?._flowGroupingId) || flowObject.doc?._flowGroupingId === groupId);
+
+    if (!flowObjetsOfAFlowGroup.length) {
+      return [flowGroupObject];
+    }
+
+    flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1] = { ...flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1], isLastFlowInFlowGroup: true};
+
+    return [flowGroupObject, ...flowObjetsOfAFlowGroup];
+  }).flat();
+
+  return finalFlowObjects;
+};

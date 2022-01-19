@@ -1,13 +1,11 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { TextField, FormLabel, FormControl } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSelector, useDispatch } from 'react-redux';
 import Suggestions from './Suggestions';
-import actions from '../../../../actions';
 import useFormContext from '../../../Form/FormContext';
-import { selectors } from '../../../../reducers';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles({
   dynaTextWithFlowFormControl: {
@@ -41,28 +39,19 @@ export default function DynaTextWithFlowSuggestion(props) {
     showSuggestionsWithoutHandlebar = false,
     skipExtractWrapOnSpecialChar = false,
     formKey,
+    stage,
+    isLoggable,
   } = props;
   const formContext = useFormContext(formKey);
   const ref = useRef(null);
-  const dispatch = useDispatch();
   const [lookupModalShown, setLookupModalShown] = useState(false);
   const [state, setState] = useState({
     hideSuggestion: true,
     textInsertPosition: 0,
   });
   const { hideSuggestion, textInsertPosition } = state;
-  const isPageGenerator = useSelector(state =>
-    selectors.isPageGenerator(state, flowId, resourceId, resourceType)
-  );
-  const sampleData = useSelector(
-    state =>
-      selectors.getSampleDataContext(state, {
-        flowId,
-        resourceId,
-        resourceType,
-        stage: 'flowInput',
-      }).data
-  );
+  const flowDataStage = stage || (resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract');
+
   const handleUpdateAfterSuggestionInsert = useCallback(
     newValue => {
       onFieldChange(id, newValue);
@@ -104,19 +93,6 @@ export default function DynaTextWithFlowSuggestion(props) {
   };
 
   useEffect(() => {
-    if (flowId && !sampleData && !isPageGenerator) {
-      dispatch(
-        actions.flowData.requestSampleData(
-          flowId,
-          resourceId,
-          resourceType,
-          'flowInput'
-        )
-      );
-    }
-  }, [dispatch, flowId, isPageGenerator, resourceId, resourceType, sampleData]);
-
-  useEffect(() => {
     document.addEventListener('click', handleClickOutside, true);
 
     return () => {
@@ -134,6 +110,7 @@ export default function DynaTextWithFlowSuggestion(props) {
       </div>
       <div ref={ref}>
         <TextField
+          {...isLoggableAttr(isLoggable)}
           autoComplete="off"
           id={`text-${id}`}
           key={id}
@@ -150,23 +127,26 @@ export default function DynaTextWithFlowSuggestion(props) {
           variant="filled"
         />
         {(showExtract || showLookup) && (
-          <Suggestions
-            hide={hideSuggestion}
-            id={`suggestions-${id}`}
-            onFieldChange={onFieldChange}
-            resourceId={resourceId}
-            flowId={flowId}
-            formContext={formContext}
-            resourceType={resourceType}
-            value={value}
-            showLookup={showLookup}
-            showExtract={showExtract}
-            textInsertPosition={textInsertPosition}
-            onValueUpdate={handleUpdateAfterSuggestionInsert}
-            showSuggestionsWithoutHandlebar={showSuggestionsWithoutHandlebar}
-            skipExtractWrapOnSpecialChar={skipExtractWrapOnSpecialChar}
-            showLookupModal={handleLookupModalShown}
+          <span {...isLoggableAttr(isLoggable)}>
+            <Suggestions
+              stage={flowDataStage}
+              hide={hideSuggestion}
+              id={`suggestions-${id}`}
+              onFieldChange={onFieldChange}
+              resourceId={resourceId}
+              flowId={flowId}
+              formContext={formContext}
+              resourceType={resourceType}
+              value={value}
+              showLookup={showLookup}
+              showExtract={showExtract}
+              textInsertPosition={textInsertPosition}
+              onValueUpdate={handleUpdateAfterSuggestionInsert}
+              showSuggestionsWithoutHandlebar={showSuggestionsWithoutHandlebar}
+              skipExtractWrapOnSpecialChar={skipExtractWrapOnSpecialChar}
+              showLookupModal={handleLookupModalShown}
           />
+          </span>
         )}
         <FieldMessage
           isValid={isValid}

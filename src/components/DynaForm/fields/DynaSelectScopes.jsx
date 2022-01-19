@@ -1,10 +1,13 @@
 import React, { useState, useMemo } from 'react';
-import { FormControl, Button, FormLabel } from '@material-ui/core';
+import { FormControl, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ModalDialog from '../../ModalDialog';
 import TransferList from '../../TransferList';
 import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
+import { FilledButton, OutlinedButton} from '../../Buttons';
+import { useIsLoggable } from '../../IsLoggableContextProvider';
+import isLoggableAttr from '../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles({
   dynaSelectScopesContainer: {
@@ -45,23 +48,23 @@ const TransferListModal = props => {
     right: selectedScopes,
     setRight: setSelectedScopes,
   };
+  const isLoggable = useIsLoggable();
 
   return (
     <ModalDialog show onClose={handleClose} maxWidth="lg">
       <div>Scopes Editor</div>
-
-      <TransferList {...transferListProps} />
+      <span {...isLoggableAttr(isLoggable)}>
+        <TransferList {...transferListProps} />
+      </span>
       <>
-        <Button
+        <FilledButton
           data-test="saveSelectedScopes"
-          variant="outlined"
-          color="primary"
           onClick={() => {
             onFieldChange(id, selectedScopes);
             handleClose();
           }}>
           Save
-        </Button>
+        </FilledButton>
       </>
     </ModalDialog>
   );
@@ -116,14 +119,12 @@ export default function DynaSelectScopesDialog(props) {
           </FormLabel>
           <FieldHelp {...props} />
         </div>
-        <Button
+        <OutlinedButton
           data-test={id}
-          variant="outlined"
           className={classes.scopesBtn}
-          color="secondary"
           onClick={() => setShowScopesModal(true)}>
           {label}
-        </Button>
+        </OutlinedButton>
 
         <FieldMessage {...props} />
       </FormControl>

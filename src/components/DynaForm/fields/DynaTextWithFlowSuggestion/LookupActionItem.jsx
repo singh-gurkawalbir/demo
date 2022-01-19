@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
-import { Button, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ManageLookupDialog from '../../../Lookup/Manage/Dialog';
+import OutlinedButton from '../../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -86,14 +87,12 @@ export default function LookupActionItem({
             {value.name}
           </Typography>
         )}
-        <Button
+        <OutlinedButton
           data-test={id}
-          variant="outlined"
           className={clsx({ [classes.editButton]: isEdit })}
-          color="secondary"
           onClick={handleEditorClick}>
           {label}
-        </Button>
+        </OutlinedButton>
       </div>
     </>
   );

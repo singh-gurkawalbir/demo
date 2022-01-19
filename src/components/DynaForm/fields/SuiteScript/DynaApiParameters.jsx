@@ -14,6 +14,8 @@ import { selectors } from '../../../../reducers';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import { isMetaRequiredValuesMet } from '../../../../utils/assistant';
 import actions from '../../../../actions';
+import OutlinedButton from '../../../Buttons/OutlinedButton';
+import IsLoggableContextProvider from '../../../IsLoggableContextProvider';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
@@ -54,7 +56,10 @@ const ApiParametersModal = props => {
   return (
     <ModalDialog show onClose={onClose}>
       <span>API parameters</span>
-      <DynaForm formKey={formKey} />
+      {/* lets not log these fields */}
+      <IsLoggableContextProvider isLoggable={false}>
+        <DynaForm formKey={formKey} />
+      </IsLoggableContextProvider>
       <div>
         <DynaSubmit onClick={onSaveClick}>Save</DynaSubmit>
         <Button
@@ -123,15 +128,14 @@ export default function DynaApiParameters(props) {
           </FormLabel>
           <FieldHelp {...props} />
         </div>
-        <Button
+        <OutlinedButton
+          color="secondary"
           disabled={disabled}
           data-test={id}
-          variant="outlined"
-          color="secondary"
           className={classes.dynaAssistantbtn}
           onClick={() => setShowApiParametersModal(true)}>
           Launch
-        </Button>
+        </OutlinedButton>
       </div>
       <FieldMessage
         isValid={isValid}

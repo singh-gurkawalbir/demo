@@ -1,5 +1,6 @@
 export default {
   pageSize: {
+    isLoggable: true,
     type: 'text',
     label: 'Page size',
     validWhen: [
@@ -9,6 +10,7 @@ export default {
     ],
   },
   dataURITemplate: {
+    isLoggable: true,
     type: 'uri',
     label: 'Data URI template',
     refreshOptionsOnChangesTo: ['name'],

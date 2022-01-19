@@ -5,9 +5,9 @@ export default {
     '/assistant': 'skubana',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://api.${
-      formValues['/environment'] === 'sandbox' ? 'sandbox.' : ''
-    }skubana.com`,
+    '/http/baseURI': `https://${
+      formValues['/http/unencrypted/subdomain']
+    }.skubana.com`,
     '/http/auth/token/location': 'header',
     '/http/auth/oauth/authURI': `https://${
       formValues['/environment'] === 'sandbox' ? 'demo' : 'app'
@@ -17,8 +17,6 @@ export default {
     }.skubana.com/oauth/token`,
     '/http/auth/oauth/accessTokenPath': 'access_token',
     '/http/auth/oauth/scopeDelimiter': '+',
-    '/http/auth/token/refreshMethod': 'POST',
-    '/http/auth/token/refreshMediaType': 'urlencoded',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
@@ -26,6 +24,7 @@ export default {
       id: 'environment',
       type: 'select',
       label: 'Environment',
+      required: true,
       helpKey: 'skubana.connection.environment',
       options: [
         {
@@ -39,12 +38,38 @@ export default {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {
-          if (baseUri.indexOf('sandbox.') !== -1) {
+          if (baseUri.includes('demo') || baseUri.includes('sandbox')) {
             return 'sandbox';
           }
+
+          return 'production';
+        }
+      },
+    },
+    'http.unencrypted.subdomain': {
+      fieldId: 'http.unencrypted.subdomain',
+      startAdornment: 'https://',
+      endAdornment: '.skubana.com',
+      type: 'updatedomain',
+      label: 'Subdomain',
+      helpKey: 'skubana.connection.http.unencrypted.subdomain',
+      required: true,
+      validWhen: {
+        matchesRegEx: {
+          pattern: '^[\\S]+$',
+          message: 'Subdomain should not contain spaces.',
+        },
+      },
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+
+        if (r?.http?.unencrypted?.subdomain) {
+          return r.http.unencrypted.subdomain;
         }
 
-        return 'production';
+        if (baseUri) {
+          return baseUri.includes('sandbox') ? 'api.sandbox' : 'api';
+        }
       },
     },
     'http.auth.oauth.scope': {
@@ -76,7 +101,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['environment', 'http.auth.oauth.scope'] },
+        fields: ['environment', 'http.unencrypted.subdomain', 'http.auth.oauth.scope'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

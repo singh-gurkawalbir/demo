@@ -2,6 +2,7 @@ const batchSizePattern = /^([4-9]|[1-8][0-9]|9[0-9]|1[0-9]{2}|200)$/; // Regular
 
 export default {
   'salesforce.sObjectType': {
+    isLoggable: true,
     type: 'text',
     label: 'sObject type',
     required: true,
@@ -17,6 +18,7 @@ export default {
     ],
   },
   'salesforce.distributed.batchSize': {
+    isLoggable: true,
     type: 'text',
     label: 'Batch size',
     validWhen: {
@@ -37,6 +39,7 @@ export default {
     ],
   },
   'salesforce.distributed.skipExportFieldId': {
+    isLoggable: true,
     type: 'text',
     label: 'Skip export field ID',
     visibleWhenAll: [
@@ -51,6 +54,7 @@ export default {
     ],
   },
   'salesforce.distributed.sObjectType': {
+    isLoggable: true,
     label: 'sObject type',
     required: true,
     visibleWhenAll: [
@@ -65,6 +69,7 @@ export default {
     ],
   },
   'salesforce.executionType': {
+    isLoggable: true,
     type: 'radiogroup',
     required: true,
     label: 'Execution type',
@@ -84,6 +89,7 @@ export default {
     visible: false,
   },
   'salesforce.soql.query': { // todo: this is probably a dead field, remove
+    isLoggable: true,
     type: 'editor',
     mode: 'sql',
     label: 'SOQL query',
@@ -105,6 +111,7 @@ export default {
     },
   },
   'salesforce.distributed.referencedFields': {
+    isLoggable: true,
     type: 'text',
     keyName: 'name',
     multiline: true,
@@ -124,6 +131,7 @@ export default {
     ],
   },
   'salesforce.distributed.requiredTrigger': {
+    isLoggable: true,
     type: 'text',
     label: 'Required trigger',
     multiline: true,
@@ -141,6 +149,7 @@ export default {
     ],
   },
   'salesforce.distributed.qualifier': {
+    isLoggable: true,
     label: 'Field specific qualification criteria',
     omitWhenHidden: true,
     visibleWhenAll: [
@@ -158,6 +167,7 @@ export default {
     connectionId: r => r && r._connectionId,
   },
   'salesforce.distributed.relatedLists': {
+    isLoggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Related lists',
@@ -175,6 +185,7 @@ export default {
     ],
   },
   'salesforce.id': {
+    isLoggable: true,
     type: 'uri',
     label: 'Id',
     required: true,
@@ -188,6 +199,7 @@ export default {
     ],
   },
   'salesforce.objectType': {
+    isLoggable: true,
     type: 'select',
     required: true,
     defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,

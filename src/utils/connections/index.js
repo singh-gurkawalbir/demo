@@ -1,5 +1,36 @@
 import { matchPath } from 'react-router-dom';
-import { CONSTANT_CONTACT_VERSIONS, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../constants';
+import { PING_STATES } from '../../reducers/comms/ping';
+import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../constants';
+
+export const getStatusVariantAndMessage = ({
+  resourceType,
+  showOfflineMsg,
+  testStatus,
+}) => {
+  if (resourceType !== 'connections') {
+    return { variant: 'warning' };
+  }
+
+  if (testStatus === PING_STATES.ERROR) {
+    return {
+      variant: 'error',
+      message:
+        'Your test was not successful. Check your information and try again',
+    };
+  } if (testStatus === PING_STATES.SUCCESS) {
+    return {
+      variant: 'success',
+      message: 'Your connection is working great! Nice Job!',
+    };
+  } if (!testStatus && showOfflineMsg) {
+    return {
+      variant: 'error',
+      message: 'This connection is currently offline. Re-enter your credentials to bring it back online.',
+    };
+  }
+
+  return {};
+};
 
 export const getFilterExpressionForAssistant = (assistant, expression) => {
   if (!assistant ||
@@ -14,6 +45,17 @@ export const getFilterExpressionForAssistant = (assistant, expression) => {
 
     CONSTANT_CONTACT_VERSIONS.forEach(version => {
       const finalExpression = [...expression, {assistant: `constantcontact${version}`}];
+
+      resultExpression.$or.push({$and: finalExpression});
+    });
+
+    return resultExpression;
+  }
+  if (assistant === 'ebay' || assistant === 'ebayfinance') {
+    const resultExpression = { $or: [] };
+
+    EBAY_TYPES.forEach(type => {
+      const finalExpression = [...expression, {assistant: type}];
 
       resultExpression.$or.push({$and: finalExpression});
     });
@@ -70,12 +112,30 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
 };
 export const getConstantContactVersion = connection =>
   connection?.http?.baseURI?.includes('api.cc.email') ? 'constantcontactv3' : 'constantcontactv2';
+export const getEbayType = connection =>
+  connection?.http?.baseURI?.includes('apiz') ? 'ebayfinance' : 'ebay';
+const getAmazonMWSType = connection => {
+  const httpType = connection?.http?.type;
 
+  switch (httpType) {
+    case 'Amazon-SP-API':
+      return 'amazonsellingpartner';
+    default:
+  }
+
+  return 'amazonmws';
+};
 export const getAssistantFromConnection = (assistant, connection) => {
   if (!MULTIPLE_AUTH_TYPE_ASSISTANTS.includes(assistant)) { return assistant; }
 
   if (assistant?.includes('constantcontact')) {
     return getConstantContactVersion(connection);
+  }
+  if (assistant === ('ebay' || 'ebayfinance')) {
+    return getEbayType(connection);
+  }
+  if (assistant === 'amazonmws') {
+    return getAmazonMWSType(connection);
   }
 
   return assistant;

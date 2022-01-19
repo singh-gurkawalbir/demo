@@ -65,20 +65,6 @@ export default {
       },
     },
     apiIdentifier: { fieldId: 'apiIdentifier',
-      visibleWhenAll: r => {
-        const exportType = getResourceSubType(r).type;
-
-        if (exportType === 'http' || exportType === 'rest') {
-          return [
-            {
-              field: 'outputMode',
-              is: ['records'],
-            },
-          ];
-        }
-
-        return [];
-      },
     },
     traceKeyTemplate: { fieldId: 'traceKeyTemplate' },
   },

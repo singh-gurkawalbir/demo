@@ -109,8 +109,6 @@ const auth = {
   clearStore: () => action(actionTypes.CLEAR_STORE),
   abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
-
-  abortAllSagasAndReset: accountToResetTo => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET, { accountToResetTo }),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
@@ -264,10 +262,6 @@ const resource = {
 
   requestCollection: (resourceType, message, refresh) =>
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
-  startCollectionPoll: resourceType =>
-    action(actionTypes.RESOURCE.START_COLLECTION_POLL, { resourceType }),
-  stopCollectionPoll: resourceType =>
-    action(actionTypes.RESOURCE.STOP_COLLECTION_POLL, { resourceType }),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
@@ -317,6 +311,17 @@ const resource = {
   undoStaged: (id, scope) =>
     action(actionTypes.RESOURCE.STAGE_UNDO, { id, scope }),
 
+  patchAndCommitStaged: (resourceType, resourceId, patch, { scope, context, asyncKey, parentContext, options } = {}) => action(actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT, {
+    resourceType,
+    id: resourceId,
+    patch,
+    scope: scope || 'value',
+    options,
+    context,
+    parentContext,
+    asyncKey,
+  }),
+
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
@@ -337,9 +342,6 @@ const resource = {
     action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id, scope }),
 
   integrations: {
-    fetchIfAnyUnloadedFlows: integrationId => action(actionTypes.INTEGRATION.FETCH_UNLOADED_FLOWS, { integrationId }),
-    resolveUnloadedResources: integrationId => action(actionTypes.INTEGRATION.RESOLVE_UNLOADED_RESOURCES, { integrationId }),
-    updateResources: (resourceType, response) => action(actionTypes.INTEGRATION.UPDATE_RESOURCES, { subCollection: response, resourceType }),
     delete: integrationId =>
       action(actionTypes.INTEGRATION.DELETE, { integrationId }),
     redirectTo: (integrationId, redirectTo) =>
@@ -351,6 +353,30 @@ const resource = {
       action(actionTypes.INTEGRATION.CLEAR_REDIRECT, {
         integrationId,
       }),
+    flowGroups: {
+      createOrUpdate: (integrationId, flowGroupId, formKey) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE, {
+          integrationId,
+          flowGroupId,
+          formKey,
+        }),
+      createOrUpdateFailed: error =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE_FAILED, {error}),
+      delete: (integrationId, flowGroupId, flowIds) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE, {
+          integrationId,
+          flowGroupId,
+          flowIds,
+        }),
+      deleteFailed: error =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE_FAILED, { error }),
+      shiftOrder: (integrationId, flowGroupId, newIndex) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.SHIFT_ORDER, {
+          integrationId,
+          flowGroupId,
+          newIndex,
+        }),
+    },
   },
   connections: {
     pingAndUpdate: (connectionId, parentContext) =>
@@ -420,17 +446,13 @@ const resource = {
       action(actionTypes.ICLIENTS, { connectionId }),
 
     netsuite: {
-      requestUserRoles: (connectionId, values) =>
+      testConnection: ({connectionId, values, hideNotificationMessage, parentContext, shouldPingConnection}) =>
         action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
           connectionId,
           values,
-          hideNotificationMessage: true,
-        }),
-      testConnection: (connectionId, values) =>
-        action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
-          connectionId,
-          values,
-          hideNotificationMessage: false,
+          hideNotificationMessage,
+          parentContext,
+          shouldPingConnection,
         }),
       receivedUserRoles: (connectionId, userRoles) =>
         action(actionTypes.NETSUITE_USER_ROLES.RECEIVED, {
@@ -468,6 +490,12 @@ const auditLogs = {
   request: (resourceType, resourceId, message) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
     resourceType: auditResourceTypePath(resourceType, resourceId),
     message,
+  }),
+  download: ({resourceType, resourceId, childId, filters}) => action(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, {
+    resourceType,
+    resourceId,
+    childId,
+    filters,
   }),
   clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
 };
@@ -927,12 +955,13 @@ const integrationApp = {
         formSubmission,
         stackId,
       }),
-    updateStep: (integrationId, installerFunction, update, formMeta) =>
+    updateStep: (integrationId, installerFunction, update, formMeta, url) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
         formMeta,
+        url,
       }),
     completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE, {
@@ -984,6 +1013,17 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
         integrationId,
       }),
+  },
+  templates: {
+    installer: {
+      verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+        action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
+          id,
+          connectionId,
+          installerFunction,
+          isFrameWork2,
+        }),
+    },
   },
   uninstaller2: {
     init: integrationId =>
@@ -1273,6 +1313,8 @@ const user = {
     request: message => resource.request('preferences', undefined, message),
     update: preferences =>
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
+    pinIntegration: integrationKey => action(actionTypes.PIN_INTEGRATION, { integrationKey }),
+    unpinIntegration: integrationKey => action(actionTypes.UNPIN_INTEGRATION, { integrationKey }),
   },
   sharedNotifications: {
     acceptInvite: (resourceType, id, isAccountTransfer) =>
@@ -1342,13 +1384,14 @@ const flowData = {
       stage,
       error,
     }),
-  requestSampleData: (flowId, resourceId, resourceType, stage, refresh) =>
+  requestSampleData: (flowId, resourceId, resourceType, stage, refresh, formKey) =>
     action(actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST, {
       flowId,
       resourceId,
       resourceType,
       stage,
       refresh,
+      formKey,
     }),
   resetStages: (flowId, resourceId, stages = [], statusToUpdate) =>
     action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate }),
@@ -1378,11 +1421,19 @@ const resourceFormSampleData = {
   setRawData: (resourceId, rawData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_RAW_FILE_DATA, { resourceId, rawData }),
   setPreviewData: (resourceId, previewData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PREVIEW_DATA, { resourceId, previewData }),
   setCsvFileData: (resourceId, csvData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_CSV_FILE_DATA, { resourceId, csvData }),
+  setProcessorData: ({resourceId, processor, processorData}) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PROCESSOR_DATA, { resourceId, processor, processorData }),
   updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
   clear: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR, { resourceId }),
   clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),
 };
 const app = {
+  polling: {
+    start: (pollAction, duration) => action(actionTypes.POLLING.START, {pollAction, duration}),
+    slowDown: () => action(actionTypes.POLLING.SLOW),
+    resume: () => action(actionTypes.POLLING.RESUME),
+    stop: () => action(actionTypes.POLLING.STOP),
+    stopSpecificPollProcess: pollActionToStop => action(actionTypes.POLLING.STOP_SPECIFIC_POLL, {pollActionToStop}),
+  },
   fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
   updateUIVersion: version => action(actionTypes.UI_VERSION_UPDATE, { version }),
   reload: () => action(actionTypes.APP_RELOAD),
@@ -1602,8 +1653,8 @@ const accessToken = {
 const job = {
   dashboard: {
     running: {
-      requestCollection: nextPageURL =>
-        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, { nextPageURL }),
+      requestCollection: ({nextPageURL, integrationId}) =>
+        action(actionTypes.JOB.DASHBOARD.RUNNING.REQUEST_COLLECTION, { nextPageURL, integrationId }),
       receivedCollection: ({ collection, nextPageURL, loadMore }) =>
         action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_COLLECTION, {
           collection,
@@ -1622,8 +1673,8 @@ const job = {
       receivedFamily: ({ collection }) => action(actionTypes.JOB.DASHBOARD.RUNNING.RECEIVED_FAMILY, { collection }),
     },
     completed: {
-      requestCollection: nextPageURL =>
-        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, { nextPageURL }),
+      requestCollection: ({nextPageURL, integrationId}) =>
+        action(actionTypes.JOB.DASHBOARD.COMPLETED.REQUEST_COLLECTION, { nextPageURL, integrationId }),
       receivedCollection: ({ collection, nextPageURL, loadMore }) =>
         action(actionTypes.JOB.DASHBOARD.COMPLETED.RECEIVED_COLLECTION, {
           collection,
@@ -1831,6 +1882,9 @@ const errorManager = {
     request: ({ flowId }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST, { flowId }),
     received: ({ flowId, runHistory }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED, { flowId, runHistory }),
     clear: ({ flowId }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.CLEAR, { flowId }),
+    requestFamily: ({ jobId }) =>
+      action(actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST_FAMILY, { jobId }),
+    receivedFamily: ({ job }) => action(actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED_FAMILY, { job }),
   },
   integrationErrors: {
     requestPoll: ({ integrationId }) =>
@@ -2077,10 +2131,11 @@ const analytics = {
   },
 };
 const responseMapping = {
-  init: ({ flowId, resourceId }) =>
+  init: ({ flowId, resourceId, resourceType }) =>
     action(actionTypes.RESPONSE_MAPPING.INIT, {
       resourceId,
       flowId,
+      resourceType,
     }),
   initComplete: (options = {}) =>
     action(actionTypes.RESPONSE_MAPPING.INIT_COMPLETE, options),
@@ -2243,22 +2298,22 @@ const logs = {
     startDebug: (connectionId, value) =>
       action(actionTypes.LOGS.CONNECTIONS.START_DEBUG, { connectionId, value }),
   },
-  listener: {
-    startDebug: (flowId, exportId, minutes) => action(actionTypes.LOGS.LISTENER.DEBUG.START, { flowId, exportId, minutes }),
-    stopDebug: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.DEBUG.STOP, { flowId, exportId }),
-    requestLogDetails: (flowId, exportId, logKey) => action(actionTypes.LOGS.LISTENER.LOG.REQUEST, { flowId, exportId, logKey }),
-    receivedLogDetails: (exportId, logKey, logDetails) => action(actionTypes.LOGS.LISTENER.LOG.RECEIVED, { exportId, logKey, logDetails }),
-    removeLog: (flowId, exportId, logsToRemove) => action(actionTypes.LOGS.LISTENER.LOG.REMOVE, { flowId, exportId, logsToRemove }),
-    logDeleted: (exportId, deletedLogKey) => action(actionTypes.LOGS.LISTENER.LOG.DELETED, { exportId, deletedLogKey }),
-    request: ({ flowId, exportId, loadMore }) => action(actionTypes.LOGS.LISTENER.REQUEST, { flowId, exportId, loadMore }),
-    received: ({ exportId, logs, nextPageURL, loadMore }) => action(actionTypes.LOGS.LISTENER.RECEIVED, { exportId, logs, nextPageURL, loadMore }),
-    failed: (exportId, error) => action(actionTypes.LOGS.LISTENER.FAILED, { exportId, error }),
-    clear: exportId => action(actionTypes.LOGS.LISTENER.CLEAR, { exportId }),
-    startLogsPoll: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.START_POLL, { flowId, exportId }),
-    stopLogsPoll: (exportId, hasNewLogs) => action(actionTypes.LOGS.LISTENER.STOP_POLL, { exportId, hasNewLogs }),
-    setActiveLog: (exportId, activeLogKey) => action(actionTypes.LOGS.LISTENER.ACTIVE_LOG, { exportId, activeLogKey }),
-    setFetchStatus: (exportId, status) => action(actionTypes.LOGS.LISTENER.FETCH_STATUS, { exportId, status }),
-    pauseFetch: (flowId, exportId) => action(actionTypes.LOGS.LISTENER.PAUSE_FETCH, { flowId, exportId }),
+  flowStep: {
+    startDebug: (flowId, resourceId, resourceType, minutes) => action(actionTypes.LOGS.FLOWSTEP.DEBUG.START, { flowId, resourceId, resourceType, minutes }),
+    stopDebug: (flowId, resourceId, resourceType) => action(actionTypes.LOGS.FLOWSTEP.DEBUG.STOP, { flowId, resourceId, resourceType }),
+    requestLogDetails: (flowId, resourceId, logKey) => action(actionTypes.LOGS.FLOWSTEP.LOG.REQUEST, { flowId, resourceId, logKey }),
+    receivedLogDetails: (resourceId, logKey, logDetails) => action(actionTypes.LOGS.FLOWSTEP.LOG.RECEIVED, { resourceId, logKey, logDetails }),
+    removeLog: (flowId, resourceId, logsToRemove) => action(actionTypes.LOGS.FLOWSTEP.LOG.REMOVE, { flowId, resourceId, logsToRemove }),
+    logDeleted: (resourceId, deletedLogKey) => action(actionTypes.LOGS.FLOWSTEP.LOG.DELETED, { resourceId, deletedLogKey }),
+    request: ({ flowId, resourceId, loadMore }) => action(actionTypes.LOGS.FLOWSTEP.REQUEST, { flowId, resourceId, loadMore }),
+    received: ({ resourceId, logs, nextPageURL, loadMore }) => action(actionTypes.LOGS.FLOWSTEP.RECEIVED, { resourceId, logs, nextPageURL, loadMore }),
+    failed: (resourceId, error) => action(actionTypes.LOGS.FLOWSTEP.FAILED, { resourceId, error }),
+    clear: resourceId => action(actionTypes.LOGS.FLOWSTEP.CLEAR, { resourceId }),
+    startLogsPoll: (flowId, resourceId) => action(actionTypes.LOGS.FLOWSTEP.START_POLL, { flowId, resourceId }),
+    stopLogsPoll: (resourceId, hasNewLogs) => action(actionTypes.LOGS.FLOWSTEP.STOP_POLL, { resourceId, hasNewLogs }),
+    setActiveLog: (resourceId, activeLogKey) => action(actionTypes.LOGS.FLOWSTEP.ACTIVE_LOG, { resourceId, activeLogKey }),
+    setFetchStatus: (resourceId, status) => action(actionTypes.LOGS.FLOWSTEP.FETCH_STATUS, { resourceId, status }),
+    pauseFetch: (flowId, resourceId) => action(actionTypes.LOGS.FLOWSTEP.PAUSE_FETCH, { flowId, resourceId }),
   },
 };
 

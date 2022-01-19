@@ -1,12 +1,13 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Grid, Divider, Typography, makeStyles } from '@material-ui/core';
+import { Grid, Divider, Typography, makeStyles } from '@material-ui/core';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import actions from '../../../../../../../actions';
 import { selectors } from '../../../../../../../reducers';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import Addons from './Addons';
+import { FilledButton } from '../../../../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -16,15 +17,14 @@ const useStyles = makeStyles(theme => ({
     borderRadius: [4, 4, 0, 0],
   },
   message: {
-    paddingBottom: theme.spacing(2),
+    padding: theme.spacing(0, 2, 2),
     textAlign: 'left',
-    paddingLeft: theme.spacing(2),
   },
   heading: {
     paddingBottom: theme.spacing(1),
   },
   content: {
-    padding: '30px 30px 30px 0',
+    paddingBottom: theme.spacing(2),
   },
   container: {
     padding: '0 0 16px 16px',
@@ -54,6 +54,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
   const dispatch = useDispatch();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
 
+  const isLicenseExpired = useSelector(state => selectors.isIntegrationAppLicenseExpired(state, integrationId));
   const [upgradeSettingsRequested, setUpgradeSettingsRequested] = useState(false);
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
@@ -108,14 +109,12 @@ export default function SubscriptionSection({ childId, integrationId }) {
               </Grid>
               <Grid item xs={3}>
                 {upgradeText && (
-                <Button
-                  variant="contained"
-                  color="primary"
+                <FilledButton
                   className={classes.button}
-                  disabled={upgradeRequested || upgradeSettingsRequested}
+                  disabled={upgradeRequested || upgradeSettingsRequested || isLicenseExpired}
                   onClick={handleUpgrade}>
                   {upgradeText}
-                </Button>
+                </FilledButton>
                 )}
               </Grid>
             </Grid>

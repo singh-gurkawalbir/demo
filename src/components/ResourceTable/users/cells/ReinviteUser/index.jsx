@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {Button} from '@material-ui/core';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import Spinner from '../../../../Spinner';
+import { TextButton } from '../../../../Buttons';
 
 export default function ReinviteUser({ user }) {
   const dispatch = useDispatch();
@@ -18,6 +18,6 @@ export default function ReinviteUser({ user }) {
   }
 
   return (
-    <Button onClick={handleReinviteClick}>Reinvite</Button>
+    <TextButton onClick={handleReinviteClick}>Reinvite</TextButton>
   );
 }

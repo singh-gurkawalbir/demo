@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { safeParse } from '../../../utils/string';
-import { HTTP_STAGES } from '../../../utils/exportPanel';
+import {shallowEqual, useSelector} from 'react-redux';
 import DefaultPanel from '../../CeligoTabLayout/CustomPanels/DefaultPanel';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   error: {
@@ -13,22 +13,13 @@ const useStyles = makeStyles(theme => ({
 
 const DEFAULT_ERROR = 'No data to show - application responded with an error';
 
-export default function ErrorPanel(props) {
-  const { resourceSampleData, availablePreviewStages } = props;
+export default function ErrorPanel({resourceId}) {
   const classes = useStyles();
-  const showDefaultErrorMessage = availablePreviewStages === HTTP_STAGES;
-  const error = useMemo(() => {
-    const sampleDataError = resourceSampleData.error;
-    const errorObj = sampleDataError[0];
+  const parseAllErrors = useSelector(state => selectors.getAllParsableErrors(state, resourceId), shallowEqual);
 
-    errorObj.message = safeParse(errorObj.message);
-
-    return errorObj;
-  }, [resourceSampleData.error]);
-
-  if (showDefaultErrorMessage) {
-    return <span className={classes.error}> { DEFAULT_ERROR } </span>;
+  if (parseAllErrors) {
+    return <DefaultPanel value={parseAllErrors} isLoggable={false} />;
   }
 
-  return <DefaultPanel value={error} />;
+  return <span className={classes.error}> { DEFAULT_ERROR } </span>;
 }

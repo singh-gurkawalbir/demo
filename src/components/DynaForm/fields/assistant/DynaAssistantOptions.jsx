@@ -43,6 +43,27 @@ export const useSetInitializeFormData = ({
   ]);
 };
 
+function setDefaultValuesForDelta(paramName, paramsMeta, params, result) {
+  const anyParamValuesSet = paramsMeta?.fields?.some(field => !field.readOnly && Object.prototype.hasOwnProperty.call(params, field.id) && params[field.id] !== field.defaultValue);
+
+  if (!anyParamValuesSet) {
+    result.push({id: `assistantMetadata.${paramName}`, value: {...params, ...paramsMeta?.defaultValuesForDeltaExport}});
+  }
+}
+
+function deleteDeltaValues(paramName, params, result) {
+  const newParams = {};
+
+  Object.keys(params || emptyObject).forEach(param => {
+    // When export type is changed to all, delete body params with delta attributes in them
+    if (!params[param]?.includes?.('lastExportDateTime')) {
+      newParams[param] = params[param];
+    }
+  });
+
+  result.push({id: `assistantMetadata.${paramName}`, value: newParams});
+}
+
 function DynaAssistantOptions(props) {
   const {
     label,
@@ -82,6 +103,11 @@ function DynaAssistantOptions(props) {
     value: queryParams,
     paramMeta: queryParamsMeta,
   } = useSelector(state => selectors.fieldState(state, props.formKey, 'assistantMetadata.queryParams'), shallowEqual) || emptyObject;
+  const {
+    value: bodyParams,
+    paramMeta: bodyParamsMeta,
+  } = useSelector(state => selectors.fieldState(state, props.formKey, 'assistantMetadata.bodyParams'), shallowEqual) || emptyObject;
+
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
       adaptorType: formContext.adaptorType,
@@ -166,6 +192,14 @@ function DynaAssistantOptions(props) {
         });
       }
 
+      if (assistantFieldType === 'operation') {
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/operationChanged',
+          value: true,
+        });
+      }
+
       dispatch(
         actions.resource.patchStaged(
           resourceContext.resourceId,
@@ -174,30 +208,32 @@ function DynaAssistantOptions(props) {
         )
       );
 
+      // this is the to maintain not only the touched state of the form but also transient field state values
+      // for example if you change the name of a export we want the value to be carried forward after reinitializing
+      // but we certainly don't want to persist it
       const allTouchedFields = fields
         .filter(field => !!field.touched)
+        .filter(field => {
+          // non assistant metadata touched values allow them
+          if (!field.id.includes('assistantMetadata.')) {
+            return true;
+          }
+
+          // only include the assistantoptions fields in the init data they are the ones which trigger form initialization
+          // these are the fields that need to be indicated as touched and the remaining metadata field values are set by the patch stage operation
+          return field.type === 'assistantoptions';
+        })
         .map(field => ({ id: field.id, value: field.value }));
 
       allTouchedFields.push({ id, value });
 
       if (id === 'assistantMetadata.exportType') {
-        const newParams = {};
-
         if (value === 'delta') {
-          const anyParamValuesSet = queryParamsMeta?.fields?.some(field => !field.readOnly && Object.prototype.hasOwnProperty.call(queryParams, field.id) && queryParams[field.id] !== field.defaultValue);
-
-          if (!anyParamValuesSet) {
-            allTouchedFields.push({id: 'assistantMetadata.queryParams', value: {...queryParams, ...queryParamsMeta?.defaultValuesForDeltaExport}});
-          }
+          setDefaultValuesForDelta('queryParams', queryParamsMeta, queryParams, allTouchedFields);
+          setDefaultValuesForDelta('bodyParams', bodyParamsMeta, bodyParams, allTouchedFields);
         } else {
-          Object.keys(queryParams || emptyObject).forEach(param => {
-            // When export type is changed to all, delete query params with delta attributes in them
-            if (!queryParams[param]?.includes?.('lastExportDateTime')) {
-              newParams[param] = queryParams[param];
-            }
-          });
-
-          allTouchedFields.push({id: 'assistantMetadata.queryParams', value: newParams});
+          deleteDeltaValues('queryParams', queryParams, allTouchedFields);
+          deleteDeltaValues('bodyParams', bodyParams, allTouchedFields);
         }
       }
       dispatch(
@@ -222,7 +258,7 @@ function DynaAssistantOptions(props) {
     />
   );
 }
-
+// no user info mostly metadata releated values...can be loggable
 export default function WrappedContextConsumer(props) {
   const form = useFormContext(props.formKey);
 

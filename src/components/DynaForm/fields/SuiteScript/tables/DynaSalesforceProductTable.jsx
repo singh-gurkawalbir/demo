@@ -171,6 +171,8 @@ export default function DynaSuiteScriptTable(props) {
     <>
       {salesforceProductFieldOptions && (
       <SalesforceProductOptions
+      // can be loggable?
+        isLoggable
         value={selectOption}
         onFieldChange={salesforceProductFieldChange}
         options={salesforceProductOptions}

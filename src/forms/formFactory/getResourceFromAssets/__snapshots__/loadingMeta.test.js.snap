@@ -52,6 +52,7 @@ Object {
       },
       "http.encrypted.clientSecret": Object {
         "defaultValue": "",
+        "description": "Note: for security reasons this field must always be re-entered.",
         "helpKey": "adp.connection.http.encrypted.clientSecret",
         "id": "http.encrypted.clientSecret",
         "inputType": "password",
@@ -236,6 +237,7 @@ Object {
       },
       "http.encrypted.apiKey": Object {
         "defaultValue": "",
+        "description": "Note: for security reasons this field must always be re-entered.",
         "helpKey": "certify.connection.http.encrypted.apiKey",
         "id": "http.encrypted.apiKey",
         "inputType": "password",
@@ -245,6 +247,7 @@ Object {
       },
       "http.encrypted.apiSecret": Object {
         "defaultValue": "",
+        "description": "Note: for security reasons this field must always be re-entered.",
         "helpKey": "certify.connection.http.encrypted.apiSecret",
         "id": "http.encrypted.apiSecret",
         "inputType": "password",
@@ -2992,8 +2995,22 @@ Object {
       "advancedSettings": Object {
         "formId": "advancedSettings",
       },
+      "apiIdentifier": Object {
+        "fieldId": "apiIdentifier",
+      },
       "common": Object {
         "formId": "common",
+      },
+      "dataURITemplate": Object {
+        "fieldId": "dataURITemplate",
+        "visibleWhen": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "edifact.format": Object {
         "fieldId": "edifact.format",
@@ -3004,8 +3021,66 @@ Object {
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
       },
+      "file.backupPath": Object {
+        "fieldId": "file.backupPath",
+      },
+      "file.batchSize": Object {
+        "fieldId": "file.batchSize",
+      },
+      "file.compressionFormat": Object {
+        "fieldId": "file.compressionFormat",
+        "visibleWhen": Array [
+          Object {
+            "field": "file.decompressFiles",
+            "is": Array [
+              true,
+            ],
+          },
+        ],
+      },
       "file.csv": Object {
         "fieldId": "file.csv",
+        "uploadSampleDataFieldName": "uploadFile",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "csv",
+            ],
+          },
+        ],
+      },
+      "file.decompressFiles": Object {
+        "defaultValue": [Function],
+        "id": "file.decompressFiles",
+        "label": "Decompress files",
+        "type": "checkbox",
+        "visibleWhen": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "file.encoding": Object {
+        "fieldId": "file.encoding",
+      },
+      "file.fileDefinition.resourcePath": Object {
+        "fieldId": "file.fileDefinition.resourcePath",
+      },
+      "file.fileNameEndsWith": Object {
+        "fieldId": "file.fileNameEndsWith",
+      },
+      "file.fileNameStartsWith": Object {
+        "fieldId": "file.fileNameStartsWith",
       },
       "file.filedefinition.rules": Object {
         "fieldId": "file.filedefinition.rules",
@@ -3024,6 +3099,9 @@ Object {
       "file.json.resourcePath": Object {
         "fieldId": "file.json.resourcePath",
       },
+      "file.skipDelete": Object {
+        "fieldId": "file.skipDelete",
+      },
       "file.sortByFields": Object {
         "fieldId": "file.sortByFields",
       },
@@ -3037,23 +3115,120 @@ Object {
         "fieldId": "file.xlsx.keyColumns",
       },
       "file.xlsx.rowsPerRecord": Object {
+        "disabledWhenAll": [Function],
         "fieldId": "file.xlsx.rowsPerRecord",
       },
-      "file.xml.resourcePath": Object {
-        "fieldId": "file.xml.resourcePath",
+      "fileAdvanced": Object {
+        "formId": "fileAdvanced",
+      },
+      "fileMetadata": Object {
+        "defaultValue": [Function],
+        "id": "fileMetadata",
+        "label": "File metadata only",
+        "type": "checkbox",
+        "visibleWhen": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "blob",
+            ],
+          },
+        ],
       },
       "fixed.format": Object {
         "fieldId": "fixed.format",
       },
+      "ftp.directoryPath": Object {
+        "fieldId": "ftp.directoryPath",
+      },
+      "ftp.fileNameEndsWith": Object {
+        "fieldId": "ftp.fileNameEndsWith",
+      },
+      "ftp.fileNameStartsWith": Object {
+        "fieldId": "ftp.fileNameStartsWith",
+      },
+      "http.fileRelativeURI": Object {
+        "defaultValue": [Function],
+        "fieldId": "http.fileRelativeURI",
+        "helpKey": [Function],
+        "label": [Function],
+        "required": true,
+        "type": "uri",
+      },
       "outputMode": Object {
-        "defaultValue": "records",
+        "defaultDisabled": [Function],
+        "defaultValue": [Function],
+        "helpKey": "export.outputMode",
         "id": "outputMode",
         "label": "Parse files being transferred",
-        "type": "text",
-        "visible": false,
+        "options": Array [
+          Object {
+            "items": Array [
+              Object {
+                "label": "Yes",
+                "value": "records",
+              },
+              Object {
+                "label": "No",
+                "value": "blob",
+              },
+            ],
+          },
+        ],
+        "type": "mode",
+      },
+      "pageSize": Object {
+        "fieldId": "pageSize",
+        "validWhen": Object {
+          "matchesRegEx": Object {
+            "message": "Only numbers allowed",
+            "pattern": "^[\\\\d]+$",
+          },
+        },
+      },
+      "parsers": Object {
+        "fieldId": "parsers",
+        "uploadSampleDataFieldName": "uploadFile",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+          Object {
+            "field": "file.type",
+            "is": Array [
+              "xml",
+            ],
+          },
+        ],
+      },
+      "s3.bucket": Object {
+        "fieldId": "s3.bucket",
+      },
+      "s3.keyEndsWith": Object {
+        "fieldId": "s3.keyEndsWith",
+      },
+      "s3.keyStartsWith": Object {
+        "fieldId": "s3.keyStartsWith",
+      },
+      "s3.region": Object {
+        "fieldId": "s3.region",
       },
       "settings": Object {
         "fieldId": "settings",
+      },
+      "skipRetries": Object {
+        "fieldId": "skipRetries",
+      },
+      "traceKeyTemplate": Object {
+        "fieldId": "traceKeyTemplate",
+      },
+      "uploadFile": Object {
+        "fieldId": "uploadFile",
+        "placeholder": "Sample file (that would be parsed)",
+        "refreshOptionsOnChangesTo": "file.type",
       },
     },
     "layout": Object {
@@ -3073,14 +3248,14 @@ Object {
               "containers": Array [
                 Object {
                   "fields": Array [
+                    "parsers",
                     "file.csv",
                   ],
                 },
               ],
               "fields": Array [
-                "outputMode",
                 "file.type",
-                "file.xml.resourcePath",
+                "uploadFile",
                 "file.json.resourcePath",
                 "file.xlsx.hasHeaderRow",
                 "file.xlsx.rowsPerRecord",
@@ -3119,7 +3294,7 @@ Object {
       ],
     },
   },
-  "init": [Function],
+  "init": undefined,
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": [Function],
@@ -3577,14 +3752,12 @@ Object {
       },
       "pageSize": Object {
         "fieldId": "pageSize",
-        "visibleWhen": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
+        "validWhen": Object {
+          "matchesRegEx": Object {
+            "message": "Only numbers allowed",
+            "pattern": "^[\\\\d]+$",
           },
-        ],
+        },
       },
       "parsers": Object {
         "fieldId": "parsers",
@@ -5309,14 +5482,12 @@ Object {
       },
       "pageSize": Object {
         "fieldId": "pageSize",
-        "visibleWhen": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
+        "validWhen": Object {
+          "matchesRegEx": Object {
+            "message": "Only numbers allowed",
+            "pattern": "^[\\\\d]+$",
           },
-        ],
+        },
       },
       "parsers": Object {
         "fieldId": "parsers",
@@ -7074,7 +7245,6 @@ Object {
               "helpscout",
               "mailparser-io",
               "sapariba",
-              "segment",
               "travis",
               "travis-org",
               "webhook",
@@ -7163,6 +7333,7 @@ Object {
               "parseur",
               "postmark",
               "recurly",
+              "segment",
               "shipwire",
               "shopify",
               "slack",
@@ -8155,6 +8326,9 @@ Object {
       "file.backupPath": Object {
         "fieldId": "file.backupPath",
       },
+      "file.batchSize": Object {
+        "fieldId": "file.batchSize",
+      },
       "file.csv": Object {
         "fieldId": "file.csv",
       },
@@ -8364,6 +8538,7 @@ Object {
                 "ftp.inProgressFileName",
                 "ftp.blobUseTempFile",
                 "ftp.blobInProgressFileName",
+                "file.batchSize",
                 "file.backupPath",
                 "file.encoding",
                 "blobKeyPath",
@@ -8626,6 +8801,12 @@ Object {
       "http.errorMediaType": Object {
         "fieldId": "http.errorMediaType",
       },
+      "http.existingExtract": Object {
+        "fieldId": "http.existingExtract",
+      },
+      "http.existingLookupName": Object {
+        "fieldId": "http.existingLookupName",
+      },
       "http.existingLookupType": Object {
         "fieldId": "http.existingLookupType",
       },
@@ -8760,6 +8941,9 @@ Object {
       },
       "http.ignoreNewLookupName": Object {
         "fieldId": "http.ignoreNewLookupName",
+      },
+      "http.lookupType": Object {
+        "fieldId": "http.lookupType",
       },
       "http.lookups": Object {
         "fieldId": "http.lookups",
@@ -9178,7 +9362,7 @@ Object {
                         "http.relativeURICreate",
                         "http.bodyCreate",
                       ],
-                      "label": "Create new data",
+                      "label": "Create new records",
                     },
                     Object {
                       "collapsed": true,
@@ -9187,7 +9371,7 @@ Object {
                         "http.ignoreExistingExtract",
                         "http.ignoreExistingLookupName",
                       ],
-                      "label": "Ignore existing records",
+                      "label": "Identify existing records",
                     },
                     Object {
                       "collapsed": true,
@@ -9196,7 +9380,16 @@ Object {
                         "http.ignoreNewExtract",
                         "http.ignoreNewLookupName",
                       ],
-                      "label": "Ignore new data",
+                      "label": "Identify existing records",
+                    },
+                    Object {
+                      "collapsed": true,
+                      "fields": Array [
+                        "http.lookupType",
+                        "http.existingExtract",
+                        "http.existingLookupName",
+                      ],
+                      "label": "Identify existing records",
                     },
                     Object {
                       "collapsed": true,
@@ -9205,7 +9398,7 @@ Object {
                         "http.relativeURIUpdate",
                         "http.bodyUpdate",
                       ],
-                      "label": "Update existing data",
+                      "label": "Update existing records",
                     },
                   ],
                   "type": "collapse",
@@ -9241,7 +9434,7 @@ Object {
                         "http.successPathCreate",
                         "http.successValuesCreate",
                       ],
-                      "label": "Create new data",
+                      "label": "Create new records",
                     },
                     Object {
                       "collapsed": true,
@@ -9253,7 +9446,7 @@ Object {
                         "http.successPathUpdate",
                         "http.successValuesUpdate",
                       ],
-                      "label": "Update existing data",
+                      "label": "Update existing records",
                     },
                   ],
                   "type": "collapse",
@@ -9426,32 +9619,6 @@ Object {
       },
       "common": Object {
         "formId": "common",
-      },
-      "createNewData": Object {
-        "id": "createNewData",
-        "label": "Create new data",
-        "type": "labeltitle",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "http.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "http.compositeType",
-            "is": Array [
-              "createandupdate",
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
       "dataMappings": Object {
         "formId": "dataMappings",
@@ -9639,6 +9806,12 @@ Object {
       "http.compositeType": Object {
         "fieldId": "http.compositeType",
       },
+      "http.existingExtract": Object {
+        "fieldId": "http.existingExtract",
+      },
+      "http.existingLookupName": Object {
+        "fieldId": "http.existingLookupName",
+      },
       "http.existingLookupType": Object {
         "fieldId": "http.existingLookupType",
       },
@@ -9656,6 +9829,9 @@ Object {
       },
       "http.ignoreNewLookupName": Object {
         "fieldId": "http.ignoreNewLookupName",
+      },
+      "http.lookupType": Object {
+        "fieldId": "http.lookupType",
       },
       "http.lookups": Object {
         "fieldId": "http.lookups",
@@ -9910,56 +10086,6 @@ Object {
           },
         ],
       },
-      "ignoreExistingData": Object {
-        "id": "ignoreExistingData",
-        "label": "Ignore existing records",
-        "type": "labeltitle",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "http.compositeType",
-            "is": Array [
-              "createandignore",
-            ],
-          },
-          Object {
-            "field": "http.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "ignoreNewData": Object {
-        "id": "ignoreNewData",
-        "label": "Ignore new data",
-        "type": "labeltitle",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "http.compositeType",
-            "is": Array [
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "http.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
       "inputMode": Object {
         "defaultValue": [Function],
         "id": "inputMode",
@@ -9998,59 +10124,8 @@ Object {
           },
         ],
       },
-      "sampleDataTitle": Object {
-        "id": "sampleDataTitle",
-        "label": "Do you have sample data?",
-        "type": "labeltitle",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-          Object {
-            "field": "http.method",
-            "isNot": Array [
-              "DELETE",
-            ],
-          },
-        ],
-      },
       "settings": Object {
         "fieldId": "settings",
-      },
-      "upateExistingData": Object {
-        "id": "upateExistingData",
-        "label": "Upate existing data",
-        "type": "labeltitle",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "http.method",
-            "is": Array [
-              "COMPOSITE",
-            ],
-          },
-          Object {
-            "field": "http.compositeType",
-            "is": Array [
-              "createandupdate",
-              "updateandignore",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-          Object {
-            "field": "inputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
     },
     "layout": Object {
@@ -10077,7 +10152,7 @@ Object {
                     "http.relativeURICreate",
                     "http.bodyCreate",
                   ],
-                  "label": "Create new data",
+                  "label": "Create new records",
                 },
                 Object {
                   "collapsed": true,
@@ -10086,7 +10161,7 @@ Object {
                     "http.ignoreExistingExtract",
                     "http.ignoreExistingLookupName",
                   ],
-                  "label": "Ignore existing records",
+                  "label": "Identify existing records",
                 },
                 Object {
                   "collapsed": true,
@@ -10095,7 +10170,16 @@ Object {
                     "http.ignoreNewExtract",
                     "http.ignoreNewLookupName",
                   ],
-                  "label": "Ignore new data",
+                  "label": "Identify existing records",
+                },
+                Object {
+                  "collapsed": true,
+                  "fields": Array [
+                    "http.lookupType",
+                    "http.existingExtract",
+                    "http.existingLookupName",
+                  ],
+                  "label": "Identify existing records",
                 },
                 Object {
                   "collapsed": true,
@@ -10104,7 +10188,7 @@ Object {
                     "http.relativeURIUpdate",
                     "http.bodyUpdate",
                   ],
-                  "label": "Update existing data",
+                  "label": "Update existing records",
                 },
               ],
               "fields": Array [
@@ -10136,7 +10220,7 @@ Object {
                     "http.successPathCreate",
                     "http.successValuesCreate",
                   ],
-                  "label": "Create new data",
+                  "label": "Create new records",
                 },
                 Object {
                   "collapsed": true,
@@ -10145,7 +10229,7 @@ Object {
                     "http.successPathUpdate",
                     "http.successValuesUpdate",
                   ],
-                  "label": "Update existing data",
+                  "label": "Update existing records",
                 },
               ],
               "fields": Array [
@@ -10237,6 +10321,9 @@ Object {
       },
       "file.backupPath": Object {
         "fieldId": "file.backupPath",
+      },
+      "file.batchSize": Object {
+        "fieldId": "file.batchSize",
       },
       "file.csv": Object {
         "fieldId": "file.csv",
@@ -11759,19 +11846,19 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "Use bulk INSERT SQL Query",
+                "label": "Use bulk insert SQL query",
                 "value": "BULK INSERT",
               },
               Object {
-                "label": "Use SQL Query",
+                "label": "Use SQL query once per record",
                 "value": "INSERT",
               },
               Object {
-                "label": "Use SQL Query once per page of data",
+                "label": "Use SQL query once per page of records",
                 "value": "MERGE",
               },
               Object {
-                "label": "Use SQL Query once per flow run",
+                "label": "Use SQL query on first page only",
                 "value": "COPY",
               },
             ],
@@ -12245,6 +12332,9 @@ Object {
       "http.status.doneWithoutDataValues": Object {
         "fieldId": "http.status.doneWithoutDataValues",
       },
+      "http.status.errorValues": Object {
+        "fieldId": "http.status.errorValues",
+      },
       "http.status.inProgressValues": Object {
         "fieldId": "http.status.inProgressValues",
       },
@@ -12289,6 +12379,7 @@ Object {
             "http.status.inProgressValues",
             "http.status.doneValues",
             "http.status.doneWithoutDataValues",
+            "http.status.errorValues",
           ],
           "label": "Configure how to check status",
         },
@@ -12603,7 +12694,6 @@ Object {
               "helpscout",
               "mailparser-io",
               "sapariba",
-              "segment",
               "travis",
               "travis-org",
               "webhook",

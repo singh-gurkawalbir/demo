@@ -10,14 +10,15 @@ import ResourceTable from '../../components/ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
-import IconTextButton from '../../components/IconTextButton';
 import AddIcon from '../../components/icons/AddIcon';
 import InfoText from '../ResourceList/infoText';
 import CheckPermissions from '../../components/CheckPermissions';
-import { PERMISSIONS } from '../../utils/constants';
+import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import actions from '../../actions';
+import { TextButton } from '../../components/Buttons';
+import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -71,14 +72,13 @@ export default function TemplateList(props) {
               filterKey={filterKey}
             />
 
-            <IconTextButton
+            <TextButton
               data-test="addNewListing"
               component={Link}
               to={`${location.pathname}/add/templates/${generateNewId()}`}
-              variant="text"
-              color="primary">
-              <AddIcon /> Create template
-            </IconTextButton>
+              startIcon={<AddIcon />}>
+              Create template
+            </TextButton>
           </div>
         </CeligoPageBar>
 
@@ -87,8 +87,8 @@ export default function TemplateList(props) {
             {list.count === 0 ? (
               <Typography>
                 {list.total === 0
-                  ? "You don't have any templates."
-                  : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
+                  ? <NoResultMessageWrapper>You don&apos;t have any templates</NoResultMessageWrapper>
+                  : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
               </Typography>
             ) : (
               <ResourceTable resources={list.resources} resourceType="templates" />

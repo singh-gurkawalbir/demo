@@ -3,7 +3,7 @@ import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
 
-export const integrations = [
+const integrations = [
   {
     _id: 'integrationId',
     name: 'Cash Application Manager for NetSuite',
@@ -1098,6 +1098,809 @@ export const integrations = [
       connectorEdition: 'premium',
     },
   },
+  {
+    _id: 'integrationId3',
+    name: 'Cash Application Manager for NetSuite',
+    _connectorId: '57d6475369ae57ad50bf835b',
+    mode: 'settings',
+    settings: {
+      general: [
+        {
+          id: 'fb5fb65e',
+          description:
+            'This section contains setting options which impact the entire Connector.',
+          fields: [
+            {
+              label: 'Enable Manual Upload Mode',
+              type: 'checkbox',
+              name: 'enableManualUploadMode_fb5fb65e',
+
+            },
+          ],
+        },
+        {
+          id: 'dd67a407',
+          description:
+            'This section contains setting options which impact the entire Connector.',
+          fields: [
+            {
+              label: 'Enable Manual Upload Mode',
+              type: 'checkbox',
+              name: 'enableManualUploadMode_dd67a407',
+
+            },
+          ],
+        },
+        {
+          id: '9606430a',
+          description:
+            'This section contains setting options which impact the entire Connector.',
+          fields: [
+            {
+              label: 'Enable Manual Upload Mode',
+              type: 'checkbox',
+              name: 'enableManualUploadMode_9606430a',
+
+            },
+          ],
+        },
+      ],
+      connectorEdition: 'premium',
+      hideUninstall: true,
+      sections: [
+        {
+          title: 'BILLTECH',
+          id: 'fb5fb65e',
+          sections: [
+            {
+              title: 'CSV',
+              iconURL: '/images/icons/settings/BAI2.png',
+              flows: [
+                {
+                  _id: '5d9f71628a71fc911a4068ee',
+                  showMapping: true,
+                  showSchedule: true,
+                  sections: [
+                    {
+                      title: 'File Import',
+                      fields: [
+                        {
+                          label: 'Directory Path:',
+                          type: 'input',
+                          name: 'directoryPath_5d9f70b98a71fc911a4068bd',
+                          required: true,
+                          placeholder:
+                            'Enter FTP folder path, such as Directory/File',
+
+                        },
+                        {
+                          label: 'File Name Starts With:',
+                          type: 'input',
+                          name: 'fileNameStartsWith_5d9f70b98a71fc911a4068bd',
+                          placeholder: 'Optional',
+
+                        },
+                        {
+                          label: 'File Name Ends With:',
+                          type: 'input',
+                          name: 'fileNameEndsWith_5d9f70b98a71fc911a4068bd',
+                          placeholder: 'Optional',
+
+                        },
+                        {
+                          label: 'Sample File:',
+                          type: 'file',
+                          name: 'ftp_sample_file_5d9f70b98a71fc911a4068bd',
+                          value: '',
+
+                        },
+                        {
+                          label: 'Leave File On Server',
+                          type: 'checkbox',
+                          name: 'skipDelete_5d9f70b98a71fc911a4068bd',
+                          value: false,
+
+                        },
+                        {
+                          label: 'Use Credit Memos',
+                          type: 'checkbox',
+                          name:
+                            'checkbox_credit_memo_5d9f70b98a71fc911a4068bd',
+                          value: false,
+
+                        },
+                        {
+                          label: 'Ignore following Customers:',
+                          type: 'textarea',
+                          name:
+                            'textarea_customer_filter_5d9f70b98a71fc911a4068bd',
+                          value: '',
+                          placeholder: 'eg. ACME Inc., S Industries',
+
+                        },
+                        {
+                          label: 'NetSuite Invoice Prefix:',
+                          type: 'textarea',
+                          name:
+                            'textarea_ns_invoice_prefix_5d9f70b98a71fc911a4068bd',
+                          value: '',
+                          placeholder: 'eg. INV, IV',
+
+                        },
+                        {
+                          label: 'NetSuite Invoice Identifier',
+                          type: 'select',
+                          name:
+                            'select_ns_invoice_identifier_5d9f70b98a71fc911a4068bd',
+                          options: [['tranid_Invoice #', 'Invoice #']],
+                          value: 'tranid_Invoice #',
+                          supportsRefresh: true,
+
+                        },
+                        {
+                          label: 'Column delimiter:',
+                          type: 'input',
+                          name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
+                          placeholder: 'Optional',
+
+                        },
+                        {
+                          label: 'Archive file',
+                          type: 'checkbox',
+                          name: 'archive_file_5d9f70b98a71fc911a4068bd',
+                          value: false,
+
+                          dependencies: {
+                            disabled: {
+                              fields: [
+                                {
+                                  name:
+                                    'netsuite_archive_dir_5d9f70b98a71fc911a4068bd',
+                                  hidden: true,
+                                  required: false,
+                                },
+                              ],
+                            },
+                            enabled: {
+                              fields: [
+                                {
+                                  name:
+                                    'netsuite_archive_dir_5d9f70b98a71fc911a4068bd',
+                                  hidden: false,
+                                  required: true,
+                                },
+                              ],
+                            },
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      title: 'File Parsing',
+                      fields: [
+                        {
+                          label: 'Batch Record',
+                          title: 'Batch Record',
+                          type: 'csvColumnMapper',
+                          maxNumberOfColumns: 50,
+                          name: '_batch_record_5d9f70b98a71fc911a4068bd',
+                          value: [],
+
+                        },
+                        {
+                          label: 'Transaction Record',
+                          title: 'Transaction Record',
+                          type: 'csvColumnMapper',
+                          maxNumberOfColumns: 50,
+                          name:
+                            '_transaction_record_5d9f70b98a71fc911a4068bd',
+                          value: [
+                            {
+                              fieldName: 'Transaction Id',
+                              column: '1',
+                            },
+                          ],
+
+                        },
+                        {
+                          label: 'Invoice Record',
+                          title: 'Invoice Record',
+                          type: 'csvColumnMapper',
+                          maxNumberOfColumns: 50,
+                          name: '_invoice_record_5d9f70b98a71fc911a4068bd',
+                          value: [
+                            {
+                              fieldName: 'Invoice number',
+                              column: '19',
+                            },
+                            {
+                              fieldName: 'Invoice Date',
+                              column: '4',
+                            },
+                            {
+                              fieldName: 'Invoice amount',
+                              column: '8',
+                            },
+                          ],
+
+                        },
+                      ],
+                    },
+                    {
+                      title: 'Advanced Settings',
+                      fields: [
+                        {
+                          label: 'Transaction Filter: Choose an action',
+                          type: 'radio',
+                          name:
+                            'transactionFilterOptions_5d9f70b98a71fc911a4068bd',
+                          properties: {
+                            sectionName: 'Filter Settings',
+                          },
+                          options: [
+                            ['skip', 'Skip'],
+                            ['allow', 'Allow'],
+                            ['default', 'Default'],
+                          ],
+
+                        },
+                        {
+                          label: 'Enter Transaction Codes',
+                          type: 'input',
+                          name: 'transactionCodes_5d9f70b98a71fc911a4068bd',
+                          placeholder: 'eg. 100,102,104,201-299,305',
+
+                          properties: {
+                            sectionName: 'Filter Settings',
+                          },
+                        },
+                        {
+                          label: 'Default Currency',
+                          type: 'select',
+                          name:
+                            'select_bank_currency_5d9f70b98a71fc911a4068bd',
+                          options: [],
+                          supportsRefresh: true,
+
+                          properties: {
+                            sectionName: 'Payment Settings',
+                          },
+                        },
+                        {
+                          label: 'Customer Has Priority',
+                          type: 'checkbox',
+                          name:
+                            'checkbox_customer_priority_5d9f70b98a71fc911a4068bd',
+
+                          properties: {
+                            sectionName: 'Matching Settings',
+                          },
+                        },
+                        {
+                          label: 'Identify invoice with Amount',
+                          name:
+                            'checkbox_match_invoice_with_amount_5d9f70b98a71fc911a4068bd',
+                          type: 'checkbox',
+                          value: false,
+
+                          properties: {
+                            sectionName: 'Matching Settings',
+                          },
+                        },
+                        {
+                          label: 'Skip Zero Amount Transactions',
+                          type: 'checkbox',
+                          name:
+                            'checkbox_skip_zero_amount_transactions_5d9f70b98a71fc911a4068bd',
+                          value: true,
+
+                          properties: {
+                            sectionName: 'Payment Settings',
+                          },
+                        },
+                        {
+                          label:
+                            "Don't create payment in locked posting period",
+                          type: 'checkbox',
+                          name:
+                            'checkbox_validate_posting_period_5d9f70b98a71fc911a4068bd',
+                          value: true,
+
+                          properties: {
+                            sectionName: 'Payment Settings',
+                          },
+                        },
+                        {
+                          label: 'Advanced Search for Customers',
+                          type: 'checkbox',
+                          name:
+                            'checkbox_use_fuzzy_search_5d9f70b98a71fc911a4068bd',
+                          value: false,
+
+                          dependencies: {
+                            disabled: {
+                              fields: [
+                                {
+                                  name:
+                                    'fuzzy_config_threshold_value_5d9f70b98a71fc911a4068bd',
+                                  hidden: true,
+                                  required: false,
+                                },
+                              ],
+                            },
+                            enabled: {
+                              fields: [
+                                {
+                                  name:
+                                    'fuzzy_config_threshold_value_5d9f70b98a71fc911a4068bd',
+                                  hidden: false,
+                                  required: true,
+                                },
+                              ],
+                            },
+                          },
+                          properties: {
+                            sectionName: 'Matching Settings',
+                          },
+                        },
+                        {
+                          label: 'Threshold',
+                          type: 'input',
+                          name:
+                            'fuzzy_config_threshold_value_5d9f70b98a71fc911a4068bd',
+                          value: '0.1',
+
+                          properties: {
+                            sectionName: 'Matching Settings',
+                          },
+                        },
+                        {
+                          type: 'subsidiaryMapWidget',
+                          name:
+                            'multisubsidiary_settings_5d9f70b98a71fc911a4068bd',
+
+                          title: 'Multi-subsidiary Settings',
+                          optionsMap: [
+                            {
+                              id: 'subsidiary',
+                              name: 'Subsidiary',
+                              type: 'select',
+                              options: [],
+                            },
+                            {
+                              id: 'paymentAccount',
+                              name: 'Payment Account',
+                              type: 'select',
+                              options: [],
+                            },
+                            {
+                              id: 'debitAccount',
+                              name: 'Write off Account',
+                              type: 'select',
+                              options: [],
+                            },
+                            {
+                              id: 'depositAccount',
+                              name: 'Customer Deposit Account',
+                              type: 'select',
+                              options: [],
+                            },
+                            {
+                              id: 'dummyCustomer',
+                              name: 'Dummy Customer',
+                              type: 'input',
+                            },
+                          ],
+                          value: [],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          title: 'HSBC',
+          id: 'dd67a407',
+          mode: 'install',
+          sections: [
+            {
+              title: 'CSV',
+              iconURL: '/images/icons/settings/BAI2.png',
+              flows: [
+                {
+                  _id: '5d9f71628a71fc911a4068ef',
+                  showMapping: true,
+                  showSchedule: true,
+                  sections: [
+                    {
+                      title: 'File Import',
+                      fields: [
+                        {
+                          label: 'Directory Path:',
+                          type: 'input',
+                          name: 'directoryPath_5d9f71628a71fc911a4068d9',
+                          required: true,
+                          placeholder:
+                            'Enter FTP folder path, such as Directory/File',
+
+                        },
+                        {
+                          label: 'File Name Starts With:',
+                          type: 'input',
+                          name: 'fileNameStartsWith_5d9f71628a71fc911a4068d9',
+                          placeholder: 'Optional',
+
+                        },
+                        {
+                          label: 'File Name Ends With:',
+                          type: 'input',
+                          name: 'fileNameEndsWith_5d9f71628a71fc911a4068d9',
+                          placeholder: 'Optional',
+
+                        },
+                        {
+                          label: 'Sample File:',
+                          type: 'file',
+                          name: 'ftp_sample_file_5d9f71628a71fc911a4068d9',
+                          value: '',
+
+                        },
+                        {
+                          label: 'Leave File On Server',
+                          type: 'checkbox',
+                          name: 'skipDelete_5d9f71628a71fc911a4068d9',
+                          value: false,
+
+                        },
+                        {
+                          label: 'Use Credit Memos',
+                          type: 'checkbox',
+                          name:
+                            'checkbox_credit_memo_5d9f71628a71fc911a4068d9',
+                          value: false,
+
+                        },
+                        {
+                          label: 'Ignore following Customers:',
+                          type: 'textarea',
+                          name:
+                            'textarea_customer_filter_5d9f71628a71fc911a4068d9',
+                          value: '',
+                          placeholder: 'eg. ACME Inc., S Industries',
+
+                        },
+                        {
+                          label: 'NetSuite Invoice Prefix:',
+                          type: 'textarea',
+                          name:
+                            'textarea_ns_invoice_prefix_5d9f71628a71fc911a4068d9',
+                          value: '',
+                          placeholder: 'eg. INV, IV',
+
+                        },
+                        {
+                          label: 'NetSuite Invoice Identifier',
+                          type: 'select',
+                          name:
+                            'select_ns_invoice_identifier_5d9f71628a71fc911a4068d9',
+                          options: [['tranid_Invoice #', 'Invoice #']],
+                          value: 'tranid_Invoice #',
+                          supportsRefresh: true,
+
+                        },
+                        {
+                          label: 'Column delimiter:',
+                          type: 'input',
+                          name: 'columnDelimiter_5d9f71628a71fc911a4068d9',
+                          placeholder: 'Optional',
+
+                        },
+                        {
+                          label: 'Archive file',
+                          type: 'checkbox',
+                          name: 'archive_file_5d9f71628a71fc911a4068d9',
+                          value: false,
+
+                          dependencies: {
+                            disabled: {
+                              fields: [
+                                {
+                                  name:
+                                    'netsuite_archive_dir_5d9f71628a71fc911a4068d9',
+                                  hidden: true,
+                                  required: false,
+                                },
+                              ],
+                            },
+                            enabled: {
+                              fields: [
+                                {
+                                  name:
+                                    'netsuite_archive_dir_5d9f71628a71fc911a4068d9',
+                                  hidden: false,
+                                  required: true,
+                                },
+                              ],
+                            },
+                          },
+                        },
+                        {
+                          label: 'NetSuite Archive Folder: ',
+                          type: 'input',
+                          name:
+                            'netsuite_archive_dir_5d9f71628a71fc911a4068d9',
+                          placeholder: 'Optional',
+
+                        },
+                        {
+                          label: 'File Has Header Row',
+                          type: 'checkbox',
+                          name: 'hasHeaderRow_5d9f71628a71fc911a4068d9',
+                          value: false,
+
+                        },
+                      ],
+                    },
+                    {
+                      title: 'File Parsing',
+                      fields: [
+                        {
+                          label: 'Batch Record',
+                          title: 'Batch Record',
+                          type: 'csvColumnMapper',
+                          maxNumberOfColumns: 50,
+                          name: '_batch_record_5d9f71628a71fc911a4068d9',
+                          value: [
+                            {
+                              fieldName: 'Batch Number',
+                              column: '1',
+                              columnName: 'BATCH NUMBER',
+                            },
+                            {
+                              fieldName: 'Batch Date',
+                              column: '2',
+                              columnName: 'DEPOSIT DATE',
+                            },
+                          ],
+
+                        },
+                        {
+                          label: 'Transaction Record',
+                          title: 'Transaction Record',
+                          type: 'csvColumnMapper',
+                          maxNumberOfColumns: 50,
+                          name:
+                            '_transaction_record_5d9f71628a71fc911a4068d9',
+                          value: [
+                            {
+                              fieldName: 'Transaction Id',
+                              column: '3',
+                              columnName: 'TRANSIT ROUTING #',
+                            },
+                            {
+                              fieldName: 'Check Number',
+                              column: '4',
+                              columnName: 'CHECK NUMBER',
+                            },
+                            {
+                              fieldName: 'Payment Amount',
+                              column: '5',
+                              columnName: 'CHECK AMOUNT',
+                            },
+                            {
+                              fieldName: 'Customer Name',
+                              column: '6',
+                              columnName: 'REMITTER NAME',
+                            },
+                            {
+                              fieldName: 'Check Date',
+                              column: '7',
+                              columnName: 'CHECK DATE',
+                            },
+                          ],
+
+                        },
+                        {
+                          label: 'Invoice Record',
+                          title: 'Invoice Record',
+                          type: 'csvColumnMapper',
+                          maxNumberOfColumns: 50,
+                          name: '_invoice_record_5d9f71628a71fc911a4068d9',
+                          value: [
+                            {
+                              fieldName: 'Invoice number',
+                              column: '8',
+                              columnName: 'INVOICE NUMBER',
+                            },
+                          ],
+
+                        },
+                      ],
+                    },
+                    {
+                      title: 'Advanced Settings',
+                      fields: [
+                        {
+                          label: 'Transaction Filter: Choose an action',
+                          type: 'radio',
+                          name:
+                            'transactionFilterOptions_5d9f71628a71fc911a4068d9',
+                          properties: {
+                            sectionName: 'Filter Settings',
+                          },
+                          options: [
+                            ['skip', 'Skip'],
+                            ['allow', 'Allow'],
+                            ['default', 'Default'],
+                          ],
+
+                        },
+                        {
+                          label: 'Enter Transaction Codes',
+                          type: 'input',
+                          name: 'transactionCodes_5d9f71628a71fc911a4068d9',
+                          placeholder: 'eg. 100,102,104,201-299,305',
+
+                          properties: {
+                            sectionName: 'Filter Settings',
+                          },
+                        },
+                        {
+                          label: 'Default Currency',
+                          type: 'select',
+                          name:
+                            'select_bank_currency_5d9f71628a71fc911a4068d9',
+                          options: [],
+                          supportsRefresh: true,
+
+                          properties: {
+                            sectionName: 'Payment Settings',
+                          },
+                        },
+                        {
+                          label: 'Customer Has Priority',
+                          type: 'checkbox',
+                          name:
+                            'checkbox_customer_priority_5d9f71628a71fc911a4068d9',
+
+                          properties: {
+                            sectionName: 'Matching Settings',
+                          },
+                        },
+                        {
+                          label: 'Identify invoice with Amount',
+                          name:
+                            'checkbox_match_invoice_with_amount_5d9f71628a71fc911a4068d9',
+                          type: 'checkbox',
+                          value: false,
+
+                          properties: {
+                            sectionName: 'Matching Settings',
+                          },
+                        },
+                        {
+                          label: 'Skip Zero Amount Transactions',
+                          type: 'checkbox',
+                          name:
+                            'checkbox_skip_zero_amount_transactions_5d9f71628a71fc911a4068d9',
+                          value: true,
+
+                          properties: {
+                            sectionName: 'Payment Settings',
+                          },
+                        },
+                        {
+                          label:
+                            "Don't create payment in locked posting period",
+                          type: 'checkbox',
+                          name:
+                            'checkbox_validate_posting_period_5d9f71628a71fc911a4068d9',
+                          value: true,
+
+                          properties: {
+                            sectionName: 'Payment Settings',
+                          },
+                        },
+                        {
+                          label: 'Advanced Search for Customers',
+                          type: 'checkbox',
+                          name:
+                            'checkbox_use_fuzzy_search_5d9f71628a71fc911a4068d9',
+                          value: false,
+
+                          dependencies: {
+                            disabled: {
+                              fields: [
+                                {
+                                  name:
+                                    'fuzzy_config_threshold_value_5d9f71628a71fc911a4068d9',
+                                  hidden: true,
+                                  required: false,
+                                },
+                              ],
+                            },
+                            enabled: {
+                              fields: [
+                                {
+                                  name:
+                                    'fuzzy_config_threshold_value_5d9f71628a71fc911a4068d9',
+                                  hidden: false,
+                                  required: true,
+                                },
+                              ],
+                            },
+                          },
+                          properties: {
+                            sectionName: 'Matching Settings',
+                          },
+                        },
+                        {
+                          label: 'Threshold',
+                          type: 'input',
+                          name:
+                            'fuzzy_config_threshold_value_5d9f71628a71fc911a4068d9',
+                          value: '0.1',
+
+                          properties: {
+                            sectionName: 'Matching Settings',
+                          },
+                        },
+                        {
+                          type: 'subsidiaryMapWidget',
+                          name:
+                            'multisubsidiary_settings_5d9f71628a71fc911a4068d9',
+
+                          title: 'Multi-subsidiary Settings',
+                          optionsMap: [
+                            {
+                              id: 'subsidiary',
+                              name: 'Subsidiary',
+                              type: 'select',
+                              options: [],
+                            },
+                            {
+                              id: 'paymentAccount',
+                              name: 'Payment Account',
+                              type: 'select',
+                              options: [],
+                            },
+                            {
+                              id: 'debitAccount',
+                              name: 'Write off Account',
+                              type: 'select',
+                              options: [],
+                            },
+                            {
+                              id: 'depositAccount',
+                              name: 'Customer Deposit Account',
+                              type: 'select',
+                              options: [],
+                            },
+                            {
+                              id: 'dummyCustomer',
+                              name: 'Dummy Customer',
+                              type: 'input',
+                            },
+                          ],
+                          value: [],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      supportsMultiStore: true,
+      supportsMatchRuleEngine: true,
+      storeLabel: 'Bank',
+    },
+  },
 ];
 const flows = [
   {
@@ -1159,6 +1962,16 @@ const flows = [
     _id: '5d9f71628a71fc911a4068d9',
     name: '5d9f71628a71fc911a4068d9',
     _integrationId: 'integrationId',
+  },
+  {
+    _id: '5d9f71628a71fc911a4068ee',
+    name: '5d9f71628a71fc911a4068ee',
+    _integrationId: 'integrationId3',
+  },
+  {
+    _id: '5d9f71628a71fc911a4068ef',
+    name: '5d9f71628a71fc911a4068ef',
+    _integrationId: 'integrationId3',
   },
 ];
 
@@ -2390,6 +3203,50 @@ describe('integrationApps selector testcases', () => {
       });
     });
 
+    test('should return license details for the integration app for owner user for expiring soon', () => {
+      const expiryDate = moment(new Date()).add(10, 'days').toISOString();
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: expiryDate,
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+              dateFormat: 'MM/DD/YY',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.integrationAppLicense(state, 'i1')).toEqual({
+        _id: 'l1',
+        _integrationId: 'i1',
+        created: '2018-07-10T10:03:02.169Z',
+        createdText: 'Started on 07/10/18',
+        expires: expiryDate,
+        expiresText: `Expires on ${moment(expiryDate).format('MM/DD/YY')} (10 Days)`,
+        showLicenseExpiringWarning: true,
+        upgradeRequested: false,
+        upgradeText: '',
+      });
+    });
+
     test('should retun license details for the integration app for non owner user for non-expired', () => {
       const state = reducer(
         {
@@ -2430,6 +3287,180 @@ describe('integrationApps selector testcases', () => {
         upgradeRequested: false,
         upgradeText: '',
       });
+    });
+  });
+
+  describe('selectors.isIntegrationAppLicenseExpired test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.isIntegrationAppLicenseExpired()).toEqual(true);
+    });
+
+    const integration = {
+      _id: 'i1',
+      settings: {
+        connectorEdition: 'standard',
+      },
+    };
+
+    test('should return if license expired for the integration app for owner user if expired and upgrade requested', () => {
+      let state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: '2020-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      state = reducer(
+        state,
+        actions.integrationApp.settings.requestedUpgrade('l1')
+      );
+
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(true);
+    });
+
+    test('should return if license expired as true for the integration app for owner user if license not found', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(true);
+    });
+
+    test('should return if license expired for the integration app for owner user for non-expired', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: '2022-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(false);
+    });
+
+    test('should return if license expired for the integration app for owner user for expiring soon', () => {
+      const expiryDate = moment(new Date()).add(10, 'days').toISOString();
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: expiryDate,
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(false);
+    });
+
+    test('should return if license expired for the integration app for non owner user for non-expired', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'as1',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: '2022-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'as1',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(false);
     });
   });
 
@@ -3822,6 +4853,550 @@ describe('integrationApps selector testcases', () => {
       ]);
     });
 
+    test('should return correct flow sections for multistore integrationApp and flow sections has a flow with name as keyword of filter', () => {
+      const state = reducer(
+        {
+          session: {
+            filters: {
+              'integrationId-flows': {
+                keyword: 'flow11',
+              },
+            },
+          },
+          data: {
+            resources: {
+              integrations,
+              flows: [
+                {
+                  _id: '5d9b20328a71fc911a4018a4',
+                  name: 'flow1',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018ad',
+                  name: 'flow2',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018a7',
+                  name: 'flow3',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018ac',
+                  name: 'flow4',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018a9',
+                  name: 'flow5',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018a8',
+                  name: 'flow6',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018b2',
+                  name: 'flow7',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018b3',
+                  name: 'flow8',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018b0',
+                  name: 'flow9',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018ba',
+                  name: 'flow10',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9f70b98a71fc911a4068bd',
+                  name: 'flow11',
+                  _integrationId: 'integrationId',
+                },
+                {
+                  _id: '5d9f71628a71fc911a4068d9',
+                  name: 'flow12',
+                  _integrationId: 'integrationId',
+                },
+                {
+                  _id: '5d9f71628a71fc911a4068ee',
+                  name: 'flow13',
+                  _integrationId: 'integrationId3',
+                },
+                {
+                  _id: '5d9f71628a71fc911a4068ef',
+                  name: 'flow14',
+                  _integrationId: 'integrationId3',
+                },
+              ],
+            },
+          },
+        },
+        'some_action'
+      );
+      const flowFilter = {
+        keyword: 'flow11',
+        excludeHiddenFlows: true,
+      };
+      const isUserInErrMgtTwoDotZero = true;
+
+      expect(
+        selectors.integrationAppFlowSections(state, 'integrationId', 'fb5fb65e', flowFilter, isUserInErrMgtTwoDotZero)
+      ).toEqual([
+        {
+          flows: [
+            {
+              _id: '5d9f70b98a71fc911a4068bd',
+              sections: [
+                {
+                  title: 'File Import',
+                  fields: [
+                    {
+                      label: 'Directory Path:',
+                      type: 'input',
+                      name: 'directoryPath_5d9f70b98a71fc911a4068bd',
+                      required: true,
+                      placeholder:
+                        'Enter FTP folder path, such as Directory/File',
+
+                    },
+                    {
+                      label: 'File Name Starts With:',
+                      type: 'input',
+                      name: 'fileNameStartsWith_5d9f70b98a71fc911a4068bd',
+                      placeholder: 'Optional',
+
+                    },
+                    {
+                      label: 'File Name Ends With:',
+                      type: 'input',
+                      name: 'fileNameEndsWith_5d9f70b98a71fc911a4068bd',
+                      placeholder: 'Optional',
+
+                    },
+                    {
+                      label: 'Sample File:',
+                      type: 'file',
+                      name: 'ftp_sample_file_5d9f70b98a71fc911a4068bd',
+                      value: '',
+
+                    },
+                    {
+                      label: 'Leave File On Server',
+                      type: 'checkbox',
+                      name: 'skipDelete_5d9f70b98a71fc911a4068bd',
+                      value: false,
+
+                    },
+                    {
+                      label: 'Use Credit Memos',
+                      type: 'checkbox',
+                      name: 'checkbox_credit_memo_5d9f70b98a71fc911a4068bd',
+                      value: false,
+
+                    },
+                    {
+                      label: 'Ignore following Customers:',
+                      type: 'textarea',
+                      name: 'textarea_customer_filter_5d9f70b98a71fc911a4068bd',
+                      value: '',
+                      placeholder: 'eg. ACME Inc., S Industries',
+
+                    },
+                    {
+                      label: 'NetSuite Invoice Prefix:',
+                      type: 'textarea',
+                      name:
+                        'textarea_ns_invoice_prefix_5d9f70b98a71fc911a4068bd',
+                      value: '',
+                      placeholder: 'eg. INV, IV',
+
+                    },
+                    {
+                      label: 'NetSuite Invoice Identifier',
+                      type: 'select',
+                      name:
+                        'select_ns_invoice_identifier_5d9f70b98a71fc911a4068bd',
+                      options: [['tranid_Invoice #', 'Invoice #']],
+                      value: 'tranid_Invoice #',
+                      supportsRefresh: true,
+
+                    },
+                    {
+                      label: 'Column delimiter:',
+                      type: 'input',
+                      name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
+                      placeholder: 'Optional',
+
+                    },
+                    {
+                      label: 'Archive file',
+                      type: 'checkbox',
+                      name: 'archive_file_5d9f70b98a71fc911a4068bd',
+                      value: false,
+
+                      dependencies: {
+                        disabled: {
+                          fields: [
+                            {
+                              name:
+                                'netsuite_archive_dir_5d9f70b98a71fc911a4068bd',
+                              hidden: true,
+                              required: false,
+                            },
+                          ],
+                        },
+                        enabled: {
+                          fields: [
+                            {
+                              name:
+                                'netsuite_archive_dir_5d9f70b98a71fc911a4068bd',
+                              hidden: false,
+                              required: true,
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  ],
+                },
+                {
+                  title: 'File Parsing',
+                  fields: [
+                    {
+                      label: 'Batch Record',
+                      title: 'Batch Record',
+                      type: 'csvColumnMapper',
+                      maxNumberOfColumns: 50,
+                      name: '_batch_record_5d9f70b98a71fc911a4068bd',
+                      value: [],
+
+                    },
+                    {
+                      label: 'Transaction Record',
+                      title: 'Transaction Record',
+                      type: 'csvColumnMapper',
+                      maxNumberOfColumns: 50,
+                      name: '_transaction_record_5d9f70b98a71fc911a4068bd',
+                      value: [
+                        {
+                          fieldName: 'Transaction Id',
+                          column: '1',
+                        },
+                      ],
+
+                    },
+                    {
+                      label: 'Invoice Record',
+                      title: 'Invoice Record',
+                      type: 'csvColumnMapper',
+                      maxNumberOfColumns: 50,
+                      name: '_invoice_record_5d9f70b98a71fc911a4068bd',
+                      value: [
+                        {
+                          fieldName: 'Invoice number',
+                          column: '19',
+                        },
+                        {
+                          fieldName: 'Invoice Date',
+                          column: '4',
+                        },
+                        {
+                          fieldName: 'Invoice amount',
+                          column: '8',
+                        },
+                      ],
+
+                    },
+                  ],
+                },
+                {
+                  title: 'Advanced Settings',
+                  fields: [
+                    {
+                      label: 'Transaction Filter: Choose an action',
+                      type: 'radio',
+                      name: 'transactionFilterOptions_5d9f70b98a71fc911a4068bd',
+                      properties: {
+                        sectionName: 'Filter Settings',
+                      },
+                      options: [
+                        ['skip', 'Skip'],
+                        ['allow', 'Allow'],
+                        ['default', 'Default'],
+                      ],
+
+                    },
+                    {
+                      label: 'Enter Transaction Codes',
+                      type: 'input',
+                      name: 'transactionCodes_5d9f70b98a71fc911a4068bd',
+                      placeholder: 'eg. 100,102,104,201-299,305',
+
+                      properties: {
+                        sectionName: 'Filter Settings',
+                      },
+                    },
+                    {
+                      label: 'Default Currency',
+                      type: 'select',
+                      name: 'select_bank_currency_5d9f70b98a71fc911a4068bd',
+                      options: [],
+                      supportsRefresh: true,
+
+                      properties: {
+                        sectionName: 'Payment Settings',
+                      },
+                    },
+                    {
+                      label: 'Customer Has Priority',
+                      type: 'checkbox',
+                      name:
+                        'checkbox_customer_priority_5d9f70b98a71fc911a4068bd',
+
+                      properties: {
+                        sectionName: 'Matching Settings',
+                      },
+                    },
+                    {
+                      label: 'Identify invoice with Amount',
+                      name:
+                        'checkbox_match_invoice_with_amount_5d9f70b98a71fc911a4068bd',
+                      type: 'checkbox',
+                      value: false,
+
+                      properties: {
+                        sectionName: 'Matching Settings',
+                      },
+                    },
+                    {
+                      label: 'Skip Zero Amount Transactions',
+                      type: 'checkbox',
+                      name:
+                        'checkbox_skip_zero_amount_transactions_5d9f70b98a71fc911a4068bd',
+                      value: true,
+
+                      properties: {
+                        sectionName: 'Payment Settings',
+                      },
+                    },
+                    {
+                      label: "Don't create payment in locked posting period",
+                      type: 'checkbox',
+                      name:
+                        'checkbox_validate_posting_period_5d9f70b98a71fc911a4068bd',
+                      value: true,
+
+                      properties: {
+                        sectionName: 'Payment Settings',
+                      },
+                    },
+                    {
+                      label: 'Advanced Search for Customers',
+                      type: 'checkbox',
+                      name:
+                        'checkbox_use_fuzzy_search_5d9f70b98a71fc911a4068bd',
+                      value: false,
+
+                      dependencies: {
+                        disabled: {
+                          fields: [
+                            {
+                              name:
+                                'fuzzy_config_threshold_value_5d9f70b98a71fc911a4068bd',
+                              hidden: true,
+                              required: false,
+                            },
+                          ],
+                        },
+                        enabled: {
+                          fields: [
+                            {
+                              name:
+                                'fuzzy_config_threshold_value_5d9f70b98a71fc911a4068bd',
+                              hidden: false,
+                              required: true,
+                            },
+                          ],
+                        },
+                      },
+                      properties: {
+                        sectionName: 'Matching Settings',
+                      },
+                    },
+                    {
+                      label: 'Threshold',
+                      type: 'input',
+                      name:
+                        'fuzzy_config_threshold_value_5d9f70b98a71fc911a4068bd',
+                      value: '0.1',
+
+                      properties: {
+                        sectionName: 'Matching Settings',
+                      },
+                    },
+                    {
+                      type: 'subsidiaryMapWidget',
+                      name: 'multisubsidiary_settings_5d9f70b98a71fc911a4068bd',
+
+                      title: 'Multi-subsidiary Settings',
+                      optionsMap: [
+                        {
+                          id: 'subsidiary',
+                          name: 'Subsidiary',
+                          type: 'select',
+                          options: [],
+                        },
+                        {
+                          id: 'paymentAccount',
+                          name: 'Payment Account',
+                          type: 'select',
+                          options: [],
+                        },
+                        {
+                          id: 'debitAccount',
+                          name: 'Write off Account',
+                          type: 'select',
+                          options: [],
+                        },
+                        {
+                          id: 'depositAccount',
+                          name: 'Customer Deposit Account',
+                          type: 'select',
+                          options: [],
+                        },
+                        {
+                          id: 'dummyCustomer',
+                          name: 'Dummy Customer',
+                          type: 'input',
+                        },
+                      ],
+                      value: [],
+                    },
+                  ],
+                },
+              ],
+              showMapping: true,
+              showSchedule: true,
+            },
+          ],
+          iconURL: '/images/icons/settings/BAI2.png',
+          title: 'CSV',
+          titleId: 'CSV',
+        },
+      ]);
+    });
+
+    test('should return empty array for multistore integrationApp if none of the flows in flowsections have name with filter keyword', () => {
+      const state = reducer(
+        {
+          session: {
+            filters: {
+              'integrationId-flows': {
+                keyword: 'dummyflow',
+              },
+            },
+          },
+          data: {
+            resources: {
+              integrations,
+              flows: [
+                {
+                  _id: '5d9b20328a71fc911a4018a4',
+                  name: 'flow1',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018ad',
+                  name: 'flow2',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018a7',
+                  name: 'flow3',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018ac',
+                  name: 'flow4',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018a9',
+                  name: 'flow5',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018a8',
+                  name: 'flow6',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018b2',
+                  name: 'flow7',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018b3',
+                  name: 'flow8',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018b0',
+                  name: 'flow9',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018ba',
+                  name: 'flow10',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9f70b98a71fc911a4068bd',
+                  name: 'flow11',
+                  _integrationId: 'integrationId',
+                },
+                {
+                  _id: '5d9f71628a71fc911a4068d9',
+                  name: 'flow12',
+                  _integrationId: 'integrationId',
+                },
+                {
+                  _id: '5d9f71628a71fc911a4068ee',
+                  name: 'flow13',
+                  _integrationId: 'integrationId3',
+                },
+                {
+                  _id: '5d9f71628a71fc911a4068ef',
+                  name: 'flow14',
+                  _integrationId: 'integrationId3',
+                },
+              ],
+            },
+          },
+        },
+        'some_action'
+      );
+      const flowFilter = {
+        keyword: 'dummyflow',
+        excludeHiddenFlows: true,
+      };
+      const isUserInErrMgtTwoDotZero = true;
+
+      expect(
+        selectors.integrationAppFlowSections(state, 'integrationId', 'fb5fb65e', flowFilter, isUserInErrMgtTwoDotZero)
+      ).toEqual([]);
+    });
+
     test('should return correct flow sections for single store integration App', () => {
       const state = reducer(
         {
@@ -4096,6 +5671,467 @@ describe('integrationApps selector testcases', () => {
           titleId: 'TicketsSync',
         },
       ]);
+    });
+
+    test('should return correct flow sections for single store integration App and flow sections has a flow with name as keyword of filter', () => {
+      const state = reducer(
+        {
+          session: {
+            filters: {
+              'integrationId2-flows': {
+                keyword: 'flow1',
+              },
+            },
+          },
+          data: {
+            resources: {
+              integrations,
+              flows: [
+                {
+                  _id: '5d9b20328a71fc911a4018a4',
+                  name: 'flow1',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018ad',
+                  name: 'flow2',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018a7',
+                  name: 'flow3',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018ac',
+                  name: 'flow4',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018a9',
+                  name: 'flow5',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018a8',
+                  name: 'flow6',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018b2',
+                  name: 'flow7',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018b3',
+                  name: 'flow8',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018b0',
+                  name: 'flow9',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018ba',
+                  name: 'flow10',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9f70b98a71fc911a4068bd',
+                  name: 'flow11',
+                  _integrationId: 'integrationId',
+                },
+                {
+                  _id: '5d9f71628a71fc911a4068d9',
+                  name: 'flow12',
+                  _integrationId: 'integrationId',
+                },
+                {
+                  _id: '5d9f71628a71fc911a4068ee',
+                  name: 'flow13',
+                  _integrationId: 'integrationId3',
+                },
+                {
+                  _id: '5d9f71628a71fc911a4068ef',
+                  name: 'flow14',
+                  _integrationId: 'integrationId3',
+                },
+              ],
+            },
+          },
+        },
+        'some_action'
+      );
+      const flowFilter = {
+        keyword: 'flow1',
+        excludeHiddenFlows: true,
+      };
+      const isUserInErrMgtTwoDotZero = true;
+
+      expect(
+        selectors.integrationAppFlowSections(state, 'integrationId2', undefined, flowFilter, isUserInErrMgtTwoDotZero)
+      ).toEqual([
+        {
+          columns: 1,
+          description:
+            'This section contains settings to sync NetSuite Customers and Zendesk Organizations between the two systems.',
+          fields: [
+            {
+              label: 'Sync all Zendesk Organizations as NetSuite Customers',
+              name: 'sync_zendesk_organizations_as_netsuite_customsers',
+              type: 'checkbox',
+              value: true,
+            },
+          ],
+          flows: [
+            {
+              _id: '5d9b20328a71fc911a4018a4',
+              settings: [
+                {
+                  label: 'Execution Context',
+                  name: 'executionContext',
+                  options: [
+                    ['userevent', 'User Event'],
+                    ['webservices', 'Web Services'],
+                    ['csvimport', 'CSV Import'],
+                    ['scheduled', 'Scheduled'],
+                    ['workflow', 'Work Flow'],
+                    ['userinterface', 'User Interface'],
+                  ],
+                  type: 'multiselect',
+                  value: [
+                    'userevent',
+                    'webservices',
+                    'csvimport',
+                    'userinterface',
+                  ],
+                },
+                {
+                  label: 'Execution Type',
+                  name: 'executionType',
+                  options: [
+                    ['edit', 'Edit'],
+                    ['create', 'Create'],
+                    ['xedit', 'xEdit'],
+                  ],
+                  type: 'multiselect',
+                  value: ['edit', 'create', 'xedit'],
+                },
+                {
+                  expressionType: 'export',
+                  label: 'Qualifier',
+                  name: 'qualifier',
+                  type: 'expression',
+                  value:
+                    '[["isperson","=","F"],"and",["custentity_celigo_znc_zendesk_id","empty",true]]',
+                },
+              ],
+              showMapping: true,
+              showSchedule: false,
+            },
+            {
+              _id: '5d9b20328a71fc911a4018ad',
+              settings: [
+                {
+                  label: 'Execution Context',
+                  name: 'executionContext',
+                  options: [
+                    ['userevent', 'User Event'],
+                    ['webservices', 'Web Services'],
+                    ['csvimport', 'CSV Import'],
+                    ['scheduled', 'Scheduled'],
+                    ['workflow', 'Work Flow'],
+                    ['userinterface', 'User Interface'],
+                  ],
+                  type: 'multiselect',
+                  value: [
+                    'userevent',
+                    'webservices',
+                    'csvimport',
+                    'userinterface',
+                  ],
+                },
+                {
+                  label: 'Execution Type',
+                  name: 'executionType',
+                  options: [
+                    ['edit', 'Edit'],
+                    ['create', 'Create'],
+                    ['xedit', 'xEdit'],
+                  ],
+                  type: 'multiselect',
+                  value: ['edit', 'create', 'xedit'],
+                },
+                {
+                  expressionType: 'export',
+                  label: 'Qualifier',
+                  name: 'qualifier',
+                  type: 'expression',
+                  value:
+                    '[["isperson","=","F"],"and",["custentity_celigo_znc_zendesk_id","empty",false]]',
+                },
+              ],
+              showMapping: true,
+              showSchedule: false,
+            },
+            {
+              _id: '5d9b20328a71fc911a4018a7',
+              showMapping: true,
+              showSchedule: true,
+            },
+            {
+              _id: '5d9b20328a71fc911a4018ac',
+              showMapping: true,
+              showSchedule: true,
+            },
+          ],
+          title: 'Organization Sync',
+          titleId: 'OrganizationSync',
+        },
+        {
+          columns: 1,
+          description:
+            'This section contains settings to sync NetSuite Cases and Zendesk Tickets between the two systems.',
+          editions: ['premium'],
+          fields: [
+            {
+              label:
+                'Create Zendesk Organization and User (if non-existent) while syncing NetSuite Support Case',
+              name: 'create_users_and_organizations_in_zendesk',
+              type: 'checkbox',
+              value: false,
+            },
+            {
+              label:
+                'Create NetSuite Customer and Contact (if non-existent) while syncing Zendesk Ticket',
+              name: 'create_contacts_and_customers_in_netsuite',
+              type: 'checkbox',
+              value: false,
+            },
+            {
+              label:
+                'Sync Zendesk Ticket Public Replies to NetSuite Case as Message',
+              name: 'sync_ticket_comments_to_netsuite',
+              type: 'checkbox',
+              value: false,
+            },
+            {
+              label:
+                'Sync attachments in NetSuite Support Cases to Zendesk Tickets',
+              name: 'sync_attachments_from_netsuite_to_zendesk',
+
+              type: 'checkbox',
+              value: false,
+            },
+          ],
+          flows: [
+            {
+              _id: '5d9b20328a71fc911a4018a9',
+              settings: [
+                {
+                  label: 'Execution Context',
+                  name: 'executionContext',
+                  options: [
+                    ['userevent', 'User Event'],
+                    ['webservices', 'Web Services'],
+                    ['csvimport', 'CSV Import'],
+                    ['scheduled', 'Scheduled'],
+                    ['workflow', 'Work Flow'],
+                    ['userinterface', 'User Interface'],
+                  ],
+                  type: 'multiselect',
+                  value: [
+                    'userevent',
+                    'webservices',
+                    'csvimport',
+                    'userinterface',
+                  ],
+                },
+                {
+                  label: 'Execution Type',
+                  name: 'executionType',
+                  options: [['edit', 'Edit'], ['create', 'Create']],
+                  type: 'multiselect',
+                  value: ['edit', 'create'],
+                },
+                {
+                  expressionType: 'export',
+                  label: 'Qualifier',
+                  name: 'qualifier',
+                  type: 'expression',
+                  value: '["custevent_celigo_znc_zendesk_id","empty",true]',
+                },
+              ],
+              showMapping: true,
+              showSchedule: false,
+            },
+            {
+              _id: '5d9b20328a71fc911a4018a8',
+              settings: [
+                {
+                  label: 'Execution Context',
+                  name: 'executionContext',
+                  options: [
+                    ['userevent', 'User Event'],
+                    ['webservices', 'Web Services'],
+                    ['csvimport', 'CSV Import'],
+                    ['scheduled', 'Scheduled'],
+                    ['workflow', 'Work Flow'],
+                    ['userinterface', 'User Interface'],
+                  ],
+                  type: 'multiselect',
+                  value: [
+                    'userevent',
+                    'webservices',
+                    'csvimport',
+                    'userinterface',
+                  ],
+                },
+                {
+                  label: 'Execution Type',
+                  name: 'executionType',
+                  options: [['edit', 'Edit'], ['xedit', 'xEdit']],
+                  type: 'multiselect',
+                  value: ['edit', 'xedit'],
+                },
+                {
+                  expressionType: 'export',
+                  label: 'Qualifier',
+                  name: 'qualifier',
+                  type: 'expression',
+                  value: '["custevent_celigo_znc_zendesk_id","empty",false]',
+                },
+              ],
+              showMapping: true,
+              showSchedule: false,
+            },
+            {
+              _id: '5d9b20328a71fc911a4018b2',
+              showMapping: true,
+              showSchedule: true,
+            },
+            {
+              _id: '5d9b20328a71fc911a4018b3',
+              showMapping: true,
+              showSchedule: true,
+            },
+            {
+              _id: '5d9b20328a71fc911a4018b0',
+              showMapping: true,
+              showSchedule: true,
+            },
+            {
+              _id: '5d9b20328a71fc911a4018ba',
+              showMapping: true,
+              showSchedule: true,
+            },
+          ],
+          title: 'Tickets Sync',
+          titleId: 'TicketsSync',
+        },
+      ]);
+    });
+
+    test('should return empty array for single store integration App if none of flows in flow sections have name as keyword of filter', () => {
+      const state = reducer(
+        {
+          session: {
+            filters: {
+              'integrationId2-flows': {
+                keyword: 'dummyflow',
+              },
+            },
+          },
+          data: {
+            resources: {
+              integrations,
+              flows: [
+                {
+                  _id: '5d9b20328a71fc911a4018a4',
+                  name: 'flow1',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018ad',
+                  name: 'flow2',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018a7',
+                  name: 'flow3',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018ac',
+                  name: 'flow4',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018a9',
+                  name: 'flow5',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018a8',
+                  name: 'flow6',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018b2',
+                  name: 'flow7',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018b3',
+                  name: 'flow8',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018b0',
+                  name: 'flow9',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9b20328a71fc911a4018ba',
+                  name: 'flow10',
+                  _integrationId: 'integrationId2',
+                },
+                {
+                  _id: '5d9f70b98a71fc911a4068bd',
+                  name: 'flow11',
+                  _integrationId: 'integrationId',
+                },
+                {
+                  _id: '5d9f71628a71fc911a4068d9',
+                  name: 'flow12',
+                  _integrationId: 'integrationId',
+                },
+                {
+                  _id: '5d9f71628a71fc911a4068ee',
+                  name: 'flow13',
+                  _integrationId: 'integrationId3',
+                },
+                {
+                  _id: '5d9f71628a71fc911a4068ef',
+                  name: 'flow14',
+                  _integrationId: 'integrationId3',
+                },
+              ],
+            },
+          },
+        },
+        'some_action'
+      );
+      const flowFilter = {
+        keyword: 'dummyflow',
+        excludeHiddenFlows: true,
+      };
+      const isUserInErrMgtTwoDotZero = true;
+
+      expect(
+        selectors.integrationAppFlowSections(state, 'integrationId2', undefined, flowFilter, isUserInErrMgtTwoDotZero)
+      ).toEqual([]);
     });
   });
 
@@ -4478,6 +6514,35 @@ describe('integrationApps selector testcases', () => {
           childName: 'HSBC',
           errors: 0,
           id: '5d9f71628a71fc911a4068d9',
+        },
+      ]);
+    });
+
+    test('should return all flows when section and childId is not passed to a multi store integration App and one of the stores is in incomplete state', () => {
+      const state = reducer(
+        {
+          data: {
+            resources: {
+              integrations,
+              flows,
+            },
+          },
+        },
+        'some_action'
+      );
+
+      expect(
+        selectors.integrationAppSectionFlows(state, 'integrationId3')
+      ).toEqual([
+        {
+          ...sortProperties,
+          _id: '5d9f71628a71fc911a4068ee',
+          _integrationId: 'integrationId3',
+          name: '5d9f71628a71fc911a4068ee',
+          childId: 'fb5fb65e',
+          childName: 'BILLTECH',
+          errors: 0,
+          id: '5d9f71628a71fc911a4068ee',
         },
       ]);
     });

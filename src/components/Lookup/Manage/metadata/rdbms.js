@@ -1,7 +1,7 @@
 import getFailedRecordDefault from './util';
 
 export default {
-  getLookupMetadata: ({ lookup, showDynamicLookupOnly, sampleData, resourceId,
+  getLookupMetadata: ({ lookup, showDynamicLookupOnly, resourceId,
     resourceType,
     flowId }) => {
     const fieldMeta = {
@@ -22,6 +22,7 @@ export default {
               ],
             },
           ],
+          isLoggable: true,
         },
         _query: {
           id: '_query',
@@ -30,11 +31,11 @@ export default {
           label: 'SQL query',
           required: true,
           helpText: 'The query that fetches records to be exported.',
-          sampleData,
           resourceId,
           resourceType,
           flowId,
           defaultValue: lookup.query,
+          isLoggable: false,
           visibleWhen: [
             {
               field: '_mode',
@@ -57,6 +58,7 @@ export default {
               is: ['dynamic'],
             },
           ],
+          isLoggable: true,
         },
         _mapList: {
           id: '_mapList',
@@ -75,6 +77,7 @@ export default {
               is: ['static'],
             },
           ],
+          isLoggable: true,
         },
         _name: {
           id: '_name',
@@ -99,6 +102,7 @@ export default {
           label: 'Action to take if unique match not found',
           showOptionsVertically: true,
           defaultValue: getFailedRecordDefault(lookup) || 'disallowFailure',
+          isLoggable: true,
           options: [
             {
               items: [
@@ -130,6 +134,8 @@ export default {
           defaultValue: lookup.default,
           helpText: 'Provide a value to be imported whenever the value being looked up is not found.',
           placeholder: 'Enter default value',
+          // can this be loggable?
+          isLoggable: true,
           visibleWhen: [
             {
               field: '_failRecord',

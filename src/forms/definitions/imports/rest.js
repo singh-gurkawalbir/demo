@@ -25,8 +25,8 @@ const restPreSave = formValues => {
     '/rest/requestType': '/http/requestType',
     '/rest/compositeMethodUpdate': '/http/compositeMethodUpdate',
     '/rest/compositeMethodCreate': '/http/compositeMethodCreate',
-    '/rest/ignoreLookupName': '/http/ignoreLookupName',
-    '/rest/ignoreExtract': '/http/ignoreExtract',
+    '/rest/ignoreLookupName': '/http/existingLookupName',
+    '/rest/ignoreExtract': '/http/existingExtract',
     '/rest/responseIdPathCreate': '/http/responseIdPathCreate',
     '/rest/responseIdPathUpdate': '/http/responseIdPathUpdate',
     '/rest/responseIdPath': '/http/response/resourceIdPath',
@@ -43,6 +43,7 @@ const restPreSave = formValues => {
     '/rest/ignoreNewExtract': '/http/ignoreNewExtract',
     '/rest/ignoreExistingLookupName': '/http/ignoreExistingLookupName',
     '/rest/ignoreNewLookupName': '/http/ignoreNewLookupName',
+    '/rest/lookupType': '/http/lookupType',
   };
 
   Object.keys(restToHttpFieldMap).forEach(restField => {
@@ -86,9 +87,6 @@ const restPreSave = formValues => {
         retValues['/rest/compositeMethodCreate'],
       ];
 
-      retValues['/rest/ignoreLookupName'] = undefined;
-      retValues['/rest/ignoreExtract'] = undefined;
-
       if (
         retValues['/rest/responseIdPathCreate'] ||
           retValues['/rest/responseIdPathUpdate']
@@ -126,6 +124,15 @@ const restPreSave = formValues => {
 
       retValues['/ignoreExisting'] = false;
       retValues['/ignoreMissing'] = false;
+
+      if (retValues['/rest/ignoreLookupName']) {
+        retValues['/rest/ignoreExtract'] = undefined;
+      } else if (retValues['/rest/ignoreExtract']) {
+        retValues['/rest/ignoreLookupName'] = undefined;
+      } else {
+        retValues['/rest/ignoreLookupName'] = undefined;
+        retValues['/rest/ignoreExtract'] = undefined;
+      }
     } else if (retValues['/rest/compositeType'] === 'createandignore') {
       retValues['/rest/relativeURI'] = [retValues['/rest/relativeURICreate']];
       retValues['/rest/method'] = [retValues['/rest/compositeMethodCreate']];
@@ -241,6 +248,7 @@ const restPreSave = formValues => {
 
   delete retValues['/rest/existingLookupType'];
   delete retValues['/rest/newLookupType'];
+  delete retValues['/rest/lookupType'];
   delete retValues['/rest/ignoreExistingExtract'];
   delete retValues['/rest/ignoreNewExtract'];
   delete retValues['/rest/ignoreExistingLookupName'];
@@ -332,12 +340,23 @@ export default {
 
         retValues['/ignoreExisting'] = false;
         retValues['/ignoreMissing'] = false;
+
+        if (retValues['/http/existingLookupName']) {
+          retValues['/http/existingExtract'] = undefined;
+        } else if (retValues['/http/existingExtract']) {
+          retValues['/http/existingLookupName'] = undefined;
+        } else {
+          retValues['/http/existingLookupName'] = undefined;
+          retValues['/http/existingExtract'] = undefined;
+        }
       } else if (retValues['/http/compositeType'] === 'createandignore') {
         retValues['/http/relativeURI'] = [retValues['/http/relativeURICreate']];
         retValues['/http/method'] = [retValues['/http/compositeMethodCreate']];
 
         retValues['/http/ignoreLookupName'] = undefined;
         retValues['/http/ignoreExtract'] = undefined;
+        retValues['/http/existingLookupName'] = undefined; // for create and update composite type
+        retValues['/http/existingExtract'] = undefined;
 
         if (retValues['/http/responseIdPathCreate']) {
           retValues['/http/response/resourceIdPath'] = [
@@ -383,6 +402,8 @@ export default {
 
         retValues['/http/ignoreLookupName'] = undefined;
         retValues['/http/ignoreExtract'] = undefined;
+        retValues['/http/existingLookupName'] = undefined; // for create and update composite type
+        retValues['/http/existingExtract'] = undefined;
 
         if (retValues['/http/responseIdPathUpdate']) {
           retValues['/http/response/resourceIdPath'] = [
@@ -428,6 +449,8 @@ export default {
         : [];
       retValues['/http/ignoreLookupName'] = undefined;
       retValues['/http/ignoreExtract'] = undefined;
+      retValues['/http/existingLookupName'] = undefined; // for create and update composite type
+      retValues['/http/existingExtract'] = undefined;
       retValues['/http/existingDataId'] = undefined;
       retValues['/http/update/existingDataId'] = undefined;
     }
@@ -449,6 +472,7 @@ export default {
     }
     delete retValues['/http/existingLookupType'];
     delete retValues['/http/newLookupType'];
+    delete retValues['/http/lookupType'];
     delete retValues['/http/ignoreExistingExtract'];
     delete retValues['/http/ignoreNewExtract'];
     delete retValues['/http/ignoreExistingLookupName'];
@@ -516,25 +540,6 @@ export default {
     blobKeyPath: { fieldId: 'blobKeyPath' },
     'http.response.successValues': { fieldId: 'http.response.successValues' },
     'http.response.resourceIdPath': { fieldId: 'http.response.resourceIdPath' },
-    createNewData: {
-      id: 'createNewData',
-      type: 'labeltitle',
-      label: 'Create new data',
-      visibleWhenAll: [
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     'http.compositeMethodCreate': {
       id: 'http.compositeMethodCreate',
       helpKey: 'import.http.method',
@@ -765,29 +770,6 @@ export default {
         return '';
       },
     },
-    upateExistingData: {
-      id: 'upateExistingData',
-      type: 'labeltitle',
-      label: 'Upate existing data',
-      visibleWhenAll: [
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'updateandignore'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     'http.compositeMethodUpdate': {
       id: 'http.compositeMethodUpdate',
       helpKey: 'import.http.method',
@@ -992,44 +974,6 @@ export default {
         return '';
       },
     },
-    ignoreExistingData: {
-      id: 'ignoreExistingData',
-      type: 'labeltitle',
-      label: 'Ignore existing records',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    ignoreNewData: {
-      id: 'ignoreNewData',
-      type: 'labeltitle',
-      label: 'Ignore new data',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['updateandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     'http.existingLookupType': {
       fieldId: 'http.existingLookupType',
     },
@@ -1048,20 +992,14 @@ export default {
     'http.ignoreNewLookupName': {
       fieldId: 'http.ignoreNewLookupName',
     },
-    sampleDataTitle: {
-      id: 'sampleDataTitle',
-      type: 'labeltitle',
-      label: 'Do you have sample data?',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-        {
-          field: 'http.method',
-          isNot: ['DELETE'],
-        },
-      ],
+    'http.lookupType': {
+      fieldId: 'http.lookupType',
+    },
+    'http.existingExtract': {
+      fieldId: 'http.existingExtract',
+    },
+    'http.existingLookupName': {
+      fieldId: 'http.existingLookupName',
     },
     sampleData: {
       fieldId: 'sampleData',
@@ -1121,7 +1059,7 @@ export default {
         containers: [
           {
             collapsed: true,
-            label: 'Create new data',
+            label: 'Create new records',
             fields: [
               'http.compositeMethodCreate',
               'http.relativeURICreate',
@@ -1130,17 +1068,22 @@ export default {
           },
           {
             collapsed: true,
-            label: 'Ignore existing records',
+            label: 'Identify existing records',
             fields: ['http.existingLookupType', 'http.ignoreExistingExtract', 'http.ignoreExistingLookupName'],
           },
           {
             collapsed: true,
-            label: 'Ignore new data',
+            label: 'Identify existing records',
             fields: ['http.newLookupType', 'http.ignoreNewExtract', 'http.ignoreNewLookupName'],
           },
           {
             collapsed: true,
-            label: 'Update existing data',
+            label: 'Identify existing records',
+            fields: ['http.lookupType', 'http.existingExtract', 'http.existingLookupName'],
+          },
+          {
+            collapsed: true,
+            label: 'Update existing records',
             fields: [
               'http.compositeMethodUpdate',
               'http.relativeURIUpdate',
@@ -1166,7 +1109,7 @@ export default {
         containers: [
           {
             collapsed: true,
-            label: 'Create new data',
+            label: 'Create new records',
             fields: [
               'http.responseIdPathCreate',
               'http.successPathCreate',
@@ -1175,7 +1118,7 @@ export default {
           },
           {
             collapsed: true,
-            label: 'Update existing data',
+            label: 'Update existing records',
             fields: [
               'http.responseIdPathUpdate',
               'http.successPathUpdate',

@@ -38,9 +38,6 @@ const useStyles = makeStyles(theme => ({
     textOverflow: 'ellipsis',
     color: theme.palette.secondary.main,
   },
-  bannerOffset: {
-    height: theme.pageBarHeight + 58,
-  },
 }));
 
 export default function CeligoPageBar(props) {
@@ -71,7 +68,6 @@ export default function CeligoPageBar(props) {
   return (
     <>
       <Paper
-        data-public
         className={clsx(classes.pageHeader, className, {
           [classes.pageHeaderShift]: drawerOpened,
         })}

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR, RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
 import DynaCeligoTable from './DynaCeligoTable';
+import { mappingFlowsToFlowGroupings } from '../../../utils/flows';
 
 const useStyles = makeStyles(theme => ({
   previewTableWrapper: {
@@ -21,6 +22,8 @@ export default function DynaPreviewComponentsTable({ data: objects, useColumns, 
 
     const result = {};
 
+    const flowGroupings = objects.find(obj => obj.model === 'Integration')?.doc?.flowGroupings;
+
     objects.forEach(obj => {
       let resourceType;
 
@@ -38,6 +41,8 @@ export default function DynaPreviewComponentsTable({ data: objects, useColumns, 
 
       result[resourceType].push(obj);
     });
+
+    result.Flow = [...mappingFlowsToFlowGroupings(flowGroupings, result.Flow, objects.length)];
 
     return result;
   }, [objects]);

@@ -14,6 +14,10 @@ const useStyles = makeStyles(theme => ({
   },
   statusButtonContainer: {
     color: theme.palette.primary.main,
+    '&:hover': {
+      color: theme.palette.primary.light,
+      background: 'none',
+    },
     '& > * .MuiButton-startIcon': {
       marginRight: 0,
     },

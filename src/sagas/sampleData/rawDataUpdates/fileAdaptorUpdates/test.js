@@ -3,8 +3,8 @@
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import { selectors } from '../../../../reducers';
-import saveRawDataForFileAdaptors, { _fetchRawDataForFileAdaptors } from '.';
-import { saveSampleDataOnResource } from '../utils';
+import { _fetchRawDataForFileAdaptors } from '.';
+import { constructResourceFromFormValues } from '../../../utils';
 
 describe('fileAdaptorUpdates sagas', () => {
   describe('_fetchRawDataForFileAdaptors saga', () => {
@@ -138,14 +138,12 @@ describe('fileAdaptorUpdates sagas', () => {
           },
         },
       };
+      const resourceType = 'exports';
+      const values = {};
 
-      return expectSaga(_fetchRawDataForFileAdaptors, { resourceId })
+      return expectSaga(_fetchRawDataForFileAdaptors, { resourceId, resourceType, values })
         .provide([
-          [select(
-            selectors.resource,
-            'exports',
-            resourceId
-          ), ftpExport],
+          [call(constructResourceFromFormValues, { resourceId, resourceType, formValues: values }), ftpExport],
           [select(
             selectors.getResourceSampleDataWithStatus,
             resourceId,
@@ -166,6 +164,7 @@ describe('fileAdaptorUpdates sagas', () => {
         ],
       };
       const resourceId = 'ftp-123';
+      const values = {};
       const ftpImport = {
         _id: 'ftp-123',
         name: 'FTP import',
@@ -182,13 +181,9 @@ describe('fileAdaptorUpdates sagas', () => {
         adaptorType: 'FTPImport',
       };
 
-      return expectSaga(_fetchRawDataForFileAdaptors, { resourceId, type: 'imports' })
+      return expectSaga(_fetchRawDataForFileAdaptors, { resourceId, resourceType: 'imports', values })
         .provide([
-          [select(
-            selectors.resource,
-            'imports',
-            resourceId
-          ), ftpImport],
+          [call(constructResourceFromFormValues, { resourceId, resourceType: 'imports', formValues: values }), ftpImport],
           [select(
             selectors.getResourceSampleDataWithStatus,
             resourceId,
@@ -196,39 +191,6 @@ describe('fileAdaptorUpdates sagas', () => {
           ), { data: rawData }],
         ])
         .returns(rawData)
-        .run();
-    });
-  });
-  describe('saveRawDataForFileAdaptors saga', () => {
-    test('should not call saveSampleDataOnResource if there is no resourceId', () => expectSaga(saveRawDataForFileAdaptors, {})
-      .not.call.fn(saveSampleDataOnResource)
-      .run());
-    test('should call _fetchRawDataForFileAdaptors and not call saveSampleDataOnResource if there is no rawData', () => expectSaga(saveRawDataForFileAdaptors, {})
-      .provide([
-        [call(_fetchRawDataForFileAdaptors, {
-          resourceId: 'export-123',
-          type: 'exports',
-        }), undefined],
-      ])
-      .not.call.fn(saveSampleDataOnResource)
-      .run());
-    test('should call _fetchRawDataForFileAdaptors and also call saveSampleDataOnResource if there is rawData', () => {
-      const resourceId = 'export-123';
-      const rawData = { body: { test: 5 } };
-
-      return expectSaga(saveRawDataForFileAdaptors, { resourceId, type: 'exports' })
-        .provide([
-          [call(_fetchRawDataForFileAdaptors, {
-            resourceId,
-            tempResourceId: undefined,
-            type: 'exports',
-          }), rawData],
-        ])
-        .call(saveSampleDataOnResource, {
-          resourceId,
-          rawData,
-          resourceType: 'exports',
-        })
         .run();
     });
   });

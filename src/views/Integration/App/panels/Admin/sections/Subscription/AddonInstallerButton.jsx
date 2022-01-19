@@ -1,33 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import clsx from 'clsx';
-import { Button, makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../../../../reducers';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../../actions';
 import Spinner from '../../../../../../../components/Spinner';
 import Loader from '../../../../../../../components/Loader';
-
-const useStyles = makeStyles(theme => ({
-  unInstallBtn: {
-    color: theme.palette.error.main,
-    borderColor: theme.palette.error.main,
-    background: 'none',
-    '&:hover': {
-      background: 'none',
-      borderColor: theme.palette.error.main,
-      color: theme.palette.error.light,
-    },
-  },
-}));
+import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 
 export default function AddonInstallerButton({ resource, ...rest }) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const [isInProgress, setIsInProgressStatus] = useState(false);
   const installInprogress = useSelector(
     state => selectors.isAddOnInstallInProgress(state, resource.id)
   );
+  const isLicenseExpired = useSelector(state => selectors.isIntegrationAppLicenseExpired(state, resource?.integrationId));
 
   useEffect(() => {
     if (!installInprogress) {
@@ -63,7 +49,7 @@ export default function AddonInstallerButton({ resource, ...rest }) {
           },
           {
             label: 'Cancel',
-            color: 'secondary',
+            variant: 'text',
           },
         ],
       });
@@ -135,15 +121,14 @@ export default function AddonInstallerButton({ resource, ...rest }) {
   }
 
   return (
-    <Button
+    <FilledButton
       data-test="addOnInstall"
       size="small"
-      variant="outlined"
-      color="primary"
-      className={clsx({[classes.unInstallBtn]: resource.status === 'installed'})}
+      error={resource.status === 'installed'}
+      disabled={resource.status === 'available' && isLicenseExpired}
       {...rest}
       onClick={() => onClick(resource)}>
       {getLabel()}
-    </Button>
+    </FilledButton>
   );
 }

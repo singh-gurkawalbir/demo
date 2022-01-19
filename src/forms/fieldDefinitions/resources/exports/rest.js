@@ -1,6 +1,7 @@
 export default {
 
   'rest.postBody': {
+    isLoggable: false,
     type: 'httprequestbody',
     label: 'HTTP request body',
     connectionId: r => r && r._connectionId,
@@ -16,6 +17,7 @@ export default {
 
   // #region paging
   'rest.pagingMethod': {
+    isLoggable: true,
     type: 'selectwithvalidations',
     helpKey: 'export.http.paging.method',
     label: 'Paging method',
@@ -43,6 +45,7 @@ export default {
   // added 2 separate UI fields for paths for url and token methods
   // to have diff help texts and labels
   'rest.nextPageURLPath': {
+    isLoggable: true,
     type: 'text',
     label: 'Path to next page URL field in HTTP response body',
     required: true,
@@ -60,6 +63,7 @@ export default {
     ],
   },
   'rest.nextPageTokenPath': {
+    isLoggable: true,
     type: 'text',
     label: 'Path to next page token field in HTTP response body',
     required: true,
@@ -77,6 +81,7 @@ export default {
     ],
   },
   'rest.linkHeaderRelation': {
+    isLoggable: true,
     type: 'text',
     label: 'Override link header relation name',
     helpKey: 'export.http.paging.linkHeaderRelation',
@@ -92,6 +97,7 @@ export default {
     ],
   },
   'rest.nextPageRelativeURI': {
+    isLoggable: true,
     type: 'relativeuri',
     label: 'Override relative URI for subsequent page requests',
     helpKey: 'export.http.paging.relativeURI',
@@ -110,6 +116,7 @@ export default {
   // added 2 separate UI fields for paths for page number and token methods
   // to have diff help texts and labels
   'rest.pageArgument': {
+    isLoggable: true,
     type: 'text',
     label: 'Override page number query parameter name',
     visibleWhenAll: [
@@ -120,6 +127,7 @@ export default {
     ],
   },
   'rest.tokenPageArgument': {
+    isLoggable: true,
     type: 'text',
     label: 'Next page token query parameter name',
     defaultValue: r => r?.rest?.pageArgument,
@@ -132,6 +140,7 @@ export default {
     ],
   },
   'rest.pagingPostBody': {
+    isLoggable: true,
     type: 'httprequestbody',
     label: 'Override HTTP request body for subsequent page requests',
     helpKey: 'export.http.paging.body',
@@ -149,6 +158,7 @@ export default {
     ],
   },
   'rest.maxPagePath': {
+    isLoggable: true,
     type: 'text',
     label: 'Path to total number of pages field in HTTP response body',
     visibleWhenAll: [
@@ -163,6 +173,7 @@ export default {
     ],
   },
   'rest.maxCountPath': {
+    isLoggable: true,
     type: 'text',
     label: 'Path to total number of results field in HTTP response body',
     visibleWhenAll: [
@@ -177,6 +188,7 @@ export default {
     ],
   },
   'rest.skipArgument': {
+    isLoggable: true,
     type: 'text',
     label: 'Override skip number query parameter name',
     visibleWhenAll: [
@@ -191,6 +203,7 @@ export default {
     ],
   },
   'rest.relativeURI': {
+    isLoggable: true,
     type: 'relativeuri',
     showLookup: false,
     required: true,
@@ -200,6 +213,7 @@ export default {
     connectionId: r => r && r._connectionId,
   },
   'rest.lastPageValue': {
+    isLoggable: true,
     type: 'text',
     label: 'Paging complete value',
     helpKey: 'export.http.paging.lastPageValues',
@@ -213,21 +227,25 @@ export default {
   // #endregion paging
   // #region transform
   'transform.expression.rules': {
+    isLoggable: true,
     type: 'transformeditor',
     label: 'Transform expression rules',
     sampleData: r => r.sampleData,
     rules: r => r && r.transform && r.transform.rules,
   },
   'transform.script._scriptId': {
+    isLoggable: true,
     type: 'text',
     label: 'Transform script _script ID',
   },
   'transform.script.function': {
+    isLoggable: true,
     type: 'text',
     label: 'Transform script function',
   },
   // #endregion transform
   'rest.once.relativeURI': {
+    isLoggable: true,
     type: 'relativeuri',
     showLookup: false,
     label: 'Relative URI to update records',
@@ -241,6 +259,7 @@ export default {
     ],
   },
   'rest.once.method': {
+    isLoggable: true,
     type: 'select',
     label: 'HTTP method to update records',
     required: true,
@@ -260,6 +279,7 @@ export default {
     ],
   },
   'rest.once.postBody': {
+    isLoggable: true,
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
     contentType: 'json',

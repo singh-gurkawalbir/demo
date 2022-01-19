@@ -1,5 +1,6 @@
 export default {
   'import.netsuite.recordType': {
+    isLoggable: true,
     label: 'Record type',
     required: true,
     type: 'refreshableselect',
@@ -12,6 +13,7 @@ export default {
     connectionId: r => r && r.ssLinkedConnectionId,
   },
   'import.netsuite.subRecordImports': {
+    isLoggable: true,
     required: false,
     type: 'suitescriptnetsuitesubrecords',
     connectionId: r => r && r.ssLinkedConnectionId,
@@ -35,6 +37,7 @@ export default {
     ],
   },
   'import.netsuite.ignoreExisting': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Ignore existing records',
     defaultValue: r => !!(r?.import?.netsuite?.ignoreExisting),
@@ -46,6 +49,7 @@ export default {
     ],
   },
   'import.netsuite.ignoreMissing': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Ignore missing records',
     defaultValue: r => !!(r?.import?.netsuite?.ignoreMissing),
@@ -57,6 +61,7 @@ export default {
     ],
   },
   'import.netsuite.internalIdLookup.expression': {
+    isLoggable: true,
     type: 'suitescriptnetsuitelookup',
     label: 'How can we find existing records?',
     required: true,

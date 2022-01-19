@@ -12,8 +12,8 @@ import FieldMessage from '../FieldMessage';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
-import { getDateMask, FIXED_DATE_FORMAT } from './DynaDateTime';
 import CalendarIcon from '../../../icons/CalendarIcon';
+import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(theme => ({
   dynaDateLabelWrapper: {
@@ -53,10 +53,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-
 export default function DynaDate(props) {
   const classes = useStyles();
-  const { id, label, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId, closeOnSelect } = props;
+  const { id, label, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId, closeOnSelect, isLoggable } = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -104,15 +103,26 @@ export default function DynaDate(props) {
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils} variant="filled">
 
         <KeyboardDatePicker
+          {...isLoggableAttr(isLoggable)}
           autoOk={closeOnSelect}
           disableToolbar
           disabled={disabled}
           className={classes.keyBoardDateWrapper}
           variant="inline"
           fullWidth
-          format={FIXED_DATE_FORMAT}
-          placeholder={FIXED_DATE_FORMAT}
-          mask={getDateMask(FIXED_DATE_FORMAT)}
+          format={dateFormat}
+          onKeyDown={e => {
+            // this is specifically for qa to inject their date time string
+            // they should alter the input dom to add a qa attribute prior to injection for date time
+            if (e.target.hasAttribute('qa')) return;
+
+            e.preventDefault();
+          }}
+          onKeyPress={e => {
+            if (e.target.hasAttribute('qa')) return;
+
+            e.preventDefault();
+          }}
           value={dateValue}
           onChange={setDateValue}
           InputProps={{ className: classes.inputDate }}

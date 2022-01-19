@@ -2,6 +2,7 @@ import { isNewId } from '../../../../utils/resource';
 
 export default {
   'salesforce.api': {
+    isLoggable: true,
     type: 'radiogroupforresetfields',
     label: 'Salesforce API type',
     required: true,
@@ -35,6 +36,7 @@ export default {
     },
   },
   'salesforce.document.id': {
+    isLoggable: true,
     type: 'uri',
     label: 'Document ID',
     showExtract: false,
@@ -56,6 +58,7 @@ export default {
     ],
   },
   'salesforce.attachment.id': {
+    isLoggable: true,
     type: 'uri',
     label: 'Attachment ID',
     showExtract: false,
@@ -77,6 +80,7 @@ export default {
     ],
   },
   'salesforce.document.name': {
+    isLoggable: true,
     type: 'uri',
     label: 'Document name',
     required: true,
@@ -98,6 +102,7 @@ export default {
     ],
   },
   'salesforce.attachment.name': {
+    isLoggable: true,
     type: 'uri',
     label: 'Attachment name',
     required: true,
@@ -119,7 +124,10 @@ export default {
     ],
   },
   'salesforce.attachment.description': {
-    type: 'text',
+    isLoggable: true,
+    type: 'uri',
+    showExtract: false,
+    showLookup: false,
     label: 'Description',
     visibleWhenAll: [
       {
@@ -137,6 +145,7 @@ export default {
     ],
   },
   'salesforce.document.folderId': {
+    isLoggable: true,
     type: 'uri',
     label: 'Folder ID',
     required: true,
@@ -158,6 +167,7 @@ export default {
     ],
   },
   'salesforce.contentVersion.contentDocumentId': {
+    isLoggable: true,
     type: 'uri',
     label: 'Content document ID',
     showExtract: false,
@@ -178,6 +188,7 @@ export default {
     ],
   },
   'salesforce.contentVersion.title': {
+    isLoggable: true,
     type: 'uri',
     label: 'Title',
     showExtract: false,
@@ -198,6 +209,7 @@ export default {
     ],
   },
   'salesforce.contentVersion.tagCsv': {
+    isLoggable: true,
     type: 'uri',
     label: 'Tag csv',
     showExtract: false,
@@ -218,6 +230,7 @@ export default {
     ],
   },
   'salesforce.contentVersion.contentLocation': {
+    isLoggable: true,
     type: 'select',
     label: 'Content location',
     options: [
@@ -244,6 +257,7 @@ export default {
     ],
   },
   'salesforce.contentVersion.pathOnClient': {
+    isLoggable: true,
     type: 'uri',
     label: 'Path on client',
     showExtract: false,
@@ -264,6 +278,7 @@ export default {
     ],
   },
   'salesforce.attachment.parentId': {
+    isLoggable: true,
     type: 'uri',
     label: 'Parent ID',
     required: true,
@@ -285,6 +300,7 @@ export default {
     ],
   },
   'salesforce.document.contentType': {
+    isLoggable: true,
     type: 'uri',
     label: 'Content type',
     showExtract: false,
@@ -305,6 +321,7 @@ export default {
     ],
   },
   'salesforce.attachment.contentType': {
+    isLoggable: true,
     type: 'uri',
     label: 'Content type',
     showExtract: false,
@@ -325,7 +342,10 @@ export default {
     ],
   },
   'salesforce.document.developerName': {
-    type: 'text',
+    isLoggable: true,
+    type: 'uri',
+    showExtract: false,
+    showLookup: false,
     label: 'Developer name',
     visibleWhenAll: [
       {
@@ -343,6 +363,7 @@ export default {
     ],
   },
   'salesforce.document.isInternalUseOnly': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'For internal use only?',
     required: true,
@@ -362,6 +383,7 @@ export default {
     ],
   },
   'salesforce.document.isPublic': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Is public document?',
     required: true,
@@ -381,6 +403,7 @@ export default {
     ],
   },
   'salesforce.attachment.isPrivate': {
+    isLoggable: true,
     type: 'checkbox',
     label: 'Is private?',
     visibleWhenAll: [
@@ -399,6 +422,7 @@ export default {
     ],
   },
   'salesforce.blobsObjectType': {
+    isLoggable: true,
     type: 'select',
     label: 'sObject type',
     defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
@@ -420,6 +444,7 @@ export default {
     ],
   },
   'salesforce.sObjectType': {
+    isLoggable: true,
     label: 'sObject type',
     type: 'refreshableselect',
     filterKey: 'salesforce-sObjects',
@@ -438,6 +463,7 @@ export default {
     ],
   },
   'salesforce.blobOperation': {
+    isLoggable: true,
     type: 'radiogroup',
     label: 'Operation',
     required: true,
@@ -462,6 +488,7 @@ export default {
     ],
   },
   'salesforce.blobContentVersionOperation': {
+    isLoggable: true,
     type: 'radiogroup',
     label: 'Operation',
     required: true,
@@ -487,6 +514,7 @@ export default {
     ],
   },
   'salesforce.operation': {
+    isLoggable: true,
     type: 'radiogroupforresetfields',
     label: 'Operation',
     required: true,
@@ -524,6 +552,7 @@ export default {
     },
   },
   'salesforce.compositeOperation': {
+    isLoggable: true,
     type: 'radiogroupforresetfields',
     label: 'Operation',
     required: true,
@@ -559,6 +588,7 @@ export default {
     },
   },
   'salesforce.idLookup.whereClause': {
+    isLoggable: true,
     type: 'salesforcelookup',
     label: 'How can we find existing records?',
     required: true,
@@ -597,6 +627,7 @@ export default {
     ],
   },
   'salesforce.idLookup.extract': {
+    isLoggable: true,
     type: 'textwithflowsuggestion',
     showSuggestionsWithoutHandlebar: true,
     skipExtractWrapOnSpecialChar: true,

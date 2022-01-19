@@ -3,17 +3,20 @@ import { ABS_URL_VALIDATION_PATTERN } from '../../../utils/constants';
 
 export default {
   name: {
+    isLoggable: true,
     type: 'text',
     label: 'Name',
     required: true,
   },
   description: {
+    isLoggable: true,
     type: 'text',
     multiline: true,
     maxRows: 5,
     label: 'Description',
   },
   websiteURL: {
+    isLoggable: true,
     type: 'text',
     label: 'Website URL',
     validWhen: {
@@ -28,10 +31,12 @@ export default {
     label: 'Contact emails',
   },
   installerFunction: {
+    isLoggable: true,
     type: 'text',
     label: 'Installer function',
   },
   applications: {
+    isLoggable: true,
     type: 'selectmultiapplication',
     placeholder: 'Choose applications',
     label: 'Applications',

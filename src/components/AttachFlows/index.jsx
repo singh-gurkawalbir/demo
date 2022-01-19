@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import Button from '@material-ui/core/Button';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../LoadResources';
@@ -8,10 +7,13 @@ import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import {FilledButton, TextButton} from '../Buttons';
+import { UNASSIGNED_SECTION_ID } from '../../utils/constants';
+import ActionGroup from '../ActionGroup';
 
 const flowsFilterConfig = { type: 'flows' };
 
-export default function AttachFlows({ onClose, integrationId }) {
+export default function AttachFlows({ integrationId, flowGroupingId }) {
   const allFlows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
@@ -21,6 +23,10 @@ export default function AttachFlows({ onClose, integrationId }) {
   ]);
   const hasFlows = !!flows.length;
   const [selected, setSelected] = useState([]);
+  const [showDialog, setShowDialog] = useState(true);
+  const toggleDialog = useCallback(() => {
+    setShowDialog(!showDialog);
+  }, [showDialog]);
   const handleSelectChange = flows => {
     const selectedFlows = [];
 
@@ -47,8 +53,15 @@ export default function AttachFlows({ onClose, integrationId }) {
         },
       ];
 
-      dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
+      if (flowGroupingId && flowGroupingId !== UNASSIGNED_SECTION_ID) {
+        patchSet.push({
+          op: 'add',
+          path: '/_flowGroupingId',
+          value: flowGroupingId,
+        });
+      }
+
+      dispatch(actions.resource.patchAndCommitStaged('flows', flow._id, patchSet));
     });
 
     dispatch(
@@ -57,51 +70,52 @@ export default function AttachFlows({ onClose, integrationId }) {
         integrationId
       )
     );
-    onClose();
+    toggleDialog();
   }, [
     connectionIdsToRegister,
     dispatch,
     flows,
     integrationId,
-    onClose,
+    toggleDialog,
     selected,
+    flowGroupingId,
   ]);
 
   return (
-    <ModalDialog show maxWidth={false} onClose={onClose}>
-      <div>Attach flows</div>
-      {hasFlows && (
+    <>
+      {showDialog && (
+        <ModalDialog show maxWidth={false} onClose={toggleDialog}>
+          <div>Attach flows</div>
+          {hasFlows && (
 
-      <div>
-        <LoadResources
-          required
-          resources="flows, connections, exports, imports">
-          <CeligoTable
-            data={flows}
-            onSelectChange={handleSelectChange}
-            {...metadata}
-            selectableRows
-          />
-        </LoadResources>
-      </div>
+          <div>
+            <LoadResources
+              required
+              resources="flows, connections, exports, imports">
+              <CeligoTable
+                data={flows}
+                onSelectChange={handleSelectChange}
+                {...metadata}
+                selectableRows
+              />
+            </LoadResources>
+          </div>
+          )}
+          {hasFlows ? (
+            <ActionGroup>
+              <FilledButton
+                data-test="attachFlows"
+                onClick={handleAttachFlowsClick}>
+                Attach
+              </FilledButton>
+              <TextButton
+                onClick={toggleDialog}>
+                Cancel
+              </TextButton>
+            </ActionGroup>
+          ) : <div>No flows found</div>}
+        </ModalDialog>
       )}
-      {hasFlows ? (
-        <div>
-          <Button
-            data-test="attachFlows"
-            onClick={handleAttachFlowsClick}
-            variant="outlined"
-            color="primary">
-            Attach
-          </Button>
-          <Button
-            variant="text"
-            color="primary"
-            onClick={onClose}>
-            Cancel
-          </Button>
-        </div>
-      ) : <div>No flows found</div>}
-    </ModalDialog>
+    </>
   );
 }

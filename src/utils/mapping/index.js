@@ -332,7 +332,7 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
     return modifiedExtract;
   }
 
-  if (!flowSampleData && /^\[.*\]$/.test(extract)) {
+  if (!flowSampleData && /^\[.*\]$/.test(extract) && !/^\[".*"\]$/.test(extract)) {
     // if extract starts with [ and ends with ]
     // find all ']' in the extract and replace it with '\]' excluding first '[' and last ']'
     return extract.replace(/^(\[)(.*)(\])$/, '$2').replace(/\\\]/g, ']');
@@ -358,6 +358,7 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
     // So wnwrap the extract only if it doesnt have a dot or sublist character in it
     if (
       /^\[.*\]$/.test(extract) && // If extract is wrapped in square braces i,e starts with [ and ends with ]
+      !/^\[".*"\]$/.test(extract) && // do not unwrap if extract is wrapped in double Quotes, as it will be interpreted as hardcodedValue ex: ["Receipt"]
       /\W/.test(extract.replace(/^\[|]$/g, '')) && // and the wrapped content contains special character
       !/\./.test(extract.replace(/^\[|]$/g, '')) // and none of the special characters is a dot
     ) {
@@ -398,8 +399,13 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
     return modifiedExtract;
   }
 
+  const isExtractAlreadyWrappedByUser = /^\[.*\]$/.test(extract) && // If extract is wrapped in square braces i,e starts with [ and ends with ]
+  /\W/.test(extract.replace(/^\[|]$/g, '')) && // and the wrapped content contains special character
+  !/\./.test(extract.replace(/^\[|]$/g, '')); // and none of the special characters is a dot
+
   if (
     !flowSampleData &&
+    !isExtractAlreadyWrappedByUser &&
     extract.indexOf('[*].') === -1 &&
     extract.indexOf('.') === -1
   ) {

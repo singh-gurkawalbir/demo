@@ -36,6 +36,13 @@ export default function reducer(state = {}, action) {
         draft.helperFunctions = helperFunctions;
         break;
 
+      case actionTypes.EDITOR.INIT: {
+        // initStatus is used to determine if parent url
+        // redirection needs to happen or not on page refresh
+        draft[id] = {initStatus: 'inProgress'};
+        break;
+      }
+
       case actionTypes.EDITOR.INIT_COMPLETE: {
         draft[id] = options;
         break;
@@ -192,6 +199,14 @@ export default function reducer(state = {}, action) {
         }
         break;
       }
+
+      case actionTypes.EDITOR.PREVIEW.REQUEST:
+        if (!draft[id]) break;
+        draft[id].previewStatus = 'requested';
+        delete draft[id].error;
+        delete draft[id].errorLine;
+        delete draft[id].violations;
+        break;
 
       case actionTypes.EDITOR.PREVIEW.RESPONSE: {
         if (!draft[id]) break;

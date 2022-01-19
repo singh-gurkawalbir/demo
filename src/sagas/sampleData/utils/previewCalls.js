@@ -8,9 +8,10 @@ import {
   fetchResourceDataForNewFlowResource,
   filterPendingResources,
 } from './flowDataUtils';
-import { getFormattedResourceForPreview } from '../../../utils/flowData';
+import { getFormattedResourceForPreview, getPostDataForDeltaExport, isPostDataNeededInResource } from '../../../utils/flowData';
 import { isNewId } from '../../../utils/resource';
 import { EMPTY_RAW_DATA } from '../../../utils/constants';
+import { getConstructedResourceObj } from '../flows/utils';
 
 export function* pageProcessorPreview({
   flowId,
@@ -88,9 +89,18 @@ export function* pageProcessorPreview({
     });
   } else if (resourceType === 'exports' && pageProcessorMap[_pageProcessorId]?.doc) {
     // remove tx,filters,hooks from PP Doc to get preview data for _pageProcessorId
-    const { transform, filter, hooks, ...rest } = pageProcessorMap[_pageProcessorId].doc;
+    const { transform, filter, hooks, ...lookupDocWithoutProcessors } = pageProcessorMap[_pageProcessorId].doc;
 
-    pageProcessorMap[_pageProcessorId].doc = rest;
+    pageProcessorMap[_pageProcessorId].doc = lookupDocWithoutProcessors;
+    // update options for the lookups if incase they were not added before ( incase of custom pp doc or new pp doc )
+    if (
+      isPostDataNeededInResource(lookupDocWithoutProcessors) &&
+      !pageProcessorMap[_pageProcessorId].options
+    ) {
+      pageProcessorMap[_pageProcessorId].options = {
+        postData: getPostDataForDeltaExport(lookupDocWithoutProcessors),
+      };
+    }
   }
 
   const body = { flow, _pageProcessorId, pageGeneratorMap, pageProcessorMap, includeStages };
@@ -137,14 +147,14 @@ export function* exportPreview({
   runOffline = false,
   throwOnError = false,
   flowId,
+  formKey,
 }) {
   if (!resourceId) return;
-  const { merged: resource } = yield select(
-    selectors.resourceData,
-    'exports',
+  const resource = yield call(getConstructedResourceObj, {
     resourceId,
-    SCOPES.VALUE
-  );
+    resourceType: 'exports',
+    formKey,
+  });
   let body = deepClone(resource);
 
   // getFormattedResourceForPreview util removes unnecessary props of resource that should not be sent in preview calls
@@ -152,8 +162,11 @@ export function* exportPreview({
   body = getFormattedResourceForPreview(body);
 
   const hasValidRawDataKey = body.rawData && body.rawData !== EMPTY_RAW_DATA;
+  const isOfflineMode = runOffline && hasValidRawDataKey && !formKey;
 
-  if (runOffline && hasValidRawDataKey) {
+  // offline mode works only incase of a valid rawDataKey
+  // also incase of a saved resource ( without a formKey )
+  if (isOfflineMode) {
     body = {
       ...body,
       verbose: true,
@@ -167,7 +180,6 @@ export function* exportPreview({
   }
 
   const path = '/exports/preview';
-  const isRunOfflineConfigured = runOffline && hasValidRawDataKey;
 
   // BE need flowId and integrationId in the preview call
   // if in case integration settings were used in export
@@ -183,13 +195,13 @@ export function* exportPreview({
       path,
       opts: { method: 'POST', body },
       message: 'Loading',
-      hidden: isRunOfflineConfigured ? true : hidden,
+      hidden: isOfflineMode ? true : hidden,
     });
 
     return previewData;
   } catch (e) {
     // When runOffline mode fails make preview call without offlineMode and move further
-    if (isRunOfflineConfigured) {
+    if (isOfflineMode) {
       return yield call(exportPreview, {
         resourceId,
         hidden,

@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Grid, List, ListItem, makeStyles } from '@material-ui/core';
 import { NavLink, useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../../reducers';
-import { SCOPES } from '../../../../../sagas/resourceForm';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
@@ -48,9 +47,36 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  flowTitle: {
+    display: 'flex',
+    minHeight: 42,
+    alignItems: 'center',
+    position: 'relative',
+    '&>div': {
+      paddingTop: 0,
+      minWidth: theme.spacing(3),
+    },
+    '&>a': {
+      padding: theme.spacing(0),
+    },
+    '&:before': {
+      content: '""',
+      width: '3px',
+      top: 0,
+      height: '100%',
+      position: 'absolute',
+      background: 'transparent',
+      left: '0px',
+    },
+    '&:hover': {
+      '&:before': {
+        background: theme.palette.primary.main,
+      },
+    },
+  },
 }));
 
-export const useSettingsPatch = (integrationId, sectionId, path) => {
+const useSettingsPatch = (integrationId, sectionId, path) => {
   const allSections = useSelectorMemo(selectors.mkGetAllCustomFormsForAResource, 'integrations', integrationId)?.allSections;
 
   if (!sectionId || sectionId === 'general') return path;
@@ -69,6 +95,11 @@ function CustomSettings({ integrationId, sectionId }) {
 
   const {settings} = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, 'integrations', integrationId, sectionId || 'general') || emptyObj;
 
+  const hasPreSaveHook = useSelector(state => {
+    const integration = selectors.resourceData(state, 'integrations', integrationId);
+
+    return !!(integration?.preSave?._scriptId && integration.preSave?.function);
+  });
   const canEditIntegration = useSelector(
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId).edit
@@ -132,26 +163,25 @@ function CustomSettings({ integrationId, sectionId }) {
           value,
         },
       ];
+      const refetchResources = isFrameWork2 || hasPreSaveHook;
 
-      dispatch(
-        actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
-      );
-      dispatch(
-        actions.resource.commitStaged(
-          'integrations',
-          integrationId,
-          SCOPES.VALUE,
-          {action: isFrameWork2 ? 'UpdatedIA2.0Settings' : 'DIYSettings'}
-        )
-      );
+      if (isFrameWork2) {
+        dispatch(actions.resource.patchAndCommitStaged('integrations', integrationId, patchSet, {
+          options: {
+            refetchResources,
+          },
+        }));
+      } else {
+        dispatch(actions.resource.patch('integrations', integrationId, patchSet));
+      }
     },
-    [dispatch, integrationId, isFrameWork2, patchPath]
+    [dispatch, integrationId, isFrameWork2, patchPath, hasPreSaveHook]
   );
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
       path: `/integrations/${integrationId}`,
-      method: 'put',
+      method: isFrameWork2 ? 'put' : 'PATCH',
       onSave: handleSubmit,
     }
   );

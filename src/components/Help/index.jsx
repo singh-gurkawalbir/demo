@@ -52,6 +52,7 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
 
   const open = !!anchorEl;
   const helpTextValue = helpText || getHelpTextMap()[helpKey];
+
   // console.log('what help', helpText, helpKey, getHelpTextMap()[helpKey]);
 
   if (!helpTextValue) return null;

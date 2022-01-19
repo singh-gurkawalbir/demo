@@ -1,9 +1,6 @@
-import { Typography, Button } from '@material-ui/core';
+import { Typography, Dialog, makeStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
-import Dialog from '@material-ui/core/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import SignInForm from '../../views/SignIn/SigninForm';
 import SignInSSOForm from '../../views/SignIn/SignInSSOForm';
 import { selectors } from '../../reducers';
@@ -12,13 +9,16 @@ import ModalDialog from '../ModalDialog';
 import getRoutePath from '../../utils/routePaths';
 import LoadResources from '../LoadResources';
 import { emptyList, HOME_PAGE_PATH} from '../../utils/constants';
+import { OutlinedButton} from '../Buttons';
+import useConfirmDialog from '../ConfirmDialog';
 
-const contentWrapper = {
-  minWidth: 432,
-  marginBottom: -104,
-  paddingTop: 24,
-
-};
+const useStyles = makeStyles({
+  contentWrapper: {
+    minWidth: 432,
+    marginBottom: -104,
+    paddingTop: 24,
+  },
+});
 
 const LoggedInWithADifferentAccount = () => (
   <ModalDialog show>
@@ -30,15 +30,14 @@ const LoggedInWithADifferentAccount = () => (
       <br />
       This may have happened automatically because another user signed in from the same browser. To continue using this account, you will need to sign in again. This is done to protect your account and to ensure the privacy of your information.
     </>
-    <Button
+    <OutlinedButton
       data-test="ok"
       onClick={() => {
         window.location.replace(getRoutePath(HOME_PAGE_PATH));
       }}
-      variant="outlined"
-      color="primary">
+     >
       Sign In
-    </Button>
+    </OutlinedButton>
   </ModalDialog>
 );
 
@@ -49,15 +48,14 @@ const StaleUIVersion = () => (
       It looks like your browser has cached an older version of our app.
       Click &apos;Reload&apos; to refresh the page.
     </Typography>
-    <Button
+    <OutlinedButton
       data-test="ok"
       onClick={() => {
         window.location.reload();
       }}
-      variant="outlined"
-      color="primary">
+      >
       Reload
-    </Button>
+    </OutlinedButton>
   </ModalDialog>
 );
 const UserAcceptedAccountTransfer = () => (
@@ -66,46 +64,20 @@ const UserAcceptedAccountTransfer = () => (
     <Typography>
       You are now the owner of this account. Go to <em>My account &gt; Users</em> to invite and manage permissions for other users in this account.
     </Typography>
-    <Button
+    <OutlinedButton
       data-test="ok"
       onClick={() => {
         window.location.reload();
       }}
-      variant="outlined"
-      color="primary">
+     >
       Reload
-    </Button>
+    </OutlinedButton>
   </ModalDialog>
 );
-const WarningSessionContent = () => {
-  const dispatch = useDispatch();
-
-  return (
-    <>
-      <DialogTitle>
-        <Typography>Your session is about to expire</Typography>
-        <br />
-        <Typography>
-          Please click the following button to resume working
-        </Typography>
-      </DialogTitle>
-      <DialogContent>
-        <Button
-          data-test="resumeWorking"
-          onClick={() => {
-            dispatch(actions.user.profile.request('Refreshing session'));
-          }}
-          variant="contained"
-          color="primary">
-          Resume working
-        </Button>
-      </DialogContent>
-    </>
-  );
-};
 
 const ExpiredSessionContent = () => {
   const showSSOSignIn = useSelector(state => selectors.isUserAllowedOnlySSOSignIn(state));
+  const classes = useStyles();
 
   return (
     <ModalDialog show disableEnforceFocus>
@@ -114,7 +86,7 @@ const ExpiredSessionContent = () => {
         <br />
         <Typography>Please sign in again</Typography>
       </div>
-      <div style={contentWrapper}>
+      <div className={classes.contentWrapper}>
         {showSSOSignIn ? <SignInSSOForm /> : <SignInForm dialogOpen />}
       </div>
     </ModalDialog>
@@ -123,6 +95,8 @@ const ExpiredSessionContent = () => {
 
 export default function AlertDialog() {
   const dispatch = useDispatch();
+  const classes = useStyles();
+  const { confirmDialog } = useConfirmDialog();
   const sessionValidTimestamp = useSelector(state => selectors.sessionValidTimestamp(state));
   const showSessionStatus = useSelector(state => selectors.showSessionStatus(state));
   const isAccountOwner = useSelector(state => selectors.isAccountOwner(state));
@@ -151,6 +125,30 @@ export default function AlertDialog() {
     };
   }, [dispatch, isAuthenticated, isUiVersionDifferent, isUserAcceptedAccountTransfer]);
 
+  // useEffect for showing session expire warning
+  useEffect(() => {
+    if (showSessionStatus === 'warning') {
+      confirmDialog({
+        message: 'Your session is about to expire. Do you want to stay signed in?',
+        title: 'Session expiring',
+        hideClose: true,
+        buttons: [
+          { label: 'Yes, keep me signed in',
+            onClick: () => {
+              dispatch(actions.user.profile.request('Refreshing session'));
+            },
+          },
+          { label: 'No, sign me out',
+            variant: 'text',
+            onClick: () => {
+              dispatch(actions.auth.logout());
+            },
+          },
+        ],
+      });
+    }
+  }, [confirmDialog, dispatch, showSessionStatus]);
+
   useEffect(() => {
     let warningSessionTimer;
     let expiredSessionTimer;
@@ -177,12 +175,8 @@ export default function AlertDialog() {
   return (
     <LoadResources required resources={isAccountOwner ? 'ssoclients' : emptyList}>
       {showSessionStatus && (
-        <Dialog disableEnforceFocus open style={contentWrapper}>
-          {showSessionStatus === 'warning' ? (
-            <WarningSessionContent />
-          ) : (
-            showSessionStatus === 'expired' && <ExpiredSessionContent />
-          )}
+        <Dialog disableEnforceFocus open className={classes.contentWrapper}>
+          {showSessionStatus === 'expired' && <ExpiredSessionContent />}
         </Dialog>
       )}
       {!showSessionStatus && isUiVersionDifferent && <StaleUIVersion />}

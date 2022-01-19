@@ -1,5 +1,6 @@
 import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
-import { isEmpty } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
+
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -11,16 +12,23 @@ import {
 import { commitStagedChanges, commitStagedChangesWrapper } from '../resources';
 import connectionSagas, { createPayload, pingConnectionWithId } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
-import { isNewId } from '../../utils/resource';
+import {
+  isNewId,
+  isFileAdaptor,
+  isAS2Resource,
+  isRestCsvMediaTypeExport,
+} from '../../utils/resource';
+import { _fetchRawDataForFileAdaptors } from '../sampleData/rawDataUpdates/fileAdaptorUpdates';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject} from '../../utils/constants';
+import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA } from '../../utils/constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, flowLastModifiedPatch } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 import { getAssistantFromConnection } from '../../utils/connections';
 import { getAssistantConnectorType } from '../../constants/applications';
+import { constructResourceFromFormValues } from '../utils';
 
 export const SCOPES = {
   META: 'meta',
@@ -120,6 +128,54 @@ export function* saveDataLoaderRawData({ resourceId, resourceType, values }) {
   return { ...values, '/rawData': rawDataKey };
 }
 
+function* updateFileAdaptorSampleData({ resourceId, resourceType, values }) {
+  const resourceObj = yield call(constructResourceFromFormValues, { resourceId, resourceType, formValues: values });
+  const connectionObj = yield select(
+    selectors.resource,
+    'connections',
+    resourceObj && resourceObj._connectionId
+  );
+
+  if (
+    isFileAdaptor(resourceObj) ||
+    isAS2Resource(resourceObj) ||
+    (resourceType === 'exports' && (isRestCsvMediaTypeExport(resourceObj, connectionObj)))
+  ) {
+    // IO-23787 The latest sample data which is edited, is available on the resourceObject
+    // Handled in DynaFileDefintionEditor_afe when user updates the sample data and saves it
+    if (['filedefinition', 'fixed', 'delimited/edifact'].includes(resourceObj?.file?.type)) {
+      if (resourceObj?.sampleData) return { ...values, '/sampleData': resourceObj?.sampleData };
+    }
+
+    const sampleData = yield call(_fetchRawDataForFileAdaptors, {
+      resourceId,
+      resourceType,
+      values,
+    });
+
+    if (sampleData !== undefined) {
+      return { ...values, '/sampleData': sampleData };
+    }
+  }
+
+  return values;
+}
+
+function* clearRawDataFromFormValues({ values, resourceId, resourceType }) {
+  const { merged: resourceObj } = yield select(
+    selectors.resourceData,
+    resourceType,
+    resourceId
+  );
+
+  // Incase of Data loader, no need to remove rawData as it is handled when the flow is run
+  if (!resourceObj?.rawData || resourceObj?.rawData === EMPTY_RAW_DATA || resourceObj?.type === 'simple') {
+    return values;
+  }
+
+  return { ...values, '/rawData': EMPTY_RAW_DATA };
+}
+
 export function* deleteUISpecificValues({ values, resourceId }) {
   const valuesCopy = { ...values };
 
@@ -129,14 +185,27 @@ export function* deleteUISpecificValues({ values, resourceId }) {
   });
 
   // TO DO: This logic should be revisited
-  if (valuesCopy['/file/sortByFields'] || valuesCopy['/file/groupByFields']) {
+  const csvKeyColumns = valuesCopy['/file/csv']?.keyColumns;
+  const xlsxKeyColumns = valuesCopy['/file/xlsx/keyColumns'];
+  const groupByFields = valuesCopy['/file/groupByFields'];
+  let canDeprecateOldFields = !!valuesCopy['/file/sortByFields'];
+
+  if ((csvKeyColumns && !isEqual(csvKeyColumns, groupByFields)) || (xlsxKeyColumns && !isEqual(xlsxKeyColumns, groupByFields))) {
+    canDeprecateOldFields = true;
+  }
+  // Existing keycolumns should be removed if any changes are done in group by fields or sort by fields.
+  if (canDeprecateOldFields) {
     if (valuesCopy['/file/csv']?.keyColumns) {
       valuesCopy['/file/csv'].keyColumns = undefined;
     }
+    if (valuesCopy['/file/xlsx/keyColumns']) {
+      valuesCopy['/file/xlsx/keyColumns'] = undefined;
+    }
+  } else if ((csvKeyColumns && isEqual(csvKeyColumns, groupByFields)) || (xlsxKeyColumns && isEqual(xlsxKeyColumns, groupByFields))) {
+    // Group by fields is initial copy of key columns, If group by fields is not modified and it is same as key columns, then it should be removed.
+    valuesCopy['/file/groupByFields'] = undefined;
   }
-  if (valuesCopy['/file/xlsx/keyColumns']) {
-    valuesCopy['/file/xlsx/keyColumns'] = undefined;
-  }
+
   // remove any staged values tied to it the ui fields
   const predicateForPatchFilter = patch =>
     !UI_FIELD_VALUES.includes(patch.path);
@@ -243,8 +312,7 @@ export function* submitFormValues({
   });
 
   if (resourceType === 'exports') {
-    delete formValues['/rawData'];
-
+    formValues = yield call(clearRawDataFromFormValues, { resourceId, resourceType, values: formValues });
     // We have a special case for exports that define a "Data loader" flow.
     // We need to store the raw data s3 key so that when a user 'runs' the flow,
     // we can post the runKey to the api. For file connectors, we do not use rawData
@@ -255,6 +323,10 @@ export function* submitFormValues({
       values: formValues,
     });
   }
+  if (['exports', 'imports'].includes(resourceType)) {
+    formValues = yield call(updateFileAdaptorSampleData, { resourceId, resourceType, values: formValues });
+  }
+
   let patchSet;
   let finalValues;
 

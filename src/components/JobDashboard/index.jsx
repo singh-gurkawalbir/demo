@@ -24,7 +24,7 @@ const useStyles = makeStyles(({
   },
 }));
 
-export const getSelectedJobsAndRetriableJobs = selectedJobs => {
+const getSelectedJobsAndRetriableJobs = selectedJobs => {
   let numJobsSelected = 0;
   let numRetriableJobsSelected = 0;
 
@@ -400,19 +400,17 @@ export default function JobDashboard({
 
   return (
     <LoadResources required resources="integrations,flows,exports,imports">
-      <span data-public>
-        <Filters
-          filterKey={filterKey}
-          integrationId={integrationId}
-          flowId={flowId}
-          numJobsSelected={numJobsSelected}
-          numRetriableJobsSelected={numRetriableJobsSelected}
-          onActionClick={handleActionClick}
-          disableResolve={disableResolve}
-          disableRetry={disableRetry}
-          isFlowBuilderView={isFlowBuilderView}
+      <Filters
+        filterKey={filterKey}
+        integrationId={integrationId}
+        flowId={flowId}
+        numJobsSelected={numJobsSelected}
+        numRetriableJobsSelected={numRetriableJobsSelected}
+        onActionClick={handleActionClick}
+        disableResolve={disableResolve}
+        disableRetry={disableRetry}
+        isFlowBuilderView={isFlowBuilderView}
       />
-      </span>
       <JobTable
         classes={classes.jobTable}
         onSelectChange={handleSelectChange}

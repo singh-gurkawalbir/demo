@@ -1,7 +1,7 @@
 import React, { useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles, Divider, Typography, Button } from '@material-ui/core';
+import { makeStyles, Divider, Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import ApplicationImg from '../../../icons/ApplicationImg';
@@ -10,6 +10,7 @@ import PreviewTable from '../common/PreviewTable';
 import AddIcon from '../../../icons/AddIcon';
 import getRoutePath from '../../../../utils/routePaths';
 import messageStore from '../../../../constants/messages';
+import { OutlinedButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -198,7 +199,7 @@ export default function TemplatePreview() {
         },
         {
           label: 'Cancel',
-          color: 'secondary',
+          variant: 'text',
         },
       ],
     });
@@ -206,7 +207,7 @@ export default function TemplatePreview() {
 
   return (
     <>
-      <div data-public className={classes.appLogosContainer}>
+      <div className={classes.appLogosContainer}>
         <div className={classes.applogos}>
           <ApplicationImg markOnly size="small" type={template.applications[0]} />
           {template.applications[1] && (
@@ -220,37 +221,33 @@ export default function TemplatePreview() {
           </>
           )}
         </div>
-        <Typography data-public variant="h3" className={classes.appsTitle}>{name}</Typography>
+        <Typography variant="h3" className={classes.appsTitle}>{name}</Typography>
       </div>
 
-      <div data-public className={classes.container}>
+      <div className={classes.container}>
         <div className={classes.appDetails}>
-          <Button
-            variant="outlined"
-            color="primary"
+          <OutlinedButton
             onClick={handleInstallIntegration}>
             Install now
-          </Button>
+          </OutlinedButton>
           <br />
           {hasReadMe && (
-            <Button
-              color="secondary"
-              variant="outlined"
+            <OutlinedButton
               onClick={handleReadMeClick}>
               View Readme
-            </Button>
+            </OutlinedButton>
           )}
           <Divider variant="middle" className={classes.divider} />
-          <Typography>{description}</Typography>
+          <Typography data-private>{description}</Typography>
 
           <Divider variant="middle" className={classes.divider} />
           <div className={classes.listItem}>
             <Typography variant="h4" className={classes.keyName}>Created by: </Typography>
-            <Typography>{username}</Typography>
+            <Typography data-private>{username}</Typography>
           </div>
           <div className={classes.listItem}>
             <Typography variant="h4" className={classes.keyName}>Company: </Typography>
-            <Typography>{company}</Typography>
+            <Typography data-private>{company}</Typography>
           </div>
 
         </div>

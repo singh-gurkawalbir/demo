@@ -121,6 +121,8 @@ export default function Security() {
           required: true,
           defaultValue: oidcClient?.oidc?.issuerURL,
           helpKey: 'sso.issuerURL',
+          noApi: true,
+          isLoggable: false,
         },
         clientId: {
           id: 'clientId',
@@ -130,6 +132,8 @@ export default function Security() {
           required: true,
           defaultValue: oidcClient?.oidc?.clientId,
           helpKey: 'sso.clientId',
+          isLoggable: false,
+          noApi: true,
         },
         clientSecret: {
           id: 'clientSecret',
@@ -139,6 +143,8 @@ export default function Security() {
           label: 'Client secret',
           required: true,
           helpKey: 'sso.clientSecret',
+          isLoggable: false,
+          noApi: true,
         },
         orgId: {
           id: 'orgId',
@@ -148,6 +154,8 @@ export default function Security() {
           required: true,
           defaultValue: oidcClient?.orgId,
           helpKey: 'sso.orgId',
+          isLoggable: false,
+          noApi: true,
         },
       },
     }),
@@ -193,8 +201,7 @@ export default function Security() {
       value: formValues.clientSecret,
     });
 
-    dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('ssoclients', resourceId, 'value'));
+    dispatch(actions.resource.patchAndCommitStaged('ssoclients', resourceId, patchSet));
   }, [dispatch, resourceId]);
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(

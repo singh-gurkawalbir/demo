@@ -18,7 +18,7 @@ const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) 
 
   if (disabledActionTitle) {
     return (
-      <Tooltip data-public title={disabledActionTitle} placement="bottom" >
+      <Tooltip title={disabledActionTitle} placement="bottom" >
         <div>
           <MenuItem data-test={key} disabled>
             {actionIcon}

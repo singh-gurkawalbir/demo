@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Button from '@material-ui/core/Button';
 import actions from '../../actions';
 import LoadResources from '../LoadResources';
 import CeligoTable from '../CeligoTable';
 import { selectors } from '../../reducers';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
+import { OutlinedButton } from '../Buttons';
 
 export default function RegisterConnections({ onClose, integrationId }) {
   const connectionsToReg = useSelector(state =>
@@ -47,13 +47,12 @@ export default function RegisterConnections({ onClose, integrationId }) {
         </LoadResources>
       </div>
       <div>
-        <Button
+        <OutlinedButton
           data-test="registerConnections"
           onClick={handleRegisterClick}
-          variant="outlined"
-          color="primary">
+          >
           Register
-        </Button>
+        </OutlinedButton>
       </div>
     </ModalDialog>
   );

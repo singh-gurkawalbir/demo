@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Button } from '@material-ui/core';
 import ExportIcon from '../../../components/icons/ExportsIcon';
 import DataLoaderIcon from '../../../components/icons/DataLoaderIcon';
 import LookupIcon from '../../../components/icons/LookUpIcon';
@@ -8,6 +7,7 @@ import ListenerIcon from '../../../components/icons/ListenerIcon';
 import ImportIcon from '../../../components/icons/ImportsIcon';
 import TransferDownIcon from '../../../components/icons/TransferDownIcon';
 import TransferUpIcon from '../../../components/icons/TransferUpIcon';
+import { TextButton } from '../../../components/Buttons';
 
 const blockMap = {
   newPG: { label: 'Add source', Icon: ExportIcon },
@@ -21,46 +21,27 @@ const blockMap = {
   exportTransfer: { label: 'Transfer', Icon: TransferDownIcon },
   importTransfer: { label: 'Transfer', Icon: TransferUpIcon },
 };
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'relative',
-  },
-  blockButton: {
-    padding: 0,
-    marginRight: theme.spacing(2),
-    textTransform: 'none',
-    '&:hover': {
-      backgroundColor: 'transparent',
-      '& svg': {
-        color: theme.palette.primary.main,
-      },
+export const resourceButtonStyles = makeStyles(theme => ({
+  resourceButton: {
+    marginRight: theme.spacing(1),
+    '& >* svg': {
+      fontSize: `${theme.spacing(6)}px !important`,
     },
-  },
-  blockIcon: {
-    width: 48,
-    height: 48,
-  },
-  resourceBtnName: {
-    color: theme.palette.secondary.main,
   },
 }));
 
 export default function ResourceButton({ onClick, variant }) {
-  const classes = useStyles();
+  const classes = resourceButtonStyles();
   const block = blockMap[variant];
 
   return (
-    <Button
-      size="small"
-      className={classes.blockButton}
+    <TextButton
       data-test={block.label}
-      onClick={onClick}>
-      <div>
-        <block.Icon className={classes.blockIcon} />
-        <Typography variant="body2" className={classes.resourceBtnName}>{block.label}</Typography>
-      </div>
-    </Button>
+      onClick={onClick}
+      className={classes.resourceButton}
+      vertical
+      startIcon={<block.Icon />}>
+      {block.label}
+    </TextButton>
   );
 }

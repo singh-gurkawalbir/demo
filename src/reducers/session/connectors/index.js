@@ -1,57 +1,55 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES as PUBLISH_STATES } from '../../comms/networkComms';
 
 export default (state = {}, action) => {
   const { type, metadata, fieldName, fieldType, _integrationId } = action;
-  const newState = { ...state };
 
-  if (!newState[_integrationId]) {
-    newState[_integrationId] = {};
+  if (!_integrationId) {
+    return state;
   }
 
-  switch (type) {
-    case actionTypes.CONNECTORS.METADATA_REQUEST:
-      newState[_integrationId][fieldName] = { isLoading: true, fieldType };
+  return produce(state, draft => {
+    if (!draft[_integrationId]) {
+      draft[_integrationId] = {};
+    }
 
-      return newState;
-    case actionTypes.CONNECTORS.METADATA_RECEIVED:
-      newState[_integrationId][fieldName] = {
-        isLoading: false,
-        fieldType,
-        data: metadata,
-        shouldReset: true,
-      };
-
-      return newState;
-    case actionTypes.CONNECTORS.METADATA_FAILURE:
-      newState[_integrationId][fieldName] = { isLoading: false, fieldType };
-
-      return newState;
-    case actionTypes.CONNECTORS.METADATA_CLEAR:
-      newState[_integrationId][fieldName] = {};
-
-      return newState;
-    case actionTypes.CONNECTORS.STATUS_CLEAR:
-      if (newState[_integrationId][fieldName]) {
-        newState[_integrationId][fieldName].isLoading = false;
-      }
-
-      return newState;
-    case actionTypes.CONNECTORS.PUBLISH.REQUEST:
-      newState[_integrationId].publishStatus = PUBLISH_STATES.LOADING;
-
-      return newState;
-    case actionTypes.CONNECTORS.PUBLISH.SUCCESS:
-      newState[_integrationId].publishStatus = PUBLISH_STATES.SUCCESS;
-
-      return newState;
-    case actionTypes.CONNECTORS.PUBLISH.ERROR:
-      newState[_integrationId].publishStatus = PUBLISH_STATES.ERROR;
-
-      return newState;
-    default:
-      return state;
-  }
+    switch (type) {
+      case actionTypes.CONNECTORS.METADATA_REQUEST:
+        draft[_integrationId][fieldName] = { isLoading: true, fieldType };
+        break;
+      case actionTypes.CONNECTORS.METADATA_RECEIVED:
+        draft[_integrationId][fieldName] = {
+          isLoading: false,
+          fieldType,
+          data: metadata,
+          shouldReset: true,
+        };
+        break;
+      case actionTypes.CONNECTORS.METADATA_FAILURE:
+        draft[_integrationId][fieldName] = { isLoading: false, fieldType };
+        break;
+      case actionTypes.CONNECTORS.METADATA_CLEAR:
+        draft[_integrationId][fieldName] = {};
+        break;
+      case actionTypes.CONNECTORS.STATUS_CLEAR:
+        if (draft[_integrationId][fieldName]) {
+          draft[_integrationId][fieldName].isLoading = false;
+        }
+        break;
+      case actionTypes.CONNECTORS.PUBLISH.REQUEST:
+        draft[_integrationId].publishStatus = PUBLISH_STATES.LOADING;
+        break;
+      case actionTypes.CONNECTORS.PUBLISH.SUCCESS:
+        draft[_integrationId].publishStatus = PUBLISH_STATES.SUCCESS;
+        break;
+      case actionTypes.CONNECTORS.PUBLISH.ERROR:
+        draft[_integrationId].publishStatus = PUBLISH_STATES.ERROR;
+        break;
+      default:
+        break;
+    }
+  });
 };
 
 // #region PUBLIC SELECTORS

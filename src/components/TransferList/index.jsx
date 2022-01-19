@@ -5,9 +5,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
-import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import { ListSubheader } from '@material-ui/core';
+import OutlinedButton from '../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -137,8 +137,8 @@ export default function TransferList(props) {
     <div className={classes.root}>
       <div>{customList(left)}</div>
       <div className={classes.actions}>
-        <Button
-          variant="outlined"
+        <OutlinedButton
+          color="secondary"
           size="small"
           className={classes.button}
           onClick={handleAllRight}
@@ -146,29 +146,29 @@ export default function TransferList(props) {
           disabled={left.length === 0}
           aria-label="move all right">
           ≫
-        </Button>
-        <Button
-          variant="outlined"
+        </OutlinedButton>
+        <OutlinedButton
           size="small"
+          color="secondary"
           className={classes.button}
           data-test="moveSelectedRight"
           onClick={handleCheckedRight}
           disabled={leftChecked.length === 0}
           aria-label="move selected right">
           &gt;
-        </Button>
-        <Button
-          variant="outlined"
+        </OutlinedButton>
+        <OutlinedButton
           size="small"
+          color="secondary"
           data-test="moveSelectedLeft"
           className={classes.button}
           onClick={handleCheckedLeft}
           disabled={rightChecked.length === 0}
           aria-label="move selected left">
           &lt;
-        </Button>
-        <Button
-          variant="outlined"
+        </OutlinedButton>
+        <OutlinedButton
+          color="secondary"
           size="small"
           data-test="moveAllLeft"
           className={classes.button}
@@ -176,7 +176,7 @@ export default function TransferList(props) {
           disabled={right.length === 0}
           aria-label="move all left">
           ≪
-        </Button>
+        </OutlinedButton>
       </div>
       <div>{customList(right)}</div>
     </div>

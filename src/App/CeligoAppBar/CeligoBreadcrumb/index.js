@@ -18,6 +18,8 @@ import suiteScriptRoutes from './suiteScript';
 import getRoutePath from '../../../utils/routePaths';
 import ConnectorCrumb from './crumbs/Connector';
 import {HOME_PAGE_PATH} from '../../../utils/constants';
+import FlowStepDebugLogs from './crumbs/FlowStepDebugLogs';
+import FlowGroupCrumb from './crumbs/FlowGroup';
 
 const modelLabelToPlural = resourceType => MODEL_PLURAL_TO_LABEL[resourceType] ? `${MODEL_PLURAL_TO_LABEL[resourceType]}s` : '';
 const useStyles = makeStyles(theme => ({
@@ -77,6 +79,13 @@ const flowBuilderRoutes = [
 const integrationAppRoutes = [
   ...flowBuilderRoutes,
   {
+    path: '/flows/sections/:sectionId',
+    breadcrumb: FlowGroupCrumb,
+    childRoutes: [
+      ...flowBuilderRoutes,
+    ],
+  },
+  {
     path: '/admin',
     breadcrumb: 'Admin',
     childRoutes: [
@@ -113,10 +122,22 @@ const routes = [
     breadcrumb: IntegrationCrumb,
     childRoutes: [
       {
+        path: '/flows/sections/:sectionId',
+        breadcrumb: FlowGroupCrumb,
+        childRoutes: [
+          ...flowBuilderRoutes,
+        ],
+      },
+      { path: '/dashboard', breadcrumb: 'Dashboard' },
+      { path: '/connections', breadcrumb: 'Connections' },
+      { path: '/users', breadcrumb: 'Users' },
+      { path: '/auditlog', breadcrumb: 'Audit log' },
+      { path: '/notifications', breadcrumb: 'Notifications' },
+      {
         path: '/admin',
         breadcrumb: 'Admin',
         childRoutes: [
-          { path: '/flows', breadcrumb: 'Flows' },
+          { path: '/flows', breadcrumb: 'Flows'},
           { path: '/dashboard', breadcrumb: 'Dashboard' },
           { path: '/connections', breadcrumb: 'Connections' },
           { path: '/readme', breadcrumb: 'Readme' },
@@ -276,7 +297,7 @@ const commonChildRoutes = [
     path: '/edit/:resourceType/:id',
     breadcrumb: EditResourceTypeCrumb,
     childRoutes: [
-      { path: '/logs', breadcrumb: 'View listener debug logs' },
+      { path: '/logs', breadcrumb: FlowStepDebugLogs },
     ],
   },
 ];

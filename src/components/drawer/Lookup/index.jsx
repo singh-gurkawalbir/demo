@@ -2,7 +2,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Switch, Route, useRouteMatch, useHistory, useLocation, matchPath } from 'react-router-dom';
 import {
-  Button,
   makeStyles,
   TableCell,
   TableRow,
@@ -17,8 +16,8 @@ import DrawerFooter from '../Right/DrawerFooter';
 import AddEditLookup from './Manage';
 import SaveButtonGroup from './Manage/SaveButtonGroup';
 import LookupListRow from '../../Lookup/LookupListRow';
-import IconTextButton from '../../IconTextButton';
 import AddIcon from '../../icons/AddIcon';
+import { OutlinedButton, TextButton } from '../../Buttons';
 import { LOOKUP_DRAWER_FORM_KEY } from '../../../utils/constants';
 import { hashCode } from '../../../utils/string';
 import useFormOnCancelContext from '../../FormOnCancelContext';
@@ -138,14 +137,14 @@ export default function LookupDrawer({
     },
     [history, lookupIndex, onSave, value]
   );
-  const selectedLookup = (lookupIndex >= 0 && lookupIndex < value.length) ? value[lookupIndex] : {};
+  const selectedLookup = (value && lookupIndex >= 0 && lookupIndex < value.length) ? value[lookupIndex] : {};
   const {setCancelTriggered} = useFormOnCancelContext(LOOKUP_DRAWER_FORM_KEY);
   const handleClose = isExact ? history.goBack : setCancelTriggered;
 
   useEffect(() => {
     // update the state if the lookups are modified
     // from parent component
-    setValue(lookups);
+    setValue(lookups || []);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lookupsHash]);
 
@@ -178,15 +177,13 @@ export default function LookupDrawer({
           </Route>
           <Route path={`${match.url}/${rootPath}`}>
             <>
-              <IconTextButton
-                variant="text"
-                color="primary"
+              <TextButton
                 className={classes.actionButton}
                 onClick={handleAdd}
+                startIcon={<AddIcon />}
                 data-test="Create lookup">
-                <AddIcon />
                 Create lookup
-              </IconTextButton>
+              </TextButton>
               <div className={classes.listing}>
                 <Table
                   classes={{
@@ -217,13 +214,11 @@ export default function LookupDrawer({
       </DrawerContent>
       <DrawerFooter>
         {isExact ? (
-          <Button
+          <OutlinedButton
             data-test="closeLookupListing"
-            variant="outlined"
-            color="primary"
             onClick={history.goBack}>
             Close
-          </Button>
+          </OutlinedButton>
         ) : (
           <SaveButtonGroup
             value={selectedLookup}

@@ -1,6 +1,7 @@
 import shortid from 'shortid';
 import { groupBy } from 'lodash';
 import { createSelector } from 'reselect';
+import cloneDeep from 'lodash/cloneDeep';
 import actionTypes from '../../../actions/types';
 import {
   JOB_TYPES,
@@ -656,9 +657,12 @@ selectors.flowJobs = createSelector(
         additionalProps.uiStatus = JOB_STATUS.RETRYING;
       }
 
+      let jobChildren = job.children;
+
       if (job.children && job.children.length > 0) {
       // eslint-disable-next-line no-param-reassign
-        job.children = job.children.filter(cJob => !!cJob).map(cJob => {
+        jobChildren = job.children.filter(cJob => !!cJob).map(childJob => {
+          const cJob = cloneDeep(childJob);
           const additionalChildProps = {
             uiStatus: cJob.status,
             duration: getJobDuration(cJob),
@@ -711,7 +715,7 @@ selectors.flowJobs = createSelector(
         });
       }
 
-      return { ...job, ...additionalProps };
+      return { ...job, children: jobChildren, ...additionalProps };
     });
   }
 );
@@ -899,6 +903,7 @@ selectors.jobErrors = (state, jobId) => {
             RETRY_OBJECT_TYPES.FILE,
             RETRY_OBJECT_TYPES.OBJECT,
             RETRY_OBJECT_TYPES.PAGE,
+            RETRY_OBJECT_TYPES.FILE_BATCH_IMPORT,
           ].includes(retryObject.type),
           isDownloadable: retryObject.type === RETRY_OBJECT_TYPES.FILE,
         },

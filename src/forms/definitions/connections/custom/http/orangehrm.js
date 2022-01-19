@@ -55,6 +55,8 @@ export default {
       defaultValue: '',
       label: 'Password',
       inputType: 'password',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'orangehrm.connection.http.encrypted.password',
     },
     'http._iClientId': {

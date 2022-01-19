@@ -6,10 +6,9 @@ import CeligoTruncate from '../../components/CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   description: {
-    minHeight: 115,
-    maxHeight: 115,
+    minHeight: theme.spacing(13),
+    maxHeight: theme.spacing(13),
     overflowY: 'auto',
-    marginBottom: theme.spacing(1),
     fontSize: 15,
   },
   name: {
@@ -38,30 +37,28 @@ export default function ConnectorTemplateContent({ resource, application }) {
 
   return (
     <>
-      <div className={classes.content}>
-        <Typography className={classes.name} variant="body2">
-          <CeligoTruncate lines={2} dataPublic placement="top" enterDelay={100}>
-            {name}
-          </CeligoTruncate>
-        </Typography>
-        <div className={classes.imgChip}>
-          <ApplicationImg
-            assistant={assistant}
-            size="small"
+      <Typography className={classes.name} variant="body2">
+        <CeligoTruncate lines={2} placement="top" enterDelay={100}>
+          {name}
+        </CeligoTruncate>
+      </Typography>
+      <div className={classes.imgChip}>
+        <ApplicationImg
+          assistant={assistant}
+          size="small"
         />
-          {free && (
+        {free && (
           <Chip
             variant="outlined"
             color="primary"
             size="small"
             label="Free"
           />
-          )}
-        </div>
-        <Typography variant="body2" className={classes.description}>
-          {description}
-        </Typography>
+        )}
       </div>
+      <Typography variant="body2" className={classes.description}>
+        {description}
+      </Typography>
     </>
   );
 }

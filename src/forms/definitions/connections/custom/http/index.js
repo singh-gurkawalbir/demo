@@ -216,6 +216,17 @@ import braintree from './braintree';
 import zenefits from './zenefits';
 import saphana from './saphana';
 import mixpanel from './mixpanel';
+import copper from './copper';
+import fifteenfive from './fifteenfive';
+import docebo from './docebo';
+import breezyhr from './breezyhr';
+import mercadolibre from './mercadolibre';
+import confluencecloud from './confluencecloud';
+import sapbusinessone from './sapbusinessone';
+import bartender from './bartender';
+import zohoexpense from './zohoexpense';
+import jazzhr from './jazzhr';
+import segment from './segment';
 
 export default {
   channelape,
@@ -436,4 +447,15 @@ export default {
   zenefits,
   saphana,
   mixpanel,
+  copper,
+  '15five': fifteenfive,
+  breezyhr,
+  docebo,
+  mercadolibre,
+  confluencecloud,
+  sapbusinessone,
+  bartender,
+  zohoexpense,
+  jazzhr,
+  segment,
 };

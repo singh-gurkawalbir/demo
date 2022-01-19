@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import IconButton from '@material-ui/core/IconButton';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import clsx from 'clsx';
@@ -171,3 +172,15 @@ export default function NotificationToaster(props) {
       />
   );
 }
+
+NotificationToaster.propTypes = {
+  children: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  onClose: PropTypes.func,
+  variant: PropTypes.oneOf(['warning', 'error', 'success', 'info']),
+  size: PropTypes.oneOf(['small', 'medium', 'large']),
+};
+
+NotificationToaster.defaultProps = {
+  size: 'small',
+};

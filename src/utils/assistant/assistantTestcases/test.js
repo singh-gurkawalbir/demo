@@ -25,7 +25,9 @@ import {
   convertToImport,
   isMetaRequiredValuesMet,
   isAppConstantContact,
+  isAmazonHybridConnection,
 } from '..';
+import { getPathParams } from '../pathParamUtils';
 
 describe('getMatchingRoute', () => {
   const testCases = [
@@ -1229,7 +1231,7 @@ describe('convertToReactFormFields', () => {
             showLookup: false,
             required: false,
             readOnly: false,
-            defaultValue: 'abc',
+            defaultValue: '',
           },
         },
         layout: {
@@ -1542,7 +1544,7 @@ describe('convertToReactFormFields', () => {
               id: 'id_input',
               fieldType: 'integer',
               name: 'Input',
-              defaultValue: 121,
+              defaultValue: '',
             },
             { id: 'id_some.thing', fieldType: 'something' },
           ],
@@ -1603,7 +1605,7 @@ describe('convertToReactFormFields', () => {
             required: true,
             readOnly: false,
             type: 'multiselect',
-            defaultValue: [],
+            defaultValue: '',
           },
           id_text: {
             id: 'id_text',
@@ -1681,7 +1683,7 @@ describe('convertToReactFormFields', () => {
                 pattern: '^[\\d]+$',
               },
             },
-            defaultValue: 121,
+            defaultValue: '',
           },
           id_input2: {
             id: 'id_input2',
@@ -1690,7 +1692,7 @@ describe('convertToReactFormFields', () => {
             required: false,
             readOnly: false,
             type: 'textwithflowsuggestion',
-            defaultValue: '123',
+            defaultValue: '',
             showLookup: false,
           },
           'id_some/thing': {
@@ -1821,12 +1823,12 @@ describe('convertToReactFormFields', () => {
               id: 'id_input',
               fieldType: 'integer',
               name: 'Input',
-              defaultValue: 121,
+              defaultValue: '',
             },
             {
               id: 'id_input2',
               name: 'Input2',
-              defaultValue: 123,
+              defaultValue: '',
             },
             { id: 'id_some.thing', fieldType: 'something' },
           ],
@@ -1883,7 +1885,7 @@ describe('convertToReactFormFields', () => {
             required: true,
             readOnly: false,
             type: 'multiselect',
-            defaultValue: [],
+            defaultValue: '',
           },
           id_text: {
             id: 'id_text',
@@ -1961,7 +1963,7 @@ describe('convertToReactFormFields', () => {
                 pattern: '^[\\d]+$',
               },
             },
-            defaultValue: 121,
+            defaultValue: '',
           },
           id_input2: {
             id: 'id_input2',
@@ -1970,7 +1972,7 @@ describe('convertToReactFormFields', () => {
             required: false,
             readOnly: false,
             type: 'textwithflowsuggestion',
-            defaultValue: '123',
+            defaultValue: '',
             showLookup: false,
           },
           'id_some/thing': {
@@ -2100,7 +2102,7 @@ describe('convertToReactFormFields', () => {
               id: 'id_input',
               fieldType: 'integer',
               name: 'Input',
-              defaultValue: 121,
+              defaultValue: '',
             },
             {
               id: 'id_input2',
@@ -2262,6 +2264,30 @@ const assistantData = {
                 paging: { pagingMethod: 'nextpageurl', nextPagePath: 'npp' },
               },
             ],
+          },
+          {
+            id: 'projects',
+            name: 'Projects',
+            endpoints: [{
+              id: 'get_projects',
+              url: '/api/workspaces/:_workspace_id/projects',
+              name: 'Get Projects',
+              resourcePath: '',
+              pathParameters: [
+                {
+                  id: 'workspace_id',
+                  name: 'Workspace Id',
+                  fieldType: 'integer',
+                },
+              ],
+              queryParameters: [
+                {
+                  id: 'filter[]=name',
+                  name: 'Name',
+                  fieldType: 'input',
+                },
+              ],
+            }],
           },
         ],
       },
@@ -2618,6 +2644,65 @@ describe('convertFromExport', () => {
           allowUndefinedResource: false,
           pagingMethod: 'nextpageurl',
           nextPagePath: 'npp',
+        },
+      },
+      assistantData,
+      'rest',
+    ],
+    [
+      {
+        bodyParams: {},
+        exportType: undefined,
+        operation: 'get_projects',
+        operationDetails: {
+          headers: {
+            hardcoded: 'header',
+            manual: '',
+          },
+          headersMetadata: [],
+          id: 'get_projects',
+          name: 'Get Projects',
+          pathParameters: [
+            {
+              fieldType: 'integer',
+              id: 'workspace_id',
+              name: 'Workspace Id',
+            },
+          ],
+          queryParameters: [
+            {
+              fieldType: 'input',
+              id: 'filter[]=name',
+              name: 'Name',
+            },
+          ],
+          resourcePath: '',
+          url: '/api/workspaces/:_workspace_id/projects',
+        },
+        pathParams: {
+          workspace_id: '111',
+        },
+        queryParams: {
+          'filter[]=name': '123',
+        },
+        resource: 'projects',
+        version: 'v1',
+      },
+      {
+        assistant: 'liquidplanner',
+        adaptorType: 'RESTExport',
+        assistantMetadata: {
+          resource: 'projects',
+          version: 'v1',
+          operation: 'get_projects',
+        },
+        rest: {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          relativeURI: '/api/workspaces/111/projects?filter[]=name=123',
+          method: 'GET',
+          pagingMethod: 'linkheader',
+          allowUndefinedResource: false,
+          linkHeaderRelation: 'next',
         },
       },
       assistantData,
@@ -3147,6 +3232,182 @@ describe('convertFromImport', () => {
       adaptorType: 'RESTImport',
 
     }, restAssistantData, 'rest'],
+    [
+      {
+        bodyParams: {},
+        lookupType: 'lookup',
+        lookupQueryParams: {
+          'filter[]=name': '{{test123}}',
+        },
+        lookupUrl: '/api/workspaces/:_workspace_id/projects',
+        lookups: {
+          project_id: {
+            operation: 'get_projects',
+          },
+        },
+        operation: 'create_or_update_a_project',
+        operationDetails: {
+          headers: {},
+          headersMetadata: [],
+          howToFindIdentifier: {
+            lookup: {
+              extract: 'id',
+              id: 'get_projects',
+              url: '/api/workspaces/:_workspace_id/projects',
+            },
+          },
+          id: 'create_or_update_a_project',
+          lookupOperationDetails: {
+            headers: {},
+            headersMetadata: [],
+            id: 'get_projects',
+            name: 'Get Projects',
+            paging: {
+              pageArgument: 'page',
+              pagingMethod: 'pageargument',
+            },
+            pathParameters: [
+              {
+                fieldType: 'integer',
+                id: 'workspace_id',
+                name: 'Workspace Id',
+              },
+            ],
+            queryParameters: [
+              {
+                fieldType: 'input',
+                id: 'filter[]=name',
+                name: 'Name',
+              },
+            ],
+            resourcePath: '',
+            url: '/api/workspaces/:_workspace_id/projects',
+          },
+          method: [
+            'PUT',
+            'POST',
+          ],
+          name: 'Create or Update a Project',
+          parameters: [
+            {
+              id: 'workspace_id',
+              in: 'path',
+              name: 'Workspace Id',
+              required: true,
+            },
+            {
+              id: 'project_id',
+              in: 'path',
+              isIdentifier: true,
+              required: true,
+            },
+          ],
+          pathParameters: [],
+          queryParameters: [],
+          url: [
+            '/api/workspaces/:_workspace_id/projects/:_project_id',
+            '/api/workspaces/:_workspace_id/projects',
+          ],
+        },
+        pathParams: {
+          project_id: 'project_id',
+          workspace_id: '{{id}}',
+        },
+        queryParams: {},
+        resource: 'projects',
+        sampleData: undefined,
+        version: 'v1',
+      },
+      {
+        assistant: 'liquidplanner',
+        assistantMetadata: {
+          resource: 'projects',
+          version: 'v1',
+          operation: 'create_or_update_a_project',
+          lookups: {
+            project_id: {
+              operation: 'get_projects',
+            },
+          },
+        },
+        lookups: [
+          {
+            method: 'GET',
+            postBody: '',
+            name: 'project_id',
+            extract: 'id',
+            relativeURI: '/api/workspaces/{{id}}/projects?filter[]=name={{test123}}',
+          },
+        ],
+        http: {
+          relativeURI: [
+            '/api/workspaces/{{{id}}}/projects/{{{lookup.project_id}}}',
+            '/api/workspaces/{{{id}}}/projects',
+          ],
+          method: [
+            'PUT',
+            'POST',
+          ],
+          body: [
+            null,
+            null,
+          ],
+          batchSize: 1,
+          ignoreLookupName: 'project_id',
+          requestMediaType: 'json',
+          successMediaType: 'json',
+          errorMediaType: 'json',
+          requestType: [
+            'UPDATE',
+            'CREATE',
+          ],
+          strictHandlebarEvaluation: true,
+          sendPostMappedData: true,
+          formType: 'assistant',
+          lookups: [
+            {
+              method: 'GET',
+              name: 'project_id',
+              extract: 'id',
+              relativeURI: '/api/workspaces/{{{id}}}/projects?filter[]=name={{{test123}}}',
+              body: '',
+              useImportHeaders: false,
+            },
+          ],
+        },
+        rest: {
+          relativeURI: [
+            '/api/workspaces/{{id}}/projects/{{{project_id}}}',
+            '/api/workspaces/{{id}}/projects',
+          ],
+          method: [
+            'PUT',
+            'POST',
+          ],
+          body: [
+            null,
+            null,
+          ],
+          ignoreLookupName: 'project_id',
+          requestType: [
+            'UPDATE',
+            'CREATE',
+          ],
+          lookups: [
+            {
+              method: 'GET',
+              postBody: '',
+              name: 'project_id',
+              extract: 'id',
+              relativeURI: '/api/workspaces/{{id}}/projects?filter[]=name={{test123}}',
+            },
+          ],
+        },
+        adaptorType: 'RESTImport',
+
+      },
+      restAssistantData,
+      'rest'],
   ];
 
   each(testCases).test(
@@ -3616,5 +3877,153 @@ describe('isMetaRequiredValuesMet', () => {
     test('should return false if application is not constant contact', () => {
       expect(isAppConstantContact('square')).toBeFalsy();
     });
+  });
+});
+describe('getPathParams util function cases', () => {
+  const pathParams = [
+    {
+      id: 'id',
+      config: {
+        prefix: "(guid'",
+        suffix: "')",
+      },
+      required: true,
+    },
+    {
+      id: 'action',
+      required: true,
+    },
+    {
+      id: 'action2',
+      config: {
+        prefix: '/action2/',
+      },
+    },
+    {
+      id: 'action3',
+      config: {
+        prefix: '/action3/',
+      },
+    },
+    {
+      id: 'action4',
+      config: {
+        prefix: '(',
+        suffix: ')',
+      },
+    },
+    {
+      id: 'action5',
+      config: {
+        prefix: '#',
+        suffix: '$',
+      },
+    },
+  ];
+
+  test('should return empty when invalid arguments are sent', () => {
+    const actualPath = 'some/lists(guid\'ABC\')/thing/XYZ/some/other/XYZ';
+    const relativePath = 'some/lists:_id/thing:_action2:_action3/some/other/:_action';
+    const expected = {};
+
+    expect(getPathParams({relativePath: undefined, actualPath: undefined, pathParametersInfo: undefined})).toMatchObject(expected);
+    expect(getPathParams({relativePath: undefined, actualPath, pathParametersInfo: pathParams})).toMatchObject(expected);
+    expect(getPathParams({relativePath, actualPath: undefined, pathParametersInfo: pathParams})).toMatchObject(expected);
+    expect(getPathParams({relativePath, actualPath, pathParametersInfo: undefined})).toMatchObject(expected);
+  });
+
+  test('should return required params when only required params are present', () => {
+    const relativePath = 'some/lists:_id/thing:_action2:_action3/some/other/:_action';
+    const actualPath = 'some/lists(guid\'ABC\')/thing/some/other/XYZ';
+    const expected = {
+      id: 'ABC',
+      action: 'XYZ',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: pathParams,
+    })).toMatchObject(expected);
+  });
+  test('should return optional when only optional params are present', () => {
+    const relativePath = 'some/thing:_action2:_action3/some/other';
+    const actualPath = 'some/thing/action2/sdf/action3/sdfa/some/other';
+    const expected = {
+      action2: 'sdf',
+      action3: 'sdfa',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: pathParams,
+    })).toMatchObject(expected);
+  });
+  test('should return both required and optional params when both are present', () => {
+    const relativePath = 'some/lists:_id/thing:_action2:_action3/some/other/:_action';
+    const actualPath = 'some/list(guid\'ABC\')/thing/action2/sdf/action3/sdfa/some/other/XYZ';
+    const expected = {
+      id: 'ABC',
+      action2: 'sdf',
+      action3: 'sdfa',
+      action: 'XYZ',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: pathParams,
+    })).toMatchObject(expected);
+  });
+  test('should return both required and optional params when both are present with different prefixes', () => {
+    const relativePath = 'some/lists:_id/thing:_action2:_action3/some/other/:_action/OnlineDelivery:_action4';
+    const actualPath = 'some/list(guid\'ABC\')/thing/action2/sdf/action3/sdfa/some/other/XYZ/OnlineDelivery(4)';
+    const expected = {
+      id: 'ABC',
+      action2: 'sdf',
+      action3: 'sdfa',
+      action: 'XYZ',
+      action4: '4',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: pathParams,
+    })).toMatchObject(expected);
+  });
+  test('should return both required and optional params when both are present with different prefixes which includes special characters', () => {
+    const relativePath = 'some/lists:_id/thing:_action2:_action3/some/other/:_action/OnlineDelivery:_action4/guid:_action5';
+    const actualPath = 'some/list(guid\'ABC\')/thing/action2/sdf/action3/sdfa/some/other/XYZ/OnlineDelivery(4)/guid#45$';
+    const expected = {
+      id: 'ABC',
+      action2: 'sdf',
+      action3: 'sdfa',
+      action: 'XYZ',
+      action4: '4',
+      action5: '45',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: pathParams,
+    })).toMatchObject(expected);
+  });
+});
+
+describe('isAmazonHybridConnection util test cases', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(isAmazonHybridConnection()).toBeFalsy();
+  });
+  test('should return true if connection assistant is amazonmws and http type is Amazon-Hybrid', () => {
+    expect(isAmazonHybridConnection({assistant: 'amazonmws', http: {type: 'Amazon-Hybrid'}})).toBeTruthy();
+  });
+  test('should return false if connection assistant is not amazonmws and http type is Amazon-Hybrid', () => {
+    expect(isAmazonHybridConnection({assistant: 'amazonsellercentral', http: {type: 'Amazon-Hybrid'}})).toBeFalsy();
+  });
+  test('should return false if connection assistant is amazonmws and http type is Amazon-SP-API', () => {
+    expect(isAmazonHybridConnection({assistant: 'amazonsellercentral', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
   });
 });

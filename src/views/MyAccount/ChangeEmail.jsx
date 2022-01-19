@@ -28,6 +28,7 @@ const changeEmailFieldMeta = {
       type: 'text',
       label: 'New email',
       required: true,
+      isLoggable: false,
     },
     password: {
       id: 'password',
@@ -36,6 +37,7 @@ const changeEmailFieldMeta = {
       inputType: 'password',
       label: 'Password',
       required: true,
+      isLoggable: false,
     },
     label: {
       id: 'label',
@@ -97,25 +99,30 @@ export default function ChangeEmail({ show, onClose }) {
   return (
     <ModalDialog show={show} onClose={onClose}>
       Change email
-      {error && (
+      <>
+        {error && (
         <NotificationToaster variant="error" size="large">
           <Typography variant="h6">{message}</Typography>
         </NotificationToaster>
-      )}
-      {!success && (
+        )}
+        {!success && (
         <div className={classes.container}>
           <DynaForm
             formKey={formKey} />
-          <DynaSubmit
-            formKey={formKey}
-            data-test="changeEmail"
-            id="changeEmail"
-            disabled={isLoading}
-            onClick={handleEmailChangeClick}>
-            {isLoading ? 'Changing email...' : 'Change email'}
-          </DynaSubmit>
         </div>
+        )}
+      </>
+      {!success && (
+      <DynaSubmit
+        formKey={formKey}
+        data-test="changeEmail"
+        id="changeEmail"
+        disabled={isLoading}
+        onClick={handleEmailChangeClick}>
+        {isLoading ? 'Changing email...' : 'Change email'}
+      </DynaSubmit>
       )}
+
     </ModalDialog>
   );
 }
