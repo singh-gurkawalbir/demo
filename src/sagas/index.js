@@ -138,6 +138,13 @@ export function* apiCallWithPaging(args) {
 
   const { data, headers } = response;
 
+  // restricting pagination for account level audit logs
+  // as the records could be huge
+  // this will be supported later when UI pagination is added
+  if (args.path === '/audit') {
+    return data;
+  }
+
   // BE only supports 'link' pagination for now
   const link = headers ? headers.get('link') : undefined;
 
