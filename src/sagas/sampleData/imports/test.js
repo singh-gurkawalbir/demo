@@ -166,6 +166,26 @@ describe('sampleData imports saga', () => {
         )
         .run();
     });
+    test('should dispatch iaMetadataReceived action with refreshMetadata response in case of refreshMetadata api success', () => {
+      const _importId = '_importId';
+      const _integrationId = '_integrationId';
+      const response = {key: 'value'};
+
+      return expectSaga(_fetchIAMetaData, {
+        _importId,
+        _integrationId,
+        refreshMetadata: true,
+      })
+        .provide([[matchers.call.fn(apiCallWithRetry), response]])
+        .put(actions.importSampleData.iaMetadataRequest({ _importId }))
+        .put(
+          actions.importSampleData.iaMetadataReceived({
+            _importId,
+            metadata: response,
+          })
+        )
+        .run();
+    });
 
     test('should dispatch iaMetadataReceived action with original sample data in case of error', () => {
       const _importId = '_importId';
@@ -179,6 +199,26 @@ describe('sampleData imports saga', () => {
         sampleData,
       })
         .provide([[matchers.call.fn(apiCallWithRetry), throwError({})]])
+        .put(actions.importSampleData.iaMetadataRequest({ _importId }))
+        .put(
+          actions.importSampleData.iaMetadataFailed({
+            _importId,
+          })
+        )
+        .run();
+    });
+    test('should dispatch iaMetadataFailed action when there is neither any response from refreshMetadata call nor it throws any error ', () => {
+      const _importId = '_importId';
+      const _integrationId = '_integrationId';
+      const sampleData = {key: 'value'};
+
+      return expectSaga(_fetchIAMetaData, {
+        _importId,
+        _integrationId,
+        refreshMetadata: true,
+        sampleData,
+      })
+        .provide([[matchers.call.fn(apiCallWithRetry)]])
         .put(actions.importSampleData.iaMetadataRequest({ _importId }))
         .put(
           actions.importSampleData.iaMetadataFailed({
@@ -270,6 +310,40 @@ describe('sampleData imports saga', () => {
           )
         )
         .not.put(actions.metadata.failedAssistantImportPreview('someId'))
+        .run();
+    });
+    test('should dispatch failedAssistantImportPreview action when import endpoint has no sample data', () => {
+      const resource = {
+        _id: 'someId',
+        assistant: 'shipwire',
+        assistantMetadata: {
+          resource: 'product',
+          version: 'v3',
+          operation: 'create_product',
+          lookups: {},
+        },
+        adaptorType: 'RESTImport',
+      };
+      const assistantMetadata = {
+        import: {
+          versions: [{
+            version: 'v3',
+            resources: [{
+              id: 'product',
+              name: 'Product',
+            }],
+          }],
+        },
+      };
+
+      return expectSaga(_fetchAssistantSampleData, { resource })
+        .provide([
+          [select(selectors.assistantData, {
+            adaptorType: 'rest',
+            assistant: 'shipwire',
+          }), assistantMetadata],
+        ])
+        .put(actions.metadata.failedAssistantImportPreview('someId'))
         .run();
     });
 
