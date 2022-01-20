@@ -70,7 +70,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function ChildJobDetail({
   job,
-  parentJob,
 }) {
   const classes = useStyles();
   const resource = useSelector(state => selectors.resource(state, RESOURCE_TYPE_SINGULAR_TO_PLURAL[job.type], job._importId || job._exportId));
@@ -89,7 +88,7 @@ export default function ChildJobDetail({
       <TableCell className={classes.success}>{job.numSuccess}</TableCell>
 
       <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
-      <TableCell className={classes.error}><ErrorCell job={job} parentJob={parentJob} /></TableCell>
+      <TableCell className={classes.error}><ErrorCell job={job} /></TableCell>
       <TableCell className={classes.pages}>{job.numPagesGenerated}</TableCell>
       <TableCell />
 

@@ -217,7 +217,7 @@ export default function AppRouting() {
         />
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall/:childId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall/child/:childId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall'),
         ]}
         component={IntegrationAppUninstallation}

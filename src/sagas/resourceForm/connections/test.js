@@ -442,6 +442,12 @@ describe('Create payload saga', () => {
     ])
     .call.fn(createFormValuesPatchSet)
     .run());
+  test('should be able to check payload calls successfully', () => expectSaga(createPayload, { resourceId, values })
+    .provide([
+      [select(selectors.resourceData), undefined],
+    ])
+    .call.fn(createFormValuesPatchSet)
+    .run());
   test('should be able to verify payload for rest assistants successfully', () => expectSaga(createPayload, { resourceId, values })
     .provide([
       [select(selectors.resourceData), conn],
@@ -449,6 +455,14 @@ describe('Create payload saga', () => {
     ])
     .call.fn(createFormValuesPatchSet)
     .returns({name: 'ZendeskToday', assistant: 'zendesk', type: 'rest', rest: {pingRelativeURI: '/api/v3/users.json'}})
+    .run());
+  test('should be able to verify payload for http assistants successfully', () => expectSaga(createPayload, { resourceId, values })
+    .provide([
+      [select(selectors.resourceData), conn],
+      [matchers.call.fn(createFormValuesPatchSet), {patchSet: patchSetAmazonMws}],
+    ])
+    .call.fn(createFormValuesPatchSet)
+    .returns({name: 'AmazonMWS', assistant: 'amazonmws', http: {ping: {relativeURI: '/api/v3/users.json'}}})
     .run());
   test('should be able to verify payload for http assistants successfully', () => expectSaga(createPayload, { resourceId, values })
     .provide([
@@ -468,37 +482,41 @@ describe('Netsuite user roles saga', () => {
   }};
   const error = {message: '{"errors":[{"message":"Error message"}]}'};
   const errorMessageNotJson = {message: 'Error message'};
-  const errorsJSON = JSON.parse(error.message);
-  const { errors } = errorsJSON;
   const unSuccessfulResp = {};
   const successOnlyEnvs = Object.keys(resp)
     .filter(env => resp[env].success)
     .map(env => ({ [env]: resp[env] }))
     .reduce((acc, env) => ({ ...acc, ...env }), {});
+  const asyncKey = getAsyncKey('connections', connectionId);
 
-  test('should update netsuite user roles successfully', () => expectSaga(netsuiteUserRoles, { connectionId, values })
+  test('should update netsuite user roles successfully', () => expectSaga(netsuiteUserRoles, { connectionId, values, hideNotificationMessage: true })
     .provide([
       [matchers.call.fn(apiCallWithRetry), resp],
     ])
     .call.fn(apiCallWithRetry)
+    .put(actions.asyncTask.start(asyncKey))
     .put(
       actions.resource.connections.netsuite.receivedUserRoles(
         connectionId,
         successOnlyEnvs
       )
     )
+    .put(actions.asyncTask.success(asyncKey))
     .run());
   test('should update netsuite user roles successfully when we get only connection Id', () => expectSaga(netsuiteUserRoles, { connectionId})
     .provide([
       [matchers.call.fn(apiCallWithRetry), resp],
     ])
     .call.fn(apiCallWithRetry)
+    .put(actions.asyncTask.start(asyncKey))
     .put(
       actions.resource.connections.netsuite.receivedUserRoles(
         connectionId,
         resp
       )
     )
+    .put(actions.resource.connections.testSuccessful(connectionId))
+    .put(actions.asyncTask.success(asyncKey))
     .run());
   test('should throw error for invalid credentials', () => expectSaga(netsuiteUserRoles, { connectionId, values })
     .provide([
@@ -512,30 +530,45 @@ describe('Netsuite user roles saga', () => {
       )
     )
     .run());
-  test('should handle api error properly', () => expectSaga(netsuiteUserRoles, { connectionId, values })
-    .provide([
-      [matchers.call.fn(apiCallWithRetry), throwError(error)],
-    ])
-    .call.fn(apiCallWithRetry)
-    .put(
-      actions.resource.connections.netsuite.requestUserRolesFailed(
-        connectionId,
-        errors[0].message
-      ))
-    .run());
+  describe('should handle api errors properly', () => {
+    test('if error status is 403', () => {
+      expectSaga(netsuiteUserRoles, { connectionId, values })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), throwError({...error, status: 403})],
+        ])
+        .call.fn(apiCallWithRetry)
+        .put(actions.asyncTask.start(asyncKey))
+        .put(actions.asyncTask.failed(asyncKey))
+        .run();
+    });
 
-  test('should handle api error properly if api error response message is not JSON', () => expectSaga(netsuiteUserRoles, { connectionId, values })
-    .provide([
-      [matchers.call.fn(apiCallWithRetry), throwError(errorMessageNotJson)],
-    ])
-    .call.fn(apiCallWithRetry)
-    .put(
-      actions.resource.connections.netsuite.requestUserRolesFailed(
-        connectionId,
-        errorMessageNotJson.message
-      ))
-    .run());
+    test('if error status is 401', () => {
+      expectSaga(netsuiteUserRoles, { connectionId, values })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), throwError({...error, status: 401})],
+        ])
+        .call.fn(apiCallWithRetry)
+        .put(actions.asyncTask.start(asyncKey))
+        .put(actions.asyncTask.failed(asyncKey))
+        .run();
+    });
 
+    test('if api error response message is not JSON', () => expectSaga(netsuiteUserRoles, { connectionId, values })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), throwError(errorMessageNotJson)],
+      ])
+      .call.fn(apiCallWithRetry)
+      .put(actions.asyncTask.start(asyncKey))
+      .put(
+        actions.resource.connections.netsuite.requestUserRolesFailed(
+          connectionId,
+          errorMessageNotJson.message
+        ))
+      .put(
+        actions.resource.connections.testErrored(connectionId, inferErrorMessages(errorMessageNotJson.message)?.[0]))
+      .put(actions.asyncTask.failed(asyncKey))
+      .run());
+  });
   test('should return directly when there is no connection Id and form values', () => {
     const saga = netsuiteUserRoles({ connectionId: undefined, values: undefined });
 

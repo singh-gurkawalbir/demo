@@ -163,12 +163,12 @@ export function* publishStatus({ templateId, isPublished }) {
     },
   ];
 
-  yield put(actions.resource.patchStaged(templateId, patchSet, SCOPES.value));
+  yield put(actions.resource.patchStaged(templateId, patchSet, SCOPES.VALUE));
 
   const resp = yield call(commitStagedChanges, {
     resourceType: 'templates',
     id: templateId,
-    scope: SCOPES.value,
+    scope: SCOPES.VALUE,
   });
 
   if (resp?.error) {
