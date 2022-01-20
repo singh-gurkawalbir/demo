@@ -4,6 +4,7 @@ import processorLogic from './index';
 
 const {
   init,
+  validate,
   processResult,
 } = processorLogic;
 
@@ -27,6 +28,12 @@ describe('mappings processor logic', () => {
       };
 
       expect(init({options, resource})).toEqual(expectedOutput);
+      expect(init({options})).toEqual({
+        stage: 'importMappingExtract',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        editorTitle: 'Edit Mapping',
+      });
     });
   });
   describe('processResult util', () => {
@@ -63,6 +70,20 @@ describe('mappings processor logic', () => {
       expect(() => {
         processResult(editor, result);
       }).toThrowError('Message: Invalid mappings');
+    });
+  });
+  describe('validate util', () => {
+    test('should correctly return violations if preset', () => {
+      const editor = {
+        stage: 'importMappingExtract',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        violations: {ruleError: 'some error'},
+      };
+
+      expect(validate(editor)).toEqual({ruleError: 'some error'});
+      delete editor.violations;
+      expect(validate(editor)).toEqual({});
     });
   });
 });

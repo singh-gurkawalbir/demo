@@ -1,3 +1,4 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = [], action) => {
@@ -8,42 +9,33 @@ export default (state = [], action) => {
   }
 
   let resourceIndex;
-  let newState;
 
-  switch (type) {
-    case actionTypes.STACK.TOKEN_RECEIVED:
-      resourceIndex = state.findIndex(r => r._id === stackToken._id);
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.STACK.TOKEN_RECEIVED:
+        resourceIndex = draft.findIndex(r => r._id === stackToken._id);
 
-      if (resourceIndex > -1) {
-        newState = [
-          ...state.slice(0, resourceIndex),
-          { ...state[resourceIndex], ...stackToken },
-          ...state.slice(resourceIndex + 1),
-        ];
+        if (resourceIndex > -1) {
+          draft.splice(resourceIndex, 1, { ...draft[resourceIndex], ...stackToken });
+          break;
+        }
 
-        return newState;
-      }
+        draft.push({ ...stackToken });
+        break;
 
-      return [...state, { ...stackToken }];
+      case actionTypes.STACK.TOKEN_MASK:
+        resourceIndex = draft.findIndex(r => r._id === stackToken._id);
 
-    case actionTypes.STACK.TOKEN_MASK:
-      resourceIndex = state.findIndex(r => r._id === stackToken._id);
+        if (resourceIndex > -1) {
+          draft.splice(resourceIndex, 1, { ...draft[resourceIndex], systemToken: null });
+          break;
+        }
 
-      if (resourceIndex > -1) {
-        newState = [
-          ...state.slice(0, resourceIndex),
-          { ...state[resourceIndex], systemToken: null },
-          ...state.slice(resourceIndex + 1),
-        ];
+        break;
 
-        return newState;
-      }
-
-      return state;
-
-    default:
-      return state;
-  }
+      default:
+    }
+  });
 };
 
 // #region PUBLIC SELECTORS
