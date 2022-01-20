@@ -1,9 +1,9 @@
 /* global describe, test, expect */
 
-import reducer from '.';
+import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
-describe('Mapping', () => {
+describe('mapping reducer', () => {
   test('should return initial state when action is not matched', () => {
     const state = reducer(undefined, { type: 'RANDOM_ACTION' });
 
@@ -18,6 +18,48 @@ describe('Mapping', () => {
     }));
 
     expect({mapping: {status: 'requested'}}).toEqual(state);
+  });
+  test('should update the state on init complete', () => {
+    const flowId = '123';
+    const resourceId = '123';
+    const options = {
+      lookups: [
+        {name: 'lookup1', map: {x: 'y'}},
+      ],
+      mappings: [
+        {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+        {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+        {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+      ],
+      importId: resourceId,
+      flowId,
+    };
+
+    const state = reducer(undefined, actions.mapping.initComplete(options));
+    const expectedState = {
+      mapping: {
+        mappings: options.mappings,
+        lookups: options.lookups,
+        flowId,
+        importId: resourceId,
+        status: 'received',
+        mappingsCopy: [
+          {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+          {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+        ],
+        lookupsCopy: [
+          {name: 'lookup1', map: {x: 'y'}},
+        ],
+      },
+    };
+
+    expect(state).toEqual(expectedState);
+  });
+  test('should update the state with error status on init failed', () => {
+    const state = reducer(undefined, actions.mapping.initFailed());
+
+    expect(state).toEqual({mapping: {status: 'error' }});
   });
 
   test('should set last touched field correctly', () => {
@@ -803,5 +845,551 @@ describe('Mapping', () => {
     const newState = reducer(initialState, actions.mapping.clear());
 
     expect(expectedState).toEqual(newState);
+  });
+
+  describe('MAPPING.SAVE action', () => {
+    test('should set saveStatus to requested if state exists', () => {
+      const initialState = {
+        mapping: {
+        },
+      };
+      const state = reducer(initialState, actions.mapping.save({}));
+
+      expect(state).toEqual({
+        mapping: {
+          saveStatus: 'requested',
+        },
+      });
+    });
+    test('should delete startKey if autoMapper exists', () => {
+      const initialState = {
+        mapping: {
+          autoMapper: {
+            startKey: 'dcdb',
+          },
+        },
+      };
+      const state = reducer(initialState, actions.mapping.save({}));
+
+      expect(state).toEqual({
+        mapping: {
+          autoMapper: {
+          },
+          saveStatus: 'requested',
+        },
+      });
+    });
+  });
+  describe('MAPPING.SAVE_COMPLETE action', () => {
+    test('should update saveStatus and other fields if state exists', () => {
+      const initialState = {
+        mapping: {
+          lookups: [
+            {name: 'lookup1', map: {x: 'y'}},
+          ],
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          validationErrMsg: 'some error',
+        },
+      };
+      const state = reducer(initialState, actions.mapping.saveComplete());
+      const expectedState = {
+        mapping: {
+          lookups: [
+            {name: 'lookup1', map: {x: 'y'}},
+          ],
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          saveStatus: 'completed',
+          mappingsCopy: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          lookupsCopy: [
+            {name: 'lookup1', map: {x: 'y'}},
+          ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.SAVE_FAILED action', () => {
+    test('should update saveStatus and other fields if state exists', () => {
+      const initialState = {
+        mapping: {
+          lookups: [
+            {name: 'lookup1', map: {x: 'y'}},
+          ],
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          validationErrMsg: 'some error',
+        },
+      };
+      const state = reducer(initialState, actions.mapping.saveFailed());
+      const expectedState = {
+        mapping: {
+          lookups: [
+            {name: 'lookup1', map: {x: 'y'}},
+          ],
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          saveStatus: 'failed',
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.PREVIEW_REQUESTED action', () => {
+    test('should update preview status if state exists', () => {
+      const initialState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          preview: {
+            status: 'failed',
+          },
+        },
+      };
+      const state = reducer(initialState, actions.mapping.requestPreview());
+      const expectedState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          preview: {
+            status: 'requested',
+          },
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should update preview status if preview status doesnt exist', () => {
+      const initialState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+        },
+      };
+      const state = reducer(initialState, actions.mapping.requestPreview());
+      const expectedState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          preview: {
+            status: 'requested',
+          },
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.PREVIEW_RECEIVED action', () => {
+    test('should update preview status and data if state exists', () => {
+      const initialState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          preview: {
+            status: 'requested',
+          },
+        },
+      };
+      const state = reducer(initialState, actions.mapping.previewReceived('some data'));
+      const expectedState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          preview: {
+            data: 'some data',
+            status: 'received',
+          },
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.PREVIEW_FAILED action', () => {
+    test('should delete data and update preview status if state exists', () => {
+      const initialState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          preview: {
+            data: 'some data',
+            status: 'received',
+          },
+        },
+      };
+      const state = reducer(initialState, actions.mapping.previewFailed());
+      const expectedState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          preview: {
+            status: 'error',
+          },
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.SET_NS_ASSISTANT_FORM_LOADED action', () => {
+    test('should update isNSAssistantFormLoaded if state exists', () => {
+      const initialState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+        },
+      };
+      const state = reducer(initialState, actions.mapping.setNSAssistantFormLoaded('some value'));
+      const expectedState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          isNSAssistantFormLoaded: 'some value',
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.SET_VALIDATION_MSG action', () => {
+    test('should set validation message if state exists', () => {
+      const initialState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+        },
+      };
+      const state = reducer(initialState, actions.mapping.setValidationMsg('some validation error'));
+      const expectedState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          validationErrMsg: 'some validation error',
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.AUTO_MAPPER.REQUEST action', () => {
+    test('should set autoMapper state with status requested if state exists', () => {
+      const initialState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+        },
+      };
+      const state = reducer(initialState, actions.mapping.autoMapper.request());
+      const expectedState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          autoMapper: {
+            status: 'requested',
+          },
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should reset autoMapper state with status requested if state exists', () => {
+      const initialState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          autoMapper: {
+            failMsg: 'some message',
+            status: 'error',
+          },
+        },
+      };
+      const state = reducer(initialState, actions.mapping.autoMapper.request());
+      const expectedState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          autoMapper: {
+            status: 'requested',
+          },
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.AUTO_MAPPER.RECEIVED action', () => {
+    test('should update autoMapper state with mappings if state exists', () => {
+      const initialState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz1'},
+          ],
+          importId: '123',
+          flowId: '123',
+          autoMapper: {
+            status: 'requested',
+          },
+        },
+      };
+      const state = reducer(initialState, actions.mapping.autoMapper.received([{key: 'key2', generate: 'xyz2', extract: 'xyz2'}]));
+      const expectedState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz1'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz2'},
+          ],
+          importId: '123',
+          flowId: '123',
+          autoMapper: {
+            status: 'received',
+            startKey: 'key2',
+          },
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.AUTO_MAPPER.FAILED action', () => {
+    test('should set error message and status if state exists', () => {
+      const initialState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz2'},
+          ],
+          importId: '123',
+          flowId: '123',
+          autoMapper: {
+            status: 'received',
+            startKey: 'key2',
+          },
+        },
+      };
+      const state = reducer(initialState, actions.mapping.autoMapper.failed(1, 'error msg'));
+      const expectedState = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz2'},
+          ],
+          importId: '123',
+          flowId: '123',
+          autoMapper: {
+            status: 'error',
+            startKey: 'key2',
+            failMsg: 'error msg',
+            failSeverity: 1,
+          },
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  test('should do nothing and not fail for all below actions if state does not exist', () => {
+    const afterSave = reducer({}, actions.mapping.save({}));
+    const afterSaveComplete = reducer(afterSave, actions.mapping.saveComplete());
+    const afterSaveFailed = reducer(afterSaveComplete, actions.mapping.saveFailed());
+    const afterPreview = reducer(afterSaveFailed, actions.mapping.requestPreview());
+    const afterPreviewReceived = reducer(afterPreview, actions.mapping.previewReceived('some data'));
+    const afterPreviewFailed = reducer(afterPreviewReceived, actions.mapping.previewFailed());
+    const afterNSForm = reducer(afterPreviewFailed, actions.mapping.setNSAssistantFormLoaded('some value'));
+    const afterValidation = reducer(afterNSForm, actions.mapping.setValidationMsg('some validation error'));
+    const afterAutoMap = reducer(afterValidation, actions.mapping.autoMapper.request());
+    const afterAutoMapReceived = reducer(afterAutoMap, actions.mapping.autoMapper.received([{key: 'key2', generate: 'xyz2', extract: 'xyz2'}]));
+    const afterAutoMapFailed = reducer(afterAutoMapReceived, actions.mapping.autoMapper.failed(1, 'error msg'));
+
+    expect(afterAutoMapFailed).toEqual({});
+  });
+});
+
+describe('mapping selectors', () => {
+  describe('selectors.mappingChanged', () => {
+    test('should return false if state does not exist', () => {
+      expect(selectors.mappingChanged()).toEqual(false);
+      expect(selectors.mappingChanged(null)).toEqual(false);
+      expect(selectors.mappingChanged({})).toEqual(false);
+      expect(selectors.mappingChanged({mapping: {}})).toEqual(false);
+    });
+    test('should return true if mappings changed', () => {
+      const state = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+          ],
+          importId: '123',
+          flowId: '123',
+          saveStatus: 'completed',
+          mappingsCopy: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+        },
+      };
+
+      expect(selectors.mappingChanged(state)).toEqual(true);
+    });
+    test('should return true if lookups changed', () => {
+      const state = {
+        mapping: {
+          lookups: [
+            {name: 'lookup-new', map: {x: 'y'}},
+          ],
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          saveStatus: 'completed',
+          mappingsCopy: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          lookupsCopy: [
+            {name: 'lookup1', map: {x: 'y'}},
+          ],
+        },
+      };
+
+      expect(selectors.mappingChanged(state)).toEqual(true);
+    });
+    test('should return false if nothing changed', () => {
+      const state = {
+        mapping: {
+          lookups: [
+            {name: 'lookup1', map: {x: 'y'}},
+          ],
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          saveStatus: 'completed',
+          mappingsCopy: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          lookupsCopy: [
+            {name: 'lookup1', map: {x: 'y'}},
+          ],
+        },
+      };
+
+      expect(selectors.mappingChanged(state)).toEqual(false);
+    });
+  });
+  describe('selectors.autoMapper', () => {
+    test('should return empty object if state does not exist', () => {
+      expect(selectors.autoMapper()).toEqual({});
+      expect(selectors.autoMapper(null)).toEqual({});
+      expect(selectors.autoMapper({})).toEqual({});
+      expect(selectors.autoMapper({mapping: {}})).toEqual({});
+    });
+    test('should return autoMapper object if exists', () => {
+      const state = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          saveStatus: 'completed',
+          autoMapper: {
+            failMsg: 'some message',
+            status: 'error',
+          },
+        },
+      };
+
+      expect(selectors.autoMapper(state)).toEqual({
+        failMsg: 'some message',
+        status: 'error',
+      });
+    });
   });
 });
