@@ -10,91 +10,82 @@ import { COMM_STATES as REINVITE_STATES } from '../../../comms/networkComms';
 export default (state = [], action) => {
   const { type, resourceType, collection, user, _id } = action;
 
-  switch (type) {
-    case actionTypes.RESOURCE.RECEIVED_COLLECTION:
-      if (resourceType === 'ashares') {
-        return collection ? [...collection] : [];
-      }
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.RESOURCE.RECEIVED_COLLECTION:
+        if (resourceType === 'ashares') {
+          return collection ? [...collection] : [];
+        }
 
-      return state;
-    case actionTypes.USER_CREATED:
-      return [...state, user];
-    case actionTypes.USER_REINVITE:
-    {
-      const index = state.findIndex(u => u._id === _id);
+        break;
+      case actionTypes.USER_CREATED:
+        draft.push(user);
+        break;
+      case actionTypes.USER_REINVITE:
+      {
+        const index = draft.findIndex(u => u._id === _id);
 
-      if (index > -1) {
-        return produce(state, draft => {
+        if (index > -1) {
           draft[index].reinviteStatus = REINVITE_STATES.LOADING;
-        });
+        }
+
+        break;
       }
 
-      return state;
-    }
+      case actionTypes.USER_REINVITE_ERROR: {
+        const index = draft.findIndex(u => u._id === _id);
 
-    case actionTypes.USER_REINVITE_ERROR: {
-      const index = state.findIndex(u => u._id === _id);
-
-      if (index > -1) {
-        return produce(state, draft => {
+        if (index > -1) {
           draft[index].reinviteStatus = REINVITE_STATES.ERROR;
-        });
-      }
+        }
 
-      return state;
-    }
-    case actionTypes.USER_UPDATED: {
-      const index = state.findIndex(u => u._id === user._id);
-
-      if (index === -1) {
-        return [...state, user];
+        break;
       }
-      if (index > -1) {
-        return produce(state, draft => {
+      case actionTypes.USER_UPDATED: {
+        const index = draft.findIndex(u => u._id === user._id);
+
+        if (index === -1) {
+          draft.push(user);
+        } else if (index > -1) {
           draft[index] = {...draft[index], ...user};
-        });
+        }
+
+        break;
       }
 
-      return state;
-    }
+      case actionTypes.USER_DISABLED: {
+        const index = draft.findIndex(u => u._id === _id);
 
-    case actionTypes.USER_DISABLED: {
-      const index = state.findIndex(u => u._id === _id);
-
-      if (index > -1) {
-        return produce(state, draft => {
+        if (index > -1) {
           draft[index].disabled = !draft[index].disabled;
-        });
+        }
+
+        break;
       }
+      case actionTypes.USER_REINVITED: {
+        const index = draft.findIndex(u => u._id === _id);
 
-      return state;
-    }
-    case actionTypes.USER_REINVITED: {
-      const index = state.findIndex(u => u._id === _id);
-
-      if (index > -1) {
-        return produce(state, draft => {
+        if (index > -1) {
           draft[index].dismissed = false;
           draft[index].reinviteStatus = REINVITE_STATES.SUCCESS;
-        });
+        }
+
+        break;
       }
 
-      return state;
-    }
+      case actionTypes.USER_DELETED: {
+        const index = draft.findIndex(u => u._id === _id);
 
-    case actionTypes.USER_DELETED: {
-      const index = state.findIndex(u => u._id === _id);
+        if (index > -1) {
+          draft.splice(index, 1);
+        }
 
-      if (index > -1) {
-        return [...state.slice(0, index), ...state.slice(index + 1)];
+        break;
       }
 
-      return state;
+      default:
     }
-
-    default:
-      return state;
-  }
+  });
 };
 
 // #region PUBLIC SELECTORS
