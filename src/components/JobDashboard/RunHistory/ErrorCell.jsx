@@ -20,10 +20,8 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function ErrorCell({
   job,
-  parentJob,
 }) {
-  const { _integrationId, _flowId, _childId, _id } = parentJob;
-  const { _exportId, numOpenError, _importId } = job;
+  const { _integrationId, _flowId, _childId, _flowJobId, _exportId, numOpenError, _importId } = job;
   const dispatch = useDispatch();
   const id = _exportId || _importId;
   const classes = useStyles();
@@ -45,9 +43,9 @@ export default function ErrorCell({
   });
 
   const handleErrorClick = useCallback(() => {
-    dispatch(actions.patchFilter(`${_flowId}-${_id}-${id}`, {...job}));
-    history.push(`${flowBuilderTo}/errors/${id}/filter/${_id}/open`);
-  }, [_flowId, _id, dispatch, flowBuilderTo, history, id, job]);
+    dispatch(actions.patchFilter(`${_flowId}-${_flowJobId}-${id}`, {...job}));
+    history.push(`${flowBuilderTo}/errors/${id}/filter/${_flowJobId}/open`);
+  }, [_flowId, _flowJobId, dispatch, flowBuilderTo, history, id, job]);
 
   if (numOpenError === 0) {
     return '0 errors';

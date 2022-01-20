@@ -1,5 +1,8 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
+import {
+  parseJobFamily,
+} from '../../../data/jobs/util';
 
 const defaultObject = {};
 
@@ -23,10 +26,18 @@ export default (state = {}, action) => {
         break;
       case actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED_FAMILY:
         {
+          if (!job || !job.children) {
+            break;
+          }
           const index = draft[job?._flowId]?.data?.findIndex(j => j._id === job._id);
+          const parsedJobFamily = parseJobFamily(job);
+
+          if (job?.children?.length === 0) {
+            parsedJobFamily.children = [];
+          }
 
           if (index > -1) {
-            draft[job._flowId].data[index] = {...job};
+            draft[job._flowId].data[index] = parsedJobFamily;
           }
         }
         break;
