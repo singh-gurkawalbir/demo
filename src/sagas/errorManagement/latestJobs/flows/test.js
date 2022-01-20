@@ -92,6 +92,10 @@ describe('refreshForMultipleFlowJobs saga', () => {
     ],
   };
 
+  test('should do nothing incase of invalid params passed', () => expectSaga(refreshForMultipleFlowJobs, ({}))
+    .not.put(actions.errorManager.latestFlowJobs.request({ flowId }))
+    .run());
+
   test('should do nothing if the export child of the job is still in inprogress status', () => {
     const latestJobs = [
       {
@@ -131,7 +135,9 @@ describe('refreshForMultipleFlowJobs saga', () => {
       },
     ];
 
-    return expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState1, latestJobs}).run();
+    return expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState1, latestJobs})
+      .not.put(actions.errorManager.latestFlowJobs.request({ flowId }))
+      .run();
   });
   test('should do nothing if the job field _lastPageGeneratorJob is set true', () => {
     const latestJobs = [
@@ -173,7 +179,9 @@ describe('refreshForMultipleFlowJobs saga', () => {
       },
     ];
 
-    return expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState1, latestJobs}).run();
+    return expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState1, latestJobs})
+      .not.put(actions.errorManager.latestFlowJobs.request({ flowId }))
+      .run();
   });
   test('should do nothing if the both the previous and present status of export child of job is in fininshed', () => {
     const latestJobs = [
@@ -215,7 +223,9 @@ describe('refreshForMultipleFlowJobs saga', () => {
       },
     ];
 
-    return expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState2, latestJobs}).run();
+    return expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState2, latestJobs})
+      .not.put(actions.errorManager.latestFlowJobs.request({ flowId }))
+      .run();
   });
   test('should dispatch request action if the export child of job is completed and previous state of the export child of job is in inprogress status', () => {
     const latestJobs = [
@@ -266,6 +276,36 @@ describe('refreshForMultipleFlowJobs saga', () => {
 describe('getJobFamily saga', () => {
   const flowId = 'f1';
   const jobId = 'j1';
+
+  test('should call refreshForMultipleFlowJobs with empty list if there are no latest flow jobs for the passed flowId', () => {
+    const job = {
+      _id: 'j1',
+      type: JOB_TYPES.FLOW,
+      status: JOB_STATUS.COMPLETED,
+      startedAt: '2019-08-11T10:50:00.000Z',
+      _integrationId: 'i1',
+      duration: undefined,
+      doneExporting: false,
+      uiStatus: JOB_STATUS.COMPLETED,
+    };
+
+    const { path, opts } = getRequestOptions(actionTypes.JOB.REQUEST_FAMILY, { resourceId: jobId });
+
+    return expectSaga(getJobFamily, { flowId, jobId })
+      .provide([
+        [select(selectors.latestFlowJobsList, flowId)],
+        [call(apiCallWithRetry, {
+          path, opts, hidden: true,
+        }), job],
+        [call(refreshForMultipleFlowJobs, {flowId, job, latestJobs: []})],
+      ])
+      .call(apiCallWithRetry, {
+        path, opts, hidden: true,
+      })
+      .put(actions.errorManager.latestFlowJobs.receivedJobFamily({flowId, job }))
+      .call(refreshForMultipleFlowJobs, {flowId, job, latestJobs: []})
+      .run();
+  });
 
   test('should dispatch receivedJobFamily and call refreshForMultipleFlowJobs on successFul api call', () => {
     const job = {
@@ -426,7 +466,9 @@ describe('requestLatestJobs saga', () => {
       .next()
       .all(
         latestFlowJobs.map(latestJob => call(getJobFamily, { flowId, jobId: latestJob._id }))
-      );
+      )
+      .next()
+      .put(actions.errorManager.latestFlowJobs.requestInProgressJobsPoll({ flowId }));
   }
   );
   test('should not dispatch any actions or call getJobFamily if apiCallWithRetry api fails', () => {
@@ -514,4 +556,8 @@ describe('cancelLatestJobs saga', () => {
         actions.errorManager.latestFlowJobs.request({ flowId })
       );
   });
+  test('should just dispatch latestFlowJobs request action if there are no latest jobs to cancel', () => expectSaga(cancelLatestJobs, { flowId })
+    .not.call.fn(cancelJob)
+    .put(actions.errorManager.latestFlowJobs.request({ flowId }))
+    .run());
 });
