@@ -305,7 +305,7 @@ export function* _requestPGExportSampleData({ formKey, refreshCache, executeProc
   yield call(_requestExportPreviewData, { formKey, executeProcessors });
 }
 
-export function* _requestLookupSampleData({ formKey, refreshCache }) {
+export function* _requestLookupSampleData({ formKey, refreshCache = false }) {
   const { resourceId, resourceObj, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
   const isRestCsvExport = yield select(selectors.isRestCsvMediaTypeExport, resourceId);
 

@@ -729,6 +729,8 @@ describe('resourceFormSampleData sagas', () => {
       const restResource = {
         _id: resourceId,
         adaptorType: 'RESTExport',
+        transform: {},
+        oneToMany: 'true',
       };
       const previewData = {
         stages: [{
@@ -738,14 +740,38 @@ describe('resourceFormSampleData sagas', () => {
           },
         }],
       };
+      const ppDoc = {
+        _id: resourceId,
+        adaptorType: 'RESTExport',
+        oneToMany: true,
+        test: { limit: 10 },
+      };
 
       return expectSaga(_requestLookupSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId, resourceObj: restResource}],
-          [matchers.call.fn(pageProcessorPreview), previewData],
+          [call(pageProcessorPreview, {
+            flowId,
+            _pageProcessorId: resourceId,
+            resourceType: 'exports',
+            hidden: true,
+            _pageProcessorDoc: ppDoc,
+            throwOnError: true,
+            includeStages: true,
+            refresh: false,
+          }), previewData],
         ])
         .not.call.fn(_requestFileSampleData)
-        .call.fn(pageProcessorPreview)
+        .call(pageProcessorPreview, {
+          flowId,
+          _pageProcessorId: resourceId,
+          resourceType: 'exports',
+          hidden: true,
+          _pageProcessorDoc: ppDoc,
+          throwOnError: true,
+          includeStages: true,
+          refresh: false,
+        })
         .put(actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData))
         .run();
     });
@@ -927,15 +953,18 @@ describe('resourceFormSampleData sagas', () => {
           },
         },
       };
+      const parsedData = {
+        users: { test: 5 },
+      };
 
-      return expectSaga(_parseFileData, { resourceId, fileContent, fileProps: ftpResource.file.csv, parserOptions, isNewSampleData: true, fileType: 'csv' })
+      return expectSaga(_parseFileData, { resourceId, fileContent, fileProps: ftpResource.file.json, parserOptions, isNewSampleData: true, fileType: 'json' })
         .provide([
           [call(_getProcessorOutput, { processorData }), processorResponse],
         ])
         .put(actions.resourceFormSampleData.setRawData(resourceId, fileContent))
         .call.fn(_getProcessorOutput)
-        .put(actions.resourceFormSampleData.setParseData(resourceId))
-        .put(actions.resourceFormSampleData.setPreviewData(resourceId))
+        .put(actions.resourceFormSampleData.setParseData(resourceId, parsedData))
+        .put(actions.resourceFormSampleData.setPreviewData(resourceId, parsedData))
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'received'))
         .run();
     });
