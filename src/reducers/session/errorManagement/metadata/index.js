@@ -30,6 +30,7 @@ export default (state = {}, action) => {
 export const selectors = {};
 
 selectors.isErrorFilterMetadataRequested = state => !!state?.status;
+
 selectors.getSourceMetadata = state => {
   if (!state) return;
 
