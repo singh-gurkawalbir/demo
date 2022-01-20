@@ -190,6 +190,10 @@ describe('sampleData imports saga', () => {
   });
 
   describe('fetchAssistantSampleData saga', () => {
+    test('should do nothing if there is no resource passed', () => expectSaga(_fetchAssistantSampleData, {})
+      .not.call.fn(requestAssistantMetadata)
+      .run());
+
     test('should call requestAssistantMetadata when there is no assistant data', () => {
       const resource = {
         adaptorType: 'RESTImport',
