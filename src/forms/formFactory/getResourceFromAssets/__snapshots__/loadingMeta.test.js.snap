@@ -4148,6 +4148,9 @@ Object {
       "unencrypted.apiType": Object {
         "fieldId": "unencrypted.apiType",
       },
+      "unencrypted.restrictedReportType": Object {
+        "fieldId": "unencrypted.restrictedReportType",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -4171,6 +4174,7 @@ Object {
                 "http.method",
                 "http.blobMethod",
                 "http.relativeURI",
+                "unencrypted.restrictedReportType",
                 "http.headers",
                 "http.requestMediaType",
                 "http.body",

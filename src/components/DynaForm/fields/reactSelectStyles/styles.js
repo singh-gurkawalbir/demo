@@ -72,7 +72,6 @@ export function CustomReactSelectStyles() {
   return {
     option: (provided, state) => ({
       ...provided,
-      padding: '0px',
       color: state.isSelected
         ? theme.palette.secondary.main
         : theme.palette.secondary.light,
@@ -178,6 +177,7 @@ export function CustomReactSelectStyles() {
       '& > * .MuiChip-root': {
         border: 'none',
         height: 'unset',
+        lineHeight: 1,
       },
     }),
     multiValueLabel: styles => ({

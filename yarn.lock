@@ -13651,9 +13651,9 @@ react-copy-to-clipboard@5.0.1:
     copy-to-clipboard "^3"
     prop-types "^15.5.8"
 
-"react-date-range@git+ssh://git@github.com:celigo/react-date-range-selector#v1.0.2":
+"react-date-range@git+ssh://git@github.com:celigo/react-date-range-selector#v1.0.3":
   version "1.0.3"
-  resolved "git+ssh://git@github.com:celigo/react-date-range-selector#7d723683a5a61640f69427ffd109212512ac8342"
+  resolved "git+ssh://git@github.com:celigo/react-date-range-selector#85a049492c3af935f4485b3024ce5515ed502987"
   dependencies:
     classnames "^2.2.6"
     prop-types "^15.7.2"
