@@ -8,7 +8,7 @@ import {
   fetchResourceDataForNewFlowResource,
   filterPendingResources,
 } from './flowDataUtils';
-import { getFormattedResourceForPreview, getPostDataForDeltaExport, isPostDataNeededInResource } from '../../../utils/flowData';
+import { getFormattedResourceForPreview } from '../../../utils/flowData';
 import { isNewId } from '../../../utils/resource';
 import { EMPTY_RAW_DATA } from '../../../utils/constants';
 import { getConstructedResourceObj } from '../flows/utils';
@@ -89,18 +89,9 @@ export function* pageProcessorPreview({
     });
   } else if (resourceType === 'exports' && pageProcessorMap[_pageProcessorId]?.doc) {
     // remove tx,filters,hooks from PP Doc to get preview data for _pageProcessorId
-    const { transform, filter, hooks, ...lookupDocWithoutProcessors } = pageProcessorMap[_pageProcessorId].doc;
+    const { transform, filter, hooks, ...rest } = pageProcessorMap[_pageProcessorId].doc;
 
-    pageProcessorMap[_pageProcessorId].doc = lookupDocWithoutProcessors;
-    // update options for the lookups if incase they were not added before ( incase of custom pp doc or new pp doc )
-    if (
-      isPostDataNeededInResource(lookupDocWithoutProcessors) &&
-      !pageProcessorMap[_pageProcessorId].options
-    ) {
-      pageProcessorMap[_pageProcessorId].options = {
-        postData: getPostDataForDeltaExport(lookupDocWithoutProcessors),
-      };
-    }
+    pageProcessorMap[_pageProcessorId].doc = rest;
   }
 
   const body = { flow, _pageProcessorId, pageGeneratorMap, pageProcessorMap, includeStages };
