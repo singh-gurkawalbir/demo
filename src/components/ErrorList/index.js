@@ -37,7 +37,6 @@ export default function ErrorList({ flowId }) {
       dispatch(actions.errorManager.flowErrorDetails.clear({ flowId, resourceId }));
       dispatch(actions.clearFilter(FILTER_KEYS.OPEN));
       dispatch(actions.clearFilter(FILTER_KEYS.RESOLVED));
-      dispatch(actions.errorManager.filterMetadata.clearStatus());
     };
   }, [dispatch, flowId, resourceId]);
 

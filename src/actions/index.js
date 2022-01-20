@@ -2069,8 +2069,6 @@ const errorManager = {
     request: () => action(actionTypes.ERROR_MANAGER.FILTER_METADATA.REQUEST),
     received: (metadata = []) =>
       action(actionTypes.ERROR_MANAGER.FILTER_METADATA.RECEIVED, { metadata }),
-    clearStatus: () => action(actionTypes.ERROR_MANAGER.FILTER_METADATA.CLEAR_STATUS),
-
   },
   errorHttpDoc: {
     request: (flowId, resourceId, reqAndResKey) =>

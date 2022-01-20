@@ -1,9 +1,10 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { isEmpty } from 'lodash';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useHistory, useRouteMatch, useLocation, matchPath } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
@@ -20,13 +21,16 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 'bold',
   },
 }));
+export const useIsFreshLoadedData = errorConfig => {
+  const errorObj = useSelectorMemo(selectors.mkResourceFilteredErrorDetailsSelector, errorConfig);
 
+  return errorObj.status === 'received';
+};
 export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
   const classes = useStyles();
   const match = useRouteMatch();
   const { pathname } = useLocation();
-  const [activeTab, setActiveTab] = useState(null);
 
   const matchIncompleteErrorDrawerPath = matchPath(pathname, {
     path: `${match.url}/errors/:resourceId`,
@@ -46,6 +50,12 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const matchErrorDrawerPathWithFilter = matchPath(pathname, {
     path: `${match.url}/errors/:resourceId/filter/:flowJobId/:errorType`,
   });
+  const errorConfig = useMemo(() => ({
+    flowId,
+    resourceId: matchErrorDrawerPathWithFilter?.params?.resourceId,
+  }), [flowId, matchErrorDrawerPathWithFilter?.params?.resourceId]);
+
+  const isFreshDataLoaded = useIsFreshLoadedData(errorConfig);
   const flowJobId = matchErrorDrawerPathWithFilter?.params?.flowJobId;
   const allErrors = useSelector(state => {
     const allErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId: matchErrorDrawerPathWithFilter?.params?.resourceId });
@@ -55,9 +65,6 @@ export default function ErrorDetailsDrawer({ flowId }) {
 
   const childJob = useSelector(
     state => selectors.filter(state, `${flowId}-${flowJobId}-${matchErrorDrawerPathWithFilter?.params?.resourceId}`), shallowEqual
-  );
-  const isErrorFilterMetadataReceived = useSelector(state =>
-    selectors.isErrorFilterMetadataReceived(state)
   );
 
   const resourceName = useSelector(state => {
@@ -86,15 +93,14 @@ export default function ErrorDetailsDrawer({ flowId }) {
     } else {
       history.replace(`${match.url}/errors/${matchErrorDrawerPath.params.resourceId}/${errorType}`);
     }
-    setActiveTab('errorType');
   }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath?.params?.resourceId]);
 
   useEffect(() => {
-    if (!allErrors.length && childJob && !activeTab && isErrorFilterMetadataReceived) {
+    if (!allErrors.length && isFreshDataLoaded && matchErrorDrawerPathWithFilter?.params?.errorType === 'open' && childJob) {
       handleErrorTypeChange('resolved');
-      setActiveTab('resolved');
     }
-  }, [activeTab, allErrors.length, childJob, handleErrorTypeChange, isErrorFilterMetadataReceived]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFreshDataLoaded]);
 
   // Child job information will not be available if we reload the page. Page should be redirected to old url for this case.
   if (flowJobId && (!childJob || isEmpty(childJob))) {

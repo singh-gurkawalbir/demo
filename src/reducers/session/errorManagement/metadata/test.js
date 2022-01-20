@@ -25,14 +25,6 @@ describe('errorManagement metadata reducer test cases', () => {
 
         expect(finalState).toEqual({status: 'received', data: {}});
       });
-      describe('actionTypes.ERROR_MANAGER.FILTER_METADATA.CLEAR_STATUS action', () => {
-        test('should clear the status', () => {
-          const requestState = reducer({}, actions.errorManager.filterMetadata.request());
-          const finalState = reducer(requestState, actions.errorManager.filterMetadata.clearStatus());
-
-          expect(finalState).toEqual({});
-        });
-      });
       test('should update status to received and update data as with formatted object with filter types as keys and enums as values', () => {
         const mockMetadata = [{
           name: 'source',
@@ -65,18 +57,6 @@ describe('errorManagement metadata reducer test cases', () => {
       test('should return true if the state contain any status (requested/received)', () => {
         expect(selectors.isErrorFilterMetadataRequested({ status: 'requested'})).toBeTruthy();
         expect(selectors.isErrorFilterMetadataRequested({ status: 'received', data: { source: [], classification: [] }})).toBeTruthy();
-      });
-    });
-    describe('isErrorFilterMetadataReceived selector', () => {
-      test('should return false if the state is empty', () => {
-        expect(selectors.isErrorFilterMetadataReceived()).toBeFalsy();
-        expect(selectors.isErrorFilterMetadataReceived(null)).toBeFalsy();
-      });
-      test('should return false if the state does not contain any status', () => {
-        expect(selectors.isErrorFilterMetadataReceived({})).toBeFalsy();
-      });
-      test('should return true if the state is received', () => {
-        expect(selectors.isErrorFilterMetadataReceived({ status: 'received', data: { source: [], classification: [] }})).toBeTruthy();
       });
     });
     describe('getSourceMetadata selector', () => {
