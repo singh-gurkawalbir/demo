@@ -23,6 +23,7 @@ const blockMap = {
 };
 export const resourceButtonStyles = makeStyles(theme => ({
   resourceButton: {
+    fontSize: 16,
     marginRight: theme.spacing(1),
     '& >* svg': {
       fontSize: `${theme.spacing(6)}px !important`,
