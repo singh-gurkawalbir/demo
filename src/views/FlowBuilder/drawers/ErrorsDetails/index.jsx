@@ -1,15 +1,16 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { isEmpty } from 'lodash';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useHistory, useRouteMatch, useLocation, matchPath } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
-import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import ErrorList from '../../../../components/ErrorList';
 import ErrorDrawerAction from './ErrorDrawerAction';
+import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
+import DrawerHeaderSubTitle from '../../../../components/DrawerHeaderSubTitle';
 
 const emptySet = [];
 
@@ -20,12 +21,12 @@ const useStyles = makeStyles(theme => ({
   boldErrorsCount: {
     fontWeight: 'bold',
   },
+  title: {
+    flexGrow: 1,
+    color: theme.palette.secondary.main,
+    wordBreak: 'break-word',
+  },
 }));
-export const useIsFreshLoadedData = errorConfig => {
-  const errorObj = useSelectorMemo(selectors.mkResourceFilteredErrorDetailsSelector, errorConfig);
-
-  return errorObj.status === 'received';
-};
 export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
   const classes = useStyles();
@@ -50,12 +51,12 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const matchErrorDrawerPathWithFilter = matchPath(pathname, {
     path: `${match.url}/errors/:resourceId/filter/:flowJobId/:errorType`,
   });
-  const errorConfig = useMemo(() => ({
-    flowId,
-    resourceId: matchErrorDrawerPathWithFilter?.params?.resourceId,
-  }), [flowId, matchErrorDrawerPathWithFilter?.params?.resourceId]);
 
-  const isFreshDataLoaded = useIsFreshLoadedData(errorConfig);
+  const isOpenErrorsLoaded = useSelector(state => {
+    const openErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId: matchErrorDrawerPathWithFilter?.params?.resourceId });
+
+    return openErrorDetails.status === 'received';
+  });
   const flowJobId = matchErrorDrawerPathWithFilter?.params?.flowJobId;
   const allErrors = useSelector(state => {
     const allErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId: matchErrorDrawerPathWithFilter?.params?.resourceId });
@@ -96,11 +97,11 @@ export default function ErrorDetailsDrawer({ flowId }) {
   }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath?.params?.resourceId]);
 
   useEffect(() => {
-    if (!allErrors.length && isFreshDataLoaded && matchErrorDrawerPathWithFilter?.params?.errorType === 'open' && childJob) {
+    if (isOpenErrorsLoaded && !allErrors.length && matchErrorDrawerPathWithFilter?.params?.errorType === 'open' && childJob) {
       handleErrorTypeChange('resolved');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFreshDataLoaded]);
+  }, [isOpenErrorsLoaded]);
 
   // Child job information will not be available if we reload the page. Page should be redirected to old url for this case.
   if (flowJobId && (!childJob || isEmpty(childJob))) {
@@ -108,6 +109,13 @@ export default function ErrorDetailsDrawer({ flowId }) {
 
     return null;
   }
+  const endedAt = childJob?.endedAt;
+  const Title = () => (
+    <>
+      <Typography variant="h4" className={classes.title} >{`Errors: ${resourceName}`}</Typography>
+      {endedAt && <DrawerHeaderSubTitle>Run completed: <CeligoTimeAgo date={endedAt} /></DrawerHeaderSubTitle>}
+    </>
+  );
 
   return (
     <RightDrawer
@@ -116,7 +124,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
       onClose={handleClose}
       variant="temporary">
 
-      <DrawerHeader endedAt={flowJobId && childJob?.endedAt} title={`Errors: ${resourceName}`} hideBackButton>
+      <DrawerHeader title={<Title />} hideBackButton>
         <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} />
       </DrawerHeader>
 
