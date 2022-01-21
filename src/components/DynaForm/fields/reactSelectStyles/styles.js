@@ -175,12 +175,10 @@ export function CustomReactSelectStyles() {
       padding: '1px 8px',
       border: `1px solid ${theme.palette.secondary.lightest}`,
       alignItems: 'center',
-      '& > div': {
-        lineHeight: 1,
-      },
       '& > * .MuiChip-root': {
         border: 'none',
         height: 'unset',
+        lineHeight: 2,
       },
     }),
     multiValueLabel: styles => ({
