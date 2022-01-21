@@ -18,17 +18,25 @@ import { requestAssistantMetadata } from '../resources/meta';
 import { getMappingMetadata as getIAMappingMetadata } from '../integrationApps/settings';
 import { getAssistantConnectorType } from '../../constants/applications';
 import { autoEvaluateProcessorWithCancel } from '../editor';
+import { getAssistantFromConnection } from '../../utils/connections';
 
 export function* fetchRequiredMappingData({
   flowId,
   importId,
   subRecordMappingId,
 }) {
-  const importResource = yield select(selectors.resource, 'imports', importId);
+  const resource = yield select(selectors.resource, 'imports', importId);
 
-  if (!importResource) {
+  if (!resource) {
     return yield put(actions.mapping.initFailed());
   }
+  const {assistant, _connectionId} = resource;
+  const connection = yield select(selectors.resource, 'connections', _connectionId);
+  const importResource = {
+    ...resource,
+    assistant: getAssistantFromConnection(assistant, connection),
+  };
+
   const subRecordMappingObj = subRecordMappingId
     ? mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId) : {};
 
@@ -156,11 +164,18 @@ export function* mappingInit({
   });
 
   if (cancelInit) return;
-  const importResource = yield select(selectors.resource, 'imports', importId);
+  const resource = yield select(selectors.resource, 'imports', importId);
 
-  if (!importResource) {
+  if (!resource) {
     return yield put(actions.mapping.initFailed());
   }
+  const {assistant, _connectionId} = resource;
+  const connection = yield select(selectors.resource, 'connections', _connectionId);
+  const importResource = {
+    ...resource,
+    assistant: getAssistantFromConnection(assistant, connection),
+  };
+
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
   const {data: flowSampleData} = yield select(selectors.getSampleDataContext, {
     flowId,

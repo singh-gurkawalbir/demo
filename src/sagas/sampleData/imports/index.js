@@ -12,6 +12,7 @@ import { isIntegrationApp } from '../../../utils/flows';
 import { getAssistantConnectorType, getImportAdaptorType } from '../../../constants/applications';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
 import { extractStages } from '../../../reducers/session/sampleData/resourceForm';
+import { getAssistantFromConnection } from '../../../utils/connections';
 
 function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource) {
   const assistantConfig = deepClone(assistantConfigOrig);
@@ -221,7 +222,11 @@ export function* requestSampleData({ resourceId, options = {}, refreshCache }) {
   );
 
   if (!resource) return;
-  const { adaptorType, assistant, _integrationId, sampleData } = resource;
+  const { adaptorType, assistant: resourceAssistant, _integrationId, sampleData, _connectionId } = resource;
+  const connection = yield select(selectors.resource, 'connections', _connectionId);
+  const assistant = getAssistantFromConnection(resourceAssistant, connection);
+
+  resource.assistant = assistant;
 
   if (assistant) {
     return yield call(_fetchAssistantSampleData, { resource });
