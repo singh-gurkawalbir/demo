@@ -8328,6 +8328,14 @@ Object {
       },
       "file.batchSize": Object {
         "fieldId": "file.batchSize",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "file.csv": Object {
         "fieldId": "file.csv",
@@ -10324,6 +10332,14 @@ Object {
       },
       "file.batchSize": Object {
         "fieldId": "file.batchSize",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "file.csv": Object {
         "fieldId": "file.csv",

@@ -80,7 +80,7 @@ export function CustomReactSelectStyles() {
           ? theme.palette.background.paper2
           : theme.palette.background.paper,
       border: 'none',
-      minHeight: '48px',
+      minHeight: 38,
       display: 'flex',
       alignItems: 'center',
       borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
@@ -174,10 +174,13 @@ export function CustomReactSelectStyles() {
       minWidth: 'unset',
       padding: '1px 8px',
       border: `1px solid ${theme.palette.secondary.lightest}`,
+      alignItems: 'center',
+      '& > div': {
+        lineHeight: 1,
+      },
       '& > * .MuiChip-root': {
         border: 'none',
         height: 'unset',
-        lineHeight: 1,
       },
     }),
     multiValueLabel: styles => ({

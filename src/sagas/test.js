@@ -649,6 +649,18 @@ describe('apiCallWithPaging saga', () => {
       .returns(responseData)
       .run());
 
+    test('should not call apiCallWithPaging with next url if "next" link header exists if path is /audit and return the first page data', () => expectSaga(apiCallWithPaging, {path: '/audit', opts})
+      .provide([
+        [call(apiCallWithRetry, {path: '/audit', opts, requireHeaders: true}),
+          {
+            data: responseData,
+            headers: {
+              get: jest.fn(() => nextLink),
+            }}],
+      ])
+      .returns(responseData)
+      .run());
+
     test('should recursively call apiCallWithPaging with next url if "next" link header exists and return the total data', () => expectSaga(apiCallWithPaging, {path, opts})
       .provide([
         [call(apiCallWithRetry, {path, opts, requireHeaders: true}),
