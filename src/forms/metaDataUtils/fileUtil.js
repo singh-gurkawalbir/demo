@@ -291,6 +291,12 @@ inputMode: {
 },
 'file.batchSize': {
   fieldId: 'file.batchSize',
+  visibleWhenAll: [
+    {
+      field: 'inputMode',
+      is: ['records'],
+    },
+  ],
 },
 'file.backupPath': {
   fieldId: 'file.backupPath',
