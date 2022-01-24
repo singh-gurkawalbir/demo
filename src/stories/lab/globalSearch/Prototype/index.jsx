@@ -45,22 +45,18 @@ function GlobalSearch() {
   );
 }
 
-export default function GlobalSearchProto({getResults, results, onKeywordChange, onFiltersChange, filterBlacklist}) {
+export default function GlobalSearchProto({getResults, filterBlacklist}) {
   return (
     <GlobalSearchProvider
       getResults={getResults}
-      results={results}
       filterBlacklist={filterBlacklist}
-      onKeywordChange={onKeywordChange}
-      onFiltersChange={onFiltersChange}>
+     >
       <GlobalSearch />
     </GlobalSearchProvider>
   );
 }
 
 GlobalSearchProto.propTypes = {
-  onKeywordChange: PropTypes.func.isRequired,
-  onFiltersChange: PropTypes.func.isRequired,
-  results: PropTypes.object,
+  getResults: PropTypes.func.isRequired,
   filterBlacklist: PropTypes.array,
 };

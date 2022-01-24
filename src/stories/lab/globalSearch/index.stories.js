@@ -23,7 +23,7 @@ export const FullResults = Template.bind({});
 
 FullResults.parameters = designParameters;
 FullResults.args = {
-  results: {
+  getResults: () => ({
     flows: [
       { lastModified: '2021-02-18T21:29:37Z', name: 'Move data from point A to B', description: 'Description of a flow.' },
       { lastModified: '2021-02-18T21:29:37Z', name: 'This flow has no description' },
@@ -48,34 +48,34 @@ FullResults.args = {
       { name: 'Some template', description: 'This is newest version of Salesforce - NetSuite Integration App built on Celigos integrator.io platform. Streamline your Lead-to-Cash process and manage sales process effectively and in real-time. Packed with Celigos deep domain expertise and best practices, this Integration App is the embodiment of several years of customer feedback, learning and growth. With distributed adapters running in NetSuite and Salesforce, our integration app allows endless customization options.' },
       { name: 'Another template'},
     ],
-  },
+  }),
 };
 
 export const EmptyResults = Template.bind({});
 
 EmptyResults.parameters = designParameters;
 EmptyResults.args = {
-  results: {},
+  getResults: () => ({}),
 };
 
 export const ResourceOnlyResults = Template.bind({});
 
 ResourceOnlyResults.parameters = designParameters;
 ResourceOnlyResults.args = {
-  results: {
+  getResults: () => ({
     connections: [
       { lastModified: '2019-09-09T14:29:37Z', name: 'Walmart API', isOnline: true },
       { lastModified: '2019-09-09T14:29:37Z', name: 'Starwars API', description: 'public API that exposes access to a database of the the Starwars universe.', isOnline: true },
       { lastModified: '2019-09-09T14:29:37Z', name: 'Shopify -EU stores', isOnline: false },
     ],
-  },
+  }),
 };
 
 export const MarketplaceOnlyResults = Template.bind({});
 
 MarketplaceOnlyResults.parameters = designParameters;
 MarketplaceOnlyResults.args = {
-  results: {
+  getResults: () => ({
     marketplaceTemplates: [
       { name: 'Some template', description: 'This is newest version of Salesforce - NetSuite Integration App built on Celigos integrator.io platform. Streamline your Lead-to-Cash process and manage sales process effectively and in real-time. Packed with Celigos deep domain expertise and best practices, this Integration App is the embodiment of several years of customer feedback, learning and growth. With distributed adapters running in NetSuite and Salesforce, our integration app allows endless customization options.' },
       { name: 'Another template'},
@@ -84,7 +84,7 @@ MarketplaceOnlyResults.args = {
       { name: 'Some Integration app', description: 'This is newest version of Salesforce - NetSuite Integration App built on Celigos integrator.io platform. Streamline your Lead-to-Cash process and manage sales process effectively and in real-time. Packed with Celigos deep domain expertise and best practices, this Integration App is the embodiment of several years of customer feedback, learning and growth. With distributed adapters running in NetSuite and Salesforce, our integration app allows endless customization options.' },
       { name: 'Another marketplace integration app with a long title.'},
     ],
-  },
+  }),
 };
 
 export const BlackListedFiltersResults = Template.bind({});
@@ -92,11 +92,11 @@ export const BlackListedFiltersResults = Template.bind({});
 BlackListedFiltersResults.parameters = designParameters;
 BlackListedFiltersResults.args = {
   filterBlacklist: ['flows', 'agents', 'apis', 'connectors', 'scripts'],
-  results: {
+  getResults: () => ({
     connections: [
       { lastModified: '2019-09-09T14:29:37Z', name: 'Walmart API', isOnline: true },
       { lastModified: '2019-09-09T14:29:37Z', name: 'Starwars API', description: 'public API that exposes access to a database of the the Starwars universe.', isOnline: true },
       { lastModified: '2019-09-09T14:29:37Z', name: 'Shopify -EU stores', isOnline: false },
     ],
-  },
+  }),
 };

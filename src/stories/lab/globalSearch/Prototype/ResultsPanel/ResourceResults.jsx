@@ -1,10 +1,10 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
-import MarketplaceIcon from '../../../../../components/icons/MarketplaceIcon';
 import ResultsList from './ResultsList';
-import TextButton from '../../../../../components/Buttons/TextButton';
-import useActiveTab from '../hooks/useActiveTab';
 import useResults from '../hooks/useResults';
+import useKeyboardNavigation from '../hooks/useKeyboardNavigation';
+import { getResultsLength } from '../utils';
+import CheckoutMarketPlace from './CheckoutMarketPlace';
 
 const useStyles = makeStyles(theme => ({
   resultContainer: {
@@ -26,25 +26,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Resourceresults({currentFocussed}) {
+function Resourceresults() {
   const classes = useStyles();
-  const [, setActiveTab] = useActiveTab();
-  const {resourceResults, marketplaceResults, marketplaceResultCount} = useResults();
+  const {resourceResults } = useResults();
+  const {currentFocussed} = useKeyboardNavigation({listLength: getResultsLength(resourceResults)});
 
   return (
     <div className={classes.resultContainer}>
       <ResultsList results={resourceResults} currentFocussed={currentFocussed} />
-
-      {marketplaceResults?.length > 0 && (
-      <div className={classes.resultFooter}>
-        <TextButton
-          onClick={() => setActiveTab(1)}
-          startIcon={<MarketplaceIcon />}
-          color="primary">
-          Checkout {marketplaceResultCount} result{marketplaceResultCount > 1 && 's'} in Marketplace
-        </TextButton>
-      </div>
-        )}
+      <CheckoutMarketPlace />
     </div>
   );
 }

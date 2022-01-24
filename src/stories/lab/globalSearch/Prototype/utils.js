@@ -87,4 +87,6 @@ export function getResourceFilters(filterBlacklist) {
   return resultsObject;
 }
 
+export const getResultsLength = results => results?.reduce((oldState, action) => oldState + action?.results?.length, 0);
+
 export { getFilters, getKeyword, getTabResults, buildSearchString};

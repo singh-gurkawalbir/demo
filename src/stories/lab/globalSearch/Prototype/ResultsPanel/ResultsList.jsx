@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ResultsList({ results, currentFocussed }, ref) {
+function ResultsList({ results, currentFocussed }) {
   const classes = useStyles();
 
   if (!results?.length) {
@@ -71,7 +71,6 @@ function ResultsList({ results, currentFocussed }, ref) {
 
             return (
               <Row
-                ref={currentRowIndex === currentFocussed ? ref : null}
                 focussed={currentRowIndex === currentFocussed}
                 key={result.id} result={result} type={type}
                 includeDivider={includeDivider} />

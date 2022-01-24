@@ -1,8 +1,7 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles, Tabs, Tab, IconButton } from '@material-ui/core';
 import FloatingPaper from '../ResourceFilter/FloatingPaper';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
-import useKeyboardNavigation from '../hooks/useKeyboardNavigation';
 import ResourceResults from './ResourceResults';
 import MarketPlaceResults from './MarketPlaceResults';
 import { useGlobalSearchState } from '../hooks/useGlobalSearchState';
@@ -49,15 +48,11 @@ const useStyles = makeStyles(theme => ({
 function ResultsPanel() {
   const classes = useStyles();
   const clearSearchInput = useGlobalSearchState(state => state?.clearSearch);
-  const {resourceResults, marketplaceResults, resourceResultCount, marketplaceResultCount} = useResults();
+  const {resourceResultCount, marketplaceResultCount} = useResults();
   const [activeTab, setActiveTab] = useActiveTab();
   const handleTabChange = (_, newValue) => {
     setActiveTab(newValue);
   };
-  const currentResults = activeTab === 1 ? marketplaceResults : resourceResults;
-  const listItemLength = currentResults?.reduce((oldState, action) => oldState + action?.results?.length, 0);
-  const listItemRef = useRef();
-  const {currentFocussed} = useKeyboardNavigation({listLength: listItemLength, listItemRef});
 
   useEffect(() => {
     if (marketplaceResultCount > 0 && resourceResultCount === 0 && activeTab === 0) {
@@ -90,8 +85,8 @@ function ResultsPanel() {
       </div>
 
       <TabContent>
-        <ResourceResults currentFocussed={currentFocussed} />
-        <MarketPlaceResults currentFocussed={currentFocussed} />
+        <ResourceResults />
+        <MarketPlaceResults />
       </TabContent>
     </FloatingPaper>
   );

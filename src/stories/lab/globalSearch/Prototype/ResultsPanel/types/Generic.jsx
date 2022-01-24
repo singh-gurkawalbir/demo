@@ -1,9 +1,10 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-import React from 'react';
+import React, { useRef } from 'react';
 import { Divider, makeStyles, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import CeligoTimeAgo from '../../../../../../components/CeligoTimeAgo';
 import InfoIconButton from '../../../../../../components/InfoIconButton';
+import useScrollIntoView from '../../hooks/useScrollIntoView';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,10 +29,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function GenericRow({result, children, includeDivider, focussed}, ref) {
+function GenericRow({result, children, includeDivider, focussed}) {
   const classes = useStyles({focussed});
   const history = useHistory();
+  const rowRef = useRef();
 
+  useScrollIntoView(rowRef, focussed);
   if (!result) return null;
 
   const handleRowClick = () => history.push(result.url);
@@ -39,7 +42,7 @@ function GenericRow({result, children, includeDivider, focussed}, ref) {
   return (
     <>
       {includeDivider && <Divider orientation="horizontal" />}
-      <div ref={ref} className={classes.root} onClick={handleRowClick}>
+      <div ref={rowRef} className={classes.root} onClick={handleRowClick}>
         <Typography variant="body2">{result.name || result.id}</Typography>
         {result.description && <InfoIconButton tabIndex={-1} size="xs" info={result.description} />}
 
@@ -54,8 +57,6 @@ function GenericRow({result, children, includeDivider, focussed}, ref) {
   );
 }
 
-const GenericRowWithForwardedRef = React.forwardRef(GenericRow);
-
-const MemoizedRow = React.memo(GenericRowWithForwardedRef);
+const MemoizedRow = React.memo(GenericRow);
 
 export default MemoizedRow;

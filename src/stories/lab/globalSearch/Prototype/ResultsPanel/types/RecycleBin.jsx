@@ -2,9 +2,9 @@ import React from 'react';
 import { Typography } from '@material-ui/core';
 import GenericRow from './Generic';
 
-function RecycleBinRow(props, ref) {
+function RecycleBinRow(props) {
   return (
-    <GenericRow ref={ref} {...props}>
+    <GenericRow {...props}>
       <Typography variant="caption" color="textSecondary">{props.result.resourceType}</Typography>
     </GenericRow>
   );

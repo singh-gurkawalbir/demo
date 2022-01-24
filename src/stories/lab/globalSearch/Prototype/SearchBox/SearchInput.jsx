@@ -1,7 +1,6 @@
 import React, { useRef, useCallback } from 'react';
 import { IconButton, InputBase, makeStyles, Paper } from '@material-ui/core';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
-import { useGlobalSearchContext } from '../GlobalSearchContext';
 import { useGlobalSearchState } from '../hooks/useGlobalSearchState';
 import useDebouncedValue from '../hooks/useDebouncedInput';
 import useKeyboardShortcut from '../../../../../hooks/useKeyboardShortcut';
@@ -37,10 +36,8 @@ function SearchInput() {
   const classes = useStyles();
   const setKeyword = useGlobalSearchState(state => state.changeKeyword);
   const setOpen = useGlobalSearchState(state => state.changeOpen);
-  const {onKeywordChange} = useGlobalSearchContext();
   const [inputValue, setInputValue] = useDebouncedValue('', value => {
     setKeyword(value);
-    onKeywordChange?.(value);
   }, 200);
   const escapePressedRef = useRef(false);
 

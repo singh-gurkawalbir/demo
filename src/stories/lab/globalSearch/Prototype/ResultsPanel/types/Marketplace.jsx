@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, makeStyles, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import UpArrowIcon from '../../../../../../components/icons/ArrowUpIcon';
 import FilledButton from '../../../../../../components/Buttons/FilledButton';
+import useScrollIntoView from '../../hooks/useScrollIntoView';
 
 const useStyles = makeStyles(theme => ({
   rootExpanded: {
@@ -33,9 +34,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function MarketPlaceRow({type, result, includeDivider, focussed}, ref) {
+function MarketPlaceRow({type, result, includeDivider, focussed}) {
   const classes = useStyles({focussed});
   const history = useHistory();
+  const rowRef = useRef();
+
+  useScrollIntoView(rowRef, focussed);
 
   if (!result) return null;
 
@@ -46,7 +50,7 @@ function MarketPlaceRow({type, result, includeDivider, focussed}, ref) {
     <>
       {includeDivider && <Divider orientation="horizontal" />}
 
-      <Accordion ref={ref} tabIndex={0} elevation={0} classes={{expanded: classes.rootExpanded, root: classes.root}}>
+      <Accordion ref={rowRef} tabIndex={0} elevation={0} classes={{expanded: classes.rootExpanded, root: classes.root}}>
         <AccordionSummary
           classes={{root: classes.summary}}
           expandIcon={<UpArrowIcon />}
@@ -70,8 +74,5 @@ function MarketPlaceRow({type, result, includeDivider, focussed}, ref) {
   );
 }
 
-const MarketPlaceRowWithForwardedRef = React.forwardRef(MarketPlaceRow);
-
-const MemoizedMarketPlaceRow = React.memo(MarketPlaceRowWithForwardedRef);
-
+const MemoizedMarketPlaceRow = React.memo(MarketPlaceRow);
 export default MemoizedMarketPlaceRow;

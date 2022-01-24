@@ -18,7 +18,7 @@ const stateUpdaters = ({get, set}) => ({
       newKeyword = buildSearchString(filters, newSearchString);
     }
     if (!isEqual(filters, newFilters)) {
-      set(state => ({...state, keyword: newKeyword, filters: newFilters}));
+      set(state => ({...state, keyword: newKeyword, filters: [...newFilters, ...filters]}));
     } else {
       set(state => ({...state, keyword: newKeyword}));
     }
