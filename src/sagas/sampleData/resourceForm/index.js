@@ -56,7 +56,7 @@ export function* _getProcessorOutput({ processorData }) {
 
 export function* _handlePreviewError({ e, resourceId }) {
 // Handling Errors with status code between 400 and 500
-  if (e.status === 403 || e.status === 401) {
+  if (!resourceId || !e || e.status === 403 || e.status === 401) {
     return;
   }
 
@@ -242,7 +242,7 @@ export function* _fetchFBActionsSampleData({ formKey }) {
   ))?.data;
 
   const {data: transformedOutput, hasNoRulesToProcess} = yield call(executeTransformationRules, {
-    transform: resourceObj.transform,
+    transform: resourceObj?.transform,
     sampleData: parsedData,
   });
 
@@ -259,7 +259,7 @@ export function* _fetchFBActionsSampleData({ formKey }) {
   ))?.data;
 
   const {data: preSavePageHookOutput, hasNoRulesToProcess: hasNoHook} = yield call(executeJavascriptHook, {
-    hook: resourceObj.hooks?.preSavePage,
+    hook: resourceObj?.hooks?.preSavePage,
     sampleData: transformedData,
   });
 
