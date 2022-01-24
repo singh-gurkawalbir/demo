@@ -948,9 +948,7 @@ describe('resourceFormSampleData sagas', () => {
       };
       const processorResponse = {
         data: {
-          data: {
-            users: { test: 5 },
-          },
+          users: { test: 5 },
         },
       };
       const parsedData = {
@@ -1001,13 +999,13 @@ describe('resourceFormSampleData sagas', () => {
       };
       const processorResponse = {
         data: {
-          data: {
-            users: { test: 5 },
-          },
+          users: { test: 5 },
         },
       };
 
-      const parseData = processorResponse.data.data;
+      const parseData = {
+        users: { test: 5 },
+      };
 
       return expectSaga(_parseFileData, { resourceId, fileContent, fileProps: ftpResource.file.csv, parserOptions, isNewSampleData: true, fileType: 'csv' })
         .provide([

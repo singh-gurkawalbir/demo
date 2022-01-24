@@ -43,20 +43,15 @@ const PARSERS = {
 };
 
 export function* _getProcessorOutput({ processorData }) {
-  try {
-    const processedData = yield call(evaluateExternalProcessor, {
-      processorData,
-    });
+  const processedData = yield call(evaluateExternalProcessor, {
+    processorData,
+  });
 
-    return { data: processedData };
-  } catch (e) {
-    // Handling Errors with status code between 400 and 500
-    if (e.status >= 400 && e.status < 500) {
-      const parsedError = safeParse(e.message);
+  // Currently, we do not need to show violations ( which is a rare case out side of editor )
+  // So, if at all violations are thrown, we reset the sample data to empty
+  if (processedData?.violations) return;
 
-      return {error: parsedError};
-    }
-  }
+  return processedData;
 }
 
 export function* _handlePreviewError({ e, resourceId }) {
@@ -138,17 +133,15 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
       };
       const processorOutput = yield call(_getProcessorOutput, { processorData });
 
-      if (processorOutput?.data) {
-        const previewData = processorOutput.data.data;
-
-        yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
-        yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
-      }
       if (processorOutput?.error) {
         return yield put(
-          actions.resourceFormSampleData.receivedError(resourceId, processorOutput.error)
+          actions.resourceFormSampleData.receivedProcessorError(resourceId, processorOutput.error)
         );
       }
+      const previewData = processorOutput?.data;
+
+      yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
+      yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
       break;
     }
     case 'xlsx': {
@@ -169,18 +162,15 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
       if (isNewSampleData) {
         yield put(actions.resourceFormSampleData.setCsvFileData(resourceId, csvFileContent));
       }
-      if (processorOutput?.data) {
-        const previewData = processorOutput.data.data;
-
-        yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
-        yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
-      }
       if (processorOutput?.error) {
-        // TODO: review this part
         return yield put(
-          actions.resourceFormSampleData.receivedError(resourceId, processorOutput.error)
+          actions.resourceFormSampleData.receivedProcessorError(resourceId, processorOutput.error)
         );
       }
+      const previewData = processorOutput.data;
+
+      yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
+      yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
       break;
     }
     case 'fileDefinitionParser': {
@@ -197,17 +187,15 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
       const processorOutput = yield call(_getProcessorOutput, { processorData });
 
       yield put(actions.resourceFormSampleData.setRawData(resourceId, fileContent));
-      if (processorOutput?.data) {
-        const previewData = processorOutput.data.data;
-
-        yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
-        yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
-      }
       if (processorOutput?.error) {
         return yield put(
-          actions.resourceFormSampleData.receivedError(resourceId, processorOutput.error)
+          actions.resourceFormSampleData.receivedProcessorError(resourceId, processorOutput.error)
         );
       }
+      const previewData = processorOutput.data;
+
+      yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
+      yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
       break;
     }
     default:
