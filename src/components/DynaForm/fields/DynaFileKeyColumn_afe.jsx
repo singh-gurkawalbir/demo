@@ -39,6 +39,7 @@ export default function DynaFileKeyColumn_afe(props) {
     helpText,
     helpKey,
     options = emptyObj,
+    isLoggable,
   } = props;
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -128,6 +129,7 @@ export default function DynaFileKeyColumn_afe(props) {
       disabled={disabled}
       className={classes.keyColumnFormWrapper}>
       <DynaMultiSelect
+        isLoggable={isLoggable}
         disabled={disabled}
         id={id}
         label={label}

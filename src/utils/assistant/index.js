@@ -14,6 +14,7 @@ import {
   isNumber,
   get,
 } from 'lodash';
+import { getPathParams } from './pathParamUtils';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
   'allowUndefinedResource',
@@ -675,7 +676,7 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
     [operationDetails.url],
     exportAdaptorSubSchema.relativeURI || ''
   );
-  const pathParams = {};
+  let pathParams = {};
   let queryParams = {};
   let bodyParams = {};
 
@@ -683,34 +684,7 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
     operationDetails.pathParameters &&
     operationDetails.pathParameters.length > 0
   ) {
-    operationDetails.pathParameters.forEach((p, index) => {
-      if (urlMatch && urlMatch.urlParts && urlMatch.urlParts[index]) {
-        pathParams[p.id] = urlMatch.urlParts[index];
-      }
-
-      if (pathParams[p.id]) {
-        if (p.config) {
-          if (p.config.prefix) {
-            pathParams[p.id] = pathParams[p.id].replace(p.config.prefix, '');
-          }
-
-          if (p.config.suffix) {
-            pathParams[p.id] = pathParams[p.id].replace(p.config.suffix, '');
-          }
-        }
-
-        /* IO-3665 */
-        if (
-          pathParams[p.id].indexOf('(') === 0 &&
-          pathParams[p.id].indexOf(')') === pathParams[p.id].length - 1
-        ) {
-          pathParams[p.id] = pathParams[p.id].substring(
-            1,
-            pathParams[p.id].length - 1
-          );
-        }
-      }
-    });
+    pathParams = getPathParams({relativePath: operationDetails.url, actualPath: exportAdaptorSubSchema.relativeURI, pathParametersInfo: operationDetails?.pathParameters});
   }
 
   if (
@@ -2184,6 +2158,8 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     '/assistantMetadata': assistantMetadata,
     '/ignoreExisting': !!ignoreExisting,
     '/ignoreMissing': !!ignoreMissing,
+    // AdaptorType will be added by backend. UI shouldnt set/update adaptorType
+    '/adaptorType': undefined,
   };
 }
 

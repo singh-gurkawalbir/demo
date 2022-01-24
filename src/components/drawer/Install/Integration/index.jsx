@@ -5,7 +5,6 @@ import DrawerHeader from '../../Right/DrawerHeader';
 import DrawerContent from '../../Right/DrawerContent';
 import UploadFile from './UploadFile';
 import Preview from './Preview';
-import Setup from '../common/Setup';
 
 const rootPath = 'installIntegration';
 
@@ -33,13 +32,8 @@ export default function InstallIntegrationDrawer() {
           <Route path={`${match.url}/${rootPath}/preview/:templateId`}>
             <Preview />
           </Route>
-          <Route path={`${match.url}/${rootPath}/setup/:templateId`}>
-            <Setup data-public handleClose={handleClose} />
-          </Route>
           <Route path={`${match.url}/${rootPath}`}>
-            <span data-public>
-              <UploadFile />
-            </span>
+            <UploadFile />
           </Route>
         </Switch>
       </DrawerContent>

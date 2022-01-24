@@ -2,7 +2,7 @@ import { isNewId } from '../../../utils/resource';
 
 export default {
   'http.status._exportId': {
-    loggable: true,
+    isLoggable: true,
     label: 'Status export',
     type: 'selectresource',
     options: { appType: 'http' },
@@ -15,57 +15,57 @@ export default {
     required: true,
   },
   name: {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Name',
     required: true,
   },
   description: {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Description',
     defaultValue: r => r.description || '',
   },
   'http.status.initialWaitTime': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Initial wait time',
   },
   'http.status.pollWaitTime': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Poll wait time',
   },
   'http.status.statusPath': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     label: 'Status path',
     required: true,
   },
   'http.status.inProgressValues': {
-    loggable: true,
+    isLoggable: true,
     type: 'textlist',
     label: 'In progress values',
     required: true,
   },
   'http.status.doneValues': {
-    loggable: true,
+    isLoggable: true,
     type: 'textlist',
     label: 'Done values',
     required: true,
   },
   'http.status.doneWithoutDataValues': {
-    loggable: true,
+    isLoggable: true,
     type: 'textlist',
     label: 'Done without data values',
   },
   'http.status.errorValues': {
-    loggable: true,
+    isLoggable: true,
     type: 'textlist',
     label: 'Error values',
   },
   'http.submit.resourcePath': {
-    loggable: true,
+    isLoggable: true,
     type: 'text',
     visibleWhen: [
       {
@@ -76,7 +76,7 @@ export default {
     label: 'Resource path',
   },
   'http.result._exportId': {
-    loggable: true,
+    isLoggable: true,
     type: 'selectresource',
     resourceType: 'exports',
     allowNew: true,
@@ -89,13 +89,13 @@ export default {
     label: 'Result export',
   },
   'http.submit.sameAsStatus': {
-    loggable: true,
+    isLoggable: true,
     type: 'checkbox',
     label: 'Same as check status',
     defaultValue: r => isNewId(r?._id) ? true : r?.http?.submit?.sameAsStatus,
   },
   'http.submit.transform': {
-    loggable: true,
+    isLoggable: true,
     type: 'transformrules',
     label: 'Transform rules',
     visibleWhen: [

@@ -144,12 +144,13 @@ export default function JavaScriptPanel({ editorId }) {
   return (
     <LoadResources required resources={['scripts']}>
       <div className={classes.container}>
-        <div data-public className={classes.headerContainer}>
+        <div className={classes.headerContainer}>
           <FormControl className={classes.jsPanelFormControl}>
             <FormLabel htmlFor="scriptId">
               Script
             </FormLabel>
             <CeligoSelect
+              isLoggable
               id="scriptId"
               margin="dense"
               value={scriptId}
@@ -185,7 +186,8 @@ export default function JavaScriptPanel({ editorId }) {
           </OutlinedButton>
           )}
         </div>
-        <div className={classes.scriptPanel}>
+        {/* hide the script content */}
+        <div className={classes.scriptPanel} data-private>
           {scriptContent === undefined && scriptId ? (
             <Spinner centerAll />
           ) : (

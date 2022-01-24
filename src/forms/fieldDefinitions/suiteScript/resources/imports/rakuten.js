@@ -1,6 +1,6 @@
 export default {
   'import.rakuten.method': {
-    loggable: true,
+    isLoggable: true,
     type: 'suitescriptapimethod',
     label: 'API',
     _connectionId: r => r?.import?._connectionId,

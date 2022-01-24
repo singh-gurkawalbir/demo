@@ -12,7 +12,7 @@ import { camelCase } from '../../../../../../utils/string';
 // view only component
 
 export default function DynaSalesUser(props) {
-  const {id, field: fieldId, _integrationId: integrationId, ssLinkedConnectionId, sectionId} = props;
+  const {id, field: fieldId, _integrationId: integrationId, ssLinkedConnectionId, sectionId, isLoggable} = props;
   const dispatch = useDispatch();
   const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/settings/refreshMetadata?field=${sectionId}.${camelCase(id)}&type=${fieldId}`;
 
@@ -42,6 +42,7 @@ export default function DynaSalesUser(props) {
     <>
       {profiles && (
       <DynaSelect
+        isLoggable={isLoggable}
         value={option}
         placeholder="--All--"
         onFieldChange={(id, value) => selectOption(value)}

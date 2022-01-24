@@ -1,6 +1,10 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions, { availableResources } from '../../../actions';
+import { emptyObject } from '../../../utils/constants';
+import getRoutePath from '../../../utils/routePaths';
+import mappingUtil from '../../../utils/mapping';
+import { getIAFlowSettings } from '../../../utils/flows';
 
 describe('resources reducer', () => {
   availableResources.forEach(resourceType => {
@@ -1152,6 +1156,235 @@ describe('resources selectors', () => {
     });
   });
 
+  describe('firstFlowGenerator', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(selectors.firstFlowPageGenerator()).toEqual({});
+      expect(selectors.firstFlowPageGenerator({})).toEqual({});
+      expect(selectors.firstFlowPageGenerator({}, '123')).toEqual({});
+      expect(selectors.firstFlowPageGenerator('123')).toEqual({});
+    });
+    test('should return first page generator in a flow', () => {
+      const flows = [{_id: '123', pageGenerators: [{_exportId: '123'}]}];
+      const exports = [{_id: '123', name: 'sql export'}];
+      let state = reducer(undefined, actions.resource.receivedCollection('flows', flows));
+
+      state = reducer(state, actions.resource.receivedCollection('exports', exports));
+
+      expect(selectors.firstFlowPageGenerator(state, '123')).toEqual(exports[0]);
+    });
+    test('should return empty object if flow does not have page generators', () => {
+      const flows = [{_id: '123', pageGenerators: []}];
+      const state = reducer(undefined, actions.resource.receivedCollection('flows', flows));
+
+      expect(selectors.firstFlowPageGenerator(state, '123')).toEqual({});
+    });
+  });
+
+  describe('rdbmsConnectionType', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(selectors.rdbmsConnectionType()).toBeUndefined();
+      expect(selectors.rdbmsConnectionType({})).toBeUndefined();
+      expect(selectors.rdbmsConnectionType({}, '123')).toBeUndefined();
+      expect(selectors.rdbmsConnectionType('123')).toBeUndefined();
+    });
+    test('should return rdbms type of a connection', () => {
+      const connections = [{_id: '1'}, {_id: '2', rdbms: {type: 'http'}}, {_id: '3', rdbms: {some: 'http'}}];
+      const state = reducer(undefined, actions.resource.receivedCollection('connections', connections));
+
+      expect(selectors.rdbmsConnectionType(state, '0')).toBeUndefined();
+      expect(selectors.rdbmsConnectionType(state, '1')).toBeUndefined();
+      expect(selectors.rdbmsConnectionType(state, '2')).toEqual('http');
+      expect(selectors.rdbmsConnectionType(state, '3')).toBeUndefined();
+    });
+  });
+  describe('mappingExtractGenerateLabel', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(selectors.mappingExtractGenerateLabel()).toBeUndefined();
+      expect(selectors.mappingExtractGenerateLabel({})).toBeUndefined();
+      expect(selectors.mappingExtractGenerateLabel({}, '123')).toBeUndefined();
+      expect(selectors.mappingExtractGenerateLabel('123')).toBeUndefined();
+    });
+    describe('when type is generate,', () => {
+      test('should return correct label for import resource', () => {
+        const imports = [
+          {_id: '1', assistant: 'googledrive', _connectionId: '1'},
+          {_id: '2', _connectionId: '2'},
+        ];
+        const connections = [{_id: '1'}, {_id: '2', assistant: 'constantcontact'}];
+        let state = reducer(undefined, actions.resource.receivedCollection('imports', imports));
+
+        state = reducer(state, actions.resource.receivedCollection('connections', connections));
+        expect(selectors.mappingExtractGenerateLabel(state, '1', '1', 'generate'))
+          .toEqual('Destination record field (Google Drive)');
+        expect(selectors.mappingExtractGenerateLabel(state, '1', '2', 'generate'))
+          .toEqual('Destination record field (Constant Contact)');
+      });
+    });
+    describe('when type is extract,', () => {
+      const flows = [
+        {_id: '1', pageGenerators: [{_exportId: '1'}]},
+        {_id: '2', pageGenerators: [{_exportId: '2'}]},
+        {_id: '3', pageGenerators: []},
+      ];
+      const exports = [
+        {_id: '1', assistant: 'googledrive', _connectionId: '1'},
+        {_id: '2', _connectionId: '2'},
+      ];
+      const connections = [{_id: '1'}, {_id: '2', assistant: 'constantcontact'}];
+      let state = reducer(undefined, actions.resource.receivedCollection('flows', flows));
+
+      state = reducer(state, actions.resource.receivedCollection('connections', connections));
+      state = reducer(state, actions.resource.receivedCollection('exports', exports));
+      test('should return correct label for first page generator in a flow', () => {
+        expect(selectors.mappingExtractGenerateLabel(state, '1', '1', 'extract'))
+          .toEqual('Source record field (Google Drive)');
+        expect(selectors.mappingExtractGenerateLabel(state, '2', '2', 'extract'))
+          .toEqual('Source record field (Constant Contact)');
+      });
+      test('should return default label if flow does not have page generators', () => {
+        expect(selectors.mappingExtractGenerateLabel(state, '3', '2', 'extract'))
+          .toEqual('Source record field');
+      });
+    });
+    describe('mappingImportSampleDataSupported', () => {
+      const imports = [
+        {_id: '1', assistant: 'constantcontact', _connectionId: '1'},
+        {_id: '2', assistant: 'financialforce', _connectionId: '1'},
+        {_id: '3', _connectorId: '2'},
+        {_id: '4', adaptorType: 'NetSuiteImport'},
+        {_id: '5', adaptorType: 'NetSuiteDistributedImport'},
+        {_id: '6', adaptorType: 'SalesforceImport'},
+      ];
+      const state = reducer(undefined, actions.resource.receivedCollection('imports', imports));
+
+      test('should not throw exception for invalid arguments', () => {
+        expect(selectors.mappingImportSampleDataSupported()).toBeFalsy();
+        expect(selectors.mappingImportSampleDataSupported({})).toBeFalsy();
+        expect(selectors.mappingImportSampleDataSupported({}, '123')).toBeFalsy();
+        expect(selectors.mappingImportSampleDataSupported('123')).toBeFalsy();
+      });
+      test('should return true if import resource is not financialforce assistant and not a file provider assistant', () => {
+        expect(selectors.mappingImportSampleDataSupported(state, '1')).toBeTruthy();
+      });
+      test('should return false if import resource is financialforce assistant and is not IA resource', () => {
+        expect(selectors.mappingImportSampleDataSupported(state, '2')).toBeFalsy();
+      });
+      test('should return true if import resource is financialforce assistant and is IA resource', () => {
+        expect(selectors.mappingImportSampleDataSupported(state, '3')).toBeTruthy();
+      });
+      test('should return true for netsuite and salesforce imports', () => {
+        expect(selectors.mappingImportSampleDataSupported(state, '4')).toBeTruthy();
+        expect(selectors.mappingImportSampleDataSupported(state, '5')).toBeTruthy();
+        expect(selectors.mappingImportSampleDataSupported(state, '6')).toBeTruthy();
+      });
+    });
+  });
+  describe('redirectUrlToResourceListingPage', () => {
+    const flows = [
+      {_id: '1', _integrationId: '1'},
+      {_id: '2'},
+    ];
+    const state = reducer(undefined, actions.resource.receivedCollection('flows', flows));
+
+    test('should not throw exception for invalid arguments', () => {
+      expect(selectors.redirectUrlToResourceListingPage()).toEqual('/');
+      expect(selectors.redirectUrlToResourceListingPage({})).toEqual('/');
+      expect(selectors.redirectUrlToResourceListingPage({}, '123')).toEqual('/');
+      expect(selectors.redirectUrlToResourceListingPage('123')).toEqual('/');
+    });
+    test('should return correct url for integration', () => {
+      expect(selectors.redirectUrlToResourceListingPage(undefined, 'integration', '1'))
+        .toEqual(getRoutePath('/integrations/1/flows'));
+    });
+    test('should return correct url for flow', () => {
+      expect(selectors.redirectUrlToResourceListingPage(state, 'flow', '1'))
+        .toEqual(getRoutePath(
+          `integrations/${flows[0]._integrationId || 'none'}/flows`
+        ));
+      expect(selectors.redirectUrlToResourceListingPage(state, 'flow', '2'))
+        .toEqual(getRoutePath('integrations/none/flows'));
+      expect(selectors.redirectUrlToResourceListingPage(state, 'flow', '3'))
+        .toEqual('/flows');
+    });
+  });
+  describe('mappingSubRecordAndJSONPath', () => {
+    const imports = [
+      {
+        _id: '4',
+        adaptorType: 'NetSuiteImport',
+        distributed: true,
+        netsuite_da: {
+          operation: 'add',
+          recordType: 'salesorder',
+          mapping: {
+            lists: [
+              {
+                generate: 'item',
+                fields: [
+                  {
+                    generate: 'celigo_inventorydetail',
+                    subRecordMapping: {
+                      recordType: 'inventorydetail',
+                      jsonPath: '$',
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        _id: '5',
+        adaptorType: 'NetSuiteDistributedImport',
+        distributed: true,
+        netsuite_da: {
+          operation: 'add',
+          recordType: 'salesorder',
+          mapping: {
+            lists: [
+              {
+                generate: 'item',
+                fields: [
+                  {
+                    generate: 'celigo_inventorydetail',
+                    subRecordMapping: {
+                      recordType: 'inventorydetail',
+                      jsonPath: '$',
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {_id: '6', adaptorType: 'SalesforceImport'},
+    ];
+    const state = reducer(undefined, actions.resource.receivedCollection('imports', imports));
+    const subRecordMappingId = 'item[*].celigo_inventorydetail';
+
+    test('should not throw exception for invalid arguments', () => {
+      expect(selectors.mappingSubRecordAndJSONPath()).toEqual(emptyObject);
+      expect(selectors.mappingSubRecordAndJSONPath({})).toEqual(emptyObject);
+      expect(selectors.mappingSubRecordAndJSONPath({}, '123')).toEqual(emptyObject);
+      expect(selectors.mappingSubRecordAndJSONPath('123')).toEqual(emptyObject);
+    });
+    test('should return correct subrecord type and json path for netsuite sub record mapping import', () => {
+      expect(selectors.mappingSubRecordAndJSONPath(state, '4', subRecordMappingId))
+        .toEqual(mappingUtil.getSubRecordRecordTypeAndJsonPath(imports[0], subRecordMappingId));
+      expect(selectors.mappingSubRecordAndJSONPath(state, '5', subRecordMappingId))
+        .toEqual(mappingUtil.getSubRecordRecordTypeAndJsonPath(imports[1], subRecordMappingId));
+    });
+    test('should return empty object if import does not have sub record mapping', () => {
+      expect(selectors.mappingSubRecordAndJSONPath(state, '6'))
+        .toEqual(emptyObject);
+    });
+    test('should return empty object if import has sub record mapping but is not netsuite type', () => {
+      expect(selectors.mappingSubRecordAndJSONPath(state, '6', subRecordMappingId))
+        .toEqual(emptyObject);
+    });
+  });
   describe('hasData', () => {
     test('should return false when no data in store for any resource', () => {
       expect(selectors.hasData(undefined, 'exports')).toEqual(false);
@@ -1176,6 +1409,40 @@ describe('resources selectors', () => {
       expect(selectors.hasData(state, 'exports')).toEqual(true);
     });
   });
+
+  describe('isResourceNetsuite', () => {
+    const iniState = reducer(
+      undefined,
+      actions.resource.receivedCollection('exports', [{_id: '1', adaptorType: 'NetSuiteExport'}])
+    );
+    const imports = [
+      {_id: '2', adaptorType: 'NetSuiteImport'},
+      {_id: '3', adaptorType: 'NetSuiteDistributedImport'},
+      {_id: '4', adaptorType: 'HTTPImport'},
+    ];
+    const state = reducer(
+      iniState,
+      actions.resource.receivedCollection('imports', imports)
+    );
+
+    test('should return false for invalid props', () => {
+      expect(selectors.isResourceNetsuite(state)).toBeFalsy();
+      expect(selectors.isResourceNetsuite()).toBeFalsy();
+    });
+    test('should return true if adaptor type is NetSuiteExport', () => {
+      expect(selectors.isResourceNetsuite(state, '1')).toBeTruthy();
+    });
+    test('should return true if adaptor type is NetSuiteImport', () => {
+      expect(selectors.isResourceNetsuite(state, '2')).toBeTruthy();
+    });
+    test('should return true if adaptor type is NetSuiteDistributedImport', () => {
+      expect(selectors.isResourceNetsuite(state, '3')).toBeTruthy();
+    });
+    test('should return false if resource is not netsuite', () => {
+      expect(selectors.isResourceNetsuite(state, '4')).toBeFalsy();
+    });
+  });
+
   describe('integrationInstallSteps', () => {
     test('should return empty array when no data in store for any resource', () => {
       expect(selectors.integrationInstallSteps(undefined, 'dummy')).toEqual([]);
@@ -1308,6 +1575,69 @@ describe('resources selectors', () => {
       expect(selectors.hasSettingsForm(state, 'exports', 567)).toBeTruthy();
       expect(selectors.hasSettingsForm(state, 'exports', 890)).toBeTruthy();
     });
+    test('should return true if settings form is valid on integration section metadata', () => {
+      const settingsForm = { form: { fieldMap: {} }, init: { _scriptId: '123' } };
+      const state = {
+        exports: [
+          {_id: '1',
+            settingsForm,
+            settings: {},
+          },
+        ],
+
+      };
+
+      expect(selectors.hasSettingsForm(state, 'exports', '1', 'general')).toBeTruthy();
+    });
+  });
+});
+
+describe('iaFlowSettings selector', () => {
+  const flowIdIA = 'f1';
+  const integrationApp = {
+    _id: 'i2',
+    _connectorId: 'ia2',
+    settings: {
+      sections: [
+        {
+          title: 'order',
+          flows: [
+            {
+              _id: 'f1',
+              sections: [
+                {
+                  title: 'flowSec',
+                  flows: [{_id: 'f4'}],
+                },
+              ],
+              showSchedule: true,
+              showMapping: true,
+              showStartDateDialog: true,
+              disableSlider: true,
+              disableRunFlow: true,
+              showUtilityMapping: true,
+            },
+            {_id: 'f2'},
+          ],
+        },
+        {
+          title: 'payment',
+          flows: [{_id: 'f3'}],
+        },
+      ],
+    },
+  };
+  const state = reducer(undefined, actions.resource.receivedCollection('integrations', [integrationApp]));
+
+  test('should not throw exception for invalid arguments', () => {
+    expect(selectors.mappingExtractGenerateLabel()).toBeUndefined();
+    expect(selectors.mappingExtractGenerateLabel({})).toBeUndefined();
+    expect(selectors.mappingExtractGenerateLabel({}, '123')).toBeUndefined();
+    expect(selectors.mappingExtractGenerateLabel('123')).toBeUndefined();
+  });
+  test('should return correct IA flow settings for IA', () => {
+    expect(selectors.iaFlowSettings(state, integrationApp._id, flowIdIA, undefined))
+      .toEqual(getIAFlowSettings(integrationApp, flowIdIA, undefined));
   });
 });
 
@@ -1439,6 +1769,7 @@ describe('Connection has as2 routing selector', () => {
   test('should return false when the state is undefined', () => {
     const state = reducer(undefined, 'some action');
 
+    expect(selectors.connectionHasAs2Routing()).toEqual(false);
     expect(selectors.connectionHasAs2Routing(state)).toEqual(false);
   });
   test('should return true if connection has as2 routing', () => {
@@ -1458,6 +1789,84 @@ describe('Connection has as2 routing selector', () => {
     expect(selectors.connectionHasAs2Routing(state, '12357')).toEqual(false);
   });
 });
+describe('mappingNSRecordType selector', () => {
+  const imports = [
+    {
+      _id: '4',
+      adaptorType: 'NetSuiteImport',
+      distributed: true,
+      netsuite_da: {
+        operation: 'add',
+        recordType: 'salesorder',
+        mapping: {
+          lists: [
+            {
+              generate: 'item',
+              fields: [
+                {
+                  generate: 'celigo_inventorydetail',
+                  subRecordMapping: {
+                    recordType: 'inventorydetail',
+                    jsonPath: '$',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    },
+    {
+      _id: '5',
+      adaptorType: 'NetSuiteDistributedImport',
+      distributed: true,
+      netsuite: {
+        operation: 'add',
+        recordType: 'salesorder',
+        mapping: {
+          lists: [
+            {
+              generate: 'item',
+              fields: [
+                {
+                  generate: 'celigo_inventorydetail',
+                  subRecordMapping: {
+                    recordType: 'inventorydetail',
+                    jsonPath: '$',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    },
+    {_id: '6', adaptorType: 'SalesforceImport'},
+  ];
+  const state = reducer(undefined, actions.resource.receivedCollection('imports', imports));
+  const subRecordMappingId = 'item[*].celigo_inventorydetail';
+
+  test('should not throw exception for invalid arguments', () => {
+    expect(selectors.mappingNSRecordType()).toBeUndefined();
+    expect(selectors.mappingNSRecordType({})).toBeUndefined();
+    expect(selectors.mappingNSRecordType({}, '123')).toBeUndefined();
+    expect(selectors.mappingNSRecordType('123')).toBeUndefined();
+  });
+  test('should return if import resource is not netsuite', () => {
+    expect(selectors.mappingNSRecordType(state, '6', subRecordMappingId)).toBeUndefined();
+  });
+  test('should return correct sub record type and json path for netsuite imports', () => {
+    expect(selectors.mappingNSRecordType(state, '4', subRecordMappingId))
+      .toEqual(mappingUtil.getSubRecordRecordTypeAndJsonPath(
+        imports[0],
+        subRecordMappingId
+      ).recordType);
+  });
+  test('should return correct record type for netsuite imports', () => {
+    expect(selectors.mappingNSRecordType(state, '5'))
+      .toEqual(imports[1].netsuite.recordType);
+  });
+});
 describe('Export needs routing selector', () => {
   const exports = [
     { _id: '1234',
@@ -1475,6 +1884,10 @@ describe('Export needs routing selector', () => {
       _connectionId: 'conn2',
       name: 'exp3',
     },
+    { _id: '12356',
+      adaptorType: 'AS2Export',
+      name: 'exp3',
+    },
     { _id: '12358',
       adaptorType: 'FTPExport',
       _connectionId: 'conn2',
@@ -1482,6 +1895,12 @@ describe('Export needs routing selector', () => {
     },
   ];
 
+  test('should not throw exception for invalid arguments', () => {
+    expect(selectors.exportNeedsRouting()).toBeFalsy();
+    expect(selectors.exportNeedsRouting({})).toBeFalsy();
+    expect(selectors.exportNeedsRouting({}, '123')).toBeFalsy();
+    expect(selectors.exportNeedsRouting('123')).toBeFalsy();
+  });
   test('should return false when the state is undefined', () => {
     const state = reducer(undefined, 'some action');
 
@@ -1502,6 +1921,14 @@ describe('Export needs routing selector', () => {
     );
 
     expect(selectors.exportNeedsRouting(state, '12358')).toEqual(false);
+  });
+  test('should return false if export does not have connectionId', () => {
+    const state = reducer(
+      undefined,
+      actions.resource.receivedCollection('exports', exports)
+    );
+
+    expect(selectors.exportNeedsRouting(state, '12356')).toEqual(false);
   });
 });
 

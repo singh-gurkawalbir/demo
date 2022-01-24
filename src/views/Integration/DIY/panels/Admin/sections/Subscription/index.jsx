@@ -20,10 +20,12 @@ const metadata = {
   useColumns: () => {
     const { supportsChild, childId, children } = useGetTableContext();
 
+    const dateFormat = useSelector(state => selectors.userProfilePreferencesProps(state)?.dateFormat);
     let columns = [
       {
         key: 'name',
         heading: 'Name',
+        isLoggable: true,
         Value: ({rowData: r}) => (
           <>
             {r && r.name}
@@ -34,16 +36,19 @@ const metadata = {
       {
         key: 'child',
         heading: 'Child',
+        isLoggable: true,
         Value: ({rowData: r}) => children.find(c => c._id === r.childId)?.label || r.childId,
       },
       {
         key: 'installedOn',
         heading: 'Installed on',
-        Value: ({rowData: r}) => r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
+        Value: ({rowData: r}) => r.installedOn ? moment(r.installedOn).format(dateFormat || 'MMM D, YYYY') : '',
+        isLoggable: true,
       },
       {
         key: 'action',
         heading: 'Action',
+        isLoggable: true,
         Value: ({rowData: r}) => <AddonInstallerButton resource={r} />,
       },
     ];
@@ -163,6 +168,8 @@ export default function SubscriptionSection({ childId, integrationId }) {
   }
 
   const hasSubscribedAddOns = subscribedAddOnsModified && subscribedAddOnsModified.length > 0;
+  const isLicenseExpired = useSelector(state => selectors.isIntegrationAppLicenseExpired(state, integrationId));
+
   const hasAddOns =
     addOnState &&
     addOnState.addOns &&
@@ -215,7 +222,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 {upgradeText && (
                   <FilledButton
                     className={classes.button}
-                    disabled={upgradeRequested}
+                    disabled={upgradeRequested || isLicenseExpired}
                     onClick={handleUpgrade}>
                     {upgradeText}
                   </FilledButton>
@@ -245,6 +252,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
               <FilledButton
                 className={classes.button}
                 component={Link}
+                disabled={isLicenseExpired}
                 to={match.url.replace('admin/subscription', 'addons')}>
                 GET ADD-ONS
               </FilledButton>

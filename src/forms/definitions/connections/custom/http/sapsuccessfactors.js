@@ -86,6 +86,7 @@ export default {
       inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
+      helpKey: 'sapsuccessfactors.connection.http.auth.token.token',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
     application: {

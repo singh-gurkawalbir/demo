@@ -95,6 +95,44 @@ describe('xmlParser processor logic', () => {
 
       expect(requestBody({rule, data})).toEqual(expectedBody);
     });
+    test('should return the correct data and rule object with options when V0_json is false and rule has properties', () => {
+      const rule = {
+        V0_json: false,
+        trimSpaces: true,
+        stripNewLineChars: true,
+        attributePrefix: '_',
+        textNodeName: 'name',
+        includeNodes: ['a'],
+        excludeNodes: ['b'],
+      };
+      const data = '<xml>some body</xml>';
+
+      const expectedBody = {
+        rules: {
+          doc: {
+            parsers: [
+              {
+                type: 'xml',
+                version: 1,
+                rules: {
+                  V0_json: false,
+                  trimSpaces: true,
+                  stripNewLineChars: true,
+                  attributePrefix: '_',
+                  textNodeName: 'name',
+                  includeNodes: ['a'],
+                  excludeNodes: ['b'],
+                },
+              },
+            ],
+          },
+        },
+        data: '<xml>some body</xml>',
+        options: { isSimplePath: true },
+      };
+
+      expect(requestBody({rule, data})).toEqual(expectedBody);
+    });
     test('should return the correct data and rule object with options when V0_json is undefined', () => {
       const rule = {
         stripNewLineChars: true,

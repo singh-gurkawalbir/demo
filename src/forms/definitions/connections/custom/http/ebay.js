@@ -43,7 +43,7 @@ export default {
       '/http/baseURI': `https://api${
         formValues['/accountType'] === 'sandbox' ? '.sandbox' : ''
       }.ebay.com/`,
-      '/http/ping/relativeURI': '/api/public/hello/',
+      '/http/ping/relativeURI': 'sell/fulfillment/v1/order',
       '/http/auth/oauth/authURI': `https://signin${
         formValues['/accountType'] === 'sandbox' ? '.sandbox' : ''
       }.ebay.com/authorize`,
@@ -131,7 +131,6 @@ export default {
             'https://api.ebay.com/oauth/api_scope/sell.analytics.readonly',
           ],
         },
-
       ],
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
@@ -157,16 +156,27 @@ export default {
       type: 'selectscopes',
       label: 'Configure scopes',
       scopes: [
-        'https://api.ebay.com/oauth/api_scope',
-        'https://api.ebay.com/oauth/api_scope/sell.marketing.readonly',
-        'https://api.ebay.com/oauth/api_scope/sell.marketing',
-        'https://api.ebay.com/oauth/api_scope/sell.inventory.readonly',
-        'https://api.ebay.com/oauth/api_scope/sell.inventory',
-        'https://api.ebay.com/oauth/api_scope/sell.account.readonly',
-        'https://api.ebay.com/oauth/api_scope/sell.account',
-        'https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly',
-        'https://api.ebay.com/oauth/api_scope/sell.fulfillment',
-        'https://api.ebay.com/oauth/api_scope/sell.analytics.readonly',
+        {
+          subHeader: 'Finance API',
+          scopes: [
+            'https://api.ebay.com/oauth/api_scope/sell.finances',
+          ],
+        },
+        {
+          subHeader: 'Other APIs',
+          scopes: [
+            'https://api.ebay.com/oauth/api_scope',
+            'https://api.ebay.com/oauth/api_scope/sell.marketing.readonly',
+            'https://api.ebay.com/oauth/api_scope/sell.marketing',
+            'https://api.ebay.com/oauth/api_scope/sell.inventory.readonly',
+            'https://api.ebay.com/oauth/api_scope/sell.inventory',
+            'https://api.ebay.com/oauth/api_scope/sell.account.readonly',
+            'https://api.ebay.com/oauth/api_scope/sell.account',
+            'https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly',
+            'https://api.ebay.com/oauth/api_scope/sell.fulfillment',
+            'https://api.ebay.com/oauth/api_scope/sell.analytics.readonly',
+          ],
+        },
       ],
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
@@ -202,7 +212,7 @@ export default {
     'http.unencrypted.apiSiteId': {
       id: 'http.unencrypted.apiSiteId',
       type: 'select',
-      label: 'API site id',
+      label: 'API site ID',
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.apiSiteId) ||
         '0',

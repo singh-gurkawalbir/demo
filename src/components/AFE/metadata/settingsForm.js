@@ -15,6 +15,7 @@ export default {
         title: ({ activeProcessor = 'json' }) => activeProcessor === 'json' ? 'Form definition' : 'Script input',
         area: 'meta',
         Panel: FormDefinitionPanel,
+        isLoggable: true,
         props: { mode: 'json' },
       },
       {

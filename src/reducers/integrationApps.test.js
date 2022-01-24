@@ -3203,6 +3203,50 @@ describe('integrationApps selector testcases', () => {
       });
     });
 
+    test('should return license details for the integration app for owner user for expiring soon', () => {
+      const expiryDate = moment(new Date()).add(10, 'days').toISOString();
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: expiryDate,
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+              dateFormat: 'MM/DD/YY',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.integrationAppLicense(state, 'i1')).toEqual({
+        _id: 'l1',
+        _integrationId: 'i1',
+        created: '2018-07-10T10:03:02.169Z',
+        createdText: 'Started on 07/10/18',
+        expires: expiryDate,
+        expiresText: `Expires on ${moment(expiryDate).format('MM/DD/YY')} (10 Days)`,
+        showLicenseExpiringWarning: true,
+        upgradeRequested: false,
+        upgradeText: '',
+      });
+    });
+
     test('should retun license details for the integration app for non owner user for non-expired', () => {
       const state = reducer(
         {
@@ -3243,6 +3287,180 @@ describe('integrationApps selector testcases', () => {
         upgradeRequested: false,
         upgradeText: '',
       });
+    });
+  });
+
+  describe('selectors.isIntegrationAppLicenseExpired test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.isIntegrationAppLicenseExpired()).toEqual(true);
+    });
+
+    const integration = {
+      _id: 'i1',
+      settings: {
+        connectorEdition: 'standard',
+      },
+    };
+
+    test('should return if license expired for the integration app for owner user if expired and upgrade requested', () => {
+      let state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: '2020-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      state = reducer(
+        state,
+        actions.integrationApp.settings.requestedUpgrade('l1')
+      );
+
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(true);
+    });
+
+    test('should return if license expired as true for the integration app for owner user if license not found', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(true);
+    });
+
+    test('should return if license expired for the integration app for owner user for non-expired', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: '2022-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(false);
+    });
+
+    test('should return if license expired for the integration app for owner user for expiring soon', () => {
+      const expiryDate = moment(new Date()).add(10, 'days').toISOString();
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'own',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: expiryDate,
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'own',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(false);
+    });
+
+    test('should return if license expired for the integration app for non owner user for non-expired', () => {
+      const state = reducer(
+        {
+          user: {
+            org: {
+              accounts: [
+                {
+                  _id: 'as1',
+                  ownerUser: {
+                    licenses: [
+                      {
+                        _id: 'l1',
+                        _integrationId: 'i1',
+                        expires: '2022-08-18T06:00:43.721Z',
+                        created: '2018-07-10T10:03:02.169Z',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            preferences: {
+              defaultAShareId: 'as1',
+            },
+          },
+        },
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(false);
     });
   });
 

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import AddIcon from '../../../components/icons/AddIcon';
 import { selectors } from '../../../reducers';
@@ -17,6 +16,8 @@ import LoadResources from '../../../components/LoadResources';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { SCOPES } from '../../../sagas/resourceForm';
 import { TextButton } from '../../../components/Buttons';
+import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
+import NoResultMessageWrapper from '../../../components/NoResultMessageWrapper';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -132,11 +133,11 @@ export default function Licenses(props) {
       <div className={classes.resultContainer}>
         <LoadResources required resources="integrations" >
           {list.count === 0 ? (
-            <Typography>
+            <div>
               {list.total === 0
-                ? 'You don\'t have any licenses.'
-                : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
-            </Typography>
+                ? <NoResultMessageWrapper>You don&apos;t have any licenses</NoResultMessageWrapper>
+                : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+            </div>
           ) : (
             <CeligoTable
               data={list.resources}

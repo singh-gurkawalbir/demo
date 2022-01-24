@@ -20,12 +20,11 @@ export default function TooltipContent({ children, className, escapeUnsecuredDom
 
   return (
     <Typography
-      data-public
       className={clsx(classes.root, className)}
       component="div"
       variant="body2">
       {/<\/?[a-z][\s\S]*>/i.test(children) ? (
-        <RawHtml html={children} options={{allowedTags: ['a', 'b', 'br'], escapeUnsecuredDomains}} />
+        <RawHtml isLoggable html={children} options={{allowedTags: ['a', 'b', 'br'], escapeUnsecuredDomains}} />
       ) : (
         children
       )}

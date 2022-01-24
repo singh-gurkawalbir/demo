@@ -21,10 +21,12 @@ export default {
     {
       key: 'integrations',
       heading: 'Integrations',
+      isLoggable: true,
       Value: ({rowData: r}) => r && r.integrations,
     },
     {
       key: 'status',
+      isLoggable: true,
       heading: <TableHeadWithRefreshIcon label="Status" resourceType="transfers" />,
       Value: ({rowData: r}) => {
         if (!r) {
@@ -48,6 +50,7 @@ export default {
     {
       key: 'transferDate',
       heading: 'Transfer date',
+      isLoggable: true,
       Value: ({rowData: r}) => r && <DateTimeDisplay dateTime={r.transferredAt} />,
     },
   ],

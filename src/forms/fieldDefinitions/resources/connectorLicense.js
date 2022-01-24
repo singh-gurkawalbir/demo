@@ -3,28 +3,28 @@ import { isNewId } from '../../../utils/resource';
 
 export default {
   expires: {
-    loggable: true,
+    isLoggable: true,
     defaultValue: r => r.expires && moment(r.expires).format('L'),
     type: 'licenseexpires',
     label: 'Expires',
     connectorId: r => r._connectorId,
   },
   trialEndDate: {
-    loggable: true,
+    isLoggable: true,
     defaultValue: r => r.trialEndDate && moment(r.trialEndDate).format('L'),
     type: 'licenseexpires',
     label: 'Trial expires',
     connectorId: r => r._connectorId,
   },
   opts: {
-    loggable: true,
+    isLoggable: true,
     defaultValue: r => r.opts,
     type: 'licenseeditor',
     mode: 'json',
     label: 'Options',
   },
   sandbox: {
-    loggable: true,
+    isLoggable: true,
     type: 'select',
     label: 'Environment',
     defaultValue: r => r.sandbox ? 'true' : 'false',
@@ -47,14 +47,14 @@ export default {
     disableText: r => !isNewId(r._id) || r.trialLicenseTemplate,
   },
   _editionId: {
-    loggable: true,
+    isLoggable: true,
     type: 'licenseedition',
     label: 'Edition',
     defaultDisabled: r => !isNewId(r._id) && !!r._integrationId,
     connectorId: r => r?._connectorId,
   },
   childLicenses: {
-    loggable: true,
+    isLoggable: true,
     type: 'childlicenses',
     label: 'Child licenses',
     connectorId: r => r._connectorId,

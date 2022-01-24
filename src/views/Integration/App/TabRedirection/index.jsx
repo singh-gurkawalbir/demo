@@ -112,7 +112,7 @@ export default function TabRedirection({children}) {
     );
   } else if (currentChild.mode === 'uninstall') {
     redirectToPage = getRoutePath(
-      `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
+      `integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${childId}`
     );
   } else if (integration.mode === 'install') {
     redirectToPage = getRoutePath(
@@ -121,7 +121,7 @@ export default function TabRedirection({children}) {
   } else if (integration.mode === 'uninstall') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall${
-        childId ? `/${childId}` : ''
+        childId ? `/child/${childId}` : ''
       }`
     );
   }

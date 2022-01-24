@@ -1,6 +1,7 @@
 import produce from 'immer';
 import reduceReducers from 'reduce-reducers';
 import { createSelector } from 'reselect';
+import { adaptorTypeMap } from '../../../utils/resource';
 import actionTypes from '../../../actions/types';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
 import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
@@ -204,11 +205,16 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
 selectors.mappingImportSampleDataSupported = (state, importId) => {
   const importResource = selectors.resource(state, 'imports', importId);
 
-  const isAssistant =
-  !!importResource.assistant && importResource.assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(importResource.assistant));
+  const isAssistant = !!importResource &&
+                      !!importResource.assistant &&
+                      importResource.assistant !== 'financialforce' &&
+                      !(FILE_PROVIDER_ASSISTANTS.includes(importResource.assistant));
+
   const isIAResource = isIntegrationApp(importResource);
 
-  return isAssistant || isIAResource || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(importResource?.adaptorType);
+  return isAssistant ||
+          isIAResource ||
+          ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(importResource?.adaptorType);
 };
 
 selectors.redirectUrlToResourceListingPage = (
@@ -325,6 +331,15 @@ selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
 
   // give precedence to netsuite_da
   return importResource.netsuite_da?.recordType || importResource.netsuite?.recordType;
+};
+
+selectors.isResourceNetsuite = (state, resourceId) => {
+  if (!state || !resourceId) return false;
+  let adaptorType = selectors.resource(state, 'exports', resourceId)?.adaptorType;
+
+  if (!adaptorType) adaptorType = selectors.resource(state, 'imports', resourceId)?.adaptorType;
+
+  return adaptorTypeMap[adaptorType] === 'netsuite';
 };
 
 selectors.isIntegrationApp = (state, integrationId) => {
