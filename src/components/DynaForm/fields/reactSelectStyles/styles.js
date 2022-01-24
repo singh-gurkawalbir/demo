@@ -180,6 +180,7 @@ export function CustomReactSelectStyles() {
         border: 'none',
         height: 'unset',
         lineHeight: 2,
+        backgroundColor: 'transparent',
       },
     }),
     multiValueLabel: styles => ({
