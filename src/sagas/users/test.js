@@ -78,7 +78,7 @@ describe('all modal sagas', () => {
       );
     });
 
-    test('should generate appropriate failure message for whatever reason', () => {
+    test('should dispatch api failure action with general message if api call fails and not able to generate appropiate error message', () => {
       const updatedPassword = {
         newPassword: 'abc',
         currentPassword: 'def',
@@ -105,6 +105,38 @@ describe('all modal sagas', () => {
           ),
         ),
       );
+    });
+
+    test('should dispatch api failure action with generated message if api call fails and able to generate appropiate error message', () => {
+      const updatedPassword = {
+        newPassword: 'abc',
+        currentPassword: 'def',
+      };
+      const args = {
+        path: changePasswordParams.path,
+        opts: { ...changePasswordParams.opts, body: updatedPassword },
+        message: "Changing user's password",
+        hidden: true,
+      };
+      const error = {
+        message: '{"errors": [{"message": "some error message"}]}',
+      };
+      const { errors } = JSON.parse(error.message);
+      const errorMsg = errors[0].message;
+
+      return expectSaga(changePassword, { updatedPassword })
+        .provide([
+          [call(apiCallWithRetry, args), throwError(error)],
+        ])
+        .put(
+          actions.api.failure(
+            changePasswordParams.path,
+            changePasswordParams.opts.method,
+            errorMsg,
+            true,
+          ),
+        )
+        .run();
     });
   });
   describe('change user email saga', () => {
@@ -249,6 +281,12 @@ describe('all modal sagas', () => {
       });
     });
     describe('accepting account share invite', () => {
+      const sharedResourceTypeMap = {
+        account: 'ashares',
+        stack: 'sshares',
+        transfer: 'transfers',
+      };
+
       test('should update aShare successfuly and reload shared/ashares when the default account is some shared account', () => {
         const aShare = {
           resourceType: 'account',
@@ -290,56 +328,56 @@ describe('all modal sagas', () => {
         expect(saga.next().value).toEqual(put(actions.auth.initSession()));
         expect(saga.next().done).toEqual(true);
       });
-      test('should update aShare successfuly and accept account transfer', () => {
-        const aShare = {
-          resourceType: 'transfer',
-          id: 'something',
-          isAccountTransfer: true,
+      test('should update aShare successfully and accept account transfer if resource is a transfer and invite is an accountTransfer', () => {
+        const resourceType = 'transfer';
+        const id = 'something';
+        const isAccountTransfer = true;
+        const args = {
+          path: `/${sharedResourceTypeMap[resourceType]}/${id}/accept`,
+          opts: {
+            method: 'PUT',
+            body: {},
+          },
+          message: `Accepting ${resourceType} share invite`,
         };
-        const saga = acceptSharedInvite(aShare);
+        const userPreferences = {
+          defaultAShareId: 'own',
+        };
 
-        expect(saga.next().value).toEqual(
-          call(apiCallWithRetry, {
-            path: `/transfers/${aShare.id}/accept`,
-            opts: { method: 'PUT', body: {} },
-            message: 'Accepting transfer share invite',
-          }),
-        );
-        expect(saga.next().value).toEqual(select(selectors.userPreferences));
-        expect(saga.next().value).toEqual(
-          put(actions.app.userAcceptedAccountTransfer()),
-        );
-        expect(saga.next().done).toEqual(true);
+        return expectSaga(acceptSharedInvite, { resourceType, id, isAccountTransfer})
+          .provide([
+            [call(apiCallWithRetry, args)],
+            [select(selectors.userPreferences), userPreferences],
+          ])
+          .put(actions.app.userAcceptedAccountTransfer())
+          .run();
       });
-      test('should update aShare successfuly and update resources collection', () => {
-        const aShare = {
-          resourceType: 'transfer',
-          id: 'something',
-          isAccountTransfer: false,
+      test('should update aShare successfuly and update resources collection if resource is transfer and it is not an accountTransfer', () => {
+        const resourceType = 'transfer';
+        const id = 'something';
+        const isAccountTransfer = false;
+        const args = {
+          path: `/${sharedResourceTypeMap[resourceType]}/${id}/accept`,
+          opts: {
+            method: 'PUT',
+            body: {},
+          },
+          message: `Accepting ${resourceType} share invite`,
         };
-        const saga = acceptSharedInvite(aShare);
+        const userPreferences = {
+          defaultAShareId: 'own',
+        };
 
-        expect(saga.next().value).toEqual(
-          call(apiCallWithRetry, {
-            path: `/transfers/${aShare.id}/accept`,
-            opts: { method: 'PUT', body: {} },
-            message: 'Accepting transfer share invite',
-          }),
-        );
-        expect(saga.next().value).toEqual(select(selectors.userPreferences));
-        expect(saga.next().value).toEqual(
-          put(actions.resource.requestCollection('integrations')),
-        );
-        expect(saga.next().value).toEqual(
-          put(actions.resource.requestCollection('transfers')),
-        );
-        expect(saga.next().value).toEqual(
-          put(actions.resource.requestCollection('tiles')),
-        );
-        expect(saga.next().value).toEqual(
-          put(actions.resource.requestCollection('connections')),
-        );
-        expect(saga.next().done).toEqual(true);
+        return expectSaga(acceptSharedInvite, { resourceType, id, isAccountTransfer})
+          .provide([
+            [call(apiCallWithRetry, args)],
+            [select(selectors.userPreferences), userPreferences],
+          ])
+          .put(actions.resource.requestCollection('integrations'))
+          .put(actions.resource.requestCollection('transfers'))
+          .put(actions.resource.requestCollection('tiles'))
+          .put(actions.resource.requestCollection('connections'))
+          .run();
       });
       test('should generate appropriate error message in case of api failure', () => {
         const aShare = { resourceType: 'account', id: 'something' };
@@ -359,7 +397,7 @@ describe('all modal sagas', () => {
       });
     });
     describe('rejecting account share invite', () => {
-      test('should update aShare successfuly', () => {
+      test('should update aShare successfuly if resourceType is an account or stack', () => {
         const aShare = {
           resourceType: 'account',
           id: 'something',
@@ -378,49 +416,53 @@ describe('all modal sagas', () => {
         );
         expect(saga.next().done).toEqual(true);
       });
-      test('should update aShare successfuly and update resource collection if the account is own', () => {
-        const aShare = {
-          resourceType: 'transfer',
-          id: 'something',
+      test('should update aShare successfuly and update resource collection if the account is own and resourcetype is a transfer', () => {
+        const resourceType = 'transfer';
+        const id = 'something';
+        const permissions = {
+          accessLevel: 'owner',
         };
-        const saga = rejectSharedInvite(aShare);
+        const args = {
+          path: `/transfers/${id}/dismiss`,
+          opts: {
+            method: 'PUT',
+            body: {},
+          },
+          message: `Rejecting ${resourceType} share invite`,
+        };
 
-        expect(saga.next().value).toEqual(
-          call(apiCallWithRetry, {
-            path: `/transfers/${aShare.id}/dismiss`,
-            opts: { method: 'PUT', body: {} },
-            message: 'Rejecting transfer share invite',
-          }),
-        );
-        expect(saga.next().value).toEqual(
-          select(selectors.resourcePermissions),
-        );
-        expect(saga.next({ accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER }).value).toEqual(
-          put(actions.resource.requestCollection('transfers')),
-        );
-        expect(saga.next().done).toEqual(true);
+        return expectSaga(rejectSharedInvite, { resourceType, id })
+          .provide([
+            [call(apiCallWithRetry, args)],
+            [select(selectors.resourcePermissions), permissions],
+          ])
+          .call(apiCallWithRetry, args)
+          .put(actions.resource.requestCollection('transfers'))
+          .run();
       });
       test('should update aShare successfuly and update resource collection if the account is not own', () => {
-        const aShare = {
-          resourceType: 'transfer',
-          id: 'something',
+        const resourceType = 'transfer';
+        const id = 'something';
+        const permissions = {
+          accessLevel: 'administrator',
         };
-        const saga = rejectSharedInvite(aShare);
+        const args = {
+          path: `/transfers/${id}/dismiss`,
+          opts: {
+            method: 'PUT',
+            body: {},
+          },
+          message: `Rejecting ${resourceType} share invite`,
+        };
 
-        expect(saga.next().value).toEqual(
-          call(apiCallWithRetry, {
-            path: `/transfers/${aShare.id}/dismiss`,
-            opts: { method: 'PUT', body: {} },
-            message: 'Rejecting transfer share invite',
-          }),
-        );
-        expect(saga.next().value).toEqual(
-          select(selectors.resourcePermissions),
-        );
-        expect(saga.next({ accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN }).value).toEqual(
-          put(actions.resource.requestCollection('transfers/invited')),
-        );
-        expect(saga.next().done).toEqual(true);
+        return expectSaga(rejectSharedInvite, { resourceType, id })
+          .provide([
+            [call(apiCallWithRetry, args)],
+            [select(selectors.resourcePermissions), permissions],
+          ])
+          .call(apiCallWithRetry, args)
+          .put(actions.resource.requestCollection('transfers/invited'))
+          .run();
       });
       test('should generate appropriate error message in case of api failure', () => {
         const aShare = { resourceType: 'account', id: 'something' };
@@ -1095,7 +1137,7 @@ describe('all modal sagas', () => {
     };
     const error = { code: 422, message: 'error occured' };
 
-    test('On successful api call should update receivedNumEnabledFlows', () => expectSaga(requestNumEnabledFlows)
+    test('Should update receivedNumEnabledFlows, On successful api call', () => expectSaga(requestNumEnabledFlows)
       .provide([
         [call(apiCallWithRetry, {
           path,
@@ -1125,7 +1167,7 @@ describe('all modal sagas', () => {
     };
     const error = { code: 422, message: 'error occured' };
 
-    test('On successful api call should update receivedLicenseEntitlementUsage', () => expectSaga(requestLicenseEntitlementUsage)
+    test('Should update receivedLicenseEntitlementUsage, On successful api call ', () => expectSaga(requestLicenseEntitlementUsage)
       .provide([
         [call(apiCallWithRetry, {
           path,
@@ -1155,7 +1197,7 @@ describe('all modal sagas', () => {
     };
     const error = { code: 422, message: 'error occured' };
 
-    test('On successful api call should update ashares resource', () => expectSaga(addSuiteScriptLinkedConnection, {connectionId})
+    test('Should update ashares resource, On successful api call ', () => expectSaga(addSuiteScriptLinkedConnection, {connectionId})
       .provide([
         [call(apiCallWithRetry, {
           path,
@@ -1191,7 +1233,7 @@ describe('all modal sagas', () => {
     };
     const error = { code: 422, message: 'error occured' };
 
-    test('On successful api call should update ashares resource', () => expectSaga(deleteSuiteScriptLinkedConnection, {connectionId})
+    test('Should update ashares resource, On successful api call', () => expectSaga(deleteSuiteScriptLinkedConnection, {connectionId})
       .provide([
         [call(apiCallWithRetry, {
           path,

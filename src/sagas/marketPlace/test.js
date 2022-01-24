@@ -1,5 +1,6 @@
 /* global describe, test, expect */
 import { call, put, select } from 'redux-saga/effects';
+import { expectSaga } from 'redux-saga-test-plan';
 import actions from '../../actions';
 import { apiCallWithRetry, apiCallWithPaging } from '../index';
 import { selectors } from '../../reducers';
@@ -130,6 +131,38 @@ describe('installConnector saga', () => {
     );
     expect(saga.throw(new Error()).value).toEqual(undefined);
     expect(saga.next().done).toEqual(true);
+  });
+  test('should request collections of integrations, tiles, connections and licenses, if api call is successful and connector is of framework twoDotZero', () => {
+    const tag = 'something';
+    const integrationAppList = [
+      {
+        _id: connectorId,
+        framework: 'twoDotZero',
+      },
+      {
+        _id: 'c2',
+      },
+    ];
+    const path = `/connectors/${connectorId}/install`;
+    const args = {
+      path,
+      opts: {
+        method: 'POST',
+        body: { sandbox, tag, newTemplateInstaller: true },
+      },
+    };
+
+    return expectSaga(installConnector, { connectorId, sandbox, tag })
+      .provide([
+        [select(selectors.integrationAppList), integrationAppList],
+        [call(apiCallWithRetry, args)],
+      ])
+      .call(apiCallWithRetry, args)
+      .put(actions.resource.requestCollection('integrations'))
+      .put(actions.resource.requestCollection('tiles'))
+      .put(actions.resource.requestCollection('connections'))
+      .put(actions.resource.requestCollection('licenses'))
+      .run();
   });
 });
 
