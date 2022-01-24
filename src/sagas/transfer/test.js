@@ -3,6 +3,7 @@
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
+import { call } from 'redux-saga/effects';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { cancel, preview, create } from '.';
@@ -36,27 +37,82 @@ describe('cancel saga', () => {
 });
 
 describe('preview saga', () => {
-  const data = {_integrationIds: ['123', '456'], email: 'abc@celigo.com'};
-
-  test('should able to get preview successfully', () => {
+  test('should able to get preview successfully if there are _integrationIds in data', () => {
+    const data = {_integrationIds: ['123', '456'], email: 'abc@celigo.com'};
+    const args = {
+      path: `/transfers/preview?email=${encodeURIComponent(data.email)}&_integrationIds=${JSON.stringify(data._integrationIds)}`,
+      opts: { method: 'GET' },
+      hidden: true,
+    };
     const response = {_integrationIds: ['123', '456']};
 
     return expectSaga(preview, { data })
       .provide([
-        [matchers.call.fn(apiCallWithRetry), response],
+        [call(apiCallWithRetry, args), response],
       ])
-      .call.fn(apiCallWithRetry)
+      .call(apiCallWithRetry, args)
+      .put(actions.transfer.receivedPreview({ response }))
+      .run();
+  });
+  test('should handle error properly if _integrationIds of data cannot be stringified', () => {
+    const data = { email: 'abc@celigo.com', _integrationIds: {x: 2n} };
+    const path = `/transfers/preview?email=${encodeURIComponent(data.email)}`;
+    const error = TypeError('Do not know how to serialize a BigInt');
+
+    return expectSaga(preview, { data })
+      .put(actions.api.failure(path, 'GET', error, false))
+      .not.call.fn(apiCallWithRetry)
+      .returns(true)
+      .run();
+  });
+  test('should able to get preview successfully if there are no _integrationIds in data', () => {
+    const data = { email: 'abc@celigo.com' };
+    const response = {_integrationIds: []};
+    const args = {
+      path: `/transfers/preview?email=${encodeURIComponent(data.email)}`,
+      opts: { method: 'GET' },
+      hidden: true,
+    };
+
+    return expectSaga(preview, { data })
+      .provide([
+        [call(apiCallWithRetry, args), response],
+      ])
+      .call(apiCallWithRetry, args)
+      .put(actions.transfer.receivedPreview({ response }))
+      .run();
+  });
+  test('should able to get preview successfully if there is no data', () => {
+    const data = undefined;
+    const response = {_integrationIds: []};
+    const args = {
+      path: '/transfers/preview',
+      opts: { method: 'GET' },
+      hidden: true,
+    };
+
+    return expectSaga(preview, { data })
+      .provide([
+        [call(apiCallWithRetry, args), response],
+      ])
+      .call(apiCallWithRetry, args)
       .put(actions.transfer.receivedPreview({ response }))
       .run();
   });
   test('should handle api error properly', () => {
+    const data = {_integrationIds: ['123', '456'], email: 'abc@celigo.com'};
+    const args = {
+      path: `/transfers/preview?email=${encodeURIComponent(data.email)}&_integrationIds=${JSON.stringify(data._integrationIds)}`,
+      opts: { method: 'GET' },
+      hidden: true,
+    };
     const error = new Error('error');
 
     return expectSaga(preview, { data })
       .provide([
-        [matchers.call.fn(apiCallWithRetry), throwError(error)],
+        [call(apiCallWithRetry, args), throwError(error)],
       ])
-      .call.fn(apiCallWithRetry)
+      .call(apiCallWithRetry, args)
       .put(actions.transfer.receivedPreview({ error }))
       .run();
   });

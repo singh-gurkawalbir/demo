@@ -32,6 +32,11 @@ import {
   unlinkWithGoogle,
   requestLicenseUpgrade,
   requestSharedStackNotifications,
+  requestLicenseUpdate,
+  requestNumEnabledFlows,
+  requestLicenseEntitlementUsage,
+  addSuiteScriptLinkedConnection,
+  deleteSuiteScriptLinkedConnection,
 } from '.';
 import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../utils/constants';
 import getRequestOptions from '../../utils/requestOptions';
@@ -73,7 +78,7 @@ describe('all modal sagas', () => {
       );
     });
 
-    test('should generate appropriate failure message for whatever reason', () => {
+    test('should dispatch api failure action with general message if api call fails and not able to generate appropiate error message', () => {
       const updatedPassword = {
         newPassword: 'abc',
         currentPassword: 'def',
@@ -100,6 +105,38 @@ describe('all modal sagas', () => {
           ),
         ),
       );
+    });
+
+    test('should dispatch api failure action with generated message if api call fails and able to generate appropiate error message', () => {
+      const updatedPassword = {
+        newPassword: 'abc',
+        currentPassword: 'def',
+      };
+      const args = {
+        path: changePasswordParams.path,
+        opts: { ...changePasswordParams.opts, body: updatedPassword },
+        message: "Changing user's password",
+        hidden: true,
+      };
+      const error = {
+        message: '{"errors": [{"message": "some error message"}]}',
+      };
+      const { errors } = JSON.parse(error.message);
+      const errorMsg = errors[0].message;
+
+      return expectSaga(changePassword, { updatedPassword })
+        .provide([
+          [call(apiCallWithRetry, args), throwError(error)],
+        ])
+        .put(
+          actions.api.failure(
+            changePasswordParams.path,
+            changePasswordParams.opts.method,
+            errorMsg,
+            true,
+          ),
+        )
+        .run();
     });
   });
   describe('change user email saga', () => {
@@ -244,6 +281,12 @@ describe('all modal sagas', () => {
       });
     });
     describe('accepting account share invite', () => {
+      const sharedResourceTypeMap = {
+        account: 'ashares',
+        stack: 'sshares',
+        transfer: 'transfers',
+      };
+
       test('should update aShare successfuly and reload shared/ashares when the default account is some shared account', () => {
         const aShare = {
           resourceType: 'account',
@@ -279,11 +322,62 @@ describe('all modal sagas', () => {
           }),
         );
         expect(saga.next().value).toEqual(select(selectors.userPreferences));
-        expect(saga.next({ defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
+        expect(saga.next({ resourceType: 'account', defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
           put(actions.auth.clearStore()),
         );
         expect(saga.next().value).toEqual(put(actions.auth.initSession()));
         expect(saga.next().done).toEqual(true);
+      });
+      test('should update aShare successfully and accept account transfer if resource is a transfer and invite is an accountTransfer', () => {
+        const resourceType = 'transfer';
+        const id = 'something';
+        const isAccountTransfer = true;
+        const args = {
+          path: `/${sharedResourceTypeMap[resourceType]}/${id}/accept`,
+          opts: {
+            method: 'PUT',
+            body: {},
+          },
+          message: `Accepting ${resourceType} share invite`,
+        };
+        const userPreferences = {
+          defaultAShareId: 'own',
+        };
+
+        return expectSaga(acceptSharedInvite, { resourceType, id, isAccountTransfer})
+          .provide([
+            [call(apiCallWithRetry, args)],
+            [select(selectors.userPreferences), userPreferences],
+          ])
+          .put(actions.app.userAcceptedAccountTransfer())
+          .run();
+      });
+      test('should update aShare successfuly and update resources collection if resource is transfer and it is not an accountTransfer', () => {
+        const resourceType = 'transfer';
+        const id = 'something';
+        const isAccountTransfer = false;
+        const args = {
+          path: `/${sharedResourceTypeMap[resourceType]}/${id}/accept`,
+          opts: {
+            method: 'PUT',
+            body: {},
+          },
+          message: `Accepting ${resourceType} share invite`,
+        };
+        const userPreferences = {
+          defaultAShareId: 'own',
+        };
+
+        return expectSaga(acceptSharedInvite, { resourceType, id, isAccountTransfer})
+          .provide([
+            [call(apiCallWithRetry, args)],
+            [select(selectors.userPreferences), userPreferences],
+          ])
+          .put(actions.resource.requestCollection('integrations'))
+          .put(actions.resource.requestCollection('transfers'))
+          .put(actions.resource.requestCollection('tiles'))
+          .put(actions.resource.requestCollection('connections'))
+          .run();
       });
       test('should generate appropriate error message in case of api failure', () => {
         const aShare = { resourceType: 'account', id: 'something' };
@@ -303,7 +397,7 @@ describe('all modal sagas', () => {
       });
     });
     describe('rejecting account share invite', () => {
-      test('should update aShare successfuly', () => {
+      test('should update aShare successfuly if resourceType is an account or stack', () => {
         const aShare = {
           resourceType: 'account',
           id: 'something',
@@ -321,6 +415,54 @@ describe('all modal sagas', () => {
           put(actions.resource.requestCollection('shared/ashares')),
         );
         expect(saga.next().done).toEqual(true);
+      });
+      test('should update aShare successfuly and update resource collection if the account is own and resourcetype is a transfer', () => {
+        const resourceType = 'transfer';
+        const id = 'something';
+        const permissions = {
+          accessLevel: 'owner',
+        };
+        const args = {
+          path: `/transfers/${id}/dismiss`,
+          opts: {
+            method: 'PUT',
+            body: {},
+          },
+          message: `Rejecting ${resourceType} share invite`,
+        };
+
+        return expectSaga(rejectSharedInvite, { resourceType, id })
+          .provide([
+            [call(apiCallWithRetry, args)],
+            [select(selectors.resourcePermissions), permissions],
+          ])
+          .call(apiCallWithRetry, args)
+          .put(actions.resource.requestCollection('transfers'))
+          .run();
+      });
+      test('should update aShare successfuly and update resource collection if the account is not own', () => {
+        const resourceType = 'transfer';
+        const id = 'something';
+        const permissions = {
+          accessLevel: 'administrator',
+        };
+        const args = {
+          path: `/transfers/${id}/dismiss`,
+          opts: {
+            method: 'PUT',
+            body: {},
+          },
+          message: `Rejecting ${resourceType} share invite`,
+        };
+
+        return expectSaga(rejectSharedInvite, { resourceType, id })
+          .provide([
+            [call(apiCallWithRetry, args)],
+            [select(selectors.resourcePermissions), permissions],
+          ])
+          .call(apiCallWithRetry, args)
+          .put(actions.resource.requestCollection('transfers/invited'))
+          .run();
       });
       test('should generate appropriate error message in case of api failure', () => {
         const aShare = { resourceType: 'account', id: 'something' };
@@ -900,5 +1042,222 @@ describe('all modal sagas', () => {
         [select(selectors.userPreferences), response2],
       ])
       .run());
+  });
+  describe('requestLicenseUpdate saga', () => {
+    const connectorId = 'c1';
+    const licenseId = 'l1';
+
+    test('should handle if it is actionType of ioResume', () => {
+      const actionType = 'ioResume';
+      const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPDATE_REQUEST, {
+        actionType, connectorId, licenseId,
+      });
+
+      return expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts,
+          })],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          timeout: 5 * 60 * 1000,
+          opts,
+        })
+        .put(actions.resource.requestCollection('integrations'))
+        .put(actions.resource.requestCollection('flows'))
+        .put(actions.resource.requestCollection('exports'))
+        .put(actions.resource.requestCollection('imports'))
+        .put(actions.resource.requestCollection('licenses'))
+        .not.put(actions.user.org.accounts.licenseUpgradeRequestSubmitted({}))
+        .run();
+    });
+    test('should handle if it is actionType is not ioResume', () => {
+      const actionType = 'trial';
+      const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPDATE_REQUEST, {
+        actionType, connectorId, licenseId,
+      });
+      const response = {
+        key: 'something',
+      };
+
+      return expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts,
+          }), response],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          timeout: 5 * 60 * 1000,
+          opts,
+        })
+        .not.put(actions.resource.requestCollection('integrations'))
+        .put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response))
+        .run();
+    });
+    test('should handle if apiCallWithRetry fails', () => {
+      const actionType = 'trial';
+      const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPDATE_REQUEST, {
+        actionType, connectorId, licenseId,
+      });
+      const error = {
+        key: 'something',
+      };
+
+      return expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
+        .provide([
+          [call(apiCallWithRetry, {
+            path,
+            timeout: 5 * 60 * 1000,
+            opts,
+          }), throwError(error)],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          timeout: 5 * 60 * 1000,
+          opts,
+        })
+        .put(actions.api.failure(path, 'POST', error, false))
+        .not.put(actions.resource.requestCollection('integrations'))
+        .not.put(actions.user.org.accounts.licenseUpgradeRequestSubmitted({}))
+        .run();
+    });
+  });
+  describe('requestNumEnabledFlows saga', () => {
+    const { path, opts } = getRequestOptions(
+      actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST
+    );
+    const response = {
+      key: 'something',
+    };
+    const error = { code: 422, message: 'error occured' };
+
+    test('Should update receivedNumEnabledFlows, On successful api call', () => expectSaga(requestNumEnabledFlows)
+      .provide([
+        [call(apiCallWithRetry, {
+          path,
+          opts,
+        }), response],
+      ])
+      .put(actions.user.org.accounts.receivedNumEnabledFlows(response))
+      .run()
+    );
+    test('Should dispatch api failure if api call fails', () => expectSaga(requestNumEnabledFlows)
+      .provide([
+        [call(apiCallWithRetry, {
+          path,
+          opts,
+        }), throwError(error)],
+      ])
+      .put(actions.api.failure(path, 'GET', error, false))
+      .run()
+    );
+  });
+  describe('requestLicenseEntitlementUsage saga', () => {
+    const { path, opts } = getRequestOptions(
+      actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST
+    );
+    const response = {
+      key: 'something',
+    };
+    const error = { code: 422, message: 'error occured' };
+
+    test('Should update receivedLicenseEntitlementUsage, On successful api call ', () => expectSaga(requestLicenseEntitlementUsage)
+      .provide([
+        [call(apiCallWithRetry, {
+          path,
+          opts,
+        }), response],
+      ])
+      .put(actions.user.org.accounts.receivedLicenseEntitlementUsage(response))
+      .run()
+    );
+    test('Should dispatch api failure if api call fails', () => expectSaga(requestLicenseEntitlementUsage)
+      .provide([
+        [call(apiCallWithRetry, {
+          path,
+          opts,
+        }), throwError(error)],
+      ])
+      .put(actions.api.failure(path, 'GET', error, false))
+      .run()
+    );
+  });
+  describe('addSuiteScriptLinkedConnection saga', () => {
+    const connectionId = 'c1';
+    const path = `/preferences/ssConnectionIds/${connectionId}`;
+    const opts = { method: 'PUT', body: {} };
+    const response = {
+      key: 'something',
+    };
+    const error = { code: 422, message: 'error occured' };
+
+    test('Should update ashares resource, On successful api call ', () => expectSaga(addSuiteScriptLinkedConnection, {connectionId})
+      .provide([
+        [call(apiCallWithRetry, {
+          path,
+          opts,
+        }), response],
+      ])
+      .put(actions.resource.requestCollection('shared/ashares'))
+      .run()
+    );
+    test('Should dispatch api failure if api call fails', () => expectSaga(addSuiteScriptLinkedConnection, {connectionId})
+      .provide([
+        [call(apiCallWithRetry, {
+          path,
+          opts,
+        }), throwError(error)],
+      ])
+      .put(
+        actions.api.failure(
+          path,
+          opts.method,
+          'Could not link suitescript integrator'
+        )
+      )
+      .run()
+    );
+  });
+  describe('deleteSuiteScriptLinkedConnection saga', () => {
+    const connectionId = 'c1';
+    const path = `/preferences/ssConnectionIds/${connectionId}`;
+    const opts = { method: 'DELETE', body: {} };
+    const response = {
+      key: 'something',
+    };
+    const error = { code: 422, message: 'error occured' };
+
+    test('Should update ashares resource, On successful api call', () => expectSaga(deleteSuiteScriptLinkedConnection, {connectionId})
+      .provide([
+        [call(apiCallWithRetry, {
+          path,
+          opts,
+        }), response],
+      ])
+      .put(actions.resource.requestCollection('shared/ashares'))
+      .run()
+    );
+    test('Should dispatch api failure if api call fails', () => expectSaga(deleteSuiteScriptLinkedConnection, {connectionId})
+      .provide([
+        [call(apiCallWithRetry, {
+          path,
+          opts,
+        }), throwError(error)],
+      ])
+      .put(
+        actions.api.failure(
+          path,
+          opts.method,
+          'Could not unlink suitescript integrator'
+        )
+      )
+      .run()
+    );
   });
 });
