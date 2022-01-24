@@ -80,8 +80,9 @@ export function CustomReactSelectStyles() {
           ? theme.palette.background.paper2
           : theme.palette.background.paper,
       border: 'none',
-      minHeight: 38,
+      height: 38,
       display: 'flex',
+      padding: 0,
       alignItems: 'center',
       borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
       '&:active': {
@@ -108,7 +109,7 @@ export function CustomReactSelectStyles() {
       overflowY: 'auto',
     }),
     input: () => ({
-      color: theme.palette.secondary.light,
+      color: theme.palette.secondary.main,
       '& input': {
         fontFamily: 'inherit',
       },
