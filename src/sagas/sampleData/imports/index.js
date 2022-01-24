@@ -224,12 +224,10 @@ export function* requestSampleData({ resourceId, options = {}, refreshCache }) {
   if (!resource) return;
   const { adaptorType, assistant: resourceAssistant, _integrationId, sampleData, _connectionId } = resource;
   const connection = yield select(selectors.resource, 'connections', _connectionId);
-  const assistant = getAssistantFromConnection(resourceAssistant, connection);
+  const connectionAssistant = getAssistantFromConnection(resourceAssistant, connection);
 
-  resource.assistant = assistant;
-
-  if (assistant) {
-    return yield call(_fetchAssistantSampleData, { resource });
+  if (connectionAssistant) {
+    return yield call(_fetchAssistantSampleData, { resource: {...resource, assistant: connectionAssistant} });
   }
 
   if (adaptorType) {
