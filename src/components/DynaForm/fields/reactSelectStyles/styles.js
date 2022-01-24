@@ -7,6 +7,9 @@ export const ReactSelectUseStyles = makeStyles(theme => ({
   },
   optionRoot: {
     display: 'flex',
+    '&>div': {
+      padding: 0,
+    },
   },
   optionImg: {
     width: '120px',
@@ -82,7 +85,6 @@ export function CustomReactSelectStyles() {
       border: 'none',
       height: 38,
       display: 'flex',
-      padding: 0,
       alignItems: 'center',
       borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
       '&:active': {
