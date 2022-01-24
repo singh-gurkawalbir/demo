@@ -69,5 +69,22 @@ function getTabResults(results) {
 
   return resultsObject;
 }
+export function getResourceFilters(filterBlacklist) {
+  const resultsObject = Object.keys(filterMap).reduce((acc, key) => {
+    const item = filterMap[key];
+
+    if (item?.isResource) {
+      if (!filterBlacklist.includes(item.type)) {
+        acc?.resourceFilters?.push(item);
+      }
+    } else {
+      acc.marketplaceFilters.push(item);
+    }
+
+    return acc;
+  }, {resourceFilters: [], marketplaceFilters: []});
+
+  return resultsObject;
+}
 
 export { getFilters, getKeyword, getTabResults, buildSearchString};

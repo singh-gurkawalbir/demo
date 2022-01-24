@@ -1,8 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
-import { useGlobalSearchContext } from './GlobalSearchContext';
 import SearchInput from './SearchInput';
-import ResultsPanel from './ResultsPanel';
+import ResultsPanel from '../ResultsPanel';
+import { useGlobalSearchState } from '../hooks/useGlobalSearchState';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -10,10 +10,18 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const isResultsOpenSelector = state => {
+  let {keyword} = state;
+
+  if (keyword?.includes(':')) {
+    keyword = keyword?.split(':')?.[1];
+  }
+
+  return keyword?.length > 1;
+};
 export default function SearchBox() {
   const classes = useStyles();
-
-  const { isResultsOpen } = useGlobalSearchContext();
+  const isResultsOpen = useGlobalSearchState(isResultsOpenSelector);
 
   return (
     <div className={classes.root}>

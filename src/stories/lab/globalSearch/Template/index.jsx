@@ -8,7 +8,7 @@ import GlobalSearchProto from '../Prototype';
 const useStyles = makeStyles(() => ({
   templateRoot: {
     display: 'flex',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-start',
   },
 }));
 

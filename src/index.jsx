@@ -111,3 +111,4 @@ if (env !== 'development' && GAKey1?.length > 1) {
     document.getElementById('root')
   );
 }
+export const getReduxState = () => store.getState();

@@ -1,13 +1,13 @@
 import clsx from 'clsx';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles, Tooltip, IconButton } from '@material-ui/core';
-import SearchIcon from '../../../../components/icons/SearchIcon';
+import { makeStyles } from '@material-ui/core';
 import useKeyboardShortcut from '../../../../hooks/useKeyboardShortcut';
 import ResourceFilter from './ResourceFilter';
-import SearchBox from './SearchBox';
-import TooltipTitle from './TooltipTitle';
-import { GlobalSearchProvider, useGlobalSearchContext } from './GlobalSearchContext';
+import SearchBox from './SearchBox/SearchBox';
+import { GlobalSearchProvider } from './GlobalSearchContext';
+import { useGlobalSearchState } from './hooks/useGlobalSearchState';
+import SearchToolTip from './SearchBox/SearchTooltip';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -21,44 +21,20 @@ const useStyles = makeStyles(theme => ({
   closed: {
     width: 0,
   },
-  muiTooltip: {
-    paddingBottom: 6,
-  },
 }));
 
 function GlobalSearch() {
   const classes = useStyles();
-  const { open, setOpen } = useGlobalSearchContext();
-  const [escapePressed, setEscapePressed] = useState(false);
+  const open = useGlobalSearchState(state => state.open);
+  const setOpen = useGlobalSearchState(state => state.changeOpen);
   const handleOpenSearch = useCallback(() => setOpen(true), [setOpen]);
-  const handleEscapeKeypress = useCallback(() => {
-    // clear the text on first ESCAPE press, then close search on second.
-    if (escapePressed) return;
-
-    setOpen(false);
-
-    // We want to de-bounce this handler as the useKeyboardShortcut would
-    // otherwise get called repeatedly each time this handler's dependency
-    // array changes.
-    setEscapePressed(true);
-    setTimeout(() => setEscapePressed(false), 200);
-  }, [escapePressed, setOpen]);
 
   useKeyboardShortcut(['/'], handleOpenSearch);
-  useKeyboardShortcut(['Escape'], handleEscapeKeypress, true);
 
   return (
     <div className={clsx(classes.root, {[classes.closed]: !open})}>
       {!open ? (
-        <Tooltip
-          classes={{tooltip: classes.muiTooltip}}
-          title={<TooltipTitle />}
-          placement="bottom"
-          aria-label="Global search">
-          <IconButton size="small" onClick={() => setOpen(true)}>
-            <SearchIcon />
-          </IconButton>
-        </Tooltip>
+        <SearchToolTip />
       ) : (
         <>
           <ResourceFilter />
@@ -69,9 +45,10 @@ function GlobalSearch() {
   );
 }
 
-export default function GlobalSearchProto({results, onKeywordChange, onFiltersChange, filterBlacklist}) {
+export default function GlobalSearchProto({getResults, results, onKeywordChange, onFiltersChange, filterBlacklist}) {
   return (
     <GlobalSearchProvider
+      getResults={getResults}
       results={results}
       filterBlacklist={filterBlacklist}
       onKeywordChange={onKeywordChange}
