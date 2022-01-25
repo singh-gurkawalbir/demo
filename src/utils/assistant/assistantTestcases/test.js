@@ -2444,6 +2444,11 @@ describe('routeToRegExp', () => {
     [/^\/v1\/integrations(?:\?([\s\S]*))?$/, '/v1/integrations'],
     [/^\/v1\/integrations\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/integrations/:_id'],
     [/^\/v1\/integrations\/([^/?]+)\/exports(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/exports'],
+    [/^\/people:createContact(?:\?([\s\S]*))?$/, '/people:createContact'],
+    [/^\/people\/([^/?]+):updateContact\?updatePersonFields=([^/?]+)(?:\?([\s\S]*))?$/, '/people/:_personID:updateContact?updatePersonFields=:_updatePersonFields'],
+    [/^\/people\/([^/?]+):updateContact(?:\?([\s\S]*))?$/, '/people/:_personID:updateContact'],
+    [/^\/people:createContact(?:\?([\s\S]*))?$/, '/people:createContact'],
+    [/^\/people\/([^/?]+):deleteContact(?:\?([\s\S]*))?$/, '/people/:_personID:deleteContact'],
   ];
 
   each(testCases).test(

@@ -124,7 +124,7 @@ export const AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE = Object.freeze(
 );
 export function routeToRegExp(route = '') {
   const optionalParam = /\((.*?)\)/g;
-  const namedParam = /(\(\?)?:\w+/g;
+  const namedParam = /(\(\?)?:_\w+/g;
   const splatParam = /\*\w+/g;
   // const escapeRegExp = /[\-{}\[\]+?.,\\\^$|#\s]/g;
   const escapeRegExp = /[-{}[\]+?.,\\^$|#\s]/g;
