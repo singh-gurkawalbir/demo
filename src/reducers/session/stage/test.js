@@ -34,32 +34,115 @@ describe('stage reducers', () => {
       state = reducer(state, actions.resource.clearStaged(id));
       expect(state[id].patch).toBeUndefined();
     });
+    test('should only clear staged patches with given scope if id matches', () => {
+      const id = 123;
+      const patch = { op: 'replace', path: '/name', value: 'ABC' };
+      let state;
+
+      state = reducer(state, actions.resource.patchStaged(id, [patch], 'value'));
+      state = reducer(
+        state,
+        actions.resource.patchStaged(id, [{ ...patch, path: '/other' }])
+      );
+      expect(state[id].patch.length).toEqual(2);
+
+      state = reducer(state, actions.resource.clearStaged(id, 'value'));
+      expect(state[id].patch).toEqual([{...patch, path: '/other', timestamp: expect.any(Number)}]);
+    });
+  });
+  describe('STAGE_REMOVE action', () => {
+    test('should do nothing if there is nothing staged', () => {
+      const id = 123;
+      const state = reducer(undefined, actions.resource.removeStage(id));
+
+      expect(state[id]).toBeUndefined();
+    });
+
+    test('should remove patches with given filter if id matches', () => {
+      const id = 123;
+      const patch = { op: 'replace', path: '/name', value: 'ABC' };
+      let state;
+
+      state = reducer(state, actions.resource.patchStaged(id, [patch]));
+      state = reducer(
+        state,
+        actions.resource.patchStaged(id, [{ ...patch, path: '/other' }])
+      );
+      expect(state[id].patch.length).toEqual(2);
+      const predicateForPatchFilter = patch => patch.path !== '/other';
+
+      state = reducer(state, actions.resource.removeStage(id, predicateForPatchFilter));
+      expect(state[id].patch).toEqual([{...patch, timestamp: expect.any(Number)}]);
+    });
   });
 
-  describe('STAGE_PATCH action', () => {
+  describe('STAGE_PATCH and STAGE_PATCH_AND_COMMIT action', () => {
+    test('should return initial state if patch does not exist', () => {
+      const id = 123;
+      const state = reducer(undefined, actions.resource.patchStaged(id, undefined));
+      const pAndCState = reducer(undefined, actions.resource.patchAndCommitStaged(id, undefined));
+
+      expect(state[id]).toBeUndefined();
+      expect(pAndCState[id]).toBeUndefined();
+    });
     test('should add patch if none yet exist.', () => {
       const id = 123;
       const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
       const state = reducer(undefined, actions.resource.patchStaged(id, patch));
+      const pAndCState = reducer(undefined, actions.resource.patchAndCommitStaged('exports', id, patch));
 
       expect(state[id]).toEqual({
         patch: [{ ...patch[0], timestamp: expect.any(Number) }],
       });
+      expect(pAndCState[id]).toEqual({
+        patch: [{ ...patch[0], scope: 'value', timestamp: expect.any(Number) }],
+      });
     });
+    test('should add patch with scope if none yet exist.', () => {
+      const id = 123;
+      const patch = [{ op: 'replace', path: '/name', value: 'ABC', scope: 'value' }];
+      const state = reducer(undefined, actions.resource.patchStaged(id, patch, 'value'));
+      const pAndCState = reducer(undefined, actions.resource.patchAndCommitStaged('exports', id, patch));
 
+      expect(state[id]).toEqual({
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
+      });
+      expect(pAndCState[id]).toEqual({
+        patch: [{ ...patch[0], scope: 'value', timestamp: expect.any(Number) }],
+      });
+    });
+    test('should add patches if none yet exist.', () => {
+      const id = 123;
+      const patch = [{ op: 'replace', path: '/name', value: 'ABC' }, { op: 'replace', path: '/names', value: 'ABC' }];
+      const state = reducer(undefined, actions.resource.patchStaged(id, patch));
+
+      expect(state[id]).toEqual({
+        patch: [{ ...patch[0], timestamp: expect.any(Number) },
+          { ...patch[1], timestamp: expect.any(Number) }],
+      });
+    });
     test('should add subsequent patch if id matches and patch exists', () => {
       const id = 123;
       const patch1 = [{ op: 'replace', path: '/name', value: 'ABC' }];
       const patch2 = [{ op: 'replace', path: '/desc', value: '123' }];
       let state;
+      let pAndCState;
 
       state = reducer(state, actions.resource.patchStaged(id, patch1));
+      pAndCState = reducer(undefined, actions.resource.patchAndCommitStaged('exports', id, patch1));
       state = reducer(state, actions.resource.patchStaged(id, patch2));
+      pAndCState = reducer(pAndCState, actions.resource.patchAndCommitStaged('exports', id, patch2));
 
       expect(state[id]).toEqual({
         patch: [
           { ...patch1[0], timestamp: expect.any(Number) },
           { ...patch2[0], timestamp: expect.any(Number) },
+        ],
+      });
+      expect(pAndCState[id]).toEqual({
+        patch: [
+          { ...patch1[0], scope: 'value', timestamp: expect.any(Number) },
+          { ...patch2[0], scope: 'value', timestamp: expect.any(Number) },
         ],
       });
     });
@@ -69,9 +152,12 @@ describe('stage reducers', () => {
       const patch1 = [{ op: 'replace', path: '/name', value: 'ABC' }];
       const patch2 = [{ op: 'replace', path: '/name', value: '123' }];
       let state;
+      let pAndCState;
 
       state = reducer(state, actions.resource.patchStaged(id, patch1));
+      pAndCState = reducer(undefined, actions.resource.patchAndCommitStaged('exports', id, patch1));
       state = reducer(state, actions.resource.patchStaged(id, patch2));
+      pAndCState = reducer(pAndCState, actions.resource.patchAndCommitStaged('exports', id, patch2));
 
       expect(state[id]).toEqual({
         patch: [
@@ -83,19 +169,30 @@ describe('stage reducers', () => {
           },
         ],
       });
+      expect(pAndCState[id]).toEqual({
+        patch: [
+          {
+            op: 'replace',
+            path: '/name',
+            value: '123',
+            scope: 'value',
+            timestamp: expect.any(Number),
+          },
+        ],
+      });
     });
   });
 
   describe('STAGE_CONFLICT action', () => {
     test('should add conflict to stage if none yet exist.', () => {
       const id = 123;
-      const conflict = [{ op: 'replace', path: '/name', value: 'ABC' }];
+      const conflict = [{ op: 'replace', path: '/name', value: 'ABC'}];
       const state = reducer(
         undefined,
-        actions.resource.commitConflict(id, conflict)
+        actions.resource.commitConflict(id, conflict, 'value')
       );
 
-      expect(state[id]).toEqual({ conflict });
+      expect(state[id]).toEqual({ conflict, scope: 'value' });
     });
 
     test('should add subsequent patch if id matches and patch exists', () => {
@@ -186,6 +283,27 @@ describe('stage selectors', () => {
       expect(selectors.getAllResourceConflicts(state)).toEqual([
         { resourceId: conflictResId, conflict },
       ]);
+    });
+  });
+  describe('lookupProcessorResourceType', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(selectors.lookupProcessorResourceType()).toBeUndefined();
+      expect(selectors.lookupProcessorResourceType({})).toBeUndefined();
+      expect(selectors.lookupProcessorResourceType({}, '234')).toBeUndefined();
+    });
+    test('should return exports if adaptor type of staged resource includes export', () => {
+      const id = 123;
+      const patch = [{ op: 'replace', path: '/adaptorType', value: 'HTTPExport' }];
+      const state = reducer(undefined, actions.resource.patchStaged(id, patch));
+
+      expect(selectors.lookupProcessorResourceType(state, id)).toEqual('exports');
+    });
+    test('should return imports if adaptor type of staged resource includes import', () => {
+      const id = 123;
+      const patch = [{ op: 'replace', path: '/adaptorType', value: 'HTTPImport' }];
+      const state = reducer(undefined, actions.resource.patchStaged(id, patch));
+
+      expect(selectors.lookupProcessorResourceType(state, id)).toEqual('imports');
     });
   });
 });

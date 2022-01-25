@@ -1,36 +1,38 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 import getImageUrl from '../../../utils/image';
 
-export default (state = null, action) => {
+export default (state = {}, action) => {
   const { type, resourceType, resource, profile } = action;
-  const newState = { ...state };
 
-  switch (type) {
-    case actionTypes.RESOURCE.RECEIVED:
-      if (resourceType === 'profile') return resource;
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.RESOURCE.RECEIVED:
+        if (resourceType === 'profile') return resource;
 
-      return newState;
+        break;
 
-    case actionTypes.USER.PROFILE.UPDATE:
-      return { ...newState, ...profile };
+      case actionTypes.USER.PROFILE.UPDATE:
+        return { ...draft, ...profile };
 
-    case actionTypes.USER.PROFILE.UNLINKED_WITH_GOOGLE:
-      return { ...newState, auth_type_google: {} };
+      case actionTypes.USER.PROFILE.UNLINKED_WITH_GOOGLE:
+        draft.auth_type_google = {};
+        break;
 
-    case actionTypes.USER.PROFILE.DELETE:
-      if (state?.email) {
-        return {
-          email: state.email,
-          auth_type_google: state.auth_type_google,
-          authTypeSSO: state.authTypeSSO,
-        };
-      }
+      case actionTypes.USER.PROFILE.DELETE:
+        if (draft.email) {
+          return {
+            email: draft.email,
+            auth_type_google: draft.auth_type_google,
+            authTypeSSO: draft.authTypeSSO,
+          };
+        }
 
-      return {};
+        return {};
 
-    default:
-      return state;
-  }
+      default:
+    }
+  });
 };
 
 // #region PUBLIC SELECTORS
@@ -41,6 +43,7 @@ selectors.avatarUrl = state => {
 
   return `https://secure.gravatar.com/avatar/${state.emailHash}?d=${getImageUrl('images/icons/icon-user-default.png&s=55')}`;
 };
-// #endregion PUBLIC SELECTORS
 
 selectors.isUserInErrMgtTwoDotZero = state => !!(state && state.useErrMgtTwoDotZero);
+
+// #endregion PUBLIC SELECTORS

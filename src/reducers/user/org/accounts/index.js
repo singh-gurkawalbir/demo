@@ -13,102 +13,95 @@ import {
 
 const emptyList = [];
 
+const hasLicense = draft => {
+  const ownAccount = draft.find(a => a._id === ACCOUNT_IDS.OWN);
+
+  if (
+    !ownAccount ||
+    !ownAccount.ownerUser ||
+    !ownAccount.ownerUser.licenses
+  ) {
+    return false;
+  }
+
+  const platformLicense = ownAccount.ownerUser.licenses.find(
+    l => (l.type === 'integrator' || l.type === 'endpoint')
+  );
+
+  if (!platformLicense) {
+    return false;
+  }
+
+  return true;
+};
+
 export default (state = [], action) => {
   const { type, resourceType } = action;
   let { collection } = action;
 
-  switch (type) {
-    case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
-      if (['licenses', 'shared/ashares'].includes(resourceType)) {
-        if (!collection) {
-          collection = [];
-        }
-      }
-
-      if (resourceType === 'licenses') {
-        const ownAccount = {
-          _id: ACCOUNT_IDS.OWN,
-          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
-          ownerUser: { licenses: [...collection] },
-        };
-        const sharedAccounts = state.filter(a => a._id !== ACCOUNT_IDS.OWN);
-
-        return [ownAccount, ...sharedAccounts];
-      }
-      if (resourceType === 'shared/ashares') {
-        const ownAccounts = state.filter(a => a._id === ACCOUNT_IDS.OWN);
-
-        if (!ownAccounts.length) {
-          return [...collection];
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
+        if (['licenses', 'shared/ashares'].includes(resourceType)) {
+          if (!collection) {
+            collection = [];
+          }
         }
 
-        return [...ownAccounts, ...collection];
+        if (resourceType === 'licenses') {
+          const ownAccount = {
+            _id: ACCOUNT_IDS.OWN,
+            accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+            ownerUser: { licenses: [...collection] },
+          };
+          const sharedAccounts = draft.filter(a => a._id !== ACCOUNT_IDS.OWN);
+
+          return [ownAccount, ...sharedAccounts];
+        }
+        if (resourceType === 'shared/ashares') {
+          const ownAccounts = draft.filter(a => a._id === ACCOUNT_IDS.OWN);
+
+          if (!ownAccounts.length) {
+            return [...collection];
+          }
+
+          return [...ownAccounts, ...collection];
+        }
+
+        break;
       }
 
-      return state;
-    }
+      case actionTypes.LICENSE.TRIAL_ISSUED: {
+        if (!hasLicense(draft)) {
+          break;
+        }
 
-    case actionTypes.LICENSE.TRIAL_ISSUED: {
-      const ownAccount = state.find(a => a._id === ACCOUNT_IDS.OWN);
-
-      if (
-        !ownAccount ||
-        !ownAccount.ownerUser ||
-        !ownAccount.ownerUser.licenses
-      ) {
-        return state;
-      }
-
-      const platformLicense = ownAccount.ownerUser.licenses.find(
-        l => (l.type === 'integrator' || l.type === 'endpoint')
-      );
-
-      if (!platformLicense) {
-        return state;
-      }
-
-      const { trialEndDate, tier } = action;
-
-      return produce(state, draft => {
+        const { trialEndDate, tier } = action;
         const index = draft.findIndex(a => a._id === ACCOUNT_IDS.OWN);
         const licenseIndex = draft[index].ownerUser.licenses.findIndex(l => l.type === 'integrator' || l.type === 'endpoint');
 
         draft[index].ownerUser.licenses[licenseIndex].trialEndDate = trialEndDate;
         draft[index].ownerUser.licenses[licenseIndex].tier = tier;
         draft[index].ownerUser.licenses[licenseIndex].trialStarted = true;
-      });
-    }
-
-    case actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED: {
-      const ownAccount = state.find(a => a._id === ACCOUNT_IDS.OWN);
-
-      if (
-        !ownAccount ||
-        !ownAccount.ownerUser ||
-        !ownAccount.ownerUser.licenses
-      ) {
-        return state;
+        break;
       }
 
-      const platformLicense = ownAccount.ownerUser.licenses.find(
-        l => (l.type === 'integrator' || l.type === 'endpoint')
-      );
+      case actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED: {
+        if (!hasLicense(draft)) {
+          break;
+        }
 
-      if (!platformLicense) {
-        return state;
-      }
-
-      return produce(state, draft => {
         const index = draft.findIndex(a => a._id === ACCOUNT_IDS.OWN);
         const licenseIndex = draft[index].ownerUser.licenses.findIndex(l => l.type === 'integrator' || l.type === 'endpoint');
 
         draft[index].ownerUser.licenses[licenseIndex].upgradeRequested = true;
-      });
-    }
 
-    default:
-      return state;
-  }
+        break;
+      }
+
+      default:
+    }
+  });
 };
 
 export const remainingDays = date => Math.ceil((moment(date).milliseconds(0) - moment().milliseconds(0)) / 1000 / 60 / 60 / 24);

@@ -18,7 +18,7 @@ import {
  * {'prop[*].prop1': 'value1'} -> {prop: [{prop1 : 'value1'}]}
  */
 
-function getFormattedNetsuiteMetadataData(nsMetaData, nsRecordType) {
+export function getFormattedNetsuiteMetadataData(nsMetaData, nsRecordType) {
   const formattedNSMetadata = [];
 
   each(nsMetaData, metadata => {
