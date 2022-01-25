@@ -646,7 +646,7 @@ describe('all modal sagas', () => {
         };
 
         expect(saga.next(response).value).toEqual(
-          put(actions.user.org.accounts.trialLicenseIssued(response)),
+          put(actions.license.trialLicenseIssued(response)),
         );
         expect(saga.next().value).toEqual(
           call(getResourceCollection, {
@@ -1009,7 +1009,7 @@ describe('all modal sagas', () => {
         [matchers.call.fn(apiCallWithRetry), response],
       ])
       .call.fn(apiCallWithRetry)
-      .put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response))
+      .put(actions.license.licenseUpgradeRequestSubmitted(response))
       .run());
     test('should handle api error properly', () => {
       const error = new Error('error');
@@ -1071,7 +1071,7 @@ describe('all modal sagas', () => {
         .put(actions.resource.requestCollection('exports'))
         .put(actions.resource.requestCollection('imports'))
         .put(actions.resource.requestCollection('licenses'))
-        .not.put(actions.user.org.accounts.licenseUpgradeRequestSubmitted({}))
+        .not.put(actions.license.licenseUpgradeRequestSubmitted({}))
         .run();
     });
     test('should handle if it is actionType is not ioResume', () => {
@@ -1097,7 +1097,7 @@ describe('all modal sagas', () => {
           opts,
         })
         .not.put(actions.resource.requestCollection('integrations'))
-        .put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response))
+        .put(actions.license.licenseUpgradeRequestSubmitted(response))
         .run();
     });
     test('should handle if apiCallWithRetry fails', () => {
@@ -1124,7 +1124,7 @@ describe('all modal sagas', () => {
         })
         .put(actions.api.failure(path, 'POST', error, false))
         .not.put(actions.resource.requestCollection('integrations'))
-        .not.put(actions.user.org.accounts.licenseUpgradeRequestSubmitted({}))
+        .not.put(actions.license.licenseUpgradeRequestSubmitted({}))
         .run();
     });
   });
@@ -1144,7 +1144,7 @@ describe('all modal sagas', () => {
           opts,
         }), response],
       ])
-      .put(actions.user.org.accounts.receivedNumEnabledFlows(response))
+      .put(actions.license.receivedNumEnabledFlows(response))
       .run()
     );
     test('Should dispatch api failure if api call fails', () => expectSaga(requestNumEnabledFlows)
@@ -1174,7 +1174,7 @@ describe('all modal sagas', () => {
           opts,
         }), response],
       ])
-      .put(actions.user.org.accounts.receivedLicenseEntitlementUsage(response))
+      .put(actions.license.receivedLicenseEntitlementUsage(response))
       .run()
     );
     test('Should dispatch api failure if api call fails', () => expectSaga(requestLicenseEntitlementUsage)

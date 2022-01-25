@@ -73,7 +73,7 @@ describe('session.resource reducers', () => {
     test('should store the license trial issued message', () => {
       const state = reducer(
         undefined,
-        actions.user.org.accounts.trialLicenseIssued()
+        actions.license.trialLicenseIssued()
       );
       const expected = {platformLicenseActionMessage: LICENSE_TRIAL_ISSUED_MESSAGE};
 
@@ -84,7 +84,7 @@ describe('session.resource reducers', () => {
     test('should store the license upgrade request submitted message', () => {
       const state = reducer(
         undefined,
-        actions.user.org.accounts.licenseUpgradeRequestSubmitted()
+        actions.license.licenseUpgradeRequestSubmitted()
       );
       const expected = {platformLicenseActionMessage: LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE};
 
@@ -96,7 +96,7 @@ describe('session.resource reducers', () => {
       const response = {numEnabledPaidFlows: 2, numEnabledSandboxFlows: 2, numEnabledFreeFlows: 1 };
       const state = reducer(
         undefined,
-        actions.user.org.accounts.receivedNumEnabledFlows(response)
+        actions.license.receivedNumEnabledFlows(response)
       );
 
       expect(state.numEnabledFlows).toEqual(response);
@@ -108,7 +108,7 @@ describe('session.resource reducers', () => {
 
       const state = reducer(
         undefined,
-        actions.user.org.accounts.receivedLicenseEntitlementUsage(response)
+        actions.license.receivedLicenseEntitlementUsage(response)
       );
 
       expect(state.licenseEntitlementUsage).toEqual(response);
@@ -223,7 +223,7 @@ describe('session.resource reducers', () => {
     test('should return correct platform license action message', () => {
       const state = reducer(
         undefined,
-        actions.user.org.accounts.trialLicenseIssued()
+        actions.license.trialLicenseIssued()
       );
       const expected = {platformLicenseActionMessage: LICENSE_TRIAL_ISSUED_MESSAGE};
 
@@ -232,7 +232,7 @@ describe('session.resource reducers', () => {
     test('should return correct license upgrade action message', () => {
       const state = reducer(
         undefined,
-        actions.user.org.accounts.licenseUpgradeRequestSubmitted()
+        actions.license.licenseUpgradeRequestSubmitted()
       );
       const expected = {platformLicenseActionMessage: LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE};
 
@@ -284,7 +284,7 @@ describe('session.resource reducers', () => {
       const response = {numEnabledPaidFlows: 2, numEnabledSandboxFlows: 2, numEnabledFreeFlows: 1 };
       const state = reducer(
         undefined,
-        actions.user.org.accounts.receivedNumEnabledFlows(response)
+        actions.license.receivedNumEnabledFlows(response)
       );
       const expected = {
         numEnabledPaidFlows: 2,
@@ -308,7 +308,7 @@ describe('session.resource reducers', () => {
 
       const state = reducer(
         undefined,
-        actions.user.org.accounts.receivedLicenseEntitlementUsage(response)
+        actions.license.receivedLicenseEntitlementUsage(response)
       );
 
       expect(selectors.getLicenseEntitlementUsage(state)).toEqual(response);

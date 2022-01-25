@@ -1235,27 +1235,8 @@ const user = {
     accounts: {
       requestCollection: message =>
         resource.requestCollection('shared/ashares', undefined, message),
-      requestLicenses: message =>
-        resource.requestCollection('licenses', undefined, message),
-      requestTrialLicense: () => action(actionTypes.LICENSE.TRIAL_REQUEST, {}),
-      trialLicenseIssued: message =>
-        action(actionTypes.LICENSE.TRIAL_ISSUED, message),
-      requestLicenseUpgrade: () =>
-        action(actionTypes.LICENSE.UPGRADE_REQUEST, {}),
-      requestUpdate: (actionType, connectorId, licenseId) =>
-        action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId }),
-      licenseUpgradeRequestSubmitted: message =>
-        action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message }),
       leave: id => action(actionTypes.USER.ACCOUNT.LEAVE_REQUEST, { id }),
       switchTo: ({ id }) => action(actionTypes.USER.ACCOUNT.SWITCH, { id }),
-      requestLicenseEntitlementUsage: () =>
-        action(actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST),
-      requestNumEnabledFlows: () =>
-        action(actionTypes.LICENSE.NUM_ENABLED_FLOWS_REQUEST, {}),
-      receivedNumEnabledFlows: response =>
-        action(actionTypes.LICENSE.NUM_ENABLED_FLOWS_RECEIVED, { response }),
-      receivedLicenseEntitlementUsage: response =>
-        action(actionTypes.LICENSE.ENTITLEMENT_USAGE_RECEIVED, { response }),
       addLinkedConnectionId: connectionId =>
         action(actionTypes.USER.ACCOUNT.ADD_SUITESCRIPT_LINKED_CONNECTION, {
           connectionId,
@@ -1279,6 +1260,27 @@ const user = {
     rejectInvite: (resourceType, id) =>
       action(actionTypes.USER.SHARED_NOTIFICATION_REJECT, { resourceType, id }),
   },
+};
+const license = {
+  requestLicenses: message =>
+    resource.requestCollection('licenses', undefined, message),
+  requestTrialLicense: () => action(actionTypes.LICENSE.TRIAL_REQUEST, {}),
+  trialLicenseIssued: message =>
+    action(actionTypes.LICENSE.TRIAL_ISSUED, message),
+  requestLicenseUpgrade: () =>
+    action(actionTypes.LICENSE.UPGRADE_REQUEST, {}),
+  requestUpdate: (actionType, connectorId, licenseId) =>
+    action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId }),
+  licenseUpgradeRequestSubmitted: message =>
+    action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message }),
+  requestLicenseEntitlementUsage: () =>
+    action(actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST),
+  requestNumEnabledFlows: () =>
+    action(actionTypes.LICENSE.NUM_ENABLED_FLOWS_REQUEST, {}),
+  receivedNumEnabledFlows: response =>
+    action(actionTypes.LICENSE.NUM_ENABLED_FLOWS_RECEIVED, { response }),
+  receivedLicenseEntitlementUsage: response =>
+    action(actionTypes.LICENSE.ENTITLEMENT_USAGE_RECEIVED, { response }),
 };
 const importSampleData = {
   request: (resourceId, options, refreshCache) =>
@@ -2221,6 +2223,7 @@ export default {
   resourceForm,
   resource,
   user,
+  license,
   api,
   auth,
   auditLogs,

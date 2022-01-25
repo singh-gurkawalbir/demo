@@ -28,7 +28,7 @@ export function* retrievingOrgDetails() {
   yield all([
     call(
       getResourceCollection,
-      actions.user.org.accounts.requestLicenses('Retrieving licenses')
+      actions.license.requestLicenses('Retrieving licenses')
     ),
     call(
       getResourceCollection,

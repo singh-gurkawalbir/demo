@@ -92,7 +92,7 @@ export function* requestTrialLicense() {
   } catch (e) {
     return true;
   }
-  yield put(actions.user.org.accounts.trialLicenseIssued(response));
+  yield put(actions.license.trialLicenseIssued(response));
   yield call(getResourceCollection, {resourceType: 'licenses', refresh: true });
 }
 
@@ -110,7 +110,7 @@ export function* requestLicenseUpgrade() {
     return true;
   }
 
-  yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
+  yield put(actions.license.licenseUpgradeRequestSubmitted(response));
 }
 
 export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
@@ -135,7 +135,7 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
     yield put(actions.resource.requestCollection('imports'));
     yield put(actions.resource.requestCollection('licenses'));
   } else {
-    yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
+    yield put(actions.license.licenseUpgradeRequestSubmitted(response));
   }
 }
 
@@ -489,7 +489,7 @@ export function* requestNumEnabledFlows() {
     return yield put(actions.api.failure(path, 'GET', error, false));
   }
 
-  yield put(actions.user.org.accounts.receivedNumEnabledFlows(response));
+  yield put(actions.license.receivedNumEnabledFlows(response));
 }
 export function* requestLicenseEntitlementUsage() {
   const { path, opts } = getRequestOptions(
@@ -506,7 +506,7 @@ export function* requestLicenseEntitlementUsage() {
     return yield put(actions.api.failure(path, 'GET', error, false));
   }
 
-  yield put(actions.user.org.accounts.receivedLicenseEntitlementUsage(response));
+  yield put(actions.license.receivedLicenseEntitlementUsage(response));
 }
 
 export function* addSuiteScriptLinkedConnection({ connectionId }) {
