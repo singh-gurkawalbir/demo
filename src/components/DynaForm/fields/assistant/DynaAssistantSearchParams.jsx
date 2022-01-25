@@ -20,6 +20,7 @@ import FieldHelp from '../../FieldHelp';
 import actions from '../../../../actions';
 import { OutlinedButton, TextButton } from '../../../Buttons';
 import { useSelectorMemo } from '../../../../hooks';
+import IsLoggableContextProvider from '../../../IsLoggableContextProvider';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
@@ -126,9 +127,11 @@ const SearchParamsModal = props => {
         <span>Search parameters</span>
       </>
       <div>
-        <DynaForm
-          formKey={formKey}
-          className={classes.searchParamForm} />
+        <IsLoggableContextProvider isLoggable>
+          <DynaForm
+            formKey={formKey}
+            className={classes.searchParamForm} />
+        </IsLoggableContextProvider>
       </div>
       <div>
         <DynaSubmit formKey={formKey} onClick={onSaveClick}>Save</DynaSubmit>
@@ -142,7 +145,7 @@ const SearchParamsModal = props => {
     </ModalDialog>
   );
 };
-
+// no user info mostly metadata releated values...can be loggable
 export default function DynaAssistantSearchParams(props) {
   const classes = useStyles();
   let { label } = props;

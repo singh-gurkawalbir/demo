@@ -1,4 +1,3 @@
-import { Typography } from '@material-ui/core';
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
@@ -14,9 +13,10 @@ import SearchInput from '../../components/SearchInput';
 import LoadResources from '../../components/LoadResources';
 import infoText from '../ResourceList/infoText';
 import CheckPermissions from '../../components/CheckPermissions';
-import { PERMISSIONS } from '../../utils/constants';
+import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import { TextButton } from '../../components/Buttons';
+import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -80,11 +80,11 @@ export default function AccessTokenList(props) {
                 resources={list.resources}
               />
             ) : (
-              <Typography>
+              <div>
                 {list.total === 0
-                  ? "You don't have any API tokens."
-                  : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
-              </Typography>
+                  ? <NoResultMessageWrapper>You don&apos;t have any API tokens.</NoResultMessageWrapper>
+                  : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+              </div>
             )}
           </LoadResources>
         </div>

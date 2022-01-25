@@ -50,6 +50,8 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'sapbusinessone.connection.http.encrypted.password',
     },
     application: {

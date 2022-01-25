@@ -1,8 +1,9 @@
 import React, { useCallback} from 'react';
-import { makeStyles, TableCell, TableSortLabel } from '@material-ui/core';
+import { makeStyles, TableSortLabel } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
+import { BaseCellWrapper } from '../../TableBodyContent/AllContentCells';
 
 const emptyObj = {};
 
@@ -24,6 +25,7 @@ const TableHeaderCell = ({filterKey, HeaderValue, heading,
   width,
   align,
   orderBy,
+  isLoggable,
 }) => {
   const classes = useStyles();
 
@@ -46,7 +48,8 @@ const TableHeaderCell = ({filterKey, HeaderValue, heading,
 
   if (orderBy) {
     return (
-      <TableCell
+      <BaseCellWrapper
+        isLoggable={isLoggable}
         style={width ? { width } : undefined}
         align={align || 'left'}
         sortDirection={sortOrderBy === orderBy ? sortOrder : false}>
@@ -64,17 +67,19 @@ const TableHeaderCell = ({filterKey, HeaderValue, heading,
             </span>
           ) : null}
         </TableSortLabel>
-      </TableCell>
+      </BaseCellWrapper>
 
     );
   }
 
   return (
-    <TableCell
+    <BaseCellWrapper
+      isLoggable={isLoggable}
       style={width ? { width } : undefined}
-      align={align || 'left'}>
+      align={align || 'left'}
+    >
       {headerValue}
-    </TableCell>
+    </BaseCellWrapper>
   );
 };
 export default function AllTableHeaderCells({useColumns, filterKey}) {

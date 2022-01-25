@@ -1,46 +1,41 @@
+import produce from 'immer';
 import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import { stringCompare } from '../../../utils/sort';
 
 export default (state = {}, action) => {
   const { type, connectionId, userRoles, message, hideNotificationMessage = false } = action;
-  const newState = { ...state };
 
-  switch (type) {
-    case actionTypes.NETSUITE_USER_ROLES.CLEAR:
-      newState[connectionId] = { ...newState[connectionId] };
-      delete newState[connectionId].message;
-      delete newState[connectionId].status;
-      delete newState[connectionId].hideNotificationMessage;
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.NETSUITE_USER_ROLES.CLEAR:
+        delete draft[connectionId].message;
+        delete draft[connectionId].status;
+        delete draft[connectionId].hideNotificationMessage;
 
-      return newState;
-    case actionTypes.NETSUITE_USER_ROLES.REQUEST:
-      if (!newState[connectionId]) newState[connectionId] = {};
+        break;
+      case actionTypes.NETSUITE_USER_ROLES.REQUEST:
+        if (!draft[connectionId]) draft[connectionId] = {};
 
-      newState[connectionId].hideNotificationMessage = hideNotificationMessage;
+        draft[connectionId].hideNotificationMessage = hideNotificationMessage;
 
-      return newState;
-    case actionTypes.NETSUITE_USER_ROLES.RECEIVED:
-      newState[connectionId] = {
-        ...newState[connectionId],
-        userRoles: deepClone(userRoles),
-        status: 'success',
-      };
+        break;
+      case actionTypes.NETSUITE_USER_ROLES.RECEIVED:
+        if (!draft[connectionId]) draft[connectionId] = {};
+        draft[connectionId].userRoles = deepClone(userRoles);
+        draft[connectionId].status = 'success';
 
-      return newState;
-    case actionTypes.NETSUITE_USER_ROLES.FAILED:
-      if (!newState[connectionId]) newState[connectionId] = {};
-      newState[connectionId] = {
-        ...newState[connectionId],
-        message,
-        status: 'error',
-      };
+        break;
+      case actionTypes.NETSUITE_USER_ROLES.FAILED:
+        if (!draft[connectionId]) draft[connectionId] = {};
+        draft[connectionId].message = message;
+        draft[connectionId].status = 'error';
 
-      return newState;
+        break;
 
-    default:
-      return state;
-  }
+      default:
+    }
+  });
 };
 
 // #region PUBLIC SELECTORS

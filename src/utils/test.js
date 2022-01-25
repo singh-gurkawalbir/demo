@@ -4,7 +4,7 @@ import moment from 'moment-timezone';
 import actionTypes from '../actions/types';
 import getJsonPaths from './jsonPaths';
 import getRequestOptions from './requestOptions';
-import getRoutePath from './routePaths';
+import getRoutePath, { getValidRelativePath } from './routePaths';
 import retry from './retry';
 import adjustTimezone from './adjustTimezone';
 import inferErrorMessages from './inferErrorMessages';
@@ -72,6 +72,13 @@ describe('Route paths util method', () => {
     ['something', '  something  '].forEach(r => {
       expect(getRoutePath(r)).toEqual(`${uiRoutePathPrefix}/${r.trim()}`);
     });
+  });
+  test('should return valid relative path', () => {
+    expect(getValidRelativePath()).toBeUndefined();
+    expect(getValidRelativePath(null)).toEqual(null);
+    expect(getValidRelativePath('httpbody')).toEqual('httpbody');
+    expect(getValidRelativePath('rest.body')).toEqual('restbody');
+    expect(getValidRelativePath('field id')).toEqual('fieldid');
   });
 });
 

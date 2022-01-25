@@ -629,6 +629,8 @@ export function* patchResource({ resourceType, id, patchSet, options = {}, async
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?
     yield put(actions.asyncTask.failed(asyncKey));
+
+    return {error};
   }
   yield put(actions.asyncTask.success(asyncKey));
 }
@@ -1006,14 +1008,14 @@ export function* requestQueuedJobs({ connectionId }) {
   yield put(actions.connection.receivedQueuedJobs(response, connectionId));
 }
 
-function* startPollingForQueuedJobs({ connectionId }) {
+export function* startPollingForQueuedJobs({ connectionId }) {
   const watcher = yield fork(requestQueuedJobs, { connectionId });
 
   yield take(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL);
   yield cancel(watcher);
 }
 
-function* startPollingForConnectionStatus({ integrationId }) {
+export function* startPollingForConnectionStatus({ integrationId }) {
   const watcher = yield fork(refreshConnectionStatus, { integrationId });
 
   yield take(actionTypes.CONNECTION.STATUS_CANCEL_POLL);

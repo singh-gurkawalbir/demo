@@ -1,4 +1,4 @@
-import { values, keyBy } from 'lodash';
+import { values, keyBy, cloneDeep } from 'lodash';
 import shortid from 'shortid';
 import parseLinkHeader from 'parse-link-header';
 import { isPageGeneratorResource } from './flows';
@@ -131,13 +131,17 @@ export function getResourceSubType(resource) {
   return out;
 }
 
-export function filterAndSortResources(resources = emptyList, config = emptyObject, skipSort = false) {
+export function filterAndSortResources(resources = emptyList, config = emptyObject, skipSort = false, comparer) {
   if (!Array.isArray(resources)) {
     return emptyList;
   }
   const { sort = emptyObject, searchBy, keyword } = config || {};
   const stringTest = r => {
     if (!keyword) return true;
+
+    if (r.searchKey) {
+      return r.searchKey.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+    }
     const searchableText =
       Array.isArray(searchBy) && searchBy.length
         ? `${searchBy.map(key => r[key]).join('|')}`
@@ -146,12 +150,14 @@ export function filterAndSortResources(resources = emptyList, config = emptyObje
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
   };
 
-  const comparer = ({ order = 'asc', orderBy = 'name' }) =>
+  const defaultComparer = ({ order = 'asc', orderBy = 'name' }) =>
     order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
+
+  const comparerFn = comparer || defaultComparer;
 
   const filteredResources = resources.filter(stringTest);
 
-  return skipSort ? filteredResources : filteredResources.sort(comparer(sort));
+  return skipSort ? filteredResources : filteredResources.sort(comparerFn(sort));
 }
 
 export function getResourceSubTypeFromAdaptorType(adaptorType) {
@@ -679,14 +685,15 @@ export const getNetSuiteSubrecordImports = importDoc =>
   );
 
 export const updateMappingsBasedOnNetSuiteSubrecords = (
-  mapping,
+  mappingOriginal,
   subrecords
 ) => {
-  const subrecordsMap = keyBy(subrecords, 'fieldId');
+  let mapping = cloneDeep(mappingOriginal);
+
+  const subrecordsMap = cloneDeep(keyBy(subrecords, 'fieldId'));
 
   if (mapping) {
     if (mapping.fields) {
-      // eslint-disable-next-line no-param-reassign
       mapping.fields = mapping.fields
         .map(fld => {
           if (subrecordsMap[fld.generate]) {
@@ -714,7 +721,6 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
     }
 
     if (mapping.lists) {
-      // eslint-disable-next-line no-param-reassign
       mapping.lists = mapping.lists
         .map(list => {
           if (list.fields) {
@@ -763,17 +769,14 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
 
   if (newSubrecords.length > 0) {
     if (!mapping) {
-      // eslint-disable-next-line no-param-reassign
       mapping = {};
     }
 
     if (!mapping.fields) {
-      // eslint-disable-next-line no-param-reassign
       mapping.fields = [];
     }
 
     if (!mapping.lists) {
-      // eslint-disable-next-line no-param-reassign
       mapping.lists = [];
     }
 
@@ -923,6 +926,10 @@ export const getAssistantFromResource = resource => {
     return 'constantcontact';
   }
 
+  if (assistant === 'ebay' || assistant === 'ebayfinance') {
+    return 'ebay';
+  }
+
   return assistant;
 };
 
@@ -957,3 +964,12 @@ export const getNextLinkRelativeUrl = link => {
 
   return '';
 };
+export const AUDIT_LOGS_RANGE_FILTERS = [
+  {id: 'last1hour', label: 'Last hour'},
+  {id: 'today', label: 'Today'},
+  {id: 'last36hours', label: 'Last 36 hours'},
+  {id: 'last7days', label: 'Last 7 Days'},
+  {id: 'last15days', label: 'Last 15 Days'},
+  {id: 'last30days', label: 'Last 30 Days'},
+  {id: 'custom', label: 'Custom'},
+];

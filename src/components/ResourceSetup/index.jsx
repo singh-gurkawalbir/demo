@@ -36,6 +36,7 @@ export default function ResourceSetupDrawer(props) {
     addOrSelect,
     resourceType = 'connections',
   } = props;
+
   const classes = useStyles();
   const isAuthorized = useSelector(state =>
     selectors.isAuthorized(state, resourceId)
@@ -50,6 +51,8 @@ export default function ResourceSetupDrawer(props) {
   const formKey = getAsyncKey(resourceType, resourceId);
   const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
 
+  const handleClose = !addOrSelect ? onClose : setCancelTriggered;
+
   return (
     <LoadResources required resources={resourceType}>
       <Drawer
@@ -59,7 +62,7 @@ export default function ResourceSetupDrawer(props) {
           paper: classes.drawerPaper,
         }}
         >
-        <DrawerTitleBar disableClose={disabled} title={title} onClose={setCancelTriggered} />
+        <DrawerTitleBar disableClose={disabled} title={title} onClose={handleClose} />
         <ResourceDrawer />
 
         <div>

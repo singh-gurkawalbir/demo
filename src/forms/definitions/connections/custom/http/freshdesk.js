@@ -48,6 +48,8 @@ export default {
       label: 'API key',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'freshdesk.connection.http.auth.basic.username',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

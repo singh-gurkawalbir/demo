@@ -23,7 +23,7 @@ export default function PanelTitle({ title, children, className, helpKey}) {
   const classes = useStyles();
 
   return (
-    <div data-public className={clsx(classes.titleContainer, className)}>
+    <div className={clsx(classes.titleContainer, className)}>
       {title ? <Typography variant="body1" component="div" className={className}>{title}</Typography> : children}
       {helpKey && (
         <Help

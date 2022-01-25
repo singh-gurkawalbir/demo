@@ -106,6 +106,8 @@ export default {
       type: 'text',
       label: 'Site ID',
       defaultValue: '',
+      description:
+      'Note: for security reasons this field must always be re-entered.',
     },
     application: {
       fieldId: 'application',

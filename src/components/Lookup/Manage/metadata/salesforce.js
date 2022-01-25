@@ -15,6 +15,7 @@ export default {
           required: true,
           helpKey: 'mapping.lookup.mode',
           defaultValue: lookup?.map ? 'static' : 'dynamic',
+          isLoggable: true,
           options: [
             {
               items: [
@@ -35,6 +36,7 @@ export default {
           label: 'sObject type',
           connectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
+          isLoggable: true,
           visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
         },
         _whereClause: {
@@ -46,6 +48,7 @@ export default {
           required: true,
           filterKey: 'salesforce-recordType',
           refreshOptionsOnChangesTo: ['_sObjectType'],
+          isLoggable: true,
           visibleWhenAll: [
             { field: '_mode', is: ['dynamic'] },
             { field: '_sObjectType', isNot: [''] },
@@ -62,6 +65,7 @@ export default {
           multiline: true,
           disableText: true,
           refreshOptionsOnChangesTo: ['_whereClause'],
+          isLoggable: true,
           helpKey: 'mapping.salesforce.lookup.whereClauseText',
           visibleWhenAll: [
             { field: '_mode', is: ['dynamic'] },
@@ -76,6 +80,7 @@ export default {
           type: 'refreshableselect',
           filterKey: 'salesforce-recordType',
           label: 'Value field',
+          isLoggable: true,
           savedSObjectType: lookup.sObjectType,
           defaultValue: lookup.resultField,
           connectionId,
@@ -93,6 +98,7 @@ export default {
           valueName: 'import',
           required: true,
           valueLabel: 'Import field value',
+          isLoggable: true,
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
@@ -113,6 +119,7 @@ export default {
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only please',
           helpKey: 'import.lookups.name',
+          isLoggable: true,
           validWhen: {
             matchesRegEx: {
               pattern: '^[\\S]+$',

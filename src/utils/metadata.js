@@ -2,6 +2,7 @@
  * Utility functions for NS and SF Metadata
  */
 import { each, filter, reject } from 'lodash';
+import { emptyList } from './constants';
 
 export const isTransactionWSRecordType = recordId => {
   if (!recordId) return false;
@@ -42,6 +43,7 @@ export const isTransactionWSRecordType = recordId => {
 };
 
 export const getWSRecordId = record => {
+  if (!record) return '';
   const recordId = record.scriptId || record.metadataId || record.internalId;
 
   return recordId.toLowerCase();
@@ -298,6 +300,7 @@ const getFormattedNSCustomerSampleData = metadata => {
 };
 
 export const filterSubListProperties = eFields => {
+  if (!eFields) return emptyList;
   let filteredSubLists = [];
   const sublists = [];
 

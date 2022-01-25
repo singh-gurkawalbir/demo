@@ -68,6 +68,7 @@ export default function DynaTrueFixedWidthColmnMapper({
   id,
   label,
   title,
+  isLoggable,
 }) {
   const classes = useStyles();
 
@@ -103,6 +104,7 @@ export default function DynaTrueFixedWidthColmnMapper({
 
   return (
     <DynaTableView
+      isLoggable={isLoggable}
       id={id}
       hideLabel
       label={label}

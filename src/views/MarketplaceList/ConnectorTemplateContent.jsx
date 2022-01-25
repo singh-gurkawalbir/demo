@@ -38,7 +38,7 @@ export default function ConnectorTemplateContent({ resource, application }) {
   return (
     <>
       <Typography className={classes.name} variant="body2">
-        <CeligoTruncate lines={2} dataPublic placement="top" enterDelay={100}>
+        <CeligoTruncate lines={2} placement="top" enterDelay={100}>
           {name}
         </CeligoTruncate>
       </Typography>

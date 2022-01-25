@@ -4,9 +4,10 @@ import DynaForm from '../../../../DynaForm';
 import DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { TextButton } from '../../../../Buttons';
+import { emptyObject } from '../../../../../utils/constants';
 
 export default function OperandSettingsDialog({
-  ruleData,
+  ruleData = emptyObject,
   onClose,
   onSubmit,
   disabled,

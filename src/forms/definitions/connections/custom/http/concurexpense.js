@@ -51,6 +51,7 @@ export default {
       inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
+      helpKey: 'concurexpense.connection.http.auth.token.token',
     },
     'http.auth.token.refreshToken': {
       id: 'http.auth.token.refreshToken',

@@ -277,7 +277,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
   //   history.push(getRoutePath('/marketplace'));
   // }, [history]);
 
-  const handleSubmitComplete = useCallback((connectionId, isAuthorized, skipDrawerClose) => {
+  const handleSubmitComplete = useCallback((connectionId, isAuthorized, connectionDoc, skipDrawerClose) => {
     dispatch(
       actions.suiteScript.installer.updateSSLinkedConnectionId(
         connectorId,
@@ -292,9 +292,9 @@ export default function SuiteScriptIntegrationAppInstallation() {
     );
     verifyNSBundle(connectionId);
     if (!skipDrawerClose) {
-      history.goBack();
+      history.replace(`${match.url}`);
     }
-  }, [connectorId, dispatch, history, verifyNSBundle]);
+  }, [connectorId, dispatch, history, verifyNSBundle, match.url]);
 
   const onSSConnSubmitComplete = useCallback(() => {
     if (currentStep.connectionType === 'salesforce') {
@@ -317,7 +317,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
 
   useEffect(() => {
     if (installSteps && installSteps.length > 0 && !ssLinkedConnectionId && paramSSLinkedConnId) {
-      handleSubmitComplete(paramSSLinkedConnId, true, true);
+      handleSubmitComplete(paramSSLinkedConnId, true, null, true);
     }
   }, [handleSubmitComplete, installSteps, paramSSLinkedConnId, ssLinkedConnectionId]);
 

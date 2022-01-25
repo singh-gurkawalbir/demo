@@ -189,13 +189,13 @@ export default function AppRouting() {
         />
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/flowBuilder/:flowId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/flows/sections/:sectionId/flowBuilder/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/flows/sections/:sectionId/flowBuilder/:flowId'),
           getRoutePath('/integrations/:integrationId/flowBuilder/:flowId'),
           getRoutePath('/integrations/:integrationId/flows/sections/:sectionId/flowBuilder/:flowId'),
           getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/flowBuilder/:flowId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/dataLoader/:flowId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/flows/sections/:sectionId/dataLoader/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/flows/sections/:sectionId/dataLoader/:flowId'),
           getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dataLoader/:flowId'),
           getRoutePath('/integrations/:integrationId/dataLoader/:flowId'),
           getRoutePath('/integrations/:integrationId/flows/sections/:sectionId/dataLoader/:flowId'),
@@ -217,7 +217,7 @@ export default function AppRouting() {
         />
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall/:childId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall/child/:childId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall'),
         ]}
         component={IntegrationAppUninstallation}
@@ -225,19 +225,19 @@ export default function AppRouting() {
 
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/dashboard/sections/:sectionId/:dashboardTab'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/:tab/sections/:sectionId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/dashboard/:dashboardTab'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/dashboard/:dashboardTab(runningFlows|completedFlows)'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/dashboard/sections/:sectionId/:dashboardTab'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab/sections/:sectionId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/dashboard/:dashboardTab'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/dashboard/:dashboardTab(runningFlows|completedFlows)'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
-          getRoutePath('/integrations/:integrationId/dashboard/sections/:sectionId/:dashboardTab'),
+          getRoutePath('/integrations/:integrationId/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
           getRoutePath('/integrations/:integrationId/:tab/sections/:sectionId'),
-          getRoutePath('/integrations/:integrationId/dashboard/:dashboardTab'),
+          getRoutePath('/integrations/:integrationId/dashboard/:dashboardTab(runningFlows|completedFlows)'),
           getRoutePath('/integrations/:integrationId/:tab'),
         ]}
         component={Integration}
@@ -245,7 +245,7 @@ export default function AppRouting() {
       <Route
         // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
         // templateName has structure of application2-application2 will contain atleast 5 characters
-        path={[getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dashboard/sections/:sectionId/:dashboardTab'),
+        path={[getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
           getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab/sections/:sectionId')]}
         component={Integration}
         />
@@ -253,7 +253,7 @@ export default function AppRouting() {
       <Route
         // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
         // templateName has structure of application2-application2 will contain atleast 5 characters
-        path={[getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dashboard/:dashboardTab'),
+        path={[getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dashboard/:dashboardTab(runningFlows|completedFlows)'),
           getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab')]}
         component={Integration}
         />
@@ -273,7 +273,7 @@ export default function AppRouting() {
       <Route exact path={getRoutePath('/marketplace')} component={Marketplace} />
 
       <Route path={getRoutePath(HOME_PAGE_PATH)} component={Home} />
-      <Route path={getRoutePath('/dashboard/:dashboardTab')} component={Dashboard} />
+      <Route path={getRoutePath('/dashboard/:dashboardTab(runningFlows|completedFlows)')} component={Dashboard} />
       <Route path={getRoutePath('/recycleBin')} component={RecycleBin} />
       <Route
         path={[

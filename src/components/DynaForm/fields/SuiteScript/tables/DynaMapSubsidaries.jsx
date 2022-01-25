@@ -15,6 +15,7 @@ const SalesforceSubsidarySelect = ({
   disabled,
   salesforceSubsidiaryFieldOptions,
   selectedOption,
+  isLoggable,
   mapSubsidiariesSalesforceSubsidiaryFieldID, onFieldChange}) => {
   const generatedSalesforceSubsidiaryFieldOptions = useMemo(() =>
     [{items: salesforceSubsidiaryFieldOptions.map(([value, label]) => ({label, value}))}],
@@ -24,6 +25,7 @@ const SalesforceSubsidarySelect = ({
     <DynaSelect
       disabled={disabled}
       value={selectedOption}
+      isLoggable={isLoggable}
       label="Salesforce Subsidiary Field"
       options={generatedSalesforceSubsidiaryFieldOptions}
       onFieldChange={(id, value) => {
@@ -39,6 +41,7 @@ export default function DynaMapSubsidaries(props) {
     _integrationId: integrationId,
     ssLinkedConnectionId: connectionId,
     formKey,
+    isLoggable,
   } = props;
 
   const fields = useFormContext(formKey)?.fields;
@@ -112,13 +115,13 @@ export default function DynaMapSubsidaries(props) {
 
   return (
     <>
-
       <DynaRadio
         isValid
         value={fieldMappingType}
         onFieldChange={(id, value) => {
           setFieldMappingType(value);
         }}
+        isLoggable={isLoggable}
         label="Field Mapping Type"
         options={fieldMappingTypeOptions} />
 
@@ -129,6 +132,7 @@ export default function DynaMapSubsidaries(props) {
             label="Select Subsidiary"
             id={id}
             disabled={disabled}
+            isLoggable={isLoggable}
             onFieldChange={(id, value) => {
               setSubsidaryValue(value);
             }}
@@ -139,6 +143,7 @@ export default function DynaMapSubsidaries(props) {
             {metadataStatus === 'requested' ? <Spinner /> : (
               <SalesforceSubsidarySelect
                 disabled={disabled}
+                isLoggable={isLoggable}
                 salesforceSubsidiaryFieldOptions={salesforceSubsidiaryFieldOptions}
                 selectedOption={selectedOption}
                 mapSubsidiariesSalesforceSubsidiaryFieldID={mapSubsidiariesSalesforceSubsidiaryFieldID}

@@ -188,6 +188,7 @@ function AccountList() {
   return (
     <>
       <TextButton
+        data-private
         onClick={handleMenu}
         endIcon={<ArrowDownIcon />}
         className={classes.currentContainer}
@@ -207,7 +208,6 @@ function AccountList() {
         placement="bottom-end"
         onClose={handleClose}>
         <List
-          data-public
           dense className={classes.listWrapper}>
           {accounts.map(a => (
             <ListItem
@@ -223,7 +223,7 @@ function AccountList() {
                 container: classes.itemContainer,
               }}
               key={a.id}>
-              <ListItemText className={classes.itemRootName}>{a.company}</ListItemText>
+              <ListItemText data-private className={classes.itemRootName}>{a.company}</ListItemText>
               {a.company && a.canLeave && (
                 <ListItemSecondaryAction className={classes.secondaryAction}>
                   <TextButton

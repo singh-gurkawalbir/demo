@@ -111,6 +111,7 @@ export default function DynaWebhookTokenGenerator(props) {
         <div className={classes.dynaWebhookTokenField}>
           <DynaTextForSetFields
             {...props}
+            isLoggable={false}
             required
             value={value}
             setFieldIds={setFieldIds}
@@ -124,6 +125,7 @@ export default function DynaWebhookTokenGenerator(props) {
         <div className={classes.dynaWebhookTokenbtn}>
           {value?.match(/^[A-Za-z0-9]/) ? (
             <CopyToClipboard
+              data-private
               onCopy={handleCopy}
               text={value}>
               <IconButtonWithTooltip

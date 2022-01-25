@@ -522,7 +522,6 @@ describe('suiteScriptLinkedTiles selector', () => {
         pinned: true,
         sortablePropType: 0,
         ssLinkedConnectionId: 'connection1',
-        totalErrorCount: 0,
       },
       {
         _integrationId: 'suitescript2',
@@ -533,7 +532,6 @@ describe('suiteScriptLinkedTiles selector', () => {
         pinned: false,
         sortablePropType: -1,
         ssLinkedConnectionId: 'connection1',
-        totalErrorCount: 0,
       },
       {
         _integrationId: 'suitescript1',
@@ -545,7 +543,6 @@ describe('suiteScriptLinkedTiles selector', () => {
         pinned: false,
         sortablePropType: 0,
         ssLinkedConnectionId: 'connection2',
-        totalErrorCount: 10,
       },
       {
         _integrationId: 'suitescript1',
@@ -554,7 +551,6 @@ describe('suiteScriptLinkedTiles selector', () => {
         pinned: false,
         sortablePropType: 0,
         ssLinkedConnectionId: 'connection3',
-        totalErrorCount: 0,
       },
       {
         _integrationId: 'suitescript2',
@@ -563,7 +559,6 @@ describe('suiteScriptLinkedTiles selector', () => {
         pinned: false,
         sortablePropType: 0,
         ssLinkedConnectionId: 'connection3',
-        totalErrorCount: 0,
       },
     ];
 

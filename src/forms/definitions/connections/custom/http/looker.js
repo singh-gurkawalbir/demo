@@ -45,6 +45,8 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       label: 'Client secret',
       required: true,
       helpKey: 'looker.connection.http.encrypted.clientSecret',
@@ -62,6 +64,7 @@ export default {
       inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
+      helpKey: 'looker.connection.http.auth.token.token',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
     application: {

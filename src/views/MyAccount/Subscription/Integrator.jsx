@@ -184,7 +184,6 @@ export default function Subscription() {
     <>
       <UpgradeDrawer />
       <div
-        data-public
         className={classes.root}>
         {licenseActionDetails && licenseActionDetails.isNone && (
         <div className={classes.block}>

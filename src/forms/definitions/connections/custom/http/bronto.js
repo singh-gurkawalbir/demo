@@ -33,6 +33,8 @@ export default {
       required: true,
       type: 'text',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       label: 'Client secret',
       inputType: 'password',
       helpKey: 'bronto.connection.http.encrypted.clientSecret',

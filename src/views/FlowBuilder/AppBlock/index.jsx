@@ -372,7 +372,7 @@ export default function AppBlock({
       </div>
       <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
         <Typography className={classes.containerName}>
-          <CeligoTruncate data-public lines={2}>{name}</CeligoTruncate>
+          <CeligoTruncate isLoggable lines={2}>{name}</CeligoTruncate>
         </Typography>
       </div>
     </div>

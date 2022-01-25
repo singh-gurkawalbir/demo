@@ -5,6 +5,7 @@ import javascriptMetadata from './javascript';
 export default {
   type: 'inputFilter',
   label: 'Define input filter',
+  helpKey: 'afe.filters',
   description: 'Filters data for PP',
   panels: ({ activeProcessor }) => {
     if (activeProcessor === 'javascript') {
