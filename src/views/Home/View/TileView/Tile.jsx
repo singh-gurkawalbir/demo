@@ -64,7 +64,7 @@ const useStyles = makeStyles(theme => ({
     right: theme.spacing(-0.5),
     top: 0,
   },
-  tagExpire: {
+  tagWithLicenseMessage: {
     bottom: 90,
     position: 'absolute',
   },
@@ -228,7 +228,7 @@ function Tile({
             </Typography>
           </CardTitle>
 
-          {!(expired && tile.tag) ? <AppLogosContainer tile={tile} /> : ''}
+          {!(licenseMessageContent && tile.tag) ? <AppLogosContainer tile={tile} /> : ''}
 
         </Content>
         <Footer>
@@ -252,8 +252,8 @@ function Tile({
               )}
             </Manage>
             )}
-            {expired && tile.tag && (<IntegrationTag label={tile.tag} className={classes.tagExpire} />)}
-            {!expired && tile.tag && (<IntegrationTag label={tile.tag} />)}
+            {licenseMessageContent && tile.tag && (<IntegrationTag label={tile.tag} className={classes.tagWithLicenseMessage} />)}
+            {!licenseMessageContent && tile.tag && (<IntegrationTag label={tile.tag} />)}
           </FooterActions>
           <Info
             variant={tile._connectorId ? 'Integration app' : numFlowsText}
