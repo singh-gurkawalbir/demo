@@ -3,11 +3,12 @@
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
 import { call, select } from 'redux-saga/effects';
+import { addDays, addMinutes } from 'date-fns';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
 import { requestMetric, requestFlowMetrics } from '.';
-import { getFlowMetricsQuery } from '../../utils/flowMetrics';
+import { getFlowMetricsQuery, getRoundedDate } from '../../utils/flowMetrics';
 
 describe('flowMetrics saga', () => {
   describe('requestMetrics generator', () => {
@@ -41,101 +42,250 @@ describe('flowMetrics saga', () => {
         .run());
   });
   describe('requestFlowMetrics saga', () => {
-    const resourceId = 'dummyResourceId';
-    const filters = {
-      range: {
-        preset: 'yesterday',
-        startDate: new Date('05 October 2011 14:48 UTC'),
-        endDate: new Date('06 October 2011 14:48 UTC'),
-      },
-      selectedResources: [],
-    };
-    const userId = '123';
-
-    test('should dispatch received action with corresponding data, if resource is an integration with some flowIds and api call is successful', () => {
+    describe('if resource is an integration', () => {
       const resourceType = 'integrations';
-      const flowIds = ['dummyId'];
+      const resourceId = 'i1';
+      const filters = {
+        range: {
+          preset: 'yesterday',
+          startDate: addDays(new Date(), -7),
+          endDate: addDays(new Date(), -6),
+        },
+        selectedResources: [],
+      };
+      const userId = 'u1';
+      const timeZone = '';
 
-      filters.selectedResources = flowIds;
-      const data = [{ dummy: 'dummy' }];
-      const args = {
-        query: getFlowMetricsQuery(resourceType, resourceId, userId, filters),
+      test('should dispatch received action with corresponding data, if there are some flowIds and requestMetric call is successful', () => {
+        const flowIds = ['f1', 'f2'];
+
+        filters.selectedResources = ['i1'];
+        const data = [{ dummy: 'dummy' }];
+        const args = {
+          query: getFlowMetricsQuery(resourceType, resourceId, userId, { ...filters, selectedResources: flowIds, timeZone }),
+        };
+
+        return expectSaga(requestFlowMetrics, {
+          resourceType,
+          resourceId,
+          filters,
+        })
+          .provide([
+            [select(selectors.ownerUserId), userId],
+            [select(selectors.userTimezone), timeZone],
+            [select(selectors.integrationEnabledFlowIds, resourceId), flowIds],
+            [call(requestMetric, args), data],
+          ])
+          .call(requestMetric, args)
+          .put(actions.flowMetrics.received(resourceId, data))
+          .run();
+      });
+      test('should dispatch received action with empty data, if there are no flowIds and integration is a standalone integration', () => {
+        const resourceId2 = 'none';
+        const flowIds = [];
+
+        return expectSaga(requestFlowMetrics, {
+          resourceType,
+          resourceId: resourceId2,
+          filters,
+        })
+          .provide([
+            [select(selectors.ownerUserId), userId],
+            [select(selectors.userTimezone), timeZone],
+            [select(selectors.integrationEnabledFlowIds, undefined), flowIds],
+          ])
+          .put(actions.flowMetrics.received(resourceId2, []))
+          .not.call.fn(requestMetric)
+          .run();
+      });
+      test('should dispatch flowmetrics failed action, if the requestMetric call failed', () => {
+        const flowIds = ['f1', 'f2'];
+
+        filters.selectedResources = ['i2'];
+        const args = {
+          query: getFlowMetricsQuery(resourceType, resourceId, userId, { ...filters, timeZone }),
+        };
+        const e = new Error();
+
+        return expectSaga(requestFlowMetrics, {
+          resourceType,
+          resourceId,
+          filters,
+        })
+          .provide([
+            [select(selectors.ownerUserId), userId],
+            [select(selectors.userTimezone), timeZone],
+            [select(selectors.integrationEnabledFlowIds, resourceId), flowIds],
+            [call(requestMetric, args), throwError(e)],
+          ])
+          .call(requestMetric, args)
+          .put(actions.flowMetrics.failed(resourceId))
+          .run();
+      });
+    });
+    describe('if resource is a flow', () => {
+      const resourceType = 'flows';
+      const resourceId = 'f1';
+      const filters = {
+        range: {
+          preset: 'lastrun',
+        },
+        selectedResources: [],
+      };
+      const userId = 'u1';
+      const timeZone = '';
+      const apiCallArgs = {
+        path: `/flows/${resourceId}/jobs/latest`,
+        opts: {
+          method: 'GET',
+        },
+        hidden: true,
       };
 
-      return expectSaga(requestFlowMetrics, {
-        resourceType,
-        resourceId,
-        filters,
-      })
-        .provide([
-          [select(selectors.ownerUserId), userId],
-          [select(selectors.integrationEnabledFlowIds, resourceId), flowIds],
-          [call(requestMetric, args), data],
-        ])
-        .call(requestMetric, args)
-        .put(actions.flowMetrics.received(resourceId, data))
-        .run();
-    });
-    test('should dispatch received action with corresponding data, if resource is not an integration and api call is successful', () => {
-      const resourceType = 'notIntegrations';
-      const data = [{ dummy: 'dummy' }];
-      const args = {
-        query: getFlowMetricsQuery(resourceType, resourceId, userId, filters),
-      };
+      test('should call apiCallWithRetry and get latestJobs if filters preset is lastrun and if latestjobs are present then update with new startDate and endDate and call requestMetric', () => {
+        const flowJobResponse = [
+          {
+            createdAt: addDays(new Date(), -7),
+            endedAt: addDays(new Date(), -6),
+          },
+          {
+            createdAt: addDays(new Date(), -2),
+            endedAt: addDays(new Date(), -1),
+          },
+        ];
+        const data = [{ dummy: 'dummy' }];
 
-      return expectSaga(requestFlowMetrics, {
-        resourceType,
-        resourceId,
-        filters,
-      })
-        .provide([
-          [select(selectors.ownerUserId), userId],
-          [call(requestMetric, args), data],
-        ])
-        .call(requestMetric, args)
-        .put(actions.flowMetrics.received(resourceId, data))
-        .run();
-    });
-    test('should dispatch received action with empty data, if resource is an integration without flowIds and api call is successful', () => {
-      const resourceType = 'integrations';
-      const flowIds = [];
+        const latestJob = flowJobResponse[0];
+        const startDate = getRoundedDate(new Date(latestJob.createdAt), 1, true);
+        const endDate = getRoundedDate(latestJob.endedAt ? new Date(latestJob.endedAt) : new Date(), 1);
 
-      return expectSaga(requestFlowMetrics, {
-        resourceType,
-        resourceId,
-        filters,
-      })
-        .provide([
-          [select(selectors.ownerUserId), userId],
-          [select(selectors.integrationEnabledFlowIds, resourceId), flowIds],
-        ])
-        .not.call.fn(requestMetric)
-        .put(actions.flowMetrics.received(resourceId, []))
-        .run();
-    });
-    test('should dispatch failed action, if the api call failed', () => {
-      const resourceType = 'integrations';
-      const flowIds = ['dummyId'];
+        startDate.setHours(startDate.getHours() - 1);
+        endDate.setHours(endDate.getHours() + 1);
+        const args = {
+          query: getFlowMetricsQuery(resourceType, resourceId, userId, { ...filters, range: { startDate, endDate, preset: 'lastrun' }, timeZone }),
+        };
 
-      filters.selectedResources = flowIds;
-      const args = {
-        query: getFlowMetricsQuery(resourceType, resourceId, userId, filters),
-      };
-      const e = new Error();
+        return expectSaga(requestFlowMetrics, {
+          resourceType,
+          resourceId,
+          filters,
+        })
+          .provide([
+            [select(selectors.ownerUserId), userId],
+            [select(selectors.userTimezone), timeZone],
+            [call(apiCallWithRetry, apiCallArgs), flowJobResponse],
+            [call(requestMetric, args), data],
+          ])
+          .call(apiCallWithRetry, apiCallArgs)
+          .put(actions.flowMetrics.updateLastRunRange(resourceId, startDate, endDate))
+          .call(requestMetric, args)
+          .put(actions.flowMetrics.received(resourceId, data))
+          .run();
+      });
+      test('should call apiCallWithRetry and get latestJobs if filters preset is lastrun and if latestjobs are present and firstJob is created before 1 hour then update with new startDate and endDate and call requestMetric', () => {
+        const flowJobResponse = [
+          {
+            createdAt: addMinutes(new Date(), -60),
+          },
+        ];
+        const data = [{ dummy: 'dummy' }];
 
-      return expectSaga(requestFlowMetrics, {
-        resourceType,
-        resourceId,
-        filters,
-      })
-        .provide([
-          [select(selectors.ownerUserId), userId],
-          [select(selectors.integrationEnabledFlowIds, resourceId), flowIds],
-          [call(requestMetric, args), throwError(e)],
-        ])
-        .call(requestMetric, args)
-        .put(actions.flowMetrics.failed(resourceId))
-        .run();
+        const latestJob = flowJobResponse[0];
+        const startDate = getRoundedDate(new Date(latestJob.createdAt), 1, true);
+        const endDate = getRoundedDate(latestJob.endedAt ? new Date(latestJob.endedAt) : new Date(), 1);
+
+        startDate.setMinutes(startDate.getMinutes() - 2);
+        endDate.setMinutes(endDate.getMinutes() + 2);
+        const args = {
+          query: getFlowMetricsQuery(resourceType, resourceId, userId, { ...filters, range: { startDate, endDate, preset: 'lastrun' }, timeZone }),
+        };
+
+        return expectSaga(requestFlowMetrics, {
+          resourceType,
+          resourceId,
+          filters,
+        })
+          .provide([
+            [select(selectors.ownerUserId), userId],
+            [select(selectors.userTimezone), timeZone],
+            [call(apiCallWithRetry, apiCallArgs), flowJobResponse],
+            [call(requestMetric, args), data],
+          ])
+          .call(apiCallWithRetry, apiCallArgs)
+          .put(actions.flowMetrics.updateLastRunRange(resourceId, startDate, endDate))
+          .call(requestMetric, args)
+          .put(actions.flowMetrics.received(resourceId, data))
+          .run();
+      });
+      test('should call apiCallWithRetry and get latestJobs if filters preset is lastrun and is there are no latestJobs should call requestMetric with corresponding data', () => {
+        const args = {
+          query: getFlowMetricsQuery(resourceType, resourceId, userId, { ...filters, timeZone }),
+        };
+        const flowJobResponse = undefined;
+        const data = [{ dummy: 'dummy' }];
+
+        return expectSaga(requestFlowMetrics, {
+          resourceType,
+          resourceId,
+          filters,
+        })
+          .provide([
+            [select(selectors.ownerUserId), userId],
+            [select(selectors.userTimezone), timeZone],
+            [call(apiCallWithRetry, apiCallArgs), flowJobResponse],
+            [call(requestMetric, args), data],
+          ])
+          .call(apiCallWithRetry, apiCallArgs)
+          .not.put(actions.flowMetrics.updateLastRunRange(resourceId, '', ''))
+          .call(requestMetric, args)
+          .put(actions.flowMetrics.received(resourceId, data))
+          .run();
+      });
+      test('should call apiCallWithRetry if filters preset is lastrun and latestJobs will be an empty array if api call fails, call requestMetric with corresponding data', () => {
+        const args = {
+          query: getFlowMetricsQuery(resourceType, resourceId, userId, { ...filters, timeZone }),
+        };
+        const data = [{ dummy: 'dummy' }];
+
+        return expectSaga(requestFlowMetrics, {
+          resourceType,
+          resourceId,
+          filters,
+        })
+          .provide([
+            [select(selectors.ownerUserId), userId],
+            [select(selectors.userTimezone), timeZone],
+            [call(apiCallWithRetry, apiCallArgs), throwError()],
+            [call(requestMetric, args), data],
+          ])
+          .call(apiCallWithRetry, apiCallArgs)
+          .not.put(actions.flowMetrics.updateLastRunRange(resourceId, '', ''))
+          .call(requestMetric, args)
+          .put(actions.flowMetrics.received(resourceId, data))
+          .run();
+      });
+      test('should not call apiCallWithRetry if filters preset is not lastrun and dispatch flowMetrics received action if requestMetric call is successful', () => {
+        filters.range.preset = 'something';
+        const data = [{ dummy: 'dummy' }];
+        const args = {
+          query: getFlowMetricsQuery(resourceType, resourceId, userId, filters),
+        };
+
+        return expectSaga(requestFlowMetrics, {
+          resourceType,
+          resourceId,
+          filters,
+        })
+          .provide([
+            [select(selectors.ownerUserId), userId],
+            [select(selectors.userTimezone), timeZone],
+            [call(requestMetric, args), data],
+          ])
+          .not.call(apiCallWithRetry, apiCallArgs)
+          .call(requestMetric, args)
+          .put(actions.flowMetrics.received(resourceId, data))
+          .run();
+      });
     });
   });
 });

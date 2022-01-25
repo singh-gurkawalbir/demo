@@ -254,6 +254,7 @@ export const getFormattedNSCustomerSampleData = metadata => {
 };
 
 export const filterSubListProperties = eFields => {
+  if (!eFields) return [];
   let filteredSubLists = [];
   const sublists = [];
 
