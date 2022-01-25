@@ -83,7 +83,7 @@ export function CustomReactSelectStyles() {
           ? theme.palette.background.paper2
           : theme.palette.background.paper,
       border: 'none',
-      height: 38,
+      minHeight: 38,
       display: 'flex',
       alignItems: 'center',
       borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
