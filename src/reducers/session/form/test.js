@@ -620,6 +620,23 @@ describe('reducer expression test cases', () => {
 
         expect(FIELD1.visible).toBe(false);
       });
+      test('should retain the form state incase of forceFieldState action as it is if the passed field id does not exist', () => {
+        const newFormState = forms(
+          formState,
+          actions.form.forceFieldState(formKey)('FIELD4', {visible: true})
+        );
+
+        expect(newFormState).toBe(formState);
+      });
+      test('should retain the form state incase of clearForceFieldState action as it is if the passed field id does not exist', () => {
+        const newFormState = forms(
+          formState,
+          actions.form.clearForceFieldState(formKey)('FIELD4')
+        );
+
+        expect(newFormState).toBe(formState);
+      });
+
       test('FIELD1 should be visible since we force it to take a field state', () => {
         formState = forms(
           formState,
@@ -923,6 +940,49 @@ describe('reducer expression test cases', () => {
       const updatedFormState = forms(formState, actions.form.clear(formKey));
 
       expect(selectors.formState(updatedFormState, formKey)).toBe(null);
+    });
+  });
+  describe('field register behaviour', () => {
+    const fieldMeta = {
+      fieldMap: {
+        FIELD1: {
+          id: 'FIELD1',
+          type: 'text',
+          name: 'field1',
+          defaultValue: 'test',
+          label: 'field1',
+        },
+      },
+      layout: { fields: ['FIELD1'] },
+    };
+    const formKey = '1-2';
+    const formState = forms(undefined, actions.form.init(formKey, '', { fieldMeta }));
+
+    test('should add the passed field metadata to the existing form state ', () => {
+      const newFieldMetadata = {
+        id: 'FIELD2',
+        type: 'text',
+        name: 'field2',
+        defaultValue: 'test11',
+        label: 'field2',
+      };
+      const updatedFormState = forms(formState, actions.form.registerField(formKey)(newFieldMetadata));
+
+      const formValues = updatedFormState[formKey].value;
+
+      expect(formValues.field2).toBe(newFieldMetadata.defaultValue);
+    });
+    test('should retain the same state if the fieldId passed is already part of the form state', () => {
+      const newFieldMetadata = {
+        id: 'FIELD1',
+        type: 'text',
+        name: 'field1',
+        defaultValue: 'test11',
+        label: 'field1',
+      };
+      const updatedFormState = forms(formState, actions.form.registerField(formKey)(newFieldMetadata));
+
+      expect(updatedFormState).toBe(formState);
     });
   });
 });
