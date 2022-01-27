@@ -1218,7 +1218,7 @@ export function convertToReactFormFields({
         fieldType = 'text';
       }
 
-      if (fieldType === 'text' && fieldDetailsMap[fieldId].type !== 'integer') {
+      if ((fieldType === 'text' || fieldType === 'textarea') && fieldDetailsMap[fieldId].type !== 'integer') {
         fieldType = 'textwithflowsuggestion';
       }
 
@@ -1289,6 +1289,10 @@ export function convertToReactFormFields({
           fieldDef.defaultValue = fieldDef.defaultValue.join(',');
         }
         fieldDef.showLookup = false;
+        if (field.fieldType === 'textarea') {
+          fieldDef.multiline = true;
+          fieldDef.rowsMax = 10;
+        }
       }
 
       if (flowId) {
