@@ -1,7 +1,8 @@
 /* global describe, test, expect, beforeEach, jest */
-import { call, put, select, take, race } from 'redux-saga/effects';
+import { call, put, select, take, race, fork, cancel } from 'redux-saga/effects';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { expectSaga } from 'redux-saga-test-plan';
+import { createMockTask } from '@redux-saga/testing-utils';
 import { throwError } from 'redux-saga-test-plan/providers';
 import actions, { availableResources } from '../../actions';
 import {
@@ -34,6 +35,9 @@ import {
   eventReportCancel,
   downloadReport,
   downloadAuditlogs,
+  commitStagedChangesWrapper,
+  startPollingForQueuedJobs,
+  startPollingForConnectionStatus,
 } from '.';
 import { apiCallWithRetry, apiCallWithPaging } from '..';
 import { selectors } from '../../reducers';
@@ -52,6 +56,7 @@ import {HOME_PAGE_PATH} from '../../utils/constants';
 import { APIException } from '../api/requestInterceptors/utils';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
+import { pingConnectionWithId } from '../resourceForm/connections';
 
 const apiError = throwError(new APIException({
   status: 401,
@@ -83,6 +88,12 @@ describe('isDataLoaderFlow saga', () => {
       [select(selectors.resourceData, 'exports', 'e1'), {merged: {_id: 'e1', type: 'simple'}}],
     ])
     .returns(true)
+    .run());
+  test('should return false if export type is not simple', () => expectSaga(isDataLoaderFlow, exportFlow)
+    .provide([
+      [select(selectors.resourceData, 'exports', 'e1'), {merged: {_id: 'e1', type: 'distributed'}}],
+    ])
+    .returns(false)
     .run());
 });
 
@@ -209,12 +220,34 @@ describe('linkUnlinkSuiteScriptIntegrator saga', () => {
       })
     )
     .run());
+  test('should not dispatch any action if link is true and it is already linked (owner/admin user)', () => expectSaga(linkUnlinkSuiteScriptIntegrator, {connectionId: 'conn2', link: true})
+    .provide([
+      [select(selectors.userPreferences), userPreferences],
+      [select(selectors.isAccountOwnerOrAdmin), true],
+    ])
+    .not.put(
+      actions.user.preferences.update({
+        ssConnectionIds: [],
+      })
+    )
+    .run());
   test('should dispatch preference update action and remove passed connectionId if link is false and it is already linked (owner/admin user)', () => expectSaga(linkUnlinkSuiteScriptIntegrator, {connectionId: 'conn2', link: false})
     .provide([
       [select(selectors.userPreferences), userPreferences],
       [select(selectors.isAccountOwnerOrAdmin), true],
     ])
     .put(
+      actions.user.preferences.update({
+        ssConnectionIds: ['conn1'],
+      })
+    )
+    .run());
+  test('should not dispatch any action if link is false and it is not already linked (owner/admin user)', () => expectSaga(linkUnlinkSuiteScriptIntegrator, {connectionId: 'conn3', link: false})
+    .provide([
+      [select(selectors.userPreferences), userPreferences],
+      [select(selectors.isAccountOwnerOrAdmin), true],
+    ])
+    .not.put(
       actions.user.preferences.update({
         ssConnectionIds: ['conn1'],
       })
@@ -227,6 +260,13 @@ describe('linkUnlinkSuiteScriptIntegrator saga', () => {
     ])
     .put(actions.user.org.accounts.addLinkedConnectionId('conn3'))
     .run());
+  test('should not dispatch any action if it is already linked and link is true (not owner/admin user)', () => expectSaga(linkUnlinkSuiteScriptIntegrator, {connectionId: 'conn2', link: true})
+    .provide([
+      [select(selectors.userPreferences), userPreferences],
+      [select(selectors.isAccountOwnerOrAdmin), false],
+    ])
+    .not.put(actions.user.org.accounts.addLinkedConnectionId('conn2'))
+    .run());
   test('should dispatch deleteLinkedConnectionId action with passed connectionId if link is false and connection is already linked (not owner/admin user)', () => expectSaga(linkUnlinkSuiteScriptIntegrator, {connectionId: 'conn2', link: false})
     .provide([
       [select(selectors.userPreferences), userPreferences],
@@ -234,9 +274,30 @@ describe('linkUnlinkSuiteScriptIntegrator saga', () => {
     ])
     .put(actions.user.org.accounts.deleteLinkedConnectionId('conn2'))
     .run());
+  test('should not dispatch any action if link is false and connection is not linked (not owner/admin user)', () => expectSaga(linkUnlinkSuiteScriptIntegrator, {connectionId: 'conn3', link: false})
+    .provide([
+      [select(selectors.userPreferences), userPreferences],
+      [select(selectors.isAccountOwnerOrAdmin), false],
+    ])
+    .not.put(actions.user.org.accounts.deleteLinkedConnectionId('conn3'))
+    .run());
 });
 
 describe('requestRevoke saga', () => {
+  test('should not dispatch any action if response does not contains any errors', () => expectSaga(requestRevoke, { connectionId: 'conn1' })
+    .provide([
+      [matchers.call.fn(apiCallWithRetry), {}],
+    ])
+    .call(apiCallWithRetry, {
+      path: '/connection/conn1/revoke',
+      hidden: false,
+      opts: {
+        method: 'GET',
+      },
+      message: 'Revoking Connection',
+    })
+    .not.put(actions.api.failure('/connection/conn1/revoke', 'GET', {}, false))
+    .run());
   test('should dispatch api failure action if response contains any errors', () => expectSaga(requestRevoke, { connectionId: 'conn1' })
     .provide([
       [matchers.call.fn(apiCallWithRetry), {errors: {code: 100}}],
@@ -444,6 +505,293 @@ describe('commitStagedChanges saga', () => {
 
       expect(finalEffect).toEqual({ done: true, value: undefined });
     });
+    test('should call corresponding api calls, clear the stage and update the resource if connections is updated from integrations page', () => {
+      const resourceType2 = 'integrations/1/connections';
+      const scope = 'value';
+      const merged = { _id: id, lastModified: 100, assistant: 'http', type: 'netsuite', netsuite: { linkSuiteScriptIntegrator: true }};
+      const path = `/connections/${id}`;
+      const master = { _id: id, lastModified: 100, netsuite: { authType: 'token-auto' } };
+
+      return expectSaga(commitStagedChanges, {resourceType: resourceType2, id, scope, options: {refetchResources: true}})
+        .provide([
+          [select(selectors.userPreferences), { environment: 'sandbox' }],
+          [select(selectors.resourceData, resourceType2, id, scope), { patch: somePatch, master, merged }],
+          [call(resourceConflictDetermination, {
+            path,
+            merged,
+            id,
+            scope,
+            resourceType: 'connections',
+            master,
+          }), {
+            merged: { _id: id, lastModified: 100, assistant: 'http', type: 'netsuite', netsuite: { linkSuiteScriptIntegrator: true } },
+          }],
+          [call(requestRevoke, { connectionId: master._id, hideNetWorkSnackbar: true })],
+          [call(apiCallWithRetry, {
+            path,
+            opts: {
+              method: 'put',
+              body: merged,
+            },
+          }), { _id: id, lastModified: 100, assistant: 'http', type: 'netsuite', netsuite: { linkSuiteScriptIntegrator: true }}],
+          [call(
+            linkUnlinkSuiteScriptIntegrator,
+            { connectionId: merged._id,
+              link: merged.netsuite.linkSuiteScriptIntegrator }
+          )],
+        ])
+        .call(resourceConflictDetermination, {
+          path,
+          merged,
+          id,
+          scope,
+          resourceType: 'connections',
+          master,
+        })
+        .call(requestRevoke, { connectionId: master._id, hideNetWorkSnackbar: true })
+        .call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'put',
+            body: merged,
+          },
+        })
+        .call(
+          linkUnlinkSuiteScriptIntegrator,
+          { connectionId: merged._id,
+            link: merged.netsuite.linkSuiteScriptIntegrator }
+        )
+        .put(actions.resource.requestCollection('flows', null, true))
+        .put(actions.resource.requestCollection('connections', null, true))
+        .put(actions.resource.requestCollection('exports', null, true))
+        .put(actions.resource.requestCollection('imports', null, true))
+        .put(actions.resource.clearStaged(id, scope))
+        .put(actions.resource.received('connections', { _id: id, lastModified: 100, assistant: 'http', type: 'netsuite', netsuite: { linkSuiteScriptIntegrator: true } }))
+        .put(actions.resource.updated('connections', id, master, somePatch))
+        .run();
+    });
+    test('should call corresponding api calls, clear the stage and update the resource if flow is enabled/disabled', () => {
+      const resourceType = 'flows';
+      const id = 'f1';
+      const path = '/flows/f1';
+      const scope = 'value';
+      const patch = [
+        {
+          op: 'replace',
+          path: '/disabled',
+          scope: 'value',
+          value: false,
+        },
+      ];
+      const master = {
+        autoResolveMatchingTraceKeys: true,
+        disabled: false,
+        name: 'flow',
+        pageGenerators: [{_exportId: 'e1'}],
+        pageProcessors: [{type: 'import', _importId: 'im1'}],
+        _id: 'f1',
+        _integrationId: 'i1',
+      };
+      const merged = {
+        _id: 'f1',
+        name: 'flow',
+        disabled: true,
+        _integrationId: 'i1',
+        pageProcessors: [{type: 'import', _importId: '618c8eda75f94b333a55b441'}],
+        pageGenerators: [{_exportId: '617a3c2ee9c97a0e40376842'}],
+        autoResolveMatchingTraceKeys: true,
+      };
+      const updated = {
+        _id: 'f1',
+        name: 'flow',
+        disabled: true,
+        _integrationId: 'i1',
+        pageProcessors: [{type: 'import', _importId: '618c8eda75f94b333a55b441'}],
+        pageGenerators: [{_exportId: '617a3c2ee9c97a0e40376842'}],
+        autoResolveMatchingTraceKeys: true,
+      };
+
+      return expectSaga(commitStagedChanges, {resourceType, id, scope, options: {action: 'flowEnableDisable'}})
+        .provide([
+          [select(selectors.userPreferences), { environment: 'production' }],
+          [select(selectors.resourceData, resourceType, id, scope), { patch, master, merged }],
+          [call(resourceConflictDetermination, {
+            path,
+            merged,
+            id,
+            scope,
+            resourceType,
+            master,
+          }), { merged }],
+          [call(isDataLoaderFlow, merged), false],
+          [call(apiCallWithRetry, {
+            path,
+            opts: {
+              method: 'put',
+              body: merged,
+            },
+          }), updated],
+        ])
+        .call(resourceConflictDetermination, {
+          path,
+          merged,
+          id,
+          scope,
+          resourceType,
+          master,
+        })
+        .call(isDataLoaderFlow, merged)
+        .call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'put',
+            body: merged,
+          },
+        })
+        .put(actions.resource.clearStaged(id, scope))
+        .put(actions.resource.received('flows', updated))
+        .put(actions.resource.updated(resourceType, updated._id, master, patch))
+        .put(actions.flow.isOnOffActionInprogress(false, id))
+        .run();
+    });
+    test('should dispatch isOnOffActionInprogress and return error if api call fails when flow is enabled/disabled', () => {
+      const resourceType = 'flows';
+      const id = 'f1';
+      const path = '/flows/f1';
+      const scope = 'value';
+      const patch = [
+        {
+          op: 'replace',
+          path: '/disabled',
+          scope: 'value',
+          value: false,
+        },
+      ];
+      const master = {
+        autoResolveMatchingTraceKeys: true,
+        disabled: false,
+        name: 'flow',
+        pageGenerators: [{_exportId: 'e1'}],
+        pageProcessors: [{type: 'import', _importId: 'im1'}],
+        _id: 'f1',
+        _integrationId: 'i1',
+      };
+      const merged = {
+        _id: 'f1',
+        name: 'flow',
+        disabled: true,
+        _integrationId: 'i1',
+        pageProcessors: [{type: 'import', _importId: '618c8eda75f94b333a55b441'}],
+        pageGenerators: [{_exportId: '617a3c2ee9c97a0e40376842'}],
+        autoResolveMatchingTraceKeys: true,
+      };
+      const error = {
+        code: 401,
+        message: 'something',
+      };
+
+      return expectSaga(commitStagedChanges, {resourceType, id, scope, options: {action: 'flowEnableDisable'}})
+        .provide([
+          [select(selectors.userPreferences), { environment: 'production' }],
+          [select(selectors.resourceData, resourceType, id, scope), { patch, master, merged }],
+          [call(resourceConflictDetermination, {
+            path,
+            merged,
+            id,
+            scope,
+            resourceType,
+            master,
+          }), { merged }],
+          [call(isDataLoaderFlow, merged), false],
+          [call(apiCallWithRetry, {
+            path,
+            opts: {
+              method: 'put',
+              body: merged,
+            },
+          }), throwError(error)],
+        ])
+        .call(resourceConflictDetermination, {
+          path,
+          merged,
+          id,
+          scope,
+          resourceType,
+          master,
+        })
+        .call(isDataLoaderFlow, merged)
+        .call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'put',
+            body: merged,
+          },
+        })
+        .put(actions.flow.isOnOffActionInprogress(false, id))
+        .returns({ error })
+        .run();
+    });
+    test('should call corresponding api calls, clear the stage and update the resource if script content is updated', () => {
+      const resourceType = 'scripts';
+      const id = 's1';
+      const path = '/scripts/s1';
+      const scope = 'value';
+      const patch = [
+        {
+          op: 'replace',
+          path: '/somepath',
+          scope: 'value',
+          value: false,
+        },
+      ];
+      const master = {
+        content: 'somethingInvalid',
+        name: 'script',
+        _id: 's1',
+      };
+      const merged = {
+        content: '/*\n* preSavePageFunction stub:\n*\n*',
+        name: 'script',
+        _id: 's1',
+      };
+      const updated = {
+        content: undefined,
+        name: 'script',
+        _id: 's1',
+      };
+
+      return expectSaga(commitStagedChanges, {resourceType, id, scope, options: {}})
+        .provide([
+          [select(selectors.userPreferences), { environment: 'production' }],
+          [select(selectors.resourceData, resourceType, id, scope), { patch, master, merged }],
+          [call(resourceConflictDetermination, {
+            path,
+            merged,
+            id,
+            scope,
+            resourceType,
+            master,
+          }), { merged }],
+          [call(apiCallWithRetry, {
+            path,
+            opts: {
+              method: 'put',
+              body: merged,
+            },
+          }), updated],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'put',
+            body: merged,
+          },
+        })
+        .put(actions.resource.clearStaged(id, scope))
+        .put(actions.resource.received(resourceType, { ...updated, content: '/*\n* preSavePageFunction stub:\n*\n*' }))
+        .put(actions.resource.updated(resourceType, updated._id, master, patch))
+        .run();
+    });
   });
 
   describe('create new resource', () => {
@@ -497,6 +845,400 @@ describe('commitStagedChanges saga', () => {
 
       expect(finalEffect).toEqual({ done: true, value: undefined });
     });
+    test('should call corresponding api calls, clear the stage and create the resource if connections is created from integrations page', () => {
+      const tempId = 'new-123';
+      const resourceType2 = 'integrations/1/connections';
+      const scope = 'value';
+      const merged = {
+        adaptorType: 'RESTConnection',
+        application: 'Zendesk Support',
+        assistant: 'zendesk',
+        type: 'rest',
+        name: 'test',
+        integrationId: 1,
+        sandbox: true,
+        rest: {
+          mediaType: 'json',
+          baseURI: 'https://celigo2591.zendesk.com',
+          pingRelativeURI: '/api/v2/users.json',
+          pingMethod: 'GET',
+          authType: 'basic',
+          basicAuth: {
+            username: 'user@celigo.com',
+            password: '***',
+          },
+        },
+      };
+      const path = `/integrations/${merged.integrationId}/connections`;
+      const master = null;
+      const updated = {
+        _id: 'c1',
+        adaptorType: 'RESTConnection',
+        application: 'Zendesk Support',
+        assistant: 'zendesk',
+        type: 'rest',
+        name: 'test',
+        _integrationId: 1,
+        sandbox: true,
+        rest: {
+          mediaType: 'json',
+          baseURI: 'https://celigo2591.zendesk.com',
+          pingRelativeURI: '/api/v2/users.json',
+          pingMethod: 'GET',
+          authType: 'basic',
+          basicAuth: {
+            username: 'user@celigo.com',
+            password: '***',
+          },
+        },
+      };
+
+      return expectSaga(commitStagedChanges, {resourceType: resourceType2, id: tempId, scope, options: {refetchResources: true}})
+        .provide([
+          [select(selectors.userPreferences), { environment: 'production' }],
+          [select(selectors.resourceData, resourceType2, tempId, scope), { patch: somePatch, master, merged }],
+          [call(apiCallWithRetry, {
+            path,
+            opts: {
+              method: 'post',
+              body: merged,
+            },
+          }), updated],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'post',
+            body: merged,
+          },
+        })
+        .put(actions.resource.requestCollection('flows', null, true))
+        .put(actions.resource.requestCollection('connections', null, true))
+        .put(actions.resource.requestCollection('exports', null, true))
+        .put(actions.resource.requestCollection('imports', null, true))
+        .put(actions.resource.clearStaged(tempId, scope))
+        .put(actions.resource.received('integrations/1/connections', updated))
+        .put(actions.resource.created(updated._id, tempId, resourceType2))
+        .run();
+    });
+    test('should call corresponding api calls, clear the stage and create the resource if connections is created from connections page and connection has integrationId', () => {
+      const tempId = 'new-123';
+      const resourceType = 'connections';
+      const scope = 'value';
+      const merged = {
+        adaptorType: 'RESTConnection',
+        application: 'Zendesk Support',
+        assistant: 'zendesk',
+        integrationId: 'i1',
+        type: 'rest',
+        name: 'test',
+        sandbox: true,
+        rest: {
+          mediaType: 'json',
+          baseURI: 'https://celigo2591.zendesk.com',
+          pingRelativeURI: '/api/v2/users.json',
+          pingMethod: 'GET',
+          authType: 'basic',
+          basicAuth: {
+            username: 'user@celigo.com',
+            password: '***',
+          },
+        },
+      };
+      const path = `/integrations/${merged.integrationId}/connections`;
+      const master = null;
+      const updated = {
+        _id: 'c1',
+        adaptorType: 'RESTConnection',
+        application: 'Zendesk Support',
+        assistant: 'zendesk',
+        _integrationId: 'i1',
+        type: 'rest',
+        name: 'test',
+        sandbox: true,
+        rest: {
+          mediaType: 'json',
+          baseURI: 'https://celigo2591.zendesk.com',
+          pingRelativeURI: '/api/v2/users.json',
+          pingMethod: 'GET',
+          authType: 'basic',
+          basicAuth: {
+            username: 'user@celigo.com',
+            password: '***',
+          },
+        },
+      };
+
+      return expectSaga(commitStagedChanges, {resourceType, id: tempId, scope, options: {refetchResources: true}})
+        .provide([
+          [select(selectors.userPreferences), { environment: 'production' }],
+          [select(selectors.resourceData, resourceType, tempId, scope), { patch: somePatch, master, merged }],
+          [call(apiCallWithRetry, {
+            path,
+            opts: {
+              method: 'post',
+              body: merged,
+            },
+          }), updated],
+          [call(getResource, { resourceType: 'integrations', id: merged.integrationId })],
+          [call(pingConnectionWithId, { connectionId: updated._id, parentContext: undefined })],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'post',
+            body: merged,
+          },
+        })
+        .call(getResource, { resourceType: 'integrations', id: merged.integrationId })
+        .call(pingConnectionWithId, { connectionId: updated._id, parentContext: undefined })
+        .put(actions.resource.requestCollection('flows', null, true))
+        .put(actions.resource.requestCollection('connections', null, true))
+        .put(actions.resource.requestCollection('exports', null, true))
+        .put(actions.resource.requestCollection('imports', null, true))
+        .put(actions.resource.clearStaged(tempId, scope))
+        .put(actions.resource.received('connections', updated))
+        .put(actions.resource.created(updated._id, tempId, resourceType))
+        .run();
+    });
+    test('should call corresponding api calls, clear the stage and create the resource if export is created from a flow buider page', () => {
+      const tempId = 'new-123';
+      const resourceType = 'exports';
+      const scope = 'value';
+      const merged = {
+        _connectionId: '61ee2b2d2959b91c0ab9cc2b',
+        adaptorType: 'RESTExport',
+        assistant: 'zendesk',
+        resourceType: 'exportRecords',
+        assistantMetadata: {
+          resource: 'apps',
+          version: 'v2',
+          operation: 'list_all_apps',
+        },
+        name: 'Zendesk export',
+        oneToMany: 'false',
+        rest: {
+          method: 'GET',
+          relativeURI: '/api/v2/apps.json',
+        },
+        _rest: {
+          key: 'something',
+        },
+        sandbox: false,
+      };
+      const path = '/exports';
+      const master = null;
+      const updated = {
+        _id: '61ee36a42959b91c0ab9cd61',
+        lastModified: '2022-01-24T05:18:28.994Z',
+        name: 'Zendesk export',
+        _connectionId: '61ee2b2d2959b91c0ab9cc2b',
+        assistant: 'zendesk',
+        sandbox: false,
+        assistantMetadata: {},
+        parsers: [],
+        http: {
+          relativeURI: '/api/v2/apps.json',
+          method: 'GET',
+          successMediaType: 'json',
+          errorMediaType: 'json',
+          formType: 'assistant',
+          response: {
+            resourcePath: 'apps',
+            successValues: [],
+          },
+        },
+        rest: {
+          relativeURI: '/api/v2/apps.json',
+          method: 'GET',
+          allowUndefinedResource: false,
+        },
+        adaptorType: 'RESTExport',
+      };
+
+      return expectSaga(commitStagedChanges, {resourceType, id: tempId, scope, options: {}})
+        .provide([
+          [select(selectors.userPreferences), {}],
+          [select(selectors.resourceData, resourceType, tempId, scope), { patch: somePatch, master, merged }],
+          [call(apiCallWithRetry, {
+            path,
+            opts: {
+              method: 'post',
+              body: merged,
+            },
+          }), updated],
+          [call(apiCallWithRetry, {
+            path: `/${resourceType}/${updated._id}`,
+            opts: {
+              method: 'PATCH',
+              body: [
+                {
+                  op: 'replace',
+                  path: '/assistantMetadata',
+                  value: merged.assistantMetadata || {},
+                },
+              ],
+            },
+          })],
+          [call(apiCallWithRetry, {
+            path: `/${resourceType}/${updated._id}`,
+          }), { lastModified: '2022-01-24T05:20:28.994Z' }],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'post',
+            body: merged,
+          },
+        })
+        .call(apiCallWithRetry, {
+          path: `/${resourceType}/${updated._id}`,
+          opts: {
+            method: 'PATCH',
+            body: [
+              {
+                op: 'replace',
+                path: '/assistantMetadata',
+                value: merged.assistantMetadata || {},
+              },
+            ],
+          },
+        })
+        .call(apiCallWithRetry, { path: `/${resourceType}/${updated._id}` })
+        .put(actions.resource.clearStaged(tempId, scope))
+        .put(actions.resource.received('exports', {
+          ...updated,
+          assistantMetadata: {
+            resource: 'apps',
+            version: 'v2',
+            operation: 'list_all_apps',
+          },
+          lastModified: '2022-01-24T05:20:28.994Z',
+        }))
+        .put(actions.resource.created(updated._id, tempId, resourceType))
+        .run();
+    });
+    test('should call corresponding api calls, clear the stage and create the resource if flow is created from a flow buider page', () => {
+      const tempId = 'new-123';
+      const resourceType = 'flows';
+      const scope = 'value';
+      const merged = {
+        name: 'DataLoader',
+        pageGenerators: [
+          {
+            application: 'dataLoader',
+            _exportId: 'e1',
+          },
+        ],
+        pageProcessors: [{_importId: 'i1'}],
+        disabled: false,
+        _integrationId: '61d3d3bfb006a065998cf267',
+        _connectorId: 'c1',
+        flowConvertedToNewSchema: true,
+        sandbox: false,
+      };
+      const path = '/flows';
+      const master = null;
+      const updated = {
+        _id: '61ee3d2b12a1c627b7a9798a',
+        lastModified: '2022-01-24T05:46:19.903Z',
+        name: 'DataLoader',
+        _exportId: 'e1',
+        _importId: 'i1',
+        disabled: false,
+        _integrationId: '61d3d3bfb006a065998cf267',
+        _connectorId: 'c1',
+        skipRetries: false,
+        createdAt: '2022-01-24T05:46:19.855Z',
+        autoResolveMatchingTraceKeys: true,
+      };
+
+      return expectSaga(commitStagedChanges, {resourceType, id: tempId, scope, options: {}})
+        .provide([
+          [select(selectors.userPreferences), {}],
+          [select(selectors.resourceData, resourceType, tempId, scope), { patch: somePatch, master, merged }],
+          [call(isDataLoaderFlow, merged), true],
+          [call(apiCallWithRetry, {
+            path,
+            opts: {
+              method: 'post',
+              body: {
+                name: 'DataLoader',
+                _exportId: 'e1',
+                _importId: 'i1',
+                disabled: false,
+                _integrationId: '61d3d3bfb006a065998cf267',
+                _connectorId: 'c1',
+                sandbox: false,
+              },
+            },
+          }), updated],
+        ])
+        .call(isDataLoaderFlow, merged)
+        .call(apiCallWithRetry, {
+          path,
+          opts: {
+            method: 'post',
+            body: merged,
+          },
+        })
+        .put(actions.resource.clearStaged(tempId, scope))
+        .put(actions.resource.received(resourceType, {
+          _id: '61ee3d2b12a1c627b7a9798a',
+          lastModified: '2022-01-24T05:46:19.903Z',
+          name: 'DataLoader',
+          disabled: false,
+          _integrationId: '61d3d3bfb006a065998cf267',
+          _connectorId: 'c1',
+          skipRetries: false,
+          pageGenerators: [{ _exportId: updated._exportId }],
+          pageProcessors: [{ _importId: updated._importId, type: 'import' }],
+          createdAt: '2022-01-24T05:46:19.855Z',
+          autoResolveMatchingTraceKeys: true,
+        }))
+        .put(actions.resource.created(updated._id, tempId, resourceType))
+        .run();
+    });
+  });
+});
+
+describe('commitStagedChangesWrapper saga', () => {
+  const props = { resourceType: 'someResource', id: 'i1', scope: SCOPES.VALUE };
+
+  test('should call commitStagedChanges if no asyncKey is present', () => expectSaga(commitStagedChangesWrapper, { asyncKey: undefined, ...props})
+    .provide([[call(commitStagedChanges, props)]])
+    .call(commitStagedChanges, props)
+    .run()
+  );
+  test('Should dispatch async task success if asyncKey is present and commitStagedChanges call is successful', () => {
+    const asyncKey = 'k1';
+    const response = { done: true, value: undefined };
+
+    return expectSaga(commitStagedChangesWrapper, { asyncKey, ...props})
+      .provide([
+        [call(commitStagedChanges, props), response],
+      ])
+      .put(actions.asyncTask.start(asyncKey))
+      .call(commitStagedChanges, props)
+      .put(actions.asyncTask.success(asyncKey))
+      .returns(response)
+      .run();
+  });
+  test('Should dispatch async task failed if asyncKey is present and commitStagedChanges call returns an error', () => {
+    const asyncKey = 'k1';
+    const response = { error: {
+      message: 'something',
+    } };
+
+    return expectSaga(commitStagedChangesWrapper, { asyncKey, ...props})
+      .provide([
+        [call(commitStagedChanges, props), response],
+      ])
+      .put(actions.asyncTask.start(asyncKey))
+      .call(commitStagedChanges, props)
+      .put(actions.asyncTask.failed(asyncKey))
+      .returns(response)
+      .run();
   });
 });
 
@@ -568,6 +1310,20 @@ describe('normalizeFlow saga', () => {
         _id: 'f1',
         pageGenerators: [{ _exportId: 'e1' }],
         pageProcessors: [{ _importId: 'i1', type: 'import' }],
+      })
+      .run();
+  });
+  test('should correctly normalize flow structure with pageProcessors and pageGenerators if flow is empty', () => {
+    const flow = {
+      _id: 'f1',
+    };
+
+    return expectSaga(normalizeFlow, flow)
+      .provide([
+        [call(isDataLoaderFlow, flow), true],
+      ])
+      .returns({
+        _id: 'f1',
       })
       .run();
   });
@@ -792,6 +1548,25 @@ availableResources.forEach(type => {
 
       expect(final.done).toBe(true);
     });
+    test('should not dispatch any actions if skipSave is true and api call is successful', () => {
+      const options = {};
+      const args = {
+        path: `/${type}/${id}/dependencies`,
+        hidden: !!options.ignoreError,
+      };
+      const resourceReferences = {
+        imports: [{ name: 'import1', id: 1 }, { name: 'import2', id: 2 }],
+        exports: [{ name: 'export1', id: 1 }, { name: 'export2', id: 2 }],
+      };
+
+      return expectSaga(requestReferences, {resourceType: type, id, skipSave: true, options})
+        .provide([
+          [call(apiCallWithRetry, args), resourceReferences],
+        ])
+        .call(apiCallWithRetry, args)
+        .returns(resourceReferences)
+        .run();
+    });
 
     test('should return undefined if api call fails', () => {
       // assign
@@ -809,6 +1584,120 @@ availableResources.forEach(type => {
 
       expect(final.done).toBe(true);
     });
+  });
+});
+
+describe('getResourceCollection saga', () => {
+  test('should dispatch received collection action if api call succeeds and resourceType is marketplacetemplates', () => {
+    const resourceType = 'marketplacetemplates';
+    const refresh = 'true';
+    const path = '/templates/published';
+    const collection = [{ id: 1 }, { id: 2 }];
+
+    return expectSaga(getResourceCollection, {resourceType, refresh})
+      .provide([
+        [call(apiCallWithPaging, {
+          path,
+          hidden: undefined,
+          refresh,
+        }), collection],
+      ])
+      .call(apiCallWithPaging, {
+        path,
+        hidden: undefined,
+        refresh,
+      })
+      .put(actions.resource.receivedCollection(resourceType, collection))
+      .returns(collection)
+      .run();
+  });
+  test('should do nothing if api call fails and resourceType is notifications', () => {
+    const resourceType = 'notifications';
+    const refresh = 'true';
+    const path = '/notifications?users=all';
+    const error = {
+      code: '401',
+      message: 'something',
+    };
+
+    return expectSaga(getResourceCollection, {resourceType, refresh})
+      .provide([
+        [call(apiCallWithPaging, {
+          path,
+          hidden: undefined,
+          refresh,
+        }), throwError(error)],
+      ])
+      .call(apiCallWithPaging, {
+        path,
+        hidden: undefined,
+        refresh,
+      })
+      .not.put(actions.resource.receivedCollection(resourceType, []))
+      .run();
+  });
+  test('should dispatch received collection action if api call succeeds and resourceType is transfers', () => {
+    const resourceType = 'transfers';
+    const refresh = 'true';
+    const path = '/transfers';
+    const collection = [{ id: 1 }, { id: 2 }];
+    const collection2 = [{id: 3}];
+
+    return expectSaga(getResourceCollection, {resourceType, refresh})
+      .provide([
+        [call(apiCallWithPaging, {
+          path,
+          hidden: true,
+          refresh,
+        }), collection],
+        [call(apiCallWithPaging, {
+          path: '/transfers/invited',
+          refresh,
+        }), collection2],
+      ])
+      .call(apiCallWithPaging, {
+        path,
+        hidden: true,
+        refresh,
+      })
+      .call(apiCallWithPaging, {
+        path: '/transfers/invited',
+        refresh,
+      })
+      .put(actions.resource.receivedCollection(resourceType, [...collection, ...collection2]))
+      .returns([...collection, ...collection2])
+      .run();
+  });
+  test('should dispatch received collection action with collection as undefined if api call returns a non array collection', () => {
+    const resourceType = 'transfers';
+    const refresh = 'true';
+    const path = '/transfers';
+    const nonArrayCollection = {id: 3};
+
+    return expectSaga(getResourceCollection, {resourceType, refresh})
+      .provide([
+        [call(apiCallWithPaging, {
+          path,
+          hidden: true,
+          refresh,
+        }), undefined],
+        [call(apiCallWithPaging, {
+          path: '/transfers/invited',
+          refresh,
+        }), nonArrayCollection],
+      ])
+      .call(apiCallWithPaging, {
+        path,
+        hidden: true,
+        refresh,
+      })
+      .call(apiCallWithPaging, {
+        path: '/transfers/invited',
+        refresh,
+      })
+      .put(actions.resource.receivedCollection(resourceType, undefined))
+      .returns(undefined)
+      .run();
   });
 });
 
@@ -933,7 +1822,7 @@ describe('updateIntegrationSettings saga', () => {
     .put(actions.resource.requestCollection('flows', null, true))
     .put(actions.resource.integrations.redirectTo(integrationId, 'dashboard'))
     .run());
-  test('should dispatch patch and commit actions if response is a success and options action is flowEnableDisable', () => {
+  test('should dispatch patchAndCommitStaged action if response is a success and options action is flowEnableDisable', () => {
     const patchSet = [
       {
         op: 'replace',
@@ -984,6 +1873,31 @@ describe('updateIntegrationSettings saga', () => {
       })
     )
     .run());
+  test('should not dispatch any actions if response does not exists, integration does not support multiStore and options action is not flowEnableDisable', () =>
+    expectSaga(updateIntegrationSettings, {
+      integrationId,
+      values,
+      flowId,
+      sectionId,
+    })
+      .provide([
+        [select(selectors.resource, 'integrations', integrationId), {settings: {supportsMultiStore: false}}],
+        [matchers.call.fn(apiCallWithRetry)],
+      ])
+      .call.fn(apiCallWithRetry)
+      .not.put(actions.resource.requestCollection('imports', null, true))
+      .not.put(actions.resource.requestCollection('exports', null, true))
+      .not.put(
+        actions.integrationApp.settings.submitComplete({
+          childId: undefined,
+          integrationId,
+          response: {success: true},
+          flowId,
+          sectionId,
+        })
+      )
+      .not.put(actions.flow.isOnOffActionInprogress(false, flowId))
+      .run());
 });
 
 describe('patchResource saga', () => {
@@ -1064,9 +1978,10 @@ describe('deleteIntegration saga', () => {
     .run());
   test('should not delete integration if integration has references like flows', () => expectSaga(deleteIntegration, {integrationId: '123'})
     .provide([
-      [select(selectors.resource, 'integrations', '123'), {_connectorId: 'someId'}],
+      [select(selectors.resource, 'integrations', '123'), { _id: '123' }],
       [call(requestReferences, {resourceType: 'integrations', id: '123'}), {flows: [{id: '123'}]}],
     ])
+    .call.fn(requestReferences)
     .not.call.fn(deleteResource)
     .returns(undefined)
     .run());
@@ -1133,6 +2048,7 @@ describe('updateTileNotifications saga', () => {
   const integrationId = 'int-123';
   const childId = 'child-123';
   const userEmail = 'abc@celigo.com';
+  const asyncKey = 'k1';
 
   test('should make notification API call with notifications array and dispatch requestCollection action is call succeeds', () => {
     const selectorResponse = {
@@ -1162,11 +2078,12 @@ describe('updateTileNotifications saga', () => {
       },
     ];
 
-    return expectSaga(updateTileNotifications, { resourcesToUpdate, integrationId, childId, userEmail })
+    return expectSaga(updateTileNotifications, { resourcesToUpdate, integrationId, childId, userEmail, asyncKey })
       .provide([
         [select(selectors.integrationNotificationResources, integrationId, { childId, userEmail }), selectorResponse],
         [matchers.call.fn(apiCallWithRetry), {success: true}],
       ])
+      .put(actions.asyncTask.start(asyncKey))
       .call(apiCallWithRetry, {
         path: '/notifications',
         opts: {
@@ -1176,6 +2093,7 @@ describe('updateTileNotifications saga', () => {
         message: 'Updating notifications',
       })
       .put(actions.resource.requestCollection('notifications'))
+      .put(actions.asyncTask.success(asyncKey))
       .run();
   });
   test('should make notification API call with notifications array and not dispatch action if API fails', () => {
@@ -1184,12 +2102,14 @@ describe('updateTileNotifications saga', () => {
       connections: [{_id: 'conn1'}],
     };
 
-    return expectSaga(updateTileNotifications, { resourcesToUpdate, integrationId, childId, userEmail })
+    return expectSaga(updateTileNotifications, { resourcesToUpdate, integrationId, childId, userEmail, asyncKey })
       .provide([
         [select(selectors.integrationNotificationResources, integrationId, { childId, userEmail }), selectorResponse],
         [matchers.call.fn(apiCallWithRetry), apiError],
       ])
+      .put(actions.asyncTask.start(asyncKey))
       .call.fn(apiCallWithRetry)
+      .put(actions.asyncTask.failed(asyncKey))
       .not.put.actionType('RESOURCE_REQUEST_COLLECTION')
       .returns(undefined)
       .run();
@@ -1223,7 +2143,7 @@ describe('updateFlowNotification saga', () => {
     .returns(undefined)
     .run());
 
-  test('should make notification API call with notifications array and dispatch requestCollection action is call succeeds', () => {
+  test('should make notification API call with notifications array and dispatch requestCollection action if call succeeds', () => {
     const notifications = [
       {
         _integrationId: 'int-123',
@@ -1243,6 +2163,35 @@ describe('updateFlowNotification saga', () => {
       .provide([
         [select(selectors.resource, 'flows', flowId), flow],
         [select(selectors.integrationNotificationResources, 'int-123'), selectorResponse],
+        [matchers.call.fn(apiCallWithRetry), {success: true}],
+      ])
+      .call(apiCallWithRetry, {
+        path: '/notifications',
+        opts: {
+          body: notifications,
+          method: 'put',
+        },
+        message: 'Updating notifications',
+      })
+      .put(actions.resource.requestCollection('notifications'))
+      .run();
+  });
+  test('should make notification API call with notifications array and dispatch requestCollection action if call succeeds and there are no previously subscribed flows', () => {
+    const notifications = [
+      {
+        _integrationId: 'int-123',
+        subscribed: false,
+      },
+      {
+        _flowId: 'flow-123',
+        subscribed: false,
+      },
+    ];
+
+    return expectSaga(updateFlowNotification, { flowId, isSubscribed: false })
+      .provide([
+        [select(selectors.resource, 'flows', flowId), flow],
+        [select(selectors.integrationNotificationResources, 'int-123'), {}],
         [matchers.call.fn(apiCallWithRetry), {success: true}],
       ])
       .call(apiCallWithRetry, {
@@ -1432,6 +2381,19 @@ describe('authorizedConnection saga', () => {
       .put(actions.resource.request('connections', connectionId))
       .run();
   });
+  test('should not dispatch any action if oauth connection is not offline or connection type is neither netsuite or salesforce', () => {
+    expectSaga(authorizedConnection, { connectionId })
+      .provide([
+        [select(
+          selectors.resourceData,
+          'connections',
+          connectionId
+        ), {merged: {offline: false, rest: {authType: 'oauth'}}}],
+      ])
+      .put(actions.connection.madeOnline(connectionId))
+      .not.put(actions.resource.request('connections', connectionId))
+      .run();
+  });
 });
 
 describe('refreshConnectionStatus saga', () => {
@@ -1476,6 +2438,42 @@ describe('requestQueuedJobs saga', () => {
     .not.put.actionType('QUEUED_JOBS_RECEIVED')
     .returns(undefined)
     .run());
+});
+
+describe('startPollingForQueuedJobs saga', () => {
+  const connectionId = 'c1';
+
+  test('should fork requestQueuedJobs, waits for applicable action and then cancels requestQueuedJobs', () => {
+    const mockTask = createMockTask();
+
+    const saga = startPollingForQueuedJobs({connectionId});
+
+    expect(saga.next().value).toEqual(fork(requestQueuedJobs, {connectionId}));
+
+    expect(saga.next(mockTask).value).toEqual(
+      take(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL)
+    );
+    expect(saga.next().value).toEqual(cancel(mockTask));
+    expect(saga.next().done).toEqual(true);
+  });
+});
+
+describe('startPollingForConnectionStatus saga', () => {
+  const integrationId = 'i1';
+
+  test('should fork requestQueuedJobs, waits for applicable action and then cancels requestQueuedJobs', () => {
+    const mockTask = createMockTask();
+
+    const saga = startPollingForConnectionStatus({integrationId});
+
+    expect(saga.next().value).toEqual(fork(refreshConnectionStatus, {integrationId}));
+
+    expect(saga.next(mockTask).value).toEqual(
+      take(actionTypes.CONNECTION.STATUS_CANCEL_POLL)
+    );
+    expect(saga.next().value).toEqual(cancel(mockTask));
+    expect(saga.next().done).toEqual(true);
+  });
 });
 
 describe('cancelQueuedJob saga', () => {
@@ -2100,6 +3098,38 @@ describe('downloadAuditlogs saga', () => {
         opts: requestOptions.opts,
       })
       .call(openExternalUrl, { url: response.signedURL })
+      .run();
+  });
+  test('should not invoke audit logs api if response does not have signedURL', () => {
+    const filters = {
+      fromDate: yesterdayDate.toISOString(),
+      toDate: new Date().toISOString(),
+    };
+    const flowIds = ['1', '2', '3'];
+    const childId = 'child123';
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters, childId, flowIds }
+    );
+
+    const response = {};
+
+    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters, childId })
+      .provide([
+        [select(
+          selectors.integrationAppFlowIds,
+          resourceId,
+          childId
+        ),
+        flowIds,
+        ],
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .not.call(openExternalUrl, { url: '' })
       .run();
   });
 });
