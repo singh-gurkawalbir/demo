@@ -80,7 +80,7 @@ export function* addFlowGroup({ integrationId, groupName, flowIds, formKey }) {
   }
 
   if (response?.error) {
-    yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(response.error));
+    yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(integrationId, response.error));
     yield put(actions.asyncTask.failed(formKey));
 
     return;
@@ -119,7 +119,7 @@ export function* editFlowGroup({ integrationId, flowGroupId, groupName, flowIds,
   }
 
   if (response?.error) {
-    yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(response.error));
+    yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(integrationId, response.error));
     yield put(actions.asyncTask.failed(formKey));
 
     return;
@@ -168,7 +168,7 @@ export function* deleteFlowGroup({ integrationId, flowGroupId, flowIds }) {
   }
 
   if (response?.error) {
-    yield put(actions.resource.integrations.flowGroups.deleteFailed(response.error));
+    yield put(actions.resource.integrations.flowGroups.deleteFailed(integrationId, response.error));
   }
 }
 
@@ -187,7 +187,7 @@ export function* flowGroupsShiftOrder({ integrationId, flowGroupId, newIndex}) {
   const response = yield call(patchIntegrationChanges, { integrationId, flowGroupings: updatedFlowGroupings });
 
   if (response?.error) {
-    yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(response.error));
+    yield put(actions.resource.integrations.flowGroups.createOrUpdateFailed(integrationId, response.error));
   }
 }
 
