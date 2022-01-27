@@ -898,6 +898,33 @@ describe('reducer expression test cases', () => {
       });
     });
   });
+  describe('form state clear ', () => {
+    const fieldMeta = {
+      fieldMap: {
+        FIELD1: {
+          id: 'FIELD1',
+          type: 'text',
+          name: 'field1',
+          defaultValue: 'test',
+          label: 'field1',
+        },
+      },
+      layout: { fields: ['FIELD1'] },
+    };
+    const formKey = '1-2';
+    const formState = forms(undefined, actions.form.init(formKey, '', { fieldMeta }));
+
+    test('should retain the same state if the formKey passed is invalid', () => {
+      const updatedFormState = forms(formState, actions.form.clear('INVALID_FORM_KEY'));
+
+      expect(updatedFormState).toBe(formState);
+    });
+    test('should clear the form state of the passed formKey', () => {
+      const updatedFormState = forms(formState, actions.form.clear(formKey));
+
+      expect(selectors.formState(updatedFormState, formKey)).toBe(null);
+    });
+  });
 });
 
 describe('selectors test cases', () => {
@@ -1110,6 +1137,11 @@ describe('selectors test cases', () => {
       },
     };
 
+    test('should return false when the form key is invalid', () => {
+      expect(selectors
+        .isAnyFieldVisibleForMetaForm(formState, 'INVALID_ID', subSegmentMeta))
+        .toBe(false);
+    });
     test('should return true when the given metadata segement is visible', () => {
       expect(selectors
         .isAnyFieldVisibleForMetaForm(formState, formKey, subSegmentMeta))
@@ -1185,6 +1217,11 @@ describe('selectors test cases', () => {
       },
     };
 
+    test('should return false when the form key is invalid', () => {
+      expect(selectors
+        .isExpansionPanelRequiredForMetaForm(formState, 'INVALID', subSegmentMeta))
+        .toBe(false);
+    });
     test('should return false when the given metadata segement is visible and required', () => {
       expect(selectors
         .isExpansionPanelRequiredForMetaForm(formState, formKey, subSegmentMeta))
@@ -1272,6 +1309,11 @@ describe('selectors test cases', () => {
       },
     };
 
+    test('should return false the formKey passed is invalid', () => {
+      expect(selectors
+        .isExpansionPanelErroredForMetaForm(formState, 'INVALID_ID', subSegmentMeta))
+        .toBeFalsy();
+    });
     test('should return false when the given metadata segement is visible and required', () => {
       expect(selectors
         .isExpansionPanelErroredForMetaForm(formState, formKey, subSegmentMeta))
@@ -1348,6 +1390,10 @@ describe('selectors test cases', () => {
       },
     };
 
+    test('should return false if the formKey passed is invalid', () => {
+      expect(selectors.isAnyFieldTouchedForMetaForm(formState, 'INVALID_ID', subSegmentMeta)).toBeFalsy();
+    });
+
     test('should return false when the given metadata segement is not touched', () => {
       expect(selectors
         .isAnyFieldTouchedForMetaForm(formState, formKey, subSegmentMeta))
@@ -1399,6 +1445,11 @@ describe('isFormDirty', () => {
 
     expect(res).toBe(false);
   });
+  test('should not be dirty if the form state is invalid', () => {
+    const res = selectors.isFormDirty(undefined, formKey);
+
+    expect(res).toBe(false);
+  });
   test('should be enabled after any form touch event', () => {
     const updatedFormState = forms(
       formState,
@@ -1410,3 +1461,204 @@ describe('isFormDirty', () => {
     expect(res).toBe(true);
   });
 });
+
+describe('isFormPurelyInvalid', () => {
+  const fieldMeta = {
+    fieldMap: {
+      FIELD1: {
+        id: 'FIELD1',
+        type: 'text',
+        name: 'field1',
+        defaultValue: 'test',
+        label: 'field1',
+      },
+      FIELD2: {
+        id: 'FIELD2',
+        type: 'text',
+        name: 'field2',
+        defaultValue: 'test',
+        label: 'field2',
+        validWhen: {
+          matchesRegEx: {
+            pattern: '^/',
+            message: "Resource path should start with '/'",
+          },
+        },
+      },
+
+    },
+    layout: { fields: ['FIELD1', 'FIELD2'] },
+  };
+  const formKey = '1-2';
+  const formState = forms(undefined, actions.form.init(formKey, '', { fieldMeta, showValidationBeforeTouched: true }));
+
+  test('should return false if the formKey is invalid or there is no form state associated with the form key', () => {
+    expect(selectors.isFormPurelyInvalid()).toBeFalsy();
+    expect(selectors.isFormPurelyInvalid(formState)).toBeFalsy();
+    expect(selectors.isFormPurelyInvalid(formState, 'INVALID_ID')).toBeFalsy();
+  });
+  test('should return true if at least one of the field is invalid', () => {
+    expect(selectors.isFormPurelyInvalid(formState, formKey)).toBeTruthy();
+  });
+  test('should return false if all the fields are valid in the form', () => {
+    const fieldMeta = {
+      fieldMap: {
+        FIELD1: {
+          id: 'FIELD1',
+          type: 'text',
+          name: 'field1',
+          defaultValue: 'test',
+          label: 'field1',
+        },
+        FIELD2: {
+          id: 'FIELD2',
+          type: 'text',
+          name: 'field2',
+          defaultValue: '/test',
+          label: 'field2',
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^/',
+              message: "Resource path should start with '/'",
+            },
+          },
+        },
+
+      },
+      layout: { fields: ['FIELD1', 'FIELD2'] },
+    };
+    const formKey = '1-2';
+    const formState = forms(undefined, actions.form.init(formKey, '', { fieldMeta, showValidationBeforeTouched: true }));
+
+    expect(selectors.isFormPurelyInvalid(formState, formKey)).toBeFalsy();
+  });
+});
+describe('isActionButtonVisibleFromMeta', () => {
+  const fieldMeta = {
+    fieldMap: {
+      FIELD1: {
+        id: 'FIELD1',
+        type: 'text',
+        name: 'field1',
+        defaultValue: 'test',
+        label: 'field1',
+      },
+
+    },
+    layout: { fields: ['FIELD1'] },
+    actions: [
+      {
+        id: 'saveandclosegroup',
+        visibleWhen: [
+          {
+            field: 'FIELD1',
+            isNot: ['test'],
+          },
+        ],
+      },
+      {
+        id: 'testandsavegroup',
+        visibleWhen: [
+          {
+            field: 'FIELD1',
+            isNot: [''],
+          },
+        ],
+      },
+    ],
+  };
+  const formKey = '1-2';
+  const formState = forms(undefined, actions.form.init(formKey, '', { fieldMeta }));
+
+  test('should return false if the formKey is invalid or there is no form state associated with the form key', () => {
+    expect(selectors.isActionButtonVisibleFromMeta()).toBeFalsy();
+    expect(selectors.isActionButtonVisibleFromMeta({})).toBeFalsy();
+  });
+  test('should return true if the action button field Id is not a valid one', () => {
+    expect(selectors.isActionButtonVisibleFromMeta(formState, formKey, 'INVALID_ID')).toBeTruthy();
+  });
+  test('should return false if the action button field metadata has isVisible false', () => {
+    expect(selectors.isActionButtonVisibleFromMeta(formState, formKey, 'saveandclosegroup')).toBeFalsy();
+  });
+  test('should return true if the action button field metadata has isVisible true', () => {
+    expect(selectors.isActionButtonVisibleFromMeta(formState, formKey, 'testandsavegroup')).toBeTruthy();
+  });
+});
+describe('formRemountKey', () => {
+  const fieldMeta = {
+    fieldMap: {
+      FIELD1: {
+        id: 'FIELD1',
+        type: 'text',
+        name: 'field1',
+        defaultValue: 'test',
+        label: 'field1',
+      },
+    },
+    layout: { fields: ['FIELD1'] },
+  };
+  const formKey = '1-2';
+  const remountKey = '3-4';
+  const formState = forms(
+    undefined,
+    actions.form.init(formKey, remountKey, { fieldMeta })
+  );
+
+  test('should return undefined if there is no formRemount key or incase of invalid form state', () => {
+    expect(selectors.formRemountKey()).toBeUndefined();
+    expect(selectors.formRemountKey(undefined, '1-2')).toBeUndefined();
+    expect(selectors.formRemountKey({}, '1-2')).toBeUndefined();
+  });
+  test('should return formRemount key from the form state', () => {
+    expect(selectors.formRemountKey(formState, formKey)).toBe(remountKey);
+  });
+});
+describe('formValueTrimmed', () => {
+  const fieldMeta = {
+    fieldMap: {
+      FIELD1: {
+        id: 'FIELD1',
+        type: 'text',
+        name: 'field1',
+        defaultValue: '  test  ',
+        label: 'field1',
+        visibleWhen: [
+          {field: 'FIELD2', is: ['abc']},
+        ],
+      },
+      FIELD2: {
+        id: 'FIELD2',
+        type: 'text',
+        name: 'field2',
+        defaultValue: '  others',
+        label: 'field2',
+        visibleWhen: [
+          {field: 'FIELD1', is: ['abc']},
+        ],
+      },
+
+    },
+
+    layout: { fields: ['FIELD1', 'FIELD2'] },
+  };
+  const formKey = '1-2';
+  const formState = forms(
+    undefined,
+    actions.form.init(formKey, '', { fieldMeta })
+  );
+
+  test('should return undefined if there is no valid form state', () => {
+    expect(selectors.formValueTrimmed({}, formKey)).toBeUndefined();
+    expect(selectors.formValueTrimmed(undefined, formKey)).toBeUndefined();
+    expect(selectors.formValueTrimmed(null, formKey)).toBeUndefined();
+  });
+  test('should return new form values which have trimmed values', () => {
+    const trimmedFieldValues = {
+      field1: 'test',
+      field2: 'others',
+    };
+
+    expect(selectors.formValueTrimmed(formState, formKey)).toEqual(trimmedFieldValues);
+  });
+});
+
