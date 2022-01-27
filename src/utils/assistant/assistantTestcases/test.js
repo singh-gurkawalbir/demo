@@ -1403,8 +1403,11 @@ describe('convertToReactFormFields', () => {
             name: 'id_textarea',
             required: false,
             readOnly: false,
-            type: 'textarea',
             defaultValue: '',
+            type: 'textwithflowsuggestion',
+            rowsMax: 10,
+            showLookup: false,
+            multiline: true,
           },
           id_input: {
             id: 'id_input',
@@ -1479,7 +1482,7 @@ describe('convertToReactFormFields', () => {
           },
           id_textarea: {
             id: 'id_textarea',
-            inputType: 'textarea',
+            inputType: 'textwithflowsuggestion',
             type: 'something',
           },
           id_input: {
@@ -1666,8 +1669,11 @@ describe('convertToReactFormFields', () => {
             name: 'id_textarea',
             required: false,
             readOnly: false,
-            type: 'textarea',
             defaultValue: '',
+            type: 'textwithflowsuggestion',
+            rowsMax: 10,
+            showLookup: false,
+            multiline: true,
           },
           id_input: {
             id: 'id_input',
@@ -1753,7 +1759,7 @@ describe('convertToReactFormFields', () => {
           },
           id_textarea: {
             id: 'id_textarea',
-            inputType: 'textarea',
+            inputType: 'textwithflowsuggestion',
             type: 'something',
           },
           id_input: {
@@ -1946,8 +1952,11 @@ describe('convertToReactFormFields', () => {
             name: 'id_textarea',
             required: false,
             readOnly: false,
-            type: 'textarea',
             defaultValue: '',
+            type: 'textwithflowsuggestion',
+            rowsMax: 10,
+            showLookup: false,
+            multiline: true,
           },
           id_input: {
             id: 'id_input',
@@ -2033,7 +2042,7 @@ describe('convertToReactFormFields', () => {
           },
           id_textarea: {
             id: 'id_textarea',
-            inputType: 'textarea',
+            inputType: 'textwithflowsuggestion',
             type: 'something',
           },
           id_input: {
