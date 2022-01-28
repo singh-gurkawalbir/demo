@@ -67,9 +67,15 @@ describe('Flow step request logs region selectors test cases', () => {
         resources: {
           connections: [{
             _id: 'conn-124',
+            isHTTP: true,
+            type: 'rest',
+          },
+          {
+            _id: 'conn-125',
             isHTTP: false,
             type: 'rest',
-          }],
+          },
+          ],
           exports: [{
             _id: exportId,
             name: 'webhook export',
@@ -99,6 +105,12 @@ describe('Flow step request logs region selectors test cases', () => {
             _id: 'exp-127',
             name: 'REST Export',
             _connectionId: 'conn-124',
+            adaptorType: 'RESTExport',
+          },
+          {
+            _id: 'exp-128',
+            name: 'REST Export',
+            _connectionId: 'conn-125',
             adaptorType: 'RESTExport',
           },
           {
@@ -175,7 +187,10 @@ describe('Flow step request logs region selectors test cases', () => {
       expect(selectors.hasLogsAccess(state, exportId, 'exports', true, '123')).toEqual(false);
     });
     test('should return true if resource is a rest export and isHTTP set to true in connection', () => {
-      expect(selectors.hasLogsAccess(state, 'exp-126', 'exports', false, flowId)).toEqual(true);
+      expect(selectors.hasLogsAccess(state, 'exp-127', 'exports', false, flowId)).toEqual(true);
+    });
+    test('should return false if resource is a rest export and isHTTP set to false in connection', () => {
+      expect(selectors.hasLogsAccess(state, 'exp-128', 'exports', false, flowId)).toEqual(false);
     });
   });
   describe('selectors.canEnableDebug test cases', () => {
