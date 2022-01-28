@@ -175,7 +175,7 @@ describe('Flow step request logs region selectors test cases', () => {
       expect(selectors.hasLogsAccess(state, exportId, 'exports', true, '123')).toEqual(false);
     });
     test('should return true if resource is a rest export and isHTTP set to true in connection', () => {
-      expect(selectors.hasLogsAccess(state, 'exp-125', 'exports', false, flowId)).toEqual(false);
+      expect(selectors.hasLogsAccess(state, 'exp-126', 'exports', false, flowId)).toEqual(true);
     });
   });
   describe('selectors.canEnableDebug test cases', () => {
