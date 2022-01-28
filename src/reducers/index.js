@@ -6235,7 +6235,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     resourceType,
     resourceId
   )?.merged || emptyObject;
-  const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
+  const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject; // jgjh
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
   // for lookup fields, BE doesn't support v1/v2 yet
@@ -6369,13 +6369,14 @@ selectors.tileLicenseDetails = (state, tile) => {
 selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
   if (!['exports', 'imports'].includes(resourceType) || !flowId || isNew) return false;
   const resource = selectors.resource(state, resourceType, resourceId);
+  const connection = selectors.resource(state, 'connections', resource?._connectionId) || emptyObject;
 
   // It should return false for all http file providers
   if (resource?.http?.type === 'file') {
     return false;
   }
 
-  return isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType);
+  return isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType) || (connection?.isHTTP && connection?.type === 'rest');
 };
 
 selectors.canEnableDebug = (state, exportId, flowId) => {
