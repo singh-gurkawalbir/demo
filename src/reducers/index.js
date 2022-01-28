@@ -6235,7 +6235,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
     resourceType,
     resourceId
   )?.merged || emptyObject;
-  const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject; // jgjh
+  const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
   // for lookup fields, BE doesn't support v1/v2 yet
@@ -6376,7 +6376,7 @@ selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
     return false;
   }
 
-  return isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType) || (connection?.isHTTP && connection?.type === 'rest');
+  return isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType) || (connection.isHTTP && connection.type === 'rest');
 };
 
 selectors.canEnableDebug = (state, exportId, flowId) => {
