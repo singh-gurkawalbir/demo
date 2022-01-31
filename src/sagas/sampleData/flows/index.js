@@ -658,7 +658,6 @@ const takeLatestSampleData = (patternOrChannel, saga, ...args) =>
   });
 
 export default [
-  takeEvery(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, requestProcessorData),
   takeLatestSampleData(
     actionTypes.FLOW_DATA.SAMPLE_DATA_REQUEST,
     requestSampleData

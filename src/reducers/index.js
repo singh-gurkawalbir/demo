@@ -123,9 +123,9 @@ const rootReducer = (state, action) => {
 
   return produce(newState, draft => {
     switch (type) {
-      case actionTypes.CLEAR_STORE:
+      case actionTypes.AUTH.CLEAR_STORE:
         Object.keys(draft).forEach(key => {
-          // delete everthing except for app and auth
+          // delete everything except for app and auth
           if (key !== 'app' && key !== 'auth') {
             delete draft[key];
           }
@@ -133,7 +133,7 @@ const rootReducer = (state, action) => {
 
         break;
 
-      case actionTypes.APP_DELETE_DATA_STATE:
+      case actionTypes.APP.DELETE_DATA_STATE:
         delete draft.data;
 
         break;
@@ -6427,13 +6427,14 @@ selectors.tileLicenseDetails = (state, tile) => {
 selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
   if (!['exports', 'imports'].includes(resourceType) || !flowId || isNew) return false;
   const resource = selectors.resource(state, resourceType, resourceId);
+  const connection = selectors.resource(state, 'connections', resource?._connectionId) || emptyObject;
 
   // It should return false for all http file providers
   if (resource?.http?.type === 'file') {
     return false;
   }
 
-  return isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType);
+  return isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType) || (connection.isHTTP && connection.type === 'rest');
 };
 
 selectors.canEnableDebug = (state, exportId, flowId) => {
@@ -6591,4 +6592,15 @@ selectors.httpDeltaValidationError = (state, formKey, deltaFieldsToValidate) => 
       return 'Delta exports must use {{lastExportDateTime}} in either the relative URI or HTTP request body.';
     }
   }
+};
+
+selectors.showAmazonRestrictedReportType = (state, formKey) => {
+  const connectionId = selectors.fieldState(state, formKey, '_connectionId')?.value;
+  const apiType = selectors.fieldState(state, formKey, 'unencrypted.apiType')?.value;
+  const relativeURI = selectors.fieldState(state, formKey, 'http.relativeURI')?.value;
+  const connectionType = selectors.resource(state, 'connections', connectionId)?.http?.type;
+
+  return ((connectionType === 'Amazon-Hybrid' && apiType === 'Amazon-SP-API') ||
+          connectionType === 'Amazon-SP-API') &&
+          relativeURI?.startsWith('/reports/2021-06-30/documents/');
 };

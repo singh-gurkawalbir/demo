@@ -6,8 +6,7 @@
  */
 import { call, select } from 'redux-saga/effects';
 import {
-  getLastExportDateTime,
-  getCurrentExportDateTime,
+  getPostDataForDeltaExport,
   isUIDataExpectedForResource,
   getBlobResourceSampleData,
   getSampleFileMeta,
@@ -73,10 +72,7 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
   const uiData = isUIDataExpectedForResource(resource, connection)
     ? yield call(_getUIDataForResource, { resource, connection, flow, refresh })
     : undefined;
-  const postData = {
-    lastExportDateTime: getLastExportDateTime(resource),
-    currentExportDateTime: getCurrentExportDateTime(resource),
-  };
+  const postData = getPostDataForDeltaExport(resource);
   const files = isFileMetaExpectedForResource(resource)
     ? getSampleFileMeta()
     : undefined;

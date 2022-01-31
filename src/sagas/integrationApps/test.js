@@ -638,7 +638,7 @@ describe('installer saga', () => {
         )
         .run();
     });
-    test('if the api call is successful but response is not true, should dispatch api.failure', () => {
+    test('if the api call is successful but response is not true, should dispatch update install step and api.failure', () => {
       const args = {
         path,
         message: 'Verifying Bundle/Package Installation...',
@@ -652,6 +652,13 @@ describe('installer saga', () => {
       return expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
         .provide([[call(apiCallWithRetry, args), response]])
         .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            installerFunction,
+            'failed'
+          )
+        )
         .put(
           actions.api.failure(
             path,

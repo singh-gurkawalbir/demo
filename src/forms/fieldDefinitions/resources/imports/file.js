@@ -282,6 +282,7 @@ export default {
     isLoggable: true,
     type: 'checkbox',
     label: 'Skip aggregation',
+    refreshOptionsOnChangesTo: 'file.type',
     visibleWhenAll: [
       {
         field: 'file.type',

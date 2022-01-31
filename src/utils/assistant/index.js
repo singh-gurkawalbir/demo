@@ -785,6 +785,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
     },
     http: {
       ...cloneDeep(DEFAULT_PROPS.EXPORT.HTTP),
+      requestMediaType: operationDetails.requestMediaType,
       successMediaType: operationDetails.successMediaType,
       errorMediaType: operationDetails.errorMediaType,
       customeTemplateEval: operationDetails.customeTemplateEval,
@@ -2191,4 +2192,8 @@ export function getRecordTypeForAutoMapper(uri) {
 }
 export function isAppConstantContact(application) {
   return application === 'constantcontact';
+}
+
+export function isAmazonHybridConnection(connection) {
+  return connection?.assistant === 'amazonmws' && connection?.http?.type === 'Amazon-Hybrid';
 }

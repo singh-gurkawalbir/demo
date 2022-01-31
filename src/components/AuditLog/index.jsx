@@ -11,13 +11,16 @@ import AuditLogTable from './AuditLogTable';
 import Filters from './Filters';
 import { isNewId } from '../../utils/resource';
 
-const useStyles = makeStyles(({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
     height: '100%',
   },
   tableContainer: {
     height: 'calc(100% - 69px)',
+  },
+  spinnerContainer: {
+    margin: theme.spacing(1),
   },
 }));
 
@@ -60,7 +63,7 @@ export default function AuditLog({
       resources="integrations, flows, exports, imports, connections">
       <>
         {isLoadingAuditLog
-          ? <Spinner loading size="large" /> : (
+          ? <Spinner loading size="large" className={classes.spinnerContainer} /> : (
             <div className={clsx(classes.root, className)}>
               <Filters
                 affectedResources={affectedResources}

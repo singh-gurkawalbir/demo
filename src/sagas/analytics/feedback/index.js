@@ -26,6 +26,6 @@ function* postFeedback({ resourceType, fieldId, helpful, feedback }) {
   } catch (e) {}
 }
 
-const feedbackSagas = [takeEvery(actionTypes.POST_FEEDBACK, postFeedback)];
+const feedbackSagas = [takeEvery(actionTypes.APP.POST_FEEDBACK, postFeedback)];
 
 export default feedbackSagas;

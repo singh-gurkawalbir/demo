@@ -3,7 +3,6 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import {
-  useLocation,
   Route,
   Switch,
   useHistory,
@@ -11,11 +10,8 @@ import {
 } from 'react-router-dom';
 import { makeStyles, Drawer } from '@material-ui/core';
 import { selectors } from '../../../reducers';
-import getRoutePath from '../../../utils/routePaths';
 import { DrawerProvider } from './DrawerContext';
-import {HOME_PAGE_PATH} from '../../../utils/constants';
 
-const bannerHeight = 57;
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     border: 'solid 1px',
@@ -58,10 +54,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.appBarHeight + theme.pageBarHeight - 1,
     paddingBottom: theme.appBarHeight + theme.pageBarHeight - 1,
   },
-  banner: {
-    marginTop: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
-    paddingBottom: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
-  },
 }));
 
 function RightDrawer(props) {
@@ -76,11 +68,8 @@ function RightDrawer(props) {
   } = props;
   const classes = useStyles();
   const history = useHistory();
-  const location = useLocation();
   const match = useRouteMatch();
-  const bannerOpened = useSelector(state => selectors.bannerOpened(state));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const showBanner = location.pathname.includes(getRoutePath(HOME_PAGE_PATH)) && bannerOpened;
   const showFullDrawerWidth = useSelector(state => selectors.showFullDrawerWidth(state, props, match.params));
 
   const handleClose = useCallback(() => {
@@ -103,7 +92,6 @@ function RightDrawer(props) {
           classes.drawerPaper,
           classes[height],
           {
-            [classes.banner]: bannerOpened && showBanner && height === 'short',
             [classes[width]]: !showFullDrawerWidth,
             [classes.fullWidthDrawerClose]: showFullDrawerWidth && !drawerOpened,
             [classes.fullWidthDrawerOpen]: showFullDrawerWidth && drawerOpened,

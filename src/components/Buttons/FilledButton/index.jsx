@@ -12,18 +12,22 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.common.white,
     '&:hover': {
       background: theme.palette.error.dark,
-      borderColor: theme.palette.error.dark,
+      borderColor: theme.palette.error.main,
+    },
+    '&:focus': {
+      background: theme.palette.error.dark,
+      borderColor: theme.palette.error.main,
     },
   },
 }));
 
-export default function FilledButton({error, ...rest}) {
+export default function FilledButton({error, className, ...rest}) {
   const classes = useStyles();
 
   return (
     <Button
       variant="contained"
-      className={clsx({[classes.error]: error})}
+      className={clsx({[classes.error]: error}, className)}
       {...rest} />
   );
 }

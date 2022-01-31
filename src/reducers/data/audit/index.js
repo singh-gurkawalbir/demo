@@ -6,7 +6,7 @@ const emptySet = [];
 export default (state = defaultState, action) => {
   const { type, resourceType, collection } = action;
 
-  if (type === actionTypes.AUDIT_LOGS_CLEAR) {
+  if (type === actionTypes.RESOURCE.AUDIT_LOGS_CLEAR) {
     return defaultState;
   }
 

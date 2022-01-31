@@ -9,7 +9,7 @@ export default function (state = defaultState, action) {
   // Since the CLEAR_STORE action resets the state, it can not be placed in
   // the produce function since the draft object within the 'produce' fn context
   // should not be re-assigned. (only its properties)
-  if (action.type === actionTypes.CLEAR_STORE) {
+  if (action.type === actionTypes.AUTH.CLEAR_STORE) {
     return {
       initialized: false,
       commStatus: COMM_STATES.LOADING,
@@ -21,7 +21,7 @@ export default function (state = defaultState, action) {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.INIT_SESSION:
+      case actionTypes.AUTH.INIT_SESSION:
 
         delete draft.showAuthError;
         draft.authenticated = false;
@@ -29,7 +29,7 @@ export default function (state = defaultState, action) {
         delete draft.loggedOut;
         break;
 
-      case actionTypes.AUTH_REQUEST:
+      case actionTypes.AUTH.REQUEST:
         if (showAuthError) { draft.showAuthError = true; }
         delete draft.failure;
         draft.authenticated = false;
@@ -38,7 +38,7 @@ export default function (state = defaultState, action) {
         delete draft.userLoggedInDifferentTab;
         break;
 
-      case actionTypes.AUTH_SUCCESSFUL:
+      case actionTypes.AUTH.SUCCESSFUL:
         delete draft.showAuthError;
         draft.authenticated = true;
         draft.initialized = true;
@@ -47,7 +47,7 @@ export default function (state = defaultState, action) {
         delete draft.failure;
         break;
 
-      case actionTypes.AUTH_FAILURE:
+      case actionTypes.AUTH.FAILURE:
         draft.failure = action.message;
         draft.commStatus = COMM_STATES.ERROR;
         if (draft.authenticated) {
@@ -60,18 +60,18 @@ export default function (state = defaultState, action) {
         draft.authenticated = false;
         break;
 
-      case actionTypes.DEFAULT_ACCOUNT_SET:
+      case actionTypes.AUTH.DEFAULT_ACCOUNT_SET:
         draft.defaultAccountSet = true;
         break;
-      case actionTypes.AUTH_USER_ALREADY_LOGGED_IN:
+      case actionTypes.AUTH.USER_ALREADY_LOGGED_IN:
         draft.userLoggedInDifferentTab = true;
         break;
-      case actionTypes.AUTH_TIMESTAMP:
+      case actionTypes.AUTH.TIMESTAMP:
         draft.authTimestamp = Date.now();
         delete draft.warning;
         break;
 
-      case actionTypes.AUTH_WARNING:
+      case actionTypes.AUTH.WARNING:
 
         // if user is not authenticated there can not be a session timeout warning
         if (!draft.authenticated) { break; }
