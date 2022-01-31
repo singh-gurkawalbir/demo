@@ -25,6 +25,7 @@ import {
   convertToImport,
   isMetaRequiredValuesMet,
   isAppConstantContact,
+  isAmazonHybridConnection,
 } from '..';
 import { getPathParams } from '../pathParamUtils';
 
@@ -2271,6 +2272,19 @@ const assistantData = {
                 },
                 paging: { pagingMethod: 'nextpageurl', nextPagePath: 'npp' },
               },
+              {
+                id: 'ep3',
+                url: 'some/lists/thing/:_action/some/other/:_action2.json',
+                pathParameters: [{
+                  id: 'action',
+                }, {
+                  id: 'action2',
+                }],
+                response: {
+                  successPath: 'successPath',
+                },
+                paging: { pagingMethod: 'nextpageurl', nextPagePath: 'npp' },
+              },
             ],
           },
           {
@@ -2654,6 +2668,65 @@ describe('convertFromExport', () => {
           method: 'GET',
           headers: [],
           relativeURI: "some/lists(guid'ABC')/thing/XYZ/some/other/XYZ",
+          allowUndefinedResource: false,
+          pagingMethod: 'nextpageurl',
+          nextPagePath: 'npp',
+        },
+      },
+      assistantData,
+      'rest',
+    ],
+    [
+      {
+        bodyParams: {},
+        exportType: undefined,
+        operation: 'ep3',
+        operationDetails: {
+          headers: {
+            hardcoded: 'header',
+            manual: '',
+          },
+          headersMetadata: [],
+          id: 'ep3',
+          paging: {
+            nextPagePath: 'npp',
+            pagingMethod: 'nextpageurl',
+          },
+          pathParameters: [
+            {
+              id: 'action',
+            },
+            {
+              id: 'action2',
+            },
+          ],
+          queryParameters: [],
+          response: {
+            successPath: 'successPath',
+          },
+          url: 'some/lists/thing/:_action/some/other/:_action2.json',
+        },
+        pathParams: {
+          action: 'XYZ',
+          action2: 'ABC',
+        },
+        queryParams: {},
+        resource: 'r2',
+        version: 'v1',
+      },
+      {
+        assistant: 'someAssistant',
+        adaptorType: 'RESTExport',
+        assistantMetadata: {
+          resource: 'r2',
+          operation: 'ep3',
+          version: 'v1',
+        },
+        rest: {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: 'some/lists/thing/XYZ/some/other/ABC.json',
           allowUndefinedResource: false,
           pagingMethod: 'nextpageurl',
           nextPagePath: 'npp',
@@ -3918,6 +3991,20 @@ describe('getPathParams util function cases', () => {
         prefix: '/action3/',
       },
     },
+    {
+      id: 'action4',
+      config: {
+        prefix: '(',
+        suffix: ')',
+      },
+    },
+    {
+      id: 'action5',
+      config: {
+        prefix: '#',
+        suffix: '$',
+      },
+    },
   ];
 
   test('should return empty when invalid arguments are sent', () => {
@@ -3974,5 +4061,55 @@ describe('getPathParams util function cases', () => {
       actualPath,
       pathParametersInfo: pathParams,
     })).toMatchObject(expected);
+  });
+  test('should return both required and optional params when both are present with different prefixes', () => {
+    const relativePath = 'some/lists:_id/thing:_action2:_action3/some/other/:_action/OnlineDelivery:_action4';
+    const actualPath = 'some/list(guid\'ABC\')/thing/action2/sdf/action3/sdfa/some/other/XYZ/OnlineDelivery(4)';
+    const expected = {
+      id: 'ABC',
+      action2: 'sdf',
+      action3: 'sdfa',
+      action: 'XYZ',
+      action4: '4',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: pathParams,
+    })).toMatchObject(expected);
+  });
+  test('should return both required and optional params when both are present with different prefixes which includes special characters', () => {
+    const relativePath = 'some/lists:_id/thing:_action2:_action3/some/other/:_action/OnlineDelivery:_action4/guid:_action5';
+    const actualPath = 'some/list(guid\'ABC\')/thing/action2/sdf/action3/sdfa/some/other/XYZ/OnlineDelivery(4)/guid#45$';
+    const expected = {
+      id: 'ABC',
+      action2: 'sdf',
+      action3: 'sdfa',
+      action: 'XYZ',
+      action4: '4',
+      action5: '45',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: pathParams,
+    })).toMatchObject(expected);
+  });
+});
+
+describe('isAmazonHybridConnection util test cases', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(isAmazonHybridConnection()).toBeFalsy();
+  });
+  test('should return true if connection assistant is amazonmws and http type is Amazon-Hybrid', () => {
+    expect(isAmazonHybridConnection({assistant: 'amazonmws', http: {type: 'Amazon-Hybrid'}})).toBeTruthy();
+  });
+  test('should return false if connection assistant is not amazonmws and http type is Amazon-Hybrid', () => {
+    expect(isAmazonHybridConnection({assistant: 'amazonsellercentral', http: {type: 'Amazon-Hybrid'}})).toBeFalsy();
+  });
+  test('should return false if connection assistant is amazonmws and http type is Amazon-SP-API', () => {
+    expect(isAmazonHybridConnection({assistant: 'amazonsellercentral', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
   });
 });

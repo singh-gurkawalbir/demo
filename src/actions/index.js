@@ -306,6 +306,9 @@ const resource = {
   clearStaged: (id, scope) =>
     action(actionTypes.RESOURCE.STAGE_CLEAR, { id, scope }),
 
+  undoStaged: (id, scope) =>
+    action(actionTypes.RESOURCE.STAGE_UNDO, { id, scope }),
+
   patchAndCommitStaged: (resourceType, resourceId, patch, { scope, context, asyncKey, parentContext, options } = {}) => action(actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT, {
     resourceType,
     id: resourceId,

@@ -7,6 +7,127 @@ const defaultState = {};
 
 const flowId = 'flow-123';
 
+describe('RUN_HISTORY.RECEIVED_FAMILY action', () => {
+  const jobFamilyJ2 = {
+    _id: 'j2',
+    _flowId: 'f2',
+    type: JOB_TYPES.FLOW,
+    status: JOB_STATUS.RUNNING,
+    startedAt: '2019-08-11T10:50:00.000Z',
+    numError: 1,
+    numIgnore: 2,
+    numPagesGenerated: 10,
+    numResolved: 0,
+    numSuccess: 20,
+    _integrationId: 'i1',
+    children: [
+      {
+        type: JOB_TYPES.EXPORT,
+        status: JOB_STATUS.COMPLETED,
+      },
+      {
+        type: JOB_TYPES.IMPORT,
+        status: JOB_STATUS.COMPLETED,
+      },
+      {
+        type: JOB_TYPES.IMPORT,
+        status: JOB_STATUS.RUNNING,
+      },
+    ],
+  };
+
+  test('should retain previous state if the passed job is null or undefined ', () => {
+    const prevState = {
+      [flowId]: {
+        status: 'received',
+        data: [],
+      },
+    };
+    const currState = reducer(prevState, { type: actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED_FAMILY });
+
+    expect(currState).toBe(prevState);
+  });
+  test('should update job family when job family is received ', () => {
+    const prevState = {
+      f2: {
+        status: 'received',
+        data: [{
+          _id: 'j2',
+          _flowId: 'f2',
+          type: JOB_TYPES.FLOW,
+          status: JOB_STATUS.RUNNING,
+          startedAt: '2019-08-11T10:50:00.000Z',
+          numError: 1,
+          numIgnore: 2,
+          numPagesGenerated: 10,
+          numResolved: 0,
+          numSuccess: 20,
+          _integrationId: 'i1'}],
+      },
+    };
+    const currState = reducer(prevState, { type: actionTypes.ERROR_MANAGER.RUN_HISTORY.RECEIVED_FAMILY, job: jobFamilyJ2 });
+
+    const expectedState = {f2: {data: [{
+      _flowId: 'f2',
+      _id: 'j2',
+      _integrationId: 'i1',
+      numPagesProcessed: 0,
+      numError: 1,
+      numIgnore: 2,
+      numPagesGenerated: 10,
+      numResolved: 0,
+      numSuccess: 20,
+      startedAt: '2019-08-11T10:50:00.000Z',
+      status: 'running',
+      type: 'flow',
+      children: [
+        {
+          type: JOB_TYPES.EXPORT,
+          status: JOB_STATUS.COMPLETED,
+          _flowId: 'f2',
+          numError: 0,
+          numIgnore: 0,
+          numPagesGenerated: 0,
+          numResolved: 0,
+          numSuccess: 0,
+          _integrationId: 'i1',
+          numPagesProcessed: 0,
+          parentStartedAt: '2019-08-11T10:50:00.000Z',
+        },
+        {
+          type: JOB_TYPES.IMPORT,
+          status: JOB_STATUS.COMPLETED,
+          _flowId: 'f2',
+          numError: 0,
+          numIgnore: 0,
+          numPagesGenerated: 0,
+          numResolved: 0,
+          numSuccess: 0,
+          _integrationId: 'i1',
+          numPagesProcessed: 0,
+          parentStartedAt: '2019-08-11T10:50:00.000Z',
+        },
+        {
+          type: JOB_TYPES.IMPORT,
+          status: JOB_STATUS.RUNNING,
+          _flowId: 'f2',
+          numError: 0,
+          numIgnore: 0,
+          numPagesGenerated: 0,
+          numPagesProcessed: 0,
+          numResolved: 0,
+          numSuccess: 0,
+          _integrationId: 'i1',
+          parentStartedAt: '2019-08-11T10:50:00.000Z',
+        },
+      ],
+    }],
+    status: 'received'}};
+
+    expect(currState).toEqual(expectedState);
+  });
+});
+
 const sampleHistory = [
   {type: 'flow', _exportId: 'id1', _flowId: flowId, status: 'completed'},
   {type: 'flow', _exportId: 'id2', _flowId: flowId, status: 'failed'},
@@ -181,6 +302,7 @@ describe('runHistory in EM2.0 reducers', () => {
           {
             type: JOB_TYPES.EXPORT,
             status: JOB_STATUS.COMPLETED,
+            parentStartedAt: '2019-08-11T10:50:00.000Z',
             _flowId: 'f2',
             numError: 0,
             numIgnore: 0,
@@ -197,6 +319,7 @@ describe('runHistory in EM2.0 reducers', () => {
             numError: 0,
             numIgnore: 0,
             numPagesGenerated: 0,
+            parentStartedAt: '2019-08-11T10:50:00.000Z',
             numResolved: 0,
             numSuccess: 0,
             _integrationId: 'i1',
@@ -206,6 +329,7 @@ describe('runHistory in EM2.0 reducers', () => {
           {
             type: JOB_TYPES.IMPORT,
             status: JOB_STATUS.RUNNING,
+            parentStartedAt: '2019-08-11T10:50:00.000Z',
             _flowId: 'f2',
             numError: 0,
             numIgnore: 0,

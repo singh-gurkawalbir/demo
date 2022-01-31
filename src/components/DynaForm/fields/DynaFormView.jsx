@@ -11,6 +11,7 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../utils/constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
+import { isAmazonHybridConnection } from '../../../utils/assistant';
 
 const emptyObj = {};
 const isParent = true;
@@ -128,7 +129,7 @@ export default function FormView(props) {
   };
 
   const isFlowBuilderAssistant =
-    flowId && assistantName && assistantName !== 'financialforce';
+    flowId && assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection);
 
   return isFlowBuilderAssistant ? (
     <DynaSelect

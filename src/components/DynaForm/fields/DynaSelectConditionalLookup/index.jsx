@@ -53,15 +53,15 @@ export default function DynaSelectConditionalLookup(props) {
     [history, match.url, value],
   );
   const handleSave = useCallback(
-    (isEdit, newValue) => {
+    (isEdit, oldValue, newValue) => {
       if (isEdit) {
-        dispatch(actions.mapping.updateLookup({oldValue: value, newValue, isConditionalLookup: true}));
+        dispatch(actions.mapping.updateLookup({oldValue, newValue, isConditionalLookup: true}));
       } else {
         dispatch(actions.mapping.addLookup({value: newValue, isConditionalLookup: true}));
       }
       onFieldChange(id, newValue.name);
     },
-    [dispatch, id, onFieldChange, value],
+    [dispatch, id, onFieldChange],
   );
 
   return (

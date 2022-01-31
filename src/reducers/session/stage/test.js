@@ -76,6 +76,33 @@ describe('stage reducers', () => {
     });
   });
 
+  describe('STAGE_UNDO action', () => {
+    test('should do nothing if there is nothing staged.', () => {
+      const id = 123;
+      const state = reducer(undefined, actions.resource.undoStaged(id));
+
+      expect(state[id]).toBeUndefined();
+    });
+
+    test('should undo last staged patch if id matches.', () => {
+      const id = 123;
+      const patch = { op: 'replace', path: '/name', value: 'ABC' };
+      let state;
+
+      state = reducer(state, actions.resource.patchStaged(id, [patch]));
+      state = reducer(
+        state,
+        actions.resource.patchStaged(id, [{ ...patch, path: '/other' }])
+      );
+      expect(state[id].patch.length).toEqual(2);
+
+      state = reducer(state, actions.resource.undoStaged(id));
+      expect(state[id].patch).toEqual([
+        { ...patch, timestamp: expect.any(Number) },
+      ]);
+    });
+  });
+
   describe('STAGE_PATCH and STAGE_PATCH_AND_COMMIT action', () => {
     test('should return initial state if patch does not exist', () => {
       const id = 123;

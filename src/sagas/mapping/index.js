@@ -18,6 +18,7 @@ import { requestAssistantMetadata } from '../resources/meta';
 import { getMappingMetadata as getIAMappingMetadata } from '../integrationApps/settings';
 import { getAssistantConnectorType } from '../../constants/applications';
 import { autoEvaluateProcessorWithCancel } from '../editor';
+import { getAssistantFromConnection } from '../../utils/connections';
 
 export function* fetchRequiredMappingData({
   flowId,
@@ -29,6 +30,10 @@ export function* fetchRequiredMappingData({
   if (!importResource) {
     return yield put(actions.mapping.initFailed());
   }
+
+  const {assistant: resourceAssistant, _connectionId} = importResource;
+  const connection = yield select(selectors.resource, 'connections', _connectionId);
+  const assistant = getAssistantFromConnection(resourceAssistant, connection);
   const subRecordMappingObj = subRecordMappingId
     ? mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId) : {};
 
@@ -45,9 +50,9 @@ export function* fetchRequiredMappingData({
       resourceId: importId,
       options: subRecordMappingObj,
     }),
-    (importResource.assistant && importResource.assistant !== 'financialforce') && call(requestAssistantMetadata, {
+    (assistant && assistant !== 'financialforce') && call(requestAssistantMetadata, {
       adaptorType: importResource.type,
-      assistant: importResource.assistant,
+      assistant,
     }),
     importResource._connectorId && call(getIAMappingMetadata, {
       integrationId: importResource._integrationId,
@@ -161,6 +166,9 @@ export function* mappingInit({
   if (!importResource) {
     return yield put(actions.mapping.initFailed());
   }
+  const {assistant: resourceAssistant, _connectionId} = importResource;
+  const connection = yield select(selectors.resource, 'connections', _connectionId);
+  const connectionAssistant = getAssistantFromConnection(resourceAssistant, connection);
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
   const {data: flowSampleData} = yield select(selectors.getSampleDataContext, {
     flowId,
@@ -193,7 +201,7 @@ export function* mappingInit({
     };
   } else if (importResource.assistant) {
     const { assistant } = getResourceSubType(
-      importResource
+      {...importResource, assistant: connectionAssistant}
     );
     const { operation, resource, version } = importResource.assistantMetadata || {};
 

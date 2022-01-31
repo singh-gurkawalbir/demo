@@ -36,9 +36,9 @@ export default function ConditionalLookup({onSave, disabled, importId, flowId, .
     history.goBack();
   }, [history]);
   const handleSave = useCallback((id, val) => {
-    onSave(isEdit, val);
+    onSave(isEdit, value, val);
     handleClose();
-  }, [handleClose, isEdit, onSave]);
+  }, [handleClose, isEdit, onSave, value]);
 
   if (isEdit && !value?.name) {
     return null;

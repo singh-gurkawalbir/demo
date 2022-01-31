@@ -276,6 +276,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     // violates some API business rules?
 
     if (options && options.action === 'flowEnableDisable') {
+      // for the subsequent commit to the flow resource in the same session,
+      // this patch is being attached to it even if it had faied. So we are removing this patch
+      yield put(actions.resource.undoStaged(id));
       yield put(actions.flow.isOnOffActionInprogress(false, id));
     }
 

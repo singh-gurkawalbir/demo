@@ -205,7 +205,18 @@ export default function SelectApplication(props) {
     }
     setMenuIsOpen(!value);
   };
-  const customStyles = CustomReactSelectStyles();
+
+  const customReactSelectStyles = CustomReactSelectStyles();
+
+  const mergedStyles = () => ({
+    ...customReactSelectStyles,
+    menuList: () => ({
+      maxHeight: 'calc(100vh - 320px)',
+      padding: '0px',
+      overflowY: 'auto',
+    }),
+  });
+  const customStyles = mergedStyles();
 
   return (
     <FormControl

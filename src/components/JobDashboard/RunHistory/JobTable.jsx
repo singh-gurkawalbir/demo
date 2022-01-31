@@ -67,10 +67,6 @@ const useStyles = makeStyles(theme => ({
     width: '7.5%',
     textAlign: 'center',
   },
-  tableContainer: {
-    overflowX: 'auto',
-    overflowY: 'hidden',
-  },
 }));
 
 export default function JobTable({
@@ -80,32 +76,30 @@ export default function JobTable({
 
   return (
     <>
-      <div className={classes.tableContainer}>
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.name}> <HeaderWithHelpText title="Flow" helpKey="runHistory.flow" /></TableCell>
-              <TableCell className={classes.status}>Status</TableCell>
-              <TableCell className={classes.duration}>Duration</TableCell>
-              <TableCell className={classes.started}>Started</TableCell>
-              <TableCell className={classes.completed}>Completed</TableCell>
-              <TableCell className={classes.success}>Success</TableCell>
-              <TableCell className={classes.ignore}>Ignored</TableCell>
-              <TableCell className={classes.error}><HeaderWithHelpText title="Errors" helpKey="runHistory.errors" /></TableCell>
-              <TableCell className={classes.pages}>Pages</TableCell>
-              <TableCell className={classes.actions}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody >
-            {jobsInCurrentPage.map(job => (
-              <JobDetail
-                key={job._id}
-                job={job}
+      <Table className={classes.table}>
+        <TableHead>
+          <TableRow>
+            <TableCell className={classes.name}> <HeaderWithHelpText title="Flow" helpKey="runHistory.flow" /></TableCell>
+            <TableCell className={classes.status}>Status</TableCell>
+            <TableCell className={classes.duration}>Duration</TableCell>
+            <TableCell className={classes.started}>Started</TableCell>
+            <TableCell className={classes.completed}>Completed</TableCell>
+            <TableCell className={classes.success}>Success</TableCell>
+            <TableCell className={classes.ignore}>Ignored</TableCell>
+            <TableCell className={classes.error}><HeaderWithHelpText title="Errors" helpKey="runHistory.errors" /></TableCell>
+            <TableCell className={classes.pages}>Pages</TableCell>
+            <TableCell className={classes.actions}>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody >
+          {jobsInCurrentPage.map(job => (
+            <JobDetail
+              key={job._id}
+              job={job}
             />
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+          ))}
+        </TableBody>
+      </Table>
     </>
   );
 }
