@@ -87,35 +87,34 @@ const form = {
 };
 // #endregion
 const auth = {
-  requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
   request: (email, password, showAuthError) =>
-    action(actionTypes.AUTH_REQUEST, { email, password, showAuthError }),
+    action(actionTypes.AUTH.REQUEST, { email, password, showAuthError }),
   signInWithGoogle: returnTo =>
-    action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
+    action(actionTypes.AUTH.SIGNIN_WITH_GOOGLE, { returnTo }),
   reSignInWithGoogle: email =>
-    action(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, { email }),
+    action(actionTypes.AUTH.RE_SIGNIN_WITH_GOOGLE, { email }),
   reSignInWithSSO: () =>
-    action(actionTypes.AUTH_RE_SIGNIN_WITH_SSO),
+    action(actionTypes.AUTH.RE_SIGNIN_WITH_SSO),
   linkWithGoogle: returnTo =>
-    action(actionTypes.AUTH_LINK_WITH_GOOGLE, { returnTo }),
-  complete: () => action(actionTypes.AUTH_SUCCESSFUL),
-  failure: message => action(actionTypes.AUTH_FAILURE, { message }),
-  warning: () => action(actionTypes.AUTH_WARNING),
+    action(actionTypes.AUTH.LINK_WITH_GOOGLE, { returnTo }),
+  complete: () => action(actionTypes.AUTH.SUCCESSFUL),
+  failure: message => action(actionTypes.AUTH.FAILURE, { message }),
+  warning: () => action(actionTypes.AUTH.WARNING),
   logout: isExistingSessionInvalid =>
-    action(actionTypes.USER_LOGOUT, {
+    action(actionTypes.AUTH.USER.LOGOUT, {
       isExistingSessionInvalid,
     }),
-  userAlreadyLoggedIn: () => action(actionTypes.AUTH_USER_ALREADY_LOGGED_IN),
-  clearStore: () => action(actionTypes.CLEAR_STORE),
-  abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
-  abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
-  initSession: () => action(actionTypes.INIT_SESSION),
+  userAlreadyLoggedIn: () => action(actionTypes.AUTH.USER_ALREADY_LOGGED_IN),
+  clearStore: () => action(actionTypes.AUTH.CLEAR_STORE),
+  abortAllSagasAndInitLR: opts => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
+  abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
+  initSession: () => action(actionTypes.AUTH.INIT_SESSION),
   changePassword: updatedPassword =>
-    action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
+    action(actionTypes.AUTH.USER.CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
-    action(actionTypes.USER_CHANGE_EMAIL, { updatedEmail }),
-  defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
-  sessionTimestamp: () => action(actionTypes.AUTH_TIMESTAMP),
+    action(actionTypes.AUTH.USER.CHANGE_EMAIL, { updatedEmail }),
+  defaultAccountSet: () => action(actionTypes.AUTH.DEFAULT_ACCOUNT_SET),
+  sessionTimestamp: () => action(actionTypes.AUTH.TIMESTAMP),
 };
 
 const asyncTask = {
@@ -126,12 +125,14 @@ const asyncTask = {
 };
 const api = {
   request: (path, method, message, hidden, refresh) =>
-    action(actionTypes.API_REQUEST, { path, message, hidden, method, refresh }),
-  retry: (path, method) => action(actionTypes.API_RETRY, { path, method }),
+    action(actionTypes.API.REQUEST, { path, message, hidden, method, refresh }),
+  retry: (path, method) => action(actionTypes.API.RETRY, { path, method }),
   complete: (path, method, message) =>
-    action(actionTypes.API_COMPLETE, { path, method, message }),
+    action(actionTypes.API.COMPLETE, { path, method, message }),
   failure: (path, method, message, hidden) =>
-    action(actionTypes.API_FAILURE, { path, method, message, hidden }),
+    action(actionTypes.API.FAILURE, { path, method, message, hidden }),
+  clearComms: () => action(actionTypes.API.CLEAR_COMMS),
+  clearCommByKey: key => action(actionTypes.API.CLEAR_COMM_BY_KEY, { key }),
 };
 // #region Resource Actions
 const connection = {
@@ -183,8 +184,6 @@ const connection = {
     action(actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_REQUEST, { connectionId }),
   madeOnline: connectionId =>
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
-  requestQueuedJobs: connectionId =>
-    action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, { connectionId }),
   requestQueuedJobsPoll: connectionId =>
     action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST_POLL, { connectionId }),
   cancelQueuedJobsPoll: connectionId =>
@@ -196,7 +195,6 @@ const connection = {
     }),
   cancelQueuedJob: jobId =>
     action(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, { jobId }),
-  enableDebug: ({ id, debugDurInMins, match }) => action(actionTypes.CONNECTION.ENABLE_DEBUG, { id, debugDurInMins, match }),
 };
 const marketplace = {
   requestConnectors: () =>
@@ -257,8 +255,8 @@ const resource = {
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
   validate: (resourceType, resourceId) => action(actionTypes.RESOURCE.VALIDATE_RESOURCE, { resourceType, resourceId }),
   updateChildIntegration: (parentId, childId) =>
-    action(actionTypes.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
-  clearChildIntegration: () => action(actionTypes.CLEAR_CHILD_INTEGRATION),
+    action(actionTypes.RESOURCE.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
+  clearChildIntegration: () => action(actionTypes.RESOURCE.CLEAR_CHILD_INTEGRATION),
 
   requestCollection: (resourceType, message, refresh) =>
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
@@ -337,9 +335,6 @@ const resource = {
 
   commitConflict: (id, conflict, scope) =>
     action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id, scope }),
-
-  clearConflict: (id, scope) =>
-    action(actionTypes.RESOURCE.CLEAR_CONFLICT, { id, scope }),
 
   integrations: {
     delete: integrationId =>
@@ -423,11 +418,6 @@ const resource = {
       }),
     authorized: connectionId =>
       action(actionTypes.CONNECTION.AUTHORIZED, { connectionId }),
-    commitAndAuthorize: resourceId =>
-      action(actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE, {
-        resourceId,
-      }),
-
     requestToken: (resourceId, fieldId, values) =>
       action(actionTypes.TOKEN.REQUEST, {
         resourceId,
@@ -497,7 +487,7 @@ const auditLogs = {
     childId,
     filters,
   }),
-  clear: () => action(actionTypes.AUDIT_LOGS_CLEAR),
+  clear: () => action(actionTypes.RESOURCE.AUDIT_LOGS_CLEAR),
 };
 const connectors = {
   refreshMetadata: (fieldType, fieldName, _integrationId, options) =>
@@ -744,23 +734,6 @@ const integrationApp = {
             newValue,
           }
         ),
-      setVisibility: (integrationId, flowId, id, value) =>
-        action(
-          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-            .SET_VISIBILITY,
-          {
-            integrationId,
-            flowId,
-            id,
-            value,
-          }
-        ),
-      updateGenerates: (integrationId, flowId, id, generateFields) =>
-        action(
-          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
-            .UPDATE_GENERATES,
-          { integrationId, flowId, id, generateFields }
-        ),
       saveVariationMappings: (integrationId, flowId, id, data = {}) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
@@ -793,15 +766,6 @@ const integrationApp = {
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_FAILED,
           { integrationId, flowId, id }
-        ),
-      saveComplete: (integrationId, flowId, id) =>
-        action(
-          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_COMPLETE,
-          {
-            integrationId,
-            flowId,
-            id,
-          }
         ),
       loadFailed: (integrationId, flowId, id) =>
         action(
@@ -1125,10 +1089,6 @@ const integrationApp = {
   },
 
 };
-const ashare = {
-  receivedCollection: ashares =>
-    resource.receivedCollection('ashares', ashares),
-};
 const clone = {
   requestPreview: (resourceType, resourceId) =>
     action(actionTypes.CLONE.PREVIEW_REQUEST, { resourceType, resourceId }),
@@ -1252,59 +1212,40 @@ const user = {
   toggleDebug: () => action(actionTypes.TOGGLE_DEBUG),
   profile: {
     request: message => resource.request('profile', undefined, message),
-    delete: () => action(actionTypes.DELETE_PROFILE),
-    update: profile => action(actionTypes.UPDATE_PROFILE, { profile }),
-    unlinkWithGoogle: () => action(actionTypes.UNLINK_WITH_GOOGLE),
-    unlinkedWithGoogle: () => action(actionTypes.UNLINKED_WITH_GOOGLE),
+    delete: () => action(actionTypes.USER.PROFILE.DELETE),
+    update: profile => action(actionTypes.USER.PROFILE.UPDATE, { profile }),
+    unlinkWithGoogle: () => action(actionTypes.USER.PROFILE.UNLINK_WITH_GOOGLE),
+    unlinkedWithGoogle: () => action(actionTypes.USER.PROFILE.UNLINKED_WITH_GOOGLE),
   },
   org: {
     users: {
       requestCollection: message =>
         resource.requestCollection('ashares', message),
-      create: (user, asyncKey) => action(actionTypes.USER_CREATE, { user, asyncKey }),
-      created: user => action(actionTypes.USER_CREATED, { user }),
-      update: (_id, user, asyncKey) => action(actionTypes.USER_UPDATE, { _id, user, asyncKey }),
-      updated: user => action(actionTypes.USER_UPDATED, { user }),
-      delete: _id => action(actionTypes.USER_DELETE, { _id }),
-      deleted: _id => action(actionTypes.USER_DELETED, { _id }),
+      create: (user, asyncKey) => action(actionTypes.USER.CREATE, { user, asyncKey }),
+      created: user => action(actionTypes.USER.CREATED, { user }),
+      update: (_id, user, asyncKey) => action(actionTypes.USER.UPDATE, { _id, user, asyncKey }),
+      updated: user => action(actionTypes.USER.UPDATED, { user }),
+      delete: _id => action(actionTypes.USER.DELETE, { _id }),
+      deleted: _id => action(actionTypes.USER.DELETED, { _id }),
       disable: (_id, disabled) =>
-        action(actionTypes.USER_DISABLE, { _id, disabled }),
-      disabled: _id => action(actionTypes.USER_DISABLED, { _id }),
-      reinvited: _id => action(actionTypes.USER_REINVITED, { _id }),
-      makeOwner: email => action(actionTypes.USER_MAKE_OWNER, { email }),
-      reinvite: _id => action(actionTypes.USER_REINVITE, { _id }),
-      reinviteError: _id => action(actionTypes.USER_REINVITE_ERROR, { _id }),
+        action(actionTypes.USER.DISABLE, { _id, disabled }),
+      disabled: _id => action(actionTypes.USER.DISABLED, { _id }),
+      reinvited: _id => action(actionTypes.USER.REINVITED, { _id }),
+      makeOwner: email => action(actionTypes.USER.MAKE_OWNER, { email }),
+      reinvite: _id => action(actionTypes.USER.REINVITE, { _id }),
+      reinviteError: _id => action(actionTypes.USER.REINVITE_ERROR, { _id }),
     },
     accounts: {
       requestCollection: message =>
         resource.requestCollection('shared/ashares', undefined, message),
-      requestLicenses: message =>
-        resource.requestCollection('licenses', undefined, message),
-      requestTrialLicense: () => action(actionTypes.LICENSE_TRIAL_REQUEST, {}),
-      trialLicenseIssued: message =>
-        action(actionTypes.LICENSE_TRIAL_ISSUED, message),
-      requestLicenseUpgrade: () =>
-        action(actionTypes.LICENSE_UPGRADE_REQUEST, {}),
-      requestUpdate: (actionType, connectorId, licenseId) =>
-        action(actionTypes.LICENSE_UPDATE_REQUEST, { actionType, connectorId, licenseId }),
-      licenseUpgradeRequestSubmitted: message =>
-        action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
-      leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
-      switchTo: ({ id }) => action(actionTypes.ACCOUNT_SWITCH, { id }),
-      requestLicenseEntitlementUsage: () =>
-        action(actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST),
-      requestNumEnabledFlows: () =>
-        action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST, {}),
-      receivedNumEnabledFlows: response =>
-        action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED, { response }),
-      receivedLicenseEntitlementUsage: response =>
-        action(actionTypes.LICENSE_ENTITLEMENT_USAGE_RECEIVED, { response }),
+      leave: id => action(actionTypes.USER.ACCOUNT.LEAVE_REQUEST, { id }),
+      switchTo: ({ id }) => action(actionTypes.USER.ACCOUNT.SWITCH, { id }),
       addLinkedConnectionId: connectionId =>
-        action(actionTypes.ACCOUNT_ADD_SUITESCRIPT_LINKED_CONNECTION, {
+        action(actionTypes.USER.ACCOUNT.ADD_SUITESCRIPT_LINKED_CONNECTION, {
           connectionId,
         }),
       deleteLinkedConnectionId: connectionId =>
-        action(actionTypes.ACCOUNT_DELETE_SUITESCRIPT_LINKED_CONNECTION, {
+        action(actionTypes.USER.ACCOUNT.DELETE_SUITESCRIPT_LINKED_CONNECTION, {
           connectionId,
         }),
     },
@@ -1312,18 +1253,37 @@ const user = {
   preferences: {
     request: message => resource.request('preferences', undefined, message),
     update: preferences =>
-      action(actionTypes.UPDATE_PREFERENCES, { preferences }),
-    pinIntegration: integrationKey => action(actionTypes.PIN_INTEGRATION, { integrationKey }),
-    unpinIntegration: integrationKey => action(actionTypes.UNPIN_INTEGRATION, { integrationKey }),
+      action(actionTypes.USER.PREFERENCES.UPDATE, { preferences }),
+    pinIntegration: integrationKey => action(actionTypes.USER.PREFERENCES.PIN_INTEGRATION, { integrationKey }),
+    unpinIntegration: integrationKey => action(actionTypes.USER.PREFERENCES.UNPIN_INTEGRATION, { integrationKey }),
   },
   sharedNotifications: {
     acceptInvite: (resourceType, id, isAccountTransfer) =>
-      action(actionTypes.SHARED_NOTIFICATION_ACCEPT, { resourceType, id, isAccountTransfer }),
-    acceptedInvite: id =>
-      action(actionTypes.SHARED_NOTIFICATION_ACCEPTED, { id }),
+      action(actionTypes.USER.SHARED_NOTIFICATION_ACCEPT, { resourceType, id, isAccountTransfer }),
     rejectInvite: (resourceType, id) =>
-      action(actionTypes.SHARED_NOTIFICATION_REJECT, { resourceType, id }),
+      action(actionTypes.USER.SHARED_NOTIFICATION_REJECT, { resourceType, id }),
   },
+};
+const license = {
+  requestLicenses: message =>
+    resource.requestCollection('licenses', undefined, message),
+  requestTrialLicense: () => action(actionTypes.LICENSE.TRIAL_REQUEST, {}),
+  trialLicenseIssued: message =>
+    action(actionTypes.LICENSE.TRIAL_ISSUED, message),
+  requestLicenseUpgrade: () =>
+    action(actionTypes.LICENSE.UPGRADE_REQUEST, {}),
+  requestUpdate: (actionType, connectorId, licenseId) =>
+    action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId }),
+  licenseUpgradeRequestSubmitted: message =>
+    action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message }),
+  requestLicenseEntitlementUsage: () =>
+    action(actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST),
+  requestNumEnabledFlows: () =>
+    action(actionTypes.LICENSE.NUM_ENABLED_FLOWS_REQUEST, {}),
+  receivedNumEnabledFlows: response =>
+    action(actionTypes.LICENSE.NUM_ENABLED_FLOWS_RECEIVED, { response }),
+  receivedLicenseEntitlementUsage: response =>
+    action(actionTypes.LICENSE.ENTITLEMENT_USAGE_RECEIVED, { response }),
 };
 const importSampleData = {
   request: (resourceId, options, refreshCache) =>
@@ -1363,13 +1323,6 @@ const flowData = {
       resourceId,
       previewType,
     }),
-  requestProcessorData: (flowId, resourceId, resourceType, processor) =>
-    action(actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST, {
-      flowId,
-      resourceId,
-      resourceType,
-      processor,
-    }),
   receivedProcessorData: (flowId, resourceId, processor, processedData) =>
     action(actionTypes.FLOW_DATA.PROCESSOR_DATA_RECEIVED, {
       flowId,
@@ -1395,7 +1348,6 @@ const flowData = {
     }),
   resetStages: (flowId, resourceId, stages = [], statusToUpdate) =>
     action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate }),
-  clearStages: flowId => action(actionTypes.FLOW_DATA.CLEAR_STAGES, { flowId }),
   resetFlowSequence: (flowId, updatedFlow) =>
     action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
   updateFlowsForResource: (resourceId, resourceType, stagesToReset = []) =>
@@ -1428,35 +1380,31 @@ const resourceFormSampleData = {
 };
 const app = {
   polling: {
-    start: (pollAction, duration) => action(actionTypes.POLLING.START, {pollAction, duration}),
-    slowDown: () => action(actionTypes.POLLING.SLOW),
-    resume: () => action(actionTypes.POLLING.RESUME),
-    stop: () => action(actionTypes.POLLING.STOP),
-    stopSpecificPollProcess: pollActionToStop => action(actionTypes.POLLING.STOP_SPECIFIC_POLL, {pollActionToStop}),
+    start: (pollAction, duration) => action(actionTypes.APP.POLLING.START, {pollAction, duration}),
+    slowDown: () => action(actionTypes.APP.POLLING.SLOW),
+    resume: () => action(actionTypes.APP.POLLING.RESUME),
+    stop: () => action(actionTypes.APP.POLLING.STOP),
+    stopSpecificPollProcess: pollActionToStop => action(actionTypes.APP.POLLING.STOP_SPECIFIC_POLL, {pollActionToStop}),
   },
-  fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
-  updateUIVersion: version => action(actionTypes.UI_VERSION_UPDATE, { version }),
-  reload: () => action(actionTypes.APP_RELOAD),
-  deleteDataState: () => action(actionTypes.APP_DELETE_DATA_STATE),
-  errored: () => action(actionTypes.APP_ERRORED),
-  clearError: () => action(actionTypes.APP_CLEAR_ERROR),
-  userAcceptedAccountTransfer: () => action(actionTypes.USER_ACCEPTED_ACCOUNT_TRANSFER),
+  fetchUiVersion: () => action(actionTypes.APP.UI_VERSION_FETCH),
+  updateUIVersion: version => action(actionTypes.APP.UI_VERSION_UPDATE, { version }),
+  reload: () => action(actionTypes.APP.RELOAD),
+  deleteDataState: () => action(actionTypes.APP.DELETE_DATA_STATE),
+  errored: () => action(actionTypes.APP.ERRORED),
+  clearError: () => action(actionTypes.APP.CLEAR_ERROR),
+  userAcceptedAccountTransfer: () => action(actionTypes.APP.USER_ACCEPTED_ACCOUNT_TRANSFER),
+  postFeedback: (resourceType, fieldId, helpful, feedback) =>
+    action(actionTypes.APP.POST_FEEDBACK, {
+      resourceType,
+      fieldId,
+      helpful,
+      feedback,
+    }),
 };
-const postFeedback = (resourceType, fieldId, helpful, feedback) =>
-  action(actionTypes.POST_FEEDBACK, {
-    resourceType,
-    fieldId,
-    helpful,
-    feedback,
-  });
-const toggleBanner = () => action(actionTypes.APP_TOGGLE_BANNER);
-const toggleDrawer = () => action(actionTypes.APP_TOGGLE_DRAWER);
+
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
-const clearComms = () => action(actionTypes.CLEAR_COMMS);
-const clearCommByKey = key => action(actionTypes.CLEAR_COMM_BY_KEY, { key });
-const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
 
 // #region Editor actions
 const editor = {
@@ -1505,8 +1453,6 @@ const mapping = {
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { oldValue, newValue, isConditionalLookup }),
   patchSettings: (key, value) =>
     action(actionTypes.MAPPING.PATCH_SETTINGS, { key, value }),
-  setVisibility: value =>
-    action(actionTypes.MAPPING.SET_VISIBILITY, { value }),
   patchIncompleteGenerates: (key, value) =>
     action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value }),
   delete: key => action(actionTypes.MAPPING.DELETE, { key }),
@@ -1639,16 +1585,14 @@ const resourceForm = {
     action(actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION, { resourceType, resourceId }),
 };
 const accessToken = {
-  displayToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),
-  generateToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_GENERATE, { id }),
+  displayToken: id => action(actionTypes.ACCESSTOKEN.DISPLAY, { id }),
+  generateToken: id => action(actionTypes.ACCESSTOKEN.GENERATE, { id }),
   tokenReceived: accessToken =>
-    action(actionTypes.ACCESSTOKEN_TOKEN_RECEIVED, { accessToken }),
+    action(actionTypes.ACCESSTOKEN.RECEIVED, { accessToken }),
   maskToken: accessToken =>
-    action(actionTypes.ACCESSTOKEN_TOKEN_MASK, { accessToken }),
-  revoke: id => action(actionTypes.ACCESSTOKEN_REVOKE, { id }),
-  activate: id => action(actionTypes.ACCESSTOKEN_ACTIVATE, { id }),
-  deletePurged: () => action(actionTypes.ACCESSTOKEN_DELETE_PURGED),
-  updatedCollection: () => action(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION),
+    action(actionTypes.ACCESSTOKEN.MASK, { accessToken }),
+  deletePurged: () => action(actionTypes.ACCESSTOKEN.DELETE_PURGED),
+  updatedCollection: () => action(actionTypes.ACCESSTOKEN.UPDATED_COLLECTION),
 };
 const job = {
   dashboard: {
@@ -1696,11 +1640,6 @@ const job = {
     action(actionTypes.JOB.RECEIVED_COLLECTION, {
       collection,
     }),
-  requestLatestJobs: ({ integrationId, flowId }) =>
-    action(actionTypes.JOB.REQUEST_LATEST, {
-      integrationId,
-      flowId,
-    }),
   requestFamily: ({ jobId }) =>
     action(actionTypes.JOB.REQUEST_FAMILY, { jobId }),
   receivedFamily: ({ job }) => action(actionTypes.JOB.RECEIVED_FAMILY, { job }),
@@ -1741,8 +1680,6 @@ const job = {
     action(actionTypes.JOB.RETRY_ALL, { flowId, childId, integrationId, match }),
   retryAllUndo: () => action(actionTypes.JOB.RETRY_ALL_UNDO),
   retryAllCommit: () => action(actionTypes.JOB.RETRY_ALL_COMMIT),
-  requestRetryObjects: ({ jobId }) =>
-    action(actionTypes.JOB.REQUEST_RETRY_OBJECTS, { jobId }),
   receivedRetryObjects: ({ collection, jobId }) =>
     action(actionTypes.JOB.RECEIVED_RETRY_OBJECT_COLLECTION, {
       collection,
@@ -1856,10 +1793,6 @@ const errorManager = {
     received: ({ flowId, latestJobs }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED, {
         flowId, latestJobs,
-      }),
-    requestJobFamily: ({ flowId, jobId }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST_JOB_FAMILY, {
-        flowId, jobId,
       }),
     receivedJobFamily: ({ flowId, job }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED_JOB_FAMILY, {
@@ -2060,7 +1993,6 @@ const errorManager = {
   retryStatus: {
     requestPoll: ({ flowId, resourceId }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST_FOR_POLL, { flowId, resourceId }),
-    clear: flowId => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.CLEAR, { flowId }),
     stopPoll: () => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.STOP_POLL),
     request: ({ flowId, resourceId }) => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST, ({ flowId, resourceId })),
     received: ({ flowId, resourceId, status }) => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.RECEIVED, ({ flowId, resourceId, status })),
@@ -2112,8 +2044,6 @@ const flow = {
     }),
 };
 const assistantMetadata = {
-  request: ({ adaptorType, assistant }) =>
-    action(actionTypes.METADATA.ASSISTANT_REQUEST, { adaptorType, assistant }),
   received: ({ adaptorType, assistant, metadata }) =>
     action(actionTypes.METADATA.ASSISTANT_RECEIVED, {
       adaptorType,
@@ -2194,48 +2124,6 @@ const exportData = {
       kind,
       identifier,
       error: err,
-    }),
-};
-
-const editorSampleData = {
-  request: ({
-    flowId,
-    resourceId,
-    resourceType,
-    stage,
-    formKey,
-    fieldType,
-    requestedTemplateVersion,
-    isEditorV2Supported,
-  }) =>
-    action(actionTypes.EDITOR_SAMPLE_DATA.REQUEST, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-      formKey,
-      fieldType,
-      requestedTemplateVersion,
-      isEditorV2Supported,
-    }),
-  received: ({ flowId, resourceId, fieldType, sampleData, templateVersion }) =>
-    action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED, {
-      flowId,
-      resourceId,
-      fieldType,
-      sampleData,
-      templateVersion,
-    }),
-  failed: ({ flowId, resourceId, fieldType }) =>
-    action(actionTypes.EDITOR_SAMPLE_DATA.FAILED, {
-      resourceId,
-      flowId,
-      fieldType,
-    }),
-  clear: ({ resourceId, flowId }) =>
-    action(actionTypes.EDITOR_SAMPLE_DATA.CLEAR, {
-      resourceId,
-      flowId,
     }),
 };
 
@@ -2327,25 +2215,19 @@ const sso = {
 export default {
   asyncTask,
   form,
-  postFeedback,
   app,
-  toggleBanner,
-  toggleDrawer,
   metadata,
   fileDefinitions,
   connectors,
-  cancelTask,
   integrationApp,
-  clearComms,
-  clearCommByKey,
   patchFilter,
   clearFilter,
   editor,
   resourceForm,
   resource,
   user,
+  license,
   api,
-  ashare,
   auth,
   auditLogs,
   accessToken,
@@ -2373,7 +2255,6 @@ export default {
   suiteScript,
   customSettings,
   exportData,
-  editorSampleData,
   hooks,
   logs,
   sso,

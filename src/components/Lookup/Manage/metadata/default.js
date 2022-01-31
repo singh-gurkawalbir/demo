@@ -53,6 +53,7 @@ const getLookupMetadata = ({
         label: 'HTTP method',
         required: true,
         defaultValue: lookup.method,
+        helpKey: 'mapping.lookup.method',
         options: [
           {
             heading: 'Select HTTP method',
@@ -104,6 +105,7 @@ const getLookupMetadata = ({
         required: true,
         label: 'Resource identifier path',
         placeholder: 'Resource identifier path',
+        helpKey: 'mapping.lookup.extract',
         defaultValue: lookup.extract,
         visibleWhen: [
           {

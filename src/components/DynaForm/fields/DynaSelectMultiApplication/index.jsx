@@ -197,6 +197,7 @@ export default function MultiSelectApplication(props) {
           filterOption={filterOptions}
           styles={customStyles}
           menuPlacement={menuPlacement}
+          captureMenuScroll={false}
         />
 
         {!removeHelperText && <FieldMessage {...props} />}

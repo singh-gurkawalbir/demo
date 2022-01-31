@@ -20,13 +20,11 @@ export default function AuditLogDialog({ resourceType, resourceId, onClose }) {
   return (
     <ModalDialog onClose={onClose} show maxWidth="xl" className={classes.auditLogModalContainer}>
       <div>Audit log{name}</div>
-      <div>
-        <AuditLog
-          onClick={onClose}
-          resourceType={resourceType}
-          resourceId={resourceId}
+      <AuditLog
+        onClick={onClose}
+        resourceType={resourceType}
+        resourceId={resourceId}
         />
-      </div>
     </ModalDialog>
   );
 }

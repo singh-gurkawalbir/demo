@@ -88,8 +88,9 @@ describe('Connection debugger log sagas', () => {
   });
 
   describe('startPollingForConnectionDebugLogs', () => {
+    const connectionId = 'c1';
+
     test('should fork startPollingForConnectionDebugLogs, waits for connection log clear or new connection logs request action and then cancels startPollingForConnectionDebugLogs', () => {
-      const connectionId = 'c1';
       const saga = startPollingForConnectionDebugLogs({connectionId});
 
       saga.next();
@@ -99,6 +100,48 @@ describe('Connection debugger log sagas', () => {
 
       saga.next(watcherTask);
       expect(saga.next({type: actionTypes.LOGS.CONNECTIONS.CLEAR, clearAllLogs: true}).value).toEqual(cancel(watcherTask));
+      expect(saga.next().done).toEqual(true);
+    });
+    test('should fork startPollingForConnectionDebugLogs, waits for connection log clear or new connection logs request action and then cancels startPollingForConnectionDebugLogs', () => {
+      const saga = startPollingForConnectionDebugLogs({connectionId});
+
+      saga.next();
+      expect(saga.next().value).toEqual(fork(pollForConnectionLogs, {connectionId}));
+
+      const watcherTask = createMockTask();
+
+      saga.next(watcherTask);
+      expect(saga.next({type: actionTypes.LOGS.CONNECTIONS.CLEAR, connectionId}).value).toEqual(cancel(watcherTask));
+      expect(saga.next().done).toEqual(true);
+    });
+    test('should put requestFailed action if connection logs are not supported', () =>
+      expectSaga(startPollingForConnectionDebugLogs, {connectionId})
+        .provide([[select(selectors.isConnectionLogsNotSupported, connectionId), true]])
+        .put(actions.logs.connections.requestFailed(connectionId))
+        .run());
+
+    test('should fork startPollingForConnectionDebugLogs, waits for connection log clear or new connection logs request action and then requests startPollingForConnectionDebugLogs', () => {
+      const saga = startPollingForConnectionDebugLogs({connectionId});
+
+      saga.next();
+      expect(saga.next().value).toEqual(fork(pollForConnectionLogs, {connectionId}));
+
+      const watcherTask = createMockTask();
+
+      saga.next(watcherTask);
+      expect(saga.next({type: actionTypes.LOGS.CONNECTIONS.REQUEST, connectionId}).value).toEqual(cancel(watcherTask));
+      expect(saga.next().done).toEqual(true);
+    });
+    test('should fork startPollingForConnectionDebugLogs, waits for connection log clear or new connection logs request action and then pauses startPollingForConnectionDebugLogs', () => {
+      const saga = startPollingForConnectionDebugLogs({connectionId});
+
+      saga.next();
+      expect(saga.next().value).toEqual(fork(pollForConnectionLogs, {connectionId}));
+
+      const watcherTask = createMockTask();
+
+      saga.next(watcherTask);
+      expect(saga.next({type: actionTypes.LOGS.CONNECTIONS.PAUSE, connectionId}).value).toEqual(cancel(watcherTask));
       expect(saga.next().done).toEqual(true);
     });
   });
@@ -132,6 +175,13 @@ describe('Connection debugger log sagas', () => {
         .call(apiCallWithRetry, { path: `/connections/${connectionId}/debug`, opts: { method: 'DELETE'}})
         .run();
     });
+    test('should call apiCallWithRetry with delete connection log path', () => {
+      const connectionId = 'c1';
+
+      return expectSaga(deleteConnectionDebugLogs, { connectionId })
+        .call(apiCallWithRetry, { path: `/connections/${connectionId}/debug`, opts: { method: 'DELETE'}})
+        .run();
+    });
   });
   describe('downloadConnectionDebugLogs saga', () => {
     test('should call openExternalUrl with url not containing integrator-ashareid query param', () => {
@@ -158,6 +208,12 @@ describe('Connection debugger log sagas', () => {
     });
   });
   describe('startDebug saga', () => {
+    test('should return if connection logs are not supported', () => expectSaga(startDebug, {connectionId: 1, value: '0'})
+      .provide([
+        [select(selectors.isConnectionLogsNotSupported, {connectionId: 1}), false],
+      ])
+      .run());
+
     test('should remove debugDate correctly', () => {
       const now = new Date();
       const mock = jest

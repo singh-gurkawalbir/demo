@@ -25,6 +25,7 @@ import {
   convertToImport,
   isMetaRequiredValuesMet,
   isAppConstantContact,
+  isAmazonHybridConnection,
 } from '..';
 import { getPathParams } from '../pathParamUtils';
 
@@ -1403,8 +1404,11 @@ describe('convertToReactFormFields', () => {
             name: 'id_textarea',
             required: false,
             readOnly: false,
-            type: 'textarea',
             defaultValue: '',
+            type: 'textwithflowsuggestion',
+            rowsMax: 10,
+            showLookup: false,
+            multiline: true,
           },
           id_input: {
             id: 'id_input',
@@ -1479,7 +1483,7 @@ describe('convertToReactFormFields', () => {
           },
           id_textarea: {
             id: 'id_textarea',
-            inputType: 'textarea',
+            inputType: 'textwithflowsuggestion',
             type: 'something',
           },
           id_input: {
@@ -1666,8 +1670,11 @@ describe('convertToReactFormFields', () => {
             name: 'id_textarea',
             required: false,
             readOnly: false,
-            type: 'textarea',
             defaultValue: '',
+            type: 'textwithflowsuggestion',
+            rowsMax: 10,
+            showLookup: false,
+            multiline: true,
           },
           id_input: {
             id: 'id_input',
@@ -1753,7 +1760,7 @@ describe('convertToReactFormFields', () => {
           },
           id_textarea: {
             id: 'id_textarea',
-            inputType: 'textarea',
+            inputType: 'textwithflowsuggestion',
             type: 'something',
           },
           id_input: {
@@ -1946,8 +1953,11 @@ describe('convertToReactFormFields', () => {
             name: 'id_textarea',
             required: false,
             readOnly: false,
-            type: 'textarea',
             defaultValue: '',
+            type: 'textwithflowsuggestion',
+            rowsMax: 10,
+            showLookup: false,
+            multiline: true,
           },
           id_input: {
             id: 'id_input',
@@ -2033,7 +2043,7 @@ describe('convertToReactFormFields', () => {
           },
           id_textarea: {
             id: 'id_textarea',
-            inputType: 'textarea',
+            inputType: 'textwithflowsuggestion',
             type: 'something',
           },
           id_input: {
@@ -2262,6 +2272,19 @@ const assistantData = {
                 },
                 paging: { pagingMethod: 'nextpageurl', nextPagePath: 'npp' },
               },
+              {
+                id: 'ep3',
+                url: 'some/lists/thing/:_action/some/other/:_action2.json',
+                pathParameters: [{
+                  id: 'action',
+                }, {
+                  id: 'action2',
+                }],
+                response: {
+                  successPath: 'successPath',
+                },
+                paging: { pagingMethod: 'nextpageurl', nextPagePath: 'npp' },
+              },
             ],
           },
           {
@@ -2444,6 +2467,11 @@ describe('routeToRegExp', () => {
     [/^\/v1\/integrations(?:\?([\s\S]*))?$/, '/v1/integrations'],
     [/^\/v1\/integrations\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/integrations/:_id'],
     [/^\/v1\/integrations\/([^/?]+)\/exports(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/exports'],
+    [/^\/people:createContact(?:\?([\s\S]*))?$/, '/people:createContact'],
+    [/^\/people\/([^/?]+):updateContact\?updatePersonFields=([^/?]+)(?:\?([\s\S]*))?$/, '/people/:_personID:updateContact?updatePersonFields=:_updatePersonFields'],
+    [/^\/people\/([^/?]+):updateContact(?:\?([\s\S]*))?$/, '/people/:_personID:updateContact'],
+    [/^\/people:createContact(?:\?([\s\S]*))?$/, '/people:createContact'],
+    [/^\/people\/([^/?]+):deleteContact(?:\?([\s\S]*))?$/, '/people/:_personID:deleteContact'],
   ];
 
   each(testCases).test(
@@ -2640,6 +2668,65 @@ describe('convertFromExport', () => {
           method: 'GET',
           headers: [],
           relativeURI: "some/lists(guid'ABC')/thing/XYZ/some/other/XYZ",
+          allowUndefinedResource: false,
+          pagingMethod: 'nextpageurl',
+          nextPagePath: 'npp',
+        },
+      },
+      assistantData,
+      'rest',
+    ],
+    [
+      {
+        bodyParams: {},
+        exportType: undefined,
+        operation: 'ep3',
+        operationDetails: {
+          headers: {
+            hardcoded: 'header',
+            manual: '',
+          },
+          headersMetadata: [],
+          id: 'ep3',
+          paging: {
+            nextPagePath: 'npp',
+            pagingMethod: 'nextpageurl',
+          },
+          pathParameters: [
+            {
+              id: 'action',
+            },
+            {
+              id: 'action2',
+            },
+          ],
+          queryParameters: [],
+          response: {
+            successPath: 'successPath',
+          },
+          url: 'some/lists/thing/:_action/some/other/:_action2.json',
+        },
+        pathParams: {
+          action: 'XYZ',
+          action2: 'ABC',
+        },
+        queryParams: {},
+        resource: 'r2',
+        version: 'v1',
+      },
+      {
+        assistant: 'someAssistant',
+        adaptorType: 'RESTExport',
+        assistantMetadata: {
+          resource: 'r2',
+          operation: 'ep3',
+          version: 'v1',
+        },
+        rest: {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: 'some/lists/thing/XYZ/some/other/ABC.json',
           allowUndefinedResource: false,
           pagingMethod: 'nextpageurl',
           nextPagePath: 'npp',
@@ -4009,5 +4096,20 @@ describe('getPathParams util function cases', () => {
       actualPath,
       pathParametersInfo: pathParams,
     })).toMatchObject(expected);
+  });
+});
+
+describe('isAmazonHybridConnection util test cases', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(isAmazonHybridConnection()).toBeFalsy();
+  });
+  test('should return true if connection assistant is amazonmws and http type is Amazon-Hybrid', () => {
+    expect(isAmazonHybridConnection({assistant: 'amazonmws', http: {type: 'Amazon-Hybrid'}})).toBeTruthy();
+  });
+  test('should return false if connection assistant is not amazonmws and http type is Amazon-Hybrid', () => {
+    expect(isAmazonHybridConnection({assistant: 'amazonsellercentral', http: {type: 'Amazon-Hybrid'}})).toBeFalsy();
+  });
+  test('should return false if connection assistant is amazonmws and http type is Amazon-SP-API', () => {
+    expect(isAmazonHybridConnection({assistant: 'amazonsellercentral', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
   });
 });

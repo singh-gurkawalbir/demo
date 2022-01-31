@@ -76,7 +76,7 @@ export default {
       root: {
         textTransform: 'unset',
         fontFamily: 'Roboto400',
-        padding: '6px 24px',
+        padding: '5px 24px',
         fontSize: '15px',
         lineHeight: '19px',
         '&: disabled': {
@@ -138,18 +138,18 @@ export default {
         borderColor: colors.celigoAccent2,
         color: colors.celigoAccent2,
         '&:hover': {
-          backgroundColor: colors.celigoAccent4,
+          backgroundColor: colors.celigoWhite,
           borderColor: colors.celigoAccent3,
-          color: colors.celigoWhite,
+          color: colors.celigoAccent3,
         },
       },
       outlinedSecondary: {
         borderColor: colors.celigoNeutral3,
         color: colors.celigoNeutral6,
         '&:hover': {
-          color: colors.celigoAccent3,
+          color: colors.celigoNeutral6,
           backgroundColor: colors.celigoWhite,
-          borderColor: colors.celigoAccent3,
+          borderColor: colors.celigoNeutral3,
         },
         '&:disabled': {
           color: colors.celigoNeutral4,

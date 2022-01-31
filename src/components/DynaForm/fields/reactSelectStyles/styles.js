@@ -7,6 +7,9 @@ export const ReactSelectUseStyles = makeStyles(theme => ({
   },
   optionRoot: {
     display: 'flex',
+    '&>div': {
+      padding: 0,
+    },
   },
   optionImg: {
     width: '120px',
@@ -72,7 +75,6 @@ export function CustomReactSelectStyles() {
   return {
     option: (provided, state) => ({
       ...provided,
-      padding: '0px',
       color: state.isSelected
         ? theme.palette.secondary.main
         : theme.palette.secondary.light,
@@ -81,7 +83,7 @@ export function CustomReactSelectStyles() {
           ? theme.palette.background.paper2
           : theme.palette.background.paper,
       border: 'none',
-      minHeight: '48px',
+      minHeight: 38,
       display: 'flex',
       alignItems: 'center',
       borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
@@ -109,7 +111,7 @@ export function CustomReactSelectStyles() {
       overflowY: 'auto',
     }),
     input: () => ({
-      color: theme.palette.secondary.light,
+      color: theme.palette.secondary.main,
       '& input': {
         fontFamily: 'inherit',
       },
@@ -175,9 +177,12 @@ export function CustomReactSelectStyles() {
       minWidth: 'unset',
       padding: '1px 8px',
       border: `1px solid ${theme.palette.secondary.lightest}`,
+      alignItems: 'center',
       '& > * .MuiChip-root': {
         border: 'none',
         height: 'unset',
+        lineHeight: 2,
+        backgroundColor: 'transparent',
       },
     }),
     multiValueLabel: styles => ({
