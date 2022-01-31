@@ -36,6 +36,7 @@ const useStyles = makeStyles(theme => ({
 
 function SearchInput() {
   const classes = useStyles();
+  const keyword = useGlobalSearchState(state => state.keyword);
   const setKeyword = useGlobalSearchState(state => state.changeKeyword);
   const setOpen = useGlobalSearchState(state => state.changeOpen);
   const filters = useGlobalSearchState(state => state.filters);
@@ -49,7 +50,18 @@ function SearchInput() {
     setOpen,
     inputValue,
   });
+  const ref = useRef();
 
+  // This effect is for syncing the keyword value with internal input
+  // When the results panel is closed, we want the input to be empty
+  useEffect(() => {
+    if (keyword === '') {
+      setInputValue('');
+      if (ref?.current) {
+        ref?.current?.children[0]?.focus();
+      }
+    }
+  }, [keyword, setInputValue]);
   const handleEscapeKeypress = useCallback(() => {
     const {inputValue, setInputValue, setOpen} = memoizedValues?.current;
 
@@ -59,8 +71,6 @@ function SearchInput() {
       setOpen(false);
     }
   }, [memoizedValues]);
-
-  const ref = useRef();
 
   // focus input when filters and active Tab changed
   useEffect(() => {
@@ -85,7 +95,6 @@ function SearchInput() {
         value={inputValue}
         classes={{input: classes.inputBase}}
         className={classes.input}
-        autoFocus
         placeholder="Search integrator.io"
         inputProps={{ 'aria-label': 'Search integrator.io', tabIndex: 0 }}
         onChange={handleSearchStringChange}
