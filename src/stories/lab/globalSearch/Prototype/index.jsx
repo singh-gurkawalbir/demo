@@ -31,7 +31,7 @@ function GlobalSearch() {
   const classes = useStyles({open});
   const handleOpenSearch = useCallback(() => setOpen(true), [setOpen]);
 
-  useKeyboardShortcut(['/'], handleOpenSearch);
+  useKeyboardShortcut(['/'], handleOpenSearch, {useCapture: false});
 
   return (
     <div className={clsx(classes.root, {[classes.closed]: !open})}>

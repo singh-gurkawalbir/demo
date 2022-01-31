@@ -79,7 +79,7 @@ function SearchInput() {
     }
   }, [activeTab, filters]);
 
-  useKeyboardShortcut(['Escape'], handleEscapeKeypress, true);
+  useKeyboardShortcut(['Escape'], handleEscapeKeypress, {ignoreBlacklist: true});
 
   const handleSearchStringChange = e => {
     const newSearchString = e.target.value;
