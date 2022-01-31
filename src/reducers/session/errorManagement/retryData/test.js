@@ -353,31 +353,6 @@ describe('Retry data in EM 2.0 reducers', () => {
       expect(currState).toMatchObject(expectedState);
     });
   });
-  describe('RETRY_STATUS.CLEAR action', () => {
-    test('should retain previous state if the passed flowId does not exist', () => {
-      const currState = reducer(existingState, actions.errorManager.retryStatus.clear());
-      const currState2 = reducer(existingState, actions.errorManager.retryStatus.clear('flow-5678'));
-
-      expect(currState).toBe(existingState);
-      expect(currState2).toBe(existingState);
-    });
-    test('should clear flowId state if already exist', () => {
-      const currState = reducer(existingState, actions.errorManager.retryStatus.clear(flowId));
-      const expectedState = {
-        retryStatus: {
-          [flowId]: {},
-          'flow-1111': {
-            'export-1111': 'success',
-          },
-          'flow-2222': {
-            'export-2222': 'retrying',
-          },
-        },
-      };
-
-      expect(currState).toMatchObject(expectedState);
-    });
-  });
 });
 
 describe('retryDataContext selector', () => {

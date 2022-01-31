@@ -17,7 +17,6 @@ describe('Reducers in the root reducer', () => {
     expect(state).toEqual({
       app: {
         appErrored: false,
-        bannerOpened: true,
         count: 1,
       },
       auth: {
@@ -35,7 +34,6 @@ describe('Reducers in the root reducer', () => {
 
     expect(state.app).toEqual({
       appErrored: false,
-      bannerOpened: true,
       count: 1,
     });
     expect(state.data).toEqual(undefined);

@@ -75,41 +75,6 @@ describe('stage reducers', () => {
       expect(state[id].patch).toEqual([{...patch, timestamp: expect.any(Number)}]);
     });
   });
-  describe('STAGE_UNDO action', () => {
-    test('should do nothing if there is nothing staged.', () => {
-      const id = 123;
-      const state = reducer(undefined, actions.resource.undoStaged(id));
-
-      expect(state[id]).toBeUndefined();
-    });
-    test('should undo last staged patch if id matches.', () => {
-      const id = 123;
-      const patch = { op: 'replace', path: '/name', value: 'ABC' };
-      let state;
-
-      state = reducer(state, actions.resource.patchStaged(id, [patch]));
-
-      state = reducer(state, actions.resource.undoStaged(id));
-      expect(state[id].patch).toBeUndefined();
-    });
-    test('should undo last staged patch for id with multiple patches', () => {
-      const id = 123;
-      const patch = { op: 'replace', path: '/name', value: 'ABC' };
-      let state;
-
-      state = reducer(state, actions.resource.patchStaged(id, [patch]));
-      state = reducer(
-        state,
-        actions.resource.patchStaged(id, [{ ...patch, path: '/other' }])
-      );
-      expect(state[id].patch.length).toEqual(2);
-
-      state = reducer(state, actions.resource.undoStaged(id));
-      expect(state[id].patch).toEqual([
-        { ...patch, timestamp: expect.any(Number) },
-      ]);
-    });
-  });
 
   describe('STAGE_PATCH and STAGE_PATCH_AND_COMMIT action', () => {
     test('should return initial state if patch does not exist', () => {
@@ -245,36 +210,6 @@ describe('stage reducers', () => {
       });
     });
   });
-
-  describe('CLEAR_CONFLICT action', () => {
-    test('should do nothing if no conflict yet exists.', () => {
-      const id = 123;
-      const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
-      const stateA = reducer(
-        undefined,
-        actions.resource.patchStaged(id, patch)
-      );
-      const stateB = reducer(stateA, actions.resource.clearConflict(id));
-
-      expect(stateA).toEqual(stateB);
-    });
-
-    test('should should clear conflict if one exists', () => {
-      const id = 123;
-      const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
-      const conflict = [{ op: 'replace', path: '/desc', value: '123' }];
-      const stateA = reducer(
-        undefined,
-        actions.resource.patchStaged(id, patch)
-      );
-      let stateB;
-
-      stateB = reducer(stateA, actions.resource.commitConflict(id, conflict));
-      stateB = reducer(stateB, actions.resource.clearConflict(id));
-
-      expect(stateA).toEqual(stateB);
-    });
-  });
 });
 
 describe('stage selectors', () => {
@@ -348,25 +283,6 @@ describe('stage selectors', () => {
       expect(selectors.getAllResourceConflicts(state)).toEqual([
         { resourceId: conflictResId, conflict },
       ]);
-    });
-
-    test('should return an empty array once the resource conflict is resolved', () => {
-      let state;
-
-      state = reducer(state, actions.resource.patchStaged(id, patch));
-
-      // commiting conflicting patch
-      state = reducer(
-        state,
-        actions.resource.commitConflict(conflictResId, conflict)
-      );
-
-      expect(selectors.getAllResourceConflicts(state)).toEqual([
-        { resourceId: conflictResId, conflict },
-      ]);
-      state = reducer(state, actions.resource.clearConflict(conflictResId));
-      // after clearing conflict expect nothing to show up
-      expect(selectors.getAllResourceConflicts(state)).toEqual([]);
     });
   });
   describe('lookupProcessorResourceType', () => {

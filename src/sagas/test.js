@@ -316,7 +316,7 @@ describe('apiCallWithRetry saga', () => {
 
       const raceBetweenApiCallAndTimeoutEffect = race([
         call(sendRequest, request),
-        take(actionsTypes.USER_LOGOUT),
+        take(actionsTypes.AUTH.USER.LOGOUT),
       ]);
 
       try {
@@ -757,9 +757,9 @@ describe('rootSaga', () => {
 
       expect(saga.next(forkEffectRes).value).toEqual(
         race({
-          logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-          logout: take(actionsTypes.USER_LOGOUT),
-          switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
+          logrocket: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR),
+          logout: take(actionsTypes.AUTH.USER.LOGOUT),
+          switchAcc: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC
           )})
       );
       expect(saga.next({logrocket: {opts: {prop1: 'someOptsz'}}}).value)
@@ -785,9 +785,9 @@ describe('rootSaga', () => {
 
       expect(saga.next(forkEffectRes).value).toEqual(
         race({
-          logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-          logout: take(actionsTypes.USER_LOGOUT),
-          switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
+          logrocket: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR),
+          logout: take(actionsTypes.AUTH.USER.LOGOUT),
+          switchAcc: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC
           )})
       );
       expect(saga.next({ logout: { isExistingSessionInvalid: undefined } }).value)
@@ -811,9 +811,9 @@ describe('rootSaga', () => {
 
       expect(saga.next(forkEffectRes).value).toEqual(
         race({
-          logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-          logout: take(actionsTypes.USER_LOGOUT),
-          switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
+          logrocket: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR),
+          logout: take(actionsTypes.AUTH.USER.LOGOUT),
+          switchAcc: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC
           )})
       );
       const account = 'another account';

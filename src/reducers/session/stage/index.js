@@ -43,41 +43,6 @@ export default (state = {}, action) => {
         draft[id].patch = draft[id].patch.filter(predicateForPatchFilter);
 
         return;
-      case actionTypes.RESOURCE.STAGE_UNDO:
-        // we can't undo if there is no staged data
-        if (!draft[id] || !draft[id].patch) {
-          return;
-        }
-
-        if (scope) {
-          let timestampOfPatch;
-
-          for (let i = draft[id].patch.length - 1; i >= 0; i -= 1) {
-            if (!timestampOfPatch && draft[id].patch[i].scope === scope) {
-              timestampOfPatch = draft[id].patch.timestamp;
-              draft[id].patch.splice(i, 1);
-            }
-            // removing older ones matching the same timestamp
-
-            if (
-              timestampOfPatch &&
-              draft[id].patch[i].timestamp === timestampOfPatch
-            ) {
-              draft[id].patch.splice(i, 1);
-            }
-          }
-
-          return;
-        }
-
-        // drop last patch.
-        if (draft[id].patch.length > 1) {
-          draft[id].patch.pop();
-        } else {
-          delete draft[id].patch;
-        }
-
-        return;
 
       case actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT:
       case actionTypes.RESOURCE.STAGE_PATCH: {
@@ -131,15 +96,6 @@ export default (state = {}, action) => {
         if (scope) {
           draft[id].scope = scope;
         }
-
-        return;
-      case actionTypes.RESOURCE.CLEAR_CONFLICT:
-        if (!draft[id] || !draft[id].conflict) {
-          return;
-        }
-
-        delete draft[id].conflict;
-        delete draft[id].scope;
 
         return;
 
