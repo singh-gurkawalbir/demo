@@ -89,7 +89,7 @@ function ManageNotifications({ integrationId, childId, onClose }) {
   const clearCommState = useCallback(() => {
     const key = commKeyGen(path, method);
 
-    dispatch(actions.clearCommByKey(key));
+    dispatch(actions.api.clearCommByKey(key));
   }, [dispatch, method, path]);
 
   useEffect(() => {

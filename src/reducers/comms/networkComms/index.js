@@ -25,7 +25,7 @@ export default (state = initialState, action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.API_REQUEST:
+      case actionTypes.API.REQUEST:
         if (!draft[commKey]) draft[commKey] = {};
         draft[commKey].timestamp = timestamp;
         draft[commKey].status = COMM_STATES.LOADING;
@@ -36,7 +36,7 @@ export default (state = initialState, action) => {
         delete draft[commKey].retry;
 
         break;
-      case actionTypes.API_COMPLETE:
+      case actionTypes.API.COMPLETE:
         if (!draft[commKey]) draft[commKey] = {};
         draft[commKey].status = COMM_STATES.SUCCESS;
         draft[commKey].message = message;
@@ -44,7 +44,7 @@ export default (state = initialState, action) => {
         delete draft[commKey].timestamp;
 
         break;
-      case actionTypes.API_RETRY:
+      case actionTypes.API.RETRY:
         if (!draft[commKey]) draft[commKey] = {};
         draft[commKey].retry = draft[commKey].retry || 0;
         draft[commKey].retry += 1;
@@ -52,7 +52,7 @@ export default (state = initialState, action) => {
 
         break;
 
-      case actionTypes.API_FAILURE:
+      case actionTypes.API.FAILURE:
 
         if (!draft[commKey]) draft[commKey] = {};
         draft[commKey].status = COMM_STATES.ERROR;
@@ -65,7 +65,7 @@ export default (state = initialState, action) => {
         delete draft[commKey].timestamp;
 
         break;
-      case actionTypes.CLEAR_COMMS:
+      case actionTypes.API.CLEAR_COMMS:
         Object.keys(draft).forEach(i => {
           if (
             draft[i].status === COMM_STATES.ERROR ||
@@ -74,7 +74,7 @@ export default (state = initialState, action) => {
         });
 
         break;
-      case actionTypes.CLEAR_COMM_BY_KEY: {
+      case actionTypes.API.CLEAR_COMM_BY_KEY: {
         delete draft[key];
         break;
       }

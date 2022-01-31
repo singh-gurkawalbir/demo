@@ -334,63 +334,6 @@ describe('Flow sample data reducer ', () => {
       });
     });
   });
-  describe('FLOW_DATA.PROCESSOR_DATA_REQUEST action', () => {
-    test('should retain previous state in case of no processor passed', () => {
-      const prevState = reducer(undefined, actions.flowData.init(dummyFlow));
-      const currState = reducer(prevState, actions.flowData.requestProcessorData(dummyFlowId, '123'));
-
-      expect(currState).toEqual(prevState);
-    });
-    test('should not corrupt existing state if the flowId passed does not exist on the flow state', () => {
-      const prevState = reducer(undefined, actions.flowData.init(dummyFlow));
-      const processor = 'transform';
-      const currState = reducer(prevState, actions.flowData.requestProcessorData('flow-5678', '123', processor));
-
-      expect(currState).toEqual(prevState);
-    });
-    test('should update stage as request inside pageGeneratorsMap incase of the resource being PG ', () => {
-      const prevState = reducer(undefined, actions.flowData.init(dummyFlow));
-      const processor = 'transform';
-      const currState = reducer(prevState, actions.flowData.requestProcessorData(dummyFlowId, '123', 'exports', processor));
-
-      expect(currState).toEqual({
-        [dummyFlowId]: {
-          pageGenerators: dummyFlow.pageGenerators,
-          pageProcessors: dummyFlow.pageProcessors,
-          pageGeneratorsMap: {
-            123: {
-              transform: {
-                status: 'requested',
-              },
-            },
-          },
-          refresh: false,
-          pageProcessorsMap: {},
-        },
-      });
-    });
-    test('should update stage as request inside pageProcessorsMap incase of the resource being PP ', () => {
-      const prevState = reducer(undefined, actions.flowData.init(dummyFlow));
-      const processor = 'transform';
-      const currState = reducer(prevState, actions.flowData.requestProcessorData(dummyFlowId, '222', 'imports', processor));
-
-      expect(currState).toEqual({
-        [dummyFlowId]: {
-          pageGenerators: dummyFlow.pageGenerators,
-          pageProcessors: dummyFlow.pageProcessors,
-          pageGeneratorsMap: {},
-          refresh: false,
-          pageProcessorsMap: {
-            222: {
-              transform: {
-                status: 'requested',
-              },
-            },
-          },
-        },
-      });
-    });
-  });
   describe('FLOW_DATA.PROCESSOR_DATA_RECEIVED action', () => {
     test('should retain previous state in case of no processor passed', () => {
       const prevState = reducer(undefined, actions.flowData.init(dummyFlow));
@@ -408,8 +351,7 @@ describe('Flow sample data reducer ', () => {
       const initState = reducer(undefined, actions.flowData.init(dummyFlow));
       const processor = 'transform';
       const processorData = { data: [{ test: 5 }]};
-      const prevState = reducer(initState, actions.flowData.requestProcessorData(dummyFlowId, '222', 'imports', processor));
-      const currState = reducer(prevState, actions.flowData.receivedProcessorData(dummyFlowId, '222', processor, processorData));
+      const currState = reducer(initState, actions.flowData.receivedProcessorData(dummyFlowId, '222', processor, processorData));
 
       expect(currState).toEqual({
         [dummyFlowId]: {
@@ -432,8 +374,7 @@ describe('Flow sample data reducer ', () => {
       const initState = reducer(undefined, actions.flowData.init(dummyFlow));
       const processor = 'transform';
       const processorData = { data: [{ test: 5 }]};
-      const prevState = reducer(initState, actions.flowData.requestProcessorData(dummyFlowId, '123', 'exports', processor));
-      const currState = reducer(prevState, actions.flowData.receivedProcessorData(dummyFlowId, '123', processor, processorData));
+      const currState = reducer(initState, actions.flowData.receivedProcessorData(dummyFlowId, '123', processor, processorData));
 
       expect(currState).toEqual({
         [dummyFlowId]: {
@@ -456,8 +397,7 @@ describe('Flow sample data reducer ', () => {
       const initState = reducer(undefined, actions.flowData.init(dummyFlow));
       const processor = 'transform';
       const processorData = { data: { data: [{ nestedTest: 5 }] }};
-      const prevState = reducer(initState, actions.flowData.requestProcessorData(dummyFlowId, '222', 'imports', processor));
-      const currState = reducer(prevState, actions.flowData.receivedProcessorData(dummyFlowId, '222', processor, processorData));
+      const currState = reducer(initState, actions.flowData.receivedProcessorData(dummyFlowId, '222', processor, processorData));
 
       expect(currState).toEqual({
         [dummyFlowId]: {
@@ -480,8 +420,7 @@ describe('Flow sample data reducer ', () => {
       const initState = reducer(undefined, actions.flowData.init(dummyFlow));
       const processor = 'transform';
       const processorData = undefined;
-      const prevState = reducer(initState, actions.flowData.requestProcessorData(dummyFlowId, '222', 'imports', processor));
-      const currState = reducer(prevState, actions.flowData.receivedProcessorData(dummyFlowId, '222', processor, processorData));
+      const currState = reducer(initState, actions.flowData.receivedProcessorData(dummyFlowId, '222', processor, processorData));
 
       expect(currState).toEqual({
         [dummyFlowId]: {
@@ -541,8 +480,7 @@ describe('Flow sample data reducer ', () => {
       const initState = reducer(undefined, actions.flowData.init(dummyFlow));
       const processor = 'transform';
       const error = { error: [{ message: ' Cannot transform the data '}] };
-      const prevState = reducer(initState, actions.flowData.requestProcessorData(dummyFlowId, '222', 'imports', processor));
-      const currState = reducer(prevState, actions.flowData.receivedError(dummyFlowId, '222', processor, error));
+      const currState = reducer(initState, actions.flowData.receivedError(dummyFlowId, '222', processor, error));
 
       expect(currState).toEqual({
         [dummyFlowId]: {
@@ -565,8 +503,7 @@ describe('Flow sample data reducer ', () => {
       const initState = reducer(undefined, actions.flowData.init(dummyFlow));
       const processor = 'transform';
       const error = { error: [{ message: ' Cannot transform the data '}] };
-      const prevState = reducer(initState, actions.flowData.requestProcessorData(dummyFlowId, '123', 'exports', processor));
-      const currState = reducer(prevState, actions.flowData.receivedError(dummyFlowId, '123', processor, error));
+      const currState = reducer(initState, actions.flowData.receivedError(dummyFlowId, '123', processor, error));
 
       expect(currState).toEqual({
         [dummyFlowId]: {
@@ -853,51 +790,6 @@ describe('Flow sample data reducer ', () => {
             },
           },
           pageProcessorsMap: {},
-        },
-      });
-    });
-  });
-  describe('FLOW_DATA.CLEAR_STAGES action', () => {
-    test('should not affect state if we pass an invalid flow', () => {
-      const prevState = reducer(undefined, { type: 'RANDOM_ACTION'});
-      const currState = reducer(prevState, actions.flowData.resetStages('flowId'));
-
-      expect(currState).toEqual(prevState);
-    });
-    test('should clear flow stages with passed flow id', () => {
-      const flow = { pageGenerators: [], pageProcessors: [], _id: '1234' };
-      const prevState = reducer(undefined, actions.flowData.init(flow));
-      const currState = reducer(prevState, actions.flowData.clearStages(1234));
-
-      expect(currState).toEqual({});
-    });
-
-    test('should clear flow stages with passed flow id and not affect other flows data', () => {
-      const flow1 = { pageGenerators: [], pageProcessors: [], _id: '1234' };
-      const flow2 = { pageGenerators: [], pageProcessors: [], _id: '12345' };
-      const flow3 = { pageGenerators: [], pageProcessors: [], _id: '123456' };
-
-      let state = reducer(undefined, actions.flowData.init(flow1));
-
-      state = reducer(state, actions.flowData.init(flow2));
-      state = reducer(state, actions.flowData.init(flow3));
-
-      const currState = reducer(state, actions.flowData.clearStages('12345'));
-
-      expect(currState).toEqual({
-        1234: {
-          pageGenerators: [],
-          pageGeneratorsMap: {},
-          pageProcessors: [],
-          pageProcessorsMap: {},
-          refresh: undefined,
-        },
-        123456: {
-          pageGenerators: [],
-          pageGeneratorsMap: {},
-          pageProcessors: [],
-          pageProcessorsMap: {},
-          refresh: undefined,
         },
       });
     });

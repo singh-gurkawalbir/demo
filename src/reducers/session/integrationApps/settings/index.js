@@ -74,7 +74,6 @@ export default (state = {}, action) => {
     data,
     id,
     key: mappingKey,
-    generateFields,
     oldValue,
     newValue,
     value,
@@ -278,13 +277,6 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_GENERATES: {
-        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
-          draft[cKey].mappings[id].generateFields = generateFields;
-        }
-
-        break;
-      }
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_FIELD: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
           const index = draft[cKey].mappings[id].mappings?.findIndex(m => m.key === mappingKey);
@@ -396,28 +388,13 @@ export default (state = {}, action) => {
 
         break;
       }
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SET_VISIBILITY:
-        if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
-          draft[cKey].mappings[id].visible = value;
-        }
 
-        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE:
         if (draft[cKey]) {
           draft[cKey].saveStatus = 'requested';
 
           if (closeOnSave) {
             draft[cKey].closeOnSave = true;
-          }
-        }
-
-        break;
-      case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_COMPLETE:
-        if (draft[cKey]) {
-          draft[cKey].saveStatus = 'saved';
-
-          if (draft[cKey].closeOnSave) {
-            draft[cKey].saveStatus = 'close';
           }
         }
 

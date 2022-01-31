@@ -48,7 +48,7 @@ export function* requestFlowMetrics({resourceType, resourceId, filters }) {
     let flowJobResponse;
 
     try {
-      flowJobResponse = yield apiCallWithRetry({
+      flowJobResponse = yield call(apiCallWithRetry, {
         path: `/flows/${resourceId}/jobs/latest`,
         opts: {
           method: 'GET',

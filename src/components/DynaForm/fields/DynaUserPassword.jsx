@@ -30,7 +30,7 @@ export default function DynaUserPassword(props) {
   const classes = useStyles();
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const dispatch = useDispatch();
-  const clearComms = useCallback(() => dispatch(actions.clearComms()), [
+  const clearComms = useCallback(() => dispatch(actions.api.clearComms()), [
     dispatch,
   ]);
   const handleModalOpen = useCallback(() => {

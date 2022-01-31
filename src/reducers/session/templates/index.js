@@ -157,9 +157,15 @@ export default function reducer(state = {}, action) {
         draft[templateId].publishStatus = PUBLISH_STATES.LOADING;
         break;
       case actionTypes.TEMPLATE.PUBLISH.SUCCESS:
+        if (!draft[templateId]) {
+          draft[templateId] = {};
+        }
         draft[templateId].publishStatus = PUBLISH_STATES.SUCCESS;
         break;
       case actionTypes.TEMPLATE.PUBLISH.ERROR:
+        if (!draft[templateId]) {
+          draft[templateId] = {};
+        }
         draft[templateId].publishStatus = PUBLISH_STATES.ERROR;
         break;
     }

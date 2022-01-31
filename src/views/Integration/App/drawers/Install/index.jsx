@@ -15,15 +15,13 @@ import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
-  getConnectionType,
   generateNewId,
   isOauth,
 } from '../../../../../utils/resource';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
-import resourceConstants from '../../../../../forms/constants/connection';
-import ResourceSetupDrawer from '../../../../../components/ResourceSetup';
+import ResourceSetupDrawer from '../../../../../components/ResourceSetup/Drawer';
 import InstallationStep from '../../../../../components/InstallStep';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
@@ -70,15 +68,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
   },
 }));
-
-const oAuthApplications = [
-  ...resourceConstants.OAUTH_APPLICATIONS,
-  'netsuite-oauth',
-  'shopify-oauth',
-  'acumatica-oauth',
-  'hubspot-oauth',
-  'amazonmws-oauth',
-];
 
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
@@ -143,52 +132,9 @@ export default function ConnectorInstallation(props) {
     return integrationApp && integrationApp.helpURL;
   });
   const installSteps = useSelector(state =>
-    selectors.integrationInstallSteps(state, integrationId)
+    selectors.integrationInstallSteps(state, integrationId),
+  shallowEqual
   );
-  const templateInstallSteps = useMemo(() => {
-    if (!isTemplate) return installSteps;
-
-    const bundleInstallationForNetsuiteConnections = installSteps.filter(step => step.sourceConnection?.type === 'netsuite');
-    const bundleInstallationForSalesforceConnections = installSteps.filter(step => step.sourceConnection?.type === 'salesforce');
-
-    let netsuiteConnIndex = 0;
-    let salesforceConnIndex = 0;
-
-    return installSteps.map(step => {
-      if (step.installURL || step.url) {
-        if (
-          step.name.includes('Integrator Bundle')
-        ) {
-          const connectionId = bundleInstallationForNetsuiteConnections[netsuiteConnIndex]?._connectionId;
-
-          netsuiteConnIndex += 1;
-
-          return {
-            ...step,
-            connectionId,
-          };
-        } if (step.name.includes('Integrator Adaptor Package')) {
-          const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
-
-          salesforceConnIndex += 1;
-
-          return {
-            ...step,
-            connectionId,
-          };
-        }
-      }
-
-      return step;
-    });
-  }, [installSteps, isTemplate]);
-  const currentStep = useMemo(() => installSteps.find(s => s.isCurrentStep), [
-    installSteps,
-  ]);
-  const currStepIndex = useMemo(() => installSteps.indexOf(currentStep), [
-    currentStep,
-    installSteps,
-  ]);
   const { openOauthConnection, connectionId } = useSelector(
     state => selectors.canOpenOauthConnection(state, integrationId),
     (left, right) => (left.openOauthConnection === right.openOauthConnection && left.connectionId === right.connectionId)
@@ -202,18 +148,11 @@ export default function ConnectorInstallation(props) {
       setConnection({
         _connectionId: connectionId,
       });
+      history.replace(`${match.url}/configure/connections/${connectionId}`);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionId, dispatch, integrationId, openOauthConnection, oauthConnection]);
 
-  const selectedConnectionType = useSelector(state => {
-    const selectedConnection = selectors.resource(
-      state,
-      'connections',
-      connection && connection._connectionId
-    );
-
-    return getConnectionType(selectedConnection);
-  });
   const integrationAppName = getIntegrationAppUrlName(integrationName);
   const integrationChildAppName = getIntegrationAppUrlName(childIntegrationName);
   const handleClose = useCallback(() => {
@@ -258,13 +197,6 @@ export default function ConnectorInstallation(props) {
       // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
       const step = installSteps.find(s => s.isCurrentStep);
 
-      if (
-        oAuthApplications.includes(selectedConnectionType) &&
-        !isAuthorized
-      ) {
-        return;
-      }
-
       dispatch(
         actions.integrationApp.installer.updateStep(
           integrationId,
@@ -300,7 +232,6 @@ export default function ConnectorInstallation(props) {
       installSteps,
       integrationId,
       isFrameWork2,
-      selectedConnectionType,
     ]
   );
 
@@ -397,12 +328,12 @@ export default function ConnectorInstallation(props) {
                 );
               } else {
                 history.push(
-                  getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${urlExtractFields[index + 1]}`)
+                  getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${urlExtractFields[index + 1]}`)
                 );
               }
             } else if (supportsMultiStore) {
               history.push(
-                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`)
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${childId}`)
               );
             } else {
               history.push(
@@ -464,6 +395,7 @@ export default function ConnectorInstallation(props) {
         doc: sourceConnection,
         _connectionId,
       });
+      history.push(`${match.url}/configure/connections/${_connectionId || newId}`);
     } else if (isFrameWork2 && !step.isTriggered && !installURL && !url && type !== 'stack') {
       dispatch(
         actions.integrationApp.installer.updateStep(
@@ -477,11 +409,13 @@ export default function ConnectorInstallation(props) {
         dispatch(
           actions.integrationApp.installer.getCurrentStep(integrationId, step)
         );
-        // history.push(`${match.url}/form/${index}`);
       } else {
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(integrationId)
         );
+      }
+      if (type === INSTALL_STEP_TYPES.FORM) {
+        history.push(`${match.url}/form/install`);
       }
     } else if (installURL || url || updatedUrl) {
       if (!step.isTriggered) {
@@ -521,7 +455,12 @@ export default function ConnectorInstallation(props) {
       }
       // handle Action step click
     } else if (type === 'stack') {
-      if (!stackId) setShowStackDialog(generateNewId());
+      if (!stackId) {
+        const newStackId = generateNewId();
+
+        setShowStackDialog(newStackId);
+        history.push(`${match.url}/configure/stacks/${newStackId}`);
+      }
     } else if (!isEmpty(form)) {
       dispatch(actions.integrationApp.installer.updateStep(
         integrationId,
@@ -603,45 +542,6 @@ export default function ConnectorInstallation(props) {
 
         </div>
       </CeligoPageBar>
-      {connection &&
-        (connection._connectionId ? (
-          <ResourceSetupDrawer
-            resourceId={connection._connectionId}
-            onClose={handleClose}
-            onSubmitComplete={handleSubmitComplete}
-          />
-        ) : (
-          <ResourceSetupDrawer
-            resourceId={connection.newId}
-            resource={connection.doc}
-            resourceType="connections"
-            // eslint-disable-next-line no-nested-ternary
-            connectionType={connection.doc.type === 'http'
-              ? (connection.doc?.http?.formType === 'rest' ? 'rest' : 'http')
-              : connection.doc.type}
-            onClose={handleClose}
-            onSubmitComplete={handleSubmitComplete}
-            addOrSelect={!_connectorId}
-          />
-        ))}
-      {stackId && (
-        <ResourceSetupDrawer
-          onClose={handleStackClose}
-          addOrSelect
-          resourceId={stackId}
-          resourceType="stacks"
-          onSubmitComplete={handleStackSetupDone}
-        />
-      )}
-      {currentStep && currentStep.formMeta && (
-        <FormStepDrawer
-          integrationId={integrationId}
-          formMeta={currentStep.formMeta}
-          installerFunction={currentStep.installerFunction}
-          title={currentStep.name}
-          index={currStepIndex + 1}
-        />
-      )}
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
           {helpUrl ? (
@@ -654,7 +554,7 @@ export default function ConnectorInstallation(props) {
             <Typography className={classes.message}>{`Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.`}</Typography>
           )}
           <div className={classes.installIntegrationSteps}>
-            {(isTemplate ? templateInstallSteps : installSteps).map((step, index) => (
+            {installSteps.map((step, index) => (
               <InstallationStep
                 key={step.name}
                 handleStepClick={handleStepClick}
@@ -668,6 +568,15 @@ export default function ConnectorInstallation(props) {
           </div>
         </div>
       </div>
+      <FormStepDrawer integrationId={integrationId} />
+      <ResourceSetupDrawer
+        integrationId={integrationId}
+        onClose={handleClose}
+        onSubmitComplete={handleSubmitComplete}
+        handleStackSetupDone={handleStackSetupDone}
+        handleStackClose={handleStackClose}
+        mode="install"
+      />
     </LoadResources>
   );
 }
