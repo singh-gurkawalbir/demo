@@ -13,8 +13,10 @@ const useStyles = makeStyles(theme => ({
     minHeight: 42,
     margin: 0,
     padding: 0,
-    border: '1px solid',
     borderRadius: 0,
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
   },
   select: {
     display: 'flex !important',

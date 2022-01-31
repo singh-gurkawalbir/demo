@@ -17,7 +17,7 @@ export default {
       key: 'applications',
       heading: 'Applications',
       isLoggable: true,
-      Value: ({rowData: r}) => <LogoStrip rows={1} columns={4} applications={r.applications} logoSize="medium" />,
+      Value: ({rowData: r}) => <LogoStrip rows={1} columns={4} applications={r.applications} size="medium" />,
     },
     {
       key: 'name',

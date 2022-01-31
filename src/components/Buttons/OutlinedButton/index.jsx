@@ -7,22 +7,23 @@ import PropTypes from 'prop-types';
 const useStyles = makeStyles(theme => ({
   error: {
     borderColor: theme.palette.error.main,
-    color: theme.palette.error.dark,
+    color: theme.palette.error.main,
     '&:hover': {
-      background: theme.palette.error.dark,
-      borderColor: theme.palette.error.dark,
+      background: theme.palette.common.white,
+      borderColor: theme.palette.error.main,
+      color: theme.palette.error.dark,
     },
   },
 }));
 
 export default function OutlinedButton(props) {
   const classes = useStyles();
-  const {children, error, ...rest} = props;
+  const {children, className, error, ...rest} = props;
 
   return (
     <Button
       variant="outlined"
-      className={clsx({[classes.error]: error})}
+      className={clsx({[classes.error]: error}, className)}
       color="primary"
       disableElevation
       {...rest}>

@@ -21,6 +21,34 @@ describe('readme processor logic', () => {
     });
   });
   describe('init util', () => {
+    test('should not throw error if resource is null', () => {
+      const options = {
+        arrayIndex: 0,
+        editorType: 'databaseMapping',
+        fieldId: 'rdbms.query',
+        resourceId: '123',
+        resourceType: 'imports',
+        stage: 'flowInput',
+      };
+      const expectedOutput = {
+        arrayIndex: 0,
+        editorSupportsV1V2data: false,
+        editorTitle: '',
+        editorType: 'databaseMapping',
+        fieldId: 'rdbms.query',
+        query: undefined,
+        resourceId: '123',
+        resourceType: 'imports',
+        resultMode: 'text',
+        rule: undefined,
+        stage: 'flowInput',
+        supportsDefaultData: true,
+        v1Rule: undefined,
+        v2Rule: undefined,
+      };
+
+      expect(init({options, resource: null})).toEqual(expectedOutput);
+    });
     test('should correctly return adaptor specific options if type is RDBMSImport', () => {
       const options = {
         arrayIndex: 0,
@@ -60,6 +88,15 @@ describe('readme processor logic', () => {
       };
 
       expect(init({options, resource})).toEqual(expectedOutput);
+      expect(init({options, resource: {...resource, rdbms: undefined}}))
+        .toEqual({
+          ...expectedOutput,
+          lookups: undefined,
+          query: undefined,
+          rule: undefined,
+          v1Rule: undefined,
+          v2Rule: undefined,
+        });
     });
     test('should correctly return adaptor specific options if type is MongodbImport', () => {
       const options = {
@@ -98,6 +135,15 @@ describe('readme processor logic', () => {
       };
 
       expect(init({options, resource})).toEqual(expectedOutput);
+      expect(init({options, resource: {...resource, mongodb: undefined}}))
+        .toEqual({
+          ...expectedOutput,
+          method: undefined,
+          query: undefined,
+          rule: undefined,
+          v1Rule: undefined,
+          v2Rule: undefined,
+        });
     });
     test('should correctly return adaptor specific options if type is DynamodbImport', () => {
       const options = {
@@ -136,6 +182,15 @@ describe('readme processor logic', () => {
       };
 
       expect(init({options, resource})).toEqual(expectedOutput);
+      expect(init({options, resource: {...resource, dynamodb: undefined}}))
+        .toEqual({
+          ...expectedOutput,
+          method: undefined,
+          query: false,
+          rule: 'false',
+          v1Rule: 'false',
+          v2Rule: 'false',
+        });
     });
     test('should correctly return rule and options if adaptor type is unsupported', () => {
       const options = {

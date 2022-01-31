@@ -11,9 +11,9 @@ import FieldHelp from '../../FieldHelp';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import IntegrationTag from '../../../tags/IntegrationTag';
 import SearchIcon from '../../../icons/SearchIcon';
-import OutlinedButton from '../../../Buttons/OutlinedButton';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import { CustomReactSelectStyles, ReactSelectUseStyles } from '../reactSelectStyles/styles';
+import { DoneButton } from '../../../CeligoSelect';
 
 const useStyles = makeStyles(theme => ({
   chips: {
@@ -38,12 +38,6 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(1),
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-  },
-  doneButton: {
-    border: 'none',
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-    minHeight: 42,
-    borderRadius: 0,
   },
 }));
 
@@ -104,7 +98,6 @@ const MultiValueLabel = props => {
 };
 
 const Menu = props => {
-  const classes = useStyles();
   const { menuIsOpen, onMenuClose } = props.selectProps;
   const closeSelect = () => {
     if (menuIsOpen) {
@@ -115,13 +108,7 @@ const Menu = props => {
   return (
     <components.Menu {...props}>
       {props.children}
-      <OutlinedButton
-        color="secondary"
-        id="select-multi-close"
-        onClick={closeSelect}
-        className={classes.doneButton}>
-        Done
-      </OutlinedButton>
+      <DoneButton id="select-multi-close" onClose={closeSelect} />
     </components.Menu>
   );
 };
@@ -210,6 +197,7 @@ export default function MultiSelectApplication(props) {
           filterOption={filterOptions}
           styles={customStyles}
           menuPlacement={menuPlacement}
+          captureMenuScroll={false}
         />
 
         {!removeHelperText && <FieldMessage {...props} />}

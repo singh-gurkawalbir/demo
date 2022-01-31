@@ -44,7 +44,7 @@ export default function DynaFlowGroupName(props) {
   const handleDeleteFlowGroupClick = useCallback(
     () => {
       confirmDialog({
-        title: 'Confirm Delete',
+        title: 'Confirm delete',
         message: 'Are you sure you want to delete this flow group? Only the group will be deleted. Its flows will be moved into “Unassigned”.',
         buttons: [
           {
