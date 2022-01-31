@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { isNode } from 'react-flow-renderer';
+import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -17,10 +17,8 @@ const options = {
   marginy: 50,
 };
 
-export function layoutElements(elements, direction = 'TB') {
-  const isHorizontal = direction === 'LR';
-
-  dagreGraph.setGraph({ rankdir: direction, ...options });
+export function layoutElements(elements) {
+  dagreGraph.setGraph({ rankdir: 'LR', ...options });
 
   elements.forEach(el => {
     if (isNode(el)) {
@@ -36,9 +34,6 @@ export function layoutElements(elements, direction = 'TB') {
     if (isNode(el)) {
       const nodeWithPosition = dagreGraph.node(el.id);
 
-      el.targetPosition = isHorizontal ? 'left' : 'top';
-      el.sourcePosition = isHorizontal ? 'right' : 'bottom';
-
       // unfortunately we need this little hack to pass a slightly different position
       // to notify react flow about the change. Moreover we are shifting the dagre node position
       // (anchor=center center) to the top left so it matches the react flow node anchor point (top left).
@@ -52,3 +47,9 @@ export function layoutElements(elements, direction = 'TB') {
   });
 }
 
+export function getConnectedEdges(id, direction = 'left', elements) {
+  const handle = direction === 'left' ? 'target' : 'source';
+  const edges = elements.filter(e => isEdge(e));
+
+  return edges.filter(edge => edge[handle] === id);
+}

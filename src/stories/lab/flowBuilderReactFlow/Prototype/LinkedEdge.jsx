@@ -20,10 +20,10 @@ const onEdgeClick = (evt, id) => {
   evt.stopPropagation();
 
   // eslint-disable-next-line no-alert
-  alert(`remove ${id}`);
+  alert(`Remove node ${id}`);
 };
 
-export default function CustomEdge({
+export default function LinkedEdge({
   id,
   sourceX,
   sourceY,
@@ -68,18 +68,15 @@ export default function CustomEdge({
         height={foreignObjectSize}
         x={edgeCenterX - foreignObjectSize / 2}
         y={edgeCenterY - foreignObjectSize / 2}
-        // className={classes.foreignObject}
         requiredExtensions="http://www.w3.org/1999/xhtml"
       >
-        <body>
-          <IconButton
-            size="small"
-            className={classes.linkButton}
-            onClick={event => onEdgeClick(event, id)}
+        <IconButton
+          size="small"
+          className={classes.linkButton}
+          onClick={event => onEdgeClick(event, id)}
           >
-            <UnLinkIcon />
-          </IconButton>
-        </body>
+          <UnLinkIcon />
+        </IconButton>
       </foreignObject>
     </>
   );
