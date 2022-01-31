@@ -34,6 +34,7 @@ function MenuItem({ type, label }) {
   return (
     <div>
       <FormControlLabel
+        tabIndex={0}
         classes={{root: classes.itemRoot}}
         control={(
           <Checkbox

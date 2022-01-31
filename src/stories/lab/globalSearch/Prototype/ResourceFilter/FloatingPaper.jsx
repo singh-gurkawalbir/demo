@@ -4,7 +4,7 @@ import { makeStyles, Paper } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    position: 'absolute',
+    position: 'fixed',
     zIndex: theme.zIndex.drawer + 1,
     marginTop: 2,
   },

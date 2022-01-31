@@ -12,7 +12,9 @@ import SearchToolTip from './SearchBox/SearchTooltip';
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
-    width: 400,
+    width: '100%',
+    minWidth: ({open}) => open ? '400px' : '32px',
+    maxWidth: '400px',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.easeIn,
       duration: theme.transitions.duration.enteringScreen,
@@ -24,9 +26,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function GlobalSearch() {
-  const classes = useStyles();
   const open = useGlobalSearchState(state => state.open);
   const setOpen = useGlobalSearchState(state => state.changeOpen);
+  const classes = useStyles({open});
   const handleOpenSearch = useCallback(() => setOpen(true), [setOpen]);
 
   useKeyboardShortcut(['/'], handleOpenSearch);

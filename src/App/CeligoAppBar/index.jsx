@@ -12,6 +12,7 @@ import EnvironmentToggle from './EnvironmentToggle';
 // import ThemeToggle from './ThemeToggle';
 import CeligoBreadcrumb from './CeligoBreadcrumb';
 import getImageUrl from '../../utils/image';
+import GlobalSearch from '../../views/GlobalSearch';
 
 const useStyles = makeStyles(theme => ({
   celigoLogo: {
@@ -102,6 +103,7 @@ export default function CeligoAppBar() {
                 (and re-run all init) I think this is causes by removing the
                 session caching layer we had in place
               */}
+          <li><GlobalSearch /></li>
           <li><AccountList /></li>
           <li><LicenseAction /></li>
           <li><EnvironmentToggle /></li>

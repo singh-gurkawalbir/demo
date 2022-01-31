@@ -4,7 +4,7 @@ const KEYCODE = {
   UP: 38,
   DOWN: 40,
 };
-const initialFocusIndex = 0;
+const initialFocusIndex = -1;
 
 function useKeyboardNavigation({listLength = 0, containerRef = null, listItemRef = null}) {
   const [currentFocussed, setCurrentFocussed] = useState(initialFocusIndex);
@@ -17,7 +17,7 @@ function useKeyboardNavigation({listLength = 0, containerRef = null, listItemRef
         break;
       case KEYCODE.UP:
         event.preventDefault();
-        setCurrentFocussed(state => state > 0 ? state - 1 : state);
+        setCurrentFocussed(state => state > -1 ? state - 1 : state);
         break;
       default:
         break;

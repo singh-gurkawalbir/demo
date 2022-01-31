@@ -1,6 +1,6 @@
 import { filterMap } from './filterMeta';
 
-function buildSearchString(filters, keyword) {
+export function buildSearchString(filters, keyword) {
   if (!filters?.length) {
     return keyword;
   }
@@ -9,7 +9,7 @@ function buildSearchString(filters, keyword) {
   return `${filterPrefix}: ${keyword}`;
 }
 
-function getFilters(searchString) {
+export function getFilters(searchString) {
   if (!searchString?.length) return [];
 
   const parts = searchString.split(':');
@@ -41,7 +41,7 @@ function getFilters(searchString) {
   return selectedFilters;
 }
 
-function getKeyword(searchString) {
+export function getKeyword(searchString) {
   const parts = searchString.split(':');
 
   if (parts.length > 1) {
@@ -51,7 +51,7 @@ function getKeyword(searchString) {
   return searchString;
 }
 
-function getTabResults(results) {
+export function getTabResults(results) {
   const resultsObject = Object.keys(filterMap).reduce((acc, key) => {
     if (!results[key]) return acc;
     const item = {type: key, results: results[key]};
@@ -89,4 +89,20 @@ export function getResourceFilters(filterBlacklist) {
 
 export const getResultsLength = results => results?.reduce((oldState, action) => oldState + action?.results?.length, 0);
 
-export { getFilters, getKeyword, getTabResults, buildSearchString};
+export function getResourceURL(type, result) {
+  let url = result?.resourceURL;
+
+  if (type === 'integrations') {
+    url = `/${type}/${result?._id}`;
+
+    return url;
+  }
+  if (type === 'flows') {
+    url = `/integrations/${result?._integrationId}/flowBuilder/${result?._id}`;
+
+    return url;
+  }
+  url = `/${type}/edit/${type}/${result?._id}`;
+
+  return url;
+}

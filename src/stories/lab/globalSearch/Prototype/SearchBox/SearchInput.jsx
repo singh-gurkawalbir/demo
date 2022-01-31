@@ -1,9 +1,11 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useEffect } from 'react';
 import { IconButton, InputBase, makeStyles, Paper } from '@material-ui/core';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
 import { useGlobalSearchState } from '../hooks/useGlobalSearchState';
 import useDebouncedValue from '../hooks/useDebouncedInput';
+import useActiveTab from '../hooks/useActiveTab';
 import useKeyboardShortcut from '../../../../../hooks/useKeyboardShortcut';
+import useSyncedRef from '../hooks/useSyncedRef';
 
 const useStyles = makeStyles(theme => ({
   searchBox: {
@@ -36,26 +38,38 @@ function SearchInput() {
   const classes = useStyles();
   const setKeyword = useGlobalSearchState(state => state.changeKeyword);
   const setOpen = useGlobalSearchState(state => state.changeOpen);
+  const filters = useGlobalSearchState(state => state.filters);
+  const [activeTab] = useActiveTab();
+
   const [inputValue, setInputValue] = useDebouncedValue('', value => {
     setKeyword(value);
   }, 200);
-  const escapePressedRef = useRef(false);
+  const memoizedValues = useSyncedRef({
+    setInputValue,
+    setOpen,
+    inputValue,
+  });
 
   const handleEscapeKeypress = useCallback(() => {
-    if (!escapePressedRef?.current) {
-      escapePressedRef.current = true;
-      if (inputValue?.length > 0) {
-        setInputValue('');
-      } else {
-        setOpen(false);
-      }
+    const {inputValue, setInputValue, setOpen} = memoizedValues?.current;
+
+    if (inputValue?.length > 0) {
+      setInputValue('');
     } else {
-      escapePressedRef.current = false;
+      setOpen(false);
     }
-  }, [inputValue?.length, setInputValue, setOpen]);
+  }, [memoizedValues]);
+
+  const ref = useRef();
+
+  // focus input when filters and active Tab changed
+  useEffect(() => {
+    if (ref?.current) {
+      ref?.current?.children[0]?.focus();
+    }
+  }, [activeTab, filters]);
 
   useKeyboardShortcut(['Escape'], handleEscapeKeypress, true);
-  const ref = useRef();
 
   const handleSearchStringChange = e => {
     const newSearchString = e.target.value;
@@ -64,7 +78,7 @@ function SearchInput() {
   };
 
   return (
-    <Paper component="form" className={classes.searchBox} variant="outlined">
+    <Paper className={classes.searchBox} variant="outlined">
       <InputBase
         ref={ref}
         spellcheck="false"

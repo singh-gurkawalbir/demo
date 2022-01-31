@@ -1,10 +1,13 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-import React, { useRef } from 'react';
+import React, { useCallback, useMemo, useRef, useEffect } from 'react';
 import { Divider, makeStyles, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import CeligoTimeAgo from '../../../../../../components/CeligoTimeAgo';
 import InfoIconButton from '../../../../../../components/InfoIconButton';
 import useScrollIntoView from '../../hooks/useScrollIntoView';
+import { useGlobalSearchState } from '../../hooks/useGlobalSearchState';
+import { getResourceURL } from '../../utils';
+import useSyncedRef from '../../hooks/useSyncedRef';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -17,7 +20,17 @@ const useStyles = makeStyles(theme => ({
       cursor: 'pointer',
       outline: 'unset',
     },
+    color: 'black',
     backgroundColor: ({focussed}) => focussed ? theme.palette.background.paper2 : 'initial',
+  },
+  text: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    maxWidth: '18.125rem',
+  },
+  time: {
+    minWidth: '10rem',
   },
   filler: {
     flexGrow: 1,
@@ -29,29 +42,74 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function GenericRow({result, children, includeDivider, focussed}) {
+function GenericRow({result, children, includeDivider, focussed, type}) {
   const classes = useStyles({focussed});
+  const setOpen = useGlobalSearchState(state => state.changeOpen);
   const history = useHistory();
   const rowRef = useRef();
 
   useScrollIntoView(rowRef, focussed);
+
+  const memoizedValuesRef = useSyncedRef({setOpen, history, result, type});
+  const url = useMemo(() => getResourceURL(type, result), [result, type]);
+
+  const handleRowClick = useCallback(() => {
+    const {setOpen, history} = memoizedValuesRef?.current;
+
+    setOpen(false);
+    history.push(url);
+  }, [memoizedValuesRef, url]);
+
+  const handleKeyDown = useCallback(e => {
+    // Listen to only enter key press
+    if (e.keyCode === 13) {
+      // To stop event bubbling
+      e?.stopPropagation();
+      handleRowClick();
+    }
+  }, [handleRowClick]);
+
+  /* For keyboard support, we are adding handlers explicitly
+   Since this event should only be registered when resource results are displayed
+   We explicitly add and remove the listeners in the effect
+   This handler should be added only to the focussed element
+   so that it listens only for focussed element  */
+
+  useEffect(() => {
+    window.addEventListener('keydown', focussed ? handleKeyDown : null);
+
+    return () => window.removeEventListener('keydown', focussed ? handleKeyDown : null);
+  }, [focussed, handleKeyDown]);
+
   if (!result) return null;
 
-  const handleRowClick = () => history.push(result.url);
+  const resultText = result.name || result.id;
+  const preventEventBubblingHandler = e => e?.stopPropagation();
 
   return (
     <>
       {includeDivider && <Divider orientation="horizontal" />}
-      <div ref={rowRef} className={classes.root} onClick={handleRowClick}>
-        <Typography variant="body2">{result.name || result.id}</Typography>
-        {result.description && <InfoIconButton tabIndex={-1} size="xs" info={result.description} />}
+      <div
+        tabIndex={0}
+        ref={rowRef}
+        className={classes.root}
+        title={resultText}
+        onClick={handleRowClick}
+        onKeyDown={handleKeyDown}>
+        <Typography className={classes.text} variant="body2">{resultText}</Typography>
+        {result.description && (
+        <div onClick={preventEventBubblingHandler}>
+          <InfoIconButton tabIndex={-1} size="xs" info={result.description} />
+        </div>
+        )}
 
         {children && <Divider orientation="vertical" className={classes.dataDivider} />}
         {children}
 
         <div className={classes.filler} />
-
-        <CeligoTimeAgo date={result.lastModified} />
+        <div className={classes.time}>
+          <CeligoTimeAgo date={result.lastModified} />
+        </div>
       </div>
     </>
   );
