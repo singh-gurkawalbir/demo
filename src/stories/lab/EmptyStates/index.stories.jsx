@@ -11,11 +11,11 @@ export default {
 
 const Template = args => <EmptyState {...args} />;
 
-export const connections = Template.bind({});
+export const homePage = Template.bind({});
 
-connections.args = {
-  children: 'Connections page',
-};
+// homePage.args = {
+//   children: 'Connections page',
+// };
 const designParameters = {
   design: {
     type: 'figma',
@@ -24,4 +24,4 @@ const designParameters = {
   },
 };
 
-connections.parameters = designParameters;
+homePage.parameters = designParameters;
