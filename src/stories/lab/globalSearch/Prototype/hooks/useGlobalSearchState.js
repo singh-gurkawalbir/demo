@@ -10,15 +10,15 @@ const initialState = {
 const stateUpdaters = ({get, set}) => ({
   changeKeyword: newSearchString => {
     let newKeyword = getKeyword(newSearchString);
-    const newFilters = getFilters(newSearchString);
-
     const {filters} = get();
+    let newFilters = filters;
 
     if (newSearchString?.includes(':')) {
       newKeyword = buildSearchString(filters, newSearchString);
+      newFilters = getFilters(newSearchString);
     }
     if (!isEqual(filters, newFilters)) {
-      set(state => ({...state, keyword: newKeyword, filters: [...newFilters, ...filters]}));
+      set(state => ({...state, keyword: newKeyword, filters: newFilters}));
     } else {
       set(state => ({...state, keyword: newKeyword}));
     }

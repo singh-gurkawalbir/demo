@@ -5,8 +5,9 @@ import { useGlobalSearchState } from './useGlobalSearchState';
 
 const resultsSelector = getResults => state => {
   const {keyword, filters} = state;
-  const searchValue = keyword?.includes(':') ? keyword?.split(':')?.[1] : keyword;
-  const results = searchValue?.length > 1 ? getResults(searchValue, filters) : {};
+  const searchTokens = keyword?.includes(':') ? keyword?.split(':') : keyword;
+  const searchValue = (Array.isArray(searchTokens) ? searchTokens[searchTokens?.length - 1] : searchTokens)?.trim?.();
+  const results = searchValue?.trim().length > 1 ? getResults(searchValue, filters) : {};
 
   return results;
 };

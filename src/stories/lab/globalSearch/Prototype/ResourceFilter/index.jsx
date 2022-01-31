@@ -78,9 +78,9 @@ function ResourceFilter() {
 
           <Divider orientation="horizontal" className={classes.divider} />
           <Typography variant="subtitle2" gutterBottom component="div">RESOURCES</Typography>
-          {resourceFilters.map(filter => <MenuItem key={filter.type} type={filter.resourceURL} label={filter.label} />)}
+          {resourceFilters.map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} resourceURL={filter?.resourceURL} />)}
           <Typography variant="subtitle2" className={classes.marketplaceTitle} gutterBottom component="div">MARKETPLACE</Typography>
-          {marketplaceFilters.map(filter => <MenuItem key={filter.type} type={filter.resourceURL} label={filter.label} />)}
+          {marketplaceFilters.map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} resourceURL={filter?.resourceURL} />)}
         </FloatingPaper>
       )}
     </div>

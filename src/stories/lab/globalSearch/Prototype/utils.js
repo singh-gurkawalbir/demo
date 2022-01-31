@@ -28,7 +28,7 @@ export function getFilters(searchString) {
 
     allFilters.forEach(f => {
       const label = filterMap[f].label.toLowerCase();
-      const filter = filterMap[f].type;
+      const filter = filterMap[f].resourceURL;
 
       if (label.startsWith(shortcut) && !selectedFilters.includes(filter)) {
         selectedFilters.push(filter);
