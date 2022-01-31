@@ -36,8 +36,6 @@ export function getFilters(searchString) {
     });
   });
 
-  // console.log(filterShortcuts, selectedFilters);
-
   return selectedFilters;
 }
 

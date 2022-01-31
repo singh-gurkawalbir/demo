@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
