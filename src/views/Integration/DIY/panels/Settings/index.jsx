@@ -93,10 +93,6 @@ function CustomSettings({ integrationId, sectionId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [remountCount, setRemountCount] = useState(0);
-  const remountAfterSaveFn = () => {
-    setRemountCount(count => count + 1);
-  };
-
   const {settings} = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, 'integrations', integrationId, sectionId || 'general') || emptyObj;
 
   const hasPreSaveHook = useSelector(state => {
@@ -130,6 +126,10 @@ function CustomSettings({ integrationId, sectionId }) {
     }),
     [sectionId, settings]
   );
+  const remountForm = useCallback(() => {
+    setRemountCount(remountCount => remountCount + 1);
+  }, []);
+
   const validationHandler = useCallback(field => {
     // Incase of invalid json throws error to be shown on the field
 
@@ -187,7 +187,7 @@ function CustomSettings({ integrationId, sectionId }) {
       path: `/integrations/${integrationId}`,
       method: isFrameWork2 ? 'put' : 'PATCH',
       onSave: handleSubmit,
-      onSuccess: remountAfterSaveFn,
+      onSuccess: remountForm,
     }
   );
 
@@ -199,6 +199,10 @@ function CustomSettings({ integrationId, sectionId }) {
     validationHandler,
     remount: remountCount,
   });
+
+  useEffect(() => {
+    setRemountCount(remountCount => remountCount + 1);
+  }, [settings]);
 
   return (
     <div className={classes.root}>
