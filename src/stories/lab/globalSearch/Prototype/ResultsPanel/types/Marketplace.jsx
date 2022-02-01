@@ -5,6 +5,7 @@ import UpArrowIcon from '../../../../../../components/icons/ArrowUpIcon';
 import FilledButton from '../../../../../../components/Buttons/FilledButton';
 import useScrollIntoView from '../../hooks/useScrollIntoView';
 import { useGlobalSearchState } from '../../hooks/useGlobalSearchState';
+import useRequestForDemo from '../../../../../../hooks/useRequestForDemo';
 
 const useStyles = makeStyles(theme => ({
   rootExpanded: {
@@ -40,18 +41,21 @@ function MarketPlaceRow({type, result, includeDivider, focussed}) {
   const setOpen = useGlobalSearchState(state => state.changeOpen);
   const history = useHistory();
   const rowRef = useRef();
+  const {RequestDemoDialog, requestDemo} = useRequestForDemo();
 
   useScrollIntoView(rowRef, focussed);
 
   const handleClick = useCallback(e => {
     e?.stopPropagation();
-    setOpen(false);
     if (type === 'marketplaceTemplates') {
       const url = `marketplace/${result?.applications?.[0]}/installTemplate/preview/${result?._id}`;
 
+      setOpen(false);
       history.push(url);
+    } else {
+      requestDemo(result);
     }
-  }, [history, result?._id, result?.applications, setOpen, type]);
+  }, [history, requestDemo, result, setOpen, type]);
   const buttonLabel = type === 'marketplaceConnectors' ? 'Request a demo' : 'Preview';
 
   if (!result) return null;
@@ -82,6 +86,7 @@ function MarketPlaceRow({type, result, includeDivider, focussed}) {
           </Typography>
         </AccordionDetails>
       </Accordion>
+      <RequestDemoDialog />
     </>
   );
 }

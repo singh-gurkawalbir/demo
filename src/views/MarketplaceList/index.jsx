@@ -9,11 +9,8 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
-import {
-  CONTACT_SALES_MESSAGE,
-} from '../../utils/messageStore';
+import useRequestForDemo from '../../hooks/useRequestForDemo';
 import { selectors } from '../../reducers';
-import ModalDialog from '../../components/ModalDialog';
 import InstallTemplateDrawer from '../../components/drawer/Install/Template';
 import LoadResources from '../../components/LoadResources';
 import useConfirmDialog from '../../components/ConfirmDialog';
@@ -122,7 +119,6 @@ export default function MarketplaceList() {
   const [fetchedCollection, setFetchedCollection] = useState(false);
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [showMessage, setShowMessage] = useState(false);
   const userPreferences = useSelector(state =>
     selectors.userPreferences(state)
   );
@@ -139,6 +135,7 @@ export default function MarketplaceList() {
   const applications = applicationsList();
   const connector = applications.find(c => c.id === application);
   const applicationName = connector?.name || capitalizeFirstLetter(application);
+  const { RequestDemoDialog, requestDemo } = useRequestForDemo();
 
   useEffect(() => {
     if (!connectors.length && !templates.length && !fetchedCollection) {
@@ -183,10 +180,6 @@ export default function MarketplaceList() {
     }
   };
 
-  const handleContactSalesClick = connector => {
-    dispatch(actions.marketplace.contactSales(connector.name, connector._id));
-    setShowMessage(true);
-  };
   const handletrialEnabledClick = connector => {
     if (connector.usedTrialLicenseExists) {
       confirmDialog({
@@ -198,7 +191,7 @@ export default function MarketplaceList() {
           {
             label: 'Request a demo',
             onClick: () => {
-              handleContactSalesClick(connector);
+              requestDemo(connector);
             },
           },
           {
@@ -274,7 +267,7 @@ export default function MarketplaceList() {
               {connector.canRequestDemo && (
                 <FilledButton
                   data-test="contactSales"
-                  onClick={() => handleContactSalesClick(connector)}>
+                  onClick={() => requestDemo(connector)}>
                   Request a demo
                 </FilledButton>
               )}
@@ -323,21 +316,7 @@ export default function MarketplaceList() {
           </Card>
         ))}
       </div>
-      {showMessage && (
-        <ModalDialog show onClose={() => setShowMessage(false)}>
-          <div>Thank you! Your request has been received.</div>
-          <div>
-            {CONTACT_SALES_MESSAGE}
-            <a
-              href="http://www.celigo.com/integration-marketplace"
-              rel="noopener noreferrer"
-              target="_blank"
-              className={classes.link}>
-              http://www.celigo.com/integration-marketplace
-            </a>
-          </div>
-        </ModalDialog>
-      )}
+      <RequestDemoDialog />
     </LoadResources>
   );
 }

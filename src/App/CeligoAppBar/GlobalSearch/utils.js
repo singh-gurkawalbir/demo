@@ -1,7 +1,7 @@
 import { filterMap } from '../../../stories/lab/globalSearch/Prototype/filterMeta';
 
 export function getResourcesToLoad(resourceItems) {
-  const mandatoryResources = ['published', 'integrations', 'flows'];
+  const mandatoryResources = ['published', 'templates/published', 'integrations', 'flows'];
   const resourcesToLoad = resourceItems?.reduce((res, item) => {
     if (filterMap[item]?.resourceURL && !mandatoryResources?.includes(filterMap[item]?.resourceURL)) {
       res.push(filterMap[item]?.resourceURL);
