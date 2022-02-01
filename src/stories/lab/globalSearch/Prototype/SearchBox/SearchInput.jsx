@@ -44,7 +44,7 @@ function SearchInput() {
 
   const [inputValue, setInputValue] = useDebouncedValue('', value => {
     setKeyword(value);
-  }, 200);
+  }, 100);
   const memoizedValues = useSyncedRef({
     setInputValue,
     setOpen,

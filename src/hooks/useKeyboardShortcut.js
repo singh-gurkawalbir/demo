@@ -83,7 +83,7 @@ const useKeyboardShortcut = (shortcutKeys, callback, {ignoreBlacklist = false, u
     window.addEventListener('keyup', keyupListener, useCapture);
 
     return () => window.removeEventListener('keyup', keyupListener, useCapture);
-  }, [keyupListener]);
+  }, [keyupListener, useCapture]);
 };
 
 export default useKeyboardShortcut;

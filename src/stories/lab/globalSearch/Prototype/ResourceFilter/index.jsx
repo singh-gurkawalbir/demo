@@ -70,7 +70,7 @@ function ResourceFilter() {
       {open && (
         <FloatingPaper ref={containerRef} className={classes.menu}>
           <div className={classes.allContainer}>
-            <MenuItem type="all" label="All" />
+            <MenuItem resourceURL="all" type="all" label="All" />
             <IconButton size="small" onClick={handleArrowClick}>
               <CloseIcon />
             </IconButton>

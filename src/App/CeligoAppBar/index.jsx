@@ -12,7 +12,7 @@ import EnvironmentToggle from './EnvironmentToggle';
 // import ThemeToggle from './ThemeToggle';
 import CeligoBreadcrumb from './CeligoBreadcrumb';
 import getImageUrl from '../../utils/image';
-import GlobalSearch from '../../views/GlobalSearch';
+import GlobalSearch from './GlobalSearch';
 
 const useStyles = makeStyles(theme => ({
   celigoLogo: {

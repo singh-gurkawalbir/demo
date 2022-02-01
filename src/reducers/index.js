@@ -6608,8 +6608,9 @@ selectors.showAmazonRestrictedReportType = (state, formKey) => {
 
 selectors.globalSearchResults = ((resultsCache = {}) => (state, keyword, filters) => {
   if (keyword?.length < 2) return {};
+  const defaultAShareId = state?.user?.preferences?.defaultAShareId;
   // the results are filtered using case insensitive keyword, hence caching also is done using case insenitive keyword
-  const cacheKey = keyword?.toLowerCase() + filters?.join(',').toLowerCase();
+  const cacheKey = defaultAShareId + keyword?.toLowerCase() + filters?.join(',').toLowerCase();
 
   if (resultsCache[cacheKey]) {
     return resultsCache[cacheKey];

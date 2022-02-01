@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core';
 import useKeyboardShortcut from '../../../../hooks/useKeyboardShortcut';
@@ -30,7 +30,13 @@ function GlobalSearch() {
   const setOpen = useGlobalSearchState(state => state.changeOpen);
   const classes = useStyles({open});
   const handleOpenSearch = useCallback(() => setOpen(true), [setOpen]);
+  const memoizedHandler = useRef({setOpen});
 
+  useEffect(() => {
+    const { setOpen } = memoizedHandler?.current;
+
+    return () => setOpen(false);
+  }, []);
   useKeyboardShortcut(['/'], handleOpenSearch, {useCapture: false});
 
   return (
