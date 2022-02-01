@@ -4,9 +4,9 @@ import clsx from 'clsx';
 import produce from 'immer';
 import React from 'react';
 import { makeStyles, IconButton } from '@material-ui/core';
-import AddIcon from '../../../../components/icons/AddIcon';
-import { getConnectedEdges, layoutElements } from './lib';
-import { useFlowContext } from './Context';
+import AddIcon from '../../../../../components/icons/AddIcon';
+import { getConnectedEdges, layoutElements } from '../lib';
+import { useFlowContext } from '../Context';
 
 const useStyles = makeStyles(theme => ({
   addButton: {
@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   leftAddButton: {
-    left: -48,
+    left: -26,
   },
   rightAddButton: {
     left: 48,
@@ -40,8 +40,8 @@ export default ({ id, direction = 'left'}) => {
 
         draft.push({
           id: newId,
-          type: 'step',
-          data: { label: `New node: ${newId}` },
+          type: 'pp',
+          data: { label: `New node: ${newId}`},
         });
 
         if (direction === 'left') {
