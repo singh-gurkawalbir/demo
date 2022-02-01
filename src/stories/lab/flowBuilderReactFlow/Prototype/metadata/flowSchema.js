@@ -1,31 +1,37 @@
 export default [
-  {
-    id: '1',
-    type: 'input', // input node
-    sourcePosition: 'right',
-    data: { label: 'Input Node' },
-  },
+  // {
+  //   id: '1',
+  //   type: 'input', // input node
+  //   sourcePosition: 'right',
+  //   data: { label: 'Input Node' },
+  // },
   // default node
   {
+    id: '1',
+    type: 'pg', // input node
+    sourcePosition: 'right',
+    data: { label: 'Export NetSuite data', connectorType: 'netsuite' },
+  },
+  {
     id: '2',
-    type: 'step',
-    data: { label: 'Custom step node' },
+    type: 'pp',
+    data: { label: 'HTTP lookup', isLookup: true, connectorType: 'http' },
   },
   {
     id: '2a',
-    type: 'step',
-    data: { label: 'Custom step node' },
+    type: 'pp',
+    data: { label: 'FTP import', connectorType: 'ftp' },
   },
   {
     id: '2b',
-    type: 'step',
-    data: { label: 'Custom step node' },
+    type: 'pp',
+    data: { label: 'S3 import', connectorType: 's3' },
   },
   {
     id: '3',
-    type: 'output', // output node
-    targetPosition: 'left',
-    data: { label: 'Output Node' },
+    type: 'pp',
+    // targetPosition: 'left',
+    data: { label: 'REST import', connectorType: 'rest' },
   },
 
   { id: 'e1-2', source: '1', target: '2', type: 'step' }, // , animated: true
