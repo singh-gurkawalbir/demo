@@ -74,6 +74,7 @@ export default {
       id: 'application',
       name: 'application',
       type: 'selectapplication',
+      isLoggable: true,
       label: 'Application',
       refreshOptionsOnChangesTo: ['resourceType'],
       placeholder: applicationsPlaceHolderText(),
