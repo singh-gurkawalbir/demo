@@ -112,8 +112,14 @@ export function CustomReactSelectStyles() {
     }),
     input: () => ({
       color: theme.palette.secondary.main,
-      '& input': {
-        fontFamily: 'inherit',
+      width: '100%',
+      '& > div': {
+        width: '100%',
+      },
+      '& * > input': {
+        width: '100% !important',
+        display: 'block !important',
+        fontFamily: 'source sans pro !important',
       },
     }),
     placeholder: () => ({
