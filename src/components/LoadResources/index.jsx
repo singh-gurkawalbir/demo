@@ -1,11 +1,12 @@
 import { useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 
 export default function LoadResources({ children, resources, required }) {
   const dispatch = useDispatch();
+  const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
   const resourceStatus = useSelectorMemo(
     selectors.makeAllResourceStatusSelector,
     resources
@@ -23,7 +24,7 @@ export default function LoadResources({ children, resources, required }) {
   );
 
   useEffect(() => {
-    if (!isAllDataReady) {
+    if (!isAllDataReady && defaultAShareId) {
       resourceStatus.forEach(resource => {
         if (!resource.hasData) {
           dispatch(actions.resource.requestCollection(resource.resourceType));
