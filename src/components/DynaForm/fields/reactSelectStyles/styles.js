@@ -112,7 +112,6 @@ export function CustomReactSelectStyles() {
     }),
     input: () => ({
       color: theme.palette.secondary.main,
-      width: '100%',
       '& input': {
         fontFamily: 'inherit',
       },
