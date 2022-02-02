@@ -9,6 +9,11 @@ const initialFocusIndex = -1;
 function useKeyboardNavigation({listLength = 0, containerRef = null, listItemRef = null}) {
   const [currentFocussed, setCurrentFocussed] = useState(initialFocusIndex);
 
+  useEffect(() => {
+    if (currentFocussed > listLength - 1) {
+      setCurrentFocussed(listLength - 1);
+    }
+  }, [currentFocussed, listLength]);
   function onKeyDown(event) {
     switch (event.keyCode) {
       case KEYCODE.DOWN:
