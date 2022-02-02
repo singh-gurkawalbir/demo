@@ -34,6 +34,7 @@ export default () => {
     <ReactFlowProvider>
       <FlowProvider elements={elements} setElements={setElements}>
         <ReactFlow
+          selectNodesOnDrag={false}
           elements={elements}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
