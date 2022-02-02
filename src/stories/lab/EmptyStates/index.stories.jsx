@@ -11,9 +11,9 @@ export default {
 
 const Template = args => <EmptyState {...args} />;
 
-export const homePage = Template.bind({});
+export const myIntegrations = Template.bind({});
 
-// homePage.args = {
+// myIntegrations.args = {
 //   children: 'Connections page',
 // };
 const designParameters = {
@@ -24,4 +24,4 @@ const designParameters = {
   },
 };
 
-homePage.parameters = designParameters;
+myIntegrations.parameters = designParameters;
