@@ -47,7 +47,7 @@ export default function ErrorCell({
     history.push(`${flowBuilderTo}/errors/${id}/filter/${_flowJobId}/open`);
   }, [_flowId, _flowJobId, dispatch, flowBuilderTo, history, id, job]);
 
-  if (numOpenError === 0) {
+  if (!numOpenError) {
     return '0 errors';
   }
 

@@ -50,6 +50,14 @@ function mapParamsToValues(relativeTokens, actualTokens, pathParametersInfo) {
 
       if (relToken?.includes(item?.config?.prefix)) {
         actualValue = actualToken.substring(actualToken.indexOf(item?.config?.prefix) + item?.config?.prefix?.length, actualToken.indexOf(item?.config?.suffix));
+      } else if (relToken?.includes('.')) {
+        const suffixTokens = new RegExp(`:_${itemId}(.*)`).exec(relToken);
+        const suffix = suffixTokens?.[suffixTokens?.length - 1];
+
+        const pathParamRegex = new RegExp(`(.*)${suffix}`);
+        const valueTokens = pathParamRegex.exec(actualToken);
+
+        actualValue = valueTokens && valueTokens[valueTokens?.length - 1];
       }
 
       const id = relToken

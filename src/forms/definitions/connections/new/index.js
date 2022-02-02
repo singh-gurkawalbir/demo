@@ -24,6 +24,7 @@ export default {
       name: 'application',
       type: 'selectapplication',
       label: 'Application',
+      isLoggable: true,
       placeholder: applicationsPlaceHolderText(),
       defaultValue: '',
       required: true,

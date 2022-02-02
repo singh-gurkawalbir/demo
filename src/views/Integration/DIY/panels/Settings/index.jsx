@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect, useMemo, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Grid, List, ListItem, makeStyles } from '@material-ui/core';
 import { NavLink, useHistory, useRouteMatch } from 'react-router-dom';
@@ -92,7 +92,7 @@ const emptyObj = {};
 function CustomSettings({ integrationId, sectionId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-
+  const [remountCount, setRemountCount] = useState(0);
   const {settings} = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, 'integrations', integrationId, sectionId || 'general') || emptyObj;
 
   const hasPreSaveHook = useSelector(state => {
@@ -126,6 +126,10 @@ function CustomSettings({ integrationId, sectionId }) {
     }),
     [sectionId, settings]
   );
+  const remountForm = useCallback(() => {
+    setRemountCount(remountCount => remountCount + 1);
+  }, []);
+
   const validationHandler = useCallback(field => {
     // Incase of invalid json throws error to be shown on the field
 
@@ -183,6 +187,7 @@ function CustomSettings({ integrationId, sectionId }) {
       path: `/integrations/${integrationId}`,
       method: isFrameWork2 ? 'put' : 'PATCH',
       onSave: handleSubmit,
+      onSuccess: remountForm,
     }
   );
 
@@ -192,9 +197,12 @@ function CustomSettings({ integrationId, sectionId }) {
     resourceType: 'integrations',
     resourceId: integrationId,
     validationHandler,
-    remount: fieldMeta,
-
+    remount: remountCount,
   });
+
+  useEffect(() => {
+    setRemountCount(remountCount => remountCount + 1);
+  }, [settings]);
 
   return (
     <div className={classes.root}>

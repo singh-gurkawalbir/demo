@@ -2263,6 +2263,19 @@ const assistantData = {
                 },
                 paging: { pagingMethod: 'nextpageurl', nextPagePath: 'npp' },
               },
+              {
+                id: 'ep3',
+                url: 'some/lists/thing/:_action/some/other/:_action2.json',
+                pathParameters: [{
+                  id: 'action',
+                }, {
+                  id: 'action2',
+                }],
+                response: {
+                  successPath: 'successPath',
+                },
+                paging: { pagingMethod: 'nextpageurl', nextPagePath: 'npp' },
+              },
             ],
           },
           {
@@ -2641,6 +2654,65 @@ describe('convertFromExport', () => {
           method: 'GET',
           headers: [],
           relativeURI: "some/lists(guid'ABC')/thing/XYZ/some/other/XYZ",
+          allowUndefinedResource: false,
+          pagingMethod: 'nextpageurl',
+          nextPagePath: 'npp',
+        },
+      },
+      assistantData,
+      'rest',
+    ],
+    [
+      {
+        bodyParams: {},
+        exportType: undefined,
+        operation: 'ep3',
+        operationDetails: {
+          headers: {
+            hardcoded: 'header',
+            manual: '',
+          },
+          headersMetadata: [],
+          id: 'ep3',
+          paging: {
+            nextPagePath: 'npp',
+            pagingMethod: 'nextpageurl',
+          },
+          pathParameters: [
+            {
+              id: 'action',
+            },
+            {
+              id: 'action2',
+            },
+          ],
+          queryParameters: [],
+          response: {
+            successPath: 'successPath',
+          },
+          url: 'some/lists/thing/:_action/some/other/:_action2.json',
+        },
+        pathParams: {
+          action: 'XYZ',
+          action2: 'ABC',
+        },
+        queryParams: {},
+        resource: 'r2',
+        version: 'v1',
+      },
+      {
+        assistant: 'someAssistant',
+        adaptorType: 'RESTExport',
+        assistantMetadata: {
+          resource: 'r2',
+          operation: 'ep3',
+          version: 'v1',
+        },
+        rest: {
+          ...DEFAULT_PROPS.EXPORT.REST,
+          method: 'GET',
+          headers: [],
+          relativeURI: 'some/lists/thing/XYZ/some/other/ABC.json',
           allowUndefinedResource: false,
           pagingMethod: 'nextpageurl',
           nextPagePath: 'npp',
