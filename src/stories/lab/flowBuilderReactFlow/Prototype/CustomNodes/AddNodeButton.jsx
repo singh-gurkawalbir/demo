@@ -23,7 +23,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const generateId = () => v4().replace(/-/g, '').substring(0, 4);
+const addNodesWithStepHandle = (newId, id, direction) => [
+  {
+    id: newId,
+    type: 'pp',
+    data: { label: `New node: ${newId}`},
+  },
+  direction === 'left' ? { id: generateId(), source: newId, target: id, type: 'step' } : { id: generateId(), source: id, target: newId, type: 'step' },
 
+];
 export default ({ id, direction = 'left'}) => {
   const classes = useStyles();
   const { setElements } = useFlowContext();
@@ -37,19 +45,10 @@ export default ({ id, direction = 'left'}) => {
       const newElements = produce(elements, draft => {
         const connectedEdge = getConnectedEdges(id, direction, draft);
         // console.log(connectedEdge);
+        const index = elements.findIndex(el => el.id === id);
+        const newNodes = addNodesWithStepHandle(newId, id, direction);
 
-        draft.push({
-          id: newId,
-          type: 'pp',
-          data: { label: `New node: ${newId}`},
-        });
-
-        if (direction === 'left') {
-          draft.push({ id: generateId(), source: newId, target: id, type: 'step' });
-        } else {
-          draft.push({ id: generateId(), source: id, target: newId, type: 'step' });
-        }
-
+        draft.splice(direction === 'left' ? index : index + 1, 0, ...newNodes);
         connectedEdge.forEach(e => {
           if (direction === 'left') {
             e.target = newId;
