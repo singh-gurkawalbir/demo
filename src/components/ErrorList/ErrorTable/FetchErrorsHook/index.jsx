@@ -24,7 +24,7 @@ export const useFetchErrors = ({
         let defaultFilter = isResolved ? DEFAULT_FILTERS.RESOLVED : DEFAULT_FILTERS.OPEN;
 
         if (flowJobId && childJob) {
-          const occuredAt = {startDate: childJob.parentStartedAt, endDate: childJob.endedAt, preset: 'custom'};
+          const occuredAt = {startDate: childJob.parentStartedAt, endDate: childJob.endedAt || new Date().toISOString(), preset: 'custom'};
           const resolvedAt = {startDate: childJob.parentStartedAt, endDate: new Date().toISOString(), preset: 'custom'};
 
           if (isResolved) {
