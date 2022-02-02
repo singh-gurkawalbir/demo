@@ -9,6 +9,7 @@ export default {
           id: 'deltaType',
           name: 'deltaType',
           type: 'radiogroup',
+          isLoggable: true,
           label: '',
           defaultValue: 'automatic',
           options: [
@@ -25,6 +26,7 @@ export default {
           name: 'timeZone',
           type: 'select',
           label: 'Time zone',
+          isLoggable: true,
           defaultValue: timeZone,
           options: [
             {
@@ -45,6 +47,7 @@ export default {
           name: 'startDateAutomatic',
           type: 'datetime',
           label: 'Start date/time',
+          isLoggable: true,
           defaultDisabled: true,
           defaultValue: startDate,
           visibleWhen: [{ field: 'deltaType', is: ['automatic'] }],
@@ -56,6 +59,7 @@ export default {
           name: 'startDateCustom',
           type: 'datetime',
           label: 'Start date/time',
+          isLoggable: true,
           defaultValue: startDate,
           requiredWhen: [{ field: 'deltaType', is: ['custom'] }],
           visibleWhen: [{ field: 'deltaType', is: ['custom'] }],
