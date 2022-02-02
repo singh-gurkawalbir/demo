@@ -275,7 +275,7 @@ describe('tests for reducer selectors', () => {
       );
 
       expect(selectors.getResourceEditUrl(state, 'flows', 'f1')).toEqual(
-        `/integrationapps/SalesforceNetSuiteIntegrationApp/${resourceId}/flows/sections/undefined/flowBuilder/f1`
+        `/integrationapps/SalesforceNetSuiteIntegrationApp/${resourceId}/flowBuilder/f1`
       );
     });
     test('should return edit url for IA flow with sectionId', () => {

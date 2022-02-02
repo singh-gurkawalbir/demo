@@ -5731,12 +5731,12 @@ selectors.getResourceEditUrl = (state, resourceType, resourceId, childId, sectio
 
   if (_connectorId) {
     if (childId) {
-      if (resourceType === 'flows') {
+      if (resourceType === 'flows' && sectionId) {
         iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/child/${childId}/flows/sections/${sectionId}`;
       } else {
         iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/child/${childId}`;
       }
-    } else if (resourceType === 'flows') {
+    } else if (resourceType === 'flows' && sectionId) {
       iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/flows/sections/${sectionId}`;
     } else {
       iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}`;

@@ -1414,8 +1414,10 @@ describe('flowbuilderUrl', () => {
   const flowURL = getRoutePath('/integrations/i1/flowBuilder/f1');
   const standAloneIntegrationFlowURL = getRoutePath('/integrations/none/flowBuilder/f1');
   const integrationFlowGroupURL = getRoutePath('/integrations/i1/flows/sections/s1/flowBuilder/f1');
-  const integrationAppParentFlowURL = getRoutePath('/integrationapps/a1/i1/flows/sections/s1/flowBuilder/f1');
-  const integrationAppChildFlowURL = getRoutePath('/integrationapps/a1/i1/child/c1/flows/sections/s1/flowBuilder/f1');
+  const integrationAppParentWithSectionsFlowURL = getRoutePath('/integrationapps/a1/i1/flows/sections/s1/flowBuilder/f1');
+  const integrationAppParentWithoutSectionsFlowURL = getRoutePath('/integrationapps/a1/i1/flowBuilder/f1');
+  const integrationAppChildWithSectionsFlowURL = getRoutePath('/integrationapps/a1/i1/child/c1/flows/sections/s1/flowBuilder/f1');
+  const integrationAppChildWithoutSectionsFlowURL = getRoutePath('/integrationapps/a1/i1/child/c1/flowBuilder/f1');
   const args = {
     childId: false,
     isIntegrationApp: false,
@@ -1438,16 +1440,29 @@ describe('flowbuilderUrl', () => {
     args.sectionId = 's1';
     expect(flowbuilderUrl(flowId, integrationId, args)).toEqual(integrationFlowGroupURL);
   });
-  test('should return valid flowBuilder URL for integration app parent flow', () => {
+  test('should return valid flowBuilder URL for integration app parent flow and parent has sections', () => {
     args.isIntegrationApp = true;
     args.appName = 'a1';
-    expect(flowbuilderUrl(flowId, integrationId, args)).toEqual(integrationAppParentFlowURL);
+    expect(flowbuilderUrl(flowId, integrationId, args)).toEqual(integrationAppParentWithSectionsFlowURL);
   });
-  test('should return valid flowBuilder URL for integration app child flow', () => {
+  test('should return valid flowBuilder URL for integration app child flow and child has sections', () => {
     args.isIntegrationApp = true;
     args.appName = 'a1';
     args.childId = 'c1';
-    expect(flowbuilderUrl(flowId, integrationId, args)).toEqual(integrationAppChildFlowURL);
+    expect(flowbuilderUrl(flowId, integrationId, args)).toEqual(integrationAppChildWithSectionsFlowURL);
+  });
+  test('should return valid flowBuilder URL for integration app child flow and child does not have sections', () => {
+    args.isIntegrationApp = true;
+    args.appName = 'a1';
+    args.childId = 'c1';
+    args.sectionId = undefined;
+    expect(flowbuilderUrl(flowId, integrationId, args)).toEqual(integrationAppChildWithoutSectionsFlowURL);
+  });
+  test('should return valid flowBuilder URL for integration app parent flow and parent does not have sections', () => {
+    args.isIntegrationApp = true;
+    args.appName = 'a1';
+    args.childId = undefined;
+    expect(flowbuilderUrl(flowId, integrationId, args)).toEqual(integrationAppParentWithoutSectionsFlowURL);
   });
 });
 
