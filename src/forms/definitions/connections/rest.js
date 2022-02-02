@@ -143,7 +143,9 @@ export default {
     }
     delete newValues['/rest/mediaType'];
 
-    newValues['/http/ping/method'] = newValues['/rest/pingMethod'];
+    if (newValues['/rest/pingMethod']) {
+      newValues['/http/ping/method'] = newValues['/rest/pingMethod'];
+    }
     delete newValues['/rest/pingMethod'];
 
     if (newValues['/http/ping/method'] === 'GET') {
