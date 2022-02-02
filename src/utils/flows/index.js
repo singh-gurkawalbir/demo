@@ -323,9 +323,15 @@ export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationAp
 
   if (isIntegrationApp) {
     if (childId) {
-      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/flows/sections/${sectionId}/${flowBuilderPathName}/${flowId}`);
-    } else {
+      if (sectionId) {
+        flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/flows/sections/${sectionId}/${flowBuilderPathName}/${flowId}`);
+      } else {
+        flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/${flowBuilderPathName}/${flowId}`);
+      }
+    } else if (sectionId) {
       flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/flows/sections/${sectionId}/${flowBuilderPathName}/${flowId}`);
+    } else {
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`);
     }
   } else if (sectionId && integrationId !== 'none') {
     flowBuilderTo = getRoutePath(`/integrations/${integrationId}/flows/sections/${sectionId}/${flowBuilderPathName}/${flowId}`);
