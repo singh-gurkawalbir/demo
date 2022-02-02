@@ -5,7 +5,7 @@ export function generateLayoutColumns(layoutSection) {
     const section = cloneDeep(sec);
 
     if (['System Information', 'Custom Links'].indexOf(section.heading) > -1) {
-      return false;
+      return section;
     }
 
     // eslint-disable-next-line no-param-reassign
