@@ -32,7 +32,7 @@ export default function LoadResources({ children, resources, required }) {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, isAllDataReady]);
+  }, [dispatch, isAllDataReady, resources]);
 
   if (isAllDataReady || !required) {
     return children || null;
