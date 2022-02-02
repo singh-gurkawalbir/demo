@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { useSelectorMemo } from '../../../../../hooks';
 import { selectors } from '../../../../../reducers';
@@ -9,12 +10,13 @@ import { getFlowGroup } from '../../../../../utils/flows';
 export default function FlowNameWithFlowGroupCell({ flowId, integrationId }) {
   const tableContext = useGetTableContext();
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
+  const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
   const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
   const flowSectionsForIA1 = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId);
   let sectionName;
   let sectionId;
 
-  if (flow?._connectorId) {
+  if (isIntegrationAppV1) {
     const section = flowSectionsForIA1.find(flowSection => flowSection.flows?.some(flow => flow._id === flowId));
 
     sectionName = section?.title;
