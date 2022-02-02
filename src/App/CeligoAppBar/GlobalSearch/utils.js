@@ -8,7 +8,7 @@ export function getResourcesToLoad(resourceItems) {
     }
 
     return res;
-  }, mandatoryResources)?.join(',');
+  }, [...mandatoryResources])?.join(',');
 
   return resourcesToLoad;
 }
