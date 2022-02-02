@@ -7,6 +7,7 @@ import CeligoSelect from '../CeligoSelect';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { stringCompare } from '../../utils/sort';
 import { getFlowGroup } from '../../utils/flows';
+import CeligoTruncate from '../CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   flow: {
@@ -33,12 +34,12 @@ const OptionIml = ({ item, integrationId, childId, isIntegrationApp}) => {
   }
 
   return (
-    <div>
+    <CeligoTruncate placement="bottom">
       <span>{item.name || item._id}</span>
       {isIntegrationApp
         ? sectionName && (<span className={classes.flowGroupName}>{` | ${sectionName}`}</span>)
         : groupName && (<span className={classes.flowGroupName}>{` | ${groupName}`}</span>)}
-    </div>
+    </CeligoTruncate>
   );
 };
 export default function FlowSelector({
