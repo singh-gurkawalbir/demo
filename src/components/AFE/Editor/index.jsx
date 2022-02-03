@@ -130,9 +130,11 @@ export default function Editor({ editorId }) {
 
   const showErrorDragBar = useSelector(state => {
     const violations = selectors.editorViolations(state, editorId);
+    const { warning, logs } = selectors.editorResult(state, editorId);
+
     const editor = selectors.editor(state, editorId);
 
-    return !!(violations || editor.error || editor.warning || editor.logs);
+    return !!(violations || editor.error || warning || logs);
   });
 
   const editorContext = useSelector(state => {
