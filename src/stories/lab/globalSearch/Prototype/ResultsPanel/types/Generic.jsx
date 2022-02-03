@@ -18,7 +18,6 @@ const useStyles = makeStyles(theme => ({
     '&:hover,&:focus': {
       backgroundColor: theme.palette.background.paper2,
       cursor: 'pointer',
-      outline: 'unset',
     },
     color: 'black',
     backgroundColor: ({focussed}) => focussed ? theme.palette.background.paper2 : 'initial',
@@ -62,7 +61,11 @@ function GenericRow({result, children, includeDivider, focussed, type}) {
 
   const handleKeyDown = useCallback(e => {
     // Listen to only enter key press
-    if (e.keyCode === 13) {
+
+    /* When navigating with tab,
+    pressing enter on focussed tab should not navigate to the resource
+    But change the tab, hence checking if activeElement is not Tabs Button */
+    if (e.keyCode === 13 && !document?.activeElement?.className?.includes('Button')) {
       // To stop event bubbling
       e?.stopPropagation();
       handleRowClick();
