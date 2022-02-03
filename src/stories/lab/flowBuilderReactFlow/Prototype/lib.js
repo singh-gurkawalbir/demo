@@ -10,8 +10,8 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 // In a real world app you would use the correct width and height values of
 // const nodes = useStoreState(state => state.nodes) and then node.__rf.width, node.__rf.height
 
-const nodeWidth = 200;
-const nodeHeight = 50;
+const nodeWidth = 250;
+const nodeHeight = 300;
 const options = {
   marginx: 50,
   marginy: 50,

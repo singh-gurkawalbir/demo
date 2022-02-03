@@ -76,13 +76,13 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     display: 'flex',
     left: -16,
-    top: 126,
+    top: 68,
   },
   rightActions: {
     position: 'absolute',
     display: 'flex',
     left: 280,
-    top: 126,
+    top: 68,
   },
   isNotOverActions: {
     // display: 'none',

@@ -48,7 +48,7 @@ export default function PageGenerator(props) {
           isPageGenerator
       />
       </div>
-      <Handle type="source" position={Position.Right} />
+      <Handle type="source" position={Position.Right} style={{marginTop: -56}} />
     </div>
   );
 }

@@ -85,7 +85,7 @@ export default function PageGenerator(props) {
 
   return (
     <div className={classes.root}>
-      <Handle className={classes.handle} type="target" position={Position.Left} />
+      <Handle className={classes.handle} type="target" position={Position.Left} style={{marginTop: -56}} />
       <div className={classes.contentContainer} >
         <AddNodeButton id={id} direction="left" />
         <div className={classes.ppContainer}>
@@ -104,7 +104,7 @@ export default function PageGenerator(props) {
         </div>
         <AddNodeButton id={id} direction="right" />
       </div>
-      <Handle className={classes.handle} type="source" position={Position.Right} />
+      <Handle className={classes.handle} type="source" position={Position.Right} style={{marginTop: -56}} />
     </div>
   );
 }
