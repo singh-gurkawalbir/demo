@@ -6607,7 +6607,9 @@ selectors.showAmazonRestrictedReportType = (state, formKey) => {
           relativeURI?.startsWith('/reports/2021-06-30/documents/');
 };
 
-selectors.globalSearchResults = ((resultsCache = new LRU({max: 20, maxAge: 1000 * 60 * 60})) => (state, keyword, filters) => {
+const ONE_HOUR = 1000 * 60 * 60;
+
+selectors.globalSearchResults = ((resultsCache = new LRU({max: 20, maxAge: ONE_HOUR })) => (state, keyword, filters) => {
   if (keyword?.length < 2) return {};
   const defaultAShareId = state?.user?.preferences?.defaultAShareId;
   // the results are filtered using case insensitive keyword, hence caching also is done using case insenitive keyword
