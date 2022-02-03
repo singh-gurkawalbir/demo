@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
@@ -165,6 +165,80 @@ export default function Editor({ editorId }) {
       resourceType: e.resourceType,
     };
   }, shallowEqual);
+  const handleDragStart = useCallback(event => {
+    let { target } = event;
+    let gridArea;
+
+    while (target) {
+      gridArea = getGridArea(target); // dragHandle-vert-0, dragHandle-hor-1
+      // console.log(`current gridArea: ${gridArea}`);
+
+      if (gridArea.startsWith('dragBar')) break;
+      // If we can't find the dragBar grid area, most likely its because
+      // the original mouse event target was captured by a child node of the drag area.
+      // We thus need to traverse up the DOM to find the parent which contains the drag area.
+      target = target.parentNode;
+    }
+
+    // only initiate drag start IFF we have a proper dragBar area.
+    if (!gridArea?.startsWith('dragBar')) {
+      return;
+    }
+
+    const orientation = gridArea.split('_')[1];
+
+    // console.log(`orientation for: ${gridArea} is ${orientation}.`);
+
+    setDragOrientation(orientation);
+    setIsDragging(true);
+    setDragBarGridArea(gridArea);
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    setIsDragging(false);
+    setRequireResize(true);
+  }, []);
+
+  const handleVerticalDrag = useCallback(event => {
+    const dX = event.movementX;
+    const gridNode = gridRef.current;
+    const dragBarCol = findGridColumn(gridNode, dragBarGridArea);
+
+    // console.log(dX, dragBarCol, dragBarGridArea);
+    // docs on relevant client browser API:
+    // https://stackoverflow.com/questions/35170581/how-to-access-styles-from-react
+    const cssGridCols = window.getComputedStyle(gridNode).getPropertyValue('grid-template-columns');
+    const newCssGridCols = getCssSizeString(cssGridCols, dragBarCol, dX);
+
+    if (!newCssGridCols) return;
+
+    gridNode.style.gridTemplateColumns = newCssGridCols;
+  }, [dragBarGridArea]);
+
+  const handleHorizontalDrag = useCallback(event => {
+    const dY = event.movementY;
+    const gridNode = gridRef.current;
+    const dragBarRow = findGridRow(gridNode, dragBarGridArea);
+
+    const cssGridRows = window.getComputedStyle(gridNode).getPropertyValue('grid-template-rows');
+    const newCssGridRows = getCssSizeString(cssGridRows, dragBarRow, dY);
+
+    if (!newCssGridRows) return;
+
+    gridNode.style.gridTemplateRows = newCssGridRows;
+  }, [dragBarGridArea]);
+
+  const handleDrag = useCallback(event => {
+    if (!isDragging) return;
+
+    if (dragOrientation === 'v') {
+      handleVerticalDrag(event);
+    } else {
+      handleHorizontalDrag(event);
+    }
+
+    event.preventDefault();
+  }, [isDragging, dragOrientation, handleHorizontalDrag, handleVerticalDrag]);
 
   // I can not think of a better way to handle container resize issues.
   // The resize panel mechanism relies on pixel math for dragging the handles.
@@ -176,7 +250,7 @@ export default function Editor({ editorId }) {
   // handler executes, it doesn't need to run again until AFTER a drag event occurs.
   // This implementation is a POC and should be reviewed/refined when the UI task
   // makes it to the UI codebase.
-  const handleResize = () => {
+  const handleResize = useCallback(() => {
     // console.log('handleResize', requireResize);
 
     if (!requireResize) return;
@@ -193,7 +267,7 @@ export default function Editor({ editorId }) {
     // there is no need for repeated processing, as the 'fr' will dynamically
     // change the grid size on it's own.
     setRequireResize(false);
-  };
+  }, [requireResize]);
 
   useEffect(() => {
     if (editorContext.saveError) {
@@ -232,81 +306,6 @@ export default function Editor({ editorId }) {
 
   const { panels } = editorMetadata[editorType];
   const gridTemplate = classes[resolveValue(layout, editorContext)];
-
-  function handleDragStart(event) {
-    let { target } = event;
-    let gridArea;
-
-    while (target) {
-      gridArea = getGridArea(target); // dragHandle-vert-0, dragHandle-hor-1
-      // console.log(`current gridArea: ${gridArea}`);
-
-      if (gridArea.startsWith('dragBar')) break;
-      // If we can't find the dragBar grid area, most likely its because
-      // the original mouse event target was captured by a child node of the drag area.
-      // We thus need to traverse up the DOM to find the parent which contains the drag area.
-      target = target.parentNode;
-    }
-
-    // only initiate drag start IFF we have a proper dragBar area.
-    if (!gridArea?.startsWith('dragBar')) {
-      return;
-    }
-
-    const orientation = gridArea.split('_')[1];
-
-    // console.log(`orientation for: ${gridArea} is ${orientation}.`);
-
-    setDragOrientation(orientation);
-    setIsDragging(true);
-    setDragBarGridArea(gridArea);
-  }
-
-  function handleDragEnd() {
-    setIsDragging(false);
-    setRequireResize(true);
-  }
-
-  function handleVerticalDrag(event) {
-    const dX = event.movementX;
-    const gridNode = gridRef.current;
-    const dragBarCol = findGridColumn(gridNode, dragBarGridArea);
-
-    // console.log(dX, dragBarCol, dragBarGridArea);
-    // docs on relevant client browser API:
-    // https://stackoverflow.com/questions/35170581/how-to-access-styles-from-react
-    const cssGridCols = window.getComputedStyle(gridNode).getPropertyValue('grid-template-columns');
-    const newCssGridCols = getCssSizeString(cssGridCols, dragBarCol, dX);
-
-    if (!newCssGridCols) return;
-
-    gridNode.style.gridTemplateColumns = newCssGridCols;
-  }
-
-  function handleHorizontalDrag(event) {
-    const dY = event.movementY;
-    const gridNode = gridRef.current;
-    const dragBarRow = findGridRow(gridNode, dragBarGridArea);
-
-    const cssGridRows = window.getComputedStyle(gridNode).getPropertyValue('grid-template-rows');
-    const newCssGridRows = getCssSizeString(cssGridRows, dragBarRow, dY);
-
-    if (!newCssGridRows) return;
-
-    gridNode.style.gridTemplateRows = newCssGridRows;
-  }
-
-  function handleDrag(event) {
-    if (!isDragging) return;
-
-    if (dragOrientation === 'v') {
-      handleVerticalDrag(event);
-    } else {
-      handleHorizontalDrag(event);
-    }
-
-    event.preventDefault();
-  }
 
   return (
     <>
