@@ -8,6 +8,7 @@ import moment from 'moment';
 import produce from 'immer';
 import { map, isEmpty, uniq, get} from 'lodash';
 import sift from 'sift';
+import LRU from 'lru-cache';
 import app, { selectors as fromApp } from './app';
 import data, { selectors as fromData } from './data';
 import { selectors as fromResources } from './data/resources';
@@ -6606,7 +6607,7 @@ selectors.showAmazonRestrictedReportType = (state, formKey) => {
           relativeURI?.startsWith('/reports/2021-06-30/documents/');
 };
 
-selectors.globalSearchResults = ((resultsCache = new Map()) => (state, keyword, filters) => {
+selectors.globalSearchResults = ((resultsCache = new LRU({max: 20, maxAge: 1000 * 60 * 60})) => (state, keyword, filters) => {
   if (keyword?.length < 2) return {};
   const defaultAShareId = state?.user?.preferences?.defaultAShareId;
   // the results are filtered using case insensitive keyword, hence caching also is done using case insenitive keyword
