@@ -1,4 +1,4 @@
-import { HELP_CENTER_BASE_URL } from '../../utils/constants';
+import { FLOW_EVENT_REPORTS_DOC_URL, HELP_CENTER_BASE_URL } from '../../utils/constants';
 // make sure the dictionary key matches the "model plural" name.
 export default {
   exports: `Exports are used to extract data from an application. 
@@ -70,6 +70,6 @@ export default {
     
     IMPORTANT: it may take up to one minute for API token changes to propagate 
     and take effect.`,
-  eventreports: 'The reports that you have created are shown in this list. To add a report, click + Run report at the right. To review an existing report’s details or download its CSV file, click the options in the Actions overflow (…) menu. Reports older than 30 days are no longer available.',
+  eventreports: `The <a href=${FLOW_EVENT_REPORTS_DOC_URL} rel="noreferrer" target="_blank">reports</a> that you have created are shown in this list. To add a report, click <b>+ Run report</b> at the right. To review an existing report’s details or download its CSV file, click the options in the <b>Actions</b> overflow (…) menu. Reports older than 30 days are no longer available.`,
   apis: 'My APIs are custom HTTP endpoints built directly in integrator.io.  These APIs are powered by script functions that have full access to the integrator.io API.  Within your script logic, you can support any content-type (i.e. JSON, XML, etc…), any HTTP request method (GET, PUT, POST, etc…), and you can invoke any number of external APIs.  To provision access to your custom APIs, simply create one or more integrator.io API tokens.',
 };

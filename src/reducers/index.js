@@ -3865,12 +3865,15 @@ selectors.canEditSettingsForm = (state, resourceType, resourceId, integrationId)
   return developer && !viewOnly && visibleForUser;
 };
 
-selectors.availableConnectionsToRegister = (state, integrationId) => {
+selectors.availableConnectionsToRegister = (state, integrationId, tableConfig) => {
   if (!state) {
     return [];
   }
 
-  const connList = selectors.resourceList(state, { type: 'connections' });
+  const connList = selectors.resourceList(state, {
+    type: 'connections',
+    ...(tableConfig || {}),
+  });
   const allConnections = connList && connList.resources;
   const integration = selectors.resource(state, 'integrations', integrationId);
   const registeredConnections =
