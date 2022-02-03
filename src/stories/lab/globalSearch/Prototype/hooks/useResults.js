@@ -11,7 +11,7 @@ const resultsSelector = memoize(getResults => createSelector(
   (keyword, filters) => {
     const searchTokens = keyword?.includes(':') ? keyword?.split(':') : keyword;
     const searchValue = (Array.isArray(searchTokens) ? searchTokens[searchTokens?.length - 1] : searchTokens)?.trim?.();
-    const results = searchValue?.trim().length > 1 ? getResults(searchValue, filters) : {};
+    const results = searchValue?.trim().length > 1 ? getResults?.(searchValue, filters) : {};
 
     return results;
   }));
