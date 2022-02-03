@@ -14,17 +14,10 @@ import TabbedPanelGridItem from './gridItems/TabbedPanelGridItem';
 import layouts from './layouts';
 import editorMetadata from '../metadata';
 import DragHandleGridItem from './panels/DragHandlePanel';
+import { resolveValue } from '../../../utils/editor';
 
 const minGridSize = 200;
 const useStyles = makeStyles(layouts);
-
-function resolveValue(value, editorContext) {
-  if (typeof value === 'function') {
-    return value(editorContext);
-  }
-
-  return value;
-}
 
 function getDragHandles(gridAreas, showErrorDragBar = false) {
   // strip all non-word characters and convert to an array.
