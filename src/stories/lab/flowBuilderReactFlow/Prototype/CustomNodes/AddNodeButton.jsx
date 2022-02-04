@@ -3,10 +3,11 @@ import { v4 } from 'uuid';
 import clsx from 'clsx';
 import produce from 'immer';
 import React from 'react';
-import { makeStyles, IconButton } from '@material-ui/core';
+import { makeStyles, IconButton, List, ListItem, ListItemText } from '@material-ui/core';
 import AddIcon from '../../../../../components/icons/AddIcon';
-import { getConnectedEdges, layoutElements, findNodeIndex } from '../lib';
+import { getConnectedEdges, layoutElements } from '../lib';
 import { useFlowContext } from '../Context';
+import ArrowPopper from '../../../../../components/ArrowPopper';
 
 const useStyles = makeStyles(theme => ({
   addButton: {
@@ -24,12 +25,29 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const generateId = () => v4().replace(/-/g, '').substring(0, 4);
+const addNodesWithStepHandle = (newId, id, direction) => [
+  {
+    id: newId,
+    type: 'pp',
+    data: { label: `New node: ${newId}`},
+  },
+  direction === 'left' ? { id: generateId(), source: newId, target: id, type: 'step' } : { id: generateId(), source: id, target: newId, type: 'step' },
+
+];
 
 export default ({ id, direction = 'left'}) => {
   const classes = useStyles();
   const { setElements } = useFlowContext();
 
-  const onClick = event => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const onAddEmptyFlowStep = event => {
     // alert(`add node to the ${direction} of node ${id}`);
     event.stopPropagation();
     const newId = generateId();
@@ -38,24 +56,10 @@ export default ({ id, direction = 'left'}) => {
       const newElements = produce(elements, draft => {
         const connectedEdge = getConnectedEdges(id, direction, draft);
         // console.log(connectedEdge);
-        let nodeIndex = findNodeIndex(id, draft);
+        const index = elements.findIndex(el => el.id === id);
+        const newNodes = addNodesWithStepHandle(newId, id, direction);
 
-        if (direction === 'right') nodeIndex += 1;
-
-        const newNode = {
-          id: newId,
-          type: 'pp',
-          data: { label: `New node: ${newId}`},
-        };
-
-        draft.splice(nodeIndex, 0, newNode);
-
-        if (direction === 'left') {
-          draft.push({ id: generateId(), source: newId, target: id, type: 'step' });
-        } else {
-          draft.push({ id: generateId(), source: id, target: newId, type: 'step' });
-        }
-
+        draft.splice(direction === 'left' ? index : index + 1, 0, ...newNodes);
         connectedEdge.forEach(e => {
           if (direction === 'left') {
             e.target = newId;
@@ -67,14 +71,42 @@ export default ({ id, direction = 'left'}) => {
 
       return layoutElements(newElements, 'LR');
     });
+    handleClose();
   };
 
   return (
-    <IconButton
-      className={clsx(classes.addButton, classes[`${direction}AddButton`])}
-      onClick={event => onClick(event, id, direction)}
+    <>
+      <IconButton
+        className={clsx(classes.addButton, classes[`${direction}AddButton`])}
+        onClick={handleClick}
     >
-      <AddIcon />
-    </IconButton>
+        <AddIcon />
+      </IconButton>
+      <ArrowPopper
+        open={open}
+        anchorEl={anchorEl}
+        placement="bottom-end"
+        onClose={handleClose}
+
+      >
+        <List
+          dense className={classes.listWrapper}>
+          {[
+            {label: 'Add empty flow step', onClick: event => onAddEmptyFlowStep(event, id, direction)},
+
+            {label: 'Add branching', onClick: handleClose },
+          ].map(({label, onClick}) => (
+            <ListItem
+              button
+              onClick={onClick}
+              key={label}>
+              <ListItemText >{label}</ListItemText>
+            </ListItem>
+          ))}
+        </List>
+
+      </ArrowPopper>
+
+    </>
   );
 };

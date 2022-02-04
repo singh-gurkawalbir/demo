@@ -2,36 +2,40 @@
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 
-const dagreGraph = new dagre.graphlib.Graph();
-
-dagreGraph.setDefaultEdgeLabel(() => ({}));
-
 // In order to keep this example simple the node width and height are hardcoded.
 // In a real world app you would use the correct width and height values of
 // const nodes = useStoreState(state => state.nodes) and then node.__rf.width, node.__rf.height
 
-const nodeWidth = 250;
-const nodeHeight = 300;
+const nodeWidth = 275;
+const nodeHeight = 285;
+const stepHeight = 25;
+const stepWidth = 25;
 const options = {
-  marginx: 50,
-  marginy: 50,
-  // ranker: 'longest-path',
+  ranksep: 225,
+};
+const applyNodeStyle = (dagreGraph, { height, width}) => el => {
+  dagreGraph.setNode(el.id, { width, height });
 };
 
 export function layoutElements(elements) {
-  dagreGraph.setGraph({ rankdir: 'LR', ...options });
+  const dagreGraph = new dagre.graphlib.Graph();
 
-  elements.forEach(el => {
-    if (isNode(el)) {
-      dagreGraph.setNode(el.id, { width: nodeWidth, height: nodeHeight });
-    } else {
-      dagreGraph.setEdge(el.source, el.target);
-    }
+  dagreGraph.setDefaultEdgeLabel(() => ({}));
+  dagreGraph.setGraph({ rankdir: 'LR', ...options });
+  const appElements = elements.filter(el => ['pg', 'pp'].includes(el.type));
+  const stepElements = elements.filter(el => ['step'].includes(el.type));
+
+  appElements.forEach(applyNodeStyle(dagreGraph, {height: nodeHeight, width: nodeWidth}));
+  stepElements.forEach(applyNodeStyle(dagreGraph, {height: stepHeight, width: stepWidth}));
+  const edges = elements.filter(isEdge);
+
+  edges.forEach(el => {
+    dagreGraph.setEdge(el.source, el.target);
   });
 
   dagre.layout(dagreGraph);
 
-  return elements.map((el, index) => {
+  return elements.map(el => {
     if (isNode(el)) {
       const nodeWithPosition = dagreGraph.node(el.id);
 
@@ -40,8 +44,8 @@ export function layoutElements(elements) {
       // (anchor=center center) to the top left so it matches the react flow node anchor point (top left).
       return ({...el,
         position: {
-          x: nodeWithPosition.x + ((index + 1) * nodeWidth),
-          y: nodeWithPosition.y - (nodeHeight / 2),
+          x: nodeWithPosition.x,
+          y: nodeWithPosition.y,
         }});
     }
 

@@ -10,6 +10,7 @@ import { layoutElements } from './lib';
 import { FlowProvider } from './Context';
 import PageGenerator from './CustomNodes/PG';
 import PageProcessor from './CustomNodes/PP';
+// import simpleFlowSchema from './metadata/simpleFlowSchema';
 
 const nodeTypes = {
   step: StepNode,
@@ -21,10 +22,8 @@ const edgeTypes = {
   linked: LinkedEdge,
 };
 
-const layedOutElements = layoutElements(flowSchema);
-
 export default () => {
-  const [elements, setElements] = useState(layedOutElements);
+  const [elements, setElements] = useState(layoutElements(flowSchema));
 
   useEffect(() => {
     // eslint-disable-next-line no-console
@@ -35,6 +34,7 @@ export default () => {
     <ReactFlowProvider>
       <FlowProvider elements={elements} setElements={setElements}>
         <ReactFlow
+          selectNodesOnDrag={false}
           elements={elements}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
