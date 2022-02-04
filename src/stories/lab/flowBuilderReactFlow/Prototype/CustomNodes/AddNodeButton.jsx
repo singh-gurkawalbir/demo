@@ -5,7 +5,7 @@ import produce from 'immer';
 import React from 'react';
 import { makeStyles, IconButton } from '@material-ui/core';
 import AddIcon from '../../../../../components/icons/AddIcon';
-import { getConnectedEdges, layoutElements } from '../lib';
+import { getConnectedEdges, layoutElements, findNodeIndex } from '../lib';
 import { useFlowContext } from '../Context';
 
 const useStyles = makeStyles(theme => ({
@@ -38,12 +38,17 @@ export default ({ id, direction = 'left'}) => {
       const newElements = produce(elements, draft => {
         const connectedEdge = getConnectedEdges(id, direction, draft);
         // console.log(connectedEdge);
+        let nodeIndex = findNodeIndex(id, draft);
 
-        draft.push({
+        if (direction === 'right') nodeIndex += 1;
+
+        const newNode = {
           id: newId,
           type: 'pp',
           data: { label: `New node: ${newId}`},
-        });
+        };
+
+        draft.splice(nodeIndex, 0, newNode);
 
         if (direction === 'left') {
           draft.push({ id: generateId(), source: newId, target: id, type: 'step' });

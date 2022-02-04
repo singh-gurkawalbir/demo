@@ -15,6 +15,7 @@ const nodeHeight = 300;
 const options = {
   marginx: 50,
   marginy: 50,
+  // ranker: 'longest-path',
 };
 
 export function layoutElements(elements) {
@@ -53,4 +54,12 @@ export function getConnectedEdges(id, direction = 'left', elements) {
   const edges = elements.filter(e => isEdge(e));
 
   return edges.filter(edge => edge[handle] === id);
+}
+
+export function findNodeIndex(id, elements) {
+  for (let i = 0; i < elements.length; i += 1) {
+    if (elements[i].id === id) {
+      return i;
+    }
+  }
 }
