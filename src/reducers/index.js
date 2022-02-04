@@ -5709,7 +5709,7 @@ const getParentsResourceId = (state, resourceType, resourceId) => {
   return null;
 };
 
-selectors.getResourceEditUrl = (state, resourceType, resourceId, childId) => {
+selectors.getResourceEditUrl = (state, resourceType, resourceId, childId, sectionId) => {
   let integrationId = resourceType === 'integrations' ? resourceId : getParentsResourceId(state, resourceType, resourceId);
   // eslint-disable-next-line prefer-const
   let { name: integrationName, _parentId } = selectors.resource(state, 'integrations', integrationId) || {};
@@ -5731,7 +5731,13 @@ selectors.getResourceEditUrl = (state, resourceType, resourceId, childId) => {
 
   if (_connectorId) {
     if (childId) {
-      iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/child/${childId}`;
+      if (resourceType === 'flows' && sectionId) {
+        iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/child/${childId}/flows/sections/${sectionId}`;
+      } else {
+        iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/child/${childId}`;
+      }
+    } else if (resourceType === 'flows' && sectionId) {
+      iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/flows/sections/${sectionId}`;
     } else {
       iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}`;
     }
@@ -5740,6 +5746,10 @@ selectors.getResourceEditUrl = (state, resourceType, resourceId, childId) => {
   if (resourceType === 'flows') {
     const isDataLoader = selectors.isDataLoader(state, resourceId);
     const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
+
+    if (!iaUrlPrefix && sectionId && integrationId !== 'none') {
+      return getRoutePath(`/integrations/${integrationId}/flows/sections/${sectionId}/${flowBuilderPathName}/${resourceId}`);
+    }
 
     return getRoutePath(`${iaUrlPrefix || `/integrations/${integrationId}`}/${flowBuilderPathName}/${resourceId}`);
   }
