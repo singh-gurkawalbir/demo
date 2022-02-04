@@ -195,6 +195,11 @@ export const getCurrentExportDateTime = resource => {
   return moment().toISOString();
 };
 
+export const getPostDataForDeltaExport = resource => ({
+  lastExportDateTime: getLastExportDateTime(resource),
+  currentExportDateTime: getCurrentExportDateTime(resource),
+});
+
 export const getAddedLookupIdInFlow = (patchSet = []) => {
   const pageProcessorsPatch = patchSet.find(
     patch => pathRegex.lookupAddition.test(patch.path) &&
@@ -345,10 +350,7 @@ export const getFormattedResourceForPreview = (
   }
 
   if (isPostDataNeededInResource(resource)) {
-    resource.postData = {
-      lastExportDateTime: getLastExportDateTime(resource),
-      currentExportDateTime: getCurrentExportDateTime(resource),
-    };
+    resource.postData = getPostDataForDeltaExport(resource);
   }
 
   // Incase of pp , morph sampleResponseData to support Response Mapping

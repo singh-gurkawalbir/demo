@@ -291,6 +291,12 @@ inputMode: {
 },
 'file.batchSize': {
   fieldId: 'file.batchSize',
+  visibleWhenAll: [
+    {
+      field: 'inputMode',
+      is: ['records'],
+    },
+  ],
 },
 'file.backupPath': {
   fieldId: 'file.backupPath',
@@ -583,6 +589,13 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
       );
 
       return fileTypeField.value.toLowerCase();
+    }
+  } else if (fieldId === 'file.skipAggregation') {
+    const fileType = fields.find(field => field.id === 'file.type');
+    const skipAggregationField = fields.find(field => field.id === fieldId);
+
+    if (['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value)) {
+      skipAggregationField.value = true;
     }
   }
 

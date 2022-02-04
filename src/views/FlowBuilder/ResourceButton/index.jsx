@@ -21,46 +21,36 @@ const blockMap = {
   exportTransfer: { label: 'Transfer', Icon: TransferDownIcon },
   importTransfer: { label: 'Transfer', Icon: TransferUpIcon },
 };
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'relative',
-  },
-  blockButton: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: 0,
-    marginRight: theme.spacing(2),
-    textTransform: 'none',
-    alignItems: 'center',
+export const resourceButtonStyles = makeStyles(theme => ({
+  resourceButton: {
+    fontSize: 16,
+    fontFamily: 'source sans pro',
+    marginRight: theme.spacing(1),
+    '& >* svg': {
+      marginBottom: 5,
+      fontSize: `${theme.spacing(6)}px !important`,
+    },
     '&:hover': {
-      backgroundColor: 'transparent',
-      '& svg': {
+      color: theme.palette.secondary.main,
+      '& > * svg': {
         color: theme.palette.primary.main,
       },
     },
   },
-  blockIcon: {
-    width: 48,
-    height: 48,
-  },
-
 }));
 
 export default function ResourceButton({ onClick, variant }) {
-  const classes = useStyles();
+  const classes = resourceButtonStyles();
   const block = blockMap[variant];
 
   return (
     <TextButton
       data-test={block.label}
-      onClick={onClick}>
-      <div className={classes.blockButton}>
-        <block.Icon className={classes.blockIcon} />
-        {block.label}
-      </div>
-
+      onClick={onClick}
+      className={classes.resourceButton}
+      vertical
+      startIcon={<block.Icon />}>
+      {block.label}
     </TextButton>
   );
 }

@@ -111,11 +111,12 @@ export function parseJobs(jobs) {
 }
 
 export function parseJobFamily(job) {
-  const { children, _flowId, _integrationId, ...rest } = job;
+  const { children, _flowId, _integrationId, startedAt, ...rest } = job;
   const updatedJob = {
     ...DEFAULT_JOB_PROPS,
     _flowId,
     _integrationId,
+    startedAt,
     ...rest,
   };
 
@@ -126,6 +127,7 @@ export function parseJobFamily(job) {
         ...DEFAULT_JOB_PROPS,
         _flowId,
         _integrationId,
+        parentStartedAt: startedAt,
         ...childJob,
       }));
   }

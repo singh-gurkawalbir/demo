@@ -1,47 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Select from 'react-select';
-import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { FormControl } from '@material-ui/core';
 import DynaText from './DynaText';
 import FieldMessage from './FieldMessage';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
+import { CustomReactSelectStyles } from './reactSelectStyles/styles';
 
-// TODO: Aditya Replace the component with DynaSelectApplication
 const useStyles = makeStyles(theme => ({
-  optionRoot: {
-    display: 'flex',
-    borderBottom: `1px solid ${theme.palette.divider}`,
-    wordBreak: 'break-word',
-    padding: '0px',
-    color: theme.palette.primary.main,
-  },
-  optionImg: {
-    minWidth: '120px',
-    display: 'flex',
-    float: 'left',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRight: '1px solid',
-    borderColor: theme.palette.divider,
-    color: theme.palette.divider,
-    height: '100%',
-  },
-  optionLabel: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingLeft: '10px',
-    height: '100%',
-  },
-  inputLabel: {
-    transform: 'unset',
-    position: 'static',
-    marginBottom: theme.spacing(1),
-  },
-  selectedContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    marginBottom: theme.spacing(2),
-  },
   multilineText: {
     width: '100%',
     '& div:first-child': {
@@ -75,112 +41,7 @@ const useStyles = makeStyles(theme => ({
     zIndex: theme.zIndex.appBar,
   },
 }));
-const SelectStyle = theme => ({
-  option: (provided, state) => ({
-    ...provided,
-    color: state.isSelected
-      ? theme.palette.secondary.main
-      : theme.palette.secondary.light,
-    backgroundColor:
-          state.isSelected || state.isFocused
-            ? theme.palette.background.paper2
-            : theme.palette.background.paper,
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    minHeight: 38,
-    wordBreak: 'break-word',
-    '&:active': {
-      backgroundColor: theme.palette.background.paper,
-      color: theme.palette.secondary.light,
-    },
-  }),
-  control: () => ({
-    width: '100%',
-    height: 38,
-    border: '1px solid',
-    padding: '4px 7px',
-    borderColor: theme.palette.secondary.lightest,
-    borderRadius: '2px',
-    backgroundColor: theme.palette.background.paper,
-    alignItems: 'center',
-    cursor: 'default',
-    color: theme.palette.secondary.main,
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    minHeight: '38px',
-    position: 'relative',
-    boxSizing: 'borderBox',
-    transition: 'all 100ms ease 0s',
-    outline: '0px !important',
-    fontSize: 15,
-    lineHeight: '24px',
-    fontFamily: 'source sans pro !important',
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-  }),
-  menu: provided => ({
-    ...provided,
-    zIndex: 2,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    position: 'absolute',
-    backgroundColor: theme.palette.background.paper,
-    width: '100%',
-    boxShadow: '0px 3px 5px rgba(0,0,0,0.2)',
-    borderRadius: theme.spacing(0, 0, 0.5, 0.5),
-  }),
-  input: () => ({
-    color: theme.palette.secondary.main,
-    width: '100%',
-    '& > div': {
-      width: '100%',
-    },
-    '& * > input': {
-      width: '100% !important',
-      display: 'block !important',
-      fontFamily: 'source sans pro !important',
-    },
-  }),
-  placeholder: () => ({
-    color: theme.palette.secondary.light,
-  }),
-  indicatorSeparator: () => ({
-    display: 'none',
-  }),
-  menuList: () => ({
-    padding: '0px',
-    maxHeight: '300px',
-    overflowY: 'auto',
-  }),
-  group: () => ({
-    padding: '0px',
-  }),
-  groupHeading: () => ({
-    textAlign: 'center',
-    fontSize: '12px',
-    padding: '5px',
-    borderBottom: '1px solid',
-    borderColor: theme.palette.divider,
-    background: theme.palette.secondary.lightest,
-    color: theme.palette.text.secondary,
-  }),
-  dropdownIndicator: () => ({
-    color: theme.palette.secondary.light,
-    padding: '8px',
-    cursor: 'pointer',
-    '&:hover': {
-      color: fade(theme.palette.secondary.light, 0.8),
-    },
-  }),
-  singleValue: (provided, state) => {
-    const opacity = state.isDisabled ? 0.5 : 1;
-    const transition = 'opacity 300ms';
-    const color = theme.palette.secondary.main;
 
-    return { ...provided, opacity, transition, color};
-  },
-});
 export default function DynaTypeableSelect(props) {
   const {
     id,
@@ -298,7 +159,7 @@ export default function DynaTypeableSelect(props) {
   const selectedValue = !isTyping && suggestions.find(suggestionItem => suggestionItem.value === value);
   // Dont resolve to value while user is typing
   const inputVal = (!isTyping && selectedValue?.label) || value;
-  const customStyles = SelectStyle(useTheme());
+  const customStyles = CustomReactSelectStyles();
   const filterOption = (options, rawInput) => {
     if (showAllSuggestions) return true;
     if (!options.label || !options.value) return false;

@@ -4,6 +4,7 @@ import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
 import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
 import { getAssistantFromResource, getResourceSubType, isNewId } from '../../../utils/resource';
+import { isAmazonHybridConnection } from '../../../utils/assistant';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -257,7 +258,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           // Common metadata for both the file providers googledrive and azurestorageaccount
           meta = meta.commonfileprovider;
         } else if (
-          resource &&
+          resource && !isAmazonHybridConnection(connection) &&
             (resource.useParentForm !== undefined
               ? !resource.useParentForm && resource.assistant
               : resource.assistant) && !resource.useTechAdaptorForm
@@ -302,7 +303,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           // Common metadata for both the file providers googledrive and azurestorageaccount
           meta = meta.commonfileprovider;
         } else if (
-          resource && resource.assistant !== 'openair' &&
+          resource && resource.assistant !== 'openair' && !isAmazonHybridConnection(connection) &&
             (resource.useParentForm !== undefined
               ? !resource.useParentForm && resource.assistant
               : resource.assistant) && !resource.useTechAdaptorForm

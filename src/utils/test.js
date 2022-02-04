@@ -4,7 +4,7 @@ import moment from 'moment-timezone';
 import actionTypes from '../actions/types';
 import getJsonPaths from './jsonPaths';
 import getRequestOptions from './requestOptions';
-import getRoutePath from './routePaths';
+import getRoutePath, { getValidRelativePath } from './routePaths';
 import retry from './retry';
 import adjustTimezone from './adjustTimezone';
 import inferErrorMessages from './inferErrorMessages';
@@ -73,96 +73,62 @@ describe('Route paths util method', () => {
       expect(getRoutePath(r)).toEqual(`${uiRoutePathPrefix}/${r.trim()}`);
     });
   });
+  test('should return valid relative path', () => {
+    expect(getValidRelativePath()).toBeUndefined();
+    expect(getValidRelativePath(null)).toEqual(null);
+    expect(getValidRelativePath('httpbody')).toEqual('httpbody');
+    expect(getValidRelativePath('rest.body')).toEqual('restbody');
+    expect(getValidRelativePath('field id')).toEqual('fieldid');
+  });
 });
 
 describe('getRequestOptions util method', () => {
   const testCases = [
     [
       { path: '/invite', opts: { method: 'POST' } },
-      actionTypes.USER_CREATE,
+      actionTypes.USER.CREATE,
       {},
     ],
     [
       { path: '/ashares/someId', opts: { method: 'PUT' } },
-      actionTypes.USER_UPDATE,
+      actionTypes.USER.UPDATE,
       { resourceId: 'someId' },
     ],
     [
       { path: '/ashares/someId', opts: { method: 'DELETE' } },
-      actionTypes.USER_DELETE,
+      actionTypes.USER.DELETE,
       { resourceId: 'someId' },
     ],
     [
       { path: '/ashares/someId/disable', opts: { method: 'PUT' } },
-      actionTypes.USER_DISABLE,
+      actionTypes.USER.DISABLE,
       { resourceId: 'someId' },
     ],
     [
       { path: '/transfers/invite', opts: { method: 'POST' } },
-      actionTypes.USER_MAKE_OWNER,
+      actionTypes.USER.MAKE_OWNER,
       {},
     ],
     [
       { path: '/licenses/startTrial', opts: { method: 'POST' } },
-      actionTypes.LICENSE_TRIAL_REQUEST,
+      actionTypes.LICENSE.TRIAL_REQUEST,
       {},
     ],
     [
       { path: '/licenses/upgradeRequest', opts: { method: 'POST' } },
-      actionTypes.LICENSE_UPGRADE_REQUEST,
+      actionTypes.LICENSE.UPGRADE_REQUEST,
       {},
-    ],
-    [
-      { path: '/accesstokens', opts: { method: 'POST' } },
-      actionTypes.ACCESSTOKEN_CREATE,
-      {},
-    ],
-    [
-      {
-        path: '/integrations/someIntegrationId1/accesstokens',
-        opts: { method: 'POST' },
-      },
-      actionTypes.ACCESSTOKEN_CREATE,
-      { integrationId: 'someIntegrationId1' },
-    ],
-    [
-      { path: '/accesstokens/someId', opts: { method: 'PUT' } },
-      actionTypes.ACCESSTOKEN_UPDATE,
-      {
-        resourceId: 'someId',
-      },
-    ],
-    [
-      { path: '/accesstokens/someId', opts: { method: 'PUT' } },
-      actionTypes.ACCESSTOKEN_REVOKE,
-      {
-        resourceId: 'someId',
-      },
-    ],
-    [
-      { path: '/accesstokens/someId', opts: { method: 'PUT' } },
-      actionTypes.ACCESSTOKEN_ACTIVATE,
-      {
-        resourceId: 'someId',
-      },
-    ],
-    [
-      { path: '/accesstokens/someId', opts: { method: 'DELETE' } },
-      actionTypes.ACCESSTOKEN_DELETE,
-      {
-        resourceId: 'someId',
-      },
     ],
     [
       { path: '/accesstokens/someId/display', opts: { method: 'GET' } },
-      actionTypes.ACCESSTOKEN_TOKEN_DISPLAY,
+      actionTypes.ACCESSTOKEN.DISPLAY,
       {
         resourceId: 'someId',
       },
     ],
     [
       { path: '/accesstokens/someId/generate', opts: { method: 'POST' } },
-      actionTypes.ACCESSTOKEN_TOKEN_GENERATE,
+      actionTypes.ACCESSTOKEN.GENERATE,
       {
         resourceId: 'someId',
       },

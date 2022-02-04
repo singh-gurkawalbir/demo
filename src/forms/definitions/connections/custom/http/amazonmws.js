@@ -92,7 +92,6 @@ export default {
       type: 'select',
       required: true,
       visibleWhenAll: [{ field: 'http.type', is: ['Amazon-SP-API', 'Amazon-Hybrid'] }],
-      defaultDisabled: r => !isNewId(r?._id) && !!r?.http?.type,
       skipSort: true,
       options: [
         {
@@ -121,7 +120,6 @@ export default {
       label: 'Marketplace',
       required: true,
       visibleWhenAll: [{ field: 'http.type', is: ['Amazon-SP-API', 'Amazon-Hybrid'] }],
-      defaultDisabled: r => !isNewId(r?._id) && !!r?.http?.type,
       defaultValue: r => r?.http?.unencrypted?.marketplaceId,
     },
     'http.sellingPartnerId': {

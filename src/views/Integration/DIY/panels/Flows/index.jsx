@@ -1,4 +1,4 @@
-import { Grid, makeStyles } from '@material-ui/core';
+import { Grid, makeStyles, Typography } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
@@ -31,6 +31,7 @@ import DragContainer from '../../../../../components/DragContainer';
 import FlowGroupRow from './FlowGroupRow';
 import { shouldHaveUnassignedSection } from '../../../../../utils/flows';
 import NoResultMessageWrapper from '../../../../../components/NoResultMessageWrapper';
+import InfoIcon from '../../../../../components/icons/InfoIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -94,6 +95,7 @@ const useStyles = makeStyles(theme => ({
   flowPanelStatusHeader: {
     fontSize: 14,
   },
+  // TODO: Azhar (flow group name component)
   flowGroupRowUnassigned: {
     '&>a': {
       padding: 0,
@@ -105,6 +107,19 @@ const useStyles = makeStyles(theme => ({
   },
   noSearchResults: {
     marginTop: theme.spacing(1),
+  },
+  // TODO: Azhar (component needed)
+  infoFilter: {
+    fontStyle: 'italic',
+    display: 'flex',
+    margin: theme.spacing(-2, 2, 3),
+    alignItems: 'center',
+    color: theme.palette.secondary.main,
+    '& > svg': {
+      marginRight: theme.spacing(0.5),
+      fontSize: theme.spacing(2),
+      color: theme.palette.text.hint,
+    },
   },
 }));
 
@@ -402,6 +417,9 @@ export default function FlowsPanel({ integrationId, childId }) {
   const infoTextFlow =
     'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
 
+  const infoSearchFilter =
+    'Showing all flow groups that contain search matches.';
+
   const basePath = getBasePath(match);
 
   return (
@@ -448,6 +466,12 @@ export default function FlowsPanel({ integrationId, childId }) {
             )}
           </ActionGroup>
         </PanelHeader>
+        {(finalFilter.keyword && flows.length && flowGroupingsSections) ? (
+          <Typography component="div" variant="caption" className={classes.infoFilter}>
+            <InfoIcon />
+            {infoSearchFilter}
+          </Typography>
+        ) : ''}
 
         <LoadResources required resources="flows, exports">
           <FlowListing
@@ -460,7 +484,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         </LoadResources>
       </div>
       <div className={classes.noSearchResults}>
-        {(finalFilter.keyword && flows.length === 0 && !flowGroupingsSections.some(({title}) => title.toUpperCase().includes(finalFilter.keyword.toUpperCase()))) ? (
+        {(finalFilter.keyword && !flows.length && !flowGroupingsSections?.some(({title}) => title.toUpperCase().includes(finalFilter.keyword.toUpperCase()))) ? (
           <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
         ) : ''}
       </div>

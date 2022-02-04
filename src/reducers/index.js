@@ -123,9 +123,9 @@ const rootReducer = (state, action) => {
 
   return produce(newState, draft => {
     switch (type) {
-      case actionTypes.CLEAR_STORE:
+      case actionTypes.AUTH.CLEAR_STORE:
         Object.keys(draft).forEach(key => {
-          // delete everthing except for app and auth
+          // delete everything except for app and auth
           if (key !== 'app' && key !== 'auth') {
             delete draft[key];
           }
@@ -133,7 +133,7 @@ const rootReducer = (state, action) => {
 
         break;
 
-      case actionTypes.APP_DELETE_DATA_STATE:
+      case actionTypes.APP.DELETE_DATA_STATE:
         delete draft.data;
 
         break;
@@ -325,27 +325,60 @@ selectors.isUninstallComplete = (state, { integrationId, childId }) => {
   return !!isSetupComplete;
 };
 
-selectors.integrationInstallSteps = (state, integrationId) => {
-  if (!state) return null;
-  const integrationInstallSteps = fromData.integrationInstallSteps(
-    state.data,
-    integrationId
-  );
-  const installStatus = fromSession.integrationAppsInstaller(
-    state.session,
-    integrationId
-  );
+selectors.integrationInstallSteps = createSelector(
+  (state, integrationId) => fromData.integrationInstallSteps(state?.data, integrationId),
+  (state, integrationId) => fromSession.integrationAppsInstaller(state?.session, integrationId),
+  (state, integrationId) => selectors.integrationAppSettings(state, integrationId)?._connectorId,
+  (integrationInstallSteps, installStatus, _connectorId) => {
+    const visibleSteps = integrationInstallSteps.filter(s => s.type !== 'hidden');
 
-  const visibleSteps = integrationInstallSteps.filter(s => s.type !== 'hidden');
+    const installSteps = visibleSteps.map(step => {
+      if (step.isCurrentStep) {
+        return { ...step, ...installStatus };
+      }
 
-  return visibleSteps.map(step => {
-    if (step.isCurrentStep) {
-      return { ...step, ...installStatus };
-    }
+      return step;
+    });
 
-    return step;
-  });
-};
+    // Incase of IAs, return the install steps
+    if (_connectorId) return installSteps;
+    // Else do below changes to the install steps incase of a template
+    // @Sravan review the logic below - moved from the component
+    const bundleInstallationForNetsuiteConnections = installSteps.filter(step => step.sourceConnection?.type === 'netsuite');
+    const bundleInstallationForSalesforceConnections = installSteps.filter(step => step.sourceConnection?.type === 'salesforce');
+
+    let netsuiteConnIndex = 0;
+    let salesforceConnIndex = 0;
+
+    return installSteps.map(step => {
+      if (step.installURL || step.url) {
+        if (
+          step.name.includes('Integrator Bundle')
+        ) {
+          const connectionId = bundleInstallationForNetsuiteConnections[netsuiteConnIndex]?._connectionId;
+
+          netsuiteConnIndex += 1;
+
+          return {
+            ...step,
+            connectionId,
+          };
+        } if (step.name.includes('Integrator Adaptor Package')) {
+          const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
+
+          salesforceConnIndex += 1;
+
+          return {
+            ...step,
+            connectionId,
+          };
+        }
+      }
+
+      return step;
+    });
+  }
+);
 
 const emptyStepsArr = [];
 
@@ -394,6 +427,22 @@ selectors.addNewChildSteps = (state, integrationId) => {
   });
 
   return { steps: modifiedSteps };
+};
+
+selectors.currentStepPerMode = (state, { mode, integrationId, cloneResourceId, cloneResourceType }) => {
+  let steps = [];
+
+  if (mode === 'install') {
+    steps = selectors.integrationInstallSteps(state, integrationId);
+  } else if (mode === 'child') {
+    steps = selectors.addNewChildSteps(state, integrationId)?.steps;
+  } else if (mode === 'uninstall') {
+    steps = selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true })?.steps;
+  } else if (mode === 'clone') {
+    steps = selectors.cloneInstallSteps(state, cloneResourceType, cloneResourceId);
+  }
+
+  return (steps || []).find(s => !!s.isCurrentStep);
 };
 
 selectors.isIAV2UninstallComplete = (state, { integrationId }) => {
@@ -3814,12 +3863,15 @@ selectors.canEditSettingsForm = (state, resourceType, resourceId, integrationId)
   return developer && !viewOnly && visibleForUser;
 };
 
-selectors.availableConnectionsToRegister = (state, integrationId) => {
+selectors.availableConnectionsToRegister = (state, integrationId, tableConfig) => {
   if (!state) {
     return [];
   }
 
-  const connList = selectors.resourceList(state, { type: 'connections' });
+  const connList = selectors.resourceList(state, {
+    type: 'connections',
+    ...(tableConfig || {}),
+  });
   const allConnections = connList && connList.resources;
   const integration = selectors.resource(state, 'integrations', integrationId);
   const registeredConnections =
@@ -5111,6 +5163,15 @@ selectors.isPreviewPanelAvailableForResource = (
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 };
 
+selectors.showFullDrawerWidth = (state, drawerProps, urlProps) => {
+  const { width, flowId } = drawerProps;
+
+  if (width === 'full') return true;
+  const { resourceType, id } = urlProps;
+
+  return selectors.isPreviewPanelAvailableForResource(state, id, resourceType, flowId);
+};
+
 selectors.applicationType = (state, resourceType, id) => {
   const resourceObj = selectors.resource(state, resourceType, id);
   const stagedResourceObj = selectors.stagedResource(state, id);
@@ -6369,13 +6430,14 @@ selectors.tileLicenseDetails = (state, tile) => {
 selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
   if (!['exports', 'imports'].includes(resourceType) || !flowId || isNew) return false;
   const resource = selectors.resource(state, resourceType, resourceId);
+  const connection = selectors.resource(state, 'connections', resource?._connectionId) || emptyObject;
 
   // It should return false for all http file providers
   if (resource?.http?.type === 'file') {
     return false;
   }
 
-  return isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType);
+  return isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType) || (connection.isHTTP && connection.type === 'rest');
 };
 
 selectors.canEnableDebug = (state, exportId, flowId) => {
@@ -6533,4 +6595,15 @@ selectors.httpDeltaValidationError = (state, formKey, deltaFieldsToValidate) => 
       return 'Delta exports must use {{lastExportDateTime}} in either the relative URI or HTTP request body.';
     }
   }
+};
+
+selectors.showAmazonRestrictedReportType = (state, formKey) => {
+  const connectionId = selectors.fieldState(state, formKey, '_connectionId')?.value;
+  const apiType = selectors.fieldState(state, formKey, 'unencrypted.apiType')?.value;
+  const relativeURI = selectors.fieldState(state, formKey, 'http.relativeURI')?.value;
+  const connectionType = selectors.resource(state, 'connections', connectionId)?.http?.type;
+
+  return ((connectionType === 'Amazon-Hybrid' && apiType === 'Amazon-SP-API') ||
+          connectionType === 'Amazon-SP-API') &&
+          relativeURI?.startsWith('/reports/2021-06-30/documents/');
 };

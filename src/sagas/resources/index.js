@@ -276,6 +276,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     // violates some API business rules?
 
     if (options && options.action === 'flowEnableDisable') {
+      // for the subsequent commit to the flow resource in the same session,
+      // this patch is being attached to it even if it had faied. So we are removing this patch
+      yield put(actions.resource.undoStaged(id));
       yield put(actions.flow.isOnOffActionInprogress(false, id));
     }
 
@@ -1008,14 +1011,14 @@ export function* requestQueuedJobs({ connectionId }) {
   yield put(actions.connection.receivedQueuedJobs(response, connectionId));
 }
 
-function* startPollingForQueuedJobs({ connectionId }) {
+export function* startPollingForQueuedJobs({ connectionId }) {
   const watcher = yield fork(requestQueuedJobs, { connectionId });
 
   yield take(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL);
   yield cancel(watcher);
 }
 
-function* startPollingForConnectionStatus({ integrationId }) {
+export function* startPollingForConnectionStatus({ integrationId }) {
   const watcher = yield fork(refreshConnectionStatus, { integrationId });
 
   yield take(actionTypes.CONNECTION.STATUS_CANCEL_POLL);
@@ -1152,7 +1155,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
   takeLatest(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST_POLL, startPollingForQueuedJobs),
   takeLatest(actionTypes.CONNECTION.STATUS_REQUEST_POLL, startPollingForConnectionStatus),
-  takeEvery(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, requestQueuedJobs),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
   takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
   takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
