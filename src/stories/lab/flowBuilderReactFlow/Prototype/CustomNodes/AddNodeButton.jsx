@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import clsx from 'clsx';
 import produce from 'immer';
 import React from 'react';
-import { makeStyles, IconButton } from '@material-ui/core';
+import { makeStyles, IconButton, Menu, MenuItem, Popper } from '@material-ui/core';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import { getConnectedEdges, layoutElements } from '../lib';
 import { useFlowContext } from '../Context';
@@ -36,7 +36,15 @@ export default ({ id, direction = 'left'}) => {
   const classes = useStyles();
   const { setElements } = useFlowContext();
 
-  const onClick = event => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const onAddEmptyFlowStep = event => {
     // alert(`add node to the ${direction} of node ${id}`);
     event.stopPropagation();
     const newId = generateId();
@@ -60,14 +68,39 @@ export default ({ id, direction = 'left'}) => {
 
       return layoutElements(newElements, 'LR');
     });
+    handleClose();
   };
 
   return (
-    <IconButton
-      className={clsx(classes.addButton, classes[`${direction}AddButton`])}
-      onClick={event => onClick(event, id, direction)}
+    <>
+      <IconButton
+        className={clsx(classes.addButton, classes[`${direction}AddButton`])}
+        onClick={handleClick}
     >
-      <AddIcon />
-    </IconButton>
+        <AddIcon />
+      </IconButton>
+      <Popper
+        open={!!anchorEl}
+        anchorEl={anchorEl}
+        role={undefined}
+        placement="bottom-start"
+        transition
+        disablePortal
+        >
+
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+>
+          <MenuItem onClick={event => onAddEmptyFlowStep(event, id, direction)}>Add empty flow step</MenuItem>
+          <MenuItem onClick={handleClose}>Add branching</MenuItem>
+        </Menu>
+      </Popper>
+
+    </>
   );
 };

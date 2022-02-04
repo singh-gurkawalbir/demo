@@ -11,8 +11,7 @@ const nodeHeight = 285;
 const stepHeight = 25;
 const stepWidth = 25;
 const options = {
-  marginx: 25,
-  marginy: 25,
+  ranksep: 225,
 };
 const applyNodeStyle = (dagreGraph, { height, width}) => el => {
   dagreGraph.setNode(el.id, { width, height });
@@ -36,7 +35,7 @@ export function layoutElements(elements) {
 
   dagre.layout(dagreGraph);
 
-  return elements.map((el, index) => {
+  return elements.map(el => {
     if (isNode(el)) {
       const nodeWithPosition = dagreGraph.node(el.id);
 
@@ -45,8 +44,8 @@ export function layoutElements(elements) {
       // (anchor=center center) to the top left so it matches the react flow node anchor point (top left).
       return ({...el,
         position: {
-          x: nodeWithPosition.x + ((index + 1) * nodeWidth),
-          y: nodeWithPosition.y - (nodeHeight / 2),
+          x: nodeWithPosition.x,
+          y: nodeWithPosition.y,
         }});
     }
 
