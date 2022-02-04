@@ -1,4 +1,4 @@
-import { makeStyles, TextField } from '@material-ui/core';
+import { makeStyles, TextField, Typography } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useState, useCallback } from 'react';
 import ModalDialog from '../ModalDialog';
@@ -15,10 +15,7 @@ const useStyles = makeStyles(theme => ({
   formField: {
     paddingTop: theme.spacing(1),
     width: '100%',
-  },
-  containerButtons: {
-    position: 'relative',
-    width: '100%',
+    marginTop: theme.spacing(1),
   },
   btnRight: {
     position: 'absolute',
@@ -55,7 +52,7 @@ export default function Prompt(props) {
         {isHtml ? (
           <RawHtml className={classes.message} html={message} options={{allowedTags}} />
         ) : (
-          <div className={classes.message}>{message}</div>
+          <Typography>{message}</Typography>
         )}
         <TextField
           autoComplete="off"
@@ -69,44 +66,42 @@ export default function Prompt(props) {
           className={clsx(classes.formField, className)}
         />
       </>
-      <div className={classes.containerButtons}>
-        <ActionGroup>
-          {buttons.map(button => {
-            const buttonProps = {
-              'data-test': button.dataTest || button.label,
-              key: button.label,
-              className: clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'}),
-              onClick: () => handleButtonClick(button),
-            };
-            const {variant = 'filled'} = button;
+      <ActionGroup>
+        {buttons.map(button => {
+          const buttonProps = {
+            'data-test': button.dataTest || button.label,
+            key: button.label,
+            className: clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'}),
+            onClick: () => handleButtonClick(button),
+          };
+          const {variant = 'filled'} = button;
 
-            if (variant === 'filled') {
-              return (
-                <FilledButton {...buttonProps}>
-                  {button.label}
-                </FilledButton>
-              );
-            }
-            if (variant === 'outlined') {
-              return (
-                <OutlinedButton {...buttonProps}>
-                  {button.label}
-                </OutlinedButton>
-              );
-            }
+          if (variant === 'filled') {
+            return (
+              <FilledButton {...buttonProps}>
+                {button.label}
+              </FilledButton>
+            );
+          }
+          if (variant === 'outlined') {
+            return (
+              <OutlinedButton {...buttonProps}>
+                {button.label}
+              </OutlinedButton>
+            );
+          }
 
-            if (variant === 'text') {
-              return (
-                <TextButton {...buttonProps}>
-                  {button.label}
-                </TextButton>
-              );
-            }
+          if (variant === 'text') {
+            return (
+              <TextButton {...buttonProps}>
+                {button.label}
+              </TextButton>
+            );
+          }
 
-            return null;
-          })}
-        </ActionGroup>
-      </div>
+          return null;
+        })}
+      </ActionGroup>
 
     </ModalDialog>
   );
