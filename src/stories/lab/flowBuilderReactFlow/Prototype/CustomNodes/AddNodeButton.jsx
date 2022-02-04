@@ -3,10 +3,11 @@ import { v4 } from 'uuid';
 import clsx from 'clsx';
 import produce from 'immer';
 import React from 'react';
-import { makeStyles, IconButton, Menu, MenuItem, Popper } from '@material-ui/core';
+import { makeStyles, IconButton, List, ListItem, ListItemText } from '@material-ui/core';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import { getConnectedEdges, layoutElements } from '../lib';
 import { useFlowContext } from '../Context';
+import ArrowPopper from '../../../../../components/ArrowPopper';
 
 const useStyles = makeStyles(theme => ({
   addButton: {
@@ -33,6 +34,7 @@ const addNodesWithStepHandle = (newId, id, direction) => [
   direction === 'left' ? { id: generateId(), source: newId, target: id, type: 'step' } : { id: generateId(), source: id, target: newId, type: 'step' },
 
 ];
+
 export default ({ id, direction = 'left'}) => {
   const classes = useStyles();
   const { setElements } = useFlowContext();
@@ -80,27 +82,30 @@ export default ({ id, direction = 'left'}) => {
     >
         <AddIcon />
       </IconButton>
-      <Popper
-        open={!!anchorEl}
+      <ArrowPopper
+        open={open}
         anchorEl={anchorEl}
-        role={undefined}
-        placement="bottom-start"
-        transition
-        disablePortal
-        >
+        placement="bottom-end"
+        onClose={handleClose}
 
-        <Menu
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          MenuListProps={{
-            'aria-labelledby': 'basic-button',
-          }}
->
-          <MenuItem onClick={event => onAddEmptyFlowStep(event, id, direction)}>Add empty flow step</MenuItem>
-          <MenuItem onClick={handleClose}>Add branching</MenuItem>
-        </Menu>
-      </Popper>
+      >
+        <List
+          dense className={classes.listWrapper}>
+          {[
+            {label: 'Add empty flow step', onClick: event => onAddEmptyFlowStep(event, id, direction)},
+
+            {label: 'Add branching', onClick: handleClose },
+          ].map(({label, onClick}) => (
+            <ListItem
+              button
+              onClick={onClick}
+              key={label}>
+              <ListItemText >{label}</ListItemText>
+            </ListItem>
+          ))}
+        </List>
+
+      </ArrowPopper>
 
     </>
   );
