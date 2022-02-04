@@ -1,10 +1,11 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Handle, Position } from 'react-flow-renderer';
+import { Position } from 'react-flow-renderer';
 import AppBlock from '../../../../../views/FlowBuilder/AppBlock';
 import exportHooksAction from '../../../../../views/FlowBuilder/PageGenerator/actions/exportHooks';
 import transformationAction from '../../../../../views/FlowBuilder/PageGenerator/actions/transformation_afe';
 import exportFilterAction from '../../../../../views/FlowBuilder/PageGenerator/actions/exportFilter_afe';
+import AppBlockHandle from './AppBlockHandle';
 
 const generatorActions = [
   {
@@ -48,7 +49,8 @@ export default function PageGenerator(props) {
           isPageGenerator
       />
       </div>
-      <Handle type="source" position={Position.Right} />
+
+      <AppBlockHandle type="source" position={Position.Right} />
     </div>
   );
 }

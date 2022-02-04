@@ -10,11 +10,12 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 // In a real world app you would use the correct width and height values of
 // const nodes = useStoreState(state => state.nodes) and then node.__rf.width, node.__rf.height
 
-const nodeWidth = 200;
-const nodeHeight = 50;
+const nodeWidth = 250;
+const nodeHeight = 300;
 const options = {
   marginx: 50,
   marginy: 50,
+  // ranker: 'longest-path',
 };
 
 export function layoutElements(elements) {
@@ -53,4 +54,12 @@ export function getConnectedEdges(id, direction = 'left', elements) {
   const edges = elements.filter(e => isEdge(e));
 
   return edges.filter(edge => edge[handle] === id);
+}
+
+export function findNodeIndex(id, elements) {
+  for (let i = 0; i < elements.length; i += 1) {
+    if (elements[i].id === id) {
+      return i;
+    }
+  }
 }
