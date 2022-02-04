@@ -13,6 +13,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     border: `solid 1px ${theme.palette.secondary.light}`,
     padding: 0,
+    top: -56,
   },
   leftAddButton: {
     left: -26,

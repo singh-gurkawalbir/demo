@@ -59,3 +59,11 @@ export function getConnectedEdges(id, direction = 'left', elements) {
 
   return edges.filter(edge => edge[handle] === id);
 }
+
+export function findNodeIndex(id, elements) {
+  for (let i = 0; i < elements.length; i += 1) {
+    if (elements[i].id === id) {
+      return i;
+    }
+  }
+}
