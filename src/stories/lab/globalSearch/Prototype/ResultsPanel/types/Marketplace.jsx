@@ -48,7 +48,7 @@ function MarketPlaceRow({type, result, includeDivider, focussed}) {
   const handleClick = useCallback(e => {
     e?.stopPropagation();
     if (type === 'marketplaceTemplates') {
-      const url = `marketplace/${result?.applications?.[0]}/installTemplate/preview/${result?._id}`;
+      const url = `/marketplace/${result?.applications?.[0]}/installTemplate/preview/${result?._id}`;
 
       setOpen(false);
       history.push(url);
