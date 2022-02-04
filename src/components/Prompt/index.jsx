@@ -4,9 +4,7 @@ import React, { useState, useCallback } from 'react';
 import ModalDialog from '../ModalDialog';
 import ActionGroup from '../ActionGroup';
 import RawHtml from '../RawHtml';
-import FilledButton from '../Buttons/FilledButton';
-import OutlinedButton from '../Buttons/OutlinedButton';
-import TextButton from '../Buttons/TextButton';
+import {FilledButton, OutlinedButton, TextButton} from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   message: {
