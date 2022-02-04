@@ -53,6 +53,9 @@ const restPreSave = formValues => {
   if (newValues['/rest/pingMethod'] === 'GET') {
     newValues['/rest/pingBody'] = undefined;
   }
+  if (!newValues['/rest/pingMethod']) {
+    newValues['/rest/pingMethod'] = undefined;
+  }
 
   if (newValues['/rest/encrypted']) {
     try {
@@ -145,6 +148,8 @@ export default {
 
     if (newValues['/rest/pingMethod']) {
       newValues['/http/ping/method'] = newValues['/rest/pingMethod'];
+    } else {
+      newValues['/http/ping/method'] = undefined;
     }
     delete newValues['/rest/pingMethod'];
 
