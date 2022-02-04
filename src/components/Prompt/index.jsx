@@ -74,7 +74,7 @@ export default function Prompt(props) {
             className: clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'}),
             onClick: () => handleButtonClick(button),
           };
-          const {variant = 'filled'} = button;
+          const {variant} = button;
 
           if (variant === 'filled') {
             return (
