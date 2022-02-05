@@ -16,12 +16,12 @@ const nodeSize = {
     height: 285,
   },
   router: {
-    width: 50,
-    height: 50,
+    width: 26,
+    height: 26,
   },
-  leaf: {
-    width: 50,
-    height: 50,
+  terminal: {
+    width: 26,
+    height: 26,
   },
 };
 

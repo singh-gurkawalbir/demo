@@ -8,13 +8,14 @@ import LinkedEdge from './CustomEdges/LinkedEdge';
 import DefaultEdge from './CustomEdges/DefaultEdge';
 import { layoutElements } from './lib';
 import { FlowProvider } from './Context';
-import PageGenerator from './CustomNodes/PG';
-import PageProcessor from './CustomNodes/PP';
-// import simpleFlowSchema from './metadata/simpleFlowSchema';
+import PgNode from './CustomNodes/PgNode';
+import PpNode from './CustomNodes/PpNode';
+import TerminalNode from './CustomNodes/TerminalNode';
 
 const nodeTypes = {
-  pg: PageGenerator,
-  pp: PageProcessor,
+  pg: PgNode,
+  pp: PpNode,
+  terminal: TerminalNode,
 };
 
 const edgeTypes = {

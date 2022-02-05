@@ -31,9 +31,14 @@ export default [
     type: 'pp',
     data: { label: 'REST import', connectorType: 'rest' },
   },
+  { id: '4', type: 'terminal'},
+  { id: '5', type: 'terminal'},
 
   { id: 'e1-2', source: '1', target: '2', type: 'default' }, // , animated: true
   { id: 'e2-2a', source: '2', target: '2a', type: 'default' }, // , animated: true
   { id: 'e2-2b', source: '2', target: '2b', type: 'default' }, // , animated: true
   { id: 'e2b-3', source: '2b', target: '3', type: 'default' },
+
+  { id: 'e2a-4', source: '2a', target: '4', type: 'default' },
+  { id: 'e3-5', source: '3', target: '5', type: 'default' },
 ];
