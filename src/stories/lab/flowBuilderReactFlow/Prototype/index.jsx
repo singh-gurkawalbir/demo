@@ -5,7 +5,6 @@ import ReactFlow,
   ReactFlowProvider } from 'react-flow-renderer';
 import flowSchema from './metadata/flowSchema';
 import LinkedEdge from './CustomEdges/LinkedEdge';
-import StepNode from './CustomNodes/StepNode';
 import { layoutElements } from './lib';
 import { FlowProvider } from './Context';
 import PageGenerator from './CustomNodes/PG';
@@ -13,7 +12,6 @@ import PageProcessor from './CustomNodes/PP';
 // import simpleFlowSchema from './metadata/simpleFlowSchema';
 
 const nodeTypes = {
-  step: StepNode,
   pg: PageGenerator,
   pp: PageProcessor,
 };

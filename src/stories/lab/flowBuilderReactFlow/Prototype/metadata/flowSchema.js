@@ -9,7 +9,6 @@ export default [
   {
     id: '1',
     type: 'pg', // input node
-    sourcePosition: 'right',
     data: { label: 'Export NetSuite data', connectorType: 'netsuite' },
   },
   {
@@ -30,7 +29,6 @@ export default [
   {
     id: '3',
     type: 'pp',
-    // targetPosition: 'left',
     data: { label: 'REST import', connectorType: 'rest' },
   },
 
