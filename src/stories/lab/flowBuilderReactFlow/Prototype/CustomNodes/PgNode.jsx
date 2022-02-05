@@ -5,7 +5,7 @@ import AppBlock from '../../../../../views/FlowBuilder/AppBlock';
 import exportHooksAction from '../../../../../views/FlowBuilder/PageGenerator/actions/exportHooks';
 import transformationAction from '../../../../../views/FlowBuilder/PageGenerator/actions/transformation_afe';
 import exportFilterAction from '../../../../../views/FlowBuilder/PageGenerator/actions/exportFilter_afe';
-import AppBlockHandle from './AppBlockHandle';
+import AppBlockHandle from './Handles/AppBlockHandle';
 
 const generatorActions = [
   {

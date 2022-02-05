@@ -11,16 +11,18 @@ import { FlowProvider } from './Context';
 import PgNode from './CustomNodes/PgNode';
 import PpNode from './CustomNodes/PpNode';
 import TerminalNode from './CustomNodes/TerminalNode';
+import RouterNode from './CustomNodes/RouterNode';
 
 const nodeTypes = {
   pg: PgNode,
   pp: PpNode,
   terminal: TerminalNode,
+  router: RouterNode,
 };
 
 const edgeTypes = {
   default: DefaultEdge,
-  linked: LinkedEdge,
+  linked: LinkedEdge, // not used now, possibly never.
 };
 
 export default () => {
