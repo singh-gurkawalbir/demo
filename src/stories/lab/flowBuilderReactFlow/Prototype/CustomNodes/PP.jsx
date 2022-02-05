@@ -9,7 +9,6 @@ import outputFilterAction from '../../../../../views/FlowBuilder/PageProcessor/a
 import lookupTransformationAction from '../../../../../views/FlowBuilder/PageProcessor/actions/lookupTransformation_afe';
 import responseTransformationAction from '../../../../../views/FlowBuilder/PageProcessor/actions/responseTransformation_afe';
 import responseMapping from '../../../../../views/FlowBuilder/PageProcessor/actions/responseMapping_afe';
-import AddNodeButton from './AddNodeButton';
 import AppBlockHandle from './AppBlockHandle';
 
 const useStyles = makeStyles(() => ({
@@ -81,7 +80,6 @@ export default function PageGenerator(props) {
       <AppBlockHandle type="target" position={Position.Left} />
 
       <div className={classes.contentContainer} >
-        <AddNodeButton id={id} direction="left" />
         <div className={classes.ppContainer}>
           <AppBlock
             name={label}
@@ -96,7 +94,6 @@ export default function PageGenerator(props) {
             actions={processorActions}
         />
         </div>
-        <AddNodeButton id={id} direction="right" />
       </div>
 
       <AppBlockHandle type="source" position={Position.Right} />

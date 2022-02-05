@@ -3,8 +3,9 @@ import ReactFlow,
 { MiniMap,
   Controls,
   ReactFlowProvider } from 'react-flow-renderer';
-import flowSchema from './metadata/flowSchema';
+import mockElements from './metadata/elements';
 import LinkedEdge from './CustomEdges/LinkedEdge';
+import DefaultEdge from './CustomEdges/DefaultEdge';
 import { layoutElements } from './lib';
 import { FlowProvider } from './Context';
 import PageGenerator from './CustomNodes/PG';
@@ -17,11 +18,12 @@ const nodeTypes = {
 };
 
 const edgeTypes = {
+  default: DefaultEdge,
   linked: LinkedEdge,
 };
 
 export default () => {
-  const [elements, setElements] = useState(layoutElements(flowSchema));
+  const [elements, setElements] = useState(layoutElements(mockElements));
 
   useEffect(() => {
     // eslint-disable-next-line no-console
