@@ -6,15 +6,28 @@ import dagre from 'dagre';
 // In a real world app you would use the correct width and height values of
 // const nodes = useStoreState(state => state.nodes) and then node.__rf.width, node.__rf.height
 
-const nodeWidth = 275;
-const nodeHeight = 285;
-const stepHeight = 25;
-const stepWidth = 25;
+const nodeSize = {
+  pp: {
+    width: 275,
+    height: 285,
+  },
+  pg: {
+    width: 275,
+    height: 285,
+  },
+  router: {
+    width: 50,
+    height: 50,
+  },
+  leaf: {
+    width: 50,
+    height: 50,
+  },
+};
+
 const options = {
   ranksep: 225,
-};
-const applyNodeStyle = (dagreGraph, { height, width}) => el => {
-  dagreGraph.setNode(el.id, { width, height });
+  nodesep: 150,
 };
 
 export function layoutElements(elements) {
@@ -22,15 +35,13 @@ export function layoutElements(elements) {
 
   dagreGraph.setDefaultEdgeLabel(() => ({}));
   dagreGraph.setGraph({ rankdir: 'LR', ...options });
-  const appElements = elements.filter(el => ['pg', 'pp'].includes(el.type));
-  const stepElements = elements.filter(el => ['step'].includes(el.type));
 
-  appElements.forEach(applyNodeStyle(dagreGraph, {height: nodeHeight, width: nodeWidth}));
-  stepElements.forEach(applyNodeStyle(dagreGraph, {height: stepHeight, width: stepWidth}));
-  const edges = elements.filter(isEdge);
-
-  edges.forEach(el => {
-    dagreGraph.setEdge(el.source, el.target);
+  elements.forEach(el => {
+    if (isNode(el)) {
+      dagreGraph.setNode(el.id, {...nodeSize[el.type]});
+    } else {
+      dagreGraph.setEdge(el.source, el.target);
+    }
   });
 
   dagre.layout(dagreGraph);
@@ -39,13 +50,13 @@ export function layoutElements(elements) {
     if (isNode(el)) {
       const nodeWithPosition = dagreGraph.node(el.id);
 
-      // unfortunately we need this little hack to pass a slightly different position
-      // to notify react flow about the change. Moreover we are shifting the dagre node position
-      // (anchor=center center) to the top left so it matches the react flow node anchor point (top left).
+      // We are shifting the dagre node position that returns centerpoint (x,y)
+      // to the top left so it matches the react-flow node anchor point (top left).
+      // This maters when nodes are of various sizes.
       return ({...el,
         position: {
-          x: nodeWithPosition.x,
-          y: nodeWithPosition.y,
+          x: nodeWithPosition.x - nodeSize[el.type].width / 2,
+          y: nodeWithPosition.y - nodeSize[el.type].height / 2,
         }});
     }
 

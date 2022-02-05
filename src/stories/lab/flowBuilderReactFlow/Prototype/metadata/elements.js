@@ -9,7 +9,6 @@ export default [
   {
     id: '1',
     type: 'pg', // input node
-    sourcePosition: 'right',
     data: { label: 'Export NetSuite data', connectorType: 'netsuite' },
   },
   {
@@ -30,12 +29,11 @@ export default [
   {
     id: '3',
     type: 'pp',
-    // targetPosition: 'left',
     data: { label: 'REST import', connectorType: 'rest' },
   },
 
-  { id: 'e1-2', source: '1', target: '2', type: 'step' }, // , animated: true
-  { id: 'e2-2a', source: '2', target: '2a', type: 'step' }, // , animated: true
-  { id: 'e2-2b', source: '2', target: '2b', type: 'step' }, // , animated: true
-  { id: 'e2b-3', source: '2b', target: '3', type: 'linked' },
+  { id: 'e1-2', source: '1', target: '2', type: 'default' }, // , animated: true
+  { id: 'e2-2a', source: '2', target: '2a', type: 'default' }, // , animated: true
+  { id: 'e2-2b', source: '2', target: '2b', type: 'default' }, // , animated: true
+  { id: 'e2b-3', source: '2b', target: '3', type: 'default' },
 ];

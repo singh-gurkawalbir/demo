@@ -1,41 +1,24 @@
 /* eslint-disable no-param-reassign */
 import { v4 } from 'uuid';
-import clsx from 'clsx';
 import produce from 'immer';
 import React from 'react';
 import { makeStyles, IconButton, List, ListItem, ListItemText } from '@material-ui/core';
-import AddIcon from '../../../../../components/icons/AddIcon';
-import { getConnectedEdges, layoutElements } from '../lib';
-import { useFlowContext } from '../Context';
-import ArrowPopper from '../../../../../components/ArrowPopper';
+import AddIcon from '../../../../components/icons/AddIcon';
+import { layoutElements } from './lib';
+import { useFlowContext } from './Context';
+import ArrowPopper from '../../../../components/ArrowPopper';
 
 const useStyles = makeStyles(theme => ({
   addButton: {
     backgroundColor: theme.palette.common.white,
     border: `solid 1px ${theme.palette.secondary.light}`,
     padding: 0,
-    top: -56,
-  },
-  leftAddButton: {
-    left: -26,
-  },
-  rightAddButton: {
-    left: 48,
   },
 }));
 
 const generateId = () => v4().replace(/-/g, '').substring(0, 4);
-const addNodesWithStepHandle = (newId, id, direction) => [
-  {
-    id: newId,
-    type: 'pp',
-    data: { label: `New node: ${newId}`},
-  },
-  direction === 'left' ? { id: generateId(), source: newId, target: id, type: 'step' } : { id: generateId(), source: id, target: newId, type: 'step' },
 
-];
-
-export default ({ id, direction = 'left'}) => {
+export default ({ edgeId }) => {
   const classes = useStyles();
   const { setElements } = useFlowContext();
 
@@ -47,26 +30,34 @@ export default ({ id, direction = 'left'}) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const onAddEmptyFlowStep = event => {
+  const handleAddNode = event => {
     // alert(`add node to the ${direction} of node ${id}`);
     event.stopPropagation();
     const newId = generateId();
 
     setElements(elements => {
       const newElements = produce(elements, draft => {
-        const connectedEdge = getConnectedEdges(id, direction, draft);
-        // console.log(connectedEdge);
-        const index = elements.findIndex(el => el.id === id);
-        const newNodes = addNodesWithStepHandle(newId, id, direction);
+        const edgeIndex = elements.findIndex(el => el.id === edgeId);
+        const oldEdge = draft[edgeIndex];
+        const oldSourceId = oldEdge.source;
+        const oldTargetId = oldEdge.target;
+        const nodeIndex = elements.findIndex(el => el.id === oldSourceId);
 
-        draft.splice(direction === 'left' ? index : index + 1, 0, ...newNodes);
-        connectedEdge.forEach(e => {
-          if (direction === 'left') {
-            e.target = newId;
-          } else {
-            e.source = newId;
-          }
-        });
+        const newNode = {
+          id: newId,
+          type: 'pp',
+          data: { label: `New node: ${newId}`},
+        };
+
+        oldEdge.target = newId;
+
+        draft.splice(nodeIndex, 0, newNode);
+        draft.push(
+          { id: generateId(),
+            source: newId,
+            target: oldTargetId,
+            type: 'default' }
+        );
       });
 
       return layoutElements(newElements, 'LR');
@@ -77,7 +68,7 @@ export default ({ id, direction = 'left'}) => {
   return (
     <>
       <IconButton
-        className={clsx(classes.addButton, classes[`${direction}AddButton`])}
+        className={classes.addButton}
         onClick={handleClick}
     >
         <AddIcon />
@@ -92,7 +83,7 @@ export default ({ id, direction = 'left'}) => {
         <List
           dense className={classes.listWrapper}>
           {[
-            {label: 'Add empty flow step', onClick: event => onAddEmptyFlowStep(event, id, direction)},
+            {label: 'Add empty flow step', onClick: event => handleAddNode(event, edgeId)},
 
             {label: 'Add branching', onClick: handleClose },
           ].map(({label, onClick}) => (
