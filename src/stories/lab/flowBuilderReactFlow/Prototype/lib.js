@@ -8,26 +8,26 @@ import dagre from 'dagre';
 
 const nodeSize = {
   pp: {
-    width: 275,
+    width: 400,
     height: 285,
   },
   pg: {
-    width: 275,
+    width: 400,
     height: 285,
   },
   router: {
-    width: 50,
-    height: 50,
+    width: 26,
+    height: 26,
   },
-  leaf: {
-    width: 50,
-    height: 50,
+  terminal: {
+    width: 26,
+    height: 26,
   },
 };
 
 const options = {
-  ranksep: 225,
-  nodesep: 150,
+  ranksep: 50,
+  nodesep: 50,
 };
 
 export function layoutElements(elements) {

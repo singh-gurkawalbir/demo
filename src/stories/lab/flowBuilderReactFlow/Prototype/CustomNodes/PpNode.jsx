@@ -8,8 +8,8 @@ import pageProcessorHooksAction from '../../../../../views/FlowBuilder/PageProce
 import outputFilterAction from '../../../../../views/FlowBuilder/PageProcessor/actions/outputFilter_afe';
 import lookupTransformationAction from '../../../../../views/FlowBuilder/PageProcessor/actions/lookupTransformation_afe';
 import responseTransformationAction from '../../../../../views/FlowBuilder/PageProcessor/actions/responseTransformation_afe';
-import responseMapping from '../../../../../views/FlowBuilder/PageProcessor/actions/responseMapping_afe';
-import AppBlockHandle from './AppBlockHandle';
+// import responseMapping from '../../../../../views/FlowBuilder/PageProcessor/actions/responseMapping_afe';
+import AppBlockHandle from './Handles/AppBlockHandle';
 
 const useStyles = makeStyles(() => ({
   ppContainer: {
@@ -67,10 +67,10 @@ export default function PageGenerator(props) {
         },
       );
     }
-    processorActions.push({
-      ...responseMapping,
-      isUsed: true,
-    });
+    // processorActions.push({
+    //   ...responseMapping,
+    //   isUsed: true,
+    // });
 
     return processorActions;
   }, [isLookup]);

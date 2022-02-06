@@ -1,24 +1,22 @@
 /* eslint-disable no-param-reassign */
+import clsx from 'clsx';
 import React from 'react';
 import { Handle } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
 
-const useStyles = makeStyles(theme => ({
-  handle: {
+const useStyles = makeStyles(() => ({
+  defaultHandle: {
     border: 0,
     width: 1,
     height: 1,
     backgroundColor: 'transparent',
-    margin: theme.spacing(-0, 2),
-    marginTop: -56,
   },
-
 }));
 
-export default props => {
+export default ({className, ...props}) => {
   const classes = useStyles();
 
   return (
-    <Handle className={classes.handle} {...props} />
+    <Handle className={clsx(classes.defaultHandle, className)} {...props} />
   );
 };
