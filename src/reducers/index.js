@@ -1666,7 +1666,7 @@ selectors.makeMarketPlaceConnectorsSelector = () => {
 
       return connectors
         .map(c => {
-          const installedIntegrationApps = integrations.filter(int => int._connectionId === c._id);
+          const installedIntegrationApps = integrations.filter(int => int._connectorId === c._id);
 
           return { ...c, installed: !!installedIntegrationApps.length };
         })
