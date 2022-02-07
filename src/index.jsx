@@ -102,7 +102,7 @@ if (env !== 'development' && GAKey1?.length > 1) {
       document.getElementById('root')
     );
   })();
-} else { // DEV ENV
+} else if (env === 'development') { // DEV ENV
   // We don't need to register Google Analytics here.
   render(
     <Provider store={store}>
