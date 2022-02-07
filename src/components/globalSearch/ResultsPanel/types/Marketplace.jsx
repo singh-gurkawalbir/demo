@@ -1,11 +1,11 @@
 import React, { useRef, useCallback } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, makeStyles, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import UpArrowIcon from '../../../../../../components/icons/ArrowUpIcon';
-import FilledButton from '../../../../../../components/Buttons/FilledButton';
+import UpArrowIcon from '../../../icons/ArrowUpIcon';
+import FilledButton from '../../../Buttons/FilledButton';
 import useScrollIntoView from '../../hooks/useScrollIntoView';
 import { useGlobalSearchState } from '../../hooks/useGlobalSearchState';
-import useRequestForDemo from '../../../../../../hooks/useRequestForDemo';
+import useRequestForDemo from '../../../../hooks/useRequestForDemo';
 
 const useStyles = makeStyles(theme => ({
   rootExpanded: {

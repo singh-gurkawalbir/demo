@@ -1,6 +1,6 @@
 import React from 'react';
 import GenericRow from './Generic';
-import OnlineStatus from '../../../../../../components/OnlineStatus';
+import OnlineStatus from '../../../OnlineStatus';
 
 export default props => (
   <GenericRow {...props}>

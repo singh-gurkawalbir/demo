@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { makeStyles, Tabs, Tab, IconButton } from '@material-ui/core';
 import FloatingPaper from '../ResourceFilter/FloatingPaper';
-import CloseIcon from '../../../../../components/icons/CloseIcon';
+import CloseIcon from '../../icons/CloseIcon';
 import ResourceResults from './ResourceResults';
 import MarketPlaceResults from './MarketPlaceResults';
 import { useGlobalSearchState } from '../hooks/useGlobalSearchState';

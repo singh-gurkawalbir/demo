@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core';
 import { useLocation } from 'react-router-dom';
-import useKeyboardShortcut from '../../../../hooks/useKeyboardShortcut';
+import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import ResourceFilter from './ResourceFilter';
 import SearchBox from './SearchBox/SearchBox';
 import { GlobalSearchProvider } from './GlobalSearchContext';

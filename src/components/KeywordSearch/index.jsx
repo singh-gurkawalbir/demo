@@ -4,7 +4,7 @@ import actions from '../../actions';
 import SearchInput from '../SearchInput';
 import { selectors } from '../../reducers';
 import HomeSearchInput from '../SearchInput/HomeSearchInput';
-import useDebouncedValue from '../../stories/lab/globalSearch/Prototype/hooks/useDebouncedInput';
+import useDebouncedValue from '../../hooks/useDebouncedInput';
 
 export default function KeywordSearch({ filterKey, isHomeSearch }) {
   const dispatch = useDispatch();

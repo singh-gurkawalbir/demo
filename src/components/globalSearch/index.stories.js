@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { jsxDecorator } from 'storybook-addon-jsx';
-import GlobalSearchProto from './Prototype';
+import GlobalSearchProto from './index';
 import Template from './Template';
 import withRouter from './withRouter';
 

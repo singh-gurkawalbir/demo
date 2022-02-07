@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
-import MarketplaceIcon from '../../../../../components/icons/MarketplaceIcon';
-import TextButton from '../../../../../components/Buttons/TextButton';
+import MarketplaceIcon from '../../icons/MarketplaceIcon';
+import TextButton from '../../Buttons/TextButton';
 import useActiveTab from '../hooks/useActiveTab';
 import useResults from '../hooks/useResults';
 

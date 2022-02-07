@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import GlobalSearchProto from '../Prototype';
+import GlobalSearchProto from '../index';
 
 const useStyles = makeStyles(() => ({
   templateRoot: {

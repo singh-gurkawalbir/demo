@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import GlobalSearch from '../../../stories/lab/globalSearch/Prototype';
+import GlobalSearch from '../../../components/globalSearch';
 import LoadResources from '../../../components/LoadResources';
 import { selectors } from '../../../reducers/index';
 import {getReduxState} from '../../../index';

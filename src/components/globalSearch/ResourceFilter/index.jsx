@@ -5,10 +5,10 @@ import { makeStyles,
   Button,
   Divider,
 } from '@material-ui/core';
-import ArrowDownIcon from '../../../../../components/icons/ArrowDownIcon';
-import ArrowUpIcon from '../../../../../components/icons/ArrowUpIcon';
+import ArrowDownIcon from '../../icons/ArrowDownIcon';
+import ArrowUpIcon from '../../icons/ArrowUpIcon';
 import FloatingPaper from './FloatingPaper';
-import CloseIcon from '../../../../../components/icons/CloseIcon';
+import CloseIcon from '../../icons/CloseIcon';
 import { useGlobalSearchContext } from '../GlobalSearchContext';
 import { getResourceFilters } from '../utils';
 import MenuItem from './MenuItem';

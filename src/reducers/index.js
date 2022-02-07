@@ -105,7 +105,7 @@ import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
 import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
-import { filterMap } from '../stories/lab/globalSearch/Prototype/filterMeta';
+import { filterMap } from '../components/globalSearch/filterMeta';
 
 const emptyArray = [];
 const emptyObject = {};

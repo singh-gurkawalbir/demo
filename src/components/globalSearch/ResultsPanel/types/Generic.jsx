@@ -2,8 +2,8 @@
 import React, { useCallback, useMemo, useRef, useEffect } from 'react';
 import { Divider, makeStyles, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import CeligoTimeAgo from '../../../../../../components/CeligoTimeAgo';
-import InfoIconButton from '../../../../../../components/InfoIconButton';
+import CeligoTimeAgo from '../../../CeligoTimeAgo';
+import InfoIconButton from '../../../InfoIconButton';
 import useScrollIntoView from '../../hooks/useScrollIntoView';
 import { getResourceURL } from '../../utils';
 import useSyncedRef from '../../hooks/useSyncedRef';
