@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo } from 'react';
-import GlobalSearch from '../../../components/globalSearch';
+import Search from '../../../components/GlobalSearch';
 import LoadResources from '../../../components/LoadResources';
 import { selectors } from '../../../reducers/index';
 import {getReduxState} from '../../../store';
 import useResourceListItems from '../../../hooks/useSidebarListItems';
 import {getResourceItems, getResourcesToLoad, getFilterBlacklist} from './utils';
 
-export default function GSearch() {
+export default function GlobalSearch() {
   const sidebarListItems = useResourceListItems();
   const resourceItems = useMemo(() => getResourceItems(sidebarListItems), [sidebarListItems]);
   const resourcesToLoad = useMemo(() => getResourcesToLoad(resourceItems), [resourceItems]);
@@ -20,7 +20,7 @@ export default function GSearch() {
 
   return (
     <LoadResources required resources={resourcesToLoad}>
-      <GlobalSearch filterBlacklist={filterBlacklist} getResults={getResults} />
+      <Search filterBlacklist={filterBlacklist} getResults={getResults} />
     </LoadResources>
   );
 }
