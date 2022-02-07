@@ -5,7 +5,6 @@ import { useHistory } from 'react-router-dom';
 import CeligoTimeAgo from '../../../../../../components/CeligoTimeAgo';
 import InfoIconButton from '../../../../../../components/InfoIconButton';
 import useScrollIntoView from '../../hooks/useScrollIntoView';
-import { useGlobalSearchState } from '../../hooks/useGlobalSearchState';
 import { getResourceURL } from '../../utils';
 import useSyncedRef from '../../hooks/useSyncedRef';
 
@@ -43,19 +42,17 @@ const useStyles = makeStyles(theme => ({
 
 function GenericRow({result, children, includeDivider, focussed, type}) {
   const classes = useStyles({focussed});
-  const setOpen = useGlobalSearchState(state => state.changeOpen);
   const history = useHistory();
   const rowRef = useRef();
 
   useScrollIntoView(rowRef, focussed);
 
-  const memoizedValuesRef = useSyncedRef({setOpen, history, result, type});
+  const memoizedValuesRef = useSyncedRef({ history, result, type});
   const url = useMemo(() => getResourceURL(type, result), [result, type]);
 
   const handleRowClick = useCallback(() => {
-    const {setOpen, history} = memoizedValuesRef?.current;
+    const {history} = memoizedValuesRef?.current;
 
-    setOpen(false);
     history.push(url);
   }, [memoizedValuesRef, url]);
 

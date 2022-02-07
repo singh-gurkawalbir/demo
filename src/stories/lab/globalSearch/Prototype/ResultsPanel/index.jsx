@@ -7,6 +7,8 @@ import MarketPlaceResults from './MarketPlaceResults';
 import { useGlobalSearchState } from '../hooks/useGlobalSearchState';
 import useActiveTab from '../hooks/useActiveTab';
 import useResults from '../hooks/useResults';
+import { useGlobalSearchContext } from '../GlobalSearchContext';
+import Spinner from '../../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   resultsPaper: {
@@ -83,7 +85,6 @@ function ResultsPanel() {
           <CloseIcon />
         </IconButton>
       </div>
-
       <TabContent>
         <ResourceResults />
         <MarketPlaceResults />
@@ -91,15 +92,22 @@ function ResultsPanel() {
     </FloatingPaper>
   );
 }
-export default React.memo(ResultsPanel);
+export default ResultsPanel;
 
 function TabContent({ children }) {
   const classes = useStyles();
   const [activeTab] = useActiveTab();
+  const {areAllResourcesLoaded} = useGlobalSearchContext();
 
   return (
     <div role="tabpanel" className={classes.tabPanel}>
-      {children && children[activeTab]}
+      {areAllResourcesLoaded ? children && children[activeTab] : (
+        <div className={classes.resultContainer}>
+          <Spinner size="small" centerAll >
+            Loading...
+          </Spinner>
+        </div>
+      )}
     </div>
   );
 }

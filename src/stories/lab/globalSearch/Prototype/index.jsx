@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import React, { useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core';
+import { useLocation } from 'react-router-dom';
 import useKeyboardShortcut from '../../../../hooks/useKeyboardShortcut';
 import ResourceFilter from './ResourceFilter';
 import SearchBox from './SearchBox/SearchBox';
@@ -28,10 +29,16 @@ const useStyles = makeStyles(theme => ({
 function GlobalSearch() {
   const open = useGlobalSearchState(state => state.open);
   const setOpen = useGlobalSearchState(state => state.changeOpen);
+  const location = useLocation();
   const classes = useStyles({open});
   const handleOpenSearch = useCallback(() => setOpen(true), [setOpen]);
   const memoizedHandler = useRef({setOpen});
 
+  useEffect(() => {
+    const { setOpen } = memoizedHandler?.current;
+
+    setOpen(false);
+  }, [location.pathname]);
   useEffect(() => {
     const { setOpen } = memoizedHandler?.current;
 
@@ -53,11 +60,12 @@ function GlobalSearch() {
   );
 }
 
-export default function GlobalSearchProto({getResults, filterBlacklist}) {
+export default function GlobalSearchProto({getResults, areAllResourcesLoaded, filterBlacklist}) {
   return (
     <GlobalSearchProvider
       getResults={getResults}
       filterBlacklist={filterBlacklist}
+      areAllResourcesLoaded={areAllResourcesLoaded}
      >
       <GlobalSearch />
     </GlobalSearchProvider>

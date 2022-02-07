@@ -3,19 +3,16 @@ import React, { useContext, useEffect, useRef } from 'react';
 const GlobalSearchContext = React.createContext();
 export const GlobalSearchProvider = ({
   children,
-  filterBlacklist,
-  getResults }) => {
+  ...props }) => {
   const dispatchRefs = useRef({
-    filterBlacklist,
-    getResults,
+    ...props,
   });
 
   useEffect(() => {
     dispatchRefs.current = {
-      filterBlacklist,
-      getResults,
+      ...props,
     };
-  }, [filterBlacklist, getResults]);
+  }, [props]);
 
   return (
     <GlobalSearchContext.Provider
