@@ -1,27 +1,12 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
-import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import { selectors } from '../../reducers';
+import useAreResourcesLoaded from '../../hooks/useAreResourcesLoaded';
 
 export default function LoadResources({ children, resources, required }) {
   const dispatch = useDispatch();
   const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
-  const resourceStatus = useSelectorMemo(
-    selectors.makeAllResourceStatusSelector,
-    resources
-  );
-  const isAllDataReady = useMemo(
-    () =>
-      resourceStatus.reduce((acc, resourceStatus) => {
-        if (!resourceStatus.isReady) {
-          return false;
-        }
-
-        return acc;
-      }, true),
-    [resourceStatus]
-  );
+  const { isAllDataReady, resourceStatus } = useAreResourcesLoaded(resources);
 
   useEffect(() => {
     if (!isAllDataReady && defaultAShareId) {
