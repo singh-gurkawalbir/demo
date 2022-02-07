@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import GlobalSearch from '../../../components/globalSearch';
 import LoadResources from '../../../components/LoadResources';
 import { selectors } from '../../../reducers/index';
-import {getReduxState} from '../../../index';
+import {getReduxState} from '../../../store';
 import useResourceListItems from '../../../hooks/useSidebarListItems';
 import {getResourceItems, getResourcesToLoad, getFilterBlacklist} from './utils';
 

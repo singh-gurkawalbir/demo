@@ -5,7 +5,7 @@ import Template from './Template';
 import withRouter from './withRouter';
 
 export default {
-  title: 'Lab/GlobalSearch',
+  title: 'Components/GlobalSearch',
   decorators: [jsxDecorator, withRouter],
 
   component: GlobalSearchProto,

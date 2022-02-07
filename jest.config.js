@@ -38,7 +38,5 @@ module.exports = {
     LOGROCKET_IDENTIFIER: 'some logrocket identifier',
     LOGROCKET_IDENTIFIER_EU: 'some logrocket identifier europe',
     CDN_BASE_URI: 'CDN_BASE_URI',
-    GA_KEY_1: '',
-    GA_KEY_2: '',
   },
 };
