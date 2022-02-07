@@ -60,12 +60,11 @@ function GlobalSearch() {
   );
 }
 
-export default function GlobalSearchProto({getResults, areAllResourcesLoaded, filterBlacklist}) {
+export default function GlobalSearchProto({getResults, filterBlacklist}) {
   return (
     <GlobalSearchProvider
       getResults={getResults}
       filterBlacklist={filterBlacklist}
-      areAllResourcesLoaded={areAllResourcesLoaded}
      >
       <GlobalSearch />
     </GlobalSearchProvider>

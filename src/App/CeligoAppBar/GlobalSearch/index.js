@@ -5,14 +5,12 @@ import { selectors } from '../../../reducers/index';
 import {getReduxState} from '../../../index';
 import useResourceListItems from '../../../hooks/useSidebarListItems';
 import {getResourceItems, getResourcesToLoad, getFilterBlacklist} from './utils';
-import useAreResourcesLoaded from '../../../hooks/useAreResourcesLoaded';
 
 export default function GSearch() {
   const sidebarListItems = useResourceListItems();
   const resourceItems = useMemo(() => getResourceItems(sidebarListItems), [sidebarListItems]);
   const resourcesToLoad = useMemo(() => getResourcesToLoad(resourceItems), [resourceItems]);
   const filterBlacklist = useMemo(() => getFilterBlacklist(resourceItems), [resourceItems]);
-  const {isAllDataReady} = useAreResourcesLoaded(resourcesToLoad);
   const getResults = useCallback((searchKeyword, filters) => {
     const state = getReduxState();
     const globalSearchResults = selectors.globalSearchResults(state, searchKeyword, filters);
@@ -21,8 +19,8 @@ export default function GSearch() {
   }, []);
 
   return (
-    <LoadResources required={false} resources={resourcesToLoad}>
-      <GlobalSearch areAllResourcesLoaded={isAllDataReady} filterBlacklist={filterBlacklist} getResults={getResults} />
+    <LoadResources required resources={resourcesToLoad}>
+      <GlobalSearch filterBlacklist={filterBlacklist} getResults={getResults} />
     </LoadResources>
   );
 }
