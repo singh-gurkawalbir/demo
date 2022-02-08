@@ -9,6 +9,7 @@ import SearchBox from './SearchBox/SearchBox';
 import { GlobalSearchProvider } from './GlobalSearchContext';
 import { useGlobalSearchState } from './hooks/useGlobalSearchState';
 import SearchToolTip from './SearchBox/SearchTooltip';
+import useClickOutSide from '../../hooks/useClickOutSide';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,6 +34,10 @@ function GlobalSearch() {
   const classes = useStyles({open});
   const handleOpenSearch = useCallback(() => setOpen(true), [setOpen]);
   const memoizedHandler = useRef({setOpen});
+  const rootRef = useRef();
+  const handleCloseSearch = useCallback(() => {
+    setOpen(false);
+  }, [setOpen]);
 
   useEffect(() => {
     const { setOpen } = memoizedHandler?.current;
@@ -46,8 +51,10 @@ function GlobalSearch() {
   }, []);
   useKeyboardShortcut(['/'], handleOpenSearch, {useCapture: false});
 
+  useClickOutSide(rootRef, handleCloseSearch);
+
   return (
-    <div className={clsx(classes.root, {[classes.closed]: !open})}>
+    <div ref={rootRef} className={clsx(classes.root, {[classes.closed]: !open})}>
       {!open ? (
         <SearchToolTip />
       ) : (
