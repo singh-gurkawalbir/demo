@@ -4,8 +4,8 @@ import { useHistory } from 'react-router-dom';
 import UpArrowIcon from '../../../icons/ArrowUpIcon';
 import FilledButton from '../../../Buttons/FilledButton';
 import useScrollIntoView from '../../../../hooks/useScrollIntoView';
-import { useGlobalSearchState } from '../../hooks/useGlobalSearchState';
 import useRequestForDemo from '../../../../hooks/useRequestForDemo';
+import { useGlobalSearchState } from '../../GlobalSearchContext';
 
 const useStyles = makeStyles(theme => ({
   rootExpanded: {

@@ -3,8 +3,8 @@ import { makeStyles,
   Typography,
   Tooltip,
   Badge} from '@material-ui/core';
-import { useGlobalSearchState } from '../hooks/useGlobalSearchState';
 import FilterIcon from '../../icons/FilterIcon';
+import { useGlobalSearchState } from '../GlobalSearchContext';
 
 const useStyles = makeStyles(() => ({
   filterLabel: {

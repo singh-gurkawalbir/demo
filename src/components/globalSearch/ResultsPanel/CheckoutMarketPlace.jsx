@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import MarketplaceIcon from '../../icons/MarketplaceIcon';
 import TextButton from '../../Buttons/TextButton';
-import useActiveTab from '../hooks/useActiveTab';
+import {useActiveTab} from '../GlobalSearchContext';
 import useResults from '../hooks/useResults';
 
 const useStyles = makeStyles(theme => ({

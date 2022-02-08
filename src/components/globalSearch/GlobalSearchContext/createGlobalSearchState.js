@@ -29,7 +29,7 @@ const stateUpdaters = ({get, set}) => ({
   clearSearch: () => set(state => ({...state, keyword: ''})),
   changeFilters: type => {
     let newFilters = [];
-    const {filters} = get();
+    const {filters, keyword} = get();
 
     if (type === 'all') {
       newFilters = [];
@@ -38,6 +38,11 @@ const stateUpdaters = ({get, set}) => ({
     } else {
       // last case is type not present, so add it.
       newFilters = [...filters, type];
+    }
+    if (keyword?.includes(':')) {
+      const newKeyword = buildSearchString(newFilters, keyword);
+
+      return set(state => ({...state, filters: newFilters, keyword: newKeyword}));
     }
     set(state => ({...state, filters: newFilters}));
   },
@@ -50,7 +55,7 @@ const stateUpdaters = ({get, set}) => ({
   },
 });
 
-export const useGlobalSearchState = createSharedState(({get, set}) => ({
+export const createGlobalSearchState = () => createSharedState(({get, set}) => ({
   ...initialState,
   ...stateUpdaters({get, set}),
 }));

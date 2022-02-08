@@ -6,8 +6,7 @@ import { useLocation } from 'react-router-dom';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import ResourceFilter from './ResourceFilter';
 import SearchBox from './SearchBox/SearchBox';
-import { GlobalSearchProvider } from './GlobalSearchContext';
-import { useGlobalSearchState } from './hooks/useGlobalSearchState';
+import { GlobalSearchProvider, useGlobalSearchState } from './GlobalSearchContext';
 import SearchToolTip from './SearchBox/SearchTooltip';
 import useClickOutSide from '../../hooks/useClickOutSide';
 

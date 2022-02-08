@@ -4,9 +4,8 @@ import FloatingPaper from '../ResourceFilter/FloatingPaper';
 import CloseIcon from '../../icons/CloseIcon';
 import ResourceResults from './ResourceResults';
 import MarketPlaceResults from './MarketPlaceResults';
-import { useGlobalSearchState } from '../hooks/useGlobalSearchState';
-import useActiveTab from '../hooks/useActiveTab';
 import useResults from '../hooks/useResults';
+import { useActiveTab, useGlobalSearchState } from '../GlobalSearchContext';
 
 const useStyles = makeStyles(theme => ({
   resultsPaper: {

@@ -1,11 +1,10 @@
 import React, { useRef, useCallback, useEffect } from 'react';
 import { IconButton, InputBase, makeStyles, Paper } from '@material-ui/core';
 import CloseIcon from '../../icons/CloseIcon';
-import { useGlobalSearchState } from '../hooks/useGlobalSearchState';
 import useDebouncedValue from '../../../hooks/useDebouncedInput';
-import useActiveTab from '../hooks/useActiveTab';
 import useKeyboardShortcut from '../../../hooks/useKeyboardShortcut';
 import useSyncedRef from '../../../hooks/useSyncedRef';
+import { useGlobalSearchState, useActiveTab } from '../GlobalSearchContext';
 
 const useStyles = makeStyles(theme => ({
   searchBox: {
