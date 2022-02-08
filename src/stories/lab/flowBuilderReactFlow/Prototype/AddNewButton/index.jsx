@@ -47,22 +47,22 @@ const AddNodeMenuPopper = ({ anchorEl, handleClose, handleAddNode, handleAddRout
   );
 };
 
-const isNodeConnectedToRouter = (nodeId, elements) => {
+const isNodeConnectedToRouterOrTerminal = (nodeId, elements) => {
   const {source, target} = elements.find(ele => ele.id === nodeId);
 
-  return elements.filter(e => [source, target].includes(e.id)).some(node => node?.type === 'router');
+  return elements.filter(e => [source, target].includes(e.id)).some(node => ['router', 'terminal'].includes(node?.type));
 };
 
 const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId}) => {
   const classes = useStyles();
 
   const { elements } = useFlowContext();
-  const isConnectedToRouter = isNodeConnectedToRouter(edgeId, elements);
+  const isConnectedToRouterOrTerminal = isNodeConnectedToRouterOrTerminal(edgeId, elements);
 
-  if (isConnectedToRouter) {
+  if (isConnectedToRouterOrTerminal) {
     return (
       <IconButtonWithTooltip
-        tooltipProps={{title: isConnectedToRouter ? 'Add empty flow step' : '', placement: 'down'}}
+        tooltipProps={{title: isConnectedToRouterOrTerminal ? 'Add empty flow step' : '', placement: 'down'}}
         onClick={handleAddNode}
         className={classes.addButton}
     >
