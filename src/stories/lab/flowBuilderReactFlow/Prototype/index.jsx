@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import ReactFlow,
 { MiniMap,
   Controls,
@@ -26,7 +26,11 @@ const edgeTypes = {
 };
 
 export default () => {
-  const [elements, setElements] = useState(layoutElements(mockElements));
+  const [elements, setElements] = useState(mockElements);
+
+  const updatedLayout = useMemo(() =>
+    layoutElements(elements, 'LR'),
+  [elements]);
 
   useEffect(() => {
     // eslint-disable-next-line no-console
@@ -38,7 +42,7 @@ export default () => {
       <FlowProvider elements={elements} setElements={setElements}>
         <ReactFlow
           selectNodesOnDrag={false}
-          elements={elements}
+          elements={updatedLayout}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
         />
