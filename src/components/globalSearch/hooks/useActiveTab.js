@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { createSharedState } from '../GlobalSearchContext/createSharedState';
+import { createSharedState } from '../../../store/createSharedState';
 
 const useTabState = createSharedState({
   activeTab: 0,

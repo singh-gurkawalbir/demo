@@ -1,6 +1,6 @@
 import {isEqual} from 'lodash';
 import { buildSearchString, getFilters, getKeyword } from '../utils';
-import { createSharedState } from '../GlobalSearchContext/createSharedState';
+import { createSharedState } from '../../../store/createSharedState';
 
 const initialState = {
   keyword: '',
