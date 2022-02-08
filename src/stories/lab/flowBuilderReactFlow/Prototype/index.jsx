@@ -37,11 +37,42 @@ export default () => {
     console.log(elements);
   }, [elements]);
 
+  const onNodeDragStart = (e, node) => {
+    if (node.type !== 'terminal') {
+      return;
+    }
+    setElements(elements => elements.map(ele => {
+      if (ele.type !== 'terminal' || ele.id === node.id) {
+        return ele;
+      }
+
+      return {...ele, highlight: true};
+    }));
+  };
+
+  const onNodeDragStop = (e, node) => {
+    if (node.type !== 'terminal') {
+      return;
+    }
+    console.log('check ', e);
+    setElements(elements => elements.map(ele => {
+      if (ele.type !== 'terminal' || ele.id === node.id) {
+        return ele;
+      }
+      const copy = {...ele};
+
+      delete copy.highlight;
+
+      return copy;
+    }));
+  };
+
   return (
     <ReactFlowProvider>
       <FlowProvider elements={elements} setElements={setElements}>
         <ReactFlow
-          selectNodesOnDrag={false}
+          onNodeDragStart={onNodeDragStart}
+          onNodeDragStop={onNodeDragStop}
           elements={updatedLayout}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
