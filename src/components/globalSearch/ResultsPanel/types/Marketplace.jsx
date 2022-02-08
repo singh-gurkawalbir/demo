@@ -3,7 +3,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Divider, makeStyles, Typ
 import { useHistory } from 'react-router-dom';
 import UpArrowIcon from '../../../icons/ArrowUpIcon';
 import FilledButton from '../../../Buttons/FilledButton';
-import useScrollIntoView from '../../hooks/useScrollIntoView';
+import useScrollIntoView from '../../../../hooks/useScrollIntoView';
 import { useGlobalSearchState } from '../../hooks/useGlobalSearchState';
 import useRequestForDemo from '../../../../hooks/useRequestForDemo';
 

@@ -5,7 +5,7 @@ import { useGlobalSearchState } from '../hooks/useGlobalSearchState';
 import useDebouncedValue from '../../../hooks/useDebouncedInput';
 import useActiveTab from '../hooks/useActiveTab';
 import useKeyboardShortcut from '../../../hooks/useKeyboardShortcut';
-import useSyncedRef from '../hooks/useSyncedRef';
+import useSyncedRef from '../../../hooks/useSyncedRef';
 
 const useStyles = makeStyles(theme => ({
   searchBox: {

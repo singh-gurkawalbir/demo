@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import ResultsList from './ResultsList';
 import useResults from '../hooks/useResults';
-import useKeyboardNavigation from '../hooks/useKeyboardNavigation';
+import useKeyboardNavigation from '../../../hooks/useKeyboardNavigation';
 import { getResultsLength } from '../utils';
 import CheckoutMarketPlace from './CheckoutMarketPlace';
 

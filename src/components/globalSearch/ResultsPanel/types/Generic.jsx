@@ -4,9 +4,9 @@ import { Divider, makeStyles, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import InfoIconButton from '../../../InfoIconButton';
-import useScrollIntoView from '../../hooks/useScrollIntoView';
+import useScrollIntoView from '../../../../hooks/useScrollIntoView';
 import { getResourceURL } from '../../utils';
-import useSyncedRef from '../../hooks/useSyncedRef';
+import useSyncedRef from '../../../../hooks/useSyncedRef';
 
 const useStyles = makeStyles(theme => ({
   root: {
