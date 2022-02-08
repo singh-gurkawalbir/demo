@@ -1,4 +1,4 @@
-import { filterMap } from '../../../components/globalSearch/filterMeta';
+import { filterMap } from '../../../components/GlobalSearch/filterMeta';
 
 export function getResourcesToLoad(resourceItems) {
   const mandatoryResources = ['published', 'marketplacetemplates', 'integrations', 'flows'];

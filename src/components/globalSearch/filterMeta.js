@@ -26,7 +26,7 @@ export const filterMap = {
   recycleBin:
     { resourceURL: 'recycleBinTTL', shortcut: 'r', type: 'recycleBin', label: 'Recycle bin', isResource: true },
   marketplaceTemplates:
-    { resourceURL: 'templates/published', shortcut: 't', type: 'marketplaceTemplates', label: 'Templates', isResource: false },
+    { resourceURL: 'marketplacetemplates', shortcut: 't', type: 'marketplaceTemplates', label: 'Templates', isResource: false },
   marketplaceConnectors:
     { resourceURL: 'published', shortcut: 'integration app', type: 'marketplaceConnectors', label: 'Integration apps', isResource: false },
 };
