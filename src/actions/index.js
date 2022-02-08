@@ -355,16 +355,16 @@ const resource = {
           flowGroupId,
           formKey,
         }),
-      createOrUpdateFailed: error =>
-        action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE_FAILED, {error}),
+      createOrUpdateFailed: (integrationId, error) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE_FAILED, {integrationId, error}),
       delete: (integrationId, flowGroupId, flowIds) =>
         action(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE, {
           integrationId,
           flowGroupId,
           flowIds,
         }),
-      deleteFailed: error =>
-        action(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE_FAILED, { error }),
+      deleteFailed: (integrationId, error) =>
+        action(actionTypes.INTEGRATION.FLOW_GROUPS.DELETE_FAILED, { integrationId, error }),
       shiftOrder: (integrationId, flowGroupId, newIndex) =>
         action(actionTypes.INTEGRATION.FLOW_GROUPS.SHIFT_ORDER, {
           integrationId,

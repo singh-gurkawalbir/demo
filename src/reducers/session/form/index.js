@@ -174,8 +174,6 @@ selectors.isActionButtonVisibleFromMeta = (state, formKey, actionButtonFieldId) 
   if (!form) return false;
   const actionButtonMeta = form.fieldMeta.actions?.find?.(({id}) => id === actionButtonFieldId) || {};
 
-  if (!actionButtonMeta) { return true; }
-
   return isVisible(actionButtonMeta, form.fields);
 };
 // #endregion

@@ -445,7 +445,51 @@ describe('resources reducer', () => {
 });
 
 describe('resources reducer for special cases', () => {
+  describe('received action', () => {
+    test('should consider type as connectorLicenses if the resource type is connectors/:id/licenses pattern', () => {
+      const resourceType = 'connectors/123/licenses';
+      const license = { _id: '456' };
+      const updatedState = reducer(
+        undefined,
+        actions.resource.received(resourceType, license)
+      );
+      const expectedState = {
+        connectorLicenses: [license],
+      };
+
+      expect(updatedState).toEqual(expectedState);
+    });
+    test('should extract the proper resourceType if the resource requested is for a specific integration in the format integration/:resourceType', () => {
+      const resourceType = 'integrations/accesstokens';
+      const accessTokens = [{ _id: '456' }];
+      const updatedState = reducer(
+        undefined,
+        actions.resource.received(resourceType, accessTokens)
+      );
+      const expectedState = {
+        accesstokens: [accessTokens],
+      };
+
+      expect(updatedState).toEqual(expectedState);
+    });
+  });
+
   describe('received collection action', () => {
+    const resourceTypes = ['profile', 'integrations/ashares', 'integrations/audit', 'suitescript/connections/con-123'];
+
+    resourceTypes.forEach(resourceType => {
+      test(`should do nothing and retain the existing state for any action incase of ${resourceType} resource`, () => {
+        const collection = [{ _id: '456' }, { _id: '678' }];
+        const initialState = {};
+        const state = reducer(
+          initialState,
+          { type: 'ANY_STATE', resourceType, collection}
+        );
+
+        expect(state).toBe(initialState);
+      });
+    });
+
     test('connector licenses should be stored successfully', () => {
       const resourceType = 'connectors/123/licenses';
       const collection = [{ _id: '456' }, { _id: '678' }];
