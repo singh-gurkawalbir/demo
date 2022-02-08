@@ -1,12 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { ClickAwayListener, IconButton, List, ListItem, ListItemText, makeStyles } from '@material-ui/core';
-import produce from 'immer';
 import React from 'react';
-import { v4 } from 'uuid';
-import ArrowPopper from '../../../../components/ArrowPopper';
-import IconButtonWithTooltip from '../../../../components/IconButtonWithTooltip';
-import AddIcon from '../../../../components/icons/AddIcon';
-import { useFlowContext } from './Context';
+import ArrowPopper from '../../../../../components/ArrowPopper';
+import IconButtonWithTooltip from '../../../../../components/IconButtonWithTooltip';
+import AddIcon from '../../../../../components/icons/AddIcon';
+import { useFlowContext } from '../Context';
+import { handleAddNewNode, handleAddNewRouter } from './addElements';
 
 const useStyles = makeStyles(theme => ({
   addButton: {
@@ -16,9 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const generateId = () => v4().replace(/-/g, '').substring(0, 4);
-
-const AddNodeMenuPopper = ({ anchorEl, handleClose, handleAddNode}) => {
+const AddNodeMenuPopper = ({ anchorEl, handleClose, handleAddNode, handleAddRouter}) => {
   const classes = useStyles();
   const open = Boolean(anchorEl);
 
@@ -35,7 +32,7 @@ const AddNodeMenuPopper = ({ anchorEl, handleClose, handleAddNode}) => {
         {[
           {label: 'Add empty flow step', onClick: handleAddNode},
 
-          {label: 'Add branching', onClick: handleClose },
+          {label: 'Add branching', onClick: handleAddRouter },
         ].map(({label, onClick}) => (
           <ListItem
             button
@@ -65,7 +62,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId}) => {
   if (isConnectedToRouter) {
     return (
       <IconButtonWithTooltip
-        tooltipProps={{title: isConnectedToRouter ? 'Add empty flow step' : ''}}
+        tooltipProps={{title: isConnectedToRouter ? 'Add empty flow step' : '', placement: 'down'}}
         onClick={handleAddNode}
         className={classes.addButton}
     >
@@ -94,33 +91,12 @@ export default ({ edgeId }) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const { setElements } = useFlowContext();
+  const {elements, setElements } = useFlowContext();
   const handleAddNode = () => {
-    const newId = generateId();
-
-    setElements(elements => produce(elements, draft => {
-      const edgeIndex = elements.findIndex(el => el.id === edgeId);
-      const oldEdge = draft[edgeIndex];
-      const oldSourceId = oldEdge.source;
-      const oldTargetId = oldEdge.target;
-      const nodeIndex = elements.findIndex(el => el.id === oldSourceId);
-
-      const newNode = {
-        id: newId,
-        type: 'pp',
-        data: { label: `New node: ${newId}`},
-      };
-
-      oldEdge.target = newId;
-
-      draft.splice(nodeIndex, 0, newNode);
-      draft.push(
-        { id: generateId(),
-          source: newId,
-          target: oldTargetId,
-          type: 'default' }
-      );
-    }));
+    setElements(handleAddNewNode(edgeId, elements));
+  };
+  const handleAddRouter = () => {
+    setElements(handleAddNewRouter(edgeId, elements));
   };
 
   return (
@@ -130,7 +106,7 @@ export default ({ edgeId }) => {
           handleOpenMenu={handleOpenMenu} edgeId={edgeId} handleAddNode={handleAddNode} />
       </ClickAwayListener>
 
-      <AddNodeMenuPopper anchorEl={anchorEl} handleClose={handleCloseMenu} handleAddNode={handleAddNode} />
+      <AddNodeMenuPopper anchorEl={anchorEl} handleClose={handleCloseMenu} handleAddNode={handleAddNode} handleAddRouter={handleAddRouter} />
     </>
   );
 };
