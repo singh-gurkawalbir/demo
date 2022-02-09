@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     },
     '& button.Mui-selected': {
       borderRadius: 24,
-      backgroundColor: theme.palette.text.secondary,
+      backgroundColor: theme.palette.background.toggle,
       '& span': {
         color: theme.palette.common.white,
       },
@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
       borderRadius: 24,
     },
     '& button.Mui-selected:hover': {
-      backgroundColor: theme.palette.text.secondary,
+      backgroundColor: theme.palette.background.toggle,
     },
     '& button:first-child': {
       borderTopLeftRadius: 24,
