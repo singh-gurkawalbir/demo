@@ -2,7 +2,7 @@ import React from 'react';
 import { getSmoothStepPath, getEdgeCenter, getMarkerEnd} from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
 // import UnLinkIcon from '../../../../../components/icons/unLinkedIcon';
-import AddNodeButton from '../AddNodeButton';
+import AddNodeButton from '../AddNewButton';
 
 const foreignObjectSize = 32;
 
