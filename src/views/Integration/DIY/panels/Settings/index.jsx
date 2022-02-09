@@ -202,7 +202,7 @@ function CustomSettings({ integrationId, sectionId }) {
 
   useEffect(() => {
     setRemountCount(remountCount => remountCount + 1);
-  }, [settings]);
+  }, [sectionId, settings]);
 
   return (
     <div className={classes.root}>
