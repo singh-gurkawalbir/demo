@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useReducer } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
@@ -15,6 +15,7 @@ import layouts from './layouts';
 import editorMetadata from '../metadata';
 import DragHandleGridItem from './panels/DragHandlePanel';
 import { resolveValue } from '../../../utils/editor';
+import reducer, { actionTypes } from './stateReducer';
 
 const minGridSize = 200;
 const useStyles = makeStyles(layouts);
@@ -122,7 +123,9 @@ const pxToFr = (pxSizes, resetLastRow) => {
 export default function Editor({ editorId }) {
   const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
-  const [isDragging, setIsDragging] = useState(false);
+  // const [isDragging, setIsDragging] = useState(false);
+  const [newState, dispatchLocalAction] = useReducer(reducer, {isDragging: false});
+  const {isDragging} = newState;
   const [requireResize, setRequireResize] = useState(false);
   const [dragBarGridArea, setDragBarGridArea] = useState();
   const [dragOrientation, setDragOrientation] = useState();
@@ -185,12 +188,14 @@ export default function Editor({ editorId }) {
     // console.log(`orientation for: ${gridArea} is ${orientation}.`);
 
     setDragOrientation(orientation);
-    setIsDragging(true);
+    // setIsDragging(true);
+    dispatchLocalAction({type: actionTypes.isDragging, value: true});
     setDragBarGridArea(gridArea);
   }, []);
 
   const handleDragEnd = useCallback(() => {
-    setIsDragging(false);
+    // setIsDragging(false);
+    dispatchLocalAction({type: actionTypes.isDragging, value: false});
     setRequireResize(true);
   }, []);
 
