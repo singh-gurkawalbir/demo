@@ -48,6 +48,7 @@ function SearchInput() {
     setInputValue,
     setOpen,
     inputValue,
+    keyword,
   });
   const ref = useRef();
 
@@ -61,6 +62,16 @@ function SearchInput() {
       }
     }
   }, [keyword, setInputValue]);
+
+  // When a filter is selected by clicking, we clear the special characters in keyword
+  // So this is effect will sync the new keyword to the local inputvalue
+  useEffect(() => {
+    const { keyword, inputValue, setInputValue } = memoizedValues?.current;
+
+    if (!keyword?.includes(':') && inputValue?.includes(':')) {
+      setInputValue(keyword);
+    }
+  }, [filters, memoizedValues]);
   const handleEscapeKeypress = useCallback(() => {
     const {inputValue, setInputValue, setOpen} = memoizedValues?.current;
 

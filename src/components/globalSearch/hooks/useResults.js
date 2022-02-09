@@ -8,7 +8,7 @@ const resultsSelector = memoize(getResults => createSelector(
   state => state.keyword,
   state => state.filters,
   (keyword, filters) => {
-    const searchTokens = keyword?.includes(':') ? keyword?.split(':') : keyword;
+    const searchTokens = keyword?.includes(':') && !keyword?.startsWith(':') ? keyword?.split(':') : keyword;
     const searchValue = (Array.isArray(searchTokens) ? searchTokens[searchTokens?.length - 1] : searchTokens)?.trim?.();
     let results = {};
 

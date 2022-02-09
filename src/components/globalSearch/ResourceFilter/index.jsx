@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { makeStyles,
   IconButton,
   Typography,
@@ -9,7 +9,7 @@ import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
 import FloatingPaper from './FloatingPaper';
 import CloseIcon from '../../icons/CloseIcon';
-import { useGlobalSearchContext } from '../GlobalSearchContext';
+import { useGlobalSearchContext, useGlobalSearchState } from '../GlobalSearchContext';
 import { getResourceFilters } from '../utils';
 import MenuItem from './MenuItem';
 import FilterLabel from './FilterLabel';
@@ -48,10 +48,11 @@ const useStyles = makeStyles(theme => ({
 function ResourceFilter() {
   const classes = useStyles();
   const { filterBlacklist = [] } = useGlobalSearchContext();
-  const [open, setOpen] = useState(false);
+  const open = useGlobalSearchState(state => state.resourceFiltersOpen);
+  const setOpen = useGlobalSearchState(state => state.changeResourceFiltersOpen);
   const containerRef = useRef();
 
-  const handleArrowClick = () => setOpen(o => !o);
+  const handleArrowClick = () => setOpen(!open);
   const {resourceFilters, marketplaceFilters} = useMemo(() => getResourceFilters(filterBlacklist), [filterBlacklist]);
 
   return (

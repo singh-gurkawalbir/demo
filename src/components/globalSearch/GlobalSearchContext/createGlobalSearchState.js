@@ -1,31 +1,31 @@
 import {isEqual} from 'lodash';
-import { buildSearchString, getFilters, getKeyword } from '../utils';
+import { getFilters } from '../utils';
 import { createSharedState } from '../../../store/createSharedState';
 
 const initialState = {
   keyword: '',
   filters: [],
   open: false,
+  resourceFiltersOpen: false,
 };
 const stateUpdaters = ({get, set}) => ({
   changeKeyword: newSearchString => {
-    let newKeyword = getKeyword(newSearchString);
     const {keyword, filters} = get();
     let newFilters = filters;
 
     // support string filters
     if (newSearchString?.includes(':')) {
-      newKeyword = buildSearchString(filters, newSearchString);
       newFilters = getFilters(newSearchString);
     } else if (keyword?.includes(':') && !newSearchString?.includes(':')) {
       newFilters = [];
     }
     if (!isEqual(filters, newFilters)) {
-      set(state => ({...state, keyword: newKeyword, filters: newFilters}));
+      set(state => ({...state, keyword: newSearchString, filters: newFilters, resourceFiltersOpen: newFilters?.length > 0}));
     } else {
-      set(state => ({...state, keyword: newKeyword}));
+      set(state => ({...state, keyword: newSearchString}));
     }
   },
+  changeResourceFiltersOpen: status => set(state => ({...state, resourceFiltersOpen: status})),
   clearSearch: () => set(state => ({...state, keyword: ''})),
   changeFilters: type => {
     let newFilters = [];
@@ -39,12 +39,14 @@ const stateUpdaters = ({get, set}) => ({
       // last case is type not present, so add it.
       newFilters = [...filters, type];
     }
-    if (keyword?.includes(':')) {
-      const newKeyword = buildSearchString(newFilters, keyword);
+    let newKeyword = keyword;
 
-      return set(state => ({...state, filters: newFilters, keyword: newKeyword}));
+    if (keyword?.includes(':')) {
+      const keywordTokens = keyword?.split(':');
+
+      newKeyword = keywordTokens[keywordTokens?.length - 1];
     }
-    set(state => ({...state, filters: newFilters}));
+    set(state => ({...state, filters: newFilters, keyword: newKeyword}));
   },
   changeOpen: value => {
     if (!value) {
