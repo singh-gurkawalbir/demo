@@ -170,7 +170,7 @@ export default function Endpoint() {
       ],
     });
 
-    return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
+    return dispatch(actions.license.requestUpdate('upgrade'));
   }, [dispatch, confirmDialog]);
 
   const onRequestUpgradeClick = useCallback(() => {
@@ -188,7 +188,7 @@ export default function Endpoint() {
       ],
     });
 
-    return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
+    return dispatch(actions.license.requestUpdate('upgrade'));
   }, [dispatch, confirmDialog]);
   const licenseEntitlementUsage = useSelector(state => selectors.getLicenseEntitlementUsage(state));
   const numberofUsedEndpoints = licenseEntitlementUsage?.production?.endpointUsage?.numConsumed;
@@ -203,7 +203,7 @@ export default function Endpoint() {
     setNeedMoreNotification(false);
   }, [setNeedMoreNotification]);
   const requestLicenseEntitlementUsage = useCallback(() => {
-    dispatch(actions.user.org.accounts.requestLicenseEntitlementUsage());
+    dispatch(actions.license.requestLicenseEntitlementUsage());
   }, [dispatch]);
 
   useEffect(() => {

@@ -107,7 +107,7 @@ describe('Flow step logs sagas', () => {
       const saga = pollForLatestLogs({ flowId, resourceId });
       const raceBetweenApiCallAndStop = race({
         pollApiRequests: call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, resourceId }, disableSlowPolling: true, duration: 15000}),
-        abortPoll: take(actionTypes.POLLING.STOP),
+        abortPoll: take(actionTypes.APP.POLLING.STOP),
       });
 
       expect(saga.next().value).toEqual(
@@ -125,7 +125,7 @@ describe('Flow step logs sagas', () => {
       const response = {abortPoll: true};
       const raceBetweenApiCallAndStop = race({
         pollApiRequests: call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, resourceId }, disableSlowPolling: true, duration: 15000}),
-        abortPoll: take(actionTypes.POLLING.STOP),
+        abortPoll: take(actionTypes.APP.POLLING.STOP),
       });
 
       expect(saga.next().value).toEqual(
@@ -140,7 +140,7 @@ describe('Flow step logs sagas', () => {
       const pollingLastStoppedAt = Date.now();
 
       expect(saga.next(response).value).toEqual(
-        take(actionTypes.POLLING.RESUME)
+        take(actionTypes.APP.POLLING.RESUME)
       );
       expect(saga.next(response).value).toEqual(
         call(pollForLatestLogs, { flowId, resourceId, timeGt: pollingLastStoppedAt })

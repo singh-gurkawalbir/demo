@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: theme.spacing(0.5),
     display: 'flex',
     alignItems: 'center',
-    padding: theme.spacing(0, 1),
+    padding: theme.spacing(0.5, 1),
   },
   appDetailsHeader: {
     borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,

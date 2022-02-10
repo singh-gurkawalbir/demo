@@ -53,7 +53,7 @@ export default {
     );
 
     const actionsToMonitor = useMemo(() => ({
-      delete: { action: actionTypes.USER_DELETE, resourceId: userId},
+      delete: { action: actionTypes.USER.DELETE, resourceId: userId},
     }), [userId]);
 
     useCommStatus({

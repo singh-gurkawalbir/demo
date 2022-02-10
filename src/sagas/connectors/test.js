@@ -5,7 +5,9 @@ import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import { fetchMetadata, updateInstallBase } from '.';
+import { fetchMetadata, publishStatus, updateInstallBase } from '.';
+import { SCOPES } from '../resourceForm';
+import { commitStagedChanges } from '../resources';
 
 describe('evaluate fetchMetadata saga', () => {
   const fieldType = 'dummy';
@@ -93,4 +95,37 @@ describe('evaluate updateInstallBase saga', () => {
     ])
     .call.fn(apiCallWithRetry)
     .run());
+});
+
+describe('publishStatus saga', () => {
+  const patchSet = [
+    {
+      op: 'replace',
+      path: '/published',
+      value: true,
+    },
+  ];
+  const successResponse = {status: 'success'};
+  const errorResponse = {error: '200'};
+
+  test('should call success action on success', () => {
+    expectSaga(publishStatus, {_integrationId: '1'})
+      .provide([
+        [matchers.call.fn(commitStagedChanges), successResponse],
+      ])
+      .put(actions.resource.patchStaged('1', patchSet, SCOPES.VALUE))
+      .call.fn(commitStagedChanges)
+      .put(actions.connectors.publish.success('1'))
+      .run();
+  });
+  test('should call error action on error', () => {
+    expectSaga(publishStatus, {_integrationId: '1'})
+      .provide([
+        [matchers.call.fn(commitStagedChanges), errorResponse],
+      ])
+      .put(actions.resource.patchStaged('1', patchSet, SCOPES.VALUE))
+      .call.fn(commitStagedChanges)
+      .put(actions.connectors.publish.error('1'))
+      .run();
+  });
 });

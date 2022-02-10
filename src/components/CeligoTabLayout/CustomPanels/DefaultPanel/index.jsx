@@ -12,6 +12,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
     overflow: 'auto',
+    minHeight: theme.spacing(26),
     '& > div': {
       wordBreak: 'break-word',
     },

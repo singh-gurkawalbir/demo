@@ -821,8 +821,7 @@ describe('jobs reducer', () => {
     retryObjectCollection.forEach(ro => {
       expectedRetryObjects[ro._id] = ro;
     });
-
-    expectedRetryObjects[retryObjectId].retryData = retryObjectData;
+    expectedRetryObjects[retryObjectId] = {...expectedRetryObjects[retryObjectId], retryData: retryObjectData};
 
     expect(state2).toEqual({ ...state, retryObjects: expectedRetryObjects });
   });

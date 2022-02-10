@@ -271,7 +271,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
 
   describe('selectors.integrationInstallSteps test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.integrationInstallSteps()).toBe(null);
+      expect(selectors.integrationInstallSteps()).toEqual([]);
     });
 
     const installSteps = [

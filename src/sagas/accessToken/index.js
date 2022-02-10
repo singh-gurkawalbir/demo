@@ -16,7 +16,7 @@ import { selectors } from '../../reducers';
 
 export function* generateToken({ id }) {
   const requestOptions = getRequestOptions(
-    actionTypes.ACCESSTOKEN_TOKEN_GENERATE,
+    actionTypes.ACCESSTOKEN.GENERATE,
     {
       resourceId: id,
     }
@@ -45,7 +45,7 @@ export function* generateToken({ id }) {
 
 export function* displayToken({ id }) {
   const requestOptions = getRequestOptions(
-    actionTypes.ACCESSTOKEN_TOKEN_DISPLAY,
+    actionTypes.ACCESSTOKEN.DISPLAY,
     {
       resourceId: id,
     }
@@ -100,7 +100,7 @@ export function* checkAndRemovePurgedTokens() {
 export function* accessTokensUpdated() {
   const watcher = yield fork(checkAndRemovePurgedTokens);
 
-  yield take(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION);
+  yield take(actionTypes.ACCESSTOKEN.UPDATED_COLLECTION);
   yield cancel(watcher);
 }
 
@@ -111,9 +111,9 @@ export function* resourcesReceived({ resourceType }) {
 }
 
 export const accessTokenSagas = [
-  takeEvery(actionTypes.ACCESSTOKEN_TOKEN_GENERATE, generateToken),
-  takeEvery(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, displayToken),
+  takeEvery(actionTypes.ACCESSTOKEN.GENERATE, generateToken),
+  takeEvery(actionTypes.ACCESSTOKEN.DISPLAY, displayToken),
   takeEvery(actionTypes.RESOURCE.RECEIVED_COLLECTION, resourcesReceived),
   takeEvery(actionTypes.RESOURCE.RECEIVED, resourcesReceived),
-  takeEvery(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION, accessTokensUpdated),
+  takeEvery(actionTypes.ACCESSTOKEN.UPDATED_COLLECTION, accessTokensUpdated),
 ];
