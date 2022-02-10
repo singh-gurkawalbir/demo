@@ -40,6 +40,7 @@ function SearchInput() {
   const setKeyword = useGlobalSearchState(state => state.changeKeyword);
   const setOpen = useGlobalSearchState(state => state.changeOpen);
   const filters = useGlobalSearchState(state => state.filters);
+  const isResourceFiltersOpen = useGlobalSearchState(state => state.resourceFiltersOpen);
   const [activeTab] = useActiveTab();
   const [inputValue, setInputValue] = useDebouncedValue('', value => {
     setKeyword(value);
@@ -82,12 +83,12 @@ function SearchInput() {
     }
   }, [memoizedValues]);
 
-  // focus input when filters and active Tab changed
+  // focus input when isResourceFiltersOpen, filters and active Tab changed
   useEffect(() => {
     if (ref?.current) {
       ref?.current?.children[0]?.focus();
     }
-  }, [activeTab, filters]);
+  }, [activeTab, filters, isResourceFiltersOpen]);
 
   useKeyboardShortcut(['Escape'], handleEscapeKeypress, {ignoreBlacklist: true});
 
