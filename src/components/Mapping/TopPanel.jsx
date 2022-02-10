@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
   headerChildRight: {
     marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(10),
+    marginRight: theme.spacing(8),
   },
   refreshButton: {
     marginLeft: theme.spacing(1),

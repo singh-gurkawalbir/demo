@@ -8,7 +8,7 @@ import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 const actionsToMonitor = {
-  makeOwner: { action: actionTypes.USER_MAKE_OWNER },
+  makeOwner: { action: actionTypes.USER.MAKE_OWNER },
 };
 export default {
   key: 'makeAccountOwner',

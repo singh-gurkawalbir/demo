@@ -21,17 +21,26 @@ const blockMap = {
   exportTransfer: { label: 'Transfer', Icon: TransferDownIcon },
   importTransfer: { label: 'Transfer', Icon: TransferUpIcon },
 };
-const useStyles = makeStyles(theme => ({
+export const resourceButtonStyles = makeStyles(theme => ({
   resourceButton: {
+    fontSize: 16,
+    fontFamily: 'source sans pro',
     marginRight: theme.spacing(1),
     '& >* svg': {
+      marginBottom: 5,
       fontSize: `${theme.spacing(6)}px !important`,
+    },
+    '&:hover': {
+      color: theme.palette.secondary.main,
+      '& > * svg': {
+        color: theme.palette.primary.main,
+      },
     },
   },
 }));
 
 export default function ResourceButton({ onClick, variant }) {
-  const classes = useStyles();
+  const classes = resourceButtonStyles();
   const block = blockMap[variant];
 
   return (
@@ -39,7 +48,7 @@ export default function ResourceButton({ onClick, variant }) {
       data-test={block.label}
       onClick={onClick}
       className={classes.resourceButton}
-      isVertical
+      vertical
       startIcon={<block.Icon />}>
       {block.label}
     </TextButton>

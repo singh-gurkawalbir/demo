@@ -65,7 +65,7 @@ export default {
       selectors.tileLicenseDetails(state, rowData).licenseId
     );
     const handleRenew = useCallback(() => {
-      dispatch(actions.user.org.accounts.requestUpdate('connectorRenewal', _connectorId, licenseId));
+      dispatch(actions.license.requestUpdate('connectorRenewal', _connectorId, licenseId));
     }, [_connectorId, dispatch, licenseId]);
 
     return handleRenew;

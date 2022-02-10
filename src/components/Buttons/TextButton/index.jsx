@@ -16,6 +16,9 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       color: theme.palette.error.main,
     },
+    '&:focus': {
+      color: `${theme.palette.error.main} !important`,
+    },
   },
   vertical: {
     '& > .MuiButton-label': {
@@ -25,13 +28,13 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function TextButton(props) {
   const classes = useStyles(props);
-  const {children, error, className, isVertical = 'false', bold, ...rest} = props;
+  const {children, className, vertical = false, error, bold, ...rest} = props;
 
   return (
     <Button
       variant="text"
       color="secondary"
-      className={clsx(classes.root, {[classes.error]: error}, {[classes.vertical]: isVertical}, className)}
+      className={clsx(classes.root, {[classes.error]: error}, {[classes.vertical]: vertical}, className)}
       disableElevation
       {...rest}>
       {children}
@@ -46,6 +49,7 @@ TextButton.propTypes = {
   bold: PropTypes.bool,
   color: PropTypes.oneOf(['primary', 'secondary']),
   error: PropTypes.bool,
+  vertical: PropTypes.bool,
 };
 
 TextButton.defaultProps = {

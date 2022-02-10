@@ -28,7 +28,7 @@ export default function DynaUserEmail(props) {
   const classes = useStyles();
   const [showChangeEmailModal, setShowChangeEmailModal] = useState(false);
   const dispatch = useDispatch();
-  const clearComms = useCallback(() => dispatch(actions.clearComms()), [
+  const clearComms = useCallback(() => dispatch(actions.api.clearComms()), [
     dispatch,
   ]);
   const handleModalOpen = useCallback(() => {

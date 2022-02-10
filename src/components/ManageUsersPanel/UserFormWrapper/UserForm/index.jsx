@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import {
   USER_ACCESS_LEVELS,
@@ -27,6 +28,7 @@ export default function UserForm({
   onCancelClick,
   disableSave,
 }) {
+  const history = useHistory();
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
     integrationsFilterConfig
@@ -36,12 +38,15 @@ export default function UserForm({
   const isSSOEnabled = useSelector(state => selectors.isSSOEnabled(state));
 
   const isEditMode = !!id;
+  // isValidUser is used to check if the id entered is corrupted through URL . Reference : IO-24595
+  const isValidUser = !!users.find(u => u._id === id);
   const data = isEditMode ? users.find(u => u._id === id) : undefined;
   let integrationsToManage = [];
   let integrationsToMonitor = [];
 
   if (
     isEditMode &&
+    isValidUser &&
     [
       USER_ACCESS_LEVELS.TILE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
@@ -65,7 +70,7 @@ export default function UserForm({
         type: 'text',
         label: 'Email',
         isLoggable: false,
-        defaultValue: isEditMode ? data.sharedWithUser.email : '',
+        defaultValue: isEditMode && isValidUser ? data.sharedWithUser.email : '',
         required: true,
         defaultDisabled: isEditMode,
         helpText:
@@ -83,7 +88,7 @@ export default function UserForm({
         name: 'accessLevel',
         type: 'select',
         label: 'Access level',
-        defaultValue: isEditMode ? data.accessLevel || 'tile' : '',
+        defaultValue: isEditMode && isValidUser ? data.accessLevel || 'tile' : '',
         required: true,
         skipSort: true,
         options: [
@@ -186,7 +191,7 @@ export default function UserForm({
         id: 'accountSSORequired',
         name: 'accountSSORequired',
         label: 'Require account Single sign-on(SSO)?',
-        defaultValue: isEditMode ? !!data.accountSSORequired : true,
+        defaultValue: isEditMode && isValidUser ? !!data.accountSSORequired : true,
         visible: !isEditMode && isAccountOwnerOrAdmin && isSSOEnabled,
         // Incase of invite, this field should not be passed if the owner has not enabled SSO
         omitWhenHidden: !isEditMode,
@@ -204,6 +209,12 @@ export default function UserForm({
     },
   };
   const formKey = useFormInitWithPermissions({ fieldMeta });
+
+  if (isEditMode && !isValidUser) {
+    history.goBack();
+
+    return null;
+  }
 
   return (
     <LoadResources required resources="integrations,ssoclients">

@@ -76,21 +76,21 @@ function LicenseAction() {
         actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
       );
 
-      return dispatch(actions.user.org.accounts.requestTrialLicense());
+      return dispatch(actions.license.requestTrialLicense());
     }
 
     if (licenseActionDetails.action === 'upgrade') {
       setUpgradeRequested(true);
 
-      return dispatch(actions.user.org.accounts.requestLicenseUpgrade());
+      return dispatch(actions.license.requestLicenseUpgrade());
     }
     if (licenseActionDetails.action === 'resume') {
       setUpgradeRequested(true);
 
-      return dispatch(actions.user.org.accounts.requestUpdate('ioResume'));
+      return dispatch(actions.license.requestUpdate('ioResume'));
     }
     if (licenseActionDetails.action === 'expired') {
-      return dispatch(actions.user.org.accounts.requestUpdate('ioRenewal'));
+      return dispatch(actions.license.requestUpdate('ioRenewal'));
     }
   }, [dispatch, licenseActionDetails.action]);
 

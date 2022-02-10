@@ -55,7 +55,8 @@ const useStyles = makeStyles(theme => ({
     },
   },
   downloadButton: {
-    '& .MuiButton-root': {
+    marginLeft: theme.spacing(1),
+    '& > :not(:last-child)': {
       marginRight: 0,
     },
   },

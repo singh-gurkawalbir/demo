@@ -48,7 +48,7 @@ export default function RequireAccountSSO({ user }) {
     [enquesnackbar, switchInProgress, accountSSORequired, sharedWithUser]
   );
 
-  const actionsToMonitor = useMemo(() => ({update: { action: actionTypes.USER_UPDATE, resourceId: userId }}), [userId]);
+  const actionsToMonitor = useMemo(() => ({update: { action: actionTypes.USER.UPDATE, resourceId: userId }}), [userId]);
 
   useCommStatus({
     actionsToMonitor,

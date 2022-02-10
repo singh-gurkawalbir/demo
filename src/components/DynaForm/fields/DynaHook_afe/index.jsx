@@ -1,18 +1,16 @@
 /* eslint-disable camelcase */
-import React, { useEffect, useCallback, useReducer } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import { generateNewId } from '../../../../utils/resource';
 import DynaText from '../DynaText';
 import FieldHelp from '../../FieldHelp';
 import { selectors } from '../../../../reducers';
-import CreateScriptDialog from './CreateScriptDialog';
-import { saveScript } from './utils';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
 import { REQUIRED_MESSAGE } from '../../../../utils/messageStore';
-import hookReducer from './stateReducer';
 import StackView from './StackView';
 import ScriptView from './ScriptView';
 
@@ -63,10 +61,11 @@ export default function DynaHook_afe({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [hookState, setHookState] = useReducer(hookReducer, {showCreateScriptDialog: false, tempScriptId: generateNewId(), isNewScriptIdAssigned: false });
-
+  const history = useHistory();
+  const match = useRouteMatch();
+  const [newScriptId, setNewScriptId] = useState();
   const createdScriptId = useSelector(state =>
-    selectors.createdResourceId(state, hookState.tempScriptId)
+    selectors.createdResourceId(state, newScriptId)
   );
 
   const handleFieldChange = field => (event, fieldValue) => {
@@ -82,28 +81,11 @@ export default function DynaHook_afe({
     });
   };
 
-  const handleCreateScriptClick = () => {
-    setHookState({ type: 'setTempScriptId', value: generateNewId() });
-    setHookState({ type: 'setIsNewScriptIdAssigned', value: false });
-    setHookState({ type: 'setShowCreateScriptDialog', value: true });
-  };
-
-  const handleCreateScriptSave = useCallback((values, formKey) => {
-    const options = { dispatch, isNew: true };
-
-    saveScript({ ...values, scriptId: hookState.tempScriptId }, options, { flowId }, formKey);
-  }, [dispatch, flowId, hookState.tempScriptId]);
-
-  const handleCreateScriptDialogClose = useCallback(() => {
-    setHookState({ type: 'setShowCreateScriptDialog', value: false });
-  }, []);
-
   useEffect(() => {
-    if (createdScriptId && !hookState.isNewScriptIdAssigned) {
+    if (createdScriptId) {
       onFieldChange(id, { ...value, _scriptId: createdScriptId }, false);
-      setHookState({ type: 'setIsNewScriptIdAssigned', value: true });
     }
-  }, [createdScriptId, hookState.isNewScriptIdAssigned, id, onFieldChange, value]);
+  }, [createdScriptId, id, onFieldChange, value]);
 
   // Below code is to make myapi resource form invalid if script or function is
   // not provided. If form is invalid, user can not save the resource.
@@ -141,42 +123,42 @@ export default function DynaHook_afe({
     [value, required, isValid, resourceType]
   );
 
-  return (
-    <>
-      <LoadResources resources="scripts">
-        {hookState.showCreateScriptDialog && (
-        <CreateScriptDialog
-          onClose={handleCreateScriptDialogClose}
-          onSave={handleCreateScriptSave}
-          scriptId={hookState.tempScriptId}
-          flowId={flowId}
-        />
-        )}
+  const addNewScript = () => {
+    setNewScriptId(() => {
+      const _newScriptId = generateNewId();
 
-        <div className={classes.inputContainer}>
-          <div className={classes.labelWithHelpTextWrapper}>
-            <InputLabel>{label}</InputLabel>
-            <FieldHelp label={propsLabel} helpKey={propsHelpKey} />
-          </div>
-          <div className={classes.wrapper}>
-            <div className={classes.field}>
-              <DynaText
-                isLoggable={isLoggable}
-                key={id}
-                name={name}
-                label="Function"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder={placeholder}
-                disabled={disabled}
-                required={required}
-                isValid={isValidHookField('function')}
-                value={value.function}
-                onFieldChange={handleFieldChange('function')}
+      history.push(`${match.url}/add/scripts/${_newScriptId}`);
+
+      return _newScriptId;
+    });
+  };
+
+  return (
+    <LoadResources resources="scripts">
+      <div className={classes.inputContainer}>
+        <div className={classes.labelWithHelpTextWrapper}>
+          <InputLabel>{label}</InputLabel>
+          <FieldHelp label={propsLabel} helpKey={propsHelpKey} />
+        </div>
+        <div className={classes.wrapper}>
+          <div className={classes.field}>
+            <DynaText
+              isLoggable={isLoggable}
+              key={id}
+              name={name}
+              label="Function"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={placeholder}
+              disabled={disabled}
+              required={required}
+              isValid={isValidHookField('function')}
+              value={value.function}
+              onFieldChange={handleFieldChange('function')}
             />
-            </div>
-            {hookType === 'stack' && (
+          </div>
+          {hookType === 'stack' && (
             <StackView
               isLoggable={isLoggable}
               disabled={disabled}
@@ -185,8 +167,8 @@ export default function DynaHook_afe({
               handleFieldChange={handleFieldChange}
               isValidHookField={isValidHookField}
             />
-            )}
-            {hookType === 'script' && (
+          )}
+          {hookType === 'script' && (
             <ScriptView
               id={id}
               flowId={flowId}
@@ -201,12 +183,11 @@ export default function DynaHook_afe({
               resourceId={resourceId}
               isValidHookField={isValidHookField}
               handleFieldChange={handleFieldChange}
-              handleCreateScriptClick={handleCreateScriptClick}
+              handleCreateScriptClick={addNewScript}
                />
-            )}
-          </div>
+          )}
         </div>
-      </LoadResources>
-    </>
+      </div>
+    </LoadResources>
   );
 }

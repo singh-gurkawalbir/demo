@@ -41,7 +41,7 @@ function* pollApiRequestsWithCancelAction(args) {
       actPayload => {
         const {type, pollActionToStop} = actPayload;
 
-        if (type !== actionTypes.POLLING.STOP_SPECIFIC_POLL) {
+        if (type !== actionTypes.APP.POLLING.STOP_SPECIFIC_POLL) {
           return false;
         }
 
@@ -50,4 +50,4 @@ function* pollApiRequestsWithCancelAction(args) {
     ,
   });
 }
-export const appSagas = [takeEvery(actionTypes.POLLING.START, pollApiRequestsWithCancelAction)];
+export const appSagas = [takeEvery(actionTypes.APP.POLLING.START, pollApiRequestsWithCancelAction)];

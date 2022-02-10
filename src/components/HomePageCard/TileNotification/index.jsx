@@ -77,13 +77,13 @@ export default function TileNotification({ content, expired, connectorId, licens
         dispatch(actions.integrationApp.license.resume(integrationId));
       }
     } else {
-      dispatch(actions.user.org.accounts.requestUpdate('connectorRenewal', connectorId, licenseId));
+      dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
     }
   }, [accessLevel, connectorId, dispatch, enquesnackbar, integrationId, licenseId, resumable]);
   const onClickBuyButton = useCallback(event => {
     event.stopPropagation();
     setUpgradeRequested(true);
-    dispatch(actions.user.org.accounts.requestUpdate('connectorRenewal', connectorId, licenseId));
+    dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
   }, [connectorId, dispatch, licenseId]);
 
   const handleUninstall = useHandleDelete(integrationId);

@@ -1,3 +1,4 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = [], action) => {
@@ -6,44 +7,33 @@ export default (state = [], action) => {
   if (!type) {
     return state;
   }
-
   let resourceIndex;
-  let newState;
 
-  switch (type) {
-    case actionTypes.AGENT.TOKEN_RECEIVED:
-      resourceIndex = state.findIndex(r => r._id === agentToken._id);
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.AGENT.TOKEN_RECEIVED:
+        resourceIndex = draft.findIndex(r => r._id === agentToken._id);
 
-      if (resourceIndex > -1) {
-        newState = [
-          ...state.slice(0, resourceIndex),
-          { ...state[resourceIndex], ...agentToken },
-          ...state.slice(resourceIndex + 1),
-        ];
+        if (resourceIndex > -1) {
+          draft.splice(resourceIndex, 1, { ...draft[resourceIndex], ...agentToken });
+          break;
+        }
+        draft.push({ ...agentToken });
+        break;
 
-        return newState;
-      }
+      case actionTypes.AGENT.TOKEN_MASK:
+        resourceIndex = draft.findIndex(r => r._id === agentToken._id);
 
-      return [...state, { ...agentToken }];
+        if (resourceIndex > -1) {
+          draft.splice(resourceIndex, 1, { ...draft[resourceIndex], accessToken: null });
+          break;
+        }
 
-    case actionTypes.AGENT.TOKEN_MASK:
-      resourceIndex = state.findIndex(r => r._id === agentToken._id);
+        break;
 
-      if (resourceIndex > -1) {
-        newState = [
-          ...state.slice(0, resourceIndex),
-          { ...state[resourceIndex], accessToken: null },
-          ...state.slice(resourceIndex + 1),
-        ];
-
-        return newState;
-      }
-
-      return state;
-
-    default:
-      return state;
-  }
+      default:
+    }
+  });
 };
 
 // #region PUBLIC SELECTORS

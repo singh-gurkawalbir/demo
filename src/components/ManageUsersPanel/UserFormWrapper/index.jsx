@@ -83,7 +83,7 @@ export default function UserFormWrapper({ userId }) {
 
   const actionsToMonitor = useMemo(() => ({
     createOrUpdate: {
-      action: userId ? actionTypes.USER_UPDATE : actionTypes.USER_CREATE,
+      action: userId ? actionTypes.USER.UPDATE : actionTypes.USER.CREATE,
       resourceId: userId,
     },
   }), [userId]);

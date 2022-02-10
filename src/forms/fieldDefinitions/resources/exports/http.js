@@ -689,4 +689,9 @@ export default {
       },
     ],
   },
+  'unencrypted.restrictedReportType': {
+    type: 'amazonRestrictedReportType',
+    label: 'Restricted report type',
+    helpKey: 'export.http.unencrypted.restrictedReportType',
+  },
 };
