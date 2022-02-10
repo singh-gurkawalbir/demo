@@ -278,6 +278,45 @@ describe('tests for reducer selectors', () => {
         `/integrationapps/SalesforceNetSuiteIntegrationApp/${resourceId}/flowBuilder/f1`
       );
     });
+    test('should return edit url for IA flow with sectionId', () => {
+      const resourceType = 'integrations';
+      const resourceId = 'i1';
+      const childId = 'c1';
+      const resource = { _id: resourceId, name: 'Salesforce NetSuite IntegrationApp', _connectorId: 'c1' };
+
+      let state = reducer(
+        undefined,
+        actions.resource.received(resourceType, resource)
+      );
+
+      const childResource = {
+        _id: 'c1',
+        name: 'integration a to b',
+        _parentId: 'i1',
+        _connectorId: 'c1',
+        childId,
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received(resourceType, childResource)
+      );
+
+      const flow = {
+        _id: 'f1',
+        _connectorId: 'c1',
+        _integrationId: 'i1',
+      };
+
+      state = reducer(
+        state,
+        actions.resource.received('flows', flow)
+      );
+
+      expect(selectors.getResourceEditUrl(state, 'flows', 'f1', undefined, 'General')).toEqual(
+        `/integrationapps/SalesforceNetSuiteIntegrationApp/${resourceId}/flows/sections/General/flowBuilder/f1`
+      );
+    });
   });
 
   describe('tests for util mkFlowConnectionList', () => {

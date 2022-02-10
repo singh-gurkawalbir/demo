@@ -1586,7 +1586,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
 
   let howToFindIdentifierLookupConfig = {};
 
-  if (operationDetails && operationDetails.howToFindIdentifier) {
+  if (operationDetails?.howToFindIdentifier?.lookup) {
     howToFindIdentifierLookupConfig =
       operationDetails.howToFindIdentifier.lookup;
   }

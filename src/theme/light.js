@@ -21,6 +21,7 @@ export default {
       drawer2: colors.celigoNeutral8,
       drawer3: colors.celigoNeutral10,
       drawerActive: colors.celigoAccent1,
+      toggle: colors.celigoNeutral7,
     },
     primary: {
       light: colors.celigoAccent3,
@@ -76,9 +77,9 @@ export default {
       root: {
         textTransform: 'unset',
         fontFamily: 'Roboto400',
-        padding: '5px 24px',
-        fontSize: '15px',
-        lineHeight: '19px',
+        padding: '6px 20px',
+        fontSize: '13px',
+        lineHeight: '15px',
         '&: disabled': {
           cursor: 'not-allowed',
         },
@@ -128,6 +129,7 @@ export default {
         backgroundColor: colors.celigoWhite,
         borderColor: colors.celigoNeutral3,
         color: colors.celigoNeutral3,
+        padding: '6px 20px',
         border: '1px solid',
         '&:disabled': {
           color: colors.celigoNeutral4,

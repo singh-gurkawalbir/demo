@@ -5,7 +5,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getFlowGroup } from '../../../../utils/flows';
 
 export default function FlowGroupCrumb({ integrationId, childId, sectionId }) {
-  const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
+  const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, (childId || integrationId));
   const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, childId);
   const sectionTitle = flowSections.find(s => s.titleId === sectionId)?.title || sectionId;
 

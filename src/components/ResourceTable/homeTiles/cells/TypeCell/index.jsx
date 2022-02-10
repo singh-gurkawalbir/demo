@@ -4,11 +4,17 @@ import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../../reducers';
 import FieldMessage from '../../../../DynaForm/fields/FieldMessage';
 import { getTextAfterCount } from '../../../../../utils/string';
+import NotificationToaster from '../../../../NotificationToaster';
 
 const useStyles = makeStyles({
   contentWrapper: {
     display: 'flex',
     flexDirection: 'column',
+  },
+  tileNotification: {
+    padding: '0 4px !important',
+    minWidth: '145px !important',
+    maxWidth: '165px !important',
   },
 });
 
@@ -26,7 +32,15 @@ export default function TypeCell({ tile }) {
         Integration app
         {listViewLicenseMesssage && (
           (expired || trialExpired)
-            ? <FieldMessage errorMessages={listViewLicenseMesssage} /> : <FieldMessage warningMessages={listViewLicenseMesssage} />
+            ? (
+              <NotificationToaster variant="error" transparent className={classes.tileNotification}>
+                {listViewLicenseMesssage}
+              </NotificationToaster>
+            ) : (
+              <NotificationToaster variant="warning" transparent className={classes.tileNotification}>
+                {listViewLicenseMesssage}
+              </NotificationToaster>
+            )
         )}
       </div>
     );
@@ -34,11 +48,7 @@ export default function TypeCell({ tile }) {
 
   return (
     <>
-      Custom
-      <FieldMessage
-        isValid
-        description={numFlowsText}
-           />
+      Custom <FieldMessage isValid description={numFlowsText} />
     </>
   );
 }
