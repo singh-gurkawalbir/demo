@@ -1,7 +1,6 @@
 import produce from 'immer';
-import { v4 } from 'uuid';
+import { generateId, generateDefaultEdge } from '../lib';
 
-const generateId = () => v4().replace(/-/g, '').substring(0, 4);
 const generateNewNode = () => {
   const newId = generateId();
 
@@ -19,12 +18,6 @@ const generateNewTerminal = () => ({
   id: generateId(),
   type: 'terminal',
 });
-const generateNewEdge = (fromId, toId) => ({
-  id: `${fromId}-${toId}`,
-  source: fromId,
-  target: toId,
-  type: 'default',
-});
 
 export const handleAddNewRouter = (edgeId, elements) =>
   produce(elements,
@@ -39,10 +32,10 @@ export const handleAddNewRouter = (edgeId, elements) =>
 
       draft.splice(nodeIndex, 0, ...[newRouter, newTerminal]);
 
-      const edgeBetweenNodeAndRouter = generateNewEdge(oldSourceId, newRouter.id);
+      const edgeBetweenNodeAndRouter = generateDefaultEdge(oldSourceId, newRouter.id);
 
       oldEdge.source = newRouter.id;
-      const edgeBetweenRouterAndTerminal = generateNewEdge(newRouter.id, newTerminal.id);
+      const edgeBetweenRouterAndTerminal = generateDefaultEdge(newRouter.id, newTerminal.id);
 
       draft.push(...[
         edgeBetweenNodeAndRouter,
@@ -61,6 +54,6 @@ export const handleAddNewNode = (edgeId, elements) => produce(elements, draft =>
 
   draft.splice(nodeIndex, 0, newNode);
   draft.push(
-    generateNewEdge(newNode.id, oldTargetId)
+    generateDefaultEdge(newNode.id, oldTargetId)
   );
 });

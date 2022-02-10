@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { v4 } from 'uuid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 
@@ -21,12 +22,28 @@ const nodeSize = {
     width: 26,
     height: 26,
   },
-};
+  mergeg: {
+    width: 26,
+    height: 26,
+  } };
 
 const options = {
   ranksep: 250,
   nodesep: 50,
 };
+
+export function generateId() {
+  return v4().replace(/-/g, '').substring(0, 4);
+}
+
+export function generateDefaultEdge(source, target) {
+  return {
+    id: `${source}-${target}`,
+    source,
+    target,
+    type: 'default',
+  };
+}
 
 export function layoutElements(elements) {
   const dagreGraph = new dagre.graphlib.Graph();

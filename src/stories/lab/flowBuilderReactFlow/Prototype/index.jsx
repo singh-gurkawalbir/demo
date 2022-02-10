@@ -12,12 +12,14 @@ import PgNode from './CustomNodes/PgNode';
 import PpNode from './CustomNodes/PpNode';
 import TerminalNode from './CustomNodes/TerminalNode';
 import RouterNode from './CustomNodes/RouterNode';
+import MergeNode from './CustomNodes/MergeNode';
 
 const nodeTypes = {
   pg: PgNode,
   pp: PpNode,
   terminal: TerminalNode,
   router: RouterNode,
+  merge: MergeNode,
 };
 
 const edgeTypes = {
@@ -47,15 +49,11 @@ export default () => {
     setMergeNodeId();
   };
 
-  const handleConnect = event => {
-    console.log('handleConnect: ', event);
-  };
-
   return (
     <ReactFlowProvider>
       <FlowProvider elements={elements} mergeNodeId={mergeNodeId} setElements={setElements}>
         <ReactFlow
-          onConnect={handleConnect}
+          // onConnect={handleConnect} // this is handled in the terminal node
           onConnectStart={handleConnectStart}
           onConnectEnd={handleConnectEnd}
           elements={updatedLayout}
