@@ -1404,8 +1404,11 @@ describe('convertToReactFormFields', () => {
             name: 'id_textarea',
             required: false,
             readOnly: false,
-            type: 'textarea',
             defaultValue: '',
+            type: 'textwithflowsuggestion',
+            rowsMax: 10,
+            showLookup: false,
+            multiline: true,
           },
           id_input: {
             id: 'id_input',
@@ -1480,7 +1483,7 @@ describe('convertToReactFormFields', () => {
           },
           id_textarea: {
             id: 'id_textarea',
-            inputType: 'textarea',
+            inputType: 'textwithflowsuggestion',
             type: 'something',
           },
           id_input: {
@@ -1667,8 +1670,11 @@ describe('convertToReactFormFields', () => {
             name: 'id_textarea',
             required: false,
             readOnly: false,
-            type: 'textarea',
             defaultValue: '',
+            type: 'textwithflowsuggestion',
+            rowsMax: 10,
+            showLookup: false,
+            multiline: true,
           },
           id_input: {
             id: 'id_input',
@@ -1754,7 +1760,7 @@ describe('convertToReactFormFields', () => {
           },
           id_textarea: {
             id: 'id_textarea',
-            inputType: 'textarea',
+            inputType: 'textwithflowsuggestion',
             type: 'something',
           },
           id_input: {
@@ -1947,8 +1953,11 @@ describe('convertToReactFormFields', () => {
             name: 'id_textarea',
             required: false,
             readOnly: false,
-            type: 'textarea',
             defaultValue: '',
+            type: 'textwithflowsuggestion',
+            rowsMax: 10,
+            showLookup: false,
+            multiline: true,
           },
           id_input: {
             id: 'id_input',
@@ -2034,7 +2043,7 @@ describe('convertToReactFormFields', () => {
           },
           id_textarea: {
             id: 'id_textarea',
-            inputType: 'textarea',
+            inputType: 'textwithflowsuggestion',
             type: 'something',
           },
           id_input: {
@@ -2458,6 +2467,11 @@ describe('routeToRegExp', () => {
     [/^\/v1\/integrations(?:\?([\s\S]*))?$/, '/v1/integrations'],
     [/^\/v1\/integrations\/([^/?]+)(?:\?([\s\S]*))?$/, '/v1/integrations/:_id'],
     [/^\/v1\/integrations\/([^/?]+)\/exports(?:\?([\s\S]*))?$/, '/v1/integrations/:_integrationId/exports'],
+    [/^\/people:createContact(?:\?([\s\S]*))?$/, '/people:createContact'],
+    [/^\/people\/([^/?]+):updateContact\?updatePersonFields=([^/?]+)(?:\?([\s\S]*))?$/, '/people/:_personID:updateContact?updatePersonFields=:_updatePersonFields'],
+    [/^\/people\/([^/?]+):updateContact(?:\?([\s\S]*))?$/, '/people/:_personID:updateContact'],
+    [/^\/people:createContact(?:\?([\s\S]*))?$/, '/people:createContact'],
+    [/^\/people\/([^/?]+):deleteContact(?:\?([\s\S]*))?$/, '/people/:_personID:deleteContact'],
   ];
 
   each(testCases).test(

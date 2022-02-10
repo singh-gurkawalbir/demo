@@ -61,7 +61,7 @@ export default function EnableUser({ user }) {
     [enquesnackbar, getStatusMessage]
   );
 
-  const actionsToMonitor = useMemo(() => ({disable: { action: actionTypes.USER_DISABLE, resourceId: userId }}), [userId]);
+  const actionsToMonitor = useMemo(() => ({disable: { action: actionTypes.USER.DISABLE, resourceId: userId }}), [userId]);
 
   useCommStatus({
     actionsToMonitor,

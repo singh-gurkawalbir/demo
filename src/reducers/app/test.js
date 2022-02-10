@@ -16,23 +16,12 @@ describe('app reducers', () => {
     expect(newState).toEqual(someState);
   });
   describe('app reload request', () => {
-    test('should increment reload count and delete bannerOpened prop', () => {
+    test('should increment reload count prop', () => {
       const newState = reducer(undefined, actions.app.reload());
 
       expect(newState).toEqual({
         appErrored: false,
         count: 2,
-      });
-    });
-  });
-  describe('app toggle banner request', () => {
-    test('should toggle bannerOpened value', () => {
-      const newState = reducer(undefined, actions.toggleBanner());
-
-      expect(newState).toEqual({
-        appErrored: false,
-        bannerOpened: false,
-        count: 1,
       });
     });
   });
@@ -42,7 +31,6 @@ describe('app reducers', () => {
 
       expect(newState).toEqual({
         appErrored: true,
-        bannerOpened: true,
         count: 1,
       });
     });
@@ -52,7 +40,6 @@ describe('app reducers', () => {
       const newState = reducer(undefined, actions.app.clearError());
 
       expect(newState).toEqual({
-        bannerOpened: true,
         count: 1,
       });
     });
@@ -63,7 +50,6 @@ describe('app reducers', () => {
 
       expect(newState).toEqual({
         appErrored: false,
-        bannerOpened: true,
         count: 1,
         initVersion: 'uiVersion',
         version: 'uiVersion',
@@ -75,7 +61,6 @@ describe('app reducers', () => {
 
       expect(newState2).toEqual({
         appErrored: false,
-        bannerOpened: true,
         count: 1,
         initVersion: 'uiVersion',
         version: 'uiVersionLatest',
@@ -88,7 +73,6 @@ describe('app reducers', () => {
 
       expect(newState).toEqual({
         appErrored: false,
-        bannerOpened: true,
         count: 1,
         userAcceptedAccountTransfer: true,
       });
@@ -97,26 +81,6 @@ describe('app reducers', () => {
 });
 
 describe('app selectors', () => {
-  describe('bannerOpened', () => {
-    const state = reducer(undefined, actions.app.reload());
-
-    test('should return false while reloading app ', () => {
-      expect(selectors.bannerOpened(state)).toBe(false);
-    });
-    test('should return true if state is undefined', () => {
-      expect(selectors.bannerOpened()).toBe(true);
-    });
-    test('should handle toggle banner', () => {
-      const state2 = reducer(state, actions.toggleBanner());
-
-      expect(selectors.bannerOpened(state2)).toBe(true);
-
-      const state3 = reducer(state2, actions.toggleBanner());
-
-      expect(selectors.bannerOpened(state3)).toBe(false);
-    });
-  });
-
   describe('reloadCount', () => {
     const state = reducer(undefined, actions.app.reload());
 
