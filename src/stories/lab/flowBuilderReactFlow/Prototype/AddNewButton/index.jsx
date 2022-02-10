@@ -62,7 +62,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId}) => {
   if (isConnectedToRouterOrTerminal) {
     return (
       <IconButtonWithTooltip
-        tooltipProps={{title: isConnectedToRouterOrTerminal ? 'Add empty flow step' : '', placement: 'down'}}
+        tooltipProps={{title: isConnectedToRouterOrTerminal ? 'Add empty flow step' : '', placement: 'bottom'}}
         onClick={handleAddNode}
         className={classes.addButton}
     >
@@ -75,7 +75,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId}) => {
     <IconButton
       className={classes.addButton}
       onClick={handleOpenMenu}
- >
+    >
       <AddIcon />
     </IconButton>
   );
@@ -102,8 +102,12 @@ export default ({ edgeId }) => {
   return (
     <>
       <ClickAwayListener onClickAway={handleCloseMenu}>
-        <AddNodeToolTip
-          handleOpenMenu={handleOpenMenu} edgeId={edgeId} handleAddNode={handleAddNode} />
+        <span>
+          <AddNodeToolTip
+            handleOpenMenu={handleOpenMenu}
+            edgeId={edgeId}
+            handleAddNode={handleAddNode} />
+        </span>
       </ClickAwayListener>
 
       <AddNodeMenuPopper anchorEl={anchorEl} handleClose={handleCloseMenu} handleAddNode={handleAddNode} handleAddRouter={handleAddRouter} />

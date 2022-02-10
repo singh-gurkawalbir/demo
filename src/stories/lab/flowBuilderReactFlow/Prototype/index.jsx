@@ -12,12 +12,14 @@ import PgNode from './CustomNodes/PgNode';
 import PpNode from './CustomNodes/PpNode';
 import TerminalNode from './CustomNodes/TerminalNode';
 import RouterNode from './CustomNodes/RouterNode';
+import MergeNode from './CustomNodes/MergeNode';
 
 const nodeTypes = {
   pg: PgNode,
   pp: PpNode,
   terminal: TerminalNode,
   router: RouterNode,
+  merge: MergeNode,
 };
 
 const edgeTypes = {
@@ -27,6 +29,7 @@ const edgeTypes = {
 
 export default () => {
   const [elements, setElements] = useState(mockElements);
+  const [mergeNodeId, setMergeNodeId] = useState();
 
   const updatedLayout = useMemo(() =>
     layoutElements(elements, 'LR'),
@@ -37,42 +40,22 @@ export default () => {
     console.log(elements);
   }, [elements]);
 
-  const onNodeDragStart = (e, node) => {
-    if (node.type !== 'terminal') {
-      return;
-    }
-    setElements(elements => elements.map(ele => {
-      if (ele.type !== 'terminal' || ele.id === node.id) {
-        return ele;
-      }
-
-      return {...ele, highlight: true};
-    }));
+  const handleConnectStart = (event, {nodeId}) => {
+    setMergeNodeId(nodeId);
+    console.log('handleConnectStart:', nodeId);
   };
 
-  const onNodeDragStop = (e, node) => {
-    if (node.type !== 'terminal') {
-      return;
-    }
-    console.log('check ', e);
-    setElements(elements => elements.map(ele => {
-      if (ele.type !== 'terminal' || ele.id === node.id) {
-        return ele;
-      }
-      const copy = {...ele};
-
-      delete copy.highlight;
-
-      return copy;
-    }));
+  const handleConnectEnd = () => {
+    setMergeNodeId();
   };
 
   return (
     <ReactFlowProvider>
-      <FlowProvider elements={elements} setElements={setElements}>
+      <FlowProvider elements={elements} mergeNodeId={mergeNodeId} setElements={setElements}>
         <ReactFlow
-          onNodeDragStart={onNodeDragStart}
-          onNodeDragStop={onNodeDragStop}
+          // onConnect={handleConnect} // this is handled in the terminal node
+          onConnectStart={handleConnectStart}
+          onConnectEnd={handleConnectEnd}
           elements={updatedLayout}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}

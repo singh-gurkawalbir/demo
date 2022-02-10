@@ -2,9 +2,9 @@ import React, { useContext } from 'react';
 
 const FlowContext = React.createContext();
 
-export const FlowProvider = ({ children, elements, setElements }) => (
+export const FlowProvider = ({ children, elements, setElements, mergeNodeId }) => (
   <FlowContext.Provider
-    value={{ elements, setElements }}>
+    value={{ elements, setElements, mergeNodeId }}>
     {children}
   </FlowContext.Provider>
 );
