@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 export const createStore = initialState => {
   // state object
@@ -56,9 +56,39 @@ export const useCreatedStore = (store, selector = defaultState, shouldNotReturnT
 };
 
 export const createSharedState = initialState => {
-  const sharedState = createStore(initialState);
-  const shouldNotReturnTuple = typeof initialState === 'function';
+  // Creating a react context for each shared state being created
+  // So that multiple instances of a complex component will have its
+  // own sharedState. Follows the react style
+  const context = React.createContext();
 
-  return selector => useCreatedStore(sharedState, selector, shouldNotReturnTuple);
+  // creating Shared state
+  const getCreatedSharedState = () => {
+    const sharedState = createStore(initialState);
+    const shouldNotReturnTuple = typeof initialState === 'function';
+
+    return selector => useCreatedStore(sharedState, selector, shouldNotReturnTuple);
+  };
+
+  // This is the provider that the consumers should wrap around their component
+  // to be able to use the sharedState selector
+  const StateProvider = ({children}) => (
+    <context.Provider value={getCreatedSharedState()}>
+      {children}
+    </context.Provider>
+  );
+  // shared state that accepts a selector and uses created state from the current context
+  // This enables multiple instances of Compound components
+  // using multiple instances of shared state
+  const useSharedStateSelector = selector => {
+    const useCreatedState = useContext(context);
+
+    if (!useCreatedState) {
+      throw new Error('useSharedState hook must be wrapped with the corresponding StateProvider ');
+    }
+
+    return useCreatedState(selector);
+  };
+
+  return {StateProvider, useSharedStateSelector};
 };
 

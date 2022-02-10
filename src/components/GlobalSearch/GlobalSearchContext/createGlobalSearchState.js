@@ -57,7 +57,7 @@ const stateUpdaters = ({get, set}) => ({
   },
 });
 
-export const createGlobalSearchState = () => createSharedState(({get, set}) => ({
+export const {StateProvider: GlobalSearchStateProvider, useSharedStateSelector: useGlobalSearchState} = createSharedState(({get, set}) => ({
   ...initialState,
   ...stateUpdaters({get, set}),
 }));

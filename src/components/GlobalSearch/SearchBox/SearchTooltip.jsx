@@ -2,7 +2,7 @@ import React from 'react';
 import { IconButton, makeStyles, Tooltip } from '@material-ui/core';
 import SearchIcon from '../../icons/SearchIcon';
 import TooltipTitle from './TooltipTitle';
-import { useGlobalSearchState } from '../GlobalSearchContext';
+import { useGlobalSearchState } from '../GlobalSearchContext/createGlobalSearchState';
 
 const useStyles = makeStyles(() => ({
   muiTooltip: {

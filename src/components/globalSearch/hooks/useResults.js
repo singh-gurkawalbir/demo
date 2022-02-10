@@ -1,7 +1,8 @@
 import { memoize } from 'lodash';
 import { useMemo } from 'react';
 import { createSelector } from 'reselect';
-import { useGlobalSearchContext, useGlobalSearchState } from '../GlobalSearchContext';
+import { useGlobalSearchContext } from '../GlobalSearchContext';
+import { useGlobalSearchState } from '../GlobalSearchContext/createGlobalSearchState';
 import { getTabResults } from '../utils';
 
 const resultsSelector = memoize(getResults => createSelector(

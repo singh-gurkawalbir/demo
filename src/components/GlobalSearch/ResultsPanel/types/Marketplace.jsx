@@ -5,7 +5,7 @@ import UpArrowIcon from '../../../icons/ArrowUpIcon';
 import FilledButton from '../../../Buttons/FilledButton';
 import useScrollIntoView from '../../../../hooks/useScrollIntoView';
 import useRequestForDemo from '../../../../hooks/useRequestForDemo';
-import { useGlobalSearchState } from '../../GlobalSearchContext';
+import { useGlobalSearchState } from '../../GlobalSearchContext/createGlobalSearchState';
 
 const useStyles = makeStyles(theme => ({
   rootExpanded: {

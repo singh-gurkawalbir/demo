@@ -9,10 +9,11 @@ import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
 import FloatingPaper from './FloatingPaper';
 import CloseIcon from '../../icons/CloseIcon';
-import { useGlobalSearchContext, useGlobalSearchState } from '../GlobalSearchContext';
+import { useGlobalSearchContext } from '../GlobalSearchContext';
 import { getResourceFilters } from '../utils';
 import MenuItem from './MenuItem';
 import FilterLabel from './FilterLabel';
+import { useGlobalSearchState } from '../GlobalSearchContext/createGlobalSearchState';
 
 const useStyles = makeStyles(theme => ({
   arrowContainer: {

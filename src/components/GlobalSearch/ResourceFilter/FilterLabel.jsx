@@ -4,7 +4,7 @@ import { makeStyles,
   Tooltip,
   Badge} from '@material-ui/core';
 import FilterIcon from '../../icons/FilterIcon';
-import { useGlobalSearchState } from '../GlobalSearchContext';
+import { useGlobalSearchState } from '../GlobalSearchContext/createGlobalSearchState';
 
 const useStyles = makeStyles(() => ({
   filterLabel: {

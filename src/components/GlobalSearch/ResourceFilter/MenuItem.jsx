@@ -5,7 +5,7 @@ import { makeStyles,
   Checkbox,
   FormControlLabel,
 } from '@material-ui/core';
-import { useGlobalSearchState } from '../GlobalSearchContext';
+import { useGlobalSearchState } from '../GlobalSearchContext/createGlobalSearchState';
 
 const useStyles = makeStyles(theme => ({
   itemRoot: {

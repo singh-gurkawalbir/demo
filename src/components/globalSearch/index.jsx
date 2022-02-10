@@ -6,9 +6,10 @@ import { useLocation } from 'react-router-dom';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import ResourceFilter from './ResourceFilter';
 import SearchBox from './SearchBox/SearchBox';
-import { GlobalSearchProvider, useGlobalSearchState } from './GlobalSearchContext';
+import { GlobalSearchProvider } from './GlobalSearchContext';
 import SearchToolTip from './SearchBox/SearchTooltip';
 import useClickOutSide from '../../hooks/useClickOutSide';
+import { useGlobalSearchState } from './GlobalSearchContext/createGlobalSearchState';
 
 const useStyles = makeStyles(theme => ({
   root: {

@@ -4,7 +4,8 @@ import CloseIcon from '../../icons/CloseIcon';
 import useDebouncedValue from '../../../hooks/useDebouncedInput';
 import useKeyboardShortcut from '../../../hooks/useKeyboardShortcut';
 import useSyncedRef from '../../../hooks/useSyncedRef';
-import { useGlobalSearchState, useActiveTab } from '../GlobalSearchContext';
+import { useGlobalSearchState } from '../GlobalSearchContext/createGlobalSearchState';
+import { useActiveTab } from '../GlobalSearchContext/createActiveTab';
 
 const useStyles = makeStyles(theme => ({
   searchBox: {
@@ -40,7 +41,6 @@ function SearchInput() {
   const setOpen = useGlobalSearchState(state => state.changeOpen);
   const filters = useGlobalSearchState(state => state.filters);
   const [activeTab] = useActiveTab();
-
   const [inputValue, setInputValue] = useDebouncedValue('', value => {
     setKeyword(value);
   }, 100);

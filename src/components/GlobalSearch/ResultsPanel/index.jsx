@@ -5,7 +5,8 @@ import CloseIcon from '../../icons/CloseIcon';
 import ResourceResults from './ResourceResults';
 import MarketPlaceResults from './MarketPlaceResults';
 import useResults from '../hooks/useResults';
-import { useActiveTab, useGlobalSearchState } from '../GlobalSearchContext';
+import { useGlobalSearchState } from '../GlobalSearchContext/createGlobalSearchState';
+import { useActiveTab } from '../GlobalSearchContext/createActiveTab';
 
 const useStyles = makeStyles(theme => ({
   resultsPaper: {

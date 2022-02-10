@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import SearchInput from './SearchInput';
 import ResultsPanel from '../ResultsPanel';
-import { useGlobalSearchState } from '../GlobalSearchContext';
+import { useGlobalSearchState } from '../GlobalSearchContext/createGlobalSearchState';
 
 const useStyles = makeStyles(() => ({
   root: {
