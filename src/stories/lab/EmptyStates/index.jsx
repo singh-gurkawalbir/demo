@@ -1,8 +1,8 @@
 import { makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
-import ApplicationImg from '../../../components/icons/ApplicationImg';
 import { FilledButton } from '../../../components/Buttons';
 import { getHelpUrl } from '../../../utils/resource';
+import EmptyStateImg from '../../../components/icons/EmptyStateImg';
 
 const useStyles = makeStyles(theme => ({
   emptyStatePage: {
@@ -38,10 +38,9 @@ export default function EmptyState() {
   return (
     <div className={classes.emptyStatePage}>
       <div className={classes.emptyStateContainer}>
-        <ApplicationImg
+        <EmptyStateImg
           className={classes.appLogo}
-          size="small"
-          type="3dcart"
+          type="imports"
           alt="Application image" />
         <Typography variant="h3">Jumpstart your data integration</Typography>
         <Typography variant="body2">
