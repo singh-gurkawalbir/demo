@@ -1,19 +1,18 @@
 /* eslint-disable no-param-reassign */
+import { v4 } from 'uuid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 
-// In order to keep this example simple the node width and height are hardcoded.
-// In a real world app you would use the correct width and height values of
-// const nodes = useStoreState(state => state.nodes) and then node.__rf.width, node.__rf.height
+const handleOffset = 56;
 
 const nodeSize = {
   pp: {
-    width: 400,
-    height: 285,
+    width: 275,
+    height: 265,
   },
   pg: {
-    width: 400,
-    height: 285,
+    width: 275,
+    height: 265,
   },
   router: {
     width: 26,
@@ -23,12 +22,28 @@ const nodeSize = {
     width: 26,
     height: 26,
   },
-};
+  mergeg: {
+    width: 26,
+    height: 26,
+  } };
 
 const options = {
-  ranksep: 50,
+  ranksep: 250,
   nodesep: 50,
 };
+
+export function generateId() {
+  return v4().replace(/-/g, '').substring(0, 4);
+}
+
+export function generateDefaultEdge(source, target) {
+  return {
+    id: `${source}-${target}`,
+    source,
+    target,
+    type: 'default',
+  };
+}
 
 export function layoutElements(elements) {
   const dagreGraph = new dagre.graphlib.Graph();
@@ -48,15 +63,17 @@ export function layoutElements(elements) {
 
   return elements.map(el => {
     if (isNode(el)) {
-      const nodeWithPosition = dagreGraph.node(el.id);
+      const layoutPos = dagreGraph.node(el.id);
+      const size = nodeSize[el.type];
+      const offset = ['pp', 'pg'].includes(el.type) ? 0 : handleOffset;
 
       // We are shifting the dagre node position that returns centerpoint (x,y)
       // to the top left so it matches the react-flow node anchor point (top left).
       // This maters when nodes are of various sizes.
       return ({...el,
         position: {
-          x: nodeWithPosition.x - nodeSize[el.type].width / 2,
-          y: nodeWithPosition.y - nodeSize[el.type].height / 2,
+          x: layoutPos.x - size.width / 2,
+          y: layoutPos.y - size.height / 2 - offset,
         }});
     }
 

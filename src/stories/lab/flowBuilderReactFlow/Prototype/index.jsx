@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import ReactFlow,
 { MiniMap,
   Controls,
@@ -12,12 +12,14 @@ import PgNode from './CustomNodes/PgNode';
 import PpNode from './CustomNodes/PpNode';
 import TerminalNode from './CustomNodes/TerminalNode';
 import RouterNode from './CustomNodes/RouterNode';
+import MergeNode from './CustomNodes/MergeNode';
 
 const nodeTypes = {
   pg: PgNode,
   pp: PpNode,
   terminal: TerminalNode,
   router: RouterNode,
+  merge: MergeNode,
 };
 
 const edgeTypes = {
@@ -26,19 +28,35 @@ const edgeTypes = {
 };
 
 export default () => {
-  const [elements, setElements] = useState(layoutElements(mockElements));
+  const [elements, setElements] = useState(mockElements);
+  const [mergeNodeId, setMergeNodeId] = useState();
+
+  const updatedLayout = useMemo(() =>
+    layoutElements(elements, 'LR'),
+  [elements]);
 
   useEffect(() => {
     // eslint-disable-next-line no-console
     console.log(elements);
   }, [elements]);
 
+  const handleConnectStart = (event, {nodeId}) => {
+    setMergeNodeId(nodeId);
+    console.log('handleConnectStart:', nodeId);
+  };
+
+  const handleConnectEnd = () => {
+    setMergeNodeId();
+  };
+
   return (
     <ReactFlowProvider>
-      <FlowProvider elements={elements} setElements={setElements}>
+      <FlowProvider elements={elements} mergeNodeId={mergeNodeId} setElements={setElements}>
         <ReactFlow
-          selectNodesOnDrag={false}
-          elements={elements}
+          // onConnect={handleConnect} // this is handled in the terminal node
+          onConnectStart={handleConnectStart}
+          onConnectEnd={handleConnectEnd}
+          elements={updatedLayout}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
         />
