@@ -88,6 +88,7 @@ import LockIcon from '../../../components/icons/LockIcon';
 import MapDataIcon from '../../../components/icons/MapDataIcon';
 import MappingConnectorIcon from '../../../components/icons/MappingConnectorIcon';
 import MarketplaceIcon from '../../../components/icons/MarketplaceIcon';
+import MergeIcon from '../../../components/icons/MergeIcon';
 import MyAPIIcon from '../../../components/icons/MyApiIcon';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import OutputFilterIcon from '../../../components/icons/OutputFilterIcon';
@@ -238,6 +239,7 @@ const icons =
       MapDataIcon,
       MappingConnectorIcon,
       MarketplaceIcon,
+      MergeIcon,
       MyAPIIcon,
       NotificationsIcon,
       OutputFilterIcon,

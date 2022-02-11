@@ -45,6 +45,16 @@ export function generateDefaultEdge(source, target) {
   };
 }
 
+export function generateNewNode() {
+  const newId = generateId();
+
+  return ({
+    id: newId,
+    type: 'pp',
+    data: { label: `New node: ${newId}`},
+  });
+}
+
 export function layoutElements(elements) {
   const dagreGraph = new dagre.graphlib.Graph();
 

@@ -1,15 +1,6 @@
 import produce from 'immer';
-import { generateId, generateDefaultEdge } from '../lib';
+import { generateId, generateNewNode, generateDefaultEdge } from '../lib';
 
-const generateNewNode = () => {
-  const newId = generateId();
-
-  return ({
-    id: newId,
-    type: 'pp',
-    data: { label: `New node: ${newId}`},
-  });
-};
 const generateNewRouter = () => ({
   id: generateId(),
   type: 'router',
