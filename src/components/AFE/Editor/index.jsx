@@ -123,7 +123,6 @@ const pxToFr = (pxSizes, resetLastRow) => {
 export default function Editor({ editorId }) {
   const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
-  // const [isDragging, setIsDragging] = useState(false);
   const [newState, dispatchLocalAction] = useReducer(reducer,
     {
       isDragging: false,
@@ -133,9 +132,6 @@ export default function Editor({ editorId }) {
     });
 
   const {isDragging, requireResize, dragBarGridArea, dragOrientation } = newState;
-  // const [requireResize, setRequireResize] = useState(false);
-  // const [dragBarGridArea, setDragBarGridArea] = useState();
-  // const [dragOrientation, setDragOrientation] = useState();
   const gridRef = useRef();
 
   const showErrorDragBar = useSelector(state => {
@@ -193,20 +189,14 @@ export default function Editor({ editorId }) {
     const orientation = gridArea.split('_')[1];
 
     // console.log(`orientation for: ${gridArea} is ${orientation}.`);
-
-    // setDragOrientation(orientation);
     dispatchLocalAction({type: actionTypes.dragOrientation, value: orientation});
-    // setIsDragging(true);
     dispatchLocalAction({type: actionTypes.isDragging, value: true});
-    // setDragBarGridArea(gridArea);
     dispatchLocalAction({type: actionTypes.dragBarGridArea, value: gridArea});
   }, []);
 
   const handleDragEnd = useCallback(() => {
-    // setIsDragging(false);
     dispatchLocalAction({type: actionTypes.isDragging, value: false});
     dispatchLocalAction({type: actionTypes.isRequireResize, value: true});
-    // setRequireResize(true);
   }, []);
 
   const handleVerticalDrag = useCallback(event => {
@@ -277,7 +267,6 @@ export default function Editor({ editorId }) {
     // there is no need for repeated processing, as the 'fr' will dynamically
     // change the grid size on it's own.
     dispatchLocalAction({type: actionTypes.isRequireResize, value: false});
-    // setRequireResize(false);
   }, [requireResize]);
 
   useEffect(() => {
