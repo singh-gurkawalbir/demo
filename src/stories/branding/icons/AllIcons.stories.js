@@ -19,6 +19,7 @@ import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import BackArrowIcon from '../../../components/icons/BackArrowIcon';
+import BranchIcon from '../../../components/icons/BranchIcon';
 import CalendarIcon from '../../../components/icons/CalendarIcon';
 import CancelIcon from '../../../components/icons/CancelIcon';
 import CheckboxUnselectedIcon from '../../../components/icons/CheckboxUnselectedIcon';
@@ -170,6 +171,7 @@ const icons =
       ArrowUpIcon,
       AuditLogIcon,
       BackArrowIcon,
+      BranchIcon,
       CalendarIcon,
       CancelIcon,
       CheckboxUnselectedIcon,

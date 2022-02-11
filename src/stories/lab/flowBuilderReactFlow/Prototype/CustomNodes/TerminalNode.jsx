@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
   button: {
     backgroundColor: theme.palette.common.white,
     border: `solid 1px ${theme.palette.secondary.light}`,
-    padding: 0,
+    padding: 2,
   },
   grow: {
     transform: 'scale(1.3)',
@@ -25,9 +25,10 @@ const useStyles = makeStyles(theme => ({
   },
   handle: {
     left: 0,
-    width: 26,
-    height: 26,
+    width: 30,
+    height: 30,
     backgroundColor: 'transparent',
+    border: 'solid 0px',
   },
   sourceHandle: {
     border: 'solid 1px grey',
