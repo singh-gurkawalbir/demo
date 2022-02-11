@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   success: {
-    borderColor: theme.palette.success.main,
+    borderColor: `${theme.palette.success.main} !important`,
     '& svg': {
       color: theme.palette.success.main,
     },
@@ -70,7 +70,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   error: {
-    borderColor: theme.palette.error.main,
+    borderColor: `${theme.palette.error.main} !important`,
     '& svg': {
       color: theme.palette.error.main,
     },
@@ -79,7 +79,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   info: {
-    borderColor: theme.palette.info.main,
+    borderColor: `${theme.palette.info.main} !important`,
     '& svg': {
       color: theme.palette.info.main,
     },
@@ -88,7 +88,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   warning: {
-    borderColor: theme.palette.warning.main,
+    borderColor: `${theme.palette.warning.main} !important`,
     '& svg': {
       color: theme.palette.warning.main,
     },
@@ -104,6 +104,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     color: theme.palette.secondary.main,
+    fontSize: props => props.transparent ? 13 : 'inherit',
   },
   actionButton: {
     padding: 0,
@@ -114,6 +115,35 @@ const useStyles = makeStyles(theme => ({
   },
   icon: {
     alignSelf: 'flex-start',
+  },
+  transparent: {
+    background: 'none',
+    fontFamily: 'source sans pro',
+    fontSize: 13,
+    border: '1px solid',
+    minHeight: 'unset',
+    boxShadow: 'none',
+    maxWidth: 'unset',
+    '&:before': {
+      display: 'none',
+    },
+    '& > .MuiSnackbarContent-message': {
+      justifyContent: 'flex-start',
+      '&:first-child': {
+        justifyContent: 'flex-start',
+      },
+    },
+    '& >*.MuiTypography-root': {
+      fontSize: 13,
+    },
+    '& > * svg': {
+      fontSize: '17px !important',
+      alignSelf: 'center',
+    },
+    '& > div:first-child': {
+      padding: 0,
+      width: '100%',
+    },
   },
 }));
 const variantIcon = {
@@ -133,6 +163,7 @@ export default function NotificationToaster(props) {
     children,
     onClose,
     variant,
+    transparent = false,
     size = 'small',
     ...other
   } = props;
@@ -144,6 +175,7 @@ export default function NotificationToaster(props) {
         classes[variant],
         classes[size],
         classes.root,
+        {[classes.transparent]: transparent},
         className
       )}
       aria-describedby="client-snackbar"

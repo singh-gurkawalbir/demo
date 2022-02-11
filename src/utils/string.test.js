@@ -12,6 +12,7 @@ describe('getTextAfterCount util test cases', () => {
     expect(getTextAfterCount('value', 2)).toEqual('2 values');
     expect(getTextAfterCount('value', 3)).toEqual('3 values');
     expect(getTextAfterCount('value', 4)).toEqual('4 values');
+    expect(getTextAfterCount('error')).toEqual('0 errors');
   });
 });
 
