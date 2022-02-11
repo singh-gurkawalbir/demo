@@ -22,7 +22,7 @@ const nodeSize = {
     width: 26,
     height: 26,
   },
-  mergeg: {
+  merge: {
     width: 26,
     height: 26,
   } };
