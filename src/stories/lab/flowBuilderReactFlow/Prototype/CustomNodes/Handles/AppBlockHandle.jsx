@@ -2,10 +2,11 @@
 import React from 'react';
 import { Handle } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
+import { handleOffset } from '../../lib';
 
 const useStyles = makeStyles(() => ({
   offsetHandle: {
-    marginTop: -56,
+    marginTop: -handleOffset,
   },
 }));
 

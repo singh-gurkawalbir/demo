@@ -2,7 +2,7 @@ import React from 'react';
 import { getSmoothStepPath, getEdgeCenter, getMarkerEnd} from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
 // import UnLinkIcon from '../../../../../components/icons/unLinkedIcon';
-import AddNodeButton from '../AddNewButton';
+import AddNewButton from '../AddNewButton';
 
 const foreignObjectSize = 26;
 
@@ -60,7 +60,7 @@ export default function LinkedEdge({
         y={edgeCenterY - foreignObjectSize / 2}
         requiredExtensions="http://www.w3.org/1999/xhtml"
       >
-        <AddNodeButton edgeId={id} />
+        <AddNewButton edgeId={id} />
       </foreignObject>
     </>
   );
