@@ -1,13 +1,12 @@
-import produce from 'immer';
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Position, Handle, getConnectedEdges } from 'react-flow-renderer';
+import { Position, Handle } from 'react-flow-renderer';
 import { IconButton } from '@material-ui/core';
 import clsx from 'clsx';
 import Icon from '../../../../../components/icons/FlowsIcon';
 import DefaultHandle from './Handles/DefaultHandle';
 import { useFlowContext } from '../Context';
-import { findNodeIndex, generateId } from '../lib';
+import actions from '../reducer/actions';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -40,33 +39,14 @@ const useStyles = makeStyles(theme => ({
 export default function TerminalNode(props) {
   const classes = useStyles();
   const {id} = props;
-  const {mergeNodeId, setElements} = useFlowContext();
+  const {mergeNodeId, dispatchFlowUpdate} = useFlowContext();
 
   const handleConnect = ({source, target}) => {
     console.log('handle terminal node onConnect', source, target);
 
     // both source and target nodes need to connect to a new "merge" node,
     // and then we delete the terminal nodes.
-    setElements(elements => produce(elements, draft => {
-      const sourceIndex = findNodeIndex(source, draft);
-      const sourceNode = draft[sourceIndex];
-      const targetIndex = findNodeIndex(target, draft);
-      const targetNode = draft[targetIndex];
-      const newMergeNode = {
-        id: generateId(),
-        type: 'merge',
-      };
-
-      const edges = getConnectedEdges([sourceNode, targetNode], draft);
-
-      console.log('edges', JSON.stringify(edges));
-
-      edges[0].target = newMergeNode.id;
-      edges[1].target = newMergeNode.id;
-
-      draft[sourceIndex] = newMergeNode; // replace
-      draft.splice(targetIndex, 1); // delete
-    }));
+    dispatchFlowUpdate({type: actions.MERGE_TERMINAL_NODES, source, target});
   };
 
   return (

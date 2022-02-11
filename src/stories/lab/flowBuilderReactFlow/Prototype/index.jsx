@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useReducer } from 'react';
 import ReactFlow,
 { MiniMap,
   Controls,
@@ -13,6 +13,7 @@ import PpNode from './CustomNodes/PpNode';
 import TerminalNode from './CustomNodes/TerminalNode';
 import RouterNode from './CustomNodes/RouterNode';
 import MergeNode from './CustomNodes/MergeNode';
+import reducer from './reducer';
 
 const nodeTypes = {
   pg: PgNode,
@@ -28,7 +29,7 @@ const edgeTypes = {
 };
 
 export default () => {
-  const [elements, setElements] = useState(mockElements);
+  const [elements, dispatchFlowUpdate] = useReducer(reducer, mockElements);
   const [mergeNodeId, setMergeNodeId] = useState();
 
   const updatedLayout = useMemo(() =>
@@ -51,7 +52,7 @@ export default () => {
 
   return (
     <ReactFlowProvider>
-      <FlowProvider elements={elements} mergeNodeId={mergeNodeId} setElements={setElements}>
+      <FlowProvider elements={elements} mergeNodeId={mergeNodeId} dispatchFlowUpdate={dispatchFlowUpdate}>
         <ReactFlow
           // onConnect={handleConnect} // this is handled in the terminal node
           onConnectStart={handleConnectStart}

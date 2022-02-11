@@ -5,7 +5,7 @@ import ArrowPopper from '../../../../../components/ArrowPopper';
 import IconButtonWithTooltip from '../../../../../components/IconButtonWithTooltip';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import { useFlowContext } from '../Context';
-import { handleAddNewNode, handleAddNewRouter } from './addElements';
+import actions from '../reducer/actions';
 
 const useStyles = makeStyles(theme => ({
   addButton: {
@@ -91,12 +91,12 @@ export default ({ edgeId }) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const {elements, setElements } = useFlowContext();
+  const { dispatchFlowUpdate } = useFlowContext();
   const handleAddNode = () => {
-    setElements(handleAddNewNode(edgeId, elements));
+    dispatchFlowUpdate({type: actions.ADD_NEW_NODE, edgeId});
   };
   const handleAddRouter = () => {
-    setElements(handleAddNewRouter(edgeId, elements));
+    dispatchFlowUpdate({type: actions.ADD_NEW_ROUTER, edgeId});
   };
 
   return (
