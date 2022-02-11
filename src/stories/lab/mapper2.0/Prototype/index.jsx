@@ -10,7 +10,7 @@ import MappingRow from './MappingRow';
 import {TreeContextProvider} from './TreeContext';
 
 const useStyles = makeStyles({
-  ashu: {
+  root: {
     '& .rc-tree-indent-unit': {
       display: 'inline-block',
       width: 24,
@@ -90,7 +90,7 @@ export default function Mapper2({importDoc}) {
     ? (
       <TreeContextProvider treeData={treeData} setTreeData={setTreeData} >
         <Tree
-          className={classes.ashu}
+          className={classes.root}
           titleRender={Row}
           treeData={treeData}
           defaultExpandAll
@@ -102,7 +102,6 @@ export default function Mapper2({importDoc}) {
           }}
              />
       </TreeContextProvider>
-
     )
     : 'Loading mappings';
 }
