@@ -1,12 +1,10 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Position, Handle } from 'react-flow-renderer';
+import { Position, useStoreState } from 'react-flow-renderer';
 import { IconButton } from '@material-ui/core';
 import clsx from 'clsx';
 import Icon from '../../../../../components/icons/FlowsIcon';
 import DefaultHandle from './Handles/DefaultHandle';
-import { useFlowContext } from '../Context';
-import actions from '../reducer/actions';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -36,39 +34,35 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+export const useIsTerminalOrMergeNodeDroppable = nodeId => {
+  const draggingEles = useStoreState(state => state.selectedElements);
+
+  if (!draggingEles) {
+    return false;
+  }
+  const draggingEle = draggingEles[0];
+
+  if (!['terminal', 'merge'].includes(draggingEle.type)) {
+    return false;
+  }
+
+  return nodeId !== draggingEle.id;
+};
+
 export default function TerminalNode(props) {
   const classes = useStyles();
   const {id} = props;
-  const {mergeNodeId, dispatchFlowUpdate} = useFlowContext();
 
-  const handleConnect = ({source, target}) => {
-    console.log('handle terminal node onConnect', source, target);
-
-    // both source and target nodes need to connect to a new "merge" node,
-    // and then we delete the terminal nodes.
-    dispatchFlowUpdate({type: actions.MERGE_TERMINAL_NODES, source, target});
-  };
+  const isDroppable = useIsTerminalOrMergeNodeDroppable(id);
 
   return (
     <div>
       <DefaultHandle type="target" position={Position.Left} />
-      <IconButton className={classes.button}>
+      <IconButton
+        className={clsx(classes.button, {
+          [classes.drop]: isDroppable })}>
         <Icon />
       </IconButton>
-      {mergeNodeId && mergeNodeId !== id ? (
-        <Handle
-          type="target"
-          // onConnect={params => console.log('handle terminal node onConnect', params)}
-          // isValidConnection={event => console.log(event)}
-          position={Position.Right}
-          className={clsx(classes.handle, classes.targetHandle)} />
-      ) : (
-        <Handle
-          type="source"
-          onConnect={handleConnect}
-          position={Position.Right}
-          className={clsx(classes.handle, classes.sourceHandle)} />
-      )}
     </div>
   );
 }

@@ -95,3 +95,18 @@ export function findNodeIndex(id, elements) {
     }
   }
 }
+const RANGE = 20;
+
+const inRange = (coordinate, dropCoordinate) => (dropCoordinate - RANGE) <= coordinate && (dropCoordinate + RANGE) >= coordinate;
+export const terminalNodeInVicinity = (ele, elements) => {
+  if (!ele) {
+    return false;
+  }
+  const {x: xCoord, y: yCoord} = ele.position;
+
+  return elements.filter(node => node.type === 'terminal' || node.type === 'merge').find(dropElement => {
+    const {x, y} = dropElement.position;
+
+    return inRange(xCoord, x) && inRange(yCoord, y);
+  })?.id;
+};

@@ -3,7 +3,6 @@ import produce from 'immer';
 import { getConnectedEdges } from 'react-flow-renderer';
 import actions from './actions';
 import { generateId, generateDefaultEdge, findNodeIndex } from '../lib';
-import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../../../constants/resource';
 
 const generateNewNode = () => {
   const newId = generateId();
@@ -59,7 +58,14 @@ export const handleAddNewNode = (edgeId, elements) => {
     generateDefaultEdge(newNode.id, oldTargetId)
   );
 };
+const mergeWithTerminalNode = (mergeNode, terminalNode, draft) => {
+  const targetIndex = findNodeIndex(terminalNode, draft);
 
+  const terminalEdge = getConnectedEdges([terminalNode], draft);
+
+  terminalEdge[0].target = mergeNode.id;
+  draft.splice(targetIndex, 1);
+};
 export default function (state, action) {
   const {type, edgeId, source, target} = action;
 
@@ -70,6 +76,18 @@ export default function (state, action) {
         const sourceNode = draft[sourceIndex];
         const targetIndex = findNodeIndex(target, draft);
         const targetNode = draft[targetIndex];
+
+        if (sourceNode.type === 'merge') {
+          mergeWithTerminalNode(sourceNode, targetNode, draft);
+
+          return;
+        }
+
+        if (targetNode.type === 'merge') {
+          mergeWithTerminalNode(targetNode, sourceNode, draft);
+
+          return;
+        }
         const newMergeNode = {
           id: generateId(),
           type: 'merge',
@@ -84,7 +102,6 @@ export default function (state, action) {
 
         draft[sourceIndex] = newMergeNode; // replace
         draft.splice(targetIndex, 1); // delete
-        RESOURCE_TYPE_PLURAL_TO_SINGULAR;
 
         return;
       }
