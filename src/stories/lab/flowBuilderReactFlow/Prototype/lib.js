@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 
-const handleOffset = 56;
+export const handleOffset = 30;
 
 const nodeSize = {
   pp: {
