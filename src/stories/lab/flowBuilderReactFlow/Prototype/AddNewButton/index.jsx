@@ -62,7 +62,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId}) => {
   if (isConnectedToRouterOrTerminal) {
     return (
       <IconButtonWithTooltip
-        tooltipProps={{title: isConnectedToRouterOrTerminal ? 'Add empty flow step' : '', placement: 'bottom'}}
+        tooltipProps={{title: isConnectedToRouterOrTerminal ? 'Add empty flow step' : '', placement: 'top'}}
         onClick={handleAddNode}
         className={classes.addButton}
     >

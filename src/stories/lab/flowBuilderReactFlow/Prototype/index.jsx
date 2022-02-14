@@ -42,7 +42,7 @@ export default () => {
     console.log(elements);
   }, [elements]);
 
-  const handleConnectStart = (event, {nodeId}) => {
+  const handleConnectStart = (event, { nodeId }) => {
     setMergeNodeId(nodeId);
   };
 
