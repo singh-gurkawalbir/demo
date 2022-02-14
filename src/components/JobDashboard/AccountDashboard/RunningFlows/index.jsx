@@ -31,8 +31,9 @@ export default function RunningFlows() {
   const match = useRouteMatch();
   let { integrationId } = match.params;
   const { childId } = match.params;
+  const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
 
-  integrationId = getDashboardIntegrationId(integrationId, childId);
+  integrationId = getDashboardIntegrationId(integrationId, childId, isIntegrationAppV1);
   const integrationFilterKey = `${integrationId || ''}${filterKey}`;
 
   const filters = useSelector(state => selectors.filter(state, integrationFilterKey));

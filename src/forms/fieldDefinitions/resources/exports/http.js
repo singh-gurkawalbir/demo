@@ -9,7 +9,7 @@ export default {
       { label: 'CSV', value: 'csv' },
       { label: 'JSON', value: 'json' },
     ],
-    dependentFieldForMediaType: '/http/requestMediaType',
+    // dependentFieldForMediaType: '/http/requestMediaType',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -48,7 +48,7 @@ export default {
       { label: 'XML', value: 'xml' },
       { label: 'JSON', value: 'json' },
     ],
-    dependentFieldForMediaType: '/http/requestMediaType',
+    // dependentFieldForMediaType: '/http/requestMediaType',
     visibleWhen: [
       {
         field: 'outputMode',

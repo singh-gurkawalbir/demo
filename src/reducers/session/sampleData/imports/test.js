@@ -61,6 +61,33 @@ describe('sampleData reducers', () => {
     });
   });
 
+  describe('iaMetadataFailed action', () => {
+    test('should set received property and data on import in the state', () => {
+      const _importId = 'i1';
+      const originalState = {};
+      const expectedState = {
+        i1: {status: 'error'},
+      };
+      const state = reducer(
+        originalState,
+        actions.importSampleData.iaMetadataFailed({ _importId })
+      );
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should update error property on a given import and not corrupt others in the state', () => {
+      const _importId = 'i2';
+      const originalState = {i2: {status: 'requested'}};
+      const expectedState = { i2: {status: 'error'} };
+      const state = reducer(
+        originalState,
+        actions.importSampleData.iaMetadataFailed({ _importId })
+      );
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+
   describe('integrationAppImportMetadata selectors', () => {
     test('should return empty object when state is undefined', () => {
       expect(selectors.integrationAppImportMetadata(undefined)).toEqual({});

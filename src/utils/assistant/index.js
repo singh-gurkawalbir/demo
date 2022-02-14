@@ -1586,7 +1586,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
 
   let howToFindIdentifierLookupConfig = {};
 
-  if (operationDetails && operationDetails.howToFindIdentifier) {
+  if (operationDetails?.howToFindIdentifier?.lookup) {
     howToFindIdentifierLookupConfig =
       operationDetails.howToFindIdentifier.lookup;
   }
@@ -2163,8 +2163,6 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     '/assistantMetadata': assistantMetadata,
     '/ignoreExisting': !!ignoreExisting,
     '/ignoreMissing': !!ignoreMissing,
-    // AdaptorType will be added by backend. UI shouldnt set/update adaptorType
-    '/adaptorType': undefined,
   };
 }
 
