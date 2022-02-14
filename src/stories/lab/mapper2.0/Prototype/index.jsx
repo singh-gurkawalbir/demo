@@ -99,7 +99,11 @@ export default function Mapper2({importDoc}) {
           onDrop={onDropHandler}
           draggable={{
             icon: <SortableDragHandle isVisible />,
+            nodeDraggable: node => !node.isTabNode,
           }}
+        //   height={500}
+        //   itemHeight={50}
+        //   virtual={false}
              />
       </TreeContextProvider>
     )
