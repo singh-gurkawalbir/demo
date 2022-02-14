@@ -91,5 +91,4 @@ function MarketPlaceRow({type, result, includeDivider, focussed}) {
   );
 }
 
-const MemoizedMarketPlaceRow = React.memo(MarketPlaceRow);
-export default MemoizedMarketPlaceRow;
+export default MarketPlaceRow;

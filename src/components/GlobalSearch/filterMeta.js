@@ -1,6 +1,6 @@
 export const filterMap = {
   integrations:
-    { resourceURL: 'integrations', shortcut: 'integrations', type: 'integrations', label: 'Integrations', isResource: true },
+    { resourceURL: 'integrations', shortcut: 'i', type: 'integrations', label: 'Integrations', isResource: true },
   flows:
     { resourceURL: 'flows', shortcut: 'f', type: 'flows', label: 'Flows', isResource: true },
   connections:
@@ -22,13 +22,13 @@ export const filterMap = {
   templates:
     { resourceURL: 'templates', shortcut: 't', type: 'templates', label: 'Templates', isResource: true },
   connectors:
-    { resourceURL: 'connectors', shortcut: 'integration app', type: 'connectors', label: 'Integration apps', isResource: true },
+    { resourceURL: 'connectors', shortcut: 'i', type: 'connectors', label: 'Integration apps', isResource: true },
   recycleBin:
     { resourceURL: 'recycleBinTTL', shortcut: 'r', type: 'recycleBin', label: 'Recycle bin', isResource: true },
   marketplaceTemplates:
     { resourceURL: 'marketplacetemplates', shortcut: 't', type: 'marketplaceTemplates', label: 'Templates', isResource: false },
   marketplaceConnectors:
-    { resourceURL: 'published', shortcut: 'integration app', type: 'marketplaceConnectors', label: 'Integration apps', isResource: false },
+    { resourceURL: 'published', shortcut: 'i', type: 'marketplaceConnectors', label: 'Integration apps', isResource: false },
 };
 
 export const shortcutMap = {};

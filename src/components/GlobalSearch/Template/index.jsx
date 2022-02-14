@@ -10,13 +10,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function Template(args) {
+export default function Template(props) {
   const classes = useStyles();
 
   return (
     <div className={classes.templateRoot}>
       <GlobalSearchProto
-        {...args} />
+        {...props} />
     </div>
   );
 }
