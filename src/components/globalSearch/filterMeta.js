@@ -5,10 +5,6 @@ export const filterMap = {
     { resourceURL: 'flows', shortcut: 'f', type: 'flows', label: 'Flows', isResource: true },
   connections:
     { resourceURL: 'connections', shortcut: 'c', type: 'connections', label: 'Connections', isResource: true },
-  // imports:
-  //   { shortcut: 'im', type: 'imports', label: 'Imports', isResource: true },
-  // exports:
-  //   { shortcut: 'e', type: 'exports', label: 'Exports', isResource: true },
   scripts:
     { resourceURL: 'scripts', shortcut: 'sc', type: 'scripts', label: 'Scripts', isResource: true },
   agents:
