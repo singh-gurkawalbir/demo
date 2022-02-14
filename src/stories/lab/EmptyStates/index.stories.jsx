@@ -9,13 +9,6 @@ export default {
   },
 };
 
-const Template = args => <EmptyState {...args} />;
-
-export const myIntegrations = Template.bind({});
-
-// myIntegrations.args = {
-//   children: 'Connections page',
-// };
 const designParameters = {
   design: {
     type: 'figma',
@@ -24,4 +17,13 @@ const designParameters = {
   },
 };
 
+const Template = args => <EmptyState {...args} />;
+
+export const myIntegrations = Template.bind({});
+
 myIntegrations.parameters = designParameters;
+
+myIntegrations.args = {
+  children: 'Connections page',
+};
+

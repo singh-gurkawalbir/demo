@@ -17,14 +17,14 @@ import getImageUrl from '../../../utils/image';
 //   },
 // }));
 
-export default function EmptyStateImg({ type, alt, className}) {
+export default function EmptyStateImg({ type, className}) {
   // const classes = useStyles();
   const path = getImageUrl(`images/react/empty-states/${type}.svg`);
 
   return (
     <img
       className={className}
-      alt={type || alt}
+      alt={type || 'Empty image'}
       src={path}
     />
   );

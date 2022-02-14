@@ -1,7 +1,5 @@
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import React from 'react';
-import { FilledButton } from '../../../components/Buttons';
-import { getHelpUrl } from '../../../utils/resource';
 import EmptyStateImg from '../../../components/icons/EmptyStateImg';
 
 const useStyles = makeStyles(theme => ({
@@ -24,32 +22,19 @@ const useStyles = makeStyles(theme => ({
       marginBottom: theme.spacing(2),
     },
   },
-  emptyStatelink: {
-    textDecoration: 'underline',
-  },
 }));
 
-// {imgSource, title, mainContent, actionItems}
-
-export default function EmptyState() {
+export default function EmptyState(type, children) {
   const classes = useStyles();
-  const helpUrl = getHelpUrl();
 
   return (
     <div className={classes.emptyStatePage}>
       <div className={classes.emptyStateContainer}>
         <EmptyStateImg
           className={classes.appLogo}
-          type="imports"
+          type={type || 'imports'}
           alt="Application image" />
-        <Typography variant="h3">Jumpstart your data integration</Typography>
-        <Typography variant="body2">
-          You can access, manage, and monitor flows from within integrations on this page.
-        </Typography>
-        <FilledButton>Create flow </FilledButton>
-        <a href={helpUrl} rel="noreferrer" target="_blank" className={classes.emptyStatelink}>
-          Learn how to develop integrations in flow builder
-        </a>
+        {children}
       </div>
     </div>
 
