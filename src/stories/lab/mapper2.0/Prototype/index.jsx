@@ -93,7 +93,7 @@ export default function Mapper2({importDoc}) {
           className={classes.root}
           titleRender={Row}
           treeData={treeData}
-          defaultExpandAll
+          // defaultExpandAll
           switcherIcon={SwitcherIcon}
           allowDrop={allowDrop}
           onDrop={onDropHandler}

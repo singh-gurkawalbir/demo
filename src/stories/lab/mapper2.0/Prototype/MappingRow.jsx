@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 import { Tooltip, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import isEmpty from 'lodash/isEmpty';
 import CeligoSelect from '../../../../components/CeligoSelect';
 import DynaTypeableSelect from '../../../../components/DynaForm/fields/DynaTypeableSelect';
 import ActionButton from '../../../../components/ActionButton';
@@ -165,7 +166,7 @@ export default function MappingRow({
     currRow.dataType = newDataType;
 
     if (newDataType === 'object' || newDataType === 'objectarray') {
-      if (!currRow.children) {
+      if (isEmpty(currRow.children)) {
         currRow.children = [{
           key: nanoid(),
           parentKey: currRow.key,
