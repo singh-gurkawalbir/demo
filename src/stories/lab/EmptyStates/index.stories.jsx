@@ -23,7 +23,7 @@ export const myIntegrations = Template.bind({});
 
 myIntegrations.parameters = designParameters;
 
-myIntegrations.args = {
-  children: 'Connections page',
-};
+// myIntegrations.args = {
+//   children: ,
+// };
 
