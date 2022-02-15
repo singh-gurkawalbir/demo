@@ -95,8 +95,6 @@ export default function (state, action) {
 
         const edges = getConnectedEdges([sourceNode, targetNode], draft);
 
-        console.log('edges', JSON.stringify(edges));
-
         edges[0].target = newMergeNode.id;
         edges[1].target = newMergeNode.id;
 
@@ -112,6 +110,13 @@ export default function (state, action) {
       }
       case actions.ADD_NEW_ROUTER: {
         handleAddNewRouter(edgeId, draft);
+
+        return;
+      }
+      case actions.DELETE_EDGE: {
+        const edgeIndex = draft.findIndex(ele => ele.id === edgeId);
+
+        draft.splice(edgeIndex, 1);
 
         return;
       }
