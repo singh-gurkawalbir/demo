@@ -1,47 +1,120 @@
-import shortid from 'shortid';
+import { nanoid } from 'nanoid';
+import TabRow from './TabbedRow';
 
 export const PRIMITIVE_DATA_TYPES = ['string', 'number', 'boolean'];
 export const ARRAY_DATA_TYPES = ['stringarray', 'numberarray', 'booleanarray', 'objectarray', 'arrayarray'];
+export const DATA_TYPES =
+[
+  {
+    id: 'string',
+    label: 'string',
+  },
+  {
+    id: 'number',
+    label: 'number',
+  },
+  {
+    id: 'boolean',
+    label: 'boolean',
+  },
+  {
+    id: 'object',
+    label: 'object',
+  },
+  {
+    id: 'stringarray',
+    label: '[string]',
+  },
+  {
+    id: 'numberarray',
+    label: '[number]',
+  },
+  {
+    id: 'booleanarray',
+    label: '[boolean]',
+  },
+  {
+    id: 'objectarray',
+    label: '[object]',
+  },
+];
 
-function iterate(mappings, treeData, parentKey) {
+function iterate(mappings, treeData, parentKey, parentExtract) {
   mappings.forEach(m => {
-    const {dataType, mappings: objMappings, extract, generate} = m;
+    const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract} = m;
+    const children = [];
+    const currNodeKey = nanoid();
+
+    const nodeToPush = {
+      key: currNodeKey,
+      parentKey,
+      parentExtract,
+      ...m,
+    };
+
+    treeData.push(nodeToPush);
 
     if (PRIMITIVE_DATA_TYPES.includes(dataType)) {
-      treeData.push({
-        key: shortid.generate(),
-        parentKey,
-        ...m,
-      });
-
+      // nothing to do
       return;
     }
     if (dataType === 'object') {
       if (objMappings) {
-        const children = [];
-        const key = shortid.generate();
+        nodeToPush.children = children;
 
-        treeData.push({
-          key,
-          parentKey,
-          generate,
-          extract,
-          dataType: 'object',
-          children,
-        });
-        iterate(objMappings, children, key);
-      } else if (extract) {
-        treeData.push({
-          key: shortid.generate(),
-          parentKey,
-          ...m,
-        });
+        iterate(objMappings, children, currNodeKey, currNodeExtract);
       }
 
       return;
     }
     if (ARRAY_DATA_TYPES.includes(dataType)) {
-      // todo
+      // invalid mappings, nothing to do
+      if (!buildArrayHelper) {
+        return;
+      }
+      if (dataType === 'objectarray' || dataType === 'arrayarray') {
+        let sourceExtract;
+        let multipleSources = false;
+
+        buildArrayHelper.forEach(obj => {
+          const {extract, mappings} = obj;
+
+          sourceExtract = extract ? `${sourceExtract ? `${sourceExtract};` : ''}${extract}` : sourceExtract;
+
+          if (!mappings) {
+            return;
+          }
+
+          if (multipleSources && !nodeToPush.multipleSources) {
+            nodeToPush.multipleSources = true;
+
+            children.unshift({
+              key: nanoid(),
+              parentKey: currNodeKey,
+              title: TabRow,
+              isTabNode: true,
+            });
+          } else {
+            multipleSources = true;
+          }
+
+          nodeToPush.children = children;
+
+          iterate(mappings, children, currNodeKey, extract);
+        });
+        nodeToPush.combinedExtract = sourceExtract;
+
+        return;
+      }
+
+      // for primitive array types
+      let extract;
+
+      buildArrayHelper.forEach(obj => {
+        extract = `${extract ? `${extract};` : ''}${obj.extract}`;
+      });
+
+      nodeToPush.combinedExtract = extract;
     }
   });
 
@@ -60,9 +133,10 @@ export function generateTreeFromMappings(input) {
 }
 
 export function allowDrop({ dragNode, dropNode }) {
-  const {parentKey: dragNodeParentKey} = dragNode;
-  const {parentKey: dropNodeParentKey} = dropNode;
+  const {parentKey: dragNodeParentKey, isTabNode: dragNodeIsTab} = dragNode;
+  const {parentKey: dropNodeParentKey, isTabNode: dropNodeIsTab} = dropNode;
 
+  if (dragNodeIsTab || dropNodeIsTab) return false;
   // nodes can only be dropped at same level
   if ((dragNodeParentKey && !dropNodeParentKey) ||
     (!dragNodeParentKey && dropNodeParentKey)) {

@@ -1,8 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
-import shortid from 'shortid';
-import { Tooltip } from '@material-ui/core';
+import { nanoid } from 'nanoid';
+import { Tooltip, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import isEmpty from 'lodash/isEmpty';
+import CeligoSelect from '../../../../components/CeligoSelect';
 import DynaTypeableSelect from '../../../../components/DynaForm/fields/DynaTypeableSelect';
 import ActionButton from '../../../../components/ActionButton';
 import TrashIcon from '../../../../components/icons/TrashIcon';
@@ -10,7 +12,7 @@ import AddIcon from '../../../../components/icons/AddIcon';
 import LookupIcon from '../../../../components/icons/LookupLetterIcon';
 import HardCodedIcon from '../../../../components/icons/HardCodedIcon';
 import MappingSettingsButton from '../../../../components/Mapping/Settings/SettingsButton';
-import {findNode} from './util';
+import {findNode, DATA_TYPES} from './util';
 import {useTreeContext} from './TreeContext';
 
 const useStyles = makeStyles(theme => ({
@@ -18,6 +20,18 @@ const useStyles = makeStyles(theme => ({
     // width: '46%',
     '& > div': {
       width: '100%',
+    },
+  },
+  dataType: {
+    position: 'absolute',
+    width: 'auto !important',
+    right: 0,
+    border: 'none',
+    backgroundColor: 'transparent',
+    fontStyle: 'italic',
+    color: theme.palette.primary.main,
+    '& .MuiSvgIcon-root': {
+      display: 'none',
     },
   },
   innerRow12: {
@@ -106,6 +120,7 @@ export default function MappingRow({
     isSubRecordMapping,
     isRequired,
     isNotEditable,
+    combinedExtract,
     extract,
     generate,
     hardCodedValue,
@@ -127,6 +142,8 @@ export default function MappingRow({
     return {nodeSubArray: ar, nodeIndexInSubArray: i};
   }, [mappingKey, newTreeData]);
 
+  // all these functions logic would be handled in data layer
+  // the goal is to update the 'treeData' so it gets rendered again
   const handleDeleteClick = useCallback(() => {
     nodeSubArray.splice(nodeIndexInSubArray, 1);
 
@@ -135,14 +152,35 @@ export default function MappingRow({
 
   const addNewRowHandler = useCallback(() => {
     nodeSubArray.splice(nodeIndexInSubArray + 1, 0, {
-      key: shortid.generate(),
+      key: nanoid(),
       dataType: 'string',
     });
 
     setTreeData(newTreeData);
   }, [nodeSubArray, nodeIndexInSubArray, newTreeData, setTreeData]);
 
-  const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
+  const onDataTypeChange = useCallback(e => {
+    const newDataType = e.target.value;
+    const currRow = nodeSubArray[nodeIndexInSubArray];
+
+    currRow.dataType = newDataType;
+
+    if (newDataType === 'object' || newDataType === 'objectarray') {
+      if (isEmpty(currRow.children)) {
+        currRow.children = [{
+          key: nanoid(),
+          parentKey: currRow.key,
+          parentExtract: currRow.extract,
+          dataType: 'string',
+        }];
+      }
+      // todo: what if newDataType is changed back to primitive
+      // should we remove the children??
+      setTreeData(newTreeData);
+    }
+  }, [newTreeData, nodeIndexInSubArray, nodeSubArray, setTreeData]);
+
+  const extractValue = combinedExtract || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
   const isLookup = !!lookupName;
   const isHardCodedValue = !!hardCodedValue;
 
@@ -162,9 +200,21 @@ export default function MappingRow({
           valueName="id"
           options={generateFields}
           disabled={isSubRecordMapping || isRequired || disabled}
-           // onBlur={handleGenerateBlur}
-            // onTouch={handleFieldTouch}
+          onBlur={() => {}}
+          onTouch={() => {}}
           />
+        <CeligoSelect
+          className={classes.dataType}
+          onChange={onDataTypeChange}
+          displayEmpty
+          value={dataType || 'string'}
+              >
+          {DATA_TYPES.map(opt => (
+            <MenuItem key={opt.id} value={opt.id}>
+              {opt.label}
+            </MenuItem>
+          ))}
+        </CeligoSelect>
       </div>
       {dataType === 'object' && !extract ? null : (
         <>
@@ -184,8 +234,8 @@ export default function MappingRow({
               value={extractValue}
               options={extractFields}
               disabled={isSubRecordMapping || isNotEditable || disabled}
-           // onBlur={handleExtractBlur}
-            // onTouch={handleFieldTouch}
+              onBlur={() => {}}
+              onTouch={() => {}}
           />
           </div>
         </>

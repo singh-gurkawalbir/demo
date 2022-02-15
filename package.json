@@ -58,6 +58,7 @@
     "mdi-react": "5.2.0",
     "moment": "2.24.0",
     "moment-timezone": "0.5.4",
+    "nanoid": "^3.2.0",
     "notistack": "0.9.17",
     "parse-link-header": "1.0.1",
     "pixi-viewport": "4.32.0",

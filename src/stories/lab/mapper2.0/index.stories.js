@@ -13,7 +13,7 @@ const useStyles = makeStyles({
   container: {
     height: '80vh',
     minHeight: '300px',
-    overflow: 'hidden',
+    overflow: 'scroll',
   },
 });
 
@@ -79,7 +79,11 @@ Example.args = {
           generate: 'new-stringarray',
           dataType: 'stringarray',
           buildArrayHelper: [{
-            extract: '$.values',
+            extract: '$.fName',
+          // mappings: [], not applicable for stringarray
+          },
+          {
+            extract: '$.lName',
           // mappings: [], not applicable for stringarray
           }],
         },
@@ -87,7 +91,40 @@ Example.args = {
           generate: 'new-objectarray',
           dataType: 'objectarray',
           buildArrayHelper: [{
-            extract: '$.siblings[*].values',
+            extract: '$.children',
+          },
+          {
+            mappings: [{
+              generate: 'name',
+              dataType: 'string',
+              extract: '$.name',
+            },
+            {
+              generate: 'age',
+              dataType: 'string',
+              extract: '$.age',
+            }],
+          },
+          {
+            extract: '$.siblings[*]',
+            mappings: [{
+              generate: 'first-name',
+              dataType: 'string',
+              extract: '$.siblings.firstname',
+            },
+            {
+              generate: 'last-name',
+              dataType: 'string',
+              extract: '$.siblings.lastname',
+            }],
+          },
+          {
+            extract: '$.grandchildren[*]',
+            mappings: [{
+              generate: 'college',
+              dataType: 'string',
+              extract: '$.grandchildren.college',
+            }],
           }],
         }],
     },
