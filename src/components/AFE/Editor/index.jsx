@@ -189,16 +189,11 @@ export default function Editor({ editorId }) {
     const orientation = gridArea.split('_')[1];
 
     // console.log(`orientation for: ${gridArea} is ${orientation}.`);
-    // dispatchLocalAction({type: actionTypes.dragOrientation, payload: orientation});
-    // dispatchLocalAction({type: actionTypes.isDragging, payload: true});
-    // dispatchLocalAction({type: actionTypes.dragBarGridArea, payload: gridArea});
     dispatchLocalAction({type: 'dragStart', payload: orientation});
     dispatchLocalAction({type: 'dragStart', payload: gridArea});
   }, []);
 
   const handleDragEnd = useCallback(() => {
-    // dispatchLocalAction({type: actionTypes.isDragging, payload: false});
-    // dispatchLocalAction({type: actionTypes.isRequireResize, payload: true});
     dispatchLocalAction({type: 'dragEnd'});
   }, []);
 
@@ -269,7 +264,6 @@ export default function Editor({ editorId }) {
     // Once the grid areas are converted to fractional units and not pixels,
     // there is no need for repeated processing, as the 'fr' will dynamically
     // change the grid size on it's own.
-    // dispatchLocalAction({type: actionTypes.isRequireResize, payload: false});
     dispatchLocalAction({type: 'resize'});
   }, [requireResize]);
 
