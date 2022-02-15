@@ -7,12 +7,12 @@ export default function reducer(state, action) {
     switch (type) {
       case 'dragStart':
         draft.isDragging = true;
-        draft.dragBarGridArea = payload;
-        if (payload === 'v') {
-          draft.dragOrientation = payload;
+        draft.dragBarGridArea = payload.gridArea;
+        if (payload.orientation === 'v') {
+          draft.dragOrientation = payload.orientation;
         }
-        if (payload === 'h') {
-          draft.dragOrientation = payload;
+        if (payload.orientation === 'h') {
+          draft.dragOrientation = payload.orientation;
         }
         break;
       case 'resize':

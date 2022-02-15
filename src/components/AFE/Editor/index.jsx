@@ -189,8 +189,7 @@ export default function Editor({ editorId }) {
     const orientation = gridArea.split('_')[1];
 
     // console.log(`orientation for: ${gridArea} is ${orientation}.`);
-    dispatchLocalAction({type: 'dragStart', payload: orientation});
-    dispatchLocalAction({type: 'dragStart', payload: gridArea});
+    dispatchLocalAction({type: 'dragStart', payload: {orientation, gridArea}});
   }, []);
 
   const handleDragEnd = useCallback(() => {
