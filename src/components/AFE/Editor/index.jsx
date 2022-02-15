@@ -15,7 +15,7 @@ import layouts from './layouts';
 import editorMetadata from '../metadata';
 import DragHandleGridItem from './panels/DragHandlePanel';
 import { resolveValue } from '../../../utils/editor';
-import reducer, { actionTypes } from './stateReducer';
+import reducer from './stateReducer';
 
 const minGridSize = 200;
 const useStyles = makeStyles(layouts);
@@ -123,15 +123,15 @@ const pxToFr = (pxSizes, resetLastRow) => {
 export default function Editor({ editorId }) {
   const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
-  const [newState, dispatchLocalAction] = useReducer(reducer,
+  const [editorState, dispatchLocalAction] = useReducer(reducer,
     {
       isDragging: false,
       requireResize: false,
       dragBarGridArea: '',
-      dragOrientation: 'h',
+      dragOrientation: '',
     });
 
-  const {isDragging, requireResize, dragBarGridArea, dragOrientation } = newState;
+  const {isDragging, requireResize, dragBarGridArea, dragOrientation } = editorState;
   const gridRef = useRef();
 
   const showErrorDragBar = useSelector(state => {
@@ -189,14 +189,17 @@ export default function Editor({ editorId }) {
     const orientation = gridArea.split('_')[1];
 
     // console.log(`orientation for: ${gridArea} is ${orientation}.`);
-    dispatchLocalAction({type: actionTypes.dragOrientation, value: orientation});
-    dispatchLocalAction({type: actionTypes.isDragging, value: true});
-    dispatchLocalAction({type: actionTypes.dragBarGridArea, value: gridArea});
+    // dispatchLocalAction({type: actionTypes.dragOrientation, payload: orientation});
+    // dispatchLocalAction({type: actionTypes.isDragging, payload: true});
+    // dispatchLocalAction({type: actionTypes.dragBarGridArea, payload: gridArea});
+    dispatchLocalAction({type: 'dragStart', payload: orientation});
+    dispatchLocalAction({type: 'dragStart', payload: gridArea});
   }, []);
 
   const handleDragEnd = useCallback(() => {
-    dispatchLocalAction({type: actionTypes.isDragging, value: false});
-    dispatchLocalAction({type: actionTypes.isRequireResize, value: true});
+    // dispatchLocalAction({type: actionTypes.isDragging, payload: false});
+    // dispatchLocalAction({type: actionTypes.isRequireResize, payload: true});
+    dispatchLocalAction({type: 'dragEnd'});
   }, []);
 
   const handleVerticalDrag = useCallback(event => {
@@ -266,7 +269,8 @@ export default function Editor({ editorId }) {
     // Once the grid areas are converted to fractional units and not pixels,
     // there is no need for repeated processing, as the 'fr' will dynamically
     // change the grid size on it's own.
-    dispatchLocalAction({type: actionTypes.isRequireResize, value: false});
+    // dispatchLocalAction({type: actionTypes.isRequireResize, payload: false});
+    dispatchLocalAction({type: 'resize'});
   }, [requireResize]);
 
   useEffect(() => {

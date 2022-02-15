@@ -1,36 +1,31 @@
-export const actionTypes = {
-  isDragging: 'isDragging',
-  isRequireResize: 'isRequireResize',
-  dragBarGridArea: 'dragBarGridArea',
-  dragOrientation: 'dragOrientation',
-};
+import produce from 'immer';
 
 export default function reducer(state, action) {
-  const { type, value } = action;
-  const currentState = {...state};
+  const {type, payload} = action;
 
-  switch (type) {
-    case actionTypes.isDragging:
-      currentState.isDragging = value;
-      break;
-    case actionTypes.isRequireResize:
-      currentState.requireResize = value;
-      break;
-    case actionTypes.dragBarGridArea:
-      currentState.dragBarGridArea = value;
-      break;
-    case actionTypes.dragOrientation:
-      if (value === 'v') {
-        currentState.dragOrientation = value;
-      }
-      if (value === 'h') {
-        currentState.dragOrientation = value;
-      }
-      break;
-    default:
-      break;
-  }
+  return produce(state, draft => {
+    switch (type) {
+      case 'dragStart':
+        draft.isDragging = true;
+        draft.dragBarGridArea = payload;
+        if (payload === 'v') {
+          draft.dragOrientation = payload;
+        }
+        if (payload === 'h') {
+          draft.dragOrientation = payload;
+        }
+        break;
+      case 'resize':
+        draft.requireResize = false;
+        break;
+      case 'dragEnd':
+        draft.isDragging = false;
+        draft.requireResize = true;
+        break;
+      default:
+        break;
+    }
 
-  return currentState;
+    return draft;
+  });
 }
-
