@@ -27,7 +27,7 @@ export default function ErrorNotifications() {
       });
     });
 
-    dispatch(actions.clearComms());
+    dispatch(actions.api.clearComms());
   }, [dispatch, enqueueSnackbar, errors]);
 
   // Commented out the intermittent network issues warning snackbar

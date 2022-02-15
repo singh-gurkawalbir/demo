@@ -251,7 +251,7 @@ export function* saveCategoryMappings({ integrationId, flowId }) {
   const updatedMappings = response.find(op => op.operation === 'mappingData');
 
   // On change of categoryMappings IA may add/remove flows in the integration.
-  yield call(getResourceCollection, { resourceType: 'flows' });
+  yield call(getResourceCollection, { resourceType: 'flows', refresh: true });
   yield call(getResource, {resourceType: 'integrations', id: integrationId});
 
   yield put(

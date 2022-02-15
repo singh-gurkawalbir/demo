@@ -12,6 +12,9 @@ const useStyles = makeStyles({
     width: '100%',
     overflowX: 'auto',
   },
+  noResultWrapper: {
+    minHeight: 110,
+  },
 });
 
 export default function AuditLogTable({ resourceType, isFixed, resourceId, filters, childId, className }) {
@@ -40,7 +43,7 @@ export default function AuditLogTable({ resourceType, isFixed, resourceId, filte
             actionProps={actionProps}
           />
         ) : (
-          <NoResultMessageWrapper isBackground>
+          <NoResultMessageWrapper isBackground className={classes.noResultWrapper}>
             You don&apos;t have any audit logs.
           </NoResultMessageWrapper>
         )}

@@ -61,6 +61,24 @@ export function* _getXmlHttpAdaptorSampleData({ resource, newResourceId }) {
   return exportPreviewData && getPreviewStageData(exportPreviewData, 'parse');
 }
 
+function* getHTTPSuccessMedia(resource) {
+  if (!resource) return;
+  const {adaptorType, http, _connectionId} = resource;
+
+  if (adaptorTypeMap[adaptorType] !== 'http') return;
+
+  if (http?.successMediaType) return http.successMediaType;
+
+  const connection = (yield select(
+    selectors.resourceData,
+    'connections',
+    _connectionId,
+    SCOPES.VALUE
+  ))?.merged || emptyObject;
+
+  return connection.type === 'http' ? connection.http?.mediaType : connection.rest?.mediaType;
+}
+
 /*
  * Patches transformation rules incase of either a XML File export / Http XML Media type Export
  */
@@ -77,9 +95,11 @@ export default function* saveTransformationRulesForNewXMLExport({
 
   const isXmlFileAdaptor =
     isFileAdaptor(resource) && resource.file?.type === 'xml';
+
+  const httpSuccessMediaType = yield call(getHTTPSuccessMedia, resource);
   const isXmlHttpAdaptor =
     adaptorTypeMap[resource.adaptorType] === 'http' &&
-    resource.http?.successMediaType === 'xml';
+    httpSuccessMediaType === 'xml';
 
   // Other than XML File Adaptor / XML Http Adaptor , we don't need to patch
   // Also for Data loader flows no need to patch though XML file is uploaded

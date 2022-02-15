@@ -18,10 +18,10 @@ export default (state = [], action) => {
         }
 
         break;
-      case actionTypes.USER_CREATED:
+      case actionTypes.USER.CREATED:
         draft.push(user);
         break;
-      case actionTypes.USER_REINVITE:
+      case actionTypes.USER.REINVITE:
       {
         const index = draft.findIndex(u => u._id === _id);
 
@@ -32,7 +32,7 @@ export default (state = [], action) => {
         break;
       }
 
-      case actionTypes.USER_REINVITE_ERROR: {
+      case actionTypes.USER.REINVITE_ERROR: {
         const index = draft.findIndex(u => u._id === _id);
 
         if (index > -1) {
@@ -41,7 +41,7 @@ export default (state = [], action) => {
 
         break;
       }
-      case actionTypes.USER_UPDATED: {
+      case actionTypes.USER.UPDATED: {
         const index = draft.findIndex(u => u._id === user._id);
 
         if (index === -1) {
@@ -53,7 +53,7 @@ export default (state = [], action) => {
         break;
       }
 
-      case actionTypes.USER_DISABLED: {
+      case actionTypes.USER.DISABLED: {
         const index = draft.findIndex(u => u._id === _id);
 
         if (index > -1) {
@@ -62,7 +62,7 @@ export default (state = [], action) => {
 
         break;
       }
-      case actionTypes.USER_REINVITED: {
+      case actionTypes.USER.REINVITED: {
         const index = draft.findIndex(u => u._id === _id);
 
         if (index > -1) {
@@ -73,7 +73,7 @@ export default (state = [], action) => {
         break;
       }
 
-      case actionTypes.USER_DELETED: {
+      case actionTypes.USER.DELETED: {
         const index = draft.findIndex(u => u._id === _id);
 
         if (index > -1) {

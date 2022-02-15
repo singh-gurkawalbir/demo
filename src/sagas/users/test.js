@@ -629,7 +629,7 @@ describe('all modal sagas', () => {
       test('should start trial successfully', () => {
         const saga = requestTrialLicense();
         const requestOptions = getRequestOptions(
-          actionTypes.LICENSE_TRIAL_REQUEST,
+          actionTypes.LICENSE.TRIAL_REQUEST,
         );
         const { path, opts } = requestOptions;
 
@@ -646,7 +646,7 @@ describe('all modal sagas', () => {
         };
 
         expect(saga.next(response).value).toEqual(
-          put(actions.user.org.accounts.trialLicenseIssued(response)),
+          put(actions.license.trialLicenseIssued(response)),
         );
         expect(saga.next().value).toEqual(
           call(getResourceCollection, {
@@ -659,7 +659,7 @@ describe('all modal sagas', () => {
       test('should handle api error properly while starting license trial', () => {
         const saga = requestTrialLicense();
         const requestOptions = getRequestOptions(
-          actionTypes.LICENSE_TRIAL_REQUEST,
+          actionTypes.LICENSE.TRIAL_REQUEST,
         );
         const { path, opts } = requestOptions;
 
@@ -683,7 +683,7 @@ describe('all modal sagas', () => {
         };
         const response = { _id: 'something' };
         const saga = createUser({ user, asyncKey: 'asyncKey' });
-        const requestOptions = getRequestOptions(actionTypes.USER_CREATE);
+        const requestOptions = getRequestOptions(actionTypes.USER.CREATE);
         const { path, opts } = requestOptions;
 
         opts.body = user;
@@ -711,7 +711,7 @@ describe('all modal sagas', () => {
           accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
         };
         const saga = createUser({ user, asyncKey: 'asyncKey' });
-        const requestOptions = getRequestOptions(actionTypes.USER_CREATE);
+        const requestOptions = getRequestOptions(actionTypes.USER.CREATE);
         const { path, opts } = requestOptions;
 
         opts.body = user;
@@ -739,7 +739,7 @@ describe('all modal sagas', () => {
         };
         const response = { _id: 'something' };
         const saga = updateUser({ _id: userId, user, asyncKey: 'asyncKey' });
-        const requestOptions = getRequestOptions(actionTypes.USER_UPDATE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.UPDATE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -770,7 +770,7 @@ describe('all modal sagas', () => {
           accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
         };
         const saga = updateUser({ _id: userId, user, asyncKey: 'asyncKey' });
-        const requestOptions = getRequestOptions(actionTypes.USER_UPDATE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.UPDATE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -795,7 +795,7 @@ describe('all modal sagas', () => {
       test('should delete user successfully', () => {
         const userId = 'something';
         const saga = deleteUser({ _id: userId });
-        const requestOptions = getRequestOptions(actionTypes.USER_DELETE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.DELETE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -816,7 +816,7 @@ describe('all modal sagas', () => {
       test('should handle api error properly while deleting user', () => {
         const userId = 'something';
         const saga = deleteUser({ _id: userId });
-        const requestOptions = getRequestOptions(actionTypes.USER_DELETE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.DELETE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -838,7 +838,7 @@ describe('all modal sagas', () => {
         const userId = 'something';
         const disabled = false;
         const saga = disableUser({ _id: userId, disabled });
-        const requestOptions = getRequestOptions(actionTypes.USER_DISABLE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.DISABLE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -859,7 +859,7 @@ describe('all modal sagas', () => {
         const userId = 'something';
         const disabled = true;
         const saga = disableUser({ _id: userId, disabled });
-        const requestOptions = getRequestOptions(actionTypes.USER_DISABLE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.DISABLE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -880,7 +880,7 @@ describe('all modal sagas', () => {
         const userId = 'something';
         const disabled = false;
         const saga = disableUser({ _id: userId, disabled });
-        const requestOptions = getRequestOptions(actionTypes.USER_DISABLE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.DISABLE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -900,7 +900,7 @@ describe('all modal sagas', () => {
       test('should request account transfer successfully', () => {
         const email = 'something@something.com';
         const saga = makeOwner({ email });
-        const requestOptions = getRequestOptions(actionTypes.USER_MAKE_OWNER);
+        const requestOptions = getRequestOptions(actionTypes.USER.MAKE_OWNER);
         const { path, opts } = requestOptions;
 
         opts.body = { email, account: true };
@@ -918,7 +918,7 @@ describe('all modal sagas', () => {
       test('should handle api error properly while requesting an account transfer', () => {
         const email = 'something@something.com';
         const saga = makeOwner({ email });
-        const requestOptions = getRequestOptions(actionTypes.USER_MAKE_OWNER);
+        const requestOptions = getRequestOptions(actionTypes.USER.MAKE_OWNER);
         const { path, opts } = requestOptions;
 
         opts.body = { email, account: true };
@@ -939,7 +939,7 @@ describe('all modal sagas', () => {
       test('should reinvite user successfully', () => {
         const userId = 'something';
         const saga = reinviteUser({ _id: userId });
-        const requestOptions = getRequestOptions(actionTypes.USER_REINVITE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.REINVITE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -959,7 +959,7 @@ describe('all modal sagas', () => {
       test('should handle api error properly while reinviting user', () => {
         const userId = 'something';
         const saga = reinviteUser({ _id: userId });
-        const requestOptions = getRequestOptions(actionTypes.USER_REINVITE, {
+        const requestOptions = getRequestOptions(actionTypes.USER.REINVITE, {
           resourceId: userId,
         });
         const { path, opts } = requestOptions;
@@ -1009,7 +1009,7 @@ describe('all modal sagas', () => {
         [matchers.call.fn(apiCallWithRetry), response],
       ])
       .call.fn(apiCallWithRetry)
-      .put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response))
+      .put(actions.license.licenseUpgradeRequestSubmitted(response))
       .run());
     test('should handle api error properly', () => {
       const error = new Error('error');
@@ -1049,7 +1049,7 @@ describe('all modal sagas', () => {
 
     test('should handle if it is actionType of ioResume', () => {
       const actionType = 'ioResume';
-      const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPDATE_REQUEST, {
+      const { path, opts } = getRequestOptions(actionTypes.LICENSE.UPDATE_REQUEST, {
         actionType, connectorId, licenseId,
       });
 
@@ -1071,12 +1071,12 @@ describe('all modal sagas', () => {
         .put(actions.resource.requestCollection('exports'))
         .put(actions.resource.requestCollection('imports'))
         .put(actions.resource.requestCollection('licenses'))
-        .not.put(actions.user.org.accounts.licenseUpgradeRequestSubmitted({}))
+        .not.put(actions.license.licenseUpgradeRequestSubmitted({}))
         .run();
     });
     test('should handle if it is actionType is not ioResume', () => {
       const actionType = 'trial';
-      const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPDATE_REQUEST, {
+      const { path, opts } = getRequestOptions(actionTypes.LICENSE.UPDATE_REQUEST, {
         actionType, connectorId, licenseId,
       });
       const response = {
@@ -1097,12 +1097,12 @@ describe('all modal sagas', () => {
           opts,
         })
         .not.put(actions.resource.requestCollection('integrations'))
-        .put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response))
+        .put(actions.license.licenseUpgradeRequestSubmitted(response))
         .run();
     });
     test('should handle if apiCallWithRetry fails', () => {
       const actionType = 'trial';
-      const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPDATE_REQUEST, {
+      const { path, opts } = getRequestOptions(actionTypes.LICENSE.UPDATE_REQUEST, {
         actionType, connectorId, licenseId,
       });
       const error = {
@@ -1124,13 +1124,13 @@ describe('all modal sagas', () => {
         })
         .put(actions.api.failure(path, 'POST', error, false))
         .not.put(actions.resource.requestCollection('integrations'))
-        .not.put(actions.user.org.accounts.licenseUpgradeRequestSubmitted({}))
+        .not.put(actions.license.licenseUpgradeRequestSubmitted({}))
         .run();
     });
   });
   describe('requestNumEnabledFlows saga', () => {
     const { path, opts } = getRequestOptions(
-      actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST
+      actionTypes.LICENSE.NUM_ENABLED_FLOWS_REQUEST
     );
     const response = {
       key: 'something',
@@ -1144,7 +1144,7 @@ describe('all modal sagas', () => {
           opts,
         }), response],
       ])
-      .put(actions.user.org.accounts.receivedNumEnabledFlows(response))
+      .put(actions.license.receivedNumEnabledFlows(response))
       .run()
     );
     test('Should dispatch api failure if api call fails', () => expectSaga(requestNumEnabledFlows)
@@ -1160,7 +1160,7 @@ describe('all modal sagas', () => {
   });
   describe('requestLicenseEntitlementUsage saga', () => {
     const { path, opts } = getRequestOptions(
-      actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST
+      actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST
     );
     const response = {
       key: 'something',
@@ -1174,7 +1174,7 @@ describe('all modal sagas', () => {
           opts,
         }), response],
       ])
-      .put(actions.user.org.accounts.receivedLicenseEntitlementUsage(response))
+      .put(actions.license.receivedLicenseEntitlementUsage(response))
       .run()
     );
     test('Should dispatch api failure if api call fails', () => expectSaga(requestLicenseEntitlementUsage)

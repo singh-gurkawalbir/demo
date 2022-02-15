@@ -21,6 +21,7 @@ export default {
       drawer2: colors.celigoNeutral8,
       drawer3: colors.celigoNeutral10,
       drawerActive: colors.celigoAccent1,
+      toggle: colors.celigoNeutral7,
     },
     primary: {
       light: colors.celigoAccent3,
@@ -76,9 +77,9 @@ export default {
       root: {
         textTransform: 'unset',
         fontFamily: 'Roboto400',
-        padding: '6px 24px',
-        fontSize: '15px',
-        lineHeight: '19px',
+        padding: '6px 20px',
+        fontSize: '13px',
+        lineHeight: '15px',
         '&: disabled': {
           cursor: 'not-allowed',
         },
@@ -128,6 +129,7 @@ export default {
         backgroundColor: colors.celigoWhite,
         borderColor: colors.celigoNeutral3,
         color: colors.celigoNeutral3,
+        padding: '6px 20px',
         border: '1px solid',
         '&:disabled': {
           color: colors.celigoNeutral4,
@@ -138,18 +140,18 @@ export default {
         borderColor: colors.celigoAccent2,
         color: colors.celigoAccent2,
         '&:hover': {
-          backgroundColor: colors.celigoAccent4,
+          backgroundColor: colors.celigoWhite,
           borderColor: colors.celigoAccent3,
-          color: colors.celigoWhite,
+          color: colors.celigoAccent3,
         },
       },
       outlinedSecondary: {
         borderColor: colors.celigoNeutral3,
         color: colors.celigoNeutral6,
         '&:hover': {
-          color: colors.celigoAccent3,
+          color: colors.celigoNeutral6,
           backgroundColor: colors.celigoWhite,
-          borderColor: colors.celigoAccent3,
+          borderColor: colors.celigoNeutral3,
         },
         '&:disabled': {
           color: colors.celigoNeutral4,
@@ -370,7 +372,6 @@ export default {
       },
       overline: {
         fontFamily: 'source sans pro',
-        fontWeight: '700',
         fontSize: '14px',
         lineHeight: '16px',
         letterSpacing: 0.5,
