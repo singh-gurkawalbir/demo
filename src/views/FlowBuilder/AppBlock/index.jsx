@@ -242,6 +242,7 @@ export default function AppBlock({
   const handleExpandClick = useCallback(() => setExpanded(true), []);
   const handleMouseOver = useCallback(
     isOver => () => {
+      console.log('appBlock over: ', isOver);
       if (!activeAction) {
         setIsOver(isOver);
       }

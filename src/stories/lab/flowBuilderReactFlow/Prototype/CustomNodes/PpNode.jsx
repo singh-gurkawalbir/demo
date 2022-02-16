@@ -75,18 +75,20 @@ export default function PageGenerator(props) {
     return processorActions;
   }, [isLookup]);
 
+  const handleDelete = index => console.log(index);
+
   return (
     <div className={classes.root}>
       <AppBlockHandle type="target" position={Position.Left} />
 
-      <div className={classes.contentContainer} >
+      <div className={classes.contentContainer} onMouseEnter={() => console.log('enter')}>
         <div className={classes.ppContainer}>
           <AppBlock
             name={label}
-            // onDelete={onDelete(name)}
+            onDelete={handleDelete}
             connectorType={connectorType}
             blockType={isLookup ? 'export' : 'import'}
-          // index={index}
+            index={33}
             resource={{}}
             resourceId={id}
          // resourceIndex={index}

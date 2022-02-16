@@ -6,7 +6,7 @@ import { getPositionInEdge } from '../lib';
 import UnlinkButton from './UnlinkButton';
 
 const foreignObjectSize = 26;
-const UNLINK_POSITION_FRACTION_OF_EDGE_START = 0.75;
+const UNLINK_POSITION_FRACTION_OF_EDGE_START = 0.6;
 const useStyles = makeStyles(() => ({
   edgePath: {
     stroke: '#b1b1b7',

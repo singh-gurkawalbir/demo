@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { v4 } from 'uuid';
+import { nanoid } from 'nanoid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 
@@ -33,7 +33,7 @@ const options = {
 };
 
 export function generateId() {
-  return v4().replace(/-/g, '').substring(0, 4);
+  return nanoid(6);
 }
 
 export function generateDefaultEdge(source, target) {
