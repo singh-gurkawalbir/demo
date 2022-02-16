@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
 import EmptyStateImg from '../../../components/icons/EmptyStateImg';
 import AppBar from '../../mocks/AppBar';
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function EmptyState({type, children}) {
+export default function EmptyState({type, title, subTitle, children}) {
   const classes = useStyles();
 
   return (
@@ -39,6 +39,8 @@ export default function EmptyState({type, children}) {
             className={classes.appLogo}
             type={type || 'imports'}
             alt={type} />
+          <Typography variant="h3">{title}</Typography>
+          <Typography variant="body2">{subTitle}</Typography>
           {children}
         </div>
       </div>
