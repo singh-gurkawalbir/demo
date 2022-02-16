@@ -79,7 +79,7 @@ function ResultsPanel() {
           <Tab label={`Resources (${resourceResultCount})`} />
           <Tab label={`Marketplace: Apps & templates (${marketplaceResultCount})`} />
         </Tabs>
-        <IconButton size="small" onClick={clearSearchInput}>
+        <IconButton aria-label="Close Resultspanel" size="small" onClick={clearSearchInput}>
           <CloseIcon />
         </IconButton>
       </div>

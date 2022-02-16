@@ -102,7 +102,7 @@ function SearchInput() {
     <Paper className={classes.searchBox} variant="outlined">
       <InputBase
         ref={ref}
-        spellcheck="false"
+        spellCheck="false"
         value={inputValue}
         classes={{input: classes.inputBase}}
         className={classes.input}
@@ -110,7 +110,7 @@ function SearchInput() {
         inputProps={{ 'aria-label': 'Search integrator.io', tabIndex: 0 }}
         onChange={handleSearchStringChange}
       />
-      <IconButton size="small" onClick={() => setOpen(false)} className={classes.searchCloseButton}>
+      <IconButton title="Close Search" size="small" onClick={() => setOpen(false)} className={classes.searchCloseButton}>
         <CloseIcon />
       </IconButton>
     </Paper>

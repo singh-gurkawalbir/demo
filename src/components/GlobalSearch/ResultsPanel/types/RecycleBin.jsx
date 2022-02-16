@@ -10,4 +10,4 @@ function RecycleBinRow(props) {
   );
 }
 
-export default React.forwardRef(RecycleBinRow);
+export default RecycleBinRow;

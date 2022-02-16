@@ -70,10 +70,10 @@ function ResourceFilter() {
       </div>
 
       {open && (
-        <FloatingPaper ref={containerRef} className={classes.menu}>
+        <FloatingPaper label="Resource Filter" ref={containerRef} className={classes.menu}>
           <div className={classes.allContainer}>
             <MenuItem resourceURL="all" type="all" label="All" />
-            <IconButton size="small" onClick={handleArrowClick}>
+            <IconButton aria-label="Close Resource filter" size="small" onClick={handleArrowClick}>
               <CloseIcon />
             </IconButton>
           </div>

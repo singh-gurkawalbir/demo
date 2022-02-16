@@ -82,4 +82,4 @@ function ResultsList({ results, currentFocussed }) {
   );
 }
 
-export default React.forwardRef(ResultsList);
+export default ResultsList;
