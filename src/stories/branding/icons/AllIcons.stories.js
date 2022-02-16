@@ -19,6 +19,7 @@ import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../components/icons/ArrowUpIcon';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import BackArrowIcon from '../../../components/icons/BackArrowIcon';
+import BranchIcon from '../../../components/icons/BranchIcon';
 import CalendarIcon from '../../../components/icons/CalendarIcon';
 import CancelIcon from '../../../components/icons/CancelIcon';
 import CheckboxUnselectedIcon from '../../../components/icons/CheckboxUnselectedIcon';
@@ -88,6 +89,7 @@ import LockIcon from '../../../components/icons/LockIcon';
 import MapDataIcon from '../../../components/icons/MapDataIcon';
 import MappingConnectorIcon from '../../../components/icons/MappingConnectorIcon';
 import MarketplaceIcon from '../../../components/icons/MarketplaceIcon';
+import MergeIcon from '../../../components/icons/MergeIcon';
 import MyAPIIcon from '../../../components/icons/MyApiIcon';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import OutputFilterIcon from '../../../components/icons/OutputFilterIcon';
@@ -169,6 +171,7 @@ const icons =
       ArrowUpIcon,
       AuditLogIcon,
       BackArrowIcon,
+      BranchIcon,
       CalendarIcon,
       CancelIcon,
       CheckboxUnselectedIcon,
@@ -238,6 +241,7 @@ const icons =
       MapDataIcon,
       MappingConnectorIcon,
       MarketplaceIcon,
+      MergeIcon,
       MyAPIIcon,
       NotificationsIcon,
       OutputFilterIcon,

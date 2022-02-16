@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 
-const handleOffset = 56;
+export const handleOffset = 30;
 
 const nodeSize = {
   pp: {
@@ -22,7 +22,7 @@ const nodeSize = {
     width: 26,
     height: 26,
   },
-  mergeg: {
+  merge: {
     width: 26,
     height: 26,
   } };
@@ -43,6 +43,16 @@ export function generateDefaultEdge(source, target) {
     target,
     type: 'default',
   };
+}
+
+export function generateNewNode() {
+  const newId = generateId();
+
+  return ({
+    id: newId,
+    type: 'pp',
+    data: { label: `New node: ${newId}`},
+  });
 }
 
 export function layoutElements(elements) {
