@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function EmptyState(type, children) {
+export default function EmptyState({type, children}) {
   const classes = useStyles();
 
   return (
@@ -38,7 +38,7 @@ export default function EmptyState(type, children) {
           <EmptyStateImg
             className={classes.appLogo}
             type={type || 'imports'}
-            alt="Application image" />
+            alt={type} />
           {children}
         </div>
       </div>

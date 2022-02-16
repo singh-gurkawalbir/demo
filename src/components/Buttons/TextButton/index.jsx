@@ -17,16 +17,24 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.error.main,
     },
   },
+  underline: {
+    color: theme.palette.primary.dark,
+    textDecoration: 'underline',
+    '&:hover': {
+      textDecoration: 'underline',
+      color: theme.palette.primary.main,
+    },
+  },
 }));
 export default function TextButton(props) {
   const classes = useStyles(props);
-  const {children, error, bold, ...rest} = props;
+  const {children, error, bold, underline, ...rest} = props;
 
   return (
     <Button
       variant="text"
       color="secondary"
-      className={clsx(classes.root, {[classes.error]: error})}
+      className={clsx(classes.root, {[classes.error]: error}, {[classes.underline]: underline})}
       disableElevation
       {...rest}>
       {children}
