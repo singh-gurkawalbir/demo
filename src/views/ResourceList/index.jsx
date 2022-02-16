@@ -174,7 +174,7 @@ export default function ResourceList(props) {
           {list.count === 0 ? (
             <>
               {list.total === 0
-                ? <NoResultMessageWrapper>You don&apos;t have any ${createResourceLabel}s.</NoResultMessageWrapper>
+                ? <NoResultMessageWrapper>You don&apos;t have any {createResourceLabel}s.</NoResultMessageWrapper>
                 : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
             </>
           ) : (
