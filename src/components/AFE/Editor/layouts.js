@@ -44,4 +44,14 @@ export default {
     gridTemplateRows: '1fr',
     gridTemplateAreas: '"rule"',
   },
+  assistantRight: {
+    gridTemplateColumns: '1fr 1fr',
+    gridTemplateRows: '1fr',
+    gridTemplateAreas: '"rule assistant" "error error"',
+  },
+  assistantTopRight: {
+    gridTemplateColumns: '1fr 1fr',
+    gridTemplateRows: '1fr 1fr 0fr',
+    gridTemplateAreas: '"rule assistant" "data result" "error error"',
+  },
 };

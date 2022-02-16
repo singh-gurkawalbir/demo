@@ -789,6 +789,10 @@ export function* initEditor({ id, editorType, options }) {
       const scriptContext = yield select(selectors.getScriptContext, {flowId, contextType: 'hook'});
 
       formattedOptions = init({options: formattedOptions, resource, fieldState, flow, scriptContext});
+    } else if (editorType === 'mappings') {
+      const mappingPreviewType = yield select(state => selectors.mappingPreviewType(state, resourceId));
+
+      formattedOptions = init({options: formattedOptions, resource, mappingPreviewType});
     } else {
       formattedOptions = init({options: formattedOptions, resource, fieldState, flow});
     }

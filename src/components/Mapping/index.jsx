@@ -13,7 +13,8 @@ export default function Mapping(props) {
   const editorId = `mappings-${importId}`;
   const mappingStatus = useSelector(state => selectors.mapping(state).status);
   const isEditorActive = useSelector(state => selectors.editor(state, editorId).editorType);
-  const isMappingPreviewAvailable = useSelector(state => !!selectors.mappingPreviewType(state, importId));
+  const mappingPreviewType = useSelector(state => selectors.mappingPreviewType(state, importId));
+  const shouldUseAfe = ['netsuite', 'salesforce'].includes(mappingPreviewType) || !mappingPreviewType;
 
   useEffect(() => {
     /** initiate a mapping init each time user opens mapping. Sample data is loaded */
@@ -32,7 +33,7 @@ export default function Mapping(props) {
 
   useEffect(() => {
     // initialize editor only when mapping init is complete
-    if (!isEditorActive && !isMappingPreviewAvailable && (mappingStatus && mappingStatus !== 'requested')) {
+    if (!isEditorActive && shouldUseAfe && (mappingStatus && mappingStatus !== 'requested')) {
       dispatch(actions.editor.init(editorId, 'mappings', {
         flowId,
         resourceId: importId,
@@ -43,7 +44,7 @@ export default function Mapping(props) {
       }));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMappingPreviewAvailable, mappingStatus]);
+  }, [shouldUseAfe, mappingStatus]);
 
   // let the mapping init and sample data load happen so that the state is updated
   if (!mappingStatus || mappingStatus === 'requested') {
@@ -51,7 +52,7 @@ export default function Mapping(props) {
   }
 
   return (
-    isMappingPreviewAvailable ? <MappingWrapper {...props} />
+    !shouldUseAfe ? <MappingWrapper {...props} />
       : <Redirect to={`${match.url}/editor/${editorId}`} />
   );
 }

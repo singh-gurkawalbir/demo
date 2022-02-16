@@ -1,12 +1,13 @@
 export default {
   processor: 'mapperProcessor',
-  init: ({options, resource}) => {
+  init: ({options, resource, mappingPreviewType}) => {
     const importName = resource?.name;
     const editorTitle = importName ? `Edit Mapping: ${importName}` : 'Edit Mapping';
 
     return {
       ...options,
       editorTitle,
+      mappingPreviewType,
     };
   },
   requestBody: () => ({
