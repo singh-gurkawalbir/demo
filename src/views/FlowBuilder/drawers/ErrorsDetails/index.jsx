@@ -11,6 +11,7 @@ import ErrorList from '../../../../components/ErrorList';
 import ErrorDrawerAction from './ErrorDrawerAction';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import DrawerHeaderSubTitle from '../../../../components/DrawerHeaderSubTitle';
+import Tabs from './Tabs';
 
 const emptySet = [];
 
@@ -20,6 +21,9 @@ const useStyles = makeStyles(theme => ({
   },
   boldErrorsCount: {
     fontWeight: 'bold',
+  },
+  removeBottomLine: {
+    borderBottom: 0,
   },
   title: {
     flexGrow: 1,
@@ -123,10 +127,10 @@ export default function ErrorDetailsDrawer({ flowId }) {
       width="full"
       onClose={handleClose}
       variant="temporary">
-
-      <DrawerHeader title={<Title />} hideBackButton>
+      <DrawerHeader className={classes.removeBottomLine} title={<Title />} hideBackButton>
         <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} />
       </DrawerHeader>
+      <Tabs onChange={handleErrorTypeChange} />
 
       <DrawerContent>
         {flowJobId ? (
