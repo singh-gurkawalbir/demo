@@ -5709,7 +5709,7 @@ const getParentsResourceId = (state, resourceType, resourceId) => {
   return null;
 };
 
-selectors.getResourceEditUrl = (state, resourceType, resourceId, childId) => {
+selectors.getResourceEditUrl = (state, resourceType, resourceId, childId, sectionId) => {
   let integrationId = resourceType === 'integrations' ? resourceId : getParentsResourceId(state, resourceType, resourceId);
   // eslint-disable-next-line prefer-const
   let { name: integrationName, _parentId } = selectors.resource(state, 'integrations', integrationId) || {};
@@ -5731,7 +5731,13 @@ selectors.getResourceEditUrl = (state, resourceType, resourceId, childId) => {
 
   if (_connectorId) {
     if (childId) {
-      iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/child/${childId}`;
+      if (resourceType === 'flows' && sectionId) {
+        iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/child/${childId}/flows/sections/${sectionId}`;
+      } else {
+        iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/child/${childId}`;
+      }
+    } else if (resourceType === 'flows' && sectionId) {
+      iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/flows/sections/${sectionId}`;
     } else {
       iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}`;
     }
@@ -5740,6 +5746,10 @@ selectors.getResourceEditUrl = (state, resourceType, resourceId, childId) => {
   if (resourceType === 'flows') {
     const isDataLoader = selectors.isDataLoader(state, resourceId);
     const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
+
+    if (!iaUrlPrefix && sectionId && integrationId !== 'none') {
+      return getRoutePath(`/integrations/${integrationId}/flows/sections/${sectionId}/${flowBuilderPathName}/${resourceId}`);
+    }
 
     return getRoutePath(`${iaUrlPrefix || `/integrations/${integrationId}`}/${flowBuilderPathName}/${resourceId}`);
   }
@@ -6369,13 +6379,14 @@ selectors.tileLicenseDetails = (state, tile) => {
 selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
   if (!['exports', 'imports'].includes(resourceType) || !flowId || isNew) return false;
   const resource = selectors.resource(state, resourceType, resourceId);
+  const connection = selectors.resource(state, 'connections', resource?._connectionId) || emptyObject;
 
   // It should return false for all http file providers
   if (resource?.http?.type === 'file') {
     return false;
   }
 
-  return isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType);
+  return isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType) || (connection.isHTTP && connection.type === 'rest');
 };
 
 selectors.canEnableDebug = (state, exportId, flowId) => {
@@ -6533,4 +6544,15 @@ selectors.httpDeltaValidationError = (state, formKey, deltaFieldsToValidate) => 
       return 'Delta exports must use {{lastExportDateTime}} in either the relative URI or HTTP request body.';
     }
   }
+};
+
+selectors.showAmazonRestrictedReportType = (state, formKey) => {
+  const connectionId = selectors.fieldState(state, formKey, '_connectionId')?.value;
+  const apiType = selectors.fieldState(state, formKey, 'unencrypted.apiType')?.value;
+  const relativeURI = selectors.fieldState(state, formKey, 'http.relativeURI')?.value;
+  const connectionType = selectors.resource(state, 'connections', connectionId)?.http?.type;
+
+  return ((connectionType === 'Amazon-Hybrid' && apiType === 'Amazon-SP-API') ||
+          connectionType === 'Amazon-SP-API') &&
+          relativeURI?.startsWith('/reports/2021-06-30/documents/');
 };

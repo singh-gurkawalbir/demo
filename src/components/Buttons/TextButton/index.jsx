@@ -16,6 +16,9 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       color: theme.palette.error.main,
     },
+    '&:focus': {
+      color: `${theme.palette.error.main} !important`,
+    },
   },
   vertical: {
     '& > .MuiButton-label': {

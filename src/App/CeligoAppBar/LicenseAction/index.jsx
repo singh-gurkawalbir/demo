@@ -9,7 +9,7 @@ import NotificationToaster from '../../../components/NotificationToaster';
 import { platformLicenseActionDetails } from '../../../utils/license';
 import {PillButton, TextButton} from '../../../components/Buttons';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   inTrial: {
     marginTop: -2,
     borderRadius: 17,
@@ -24,31 +24,7 @@ const useStyles = makeStyles(theme => ({
   titleStatusPanel: {
     fontSize: 15,
   },
-  licenseActionDetailsWrapper: {
-    background: 'none',
-    border: '1px solid',
-    minHeight: 'unset',
-    boxShadow: 'none',
-    maxWidth: 'unset',
-    '&:before': {
-      display: 'none',
-    },
-    '& > * svg': {
-      fontSize: '17px !important',
-      alignSelf: 'center',
-    },
-    '& > div:first-child': {
-      padding: 0,
-      width: '100%',
-    },
-  },
-  licenseActionInfoWrapper: {
-    borderColor: theme.palette.primary.main,
-  },
-  licenseActionErrorWrapper: {
-    borderColor: theme.palette.error.main,
-  },
-}));
+});
 
 function LicenseAction() {
   const classes = useStyles();
@@ -107,10 +83,9 @@ function LicenseAction() {
     <>
       {['resume', 'expired'].includes(licenseActionDetails.action) ? (
         <NotificationToaster
-          variant={licenseActionDetails.action === 'expired' ? 'error' : 'info'} className={clsx(classes.licenseActionDetailsWrapper,
-            {[classes.licenseActionErrorWrapper]: licenseActionDetails.action === 'expired'},
-            {[classes.licenseActionInfoWrapper]: licenseActionDetails.action !== 'expired' })}>
-
+          variant={licenseActionDetails.action === 'expired' ? 'error' : 'info'}
+          transparent
+          className={clsx(classes.licenseActionDetailsWrapper)}>
           <Typography component="div" variant="body2" className={classes.titleStatusPanel}>
             {licenseActionDetails.action === 'expired' ? 'Your subscription has expired.' : 'Your subscription was renewed.'}
           </Typography>

@@ -2928,6 +2928,7 @@ Object {
       "application": Object {
         "defaultValue": "",
         "id": "application",
+        "isLoggable": true,
         "label": "Application",
         "name": "application",
         "placeholder": "Choose application or start typing to browse 50+ applications",
@@ -4148,6 +4149,9 @@ Object {
       "unencrypted.apiType": Object {
         "fieldId": "unencrypted.apiType",
       },
+      "unencrypted.restrictedReportType": Object {
+        "fieldId": "unencrypted.restrictedReportType",
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -4171,6 +4175,7 @@ Object {
                 "http.method",
                 "http.blobMethod",
                 "http.relativeURI",
+                "unencrypted.restrictedReportType",
                 "http.headers",
                 "http.requestMediaType",
                 "http.body",
@@ -7195,6 +7200,7 @@ Object {
         "appType": "export",
         "defaultValue": [Function],
         "id": "application",
+        "isLoggable": true,
         "label": "Application",
         "name": "application",
         "placeholder": "Choose application or start typing to browse 50+ applications",
@@ -8324,6 +8330,14 @@ Object {
       },
       "file.batchSize": Object {
         "fieldId": "file.batchSize",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "file.csv": Object {
         "fieldId": "file.csv",
@@ -10320,6 +10334,14 @@ Object {
       },
       "file.batchSize": Object {
         "fieldId": "file.batchSize",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "inputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "file.csv": Object {
         "fieldId": "file.csv",
@@ -10647,6 +10669,7 @@ Object {
         "appType": "import",
         "defaultValue": "",
         "id": "application",
+        "isLoggable": true,
         "label": "Application",
         "name": "application",
         "placeholder": "Choose application or start typing to browse 50+ applications",
@@ -12658,6 +12681,7 @@ Object {
         "appType": "export",
         "defaultValue": [Function],
         "id": "application",
+        "isLoggable": true,
         "label": "Application",
         "name": "application",
         "placeholder": "Choose application or start typing to browse 50+ applications",
@@ -12781,6 +12805,7 @@ Object {
       "application": Object {
         "defaultValue": [Function],
         "id": "application",
+        "isLoggable": true,
         "label": "Application",
         "name": "application",
         "placeholder": "Choose application or start typing to browse 50+ applications",

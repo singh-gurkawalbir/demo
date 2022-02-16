@@ -99,7 +99,7 @@ export default function UninstallSection({ childId, integrationId }) {
           data-test="uninstallConnector"
           error
           className={classes.button}
-          startIcon={<DeleteIcon />}
+          endIcon={<DeleteIcon />}
           onClick={handleUninstall}>
           Uninstall
         </OutlinedButton>

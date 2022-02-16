@@ -16,6 +16,8 @@ const useStyles = makeStyles({
   },
   textFieldRowContainer: {
     flexGrow: 1,
+  },
+  rowContainerWrapper: {
     display: 'flex !important',
   },
 });
@@ -77,7 +79,7 @@ export default function KeyValueRow(props) {
       {enableSorting && (
         <SortableHandle isVisible={showGripper} />
       )}
-      <div className={clsx(classes.rowContainer, rowComponentClasses.textFieldRowContainer)}>
+      <div className={clsx(classes.rowContainer, rowComponentClasses.textFieldRowContainer, {[rowComponentClasses.rowContainerWrapper]: !suggestKeyConfig && !suggestValueConfig})}>
         {suggestKeyConfig && (
         <AutoSuggest
           disabled={disabled}

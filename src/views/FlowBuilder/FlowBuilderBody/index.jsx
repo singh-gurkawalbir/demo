@@ -24,6 +24,7 @@ const useCalcCanvasStyle = () => {
   return calcCanvasStyle;
 };
 
+// TODO: (AZHAR) suitescript and normal styles are repeating
 const useStyles = makeStyles(theme => ({
   canvasContainer: {
     // border: 'solid 1px black',
@@ -53,6 +54,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(0.5),
     justifyContent: 'center',
     color: theme.palette.secondary.main,
+    fontFamily: 'Roboto400',
   },
   destinationTitle: {
     marginLeft: 100,

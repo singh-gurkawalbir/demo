@@ -4,7 +4,7 @@ import Delete from '../commonActions/Delete';
 import UploadZipFile from './actions/UploadZipFile';
 import Download from '../commonActions/Download';
 import Edit from '../commonActions/Edit';
-import ApplicationLogostrip from '../../ApplicationLogostrip';
+import LogoStrip from '../../LogoStrip';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import OnOffCell from './cells/OnOffCell';
@@ -17,8 +17,7 @@ export default {
       key: 'applications',
       heading: 'Applications',
       isLoggable: true,
-      Value: ({rowData: r}) => <ApplicationLogostrip applications={r.applications} />,
-
+      Value: ({rowData: r}) => <LogoStrip rows={1} columns={4} applications={r.applications} size="medium" />,
     },
     {
       key: 'name',
