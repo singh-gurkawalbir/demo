@@ -75,13 +75,16 @@ export default function PageGenerator(props) {
     return processorActions;
   }, [isLookup]);
 
-  const handleDelete = index => console.log(index);
+  const handleDelete = index => {
+    // eslint-disable-next-line no-console
+    console.log(index);
+  };
 
   return (
     <div className={classes.root}>
       <AppBlockHandle type="target" position={Position.Left} />
 
-      <div className={classes.contentContainer} onMouseEnter={() => console.log('enter')}>
+      <div className={classes.contentContainer}>
         <div className={classes.ppContainer}>
           <AppBlock
             name={label}
@@ -91,7 +94,7 @@ export default function PageGenerator(props) {
             index={33}
             resource={{}}
             resourceId={id}
-         // resourceIndex={index}
+            resourceIndex={4}
             resourceType={isLookup ? 'exports' : 'imports'}
             actions={processorActions}
         />
