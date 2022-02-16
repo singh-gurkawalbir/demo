@@ -114,7 +114,12 @@ const metadata = {
         }, [flowBuilderTo, history, id]);
 
         if (count === 0) {
-          return '0';
+          return (
+            <div className={classes.button} onClick={handleErrorClick}>
+              <StatusCircle variant="success" size="mini" />
+              success
+            </div >
+          );
         }
 
         return (
