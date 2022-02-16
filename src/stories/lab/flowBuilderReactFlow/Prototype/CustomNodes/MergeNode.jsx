@@ -33,6 +33,8 @@ export default function MergeNode({id}) {
         )}>
         <Icon />
       </IconButton>
+      <DefaultHandle type="source" position={Position.Right} />
+
     </div>
   );
 }
