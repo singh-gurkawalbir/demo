@@ -1,0 +1,288 @@
+{
+    "numConflicts": 0,
+    "merged": {
+        "connection": {
+            "61c41ef898b77c531585ebc5.new": {
+                "name": "Uma Prod Dev",
+                "netsuite": {
+                    "_iClientId": "61c41ec798b77c531585ebc4",
+                    "account": "TSTDRV1265333",
+                    "authType": "token-auto",
+                    "concurrencyLevel": 1,
+                    "dataCenterURLs": {
+                        "restDomain": "https://tstdrv1265333.restlets.api.netsuite.com",
+                        "systemDomain": "https://tstdrv1265333.app.netsuite.com",
+                        "webservicesDomain": "https://tstdrv1265333.suitetalk.api.netsuite.com"
+                    },
+                    "entityId": "14118",
+                    "requestLevelCredentials": true,
+                    "roleId": "3",
+                    "suiteAppInstalled": true,
+                    "tokenId": "******",
+                    "tokenSecret": "******",
+                    "wsdlVersion": "2020.2"
+                },
+                "offline": false,
+                "type": "netsuite"
+            },
+            "61d439eb09cf7870de83d208": {
+                "type": "http",
+                "name": "htt[",
+                "http": {
+                    "formType": "http",
+                    "mediaType": "json",
+                    "baseURI": "http://test.com",
+                    "ping": {
+                        "failValues": [],
+                        "successValues": []
+                    },
+                    "rateLimit": {
+                        "failValues": []
+                    },
+                    "unencrypted": {
+                        "field": "value"
+                    },
+                    "auth": {
+                        "type": "custom",
+                        "failValues": [],
+                        "oauth": {
+                            "scope": []
+                        }
+                    }
+                }
+            }
+        },
+        "export": {
+            "6204a5c516d779d23ea26b99.new": {
+                "_connectionId": "61c41ef898b77c531585ebc5.new",
+                "adaptorType": "NetSuiteExport",
+                "asynchronous": true,
+                "name": "NS EXP",
+                "netsuite": {
+                    "distributed": {
+                        "disabled": false,
+                        "executionContext": [],
+                        "executionType": [],
+                        "forceReload": false
+                    },
+                    "restlet": {
+                        "columns": [],
+                        "criteria": [],
+                        "recordType": "customer",
+                        "searchId": "781",
+                        "useSS2Restlets": false
+                    },
+                    "skipGrouping": true,
+                    "statsOnly": false,
+                    "type": "restlet"
+                },
+                "oneToMany": false,
+                "parsers": [],
+                "rawData": "61811a4a2fef0a2516288973cc90497495c74e089f637b3a8a23b5b9"
+            },
+            "6203b034887b312cb0811c85": {
+                "_connectionId": "61d439eb09cf7870de83d208",
+                "adaptorType": "HTTPExport",
+                "asynchronous": true,
+                "file": {
+                    "groupByFields": []
+                },
+                "http": {
+                    "formType": "http",
+                    "method": "GET",
+                    "paging": {
+                        "lastPageValues": []
+                    },
+                    "relativeURI": "/test",
+                    "response": {
+                        "failValues": [],
+                        "successValues": []
+                    }
+                },
+                "name": "Http Exp",
+                "oneToMany": false,
+                "parsers": []
+            }
+        },
+        "flow": {
+            "6203b035887b312cb0811c88": {
+                "autoResolveMatchingTraceKeys": true,
+                "disabled": true,
+                "free": false,
+                "name": "Http to Http flow - master",
+                "pageGenerators": [
+                    {
+                        "_exportId": "6203b034887b312cb0811c85",
+                        "skipRetries": false
+                    },
+                    {
+                        "_exportId": "6204a5c516d779d23ea26b99.new",
+                        "skipRetries": false
+                    }
+                ],
+                "pageProcessors": [
+                    {
+                        "_importId": "6203b04a887b312cb0811c8d",
+                        "responseMapping": {
+                            "fields": [],
+                            "lists": []
+                        },
+                        "type": "import"
+                    }
+                ],
+                "skipRetries": false
+            }
+        },
+        "import": {
+            "6203b04a887b312cb0811c8d": {
+                "_connectionId": "61d439eb09cf7870de83d208",
+                "adaptorType": "HTTPImport",
+                "http": {
+                    "batchSize": 1,
+                    "body": [],
+                    "formType": "http",
+                    "method": [
+                        "POST"
+                    ],
+                    "relativeURI": [
+                        "/test"
+                    ],
+                    "sendPostMappedData": true
+                },
+                "ignoreExisting": false,
+                "ignoreMissing": false,
+                "lookups": [],
+                "name": "Http imp",
+                "oneToMany": false,
+                "parsers": []
+            }
+        },
+        "integration": {
+            "6203b00d887b312cb0811c80": {
+                "flowGroupings": [],
+                "install": [],
+                "installSteps": [],
+                "mode": "settings",
+                "name": "clone now",
+                "uninstallSteps": []
+            }
+        }
+    },
+    "current": {
+        "connection": {
+            "61d439eb09cf7870de83d208": {
+                "http": {
+                    "auth": {
+                        "failValues": [],
+                        "oauth": {
+                            "scope": []
+                        },
+                        "type": "custom"
+                    },
+                    "baseURI": "http://test.com",
+                    "encrypted": "******",
+                    "formType": "http",
+                    "mediaType": "json",
+                    "ping": {
+                        "failValues": [],
+                        "successValues": []
+                    },
+                    "rateLimit": {
+                        "failValues": []
+                    },
+                    "unencrypted": {
+                        "field": "value"
+                    }
+                },
+                "name": "htt[",
+                "sandbox": false,
+                "type": "http"
+            }
+        },
+        "export": {
+            "6203b034887b312cb0811c85": {
+                "_connectionId": "61d439eb09cf7870de83d208",
+                "adaptorType": "HTTPExport",
+                "asynchronous": true,
+                "file": {
+                    "groupByFields": []
+                },
+                "http": {
+                    "formType": "http",
+                    "method": "GET",
+                    "paging": {
+                        "lastPageValues": []
+                    },
+                    "relativeURI": "/test",
+                    "response": {
+                        "failValues": [],
+                        "successValues": []
+                    }
+                },
+                "name": "Http Exp",
+                "oneToMany": false,
+                "parsers": [],
+                "sandbox": false
+            }
+        },
+        "flow": {
+            "6203b035887b312cb0811c88": {
+                "autoResolveMatchingTraceKeys": true,
+                "disabled": false,
+                "name": "Http to Http flow - master",
+                "pageGenerators": [
+                    {
+                        "_exportId": "6203b034887b312cb0811c85",
+                        "skipRetries": false
+                    }
+                ],
+                "pageProcessors": [
+                    {
+                        "_importId": "6203b04a887b312cb0811c8d",
+                        "responseMapping": {
+                            "fields": [],
+                            "lists": []
+                        },
+                        "type": "import"
+                    }
+                ],
+                "skipRetries": false
+            }
+        },
+        "import": {
+            "6203b04a887b312cb0811c8d": {
+                "_connectionId": "61d439eb09cf7870de83d208",
+                "adaptorType": "HTTPImport",
+                "http": {
+                    "batchSize": 1,
+                    "body": [],
+                    "formType": "http",
+                    "method": [
+                        "POST"
+                    ],
+                    "relativeURI": [
+                        "/test"
+                    ],
+                    "sendPostMappedData": true
+                },
+                "ignoreExisting": false,
+                "ignoreMissing": false,
+                "lookups": [],
+                "name": "Http imp",
+                "oneToMany": false,
+                "parsers": [],
+                "sandbox": false
+            }
+        },
+        "integration": {
+            "6203b00d887b312cb0811c80": {
+                "flowGroupings": [],
+                "install": [],
+                "installSteps": [],
+                "name": "Master Integration",
+                "sandbox": false,
+                "uninstallSteps": []
+            }
+        }
+    }
+}
