@@ -48,7 +48,12 @@ export default function ErrorCell({
   }, [_flowId, _flowJobId, dispatch, flowBuilderTo, history, id, job]);
 
   if (!numOpenError) {
-    return '0 errors';
+    return (
+      <div className={classes.button} onClick={handleErrorClick}>
+        <StatusCircle variant="success" size="mini" />
+        success
+      </div >
+    );
   }
 
   return (

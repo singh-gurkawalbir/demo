@@ -113,7 +113,7 @@ const metadata = {
           history.push(`${flowBuilderTo}/errors/${id}`);
         }, [flowBuilderTo, history, id]);
 
-        if (count === 0) {
+        if (!count) {
           return (
             <div className={classes.button} onClick={handleErrorClick}>
               <StatusCircle variant="success" size="mini" />
