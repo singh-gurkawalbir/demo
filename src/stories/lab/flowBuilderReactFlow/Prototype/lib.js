@@ -105,3 +105,115 @@ export function findNodeIndex(id, elements) {
     }
   }
 }
+const RANGE = 20;
+
+const inRange = (coordinate, dropCoordinate) => (dropCoordinate - RANGE) <= coordinate && (dropCoordinate + RANGE) >= coordinate;
+export const terminalNodeInVicinity = (ele, elements) => {
+  if (!ele) {
+    return false;
+  }
+  const {x: xCoord, y: yCoord} = ele.position;
+
+  return elements.filter(node => node.type === 'terminal' || node.type === 'merge').find(dropElement => {
+    const {x, y} = dropElement.position;
+
+    return inRange(xCoord, x) && inRange(yCoord, y);
+  })?.id;
+};
+
+const getModulusVal = val => val > 0 ? val : -val;
+const getLengthBtwCoordinates = (x1, y1, x2, y2) => {
+  if (x1 === x2) {
+    return getModulusVal(y2 - y1);
+  }
+
+  return getModulusVal(x2 - x1);
+};
+// const SEPERATION_SPACE = 50;
+// // use same forgein object space for unlink icon
+// const SPACE_FROM_ADDICON = foreignObjectSize + SEPERATION_SPACE;
+
+export const getPositionInEdge = (edgeCommands, fraction) => {
+  const linePlotsCoordinates = edgeCommands.substr(1).split(/[LQ]/).map(cmd => cmd.trim()).map(cmd => {
+    // Quadratic command...currently that is supported...if its a cubic command it can have
+    //  3 coordinates to describe the curve,we don't support it... So this function support M,L,C commands.
+    const commandSplit = cmd.split(' ');
+
+    if (commandSplit.length >= 3) {
+      throw new Error('Cubic command encountered please change the path generation logic to support quadratic');
+    }
+    const isQuadratic = !!commandSplit[1];
+
+    if (isQuadratic) {
+      return commandSplit[1];
+    }
+
+    return cmd;
+  })
+    .map(coordinates => coordinates.split(',').map(e => parseInt(e, 10)));
+
+  if (linePlotsCoordinates.length <= 1) {
+    return null;
+  }
+  const lengthOFEdges = linePlotsCoordinates.reduce((acc, curr, i) => {
+    if (i >= (linePlotsCoordinates.length - 1)) {
+      return acc;
+    }
+    const nextCoord = linePlotsCoordinates[i + 1];
+
+    return acc + getLengthBtwCoordinates(...curr, ...nextCoord);
+  }, 0);
+  let lengthFromStart = Math.floor(lengthOFEdges * fraction);
+
+  for (let i = 0; i < linePlotsCoordinates.length - 1; i += 1) {
+    const coord1 = linePlotsCoordinates[i];
+    const coord2 = linePlotsCoordinates[i + 1];
+    const edgeLen = getLengthBtwCoordinates(...coord1, ...coord2);
+
+    if (lengthFromStart - edgeLen < 0) {
+      const [x1, y1] = coord1;
+      const [x2, y2] = coord2;
+
+      if (x1 === x2) {
+        if (y2 > y1) {
+          return [x2, y1 + lengthFromStart];
+        }
+
+        return [x2, y1 - lengthFromStart];
+      }
+      if (x2 > x1) {
+        return [x1 + lengthFromStart, y1];
+      }
+
+      return [x1 - lengthFromStart, y1];
+    }
+
+    lengthFromStart -= edgeLen;
+  }
+};
+export const areMultipleEdgesConnectedToSameEdgeTarget = (edgeId, elements) => {
+  if (!edgeId || !elements) {
+    return false;
+  }
+  const edge = elements.find(ele => ele.id === edgeId);
+
+  if (!edge) {
+    return false;
+  }
+  const {target} = edge;
+
+  return elements.filter(isEdge).filter(e => e.target === target).length > 1;
+};
+export const isNodeConnectedToRouterOrTerminal = (nodeId, elements) => {
+  if (!nodeId || !elements) {
+    return false;
+  }
+  const node = elements.find(ele => ele.id === nodeId);
+
+  if (!node) {
+    return false;
+  }
+  const {source, target} = node;
+
+  return elements.filter(e => [source, target].includes(e.id)).some(node => ['router', 'terminal'].includes(node?.type));
+};

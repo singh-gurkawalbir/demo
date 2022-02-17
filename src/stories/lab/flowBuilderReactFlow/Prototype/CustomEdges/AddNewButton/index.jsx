@@ -1,11 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { ClickAwayListener, IconButton, List, ListItem, ListItemText, makeStyles } from '@material-ui/core';
 import React from 'react';
-import ArrowPopper from '../../../../../components/ArrowPopper';
-import IconButtonWithTooltip from '../../../../../components/IconButtonWithTooltip';
-import AddIcon from '../../../../../components/icons/AddIcon';
-import { useFlowContext } from '../Context';
-import { handleAddNewNode, handleAddNewRouter } from './addElements';
+import ArrowPopper from '../../../../../../components/ArrowPopper';
+import IconButtonWithTooltip from '../../../../../../components/IconButtonWithTooltip';
+import AddIcon from '../../../../../../components/icons/AddIcon';
+import { useFlowContext } from '../../Context';
+import { isNodeConnectedToRouterOrTerminal } from '../../lib';
+import actions from '../../reducer/actions';
 
 const useStyles = makeStyles(theme => ({
   addButton: {
@@ -47,12 +48,6 @@ const AddNodeMenuPopper = ({ anchorEl, handleClose, handleAddNode, handleAddRout
   );
 };
 
-const isNodeConnectedToRouterOrTerminal = (nodeId, elements) => {
-  const {source, target} = elements.find(ele => ele.id === nodeId);
-
-  return elements.filter(e => [source, target].includes(e.id)).some(node => ['router', 'terminal'].includes(node?.type));
-};
-
 const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId}) => {
   const classes = useStyles();
 
@@ -91,12 +86,12 @@ export default ({ edgeId }) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const {elements, setElements } = useFlowContext();
+  const { dispatchFlowUpdate } = useFlowContext();
   const handleAddNode = () => {
-    setElements(handleAddNewNode(edgeId, elements));
+    dispatchFlowUpdate({type: actions.ADD_NEW_NODE, edgeId});
   };
   const handleAddRouter = () => {
-    setElements(handleAddNewRouter(edgeId, elements));
+    dispatchFlowUpdate({type: actions.ADD_NEW_ROUTER, edgeId});
   };
 
   return (
