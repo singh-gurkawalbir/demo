@@ -33,7 +33,7 @@ const options = {
   // ranker: 'network-simplex', // default
   ranker: 'tight-tree',
   // ranker: 'longest-path', // seems worst
-  ranksep: 250,
+  ranksep: 200,
   nodesep: 50,
 };
 

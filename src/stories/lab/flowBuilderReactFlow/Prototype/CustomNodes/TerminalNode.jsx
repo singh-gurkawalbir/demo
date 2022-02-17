@@ -10,7 +10,14 @@ const useStyles = makeStyles(theme => ({
   button: {
     backgroundColor: theme.palette.common.white,
     border: `solid 1px ${theme.palette.secondary.light}`,
-    padding: 2,
+    padding: 0,
+    '& > span': {
+      width: 20,
+      height: 20,
+      '& > svg': {
+        width: '0.7em',
+      },
+    },
   },
   grow: {
     transform: 'scale(1.3)',

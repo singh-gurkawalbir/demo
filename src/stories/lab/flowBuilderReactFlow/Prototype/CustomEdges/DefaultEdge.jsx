@@ -5,11 +5,13 @@ import AddNewButton from './AddNewButton';
 import { getPositionInEdge } from '../lib';
 import UnlinkButton from './UnlinkButton';
 
-const foreignObjectSize = 26;
+const foreignObjectSize = 22;
 const UNLINK_POSITION_FRACTION_OF_EDGE_START = 0.6;
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   edgePath: {
-    stroke: '#b1b1b7',
+    strokeDasharray: 4,
+    strokeWidth: 2,
+    stroke: theme.palette.secondary.lightest, // celigo neutral 3
     fill: 'none',
   },
 }));

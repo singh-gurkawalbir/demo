@@ -13,6 +13,10 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     border: `solid 1px ${theme.palette.secondary.light}`,
     padding: 0,
+    '& > span': {
+      width: 20,
+      height: 20,
+    },
   },
 }));
 
