@@ -37,6 +37,7 @@ export const appTypeToAdaptorType = {
   mssql: 'RDBMS',
   oracle: 'RDBMS',
   snowflake: 'RDBMS',
+  bigquerydatawarehouse: 'RDBMS',
   netsuite: 'NetSuite',
   ftp: 'FTP',
   http: 'HTTP',

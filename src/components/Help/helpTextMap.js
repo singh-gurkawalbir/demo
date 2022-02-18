@@ -874,6 +874,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
   'snowflake.import.rdbms.queryType': "'Use bulk insert SQL query' to quickly insert batches of data efficiently. </br>'Use SQL query once per record' to execute a custom query per record. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
+  'bigquery.import.rdbms.queryType': "'Use bulk insert SQL query' to quickly insert batches of data efficiently. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
   'connection.rdbms.snowflake.warehouse':
 'Warehouse used for executing compute process.',
   'connection.rdbms.snowflake.schema':
@@ -885,6 +886,10 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Snowflake database that you want to connect.',
   'snowflake.connection.rdbms.user': 'Username to connect to Snowflake.',
   'snowflake.connection.rdbms.password': 'Password to connect to Snowflake.',
+  'connection.rdbms.bigquery.projectId': 'The unique identifier for the BigQuery project.',
+  'connection.rdbms.bigquery.clientEmail': 'The email address for the Google Cloud service account used for authentication.',
+  'connection.rdbms.bigquery.privateKey': 'The private key for the Google Cloud service account used for authentication.',
+  'connection.rdbms.bigquery.dataset': 'The name of the dataset containing the tables and views being accessed.',
   'connection.rdbms.options':
 'Define additional configurations for the database connection that is available according to the database documentation. For example, you can configure the connection timeout if the SQL server you are trying to connect to is slow (default connection timeout for MS SQL server is 15000ms).',
   'connection.rdbms.concurrencyLevel':
@@ -1097,6 +1102,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'The specific connection you would like to use for your export or import.\nYou can pre-establish and save your connections using Menu > Connections. Each stored connection contains credentials along with other related information needed to access the desired application.\nIn addition, you can click the + icon beside this field to create a new connection.',
   'export.type':
 "There are multiple export types available to help support common integration patterns.  'All' will export all data, always.  'Delta' will only export data that has changed since the last time the data flow was run.  'Once' will only export data that has not been exported already, and will also automatically update records to mark them as exported.  'Test' will only export 1 record by default, and should be used while testing to avoid syncing lots of data.",
+  'export.bigquery.type':
+"There are multiple export types available to help support common integration patterns.  'All' will export all data, always.  'Delta' will only export data that has changed since the last time the data flow was run.  'Test' will only export 1 record by default, and should be used while testing to avoid syncing lots of data.",
   'export.lastModified':
 'System generated date/time to track the last time this resource was modified.',
   'export.apiIdentifier':

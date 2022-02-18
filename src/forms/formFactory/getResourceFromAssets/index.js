@@ -220,7 +220,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         // when editing rdms connection we lookup for the resource subtype
         meta = formMeta.connections.rdbms[rdbmsSubType];
       } else if (RDBMS_TYPES.includes(type)) {
-        meta = formMeta.connections.rdbms[type];
+        meta = formMeta.connections.rdbms[type === 'bigquerydatawarehouse' ? 'bigquery' : type];
       } else if (resource?.http?.formType === 'rest' && type === 'http') {
         meta = formMeta.connections.rest;
       } else {
@@ -251,6 +251,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           // when editing rdbms connection we lookup for the resource subtype
           if (rdbmsSubType === 'snowflake') {
             meta = meta.rdbms.snowflake;
+          } else if (rdbmsSubType === 'bigquery') {
+            meta = meta.rdbms.bigquery;
           } else {
             meta = meta.rdbms.sql;
           }
@@ -290,6 +292,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           if (rdbmsSubType === 'snowflake') {
             // TODO:both seems to be duplicated
             meta = meta.rdbms.snowflake;
+          } else if (rdbmsSubType === 'bigquery') {
+            meta = meta.rdbms.bigquery;
           } else {
             meta = meta.rdbms.sql;
           }

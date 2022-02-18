@@ -139,6 +139,13 @@ const connectors = [
     keywords: 'database,db',
     group: 'db',
   },
+  {
+    id: 'bigquerydatawarehouse',
+    name: 'Google BigQuery',
+    type: 'bigquerydatawarehouse',
+    keywords: 'database,db',
+    group: 'db',
+  },
   // Application connectors
   {
     id: 'activecampaign',

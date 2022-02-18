@@ -17,6 +17,7 @@ const appTypeToAdaptorType = {
   mssql: 'RDBMS',
   oracle: 'RDBMS',
   snowflake: 'RDBMS',
+  bigquerydatawarehouse: 'RDBMS',
   netsuite: 'NetSuiteDistributed',
   ftp: 'FTP',
   http: 'HTTP',
@@ -113,7 +114,7 @@ export default {
       const expression = [];
 
       if (RDBMS_TYPES.includes(app.type)) {
-        expression.push({ 'rdbms.type': app.type });
+        expression.push({ 'rdbms.type': app.type === 'bigquerydatawarehouse' ? 'bigquery' : app.type });
       } else if (app.type === 'rest') {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
       } else if (app.type === 'http') {

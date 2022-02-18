@@ -228,6 +228,34 @@ export default {
       },
     ],
   },
+  'rdbms.bigquery.projectId': {
+    fieldId: 'rdbms.bigquery.projectId',
+    label: 'Project',
+    type: 'text',
+    required: true,
+  },
+  'rdbms.bigquery.clientEmail': {
+    fieldId: 'rdbms.bigquery.clientEmail',
+    label: 'Client email',
+    type: 'text',
+    required: true,
+  },
+  'rdbms.bigquery.privateKey': {
+    fieldId: 'rdbms.bigquery.privateKey',
+    label: 'Private key',
+    type: 'text',
+    required: true,
+    inputType: 'password',
+    defaultValue: '',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+  },
+  'rdbms.bigquery.dataset': {
+    fieldId: 'rdbms.bigquery.dataset',
+    label: 'Dataset',
+    type: 'text',
+    required: true,
+  },
   // #endregion rdbms
   // #region rest
   'rest.mediaType': {
