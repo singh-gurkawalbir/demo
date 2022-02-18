@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position, useStoreState } from 'react-flow-renderer';
-import { IconButton, Tooltip } from '@material-ui/core';
+import { Tooltip } from '@material-ui/core';
 import CircleIcon from './CircleIcon';
 import MergeIcon from '../../../../../../components/icons/MergeIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
