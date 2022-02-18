@@ -19,12 +19,12 @@ const nodeSize = {
     height: 50,
   },
   terminal: {
-    width: 26,
-    height: 26,
+    width: 34,
+    height: 34,
   },
   merge: {
-    width: 50,
-    height: 50,
+    width: 34,
+    height: 38,
   } };
 
 const options = {
