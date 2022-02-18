@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { v4 } from 'uuid';
+import { nanoid } from 'nanoid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 
@@ -8,32 +8,37 @@ export const handleOffset = 30;
 const nodeSize = {
   pp: {
     width: 275,
-    height: 265,
+    height: 235,
   },
   pg: {
     width: 275,
-    height: 265,
+    height: 235,
   },
   router: {
-    width: 26,
-    height: 26,
+    width: 50,
+    height: 50,
   },
   terminal: {
-    width: 26,
-    height: 26,
+    width: 34,
+    height: 34,
   },
   merge: {
-    width: 26,
-    height: 26,
+    width: 34,
+    height: 38,
   } };
 
 const options = {
-  ranksep: 250,
+  // align: 'UL',
+  // acyclicer: 'greedy',  // default is undefined, dont know what this does.
+  // ranker: 'network-simplex', // default
+  ranker: 'tight-tree',
+  // ranker: 'longest-path', // seems worst
+  ranksep: 200,
   nodesep: 50,
 };
 
 export function generateId() {
-  return v4().replace(/-/g, '').substring(0, 4);
+  return nanoid(6);
 }
 
 export function generateDefaultEdge(source, target) {
@@ -75,15 +80,16 @@ export function layoutElements(elements) {
     if (isNode(el)) {
       const layoutPos = dagreGraph.node(el.id);
       const size = nodeSize[el.type];
-      const offset = ['pp', 'pg'].includes(el.type) ? 0 : handleOffset;
+      const offsetY = ['pp', 'pg'].includes(el.type) ? 0 : handleOffset;
+      const offsetX = el.type === 'terminal' ? nodeSize.pp.width / 2 - nodeSize.terminal.width / 2 : 0;
 
       // We are shifting the dagre node position that returns centerpoint (x,y)
       // to the top left so it matches the react-flow node anchor point (top left).
       // This maters when nodes are of various sizes.
       return ({...el,
         position: {
-          x: layoutPos.x - size.width / 2,
-          y: layoutPos.y - size.height / 2 - offset,
+          x: layoutPos.x - size.width / 2 - offsetX,
+          y: layoutPos.y - size.height / 2 - offsetY,
         }});
     }
 
