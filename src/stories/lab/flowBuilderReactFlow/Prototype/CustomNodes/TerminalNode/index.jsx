@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position, useStoreState } from 'react-flow-renderer';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Tooltip } from '@material-ui/core';
 import CircleIcon from './CircleIcon';
 import MergeIcon from '../../../../../../components/icons/MergeIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
@@ -16,30 +16,25 @@ const useStyles = makeStyles(theme => ({
   merge: {
     backgroundColor: theme.palette.common.white,
     border: `solid 1px ${theme.palette.secondary.light}`,
-    padding: 0,
-    '& > span': {
-      width: 20,
-      height: 20,
-      '& > svg': {
-        width: '0.7em',
-      },
-    },
+    color: theme.palette.secondary.light,
+    borderRadius: '50%',
+    padding: 2,
   },
 }));
 
 export const useIsTerminalOrMergeNodeDroppable = nodeId => {
-  const draggingEles = useStoreState(state => state.selectedElements);
+  const selectedElements = useStoreState(state => state.selectedElements);
 
-  if (!draggingEles) {
+  if (!selectedElements) {
     return false;
   }
-  const draggingEle = draggingEles[0];
+  const dragElement = selectedElements[0];
 
-  if (!['terminal', 'merge'].includes(draggingEle.type)) {
+  if (!['terminal', 'merge'].includes(dragElement.type)) {
     return false;
   }
 
-  return nodeId !== draggingEle.id;
+  return nodeId !== dragElement.id;
 };
 
 export default function TerminalNode(props) {
@@ -54,9 +49,9 @@ export default function TerminalNode(props) {
       {isDroppable ? (
         <CircleIcon />
       ) : (
-        <IconButton className={classes.merge}>
-          <MergeIcon />
-        </IconButton>
+        <Tooltip title="Drag to merge with other branch" position="top">
+          <MergeIcon className={classes.merge} />
+        </Tooltip>
       )}
     </div>
   );
