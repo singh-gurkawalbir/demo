@@ -20,23 +20,79 @@ const designParameters = {
   },
 };
 
-const Template = args => (
+const Template = ({primaryButtonText, secondaryButtonText, ...args}) => (
   <>
     <AppBar />
     <PageBar />
     <EmptyState {...args}>
-      <FilledButton>Create Flow</FilledButton>
-      <TextButton underline>Test link</TextButton>
+      <FilledButton>{primaryButtonText}</FilledButton>
+      {secondaryButtonText && <TextButton underline>{secondaryButtonText}</TextButton>}
     </EmptyState>
   </>
 );
 
-export const Agents = Template.bind({});
+export const Default = Template.bind({});
 
-Agents.parameters = designParameters;
+Default.parameters = designParameters;
 
-Agents.args = {
+Default.args = {
   title: 'Welcome',
-  subTitle: 'WElcome to the new connections experience',
-  type: 'agents',
+  subTitle: 'Welcome to the new connections experience',
+  type: 'connections',
+  altText: 'Connections image alt text',
+  primaryButtonText: 'Create Flow',
+  secondaryButtonText: 'Secondary text link with underline treatment',
+};
+
+export const LongTitleText = Template.bind({});
+
+LongTitleText.parameters = designParameters;
+
+LongTitleText.args = {
+  title: `Welcome to the new connections experience. 
+          This is a really long "Title" to demonstrate if and how it will wrap to a second line.`,
+  subTitle: 'Welcome to the new connections experience',
+  type: 'connections',
+  altText: 'Connections image alt text',
+  primaryButtonText: 'Create Flow',
+  secondaryButtonText: 'Secondary text link with underline treatment',
+};
+
+export const LongSubTitleText = Template.bind({});
+
+LongSubTitleText.parameters = designParameters;
+
+LongSubTitleText.args = {
+  title: 'Welcome',
+  subTitle: `Welcome to the new connections experience. 
+             This is a really long subTitle to demonstrate if and how it will wrap to a second line. 
+             It should also help identify line height issues.`,
+  type: 'connections',
+  altText: 'Connections image alt text',
+  primaryButtonText: 'Create Flow',
+  secondaryButtonText: 'Secondary text link with underline treatment',
+};
+
+export const NoSubTitle = Template.bind({});
+
+NoSubTitle.parameters = designParameters;
+
+NoSubTitle.args = {
+  title: 'Welcome',
+  type: 'connections',
+  altText: 'Connections image alt text',
+  primaryButtonText: 'Create Flow',
+  secondaryButtonText: 'Secondary text link with underline treatment',
+};
+
+export const SingleButton = Template.bind({});
+
+SingleButton.parameters = designParameters;
+
+SingleButton.args = {
+  title: 'Welcome',
+  subTitle: 'Welcome to the new connections experience',
+  type: 'connections',
+  altText: 'Connections image alt text',
+  primaryButtonText: 'Create Flow',
 };
