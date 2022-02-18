@@ -20,15 +20,6 @@ const designParameters = {
   },
 };
 
-export const myIntegrations = () => (
-  <EmptyState type="integrations" title="Jumpstart your data integration" subTitle="You can access, manage, and monitor flows from within integrations on this page.">
-    <FilledButton>Create Flow</FilledButton>
-    <TextButton underline>Learn how to develop integrations in flow builder</TextButton>
-  </EmptyState>
-);
-
-myIntegrations.parameters = designParameters;
-
 const Template = args => (
   <>
     <AppBar />
@@ -40,9 +31,11 @@ const Template = args => (
   </>
 );
 
-export const Connections = Template.bind({});
+export const Agents = Template.bind({});
 
-Connections.args = {
+Agents.parameters = designParameters;
+
+Agents.args = {
   title: 'Welcome',
   subTitle: 'WElcome to the new connections experience',
   type: 'agents',
