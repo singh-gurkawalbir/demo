@@ -1,8 +1,7 @@
 import { makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
+import PropTypes from 'prop-types';
 import EmptyStateImg from '../../../components/icons/EmptyStateImg';
-import AppBar from '../../mocks/AppBar';
-import PageBar from '../../mocks/PageBar';
 
 const useStyles = makeStyles(theme => ({
   emptyStatePage: {
@@ -30,21 +29,23 @@ export default function EmptyState({type, title, subTitle, children}) {
   const classes = useStyles();
 
   return (
-    <>
-      <AppBar>APP BAR IT IS</AppBar>
-      <PageBar>Page BAR IT IS</PageBar>
-      <div className={classes.emptyStatePage}>
-        <div className={classes.emptyStateContainer}>
-          <EmptyStateImg
-            className={classes.appLogo}
-            type={type || 'imports'}
-            alt={type} />
-          <Typography variant="h3">{title}</Typography>
-          <Typography variant="body2">{subTitle}</Typography>
-          {children}
-        </div>
+    <div className={classes.emptyStatePage}>
+      <div className={classes.emptyStateContainer}>
+        <EmptyStateImg
+          className={classes.appLogo}
+          type={type || 'imports'}
+          alt={type} />
+        <Typography variant="h3">{title}</Typography>
+        <Typography variant="body2">{subTitle}</Typography>
+        {children}
       </div>
-    </>
-
+    </div>
   );
 }
+
+EmptyState.propTypes = {
+  children: PropTypes.element,
+  title: PropTypes.string,
+  subTitle: PropTypes.string,
+  type: PropTypes.string,
+};

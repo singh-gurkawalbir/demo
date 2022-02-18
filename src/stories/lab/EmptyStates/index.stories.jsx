@@ -1,6 +1,8 @@
 import React from 'react';
 import EmptyState from '.';
 import {FilledButton, TextButton} from '../../../components/Buttons';
+import AppBar from '../../mocks/AppBar';
+import PageBar from '../../mocks/PageBar';
 
 export default {
   title: 'Lab/ Empty State',
@@ -27,3 +29,21 @@ export const myIntegrations = () => (
 
 myIntegrations.parameters = designParameters;
 
+const Template = args => (
+  <>
+    <AppBar />
+    <PageBar />
+    <EmptyState {...args}>
+      <FilledButton>Create Flow</FilledButton>
+      <TextButton underline>Test link</TextButton>
+    </EmptyState>
+  </>
+);
+
+export const Connections = Template.bind({});
+
+Connections.args = {
+  title: 'Welcome',
+  subTitle: 'WElcome to the new connections experience',
+  type: 'agents',
+};
