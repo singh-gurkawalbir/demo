@@ -30,6 +30,7 @@ module.exports = {
       lines: 84,
     },
   },
+  testURL: 'http://localhost:4000',
   // these variables are injected through webpack definePlugin and
   // are not injected in out test case, hence generating undefined errors
   // through globals we are able to inject these variables

@@ -1,0 +1,78 @@
+import { API } from '../utils';
+
+export default API.get('/api/integrations', [
+  {
+    _id: '5ff579d745ceef7dcd797c15',
+    lastModified: '2021-01-19T06:34:17.222Z',
+    name: " AFE 2.0 refactoring for DB's",
+    install: [],
+    sandbox: false,
+    _registeredConnectionIds: [
+      '5cd51efd3607fe7d8eda9c97',
+      '5ff57a8345ceef7dcd797c21',
+    ],
+    installSteps: [],
+    uninstallSteps: [],
+    flowGroupings: [],
+    createdAt: '2021-01-06T08:50:31.935Z',
+  },
+  {
+    _id: '5e2fdf183a34b14c6405381c',
+    lastModified: '2020-11-03T15:29:52.385Z',
+    name: 'ACUMATICA',
+    install: [],
+    sandbox: false,
+    _registeredConnectionIds: [
+      '5da93f6590b5b54781372e96',
+      '5e2fd9893a34b14c640536a4',
+    ],
+    installSteps: [],
+    uninstallSteps: [],
+    flowGroupings: [],
+    createdAt: '2020-01-28T07:13:28.354Z',
+  },
+  {
+    _id: '5f925c684109037fe51fbe8c',
+    lastModified: '2021-02-05T09:26:33.479Z',
+    name: 'AFE 2.0 IN DB',
+    install: [],
+    sandbox: false,
+    _registeredConnectionIds: [
+      '5e80979706d4e11f2a2aab0d',
+      '5cd2995a67d43871d97c5260',
+    ],
+    installSteps: [],
+    uninstallSteps: [],
+    flowGroupings: [],
+    createdAt: '2020-10-23T04:30:32.355Z',
+  },
+  {
+    _id: '6035ea822517ec51224a1afe',
+    lastModified: '2021-02-25T05:34:30.478Z',
+    name: 'AFE REPORTED ISSUES',
+    install: [],
+    sandbox: false,
+    _registeredConnectionIds: [
+      '5cd51efd3607fe7d8eda9c97',
+      '5feafdd3b3ded9644e0418c2',
+    ],
+    installSteps: [],
+    uninstallSteps: [],
+    flowGroupings: [],
+    createdAt: '2021-02-24T05:56:18.507Z',
+  },
+  {
+    _id: '5ffad3d1f08d35214ed200f7',
+    lastModified: '2021-01-22T08:40:45.731Z',
+    name: 'AFE other adaptors',
+    install: [],
+    sandbox: false,
+    _registeredConnectionIds: [
+      '5cd51efd3607fe7d8eda9c97',
+      '5feafe6bf415e15f455dbc05',
+    ],
+    installSteps: [],
+    uninstallSteps: [],
+    flowGroupings: [],
+    createdAt: '2021-01-10T10:15:45.184Z',
+  }]);

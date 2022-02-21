@@ -7,46 +7,47 @@ import rootReducer from '../reducers';
 import rootSaga from '../sagas';
 import actions from '../actions';
 
+export const getCreatedStore = initialState => {
 // eslint-disable-next-line import/no-mutable-exports
-let store;
+  let store;
 
-const env = process.env.NODE_ENV;
-const middleware = [];
-const sagaMiddleware = createSagaMiddleware({
-  onError: error => {
+  const env = process.env.NODE_ENV;
+  const middleware = [];
+  const sagaMiddleware = createSagaMiddleware({
+    onError: error => {
     // eslint-disable-next-line no-console
-    console.warn('saga middleware crashed on error ', error);
-    store.dispatch(actions.app.errored());
-    LogRocket.captureException(error);
-  },
-});
+      console.warn('saga middleware crashed on error ', error);
+      store.dispatch(actions.app.errored());
+      LogRocket.captureException(error);
+    },
+  });
 
-middleware.push(sagaMiddleware);
+  middleware.push(sagaMiddleware);
 
-middleware.push(LogRocket.reduxMiddleware({
-  stateSanitizer: state => ({
-    ...state,
-    auth: null,
-    data: null,
-    session: null,
-  }),
-  actionSanitizer: () => null,
-}));
+  middleware.push(LogRocket.reduxMiddleware({
+    stateSanitizer: state => ({
+      ...state,
+      auth: null,
+      data: null,
+      session: null,
+    }),
+    actionSanitizer: () => null,
+  }));
 
-if (env === 'development' && process.env.REDUX_LOGGER === 'true') {
+  if (env === 'development' && process.env.REDUX_LOGGER === 'true') {
   // redux-logger options reference: https://www.npmjs.com/package/redux-logger#options
-  const logOptions = {
-    diff: true,
-    duration: true,
-    collapsed: (getState, action, logEntry) => !logEntry.error,
-  };
+    const logOptions = {
+      diff: true,
+      duration: true,
+      collapsed: (getState, action, logEntry) => !logEntry.error,
+    };
 
-  middleware.push(createLogger(logOptions));
-}
+    middleware.push(createLogger(logOptions));
+  }
 
-// trace true allows us to determine the origin of dispatched actions
-// using the redux dev tools plugin we can see the stack trace of where the request is originated from.
-const composeEnhancers =
+  // trace true allows us to determine the origin of dispatched actions
+  // using the redux dev tools plugin we can see the stack trace of where the request is originated from.
+  const composeEnhancers =
   (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ &&
   // TODO: check if we need to enable it in staging.
   env === 'development' &&
@@ -55,12 +56,16 @@ const composeEnhancers =
       traceLimit: 25,
     })) || compose;
 
-store = createStore(
-  rootReducer,
-  composeEnhancers(applyMiddleware(...middleware))
-);
+  store = initialState ? createStore(rootReducer, initialState, composeEnhancers(applyMiddleware(...middleware))) : createStore(
+    rootReducer,
+    composeEnhancers(applyMiddleware(...middleware))
+  );
 
-sagaMiddleware.run(rootSaga);
+  sagaMiddleware.run(rootSaga);
+
+  return store;
+};
+export const store = getCreatedStore();
 export const getReduxState = () => store.getState();
 
 export default store;
