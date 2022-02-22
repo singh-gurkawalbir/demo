@@ -377,8 +377,8 @@ export default {
         letterSpacing: 0.5,
       },
       caption: {
-        fontFamily: 'source sans pro',
-        fontSize: '13px',
+        fontFamily: 'Roboto400',
+        fontSize: '0.75rem',
       },
     },
     MuiListItem: {
@@ -701,6 +701,7 @@ export default {
         fontWeight: 'normal',
       },
       textColorPrimary: {
+        color: colors.celigoNeutral8,
         '&.Mui-selected': {
           fontFamily: 'source sans pro semibold',
         },
