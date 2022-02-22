@@ -12,10 +12,6 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     height: '100%',
   },
-  flowGroupTitle: {
-    textTransform: 'uppercase',
-    paddingTop: theme.spacing(1),
-  },
   firstFlowName: {
     marginTop: theme.spacing(1),
   },
@@ -27,6 +23,7 @@ const useStyles = makeStyles(theme => ({
   },
   flowInFlowGroupNameHover: {
     backgroundColor: theme.palette.background.paper,
+    borderTop: `1px solid ${theme.palette.secondary.lightest} !important`,
   },
 }));
 const useColumns = () => [
@@ -44,10 +41,8 @@ const useColumns = () => [
       return clsx(classFlowInFlowGroupName, classFlowInFlowGroupNameHover);
     },
     Value: ({rowData: r}) => {
-      const classes = useStyles();
-
       if (r?.groupName) {
-        return <Typography variant="overline" component="div" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>;
+        return <Typography variant="overline" component="div" color="textSecondary">{r?.groupName}</Typography>;
       }
 
       return r?.doc?.name || r?.doc?._id;
@@ -99,3 +94,4 @@ export default function PreviewTable({ templateId }) {
 
   return <DynaPreviewComponentsTable data={data} useColumns={useColumns} />;
 }
+

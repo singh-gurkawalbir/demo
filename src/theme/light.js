@@ -375,6 +375,7 @@ export default {
         fontSize: '14px',
         lineHeight: '16px',
         letterSpacing: 0.5,
+        fontWeight: '700',
       },
       caption: {
         fontFamily: 'source sans pro',
@@ -880,3 +881,4 @@ export default {
     },
   },
 };
+
