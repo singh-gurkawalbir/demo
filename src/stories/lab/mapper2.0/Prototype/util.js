@@ -185,11 +185,17 @@ export const sampleData = {
     {
       fName: 'Bro',
       lName: '1',
+      hobbies: ['dance'],
     },
     {
       fName: 'Bro',
       lName: '2',
       age: 34,
+    },
+    {
+      kids: {
+        age: 2,
+      },
     },
   ],
 };
