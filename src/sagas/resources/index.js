@@ -219,6 +219,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   if (resourceType === 'exports' && merged._rest) {
     delete merged._rest;
   }
+  if (['exports', 'imports'].includes(resourceType)) {
+    delete merged.adaptorType;
+  }
 
   // When integrationId is set on connection model, integrations/:_integrationId/connections route will be used
   // and connection will be auto registered to the integration.
