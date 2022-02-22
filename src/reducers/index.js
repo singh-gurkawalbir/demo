@@ -5842,6 +5842,25 @@ selectors.mkIsAnyFlowConnectionOffline = () => {
   );
 };
 
+selectors.mkIntegratorConnectionList = () => createSelector(
+  state => state?.data?.resources?.connections,
+  (state, integrationId) => selectors.resource(state, 'integrations', integrationId),
+  (connections = emptyArray, integration) => {
+    const connectionIds = integration?._registeredConnectionIds;
+
+    return connections.filter(c => connectionIds.includes(c._id));
+  }
+);
+
+selectors.mkIsAnyIntegratorConnectionOffline = () => {
+  const integratorConnections = selectors.mkIntegratorConnectionList();
+
+  return createSelector(
+    (state, integrationId) => integratorConnections(state, integrationId),
+    integratorConnections => integratorConnections.some(c => c.offline)
+  );
+};
+
 selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
   const flowsState = state && state.session && state.session.flowData;
   const exports = selectors.resourceList(state, {
