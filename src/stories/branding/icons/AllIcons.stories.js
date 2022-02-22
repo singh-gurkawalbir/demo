@@ -148,6 +148,7 @@ import UnpinIntegrationIcon from '../../../components/icons/UnpinIntegrationIcon
 import ViewReferencesIcon from '../../../components/icons/ViewReferencesIcon';
 import ViewResolvedHistoryIcon from '../../../components/icons/ViewResolvedHistoryIcon';
 import ViewDetailsIcon from '../../../components/icons/ViewDetailsIcon';
+import VerticalLayoutIcon from '../../../components/icons/VerticalLayoutIcon';
 import WarningIcon from '../../../components/icons/WarningIcon';
 import WhatsNewIcon from '../../../components/icons/WhatsNewIcon';
 
@@ -296,6 +297,7 @@ const icons =
       UniversityIcon,
       UnpinIntegrationIcon,
       ViewReferencesIcon,
+      VerticalLayoutIcon,
       ViewResolvedHistoryIcon,
       ViewDetailsIcon,
       WarningIcon,
