@@ -209,7 +209,7 @@ describe('GlobalSearch UI Tests', () => {
 
     userEvent.click(scriptsItem);
     expect(searchInput).toHaveFocus();
-    await waitFor(() => expect(searchInput).toHaveValue(' am'));
+    await waitFor(() => expect(searchInput).toHaveValue(' am'), {timeout: 8000});
     expect(screen.queryByLabelText(/Integrations/i)).toBeChecked();
     screen.queryAllByLabelText(/Integration apps/i)?.forEach(item => expect(item).toBeChecked());
     expect(screen.queryByLabelText(/Connections/)).toBeChecked();
