@@ -79,7 +79,7 @@ function iterate(mappings, treeData, parentKey, parentExtract) {
         buildArrayHelper.forEach(obj => {
           const {extract, mappings} = obj;
 
-          sourceExtract = extract ? `${sourceExtract ? `${sourceExtract};` : ''}${extract}` : sourceExtract;
+          sourceExtract = extract ? `${sourceExtract ? `${sourceExtract},` : ''}${extract}` : sourceExtract;
 
           if (!mappings) {
             return;
@@ -111,7 +111,7 @@ function iterate(mappings, treeData, parentKey, parentExtract) {
       let extract;
 
       buildArrayHelper.forEach(obj => {
-        extract = `${extract ? `${extract};` : ''}${obj.extract}`;
+        extract = `${extract ? `${extract},` : ''}${obj.extract}`;
       });
 
       nodeToPush.combinedExtract = extract;

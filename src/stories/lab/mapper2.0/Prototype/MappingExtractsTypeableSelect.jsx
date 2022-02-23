@@ -245,7 +245,7 @@ export default function MappingExtractsTypeableSelect(props) {
 
   const filterTreeNode = treeNode => {
     const key = treeNode.fullPath || '';
-    const splitInput = inputValue.split(';');
+    const splitInput = inputValue.split(',');
 
     const newT = splitInput.filter(i => {
       if (i && key && key.toUpperCase().indexOf(i.toUpperCase()) > -1) {
@@ -262,7 +262,7 @@ export default function MappingExtractsTypeableSelect(props) {
 
   const dropdownText =
   isArrayType
-    ? '<ul><li>Type or select source record field</li>   <li>Enter multiple separated by semicolons</li></ul>'
+    ? '<ul><li>Type or select source record field</li>   <li>Type a comma after a source record field to type/select multiple</li></ul>'
     : '<ul><li>Type or select source record field</li></ul>';
 
   return (
