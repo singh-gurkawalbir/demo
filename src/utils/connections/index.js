@@ -175,6 +175,8 @@ export const amazonSellerCentralAuthURI = {
   A19VAU5U5O7RUS: 'https://sellercentral.amazon.sg/apps/authorize/consent',
   A39IBJ37TRP1C6: 'https://sellercentral.amazon.com.au/apps/authorize/consent',
   A1VC38T7YXB528: 'https://sellercentral.amazon.co.jp/apps/authorize/consent',
+  ARBP9OOSHTCHU: 'https://sellercentral.amazon.eg/apps/authorize/consent',
+  A17E79C6D8DWNP: 'https://sellercentral.amazon.sa/apps/authorize/consent',
 };
 
 export const amazonSellerCentralMarketPlaceOptions = {
