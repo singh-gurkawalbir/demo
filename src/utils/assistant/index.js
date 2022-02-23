@@ -1619,6 +1619,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   const bodyParams = {};
   let lookupUrl;
   let lookupQueryParams;
+  let identifierValue;
 
   if (operationDetails.parameters && operationDetails.parameters.length > 0) {
     operationDetails.parameters.forEach((p, index) => {
@@ -1689,6 +1690,10 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
         */
         if (importAdaptorSubSchema.ignoreExtract && /(\?|\/)/.test(importAdaptorSubSchema.ignoreExtract)) {
           pathParams[p.id] = importAdaptorSubSchema.ignoreExtract;
+        }
+
+        if (operationDetails.howToIdentifyExistingRecords) {
+          pathParams[p.id] = importAdaptorSubSchema.existingLookupName;
         }
       }
 
@@ -1787,7 +1792,10 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
       ); /* if there is parameter (path) defined but no place-holder in the url then the pathParameter is being set with the entire query string */
     }
   }
-
+  if (importAdaptorSubSchema.existingExtract) {
+    identifierValue = importAdaptorSubSchema.existingExtract;
+    lookupType = 'source';
+  }
   if (!operation) {
     if (operationDetails.id) {
       operation = operationDetails.id;
@@ -1813,6 +1821,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
     lookupType,
     lookupUrl,
     lookupQueryParams,
+    identifierValue,
   };
 }
 
@@ -1828,6 +1837,8 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     ignoreExisting = false,
     ignoreMissing = false,
     lookups = [],
+    existingExtract,
+    existingLookupName,
   } = assistantConfig;
   let { lookupQueryParams = {} } = assistantConfig;
 
@@ -1858,7 +1869,13 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     if (isArray(operationDetails.method)) {
       importDoc.method = operationDetails.method;
       importDoc.requestType = operationDetails.requestType;
-
+      if (existingExtract) {
+        importDoc.existingExtract = existingExtract;
+        importDoc.existingLookupName = undefined;
+      } else if (existingLookupName) {
+        importDoc.existingExtract = undefined;
+        importDoc.existingLookupName = existingLookupName;
+      }
       if (!importDoc.requestType) {
         importDoc.requestType = ['UPDATE', 'CREATE'];
       }
@@ -1889,7 +1906,13 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
       importDoc.method = operationDetails.method;
       importDoc.relativeURI = operationDetails.url;
       importDoc.requestType = operationDetails.requestType;
-
+      if (existingExtract) {
+        importDoc.existingExtract = existingExtract;
+        importDoc.existingLookupName = undefined;
+      } else if (existingLookupName) {
+        importDoc.existingExtract = undefined;
+        importDoc.existingLookupName = existingLookupName;
+      }
       if (!importDoc.requestType) {
         importDoc.requestType = ['UPDATE', 'CREATE'];
       }

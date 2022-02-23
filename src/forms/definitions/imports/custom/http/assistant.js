@@ -42,6 +42,9 @@ export default function assistantDefinition(
             key.replace('/assistantMetadata/pathParams/', '')
           ] = formValues[key];
         }
+        if (key.includes('/assistantMetadata/existingExtract')) {
+          assistantMetadata.existingExtract = formValues[key];
+        }
       });
       const importDoc = convertToImport({
         assistantConfig: assistantMetadata,
