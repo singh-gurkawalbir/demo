@@ -11,8 +11,8 @@ const useStyles = makeStyles(theme => ({
     stroke: theme.palette.secondary.lightest,
   },
   drop: {
-    strokeDasharray: 2,
-    strokeWidth: 1,
+    strokeDasharray: 4,
+    strokeWidth: 2,
     stroke: theme.palette.primary.light,
     animation: '$dash 50s linear',
   },
