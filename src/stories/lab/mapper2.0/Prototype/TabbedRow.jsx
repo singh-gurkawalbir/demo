@@ -6,6 +6,7 @@ import {findNode} from './util';
 const useStyles = makeStyles(theme => ({
   tabComponentRoot: {
     display: 'flex',
+    marginLeft: theme.spacing(-9),
   },
 
   tabsContainer: {

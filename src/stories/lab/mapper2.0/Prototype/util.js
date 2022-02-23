@@ -79,7 +79,7 @@ function iterate(mappings, treeData, parentKey, parentExtract) {
         buildArrayHelper.forEach(obj => {
           const {extract, mappings} = obj;
 
-          sourceExtract = extract ? `${sourceExtract ? `${sourceExtract};` : ''}${extract}` : sourceExtract;
+          sourceExtract = extract ? `${sourceExtract ? `${sourceExtract},` : ''}${extract}` : sourceExtract;
 
           if (!mappings) {
             return;
@@ -111,7 +111,7 @@ function iterate(mappings, treeData, parentKey, parentExtract) {
       let extract;
 
       buildArrayHelper.forEach(obj => {
-        extract = `${extract ? `${extract};` : ''}${obj.extract}`;
+        extract = `${extract ? `${extract},` : ''}${obj.extract}`;
       });
 
       nodeToPush.combinedExtract = extract;
@@ -132,11 +132,15 @@ export function generateTreeFromMappings(input) {
   return iterate(mappings, treeData);
 }
 
-export function allowDrop({ dragNode, dropNode }) {
+export function allowDrop({ dragNode, dropNode, dropPosition }) {
   const {parentKey: dragNodeParentKey, isTabNode: dragNodeIsTab} = dragNode;
-  const {parentKey: dropNodeParentKey, isTabNode: dropNodeIsTab} = dropNode;
+  const {key: dropNodeKey, parentKey: dropNodeParentKey, isTabNode: dropNodeIsTab} = dropNode;
 
   if (dragNodeIsTab || dropNodeIsTab) return false;
+
+  // dropping a child node at the 0th position in the children list
+  if (dropPosition === 0 && dragNodeParentKey === dropNodeKey) return true;
+
   // nodes can only be dropped at same level
   if ((dragNodeParentKey && !dropNodeParentKey) ||
     (!dragNodeParentKey && dropNodeParentKey)) {
@@ -161,4 +165,37 @@ export const findNode = (data, key, callback) => {
       findNode(item.children, key, callback);
     }
   });
+};
+
+export const sampleData = {
+  fName: 'John',
+  lName: 'Doe',
+  age: 20,
+  married: true,
+  hobbies: ['yoga', 'sports'],
+  daysBusy: [1, 4],
+  father: {
+    firstName: 'Dad',
+  },
+  mother: {
+    fName: 'Mom',
+    lName: 'Doe',
+  },
+  siblings: [
+    {
+      fName: 'Bro',
+      lName: '1',
+      hobbies: ['dance'],
+    },
+    {
+      fName: 'Bro',
+      lName: '2',
+      age: 34,
+    },
+    {
+      kids: {
+        age: 2,
+      },
+    },
+  ],
 };
