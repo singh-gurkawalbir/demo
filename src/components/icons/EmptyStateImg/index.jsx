@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import getImageUrl from '../../../utils/image';
 
 export default function EmptyStateImg({ type}) {
-  const path = getImageUrl(`images/react/empty-states/${type}.svg`);
+  const path = getImageUrl(`images/react/empty-states/${type}.png`);
 
   return (
     <img
