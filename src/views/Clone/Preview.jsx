@@ -126,7 +126,6 @@ const useColumns = () => [
 export default function ClonePreview(props) {
   const classes = useStyles(props);
   const { resourceType, resourceId } = props.match.params;
-  const [requested, setRequested] = useState(false);
   const [cloneRequested, setCloneRequested] = useState(false);
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
@@ -222,12 +221,10 @@ export default function ClonePreview(props) {
     resourceType,
   ]);
 
+  // fetches the latest preview components on every mount
   useEffect(() => {
-    if (!components || (isEmpty(components) && !requested)) {
-      dispatch(actions.clone.requestPreview(resourceType, resourceId));
-      setRequested(true);
-    }
-  }, [components, dispatch, requested, resourceId, resourceType]);
+    dispatch(actions.clone.requestPreview(resourceType, resourceId));
+  }, []);
   useEffect(() => {
     if (createdComponents) {
       dispatch(actions.template.clearTemplate(`${resourceType}-${resourceId}`));
