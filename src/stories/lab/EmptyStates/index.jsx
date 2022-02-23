@@ -23,6 +23,12 @@ const useStyles = makeStyles(theme => ({
       marginBottom: theme.spacing(2),
     },
   },
+  subTitle: {
+    marginBottom: 30,
+  },
+  title: {
+    marginTop: theme.spacing(4),
+  },
 }));
 
 export default function EmptyState({type, altText, title, subTitle, children}) {
@@ -35,8 +41,8 @@ export default function EmptyState({type, altText, title, subTitle, children}) {
           className={classes.appLogo}
           type={type}
           alt={altText} />
-        <Typography variant="h3">{title}</Typography>
-        {subTitle && <Typography variant="body2">{subTitle}</Typography> }
+        <Typography variant="h3" className={classes.title}>{title}</Typography>
+        {subTitle && <Typography variant="body2" className={classes.subTitle}>{subTitle}</Typography> }
         {children}
       </div>
     </div>

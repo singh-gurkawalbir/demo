@@ -36,12 +36,12 @@ export const Default = Template.bind({});
 Default.parameters = designParameters;
 
 Default.args = {
-  title: 'Welcome',
-  subTitle: 'Welcome to the new connections experience',
-  type: 'connections',
-  altText: 'Connections image alt text',
+  title: 'This is a default heading',
+  subTitle: 'In the sub heading we are write the short description about the state',
+  type: 'integrations',
+  altText: 'integrations image alt text',
   primaryButtonText: 'Create Flow',
-  secondaryButtonText: 'Secondary text link with underline treatment',
+  secondaryButtonText: 'This is going to be a text button for the this state ',
 };
 
 export const LongTitleText = Template.bind({});
