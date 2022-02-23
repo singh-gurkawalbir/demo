@@ -9,8 +9,8 @@ import ModalDialog from '../ModalDialog';
 import getRoutePath from '../../utils/routePaths';
 import LoadResources from '../LoadResources';
 import { emptyList, HOME_PAGE_PATH} from '../../utils/constants';
-import { OutlinedButton} from '../Buttons';
 import useConfirmDialog from '../ConfirmDialog';
+import FilledButton from '../Buttons';
 
 const useStyles = makeStyles({
   contentWrapper: {
@@ -30,14 +30,14 @@ const LoggedInWithADifferentAccount = () => (
       <br />
       This may have happened automatically because another user signed in from the same browser. To continue using this account, you will need to sign in again. This is done to protect your account and to ensure the privacy of your information.
     </>
-    <OutlinedButton
+    <FilledButton
       data-test="ok"
       onClick={() => {
         window.location.replace(getRoutePath(HOME_PAGE_PATH));
       }}
      >
       Sign In
-    </OutlinedButton>
+    </FilledButton>
   </ModalDialog>
 );
 
@@ -48,14 +48,14 @@ const StaleUIVersion = () => (
       It looks like your browser has cached an older version of our app.
       Click &apos;Reload&apos; to refresh the page.
     </Typography>
-    <OutlinedButton
+    <FilledButton
       data-test="ok"
       onClick={() => {
         window.location.reload();
       }}
       >
       Reload
-    </OutlinedButton>
+    </FilledButton>
   </ModalDialog>
 );
 const UserAcceptedAccountTransfer = () => (
@@ -64,14 +64,14 @@ const UserAcceptedAccountTransfer = () => (
     <Typography>
       You are now the owner of this account. Go to <em>My account &gt; Users</em> to invite and manage permissions for other users in this account.
     </Typography>
-    <OutlinedButton
+    <FilledButton
       data-test="ok"
       onClick={() => {
         window.location.reload();
       }}
      >
       Reload
-    </OutlinedButton>
+    </FilledButton>
   </ModalDialog>
 );
 

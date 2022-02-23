@@ -2182,8 +2182,6 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     '/assistantMetadata': assistantMetadata,
     '/ignoreExisting': !!ignoreExisting,
     '/ignoreMissing': !!ignoreMissing,
-    // AdaptorType will be added by backend. UI shouldnt set/update adaptorType
-    '/adaptorType': undefined,
   };
 }
 
