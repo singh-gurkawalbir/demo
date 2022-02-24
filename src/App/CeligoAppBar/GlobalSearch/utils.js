@@ -13,7 +13,7 @@ export function getResourcesToLoad(resourceItems) {
   return resourcesToLoad;
 }
 
-const getResourcesMeta = () => Object.values(filterMap)?.filter(item => item?.isResource)?.map(item => item?.type);
+const getResourcesMeta = () => Object.values(filterMap)?.filter(item => item.isResource)?.map(item => item.type);
 export function getFilterBlacklist(resourceItems, resourcesMeta = getResourcesMeta()) {
   const filterBlackList = resourcesMeta?.reduce((acc, item) => {
     const mandatoryFilters = ['integrations', 'flows', 'marketplaceTemplates', 'marketplaceConnectors'];
@@ -29,8 +29,8 @@ export function getFilterBlacklist(resourceItems, resourcesMeta = getResourcesMe
 }
 export function getResourceItems(sidebarListItems) {
   const resourceItems = sidebarListItems?.reduce((acc, item) => {
-    if (item?.label === 'Resources') {
-      const resourceItems = item?.children?.map(item => item?.path?.replaceAll('/', ''));
+    if (item.label === 'Resources') {
+      const resourceItems = item.children.map(item => item.path.replaceAll('/', ''));
 
       acc.push(...resourceItems);
     }

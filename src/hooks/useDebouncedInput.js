@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { debounce } from 'lodash';
+import useSyncedRef from './useSyncedRef';
 
 const DEBOUNCE_DURATION = 300;
 export default function useDebouncedValue(
@@ -8,7 +8,7 @@ export default function useDebouncedValue(
   duration = DEBOUNCE_DURATION
 ) {
   const [input, setInput] = useState(initialValue);
-  const memoizedArgsRef = useRef({
+  const memoizedArgsRef = useSyncedRef({
     callback,
     duration,
   });
@@ -21,13 +21,10 @@ export default function useDebouncedValue(
       return;
     }
     const { callback, duration } = memoizedArgsRef.current;
+    const timer = setTimeout(() => callback(input), duration);
 
-    if (typeof callback === 'function') {
-      const debouncedCallback = debounce(() => callback(input), duration);
-
-      debouncedCallback();
-    }
-  }, [input]);
+    return () => clearTimeout(timer);
+  }, [input, memoizedArgsRef]);
 
   return [input, setInput];
 }

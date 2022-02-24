@@ -14,9 +14,9 @@ const isResultsOpenSelector = state => {
   let {keyword} = state;
 
   if (keyword?.includes(':')) {
-    const keywordTokens = keyword?.split(':');
+    const keywordTokens = keyword.split(':');
 
-    keyword = keywordTokens[keywordTokens?.length - 1]?.trim?.();
+    keyword = keywordTokens[keywordTokens.length - 1].trim();
   }
 
   return keyword?.length > 1;

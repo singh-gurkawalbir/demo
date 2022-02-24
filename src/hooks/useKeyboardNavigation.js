@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import useScrollIntoView from './useScrollIntoView';
 
 const KEYCODE = {
   UP: 38,
@@ -51,11 +52,7 @@ function useKeyboardNavigation({listLength = 0, containerRef = null, listItemRef
   }, [containerRef, keyDownHandler]);
 
   // for auto scrolling the container when focussed element is out of screen
-  useEffect(() => {
-    if (listItemRef?.current && currentFocussed) {
-        listItemRef?.current?.scrollIntoView({behavior: 'smooth', block: 'end', inline: 'nearest'});
-    }
-  }, [currentFocussed, listItemRef]);
+  useScrollIntoView(listItemRef, currentFocussed);
 
   return {currentFocussed, resetKeyboardFocus};
 }

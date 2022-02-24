@@ -116,7 +116,4 @@ function SearchInput() {
     </Paper>
   );
 }
-
-const MemoizedSearchInput = React.memo(SearchInput);
-
-export default MemoizedSearchInput;
+export default SearchInput;

@@ -12,18 +12,8 @@ import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
 // the resource types. Only common resource types can use the
 // generic row item.
 const rowTypeMap = {
-  integrations: GenericRow,
-  flows: GenericRow,
   connections: ConnectedRow,
-  imports: GenericRow,
-  exports: GenericRow,
-  scripts: GenericRow,
   agents: ConnectedRow,
-  stacks: GenericRow,
-  apis: GenericRow,
-  accesstokens: GenericRow,
-  templates: GenericRow,
-  connectors: GenericRow,
   recycleBin: RecycleBinRow,
   marketplaceTemplates: MarketplaceRow,
   marketplaceConnectors: MarketplaceRow,
@@ -66,13 +56,15 @@ function ResultsList({ results, currentFocussed }) {
           <Typography color="textSecondary" variant="overline">{filterMap[type]?.label}</Typography>
           {typeResults.map((result, index) => {
             currentRowIndex += 1;
-            const Row = rowTypeMap[type];
+            const Row = rowTypeMap[type] || GenericRow;
             const includeDivider = typeResults.length > 1 && index > 0;
 
             return (
               <Row
                 focussed={currentRowIndex === currentFocussed}
-                key={result.id} result={result} type={type}
+                key={result?._id}
+                result={result}
+                type={type}
                 includeDivider={includeDivider} />
             );
           })}

@@ -1,18 +1,14 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, makeStyles, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import UpArrowIcon from '../../../icons/ArrowUpIcon';
 import FilledButton from '../../../Buttons/FilledButton';
-import useScrollIntoView from '../../../../hooks/useScrollIntoView';
 import useRequestForDemo from '../../../../hooks/useRequestForDemo';
 import { useGlobalSearchState } from '../../GlobalSearchContext/createGlobalSearchState';
 
 const useStyles = makeStyles(theme => ({
   rootExpanded: {
     margin: `${theme.spacing(0, 0, 2)} !important`,
-  },
-  root: {
-    backgroundColor: ({focussed}) => focussed ? theme.palette.background.paper2 : 'initial',
   },
   summary: {
     display: 'flex',
@@ -36,14 +32,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function MarketPlaceRow({type, result, includeDivider, focussed}) {
-  const classes = useStyles({focussed});
+function MarketPlaceRow({type, result, includeDivider}) {
+  const classes = useStyles();
   const setOpen = useGlobalSearchState(state => state.changeOpen);
   const history = useHistory();
-  const rowRef = useRef();
   const {RequestDemoDialog, requestDemo} = useRequestForDemo();
-
-  useScrollIntoView(rowRef, focussed);
 
   const handleClick = useCallback(e => {
     e?.stopPropagation();
@@ -65,7 +58,7 @@ function MarketPlaceRow({type, result, includeDivider, focussed}) {
       {includeDivider && <Divider orientation="horizontal" />}
 
       <Accordion
-        ref={rowRef} elevation={0}
+        elevation={0}
         classes={{expanded: classes.rootExpanded, root: classes.root}}>
         <AccordionSummary
           classes={{root: classes.summary}}

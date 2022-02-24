@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function GlobalSearch() {
+function GlobalSearchConsumer() {
   const open = useGlobalSearchState(state => state.open);
   const setOpen = useGlobalSearchState(state => state.changeOpen);
   const location = useLocation();
@@ -67,18 +67,18 @@ function GlobalSearch() {
   );
 }
 
-export default function GlobalSearchProto({getResults, filterBlacklist}) {
+export default function GlobalSearch({getResults, filterBlacklist}) {
   return (
     <GlobalSearchProvider
       getResults={getResults}
       filterBlacklist={filterBlacklist}
      >
-      <GlobalSearch />
+      <GlobalSearchConsumer />
     </GlobalSearchProvider>
   );
 }
 
-GlobalSearchProto.propTypes = {
+GlobalSearch.propTypes = {
   getResults: PropTypes.func.isRequired,
   filterBlacklist: PropTypes.array,
 };

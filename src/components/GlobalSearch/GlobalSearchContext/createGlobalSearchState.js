@@ -28,23 +28,23 @@ const stateUpdaters = ({get, set}) => ({
   changeResourceFiltersOpen: status => set(state => ({...state, resourceFiltersOpen: status})),
   clearSearch: () => set(state => ({...state, keyword: ''})),
   changeFilters: type => {
-    let newFilters = [];
     const {filters, keyword} = get();
+    let newFilters = [];
+    let newKeyword = keyword;
 
     if (type === 'all') {
       newFilters = [];
     } else if (filters?.includes(type)) {
       newFilters = filters.filter(i => i !== type);
-    } else {
+    } else if (filters) {
       // last case is type not present, so add it.
       newFilters = [...filters, type];
     }
-    let newKeyword = keyword;
 
     if (keyword?.includes(':')) {
-      const keywordTokens = keyword?.split(':');
+      const keywordTokens = keyword.split(':');
 
-      newKeyword = keywordTokens[keywordTokens?.length - 1];
+      newKeyword = keywordTokens[keywordTokens.length - 1];
     }
     set(state => ({...state, filters: newFilters, keyword: newKeyword}));
   },

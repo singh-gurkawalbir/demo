@@ -8,7 +8,6 @@ import moment from 'moment';
 import produce from 'immer';
 import { map, isEmpty, uniq, get} from 'lodash';
 import sift from 'sift';
-import LRU from 'lru-cache';
 import app, { selectors as fromApp } from './app';
 import data, { selectors as fromData } from './data';
 import { selectors as fromResources } from './data/resources';
@@ -6620,37 +6619,35 @@ selectors.showAmazonRestrictedReportType = (state, formKey) => {
           relativeURI?.startsWith('/reports/2021-06-30/documents/');
 };
 
-const ONE_HOUR = 1000 * 60 * 60;
+const resourceListSelector = selectors.makeResourceListSelector();
 
-selectors.globalSearchResults = ((resultsCache = new LRU({max: 20, maxAge: ONE_HOUR })) => (state, keyword, filters) => {
-  if (keyword?.length < 2) return {};
-  const defaultAShareId = state?.user?.preferences?.defaultAShareId;
-  // the results are filtered using case insensitive keyword, hence caching also is done using case insenitive keyword
-  const cacheKey = [defaultAShareId, keyword?.toLowerCase(), filters].join(',');
+selectors.globalSearchResults = createSelector(
+  [
+    state => state,
+    (state, keyword, filters, filterBlackList) => {
+      if (keyword?.length < 2) return {};
+      const resourceIds = Object.keys(filterMap);
 
-  if (resultsCache.has(cacheKey)) {
-    return resultsCache.get(cacheKey);
-  }
-  const resourceIds = Object.keys(filterMap);
+      const results = resourceIds.reduce((acc, id) => {
+        const resourceId = filterMap[id]?.resourceURL;
 
-  const results = resourceIds.reduce((acc, id) => {
-    const resourceId = filterMap[id]?.resourceURL;
+        if ((filters?.length > 0 && !(filters.includes(resourceId))) || filterBlackList.includes(resourceId)) return acc;
+        const resourceResults = resourceListSelector(state, {type: resourceId, take: 3, keyword, searchBy: ['name']});
+        let resourcesList = resourceResults?.resources;
 
-    if (filters?.length > 0 && !(filters.includes(resourceId))) return acc;
-    const resourceResults = selectors.makeResourceListSelector()(state, {type: resourceId, take: 3, keyword, searchBy: ['name']});
-    let resourcesList = resourceResults?.resources;
+        if (id === 'connections') {
+          resourcesList = resourcesList.map(connection => ({...connection, isOnline: selectors.isConnectionOffline(state, connection?._id)}));
+        }
+        if (resourcesList?.length > 0) {
+          acc[id] = resourcesList;
+        }
 
-    if (id === 'connections') {
-      resourcesList = resourcesList.map(connection => ({...connection, isOnline: selectors.isConnectionOffline(state, connection?._id)}));
-    }
-    if (resourcesList?.length > 0) {
-      acc[id] = resourcesList;
-    }
+        return acc;
+      }, {});
 
-    return acc;
-  }, {});
+      return results;
+    },
+  ],
+  (_, resourceResults) => resourceResults
+);
 
-  resultsCache.set(cacheKey, results);
-
-  return results;
-})();

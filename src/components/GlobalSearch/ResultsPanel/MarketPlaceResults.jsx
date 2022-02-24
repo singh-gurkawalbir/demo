@@ -12,7 +12,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function Marketplaceresults() {
+function MarketplaceResults() {
   const classes = useStyles();
   const { marketplaceResults} = useResults();
 
@@ -22,4 +22,4 @@ function Marketplaceresults() {
     </div>
   );
 }
-export default React.memo(Marketplaceresults);
+export default React.memo(MarketplaceResults);

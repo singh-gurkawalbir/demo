@@ -46,9 +46,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const emptyArr = [];
+
 function ResourceFilter() {
   const classes = useStyles();
-  const { filterBlacklist = [] } = useGlobalSearchContext();
+  const { filterBlacklist = emptyArr } = useGlobalSearchContext();
   const open = useGlobalSearchState(state => state.resourceFiltersOpen);
   const setOpen = useGlobalSearchState(state => state.changeResourceFiltersOpen);
   const containerRef = useRef();

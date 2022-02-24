@@ -9,9 +9,10 @@ export default function LoadResources({ children, resources, required }) {
   const { isAllDataReady, resourceStatus } = useAreResourcesLoaded(resources);
 
   useEffect(() => {
-    if (!isAllDataReady && defaultAShareId) {
+    if (!isAllDataReady) {
       resourceStatus.forEach(resource => {
         if (!resource.hasData) {
+          if (resource.resourceType === 'recycleBinTTL' && !defaultAShareId) return;
           dispatch(actions.resource.requestCollection(resource.resourceType));
         }
       });

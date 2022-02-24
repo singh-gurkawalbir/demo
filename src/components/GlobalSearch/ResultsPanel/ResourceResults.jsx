@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Resourceresults() {
+function ResourceResults() {
   const classes = useStyles();
   const {resourceResults } = useResults();
   const {currentFocussed} = useKeyboardNavigation({listLength: getResultsLength(resourceResults)});
@@ -39,4 +39,4 @@ function Resourceresults() {
   );
 }
 
-export default React.memo(Resourceresults);
+export default React.memo(ResourceResults);

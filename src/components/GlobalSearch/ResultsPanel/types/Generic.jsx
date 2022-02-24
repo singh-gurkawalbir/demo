@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-import React, { useCallback, useMemo, useRef, useEffect } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { Divider, makeStyles, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import InfoIconButton from '../../../InfoIconButton';
 import useScrollIntoView from '../../../../hooks/useScrollIntoView';
-import { getResourceURL } from '../../utils';
 import useSyncedRef from '../../../../hooks/useSyncedRef';
+import { selectors } from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -48,11 +49,14 @@ function GenericRow({result, children, includeDivider, focussed, type}) {
   useScrollIntoView(rowRef, focussed);
 
   const memoizedValuesRef = useSyncedRef({ history, result, type});
-  const url = useMemo(() => getResourceURL(type, result), [result, type]);
+  const url = useSelector(state => selectors.getResourceEditUrl(state, type, result?._id));
 
   const handleRowClick = useCallback(() => {
-    const {history} = memoizedValuesRef?.current;
+    const {history, type} = memoizedValuesRef?.current;
 
+    if (type === 'recycleBin') {
+      return history.push('/recycleBin');
+    }
     history.push(url);
   }, [memoizedValuesRef, url]);
 
@@ -83,8 +87,8 @@ function GenericRow({result, children, includeDivider, focussed, type}) {
 
   if (!result) return null;
 
-  const resultText = result.name || result.id;
-  const preventEventBubblingHandler = e => e?.stopPropagation();
+  const resultText = result.name || result._id || result.doc?.name || result?.doc?._id;
+  const preventEventBubblingHandler = e => e.stopPropagation();
 
   return (
     <>
@@ -115,6 +119,4 @@ function GenericRow({result, children, includeDivider, focussed, type}) {
   );
 }
 
-const MemoizedRow = React.memo(GenericRow);
-
-export default MemoizedRow;
+export default React.memo(GenericRow);
