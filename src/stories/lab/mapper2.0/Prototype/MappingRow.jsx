@@ -4,6 +4,7 @@ import { Tooltip, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
 import CeligoSelect from '../../../../components/CeligoSelect';
 import DynaTypeableSelect from '../../../../components/DynaForm/fields/DynaTypeableSelect';
 import ActionButton from '../../../../components/ActionButton';
@@ -14,6 +15,7 @@ import HardCodedIcon from '../../../../components/icons/HardCodedIcon';
 import MappingSettingsButton from '../../../../components/Mapping/Settings/SettingsButton';
 import {findNode, DATA_TYPES} from './util';
 import {useTreeContext} from './TreeContext';
+import MappingExtractsTypeableSelect from './MappingExtractsTypeableSelect';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -33,9 +35,11 @@ const useStyles = makeStyles(theme => ({
     '& .MuiSvgIcon-root': {
       display: 'none',
     },
+    '& .MuiSelect-selectMenu': {
+      paddingRight: 12,
+    },
   },
   innerRow12: {
-    marginLeft: theme.spacing(2),
     display: 'flex',
     width: '100%',
     marginBottom: theme.spacing(1),
@@ -101,17 +105,15 @@ const RightIcon = ({title, Icon, className}) => {
   );
 };
 
-const extractFields = [];
 const generateFields = [];
 
-export default function MappingRow({
+const MappingRow = React.memo(({
   disabled,
-  index,
   importId,
   flowId,
   rowData,
   subRecordMappingId,
-}) {
+}) => {
   const classes = useStyles();
   const { treeData, setTreeData } = useTreeContext();
 
@@ -151,8 +153,12 @@ export default function MappingRow({
   }, [nodeSubArray, nodeIndexInSubArray, newTreeData, setTreeData]);
 
   const addNewRowHandler = useCallback(() => {
+    const currRow = nodeSubArray[nodeIndexInSubArray];
+
     nodeSubArray.splice(nodeIndexInSubArray + 1, 0, {
       key: nanoid(),
+      parentKey: currRow.parentKey,
+      parentExtract: currRow.parentExtract,
       dataType: 'string',
     });
 
@@ -185,7 +191,9 @@ export default function MappingRow({
   const isHardCodedValue = !!hardCodedValue;
 
   return (
-    <div className={classes.innerRow12}>
+    <div
+      key={mappingKey}
+      className={classes.innerRow12}>
       <div
         className={clsx(classes.childHeader, classes.mapField, {
           [classes.disableChildRow]:
@@ -193,8 +201,8 @@ export default function MappingRow({
         })}>
         <DynaTypeableSelect
           isLoggable
-          key={generate}
-          id={`fieldMappingGenerate-${index}`}
+          key={`fieldMappingGenerate-${mappingKey}`}
+          id={`fieldMappingGenerate-${mappingKey}`}
           value={generate}
           labelName="name"
           valueName="id"
@@ -225,18 +233,16 @@ export default function MappingRow({
               disabled,
             })}>
 
-            <DynaTypeableSelect
+            <MappingExtractsTypeableSelect
               isLoggable
-              key={extractValue}
-              id={`fieldMappingExtract-${index}`}
+              key={`fieldMappingExtract-${mappingKey}`}
+              id={`fieldMappingExtract-${mappingKey}`}
               labelName="name"
               valueName="id"
               value={extractValue}
-              options={extractFields}
               disabled={isSubRecordMapping || isNotEditable || disabled}
-              onBlur={() => {}}
-              onTouch={() => {}}
-          />
+              dataType={dataType}
+            />
           </div>
         </>
       )}
@@ -249,7 +255,7 @@ export default function MappingRow({
             [classes.disableChildRow]: false,
           })}>
           <MappingSettingsButton
-            dataTest={`fieldMappingSettings-${index}`}
+            dataTest={`fieldMappingSettings-${mappingKey}`}
             mappingKey={mappingKey}
              // disabled={disabled}
             subRecordMappingId={subRecordMappingId}
@@ -265,7 +271,7 @@ export default function MappingRow({
           key="delete_button"
           className={classes.deleteMappingRow}>
           <ActionButton
-            data-test={`fieldMappingRemove-${index}`}
+            data-test={`fieldMappingRemove-${mappingKey}`}
             aria-label="delete"
              // disabled={disableDelete}
             onClick={handleDeleteClick}
@@ -276,4 +282,12 @@ export default function MappingRow({
       </div>
     </div>
   );
-}
+},
+
+(prevProps, nextProps) => {
+  if (isEqual(prevProps, nextProps)) return true;
+
+  return false;
+});
+
+export default MappingRow;
