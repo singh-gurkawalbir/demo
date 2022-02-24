@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   sessionExpiredInfo: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     paddingBottom: theme.spacing(2),
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(3),
   },
   sessionExpiredModal: {
     maxWidth: 470,
@@ -83,16 +83,21 @@ const UserAcceptedAccountTransfer = () => (
 );
 
 const ExpiredSessionContent = () => {
+  const dispatch = useDispatch();
   const showSSOSignIn = useSelector(state => selectors.isUserAllowedOnlySSOSignIn(state));
   const classes = useStyles();
 
+  const handleUserLogout = () => {
+    dispatch(actions.auth.logout());
+  };
+
   return (
-    <ModalDialog show disableEnforceFocus onClose={() => console.log('test')} className={classes.sessionExpiredModal}>
+    <ModalDialog show disableEnforceFocus onClose={handleUserLogout} className={classes.sessionExpiredModal}>
       <div>
         Your session has expired
       </div>
       <div className={classes.contentWrapper}>
-        <Typography component="div" className={classes.sessionExpiredInfo}>For your security, we automatically sign you out after more than an hour of inactivity. Sign in again to resume your session.</Typography>
+        <Typography component="div" variant="body2" className={classes.sessionExpiredInfo}>For your security, we automatically sign you out after more than an hour of inactivity. Sign in again to resume your session.</Typography>
         {showSSOSignIn ? <SignInSSOForm /> : <SignInForm dialogOpen />}
       </div>
     </ModalDialog>
@@ -180,7 +185,7 @@ export default function AlertDialog() {
 
   return (
     <LoadResources required resources={isAccountOwner ? 'ssoclients' : emptyList}>
-      {!showSessionStatus && (
+      {showSessionStatus && (
         <Dialog disableEnforceFocus open className={classes.contentWrapper}>
           {showSessionStatus !== 'expired' && <ExpiredSessionContent />}
         </Dialog>
