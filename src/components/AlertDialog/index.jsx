@@ -187,7 +187,7 @@ export default function AlertDialog() {
     <LoadResources required resources={isAccountOwner ? 'ssoclients' : emptyList}>
       {showSessionStatus && (
         <Dialog disableEnforceFocus open className={classes.contentWrapper}>
-          {showSessionStatus !== 'expired' && <ExpiredSessionContent />}
+          {showSessionStatus === 'expired' && <ExpiredSessionContent />}
         </Dialog>
       )}
       {!showSessionStatus && isUiVersionDifferent && <StaleUIVersion />}
