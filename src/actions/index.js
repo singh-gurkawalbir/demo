@@ -2212,6 +2212,34 @@ const sso = {
   clearValidations: () => action(actionTypes.SSO.ORG_ID.VALIDATION_CLEAR),
 };
 
+const integrationLCM = {
+  cloneFamily: {
+    request: integrationId => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, { integrationId }),
+    received: (integrationId, clonesList) => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.RECEIVED, { integrationId, clonesList }),
+    receivedError: (integrationId, error) => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.RECEIVED_ERROR, { integrationId, error }),
+  },
+  compare: {
+    pullRequest: (integrationId, cloneIntegrationId) => action(actionTypes.INTEGRATION_LCM.COMPARE.PULL_REQUEST, { integrationId, cloneIntegrationId }),
+    revertRequest: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.COMPARE.REVERT_REQUEST, { integrationId, revisionId }),
+    revisionChanges: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.COMPARE.REVISION_REQUEST, { integrationId, revisionId }),
+    receivedDiff: (integrationId, diff) => action(actionTypes.INTEGRATION_LCM.COMPARE.RECEIVED_DIFF, { integrationId, diff }),
+    clear: integrationId => action(actionTypes.INTEGRATION_LCM.COMPARE.CLEAR, { integrationId }),
+  },
+  revision: {
+    openPull: ({ integrationId, newRevId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.OPEN_PULL, { integrationId, newRevId, revisionInfo }),
+    openRevert: ({ integrationId, newRevId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.OPEN_REVERT, { integrationId, newRevId, revisionInfo }),
+    create: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.OPEN_REVERT, { integrationId, revisionId }),
+    clear: integrationId => action(actionTypes.INTEGRATION_LCM.REVISION.CLEAR, { integrationId }),
+    cancel: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CANCEL_MERGE, { integrationId, revisionId }),
+  },
+  installSteps: {
+    installStep: () => {},
+    updateStep: () => {},
+    completedStepInstall: () => {},
+    getCurrentStep: () => {},
+  },
+};
+
 export default {
   asyncTask,
   form,
@@ -2259,4 +2287,5 @@ export default {
   logs,
   sso,
   bottomDrawer,
+  integrationLCM,
 };

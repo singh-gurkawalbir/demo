@@ -738,11 +738,43 @@ export function* getResourceCollection({ resourceType, refresh }) {
   }
 
   try {
-    let collection = yield call(apiCallWithPaging, {
-      path,
-      hidden: hideNetWorkSnackbar,
-      refresh,
-    });
+    let collection;
+
+    if (resourceType.includes('revisions')) {
+      console.log('api call done', resourceType);
+      collection = [
+        {
+          _id: '6215f13ed611afb647b2cf4b',
+          _byUserId: '5301043caa20740200000001',
+          lastModified: '2022-02-23T08:33:02.247Z',
+          createdAt: '2022-02-23T08:33:02.247Z',
+          status: 'completed',
+          type: 'snapshot',
+          _integrationId: '6215f13ed611afb647b2cf45',
+          fromIntegrationIsSandbox: false,
+          beforeRevisionHash: '123456789',
+          installSteps: [],
+        },
+        {
+          _id: '6215f13ed611afb647b2cf49',
+          _byUserId: '5301043caa20740200000001',
+          lastModified: '2022-02-23T08:33:02.221Z',
+          createdAt: '2022-02-23T08:33:02.221Z',
+          status: 'completed',
+          type: 'snapshot',
+          _integrationId: '6215f13ed611afb647b2cf45',
+          fromIntegrationIsSandbox: false,
+          beforeRevisionHash: '123456789',
+          installSteps: [],
+        },
+      ];
+    } else {
+      collection = yield call(apiCallWithPaging, {
+        path,
+        hidden: hideNetWorkSnackbar,
+        refresh,
+      });
+    }
 
     if (resourceType === 'stacks') {
       let sharedStacks = yield call(apiCallWithPaging, {

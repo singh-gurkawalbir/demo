@@ -30,6 +30,9 @@ function replaceOrInsertResource(draft, resourceType, resourceValue) {
     resource._connectorId = id;
     type = 'connectorLicenses';
   }
+  if (type.includes('/revisions')) {
+    type = 'revisions';
+  }
 
   // For accesstokens and connections within an integration
   if (type.includes('integrations/')) {
@@ -94,6 +97,11 @@ const addResourceCollection = (draft, resourceType, collection) => {
     }));
 
     updateStateWhenValueDiff(draft, 'connectorLicenses', newCollection || []);
+
+    return;
+  }
+  if (resourceType.includes('/revisions')) {
+    updateStateWhenValueDiff(draft, 'revisions', collection);
 
     return;
   }

@@ -61,6 +61,17 @@ export const ACCOUNT_SSO_STATUS = Object.freeze({
   LINKED_TO_THIS_ACCOUNT: 'this_account',
   LINKED_TO_OTHER_ACCOUNT: 'other_account',
 });
+export const REVISION_TYPES = Object.freeze({
+  PULL: 'pull',
+  REVERT: 'revert',
+  SNAPSHOT: 'snapshot',
+});
+export const REVISION_STATUS = Object.freeze({
+  IN_PROGRESS: 'inprogress',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+  CANCELED: 'canceled',
+});
 
 export const UI_FIELD_VALUES = Object.freeze(['/formView', '/uploadFile']);
 export const SALESFORCE_DA_PACKAGE_URL =

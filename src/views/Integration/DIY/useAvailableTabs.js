@@ -12,6 +12,7 @@ import AuditLogPanel from './panels/AuditLog';
 import NotificationsPanel from './panels/Notifications';
 import SettingsPanel from './panels/Settings';
 import AdminPanel from './panels/Admin';
+import RevisionsPanel from './panels/Revisions';
 import UsersPanel from '../../../components/ManageUsersPanel';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
@@ -72,6 +73,12 @@ const getTabs = isUserInErrMgtTwoDotZero => [
     label: 'Admin',
     Icon: SingleUserIcon,
     Panel: AdminPanel,
+  },
+  {
+    path: 'revisions',
+    label: 'Revisions',
+    Icon: SingleUserIcon,
+    Panel: RevisionsPanel,
   },
 ];
 const emptyObj = {};
