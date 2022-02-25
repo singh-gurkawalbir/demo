@@ -21,12 +21,12 @@ describe('uploadFile saga', () => {
   test('should succeed on successful api call', () => expectSaga(uploadFile, { resourceType, resourceId, fileType, file })
     .provide([[matchers.call.fn(apiCallWithRetry), response]])
     .call.fn(apiCallWithRetry)
-    .returns('runKey')
+    .returns(true)
     .run());
   test('should update the headers correctly if fileName exists and succeed on successful api call', () => expectSaga(uploadFile, { resourceType, resourceId, fileType, file, fileName })
     .provide([[matchers.call.fn(apiCallWithRetry), response]])
     .call.fn(apiCallWithRetry)
-    .returns('runKey')
+    .returns(true)
     .run());
   test('should handle api error properly', () => {
     const error = new Error('error');

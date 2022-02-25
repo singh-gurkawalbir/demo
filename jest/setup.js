@@ -9,7 +9,7 @@ require('dotenv').config();
 
 Object.defineProperty(window, 'open', { value() {}, writable: true });
 
-beforeAll(() => server.listen());
+beforeAll(() => server.listen({onUnhandledRequest: 'error'}));
 afterEach(() => {
   server.resetHandlers();
   jest.setTimeout(5000);
