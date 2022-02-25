@@ -245,7 +245,7 @@ export const featuresMap = options => ({
     hidePreview: true,
   },
   mappings: {
-    layout: options?.mappingPreviewType ? 'compact' : 'compactRow',
+    layout: 'compactRow',
     autoEvaluate: false,
   },
   responseMappings: {

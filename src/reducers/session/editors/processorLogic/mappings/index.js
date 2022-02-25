@@ -1,5 +1,6 @@
 export default {
   processor: 'mapperProcessor',
+  skipPreview: ({layout}) => layout === 'assistantRight',
   init: ({options, resource, mappingPreviewType}) => {
     const importName = resource?.name;
     const editorTitle = importName ? `Edit Mapping: ${importName}` : 'Edit Mapping';

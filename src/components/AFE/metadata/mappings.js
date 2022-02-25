@@ -17,7 +17,7 @@ export default {
       },
     ];
 
-    if (!!mappingPreviewType && layout !== 'compact') {
+    if (!!mappingPreviewType && ['assistantRight', 'assistantTopRight'].includes(layout)) {
       panels.push(
         {
           title: `${mappingPreviewType === 'netsuite' ? 'NetSuite' : 'Salesforce'} mapping assistant`,

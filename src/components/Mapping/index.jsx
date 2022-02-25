@@ -14,7 +14,7 @@ export default function Mapping(props) {
   const mappingStatus = useSelector(state => selectors.mapping(state).status);
   const isEditorActive = useSelector(state => selectors.editor(state, editorId).editorType);
   const mappingPreviewType = useSelector(state => selectors.mappingPreviewType(state, importId));
-  const shouldUseAfe = ['netsuite', 'salesforce'].includes(mappingPreviewType) || !mappingPreviewType;
+  const shouldUseAfe = mappingPreviewType !== 'http' && !subRecordMappingId;
 
   useEffect(() => {
     /** initiate a mapping init each time user opens mapping. Sample data is loaded */

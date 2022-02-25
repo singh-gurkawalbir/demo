@@ -53,7 +53,7 @@ export default function ToggleLayout({ editorId }) {
           {!isMappingsEditor && <MenuItem className={classes.item} value="column"><ViewColumnIcon /></MenuItem> }
           <MenuItem className={classes.item} value="compact"><ViewCompactIcon /></MenuItem>
           {!isMappingsEditor && <MenuItem className={classes.item} value="row"> <ViewRowIcon /></MenuItem> }
-          {isMappingsEditor && !mappingPreviewType && <MenuItem className={classes.item} value="compactRow"> <ViewCompactRowIcon /></MenuItem> }
+          {isMappingsEditor && <MenuItem className={classes.item} value="compactRow"> <ViewCompactRowIcon /></MenuItem> }
           {!!mappingPreviewType && <MenuItem className={classes.item} value="assistantRight"> <ViewAssistantRightIcon /></MenuItem> }
           {!!mappingPreviewType && <MenuItem className={classes.item} value="assistantTopRight"> <ViewAssistantTopRightIcon /></MenuItem> }
         </Select>
