@@ -28,15 +28,16 @@ export const API = (() => {
     post: rest.post,
     delete: rest.delete,
   };
-  const handler = type => (path, resolver) => {
+  const handler = type => (path, resolver, once = false) => {
     const url = buildPath(path);
-    const defaultResolver = (req, res, ctx) => res(ctx.json(resolver));
+    const defaultResolver = (req, res, ctx) => once ? res.once(ctx.status(200), ctx.json(resolver)) : res(ctx.json(resolver));
     const currentResolver = resolver && typeof resolver === 'function' ? resolver : defaultResolver;
 
     return HANDLERS_DICTIONARY[type](url, currentResolver);
   };
 
   return {
+    getOnce: handler('get', true),
     get: handler('get'),
     put: handler('put'),
     post: handler('post'),
