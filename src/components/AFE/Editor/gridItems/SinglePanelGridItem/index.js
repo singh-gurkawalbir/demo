@@ -15,11 +15,11 @@ const useStyles = makeStyles({
   panel: { flex: '1 1 100px', minHeight: 50, position: 'relative' },
 });
 
-export default function SinglePanelGridItem({area, title, children, helpKey, isLoggable}) {
+export default function SinglePanelGridItem({area, title, children, helpKey, ref, isLoggable}) {
   const classes = useStyles();
 
   return (
-    <PanelGridItem gridArea={area}>
+    <PanelGridItem gridArea={area} ref={ref}>
       <div className={classes.flexContainer}>
         <div className={classes.title}>
           <PanelTitle title={title} helpKey={helpKey} />
