@@ -745,6 +745,7 @@ export function* getResourceCollection({ resourceType, refresh }) {
       collection = [
         {
           _id: '6215f13ed611afb647b2cf4b',
+          description: 'Changes in the export relative URI',
           _byUserId: '5301043caa20740200000001',
           lastModified: '2022-02-23T08:33:02.247Z',
           createdAt: '2022-02-23T08:33:02.247Z',
@@ -757,6 +758,7 @@ export function* getResourceCollection({ resourceType, refresh }) {
         },
         {
           _id: '6215f13ed611afb647b2cf49',
+          description: 'Changes in the export name',
           _byUserId: '5301043caa20740200000001',
           lastModified: '2022-02-23T08:33:02.221Z',
           createdAt: '2022-02-23T08:33:02.221Z',
