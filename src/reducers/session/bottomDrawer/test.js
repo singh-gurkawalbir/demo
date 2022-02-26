@@ -25,6 +25,19 @@ describe('bottom drawer reducers', () => {
 
     expect({}).toEqual(state);
   });
+  test('should do nothing incase of add/remove if the state is not initialised', () => {
+    const initialState = {};
+    const addState = reducer(initialState, actions.bottomDrawer.addTab({tabType: 'newTab'}));
+
+    expect(addState).toBe(initialState);
+    const removeState = reducer(initialState, actions.bottomDrawer.removeTab({tabType: 'newTab'}));
+
+    expect(removeState).toBe(initialState);
+    const activeState = reducer(initialState, actions.bottomDrawer.setActiveTab({index: 1}));
+
+    expect(activeState).toBe(initialState);
+  });
+
   test('should add new tab correctly', () => {
     const initialState = {bottomDrawer: { tabs: [{tabType: 'dashboard'}] }};
     const state = reducer(initialState, actions.bottomDrawer.addTab({tabType: 'newTab'}));
@@ -37,6 +50,26 @@ describe('bottom drawer reducers', () => {
           resourceId: undefined,
           tabType: 'newTab',
         },
+      ],
+      activeTabIndex: 1,
+      }}
+    ).toEqual(state);
+  });
+  test('should not add new tab and update active tab to the tab matching the resourceId passed', () => {
+    const initialState = {bottomDrawer: { tabs:
+      [
+        {tabType: 'dashboard'},
+        {tabType: 'connectionDebugger', resourceId: 'con-123'},
+        {tabType: 'connectionDebugger', resourceId: 'con-456'},
+      ],
+    }};
+    const state = reducer(initialState, actions.bottomDrawer.addTab({tabType: 'connectionDebugger', resourceId: 'con-123'}));
+
+    expect(
+      {bottomDrawer: { tabs: [
+        {tabType: 'dashboard'},
+        {tabType: 'connectionDebugger', resourceId: 'con-123'},
+        {tabType: 'connectionDebugger', resourceId: 'con-456'},
       ],
       activeTabIndex: 1,
       }}
@@ -57,6 +90,27 @@ describe('bottom drawer reducers', () => {
       {bottomDrawer: { tabs: [
         {tabType: 'dashboard'},
         {tabType: 'scripts'},
+      ],
+      activeTabIndex: 1,
+      }}
+    ).toEqual(state);
+  });
+  test('when a connection log tab is removed , then it redirects to the connection tab ', () => {
+    const initialState = {bottomDrawer: { tabs: [
+      {tabType: 'dashboard'},
+      {tabType: 'connections'},
+      {tabType: 'connectionLogs', resourceId: 'c2'},
+      {tabType: 'connectionLogs', resourceId: 'c3'},
+    ],
+    activeTabIndex: 3,
+    }};
+    const state = reducer(initialState, actions.bottomDrawer.removeTab({tabType: 'connectionLogs', resourceId: 'c3'}));
+
+    expect(
+      {bottomDrawer: { tabs: [
+        {tabType: 'dashboard'},
+        {tabType: 'connections'},
+        {tabType: 'connectionLogs', resourceId: 'c2'},
       ],
       activeTabIndex: 1,
       }}
@@ -104,6 +158,20 @@ describe('bottom drawer reducers', () => {
       }}
     ).toEqual(state);
   });
+
+  test('should do nothing if neither an index nor tabType is provided ', () => {
+    const initialState = {bottomDrawer: { tabs: [
+      {tabType: 'dashboard'},
+      {tabType: 'scripts'},
+      {tabType: 'scriptLogs', resourceId: 'r1'},
+    ],
+    activeTabIndex: 2,
+    }};
+    const state = reducer(initialState, actions.bottomDrawer.setActiveTab({}));
+
+    expect(state).toEqual(initialState);
+  });
+
   test('should clear state correctly', () => {
     const initialState = {bottomDrawer: { tabs: [
       {tabType: 'dashboard'},

@@ -96,7 +96,7 @@ const rootDataReducer = (state = {}, action) => {
         }
 
         return;
-      case actionTypes.ACCESSTOKEN_DELETE_PURGED:
+      case actionTypes.ACCESSTOKEN.DELETE_PURGED:
 
         draft.accesstokens = draft.accesstokens.filter(
           token =>
@@ -205,11 +205,16 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
 selectors.mappingImportSampleDataSupported = (state, importId) => {
   const importResource = selectors.resource(state, 'imports', importId);
 
-  const isAssistant =
-  !!importResource.assistant && importResource.assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(importResource.assistant));
+  const isAssistant = !!importResource &&
+                      !!importResource.assistant &&
+                      importResource.assistant !== 'financialforce' &&
+                      !(FILE_PROVIDER_ASSISTANTS.includes(importResource.assistant));
+
   const isIAResource = isIntegrationApp(importResource);
 
-  return isAssistant || isIAResource || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(importResource?.adaptorType);
+  return isAssistant ||
+          isIAResource ||
+          ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(importResource?.adaptorType);
 };
 
 selectors.redirectUrlToResourceListingPage = (
@@ -468,7 +473,7 @@ selectors.mkIntegrationAppSettings = subState => {
           draft.settings.hasGeneralSettings = true;
         }
         if (draft.settings.supportsMultiStore) {
-          draft.children = draft.settings.sections.map(s => ({
+          draft.children = (draft.settings.sections || []).map(s => ({
             label: s.title,
             hidden: !!s.hidden,
             mode: s.mode || 'settings',

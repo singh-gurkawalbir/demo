@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     right: styleProps => styleProps.additionalAppsCount >= styleProps.columns - 1 ? styleProps.pxSize : styleProps.pxSize / 2,
   },
   applicationsMenuPaperMax: {
-    right: styleProps => styleProps.pxSize * 2,
+    right: styleProps => styleProps.pxSize * 1.5,
   },
   applicationsMenuPaperPlaceholder: {
     position: 'relative',
@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     '& >* span': {
       display: 'flex',
       alignItems: 'center',
-      fontSize: 12,
+      fontSize: styleProps => styleProps.pxSize / 2.5,
       color: theme.palette.secondary.main,
     },
   },

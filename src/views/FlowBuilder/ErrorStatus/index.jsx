@@ -5,9 +5,8 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../reducers';
 import Status from '../../../components/Buttons/Status';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(({
   statusAppBlock: {
-    marginTop: theme.spacing(1),
     display: 'flex',
     justifyContent: 'center',
     '& > button': {

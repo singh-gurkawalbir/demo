@@ -140,6 +140,7 @@ import DynaSelectLookup from './DynaSelectLookup';
 import DynaSortAndGroup from './DynaSortAndGroup';
 import DynaSelectAmazonSellerCentralAPIType from './DynaSelectAmazonSellerCentralAPIType';
 import DynaNetSuiteRecordType from './DynaNetSuiteRecordType';
+import DynaAmazonRestrictedReportType from './DynaAmazonRestrictedReportType';
 import DynaFlowGroupName from './integrations/DynaFlowGroupName';
 import DynaFlowGroupsTiedToIntegrations from './integrations/DynaFlowGroupsTiedToIntegrations';
 import DynaTextUpdateDomain from './text/DynaTextUpdateDomain';
@@ -296,5 +297,6 @@ export default {
   selectlookup: DynaSelectLookup,
   sortandgroup: DynaSortAndGroup,
   selectAmazonSellerCentralAPIType: DynaSelectAmazonSellerCentralAPIType,
+  amazonRestrictedReportType: DynaAmazonRestrictedReportType,
   updatedomain: DynaTextUpdateDomain,
 };

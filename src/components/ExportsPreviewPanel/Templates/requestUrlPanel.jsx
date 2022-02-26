@@ -25,7 +25,7 @@ export default function RequestUrlPanel(props) {
   const isRequestUrlAvailable = useSelector(state =>
     selectors.isRequestUrlAvailableForPreviewPanel(state, resourceId, resourceType)
   );
-  const requestURL = getRequestURL(previewStageDataList?.request);
+  const requestURL = getRequestURL(previewStageDataList);
 
   if (!isRequestUrlAvailable || (!showEmptyPanel && !requestURL)) {
     return null;

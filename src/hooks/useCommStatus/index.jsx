@@ -9,7 +9,7 @@ import getRequestOptions from '../../utils/requestOptions';
 
 export default function useCommStatus({actionsToMonitor, commStatusHandler, autoClearOnComplete, actionsToClear}) {
   const dispatch = useDispatch();
-  const clearCommByKey = useCallback(key => dispatch(actions.clearCommByKey(key)), [dispatch]);
+  const clearCommByKey = useCallback(key => dispatch(actions.api.clearCommByKey(key)), [dispatch]);
 
   const toMonitor = useSelectorMemo(selectors.mkActionsToMonitorCommStatus, actionsToMonitor);
 

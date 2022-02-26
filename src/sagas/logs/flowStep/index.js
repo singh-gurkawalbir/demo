@@ -43,11 +43,11 @@ export function* pollForLatestLogs({ flowId, resourceId, timeGt }) {
 
   yield race({
     pollApiRequests: call(pollApiRequests, {pollSaga: fetchNewLogs, pollSagaArgs: { flowId, resourceId }, disableSlowPolling: true, duration: POLLING_DURATION}),
-    abortPoll: take(actionTypes.POLLING.STOP),
+    abortPoll: take(actionTypes.APP.POLLING.STOP),
   });
   const pollingLastStoppedAt = Date.now();
 
-  yield take(actionTypes.POLLING.RESUME);
+  yield take(actionTypes.APP.POLLING.RESUME);
   yield call(pollForLatestLogs, { flowId, resourceId, timeGt: pollingLastStoppedAt });
 }
 

@@ -160,6 +160,7 @@ export default function MarketplaceList() {
         buttons: [
           {
             label: 'Install',
+            variant: 'filled',
             onClick: tag => {
               dispatch(
                 actions.marketplace.installConnector(
