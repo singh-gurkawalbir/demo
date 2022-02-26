@@ -98,7 +98,7 @@ function RightDrawer(props) {
           }
         ),
       }}
-      onClose={handleClose}>
+     >
       <div className={classes.childrenWrapper}>
         <DrawerProvider height={height} fullPath={fullPath} onClose={handleClose}>
           {children}
