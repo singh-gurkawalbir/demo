@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import React, { useState, useEffect } from 'react';
-import ExpandMoreIcon from '../../../../components/icons/ArrowDownIcon';
+import ExpandMoreIcon from '../../../../../components/icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
   accordionDetails: {

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDiffViewer from 'react-diff-viewer';
-import CollapsableContainer from '../../CollapsableContainer';
-import Conflicts from '../../Conflicts';
+import CollapsableContainer from '../CollapsableContainer';
+import Conflicts from '../Conflicts';
 
 const getResourceTypeTitle = resourceType => `${resourceType[0].toUpperCase()}${resourceType.slice(1)}s`;
 
