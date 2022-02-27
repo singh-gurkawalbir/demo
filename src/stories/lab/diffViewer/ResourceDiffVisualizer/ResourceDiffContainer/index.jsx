@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDiffViewer from 'react-diff-viewer';
+import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
 import CollapsableContainer from '../CollapsableContainer';
 import Conflicts from '../Conflicts';
 
@@ -12,8 +12,8 @@ export default function ResourceDiffContainer({ diff, resourceType, forceExpand 
     }
 
     return {
-      oldValue: res.before && JSON.stringify(res.before, null, 2),
-      newValue: res.after && JSON.stringify(res.after, null, 2),
+      oldValue: JSON.stringify(res.before, null, 2),
+      newValue: JSON.stringify(res.after, null, 2),
     };
   };
 
@@ -26,6 +26,7 @@ export default function ResourceDiffContainer({ diff, resourceType, forceExpand 
           <CollapsableContainer forceExpand={forceExpand} title={`${res.resourceId} : Action - ${res.action || 'Update'}`} key={res.resourceId}>
             <ReactDiffViewer
               codeFoldMessageRenderer={codeFoldMessageRenderer}
+              compareMethod={DiffMethod.WORDS}
               {...getValues(res)}
             />
             <Conflicts conflicts={res.conflicts} />
