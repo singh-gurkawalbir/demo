@@ -17,20 +17,21 @@ export default function ResourceDiffContainer({ diff, resourceType, forceExpand 
     };
   };
 
+  const codeFoldMessageRenderer = p1 => `(Our custom code with styles) Expand ${p1} lines...`;
+
   return (
     <CollapsableContainer title={getResourceTypeTitle(resourceType)} forceExpand={forceExpand}>
       {
-                diff?.map(res => (
-                  <CollapsableContainer forceExpand={forceExpand} title={`${res.resourceId} : Action - ${res.action || 'Update'}`} key={res.resourceId}>
-                    <ReactDiffViewer
-                      splitView={!!(res.before && res.after)}
-                      hideLineNumbers={!(res.before && res.after)}
-                      {...getValues(res)}
-                    />
-                    <Conflicts conflicts={res.conflicts} />
-                  </CollapsableContainer>
-                ))
-              }
+        diff?.map(res => (
+          <CollapsableContainer forceExpand={forceExpand} title={`${res.resourceId} : Action - ${res.action || 'Update'}`} key={res.resourceId}>
+            <ReactDiffViewer
+              codeFoldMessageRenderer={codeFoldMessageRenderer}
+              {...getValues(res)}
+            />
+            <Conflicts conflicts={res.conflicts} />
+          </CollapsableContainer>
+        ))
+      }
     </CollapsableContainer>
   );
 }
