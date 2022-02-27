@@ -5,7 +5,7 @@ import {
   Accordion,
 } from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ExpandMoreIcon from '../../../../components/icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -22,8 +22,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function CollapsableContainer(props) {
   const classes = useStyles();
-  const { title, defaultExpand = false, children } = props;
-  const [shouldExpand, setShouldExpand] = useState(defaultExpand);
+  const { title, forceExpand = false, children } = props;
+  const [shouldExpand, setShouldExpand] = useState(forceExpand);
+
+  useEffect(() => {
+    setShouldExpand(forceExpand);
+  }, [forceExpand]);
 
   if (!children) return null;
 
