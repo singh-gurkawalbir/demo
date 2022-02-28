@@ -4,9 +4,9 @@
         "export": {
             "6204a65316d779d23ea26ba3": {
                 "_connectionId": "61c41ef898b77c531585ebc5",
-                "adaptorType": "NetSuiteExport",
                 "asynchronous": true,
-                "name": "NS one more SO",
+                "adaptorType": "NetSuiteExport",
+                "name": "NS one more SO changed",
                 "netsuite": {
                     "distributed": {
                         "disabled": false,
