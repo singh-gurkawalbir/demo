@@ -14,6 +14,7 @@ import { selectors } from '../reducers';
 import actions from '../actions';
 import Signin from '../views/SignIn';
 import * as gainsight from '../utils/analytics/gainsight';
+import * as pendo from '../utils/analytics/pendo';
 import { getDomain } from '../utils/resource';
 import getRoutePath from '../utils/routePaths';
 import colors from '../theme/colors';
@@ -138,6 +139,7 @@ export default function App() {
      */
     if (domain === 'localhost.io') {
       gainsight.initialize({ tagKey: 'AP-CAGNPCDUT5BV-2' });
+      pendo.initialize({ tagKey: 'AP-CAGNPCDUT5BV-2' });
     }
   }, []);
 

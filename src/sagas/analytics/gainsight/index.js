@@ -2,6 +2,7 @@ import { takeEvery, select, call } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import { selectors } from '../../../reducers';
 import * as gainsight from '../../../utils/analytics/gainsight';
+import * as pendo from '../../../utils/analytics/pendo';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants/resource';
 import { getResourceSubType, resourceCategory } from '../../../utils/resource';
 
@@ -26,6 +27,7 @@ export function* identifyUser() {
   };
 
   gainsight.identify(userInfo, accountInfo);
+  pendo.identify(userInfo, accountInfo);
 }
 
 export function trackEvent({ eventId, details }) {

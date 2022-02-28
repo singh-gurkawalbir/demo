@@ -90,7 +90,7 @@ export default function ChildJobDetail({
 
       <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
       <TableCell className={classes.error}><ErrorCell job={job} parentJob={parentJob} /></TableCell>
-      <TableCell className={classes.pages}>{job.numPagesGenerated}</TableCell>
+      <TableCell className={classes.pages}>{job.type === 'export' ? job.numPagesGenerated || job.numPagesProcessed : job.numPagesProcessed}</TableCell>
       <TableCell />
 
     </TableRow>
