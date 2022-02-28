@@ -872,7 +872,7 @@ export function* initFormValues({
 
   let assistantData;
 
-  if (['exports', 'imports'].includes(resourceType) && connectionAssistant) {
+  if (['exports', 'imports'].includes(resourceType) && connectionAssistant && !isNew) {
     if (!assistantMetadata) {
       yield put(
         actions.resource.patchStaged(
