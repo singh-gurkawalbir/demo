@@ -382,11 +382,15 @@ export function* previewMappings() {
     importId,
     flowId,
     subRecordMappingId,
+    isNSAssistantFormLoaded,
   } = yield select(selectors.mapping);
   const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
   const _importRes = yield select(selectors.resource, 'imports', importId);
 
-  if (!_importRes) {
+  if (!_importRes ||
+    (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(_importRes.adaptorType) &&
+      !isNSAssistantFormLoaded)
+  ) {
     return yield put(actions.mapping.previewFailed());
   }
   const importResource = deepClone(_importRes);
