@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import GA4React from 'ga-4-react';
 import App from './App';
 import { getDomain } from './utils/resource';
-import store from './store';
+import reduxStore from './store';
 
 smoothscroll.polyfill();
 
@@ -39,7 +39,7 @@ if (env !== 'development' && GAKey1?.length > 1) {
     }
 
     render(
-      <Provider store={store}>
+      <Provider store={reduxStore}>
         <App />
       </Provider>,
       document.getElementById('root')
@@ -48,7 +48,7 @@ if (env !== 'development' && GAKey1?.length > 1) {
 } else { // DEV ENV
   // We don't need to register Google Analytics here.
   render(
-    <Provider store={store}>
+    <Provider store={reduxStore}>
       <StrictMode> <App /> </StrictMode>
     </Provider>,
     document.getElementById('root')
