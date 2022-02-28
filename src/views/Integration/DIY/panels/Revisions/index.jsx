@@ -26,6 +26,7 @@ export default function Revisions({ integrationId }) {
   const revisions = useSelector(state => state?.data?.resources?.revisions);
 
   // call resource collection action
+  // test
   useEffect(() => {
     dispatch(
       actions.resource.requestCollection(`integrations/${integrationId}/revisions`)
