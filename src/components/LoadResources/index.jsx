@@ -18,7 +18,7 @@ export default function LoadResources({ children, resources, required }) {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, isAllDataReady, resources]);
+  }, [dispatch, isAllDataReady, resources, defaultAShareId]);
 
   if (isAllDataReady || !required) {
     return children || null;

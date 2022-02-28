@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext } from 'react';
+import useSyncedRef from '../../../hooks/useSyncedRef';
 import { TabsStateProvider } from './createActiveTab';
 import { GlobalSearchStateProvider } from './createGlobalSearchState';
 
@@ -6,19 +7,11 @@ const GlobalSearchContext = React.createContext();
 export const GlobalSearchProvider = ({
   children,
   ...props }) => {
-  const dispatchRefs = useRef({
-    ...props,
-  });
-
-  useEffect(() => {
-    dispatchRefs.current = {
-      ...props,
-    };
-  }, [props]);
+  const dispatchRefs = useSyncedRef(props);
 
   return (
     <GlobalSearchContext.Provider
-      value={dispatchRefs?.current}>
+      value={dispatchRefs}>
       <GlobalSearchStateProvider>
         <TabsStateProvider>
           {children}
@@ -29,7 +22,7 @@ export const GlobalSearchProvider = ({
 };
 
 export function useGlobalSearchContext() {
-  return useContext(GlobalSearchContext);
+  return useContext(GlobalSearchContext)?.current;
 }
 export default {
   GlobalSearchProvider,

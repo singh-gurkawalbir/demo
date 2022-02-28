@@ -88,7 +88,10 @@ export const createSharedState = initialState => {
 
     return useCreatedState(selector);
   };
+  // If we want to use the store in Redux like way, where one store is created
+  // All the instances share the store, like a single source of truth
+  const useGlobalSharedStateSelector = getCreatedSharedState();
 
-  return {StateProvider, useSharedStateSelector};
+  return {StateProvider, useSharedStateSelector, useGlobalSharedStateSelector};
 };
 

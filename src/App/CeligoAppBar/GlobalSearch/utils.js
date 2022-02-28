@@ -5,11 +5,12 @@ import { filterMap } from '../../../components/GlobalSearch/filterMeta';
  * @param {Object[]} resourceItems
  * @returns a string
  */
-export function getResourcesToLoad(resourceItems) {
+export function getResourcesToLoad(resourceItems, accessLevel) {
   const mandatoryResources = ['published', 'marketplacetemplates', 'integrations', 'flows'];
   const resourcesToLoad = resourceItems.reduce((res, item) => {
-    const {resourceURL} = filterMap[item];
+    const resourceURL = filterMap[item]?.resourceURL;
 
+    if (item === 'recycleBinTTL' && ['monitor', 'tile'].includes(accessLevel)) return res;
     if (resourceURL && !mandatoryResources?.includes(resourceURL)) {
       res.push(resourceURL);
     }
