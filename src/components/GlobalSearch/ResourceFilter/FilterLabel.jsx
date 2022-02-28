@@ -27,7 +27,7 @@ const FilterLabel = () => {
   }
 
   return (
-    <Tooltip title={`${getTextAfterCount('Filter', filters.length)} applied`} placement="bottom" aria-label="Filters">
+    <Tooltip title={`${getTextAfterCount('filter', filters.length)} applied`} placement="bottom" aria-label="Filters">
       <Badge color="secondary" overlap="circle" variant="dot">
         <FilterIcon fontSize="small" />
       </Badge>

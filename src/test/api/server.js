@@ -1,7 +1,9 @@
+/* global beforeAll,jest, afterAll, afterEach */
 import {setupServer} from 'msw/node';
 import path from 'path';
 import { cleanup } from '@testing-library/react';
 import { getAllDefaultEports } from './utils';
+
 import 'whatwg-fetch';
 
 const routesPath = path.join(__dirname, 'routes');

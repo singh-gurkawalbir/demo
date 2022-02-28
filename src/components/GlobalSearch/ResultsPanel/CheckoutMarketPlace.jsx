@@ -28,7 +28,7 @@ export default function CheckoutMarketPlace() {
           onClick={() => setActiveTab(1)}
           startIcon={<MarketplaceIcon />}
           color="primary">
-          Checkout {marketplaceResultCount} {getTextAfterCount('result', marketplaceResultCount)} in Marketplace
+          Checkout {getTextAfterCount('result', marketplaceResultCount)} in Marketplace
         </TextButton>
       </div>
     </>

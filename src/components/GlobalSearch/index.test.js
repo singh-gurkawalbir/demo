@@ -1,3 +1,4 @@
+/* global describe, test, expect,  beforeEach */
 import React from 'react';
 import {render, screen, waitFor} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -52,8 +53,6 @@ describe('GlobalSearch UI Tests', () => {
     expect(resourceFiltersButton).toBeInTheDocument();
   });
   test('Pressing Escape character on keyboard when there is text should clear the input', () => {
-    const searchIcon = screen.getByLabelText(/Global search/i);
-
     userEvent.keyboard('/');
 
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
