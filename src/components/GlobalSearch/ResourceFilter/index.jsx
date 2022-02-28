@@ -53,7 +53,6 @@ function ResourceFilter() {
   const { filterBlacklist = emptyArr } = useGlobalSearchContext();
   const open = useGlobalSearchState(state => state.resourceFiltersOpen);
   const setOpen = useGlobalSearchState(state => state.changeResourceFiltersOpen);
-  const containerRef = useRef();
 
   const handleArrowClick = () => setOpen(!open);
   const {resourceFilters, marketplaceFilters} = useMemo(() => getResourceFilters(filterBlacklist), [filterBlacklist]);
@@ -72,7 +71,7 @@ function ResourceFilter() {
       </div>
 
       {open && (
-        <FloatingPaper label="Resource Filter" ref={containerRef} className={classes.menu}>
+        <FloatingPaper ariaLabel="Resource Filter" className={classes.menu}>
           <div className={classes.allContainer}>
             <MenuItem resourceURL="all" type="all" label="All" />
             <IconButton aria-label="Close Resource filter" size="small" onClick={handleArrowClick}>
@@ -82,12 +81,12 @@ function ResourceFilter() {
 
           <Divider orientation="horizontal" className={classes.divider} />
           <Typography variant="subtitle2" gutterBottom component="div">RESOURCES</Typography>
-          {resourceFilters.map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} resourceURL={filter?.resourceURL} />)}
+          {resourceFilters.map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} resourceURL={filter.resourceURL} />)}
           <Typography variant="subtitle2" className={classes.marketplaceTitle} gutterBottom component="div">MARKETPLACE</Typography>
-          {marketplaceFilters.map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} resourceURL={filter?.resourceURL} />)}
+          {marketplaceFilters.map(filter => <MenuItem key={filter.type} type={filter.type} label={filter.label} resourceURL={filter.resourceURL} />)}
         </FloatingPaper>
       )}
     </div>
   );
 }
-export default React.memo(ResourceFilter);
+export default ResourceFilter;

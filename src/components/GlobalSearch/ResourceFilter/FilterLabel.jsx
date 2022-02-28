@@ -5,6 +5,7 @@ import { makeStyles,
   Badge} from '@material-ui/core';
 import FilterIcon from '../../icons/FilterIcon';
 import { useGlobalSearchState } from '../GlobalSearchContext/createGlobalSearchState';
+import { getTextAfterCount } from '../../../utils/string';
 
 const useStyles = makeStyles(() => ({
   filterLabel: {
@@ -17,7 +18,7 @@ const FilterLabel = () => {
   const classes = useStyles();
   const filters = useGlobalSearchState(state => state.filters);
 
-  if (filters?.length === 0) {
+  if (filters.length === 0) {
     return (
       <Typography variant="h6" color="inherit" className={classes.filterLabel}>
         All
@@ -26,11 +27,11 @@ const FilterLabel = () => {
   }
 
   return (
-    <Tooltip title={`Filter${filters.length > 1 ? 's' : ''} applied`} placement="bottom" aria-label="Filters">
+    <Tooltip title={`${getTextAfterCount('Filter', filters.length)} applied`} placement="bottom" aria-label="Filters">
       <Badge color="secondary" overlap="circle" variant="dot">
         <FilterIcon fontSize="small" />
       </Badge>
     </Tooltip>
   );
 };
-export default React.memo(FilterLabel);
+export default FilterLabel;

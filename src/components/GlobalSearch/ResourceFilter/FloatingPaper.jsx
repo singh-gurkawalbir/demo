@@ -10,11 +10,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FloatingPaper({className, children, label}) {
+export default function FloatingPaper({className, children, ariaLabel}) {
   const classes = useStyles();
 
   return (
-    <Paper aria-label={label} className={clsx(classes.root, className)} elevation={3}>
+    <Paper aria-label={ariaLabel} className={clsx(classes.root, className)} elevation={3}>
       {children}
     </Paper>
   );

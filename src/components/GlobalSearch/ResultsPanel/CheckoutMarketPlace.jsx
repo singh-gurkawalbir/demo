@@ -4,6 +4,7 @@ import MarketplaceIcon from '../../icons/MarketplaceIcon';
 import TextButton from '../../Buttons/TextButton';
 import useResults from '../hooks/useResults';
 import { useActiveTab } from '../GlobalSearchContext/createActiveTab';
+import { getTextAfterCount } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   resultFooter: {
@@ -18,18 +19,18 @@ export default function CheckoutMarketPlace() {
   const [, setActiveTab] = useActiveTab();
   const {marketplaceResults, marketplaceResultCount} = useResults();
 
+  if (marketplaceResults?.length < 1) return null;
+
   return (
     <>
-      {marketplaceResults?.length > 0 && (
       <div className={classes.resultFooter}>
         <TextButton
           onClick={() => setActiveTab(1)}
           startIcon={<MarketplaceIcon />}
           color="primary">
-          Checkout {marketplaceResultCount} result{marketplaceResultCount > 1 && 's'} in Marketplace
+          Checkout {marketplaceResultCount} {getTextAfterCount('result', marketplaceResultCount)} in Marketplace
         </TextButton>
       </div>
-        )}
     </>
   );
 }

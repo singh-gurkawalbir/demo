@@ -74,7 +74,7 @@ export function getResourceFilters(filterBlacklist) {
 
     if (item?.isResource) {
       if (!filterBlacklist.includes(item.type)) {
-        acc?.resourceFilters?.push(item);
+        acc?.resourceFilters.push(item);
       }
     } else {
       acc.marketplaceFilters.push(item);

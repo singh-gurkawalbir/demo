@@ -1,4 +1,3 @@
-
 import clsx from 'clsx';
 import React from 'react';
 import { makeStyles,
@@ -23,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 function MenuItem({ type, label, resourceURL }) {
   const classes = useStyles();
-  const isChecked = useGlobalSearchState(state => state.filters.includes(resourceURL) || (type === 'all' && !state.filters?.length));
+  const isChecked = useGlobalSearchState(state => state.filters.includes(resourceURL) || (type === 'all' && !state.filters.length));
   const setFilters = useGlobalSearchState(state => state.changeFilters);
   const handleMenuItemClick = resourceURL => () => {
     setFilters(resourceURL);

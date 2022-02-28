@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, makeStyles, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import UpArrowIcon from '../../../icons/ArrowUpIcon';
+import DownArrowIcon from '../../../icons/ArrowDownIcon';
 import FilledButton from '../../../Buttons/FilledButton';
 import useRequestForDemo from '../../../../hooks/useRequestForDemo';
 import { useGlobalSearchState } from '../../GlobalSearchContext/createGlobalSearchState';
@@ -62,7 +62,7 @@ function MarketPlaceRow({type, result, includeDivider}) {
         classes={{expanded: classes.rootExpanded, root: classes.root}}>
         <AccordionSummary
           classes={{root: classes.summary}}
-          expandIcon={<UpArrowIcon />}
+          expandIcon={<DownArrowIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
