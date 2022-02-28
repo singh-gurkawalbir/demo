@@ -159,11 +159,7 @@ selectors.appTheme = createSelector(
 selectors.drawerOpened = (state = null) => {
   const preferences = selectors.userPreferences(state);
 
-  if ('drawerOpened' in preferences) {
-    return !!preferences.drawerOpened;
-  }
-
-  return true;
+  return preferences && !!preferences.drawerOpened;
 };
 
 selectors.expandSelected = (state = null) => {
