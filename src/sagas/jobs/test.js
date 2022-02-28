@@ -2596,7 +2596,7 @@ describe('downloadRetryData saga', () => {
       .call(openExternalUrl, {url: signedURL})
       .run();
   });
-  test.skip('should not call openExternalUrl if response does not contain signedUrl', () => {
+  test('should not call openExternalUrl if response does not contain signedUrl', () => {
     expectSaga(downloadRetryData, {retryId: '1'})
       .provide([
         [matchers.call.fn(getRequestOptions), {}],
