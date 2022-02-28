@@ -7,8 +7,8 @@ import { filterMap } from '../../../components/GlobalSearch/filterMeta';
  */
 export function getResourcesToLoad(resourceItems) {
   const mandatoryResources = ['published', 'marketplacetemplates', 'integrations', 'flows'];
-  const resourcesToLoad = resourceItems?.reduce((res, item) => {
-    const resourceURL = filterMap[item]?.resourceURL;
+  const resourcesToLoad = resourceItems.reduce((res, item) => {
+    const {resourceURL} = filterMap[item];
 
     if (resourceURL && !mandatoryResources?.includes(resourceURL)) {
       res.push(resourceURL);
@@ -49,7 +49,7 @@ export function getFilterBlacklist(resourceItems, resourcesMeta = getResourcesMe
  * @returns {Object[]}
  */
 export function getResourceItems(sidebarListItems) {
-  const resourceItems = sidebarListItems?.reduce((acc, item) => {
+  const resourceItems = sidebarListItems.reduce((acc, item) => {
     if (item.label === 'Resources') {
       const resourceItems = item.children.map(item => item.path.replaceAll('/', ''));
 
