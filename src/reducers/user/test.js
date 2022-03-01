@@ -657,7 +657,7 @@ describe('user selectors', () => {
 
       expect(selectors.drawerOpened(state)).toEqual(true);
     });
-    test('should return true any org owner account', () => {
+    test('should return true for any org owner account', () => {
       const state = reducer(
         {
           profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
