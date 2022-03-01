@@ -96,7 +96,7 @@ const rootDataReducer = (state = {}, action) => {
         }
 
         return;
-      case actionTypes.ACCESSTOKEN_DELETE_PURGED:
+      case actionTypes.ACCESSTOKEN.DELETE_PURGED:
 
         draft.accesstokens = draft.accesstokens.filter(
           token =>
@@ -473,7 +473,7 @@ selectors.mkIntegrationAppSettings = subState => {
           draft.settings.hasGeneralSettings = true;
         }
         if (draft.settings.supportsMultiStore) {
-          draft.children = draft.settings.sections.map(s => ({
+          draft.children = (draft.settings.sections || []).map(s => ({
             label: s.title,
             hidden: !!s.hidden,
             mode: s.mode || 'settings',

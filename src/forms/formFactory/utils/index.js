@@ -539,7 +539,7 @@ const translateFieldProps = (fields = [], _integrationId, resource, ssLinkedConn
         options: [
           {
             items:
-              (options &&
+              (Array.isArray(options) &&
                 options.map(option => ({
                   label: option && option[1],
                   value: option && option[0],

@@ -104,25 +104,6 @@ export default function (state = {}, action) {
         break;
       }
 
-      case actionTypes.FLOW_DATA.PROCESSOR_DATA_REQUEST: {
-        if (!flowId || !resourceId || !processor) break;
-        const resourceMap =
-            draft[flowId]?.[
-              isPageGeneratorResource(draft[flowId], resourceId)
-                ? 'pageGeneratorsMap'
-                : 'pageProcessorsMap'
-            ] || {};
-
-        if (!resourceMap[resourceId]) {
-          resourceMap[resourceId] = {};
-        }
-        if (!resourceMap[resourceId][processor]) {
-          resourceMap[resourceId][processor] = {};
-        }
-        resourceMap[resourceId][processor].status = 'requested';
-        break;
-      }
-
       case actionTypes.FLOW_DATA.PROCESSOR_DATA_RECEIVED: {
         if (!flowId || !resourceId || !processor) break;
         const { data: receivedData } = processedData || {};
@@ -228,10 +209,6 @@ export default function (state = {}, action) {
 
         break;
       }
-
-      case actionTypes.FLOW_DATA.CLEAR_STAGES:
-        delete draft[flowId];
-        break;
 
       case actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET: {
         const currentFlow = draft[flowId];

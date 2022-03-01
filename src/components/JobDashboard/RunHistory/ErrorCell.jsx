@@ -22,7 +22,6 @@ export default function ErrorCell({
   job,
 }) {
   const { _integrationId, _flowId, _childId, _flowJobId, _exportId, numOpenError, _importId } = job;
-
   const dispatch = useDispatch();
   const id = _exportId || _importId;
   const classes = useStyles();
@@ -48,7 +47,7 @@ export default function ErrorCell({
     history.push(`${flowBuilderTo}/errors/${id}/filter/${_flowJobId}/open`);
   }, [_flowId, _flowJobId, dispatch, flowBuilderTo, history, id, job]);
 
-  if (numOpenError === 0) {
+  if (!numOpenError) {
     return '0 errors';
   }
 

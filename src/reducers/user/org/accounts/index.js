@@ -71,7 +71,7 @@ export default (state = [], action) => {
         break;
       }
 
-      case actionTypes.LICENSE_TRIAL_ISSUED: {
+      case actionTypes.LICENSE.TRIAL_ISSUED: {
         if (!hasLicense(draft)) {
           break;
         }
@@ -86,7 +86,7 @@ export default (state = [], action) => {
         break;
       }
 
-      case actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED: {
+      case actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED: {
         if (!hasLicense(draft)) {
           break;
         }

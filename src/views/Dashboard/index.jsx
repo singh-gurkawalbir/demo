@@ -19,8 +19,10 @@ export default function Dashboard() {
   const match = useRouteMatch();
   let { integrationId } = match.params;
   const { childId } = match.params;
+  const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
 
-  integrationId = getDashboardIntegrationId(integrationId, childId);
+  integrationId = getDashboardIntegrationId(integrationId, childId, isIntegrationAppV1);
+
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );

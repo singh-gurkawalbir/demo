@@ -279,6 +279,13 @@ export function* verifyBundleOrPackageInstall({
       (response.resBody || response.message)
   ) {
     yield put(
+      actions.integrationApp.installer.updateStep(
+        id,
+        installerFunction,
+        'failed'
+      )
+    );
+    yield put(
       actions.api.failure(
         path,
         'GET',

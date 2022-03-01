@@ -28,11 +28,11 @@ export default function getRequestOptions(
   } = {}
 ) {
   switch (action) {
-    case actionTypes.USER_CREATE:
+    case actionTypes.USER.CREATE:
       return { path: '/invite', opts: { method: 'POST' } };
-    case actionTypes.USER_UPDATE:
+    case actionTypes.USER.UPDATE:
       return { path: `/ashares/${resourceId}`, opts: { method: 'PUT' } };
-    case actionTypes.USER_DELETE:
+    case actionTypes.USER.DELETE:
       return { path: `/ashares/${resourceId}`, opts: { method: 'DELETE' } };
     case actionTypes.AGENT.TOKEN_DISPLAY:
       return {
@@ -49,29 +49,29 @@ export default function getRequestOptions(
         path: `/agents/${resourceId}/installer/signedURL?os=${osType}`,
         opts: { method: 'GET' },
       };
-    case actionTypes.USER_DISABLE:
+    case actionTypes.USER.DISABLE:
       return {
         path: `/ashares/${resourceId}/disable`,
         opts: { method: 'PUT' },
       };
-    case actionTypes.USER_REINVITE:
+    case actionTypes.USER.REINVITE:
       return {
         path: `/ashares/${resourceId}/reinvite`,
         opts: { method: 'PUT' },
       };
-    case actionTypes.USER_MAKE_OWNER:
+    case actionTypes.USER.MAKE_OWNER:
       return { path: '/transfers/invite', opts: { method: 'POST' } };
-    case actionTypes.LICENSE_TRIAL_REQUEST:
+    case actionTypes.LICENSE.TRIAL_REQUEST:
       return {
         path: '/licenses/startTrial',
         opts: { method: 'POST' },
       };
-    case actionTypes.LICENSE_UPGRADE_REQUEST:
+    case actionTypes.LICENSE.UPGRADE_REQUEST:
       return {
         path: '/licenses/upgradeRequest',
         opts: { method: 'POST' },
       };
-    case actionTypes.LICENSE_UPDATE_REQUEST:
+    case actionTypes.LICENSE.UPDATE_REQUEST:
       if (actionType === 'trial') {
         path = '/licenses/startTrial';
       } else if (actionType === 'reTrial') {
@@ -90,31 +90,12 @@ export default function getRequestOptions(
         path,
         opts: { method: 'POST' },
       };
-    case actionTypes.ACCESSTOKEN_CREATE:
-      return {
-        path: integrationId
-          ? `/integrations/${integrationId}/accesstokens`
-          : '/accesstokens',
-        opts: { method: 'POST' },
-      };
-    case actionTypes.ACCESSTOKEN_UPDATE:
-    case actionTypes.ACCESSTOKEN_REVOKE:
-    case actionTypes.ACCESSTOKEN_ACTIVATE:
-      return {
-        path: `/accesstokens/${resourceId}`,
-        opts: { method: 'PUT' },
-      };
-    case actionTypes.ACCESSTOKEN_DELETE:
-      return {
-        path: `/accesstokens/${resourceId}`,
-        opts: { method: 'DELETE' },
-      };
-    case actionTypes.ACCESSTOKEN_TOKEN_DISPLAY:
+    case actionTypes.ACCESSTOKEN.DISPLAY:
       return {
         path: `/accesstokens/${resourceId}/display`,
         opts: { method: 'GET' },
       };
-    case actionTypes.ACCESSTOKEN_TOKEN_GENERATE:
+    case actionTypes.ACCESSTOKEN.GENERATE:
       return {
         path: `/accesstokens/${resourceId}/generate`,
         opts: { method: 'POST' },
@@ -280,12 +261,12 @@ export default function getRequestOptions(
             : `/ui/assistants/${resourceId}`,
         opts: { method: 'GET' },
       };
-    case actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST:
+    case actionTypes.LICENSE.NUM_ENABLED_FLOWS_REQUEST:
       return {
         path: '/numEnabledFlows',
         opts: { method: 'GET' },
       };
-    case actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST:
+    case actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST:
       return {
         path: '/licenseEntitlementUsage',
         opts: { method: 'GET' },

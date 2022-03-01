@@ -12,14 +12,14 @@ export default (state = {}, action) => {
 
         break;
 
-      case actionTypes.UPDATE_PROFILE:
+      case actionTypes.USER.PROFILE.UPDATE:
         return { ...draft, ...profile };
 
-      case actionTypes.UNLINKED_WITH_GOOGLE:
+      case actionTypes.USER.PROFILE.UNLINKED_WITH_GOOGLE:
         draft.auth_type_google = {};
         break;
 
-      case actionTypes.DELETE_PROFILE:
+      case actionTypes.USER.PROFILE.DELETE:
         if (draft.email) {
           return {
             email: draft.email,

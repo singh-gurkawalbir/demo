@@ -55,6 +55,7 @@ export default {
       name: 'application',
       type: 'selectapplication',
       label: 'Application',
+      isLoggable: true,
       appType: 'import',
       placeholder: applicationsPlaceHolderText(),
       defaultValue: '',

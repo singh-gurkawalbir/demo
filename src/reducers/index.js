@@ -104,6 +104,7 @@ import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
 import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
+import { filterMap } from '../components/GlobalSearch/filterMeta';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -123,9 +124,9 @@ const rootReducer = (state, action) => {
 
   return produce(newState, draft => {
     switch (type) {
-      case actionTypes.CLEAR_STORE:
+      case actionTypes.AUTH.CLEAR_STORE:
         Object.keys(draft).forEach(key => {
-          // delete everthing except for app and auth
+          // delete everything except for app and auth
           if (key !== 'app' && key !== 'auth') {
             delete draft[key];
           }
@@ -133,7 +134,7 @@ const rootReducer = (state, action) => {
 
         break;
 
-      case actionTypes.APP_DELETE_DATA_STATE:
+      case actionTypes.APP.DELETE_DATA_STATE:
         delete draft.data;
 
         break;
@@ -1666,7 +1667,7 @@ selectors.makeMarketPlaceConnectorsSelector = () => {
 
       return connectors
         .map(c => {
-          const installedIntegrationApps = integrations.filter(int => int._connectionId === c._id);
+          const installedIntegrationApps = integrations.filter(int => int._connectorId === c._id);
 
           return { ...c, installed: !!installedIntegrationApps.length };
         })
@@ -3863,12 +3864,15 @@ selectors.canEditSettingsForm = (state, resourceType, resourceId, integrationId)
   return developer && !viewOnly && visibleForUser;
 };
 
-selectors.availableConnectionsToRegister = (state, integrationId) => {
+selectors.availableConnectionsToRegister = (state, integrationId, tableConfig) => {
   if (!state) {
     return [];
   }
 
-  const connList = selectors.resourceList(state, { type: 'connections' });
+  const connList = selectors.resourceList(state, {
+    type: 'connections',
+    ...(tableConfig || {}),
+  });
   const allConnections = connList && connList.resources;
   const integration = selectors.resource(state, 'integrations', integrationId);
   const registeredConnections =
@@ -5767,7 +5771,7 @@ const getParentsResourceId = (state, resourceType, resourceId) => {
   return null;
 };
 
-selectors.getResourceEditUrl = (state, resourceType, resourceId, childId) => {
+selectors.getResourceEditUrl = (state, resourceType, resourceId, childId, sectionId) => {
   let integrationId = resourceType === 'integrations' ? resourceId : getParentsResourceId(state, resourceType, resourceId);
   // eslint-disable-next-line prefer-const
   let { name: integrationName, _parentId } = selectors.resource(state, 'integrations', integrationId) || {};
@@ -5789,7 +5793,13 @@ selectors.getResourceEditUrl = (state, resourceType, resourceId, childId) => {
 
   if (_connectorId) {
     if (childId) {
-      iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/child/${childId}`;
+      if (resourceType === 'flows' && sectionId) {
+        iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/child/${childId}/flows/sections/${sectionId}`;
+      } else {
+        iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/child/${childId}`;
+      }
+    } else if (resourceType === 'flows' && sectionId) {
+      iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/flows/sections/${sectionId}`;
     } else {
       iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}`;
     }
@@ -5798,6 +5808,10 @@ selectors.getResourceEditUrl = (state, resourceType, resourceId, childId) => {
   if (resourceType === 'flows') {
     const isDataLoader = selectors.isDataLoader(state, resourceId);
     const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
+
+    if (!iaUrlPrefix && sectionId && integrationId !== 'none') {
+      return getRoutePath(`/integrations/${integrationId}/flows/sections/${sectionId}/${flowBuilderPathName}/${resourceId}`);
+    }
 
     return getRoutePath(`${iaUrlPrefix || `/integrations/${integrationId}`}/${flowBuilderPathName}/${resourceId}`);
   }
@@ -6427,13 +6441,14 @@ selectors.tileLicenseDetails = (state, tile) => {
 selectors.hasLogsAccess = (state, resourceId, resourceType, isNew, flowId) => {
   if (!['exports', 'imports'].includes(resourceType) || !flowId || isNew) return false;
   const resource = selectors.resource(state, resourceType, resourceId);
+  const connection = selectors.resource(state, 'connections', resource?._connectionId) || emptyObject;
 
   // It should return false for all http file providers
   if (resource?.http?.type === 'file') {
     return false;
   }
 
-  return isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType);
+  return isRealtimeExport(resource) || ['HTTPImport', 'HTTPExport'].includes(resource?.adaptorType) || (connection.isHTTP && connection.type === 'rest');
 };
 
 selectors.canEnableDebug = (state, exportId, flowId) => {
@@ -6592,3 +6607,47 @@ selectors.httpDeltaValidationError = (state, formKey, deltaFieldsToValidate) => 
     }
   }
 };
+
+selectors.showAmazonRestrictedReportType = (state, formKey) => {
+  const connectionId = selectors.fieldState(state, formKey, '_connectionId')?.value;
+  const apiType = selectors.fieldState(state, formKey, 'unencrypted.apiType')?.value;
+  const relativeURI = selectors.fieldState(state, formKey, 'http.relativeURI')?.value;
+  const connectionType = selectors.resource(state, 'connections', connectionId)?.http?.type;
+
+  return ((connectionType === 'Amazon-Hybrid' && apiType === 'Amazon-SP-API') ||
+          connectionType === 'Amazon-SP-API') &&
+          relativeURI?.startsWith('/reports/2021-06-30/documents/');
+};
+
+const resourceListSelector = selectors.makeResourceListSelector();
+
+selectors.globalSearchResults = createSelector(
+  [
+    state => state,
+    (state, keyword, filters, filterBlackList) => {
+      if (keyword?.length < 2) return {};
+      const resourceIds = Object.keys(filterMap);
+
+      const results = resourceIds.reduce((acc, id) => {
+        const resourceId = filterMap[id]?.resourceURL;
+
+        if ((filters?.length > 0 && !(filters.includes(resourceId))) || filterBlackList.includes(resourceId)) return acc;
+        const resourceResults = resourceListSelector(state, {type: resourceId, take: 3, keyword, searchBy: ['name']});
+        let resourcesList = resourceResults?.resources;
+
+        if (id === 'connections') {
+          resourcesList = resourcesList.map(connection => ({...connection, isOnline: selectors.isConnectionOffline(state, connection?._id)}));
+        }
+        if (resourcesList?.length > 0) {
+          acc[id] = resourcesList;
+        }
+
+        return acc;
+      }, {});
+
+      return results;
+    },
+  ],
+  (_, resourceResults) => resourceResults
+);
+

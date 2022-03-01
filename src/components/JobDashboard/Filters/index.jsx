@@ -60,9 +60,6 @@ const useStyles = makeStyles(theme => ({
   status: {
     minWidth: 134,
   },
-  hideEmptyLabel: {
-    marginTop: theme.spacing(0.5),
-  },
   rightActionContainer: {
     flexGrow: 1,
     display: 'flex',
@@ -249,7 +246,6 @@ export default function Filters({
           <FormControlLabel
             data-test="hideEmptyJobsFilter"
             label="Hide empty jobs"
-            classes={{ label: classes.hideEmptyLabel }}
             control={(
               <Checkbox
               // indeterminate={numSelected > 0 && numSelected < rowCount}

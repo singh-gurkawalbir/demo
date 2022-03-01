@@ -13,7 +13,7 @@ export default function NameCell({al, actionProps}) {
     selectors.resource(state, resourceType, al._resourceId)?.name
   );
   const routePath = useSelector(state =>
-    selectors.getResourceEditUrl(state, resourceType, al._resourceId, actionProps?.childId)
+    selectors.getResourceEditUrl(state, resourceType, al._resourceId, actionProps?.childId, al.sectionId)
   );
 
   if (resourceType === 'integrations' && al?._resourceId === 'none') {

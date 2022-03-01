@@ -15,7 +15,7 @@ describe('displayToken saga', () => {
     const tokenInPlainText = 'token in plain text';
     const saga = displayToken({ id: tokenId });
     const requestOptions = getRequestOptions(
-      actionTypes.ACCESSTOKEN_TOKEN_DISPLAY,
+      actionTypes.ACCESSTOKEN.DISPLAY,
       {
         resourceId: tokenId,
       }
@@ -53,7 +53,7 @@ describe('displayToken saga', () => {
     const tokenId = 'something';
     const saga = displayToken({ id: tokenId });
     const requestOptions = getRequestOptions(
-      actionTypes.ACCESSTOKEN_TOKEN_DISPLAY,
+      actionTypes.ACCESSTOKEN.DISPLAY,
       {
         resourceId: tokenId,
       }
@@ -78,7 +78,7 @@ describe('generateToken saga', () => {
     const tokenInPlainText = 'token in plain text';
     const saga = generateToken({ id: tokenId });
     const requestOptions = getRequestOptions(
-      actionTypes.ACCESSTOKEN_TOKEN_GENERATE,
+      actionTypes.ACCESSTOKEN.GENERATE,
       {
         resourceId: tokenId,
       }
@@ -116,7 +116,7 @@ describe('generateToken saga', () => {
     const tokenId = 'something';
     const saga = generateToken({ id: tokenId });
     const requestOptions = getRequestOptions(
-      actionTypes.ACCESSTOKEN_TOKEN_GENERATE,
+      actionTypes.ACCESSTOKEN.GENERATE,
       {
         resourceId: tokenId,
       }
@@ -154,7 +154,7 @@ describe('Updated access tokens saga', () => {
     expect(saga.next().value).toEqual(fork(checkAndRemovePurgedTokens));
 
     expect(saga.next(mockTask).value).toEqual(
-      take(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION)
+      take(actionTypes.ACCESSTOKEN.UPDATED_COLLECTION)
     );
     expect(saga.next().value).toEqual(cancel(mockTask));
     expect(saga.next().done).toEqual(true);

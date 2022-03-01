@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles, CircularProgress } from '@material-ui/core';
+import { makeStyles, CircularProgress, fade } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
@@ -16,8 +16,8 @@ const useStyles = makeStyles(theme => ({
     margin: 'auto',
     zIndex: theme.zIndex.appBar + 1,
     '& >.MuiCircularProgress-root': {
-      width: props => props.centerAll && props.size ? `${props.size} !important` : theme.spacing(6),
-      height: props => props.centerAll && props.size ? `${props.size} !important` : theme.spacing(6),
+      width: theme.spacing(6),
+      height: theme.spacing(6),
     },
   },
   spinnerChildren: {
@@ -47,14 +47,29 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
   },
+  spinnerCenterSmall: {
+    '& >.MuiCircularProgress-root': {
+      width: theme.spacing(2),
+      height: theme.spacing(2),
+    },
+  },
+  overlayPanel: {
+    background: fade(theme.palette.common.white, 0.7),
+    height: '100%',
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    left: 0,
+    bottom: 0,
+    margin: 'auto',
+  },
 }));
 
 /**
  * Render an indeterminate spinning indicator.
  */
-export default function Spinner(props) {
-  const classes = useStyles(props);
-  const { loading, color = 'primary', children, centerAll, className, size = 'medium' } = props;
+export default function Spinner({loading, isOverlay = false, color = 'primary', children, centerAll, size = 'medium', className}) {
+  const classes = useStyles();
 
   const progress = (
     <CircularProgress
@@ -68,8 +83,10 @@ export default function Spinner(props) {
     <div
       className={clsx(
         {[classes.spinnerWrapper]: centerAll},
+        {[classes.spinnerCenterSmall]: centerAll && size === 'small'},
         {[classes.spinnerWithChildren]: children},
         {[classes.loadingWithChildren]: loading},
+        {[classes.overlayPanel]: isOverlay},
         className)}>
       {progress} {children && <div className={classes.spinnerChildren}>{children}</div> }
     </div>
@@ -81,5 +98,5 @@ Spinner.propTypes = {
   size: PropTypes.oneOf(['extraSmall', 'small', 'medium', 'large']),
   centerAll: PropTypes.bool,
   loading: PropTypes.bool,
+  overlay: PropTypes.bool,
 };
-
