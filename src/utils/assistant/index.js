@@ -1691,15 +1691,12 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
         if (importAdaptorSubSchema.ignoreExtract && /(\?|\/)/.test(importAdaptorSubSchema.ignoreExtract)) {
           pathParams[p.id] = importAdaptorSubSchema.ignoreExtract;
         }
-
-        if (operationDetails.howToIdentifyExistingRecords) {
-          pathParams[p.id] = importAdaptorSubSchema.existingLookupName;
-        }
       }
 
-      if (p.isIdentifier && pathParams[p.id]) {
+      if (p.isIdentifier && (pathParams[p.id] || operationDetails.howToIdentifyExistingRecords)) {
+        const {existingLookupName} = importAdaptorSubSchema;
         const lookup = importAdaptorSubSchema.lookups.find(
-          lu => lu.name === pathParams[p.id]
+          lu => lu.name === pathParams[p.id] || lu.name === existingLookupName
         );
 
         if (lookup) {
@@ -1711,14 +1708,14 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
             howToFindIdentifierLookupConfig.id &&
             assistantMetadata &&
             assistantMetadata.lookups &&
-            assistantMetadata.lookups[pathParams[p.id]]
+            assistantMetadata.lookups[pathParams[p.id] || existingLookupName]
           ) {
             const luEndpoint = getExportOperationDetails({
               version: assistantMetadata.version,
               resource:
-                assistantMetadata.lookups[pathParams[p.id]].resource ||
+                assistantMetadata.lookups[pathParams[p.id] || existingLookupName].resource ||
                 assistantMetadata.resource,
-              operation: assistantMetadata.lookups[pathParams[p.id]].operation,
+              operation: assistantMetadata.lookups[pathParams[p.id] || existingLookupName].operation,
               assistantData,
             });
 
@@ -2053,7 +2050,11 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
       if (lookupType === 'source') {
         importDoc.ignoreExtract = pathParams[identifiers[0].id];
       } else if (lookupType === 'lookup') {
-        pathParams[identifiers[0].id] = identifiers[0].id;
+        if (operationDetails.howToIdentifyExistingRecords) {
+          importDoc.existingLookupName = identifiers[0].id;
+        } else {
+          pathParams[identifiers[0].id] = identifiers[0].id;
+        }
       }
     }
   }

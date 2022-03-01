@@ -26,6 +26,7 @@ export default function assistantDefinition(
         'lookupType',
         'lookupQueryParams',
         'lookups',
+        'existingExtract',
       ].forEach(prop => {
         assistantMetadata[prop] = formValues[`/assistantMetadata/${prop}`];
       });
@@ -41,9 +42,6 @@ export default function assistantDefinition(
           assistantMetadata.pathParams[
             key.replace('/assistantMetadata/pathParams/', '')
           ] = formValues[key];
-        }
-        if (key.includes('/assistantMetadata/existingExtract')) {
-          assistantMetadata.existingExtract = formValues[key];
         }
       });
       const importDoc = convertToImport({
