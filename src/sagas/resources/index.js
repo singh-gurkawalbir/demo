@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
+import {delay, call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean, isEmpty } from 'lodash';
 import actions from '../../actions';
@@ -741,7 +741,7 @@ export function* getResourceCollection({ resourceType, refresh }) {
     let collection;
 
     if (resourceType.includes('revisions')) {
-      console.log('api call done', resourceType);
+      yield delay(2000);
       collection = [
         {
           _id: '6215f13ed611afb647b2cf4b',

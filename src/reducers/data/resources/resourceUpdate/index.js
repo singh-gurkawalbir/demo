@@ -100,11 +100,6 @@ const addResourceCollection = (draft, resourceType, collection) => {
 
     return;
   }
-  if (resourceType.includes('/revisions')) {
-    updateStateWhenValueDiff(draft, 'revisions', collection);
-
-    return;
-  }
 
   if (resourceType === 'recycleBinTTL' && collection && collection.length) {
     const updatedRecycleBinTTL = collection.map(i => ({...i, key: i.doc._id}));
@@ -161,7 +156,7 @@ export default (state = {}, action) => {
   if (
     resourceType &&
       resourceType.startsWith('integrations/') &&
-      (resourceType.endsWith('/ashares') || resourceType.endsWith('/audit'))
+      (resourceType.endsWith('/ashares') || resourceType.endsWith('/audit') || resourceType.endsWith('/revisions'))
   ) {
     return state;
   }

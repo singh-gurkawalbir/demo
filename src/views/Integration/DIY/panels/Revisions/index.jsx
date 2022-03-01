@@ -4,11 +4,13 @@ import { makeStyles } from '@material-ui/core';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { TextButton } from '../../../../../components/Buttons';
 import actions from '../../../../../actions';
+import { selectors } from '../../../../../reducers';
 import PanelHeader from '../../../../../components/PanelHeader';
 import ActionGroup from '../../../../../components/ActionGroup';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import RevisionFilters from './RevisionFilters';
 import ResourceTable from '../../../../../components/ResourceTable';
+import Spinner from '../../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -23,14 +25,17 @@ export default function Revisions({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const match = useRouteMatch();
-  const revisions = useSelector(state => state?.data?.resources?.revisions);
+  const revisions = useSelector(state => selectors.revisions(state, integrationId));
+  const isLoadingRevisions = useSelector(state => {
+    const status = selectors.revisionsFetchStatus(state, integrationId);
 
-  // call resource collection action
-  // test
+    return !status || status === 'requested';
+  });
+
   useEffect(() => {
-    dispatch(
-      actions.resource.requestCollection(`integrations/${integrationId}/revisions`)
-    );
+    dispatch(actions.integrationLCM.revisions.request(integrationId));
+
+    return () => dispatch(actions.integrationLCM.revisions.clear(integrationId));
   }, [integrationId, dispatch]);
 
   return (
@@ -39,6 +44,7 @@ export default function Revisions({ integrationId }) {
         <ActionGroup>
           <TextButton
             component={Link}
+            disabled={isLoadingRevisions}
             startIcon={<AddIcon />}
             to={`${match.url}/pull`}
             data-test="createPull">
@@ -47,6 +53,7 @@ export default function Revisions({ integrationId }) {
           <TextButton
             component={Link}
             startIcon={<AddIcon />}
+            disabled={isLoadingRevisions}
             to={`${match.url}/snapshot`}
             data-test="createSnapshot">
             Create snapshot
@@ -54,11 +61,14 @@ export default function Revisions({ integrationId }) {
         </ActionGroup>
       </PanelHeader>
       <RevisionFilters />
-      <ResourceTable
-        resourceType="revisions"
-        resources={revisions}
-       />
-
+      {
+        isLoadingRevisions ? <Spinner centerAll /> : (
+          <ResourceTable
+            resourceType="revisions"
+            resources={revisions}
+          />
+        )
+      }
     </div>
   );
 }
