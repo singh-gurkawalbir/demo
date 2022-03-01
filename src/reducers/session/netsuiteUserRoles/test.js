@@ -97,6 +97,14 @@ describe('netsuiteUser roles reducer ', () => {
       [connectionId]: {},
     });
   });
+  test('should not throw exception on clear roles action if state does not exist', () => {
+    const state = reducer(
+      {},
+      actions.resource.connections.netsuite.clearUserRoles(connectionId)
+    );
+
+    expect(state).toEqual({});
+  });
 
   test('should not clear the previous successful retrieval of netsuiteUserRoles in the event of a failure', () => {
     let state = reducer(
