@@ -103,7 +103,8 @@ export default function CeligoAppBar() {
                 (and re-run all init) I think this is causes by removing the
                 session caching layer we had in place
               */}
-          <li><GlobalSearch /></li>
+          {/* To toggle the global search feature, please uncomment the below line */}
+          {/* <li><GlobalSearch /></li> */}
           <li><AccountList /></li>
           <li><LicenseAction /></li>
           <li><EnvironmentToggle /></li>
