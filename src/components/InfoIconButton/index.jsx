@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function InfoIconButton({ info, size = 'small', className, escapeUnsecuredDomains }) {
+export default function InfoIconButton({ info, size = 'small', className, escapeUnsecuredDomains, tabIndex = 0 }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -48,6 +48,7 @@ export default function InfoIconButton({ info, size = 'small', className, escape
         className={clsx(classes[size], className)}
         onClick={handleInfoOpen}
         aria-owns={!anchorEl ? null : 'pageInfo'}
+        tabIndex={tabIndex}
         aria-haspopup="true">
         <InfoIcon />
       </IconButton>

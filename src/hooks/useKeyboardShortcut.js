@@ -12,7 +12,7 @@ const keysReducer = (state, action) => {
   }
 };
 
-const useKeyboardShortcut = (shortcutKeys, callback, ignoreBlacklist = false) => {
+const useKeyboardShortcut = (shortcutKeys, callback, {ignoreBlacklist = false, useCapture = true} = {}) => {
   if (!Array.isArray(shortcutKeys)) {
     throw new Error(
       'The first parameter to `useKeyboardShortcut` must be an ordered array of `KeyboardEvent.key` strings.'
@@ -74,16 +74,16 @@ const useKeyboardShortcut = (shortcutKeys, callback, ignoreBlacklist = false) =>
   }, [callback, keys]);
 
   useEffect(() => {
-    window.addEventListener('keydown', keydownListener, true);
+    window.addEventListener('keydown', keydownListener, useCapture);
 
-    return () => window.removeEventListener('keydown', keydownListener, true);
-  }, [keydownListener]);
+    return () => window.removeEventListener('keydown', keydownListener, useCapture);
+  }, [keydownListener, useCapture]);
 
   useEffect(() => {
-    window.addEventListener('keyup', keyupListener, true);
+    window.addEventListener('keyup', keyupListener, useCapture);
 
-    return () => window.removeEventListener('keyup', keyupListener, true);
-  }, [keyupListener]);
+    return () => window.removeEventListener('keyup', keyupListener, useCapture);
+  }, [keyupListener, useCapture]);
 };
 
 export default useKeyboardShortcut;
