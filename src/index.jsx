@@ -2,72 +2,15 @@ import 'url-search-params-polyfill';
 import * as smoothscroll from 'smoothscroll-polyfill';
 import React, { StrictMode } from 'react';
 import { render } from 'react-dom';
-import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
-import createSagaMiddleware from 'redux-saga';
-import { createLogger } from 'redux-logger';
-import LogRocket from 'logrocket';
 import GA4React from 'ga-4-react';
 import App from './App';
-import rootReducer from './reducers';
-import rootSaga from './sagas';
-import actions from './actions';
 import { getDomain } from './utils/resource';
+import reduxStore from './store';
 
 smoothscroll.polyfill();
 
-let store;
 const env = process.env.NODE_ENV;
-const middleware = [];
-const sagaMiddleware = createSagaMiddleware({
-  onError: error => {
-    // eslint-disable-next-line no-console
-    console.warn('saga middleware crashed on error ', error);
-    store.dispatch(actions.app.errored());
-    LogRocket.captureException(error);
-  },
-});
-
-middleware.push(sagaMiddleware);
-
-middleware.push(LogRocket.reduxMiddleware({
-  stateSanitizer: state => ({
-    ...state,
-    auth: null,
-    data: null,
-    session: null,
-  }),
-  actionSanitizer: () => null,
-}));
-
-if (env === 'development' && process.env.REDUX_LOGGER === 'true') {
-  // redux-logger options reference: https://www.npmjs.com/package/redux-logger#options
-  const logOptions = {
-    diff: true,
-    duration: true,
-    collapsed: (getState, action, logEntry) => !logEntry.error,
-  };
-
-  middleware.push(createLogger(logOptions));
-}
-
-// trace true allows us to determine the origin of dispatched actions
-// using the redux dev tools plugin we can see the stack trace of where the request is originated from.
-const composeEnhancers =
-  (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ &&
-  // TODO: check if we need to enable it in staging.
-  env === 'development' &&
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-      trace: true,
-      traceLimit: 25,
-    })) || compose;
-
-store = createStore(
-  rootReducer,
-  composeEnhancers(applyMiddleware(...middleware))
-);
-
-sagaMiddleware.run(rootSaga);
 
 // eslint-disable-next-line no-undef
 const GAKey1 = (getDomain() === 'eu.integrator.io' ? GA_KEY_1_EU : GA_KEY_1);
@@ -96,7 +39,7 @@ if (env !== 'development' && GAKey1?.length > 1) {
     }
 
     render(
-      <Provider store={store}>
+      <Provider store={reduxStore}>
         <App />
       </Provider>,
       document.getElementById('root')
@@ -105,7 +48,7 @@ if (env !== 'development' && GAKey1?.length > 1) {
 } else { // DEV ENV
   // We don't need to register Google Analytics here.
   render(
-    <Provider store={store}>
+    <Provider store={reduxStore}>
       <StrictMode> <App /> </StrictMode>
     </Provider>,
     document.getElementById('root')
