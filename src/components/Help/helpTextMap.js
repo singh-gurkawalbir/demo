@@ -878,6 +878,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Warehouse used for executing compute process.',
   'connection.rdbms.snowflake.schema':
 'Name of the schema that the connection will use. If the name is not provided, the connection will use the default schema defined in Snowflake for the user.',
+  'connection.rdbms.snowflake.application':
+  'Snowflake partner use only: Specifies the name of a partner application to connect through NodeJS Driver.',
   'connection.rdbms.snowflake.role':
 'Name of the Roles to use in the connection. If the user role is not provided, the connection will use the default user role defined in Snowflake for the user.',
   'snowflake.connection.rdbms.host': 'Account name of Snowflake instance.',
