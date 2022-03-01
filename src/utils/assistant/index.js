@@ -1835,7 +1835,6 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     ignoreMissing = false,
     lookups = [],
     existingExtract,
-    existingLookupName,
   } = assistantConfig;
   let { lookupQueryParams = {} } = assistantConfig;
 
@@ -1866,13 +1865,6 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     if (isArray(operationDetails.method)) {
       importDoc.method = operationDetails.method;
       importDoc.requestType = operationDetails.requestType;
-      if (existingExtract) {
-        importDoc.existingExtract = existingExtract;
-        importDoc.existingLookupName = undefined;
-      } else if (existingLookupName) {
-        importDoc.existingExtract = undefined;
-        importDoc.existingLookupName = existingLookupName;
-      }
       if (!importDoc.requestType) {
         importDoc.requestType = ['UPDATE', 'CREATE'];
       }
@@ -1903,13 +1895,6 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
       importDoc.method = operationDetails.method;
       importDoc.relativeURI = operationDetails.url;
       importDoc.requestType = operationDetails.requestType;
-      if (existingExtract) {
-        importDoc.existingExtract = existingExtract;
-        importDoc.existingLookupName = undefined;
-      } else if (existingLookupName) {
-        importDoc.existingExtract = undefined;
-        importDoc.existingLookupName = existingLookupName;
-      }
       if (!importDoc.requestType) {
         importDoc.requestType = ['UPDATE', 'CREATE'];
       }
@@ -2034,7 +2019,12 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
       importDoc.ignoreLookupName = luConfig.name;
     }
   }
-
+  if (operationDetails.howToIdentifyExistingRecords) {
+    if (existingExtract) {
+      importDoc.existingExtract = existingExtract;
+      importDoc.existingLookupName = undefined;
+    }
+  }
   if (ignoreExisting) {
     if (identifiers && identifiers.length > 0) {
       if (lookupType === 'source') {
@@ -2052,6 +2042,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
       } else if (lookupType === 'lookup') {
         if (operationDetails.howToIdentifyExistingRecords) {
           importDoc.existingLookupName = identifiers[0].id;
+          importDoc.existingExtract = undefined;
         } else {
           pathParams[identifiers[0].id] = identifiers[0].id;
         }
