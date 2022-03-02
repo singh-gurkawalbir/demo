@@ -3,9 +3,9 @@ import { getPositionInEdge } from '../../lib';
 
 const foreignObjectSize = 22;
 
-export default function ForeignObject({edgePath, offset, children}) {
+export default function ForeignObject({edgePath, centerOffset, children}) {
   const [edgeCenterX, edgeCenterY] = useMemo(() =>
-    getPositionInEdge(edgePath, offset) || [], [edgePath, offset]);
+    getPositionInEdge(edgePath, centerOffset) || [], [edgePath, centerOffset]);
 
   return (
     <foreignObject

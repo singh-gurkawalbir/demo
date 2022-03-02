@@ -155,7 +155,7 @@ const getLengthBtwCoordinates = (x1, y1, x2, y2) => {
 // // use same forgein object space for unlink icon
 // const SPACE_FROM_ADDICON = foreignObjectSize + SEPERATION_SPACE;
 
-export const getPositionInEdge = (edgeCommands, fraction) => {
+export const getPositionInEdge = (edgeCommands, centerOffset) => {
   const linePlotsCoordinates = edgeCommands.substr(1).split(/[LQ]/).map(cmd => cmd.trim()).map(cmd => {
     // Quadratic command...currently that is supported...if its a cubic command it can have
     //  3 coordinates to describe the curve,we don't support it... So this function support M,L,C commands.
@@ -185,7 +185,8 @@ export const getPositionInEdge = (edgeCommands, fraction) => {
 
     return acc + getLengthBtwCoordinates(...curr, ...nextCoord);
   }, 0);
-  let lengthFromStart = Math.floor(lengthOFEdges * fraction);
+
+  let lengthFromStart = Math.floor(lengthOFEdges / 2 + centerOffset);
 
   for (let i = 0; i < linePlotsCoordinates.length - 1; i += 1) {
     const coord1 = linePlotsCoordinates[i];

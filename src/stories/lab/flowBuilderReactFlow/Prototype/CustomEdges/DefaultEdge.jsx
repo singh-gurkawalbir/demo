@@ -2,9 +2,10 @@ import React, {useMemo} from 'react';
 import { getSmoothStepPath, getMarkerEnd } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
 import AddNewButton from './AddNewButton';
-import { handleOffset } from '../lib';
+import { handleOffset, areMultipleEdgesConnectedToSameEdgeTarget } from '../lib';
 import UnlinkButton from './UnlinkButton';
 import ForeignObject from './ForeignObject';
+import { useFlowContext } from '../Context';
 
 const useStyles = makeStyles(theme => ({
   edgePath: {
@@ -29,6 +30,8 @@ export default function DefaultEdge({
   markerEndId,
 }) {
   const classes = useStyles();
+  const { elements } = useFlowContext();
+  const shouldShowLinkIcon = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
 
   /*
   {"points":[{"x":1250,"y":494},{"x":1350,"y":555},{"x":1587.5,"y":555},{"x":1825,"y":555},{"x":1927,"y":421.5}]}
@@ -95,13 +98,15 @@ export default function DefaultEdge({
         markerEnd={markerEnd}
       />
 
-      <ForeignObject edgePath={edgePath} offset={0.45}>
+      <ForeignObject edgePath={edgePath} centerOffset={shouldShowLinkIcon ? -10 : 10}>
         <AddNewButton edgeId={id} />
       </ForeignObject>
 
-      <ForeignObject edgePath={edgePath} offset={0.55}>
+      {shouldShowLinkIcon && (
+      <ForeignObject edgePath={edgePath} centerOffset={30}>
         <UnlinkButton edgeId={id} />
       </ForeignObject>
+      )}
     </>
   );
 }
