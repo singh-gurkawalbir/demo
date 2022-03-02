@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SortableHandle from '../../../components/Sortable/SortableHandle';
 
-export default function MenuStatusWithName({name, status, isGripperVisible = false, onMouseEnter, onMouseLeave}) {
+export default function MenuLinkWithStatus({name, status, isGripperVisible = false, onMouseEnter, onMouseLeave}) {
   return (
     <li>
       {isGripperVisible && (
@@ -16,7 +16,7 @@ export default function MenuStatusWithName({name, status, isGripperVisible = fal
   );
 }
 
-MenuStatusWithName.propTypes = {
+MenuLinkWithStatus.propTypes = {
   name: PropTypes.string.isRequired,
   status: PropTypes.node,
   isGripperVisible: PropTypes.bool,
