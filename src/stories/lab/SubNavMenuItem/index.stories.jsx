@@ -2,18 +2,18 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {action} from '@storybook/addon-actions';
-import MenuLinkWithStaus from './index';
+import SubNavMenuItem from './index';
 import Status from '../../../components/Buttons/Status';
 
 export default {
-  title: 'Lab / MenuLinkWithStatus',
-  component: MenuLinkWithStaus,
+  title: 'Lab / SubNav Menu Item',
+  component: SubNavMenuItem,
 };
 
 const handleMouseEnter = action('Mouse Entered');
 const handleMouseLeave = action('Mouse Leave');
 
-const Template = args => <MenuLinkWithStaus {...args} />;
+const Template = args => <SubNavMenuItem {...args} />;
 
 export const NameWithStatus = Template.bind();
 export const NameWithoutStatus = Template.bind();

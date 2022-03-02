@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(1),
   },
 }));
-export default function MenuLinkWithStatus({name, status, isGripperVisible = false, onMouseEnter, onMouseLeave}) {
+export default function SubNavMenuItem({name, status, isGripperVisible = false, onMouseEnter, onMouseLeave}) {
   const classes = useStyles(isGripperVisible);
 
   return (
@@ -32,7 +32,7 @@ export default function MenuLinkWithStatus({name, status, isGripperVisible = fal
   );
 }
 
-MenuLinkWithStatus.propTypes = {
+SubNavMenuItem.propTypes = {
   name: PropTypes.string.isRequired,
   status: PropTypes.node,
   isGripperVisible: PropTypes.bool,
