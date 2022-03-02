@@ -4,7 +4,6 @@ import ReactFlow,
   Controls,
   ReactFlowProvider} from 'react-flow-renderer';
 import mockElements from './metadata/complexEdge';
-import LinkedEdge from './CustomEdges/LinkedEdge';
 import DefaultEdge from './CustomEdges/DefaultEdge';
 import { layoutElements, terminalNodeInVicinity } from './lib';
 import { FlowProvider } from './Context';
@@ -25,8 +24,7 @@ const nodeTypes = {
 };
 
 const edgeTypes = {
-  default: DefaultEdge,
-  linked: LinkedEdge, // not used now, possibly never.
+  default: DefaultEdge, // override the default with out own edge logic
 };
 
 export default () => {
