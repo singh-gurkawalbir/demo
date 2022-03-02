@@ -3,16 +3,16 @@ import { nanoid } from 'nanoid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 
-export const handleOffset = 30;
+export const handleOffset = 0;
 
 const nodeSize = {
   pp: {
     width: 275,
-    height: 235,
+    height: 295,
   },
   pg: {
     width: 275,
-    height: 235,
+    height: 295,
   },
   router: {
     width: 50,
@@ -98,7 +98,6 @@ export function layoutElements(elements) {
       const edge = graph.edge({v: el.source, w: el.target});
       const target = nodes.find(n => n.id === el.target);
 
-      console.log(target);
       const isTerminal = target.type === 'terminal';
 
       edges.push({

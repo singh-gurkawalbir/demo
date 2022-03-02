@@ -5,7 +5,7 @@ import ReactFlow,
   ReactFlowProvider} from 'react-flow-renderer';
 import mockElements from './metadata/complexEdge';
 import LinkedEdge from './CustomEdges/LinkedEdge';
-import StepEdge from './CustomEdges/StepEdge';
+import DefaultEdge from './CustomEdges/DefaultEdge';
 import { layoutElements, terminalNodeInVicinity } from './lib';
 import { FlowProvider } from './Context';
 import PgNode from './CustomNodes/PgNode';
@@ -25,7 +25,7 @@ const nodeTypes = {
 };
 
 const edgeTypes = {
-  step: StepEdge,
+  default: DefaultEdge,
   linked: LinkedEdge, // not used now, possibly never.
 };
 

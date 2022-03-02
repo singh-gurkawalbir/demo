@@ -64,7 +64,7 @@ const UnlinkButtonForeignObj = (
     </foreignObject>
   );
 };
-export default function StepEdge({
+export default function DefaultEdge({
   id,
   sourceX,
   sourceY,
