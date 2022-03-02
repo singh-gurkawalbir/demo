@@ -36,7 +36,7 @@ export default () => {
   const updatedLayout = useMemo(() => {
     const el = layoutElements(elements, 'LR');
 
-    console.log(el);
+    // console.log(el);
 
     return el;
   },

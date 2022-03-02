@@ -1,12 +1,11 @@
 import React, {useMemo} from 'react';
-import { getSmoothStepPath, getEdgeCenter, getMarkerEnd } from 'react-flow-renderer';
+import { getSmoothStepPath, getMarkerEnd } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
 import AddNewButton from './AddNewButton';
 import { getPositionInEdge, handleOffset } from '../lib';
 import UnlinkButton from './UnlinkButton';
 
 const foreignObjectSize = 22;
-const UNLINK_POSITION_FRACTION_OF_EDGE_START = 0.6;
 const useStyles = makeStyles(theme => ({
   edgePath: {
     strokeDasharray: 4,
@@ -16,19 +15,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const AddNewButtonForeignObj = ({
-  sourceX,
-  sourceY,
-  targetX,
-  targetY,
-  edgeId,
-}) => {
-  const [edgeCenterX, edgeCenterY] = useMemo(() => getEdgeCenter({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-  }), [sourceX, sourceY, targetX, targetY]);
+const ForeignObject = ({edgePath, offset, children}) => {
+  const [edgeCenterX, edgeCenterY] = useMemo(() =>
+    getPositionInEdge(edgePath, offset) || [], [edgePath, offset]);
 
   return (
     <foreignObject
@@ -36,34 +25,12 @@ const AddNewButtonForeignObj = ({
       height={foreignObjectSize}
       x={edgeCenterX - foreignObjectSize / 2}
       y={edgeCenterY - foreignObjectSize / 2}
-      requiredExtensions="http://www.w3.org/1999/xhtml"
->
-      <AddNewButton edgeId={edgeId} />
+      requiredExtensions="http://www.w3.org/1999/xhtml">
+      {children}
     </foreignObject>
   );
 };
 
-const UnlinkButtonForeignObj = (
-  {edgePath, edgeId}
-
-) => {
-  const [unlinkBtnX, unlinkBtnY] = useMemo(() =>
-    getPositionInEdge(edgePath, UNLINK_POSITION_FRACTION_OF_EDGE_START) || [], [edgePath]);
-
-  return (
-
-    <foreignObject
-      width={foreignObjectSize}
-      height={foreignObjectSize}
-      x={unlinkBtnX - foreignObjectSize / 2}
-      y={unlinkBtnY - foreignObjectSize / 2}
-      requiredExtensions="http://www.w3.org/1999/xhtml"
->
-
-      <UnlinkButton edgeId={edgeId} />
-    </foreignObject>
-  );
-};
 export default function DefaultEdge({
   id,
   sourceX,
@@ -150,17 +117,14 @@ export default function DefaultEdge({
         d={edgePath}
         markerEnd={markerEnd}
       />
-      <AddNewButtonForeignObj
-        sourceX={sourceX}
-        sourceY={sourceY}
-        targetX={targetX}
-        targetY={targetY}
-        edgeId={id}
-      />
-      <UnlinkButtonForeignObj
-        edgePath={edgePath}
-        edgeId={id}
-      />
+
+      <ForeignObject edgePath={edgePath} offset={0.45}>
+        <AddNewButton edgeId={id} />
+      </ForeignObject>
+
+      <ForeignObject edgePath={edgePath} offset={0.55}>
+        <UnlinkButton edgeId={id} />
+      </ForeignObject>
     </>
   );
 }
