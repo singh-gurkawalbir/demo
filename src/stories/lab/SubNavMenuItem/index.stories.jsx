@@ -3,7 +3,7 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {action} from '@storybook/addon-actions';
 import SubNavMenuItem from './index';
-import Status from '../../../components/Buttons/Status';
+import StatusCircle from '../../../components/StatusCircle';
 
 export default {
   title: 'Lab / SubNav Menu Item',
@@ -22,7 +22,7 @@ export const NameWithoutStatusAndGrippper = Template.bind();
 
 NameWithStatus.args = {
   name: 'It is a very long name',
-  status: <Status variant="success" />,
+  status: <StatusCircle variant="success" />,
 };
 NameWithoutStatus.args = {
   name: 'Welcometotheworld',
@@ -31,7 +31,7 @@ NameWithoutStatus.args = {
 NameWithStatusAndGrippper.args = {
   name: 'welcometotheworld',
   isGripperVisible: true,
-  status: <Status variant="success" />,
+  status: <StatusCircle variant="success" />,
   onMouseEnter: handleMouseEnter,
   onMouseLeave: handleMouseLeave,
 };
