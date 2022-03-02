@@ -61,24 +61,27 @@ export function generateNewNode() {
 }
 
 export function layoutElements(elements) {
-  const dagreGraph = new dagre.graphlib.Graph();
+  const graph = new dagre.graphlib.Graph();
 
-  dagreGraph.setDefaultEdgeLabel(() => ({}));
-  dagreGraph.setGraph({ rankdir: 'LR', ...options });
+  graph.setDefaultEdgeLabel(() => ({}));
+  graph.setGraph({ rankdir: 'LR', ...options });
 
   elements.forEach(el => {
     if (isNode(el)) {
-      dagreGraph.setNode(el.id, {...nodeSize[el.type]});
+      graph.setNode(el.id, {...nodeSize[el.type]});
     } else {
-      dagreGraph.setEdge(el.source, el.target);
+      graph.setEdge(el.source, el.target);
     }
   });
 
-  dagre.layout(dagreGraph);
+  dagre.layout(graph);
 
-  return elements.map(el => {
+  const nodes = [];
+  const edges = [];
+
+  elements.forEach(el => {
     if (isNode(el)) {
-      const layoutPos = dagreGraph.node(el.id);
+      const node = graph.node(el.id);
       const size = nodeSize[el.type];
       const offsetY = ['pp', 'pg'].includes(el.type) ? 0 : handleOffset;
       const offsetX = el.type === 'terminal' ? nodeSize.pp.width / 2 - nodeSize.terminal.width / 2 : 0;
@@ -86,15 +89,29 @@ export function layoutElements(elements) {
       // We are shifting the dagre node position that returns centerpoint (x,y)
       // to the top left so it matches the react-flow node anchor point (top left).
       // This maters when nodes are of various sizes.
-      return ({...el,
+      nodes.push({...el,
         position: {
-          x: layoutPos.x - size.width / 2 - offsetX,
-          y: layoutPos.y - size.height / 2 - offsetY,
+          x: node.x - size.width / 2 - offsetX,
+          y: node.y - size.height / 2 - offsetY,
         }});
-    }
+    } else { // these are the edges...
+      const edge = graph.edge({v: el.source, w: el.target});
+      const target = nodes.find(n => n.id === el.target);
 
-    return el;
+      console.log(target);
+      const isTerminal = target.type === 'terminal';
+
+      edges.push({
+        ...el,
+        data: {
+          isTerminal,
+          points: edge.points,
+        },
+      });
+    }
   });
+
+  return [...nodes, ...edges];
 }
 
 export function getConnectedEdges(id, direction = 'left', elements) {

@@ -50,7 +50,9 @@ export default function TerminalNode(props) {
         <CircleIcon />
       ) : (
         <Tooltip title="Drag to merge with other branch" position="top">
-          <MergeIcon className={classes.merge} />
+          <span>
+            <MergeIcon className={classes.merge} />
+          </span>
         </Tooltip>
       )}
     </div>

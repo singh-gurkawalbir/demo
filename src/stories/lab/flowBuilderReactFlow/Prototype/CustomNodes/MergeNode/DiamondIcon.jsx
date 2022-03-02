@@ -27,7 +27,7 @@ export default function DiamondIcon({isDroppable}) {
   const classes = useStyles();
 
   return (
-    <svg viewBox="34 34" className={clsx(classes.button, {[classes.drop]: isDroppable})} >
+    <svg viewBox="0 0 34 34" className={clsx(classes.button, {[classes.drop]: isDroppable})} >
       <path d="m0,17l17,-17l17,17l-17,17l-17,-17z" />
     </svg>
   );

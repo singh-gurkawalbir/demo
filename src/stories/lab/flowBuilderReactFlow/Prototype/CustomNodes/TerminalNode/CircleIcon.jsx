@@ -23,7 +23,7 @@ export default function DiamondIcon() {
   const classes = useStyles();
 
   return (
-    <svg viewbox="34 34" className={classes.svg} >
+    <svg viewBox="0 0 34 34" className={classes.svg} >
       <circle cx="16" cy="16" r="15.5" />
     </svg>
   );
