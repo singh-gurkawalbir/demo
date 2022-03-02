@@ -68,7 +68,7 @@ export default function HomePageCardContainer({ children, onClick, isDragInProgr
   };
   const handleMouseLeave = () => {
     if (!isDragInProgress) {
-      setShowGripper(true);
+      setShowGripper(false);
     }
   };
 
