@@ -2,10 +2,10 @@ import React, {useMemo} from 'react';
 import { getSmoothStepPath, getMarkerEnd } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
 import AddNewButton from './AddNewButton';
-import { getPositionInEdge, handleOffset } from '../lib';
+import { handleOffset } from '../lib';
 import UnlinkButton from './UnlinkButton';
+import ForeignObject from './ForeignObject';
 
-const foreignObjectSize = 22;
 const useStyles = makeStyles(theme => ({
   edgePath: {
     strokeDasharray: 4,
@@ -14,22 +14,6 @@ const useStyles = makeStyles(theme => ({
     fill: 'none',
   },
 }));
-
-const ForeignObject = ({edgePath, offset, children}) => {
-  const [edgeCenterX, edgeCenterY] = useMemo(() =>
-    getPositionInEdge(edgePath, offset) || [], [edgePath, offset]);
-
-  return (
-    <foreignObject
-      width={foreignObjectSize}
-      height={foreignObjectSize}
-      x={edgeCenterX - foreignObjectSize / 2}
-      y={edgeCenterY - foreignObjectSize / 2}
-      requiredExtensions="http://www.w3.org/1999/xhtml">
-      {children}
-    </foreignObject>
-  );
-};
 
 export default function DefaultEdge({
   id,
@@ -72,14 +56,7 @@ export default function DefaultEdge({
       return sp;
     }
 
-    // lets skip that and just proof the dagre layout with hard corners.
-    const points = [
-      // {x: sourceX, y: targetY}, // sourceHandle?
-      ...data.points,
-      // {x: targetX, y: targetY}, // target handle?
-    ];
-
-    // console.log('points including s,t:', points);
+    const {points} = data;
 
     let path;
     let currentX = points[0].x;
