@@ -13,7 +13,7 @@ describe('GlobalSearch UI Tests', () => {
     userEvent.click(screen.getByLabelText(/Global search/i));
   };
 
-  test('Clicking on search icon should open globalsearch', () => {
+  test('Should open globalsearch on clicking on search icon', () => {
     const searchIcon = screen.getByLabelText(/Global search/i);
 
     clickOnSearchIcon();
@@ -25,7 +25,7 @@ describe('GlobalSearch UI Tests', () => {
 
     expect(resourceFiltersButton).toBeInTheDocument();
   });
-  test('Clicking on close icon in search input should close searchbox', () => {
+  test('Should close searchbox on clicking on close icon in search input', () => {
     clickOnSearchIcon();
 
     const searchInputCloseButton = screen.getByTitle(/Close Search/i);
@@ -39,7 +39,7 @@ describe('GlobalSearch UI Tests', () => {
     expect(resourceFiltersButton).not.toBeInTheDocument();
     expect(screen.getByLabelText(/Global search/i)).toBeInTheDocument();
   });
-  test('Pressing / character on keyboard should open globalsearch', () => {
+  test('should open globalsearch on pressing / character on keyboard ', () => {
     const searchIcon = screen.getByLabelText(/Global search/i);
 
     userEvent.keyboard('/');
@@ -52,7 +52,7 @@ describe('GlobalSearch UI Tests', () => {
 
     expect(resourceFiltersButton).toBeInTheDocument();
   });
-  test('Pressing Escape character on keyboard when there is text should clear the input', () => {
+  test('Should clear the input on pressing escape character on keyboard when there is text', () => {
     userEvent.keyboard('/');
 
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
@@ -63,7 +63,7 @@ describe('GlobalSearch UI Tests', () => {
     userEvent.keyboard('{esc}');
     expect(searchInput).toHaveValue('');
   });
-  test('Pressing Escape character on keyboard when there is no text should close the global search', async () => {
+  test('Should close the global search on pressing escape character on keyboard when there is no text ', async () => {
     userEvent.keyboard('/');
 
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
@@ -76,7 +76,7 @@ describe('GlobalSearch UI Tests', () => {
     userEvent.keyboard('{esc}');
     await waitFor(() => expect(screen.getByLabelText(/Global search/i)).toBeInTheDocument());
   });
-  test('Typing one character on input should not open Results Panel', () => {
+  test('Should not open Results Panel typing one character on input', () => {
     clickOnSearchIcon();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -85,7 +85,7 @@ describe('GlobalSearch UI Tests', () => {
     expect(searchInput).toHaveValue('a');
     expect(screen.queryByLabelText(/Global search results/i)).not.toBeInTheDocument();
   });
-  test('Typing two or more characters on input should open Results Panel', async () => {
+  test('should open Results Panel on typing two or more characters on input ', async () => {
     clickOnSearchIcon();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -99,7 +99,7 @@ describe('GlobalSearch UI Tests', () => {
       expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria/i)).toBeInTheDocument();
     });
   });
-  test('Typing two or more characters on input should open Results Panel and on deleting results panel should be closed', async () => {
+  test('Should open Results Panel Typing two or more characters on input and on deleting results panel should be closed', async () => {
     clickOnSearchIcon();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -111,7 +111,7 @@ describe('GlobalSearch UI Tests', () => {
     expect(searchInput).toHaveValue('a');
     await waitFor(() => expect(screen.queryByLabelText(/Global search results/i)).not.toBeInTheDocument());
   });
-  test('Clicking on close button on results panel should close Results Panel and clear the search input and focus the search input', async () => {
+  test('Should close Results Panel on clicking on close button on results panel and clear the search input and focus the search input', async () => {
     clickOnSearchIcon();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -125,7 +125,7 @@ describe('GlobalSearch UI Tests', () => {
     expect(searchInput).toHaveFocus();
     expect(searchInput).toHaveValue('');
   });
-  test('Clicking on MarketplaceTab should open Marketplace results and focus search input', async () => {
+  test('Should open Marketplace results on clicking on MarketplaceTab  and focus search input', async () => {
     clickOnSearchIcon();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -143,7 +143,7 @@ describe('GlobalSearch UI Tests', () => {
     expect(searchInput).toHaveValue('am');
     expect(screen.queryByText(/Checkout/)).not.toBeInTheDocument();
   });
-  test('Clicking on Resources Tab should open Resource results and focus search input', async () => {
+  test('Should open Resource results on clicking on Resources Tab  and focus search input', async () => {
     clickOnSearchIcon();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -164,7 +164,7 @@ describe('GlobalSearch UI Tests', () => {
     expect(searchInput).toHaveValue('am');
     expect(screen.queryByText(/Checkout/)).not.toBeInTheDocument();
   });
-  test('Typing special charcters with : should open Resourcefilter with selected filters', async () => {
+  test('Should open Resourcefilter on typing special charcters with :  with selected filters', async () => {
     clickOnSearchIcon();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -183,7 +183,7 @@ describe('GlobalSearch UI Tests', () => {
     });
     expect(screen.queryByLabelText(/Connections/)).toBeChecked();
   });
-  test('Typing special charcters with : should open Resourcefilter with selected filters and when : is deleted , the resource filters should be closed', async () => {
+  test('Should open Resourcefilter with selected filters on typing special charcters with :  and when : is deleted , the resource filters should be closed', async () => {
     clickOnSearchIcon();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -196,7 +196,7 @@ describe('GlobalSearch UI Tests', () => {
       expect(screen.queryByLabelText(/^Resource Filter/i)).not.toBeInTheDocument();
     });
   });
-  test('Clicking on any filter when search input has : should remove the : and also the string before it, filters should be updated filters', async () => {
+  test('Should remove the : on clicking on any filter when search input has : and also the string before it, filters should be updated filters', async () => {
     clickOnSearchIcon();
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
 
@@ -214,14 +214,14 @@ describe('GlobalSearch UI Tests', () => {
     expect(screen.queryByLabelText(/Connections/)).toBeChecked();
     expect(screen.queryByLabelText(/Scripts/i)).toBeChecked();
   });
-  test('Clicking on ResourceFilter button should open resource filters', () => {
+  test('Should open resource filters on clicking on ResourceFilter button ', () => {
     clickOnSearchIcon();
     const resourceFilterButton = screen.queryByText(/all/i);
 
     userEvent.click(resourceFilterButton);
     expect(screen.queryByLabelText(/^Resource Filter/i)).toBeInTheDocument();
   });
-  test('Clicking on ResourceFilter button when it is already open should close resource filters', () => {
+  test('Should close resource filters on clicking on ResourceFilter button when it is already open ', () => {
     clickOnSearchIcon();
     const resourceFilterButton = screen.queryByText(/all/i);
 
@@ -231,7 +231,7 @@ describe('GlobalSearch UI Tests', () => {
     userEvent.click(resourceFilterButton);
     expect(screen.queryByLabelText(/^Resource Filter/i)).not.toBeInTheDocument();
   });
-  test('Clicking on close button on ResourceFilter popup should close resource filters and focus the search input', () => {
+  test('Should close resource filters on clicking on close button on ResourceFilter popup and focus the search input', () => {
     clickOnSearchIcon();
     const resourceFilterButton = screen.queryByText(/all/i);
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
@@ -243,7 +243,7 @@ describe('GlobalSearch UI Tests', () => {
     expect(screen.queryByLabelText(/^Resource Filter/i)).not.toBeInTheDocument();
     expect(searchInput).toHaveFocus();
   });
-  test('Clicking on Menu Item in resource filters should enable the filter and focus the search input and uncheck all filter', () => {
+  test('Should enable the filter on clicking on Menu Item in resource filters  and focus the search input and uncheck all filter', () => {
     clickOnSearchIcon();
     const resourceFilterButton = screen.queryByText(/all/i);
     const searchInput = screen.getByLabelText(/Search integrator.io/i);
