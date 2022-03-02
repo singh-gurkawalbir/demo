@@ -1,12 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { IconButton } from '@material-ui/core';
-import AddIcon from '../../../components/icons/AddIcon';
+import SortableHandle from '../../../components/Sortable/SortableHandle';
 
-export default function MenuStatusWithName({name, status, isDragbar, onClick}) {
+export default function MenuStatusWithName({name, status, isGripperVisible = false, onMouseEnter, onMouseLeave}) {
   return (
     <li>
-      {isDragbar && <span> <IconButton onClick={onClick}><AddIcon /></IconButton></span>} <span>{name}</span> <span>{status}</span>
+      {isGripperVisible && (
+      <span onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+        <SortableHandle isVisible={isGripperVisible} />
+      </span>
+      )}
+      <span>{name}</span>
+      <span>{status}</span>
     </li>
   );
 }
@@ -14,5 +19,5 @@ export default function MenuStatusWithName({name, status, isDragbar, onClick}) {
 MenuStatusWithName.propTypes = {
   name: PropTypes.string.isRequired,
   status: PropTypes.node,
-  isDragbar: PropTypes.bool,
+  isGripperVisible: PropTypes.bool,
 };
