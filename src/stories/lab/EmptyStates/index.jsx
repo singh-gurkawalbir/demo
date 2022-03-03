@@ -54,5 +54,5 @@ EmptyState.propTypes = {
   title: PropTypes.string,
   altText: PropTypes.string,
   subTitle: PropTypes.string,
-  type: PropTypes.string.isRequired,
+  type: PropTypes.array.isRequired,
 };
