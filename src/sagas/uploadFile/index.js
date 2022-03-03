@@ -32,7 +32,7 @@ export function* uploadFile({
     };
 
     if (fileName) {
-      headers['Content-Disposition'] = `attachment;filename=${fileName}`;
+      headers['Content-Disposition'] = `attachment;filename=${encodeURIComponent(fileName)}`;
     }
 
     yield fetch(response.signedURL, {
@@ -43,7 +43,9 @@ export function* uploadFile({
 
     return response.runKey;
   } catch (e) {
-    return true;
+    console.log('e', e);
+
+    return undefined;
   }
 }
 
