@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function EmptyState({type, altText, title, subTitle, children}) {
+export default function EmptyState({type, title, subTitle, children}) {
   const classes = useStyles();
 
   return (
@@ -40,7 +40,7 @@ export default function EmptyState({type, altText, title, subTitle, children}) {
         <EmptyStateImg
           className={classes.appLogo}
           type={type}
-          alt={altText} />
+          alt="" />
         <Typography variant="h3" className={classes.title}>{title}</Typography>
         {subTitle && <Typography variant="body2" className={classes.subTitle}>{subTitle}</Typography> }
         {children}
@@ -52,7 +52,6 @@ export default function EmptyState({type, altText, title, subTitle, children}) {
 EmptyState.propTypes = {
   children: PropTypes.element,
   title: PropTypes.string,
-  altText: PropTypes.string,
   subTitle: PropTypes.string,
   type: PropTypes.oneOf(['imports', 'connections', 'agents', 'apitokens', 'exports', 'recyclebin', 'integrations']),
 };

@@ -39,7 +39,6 @@ Default.args = {
   title: 'This is a default heading',
   subTitle: 'In the sub heading we are write the short description about the state',
   type: 'integrations',
-  altText: 'integrations image alt text',
   primaryButtonText: 'Create Flow',
   secondaryButtonText: 'This is going to be a text button for the this state ',
 };
@@ -53,7 +52,6 @@ LongTitleText.args = {
           This is a really long "Title" to demonstrate if and how it will wrap to a second line.`,
   subTitle: 'Welcome to the new connections experience',
   type: 'connections',
-  altText: 'Connections image alt text',
   primaryButtonText: 'Create Flow',
   secondaryButtonText: 'Secondary text link with underline treatment',
 };
@@ -68,7 +66,6 @@ LongSubTitleText.args = {
              This is a really long subTitle to demonstrate if and how it will wrap to a second line. 
              It should also help identify line height issues.`,
   type: 'connections',
-  altText: 'Connections image alt text',
   primaryButtonText: 'Create Flow',
   secondaryButtonText: 'Secondary text link with underline treatment',
 };
@@ -80,7 +77,6 @@ NoSubTitle.parameters = designParameters;
 NoSubTitle.args = {
   title: 'Welcome',
   type: 'connections',
-  altText: 'Connections image alt text',
   primaryButtonText: 'Create Flow',
   secondaryButtonText: 'Secondary text link with underline treatment',
 };
@@ -93,7 +89,6 @@ SingleButton.args = {
   title: 'Welcome',
   subTitle: 'Welcome to the new connections experience',
   type: 'connections',
-  altText: 'Connections image alt text',
   primaryButtonText: 'Create Flow',
 };
 
