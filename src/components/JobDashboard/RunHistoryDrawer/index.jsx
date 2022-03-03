@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { addDays, startOfDay, endOfDay } from 'date-fns';
@@ -59,21 +59,27 @@ export default function RunHistoryDrawer() {
     selectors.filter(state, `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`),
   shallowEqual
   );
-  let selectedDate;
+  // let selectedDate;
 
-  if (filter?.range) {
-    selectedDate = {
-      startDate: new Date(filter.range.startDate),
-      endDate: new Date(filter.range.endDate),
-      preset: filter.range.preset,
-    };
-  } else {
-    selectedDate = {
-      preset: 'last24hours',
-      startDate: startOfDay(addDays(new Date(), -29)),
-      endDate: endOfDay(new Date()),
-    };
-  }
+  // if (filter?.range) {
+  //   selectedDate = {
+  //     startDate: new Date(filter.range.startDate),
+  //     endDate: new Date(filter.range.endDate),
+  //     preset: filter.range.preset,
+  //   };
+  // } else {
+  //   selectedDate = {
+  //     preset: 'last24hours',
+  //     startDate: startOfDay(addDays(new Date(), -29)),
+  //     endDate: endOfDay(new Date()),
+  //   };
+  // }
+  const selectedDate = useMemo(() => (
+    {
+      preset: filter.range ? filter.range.preset : 'last24hours',
+      startDate: filter.range ? new Date(filter.range.startDate) : startOfDay(addDays(new Date(), -29)),
+      endDate: filter.range ? new Date(filter.range.endDate) : endOfDay(new Date()),
+    }), [filter.range]);
 
   useEffect(() => {
     dispatch(
