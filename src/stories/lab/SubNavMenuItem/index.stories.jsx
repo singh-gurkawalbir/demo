@@ -21,6 +21,8 @@ export const NameWithoutStatusAndGrippper = Template.bind();
 
 NameWithStatus.args = {
   name: 'It is a very long name',
+  errorCount: 0,
+  isGripperVisible: true,
 };
 NameWithoutStatus.args = {
   name: 'Welcometotheworld',
