@@ -96,3 +96,11 @@ SingleButton.args = {
   altText: 'Connections image alt text',
   primaryButtonText: 'Create Flow',
 };
+
+export const WithOutButton = Template.bind({});
+
+WithOutButton.args = {
+  title: 'Welcome',
+  subTitle: 'Welcome to the new connections experience',
+  type: 'imports',
+};
