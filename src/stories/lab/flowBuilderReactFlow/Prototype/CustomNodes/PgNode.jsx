@@ -20,8 +20,7 @@ const generatorActions = [
 
 const useStyles = makeStyles(theme => ({
   pgContainer: {
-    display: 'flex',
-    alignItems: 'flex-start',
+    paddingTop: 60,
   },
   root: {
     width: 250,

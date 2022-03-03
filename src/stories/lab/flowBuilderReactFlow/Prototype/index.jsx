@@ -3,8 +3,7 @@ import ReactFlow,
 { MiniMap,
   Controls,
   ReactFlowProvider} from 'react-flow-renderer';
-import mockElements from './metadata/elements';
-import LinkedEdge from './CustomEdges/LinkedEdge';
+import mockElements from './metadata/complexEdge';
 import DefaultEdge from './CustomEdges/DefaultEdge';
 import { layoutElements, terminalNodeInVicinity } from './lib';
 import { FlowProvider } from './Context';
@@ -25,16 +24,20 @@ const nodeTypes = {
 };
 
 const edgeTypes = {
-  default: DefaultEdge,
-  linked: LinkedEdge, // not used now, possibly never.
+  default: DefaultEdge, // override the default with out own edge logic
 };
 
 export default () => {
   const [elements, dispatchFlowUpdate] = useReducer(reducer, mockElements);
   const [mergeNodeId, setMergeNodeId] = useState();
 
-  const updatedLayout = useMemo(() =>
-    layoutElements(elements, 'LR'),
+  const updatedLayout = useMemo(() => {
+    const el = layoutElements(elements, 'LR');
+
+    // console.log(el);
+
+    return el;
+  },
   [elements]);
 
   useEffect(() => {
