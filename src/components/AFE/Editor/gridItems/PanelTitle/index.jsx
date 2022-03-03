@@ -6,7 +6,7 @@ import Help from '../../../../Help';
 
 const useStyles = makeStyles(theme => ({
   titleContainer: {
-    height: 39,
+    // height: 39,
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(1),
