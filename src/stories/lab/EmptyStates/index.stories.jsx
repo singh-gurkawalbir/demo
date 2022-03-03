@@ -25,7 +25,7 @@ const Template = ({primaryButtonText, secondaryButtonText, ...args}) => (
     <AppBar />
     <PageBar />
     <EmptyState {...args}>
-      {primaryButtonText && <FilledButton>{primaryButtonText}</FilledButton> }
+      {primaryButtonText && <FilledButton>{primaryButtonText}</FilledButton>}
       {secondaryButtonText && <TextButton underline>{secondaryButtonText}</TextButton>}
     </EmptyState>
   </>

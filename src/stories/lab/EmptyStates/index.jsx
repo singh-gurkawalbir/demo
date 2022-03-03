@@ -54,5 +54,5 @@ EmptyState.propTypes = {
   title: PropTypes.string,
   altText: PropTypes.string,
   subTitle: PropTypes.string,
-  type: PropTypes.array.isRequired,
+  type: PropTypes.oneOf(['imports', 'connections', 'agents', 'apitokens', 'exports', 'recyclebin', 'integrations']),
 };
