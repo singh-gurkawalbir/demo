@@ -10,29 +10,59 @@ const {
 
 describe('mappings processor logic', () => {
   describe('init util', () => {
-    test('should correctly return options along with editor title', () => {
-      const options = {
-        stage: 'importMappingExtract',
-        resourceId: 'res-123',
-        resourceType: 'imports',
-      };
-      const resource = {
-        _id: 'res-123',
-        name: 'Import into ftp',
-      };
-      const expectedOutput = {
-        stage: 'importMappingExtract',
-        resourceId: 'res-123',
-        resourceType: 'imports',
-        editorTitle: 'Edit Mapping: Import into ftp',
-      };
+    const options = {
+      stage: 'importMappingExtract',
+      resourceId: 'res-123',
+      resourceType: 'imports',
+    };
+    const resource = {
+      _id: 'res-123',
+      name: 'Import into ftp',
+    };
+    const expectedOutput = {
+      stage: 'importMappingExtract',
+      resourceId: 'res-123',
+      resourceType: 'imports',
+      editorTitle: 'Edit Mapping: Import into ftp',
+    };
 
+    test('should correctly return options along with editor title', () => {
       expect(init({options, resource})).toEqual(expectedOutput);
       expect(init({options})).toEqual({
         stage: 'importMappingExtract',
         resourceId: 'res-123',
         resourceType: 'imports',
         editorTitle: 'Edit Mapping',
+      });
+      expect(init({options, mappingPreviewType: 'http'})).toEqual({
+        stage: 'importMappingExtract',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        editorTitle: 'Edit Mapping',
+        mappingPreviewType: false,
+      });
+    });
+    test('should return only supported mappingPreviewType', () => {
+      expect(init({options, mappingPreviewType: 'http'})).toEqual({
+        stage: 'importMappingExtract',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        editorTitle: 'Edit Mapping',
+        mappingPreviewType: false,
+      });
+      expect(init({options, mappingPreviewType: 'netsuite'})).toEqual({
+        stage: 'importMappingExtract',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        editorTitle: 'Edit Mapping',
+        mappingPreviewType: 'netsuite',
+      });
+      expect(init({options, mappingPreviewType: 'salesforce'})).toEqual({
+        stage: 'importMappingExtract',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        editorTitle: 'Edit Mapping',
+        mappingPreviewType: 'salesforce',
       });
     });
   });
