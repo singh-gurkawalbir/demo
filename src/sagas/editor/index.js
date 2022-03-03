@@ -132,7 +132,7 @@ export function* requestPreview({ id }) {
   // since mappings are stored in separate state
   // we validate the same here
   if (editor.editorType === 'mappings') {
-    const {mappings, lookups} = yield select(selectors.mapping);
+    const {mappings, lookups, isNSAssistantFormLoaded} = yield select(selectors.mapping);
     const {errMessage} = mappingUtil.validateMappings(mappings, lookups);
 
     if (errMessage) {
@@ -142,7 +142,8 @@ export function* requestPreview({ id }) {
 
       return yield put(actions.editor.validateFailure(id, violations));
     }
-    if (editor.mappingPreviewType) {
+    if (editor.mappingPreviewType &&
+      (editor.mappingPreviewType !== 'netsuite' || isNSAssistantFormLoaded)) {
       yield put(actions.mapping.requestPreview());
     }
   }
