@@ -13,12 +13,9 @@ import AppBlockHandle from './Handles/AppBlockHandle';
 
 const useStyles = makeStyles(() => ({
   ppContainer: {
-    display: 'flex',
-    alignItems: 'flex-start',
+    paddingTop: 60,
   },
   root: {
-    // padding: 10,
-    // textAlign: 'center',
     width: 250,
   },
   contentContainer: {

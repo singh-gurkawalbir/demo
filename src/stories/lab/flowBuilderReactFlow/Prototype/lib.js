@@ -3,16 +3,16 @@ import { nanoid } from 'nanoid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 
-export const handleOffset = 30;
+export const handleOffset = 0;
 
 const nodeSize = {
   pp: {
     width: 275,
-    height: 235,
+    height: 295,
   },
   pg: {
     width: 275,
-    height: 235,
+    height: 295,
   },
   router: {
     width: 50,
@@ -61,24 +61,27 @@ export function generateNewNode() {
 }
 
 export function layoutElements(elements) {
-  const dagreGraph = new dagre.graphlib.Graph();
+  const graph = new dagre.graphlib.Graph();
 
-  dagreGraph.setDefaultEdgeLabel(() => ({}));
-  dagreGraph.setGraph({ rankdir: 'LR', ...options });
+  graph.setDefaultEdgeLabel(() => ({}));
+  graph.setGraph({ rankdir: 'LR', ...options });
 
   elements.forEach(el => {
     if (isNode(el)) {
-      dagreGraph.setNode(el.id, {...nodeSize[el.type]});
+      graph.setNode(el.id, {...nodeSize[el.type]});
     } else {
-      dagreGraph.setEdge(el.source, el.target);
+      graph.setEdge(el.source, el.target);
     }
   });
 
-  dagre.layout(dagreGraph);
+  dagre.layout(graph);
 
-  return elements.map(el => {
+  const nodes = [];
+  const edges = [];
+
+  elements.forEach(el => {
     if (isNode(el)) {
-      const layoutPos = dagreGraph.node(el.id);
+      const node = graph.node(el.id);
       const size = nodeSize[el.type];
       const offsetY = ['pp', 'pg'].includes(el.type) ? 0 : handleOffset;
       const offsetX = el.type === 'terminal' ? nodeSize.pp.width / 2 - nodeSize.terminal.width / 2 : 0;
@@ -86,15 +89,28 @@ export function layoutElements(elements) {
       // We are shifting the dagre node position that returns centerpoint (x,y)
       // to the top left so it matches the react-flow node anchor point (top left).
       // This maters when nodes are of various sizes.
-      return ({...el,
+      nodes.push({...el,
         position: {
-          x: layoutPos.x - size.width / 2 - offsetX,
-          y: layoutPos.y - size.height / 2 - offsetY,
+          x: node.x - size.width / 2 - offsetX,
+          y: node.y - size.height / 2 - offsetY,
         }});
-    }
+    } else { // these are the edges...
+      const edge = graph.edge({v: el.source, w: el.target});
+      const target = nodes.find(n => n.id === el.target);
 
-    return el;
+      const isTerminal = target.type === 'terminal';
+
+      edges.push({
+        ...el,
+        data: {
+          isTerminal,
+          points: edge.points,
+        },
+      });
+    }
   });
+
+  return [...nodes, ...edges];
 }
 
 export function getConnectedEdges(id, direction = 'left', elements) {
@@ -139,7 +155,7 @@ const getLengthBtwCoordinates = (x1, y1, x2, y2) => {
 // // use same forgein object space for unlink icon
 // const SPACE_FROM_ADDICON = foreignObjectSize + SEPERATION_SPACE;
 
-export const getPositionInEdge = (edgeCommands, fraction) => {
+export const getPositionInEdge = (edgeCommands, centerOffset) => {
   const linePlotsCoordinates = edgeCommands.substr(1).split(/[LQ]/).map(cmd => cmd.trim()).map(cmd => {
     // Quadratic command...currently that is supported...if its a cubic command it can have
     //  3 coordinates to describe the curve,we don't support it... So this function support M,L,C commands.
@@ -169,7 +185,8 @@ export const getPositionInEdge = (edgeCommands, fraction) => {
 
     return acc + getLengthBtwCoordinates(...curr, ...nextCoord);
   }, 0);
-  let lengthFromStart = Math.floor(lengthOFEdges * fraction);
+
+  let lengthFromStart = Math.floor(lengthOFEdges / 2 + centerOffset);
 
   for (let i = 0; i < linePlotsCoordinates.length - 1; i += 1) {
     const coord1 = linePlotsCoordinates[i];
