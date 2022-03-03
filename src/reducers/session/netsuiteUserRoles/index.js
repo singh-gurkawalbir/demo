@@ -9,6 +9,7 @@ export default (state = {}, action) => {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.NETSUITE_USER_ROLES.CLEAR:
+        if (!draft[connectionId]) break;
         delete draft[connectionId].message;
         delete draft[connectionId].status;
         delete draft[connectionId].hideNotificationMessage;
