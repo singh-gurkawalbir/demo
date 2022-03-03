@@ -53,5 +53,5 @@ EmptyState.propTypes = {
   children: PropTypes.element,
   title: PropTypes.string,
   subTitle: PropTypes.string,
-  type: PropTypes.oneOf(['imports', 'connections', 'agents', 'apitokens', 'exports', 'recyclebin', 'integrations']),
+  type: PropTypes.oneOf(['imports', 'connections', 'agents', 'apitokens', 'exports', 'recyclebin', 'integrations']).isRequired,
 };

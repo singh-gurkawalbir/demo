@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(1),
   },
 }));
-export default function SubNavMenuItem({name, status, variant, errorCount, isGripperVisible = false, onMouseEnter, onMouseLeave}) {
+export default function SubNavMenuItem({name, errorCount, isGripperVisible = false, onMouseEnter, onMouseLeave}) {
   const classes = useStyles(isGripperVisible);
 
   return (
@@ -29,8 +29,11 @@ export default function SubNavMenuItem({name, status, variant, errorCount, isGri
         <SortableHandle isVisible={isGripperVisible} />
       )}
       <Typography className={classes.name}>{name}</Typography>
-      <span className={classes.status}>{status}</span>
-      {errorCount && <span><Status variant={variant}>{errorCount}</Status></span>}
+      {errorCount && (
+      <Status variant="error" size="small">
+        <span>{errorCount > 9999 ? '9999+' : errorCount}</span>
+      </Status>
+      )}
     </ListItem>
   );
 }
