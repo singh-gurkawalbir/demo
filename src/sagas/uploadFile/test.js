@@ -28,7 +28,7 @@ describe('uploadFile saga', () => {
   afterAll(() => {
     global.fetch = unmockedFetch;
   });
-  test('should succeed on successful api call', () => expectSaga(uploadFile, { resourceType, resourceId, fileType, file })
+  test('should succeed on successful api call and return runKey', () => expectSaga(uploadFile, { resourceType, resourceId, fileType, file })
     .provide([[matchers.call.fn(apiCallWithRetry), response]])
     .call.fn(apiCallWithRetry)
     .returns('runKey')
