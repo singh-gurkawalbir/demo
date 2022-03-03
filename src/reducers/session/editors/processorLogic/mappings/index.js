@@ -8,7 +8,7 @@ export default {
     return {
       ...options,
       editorTitle,
-      mappingPreviewType,
+      mappingPreviewType: mappingPreviewType !== 'http' && mappingPreviewType,
     };
   },
   requestBody: () => ({
