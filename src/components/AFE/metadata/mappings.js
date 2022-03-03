@@ -24,6 +24,7 @@ export default {
           area: 'assistant',
           isLoggable: true,
           Panel: PreviewPanel,
+          helpKey: `${mappingPreviewType === 'netsuite' ? 'afe.mappings.netsuite.assistant' : 'afe.mappings.salesforce.assistant'}`,
         },
       );
     }
