@@ -245,11 +245,11 @@ export const featuresMap = options => ({
     hidePreview: true,
   },
   mappings: {
-    layout: 'compactRow',
+    layout: 'compact2',
     autoEvaluate: false,
   },
   responseMappings: {
-    layout: 'compactRow',
+    layout: 'compact2',
     autoEvaluate: false,
   },
 });

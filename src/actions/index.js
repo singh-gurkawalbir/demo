@@ -1476,6 +1476,7 @@ const mapping = {
     received: value => action(actionTypes.MAPPING.AUTO_MAPPER.RECEIVED, { value }),
     failed: (failSeverity, failMsg) => action(actionTypes.MAPPING.AUTO_MAPPER.FAILED, { failSeverity, failMsg }),
   },
+  toggleVersion: version => action(actionTypes.MAPPING.TOGGLE_VERSION, { version }),
 };
 
 const searchCriteria = {

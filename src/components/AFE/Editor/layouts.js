@@ -9,9 +9,13 @@ export default {
                         "error error error"`,
   },
   compact2: {
-    gridTemplateColumns: '1fr 1fr',
-    gridTemplateRows: '1fr 1fr 0fr',
-    gridTemplateAreas: '"rule data" "result data" "error error"',
+    gridTemplateColumns: '1fr 1fr 1fr auto 1fr',
+    gridTemplateRows: '1fr auto 1fr auto 0fr',
+    gridTemplateAreas: `"rule rule rule dragBar_v_0 data" 
+                        "rule rule rule dragBar_v_0 dragBar_h_0"
+                        "rule rule rule dragBar_v_0 result" 
+                        "dragBar_h_1 dragBar_h_1 dragBar_h_1 dragBar_h_1 dragBar_h_1"
+                        "error error error error error"`,
   },
   row: {
     gridTemplateColumns: '1fr',

@@ -1,6 +1,8 @@
 import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
 import MappingsPanel from '../Editor/panels/Mappings';
+import Mapper2Guide from '../Drawer/actions/Mapper2Guide';
+import ToggleMapperVersion from '../Drawer/actions/ToggleMapperVersion';
 
 export default {
   type: 'mappings',
@@ -34,5 +36,11 @@ export default {
   ],
   drawer: {
     showLayoutToggle: true,
+    actions: [
+      { component: ToggleMapperVersion,
+        position: 'left',
+      },
+      { component: Mapper2Guide, position: 'right' },
+    ],
   },
 };

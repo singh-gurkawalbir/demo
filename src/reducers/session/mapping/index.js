@@ -6,6 +6,7 @@ import actionTypes from '../../../actions/types';
 import {isMappingEqual} from '../../../utils/mapping';
 
 const emptyObj = {};
+const emptyArr = [];
 
 export default (state = {}, action) => {
   const {
@@ -25,6 +26,7 @@ export default (state = {}, action) => {
     isGroupedSampleData,
     failMsg,
     failSeverity,
+    version,
   } = action;
 
   return produce(state, draft => {
@@ -302,6 +304,11 @@ export default (state = {}, action) => {
         }
         break;
 
+      case actionTypes.MAPPING.TOGGLE_VERSION:
+        if (!draft.mapping) break;
+        draft.mapping.version = version;
+        break;
+
       default:
     }
   });
@@ -316,6 +323,14 @@ selectors.mapping = state => {
   }
 
   return state.mapping;
+};
+
+selectors.mappingTreeData = state => {
+  if (!state || !state.mapping) {
+    return emptyArr;
+  }
+
+  return state.mapping.mappingTreeData || emptyArr;
 };
 
 // #region PUBLIC SELECTORS
@@ -358,5 +373,11 @@ selectors.autoMapper = state => {
 
   return state.mapping.autoMapper;
 };
-// selectors.autoMapperStartKey = state => state?.mapping?.autoMapper?.startKey || '';
-// selectors.autoMapperErrorMsg = state => state?.mapping?.autoMapper?.errorMsg;
+
+selectors.mappingVersion = state => {
+  if (!state || !state.mapping) {
+    return;
+  }
+
+  return state.mapping.version || 1;
+};

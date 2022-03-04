@@ -5349,6 +5349,43 @@ selectors.responseMappingInput = (state, resourceType, resourceId, flowId) => {
   return responseMappingUtil.getResponseMappingDefaultInput(resourceType, preProcessedData, resource?.adaptorType);
 };
 
+selectors.isMapper2Supported = state => {
+  const importId = selectors.mapping(state)?.importId;
+
+  if (!importId) return false;
+
+  const resource = selectors.resource(state, 'imports', importId);
+
+  // IAs don't support mapper2
+  if (!resource || resource._connectorId) return false;
+
+  return !!(resource.adaptorType === 'HTTPImport' || resource.adaptorType === 'RESTImport');
+};
+
+selectors.mappingEditorNotification = state => {
+  const isMapper2Supported = selectors.isMapper2Supported(state);
+  const hasV2Mappings = selectors.mappingTreeData(state).length;
+  const mappingVersion = selectors.mappingVersion(state);
+
+  if (!isMapper2Supported) return emptyObject;
+
+  // if v2 mappings exist, no v2 message is shown and only show v1 message
+  if (hasV2Mappings) {
+    if (mappingVersion === 2) return emptyObject;
+
+    return {
+      message: 'Your 1.0 mappings are for reference only and will no longer be applied. To re-apply them, remove your 2.0 mappings and save from either toggle screen.',
+      variant: 'info',
+    };
+  }
+  if (mappingVersion === 1) return emptyObject;
+
+  return {
+    message: 'If you have entered 2.0 mappings and save from either toggle screen, your 2.0 mappings will be applied instead of 1.0 mappings. To apply 1.0 mappings, remove any 2.0 mappings and save from either toggle screen.',
+    variant: 'warning',
+  };
+};
+
 // #endregion MAPPING END
 
 // DO NOT DELETE, might be needed later
