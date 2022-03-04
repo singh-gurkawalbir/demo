@@ -28,10 +28,6 @@ export function* retrievingOrgDetails() {
   yield all([
     call(
       getResourceCollection,
-      actions.license.requestLicenses('Retrieving licenses')
-    ),
-    call(
-      getResourceCollection,
       actions.user.org.users.requestCollection('Retrieving org users')
     ),
     call(
@@ -39,6 +35,14 @@ export function* retrievingOrgDetails() {
       actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
     ),
   ]);
+  const defaultAShareId = yield select(selectors.defaultAShareId);
+
+  if (defaultAShareId === 'own') {
+    yield call(
+      getResourceCollection,
+      actions.license.requestLicenses('Retrieving licenses')
+    );
+  }
 }
 
 export function* retrievingUserDetails() {
