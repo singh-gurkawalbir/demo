@@ -26,6 +26,7 @@ export default function assistantDefinition(
         'lookupType',
         'lookupQueryParams',
         'lookups',
+        'existingExtract',
       ].forEach(prop => {
         assistantMetadata[prop] = formValues[`/assistantMetadata/${prop}`];
       });
