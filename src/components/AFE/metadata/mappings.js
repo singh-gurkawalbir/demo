@@ -1,7 +1,7 @@
 import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
 import MappingsPanel from '../Editor/panels/Mappings';
-import PreviewPanel from '../Editor/panels/Mappings/Preview/Panel';
+import AssistantPanel from '../Editor/panels/Mappings/Assistant/Panel';
 
 export default {
   type: 'mappings',
@@ -22,8 +22,7 @@ export default {
         {
           title: `${mappingPreviewType === 'netsuite' ? 'NetSuite' : 'Salesforce'} mapping assistant`,
           area: 'assistant',
-          isLoggable: true,
-          Panel: PreviewPanel,
+          Panel: AssistantPanel,
           helpKey: `${mappingPreviewType === 'netsuite' ? 'afe.mappings.netsuite.assistant' : 'afe.mappings.salesforce.assistant'}`,
         },
       );

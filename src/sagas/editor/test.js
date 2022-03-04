@@ -468,7 +468,29 @@ describe('editor sagas', () => {
           body: {} })
         .run();
     });
-    test('should validate mappings and dispatch request preview action for correct mapping preview type and call invokeProcessor saga when skipPreview is not set', () => {
+    test('should validate mappings and not call invokeProcessor saga when skipPreview is set', () => {
+      const editor = {
+        id: editorId,
+        editorType: 'mappings',
+        formKey: 'new-123',
+        data: '{"id": "999"}',
+        rule: '{{id}}',
+        layout: 'assistantRight',
+      };
+      const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
+
+      return expectSaga(requestPreview, { id: editorId})
+        .provide([
+          [select(selectors.editor, editorId), editor],
+          [select(selectors.mapping), {mappings}],
+        ])
+        .not.call(invokeProcessor, {
+          editorId,
+          processor: 'mapperProcessor',
+          body: {} })
+        .run();
+    });
+    test('should validate mappings and dispatch request preview action when mappingPreviewType is salesforce and call invokeProcessor saga when skipPreview is not set', () => {
       const editor = {
         id: editorId,
         editorType: 'mappings',
@@ -479,7 +501,7 @@ describe('editor sagas', () => {
       };
       const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
 
-      expectSaga(requestPreview, { id: editorId})
+      return expectSaga(requestPreview, { id: editorId })
         .provide([
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings}],
@@ -490,9 +512,45 @@ describe('editor sagas', () => {
           processor: 'mapperProcessor',
           body: {} })
         .run();
-      expectSaga(requestPreview, { id: editorId})
+    });
+    test('should validate mappings and dispatch request preview action when mappingPreviewType is salesforce and not call invokeProcessor saga when skipPreview is set', () => {
+      const editor = {
+        id: editorId,
+        editorType: 'mappings',
+        formKey: 'new-123',
+        data: '{"id": "999"}',
+        rule: '{{id}}',
+        mappingPreviewType: 'salesforce',
+        layout: 'assistantRight',
+      };
+      const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
+
+      return expectSaga(requestPreview, { id: editorId })
         .provide([
-          [select(selectors.editor, editorId), {...editor, mappingPreviewType: 'netsuite'}],
+          [select(selectors.editor, editorId), editor],
+          [select(selectors.mapping), {mappings}],
+        ])
+        .put(actions.mapping.requestPreview())
+        .not.call(invokeProcessor, {
+          editorId,
+          processor: 'mapperProcessor',
+          body: {} })
+        .run();
+    });
+    test('should validate mappings and not dispatch request preview action when mappingPreviewType is netsuite and NS assistant form is not loaded and call invokeProcessor saga when skipPreview is not set', () => {
+      const editor = {
+        id: editorId,
+        editorType: 'mappings',
+        formKey: 'new-123',
+        data: '{"id": "999"}',
+        rule: '{{id}}',
+        mappingPreviewType: 'netsuite',
+      };
+      const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
+
+      return expectSaga(requestPreview, { id: editorId})
+        .provide([
+          [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings, isNSAssistantFormLoaded: false}],
         ])
         .call(invokeProcessor, {
@@ -500,9 +558,21 @@ describe('editor sagas', () => {
           processor: 'mapperProcessor',
           body: {} })
         .run();
-      expectSaga(requestPreview, { id: editorId})
+    });
+    test('should validate mappings and dispatch request preview action when mappingPreviewType is netsuite and NS assistant form is loaded and call invokeProcessor saga when skipPreview is not set', () => {
+      const editor = {
+        id: editorId,
+        editorType: 'mappings',
+        formKey: 'new-123',
+        data: '{"id": "999"}',
+        rule: '{{id}}',
+        mappingPreviewType: 'netsuite',
+      };
+      const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
+
+      return expectSaga(requestPreview, { id: editorId})
         .provide([
-          [select(selectors.editor, editorId), {...editor, mappingPreviewType: 'netsuite'}],
+          [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings, isNSAssistantFormLoaded: true }],
         ])
         .put(actions.mapping.requestPreview())
@@ -1978,49 +2048,6 @@ describe('editor sagas', () => {
           [matchers.call.fn(initSampleData), undefined],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [select(selectors.getScriptContext, {flowId: 'flow-123', contextType: 'hook'}), {context: 'hook'}],
-        ])
-        .run()
-        .then(result => {
-          const { effects } = result;
-
-          expect(effects.put).toHaveLength(1);
-          expect(effects.call).toEqual(expect.arrayContaining([call(initSampleData, { id })]));
-
-          expect(effects.put[0]).toHaveProperty('payload.action.options', expectedOptions);
-        });
-    });
-    test('should correctly update init options if editor type is handlebars or sql and dispatch init complete action', () => {
-      const id = 'query';
-      const options = {
-        resourceId: 'res-123',
-        resourceType: 'imports',
-        flowId: 'flow-123',
-        stage: 'flowInput',
-        rule: '{{query}}',
-        fieldId: 'query',
-      };
-      const expectedOptions = {
-        editorType: 'mappings',
-        resourceId: 'res-123',
-        autoEvaluate: false,
-        editorTitle: 'Edit Mapping',
-        resourceType: 'imports',
-        flowId: 'flow-123',
-        stage: 'flowInput',
-        rule: '{{query}}',
-        originalRule: '{{query}}',
-        fieldId: 'query',
-        layout: 'compactRow',
-        sampleDataStatus: 'requested',
-        mappingPreviewType: 'netsuite',
-        onSave: undefined,
-      };
-
-      return expectSaga(initEditor, { id, editorType: 'mappings', options })
-        .provide([
-          [matchers.call.fn(initSampleData), undefined],
-          [matchers.select.selector(selectors.resource), {}],
-          [select(selectors.mappingPreviewType, 'res-123'), 'netsuite'],
         ])
         .run()
         .then(result => {

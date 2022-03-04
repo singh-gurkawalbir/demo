@@ -1,14 +1,13 @@
 export default {
   processor: 'mapperProcessor',
   skipPreview: ({layout}) => layout === 'assistantRight',
-  init: ({options, resource, mappingPreviewType}) => {
+  init: ({options, resource}) => {
     const importName = resource?.name;
     const editorTitle = importName ? `Edit Mapping: ${importName}` : 'Edit Mapping';
 
     return {
       ...options,
       editorTitle,
-      mappingPreviewType: mappingPreviewType !== 'http' && mappingPreviewType,
     };
   },
   requestBody: () => ({

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles, MenuItem, Select } from '@material-ui/core';
 import ViewRowIcon from '../../../icons/VerticalLayoutIcon';
 import actions from '../../../../actions';
@@ -30,10 +30,15 @@ const useStyles = makeStyles(theme => ({
 export default function ToggleLayout({ editorId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const layout = useSelector(state => selectors.editor(state, editorId).layout);
-  const editor = useSelector(state => selectors.editor(state, editorId));
-  const {editorType, mappingPreviewType} = editor;
-  const isMappingsEditor = editorType === 'mappings' || editorType === 'responseMappings';
+  const {layout, mappingPreviewType, isMappingsEditor} = useSelector(state => {
+    const e = selectors.editor(state, editorId);
+
+    return {
+      mappingPreviewType: e.mappingPreviewType,
+      isMappingsEditor: e.editorType === 'mappings' || e.editorType === 'responseMappings',
+      layout: e.layout,
+    };
+  }, shallowEqual);
 
   const handleToggle = event => {
     dispatch(actions.editor.changeLayout(editorId, event.target.value));
