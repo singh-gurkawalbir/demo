@@ -8,6 +8,7 @@ import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import SingleUserIcon from '../../../components/icons/SingleUserIcon';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
+import InstallationGuideIcon from '../../../components/icons/InstallationGuideIcon';
 import AuditLogPanel from './panels/AuditLog';
 import NotificationsPanel from './panels/Notifications';
 import SettingsPanel from './panels/Settings';
@@ -17,6 +18,7 @@ import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
 import AnalyticsPanel from './panels/Analytics';
+import AliasesPanel from './panels/Aliases';
 import { selectors } from '../../../reducers';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import GraphIcon from '../../../components/icons/GraphIcon';
@@ -72,6 +74,12 @@ const getTabs = isUserInErrMgtTwoDotZero => [
     label: 'Admin',
     Icon: SingleUserIcon,
     Panel: AdminPanel,
+  },
+  {
+    path: 'aliases',
+    label: 'Aliases',
+    Icon: InstallationGuideIcon,
+    Panel: AliasesPanel,
   },
 ];
 const emptyObj = {};

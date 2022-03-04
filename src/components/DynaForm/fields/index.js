@@ -144,6 +144,7 @@ import DynaAmazonRestrictedReportType from './DynaAmazonRestrictedReportType';
 import DynaFlowGroupName from './integrations/DynaFlowGroupName';
 import DynaFlowGroupsTiedToIntegrations from './integrations/DynaFlowGroupsTiedToIntegrations';
 import DynaTextUpdateDomain from './text/DynaTextUpdateDomain';
+import DynaManageAliases from './aliases/DynaManageAliases';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -298,5 +299,6 @@ export default {
   sortandgroup: DynaSortAndGroup,
   selectAmazonSellerCentralAPIType: DynaSelectAmazonSellerCentralAPIType,
   amazonRestrictedReportType: DynaAmazonRestrictedReportType,
+  managealiases: DynaManageAliases,
   updatedomain: DynaTextUpdateDomain,
 };

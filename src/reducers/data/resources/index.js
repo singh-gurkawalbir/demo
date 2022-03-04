@@ -385,6 +385,63 @@ selectors.integrationInstallSteps = (state, id) => {
   });
 };
 
+selectors.makeOwnAliases = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, resourceType, resourceId) => resourceSelector(state, resourceType, resourceId)?.aliases,
+    aliases => {
+      if (!aliases) return [];
+
+      return aliases;
+    }
+  );
+};
+
+selectors.makeInheritedAliases = () => {
+  const resourceSel = selectors.makeResourceSelector();
+  const integrationResourceSel = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, id) => resourceSel(state, 'flows', id),
+    (state, id) => {
+      const flow = resourceSel(state, 'flows', id);
+
+      if (!flow || !flow._integrationId) return null;
+
+      return integrationResourceSel(state, 'integrations', flow._integrationId)?.aliases;
+    },
+    (_1, integrationAliases) => {
+      if (!integrationAliases) return [];
+
+      return integrationAliases;
+    });
+};
+
+selectors.makeAllAliases = () => {
+  const resourceSel = selectors.makeResourceSelector();
+  const integrationResourceSel = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, id) => resourceSel(state, 'flows', id)?.aliases,
+    (state, id) => {
+      const flow = resourceSel(state, 'flows', id);
+
+      if (!flow || !flow._integrationId) return null;
+
+      return integrationResourceSel(state, 'integrations', flow._integrationId)?.aliases;
+    },
+    (flowAliases, integrationAliases) => {
+      if (!flowAliases?.length && !integrationAliases?.length) return [];
+
+      if (!integrationAliases?.length) return flowAliases;
+
+      if (!flowAliases?.length) return integrationAliases;
+
+      return [...flowAliases, ...integrationAliases];
+    });
+};
+
 selectors.mkFlowGroupingsSections = () => {
   const resourceSelector = selectors.makeResourceSelector();
 
