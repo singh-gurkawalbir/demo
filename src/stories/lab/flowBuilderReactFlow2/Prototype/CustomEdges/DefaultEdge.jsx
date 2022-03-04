@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import { getSmoothStepPath, getMarkerEnd } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
-import { handleOffset, areMultipleEdgesConnectedToSameEdgeTarget } from '../lib';
+import { handleOffset, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles } from '../lib';
 import { useFlowContext } from '../Context';
 import AddNewButton from './AddNewButton';
 import UnlinkButton from './UnlinkButton';
@@ -76,7 +76,18 @@ export default function DefaultEdge({
       return sp;
     }
 
-    const {points} = data;
+    const points = snapPointsToHandles(
+      {x: sourceX, y: sourceY},
+      {x: targetX, y: targetY},
+      data.points,
+    );
+
+    // console.log(
+    //   id,
+    //   {sourceX, sourceY},
+    //   points,
+    //   {targetX, targetY},
+    // );
 
     let path;
     let currentX = points[0].x;

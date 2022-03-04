@@ -2,10 +2,10 @@ import React, {useMemo} from 'react';
 import { getSmoothStepPath, getMarkerEnd } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
 import AddNewButton from './AddNewButton';
-import { handleOffset, areMultipleEdgesConnectedToSameEdgeTarget } from '../lib';
+import { handleOffset, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles } from '../lib';
+import { useFlowContext } from '../Context';
 import UnlinkButton from './UnlinkButton';
 import ForeignObject from './ForeignObject';
-import { useFlowContext } from '../Context';
 
 const useStyles = makeStyles(theme => ({
   edgePath: {
@@ -59,7 +59,18 @@ export default function DefaultEdge({
       return sp;
     }
 
-    const {points} = data;
+    const points = snapPointsToHandles(
+      {x: sourceX, y: sourceY},
+      {x: targetX, y: targetY},
+      data.points,
+    );
+
+    // console.log(
+    //   id,
+    //   {sourceX, sourceY},
+    //   points,
+    //   {targetX, targetY},
+    // );
 
     let path;
     let currentX = points[0].x;
@@ -85,6 +96,7 @@ export default function DefaultEdge({
     // remove this after debug code is removed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
+
   const markerEnd = useMemo(() =>
     getMarkerEnd(arrowHeadType, markerEndId), [arrowHeadType, markerEndId]);
 
