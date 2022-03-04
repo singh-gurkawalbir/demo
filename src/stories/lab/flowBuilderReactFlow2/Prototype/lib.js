@@ -3,47 +3,43 @@ import { nanoid } from 'nanoid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 
-export const handleOffset = 30;
+export const handleOffset = 0;
 
 const nodeSize = {
   pp: {
     width: 275,
-    height: 265,
+    height: 295,
   },
   pg: {
     width: 275,
-    height: 265,
+    height: 295,
   },
   router: {
-    width: 26,
-    height: 26,
+    width: 50,
+    height: 50,
   },
   terminal: {
-    width: 26,
-    height: 26,
+    width: 34,
+    height: 34,
   },
   merge: {
-    width: 26,
-    height: 26,
+    width: 34,
+    height: 34,
   },
 };
 
 const options = {
-  ranksep: 250,
+  // align: 'UL',
+  // acyclicer: 'greedy',  // default is undefined, dont know what this does.
+  // ranker: 'network-simplex', // default
+  ranker: 'tight-tree',
+  // ranker: 'longest-path', // seems worst
+  ranksep: 200,
   nodesep: 50,
 };
 
 export function generateId() {
   return nanoid(6);
-}
-
-export function generateSmoothStepEdge(source, target) {
-  return {
-    id: `${source}-${target}`,
-    source,
-    target,
-    type: 'smoothstep',
-  };
 }
 
 export function generateDefaultEdge(source, target) {
@@ -66,39 +62,56 @@ export function generateNewNode() {
 }
 
 export function layoutElements(elements) {
-  const dagreGraph = new dagre.graphlib.Graph();
+  const graph = new dagre.graphlib.Graph();
 
-  dagreGraph.setDefaultEdgeLabel(() => ({}));
-  dagreGraph.setGraph({ rankdir: 'LR', ...options });
+  graph.setDefaultEdgeLabel(() => ({}));
+  graph.setGraph({ rankdir: 'LR', ...options });
 
   elements.forEach(el => {
     if (isNode(el)) {
-      dagreGraph.setNode(el.id, {...nodeSize[el.type]});
+      graph.setNode(el.id, {...nodeSize[el.type]});
     } else {
-      dagreGraph.setEdge(el.source, el.target);
+      graph.setEdge(el.source, el.target);
     }
   });
 
-  dagre.layout(dagreGraph);
+  dagre.layout(graph);
 
-  return elements.map(el => {
+  const nodes = [];
+  const edges = [];
+
+  elements.forEach(el => {
     if (isNode(el)) {
-      const layoutPos = dagreGraph.node(el.id);
+      const node = graph.node(el.id);
       const size = nodeSize[el.type];
-      const offset = ['pp', 'pg'].includes(el.type) ? 0 : handleOffset;
+      const offsetY = ['pp', 'pg'].includes(el.type) ? 0 : handleOffset;
+      const offsetX = el.type === 'terminal' ? nodeSize.pp.width / 2 - nodeSize.terminal.width / 2 : 0;
 
       // We are shifting the dagre node position that returns centerpoint (x,y)
       // to the top left so it matches the react-flow node anchor point (top left).
       // This maters when nodes are of various sizes.
-      return ({...el,
+      nodes.push({...el,
         position: {
-          x: layoutPos.x - size.width / 2,
-          y: layoutPos.y - size.height / 2 - offset,
+          x: node.x - size.width / 2 - offsetX,
+          y: node.y - size.height / 2 - offsetY,
         }});
-    }
+    } else { // these are the edges...
+      const edge = graph.edge({v: el.source, w: el.target});
+      const target = nodes.find(n => n.id === el.target);
 
-    return el;
+      const isTerminal = target.type === 'terminal';
+
+      edges.push({
+        ...el,
+        data: {
+          isTerminal,
+          points: edge.points,
+        },
+      });
+    }
   });
+
+  return [...nodes, ...edges];
 }
 
 export function getConnectedEdges(id, direction = 'left', elements) {
@@ -125,11 +138,13 @@ export const terminalNodeInVicinity = (ele, elements) => {
   }
   const {x: xCoord, y: yCoord} = ele.position;
 
-  return elements.filter(node => node.type === 'terminal' || node.type === 'merge').find(dropElement => {
-    const {x, y} = dropElement.position;
+  return elements
+    .filter(node => node.type === 'terminal' || node.type === 'merge')
+    .find(dropElement => {
+      const {x, y} = dropElement.position;
 
-    return inRange(xCoord, x) && inRange(yCoord, y);
-  })?.id;
+      return inRange(xCoord, x) && inRange(yCoord, y);
+    })?.id;
 };
 
 const getModulusVal = val => val > 0 ? val : -val;
@@ -144,7 +159,7 @@ const getLengthBtwCoordinates = (x1, y1, x2, y2) => {
 // // use same forgein object space for unlink icon
 // const SPACE_FROM_ADDICON = foreignObjectSize + SEPERATION_SPACE;
 
-export const getPositionInEdge = (edgeCommands, fraction) => {
+export const getPositionInEdge = (edgeCommands, centerOffset) => {
   const linePlotsCoordinates = edgeCommands.substr(1).split(/[LQ]/).map(cmd => cmd.trim()).map(cmd => {
     // Quadratic command...currently that is supported...if its a cubic command it can have
     //  3 coordinates to describe the curve,we don't support it... So this function support M,L,C commands.
@@ -177,7 +192,7 @@ export const getPositionInEdge = (edgeCommands, fraction) => {
     return acc + getLengthBtwCoordinates(...curr, ...nextCoord);
   }, 0);
 
-  let lengthFromStart = Math.floor(lengthOFEdges * fraction);
+  let lengthFromStart = Math.floor(lengthOFEdges / 2 + centerOffset);
 
   for (let i = 0; i < linePlotsCoordinates.length - 1; i += 1) {
     const coord1 = linePlotsCoordinates[i];

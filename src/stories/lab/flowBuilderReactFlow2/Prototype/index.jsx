@@ -11,7 +11,7 @@ import PpNode from './CustomNodes/PpNode';
 import TerminalNode from './CustomNodes/TerminalNode';
 import RouterNode from './CustomNodes/RouterNode';
 import MergeNode from './CustomNodes/MergeNode';
-import reducer, { resourceDataSelector} from './reducer';
+import reducer, { resourceDataSelector } from './reducer';
 import { resourceState } from './metadata/simpleFlowSchema';
 import { generateReactFlowGraph } from './translateSchema';
 import { handleMergeNode } from './hooks';
@@ -70,8 +70,10 @@ export default () => {
           edgeTypes={edgeTypes}
         />
       </FlowProvider>
+
       <MiniMap />
       <Controls />
+
     </ReactFlowProvider>
   );
 };

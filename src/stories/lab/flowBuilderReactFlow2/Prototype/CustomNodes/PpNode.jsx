@@ -13,12 +13,9 @@ import AppBlockHandle from './Handles/AppBlockHandle';
 
 const useStyles = makeStyles(() => ({
   ppContainer: {
-    display: 'flex',
-    alignItems: 'flex-start',
+    paddingTop: 60,
   },
   root: {
-    // padding: 10,
-    // textAlign: 'center',
     width: 250,
   },
   contentContainer: {
@@ -27,7 +24,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function PageGenerator(props) {
+export default function PageProcessor(props) {
   const { data, id } = props;
   const { label, isLookup, connectorType } = data;
   const classes = useStyles();
@@ -75,6 +72,11 @@ export default function PageGenerator(props) {
     return processorActions;
   }, [isLookup]);
 
+  const handleDelete = index => {
+    // eslint-disable-next-line no-console
+    console.log(index);
+  };
+
   return (
     <div className={classes.root}>
       <AppBlockHandle type="target" position={Position.Left} />
@@ -83,13 +85,13 @@ export default function PageGenerator(props) {
         <div className={classes.ppContainer}>
           <AppBlock
             name={label}
-            // onDelete={onDelete(name)}
+            onDelete={handleDelete}
             connectorType={connectorType}
             blockType={isLookup ? 'export' : 'import'}
-          // index={index}
+            index={33}
             resource={{}}
             resourceId={id}
-         // resourceIndex={index}
+            resourceIndex={4}
             resourceType={isLookup ? 'exports' : 'imports'}
             actions={processorActions}
         />
