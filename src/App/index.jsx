@@ -140,7 +140,7 @@ export default function App() {
      */
     if (domain === 'localhost.io') {
       gainsight.initialize({ tagKey: 'AP-CAGNPCDUT5BV-2' });
-      pendo.init();
+      pendo.init({apiKey: '78f58e2a-2645-49fb-70cf-0fc21baff71f'});
     }
   }, []);
 

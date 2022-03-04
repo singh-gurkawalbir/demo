@@ -1,5 +1,5 @@
 /* global pendo */
-export function init() {
+export function init({apiKey}) {
   try {
     /* eslint-disable */
     (function(apiKey){
@@ -10,7 +10,7 @@ export function init() {
             y=e.createElement(n);y.async=!0;y.src='https://cdn.pendo.io/agent/static/'+apiKey+'/pendo.js';
             z=e.getElementsByTagName(n)[0];z.parentNode.insertBefore(y,z);
         })(window,document,'script','pendo');
-    })('78f58e2a-2645-49fb-70cf-0fc21baff71f');
+    })(apiKey);
          /* eslint-enable */
   } catch (ex) {
     // We can't do anything here, just a safe check to prevent it from crashing our app.

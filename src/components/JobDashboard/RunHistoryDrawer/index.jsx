@@ -74,20 +74,15 @@ export default function RunHistoryDrawer() {
       endDate: endOfDay(new Date()),
     };
   }
-  // const selectedDate = useMemo(() => (
-  //   {
-  //     preset: filter.range ? filter.range.preset : 'last24hours',
-  //     startDate: filter.range ? new Date(filter.range.startDate) : startOfDay(addDays(new Date(), -29)),
-  //     endDate: filter.range ? new Date(filter.range.endDate) : endOfDay(new Date()),
-  //   }), [filter.range]);
 
   useEffect(() => {
     dispatch(
       actions.patchFilter(FILTER_KEYS.RUN_HISTORY, {
+        ...filter,
         range: selectedDate,
       })
     );
-  }, [dispatch, selectedDate, flowId]);
+  }, [dispatch, filter, selectedDate, flowId]);
   useEffect(() =>
     () => {
       dispatch(actions.clearFilter(FILTER_KEYS.RUN_HISTORY));
