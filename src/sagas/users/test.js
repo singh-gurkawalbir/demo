@@ -877,7 +877,7 @@ describe('all modal sagas', () => {
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
         .call.fn(apiCallWithRetry)
-        .returns(true)
+        .put(actions.api.failure('/licenses/upgradeRequest', 'POST', 'You have already submitted an upgrade request. We will be in touch soon.', false))
         .run();
     });
   });
