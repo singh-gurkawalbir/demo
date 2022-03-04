@@ -77,7 +77,7 @@ export default {
   },
   assistantTopRight: {
     gridTemplateColumns: '1fr auto 1fr',
-    gridTemplateRows: '1fr auto 0fr auto 0fr',
+    gridTemplateRows: '1fr auto 1fr auto 0fr',
     gridTemplateAreas: `"rule dragBar_v_0 assistant" 
                         "dragBar_h_0 dragBar_h_0 dragBar_h_0"
                         "data dragBar_v_1 result" 
