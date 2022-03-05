@@ -4,7 +4,7 @@ export default [
     type: 'pg', // input node
     data: { label: 'Export NetSuite data', connectorType: 'netsuite' },
   },
-  { id: '2', type: 'router'},
+  { id: '2', type: 'router' },
   {
     id: '3',
     type: 'pp',
@@ -15,19 +15,19 @@ export default [
     type: 'pp',
     data: { label: 'FTP import', connectorType: 'ftp' },
   },
-  { id: '4r', type: 'router'},
+  { id: '4r', type: 'router' },
   {
     id: '4a',
     type: 'pp',
     data: { label: 'FTP import', connectorType: 'ftp' },
   },
-  { id: '5', type: 'merge'},
+  { id: '5', type: 'merge' },
   {
     id: '6',
     type: 'pp',
     data: { label: 'S3 import', connectorType: 's3' },
   },
-  { id: '7', type: 'terminal'},
+  { id: '7', type: 'terminal', draggable: true},
   // { id: '5', type: 'terminal'},
 
   { id: 'e1-2', source: '1', target: '2', type: 'default' }, // , animated: true

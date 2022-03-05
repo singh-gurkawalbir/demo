@@ -3,8 +3,8 @@ import { makeStyles } from '@material-ui/core/';
 
 const useStyles = makeStyles(theme => ({
   svg: {
-    width: 34,
-    height: 34,
+    width: 24,
+    height: 24,
     // backgroundColor: theme.palette.common.white,
     fill: 'none',
     strokeDasharray: 4,
@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DiamondIcon() {
+export default function CircleIcon() {
   const classes = useStyles();
 
   return (
