@@ -129,9 +129,19 @@ export function findNodeIndex(id, elements) {
   }
 }
 
-const RANGE = 20;
+const RANGE = 40;
 const inRange = (coordinate, dropCoordinate) => (dropCoordinate - RANGE) <= coordinate && (dropCoordinate + RANGE) >= coordinate;
+const isMergableNode = (node = {}) => {
+  if (node.type === 'terminal' || node.type === 'merge') {
+    return true;
+  }
+  // Is router node virtual?
+  if (node.type === 'router' && node.data) {
+    return !node.data.routeRecordsTo && !node.data.routeRecordsUsing && (!node.data.branches || node.data.branches.length <= 1);
+  }
 
+  return false;
+};
 export const terminalNodeInVicinity = (ele, elements) => {
   if (!ele) {
     return false;
@@ -139,7 +149,7 @@ export const terminalNodeInVicinity = (ele, elements) => {
   const {x: xCoord, y: yCoord} = ele.position;
 
   return elements
-    .filter(node => node.type === 'terminal' || node.type === 'merge')
+    .filter(node => isMergableNode(node))
     .find(dropElement => {
       const {x, y} = dropElement.position;
 

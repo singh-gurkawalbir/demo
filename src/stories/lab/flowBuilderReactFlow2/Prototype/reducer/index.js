@@ -71,7 +71,7 @@ const mergeTerminalNodes = (draft, action) => {
     {
       op: 'add',
       path: !destinationRouter ? destinationPath : sourcePath,
-      value: !destinationRouter ? destinationRouter : sourceRouter,
+      value: destinationRouter || sourceRouter,
     });
 };
 
