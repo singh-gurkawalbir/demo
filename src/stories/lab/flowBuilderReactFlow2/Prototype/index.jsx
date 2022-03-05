@@ -33,7 +33,7 @@ const stateOrig = {data: {resources: resourceState}, session: {staged: {}}};
 
 export default () => {
   const [state, setState] = useReducer(reducer, stateOrig);
-  const mergedFlow = resourceDataSelector(state, 'flows', flowIdToTest)?.merged;
+  const mergedFlow = resourceDataSelector(state, 'flows', flowIdToTest);
   const elements = useMemo(() => generateReactFlowGraph(state.data.resources, mergedFlow), [mergedFlow, state.data.resources]);
 
   // console.log('state ', mergedFlow, state);

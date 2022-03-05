@@ -3,6 +3,7 @@ import jsonPatch from 'fast-json-patch';
 import actions from './actions';
 import { emptyObject } from '../../../../../utils/constants';
 import { generateAnEmptyActualRouter, generateBranch } from '../metadata/nodeGeneration';
+import { populateIds } from '../translateSchema';
 
 const addNewNode = (draft, action) => {
   const { path, resourceType, flowNode, resourceNode, flowId } = action;
@@ -260,5 +261,9 @@ export const resourceDataSelector = (state, type, id) => {
 
   const session = getSessionState(state, id);
 
-  return resourceDataModified(resource, session, type, id);
+  const flow = resourceDataModified(resource, session, type, id)?.merged;
+
+  populateIds(flow);
+
+  return flow;
 };

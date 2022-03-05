@@ -1,10 +1,10 @@
 import { getRouter } from '.';
 
-const getPGPath = (pageGenerators, nodeId) => {
+const getPageGeneratorPath = (pageGenerators, nodeId) => {
   if (!pageGenerators || !nodeId) {
     return null;
   }
-  const index = pageGenerators.findIndex(ele => ele._exportId === nodeId);
+  const index = pageGenerators.findIndex(ele => ele.id === nodeId);
 
   if (index > -1) {
     return `/pageGenerators/${index}`;
@@ -13,11 +13,11 @@ const getPGPath = (pageGenerators, nodeId) => {
   return null;
 };
 
-const getPPPath = (pageProcessors, nodeId) => {
+const getPageProcessorPath = (pageProcessors, nodeId) => {
   if (!pageProcessors || !nodeId) {
     return null;
   }
-  const index = pageProcessors.findIndex(ele => ele._exportId === nodeId || ele._importId === nodeId);
+  const index = pageProcessors.findIndex(ele => ele.id === nodeId);
 
   if (index > -1) {
     return `/pageProcessors/${index}`;
@@ -36,7 +36,7 @@ const traverseGraph = (flow, routerId, nodeId, accPath) => {
   return branches.map((branch, index) => {
     const {pageProcessors, _nextRouterId} = branch;
     const extendedPath = `${accPath}/branches/${index}`;
-    const pathWithinPP = getPPPath(pageProcessors, nodeId);
+    const pathWithinPP = getPageProcessorPath(pageProcessors, nodeId);
 
     if (pathWithinPP) {
       return extendedPath + pathWithinPP;
@@ -55,12 +55,12 @@ const getPathOfPGOrPPNode = (flow, nodeId) => {
 
   const {pageGenerators, pageProcessors, routers} = flow;
 
-  if (getPGPath(pageGenerators, nodeId)) {
-    return getPGPath(pageGenerators, nodeId);
+  if (getPageGeneratorPath(pageGenerators, nodeId)) {
+    return getPageGeneratorPath(pageGenerators, nodeId);
   }
 
-  if (getPPPath(pageProcessors, nodeId)) {
-    return getPPPath(pageProcessors, nodeId);
+  if (getPageProcessorPath(pageProcessors, nodeId)) {
+    return getPageProcessorPath(pageProcessors, nodeId);
   }
 
   if (!routers) {

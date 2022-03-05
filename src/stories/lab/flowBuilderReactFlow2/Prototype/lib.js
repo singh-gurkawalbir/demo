@@ -61,7 +61,7 @@ export function generateNewNode() {
   });
 }
 
-export function layoutElements(elements) {
+export function layoutElements(elements = []) {
   const graph = new dagre.graphlib.Graph();
 
   graph.setDefaultEdgeLabel(() => ({}));
