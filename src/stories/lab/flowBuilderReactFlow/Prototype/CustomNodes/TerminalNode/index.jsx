@@ -8,12 +8,10 @@ import DefaultHandle from '../Handles/DefaultHandle';
 
 const useStyles = makeStyles(theme => ({
   container: {
-    width: 34,
-    height: 34,
-    display: 'flex',
-    alignItems: 'center',
+    width: 24,
+    height: 24,
   },
-  merge: {
+  terminal: {
     backgroundColor: theme.palette.common.white,
     border: `solid 1px ${theme.palette.secondary.light}`,
     color: theme.palette.secondary.light,
@@ -51,7 +49,7 @@ export default function TerminalNode(props) {
       ) : (
         <Tooltip title="Drag to merge with other branch" position="top">
           <span>
-            <MergeIcon className={classes.merge} />
+            <MergeIcon className={classes.terminal} />
           </span>
         </Tooltip>
       )}

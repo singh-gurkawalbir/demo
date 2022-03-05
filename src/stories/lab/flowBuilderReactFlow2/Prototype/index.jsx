@@ -65,6 +65,7 @@ export default () => {
       <FlowProvider elements={elements} flow={mergedFlow} setState={setState}>
         <ReactFlow
           onNodeDragStop={onNodeDragStop}
+          nodesDraggable={false}
           elements={updatedLayout}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}

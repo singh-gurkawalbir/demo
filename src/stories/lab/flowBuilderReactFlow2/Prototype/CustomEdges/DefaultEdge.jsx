@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import { getSmoothStepPath, getMarkerEnd } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
-import { handleOffset, areMultipleEdgesConnectedToSameEdgeTarget } from '../lib';
+import { handleOffset, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles } from '../lib';
 import { useFlowContext } from '../Context';
 import AddNewButton from './AddNewButton';
 import UnlinkButton from './UnlinkButton';
@@ -76,24 +76,53 @@ export default function DefaultEdge({
       return sp;
     }
 
-    const {points} = data;
+    const points = snapPointsToHandles(
+      {x: sourceX, y: sourceY},
+      {x: targetX, y: targetY},
+      data.points,
+    );
+
+    // console.log(
+    //   id,
+    //   {sourceX, sourceY},
+    //   points,
+    //   {targetX, targetY},
+    // );
 
     let path;
-    let currentX = points[0].x;
-    let currentY = points[0].y;
+    const current = {x: points[0].x, y: points[0].y};
+
+    const drawLine = (p, axis) => {
+      if (p[axis] !== current[axis]) {
+        current[axis] = p[axis];
+        if (axis === 'x') {
+          // eslint-disable-next-line no-param-reassign
+          path += `L${p.x},${current.y} `;
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          path += `L${current.x},${p.y} `;
+        }
+      }
+    };
 
     points.forEach((p, i) => {
       if (i === 0) {
         path = `M${points[0].x},${points[0].y - handleOffset} `;
+      } else
+      // for the last point (that defines an edge), we want to draw the vertical line first so that
+      // a node always connects to a horizontal line since our diagram is L-> R,
+      // while all other points should translate to horizontal first (leaving a node)
+
+      // the problem with the above logic is with dotted lines. If the lines are
+      // not all the same length, then the overlapping edges for a merge node will
+      // render the dashes at different offsets and appear as a solid line. Not
+      // sure how to fix this.
+      if (i === points.length - 1) { // last point
+        drawLine(p, 'y');
+        drawLine(p, 'x');
       } else {
-        if (p.x !== currentX) {
-          path += `L${p.x},${currentY - handleOffset} `;
-          currentX = p.x;
-        }
-        if (p.y !== currentY) {
-          path += `L${currentX},${p.y - handleOffset} `;
-          currentY = p.y;
-        }
+        drawLine(p, 'x');
+        drawLine(p, 'y');
       }
     });
 

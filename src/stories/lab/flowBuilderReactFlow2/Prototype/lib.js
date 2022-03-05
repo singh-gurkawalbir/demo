@@ -19,8 +19,8 @@ const nodeSize = {
     height: 50,
   },
   terminal: {
-    width: 34,
-    height: 34,
+    width: 24,
+    height: 24,
   },
   merge: {
     width: 34,
@@ -155,9 +155,6 @@ const getLengthBtwCoordinates = (x1, y1, x2, y2) => {
 
   return getModulusVal(x2 - x1);
 };
-// const SEPERATION_SPACE = 50;
-// // use same forgein object space for unlink icon
-// const SPACE_FROM_ADDICON = foreignObjectSize + SEPERATION_SPACE;
 
 export const getPositionInEdge = (edgeCommands, centerOffset) => {
   const linePlotsCoordinates = edgeCommands.substr(1).split(/[LQ]/).map(cmd => cmd.trim()).map(cmd => {
@@ -249,3 +246,58 @@ export const isNodeConnectedToRouterOrTerminal = (nodeId, elements) => {
 
   return elements.filter(e => [source, target].includes(e.id)).some(node => ['router', 'terminal'].includes(node?.type));
 };
+
+export function snapPointsToHandles(source, target, points) {
+  const snappedPoints = [...points];
+  const {x: startX, y: startY} = points[0];
+  const {x: endX, y: endY} = points[points.length - 1];
+
+  // lets process the start points of the edge first.
+  let i = 0;
+  const complete = { x: false, y: false };
+
+  for (; i < points.length - 1; i += 1) {
+    const { x, y } = points[i];
+
+    if (!complete.y && y === startY && y !== source.y) {
+      snappedPoints[i].y = source.y;
+    } else {
+      complete.y = true;
+    }
+
+    if (!complete.x && x === startX && x !== source.x) {
+      snappedPoints[i].x = source.x;
+    } else {
+      complete.x = true;
+    }
+
+    if (complete.y && complete.x) break;
+  }
+
+  // now iterate over the remaining edge points, but in reverse order
+  // as we only need to snap the start/end points that have the incorrect
+  // handle positions. Make sure to skip the first point in case its a full
+  // traversal, as the first point should only snap to the source, not target.
+  complete.x = false;
+  complete.y = false;
+
+  for (let j = points.length - 1; j > i; j -= 1) {
+    const { x, y } = points[j];
+
+    if (!complete.y && y === endY && y !== target.y) {
+      snappedPoints[j].y = target.y;
+    } else {
+      complete.y = true;
+    }
+
+    if (!complete.x && x === endX && x !== target.x) {
+      snappedPoints[j].x = target.x;
+    } else {
+      complete.x = true;
+    }
+
+    if (complete.y && complete.x) break;
+  }
+
+  return snappedPoints;
+}
