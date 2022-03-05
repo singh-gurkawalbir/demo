@@ -14,6 +14,7 @@ export const generateNewRouter = id => ({
 export const generateNewTerminal = () => ({
   id: generateId(),
   type: 'terminal',
+  draggable: true,
 });
 
 export const generateBranch = () => {

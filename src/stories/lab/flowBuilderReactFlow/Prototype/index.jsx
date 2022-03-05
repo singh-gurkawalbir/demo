@@ -71,6 +71,7 @@ export default () => {
           onConnectStart={handleConnectStart}
           onNodeDragStop={onNodeDragStop}
           onConnectEnd={handleConnectEnd}
+          nodesDraggable={false}
           elements={updatedLayout}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
