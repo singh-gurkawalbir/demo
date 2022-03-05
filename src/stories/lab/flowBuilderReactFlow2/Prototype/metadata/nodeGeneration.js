@@ -29,20 +29,21 @@ export const generateBranch = () => {
     _id: newId,
   };
 };
-export const generateAnEmptyActualRouter = () => ({
+export const generateAnEmptyActualRouter = isVirtual => ({
   _id: generateId(),
-  routeRecordsTo: {
+  ...(!isVirtual && { routeRecordsTo: {
     type: 'first_matching_branch',
     default: undefined,
-  },
-  routeRecordsUsing: {
+  }}),
+  ...(!isVirtual && { routeRecordsUsing: {
     type: 'input_filters',
     default: undefined,
-  },
-  branches: [],
-  script: {
+  }}),
+  branches: [{
+    pageProcessors: [{application: `none-${generateId()}`}],
+  }],
+  ...(!isVirtual && { script: {
     _scriptId: { type: 'something', ref: 'Script' },
     function: { type: 'something' },
-  },
-
+  } }),
 });

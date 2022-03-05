@@ -24,7 +24,7 @@ const addNewNode = (draft, action) => {
 };
 
 const mergeTerminalNodes = (draft, action) => {
-  const { flow, sourcePath, destinationPath} = action;
+  const { flow, sourcePath, destinationPath } = action;
   const sourceRouter = jsonPatch.getValueByPointer(flow, sourcePath);
   const destinationRouter = jsonPatch.getValueByPointer(flow, destinationPath);
   const {session} = draft;
@@ -45,7 +45,7 @@ const mergeTerminalNodes = (draft, action) => {
 
   if (!sourceRouter && !destinationRouter) {
     // create a new router
-    const router = generateAnEmptyActualRouter();
+    const router = generateAnEmptyActualRouter(true);
 
     staged[flowId].patch.push(...[
       {
