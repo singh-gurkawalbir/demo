@@ -68,7 +68,7 @@ const virtualBranch = {
 const virtualRouterForFirstPP = {
   _id: 'virtualRouter',
   routeRecordsTo: {
-    type: 'first_matching_branch',
+    type: 'all_matching_branches',
     default: undefined,
   },
   routeRecordsUsing: {

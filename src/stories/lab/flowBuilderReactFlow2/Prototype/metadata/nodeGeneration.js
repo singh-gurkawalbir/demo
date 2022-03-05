@@ -7,9 +7,10 @@ export const getSomePg = _exportId => ({_exportId, skipRetries: true});
 
 export const getSomePpImport = _importId =>
   ({responseMapping: {fields: [], lists: []}, type: 'import', _importId});
-export const generateRouterNode = id => ({
-  id: id || generateId(),
+export const generateRouterNode = router => ({
+  id: router?._id || generateId(),
   type: 'router',
+  data: router,
 });
 export const generateNewTerminal = () => ({
   id: generateId(),

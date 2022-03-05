@@ -115,7 +115,7 @@ const getGraphsMetadata = (resourceState, flow, routerId) => {
   }
   const router = getRouter(routerId, flow);
 
-  const routerNode = generateRouterNode(routerId);
+  const routerNode = generateRouterNode(router);
 
   return router.branches.reduce((acc, branch) => {
     const { pageProcessors, _nextRouterId, name } = branch;
