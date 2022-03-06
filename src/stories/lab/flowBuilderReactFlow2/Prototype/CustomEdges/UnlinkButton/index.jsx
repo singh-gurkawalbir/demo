@@ -27,7 +27,7 @@ export default function UnlinkButton({edgeId}) {
     <IconButton
       className={classes.addButton}
       onClick={handleDeleteEdge}
-        >
+    >
       <UnLinkIcon />
     </IconButton>
   );

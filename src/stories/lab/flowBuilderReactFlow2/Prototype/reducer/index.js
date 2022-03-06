@@ -4,6 +4,7 @@ import actions from './actions';
 import { emptyObject } from '../../../../../utils/constants';
 import { generateAnEmptyActualRouter, generateBranch } from '../metadata/nodeGeneration';
 import { populateIds } from '../translateSchema';
+import { generateId } from '../lib';
 
 const addNewNode = (draft, action) => {
   const { path, resourceType, flowNode, resourceNode, flowId } = action;
@@ -184,6 +185,14 @@ const handleDeleteNode = (draft, action) => {
       op: 'remove',
       path,
     });
+    // If last PG is deleted, add a new PG step
+    if (flow.pageGenerators.length === 1) {
+      staged[flowId].patch.push({
+        op: 'add',
+        path,
+        value: {application: `none=${generateId()}`},
+      });
+    }
   } else {
     // Page processors
   }

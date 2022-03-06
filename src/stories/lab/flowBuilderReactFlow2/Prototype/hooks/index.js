@@ -60,6 +60,20 @@ export const useHandleAddNewRouter = edgeId => {
   };
 };
 
+export const useHandleDeleteNode = nodeId => {
+  const { flow, elements, setState } = useFlowContext();
+
+  return () => {
+    const node = elements.find(ele => ele.id === nodeId);
+
+    const path = getPathOfPGOrPPNode(flow, nodeId);
+
+    if (!path) return;
+
+    setState({type: actions.DELETE_NODE, flow, path, isPageGenerator: node.type === 'pg'});
+  };
+};
+
 export const useHandleDeleteEdge = edgeId => {
   const {flow, elements, setState} = useFlowContext();
 
@@ -72,7 +86,7 @@ export const useHandleDeleteEdge = edgeId => {
 
     if (isSourceNodeAPG) {
       if (sourceNodePath) {
-        return setState({type: actions.DELETE_NODE, flow, path: sourceNodePath});
+        return setState({type: actions.DELETE_NODE, flow, path: sourceNodePath, isPageGenerator: true});
       }
 
       return;
