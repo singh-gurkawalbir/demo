@@ -169,6 +169,26 @@ const handleDeleteEdge = (draft, action) => {
   });
 };
 
+const handleDeleteNode = (draft, action) => {
+  const {flow, path, isPageGenerator} = action;
+  const {session} = draft;
+  const {staged} = session;
+  const flowId = flow._id;
+
+  if (!staged[flowId]) {
+    staged[flowId] = {patch: []};
+  }
+  if (isPageGenerator) {
+    // remove the node
+    staged[flowId].patch.push({
+      op: 'remove',
+      path,
+    });
+  } else {
+    // Page processors
+  }
+};
+
 export default function (state, action) {
   const {type } = action;
 
@@ -194,6 +214,12 @@ export default function (state, action) {
 
       case actions.DELETE_EDGE: {
         handleDeleteEdge(draft, action);
+
+        return;
+      }
+
+      case actions.DELETE_NODE: {
+        handleDeleteNode(draft, action);
 
         return;
       }

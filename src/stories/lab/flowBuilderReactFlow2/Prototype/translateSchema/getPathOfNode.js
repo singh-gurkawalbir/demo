@@ -48,7 +48,7 @@ const traverseGraph = (flow, routerId, nodeId, accPath) => {
   }).find(ele => !!ele);
 };
 
-const getPathOfPGOrPPNode = (flow, nodeId) => {
+export const getPathOfPGOrPPNode = (flow, nodeId) => {
   if (!nodeId) {
     return;
   }

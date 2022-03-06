@@ -1,8 +1,8 @@
 import { useFlowContext } from '../Context';
 import actions from '../reducer/actions';
-import { generateNewId } from '../../../../../utils/resource';
-import { getNextRouterPathForTerminalNode, getNodeInsertionPathForEdge, isPageGenerator } from '../translateSchema/getPathOfNode';
+import { getNextRouterPathForTerminalNode, getNodeInsertionPathForEdge, getPathOfPGOrPPNode, isPageGenerator } from '../translateSchema/getPathOfNode';
 import { getSomeExport, getSomeImport, getSomePg, getSomePpImport } from '../metadata/nodeGeneration';
+import { generateId } from '../lib';
 
 const getSomeNode = (id, isPG) => {
   if (isPG) {
@@ -25,7 +25,7 @@ export const useHandleAddNode = edgeId => {
 
     if (!path) return;
 
-    const id = `new-${generateNewId()}`;
+    const id = `new-${generateId()}`;
 
     // Assume all pg are exports and all pp are imports
     // This segment of code can change
@@ -65,10 +65,19 @@ export const useHandleDeleteEdge = edgeId => {
 
   return () => {
     const edge = elements.find(ele => ele.id === edgeId);
+    const sourceNode = elements.find(ele => ele.id === edge?.source);
+    const isSourceNodeAPG = sourceNode.type === 'pg';
     const path = getNextRouterPathForTerminalNode(flow, edge);
+    const sourceNodePath = getPathOfPGOrPPNode(flow, edge?.source);
 
+    if (isSourceNodeAPG) {
+      if (sourceNodePath) {
+        return setState({type: actions.DELETE_NODE, flow, path: sourceNodePath});
+      }
+
+      return;
+    }
     if (!path) return;
-
     setState({type: actions.DELETE_EDGE, flow, path});
   };
 };

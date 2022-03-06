@@ -3,4 +3,5 @@ export default {
   ADD_NEW_ROUTER: 'ADD_NEW_ROUTER',
   ADD_NEW_NODE: 'ADD_NEW_NODE', // should this be: ADD_NEW_STEP
   DELETE_EDGE: 'DELETE_EDGE', // should this be: UNMERGE_BRANCH
+  DELETE_NODE: 'DELETE_NODE',
 };
