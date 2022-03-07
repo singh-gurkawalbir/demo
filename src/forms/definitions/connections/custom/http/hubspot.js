@@ -112,12 +112,6 @@ export default {
             'crm.schemas.deals.write',
           ],
         },
-        {
-          subHeader: 'Legacy',
-          scopes: [
-            'contacts',
-          ],
-        },
       ],
       defaultValue: r => {
         const authUri = r?.http?.auth?.oauth?.authURI;
