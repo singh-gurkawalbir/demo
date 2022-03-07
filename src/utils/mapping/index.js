@@ -1506,3 +1506,40 @@ export default {
     }
   },
 };
+
+// #region Mapper2 utils
+export const RECORD_AS_INPUT_OPTIONS = [{
+  label: 'Record to record - { } to { }',
+  value: 'recrec',
+},
+{
+  label: 'Record to rows - { } to [ ]',
+  value: 'recrow',
+},
+];
+
+export const ROWS_AS_INPUT_OPTIONS = [
+  {
+    label: 'Rows to record - [ ] to { }',
+    value: 'rowrec',
+  },
+  {
+    label: 'Rows to rows - [ ] to [ ]',
+    value: 'rowrow',
+  },
+];
+
+export const getInputOutputFormat = (isGroupedSampleData, isGroupedOutput) => {
+  if (isGroupedSampleData) {
+    if (isGroupedOutput) {
+      return 'rowrow';
+    }
+
+    return 'rowrec';
+  } if (isGroupedOutput) {
+    return 'recrow';
+  }
+
+  return 'recrec';
+};
+// #endregion

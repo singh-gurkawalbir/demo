@@ -27,6 +27,7 @@ export default (state = {}, action) => {
     failMsg,
     failSeverity,
     version,
+    outputFormat,
   } = action;
 
   return produce(state, draft => {
@@ -307,6 +308,12 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.TOGGLE_VERSION:
         if (!draft.mapping) break;
         draft.mapping.version = version;
+        break;
+
+      case actionTypes.MAPPING.V2.TOGGLE_OUTPUT:
+        if (!draft.mapping) break;
+        draft.mapping.isGroupedOutput = outputFormat === 'rows';
+
         break;
 
       default:

@@ -1477,6 +1477,10 @@ const mapping = {
     failed: (failSeverity, failMsg) => action(actionTypes.MAPPING.AUTO_MAPPER.FAILED, { failSeverity, failMsg }),
   },
   toggleVersion: version => action(actionTypes.MAPPING.TOGGLE_VERSION, { version }),
+  v2: {
+    toggleOutput: outputFormat => action(actionTypes.MAPPING.V2.TOGGLE_OUTPUT, { outputFormat }),
+    toggleRows: expanded => action(actionTypes.MAPPING.V2.TOGGLE_ROWS, { expanded }),
+  },
 };
 
 const searchCriteria = {

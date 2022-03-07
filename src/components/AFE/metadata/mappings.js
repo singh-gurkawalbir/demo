@@ -1,8 +1,11 @@
+import React from 'react';
 import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
 import MappingsPanel from '../Editor/panels/Mappings';
 import Mapper2Guide from '../Drawer/actions/Mapper2Guide';
 import ToggleMapperVersion from '../Drawer/actions/ToggleMapperVersion';
+import InputOutputTitle from '../Editor/actions/Mappings/InputOutputTitle';
+import MapperPanelTitle from '../Editor/actions/Mappings/MapperPanelTitle';
 
 export default {
   type: 'mappings',
@@ -10,25 +13,23 @@ export default {
   helpKey: 'afe.import.mapping',
   panels: [
     {
-      title: 'Rules',
+      title: ({editorId}) => <MapperPanelTitle editorId={editorId} title="Rules" helpKey="afe.mappings.v2rule" />,
       area: 'rule',
       isLoggable: true,
       Panel: MappingsPanel,
     },
     {
-      title: 'Input',
+      title: ({editorId}) => <InputOutputTitle editorId={editorId} title="Input" helpKey="afe.mappings.input" />,
       area: 'data',
       Panel: DataPanel,
-      helpKey: 'afe.mappings.input',
       props: {
         mode: 'json',
       },
     },
     {
-      title: 'Output',
+      title: ({editorId}) => <InputOutputTitle editorId={editorId} title="Output" helpKey="afe.mappings.output" />,
       area: 'result',
       Panel: ResultPanel,
-      helpKey: 'afe.mappings.output',
       props: {
         mode: 'json',
       },
