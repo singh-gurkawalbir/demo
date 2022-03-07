@@ -14,15 +14,17 @@ const useStyles = makeStyles(theme => ({
     gridArea: 'error',
     marginBottom: theme.spacing(2),
   },
-
   flexContainer: {
     display: 'flex',
     height: '100%',
     flexDirection: 'column',
     alignItems: 'stretch',
   },
-  title: { color: theme.palette.warning.main },
-  panel: { flex: '1 1 100px', minHeight: 50, position: 'relative' },
+  panel: {
+    flex: '1 1 100px',
+    minHeight: 50,
+    position: 'relative',
+  },
 }));
 
 const overrides = { wrap: true };
@@ -36,7 +38,7 @@ export default function WarningGridItem({ editorId }) {
   return (
     <div className={classes.gridItem}>
       <div className={classes.flexContainer}>
-        <PanelTitle className={classes.title} title="Warning" />
+        <PanelTitle titleColor="warning" title="Warning" />
         <div className={classes.panel} data-private>
           <CodePanel
             readOnly
