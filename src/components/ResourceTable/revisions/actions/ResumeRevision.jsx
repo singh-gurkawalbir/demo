@@ -16,7 +16,7 @@ export default {
         history.push(`${match.url}/pull/${revisionId}/merge`);
       }
       if (type === REVISION_TYPES.REVERT) {
-        history.push(`${match.url}/pull/${revisionId}/final`);
+        history.push(`${match.url}/revert/${revisionId}/final`);
       }
     }, [revisionId, type, history, match.url]);
 

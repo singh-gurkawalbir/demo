@@ -11,7 +11,7 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
-      history.push(`${match.url}/revert?toAfter=${revisionId}/new-123/open`);
+      history.push(`${match.url}/revert/new-123/open/toAfter/revision/${revisionId}`);
     }, [revisionId, history, match.url]);
 
     return handleClick;
