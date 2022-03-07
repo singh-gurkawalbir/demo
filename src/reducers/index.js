@@ -105,6 +105,7 @@ import { getSelectedRange } from '../utils/flowMetrics';
 import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
 import { filterMap } from '../components/GlobalSearch/filterMeta';
+import { getRevisionFilterKey, getFilteredRevisions } from '../utils/revisions';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -6651,3 +6652,14 @@ selectors.globalSearchResults = createSelector(
   (_, resourceResults) => resourceResults
 );
 
+selectors.revisionsFilter = (state, integrationId) => {
+  const filterKey = getRevisionFilterKey(integrationId);
+
+  return selectors.filter(state, filterKey);
+};
+
+selectors.filteredRevisions = createSelector(
+  selectors.revisions,
+  selectors.revisionsFilter,
+  (revisionsList, revisionsFilter) => getFilteredRevisions(revisionsList, revisionsFilter)
+);

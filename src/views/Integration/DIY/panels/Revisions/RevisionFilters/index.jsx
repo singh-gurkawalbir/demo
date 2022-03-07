@@ -1,20 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import FormControl from '@material-ui/core/FormControl';
-import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import ActionGroup from '../../../../../../components/ActionGroup';
-import CeligoSelect from '../../../../../../components/CeligoSelect';
-import DateRangeSelector from '../../../../../../components/DateRangeSelector';
-import {
-  REVISION_STATUS_OPTIONS,
-  REVISION_TYPE_OPTIONS,
-  ROWS_PER_PAGE_OPTIONS,
-} from '../../../../../../utils/revisions';
-import useFetchIntegrationUsers from '../../../../../../hooks/useFetchIntegrationUsers';
-import CeligoPagination from '../../../../../../components/CeligoPagination';
+import { getRevisionFilterKey, DEFAULT_REVISION_FILTERS } from '../../../../../../utils/revisions';
 import { selectors } from '../../../../../../reducers';
+import actions from '../../../../../../actions';
+import UserFilter from './UserFilter';
+import PaginationFilter from './PaginationFilter';
+import CreatedAtFilter from './CreatedAtFilter';
+import RevisionStatusFilter from './RevisionStatusFilter';
+import RevisionTypeFilter from './RevisionTypeFilter';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,9 +24,6 @@ const useStyles = makeStyles(theme => ({
     minWidth: 150,
     maxWidth: theme.spacing(30),
     height: 36,
-  },
-  tablePaginationRoot: {
-    display: 'flex',
   },
   filterContainer: {
     padding: theme.spacing(2, 0),
@@ -49,93 +43,44 @@ const useStyles = makeStyles(theme => ({
 
 export default function RevisionFilters() {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const { integrationId } = useParams();
-  const integrationUsers = useFetchIntegrationUsers(integrationId);
-  const userInput = {
-    name: 'byUser',
-    id: 'byUser',
-  };
-
+  const filterKey = getRevisionFilterKey(integrationId);
   const totalRevisions = useSelector(state => (selectors.revisions(state, integrationId) || []).length);
+
+  const hasEmptyFilters = useSelector(state => {
+    const { user, type, status, paging, createdAt } = selectors.filter(state, filterKey);
+
+    return !(user || type || status || paging || createdAt);
+  });
+
+  useEffect(() => {
+    if (hasEmptyFilters) {
+      dispatch(actions.patchFilter(filterKey, DEFAULT_REVISION_FILTERS));
+    }
+  }, [dispatch, hasEmptyFilters, filterKey]);
+
+  if (!totalRevisions) {
+    return null;
+  }
 
   return (
     <div className={classes.filterContainer}>
       <form className={classes.root} autoComplete="off">
         <ActionGroup>
-          <DateRangeSelector
-            // disabled={!canDownloadLogs}
-            primaryButtonLabel="Created date"
-            placement="right"
-            fixedPlaceholder="Created date"
-            // clearValue={defaultRange}
-            // onSave={handleDateFilter}
-            // value={date}
-         />
+          <CreatedAtFilter />
           <FormControl className={classes.formControl}>
-            <CeligoSelect
-              isLoggable={false}
-              inputProps={userInput}
-              onChange={() => {}}
-              value="ALL"
-            >
-              <MenuItem key="ALL" value="ALL">
-                Select status
-              </MenuItem>
-              {REVISION_STATUS_OPTIONS.map(opt => (
-                <MenuItem key={opt.value} value={opt.value} data-private>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </CeligoSelect>
+            <RevisionStatusFilter />
           </FormControl>
           <FormControl className={classes.formControl}>
-            <CeligoSelect
-              isLoggable={false}
-              inputProps={userInput}
-              onChange={() => {}}
-              value="ALL"
-            >
-              <MenuItem key="ALL" value="ALL">
-                Select type
-              </MenuItem>
-              {REVISION_TYPE_OPTIONS.map(opt => (
-                <MenuItem key={opt.value} value={opt.value} data-private>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </CeligoSelect>
+            <RevisionTypeFilter />
           </FormControl>
           <FormControl className={classes.formControl}>
-            <CeligoSelect
-              isLoggable={false}
-              inputProps={userInput}
-              onChange={() => {}}
-              value="ALL"
-            >
-              <MenuItem key="ALL" value="ALL">
-                Select user
-              </MenuItem>
-              {
-                integrationUsers.map(user => (
-                  <MenuItem key={user.sharedWithUser._id} value={user.sharedWithUser._id} data-private>
-                    {user.sharedWithUser.name || user.sharedWithUser.email}
-                  </MenuItem>
-                ))
-              }
-            </CeligoSelect>
+            <UserFilter />
           </FormControl>
         </ActionGroup>
         <ActionGroup position="right">
-          <CeligoPagination
-            rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
-            className={classes.tablePaginationRoot}
-            count={totalRevisions}
-            page={0}
-            rowsPerPage={25}
-            resultPerPageLabel="Results per page:"
-            // onChangePage={handleChangePage}
-            // onChangeRowsPerPage={handleChangeRowsPerPage}
-            />
+          <PaginationFilter />
         </ActionGroup>
       </form>
     </div>

@@ -12,6 +12,7 @@ export default {
       key: 'createdAt',
       heading: 'Date created',
       Value: ({ rowData: r }) => <DateTimeDisplay dateTime={r.createdAt} />,
+      orderBy: 'createdAt',
     }, {
       key: 'type',
       heading: 'Type',

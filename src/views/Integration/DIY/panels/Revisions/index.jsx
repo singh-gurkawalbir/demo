@@ -5,6 +5,7 @@ import { Link, useRouteMatch } from 'react-router-dom';
 import { TextButton } from '../../../../../components/Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
+import { getRevisionFilterKey } from '../../../../../utils/revisions';
 import PanelHeader from '../../../../../components/PanelHeader';
 import ActionGroup from '../../../../../components/ActionGroup';
 import AddIcon from '../../../../../components/icons/AddIcon';
@@ -25,7 +26,7 @@ export default function Revisions({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const match = useRouteMatch();
-  const revisions = useSelector(state => selectors.revisions(state, integrationId));
+  const revisions = useSelector(state => selectors.filteredRevisions(state, integrationId));
   const isLoadingRevisions = useSelector(state => {
     const status = selectors.revisionsFetchStatus(state, integrationId);
 
@@ -65,6 +66,7 @@ export default function Revisions({ integrationId }) {
         isLoadingRevisions ? <Spinner centerAll /> : (
           <ResourceTable
             resourceType="revisions"
+            filterKey={getRevisionFilterKey(integrationId)}
             resources={revisions}
           />
         )
