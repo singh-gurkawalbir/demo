@@ -6,7 +6,7 @@
         "lastModified": "2022-02-23T08:33:02.247Z",
         "createdAt": "2022-02-23T08:33:02.247Z",
         "status": "completed",
-        "type": "snapshot",
+        "type": "revert",
         "_integrationId": "6215f13ed611afb647b2cf45",
         "fromIntegrationIsSandbox": false,
         "beforeRevisionHash": "123456789",

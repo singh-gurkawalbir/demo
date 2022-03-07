@@ -29,6 +29,18 @@ export const REVISION_STATUS_OPTIONS = [{
   value: REVISION_STATUS.CANCELED,
 }];
 
+export const REVISION_TYPE_LABELS = {
+  [REVISION_TYPES.PULL]: 'Pull',
+  [REVISION_TYPES.REVERT]: 'Revert',
+  [REVISION_TYPES.SNAPSHOT]: 'Snapshot',
+};
+export const REVISION_STATUS_LABELS = {
+  [REVISION_STATUS.IN_PROGRESS]: 'In progress',
+  [REVISION_STATUS.COMPLETED]: 'Completed',
+  [REVISION_STATUS.FAILED]: 'Failed',
+  [REVISION_STATUS.CANCELED]: 'Canceled',
+};
+
 export const getRevisionFilterKey = integrationId => `${integrationId}-revisions`;
 
 export const DEFAULT_OPTION = 'all';

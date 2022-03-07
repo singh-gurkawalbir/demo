@@ -8,6 +8,7 @@ import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import SingleUserIcon from '../../../components/icons/SingleUserIcon';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
+import RevisionsIcon from '../../../components/icons/ViewResolvedHistoryIcon';
 import AuditLogPanel from './panels/AuditLog';
 import NotificationsPanel from './panels/Notifications';
 import SettingsPanel from './panels/Settings';
@@ -77,7 +78,7 @@ const getTabs = isUserInErrMgtTwoDotZero => [
   {
     path: 'revisions',
     label: 'Revisions',
-    Icon: SingleUserIcon,
+    Icon: RevisionsIcon,
     Panel: RevisionsPanel,
   },
 ];

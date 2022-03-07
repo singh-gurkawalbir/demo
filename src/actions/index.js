@@ -2228,9 +2228,9 @@ const integrationLCM = {
   revision: {
     openPull: ({ integrationId, newRevId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.OPEN_PULL, { integrationId, newRevId, revisionInfo }),
     openRevert: ({ integrationId, newRevId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.OPEN_REVERT, { integrationId, newRevId, revisionInfo }),
-    create: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.OPEN_REVERT, { integrationId, revisionId }),
+    create: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CREATE, { integrationId, revisionId }),
     clear: integrationId => action(actionTypes.INTEGRATION_LCM.REVISION.CLEAR, { integrationId }),
-    cancel: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CANCEL_MERGE, { integrationId, revisionId }),
+    cancel: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CANCEL, { integrationId, revisionId }),
   },
   installSteps: {
     installStep: () => {},
