@@ -108,7 +108,20 @@ export function* requestLicenseUpgrade() {
       message: 'Requesting license upgrade',
     });
   } catch (e) {
-    return yield put(actions.api.failure(path, 'POST', 'You have already submitted an upgrade request. We will be in touch soon.', false));
+    try {
+      const errorsJSON = JSON.parse(e.message);
+      const { errors } = errorsJSON;
+
+      const errorCode = errors && errors[0].code;
+
+      if (errorCode === 'ratelimit_exceeded') {
+        return yield put(actions.api.failure(path, 'POST', 'You have already submitted an upgrade request. We will be in touch soon.', false));
+      }
+    // eslint-disable-next-line no-empty
+    } catch (e) {
+    }
+
+    return true;
   }
 
   yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
@@ -128,7 +141,17 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
       hidden: actionType === 'upgrade',
     });
   } catch (error) {
-    if (actionType === 'upgrade') {
+    let errorCode;
+
+    try {
+      const errorsJSON = JSON.parse(error.message);
+      const { errors } = errorsJSON;
+
+      errorCode = errors && errors[0].code;
+    // eslint-disable-next-line no-empty
+    } catch (e) {
+    }
+    if (actionType === 'upgrade' && errorCode === 'ratelimit_exceeded') {
       return yield put(actions.api.failure(path, 'POST', 'You have already submitted an upgrade request. We will be in touch soon.', false));
     }
 
