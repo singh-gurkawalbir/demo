@@ -3,14 +3,14 @@ import { API} from '../utils';
 export default API.get('/api/published', [
   {
     _id: '602177d98a71e67e830613f8',
-    name: ' Sukeerthi Test connector',
-    description: 'Diksha Staging twoDotZero IA - 01',
+    name: ' Test connector',
+    description: 'Staging twoDotZero IA - 01',
     applications: [
       'netsuite',
     ],
     user: {
-      name: 'sukeerthi sriram',
-      company: 'Sukee- test debugger',
+      name: 'Test',
+      company: 'test debugger',
     },
     lastModified: '2021-02-08T17:49:58.265Z',
     framework: 'twoDotZero',
@@ -46,21 +46,21 @@ export default API.get('/api/published', [
       'adp',
     ],
     user: {
-      name: 'THOTAKURA MUNESWARA',
+      name: 'TM',
       company: 'Celigo',
     },
     lastModified: '2019-12-26T12:55:38.162Z',
   },
   {
     _id: '5f0573c32416854938f60d01',
-    name: 'ADP Rockzzzz',
+    name: 'ADP IA',
     description: 'ADP connector is the connector',
     imageURL: 'image.png',
     applications: [
       'adp',
     ],
     user: {
-      name: 'Dileep Krishna Sai',
+      name: 'DKS',
       company: 'celigo',
     },
     lastModified: '2021-02-10T09:24:57.229Z',
@@ -76,7 +76,7 @@ export default API.get('/api/published', [
       's3',
     ],
     user: {
-      name: 'Dinesh Venkat',
+      name: 'Test',
       company: 'Celigo',
     },
     trialEnabled: false,
