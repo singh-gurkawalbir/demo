@@ -11,6 +11,7 @@ import AutoMapperButton from '../../../../Mapping/AutoMapperButton';
 import { dataAsString } from '../../../../../utils/editor';
 import MappingRow from '../../../../Mapping/MappingRow';
 import { emptyObject } from '../../../../../utils/constants';
+import Mapper2 from './Mapper2';
 
 const useStyles = makeStyles(theme => ({
   mappingDrawerContent: {
@@ -40,7 +41,7 @@ const SortableItemComponent = props => (
 const LastRowSortableItemComponent = props => (
   <MappingRow rowData={emptyObject} {...props} />
 );
-const Mapping = ({editorId, flowId, importId, subRecordMappingId}) => {
+const Mapper1 = ({editorId, flowId, importId, subRecordMappingId}) => {
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
 
   const canAutoMap = useSelector(state => {
@@ -113,6 +114,7 @@ export default function MappingWrapper({ editorId }) {
 
     return dataAsString(data);
   });
+  const mappingVersion = useSelector(state => selectors.mappingVersion(state));
 
   useEffect(() => {
     if (mappingStatus === 'received') {
@@ -130,12 +132,20 @@ export default function MappingWrapper({ editorId }) {
     );
   }
 
-  return (
-    <Mapping
+  return mappingVersion === 2 ? (
+    <Mapper2
       editorId={editorId}
       flowId={flowId}
       importId={importId}
       subRecordMappingId={subRecordMappingId}
      />
-  );
+  )
+    : (
+      <Mapper1
+        editorId={editorId}
+        flowId={flowId}
+        importId={importId}
+        subRecordMappingId={subRecordMappingId}
+     />
+    );
 }

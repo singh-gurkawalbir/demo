@@ -1,6 +1,6 @@
 import deepClone from 'lodash/cloneDeep';
-import { uniqBy } from 'lodash';
-import isEqual from 'lodash/isEqual';
+import { uniqBy, isEmpty, isEqual, forEach } from 'lodash';
+import { nanoid } from 'nanoid';
 import { adaptorTypeMap, isNetSuiteBatchExport, isFileAdaptor} from '../resource';
 // eslint-disable-next-line import/no-self-import
 import mappingUtil from '.';
@@ -8,12 +8,15 @@ import netsuiteMappingUtil from './application/netsuite';
 import getJSONPaths, {
   getJSONPathArrayWithSpecialCharactersWrapped,
   pickFirstObject,
+  getUnionObject,
 } from '../jsonPaths';
 import { getRecordTypeForAutoMapper } from '../assistant';
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
 import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../constants';
+import { TitleExtracts } from '../../components/AFE/Editor/panels/Mappings/Mapper2/Mapper2ExtractsTypeableSelect';
+// import TabRow from './TabbedRow';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
@@ -1541,5 +1544,407 @@ export const getInputOutputFormat = (isGroupedSampleData, isGroupedOutput) => {
   }
 
   return 'recrec';
+};
+
+export const PRIMITIVE_DATA_TYPES = ['string', 'number', 'boolean'];
+export const ARRAY_DATA_TYPES = ['stringarray', 'numberarray', 'booleanarray', 'objectarray', 'arrayarray'];
+export const DATA_TYPES_OPTIONS =
+[
+  {
+    id: 'string',
+    label: 'string',
+  },
+  {
+    id: 'number',
+    label: 'number',
+  },
+  {
+    id: 'boolean',
+    label: 'boolean',
+  },
+  {
+    id: 'object',
+    label: 'object',
+  },
+  {
+    id: 'stringarray',
+    label: '[string]',
+  },
+  {
+    id: 'numberarray',
+    label: '[number]',
+  },
+  {
+    id: 'booleanarray',
+    label: '[boolean]',
+  },
+  {
+    id: 'objectarray',
+    label: '[object]',
+  },
+];
+
+function iterateForParentTree(mappings, treeData, parentKey, parentExtract) {
+  mappings.forEach(m => {
+    const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract} = m;
+    const children = [];
+    const currNodeKey = nanoid();
+
+    const nodeToPush = {
+      key: currNodeKey,
+      title: '',
+      parentKey,
+      parentExtract,
+      ...m,
+    };
+
+    treeData.push(nodeToPush);
+
+    if (PRIMITIVE_DATA_TYPES.includes(dataType)) {
+      // nothing to do
+      return;
+    }
+    if (dataType === 'object') {
+      if (objMappings) {
+        nodeToPush.children = children;
+
+        iterateForParentTree(objMappings, children, currNodeKey, currNodeExtract);
+      }
+
+      return;
+    }
+    if (ARRAY_DATA_TYPES.includes(dataType)) {
+      // invalid mappings, nothing to do
+      if (!buildArrayHelper) {
+        return;
+      }
+      if (dataType === 'objectarray' || dataType === 'arrayarray') {
+        let sourceExtract;
+        let multipleSources = false;
+
+        buildArrayHelper.forEach(obj => {
+          const {extract, mappings} = obj;
+
+          sourceExtract = extract ? `${sourceExtract ? `${sourceExtract},` : ''}${extract}` : sourceExtract;
+
+          if (!mappings) {
+            return;
+          }
+
+          if (multipleSources && !nodeToPush.multipleSources) {
+            nodeToPush.multipleSources = true;
+
+            children.unshift({
+              key: nanoid(),
+              parentKey: currNodeKey,
+              // title: TabRow,
+              isTabNode: true,
+            });
+          } else {
+            multipleSources = true;
+          }
+
+          nodeToPush.children = children;
+
+          iterateForParentTree(mappings, children, currNodeKey, extract);
+        });
+        nodeToPush.combinedExtract = sourceExtract;
+
+        return;
+      }
+
+      // for primitive array types
+      let extract;
+
+      buildArrayHelper.forEach(obj => {
+        extract = `${extract ? `${extract},` : ''}${obj.extract}`;
+      });
+
+      nodeToPush.combinedExtract = extract;
+    }
+  });
+
+  return treeData;
+}
+
+export function generateTreeFromV2Mappings(input) {
+  const treeData = [];
+  const emptyMappingsTree = [{
+    key: nanoid(),
+    title: '',
+  }];
+
+  if (!input) return emptyMappingsTree;
+  const {type: mappings} = input;
+
+  if (!mappings || isEmpty(mappings)) return emptyMappingsTree;
+
+  return iterateForParentTree(mappings, treeData);
+}
+
+export function allowDrop({ dragNode, dropNode, dropPosition }) {
+  const {parentKey: dragNodeParentKey, isTabNode: dragNodeIsTab} = dragNode;
+  const {key: dropNodeKey, parentKey: dropNodeParentKey, isTabNode: dropNodeIsTab} = dropNode;
+
+  if (dragNodeIsTab || dropNodeIsTab) return false;
+
+  // dropping a child node at the 0th position in the children list
+  if (dropPosition === 0 && dragNodeParentKey === dropNodeKey) return true;
+
+  // nodes can only be dropped at same level
+  if ((dragNodeParentKey && !dropNodeParentKey) ||
+    (!dragNodeParentKey && dropNodeParentKey)) {
+    return false;
+  }
+
+  if (dragNodeParentKey && dropNodeParentKey && dragNodeParentKey !== dropNodeParentKey) {
+    return false;
+  }
+
+  return true;
+}
+
+export const findNode = (data, prop, key, callback) => {
+  data.forEach((item, index, arr) => {
+    if (item[prop] === key) {
+      callback(item, index, arr);
+
+      return;
+    }
+    if (item.children) {
+      findNode(item.children, prop, key, callback);
+    }
+  });
+};
+
+export const findNodeFromParentPath = (data, key) => {
+  let node;
+
+  forEach(data, item => {
+    if (item.parentPath === key) {
+      node = item;
+
+      return false;
+    }
+    if (item.children) {
+      node = findNodeFromParentPath(item.children, key);
+    }
+  });
+
+  return node;
+};
+
+export const TYPEOF_TO_DATA_TYPE = {
+  '[object String]': 'string',
+  '[object Number]': 'number',
+  '[object Boolean]': 'boolean',
+  '[object Null]': 'string',
+};
+
+function iterateForExtracts(dataIn, treeData, parentKey, parentFieldName = '') {
+  Object.keys(dataIn).forEach(property => {
+    if (property in dataIn) {
+      const v = dataIn[property];
+      const type = Object.prototype.toString.apply(v);
+      const parentPath = `${parentFieldName ? `${parentFieldName}.` : ''}${property}`;
+
+      if (type !== '[object Array]' && type !== '[object Object]') {
+        treeData.push({
+          key: nanoid(),
+          parentKey,
+          title: TitleExtracts,
+          parentPath,
+          fieldName: property,
+          dataType: TYPEOF_TO_DATA_TYPE[type],
+        });
+
+        return;
+      }
+
+      if (type === '[object Object]') {
+        const key = nanoid();
+        const children = [];
+
+        treeData.push({
+          key,
+          parentKey,
+          title: TitleExtracts,
+          parentPath,
+          fieldName: property,
+          dataType: 'object',
+          children,
+        });
+
+        iterateForExtracts(v, children, key, parentPath);
+
+        return;
+      }
+
+      if (type === '[object Array]') {
+        if (Object.prototype.toString.apply(v[0]) === '[object Object]' && !isEmpty(v[0])) {
+          const key = nanoid();
+          const children = [];
+
+          treeData.push({
+            key,
+            parentKey,
+            title: TitleExtracts,
+            parentPath: `${parentPath}[*]`,
+            fieldName: property,
+            dataType: '[object]',
+            children,
+          });
+
+          iterateForExtracts(getUnionObject(v), children, key, `${parentPath}[*]`);
+
+          return;
+        }
+
+        // primitive array
+        const valueType = Object.prototype.toString.apply(v[0]);
+
+        treeData.push({
+          key: nanoid(),
+          parentKey,
+          title: TitleExtracts,
+          parentPath,
+          fieldName: property,
+          dataType: `[${TYPEOF_TO_DATA_TYPE[valueType]}]`,
+        });
+      }
+    }
+  });
+}
+
+export const constructExtractsTree = dataIn => {
+  const treeData = [];
+  const children = [];
+
+  if (!dataIn || typeof dataIn !== 'object') return treeData;
+
+  const key = nanoid();
+
+  treeData.push({
+    key,
+    title: '$',
+    fieldName: '$',
+    children,
+  });
+
+  iterateForExtracts(dataIn, children, key);
+  // console.log('treeData', treeData);
+
+  return treeData;
+};
+
+export const filterExtractsNode = (node, propValue, inputValue) => {
+// if node is already selected, do not mark it as filtered
+  if (node.selected) return false;
+
+  // if no change has been made in input, then no need to filter
+  // this should work because propValue should get updated once you update the extract field
+  if (propValue === inputValue) return false;
+
+  const searchKey = node.parentPath || '';
+  const splitInput = inputValue.split(',');
+
+  const newT = splitInput.filter(i => {
+    const inp = i.replace('$.', '');
+
+    // if inp ends with [*], then look for exact match
+    // so that we only highlight the parent row for such cases
+    if (inp.endsWith('[*]')) {
+      if (searchKey.toUpperCase() === inp.toUpperCase()) return true;
+
+      return false;
+    }
+
+    if (inp && searchKey && searchKey.toUpperCase().indexOf(inp.toUpperCase()) > -1) {
+      return true;
+    }
+
+    return false;
+  });
+
+  if (isEmpty(newT)) return false;
+
+  return true;
+};
+
+export const getFinalSelectedExtracts = (node, inputValue, isArrayType) => {
+  const {parentPath = ''} = node;
+  const fullPath = `$.${parentPath}`;
+  let newValue = fullPath;
+
+  const splitByComma = inputValue.split(',');
+  const valuesLen = splitByComma.length;
+
+  // handle comma separated scenario for array data types
+  if (isArrayType) {
+    const lastChar = inputValue.charAt(inputValue.length - 1);
+
+    // if user has typed comma before selecting new value, we append the new value
+    // else replace the last value after comma
+    if (lastChar === ',') {
+      newValue = inputValue + fullPath;
+    } else {
+      splitByComma[valuesLen - 1] = fullPath;
+      newValue = splitByComma.join(',');
+    }
+  }
+
+  return newValue;
+};
+
+export const sampleData = {
+  fName: 'scott',
+  lName: 'henderson',
+  altFirstName: 'scooter',
+  additionalFirstNames: ['scoots', 'mchendrix'],
+  children: [
+    {
+      firstName: 'abby',
+    },
+    {
+      firstName: 'paige',
+    },
+  ],
+  mother: {
+    fName: 'mary',
+    lName: 'henderson',
+  },
+  father: {
+    fName: 'herb',
+    lName: 'henderson',
+  },
+  siblings: [
+    {
+      fName: 'james',
+      lName: 'henderson',
+      children: [
+        {
+          fName: 'patrick',
+        },
+        {
+          fName: 'asher',
+        },
+        {
+          fName: 'cade',
+        },
+        {
+          fName: 'lee',
+        },
+      ],
+    },
+    {
+      fName: 'erin',
+      lName: 'tuohy',
+      children: [
+        {
+          fName: 'jake',
+        },
+      ],
+    },
+  ],
 };
 // #endregion

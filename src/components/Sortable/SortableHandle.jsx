@@ -14,11 +14,11 @@ const useStyles = makeStyles(theme => ({
     paddingTop: 6,
   },
 }));
-const SortableDragHandle = ({className = '', isVisible}) => {
+export const SortableDragHandle = ({className = '', isVisible, draggable}) => {
   const classes = useStyles();
 
   return (
-    <div className={clsx(classes.dragIconWrapper, className)}>
+    <div id="dragHandle" draggable={draggable} className={clsx(classes.dragIconWrapper, className)}>
       {isVisible ? <GripperIcon /> : null}
     </div>
   );
