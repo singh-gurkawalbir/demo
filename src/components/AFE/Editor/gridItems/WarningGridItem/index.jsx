@@ -5,9 +5,11 @@ import { selectors } from '../../../../../reducers';
 import PanelTitle from '../PanelTitle';
 import CodePanel from '../../panels/Code';
 
+// TODO (Azhar): Improve the CSS for Warning, Error and Console along with Components
 const useStyles = makeStyles(theme => ({
   gridItem: {
-    border: 'solid 1px rgb(0,0,0,0.3)',
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
     overflow: 'hidden',
     minWidth: 150,
     minHeight: 100,
