@@ -8,8 +8,8 @@ import { selectors } from '../../../../../reducers';
 import RefreshIcon from '../../../../icons/RefreshIcon';
 import TextButton from '../../../../Buttons/TextButton';
 import CeligoDivider from '../../../../CeligoDivider';
-import ExpandWindowIcon from '../../../../icons/ExpandWindowIcon';
-import CollapseWindowIcon from '../../../../icons/CollapseWindowIcon';
+import ExpandRowsIcon from '../../../../icons/ExpandRowsIcon';
+import CollapseRowsIcon from '../../../../icons/CollapseRowsIcon';
 import CeligoSelect from '../../../../CeligoSelect';
 import ArrowDownIcon from '../../../../icons/ArrowDownIcon';
 import { ROWS_AS_INPUT_OPTIONS, RECORD_AS_INPUT_OPTIONS, getInputOutputFormat } from '../../../../../utils/mapping';
@@ -134,7 +134,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
             size="small"
             date-test="expandAll"
             onClick={() => handleToggleRows(true)} >
-            <ExpandWindowIcon />
+            <ExpandRowsIcon />
           </IconButton>
         </Tooltip >
 
@@ -143,7 +143,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
             size="small"
             date-test="collapseAll"
             onClick={() => handleToggleRows(false)} >
-            <CollapseWindowIcon />
+            <CollapseRowsIcon />
           </IconButton>
         </Tooltip>
       </ActionGroup>

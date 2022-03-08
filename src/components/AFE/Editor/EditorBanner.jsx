@@ -32,7 +32,7 @@ export default function EditorBanner() {
       className={classes.notification}>
       <Typography variant="h6" className={classes.titleStatusPanel}>
         {message}
-        {mappingVersion === 2 && <a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/360039326071-Handlebars-helper-reference"> Learn about Mapper 2.0’s advantages</a>}
+        {mappingVersion === 2 && <a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/4536629083035-Mapper-2-0"> Learn about Mapper 2.0’s advantages</a>}
       </Typography>
     </NotificationToaster>
   );

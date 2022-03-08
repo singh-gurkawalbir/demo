@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
 const anchorProps = {
   component: 'a',
   target: '_blank',
-  href: 'https://docs.celigo.com/hc/en-us/articles/360039326071-Handlebars-helper-reference',
+  href: 'https://docs.celigo.com/hc/en-us/articles/4536629083035-Mapper-2-0',
 };
 
 export default function Mapper2Guide() {
