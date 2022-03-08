@@ -108,6 +108,7 @@ const config = {
       GA_KEY_2: JSON.stringify(process.env.GA_KEY_2),
       GA_KEY_1_EU: JSON.stringify(process.env.GA_KEY_1_EU),
       GA_KEY_2_EU: JSON.stringify(process.env.GA_KEY_2_EU),
+      IO_LOGIN_PROMOTION_URL: JSON.stringify(process.env.IO_LOGIN_PROMOTION_URL),
     }),
   ],
   output: {

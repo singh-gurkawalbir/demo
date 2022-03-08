@@ -94,7 +94,8 @@ export default function Signin(props) {
         </div>
       </div>
       <div className={classes.marketingContentWrapper}>
-        <MarketingContentWithIframe contentUrl={process.env.IO_LOGIN_PROMOTION_URL} />
+        {/* eslint-disable-next-line no-undef */}
+        <MarketingContentWithIframe contentUrl={IO_LOGIN_PROMOTION_URL} />
       </div>
     </div>
   );
