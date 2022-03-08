@@ -220,6 +220,7 @@ export default {
     'docebo',
     'mercadolibre',
     'zohoexpense',
+    'microsoftpowerautomate',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
