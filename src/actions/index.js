@@ -2215,7 +2215,7 @@ const sso = {
 const integrationLCM = {
   cloneFamily: {
     request: integrationId => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, { integrationId }),
-    received: (integrationId, clonesList) => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.RECEIVED, { integrationId, clonesList }),
+    received: (integrationId, cloneFamily) => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.RECEIVED, { integrationId, cloneFamily }),
     receivedError: (integrationId, error) => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.RECEIVED_ERROR, { integrationId, error }),
   },
   compare: {

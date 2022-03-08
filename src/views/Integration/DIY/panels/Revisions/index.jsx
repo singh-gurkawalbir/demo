@@ -79,14 +79,14 @@ export default function Revisions({ integrationId }) {
           />
         )
       }
-      <ViewDetailsDrawer />
-      <OpenPullDrawer />
-      <ReviewPullChangesDrawer />
-      <MergePullDrawer />
-      <OpenRevertDrawer />
-      <ReviewRevertChangesDrawer />
-      <FinalRevertDrawer />
-      <CreateSnapshotDrawer />
+      <ViewDetailsDrawer integrationId={integrationId} />
+      <OpenPullDrawer integrationId={integrationId} />
+      <ReviewPullChangesDrawer integrationId={integrationId} />
+      <MergePullDrawer integrationId={integrationId} />
+      <OpenRevertDrawer integrationId={integrationId} />
+      <ReviewRevertChangesDrawer integrationId={integrationId} />
+      <FinalRevertDrawer integrationId={integrationId} />
+      <CreateSnapshotDrawer integrationId={integrationId} />
     </div>
   );
 }
