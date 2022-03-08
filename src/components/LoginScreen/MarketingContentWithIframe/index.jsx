@@ -1,4 +1,5 @@
 import React from 'react';
+import Iframe from 'react-iframe';
 import { makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
@@ -8,11 +9,6 @@ const useStylesIframe = makeStyles(theme => ({
     height: '100%',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    '& > iframe': {
-      width: '100%',
-      height: '100%',
-      border: 'none',
-    },
   },
 }));
 export default function MarketingContentWithIframe({contentUrl}) {
@@ -20,7 +16,12 @@ export default function MarketingContentWithIframe({contentUrl}) {
 
   return (
     <div className={classes.container}>
-      <iframe src={contentUrl} title="Marketing Content" />
+      <Iframe
+        url={contentUrl}
+        title="Marketing Content"
+        width="100%"
+        height="100%"
+        frameBorder={0} />
     </div>
   );
 }

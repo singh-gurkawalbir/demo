@@ -7,7 +7,8 @@ import CodePanel from '../../panels/Code';
 
 const useStyles = makeStyles(theme => ({
   gridItem: {
-    border: 'solid 1px rgb(0,0,0,0.3)',
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
     overflow: 'hidden',
     minWidth: 150,
     minHeight: 100,
