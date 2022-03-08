@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
+import {Link} from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { isEqual, difference } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,6 +11,9 @@ import SuiteScriptTile from './SuiteScriptTile';
 import SortableList from '../../../../components/Sortable/SortableList';
 import SortableItem from '../../../../components/Sortable/SortableItem';
 import useSortableList from '../../../../hooks/useSortableList';
+import EmptyState from '../../../../components/EmptyStates';
+import { FilledButton, TextButton } from '../../../../components/Buttons';
+import { EMPTY_STATES_URLS } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -31,6 +35,23 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
+const {INTEGRATIONS_URL} = EMPTY_STATES_URLS;
+export const DashboardEmptyState = () => (
+  <EmptyState
+    title="Jumpstart your data integration"
+    subTitle="You can access, manage and monitor flows from within integrations on this page."
+    type="integrations">
+    <FilledButton href="/integrations/none/flowBuilder/new">Create flow</FilledButton>
+    <TextButton
+      underline
+      component={Link}
+      to={INTEGRATIONS_URL}
+      target="_blank">
+      Learn how to develop integrations in flow builder
+    </TextButton>
+  </EmptyState>
+);
 
 export default function HomeCard({ sortedTiles }) {
   const dispatch = useDispatch();
@@ -64,39 +85,43 @@ export default function HomeCard({ sortedTiles }) {
 
   return (
     <>
-      <SortableList
-        className={classes.container}
-        onSortEnd={handleSortEnd}
-        updateBeforeSortStart={handleSortStart}
-        axis="xy"
-        useDragHandle>
-        {sortedTiles.map((t, index) => (
-          <SortableItem
-            key={getTileId(t)}
-            index={index}
-            hideSortableGhost={false}
-            value={(
-              <>
-                {t.ssLinkedConnectionId ? (
-                  <SuiteScriptTile
-                    tile={t}
-                    index={index}
-                    isDragInProgress={dragItemIndex !== undefined}
-                    isTileDragged={dragItemIndex === index}
+      {sortedTiles.length === 0 ? (
+        <DashboardEmptyState />
+      ) : (
+        <SortableList
+          className={classes.container}
+          onSortEnd={handleSortEnd}
+          updateBeforeSortStart={handleSortStart}
+          axis="xy"
+          useDragHandle>
+          {sortedTiles.map((t, index) => (
+            <SortableItem
+              key={getTileId(t)}
+              index={index}
+              hideSortableGhost={false}
+              value={(
+                <>
+                  {t.ssLinkedConnectionId ? (
+                    <SuiteScriptTile
+                      tile={t}
+                      index={index}
+                      isDragInProgress={dragItemIndex !== undefined}
+                      isTileDragged={dragItemIndex === index}
                   />
-                ) : (
-                  <Tile
-                    tile={t}
-                    index={index}
-                    isDragInProgress={dragItemIndex !== undefined}
-                    isTileDragged={dragItemIndex === index}
+                  ) : (
+                    <Tile
+                      tile={t}
+                      index={index}
+                      isDragInProgress={dragItemIndex !== undefined}
+                      isTileDragged={dragItemIndex === index}
                   />
-                )}
-              </>
+                  )}
+                </>
             )}
           />
-        ))}
-      </SortableList>
+          ))}
+        </SortableList>
+      )}
     </>
   );
 }

@@ -438,6 +438,14 @@ export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles
 
 export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle'];
 
+export const EMPTY_STATES_URLS = {
+  INTEGRATIONS_URL: 'https://docs.celigo.com/hc/en-us/articles/360025919171-Develop-integrations-in-Flow-Builder',
+  CONNECTIONS_URL: 'https://docs.celigo.com/hc/en-us/articles/226974368-Establish-connections-in-integrator-io',
+  IMPORTS_URL: 'https://docs.celigo.com/hc/en-us/articles/226933887-What-are-imports-',
+  EXPORTS_URL: 'https://docs.celigo.com/hc/en-us/articles/226934107-What-are-exports-',
+  AGENTS_URL: 'https://docs.celigo.com/hc/en-us/articles/360004081771-Integrate-data-through-firewall-with-on-premise-agent',
+  API_TOKENS_URL: 'https://docs.celigo.com/hc/en-us/articles/360019782431-Generate-API-tokens',
+};
 export const AWS_REGIONS_LIST = [
   {
     label: 'US East (N. Virginia) [us-east-1]',
