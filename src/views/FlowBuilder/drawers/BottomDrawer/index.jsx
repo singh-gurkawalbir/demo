@@ -154,6 +154,9 @@ export default function BottomDrawer({
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const defaultBottomDrawerTab = useSelector(
+    state => selectors.filter(state, 'bottomDrawer')?.defaultTab
+  );
 
   const minDrawerHeight = 41;
   const maxHeight = window.innerHeight - theme.appBarHeight - theme.pageBarHeight + 1; // border 1px
@@ -236,6 +239,15 @@ export default function BottomDrawer({
       dispatch(actions.logs.connections.clear({clearAllLogs: true}));
     },
   [dispatch]);
+  useEffect(() => {
+    if (defaultBottomDrawerTab && tabs?.length) {
+      const defaultTabIndex = tabs?.findIndex(a => a.tabType === defaultBottomDrawerTab);
+
+      dispatch(actions.bottomDrawer.setActiveTab({index: defaultTabIndex}));
+      dispatch(actions.clearFilter('bottomDrawer'));
+    }
+  },
+  [defaultBottomDrawerTab, dispatch, tabs]);
 
   useEffect(() => {
     if (isDragging === false) {

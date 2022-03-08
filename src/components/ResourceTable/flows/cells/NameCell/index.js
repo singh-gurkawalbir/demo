@@ -1,6 +1,8 @@
 import React, {useCallback} from 'react';
-import { Link, useRouteMatch, useHistory, generatePath } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { makeStyles, Chip } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
+import actions from '../../../../../actions';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 import InfoIconButton from '../../../../InfoIconButton';
 import { flowbuilderUrl } from '../../../../../utils/flows';
@@ -32,22 +34,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function OfflineConnectionsIndicator({flowId}) {
+function OfflineConnectionsIndicator({flowId, flowBuilderTo}) {
   const classes = useStyles();
-  const match = useRouteMatch();
   const history = useHistory();
+  const dispatch = useDispatch();
   const isAnyConnectionOffline = useSelectorMemo(selectors.mkIsAnyFlowConnectionOffline, flowId);
 
   const handleTabChange = useCallback(
     () => {
-      const path = generatePath(match.path, {
-        ...match.params,
-        tab: 'connections',
-      });
-
-      history.push(path);
+      dispatch(actions.patchFilter('bottomDrawer', {defaultTab: 'connections'}));
+      history.push(flowBuilderTo);
     },
-    [history, match.params, match.path]);
+    [dispatch, flowBuilderTo, history]);
 
   if (!isAnyConnectionOffline) { return null; }
 
@@ -82,7 +80,7 @@ export default function NameCell({
   return (
     <div className={classes.root}>
       <Link to={flowBuilderTo}>{flowName}</Link>
-      <OfflineConnectionsIndicator flowId={flowId} />
+      <OfflineConnectionsIndicator flowBuilderTo={flowBuilderTo} flowId={flowId} />
       <InfoIconButton info={description} escapeUnsecuredDomains size="xs" />
 
       {isFree && (
