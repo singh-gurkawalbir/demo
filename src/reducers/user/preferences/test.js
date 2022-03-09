@@ -278,6 +278,37 @@ describe('user reducers', () => {
   });
 });
 
+describe('user defaultAShareId selectors', () => {
+  test('should return undefined for payload in the preference update action', () => {
+    const regularUserAccountPreferences = {};
+    const receivedPreferencesAction = actions.resource.receivedCollection(
+      'preferences',
+      regularUserAccountPreferences
+    );
+    const state = reducer(undefined, receivedPreferencesAction);
+
+    expect(selectors.defaultAShareId(state)).toEqual(undefined);
+  });
+  test('should return undefined if state is empty', () => {
+    expect(selectors.defaultAShareId()).toEqual(undefined);
+  });
+
+  test('should return defaultAShareId if preferences contains defaultAShareId', () => {
+    const preferences = {
+      defaultAShareId: ACCOUNT_IDS.OWN,
+      timeFormat: 'something',
+      themeName: 'fancy',
+    };
+    const receivedPreferences = actions.resource.received(
+      'preferences',
+      preferences
+    );
+    const state = reducer(undefined, receivedPreferences);
+
+    expect(selectors.defaultAShareId(state)).toEqual('own');
+  });
+});
+
 describe('accountShareHeader reducers', () => {
   const testCases = [];
 
