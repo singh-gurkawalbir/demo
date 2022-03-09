@@ -24,18 +24,6 @@ const useStyles = makeStyles(theme => ({
 export default function SubNavMenuItem({name, errorCount, isGripperVisible = false, onMouseEnter, onMouseLeave}) {
   const classes = useStyles(isGripperVisible);
 
-  // const errorStatus = useMemo(() => {
-  //   if (errorCount === 0) {
-  //     return <StatusCircle size="mini" variant="success" />;
-  //   }
-
-  //   return (
-  //     <Status size="mini" variant="error" >
-  //       <span>{errorCount > 9999 ? '9999+' : errorCount}</span>
-  //     </Status>
-  //   );
-  // }, [errorCount]);
-
   return (
     <ListItem className={classes.listItemwrapper} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       {isGripperVisible && (
