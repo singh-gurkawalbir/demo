@@ -26,8 +26,6 @@ export default function UserFilter() {
     [dispatch, filterKey],
   );
 
-  console.log(selectedUser);
-
   return (
     <CeligoSelect
     //   isLoggable={false}

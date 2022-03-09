@@ -10,6 +10,7 @@ export default function getMetadata({integrationId}) {
       integration: {
         id: 'integration',
         name: 'integration',
+        label: 'Integration',
         type: 'integrationcloneselect',
         required: true,
         integrationId,

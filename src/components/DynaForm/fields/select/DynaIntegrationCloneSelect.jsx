@@ -1,11 +1,13 @@
-import React, { useEffect} from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {useSelector, useDispatch } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import Spinner from '../../../Spinner';
+import DynaSelect from '../DynaSelect';
 
-export default function DynaIntegrationCloneSelect({ integrationId }) {
+export default function DynaIntegrationCloneSelect(props) {
+  const { integrationId } = props;
   const dispatch = useDispatch();
   const {fetchStatus, isLoadingCloneFamily} = useSelector(state => {
     const fetchStatus = selectors.cloneFamilyFetchStatus(state, integrationId);
@@ -24,9 +26,14 @@ export default function DynaIntegrationCloneSelect({ integrationId }) {
     }
   }, [dispatch, integrationId, fetchStatus]);
 
+  const options = useMemo(() => [{
+    items: (cloneList || []).map(clone => ({ label: clone.name, value: clone._id })),
+  }], [cloneList]);
+
   if (isLoadingCloneFamily) {
     return <Spinner />;
   }
 
-  return <div> test {JSON.stringify(cloneList)} </div>;
+  return <DynaSelect {...props} options={options} />;
 }
+
