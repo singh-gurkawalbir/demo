@@ -3,7 +3,7 @@ import Iframe from 'react-iframe';
 import { makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
-const useStylesIframe = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   container: {
     width: '100%',
     height: '100%',
@@ -12,13 +12,13 @@ const useStylesIframe = makeStyles(theme => ({
   },
 }));
 export default function MarketingContentWithIframe({contentUrl}) {
-  const classes = useStylesIframe();
+  const classes = useStyles();
 
   return (
     <div className={classes.container}>
       <Iframe
         url={contentUrl}
-        title="Marketing Content"
+        title="Announcement"
         width="100%"
         height="100%"
         frameBorder={0} />
