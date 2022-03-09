@@ -35,7 +35,7 @@ export default function SubNavMenuItem({name, errorCount, isGripperVisible = fal
       </Status>
       )}
       {errorCount === 0 && (
-      <Status variant="success" size="mini">hello</Status>)}
+      <Status variant="success" size="mini" />)}
     </ListItem>
   );
 }
