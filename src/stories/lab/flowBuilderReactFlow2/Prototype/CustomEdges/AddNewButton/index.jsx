@@ -6,7 +6,7 @@ import IconButtonWithTooltip from '../../../../../../components/IconButtonWithTo
 import AddIcon from '../../../../../../components/icons/AddIcon';
 import { useFlowContext } from '../../Context';
 import { useHandleAddNode, useHandleAddNewRouter } from '../../hooks';
-import { isNodeConnectedToRouterOrTerminal } from '../../lib';
+import { isNodeConnectedToRouter } from '../../lib';
 
 const useStyles = makeStyles(theme => ({
   addButton: {
@@ -30,13 +30,11 @@ const AddNodeMenuPopper = ({ anchorEl, handleClose, handleAddNode, handleAddRout
       anchorEl={anchorEl}
       placement="bottom-end"
       onClose={handleClose}
-
-  >
+    >
       <List
         dense className={classes.listWrapper}>
         {[
           {label: 'Add empty flow step', onClick: handleAddNode},
-
           {label: 'Add branching', onClick: handleAddRouter },
         ].map(({label, onClick}) => (
           <ListItem
@@ -47,7 +45,6 @@ const AddNodeMenuPopper = ({ anchorEl, handleClose, handleAddNode, handleAddRout
           </ListItem>
         ))}
       </List>
-
     </ArrowPopper>
   );
 };
@@ -56,7 +53,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId}) => {
   const classes = useStyles();
 
   const { elements } = useFlowContext();
-  const isConnectedToRouterOrTerminal = isNodeConnectedToRouterOrTerminal(edgeId, elements);
+  const isConnectedToRouterOrTerminal = isNodeConnectedToRouter(edgeId, elements);
 
   if (isConnectedToRouterOrTerminal) {
     return (
@@ -104,7 +101,12 @@ export default ({ edgeId }) => {
         </span>
       </ClickAwayListener>
 
-      <AddNodeMenuPopper anchorEl={anchorEl} handleClose={handleCloseMenu} handleAddNode={handleAddNode} handleAddRouter={handleAddRouter} />
+      <AddNodeMenuPopper
+        anchorEl={anchorEl}
+        handleClose={handleCloseMenu}
+        handleAddNode={handleAddNode}
+        handleAddRouter={handleAddRouter}
+      />
     </>
   );
 };

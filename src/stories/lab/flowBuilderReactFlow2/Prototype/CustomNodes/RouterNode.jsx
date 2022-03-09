@@ -16,7 +16,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function RouterNode() {
+export default function RouterNode({data = {}}) {
+  const { routeRecordsTo } = data;
+  const badgeContent = routeRecordsTo?.type === 'all_matching_branches' ? 'ALL' : '1ST';
   const classes = useStyles();
 
   return (
@@ -25,7 +27,7 @@ export default function RouterNode() {
 
       <IconButton className={classes.button}>
         <Badge
-          badgeContent="1ST"
+          badgeContent={badgeContent}
           // overlap="circle"
           color="secondary"
           anchorOrigin={{

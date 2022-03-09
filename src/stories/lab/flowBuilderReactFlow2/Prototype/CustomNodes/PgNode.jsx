@@ -6,6 +6,7 @@ import exportHooksAction from '../../../../../views/FlowBuilder/PageGenerator/ac
 import transformationAction from '../../../../../views/FlowBuilder/PageGenerator/actions/transformation_afe';
 import exportFilterAction from '../../../../../views/FlowBuilder/PageGenerator/actions/exportFilter_afe';
 import AppBlockHandle from './Handles/AppBlockHandle';
+import { useHandleDeleteNode } from '../hooks';
 
 const generatorActions = [
   {
@@ -33,6 +34,8 @@ export default function PageGenerator(props) {
   const { label, connectorType } = data;
   const classes = useStyles();
 
+  const handleDelete = useHandleDeleteNode(id);
+
   return (
     <div className={classes.root}>
       <div className={classes.pgContainer}>
@@ -40,6 +43,7 @@ export default function PageGenerator(props) {
           name={label}
           connectorType={connectorType}
           blockType="export"
+          onDelete={handleDelete}
           actions={generatorActions}
           resource={{}}
           resourceId={id}

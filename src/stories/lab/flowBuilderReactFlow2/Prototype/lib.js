@@ -61,7 +61,7 @@ export function generateNewNode() {
   });
 }
 
-export function layoutElements(elements) {
+export function layoutElements(elements = []) {
   const graph = new dagre.graphlib.Graph();
 
   graph.setDefaultEdgeLabel(() => ({}));
@@ -131,7 +131,17 @@ export function findNodeIndex(id, elements) {
 
 const RANGE = 20;
 const inRange = (coordinate, dropCoordinate) => (dropCoordinate - RANGE) <= coordinate && (dropCoordinate + RANGE) >= coordinate;
+const isMergableNode = (node = {}) => {
+  if (node.type === 'terminal' || node.type === 'merge') {
+    return true;
+  }
+  // Is router node virtual?
+  if (node.type === 'router' && node.data) {
+    return !node.data.routeRecordsTo && !node.data.routeRecordsUsing && (!node.data.branches || node.data.branches.length <= 1);
+  }
 
+  return false;
+};
 export const terminalNodeInVicinity = (ele, elements) => {
   if (!ele) {
     return false;
@@ -139,7 +149,7 @@ export const terminalNodeInVicinity = (ele, elements) => {
   const {x: xCoord, y: yCoord} = ele.position;
 
   return elements
-    .filter(node => node.type === 'terminal' || node.type === 'merge')
+    .filter(node => isMergableNode(node))
     .find(dropElement => {
       const {x, y} = dropElement.position;
 
@@ -233,7 +243,7 @@ export const areMultipleEdgesConnectedToSameEdgeTarget = (edgeId, elements) => {
   return elements.filter(isEdge).filter(e => e.target === target).length > 1;
 };
 
-export const isNodeConnectedToRouterOrTerminal = (nodeId, elements) => {
+export const isNodeConnectedToRouter = (nodeId, elements) => {
   if (!nodeId || !elements) {
     return false;
   }
@@ -244,7 +254,7 @@ export const isNodeConnectedToRouterOrTerminal = (nodeId, elements) => {
   }
   const {source, target} = node;
 
-  return elements.filter(e => [source, target].includes(e.id)).some(node => ['router', 'terminal'].includes(node?.type));
+  return elements.filter(e => [source, target].includes(e.id)).some(node => ['router'].includes(node?.type));
 };
 
 export function snapPointsToHandles(source, target, points) {
