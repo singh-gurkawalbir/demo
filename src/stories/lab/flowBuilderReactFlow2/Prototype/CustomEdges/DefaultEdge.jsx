@@ -1,9 +1,9 @@
 import React, {useMemo} from 'react';
 import { getSmoothStepPath, getMarkerEnd } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
-import AddNewButton from './AddNewButton';
 import { handleOffset, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles } from '../lib';
 import { useFlowContext } from '../Context';
+import AddNewButton from './AddNewButton';
 import UnlinkButton from './UnlinkButton';
 import ForeignObject from './ForeignObject';
 
@@ -15,6 +15,23 @@ const useStyles = makeStyles(theme => ({
     fill: 'none',
   },
 }));
+
+const BranchLabel = (
+  {id, branchName}
+
+) => {
+  if (!branchName) {
+    return null;
+  }
+
+  return (
+    <text>
+      <textPath href={`#${id}`} startOffset="25%">
+        {branchName}
+      </textPath>
+    </text>
+  );
+};
 
 export default function DefaultEdge({
   id,
@@ -127,6 +144,8 @@ export default function DefaultEdge({
         d={edgePath}
         markerEnd={markerEnd}
       />
+
+      <BranchLabel id={id} branchName={data?.name} />
 
       <ForeignObject edgePath={edgePath} centerOffset={shouldShowLinkIcon ? -10 : 10}>
         <AddNewButton edgeId={id} />

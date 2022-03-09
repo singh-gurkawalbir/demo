@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Position, useStoreState } from 'react-flow-renderer';
 import { Tooltip } from '@material-ui/core';
 import CircleIcon from './CircleIcon';
-import MergeIcon from '../../../../../../components/icons/MergeIcon';
+import TerminalIcon from '../../../../../../components/icons/MergeIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
 
 const useStyles = makeStyles(theme => ({
@@ -49,7 +49,7 @@ export default function TerminalNode(props) {
       ) : (
         <Tooltip title="Drag to merge with other branch" position="top">
           <span>
-            <MergeIcon className={classes.terminal} />
+            <TerminalIcon className={classes.terminal} />
           </span>
         </Tooltip>
       )}

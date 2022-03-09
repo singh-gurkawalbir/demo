@@ -25,7 +25,8 @@ const nodeSize = {
   merge: {
     width: 34,
     height: 34,
-  } };
+  },
+};
 
 const options = {
   // align: 'UL',
@@ -127,20 +128,23 @@ export function findNodeIndex(id, elements) {
     }
   }
 }
-const RANGE = 20;
 
+const RANGE = 20;
 const inRange = (coordinate, dropCoordinate) => (dropCoordinate - RANGE) <= coordinate && (dropCoordinate + RANGE) >= coordinate;
+
 export const terminalNodeInVicinity = (ele, elements) => {
   if (!ele) {
     return false;
   }
   const {x: xCoord, y: yCoord} = ele.position;
 
-  return elements.filter(node => node.type === 'terminal' || node.type === 'merge').find(dropElement => {
-    const {x, y} = dropElement.position;
+  return elements
+    .filter(node => node.type === 'terminal' || node.type === 'merge')
+    .find(dropElement => {
+      const {x, y} = dropElement.position;
 
-    return inRange(xCoord, x) && inRange(yCoord, y);
-  })?.id;
+      return inRange(xCoord, x) && inRange(yCoord, y);
+    })?.id;
 };
 
 const getModulusVal = val => val > 0 ? val : -val;
@@ -161,6 +165,7 @@ export const getPositionInEdge = (edgeCommands, centerOffset) => {
     if (commandSplit.length >= 3) {
       throw new Error('Cubic command encountered please change the path generation logic to support quadratic');
     }
+
     const isQuadratic = !!commandSplit[1];
 
     if (isQuadratic) {
@@ -174,6 +179,7 @@ export const getPositionInEdge = (edgeCommands, centerOffset) => {
   if (linePlotsCoordinates.length <= 1) {
     return null;
   }
+
   const lengthOFEdges = linePlotsCoordinates.reduce((acc, curr, i) => {
     if (i >= (linePlotsCoordinates.length - 1)) {
       return acc;
@@ -201,6 +207,7 @@ export const getPositionInEdge = (edgeCommands, centerOffset) => {
 
         return [x2, y1 - lengthFromStart];
       }
+
       if (x2 > x1) {
         return [x1 + lengthFromStart, y1];
       }
@@ -211,6 +218,7 @@ export const getPositionInEdge = (edgeCommands, centerOffset) => {
     lengthFromStart -= edgeLen;
   }
 };
+
 export const areMultipleEdgesConnectedToSameEdgeTarget = (edgeId, elements) => {
   if (!edgeId || !elements) {
     return false;
@@ -224,6 +232,7 @@ export const areMultipleEdgesConnectedToSameEdgeTarget = (edgeId, elements) => {
 
   return elements.filter(isEdge).filter(e => e.target === target).length > 1;
 };
+
 export const isNodeConnectedToRouterOrTerminal = (nodeId, elements) => {
   if (!nodeId || !elements) {
     return false;

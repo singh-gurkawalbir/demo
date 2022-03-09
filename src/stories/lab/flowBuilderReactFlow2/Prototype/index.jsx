@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useMemo, useReducer } from 'react';
+import React, { useEffect, useMemo, useReducer } from 'react';
 import ReactFlow,
 { MiniMap,
   Controls,
   ReactFlowProvider} from 'react-flow-renderer';
-import mockElements from './metadata/complexEdge';
 import DefaultEdge from './CustomEdges/DefaultEdge';
 import { layoutElements, terminalNodeInVicinity } from './lib';
 import { FlowProvider } from './Context';
@@ -12,8 +11,10 @@ import PpNode from './CustomNodes/PpNode';
 import TerminalNode from './CustomNodes/TerminalNode';
 import RouterNode from './CustomNodes/RouterNode';
 import MergeNode from './CustomNodes/MergeNode';
-import reducer from './reducer';
-import actions from './reducer/actions';
+import reducer, { resourceDataSelector } from './reducer';
+import { resourceState } from './metadata/simpleFlowSchema';
+import { generateReactFlowGraph } from './translateSchema';
+import { handleMergeNode } from './hooks';
 
 const nodeTypes = {
   pg: PgNode,
@@ -24,34 +25,29 @@ const nodeTypes = {
 };
 
 const edgeTypes = {
-  default: DefaultEdge, // override the default with out own edge logic
+  default: DefaultEdge,
 };
+const flowIdToTest = 'flow1';
+
+const stateOrig = {data: {resources: resourceState}, session: {staged: {}}};
 
 export default () => {
-  const [elements, dispatchFlowUpdate] = useReducer(reducer, mockElements);
-  const [mergeNodeId, setMergeNodeId] = useState();
+  const [state, setState] = useReducer(reducer, stateOrig);
+  const mergedFlow = resourceDataSelector(state, 'flows', flowIdToTest)?.merged;
+  const elements = useMemo(() => generateReactFlowGraph(state.data.resources, mergedFlow), [mergedFlow, state.data.resources]);
 
-  const updatedLayout = useMemo(() => {
-    const el = layoutElements(elements, 'LR');
+  // console.log('state ', mergedFlow, state);
 
-    // console.log(el);
-
-    return el;
-  },
+  const updatedLayout = useMemo(() =>
+    layoutElements(elements, 'LR'),
   [elements]);
 
   useEffect(() => {
     // eslint-disable-next-line no-console
-    console.log(elements);
+    // console.log(elements);
   }, [elements]);
 
-  const handleConnectStart = (event, { nodeId }) => {
-    setMergeNodeId(nodeId);
-  };
-
-  const handleConnectEnd = () => {
-    setMergeNodeId();
-  };
+  const handleMerge = handleMergeNode(mergedFlow, elements, setState);
   const onNodeDragStop = (evt, source) => {
     const target = terminalNodeInVicinity(source, updatedLayout);
 
@@ -59,26 +55,26 @@ export default () => {
       return;
     }
 
-    dispatchFlowUpdate({type: actions.MERGE_TERMINAL_NODES, source: source.id, target});
+    handleMerge(source.id, target);
     // sometimes the selection sticks
   };
 
   return (
     <ReactFlowProvider>
-      <FlowProvider elements={elements} mergeNodeId={mergeNodeId} dispatchFlowUpdate={dispatchFlowUpdate}>
+      {/* add flow to the context so it is accessible to flowGraph beneath ..this will be replaced by the resourceDataSelector */}
+      <FlowProvider elements={elements} flow={mergedFlow} setState={setState}>
         <ReactFlow
-          // onConnect={handleConnect} // this is handled in the terminal node
-          onConnectStart={handleConnectStart}
           onNodeDragStop={onNodeDragStop}
-          onConnectEnd={handleConnectEnd}
           nodesDraggable={false}
           elements={updatedLayout}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
         />
       </FlowProvider>
+
       <MiniMap />
       <Controls />
+
     </ReactFlowProvider>
   );
 };
