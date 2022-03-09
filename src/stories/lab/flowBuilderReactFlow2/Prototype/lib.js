@@ -129,7 +129,7 @@ export function findNodeIndex(id, elements) {
   }
 }
 
-const RANGE = 40;
+const RANGE = 20;
 const inRange = (coordinate, dropCoordinate) => (dropCoordinate - RANGE) <= coordinate && (dropCoordinate + RANGE) >= coordinate;
 const isMergableNode = (node = {}) => {
   if (node.type === 'terminal' || node.type === 'merge') {

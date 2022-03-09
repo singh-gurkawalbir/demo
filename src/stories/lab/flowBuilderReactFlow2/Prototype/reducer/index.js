@@ -193,8 +193,33 @@ const handleDeleteNode = (draft, action) => {
         value: {application: `none=${generateId()}`},
       });
     }
-  } else {
-    // Page processors
+  } else
+  // Page processors
+  // Typical page processor looks like /routers/:routerIndex/branches/:branchIndex/pageProcessors/:pageProcessorIndex
+  if (/\/routers\/(\d)\/branches\/(\d)\/pageProcessors\/(\d)/.test(path)) {
+    const [, routerIndex, branchIndex, pageProcessorIndex] = /\/routers\/(\d)\/branches\/(\d)\/pageProcessors\/(\d)/.exec(path);
+    const pageProcessors = jsonPatch.getValueByPointer(flow, `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors`);
+
+    if (pageProcessors.length === 1) {
+      const branches = jsonPatch.getValueByPointer(flow, `/routers/${routerIndex}/branches`);
+
+      if (branches.length === 1) {
+        staged[flowId].patch.push({
+          op: 'remove',
+          path: `/routers/${routerIndex}`,
+        });
+      } else {
+        staged[flowId].patch.push({
+          op: 'remove',
+          path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${pageProcessorIndex}`,
+        });
+      }
+    } else {
+      staged[flowId].patch.push({
+        op: 'remove',
+        path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${pageProcessorIndex}`,
+      });
+    }
   }
 };
 
@@ -227,7 +252,7 @@ export default function (state, action) {
         return;
       }
 
-      case actions.DELETE_NODE: {
+      case actions.DELETE_STEP: {
         handleDeleteNode(draft, action);
 
         return;

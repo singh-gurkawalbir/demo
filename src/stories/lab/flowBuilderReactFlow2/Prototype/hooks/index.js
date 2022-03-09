@@ -70,7 +70,7 @@ export const useHandleDeleteNode = nodeId => {
 
     if (!path) return;
 
-    setState({type: actions.DELETE_NODE, flow, path, isPageGenerator: node.type === 'pg'});
+    setState({type: actions.DELETE_STEP, flow, path, isPageGenerator: node.type === 'pg'});
   };
 };
 
@@ -86,7 +86,7 @@ export const useHandleDeleteEdge = edgeId => {
 
     if (isSourceNodeAPG) {
       if (sourceNodePath) {
-        return setState({type: actions.DELETE_NODE, flow, path: sourceNodePath, isPageGenerator: true});
+        return setState({type: actions.DELETE_STEP, flow, path: sourceNodePath, isPageGenerator: true});
       }
 
       return;
