@@ -103,9 +103,6 @@ const getBranchPath = path => {
 
 const generateTwoBranchRouter = (remainingNodes, nextRouterId) => {
   const origRouter = generateAnEmptyActualRouter();
-
-  // console.log('remainingNodes ', remainingNodes);
-  origRouter.branches.push(generateBranch());
   const branch = {...generateBranch(),
     pageProcessors: remainingNodes,
     _nextRouterId: nextRouterId,
