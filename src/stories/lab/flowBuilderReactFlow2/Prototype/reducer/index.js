@@ -122,8 +122,18 @@ const handleAddNewRouter = (draft, action) => {
   const ppPgArr = jsonPatch.getValueByPointer(flow, pgPpPath);
   const branchPath = getBranchPath(path);
   const { _nextRouterId } = jsonPatch.getValueByPointer(flow, branchPath);
+
   const insertionIndex = getInsertionIndex(path);
-  const [firstHalf, secondHalf] = splitPPArray(ppPgArr, insertionIndex);
+
+  let firstHalf;
+  let secondHalf;
+
+  if (insertionIndex !== '-') {
+    [firstHalf, secondHalf] = splitPPArray(ppPgArr, insertionIndex);
+  } else {
+    firstHalf = ppPgArr;
+    secondHalf = [{application: `none-${generateId()}`}];
+  }
 
   if (!staged[flowId]) {
     staged[flowId] = {patch: []};
@@ -136,8 +146,6 @@ const handleAddNewRouter = (draft, action) => {
   });
 
   const newBranchedRouter = generateTwoBranchRouter(secondHalf, _nextRouterId);
-
-  // console.log('see ', newBranchedRouter);
 
   staged[flowId].patch.push(...[{
     op: 'replace',

@@ -243,7 +243,7 @@ export const areMultipleEdgesConnectedToSameEdgeTarget = (edgeId, elements) => {
   return elements.filter(isEdge).filter(e => e.target === target).length > 1;
 };
 
-export const isNodeConnectedToRouterOrTerminal = (nodeId, elements) => {
+export const isNodeConnectedToRouter = (nodeId, elements) => {
   if (!nodeId || !elements) {
     return false;
   }
@@ -254,7 +254,7 @@ export const isNodeConnectedToRouterOrTerminal = (nodeId, elements) => {
   }
   const {source, target} = node;
 
-  return elements.filter(e => [source, target].includes(e.id)).some(node => ['router', 'terminal'].includes(node?.type));
+  return elements.filter(e => [source, target].includes(e.id)).some(node => ['router'].includes(node?.type));
 };
 
 export function snapPointsToHandles(source, target, points) {
