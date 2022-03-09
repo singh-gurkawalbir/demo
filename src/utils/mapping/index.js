@@ -941,7 +941,7 @@ export default {
     importResource,
     isFieldMapping = false,
     isGroupedSampleData,
-    isPreviewSucess,
+    isPreviewSuccess,
     netsuiteRecordType,
     options = {},
     exportResource,
@@ -982,7 +982,7 @@ export default {
     return mappingUtil.getMappingsForApp({
       mappings: mappingCopy,
       isGroupedSampleData,
-      isPreviewSucess,
+      isPreviewSuccess,
       resource: importResource,
       netsuiteRecordType,
       exportResource,
@@ -993,7 +993,7 @@ export default {
     mappings = {},
     resource = {},
     isGroupedSampleData,
-    isPreviewSucess,
+    isPreviewSuccess,
     netsuiteRecordType,
     exportResource,
     options = {},
@@ -1027,7 +1027,7 @@ export default {
           mappings: _mappings,
           recordType: netsuiteRecordType,
           isGroupedSampleData,
-          isPreviewSucess,
+          isPreviewSuccess,
           exportResource,
           resource,
         });
@@ -1044,7 +1044,7 @@ export default {
         return mappingUtil.getFieldsAndListMappings({
           mappings: _mappings,
           isGroupedSampleData,
-          isPreviewSucess,
+          isPreviewSuccess,
           useFirstRowSupported: true,
           exportResource,
           resource,
@@ -1090,7 +1090,7 @@ export default {
   getFieldsAndListMappings: ({
     mappings = {},
     isGroupedSampleData,
-    isPreviewSucess,
+    isPreviewSuccess,
     useFirstRowSupported = false,
     resource = {},
     exportResource,
@@ -1104,7 +1104,7 @@ export default {
         if (isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportResource)) {
           if (isGroupedSampleData) {
             _fm.useFirstRow = true;
-          } else if (!isPreviewSucess) {
+          } else if (!isPreviewSuccess) {
             // If no sample data found, and extract starts with *. example *.abc, then assume export is grouped data.
             if (handlebarRegex.test(_fm.extract)) {
               if (_fm.extract?.indexOf('*.') !== -1 || _fm.extract?.indexOf('[*].') !== -1) {
@@ -1133,12 +1133,12 @@ export default {
           }
 
           // If no sample data found, and extract starts with *. example *.abc, then assume export is grouped data.
-          if (!isPreviewSucess && /^\*\./.test(tempFm?.extract)) {
+          if (!isPreviewSuccess && /^\*\./.test(tempFm?.extract)) {
             tempFm.useIterativeRow = true;
           }
 
           // adding support for multi-field list mappings for csv/NS only for now to reduce regression
-          if (!isPreviewSucess && isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportResource)) {
+          if (!isPreviewSuccess && isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportResource)) {
             if (handlebarRegex.test(tempFm.extract)) {
               if (tempFm.extract?.indexOf('*.') !== -1 || tempFm.extract?.indexOf('[*].') !== -1) {
                 tempFm.useIterativeRow = true;
@@ -1584,17 +1584,22 @@ export const DATA_TYPES_OPTIONS =
   },
 ];
 
-function iterateForParentTree(mappings, treeData, parentKey, parentExtract) {
+function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disabled) {
   mappings.forEach(m => {
     const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract} = m;
     const children = [];
     const currNodeKey = nanoid();
+
+    // add same key in the mappings schema as well
+    // eslint-disable-next-line no-param-reassign
+    m.key = currNodeKey;
 
     const nodeToPush = {
       key: currNodeKey,
       title: '',
       parentKey,
       parentExtract,
+      disabled,
       ...m,
     };
 
@@ -1608,7 +1613,7 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract) {
       if (objMappings) {
         nodeToPush.children = children;
 
-        iterateForParentTree(objMappings, children, currNodeKey, currNodeExtract);
+        iterateForParentTree(objMappings, children, currNodeKey, currNodeExtract, disabled);
       }
 
       return;
@@ -1646,7 +1651,7 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract) {
 
           nodeToPush.children = children;
 
-          iterateForParentTree(mappings, children, currNodeKey, extract);
+          iterateForParentTree(mappings, children, currNodeKey, extract, disabled);
         });
         nodeToPush.combinedExtract = sourceExtract;
 
@@ -1667,20 +1672,334 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract) {
   return treeData;
 }
 
-export function generateTreeFromV2Mappings(input) {
+export function generateTreeFromV2Mappings(mappings, disabled) {
   const treeData = [];
+  const emptyRowKey = nanoid();
+
+  // we need empty title to be passed here
+  // for each node as the parent Tree is handling the titleRender for all
+  // if empty title is not set here, then a dummy '---' title gets shown on each row hover
   const emptyMappingsTree = [{
-    key: nanoid(),
+    key: emptyRowKey,
+    isEmptyRow: true,
     title: '',
+    disabled,
   }];
 
-  if (!input) return emptyMappingsTree;
-  const {type: mappings} = input;
+  if (isEmpty(mappings)) {
+    mappings.push({
+      key: emptyRowKey,
+    });
 
-  if (!mappings || isEmpty(mappings)) return emptyMappingsTree;
+    return emptyMappingsTree;
+  }
 
-  return iterateForParentTree(mappings, treeData);
+  return iterateForParentTree(mappings, treeData, '', '', disabled);
 }
+
+// eslint-disable-next-line camelcase
+const mappings_record_to_record = {
+  mappings: [
+    {
+      generate: 'my_first_name',
+      dataType: 'string',
+      extract: '$.fName',
+    },
+    {
+      generate: 'my_last_name',
+      dataType: 'string',
+      extract: '$.lName',
+    },
+    // expressions continue to use handlebars, NOT jsonpath
+    {
+      generate: 'my_full_name',
+      dataType: 'string',
+      extract: '{{record.fName}} {{record.lName}}',
+    },
+    // mapping settings is supported via handlebars only
+    {
+      generate: 'my_custom_setting',
+      dataType: 'string',
+      extract: '{{settings.flow.XYZ}}',
+    },
+    {
+      generate: 'my_mothers_name',
+      dataType: 'object',
+      mappings: [
+        {
+          generate: 'first_name',
+          dataType: 'string',
+          extract: '$.mother.fName',
+        },
+        {
+          generate: 'last_name',
+          dataType: 'string',
+          extract: '$.mother.lName',
+        },
+      ],
+    },
+    {
+      generate: 'my_many_first_names',
+      dataType: 'stringarray',
+      buildArrayHelper: [
+        { extract: '$.fname' },
+        { extract: '$.altFirstName'},
+        { extract: '$.additionalFirstNames' },
+      ],
+    },
+    {
+      generate: 'two_of_my_fav_names',
+      dataType: 'objectarray',
+      buildArrayHelper: [
+        {
+          mappings: [
+            {
+              generate: 'my_first_name',
+              dataType: 'string',
+              extract: '$.fName',
+            },
+            {
+              generate: 'my_last_name',
+              dataType: 'string',
+              extract: '$.lName',
+            },
+          ],
+        },
+        {
+          mappings: [
+            {
+              generate: 'my_first_name',
+              dataType: 'string',
+              extract: '$.altFirstName',
+            },
+            {
+              generate: 'my_last_name',
+              dataType: 'string',
+              extract: '$.lName',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      generate: 'my_siblings',
+      dataType: 'objectarray',
+      buildArrayHelper: [
+        {
+          extract: '$.siblings[*]',
+          mappings: [
+            {
+              generate: 'sibling_first_name',
+              dataType: 'string',
+              extract: '$.siblings.fName',
+            },
+            {
+              generate: 'sibling_last_name',
+              dataType: 'string',
+              extract: '$.siblings.lName',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      generate: 'all_the_children',
+      dataType: 'objectarray',
+      buildArrayHelper: [
+        {
+          extract: '$.siblings[*].children[*]',
+          mappings: [
+            {
+              generate: 'first_name',
+              dataType: 'string',
+              extract: '$.siblings.children.fName',
+            },
+            {
+              generate: 'last_name',
+              dataType: 'string',
+              extract: '$.siblings.lName',
+            },
+            {
+              generate: 'full_name',
+              dataType: 'string',
+              extract: '{{record.siblings.children.fName}} {{record.siblings.lName}}',
+            },
+          ],
+        },
+        {
+          extract: '$.children[*]',
+          mappings: [
+            {
+              generate: 'my_child_first_name',
+              dataType: 'string',
+              extract: '$.children.firstName',
+            },
+            {
+              generate: 'my_child_last_name',
+              dataType: 'string',
+              extract: '$.lName',
+            },
+            {
+              generate: 'full_name',
+              dataType: 'string',
+              extract: '{{record.children.firstName}} {{record.lName}}',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      generate: 'family_tree_from_mom_perspective',
+      dataType: 'object',
+      mappings: [
+        {
+          generate: 'first_name',
+          dataType: 'string',
+          extract: '$.mother.fName',
+        },
+        {
+          generate: 'last_name',
+          dataType: 'string',
+          extract: '$.mother.lName',
+        },
+        {
+          generate: 'children',
+          dataType: 'objectarray',
+          buildArrayHelper: [
+            {
+              extract: '$.siblings[*]',
+              mappings: [
+                {
+                  generate: 'first_name',
+                  dataType: 'string',
+                  extract: '$.siblings.fName',
+                },
+                {
+                  generate: 'last_name',
+                  dataType: 'string',
+                  extract: '$.siblings.lName',
+                },
+                {
+                  generate: 'grandchildren',
+                  dataType: 'objectarray',
+                  buildArrayHelper: [
+                    {
+                      extract: '$.siblings.children[*]',
+                      mappings: [
+                        {
+                          generate: 'first_name',
+                          dataType: 'string',
+                          extract: '$.siblings.children.fName',
+                        },
+                        {
+                          generate: 'last_name',
+                          dataType: 'string',
+                          extract: '$.siblings.lName',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              mappings: [
+                {
+                  generate: 'first_name',
+                  dataType: 'string',
+                  extract: '$.fName',
+                },
+                {
+                  generate: 'last_name',
+                  dataType: 'string',
+                  extract: '$.lName',
+                },
+                {
+                  generate: 'grandchildren',
+                  dataType: 'objectarray',
+                  buildArrayHelper: [
+                    {
+                      extract: '$.children[*]',
+                      mappings: [
+                        {
+                          generate: 'first_name',
+                          dataType: 'string',
+                          extract: '$.children.firstName',
+                        },
+                        {
+                          generate: 'last_name',
+                          dataType: 'string',
+                          extract: '$.lName',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      generate: 'my_nephews_and_nieces_but_maintain_arrays_of_siblings',
+      dataType: 'arrayarray',
+      buildArrayHelper: [
+        {
+          extract: '$.siblings[*]',
+          mappings: [
+            {
+              dataType: 'objectarray',
+              buildArrayHelper: [
+                {
+                  extract: '$.siblings.children[*]',
+                  mappings: [
+                    {
+                      generate: 'first_name',
+                      dataType: 'string',
+                      extract: '$.siblings.children.firstName',
+                    },
+                    {
+                      generate: 'last_name',
+                      dataType: 'string',
+                      extract: '$.siblings.lName',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};
+export const getV2MappingsForResource = (
+  importResource,
+  // isFieldMapping = false,
+  isGroupedSampleData,
+  isPreviewSuccess,
+  // options = {},
+  exportResource,
+  disabled
+) => {
+  if (!importResource) {
+    return;
+  }
+
+  const v2Mappings = importResource.mappings || mappings_record_to_record.mappings || [];
+
+  // creating deep copy of mapping object to avoid alteration to resource mapping object
+  const v2MappingsCopy = deepClone(v2Mappings);
+
+  // if (isFieldMapping) return v2MappingsCopy;
+
+  // todo ashu handle isRequiredMapping for assistants
+
+  const mappingsTreeData = generateTreeFromV2Mappings(v2MappingsCopy, disabled);
+
+  return {mappingsTreeData, v2MappingsCopy};
+};
 
 export function allowDrop({ dragNode, dropNode, dropPosition }) {
   const {parentKey: dragNodeParentKey, isTabNode: dragNodeIsTab} = dragNode;
@@ -1717,17 +2036,17 @@ export const findNode = (data, prop, key, callback) => {
   });
 };
 
-export const findNodeFromParentPath = (data, key) => {
+export const findNodeFromJsonPath = (data, key) => {
   let node;
 
   forEach(data, item => {
-    if (item.parentPath === key) {
+    if (item.jsonPath === key) {
       node = item;
 
       return false;
     }
     if (item.children) {
-      node = findNodeFromParentPath(item.children, key);
+      node = findNodeFromJsonPath(item.children, key);
     }
   });
 
@@ -1741,19 +2060,28 @@ export const TYPEOF_TO_DATA_TYPE = {
   '[object Null]': 'string',
 };
 
-function iterateForExtracts(dataIn, treeData, parentKey, parentFieldName = '') {
+function iterateForExtracts(dataIn, treeData, parentKey, parentFieldName = '', propValues, selectedKeys) {
+  // iterate over all keys and construct the tree
   Object.keys(dataIn).forEach(property => {
     if (property in dataIn) {
       const v = dataIn[property];
       const type = Object.prototype.toString.apply(v);
-      const parentPath = `${parentFieldName ? `${parentFieldName}.` : ''}${property}`;
+      const key = nanoid();
+      const jsonPath = `${parentFieldName ? `${parentFieldName}.` : ''}${property}`;
+
+      // if the value is already selected, then mark the node selected to highlight it
+      const selected = propValues.includes(jsonPath);
+
+      if (selected) {
+        selectedKeys.push(key);
+      }
 
       if (type !== '[object Array]' && type !== '[object Object]') {
         treeData.push({
-          key: nanoid(),
+          key,
           parentKey,
           title: TitleExtracts,
-          parentPath,
+          jsonPath,
           fieldName: property,
           dataType: TYPEOF_TO_DATA_TYPE[type],
         });
@@ -1762,40 +2090,41 @@ function iterateForExtracts(dataIn, treeData, parentKey, parentFieldName = '') {
       }
 
       if (type === '[object Object]') {
-        const key = nanoid();
         const children = [];
 
         treeData.push({
           key,
           parentKey,
           title: TitleExtracts,
-          parentPath,
+          jsonPath,
           fieldName: property,
           dataType: 'object',
           children,
         });
 
-        iterateForExtracts(v, children, key, parentPath);
+        iterateForExtracts(v, children, key, jsonPath, propValues, selectedKeys);
 
         return;
       }
 
       if (type === '[object Array]') {
         if (Object.prototype.toString.apply(v[0]) === '[object Object]' && !isEmpty(v[0])) {
-          const key = nanoid();
           const children = [];
 
           treeData.push({
             key,
             parentKey,
             title: TitleExtracts,
-            parentPath: `${parentPath}[*]`,
+            jsonPath: `${jsonPath}[*]`,
             fieldName: property,
             dataType: '[object]',
             children,
           });
+          const selected = propValues.includes(`${jsonPath}[*]`);
 
-          iterateForExtracts(getUnionObject(v), children, key, `${parentPath}[*]`);
+          if (selected) selectedKeys.push(key);
+
+          iterateForExtracts(getUnionObject(v), children, key, `${jsonPath}[*]`, propValues, selectedKeys);
 
           return;
         }
@@ -1804,10 +2133,10 @@ function iterateForExtracts(dataIn, treeData, parentKey, parentFieldName = '') {
         const valueType = Object.prototype.toString.apply(v[0]);
 
         treeData.push({
-          key: nanoid(),
+          key,
           parentKey,
           title: TitleExtracts,
-          parentPath,
+          jsonPath,
           fieldName: property,
           dataType: `[${TYPEOF_TO_DATA_TYPE[valueType]}]`,
         });
@@ -1816,36 +2145,43 @@ function iterateForExtracts(dataIn, treeData, parentKey, parentFieldName = '') {
   });
 }
 
-export const constructExtractsTree = dataIn => {
+export const constructExtractsTree = (dataIn, propValues) => {
   const treeData = [];
   const children = [];
 
-  if (!dataIn || typeof dataIn !== 'object') return treeData;
+  if (!dataIn) return treeData;
+
+  const dataObj = pickFirstObject(dataIn);
 
   const key = nanoid();
 
+  // add first default $ path
   treeData.push({
     key,
-    title: '$',
+    title: TitleExtracts,
+    dataType: Array.isArray(dataIn) ? '[object]' : 'object',
     fieldName: '$',
     children,
   });
+  const selectedKeys = [];
 
-  iterateForExtracts(dataIn, children, key);
+  iterateForExtracts(dataObj, children, key, '', propValues, selectedKeys);
   // console.log('treeData', treeData);
 
-  return treeData;
+  return {treeData, selectedKeys};
 };
 
+// this util takes care of filtering the tree when some input
+// is typed into the search
 export const filterExtractsNode = (node, propValue, inputValue) => {
-// if node is already selected, do not mark it as filtered
+  // if node is already selected, do not mark it as filtered
   if (node.selected) return false;
 
   // if no change has been made in input, then no need to filter
   // this should work because propValue should get updated once you update the extract field
   if (propValue === inputValue) return false;
 
-  const searchKey = node.parentPath || '';
+  const searchKey = node.jsonPath || '';
   const splitInput = inputValue.split(',');
 
   const newT = splitInput.filter(i => {
@@ -1871,10 +2207,12 @@ export const filterExtractsNode = (node, propValue, inputValue) => {
   return true;
 };
 
+// this util handles the comma separated values use-case
+// and returns the final input after user selects a node
 export const getFinalSelectedExtracts = (node, inputValue, isArrayType) => {
-  const {parentPath = ''} = node;
-  const fullPath = `$.${parentPath}`;
-  let newValue = fullPath;
+  const {jsonPath = ''} = node;
+  const fullJsonPath = `$.${jsonPath}`;
+  let newValue = fullJsonPath;
 
   const splitByComma = inputValue.split(',');
   const valuesLen = splitByComma.length;
@@ -1886,9 +2224,9 @@ export const getFinalSelectedExtracts = (node, inputValue, isArrayType) => {
     // if user has typed comma before selecting new value, we append the new value
     // else replace the last value after comma
     if (lastChar === ',') {
-      newValue = inputValue + fullPath;
+      newValue = inputValue + fullJsonPath;
     } else {
-      splitByComma[valuesLen - 1] = fullPath;
+      splitByComma[valuesLen - 1] = fullJsonPath;
       newValue = splitByComma.join(',');
     }
   }
@@ -1896,7 +2234,7 @@ export const getFinalSelectedExtracts = (node, inputValue, isArrayType) => {
   return newValue;
 };
 
-export const sampleData = {
+export const sampleData = [{
   fName: 'scott',
   lName: 'henderson',
   altFirstName: 'scooter',
@@ -1946,5 +2284,5 @@ export const sampleData = {
       ],
     },
   ],
-};
+}];
 // #endregion

@@ -1,7 +1,6 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import Tree from 'rc-tree';
-import {isEmpty, isEqual} from 'lodash';
-import { useSelector } from 'react-redux';
+import {isEmpty} from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, InputAdornment, Typography, Tooltip } from '@material-ui/core';
 import isLoggableAttr from '../../../../../../utils/isLoggableAttr';
@@ -10,7 +9,8 @@ import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
 import useOnClickOutside from '../../../../../../hooks/useClickOutSide';
 import useKeyboardShortcut from '../../../../../../hooks/useKeyboardShortcut';
 import {selectors} from '../../../../../../reducers';
-import {sampleData, constructExtractsTree, filterExtractsNode, getFinalSelectedExtracts} from '../../../../../../utils/mapping';
+import {filterExtractsNode, getFinalSelectedExtracts} from '../../../../../../utils/mapping';
+import { useSelectorMemo } from '../../../../../../hooks';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -123,6 +123,7 @@ const useStyles = makeStyles(theme => ({
 })
 );
 
+// this is the component rendered for each row inside extracts tree
 export const TitleExtracts = ({fieldName, dataType}) => (
   <div
     style={{
@@ -142,20 +143,24 @@ export const TitleExtracts = ({fieldName, dataType}) => (
   </div>
 );
 
-const TreeExtracts = ({id, destDataType, propValue, inputValue = '', setInputValue, setIsFocused, isFocused, flowId, resourceId, setSrcDataType}) => {
+// this component renders the whole extracts tree
+// based on the sample data
+const TreeExtracts = (
+  {id,
+    destDataType,
+    propValue,
+    inputValue = '',
+    setInputValue,
+    setIsFocused,
+    onBlur,
+    flowId,
+    resourceId,
+    setSrcDataType,
+  }) => {
   const classes = useStyles();
   const isArrayType = destDataType.includes('array');
-  // const isArrayType = true;
 
-  const flowSampleData = useSelector(state =>
-    selectors.getSampleDataContext(state, {
-      flowId,
-      resourceId,
-      stage: 'importMappingExtract',
-      resourceType: 'imports',
-    }).data,
-  isEqual);
-  const treeData = useMemo(() => constructExtractsTree(flowSampleData || sampleData), [flowSampleData]);
+  const {treeData, selectedKeys} = useSelectorMemo(selectors.mkBuildExtractsTree, {flowId, resourceId, searchValues: propValue.replaceAll('$.', '').split(',')});
 
   const onSelect = useCallback((keys, e) => {
     const newValue = getFinalSelectedExtracts(e.node, inputValue, isArrayType);
@@ -168,8 +173,9 @@ const TreeExtracts = ({id, destDataType, propValue, inputValue = '', setInputVal
     if (valuesLen > 1) { setSrcDataType(''); } else { setSrcDataType(e.node.dataType); }
 
     setInputValue(newValue);
+    onBlur(newValue);
     setIsFocused(false);
-  }, [inputValue, isArrayType, setInputValue, setIsFocused, setSrcDataType]);
+  }, [inputValue, isArrayType, onBlur, setInputValue, setIsFocused, setSrcDataType]);
 
   const onExpand = useCallback((expandedKeys, {nativeEvent}) => {
     setIsFocused(true);
@@ -178,7 +184,7 @@ const TreeExtracts = ({id, destDataType, propValue, inputValue = '', setInputVal
 
   const filterTreeNode = useCallback(node => filterExtractsNode(node, propValue, inputValue), [inputValue, propValue]);
 
-  if (!isFocused || isEmpty(treeData)) return null;
+  if (isEmpty(treeData)) return null;
 
   return (
     <div
@@ -194,7 +200,7 @@ const TreeExtracts = ({id, destDataType, propValue, inputValue = '', setInputVal
       <Tree
         key={id}
         className={classes.childTree}
-        // selectedKeys={selectedKeys}
+        selectedKeys={selectedKeys} // todo ashu verify this
         treeData={treeData}
         showLine={false}
         switcherIcon={SwitcherIcon}
@@ -217,15 +223,14 @@ export default function Mapper2ExtractsTypeableSelect(props) {
     value: propValue = '',
     importId,
     flowId,
+    onBlur,
   } = props;
 
   const classes = useStyles();
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState(propValue);
   const [srcDataType, setSrcDataType] = useState('string');
-
   const containerRef = useRef();
-  const textRef = useRef();
 
   const handleChange = event => {
     setInputValue(event.target.value);
@@ -241,6 +246,7 @@ export default function Mapper2ExtractsTypeableSelect(props) {
 
   const handleBlur = () => {
     setIsFocused(false);
+    onBlur(inputValue);
   };
 
   useOnClickOutside(containerRef, isFocused && handleBlur);
@@ -258,7 +264,6 @@ export default function Mapper2ExtractsTypeableSelect(props) {
       >
       <Tooltip disableFocusListener title={toolTipTitle} placement="bottom" >
         <TextField
-          ref={textRef}
           {...isLoggableAttr(isLoggable)}
           className={classes.customTextField}
           variant="filled"
@@ -280,18 +285,21 @@ export default function Mapper2ExtractsTypeableSelect(props) {
    />
       </Tooltip >
 
+      {/* only render tree component if its focussed and not disabled */}
+      {isFocused && !disabled && (
       <TreeExtracts
         id={id}
         destDataType={destDataType}
-        isFocused={isFocused}
-        propValue="$.lName,$.siblings[*].fName"
+        propValue={propValue}
         inputValue={inputValue}
+        onBlur={onBlur}
         setInputValue={setInputValue}
         setIsFocused={setIsFocused}
         flowId={flowId}
         resourceId={importId}
-        setSrcDataType={setSrcDataType}
-      />
+        setSrcDataType={setSrcDataType} />
+      )}
+
     </FormControl>
   );
 }

@@ -79,7 +79,7 @@ import {
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
-import mappingUtil from '../utils/mapping';
+import mappingUtil, { constructExtractsTree } from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare, comparer } from '../utils/sort';
@@ -5364,7 +5364,15 @@ selectors.isMapper2Supported = state => {
 
 selectors.mappingEditorNotification = state => {
   const isMapper2Supported = selectors.isMapper2Supported(state);
-  const hasV2Mappings = selectors.mappingTreeData(state).length;
+  const treeData = selectors.v2MappingsTreeData(state);
+
+  let hasV2Mappings;
+
+  if (!treeData.length || (treeData.length === 1 && treeData[0].isEmptyRow)) {
+    hasV2Mappings = false;
+  } else {
+    hasV2Mappings = true;
+  }
   const mappingVersion = selectors.mappingVersion(state);
 
   if (!isMapper2Supported) return emptyObject;
@@ -5385,6 +5393,21 @@ selectors.mappingEditorNotification = state => {
     variant: 'warning',
   };
 };
+
+selectors.mkBuildExtractsTree = () => createSelector(
+  (state, {flowId, resourceId}) => {
+    const flowData = selectors.getSampleDataContext(state, {
+      flowId,
+      resourceId,
+      stage: 'importMappingExtract',
+      resourceType: 'imports',
+    }).data;
+
+    return flowData;
+  },
+  (state, {searchValues}) => searchValues,
+  (flowData, searchValues) => constructExtractsTree(flowData, searchValues)
+);
 
 // #endregion MAPPING END
 

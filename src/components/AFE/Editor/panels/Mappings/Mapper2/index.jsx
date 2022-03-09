@@ -1,13 +1,12 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import Tree from 'rc-tree';
 import { useSelector } from 'react-redux';
-import cloneDeep from 'lodash/cloneDeep';
 import { IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ArrowUpIcon from '../../../../../icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
 import {SortableDragHandle} from '../../../../../Sortable/SortableHandle';
-import {generateTreeFromV2Mappings, allowDrop, findNode} from '../../../../../../utils/mapping';
+import {allowDrop} from '../../../../../../utils/mapping';
 import SettingsDrawer from '../../../../../Mapping/Settings';
 import {selectors} from '../../../../../../reducers';
 import Mapper2Row from './Mapper2Row';
@@ -66,6 +65,12 @@ const useStyles = makeStyles(theme => ({
       transform: 'translateY(-50%)',
     },
   },
+  mappingDrawerContent: {
+    height: '100%',
+    display: 'flex',
+    padding: theme.spacing(3, 3, 0),
+    overflow: 'auto',
+  },
 })
 );
 
@@ -99,70 +104,69 @@ const Row = props =>
   );
 const drag = {
   icon: <SortableDragHandle isVisible draggable />,
-  nodeDraggable: node => !node.isTabNode,
+  nodeDraggable: node => (!node.isTabNode && !node.disabled),
 };
 
 export default function Mapper2({editorId}) {
   const classes = useStyles();
-  // const {mappings} = importDoc; // read from state
-  const [treeData, setTreeData] = useState(generateTreeFromV2Mappings([]));
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
+  const treeData = useSelector(state => selectors.v2MappingsTreeData(state));
 
-  const onDropHandler = useCallback(info => {
-    const dropKey = info.node.key;
-    const dragKey = info.dragNode.key;
-    const dragParentKey = info.dragNode.parentKey;
-    const dropPos = info.node.pos.split('-');
-    const dragPos = info.dragNode.pos.split('-');
-    const dragNodeIndex = Number(dragPos[dragPos.length - 1]);
-    const dropNodeIndex = Number(dropPos[dropPos.length - 1]);
-    const dropPosition = info.dropPosition - dropNodeIndex;
+  // const onDropHandler = useCallback(info => {
+  //   const dropKey = info.node.key;
+  //   const dragKey = info.dragNode.key;
+  //   const dragParentKey = info.dragNode.parentKey;
+  //   const dropPos = info.node.pos.split('-');
+  //   const dragPos = info.dragNode.pos.split('-');
+  //   const dragNodeIndex = Number(dragPos[dragPos.length - 1]);
+  //   const dropNodeIndex = Number(dropPos[dropPos.length - 1]);
+  //   const dropPosition = info.dropPosition - dropNodeIndex;
 
-    const newTreeData = cloneDeep(treeData);
+  //   const newTreeData = cloneDeep(treeData);
 
-    let dragObj;
+  //   let dragObj;
 
-    // Find dragObject and remove from current position
-    findNode(newTreeData, 'key', dragKey, (item, index, arr) => {
-      arr.splice(index, 1);
-      dragObj = item;
-    });
+  //   // Find dragObject and remove from current position
+  //   findNode(newTreeData, 'key', dragKey, (item, index, arr) => {
+  //     arr.splice(index, 1);
+  //     dragObj = item;
+  //   });
 
-    let ar;
-    let i;
+  //   let ar;
+  //   let i;
 
-    // find drop position and drop sub-array
-    findNode(newTreeData, 'key', dropKey, (item, index, arr) => {
-      ar = arr;
-      i = index;
-    });
+  //   // find drop position and drop sub-array
+  //   findNode(newTreeData, 'key', dropKey, (item, index, arr) => {
+  //     ar = arr;
+  //     i = index;
+  //   });
 
-    // child node is being dragged and dropped at top (0th index) of the children list
-    if (dropPosition === 0 && dragParentKey === dropKey) {
-      const hasTabbedRow = info.node.multipleSources;
+  //   // child node is being dragged and dropped at top (0th index) of the children list
+  //   if (dropPosition === 0 && dragParentKey === dropKey) {
+  //     const hasTabbedRow = info.node.multipleSources;
 
-      // if child is already at 0th position, nothing to do
-      if (dragNodeIndex === 0 || (hasTabbedRow && dragNodeIndex === 1)) return;
-      const {children = []} = ar[dropNodeIndex];
+  //     // if child is already at 0th position, nothing to do
+  //     if (dragNodeIndex === 0 || (hasTabbedRow && dragNodeIndex === 1)) return;
+  //     const {children = []} = ar[dropNodeIndex];
 
-      // retain the tabbed row
-      if (hasTabbedRow) {
-        children.splice(1, 0, dragObj);
-      } else {
-        children.unshift(dragObj);
-      }
-    } else if (dropPosition === -1) { // drag obj inserted before drop node
-      if (i === dragNodeIndex) return;
+  //     // retain the tabbed row
+  //     if (hasTabbedRow) {
+  //       children.splice(1, 0, dragObj);
+  //     } else {
+  //       children.unshift(dragObj);
+  //     }
+  //   } else if (dropPosition === -1) { // drag obj inserted before drop node
+  //     if (i === dragNodeIndex) return;
 
-      ar.splice(i, 0, dragObj);
-    } else { // drag obj inserted after drop node
-      if (i + 1 === dragNodeIndex) return;
+  //     ar.splice(i, 0, dragObj);
+  //   } else { // drag obj inserted after drop node
+  //     if (i + 1 === dragNodeIndex) return;
 
-      ar.splice(i + 1, 0, dragObj);
-    }
+  //     ar.splice(i + 1, 0, dragObj);
+  //   }
 
-    setTreeData(newTreeData);
-  }, [treeData]);
+  //   setTreeData(newTreeData);
+  // }, [treeData]);
 
   // console.log('treeData', treeData);
   const onDragStart = ({event}) => {
@@ -178,21 +182,24 @@ export default function Mapper2({editorId}) {
     ? (
       <>
         <SettingsDrawer disabled={disabled} />
-        <Tree
-          className={classes.treeRoot}
-          titleRender={Row}
-          treeData={treeData}
-          showLine
-          switcherIcon={SwitcherIcon}
-          allowDrop={allowDrop}
-          onDrop={onDropHandler}
+        <div className={classes.mappingDrawerContent}>
+          <Tree
+            className={classes.treeRoot}
+            titleRender={Row}
+            treeData={treeData}
+            showLine
+            switcherIcon={SwitcherIcon}
+            allowDrop={allowDrop}
+          // onDrop={onDropHandler}
           // activeKey={treeData[0].key}
-          draggable={drag}
-          onDragStart={onDragStart}
+            draggable={drag}
+            onDragStart={onDragStart}
+            disabled={disabled}
           // height={500}
         //   itemHeight={50}
         //   virtual={false}
               />
+        </div>
       </>
 
     )

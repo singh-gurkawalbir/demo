@@ -1480,6 +1480,13 @@ const mapping = {
   v2: {
     toggleOutput: outputFormat => action(actionTypes.MAPPING.V2.TOGGLE_OUTPUT, { outputFormat }),
     toggleRows: expanded => action(actionTypes.MAPPING.V2.TOGGLE_ROWS, { expanded }),
+    dropRow: ({dragNode, dropNode, dropPosition}) => action(actionTypes.MAPPING.V2.DRAG_DROP, {dragNode, dropNode, dropPosition}),
+    deleteRow: key => action(actionTypes.MAPPING.V2.DELETE_ROW, { key }),
+    addRow: key => action(actionTypes.MAPPING.V2.ADD_ROW, { key }),
+    updateDataType: (key, newDataType) => action(actionTypes.MAPPING.V2.UPDATE_DATA_TYPE, { key, newDataType }),
+    changeArrayTab: newTab => action(actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB, { newTab }),
+    patchField: (field, key, value) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, key, value }),
+    patchSettings: (key, value) => action(actionTypes.MAPPING.V2.PATCH_SETTINGS, { key, value }),
   },
 };
 

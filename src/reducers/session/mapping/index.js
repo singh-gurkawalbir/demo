@@ -17,6 +17,8 @@ export default (state = {}, action) => {
     value,
     mappings,
     lookups,
+    v2TreeData,
+    v2Mappings,
     flowId,
     importId,
     subRecordMappingId,
@@ -45,6 +47,8 @@ export default (state = {}, action) => {
         draft.mapping = {
           mappings,
           lookups,
+          v2TreeData,
+          v2Mappings,
           flowId,
           importId,
           subRecordMappingId,
@@ -52,6 +56,7 @@ export default (state = {}, action) => {
           isGroupedSampleData,
           mappingsCopy: deepClone(mappings),
           lookupsCopy: deepClone(lookups),
+          v2MappingsCopy: deepClone(v2Mappings),
         };
         break;
       case actionTypes.MAPPING.INIT_FAILED:
@@ -332,12 +337,12 @@ selectors.mapping = state => {
   return state.mapping;
 };
 
-selectors.mappingTreeData = state => {
+selectors.v2MappingsTreeData = state => {
   if (!state || !state.mapping) {
     return emptyArr;
   }
 
-  return state.mapping.mappingTreeData || emptyArr;
+  return state.mapping.v2TreeData || emptyArr;
 };
 
 // #region PUBLIC SELECTORS

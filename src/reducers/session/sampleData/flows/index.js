@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
 import { getSampleDataStage } from '../../../../utils/flowData';
 import { isPageGeneratorResource } from '../../../../utils/flows';
@@ -266,23 +267,24 @@ selectors.getFlowDataState = (state, flowId, resourceId) => {
   return resourceMap[resourceId] || DEFAULT_VALUE;
 };
 
-selectors.getSampleDataContext = (
-  state,
-  { flowId, resourceId, resourceType, stage }
-) => {
-  // returns input data for that stage to populate
-  const flow = state?.[flowId];
-  const sampleDataStage = getSampleDataStage(stage, resourceType);
+selectors.getSampleDataContext = createSelector(
+  (state, {flowId}) => state?.[flowId],
+  (state, {resourceId}) => resourceId,
+  (state, {resourceType }) => resourceType,
+  (state, { stage }) => stage,
+  (flow, resourceId, resourceType, stage) => {
+    // returns input data for that stage to populate
+    const sampleDataStage = getSampleDataStage(stage, resourceType);
 
-  if (!flow || !sampleDataStage || !resourceId) return DEFAULT_VALUE;
-  const resourceMap = isPageGeneratorResource(flow, resourceId)
-    ? flow.pageGeneratorsMap
-    : flow.pageProcessorsMap;
-  const flowStageContext =
-    resourceMap &&
-    resourceMap[resourceId] &&
-    resourceMap[resourceId][sampleDataStage];
+    if (!flow || !sampleDataStage || !resourceId) return DEFAULT_VALUE;
+    const resourceMap = isPageGeneratorResource(flow, resourceId)
+      ? flow.pageGeneratorsMap
+      : flow.pageProcessorsMap;
+    const flowStageContext =
+  resourceMap &&
+  resourceMap[resourceId] &&
+  resourceMap[resourceId][sampleDataStage];
 
-  return flowStageContext || DEFAULT_VALUE;
-};
+    return flowStageContext || DEFAULT_VALUE;
+  });
 

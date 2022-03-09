@@ -7,7 +7,7 @@ import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
 import {selectors} from '../../reducers';
 import { commitStagedChanges } from '../resources';
-import mappingUtil from '../../utils/mapping';
+import mappingUtil, {getV2MappingsForResource} from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
 import { getResourceSubType } from '../../utils/resource';
@@ -177,7 +177,7 @@ export function* mappingInit({
     resourceType: 'imports',
   });
   const isGroupedSampleData = Array.isArray(flowSampleData);
-  const isPreviewSucess = !!flowSampleData;
+  const isPreviewSuccess = !!flowSampleData;
   let formattedMappings = [];
   let lookups = [];
   const options = {};
@@ -239,7 +239,7 @@ export function* mappingInit({
       importResource,
       isFieldMapping: false,
       isGroupedSampleData,
-      isPreviewSucess,
+      isPreviewSuccess,
       netsuiteRecordType: options.recordType,
       options,
       exportResource,
@@ -252,6 +252,20 @@ export function* mappingInit({
 
     return {...lookup, isConditionalLookup: !!isConditionalLookup};
   });
+
+  const isMonitorLevelAccess = yield select(selectors.isFormAMonitorLevelAccess, importResource._integrationId);
+  const {mappingsTreeData, v2MappingsCopy} = getV2MappingsForResource({
+    importResource,
+    isFieldMapping: false,
+    isGroupedSampleData,
+    isPreviewSuccess,
+    options,
+    exportResource,
+    disabled: isMonitorLevelAccess,
+  });
+  // todo ashu
+  // const lookups12 = lookupUtil.getLookupFromResource(importResource) || [];
+
   yield put(
     actions.mapping.initComplete({
       mappings: (formattedMappings || []).map(m => ({
@@ -259,6 +273,8 @@ export function* mappingInit({
         key: shortid.generate(),
       })),
       lookups,
+      v2TreeData: mappingsTreeData,
+      v2Mappings: v2MappingsCopy,
       flowId,
       importId,
       subRecordMappingId,
