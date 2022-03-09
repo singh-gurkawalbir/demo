@@ -56,6 +56,15 @@ export default (state = defaultState, action) => {
 export const selectors = {};
 
 selectors.revisions = (state = defaultState, integrationId) => state[integrationId]?.data;
+selectors.revision = (state = defaultState, integrationId, revisionId) => {
+  const revisions = selectors.revisions(state, integrationId);
+
+  if (!revisions?.length) {
+    return;
+  }
+
+  return revisions.find(rev => rev._id === revisionId);
+};
 
 selectors.revisionsFetchStatus = (state = defaultState, integrationId) => state[integrationId]?.status;
 // #endregion

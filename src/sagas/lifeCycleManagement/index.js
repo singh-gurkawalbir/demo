@@ -41,8 +41,19 @@ export function* requestIntegrationCloneFamily({ integrationId }) {
 function* createRevision({ integrationId, newRevisionId}) {
   const {type, revisionInfo} = (yield select(selectors.tempRevisionInfo, integrationId, newRevisionId)) || {};
   const { description } = revisionInfo || {};
+  // const VALID_REVERT_TO_QUERIES = ['toAfter', 'toBefore'];
+
   // const createdRevision = yield call(apiCallWithRetry, {
-  //   path: `/api/integrations/${integrationId}/pull/${cloneIntegrationId}/open`,
+  //   path: `/integrations/${integrationId}/pull/${cloneIntegrationId}/open`,
+  //   opts: {
+  //     method: 'POST',
+  //     body: { description },
+  //   },
+  // });
+  // const { revertTo, revisionId } = revertToConfig;
+  // const queryParam = `${VALID_REVERT_TO_QUERIES.includes(revertTo) ? `?${revertTo}=true` : ''}`;
+  // const createdRevision = yield call(apiCallWithRetry, {
+  //   path: `/integrations/${integrationId}/revisions/${revisionId}/revert/open${queryParam}`,
   //   opts: {
   //     method: 'POST',
   //     body: { description },

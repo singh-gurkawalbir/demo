@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { nanoid } from 'nanoid';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import RevertIcon from '../../../icons/ViewResolvedHistoryIcon';
 
@@ -11,7 +12,7 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
-      history.push(`${match.url}/revert/new-123/open/this/revision/${revisionId}`);
+      history.push(`${match.url}/revert/${nanoid()}/open/this/revision/${revisionId}`);
     }, [revisionId, history, match.url]);
 
     return handleClick;

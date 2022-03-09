@@ -19,6 +19,15 @@ export default (state = {}, action) => {
           revisionInfo,
         };
         break;
+      case actionTypes.INTEGRATION_LCM.REVISION.OPEN_REVERT:
+        if (!draft[integrationId]) {
+          draft[integrationId] = {};
+        }
+        draft[integrationId][newRevisionId] = {
+          type: REVISION_TYPES.REVERT,
+          revisionInfo,
+        };
+        break;
       case actionTypes.INTEGRATION_LCM.REVISION.CREATE_SNAPSHOT:
         if (!draft[integrationId]) {
           draft[integrationId] = {};
