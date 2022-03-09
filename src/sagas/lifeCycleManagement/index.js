@@ -1,7 +1,7 @@
 import { delay, put, takeEvery, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import { REVISION_STATUS } from '../../utils/constants';
+import { REVISION_STATUS, REVISION_TYPES } from '../../utils/constants';
 import actionTypes from '../../actions/types';
 // import { apiCallWithRetry } from '../index';
 
@@ -53,7 +53,7 @@ function* createRevision({ integrationId, newRevisionId}) {
     description,
     _byUserId: '609276382b22fe4803a3589e',
     createdAt: new Date().toISOString(),
-    status: REVISION_STATUS.IN_PROGRESS,
+    status: type === REVISION_TYPES.SNAPSHOT ? REVISION_STATUS.COMPLETED : REVISION_STATUS.IN_PROGRESS,
     type,
     _integrationId: integrationId,
     fromIntegrationIsSandbox: false,
@@ -70,4 +70,5 @@ function* createRevision({ integrationId, newRevisionId}) {
 export default [
   takeEvery(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, requestIntegrationCloneFamily),
   takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CREATE, createRevision),
+  takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CREATE_SNAPSHOT, createRevision),
 ];

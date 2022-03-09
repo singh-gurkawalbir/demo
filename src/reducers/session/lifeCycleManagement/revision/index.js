@@ -19,11 +19,27 @@ export default (state = {}, action) => {
           revisionInfo,
         };
         break;
+      case actionTypes.INTEGRATION_LCM.REVISION.CREATE_SNAPSHOT:
+        if (!draft[integrationId]) {
+          draft[integrationId] = {};
+        }
+        draft[integrationId][newRevisionId] = {
+          type: REVISION_TYPES.SNAPSHOT,
+          revisionInfo,
+          status: REVISION_CREATION_STATUS.CREATION_IN_PROGRESS,
+        };
+        break;
       case actionTypes.INTEGRATION_LCM.REVISION.CREATE:
         if (!draft[integrationId]) {
           draft[integrationId] = {};
         }
-        draft[integrationId][newRevisionId].status = REVISION_CREATION_STATUS;
+        draft[integrationId][newRevisionId].status = REVISION_CREATION_STATUS.CREATION_IN_PROGRESS;
+        break;
+      case actionTypes.INTEGRATION_LCM.REVISION.CREATED:
+        if (!draft[integrationId]) {
+          draft[integrationId] = {};
+        }
+        draft[integrationId][newRevisionId].status = REVISION_CREATION_STATUS.CREATED;
         break;
 
       default:
@@ -46,5 +62,5 @@ selectors.isRevisionCreationInProgress = (state, integrationId, revisionId) => {
     return false;
   }
 
-  return state[integrationId][revisionId].status === REVISION_CREATION_STATUS;
+  return state[integrationId][revisionId].status === REVISION_CREATION_STATUS.CREATION_IN_PROGRESS;
 };

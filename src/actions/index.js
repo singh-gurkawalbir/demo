@@ -2230,6 +2230,7 @@ const integrationLCM = {
     openRevert: ({ integrationId, newRevisionId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.OPEN_REVERT, { integrationId, newRevisionId, revisionInfo }),
     create: (integrationId, newRevisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CREATE, { integrationId, newRevisionId }),
     created: (integrationId, newRevisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CREATED, { integrationId, newRevisionId }),
+    createSnapshot: ({ integrationId, newRevisionId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.CREATE_SNAPSHOT, { integrationId, newRevisionId, revisionInfo }),
     clear: integrationId => action(actionTypes.INTEGRATION_LCM.REVISION.CLEAR, { integrationId }),
     cancel: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CANCEL, { integrationId, revisionId }),
   },
