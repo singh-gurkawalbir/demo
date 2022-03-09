@@ -67,6 +67,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function Signin(props) {
   const classes = useStyles();
+  // eslint-disable-next-line no-undef
+  const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
 
   return (
     <div className={classes.wrapper}>
@@ -94,7 +96,7 @@ export default function Signin(props) {
         </div>
       </div>
       <div className={classes.marketingContentWrapper}>
-        <MarketingContentWithIframe contentUrl={process.env.IO_LOGIN_PROMOTION_URL} />
+        <MarketingContentWithIframe contentUrl={contentUrl} />
       </div>
     </div>
   );
