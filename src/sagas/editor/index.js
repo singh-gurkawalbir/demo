@@ -80,14 +80,18 @@ export function* invokeProcessor({ editorId, processor, body }) {
     if (editorType === 'mappings') {
       const mappings = (yield select(selectors.mapping))?.mappings;
       const lookups = (yield select(selectors.mapping))?.lookups;
+      const generateFields = yield select(selectors.mappingGenerates, resourceId);
       const importResource = yield select(selectors.resource, 'imports', resourceId);
       const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+      const netsuiteRecordType = yield select(selectors.mappingNSRecordType, resourceId);
 
       _mappings = mappingUtil.generateFieldsAndListMappingForApp({
         mappings,
+        generateFields,
         isGroupedSampleData: Array.isArray(flowSampleData),
         isPreviewSuccess: !!flowSampleData,
         importResource,
+        netsuiteRecordType,
         exportResource,
       });
       _mappings = {..._mappings, lookups};
