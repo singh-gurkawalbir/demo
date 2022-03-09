@@ -37,9 +37,9 @@ export const withIframeStagEU = Template.bind({});
 withIframeStagEU.args = {
   contentUrl: urls.contentUrlStagEU,
 };
-export const withIframe = Template.bind({});
+export const withIframeProdEU = Template.bind({});
 
-withIframe.args = {
+withIframeProdEU.args = {
   contentUrl: urls.contentUrlProdEU,
 };
 export const fallBackIframe = Template.bind({});
