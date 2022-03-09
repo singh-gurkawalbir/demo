@@ -1,28 +1,30 @@
 import React from 'react';
-// import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../../Right';
 import DrawerHeader from '../../../Right/DrawerHeader';
 import DrawerContent from '../../../Right/DrawerContent';
 import DrawerFooter from '../../../Right/DrawerFooter';
-// import { selectors} from '../../../../../reducers';
-// import actions from '../../../../../actions';
+import actions from '../../../../../actions';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../../../DynaForm';
 import DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import { TextButton } from '../../../../Buttons';
 import getMetadata from './metadata';
 
-function OpenPullDrawerContent({ integrationId }) {
-  // const match = useRouteMatch();
-  // const { revId } = match.params;
-  // const history = useHistory();
+function OpenPullDrawerContent({ integrationId, parentUrl }) {
+  const match = useRouteMatch();
+  const { revId } = match.params;
+  const history = useHistory();
+  const dispatch = useDispatch();
   const formKey = useFormInitWithPermissions({ fieldMeta: getMetadata({integrationId}) });
-  const onClose = () => {};
+  const onClose = () => {
+    history.replace(parentUrl);
+  };
 
   const handleCreateRevision = formValues => {
-    const { description, integration } = formValues;
-
-    console.log(description, integration);
+    dispatch(actions.integrationLCM.revision.openPull({ integrationId, newRevisionId: revId, revisionInfo: formValues }));
+    history.replace(`${parentUrl}/pull/${revId}/review`);
   };
 
   return (
@@ -46,13 +48,15 @@ function OpenPullDrawerContent({ integrationId }) {
 }
 
 export default function OpenPullDrawer({ integrationId }) {
+  const match = useRouteMatch();
+
   return (
     <RightDrawer
       path="pull/:revId/open"
       variant="temporary"
       height="tall"
       width="xl">
-      <OpenPullDrawerContent integrationId={integrationId} />
+      <OpenPullDrawerContent integrationId={integrationId} parentUrl={match.url} />
     </RightDrawer>
   );
 }

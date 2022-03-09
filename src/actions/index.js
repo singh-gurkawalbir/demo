@@ -2226,9 +2226,10 @@ const integrationLCM = {
     clear: integrationId => action(actionTypes.INTEGRATION_LCM.COMPARE.CLEAR, { integrationId }),
   },
   revision: {
-    openPull: ({ integrationId, newRevId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.OPEN_PULL, { integrationId, newRevId, revisionInfo }),
-    openRevert: ({ integrationId, newRevId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.OPEN_REVERT, { integrationId, newRevId, revisionInfo }),
-    create: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CREATE, { integrationId, revisionId }),
+    openPull: ({ integrationId, newRevisionId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.OPEN_PULL, { integrationId, newRevisionId, revisionInfo }),
+    openRevert: ({ integrationId, newRevisionId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.OPEN_REVERT, { integrationId, newRevisionId, revisionInfo }),
+    create: (integrationId, newRevisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CREATE, { integrationId, newRevisionId }),
+    created: (integrationId, newRevisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CREATED, { integrationId, newRevisionId }),
     clear: integrationId => action(actionTypes.INTEGRATION_LCM.REVISION.CLEAR, { integrationId }),
     cancel: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CANCEL, { integrationId, revisionId }),
   },

@@ -4,7 +4,7 @@ import actionTypes from '../../../actions/types';
 const defaultState = {};
 
 export default (state = defaultState, action) => {
-  const { type, resourceType, collection, integrationId } = action;
+  const { type, resourceType, collection, integrationId, resource } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -27,6 +27,20 @@ export default (state = defaultState, action) => {
           }
           draft[integrationId].status = 'received';
           draft[integrationId].data = collection;
+        }
+        break;
+      case actionTypes.RESOURCE.RECEIVED:
+        if (resourceType?.includes('revisions')) {
+          const integrationId = resourceType.split('/')[1];
+
+          if (!draft[integrationId]) {
+            draft[integrationId] = {};
+          }
+          draft[integrationId].status = 'received';
+          if (!draft[integrationId].data) {
+            draft[integrationId].data = [];
+          }
+          draft[integrationId].data.push(resource);
         }
         break;
 

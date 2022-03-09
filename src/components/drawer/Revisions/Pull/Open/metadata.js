@@ -3,6 +3,7 @@ export default function getMetadata({integrationId}) {
     fieldMap: {
       description: {
         id: 'description',
+        name: 'description',
         type: 'text',
         label: 'Description',
         required: true,

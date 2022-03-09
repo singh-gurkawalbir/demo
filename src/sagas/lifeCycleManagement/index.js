@@ -1,5 +1,7 @@
-import { delay, put, takeEvery } from 'redux-saga/effects';
+import { delay, put, takeEvery, select } from 'redux-saga/effects';
 import actions from '../../actions';
+import { selectors } from '../../reducers';
+import { REVISION_STATUS } from '../../utils/constants';
 import actionTypes from '../../actions/types';
 // import { apiCallWithRetry } from '../index';
 
@@ -36,6 +38,36 @@ export function* requestIntegrationCloneFamily({ integrationId }) {
   }
 }
 
+function* createRevision({ integrationId, newRevisionId}) {
+  const {type, revisionInfo} = (yield select(selectors.tempRevisionInfo, integrationId, newRevisionId)) || {};
+  const { description } = revisionInfo || {};
+  // const createdRevision = yield call(apiCallWithRetry, {
+  //   path: `/api/integrations/${integrationId}/pull/${cloneIntegrationId}/open`,
+  //   opts: {
+  //     method: 'POST',
+  //     body: { description },
+  //   },
+  // });
+  const createdRevision = {
+    _id: '6215f13ed611afb647b2cf4b',
+    description,
+    _byUserId: '609276382b22fe4803a3589e',
+    createdAt: new Date().toISOString(),
+    status: REVISION_STATUS.IN_PROGRESS,
+    type,
+    _integrationId: integrationId,
+    fromIntegrationIsSandbox: false,
+    beforeRevisionHash: '123456789',
+    installSteps: [],
+  };
+
+  yield delay(2000);
+  yield put(actions.resource.received(`integrations/${integrationId}/revisions`, createdRevision));
+  yield put(actions.resource.created(createdRevision._id, newRevisionId));
+  yield put(actions.integrationLCM.revision.created(integrationId, newRevisionId));
+}
+
 export default [
   takeEvery(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, requestIntegrationCloneFamily),
+  takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CREATE, createRevision),
 ];

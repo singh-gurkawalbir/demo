@@ -72,6 +72,10 @@ export const REVISION_STATUS = Object.freeze({
   FAILED: 'failed',
   CANCELED: 'canceled',
 });
+export const REVISION_CREATION_STATUS = Object.freeze({
+  CREATION_IN_PROGRESS: 'creating',
+  CREATED: 'created',
+});
 
 export const UI_FIELD_VALUES = Object.freeze(['/formView', '/uploadFile']);
 export const SALESFORCE_DA_PACKAGE_URL =

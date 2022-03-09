@@ -2,6 +2,7 @@ import React, { useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { Link, useRouteMatch } from 'react-router-dom';
+import { nanoid } from 'nanoid';
 import { TextButton } from '../../../../../components/Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
@@ -55,7 +56,7 @@ export default function Revisions({ integrationId }) {
             component={Link}
             disabled={isLoadingRevisions}
             startIcon={<AddIcon />}
-            to={`${match.url}/pull/new-123/open`}
+            to={`${match.url}/pull/${nanoid()}/open`}
             data-test="createPull">
             Create pull
           </TextButton>
@@ -63,7 +64,7 @@ export default function Revisions({ integrationId }) {
             component={Link}
             startIcon={<AddIcon />}
             disabled={isLoadingRevisions}
-            to={`${match.url}/snapshot/new-123/open`}
+            to={`${match.url}/snapshot/${nanoid()}/open`}
             data-test="createSnapshot">
             Create snapshot
           </TextButton>
