@@ -40,7 +40,7 @@ function OfflineConnectionsIndicator({flowId, flowBuilderTo}) {
   const dispatch = useDispatch();
   const isAnyConnectionOffline = useSelectorMemo(selectors.mkIsAnyFlowConnectionOffline, flowId);
 
-  const handleTabChange = useCallback(
+  const onOfflineIconClick = useCallback(
     () => {
       dispatch(actions.patchFilter('bottomDrawer', {defaultTab: 'connections'}));
       history.push(flowBuilderTo);
@@ -52,7 +52,7 @@ function OfflineConnectionsIndicator({flowId, flowBuilderTo}) {
   return (
     <IconButtonWithTooltip
       className={classes.connectionIcon}
-      onClick={handleTabChange}
+      onClick={onOfflineIconClick}
       tooltipProps={{title: 'Connection down', placement: 'bottom'}}
       buttonSize={{size: 'small'}}>
       <OfflineConnectionsIcon className={classes.freeTag} />

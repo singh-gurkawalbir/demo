@@ -13,7 +13,6 @@ import DebugIcon from '../../../../components/icons/DebugIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
 import RunningFlowsIcon from '../../../../components/icons/RunningFlowsIcon';
 import RunHistoryIcon from '../../../../components/icons/CompletedFlowsIcon';
-import WarningIcon from '../../../../components/icons/WarningIcon';
 import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/Dashboard/RunDashboardPanel';
@@ -28,6 +27,7 @@ import Spinner from '../../../../components/Spinner';
 import ScriptLogs from '../../../ScriptLogs';
 import ScriptsIcon from '../../../../components/icons/ScriptsIcon';
 import ConnectionLogs from '../../../ConnectionLogs';
+import OfflineConnectionsIcon from '../../../../components/icons/OfflineConnectionsIcon';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -363,7 +363,7 @@ export default function BottomDrawer({
                       key={tabType}
                       icon={
                         isAnyFlowConnectionOffline ? (
-                          <WarningIcon className={classes.connectionWarning} />
+                          <OfflineConnectionsIcon className={classes.connectionWarning} />
                         ) : (
                           <ConnectionsIcon />
                         )
