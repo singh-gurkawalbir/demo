@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { ListItem, makeStyles, Typography } from '@material-ui/core';
 import SortableHandle from '../../../components/Sortable/SortableHandle';
 import Status from '../../../components/Buttons/Status';
-import StatusCircle from '../../../components/StatusCircle';
 
 const useStyles = makeStyles(theme => ({
   listItemwrapper: {
@@ -30,12 +29,13 @@ export default function SubNavMenuItem({name, errorCount, isGripperVisible = fal
         <SortableHandle isVisible={isGripperVisible} />
       )}
       <Typography className={classes.name}>{name}</Typography>
-      {errorCount && (
-      <Status variant="error" size="small">
-        <span>{errorCount > 9999 ? '9999+' : errorCount}</span>
+      {errorCount && errorCount > 9999 && (
+      <Status variant="error" size="mini">
+        9999+
       </Status>
       )}
-      {errorCount === 0 && <StatusCircle variant="success" size="mini" />}
+      {errorCount === 0 && (
+      <Status variant="success" size="mini">hello</Status>)}
     </ListItem>
   );
 }

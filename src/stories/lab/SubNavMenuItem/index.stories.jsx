@@ -17,6 +17,7 @@ const Template = args => <SubNavMenuItem {...args} />;
 export const NameWithStatus = Template.bind();
 export const NameWithGrippper = Template.bind();
 export const NameWithErrors = Template.bind();
+export const NameWithNoErrors = Template.bind();
 export const NameWithMaxErrors = Template.bind();
 export const NameWithoutStatusAndGrippper = Template.bind();
 
@@ -34,6 +35,11 @@ NameWithErrors.args = {
   name: 'Deprovisioning',
   isGripperVisible: true,
   errorCount: 1000,
+};
+NameWithNoErrors.args = {
+  name: 'Deprovisioning',
+  isGripperVisible: true,
+  errorCount: 0,
 };
 NameWithMaxErrors.args = {
   name: 'Deprovisioning',
