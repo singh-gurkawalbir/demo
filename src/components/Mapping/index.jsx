@@ -41,7 +41,7 @@ export default function Mapping(props) {
         subRecordMappingId,
         stage: 'importMappingExtract',
         data: {}, // adding dummy data here. Actual data gets loaded once the mapping init is complete
-        mappingPreviewType: mappingPreviewType !== 'http' && mappingPreviewType,
+        mappingPreviewType: mappingPreviewType === 'http' ? undefined : mappingPreviewType,
       }));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
