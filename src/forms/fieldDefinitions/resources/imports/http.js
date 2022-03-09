@@ -355,7 +355,7 @@ export default {
       { label: 'XML', value: 'xml' },
       { label: 'JSON', value: 'json' },
     ],
-    dependentFieldForMediaType: '/http/requestMediaType',
+    // dependentFieldForMediaType: '/http/requestMediaType',
   },
   'http.errorMediaType': {
     isLoggable: true,
@@ -372,7 +372,7 @@ export default {
       { label: 'XML', value: 'xml' },
       { label: 'JSON', value: 'json' },
     ],
-    dependentFieldForMediaType: '/http/requestMediaType',
+    // dependentFieldForMediaType: '/http/requestMediaType',
   },
   'http.ignoreEmptyNodes': {
     isLoggable: true,

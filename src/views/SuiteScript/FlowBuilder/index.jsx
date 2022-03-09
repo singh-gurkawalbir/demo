@@ -26,6 +26,8 @@ import DeleteCell from '../../../components/ResourceTable/suiteScript/flows/Dele
 import actions from '../../../actions';
 import SuiteScriptMappingDrawer from '../Mappings/Drawer';
 
+// TODO: (AZHAR) suitescript and normal styles are repeating
+
 const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
@@ -80,6 +82,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     marginBottom: theme.spacing(0.5),
     justifyContent: 'center',
+    fontFamily: 'Roboto400',
   },
   destinationTitle: {
     marginLeft: 100,

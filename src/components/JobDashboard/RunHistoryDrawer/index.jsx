@@ -52,8 +52,9 @@ export default function RunHistoryDrawer() {
   }, [match.url, history]);
   let { integrationId } = match.params;
   const { childId } = match.params;
+  const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
 
-  integrationId = getDashboardIntegrationId(integrationId, childId);
+  integrationId = getDashboardIntegrationId(integrationId, childId, isIntegrationAppV1);
   const filter = useSelector(state =>
     selectors.filter(state, `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`),
   shallowEqual

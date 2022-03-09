@@ -1,6 +1,6 @@
 import Proto from './Prototype';
 import Template from './Template';
-import withRouter from '../globalSearch/withRouter';
+import withRouter from '../../components/globalSearch/withRouter';
 
 export default {
   title: 'Lab/Flow builder react-flow',

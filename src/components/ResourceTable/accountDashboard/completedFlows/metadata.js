@@ -20,8 +20,9 @@ export default {
     const match = useRouteMatch();
     let { integrationId } = match.params;
     const { childId } = match.params;
+    const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
 
-    integrationId = getDashboardIntegrationId(integrationId, childId);
+    integrationId = getDashboardIntegrationId(integrationId, childId, isIntegrationAppV1);
     const integrationFilterKey = `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`;
 
     return [

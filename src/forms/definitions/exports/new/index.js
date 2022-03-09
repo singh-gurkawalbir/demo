@@ -47,6 +47,7 @@ export default {
       name: 'application',
       type: 'selectapplication',
       label: 'Application',
+      isLoggable: true,
       appType: 'export',
       placeholder: applicationsPlaceHolderText(),
       defaultValue: r => (r && r.application) || '',

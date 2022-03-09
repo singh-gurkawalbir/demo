@@ -124,7 +124,7 @@ export const AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE = Object.freeze(
 );
 export function routeToRegExp(route = '') {
   const optionalParam = /\((.*?)\)/g;
-  const namedParam = /(\(\?)?:\w+/g;
+  const namedParam = /(\(\?)?:_\w+/g;
   const splatParam = /\*\w+/g;
   // const escapeRegExp = /[\-{}\[\]+?.,\\\^$|#\s]/g;
   const escapeRegExp = /[-{}[\]+?.,\\^$|#\s]/g;
@@ -785,6 +785,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
     },
     http: {
       ...cloneDeep(DEFAULT_PROPS.EXPORT.HTTP),
+      requestMediaType: operationDetails.requestMediaType,
       successMediaType: operationDetails.successMediaType,
       errorMediaType: operationDetails.errorMediaType,
       customeTemplateEval: operationDetails.customeTemplateEval,
@@ -1218,7 +1219,7 @@ export function convertToReactFormFields({
         fieldType = 'text';
       }
 
-      if (fieldType === 'text' && fieldDetailsMap[fieldId].type !== 'integer') {
+      if ((fieldType === 'text' || fieldType === 'textarea') && fieldDetailsMap[fieldId].type !== 'integer') {
         fieldType = 'textwithflowsuggestion';
       }
 
@@ -1289,6 +1290,10 @@ export function convertToReactFormFields({
           fieldDef.defaultValue = fieldDef.defaultValue.join(',');
         }
         fieldDef.showLookup = false;
+        if (field.fieldType === 'textarea') {
+          fieldDef.multiline = true;
+          fieldDef.rowsMax = 10;
+        }
       }
 
       if (flowId) {
@@ -1581,7 +1586,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
 
   let howToFindIdentifierLookupConfig = {};
 
-  if (operationDetails && operationDetails.howToFindIdentifier) {
+  if (operationDetails?.howToFindIdentifier?.lookup) {
     howToFindIdentifierLookupConfig =
       operationDetails.howToFindIdentifier.lookup;
   }
@@ -2158,8 +2163,6 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     '/assistantMetadata': assistantMetadata,
     '/ignoreExisting': !!ignoreExisting,
     '/ignoreMissing': !!ignoreMissing,
-    // AdaptorType will be added by backend. UI shouldnt set/update adaptorType
-    '/adaptorType': undefined,
   };
 }
 
@@ -2189,4 +2192,8 @@ export function getRecordTypeForAutoMapper(uri) {
 }
 export function isAppConstantContact(application) {
   return application === 'constantcontact';
+}
+
+export function isAmazonHybridConnection(connection) {
+  return connection?.assistant === 'amazonmws' && connection?.http?.type === 'Amazon-Hybrid';
 }

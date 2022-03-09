@@ -316,7 +316,7 @@ describe('apiCallWithRetry saga', () => {
 
       const raceBetweenApiCallAndTimeoutEffect = race([
         call(sendRequest, request),
-        take(actionsTypes.USER_LOGOUT),
+        take(actionsTypes.AUTH.USER.LOGOUT),
       ]);
 
       try {
@@ -649,6 +649,18 @@ describe('apiCallWithPaging saga', () => {
       .returns(responseData)
       .run());
 
+    test('should not call apiCallWithPaging with next url if "next" link header exists if path is /audit and return the first page data', () => expectSaga(apiCallWithPaging, {path: '/audit', opts})
+      .provide([
+        [call(apiCallWithRetry, {path: '/audit', opts, requireHeaders: true}),
+          {
+            data: responseData,
+            headers: {
+              get: jest.fn(() => nextLink),
+            }}],
+      ])
+      .returns(responseData)
+      .run());
+
     test('should recursively call apiCallWithPaging with next url if "next" link header exists and return the total data', () => expectSaga(apiCallWithPaging, {path, opts})
       .provide([
         [call(apiCallWithRetry, {path, opts, requireHeaders: true}),
@@ -757,9 +769,9 @@ describe('rootSaga', () => {
 
       expect(saga.next(forkEffectRes).value).toEqual(
         race({
-          logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-          logout: take(actionsTypes.USER_LOGOUT),
-          switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
+          logrocket: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR),
+          logout: take(actionsTypes.AUTH.USER.LOGOUT),
+          switchAcc: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC
           )})
       );
       expect(saga.next({logrocket: {opts: {prop1: 'someOptsz'}}}).value)
@@ -785,9 +797,9 @@ describe('rootSaga', () => {
 
       expect(saga.next(forkEffectRes).value).toEqual(
         race({
-          logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-          logout: take(actionsTypes.USER_LOGOUT),
-          switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
+          logrocket: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR),
+          logout: take(actionsTypes.AUTH.USER.LOGOUT),
+          switchAcc: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC
           )})
       );
       expect(saga.next({ logout: { isExistingSessionInvalid: undefined } }).value)
@@ -811,9 +823,9 @@ describe('rootSaga', () => {
 
       expect(saga.next(forkEffectRes).value).toEqual(
         race({
-          logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-          logout: take(actionsTypes.USER_LOGOUT),
-          switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC
+          logrocket: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR),
+          logout: take(actionsTypes.AUTH.USER.LOGOUT),
+          switchAcc: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC
           )})
       );
       const account = 'another account';

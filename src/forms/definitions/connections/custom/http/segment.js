@@ -25,6 +25,8 @@ export default {
       label: 'Write key',
       inputType: 'password',
       defaultValue: '',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
       helpKey: 'segment.connection.http.encrypted.writeKey',
     },
     application: {

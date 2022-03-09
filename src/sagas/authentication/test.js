@@ -203,7 +203,7 @@ describe('initialize all app relevant resources sagas', () => {
       const saga = retrievingOrgDetails();
       const getLicensesEffect = call(
         getResourceCollection,
-        actions.user.org.accounts.requestLicenses('Retrieving licenses')
+        actions.license.requestLicenses('Retrieving licenses')
       );
       const getOrgUsersEffect = call(
         getResourceCollection,
@@ -217,8 +217,16 @@ describe('initialize all app relevant resources sagas', () => {
       );
 
       expect(saga.next().value).toEqual(
-        all([getLicensesEffect, getOrgUsersEffect, getOrgAccountsEffect])
+        all([getOrgUsersEffect, getOrgAccountsEffect])
       );
+      const defaultAShareIdEffects = select(
+        selectors.defaultAShareId
+      );
+
+      expect(saga.next().value).toEqual(
+        defaultAShareIdEffects
+      );
+      expect(saga.next('own').value).toEqual(getLicensesEffect);
     });
   });
   describe('retrievingUserDetails sagas', () => {

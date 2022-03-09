@@ -25,8 +25,8 @@ const restPreSave = formValues => {
     '/rest/requestType': '/http/requestType',
     '/rest/compositeMethodUpdate': '/http/compositeMethodUpdate',
     '/rest/compositeMethodCreate': '/http/compositeMethodCreate',
-    '/rest/ignoreLookupName': '/http/existingLookupName',
-    '/rest/ignoreExtract': '/http/existingExtract',
+    '/rest/existingLookupName': '/http/existingLookupName',
+    '/rest/existingExtract': '/http/existingExtract',
     '/rest/responseIdPathCreate': '/http/responseIdPathCreate',
     '/rest/responseIdPathUpdate': '/http/responseIdPathUpdate',
     '/rest/responseIdPath': '/http/response/resourceIdPath',
@@ -125,13 +125,13 @@ const restPreSave = formValues => {
       retValues['/ignoreExisting'] = false;
       retValues['/ignoreMissing'] = false;
 
-      if (retValues['/rest/ignoreLookupName']) {
-        retValues['/rest/ignoreExtract'] = undefined;
-      } else if (retValues['/rest/ignoreExtract']) {
-        retValues['/rest/ignoreLookupName'] = undefined;
+      if (retValues['/rest/existingLookupName']) {
+        retValues['/rest/existingExtract'] = undefined;
+      } else if (retValues['/rest/existingExtract']) {
+        retValues['/rest/existingLookupName'] = undefined;
       } else {
-        retValues['/rest/ignoreLookupName'] = undefined;
-        retValues['/rest/ignoreExtract'] = undefined;
+        retValues['/rest/existingLookupName'] = undefined;
+        retValues['/rest/existingExtract'] = undefined;
       }
     } else if (retValues['/rest/compositeType'] === 'createandignore') {
       retValues['/rest/relativeURI'] = [retValues['/rest/relativeURICreate']];
@@ -139,6 +139,8 @@ const restPreSave = formValues => {
 
       retValues['/rest/ignoreLookupName'] = undefined;
       retValues['/rest/ignoreExtract'] = undefined;
+      retValues['/rest/existingLookupName'] = undefined;
+      retValues['/rest/existingExtract'] = undefined;
 
       if (retValues['/rest/responseIdPathCreate']) {
         retValues['/rest/responseIdPath'] = [
@@ -184,6 +186,8 @@ const restPreSave = formValues => {
 
       retValues['/rest/ignoreLookupName'] = undefined;
       retValues['/rest/ignoreExtract'] = undefined;
+      retValues['/rest/existingLookupName'] = undefined;
+      retValues['/rest/existingExtract'] = undefined;
 
       if (retValues['/rest/responseIdPathUpdate']) {
         retValues['/rest/responseIdPath'] = [
@@ -229,6 +233,8 @@ const restPreSave = formValues => {
       : [];
     retValues['/rest/ignoreLookupName'] = undefined;
     retValues['/rest/ignoreExtract'] = undefined;
+    retValues['/rest/existingLookupName'] = undefined;
+    retValues['/rest/existingExtract'] = undefined;
     retValues['/rest/existingDataId'] = undefined;
     retValues['/rest/update/existingDataId'] = undefined;
   }

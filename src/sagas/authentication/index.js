@@ -28,10 +28,6 @@ export function* retrievingOrgDetails() {
   yield all([
     call(
       getResourceCollection,
-      actions.user.org.accounts.requestLicenses('Retrieving licenses')
-    ),
-    call(
-      getResourceCollection,
       actions.user.org.users.requestCollection('Retrieving org users')
     ),
     call(
@@ -39,6 +35,14 @@ export function* retrievingOrgDetails() {
       actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
     ),
   ]);
+  const defaultAShareId = yield select(selectors.defaultAShareId);
+
+  if (defaultAShareId === 'own') {
+    yield call(
+      getResourceCollection,
+      actions.license.requestLicenses('Retrieving licenses')
+    );
+  }
 }
 
 export function* retrievingUserDetails() {
@@ -442,11 +446,11 @@ export function* linkWithGoogle({ returnTo }) {
 }
 
 export const authenticationSagas = [
-  takeEvery(actionTypes.INIT_SESSION, initializeSession),
-  takeEvery(actionTypes.AUTH_REQUEST, auth),
-  takeEvery(actionTypes.UI_VERSION_FETCH, fetchUIVersion),
-  takeEvery(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, signInWithGoogle),
-  takeEvery(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
-  takeEvery(actionTypes.AUTH_RE_SIGNIN_WITH_SSO, reSignInWithSSO),
-  takeEvery(actionTypes.AUTH_LINK_WITH_GOOGLE, linkWithGoogle),
+  takeEvery(actionTypes.AUTH.INIT_SESSION, initializeSession),
+  takeEvery(actionTypes.AUTH.REQUEST, auth),
+  takeEvery(actionTypes.APP.UI_VERSION_FETCH, fetchUIVersion),
+  takeEvery(actionTypes.AUTH.SIGNIN_WITH_GOOGLE, signInWithGoogle),
+  takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
+  takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_SSO, reSignInWithSSO),
+  takeEvery(actionTypes.AUTH.LINK_WITH_GOOGLE, linkWithGoogle),
 ];

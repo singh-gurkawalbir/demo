@@ -1,37 +1,24 @@
-import { useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
-import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import { selectors } from '../../reducers';
+import useAreResourcesLoaded from '../../hooks/useAreResourcesLoaded';
 
 export default function LoadResources({ children, resources, required }) {
   const dispatch = useDispatch();
-  const resourceStatus = useSelectorMemo(
-    selectors.makeAllResourceStatusSelector,
-    resources
-  );
-  const isAllDataReady = useMemo(
-    () =>
-      resourceStatus.reduce((acc, resourceStatus) => {
-        if (!resourceStatus.isReady) {
-          return false;
-        }
-
-        return acc;
-      }, true),
-    [resourceStatus]
-  );
+  const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
+  const { isAllDataReady, resourceStatus } = useAreResourcesLoaded(resources);
 
   useEffect(() => {
     if (!isAllDataReady) {
       resourceStatus.forEach(resource => {
         if (!resource.hasData) {
+          if (resource.resourceType === 'recycleBinTTL' && !defaultAShareId) return;
           dispatch(actions.resource.requestCollection(resource.resourceType));
         }
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, isAllDataReady]);
+  }, [dispatch, isAllDataReady, resources, defaultAShareId]);
 
   if (isAllDataReady || !required) {
     return children || null;

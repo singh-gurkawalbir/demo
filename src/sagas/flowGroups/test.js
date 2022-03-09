@@ -225,7 +225,7 @@ describe('addFlowGroup saga', () => {
       .run()
   );
 
-  test('If updateIntegrationFlowGroups returns an error, should not call updateFlowsWithFlowGroupId and dispatch createOrUpdate and asyncTask failed action', () =>
+  test('If updateIntegrationFlowGroups returns an error, should not call updateFlowsWithFlowGroupId and dispatch createOrUpdate and asyncTask failed actions', () =>
     expectSaga(addFlowGroup, { integrationId, groupName, flowIds, formKey })
       .provide([
         [select(selectors.resource, 'integrations', integrationId), integration],
@@ -233,7 +233,7 @@ describe('addFlowGroup saga', () => {
       ])
       .call(updateIntegrationFlowGroups, { integrationId, payload })
       .not.call.fn(updateFlowsWithFlowGroupId)
-      .put(actions.resource.integrations.flowGroups.createOrUpdateFailed(apiError))
+      .put(actions.resource.integrations.flowGroups.createOrUpdateFailed(integrationId, apiError))
       .put(actions.asyncTask.failed(formKey))
       .not.put(actions.asyncTask.success(formKey))
       .run()
@@ -248,7 +248,7 @@ describe('addFlowGroup saga', () => {
       ])
       .call(updateIntegrationFlowGroups, { integrationId, payload })
       .call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId })
-      .put(actions.resource.integrations.flowGroups.createOrUpdateFailed(apiError))
+      .put(actions.resource.integrations.flowGroups.createOrUpdateFailed(integrationId, apiError))
       .put(actions.asyncTask.failed(formKey))
       .not.put(actions.asyncTask.success(formKey))
       .run()
@@ -298,7 +298,7 @@ describe('editFlowGroup saga', () => {
       ])
       .call(patchIntegrationChanges, { integrationId, flowGroupings })
       .not.call.fn(updateFlowsWithFlowGroupId)
-      .put(actions.resource.integrations.flowGroups.createOrUpdateFailed(apiError))
+      .put(actions.resource.integrations.flowGroups.createOrUpdateFailed(integrationId, apiError))
       .put(actions.asyncTask.failed(formKey))
       .not.put(actions.asyncTask.success(formKey))
       .run()
@@ -334,7 +334,7 @@ describe('editFlowGroup saga', () => {
       .not.call.fn(patchIntegrationChanges)
       .call(updateFlowsWithFlowGroupId, { flowIds, flowGroupId })
       .not.call(updateFlowsWithFlowGroupId, { flowIds: deSelectedFlowIds, flowGroupId: undefined })
-      .put(actions.resource.integrations.flowGroups.createOrUpdateFailed(apiError))
+      .put(actions.resource.integrations.flowGroups.createOrUpdateFailed(integrationId, apiError))
       .put(actions.asyncTask.failed(formKey))
       .not.put(actions.asyncTask.success(formKey))
       .run()
@@ -465,7 +465,7 @@ describe('deleteFlowGroup saga', () => {
       ])
       .call(updateFlowsWithFlowGroupId, { flowIds })
       .call(patchIntegrationChanges, { integrationId, flowGroupings })
-      .put(actions.resource.integrations.flowGroups.deleteFailed(apiError))
+      .put(actions.resource.integrations.flowGroups.deleteFailed(integrationId, apiError))
       .run()
   );
 
@@ -477,7 +477,7 @@ describe('deleteFlowGroup saga', () => {
       ])
       .call(updateFlowsWithFlowGroupId, { flowIds })
       .not.call.fn(patchIntegrationChanges)
-      .put(actions.resource.integrations.flowGroups.deleteFailed(apiError))
+      .put(actions.resource.integrations.flowGroups.deleteFailed(integrationId, apiError))
       .run()
   );
 });
@@ -517,7 +517,7 @@ describe('flowGroupsShiftOrder saga', () => {
         [call(patchIntegrationChanges, { integrationId, flowGroupings })],
       ])
       .call(patchIntegrationChanges, { integrationId, flowGroupings })
-      .not.put(actions.resource.integrations.flowGroups.createOrUpdateFailed(apiError))
+      .not.put(actions.resource.integrations.flowGroups.createOrUpdateFailed(integrationId, apiError))
       .run()
   );
   test('If patchIntegrationChanges call returns response with error, should dispatch flowGroups createOrUpdateFailed action', () =>
@@ -527,7 +527,7 @@ describe('flowGroupsShiftOrder saga', () => {
         [call(patchIntegrationChanges, { integrationId, flowGroupings }), {error: apiError}],
       ])
       .call(patchIntegrationChanges, { integrationId, flowGroupings })
-      .put(actions.resource.integrations.flowGroups.createOrUpdateFailed(apiError))
+      .put(actions.resource.integrations.flowGroups.createOrUpdateFailed(integrationId, apiError))
       .run()
   );
 });

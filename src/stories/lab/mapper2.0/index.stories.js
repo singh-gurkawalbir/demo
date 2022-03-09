@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import DemoTree from './Prototype';
-import withRouter from '../globalSearch/withRouter';
+import withRouter from '../../components/globalSearch/withRouter';
 
 export default {
   title: 'Lab/Mapper 2.0',

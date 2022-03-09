@@ -1,12 +1,11 @@
 import { Collapse, List } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import React, { Fragment, useMemo } from 'react';
+import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
-import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
-import menuItems from '../menuItems';
 import MemoNavItem from '../NavListItem';
+import useResourceListItems from '../../../hooks/useSidebarListItems';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -98,50 +97,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const integrationsFilterConfig = {
-  type: 'integrations',
-  ignoreEnvironmentFilter: true,
-};
-
 export default function () {
   const classes = useStyles();
-  const userProfile = useSelector(state => selectors.userProfile(state));
-  const canUserPublish = useSelector(state => selectors.canUserPublish(state));
-  const accessLevel = useSelector(
-    state => selectors.resourcePermissions(state).accessLevel
-  );
-  const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isOwnerUserInErrMgtTwoDotZero(state)
-  );
-  const integrations = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    integrationsFilterConfig
-  ).resources;
-  const environment = useSelector(
-    state => selectors.userPreferences(state).environment
-  );
-
   const expand = useSelector(state => selectors.expandSelected(state));
-  const isSandbox = environment === 'sandbox';
-  const marketplaceConnectors = useSelectorMemo(
-    selectors.makeMarketPlaceConnectorsSelector,
-    undefined,
-    isSandbox
-  );
-
-  const listItemsMemo = useMemo(() => menuItems(
-    userProfile,
-    accessLevel,
-    integrations,
-    canUserPublish,
-    marketplaceConnectors,
-    isUserInErrMgtTwoDotZero),
-  [userProfile, accessLevel, integrations, canUserPublish, marketplaceConnectors, isUserInErrMgtTwoDotZero]);
+  const listItems = useResourceListItems();
 
   return (
 
     <List className={clsx(classes.list)}>
-      {listItemsMemo.map(({ label, Icon, path, routeProps, children: navChildren, href, component, dataTest }) => (
+      {listItems.map(({ label, Icon, path, routeProps, children: navChildren, href, component, dataTest }) => (
         <Fragment key={label}>
           <MemoNavItem
             isParentNavItem

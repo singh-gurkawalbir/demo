@@ -208,10 +208,12 @@ export default (state = {}, action) => {
         }
         break;
       case actionTypes.MAPPING.PREVIEW_REQUESTED:
-        if (draft.mapping.preview) {
-          draft.mapping.preview.status = 'requested';
-        } else {
-          draft.mapping.preview = { status: 'requested' };
+        if (draft.mapping) {
+          if (draft.mapping.preview) {
+            draft.mapping.preview.status = 'requested';
+          } else {
+            draft.mapping.preview = { status: 'requested' };
+          }
         }
         break;
       case actionTypes.MAPPING.PREVIEW_RECEIVED:
@@ -332,7 +334,7 @@ selectors.mappingChanged = state => {
       lookupsCopy.length !== lookups.length || lookupsDiff.length;
   }
 
-  return isMappingsChanged;
+  return !!isMappingsChanged;
 };
 
 // #region PUBLIC SELECTORS

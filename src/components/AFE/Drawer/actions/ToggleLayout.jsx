@@ -1,8 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles, MenuItem, Select } from '@material-ui/core';
-// TODO: @Azhar, can you fix this to use our own icon?
-import ViewRowIcon from '@material-ui/icons/HorizontalSplit';
+import ViewRowIcon from '../../../icons/VerticalLayoutIcon';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import ViewColumnIcon from '../../../icons/LayoutTriVerticalIcon';
