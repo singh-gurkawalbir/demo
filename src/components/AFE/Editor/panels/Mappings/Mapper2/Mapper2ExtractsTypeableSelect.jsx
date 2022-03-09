@@ -175,6 +175,7 @@ const TreeExtracts = (
     setInputValue(newValue);
     onBlur(newValue);
     setIsFocused(false);
+    e.nativeEvent.stopImmediatePropagation();
   }, [inputValue, isArrayType, onBlur, setInputValue, setIsFocused, setSrcDataType]);
 
   const onExpand = useCallback((expandedKeys, {nativeEvent}) => {
@@ -214,40 +215,41 @@ const TreeExtracts = (
   );
 };
 
-export default function Mapper2ExtractsTypeableSelect(props) {
-  const {
-    dataType: destDataType = 'string',
-    id,
-    disabled,
-    isLoggable,
-    value: propValue = '',
-    importId,
-    flowId,
-    onBlur,
-  } = props;
-
+export default function Mapper2ExtractsTypeableSelect({
+  dataType: destDataType = 'string',
+  id,
+  disabled,
+  isLoggable,
+  value: propValue = '',
+  importId,
+  flowId,
+  onBlur,
+  isLookup,
+  isHardCodedValue,
+  isHandlebarExp,
+}) {
   const classes = useStyles();
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState(propValue);
-  const [srcDataType, setSrcDataType] = useState('string');
+  const [srcDataType, setSrcDataType] = useState();
   const containerRef = useRef();
 
-  const handleChange = event => {
+  const handleChange = useCallback(event => {
     setInputValue(event.target.value);
-  };
+  }, []);
 
-  const handleFocus = e => {
+  const handleFocus = useCallback(e => {
     e.stopPropagation();
     const { value } = e.target;
 
     e.target.setSelectionRange(value.length, value.length);
     setIsFocused(true);
-  };
+  }, []);
 
-  const handleBlur = () => {
+  const handleBlur = useCallback(() => {
     setIsFocused(false);
     onBlur(inputValue);
-  };
+  }, [inputValue, onBlur]);
 
   useOnClickOutside(containerRef, isFocused && handleBlur);
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
@@ -286,7 +288,7 @@ export default function Mapper2ExtractsTypeableSelect(props) {
       </Tooltip >
 
       {/* only render tree component if its focussed and not disabled */}
-      {isFocused && !disabled && (
+      {isFocused && !disabled && !isLookup && !isHardCodedValue && !isHandlebarExp && (
       <TreeExtracts
         id={id}
         destDataType={destDataType}

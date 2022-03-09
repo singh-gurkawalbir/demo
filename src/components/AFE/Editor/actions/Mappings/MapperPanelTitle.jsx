@@ -14,6 +14,7 @@ import CeligoSelect from '../../../../CeligoSelect';
 import ArrowDownIcon from '../../../../icons/ArrowDownIcon';
 import { ROWS_AS_INPUT_OPTIONS, RECORD_AS_INPUT_OPTIONS, getInputOutputFormat } from '../../../../../utils/mapping';
 import ActionGroup from '../../../../ActionGroup';
+import Spinner from '../../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -56,6 +57,17 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
     };
   }, shallowEqual);
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
+
+  const isExtractsLoading = useSelector(state => {
+    const extractStatus = selectors.getSampleDataContext(state, {
+      flowId,
+      resourceId: importId,
+      stage: 'importMappingExtract',
+      resourceType: 'imports',
+    }).status;
+
+    return extractStatus === 'requested';
+  });
 
   const handleRefreshFlowDataClick = useCallback(
     () => {
@@ -120,7 +132,9 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
 
         <TextButton
           data-test="refreshExtracts"
-          startIcon={<RefreshIcon />}
+          startIcon={isExtractsLoading ? (
+            <Spinner size="small" />
+          ) : <RefreshIcon />}
           disabled={disabled}
           onClick={handleRefreshFlowDataClick}
           className={classes.refresh}

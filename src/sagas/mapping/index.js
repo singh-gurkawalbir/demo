@@ -166,6 +166,8 @@ export function* mappingInit({
   if (!importResource) {
     return yield put(actions.mapping.initFailed());
   }
+  const flowResource = yield select(selectors.resource, 'flows', flowId);
+
   const {assistant: resourceAssistant, _connectionId} = importResource;
   const connection = yield select(selectors.resource, 'connections', _connectionId);
   const connectionAssistant = getAssistantFromConnection(resourceAssistant, connection);
@@ -253,18 +255,32 @@ export function* mappingInit({
     return {...lookup, isConditionalLookup: !!isConditionalLookup};
   });
 
-  const isMonitorLevelAccess = yield select(selectors.isFormAMonitorLevelAccess, importResource._integrationId);
-  const {mappingsTreeData, v2MappingsCopy} = getV2MappingsForResource({
-    importResource,
-    isFieldMapping: false,
-    isGroupedSampleData,
-    isPreviewSuccess,
-    options,
-    exportResource,
-    disabled: isMonitorLevelAccess,
-  });
-  // todo ashu
-  // const lookups12 = lookupUtil.getLookupFromResource(importResource) || [];
+  const isMonitorLevelAccess = yield select(selectors.isFormAMonitorLevelAccess, flowResource?._integrationId);
+
+  let version = 1;
+  let v2Output = {};
+
+  // IAs, non http/rest don't support mapper2
+  if (!importResource._connectorId && (importResource.adaptorType === 'HTTPImport' || importResource.adaptorType === 'RESTImport')) {
+    v2Output = getV2MappingsForResource({
+      importResource,
+      isFieldMapping: false,
+      isGroupedSampleData,
+      isPreviewSuccess,
+      options,
+      exportResource,
+      disabled: isMonitorLevelAccess,
+    });
+    // todo ashu
+    // const lookups12 = lookupUtil.getLookupFromResource(importResource) || [];
+    const {v2Mappings} = v2Output;
+
+    if (
+      v2Mappings?.length && !(v2Mappings.length === 1 && v2Mappings[0].isEmptyRow)
+    ) {
+      version = 2;
+    }
+  }
 
   yield put(
     actions.mapping.initComplete({
@@ -273,12 +289,14 @@ export function* mappingInit({
         key: shortid.generate(),
       })),
       lookups,
-      v2TreeData: mappingsTreeData,
-      v2Mappings: v2MappingsCopy,
+      v2TreeData: v2Output.mappingsTreeData,
+      v2Mappings: v2Output.v2Mappings,
+      version,
       flowId,
       importId,
       subRecordMappingId,
       isGroupedSampleData,
+      isMonitorLevelAccess,
     })
   );
   yield call(refreshGenerates, {isInit: true});

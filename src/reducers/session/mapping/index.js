@@ -1,9 +1,10 @@
 import shortid from 'shortid';
 import produce from 'immer';
-import { differenceWith, isEqual } from 'lodash';
+import { differenceWith, isEqual, isEmpty } from 'lodash';
 import deepClone from 'lodash/cloneDeep';
+import { nanoid } from 'nanoid';
 import actionTypes from '../../../actions/types';
-import {isMappingEqual} from '../../../utils/mapping';
+import {isMappingEqual, findNodeInTree, PRIMITIVE_DATA_TYPES, ARRAY_DATA_TYPES} from '../../../utils/mapping';
 
 const emptyObj = {};
 const emptyArr = [];
@@ -17,8 +18,6 @@ export default (state = {}, action) => {
     value,
     mappings,
     lookups,
-    v2TreeData,
-    v2Mappings,
     flowId,
     importId,
     subRecordMappingId,
@@ -28,8 +27,16 @@ export default (state = {}, action) => {
     isGroupedSampleData,
     failMsg,
     failSeverity,
-    version,
     outputFormat,
+    newVersion,
+    v2TreeData,
+    v2Mappings,
+    v2Key,
+    newDataType,
+    isMonitorLevelAccess,
+    dragDropInfo,
+    version,
+    expanded,
   } = action;
 
   return produce(state, draft => {
@@ -54,6 +61,8 @@ export default (state = {}, action) => {
           subRecordMappingId,
           status: 'received',
           isGroupedSampleData,
+          isMonitorLevelAccess,
+          version,
           mappingsCopy: deepClone(mappings),
           lookupsCopy: deepClone(lookups),
           v2MappingsCopy: deepClone(v2Mappings),
@@ -312,14 +321,204 @@ export default (state = {}, action) => {
 
       case actionTypes.MAPPING.TOGGLE_VERSION:
         if (!draft.mapping) break;
-        draft.mapping.version = version;
+        draft.mapping.version = newVersion;
         break;
 
-      case actionTypes.MAPPING.V2.TOGGLE_OUTPUT:
+      case actionTypes.MAPPING.V2.TOGGLE_OUTPUT: {
         if (!draft.mapping) break;
+
+        const oldFormat = draft.mapping.isGroupedOutput;
+
         draft.mapping.isGroupedOutput = outputFormat === 'rows';
 
+        if (oldFormat === outputFormat) break;
+
+        if (outputFormat === 'rows') {
+          // top disabled row already exists
+          if (draft.mapping.v2TreeData[0]?.generateDisabled) break;
+
+          const newRowKey = nanoid();
+          const node = {
+            key: newRowKey,
+            title: '',
+            dataType: 'objectarray',
+            generateDisabled: true,
+            disabled: draft.mapping.isMonitorLevelAccess,
+            children: deepClone(draft.mapping.v2TreeData),
+          };
+
+          draft.mapping.v2TreeData = [node];
+          // todo ashu should expand this node
+        } else {
+          // top disabled row does not exist
+          if (!draft.mapping.v2TreeData[0]?.generateDisabled) break;
+
+          const children = draft.mapping.v2TreeData[0]?.children;
+
+          draft.mapping.v2TreeData = deepClone(children);
+        }
+
         break;
+      }
+
+      case actionTypes.MAPPING.V2.TOGGLE_ROWS:
+        if (!draft.mapping) break;
+        draft.mapping.expandAll = expanded;
+        draft.mapping.toggleCount = (draft.mapping.toggleCount || 0) + 1;
+        break;
+
+      case actionTypes.MAPPING.V2.DELETE_ROW: {
+        if (!draft.mapping) break;
+
+        const {nodeSubArray, nodeIndexInSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
+
+        if (nodeIndexInSubArray >= 0) {
+          nodeSubArray.splice(nodeIndexInSubArray, 1);
+
+          // add empty row if all the mappings have been deleted
+          if (isEmpty(draft.mapping.v2TreeData)) {
+            const newRowKey = nanoid();
+
+            draft.mapping.v2TreeData.push({
+              key: newRowKey,
+              title: '',
+              dataType: 'string',
+              disabled: draft.mapping.isMonitorLevelAccess,
+            });
+          }
+        }
+
+        // todo ashu delete from v2Mappings as well
+        break;
+      }
+
+      case actionTypes.MAPPING.V2.ADD_ROW: {
+        if (!draft.mapping) break;
+
+        const {node, nodeSubArray, nodeIndexInSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
+
+        if (nodeIndexInSubArray >= 0) {
+          const newRowKey = nanoid();
+
+          nodeSubArray.splice(nodeIndexInSubArray + 1, 0, {
+            key: newRowKey,
+            title: '',
+            parentKey: node.parentKey,
+            parentExtract: node.parentExtract,
+            dataType: 'string',
+          });
+        }
+
+        // todo ashu add in v2Mappings as well
+        break;
+      }
+
+      case actionTypes.MAPPING.V2.UPDATE_DATA_TYPE: {
+        if (!draft.mapping) break;
+
+        const {node} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
+
+        if (isEmpty(node)) break;
+
+        node.dataType = newDataType;
+        // node.expanded = true;
+
+        const newRowKey = nanoid();
+
+        if (newDataType === 'object' || newDataType === 'objectarray' || newDataType === 'arrayarray') {
+          if (isEmpty(node.children)) {
+            node.children = [{
+              key: newRowKey,
+              title: '',
+              parentKey: node.key,
+              parentExtract: node.extract,
+              dataType: 'string',
+            }];
+          }
+          break;
+        }
+        // now handle the primitive data types or which can not have children
+        if (PRIMITIVE_DATA_TYPES.includes(newDataType) || ARRAY_DATA_TYPES.includes(newDataType)) {
+          if (!isEmpty(node.children)) {
+            delete node.children;
+          }
+        }
+
+        // todo ashu update in v2Mappings as well
+        break;
+      }
+
+      case actionTypes.MAPPING.V2.DRAG_DROP: {
+        if (!draft.mapping) break;
+
+        const {node: dropNode, dragNode} = dragDropInfo;
+        const dropKey = dropNode.key;
+        const dragKey = dragNode.key;
+        const dragParentKey = dragNode.parentKey;
+        const dropPos = dropNode.pos.split('-');
+        const dragPos = dragNode.pos.split('-');
+        const dragNodeIndex = Number(dragPos[dragPos.length - 1]);
+        const dropNodeIndex = Number(dropPos[dropPos.length - 1]);
+        const dropPosition = dragDropInfo.dropPosition - dropNodeIndex;
+
+        const {v2TreeData} = draft.mapping;
+
+        // Find dragObject and remove from current position
+        const {node: dragObj, nodeSubArray: dragSubArr, nodeIndexInSubArray: dragSubArrIndex} = findNodeInTree(v2TreeData, 'key', dragKey);
+
+        dragSubArr.splice(dragSubArrIndex, 1);
+
+        // find drop position
+        const {nodeSubArray: dropSubArr, nodeIndexInSubArray: dropSubArrIndex } = findNodeInTree(v2TreeData, 'key', dropKey);
+
+        // child node is being dragged and dropped at top (0th index) of the children list
+        if (dropPosition === 0 && dragParentKey === dropKey) {
+          const hasTabbedRow = dropNode.multipleSources;
+
+          // if child is already at 0th position, nothing to do
+          if (dragNodeIndex === 0 || (hasTabbedRow && dragNodeIndex === 1)) return;
+          const {children = []} = dropSubArr[dropNodeIndex];
+
+          // retain the tabbed row
+          if (hasTabbedRow) {
+            children.splice(1, 0, dragObj);
+          } else {
+            children.unshift(dragObj);
+          }
+        } else if (dropPosition === -1) { // drag obj inserted before drop node
+          if (dropSubArrIndex === dragNodeIndex) return;
+
+          dropSubArr.splice(dropSubArrIndex, 0, dragObj);
+        } else { // drag obj inserted after drop node
+          if (dropSubArrIndex + 1 === dragNodeIndex) return;
+
+          dropSubArr.splice(dropSubArrIndex + 1, 0, dragObj);
+        }
+
+        // todo ashu add in v2Mappings as well
+        break;
+      }
+
+      case actionTypes.MAPPING.V2.PATCH_FIELD: {
+        if (!draft.mapping) break;
+        const {node} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
+
+        if (node) {
+          if (field === 'extract') {
+            if (value.indexOf('"') === 0) {
+              delete node.extract;
+              node.hardCodedValue = value.replace(/(^")|("$)/g, '');
+            } else {
+              delete node.hardCodedValue;
+              node.extract = value;
+            }
+          } else {
+            node[field] = value;
+          }
+        }
+
+        break;
+      }
 
       default:
     }
@@ -391,5 +590,5 @@ selectors.mappingVersion = state => {
     return;
   }
 
-  return state.mapping.version || 1;
+  return state.mapping.version;
 };

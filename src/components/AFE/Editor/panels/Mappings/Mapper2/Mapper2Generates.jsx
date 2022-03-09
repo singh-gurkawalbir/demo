@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, Tooltip, MenuItem } from '@material-ui/core';
 import isLoggableAttr from '../../../../../../utils/isLoggableAttr';
@@ -75,6 +75,7 @@ export default function Mapper2Generates(props) {
     dataType: destDataType = 'string',
     id,
     disabled,
+    generateDisabled,
     isLoggable,
     value: propValue = '',
     onDataTypeChange,
@@ -85,29 +86,30 @@ export default function Mapper2Generates(props) {
   const [inputValue, setInputValue] = useState(propValue);
   const containerRef = useRef();
 
-  const handleChange = event => {
+  const handleChange = useCallback(event => {
     setInputValue(event.target.value);
-  };
+  }, []);
 
-  const handleFocus = e => {
+  const handleFocus = useCallback(e => {
     e.stopPropagation();
     const { value } = e.target;
 
     e.target.setSelectionRange(value.length, value.length);
     setIsFocused(true);
-  };
+  }, []);
 
-  const handleBlur = () => {
+  const handleBlur = useCallback(() => {
     setIsFocused(false);
     onBlur(inputValue);
-  };
+  }, [inputValue, onBlur]);
 
   useOnClickOutside(containerRef, isFocused && handleBlur);
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
 
   // todo ashu only show tooltip when length is big
   // eslint-disable-next-line no-nested-ternary
-  const toolTipTitle = isFocused ? '' : (!inputValue ? 'Destination record field' : inputValue);
+  const toolTipTitle = (isFocused || generateDisabled) ? '' : (!inputValue ? 'Destination record field' : inputValue);
+  const isDisabled = generateDisabled || disabled;
 
   return (
     <FormControl
@@ -126,23 +128,27 @@ export default function Mapper2Generates(props) {
             value={inputValue}
             onChange={handleChange}
             onFocus={handleFocus}
-            disabled={disabled}
+            disabled={isDisabled}
             multiline={isFocused}
-            placeholder="Destination record field"
+            placeholder={!generateDisabled && 'Destination record field'}
    />
         </Tooltip >
-        <CeligoSelect
-          disabled={disabled}
-          className={classes.dataType}
-          onChange={onDataTypeChange}
-          displayEmpty
-          value={destDataType} >
-          {DATA_TYPES_OPTIONS.map(opt => (
-            <MenuItem key={opt.id} value={opt.id}>
-              {opt.label}
-            </MenuItem>
-          ))}
-        </CeligoSelect>
+
+        {/* todo ashu tooltip does not work for celigo select */}
+        <Tooltip disableFocusListener title={`Data type:${destDataType} - Click to change`} placement="bottom" >
+          <CeligoSelect
+            disabled={isDisabled}
+            className={classes.dataType}
+            onChange={onDataTypeChange}
+            displayEmpty
+            value={destDataType} >
+            {DATA_TYPES_OPTIONS.map(opt => (
+              <MenuItem key={opt.id} value={opt.id}>
+                {opt.label}
+              </MenuItem>
+            ))}
+          </CeligoSelect>
+        </Tooltip>
       </div>
     </FormControl>
   );

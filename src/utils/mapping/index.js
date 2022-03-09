@@ -1684,11 +1684,13 @@ export function generateTreeFromV2Mappings(mappings, disabled) {
     isEmptyRow: true,
     title: '',
     disabled,
+    dataType: 'string',
   }];
 
   if (isEmpty(mappings)) {
     mappings.push({
       key: emptyRowKey,
+      dataType: 'string',
     });
 
     return emptyMappingsTree;
@@ -1941,48 +1943,48 @@ const mappings_record_to_record = {
         },
       ],
     },
-    {
-      generate: 'my_nephews_and_nieces_but_maintain_arrays_of_siblings',
-      dataType: 'arrayarray',
-      buildArrayHelper: [
-        {
-          extract: '$.siblings[*]',
-          mappings: [
-            {
-              dataType: 'objectarray',
-              buildArrayHelper: [
-                {
-                  extract: '$.siblings.children[*]',
-                  mappings: [
-                    {
-                      generate: 'first_name',
-                      dataType: 'string',
-                      extract: '$.siblings.children.firstName',
-                    },
-                    {
-                      generate: 'last_name',
-                      dataType: 'string',
-                      extract: '$.siblings.lName',
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
+    // {
+    //   generate: 'my_nephews_and_nieces_but_maintain_arrays_of_siblings',
+    //   dataType: 'arrayarray',
+    //   buildArrayHelper: [
+    //     {
+    //       extract: '$.siblings[*]',
+    //       mappings: [
+    //         {
+    //           dataType: 'objectarray',
+    //           buildArrayHelper: [
+    //             {
+    //               extract: '$.siblings.children[*]',
+    //               mappings: [
+    //                 {
+    //                   generate: 'first_name',
+    //                   dataType: 'string',
+    //                   extract: '$.siblings.children.firstName',
+    //                 },
+    //                 {
+    //                   generate: 'last_name',
+    //                   dataType: 'string',
+    //                   extract: '$.siblings.lName',
+    //                 },
+    //               ],
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // },
   ],
 };
-export const getV2MappingsForResource = (
+export const getV2MappingsForResource = ({
   importResource,
   // isFieldMapping = false,
-  isGroupedSampleData,
-  isPreviewSuccess,
+  // isGroupedSampleData,
+  // isPreviewSuccess,
   // options = {},
-  exportResource,
-  disabled
-) => {
+  // exportResource,
+  disabled,
+}) => {
   if (!importResource) {
     return;
   }
@@ -1998,7 +2000,7 @@ export const getV2MappingsForResource = (
 
   const mappingsTreeData = generateTreeFromV2Mappings(v2MappingsCopy, disabled);
 
-  return {mappingsTreeData, v2MappingsCopy};
+  return {mappingsTreeData, v2Mappings: v2MappingsCopy};
 };
 
 export function allowDrop({ dragNode, dropNode, dropPosition }) {
@@ -2023,34 +2025,33 @@ export function allowDrop({ dragNode, dropNode, dropPosition }) {
   return true;
 }
 
-export const findNode = (data, prop, key, callback) => {
-  data.forEach((item, index, arr) => {
-    if (item[prop] === key) {
-      callback(item, index, arr);
-
-      return;
-    }
-    if (item.children) {
-      findNode(item.children, prop, key, callback);
-    }
-  });
-};
-
-export const findNodeFromJsonPath = (data, key) => {
+export const findNodeInTree = (data, prop, value) => {
   let node;
+  let nodeSubArray;
+  let nodeIndexInSubArray;
 
-  forEach(data, item => {
-    if (item.jsonPath === key) {
+  forEach(data, (item, i, arr) => {
+    if (item[prop] === value) {
       node = item;
+      nodeSubArray = arr;
+      nodeIndexInSubArray = i;
 
+      // if found exit from loop
       return false;
     }
     if (item.children) {
-      node = findNodeFromJsonPath(item.children, key);
+      const returnToParent = findNodeInTree(item.children, prop, value);
+
+      node = returnToParent.node;
+      nodeSubArray = returnToParent.nodeSubArray;
+      nodeIndexInSubArray = returnToParent.nodeIndexInSubArray;
+
+      // if found exit from loop
+      if (node) return false;
     }
   });
 
-  return node;
+  return {node, nodeSubArray, nodeIndexInSubArray};
 };
 
 export const TYPEOF_TO_DATA_TYPE = {
@@ -2211,7 +2212,7 @@ export const filterExtractsNode = (node, propValue, inputValue) => {
 // and returns the final input after user selects a node
 export const getFinalSelectedExtracts = (node, inputValue, isArrayType) => {
   const {jsonPath = ''} = node;
-  const fullJsonPath = `$.${jsonPath}`;
+  const fullJsonPath = jsonPath ? `$.${jsonPath}` : '$';
   let newValue = fullJsonPath;
 
   const splitByComma = inputValue.split(',');

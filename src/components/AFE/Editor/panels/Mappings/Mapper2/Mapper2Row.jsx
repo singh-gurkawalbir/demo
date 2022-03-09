@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import isEqual from 'lodash/isEqual';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import ActionButton from '../../../../../ActionButton';
 import TrashIcon from '../../../../../icons/TrashIcon';
@@ -14,6 +13,7 @@ import Mapper2ExtractsTypeableSelect from './Mapper2ExtractsTypeableSelect';
 import {selectors} from '../../../../../../reducers';
 import Mapper2Generates from './Mapper2Generates';
 import actions from '../../../../../../actions';
+import MultiFieldIcon from '../../../../../icons/MultiFieldIcon';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -59,20 +59,17 @@ const RightIcon = ({title, Icon, className}) => {
 };
 
 const Mapper2Row = React.memo(({
-  rowData,
+  nodeKey,
+  combinedExtract,
+  extract,
+  generate,
+  hardCodedValue,
+  dataType,
+  lookupName,
+  disabled,
+  generateDisabled,
 }) => {
   const classes = useStyles();
-
-  const {
-    key,
-    combinedExtract,
-    extract,
-    generate,
-    hardCodedValue,
-    dataType,
-    lookupName,
-    disabled,
-  } = rowData;
   const dispatch = useDispatch();
   const {flowId,
     importId, subRecordMappingId} = useSelector(state => {
@@ -85,68 +82,23 @@ const Mapper2Row = React.memo(({
     };
   }, shallowEqual);
 
-  // const newTreeData = useMemo(() => [...treeData], [treeData]);
-
-  // const {nodeSubArray, nodeIndexInSubArray} = useMemo(() => {
-  //   let ar;
-  //   let i;
-
-  //   findNode(newTreeData, 'key', key, (item, index, arr) => {
-  //     ar = arr;
-  //     i = index;
-  //   });
-
-  //   return {nodeSubArray: ar, nodeIndexInSubArray: i};
-  // }, [key, newTreeData]);
-
-  // all these functions logic would be handled in data layer
-  // the goal is to update the 'treeData' so it gets rendered again
   const handleDeleteClick = useCallback(() => {
-    // nodeSubArray.splice(nodeIndexInSubArray, 1);
-    dispatch(actions.mapping.v2.deleteRow(key));
-    // setTreeData(newTreeData);
-  }, [dispatch, key]);
+    dispatch(actions.mapping.v2.deleteRow(nodeKey));
+  }, [dispatch, nodeKey]);
 
   const addNewRowHandler = useCallback(() => {
-    // const currRow = nodeSubArray[nodeIndexInSubArray];
-
-    // nodeSubArray.splice(nodeIndexInSubArray + 1, 0, {
-    //   key: nanoid(),
-    //   parentKey: currRow.parentKey,
-    //   parentExtract: currRow.parentExtract,
-    //   dataType: 'string',
-    // });
-    dispatch(actions.mapping.v2.addRow(key));
-    // setTreeData(newTreeData);
-  }, [dispatch, key]);
+    dispatch(actions.mapping.v2.addRow(nodeKey));
+  }, [dispatch, nodeKey]);
 
   const onDataTypeChange = useCallback(e => {
     const newDataType = e.target.value;
-    // const currRow = nodeSubArray[nodeIndexInSubArray];
 
-    // currRow.dataType = newDataType;
-    // currRow.expanded = true;
-
-    // if (newDataType === 'object' || newDataType === 'objectarray') {
-    //   if (isEmpty(currRow.children)) {
-    //     currRow.children = [{
-    //       key: nanoid(),
-    //       parentKey: currRow.key,
-    //       parentExtract: currRow.extract,
-    //       dataType: 'string',
-    //     }];
-    //   }
-    //   // todo: what if newDataType is changed back to primitive
-    //   // should we remove the children??
-    //   // setTreeData(newTreeData);
-    // }
-
-    dispatch(actions.mapping.v2.updateDataType(key, newDataType));
-  }, [dispatch, key]);
+    dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType));
+  }, [dispatch, nodeKey]);
 
   const handleBlur = useCallback((field, value) => {
-    dispatch(actions.mapping.v2.patchField(field, key, value));
-  }, [dispatch, key]);
+    dispatch(actions.mapping.v2.patchField(field, nodeKey, value));
+  }, [dispatch, nodeKey]);
 
   const handleExtractBlur = useCallback(value => {
     handleBlur('extract', value);
@@ -156,22 +108,25 @@ const Mapper2Row = React.memo(({
     handleBlur('generate', value);
   }, [handleBlur]);
 
+  const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
   const extractValue = combinedExtract || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
   const isLookup = !!lookupName;
   const isHardCodedValue = !!hardCodedValue;
+  const isHandlebarExp = handlebarRegex.test(extract);
 
   return (
     <div
-      key={key}
+      key={nodeKey}
       className={classes.innerRowRoot}>
 
       <div className={classes.childHeader}>
         <Mapper2Generates
           isLoggable
-          key={`fieldMappingGenerate-${key}`}
-          id={`fieldMappingGenerate-${key}`}
+          key={`fieldMappingGenerate-${nodeKey}`}
+          id={`fieldMappingGenerate-${nodeKey}`}
           value={generate}
           disabled={disabled}
+          generateDisabled={generateDisabled}
           dataType={dataType}
           onBlur={handleGenerateBlur}
           onDataTypeChange={onDataTypeChange}
@@ -183,14 +138,17 @@ const Mapper2Row = React.memo(({
           <div className={classes.childHeader}>
             <Mapper2ExtractsTypeableSelect
               isLoggable
-              key={`fieldMappingExtract-${key}`}
-              id={`fieldMappingExtract-${key}`}
+              key={`fieldMappingExtract-${nodeKey}`}
+              id={`fieldMappingExtract-${nodeKey}`}
               value={extractValue}
               disabled={disabled}
               dataType={dataType}
               importId={importId}
               flowId={flowId}
               onBlur={handleExtractBlur}
+              isLookup={isLookup}
+              isHardCodedValue={isHardCodedValue}
+              isHandlebarExp={isHandlebarExp}
             />
           </div>
         </>
@@ -198,11 +156,12 @@ const Mapper2Row = React.memo(({
 
       <div className={classes.actionsMapping}>
         {isLookup && <RightIcon title="Lookup" Icon={LookupIcon} />}
+        {isHandlebarExp && !isLookup && <RightIcon title="Multi-field" Icon={MultiFieldIcon} />}
         {isHardCodedValue && !isLookup && <RightIcon title="Hard-coded" Icon={HardCodedIcon} />}
         <div>
           <MappingSettingsButton
-            dataTest={`fieldMappingSettings-${key}`}
-            mappingKey={key}
+            dataTest={`fieldMappingSettings-${nodeKey}`}
+            mappingKey={nodeKey}
             disabled={disabled}
             subRecordMappingId={subRecordMappingId}
             importId={importId}
@@ -210,16 +169,16 @@ const Mapper2Row = React.memo(({
           />
         </div>
 
-        <ActionButton onClick={addNewRowHandler} disabled={disabled}>
+        <ActionButton onClick={addNewRowHandler} disabled={generateDisabled || disabled}>
           <AddIcon />
         </ActionButton>
         <div
           key="delete_button"
           className={classes.deleteMapping}>
           <ActionButton
-            data-test={`fieldMappingRemove-${key}`}
+            data-test={`fieldMappingRemove-${nodeKey}`}
             aria-label="delete"
-            disabled={disabled}
+            disabled={generateDisabled || disabled}
             onClick={handleDeleteClick}
             className={classes.deleteBtn}>
             <TrashIcon />
@@ -228,12 +187,6 @@ const Mapper2Row = React.memo(({
       </div>
     </div>
   );
-},
-
-(prevProps, nextProps) => {
-  if (isEqual(prevProps, nextProps)) return true;
-
-  return false;
 });
 
 export default Mapper2Row;

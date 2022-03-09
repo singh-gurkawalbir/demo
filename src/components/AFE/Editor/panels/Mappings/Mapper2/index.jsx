@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Tree from 'rc-tree';
-import { useSelector } from 'react-redux';
+import {isEqual} from 'lodash';
+import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ArrowUpIcon from '../../../../../icons/ArrowUpIcon';
@@ -10,6 +11,7 @@ import {allowDrop} from '../../../../../../utils/mapping';
 import SettingsDrawer from '../../../../../Mapping/Settings';
 import {selectors} from '../../../../../../reducers';
 import Mapper2Row from './Mapper2Row';
+import actions from '../../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   treeRoot: {
@@ -90,93 +92,45 @@ export const SwitcherIcon = ({isLeaf, expanded}) => {
   );
 };
 
-const Row = props =>
-
-  (
-    <Mapper2Row
-      key={props.key}
-      // flowId={flowId}
-     // importId={importId}
-               // index={emptyRowIndex}
-      rowData={{...props}}
-                // disabled={disabled}
-                  />
-  );
-const drag = {
+const Row = props => (
+  <Mapper2Row {...props} key={`row-${props.key}`} nodeKey={props.key} />
+);
+const dragConfig = {
   icon: <SortableDragHandle isVisible draggable />,
   nodeDraggable: node => (!node.isTabNode && !node.disabled),
 };
 
 export default function Mapper2({editorId}) {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const [remountKey, setRemountKey] = useState(0);
+
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const treeData = useSelector(state => selectors.v2MappingsTreeData(state));
+  const treeData = useSelector(state => selectors.v2MappingsTreeData(state), isEqual);
 
-  // const onDropHandler = useCallback(info => {
-  //   const dropKey = info.node.key;
-  //   const dragKey = info.dragNode.key;
-  //   const dragParentKey = info.dragNode.parentKey;
-  //   const dropPos = info.node.pos.split('-');
-  //   const dragPos = info.dragNode.pos.split('-');
-  //   const dragNodeIndex = Number(dragPos[dragPos.length - 1]);
-  //   const dropNodeIndex = Number(dropPos[dropPos.length - 1]);
-  //   const dropPosition = info.dropPosition - dropNodeIndex;
+  const shouldExpandAll = useSelector(state => selectors.mapping(state)?.expandAll);
+  const toggleCount = useSelector(state => selectors.mapping(state)?.toggleCount);
 
-  //   const newTreeData = cloneDeep(treeData);
+  const onDropHandler = useCallback(info => {
+    dispatch(actions.mapping.v2.dropRow(info));
+  }, [dispatch]);
 
-  //   let dragObj;
-
-  //   // Find dragObject and remove from current position
-  //   findNode(newTreeData, 'key', dragKey, (item, index, arr) => {
-  //     arr.splice(index, 1);
-  //     dragObj = item;
-  //   });
-
-  //   let ar;
-  //   let i;
-
-  //   // find drop position and drop sub-array
-  //   findNode(newTreeData, 'key', dropKey, (item, index, arr) => {
-  //     ar = arr;
-  //     i = index;
-  //   });
-
-  //   // child node is being dragged and dropped at top (0th index) of the children list
-  //   if (dropPosition === 0 && dragParentKey === dropKey) {
-  //     const hasTabbedRow = info.node.multipleSources;
-
-  //     // if child is already at 0th position, nothing to do
-  //     if (dragNodeIndex === 0 || (hasTabbedRow && dragNodeIndex === 1)) return;
-  //     const {children = []} = ar[dropNodeIndex];
-
-  //     // retain the tabbed row
-  //     if (hasTabbedRow) {
-  //       children.splice(1, 0, dragObj);
-  //     } else {
-  //       children.unshift(dragObj);
-  //     }
-  //   } else if (dropPosition === -1) { // drag obj inserted before drop node
-  //     if (i === dragNodeIndex) return;
-
-  //     ar.splice(i, 0, dragObj);
-  //   } else { // drag obj inserted after drop node
-  //     if (i + 1 === dragNodeIndex) return;
-
-  //     ar.splice(i + 1, 0, dragObj);
-  //   }
-
-  //   setTreeData(newTreeData);
-  // }, [treeData]);
-
-  // console.log('treeData', treeData);
-  const onDragStart = ({event}) => {
+  // this function ensures the row can be dragged via the drag handle only
+  // and not from any other place
+  const onDragStart = useCallback(({event}) => {
     if (event.target.id !== 'dragHandle') {
       event.preventDefault();
     }
     const parent = event.target.parentNode.parentNode;
 
     event.dataTransfer.setDragImage(parent, 0, 0);
-  };
+  }, []);
+
+  // we want the tree to re-render if expand/collapse flag is changed
+  // defaultExpandAll prop of tree works only on mount hence re-mount is required
+  useEffect(() => {
+    setRemountKey(count => count + 1);
+  }, [toggleCount]);
 
   return treeData.length
     ? (
@@ -184,15 +138,18 @@ export default function Mapper2({editorId}) {
         <SettingsDrawer disabled={disabled} />
         <div className={classes.mappingDrawerContent}>
           <Tree
+            key={remountKey}
             className={classes.treeRoot}
+           // expandedKeys={} set this when data type is change to auto expand
             titleRender={Row}
             treeData={treeData}
             showLine
+            defaultExpandAll={shouldExpandAll}
             switcherIcon={SwitcherIcon}
             allowDrop={allowDrop}
-          // onDrop={onDropHandler}
+            onDrop={onDropHandler}
           // activeKey={treeData[0].key}
-            draggable={drag}
+            draggable={dragConfig}
             onDragStart={onDragStart}
             disabled={disabled}
           // height={500}
