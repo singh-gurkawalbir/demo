@@ -41,7 +41,7 @@ const getTabs = (isUserInErrMgtTwoDotZero, isAnyIntegratorConnectionOffline) => 
   {
     path: 'connections',
     label: 'Connections',
-    Icon: isAnyIntegratorConnectionOffline ? OfflineConnectionsIcon : ConnectionsIcon, // sdfsd
+    Icon: isAnyIntegratorConnectionOffline ? OfflineConnectionsIcon : ConnectionsIcon,
     Panel: ConnectionsPanel,
   },
   {
@@ -121,8 +121,7 @@ export function useAvailableTabs() {
     return {addOnStatus: addOnState.status,
       hasAddOns: addOnState?.addOns?.addOnMetaData?.length > 0};
   }, shallowEqual);
-  const isAnyIntegratorConnectionOffline = useSelectorMemo(selectors.mkIsAnyIntegratorConnectionOffline, childId || integrationId);
-
+  const isAnyIntegratorConnectionOffline = useSelector(state => selectors.isAnyIntegratorConnectionOffline(state, childId || integrationId));
   const isParent = childId === integrationId;
 
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
