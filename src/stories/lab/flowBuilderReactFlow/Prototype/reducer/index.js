@@ -146,7 +146,7 @@ export default function (state, action) {
 
         return;
       }
-      case actions.ADD_NEW_NODE: {
+      case actions.ADD_NEW_STEP: {
         handleAddNewNode(edgeId, draft);
 
         return;

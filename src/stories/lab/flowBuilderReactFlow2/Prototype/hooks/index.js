@@ -33,7 +33,7 @@ export const useHandleAddNode = edgeId => {
     const {flowNode, resourceNode} = getSomeNode(id, isPG);
     const resourceType = isPG ? 'exports' : 'imports';
 
-    setState({type: actions.ADD_NEW_NODE, resourceType, path, flowNode, resourceNode, flowId: flow._id});
+    setState({type: actions.ADD_NEW_STEP, resourceType, path, flowNode, resourceNode, flowId: flow._id});
   };
 };
 

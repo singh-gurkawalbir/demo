@@ -6,7 +6,7 @@ import { generateAnEmptyActualRouter, generateBranch } from '../metadata/nodeGen
 import { populateIds } from '../translateSchema';
 import { generateId } from '../lib';
 
-const addNewNode = (draft, action) => {
+const addNewStep = (draft, action) => {
   const { path, resourceType, flowNode, resourceNode, flowId } = action;
 
   const {session, data} = draft;
@@ -203,8 +203,8 @@ export default function (state, action) {
 
   return produce(state, draft => {
     switch (type) {
-      case actions.ADD_NEW_NODE: {
-        addNewNode(draft, action);
+      case actions.ADD_NEW_STEP: {
+        addNewStep(draft, action);
 
         return;
       }
