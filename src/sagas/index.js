@@ -138,6 +138,13 @@ export function* apiCallWithPaging(args) {
 
   const { data, headers } = response;
 
+  // restricting pagination for account level audit logs
+  // as the records could be huge
+  // this will be supported later when UI pagination is added
+  if (args.path === '/audit') {
+    return data;
+  }
+
   // BE only supports 'link' pagination for now
   const link = headers ? headers.get('link') : undefined;
 
@@ -220,9 +227,9 @@ export function* allSagas() {
 export default function* rootSaga() {
   const t = yield fork(allSagas);
   const {logrocket, logout, switchAcc} = yield race({
-    logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-    logout: take(actionsTypes.USER_LOGOUT),
-    switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC),
+    logrocket: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR),
+    logout: take(actionsTypes.AUTH.USER.LOGOUT),
+    switchAcc: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC),
   });
 
   // stop the main sagas

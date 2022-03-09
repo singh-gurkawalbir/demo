@@ -69,20 +69,20 @@ describe('account (ashares) reducers', () => {
         },
       },
     ];
-    const licenseTrailIssuedAction = actions.user.org.accounts.trialLicenseIssued({tier: 'free', trialEndDate: moment().add(30, 'days').toISOString(), type: 'LICENSE_TRIAL_ISSUED'}
+    const licenseTrailIssuedAction = actions.license.trialLicenseIssued({tier: 'free', trialEndDate: moment().add(30, 'days').toISOString(), type: 'LICENSE_TRIAL_ISSUED'}
     );
     const newState = reducer(state, licenseTrailIssuedAction);
 
     expect(newState).toEqual(output);
   });
   test('should return default state when trialLicenseIssued event is triggered and initial state in empty', () => {
-    const trialLicenseIssuedAction = actions.user.org.accounts.trialLicenseIssued();
+    const trialLicenseIssuedAction = actions.license.trialLicenseIssued();
     const newState = reducer(emptyList, trialLicenseIssuedAction);
 
     expect(newState).toEqual(emptyList);
   });
   test('should return default state when trialLicenseIssued event is triggered and initial state does not contain endpoint or integrator license', () => {
-    const licenseTrailIssuedAction = actions.user.org.accounts.trialLicenseIssued({tier: 'free', trialEndDate: moment().add(30, 'days').toISOString(), type: 'LICENSE_TRIAL_ISSUED'}
+    const licenseTrailIssuedAction = actions.license.trialLicenseIssued({tier: 'free', trialEndDate: moment().add(30, 'days').toISOString(), type: 'LICENSE_TRIAL_ISSUED'}
     );
     const state = [
       {
@@ -126,19 +126,19 @@ describe('account (ashares) reducers', () => {
         },
       },
     ];
-    const licenseUpgradeRequestSubmittedAction = actions.user.org.accounts.licenseUpgradeRequestSubmitted();
+    const licenseUpgradeRequestSubmittedAction = actions.license.licenseUpgradeRequestSubmitted();
     const newState = reducer(state, licenseUpgradeRequestSubmittedAction);
 
     expect(newState).toEqual(output);
   });
   test('should return default state when licenseUpgradeRequestSubmitted event is triggered and initial state in empty', () => {
-    const licenseUpgradeRequestSubmittedAction = actions.user.org.accounts.licenseUpgradeRequestSubmitted();
+    const licenseUpgradeRequestSubmittedAction = actions.license.licenseUpgradeRequestSubmitted();
     const newState = reducer(emptyList, licenseUpgradeRequestSubmittedAction);
 
     expect(newState).toEqual(emptyList);
   });
   test('should return default state when licenseUpgradeRequestSubmitted event is triggered and initial state does not contain endpoint or integrator license', () => {
-    const licenseUpgradeRequestSubmittedAction = actions.user.org.accounts.licenseUpgradeRequestSubmitted();
+    const licenseUpgradeRequestSubmittedAction = actions.license.licenseUpgradeRequestSubmitted();
     const state = [
       {
         _id: ACCOUNT_IDS.OWN,

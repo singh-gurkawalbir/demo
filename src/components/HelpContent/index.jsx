@@ -102,7 +102,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
   const handleUpdateFeedBack = useCallback(
     helpful => () => {
       if (helpful) {
-        dispatch(actions.postFeedback(resourceType, fieldId, helpful));
+        dispatch(actions.app.postFeedback(resourceType, fieldId, helpful));
       } else {
         setFeedbackText(true);
       }
@@ -112,7 +112,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
   );
   const handleSendFeedbackText = useCallback(() => {
     dispatch(
-      actions.postFeedback(resourceType, fieldId, false, feedbackTextValue)
+      actions.app.postFeedback(resourceType, fieldId, false, feedbackTextValue)
     );
   }, [dispatch, feedbackTextValue, fieldId, resourceType]);
   const onChange = useCallback(e => {

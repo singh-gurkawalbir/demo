@@ -3,12 +3,13 @@
 import { expectSaga, testSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
-import { call, select } from 'redux-saga/effects';
+import { call, select, take } from 'redux-saga/effects';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
 import { getResource, getResourceCollection } from '../resources';
+import actionTypes from '../../actions/types';
 import {
   initInstall,
   installStep,
@@ -26,6 +27,7 @@ import {
   getCategoryMappingMetadata,
   saveCategoryMappings,
   getMappingMetadata,
+  initCategoryMappings,
 } from './settings';
 import { preUninstall, uninstallIntegration, uninstallStep as uninstallStepGen } from './uninstaller';
 import { initUninstall, uninstallStep, requestSteps } from './uninstaller2.0';
@@ -636,7 +638,7 @@ describe('installer saga', () => {
         )
         .run();
     });
-    test('if the api call is successful but response is not true, should dispatch api.failure', () => {
+    test('if the api call is successful but response is not true, should dispatch update install step and api.failure', () => {
       const args = {
         path,
         message: 'Verifying Bundle/Package Installation...',
@@ -650,6 +652,13 @@ describe('installer saga', () => {
       return expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
         .provide([[call(apiCallWithRetry, args), response]])
         .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            installerFunction,
+            'failed'
+          )
+        )
         .put(
           actions.api.failure(
             path,
@@ -1516,6 +1525,19 @@ describe('settings saga', () => {
             error.message
           )
         )
+        .run();
+    });
+  });
+  describe('initCategoryMappings generator', () => {
+    const integrationId = '1';
+    const flowId = '1';
+
+    test('should return if initialization is cancelled', () => {
+      expectSaga(initCategoryMappings, {integrationId, flowId})
+        .provide([
+          [select(selectors.categoryMappingData, integrationId, flowId), undefined],
+          [take(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR), true],
+        ])
         .run();
     });
   });

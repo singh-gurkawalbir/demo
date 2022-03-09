@@ -3,6 +3,7 @@ import HeaderWithHelpText from '../commonCells/HeaderWithHelpText';
 import FlowStepName from './cells/FlowStepName';
 import FlowStepStatus from './cells/FlowStepStatus';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
+import ErrorCell from '../../JobDashboard/RunHistory/ErrorCell';
 
 export default {
   useColumns: () => [
@@ -34,7 +35,7 @@ export default {
       heading: 'Errors',
       // these fields are numbers so it should be okay if they are loggable
       isLoggable: true,
-      Value: ({rowData: r}) => r.numOpenError },
+      Value: ({rowData: r}) => <ErrorCell job={r} /> },
     {
       key: 'resolved',
       heading: 'Resolved',

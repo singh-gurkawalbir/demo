@@ -77,9 +77,9 @@ export default function DynaSettings(props) {
     [id, onFieldChange]
   );
 
-  useUpdateParentForm(settingsFormKey, handleSettingFormChange);
+  useUpdateParentForm(hasSettingsForm ? settingsFormKey : '', handleSettingFormChange);
 
-  useSetSubFormShowValidations(parentFormKey, settingsFormKey);
+  useSetSubFormShowValidations(parentFormKey, hasSettingsForm ? settingsFormKey : '');
   // TODO: @Surya revisit this implementation of settings form
   // directly register field states
 

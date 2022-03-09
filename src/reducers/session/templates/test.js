@@ -2,6 +2,7 @@
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import { INSTALL_STEP_TYPES } from '../../../utils/constants';
+import { COMM_STATES as PUBLISH_STATES } from '../../comms/networkComms';
 
 describe('template test cases', () => {
   const installSteps = [
@@ -908,6 +909,139 @@ describe('template test cases', () => {
         });
       });
 
+      test('should set correct status details with stack id on the step if status is completed', () => {
+        const step = {
+          name: 'installStep',
+          description: 'something',
+          _connectionId: 'connectionId',
+          type: 'Connection',
+          status: 'completed',
+          stackId: 'stack-id',
+        };
+        const state = reducer(
+          { [testTemplateId]: { installSteps } },
+          actions.template.updateStep(step, testTemplateId)
+        );
+
+        expect(state).toEqual({
+          '58e718fe160a77244b441a46': {
+            stackId: 'stack-id',
+            installSteps: [
+              { description: 'something', name: 'installStep', type: 'Stack' },
+              {
+                _connectionId: 'connectionId',
+                description: 'something',
+                completed: true,
+                name: 'installStep',
+                type: 'Connection',
+              },
+              {
+                description: 'something',
+                installURL: 'connectionId',
+                name: 'installUrl',
+                type: 'installPackage',
+              },
+            ],
+          },
+        });
+      });
+
+      test('should set correct status details on the step if status is completed and verifyBundleStep is present', () => {
+        const step = {
+          name: 'installStep',
+          description: 'something',
+          _connectionId: 'connectionId',
+          type: 'Connection',
+          status: 'completed',
+          newConnectionId: 'new-conn',
+          verifyBundleStep: 'netsuite',
+        };
+
+        installSteps.push({
+          name: 'installBundle',
+          description: 'something',
+          installURL: 'connectionId',
+          type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
+          application: 'netsuite',
+          completed: false,
+          options: {},
+        });
+        const state = reducer(
+          { [testTemplateId]: { installSteps } },
+          actions.template.updateStep(step, testTemplateId)
+        );
+
+        expect(state).toEqual({
+          '58e718fe160a77244b441a46': {
+            cMap: {
+              connectionId: 'new-conn',
+            },
+            installSteps: [
+              { description: 'something', name: 'installStep', type: 'Stack' },
+              {
+                _connectionId: 'connectionId',
+                description: 'something',
+                completed: true,
+                name: 'installStep',
+                type: 'Connection',
+              },
+              {
+                description: 'something',
+                installURL: 'connectionId',
+                name: 'installUrl',
+                type: 'installPackage',
+              },
+              {
+                completed: false,
+                application: 'netsuite',
+                description: 'something',
+                installURL: 'connectionId',
+                name: 'installBundle',
+                type: 'installPackage',
+                options: {_connectionId: 'new-conn'},
+              },
+            ],
+          },
+        });
+        installSteps.pop();
+      });
+
+      test('should set correct details on the step if the status is failed', () => {
+        const step = {
+          name: 'installStep',
+          description: 'something',
+          _connectionId: 'connectionId',
+          type: 'Connection',
+          status: 'failed',
+        };
+        const state = reducer(
+          { [testTemplateId]: { installSteps } },
+          actions.template.updateStep(step, testTemplateId)
+        );
+
+        expect(state).toEqual({
+          '58e718fe160a77244b441a46': {
+            installSteps: [
+              { description: 'something', name: 'installStep', type: 'Stack' },
+              {
+                _connectionId: 'connectionId',
+                description: 'something',
+                isTriggered: false,
+                verifying: false,
+                name: 'installStep',
+                type: 'Connection',
+              },
+              {
+                description: 'something',
+                installURL: 'connectionId',
+                name: 'installUrl',
+                type: 'installPackage',
+              },
+            ],
+          },
+        });
+      });
+
       test('should not affect the step if invalid status in passed', () => {
         const step = {
           name: 'installStep',
@@ -1019,7 +1153,7 @@ describe('template test cases', () => {
       });
     });
 
-    describe('template failed preview reducer', () => {
+    describe('template failed install reducer', () => {
       test('should find the template with template Id and set isInstallFailed', () => {
         const state = reducer(
           {},
@@ -1046,6 +1180,111 @@ describe('template test cases', () => {
 
         expect(state).toEqual({
           [testTemplateId]: { installSteps, isInstallFailed: true },
+          anotherTemplate: {
+            installSteps,
+            isInstalled: true,
+          },
+        });
+      });
+    });
+
+    describe('template publish request reducer', () => {
+      test('should create new template state and set publishStatus flag', () => {
+        const state = reducer(
+          {},
+          actions.template.publish.request(testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: { publishStatus: PUBLISH_STATES.LOADING},
+        });
+      });
+
+      test('should find the template with template Id and set publishStatus flag', () => {
+        const state = reducer(
+          { [testTemplateId]: {
+            installSteps,
+            publishStatus: PUBLISH_STATES.ERROR,
+          },
+          anotherTemplate: {
+            installSteps,
+            isInstalled: true,
+          } },
+          actions.template.publish.request(testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: { installSteps, publishStatus: PUBLISH_STATES.LOADING },
+          anotherTemplate: {
+            installSteps,
+            isInstalled: true,
+          },
+        });
+      });
+    });
+
+    describe('template publish success reducer', () => {
+      test('should create new template state and set publishStatus flag', () => {
+        const state = reducer(
+          {},
+          actions.template.publish.success(testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: { publishStatus: PUBLISH_STATES.SUCCESS},
+        });
+      });
+
+      test('should find the template with template Id and set publishStatus flag', () => {
+        const state = reducer(
+          { [testTemplateId]: {
+            installSteps,
+            publishStatus: PUBLISH_STATES.ERROR,
+          },
+          anotherTemplate: {
+            installSteps,
+            isInstalled: true,
+          } },
+          actions.template.publish.success(testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: { installSteps, publishStatus: PUBLISH_STATES.SUCCESS },
+          anotherTemplate: {
+            installSteps,
+            isInstalled: true,
+          },
+        });
+      });
+    });
+
+    describe('template publish error reducer', () => {
+      test('should create new template state and set publishStatus flag', () => {
+        const state = reducer(
+          {},
+          actions.template.publish.error(testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: { publishStatus: PUBLISH_STATES.ERROR},
+        });
+      });
+
+      test('should find the template with template Id and set publishStatus flag', () => {
+        const state = reducer(
+          { [testTemplateId]: {
+            installSteps,
+            publishStatus: PUBLISH_STATES.SUCCESS,
+          },
+          anotherTemplate: {
+            installSteps,
+            isInstalled: true,
+          } },
+          actions.template.publish.error(testTemplateId)
+        );
+
+        expect(state).toEqual({
+          [testTemplateId]: { installSteps, publishStatus: PUBLISH_STATES.ERROR },
           anotherTemplate: {
             installSteps,
             isInstalled: true,
@@ -1139,6 +1378,17 @@ describe('template test cases', () => {
         id: testTemplateId,
         previewFailedStatus: true,
       });
+    });
+    test('should return template id state with publishStatus flag', () => {
+      const state = reducer(
+        {},
+        actions.template.publish.success(testTemplateId)
+      );
+
+      expect(selectors.templatePublishStatus(state, testTemplateId)).toEqual(PUBLISH_STATES.SUCCESS);
+    });
+    test('should return template id state with publishStatus as failed if state does not exist', () => {
+      expect(selectors.templatePublishStatus(null, testTemplateId)).toEqual('failed');
     });
   });
 });

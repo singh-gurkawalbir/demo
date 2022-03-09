@@ -60,6 +60,17 @@ export default {
           message: 'Subdomain should not contain spaces.',
         },
       },
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+
+        if (r?.http?.unencrypted?.subdomain) {
+          return r.http.unencrypted.subdomain;
+        }
+
+        if (baseUri) {
+          return baseUri.includes('sandbox') ? 'api.sandbox' : 'api';
+        }
+      },
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',

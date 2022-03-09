@@ -66,14 +66,17 @@ describe('Error Management region selector testcases', () => {
           {
             type: JOB_TYPES.EXPORT,
             status: JOB_STATUS.COMPLETED,
+            parentStartedAt: '2019-08-11T10:50:00.000Z',
           },
           {
             type: JOB_TYPES.IMPORT,
             status: JOB_STATUS.COMPLETED,
+            parentStartedAt: '2019-08-11T10:50:00.000Z',
           },
           {
             type: JOB_TYPES.IMPORT,
             status: JOB_STATUS.RUNNING,
+            parentStartedAt: '2019-08-11T10:50:00.000Z',
           },
         ],
       };
@@ -152,7 +155,7 @@ describe('Error Management region selector testcases', () => {
               {
                 type: JOB_TYPES.EXPORT,
                 status: JOB_STATUS.COMPLETED,
-
+                parentStartedAt: '2019-08-11T10:50:00.000Z',
                 duration: undefined,
                 numError: 0,
                 numIgnore: 0,
@@ -169,6 +172,7 @@ describe('Error Management region selector testcases', () => {
               {
                 type: JOB_TYPES.IMPORT,
                 status: JOB_STATUS.COMPLETED,
+                parentStartedAt: '2019-08-11T10:50:00.000Z',
                 duration: undefined,
                 numError: 0,
                 numIgnore: 0,
@@ -185,6 +189,7 @@ describe('Error Management region selector testcases', () => {
               },
               {
                 type: JOB_TYPES.IMPORT,
+                parentStartedAt: '2019-08-11T10:50:00.000Z',
                 status: JOB_STATUS.RUNNING,
                 duration: undefined,
                 numError: 0,
@@ -443,14 +448,18 @@ describe('Error Management region selector testcases', () => {
           {
             type: JOB_TYPES.EXPORT,
             status: JOB_STATUS.COMPLETED,
+            parentStartedAt: '2019-08-11T10:50:00.000Z',
+
           },
           {
             type: JOB_TYPES.IMPORT,
             status: JOB_STATUS.COMPLETED,
+            parentStartedAt: '2019-08-11T10:50:00.000Z',
           },
           {
             type: JOB_TYPES.IMPORT,
             status: JOB_STATUS.RUNNING,
+            parentStartedAt: '2019-08-11T10:50:00.000Z',
           },
         ],
       };
@@ -483,7 +492,6 @@ describe('Error Management region selector testcases', () => {
             {
               type: JOB_TYPES.EXPORT,
               status: JOB_STATUS.COMPLETED,
-
               duration: undefined,
               numError: 0,
               numIgnore: 0,
@@ -496,6 +504,7 @@ describe('Error Management region selector testcases', () => {
               flowDisabled: undefined,
               name: undefined,
               _flowId: 'f2',
+              parentStartedAt: '2019-08-11T10:50:00.000Z',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -513,6 +522,7 @@ describe('Error Management region selector testcases', () => {
               flowDisabled: undefined,
               name: undefined,
               _flowId: 'f2',
+              parentStartedAt: '2019-08-11T10:50:00.000Z',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -530,6 +540,7 @@ describe('Error Management region selector testcases', () => {
               flowDisabled: undefined,
               name: undefined,
               _flowId: 'f2',
+              parentStartedAt: '2019-08-11T10:50:00.000Z',
             },
           ],
         },
@@ -592,16 +603,19 @@ describe('Error Management region selector testcases', () => {
           _id: 'c1',
           type: JOB_TYPES.EXPORT,
           status: JOB_STATUS.COMPLETED,
+          parentStartedAt: '2019-08-11T10:50:00.000Z',
         },
         {
           _id: 'c2',
           type: JOB_TYPES.IMPORT,
           status: JOB_STATUS.COMPLETED,
+          parentStartedAt: '2019-08-11T10:50:00.000Z',
         },
         {
           _id: 'c3',
           type: JOB_TYPES.IMPORT,
           status: JOB_STATUS.RUNNING,
+          parentStartedAt: '2019-08-11T10:50:00.000Z',
         },
       ],
     };
@@ -668,6 +682,7 @@ describe('Error Management region selector testcases', () => {
           _integrationId: 'i1',
           _flowId: 'f2',
           name: 'flow_Two',
+          parentStartedAt: '2019-08-11T10:50:00.000Z',
         },
       );
     });

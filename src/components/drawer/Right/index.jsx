@@ -3,7 +3,6 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import {
-  useLocation,
   Route,
   Switch,
   useHistory,
@@ -11,11 +10,8 @@ import {
 } from 'react-router-dom';
 import { makeStyles, Drawer } from '@material-ui/core';
 import { selectors } from '../../../reducers';
-import getRoutePath from '../../../utils/routePaths';
 import { DrawerProvider } from './DrawerContext';
-import {HOME_PAGE_PATH} from '../../../utils/constants';
 
-const bannerHeight = 57;
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     border: 'solid 1px',
@@ -58,28 +54,24 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.appBarHeight + theme.pageBarHeight - 1,
     paddingBottom: theme.appBarHeight + theme.pageBarHeight - 1,
   },
-  banner: {
-    marginTop: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
-    paddingBottom: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
-  },
 }));
 
-export default function RightDrawer({
-  path,
-  width,
-  height,
-  children,
-  onClose,
-  variant,
-  ...muiDrawerProps
-}) {
+function RightDrawer(props) {
+  const {
+    width,
+    height,
+    children,
+    onClose,
+    variant,
+    fullPath,
+    ...muiDrawerProps
+  } = props;
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  const location = useLocation();
-  const bannerOpened = useSelector(state => selectors.bannerOpened(state));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const showBanner = location.pathname.includes(getRoutePath(HOME_PAGE_PATH)) && bannerOpened;
+  const showFullDrawerWidth = useSelector(state => selectors.showFullDrawerWidth(state, props, match.params));
+
   const handleClose = useCallback(() => {
     if (onClose && typeof onClose === 'function') {
       return onClose();
@@ -89,7 +81,38 @@ export default function RightDrawer({
     history.goBack();
   }, [history, onClose]);
 
+  return (
+    <Drawer
+      {...muiDrawerProps}
+      variant={variant}
+      anchor="right"
+      open
+      classes={{
+        paper: clsx(
+          classes.drawerPaper,
+          classes[height],
+          {
+            [classes[width]]: !showFullDrawerWidth,
+            [classes.fullWidthDrawerClose]: showFullDrawerWidth && !drawerOpened,
+            [classes.fullWidthDrawerOpen]: showFullDrawerWidth && drawerOpened,
+          }
+        ),
+      }}
+      onClose={handleClose}>
+      <div className={classes.childrenWrapper}>
+        <DrawerProvider height={height} fullPath={fullPath} onClose={handleClose}>
+          {children}
+        </DrawerProvider>
+      </div>
+    </Drawer>
+  );
+}
+
+export default function RightDrawerRoute(props) {
+  const { path } = props;
   let fullPath;
+  const match = useRouteMatch();
+
   const getFullPath = path => match.url === '/' ? path : `${match.url}/${path}`;
 
   if (typeof path === 'string' || typeof path === 'number') {
@@ -104,30 +127,7 @@ export default function RightDrawer({
   return (
     <Switch>
       <Route path={fullPath}>
-        <Drawer
-          {...muiDrawerProps}
-          variant={variant}
-          anchor="right"
-          open
-          classes={{
-            paper: clsx(
-              classes.drawerPaper,
-              classes[height],
-              {
-                [classes.banner]: bannerOpened && showBanner && height === 'short',
-                [classes[width]]: width !== 'full',
-                [classes.fullWidthDrawerClose]: width === 'full' && !drawerOpened,
-                [classes.fullWidthDrawerOpen]: width === 'full' && drawerOpened,
-              }
-            ),
-          }}
-          onClose={handleClose}>
-          <div className={classes.childrenWrapper}>
-            <DrawerProvider height={height} fullPath={fullPath} onClose={handleClose}>
-              {children}
-            </DrawerProvider>
-          </div>
-        </Drawer>
+        <RightDrawer {...props} fullPath={fullPath} />
       </Route>
       <Route>
         <Drawer />

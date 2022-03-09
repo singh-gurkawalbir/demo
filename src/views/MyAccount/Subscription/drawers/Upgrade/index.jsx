@@ -22,7 +22,7 @@ export default function UpgradeDrawer() {
 
   const onStartFreeTrialInterestedClick = () => {
     dispatch(actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED'));
-    dispatch(actions.user.org.accounts.requestTrialLicense());
+    dispatch(actions.license.requestTrialLicense());
 
     history.goBack();
   };

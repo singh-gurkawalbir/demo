@@ -35,7 +35,7 @@ export default function MappingSettingsButton(props) {
 
     const value = mappings?.find(({key}) => key === mappingKey) || emptyObject;
 
-    return !('generate' in value);
+    return !value.generate;
   });
   const handleBtnClick = useCallback(() => {
     if (isCategoryMapping) {

@@ -348,7 +348,7 @@ export function useCallMetadataAndReturnStatus(props) {
 
   useEffect(() => {
     if (!status && selectedSObject && typeof selectedSObject === 'string') {
-      dispatch(actions.metadata.request(connectionId, commMetaPath));
+      dispatch(actions.metadata.request(connectionId, commMetaPath, {refreshCache: true}));
     }
   }, [commMetaPath, connectionId, dispatch, selectedSObject, status]);
 
