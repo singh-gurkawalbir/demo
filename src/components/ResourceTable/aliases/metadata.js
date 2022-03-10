@@ -1,7 +1,7 @@
 import React from 'react';
 import AliasResourceName from './cells/AliasResourceName';
 import AliasName from './cells/AliasName';
-import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
+import { getResourceFromAlias, MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 
 export default {
   useColumns: () => [
@@ -13,12 +13,12 @@ export default {
     {
       key: 'name',
       heading: 'Resource Name',
-      Value: ({rowData: r}) => <AliasResourceName id={r._resourceId} resourceType={r.resourceType} />,
+      Value: ({rowData: r}) => <AliasResourceName alias={r} />,
     },
     {
       key: 'type',
       heading: 'Resource Type',
-      Value: ({rowData: r}) => MODEL_PLURAL_TO_LABEL[r.resourceType],
+      Value: ({rowData: r}) => MODEL_PLURAL_TO_LABEL[getResourceFromAlias(r).resourceType],
       orderBy: 'type',
     },
   ],

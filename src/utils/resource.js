@@ -964,6 +964,37 @@ export const getNextLinkRelativeUrl = link => {
 
   return '';
 };
+
+export const getResourceFromAlias = alias => {
+  if (!alias) return {};
+
+  if (alias._connectionId) {
+    return {
+      id: alias._connectionId,
+      resourceType: 'connections',
+    };
+  }
+
+  if (alias._flowId) {
+    return {
+      id: alias._flowId,
+      resourceType: 'flows',
+    };
+  }
+
+  if (alias._exportId) {
+    return {
+      id: alias._exportId,
+      resourceType: 'exports',
+    };
+  }
+
+  return {
+    id: alias._importId,
+    resourceType: 'imports',
+  };
+};
+
 export const AUDIT_LOGS_RANGE_FILTERS = [
   {id: 'last1hour', label: 'Last hour'},
   {id: 'today', label: 'Today'},

@@ -442,6 +442,42 @@ selectors.makeAllAliases = () => {
     });
 };
 
+selectors.makeAliasResources = () => {
+  const resourceSel = selectors.makeResourceSelector();
+  const integrationResourceSel = selectors.makeResourceSelector();
+
+  return createSelector(
+    (_1, resourceType) => resourceType,
+    (state, resourceType) => selectors.resources(state, resourceType),
+    (state, _2, parentResourceType, parentResourceId) => {
+      let integrationId;
+
+      if (parentResourceType === 'flows') {
+        const flow = resourceSel(state, parentResourceType, parentResourceId);
+
+        if (!flow || !flow._integrationId) return null;
+
+        integrationId = flow._integrationId;
+      }
+
+      return integrationResourceSel(state, 'integrations', integrationId || parentResourceId);
+    },
+    (resourceType, resourceList, integration) => {
+      const integrationId = integration._id;
+      const registeredConnectionIds = integration._registeredConnectionIds;
+
+      if (resourceType === 'connections') {
+        return resourceList.filter(res => registeredConnectionIds?.includes(res._id));
+      }
+      if (resourceType === 'flows') {
+        return resourceList.filter(res => res._integrationId === integrationId);
+      }
+
+      return resourceList.filter(res => registeredConnectionIds?.includes(res._connectionId));
+    },
+  );
+};
+
 selectors.mkFlowGroupingsSections = () => {
   const resourceSelector = selectors.makeResourceSelector();
 

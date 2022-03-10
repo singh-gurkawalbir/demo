@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { FormControl, FormLabel } from '@material-ui/core';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
 import FieldHelp from '../../FieldHelp';
-import AliasDrawerWrapper from './Drawer';
+import AliasDrawerWrapper from '../../../drawer/Aliases';
 
 export default function DynaManageAliases(props) {
   const { id, label, resourceContext } = props;

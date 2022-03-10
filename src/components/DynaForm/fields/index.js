@@ -145,6 +145,8 @@ import DynaFlowGroupName from './integrations/DynaFlowGroupName';
 import DynaFlowGroupsTiedToIntegrations from './integrations/DynaFlowGroupsTiedToIntegrations';
 import DynaTextUpdateDomain from './text/DynaTextUpdateDomain';
 import DynaManageAliases from './aliases/DynaManageAliases';
+import DynaAliasId from './aliases/DynaAliasId';
+import DynaSelectAliasResource from './aliases/DynaSelectAliasResource';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -300,5 +302,7 @@ export default {
   selectAmazonSellerCentralAPIType: DynaSelectAmazonSellerCentralAPIType,
   amazonRestrictedReportType: DynaAmazonRestrictedReportType,
   managealiases: DynaManageAliases,
+  aliasid: DynaAliasId,
+  selectaliasresource: DynaSelectAliasResource,
   updatedomain: DynaTextUpdateDomain,
 };
