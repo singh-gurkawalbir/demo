@@ -25,7 +25,11 @@ import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDe
 import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
 import { TextButton } from '../../components/Buttons';
 import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import EmptyState from '../../components/EmptyState';
+import emptyStatesMetaData from '../../components/EmptyState/metadata';
+import FilledButton from '../../components/Buttons/FilledButton';
 
+const emptyStateResource = emptyStatesMetaData;
 const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
@@ -174,7 +178,16 @@ export default function ResourceList(props) {
           {list.count === 0 ? (
             <>
               {list.total === 0
-                ? <NoResultMessageWrapper>You don&apos;t have any ${createResourceLabel}s.</NoResultMessageWrapper>
+                ? (
+                  <EmptyState
+                    title={emptyStateResource[resourceType].title}
+                    subTitle={emptyStateResource[resourceType].subTitle}
+                    type={emptyStateResource[resourceType].type}
+                  >
+                    <FilledButton onClick={emptyStateResource[resourceType].handleButtonClick}>{emptyStateResource[resourceType].buttonLabel}</FilledButton>
+                    <TextButton onClick={emptyStateResource[resourceType].handleLinkClick} underline>{emptyStateResource[resourceType].linkLabel}</TextButton>
+                  </EmptyState>
+                )
                 : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
             </>
           ) : (

@@ -11,9 +11,10 @@ import SuiteScriptTile from './SuiteScriptTile';
 import SortableList from '../../../../components/Sortable/SortableList';
 import SortableItem from '../../../../components/Sortable/SortableItem';
 import useSortableList from '../../../../hooks/useSortableList';
-import EmptyState from '../../../../components/EmptyStates';
+import EmptyState from '../../../../components/EmptyState';
 import { FilledButton, TextButton } from '../../../../components/Buttons';
 import { EMPTY_STATES_URLS } from '../../../../utils/constants';
+import emptyStateResource from '../../../../components/EmptyState/metadata';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -36,19 +37,21 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const {integrations} = emptyStateResource;
+
 const {INTEGRATIONS_URL} = EMPTY_STATES_URLS;
 export const DashboardEmptyState = () => (
   <EmptyState
-    title="Jumpstart your data integration"
-    subTitle="You can access, manage and monitor flows from within integrations on this page."
-    type="integrations">
-    <FilledButton href="/integrations/none/flowBuilder/new">Create flow</FilledButton>
+    title={integrations.title}
+    subTitle={integrations.subTitle}
+    type={integrations.type}>
+    <FilledButton href="/integrations/none/flowBuilder/new">{integrations.buttonLabel}</FilledButton>
     <TextButton
       underline
       component={Link}
       to={INTEGRATIONS_URL}
       target="_blank">
-      Learn how to develop integrations in flow builder
+      {integrations.linkLabel}
     </TextButton>
   </EmptyState>
 );
