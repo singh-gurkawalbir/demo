@@ -89,7 +89,6 @@ const ConfirmDialog = (
       </>
       <div className={classes.containerButtons}>
         <ActionGroup>
-
           {buttons.map(button => {
             const buttonProps = {
               'data-test': button.dataTest || button.label,
