@@ -17,6 +17,9 @@ import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import { TextButton } from '../../components/Buttons';
 import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import EmptyState from '../../components/EmptyState';
+import FilledButton from '../../components/Buttons/FilledButton';
+import emptyStateResource from '../../components/EmptyState/metadata';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -31,6 +34,7 @@ const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
 };
 
+const {apitokens} = emptyStateResource;
 export default function AccessTokenList(props) {
   const { integrationId, location } = props;
   const filter = useSelector(state =>
@@ -82,7 +86,21 @@ export default function AccessTokenList(props) {
             ) : (
               <div>
                 {list.total === 0
-                  ? <NoResultMessageWrapper>You don&apos;t have any API tokens.</NoResultMessageWrapper>
+                  ? (
+                    <EmptyState
+                      title={apitokens.title}
+                      subTitle={apitokens.subTitle}
+                      type={apitokens.type}>
+                      <FilledButton href="/apitokens/none/flowBuilder/new">{apitokens.buttonLabel}</FilledButton>
+                      <TextButton
+                        underline
+                        component={Link}
+                        to={apitokens.link}
+                        target="_blank">
+                        {apitokens.linkLabel}
+                      </TextButton>
+                    </EmptyState>
+                  )
                   : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
               </div>
             )}

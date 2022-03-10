@@ -185,7 +185,13 @@ export default function ResourceList(props) {
                     type={emptyStateResource[resourceType].type}
                   >
                     <FilledButton onClick={emptyStateResource[resourceType].handleButtonClick}>{emptyStateResource[resourceType].buttonLabel}</FilledButton>
-                    <TextButton onClick={emptyStateResource[resourceType].handleLinkClick} underline>{emptyStateResource[resourceType].linkLabel}</TextButton>
+                    <TextButton
+                      underline
+                      component={Link}
+                      to={emptyStateResource[resourceType].link}
+                      target="_blank">
+                      {emptyStateResource[resourceType].linkLabel}
+                    </TextButton>
                   </EmptyState>
                 )
                 : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}

@@ -6,6 +6,7 @@ export default {
     type: 'integrations',
     buttonLabel: 'create flow',
     linkLabel: 'Learn how to develop integrations in flow builder',
+    link: 'https://docs.celigo.com/hc/en-us/articles/360025919171-Develop-integrations-in-Flow-Builder',
     handleButtonClick() {
       alert('Create Integrations button clicked');
     },
@@ -19,11 +20,9 @@ export default {
     type: 'connections',
     buttonLabel: 'create connection',
     linkLabel: 'Learn how to establish connection',
+    link: 'https://docs.celigo.com/hc/en-us/articles/226974368-Establish-connections-in-integrator-io',
     handleButtonClick() {
       alert('Create Connections button clicked');
-    },
-    handleLinkClick() {
-      alert('connections link clicked');
     },
   },
   imports: {
@@ -32,6 +31,7 @@ export default {
     type: 'imports',
     buttonLabel: 'create import',
     linkLabel: 'Learn more about imports',
+    link: 'https://docs.celigo.com/hc/en-us/articles/226933887-What-are-imports-',
     handleButtonClick() {
       alert('Create import button clicked');
     },
@@ -45,6 +45,7 @@ export default {
     type: 'exports',
     buttonLabel: 'create export',
     linkLabel: 'Learn more about exports',
+    link: 'https://docs.celigo.com/hc/en-us/articles/226934107-What-are-exports-',
     handleButtonClick() {
       alert('Create export button clicked');
     },
@@ -58,11 +59,9 @@ export default {
     type: 'apitokens',
     buttonLabel: 'create API token',
     linkLabel: 'Learn more about how to generate API tokens',
+    link: 'https://docs.celigo.com/hc/en-us/articles/360019782431-Generate-API-tokens',
     handleButtonClick() {
       alert('Create Api tokens button clicked');
-    },
-    handleLinkClick() {
-      alert('api tokens link clicked');
     },
   },
   agents: {
@@ -71,11 +70,9 @@ export default {
     type: 'agents',
     buttonLabel: 'create agent',
     linkLabel: 'Integrate data through a firewall with an on-premise agent',
+    link: 'https://docs.celigo.com/hc/en-us/articles/360004081771-Integrate-data-through-firewall-with-on-premise-agent',
     handleButtonClick() {
       alert('Create agents button clicked');
-    },
-    handleLinkClick() {
-      alert('agents link clicked');
     },
   },
   recyclebin: {
@@ -85,3 +82,4 @@ export default {
   },
 
 };
+

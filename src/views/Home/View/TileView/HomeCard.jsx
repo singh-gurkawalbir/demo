@@ -13,7 +13,6 @@ import SortableItem from '../../../../components/Sortable/SortableItem';
 import useSortableList from '../../../../hooks/useSortableList';
 import EmptyState from '../../../../components/EmptyState';
 import { FilledButton, TextButton } from '../../../../components/Buttons';
-import { EMPTY_STATES_URLS } from '../../../../utils/constants';
 import emptyStateResource from '../../../../components/EmptyState/metadata';
 
 const useStyles = makeStyles(theme => ({
@@ -39,7 +38,6 @@ const useStyles = makeStyles(theme => ({
 
 const {integrations} = emptyStateResource;
 
-const {INTEGRATIONS_URL} = EMPTY_STATES_URLS;
 export const DashboardEmptyState = () => (
   <EmptyState
     title={integrations.title}
@@ -49,7 +47,7 @@ export const DashboardEmptyState = () => (
     <TextButton
       underline
       component={Link}
-      to={INTEGRATIONS_URL}
+      to={integrations.link}
       target="_blank">
       {integrations.linkLabel}
     </TextButton>
