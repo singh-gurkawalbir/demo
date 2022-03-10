@@ -1694,7 +1694,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
       }
 
       if (p.isIdentifier && (pathParams[p.id] || operationDetails.howToIdentifyExistingRecords)) {
-        const {existingLookupName} = importAdaptorSubSchema;
+        const {existingLookupName} = operationDetails.howToIdentifyExistingRecords ? importAdaptorSubSchema : {};
         const lookup = importAdaptorSubSchema.lookups.find(
           lu => lu.name === pathParams[p.id] || lu.name === existingLookupName
         );
