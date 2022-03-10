@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { generateDefaultEdge, generateId } from '../lib';
-import { generateNewTerminal, generateRouterNode } from '../metadata/nodeGeneration';
+import { generateNewTerminal, generateRouterNode } from '../nodeGeneration';
 
 export const populateIds = flow => {
   if (!flow) return flow;

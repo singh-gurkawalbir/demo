@@ -1,7 +1,7 @@
 import { useFlowContext } from '../Context';
 import actions from '../reducer/actions';
 import { getNextRouterPathForTerminalNode, getNodeInsertionPathForEdge, getPathOfPGOrPPNode, isPageGenerator } from '../translateSchema/getPathOfNode';
-import { getSomeExport, getSomeImport, getSomePg, getSomePpImport } from '../metadata/nodeGeneration';
+import { getSomeExport, getSomeImport, getSomePg, getSomePpImport } from '../nodeGeneration';
 import { generateId } from '../lib';
 
 const getSomeNode = (id, isPG) => {
@@ -26,7 +26,6 @@ export const useHandleAddNode = edgeId => {
     if (!path) return;
 
     const id = `new-${generateId()}`;
-
     // Assume all pg are exports and all pp are imports
     // This segment of code can change
     const isPG = isPageGenerator(path);

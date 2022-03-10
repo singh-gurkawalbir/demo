@@ -1,18 +1,18 @@
-import { getSomePg, getSomePpImport } from './nodeGeneration';
+import { getSomePg, getSomePpImport } from '../Prototype/nodeGeneration';
 
-const export1 = {_id: 'export1', label: 'export1', connectorType: 'netsuite' };
+const export1 = {_id: 'export1', name: 'The only export', connectorType: 'netsuite' };
 
-const import1 = {_id: 'import1', label: 'import1', connectorType: 'ftp' };
-const import2 = {_id: 'import2', label: 'import2', connectorType: 'http' };
-const import3 = {_id: 'import3', label: 'import3', isLookup: true, connectorType: 'http'};
-const import4 = {_id: 'import4', label: 'import4', isLookup: true, connectorType: 'ftp'};
-const import5 = {_id: 'import5', label: 'import5', isLookup: true, connectorType: 'netsuite'};
-const import6 = {_id: 'import6', label: 'import6', connectorType: 'http' };
-const import7 = {_id: 'import7', label: 'import7', isLookup: true, connectorType: 'http'};
-const import8 = {_id: 'import8', label: 'import8', isLookup: true, connectorType: 'ftp'};
-const import9 = {_id: 'import9', label: 'import9', isLookup: true, connectorType: 'netsuite'};
+const import1 = {_id: 'import1', name: 'import1 with long name', connectorType: 'ftp' };
+const import2 = {_id: 'import2', name: 'Import Two', connectorType: 'http' };
+const import3 = {_id: 'import3', name: 'import3', isLookup: true, connectorType: 'http'};
+const import4 = {_id: 'import4', name: 'import4', isLookup: true, connectorType: 'ftp'};
+const import5 = {_id: 'import5', name: 'import5', isLookup: true, connectorType: 'netsuite'};
+const import6 = {_id: 'import6', name: 'import6', connectorType: 'http' };
+const import7 = {_id: 'import7', name: 'import7', isLookup: true, connectorType: 'http'};
+const import8 = {_id: 'import8', name: 'import8', isLookup: true, connectorType: 'ftp'};
+const import9 = {_id: 'import9', name: 'import9', isLookup: true, connectorType: 'netsuite'};
 
-export const imports = [
+const imports = [
   import1,
   import2,
   import3,
@@ -24,7 +24,7 @@ export const imports = [
   import9,
 ];
 
-export const exports = [
+const exports = [
   export1,
 ];
 
@@ -114,13 +114,13 @@ const virtualRouterForFirstPP = {
   branches: [virtualBranch],
 };
 
-export const flowSchema = {
+const flowSchema = {
   _id: 'flow1',
   routers: [virtualRouterForFirstPP, firstRouter, secondRouter],
   pageGenerators: [getSomePg('export1')],
 };
 
-export const resourceState = {
+export default {
   flows: [flowSchema],
   exports,
   imports,

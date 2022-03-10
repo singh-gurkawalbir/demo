@@ -2,7 +2,7 @@ import produce from 'immer';
 import jsonPatch from 'fast-json-patch';
 import actions from './actions';
 import { emptyObject } from '../../../../../utils/constants';
-import { generateAnEmptyActualRouter, generateBranch } from '../metadata/nodeGeneration';
+import { generateAnEmptyActualRouter, generateBranch } from '../nodeGeneration';
 import { populateIds } from '../translateSchema';
 import { generateId } from '../lib';
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useReducer } from 'react';
+import { makeStyles } from '@material-ui/core';
 import ReactFlow,
 { MiniMap,
   Controls,
@@ -12,9 +13,9 @@ import TerminalNode from './CustomNodes/TerminalNode';
 import RouterNode from './CustomNodes/RouterNode';
 import MergeNode from './CustomNodes/MergeNode';
 import reducer, { resourceDataSelector } from './reducer';
-import { resourceState } from './metadata/simpleFlowSchema';
 import { generateReactFlowGraph } from './translateSchema';
 import { handleMergeNode } from './hooks';
+import TextButton from '../../../../components/Buttons/TextButton';
 
 const nodeTypes = {
   pg: PgNode,
@@ -29,14 +30,25 @@ const edgeTypes = {
 };
 const flowIdToTest = 'flow1';
 
-const stateOrig = {data: {resources: resourceState}, session: {staged: {}}};
+const useStyles = makeStyles({
+  copyButton: {
+    top: 1,
+    left: 10,
+    position: 'absolute',
+    zIndex: 5,
+  },
+});
 
-export default () => {
-  const [state, setState] = useReducer(reducer, stateOrig);
+export default ({resourceState}) => {
+  const classes = useStyles();
+  const [state, setState] = useReducer(reducer, {
+    data: {resources: resourceState},
+    session: {
+      staged: {},
+    },
+  });
   const mergedFlow = resourceDataSelector(state, 'flows', flowIdToTest);
   const elements = useMemo(() => generateReactFlowGraph(state.data.resources, mergedFlow), [mergedFlow, state.data.resources]);
-
-  // console.log('state ', mergedFlow, state);
 
   const updatedLayout = useMemo(() =>
     layoutElements(elements, 'LR'),
@@ -48,6 +60,7 @@ export default () => {
   }, [elements]);
 
   const handleMerge = handleMergeNode(mergedFlow, elements, setState);
+
   const onNodeDragStop = (evt, source) => {
     const target = terminalNodeInVicinity(source, updatedLayout);
 
@@ -57,6 +70,26 @@ export default () => {
 
     handleMerge(source.id, target);
     // sometimes the selection sticks
+  };
+
+  const handleCopySchema = () => {
+    const resourceState = {
+      // remove exports that are not in the flow.
+      exports: state.data.resources.exports
+        .filter(e => mergedFlow.pageGenerators
+          .map(g => g._exportId)
+          .includes(e._id)),
+      // for now copy all imports. later we can traverse the
+      // flow to collect importIds and then filter our the imports
+      // that are no longer referenced by the flow
+      imports: state.data.resources.imports,
+      // our stories only have 1 flow, so we can always rebuild the
+      // flows collection from the single merged flow...
+      flows: [mergedFlow],
+    };
+
+    // eslint-disable-next-line no-console
+    console.log(resourceState);
   };
 
   return (
@@ -75,6 +108,7 @@ export default () => {
       <MiniMap />
       <Controls />
 
+      <TextButton className={classes.copyButton} onClick={handleCopySchema}>Copy Flow Schema</TextButton>
     </ReactFlowProvider>
   );
 };

@@ -1,4 +1,4 @@
-import { generateId } from '../lib';
+import { generateId } from './lib';
 
 export const getSomeImport = _id => ({_id, connectorType: 'ftp', label: _id});
 export const getSomeExport = _exportId => ({_id: _exportId, connectorType: 'ftp', label: _exportId});
