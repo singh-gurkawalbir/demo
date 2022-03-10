@@ -1,5 +1,5 @@
 import { REVISION_STATUS, REVISION_TYPES } from '../constants';
-import { comparer } from '../sort';
+import { comparer, sortJsonByKeys } from '../sort';
 
 export const DEFAULT_ROWS_PER_PAGE = 50;
 export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
@@ -70,17 +70,6 @@ export const getFilteredRevisions = (revisions = [], filters = {}) => {
   });
 
   return filteredRevisions.sort(comparer(sort));
-};
-
-const sortJsonByKeys = obj => {
-  const isObject = typeof obj === 'object' && !Array.isArray(obj);
-
-  if (!isObject) return obj;
-  const keys = Object.keys(obj);
-  // TODO: Handle blacklisting some properties which are order sensitive
-  const sortedKeys = [...keys].sort((a, b) => a.localeCompare(b));
-
-  return sortedKeys.reduce((newObj, key) => ({...newObj, [key]: sortJsonByKeys(obj[key])}), {});
 };
 
 export const getRevisionResourceLevelChanges = (overallDiff = {}) => {
