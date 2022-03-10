@@ -1,4 +1,4 @@
-/* global describe, test */
+/* global describe, test, beforeAll, afterAll */
 import { throwError } from 'redux-saga-test-plan/providers';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -17,10 +17,21 @@ describe('uploadFile saga', () => {
   const file = { _id: '456', name: 'someFile' };
   const response = { signedURL: 'someURL', runKey: 'runKey' };
 
-  test('should succeed on successful api call', () => expectSaga(uploadFile, { resourceType, resourceId, fileType, file })
+  // This is the part where we mock `fetch`
+  const unmockedFetch = global.fetch;
+
+  beforeAll(() => {
+    global.fetch = () =>
+      Promise.resolve({});
+  });
+
+  afterAll(() => {
+    global.fetch = unmockedFetch;
+  });
+  test('should succeed on successful api call and return runKey', () => expectSaga(uploadFile, { resourceType, resourceId, fileType, file })
     .provide([[matchers.call.fn(apiCallWithRetry), response]])
     .call.fn(apiCallWithRetry)
-    .returns(true)
+    .returns('runKey')
     .run());
   test('should handle api error properly', () => {
     const error = new Error('error');
@@ -30,7 +41,7 @@ describe('uploadFile saga', () => {
         [matchers.call.fn(apiCallWithRetry), throwError(error)],
       ])
       .call.fn(apiCallWithRetry)
-      .returns(true)
+      .returns(undefined)
       .run();
   });
 });
