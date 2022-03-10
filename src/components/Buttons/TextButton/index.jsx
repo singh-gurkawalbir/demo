@@ -31,13 +31,13 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function TextButton(props) {
   const classes = useStyles(props);
-  const {children, error, bold, underline, ...rest} = props;
+  const {children, error, bold, underline, className, ...rest} = props;
 
   return (
     <Button
       variant="text"
       color="secondary"
-      className={clsx(classes.root, {[classes.error]: error}, {[classes.underline]: underline})}
+      className={clsx(classes.root, {[classes.error]: error}, {[classes.underline]: underline, className})}
       disableElevation
       {...rest}>
       {children}
