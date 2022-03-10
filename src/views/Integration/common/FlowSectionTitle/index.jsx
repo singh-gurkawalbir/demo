@@ -7,13 +7,6 @@ import StatusCircle from '../../../../components/StatusCircle';
 import CeligoTruncate from '../../../../components/CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
-  errorStatus: {
-    justifyContent: 'center',
-    height: 'unset',
-    display: 'flex',
-    alignItems: 'center',
-    fontSize: '12px',
-  },
   gridContainer: {
     display: 'grid',
     gridColumnGap: theme.spacing(1),

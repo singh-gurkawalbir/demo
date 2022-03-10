@@ -4,6 +4,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 const useStyles = makeStyles(theme => ({
   mockPageBar: {
     position: 'absolute',
+    zIndex: 2,
     left: 0,
     top: 0,
     display: 'flex',

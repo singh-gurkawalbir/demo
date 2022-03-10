@@ -25,16 +25,24 @@ const useStyles = makeStyles(theme => ({
       flexDirection: 'column',
     },
   },
+  underline: {
+    color: theme.palette.primary.dark,
+    textDecoration: 'underline',
+    '&:hover': {
+      textDecoration: 'underline',
+      color: theme.palette.primary.main,
+    },
+  },
 }));
 export default function TextButton(props) {
   const classes = useStyles(props);
-  const {children, className, vertical = false, error, bold, ...rest} = props;
+  const {children, className, vertical = false, error, bold, underline, ...rest} = props;
 
   return (
     <Button
       variant="text"
       color="secondary"
-      className={clsx(classes.root, {[classes.error]: error}, {[classes.vertical]: vertical}, className)}
+      className={clsx(classes.root, {[classes.error]: error}, {[classes.underline]: underline}, {[classes.vertical]: vertical}, className)}
       disableElevation
       {...rest}>
       {children}
