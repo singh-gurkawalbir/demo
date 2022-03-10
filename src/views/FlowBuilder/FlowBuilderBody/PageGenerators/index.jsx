@@ -53,9 +53,6 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  pageGenerator: {
-    marginBottom: 50,
-  },
 }));
 
 export default function PageGenerators({integrationId, flowId}) {
@@ -97,7 +94,6 @@ export default function PageGenerators({integrationId, flowId}) {
               }
               value={(
                 <PageGenerator
-                  className={classes.pageGenerator}
                   {...pg}
                   onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
                   flowId={flowId}

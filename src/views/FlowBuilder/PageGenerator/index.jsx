@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import React, { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -38,7 +37,6 @@ const PageGenerator = ({
   isViewMode,
   onDelete,
   openErrorCount,
-  className,
   ...pg
 }) => {
   const pending = !pg._exportId;
@@ -282,7 +280,7 @@ const PageGenerator = ({
   // console.log('render: <PageGenerator>');
 
   return (
-    <div className={clsx(classes.pgContainer, className)}>
+    <div className={classes.pgContainer}>
       <AppBlock
         integrationId={integrationId}
         name={blockName}
