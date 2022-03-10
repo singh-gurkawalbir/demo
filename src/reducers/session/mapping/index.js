@@ -4,7 +4,7 @@ import { differenceWith, isEqual, isEmpty } from 'lodash';
 import deepClone from 'lodash/cloneDeep';
 import { nanoid } from 'nanoid';
 import actionTypes from '../../../actions/types';
-import {isMappingEqual, findNodeInTree, PRIMITIVE_DATA_TYPES, ARRAY_DATA_TYPES} from '../../../utils/mapping';
+import {isMappingEqual, isV2MappingsChanged, findNodeInTree, PRIMITIVE_DATA_TYPES, ARRAY_DATA_TYPES, getAllKeys} from '../../../utils/mapping';
 
 const emptyObj = {};
 const emptyArr = [];
@@ -37,6 +37,7 @@ export default (state = {}, action) => {
     dragDropInfo,
     version,
     expanded,
+    expandedKeys,
   } = action;
 
   return produce(state, draft => {
@@ -56,6 +57,7 @@ export default (state = {}, action) => {
           lookups,
           v2TreeData,
           v2Mappings,
+          expandedKeys: [],
           flowId,
           importId,
           subRecordMappingId,
@@ -66,6 +68,7 @@ export default (state = {}, action) => {
           mappingsCopy: deepClone(mappings),
           lookupsCopy: deepClone(lookups),
           v2MappingsCopy: deepClone(v2Mappings),
+          v2TreeDataCopy: deepClone(v2TreeData),
         };
         break;
       case actionTypes.MAPPING.INIT_FAILED:
@@ -348,7 +351,7 @@ export default (state = {}, action) => {
           };
 
           draft.mapping.v2TreeData = [node];
-          // todo ashu should expand this node
+          draft.mapping.expandedKeys.push(newRowKey);
         } else {
           // top disabled row does not exist
           if (!draft.mapping.v2TreeData[0]?.generateDisabled) break;
@@ -363,8 +366,15 @@ export default (state = {}, action) => {
 
       case actionTypes.MAPPING.V2.TOGGLE_ROWS:
         if (!draft.mapping) break;
-        draft.mapping.expandAll = expanded;
-        draft.mapping.toggleCount = (draft.mapping.toggleCount || 0) + 1;
+        if (!expanded) {
+          draft.mapping.expandedKeys = [];
+        } else {
+          draft.mapping.expandedKeys = getAllKeys(draft.mapping.v2TreeData);
+        }
+        break;
+
+      case actionTypes.MAPPING.V2.UPDATE_EXPANDED_KEYS:
+        draft.mapping.expandedKeys = expandedKeys;
         break;
 
       case actionTypes.MAPPING.V2.DELETE_ROW: {
@@ -377,13 +387,14 @@ export default (state = {}, action) => {
 
           // add empty row if all the mappings have been deleted
           if (isEmpty(draft.mapping.v2TreeData)) {
-            const newRowKey = nanoid();
+            const emptyRowKey = nanoid();
 
             draft.mapping.v2TreeData.push({
-              key: newRowKey,
+              key: emptyRowKey,
               title: '',
               dataType: 'string',
               disabled: draft.mapping.isMonitorLevelAccess,
+              isEmptyRow: true,
             });
           }
         }
@@ -421,11 +432,12 @@ export default (state = {}, action) => {
         if (isEmpty(node)) break;
 
         node.dataType = newDataType;
-        // node.expanded = true;
 
         const newRowKey = nanoid();
 
         if (newDataType === 'object' || newDataType === 'objectarray' || newDataType === 'arrayarray') {
+          draft.mapping.expandedKeys.push(v2Key);
+
           if (isEmpty(node.children)) {
             node.children = [{
               key: newRowKey,
@@ -550,7 +562,8 @@ selectors.mappingChanged = state => {
     return false;
   }
 
-  const { mappings = [], mappingsCopy = [], lookups = [], lookupsCopy = [] } = state.mapping;
+  const { mappings = [], mappingsCopy = [], lookups = [], lookupsCopy = [],
+    v2TreeData = [], v2TreeDataCopy = [] } = state.mapping;
   let isMappingsChanged = !isMappingEqual(mappings, mappingsCopy);
 
   if (!isMappingsChanged) {
@@ -560,7 +573,14 @@ selectors.mappingChanged = state => {
       lookupsCopy.length !== lookups.length || lookupsDiff.length;
   }
 
-  return !!isMappingsChanged;
+  let isCombinedMappingsChanged = isMappingsChanged;
+
+  // check for v2 mappings
+  if (!isCombinedMappingsChanged) {
+    isCombinedMappingsChanged = isV2MappingsChanged(v2TreeData, v2TreeDataCopy);
+  }
+
+  return !!isCombinedMappingsChanged;
 };
 
 // #region PUBLIC SELECTORS
@@ -591,4 +611,12 @@ selectors.mappingVersion = state => {
   }
 
   return state.mapping.version;
+};
+
+selectors.v2MappingExpandedKeys = state => {
+  if (!state || !state.mapping) {
+    return emptyArr;
+  }
+
+  return state.mapping.expandedKeys || emptyArr;
 };

@@ -115,8 +115,7 @@ export default function Mapper2Generates(props) {
     <FormControl
       data-test={id}
       key={id}
-      ref={containerRef}
-      >
+      ref={containerRef} >
       <div
         className={classes.mapField}>
         <Tooltip disableFocusListener title={toolTipTitle} placement="bottom" >
@@ -130,8 +129,7 @@ export default function Mapper2Generates(props) {
             onFocus={handleFocus}
             disabled={isDisabled}
             multiline={isFocused}
-            placeholder={!generateDisabled && 'Destination record field'}
-   />
+            placeholder={!generateDisabled && 'Destination record field'} />
         </Tooltip >
 
         {/* todo ashu tooltip does not work for celigo select */}

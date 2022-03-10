@@ -1,7 +1,7 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback} from 'react';
 import Tree from 'rc-tree';
 import {isEqual} from 'lodash';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ArrowUpIcon from '../../../../../icons/ArrowUpIcon';
@@ -103,13 +103,10 @@ const dragConfig = {
 export default function Mapper2({editorId}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [remountKey, setRemountKey] = useState(0);
 
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const treeData = useSelector(state => selectors.v2MappingsTreeData(state), isEqual);
-
-  const shouldExpandAll = useSelector(state => selectors.mapping(state)?.expandAll);
-  const toggleCount = useSelector(state => selectors.mapping(state)?.toggleCount);
+  const expandedKeys = useSelector(state => selectors.v2MappingExpandedKeys(state), shallowEqual);
 
   const onDropHandler = useCallback(info => {
     dispatch(actions.mapping.v2.dropRow(info));
@@ -126,39 +123,34 @@ export default function Mapper2({editorId}) {
     event.dataTransfer.setDragImage(parent, 0, 0);
   }, []);
 
-  // we want the tree to re-render if expand/collapse flag is changed
-  // defaultExpandAll prop of tree works only on mount hence re-mount is required
-  useEffect(() => {
-    setRemountKey(count => count + 1);
-  }, [toggleCount]);
+  const onExpandHandler = useCallback(expandedKeys => {
+    dispatch(actions.mapping.v2.updateExpandedKeys(expandedKeys));
+  }, [dispatch]);
 
-  return treeData.length
-    ? (
-      <>
-        <SettingsDrawer disabled={disabled} />
-        <div className={classes.mappingDrawerContent}>
-          <Tree
-            key={remountKey}
-            className={classes.treeRoot}
-           // expandedKeys={} set this when data type is change to auto expand
-            titleRender={Row}
-            treeData={treeData}
-            showLine
-            defaultExpandAll={shouldExpandAll}
-            switcherIcon={SwitcherIcon}
-            allowDrop={allowDrop}
-            onDrop={onDropHandler}
-          // activeKey={treeData[0].key}
-            draggable={dragConfig}
-            onDragStart={onDragStart}
-            disabled={disabled}
-          // height={500}
-        //   itemHeight={50}
-        //   virtual={false}
-              />
-        </div>
-      </>
-
-    )
-    : 'Loading mappings';
+  return (
+    <>
+      <SettingsDrawer disabled={disabled} />
+      <div className={classes.mappingDrawerContent}>
+        <Tree
+          className={classes.treeRoot}
+          titleRender={Row}
+          treeData={treeData}
+          showLine
+          defaultExpandAll={false}
+          expandedKeys={expandedKeys}
+          onExpand={onExpandHandler}
+          switcherIcon={SwitcherIcon}
+          allowDrop={allowDrop}
+          onDrop={onDropHandler}
+        // activeKey={treeData[0].key}
+          draggable={dragConfig}
+          onDragStart={onDragStart}
+          disabled={disabled}
+        // height={500}
+      //   itemHeight={50}
+      //   virtual={false}
+            />
+      </div>
+    </>
+  );
 }

@@ -1,5 +1,5 @@
 import deepClone from 'lodash/cloneDeep';
-import { uniqBy, isEmpty, isEqual, forEach } from 'lodash';
+import { uniqBy, isEmpty, isEqual, forEach, flattenDeep } from 'lodash';
 import { nanoid } from 'nanoid';
 import { adaptorTypeMap, isNetSuiteBatchExport, isFileAdaptor} from '../resource';
 // eslint-disable-next-line import/no-self-import
@@ -1532,20 +1532,6 @@ export const ROWS_AS_INPUT_OPTIONS = [
   },
 ];
 
-export const getInputOutputFormat = (isGroupedSampleData, isGroupedOutput) => {
-  if (isGroupedSampleData) {
-    if (isGroupedOutput) {
-      return 'rowrow';
-    }
-
-    return 'rowrec';
-  } if (isGroupedOutput) {
-    return 'recrow';
-  }
-
-  return 'recrec';
-};
-
 export const PRIMITIVE_DATA_TYPES = ['string', 'number', 'boolean'];
 export const ARRAY_DATA_TYPES = ['stringarray', 'numberarray', 'booleanarray', 'objectarray', 'arrayarray'];
 export const DATA_TYPES_OPTIONS =
@@ -1583,6 +1569,20 @@ export const DATA_TYPES_OPTIONS =
     label: '[object]',
   },
 ];
+
+export const getInputOutputFormat = (isGroupedSampleData, isGroupedOutput) => {
+  if (isGroupedSampleData) {
+    if (isGroupedOutput) {
+      return 'rowrow';
+    }
+
+    return 'rowrec';
+  } if (isGroupedOutput) {
+    return 'recrow';
+  }
+
+  return 'recrec';
+};
 
 function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disabled) {
   mappings.forEach(m => {
@@ -1630,7 +1630,8 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disa
         buildArrayHelper.forEach(obj => {
           const {extract, mappings} = obj;
 
-          sourceExtract = extract ? `${sourceExtract ? `${sourceExtract},` : ''}${extract}` : sourceExtract;
+          //  sourceExtract = extract ? `${sourceExtract ? `${sourceExtract},` : ''}${extract}` : sourceExtract;
+          sourceExtract = `${sourceExtract ? `${sourceExtract},` : ''}${extract || '$'}`;
 
           if (!mappings) {
             return;
@@ -1710,7 +1711,8 @@ const mappings_record_to_record = {
     {
       generate: 'my_last_name',
       dataType: 'string',
-      extract: '$.lName',
+      // extract: '$.lName',
+      hardCodedValue: 'henderson',
     },
     // expressions continue to use handlebars, NOT jsonpath
     {
@@ -1976,6 +1978,7 @@ const mappings_record_to_record = {
     // },
   ],
 };
+
 export const getV2MappingsForResource = ({
   importResource,
   // isFieldMapping = false,
@@ -2030,6 +2033,8 @@ export const findNodeInTree = (data, prop, value) => {
   let nodeSubArray;
   let nodeIndexInSubArray;
 
+  // using lodash forEach here as it provides a way to exit from loop
+  // unlike Array forEach function
   forEach(data, (item, i, arr) => {
     if (item[prop] === value) {
       node = item;
@@ -2235,55 +2240,82 @@ export const getFinalSelectedExtracts = (node, inputValue, isArrayType) => {
   return newValue;
 };
 
-export const sampleData = [{
-  fName: 'scott',
-  lName: 'henderson',
-  altFirstName: 'scooter',
-  additionalFirstNames: ['scoots', 'mchendrix'],
-  children: [
-    {
-      firstName: 'abby',
-    },
-    {
-      firstName: 'paige',
-    },
-  ],
-  mother: {
-    fName: 'mary',
-    lName: 'henderson',
-  },
-  father: {
-    fName: 'herb',
-    lName: 'henderson',
-  },
-  siblings: [
-    {
-      fName: 'james',
-      lName: 'henderson',
-      children: [
-        {
-          fName: 'patrick',
-        },
-        {
-          fName: 'asher',
-        },
-        {
-          fName: 'cade',
-        },
-        {
-          fName: 'lee',
-        },
-      ],
-    },
-    {
-      fName: 'erin',
-      lName: 'tuohy',
-      children: [
-        {
-          fName: 'jake',
-        },
-      ],
-    },
-  ],
-}];
+const isV2MappingObjEqual = (_mappingObj1, _mappingObj2) => {
+  if ((!isEmpty(_mappingObj1.children) && isEmpty(_mappingObj2.children)) || (isEmpty(_mappingObj1.children) && !isEmpty(_mappingObj2.children))) return false;
+
+  const {
+    key: key1,
+    parentKey: pKey1,
+    title: t1,
+    disabled: d1,
+    parentExtract: p1,
+    mappings: m1,
+    buildArrayHelper: b1,
+    children: c1,
+    isNotEditable: e1,
+    isRequired: req1,
+    ...mappingObj1
+  } = _mappingObj1;
+  const {
+    key: key2,
+    parentKey: pKey2,
+    title: t2,
+    disabled: d2,
+    parentExtract: p2,
+    mappings: m2,
+    buildArrayHelper: b2,
+    children: c2,
+    isNotEditable: e2,
+    isRequired: req2,
+    ...mappingObj2
+  } = _mappingObj2;
+
+  const isEqualObj = isEqual(mappingObj1, mappingObj2);
+
+  if (!isEqualObj) return false;
+
+  if (!_mappingObj1.children && !_mappingObj2.children) return isEqualObj;
+
+  // both have children so need to compare children now
+  let isChildrenEqual = true;
+
+  for (let i = 0; i < _mappingObj1.children.length; i += 1) {
+    isChildrenEqual = isV2MappingObjEqual(_mappingObj1.children[i], _mappingObj2.children[i]);
+    if (!isChildrenEqual) {
+      break;
+    }
+  }
+
+  return isChildrenEqual;
+};
+
+export const isV2MappingsChanged = (tree1, tree2) => {
+  let isV2MappingsChanged = tree1.length !== tree2.length;
+
+  if (isV2MappingsChanged) return true;
+
+  // change of order of mappings is treated as Mapping change
+  for (let i = 0; i < tree1.length; i += 1) {
+    isV2MappingsChanged = !isV2MappingObjEqual(tree1[i], tree2[i]);
+    if (isV2MappingsChanged) break;
+  }
+
+  return isV2MappingsChanged;
+};
+
+// this util returns ALL the keys of the tree data in a flat array format
+export const getAllKeys = data => {
+  const nestedKeys = data.map(node => {
+    let childKeys = [];
+
+    if (node.children) {
+      childKeys = getAllKeys(node.children);
+    }
+
+    return [childKeys, node.key];
+  });
+
+  return flattenDeep(nestedKeys);
+};
+
 // #endregion

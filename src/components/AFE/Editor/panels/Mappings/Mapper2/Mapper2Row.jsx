@@ -6,14 +6,15 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import ActionButton from '../../../../../ActionButton';
 import TrashIcon from '../../../../../icons/TrashIcon';
 import AddIcon from '../../../../../icons/AddIcon';
-import LookupIcon from '../../../../../icons/LookupLetterIcon';
+import StaticLookupIcon from '../../../../../icons/StaticLookupIcon';
+import HandlebarsExpressionIcon from '../../../../../icons/HandlebarsExpressionIcon';
+import DynamicLookupIcon from '../../../../../icons/DynamicLookupIcon';
 import HardCodedIcon from '../../../../../icons/HardCodedIcon';
 import MappingSettingsButton from '../../../../../Mapping/Settings/SettingsButton';
 import Mapper2ExtractsTypeableSelect from './Mapper2ExtractsTypeableSelect';
 import {selectors} from '../../../../../../reducers';
 import Mapper2Generates from './Mapper2Generates';
 import actions from '../../../../../../actions';
-import MultiFieldIcon from '../../../../../icons/MultiFieldIcon';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -68,17 +69,20 @@ const Mapper2Row = React.memo(({
   lookupName,
   disabled,
   generateDisabled,
+  isEmptyRow,
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const {flowId,
-    importId, subRecordMappingId} = useSelector(state => {
+    importId, subRecordMappingId, lookup} = useSelector(state => {
     const e = selectors.mapping(state);
+    const lookup = (lookupName && e.lookups?.find(lookup => lookup.name === lookupName)) || {};
 
     return {
       flowId: e.flowId,
       importId: e.importId,
       subRecordMappingId: e.subRecordMappingId,
+      lookup,
     };
   }, shallowEqual);
 
@@ -111,6 +115,7 @@ const Mapper2Row = React.memo(({
   const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
   const extractValue = combinedExtract || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
   const isLookup = !!lookupName;
+  const isStaticLookup = !!(lookup.name && lookup.map);
   const isHardCodedValue = !!hardCodedValue;
   const isHandlebarExp = handlebarRegex.test(extract);
 
@@ -133,7 +138,7 @@ const Mapper2Row = React.memo(({
           />
 
       </div>
-      {dataType === 'object' && !extract ? null : (
+      {dataType === 'object' && !extractValue ? null : (
         <>
           <div className={classes.childHeader}>
             <Mapper2ExtractsTypeableSelect
@@ -155,8 +160,9 @@ const Mapper2Row = React.memo(({
       )}
 
       <div className={classes.actionsMapping}>
-        {isLookup && <RightIcon title="Lookup" Icon={LookupIcon} />}
-        {isHandlebarExp && !isLookup && <RightIcon title="Multi-field" Icon={MultiFieldIcon} />}
+        {isStaticLookup && <RightIcon title="Static lookup" Icon={StaticLookupIcon} />}
+        {(isLookup && !isStaticLookup) && <RightIcon title="Dynamic lookup" Icon={DynamicLookupIcon} />}
+        {isHandlebarExp && !isLookup && <RightIcon title="Handlebars expression" Icon={HandlebarsExpressionIcon} />}
         {isHardCodedValue && !isLookup && <RightIcon title="Hard-coded" Icon={HardCodedIcon} />}
         <div>
           <MappingSettingsButton
@@ -178,7 +184,7 @@ const Mapper2Row = React.memo(({
           <ActionButton
             data-test={`fieldMappingRemove-${nodeKey}`}
             aria-label="delete"
-            disabled={generateDisabled || disabled}
+            disabled={isEmptyRow || generateDisabled || disabled}
             onClick={handleDeleteClick}
             className={classes.deleteBtn}>
             <TrashIcon />
