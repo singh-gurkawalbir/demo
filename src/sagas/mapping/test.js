@@ -1390,7 +1390,7 @@ describe('updateImportSampleData saga', () => {
     .not.put(actions.mapping.updateMappings())
     .run());
 
-  test('should check for incomplete generate in mapping list and trigger update mapping action correctly', () => expectSaga(updateImportSampleData)
+  test('should check for incomplete generate in mapping list and trigger update mapping action correctly ', () => expectSaga(updateImportSampleData)
     .provide([
       [select(selectors.mapping), {importId, incompleteGenerates: [{key: 'k1', value: 'Assets'}], mappings: [{key: 'k1', generate: '_child_Emails'}]}],
       [select(selectors.mappingGenerates, importId, undefined), [
