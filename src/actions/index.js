@@ -2219,7 +2219,7 @@ const integrationLCM = {
     receivedError: (integrationId, error) => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.RECEIVED_ERROR, { integrationId, error }),
   },
   compare: {
-    pullRequest: (integrationId, cloneIntegrationId) => action(actionTypes.INTEGRATION_LCM.COMPARE.PULL_REQUEST, { integrationId, cloneIntegrationId }),
+    pullRequest: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.COMPARE.PULL_REQUEST, { integrationId, revisionId }),
     revertRequest: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.COMPARE.REVERT_REQUEST, { integrationId, revisionId }),
     revisionChanges: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.COMPARE.REVISION_REQUEST, { integrationId, revisionId }),
     receivedDiff: (integrationId, diff) => action(actionTypes.INTEGRATION_LCM.COMPARE.RECEIVED_DIFF, { integrationId, diff }),

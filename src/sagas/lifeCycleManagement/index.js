@@ -4,6 +4,10 @@ import { selectors } from '../../reducers';
 import { REVISION_STATUS, REVISION_TYPES } from '../../utils/constants';
 import actionTypes from '../../actions/types';
 // import { apiCallWithRetry } from '../index';
+import conflicts from './samples/conflicts.json';
+// import conflictsWithScript from './samples/conflictsWithScript.json';
+// import diff from './samples/diff.json';
+// import diffWithScript from './samples/diffWithScript.json';
 
 export function* requestIntegrationCloneFamily({ integrationId }) {
   try {
@@ -78,8 +82,25 @@ function* createRevision({ integrationId, newRevisionId}) {
   yield put(actions.integrationLCM.revision.created(integrationId, newRevisionId));
 }
 
+function* comparePullRequest({ integrationId }) {
+  // const { revisionInfo = {}} = (yield select(selectors.tempRevisionInfo, integrationId, revisionId)) || {};
+  // const { integration: cloneIntegrationId } = revisionInfo;
+  // const resourceDiff = yield call(apiCallWithRetry, {
+  //   path: `/integrations/${integrationId}/pull/${cloneIntegrationId}/compare`,
+  //   opts: {
+  //     method: 'POST',
+  //   },
+  // });
+  yield delay(2000);
+  const resourceDiff = conflicts;
+
+  console.log(resourceDiff);
+  yield put(actions.integrationLCM.compare.receivedDiff(integrationId, resourceDiff));
+}
+
 export default [
   takeEvery(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, requestIntegrationCloneFamily),
   takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CREATE, createRevision),
   takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CREATE_SNAPSHOT, createRevision),
+  takeEvery(actionTypes.INTEGRATION_LCM.COMPARE.PULL_REQUEST, comparePullRequest),
 ];

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../../Right';
@@ -6,9 +6,11 @@ import DrawerHeader from '../../../Right/DrawerHeader';
 import DrawerContent from '../../../Right/DrawerContent';
 import DrawerFooter from '../../../Right/DrawerFooter';
 import Spinner from '../../../../Spinner';
+import ResourceDiffVisualizer from '../../../../ResourceDiffVisualizer';
 import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
+import { getRevisionResourceLevelChanges } from '../../../../../utils/revisions';
 
 function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
@@ -18,6 +20,13 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
 
   const createdRevisionId = useSelector(state => selectors.createdResourceId(state, revId));
   const isRevisionCreationInProgress = useSelector(state => selectors.isRevisionCreationInProgress(state, integrationId, revId));
+  const isResourceComparisonInProgress = useSelector(state => selectors.isResourceComparisonInProgress(state, integrationId));
+  const revisionResourceDiff = useSelector(state => selectors.revisionResourceDiff(state, integrationId));
+  const resourceDiffInfo = useMemo(() => {
+    if (revisionResourceDiff) {
+      return getRevisionResourceLevelChanges(revisionResourceDiff);
+    }
+  }, [revisionResourceDiff]);
 
   const onClose = () => {
     history.replace(parentUrl);
@@ -33,14 +42,22 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdRevisionId]);
 
+  useEffect(() => {
+    dispatch(actions.integrationLCM.compare.pullRequest(integrationId, revId));
+  }, [dispatch, integrationId, revId]);
+
   return (
     <>
       <DrawerHeader title="Review changes " handleClose={onClose} />
       <DrawerContent>
-        <div> test </div>
+        {
+          isResourceComparisonInProgress ? <Spinner /> : (
+            <ResourceDiffVisualizer diffs={resourceDiffInfo?.diffs} />
+          )
+        }
       </DrawerContent>
       <DrawerFooter>
-        <FilledButton disabled={isRevisionCreationInProgress} onClick={handleCreateRevision} >
+        <FilledButton disabled={isRevisionCreationInProgress || isResourceComparisonInProgress} onClick={handleCreateRevision} >
           Next { isRevisionCreationInProgress ? <Spinner size={12} /> : null }
         </FilledButton>
         <TextButton
