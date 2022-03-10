@@ -30,6 +30,9 @@ export default (state = {}, action) => {
         }
         draft[integrationId].expandAll = !draft[integrationId].expandAll;
         break;
+      case actionTypes.INTEGRATION_LCM.COMPARE.CLEAR:
+        delete draft[integrationId];
+        break;
       default:
     }
   });
