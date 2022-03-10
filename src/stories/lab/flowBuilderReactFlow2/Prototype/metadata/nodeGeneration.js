@@ -7,14 +7,15 @@ export const getSomePg = _exportId => ({_exportId, skipRetries: true});
 
 export const getSomePpImport = _importId =>
   ({responseMapping: {fields: [], lists: []}, type: 'import', _importId});
-export const generateNewRouter = id => ({
-  id: id || generateId(),
+export const generateRouterNode = router => ({
+  id: router?._id || generateId(),
   type: 'router',
+  data: router,
 });
-export const generateNewTerminal = () => ({
+export const generateNewTerminal = isEmptyBranch => ({
   id: generateId(),
   type: 'terminal',
-  draggable: true,
+  draggable: !isEmptyBranch,
 });
 
 export const generateBranch = () => {
@@ -28,20 +29,21 @@ export const generateBranch = () => {
     _id: newId,
   };
 };
-export const generateAnEmptyActualRouter = () => ({
+export const generateAnEmptyActualRouter = isVirtual => ({
   _id: generateId(),
-  routeRecordsTo: {
+  ...(!isVirtual && { routeRecordsTo: {
     type: 'first_matching_branch',
     default: undefined,
-  },
-  routeRecordsUsing: {
+  }}),
+  ...(!isVirtual && { routeRecordsUsing: {
     type: 'input_filters',
     default: undefined,
-  },
-  branches: [],
-  script: {
+  }}),
+  branches: [{
+    pageProcessors: [{application: `none-${generateId()}`}],
+  }],
+  ...(!isVirtual && { script: {
     _scriptId: { type: 'something', ref: 'Script' },
     function: { type: 'something' },
-  },
-
+  } }),
 });

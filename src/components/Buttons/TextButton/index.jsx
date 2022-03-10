@@ -16,6 +16,14 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       color: theme.palette.error.main,
     },
+    '&:focus': {
+      color: `${theme.palette.error.main} !important`,
+    },
+  },
+  vertical: {
+    '& > .MuiButton-label': {
+      flexDirection: 'column',
+    },
   },
   underline: {
     color: theme.palette.primary.dark,
@@ -28,13 +36,13 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function TextButton(props) {
   const classes = useStyles(props);
-  const {children, error, bold, underline, ...rest} = props;
+  const {children, className, vertical = false, error, bold, underline, ...rest} = props;
 
   return (
     <Button
       variant="text"
       color="secondary"
-      className={clsx(classes.root, {[classes.error]: error}, {[classes.underline]: underline})}
+      className={clsx(classes.root, {[classes.error]: error}, {[classes.underline]: underline}, {[classes.vertical]: vertical}, className)}
       disableElevation
       {...rest}>
       {children}
@@ -49,6 +57,7 @@ TextButton.propTypes = {
   bold: PropTypes.bool,
   color: PropTypes.oneOf(['primary', 'secondary']),
   error: PropTypes.bool,
+  vertical: PropTypes.bool,
 };
 
 TextButton.defaultProps = {

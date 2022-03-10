@@ -3,8 +3,10 @@ import jsonPatch from 'fast-json-patch';
 import actions from './actions';
 import { emptyObject } from '../../../../../utils/constants';
 import { generateAnEmptyActualRouter, generateBranch } from '../metadata/nodeGeneration';
+import { populateIds } from '../translateSchema';
+import { generateId } from '../lib';
 
-const addNewNode = (draft, action) => {
+const addNewStep = (draft, action) => {
   const { path, resourceType, flowNode, resourceNode, flowId } = action;
 
   const {session, data} = draft;
@@ -23,7 +25,7 @@ const addNewNode = (draft, action) => {
 };
 
 const mergeTerminalNodes = (draft, action) => {
-  const { flow, sourcePath, destinationPath} = action;
+  const { flow, sourcePath, destinationPath } = action;
   const sourceRouter = jsonPatch.getValueByPointer(flow, sourcePath);
   const destinationRouter = jsonPatch.getValueByPointer(flow, destinationPath);
   const {session} = draft;
@@ -44,7 +46,7 @@ const mergeTerminalNodes = (draft, action) => {
 
   if (!sourceRouter && !destinationRouter) {
     // create a new router
-    const router = generateAnEmptyActualRouter();
+    const router = generateAnEmptyActualRouter(true);
 
     staged[flowId].patch.push(...[
       {
@@ -70,7 +72,7 @@ const mergeTerminalNodes = (draft, action) => {
     {
       op: 'add',
       path: !destinationRouter ? destinationPath : sourcePath,
-      value: !destinationRouter ? destinationRouter : sourceRouter,
+      value: destinationRouter || sourceRouter,
     });
 };
 
@@ -101,9 +103,6 @@ const getBranchPath = path => {
 
 const generateTwoBranchRouter = (remainingNodes, nextRouterId) => {
   const origRouter = generateAnEmptyActualRouter();
-
-  // console.log('remainingNodes ', remainingNodes);
-  origRouter.branches.push(generateBranch());
   const branch = {...generateBranch(),
     pageProcessors: remainingNodes,
     _nextRouterId: nextRouterId,
@@ -123,8 +122,18 @@ const handleAddNewRouter = (draft, action) => {
   const ppPgArr = jsonPatch.getValueByPointer(flow, pgPpPath);
   const branchPath = getBranchPath(path);
   const { _nextRouterId } = jsonPatch.getValueByPointer(flow, branchPath);
+
   const insertionIndex = getInsertionIndex(path);
-  const [firstHalf, secondHalf] = splitPPArray(ppPgArr, insertionIndex);
+
+  let firstHalf;
+  let secondHalf;
+
+  if (insertionIndex !== '-') {
+    [firstHalf, secondHalf] = splitPPArray(ppPgArr, insertionIndex);
+  } else {
+    firstHalf = ppPgArr;
+    secondHalf = [{application: `none-${generateId()}`}];
+  }
 
   if (!staged[flowId]) {
     staged[flowId] = {patch: []};
@@ -137,8 +146,6 @@ const handleAddNewRouter = (draft, action) => {
   });
 
   const newBranchedRouter = generateTwoBranchRouter(secondHalf, _nextRouterId);
-
-  // console.log('see ', newBranchedRouter);
 
   staged[flowId].patch.push(...[{
     op: 'replace',
@@ -168,13 +175,66 @@ const handleDeleteEdge = (draft, action) => {
   });
 };
 
+const handleDeleteNode = (draft, action) => {
+  const {flow, path, isPageGenerator} = action;
+  const {session} = draft;
+  const {staged} = session;
+  const flowId = flow._id;
+
+  if (!staged[flowId]) {
+    staged[flowId] = {patch: []};
+  }
+  if (isPageGenerator) {
+    // remove the node
+    staged[flowId].patch.push({
+      op: 'remove',
+      path,
+    });
+    // If last PG is deleted, add a new PG step
+    if (flow.pageGenerators.length === 1) {
+      staged[flowId].patch.push({
+        op: 'add',
+        path,
+        value: {application: `none=${generateId()}`},
+      });
+    }
+  } else
+  // Page processors
+  // Typical page processor looks like /routers/:routerIndex/branches/:branchIndex/pageProcessors/:pageProcessorIndex
+  if (/\/routers\/(\d)\/branches\/(\d)\/pageProcessors\/(\d)/.test(path)) {
+    const [, routerIndex, branchIndex, pageProcessorIndex] = /\/routers\/(\d)\/branches\/(\d)\/pageProcessors\/(\d)/.exec(path);
+    const pageProcessors = jsonPatch.getValueByPointer(flow, `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors`);
+
+    if (pageProcessors.length === 1) {
+      const branches = jsonPatch.getValueByPointer(flow, `/routers/${routerIndex}/branches`);
+
+      if (branches.length === 1) {
+        staged[flowId].patch.push({
+          op: 'remove',
+          path: `/routers/${routerIndex}`,
+        });
+      } else {
+        staged[flowId].patch.push({
+          op: 'remove',
+          path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${pageProcessorIndex}`,
+        });
+      }
+    } else {
+      staged[flowId].patch.push({
+        op: 'remove',
+        path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${pageProcessorIndex}`,
+      });
+    }
+  }
+};
+
 export default function (state, action) {
   const {type } = action;
 
   return produce(state, draft => {
     switch (type) {
-      case actions.ADD_NEW_NODE: {
-        addNewNode(draft, action);
+      case actions.ADD_NEW_STEP: {
+        addNewStep(draft, action);
 
         return;
       }
@@ -193,6 +253,12 @@ export default function (state, action) {
 
       case actions.DELETE_EDGE: {
         handleDeleteEdge(draft, action);
+
+        return;
+      }
+
+      case actions.DELETE_STEP: {
+        handleDeleteNode(draft, action);
 
         return;
       }
@@ -260,5 +326,9 @@ export const resourceDataSelector = (state, type, id) => {
 
   const session = getSessionState(state, id);
 
-  return resourceDataModified(resource, session, type, id);
+  const flow = resourceDataModified(resource, session, type, id)?.merged;
+
+  populateIds(flow);
+
+  return flow;
 };

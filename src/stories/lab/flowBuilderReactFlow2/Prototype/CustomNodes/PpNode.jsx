@@ -10,6 +10,7 @@ import lookupTransformationAction from '../../../../../views/FlowBuilder/PagePro
 import responseTransformationAction from '../../../../../views/FlowBuilder/PageProcessor/actions/responseTransformation_afe';
 // import responseMapping from '../../../../../views/FlowBuilder/PageProcessor/actions/responseMapping_afe';
 import AppBlockHandle from './Handles/AppBlockHandle';
+import { useHandleDeleteNode } from '../hooks';
 
 const useStyles = makeStyles(() => ({
   ppContainer: {
@@ -72,10 +73,7 @@ export default function PageProcessor(props) {
     return processorActions;
   }, [isLookup]);
 
-  const handleDelete = index => {
-    // eslint-disable-next-line no-console
-    console.log(index);
-  };
+  const handleDelete = useHandleDeleteNode(id);
 
   return (
     <div className={classes.root}>
@@ -88,7 +86,7 @@ export default function PageProcessor(props) {
             onDelete={handleDelete}
             connectorType={connectorType}
             blockType={isLookup ? 'export' : 'import'}
-            index={33}
+            index={id}
             resource={{}}
             resourceId={id}
             resourceIndex={4}

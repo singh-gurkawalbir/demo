@@ -15,11 +15,9 @@ import { pingConnectionParams } from '../../api/apiPaths';
 import {
   createFormValuesPatchSet,
   submitFormValues,
-  SCOPES,
   newIAFrameWorkPayload,
 } from '../index';
 import { selectors } from '../../../reducers/index';
-import { commitStagedChangesWrapper } from '../../resources';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';
 import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
@@ -479,28 +477,6 @@ function* saveAndAuthorizeConnectionForm(params) {
   if (cancelSave) yield put(actions.resource.clearStaged(resourceId));
 }
 
-export function* commitAndAuthorizeConnection({ resourceId }) {
-  const resp = yield call(commitStagedChangesWrapper, {
-    resourceType: 'connections',
-    id: resourceId,
-    scope: SCOPES.VALUE,
-    asyncKey: getAsyncKey('connections', resourceId),
-  });
-
-  // if there is conflict let conflict dialog show up
-  // and oauth authorize be skipped
-  if (resp && (resp.error || resp.conflict)) {
-    // could not save the resource...lets just return
-    return;
-  }
-
-  try {
-    yield call(openOAuthWindowForConnection, [resourceId]);
-  } catch (e) {
-    // could not close the window
-  }
-}
-
 export function* requestIClients({ connectionId }) {
   let path;
   const newIAConnDoc = yield call(newIAFrameWorkPayload, {
@@ -583,10 +559,6 @@ export default [
     saveAndAuthorizeConnectionForm
   ),
   takeEvery(actionTypes.NETSUITE_USER_ROLES.REQUEST, netsuiteUserRoles),
-  takeEvery(
-    actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE,
-    commitAndAuthorizeConnection
-  ),
   takeLatest(actionTypes.ICLIENTS, requestIClients),
   takeLatest(actionTypes.CONNECTION.TRADING_PARTNER_CONNECTIONS_REQUEST, requestTradingPartnerConnections),
 ];

@@ -12,7 +12,7 @@ export default (state = [], action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.ACCESSTOKEN_TOKEN_RECEIVED:
+      case actionTypes.ACCESSTOKEN.RECEIVED:
         resourceIndex = state.findIndex(r => r._id === accessToken._id);
 
         if (resourceIndex > -1) {
@@ -22,7 +22,7 @@ export default (state = [], action) => {
         }
 
         break;
-      case actionTypes.ACCESSTOKEN_TOKEN_MASK:
+      case actionTypes.ACCESSTOKEN.MASK:
         resourceIndex = state.findIndex(r => r._id === accessToken._id);
 
         if (resourceIndex > -1) {
