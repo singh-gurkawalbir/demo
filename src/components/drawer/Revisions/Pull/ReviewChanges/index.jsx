@@ -79,7 +79,7 @@ export default function ReviewChangesDrawer({ integrationId }) {
       path="pull/:revId/review"
       variant="temporary"
       height="tall"
-      width="xl">
+      width="full">
       <ReviewChangesDrawerContent integrationId={integrationId} parentUrl={match.url} />
     </RightDrawer>
   );
