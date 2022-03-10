@@ -11,17 +11,21 @@ import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { getRevisionResourceLevelChanges } from '../../../../../utils/revisions';
+import ReviewHeaderActions from './ReviewHeaderActions';
 
 function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const { revId } = match.params;
   const history = useHistory();
   const dispatch = useDispatch();
-
+  // selectors
   const createdRevisionId = useSelector(state => selectors.createdResourceId(state, revId));
   const isRevisionCreationInProgress = useSelector(state => selectors.isRevisionCreationInProgress(state, integrationId, revId));
   const isResourceComparisonInProgress = useSelector(state => selectors.isResourceComparisonInProgress(state, integrationId));
   const revisionResourceDiff = useSelector(state => selectors.revisionResourceDiff(state, integrationId));
+  const isDiffExpanded = useSelector(state => selectors.isDiffExpanded(state, integrationId));
+  // end selectors
+
   const resourceDiffInfo = useMemo(() => {
     if (revisionResourceDiff) {
       return getRevisionResourceLevelChanges(revisionResourceDiff);
@@ -44,15 +48,26 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
 
   useEffect(() => {
     dispatch(actions.integrationLCM.compare.pullRequest(integrationId, revId));
+
+    return () => dispatch(actions.integrationLCM.compare.clear(integrationId));
   }, [dispatch, integrationId, revId]);
 
   return (
     <>
-      <DrawerHeader title="Review changes " handleClose={onClose} />
+      <DrawerHeader title="Review changes " handleClose={onClose}>
+        <ReviewHeaderActions
+          numConflicts={resourceDiffInfo?.numConflicts}
+          integrationId={integrationId}
+          revId={revId}
+        />
+      </DrawerHeader>
       <DrawerContent>
         {
           isResourceComparisonInProgress ? <Spinner /> : (
-            <ResourceDiffVisualizer diffs={resourceDiffInfo?.diffs} />
+            <ResourceDiffVisualizer
+              diffs={resourceDiffInfo?.diffs}
+              forceExpand={isDiffExpanded}
+            />
           )
         }
       </DrawerContent>

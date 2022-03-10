@@ -2224,6 +2224,7 @@ const integrationLCM = {
     revisionChanges: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.COMPARE.REVISION_REQUEST, { integrationId, revisionId }),
     receivedDiff: (integrationId, diff) => action(actionTypes.INTEGRATION_LCM.COMPARE.RECEIVED_DIFF, { integrationId, diff }),
     clear: integrationId => action(actionTypes.INTEGRATION_LCM.COMPARE.CLEAR, { integrationId }),
+    toggleExpandAll: integrationId => action(actionTypes.INTEGRATION_LCM.COMPARE.TOGGLE_EXPAND_ALL, { integrationId }),
   },
   revision: {
     openPull: ({ integrationId, newRevisionId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.OPEN_PULL, { integrationId, newRevisionId, revisionInfo }),

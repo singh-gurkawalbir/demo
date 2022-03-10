@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../../Right';
@@ -9,6 +9,9 @@ import Spinner from '../../../../Spinner';
 import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
+import ReviewHeaderActions from './ReviewHeaderActions';
+import ResourceDiffVisualizer from '../../../../ResourceDiffVisualizer';
+import { getRevisionResourceLevelChanges } from '../../../../../utils/revisions';
 
 function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
@@ -16,8 +19,19 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
   const history = useHistory();
   const dispatch = useDispatch();
 
+  // selectors
   const createdRevisionId = useSelector(state => selectors.createdResourceId(state, tempRevId));
   const isRevisionCreationInProgress = useSelector(state => selectors.isRevisionCreationInProgress(state, integrationId, tempRevId));
+  const isResourceComparisonInProgress = useSelector(state => selectors.isResourceComparisonInProgress(state, integrationId));
+  const revisionResourceDiff = useSelector(state => selectors.revisionResourceDiff(state, integrationId));
+  const isDiffExpanded = useSelector(state => selectors.isDiffExpanded(state, integrationId));
+  // end selectors
+
+  const resourceDiffInfo = useMemo(() => {
+    if (revisionResourceDiff) {
+      return getRevisionResourceLevelChanges(revisionResourceDiff);
+    }
+  }, [revisionResourceDiff]);
 
   const onClose = () => {
     history.replace(parentUrl);
@@ -33,11 +47,29 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdRevisionId]);
 
+  useEffect(() => {
+    dispatch(actions.integrationLCM.compare.revertRequest(integrationId, tempRevId));
+
+    return () => dispatch(actions.integrationLCM.compare.clear(integrationId));
+  }, [dispatch, integrationId, tempRevId]);
+
   return (
     <>
-      <DrawerHeader title="Review changes" handleClose={onClose} />
+      <DrawerHeader title="Review changes" handleClose={onClose}>
+        <ReviewHeaderActions
+          integrationId={integrationId}
+          revId={tempRevId}
+        />
+      </DrawerHeader>
       <DrawerContent>
-        <div> test </div>
+        {
+          isResourceComparisonInProgress ? <Spinner /> : (
+            <ResourceDiffVisualizer
+              diffs={resourceDiffInfo?.diffs}
+              forceExpand={isDiffExpanded}
+            />
+          )
+        }
       </DrawerContent>
       <DrawerFooter>
         <FilledButton disabled={isRevisionCreationInProgress} onClick={handleCreateRevision} >

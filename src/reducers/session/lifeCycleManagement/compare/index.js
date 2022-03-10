@@ -24,6 +24,12 @@ export default (state = {}, action) => {
         draft[integrationId].status = 'received';
         draft[integrationId].diff = diff;
         break;
+      case actionTypes.INTEGRATION_LCM.COMPARE.TOGGLE_EXPAND_ALL:
+        if (!draft[integrationId]) {
+          draft[integrationId] = {};
+        }
+        draft[integrationId].expandAll = !draft[integrationId].expandAll;
+        break;
       default:
     }
   });
@@ -36,7 +42,7 @@ selectors.isResourceComparisonInProgress = (state, integrationId) => {
     return false;
   }
 
-  return state[integrationId]?.status === 'requested';
+  return state[integrationId].status === 'requested';
 };
 
 selectors.revisionResourceDiff = (state, integrationId) => {
@@ -44,5 +50,13 @@ selectors.revisionResourceDiff = (state, integrationId) => {
     return;
   }
 
-  return state[integrationId]?.diff;
+  return state[integrationId].diff;
+};
+
+selectors.isDiffExpanded = (state, integrationId) => {
+  if (!state || !integrationId || !state[integrationId]) {
+    return false;
+  }
+
+  return !!state[integrationId].expandAll;
 };
