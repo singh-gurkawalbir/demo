@@ -101,7 +101,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath?.params?.resourceId]);
 
   useEffect(() => {
-    if (isOpenErrorsLoaded && !allErrors.length && matchErrorDrawerPathWithFilter?.params?.errorType === 'open' && childJob) {
+    if (isOpenErrorsLoaded && !allErrors.length && matchErrorDrawerPathWithFilter?.params?.errorType === 'open') {
       handleErrorTypeChange('resolved');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
