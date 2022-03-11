@@ -7,6 +7,7 @@ import dataMappings from './dataMappings';
 import advancedSettings from './advancedSettings';
 import fileApiIdentifier from './fileApiIdentifier';
 import fileAdvanced from './fileAdvanced';
+import graphql from './graphql';
 
 export default {
   common,
@@ -18,4 +19,5 @@ export default {
   advancedSettings,
   fileApiIdentifier,
   fileAdvanced,
+  graphql,
 };

@@ -139,6 +139,12 @@ const connectors = [
     keywords: 'database,db',
     group: 'db',
   },
+  {
+    id: 'graphql',
+    name: 'GraphQL',
+    type: 'graphql',
+    group: 'tech',
+  },
   // Application connectors
   {
     id: 'activecampaign',

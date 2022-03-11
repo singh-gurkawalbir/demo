@@ -188,6 +188,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
 
   const { type } = getResourceSubType(resource);
 
+  console.log('resource in getform meta', resource);
   switch (resourceType) {
     case 'connections':
       if (isNew) {
@@ -223,6 +224,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         meta = formMeta.connections.rdbms[type];
       } else if (resource?.http?.formType === 'rest' && type === 'http') {
         meta = formMeta.connections.rest;
+      } else if (resource?.http?.formType === 'graph_ql' && type === 'http') {
+        meta = formMeta.connections.graphql;
       } else {
         meta = formMeta.connections[type];
       }
@@ -270,6 +273,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           );
         } else if (resource?.http?.formType === 'rest' && type === 'http') {
           meta = meta.rest;
+        } else if (type === 'graphql' || (resource?.http?.formType === 'graph_ql' && type === 'http')) {
+          meta = resource.useParentForm ? meta.http : meta.graphql;
         } else {
           meta = meta[type];
         }
@@ -321,6 +326,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           } else {
             meta = meta.json;
           }
+        } else if (type === 'graphql' || (type === 'http' && resource?.http?.formType === 'graph_ql')) {
+          meta = resource.useParentForm ? meta.http : meta.graphql;
         } else {
           meta = meta[type];
         }

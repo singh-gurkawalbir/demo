@@ -22,21 +22,18 @@ export default {
       },
     ],
     defaultValue: r => {
-      let toReturn = '';
+      if (!r?.http?.method) return '';
 
-      if (!r || !r.http) {
-        return toReturn;
-      }
-
-      if (r.http.method) {
+      if (Array.isArray(r.http.method)) {
+        if (r.http.method.length === 1) {
+          return r.http.method[0];
+        }
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          toReturn = 'COMPOSITE';
-        } else if (r.http.method && r.http.method.length === 1) {
-          [toReturn] = r.http.method;
+          return 'COMPOSITE';
         }
       }
 
-      return toReturn;
+      return r.http.method;
     },
   },
   'http.blobMethod': {

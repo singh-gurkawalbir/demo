@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 import { isIntegrationApp } from '../../../../utils/flows';
-import { isNewId } from '../../../../utils/resource';
+import { adaptorTypeMap, isNewId } from '../../../../utils/resource';
 
 export default {
   name: {
@@ -22,7 +22,15 @@ export default {
     type: 'formview',
     label: 'Form view',
     visible: r => !r?.useTechAdaptorForm || !isEmpty(r?.assistantMetadata),
-    defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
+    defaultValue: r => {
+      if (adaptorTypeMap[r?.adaptorType] === 'graphql') {
+        if (!r?.http?.formType) return 'false';
+
+        return r?.http?.formType === 'graph_ql' ? 'false' : 'true';
+      }
+
+      return r && `${r.assistant || r?.http?.formType === 'graph_ql' ? 'false' : 'true'}`;
+    },
     helpKey: 'formView',
   },
   _connectionId: {

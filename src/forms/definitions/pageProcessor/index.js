@@ -185,6 +185,8 @@ export default {
         expression.push({ 'rdbms.type': app.type });
       } else if (app.type === 'rest') {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
+      } else if (app.type === 'graphql') {
+        expression.push({ 'http.formType': 'graph_ql' });
       } else if (app.type === 'http') {
         expression.push({ 'http.formType': { $ne: 'rest' } });
         expression.push({ type: app.type });
