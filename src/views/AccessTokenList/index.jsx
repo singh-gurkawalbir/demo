@@ -94,8 +94,7 @@ export default function AccessTokenList(props) {
                       <FilledButton href="/apitokens/none/flowBuilder/new">{apitokens.buttonLabel}</FilledButton>
                       <TextButton
                         underline
-                        component={Link}
-                        to={apitokens.link}
+                        href={apitokens.link}
                         target="_blank">
                         {apitokens.linkLabel}
                       </TextButton>

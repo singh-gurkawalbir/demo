@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo } from 'react';
-import {Link} from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { isEqual, difference } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
@@ -44,10 +43,13 @@ export const DashboardEmptyState = () => (
     subTitle={integrations.subTitle}
     type={integrations.type}>
     <FilledButton href="/integrations/none/flowBuilder/new">{integrations.buttonLabel}</FilledButton>
+    {/* // learn this */}
+    {/* openExternalUr({
+        url: {integrations.link},
+      }); */}
     <TextButton
       underline
-      component={Link}
-      to={integrations.link}
+      href={integrations.link}
       target="_blank">
       {integrations.linkLabel}
     </TextButton>
