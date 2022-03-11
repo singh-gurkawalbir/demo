@@ -521,11 +521,13 @@ describe('editor sagas', () => {
         .provide([
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings}],
+          [call(invokeProcessor, {
+            editorId,
+            processor: 'mapperProcessor',
+            body: {} }), {data: [{mappedObject: 'test'}]}],
         ])
-        .call(invokeProcessor, {
-          editorId,
-          processor: 'mapperProcessor',
-          body: {} })
+        .not.put(actions.editor.previewFailed(editorId))
+        .put(actions.editor.previewResponse(editorId, { data: 'test' }))
         .run();
     });
     test('should validate mappings and not call invokeProcessor saga when skipPreview is set', () => {
@@ -544,10 +546,8 @@ describe('editor sagas', () => {
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings}],
         ])
-        .not.call(invokeProcessor, {
-          editorId,
-          processor: 'mapperProcessor',
-          body: {} })
+        .not.put(actions.editor.previewFailed(editorId))
+        .put(actions.editor.previewResponse(editorId, { data: '' }))
         .run();
     });
     test('should validate mappings and dispatch request preview action when mappingPreviewType is salesforce and call invokeProcessor saga when skipPreview is not set', () => {
@@ -561,16 +561,18 @@ describe('editor sagas', () => {
       };
       const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
 
-      return expectSaga(requestPreview, { id: editorId })
+      return expectSaga(requestPreview, { id: editorId})
         .provide([
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings}],
+          [call(invokeProcessor, {
+            editorId,
+            processor: 'mapperProcessor',
+            body: {} }), {data: [{mappedObject: 'test'}]}],
         ])
         .put(actions.mapping.requestPreview())
-        .call(invokeProcessor, {
-          editorId,
-          processor: 'mapperProcessor',
-          body: {} })
+        .not.put(actions.editor.previewFailed(editorId))
+        .put(actions.editor.previewResponse(editorId, { data: 'test' }))
         .run();
     });
     test('should validate mappings and dispatch request preview action when mappingPreviewType is salesforce and not call invokeProcessor saga when skipPreview is set', () => {
@@ -585,16 +587,14 @@ describe('editor sagas', () => {
       };
       const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
 
-      return expectSaga(requestPreview, { id: editorId })
+      return expectSaga(requestPreview, { id: editorId})
         .provide([
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings}],
         ])
         .put(actions.mapping.requestPreview())
-        .not.call(invokeProcessor, {
-          editorId,
-          processor: 'mapperProcessor',
-          body: {} })
+        .not.put(actions.editor.previewFailed(editorId))
+        .put(actions.editor.previewResponse(editorId, { data: '' }))
         .run();
     });
     test('should validate mappings and not dispatch request preview action when mappingPreviewType is netsuite and NS assistant form is not loaded and call invokeProcessor saga when skipPreview is not set', () => {
@@ -612,11 +612,14 @@ describe('editor sagas', () => {
         .provide([
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings, isNSAssistantFormLoaded: false}],
+          [call(invokeProcessor, {
+            editorId,
+            processor: 'mapperProcessor',
+            body: {} }), {data: [{mappedObject: 'test'}]}],
         ])
-        .call(invokeProcessor, {
-          editorId,
-          processor: 'mapperProcessor',
-          body: {} })
+        .not.put(actions.mapping.requestPreview())
+        .not.put(actions.editor.previewFailed(editorId))
+        .put(actions.editor.previewResponse(editorId, { data: 'test' }))
         .run();
     });
     test('should validate mappings and dispatch request preview action when mappingPreviewType is netsuite and NS assistant form is loaded and call invokeProcessor saga when skipPreview is not set', () => {
@@ -633,13 +636,15 @@ describe('editor sagas', () => {
       return expectSaga(requestPreview, { id: editorId})
         .provide([
           [select(selectors.editor, editorId), editor],
-          [select(selectors.mapping), {mappings, isNSAssistantFormLoaded: true }],
+          [select(selectors.mapping), {mappings, isNSAssistantFormLoaded: true}],
+          [call(invokeProcessor, {
+            editorId,
+            processor: 'mapperProcessor',
+            body: {} }), {data: [{mappedObject: 'test'}]}],
         ])
         .put(actions.mapping.requestPreview())
-        .call(invokeProcessor, {
-          editorId,
-          processor: 'mapperProcessor',
-          body: {} })
+        .not.put(actions.editor.previewFailed(editorId))
+        .put(actions.editor.previewResponse(editorId, { data: 'test' }))
         .run();
     });
     test('should dispatch validate failure if mappings are not valid', () => {
