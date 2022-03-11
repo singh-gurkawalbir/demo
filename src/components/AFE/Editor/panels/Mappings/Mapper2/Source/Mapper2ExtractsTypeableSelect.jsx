@@ -167,12 +167,14 @@ export default function Mapper2ExtractsTypeableSelect({
           multiline={isFocused}
           placeholder="Source record field"
           InputProps={{
-            endAdornment: (
-              <InputAdornment className={classes.autoSuggestDropdown} position="start">
-                <Typography variant="caption" className={classes.srcDataType}>{srcDataType}</Typography>
-                <ArrowDownIcon />
-              </InputAdornment>
-            ),
+            endAdornment: hideDropdown
+              ? (<Typography variant="caption" className={classes.srcDataType}>{srcDataType}</Typography>)
+              : (
+                <InputAdornment className={classes.autoSuggestDropdown} position="start">
+                  <Typography variant="caption" className={classes.srcDataType}>{srcDataType}</Typography>
+                  <ArrowDownIcon />
+                </InputAdornment>
+              ),
             inputProps: {
               ref: inputFieldRef,
             },
