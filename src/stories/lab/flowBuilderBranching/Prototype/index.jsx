@@ -16,6 +16,7 @@ import reducer, { resourceDataSelector } from './reducer';
 import { generateReactFlowGraph } from './translateSchema';
 import { handleMergeNode } from './hooks';
 import TextButton from '../../../../components/Buttons/TextButton';
+import { Background } from './Background';
 
 const nodeTypes = {
   pg: PgNode,
@@ -102,7 +103,9 @@ export default ({resourceState}) => {
           elements={updatedLayout}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
-        />
+        >
+          <Background />
+        </ReactFlow>
       </FlowProvider>
 
       <MiniMap />
