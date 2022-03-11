@@ -36,6 +36,8 @@ const options = {
   // ranker: 'longest-path', // seems worst
   ranksep: 200,
   nodesep: 50,
+  marginx: 50,
+  marginy: 50,
 };
 
 export function generateId() {

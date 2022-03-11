@@ -2,6 +2,8 @@ import React, { memo } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
 
+const FB_SOURCE_COLUMN_WIDTH = 450;
+
 const useStyles = makeStyles(theme => ({
   svgBg: {
     width: '100%',
@@ -28,7 +30,9 @@ export function Background() {
         y={0}
         // if the user pans the flow, we need to also adjust the width of
         // the source rectangle to accommodate the pan offset.
-        width={(400 + x) * scale}
+        // note that the "x" offset is ALREADY scaled. No need to multiply it
+        // by the scale.
+        width={(FB_SOURCE_COLUMN_WIDTH) * scale + x}
         height="100%" />
     </svg>
   );

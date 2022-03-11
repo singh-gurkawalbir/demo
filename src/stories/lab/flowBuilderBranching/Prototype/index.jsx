@@ -33,8 +33,8 @@ const flowIdToTest = 'flow1';
 
 const useStyles = makeStyles({
   copyButton: {
-    top: 1,
-    left: 10,
+    bottom: 10,
+    left: 60,
     position: 'absolute',
     zIndex: 5,
   },
@@ -111,7 +111,9 @@ export default ({resourceState}) => {
       <MiniMap />
       <Controls />
 
-      <TextButton className={classes.copyButton} onClick={handleCopySchema}>Copy Flow Schema</TextButton>
+      <TextButton className={classes.copyButton} onClick={handleCopySchema}>
+        Log schema to console
+      </TextButton>
     </ReactFlowProvider>
   );
 };
