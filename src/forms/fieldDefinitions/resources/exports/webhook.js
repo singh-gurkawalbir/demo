@@ -226,4 +226,37 @@ export default {
     helpKey: 'export.webhook.sampledata',
     label: 'Sample data',
   },
+  'webhook.successStatusCode': {
+    label: 'Override HTTP status code for the success responses',
+    type: 'select',
+    placeholder: 'Do not override',
+    options: [
+      {
+        items: [
+          {label: '200', value: 200},
+          {label: '202', value: 202},
+        ],
+      },
+    ],
+  },
+  'webhook.successMediaType': {
+    label: 'Override media type for success responses',
+    type: 'select',
+    placeholder: 'Do not override',
+    skipSort: true,
+    options: [
+      {
+        items: [
+          {label: 'JSON', value: 'json'},
+          {label: 'XML', value: 'xml'},
+          {label: 'Plaintext', value: 'plaintext'},
+        ],
+      },
+    ],
+  },
+  'webhook.successBody': {
+    label: 'Override HTTP response body for success responses',
+    type: 'uri',
+    showLookup: false,
+  },
 };

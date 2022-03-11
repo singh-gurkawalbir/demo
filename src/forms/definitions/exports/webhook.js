@@ -91,6 +91,15 @@ export default {
     traceKeyTemplate: {
       fieldId: 'traceKeyTemplate',
     },
+    'webhook.successStatusCode': {
+      fieldId: 'webhook.successStatusCode',
+    },
+    'webhook.successMediaType': {
+      fieldId: 'webhook.successMediaType',
+    },
+    'webhook.successBody': {
+      fieldId: 'webhook.successBody',
+    },
   },
   layout: {
     type: 'collapse',
@@ -122,7 +131,18 @@ export default {
         label: 'Generate URL & sample data',
         fields: ['webhook.url', 'webhook.sampledata'],
       },
-      { collapsed: true, label: 'Advanced', fields: ['pageSize', 'dataURITemplate', 'skipRetries', 'traceKeyTemplate'] },
+      { collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'webhook.successStatusCode',
+          'webhook.successMediaType',
+          'webhook.successBody',
+          'pageSize',
+          'dataURITemplate',
+          'skipRetries',
+          'traceKeyTemplate',
+        ],
+      },
     ],
   },
 };
