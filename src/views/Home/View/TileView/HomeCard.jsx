@@ -43,10 +43,6 @@ export const DashboardEmptyState = () => (
     subTitle={integrations.subTitle}
     type={integrations.type}>
     <FilledButton href="/integrations/none/flowBuilder/new">{integrations.buttonLabel}</FilledButton>
-    {/* // learn this */}
-    {/* openExternalUr({
-        url: {integrations.link},
-      }); */}
     <TextButton
       underline
       href={integrations.link}
