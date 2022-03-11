@@ -91,7 +91,12 @@ export default function AccessTokenList(props) {
                       title={apitokens.title}
                       subTitle={apitokens.subTitle}
                       type={apitokens.type}>
-                      <FilledButton href="/apitokens/none/flowBuilder/new">{apitokens.buttonLabel}</FilledButton>
+                      <FilledButton
+                        data-test="newAccessToken"
+                        component={Link}
+                        to={`${location.pathname}/add/accesstokens/${generateNewId()}`}
+                      >{apitokens.buttonLabel}
+                      </FilledButton>
                       <TextButton
                         underline
                         href={apitokens.link}
