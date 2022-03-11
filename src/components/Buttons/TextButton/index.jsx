@@ -52,6 +52,7 @@ TextButton.propTypes = {
   bold: PropTypes.bool,
   color: PropTypes.oneOf(['primary', 'secondary']),
   error: PropTypes.bool,
+  vertical: PropTypes.bool,
 };
 
 TextButton.defaultProps = {
