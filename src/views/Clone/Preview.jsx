@@ -79,6 +79,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     borderTop: `1px solid ${theme.palette.secondary.lightest} !important`,
   },
+  flowGroupTitle: {
+    paddingTop: theme.spacing(1),
+  },
 }));
 const integrationsFilterConfig = {
   type: 'integrations',
@@ -95,14 +98,19 @@ const useColumns = () => [
     useGetCellStyling: ({rowData: r}) => {
       const classes = useStyles();
       const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
-      const classFlowInFlowGroupName = groupName || isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
+      const classFlowInFlowGroupName = !isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
       const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
 
       return clsx(classFlowInFlowGroupName, classFlowInFlowGroupNameHover);
     },
     Value: ({rowData: r}) => {
+      const classes = useStyles();
+
       if (r?.groupName) {
-        return <Typography variant="overline" component="div" color="textSecondary">{r?.groupName}</Typography>;
+        return <Typography variant="overline" component="div" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>;
+      }
+      if (r?.emptyMessage) {
+        return <Typography variant="body2" component="div" color="textSecondary">{r?.emptyMessage}</Typography>;
       }
 
       return r?.doc?.name || r?.doc?._id;
@@ -115,10 +123,10 @@ const useColumns = () => [
     useGetCellStyling: ({rowData: r}) => {
       const classes = useStyles();
       const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
-      const classLastFlowInGroup = groupName || isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
+      const classFlowInFlowGroupName = !isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
       const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
 
-      return clsx(classLastFlowInGroup, classFlowInFlowGroupNameHover);
+      return clsx(classFlowInFlowGroupName, classFlowInFlowGroupNameHover);
     },
     Value: ({rowData: r}) => r?.doc?.description,
   },
