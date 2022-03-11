@@ -11,60 +11,42 @@ const useStyles = makeStyles(theme => ({
   customTextField: {
     padding: 0,
     display: 'flex',
-    // marginBottom: 0,
-    // '&>.MuiFormControl-root': {
-    //   width: '100%',
-    // },
-    // '&>.MuiInputBase-root': {
-    //   marginLeft: '-104px',
-    // },
-    '& > .MuiFilledInput-multiline': {
-      minHeight: 38,
-      padding: theme.spacing(1),
-      '& >:nth-child(1)': {
-        margin: 0,
-        minWidth: 0,
-        maxWidth: '85%',
-        paddingTop: theme.spacing(0.5),
-      },
-      '& >:nth-child(2)': {
-        minHeight: '16px !important',
-        wordBreak: 'break-word',
-      },
-    },
-    '& > div': {
-      width: '100%',
-    },
+    width: '100%',
     '& > * .MuiFilledInput-input': {
       overflow: 'hidden',
       textOverflow: 'ellipsis',
     },
+    '& .MuiFilledInput-multiline': {
+      border: 'none',
+    },
   },
-  //   textLabel: {
-  //     background: theme.palette.background.paper,
-  //     border: `1px solid ${theme.palette.secondary.lightest}`,
-  //     borderRadius: 2,
-  //   },
   mapField: {
     display: 'flex',
-    justifyContent: 'space-between',
     position: 'relative',
-    // width: '40%',
+    width: theme.spacing(34),
     alignItems: 'center',
+    borderRadius: 2,
+    border: `1px solid ${theme.palette.secondary.lightest}`,
+    backgroundColor: theme.palette.background.paper,
+    '& .MuiFilledInput-input': {
+      border: 'none',
+    },
+    '&:hover': {
+      border: `1px solid ${theme.palette.primary.main}`,
+    },
   },
   dataType: {
     border: 'none',
-    backgroundColor: 'transparent',
     fontStyle: 'italic',
     color: theme.palette.primary.main,
-    width: 100,
-    marginLeft: theme.spacing(1),
-    zIndex: theme.zIndex.drawer,
+    width: theme.spacing(12),
+    padding: 0,
     '& .MuiSvgIcon-root': {
       display: 'none',
     },
     '& .MuiSelect-selectMenu': {
-      paddingRight: 12,
+      padding: 0,
+      margin: 0,
     },
   },
 })

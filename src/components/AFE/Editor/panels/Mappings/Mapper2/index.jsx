@@ -23,26 +23,47 @@ const useStyles = makeStyles(theme => ({
     },
     '& .rc-tree-indent-unit:before': {
       position: 'absolute',
-      top: '-8px',
+      top: '-9px',
       right: '30px',
-      bottom: '8px',
+      bottom: '7px',
       borderRight: '1px solid #d9d9d9',
       content: '""',
     },
     '& .rc-tree-treenode': {
       display: 'flex',
       position: 'relative',
-      alignItems: 'center',
+      border: '1px solid transparent',
       '&:hover': {
         '& .rc-tree-draggable-icon': {
           visibility: 'visible',
         },
       },
+      '&.dragging': {
+        // border: `1px dashed ${theme.palette.primary.main}`,
+      },
+      '&.drop-target': {
+        // borderTop: `1px dashed ${theme.palette.primary.main}`,
+        // borderBottom: `1px dashed ${theme.palette.primary.main}`,
+      },
+      '&.drag-over-gap-bottom,&.drag-over-gap-top,&.drag-over': {
+        '& .rc-tree-node-content-wrapper': {
+          '&>div': {
+            backgroundColor: `${theme.palette.primary.main}!important`,
+          },
+        },
+      },
+    },
+    '& .rc-tree-switcher,.rc-tree-draggable-icon': {
+      alignSelf: 'center',
+      margin: theme.spacing(1, 0),
     },
     '& .rc-tree-switcher-noop': {
       width: 30,
     },
     '& .rc-tree-draggable-icon': {
+      '&>div': {
+        paddingTop: 0,
+      },
       visibility: 'hidden',
     },
     '& .rc-tree-node-content-wrapper': {
@@ -52,15 +73,7 @@ const useStyles = makeStyles(theme => ({
       background: theme.palette.primary.light,
     },
     '& .MuiFilledInput-multiline': {
-      paddingRight: theme.spacing(10),
-    },
-    '& .rc-tree-title': {
-      '&>div>div': {
-        width: 300,
-      },
-      '&>div>div:last-child': {
-        width: 'auto',
-      },
+      padding: '6px 15px',
     },
     '& .MuiInputAdornment-root': {
       top: '50%',

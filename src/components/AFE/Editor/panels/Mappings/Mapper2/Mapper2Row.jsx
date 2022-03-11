@@ -18,30 +18,34 @@ import actions from '../../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
-    // width: '46%',
+    '&:first-child': {
+      marginRight: theme.spacing(1),
+    },
   },
   innerRowRoot: {
     display: 'flex',
     width: '100%',
-    marginBottom: theme.spacing(1),
     alignItems: 'center',
+    margin: theme.spacing(1, 0),
+    '&:hover': {
+      '&>div:last-child': {
+        '&>button:last-child': {
+          visibility: 'visible',
+        },
+      },
+    },
   },
   lockIcon: {
     marginLeft: theme.spacing(1),
     color: theme.palette.text.hint,
+    height: theme.spacing(3),
   },
   actionsMapping: {
     display: 'flex',
-    minWidth: 36,
-    maxWidth: 64,
+    alignItems: 'baseline',
   },
   deleteMapping: {
-    width: theme.spacing(4),
-    marginRight: theme.spacing(1),
-  },
-  deleteBtn: {
-    border: 'none',
-    width: 0,
+    visibility: 'hidden',
   },
 }));
 
@@ -164,32 +168,26 @@ const Mapper2Row = React.memo(({
         {(isLookup && !isStaticLookup) && <RightIcon title="Dynamic lookup" Icon={DynamicLookupIcon} />}
         {isHandlebarExp && !isLookup && <RightIcon title="Handlebars expression" Icon={HandlebarsExpressionIcon} />}
         {isHardCodedValue && !isLookup && <RightIcon title="Hard-coded" Icon={HardCodedIcon} />}
-        <div>
-          <MappingSettingsButton
-            dataTest={`fieldMappingSettings-${nodeKey}`}
-            mappingKey={nodeKey}
-            disabled={disabled}
-            subRecordMappingId={subRecordMappingId}
-            importId={importId}
-            flowId={flowId}
+        <MappingSettingsButton
+          dataTest={`fieldMappingSettings-${nodeKey}`}
+          mappingKey={nodeKey}
+          disabled={disabled}
+          subRecordMappingId={subRecordMappingId}
+          importId={importId}
+          flowId={flowId}
           />
-        </div>
-
         <ActionButton onClick={addNewRowHandler} disabled={generateDisabled || disabled}>
           <AddIcon />
         </ActionButton>
-        <div
+        <ActionButton
+          data-test={`fieldMappingRemove-${nodeKey}`}
+          aria-label="delete"
+          disabled={isEmptyRow || generateDisabled || disabled}
+          onClick={handleDeleteClick}
           key="delete_button"
           className={classes.deleteMapping}>
-          <ActionButton
-            data-test={`fieldMappingRemove-${nodeKey}`}
-            aria-label="delete"
-            disabled={isEmptyRow || generateDisabled || disabled}
-            onClick={handleDeleteClick}
-            className={classes.deleteBtn}>
-            <TrashIcon />
-          </ActionButton>
-        </div>
+          <TrashIcon />
+        </ActionButton>
       </div>
     </div>
   );
