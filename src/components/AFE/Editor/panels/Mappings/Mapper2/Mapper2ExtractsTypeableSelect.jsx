@@ -3,6 +3,7 @@ import Tree from 'rc-tree';
 import {isEmpty} from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, InputAdornment, Typography, Tooltip } from '@material-ui/core';
+import clsx from 'clsx';
 import isLoggableAttr from '../../../../../../utils/isLoggableAttr';
 import {SwitcherIcon} from './index';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
@@ -17,19 +18,9 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     display: 'flex',
     marginBottom: 0,
+    width: theme.spacing(34),
     '& > .MuiFilledInput-multiline': {
-      minHeight: 38,
-      padding: theme.spacing(1),
-      '& >:nth-child(1)': {
-        margin: 0,
-        minWidth: 0,
-        maxWidth: '85%',
-        paddingTop: theme.spacing(0.5),
-      },
-      '& >:nth-child(2)': {
-        minHeight: '16px !important',
-        wordBreak: 'break-word',
-      },
+      border: `1px solid ${theme.palette.secondary.lightest}`,
     },
     '& > div': {
       width: '100%',
@@ -37,6 +28,7 @@ const useStyles = makeStyles(theme => ({
     '& > * .MuiFilledInput-input': {
       overflow: 'hidden',
       textOverflow: 'ellipsis',
+      height: theme.spacing(5),
     },
   },
   dropdown: {
@@ -119,6 +111,9 @@ const useStyles = makeStyles(theme => ({
       width: '12px',
       height: '12px',
     },
+  },
+  test: {
+    backgroundColor: 'red',
   },
 })
 );
@@ -267,7 +262,7 @@ export default function Mapper2ExtractsTypeableSelect({
       <Tooltip disableFocusListener title={toolTipTitle} placement="bottom" >
         <TextField
           {...isLoggableAttr(isLoggable)}
-          className={classes.customTextField}
+          className={clsx(classes.customTextField, {[classes.test]: srcDataType})}
           variant="filled"
           autoFocus={isFocused}
           value={inputValue}

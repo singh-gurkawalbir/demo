@@ -29,10 +29,14 @@ const useStyles = makeStyles(theme => ({
     border: 'none',
     fontFamily: 'Roboto400',
     fontSize: 14,
+    height: theme.spacing(2),
   },
   actions: {
-    '& > :not(:last-child)': {
-      marginRight: theme.spacing(1),
+    '& > .MuiButtonBase-root': {
+      padding: 0,
+    },
+    '& > :first-child': {
+      marginRight: 0,
     },
   },
   refresh: {
@@ -138,6 +142,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
           disabled={disabled}
           onClick={handleRefreshFlowDataClick}
           className={classes.refresh}
+          size="small"
           >
           Refresh fields
         </TextButton>
