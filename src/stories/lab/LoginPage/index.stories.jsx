@@ -1,10 +1,15 @@
 import React from 'react';
 import LoginScreen from '../../../components/LoginScreen';
 
-const contentUrl = 'https://staging.celigo.com/login/display';
-const foregroundImageUrl = 'https://www.celigo.com/wp-content/uploads/g2-medal-winter-2021.svg';
-const backgroundImageUrl = 'https://www.celigo.com/wp-content/uploads/home-hero.svg';
-const targetUrl = 'https://docs.celigo.com/hc/en-us/community/topics';
+const urls = {
+  contentUrlProd: 'https://www.celigo.com/login/display',
+  contentUrlStag: `${process.env.IO_LOGIN_PROMOTION_URL}`,
+  contentUrlProdEU: 'https://www.celigo.com/login/display-eu',
+  contentUrlStagEU: 'https://staging.celigo.com/login/display-eu',
+  foregroundImageUrl: 'https://www.celigo.com/wp-content/uploads/g2-medal-winter-2021.svg',
+  backgroundImageUrl: 'https://www.celigo.com/wp-content/uploads/home-hero.svg',
+  targetUrl: 'https://docs.celigo.com/hc/en-us/community/topics',
+};
 
 export default {
   title: 'Lab/ Marketing Login',
@@ -16,12 +21,27 @@ export default {
 
 const Template = args => <LoginScreen {...args} />;
 
-export const withIframe = Template.bind({});
+export const withIframeStag = Template.bind({});
 
-withIframe.args = {
-  contentUrl,
+withIframeStag.args = {
+  contentUrl: urls.contentUrlStag,
 };
 
+export const withIframeProd = Template.bind({});
+
+withIframeProd.args = {
+  contentUrl: urls.contentUrlProd,
+};
+export const withIframeStagEU = Template.bind({});
+
+withIframeStagEU.args = {
+  contentUrl: urls.contentUrlStagEU,
+};
+export const withIframeProdEU = Template.bind({});
+
+withIframeProdEU.args = {
+  contentUrl: urls.contentUrlProdEU,
+};
 export const fallBackIframe = Template.bind({});
 
 fallBackIframe.args = {
@@ -31,9 +51,9 @@ fallBackIframe.args = {
 export const withImages = Template.bind({});
 
 withImages.args = {
-  backgroundImageUrl,
-  foregroundImageUrl,
-  targetUrl,
+  backgroundImageUrl: urls.backgroundImageUrl,
+  foregroundImageUrl: urls.foregroundImageUrl,
+  targetUrl: urls.targetUrl,
 };
 
 export const frontMediumImage = Template.bind({});

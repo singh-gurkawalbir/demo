@@ -20,7 +20,7 @@ export default function MarketingContentWithIframe({contentUrl}) {
 
   return (
     <div className={classes.container}>
-      <iframe src={contentUrl} title="Marketing Content" />
+      <iframe src={contentUrl} title="Announcement" />
     </div>
   );
 }

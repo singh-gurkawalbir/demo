@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     width: blockWidth,
     height: blockHeight,
     position: 'relative',
-    zIndex: theme.zIndex.drawer,
+    zIndex: theme.zIndex.bubble,
   },
   draggable: { cursor: 'move' },
   name: {
@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
     borderRadius: [[0, 0, 20, 20]],
     position: 'relative',
-    zIndex: theme.zIndex.drawer - 1,
+    zIndex: theme.zIndex.bubbleName,
     padding: theme.spacing(2),
 
   },
