@@ -3,6 +3,7 @@ import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import ActionButton from '../../../../../ActionButton';
 import TrashIcon from '../../../../../icons/TrashIcon';
 import AddIcon from '../../../../../icons/AddIcon';
@@ -10,10 +11,10 @@ import StaticLookupIcon from '../../../../../icons/StaticLookupIcon';
 import HandlebarsExpressionIcon from '../../../../../icons/HandlebarsExpressionIcon';
 import DynamicLookupIcon from '../../../../../icons/DynamicLookupIcon';
 import HardCodedIcon from '../../../../../icons/HardCodedIcon';
-import MappingSettingsButton from '../../../../../Mapping/Settings/SettingsButton';
-import Mapper2ExtractsTypeableSelect from './Mapper2ExtractsTypeableSelect';
+import SettingsIcon from '../../../../../icons/SettingsIcon';
+import Mapper2ExtractsTypeableSelect from './Source/Mapper2ExtractsTypeableSelect';
 import {selectors} from '../../../../../../reducers';
-import Mapper2Generates from './Mapper2Generates';
+import Mapper2Generates from './Destination/Mapper2Generates';
 import actions from '../../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
@@ -76,16 +77,18 @@ const Mapper2Row = React.memo(({
   isEmptyRow,
 }) => {
   const classes = useStyles();
+  const history = useHistory();
   const dispatch = useDispatch();
-  const {flowId,
-    importId, subRecordMappingId, lookup} = useSelector(state => {
+  const {
+    flowId,
+    importId,
+    lookup} = useSelector(state => {
     const e = selectors.mapping(state);
     const lookup = (lookupName && e.lookups?.find(lookup => lookup.name === lookupName)) || {};
 
     return {
       flowId: e.flowId,
       importId: e.importId,
-      subRecordMappingId: e.subRecordMappingId,
       lookup,
     };
   }, shallowEqual);
@@ -115,6 +118,10 @@ const Mapper2Row = React.memo(({
   const handleGenerateBlur = useCallback(value => {
     handleBlur('generate', value);
   }, [handleBlur]);
+
+  const handleBtnClick = useCallback(() => {
+    history.push(`${history.location.pathname}/settings/v2/${nodeKey}`);
+  }, [history, nodeKey]);
 
   const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
   const extractValue = combinedExtract || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
@@ -168,14 +175,15 @@ const Mapper2Row = React.memo(({
         {(isLookup && !isStaticLookup) && <RightIcon title="Dynamic lookup" Icon={DynamicLookupIcon} />}
         {isHandlebarExp && !isLookup && <RightIcon title="Handlebars expression" Icon={HandlebarsExpressionIcon} />}
         {isHardCodedValue && !isLookup && <RightIcon title="Hard-coded" Icon={HardCodedIcon} />}
-        <MappingSettingsButton
-          dataTest={`fieldMappingSettings-${nodeKey}`}
-          mappingKey={nodeKey}
-          disabled={disabled}
-          subRecordMappingId={subRecordMappingId}
-          importId={importId}
-          flowId={flowId}
-          />
+        <ActionButton
+          data-test={`fieldMappingSettings-${nodeKey}`}
+          disabled={disabled || !generate}
+          aria-label="settings"
+          onClick={handleBtnClick}
+          key="settings">
+          <SettingsIcon />
+        </ActionButton>
+
         <ActionButton onClick={addNewRowHandler} disabled={generateDisabled || disabled}>
           <AddIcon />
         </ActionButton>

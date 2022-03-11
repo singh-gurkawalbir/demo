@@ -522,7 +522,11 @@ export default (state = {}, action) => {
               node.hardCodedValue = value.replace(/(^")|("$)/g, '');
             } else {
               delete node.hardCodedValue;
-              node.extract = value;
+              if (value.includes(',')) {
+                node.combinedExtract = value;
+              } else {
+                node.extract = value; // todo ashu handle comma separated
+              }
             }
           } else {
             node[field] = value;

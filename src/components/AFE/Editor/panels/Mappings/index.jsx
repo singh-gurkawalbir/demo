@@ -61,32 +61,29 @@ const Mapper1 = ({editorId, flowId, importId, subRecordMappingId}) => {
   }, [dispatch, mappings]);
 
   return (
-    <>
-      <SettingsDrawer disabled={disabled} />
-      <div className={classes.mappingDrawerContent}>
-        <div className={classes.mappingColumn}>
-          <TopPanel flowId={flowId} importId={importId} disabled={disabled} />
+    <div className={classes.mappingDrawerContent}>
+      <div className={classes.mappingColumn}>
+        <TopPanel flowId={flowId} importId={importId} disabled={disabled} />
 
-          <div className={classes.mappingTable}>
-            <DragContainer
-              disabled={disabled}
-              importId={importId}
-              flowId={flowId}
-              items={mappings}
-              SortableItemComponent={SortableItemComponent}
-              LastRowSortableItemComponent={LastRowSortableItemComponent}
-              onSortEnd={onSortEnd}
-              subRecordMappingId={subRecordMappingId}
+        <div className={classes.mappingTable}>
+          <DragContainer
+            disabled={disabled}
+            importId={importId}
+            flowId={flowId}
+            items={mappings}
+            SortableItemComponent={SortableItemComponent}
+            LastRowSortableItemComponent={LastRowSortableItemComponent}
+            onSortEnd={onSortEnd}
+            subRecordMappingId={subRecordMappingId}
               />
-            {canAutoMap && (
+          {canAutoMap && (
             <div className={classes.autoMapper}>
               <AutoMapperButton />
             </div>
-            )}
-          </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
@@ -103,6 +100,7 @@ export default function MappingWrapper({ editorId }) {
       subRecordMappingId: e.subRecordMappingId,
     };
   }, shallowEqual);
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const mappingStatus = useSelector(state => selectors.mapping(state, flowId, importId, subRecordMappingId).status);
   const sampleInput = useSelector(state => {
     const {data} = selectors.getSampleDataContext(state, {
@@ -132,20 +130,25 @@ export default function MappingWrapper({ editorId }) {
     );
   }
 
-  return mappingVersion === 2 ? (
-    <Mapper2
-      editorId={editorId}
-      flowId={flowId}
-      importId={importId}
-      subRecordMappingId={subRecordMappingId}
+  return (
+    <>
+      <SettingsDrawer disabled={disabled} />
+      {mappingVersion === 2 ? (
+        <Mapper2
+          editorId={editorId}
+          flowId={flowId}
+          importId={importId}
+          subRecordMappingId={subRecordMappingId}
      />
-  )
-    : (
-      <Mapper1
-        editorId={editorId}
-        flowId={flowId}
-        importId={importId}
-        subRecordMappingId={subRecordMappingId}
+      )
+        : (
+          <Mapper1
+            editorId={editorId}
+            flowId={flowId}
+            importId={importId}
+            subRecordMappingId={subRecordMappingId}
      />
-    );
+        )}
+    </>
+  );
 }

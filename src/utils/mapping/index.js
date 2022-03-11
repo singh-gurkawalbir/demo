@@ -15,7 +15,7 @@ import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
 import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../constants';
-import { TitleExtracts } from '../../components/AFE/Editor/panels/Mappings/Mapper2/Mapper2ExtractsTypeableSelect';
+import { TreeTitle } from '../../components/AFE/Editor/panels/Mappings/Mapper2/Source/ExtractsTree';
 // import TabRow from './TabbedRow';
 
 const isCsvOrXlsxResource = resource => {
@@ -2086,7 +2086,7 @@ function iterateForExtracts(dataIn, treeData, parentKey, parentFieldName = '', p
         treeData.push({
           key,
           parentKey,
-          title: TitleExtracts,
+          title: TreeTitle,
           jsonPath,
           fieldName: property,
           dataType: TYPEOF_TO_DATA_TYPE[type],
@@ -2101,7 +2101,7 @@ function iterateForExtracts(dataIn, treeData, parentKey, parentFieldName = '', p
         treeData.push({
           key,
           parentKey,
-          title: TitleExtracts,
+          title: TreeTitle,
           jsonPath,
           fieldName: property,
           dataType: 'object',
@@ -2120,7 +2120,7 @@ function iterateForExtracts(dataIn, treeData, parentKey, parentFieldName = '', p
           treeData.push({
             key,
             parentKey,
-            title: TitleExtracts,
+            title: TreeTitle,
             jsonPath: `${jsonPath}[*]`,
             fieldName: property,
             dataType: '[object]',
@@ -2141,7 +2141,7 @@ function iterateForExtracts(dataIn, treeData, parentKey, parentFieldName = '', p
         treeData.push({
           key,
           parentKey,
-          title: TitleExtracts,
+          title: TreeTitle,
           jsonPath,
           fieldName: property,
           dataType: `[${TYPEOF_TO_DATA_TYPE[valueType]}]`,
@@ -2164,7 +2164,7 @@ export const constructExtractsTree = (dataIn, propValues) => {
   // add first default $ path
   treeData.push({
     key,
-    title: TitleExtracts,
+    title: TreeTitle,
     dataType: Array.isArray(dataIn) ? '[object]' : 'object',
     fieldName: '$',
     children,

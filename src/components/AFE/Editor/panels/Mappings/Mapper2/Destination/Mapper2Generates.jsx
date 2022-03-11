@@ -1,11 +1,12 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, Tooltip, MenuItem } from '@material-ui/core';
-import isLoggableAttr from '../../../../../../utils/isLoggableAttr';
-import useOnClickOutside from '../../../../../../hooks/useClickOutSide';
-import useKeyboardShortcut from '../../../../../../hooks/useKeyboardShortcut';
-import CeligoSelect from '../../../../../CeligoSelect';
-import { DATA_TYPES_OPTIONS } from '../../../../../../utils/mapping';
+import isLoggableAttr from '../../../../../../../utils/isLoggableAttr';
+import useOnClickOutside from '../../../../../../../hooks/useClickOutSide';
+import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
+import CeligoSelect from '../../../../../../CeligoSelect';
+import { DATA_TYPES_OPTIONS } from '../../../../../../../utils/mapping';
+import { TooltipTitle } from '../Source/Mapper2ExtractsTypeableSelect';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -66,7 +67,9 @@ export default function Mapper2Generates(props) {
   const classes = useStyles();
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState(propValue);
+  const [isTruncated, setIsTruncated] = useState(false);
   const containerRef = useRef();
+  const inputFieldRef = useRef();
 
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
@@ -82,15 +85,16 @@ export default function Mapper2Generates(props) {
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
-    onBlur(inputValue);
-  }, [inputValue, onBlur]);
+    if (propValue !== inputValue) { onBlur(inputValue); }
+  }, [propValue, inputValue, onBlur]);
+
+  const handleMouseOver = useCallback(() => {
+    setIsTruncated(inputFieldRef.current.offsetWidth < inputFieldRef.current.scrollWidth);
+  }, []);
 
   useOnClickOutside(containerRef, isFocused && handleBlur);
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
 
-  // todo ashu only show tooltip when length is big
-  // eslint-disable-next-line no-nested-ternary
-  const toolTipTitle = (isFocused || generateDisabled) ? '' : (!inputValue ? 'Destination record field' : inputValue);
   const isDisabled = generateDisabled || disabled;
 
   return (
@@ -100,9 +104,22 @@ export default function Mapper2Generates(props) {
       ref={containerRef} >
       <div
         className={classes.mapField}>
-        <Tooltip disableFocusListener title={toolTipTitle} placement="bottom" >
+        <Tooltip
+          disableFocusListener
+          placement="bottom"
+          title={(isFocused || generateDisabled || (!isTruncated && inputValue)) ? '' : (
+            <TooltipTitle
+              isTruncated={isTruncated}
+              inputValue={inputValue}
+              fieldType="Destination record field"
+              />
+          )} >
           <TextField
             {...isLoggableAttr(isLoggable)}
+            onMouseMove={handleMouseOver}
+            inputProps={{
+              ref: inputFieldRef,
+            }}
             className={classes.customTextField}
             variant="filled"
             autoFocus={isFocused}

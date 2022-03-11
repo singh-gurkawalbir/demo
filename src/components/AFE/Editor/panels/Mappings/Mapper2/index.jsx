@@ -8,7 +8,6 @@ import ArrowUpIcon from '../../../../../icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
 import {SortableDragHandle} from '../../../../../Sortable/SortableHandle';
 import {allowDrop} from '../../../../../../utils/mapping';
-import SettingsDrawer from '../../../../../Mapping/Settings';
 import {selectors} from '../../../../../../reducers';
 import Mapper2Row from './Mapper2Row';
 import actions from '../../../../../../actions';
@@ -141,29 +140,26 @@ export default function Mapper2({editorId}) {
   }, [dispatch]);
 
   return (
-    <>
-      <SettingsDrawer disabled={disabled} />
-      <div className={classes.mappingDrawerContent}>
-        <Tree
-          className={classes.treeRoot}
-          titleRender={Row}
-          treeData={treeData}
-          showLine
-          defaultExpandAll={false}
-          expandedKeys={expandedKeys}
-          onExpand={onExpandHandler}
-          switcherIcon={SwitcherIcon}
-          allowDrop={allowDrop}
-          onDrop={onDropHandler}
+    <div className={classes.mappingDrawerContent}>
+      <Tree
+        className={classes.treeRoot}
+        titleRender={Row}
+        treeData={treeData}
+        showLine
+        defaultExpandAll={false}
+        expandedKeys={expandedKeys}
+        onExpand={onExpandHandler}
+        switcherIcon={SwitcherIcon}
+        allowDrop={allowDrop}
+        onDrop={onDropHandler}
         // activeKey={treeData[0].key}
-          draggable={dragConfig}
-          onDragStart={onDragStart}
-          disabled={disabled}
+        draggable={dragConfig}
+        onDragStart={onDragStart}
+        disabled={disabled}
         // height={500}
       //   itemHeight={50}
       //   virtual={false}
             />
-      </div>
-    </>
+    </div>
   );
 }
