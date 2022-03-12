@@ -6663,3 +6663,11 @@ selectors.filteredRevisions = createSelector(
   selectors.revisionsFilter,
   (revisionsList, revisionsFilter) => getFilteredRevisions(revisionsList, revisionsFilter)
 );
+
+selectors.resourceName = (state, resourceId, resourceType) => {
+  if (!resourceId || !resourceType) return '';
+  const resource = selectors.resource(state, resourceType, resourceId);
+
+  return resource?.name || resource?.id;
+};
+

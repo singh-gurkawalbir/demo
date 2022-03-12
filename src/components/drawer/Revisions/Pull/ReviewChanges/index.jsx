@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import {makeStyles} from '@material-ui/core/styles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../../Right';
 import DrawerHeader from '../../../Right/DrawerHeader';
@@ -13,8 +14,17 @@ import { selectors } from '../../../../../reducers';
 import { getRevisionResourceLevelChanges } from '../../../../../utils/revisions';
 import ReviewHeaderActions from './ReviewHeaderActions';
 
+const useStyles = makeStyles(() => ({
+  drawerHeader: {
+    '& > h4': {
+      whiteSpace: 'nowrap',
+    },
+  },
+}));
+
 function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
+  const classes = useStyles();
   const { revId } = match.params;
   const history = useHistory();
   const dispatch = useDispatch();
@@ -54,7 +64,11 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
 
   return (
     <>
-      <DrawerHeader title="Review changes " handleClose={onClose}>
+      <DrawerHeader
+        title="Review changes"
+        className={classes.drawerHeader}
+        infoText="test"
+        handleClose={onClose}>
         <ReviewHeaderActions
           numConflicts={resourceDiffInfo?.numConflicts}
           integrationId={integrationId}

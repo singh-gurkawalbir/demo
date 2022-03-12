@@ -4,10 +4,10 @@ import { selectors } from '../../reducers';
 import { REVISION_STATUS, REVISION_TYPES } from '../../utils/constants';
 import actionTypes from '../../actions/types';
 // import { apiCallWithRetry } from '../index';
-import conflicts from './samples/conflicts.json';
-// import conflictsWithScript from './samples/conflictsWithScript.json';
-// import diff from './samples/diff.json';
-// import diffWithScript from './samples/diffWithScript.json';
+import conflicts from '../../components/ResourceDiffVisualizer/samples/conflicts.json';
+// import conflictsWithScript from '../../components/ResourceDiffVisualizer/samples/conflictsWithScript.json';
+// import diff from '../../components/ResourceDiffVisualizer/samples/diff.json';
+// import diffWithScript from '../../components/ResourceDiffVisualizer/samples/diffWithScript.json';
 
 export function* requestIntegrationCloneFamily({ integrationId }) {
   try {

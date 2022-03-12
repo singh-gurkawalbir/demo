@@ -1,9 +1,9 @@
 import {
   AccordionSummary,
-  Typography,
   AccordionDetails,
   Accordion,
 } from '@material-ui/core';
+import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
 import React, { useState, useEffect } from 'react';
 import ExpandMoreIcon from '../../icons/ArrowDownIcon';
@@ -12,6 +12,9 @@ const useStyles = makeStyles(theme => ({
   accordionDetails: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     display: 'block',
+  },
+  accordionSummary: {
+    width: '100%',
   },
   accordionWrapper: {
     border: '1px solid',
@@ -22,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function CollapsableContainer(props) {
   const classes = useStyles();
-  const { title, forceExpand = false, children } = props;
+  const { title, forceExpand = false, children, className } = props;
   const [shouldExpand, setShouldExpand] = useState(forceExpand);
 
   useEffect(() => {
@@ -35,13 +38,13 @@ export default function CollapsableContainer(props) {
     <Accordion
       elevation={0}
       square
-      className={classes.accordionWrapper}
+      className={clsx(classes.accordionWrapper, className)}
       expanded={shouldExpand}>
       <AccordionSummary
-        data-test={title}
+        className={classes.accordionSummary}
         onClick={() => setShouldExpand(expand => !expand)}
         expandIcon={<ExpandMoreIcon />}>
-        <Typography>{title}</Typography>
+        {title}
       </AccordionSummary>
       <AccordionDetails className={classes.accordionDetails}>
         {children}
