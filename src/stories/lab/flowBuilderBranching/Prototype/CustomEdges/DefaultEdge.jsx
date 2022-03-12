@@ -117,7 +117,11 @@ export default function DefaultEdge({
       // not all the same length, then the overlapping edges for a merge node will
       // render the dashes at different offsets and appear as a solid line. Not
       // sure how to fix this.
-      if (i === points.length - 1) { // last point
+
+      // Also note that if an edge's target is a merge node, then we always want to render
+      // the x line first, as we don't want overlapping lines when multiple edges share the
+      // same final y position.
+      if (i === points.length - 1 && !data.isMerge) { // last point
         drawLine(p, 'y');
         drawLine(p, 'x');
       } else {
@@ -127,10 +131,7 @@ export default function DefaultEdge({
     });
 
     return path;
-
-    // remove this after debug code is removed.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
+  }, [data.isMerge, data.isTerminal, data.points, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
 
   const markerEnd = useMemo(() =>
     getMarkerEnd(arrowHeadType, markerEndId), [arrowHeadType, markerEndId]);

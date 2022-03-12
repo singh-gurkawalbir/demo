@@ -102,11 +102,15 @@ export function layoutElements(elements = []) {
       const target = nodes.find(n => n.id === el.target);
 
       const isTerminal = target.type === 'terminal';
+      // once @Sravan updates his code to replace virtual router with merge node, we can
+      // remove the second condition.
+      const isMerge = target.type === 'merge' || target.type === 'router';
 
       edges.push({
         ...el,
         data: {
           isTerminal,
+          isMerge,
           points: edge.points,
         },
       });
