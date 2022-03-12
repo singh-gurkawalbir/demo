@@ -41,6 +41,21 @@ export const REVISION_STATUS_LABELS = {
   [REVISION_STATUS.CANCELED]: 'Canceled',
 };
 
+export const REVISION_DIFF_ACTIONS = {
+  ADD: 'add',
+  NEW: 'new',
+  DELETED: 'deleted',
+  UPDATE: 'update',
+  CONFLICT: 'conflict',
+};
+
+export const REVISION_DIFF_ACTION_LABELS = {
+  [REVISION_DIFF_ACTIONS.ADD]: 'Add',
+  [REVISION_DIFF_ACTIONS.NEW]: 'New',
+  [REVISION_DIFF_ACTIONS.DELETED]: 'Deleted',
+  [REVISION_DIFF_ACTIONS.UPDATED]: 'Update',
+};
+
 export const getRevisionFilterKey = integrationId => `${integrationId}-revisions`;
 
 export const DEFAULT_OPTION = 'all';
@@ -84,19 +99,19 @@ export const getRevisionResourceLevelChanges = (overallDiff = {}) => {
     const resources = merged[resourceType];
 
     Object.keys(resources).forEach(id => {
-      const [resourceId, action = 'update'] = id.split('.');
+      const [resourceId, action = REVISION_DIFF_ACTIONS.UPDATE] = id.split('.');
       const resourceDiff = { resourceId, action };
       const {$conflicts, ...rest} = merged[resourceType][id];
       // TODO: confirm on script diffs - we do show script changes but not script name as of now
       const mergedContent = resourceType === 'script' ? (rest['$blob.conflict'] || rest.$blob) : sortJsonByKeys(rest);
       const currentContent = resourceType === 'script' ? current[resourceType][resourceId]?.$blob : sortJsonByKeys(current[resourceType][resourceId]);
 
-      if (action === 'new') {
+      if (action === REVISION_DIFF_ACTIONS.NEW) {
         resourceDiff.after = mergedContent;
-      } else if (action === 'deleted') {
+      } else if (action === REVISION_DIFF_ACTIONS.DELETED) {
         resourceDiff.before = currentContent;
       } else {
-        if (action === 'conflict') {
+        if (action === REVISION_DIFF_ACTIONS.CONFLICT) {
           resourceDiff.conflicts = $conflicts;
         }
         resourceDiff.after = mergedContent;

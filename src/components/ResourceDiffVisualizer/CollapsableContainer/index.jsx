@@ -15,6 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
   accordionSummary: {
     width: '100%',
+    cursor: 'default !important',
   },
   accordionWrapper: {
     border: '1px solid',
@@ -42,8 +43,7 @@ export default function CollapsableContainer(props) {
       expanded={shouldExpand}>
       <AccordionSummary
         className={classes.accordionSummary}
-        onClick={() => setShouldExpand(expand => !expand)}
-        expandIcon={<ExpandMoreIcon />}>
+        expandIcon={<ExpandMoreIcon onClick={() => setShouldExpand(expand => !expand)} />}>
         {title}
       </AccordionSummary>
       <AccordionDetails className={classes.accordionDetails}>

@@ -7,7 +7,6 @@ import ExpandWindowIcon from '../../../../icons/ExpandWindowIcon';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { getTextAfterCount } from '../../../../../utils/string';
-import Spinner from '../../../../Spinner';
 import StatusCircle from '../../../../StatusCircle';
 import ActionGroup from '../../../../ActionGroup';
 import CeligoDivider from '../../../../CeligoDivider';
@@ -63,18 +62,13 @@ export default function ReviewHeaderActions({ numConflicts, integrationId, revId
       <div className={classes.drawerHeaderActions}>
         { !isResourceComparisonInProgress && <Conflicts count={numConflicts} /> }
         <ActionGroup position="right">
-          {
-                isResourceComparisonInProgress
-                  ? <Spinner />
-                  : (
-                    <IconButton
-                      size="small"
-                      data-test="expandAll"
-                      onClick={handleRefresh}>
-                      <RefreshIcon />
-                    </IconButton>
-                  )
-          }
+          <IconButton
+            disabled={isResourceComparisonInProgress}
+            size="small"
+            data-test="expandAll"
+            onClick={handleRefresh}>
+            <RefreshIcon />
+          </IconButton>
           <CeligoDivider />
           <div className={classes.expand}>
             <IconButton
