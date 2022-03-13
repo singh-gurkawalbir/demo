@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function DynaCeligoTable(props) {
   const classes = useStyles();
-  const { title, collapsable = false, defaultExpand = false } = props;
+  const { title, collapsable = false, defaultExpand = false, data, noDataMessage } = props;
   const [shouldExpand, setShouldExpand] = useState(defaultExpand);
 
   return collapsable ? (
@@ -39,7 +39,7 @@ export default function DynaCeligoTable(props) {
         <Typography>{title}</Typography>
       </AccordionSummary>
       <AccordionDetails className={classes.accordianDetails}>
-        <CeligoTable {...props} />
+        {(!data?.length && noDataMessage) ? <Typography >{noDataMessage}</Typography> : <CeligoTable {...props} />}
       </AccordionDetails>
     </Accordion>
   ) : (

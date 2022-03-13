@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
 import { useFormOnCancel } from '../../FormOnCancelContext';
@@ -15,10 +16,14 @@ import { getResourceFromAlias } from '../../../utils/resource';
 import { FORM_SAVE_STATUS } from '../../../utils/constants';
 import getRoutePath from '../../../utils/routePaths';
 import actions from '../../../actions';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import InstallationGuideIcon from '../../icons/InstallationGuideIcon';
+import ActionGroup from '../../ActionGroup';
+import CeligoDivider from '../../CeligoDivider';
 
 const ALIAS_FORM_KEY = 'resource-alias';
 
-const getFieldMeta = (parentResourceId, parentResourceType, alias, isEdit) => ({
+const getFieldMeta = (parentResourceId, parentResourceType, alias, aliasResourceId, isEdit) => ({
   fieldMap: {
     aliasId: {
       id: 'aliasId',
@@ -77,7 +82,7 @@ const getFieldMeta = (parentResourceId, parentResourceType, alias, isEdit) => ({
       type: 'selectaliasresource',
       label: 'Resource Name',
       helpKey: 'alias.resource',
-      defaultValue: '',
+      defaultValue: aliasResourceId,
       required: true,
       isLoggable: true,
       refreshOptionsOnChangesTo: ['aliasResourceType'],
@@ -125,22 +130,25 @@ const getFieldMeta = (parentResourceId, parentResourceType, alias, isEdit) => ({
   },
 });
 
-const AliasForm = ({ resourceId, resourceType, aliasId, isEdit, parentUrl }) => {
+const AliasForm = ({ resourceId, resourceType, isEdit, parentUrl }) => {
+  const match = useRouteMatch();
   const history = useHistory();
   const dispatch = useDispatch();
+  const aliasId = match?.params?.aliasId;
   const [remountCount, setRemountCount] = useState(0);
   const [isFormSaveTriggered, setIsFormSaveTriggered] = useState(false);
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const asyncTaskStatus = useSelector(state => selectors.asyncTaskStatus(state, ALIAS_FORM_KEY));
   const resourceAliases = useSelectorMemo(selectors.makeOwnAliases, resourceType, resourceId);
-  const formFields = useSelector(state => selectors.formState(state, ALIAS_FORM_KEY)?.fields);
+  const formVal = useSelector(state => selectors.formValueTrimmed(state, ALIAS_FORM_KEY), shallowEqual);
 
   let alias;
 
   if (isEdit) {
-    alias = resourceAliases.some(ra => ra.alias === aliasId);
+    alias = resourceAliases.find(ra => ra.alias === aliasId);
   }
-
-  const fieldMeta = getFieldMeta(resourceId, resourceType, alias, isEdit);
+  const { id: aliasResourceId } = getResourceFromAlias(alias);
+  const fieldMeta = getFieldMeta(resourceId, resourceType, alias, aliasResourceId, isEdit);
 
   useFormInitWithPermissions({formKey: ALIAS_FORM_KEY, fieldMeta, optionsHandler: fieldMeta?.optionsHandler, remount: remountCount});
 
@@ -149,39 +157,41 @@ const AliasForm = ({ resourceId, resourceType, aliasId, isEdit, parentUrl }) => 
       return;
     }
 
+    enqueueSnackbar({ message: 'You’ve successsfully created an alias.' });
+
     // if the create alias form is saved
     // we will open the edit alias form of the newly created alias
     if (!isEdit) {
       history.replace(
-        getRoutePath(`${parentUrl}/edit`)
+        getRoutePath(`${parentUrl}/edit/${formVal.alias}`)
       );
     }
-  }, [history, isFormSaveTriggered, asyncTaskStatus, parentUrl, isEdit]);
+  }, [history, formVal, isFormSaveTriggered, asyncTaskStatus, parentUrl, isEdit, enqueueSnackbar]);
 
   const handleClose = useCallback(() => {
-    history.replace(parentUrl);
-  }, [history, parentUrl]);
+    history.goBack();
+  }, [history]);
 
   const handleSave = useCallback(closeAfterSave => {
     let newResourceAliases;
     const newAlias = {
-      alias: formFields?.aliasId?.value,
-      description: formFields?.description?.value,
+      alias: formVal.aliasId,
+      description: formVal.description,
     };
 
-    if (formFields?.aliasResourceType?.value === 'connections') {
-      newAlias._connectionId = formFields?.aliasResourceName?.value;
-    } else if (formFields?.aliasResourceType?.value === 'exports') {
-      newAlias._exportId = formFields?.aliasResourceName?.value;
-    } else if (formFields?.aliasResourceType?.value === 'flows') {
-      newAlias._flowId = formFields?.aliasResourceName?.value;
+    if (formVal.aliasResourceType === 'connections') {
+      newAlias._connectionId = formVal.aliasResourceName;
+    } else if (formVal.aliasResourceType === 'exports') {
+      newAlias._exportId = formVal.aliasResourceName;
+    } else if (formVal.aliasResourceType === 'flows') {
+      newAlias._flowId = formVal.aliasResourceName;
     } else {
-      newAlias._importId = formFields?.aliasResourceName?.value;
+      newAlias._importId = formVal.aliasResourceName;
     }
 
     if (isEdit) {
-      newResourceAliases = resourceAliases.map(alias => {
-        if (!(alias.alias === aliasId)) return alias;
+      newResourceAliases = resourceAliases.map(aliasData => {
+        if (!(aliasData.alias === aliasId)) return aliasData;
 
         return newAlias;
       });
@@ -203,7 +213,7 @@ const AliasForm = ({ resourceId, resourceType, aliasId, isEdit, parentUrl }) => 
       return handleClose();
     }
     setIsFormSaveTriggered(true);
-  }, [handleClose]);
+  }, [dispatch, resourceType, resourceId, formVal, aliasId, isEdit, resourceAliases, handleClose]);
 
   const remountForm = useCallback(() => {
     setRemountCount(remountCount => remountCount + 1);
@@ -245,7 +255,15 @@ export default function CreateAliasDrawer({resourceId, resourceType}) {
         title={isEdit ? 'Edit alias' : 'Create alias'}
         infoText={isEdit ? infoTextEditAlias : infoTextCreateAlias}
         disableClose={disabled}
-        handleClose={setCancelTriggered} />
+        handleClose={setCancelTriggered} >
+        <ActionGroup>
+          <InstallationGuideIcon />
+          <a href="https://docs.celigo.com/hc/en-us/articles/4454740861979" rel="noreferrer" target="_blank">
+            Aliases Guide
+          </a>
+        </ActionGroup>
+        <CeligoDivider position="right" />
+      </DrawerHeader>
       <AliasForm parentUrl={match.url} isEdit={isEdit} resourceId={resourceId} resourceType={resourceType} />
     </RightDrawer>
   );
