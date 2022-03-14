@@ -79,6 +79,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     borderTop: `1px solid ${theme.palette.secondary.lightest} !important`,
   },
+  flowGroupTitle: {
+    paddingTop: theme.spacing(1),
+  },
 }));
 const integrationsFilterConfig = {
   type: 'integrations',
@@ -95,15 +98,13 @@ const useColumns = () => [
     useGetCellStyling: ({rowData: r}) => {
       const classes = useStyles();
       const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
-      const classFlowInFlowGroupName = groupName || isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
-      const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
 
-      return clsx(classFlowInFlowGroupName, classFlowInFlowGroupNameHover);
+      return clsx({[classes.flowInFlowGroupName]: !isLastFlowInFlowGroup, [classes.flowInFlowGroupNameHover]: groupName});
     },
     Value: ({rowData: r}) => {
-      if (r?.groupName) {
-        return <Typography variant="overline" component="div" color="textSecondary">{r?.groupName}</Typography>;
-      }
+      const classes = useStyles();
+
+      if (r.groupName || r.emptyMessage) return <Typography variant={r?.groupName ? 'overline' : 'body2'} component="div" color="textSecondary" className={clsx({[classes.flowGroupTitle]: r?.groupName, [classes.emptyMessageContent]: r?.emptyMessage})}>{r?.groupName || r?.emptyMessage}</Typography>;
 
       return r?.doc?.name || r?.doc?._id;
     },
@@ -115,10 +116,8 @@ const useColumns = () => [
     useGetCellStyling: ({rowData: r}) => {
       const classes = useStyles();
       const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
-      const classLastFlowInGroup = groupName || isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
-      const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
 
-      return clsx(classLastFlowInGroup, classFlowInFlowGroupNameHover);
+      return clsx({[classes.flowInFlowGroupName]: !isLastFlowInFlowGroup, [classes.flowInFlowGroupNameHover]: groupName});
     },
     Value: ({rowData: r}) => r?.doc?.description,
   },
