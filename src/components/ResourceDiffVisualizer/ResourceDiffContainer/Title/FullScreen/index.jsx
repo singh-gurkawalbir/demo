@@ -8,6 +8,7 @@ export default function FullScreen({ resourceDiff, resourceType }) {
   const handleClick = () => {
     setShowFullScreen(showFullScreen => !showFullScreen);
   };
+  const handleClose = () => setShowFullScreen(false);
 
   return (
     <>
@@ -22,6 +23,7 @@ export default function FullScreen({ resourceDiff, resourceType }) {
           <FullScreenModal
             resourceDiff={resourceDiff}
             resourceType={resourceType}
+            onClose={handleClose}
           />
           )
       }

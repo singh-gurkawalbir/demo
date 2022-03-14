@@ -1,9 +1,8 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
 import CollapsableContainer from '../CollapsableContainer';
-import Conflicts from '../Conflicts';
 import Title from './Title';
+import DiffPanel from './DiffPanel';
 
 const useStyles = makeStyles(() => ({
   resourceContainer: {
@@ -15,18 +14,6 @@ const getResourceTypeTitle = resourceType => `${resourceType[0].toUpperCase()}${
 
 export default function ResourceDiffContainer({ diff, resourceType, forceExpand }) {
   const classes = useStyles();
-  const getValues = res => {
-    if (resourceType === 'script') {
-      return { oldValue: res.before, newValue: res.after};
-    }
-
-    return {
-      oldValue: JSON.stringify(res.before, null, 2),
-      newValue: JSON.stringify(res.after, null, 2),
-    };
-  };
-
-  // const codeFoldMessageRenderer = p1 => `(Our custom code with styles) Expand ${p1} lines...`;
 
   return (
     <CollapsableContainer
@@ -40,13 +27,8 @@ export default function ResourceDiffContainer({ diff, resourceType, forceExpand 
             forceExpand={forceExpand}
             title={<Title resourceType={getResourceTypeTitle(resourceType).toLocaleLowerCase()} resourceDiff={resourceDiff} />}
             key={resourceDiff.resourceId}
-           >
-            <ReactDiffViewer
-              // codeFoldMessageRenderer={codeFoldMessageRenderer}
-              compareMethod={DiffMethod.WORDS}
-              {...getValues(resourceDiff)}
-            />
-            <Conflicts conflicts={resourceDiff.conflicts} />
+            >
+            <DiffPanel resourceDiff={resourceDiff} />
           </CollapsableContainer>
         ))
       }
