@@ -1,11 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import Tree from 'rc-tree';
 import {isEmpty} from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import {SwitcherIcon} from '../index';
 import {selectors} from '../../../../../../../reducers';
-import {filterExtractsNode, getFinalSelectedExtracts} from '../../../../../../../utils/mapping';
+import {filterExtractsNode, getFinalSelectedExtracts, getAllKeys} from '../../../../../../../utils/mapping';
 import { useSelectorMemo } from '../../../../../../../hooks';
 
 const useStyles = makeStyles(theme => ({
@@ -89,7 +90,7 @@ const useStyles = makeStyles(theme => ({
 })
 );
 
-const TitleExtracts = ({fieldName, dataType}) => {
+const TitleExtracts = React.memo(({fieldName, dataType}) => {
   const classes = useStyles();
 
   return (
@@ -101,7 +102,7 @@ const TitleExtracts = ({fieldName, dataType}) => {
       </Typography>
     </div>
   );
-};
+});
 
 // this is the component rendered for each row inside extracts tree
 export const TreeTitle = props => <TitleExtracts {...props} key={`title-${props.key}`} />;
@@ -122,11 +123,16 @@ const ExtractsTree = React.memo((
   }) => {
   const classes = useStyles();
   const isArrayType = destDataType.includes('array');
+  const searchValues = useMemo(() => propValue.replaceAll('$.', '').split(','), [propValue]);
+  const isGroupedSampleData = useSelector(state => selectors.mapping(state).isGroupedSampleData);
 
-  const {treeData, selectedKeys} = useSelectorMemo(selectors.mkBuildExtractsTree, {flowId, resourceId, searchValues: propValue.replaceAll('$.', '').split(',')});
+  const {treeData, selectedKeys} = useSelectorMemo(selectors.mkBuildExtractsTree, {flowId, resourceId, searchValues});
+  const allKeys = useMemo(() => getAllKeys(treeData), [treeData]);
+
+  const [expandedKeys, setExpandedKeys] = useState(allKeys);
 
   const onSelect = useCallback((keys, e) => {
-    const newValue = getFinalSelectedExtracts(e.node, inputValue, isArrayType);
+    const newValue = getFinalSelectedExtracts(e.node, inputValue, isArrayType, isGroupedSampleData);
 
     const splitByComma = inputValue.split(',');
     const valuesLen = splitByComma.length;
@@ -139,10 +145,11 @@ const ExtractsTree = React.memo((
     setIsFocused(false);
     if (propValue !== newValue) { onBlur(newValue); }
     e.nativeEvent.stopImmediatePropagation();
-  }, [propValue, inputValue, isArrayType, onBlur, setInputValue, setIsFocused, setSrcDataType]);
+  }, [propValue, inputValue, isArrayType, onBlur, setInputValue, setIsFocused, setSrcDataType, isGroupedSampleData]);
 
   const onExpand = useCallback((expandedKeys, {nativeEvent}) => {
     setIsFocused(true);
+    setExpandedKeys(expandedKeys);
     nativeEvent.stopImmediatePropagation();
   }, [setIsFocused]);
 
@@ -162,13 +169,14 @@ const ExtractsTree = React.memo((
       </div>
 
       <Tree
-        key={id}
+        key={`extractsTree-${id}`}
         className={classes.childTree}
         selectedKeys={selectedKeys} // todo ashu verify this
         treeData={treeData}
         showLine={false}
         switcherIcon={SwitcherIcon}
         defaultExpandAll
+        expandedKeys={expandedKeys}
         onSelect={onSelect}
         onExpand={onExpand}
         filterTreeNode={filterTreeNode}

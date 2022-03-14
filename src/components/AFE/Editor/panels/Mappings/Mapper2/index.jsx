@@ -69,7 +69,8 @@ const useStyles = makeStyles(theme => ({
       // width: 500,
     },
     '& .rc-tree-treenode-active': {
-      background: theme.palette.primary.light,
+      backgroundColor: theme.palette.background.paper2,
+      borderLeft: `3px solid ${theme.palette.primary.main}`,
     },
     '& .MuiFilledInput-multiline': {
       padding: '6px 15px',
@@ -119,6 +120,7 @@ export default function Mapper2({editorId}) {
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const treeData = useSelector(state => selectors.v2MappingsTreeData(state), isEqual);
   const expandedKeys = useSelector(state => selectors.v2MappingExpandedKeys(state), shallowEqual);
+  const activeKey = useSelector(state => selectors.v2ActiveKey(state));
 
   const onDropHandler = useCallback(info => {
     dispatch(actions.mapping.v2.dropRow(info));
@@ -152,7 +154,7 @@ export default function Mapper2({editorId}) {
         switcherIcon={SwitcherIcon}
         allowDrop={allowDrop}
         onDrop={onDropHandler}
-        // activeKey={treeData[0].key}
+        activeKey={activeKey}
         draggable={dragConfig}
         onDragStart={onDragStart}
         disabled={disabled}

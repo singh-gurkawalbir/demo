@@ -536,6 +536,42 @@ export default (state = {}, action) => {
         break;
       }
 
+      case actionTypes.MAPPING.V2.PATCH_SETTINGS: {
+        if (!draft.mapping) break;
+        const {node} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
+
+        if (node) {
+          Object.assign(node, value);
+
+          // removing lookups
+          if (!value.lookupName) {
+            delete node.lookupName;
+          }
+          if (!value.conditional?.when && node?.conditional?.when) {
+            delete node.conditional.when;
+          }
+
+          if ('hardCodedValue' in value) {
+            delete node.extract;
+          } else {
+            delete node.hardCodedValue;
+          }
+
+          if (value.copySource === 'yes') {
+            // delete child rows if object is to be copied as is
+            node.children = [];
+          }
+        }
+
+        break;
+      }
+
+      case actionTypes.MAPPING.V2.ACTIVE_KEY: {
+        if (!draft.mapping) break;
+        draft.mapping.v2ActiveKey = v2Key;
+        break;
+      }
+
       default:
     }
   });
@@ -623,4 +659,12 @@ selectors.v2MappingExpandedKeys = state => {
   }
 
   return state.mapping.expandedKeys || emptyArr;
+};
+
+selectors.v2ActiveKey = state => {
+  if (!state || !state.mapping) {
+    return;
+  }
+
+  return state.mapping.v2ActiveKey;
 };

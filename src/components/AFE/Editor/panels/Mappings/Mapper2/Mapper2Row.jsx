@@ -68,6 +68,7 @@ const Mapper2Row = React.memo(({
   nodeKey,
   combinedExtract,
   extract,
+  copySource = 'no',
   generate,
   hardCodedValue,
   dataType,
@@ -94,6 +95,7 @@ const Mapper2Row = React.memo(({
   }, shallowEqual);
 
   const handleDeleteClick = useCallback(() => {
+    // todo ashu confirmation warning
     dispatch(actions.mapping.v2.deleteRow(nodeKey));
   }, [dispatch, nodeKey]);
 
@@ -104,6 +106,7 @@ const Mapper2Row = React.memo(({
   const onDataTypeChange = useCallback(e => {
     const newDataType = e.target.value;
 
+    // todo ashu confirmation warning
     dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType));
   }, [dispatch, nodeKey]);
 
@@ -119,9 +122,10 @@ const Mapper2Row = React.memo(({
     handleBlur('generate', value);
   }, [handleBlur]);
 
-  const handleBtnClick = useCallback(() => {
-    history.push(`${history.location.pathname}/settings/v2/${nodeKey}`);
-  }, [history, nodeKey]);
+  const handleSettingsClick = useCallback(() => {
+    dispatch(actions.mapping.v2.updateActiveKey(nodeKey));
+    history.push(`${history.location.pathname}/settings/v2/${nodeKey}/${generate}`);
+  }, [dispatch, history, nodeKey, generate]);
 
   const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
   const extractValue = combinedExtract || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
@@ -138,7 +142,7 @@ const Mapper2Row = React.memo(({
       <div className={classes.childHeader}>
         <Mapper2Generates
           isLoggable
-          key={`fieldMappingGenerate-${nodeKey}`}
+          key={generate}
           id={`fieldMappingGenerate-${nodeKey}`}
           value={generate}
           disabled={disabled}
@@ -149,12 +153,12 @@ const Mapper2Row = React.memo(({
           />
 
       </div>
-      {dataType === 'object' && !extractValue ? null : (
+      {(dataType === 'object' || dataType === 'objectarray') && !extractValue && copySource === 'no' ? null : (
         <>
           <div className={classes.childHeader}>
             <Mapper2ExtractsTypeableSelect
               isLoggable
-              key={`fieldMappingExtract-${nodeKey}`}
+              key={extractValue}
               id={`fieldMappingExtract-${nodeKey}`}
               value={extractValue}
               disabled={disabled}
@@ -179,7 +183,7 @@ const Mapper2Row = React.memo(({
           data-test={`fieldMappingSettings-${nodeKey}`}
           disabled={disabled || !generate}
           aria-label="settings"
-          onClick={handleBtnClick}
+          onClick={handleSettingsClick}
           key="settings">
           <SettingsIcon />
         </ActionButton>

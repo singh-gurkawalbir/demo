@@ -5366,7 +5366,7 @@ selectors.mappingEditorNotification = state => {
   const isMapper2Supported = selectors.isMapper2Supported(state);
   // we pick from original tree data as the banner should
   // depend only on the final saved state
-  const treeData = selectors.mapping(state)?.v2TreeDataCopy;
+  const treeData = selectors.mapping(state)?.v2TreeDataCopy || [];
 
   let hasV2Mappings;
 

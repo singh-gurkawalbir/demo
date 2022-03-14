@@ -185,6 +185,7 @@ export default function Mapper2ExtractsTypeableSelect({
       {/* only render tree component if its focussed and not disabled */}
       {isFocused && !disabled && !hideDropdown && (
       <ExtractsTree
+        key={id}
         id={id}
         destDataType={destDataType}
         propValue={propValue}

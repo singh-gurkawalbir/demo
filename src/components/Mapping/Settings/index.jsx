@@ -17,6 +17,7 @@ import EditorDrawer from '../../AFE/Drawer';
 import SaveAndCloseResourceForm from '../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 import { FORM_SAVE_STATUS } from '../../../utils/constants';
 import useFormOnCancelContext from '../../FormOnCancelContext';
+import MappingsSettingsV2Wrapper from '../../AFE/Editor/panels/Mappings/Mapper2/Settings';
 
 const emptySet = [];
 const emptyObject = {};
@@ -268,6 +269,15 @@ function CategoryMappingSettingsWrapper(props) {
     />
   );
 }
+
+function Title() {
+  const match = useRouteMatch();
+  const {nodeKey, generate} = match.params;
+
+  if (!nodeKey) return 'Settings';
+
+  return `Settings - destination field: ${generate}`;
+}
 export default function SettingsDrawer(props) {
   const match = useRouteMatch();
   const {setCancelTriggered} = useFormOnCancelContext(formKey);
@@ -279,12 +289,13 @@ export default function SettingsDrawer(props) {
       disableBackdropClick
       onClose={setCancelTriggered}
       path={[
-        'settings/:mappingKey',
+        'settings/v2/:nodeKey/:generate',
         'settings/category/:editorId/sections/:sectionId/:depth/:mappingKey',
+        'settings/:mappingKey',
       ]}
       height="tall"
     >
-      <DrawerHeader title="Settings" />
+      <DrawerHeader title={<Title />} />
 
       <Switch>
         <Route
@@ -292,6 +303,11 @@ export default function SettingsDrawer(props) {
           <CategoryMappingSettingsWrapper
             {...props}
             />
+        </Route>
+        <Route
+          path={`${match.url}/settings/v2/:nodeKey/:generate`}>
+          <MappingsSettingsV2Wrapper
+            {...props} />
         </Route>
         <Route
           path={`${match.url}/settings/:mappingKey`}>

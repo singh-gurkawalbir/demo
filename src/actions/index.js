@@ -1482,6 +1482,7 @@ const mapping = {
     toggleRows: expanded => action(actionTypes.MAPPING.V2.TOGGLE_ROWS, { expanded }),
     updateExpandedKeys: expandedKeys => action(actionTypes.MAPPING.V2.UPDATE_EXPANDED_KEYS, { expandedKeys }),
     dropRow: dragDropInfo => action(actionTypes.MAPPING.V2.DRAG_DROP, { dragDropInfo }),
+    updateActiveKey: v2Key => action(actionTypes.MAPPING.V2.ACTIVE_KEY, { v2Key }),
     deleteRow: v2Key => action(actionTypes.MAPPING.V2.DELETE_ROW, { v2Key }),
     addRow: v2Key => action(actionTypes.MAPPING.V2.ADD_ROW, { v2Key }),
     updateDataType: (v2Key, newDataType) => action(actionTypes.MAPPING.V2.UPDATE_DATA_TYPE, { v2Key, newDataType }),

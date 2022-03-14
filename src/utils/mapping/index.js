@@ -1508,6 +1508,47 @@ export default {
       default: return FORM_SAVE_STATUS.FAILED;
     }
   },
+
+  // #region default Mapper2 utils
+  getV2DefaultActionValue: value => {
+    if (value.conditional?.when === 'extract_not_empty') {
+      return 'discardIfEmpty';
+    }
+    if ('default' in value) {
+      switch (value.default) {
+        case '':
+          return 'useEmptyString';
+        case null:
+          return 'useNull';
+        default:
+          return 'default';
+      }
+    }
+  },
+  getV2DefaultLookupActionValue: (value, lookup = {}) => {
+    if (value.conditional?.when === 'extract_not_empty') {
+      return 'discardIfEmpty';
+    }
+    if (!lookup.allowFailures) {
+      return 'disallowFailure';
+    }
+
+    if (lookup.useDefaultOnMultipleMatches) {
+      return 'useDefaultOnMultipleMatches';
+    }
+
+    if ('default' in lookup) {
+      switch (lookup.default) {
+        case '':
+          return 'useEmptyString';
+        case null:
+          return 'useNull';
+        default:
+          return 'default';
+      }
+    }
+  },
+  // #endregion
 };
 
 // #region Mapper2 utils
@@ -2215,9 +2256,10 @@ export const filterExtractsNode = (node, propValue, inputValue) => {
 
 // this util handles the comma separated values use-case
 // and returns the final input after user selects a node
-export const getFinalSelectedExtracts = (node, inputValue, isArrayType) => {
+export const getFinalSelectedExtracts = (node, inputValue, isArrayType, isGroupedSampleData) => {
+  const prefix = isGroupedSampleData ? '$[*]' : '$';
   const {jsonPath = ''} = node;
-  const fullJsonPath = jsonPath ? `$.${jsonPath}` : '$';
+  const fullJsonPath = jsonPath ? `${prefix}.${jsonPath}` : prefix;
   let newValue = fullJsonPath;
 
   const splitByComma = inputValue.split(',');
@@ -2305,6 +2347,7 @@ export const isV2MappingsChanged = (tree1, tree2) => {
 
 // this util returns ALL the keys of the tree data in a flat array format
 export const getAllKeys = data => {
+  if (!data) return emptyList;
   const nestedKeys = data.map(node => {
     let childKeys = [];
 
