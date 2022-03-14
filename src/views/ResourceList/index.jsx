@@ -184,8 +184,9 @@ export default function ResourceList(props) {
                     subTitle={emptyStateResource[resourceType].subTitle}
                     type={emptyStateResource[resourceType].type}
                   >
-                    <FilledButton onClick={emptyStateResource[resourceType].handleButtonClick}>{emptyStateResource[resourceType].buttonLabel}</FilledButton>
+                    <FilledButton data-test="addNewResource" href={`${location.pathname}/add/${resourceType}/${generateNewId()}`}>{emptyStateResource[resourceType].buttonLabel}</FilledButton>
                     <TextButton
+                      data-test="openResourceDocLink"
                       underline
                       href={emptyStateResource[resourceType].link}
                       target="_blank">

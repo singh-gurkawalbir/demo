@@ -98,6 +98,7 @@ export default function AccessTokenList(props) {
                       >{apitokens.buttonLabel}
                       </FilledButton>
                       <TextButton
+                        data-test="openResourceDocLink"
                         underline
                         href={apitokens.link}
                         target="_blank">

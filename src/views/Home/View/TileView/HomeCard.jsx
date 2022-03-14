@@ -42,8 +42,9 @@ export const DashboardEmptyState = () => (
     title={integrations.title}
     subTitle={integrations.subTitle}
     type={integrations.type}>
-    <FilledButton href="/integrations/none/flowBuilder/new">{integrations.buttonLabel}</FilledButton>
+    <FilledButton data-test="create flow" href="/integrations/none/flowBuilder/new">{integrations.buttonLabel}</FilledButton>
     <TextButton
+      data-test="openResourceDocLink"
       underline
       href={integrations.link}
       target="_blank">

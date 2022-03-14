@@ -7,12 +7,6 @@ export default {
     buttonLabel: 'create flow',
     linkLabel: 'Learn how to develop integrations in flow builder',
     link: 'https://docs.celigo.com/hc/en-us/articles/360025919171-Develop-integrations-in-Flow-Builder',
-    handleButtonClick() {
-      alert('Create Integrations button clicked');
-    },
-    handleLinkClick() {
-      alert('integrations link clicked');
-    },
   },
   connections: {
     title: 'You don’t have any connections',
@@ -21,9 +15,6 @@ export default {
     buttonLabel: 'create connection',
     linkLabel: 'Learn how to establish connection',
     link: 'https://docs.celigo.com/hc/en-us/articles/226974368-Establish-connections-in-integrator-io',
-    handleButtonClick() {
-      alert('Create Connections button clicked');
-    },
   },
   imports: {
     title: 'You don’t have any imports',
@@ -32,12 +23,6 @@ export default {
     buttonLabel: 'create import',
     linkLabel: 'Learn more about imports',
     link: 'https://docs.celigo.com/hc/en-us/articles/226933887-What-are-imports-',
-    handleButtonClick() {
-      alert('Create import button clicked');
-    },
-    handleLinkClick() {
-      alert('import link clicked');
-    },
   },
   exports: {
     title: 'You don’t have any exports',
@@ -46,12 +31,6 @@ export default {
     buttonLabel: 'create export',
     linkLabel: 'Learn more about exports',
     link: 'https://docs.celigo.com/hc/en-us/articles/226934107-What-are-exports-',
-    handleButtonClick() {
-      alert('Create export button clicked');
-    },
-    handleLinkClick() {
-      alert('export link clicked');
-    },
   },
   apitokens: {
     title: 'You don’t have any API tokens',
@@ -60,9 +39,6 @@ export default {
     buttonLabel: 'create API token',
     linkLabel: 'Learn more about how to generate API tokens',
     link: 'https://docs.celigo.com/hc/en-us/articles/360019782431-Generate-API-tokens',
-    handleButtonClick() {
-      alert('Create Api tokens button clicked');
-    },
   },
   agents: {
     title: 'You don’t have any agents',
@@ -71,9 +47,6 @@ export default {
     buttonLabel: 'create agent',
     linkLabel: 'Integrate data through a firewall with an on-premise agent',
     link: 'https://docs.celigo.com/hc/en-us/articles/360004081771-Integrate-data-through-firewall-with-on-premise-agent',
-    handleButtonClick() {
-      alert('Create agents button clicked');
-    },
   },
   recyclebin: {
     title: 'Your recycle bin is empty.',
