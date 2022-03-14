@@ -15,10 +15,9 @@ import infoText from '../ResourceList/infoText';
 import CheckPermissions from '../../components/CheckPermissions';
 import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
-import { TextButton } from '../../components/Buttons';
+import { TextButton, FilledButton } from '../../components/Buttons';
 import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
 import EmptyState from '../../components/EmptyState';
-import FilledButton from '../../components/Buttons/FilledButton';
 import emptyStateResource from '../../components/EmptyState/metadata';
 
 const useStyles = makeStyles(theme => ({

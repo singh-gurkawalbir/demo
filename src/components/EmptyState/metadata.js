@@ -1,4 +1,3 @@
-/* eslint-disable no-alert */
 export default {
   integrations: {
     title: 'Jumpstart your data integration',

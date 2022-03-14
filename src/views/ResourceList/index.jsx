@@ -141,6 +141,7 @@ export default function ResourceList(props) {
   }, [dispatch, resourceType]);
 
   const actionProps = useMemo(() => ({ showTradingPartner }), [showTradingPartner]);
+  const resource = emptyStateResource[resourceType];
 
   return (
     <CheckPermissions
@@ -180,17 +181,21 @@ export default function ResourceList(props) {
               {list.total === 0
                 ? (
                   <EmptyState
-                    title={emptyStateResource[resourceType].title}
-                    subTitle={emptyStateResource[resourceType].subTitle}
-                    type={emptyStateResource[resourceType].type}
+                    title={resource.title}
+                    subTitle={resource.subTitle}
+                    type={resource.type}
                   >
-                    <FilledButton data-test="addNewResource" href={`${location.pathname}/add/${resourceType}/${generateNewId()}`}>{emptyStateResource[resourceType].buttonLabel}</FilledButton>
+                    <FilledButton
+                      data-test="addNewResource"
+                      href={`${location.pathname}/add/${resourceType}/${generateNewId()}`}>
+                      {resource.buttonLabel}
+                    </FilledButton>
                     <TextButton
                       data-test="openResourceDocLink"
                       underline
-                      href={emptyStateResource[resourceType].link}
+                      href={resource.link}
                       target="_blank">
-                      {emptyStateResource[resourceType].linkLabel}
+                      {resource.linkLabel}
                     </TextButton>
                   </EmptyState>
                 )
