@@ -126,7 +126,6 @@ export default {
 
     if (retValues['/outputMode'] === 'blob') {
       retValues['/type'] = 'blob';
-      retValues['/http/method'] = retValues['/http/blobMethod'];
     }
     if (retValues['/http/requestMediaType'] === ' ' || !retValues['/http/requestMediaType']) {
       retValues['/http/requestMediaType'] = undefined;
@@ -247,6 +246,7 @@ export default {
     delete retValues['/graphql/query'];
     delete retValues['/graphql/operationName'];
     delete retValues['/graphql/variables'];
+    retValues['/adaptorType'] = 'HTTPExport';
 
     return {
       ...retValues,
@@ -339,7 +339,7 @@ export default {
           isNot: ['csv'],
         },
       ],
-      defaultValue: 'data',
+      defaultValue: r => r?.resourceType === 'lookupFiles' || r?.type === 'blob' ? '' : 'data',
     },
     'http.response.successPath': { fieldId: 'http.response.successPath' },
     'http.response.successValues': {
@@ -618,31 +618,14 @@ export default {
       {
         collapsed: true,
         label: 'Non-standard API response patterns',
-        containers: [
-          {
-            fields: [
-              'http.response.resourcePath',
-              'http.response.failPath',
-              'http.response.failValues',
-              'http.response.successPath',
-              'http.response.successValues',
-              'http.response.errorPath',
-              'http.successMediaType',
-            ],
-          },
-          {
-            type: 'indent',
-            containers: [
-              {fields: [
-                'file.csv',
-              ]},
-            ],
-          },
-          {
-            fields: [
-              'http.errorMediaType',
-            ],
-          },
+        fields: [
+          'http.response.resourcePath',
+          // 'http.response.failPath',
+          // 'http.response.failValues',
+          // 'http.response.successPath',
+          // 'http.response.successValues',
+          // 'http.response.errorPath',
+          // 'http.successMediaType',
         ],
       },
       {

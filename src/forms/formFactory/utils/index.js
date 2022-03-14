@@ -926,6 +926,20 @@ export const destinationOptions = {
       value: 'lookupFiles',
     },
   ],
+  graphql: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Look up additional records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Look up additional files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
   netsuite: [
     {
       label: 'Import records into destination application',

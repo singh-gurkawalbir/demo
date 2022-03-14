@@ -9,6 +9,11 @@ export default {
     // graphql specific values
     retValues['/http/formType'] = 'graph_ql';
 
+    // relative URI
+    retValues['/http/relativeURI'] = '/';
+    retValues['/http/relativeURIUpdate'] = '/';
+    retValues['/http/relativeURICreate'] = '/';
+
     // http.body
     if (!retValues['/http/body']) {
       retValues['/http/body'] = convertGraphQLQueryToHTTPBody({
@@ -33,6 +38,18 @@ export default {
         operationName: retValues['/graphql/operationNameUpdate'],
       });
     }
+
+    delete retValues['/graphql/query'];
+    delete retValues['/graphql/variables'];
+    delete retValues['/graphql/operationName'];
+
+    delete retValues['/graphql/queryCreate'];
+    delete retValues['/graphql/variablesCreate'];
+    delete retValues['/graphql/operationNameCreate'];
+
+    delete retValues['/graphql/queryUpdate'];
+    delete retValues['/graphql/variablesUpdate'];
+    delete retValues['/graphql/operationNameUpdate'];
     // graphql specific values end
 
     if (retValues['/http/response/successValues']) {

@@ -5203,7 +5203,7 @@ selectors.applicationType = (state, resourceType, id) => {
   if (adaptorType === 'http' && resourceObj?.http?.formType === 'rest') {
     adaptorType = 'rest';
   }
-  if (adaptorTypeMap[adaptorType] === 'graphql' || (adaptorTypeMap[adaptorType] === 'http' && resourceObj?.http?.formType === 'graph_ql')) {
+  if (adaptorTypeMap[adaptorType] === 'graphql' || resourceObj?.http?.formType === 'graph_ql') {
     adaptorType = 'graphql';
   }
   // For Data Loader cases, there is no image.

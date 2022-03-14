@@ -51,3 +51,10 @@ export function getGraphQLValues({resource, field, path}) {
 
   return grapqhqlObj?.[field];
 }
+
+export const GRAPHQL_JSON_FIELDS = [
+  'graphql.variables',
+  'graphql.variablesCreate',
+  'graphql.variablesUpdate',
+  'paging.graphql.variables',
+];
