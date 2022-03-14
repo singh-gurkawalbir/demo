@@ -1,3 +1,5 @@
+// TODO: this file is only used for HTTP assistant for now and would be removed later as part of https://celigo.atlassian.net/browse/IO-25213
+
 import React, { useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
