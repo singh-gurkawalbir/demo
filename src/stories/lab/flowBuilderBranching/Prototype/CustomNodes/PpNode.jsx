@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
 
 export default function PageProcessor(props) {
   const { data, id } = props;
-  const { label, isLookup, connectorType } = data;
+  const { name: label, isLookup, connectorType } = data;
   const classes = useStyles();
 
   const processorActions = useMemo(() => {
