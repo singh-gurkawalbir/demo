@@ -8,8 +8,8 @@ import { REVISION_DIFF_ACTION_LABELS, REVISION_DIFF_ACTIONS } from '../../../../
 import ViewReferences from './ViewReferences';
 import FullScreen from './FullScreen';
 
-export default function DiffContainerTitle(props) {
-  const { resourceId, action = REVISION_DIFF_ACTIONS.UPDATE, resourceType} = props;
+export default function DiffContainerTitle({ resourceDiff, resourceType}) {
+  const { resourceId, action = REVISION_DIFF_ACTIONS.UPDATE} = resourceDiff;
   const resourceName = useSelector(state => selectors.resourceName(state, resourceId, resourceType));
 
   return (
@@ -19,9 +19,9 @@ export default function DiffContainerTitle(props) {
         <Typography variant="body2"> Action: {REVISION_DIFF_ACTION_LABELS[action]} </Typography>
       </ActionGroup>
       <ActionGroup position="right">
-        <ViewReferences />
+        <ViewReferences resourceId={resourceId} resourceType={resourceType} />
         <CeligoDivider />
-        <FullScreen />
+        <FullScreen resourceDiff={resourceDiff} resourceType={resourceType} />
       </ActionGroup>
     </>
   );

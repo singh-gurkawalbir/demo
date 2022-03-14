@@ -35,18 +35,18 @@ export default function ResourceDiffContainer({ diff, resourceType, forceExpand 
       forceExpand={forceExpand}
     >
       {
-        diff?.map(res => (
+        diff?.map(resourceDiff => (
           <CollapsableContainer
             forceExpand={forceExpand}
-            title={<Title resourceId={res.resourceId} resourceType={getResourceTypeTitle(resourceType).toLocaleLowerCase()} action={res.action} />}
-            key={res.resourceId}
+            title={<Title resourceType={getResourceTypeTitle(resourceType).toLocaleLowerCase()} resourceDiff={resourceDiff} />}
+            key={resourceDiff.resourceId}
            >
             <ReactDiffViewer
               // codeFoldMessageRenderer={codeFoldMessageRenderer}
               compareMethod={DiffMethod.WORDS}
-              {...getValues(res)}
+              {...getValues(resourceDiff)}
             />
-            <Conflicts conflicts={res.conflicts} />
+            <Conflicts conflicts={resourceDiff.conflicts} />
           </CollapsableContainer>
         ))
       }
