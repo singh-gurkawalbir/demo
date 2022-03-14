@@ -1,4 +1,6 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import UserName from '../commonCells/UserName';
 import DateTimeDisplay from '../../DateTimeDisplay';
 import { REVISION_STATUS_LABELS, REVISION_TYPE_LABELS } from '../../../utils/revisions';
@@ -11,6 +13,7 @@ import ResumeRevision from './actions/ResumeRevision';
 import RevertToAfterRevision from './actions/RevertToAfterRevision';
 import RevertToBeforeRevision from './actions/RevertToBeforeRevision';
 import RevertToRevision from './actions/RevertToRevision';
+import { selectors } from '../../../reducers';
 
 export default {
   useColumns: () => {
@@ -40,8 +43,21 @@ export default {
     return columns;
   },
   useRowActions: revision => {
+    const { integrationId } = useParams();
+    const hasMonitorLevelAccess = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
     const { type, status } = revision;
 
+    if (hasMonitorLevelAccess) {
+      // for monitor user, view changes & view details are the only actions accesible
+      if (status === REVISION_STATUS.COMPLETED && type !== REVISION_TYPES.SNAPSHOT) {
+        return [
+          ViewResourceChanges,
+          ViewDetails,
+        ];
+      }
+
+      return [ViewDetails];
+    }
     if (status === REVISION_STATUS.CANCELED) {
       return [ViewDetails];
     }

@@ -10,7 +10,6 @@ import { thisIntegrationRefsMetadata, otherIntegrationRefsMetadata } from './met
 const useStyles = makeStyles(theme => ({
   references: {
     height: '100%',
-    color: theme.palette.text.hint,
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(2),
@@ -74,6 +73,14 @@ export default function References({ resourceId, resourceType, integrationId }) 
 
   if (!resourceReferences) {
     return <Spinner />;
+  }
+
+  if (!resourceReferences.length) {
+    return (
+      <div className={classes.references}>
+        No references
+      </div>
+    );
   }
 
   return (

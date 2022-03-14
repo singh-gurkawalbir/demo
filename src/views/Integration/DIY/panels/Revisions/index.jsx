@@ -32,11 +32,31 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+function DrawerDeclarations({ integrationId, hasMonitorLevelAccess }) {
+  if (hasMonitorLevelAccess) {
+    <ViewDetailsDrawer integrationId={integrationId} />;
+  }
+
+  return (
+    <>
+      <ViewDetailsDrawer integrationId={integrationId} />
+      <OpenPullDrawer integrationId={integrationId} />
+      <ReviewPullChangesDrawer integrationId={integrationId} />
+      <MergePullDrawer integrationId={integrationId} />
+      <OpenRevertDrawer integrationId={integrationId} />
+      <ReviewRevertChangesDrawer integrationId={integrationId} />
+      <FinalRevertDrawer integrationId={integrationId} />
+      <CreateSnapshotDrawer integrationId={integrationId} />
+    </>
+  );
+}
+
 export default function Revisions({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const match = useRouteMatch();
   const revisions = useSelector(state => selectors.filteredRevisions(state, integrationId));
+  const hasMonitorLevelAccess = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
   const isLoadingRevisions = useSelector(state => {
     const status = selectors.revisionsFetchStatus(state, integrationId);
 
@@ -52,6 +72,7 @@ export default function Revisions({ integrationId }) {
   return (
     <div className={classes.root}>
       <PanelHeader title="Revisions" infoText="test" className={classes.flowPanelTitle}>
+        { !hasMonitorLevelAccess && (
         <ActionGroup>
           <TextButton
             component={Link}
@@ -70,6 +91,7 @@ export default function Revisions({ integrationId }) {
             Create snapshot
           </TextButton>
         </ActionGroup>
+        )}
       </PanelHeader>
       <RevisionFilters />
       {
@@ -82,14 +104,10 @@ export default function Revisions({ integrationId }) {
         )
       }
       <LoadResources resources="flows,integrations">
-        <ViewDetailsDrawer integrationId={integrationId} />
-        <OpenPullDrawer integrationId={integrationId} />
-        <ReviewPullChangesDrawer integrationId={integrationId} />
-        <MergePullDrawer integrationId={integrationId} />
-        <OpenRevertDrawer integrationId={integrationId} />
-        <ReviewRevertChangesDrawer integrationId={integrationId} />
-        <FinalRevertDrawer integrationId={integrationId} />
-        <CreateSnapshotDrawer integrationId={integrationId} />
+        <DrawerDeclarations
+          integrationId={integrationId}
+          hasMonitorLevelAccess={hasMonitorLevelAccess}
+       />
       </LoadResources>
     </div>
   );
