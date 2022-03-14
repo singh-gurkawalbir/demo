@@ -237,7 +237,7 @@ const AliasForm = ({ resourceId, resourceType, isEdit, parentUrl }) => {
   );
 };
 
-export default function CreateAliasDrawer({resourceId, resourceType}) {
+export default function CreateAliasDrawer({resourceId, resourceType, height = 'short' }) {
   const {disabled, setCancelTriggered} = useFormOnCancel(ALIAS_FORM_KEY);
   const match = useRouteMatch();
   const history = useHistory();
@@ -247,7 +247,7 @@ export default function CreateAliasDrawer({resourceId, resourceType}) {
 
   return (
     <RightDrawer
-      height="short"
+      height={height}
       width="default"
       path={['add', 'edit/:aliasId']}
     >
@@ -259,7 +259,7 @@ export default function CreateAliasDrawer({resourceId, resourceType}) {
         <ActionGroup>
           <InstallationGuideIcon />
           <a href="https://docs.celigo.com/hc/en-us/articles/4454740861979" rel="noreferrer" target="_blank">
-            Aliases Guide
+            Aliases guide
           </a>
         </ActionGroup>
         <CeligoDivider position="right" />

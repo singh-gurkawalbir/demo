@@ -18,7 +18,7 @@ import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
 import AnalyticsPanel from './panels/Analytics';
-import AliasesPanel from './panels/Aliases';
+import AliasesPanel from '../common/AliasesPanel';
 import { selectors } from '../../../reducers';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import GraphIcon from '../../../components/icons/GraphIcon';

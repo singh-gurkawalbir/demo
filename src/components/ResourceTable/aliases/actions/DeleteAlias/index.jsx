@@ -19,7 +19,7 @@ export default {
     const {resourceId: parentResourceId, resourceType: parentResourceType} = useGetTableContext();
     const { id, resourceType } = getResourceFromAlias(rowData);
     const dispatch = useDispatch();
-    const [showRef, setShowRef] = useState(true);
+    const [showRef, setShowRef] = useState(false);
     const [referencesRequested, setReferencesRequested] = useState(false);
     const resourceReferences = useSelector(state =>
       selectors.resourceReferences(state)

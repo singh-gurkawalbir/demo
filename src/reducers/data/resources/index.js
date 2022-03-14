@@ -403,7 +403,6 @@ selectors.makeInheritedAliases = () => {
   const integrationResourceSel = selectors.makeResourceSelector();
 
   return createSelector(
-    (state, resourceType, id) => resourceSel(state, resourceType, id)?.aliases.map(aliasData => aliasData.alias),
     (state, resourceType, id) => {
       if (resourceType === 'integrations') return id;
 
@@ -422,10 +421,10 @@ selectors.makeInheritedAliases = () => {
 
       return integrationResourceSel(state, 'integrations', flow._integrationId)?.aliases;
     },
-    (resourceAliases, parentResourceId, parentResourceAliases) => {
+    (parentResourceId, parentResourceAliases) => {
       if (!parentResourceAliases) return [];
 
-      return parentResourceAliases.filter(ad => !resourceAliases?.includes(ad.alias)).map(aliasData => ({...aliasData, parentResourceId }));
+      return parentResourceAliases.map(aliasData => ({...aliasData, parentResourceId }));
     });
 };
 
@@ -436,8 +435,11 @@ selectors.makeAllAliases = () => {
   return createSelector(
     (state, resourceType, id) => resourceAliasesSel(state, resourceType, id),
     (state, resourceType, id) => inheritedAliasesSel(state, resourceType, id),
-    (resourceAliases, inheritedAliases) => [...resourceAliases, ...inheritedAliases],
-  );
+    (resourceAliases, inheritedAliases) => {
+      const filteredInheritedAliases = inheritedAliases.filter(aliasData => !resourceAliases.some(ra => ra.alias === aliasData.alias));
+
+      return [...resourceAliases, ...filteredInheritedAliases];
+    });
 };
 
 selectors.makeAliasResources = () => {

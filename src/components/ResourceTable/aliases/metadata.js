@@ -17,7 +17,7 @@ export default {
       Value: ({rowData: r}) => (
         <>
           <Typography component="span" >{r?.alias}</Typography>
-          {r?.description && <InfoIconButton info={r?.description} escapeUnsecuredDomains size="xs" />}
+          {r?.description && <InfoIconButton info={r?.description} placement="bottom-center" escapeUnsecuredDomains size="xs" />}
         </>
       ),
     },

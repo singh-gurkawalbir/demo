@@ -8,12 +8,12 @@ export default {
   useLabel: () => 'View details',
   icon: ViewDetailsIcon,
   useOnClick: rowData => {
-    const { alias } = rowData;
+    const { alias, parentResourceId } = rowData;
     const history = useHistory();
     const match = useRouteMatch();
     const openViewDetails = useCallback(() => {
-      history.push(getRoutePath(`${match.url}/viewdetails/${alias}`));
-    }, [history, match.url, alias]);
+      history.push(getRoutePath(parentResourceId ? `${match.url}/viewdetails/inherited/${alias}` : `${match.url}/viewdetails/${alias}`));
+    }, [history, match.url, alias, parentResourceId]);
 
     return openViewDetails;
   },

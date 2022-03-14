@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 
 const NO_ALIASES_MESSAGE = 'You don’t have any aliases.';
 
-const ManageAliases = ({ flowId }) => {
+const ManageAliases = ({ flowId, height }) => {
   const classes = useStyles();
   const resourceAliases = useSelectorMemo(selectors.makeOwnAliases, 'flows', flowId);
   const inheritedAliases = useSelectorMemo(selectors.makeInheritedAliases, 'flows', flowId);
@@ -47,27 +47,27 @@ const ManageAliases = ({ flowId }) => {
     resourceId: flowId,
   }), [isIntegrationApp, accessLevel, flowId]);
 
-  const aliasesTableData = [
+  const aliasesTableData = useMemo(() => ([
     {
-      data: resourceAliases.map(aliasData => ({...aliasData, _id: aliasData.alias})),
+      data: resourceAliases.map(aliasData => ({...aliasData, _id: `${flowId}-${aliasData.alias}`})),
       title: 'Aliases',
       filterKey: `${flowId}+aliases`,
       actionProps: {...actionProps, hasManageAccess: true},
       noAliasesMessage: 'You don’t have any custom aliases.',
     },
     {
-      data: inheritedAliases.map(aliasData => ({...aliasData, _id: aliasData.alias})),
+      data: inheritedAliases.map(aliasData => ({...aliasData, _id: `${flow._integrationId}-${aliasData.alias}`})),
       title: 'Inherited aliases',
-      filterKey: `${flowId}+inheritedAliases`,
+      filterKey: `${flow?._integrationId}+inheritedAliases`,
       actionProps,
       noAliasesMessage: 'You don’t have any inherited aliases.',
     },
-  ];
+  ]), [resourceAliases, inheritedAliases, flowId, flow, actionProps]);
 
   return (
     <>
-      <CreateAliasDrawer resourceId={flowId} resourceType="flows" />
-      <ViewAliasDetailsDrawer resourceId={flowId} resourceType="flows" />
+      <CreateAliasDrawer resourceId={flowId} resourceType="flows" height={height} />
+      <ViewAliasDetailsDrawer resourceId={flowId} resourceType="flows" height={height} />
       {aliasesTableData.map(tableData => (
         <>
           <DynaCeligoTable
@@ -87,7 +87,7 @@ const ManageAliases = ({ flowId }) => {
   );
 };
 
-const ViewAliases = ({ resourceId, resourceType }) => {
+const ViewAliases = ({ resourceId, resourceType, height }) => {
   const classes = useStyles();
   const filterKey = `${resourceId}+viewAliases`;
   const allAliases = useSelectorMemo(selectors.makeAllAliases, resourceType, resourceId);
@@ -106,7 +106,7 @@ const ViewAliases = ({ resourceId, resourceType }) => {
 
   return (
     <>
-      <ViewAliasDetailsDrawer resourceId={resourceId} resourceType={resourceType} />
+      <ViewAliasDetailsDrawer resourceId={resourceId} resourceType={resourceType} height={height} />
       {allAliases.length ? (
         <CeligoTable
           className={classes.accordianWrapper}
@@ -120,7 +120,7 @@ const ViewAliases = ({ resourceId, resourceType }) => {
   );
 };
 
-export default function AliasDrawerWrapper({ resourceId, resourceType }) {
+export default function AliasDrawerWrapper({ resourceId, resourceType, height = 'short' }) {
   const match = useRouteMatch();
   const history = useHistory();
 
@@ -137,7 +137,8 @@ export default function AliasDrawerWrapper({ resourceId, resourceType }) {
 
   return (
     <RightDrawer
-      height="short"
+      variant="temporary"
+      height={height}
       width="default"
       path={['aliases/manage', 'aliases/view']}
     >
@@ -155,7 +156,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType }) {
             <CeligoDivider position="right" />
           </DrawerHeader>
           <DrawerContent>
-            <ManageAliases flowId={resourceId} />
+            <ManageAliases flowId={resourceId} height={height} />
           </DrawerContent>
           <DrawerFooter>
             <FilledButton
@@ -171,7 +172,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType }) {
             infoText={infoTextViewAliases}
             handleClose={handleClose} />
           <DrawerContent>
-            <ViewAliases resourceId={resourceId} resourceType={resourceType} />
+            <ViewAliases resourceId={resourceId} resourceType={resourceType} height={height} />
           </DrawerContent>
           <DrawerFooter>
             <FilledButton

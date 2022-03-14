@@ -2,18 +2,18 @@ import React, { useCallback, useMemo } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
-import { selectors } from '../../../../../reducers';
-import PanelHeader from '../../../../../components/PanelHeader';
-import ActionGroup from '../../../../../components/ActionGroup';
-import { TextButton } from '../../../../../components/Buttons';
-import LoadResources from '../../../../../components/LoadResources';
-import CeligoTable from '../../../../../components/CeligoTable';
-import CreateAliasDrawer from '../../../../../components/drawer/Aliases/CreateAliases';
-import metadata from '../../../../../components/ResourceTable/aliases/metadata';
-import AddIcon from '../../../../../components/icons/AddIcon';
-import { useSelectorMemo } from '../../../../../hooks';
-import getRoutePath from '../../../../../utils/routePaths';
-import ViewAliasDetailsDrawer from '../../../../../components/drawer/Aliases/ViewAliasesDetails';
+import { selectors } from '../../../../reducers';
+import PanelHeader from '../../../../components/PanelHeader';
+import ActionGroup from '../../../../components/ActionGroup';
+import { TextButton } from '../../../../components/Buttons';
+import LoadResources from '../../../../components/LoadResources';
+import CeligoTable from '../../../../components/CeligoTable';
+import CreateAliasDrawer from '../../../../components/drawer/Aliases/CreateAliases';
+import metadata from '../../../../components/ResourceTable/aliases/metadata';
+import AddIcon from '../../../../components/icons/AddIcon';
+import { useSelectorMemo } from '../../../../hooks';
+import getRoutePath from '../../../../utils/routePaths';
+import ViewAliasDetailsDrawer from '../../../../components/drawer/Aliases/ViewAliasesDetails';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -64,7 +64,7 @@ export default function Aliases({ integrationId, childId }) {
     <div className={classes.root}>
       <PanelHeader title="Aliases" infoText={infoTextAliases} className={classes.aliasesHeader} >
         <ActionGroup>
-          {accessLevel !== 'monitor' && (
+          {accessLevel !== 'monitor' && !isIntegrationApp && (
           <TextButton
             startIcon={<AddIcon />}
             onClick={handleClick}>
@@ -76,7 +76,7 @@ export default function Aliases({ integrationId, childId }) {
 
       <LoadResources required resources="integrations,flows,connections,imports,exports" >
         <CreateAliasDrawer resourceId={currentIntegrationId} resourceType="integrations" />
-        <ViewAliasDetailsDrawer resourceId={currentIntegrationId} resourceType="integrations" parentUrl={match.url} />
+        <ViewAliasDetailsDrawer resourceId={currentIntegrationId} resourceType="integrations" />
         {aliases?.length ? (
           <CeligoTable
             data={aliases.map(aliasData => ({ ...aliasData, _id: aliasData.alias }))}
