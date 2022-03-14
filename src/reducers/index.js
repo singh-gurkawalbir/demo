@@ -6671,3 +6671,27 @@ selectors.resourceName = (state, resourceId, resourceType) => {
   return resource?.name || resource?.id;
 };
 
+selectors.resourceReferencesPerIntegration = createSelector(
+  selectors.resourceReferences,
+  state => state.data.resources.flows,
+  state => state.data.resources.integrations,
+  (resourceReferences, flowsList, integrationsList) => {
+    if (!resourceReferences) return null;
+    const flowReferences = resourceReferences.filter(ref => ref.resourceType === 'flows');
+    const results = [];
+
+    flowReferences.forEach(flowRef => {
+      const integrationId = flowsList?.find(f => f._id === flowRef.id)?._integrationId;
+      const integrationName = integrationsList?.find(i => i._id === integrationId)?.name;
+
+      results.push({
+        flowId: flowRef.id,
+        flowName: flowRef.name,
+        integrationId,
+        integrationName,
+      });
+    });
+
+    return results;
+  }
+);

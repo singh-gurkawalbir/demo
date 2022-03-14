@@ -54,6 +54,7 @@ export const REVISION_DIFF_ACTION_LABELS = {
   [REVISION_DIFF_ACTIONS.NEW]: 'New',
   [REVISION_DIFF_ACTIONS.DELETED]: 'Deleted',
   [REVISION_DIFF_ACTIONS.UPDATE]: 'Update',
+  [REVISION_DIFF_ACTIONS.CONFLICT]: 'Conflict',
 };
 
 export const getRevisionFilterKey = integrationId => `${integrationId}-revisions`;
@@ -122,4 +123,10 @@ export const getRevisionResourceLevelChanges = (overallDiff = {}) => {
   });
 
   return { numConflicts, diffs };
+};
+
+export const shouldShowReferences = resourceType => {
+  const VALID_RESOURCE_TYPES_WITH_REFERENCES = ['exports', 'imports', 'connections'];
+
+  return VALID_RESOURCE_TYPES_WITH_REFERENCES.includes(resourceType);
 };

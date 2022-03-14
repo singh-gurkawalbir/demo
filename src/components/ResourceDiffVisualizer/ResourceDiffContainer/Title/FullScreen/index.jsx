@@ -3,7 +3,7 @@ import { IconButton } from '@material-ui/core';
 import ExpandWindowIcon from '../../../../icons/ExpandWindowIcon';
 import FullScreenModal from './FullScreenModal';
 
-export default function FullScreen({ resourceDiff, resourceType }) {
+export default function FullScreen({ resourceDiff, resourceType, integrationId }) {
   const [showFullScreen, setShowFullScreen] = useState(false);
   const handleClick = () => {
     setShowFullScreen(showFullScreen => !showFullScreen);
@@ -24,6 +24,7 @@ export default function FullScreen({ resourceDiff, resourceType }) {
             resourceDiff={resourceDiff}
             resourceType={resourceType}
             onClose={handleClose}
+            integrationId={integrationId}
           />
           )
       }

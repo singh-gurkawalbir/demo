@@ -21,6 +21,7 @@ import OpenRevertDrawer from '../../../../../components/drawer/Revisions/Revert/
 import ReviewRevertChangesDrawer from '../../../../../components/drawer/Revisions/Revert/ReviewChanges';
 import FinalRevertDrawer from '../../../../../components/drawer/Revisions/Revert/Final';
 import CreateSnapshotDrawer from '../../../../../components/drawer/Revisions/CreateSnapshot';
+import LoadResources from '../../../../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -80,14 +81,16 @@ export default function Revisions({ integrationId }) {
           />
         )
       }
-      <ViewDetailsDrawer integrationId={integrationId} />
-      <OpenPullDrawer integrationId={integrationId} />
-      <ReviewPullChangesDrawer integrationId={integrationId} />
-      <MergePullDrawer integrationId={integrationId} />
-      <OpenRevertDrawer integrationId={integrationId} />
-      <ReviewRevertChangesDrawer integrationId={integrationId} />
-      <FinalRevertDrawer integrationId={integrationId} />
-      <CreateSnapshotDrawer integrationId={integrationId} />
+      <LoadResources resources="flows,integrations">
+        <ViewDetailsDrawer integrationId={integrationId} />
+        <OpenPullDrawer integrationId={integrationId} />
+        <ReviewPullChangesDrawer integrationId={integrationId} />
+        <MergePullDrawer integrationId={integrationId} />
+        <OpenRevertDrawer integrationId={integrationId} />
+        <ReviewRevertChangesDrawer integrationId={integrationId} />
+        <FinalRevertDrawer integrationId={integrationId} />
+        <CreateSnapshotDrawer integrationId={integrationId} />
+      </LoadResources>
     </div>
   );
 }

@@ -13,12 +13,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ViewReferences({ resourceId, resourceType }) {
+export default function ViewReferences({ resourceId, resourceType, integrationId }) {
   const classes = useStyles();
   const [showReferences, setShowReferences] = useState(false);
   const handleClick = () => {
     setShowReferences(showReferences => !showReferences);
   };
+
+  const handleClose = () => setShowReferences(false);
 
   return (
     <>
@@ -30,7 +32,14 @@ export default function ViewReferences({ resourceId, resourceType }) {
         <ViewReferencesIcon className={classes.icon} />
         <Typography variant="body2"> References</Typography>
       </IconButton>
-      { showReferences && <ReferencesModal resourceId={resourceId} resourceType={resourceType} />}
+      { showReferences && (
+        <ReferencesModal
+          resourceId={resourceId}
+          integrationId={integrationId}
+          resourceType={resourceType}
+          onClose={handleClose}
+        />
+      )}
     </>
   );
 }

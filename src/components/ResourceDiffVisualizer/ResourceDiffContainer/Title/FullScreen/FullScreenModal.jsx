@@ -8,7 +8,7 @@ import DiffPanel from '../../DiffPanel';
 import ViewReferences from '../ViewReferences';
 import CeligoDivider from '../../../../CeligoDivider';
 import { selectors } from '../../../../../reducers';
-import { REVISION_DIFF_ACTION_LABELS } from '../../../../../utils/revisions';
+import { REVISION_DIFF_ACTION_LABELS, REVISION_DIFF_ACTIONS, shouldShowReferences } from '../../../../../utils/revisions';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -17,9 +17,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function ModalTitle({ resourceId, resourceType, action }) {
+export function ModalTitle({ resourceId, resourceType, action, integrationId }) {
   const classes = useStyles();
   const resourceName = useSelector(state => selectors.resourceName(state, resourceId, resourceType));
+  const showReferences = shouldShowReferences(resourceType);
 
   return (
     <>
@@ -27,20 +28,22 @@ function ModalTitle({ resourceId, resourceType, action }) {
         <Typography variant="body2" className> {resourceName || resourceId} </Typography>
         <CeligoDivider />
         <Typography variant="body2"> Action: {REVISION_DIFF_ACTION_LABELS[action]} </Typography>
+        {showReferences && (
         <ActionGroup position="right">
-          <ViewReferences resourceId={resourceId} resourceType={resourceType} />
+          <ViewReferences resourceId={resourceId} resourceType={resourceType} integrationId={integrationId} />
           <CeligoDivider />
         </ActionGroup>
+        )}
       </div>
     </>
   );
 }
-export default function FullScreenModal({resourceType, resourceDiff, onClose }) {
-  const { resourceId, action } = resourceDiff;
+export default function FullScreenModal({resourceType, resourceDiff, onClose, integrationId }) {
+  const { resourceId, action = REVISION_DIFF_ACTIONS.UPDATE } = resourceDiff;
 
   return (
-    <ModalDialog show onClose={onClose} maxWidth>
-      <ModalTitle resourceId={resourceId} resourceType={resourceType} action={action} />
+    <ModalDialog show onClose={onClose} maxWidth="xl" minWidth="md">
+      <ModalTitle resourceId={resourceId} resourceType={resourceType} action={action} integrationId={integrationId} />
       <DiffPanel resourceDiff={resourceDiff} />
     </ModalDialog>
   );

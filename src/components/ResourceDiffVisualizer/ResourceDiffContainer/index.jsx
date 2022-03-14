@@ -12,7 +12,7 @@ const useStyles = makeStyles(() => ({
 
 const getResourceTypeTitle = resourceType => `${resourceType[0].toUpperCase()}${resourceType.slice(1)}s`;
 
-export default function ResourceDiffContainer({ diff, resourceType, forceExpand }) {
+export default function ResourceDiffContainer({ diff, resourceType, forceExpand, integrationId }) {
   const classes = useStyles();
 
   return (
@@ -25,7 +25,7 @@ export default function ResourceDiffContainer({ diff, resourceType, forceExpand 
         diff?.map(resourceDiff => (
           <CollapsableContainer
             forceExpand={forceExpand}
-            title={<Title resourceType={getResourceTypeTitle(resourceType).toLocaleLowerCase()} resourceDiff={resourceDiff} />}
+            title={<Title resourceType={getResourceTypeTitle(resourceType).toLocaleLowerCase()} resourceDiff={resourceDiff} integrationId={integrationId} />}
             key={resourceDiff.resourceId}
             >
             <DiffPanel resourceDiff={resourceDiff} />

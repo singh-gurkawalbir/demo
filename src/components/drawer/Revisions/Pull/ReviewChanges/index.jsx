@@ -79,6 +79,7 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
         {
           isResourceComparisonInProgress ? <Spinner /> : (
             <ResourceDiffVisualizer
+              integrationId={integrationId}
               diffs={resourceDiffInfo?.diffs}
               forceExpand={isDiffExpanded}
             />

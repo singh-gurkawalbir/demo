@@ -3,7 +3,7 @@ import ResourceDiffContainer from './ResourceDiffContainer';
 
 const SUPPORTED_RESOURCE_TYPES = ['export', 'import', 'flow', 'integration', 'script'];
 
-export default function ResourceDiffVisualizer({ diffs = {}, forceExpand }) {
+export default function ResourceDiffVisualizer({ diffs = {}, forceExpand, integrationId }) {
   return (
     <>
       {
@@ -11,6 +11,7 @@ export default function ResourceDiffVisualizer({ diffs = {}, forceExpand }) {
             <ResourceDiffContainer
               key={resourceType}
               resourceType={resourceType}
+              integrationId={integrationId}
               diff={diffs[resourceType]}
               forceExpand={forceExpand}
             />
