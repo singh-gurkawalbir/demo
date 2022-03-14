@@ -26,7 +26,7 @@ export default function ResourceDiffContainer({ diff, resourceType, forceExpand 
     };
   };
 
-  const codeFoldMessageRenderer = p1 => `(Our custom code with styles) Expand ${p1} lines...`;
+  // const codeFoldMessageRenderer = p1 => `(Our custom code with styles) Expand ${p1} lines...`;
 
   return (
     <CollapsableContainer
@@ -42,7 +42,7 @@ export default function ResourceDiffContainer({ diff, resourceType, forceExpand 
             key={res.resourceId}
            >
             <ReactDiffViewer
-              codeFoldMessageRenderer={codeFoldMessageRenderer}
+              // codeFoldMessageRenderer={codeFoldMessageRenderer}
               compareMethod={DiffMethod.WORDS}
               {...getValues(res)}
             />

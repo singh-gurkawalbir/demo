@@ -53,7 +53,7 @@ export const REVISION_DIFF_ACTION_LABELS = {
   [REVISION_DIFF_ACTIONS.ADD]: 'Add',
   [REVISION_DIFF_ACTIONS.NEW]: 'New',
   [REVISION_DIFF_ACTIONS.DELETED]: 'Deleted',
-  [REVISION_DIFF_ACTIONS.UPDATED]: 'Update',
+  [REVISION_DIFF_ACTIONS.UPDATE]: 'Update',
 };
 
 export const getRevisionFilterKey = integrationId => `${integrationId}-revisions`;
