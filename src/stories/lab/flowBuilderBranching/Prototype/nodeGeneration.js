@@ -12,10 +12,13 @@ export const generateRouterNode = router => ({
   type: 'router',
   data: router,
 });
-export const generateNewTerminal = isEmptyBranch => ({
+export const generateNewTerminal = branch => ({
   id: generateId(),
   type: 'terminal',
-  draggable: !isEmptyBranch,
+  draggable: branch?.pageProcessors?.length !== 0,
+  data: {
+    ...branch,
+  },
 });
 
 export const generateBranch = () => {

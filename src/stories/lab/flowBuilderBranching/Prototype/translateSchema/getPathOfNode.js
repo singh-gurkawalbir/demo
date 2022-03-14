@@ -48,7 +48,7 @@ const traverseGraph = (flow, routerId, nodeId, accPath) => {
   }).find(ele => !!ele);
 };
 
-export const getPathOfPGOrPPNode = (flow, nodeId) => {
+export const getPathOfPGOrPPNode = (flow, nodeId, targetBranch) => {
   if (!nodeId) {
     return;
   }
@@ -65,6 +65,14 @@ export const getPathOfPGOrPPNode = (flow, nodeId) => {
 
   if (!routers) {
     return null;
+  }
+
+  if (getRouter(nodeId, flow) && targetBranch) {
+    const router = getRouter(nodeId, flow);
+    const routerIndex = routers.findIndex(router => router._id === nodeId);
+    const branchIndex = router.branches.findIndex(branch => branch._id === targetBranch?._id);
+
+    return `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/0`;
   }
 
   return traverseGraph(flow, routers[0]._id, nodeId, '/routers/0');
@@ -87,12 +95,13 @@ export const isPageGenerator = path => {
 
   return segs[segs.length - 2] === 'pageGenerators';
 };
-export const getNodeInsertionPathForEdge = (flow, edge) => {
+export const getNodeInsertionPathForEdge = (flow, edge, elements) => {
   if (!edge) {
     return;
   }
-
   const {source, target} = edge;
+  const targetBranch = elements.find(ele => ele.id === target)?.data;
+
   const targetPath = getPathOfPGOrPPNode(flow, target);
 
   if (targetPath) {
@@ -100,7 +109,7 @@ export const getNodeInsertionPathForEdge = (flow, edge) => {
   }
 
   // if no target node path should be pointing to a router or a merge node
-  const sourcePath = getPathOfPGOrPPNode(flow, source);
+  const sourcePath = getPathOfPGOrPPNode(flow, source, targetBranch);
   // Since json fast patch can insert before a specific index, we should support pushing end of an array through "-"
   // then the sourcePath should be modified to add jsonPath towards the end PP or PG array
 

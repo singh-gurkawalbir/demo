@@ -21,7 +21,7 @@ export const useHandleAddNode = edgeId => {
 
   return () => {
     const edge = elements.find(ele => ele.id === edgeId);
-    const path = getNodeInsertionPathForEdge(flow, edge);
+    const path = getNodeInsertionPathForEdge(flow, edge, elements);
 
     if (!path) return;
 
@@ -77,6 +77,8 @@ export const useHandleDeleteEdge = edgeId => {
   const {flow, elements, setState} = useFlowContext();
 
   return () => {
+    console.log('useHandleDeleteEdge', edgeId);
+
     const edge = elements.find(ele => ele.id === edgeId);
     const sourceNode = elements.find(ele => ele.id === edge?.source);
     const isSourceNodeAPG = sourceNode.type === 'pg';
