@@ -10,11 +10,10 @@ import { thisIntegrationRefsMetadata, otherIntegrationRefsMetadata } from './met
 const useStyles = makeStyles(theme => ({
   references: {
     height: '100%',
-    backgroundColor: 'white',
-    border: `1px solid ${theme.palette.secondary.lightest}`,
     color: theme.palette.text.hint,
     display: 'flex',
     flexDirection: 'column',
+    padding: theme.spacing(2),
   },
   tabContent: {
     flexGrow: 1,
@@ -23,8 +22,8 @@ const useStyles = makeStyles(theme => ({
     borderTop: 'none',
     borderBottom: 'none',
   },
-  tabHeader: {
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+  grid: {
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -39,19 +38,20 @@ const tabs = [
   }];
 
 const UsedByThisIntegrationTab = ({resourceReferences, integrationId}) => {
-  console.log(integrationId);
+  const classes = useStyles();
   const referredByThisIntegration = (resourceReferences || []).filter(ref => ref.integrationId === integrationId);
 
   return (
-    <CeligoTable data={referredByThisIntegration} {...thisIntegrationRefsMetadata} />
+    <CeligoTable className={classes.grid} data={referredByThisIntegration} {...thisIntegrationRefsMetadata} />
   );
 };
 
 const UsedByOtherIntegrationsTab = ({resourceReferences, integrationId}) => {
+  const classes = useStyles();
   const referredByOtherIntegrations = (resourceReferences || []).filter(ref => ref.integrationId !== integrationId);
 
   return (
-    <CeligoTable data={referredByOtherIntegrations} {...otherIntegrationRefsMetadata} />
+    <CeligoTable className={classes.grid} data={referredByOtherIntegrations} {...otherIntegrationRefsMetadata} />
   );
 };
 

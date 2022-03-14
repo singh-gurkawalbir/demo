@@ -1,5 +1,5 @@
 import React from 'react';
-import {makeStyles} from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import CollapsableContainer from '../CollapsableContainer';
 import Title from './Title';
 import DiffPanel from './DiffPanel';

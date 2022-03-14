@@ -1,4 +1,6 @@
 import produce from 'immer';
+import { uniq } from 'lodash';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 
 const defaultState = {};
@@ -65,6 +67,9 @@ selectors.revision = (state = defaultState, integrationId, revisionId) => {
 
   return revisions.find(rev => rev._id === revisionId);
 };
-
+selectors.uniqueUserIdsFromRevisions = createSelector(
+  selectors.revisions,
+  revisionsList => uniq(revisionsList.map(rev => rev._byUserId))
+);
 selectors.revisionsFetchStatus = (state = defaultState, integrationId) => state[integrationId]?.status;
 // #endregion

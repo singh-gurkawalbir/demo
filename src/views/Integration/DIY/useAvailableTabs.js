@@ -23,9 +23,10 @@ import { selectors } from '../../../reducers';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import GraphIcon from '../../../components/icons/GraphIcon';
 import { getTopLevelTabs } from '../../../utils/integrationApps';
+import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const getTabs = isUserInErrMgtTwoDotZero => [
+const getTabs = (isUserInErrMgtTwoDotZero, isStandaloneIntegration) => [
   {
     path: 'settings',
     label: 'Settings',
@@ -75,12 +76,12 @@ const getTabs = isUserInErrMgtTwoDotZero => [
     Icon: SingleUserIcon,
     Panel: AdminPanel,
   },
-  {
+  ...(!isStandaloneIntegration ? [{
     path: 'revisions',
     label: 'Revisions',
     Icon: RevisionsIcon,
     Panel: RevisionsPanel,
-  },
+  }] : []),
 ];
 const emptyObj = {};
 
@@ -88,6 +89,7 @@ export function useAvailableTabs() {
   const match = useRouteMatch();
 
   const { integrationId, childId } = match?.params;
+  const isStandaloneIntegration = integrationId === STANDALONE_INTEGRATION.id;
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
@@ -134,7 +136,7 @@ export function useAvailableTabs() {
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
 
   const availableTabs = useMemo(() => getTopLevelTabs({
-    tabs: getTabs(isUserInErrMgtTwoDotZero),
+    tabs: getTabs(isUserInErrMgtTwoDotZero, isStandaloneIntegration),
     isIntegrationApp,
     isParent,
     integrationId,
@@ -143,7 +145,7 @@ export function useAvailableTabs() {
     children,
     isMonitorLevelUser,
     hideSettingsTab,
-  }), [children, hasAddOns, hideSettingsTab, integrationId, isIntegrationApp, isUserInErrMgtTwoDotZero, isMonitorLevelUser, isParent, supportsChild]);
+  }), [children, hasAddOns, hideSettingsTab, integrationId, isStandaloneIntegration, isIntegrationApp, isUserInErrMgtTwoDotZero, isMonitorLevelUser, isParent, supportsChild]);
 
   return availableTabs;
 }
