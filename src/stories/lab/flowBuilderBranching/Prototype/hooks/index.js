@@ -51,7 +51,7 @@ export const useHandleAddNewRouter = edgeId => {
 
   return () => {
     const edge = elements.find(ele => ele.id === edgeId);
-    const path = getNodeInsertionPathForEdge(flow, edge);
+    const path = getNodeInsertionPathForEdge(flow, edge, elements);
 
     if (!path) return;
 

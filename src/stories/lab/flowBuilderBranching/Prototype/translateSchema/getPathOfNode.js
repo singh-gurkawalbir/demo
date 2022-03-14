@@ -95,7 +95,7 @@ export const isPageGenerator = path => {
 
   return segs[segs.length - 2] === 'pageGenerators';
 };
-export const getNodeInsertionPathForEdge = (flow, edge, elements) => {
+export const getNodeInsertionPathForEdge = (flow, edge, elements = []) => {
   if (!edge) {
     return;
   }
