@@ -1,25 +1,13 @@
-// TODO: this file is only used for HTTP assistant for now and would be removed later as part of https://celigo.atlassian.net/browse/IO-25213
-
 import React, { useMemo, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import actions from '../../../actions';
-import {selectors} from '../../../reducers';
-import SalesforceMappingAssistant from '../../SalesforceMappingAssistant';
-import NetSuiteMappingAssistant from '../../NetSuiteMappingAssistant';
-import HttpMappingAssistant from './HttpMappingAssistant_afe';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { Typography } from '@material-ui/core';
+import actions from '../../../../../../actions';
+import {selectors} from '../../../../../../reducers';
+import SalesforceMappingAssistant from '../../../../../SalesforceMappingAssistant';
+import NetSuiteMappingAssistant from '../../../../../NetSuiteMappingAssistant';
+import Spinner from '../../../../../Spinner';
 
-const useStyles = makeStyles(theme => ({
-  assistantContainer: {
-    flex: '1 1 0',
-    width: '0px',
-    marginRight: theme.spacing(1),
-    marginLeft: theme.spacing(1),
-    position: 'relative',
-  },
-}));
-export default function PreviewPanel({importId, subRecordMappingId, disabled}) {
-  const classes = useStyles();
+function PreviewPanel({importId, subRecordMappingId, disabled}) {
   const dispatch = useDispatch();
   const previewData = useSelector(state => selectors.mapping(state).preview?.data);
   const recordType = useSelector(state => selectors.mappingNSRecordType(state, importId, subRecordMappingId));
@@ -91,8 +79,7 @@ export default function PreviewPanel({importId, subRecordMappingId, disabled}) {
 
   return (
     <>
-      <div className={classes.assistantContainer}>
-        {mappingPreviewType === 'salesforce' && (
+      {mappingPreviewType === 'salesforce' && (
         <SalesforceMappingAssistant
           connectionId={connectionId}
           layoutId={salesforcelayoutId}
@@ -100,21 +87,47 @@ export default function PreviewPanel({importId, subRecordMappingId, disabled}) {
           data={salesforceNetsuitePreviewData}
           {...options}
              />
-        )}
-        {mappingPreviewType === 'netsuite' && (
+      )}
+      {mappingPreviewType === 'netsuite' && (
         <NetSuiteMappingAssistant
           netSuiteConnectionId={connectionId}
           onFieldClick={handleSFNSAssistantFieldClick}
           data={salesforceNetsuitePreviewData}
           {...options}
              />
-        )}
-        {mappingPreviewType === 'http' && (
-        <HttpMappingAssistant
-          importId={importId}
-             />
-        )}
-      </div>
+      )}
     </>
+  );
+}
+
+export default function PreviewPanelWrapper({editorId}) {
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
+  const {flowId,
+    importId,
+    subRecordMappingId} = useSelector(state => {
+    const e = selectors.editor(state, editorId);
+
+    return {
+      flowId: e.flowId,
+      importId: e.resourceId,
+      subRecordMappingId: e.subRecordMappingId,
+    };
+  }, shallowEqual);
+  const mappingStatus = useSelector(state => selectors.mapping(state, flowId, importId, subRecordMappingId).status);
+
+  if (mappingStatus === 'error') {
+    return (<Typography>Failed to load mapping.</Typography>);
+  }
+  if (mappingStatus !== 'received') {
+    return (
+      <Spinner centerAll />
+    );
+  }
+
+  return (
+    <PreviewPanel
+      importId={importId}
+      disabled={disabled}
+      subRecordMappingId={subRecordMappingId} />
   );
 }
