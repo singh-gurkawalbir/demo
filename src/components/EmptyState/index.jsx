@@ -40,8 +40,8 @@ export default function EmptyState({type, title, subTitle, children}) {
         className={classes.appLogo}
         src={path}
         type={type}
-        alt="Empty State" />
-      <Typography variant="h3" className={classes.title}>{title}</Typography>
+        alt="" />
+      {title && <Typography variant="h3" className={classes.title}>{title}</Typography> }
       {subTitle && <Typography variant="body2" className={classes.subTitle}>{subTitle}</Typography> }
       {children}
     </div>
@@ -51,7 +51,6 @@ export default function EmptyState({type, title, subTitle, children}) {
 EmptyState.propTypes = {
   children: PropTypes.element,
   title: PropTypes.string,
-  altText: PropTypes.string,
   subTitle: PropTypes.string,
-  type: PropTypes.string.isRequired,
+  type: PropTypes.oneOf(['imports', 'connections', 'agents', 'apitokens', 'exports', 'recyclebin', 'integrations']).isRequired,
 };
