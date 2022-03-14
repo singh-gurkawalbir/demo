@@ -42,7 +42,13 @@ export default (state = defaultState, action) => {
           if (!draft[integrationId].data) {
             draft[integrationId].data = [];
           }
-          draft[integrationId].data.push(resource);
+          const index = draft[integrationId].data.findIndex(r => r._id === resource._id);
+
+          if (index === -1) {
+            draft[integrationId].data.push(resource);
+          } else {
+            draft[integrationId].data[index] = resource;
+          }
         }
         break;
 
@@ -61,6 +67,7 @@ selectors.revisions = (state = defaultState, integrationId) => state[integration
 selectors.revision = (state = defaultState, integrationId, revisionId) => {
   const revisions = selectors.revisions(state, integrationId);
 
+  console.log(revisions);
   if (!revisions?.length) {
     return;
   }

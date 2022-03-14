@@ -110,10 +110,27 @@ function* compareRevertRequest({ integrationId }) {
   yield put(actions.integrationLCM.compare.receivedDiff(integrationId, resourceDiff));
 }
 
+function* cancelRevision({ integrationId, revisionId }) {
+  const revision = yield select(selectors.revision, integrationId, revisionId);
+
+  // const resourceDiff = yield call(apiCallWithRetry, {
+  //   path: `/integrations/${integrationId}/revisions/${revisionId}/cancel`,
+  //   opts: {
+  //     method: 'POST',
+  //   },
+  // });
+  yield delay(2000);
+  const updatedRevision = {...revision, status: REVISION_STATUS.CANCELED};
+
+  // yield put(actions.resource.request(`integrations/${integrationId}/revisions`, revisionId));
+  yield put(actions.resource.received(`integrations/${integrationId}/revisions`, updatedRevision));
+}
+
 export default [
   takeEvery(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, requestIntegrationCloneFamily),
   takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CREATE, createRevision),
   takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CREATE_SNAPSHOT, createRevision),
   takeEvery(actionTypes.INTEGRATION_LCM.COMPARE.PULL_REQUEST, comparePullRequest),
   takeEvery(actionTypes.INTEGRATION_LCM.COMPARE.REVERT_REQUEST, compareRevertRequest),
+  takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CANCEL, cancelRevision),
 ];
