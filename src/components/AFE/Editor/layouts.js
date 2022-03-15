@@ -68,4 +68,20 @@ export default {
     gridTemplateRows: '1fr',
     gridTemplateAreas: '"rule"',
   },
+  assistantRight: {
+    gridTemplateColumns: '1fr auto 1fr',
+    gridTemplateRows: '1fr auto 0fr',
+    gridTemplateAreas: `"rule dragBar_v_0 assistant"
+                        "dragBar_h_0 dragBar_h_0 dragBar_h_0"
+                        "error error error"`,
+  },
+  assistantTopRight: {
+    gridTemplateColumns: '1fr auto 1fr',
+    gridTemplateRows: '1fr auto 1fr auto 0fr',
+    gridTemplateAreas: `"rule dragBar_v_0 assistant" 
+                        "dragBar_h_0 dragBar_h_0 dragBar_h_0"
+                        "data dragBar_v_1 result" 
+                        "dragBar_h_1 dragBar_h_1 dragBar_h_1"
+                        "error error error"`,
+  },
 };
