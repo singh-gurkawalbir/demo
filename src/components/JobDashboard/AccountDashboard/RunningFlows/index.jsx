@@ -1,5 +1,5 @@
 import React, { useEffect, Fragment } from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import {useRouteMatch} from 'react-router-dom';
 import { selectors } from '../../../../reducers';
@@ -9,12 +9,9 @@ import ResourceTable from '../../../ResourceTable';
 import { hashCode } from '../../../../utils/string';
 import Spinner from '../../../Spinner';
 import {FILTER_KEYS_AD, getDashboardIntegrationId} from '../../../../utils/accountDashboard';
+import NoResultMessageWrapper from '../../../NoResultMessageWrapper';
 
 const useStyles = makeStyles(theme => ({
-  emptyMessage: {
-    marginTop: theme.spacing(2),
-    padding: theme.spacing(0, 2, 2),
-  },
   root: {
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
@@ -77,7 +74,7 @@ export default function RunningFlows() {
           </>
         )}
       </div>
-      {!jobs?.length && !isRunningJobsCollectionLoading ? <Typography variant="body2" className={classes.emptyMessage}>You don&apos;t have any running flows. </Typography> : ''}
+      {!jobs?.length && !isRunningJobsCollectionLoading ? <NoResultMessageWrapper>You don&apos;t have any running flows. </NoResultMessageWrapper> : ''}
     </>
   );
 }

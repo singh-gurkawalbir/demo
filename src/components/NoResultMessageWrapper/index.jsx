@@ -17,14 +17,16 @@ const useStyles = makeStyles(theme => ({
   large: {
     padding: theme.spacing(3),
   },
+  noPadding: {
+    padding: 0,
+  },
 }));
 
-export default function NoResultMessageWrapper(props) {
+export default function NoResultMessageWrapper({children, size = 'medium', isBackground = false, noPadding = false, className}) {
   const classes = useStyles();
-  const {children, size = 'medium', isBackground = false, className} = props;
 
   return (
-    <div className={clsx({[classes.root]: isBackground}, classes[size], className)}>
+    <div className={clsx({[classes.root]: isBackground}, classes[size], {[classes.noPadding]: noPadding}, className)}>
       <Typography>{children}</Typography>
     </div>
   );
@@ -34,7 +36,10 @@ NoResultMessageWrapper.propTypes = {
   children: PropTypes.node.isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   isBackground: PropTypes.bool,
+  noPadding: PropTypes.bool,
 };
 NoResultMessageWrapper.defaultProps = {
   size: 'medium',
+  noPadding: false,
+  isBackground: false,
 };

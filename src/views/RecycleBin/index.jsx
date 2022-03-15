@@ -1,5 +1,4 @@
 import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -18,15 +17,8 @@ import infoText from '../ResourceList/infoText';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
 import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
-
-const useStyles = makeStyles(theme => ({
-  actions: {
-    display: 'flex',
-  },
-  resultContainer: {
-    padding: theme.spacing(3, 3, 12, 3),
-  },
-}));
+import ActionGroup from '../../components/ActionGroup';
+import PageWrapper from '../../components/MainComponentWrapper';
 
 export const LoadingMask = ({message}) => (
   <Loader open>
@@ -41,7 +33,6 @@ const defaultFilter = {
 
 export default function RecycleBin(props) {
   const history = useHistory();
-  const classes = useStyles();
   const dispatch = useDispatch();
   const filterKey = 'recycleBinTTL';
   const filter =
@@ -87,25 +78,25 @@ export default function RecycleBin(props) {
         {status === 'requested' && <LoadingMask message="Restoring..." />}
         <ResourceDrawer {...props} />
         <CeligoPageBar title="Recycle bin" infoText={infoText.recycleBin}>
-          <div className={classes.actions}>
+          <ActionGroup>
             <KeywordSearch
               filterKey={filterKey}
             />
-          </div>
+          </ActionGroup>
         </CeligoPageBar>
-        <div className={classes.resultContainer}>
+        <PageWrapper>
           <LoadResources required resources="recycleBinTTL">
             {list.count === 0 ? (
-              <div>
+              <>
                 {list.total === 0
-                  ? <NoResultMessageWrapper>Recycle bin is empty.</NoResultMessageWrapper>
+                  ? <NoResultMessageWrapper noPadding>Recycle bin is empty.</NoResultMessageWrapper>
                   : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
-              </div>
+              </>
             ) : (
               <ResourceTable resources={list.resources} resourceType="recycleBinTTL" />
             )}
           </LoadResources>
-        </div>
+        </PageWrapper>
         <ShowMoreDrawer
           filterKey={filterKey}
           count={list.count}
