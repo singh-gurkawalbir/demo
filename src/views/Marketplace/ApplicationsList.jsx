@@ -12,15 +12,13 @@ import ApplicationImg from '../../components/icons/ApplicationImg';
 import {applicationsList} from '../../constants/applications';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import PageWrapper from '../../components/MainComponentWrapper';
 
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'grid',
-    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
-    overflowY: 'auto',
     gridTemplateColumns: 'repeat(auto-fill, minmax(204px, 1fr));',
     gridRowGap: theme.spacing(3),
-    padding: '24px 10px',
     [theme.breakpoints.up('xl')]: {
       gridTemplateColumns: 'repeat(7, 1fr);',
     },
@@ -111,21 +109,23 @@ export default function ApplicationsList({ filter }) {
   return (
     <>
       {applications.length > 0 ? (
-        <div className={classes.root}>
-          {applications.map(id => (
-            <NavLink
-              className={classes.tile}
-              key={id}
-              to={getRoutePath(`/marketplace/${id}`)}>
-              <Card className={classes.card} elevation={0}>
-                <ApplicationImg assistant={id} size="large" />
-              </Card>
-              <Typography variant="body2" className={classes.label}>
-                {(connectorsMetadata.find(a => a.id === id) || {}).name || id}
-              </Typography>
-            </NavLink>
-          ))}
-        </div>
+        <PageWrapper>
+          <div className={classes.root}>
+            {applications.map(id => (
+              <NavLink
+                className={classes.tile}
+                key={id}
+                to={getRoutePath(`/marketplace/${id}`)}>
+                <Card className={classes.card} elevation={0}>
+                  <ApplicationImg assistant={id} size="large" />
+                </Card>
+                <Typography variant="body2" className={classes.label}>
+                  {(connectorsMetadata.find(a => a.id === id) || {}).name || id}
+                </Typography>
+              </NavLink>
+            ))}
+          </div>
+        </PageWrapper>
       ) : (
         <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
       )}

@@ -8,10 +8,10 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 3),
   },
   tabPanel: {
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    padding: theme.spacing(1, 2),
+    // background: theme.palette.background.paper,
+    // border: '1px solid',
+    // borderColor: theme.palette.secondary.lightest,
+    // padding: theme.spacing(1, 2),
     overflow: 'auto',
   },
   tab: {

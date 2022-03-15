@@ -89,6 +89,7 @@ export default function ResourceList(props) {
     selectors.makeResourceListSelector,
     filterConfig
   );
+
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
   );
@@ -138,6 +139,7 @@ export default function ResourceList(props) {
   }, [dispatch, resourceType]);
 
   const actionProps = useMemo(() => ({ showTradingPartner }), [showTradingPartner]);
+  const isPagingBar = list.count >= 100;
 
   return (
     <CheckPermissions
@@ -170,7 +172,7 @@ export default function ResourceList(props) {
           </TextButton>
         </div>
       </CeligoPageBar>
-      <PageWrapper>
+      <PageWrapper isPagingBar={isPagingBar}>
         {/* <div className={clsx(classes.resultContainer, {[classes.noShowMoreContainer]: list.filtered === list.count }, {[classes.noResultWrapper]: list.count === 0})}> */}
         <LoadResources required resources={resourcesToLoad(resourceType)}>
           {list.count === 0 ? (

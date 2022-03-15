@@ -19,19 +19,9 @@ import ConnectionsPanel from '../DIY/panels/Connections';
 import DashboardPanel from '../DIY/panels/Dashboard';
 import FlowsPanel from './panels/Flows';
 import SettingsPanel from './panels/Settings';
+import PageWrapper from '../../../../components/MainComponentWrapper';
 
 const useStyles = makeStyles(theme => ({
-  pageWrapper: {
-    padding: theme.spacing(3),
-    minHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px +  ${theme.showMoreHeight}px))`,
-    overflowY: 'auto',
-    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
-    '& > [role = tabpanel]': {
-      background: 'none',
-      padding: 0,
-      border: 'none',
-    },
-  },
   editableTextInput: {
     width: `calc(60vw - ${52 + 24}px)`,
   },
@@ -141,11 +131,9 @@ export default function Integration({ match }) {
             }
         />
 
-          <IntegrationTabs
-            tabs={tabs}
-            match={match}
-            className={classes.pageWrapper}
-        />
+          <PageWrapper isIntegrationTabsWrapper>
+            <IntegrationTabs tabs={tabs} match={match} />
+          </PageWrapper>
           {/* Add Suitescript flow related component */}
           <SuiteScriptMappingDrawer
             ssLinkedConnectionId={ssLinkedConnectionId}

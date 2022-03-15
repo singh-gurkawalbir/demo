@@ -19,20 +19,10 @@ import DashboardPanel from './panels/Dashboard';
 import SettingsIcon from '../../../../components/icons/SingleUserIcon';
 import IntegrationTabs from '../common/Tabs';
 import actions from '../../../../actions';
+import PageWrapper from '../../../../components/MainComponentWrapper';
 
 const useStyles = makeStyles(theme => ({
   // Todo (Azhar) Styles are repeating in suitescript
-  pageWrapper: {
-    padding: theme.spacing(3),
-    minHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px +  ${theme.showMoreHeight}px))`,
-    overflowY: 'auto',
-    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
-    '& > [role = tabpanel]': {
-      background: 'none',
-      padding: 0,
-      border: 'none',
-    },
-  },
   editableTextInput: {
     width: `calc(60vw - ${52 + 24}px)`,
   },
@@ -144,12 +134,10 @@ export default function Integration({ match }) {
             )
             }
         />
+          <PageWrapper isIntegrationTabsWrapper>
+            <IntegrationTabs tabs={tabs} match={match} />
+          </PageWrapper>
 
-          <IntegrationTabs
-            tabs={tabs}
-            match={match}
-            className={classes.pageWrapper}
-        />
         </LoadSuiteScriptResources>
       </LoadResources>
     </>

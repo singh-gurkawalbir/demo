@@ -5,27 +5,43 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   pageWrapper: {
-    padding: theme.spacing(3, 3, 12),
+    padding: theme.spacing(2),
     maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.spacing(2)}px + ${theme.pageBarHeight}px))`,
     overflowY: 'auto',
   },
   pagingBar: {
-    paddingBottom: theme.spacing(3),
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px +  ${theme.showMoreHeight}px))`,
+  },
+  pageWrapperWithIntegrationTabs: {
+    '& > [role = tabpanel]': {
+      background: 'none',
+      padding: 0,
+      border: 'none',
+    },
   },
 }));
-export default function PageWrapper({children, isPagingBar = false}) {
+export default function PageWrapper({children, isPagingBar = false, isIntegrationTabsWrapper = false, className}) {
   const classes = useStyles();
 
   return (
-    <div className={clsx(classes.pageWrapper, {[classes.pagingBar]: isPagingBar})}>{children}</div>
+    <div
+      className={clsx(
+        classes.pageWrapper,
+        {[classes.pagingBar]: isPagingBar},
+        {[classes.pageWrapperWithIntegrationTabs]: isIntegrationTabsWrapper},
+        className)}>{children}
+    </div>
   );
 }
 
 PageWrapper.propTypes = {
   children: PropTypes.element.isRequired,
   isPagingBar: PropTypes.bool,
+  className: PropTypes.string,
+  isIntegrationTabsWrapper: PropTypes.bool,
 };
 
 PageWrapper.defaultProps = {
   isPagingBar: false,
+  isIntegrationTabsWrapper: false,
 };
