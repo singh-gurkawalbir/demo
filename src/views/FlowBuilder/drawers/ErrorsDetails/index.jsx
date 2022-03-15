@@ -55,15 +55,16 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const matchErrorDrawerPathWithFilter = matchPath(pathname, {
     path: `${match.url}/errors/:resourceId/filter/:flowJobId/:errorType`,
   });
+  const resourceId = matchErrorDrawerPathWithFilter?.params?.resourceId || matchErrorDrawerPath?.params?.resourceId;
 
   const isOpenErrorsLoaded = useSelector(state => {
-    const openErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId: matchErrorDrawerPathWithFilter?.params?.resourceId });
+    const openErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId});
 
     return openErrorDetails.status === 'received';
   });
   const flowJobId = matchErrorDrawerPathWithFilter?.params?.flowJobId;
   const allErrors = useSelector(state => {
-    const allErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId: matchErrorDrawerPathWithFilter?.params?.resourceId });
+    const allErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId });
 
     return allErrorDetails.errors || emptySet;
   });
@@ -101,7 +102,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath?.params?.resourceId]);
 
   useEffect(() => {
-    if (isOpenErrorsLoaded && !allErrors.length && matchErrorDrawerPathWithFilter?.params?.errorType === 'open') {
+    if (isOpenErrorsLoaded && !allErrors.length && (matchErrorDrawerPathWithFilter?.params?.errorType === 'open' || matchErrorDrawerPath?.params?.errorType === 'open')) {
       handleErrorTypeChange('resolved');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
