@@ -27,6 +27,7 @@
     },
     {
         "_id": "621df70011ca8f1939282125",
+        "description": "Changes in the import relative URI",
         "lastModified": "2022-03-01T10:35:44.204Z",
         "createdAt": "2022-03-01T10:35:44.183Z",
         "status": "inprogress",
@@ -87,6 +88,7 @@
     },
     {
         "_id": "621df69ae2b69a18d213f0cd",
+        "description": "Changes in the lookup relative URI",
         "lastModified": "2022-03-01T10:34:02.307Z",
         "createdAt": "2022-03-01T10:34:02.265Z",
         "status": "inprogress",

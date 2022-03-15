@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import UserName from '../commonCells/UserName';
+import UserName from './UserName';
 import DateTimeDisplay from '../../DateTimeDisplay';
 import { REVISION_STATUS_LABELS, REVISION_TYPE_LABELS } from '../../../utils/revisions';
 import { REVISION_STATUS, REVISION_TYPES } from '../../../utils/constants';
@@ -17,6 +17,7 @@ import { selectors } from '../../../reducers';
 
 export default {
   useColumns: () => {
+    const { integrationId } = useParams();
     const columns = [{
       key: 'description',
       heading: 'Description',
@@ -37,7 +38,7 @@ export default {
     }, {
       key: 'user',
       heading: 'User',
-      Value: ({ rowData: r }) => <UserName userId={r._byUserId} />,
+      Value: ({ rowData: r }) => <UserName userId={r._byUserId} integrationId={integrationId} />,
     }];
 
     return columns;
@@ -48,7 +49,7 @@ export default {
     const { type, status } = revision;
 
     if (hasMonitorLevelAccess) {
-      // for monitor user, view changes & view details are the only actions accesible
+      // for monitor user, view changes & view details are the only actions accessible
       if (status === REVISION_STATUS.COMPLETED && type !== REVISION_TYPES.SNAPSHOT) {
         return [
           ViewResourceChanges,
