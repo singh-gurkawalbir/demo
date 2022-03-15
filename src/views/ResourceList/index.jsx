@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import clsx from 'clsx';
+// import clsx from 'clsx';
 import { Link, useLocation, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '../../components/icons/AddIcon';
@@ -25,6 +25,7 @@ import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDe
 import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
 import { TextButton } from '../../components/Buttons';
 import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import PageWrapper from '../../components/MainComponentWrapper';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -169,7 +170,8 @@ export default function ResourceList(props) {
           </TextButton>
         </div>
       </CeligoPageBar>
-      <div className={clsx(classes.resultContainer, {[classes.noShowMoreContainer]: list.filtered === list.count }, {[classes.noResultWrapper]: list.count === 0})}>
+      <PageWrapper>
+        {/* <div className={clsx(classes.resultContainer, {[classes.noShowMoreContainer]: list.filtered === list.count }, {[classes.noResultWrapper]: list.count === 0})}> */}
         <LoadResources required resources={resourcesToLoad(resourceType)}>
           {list.count === 0 ? (
             <>
@@ -185,7 +187,8 @@ export default function ResourceList(props) {
             />
           )}
         </LoadResources>
-      </div>
+        {/* </div> */}
+      </PageWrapper>
       <ShowMoreDrawer
         filterKey={resourceType}
         count={list.count}
