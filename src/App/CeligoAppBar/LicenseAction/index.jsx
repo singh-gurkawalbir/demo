@@ -8,6 +8,7 @@ import { selectors } from '../../../reducers';
 import NotificationToaster from '../../../components/NotificationToaster';
 import { platformLicenseActionDetails } from '../../../utils/license';
 import {PillButton, TextButton} from '../../../components/Buttons';
+import useConfirmDialog from '../../../components/ConfirmDialog';
 
 const useStyles = makeStyles({
   inTrial: {
@@ -29,6 +30,7 @@ const useStyles = makeStyles({
 function LicenseAction() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const {confirmDialog} = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
   const platformLicense = useSelector(state => selectors.platformLicense(state));
@@ -56,19 +58,60 @@ function LicenseAction() {
     }
 
     if (licenseActionDetails.action === 'upgrade') {
-      setUpgradeRequested(true);
-
-      return dispatch(actions.license.requestLicenseUpgrade());
+      return confirmDialog({
+        title: 'Request upgrade',
+        message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+        buttons: [
+          { label: 'Submit request',
+            onClick: () => {
+              setUpgradeRequested(true);
+              dispatch(actions.license.requestLicenseUpgrade());
+            },
+          },
+          { label: 'Cancel',
+            variant: 'text',
+          },
+        ],
+      });
     }
     if (licenseActionDetails.action === 'resume') {
-      setUpgradeRequested(true);
-
-      return dispatch(actions.license.requestUpdate('ioResume'));
+      return confirmDialog({
+        title: 'Request to reactivate subscription',
+        message: 'We will contact you to reactivate your subscription.',
+        buttons: [
+          {
+            label: 'Submit request',
+            onClick: () => {
+              setUpgradeRequested(true);
+              dispatch(actions.license.requestUpdate('ioResume'));
+            },
+          },
+          {
+            label: 'Cancel',
+            variant: 'text',
+          },
+        ],
+      });
     }
     if (licenseActionDetails.action === 'expired') {
-      return dispatch(actions.license.requestUpdate('ioRenewal'));
+      confirmDialog({
+        title: 'Request to renew subscription',
+        message: 'We will contact you to renew your subscription.',
+        buttons: [
+          {
+            label: 'Submit request',
+            onClick: () => {
+              dispatch(actions.license.requestUpdate('ioRenewal'));
+            },
+          },
+          {
+            label: 'Cancel',
+            variant: 'text',
+          },
+        ],
+      });
     }
-  }, [dispatch, licenseActionDetails.action]);
+  }, [confirmDialog, dispatch, licenseActionDetails.action]);
 
   if (
     !licenseActionDetails ||
@@ -94,7 +137,7 @@ function LicenseAction() {
             data-test="renewOrResumeNow"
             color="primary"
             onClick={handleClick}>
-            {licenseActionDetails.action === 'expired' ? 'Renew now.' : 'Reactivate.'}
+            {licenseActionDetails.action === 'expired' ? 'Request to renew now.' : 'Request to reactivate.'}
           </TextButton>
 
         </NotificationToaster>

@@ -104,9 +104,23 @@ export function* requestLicenseUpgrade() {
     response = yield call(apiCallWithRetry, {
       path,
       opts,
+      hidden: true,
       message: 'Requesting license upgrade',
     });
   } catch (e) {
+    try {
+      const errorsJSON = JSON.parse(e.message);
+      const { errors } = errorsJSON;
+
+      const errorCode = errors && errors[0].code;
+
+      if (errorCode === 'ratelimit_exceeded') {
+        return yield put(actions.api.failure(path, 'POST', 'You have already submitted an upgrade request. We will be in touch soon.', false));
+      }
+    // eslint-disable-next-line no-empty
+    } catch (e) {
+    }
+
     return true;
   }
 
@@ -124,8 +138,23 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
       path,
       timeout: 5 * 60 * 1000,
       opts,
+      hidden: actionType === 'upgrade',
     });
   } catch (error) {
+    let errorCode;
+
+    try {
+      const errorsJSON = JSON.parse(error.message);
+      const { errors } = errorsJSON;
+
+      errorCode = errors && errors[0].code;
+    // eslint-disable-next-line no-empty
+    } catch (e) {
+    }
+    if (actionType === 'upgrade' && errorCode === 'ratelimit_exceeded') {
+      return yield put(actions.api.failure(path, 'POST', 'You have already submitted an upgrade request. We will be in touch soon.', false));
+    }
+
     return yield put(actions.api.failure(path, 'POST', error, false));
   }
   if (actionType === 'ioResume') {

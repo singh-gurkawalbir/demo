@@ -11,6 +11,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import ActionGroup from '../../ActionGroup';
 import { FilledButton, TextButton} from '../../Buttons';
 import useHandleDelete from '../../../views/Integration/hooks/useHandleDelete';
+import useConfirmDialog from '../../ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   trialExpireWrapper: {
@@ -62,6 +63,7 @@ const useStyles = makeStyles(theme => ({
 export default function TileNotification({ content, expired, connectorId, licenseId, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, tileStatus, trialExpired}) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const {confirmDialog} = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
   // Single means only button displayed here (Buy or renew), unistall button will be added if it is not single.
@@ -74,17 +76,62 @@ export default function TileNotification({ content, expired, connectorId, licens
       if (![INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel)) {
         enquesnackbar({ message: 'Contact your account owner to reactivate this integration app.', variant: 'error' });
       } else {
-        dispatch(actions.integrationApp.license.resume(integrationId));
+        confirmDialog({
+          title: 'Request to reactivate subscription',
+          message: 'We will contact you to reactivate your subscription.',
+          buttons: [
+            {
+              label: 'Submit request',
+              onClick: () => {
+                dispatch(actions.integrationApp.license.resume(integrationId));
+              },
+            },
+            {
+              label: 'Cancel',
+              variant: 'text',
+            },
+          ],
+        });
       }
     } else {
-      dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
+      confirmDialog({
+        title: 'Request to renew subscription',
+        message: 'We will contact you to renew your subscription.',
+        buttons: [
+          {
+            label: 'Submit request',
+            onClick: () => {
+              dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
+            },
+          },
+          {
+            label: 'Cancel',
+            variant: 'text',
+          },
+        ],
+      });
     }
-  }, [accessLevel, connectorId, dispatch, enquesnackbar, integrationId, licenseId, resumable]);
+  }, [accessLevel, confirmDialog, connectorId, dispatch, enquesnackbar, integrationId, licenseId, resumable]);
   const onClickBuyButton = useCallback(event => {
     event.stopPropagation();
-    setUpgradeRequested(true);
-    dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
-  }, [connectorId, dispatch, licenseId]);
+    confirmDialog({
+      title: 'Request to buy subscription',
+      message: 'We will contact you to buy your subscription.',
+      buttons: [
+        {
+          label: 'Submit request',
+          onClick: () => {
+            setUpgradeRequested(true);
+            dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
+          },
+        },
+        {
+          label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, connectorId, dispatch, licenseId]);
 
   const handleUninstall = useHandleDelete(integrationId);
 
@@ -106,7 +153,7 @@ export default function TileNotification({ content, expired, connectorId, licens
             onClick={onClickRenewOrReactivateButton}
             data-test="RenewOrReactivate"
            >
-            {resumable ? 'Reactivate' : 'Renew'}
+            {resumable ? 'Request to reactivate' : 'Request to renew'}
           </FilledButton>
         )}
         {single && showTrialLicenseMessage && (
@@ -115,7 +162,7 @@ export default function TileNotification({ content, expired, connectorId, licens
             onClick={onClickBuyButton}
             data-test="buy"
             >
-            Buy
+            Request to buy
           </FilledButton>
         )}
         {!single && (

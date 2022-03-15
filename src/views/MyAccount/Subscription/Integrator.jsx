@@ -10,6 +10,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import FilledButton from '../../../components/Buttons/FilledButton';
+import useConfirmDialog from '../../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -93,6 +94,7 @@ export default function Subscription() {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
+  const {confirmDialog} = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
@@ -155,13 +157,26 @@ export default function Subscription() {
     return dispatch(actions.license.requestUpdate('upgrade'));
   }, [dispatch]);
   const onRequestUpgradeClick = useCallback(() => {
-    dispatch(
-      actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
-    );
-    setUpgradeRequested(true);
+    confirmDialog({
+      title: 'Request upgrade',
+      message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+      buttons: [
+        { label: 'Submit request',
+          onClick: () => {
+            dispatch(
+              actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+            );
+            setUpgradeRequested(true);
 
-    return dispatch(actions.license.requestUpdate('upgrade'));
-  }, [dispatch]);
+            dispatch(actions.license.requestUpdate('upgrade'));
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, dispatch]);
   const onRequestTrialExtensionClick = useCallback(() => {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
@@ -359,13 +374,6 @@ export default function Subscription() {
                           Request trial extension
                         </FilledButton>
                       )}
-                      <a
-                        className={classes.linkCompare}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href="https://www.celigo.com/ipaas-integration-platform/#Pricing">
-                        Compare plans
-                      </a>
                     </div>
                   </div>
           )}
