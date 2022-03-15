@@ -81,14 +81,18 @@ export function* invokeProcessor({ editorId, processor, body }) {
     if (editorType === 'mappings') {
       const mappings = (yield select(selectors.mapping))?.mappings;
       const lookups = (yield select(selectors.mapping))?.lookups;
+      const generateFields = yield select(selectors.mappingGenerates, resourceId);
       const importResource = yield select(selectors.resource, 'imports', resourceId);
       const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+      const netsuiteRecordType = yield select(selectors.mappingNSRecordType, resourceId);
 
       _mappings = mappingUtil.generateFieldsAndListMappingForApp({
         mappings,
+        generateFields,
         isGroupedSampleData: Array.isArray(flowSampleData),
         isPreviewSuccess: !!flowSampleData,
         importResource,
+        netsuiteRecordType,
         exportResource,
       });
       _mappings = {..._mappings, lookups};
@@ -133,7 +137,7 @@ export function* requestPreview({ id }) {
   // since mappings are stored in separate state
   // we validate the same here
   if (editor.editorType === 'mappings') {
-    const {mappings, lookups} = yield select(selectors.mapping);
+    const {mappings, lookups, isNSAssistantFormLoaded} = yield select(selectors.mapping);
     const {errMessage} = mappingUtil.validateMappings(mappings, lookups);
 
     if (errMessage) {
@@ -142,6 +146,10 @@ export function* requestPreview({ id }) {
       };
 
       return yield put(actions.editor.validateFailure(id, violations));
+    }
+    if (editor.mappingPreviewType &&
+      (editor.mappingPreviewType !== 'netsuite' || isNSAssistantFormLoaded)) {
+      yield put(actions.mapping.requestPreview());
     }
   }
 
