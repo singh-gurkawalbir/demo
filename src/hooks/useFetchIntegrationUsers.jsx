@@ -11,7 +11,7 @@ export default function useFetchIntegrationUsers({ integrationId }) {
 
   useEffect(() => {
     if (integrationId && !integrationUsers) {
-      dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`)); dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
+      dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
     }
   }, [integrationUsers, integrationId, dispatch]);
 

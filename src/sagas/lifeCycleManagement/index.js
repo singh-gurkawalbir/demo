@@ -138,6 +138,18 @@ function* cancelRevision({ integrationId, revisionId }) {
   yield put(actions.resource.received(`integrations/${integrationId}/revisions`, updatedRevision));
 }
 
+function* installStep({ revisionId }) {
+// const updatedSteps = yield call(apiCallWithRetry, {
+  //   path: `/integrations/${integrationId}/revisions/${revisionId}/installSteps`,
+  //   opts: {
+  //     method: 'POST',
+  //   },
+  // });
+  // Handle updating with new steps also errors
+  yield delay(2000);
+  yield put(actions.integrationLCM.installSteps.completedStepInstall(revisionId));
+}
+
 export default [
   takeEvery(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, requestIntegrationCloneFamily),
   takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CREATE, createRevision),
@@ -146,4 +158,5 @@ export default [
   takeEvery(actionTypes.INTEGRATION_LCM.COMPARE.REVERT_REQUEST, compareRevertRequest),
   takeEvery(actionTypes.INTEGRATION_LCM.COMPARE.REVISION_REQUEST, compareRevisionChanges),
   takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CANCEL, cancelRevision),
+  takeEvery(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, installStep),
 ];

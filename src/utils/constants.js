@@ -34,6 +34,8 @@ export const INSTALL_STEP_TYPES = Object.freeze({
   STACK: 'Stack',
   FORM: 'form',
   URL: 'url',
+  MERGE: 'merge',
+  REVERT: 'revert',
 });
 export const UNINSTALL_STEP_TYPES = Object.freeze({
   FORM: 'form',

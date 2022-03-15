@@ -431,7 +431,7 @@ selectors.addNewChildSteps = (state, integrationId) => {
   return { steps: modifiedSteps };
 };
 
-selectors.currentStepPerMode = (state, { mode, integrationId, cloneResourceId, cloneResourceType }) => {
+selectors.currentStepPerMode = (state, { mode, integrationId, revisionId, cloneResourceId, cloneResourceType }) => {
   let steps = [];
 
   if (mode === 'install') {
@@ -442,6 +442,8 @@ selectors.currentStepPerMode = (state, { mode, integrationId, cloneResourceId, c
     steps = selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true })?.steps;
   } else if (mode === 'clone') {
     steps = selectors.cloneInstallSteps(state, cloneResourceType, cloneResourceId);
+  } else if (mode === 'revision') {
+    steps = selectors.cloneInstallSteps(state, integrationId, revisionId);
   }
 
   return (steps || []).find(s => !!s.isCurrentStep);
@@ -6694,4 +6696,16 @@ selectors.resourceReferencesPerIntegration = createSelector(
 
     return results;
   }
+);
+
+selectors.currentRevisionInstallSteps = createSelector(
+  selectors.revisionInstallSteps,
+  (state, _, revisionId) => selectors.updatedRevisionInstallStep(state, revisionId),
+  (revisionInstallSteps, updatedRevisionInstallStep) => revisionInstallSteps.map(step => {
+    if (step.isCurrentStep) {
+      return {...step, ...updatedRevisionInstallStep};
+    }
+
+    return step;
+  })
 );

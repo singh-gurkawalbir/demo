@@ -2236,10 +2236,9 @@ const integrationLCM = {
     cancel: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CANCEL, { integrationId, revisionId }),
   },
   installSteps: {
-    installStep: () => {},
-    updateStep: () => {},
-    completedStepInstall: () => {},
-    getCurrentStep: () => {},
+    installStep: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, { revisionId, integrationId }),
+    updateStep: (revisionId, status) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.UPDATE, { revisionId, status }),
+    completedStepInstall: revisionId => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.DONE, { revisionId }),
   },
   revisions: {
     request: integrationId => resource.requestCollection(`integrations/${integrationId}/revisions`),

@@ -34,6 +34,7 @@ function ResourceSetupDrawerContent({
   mode,
   cloneResourceType,
   cloneResourceId,
+  revisionId,
 }) {
   const { resourceId, resourceType } = useParams();
   const history = useHistory();
@@ -77,6 +78,7 @@ function ResourceSetupDrawerContent({
       integrationId,
       cloneResourceId,
       cloneResourceType,
+      revisionId,
     })
   );
 

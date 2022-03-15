@@ -12,7 +12,7 @@ import DrawerFooter from '../../../Right/DrawerFooter';
 import { TextButton } from '../../../../Buttons';
 import CancelIcon from '../../../../icons/CancelIcon';
 import actions from '../../../../../actions';
-// import { selectors } from '../../../../../reducers';
+import InstallSteps from '../../InstallSteps';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -73,7 +73,7 @@ function FinalRevertDrawerContent({ parentUrl, integrationId }) {
         </ActionGroup>
       </DrawerHeader>
       <DrawerContent>
-        <div> merge install steps </div>
+        <InstallSteps integrationId={integrationId} revisionId={revId} />
       </DrawerContent>
       <DrawerFooter>
         <TextButton

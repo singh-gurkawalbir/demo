@@ -67,16 +67,25 @@ selectors.revisions = (state = defaultState, integrationId) => state[integration
 selectors.revision = (state = defaultState, integrationId, revisionId) => {
   const revisions = selectors.revisions(state, integrationId);
 
-  console.log(revisions);
-  if (!revisions?.length) {
-    return;
-  }
-
-  return revisions.find(rev => rev._id === revisionId);
+  return revisions?.find(rev => rev._id === revisionId);
 };
 selectors.uniqueUserIdsFromRevisions = createSelector(
   selectors.revisions,
   revisionsList => uniq(revisionsList.map(rev => rev._byUserId))
 );
 selectors.revisionsFetchStatus = (state = defaultState, integrationId) => state[integrationId]?.status;
+selectors.revisionInstallSteps = (state, integrationId, revisionId) => {
+  const revision = selectors.revision(state, integrationId, revisionId);
+
+  const steps = [...(revision?.installSteps || [])];
+
+  if (steps.length) {
+    const firstInCompleteStep = steps.find(step => !step.completed);
+
+    firstInCompleteStep.isCurrentStep = true;
+  }
+
+  return steps;
+};
+
 // #endregion
