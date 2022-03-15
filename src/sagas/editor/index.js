@@ -65,7 +65,8 @@ export function* invokeProcessor({ editorId, processor, body }) {
       options: {
         connection,
         [resourceType === 'imports' ? 'import' : 'export']: resource,
-        fieldPath: fieldId,
+        // TODO: Siddharth, revert this change after completion of https://celigo.atlassian.net/browse/IO-25372
+        fieldPath: fieldId === 'webhook.successBody' ? 'dataURITemplate' : fieldId,
         timezone,
       },
     };
@@ -566,7 +567,13 @@ export function* requestEditorSampleData({
     const flow = yield select(selectors.resource, 'flows', flowId);
 
     body.integrationId = flow?._integrationId;
-    body.fieldPath = fieldId || filterPath;
+
+    // TODO: Siddharth, revert this change after completion of https://celigo.atlassian.net/browse/IO-25372
+    if (fieldId === 'webhook.successBody') {
+      body.fieldPath = 'dataURITemplate';
+    } else {
+      body.fieldPath = fieldId || filterPath;
+    }
 
     if (needPreviewStagesData) {
       body.previewData = yield select(selectors.getResourceSampleDataStages, resourceId);
