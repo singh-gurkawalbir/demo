@@ -1,5 +1,5 @@
 export const CONTACT_SALES_MESSAGE =
-  'We will contact you soon to schedule your demo and discuss your business needs.</br> In the meantime,';
+  'We will contact you soon to schedule your demo and discuss your business needs. In the meantime,';
 export const MULTIPLE_INSTALLS =
   'Looks like this Integration App is already installed in your account. If you would like to install another instance please provide a unique tag name so that we can help you differentiate this install from the others.';
 export const INTEGRATION_DELETE_VALIDATE =

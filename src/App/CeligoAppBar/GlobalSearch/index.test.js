@@ -507,7 +507,7 @@ describe('Globalsearch feature tests', () => {
       expect(screen.queryByLabelText(/Global search results/i)).toBeInTheDocument();
     });
     expect(screen.queryByText(/ADP IA/i)).toBeInTheDocument();
-    const requestForDemoButton = screen.queryByText('Request a demo');
+    const requestForDemoButton = screen.queryByText('Request demo');
 
     userEvent.click(requestForDemoButton);
     await waitFor(() => {
