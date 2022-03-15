@@ -120,7 +120,7 @@ export default {
           id: 'copySource',
           name: 'copySource',
           type: 'radiogroup',
-          label: 'Would you like to copy an object from the source record?',
+          label: 'Would you like to copy an object from the source record as-is?',
           fullWidth: true,
           defaultValue: extract ? 'yes' : 'no',
           visibleWhen: [{ field: 'dataType', is: ['object', 'objectarray'] }],
