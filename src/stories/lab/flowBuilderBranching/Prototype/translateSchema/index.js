@@ -89,7 +89,7 @@ const generateMetadataFromNonBranchedFlow = (resourceState, flow) => {
   return clubNodesAndEdges([pgMetadata, ppMetadata]);
 };
 
-export const getRouter = (routerId, flow = {}) => (flow.routers || []).find?.(r => r._id === routerId);
+export const getRouter = (routerId, flow = {}) => flow.routers?.find(r => r._id === routerId);
 const getLastNodeId = nodes => nodes?.[nodes?.length - 1]?.id;
 const generateMergeEdge = (sourceNodes, targetNodes) => {
   const source = getLastNodeId(sourceNodes);
