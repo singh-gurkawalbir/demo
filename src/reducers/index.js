@@ -2378,19 +2378,23 @@ selectors.mkConnectionIdsUsedInSelectedFlows = () => createSelector(
  */
 selectors.getScriptContext = createSelector(
   [
-    (state, { contextType }) => contextType,
+    (_1, { contextType }) => contextType,
+    (_1, { flowId }) => flowId,
     (state, { flowId }) => {
       const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
 
       return flow._integrationId;
     },
+    (_1, { options }) => options,
   ],
-  (contextType, _integrationId) => {
+  (contextType, _flowId, _integrationId, options) => {
     if (contextType === 'hook' && _integrationId) {
       return {
         type: 'hook',
         container: 'integration',
         _integrationId,
+        _flowId,
+        _scriptId: options?.rule?._scriptId,
       };
     }
   }

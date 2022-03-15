@@ -1894,7 +1894,7 @@ describe('editor sagas', () => {
         .provide([
           [matchers.call.fn(initSampleData), undefined],
           [matchers.call.fn(constructResourceFromFormValues), {}],
-          [select(selectors.getScriptContext, {flowId: 'flow-123', contextType: 'hook'}), {context: 'hook'}],
+          [select(selectors.getScriptContext, {flowId: 'flow-123', contextType: 'hook', options}), {context: 'hook'}],
         ])
         .run()
         .then(result => {
