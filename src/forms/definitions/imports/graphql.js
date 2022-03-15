@@ -5,7 +5,6 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-    console.log('graphql import return values', retValues);
     // graphql specific values
     retValues['/http/formType'] = 'graph_ql';
 
@@ -64,9 +63,7 @@ export default {
       ];
     }
 
-    if (retValues['/inputMode'] === 'blob') {
-      retValues['/http/method'] = retValues['/http/blobMethod'];
-    } else if (retValues['/http/method'] === 'COMPOSITE') {
+    if (retValues['/http/method'] === 'COMPOSITE') {
       if (retValues['/http/compositeType'] === 'createandupdate') {
         retValues['/http/relativeURI'] = [
           retValues['/http/relativeURIUpdate'],
@@ -342,12 +339,6 @@ export default {
     } else {
       retValues['/blob'] = true;
     }
-    if (retValues['/http/requestMediaType'] === 'csv') {
-      retValues['/file/type'] = 'csv';
-    }
-    if (!retValues['/http/requestMediaType']) {
-      retValues['/http/requestMediaType'] = undefined;
-    }
     if (!retValues['/http/successMediaType']) {
       retValues['/http/successMediaType'] = undefined;
     }
@@ -372,45 +363,6 @@ export default {
       ...retValues,
     };
   },
-  // optionsHandler: (fieldId, fields) => {
-  //   if (
-  //     fieldId === 'http.body' ||
-  //     fieldId === 'http.bodyCreate' ||
-  //     fieldId === 'http.bodyUpdate'
-  //   ) {
-  //     const httpBodyField = fields.find(field => field.fieldId === 'http.body');
-  //     const httpBodyCreateField = fields.find(
-  //       field => field.fieldId === 'http.bodyCreate'
-  //     );
-  //     const httpBodyUpdateField = fields.find(
-  //       field => field.fieldId === 'http.bodyUpdate'
-  //     );
-  //     const requestMediaTypeField = fields.find(
-  //       field => field.fieldId === 'http.requestMediaType'
-  //     );
-  //     const bodyFields = [
-  //       httpBodyField,
-  //       httpBodyCreateField,
-  //       httpBodyUpdateField,
-  //     ];
-
-  //     // checking if requestMediaType value changed. Reset body value when requestMediaType changes. Also, store requestMediaType value to check for change
-  //     // bodyFields.forEach(f => {
-  //     //   if (!f) return;
-  //     //   if (f.requestMediaType && requestMediaTypeField.value && f.requestMediaType !== requestMediaTypeField.value) {
-  //     //     f.value = '';
-  //     //     f.requestMediaType = requestMediaTypeField.value;
-  //     //   }
-  //     // });
-
-  //     // return {
-  //     //   contentType: requestMediaTypeField.value,
-  //     // };
-  //   }
-
-  //   return null;
-  // },
-
   fieldMap: {
     common: { formId: 'common' },
     dataMappings: { formId: 'dataMappings' },
@@ -435,80 +387,8 @@ export default {
       },
     },
     'http.method': { fieldId: 'http.method' },
-    'http.blobMethod': { fieldId: 'http.blobMethod' },
-    'http.headers': { fieldId: 'http.headers' },
-    'http.response.failPath': {
-      fieldId: 'http.response.failPath',
-      defaultValue: r => {
-        if (
-          Array.isArray(
-            r && r.http && r.http.response && r.http.response.failPath
-          )
-        ) {
-          return r.http.response.failPath[0];
-        }
-
-        return r && r.http && r.http.response && r.http.response.failPath;
-      },
-    },
-    'http.response.failValues': {
-      fieldId: 'http.response.failValues',
-      defaultValue: r => {
-        if (
-          Array.isArray(
-            r &&
-              r.http &&
-              r.http.response &&
-              r.http.response.failValues &&
-              r.http.response.failValues[0]
-          )
-        ) {
-          return r.http.response.failValues[0];
-        }
-
-        return r && r.http && r.http.response && r.http.response.failValues;
-      },
-    },
-    'http.requestMediaType': { fieldId: 'http.requestMediaType' },
     'http.compositeType': { fieldId: 'http.compositeType' },
-    'http.lookups': { fieldId: 'http.lookups', visible: false },
-    'http.relativeURI': { fieldId: 'http.relativeURI' },
-    'http.response.successPath': {
-      fieldId: 'http.response.successPath',
-      defaultValue: r => {
-        if (
-          Array.isArray(
-            r && r.http && r.http.response && r.http.response.successPath
-          )
-        ) {
-          return r.http.response.successPath[0];
-        }
-
-        return r && r.http && r.http.response && r.http.response.successPath;
-      },
-    },
-    'http.response.successValues': {
-      fieldId: 'http.response.successValues',
-      defaultValue: r => {
-        if (
-          Array.isArray(
-            r &&
-              r.http &&
-              r.http.response &&
-              r.http.response.successValues &&
-              r.http.response.successValues[0]
-          )
-        ) {
-          return r.http.response.successValues[0];
-        }
-
-        return r && r.http && r.http.response && r.http.response.successValues;
-      },
-    },
     'http.response.resourceIdPath': { fieldId: 'http.response.resourceIdPath' },
-    'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
-    'http.response.errorPath': { fieldId: 'http.response.errorPath' },
-    'http.batchSize': { fieldId: 'http.batchSize' },
     'http.compositeMethodCreate': {
       id: 'http.compositeMethodCreate',
       helpKey: 'import.http.method',
@@ -553,83 +433,6 @@ export default {
           is: ['records'],
         },
       ],
-    },
-    'http.relativeURICreate': {
-      id: 'http.relativeURICreate',
-      helpKey: 'import.http.relativeURI',
-      type: 'relativeuri',
-      arrayIndex: 1,
-      connectionId: r => r && r._connectionId,
-      label: 'Relative URI',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => {
-        if (!r || !r.http || !r.http.method) {
-          return '';
-        }
-
-        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          if (r.http.method.length > 1) {
-            return r.http.relativeURI[1];
-          }
-
-          return r.http.relativeURI[0];
-        }
-
-        return '';
-      },
-    },
-    'http.bodyCreate': {
-      id: 'http.bodyCreate',
-      type: 'httprequestbody',
-      connectionId: r => r && r._connectionId,
-      label: 'HTTP request body',
-      helpKey: 'import.http.body',
-      arrayIndex: 1,
-      requestMediaType: r =>
-        r && r.http ? r && r.http.requestMediaType : 'json',
-      refreshOptionsOnChangesTo: ['http.requestMediaType'],
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => {
-        if (!r || !r.http || !r.http.method) {
-          return '';
-        }
-
-        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          if (r.http.method.length > 1) {
-            return r.http.body[1] || '';
-          }
-
-          return r.http.body[0] || '';
-        }
-
-        return '';
-      },
     },
     'http.failPathCreate': {
       id: 'http.failPathCreate',
@@ -1041,75 +844,6 @@ export default {
         return '';
       },
     },
-    'http.relativeURIUpdate': {
-      id: 'http.relativeURIUpdate',
-      helpKey: 'import.http.relativeURI',
-      type: 'relativeuri',
-      arrayIndex: 0,
-      connectionId: r => r && r._connectionId,
-      label: 'Relative URI',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'updateandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => {
-        if (!r || !r.http || !r.http.method) {
-          return '';
-        }
-
-        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return r.http.relativeURI && r.http.relativeURI[0];
-        }
-
-        return '';
-      },
-    },
-    'http.bodyUpdate': {
-      id: 'http.bodyUpdate',
-      type: 'httprequestbody',
-      connectionId: r => r && r._connectionId,
-      label: 'HTTP request body',
-      helpKey: 'import.http.body',
-      arrayIndex: 0,
-      requestMediaType: r =>
-        r && r.http ? r && r.http.requestMediaType : 'json',
-      refreshOptionsOnChangesTo: ['http.requestMediaType'],
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'updateandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => {
-        if (!r || !r.http || !r.http.method) {
-          return '';
-        }
-
-        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return r.http.body[0] || '';
-        }
-
-        return '';
-      },
-    },
     'http.resourceIdPathUpdate': {
       id: 'http.resourceIdPathUpdate',
       helpKey: 'import.http.response.resourceIdPath',
@@ -1292,54 +1026,35 @@ export default {
     'http.existingLookupName': {
       fieldId: 'http.existingLookupName',
     },
-    'http.successMediaType': { fieldId: 'http.successMediaType' },
-    blobKeyPath: { fieldId: 'blobKeyPath' },
-    'http.errorMediaType': { fieldId: 'http.errorMediaType' },
-    uploadFile: {
-      fieldId: 'uploadFile',
-      refreshOptionsOnChangesTo: ['file.type'],
-      placeholder: 'Sample file (that would be generated)',
-      helpKey: 'import.uploadFile',
-      mode: r => r && r.file && r.file.type,
+    'http.successMediaType': {
+      fieldId: 'http.successMediaType',
       visibleWhenAll: [
-        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
         {
           field: 'inputMode',
           is: ['records'],
         },
       ],
     },
-    'file.csv': {
-      fieldId: 'file.csv',
+    'http.errorMediaType': {
+      fieldId: 'http.errorMediaType',
       visibleWhenAll: [
-        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
         {
           field: 'inputMode',
           is: ['records'],
         },
       ],
     },
-    'http.body': {
-      fieldId: 'http.body',
-      refreshOptionsOnChangesTo: ['http.requestMediaType'],
-    },
-
-    'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },
     advancedSettings: {
       formId: 'advancedSettings',
     },
-    'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper' },
-    'http._asyncHelperId': { fieldId: 'http._asyncHelperId' },
-    deleteAfterImport: {
-      fieldId: 'deleteAfterImport',
-      visibleWhen: [
-        {
-          field: 'inputMode',
-          is: ['blob'],
-        },
-      ],
-    },
-    'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
     graphql: {
       formId: 'graphql',
       visibleWhenAll: [
@@ -1347,10 +1062,6 @@ export default {
           field: 'http.method',
           isNot: ['COMPOSITE'],
         },
-        // {
-        //   field: 'inputMode',
-        //   is: ['blob'],
-        // },
       ],
     },
     'graphql.queryCreate': {
@@ -1485,7 +1196,6 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          // return r.http.body[0] || '';
           return getGraphQLValues({resource: r, field: 'query', path: 'http.body[0]'}) || '';
         }
 
@@ -1517,7 +1227,6 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          // return r.http.body[0] || '';
           return getGraphQLValues({resource: r, field: 'operationName', path: 'http.body[0]'}) || '';
         }
 
@@ -1550,7 +1259,6 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          // return r.http.body[0] || '';
           return getGraphQLValues({resource: r, field: 'variables', path: 'http.body[0]'}) || '';
         }
 
@@ -1568,38 +1276,13 @@ export default {
       },
       {
         collapsed: true,
-        label: r => {
-          if (r?.resourceType === 'transferFiles' || r?.blob) {
-            return 'Where would you like the files transferred?';
-          }
-
-          return 'How would you like the records imported?';
-        },
+        label: 'How would you like the records imported?',
         fields: [
-          // 'unencrypted.apiType',
           'http.method',
-          // 'http.blobMethod',
           'graphql',
           'http.compositeType',
-          // 'http.relativeURI',
-          // 'http.headers',
-          // 'http.requestMediaType',
-          // 'http.lookups',
-          // 'http.batchSize',
-          // 'http.body',
-          // 'uploadFile',
         ],
         containers: [
-          // {type: 'indent',
-          //   containers: [
-          //     {
-          //       fields:
-          //       [
-          //         'file.csv',
-          //       ],
-          //     },
-          //   ],
-          // },
           {type: 'collapse',
             containers: [
               {
@@ -1676,15 +1359,9 @@ export default {
           },
           {
             fields: [
-              'http.response.resourcePath',
               'http.response.resourceIdPath',
-              'http.response.failPath',
-              'http.response.failValues',
-              'http.response.successPath',
-              'http.response.successValues',
-              'http.response.errorPath',
-              'http.successMediaType',
-              'http.errorMediaType',
+              // 'http.successMediaType',
+              // 'http.errorMediaType',
             ],
           },
         ],
@@ -1692,14 +1369,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: [
-          'http.ignoreEmptyNodes',
-          'blobKeyPath',
-          'advancedSettings',
-          'http.configureAsyncHelper',
-          'http._asyncHelperId',
-          'deleteAfterImport',
-        ],
+        fields: ['advancedSettings'],
       },
     ],
   },

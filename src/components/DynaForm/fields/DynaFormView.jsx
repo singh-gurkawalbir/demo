@@ -141,8 +141,8 @@ export default function FormView(props) {
     );
   };
 
-  const isFlowBuilderAssistant = isGraphql ||
-    (flowId && assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection));
+  const isFlowBuilderAssistant = flowId && (isGraphql ||
+    (assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection)));
 
   return isFlowBuilderAssistant ? (
     <DynaSelect

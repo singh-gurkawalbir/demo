@@ -5,7 +5,6 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-    // console.log('return values of graphql', retValues);
     // graphql specific values
     retValues['/http/formType'] = 'graph_ql';
     retValues['/http/relativeURI'] = '/';
@@ -18,26 +17,6 @@ export default {
       });
     }
     // graphql specific values end
-
-    if (retValues['/http/successMediaType'] === 'csv') {
-      retValues['/file/type'] = 'csv';
-    } else if (
-      retValues['/http/successMediaType'] === 'json' ||
-      retValues['/http/successMediaType'] === 'xml'
-    ) {
-      delete retValues['/file/csv/rowsToSkip'];
-      delete retValues['/file/csv/trimSpaces'];
-      delete retValues['/file/csv/columnDelimiter'];
-      delete retValues['/file/csv/rowDelimiter'];
-      delete retValues['/file/csv/hasHeaderRow'];
-      delete retValues['/file/csv/rowsPerRecord'];
-      delete retValues['/file/csv/keyColumns'];
-      retValues['/file'] = undefined;
-      delete retValues['/file/type'];
-      delete retValues['/file/csv/rowsToSkip'];
-      delete retValues['/file/csv/trimSpaces'];
-      delete retValues['/file/csv/columnDelimiter'];
-    }
 
     if (retValues['/type'] === 'all') {
       retValues['/type'] = undefined;
@@ -80,63 +59,10 @@ export default {
       delete retValues['/delta/lagOffset'];
     }
 
-    if (
-      retValues['/http/response/successValues'] &&
-      !retValues['/http/response/successValues'].length
-    ) {
-      retValues['/http/response/successValues'] = undefined;
-    }
-
-    if (retValues['/http/response/successPath'] === '') {
-      retValues['/http/response/successPath'] = undefined;
-    }
-    if (retValues['/http/response/successValues'] === '') {
-      retValues['/http/response/successValues'] = undefined;
-    }
-    if (
-      retValues['/http/response/failValues'] &&
-      !retValues['/http/response/failValues'].length
-    ) {
-      retValues['/http/response/failValues'] = undefined;
-    }
-
-    if (retValues['/http/response/failPath'] === '') {
-      retValues['/http/response/failPath'] = undefined;
-    }
-    if (retValues['/http/response/failValues'] === '') {
-      retValues['/http/response/failValues'] = undefined;
-    }
-
-    if (retValues['/http/successMediaType'] === 'csv' ||
-      (retValues['/http/response/successValues'] === undefined &&
-      retValues['/http/response/successPath'] === undefined &&
-      retValues['/http/response/failValues'] === undefined &&
-      retValues['/http/response/failPath'] === undefined &&
-      retValues['/http/response/resourcePath'] === '' &&
-      retValues['/http/response/errorPath'] === ''
-      )) {
-      retValues['/http/response'] = undefined;
-      delete retValues['/http/response/resourcePath'];
-      delete retValues['/http/response/successValues'];
-      delete retValues['/http/response/successPath'];
-      delete retValues['/http/response/failValues'];
-      delete retValues['/http/response/failPath'];
-      delete retValues['/http/response/errorPath'];
-    }
-
     if (retValues['/outputMode'] === 'blob') {
       retValues['/type'] = 'blob';
     }
-    if (retValues['/http/requestMediaType'] === ' ' || !retValues['/http/requestMediaType']) {
-      retValues['/http/requestMediaType'] = undefined;
-    }
-    if (!retValues['/http/successMediaType']) {
-      retValues['/http/successMediaType'] = undefined;
-    }
-    if (!retValues['/http/errorMediaType']) {
-      retValues['/http/errorMediaType'] = undefined;
-    }
-    delete retValues['/http/blobMethod'];
+
     delete retValues['/outputMode'];
 
     if (retValues['/http/paging/method'] === 'page') {
@@ -253,37 +179,6 @@ export default {
     };
   },
 
-  optionsHandler: (fieldId, fields) => {
-    if (fieldId !== 'http.body' && fieldId !== 'http.once.body') {
-      return null;
-    }
-
-    const bodyFields = [];
-    let requestMediaTypeField = {};
-
-    fields.map(field => {
-      if (field.fieldId === 'http.body' || field.fieldId === 'http.once.body') {
-        bodyFields.push(field);
-      } else if (field.fieldId === 'http.requestMediaType') { requestMediaTypeField = {...field}; }
-
-      return null;
-    });
-
-    // reset http body field if requestMediaTypeField changed
-    bodyFields.forEach(field => {
-      const f = field;
-
-      if (f?.requestMediaType !== requestMediaTypeField.value) {
-        f.value = '';
-        f.requestMediaType = requestMediaTypeField.value;
-      }
-    });
-
-    return {
-      contentType: requestMediaTypeField.value,
-    };
-  },
-
   fieldMap: {
     common: { formId: 'common' },
     outputMode: {
@@ -306,13 +201,6 @@ export default {
         return 'records';
       },
     },
-    'http.blobMethod': { fieldId: 'http.blobMethod' },
-    'http.headers': { fieldId: 'http.headers' },
-    'unencrypted.restrictedReportType': {fieldId: 'unencrypted.restrictedReportType'},
-    // 'http.body': { fieldId: 'http.body' },
-    'http.successMediaType': { fieldId: 'http.successMediaType' },
-    'http.requestMediaType': { fieldId: 'http.requestMediaType' },
-    'http.errorMediaType': { fieldId: 'http.errorMediaType' },
     'http.response.resourcePath': {
       id: 'http.response.resourcePath',
       isLoggable: true,
@@ -333,21 +221,8 @@ export default {
           is: ['xml'],
         },
       ],
-      visibleWhen: [
-        {
-          field: 'http.successMediaType',
-          isNot: ['csv'],
-        },
-      ],
       defaultValue: r => r?.resourceType === 'lookupFiles' || r?.type === 'blob' ? '' : 'data',
     },
-    'http.response.successPath': { fieldId: 'http.response.successPath' },
-    'http.response.successValues': {
-      fieldId: 'http.response.successValues',
-    },
-    'http.response.errorPath': { fieldId: 'http.response.errorPath' },
-    'http.response.failPath': { fieldId: 'http.response.failPath' },
-    'http.response.failValues': { fieldId: 'http.response.failValues' },
     type: {
       id: 'type',
       type: 'selectwithvalidations',
@@ -377,8 +252,7 @@ export default {
               regex: /.*{{.*lastExportDateTime.*}}/,
               description: 'Add {{lastExportDateTime}} to either the relative URI or HTTP request body to complete the setup.',
               helpKey: 'export.delta',
-              fieldsToValidate: ['http.relativeURI', 'http.body'] },
-
+            },
             { label: 'Once – export records only once', value: 'once' },
             { label: 'Test – export only 1 record', value: 'test' },
           ],
@@ -422,7 +296,6 @@ export default {
               regex: /.*{{.*export\.http\.paging\.token.*}}/,
               description: 'Add {{export.http.paging.token}} to either the relative URI or HTTP request body to complete the setup.',
               helpKey: 'export.paging.token',
-              fieldsToValidate: ['http.relativeURI', 'http.body', 'http.paging.relativeURI', 'http.paging.body'],
             },
             { label: 'Custom relative URI', value: 'relativeuri' },
             { label: 'Custom request body', value: 'body' },
@@ -460,31 +333,6 @@ export default {
     advancedSettings: {
       formId: 'advancedSettings',
     },
-    'file.csv': {
-      id: 'file.csv',
-      type: 'csvparse',
-      label: 'CSV parser helper',
-      helpKey: 'file.csvParse',
-      ignoreSortAndGroup: true,
-      defaultValue: r => r?.file?.csv || {
-        columnDelimiter: ',',
-        rowDelimiter: '\n',
-        hasHeaderRow: false,
-        keyColumns: [],
-        rowsToSkip: 0,
-        trimSpaces: true,
-      },
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-        {
-          field: 'http.successMediaType',
-          is: ['csv'],
-        },
-      ],
-    },
     exportOneToMany: { formId: 'exportOneToMany' },
     configureAsyncHelper: {
       fieldId: 'configureAsyncHelper',
@@ -506,7 +354,6 @@ export default {
     },
     formView: { fieldId: 'formView' },
     semiassistantoperationselect: {fieldId: 'semiassistantoperationselect', visibleWhenAll: [{field: 'formView', isNot: ['true']}]},
-    'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
     graphql: {
       formId: 'graphql',
     },
@@ -550,11 +397,6 @@ export default {
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['common', 'outputMode', 'exportOneToMany', 'formView', 'semiassistantoperationselect'] },
-      // {
-      //   collapsed: true,
-      //   label: 'Assistant Helper',
-      //   fields: ['semiassistantoperationselect'],
-      // },
       {
         collapsed: true,
         label: r => {
@@ -562,20 +404,7 @@ export default {
 
           return 'What would you like to export?';
         },
-        fields: [
-          // 'unencrypted.apiType',
-          // 'graphql.query',
-          // 'graphql.operationName',
-          // 'graphql.variables',
-          'graphql',
-          // 'http.blobMethod',
-          // 'http.relativeURI',
-          // 'unencrypted.restrictedReportType',
-          // 'http.headers',
-          // 'http.requestMediaType',
-          // 'http.body',
-          // 'http.response.blobFormat',
-        ],
+        fields: ['graphql', 'http.response.blobFormat'],
       },
       {
         collapsed: true,
@@ -606,7 +435,6 @@ export default {
           'http.paging.relativeURI',
           'http.paging.linkHeaderRelation',
           'http.paging.pathAfterFirstRequest',
-          // 'http.paging.body',
           'http.paging.resourcePath',
           'http.paging.maxPagePath',
           'http.paging.maxCountPath',
@@ -618,15 +446,7 @@ export default {
       {
         collapsed: true,
         label: 'Non-standard API response patterns',
-        fields: [
-          'http.response.resourcePath',
-          // 'http.response.failPath',
-          // 'http.response.failValues',
-          // 'http.response.successPath',
-          // 'http.response.successValues',
-          // 'http.response.errorPath',
-          // 'http.successMediaType',
-        ],
+        fields: ['http.response.resourcePath'],
       },
       {
         collapsed: true,

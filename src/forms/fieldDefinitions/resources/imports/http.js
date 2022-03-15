@@ -25,11 +25,11 @@ export default {
       if (!r?.http?.method) return '';
 
       if (Array.isArray(r.http.method)) {
-        if (r.http.method.length === 1) {
-          return r.http.method[0];
-        }
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
           return 'COMPOSITE';
+        }
+        if (r.http.method.length === 1) {
+          return r.http.method[0];
         }
       }
 

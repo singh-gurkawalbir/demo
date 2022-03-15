@@ -610,7 +610,11 @@ selectors.mkTileApplications = () => {
           const connection = connections.find(c => c._id === r);
 
           if (connection) {
-            applications.push(connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type);
+            if (connection.http?.formType === 'graph_ql') {
+              applications.push('graphql');
+            } else {
+              applications.push(connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type);
+            }
           }
         });
 

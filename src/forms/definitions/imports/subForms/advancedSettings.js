@@ -21,6 +21,16 @@ export default {
     idLockTemplate: {
       fieldId: 'idLockTemplate',
       visibleWhenAll: shouldInputModeBeRecords,
+      visible: r => {
+        const importType = getResourceSubType(r).type;
+
+        // this field should not be shown in graphql advanced section
+        if (importType === 'graphql' || r?.http?.formType === 'graph_ql') {
+          return false;
+        }
+
+        return true;
+      },
     },
     dataURITemplate: {
       fieldId: 'dataURITemplate',
