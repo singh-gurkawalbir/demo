@@ -1,4 +1,3 @@
-// import { makeStyles } from '@material-ui/core';
 import React from 'react';
 import PageWrapper from '../../../../components/MainComponentWrapper';
 import IntegrationTabs from '../../common/Tabs';
