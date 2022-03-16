@@ -1284,6 +1284,8 @@ const license = {
     action(actionTypes.LICENSE.NUM_ENABLED_FLOWS_RECEIVED, { response }),
   receivedLicenseEntitlementUsage: response =>
     action(actionTypes.LICENSE.ENTITLEMENT_USAGE_RECEIVED, { response }),
+  clearActionMessage: () =>
+    action(actionTypes.LICENSE.CLEAR_ACTION_MESSAGE),
 };
 const importSampleData = {
   request: (resourceId, options, refreshCache) =>

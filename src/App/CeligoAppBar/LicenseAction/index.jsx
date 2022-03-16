@@ -9,6 +9,8 @@ import NotificationToaster from '../../../components/NotificationToaster';
 import { platformLicenseActionDetails } from '../../../utils/license';
 import {PillButton, TextButton} from '../../../components/Buttons';
 import useConfirmDialog from '../../../components/ConfirmDialog';
+import RawHtml from '../../../components/RawHtml';
+import { LICENSE_UPGRADE_SUCCESS_MESSAGE } from '../../../utils/messageStore';
 
 const useStyles = makeStyles({
   inTrial: {
@@ -40,10 +42,13 @@ function LicenseAction() {
   );
 
   useEffect(() => {
-    if (platformLicenseActionMessage) {
-      enquesnackbar({ message: platformLicenseActionMessage });
-    }
-  }, [enquesnackbar, platformLicenseActionMessage]);
+    setTimeout(() => {
+      if (platformLicenseActionMessage) {
+        enquesnackbar({message: <RawHtml html={LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
+        dispatch(actions.license.clearActionMessage());
+      }
+    }, 1000);
+  }, [dispatch, enquesnackbar, platformLicenseActionMessage]);
   const canRequestUpgrade = useSelector(
     state =>
       selectors.resourcePermissions(state, 'subscriptions').requestUpgrade
@@ -143,8 +148,9 @@ function LicenseAction() {
         </NotificationToaster>
       ) : (
         <PillButton
-          fill
+          fill={!upgradeRequested}
           disableElevation
+          disabled={upgradeRequested}
           className={classes.inTrial}
           data-test={licenseActionDetails.label}
           onClick={handleClick}>

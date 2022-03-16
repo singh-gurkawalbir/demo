@@ -37,6 +37,10 @@ export default function reducer(state = {}, action) {
       case actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED:
         draft.platformLicenseActionMessage = LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE;
         break;
+      case actionTypes.LICENSE.CLEAR_ACTION_MESSAGE:
+        draft.platformLicenseActionMessage = undefined;
+        delete draft.platformLicenseActionMessage;
+        break;
 
       case actionTypes.LICENSE.NUM_ENABLED_FLOWS_RECEIVED:
         draft.numEnabledFlows = response;

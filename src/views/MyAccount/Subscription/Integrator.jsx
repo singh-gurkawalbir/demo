@@ -11,6 +11,8 @@ import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import FilledButton from '../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../components/ConfirmDialog';
+import RawHtml from '../../../components/RawHtml';
+import { LICENSE_UPGRADE_SUCCESS_MESSAGE } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -191,9 +193,10 @@ export default function Subscription() {
 
   useEffect(() => {
     if (platformLicenseActionMessage) {
-      enquesnackbar({ message: platformLicenseActionMessage });
+      enquesnackbar({message: <RawHtml html={LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
+      dispatch(actions.license.clearActionMessage());
     }
-  }, [enquesnackbar, platformLicenseActionMessage]);
+  }, [dispatch, enquesnackbar, platformLicenseActionMessage]);
 
   return (
     <>

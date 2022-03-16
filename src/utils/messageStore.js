@@ -9,6 +9,10 @@ export const FLOW_GROUP_DELETE_MESSAGE =
 export const LICENSE_UPGRADE_REQUEST_RECEIVED =
 'Thanks for your interest! We will be in touch soon.';
 export const LICENSE_UPGRADE_REQUEST = 'We will contact you to discuss your add-on request.';
+export const LICENSE_UPGRADE_SUCCESS_MESSAGE = `${LICENSE_UPGRADE_REQUEST_RECEIVED}
+      
+<a target="_blank" rel="noopener noreferrer"
+  href="/marketplace"><u>Checkout our Marketplace</u></a>  Integration Apps, templates for business process automation, and quickstart integration templates.`;
 export default {
   CONTACT_SALES_MESSAGE,
   MULTIPLE_INSTALLS,

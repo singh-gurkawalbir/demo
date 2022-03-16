@@ -19,6 +19,8 @@ import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import { TextButton, FilledButton } from '../../../components/Buttons';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import RawHtml from '../../../components/RawHtml';
+import { LICENSE_UPGRADE_SUCCESS_MESSAGE } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -194,7 +196,7 @@ export default function Endpoint() {
         },
       ],
     });
-  }, [dispatch, confirmDialog]);
+  }, [confirmDialog, dispatch]);
   const licenseEntitlementUsage = useSelector(state => selectors.getLicenseEntitlementUsage(state));
   const numberofUsedEndpoints = licenseEntitlementUsage?.production?.endpointUsage?.numConsumed;
   const numberofUsedFlows = licenseEntitlementUsage?.production?.flowUsage?.numEnabled;
@@ -227,9 +229,10 @@ export default function Endpoint() {
 
   useEffect(() => {
     if (platformLicenseActionMessage) {
-      enquesnackbar({ message: platformLicenseActionMessage });
+      enquesnackbar({message: <RawHtml html={LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
+      dispatch(actions.license.clearActionMessage());
     }
-  }, [enquesnackbar, platformLicenseActionMessage]);
+  }, [dispatch, enquesnackbar, platformLicenseActionMessage]);
 
   if (!licenseEntitlementUsage) {
     return (
