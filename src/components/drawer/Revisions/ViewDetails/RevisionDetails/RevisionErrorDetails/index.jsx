@@ -5,8 +5,12 @@ import {
   Accordion,
 } from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import ExpandMoreIcon from '../../../../../icons/ArrowDownIcon';
+import Spinner from '../../../../../Spinner';
+import { selectors } from '../../../../../../reducers';
+import actions from '../../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   accordionDetails: {
@@ -27,9 +31,26 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function RevisionErrorDetails() {
+export default function RevisionErrorDetails({ integrationId, revisionId }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [shouldExpand, setShouldExpand] = useState(true);
+
+  // selectors
+  const isErrorsFetchInProgress = useSelector(state => selectors.isRevisionErrorsFetchInProgress(state, integrationId, revisionId));
+  const isRevisionErrorsRequested = useSelector(state => selectors.isRevisionErrorsRequested(state, integrationId, revisionId));
+  const revisionErrors = useSelector(state => selectors.revisionErrors(state, integrationId, revisionId));
+  // end selectors
+
+  useEffect(() => {
+    if (!isRevisionErrorsRequested) {
+      dispatch(actions.integrationLCM.revision.fetchErrors(integrationId, revisionId));
+    }
+  }, [dispatch, integrationId, isRevisionErrorsRequested, revisionId]);
+
+  if (isErrorsFetchInProgress) {
+    return <Spinner />;
+  }
 
   return (
     <Accordion
@@ -43,7 +64,7 @@ export default function RevisionErrorDetails() {
         Errors
       </AccordionSummary>
       <AccordionDetails className={classes.accordionDetails}>
-        <div> errors </div>
+        <div> {JSON.stringify(revisionErrors)} </div>
       </AccordionDetails>
     </Accordion>
   );

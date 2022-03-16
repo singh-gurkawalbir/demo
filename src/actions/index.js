@@ -2234,6 +2234,8 @@ const integrationLCM = {
     createSnapshot: ({ integrationId, newRevisionId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.CREATE_SNAPSHOT, { integrationId, newRevisionId, revisionInfo }),
     clear: integrationId => action(actionTypes.INTEGRATION_LCM.REVISION.CLEAR, { integrationId }),
     cancel: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CANCEL, { integrationId, revisionId }),
+    fetchErrors: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.FETCH_ERRORS, { integrationId, revisionId }),
+    receivedErrors: (integrationId, revisionId, errors) => action(actionTypes.INTEGRATION_LCM.REVISION.RECEIVED_ERRORS, {integrationId, revisionId, errors }),
   },
   installSteps: {
     installStep: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, { revisionId, integrationId }),

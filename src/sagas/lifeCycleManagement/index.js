@@ -151,6 +151,23 @@ function* installStep({ revisionId }) {
   yield put(actions.integrationLCM.installSteps.completedStepInstall(revisionId));
 }
 
+function* fetchRevisionErrors({integrationId, revisionId }) {
+  // const errors = yield call(apiCallWithRetry, {
+  //   path: `/integrations/${integrationId}/revisions/${revisionId}/errors`,
+  //   opts: {
+  //     method: 'GET',
+  //   },
+  // });
+  yield delay(2000);
+  const errors = [{
+    code: 'version_error',
+    message: 'The document you are trying to update has already been updated to a newer version. This happens due to concurrent modifications on an array field in the document. Please get the latest document and try again.',
+    createdAt: '2022-03-16T15:14:37.786',
+  }];
+
+  yield put(actions.integrationLCM.revision.receivedErrors(integrationId, revisionId, errors));
+}
+
 export default [
   takeEvery(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, requestIntegrationCloneFamily),
   takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CREATE, createRevision),
@@ -160,4 +177,5 @@ export default [
   takeEvery(actionTypes.INTEGRATION_LCM.COMPARE.REVISION_REQUEST, compareRevisionChanges),
   takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CANCEL, cancelRevision),
   takeEvery(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, installStep),
+  takeEvery(actionTypes.INTEGRATION_LCM.REVISION.FETCH_ERRORS, fetchRevisionErrors),
 ];

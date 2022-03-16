@@ -4,7 +4,7 @@ import actionTypes from '../../../../actions/types';
 import { REVISION_TYPES, REVISION_CREATION_STATUS } from '../../../../utils/constants';
 
 export default (state = {}, action) => {
-  const { integrationId, type, revisionInfo, newRevisionId } = action;
+  const { integrationId, type, revisionInfo, newRevisionId, revisionId, errors } = action;
 
   if (!integrationId) return state;
 
@@ -42,15 +42,44 @@ export default (state = {}, action) => {
         if (!draft[integrationId]) {
           draft[integrationId] = {};
         }
+        if (!draft[integrationId][newRevisionId]) {
+          draft[integrationId][newRevisionId] = {};
+        }
         draft[integrationId][newRevisionId].status = REVISION_CREATION_STATUS.CREATION_IN_PROGRESS;
         break;
       case actionTypes.INTEGRATION_LCM.REVISION.CREATED:
         if (!draft[integrationId]) {
           draft[integrationId] = {};
         }
+        if (!draft[integrationId][newRevisionId]) {
+          draft[integrationId][newRevisionId] = {};
+        }
         draft[integrationId][newRevisionId].status = REVISION_CREATION_STATUS.CREATED;
         break;
-
+      case actionTypes.INTEGRATION_LCM.REVISION.FETCH_ERRORS:
+        if (!draft[integrationId]) {
+          draft[integrationId] = {};
+        }
+        if (!draft[integrationId][revisionId]) {
+          draft[integrationId][revisionId] = {};
+        }
+        draft[integrationId][revisionId].errors = {
+          status: 'requested',
+        };
+        break;
+      case actionTypes.INTEGRATION_LCM.REVISION.RECEIVED_ERRORS:
+        if (!draft[integrationId]) {
+          draft[integrationId] = {};
+        }
+        if (!draft[integrationId][revisionId]) {
+          draft[integrationId][revisionId] = {};
+        }
+        if (!draft[integrationId][revisionId].errors) {
+          draft[integrationId][revisionId].errors = {};
+        }
+        draft[integrationId][revisionId].errors.status = 'received';
+        draft[integrationId][revisionId].errors.data = errors || [];
+        break;
       default:
     }
   });
@@ -73,3 +102,20 @@ selectors.isRevisionCreationInProgress = (state, integrationId, revisionId) => {
 
   return state[integrationId][revisionId].status === REVISION_CREATION_STATUS.CREATION_IN_PROGRESS;
 };
+
+selectors.isRevisionErrorsFetchInProgress = (state, integrationId, revisionId) => {
+  if (!state || !integrationId || !revisionId || !state[integrationId]?.[revisionId]?.errors) {
+    return false;
+  }
+
+  return state[integrationId][revisionId].errors.status === 'requested';
+};
+selectors.isRevisionErrorsRequested = (state, integrationId, revisionId) => {
+  if (!state || !integrationId || !revisionId || !state[integrationId]?.[revisionId]?.errors) {
+    return false;
+  }
+
+  return !!state[integrationId][revisionId].errors.status;
+};
+
+selectors.revisionErrors = (state, integrationId, revisionId) => state?.[integrationId]?.[revisionId]?.errors?.data;
