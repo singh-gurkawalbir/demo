@@ -2,6 +2,7 @@
 import { nanoid } from 'nanoid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
+import { isVirtualRouter } from './nodeGeneration';
 
 export const handleOffset = 0;
 
@@ -18,7 +19,11 @@ const nodeSize = {
     width: 50,
     height: 50,
   },
-  terminal: {
+  terminalFree: {
+    width: 24,
+    height: 24,
+  },
+  terminalBlocked: {
     width: 24,
     height: 24,
   },
@@ -87,7 +92,7 @@ export function layoutElements(elements = []) {
       const node = graph.node(el.id);
       const size = nodeSize[el.type];
       const offsetY = ['pp', 'pg'].includes(el.type) ? 0 : handleOffset;
-      const offsetX = el.type === 'terminal' ? nodeSize.pp.width / 2 - nodeSize.terminal.width / 2 : 0;
+      const offsetX = el.type?.includes('terminal') ? nodeSize.pp.width / 2 - nodeSize[el.type].width / 2 : 0;
 
       // We are shifting the dagre node position that returns centerpoint (x,y)
       // to the top left so it matches the react-flow node anchor point (top left).
@@ -101,7 +106,7 @@ export function layoutElements(elements = []) {
       const edge = graph.edge({v: el.source, w: el.target});
       const target = nodes.find(n => n.id === el.target);
 
-      const isTerminal = target.type === 'terminal';
+      const isTerminal = target.type.includes('terminal');
 
       edges.push({
         ...el,
@@ -134,12 +139,12 @@ export function findNodeIndex(id, elements) {
 const RANGE = 20;
 const inRange = (coordinate, dropCoordinate) => (dropCoordinate - RANGE) <= coordinate && (dropCoordinate + RANGE) >= coordinate;
 const isMergableNode = (node = {}) => {
-  if (node.type === 'terminal' || node.type === 'merge') {
+  if (node.type === 'terminalFree' || node.type === 'merge') {
     return true;
   }
   // Is router node virtual?
   if (node.type === 'router' && node.data) {
-    return !node.data.routeRecordsTo && !node.data.routeRecordsUsing && (!node.data.branches || node.data.branches.length <= 1);
+    return isVirtualRouter(node.data);
   }
 
   return false;

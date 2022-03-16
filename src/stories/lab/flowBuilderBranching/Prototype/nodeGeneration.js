@@ -7,14 +7,16 @@ export const getSomePg = _exportId => ({_exportId, skipRetries: true});
 
 export const getSomePpImport = _importId =>
   ({responseMapping: {fields: [], lists: []}, type: 'import', _importId});
+export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
+
 export const generateRouterNode = router => ({
   id: router?._id || generateId(),
-  type: 'router',
+  type: isVirtualRouter(router) ? 'merge' : 'router',
   data: router,
 });
 export const generateNewTerminal = branch => ({
   id: generateId(),
-  type: 'terminal',
+  type: branch?.pageProcessors?.length !== 0 ? 'terminalFree' : 'termainalBlocked',
   draggable: branch?.pageProcessors?.length !== 0,
   data: {
     ...branch,
