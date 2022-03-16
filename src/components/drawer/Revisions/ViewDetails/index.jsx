@@ -1,19 +1,22 @@
 import React from 'react';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
+import { Tabs, Tab } from '@material-ui/core';
 import { useSelector, shallowEqual } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import DrawerContent from '../../Right/DrawerContent';
 import DrawerHeader from '../../Right/DrawerHeader';
+import DrawerFooter from '../../Right/DrawerFooter';
 import RightDrawer from '../../Right';
 import { selectors } from '../../../../reducers';
 import { REVISION_STATUS, REVISION_TYPES } from '../../../../utils/constants';
 import ViewResourceChanged from './ResourcesChanged';
 import ViewDetails from './RevisionDetails';
+import ExpandAllResourceDiff from '../ExpandAllResourceDiff';
+import ActionGroup from '../../../ActionGroup';
+import { FilledButton } from '../../../Buttons';
 
 const allTabs = {
-  changes: { type: 'changes', label: 'View resource changes' },
+  changes: { type: 'changes', label: 'View resources changed' },
   details: { type: 'details', label: 'View details'},
 };
 
@@ -35,6 +38,11 @@ const useStyles = makeStyles(theme => ({
   },
   tabHeader: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  resourceDiffContainer: {
+    margin: theme.spacing(2),
+    overflowY: 'auto',
+    height: 550, // TODO: Check with karthik
   },
 }));
 
@@ -61,6 +69,7 @@ function ViewRevisionDetailsContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const history = useHistory();
   const classes = useStyles();
+
   const { revId, mode } = match.params;
   const accessibleTabs = useSelector(state => {
     const revision = selectors.revision(state, integrationId, revId);
@@ -98,16 +107,32 @@ function ViewRevisionDetailsContent({ integrationId, parentUrl }) {
             {
             availableTabs.map(({ label, type }) =>
               <Tab key={type} label={label} id={type} value={type} />)
-        }
+            }
+            {
+              mode === 'changes' && (
+                <ActionGroup position="right">
+                  <ExpandAllResourceDiff integrationId={integrationId} />
+                </ActionGroup>
+              )
+            }
           </Tabs>
           <TabPanel value={mode} type="changes">
-            <ViewResourceChanged integrationId={integrationId} revisionId={revId} />
+            <div className={classes.resourceDiffContainer}>
+              <ViewResourceChanged integrationId={integrationId} revisionId={revId} />
+            </div>
           </TabPanel>
           <TabPanel value={mode} type="details">
             <ViewDetails integrationId={integrationId} revisionId={revId} />
           </TabPanel>
         </div>
       </DrawerContent>
+      <DrawerFooter>
+        <FilledButton
+          data-test="cancelViewChanges"
+          onClick={onClose}>
+          Cancel
+        </FilledButton>
+      </DrawerFooter>
     </>
   );
 }
