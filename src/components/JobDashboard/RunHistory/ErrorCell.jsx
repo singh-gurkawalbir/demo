@@ -9,6 +9,7 @@ import { emptyObject } from '../../../utils/constants';
 import StatusCircle from '../../StatusCircle';
 import actions from '../../../actions';
 import { getTextAfterCount } from '../../../utils/string';
+import Status from '../../Buttons/Status';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -49,10 +50,7 @@ export default function ErrorCell({
 
   if (!numOpenError) {
     return (
-      <div className={classes.button} onClick={handleErrorClick}>
-        <StatusCircle variant="success" size="mini" />
-        success
-      </div >
+      <Status variant="success" size="mini" onClick={handleErrorClick}>success</Status>
     );
   }
 

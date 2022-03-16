@@ -24,7 +24,7 @@ import GraphIcon from '../../../components/icons/GraphIcon';
 import { getTopLevelTabs } from '../../../utils/integrationApps';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const getTabs = (isUserInErrMgtTwoDotZero, isAnyIntegratorConnectionOffline) => [
+const getTabs = (isUserInErrMgtTwoDotZero, isAnyIntegrationConnectionOffline) => [
   {
     path: 'settings',
     label: 'Settings',
@@ -41,7 +41,7 @@ const getTabs = (isUserInErrMgtTwoDotZero, isAnyIntegratorConnectionOffline) => 
   {
     path: 'connections',
     label: 'Connections',
-    Icon: isAnyIntegratorConnectionOffline ? OfflineConnectionsIcon : ConnectionsIcon,
+    Icon: isAnyIntegrationConnectionOffline ? OfflineConnectionsIcon : ConnectionsIcon,
     Panel: ConnectionsPanel,
   },
   {
@@ -121,13 +121,13 @@ export function useAvailableTabs() {
     return {addOnStatus: addOnState.status,
       hasAddOns: addOnState?.addOns?.addOnMetaData?.length > 0};
   }, shallowEqual);
-  const isAnyIntegratorConnectionOffline = useSelector(state => selectors.isAnyIntegratorConnectionOffline(state, childId || integrationId));
+  const isAnyIntegrationConnectionOffline = useSelector(state => selectors.isAnyIntegrationConnectionOffline(state, childId || integrationId));
   const isParent = childId === integrationId;
 
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
 
   const availableTabs = useMemo(() => getTopLevelTabs({
-    tabs: getTabs(isUserInErrMgtTwoDotZero, isAnyIntegratorConnectionOffline),
+    tabs: getTabs(isUserInErrMgtTwoDotZero, isAnyIntegrationConnectionOffline),
     isIntegrationApp,
     isParent,
     integrationId,
@@ -136,7 +136,7 @@ export function useAvailableTabs() {
     children,
     isMonitorLevelUser,
     hideSettingsTab,
-  }), [isUserInErrMgtTwoDotZero, isAnyIntegratorConnectionOffline, isIntegrationApp, isParent, integrationId, hasAddOns, supportsChild, children, isMonitorLevelUser, hideSettingsTab]);
+  }), [isUserInErrMgtTwoDotZero, isAnyIntegrationConnectionOffline, isIntegrationApp, isParent, integrationId, hasAddOns, supportsChild, children, isMonitorLevelUser, hideSettingsTab]);
 
   return availableTabs;
 }

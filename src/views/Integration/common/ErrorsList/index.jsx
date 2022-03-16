@@ -2,7 +2,6 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 import RightDrawer from '../../../../components/drawer/Right';
@@ -21,16 +20,6 @@ import { emptyObject } from '../../../../utils/constants';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import { getTextAfterCount } from '../../../../utils/string';
 import Status from '../../../../components/Buttons/Status';
-import StatusCircle from '../../../../components/StatusCircle';
-
-const useStyles = makeStyles(theme => ({
-  button: {
-    color: theme.palette.primary.main,
-    width: '100%',
-    cursor: 'pointer',
-    display: 'block',
-  },
-}));
 
 const metadata = {
   rowKey: 'id',
@@ -95,7 +84,6 @@ const metadata = {
       Value: ({rowData}) => {
         const { flowId, integrationId, childId, id, count } = rowData;
         const history = useHistory();
-        const classes = useStyles();
         const isDataLoader = useSelector(state =>
           selectors.isDataLoader(state, flowId)
         );
@@ -118,10 +106,7 @@ const metadata = {
 
         if (!count) {
           return (
-            <div className={classes.button} onClick={handleErrorClick}>
-              <StatusCircle variant="success" size="mini" />
-              success
-            </div >
+            <Status variant="success" size="mini" onClick={handleErrorClick}>success</Status >
           );
         }
 

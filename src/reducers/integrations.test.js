@@ -454,7 +454,7 @@ describe('selectors.isParentChildIntegration', () => {
     expect(result).toEqual(false);
   });
 });
-describe('selectors.isAnyIntegratorConnectionOffline', () => {
+describe('selectors.isAnyIntegrationConnectionOffline', () => {
   const state1 = {
     data: {
       resources: {
@@ -479,22 +479,22 @@ describe('selectors.isAnyIntegratorConnectionOffline', () => {
   };
 
   test('should return true if any connection is offline in given integration', () => {
-    const result = selectors.isAnyIntegratorConnectionOffline(state1, 'integrationId');
+    const result = selectors.isAnyIntegrationConnectionOffline(state1, 'integrationId');
 
     expect(result).toEqual(true);
   });
   test('should return false if none of the connection is offline in given integration', () => {
-    const result = selectors.isAnyIntegratorConnectionOffline(state2, 'integrationId');
+    const result = selectors.isAnyIntegrationConnectionOffline(state2, 'integrationId');
 
     expect(result).toEqual(false);
   });
   test('should return false if given state in null or undefined', () => {
-    const result = selectors.isAnyIntegratorConnectionOffline();
+    const result = selectors.isAnyIntegrationConnectionOffline();
 
     expect(result).toEqual(false);
   });
   test('should return false if integration is undefined', () => {
-    const result = selectors.isAnyIntegratorConnectionOffline(state2);
+    const result = selectors.isAnyIntegrationConnectionOffline(state2);
 
     expect(result).toEqual(false);
   });

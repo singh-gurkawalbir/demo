@@ -118,9 +118,6 @@ export default {
     if (actionInProgress) return actions;
     if (retryDataKey) {
       actions.push(EditRetryData);
-    }
-
-    if (retryDataKey) {
       actions.push(Retry);
     }
     actions.push(ViewErrorDetails);
