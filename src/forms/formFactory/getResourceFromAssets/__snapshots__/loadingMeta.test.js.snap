@@ -4611,7 +4611,7 @@ Object {
                 "value": "false",
               },
               Object {
-                "label": "SuiteScript 2.0 (beta)",
+                "label": "SuiteScript 2.0",
                 "value": "true",
               },
             ],
@@ -4727,7 +4727,7 @@ Object {
                 "value": "false",
               },
               Object {
-                "label": "SuiteScript 2.0 (beta)",
+                "label": "SuiteScript 2.0",
                 "value": "true",
               },
             ],
