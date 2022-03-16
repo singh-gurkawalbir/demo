@@ -6,7 +6,7 @@ import actionTypes from '../../../actions/types';
 const defaultState = {};
 
 export default (state = defaultState, action) => {
-  const { type, resourceType, collection, integrationId, resource } = action;
+  const { type, resourceType, collection, resource } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -50,10 +50,6 @@ export default (state = defaultState, action) => {
             draft[integrationId].data[index] = resource;
           }
         }
-        break;
-
-      case actionTypes.INTEGRATION_LCM.CLEAR_REVISIONS:
-        delete draft[integrationId];
         break;
       default:
     }

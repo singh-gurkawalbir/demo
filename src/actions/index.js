@@ -2242,7 +2242,6 @@ const integrationLCM = {
   },
   revisions: {
     request: integrationId => resource.requestCollection(`integrations/${integrationId}/revisions`),
-    clear: integrationId => action(actionTypes.INTEGRATION_LCM.CLEAR_REVISIONS, { integrationId }),
   },
 };
 
