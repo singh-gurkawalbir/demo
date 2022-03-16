@@ -1,4 +1,5 @@
 import { delay, put, takeEvery, select } from 'redux-saga/effects';
+import { nanoid } from 'nanoid';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { REVISION_STATUS, REVISION_TYPES } from '../../utils/constants';
@@ -64,7 +65,7 @@ function* createRevision({ integrationId, newRevisionId}) {
   //   },
   // });
   const createdRevision = {
-    _id: '6215f13ed611afb647b2cf4b',
+    _id: nanoid(),
     description,
     _byUserId: '609276382b22fe4803a3589e',
     createdAt: new Date().toISOString(),

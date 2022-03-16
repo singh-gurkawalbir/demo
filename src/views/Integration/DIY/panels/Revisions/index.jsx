@@ -62,12 +62,13 @@ export default function Revisions({ integrationId }) {
 
     return !status || status === 'requested';
   });
+  const isRevisionsCollectionRequested = useSelector(state => !!selectors.revisionsFetchStatus(state, integrationId));
 
   useEffect(() => {
-    dispatch(actions.integrationLCM.revisions.request(integrationId));
-
-    return () => dispatch(actions.integrationLCM.revisions.clear(integrationId));
-  }, [integrationId, dispatch]);
+    if (!isRevisionsCollectionRequested) {
+      dispatch(actions.integrationLCM.revisions.request(integrationId));
+    }
+  }, [integrationId, dispatch, isRevisionsCollectionRequested]);
 
   return (
     <div className={classes.root}>

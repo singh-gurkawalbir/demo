@@ -2,7 +2,7 @@ import { REVISION_STATUS, REVISION_TYPES } from '../constants';
 import { comparer, sortJsonByKeys } from '../sort';
 
 export const DEFAULT_ROWS_PER_PAGE = 50;
-export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
+export const ROWS_PER_PAGE_OPTIONS = [2, 25, 50];
 
 export const REVISION_TYPE_OPTIONS = [{
   label: 'Pull',
@@ -73,7 +73,8 @@ export const DEFAULT_REVISION_FILTERS = {
 };
 
 export const getFilteredRevisions = (revisions = [], filters = {}) => {
-  const { createdAt, status, user, type, sort = {} } = filters;
+  const { createdAt, status, user, type, sort = {}, paging = {} } = filters;
+  const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = paging;
 
   const filteredRevisions = revisions.filter(revision => {
     if (status !== DEFAULT_OPTION && revision.status !== status) return false;
@@ -85,7 +86,9 @@ export const getFilteredRevisions = (revisions = [], filters = {}) => {
     return true;
   });
 
-  return filteredRevisions.sort(comparer(sort));
+  filteredRevisions.sort(comparer(sort));
+
+  return filteredRevisions.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
 };
 
 export const getRevisionResourceLevelChanges = (overallDiff = {}) => {

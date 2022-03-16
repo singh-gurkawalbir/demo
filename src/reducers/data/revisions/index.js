@@ -87,5 +87,4 @@ selectors.revisionInstallSteps = (state, integrationId, revisionId) => {
 
   return steps;
 };
-
 // #endregion
