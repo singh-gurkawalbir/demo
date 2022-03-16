@@ -179,14 +179,6 @@ export default function Subscription() {
       ],
     });
   }, [confirmDialog, dispatch]);
-  const onRequestTrialExtensionClick = useCallback(() => {
-    dispatch(
-      actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
-    );
-    setUpgradeRequested(true);
-
-    return dispatch(actions.license.requestUpdate('reTrial'));
-  }, [dispatch]);
   const platformLicenseActionMessage = useSelector(state =>
     selectors.platformLicenseActionMessage(state)
   );
@@ -362,19 +354,6 @@ export default function Subscription() {
                           disabled={upgradeRequested}
                          >
                           Request upgrade
-                        </FilledButton>
-                      )}
-                      {licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'request-trial-extension'
-                      ) > -1 && <span>-or-</span>}
-                      {licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'request-trial-extension'
-                      ) > -1 && (
-                        <FilledButton
-                          onClick={onRequestTrialExtensionClick}
-                          disabled={upgradeRequested}
-                         >
-                          Request trial extension
                         </FilledButton>
                       )}
                     </div>

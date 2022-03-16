@@ -47,7 +47,7 @@ function LicenseAction() {
         enquesnackbar({message: <RawHtml html={LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
         dispatch(actions.license.clearActionMessage());
       }
-    }, 1000);
+    }, 2000);
   }, [dispatch, enquesnackbar, platformLicenseActionMessage]);
   const canRequestUpgrade = useSelector(
     state =>
