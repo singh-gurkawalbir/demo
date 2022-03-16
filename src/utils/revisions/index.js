@@ -2,7 +2,7 @@ import { REVISION_STATUS, REVISION_TYPES } from '../constants';
 import { comparer, sortJsonByKeys } from '../sort';
 
 export const DEFAULT_ROWS_PER_PAGE = 50;
-export const ROWS_PER_PAGE_OPTIONS = [2, 25, 50];
+export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
 
 export const REVISION_TYPE_OPTIONS = [{
   label: 'Pull',

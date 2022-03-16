@@ -77,7 +77,7 @@ export default function RevisionDetails({ integrationId, revisionId }) {
         </Accordion>
       </div>
       {
-        revision?.status !== REVISION_STATUS.FAILED
+        revision?.status === REVISION_STATUS.FAILED
           ? (
             <div className={classes.container}>
               <RevisionErrorDetails
