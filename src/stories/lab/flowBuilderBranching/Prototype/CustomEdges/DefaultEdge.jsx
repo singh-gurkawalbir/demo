@@ -48,8 +48,15 @@ export default function DefaultEdge({
 }) {
   const classes = useStyles();
   const { elements } = useFlowContext();
-  const shouldShowLinkIcon = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
+  const hasSiblingEdges = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
+  const { sourceType, targetType, points: edgePoints } = data;
+  const isMerge = targetType === 'merge';
+  const isSource = sourceType === 'pg';
+  const isTerminal = targetType.includes('terminal');
+  const showLinkIcon = hasSiblingEdges && !isSource;
+  const showAddIcon = !isSource;
 
+  console.log(id, data, showAddIcon);
   /*
   {"points":[{"x":1250,"y":494},{"x":1350,"y":555},{"x":1587.5,"y":555},{"x":1825,"y":555},{"x":1927,"y":421.5}]}
 
@@ -61,7 +68,7 @@ export default function DefaultEdge({
   */
 
   const edgePath = useMemo(() => {
-    if (data.isTerminal) {
+    if (isTerminal) {
       const sp = getSmoothStepPath({
         sourceX,
         sourceY,
@@ -71,23 +78,14 @@ export default function DefaultEdge({
         targetPosition,
       });
 
-      // console.log(sp);
-
       return sp;
     }
 
     const points = snapPointsToHandles(
       {x: sourceX, y: sourceY},
       {x: targetX, y: targetY},
-      data.points,
+      edgePoints,
     );
-
-    // console.log(
-    //   id,
-    //   {sourceX, sourceY},
-    //   points,
-    //   {targetX, targetY},
-    // );
 
     let path;
     const current = {x: points[0].x, y: points[0].y};
@@ -121,7 +119,7 @@ export default function DefaultEdge({
       // Also note that if an edge's target is a merge node, then we always want to render
       // the x line first, as we don't want overlapping lines when multiple edges share the
       // same final y position.
-      if (i === points.length - 1 && !data.isMerge) { // last point
+      if (i === points.length - 1 && !isMerge) { // last point
         drawLine(p, 'y');
         drawLine(p, 'x');
       } else {
@@ -131,7 +129,7 @@ export default function DefaultEdge({
     });
 
     return path;
-  }, [data.isMerge, data.isTerminal, data.points, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
+  }, [edgePoints, isMerge, isTerminal, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
 
   const markerEnd = useMemo(() =>
     getMarkerEnd(arrowHeadType, markerEndId), [arrowHeadType, markerEndId]);
@@ -147,15 +145,16 @@ export default function DefaultEdge({
       />
 
       <BranchLabel id={id} branchName={data?.branch} />
+      {showAddIcon && (
+        <ForeignObject edgePath={edgePath} centerOffset={showLinkIcon ? -10 : 10}>
+          <AddNewButton edgeId={id} />
+        </ForeignObject>
+      )}
 
-      <ForeignObject edgePath={edgePath} centerOffset={shouldShowLinkIcon ? -10 : 10}>
-        <AddNewButton edgeId={id} />
-      </ForeignObject>
-
-      {shouldShowLinkIcon && (
-      <ForeignObject edgePath={edgePath} centerOffset={30}>
-        <UnlinkButton edgeId={id} />
-      </ForeignObject>
+      {showLinkIcon && (
+        <ForeignObject edgePath={edgePath} centerOffset={30}>
+          <UnlinkButton edgeId={id} />
+        </ForeignObject>
       )}
     </>
   );

@@ -104,15 +104,14 @@ export function layoutElements(elements = []) {
         }});
     } else { // these are the edges...
       const edge = graph.edge({v: el.source, w: el.target});
-      const target = nodes.find(n => n.id === el.target);
-      const isMerge = target.type === 'merge';
-      const isTerminal = target.type.includes('terminal');
+      const sourceType = nodes.find(n => n.id === el.source).type;
+      const targetType = nodes.find(n => n.id === el.target).type;
 
       edges.push({
         ...el,
         data: {
-          isTerminal,
-          isMerge,
+          sourceType,
+          targetType,
           points: edge.points,
         },
       });
