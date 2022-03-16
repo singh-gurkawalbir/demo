@@ -257,6 +257,7 @@ export default {
   'webhook.successBody': {
     label: 'Override HTTP response body for success responses',
     type: 'uri',
+    stage: 'responseMappingExtract',
     showLookup: false,
   },
 };
