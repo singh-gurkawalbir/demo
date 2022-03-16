@@ -3,7 +3,8 @@ import LoginScreen from '../../../components/LoginScreen';
 
 const urls = {
   contentUrlProd: 'https://www.celigo.com/login/display',
-  contentUrlStag: `${process.env.IO_LOGIN_PROMOTION_URL}`,
+  // eslint-disable-next-line no-undef
+  contentUrlStag: IO_LOGIN_PROMOTION_URL,
   contentUrlProdEU: 'https://www.celigo.com/login/display-eu',
   contentUrlStagEU: 'https://staging.celigo.com/login/display-eu',
   foregroundImageUrl: 'https://www.celigo.com/wp-content/uploads/g2-medal-winter-2021.svg',

@@ -8,6 +8,7 @@ import ShowMoreDrawer from '../../../components/drawer/ShowMore';
 import { FILTER_KEY } from '../../../utils/home';
 import NoResultMessageWrapper from '../../../components/NoResultMessageWrapper';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
+import { DashboardEmptyState } from './TileView/HomeCard';
 
 const useStyles = makeStyles(theme => ({
   textWrapper: {
@@ -28,7 +29,9 @@ export default function ListView() {
   const classes = useStyles();
 
   if (!totalCount) {
-    return null;
+    return (
+      <DashboardEmptyState />
+    );
   }
 
   return (
