@@ -37,13 +37,6 @@ const useStyles = makeStyles(theme => ({
           visibility: 'visible',
         },
       },
-      '&.dragging': {
-        // border: `1px dashed ${theme.palette.primary.main}`,
-      },
-      '&.drop-target': {
-        // borderTop: `1px dashed ${theme.palette.primary.main}`,
-        // borderBottom: `1px dashed ${theme.palette.primary.main}`,
-      },
       '&.drag-over-gap-bottom,&.drag-over-gap-top,&.drag-over': {
         '& .rc-tree-node-content-wrapper': {
           '&>div': {

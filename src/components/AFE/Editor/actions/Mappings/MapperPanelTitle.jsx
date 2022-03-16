@@ -35,6 +35,9 @@ const useStyles = makeStyles(theme => ({
     '& > .MuiButtonBase-root': {
       padding: 0,
     },
+    '& > :not(:last-child)': {
+      marginRight: theme.spacing(1),
+    },
     '& > :first-child': {
       marginRight: 0,
     },
@@ -152,7 +155,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
           <IconButton
             size="small"
             date-test="expandAll"
-            onClick={() => handleToggleRows(true)} >
+            onClick={() => handleToggleRows(true)}>
             <ExpandRowsIcon />
           </IconButton>
         </Tooltip >
