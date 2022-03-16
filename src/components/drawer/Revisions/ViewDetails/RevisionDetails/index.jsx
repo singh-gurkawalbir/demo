@@ -44,7 +44,7 @@ export default function RevisionDetails({ integrationId, revisionId }) {
 
     const user = users.find(user => revision?._byUserId === user.sharedWithUser._id);
 
-    if (!user) return revision._byUserId;
+    if (!user) return revision?._byUserId;
 
     return user.sharedWithUser.name || user.sharedWithUser.email;
   });

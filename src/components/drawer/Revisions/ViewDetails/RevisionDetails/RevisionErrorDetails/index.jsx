@@ -11,6 +11,7 @@ import ExpandMoreIcon from '../../../../../icons/ArrowDownIcon';
 import Spinner from '../../../../../Spinner';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
+import ErrorTable from './ErrorTable';
 
 const useStyles = makeStyles(theme => ({
   accordionDetails: {
@@ -39,7 +40,6 @@ export default function RevisionErrorDetails({ integrationId, revisionId }) {
   // selectors
   const isErrorsFetchInProgress = useSelector(state => selectors.isRevisionErrorsFetchInProgress(state, integrationId, revisionId));
   const isRevisionErrorsRequested = useSelector(state => selectors.isRevisionErrorsRequested(state, integrationId, revisionId));
-  const revisionErrors = useSelector(state => selectors.revisionErrors(state, integrationId, revisionId));
   // end selectors
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export default function RevisionErrorDetails({ integrationId, revisionId }) {
         Errors
       </AccordionSummary>
       <AccordionDetails className={classes.accordionDetails}>
-        <div> {JSON.stringify(revisionErrors)} </div>
+        <ErrorTable integrationId={integrationId} revisionId={revisionId} />
       </AccordionDetails>
     </Accordion>
   );

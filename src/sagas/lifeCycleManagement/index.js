@@ -161,11 +161,13 @@ function* fetchRevisionErrors({integrationId, revisionId }) {
   yield delay(2000);
   const errors = [{
     code: 'version_error',
-    message: 'The document you are trying to update has already been updated to a newer version. This happens due to concurrent modifications on an array field in the document. Please get the latest document and try again.',
+    message: 'The document you are trying to update has already been updated to a newer version. This happens due to concurrent modifications on an array field in the document. Please get the latest document and try again.The document you are trying to update has already been updated to a newer version. This happens due to concurrent modifications on an array field in the document. Please get the latest document and try again.',
     createdAt: '2022-03-16T15:14:37.786',
   }];
 
-  yield put(actions.integrationLCM.revision.receivedErrors(integrationId, revisionId, errors));
+  const errorsList = errors.map(error => ({...error, _id: nanoid()}));
+
+  yield put(actions.integrationLCM.revision.receivedErrors(integrationId, revisionId, errorsList));
 }
 
 export default [

@@ -119,3 +119,12 @@ selectors.isRevisionErrorsRequested = (state, integrationId, revisionId) => {
 };
 
 selectors.revisionErrors = (state, integrationId, revisionId) => state?.[integrationId]?.[revisionId]?.errors?.data;
+selectors.revisionError = (state, integrationId, revisionId, errorId) => {
+  if (!state || !integrationId || !revisionId || !errorId) {
+    return;
+  }
+  const errors = state?.[integrationId]?.[revisionId]?.errors?.data || [];
+
+  return errors.find(error => error._id === errorId);
+};
+
