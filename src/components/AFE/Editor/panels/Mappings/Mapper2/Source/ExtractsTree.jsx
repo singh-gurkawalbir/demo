@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import Tree from 'rc-tree';
 import {isEmpty} from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Divider, Typography } from '@material-ui/core';
 import {SwitcherIcon} from '../index';
 import {selectors} from '../../../../../../../reducers';
 import {filterExtractsNode, getFinalSelectedExtracts, getAllKeys} from '../../../../../../../utils/mapping';
@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     borderWidth: '0px 1px 1px 1px',
     borderColor: '#d6e4ed',
     borderStyle: 'solid',
-    overflow: 'scroll',
+    overflow: 'auto',
     maxHeight: '300px',
     boxShadow: 'none',
     borderRadius: 0,
@@ -29,8 +29,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: 14,
     lineHeight: '14px',
     color: theme.palette.secondary.light,
-    margin: theme.spacing(2),
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    margin: theme.spacing(0, 2, 2, 2),
     '& ul': {
       paddingLeft: theme.spacing(2),
       fontStyle: 'italic',
@@ -54,6 +53,7 @@ const useStyles = makeStyles(theme => ({
       height: theme.spacing(4),
       cursor: 'pointer',
       paddingLeft: theme.spacing(2),
+      alignItems: 'center',
     },
     '& .rc-tree-treenode-selected': {
       backgroundColor: theme.palette.background.paper2,
@@ -77,6 +77,9 @@ const useStyles = makeStyles(theme => ({
     '& .MuiIconButton-label': {
       width: '12px',
       height: '12px',
+    },
+    '& .rc-tree-switcher,.rc-tree-draggable-icon': {
+      margin: theme.spacing(0),
     },
   },
   treeTitle: {
@@ -162,10 +165,12 @@ const ExtractsTree = React.memo((
       onClick={e => e.stopPropagation()}
       className={classes.dropdown}>
       <div className={classes.message}>
+        <Divider />
         <ul>
           <li>Type or select source record field</li>
           {isArrayType && <li>Separate additional fields with a comma (,)</li>}
         </ul>
+        <Divider />
       </div>
 
       <Tree

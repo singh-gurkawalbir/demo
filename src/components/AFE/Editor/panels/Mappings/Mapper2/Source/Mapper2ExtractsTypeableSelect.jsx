@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
     width: theme.spacing(34),
     '& > .MuiFilledInput-multiline': {
       border: `1px solid ${theme.palette.secondary.lightest}`,
+      paddingRight: 0,
     },
     '& > div': {
       width: '100%',
@@ -38,8 +39,10 @@ const useStyles = makeStyles(theme => ({
     fontStyle: 'italic',
     color: theme.palette.secondary.light,
   },
-  test: {
-    backgroundColor: 'red',
+  textFieldWithDataType: {
+    '&> * .MuiFilledInput-input': {
+      paddingRight: theme.spacing(10),
+    },
   },
   divider: {
     marginTop: theme.spacing(1),
@@ -157,7 +160,7 @@ export default function Mapper2ExtractsTypeableSelect({
         <TextField
           {...isLoggableAttr(isLoggable)}
           onMouseMove={handleMouseOver}
-          className={clsx(classes.customTextField, {[classes.test]: srcDataType})}
+          className={clsx(classes.customTextField, {[classes.textFieldWithDataType]: srcDataType})}
           variant="filled"
           autoFocus={isFocused}
           value={inputValue}
