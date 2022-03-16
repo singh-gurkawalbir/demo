@@ -21,7 +21,8 @@ import { Background } from './Background';
 const nodeTypes = {
   pg: PgNode,
   pp: PpNode,
-  terminal: TerminalNode,
+  terminalFree: TerminalNode,
+  terminalBlocked: TerminalNode, // create new component
   router: RouterNode,
   merge: MergeNode,
 };

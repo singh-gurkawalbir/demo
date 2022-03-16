@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function PageGenerator(props) {
   const { data, id } = props;
-  const { label, connectorType } = data;
+  const { name: label, connectorType } = data;
   const classes = useStyles();
 
   const handleDelete = useHandleDeleteNode(id);

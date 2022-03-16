@@ -89,7 +89,7 @@ const generateMetadataFromNonBranchedFlow = (resourceState, flow) => {
   return clubNodesAndEdges([pgMetadata, ppMetadata]);
 };
 
-export const getRouter = (routerId, flow) => flow.routers.find(r => r._id === routerId);
+export const getRouter = (routerId, flow = {}) => flow.routers?.find(r => r._id === routerId);
 const getLastNodeId = nodes => nodes?.[nodes?.length - 1]?.id;
 const generateMergeEdge = (sourceNodes, targetNodes) => {
   const source = getLastNodeId(sourceNodes);
@@ -109,9 +109,9 @@ const mergeNodesAndEdges = metadatas => metadatas.reduce((acc, curr) => ({
 
 const isAMergeNode = (edges, routerId) => edges.find(e => e.target === routerId);
 
-const getGraphsMetadata = (resourceState, flow, routerId, isEmptyBranch) => {
+const getGraphsMetadata = (resourceState, flow, routerId, branch) => {
   if (!routerId || !getRouter(routerId, flow)) {
-    return {nodes: [generateNewTerminal(isEmptyBranch)], edges: []};
+    return {nodes: [generateNewTerminal(branch)], edges: []};
   }
   const router = getRouter(routerId, flow);
 
@@ -138,7 +138,7 @@ const getGraphsMetadata = (resourceState, flow, routerId, isEmptyBranch) => {
 
     // this refers to the next routers metadata which can lead to another graph
 
-    const ancesstorMeta = getGraphsMetadata(resourceState, flow, _nextRouterId, pageProcessors.length === 0);
+    const ancesstorMeta = getGraphsMetadata(resourceState, flow, _nextRouterId, branch);
     const branchMetaMergedWithAncesstor = mergeNodesAndEdges([branchMeta, ancesstorMeta]);
 
     // connecting router to every branch

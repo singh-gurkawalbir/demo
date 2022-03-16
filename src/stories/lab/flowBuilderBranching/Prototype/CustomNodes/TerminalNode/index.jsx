@@ -28,7 +28,7 @@ export const useIsTerminalOrMergeNodeDroppable = nodeId => {
   }
   const dragElement = selectedElements[0];
 
-  if (!['terminal', 'merge'].includes(dragElement.type)) {
+  if (!['terminalFree', 'merge'].includes(dragElement.type)) {
     return false;
   }
 

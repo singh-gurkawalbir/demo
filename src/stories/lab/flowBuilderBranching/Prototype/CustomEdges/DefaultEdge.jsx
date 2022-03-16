@@ -146,7 +146,7 @@ export default function DefaultEdge({
         markerEnd={markerEnd}
       />
 
-      <BranchLabel id={id} branchName={data?.name} />
+      <BranchLabel id={id} branchName={data?.branch} />
 
       <ForeignObject edgePath={edgePath} centerOffset={shouldShowLinkIcon ? -10 : 10}>
         <AddNewButton edgeId={id} />
