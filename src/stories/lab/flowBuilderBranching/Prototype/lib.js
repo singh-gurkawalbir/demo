@@ -4,9 +4,12 @@ import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 import { isVirtualRouter } from './nodeGeneration';
 
-export const handleOffset = 0;
+// react-flow handles by default sit just outside of the node boundary.
+// this offset is the number of pixels the left or right handle is offset from
+// the edge of this node boundary frame.
+export const handleOffset = 4;
 
-const nodeSize = {
+export const nodeSize = {
   pp: {
     width: 275,
     height: 295,
@@ -91,7 +94,7 @@ export function layoutElements(elements = []) {
     if (isNode(el)) {
       const node = graph.node(el.id);
       const size = nodeSize[el.type];
-      const offsetY = ['pp', 'pg'].includes(el.type) ? 0 : handleOffset;
+      const offsetY = 0;
       const offsetX = el.type?.includes('terminal') ? nodeSize.pp.width / 2 - nodeSize[el.type].width / 2 : 0;
 
       // We are shifting the dagre node position that returns centerpoint (x,y)

@@ -9,7 +9,7 @@ import outputFilterAction from '../../../../../views/FlowBuilder/PageProcessor/a
 import lookupTransformationAction from '../../../../../views/FlowBuilder/PageProcessor/actions/lookupTransformation_afe';
 import responseTransformationAction from '../../../../../views/FlowBuilder/PageProcessor/actions/responseTransformation_afe';
 // import responseMapping from '../../../../../views/FlowBuilder/PageProcessor/actions/responseMapping_afe';
-import AppBlockHandle from './Handles/AppBlockHandle';
+import DefaultHandle from './Handles/DefaultHandle';
 import { useHandleDeleteNode } from '../hooks';
 
 const useStyles = makeStyles(() => ({
@@ -77,7 +77,7 @@ export default function PageProcessor(props) {
 
   return (
     <div className={classes.root}>
-      <AppBlockHandle type="target" position={Position.Left} />
+      <DefaultHandle type="target" position={Position.Left} />
 
       <div className={classes.contentContainer} >
         <div className={classes.ppContainer}>
@@ -96,7 +96,7 @@ export default function PageProcessor(props) {
         </div>
       </div>
 
-      <AppBlockHandle type="source" position={Position.Right} />
+      <DefaultHandle type="source" position={Position.Right} />
     </div>
   );
 }

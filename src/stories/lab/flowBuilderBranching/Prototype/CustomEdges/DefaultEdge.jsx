@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import { getSmoothStepPath, getMarkerEnd } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
-import { handleOffset, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles } from '../lib';
+import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles } from '../lib';
 import { useFlowContext } from '../Context';
 import AddNewButton from './AddNewButton';
 import UnlinkButton from './UnlinkButton';
@@ -80,9 +80,21 @@ export default function DefaultEdge({
       return sp;
     }
 
+    const targetHandle = { x: targetX, y: targetY };
+
+    if (isMerge) {
+      targetHandle.x += handleOffset + nodeSize.merge.width / 2;
+
+      console.log({
+        source: { sourceX, sourceY },
+        target: { targetX, targetY },
+        targetHandle,
+      });
+    }
+
     const points = snapPointsToHandles(
       {x: sourceX, y: sourceY},
-      {x: targetX, y: targetY},
+      targetHandle,
       edgePoints,
     );
 
@@ -104,7 +116,7 @@ export default function DefaultEdge({
 
     points.forEach((p, i) => {
       if (i === 0) {
-        path = `M${points[0].x},${points[0].y - handleOffset} `;
+        path = `M${points[0].x},${points[0].y} `;
       } else
       // for the last point (that defines an edge), we want to draw the vertical line first so that
       // a node always connects to a horizontal line since our diagram is L-> R,
