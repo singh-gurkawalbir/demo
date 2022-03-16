@@ -23,7 +23,12 @@ function OpenPullDrawerContent({ integrationId, parentUrl }) {
   };
 
   const handleCreateRevision = formValues => {
-    dispatch(actions.integrationLCM.revision.openPull({ integrationId, newRevisionId: revId, revisionInfo: formValues }));
+    const revisionInfo = {
+      description: formValues.description,
+      integration: formValues.integration.value,
+    };
+
+    dispatch(actions.integrationLCM.revision.openPull({ integrationId, newRevisionId: revId, revisionInfo }));
     history.replace(`${parentUrl}/pull/${revId}/review`);
   };
 

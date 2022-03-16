@@ -6709,3 +6709,10 @@ selectors.currentRevisionInstallSteps = createSelector(
     return step;
   })
 );
+
+selectors.accountHasSandbox = state => {
+  const accounts = selectors.accountSummary(state);
+  const selectedAccount = accounts?.find(a => a.selected);
+
+  return !!(selectedAccount?.hasSandbox || selectedAccount?.hasConnectorSandbox);
+};
