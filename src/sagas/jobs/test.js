@@ -2577,32 +2577,25 @@ describe('requestCompletedJobCollection saga', () => {
 describe('downloadRetryData saga', () => {
   const signedURL = 'https://integrator.io';
 
-  test('should return true if api call fails', () => {
-    expectSaga(downloadRetryData, {retryId: '1'})
-      .provide([
-        [matchers.call.fn(getRequestOptions), {}],
-        [matchers.call.fn(apiCallWithRetry), throwError({message: 'fail'})],
-      ])
-      .returns(true)
-      .run();
-  });
-  test('should call openExternalUrl if response contains signedURL', () => {
-    expectSaga(downloadRetryData, {retryId: '1'})
-      .provide([
-        [matchers.call.fn(getRequestOptions), {}],
-        [matchers.call.fn(apiCallWithRetry), {signedURL}],
-      ])
-      .call(apiCallWithRetry)
-      .call(openExternalUrl, {url: signedURL})
-      .run();
-  });
-  test('should not call openExternalUrl if response does not contain signedUrl', () => {
-    expectSaga(downloadRetryData, {retryId: '1'})
-      .provide([
-        [matchers.call.fn(getRequestOptions), {}],
-        [matchers.call.fn(apiCallWithRetry), {}],
-      ])
-      .call.fn(apiCallWithRetry)
-      .run();
-  });
+  test('should return true if api call fails', () => expectSaga(downloadRetryData, {retryId: '1'})
+    .provide([
+      [matchers.call.fn(getRequestOptions), {}],
+      [matchers.call.fn(apiCallWithRetry), throwError({message: 'fail'})],
+    ])
+    .returns(true)
+    .run());
+  test('should call openExternalUrl if response contains signedURL', () => expectSaga(downloadRetryData, {retryId: '1'})
+    .provide([
+      [matchers.call.fn(getRequestOptions), {}],
+      [matchers.call.fn(apiCallWithRetry), {signedURL}],
+    ])
+    .call(apiCallWithRetry, { path: '/retries/1/signedURL', opts: { method: 'GET' } })
+    .run());
+  test('should not call openExternalUrl if response does not contain signedUrl', () => expectSaga(downloadRetryData, {retryId: '1'})
+    .provide([
+      [matchers.call.fn(getRequestOptions), {}],
+      [matchers.call.fn(apiCallWithRetry), {}],
+    ])
+    .call(apiCallWithRetry, { path: '/retries/1/signedURL', opts: { method: 'GET' } })
+    .run());
 });
