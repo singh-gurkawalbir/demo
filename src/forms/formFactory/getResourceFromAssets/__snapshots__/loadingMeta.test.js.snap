@@ -2188,11 +2188,6 @@ Object {
         "fieldId": "rdbms.password",
         "helpKey": "snowflake.connection.rdbms.password",
       },
-      "rdbms.snowflake.application": Object {
-        "id": "rdbms.snowflake.application",
-        "label": "Application",
-        "type": "text",
-      },
       "rdbms.snowflake.role": Object {
         "id": "rdbms.snowflake.role",
         "label": "User Role",
@@ -2236,7 +2231,6 @@ Object {
                 "rdbms.database",
                 "rdbms.snowflake.warehouse",
                 "rdbms.snowflake.schema",
-                "rdbms.snowflake.application",
                 "rdbms.snowflake.role",
                 "rdbms.user",
                 "rdbms.password",
@@ -2851,11 +2845,6 @@ Object {
         "fieldId": "rdbms.password",
         "helpKey": "snowflake.connection.rdbms.password",
       },
-      "rdbms.snowflake.application": Object {
-        "id": "rdbms.snowflake.application",
-        "label": "Application",
-        "type": "text",
-      },
       "rdbms.snowflake.role": Object {
         "id": "rdbms.snowflake.role",
         "label": "User Role",
@@ -2899,7 +2888,6 @@ Object {
                 "rdbms.database",
                 "rdbms.snowflake.warehouse",
                 "rdbms.snowflake.schema",
-                "rdbms.snowflake.application",
                 "rdbms.snowflake.role",
                 "rdbms.user",
                 "rdbms.password",

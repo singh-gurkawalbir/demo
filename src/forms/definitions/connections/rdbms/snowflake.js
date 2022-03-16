@@ -48,11 +48,6 @@ export default {
       type: 'text',
       label: 'Schema',
     },
-    'rdbms.snowflake.application': {
-      id: 'rdbms.snowflake.application',
-      type: 'text',
-      label: 'Application',
-    },
     'rdbms.snowflake.role': {
       id: 'rdbms.snowflake.role',
       type: 'text',
@@ -85,7 +80,6 @@ export default {
           'rdbms.database',
           'rdbms.snowflake.warehouse',
           'rdbms.snowflake.schema',
-          'rdbms.snowflake.application',
           'rdbms.snowflake.role',
           'rdbms.user',
           'rdbms.password',
