@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import UserName from './UserName';
+import UserName from '../commonCells/IntegrationUserName';
 import DateTimeDisplay from '../../DateTimeDisplay';
 import { REVISION_STATUS_LABELS, REVISION_TYPE_LABELS } from '../../../utils/revisions';
 import { REVISION_STATUS, REVISION_TYPES } from '../../../utils/constants';

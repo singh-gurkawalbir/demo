@@ -1,14 +1,12 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { selectors } from '../../../../reducers';
 import TextOverflowCell from '../../../TextOverflowCell';
+import { selectors } from '../../../../reducers';
 
-export default function UserName({ userId, integrationId }) {
-  // TODO: can reuse common cell
+export default function IntegrationUserName({ userId, integrationId }) {
   const userName = useSelector(state => {
-    const users = selectors.availableUsersList(state, integrationId);
-
-    const user = users.find(user => userId === user.sharedWithUser._id);
+    const integrationUsers = selectors.availableUsersList(state, integrationId);
+    const user = integrationUsers?.find(user => userId === user.sharedWithUser._id);
 
     if (!user) return userId;
 

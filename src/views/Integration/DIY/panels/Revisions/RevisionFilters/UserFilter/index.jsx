@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import { useParams } from 'react-router-dom';
 import CeligoSelect from '../../../../../../../components/CeligoSelect';
@@ -16,8 +16,17 @@ export default function UserFilter() {
   const usersList = useSelector(state => {
     const uniqUserIds = selectors.uniqueUserIdsFromRevisions(state, integrationId);
 
-    return integrationUsers.filter(user => uniqUserIds.includes(user.sharedWithUser._id));
-  });
+    return uniqUserIds.map(userId => {
+      const userObj = integrationUsers.find(user => user.sharedWithUser._id === userId);
+
+      if (!userObj) return { id: userId, name: userId};
+
+      return {
+        id: userId,
+        name: userObj.sharedWithUser.name || userObj.sharedWithUser.email,
+      };
+    });
+  }, shallowEqual);
   const selectedUser = useSelector(state => {
     const revisionFilter = selectors.filter(state, filterKey);
 
@@ -40,8 +49,8 @@ export default function UserFilter() {
       </MenuItem>
       {
         usersList.map(user => (
-          <MenuItem key={user.sharedWithUser._id} value={user.sharedWithUser._id} data-private>
-            {user.sharedWithUser.name || user.sharedWithUser.email}
+          <MenuItem key={user.id} value={user.id} data-private>
+            {user.name}
           </MenuItem>
         ))
       }
