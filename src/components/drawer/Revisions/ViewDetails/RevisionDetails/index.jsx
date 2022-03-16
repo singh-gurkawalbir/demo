@@ -7,6 +7,7 @@ import {
 import {makeStyles} from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import ExpandMoreIcon from '../../../../icons/ArrowDownIcon';
+import DateTimeDisplay from '../../../../DateTimeDisplay';
 import { selectors } from '../../../../../reducers';
 import { REVISION_STATUS_LABELS, REVISION_TYPE_LABELS } from '../../../../../utils/revisions';
 
@@ -60,7 +61,7 @@ export default function RevisionDetails({ integrationId, revisionId }) {
       </AccordionSummary>
       <AccordionDetails className={classes.accordionDetails}>
         <div className={classes.revisionInfoRow}>  <b> Description: </b> {revision.description}</div>
-        <div className={classes.revisionInfoRow}>  <b> Date created: </b> {revision.createdAt}</div>
+        <div className={classes.revisionInfoRow}>  <b> Date created: </b> <DateTimeDisplay dateTime={revision.createdAt} /></div>
         <div className={classes.revisionInfoRow}>  <b> Type: </b> {REVISION_TYPE_LABELS[revision.type]}</div>
         <div className={classes.revisionInfoRow}>  <b> Status: </b> {REVISION_STATUS_LABELS[revision.status]}</div>
         <div className={classes.revisionInfoRow}>  <b> Created by: </b> {userName}</div>

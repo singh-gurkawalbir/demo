@@ -1,3 +1,5 @@
+import DateTimeDisplay from '../../../../DateTimeDisplay';
+
 export default function getMetadata(revertToRevision = {}) {
   const metadata = {
     fieldMap: {
@@ -21,7 +23,7 @@ export default function getMetadata(revertToRevision = {}) {
         name: 'revertToRevisionCreatedDate',
         type: 'text',
         label: 'Revert to revision created date',
-        defaultValue: revertToRevision.createdAt,
+        defaultValue: DateTimeDisplay({dateTime: revertToRevision.createdAt}),
         disableText: true,
       },
       revertToRevisionID: {
