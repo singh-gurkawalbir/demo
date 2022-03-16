@@ -139,7 +139,7 @@ module.exports = (env, argv) => {
     // should be replaced here
     config.plugins.push(new webpack.NormalModuleReplacementPlugin(
       /^redux-logger$/,
-      './utils/dummy.js'
+      '../utils/dummy.js'
     ));
 
     if (argv.analyze) {
