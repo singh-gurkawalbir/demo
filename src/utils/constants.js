@@ -327,6 +327,7 @@ export const REST_ASSISTANTS = [
   'googlesheets',
   'googlemail',
   'googlecontacts',
+  'googlecontactspeople',
   'hubspot',
   'freshdesk',
   'harvest',
@@ -652,6 +653,7 @@ export const CONNECTORS_TO_IGNORE = [
   'constantcontactv3',
   'amazonsellingpartner',
   'ebayfinance',
+  'googlecontactspeople',
 ];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
@@ -734,10 +736,13 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
   'ebay',
   'ebayfinance',
   'amazonsellingpartner',
+  'googlecontacts',
+  'googlecontactspeople',
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];
 export const EBAY_TYPES = ['ebay', 'ebayfinance'];
+export const GOOGLE_CONTACTS_API = ['googlecontacts', 'googlecontactspeople'];
 export const POLLING_STATUS = {
   SLOW: 'slow down polling',
   RESUME: 'resume polling',

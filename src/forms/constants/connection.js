@@ -167,6 +167,7 @@ export default {
     'campaignmonitor',
     'googlesheets',
     'googlecontacts',
+    'googlecontactspeople',
     'googlemail',
     'googledrive',
     'googleanalytics',
