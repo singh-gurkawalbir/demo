@@ -72,7 +72,7 @@ describe('user reducers', () => {
     });
     test('when unlink with google request is received, clear auth type google info', () => {
       const action = {
-        type: actionTypes.UNLINKED_WITH_GOOGLE,
+        type: actionTypes.USER.PROFILE.UNLINKED_WITH_GOOGLE,
         resourceType: 'profile',
         resource: {
           email: 'someemail@gmail.com',

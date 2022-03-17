@@ -33,12 +33,12 @@ const OptionIml = ({ item, integrationId, childId, isIntegrationApp}) => {
   }
 
   return (
-    <div>
+    <>
       <span>{item.name || item._id}</span>
       {isIntegrationApp
         ? sectionName && (<span className={classes.flowGroupName}>{` | ${sectionName}`}</span>)
         : groupName && (<span className={classes.flowGroupName}>{` | ${groupName}`}</span>)}
-    </div>
+    </>
   );
 };
 export default function FlowSelector({

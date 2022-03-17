@@ -224,6 +224,7 @@ describe('runHistory in EM2.0 reducers', () => {
       expect(currState).toEqual(expectedState);
     });
   });
+
   describe('RUN_HISTORY.RECEIVED_FAMILY action', () => {
     const jobFamilyJ2 = {
       _id: 'j2',

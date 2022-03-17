@@ -2928,6 +2928,7 @@ Object {
       "application": Object {
         "defaultValue": "",
         "id": "application",
+        "isLoggable": true,
         "label": "Application",
         "name": "application",
         "placeholder": "Choose application or start typing to browse 50+ applications",
@@ -4610,7 +4611,7 @@ Object {
                 "value": "false",
               },
               Object {
-                "label": "SuiteScript 2.0 (beta)",
+                "label": "SuiteScript 2.0",
                 "value": "true",
               },
             ],
@@ -4726,7 +4727,7 @@ Object {
                 "value": "false",
               },
               Object {
-                "label": "SuiteScript 2.0 (beta)",
+                "label": "SuiteScript 2.0",
                 "value": "true",
               },
             ],
@@ -7199,6 +7200,7 @@ Object {
         "appType": "export",
         "defaultValue": [Function],
         "id": "application",
+        "isLoggable": true,
         "label": "Application",
         "name": "application",
         "placeholder": "Choose application or start typing to browse 50+ applications",
@@ -10667,6 +10669,7 @@ Object {
         "appType": "import",
         "defaultValue": "",
         "id": "application",
+        "isLoggable": true,
         "label": "Application",
         "name": "application",
         "placeholder": "Choose application or start typing to browse 50+ applications",
@@ -12678,6 +12681,7 @@ Object {
         "appType": "export",
         "defaultValue": [Function],
         "id": "application",
+        "isLoggable": true,
         "label": "Application",
         "name": "application",
         "placeholder": "Choose application or start typing to browse 50+ applications",
@@ -12801,6 +12805,7 @@ Object {
       "application": Object {
         "defaultValue": [Function],
         "id": "application",
+        "isLoggable": true,
         "label": "Application",
         "name": "application",
         "placeholder": "Choose application or start typing to browse 50+ applications",

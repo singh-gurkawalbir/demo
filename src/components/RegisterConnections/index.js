@@ -9,8 +9,9 @@ import ModalDialog from '../ModalDialog';
 import { OutlinedButton } from '../Buttons';
 
 export default function RegisterConnections({ onClose, integrationId }) {
+  const tableConfig = useSelector(state => selectors.filter(state, 'registerConnections'));
   const connectionsToReg = useSelector(state =>
-    selectors.availableConnectionsToRegister(state, integrationId)
+    selectors.availableConnectionsToRegister(state, integrationId, tableConfig)
   );
   const [selected, setSelected] = useState({});
   const dispatch = useDispatch();

@@ -20,8 +20,9 @@ export default {
     const match = useRouteMatch();
     let { integrationId } = match.params;
     const { childId } = match.params;
+    const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
 
-    integrationId = getDashboardIntegrationId(integrationId, childId);
+    integrationId = getDashboardIntegrationId(integrationId, childId, isIntegrationAppV1);
     const integrationFilterKey = `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`;
 
     return [
@@ -81,11 +82,10 @@ export default {
         Value: ({rowData: r}) => {
           const match = useRouteMatch();
 
-          return (r.numOpenError && (
-          <Status variant="error" size="mini" >
-            <Link data-test="account-dashboard-open-errors" to={`${match.url}/${r._flowId}/errorsList`}>{r.numOpenError} </Link>
-          </Status>
-          )
+          return (
+            <Status variant={r.numOpenError ? 'error' : 'success'} size="mini" >
+              <Link data-test="account-dashboard-open-errors" to={`${match.url}/${r._flowId}/errorsList`}>{r.numOpenError} </Link>
+            </Status>
           );
         },
       },

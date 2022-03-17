@@ -11,20 +11,26 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     padding: theme.spacing(1),
     backgroundColor: theme.palette.background.paper,
-    borderBottom: 'solid 1px rgb(0,0,0,0.3)',
+    borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
   },
   helpButton: {
     padding: 0,
     margin: 2,
   },
+  error: {
+    color: theme.palette.error.main,
+  },
+  warning: {
+    color: theme.palette.warning.main,
+  },
 }));
 
-export default function PanelTitle({ title, children, className, helpKey}) {
+export default function PanelTitle({ title, children, className, helpKey, titleColor}) {
   const classes = useStyles();
 
   return (
     <div className={clsx(classes.titleContainer, className)}>
-      {title ? <Typography variant="body1" component="div" className={className}>{title}</Typography> : children}
+      {title ? <Typography variant="body1" component="div" className={clsx(classes[titleColor], className)}>{title}</Typography> : children}
       {helpKey && (
         <Help
           title={title}

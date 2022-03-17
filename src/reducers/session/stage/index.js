@@ -78,7 +78,6 @@ export default (state = {}, action) => {
         }
 
         return;
-
       case actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT:
       case actionTypes.RESOURCE.STAGE_PATCH: {
         if (!newPatch || !newPatch.length) return;
@@ -131,15 +130,6 @@ export default (state = {}, action) => {
         if (scope) {
           draft[id].scope = scope;
         }
-
-        return;
-      case actionTypes.RESOURCE.CLEAR_CONFLICT:
-        if (!draft[id] || !draft[id].conflict) {
-          return;
-        }
-
-        delete draft[id].conflict;
-        delete draft[id].scope;
 
         return;
 

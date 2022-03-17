@@ -4,7 +4,6 @@ import { POLLING_STATUS } from '../../utils/constants';
 
 export const defaultState = {
   appErrored: false,
-  bannerOpened: true,
   count: 1,
 };
 // #region Reducers
@@ -13,38 +12,33 @@ export default function (state = defaultState, action) {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.APP_RELOAD:
+      case actionTypes.APP.RELOAD:
         draft.count += 1;
-        delete draft.bannerOpened;
         break;
-      case actionTypes.POLLING.SLOW:
+      case actionTypes.APP.POLLING.SLOW:
         draft.pollingStatus = POLLING_STATUS.SLOW;
         break;
-      case actionTypes.POLLING.RESUME:
+      case actionTypes.APP.POLLING.RESUME:
         draft.pollingStatus = POLLING_STATUS.RESUME;
         break;
-      case actionTypes.POLLING.STOP:
+      case actionTypes.APP.POLLING.STOP:
         draft.pollingStatus = POLLING_STATUS.STOP;
         break;
 
-      case actionTypes.APP_TOGGLE_BANNER:
-        draft.bannerOpened = !draft.bannerOpened;
-        break;
-
-      case actionTypes.APP_ERRORED:
+      case actionTypes.APP.ERRORED:
         draft.appErrored = true;
         break;
 
-      case actionTypes.APP_CLEAR_ERROR:
+      case actionTypes.APP.CLEAR_ERROR:
         delete draft.appErrored;
         break;
-      case actionTypes.UI_VERSION_UPDATE:
+      case actionTypes.APP.UI_VERSION_UPDATE:
         if (!draft.initVersion) {
           draft.initVersion = version;
         }
         draft.version = version;
         break;
-      case actionTypes.USER_ACCEPTED_ACCOUNT_TRANSFER:
+      case actionTypes.APP.USER_ACCEPTED_ACCOUNT_TRANSFER:
         draft.userAcceptedAccountTransfer = true;
         break;
       default:
@@ -56,12 +50,6 @@ export default function (state = defaultState, action) {
 
 // #region Selectors
 export const selectors = {};
-
-selectors.bannerOpened = state => {
-  if (!state) return true;
-
-  return !!state.bannerOpened;
-};
 
 selectors.reloadCount = state => {
   if (!state) return 0;

@@ -626,6 +626,8 @@ export default {
   'orderful.connection.http.unencrypted.version': 'Please enter the version of your Orderful account.',
   'orderful.connection.http.auth.token.token':
 'Please enter your API key here.Log into your Orderful Account->Settings > API Credentials, you can view your API token.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'happyreturns.connection.http.auth.token.token':
+'Enter the API key provided by Happy Returns.<br><b>Note: </b>Contact Happy Returns to get the API key.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'gorgias.connection.gorgiasSubdomain': 'Please enter your Gorgias subdomain. For example, in https://temp-portal.gorgias.com \'temp-portal\' is the subdomain.',
   'gorgias.connection.http.auth.basic.username':
 'Please enter the Username of your Gorgias account',
@@ -2295,6 +2297,8 @@ When you select <b>Apply only the first row’s value and map the Visits</b>, th
   'afe.mappings.output': 'The output area shows the complete data set that will be sent to the import application, after the mapping has been applied.',
   'afe.responseMappings.output': 'The output area shows the new source record data after the import response has been added or merged.',
   'afe.lookupMappings.output': 'The output area shows the new source record data after the lookup data has been added or merged.',
+  'afe.mappings.netsuite.assistant': 'The NetSuite Mapping Assistant emulates your NetSuite account, displaying a standard form with only the visible fields. Click a destination field to be mapped, and then select the field in the Assistant to populate your import mapping with the NetSuite (path and) field name.',
+  'afe.mappings.salesforce.assistant': 'The Salesforce Mapping Assistant emulates your Salesforce account, displaying a standard form with only the visible fields. Click a destination field to be mapped, and then select the field in the Assistant to populate your import mapping with the Salesforce (path and) field name.',
   'mapping.suitescript.netsuite.lookup.searchField': 'Field name that is provided to the lookups defined, using this field name the respective field from the record will be extracted out and provided for the respective field in the import system.',
   'mapping.suitescript.lookup.failWhenUniqueMatchNotFound': 'When this flag is set, if no results are found or the dynamic lookup fails, the lookup will silently fail(return empty string). Similarly, if multiple results are found (dynamic lookup) then the first value is chosen. In other words, if allowFailures is set to true, then no errors will be raised and the default lookup value will be used if the lookup fails.',
   'mapping.lookup.default': 'This holds the default value to be set for the extract field.',

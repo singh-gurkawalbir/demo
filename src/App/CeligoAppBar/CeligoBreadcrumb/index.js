@@ -133,6 +133,7 @@ const routes = [
       { path: '/users', breadcrumb: 'Users' },
       { path: '/auditlog', breadcrumb: 'Audit log' },
       { path: '/notifications', breadcrumb: 'Notifications' },
+      { path: '/analytics', breadcrumb: 'Analytics' },
       {
         path: '/admin',
         breadcrumb: 'Admin',
@@ -176,6 +177,23 @@ const routes = [
   {
     path: getRoutePath('/templates/:integrationAppName/:integrationId'),
     breadcrumb: IntegrationCrumb,
+    childRoutes: [
+      {
+        path: '/flows/sections/:sectionId',
+        breadcrumb: FlowGroupCrumb,
+        childRoutes: [
+          ...flowBuilderRoutes,
+        ],
+      },
+      { path: '/dashboard', breadcrumb: 'Dashboard' },
+      { path: '/connections', breadcrumb: 'Connections' },
+      { path: '/users', breadcrumb: 'Users' },
+      { path: '/auditlog', breadcrumb: 'Audit log' },
+      { path: '/notifications', breadcrumb: 'Notifications' },
+      { path: '/admin', breadcrumb: 'Admin' },
+      { path: '/analytics', breadcrumb: 'Analytics' },
+      ...flowBuilderRoutes,
+    ],
   },
   { path: getRoutePath('/templates'), breadcrumb: 'Templates' },
 
