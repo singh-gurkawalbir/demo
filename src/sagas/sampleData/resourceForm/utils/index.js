@@ -62,7 +62,7 @@ export function* _fetchResourceInfoFromFormKey({ formKey }) {
  * Checks if the constructed body from formValues has same file type as saved resource
  * and if body has sampleData
  */
-function* _hasSampleDataOnResource({ formKey }) {
+export function* _hasSampleDataOnResource({ formKey }) {
   const { resourceObj, resourceId, resourceType } = yield call(_fetchResourceInfoFromFormKey, { formKey });
   const resource = yield select(selectors.resource, resourceType, resourceId);
 
