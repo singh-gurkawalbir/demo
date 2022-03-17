@@ -49,6 +49,23 @@ export const appTypeToAdaptorType = {
   dynamodb: 'Dynamodb',
 };
 
+// the methods rdbmsSubTypeToAppType and rdbmsAppTypeToSubType are used to find rdbms subtype from the app.type of the application or vice-versa
+export const rdbmsSubTypeToAppType = rdbmsSubType => {
+  if (rdbmsSubType === 'bigquery') {
+    return 'bigquerydatawarehouse';
+  }
+
+  return rdbmsSubType;
+};
+
+export const rdbmsAppTypeToSubType = appType => {
+  if (appType === 'bigquerydatawarehouse') {
+    return 'bigquery';
+  }
+
+  return appType;
+};
+
 export const adaptorTypeMap = {
   NetSuiteExport: 'netsuite',
   NetSuiteImport: 'netsuite',

@@ -886,7 +886,7 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Snowflake database that you want to connect.',
   'snowflake.connection.rdbms.user': 'Username to connect to Snowflake.',
   'snowflake.connection.rdbms.password': 'Password to connect to Snowflake.',
-  'connection.rdbms.bigquery.projectId': 'The unique identifier for the BigQuery project.',
+  'connection.rdbms.bigquery.projectId': 'The unique identifier for the BigQuery project in the Google Cloud account.',
   'connection.rdbms.bigquery.clientEmail': 'The email address for the Google Cloud service account used for authentication.',
   'connection.rdbms.bigquery.privateKey': 'The private key for the Google Cloud service account used for authentication.',
   'connection.rdbms.bigquery.dataset': 'The name of the dataset containing the tables and views being accessed.',

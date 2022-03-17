@@ -7,9 +7,31 @@ export default {
     value = {},
     extractFields,
     isGroupedSampleData,
+    importConnectionResource,
   }) => {
     const { generate, extract } = value;
     const extractfieldsOpts = [];
+
+    // As of now, we are not showing the lookup option for BigQuery imports
+    // These imports does not support the lookup fields
+    const fieldMappingTypeOptions = importConnectionResource?.rdbms?.type === 'bigquery' ? [
+      {
+        items: [
+          { label: 'Standard', value: 'standard' },
+          { label: 'Hard-Coded', value: 'hardCoded' },
+          { label: 'Multi-Field', value: 'multifield' },
+        ],
+      },
+    ] : [
+      {
+        items: [
+          { label: 'Standard', value: 'standard' },
+          { label: 'Hard-Coded', value: 'hardCoded' },
+          { label: 'Lookup', value: 'lookup' },
+          { label: 'Multi-Field', value: 'multifield' },
+        ],
+      },
+    ];
 
     if (extractFields) {
       if (isGroupedSampleData && generate.indexOf('[*].') !== -1) {
@@ -73,16 +95,7 @@ export default {
           fullWidth: true,
           helpKey: 'mapping.fieldMappingType',
           noApi: true,
-          options: [
-            {
-              items: [
-                { label: 'Standard', value: 'standard' },
-                { label: 'Hard-Coded', value: 'hardCoded' },
-                { label: 'Lookup', value: 'lookup' },
-                { label: 'Multi-Field', value: 'multifield' },
-              ],
-            },
-          ],
+          options: fieldMappingTypeOptions,
         },
         functions: {
           id: 'functions',

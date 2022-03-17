@@ -1,6 +1,7 @@
 import {applicationsList, applicationsPlaceHolderText} from '../../../../constants/applications';
 import { getFilterExpressionForAssistant } from '../../../../utils/connections';
 import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../../utils/constants';
+import { rdbmsAppTypeToSubType } from '../../../../utils/resource';
 
 const visibleWhen = [
   {
@@ -114,7 +115,7 @@ export default {
       const expression = [];
 
       if (RDBMS_TYPES.includes(app.type)) {
-        expression.push({ 'rdbms.type': app.type === 'bigquerydatawarehouse' ? 'bigquery' : app.type });
+        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(app.type) });
       } else if (app.type === 'rest') {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
       } else if (app.type === 'http') {

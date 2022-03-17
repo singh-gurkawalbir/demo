@@ -71,6 +71,7 @@ import {
   isQueryBuilderSupported,
   filterAndSortResources,
   getUserAccessLevelOnConnection,
+  rdbmsSubTypeToAppType,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -5216,7 +5217,7 @@ selectors.applicationType = (state, resourceType, id) => {
       getStagedValue('/_connectionId') || (resourceObj?._connectionId)
     );
 
-    return connection && connection.rdbms && connection.rdbms.type;
+    return connection && connection.rdbms && rdbmsSubTypeToAppType(connection.rdbms.type);
   }
 
   if (adaptorType?.toUpperCase().startsWith('HTTP') && resourceObj?.http?.formType === 'rest' && !assistant) {

@@ -136,6 +136,7 @@ export default {
     'bartender',
     'jazzhr',
     'segment',
+    'bigquerydatawarehouse',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

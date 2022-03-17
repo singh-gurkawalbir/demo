@@ -1,5 +1,5 @@
 import { URI_VALIDATION_PATTERN, RDBMS_TYPES} from '../../../utils/constants';
-import { isNewId, getDomainUrl, getAssistantFromResource } from '../../../utils/resource';
+import { isNewId, getDomainUrl, getAssistantFromResource, rdbmsSubTypeToAppType } from '../../../utils/resource';
 import { applicationsList} from '../../../constants/applications';
 import { getConstantContactVersion } from '../../../utils/connections';
 
@@ -15,7 +15,7 @@ export default {
         { _id: { $ne: r._id } },
       ];
 
-      if (RDBMS_TYPES.includes(r.type)) {
+      if (RDBMS_TYPES.includes(rdbmsSubTypeToAppType(r.type))) {
         expression.push({ 'rdbms.type': r.type });
       } else {
         // Should not borrow concurrency for ['ftp', 'as2', 's3']
@@ -81,7 +81,7 @@ export default {
       }
       const applications = applicationsList();
       let application = getAssistantFromResource(r) ||
-      (r.type === 'rdbms' ? r.rdbms.type : r.type);
+      (r.type === 'rdbms' ? rdbmsSubTypeToAppType(r.rdbms.type) : r.type);
 
       if (r.type === 'http' && r.http?.formType === 'rest') {
         application = 'rest';
@@ -243,6 +243,7 @@ export default {
   'rdbms.bigquery.privateKey': {
     fieldId: 'rdbms.bigquery.privateKey',
     label: 'Private key',
+    multiline: true,
     type: 'text',
     required: true,
     inputType: 'password',
