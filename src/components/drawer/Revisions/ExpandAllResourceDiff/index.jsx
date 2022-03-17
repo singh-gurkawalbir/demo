@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import IconButton from '@material-ui/core/IconButton';
 import ExpandWindowIcon from '../../../icons/ExpandWindowIcon';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+import TextButton from '../../../Buttons/TextButton';
+import CollapseWindowIcon from '../../../icons/CollapseWindowIcon';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   expand: {
-    minWidth: 110,
     display: 'flex',
     alignItems: 'center',
+    marginRight: theme.spacing(2),
   },
 }));
 
@@ -30,14 +31,14 @@ export default function ExpandAllResourceDiff({ integrationId }) {
 
   return (
     <div className={classes.expand}>
-      <IconButton
+      <TextButton
+        startIcon={isDiffExpanded ? <CollapseWindowIcon /> : <ExpandWindowIcon />}
         size="small"
         data-test="expandAll"
         disabled={isResourceComparisonInProgress}
         onClick={handleToggleExpand}>
-        <ExpandWindowIcon />
-      </IconButton>
-      {isDiffExpanded ? 'Collapse all' : 'Expand all'}
+        {isDiffExpanded ? 'Collapse all' : 'Expand all'}
+      </TextButton>
     </div>
   );
 }

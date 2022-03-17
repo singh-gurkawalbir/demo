@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../Right';
@@ -13,6 +14,12 @@ import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import { TextButton } from '../../../Buttons';
 import Spinner from '../../../Spinner';
 
+const useStyles = makeStyles(theme => ({
+  inProgressSpinner: {
+    marginRight: theme.spacing(0.5),
+    height: theme.spacing(2),
+  },
+}));
 const metadata = {
   fieldMap: {
     description: {
@@ -26,6 +33,7 @@ const metadata = {
 };
 
 function CreateSnapshotDrawerContent({ integrationId, parentUrl }) {
+  const classes = useStyles();
   const match = useRouteMatch();
   const { revId } = match.params;
   const history = useHistory();
@@ -62,13 +70,13 @@ function CreateSnapshotDrawerContent({ integrationId, parentUrl }) {
           formKey={formKey}
           onClick={handleCreateSnapshot}
         >
-          Next { isSnapshotCreationInProgress ? <Spinner size={12} /> : null }
+          { isSnapshotCreationInProgress ? <Spinner size="small" className={classes.inProgressSpinner} /> : null } Create
         </DynaSubmit>
         <TextButton
-          data-test="cancelCreatePull"
+          data-test="cancelSnapshot"
           disabled={isSnapshotCreationInProgress}
           onClick={onClose}>
-          Cancel
+          Close
         </TextButton>
       </DrawerFooter>
     </>

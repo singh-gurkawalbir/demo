@@ -28,7 +28,7 @@ export default function ResourcesChanged({ integrationId, revisionId }) {
   }, [dispatch, integrationId, revisionId]);
 
   if (isResourceComparisonInProgress) {
-    return <Spinner />;
+    return <Spinner centerAll />;
   }
 
   return (

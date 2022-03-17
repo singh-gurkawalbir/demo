@@ -12,7 +12,7 @@ import CeligoDivider from '../../../../CeligoDivider';
 import RevisionsGuide from '../../RevisionsGuide';
 import ExpandAllResourceDiff from '../../ExpandAllResourceDiff';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   drawerHeaderActions: {
     width: '100%',
     display: 'flex',
@@ -22,6 +22,11 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     marginLeft: 5,
   },
+  drawerHeaderActionsGroup: {
+    '& > :not(:last-child)': {
+      marginRight: theme.spacing(1),
+    },
+  },
 }));
 
 const Conflicts = ({count}) => {
@@ -29,7 +34,7 @@ const Conflicts = ({count}) => {
 
   return (
     <>
-      <CeligoDivider position="left" />
+      <CeligoDivider position="right" />
       <div className={classes.conflictStatus}>
         <StatusCircle variant={count ? 'error' : 'success'} size="mini" />
         <span>{getTextAfterCount('conflict', count)}</span>
@@ -51,7 +56,7 @@ export default function ReviewHeaderActions({ numConflicts, integrationId, revId
     <>
       <div className={classes.drawerHeaderActions}>
         { !isResourceComparisonInProgress && <Conflicts count={numConflicts} /> }
-        <ActionGroup position="right">
+        <ActionGroup position="right" className={classes.drawerHeaderActionsGroup}>
           <IconButton
             disabled={isResourceComparisonInProgress}
             size="small"
@@ -59,7 +64,7 @@ export default function ReviewHeaderActions({ numConflicts, integrationId, revId
             onClick={handleRefresh}>
             <RefreshIcon />
           </IconButton>
-          <CeligoDivider />
+          <CeligoDivider position="right" />
           <ExpandAllResourceDiff integrationId={integrationId} />
           <RevisionsGuide />
         </ActionGroup>

@@ -1,23 +1,22 @@
 import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton } from '@material-ui/core';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../../Right';
-import ActionGroup from '../../../../ActionGroup';
 import DrawerHeader from '../../../Right/DrawerHeader';
 import DrawerContent from '../../../Right/DrawerContent';
 import DrawerFooter from '../../../Right/DrawerFooter';
-import { TextButton } from '../../../../Buttons';
+import { TextButton, FilledButton } from '../../../../Buttons';
 import CancelIcon from '../../../../icons/CancelIcon';
 import InstallSteps from '../../InstallSteps';
 import useCancelRevision from '../../hooks/useCancelRevision';
+import CeligoDivider from '../../../../CeligoDivider';
 
 const useStyles = makeStyles(theme => ({
-  container: {
-    width: theme.spacing(11),
-  },
   icon: {
     marginRight: theme.spacing(0.5),
+  },
+  drawerHeaderWrapper: {
+    alignItems: 'center',
   },
 }));
 
@@ -35,27 +34,25 @@ function MergePullDrawerContent({ parentUrl, integrationId }) {
 
   return (
     <>
-      <DrawerHeader title="Review changes " handleClose={onClose}>
-        <ActionGroup>
-          <IconButton
-            size="small"
-            className={classes.container}
-            data-test="expandAll"
-            onClick={handleCancel}>
-            <CancelIcon className={classes.icon} />
-            <Typography variant="body2"> Cancel merge</Typography>
-          </IconButton>
-        </ActionGroup>
+      <DrawerHeader title="Review changes" handleClose={onClose} className={classes.drawerHeaderWrapper}>
+        <TextButton
+          startIcon={<CancelIcon />}
+          size="small"
+          data-test="expandAll"
+          onClick={handleCancel}>
+          Cancel merge
+        </TextButton>
+        <CeligoDivider position="right" />
       </DrawerHeader>
       <DrawerContent>
         <InstallSteps integrationId={integrationId} revisionId={revId} />
       </DrawerContent>
       <DrawerFooter>
-        <TextButton
-          data-test="cancelCreatePull"
+        <FilledButton
+          data-test="cancelMerge"
           onClick={onClose}>
-          Cancel
-        </TextButton>
+          Close
+        </FilledButton>
       </DrawerFooter>
     </>
   );

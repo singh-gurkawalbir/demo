@@ -15,6 +15,23 @@ const getDiffValues = (diff, resourceType) => {
 
 export default function DiffPanel({ resourceDiff }) {
   // const codeFoldMessageRenderer = p1 => `(Our custom code with styles) Expand ${p1} lines...`;
+  const newStyles = {
+    titleBlock: {
+      backgroundColor: '#F8FAFF',
+      borderBottom: 'none',
+      padding: '8px',
+      '& pre': {
+        lineHeight: 1,
+      },
+      '&:last-child': {
+        borderLeft: '1px solid #D6E4ED',
+      },
+    },
+    contentText: {
+      fontFamily: 'source sans pro semibold',
+      color: '#677A89',
+    },
+  };
 
   return (
     <>
@@ -22,7 +39,9 @@ export default function DiffPanel({ resourceDiff }) {
         // codeFoldMessageRenderer={codeFoldMessageRenderer}
         compareMethod={DiffMethod.WORDS}
         {...getDiffValues(resourceDiff)}
-      />
+        leftTitle="Before pull"
+        rightTitle="After pull"
+        styles={newStyles} />
       <Conflicts conflicts={resourceDiff.conflicts} />
     </>
   );

@@ -3,6 +3,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   Accordion,
+  Typography,
 } from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import React, { useState } from 'react';
@@ -16,7 +17,8 @@ import RevisionErrorDetails from './RevisionErrorDetails';
 const useStyles = makeStyles(theme => ({
   accordionDetails: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-    display: 'block',
+    flexDirection: 'column',
+    padding: theme.spacing(2),
   },
   accordionSummary: {
     width: '100%',
@@ -29,6 +31,9 @@ const useStyles = makeStyles(theme => ({
   },
   revisionInfoRow: {
     marginBottom: theme.spacing(2),
+    '&:last-child': {
+      marginBottom: 0,
+    },
   },
   container: {
     margin: theme.spacing(2),
@@ -67,12 +72,12 @@ export default function RevisionDetails({ integrationId, revisionId }) {
             General
           </AccordionSummary>
           <AccordionDetails className={classes.accordionDetails}>
-            <div className={classes.revisionInfoRow}>  <b> Description: </b> {revision.description}</div>
-            <div className={classes.revisionInfoRow}>  <b> Date created: </b> <DateTimeDisplay dateTime={revision.createdAt} /></div>
-            <div className={classes.revisionInfoRow}>  <b> Type: </b> {REVISION_TYPE_LABELS[revision.type]}</div>
-            <div className={classes.revisionInfoRow}>  <b> Status: </b> {REVISION_STATUS_LABELS[revision.status]}</div>
-            <div className={classes.revisionInfoRow}>  <b> Created by: </b> {userName}</div>
-            <div className={classes.revisionInfoRow}>  <b> Revision ID: </b> {revision._id}</div>
+            <Typography variant="body2" className={classes.revisionInfoRow}><b>Description:</b> {revision.description}</Typography>
+            <Typography variant="body2" className={classes.revisionInfoRow}><b>Date created:</b> <DateTimeDisplay dateTime={revision.createdAt} /></Typography>
+            <Typography variant="body2" className={classes.revisionInfoRow}><b>Type:</b> {REVISION_TYPE_LABELS[revision.type]}</Typography>
+            <Typography variant="body2" className={classes.revisionInfoRow}><b>Status:</b> {REVISION_STATUS_LABELS[revision.status]}</Typography>
+            <Typography variant="body2" className={classes.revisionInfoRow}><b>Created by:</b> {userName}</Typography>
+            <Typography variant="body2" className={classes.revisionInfoRow}><b>Revision ID:</b> {revision._id}</Typography>
           </AccordionDetails>
         </Accordion>
       </div>

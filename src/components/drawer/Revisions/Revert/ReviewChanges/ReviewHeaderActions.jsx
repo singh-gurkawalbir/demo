@@ -10,15 +10,15 @@ import ActionGroup from '../../../../ActionGroup';
 import CeligoDivider from '../../../../CeligoDivider';
 import RevisionsGuide from '../../RevisionsGuide';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   drawerHeaderActions: {
     width: '100%',
     display: 'flex',
   },
   expand: {
-    minWidth: 110,
     display: 'flex',
     alignItems: 'center',
+    marginRight: theme.spacing(2),
   },
 }));
 

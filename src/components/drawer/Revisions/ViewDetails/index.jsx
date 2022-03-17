@@ -33,16 +33,17 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
-    borderTop: 'none',
     borderBottom: 'none',
+    overflowY: 'auto',
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
   tabHeader: {
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    '& .MuiTab-root': {
+      minWidth: 'auto',
+    },
   },
   resourceDiffContainer: {
     margin: theme.spacing(2),
-    overflowY: 'auto',
-    height: 550, // TODO: Check with karthik
   },
 }));
 
@@ -105,8 +106,10 @@ function ViewRevisionDetailsContent({ integrationId, parentUrl }) {
             indicatorColor="primary"
         >
             {
-            availableTabs.map(({ label, type }) =>
-              <Tab key={type} label={label} id={type} value={type} />)
+            availableTabs.map(({ label, type }) => (
+              <Tab
+                key={type} label={label} id={type} value={type} />
+            ))
             }
             {
               mode === 'changes' && (
@@ -144,7 +147,7 @@ export default function ViewRevisionDetails({ integrationId }) {
       path="view/:revId/mode/:mode"
       variant="temporary"
       height="tall"
-      width="full">
+      width="xl">
       <ViewRevisionDetailsContent integrationId={integrationId} parentUrl={match.url} />
     </RightDrawer>
   );

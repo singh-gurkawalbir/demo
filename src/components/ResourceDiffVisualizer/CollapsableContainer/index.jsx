@@ -10,8 +10,9 @@ import ExpandMoreIcon from '../../icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
   accordionDetails: {
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-    display: 'block',
+    borderTop: 'none',
+    flexDirection: 'column',
+    padding: theme.spacing(0, 2, 2),
   },
   accordionSummary: {
     width: '100%',
