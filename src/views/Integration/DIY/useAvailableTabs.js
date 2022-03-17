@@ -6,6 +6,7 @@ import FlowsIcon from '../../../components/icons/FlowsIcon';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
+import OfflineConnectionsIcon from '../../../components/icons/OfflineConnectionsIcon';
 import SingleUserIcon from '../../../components/icons/SingleUserIcon';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import AuditLogPanel from './panels/AuditLog';
@@ -23,7 +24,7 @@ import GraphIcon from '../../../components/icons/GraphIcon';
 import { getTopLevelTabs } from '../../../utils/integrationApps';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const getTabs = isUserInErrMgtTwoDotZero => [
+const getTabs = (isUserInErrMgtTwoDotZero, isAnyIntegrationConnectionOffline) => [
   {
     path: 'settings',
     label: 'Settings',
@@ -40,7 +41,7 @@ const getTabs = isUserInErrMgtTwoDotZero => [
   {
     path: 'connections',
     label: 'Connections',
-    Icon: ConnectionsIcon,
+    Icon: isAnyIntegrationConnectionOffline ? OfflineConnectionsIcon : ConnectionsIcon,
     Panel: ConnectionsPanel,
   },
   {
@@ -120,13 +121,13 @@ export function useAvailableTabs() {
     return {addOnStatus: addOnState.status,
       hasAddOns: addOnState?.addOns?.addOnMetaData?.length > 0};
   }, shallowEqual);
-
+  const isAnyIntegrationConnectionOffline = useSelector(state => selectors.isAnyIntegrationConnectionOffline(state, childId || integrationId));
   const isParent = childId === integrationId;
 
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
 
   const availableTabs = useMemo(() => getTopLevelTabs({
-    tabs: getTabs(isUserInErrMgtTwoDotZero),
+    tabs: getTabs(isUserInErrMgtTwoDotZero, isAnyIntegrationConnectionOffline),
     isIntegrationApp,
     isParent,
     integrationId,
@@ -135,7 +136,7 @@ export function useAvailableTabs() {
     children,
     isMonitorLevelUser,
     hideSettingsTab,
-  }), [children, hasAddOns, hideSettingsTab, integrationId, isIntegrationApp, isUserInErrMgtTwoDotZero, isMonitorLevelUser, isParent, supportsChild]);
+  }), [isUserInErrMgtTwoDotZero, isAnyIntegrationConnectionOffline, isIntegrationApp, isParent, integrationId, hasAddOns, supportsChild, children, isMonitorLevelUser, hideSettingsTab]);
 
   return availableTabs;
 }

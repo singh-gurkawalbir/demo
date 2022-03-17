@@ -9,6 +9,7 @@ import { emptyObject } from '../../../utils/constants';
 import StatusCircle from '../../StatusCircle';
 import actions from '../../../actions';
 import { getTextAfterCount } from '../../../utils/string';
+import Status from '../../Buttons/Status';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -48,7 +49,9 @@ export default function ErrorCell({
   }, [_flowId, _flowJobId, dispatch, flowBuilderTo, history, id, job]);
 
   if (!numOpenError) {
-    return '0 errors';
+    return (
+      <Status variant="success" size="mini" onClick={handleErrorClick}>success</Status>
+    );
   }
 
   return (

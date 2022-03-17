@@ -5843,6 +5843,16 @@ selectors.mkIsAnyFlowConnectionOffline = () => {
   );
 };
 
+selectors.isAnyIntegrationConnectionOffline = (state, integrationId) => {
+  const integration = selectors.resource(state, 'integrations', integrationId);
+  const connections = selectors.resourceList(state, {
+    type: 'connections',
+  }).resources;
+  const connectionIds = integration?._registeredConnectionIds || emptyArray;
+
+  return connections.some(c => connectionIds.includes(c._id) && c.offline);
+};
+
 selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
   const flowsState = state && state.session && state.session.flowData;
   const exports = selectors.resourceList(state, {

@@ -1,6 +1,7 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import openExternalUrl from '../../utils/window';
+import {getParsedMessage} from '../../utils/string';
 import RawHtml from '../RawHtml';
 import { TextButton } from '../Buttons';
 
@@ -14,6 +15,7 @@ function isValidURL(url) {
   return url.indexOf('http://') === 0 || url.indexOf('https://') === 0;
 }
 
+const options = { allowedTags: ['a'] };
 export default function JobErrorMessage({
   message,
   exportDataURI,
@@ -48,7 +50,7 @@ export default function JobErrorMessage({
 
   return (
     <>
-      <RawHtml className={classes.jobErrorMessage} html={message} options={{ allowedTags: ['a'] }} />
+      <RawHtml className={classes.jobErrorMessage} html={getParsedMessage(message)} options={options} />
       <div>
         {exportRecordLink && (
           <TextButton

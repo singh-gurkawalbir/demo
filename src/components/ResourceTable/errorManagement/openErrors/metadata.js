@@ -103,10 +103,10 @@ export default {
 
     if (actionInProgress) return [];
     const actions = [
+      ...(retryDataKey ? [EditRetryData] : []),
       Resolve,
       ...(retryDataKey ? [Retry] : []),
       ViewErrorDetails,
-      ...(retryDataKey ? [EditRetryData] : []),
       // IO-19304, for errors occuring at FTP bridge, retry data returned will be metadata and not actual retry data,
       // hence show download option
       ...(retryDataKey && source === 'ftp_bridge' ? [DownloadRetryData] : []),
