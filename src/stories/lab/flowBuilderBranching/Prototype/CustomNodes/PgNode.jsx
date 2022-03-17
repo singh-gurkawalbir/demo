@@ -5,8 +5,8 @@ import AppBlock from '../../../../../views/FlowBuilder/AppBlock';
 import exportHooksAction from '../../../../../views/FlowBuilder/PageGenerator/actions/exportHooks';
 import transformationAction from '../../../../../views/FlowBuilder/PageGenerator/actions/transformation_afe';
 import exportFilterAction from '../../../../../views/FlowBuilder/PageGenerator/actions/exportFilter_afe';
-import AppBlockHandle from './Handles/AppBlockHandle';
 import { useHandleDeleteNode } from '../hooks';
+import DefaultHandle from './Handles/DefaultHandle';
 
 const generatorActions = [
   {
@@ -53,7 +53,7 @@ export default function PageGenerator(props) {
       />
       </div>
 
-      <AppBlockHandle type="source" position={Position.Right} />
+      <DefaultHandle type="source" position={Position.Right} />
     </div>
   );
 }

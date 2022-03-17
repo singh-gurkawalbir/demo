@@ -1,4 +1,4 @@
-import { IconButton, makeStyles, Typography, useTheme } from '@material-ui/core';
+import { IconButton, makeStyles, useTheme } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,9 +6,8 @@ import actions from '../../../actions';
 import AddIcon from '../../../components/icons/AddIcon';
 import { selectors } from '../../../reducers';
 import useBottomDrawer from '../drawers/BottomDrawer/useBottomDrawer';
-import {
-  useHandleAddGenerator, useHandleAddProcessor,
-} from '../hooks';
+import { useHandleAddGenerator, useHandleAddProcessor } from '../hooks';
+import TitleTypography from '../TitleTypography';
 import PageBar from './PageBar';
 import PageGenerators from './PageGenerators';
 import PageProcessors from './PageProcessors';
@@ -47,14 +46,8 @@ const useStyles = makeStyles(theme => ({
   },
 
   title: {
-    display: 'flex',
-    fontSize: 14,
     padding: theme.spacing(4, 0, 6, 0),
-    alignItems: 'center',
     marginBottom: theme.spacing(0.5),
-    justifyContent: 'center',
-    color: theme.palette.secondary.main,
-    fontFamily: 'Roboto400',
   },
   destinationTitle: {
     marginLeft: 100,
@@ -138,33 +131,27 @@ function Canvas({flowId, integrationId}) {
         <div
           className={classes.generatorRoot}
         >
-          <Typography
-            component="div"
-            className={clsx(classes.title, classes.sourceTitle)}
-            variant="overline">
+          <TitleTypography className={clsx(classes.title, classes.sourceTitle)}>
             {isDataLoaderFlow ? 'SOURCE' : 'SOURCES'}
             {!isDataLoaderFlow && !isFreeFlow && (
               <AddGenerator integrationId={integrationId} flowId={flowId} />
             )}
-          </Typography>
+          </TitleTypography>
+
           <PageGenerators
             integrationId={integrationId}
             flowId={flowId}
           />
         </div>
         <div className={classes.processorRoot}>
-          <Typography
-            component="div"
-            className={clsx(classes.title, classes.destinationTitle)}
-            variant="overline">
+          <TitleTypography className={clsx(classes.title, classes.destinationTitle)}>
             {isDataLoaderFlow
               ? 'DESTINATION APPLICATION'
               : 'DESTINATIONS & LOOKUPS '}
-
             {showAddPageProcessor && !isFreeFlow && (
             <AddProcessor integrationId={integrationId} flowId={flowId} />
             )}
-          </Typography>
+          </TitleTypography>
           <PageProcessors
             integrationId={integrationId}
             flowId={flowId}

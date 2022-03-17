@@ -1,8 +1,8 @@
 import React, { memo } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
-
-const FB_SOURCE_COLUMN_WIDTH = 450;
+import SourceTitle from './titles/SourceTitle';
+import { FB_SOURCE_COLUMN_WIDTH } from '../constants';
 
 const useStyles = makeStyles(theme => ({
   svgBg: {
@@ -14,12 +14,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+// eslint-disable-next-line no-alert
+const handleAddSource = () => alert('add new source');
+
 export function Background() {
+  const classes = useStyles();
   // we dont care about the y axis since we always want 100% y axis coverage,
   // regardless of pan or zoom settings.
   const [x, , scale] = useStoreState(s => s.transform);
-  const classes = useStyles();
-
+  const width = Math.max(0, FB_SOURCE_COLUMN_WIDTH * scale + x);
   // console.log({x, scale});
 
   return (
@@ -32,8 +35,10 @@ export function Background() {
         // the source rectangle to accommodate the pan offset.
         // note that the "x" offset is ALREADY scaled. No need to multiply it
         // by the scale.
-        width={(FB_SOURCE_COLUMN_WIDTH) * scale + x}
+        width={width}
         height="100%" />
+
+      <SourceTitle onClick={handleAddSource}>SOURCES</SourceTitle>
     </svg>
   );
 }

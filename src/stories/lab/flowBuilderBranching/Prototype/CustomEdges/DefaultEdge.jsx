@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import { getSmoothStepPath, getMarkerEnd } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
-import { handleOffset, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles } from '../lib';
+import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles } from '../lib';
 import { useFlowContext } from '../Context';
 import AddNewButton from './AddNewButton';
 import UnlinkButton from './UnlinkButton';
@@ -48,7 +48,13 @@ export default function DefaultEdge({
 }) {
   const classes = useStyles();
   const { elements } = useFlowContext();
-  const shouldShowLinkIcon = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
+  const hasSiblingEdges = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
+  const { sourceType, targetType, points: edgePoints } = data;
+  const isTargetMerge = targetType === 'merge';
+  const isSource = sourceType === 'pg';
+  const isTerminal = targetType.includes('terminal');
+  const showLinkIcon = hasSiblingEdges && !isSource;
+  const showAddIcon = !isSource;
 
   /*
   {"points":[{"x":1250,"y":494},{"x":1350,"y":555},{"x":1587.5,"y":555},{"x":1825,"y":555},{"x":1927,"y":421.5}]}
@@ -61,7 +67,7 @@ export default function DefaultEdge({
   */
 
   const edgePath = useMemo(() => {
-    if (data.isTerminal) {
+    if (isTerminal) {
       const sp = getSmoothStepPath({
         sourceX,
         sourceY,
@@ -71,23 +77,20 @@ export default function DefaultEdge({
         targetPosition,
       });
 
-      // console.log(sp);
-
       return sp;
+    }
+
+    const targetHandle = { x: targetX, y: targetY };
+
+    if (isTargetMerge) {
+      targetHandle.x += handleOffset + nodeSize.merge.width / 2;
     }
 
     const points = snapPointsToHandles(
       {x: sourceX, y: sourceY},
-      {x: targetX, y: targetY},
-      data.points,
+      targetHandle,
+      edgePoints,
     );
-
-    // console.log(
-    //   id,
-    //   {sourceX, sourceY},
-    //   points,
-    //   {targetX, targetY},
-    // );
 
     let path;
     const current = {x: points[0].x, y: points[0].y};
@@ -107,7 +110,7 @@ export default function DefaultEdge({
 
     points.forEach((p, i) => {
       if (i === 0) {
-        path = `M${points[0].x},${points[0].y - handleOffset} `;
+        path = `M${points[0].x},${points[0].y} `;
       } else
       // for the last point (that defines an edge), we want to draw the vertical line first so that
       // a node always connects to a horizontal line since our diagram is L-> R,
@@ -117,7 +120,11 @@ export default function DefaultEdge({
       // not all the same length, then the overlapping edges for a merge node will
       // render the dashes at different offsets and appear as a solid line. Not
       // sure how to fix this.
-      if (i === points.length - 1) { // last point
+
+      // Also note that if an edge's target is a merge node, then we always want to render
+      // the x line first, as we don't want overlapping lines when multiple edges share the
+      // same final y position.
+      if (i === points.length - 1 && !isTargetMerge) { // last point
         drawLine(p, 'y');
         drawLine(p, 'x');
       } else {
@@ -127,10 +134,7 @@ export default function DefaultEdge({
     });
 
     return path;
-
-    // remove this after debug code is removed.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
+  }, [edgePoints, isTargetMerge, isTerminal, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
 
   const markerEnd = useMemo(() =>
     getMarkerEnd(arrowHeadType, markerEndId), [arrowHeadType, markerEndId]);
@@ -145,16 +149,17 @@ export default function DefaultEdge({
         markerEnd={markerEnd}
       />
 
-      <BranchLabel id={id} branchName={data?.name} />
+      <BranchLabel id={id} branchName={data?.branch} />
+      {showAddIcon && (
+        <ForeignObject edgePath={edgePath} centerOffset={showLinkIcon ? -10 : 10}>
+          <AddNewButton edgeId={id} />
+        </ForeignObject>
+      )}
 
-      <ForeignObject edgePath={edgePath} centerOffset={shouldShowLinkIcon ? -10 : 10}>
-        <AddNewButton edgeId={id} />
-      </ForeignObject>
-
-      {shouldShowLinkIcon && (
-      <ForeignObject edgePath={edgePath} centerOffset={30}>
-        <UnlinkButton edgeId={id} />
-      </ForeignObject>
+      {showLinkIcon && (
+        <ForeignObject edgePath={edgePath} centerOffset={30}>
+          <UnlinkButton edgeId={id} />
+        </ForeignObject>
       )}
     </>
   );
