@@ -50,7 +50,7 @@ export default function DefaultEdge({
   const { elements } = useFlowContext();
   const hasSiblingEdges = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
   const { sourceType, targetType, points: edgePoints } = data;
-  const isMerge = targetType === 'merge';
+  const isTargetMerge = targetType === 'merge';
   const isSource = sourceType === 'pg';
   const isTerminal = targetType.includes('terminal');
   const showLinkIcon = hasSiblingEdges && !isSource;
@@ -82,14 +82,8 @@ export default function DefaultEdge({
 
     const targetHandle = { x: targetX, y: targetY };
 
-    if (isMerge) {
+    if (isTargetMerge) {
       targetHandle.x += handleOffset + nodeSize.merge.width / 2;
-
-      console.log({
-        source: { sourceX, sourceY },
-        target: { targetX, targetY },
-        targetHandle,
-      });
     }
 
     const points = snapPointsToHandles(
@@ -130,7 +124,7 @@ export default function DefaultEdge({
       // Also note that if an edge's target is a merge node, then we always want to render
       // the x line first, as we don't want overlapping lines when multiple edges share the
       // same final y position.
-      if (i === points.length - 1 && !isMerge) { // last point
+      if (i === points.length - 1 && !isTargetMerge) { // last point
         drawLine(p, 'y');
         drawLine(p, 'x');
       } else {
@@ -140,7 +134,7 @@ export default function DefaultEdge({
     });
 
     return path;
-  }, [edgePoints, isMerge, isTerminal, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
+  }, [edgePoints, isTargetMerge, isTerminal, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
 
   const markerEnd = useMemo(() =>
     getMarkerEnd(arrowHeadType, markerEndId), [arrowHeadType, markerEndId]);
