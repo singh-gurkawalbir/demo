@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
-import {LICENSE_TRIAL_ISSUED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../utils/constants';
+import { LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../utils/constants';
 
 const defaultObject = { numEnabledPaidFlows: 0, numEnabledSandboxFlows: 0 };
 
@@ -14,6 +14,7 @@ export default function reducer(state = {}, action) {
     response,
     parentId,
     childId,
+    code,
   } = action;
 
   return produce(state, draft => {
@@ -30,10 +31,6 @@ export default function reducer(state = {}, action) {
         delete draft.references;
         break;
 
-      case actionTypes.LICENSE.TRIAL_ISSUED:
-        draft.platformLicenseActionMessage = LICENSE_TRIAL_ISSUED_MESSAGE;
-        break;
-
       case actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED:
         draft.platformLicenseActionMessage = LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE;
         break;
@@ -41,7 +38,13 @@ export default function reducer(state = {}, action) {
         draft.platformLicenseActionMessage = undefined;
         delete draft.platformLicenseActionMessage;
         break;
-
+      case actionTypes.LICENSE.ERROR_MESSAGE_RECEIVED:
+        draft.code = code;
+        break;
+      case actionTypes.LICENSE.CLEAR_ERROR_MESSAGE:
+        draft.code = undefined;
+        delete draft.code;
+        break;
       case actionTypes.LICENSE.NUM_ENABLED_FLOWS_RECEIVED:
         draft.numEnabledFlows = response;
         break;
@@ -106,6 +109,13 @@ selectors.platformLicenseActionMessage = state => {
   }
 
   return state.platformLicenseActionMessage;
+};
+selectors.licenseErrorMessage = state => {
+  if (!state) {
+    return;
+  }
+
+  return state.code;
 };
 
 selectors.getChildIntegrationId = (state, parentId) => {

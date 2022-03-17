@@ -40,44 +40,76 @@ function LicenseAction() {
   const platformLicenseActionMessage = useSelector(state =>
     selectors.platformLicenseActionMessage(state)
   );
+  const licenseErrorCode = useSelector(state =>
+    selectors.licenseErrorMessage(state)
+  );
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (platformLicenseActionMessage) {
-        enquesnackbar({message: <RawHtml html={LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
-        dispatch(actions.license.clearActionMessage());
-      }
-    }, 2000);
-  }, [dispatch, enquesnackbar, platformLicenseActionMessage]);
   const canRequestUpgrade = useSelector(
     state =>
       selectors.resourcePermissions(state, 'subscriptions').requestUpgrade
   );
+
+  const startFreeTrialDialog = useCallback(() => {
+    const message = `What will you integrate next?
+      <br/><br/><a target="_blank" rel="noopener noreferrer"
+  href="/marketplace"><u>Checkout our Marketplace</u></a>  Integration Apps, templates for business process automation, and quickstart integration templates.`;
+
+    confirmDialog({
+      title: 'Congratulations! Your unlimited flows trial starts now',
+      message: <RawHtml html={message} />,
+      buttons: [
+        { label: 'Close',
+        },
+      ],
+    });
+  }, [confirmDialog]);
+
+  const submitUpgradeDialog = useCallback(() => {
+    confirmDialog({
+      title: 'Request upgrade',
+      message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+      buttons: [
+        { label: 'Submit request',
+          onClick: () => {
+            setUpgradeRequested(true);
+            dispatch(actions.license.requestLicenseUpgrade());
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, dispatch]);
+  const requestUpgradeDialog = useCallback(() => {
+    confirmDialog({
+      title: 'Upgrade plan',
+      message: 'You cannot enable more than one flow at a time with your current free subscription plan. Upgrade to unlock your data integration potential with more flows.',
+      buttons: [
+        { label: 'Request upgrade',
+          onClick: () => {
+            submitUpgradeDialog();
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, submitUpgradeDialog]);
+
   const handleClick = useCallback(() => {
     if (licenseActionDetails.action === 'startTrial') {
       dispatch(
         actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
       );
+      dispatch(actions.license.requestTrialLicense());
 
-      return dispatch(actions.license.requestTrialLicense());
+      return startFreeTrialDialog();
     }
 
     if (licenseActionDetails.action === 'upgrade') {
-      return confirmDialog({
-        title: 'Request upgrade',
-        message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
-        buttons: [
-          { label: 'Submit request',
-            onClick: () => {
-              setUpgradeRequested(true);
-              dispatch(actions.license.requestLicenseUpgrade());
-            },
-          },
-          { label: 'Cancel',
-            variant: 'text',
-          },
-        ],
-      });
+      return submitUpgradeDialog();
     }
     if (licenseActionDetails.action === 'resume') {
       return confirmDialog({
@@ -116,7 +148,82 @@ function LicenseAction() {
         ],
       });
     }
-  }, [confirmDialog, dispatch, licenseActionDetails.action]);
+  }, [confirmDialog, dispatch, licenseActionDetails.action, startFreeTrialDialog, submitUpgradeDialog]);
+
+  const startFreeTrialConfirmationDialog = useCallback(() => {
+    const message = `<b>You cannot enable more than one flow at a time with your current free subscription plan.</b>
+    <br/><br/>Start your free trial or upgrade your plan to unlock your data integration potential with more flows.
+    <br/><br/><b>FREE UNLIMITED FLOWS TRIAL </b>
+
+    <br/><br/>Experience optimal process automation for your business with full access to integratior.io.
+     For 30 days, you will get: 
+     <ul><li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
+     <li>Easy installation of Integration Apps and free templates from our vast library</li>
+     <li>Integrations with multiple imports or exports (orchestration)</li>
+     <li>Ad hoc data imports to thousands of applications</li>
+     <li>Ability to daisy-chain flows.</li>
+
+     <br/><br/>Learn how to make the most of your free trial 
+
+      After 30 days, your plan will revert to the free subscription plan with 1 enabled integration flow.`;
+
+    confirmDialog({
+      title: 'Try unlimited flows free for 30 days or upgrade plan',
+      message: <RawHtml html={message} />,
+      buttons: [
+        { label: 'Start free trial',
+          onClick: () => {
+            dispatch(actions.license.requestTrialLicense());
+            startFreeTrialDialog();
+          },
+        },
+        { label: 'Request upgrade',
+          onClick: requestUpgradeDialog,
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, dispatch, requestUpgradeDialog, startFreeTrialDialog]);
+
+  const entitlementOfEndpointsDialog = useCallback(() => {
+    confirmDialog({
+      title: 'Upgrade plan',
+      message: 'ou have reached the entitlement of endpoints for your free subscription. Upgrade to unlock your data integration potential with more endpoints.',
+      buttons: [
+        { label: 'Request upgrade',
+          onClick: () => {
+            submitUpgradeDialog();
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, submitUpgradeDialog]);
+
+  useEffect(() => {
+    if (licenseErrorCode === 'subscription_required') {
+      if (licenseActionDetails.action === 'startTrial') {
+        startFreeTrialConfirmationDialog();
+      } else {
+        requestUpgradeDialog();
+      }
+      dispatch(actions.license.clearErrorMessage());
+    } else if (licenseErrorCode === 'entitlement_reached') {
+      entitlementOfEndpointsDialog();
+      dispatch(actions.license.clearErrorMessage());
+    }
+  }, [dispatch, entitlementOfEndpointsDialog, licenseActionDetails.action, licenseErrorCode, requestUpgradeDialog, startFreeTrialConfirmationDialog]);
+
+  useEffect(() => {
+    if (platformLicenseActionMessage) {
+      enquesnackbar({message: <RawHtml html={LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
+      dispatch(actions.license.clearActionMessage());
+    }
+  }, [dispatch, enquesnackbar, platformLicenseActionMessage]);
 
   if (
     !licenseActionDetails ||

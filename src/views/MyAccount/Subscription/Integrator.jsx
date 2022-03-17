@@ -6,13 +6,10 @@ import { Typography, LinearProgress, capitalize } from '@material-ui/core';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import FilledButton from '../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../components/ConfirmDialog';
-import RawHtml from '../../../components/RawHtml';
-import { LICENSE_UPGRADE_SUCCESS_MESSAGE } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -97,7 +94,6 @@ export default function Subscription() {
   const match = useRouteMatch();
   const history = useHistory();
   const {confirmDialog} = useConfirmDialog();
-  const [enquesnackbar] = useEnqueueSnackbar();
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
   );
@@ -179,16 +175,6 @@ export default function Subscription() {
       ],
     });
   }, [confirmDialog, dispatch]);
-  const platformLicenseActionMessage = useSelector(state =>
-    selectors.platformLicenseActionMessage(state)
-  );
-
-  useEffect(() => {
-    if (platformLicenseActionMessage) {
-      enquesnackbar({message: <RawHtml html={LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
-      dispatch(actions.license.clearActionMessage());
-    }
-  }, [dispatch, enquesnackbar, platformLicenseActionMessage]);
 
   return (
     <>

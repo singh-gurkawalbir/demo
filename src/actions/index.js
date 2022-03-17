@@ -1286,6 +1286,9 @@ const license = {
     action(actionTypes.LICENSE.ENTITLEMENT_USAGE_RECEIVED, { response }),
   clearActionMessage: () =>
     action(actionTypes.LICENSE.CLEAR_ACTION_MESSAGE),
+  receivedLicenseErrorMessage: code => action(actionTypes.LICENSE.ERROR_MESSAGE_RECEIVED, { code }),
+  clearErrorMessage: () => action(actionTypes.LICENSE.CLEAR_ERROR_MESSAGE),
+
 };
 const importSampleData = {
   request: (resourceId, options, refreshCache) =>

@@ -87,6 +87,7 @@ export function* requestTrialLicense() {
     response = yield call(apiCallWithRetry, {
       path,
       opts,
+      hidden: true,
       message: 'Requesting trial license',
     });
   } catch (e) {
