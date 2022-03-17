@@ -83,4 +83,10 @@ selectors.revisionInstallSteps = (state, integrationId, revisionId) => {
 
   return steps;
 };
+
+selectors.revisionType = (state, integrationId, revisionId) => {
+  const revision = selectors.revision(state, integrationId, revisionId);
+
+  return revision?.type;
+};
 // #endregion
