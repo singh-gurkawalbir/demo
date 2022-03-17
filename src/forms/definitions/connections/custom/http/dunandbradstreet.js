@@ -23,7 +23,7 @@ export default {
       },
       {
         name: 'x-dnb-pwd',
-        value: `${formValues['/http/encrypted/password']}`,
+        value: '{{{connection.http.encrypted.password}}}',
       },
     ],
   }),

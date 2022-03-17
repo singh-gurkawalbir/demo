@@ -6,6 +6,7 @@ import FlowsIcon from '../../../components/icons/FlowsIcon';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
+import OfflineConnectionsIcon from '../../../components/icons/OfflineConnectionsIcon';
 import SingleUserIcon from '../../../components/icons/SingleUserIcon';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import RevisionsIcon from '../../../components/icons/ViewResolvedHistoryIcon';
@@ -26,7 +27,7 @@ import { getTopLevelTabs } from '../../../utils/integrationApps';
 import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const getTabs = (isUserInErrMgtTwoDotZero, isStandaloneIntegration) => [
+const getTabs = ({isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyIntegrationConnectionOffline}) => [
   {
     path: 'settings',
     label: 'Settings',
@@ -43,7 +44,7 @@ const getTabs = (isUserInErrMgtTwoDotZero, isStandaloneIntegration) => [
   {
     path: 'connections',
     label: 'Connections',
-    Icon: ConnectionsIcon,
+    Icon: isAnyIntegrationConnectionOffline ? OfflineConnectionsIcon : ConnectionsIcon,
     Panel: ConnectionsPanel,
   },
   {
@@ -130,13 +131,17 @@ export function useAvailableTabs() {
     return {addOnStatus: addOnState.status,
       hasAddOns: addOnState?.addOns?.addOnMetaData?.length > 0};
   }, shallowEqual);
-
+  const isAnyIntegrationConnectionOffline = useSelector(state => selectors.isAnyIntegrationConnectionOffline(state, childId || integrationId));
   const isParent = childId === integrationId;
 
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
 
   const availableTabs = useMemo(() => getTopLevelTabs({
-    tabs: getTabs(isUserInErrMgtTwoDotZero, isStandaloneIntegration),
+    tabs: getTabs({
+      isUserInErrMgtTwoDotZero,
+      isStandaloneIntegration,
+      isAnyIntegrationConnectionOffline,
+    }),
     isIntegrationApp,
     isParent,
     integrationId,
@@ -145,7 +150,7 @@ export function useAvailableTabs() {
     children,
     isMonitorLevelUser,
     hideSettingsTab,
-  }), [children, hasAddOns, hideSettingsTab, integrationId, isStandaloneIntegration, isIntegrationApp, isUserInErrMgtTwoDotZero, isMonitorLevelUser, isParent, supportsChild]);
+  }), [isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyIntegrationConnectionOffline, isIntegrationApp, isParent, integrationId, hasAddOns, supportsChild, children, isMonitorLevelUser, hideSettingsTab]);
 
   return availableTabs;
 }

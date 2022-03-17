@@ -72,9 +72,7 @@ export default function* requestRealTimeMetadata({ resource, refresh }) {
       }
 
       case 'SalesforceExport': {
-        // Adding basic flow for Salesforce Sample data
-        // Need to add actual logic and return the same
-        const { _connectionId: connectionId, salesforce } = resource;
+        const { _connectionId: connectionId, salesforce = {} } = resource;
         const { sObjectType, distributed = {} } = salesforce;
 
         if (!sObjectType) return;

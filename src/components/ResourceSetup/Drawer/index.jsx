@@ -14,6 +14,7 @@ import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from '../../drawer/Resource/Panel/ResourceFormActionsPanel';
 import { isNewId, getConnectionType } from '../../../utils/resource';
 import resourceConstants from '../../../forms/constants/connection';
+import EditorDrawer from '../../AFE/Drawer';
 
 const oAuthApplications = [
   ...resourceConstants.OAUTH_APPLICATIONS,
@@ -194,6 +195,7 @@ export default function ResourceSetupDrawer(props) {
       height="tall"
       variant="temporary">
       <ResourceSetupDrawerContent {...props} />
+      <EditorDrawer />
     </RightDrawer>
   );
 }
