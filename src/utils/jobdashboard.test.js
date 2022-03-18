@@ -1,8 +1,6 @@
 /* global describe, test, expect */
 import { getStatus, JOB_UI_STATUS, getSuccess } from './jobdashboard';
 
-// import { getStatus, getSuccess, getPages, getFlowJobStatusDetails, getExportJobStatusDetails, getImportJobStatusDetails, getJobStatusDetails} from './jobdashboard';
-
 describe('Job dashboard utils test cases', () => {
   describe('getStaus util', () => {
     test('should get correct job status', () => {

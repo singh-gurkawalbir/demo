@@ -482,7 +482,7 @@ describe('Globalsearch feature tests', () => {
     userEvent.click(marketplaceTab);
     expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria/i)).toBeInTheDocument();
   });
-  test('Should raise a request to backend and open a modal on clicking on marketplace app preview ', async () => {
+  test.skip('Should raise a request to backend and open a modal on clicking on marketplace app preview ', async () => {
     await initGlobalSearch();
     const mockResolverFunction = jest.fn();
     /* When checking if the route was requested, if we directly give

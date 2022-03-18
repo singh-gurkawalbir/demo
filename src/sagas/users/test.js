@@ -637,6 +637,7 @@ describe('all modal sagas', () => {
           call(apiCallWithRetry, {
             path,
             opts,
+            hidden: true,
             message: 'Requesting trial license',
           }),
         );
@@ -667,6 +668,7 @@ describe('all modal sagas', () => {
           call(apiCallWithRetry, {
             path,
             opts,
+            hidden: true,
             message: 'Requesting trial license',
           }),
         );
@@ -1059,12 +1061,14 @@ describe('all modal sagas', () => {
             path,
             timeout: 5 * 60 * 1000,
             opts,
+            hidden: false,
           })],
         ])
         .call(apiCallWithRetry, {
           path,
           timeout: 5 * 60 * 1000,
           opts,
+          hidden: false,
         })
         .put(actions.resource.requestCollection('integrations'))
         .put(actions.resource.requestCollection('flows'))
@@ -1089,12 +1093,14 @@ describe('all modal sagas', () => {
             path,
             timeout: 5 * 60 * 1000,
             opts,
+            hidden: false,
           }), response],
         ])
         .call(apiCallWithRetry, {
           path,
           timeout: 5 * 60 * 1000,
           opts,
+          hidden: false,
         })
         .not.put(actions.resource.requestCollection('integrations'))
         .put(actions.license.licenseUpgradeRequestSubmitted(response))
@@ -1115,12 +1121,14 @@ describe('all modal sagas', () => {
             path,
             timeout: 5 * 60 * 1000,
             opts,
+            hidden: false,
           }), throwError(error)],
         ])
         .call(apiCallWithRetry, {
           path,
           timeout: 5 * 60 * 1000,
           opts,
+          hidden: false,
         })
         .put(actions.api.failure(path, 'POST', error, false))
         .not.put(actions.resource.requestCollection('integrations'))
