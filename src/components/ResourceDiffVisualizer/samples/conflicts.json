@@ -2,7 +2,7 @@
     "numConflicts": 1,
     "merged": {
         "export": {
-            "617aaca8eb640c046410cafc": {
+            "5faa413b04a8b755823c2e1c": {
                 "_connectionId": "61c41ef898b77c531585ebc5",
                 "asynchronous": true,
                 "adaptorType": "NetSuiteExport",
@@ -176,7 +176,7 @@
                                     ],
                                     "op": "add",
                                     "value": {
-                                        "_exportId": "617aaca8eb640c046410cafc",
+                                        "_exportId": "5faa413b04a8b755823c2e1c",
                                         "skipRetries": false
                                     }
                                 }
@@ -328,7 +328,7 @@
                 "sandbox": false,
                 "type": "once"
             },
-            "617aaca8eb640c046410cafc": {
+            "5faa413b04a8b755823c2e1c": {
                 "_connectionId": "61c41ef898b77c531585ebc5",
                 "adaptorType": "NetSuiteExport",
                 "asynchronous": true,
@@ -368,7 +368,7 @@
                         "skipRetries": false
                     },
                     {
-                        "_exportId": "617aaca8eb640c046410cafc",
+                        "_exportId": "5faa413b04a8b755823c2e1c",
                         "skipRetries": false
                     }
                 ],

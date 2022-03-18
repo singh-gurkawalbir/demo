@@ -4,9 +4,15 @@ import CollapsableContainer from '../CollapsableContainer';
 import Title from './Title';
 import DiffPanel from './DiffPanel';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   resourceContainer: {
     background: '#F0F5F9',
+  },
+  resourceTypeWrapper: {
+    '& .MuiAccordionDetails-root': {
+      borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+      padding: 0,
+    },
   },
 }));
 
@@ -27,7 +33,7 @@ export default function ResourceDiffContainer({ diff, resourceType, forceExpand,
             forceExpand={forceExpand}
             title={<Title resourceType={getResourceTypeTitle(resourceType).toLocaleLowerCase()} resourceDiff={resourceDiff} integrationId={integrationId} />}
             key={resourceDiff.resourceId}
-            >
+            className={classes.resourceTypeWrapper}>
             <DiffPanel resourceDiff={resourceDiff} />
           </CollapsableContainer>
         ))

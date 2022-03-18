@@ -14,11 +14,18 @@ import { selectors } from '../../../../../reducers';
 import RevisionHeader from '../../RevisionHeader';
 import ResourceDiffDrawerContent from '../../ResourceDiffDrawerContent';
 
-const useStyles = makeStyles(() => ({
-  drawerHeader: {
+const useStyles = makeStyles(theme => ({
+  drawerHeaderWrapper: {
     '& > h4': {
       whiteSpace: 'nowrap',
     },
+    '& > :not(:last-child)': {
+      marginRight: 0,
+    },
+  },
+  inProgressSpinner: {
+    marginRight: theme.spacing(0.5),
+    height: theme.spacing(2),
   },
 }));
 
@@ -59,7 +66,7 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
     <>
       <DrawerHeader
         title="Review changes"
-        className={classes.drawerHeader}
+        className={classes.drawerHeaderWrapper}
         infoText="test"
         handleClose={onClose}>
         <RevisionHeader
@@ -74,13 +81,13 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
       </DrawerContent>
       <DrawerFooter>
         <FilledButton disabled={isRevisionCreationInProgress || !hasReceivedResourceDiff} onClick={handleCreateRevision} >
-          Next { isRevisionCreationInProgress ? <Spinner size={12} /> : null }
+          { isRevisionCreationInProgress ? <Spinner size="small" className={classes.inProgressSpinner} /> : null } Next
         </FilledButton>
         <TextButton
           data-test="cancelCreatePull"
           disabled={isRevisionCreationInProgress}
           onClick={onClose}>
-          Cancel
+          Close
         </TextButton>
       </DrawerFooter>
     </>
@@ -95,7 +102,7 @@ export default function ReviewChangesDrawer({ integrationId }) {
       path="pull/:revId/review"
       variant="temporary"
       height="tall"
-      width="full">
+      width="xl">
       <ReviewChangesDrawerContent integrationId={integrationId} parentUrl={match.url} />
     </RightDrawer>
   );

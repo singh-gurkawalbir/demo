@@ -4,9 +4,11 @@ import {makeStyles} from '@material-ui/core/styles';
 import ModalDialog from '../../../../ModalDialog';
 import References from './References';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   referenceContainer: {
     background: '#F8FAFF',
+    padding: theme.spacing(0, 3, 3),
+    minWidth: '880px',
   },
 }));
 
@@ -14,7 +16,7 @@ export default function ReferencesModal({ resourceId, resourceType, integrationI
   const classes = useStyles();
 
   return (
-    <ModalDialog show onClose={onClose} className={classes.referenceContainer}>
+    <ModalDialog show maxWidth="md" onClose={onClose} className={classes.referenceContainer}>
       <Typography>References</Typography>
       <References
         resourceId={resourceId}

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import {makeStyles} from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../Right';
@@ -15,11 +15,15 @@ import { TextButton } from '../../../Buttons';
 import Spinner from '../../../Spinner';
 import RevisionHeader from '../RevisionHeader';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   drawerHeader: {
     '& > h4': {
       whiteSpace: 'nowrap',
     },
+  },
+  inProgressSpinner: {
+    marginRight: theme.spacing(0.5),
+    height: theme.spacing(2),
   },
 }));
 
@@ -36,8 +40,8 @@ const metadata = {
 };
 
 function CreateSnapshotDrawerContent({ integrationId, parentUrl }) {
-  const match = useRouteMatch();
   const classes = useStyles();
+  const match = useRouteMatch();
   const history = useHistory();
   const dispatch = useDispatch();
   const formKey = useFormInitWithPermissions({ fieldMeta: metadata });
@@ -76,13 +80,13 @@ function CreateSnapshotDrawerContent({ integrationId, parentUrl }) {
           formKey={formKey}
           onClick={handleCreateSnapshot}
         >
-          Next { isSnapshotCreationInProgress ? <Spinner size={12} /> : null }
+          { isSnapshotCreationInProgress ? <><Spinner size="small" className={classes.inProgressSpinner} /> Creating</> : 'Create' }
         </DynaSubmit>
         <TextButton
-          data-test="cancelCreatePull"
+          data-test="cancelSnapshot"
           disabled={isSnapshotCreationInProgress}
           onClick={onClose}>
-          Cancel
+          Close
         </TextButton>
       </DrawerFooter>
     </>

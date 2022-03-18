@@ -58,7 +58,7 @@ function OpenPullDrawerContent({ integrationId, parentUrl }) {
         <TextButton
           data-test="cancelCreatePull"
           onClick={onClose}>
-          Cancel
+          Close
         </TextButton>
       </DrawerFooter>
     </>
