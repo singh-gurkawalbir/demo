@@ -1,5 +1,4 @@
 import produce from 'immer';
-import { uniq } from 'lodash';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 
@@ -67,7 +66,13 @@ selectors.revision = (state = defaultState, integrationId, revisionId) => {
 };
 selectors.uniqueUserIdsFromRevisions = createSelector(
   selectors.revisions,
-  revisionsList => uniq(revisionsList.map(rev => rev._byUserId))
+  revisionsList => revisionsList.reduce((userIds, revision) => {
+    if (revision._byUserId) {
+      userIds.add(revision._byUserId);
+    }
+
+    return userIds;
+  }, new Set())
 );
 selectors.revisionsFetchStatus = (state = defaultState, integrationId) => state[integrationId]?.status;
 selectors.revisionInstallSteps = (state, integrationId, revisionId) => {
@@ -88,5 +93,11 @@ selectors.revisionType = (state, integrationId, revisionId) => {
   const revision = selectors.revision(state, integrationId, revisionId);
 
   return revision?.type;
+};
+selectors.integrationHasNoRevisions = (state, integrationId) => {
+  const status = selectors.revisionsFetchStatus(state, integrationId);
+  const revisions = selectors.revisions(state, integrationId);
+
+  return status === 'received' && !revisions?.length;
 };
 // #endregion

@@ -4,6 +4,18 @@ import { comparer, sortJsonByKeys } from '../sort';
 export const DEFAULT_ROWS_PER_PAGE = 50;
 export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
 
+export const VALID_REVERT_TO_QUERIES = ['toAfter', 'toBefore', 'this'];
+export const VALID_REVISION_TYPES_FOR_CREATION = [
+  REVISION_TYPES.PULL,
+  REVISION_TYPES.REVERT,
+  REVISION_TYPES.SNAPSHOT,
+];
+
+export const REVISION_DRAWER_MODES = {
+  OPEN: 'open',
+  REVIEW: 'review',
+  MERGE: 'merge',
+};
 export const REVISION_TYPE_OPTIONS = [{
   label: 'Pull',
   value: REVISION_TYPES.PULL,
@@ -91,10 +103,12 @@ export const getFilteredRevisions = (revisions = [], filters = {}) => {
   return filteredRevisions.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
 };
 
-export const getRevisionResourceLevelChanges = (overallDiff = {}) => {
+export const getRevisionResourceLevelChanges = (overallDiff = {}, sortKeys = false) => {
   const { numConflicts, current, merged } = overallDiff;
   const diffs = {};
   const resourcesTypes = Object.keys(merged);
+  const NOOP = obj => obj;
+  const sortFn = sortKeys ? sortJsonByKeys : NOOP;
 
   resourcesTypes.forEach(resourceType => {
     if (!diffs[resourceType]) {
@@ -107,8 +121,8 @@ export const getRevisionResourceLevelChanges = (overallDiff = {}) => {
       const resourceDiff = { resourceId, action };
       const {$conflicts, ...rest} = merged[resourceType][id];
       // TODO: confirm on script diffs - we do show script changes but not script name as of now
-      const mergedContent = resourceType === 'script' ? (rest['$blob.conflict'] || rest.$blob) : sortJsonByKeys(rest);
-      const currentContent = resourceType === 'script' ? current[resourceType][resourceId]?.$blob : sortJsonByKeys(current[resourceType][resourceId]);
+      const mergedContent = resourceType === 'script' ? (rest['$blob.conflict'] || rest.$blob) : sortFn(rest);
+      const currentContent = resourceType === 'script' ? current[resourceType]?.[resourceId]?.$blob : sortFn(current[resourceType]?.[resourceId]);
 
       if (action === REVISION_DIFF_ACTIONS.NEW) {
         resourceDiff.after = mergedContent;

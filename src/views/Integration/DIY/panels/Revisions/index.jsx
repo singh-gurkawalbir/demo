@@ -51,11 +51,36 @@ function DrawerDeclarations({ integrationId, hasMonitorLevelAccess }) {
   );
 }
 
+const RevisionsList = ({ integrationId }) => {
+  const revisions = useSelector(state => selectors.filteredRevisions(state, integrationId));
+  const isLoadingRevisions = useSelector(state => {
+    const status = selectors.revisionsFetchStatus(state, integrationId);
+
+    return !status || status === 'requested';
+  });
+  const hasNoRevisions = useSelector(state => selectors.integrationHasNoRevisions(state, integrationId));
+
+  if (isLoadingRevisions) {
+    return <Spinner centerAll />;
+  }
+
+  if (hasNoRevisions) {
+    return <div> No revisions </div>;
+  }
+
+  return (
+    <ResourceTable
+      resourceType="revisions"
+      filterKey={getRevisionFilterKey(integrationId)}
+      resources={revisions}
+      />
+  );
+};
+
 export default function Revisions({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const match = useRouteMatch();
-  const revisions = useSelector(state => selectors.filteredRevisions(state, integrationId));
   const hasMonitorLevelAccess = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
   const isLoadingRevisions = useSelector(state => {
     const status = selectors.revisionsFetchStatus(state, integrationId);
@@ -95,15 +120,7 @@ export default function Revisions({ integrationId }) {
         )}
       </PanelHeader>
       <RevisionFilters />
-      {
-        isLoadingRevisions ? <Spinner centerAll /> : (
-          <ResourceTable
-            resourceType="revisions"
-            filterKey={getRevisionFilterKey(integrationId)}
-            resources={revisions}
-          />
-        )
-      }
+      <RevisionsList integrationId={integrationId} />
       <LoadResources resources="flows,integrations">
         <DrawerDeclarations
           integrationId={integrationId}

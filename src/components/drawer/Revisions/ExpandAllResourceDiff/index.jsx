@@ -19,7 +19,7 @@ export default function ExpandAllResourceDiff({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const isDiffExpanded = useSelector(state => selectors.isDiffExpanded(state, integrationId));
-  const isResourceComparisonInProgress = useSelector(state => selectors.isResourceComparisonInProgress(state, integrationId));
+  const hasReceivedResourceDiff = useSelector(state => selectors.hasReceivedResourceDiff(state, integrationId));
 
   const handleToggleExpand = () => {
     dispatch(actions.integrationLCM.compare.toggleExpandAll(integrationId));
@@ -35,7 +35,7 @@ export default function ExpandAllResourceDiff({ integrationId }) {
         startIcon={isDiffExpanded ? <CollapseWindowIcon /> : <ExpandWindowIcon />}
         size="small"
         data-test="expandAll"
-        disabled={isResourceComparisonInProgress}
+        disabled={!hasReceivedResourceDiff}
         onClick={handleToggleExpand}>
         {isDiffExpanded ? 'Collapse all' : 'Expand all'}
       </TextButton>

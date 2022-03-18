@@ -3,7 +3,7 @@ import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 
 export default (state = {}, action) => {
-  const { integrationId, type, diff } = action;
+  const { integrationId, type, diff, diffError } = action;
 
   if (!integrationId) return state;
 
@@ -22,7 +22,16 @@ export default (state = {}, action) => {
           draft[integrationId] = {};
         }
         draft[integrationId].status = 'received';
+        delete draft[integrationId].error;
         draft[integrationId].diff = diff;
+        break;
+      case actionTypes.INTEGRATION_LCM.COMPARE.RECEIVED_DIFF_ERROR:
+        if (!draft[integrationId]) {
+          draft[integrationId] = {};
+        }
+        draft[integrationId].status = 'error';
+        delete draft[integrationId].diff;
+        draft[integrationId].error = diffError;
         break;
       case actionTypes.INTEGRATION_LCM.COMPARE.TOGGLE_EXPAND_ALL:
         if (!draft[integrationId]) {
@@ -47,6 +56,14 @@ selectors.isResourceComparisonInProgress = (state, integrationId) => {
 
   return state[integrationId].status === 'requested';
 };
+selectors.hasReceivedResourceDiff = (state, integrationId) => {
+  if (!state || !integrationId || !state[integrationId]) {
+    return false;
+  }
+  const diffContext = state[integrationId] || {};
+
+  return diffContext?.status === 'received';
+};
 
 selectors.revisionResourceDiff = (state, integrationId) => {
   if (!state || !integrationId || !state[integrationId]) {
@@ -54,6 +71,13 @@ selectors.revisionResourceDiff = (state, integrationId) => {
   }
 
   return state[integrationId].diff;
+};
+selectors.revisionResourceDiffError = (state, integrationId) => {
+  if (!state || !integrationId || !state[integrationId]) {
+    return;
+  }
+
+  return state[integrationId].error;
 };
 
 selectors.isDiffExpanded = (state, integrationId) => {

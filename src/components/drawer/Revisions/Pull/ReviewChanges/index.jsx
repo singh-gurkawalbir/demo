@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
@@ -7,12 +7,12 @@ import DrawerHeader from '../../../Right/DrawerHeader';
 import DrawerContent from '../../../Right/DrawerContent';
 import DrawerFooter from '../../../Right/DrawerFooter';
 import Spinner from '../../../../Spinner';
-import ResourceDiffVisualizer from '../../../../ResourceDiffVisualizer';
 import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
+import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import { selectors } from '../../../../../reducers';
-import { getRevisionResourceLevelChanges } from '../../../../../utils/revisions';
-import ReviewHeaderActions from './ReviewHeaderActions';
+import RevisionHeader from '../../RevisionHeader';
+import ResourceDiffDrawerContent from '../../ResourceDiffDrawerContent';
 
 const useStyles = makeStyles(theme => ({
   drawerHeaderWrapper: {
@@ -38,16 +38,9 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
   // selectors
   const createdRevisionId = useSelector(state => selectors.createdResourceId(state, revId));
   const isRevisionCreationInProgress = useSelector(state => selectors.isRevisionCreationInProgress(state, integrationId, revId));
-  const isResourceComparisonInProgress = useSelector(state => selectors.isResourceComparisonInProgress(state, integrationId));
-  const revisionResourceDiff = useSelector(state => selectors.revisionResourceDiff(state, integrationId));
-  const isDiffExpanded = useSelector(state => selectors.isDiffExpanded(state, integrationId));
+  const hasReceivedResourceDiff = useSelector(state => selectors.hasReceivedResourceDiff(state, integrationId));
+  const numConflicts = useSelector(state => selectors.revisionResourceDiff(state, integrationId)?.numConflicts);
   // end selectors
-
-  const resourceDiffInfo = useMemo(() => {
-    if (revisionResourceDiff) {
-      return getRevisionResourceLevelChanges(revisionResourceDiff);
-    }
-  }, [revisionResourceDiff]);
 
   const onClose = () => {
     history.replace(parentUrl);
@@ -76,25 +69,18 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
         className={classes.drawerHeaderWrapper}
         infoText="test"
         handleClose={onClose}>
-        <ReviewHeaderActions
-          numConflicts={resourceDiffInfo?.numConflicts}
+        <RevisionHeader
+          numConflicts={numConflicts}
           integrationId={integrationId}
           revId={revId}
+          mode={REVISION_DRAWER_MODES.REVIEW}
         />
       </DrawerHeader>
       <DrawerContent>
-        {
-          isResourceComparisonInProgress ? <Spinner centerAll /> : (
-            <ResourceDiffVisualizer
-              integrationId={integrationId}
-              diffs={resourceDiffInfo?.diffs}
-              forceExpand={isDiffExpanded}
-            />
-          )
-        }
+        <ResourceDiffDrawerContent integrationId={integrationId} />
       </DrawerContent>
       <DrawerFooter>
-        <FilledButton disabled={isRevisionCreationInProgress || isResourceComparisonInProgress} onClick={handleCreateRevision} >
+        <FilledButton disabled={isRevisionCreationInProgress || !hasReceivedResourceDiff} onClick={handleCreateRevision} >
           { isRevisionCreationInProgress ? <Spinner size="small" className={classes.inProgressSpinner} /> : null } Next
         </FilledButton>
         <TextButton

@@ -1,48 +1,41 @@
 import React, { useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../../Right';
 import DrawerHeader from '../../../Right/DrawerHeader';
 import DrawerContent from '../../../Right/DrawerContent';
 import DrawerFooter from '../../../Right/DrawerFooter';
-import { TextButton, FilledButton } from '../../../../Buttons';
-import CancelIcon from '../../../../icons/CancelIcon';
 import InstallSteps from '../../InstallSteps';
-import useCancelRevision from '../../hooks/useCancelRevision';
-import CeligoDivider from '../../../../CeligoDivider';
+import RevisionHeader from '../../RevisionHeader';
+import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
+import FilledButton from '../../../../Buttons/FilledButton';
 
-const useStyles = makeStyles(theme => ({
-  icon: {
-    marginRight: theme.spacing(0.5),
-  },
-  drawerHeaderWrapper: {
-    alignItems: 'center',
+const useStyles = makeStyles(() => ({
+  drawerHeader: {
+    '& > h4': {
+      whiteSpace: 'nowrap',
+    },
   },
 }));
 
 function MergePullDrawerContent({ parentUrl, integrationId }) {
   const match = useRouteMatch();
-  const history = useHistory();
   const classes = useStyles();
+  const history = useHistory();
   const { revId } = match.params;
 
   const onClose = useCallback(() => {
     history.replace(parentUrl);
   }, [history, parentUrl]);
 
-  const handleCancel = useCancelRevision({ integrationId, revisionId: revId, onClose });
-
   return (
     <>
-      <DrawerHeader title="Review changes" handleClose={onClose} className={classes.drawerHeaderWrapper}>
-        <TextButton
-          startIcon={<CancelIcon />}
-          size="small"
-          data-test="expandAll"
-          onClick={handleCancel}>
-          Cancel merge
-        </TextButton>
-        <CeligoDivider position="right" />
+      <DrawerHeader className={classes.drawerHeader} title="Review changes" handleClose={onClose}>
+        <RevisionHeader
+          integrationId={integrationId}
+          revisionId={revId}
+          onClose={onClose}
+          mode={REVISION_DRAWER_MODES.MERGE} />
       </DrawerHeader>
       <DrawerContent>
         <InstallSteps integrationId={integrationId} revisionId={revId} />

@@ -8,6 +8,7 @@ import CeligoDivider from '../../../CeligoDivider';
 import { REVISION_DIFF_ACTION_LABELS, REVISION_DIFF_ACTIONS, shouldShowReferences } from '../../../../utils/revisions';
 import ViewReferences from './ViewReferences';
 import FullScreen from './FullScreen';
+import ConflictStatus from '../../ConflictStatus';
 
 const useStyles = makeStyles(theme => ({
   referencesButton: {
@@ -22,12 +23,15 @@ export default function DiffContainerTitle({ resourceDiff, resourceType, integra
   const classes = useStyles();
   const resourceName = useSelector(state => selectors.resourceName(state, resourceId, resourceType));
   const showReferences = shouldShowReferences(resourceType);
+  const numConflicts = resourceDiff?.conflicts?.length;
 
   return (
     <>
       <ActionGroup>
         <Typography variant="body2"> {resourceName || resourceId} </Typography>
+        <CeligoDivider />
         <Typography variant="body2"> Action: {REVISION_DIFF_ACTION_LABELS[action]} </Typography>
+        { numConflicts && <ConflictStatus count={numConflicts} />}
       </ActionGroup>
       <ActionGroup position="right" className={classes.referencesButton}>
         { showReferences && <ViewReferences integrationId={integrationId} resourceId={resourceId} resourceType={resourceType} />}

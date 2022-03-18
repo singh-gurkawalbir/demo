@@ -1,7 +1,7 @@
 import React from 'react';
 import ResourceDiffContainer from './ResourceDiffContainer';
 
-const SUPPORTED_RESOURCE_TYPES = ['export', 'import', 'flow', 'integration', 'script'];
+const SUPPORTED_RESOURCE_TYPES = ['export', 'import', 'connections', 'flow', 'integration', 'script'];
 
 export default function ResourceDiffVisualizer({ diffs = {}, forceExpand, integrationId }) {
   return (

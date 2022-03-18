@@ -1,4 +1,5 @@
 import React from 'react';
+import {makeStyles} from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import RightDrawer from '../../../Right';
@@ -12,9 +13,19 @@ import DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import { TextButton } from '../../../../Buttons';
 import {selectors } from '../../../../../reducers';
 import getMetadata from './metadata';
+import RevisionHeader from '../../RevisionHeader';
+
+const useStyles = makeStyles(() => ({
+  drawerHeader: {
+    '& > h4': {
+      whiteSpace: 'nowrap',
+    },
+  },
+}));
 
 function OpenRevertDrawerContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
+  const classes = useStyles();
   const { tempRevId, revertTo, revisionId } = match.params;
   const history = useHistory();
   const dispatch = useDispatch();
@@ -38,7 +49,12 @@ function OpenRevertDrawerContent({ integrationId, parentUrl }) {
 
   return (
     <>
-      <DrawerHeader title="Create revert" handleClose={onClose} />
+      <DrawerHeader
+        className={classes.drawerHeader}
+        title="Create revert"
+        handleClose={onClose}>
+        <RevisionHeader />
+      </DrawerHeader>
       <DrawerContent>
         <DynaForm formKey={formKey} />
       </DrawerContent>

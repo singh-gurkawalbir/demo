@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles, useTheme, useMediaQuery, IconButton, Tooltip } from '@material-ui/core';
-import CeligoDivider from '../../../CeligoDivider';
 import Icon from '../../../icons/InstallationGuideIcon';
 import { TextButton } from '../../../Buttons';
 
@@ -40,7 +39,6 @@ export default function HandlebarGuide() {
           </IconButton>
         </Tooltip>
       )}
-      <CeligoDivider position="right" />
     </>
   );
 }

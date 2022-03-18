@@ -2224,6 +2224,7 @@ const integrationLCM = {
     revertRequest: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.COMPARE.REVERT_REQUEST, { integrationId, revisionId }),
     revisionChanges: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.COMPARE.REVISION_REQUEST, { integrationId, revisionId }),
     receivedDiff: (integrationId, diff) => action(actionTypes.INTEGRATION_LCM.COMPARE.RECEIVED_DIFF, { integrationId, diff }),
+    receivedDiffError: (integrationId, diffError) => action(actionTypes.INTEGRATION_LCM.COMPARE.RECEIVED_DIFF_ERROR, { integrationId, diffError }),
     clear: integrationId => action(actionTypes.INTEGRATION_LCM.COMPARE.CLEAR, { integrationId }),
     toggleExpandAll: integrationId => action(actionTypes.INTEGRATION_LCM.COMPARE.TOGGLE_EXPAND_ALL, { integrationId }),
   },
