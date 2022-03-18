@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGetTableContext } from '../../../../../CeligoTable/TableContext';
-import ResourceLink from './ResourceLink';
+import ResourceLink from '../../../../../ResourceLink';
 
 export const thisIntegrationRefsMetadata = {
   rowKey: 'flowId',
@@ -9,8 +9,8 @@ export const thisIntegrationRefsMetadata = {
       key: 'flowName',
       heading: 'Name',
       isLoggable: true,
-      Value: ({rowData: r}) => {
-        const {onClose} = useGetTableContext();
+      Value: ({ rowData: r }) => {
+        const { onClose } = useGetTableContext();
 
         return <ResourceLink name={r.flowName} resourceType="flows" id={r.flowId} onClick={onClose} />;
       },

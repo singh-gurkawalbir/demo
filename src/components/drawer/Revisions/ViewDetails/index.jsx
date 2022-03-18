@@ -136,7 +136,7 @@ function ViewRevisionDetailsContent({ integrationId, parentUrl }) {
         <FilledButton
           data-test="cancelViewChanges"
           onClick={onClose}>
-          Cancel
+          Close
         </FilledButton>
       </DrawerFooter>
     </>
