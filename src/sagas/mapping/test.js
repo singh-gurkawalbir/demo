@@ -159,7 +159,7 @@ describe('fetchRequiredMappingData saga', () => {
   });
 });
 
-describe('refreshGenerates saga', () => {
+describe('refreshGenerates saga ', () => {
   test('should request import sample data in case where non SF/NS adaptor', () => {
     const importId = 'import1';
 
@@ -343,7 +343,7 @@ describe('mappingInit saga', () => {
     mock.mockReturnValue('mock_key');
     expectSaga(mappingInit, {flowId, importId})
       .provide([
-        [call(fetchRequiredMappingData), {}],
+        [call(fetchRequiredMappingData, {flowId, importId}), {}],
         [select(selectors.resource, 'imports', importId), {_id: importId, adaptorType: 'FTPImport', lookups: [], mapping: {fields: [{extract: 'e1', generate: 'g1'}], lists: [{generate: 'l1', fields: [{extract: 'x', generate: 'y'}]}]}}],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
         [select(selectors.getSampleDataContext, {
@@ -374,7 +374,7 @@ describe('mappingInit saga', () => {
     mock.mockReturnValue('mock_key');
     expectSaga(mappingInit, {flowId, importId})
       .provide([
-        [call(fetchRequiredMappingData), {}],
+        [call(fetchRequiredMappingData, {flowId, importId}), {}],
         [select(selectors.resource, 'imports', importId), {_id: importId, adaptorType: 'NetSuiteDistributedImport', lookups: [], netsuite_da: {mapping: {fields: [{extract: 'e1', generate: 'g1'}], lists: [{generate: 'l1', fields: [{extract: 'x', generate: 'y'}]}]}}}],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
         [select(selectors.mappingNSRecordType, importId), 'recordType'],
@@ -407,7 +407,7 @@ describe('mappingInit saga', () => {
     mock.mockReturnValue('mock_key');
     expectSaga(mappingInit, {flowId, importId, subRecordMappingId})
       .provide([
-        [call(fetchRequiredMappingData), {}],
+        [call(fetchRequiredMappingData, {flowId, importId}), {}],
         [select(selectors.resource, 'imports', importId), {_id: importId, adaptorType: 'NetSuiteDistributedImport', lookups: [], netsuite_da: {mapping: {fields: [{extract: 'e1', generate: 'g1'}], lists: [{generate: 'item', fields: [{generate: 'celigo_inventorydetail', subRecordMapping: {jsonPath: '$', lookups: [], mapping: {recordType: 'inventorydetail', fields: [{extract: 'a', generate: 'b'}], lists: []}}}]}]}}}],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
         [select(selectors.mappingNSRecordType, importId, subRecordMappingId), 'inventorydetail'],
@@ -438,9 +438,10 @@ describe('mappingInit saga', () => {
     mock.mockReturnValue('mock_key');
     expectSaga(mappingInit, {flowId, importId})
       .provide([
-        [call(fetchRequiredMappingData), {}],
+        [call(fetchRequiredMappingData, {flowId, importId}), {}],
         [select(selectors.resource, 'imports', importId), {
           _id: importId,
+          _connectionId: 'conn1',
           assistantMetadata: {lookups: {}, operation: 'create_organization_fields', resource: 'organization_fields', version: 'v2'},
           adaptorType: 'RESTImport',
           assistant: 'zendesk',
@@ -450,9 +451,10 @@ describe('mappingInit saga', () => {
             lists: [],
           },
         }],
+        [select(selectors.resource, 'connections', 'conn1'), {assistant: 'zendesk'}],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
         [select(selectors.assistantData, {
-          adaptorType: 'RESTImport',
+          adaptorType: 'rest',
           assistant: 'zendesk',
         }), undefined],
         [select(selectors.getSampleDataContext, {
@@ -482,7 +484,7 @@ describe('mappingInit saga', () => {
     mock.mockReturnValue('mock_key');
     expectSaga(mappingInit, {flowId, importId})
       .provide([
-        [call(fetchRequiredMappingData), {}],
+        [call(fetchRequiredMappingData, {flowId, importId}), {}],
         [select(selectors.resource, 'imports', importId), {
           _id: importId,
           _connectorId: '_c1',
@@ -498,7 +500,7 @@ describe('mappingInit saga', () => {
         [select(selectors.integrationAppMappingMetadata, '_i1'), {mappingMetadata: {}}],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
         [select(selectors.assistantData, {
-          adaptorType: 'RESTImport',
+          adaptorType: 'rest',
           assistant: 'zendesk',
         }), undefined],
         [select(selectors.getSampleDataContext, {
@@ -1286,7 +1288,7 @@ describe('checkForIncompleteSFGenerateWhilePatch saga', () => {
     .call(validateMappings)
     .run());
 
-  test('should not trigger mapping patchIncompleteGenerates for invalid importId', () => expectSaga(checkForIncompleteSFGenerateWhilePatch, {field: 'generate', value: 'test'})
+  test('should not trigger mapping patchIncompleteGenerates for invalid importId ', () => expectSaga(checkForIncompleteSFGenerateWhilePatch, {field: 'generate', value: 'test'})
     .provide([
       [call(validateMappings), undefined],
       [select(selectors.mapping), {
