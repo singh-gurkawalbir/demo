@@ -80,7 +80,7 @@ function CreateSnapshotDrawerContent({ integrationId, parentUrl }) {
           formKey={formKey}
           onClick={handleCreateSnapshot}
         >
-          { isSnapshotCreationInProgress ? <Spinner size="small" className={classes.inProgressSpinner} /> : null } Create
+          { isSnapshotCreationInProgress ? <><Spinner size="small" className={classes.inProgressSpinner} /> Creating</> : 'Create' }
         </DynaSubmit>
         <TextButton
           data-test="cancelSnapshot"
