@@ -8,11 +8,6 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import inferErrorMessages from '../../utils/inferErrorMessages';
 
-// import conflicts from '../../components/ResourceDiffVisualizer/samples/conflicts.json';
-// import conflictsWithScript from '../../components/ResourceDiffVisualizer/samples/conflictsWithScript.json';
-// import diff from '../../components/ResourceDiffVisualizer/samples/diff.json';
-// import diffWithScript from '../../components/ResourceDiffVisualizer/samples/diffWithScript.json';
-
 export function* requestIntegrationCloneFamily({ integrationId }) {
   try {
     const cloneFamily = yield call(apiCallWithRetry, {
