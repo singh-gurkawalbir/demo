@@ -16,25 +16,7 @@ export function* requestIntegrationCloneFamily({ integrationId }) {
         method: 'GET',
       },
     });
-    // const cloneFamily = [
-    //   {
-    //     _id: '6203b066887b312cb0811c92',
-    //     name: 'Clone Integration using /clone route',
-    //     sandbox: false,
-    //   },
-    //   {
-    //     _id: '6203c20df06fd655e212980f',
-    //     name: 'Clone - Master Integration',
-    //     sandbox: false,
-    //   },
-    //   {
-    //     _id: '6203f8e896c8fccb83c4cc0e',
-    //     name: 'clone now',
-    //     sandbox: false,
-    //   },
-    // ];
 
-    // yield delay(2000);
     yield put(actions.integrationLCM.cloneFamily.received(integrationId, cloneFamily));
   } catch (error) {
     yield put(actions.integrationLCM.cloneFamily.receivedError(integrationId, error));
@@ -69,20 +51,7 @@ function* createRevision({ integrationId, newRevisionId}) {
         body: { description },
       },
     });
-    // const createdRevision = {
-    //   _id: nanoid(),
-    //   description,
-    //   _byUserId: '609276382b22fe4803a3589e',
-    //   createdAt: new Date().toISOString(),
-    //   status: type === REVISION_TYPES.SNAPSHOT ? REVISION_STATUS.COMPLETED : REVISION_STATUS.IN_PROGRESS,
-    //   type,
-    //   _integrationId: integrationId,
-    //   fromIntegrationIsSandbox: false,
-    //   beforeRevisionHash: '123456789',
-    //   installSteps: [],
-    // };
 
-    // yield delay(2000);
     yield put(actions.resource.received(`integrations/${integrationId}/revisions`, createdRevision));
     yield put(actions.resource.created(createdRevision._id, newRevisionId));
     yield put(actions.integrationLCM.revision.created(integrationId, newRevisionId));
@@ -105,8 +74,6 @@ function* comparePullRequest({ integrationId, revisionId }) {
       },
       hidden: true,
     });
-    // yield delay(2000);
-    // const resourceDiff = conflicts;
 
     yield put(actions.integrationLCM.compare.receivedDiff(integrationId, resourceDiff));
   } catch (e) {
@@ -129,8 +96,6 @@ function* compareRevertRequest({ integrationId, revisionId }) {
         method: 'POST',
       },
     });
-    // yield delay(2000);
-    // const resourceDiff = conflicts;
 
     yield put(actions.integrationLCM.compare.receivedDiff(integrationId, resourceDiff));
   } catch (e) {
@@ -148,8 +113,6 @@ function* compareRevisionChanges({ integrationId, revisionId }) {
       },
       hidden: true,
     });
-    // yield delay(2000);
-    // const resourceDiff = conflicts;
 
     yield put(actions.integrationLCM.compare.receivedDiff(integrationId, resourceDiff));
   } catch (e) {
@@ -167,11 +130,8 @@ function* cancelRevision({ integrationId, revisionId }) {
         method: 'POST',
       },
     });
-    // yield delay(2000);
-    // const updatedRevision = {...revision, status: REVISION_STATUS.CANCELED};
 
     yield put(actions.resource.request(`integrations/${integrationId}/revisions`, revisionId));
-    // yield put(actions.resource.received(`integrations/${integrationId}/revisions`, cancelledRevision));
   } catch (e) {
     // errors
   }
