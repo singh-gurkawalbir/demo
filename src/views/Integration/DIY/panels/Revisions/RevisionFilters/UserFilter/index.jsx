@@ -13,7 +13,8 @@ export default function UserFilter() {
   const dispatch = useDispatch();
   const filterKey = getRevisionFilterKey(integrationId);
   const integrationUsers = useFetchIntegrationUsers(integrationId);
-  const usersList = useSelector(state => {
+
+  const usersListSet = useSelector(state => {
     const uniqUserIds = selectors.uniqueUserIdsFromRevisions(state, integrationId);
 
     return uniqUserIds.map(userId => {
@@ -27,11 +28,13 @@ export default function UserFilter() {
       };
     });
   }, shallowEqual);
+
   const selectedUser = useSelector(state => {
     const revisionFilter = selectors.filter(state, filterKey);
 
     return revisionFilter?.user;
   });
+
   const handleUserFilter = useCallback(
     e => {
       dispatch(actions.patchFilter(filterKey, { user: e.target.value }));
@@ -42,14 +45,14 @@ export default function UserFilter() {
   return (
     <CeligoSelect
     //   isLoggable={false}
-      disabled={!usersList.length}
+      disabled={!usersListSet.size}
       onChange={handleUserFilter}
       value={selectedUser}>
       <MenuItem key={DEFAULT_OPTION} value={DEFAULT_OPTION}>
         Select user
       </MenuItem>
       {
-        usersList.map(user => (
+        usersListSet.map(user => (
           <MenuItem key={user.id} value={user.id} data-private>
             {user.name}
           </MenuItem>

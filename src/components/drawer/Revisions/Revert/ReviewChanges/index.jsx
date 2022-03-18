@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
@@ -11,8 +11,7 @@ import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import ReviewHeaderActions from './ReviewHeaderActions';
-import ResourceDiffVisualizer from '../../../../ResourceDiffVisualizer';
-import { getRevisionResourceLevelChanges } from '../../../../../utils/revisions';
+import ResourceDiffDrawerContent from '../../ResourceDiffDrawerContent';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {
@@ -32,16 +31,8 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
   // selectors
   const createdRevisionId = useSelector(state => selectors.createdResourceId(state, tempRevId));
   const isRevisionCreationInProgress = useSelector(state => selectors.isRevisionCreationInProgress(state, integrationId, tempRevId));
-  const isResourceComparisonInProgress = useSelector(state => selectors.isResourceComparisonInProgress(state, integrationId));
-  const revisionResourceDiff = useSelector(state => selectors.revisionResourceDiff(state, integrationId));
-  const isDiffExpanded = useSelector(state => selectors.isDiffExpanded(state, integrationId));
+  const hasReceivedResourceDiff = useSelector(state => selectors.hasReceivedResourceDiff(state, integrationId));
   // end selectors
-
-  const resourceDiffInfo = useMemo(() => {
-    if (revisionResourceDiff) {
-      return getRevisionResourceLevelChanges(revisionResourceDiff);
-    }
-  }, [revisionResourceDiff]);
 
   const onClose = () => {
     history.replace(parentUrl);
@@ -77,17 +68,10 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
         />
       </DrawerHeader>
       <DrawerContent>
-        {
-          isResourceComparisonInProgress ? <Spinner /> : (
-            <ResourceDiffVisualizer
-              diffs={resourceDiffInfo?.diffs}
-              forceExpand={isDiffExpanded}
-            />
-          )
-        }
+        <ResourceDiffDrawerContent integrationId={integrationId} />
       </DrawerContent>
       <DrawerFooter>
-        <FilledButton disabled={isRevisionCreationInProgress} onClick={handleCreateRevision} >
+        <FilledButton disabled={isRevisionCreationInProgress || !hasReceivedResourceDiff} onClick={handleCreateRevision} >
           Next { isRevisionCreationInProgress ? <Spinner size={12} /> : null }
         </FilledButton>
         <TextButton

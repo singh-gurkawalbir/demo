@@ -1,4 +1,4 @@
-import {delay, call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean, isEmpty } from 'lodash';
 import actions from '../../actions';
@@ -17,7 +17,6 @@ import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
 import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
-import sampleRevisionCollection from './samples/revisions.json';
 
 export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -741,16 +740,22 @@ export function* getResourceCollection({ resourceType, refresh }) {
   try {
     let collection;
 
-    if (resourceType.includes('revisions')) {
-      yield delay(2000);
-      collection = sampleRevisionCollection;
-    } else {
-      collection = yield call(apiCallWithPaging, {
-        path,
-        hidden: hideNetWorkSnackbar,
-        refresh,
-      });
-    }
+    collection = yield call(apiCallWithPaging, {
+      path,
+      hidden: hideNetWorkSnackbar,
+      refresh,
+    });
+
+    // if (resourceType.includes('revisions')) {
+    //   yield delay(2000);
+    //   collection = sampleRevisionCollection;
+    // } else {
+    //   collection = yield call(apiCallWithPaging, {
+    //     path,
+    //     hidden: hideNetWorkSnackbar,
+    //     refresh,
+    //   });
+    // }
 
     if (resourceType === 'stacks') {
       let sharedStacks = yield call(apiCallWithPaging, {

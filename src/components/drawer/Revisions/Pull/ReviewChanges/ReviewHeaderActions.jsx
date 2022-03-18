@@ -22,6 +22,7 @@ export default function ReviewHeaderActions({ numConflicts, integrationId, revId
   const dispatch = useDispatch();
   const classes = useStyles();
   const isResourceComparisonInProgress = useSelector(state => selectors.isResourceComparisonInProgress(state, integrationId));
+  const hasReceivedResourceDiff = useSelector(state => selectors.hasReceivedResourceDiff(state, integrationId));
 
   const handleRefresh = () => {
     dispatch(actions.integrationLCM.compare.pullRequest(integrationId, revId));
@@ -30,7 +31,7 @@ export default function ReviewHeaderActions({ numConflicts, integrationId, revId
   return (
     <>
       <div className={classes.drawerHeaderActions}>
-        { !isResourceComparisonInProgress && <ConflictStatus count={numConflicts} /> }
+        { hasReceivedResourceDiff && <ConflictStatus count={numConflicts} /> }
         <ActionGroup position="right">
           <IconButton
             disabled={isResourceComparisonInProgress}

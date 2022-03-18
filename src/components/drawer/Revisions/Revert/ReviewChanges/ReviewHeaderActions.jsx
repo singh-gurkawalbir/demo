@@ -3,12 +3,12 @@ import { IconButton } from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import RefreshIcon from '../../../../icons/RefreshIcon';
-import ExpandWindowIcon from '../../../../icons/ExpandWindowIcon';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import ActionGroup from '../../../../ActionGroup';
 import CeligoDivider from '../../../../CeligoDivider';
 import RevisionsGuide from '../../RevisionsGuide';
+import ExpandAllResourceDiff from '../../ExpandAllResourceDiff';
 
 const useStyles = makeStyles(() => ({
   drawerHeaderActions: {
@@ -25,15 +25,10 @@ const useStyles = makeStyles(() => ({
 export default function ReviewHeaderActions({ integrationId, revId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const isDiffExpanded = useSelector(state => selectors.isDiffExpanded(state, integrationId));
   const isResourceComparisonInProgress = useSelector(state => selectors.isResourceComparisonInProgress(state, integrationId));
 
   const handleRefresh = () => {
     dispatch(actions.integrationLCM.compare.revertRequest(integrationId, revId));
-  };
-
-  const handleToggleExpand = () => {
-    dispatch(actions.integrationLCM.compare.toggleExpandAll(integrationId));
   };
 
   return (
@@ -48,15 +43,7 @@ export default function ReviewHeaderActions({ integrationId, revId }) {
             <RefreshIcon />
           </IconButton>
           <CeligoDivider />
-          <div className={classes.expand}>
-            <IconButton
-              size="small"
-              data-test="expandAll"
-              onClick={handleToggleExpand}>
-              <ExpandWindowIcon />
-            </IconButton>
-            {isDiffExpanded ? 'Collapse all' : 'Expand all'}
-          </div>
+          <ExpandAllResourceDiff integrationId={integrationId} />
           <RevisionsGuide />
         </ActionGroup>
       </div>
