@@ -23,7 +23,7 @@ export default function DestinationTitle({onClick}) {
 
   return (
     <Title onClick={onClick} className={classes.sourceTitle}>
-      DESTINATION
+      DESTINATIONS & LOOKUPS
     </Title>
   );
 }
