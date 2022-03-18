@@ -705,6 +705,7 @@ export default {
         fontWeight: 'normal',
       },
       textColorPrimary: {
+        color: colors.celigoNeutral8,
         '&.Mui-selected': {
           fontFamily: 'source sans pro semibold',
         },

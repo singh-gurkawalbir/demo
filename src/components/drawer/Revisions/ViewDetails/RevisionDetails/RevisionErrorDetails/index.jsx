@@ -16,7 +16,7 @@ import ErrorTable from './ErrorTable';
 const useStyles = makeStyles(theme => ({
   accordionDetails: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-    display: 'block',
+    padding: 0,
   },
   accordionSummary: {
     width: '100%',
@@ -29,6 +29,9 @@ const useStyles = makeStyles(theme => ({
   },
   revisionInfoRow: {
     marginBottom: theme.spacing(2),
+  },
+  spinnerWrapper: {
+    textAlign: 'center',
   },
 }));
 
@@ -49,7 +52,7 @@ export default function RevisionErrorDetails({ integrationId, revisionId }) {
   }, [dispatch, integrationId, isRevisionErrorsRequested, revisionId]);
 
   if (isErrorsFetchInProgress) {
-    return <Spinner />;
+    return <Spinner className={classes.spinnerWrapper} />;
   }
 
   return (

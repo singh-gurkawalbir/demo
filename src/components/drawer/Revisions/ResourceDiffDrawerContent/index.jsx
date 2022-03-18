@@ -27,7 +27,7 @@ export default function ResourceDiffContent({ integrationId }) {
   }, [revisionResourceDiff]);
 
   if (isResourceComparisonInProgress) {
-    return <Spinner />;
+    return <Spinner centerAll />;
   }
   if (revisionResourceDiffError) {
     return <div className={classes.error}> {revisionResourceDiffError} </div>;

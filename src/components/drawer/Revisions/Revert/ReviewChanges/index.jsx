@@ -11,7 +11,7 @@ import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
-import ReviewHeaderActions from './ReviewHeaderActions';
+import RevisionHeader from '../../RevisionHeader';
 import ResourceDiffDrawerContent from '../../ResourceDiffDrawerContent';
 
 const useStyles = makeStyles(() => ({
@@ -63,7 +63,7 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
         className={classes.drawerHeader}
         infoText="test"
       >
-        <ReviewHeaderActions
+        <RevisionHeader
           integrationId={integrationId}
           revId={tempRevId}
           mode={REVISION_DRAWER_MODES.REVIEW}

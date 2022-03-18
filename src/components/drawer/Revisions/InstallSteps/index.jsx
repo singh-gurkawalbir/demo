@@ -14,9 +14,6 @@ import openExternalUrl from '../../../../utils/window';
 import { INSTALL_STEP_TYPES } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
-  installIntegrationWrapper: {
-    padding: theme.spacing(2, 3),
-  },
   installIntegrationWrapperContent: {
     maxWidth: 750,
   },
@@ -126,31 +123,29 @@ export default function InstallSteps({ integrationId, revisionId }) {
   // Consider a conection to be created
   // Consider merge step to be finished
   return (
-    <div className={classes.installIntegrationWrapper}>
-      <div className={classes.installIntegrationWrapperContent}>
-        <RawHtml
-          className={classes.message}
-          options={{ allowedHtmlTags: ['a', 'br'] }}
-          html={' Complete the steps below to merge your changes.Need more help? <a href="" target="_blank">Check out our help guide</a>'} />
-        <div className={classes.installIntegrationSteps}>
-          {installSteps.map((step, index) => (
-            <InstallationStep
-              key={step.name}
-              handleStepClick={handleStepClick}
-              index={index + 1}
-              step={step}
-              integrationId={integrationId}
+    <div className={classes.installIntegrationWrapperContent}>
+      <RawHtml
+        className={classes.message}
+        options={{ allowedHtmlTags: ['a', 'br'] }}
+        html={' Complete the steps below to merge your changes.Need more help? <a href="" target="_blank">Check out our help guide</a>'} />
+      <div className={classes.installIntegrationSteps}>
+        {installSteps.map((step, index) => (
+          <InstallationStep
+            key={step.name}
+            handleStepClick={handleStepClick}
+            index={index + 1}
+            step={step}
+            integrationId={integrationId}
           />
-          ))}
-        </div>
-        <ResourceSetupDrawer
-          integrationId={integrationId}
-          revisionId={revisionId}
-          onClose={() => {}}
-          onSubmitComplete={handleSubmitComplete}
-          mode="revision"
-      />
+        ))}
       </div>
+      <ResourceSetupDrawer
+        integrationId={integrationId}
+        revisionId={revisionId}
+        onClose={() => {}}
+        onSubmitComplete={handleSubmitComplete}
+        mode="revision"
+      />
     </div>
   );
 }

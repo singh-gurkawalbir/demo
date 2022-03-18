@@ -21,13 +21,14 @@ const useStyles = makeStyles({
     justifyContent: 'space-between',
     width: '100%',
   },
+  spinnerWrapper: {
+    textAlign: 'center',
+  },
+  environment: {
+    display: 'flex',
+    alignItems: 'center',
+  },
 });
-
-const DropdownIndicator = props => (
-  <components.DropdownIndicator {...props}>
-    <ArrowDownIcon />
-  </components.DropdownIndicator>
-);
 
 export const CloneSelect = props => {
   const {
@@ -46,7 +47,12 @@ export const CloneSelect = props => {
   const customStyles = CustomReactSelectStyles();
 
   const handleChange = value => onFieldChange(id, value);
-
+  const DropdownIndicator = props => (
+    <components.DropdownIndicator {...props} className={classes.environment}>
+      {showEnvironment && value?.environment}
+      <ArrowDownIcon />
+    </components.DropdownIndicator>
+  );
   const Option = props => {
     const classes = useStyles();
     const { label, data } = props;
@@ -94,6 +100,7 @@ export const CloneSelect = props => {
 };
 
 export default function DynaIntegrationCloneSelect(props) {
+  const classes = useStyles();
   const { integrationId } = props;
   const dispatch = useDispatch();
   const {fetchStatus, isLoadingCloneFamily} = useSelector(state => {
@@ -125,7 +132,7 @@ export default function DynaIntegrationCloneSelect(props) {
   );
 
   if (isLoadingCloneFamily) {
-    return <Spinner />;
+    return <div className={classes.spinnerWrapper}><Spinner /></div>;
   }
 
   return <CloneSelect {...props} options={newOptions} showEnvironment={accountHasSandbox} />;

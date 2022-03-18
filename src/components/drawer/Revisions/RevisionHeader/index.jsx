@@ -19,6 +19,9 @@ const useStyles = makeStyles(theme => ({
   drawerHeaderActions: {
     width: '100%',
     display: 'flex',
+    '&:not(:last-child)': {
+      marginRight: 0,
+    },
   },
   container: {
     width: theme.spacing(11),

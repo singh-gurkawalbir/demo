@@ -5,10 +5,10 @@ import RightDrawer from '../../../Right';
 import DrawerHeader from '../../../Right/DrawerHeader';
 import DrawerContent from '../../../Right/DrawerContent';
 import DrawerFooter from '../../../Right/DrawerFooter';
-import { TextButton } from '../../../../Buttons';
 import InstallSteps from '../../InstallSteps';
 import RevisionHeader from '../../RevisionHeader';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
+import FilledButton from '../../../../Buttons/FilledButton';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {
@@ -41,11 +41,11 @@ function MergePullDrawerContent({ parentUrl, integrationId }) {
         <InstallSteps integrationId={integrationId} revisionId={revId} />
       </DrawerContent>
       <DrawerFooter>
-        <TextButton
-          data-test="cancelCreatePull"
+        <FilledButton
+          data-test="cancelMerge"
           onClick={onClose}>
-          Cancel
-        </TextButton>
+          Close
+        </FilledButton>
       </DrawerFooter>
     </>
   );

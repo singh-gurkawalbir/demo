@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles';
 import { useRouteMatch, useHistory } from 'react-router-dom';
+import { Typography } from '@material-ui/core';
 import RightDrawer from '../../../../../Right';
 import DrawerHeader from '../../../../../Right/DrawerHeader';
 import DrawerContent from '../../../../../Right/DrawerContent';
@@ -12,7 +13,7 @@ import DateTimeDisplay from '../../../../../../DateTimeDisplay';
 
 const useStyles = makeStyles(theme => ({
   details: {
-    margin: theme.spacing(2),
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -37,20 +38,9 @@ function ErrorInfoDrawerContent({ integrationId, revisionId, parentUrl }) {
     <>
       <DrawerHeader title="View error" handleClose={onClose} />
       <DrawerContent>
-        <div className={classes.details}>
-          <b> Timestamp </b>
-          <div><DateTimeDisplay dateTime={revisionError.createdAt} /></div>
-        </div>
-        <div className={classes.details}>
-
-          <b>Code</b>
-          <div>{revisionError.code}</div>
-        </div>
-        <div className={classes.details}>
-
-          <b>Message</b>
-          <div>{revisionError.message}</div>
-        </div>
+        <Typography className={classes.details}><b>Timestamp</b><br /><DateTimeDisplay dateTime={revisionError.createdAt} /></Typography>
+        <Typography className={classes.details}><b>Code</b><br /><DateTimeDisplay dateTime={revisionError.code} /></Typography>
+        <Typography className={classes.details}><b>Message</b><br /><DateTimeDisplay dateTime={revisionError.message} /></Typography>
       </DrawerContent>
       <DrawerFooter>
         <FilledButton
@@ -70,8 +60,7 @@ export default function ErrorInfoDrawer({ integrationId, revisionId }) {
     <RightDrawer
       path="error/:errorId"
       variant="temporary"
-      height="tall"
-      width="full">
+      height="tall">
       <ErrorInfoDrawerContent
         integrationId={integrationId}
         revisionId={revisionId}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import ActionGroup from '../../../ActionGroup';
 import { selectors } from '../../../../reducers';
 import CeligoDivider from '../../../CeligoDivider';
@@ -9,9 +10,17 @@ import ViewReferences from './ViewReferences';
 import FullScreen from './FullScreen';
 import ConflictStatus from '../../ConflictStatus';
 
+const useStyles = makeStyles(theme => ({
+  referencesButton: {
+    '&> :not(:last-child)': {
+      marginRight: theme.spacing(1),
+    },
+  },
+}));
+
 export default function DiffContainerTitle({ resourceDiff, resourceType, integrationId }) {
   const { resourceId, action = REVISION_DIFF_ACTIONS.UPDATE } = resourceDiff;
-
+  const classes = useStyles();
   const resourceName = useSelector(state => selectors.resourceName(state, resourceId, resourceType));
   const showReferences = shouldShowReferences(resourceType);
   const numConflicts = resourceDiff?.conflicts?.length;
@@ -24,9 +33,9 @@ export default function DiffContainerTitle({ resourceDiff, resourceType, integra
         <Typography variant="body2"> Action: {REVISION_DIFF_ACTION_LABELS[action]} </Typography>
         { numConflicts && <ConflictStatus count={numConflicts} />}
       </ActionGroup>
-      <ActionGroup position="right">
+      <ActionGroup position="right" className={classes.referencesButton}>
         { showReferences && <ViewReferences integrationId={integrationId} resourceId={resourceId} resourceType={resourceType} />}
-        { showReferences && <CeligoDivider /> }
+        { showReferences && <CeligoDivider position="right" /> }
         <FullScreen resourceDiff={resourceDiff} resourceType={resourceType} integrationId={integrationId} />
       </ActionGroup>
     </>
