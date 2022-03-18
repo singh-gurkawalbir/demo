@@ -1,20 +1,13 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position } from 'react-flow-renderer';
-import CircleIcon from '../CircleIcon';
 import DefaultHandle from '../../Handles/DefaultHandle';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   container: {
-    width: 24,
-    height: 24,
-  },
-  terminal: {
-    backgroundColor: theme.palette.common.white,
-    border: `solid 1px ${theme.palette.secondary.light}`,
-    color: theme.palette.secondary.light,
-    borderRadius: '50%',
-    padding: 2,
+    width: 1,
+    height: 1,
+    background: 'red',
   },
 }));
 
@@ -24,7 +17,6 @@ export default function TerminalBlockedNode() {
   return (
     <div className={classes.container}>
       <DefaultHandle type="target" position={Position.Left} />
-      <CircleIcon />
     </div>
   );
 }

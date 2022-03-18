@@ -27,8 +27,8 @@ export const nodeSize = {
     height: 24,
   },
   terminalBlocked: {
-    width: 24,
-    height: 24,
+    width: 1,
+    height: 1,
   },
   merge: {
     width: 34,
@@ -176,24 +176,28 @@ const getLengthBtwCoordinates = (x1, y1, x2, y2) => {
   return getModulusVal(x2 - x1);
 };
 
-export const getPositionInEdge = (edgeCommands, centerOffset) => {
-  const linePlotsCoordinates = edgeCommands.substr(1).split(/[LQ]/).map(cmd => cmd.trim()).map(cmd => {
+export const getPositionInEdge = (edgeCommands, position = 'center', offset = 0) => {
+  const linePlotsCoordinates = edgeCommands
+    .substr(1)
+    .split(/[LQ]/)
+    .map(cmd => cmd.trim())
+    .map(cmd => {
     // Quadratic command...currently that is supported...if its a cubic command it can have
     //  3 coordinates to describe the curve,we don't support it... So this function support M,L,C commands.
-    const commandSplit = cmd.split(' ');
+      const commandSplit = cmd.split(' ');
 
-    if (commandSplit.length >= 3) {
-      throw new Error('Cubic command encountered please change the path generation logic to support quadratic');
-    }
+      if (commandSplit.length >= 3) {
+        throw new Error('Cubic command encountered please change the path generation logic to support quadratic');
+      }
 
-    const isQuadratic = !!commandSplit[1];
+      const isQuadratic = !!commandSplit[1];
 
-    if (isQuadratic) {
-      return commandSplit[1];
-    }
+      if (isQuadratic) {
+        return commandSplit[1];
+      }
 
-    return cmd;
-  })
+      return cmd;
+    })
     .map(coordinates => coordinates.split(',').map(e => parseInt(e, 10)));
 
   if (linePlotsCoordinates.length <= 1) {
@@ -209,7 +213,16 @@ export const getPositionInEdge = (edgeCommands, centerOffset) => {
     return acc + getLengthBtwCoordinates(...curr, ...nextCoord);
   }, 0);
 
-  let lengthFromStart = Math.floor(lengthOFEdges / 2 + centerOffset);
+  let lengthFromStart;
+
+  if (position === 'center') {
+    lengthFromStart = Math.floor(lengthOFEdges / 2 + offset);
+  } else if (position === 'left') {
+    lengthFromStart = offset;
+  } else { // right
+    lengthFromStart = lengthOFEdges - offset;
+  }
+  console.log(lengthOFEdges, lengthFromStart, position, offset);
 
   for (let i = 0; i < linePlotsCoordinates.length - 1; i += 1) {
     const coord1 = linePlotsCoordinates[i];

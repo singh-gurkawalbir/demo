@@ -24,7 +24,7 @@ import DestinationTitle from './titles/DestinationTitle';
 const nodeTypes = {
   pg: PgNode,
   pp: PpNode,
-  terminalFree: TerminalFreeNode,
+  terminalFree: TerminalFreeNode, // TerminalFreeNode,
   terminalBlocked: TerminalBlockedNode,
   router: RouterNode,
   merge: MergeNode,
