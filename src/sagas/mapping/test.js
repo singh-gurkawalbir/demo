@@ -44,10 +44,18 @@ describe('fetchRequiredMappingData saga', () => {
 
     return expectSaga(fetchRequiredMappingData, { flowId, importId })
       .provide([
-        [select(selectors.resource, 'imports', importId), {_id: 'imp1', name: 'test'}],
+        [select(selectors.resource, 'imports', importId), {_id: 'imp1', _connectionId: 'conn1', name: 'test'}],
+        [select(selectors.resource, 'connections', 'conn1'), {_id: 'conn1', name: 'Conn 1'}],
         [select(selectors.getImportSampleData, importId, {}), {}],
       ])
-      .call(requestImportSampleData, {
+      .call(requestFlowSampleData,
+        {
+          flowId,
+          resourceId: importId,
+          resourceType: 'imports',
+          stage: 'importMappingExtract',
+        }
+      ).call(requestImportSampleData, {
         resourceId: importId,
         options: {},
       })
@@ -60,8 +68,17 @@ describe('fetchRequiredMappingData saga', () => {
     return expectSaga(fetchRequiredMappingData, { flowId, importId })
       .provide([
         [select(selectors.resource, 'imports', importId), {_id: 'imp1', name: 'test'}],
+        [select(selectors.resource, 'connections', 'conn1'), {_id: 'conn1', name: 'Conn 1'}],
         [select(selectors.getImportSampleData, importId, {}), {status: 'received'}],
       ])
+      .call(requestFlowSampleData,
+        {
+          flowId,
+          resourceId: importId,
+          resourceType: 'imports',
+          stage: 'importMappingExtract',
+        }
+      )
       .not.call(requestImportSampleData, {
         resourceId: importId,
         options: {},
@@ -438,6 +455,10 @@ describe('mappingInit saga', () => {
     mock.mockReturnValue('mock_key');
     expectSaga(mappingInit, {flowId, importId})
       .provide([
+        [call(requestAssistantMetadata, {
+          adaptorType: 'rest',
+          assistant: 'zendesk',
+        }), {export: {}, import: {}}],
         [call(fetchRequiredMappingData, {flowId, importId}), {}],
         [select(selectors.resource, 'imports', importId), {
           _id: importId,
@@ -453,16 +474,16 @@ describe('mappingInit saga', () => {
         }],
         [select(selectors.resource, 'connections', 'conn1'), {assistant: 'zendesk'}],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
-        [select(selectors.assistantData, {
-          adaptorType: 'rest',
-          assistant: 'zendesk',
-        }), undefined],
         [select(selectors.getSampleDataContext, {
           flowId,
           resourceId: importId,
           stage: 'importMappingExtract',
           resourceType: 'imports',
         }), {data: [{id: 'a'}]}],
+        [select(selectors.assistantData, {
+          adaptorType: 'rest',
+          assistant: 'zendesk',
+        }), {export: {}, import: {}}],
       ])
       .put(actions.mapping.initComplete({
         mappings: [
@@ -499,10 +520,6 @@ describe('mappingInit saga', () => {
         }],
         [select(selectors.integrationAppMappingMetadata, '_i1'), {mappingMetadata: {}}],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
-        [select(selectors.assistantData, {
-          adaptorType: 'rest',
-          assistant: 'zendesk',
-        }), undefined],
         [select(selectors.getSampleDataContext, {
           flowId,
           resourceId: importId,
