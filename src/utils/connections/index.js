@@ -211,7 +211,7 @@ export const amazonSellerCentralMarketPlaceOptions = {
 export const amazonSellerCentralBaseUriForNonMWSConnection = {
   northAmerica: 'https://sellingpartnerapi-na.amazon.com/',
   europe: 'https://sellingpartnerapi-eu.amazon.com/',
-  farEast: 'https://sellingpartnerapi-fe.amazon.com',
+  farEast: 'https://sellingpartnerapi-fe.amazon.com/',
 };
 
 export const amazonSellerCentralBaseUriForMWSConnection = {
