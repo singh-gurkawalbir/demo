@@ -14,7 +14,7 @@ export const VALID_REVISION_TYPES_FOR_CREATION = [
 export const REVISION_DRAWER_MODES = {
   OPEN: 'open',
   REVIEW: 'review',
-  MERGE: 'merge',
+  INSTALL: 'install',
 };
 export const REVISION_TYPE_OPTIONS = [{
   label: 'Pull',

@@ -33,8 +33,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function DrawerDeclarations({ integrationId, hasMonitorLevelAccess }) {
+  const isLoadingRevisions = useSelector(state => selectors.isLoadingRevisions(state, integrationId));
+
+  if (isLoadingRevisions) {
+    // to make sure drawers are not initialized before revisions are loaded
+    return null;
+  }
+
   if (hasMonitorLevelAccess) {
-    <ViewDetailsDrawer integrationId={integrationId} />;
+    return <ViewDetailsDrawer integrationId={integrationId} />;
   }
 
   return (
@@ -53,11 +60,7 @@ function DrawerDeclarations({ integrationId, hasMonitorLevelAccess }) {
 
 const RevisionsList = ({ integrationId }) => {
   const revisions = useSelector(state => selectors.filteredRevisions(state, integrationId));
-  const isLoadingRevisions = useSelector(state => {
-    const status = selectors.revisionsFetchStatus(state, integrationId);
-
-    return !status || status === 'requested';
-  });
+  const isLoadingRevisions = useSelector(state => selectors.isLoadingRevisions(state, integrationId));
   const hasNoRevisions = useSelector(state => selectors.integrationHasNoRevisions(state, integrationId));
 
   if (isLoadingRevisions) {

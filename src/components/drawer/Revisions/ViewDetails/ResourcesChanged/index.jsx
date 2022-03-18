@@ -1,25 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import Spinner from '../../../../Spinner';
-import ResourceDiffVisualizer from '../../../../ResourceDiffVisualizer';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import { selectors } from '../../../../../reducers';
-import { getRevisionResourceLevelChanges } from '../../../../../utils/revisions';
+import ResourceDiffContent from '../../ResourceDiffContent';
 
 export default function ResourcesChanged({ integrationId, revisionId }) {
   const dispatch = useDispatch();
-
-  // selectors
-  const isResourceComparisonInProgress = useSelector(state => selectors.isResourceComparisonInProgress(state, integrationId));
-  const revisionResourceDiff = useSelector(state => selectors.revisionResourceDiff(state, integrationId));
-  const isDiffExpanded = useSelector(state => selectors.isDiffExpanded(state, integrationId));
-  // end selectors
-
-  const resourceDiffInfo = useMemo(() => {
-    if (revisionResourceDiff) {
-      return getRevisionResourceLevelChanges(revisionResourceDiff);
-    }
-  }, [revisionResourceDiff]);
 
   useEffect(() => {
     dispatch(actions.integrationLCM.compare.revisionChanges(integrationId, revisionId));
@@ -27,15 +12,5 @@ export default function ResourcesChanged({ integrationId, revisionId }) {
     return () => dispatch(actions.integrationLCM.compare.clear(integrationId));
   }, [dispatch, integrationId, revisionId]);
 
-  if (isResourceComparisonInProgress) {
-    return <Spinner centerAll />;
-  }
-
-  return (
-    <ResourceDiffVisualizer
-      integrationId={integrationId}
-      diffs={resourceDiffInfo?.diffs}
-      forceExpand={isDiffExpanded}
-    />
-  );
+  return <ResourceDiffContent integrationId={integrationId} />;
 }

@@ -94,6 +94,13 @@ selectors.revisionType = (state, integrationId, revisionId) => {
 
   return revision?.type;
 };
+
+selectors.isLoadingRevisions = (state, integrationId) => {
+  const status = selectors.revisionsFetchStatus(state, integrationId);
+
+  return !status || status === 'requested';
+};
+
 selectors.integrationHasNoRevisions = (state, integrationId) => {
   const status = selectors.revisionsFetchStatus(state, integrationId);
   const revisions = selectors.revisions(state, integrationId);

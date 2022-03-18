@@ -12,7 +12,7 @@ import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import RevisionHeader from '../../RevisionHeader';
-import ResourceDiffDrawerContent from '../../ResourceDiffDrawerContent';
+import ResourceDiffDrawerContent from '../../ResourceDiffContent';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {

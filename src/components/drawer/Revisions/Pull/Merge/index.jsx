@@ -30,12 +30,12 @@ function MergePullDrawerContent({ parentUrl, integrationId }) {
 
   return (
     <>
-      <DrawerHeader className={classes.drawerHeader} title="Review changes" handleClose={onClose}>
+      <DrawerHeader className={classes.drawerHeader} title="Merge changes" handleClose={onClose}>
         <RevisionHeader
           integrationId={integrationId}
           revisionId={revId}
           onClose={onClose}
-          mode={REVISION_DRAWER_MODES.MERGE} />
+          mode={REVISION_DRAWER_MODES.INSTALL} />
       </DrawerHeader>
       <DrawerContent>
         <InstallSteps integrationId={integrationId} revisionId={revId} />

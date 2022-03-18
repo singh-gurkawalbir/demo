@@ -1,6 +1,6 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import { IconButton, Typography } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import actions from '../../../../actions';
@@ -14,6 +14,7 @@ import ExpandAllResourceDiff from '../ExpandAllResourceDiff';
 import ConflictStatus from '../../../ResourceDiffVisualizer/ConflictStatus';
 import { REVISION_DRAWER_MODES } from '../../../../utils/revisions';
 import CancelIcon from '../../../icons/CancelIcon';
+import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   drawerHeaderActions: {
@@ -24,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   container: {
-    width: theme.spacing(11),
+    width: theme.spacing(16),
   },
   icon: {
     marginRight: theme.spacing(0.5),
@@ -87,34 +88,41 @@ const CancelRevision = ({ integrationId, revisionId, mode, onClose }) => {
   const classes = useStyles();
   const handleCancel = useCancelRevision({ integrationId, revisionId, onClose });
 
-  if (mode !== REVISION_DRAWER_MODES.MERGE) {
+  const revisionType = useSelector(state => selectors.revisionType(state, integrationId, revisionId));
+
+  if (
+    mode !== REVISION_DRAWER_MODES.INSTALL ||
+    ![REVISION_TYPES.PULL, REVISION_TYPES.REVERT].includes(revisionType)
+  ) {
     return null;
   }
 
+  const label = revisionType === REVISION_TYPES.PULL ? 'Cancel merge' : 'Cancel revert';
+
   return (
-    <IconButton
+    <TextButton
       size="small"
       className={classes.container}
       data-test="expandAll"
       onClick={handleCancel}>
       <CancelIcon className={classes.icon} />
-      <Typography variant="body2"> Cancel merge</Typography>
-    </IconButton>
+      {label}
+    </TextButton>
   );
 };
 
-export default function ReviewHeaderActions({ integrationId, revId, mode, onClose }) {
+export default function RevisionHeader({ integrationId, revisionId, mode, onClose }) {
   const classes = useStyles();
 
   return (
     <div className={classes.drawerHeaderActions}>
       <Conflicts integrationId={integrationId} mode={mode} />
       <ActionGroup position="right">
-        <RefreshResourceChanges integrationId={integrationId} revisionId={revId} mode={mode} />
+        <RefreshResourceChanges integrationId={integrationId} revisionId={revisionId} mode={mode} />
         <ExpandAction integrationId={integrationId} mode={mode} />
         <RevisionsGuide />
-        <CancelRevision integrationId={integrationId} revisionId={revId} mode={mode} onClose={onClose} />
-        <CeligoDivider />
+        <CancelRevision integrationId={integrationId} revisionId={revisionId} mode={mode} onClose={onClose} />
+        <CeligoDivider position="right" />
       </ActionGroup>
     </div>
   );

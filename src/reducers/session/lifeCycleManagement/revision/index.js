@@ -107,48 +107,37 @@ selectors.tempRevisionInfo = (state, integrationId, revisionId) => {
   return state[integrationId]?.[revisionId];
 };
 
-selectors.tempRevisionType = (state, integrationId, revisionId) => {
-  if (!state || !integrationId || !revisionId) {
+selectors.revisionErrorsInfo = (state, integrationId, revisionId) => {
+  if (!state || !integrationId || !revisionId || !state[integrationId]?.[revisionId]?.errors) {
     return;
   }
 
-  return state[integrationId]?.[revisionId]?.type;
+  return state[integrationId][revisionId].errors;
 };
 
-selectors.isRevisionCreationInProgress = (state, integrationId, revisionId) => {
-  if (!state || !integrationId || !revisionId || !state[integrationId]?.[revisionId]) {
-    return false;
-  }
+selectors.tempRevisionType = (state, integrationId, revisionId) =>
+  selectors.tempRevisionInfo(state, integrationId, revisionId)?.type;
 
-  return state[integrationId][revisionId].status === REVISION_CREATION_STATUS.CREATION_IN_PROGRESS;
+selectors.isRevisionCreationInProgress = (state, integrationId, revisionId) =>
+  selectors.tempRevisionInfo(state, integrationId, revisionId).status === REVISION_CREATION_STATUS.CREATION_IN_PROGRESS;
+
+selectors.isRevisionErrorsFetchInProgress = (state, integrationId, revisionId) =>
+  !!selectors.revisionErrorsInfo(state, integrationId, revisionId)?.status === 'requested';
+
+selectors.isRevisionErrorsRequested = (state, integrationId, revisionId) =>
+  !!selectors.revisionErrorsInfo(state, integrationId, revisionId)?.status;
+
+selectors.revisionErrors = (state, integrationId, revisionId) =>
+  selectors.revisionErrorsInfo(state, integrationId, revisionId)?.data;
+
+selectors.revisionError = (state, integrationId, revisionId, errorId) => {
+  const errors = selectors.revisionErrors(state, integrationId, revisionId) || [];
+
+  return errors.find(error => error._id === errorId);
 };
 
-selectors.isRevisionErrorsFetchInProgress = (state, integrationId, revisionId) => {
-  if (!state || !integrationId || !revisionId || !state[integrationId]?.[revisionId]?.errors) {
-    return false;
-  }
-
-  return state[integrationId][revisionId].errors.status === 'requested';
-};
-selectors.isRevisionErrorsRequested = (state, integrationId, revisionId) => {
-  if (!state || !integrationId || !revisionId || !state[integrationId]?.[revisionId]?.errors) {
-    return false;
-  }
-
-  return !!state[integrationId][revisionId].errors.status;
-};
 selectors.revisionCreationError = (state, integrationId, revisionId) => {
   const revisionInfo = selectors.tempRevisionInfo(state, integrationId, revisionId);
 
   return revisionInfo?.creationError;
-};
-
-selectors.revisionErrors = (state, integrationId, revisionId) => state?.[integrationId]?.[revisionId]?.errors?.data;
-selectors.revisionError = (state, integrationId, revisionId, errorId) => {
-  if (!state || !integrationId || !revisionId || !errorId) {
-    return;
-  }
-  const errors = state?.[integrationId]?.[revisionId]?.errors?.data || [];
-
-  return errors.find(error => error._id === errorId);
 };

@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import nanoid from 'nanoid';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import HttpIcon from '../../../icons/HttpIcon';
 
@@ -10,7 +11,7 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
-      history.push(`${match.url}/pull/123/open`);
+      history.push(`${match.url}/pull/${nanoid()}/open`);
     }, [history, match.url]);
 
     return handleClick;

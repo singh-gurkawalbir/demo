@@ -12,7 +12,7 @@ import actions from '../../../../../actions';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import { selectors } from '../../../../../reducers';
 import RevisionHeader from '../../RevisionHeader';
-import ResourceDiffDrawerContent from '../../ResourceDiffDrawerContent';
+import ResourceDiffDrawerContent from '../../ResourceDiffContent';
 
 const useStyles = makeStyles(theme => ({
   drawerHeaderWrapper: {
@@ -39,7 +39,6 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
   const createdRevisionId = useSelector(state => selectors.createdResourceId(state, revId));
   const isRevisionCreationInProgress = useSelector(state => selectors.isRevisionCreationInProgress(state, integrationId, revId));
   const hasReceivedResourceDiff = useSelector(state => selectors.hasReceivedResourceDiff(state, integrationId));
-  const numConflicts = useSelector(state => selectors.revisionResourceDiff(state, integrationId)?.numConflicts);
   // end selectors
 
   const onClose = () => {
@@ -70,9 +69,8 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
         infoText="test"
         handleClose={onClose}>
         <RevisionHeader
-          numConflicts={numConflicts}
           integrationId={integrationId}
-          revId={revId}
+          revisionId={revId}
           mode={REVISION_DRAWER_MODES.REVIEW}
         />
       </DrawerHeader>

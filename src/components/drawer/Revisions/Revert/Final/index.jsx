@@ -35,7 +35,7 @@ function FinalRevertDrawerContent({ parentUrl, integrationId }) {
           integrationId={integrationId}
           revisionId={revId}
           onClose={onClose}
-          mode={REVISION_DRAWER_MODES.MERGE} />
+          mode={REVISION_DRAWER_MODES.INSTALL} />
       </DrawerHeader>
       <DrawerContent>
         <InstallSteps integrationId={integrationId} revisionId={revId} />
