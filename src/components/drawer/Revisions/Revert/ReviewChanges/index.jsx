@@ -10,6 +10,7 @@ import Spinner from '../../../../Spinner';
 import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
+import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import ReviewHeaderActions from './ReviewHeaderActions';
 import ResourceDiffDrawerContent from '../../ResourceDiffDrawerContent';
 
@@ -65,6 +66,7 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
         <ReviewHeaderActions
           integrationId={integrationId}
           revId={tempRevId}
+          mode={REVISION_DRAWER_MODES.REVIEW}
         />
       </DrawerHeader>
       <DrawerContent>

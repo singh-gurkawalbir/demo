@@ -1,23 +1,20 @@
 import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, IconButton } from '@material-ui/core';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../../Right';
-import ActionGroup from '../../../../ActionGroup';
 import DrawerHeader from '../../../Right/DrawerHeader';
 import DrawerContent from '../../../Right/DrawerContent';
 import DrawerFooter from '../../../Right/DrawerFooter';
 import { TextButton } from '../../../../Buttons';
-import CancelIcon from '../../../../icons/CancelIcon';
 import InstallSteps from '../../InstallSteps';
-import useCancelRevision from '../../hooks/useCancelRevision';
+import RevisionHeader from '../../RevisionHeader';
+import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 
-const useStyles = makeStyles(theme => ({
-  container: {
-    width: theme.spacing(11),
-  },
-  icon: {
-    marginRight: theme.spacing(0.5),
+const useStyles = makeStyles(() => ({
+  drawerHeader: {
+    '& > h4': {
+      whiteSpace: 'nowrap',
+    },
   },
 }));
 
@@ -31,21 +28,14 @@ function FinalRevertDrawerContent({ parentUrl, integrationId }) {
     history.replace(parentUrl);
   }, [history, parentUrl]);
 
-  const handleCancel = useCancelRevision({ integrationId, revisionId: revId, onClose });
-
   return (
     <>
-      <DrawerHeader title="Review changes " handleClose={onClose}>
-        <ActionGroup>
-          <IconButton
-            size="small"
-            className={classes.container}
-            data-test="expandAll"
-            onClick={handleCancel}>
-            <CancelIcon className={classes.icon} />
-            <Typography variant="body2"> Cancel revert</Typography>
-          </IconButton>
-        </ActionGroup>
+      <DrawerHeader className={classes.drawerHeader} title="Revert changes" handleClose={onClose}>
+        <RevisionHeader
+          integrationId={integrationId}
+          revisionId={revId}
+          onClose={onClose}
+          mode={REVISION_DRAWER_MODES.MERGE} />
       </DrawerHeader>
       <DrawerContent>
         <InstallSteps integrationId={integrationId} revisionId={revId} />

@@ -9,8 +9,9 @@ import DrawerFooter from '../../../Right/DrawerFooter';
 import Spinner from '../../../../Spinner';
 import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
+import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import { selectors } from '../../../../../reducers';
-import ReviewHeaderActions from './ReviewHeaderActions';
+import RevisionHeader from '../../RevisionHeader';
 import ResourceDiffDrawerContent from '../../ResourceDiffDrawerContent';
 
 const useStyles = makeStyles(() => ({
@@ -61,10 +62,11 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
         className={classes.drawerHeader}
         infoText="test"
         handleClose={onClose}>
-        <ReviewHeaderActions
+        <RevisionHeader
           numConflicts={numConflicts}
           integrationId={integrationId}
           revId={revId}
+          mode={REVISION_DRAWER_MODES.REVIEW}
         />
       </DrawerHeader>
       <DrawerContent>

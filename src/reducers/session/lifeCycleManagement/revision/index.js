@@ -95,6 +95,14 @@ selectors.tempRevisionInfo = (state, integrationId, revisionId) => {
   return state[integrationId]?.[revisionId];
 };
 
+selectors.tempRevisionType = (state, integrationId, revisionId) => {
+  if (!state || !integrationId || !revisionId) {
+    return;
+  }
+
+  return state[integrationId]?.[revisionId]?.type;
+};
+
 selectors.isRevisionCreationInProgress = (state, integrationId, revisionId) => {
   if (!state || !integrationId || !revisionId || !state[integrationId]?.[revisionId]) {
     return false;

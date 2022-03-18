@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import {makeStyles} from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../Right';
@@ -12,6 +13,15 @@ import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import { TextButton } from '../../../Buttons';
 import Spinner from '../../../Spinner';
+import RevisionHeader from '../RevisionHeader';
+
+const useStyles = makeStyles(() => ({
+  drawerHeader: {
+    '& > h4': {
+      whiteSpace: 'nowrap',
+    },
+  },
+}));
 
 const metadata = {
   fieldMap: {
@@ -27,10 +37,12 @@ const metadata = {
 
 function CreateSnapshotDrawerContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
-  const { revId } = match.params;
+  const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const formKey = useFormInitWithPermissions({ fieldMeta: metadata });
+
+  const { revId } = match.params;
 
   const createdSnapshotId = useSelector(state => selectors.createdResourceId(state, revId));
   const isSnapshotCreationInProgress = useSelector(state => selectors.isRevisionCreationInProgress(state, integrationId, revId));
@@ -52,7 +64,9 @@ function CreateSnapshotDrawerContent({ integrationId, parentUrl }) {
 
   return (
     <>
-      <DrawerHeader title="Create snapshot" handleClose={onClose} />
+      <DrawerHeader className={classes.drawerHeader} title="Create snapshot" handleClose={onClose}>
+        <RevisionHeader />
+      </DrawerHeader>
       <DrawerContent>
         <DynaForm formKey={formKey} />
       </DrawerContent>

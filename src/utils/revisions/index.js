@@ -11,6 +11,11 @@ export const VALID_REVISION_TYPES_FOR_CREATION = [
   REVISION_TYPES.SNAPSHOT,
 ];
 
+export const REVISION_DRAWER_MODES = {
+  OPEN: 'open',
+  REVIEW: 'review',
+  MERGE: 'merge',
+};
 export const REVISION_TYPE_OPTIONS = [{
   label: 'Pull',
   value: REVISION_TYPES.PULL,
