@@ -42,6 +42,7 @@ export default function UserFilter() {
   return (
     <CeligoSelect
     //   isLoggable={false}
+      disabled={!usersList.length}
       onChange={handleUserFilter}
       value={selectedUser}>
       <MenuItem key={DEFAULT_OPTION} value={DEFAULT_OPTION}>
