@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Position } from 'react-flow-renderer';
 import Icon from './DiamondIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
-import { useIsTerminalOrMergeNodeDroppable } from '../TerminalNode';
+import { useIsTerminalOrMergeNodeDroppable } from '../terminalNodes/Free';
 
 const useStyles = makeStyles(() => ({
   container: {

@@ -4,18 +4,19 @@ import ReactFlow,
 { MiniMap,
   Controls,
   ReactFlowProvider} from 'react-flow-renderer';
+import TextButton from '../../../../components/Buttons/TextButton';
 import DefaultEdge from './CustomEdges/DefaultEdge';
 import { layoutElements, terminalNodeInVicinity } from './lib';
 import { FlowProvider } from './Context';
 import PgNode from './CustomNodes/PgNode';
 import PpNode from './CustomNodes/PpNode';
-import TerminalNode from './CustomNodes/TerminalNode';
+import TerminalFreeNode from './CustomNodes/terminalNodes/Free';
+import TerminalBlockedNode from './CustomNodes/terminalNodes/Blocked';
 import RouterNode from './CustomNodes/RouterNode';
 import MergeNode from './CustomNodes/MergeNode';
 import reducer, { resourceDataSelector } from './reducer';
 import { generateReactFlowGraph } from './translateSchema';
 import { handleMergeNode } from './hooks';
-import TextButton from '../../../../components/Buttons/TextButton';
 import { Background } from './Background';
 import SourceTitle from './titles/SourceTitle';
 import DestinationTitle from './titles/DestinationTitle';
@@ -23,8 +24,8 @@ import DestinationTitle from './titles/DestinationTitle';
 const nodeTypes = {
   pg: PgNode,
   pp: PpNode,
-  terminalFree: TerminalNode,
-  terminalBlocked: TerminalNode, // create new component
+  terminalFree: TerminalFreeNode,
+  terminalBlocked: TerminalBlockedNode,
   router: RouterNode,
   merge: MergeNode,
 };

@@ -7,7 +7,7 @@ const useStyles = makeStyles(theme => ({
     width: 34,
     height: 34,
     // backgroundColor: theme.palette.common.white,
-    fill: theme.palette.background.default,
+    fill: theme.palette.background.paper,
     stroke: theme.palette.secondary.lightest,
   },
   drop: {
