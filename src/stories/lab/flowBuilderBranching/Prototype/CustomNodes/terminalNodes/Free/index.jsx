@@ -2,9 +2,9 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position, useStoreState } from 'react-flow-renderer';
 import { Tooltip } from '@material-ui/core';
-import CircleIcon from './CircleIcon';
-import TerminalIcon from '../../../../../../components/icons/MergeIcon';
-import DefaultHandle from '../Handles/DefaultHandle';
+import CircleIcon from '../CircleIcon';
+import TerminalIcon from '../../../../../../../components/icons/MergeIcon';
+import DefaultHandle from '../../Handles/DefaultHandle';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -35,9 +35,8 @@ export const useIsTerminalOrMergeNodeDroppable = nodeId => {
   return nodeId !== dragElement.id;
 };
 
-export default function TerminalNode(props) {
+export default function TerminalFreeNode({ id }) {
   const classes = useStyles();
-  const {id} = props;
 
   const isDroppable = useIsTerminalOrMergeNodeDroppable(id);
 

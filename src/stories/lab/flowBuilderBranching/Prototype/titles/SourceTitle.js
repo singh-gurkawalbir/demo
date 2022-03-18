@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
   sourceTitle: {
     width: titleWidth,
     left: ({xOffset}) => xOffset,
-    background: `radial-gradient(circle at center, ${theme.palette.background.paper2}, 80%, transparent)`,
+    background: `radial-gradient(circle at center, ${theme.palette.background.default}, 80%, transparent)`,
   },
 }));
 

@@ -139,6 +139,25 @@ export default function DefaultEdge({
   const markerEnd = useMemo(() =>
     getMarkerEnd(arrowHeadType, markerEndId), [arrowHeadType, markerEndId]);
 
+  let position = 'center';
+  let offset = 10;
+
+  if (targetType === 'terminalBlocked') {
+    position = 'right';
+    offset = 1;
+  } else if (targetType === 'pp' && sourceType !== 'pp') {
+    // we want the add button to be positioned close to the pp,
+    // not close to the merge/router nodes.
+    position = 'right';
+    offset = 30;
+  }
+
+  // The link icon is always rendered in the center, so if it is
+  // visible, then the add icon needs to be offset to prevent an overlap.
+  if (showLinkIcon && position === 'center') {
+    offset = -10;
+  }
+
   return (
     <>
       <path
@@ -152,13 +171,13 @@ export default function DefaultEdge({
       <BranchLabel id={id} branchName={data?.branch} />
 
       {showAddIcon && (
-        <ForeignObject edgePath={edgePath} centerOffset={showLinkIcon ? -10 : 10}>
+        <ForeignObject edgePath={edgePath} position={position} offset={offset}>
           <AddNewButton edgeId={id} />
         </ForeignObject>
       )}
 
       {showLinkIcon && (
-        <ForeignObject edgePath={edgePath} centerOffset={30}>
+        <ForeignObject edgePath={edgePath} position="center" offset={30}>
           <UnlinkButton edgeId={id} />
         </ForeignObject>
       )}

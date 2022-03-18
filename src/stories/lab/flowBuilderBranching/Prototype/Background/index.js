@@ -7,9 +7,10 @@ const useStyles = makeStyles(theme => ({
   svgBg: {
     width: '100%',
     height: '100%',
+    backgroundColor: theme.palette.background.paper,
   },
   rectangle: {
-    fill: theme.palette.background.paper2,
+    fill: theme.palette.background.default,
   },
 }));
 
