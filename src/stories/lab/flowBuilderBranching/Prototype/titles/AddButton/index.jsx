@@ -1,6 +1,6 @@
 import React from 'react';
 import { IconButton, makeStyles } from '@material-ui/core';
-import AddIcon from '../../../../../../../components/icons/AddIcon';
+import AddIcon from '../../../../../../components/icons/AddIcon';
 
 const useStyles = makeStyles(theme => ({
   roundBtn: {
@@ -10,10 +10,6 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     padding: 0,
     marginLeft: theme.spacing(2),
-    // for a yet unknown reason, foreign objects within an svg are not accepting mouse
-    // events. It MUST be possible as this same strategy works for our AppBlock component.
-    // I am unfortunately not able to figure it out today.
-    pointerEvents: 'all',
   },
 }));
 

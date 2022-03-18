@@ -17,6 +17,8 @@ import { generateReactFlowGraph } from './translateSchema';
 import { handleMergeNode } from './hooks';
 import TextButton from '../../../../components/Buttons/TextButton';
 import { Background } from './Background';
+import SourceTitle from './titles/SourceTitle';
+import DestinationTitle from './titles/DestinationTitle';
 
 const nodeTypes = {
   pg: PgNode,
@@ -37,7 +39,7 @@ const useStyles = makeStyles({
     bottom: 10,
     left: 60,
     position: 'absolute',
-    zIndex: 5,
+    zIndex: 4,
   },
 });
 
@@ -94,10 +96,18 @@ export default ({resourceState}) => {
     console.log(resourceState);
   };
 
+  // eslint-disable-next-line no-alert
+  const handleAddSource = () => alert('add new source');
+  // eslint-disable-next-line no-alert
+  const handleAddDestination = () => alert('add new destination');
+
   return (
     <ReactFlowProvider>
       {/* add flow to the context so it is accessible to flowGraph beneath ..this will be replaced by the resourceDataSelector */}
       <FlowProvider elements={elements} flow={mergedFlow} setState={setState}>
+        <SourceTitle onClick={handleAddSource} />
+        <DestinationTitle onClick={handleAddDestination} />
+
         <ReactFlow
           onNodeDragStop={onNodeDragStop}
           nodesDraggable={false}
