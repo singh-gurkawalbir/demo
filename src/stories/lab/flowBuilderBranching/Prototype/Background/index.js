@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
-import SourceTitle from './titles/SourceTitle';
 import { FB_SOURCE_COLUMN_WIDTH } from '../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -13,9 +12,6 @@ const useStyles = makeStyles(theme => ({
     fill: theme.palette.background.paper2,
   },
 }));
-
-// eslint-disable-next-line no-alert
-const handleAddSource = () => alert('add new source');
 
 export function Background() {
   const classes = useStyles();
@@ -37,8 +33,6 @@ export function Background() {
         // by the scale.
         width={width}
         height="100%" />
-
-      <SourceTitle onClick={handleAddSource}>SOURCES</SourceTitle>
     </svg>
   );
 }
