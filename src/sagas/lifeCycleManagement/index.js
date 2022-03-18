@@ -66,30 +66,37 @@ function* createRevision({ integrationId, newRevisionId}) {
 
     path = `/integrations/${integrationId}/revisions/${revisionId}/revert/open${queryParam}`;
   }
-  const createdRevision = yield call(apiCallWithRetry, {
-    path,
-    opts: {
-      method: 'POST',
-      body: { description },
-    },
-  });
-  // const createdRevision = {
-  //   _id: nanoid(),
-  //   description,
-  //   _byUserId: '609276382b22fe4803a3589e',
-  //   createdAt: new Date().toISOString(),
-  //   status: type === REVISION_TYPES.SNAPSHOT ? REVISION_STATUS.COMPLETED : REVISION_STATUS.IN_PROGRESS,
-  //   type,
-  //   _integrationId: integrationId,
-  //   fromIntegrationIsSandbox: false,
-  //   beforeRevisionHash: '123456789',
-  //   installSteps: [],
-  // };
+  try {
+    const createdRevision = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'POST',
+        body: { description },
+      },
+    });
+    // const createdRevision = {
+    //   _id: nanoid(),
+    //   description,
+    //   _byUserId: '609276382b22fe4803a3589e',
+    //   createdAt: new Date().toISOString(),
+    //   status: type === REVISION_TYPES.SNAPSHOT ? REVISION_STATUS.COMPLETED : REVISION_STATUS.IN_PROGRESS,
+    //   type,
+    //   _integrationId: integrationId,
+    //   fromIntegrationIsSandbox: false,
+    //   beforeRevisionHash: '123456789',
+    //   installSteps: [],
+    // };
 
-  // yield delay(2000);
-  yield put(actions.resource.received(`integrations/${integrationId}/revisions`, createdRevision));
-  yield put(actions.resource.created(createdRevision._id, newRevisionId));
-  yield put(actions.integrationLCM.revision.created(integrationId, newRevisionId));
+    // yield delay(2000);
+    yield put(actions.resource.received(`integrations/${integrationId}/revisions`, createdRevision));
+    yield put(actions.resource.created(createdRevision._id, newRevisionId));
+    yield put(actions.integrationLCM.revision.created(integrationId, newRevisionId));
+  } catch (e) {
+  // errors
+    const errors = inferErrorMessages(e.message);
+
+    yield put(actions.integrationLCM.revision.creationError(integrationId, newRevisionId, errors?.[0]));
+  }
 }
 
 function* comparePullRequest({ integrationId, revisionId }) {
@@ -110,7 +117,7 @@ function* comparePullRequest({ integrationId, revisionId }) {
   } catch (e) {
     const errors = inferErrorMessages(e.message);
 
-    yield put(actions.integrationLCM.compare.receivedDiffError(integrationId, errors[0]));
+    yield put(actions.integrationLCM.compare.receivedDiffError(integrationId, errors?.[0]));
   }
 }
 
@@ -134,7 +141,7 @@ function* compareRevertRequest({ integrationId, revisionId }) {
   } catch (e) {
     const errors = inferErrorMessages(e.message);
 
-    yield put(actions.integrationLCM.compare.receivedDiffError(integrationId, errors[0]));
+    yield put(actions.integrationLCM.compare.receivedDiffError(integrationId, errors?.[0]));
   }
 }
 function* compareRevisionChanges({ integrationId, revisionId }) {
@@ -153,7 +160,7 @@ function* compareRevisionChanges({ integrationId, revisionId }) {
   } catch (e) {
     const errors = inferErrorMessages(e.message);
 
-    yield put(actions.integrationLCM.compare.receivedDiffError(integrationId, errors[0]));
+    yield put(actions.integrationLCM.compare.receivedDiffError(integrationId, errors?.[0]));
   }
 }
 

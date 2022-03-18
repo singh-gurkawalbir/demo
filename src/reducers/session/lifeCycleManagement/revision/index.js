@@ -4,7 +4,7 @@ import actionTypes from '../../../../actions/types';
 import { REVISION_TYPES, REVISION_CREATION_STATUS } from '../../../../utils/constants';
 
 export default (state = {}, action) => {
-  const { integrationId, type, revisionInfo, newRevisionId, revisionId, errors } = action;
+  const { integrationId, type, revisionInfo, newRevisionId, revisionId, errors, creationError } = action;
 
   if (!integrationId) return state;
 
@@ -46,6 +46,17 @@ export default (state = {}, action) => {
           draft[integrationId][newRevisionId] = {};
         }
         draft[integrationId][newRevisionId].status = REVISION_CREATION_STATUS.CREATION_IN_PROGRESS;
+        delete draft[integrationId][newRevisionId].creationError;
+        break;
+      case actionTypes.INTEGRATION_LCM.REVISION.CREATION_ERROR:
+        if (!draft[integrationId]) {
+          draft[integrationId] = {};
+        }
+        if (!draft[integrationId][newRevisionId]) {
+          draft[integrationId][newRevisionId] = {};
+        }
+        draft[integrationId][newRevisionId].status = REVISION_CREATION_STATUS.CREATION_ERROR;
+        draft[integrationId][newRevisionId].creationError = creationError;
         break;
       case actionTypes.INTEGRATION_LCM.REVISION.CREATED:
         if (!draft[integrationId]) {
@@ -55,6 +66,7 @@ export default (state = {}, action) => {
           draft[integrationId][newRevisionId] = {};
         }
         draft[integrationId][newRevisionId].status = REVISION_CREATION_STATUS.CREATED;
+        delete draft[integrationId][newRevisionId].creationError;
         break;
       case actionTypes.INTEGRATION_LCM.REVISION.FETCH_ERRORS:
         if (!draft[integrationId]) {
@@ -125,6 +137,11 @@ selectors.isRevisionErrorsRequested = (state, integrationId, revisionId) => {
 
   return !!state[integrationId][revisionId].errors.status;
 };
+selectors.revisionCreationError = (state, integrationId, revisionId) => {
+  const revisionInfo = selectors.tempRevisionInfo(state, integrationId, revisionId);
+
+  return revisionInfo?.creationError;
+};
 
 selectors.revisionErrors = (state, integrationId, revisionId) => state?.[integrationId]?.[revisionId]?.errors?.data;
 selectors.revisionError = (state, integrationId, revisionId, errorId) => {
@@ -135,4 +152,3 @@ selectors.revisionError = (state, integrationId, revisionId, errorId) => {
 
   return errors.find(error => error._id === errorId);
 };
-

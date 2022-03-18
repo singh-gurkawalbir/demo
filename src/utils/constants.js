@@ -76,6 +76,7 @@ export const REVISION_STATUS = Object.freeze({
 });
 export const REVISION_CREATION_STATUS = Object.freeze({
   CREATION_IN_PROGRESS: 'creating',
+  CREATION_ERROR: 'create_error',
   CREATED: 'created',
 });
 
