@@ -13,7 +13,7 @@ import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import { TextButton } from '../../../Buttons';
 import Spinner from '../../../Spinner';
-import RevisionHeader from '../RevisionHeader';
+import RevisionHeader from '../components/RevisionHeader';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {

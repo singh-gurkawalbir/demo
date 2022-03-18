@@ -11,8 +11,9 @@ import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import { selectors } from '../../../../../reducers';
-import RevisionHeader from '../../RevisionHeader';
-import ResourceDiffDrawerContent from '../../ResourceDiffContent';
+import RevisionHeader from '../../components/RevisionHeader';
+import ResourceDiffDrawerContent from '../../components/ResourceDiffContent';
+import useHandleInvalidNewRevision from '../../hooks/useHandleInvalidNewRevision';
 
 const useStyles = makeStyles(theme => ({
   drawerHeaderWrapper: {
@@ -32,12 +33,15 @@ const useStyles = makeStyles(theme => ({
 function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const classes = useStyles();
-  const { revId } = match.params;
+  const { revisionId } = match.params;
   const history = useHistory();
   const dispatch = useDispatch();
+
+  useHandleInvalidNewRevision({ integrationId, revisionId, parentUrl });
+
   // selectors
-  const createdRevisionId = useSelector(state => selectors.createdResourceId(state, revId));
-  const isRevisionCreationInProgress = useSelector(state => selectors.isRevisionCreationInProgress(state, integrationId, revId));
+  const createdRevisionId = useSelector(state => selectors.createdResourceId(state, revisionId));
+  const isRevisionCreationInProgress = useSelector(state => selectors.isRevisionCreationInProgress(state, integrationId, revisionId));
   const hasReceivedResourceDiff = useSelector(state => selectors.hasReceivedResourceDiff(state, integrationId));
   // end selectors
 
@@ -45,7 +49,7 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
     history.replace(parentUrl);
   };
   const handleCreateRevision = () => {
-    dispatch(actions.integrationLCM.revision.create(integrationId, revId));
+    dispatch(actions.integrationLCM.revision.create(integrationId, revisionId));
   };
 
   useEffect(() => {
@@ -56,10 +60,10 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
   }, [createdRevisionId]);
 
   useEffect(() => {
-    dispatch(actions.integrationLCM.compare.pullRequest(integrationId, revId));
+    dispatch(actions.integrationLCM.compare.pullRequest(integrationId, revisionId));
 
     return () => dispatch(actions.integrationLCM.compare.clear(integrationId));
-  }, [dispatch, integrationId, revId]);
+  }, [dispatch, integrationId, revisionId]);
 
   return (
     <>
@@ -70,7 +74,7 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
         handleClose={onClose}>
         <RevisionHeader
           integrationId={integrationId}
-          revisionId={revId}
+          revisionId={revisionId}
           mode={REVISION_DRAWER_MODES.REVIEW}
         />
       </DrawerHeader>
@@ -97,7 +101,7 @@ export default function ReviewChangesDrawer({ integrationId }) {
 
   return (
     <RightDrawer
-      path="pull/:revId/review"
+      path="pull/:revisionId/review"
       variant="temporary"
       height="tall"
       width="xl">

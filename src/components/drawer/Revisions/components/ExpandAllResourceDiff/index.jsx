@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import ExpandWindowIcon from '../../../icons/ExpandWindowIcon';
-import actions from '../../../../actions';
-import { selectors } from '../../../../reducers';
-import TextButton from '../../../Buttons/TextButton';
-import CollapseWindowIcon from '../../../icons/CollapseWindowIcon';
+import ExpandWindowIcon from '../../../../icons/ExpandWindowIcon';
+import actions from '../../../../../actions';
+import { selectors } from '../../../../../reducers';
+import TextButton from '../../../../Buttons/TextButton';
+import CollapseWindowIcon from '../../../../icons/CollapseWindowIcon';
 
 const useStyles = makeStyles(theme => ({
   expand: {

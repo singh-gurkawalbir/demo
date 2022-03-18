@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles, useTheme, useMediaQuery, IconButton, Tooltip } from '@material-ui/core';
-import Icon from '../../../icons/InstallationGuideIcon';
-import { TextButton } from '../../../Buttons';
+import Icon from '../../../../icons/InstallationGuideIcon';
+import { TextButton } from '../../../../Buttons';
 
 const useStyles = makeStyles({
   button: {

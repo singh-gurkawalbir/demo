@@ -12,7 +12,7 @@ import DynaForm from '../../../../DynaForm';
 import DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import { TextButton } from '../../../../Buttons';
 import getMetadata from './metadata';
-import RevisionHeader from '../../RevisionHeader';
+import RevisionHeader from '../../components/RevisionHeader';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {

@@ -6,9 +6,10 @@ import DrawerHeader from '../../../Right/DrawerHeader';
 import DrawerContent from '../../../Right/DrawerContent';
 import DrawerFooter from '../../../Right/DrawerFooter';
 import { TextButton } from '../../../../Buttons';
-import InstallSteps from '../../InstallSteps';
-import RevisionHeader from '../../RevisionHeader';
+import InstallSteps from '../../components/InstallSteps';
+import RevisionHeader from '../../components/RevisionHeader';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
+import useHandleInvalidRevision from '../../hooks/useHandleInvalidRevision';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {
@@ -22,7 +23,9 @@ function FinalRevertDrawerContent({ parentUrl, integrationId }) {
   const match = useRouteMatch();
   const history = useHistory();
   const classes = useStyles();
-  const { revId } = match.params;
+  const { revisionId } = match.params;
+
+  useHandleInvalidRevision({ integrationId, revisionId, parentUrl });
 
   const onClose = useCallback(() => {
     history.replace(parentUrl);
@@ -33,12 +36,12 @@ function FinalRevertDrawerContent({ parentUrl, integrationId }) {
       <DrawerHeader className={classes.drawerHeader} title="Revert changes" handleClose={onClose}>
         <RevisionHeader
           integrationId={integrationId}
-          revisionId={revId}
+          revisionId={revisionId}
           onClose={onClose}
           mode={REVISION_DRAWER_MODES.INSTALL} />
       </DrawerHeader>
       <DrawerContent>
-        <InstallSteps integrationId={integrationId} revisionId={revId} />
+        <InstallSteps integrationId={integrationId} revisionId={revisionId} />
       </DrawerContent>
       <DrawerFooter>
         <TextButton
@@ -56,7 +59,7 @@ export default function FinalRevert({ integrationId }) {
 
   return (
     <RightDrawer
-      path="revert/:revId/final"
+      path="revert/:revisionId/final"
       variant="temporary"
       height="tall"
       width="full">

@@ -119,7 +119,7 @@ selectors.tempRevisionType = (state, integrationId, revisionId) =>
   selectors.tempRevisionInfo(state, integrationId, revisionId)?.type;
 
 selectors.isRevisionCreationInProgress = (state, integrationId, revisionId) =>
-  selectors.tempRevisionInfo(state, integrationId, revisionId).status === REVISION_CREATION_STATUS.CREATION_IN_PROGRESS;
+  selectors.tempRevisionInfo(state, integrationId, revisionId)?.status === REVISION_CREATION_STATUS.CREATION_IN_PROGRESS;
 
 selectors.isRevisionErrorsFetchInProgress = (state, integrationId, revisionId) =>
   !!selectors.revisionErrorsInfo(state, integrationId, revisionId)?.status === 'requested';

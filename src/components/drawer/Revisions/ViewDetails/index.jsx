@@ -11,7 +11,8 @@ import { selectors } from '../../../../reducers';
 import { REVISION_STATUS, REVISION_TYPES } from '../../../../utils/constants';
 import ViewResourceChanged from './ResourcesChanged';
 import ViewDetails from './RevisionDetails';
-import ExpandAllResourceDiff from '../ExpandAllResourceDiff';
+import ExpandAllResourceDiff from '../components/ExpandAllResourceDiff';
+import useHandleInvalidRevision from '../hooks/useHandleInvalidRevision';
 import ActionGroup from '../../../ActionGroup';
 import { FilledButton } from '../../../Buttons';
 
@@ -70,10 +71,12 @@ function ViewRevisionDetailsContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const history = useHistory();
   const classes = useStyles();
+  const { revisionId, mode } = match.params;
 
-  const { revId, mode } = match.params;
+  useHandleInvalidRevision({ integrationId, revisionId, parentUrl });
+
   const accessibleTabs = useSelector(state => {
-    const revision = selectors.revision(state, integrationId, revId);
+    const revision = selectors.revision(state, integrationId, revisionId);
 
     if (!revision) return [];
     const { type, status} = revision;
@@ -85,10 +88,10 @@ function ViewRevisionDetailsContent({ integrationId, parentUrl }) {
     return ['details'];
   }, shallowEqual);
 
-  const drawerTitle = useSelector(state => selectors.revision(state, integrationId, revId)?.description);
+  const drawerTitle = useSelector(state => selectors.revision(state, integrationId, revisionId)?.description);
   const availableTabs = accessibleTabs.map(tabId => allTabs[tabId]);
 
-  const handleModeChange = (_, newMode) => history.push(`${parentUrl}/view/${revId}/mode/${newMode}`);
+  const handleModeChange = (_, newMode) => history.push(`${parentUrl}/view/${revisionId}/mode/${newMode}`);
   const onClose = () => {
     history.replace(parentUrl);
   };
@@ -121,11 +124,11 @@ function ViewRevisionDetailsContent({ integrationId, parentUrl }) {
           </Tabs>
           <TabPanel value={mode} type="changes">
             <div className={classes.resourceDiffContainer}>
-              <ViewResourceChanged integrationId={integrationId} revisionId={revId} />
+              <ViewResourceChanged integrationId={integrationId} revisionId={revisionId} />
             </div>
           </TabPanel>
           <TabPanel value={mode} type="details">
-            <ViewDetails integrationId={integrationId} revisionId={revId} />
+            <ViewDetails integrationId={integrationId} revisionId={revisionId} />
           </TabPanel>
         </div>
       </DrawerContent>
@@ -144,7 +147,7 @@ export default function ViewRevisionDetails({ integrationId }) {
 
   return (
     <RightDrawer
-      path="view/:revId/mode/:mode"
+      path="view/:revisionId/mode/:mode"
       variant="temporary"
       height="tall"
       width="xl">

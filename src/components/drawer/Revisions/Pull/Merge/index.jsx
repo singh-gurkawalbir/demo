@@ -5,10 +5,11 @@ import RightDrawer from '../../../Right';
 import DrawerHeader from '../../../Right/DrawerHeader';
 import DrawerContent from '../../../Right/DrawerContent';
 import DrawerFooter from '../../../Right/DrawerFooter';
-import InstallSteps from '../../InstallSteps';
-import RevisionHeader from '../../RevisionHeader';
+import InstallSteps from '../../components/InstallSteps';
+import RevisionHeader from '../../components/RevisionHeader';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import FilledButton from '../../../../Buttons/FilledButton';
+import useHandleInvalidRevision from '../../hooks/useHandleInvalidRevision';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {
@@ -22,7 +23,9 @@ function MergePullDrawerContent({ parentUrl, integrationId }) {
   const match = useRouteMatch();
   const classes = useStyles();
   const history = useHistory();
-  const { revId } = match.params;
+  const { revisionId } = match.params;
+
+  useHandleInvalidRevision({ integrationId, revisionId, parentUrl });
 
   const onClose = useCallback(() => {
     history.replace(parentUrl);
@@ -33,12 +36,12 @@ function MergePullDrawerContent({ parentUrl, integrationId }) {
       <DrawerHeader className={classes.drawerHeader} title="Merge changes" handleClose={onClose}>
         <RevisionHeader
           integrationId={integrationId}
-          revisionId={revId}
+          revisionId={revisionId}
           onClose={onClose}
           mode={REVISION_DRAWER_MODES.INSTALL} />
       </DrawerHeader>
       <DrawerContent>
-        <InstallSteps integrationId={integrationId} revisionId={revId} />
+        <InstallSteps integrationId={integrationId} revisionId={revisionId} />
       </DrawerContent>
       <DrawerFooter>
         <FilledButton
@@ -56,7 +59,7 @@ export default function MergePullDrawer({ integrationId }) {
 
   return (
     <RightDrawer
-      path="pull/:revId/merge"
+      path="pull/:revisionId/merge"
       variant="temporary"
       height="tall"
       width="xl">

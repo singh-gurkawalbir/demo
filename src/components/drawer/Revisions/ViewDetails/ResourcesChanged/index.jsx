@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import ResourceDiffContent from '../../ResourceDiffContent';
+import ResourceDiffContent from '../../components/ResourceDiffContent';
 
 export default function ResourcesChanged({ integrationId, revisionId }) {
   const dispatch = useDispatch();

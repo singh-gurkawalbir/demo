@@ -13,7 +13,8 @@ import DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import { TextButton } from '../../../../Buttons';
 import {selectors } from '../../../../../reducers';
 import getMetadata from './metadata';
-import RevisionHeader from '../../RevisionHeader';
+import RevisionHeader from '../../components/RevisionHeader';
+import useHandleInvalidRevision from '../../hooks/useHandleInvalidRevision';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {
@@ -29,6 +30,9 @@ function OpenRevertDrawerContent({ integrationId, parentUrl }) {
   const { tempRevId, revertTo, revisionId } = match.params;
   const history = useHistory();
   const dispatch = useDispatch();
+
+  useHandleInvalidRevision({ integrationId, revisionId, parentUrl });
+
   const revertToRevision = useSelector(state => selectors.revision(state, integrationId, revisionId));
   const formKey = useFormInitWithPermissions({ fieldMeta: getMetadata(revertToRevision) });
 

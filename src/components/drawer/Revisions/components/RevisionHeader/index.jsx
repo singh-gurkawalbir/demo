@@ -2,19 +2,19 @@ import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import RefreshIcon from '../../../icons/RefreshIcon';
-import actions from '../../../../actions';
-import { selectors } from '../../../../reducers';
-import { REVISION_TYPES } from '../../../../utils/constants';
-import ActionGroup from '../../../ActionGroup';
-import CeligoDivider from '../../../CeligoDivider';
+import RefreshIcon from '../../../../icons/RefreshIcon';
+import actions from '../../../../../actions';
+import { selectors } from '../../../../../reducers';
+import { REVISION_TYPES } from '../../../../../utils/constants';
+import ActionGroup from '../../../../ActionGroup';
+import CeligoDivider from '../../../../CeligoDivider';
 import RevisionsGuide from '../RevisionsGuide';
-import useCancelRevision from '../hooks/useCancelRevision';
+import useCancelRevision from '../../hooks/useCancelRevision';
 import ExpandAllResourceDiff from '../ExpandAllResourceDiff';
-import ConflictStatus from '../../../ResourceDiffVisualizer/ConflictStatus';
-import { REVISION_DRAWER_MODES } from '../../../../utils/revisions';
-import CancelIcon from '../../../icons/CancelIcon';
-import { TextButton } from '../../../Buttons';
+import ConflictStatus from '../../../../ResourceDiffVisualizer/ConflictStatus';
+import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
+import CancelIcon from '../../../../icons/CancelIcon';
+import { TextButton } from '../../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   drawerHeaderActions: {

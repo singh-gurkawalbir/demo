@@ -2,16 +2,16 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import { selectors } from '../../../../reducers';
-import actions from '../../../../actions';
-import RawHtml from '../../../RawHtml';
-import InstallationStep from '../../../InstallStep';
-import ResourceSetupDrawer from '../../../ResourceSetup/Drawer';
-import { generateNewId } from '../../../../utils/resource';
-import jsonUtil from '../../../../utils/json';
-import { SCOPES } from '../../../../sagas/resourceForm';
-import openExternalUrl from '../../../../utils/window';
-import { INSTALL_STEP_TYPES } from '../../../../utils/constants';
+import { selectors } from '../../../../../reducers';
+import actions from '../../../../../actions';
+import RawHtml from '../../../../RawHtml';
+import InstallationStep from '../../../../InstallStep';
+import ResourceSetupDrawer from '../../../../ResourceSetup/Drawer';
+import { generateNewId } from '../../../../../utils/resource';
+import jsonUtil from '../../../../../utils/json';
+import { SCOPES } from '../../../../../sagas/resourceForm';
+import openExternalUrl from '../../../../../utils/window';
+import { INSTALL_STEP_TYPES } from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapperContent: {

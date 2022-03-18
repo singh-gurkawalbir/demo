@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles';
-import Spinner from '../../../Spinner';
-import ResourceDiffVisualizer from '../../../ResourceDiffVisualizer';
-import { selectors } from '../../../../reducers';
-import { getRevisionResourceLevelChanges } from '../../../../utils/revisions';
+import Spinner from '../../../../Spinner';
+import ResourceDiffVisualizer from '../../../../ResourceDiffVisualizer';
+import { selectors } from '../../../../../reducers';
+import { getRevisionResourceLevelChanges } from '../../../../../utils/revisions';
 
 const useStyles = makeStyles(theme => ({
   error: {
