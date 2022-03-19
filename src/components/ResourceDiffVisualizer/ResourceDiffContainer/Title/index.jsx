@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DiffContainerTitle({ resourceDiff, resourceType, integrationId }) {
+export default function DiffContainerTitle({ resourceDiff, resourceType, integrationId, titles }) {
   const { resourceId, action = REVISION_DIFF_ACTIONS.UPDATE } = resourceDiff;
   const classes = useStyles();
   const resourceName = useSelector(state => selectors.resourceName(state, resourceId, resourceType));
@@ -36,7 +36,11 @@ export default function DiffContainerTitle({ resourceDiff, resourceType, integra
       <ActionGroup position="right" className={classes.referencesButton}>
         { showReferences && <ViewReferences integrationId={integrationId} resourceId={resourceId} resourceType={resourceType} />}
         { showReferences && <CeligoDivider position="right" /> }
-        <FullScreen resourceDiff={resourceDiff} resourceType={resourceType} integrationId={integrationId} />
+        <FullScreen
+          resourceDiff={resourceDiff}
+          titles={titles}
+          resourceType={resourceType}
+          integrationId={integrationId} />
       </ActionGroup>
     </>
   );

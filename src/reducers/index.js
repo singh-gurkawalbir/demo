@@ -443,7 +443,7 @@ selectors.currentStepPerMode = (state, { mode, integrationId, revisionId, cloneR
   } else if (mode === 'clone') {
     steps = selectors.cloneInstallSteps(state, cloneResourceType, cloneResourceId);
   } else if (mode === 'revision') {
-    steps = selectors.cloneInstallSteps(state, integrationId, revisionId);
+    steps = selectors.currentRevisionInstallSteps(state, integrationId, revisionId);
   }
 
   return (steps || []).find(s => !!s.isCurrentStep);

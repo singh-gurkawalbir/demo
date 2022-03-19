@@ -31,7 +31,14 @@ export default function ResourceDiffContainer({ diff, titles, resourceType, forc
         diff?.map(resourceDiff => (
           <CollapsableContainer
             forceExpand={forceExpand}
-            title={<Title resourceType={getResourceTypeTitle(resourceType).toLocaleLowerCase()} resourceDiff={resourceDiff} integrationId={integrationId} />}
+            title={(
+              <Title
+                resourceType={getResourceTypeTitle(resourceType).toLocaleLowerCase()}
+                resourceDiff={resourceDiff}
+                integrationId={integrationId}
+                titles={titles}
+              />
+)}
             key={resourceDiff.resourceId}
             className={classes.resourceTypeWrapper}>
             <DiffPanel resourceDiff={resourceDiff} titles={titles} />

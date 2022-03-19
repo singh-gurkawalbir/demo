@@ -51,7 +51,7 @@ export function ModalTitle({ resourceId, resourceType, action, integrationId }) 
     </>
   );
 }
-export default function FullScreenModal({resourceType, resourceDiff, onClose, integrationId }) {
+export default function FullScreenModal({resourceType, resourceDiff, titles, onClose, integrationId }) {
   const { resourceId, action = REVISION_DIFF_ACTIONS.UPDATE } = resourceDiff;
   const classes = useStyles();
 
@@ -61,7 +61,7 @@ export default function FullScreenModal({resourceType, resourceDiff, onClose, in
       className={classes.referencesFullscreenModal}>
       <ModalTitle
         resourceId={resourceId} resourceType={resourceType} action={action} integrationId={integrationId} />
-      <DiffPanel resourceDiff={resourceDiff} />
+      <DiffPanel resourceDiff={resourceDiff} titles={titles} />
     </ModalDialog>
   );
 }

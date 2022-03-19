@@ -111,10 +111,17 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
     }
   };
 
-  const handleSubmitComplete = useCallback(() => {
+  const handleSubmitComplete = useCallback(connId => {
     // dispatch an action to make status in progress
     dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'inProgress'));
-    dispatch(actions.integrationLCM.installSteps.installStep(integrationId, revisionId));
+    // Done: selected existing connection use case
+    const stepInfo = {
+      _connectionId: connId,
+    };
+
+    // TODO: 1. Creation of a new connection
+    // 2. URL type step
+    dispatch(actions.integrationLCM.installSteps.installStep(integrationId, revisionId, stepInfo));
   }, [dispatch, revisionId, integrationId]);
 
   // useEffect(() => {

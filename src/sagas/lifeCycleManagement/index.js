@@ -137,11 +137,12 @@ function* cancelRevision({ integrationId, revisionId }) {
   }
 }
 
-function* installStep({ integrationId, revisionId }) {
+function* installStep({ integrationId, revisionId, stepInfo }) {
   const updatedRevision = yield call(apiCallWithRetry, {
     path: `/integrations/${integrationId}/revisions/${revisionId}/installSteps`,
     opts: {
       method: 'POST',
+      body: stepInfo,
     },
   });
 

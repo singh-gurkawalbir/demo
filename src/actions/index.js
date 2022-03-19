@@ -2242,7 +2242,7 @@ const integrationLCM = {
     receivedErrors: (integrationId, revisionId, errors) => action(actionTypes.INTEGRATION_LCM.REVISION.RECEIVED_ERRORS, {integrationId, revisionId, errors }),
   },
   installSteps: {
-    installStep: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, { revisionId, integrationId }),
+    installStep: (integrationId, revisionId, stepInfo) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, { revisionId, integrationId, stepInfo }),
     updateStep: (revisionId, status) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.UPDATE, { revisionId, status }),
     completedStepInstall: revisionId => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.DONE, { revisionId }),
   },
