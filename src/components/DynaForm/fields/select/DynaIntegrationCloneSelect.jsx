@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
 import {useSelector, useDispatch } from 'react-redux';
-import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { FormControl, FormLabel, makeStyles } from '@material-ui/core';
 import Select, { components } from 'react-select';
 import actions from '../../../../actions';
@@ -90,7 +89,7 @@ export const CloneSelect = props => {
             onChange={handleChange}
             styles={customStyles}
             isSearchable={false}
-            defaultMenuIsOpen
+            defaultMenuIsOpen={options?.length}
           />
         </span>
         <FieldMessage {...props} />
@@ -103,23 +102,16 @@ export default function DynaIntegrationCloneSelect(props) {
   const classes = useStyles();
   const { integrationId } = props;
   const dispatch = useDispatch();
-  const {fetchStatus, isLoadingCloneFamily} = useSelector(state => {
-    const fetchStatus = selectors.cloneFamilyFetchStatus(state, integrationId);
-
-    return {
-      fetchStatus,
-      isLoadingCloneFamily: fetchStatus === 'requested',
-    };
-  }, shallowEqual);
-
+  const isLoadingCloneFamily = useSelector(state => selectors.isLoadingCloneFamily(state, integrationId));
   const cloneList = useSelector(state => selectors.cloneFamily(state, integrationId));
   const accountHasSandbox = useSelector(state => selectors.accountHasSandbox(state));
+  // const hasNoClonesToSelect = !isLoadingCloneFamily && !cloneList?.length;
 
   useEffect(() => {
-    if (!fetchStatus) {
-      dispatch(actions.integrationLCM.cloneFamily.request(integrationId));
-    }
-  }, [dispatch, integrationId, fetchStatus]);
+    dispatch(actions.integrationLCM.cloneFamily.request(integrationId));
+
+    return () => dispatch(actions.integrationLCM.cloneFamily.clear(integrationId));
+  }, [dispatch, integrationId]);
 
   const newOptions = useMemo(
     () => (cloneList || []).map(clone =>
@@ -135,6 +127,12 @@ export default function DynaIntegrationCloneSelect(props) {
     return <div className={classes.spinnerWrapper}><Spinner /></div>;
   }
 
-  return <CloneSelect {...props} options={newOptions} showEnvironment={accountHasSandbox} />;
+  return (
+    <CloneSelect
+      {...props}
+      options={newOptions}
+      showEnvironment={accountHasSandbox}
+   />
+  );
 }
 

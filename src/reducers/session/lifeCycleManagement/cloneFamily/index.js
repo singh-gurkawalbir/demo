@@ -30,6 +30,9 @@ export default (state = {}, action) => {
         draft[integrationId].status = 'error';
         draft[integrationId].error = error;
         break;
+      case actionTypes.INTEGRATION_LCM.CLONE_FAMILY.CLEAR:
+        delete draft[integrationId];
+        break;
       default:
     }
   });
@@ -43,10 +46,10 @@ selectors.cloneFamily = (state, integrationId) => {
   return state[integrationId].cloneFamily;
 };
 
-selectors.cloneFamilyFetchStatus = (state, integrationId) => {
+selectors.isLoadingCloneFamily = (state, integrationId) => {
   if (!state || !integrationId || !state[integrationId]) return;
 
-  return state[integrationId].status;
+  return state[integrationId].status === 'requested';
 };
 
 selectors.cloneFamilyFetchError = (state, integrationId) => {

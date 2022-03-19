@@ -2218,6 +2218,7 @@ const integrationLCM = {
     request: integrationId => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, { integrationId }),
     received: (integrationId, cloneFamily) => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.RECEIVED, { integrationId, cloneFamily }),
     receivedError: (integrationId, error) => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.RECEIVED_ERROR, { integrationId, error }),
+    clear: integrationId => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.CLEAR, { integrationId }),
   },
   compare: {
     pullRequest: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.COMPARE.PULL_REQUEST, { integrationId, revisionId }),
