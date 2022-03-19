@@ -46,7 +46,6 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
-  // const [isSetupComplete, setIsSetupComplete] = useState(false);
 
   const installSteps = useSelector(state =>
     selectors.currentRevisionInstallSteps(state, integrationId, revisionId)
@@ -111,35 +110,19 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
     }
   };
 
-  const handleSubmitComplete = useCallback(connId => {
+  const handleSubmitComplete = useCallback((connId, _, connectionDoc) => {
     // dispatch an action to make status in progress
     dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'inProgress'));
-    // Done: selected existing connection use case
-    const stepInfo = {
-      _connectionId: connId,
+    const stepInfo = connId ? {
+      _connectionId: connId, // selected existing connection use case, creating a new connection
+    } : {
+      connection: connectionDoc, // TODO: when does this use case occur?
     };
 
-    // TODO: 1. Creation of a new connection
-    // 2. URL type step
+    // TODO 2. URL type step ?
     dispatch(actions.integrationLCM.installSteps.installStep(integrationId, revisionId, stepInfo));
   }, [dispatch, revisionId, integrationId]);
 
-  // useEffect(() => {
-  //   const allStepsCompleted = !installSteps.reduce((result, step) => result || !step.completed, false);
-
-  //   if (installSteps.length) {
-  //     if (allStepsCompleted && !isSetupComplete) {
-  //       // dispatch(actions.resource.request('integrations', integrationId));
-  //       setIsSetupComplete(true);
-  //     } else if (!allStepsCompleted && isSetupComplete) {
-  //       // reset local state if some new steps were added
-  //       setIsSetupComplete(false);
-  //     }
-  //   }
-  // }, [dispatch, installSteps, integrationId, isSetupComplete]);
-
-  // Consider a conection to be created
-  // Consider merge step to be finished
   return (
     <div className={classes.installIntegrationWrapperContent}>
       <RawHtml
