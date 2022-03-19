@@ -16,7 +16,7 @@ export const generateRouterNode = router => ({
 });
 export const generateNewTerminal = branch => ({
   id: generateId(),
-  type: branch?.pageProcessors?.length !== 0 ? 'terminalFree' : 'termainalBlocked',
+  type: branch?.pageProcessors?.length !== 0 ? 'terminalFree' : 'terminalBlocked',
   draggable: branch?.pageProcessors?.length !== 0,
   data: {
     ...branch,
