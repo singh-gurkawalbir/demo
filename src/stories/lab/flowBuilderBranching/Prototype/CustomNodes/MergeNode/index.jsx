@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position } from 'react-flow-renderer';
-import Icon from './DiamondIcon';
+import Icon from '../../icons/DiamondIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
 import { useIsTerminalOrMergeNodeDroppable } from '../terminalNodes/Free';
 
