@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 
 const getResourceTypeTitle = resourceType => `${resourceType[0].toUpperCase()}${resourceType.slice(1)}s`;
 
-export default function ResourceDiffContainer({ diff, resourceType, forceExpand, integrationId }) {
+export default function ResourceDiffContainer({ diff, titles, resourceType, forceExpand, integrationId }) {
   const classes = useStyles();
 
   return (
@@ -34,7 +34,7 @@ export default function ResourceDiffContainer({ diff, resourceType, forceExpand,
             title={<Title resourceType={getResourceTypeTitle(resourceType).toLocaleLowerCase()} resourceDiff={resourceDiff} integrationId={integrationId} />}
             key={resourceDiff.resourceId}
             className={classes.resourceTypeWrapper}>
-            <DiffPanel resourceDiff={resourceDiff} />
+            <DiffPanel resourceDiff={resourceDiff} titles={titles} />
           </CollapsableContainer>
         ))
       }

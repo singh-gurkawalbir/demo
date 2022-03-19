@@ -10,7 +10,6 @@ export const VALID_REVISION_TYPES_FOR_CREATION = [
   REVISION_TYPES.REVERT,
   REVISION_TYPES.SNAPSHOT,
 ];
-
 export const REVISION_DRAWER_MODES = {
   OPEN: 'open',
   REVIEW: 'review',
@@ -84,6 +83,12 @@ export const DEFAULT_REVISION_FILTERS = {
   },
 };
 
+const DIFF_TITLES_BY_TYPE = {
+  pull: { before: 'Before pull', after: 'After pull'},
+  revert: { before: 'Before revert', after: 'After revert'},
+  details: { before: 'Before changes', after: 'After changes'},
+};
+
 export const getFilteredRevisions = (revisions = [], filters = {}) => {
   const { createdAt, status, user, type, sort = {}, paging = {} } = filters;
   const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = paging;
@@ -103,10 +108,27 @@ export const getFilteredRevisions = (revisions = [], filters = {}) => {
   return filteredRevisions.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
 };
 
-export const getRevisionResourceLevelChanges = (overallDiff = {}, sortKeys = false) => {
-  const { numConflicts, current, merged } = overallDiff;
+const getDiffContent = (diff, type) => {
+  const RESOURCE_DIFF_KEYS_BY_TYPE = {
+    pull: ['current', 'merged'],
+    revert: ['current', 'reverted'],
+    details: ['before', 'after'],
+  };
+
+  const [beforeKey, afterKey] = RESOURCE_DIFF_KEYS_BY_TYPE[type] || ['before', 'after'];
+
+  return {
+    before: diff[beforeKey],
+    after: diff[afterKey],
+  };
+};
+
+export const getRevisionResourceLevelChanges = (overallDiff = {}, type, sortKeys = false) => {
+  const { numConflicts } = overallDiff;
+  const { before, after } = getDiffContent(overallDiff, type);
   const diffs = {};
-  const resourcesTypes = Object.keys(merged);
+  const resourcesTypes = Object.keys(after);
+  // Ignore Sorting keys for now
   const NOOP = obj => obj;
   const sortFn = sortKeys ? sortJsonByKeys : NOOP;
 
@@ -114,32 +136,32 @@ export const getRevisionResourceLevelChanges = (overallDiff = {}, sortKeys = fal
     if (!diffs[resourceType]) {
       diffs[resourceType] = [];
     }
-    const resources = merged[resourceType];
+    const resources = after[resourceType];
 
     Object.keys(resources).forEach(id => {
       const [resourceId, action = REVISION_DIFF_ACTIONS.UPDATE] = id.split('.');
       const resourceDiff = { resourceId, action };
-      const {$conflicts, ...rest} = merged[resourceType][id];
+      const {$conflicts, ...rest} = after[resourceType][id];
       // TODO: confirm on script diffs - we do show script changes but not script name as of now
-      const mergedContent = resourceType === 'script' ? (rest['$blob.conflict'] || rest.$blob) : sortFn(rest);
-      const currentContent = resourceType === 'script' ? current[resourceType]?.[resourceId]?.$blob : sortFn(current[resourceType]?.[resourceId]);
+      const afterContent = resourceType === 'script' ? (rest['$blob.conflict'] || rest.$blob) : sortFn(rest);
+      const beforeContent = resourceType === 'script' ? before[resourceType]?.[resourceId]?.$blob : sortFn(before[resourceType]?.[resourceId]);
 
       if (action === REVISION_DIFF_ACTIONS.NEW) {
-        resourceDiff.after = mergedContent;
+        resourceDiff.after = afterContent;
       } else if (action === REVISION_DIFF_ACTIONS.DELETED) {
-        resourceDiff.before = currentContent;
+        resourceDiff.before = beforeContent;
       } else {
         if (action === REVISION_DIFF_ACTIONS.CONFLICT) {
           resourceDiff.conflicts = $conflicts;
         }
-        resourceDiff.after = mergedContent;
-        resourceDiff.before = currentContent;
+        resourceDiff.after = afterContent;
+        resourceDiff.before = beforeContent;
       }
       diffs[resourceType].push(resourceDiff);
     });
   });
 
-  return { numConflicts, diffs };
+  return { numConflicts, diffs, titles: DIFF_TITLES_BY_TYPE[type] };
 };
 
 export const shouldShowReferences = resourceType => {

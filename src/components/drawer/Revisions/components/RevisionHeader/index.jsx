@@ -32,11 +32,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Conflicts = ({ integrationId, mode }) => {
+const Conflicts = ({ integrationId, mode, revisionId }) => {
   const hasReceivedResourceDiff = useSelector(state => selectors.hasReceivedResourceDiff(state, integrationId));
   const numConflicts = useSelector(state => selectors.revisionResourceDiff(state, integrationId)?.numConflicts);
+  const tempRevisionType = useSelector(state => selectors.tempRevisionType(state, integrationId, revisionId));
 
-  if (mode === REVISION_DRAWER_MODES.REVIEW && hasReceivedResourceDiff) {
+  if (
+    tempRevisionType === REVISION_TYPES.PULL &&
+    mode === REVISION_DRAWER_MODES.REVIEW &&
+    hasReceivedResourceDiff
+  ) {
     return <ConflictStatus count={numConflicts} />;
   }
 
@@ -116,7 +121,7 @@ export default function RevisionHeader({ integrationId, revisionId, mode, onClos
 
   return (
     <div className={classes.drawerHeaderActions}>
-      <Conflicts integrationId={integrationId} mode={mode} />
+      <Conflicts integrationId={integrationId} mode={mode} revisionId={revisionId} />
       <ActionGroup position="right">
         <RefreshResourceChanges integrationId={integrationId} revisionId={revisionId} mode={mode} />
         <ExpandAction integrationId={integrationId} mode={mode} />

@@ -83,7 +83,9 @@ selectors.revisionInstallSteps = (state, integrationId, revisionId) => {
   if (steps.length) {
     const firstInCompleteStep = steps.find(step => !step.completed);
 
-    firstInCompleteStep.isCurrentStep = true;
+    if (firstInCompleteStep) {
+      firstInCompleteStep.isCurrentStep = true;
+    }
   }
 
   return steps;

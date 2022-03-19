@@ -41,7 +41,10 @@ function FinalRevertDrawerContent({ parentUrl, integrationId }) {
           mode={REVISION_DRAWER_MODES.INSTALL} />
       </DrawerHeader>
       <DrawerContent>
-        <InstallSteps integrationId={integrationId} revisionId={revisionId} />
+        <InstallSteps
+          onClose={onClose}
+          integrationId={integrationId}
+          revisionId={revisionId} />
       </DrawerContent>
       <DrawerFooter>
         <TextButton

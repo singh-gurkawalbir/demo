@@ -73,7 +73,7 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
         />
       </DrawerHeader>
       <DrawerContent>
-        <ResourceDiffDrawerContent integrationId={integrationId} />
+        <ResourceDiffDrawerContent integrationId={integrationId} type="revert" />
       </DrawerContent>
       <DrawerFooter>
         <FilledButton disabled={isRevisionCreationInProgress || !hasReceivedResourceDiff} onClick={handleCreateRevision} >

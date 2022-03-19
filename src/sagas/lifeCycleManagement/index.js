@@ -109,7 +109,7 @@ function* compareRevisionChanges({ integrationId, revisionId }) {
     const resourceDiff = yield call(apiCallWithRetry, {
       path: `/integrations/${integrationId}/revisions/${revisionId}/diff`,
       opts: {
-        method: 'POST',
+        method: 'GET',
       },
       hidden: true,
     });
@@ -137,16 +137,26 @@ function* cancelRevision({ integrationId, revisionId }) {
   }
 }
 
-function* installStep({ revisionId }) {
-// const updatedSteps = yield call(apiCallWithRetry, {
-  //   path: `/integrations/${integrationId}/revisions/${revisionId}/installSteps`,
-  //   opts: {
-  //     method: 'POST',
-  //   },
-  // });
-  // Handle updating with new steps also errors
-  yield delay(2000);
+function* installStep({ integrationId, revisionId }) {
+  const updatedRevision = yield call(apiCallWithRetry, {
+    path: `/integrations/${integrationId}/revisions/${revisionId}/installSteps`,
+    opts: {
+      method: 'POST',
+    },
+  });
+
+  yield put(actions.resource.received(`integrations/${integrationId}/revisions`, updatedRevision));
+  const isInstallationDone = yield select(selectors.areAllRevisionInstallStepsCompleted, integrationId, revisionId);
+
   yield put(actions.integrationLCM.installSteps.completedStepInstall(revisionId));
+  if (isInstallationDone) {
+    // TODO: revisit what needs to be fetched again
+    yield put(actions.resource.request('integrations', integrationId));
+    yield put(actions.resource.requestCollection('flows', null, true));
+    yield put(actions.resource.requestCollection('exports', null, true));
+    yield put(actions.resource.requestCollection('imports', null, true));
+    yield put(actions.resource.requestCollection('connections', null, true));
+  }
 }
 
 function* fetchRevisionErrors({integrationId, revisionId }) {

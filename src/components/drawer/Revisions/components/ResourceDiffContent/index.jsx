@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ResourceDiffContent({ integrationId }) {
+export default function ResourceDiffContent({ integrationId, type }) {
   const classes = useStyles();
   // selectors
   const revisionResourceDiff = useSelector(state => selectors.revisionResourceDiff(state, integrationId));
@@ -22,9 +22,9 @@ export default function ResourceDiffContent({ integrationId }) {
   // end selectors
   const resourceDiffInfo = useMemo(() => {
     if (revisionResourceDiff) {
-      return getRevisionResourceLevelChanges(revisionResourceDiff);
+      return getRevisionResourceLevelChanges(revisionResourceDiff, type);
     }
-  }, [revisionResourceDiff]);
+  }, [revisionResourceDiff, type]);
 
   if (isResourceComparisonInProgress) {
     return <Spinner centerAll />;
@@ -37,6 +37,7 @@ export default function ResourceDiffContent({ integrationId }) {
     <ResourceDiffVisualizer
       integrationId={integrationId}
       diffs={resourceDiffInfo?.diffs}
+      titles={resourceDiffInfo?.titles}
       forceExpand={isDiffExpanded}
     />
   );

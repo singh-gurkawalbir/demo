@@ -13,7 +13,9 @@ const getDiffValues = (diff, resourceType) => {
   };
 };
 
-export default function DiffPanel({ resourceDiff }) {
+const DEFAULT_DIFF_TITLES = { before: 'Before changes', after: 'After changes'};
+
+export default function DiffPanel({ resourceDiff, titles = {} }) {
   // const codeFoldMessageRenderer = p1 => `(Our custom code with styles) Expand ${p1} lines...`;
   const newStyles = {
     titleBlock: {
@@ -39,8 +41,8 @@ export default function DiffPanel({ resourceDiff }) {
         // codeFoldMessageRenderer={codeFoldMessageRenderer}
         compareMethod={DiffMethod.WORDS}
         {...getDiffValues(resourceDiff)}
-        leftTitle="Before pull"
-        rightTitle="After pull"
+        leftTitle={titles.before || DEFAULT_DIFF_TITLES.before}
+        rightTitle={titles.after || DEFAULT_DIFF_TITLES.after}
         styles={newStyles} />
       <Conflicts conflicts={resourceDiff.conflicts} />
     </>

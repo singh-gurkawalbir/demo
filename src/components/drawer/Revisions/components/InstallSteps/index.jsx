@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouteMatch, useHistory } from 'react-router-dom';
@@ -41,16 +41,27 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function InstallSteps({ integrationId, revisionId }) {
+export default function InstallSteps({ integrationId, revisionId, onClose }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
-  const [isSetupComplete, setIsSetupComplete] = useState(false);
+  // const [isSetupComplete, setIsSetupComplete] = useState(false);
 
   const installSteps = useSelector(state =>
     selectors.currentRevisionInstallSteps(state, integrationId, revisionId)
   );
+  const areAllRevisionInstallStepsCompleted = useSelector(state =>
+    selectors.areAllRevisionInstallStepsCompleted(state, integrationId, revisionId)
+  );
+
+  useEffect(() => {
+    if (areAllRevisionInstallStepsCompleted) {
+      onClose();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [areAllRevisionInstallStepsCompleted]);
+
   const handleStepClick = step => {
     const { type, completed, isTriggered, _connectionId, sourceConnection, url } = step;
 
@@ -106,19 +117,19 @@ export default function InstallSteps({ integrationId, revisionId }) {
     dispatch(actions.integrationLCM.installSteps.installStep(integrationId, revisionId));
   }, [dispatch, revisionId, integrationId]);
 
-  useEffect(() => {
-    const allStepsCompleted = !installSteps.reduce((result, step) => result || !step.completed, false);
+  // useEffect(() => {
+  //   const allStepsCompleted = !installSteps.reduce((result, step) => result || !step.completed, false);
 
-    if (installSteps.length) {
-      if (allStepsCompleted && !isSetupComplete) {
-        // dispatch(actions.resource.request('integrations', integrationId));
-        setIsSetupComplete(true);
-      } else if (!allStepsCompleted && isSetupComplete) {
-        // reset local state if some new steps were added
-        setIsSetupComplete(false);
-      }
-    }
-  }, [dispatch, installSteps, integrationId, isSetupComplete]);
+  //   if (installSteps.length) {
+  //     if (allStepsCompleted && !isSetupComplete) {
+  //       // dispatch(actions.resource.request('integrations', integrationId));
+  //       setIsSetupComplete(true);
+  //     } else if (!allStepsCompleted && isSetupComplete) {
+  //       // reset local state if some new steps were added
+  //       setIsSetupComplete(false);
+  //     }
+  //   }
+  // }, [dispatch, installSteps, integrationId, isSetupComplete]);
 
   // Consider a conection to be created
   // Consider merge step to be finished

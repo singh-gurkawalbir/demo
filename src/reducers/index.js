@@ -6720,6 +6720,12 @@ selectors.currentRevisionInstallSteps = createSelector(
   })
 );
 
+selectors.areAllRevisionInstallStepsCompleted = (state, integrationId, revisionId) => {
+  const installSteps = selectors.currentRevisionInstallSteps(state, integrationId, revisionId);
+
+  return installSteps.every(step => step.completed);
+};
+
 selectors.accountHasSandbox = state => {
   const accounts = selectors.accountSummary(state);
   const selectedAccount = accounts?.find(a => a.selected);

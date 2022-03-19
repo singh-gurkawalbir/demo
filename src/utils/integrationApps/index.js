@@ -209,7 +209,21 @@ export default {
     let showSpinner = false;
     const isUninstall = mode === 'uninstall';
 
-    if (
+    if (step.type === INSTALL_STEP_TYPES.MERGE) {
+      if (step.isTriggered) {
+        stepText = 'Merging';
+        showSpinner = true;
+      } else {
+        stepText = 'Merge';
+      }
+    } else if (step.type === INSTALL_STEP_TYPES.REVERT) {
+      if (step.isTriggered) {
+        stepText = 'Reverting';
+        showSpinner = true;
+      } else {
+        stepText = 'Revert';
+      }
+    } else if (
       step._connectionId ||
       step.type === INSTALL_STEP_TYPES.STACK ||
       step.type === 'connection' ||

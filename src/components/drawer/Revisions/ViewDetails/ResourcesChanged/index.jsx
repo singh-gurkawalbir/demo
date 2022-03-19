@@ -12,5 +12,5 @@ export default function ResourcesChanged({ integrationId, revisionId }) {
     return () => dispatch(actions.integrationLCM.compare.clear(integrationId));
   }, [dispatch, integrationId, revisionId]);
 
-  return <ResourceDiffContent integrationId={integrationId} />;
+  return <ResourceDiffContent integrationId={integrationId} type="details" />;
 }
