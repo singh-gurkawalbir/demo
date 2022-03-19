@@ -205,6 +205,7 @@ export const getIntegrationApp = ({ _connectorId, name }) => {
 
 export default {
   getStepText: (step = {}, mode) => {
+    // TODO: move this to a generic util file as Install steps are not just used in IAs
     let stepText = '';
     let showSpinner = false;
     const isUninstall = mode === 'uninstall';

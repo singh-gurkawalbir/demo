@@ -14,30 +14,15 @@ import openExternalUrl from '../../../../../utils/window';
 import { INSTALL_STEP_TYPES } from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
-  installIntegrationWrapperContent: {
+  installStepsWrapper: {
     maxWidth: 750,
   },
   message: {
     marginBottom: theme.spacing(2),
   },
-  formHead: {
-    borderBottom: 'solid 1px',
-    borderColor: theme.palette.secondary.lightest,
-    marginBottom: 5,
-  },
-  floatRight: {
-    float: 'right',
-  },
-  paper: {
-    padding: theme.spacing(1, 2),
-    background: theme.palette.background.default,
-  },
-  installIntegrationSteps: {
+  installSteps: {
     display: 'flex',
     flexDirection: 'column',
-  },
-  noIntegrationMsg: {
-    padding: theme.spacing(3),
   },
 }));
 
@@ -124,12 +109,12 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
   }, [dispatch, revisionId, integrationId]);
 
   return (
-    <div className={classes.installIntegrationWrapperContent}>
+    <div className={classes.installStepsWrapper}>
       <RawHtml
         className={classes.message}
         options={{ allowedHtmlTags: ['a', 'br'] }}
         html={' Complete the steps below to merge your changes.Need more help? <a href="" target="_blank">Check out our help guide</a>'} />
-      <div className={classes.installIntegrationSteps}>
+      <div className={classes.installSteps}>
         {installSteps.map((step, index) => (
           <InstallationStep
             key={step.name}

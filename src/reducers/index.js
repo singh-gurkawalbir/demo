@@ -6723,6 +6723,7 @@ selectors.currentRevisionInstallSteps = createSelector(
 selectors.areAllRevisionInstallStepsCompleted = (state, integrationId, revisionId) => {
   const installSteps = selectors.currentRevisionInstallSteps(state, integrationId, revisionId);
 
+  // TODO:  check for hidden step. Do we need to consider them?
   return installSteps.every(step => step.completed);
 };
 

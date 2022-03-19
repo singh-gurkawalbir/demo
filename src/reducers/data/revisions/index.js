@@ -1,4 +1,5 @@
 import produce from 'immer';
+import cloneDeep from 'lodash/cloneDeep';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 
@@ -75,21 +76,23 @@ selectors.uniqueUserIdsFromRevisions = createSelector(
   }, new Set())
 );
 selectors.revisionsFetchStatus = (state = defaultState, integrationId) => state[integrationId]?.status;
-selectors.revisionInstallSteps = (state, integrationId, revisionId) => {
-  const revision = selectors.revision(state, integrationId, revisionId);
 
-  const steps = [...(revision?.installSteps || [])];
+selectors.revisionInstallSteps = createSelector(
+  selectors.revision,
+  revision => {
+    const steps = cloneDeep(revision?.installSteps) || [];
 
-  if (steps.length) {
-    const firstInCompleteStep = steps.find(step => !step.completed);
+    if (steps.length) {
+      const firstInCompleteStep = steps.find(step => !step.completed);
 
-    if (firstInCompleteStep) {
-      firstInCompleteStep.isCurrentStep = true;
+      if (firstInCompleteStep) {
+        firstInCompleteStep.isCurrentStep = true;
+      }
     }
-  }
 
-  return steps;
-};
+    return steps;
+  }
+);
 
 selectors.revisionType = (state, integrationId, revisionId) => {
   const revision = selectors.revision(state, integrationId, revisionId);

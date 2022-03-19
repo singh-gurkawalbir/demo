@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import ExpandWindowIcon from '../../../../icons/ExpandWindowIcon';
@@ -24,10 +24,6 @@ export default function ExpandAllResourceDiff({ integrationId }) {
   const handleToggleExpand = () => {
     dispatch(actions.integrationLCM.compare.toggleExpandAll(integrationId));
   };
-
-  useEffect(
-    () => () => dispatch(actions.integrationLCM.compare.clear(integrationId)),
-    [dispatch, integrationId]);
 
   return (
     <div className={classes.expand}>

@@ -746,17 +746,6 @@ export function* getResourceCollection({ resourceType, refresh }) {
       refresh,
     });
 
-    // if (resourceType.includes('revisions')) {
-    //   yield delay(2000);
-    //   collection = sampleRevisionCollection;
-    // } else {
-    //   collection = yield call(apiCallWithPaging, {
-    //     path,
-    //     hidden: hideNetWorkSnackbar,
-    //     refresh,
-    //   });
-    // }
-
     if (resourceType === 'stacks') {
       let sharedStacks = yield call(apiCallWithPaging, {
         path: '/shared/stacks',

@@ -1,5 +1,4 @@
-import { delay, put, takeEvery, select, call } from 'redux-saga/effects';
-import { nanoid } from 'nanoid';
+import { put, takeEvery, select, call } from 'redux-saga/effects';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { REVISION_TYPES } from '../../utils/constants';
@@ -138,45 +137,45 @@ function* cancelRevision({ integrationId, revisionId }) {
 }
 
 function* installStep({ integrationId, revisionId, stepInfo }) {
-  const updatedRevision = yield call(apiCallWithRetry, {
-    path: `/integrations/${integrationId}/revisions/${revisionId}/installSteps`,
-    opts: {
-      method: 'POST',
-      body: stepInfo,
-    },
-  });
+  try {
+    const updatedRevision = yield call(apiCallWithRetry, {
+      path: `/integrations/${integrationId}/revisions/${revisionId}/installSteps`,
+      opts: {
+        method: 'POST',
+        body: stepInfo,
+      },
+    });
 
-  yield put(actions.resource.received(`integrations/${integrationId}/revisions`, updatedRevision));
-  const isInstallationDone = yield select(selectors.areAllRevisionInstallStepsCompleted, integrationId, revisionId);
+    yield put(actions.resource.received(`integrations/${integrationId}/revisions`, updatedRevision));
+    const isInstallationDone = yield select(selectors.areAllRevisionInstallStepsCompleted, integrationId, revisionId);
 
-  yield put(actions.integrationLCM.installSteps.completedStepInstall(revisionId));
-  if (isInstallationDone) {
+    yield put(actions.integrationLCM.installSteps.completedStepInstall(revisionId));
+    if (isInstallationDone) {
     // TODO: revisit what needs to be fetched again
-    yield put(actions.resource.request('integrations', integrationId));
-    yield put(actions.resource.requestCollection('flows', null, true));
-    yield put(actions.resource.requestCollection('exports', null, true));
-    yield put(actions.resource.requestCollection('imports', null, true));
-    yield put(actions.resource.requestCollection('connections', null, true));
+      yield put(actions.resource.request('integrations', integrationId));
+      yield put(actions.resource.requestCollection('flows', null, true));
+      yield put(actions.resource.requestCollection('exports', null, true));
+      yield put(actions.resource.requestCollection('imports', null, true));
+      yield put(actions.resource.requestCollection('connections', null, true));
+    }
+  } catch (e) {
+  // TODO: Handle errors and trigger failed action
   }
 }
 
 function* fetchRevisionErrors({integrationId, revisionId }) {
-  // const errors = yield call(apiCallWithRetry, {
-  //   path: `/integrations/${integrationId}/revisions/${revisionId}/errors`,
-  //   opts: {
-  //     method: 'GET',
-  //   },
-  // });
-  yield delay(2000);
-  const errors = [{
-    code: 'version_error',
-    message: 'The document you are trying to update has already been updated to a newer version. This happens due to concurrent modifications on an array field in the document. Please get the latest document and try again.The document you are trying to update has already been updated to a newer version. This happens due to concurrent modifications on an array field in the document. Please get the latest document and try again.',
-    createdAt: '2022-03-16T15:14:37.786',
-  }];
+  try {
+    const errors = yield call(apiCallWithRetry, {
+      path: `/integrations/${integrationId}/revisions/${revisionId}/errors`,
+      opts: {
+        method: 'GET',
+      },
+    });
 
-  const errorsList = errors.map(error => ({...error, _id: nanoid()}));
-
-  yield put(actions.integrationLCM.revision.receivedErrors(integrationId, revisionId, errorsList));
+    yield put(actions.integrationLCM.revision.receivedErrors(integrationId, revisionId, errors));
+  } catch (e) {
+    // TODO: check if we need to handle errors
+  }
 }
 
 export default [
