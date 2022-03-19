@@ -954,7 +954,7 @@ describe('previewMappings saga', () => {
   test('should trigger mapping preview success action correctly for Salesforce Import', () => {
     const importRes = {
       _id: importId,
-      _connectionId: connectionId,
+      _connectionId: 'conn11',
       name: 'n1',
       lookups: [],
       adaptorType: 'SalesforceImport',
@@ -1017,7 +1017,7 @@ describe('previewMappings saga', () => {
 
       ])
       .call(apiCallWithRetry, {
-        path: `/connections/${connectionId}/mappingPreview`,
+        path: '/connections/conn11/mappingPreview',
         opts: {
           method: 'PUT',
           body: {
@@ -1026,7 +1026,7 @@ describe('previewMappings saga', () => {
             ],
             importConfig: {
               _id: 'i1',
-              _connectionId: 'conn1',
+              _connectionId: 'conn11',
               name: 'n1',
               lookups: [],
               adaptorType: 'SalesforceImport',
@@ -1055,7 +1055,7 @@ describe('previewMappings saga', () => {
   test('should trigger mapping preview success action correctly for HTTPImport Import', () => {
     const importRes = {
       _id: importId,
-      _connectionId: connectionId,
+      _connectionId: 'connection2',
       name: 'n1',
       http: {
         lookups: [],
@@ -1079,14 +1079,14 @@ describe('previewMappings saga', () => {
         [select(selectors.mappingGenerates, importId, undefined), []],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
         [call(apiCallWithRetry, {
-          path: `/connections/${connectionId}/mappingPreview`,
+          path: '/connections/connection2/mappingPreview',
           opts: {
             method: 'PUT',
             body: {
               data: [],
               importConfig: {
                 _id: 'i1',
-                _connectionId: 'conn1',
+                _connectionId: 'connection2',
                 name: 'n1',
                 adaptorType: 'HTTPImport',
                 http: {
@@ -1115,7 +1115,7 @@ describe('previewMappings saga', () => {
 
       ])
       .call(apiCallWithRetry, {
-        path: `/connections/${connectionId}/mappingPreview`,
+        path: '/connections/connection2/mappingPreview',
         opts: {
           method: 'PUT',
           body: {
@@ -1124,7 +1124,7 @@ describe('previewMappings saga', () => {
             ],
             importConfig: {
               _id: 'i1',
-              _connectionId: 'conn1',
+              _connectionId: 'connection2',
               name: 'n1',
               http: {
                 lookups: [],
@@ -1150,7 +1150,7 @@ describe('previewMappings saga', () => {
   test('should trigger mapping preview failed action if api call errors', () => {
     const importRes = {
       _id: importId,
-      _connectionId: connectionId,
+      _connectionId: 'conn3',
       name: 'n1',
       http: {
         lookups: [],
@@ -1174,14 +1174,14 @@ describe('previewMappings saga', () => {
         [select(selectors.mappingGenerates, importId, undefined), []],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
         [call(apiCallWithRetry, {
-          path: `/connections/${connectionId}/mappingPreview`,
+          path: '/connections/conn3/mappingPreview',
           opts: {
             method: 'PUT',
             body: {
               data: [],
               importConfig: {
                 _id: 'i1',
-                _connectionId: 'conn1',
+                _connectionId: 'conn3',
                 name: 'n1',
                 adaptorType: 'HTTPImport',
                 http: {
@@ -1210,7 +1210,7 @@ describe('previewMappings saga', () => {
 
       ])
       .call(apiCallWithRetry, {
-        path: `/connections/${connectionId}/mappingPreview`,
+        path: '/connections/conn3/mappingPreview',
         opts: {
           method: 'PUT',
           body: {
@@ -1219,7 +1219,7 @@ describe('previewMappings saga', () => {
             ],
             importConfig: {
               _id: 'i1',
-              _connectionId: 'conn1',
+              _connectionId: 'conn3',
               name: 'n1',
               http: {
                 lookups: [],
