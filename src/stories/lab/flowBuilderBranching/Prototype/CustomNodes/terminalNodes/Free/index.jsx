@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position, useStoreState } from 'react-flow-renderer';
 import { Tooltip } from '@material-ui/core';
-import CircleIcon from '../CircleIcon';
+import DiamondIcon from '../../../icons/DiamondIcon';
 import TerminalIcon from '../../../../../../../components/icons/MergeIcon';
 import DefaultHandle from '../../Handles/DefaultHandle';
 
@@ -44,7 +44,7 @@ export default function TerminalFreeNode({ id }) {
     <div className={classes.container}>
       <DefaultHandle type="target" position={Position.Left} />
       {isDroppable ? (
-        <CircleIcon />
+        <DiamondIcon isDroppable />
       ) : (
         <Tooltip title="Drag to merge with other branch" position="top">
           <span>
