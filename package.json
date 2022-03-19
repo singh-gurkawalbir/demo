@@ -18,7 +18,6 @@
     "build-analyze": "env NODE_ENV=production webpack --mode=production --analyze",
     "lint": "eslint --ext .js --ext .jsx ./src",
     "test": "env NODE_ENV=test TZ=UTC jest",
-    "clearTestCache": "env NODE_ENV=test TZ=UTC jest --clearCache",
     "coverage": "env NODE_ENV=test TZ=UTC jest --coverage",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "env STORYBOOK_CDN_x=test test_CDN=123 build-storybook"
