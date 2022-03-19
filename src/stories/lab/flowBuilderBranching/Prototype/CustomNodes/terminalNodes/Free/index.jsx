@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position, useStoreState } from 'react-flow-renderer';
 import { Tooltip } from '@material-ui/core';
-import DiamondIcon from '../../../icons/DiamondgIcon';
+import DiamondIcon from '../../../icons/DiamondIcon';
 import TerminalIcon from '../../../../../../../components/icons/MergeIcon';
 import DefaultHandle from '../../Handles/DefaultHandle';
 
