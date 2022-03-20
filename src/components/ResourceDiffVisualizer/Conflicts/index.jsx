@@ -1,20 +1,22 @@
 import React from 'react';
-import ReactDiffViewer from 'react-diff-viewer';
-import { serializeConflicts } from '../utils';
+import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
+import { serializeConflicts, fetchConflictsOnBothBases } from '../utils';
 
 export default function Conflicts({ conflicts }) {
   if (!conflicts || !conflicts.length) return null;
 
-  const serializedConflicts = serializeConflicts(conflicts);
+  const { ours, theirs } = fetchConflictsOnBothBases(conflicts);
 
-  // Can be enhanced
   return (
     <>
       <h1> Conflicts </h1>
       <ReactDiffViewer
-        splitView={false}
         hideLineNumbers
-        newValue={JSON.stringify(serializedConflicts, null, 2)}
+        compareMethod={DiffMethod.WORDS}
+        leftTitle="Ours"
+        rightTitle="Theirs"
+        oldValue={JSON.stringify(serializeConflicts(ours), null, 2)}
+        newValue={JSON.stringify(serializeConflicts(theirs), null, 2)}
         />
     </>
   );

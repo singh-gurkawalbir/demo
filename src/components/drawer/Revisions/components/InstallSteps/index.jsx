@@ -68,6 +68,8 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
               _id: newId,
               _integrationId: integrationId,
               installStepConnection: true,
+              newIA: true, // this prop is used to stop from saving the connection in resourceForm saga
+              // TODO: refactor this and rename this prop to make it more generic
             }),
             SCOPES.VALUE
           )
@@ -83,28 +85,24 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
           return false;
         }
 
-        dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'verify'));
+        dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'verify')); // status changes to verifying
+        dispatch(actions.integrationLCM.installSteps.installStep(integrationId, revisionId)); // makes api call to update steps
       }
-    } else {
-      // merge and revert
-      // eslint-disable-next-line no-lonely-if
-      if (!step.isTriggered) {
-        dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'inProgress'));
-        dispatch(actions.integrationLCM.installSteps.installStep(integrationId, revisionId));
-      }
+    } else if (!step.isTriggered) {
+      // For Merge and Revert steps
+      dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'inProgress'));
+      dispatch(actions.integrationLCM.installSteps.installStep(integrationId, revisionId));
     }
   };
 
   const handleSubmitComplete = useCallback((connId, _, connectionDoc) => {
-    // dispatch an action to make status in progress
     dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'inProgress'));
     const stepInfo = connId ? {
-      _connectionId: connId, // selected existing connection use case, creating a new connection
+      _connectionId: connId, // Incase user selects existing connections
     } : {
-      connection: connectionDoc, // TODO: when does this use case occur?
+      connection: connectionDoc, // Incase user configures a new connection
     };
 
-    // TODO 2. URL type step ?
     dispatch(actions.integrationLCM.installSteps.installStep(integrationId, revisionId, stepInfo));
   }, [dispatch, revisionId, integrationId]);
 
@@ -128,7 +126,6 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
       <ResourceSetupDrawer
         integrationId={integrationId}
         revisionId={revisionId}
-        onClose={() => {}}
         onSubmitComplete={handleSubmitComplete}
         mode="revision"
       />
