@@ -71,6 +71,10 @@ export default {
       xxl: 1920,
     },
   },
+  zIndex: {
+    bubbleName: 0,
+    bubble: 1,
+  },
   // global overrides for MUI styles...
   overrides: {
     MuiButton: {

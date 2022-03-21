@@ -1,0 +1,259 @@
+{
+    "numConflicts": 1,
+    "merged": {
+        "connection": {
+            "61d439eb09cf7870de83d208": {
+                "http": {
+                    "auth": {
+                        "failValues": [],
+                        "oauth": {
+                            "scope": []
+                        },
+                        "type": "custom"
+                    },
+                    "baseURI": "http://test.com",
+                    "encrypted": "******",
+                    "formType": "http",
+                    "mediaType": "json",
+                    "ping": {
+                        "failValues": [],
+                        "successValues": []
+                    },
+                    "rateLimit": {
+                        "failValues": []
+                    },
+                    "unencrypted": {
+                        "field": "value"
+                    }
+                },
+                "name": "htt[",
+                "type": "http"
+            }
+        },
+        "export": {
+            "620ca225b738605d4ba0b692": {
+                "_connectionId": "61d439eb09cf7870de83d208",
+                "adaptorType": "HTTPExport",
+                "asynchronous": true,
+                "file": {
+                    "groupByFields": []
+                },
+                "hooks": {
+                    "preSavePage": {
+                        "_scriptId": "61badae2048bf1159fe9dd3c",
+                        "function": "preSavePage"
+                    }
+                },
+                "http": {
+                    "formType": "http",
+                    "method": "GET",
+                    "paging": {
+                        "lastPageValues": []
+                    },
+                    "relativeURI": "/test",
+                    "response": {
+                        "failValues": [],
+                        "successValues": []
+                    }
+                },
+                "name": "Http export",
+                "oneToMany": false,
+                "parsers": []
+            }
+        },
+        "flow": {
+            "620ca211b738605d4ba0b690": {
+                "autoResolveMatchingTraceKeys": true,
+                "disabled": true,
+                "free": false,
+                "name": "Flow with Script",
+                "pageGenerators": [
+                    {
+                        "_exportId": "620ca225b738605d4ba0b692",
+                        "skipRetries": false
+                    }
+                ],
+                "pageProcessors": [
+                    {
+                        "_importId": "6203b04a887b312cb0811c8d",
+                        "responseMapping": {
+                            "fields": [],
+                            "lists": []
+                        },
+                        "type": "import"
+                    }
+                ],
+                "skipRetries": false
+            }
+        },
+        "import": {
+            "6203b04a887b312cb0811c8d": {
+                "_connectionId": "61d439eb09cf7870de83d208",
+                "adaptorType": "HTTPImport",
+                "http": {
+                    "batchSize": 1,
+                    "body": [],
+                    "formType": "http",
+                    "method": [
+                        "POST"
+                    ],
+                    "relativeURI": [
+                        "/test"
+                    ],
+                    "sendPostMappedData": true
+                },
+                "ignoreExisting": false,
+                "ignoreMissing": false,
+                "lookups": [],
+                "name": "Http imp",
+                "oneToMany": false,
+                "parsers": []
+            }
+        },
+        "integration": {
+            "620ca206b738605d4ba0b68e": {
+                "flowGroupings": [],
+                "install": [],
+                "installSteps": [],
+                "mode": "settings",
+                "name": "Clone - Integration with Script new",
+                "uninstallSteps": []
+            }
+        },
+        "script": {
+            "61badae2048bf1159fe9dd3c.conflict": {
+                "name": "My API",
+                "$blob.conflict": "/*\n* handleRequest function stub:\n*\n* The name of the function can be changed to anything you like.\n*\n* The function will be passed one 'options' argument that has the following fields:\n*   'method' - http request method (uppercase string).\n*   'headers' - http request headers (object).  \n*   'queryString' - http request query string (object).\n*   'body' - parsed http request body (object, or undefined if unable to parse).\n*   'rawBody' - raw http request body (string).\n*\n* The function needs to return a response object that has the following fields:\n*   'statusCode' - http response status code (number).\n*   'headers' - http response headers overrides (object, optional).\n*   'body' - http response body (string or object).\n* Throwing an exception will signal an error.\n*/\n \n/*\n* preSavePageFunction stub:\n*\n* The name of the function can be changed to anything you like.\n*\n* The function will be passed one 'options' argument that has the following fields:\n*   'data' - an array of records representing one page of data. A record can be an object {} or array [] depending on the data source.\n*   'files' - file exports only. files[i] contains source file metadata for data[i]. i.e. files[i].fileMeta.fileName.\n*   'errors' - an array of errors where each error has the structure {code: '', message: '', source: '', retryDataKey: ''}.\n*   'retryData' - a dictionary object containing the retry data for all errors: {retryDataKey: { data: <record>, stage: '', traceKey: ''}}.\n*   '_exportId' - the _exportId currently running.\n*   '_connectionId' - the _connectionId currently running.\n*   '_flowId' - the _flowId currently running.\n*   '_integrationId' - the _integrationId currently running.\n*   'pageIndex' - 0 based. context is the batch export currently running.\n*   'lastExportDateTime' - delta exports only.\n*   'currentExportDateTime' - delta exports only.\n*   'settings' - all custom settings in scope for the export currently running.\n*\n* The function needs to return an object that has the following fields:\n*   'data' - your modified data.\n*   'errors' - your modified errors.\n*   'abort' - instruct the batch export currently running to stop generating new pages of data.\n*   'newErrorsAndRetryData' - return brand new errors linked to retry data: [{retryData: <record>, errors: [<error>]}].\n* Throwing an exception will signal a fatal error and stop the flow.\n*/\nfunction preSavePage (options) {\n  // sample code that simply passes on what has been exported\n  return {\n    data: options.data,\n    errors: options.errors,\n    abort: false,\n    newErrorsAndRetryData: []\n  }\n} \n/*\n* preSavePageFunction stub:\n*\n* The name of the function can be changed to anything you like.\n*\n* The function will be passed one 'options' argument that has the following fields:\n*   'data' - an array of records representing one page of data. A record can be an object {} or array [] depending on the data source.\n*   'files' - file exports only. files[i] contains source file metadata for data[i]. i.e. files[i].fileMeta.fileName.\n*   'errors' - an array of errors where each error has the structure {code: '', message: '', source: '', retryDataKey: ''}.\n*   'retryData' - a dictionary object containing the retry data for all errors: {retryDataKey: { data: <record>, stage: '', traceKey: ''}}.\n*   '_exportId' - the _exportId currently running.\n*   '_connectionId' - the _connectionId currently running.\n*   '_flowId' - the _flowId currently running.\n*   '_integrationId' - the _integrationId currently running.\n*   'pageIndex' - 0 based. context is the batch export currently running.\n*   'lastExportDateTime' - delta exports only.\n*   'currentExportDateTime' - delta exports only.\n*   'settings' - all custom settings in scope for the export currently running.\n*\n* The function needs to return an object that has the following fields:\n*   'data' - your modified data.\n*   'errors' - your modified errors.\n*   'abort' - instruct the batch export currently running to stop generating new pages of data.\n*   'newErrorsAndRetryData' - return brand new errors linked to retry data: [{retryData: <record>, errors: [<error>]}].\n* Throwing an exception will signal a fatal error and stop the flow.\n*/\nfunction preSavePage (options) {\n  // sample code that simply passes on what has been exported\n  return {\n    data: options.data,\n    errors: options.errors,\n    abort: false,\n    newErrorsAndRetryData: []\n  }\n}\n\nfunction handleRequest (options) {\n<<<<<<< ours\n  if (!options) return {\n    statusCode: 422\n  }\n  if (options.isNew) { options.isNew = false }\n=======\n>>>>>>> theirs\n  return {\n    statusCode: 200,\n    headers: { },\n    body: {\n      b:options.body,\n      e: 123454\n    }\n  }\n}"
+            }
+        }
+    },
+    "current": {
+        "connection": {
+            "61d439eb09cf7870de83d208": {
+                "http": {
+                    "auth": {
+                        "failValues": [],
+                        "oauth": {
+                            "scope": []
+                        },
+                        "type": "custom"
+                    },
+                    "baseURI": "http://test.com",
+                    "encrypted": "******",
+                    "formType": "http",
+                    "mediaType": "json",
+                    "ping": {
+                        "failValues": [],
+                        "successValues": []
+                    },
+                    "rateLimit": {
+                        "failValues": []
+                    },
+                    "unencrypted": {
+                        "field": "value"
+                    }
+                },
+                "name": "htt[",
+                "sandbox": false,
+                "type": "http"
+            }
+        },
+        "export": {
+            "620ca225b738605d4ba0b692": {
+                "_connectionId": "61d439eb09cf7870de83d208",
+                "adaptorType": "HTTPExport",
+                "asynchronous": true,
+                "file": {
+                    "groupByFields": []
+                },
+                "hooks": {
+                    "preSavePage": {
+                        "_scriptId": "61badae2048bf1159fe9dd3c",
+                        "function": "preSavePage"
+                    }
+                },
+                "http": {
+                    "formType": "http",
+                    "method": "GET",
+                    "paging": {
+                        "lastPageValues": []
+                    },
+                    "relativeURI": "/test",
+                    "response": {
+                        "failValues": [],
+                        "successValues": []
+                    }
+                },
+                "name": "Http export",
+                "oneToMany": false,
+                "parsers": [],
+                "sandbox": false
+            }
+        },
+        "flow": {
+            "620ca211b738605d4ba0b690": {
+                "autoResolveMatchingTraceKeys": true,
+                "disabled": false,
+                "name": "Flow with Script",
+                "pageGenerators": [
+                    {
+                        "_exportId": "620ca225b738605d4ba0b692",
+                        "skipRetries": false
+                    }
+                ],
+                "pageProcessors": [
+                    {
+                        "_importId": "6203b04a887b312cb0811c8d",
+                        "responseMapping": {
+                            "fields": [],
+                            "lists": []
+                        },
+                        "type": "import"
+                    }
+                ],
+                "skipRetries": false
+            }
+        },
+        "import": {
+            "6203b04a887b312cb0811c8d": {
+                "_connectionId": "61d439eb09cf7870de83d208",
+                "adaptorType": "HTTPImport",
+                "http": {
+                    "batchSize": 1,
+                    "body": [],
+                    "formType": "http",
+                    "method": [
+                        "POST"
+                    ],
+                    "relativeURI": [
+                        "/test"
+                    ],
+                    "sendPostMappedData": true
+                },
+                "ignoreExisting": false,
+                "ignoreMissing": false,
+                "lookups": [],
+                "name": "Http imp",
+                "oneToMany": false,
+                "parsers": [],
+                "sandbox": false
+            }
+        },
+        "integration": {
+            "620ca206b738605d4ba0b68e": {
+                "flowGroupings": [],
+                "install": [],
+                "installSteps": [],
+                "name": "Integration with Script",
+                "sandbox": false,
+                "uninstallSteps": []
+            }
+        },
+        "script": {
+            "61badae2048bf1159fe9dd3c": {
+                "name": "My API",
+                "$blob": "/*\n* handleRequest function stub:\n*\n* The name of the function can be changed to anything you like.\n*\n* The function will be passed one 'options' argument that has the following fields:\n*   'method' - http request method (uppercase string).\n*   'headers' - http request headers (object).  \n*   'queryString' - http request query string (object).\n*   'body' - parsed http request body (object, or undefined if unable to parse).\n*   'rawBody' - raw http request body (string).\n*\n* The function needs to return a response object that has the following fields:\n*   'statusCode' - http response status code (number).\n*   'headers' - http response headers overrides (object, optional).\n*   'body' - http response body (string or object).\n* Throwing an exception will signal an error.\n*/\n \n/*\n* preSavePageFunction stub:\n*\n* The name of the function can be changed to anything you like.\n*\n* The function will be passed one 'options' argument that has the following fields:\n*   'data' - an array of records representing one page of data. A record can be an object {} or array [] depending on the data source.\n*   'files' - file exports only. files[i] contains source file metadata for data[i]. i.e. files[i].fileMeta.fileName.\n*   'errors' - an array of errors where each error has the structure {code: '', message: '', source: '', retryDataKey: ''}.\n*   'retryData' - a dictionary object containing the retry data for all errors: {retryDataKey: { data: <record>, stage: '', traceKey: ''}}.\n*   '_exportId' - the _exportId currently running.\n*   '_connectionId' - the _connectionId currently running.\n*   '_flowId' - the _flowId currently running.\n*   '_integrationId' - the _integrationId currently running.\n*   'pageIndex' - 0 based. context is the batch export currently running.\n*   'lastExportDateTime' - delta exports only.\n*   'currentExportDateTime' - delta exports only.\n*   'settings' - all custom settings in scope for the export currently running.\n*\n* The function needs to return an object that has the following fields:\n*   'data' - your modified data.\n*   'errors' - your modified errors.\n*   'abort' - instruct the batch export currently running to stop generating new pages of data.\n*   'newErrorsAndRetryData' - return brand new errors linked to retry data: [{retryData: <record>, errors: [<error>]}].\n* Throwing an exception will signal a fatal error and stop the flow.\n*/\nfunction preSavePage (options) {\n  // sample code that simply passes on what has been exported\n  return {\n    data: options.data,\n    errors: options.errors,\n    abort: false,\n    newErrorsAndRetryData: []\n  }\n} \n/*\n* preSavePageFunction stub:\n*\n* The name of the function can be changed to anything you like.\n*\n* The function will be passed one 'options' argument that has the following fields:\n*   'data' - an array of records representing one page of data. A record can be an object {} or array [] depending on the data source.\n*   'files' - file exports only. files[i] contains source file metadata for data[i]. i.e. files[i].fileMeta.fileName.\n*   'errors' - an array of errors where each error has the structure {code: '', message: '', source: '', retryDataKey: ''}.\n*   'retryData' - a dictionary object containing the retry data for all errors: {retryDataKey: { data: <record>, stage: '', traceKey: ''}}.\n*   '_exportId' - the _exportId currently running.\n*   '_connectionId' - the _connectionId currently running.\n*   '_flowId' - the _flowId currently running.\n*   '_integrationId' - the _integrationId currently running.\n*   'pageIndex' - 0 based. context is the batch export currently running.\n*   'lastExportDateTime' - delta exports only.\n*   'currentExportDateTime' - delta exports only.\n*   'settings' - all custom settings in scope for the export currently running.\n*\n* The function needs to return an object that has the following fields:\n*   'data' - your modified data.\n*   'errors' - your modified errors.\n*   'abort' - instruct the batch export currently running to stop generating new pages of data.\n*   'newErrorsAndRetryData' - return brand new errors linked to retry data: [{retryData: <record>, errors: [<error>]}].\n* Throwing an exception will signal a fatal error and stop the flow.\n*/\nfunction preSavePage (options) {\n  // sample code that simply passes on what has been exported\n  return {\n    data: options.data,\n    errors: options.errors,\n    abort: false,\n    newErrorsAndRetryData: []\n  }\n}\n\nfunction handleRequest (options) {\n  if (!options) return {\n    statusCode: 422\n  }\n  if (options.isNew) { options.isNew = false }\n  return {\n    statusCode: 200,\n    headers: { },\n    body: options.body\n  }\n}"
+            }
+        }
+    }
+}

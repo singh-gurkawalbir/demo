@@ -104,6 +104,7 @@ import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
 import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
+import { filterMap } from '../components/GlobalSearch/filterMeta';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -5842,6 +5843,16 @@ selectors.mkIsAnyFlowConnectionOffline = () => {
   );
 };
 
+selectors.isAnyIntegrationConnectionOffline = (state, integrationId) => {
+  const integration = selectors.resource(state, 'integrations', integrationId);
+  const connections = selectors.resourceList(state, {
+    type: 'connections',
+  }).resources;
+  const connectionIds = integration?._registeredConnectionIds || emptyArray;
+
+  return connections.some(c => connectionIds.includes(c._id) && c.offline);
+};
+
 selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
   const flowsState = state && state.session && state.session.flowData;
   const exports = selectors.resourceList(state, {
@@ -6617,3 +6628,36 @@ selectors.showAmazonRestrictedReportType = (state, formKey) => {
           connectionType === 'Amazon-SP-API') &&
           relativeURI?.startsWith('/reports/2021-06-30/documents/');
 };
+
+const resourceListSelector = selectors.makeResourceListSelector();
+
+selectors.globalSearchResults = createSelector(
+  [
+    state => state,
+    (state, keyword, filters, filterBlackList) => {
+      if (keyword?.length < 2) return {};
+      const resourceIds = Object.keys(filterMap);
+
+      const results = resourceIds.reduce((acc, id) => {
+        const resourceId = filterMap[id]?.resourceURL;
+
+        if ((filters?.length > 0 && !(filters.includes(resourceId))) || filterBlackList.includes(resourceId)) return acc;
+        const resourceResults = resourceListSelector(state, {type: resourceId, take: 3, keyword, searchBy: ['name']});
+        let resourcesList = resourceResults?.resources;
+
+        if (id === 'connections') {
+          resourcesList = resourcesList.map(connection => ({...connection, isOnline: selectors.isConnectionOffline(state, connection?._id)}));
+        }
+        if (resourcesList?.length > 0) {
+          acc[id] = resourcesList;
+        }
+
+        return acc;
+      }, {});
+
+      return results;
+    },
+  ],
+  (_, resourceResults) => resourceResults
+);
+

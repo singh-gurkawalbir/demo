@@ -227,6 +227,7 @@ import bartender from './bartender';
 import zohoexpense from './zohoexpense';
 import jazzhr from './jazzhr';
 import segment from './segment';
+import happyreturns from './happyreturns';
 
 export default {
   channelape,
@@ -458,4 +459,5 @@ export default {
   zohoexpense,
   jazzhr,
   segment,
+  happyreturns,
 };
