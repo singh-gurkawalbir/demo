@@ -219,7 +219,8 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   if (resourceType === 'exports' && merged._rest) {
     delete merged._rest;
   }
-  if (['exports', 'imports'].includes(resourceType)) {
+  if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2')) {
+    // AS2 is special case where backend cannot identify adaptorType on its own
     delete merged.adaptorType;
   }
 
