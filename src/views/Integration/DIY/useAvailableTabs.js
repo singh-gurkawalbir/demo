@@ -95,7 +95,9 @@ export function useAvailableTabs() {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const isIAFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
+  // TODO: commenting for now
+  // const isIAFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
+  const isIAFrameWork2 = false;
   const hideSettingsTab = useSelector(state => {
     const canEditSettingsForm =
           selectors.canEditSettingsForm(state, 'integrations', integrationId, (childId || integrationId));

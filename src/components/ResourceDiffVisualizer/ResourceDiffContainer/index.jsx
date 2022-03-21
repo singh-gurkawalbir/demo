@@ -6,7 +6,7 @@ import DiffPanel from './DiffPanel';
 
 const useStyles = makeStyles(theme => ({
   resourceContainer: {
-    background: '#F0F5F9',
+    background: theme.palette.background.paper2,
   },
   resourceTypeWrapper: {
     '& .MuiAccordionDetails-root': {

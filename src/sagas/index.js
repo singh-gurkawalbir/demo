@@ -52,7 +52,7 @@ import latestFlowJobsSagas from './errorManagement/latestJobs/flows';
 import errorMetadataSagas from './errorManagement/metadata';
 import runHistorySagas from './errorManagement/runHistory';
 import { customSettingsSagas } from './customSettings';
-import lifeCycleManagementSagas from './lifeCycleManagement';
+import lifecycleManagementSagas from './lifecycleManagement';
 import exportDataSagas from './exportData';
 import {logsSagas} from './logs';
 import ssoSagas from './sso';
@@ -222,7 +222,7 @@ export function* allSagas() {
     ...ssoSagas,
     ...bottomDrawerSagas,
     ...flowGroupSagas,
-    ...lifeCycleManagementSagas,
+    ...lifecycleManagementSagas,
   ]);
 }
 

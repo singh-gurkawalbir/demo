@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import { useParams } from 'react-router-dom';
 import CeligoSelect from '../../../../../../../components/CeligoSelect';
@@ -27,7 +27,7 @@ export default function UserFilter() {
         name: userObj.sharedWithUser.name || userObj.sharedWithUser.email,
       };
     });
-  }, shallowEqual);
+  });
 
   const selectedUser = useSelector(state => {
     const revisionFilter = selectors.filter(state, filterKey);

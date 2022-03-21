@@ -81,6 +81,10 @@ export const DEFAULT_REVISION_FILTERS = {
     currPage: 0,
     rowsPerPage: 25,
   },
+  sort: {
+    order: 'desc',
+    orderBy: 'createdAt',
+  },
 };
 
 const DIFF_TITLES_BY_TYPE = {

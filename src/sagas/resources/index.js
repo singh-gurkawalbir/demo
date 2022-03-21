@@ -738,9 +738,7 @@ export function* getResourceCollection({ resourceType, refresh }) {
   }
 
   try {
-    let collection;
-
-    collection = yield call(apiCallWithPaging, {
+    let collection = yield call(apiCallWithPaging, {
       path,
       hidden: hideNetWorkSnackbar,
       refresh,

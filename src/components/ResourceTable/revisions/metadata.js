@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import UserName from '../commonCells/IntegrationUserName';
-import DateTimeDisplay from '../../DateTimeDisplay';
+import CeligoTimeAgo from '../../CeligoTimeAgo';
 import { REVISION_STATUS_LABELS, REVISION_TYPE_LABELS } from '../../../utils/revisions';
 import { REVISION_STATUS, REVISION_TYPES } from '../../../utils/constants';
 import CreatePull from './actions/CreatePull';
@@ -25,7 +25,7 @@ export default {
     }, {
       key: 'createdAt',
       heading: 'Date created',
-      Value: ({ rowData: r }) => <DateTimeDisplay dateTime={r.createdAt} />,
+      Value: ({ rowData: r }) => <CeligoTimeAgo date={r.createdAt} />,
       orderBy: 'createdAt',
     }, {
       key: 'type',
