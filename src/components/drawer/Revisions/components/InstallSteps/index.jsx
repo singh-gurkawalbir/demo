@@ -1,17 +1,18 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
-import RawHtml from '../../../../RawHtml';
+// import RawHtml from '../../../../RawHtml';
 import InstallationStep from '../../../../InstallStep';
 import ResourceSetupDrawer from '../../../../ResourceSetup/Drawer';
 import { generateNewId } from '../../../../../utils/resource';
 import jsonUtil from '../../../../../utils/json';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import openExternalUrl from '../../../../../utils/window';
-import { INSTALL_STEP_TYPES } from '../../../../../utils/constants';
+import { INSTALL_STEP_TYPES, REVISION_TYPES } from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   installStepsWrapper: {
@@ -37,6 +38,10 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
   );
   const areAllRevisionInstallStepsCompleted = useSelector(state =>
     selectors.areAllRevisionInstallStepsCompleted(state, integrationId, revisionId)
+  );
+
+  const revisionType = useSelector(state =>
+    selectors.revisionType(state, integrationId, revisionId)
   );
 
   useEffect(() => {
@@ -108,10 +113,13 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
 
   return (
     <div className={classes.installStepsWrapper}>
-      <RawHtml
+      {/* <RawHtml
         className={classes.message}
         options={{ allowedHtmlTags: ['a', 'br'] }}
-        html={' Complete the steps below to merge your changes.Need more help? <a href="" target="_blank">Check out our help guide</a>'} />
+        html={' Complete the steps below to merge your changes.Need more help? <a href="" target="_blank">Check out our help guide</a>'} /> */}
+      <Typography className={classes.message}>
+        {`Complete the steps below to ${revisionType === REVISION_TYPES.PULL ? 'merge' : 'revert'} your changes.`}
+      </Typography>
       <div className={classes.installSteps}>
         {installSteps.map((step, index) => (
           <InstallationStep

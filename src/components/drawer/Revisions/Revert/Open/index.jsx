@@ -55,6 +55,7 @@ function OpenRevertDrawerContent({ integrationId, parentUrl }) {
     <>
       <DrawerHeader
         className={classes.drawerHeader}
+        helpKey="revert.create"
         title="Create revert"
         handleClose={onClose}>
         <RevisionHeader />

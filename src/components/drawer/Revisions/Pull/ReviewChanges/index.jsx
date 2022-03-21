@@ -70,7 +70,7 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
       <DrawerHeader
         title="Review changes"
         className={classes.drawerHeaderWrapper}
-        infoText="test"
+        helpKey="pull.reviewChanges"
         handleClose={onClose}>
         <RevisionHeader
           integrationId={integrationId}

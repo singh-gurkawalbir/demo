@@ -64,7 +64,7 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
         title="Review changes"
         handleClose={onClose}
         className={classes.drawerHeader}
-        infoText="test"
+        helpKey="revert.reviewChanges"
       >
         <RevisionHeader
           integrationId={integrationId}

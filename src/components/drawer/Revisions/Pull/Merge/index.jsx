@@ -33,7 +33,11 @@ function MergePullDrawerContent({ parentUrl, integrationId }) {
 
   return (
     <>
-      <DrawerHeader className={classes.drawerHeader} title="Merge changes" handleClose={onClose}>
+      <DrawerHeader
+        className={classes.drawerHeader}
+        helpKey="pull.mergeChanges"
+        title="Merge changes"
+        handleClose={onClose}>
         <RevisionHeader
           integrationId={integrationId}
           revisionId={revisionId}

@@ -33,7 +33,11 @@ function FinalRevertDrawerContent({ parentUrl, integrationId }) {
 
   return (
     <>
-      <DrawerHeader className={classes.drawerHeader} title="Revert changes" handleClose={onClose}>
+      <DrawerHeader
+        className={classes.drawerHeader}
+        helpKey="revert.finalRevertChanges"
+        title="Revert changes"
+        handleClose={onClose}>
         <RevisionHeader
           integrationId={integrationId}
           revisionId={revisionId}

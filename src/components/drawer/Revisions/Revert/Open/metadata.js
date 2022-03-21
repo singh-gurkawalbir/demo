@@ -8,6 +8,7 @@ export default function getMetadata(revertToRevision = {}) {
         name: 'description',
         type: 'text',
         label: 'Description',
+        helpKey: 'revert.description',
         required: true,
       },
       revertToRevisionDescription: {
@@ -22,6 +23,7 @@ export default function getMetadata(revertToRevision = {}) {
         id: 'revertToRevisionCreatedDate',
         name: 'revertToRevisionCreatedDate',
         type: 'text',
+        helpKey: 'revert.revision.createdAt',
         label: 'Revert to revision created date',
         defaultValue: DateTimeDisplay({dateTime: revertToRevision.createdAt}),
         disableText: true,
@@ -32,6 +34,7 @@ export default function getMetadata(revertToRevision = {}) {
         type: 'text',
         label: 'Revert to revision ID',
         defaultValue: revertToRevision._id,
+        helpKey: 'revert.revisionId',
         disableText: true,
       },
     },

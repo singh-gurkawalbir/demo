@@ -32,6 +32,7 @@ const metadata = {
     description: {
       id: 'description',
       name: 'description',
+      helpKey: 'snapshot.description',
       type: 'text',
       label: 'Description',
       required: true,
@@ -68,7 +69,11 @@ function CreateSnapshotDrawerContent({ integrationId, parentUrl }) {
 
   return (
     <>
-      <DrawerHeader className={classes.drawerHeader} title="Create snapshot" handleClose={onClose}>
+      <DrawerHeader
+        className={classes.drawerHeader}
+        helpKey="snapshot.create"
+        title="Create snapshot"
+        handleClose={onClose}>
         <RevisionHeader />
       </DrawerHeader>
       <DrawerContent>
