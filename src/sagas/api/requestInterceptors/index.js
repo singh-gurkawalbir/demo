@@ -129,14 +129,18 @@ export function* onSuccessSaga(response, action) {
 export function* onErrorSaga(error, action) {
   const { path, method, origReq } = action.request.meta;
   const {data} = error;
-  let code;
+  let code = [];
 
   if (isJsonString(data)) {
-    code = JSON.parse(data)?.errors?.[0]?.code;
+    code = JSON.parse(data)?.errors?.map(error => error.code) || [];
   }
 
-  if (code === 'subscription_required' || code === 'entitlement_reached') {
-    yield put(actions.license.receivedLicenseErrorMessage(code));
+  if (code.includes('subscription_required') || code.includes('entitlement_reached')) {
+    if (code.includes('subscription_required')) {
+      yield put(actions.license.receivedLicenseErrorMessage('subscription_required'));
+    } else {
+      yield put(actions.license.receivedLicenseErrorMessage('entitlement_reached'));
+    }
     yield put(
       actions.api.failure(path, method, error.data, true)
     );
