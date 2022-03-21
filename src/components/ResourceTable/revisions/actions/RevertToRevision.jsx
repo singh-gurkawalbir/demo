@@ -12,7 +12,7 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
-      history.push(`${match.url}/revert/${nanoid()}/open/this/revision/${revisionId}`);
+      history.push(`${match.url}/revert/${nanoid()}/open/toBefore/revision/${revisionId}`);
     }, [revisionId, history, match.url]);
 
     return handleClick;

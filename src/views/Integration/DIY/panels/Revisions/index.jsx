@@ -1,6 +1,6 @@
 import React, { useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { nanoid } from 'nanoid';
 import { TextButton } from '../../../../../components/Buttons';
@@ -29,6 +29,9 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
+  },
+  noRevisions: {
+    padding: theme.spacing(2),
   },
 }));
 
@@ -59,7 +62,8 @@ function DrawerDeclarations({ integrationId, hasMonitorLevelAccess }) {
 }
 
 const RevisionsList = ({ integrationId }) => {
-  const revisions = useSelector(state => selectors.filteredRevisions(state, integrationId));
+  const classes = useStyles();
+  const filteredRevisions = useSelector(state => selectors.filteredRevisions(state, integrationId));
   const isLoadingRevisions = useSelector(state => selectors.isLoadingRevisions(state, integrationId));
   const hasNoRevisions = useSelector(state => selectors.integrationHasNoRevisions(state, integrationId));
 
@@ -67,16 +71,34 @@ const RevisionsList = ({ integrationId }) => {
     return <Spinner centerAll />;
   }
 
-  if (hasNoRevisions) {
-    return <div> No revisions </div>;
-  }
+  const NoRevisionsInfo = () => {
+    if (hasNoRevisions) {
+      return (
+        <Typography variant="body2" className={classes.noRevisions}>
+          You don&apos;t have any revisions
+        </Typography>
+      );
+    }
+    if (!filteredRevisions.length) {
+      return (
+        <Typography variant="body2" className={classes.noRevisions}>
+          You don&apos;t have any revisions with this filters
+        </Typography>
+      );
+    }
+
+    return null;
+  };
 
   return (
-    <ResourceTable
-      resourceType="revisions"
-      filterKey={getRevisionFilterKey(integrationId)}
-      resources={revisions}
+    <>
+      <ResourceTable
+        resourceType="revisions"
+        filterKey={getRevisionFilterKey(integrationId)}
+        resources={filteredRevisions}
       />
+      <NoRevisionsInfo />
+    </>
   );
 };
 

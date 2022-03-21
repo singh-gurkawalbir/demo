@@ -6,7 +6,7 @@ import References from './References';
 
 const useStyles = makeStyles(theme => ({
   referenceContainer: {
-    background: '#F8FAFF',
+    background: theme.palette.background.default,
     padding: theme.spacing(0, 3, 3),
     minWidth: '880px',
   },

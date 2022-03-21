@@ -4,7 +4,7 @@ import { comparer, sortJsonByKeys } from '../sort';
 export const DEFAULT_ROWS_PER_PAGE = 50;
 export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
 
-export const VALID_REVERT_TO_QUERIES = ['toAfter', 'toBefore', 'this'];
+export const VALID_REVERT_TO_QUERIES = ['toAfter', 'toBefore'];
 export const VALID_REVISION_TYPES_FOR_CREATION = [
   REVISION_TYPES.PULL,
   REVISION_TYPES.REVERT,
