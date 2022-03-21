@@ -110,7 +110,7 @@ selectors.platformLicenseActionMessage = state => {
 
   return state.platformLicenseActionMessage;
 };
-selectors.licenseErrorMessage = state => {
+selectors.licenseErrorCode = state => {
   if (!state) {
     return;
   }

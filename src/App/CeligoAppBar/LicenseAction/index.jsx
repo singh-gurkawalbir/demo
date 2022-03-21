@@ -41,7 +41,7 @@ function LicenseAction() {
     selectors.platformLicenseActionMessage(state)
   );
   const licenseErrorCode = useSelector(state =>
-    selectors.licenseErrorMessage(state)
+    selectors.licenseErrorCode(state)
   );
 
   const canRequestUpgrade = useSelector(
