@@ -42,7 +42,6 @@ export default function reducer(state = {}, action) {
         draft.code = code;
         break;
       case actionTypes.LICENSE.CLEAR_ERROR_MESSAGE:
-        draft.code = undefined;
         delete draft.code;
         break;
       case actionTypes.LICENSE.NUM_ENABLED_FLOWS_RECEIVED:

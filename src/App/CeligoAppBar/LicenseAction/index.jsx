@@ -29,6 +29,32 @@ const useStyles = makeStyles({
   },
 });
 
+function StartFreeTrialConfirmationMessage() {
+  return (
+    <div>
+      <b>You cannot enable more than one flow at a time with your current free subscription plan.</b>
+      <br /><br />Start your free trial or upgrade your plan to unlock your data integration potential with more flows.
+      <br /><br /><b>FREE UNLIMITED FLOWS TRIAL </b>
+
+      <br /><br />Experience optimal process automation for your business with full access to integratior.io.
+      For 30 days, you will get:
+      <ul><li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
+        <li>Easy installation of Integration Apps and free templates from our vast library</li>
+        <li>Integrations with multiple imports or exports (orchestration)</li>
+        <li>Ad hoc data imports to thousands of applications</li>
+        <li>Ability to daisy-chain flows.</li>
+      </ul>
+
+      <br />
+      <a
+        target="_blank" rel="noopener noreferrer"
+        href="https://docs.celigo.com/hc/en-us/articles/4414582961819-Learn-how-to-make-the-most-of-your-free-trial"><u>Learn how to make the most of your free trial </u>
+      </a>
+
+      <br /><br />After 30 days, your plan will revert to the free subscription plan with 1 enabled integration flow.
+    </div>
+  );
+}
 function LicenseAction() {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -151,26 +177,9 @@ function LicenseAction() {
   }, [confirmDialog, dispatch, licenseActionDetails.action, startFreeTrialDialog, submitUpgradeDialog]);
 
   const startFreeTrialConfirmationDialog = useCallback(() => {
-    const message = `<b>You cannot enable more than one flow at a time with your current free subscription plan.</b>
-    <br/><br/>Start your free trial or upgrade your plan to unlock your data integration potential with more flows.
-    <br/><br/><b>FREE UNLIMITED FLOWS TRIAL </b>
-
-    <br/><br/>Experience optimal process automation for your business with full access to integratior.io.
-     For 30 days, you will get: 
-  <ul><li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
-     <li>Easy installation of Integration Apps and free templates from our vast library</li>
-     <li>Integrations with multiple imports or exports (orchestration)</li>
-     <li>Ad hoc data imports to thousands of applications</li>
-     <li>Ability to daisy-chain flows.</li></ul>
-
-     <br/><a target="_blank" rel="noopener noreferrer"
-     href="https://docs.celigo.com/hc/en-us/articles/4414582961819-Learn-how-to-make-the-most-of-your-free-trial"><u>Learn how to make the most of your free trial </u></a>
-
-     <br/><br/>After 30 days, your plan will revert to the free subscription plan with 1 enabled integration flow.`;
-
     confirmDialog({
       title: 'Try unlimited flows free for 30 days or upgrade plan',
-      message: <RawHtml html={message} />,
+      message: <StartFreeTrialConfirmationMessage />,
       buttons: [
         { label: 'Start free trial',
           onClick: () => {
