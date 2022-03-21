@@ -2561,6 +2561,24 @@ selectors.getResourceType = (state, { resourceType, resourceId }) => {
   return updatedResourceType;
 };
 
+// As of now, we are not showing the lookup option for BigQuery imports
+selectors.mkMappingHasLookupOption = () => {
+  const resourceSel = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, resourceType, resourceId) => resourceSel(state, resourceType, resourceId),
+    connection => {
+      if (connection?.rdbms?.type === 'bigquery') {
+        return false;
+      }
+
+      return true;
+    },
+  );
+};
+
+selectors.mappingHasLookupOption = selectors.mkMappingHasLookupOption();
+
 // this selector updates the field options based on the
 // parent field media type
 selectors.mkGetMediaTypeOptions = () => {
@@ -6276,7 +6294,7 @@ selectors.isEditorDisabled = (state, editorId) => {
 
 selectors.isEditorLookupSupported = (state, editorId) => {
   const editor = fromSession.editor(state?.session, editorId);
-  const {resultMode, fieldId, editorType, resourceType} = editor;
+  const {resultMode, fieldId, editorType, resourceType, resourceId} = editor;
   const fieldsWhichNotSupportlookup = [
     '_body',
     '_postBody',
@@ -6289,6 +6307,12 @@ selectors.isEditorLookupSupported = (state, editorId) => {
     'http.relativeURI',
     'rest.relativeURI',
   ];
+  const resource = selectors.resourceData(
+    state,
+    resourceType,
+    resourceId
+  )?.merged || emptyObject;
+  const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
 
   // lookups are only valid for http request body and sql query import fields (but not for lookup fields inside those)
   // and other text result fields
@@ -6300,6 +6324,10 @@ selectors.isEditorLookupSupported = (state, editorId) => {
   }
 
   if (fieldsWhichNotSupportlookup.includes(fieldId) || (resultMode === 'text' && editorType !== 'sql' && editorType !== 'databaseMapping')) {
+    return false;
+  }
+
+  if (connection.rdbms?.type === 'bigquery') {
     return false;
   }
 

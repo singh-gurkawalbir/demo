@@ -7594,6 +7594,44 @@ describe('resource region selector testcases', () => {
     });
   });
 
+  describe('selectors.mkMappingHasLookupOption test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          connections: [
+            {
+              _id: 'connection1',
+              type: 'http',
+              http: {mediaType: 'xml'},
+            },
+            {
+              _id: 'connection2',
+              type: 'rdbms',
+              rdbms: {type: 'bigquery'},
+            },
+            {
+              _id: 'connection3',
+              type: 'rdbms',
+              rdbms: {type: 'snowflake'},
+            },
+          ],
+        },
+      },
+    };
+
+    const mappingHasLookupOption = selectors.mkMappingHasLookupOption();
+
+    test('should return false if the connection is of bigquery rdbms subtype', () => {
+      expect(mappingHasLookupOption(state, 'connections', 'connection2')).toEqual(false);
+    });
+    test('should return true if the connection is not of bigquery rdbms subtype', () => {
+      expect(mappingHasLookupOption(state, 'connections', 'connection3')).toEqual(true);
+    });
+    test('should return true if the connection is of not rdbms type', () => {
+      expect(mappingHasLookupOption(state, 'connections', 'connection1')).toEqual(true);
+    });
+  });
+
   describe('selectors.mkGetMediaTypeOptions test cases', () => {
     const state = {
       data: {

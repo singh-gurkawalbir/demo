@@ -89,8 +89,8 @@ function MappingSettings({
     selectors.resource(state, 'imports', importId)
   );
 
-  const importConnection = useSelector(state =>
-    selectors.resource(state, 'connections', importResource?._connectionId)
+  const hasLookUpOption = useSelector(state =>
+    selectors.mappingHasLookupOption(state, 'connections', importResource?._connectionId)
   );
 
   const { generate, extract, lookupName } = value;
@@ -105,13 +105,13 @@ function MappingSettings({
         isCategoryMapping,
         recordType: nsRecordType,
         importResource,
-        importConnection,
+        hasLookUpOption,
         isGroupedSampleData,
       };
 
       return ApplicationMappingSettings.getMetaData(opts);
     },
-    [value, flowId, extractFields, generateFields, lookups, isCategoryMapping, nsRecordType, importResource, importConnection, isGroupedSampleData]
+    [value, flowId, extractFields, generateFields, lookups, isCategoryMapping, nsRecordType, importResource, hasLookUpOption, isGroupedSampleData]
   );
   const disableSave = useMemo(() => {
     // Disable all fields except useAsAnInitializeValue in case mapping is not editable

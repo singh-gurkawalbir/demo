@@ -7,14 +7,10 @@ export default {
     value = {},
     extractFields,
     isGroupedSampleData,
-    importConnection,
+    hasLookUpOption,
   }) => {
     const { generate, extract } = value;
     const extractfieldsOpts = [];
-
-    // As of now, we are not showing the lookup option for BigQuery imports
-    // These imports does not support the lookup fields
-    const hasLookUpOption = importConnection?.rdbms?.type !== 'bigquery';
 
     if (extractFields) {
       if (isGroupedSampleData && generate.indexOf('[*].') !== -1) {
