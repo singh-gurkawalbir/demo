@@ -82,7 +82,7 @@ const RevisionsList = ({ integrationId }) => {
     if (!filteredRevisions.length) {
       return (
         <Typography variant="body2" className={classes.noRevisions}>
-          You don&apos;t have any revisions with this filters
+          You don&apos;t have any revisions with these filters
         </Typography>
       );
     }
@@ -122,7 +122,7 @@ export default function Revisions({ integrationId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Revisions" infoText="test" className={classes.flowPanelTitle}>
+      <PanelHeader title="Revisions" className={classes.flowPanelTitle}>
         { !hasMonitorLevelAccess && (
         <ActionGroup>
           <TextButton

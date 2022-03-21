@@ -27,7 +27,7 @@ import { getTopLevelTabs } from '../../../utils/integrationApps';
 import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const getTabs = ({isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyIntegrationConnectionOffline}) => [
+const getTabs = ({ isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyIntegrationConnectionOffline, isIAFrameWork2 }) => [
   {
     path: 'settings',
     label: 'Settings',
@@ -77,7 +77,7 @@ const getTabs = ({isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyIntegr
     Icon: SingleUserIcon,
     Panel: AdminPanel,
   },
-  ...(!isStandaloneIntegration ? [{
+  ...((!isStandaloneIntegration && !isIAFrameWork2) ? [{
     path: 'revisions',
     label: 'Revisions',
     Icon: RevisionsIcon,
@@ -95,6 +95,7 @@ export function useAvailableTabs() {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const isIAFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const hideSettingsTab = useSelector(state => {
     const canEditSettingsForm =
           selectors.canEditSettingsForm(state, 'integrations', integrationId, (childId || integrationId));
@@ -141,6 +142,7 @@ export function useAvailableTabs() {
       isUserInErrMgtTwoDotZero,
       isStandaloneIntegration,
       isAnyIntegrationConnectionOffline,
+      isIAFrameWork2,
     }),
     isIntegrationApp,
     isParent,
@@ -150,7 +152,7 @@ export function useAvailableTabs() {
     children,
     isMonitorLevelUser,
     hideSettingsTab,
-  }), [isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyIntegrationConnectionOffline, isIntegrationApp, isParent, integrationId, hasAddOns, supportsChild, children, isMonitorLevelUser, hideSettingsTab]);
+  }), [isUserInErrMgtTwoDotZero, isStandaloneIntegration, isIAFrameWork2, isAnyIntegrationConnectionOffline, isIntegrationApp, isParent, integrationId, hasAddOns, supportsChild, children, isMonitorLevelUser, hideSettingsTab]);
 
   return availableTabs;
 }

@@ -68,7 +68,7 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
       >
         <RevisionHeader
           integrationId={integrationId}
-          revId={revisionId}
+          revisionId={revisionId}
           mode={REVISION_DRAWER_MODES.REVIEW}
         />
       </DrawerHeader>

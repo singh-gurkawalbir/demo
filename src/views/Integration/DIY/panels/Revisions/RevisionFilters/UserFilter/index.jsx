@@ -44,7 +44,6 @@ export default function UserFilter() {
 
   return (
     <CeligoSelect
-    //   isLoggable={false}
       disabled={!usersListSet.size}
       onChange={handleUserFilter}
       value={selectedUser}>

@@ -4,7 +4,7 @@ import ViewDetailsIcon from '../../../icons/ViewDetailsIcon';
 
 export default {
   key: 'viewDetails',
-  useLabel: () => 'View Details',
+  useLabel: () => 'View details',
   icon: ViewDetailsIcon,
   useOnClick: rowData => {
     const { _id: revisionId } = rowData;

@@ -34,6 +34,7 @@ const metadata = {
       name: 'description',
       helpKey: 'snapshot.description',
       type: 'text',
+      noApi: true,
       label: 'Description',
       required: true,
     },
