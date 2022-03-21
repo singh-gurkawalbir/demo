@@ -9,6 +9,7 @@ import { isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource'
 import EditorDrawer from '../../../AFE/Drawer';
 import ExpandModeEditorDrawer from '../../../DynaForm/fields/DynaEditor/ExpandModeEditor/Drawer';
 import ExportsPreviewPanel from '../../../ExportsPreviewPanel';
+import ImportsPreviewPanel from '../../../ImportsPreviewPanel';
 import LoadResources from '../../../LoadResources';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
@@ -30,11 +31,7 @@ export const isNestedDrawer = url => !!matchPath(url, {
 const useStyles = makeStyles(theme => ({
   root: {
     height: '100vh',
-    width: props => {
-      if (props.occupyFullWidth) return '100%';
-
-      return props.match.isExact ? 824 : 0;
-    },
+    width: '100%',
     overflowX: 'hidden',
     overflowY: 'hidden',
   },
@@ -101,7 +98,8 @@ const useResourceFormRedirectionToParentRoute = (resourceType, id) => {
 };
 
 export default function Panel(props) {
-  const { onClose, occupyFullWidth, flowId, integrationId } = props;
+  const { onClose, flowId, integrationId } = props;
+  const occupyFullWidth = true;
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const { id, resourceType, operation } = match.params;
@@ -172,6 +170,8 @@ export default function Panel(props) {
     return shouldShow && !isFirstStep;
   });
 
+  const showImportsPreviewPanel = resourceType === 'imports';
+
   const isReportType = VALID_REPORT_TYPES.some(({value}) => value === resourceType);
 
   return (
@@ -180,11 +180,7 @@ export default function Panel(props) {
       <DrawerContent className={classes.root}>
         <LoadResources required resources={requiredResources}>
           <div
-            className={clsx({
-              [classes.baseForm]: resourceType === 'exports',
-            },
-            {[classes.baseFormWithPreview]: showPreviewPanel }
-            )}
+            className={classes.baseFormWithPreview}
           >
             <ResourceFormWithStatusPanel
               formKey={formKey}
@@ -204,6 +200,14 @@ export default function Panel(props) {
           />
             {showPreviewPanel && (
               <ExportsPreviewPanel
+                resourceId={id}
+                formKey={formKey}
+                resourceType={resourceType}
+                flowId={flowId}
+          />
+            )}
+            {showImportsPreviewPanel && (
+              <ImportsPreviewPanel
                 resourceId={id}
                 formKey={formKey}
                 resourceType={resourceType}

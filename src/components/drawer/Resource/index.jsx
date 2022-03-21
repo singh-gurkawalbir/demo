@@ -38,7 +38,7 @@ function ResourceDrawerContent(props) {
     <>
       <Panel
         {...props}
-        occupyFullWidth={isPreviewPanelAvailableForResource}
+        occupyFullWidth
         zIndex={1}
         onClose={handleClose}
             />
@@ -60,6 +60,7 @@ export default function ResourceDrawer({
       path=":operation(add|edit)/:resourceType/:id"
       variant="temporary"
       height="tall"
+      width="full"
       flowId={flowId}>
       <ResourceDrawerContent flowId={flowId} integrationId={integrationId} />
     </RightDrawer>

@@ -64,7 +64,7 @@ function ResourceDrawer(props) {
         {open && (
           <Panel
             {...props}
-            occupyFullWidth={isPreviewPanelAvailableForResource}
+            occupyFullWidth
             match={match}
             zIndex={1}
             onClose={handleClose}
