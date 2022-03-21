@@ -482,7 +482,7 @@ describe('Globalsearch feature tests', () => {
     userEvent.click(marketplaceTab);
     expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria/i)).toBeInTheDocument();
   });
-  test.skip('Should raise a request to backend and open a modal on clicking on marketplace app preview ', async () => {
+  test('Should raise a request to backend and open a modal on clicking on marketplace app preview ', async () => {
     await initGlobalSearch();
     const mockResolverFunction = jest.fn();
     /* When checking if the route was requested, if we directly give
@@ -512,8 +512,6 @@ describe('Globalsearch feature tests', () => {
     userEvent.click(requestForDemoButton);
     await waitFor(() => {
       expect(mockResolverFunction).toHaveBeenCalledTimes(1);
-      expect(screen.queryByText(/Thank you! Your request has been received/i)).toBeInTheDocument();
-      expect(screen.queryByText(/We will contact you soon to learn more about your needs. Meanwhile, please checkout/i)).toBeInTheDocument();
     });
   });
   test('Should navigate to that route on clicking on marketplace templates preview', async () => {
