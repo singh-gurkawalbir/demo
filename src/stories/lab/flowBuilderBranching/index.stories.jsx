@@ -17,12 +17,14 @@ export default {
   },
 };
 
-const {emptyFlow, complexFlow, multipleSources} = metadata;
+const {emptyFlow, complexFlow, multipleSources, overlappingEdges} = metadata;
 
 export const EmptyFlow = Template.bind({});
 export const ComplexFlow = Template.bind({});
 export const MultipleSources = Template.bind({});
+export const OverlappingEdges = Template.bind({});
 
 EmptyFlow.args = { resourceState: emptyFlow };
 ComplexFlow.args = { resourceState: complexFlow };
 MultipleSources.args = { resourceState: multipleSources };
+OverlappingEdges.args = { resourceState: overlappingEdges};

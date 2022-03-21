@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { uniqBy } from 'lodash';
 import { generateDefaultEdge, generateId } from '../lib';
 import { generateNewTerminal, generateRouterNode } from '../nodeGeneration';
 
@@ -105,8 +106,8 @@ const generateMergeEdge = (sourceNodes, targetNodes) => {
 };
 
 const mergeNodesAndEdges = metadatas => metadatas.reduce((acc, curr) => ({
-  nodes: [...acc.nodes, ...curr.nodes],
-  edges: [...acc.edges, ...generateMergeEdge(acc.nodes, curr.nodes), ...curr.edges],
+  nodes: uniqBy([...acc.nodes, ...curr.nodes], 'id'),
+  edges: uniqBy([...acc.edges, ...generateMergeEdge(acc.nodes, curr.nodes), ...curr.edges], 'id'),
 }), {nodes: [], edges: []});
 
 const isAMergeNode = (edges, routerId) => edges.find(e => e.target === routerId);
