@@ -30,7 +30,7 @@ export function extractStages(sampleData) {
 }
 
 export default function (state = {}, action) {
-  const { type, resourceId, status = 'requested', previewData, previewStagesData, previewError, parseData, rawData, csvData, recordSize, processor, processorData } = action;
+  const { type, resourceId, status = 'requested', previewData, previewStagesData, previewError, parseData, rawData, csvData, recordSize, processor, processorData, processorError } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -49,6 +49,20 @@ export default function (state = {}, action) {
         draft[resourceId].error = previewError?.errors;
         draft[resourceId].data = extractStages(previewError);
         break;
+      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PROCESSOR_ERROR: {
+        draft[resourceId] = draft[resourceId] || {};
+        draft[resourceId].status = 'error';
+        const errors = Array.isArray(processorError) ? processorError : [processorError];
+
+        draft[resourceId].error = errors;
+        draft[resourceId].data = {
+          ...draft[resourceId].data,
+          // processor dependent stages need to be reset if processor throws error
+          parse: { errors },
+          preview: undefined,
+        };
+        break;
+      }
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PARSE_DATA:
         draft[resourceId] = draft[resourceId] || {};
         if (!draft[resourceId].data) {
