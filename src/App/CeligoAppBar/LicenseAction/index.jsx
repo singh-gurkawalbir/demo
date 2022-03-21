@@ -157,15 +157,16 @@ function LicenseAction() {
 
     <br/><br/>Experience optimal process automation for your business with full access to integratior.io.
      For 30 days, you will get: 
-     <ul><li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
+  <ul><li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
      <li>Easy installation of Integration Apps and free templates from our vast library</li>
      <li>Integrations with multiple imports or exports (orchestration)</li>
      <li>Ad hoc data imports to thousands of applications</li>
-     <li>Ability to daisy-chain flows.</li>
+     <li>Ability to daisy-chain flows.</li></ul>
 
-     <br/><br/>Learn how to make the most of your free trial 
+     <br/><a target="_blank" rel="noopener noreferrer"
+     href="https://docs.celigo.com/hc/en-us/articles/4414582961819-Learn-how-to-make-the-most-of-your-free-trial"><u>Learn how to make the most of your free trial </u></a>
 
-      After 30 days, your plan will revert to the free subscription plan with 1 enabled integration flow.`;
+     <br/><br/>After 30 days, your plan will revert to the free subscription plan with 1 enabled integration flow.`;
 
     confirmDialog({
       title: 'Try unlimited flows free for 30 days or upgrade plan',
