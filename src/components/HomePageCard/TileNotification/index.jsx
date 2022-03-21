@@ -66,9 +66,29 @@ export default function TileNotification({ content, expired, connectorId, licens
   const {confirmDialog} = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
-  // Single means only button displayed here (Buy or renew), unistall button will be added if it is not single.
+  // Single means only one button displayed here (Buy or renew), uninstall button will be added if it is not single.
   const single = tileStatus === TILE_STATUS.IS_PENDING_SETUP || (!trialExpired && (isIntegrationV2 || !expired));
 
+  const onClickBuyButton = useCallback(event => {
+    event?.stopPropagation();
+    confirmDialog({
+      title: 'Request to buy subscription',
+      message: 'We will contact you to buy your subscription.',
+      buttons: [
+        {
+          label: 'Submit request',
+          onClick: () => {
+            setUpgradeRequested(true);
+            dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
+          },
+        },
+        {
+          label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, connectorId, dispatch, licenseId]);
   const onClickRenewOrReactivateButton = useCallback(event => {
     event.stopPropagation();
     setUpgradeRequested(true);
@@ -93,6 +113,8 @@ export default function TileNotification({ content, expired, connectorId, licens
           ],
         });
       }
+    } else if (showTrialLicenseMessage) {
+      onClickBuyButton();
     } else {
       confirmDialog({
         title: 'Request to renew subscription',
@@ -111,27 +133,7 @@ export default function TileNotification({ content, expired, connectorId, licens
         ],
       });
     }
-  }, [accessLevel, confirmDialog, connectorId, dispatch, enquesnackbar, integrationId, licenseId, resumable]);
-  const onClickBuyButton = useCallback(event => {
-    event.stopPropagation();
-    confirmDialog({
-      title: 'Request to buy subscription',
-      message: 'We will contact you to buy your subscription.',
-      buttons: [
-        {
-          label: 'Submit request',
-          onClick: () => {
-            setUpgradeRequested(true);
-            dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
-          },
-        },
-        {
-          label: 'Cancel',
-          variant: 'text',
-        },
-      ],
-    });
-  }, [confirmDialog, connectorId, dispatch, licenseId]);
+  }, [accessLevel, confirmDialog, connectorId, dispatch, enquesnackbar, integrationId, licenseId, onClickBuyButton, resumable, showTrialLicenseMessage]);
 
   const handleUninstall = useHandleDelete(integrationId);
 
@@ -172,7 +174,7 @@ export default function TileNotification({ content, expired, connectorId, licens
             onClick={onClickRenewOrReactivateButton}
             data-test="RenewOrReactivateDouble"
            >
-            {showTrialLicenseMessage ? 'Buy' : 'Renew'}
+            {showTrialLicenseMessage ? 'Request to buy' : 'Request to renew'}
           </FilledButton>
           <TextButton
             data-test="uninstall"
