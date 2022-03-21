@@ -19,10 +19,8 @@ export default function RevisionTypeFilter() {
 
   return (
     <CeligoSelect
-      isLoggable={false}
       onChange={handleTypeFilter}
-      value={typeFilter}
-    >
+      value={typeFilter}>
       <MenuItem key={DEFAULT_OPTION} value={DEFAULT_OPTION}>
         Select type
       </MenuItem>

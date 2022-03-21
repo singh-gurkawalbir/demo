@@ -1,4 +1,4 @@
-import { put, takeEvery, select, call } from 'redux-saga/effects';
+import { put, select, call, takeLatest } from 'redux-saga/effects';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { REVISION_TYPES } from '../../utils/constants';
@@ -179,13 +179,13 @@ function* fetchRevisionErrors({integrationId, revisionId }) {
 }
 
 export default [
-  takeEvery(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, requestIntegrationCloneFamily),
-  takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CREATE, createRevision),
-  takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CREATE_SNAPSHOT, createRevision),
-  takeEvery(actionTypes.INTEGRATION_LCM.COMPARE.PULL_REQUEST, comparePullRequest),
-  takeEvery(actionTypes.INTEGRATION_LCM.COMPARE.REVERT_REQUEST, compareRevertRequest),
-  takeEvery(actionTypes.INTEGRATION_LCM.COMPARE.REVISION_REQUEST, compareRevisionChanges),
-  takeEvery(actionTypes.INTEGRATION_LCM.REVISION.CANCEL, cancelRevision),
-  takeEvery(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, installStep),
-  takeEvery(actionTypes.INTEGRATION_LCM.REVISION.FETCH_ERRORS, fetchRevisionErrors),
+  takeLatest(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, requestIntegrationCloneFamily),
+  takeLatest(actionTypes.INTEGRATION_LCM.REVISION.CREATE, createRevision),
+  takeLatest(actionTypes.INTEGRATION_LCM.REVISION.CREATE_SNAPSHOT, createRevision),
+  takeLatest(actionTypes.INTEGRATION_LCM.COMPARE.PULL_REQUEST, comparePullRequest),
+  takeLatest(actionTypes.INTEGRATION_LCM.COMPARE.REVERT_REQUEST, compareRevertRequest),
+  takeLatest(actionTypes.INTEGRATION_LCM.COMPARE.REVISION_REQUEST, compareRevisionChanges),
+  takeLatest(actionTypes.INTEGRATION_LCM.REVISION.CANCEL, cancelRevision),
+  takeLatest(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, installStep),
+  takeLatest(actionTypes.INTEGRATION_LCM.REVISION.FETCH_ERRORS, fetchRevisionErrors),
 ];

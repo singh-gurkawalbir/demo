@@ -19,14 +19,13 @@ export default function RevisionStatusFilter() {
 
   return (
     <CeligoSelect
-      isLoggable={false}
       onChange={handleStatusFilter}
       value={statusFilter}>
       <MenuItem key={DEFAULT_OPTION} value={DEFAULT_OPTION}>
         Select status
       </MenuItem>
       {REVISION_STATUS_OPTIONS.map(opt => (
-        <MenuItem key={opt.value} value={opt.value} data-private>
+        <MenuItem key={opt.value} value={opt.value}>
           {opt.label}
         </MenuItem>
       ))}

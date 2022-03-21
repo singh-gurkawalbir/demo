@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
 import Spinner from '../../../../../Spinner';
@@ -35,9 +35,14 @@ const tabs = [
     dataTest: 'usedByInOtherIntegrations',
   }];
 
+const USED_BY_THIS_INTEGRATION_TAB = 0;
+const USED_BY_OTHER_INTEGRATION_TAB = 1;
+
 const UsedByThisIntegrationTab = ({resourceReferences, integrationId}) => {
   const classes = useStyles();
-  const referredByThisIntegration = (resourceReferences || []).filter(ref => ref.integrationId === integrationId);
+  const referredByThisIntegration = useMemo(() =>
+    (resourceReferences || []).filter(ref => ref.integrationId === integrationId),
+  [integrationId, resourceReferences]);
 
   return (
     <CeligoTable className={classes.grid} data={referredByThisIntegration} {...thisIntegrationRefsMetadata} />
@@ -46,7 +51,9 @@ const UsedByThisIntegrationTab = ({resourceReferences, integrationId}) => {
 
 const UsedByOtherIntegrationsTab = ({resourceReferences, integrationId}) => {
   const classes = useStyles();
-  const referredByOtherIntegrations = (resourceReferences || []).filter(ref => ref.integrationId !== integrationId);
+  const referredByOtherIntegrations = useMemo(() =>
+    (resourceReferences || []).filter(ref => ref.integrationId !== integrationId),
+  [integrationId, resourceReferences]);
 
   return (
     <CeligoTable className={classes.grid} data={referredByOtherIntegrations} {...otherIntegrationRefsMetadata} />
@@ -101,8 +108,10 @@ export default function References({ resourceId, resourceType, integrationId }) 
         />
         ))}
       </Tabs>
-      {tabIndex === 0 && <UsedByThisIntegrationTab resourceReferences={resourceReferences} integrationId={integrationId} />}
-      {tabIndex === 1 && <UsedByOtherIntegrationsTab resourceReferences={resourceReferences} integrationId={integrationId} />}
+
+      { tabIndex === USED_BY_THIS_INTEGRATION_TAB && <UsedByThisIntegrationTab resourceReferences={resourceReferences} integrationId={integrationId} /> }
+      { tabIndex === USED_BY_OTHER_INTEGRATION_TAB && <UsedByOtherIntegrationsTab resourceReferences={resourceReferences} integrationId={integrationId} /> }
+
     </div>
   );
 }
