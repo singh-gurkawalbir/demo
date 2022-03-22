@@ -1,7 +1,7 @@
-import React, { useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 import { nanoid } from 'nanoid';
 import { TextButton } from '../../../../../components/Buttons';
 import actions from '../../../../../actions';
@@ -22,6 +22,7 @@ import ReviewRevertChangesDrawer from '../../../../../components/drawer/Revision
 import FinalRevertDrawer from '../../../../../components/drawer/Revisions/Revert/Final';
 import CreateSnapshotDrawer from '../../../../../components/drawer/Revisions/CreateSnapshot';
 import LoadResources from '../../../../../components/LoadResources';
+import useOpenRevisionWhenValid from '../../../../../components/drawer/Revisions/hooks/useOpenRevisionWhenValid';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -82,7 +83,7 @@ const RevisionsList = ({ integrationId }) => {
     if (!filteredRevisions.length) {
       return (
         <Typography variant="body2" className={classes.noRevisions}>
-          You don&apos;t have any revisions with these filters
+          Your selection didn&apos;t return any matching results. Try expanding your filter criteria.
         </Typography>
       );
     }
@@ -106,6 +107,7 @@ export default function Revisions({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const match = useRouteMatch();
+
   const hasMonitorLevelAccess = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
   const isLoadingRevisions = useSelector(state => {
     const status = selectors.revisionsFetchStatus(state, integrationId);
@@ -120,24 +122,31 @@ export default function Revisions({ integrationId }) {
     }
   }, [integrationId, dispatch, isRevisionsCollectionRequested]);
 
+  const handleCreatePull = useOpenRevisionWhenValid({
+    integrationId,
+    drawerURL: `${match.url}/pull/${nanoid()}/open`,
+  });
+  const handleCreateSnapshot = useOpenRevisionWhenValid({
+    integrationId,
+    drawerURL: `${match.url}/snapshot/${nanoid()}/open`,
+  });
+
   return (
     <div className={classes.root}>
       <PanelHeader title="Revisions" className={classes.flowPanelTitle}>
         { !hasMonitorLevelAccess && (
         <ActionGroup>
           <TextButton
-            component={Link}
             disabled={isLoadingRevisions}
             startIcon={<AddIcon />}
-            to={`${match.url}/pull/${nanoid()}/open`}
+            onClick={handleCreatePull}
             data-test="createPull">
             Create pull
           </TextButton>
           <TextButton
-            component={Link}
             startIcon={<AddIcon />}
             disabled={isLoadingRevisions}
-            to={`${match.url}/snapshot/${nanoid()}/open`}
+            onClick={handleCreateSnapshot}
             data-test="createSnapshot">
             Create snapshot
           </TextButton>

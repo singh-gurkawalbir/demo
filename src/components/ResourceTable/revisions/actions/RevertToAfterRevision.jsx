@@ -1,7 +1,7 @@
-import { useCallback } from 'react';
 import { nanoid } from 'nanoid';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 import RevertIcon from '../../../icons/ViewResolvedHistoryIcon';
+import useOpenRevisionWhenValid from '../../../drawer/Revisions/hooks/useOpenRevisionWhenValid';
 
 export default {
   key: 'revertToAfterRevision',
@@ -9,12 +9,12 @@ export default {
   icon: RevertIcon,
   useOnClick: rowData => {
     const { _id: revisionId } = rowData;
-    const history = useHistory();
     const match = useRouteMatch();
-    const handleClick = useCallback(() => {
-      history.push(`${match.url}/revert/${nanoid()}/open/toAfter/revision/${revisionId}`);
-    }, [revisionId, history, match.url]);
+    const { integrationId } = match.params;
 
-    return handleClick;
+    return useOpenRevisionWhenValid({
+      integrationId,
+      drawerURL: `${match.url}/revert/${nanoid()}/open/toAfter/revision/${revisionId}`,
+    });
   },
 };

@@ -2,6 +2,7 @@ import produce from 'immer';
 import cloneDeep from 'lodash/cloneDeep';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
+import { REVISION_STATUS } from '../../../utils/constants';
 
 const defaultState = {};
 
@@ -112,4 +113,11 @@ selectors.integrationHasNoRevisions = (state, integrationId) => {
 
   return status === 'received' && !revisions?.length;
 };
+
+selectors.getInProgressRevisionId = (state, integrationId) => {
+  const revisions = selectors.revisions(state, integrationId);
+
+  return revisions?.find(revision => revision.status === REVISION_STATUS.IN_PROGRESS);
+};
+selectors.isAnyRevisionInProgress = (state, integrationId) => !!selectors.getInProgressRevisionId(state, integrationId);
 // #endregion

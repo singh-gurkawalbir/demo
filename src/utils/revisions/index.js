@@ -52,6 +52,8 @@ export const REVISION_STATUS_LABELS = {
   [REVISION_STATUS.CANCELED]: 'Canceled',
 };
 
+export const REVISION_IN_PROGRESS_ERROR = 'You have a pull, snapshot, or revert in progress.';
+
 export const REVISION_DIFF_ACTIONS = {
   ADD: 'add',
   NEW: 'new',

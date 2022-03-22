@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import nanoid from 'nanoid';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import HttpIcon from '../../../icons/HttpIcon';
+import CreatePullIcon from '../../../icons/AddIcon';
 
 export default {
   key: 'createPull',
   useLabel: () => 'Create pull',
-  icon: HttpIcon,
+  icon: CreatePullIcon,
   useOnClick: () => {
     const history = useHistory();
     const match = useRouteMatch();
