@@ -11,9 +11,6 @@ import SortableList from '../../../../components/Sortable/SortableList';
 import SortableItem from '../../../../components/Sortable/SortableItem';
 import useSortableList from '../../../../hooks/useSortableList';
 import PageWrapper from '../../../../components/MainComponentWrapper';
-import EmptyState from '../../../../components/EmptyState';
-import { FilledButton, TextButton } from '../../../../components/Buttons';
-import emptyStateResource from '../../../../components/EmptyState/metadata';
 
 export const gridViewStyles = makeStyles(theme => ({
   container: {
@@ -34,24 +31,6 @@ export const gridViewStyles = makeStyles(theme => ({
     },
   },
 }));
-
-const {integrations} = emptyStateResource;
-
-export const DashboardEmptyState = () => (
-  <EmptyState
-    title={integrations.title}
-    subTitle={integrations.subTitle}
-    type={integrations.type}>
-    <FilledButton data-test="create flow" href="/integrations/none/flowBuilder/new">{integrations.buttonLabel}</FilledButton>
-    <TextButton
-      data-test="openResourceDocLink"
-      underline
-      href={integrations.link}
-      target="_blank">
-      {integrations.linkLabel}
-    </TextButton>
-  </EmptyState>
-);
 
 export default function HomeCard({ sortedTiles }) {
   const dispatch = useDispatch();
@@ -85,43 +64,39 @@ export default function HomeCard({ sortedTiles }) {
 
   return (
     <PageWrapper>
-      {sortedTiles.length === 0 ? (
-        <DashboardEmptyState />
-      ) : (
-        <SortableList
-          className={classes.container}
-          onSortEnd={handleSortEnd}
-          updateBeforeSortStart={handleSortStart}
-          axis="xy"
-          useDragHandle>
-          {sortedTiles.map((t, index) => (
-            <SortableItem
-              key={getTileId(t)}
-              index={index}
-              hideSortableGhost={false}
-              value={(
-                <>
-                  {t.ssLinkedConnectionId ? (
-                    <SuiteScriptTile
-                      tile={t}
-                      index={index}
-                      isDragInProgress={dragItemIndex !== undefined}
-                      isTileDragged={dragItemIndex === index}
+      <SortableList
+        className={classes.container}
+        onSortEnd={handleSortEnd}
+        updateBeforeSortStart={handleSortStart}
+        axis="xy"
+        useDragHandle>
+        {sortedTiles.map((t, index) => (
+          <SortableItem
+            key={getTileId(t)}
+            index={index}
+            hideSortableGhost={false}
+            value={(
+              <>
+                {t.ssLinkedConnectionId ? (
+                  <SuiteScriptTile
+                    tile={t}
+                    index={index}
+                    isDragInProgress={dragItemIndex !== undefined}
+                    isTileDragged={dragItemIndex === index}
                   />
-                  ) : (
-                    <Tile
-                      tile={t}
-                      index={index}
-                      isDragInProgress={dragItemIndex !== undefined}
-                      isTileDragged={dragItemIndex === index}
+                ) : (
+                  <Tile
+                    tile={t}
+                    index={index}
+                    isDragInProgress={dragItemIndex !== undefined}
+                    isTileDragged={dragItemIndex === index}
                   />
-                  )}
-                </>
+                )}
+              </>
             )}
           />
-          ))}
-        </SortableList>
-      )}
+        ))}
+      </SortableList>
     </PageWrapper>
   );
 }
