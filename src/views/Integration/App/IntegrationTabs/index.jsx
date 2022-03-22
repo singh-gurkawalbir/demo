@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import { useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import IntegrationTabs from '../../common/Tabs';
@@ -26,6 +25,7 @@ import GroupOfUsersIcon from '../../../../components/icons/GroupOfUsersIcon';
 import SingleUserIcon from '../../../../components/icons/SingleUserIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getAdminLevelTabs } from '../../../../utils/integrationApps';
+import TabContent from '../../../../components/TabContent';
 
 const getAllTabs = isUserInErrMgtTwoDotZero => [
   { path: 'settings', label: 'Settings', Icon: SettingsIcon, Panel: SettingsPanel},
@@ -75,23 +75,9 @@ const getAllTabs = isUserInErrMgtTwoDotZero => [
   { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
 ];
 
-const useStyles = makeStyles(theme => ({
-  pageWrapper: {
-    padding: theme.spacing(3),
-    minHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px +  ${theme.showMoreHeight}px))`,
-    overflowY: 'auto',
-    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
-    '& > [role = tabpanel]': {
-      background: 'none',
-      padding: 0,
-      border: 'none',
-    },
-  },
-}));
 export default function IntegrationTabsComponent() {
   const match = useRouteMatch();
   const {integrationId} = match.params;
-  const classes = useStyles();
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
 
@@ -133,8 +119,9 @@ export default function IntegrationTabsComponent() {
   }, [hasAddOns, isUserInErrMgtTwoDotZero, showAdminTab]);
 
   return (
-
-    <IntegrationTabs tabs={availableTabs} className={classes.pageWrapper} />
+    <TabContent >
+      <IntegrationTabs tabs={availableTabs} />
+    </TabContent>
 
   );
 }
