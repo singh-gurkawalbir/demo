@@ -136,6 +136,7 @@ export default {
     'bartender',
     'jazzhr',
     'segment',
+    'happyreturns',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

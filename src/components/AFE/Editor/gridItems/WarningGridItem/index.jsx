@@ -5,24 +5,28 @@ import { selectors } from '../../../../../reducers';
 import PanelTitle from '../PanelTitle';
 import CodePanel from '../../panels/Code';
 
+// TODO (Azhar): Improve the CSS for Warning, Error and Console along with Components
 const useStyles = makeStyles(theme => ({
   gridItem: {
-    border: 'solid 1px rgb(0,0,0,0.3)',
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
     overflow: 'hidden',
     minWidth: 150,
     minHeight: 100,
     gridArea: 'error',
     marginBottom: theme.spacing(2),
   },
-
   flexContainer: {
     display: 'flex',
     height: '100%',
     flexDirection: 'column',
     alignItems: 'stretch',
   },
-  title: { color: theme.palette.warning.main },
-  panel: { flex: '1 1 100px', minHeight: 50, position: 'relative' },
+  panel: {
+    flex: '1 1 100px',
+    minHeight: 50,
+    position: 'relative',
+  },
 }));
 
 const overrides = { wrap: true };
@@ -36,7 +40,7 @@ export default function WarningGridItem({ editorId }) {
   return (
     <div className={classes.gridItem}>
       <div className={classes.flexContainer}>
-        <PanelTitle className={classes.title} title="Warning" />
+        <PanelTitle titleColor="warning" title="Warning" />
         <div className={classes.panel} data-private>
           <CodePanel
             readOnly
