@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { fetchConflictsOnBothBases } from '../utils';
-import CodeEditor from '../../CodeEditor2';
 
 const useStyles = makeStyles(theme => ({
   conflictPanelWrapper: {
@@ -32,9 +31,21 @@ const useStyles = makeStyles(theme => ({
   },
   conflictDiffColumn: {
     flex: 1,
+    '&>.MuiTypography-root': {
+      marginBottom: theme.spacing(1),
+    },
   },
   container: {
-    height: 100,
+    '& pre': {
+      fontFamily: 'source sans pro',
+      fontSize: 16,
+      marginTop: 0,
+      marginRight: theme.spacing(2),
+      backgroundColor: theme.palette.background.paper2,
+      padding: theme.spacing(1),
+      border: `1px solid ${theme.palette.secondary.lightest}`,
+      borderRadius: 4,
+    },
   },
 }));
 
@@ -45,12 +56,7 @@ const ConflictValue = ({ value }) => {
 
   return (
     <div className={classes.container}>
-      <CodeEditor
-        value={value}
-        mode="json"
-        readOnly
-        showGutter={false}
-    />
+      <pre>{JSON.stringify(value, null, 2)}</pre>
     </div>
   );
 };
@@ -63,14 +69,14 @@ const Conflict = ({ current, remote, index }) => {
       <Typography variant="body2">{index}</Typography>
       <div className={classes.conflictContentWrapper}>
         <div className={classes.conflictDiffColumn}>
-          <Typography variant="body2"><b>Path:</b>{current.path}</Typography>
+          <Typography variant="body2"><b>Path:</b> {current.path}</Typography>
           <Typography variant="body2"><b>Operation:</b> {current.op}</Typography>
-          <Typography variant="body2"><b>Value:</b> <ConflictValue value={current.value} /></Typography>
+          {current.value && <Typography variant="body2"><b>Value:</b> <ConflictValue value={current.value} /></Typography>}
         </div>
         <div className={classes.conflictDiffColumn}>
           <Typography variant="body2"><b>Path:</b> {remote.path}</Typography>
           <Typography variant="body2"><b>Operation:</b> {remote.op}</Typography>
-          <Typography variant="body2"><b>Value:</b> <ConflictValue value={remote.value} /></Typography>
+          {remote.value && <Typography variant="body2"><b>Value:</b> <ConflictValue value={remote.value} /></Typography>}
         </div>
       </div>
     </div>
@@ -84,8 +90,8 @@ export default function ConflictsDiffViewer(props) {
   return (
     <div className={classes.conflictPanelWrapper}>
       <div className={classes.conflictTitle}>
-        <Typography variant="body2">{leftTitle}</Typography>
-        <Typography variant="body2">{rightTitle}</Typography>
+        <Typography variant="body2"><b>{leftTitle}</b></Typography>
+        <Typography variant="body2"><b>{rightTitle}</b></Typography>
       </div>
 
       {
