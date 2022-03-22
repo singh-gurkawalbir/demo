@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import HttpIcon from '../../../icons/HttpIcon';
+import ViewResourcesChangedIcon from '../../../icons/ViewResourcesChangedIcon';
 
 export default {
   key: 'viewChanges',
   useLabel: () => 'View resources changed',
-  icon: HttpIcon,
+  icon: ViewResourcesChangedIcon,
   useOnClick: rowData => {
     const { _id: revisionId } = rowData;
     const history = useHistory();
