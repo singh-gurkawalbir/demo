@@ -33,7 +33,7 @@ export default function ResourceEmptyState({resourceType}) {
 
         </EmptyState>
       ) : (
-        <NoResultMessageWrapper>You don&apos;t have any {resourceType}s.</NoResultMessageWrapper>
+        <NoResultMessageWrapper>You don&apos;t have any {resourceType}.</NoResultMessageWrapper>
       )}
     </>
 
