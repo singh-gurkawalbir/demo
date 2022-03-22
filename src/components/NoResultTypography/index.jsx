@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function NoResultMessageWrapper({children, size = 'medium', isBackground = false, noPadding = false, className}) {
+export default function NoResultTypography({children, size = 'medium', isBackground = false, noPadding = false, className}) {
   const classes = useStyles();
 
   return (
@@ -32,13 +32,13 @@ export default function NoResultMessageWrapper({children, size = 'medium', isBac
   );
 }
 
-NoResultMessageWrapper.propTypes = {
+NoResultTypography.propTypes = {
   children: PropTypes.node.isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   isBackground: PropTypes.bool,
   noPadding: PropTypes.bool,
 };
-NoResultMessageWrapper.defaultProps = {
+NoResultTypography.defaultProps = {
   size: 'medium',
   noPadding: false,
   isBackground: false,

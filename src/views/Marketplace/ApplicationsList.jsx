@@ -11,8 +11,8 @@ import {CONNECTORS_TO_IGNORE, NO_RESULT_SEARCH_MESSAGE, WEBHOOK_ONLY_APPLICATION
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import {applicationsList} from '../../constants/applications';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
-import PageWrapper from '../../components/MainComponentWrapper';
+import NoResultTypography from '../../components/NoResultTypography';
+import PageContent from '../../components/PageContent';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -109,7 +109,7 @@ export default function ApplicationsList({ filter }) {
   return (
     <>
       {applications.length > 0 ? (
-        <PageWrapper>
+        <PageContent>
           <div className={classes.root}>
             {applications.map(id => (
               <NavLink
@@ -125,9 +125,9 @@ export default function ApplicationsList({ filter }) {
               </NavLink>
             ))}
           </div>
-        </PageWrapper>
+        </PageContent>
       ) : (
-        <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
+        <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>
       )}
     </>
   );

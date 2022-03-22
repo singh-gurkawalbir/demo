@@ -9,7 +9,7 @@ import Spinner from '../../../Spinner';
 import RunHistoryDrawer from '../../RunHistoryDrawer';
 import ErrorsListDrawer from '../../../../views/Integration/common/ErrorsList';
 import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
-import NoResultMessageWrapper from '../../../NoResultMessageWrapper';
+import NoResultTypography from '../../../NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   jobTable: {
@@ -63,7 +63,7 @@ export default function CompletedFlows() {
           </>
         )}
       </div>
-      {showEmptyMessage ? <NoResultMessageWrapper>You don&apos;t have any completed flows in the selected date range. </NoResultMessageWrapper> : ''}
+      {showEmptyMessage ? <NoResultTypography>You don&apos;t have any completed flows in the selected date range. </NoResultTypography> : ''}
       <RunHistoryDrawer />
       <ErrorsListDrawer />
     </div>

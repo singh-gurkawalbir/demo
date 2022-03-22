@@ -9,7 +9,7 @@ import ResourceTable from '../../../ResourceTable';
 import { hashCode } from '../../../../utils/string';
 import Spinner from '../../../Spinner';
 import {FILTER_KEYS_AD, getDashboardIntegrationId} from '../../../../utils/accountDashboard';
-import NoResultMessageWrapper from '../../../NoResultMessageWrapper';
+import NoResultTypography from '../../../NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -74,7 +74,7 @@ export default function RunningFlows() {
           </>
         )}
       </div>
-      {!jobs?.length && !isRunningJobsCollectionLoading ? <NoResultMessageWrapper>You don&apos;t have any running flows. </NoResultMessageWrapper> : ''}
+      {!jobs?.length && !isRunningJobsCollectionLoading ? <NoResultTypography>You don&apos;t have any running flows. </NoResultTypography> : ''}
     </>
   );
 }

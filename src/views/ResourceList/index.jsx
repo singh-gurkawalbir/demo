@@ -22,10 +22,10 @@ import StackShareDrawer from '../../components/StackShare/Drawer';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
 import { TextButton } from '../../components/Buttons';
-import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../components/NoResultTypography';
 import ResourceEmptyState from './ResourceEmptyState';
 import ActionGroup from '../../components/ActionGroup';
-import PageWrapper from '../../components/MainComponentWrapper';
+import PageContent from '../../components/PageContent';
 
 const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
 const resourcesToLoad = resourceType => {
@@ -155,7 +155,7 @@ export default function ResourceList(props) {
           </TextButton>
         </ActionGroup>
       </CeligoPageBar>
-      <PageWrapper isPagingBar={isPagingBar}>
+      <PageContent isPagingBar={isPagingBar}>
         <LoadResources required resources={resourcesToLoad(resourceType)}>
           {list.count === 0 ? (
             <>
@@ -163,7 +163,7 @@ export default function ResourceList(props) {
                 ? (
                   <ResourceEmptyState resourceType={resourceType} />
                 )
-                : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+                : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
             </>
           ) : (
             <ResourceTable
@@ -173,7 +173,7 @@ export default function ResourceList(props) {
             />
           )}
         </LoadResources>
-      </PageWrapper>
+      </PageContent>
       <ShowMoreDrawer
         filterKey={resourceType}
         count={list.count}

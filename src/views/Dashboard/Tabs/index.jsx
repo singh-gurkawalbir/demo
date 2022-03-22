@@ -5,7 +5,7 @@ import Completed from '../panels/Completed';
 import Running from '../panels/Running';
 import RunningIcon from '../../../components/icons/RunningFlowsIcon';
 import CompletedIcon from '../../../components/icons/CompletedFlowsIcon';
-import PageWrapper from '../../../components/MainComponentWrapper';
+import PageContent from '../../../components/PageContent';
 
 const useStyles = makeStyles(theme => ({
   tabContainer: {
@@ -64,7 +64,7 @@ export default function DashboardTabs() {
   );
 
   return (
-    <PageWrapper isIntegrationTabsWrapper>
+    <PageContent isIntegrationTabsWrapper>
       <Tabs
         value={currentTabIndex}
         onChange={handleTabChange}
@@ -97,6 +97,6 @@ export default function DashboardTabs() {
           <div>{currentTabIndex === i && <Panel {...match.params} />}</div>
         </div>
       ))}
-    </PageWrapper>
+    </PageContent>
   );
 }

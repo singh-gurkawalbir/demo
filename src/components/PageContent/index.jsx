@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-export default function PageWrapper({children, isPagingBar = false, isIntegrationTabsWrapper = false, className}) {
+export default function PageContent({children, isPagingBar = false, isIntegrationTabsWrapper = false, className}) {
   const classes = useStyles();
 
   return (
@@ -34,14 +34,14 @@ export default function PageWrapper({children, isPagingBar = false, isIntegratio
   );
 }
 
-PageWrapper.propTypes = {
+PageContent.propTypes = {
   children: PropTypes.element.isRequired,
   isPagingBar: PropTypes.bool,
   className: PropTypes.string,
   isIntegrationTabsWrapper: PropTypes.bool,
 };
 
-PageWrapper.defaultProps = {
+PageContent.defaultProps = {
   isPagingBar: false,
   isIntegrationTabsWrapper: false,
 };

@@ -19,7 +19,7 @@ import { SUITESCRIPT_CONNECTOR_IDS, HOME_PAGE_PATH } from '../../utils/constants
 import { capitalizeFirstLetter } from '../../utils/string';
 import FilledButton from '../../components/Buttons/FilledButton';
 import getImageUrl from '../../utils/image';
-import PageWrapper from '../../components/MainComponentWrapper';
+import PageContent from '../../components/PageContent';
 import { gridViewStyles } from '../Home/View/TileView/HomeCard';
 
 const useStyles = makeStyles(theme => ({
@@ -216,15 +216,15 @@ export default function MarketplaceList() {
       </CeligoPageBar>
 
       {(!templates.length && !connectors.length) && (
-      <PageWrapper>
+      <PageContent>
         <div className={classes.pageCenter}>
           <Typography variant="h4">Connect this app to anything</Typography>
           <Typography variant="body2">Prebuilt templates and integration apps are not yet available for this application. Anyone with manager permission and above can use Flow Builder to create new custom flows using the prebuilt connector available for this application.<br /><br />Need help? Check out our <a target="blank" href="https://docs.celigo.com/hc/en-us/categories/360002670492-Connectors">documentation</a> or <a target="blank" href="https://docs.celigo.com/hc/en-us/community/topics" >join our community</a>.</Typography>
           <img src={marketPlaceConnectAppUrl} alt="Marketplace Connect App" />
         </div>
-      </PageWrapper>
+      </PageContent>
       )}
-      <PageWrapper>
+      <PageContent>
         <div className={gridViewClasses.container}>
           {connectors.map(connector => (
             <Card
@@ -304,7 +304,7 @@ export default function MarketplaceList() {
             </Card>
           ))}
         </div>
-      </PageWrapper>
+      </PageContent>
       <RequestDemoDialog />
     </LoadResources>
   );

@@ -10,7 +10,7 @@ import SuiteScriptTile from './SuiteScriptTile';
 import SortableList from '../../../../components/Sortable/SortableList';
 import SortableItem from '../../../../components/Sortable/SortableItem';
 import useSortableList from '../../../../hooks/useSortableList';
-import PageWrapper from '../../../../components/MainComponentWrapper';
+import PageContent from '../../../../components/PageContent';
 
 export const gridViewStyles = makeStyles(theme => ({
   container: {
@@ -63,7 +63,7 @@ export default function HomeCard({ sortedTiles }) {
   const {dragItemIndex, handleSortStart, handleSortEnd} = useSortableList(onSortEnd);
 
   return (
-    <PageWrapper>
+    <PageContent>
       <SortableList
         className={classes.container}
         onSortEnd={handleSortEnd}
@@ -97,7 +97,7 @@ export default function HomeCard({ sortedTiles }) {
           />
         ))}
       </SortableList>
-    </PageWrapper>
+    </PageContent>
   );
 }
 

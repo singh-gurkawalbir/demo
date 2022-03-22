@@ -16,9 +16,9 @@ import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
 import infoText from '../ResourceList/infoText';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
-import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../components/NoResultTypography';
 import ActionGroup from '../../components/ActionGroup';
-import PageWrapper from '../../components/MainComponentWrapper';
+import PageContent from '../../components/PageContent';
 import emptyStateResource from '../../components/EmptyState/metadata';
 import EmptyState from '../../components/EmptyState';
 
@@ -87,7 +87,7 @@ export default function RecycleBin(props) {
             />
           </ActionGroup>
         </CeligoPageBar>
-        <PageWrapper>
+        <PageContent>
           <LoadResources required resources="recycleBinTTL">
             {list.count === 0 ? (
               <>
@@ -98,13 +98,13 @@ export default function RecycleBin(props) {
                       subTitle={recyclebin.subTitle}
                       type={recyclebin.type} />
                   )
-                  : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+                  : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
               </>
             ) : (
               <ResourceTable resources={list.resources} resourceType="recycleBinTTL" />
             )}
           </LoadResources>
-        </PageWrapper>
+        </PageContent>
         <ShowMoreDrawer
           filterKey={filterKey}
           count={list.count}

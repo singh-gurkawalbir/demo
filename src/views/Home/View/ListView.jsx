@@ -4,10 +4,10 @@ import { useSelectorMemo } from '../../../hooks';
 import ResourceTable from '../../../components/ResourceTable';
 import ShowMoreDrawer from '../../../components/drawer/ShowMore';
 import { FILTER_KEY } from '../../../utils/home';
-import NoResultMessageWrapper from '../../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../../components/NoResultTypography';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
 import ResourceEmptyState from '../../ResourceList/ResourceEmptyState';
-import PageWrapper from '../../../components/MainComponentWrapper';
+import PageContent from '../../../components/PageContent';
 
 export default function ListView() {
   const {filteredTiles, filteredCount, perPageCount, totalCount} = useSelectorMemo(selectors.mkFilteredHomeTiles);
@@ -21,7 +21,7 @@ export default function ListView() {
   }
 
   return (
-    <PageWrapper isPagingBar={isPagingBar}>
+    <PageContent isPagingBar={isPagingBar}>
       <ResourceTable
         resourceType={FILTER_KEY}
         resources={filteredTiles} />
@@ -30,8 +30,8 @@ export default function ListView() {
         count={perPageCount}
         maxCount={filteredCount} />
       {!filteredTiles?.length && totalCount && (
-      <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
+      <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>
       )}
-    </PageWrapper>
+    </PageContent>
   );
 }

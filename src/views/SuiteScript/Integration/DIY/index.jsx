@@ -19,7 +19,7 @@ import DashboardPanel from './panels/Dashboard';
 import SettingsIcon from '../../../../components/icons/SingleUserIcon';
 import IntegrationTabs from '../common/Tabs';
 import actions from '../../../../actions';
-import PageWrapper from '../../../../components/MainComponentWrapper';
+import PageContent from '../../../../components/PageContent';
 
 const useStyles = makeStyles(theme => ({
   // Todo (Azhar) Styles are repeating in suitescript
@@ -134,9 +134,9 @@ export default function Integration({ match }) {
             )
             }
         />
-          <PageWrapper isIntegrationTabsWrapper>
+          <PageContent isIntegrationTabsWrapper>
             <IntegrationTabs tabs={tabs} match={match} />
-          </PageWrapper>
+          </PageContent>
 
         </LoadSuiteScriptResources>
       </LoadResources>

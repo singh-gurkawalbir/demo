@@ -19,7 +19,7 @@ import ConnectionsPanel from '../DIY/panels/Connections';
 import DashboardPanel from '../DIY/panels/Dashboard';
 import FlowsPanel from './panels/Flows';
 import SettingsPanel from './panels/Settings';
-import PageWrapper from '../../../../components/MainComponentWrapper';
+import PageContent from '../../../../components/PageContent';
 
 const useStyles = makeStyles(theme => ({
   editableTextInput: {
@@ -131,9 +131,9 @@ export default function Integration({ match }) {
             }
         />
 
-          <PageWrapper isIntegrationTabsWrapper>
+          <PageContent isIntegrationTabsWrapper>
             <IntegrationTabs tabs={tabs} match={match} />
-          </PageWrapper>
+          </PageContent>
           {/* Add Suitescript flow related component */}
           <SuiteScriptMappingDrawer
             ssLinkedConnectionId={ssLinkedConnectionId}
