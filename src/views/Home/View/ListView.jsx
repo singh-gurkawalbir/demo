@@ -8,7 +8,7 @@ import ShowMoreDrawer from '../../../components/drawer/ShowMore';
 import { FILTER_KEY } from '../../../utils/home';
 import NoResultMessageWrapper from '../../../components/NoResultMessageWrapper';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
-import { DashboardEmptyState } from './TileView/HomeCard';
+import ResourceEmptyState from '../../ResourceList/ResourceEmptyState';
 
 const useStyles = makeStyles(theme => ({
   textWrapper: {
@@ -28,9 +28,9 @@ export default function ListView() {
   const {filteredTiles, filteredCount, perPageCount, totalCount} = useSelectorMemo(selectors.mkFilteredHomeTiles);
   const classes = useStyles();
 
-  if (!totalCount) {
+  if (!filteredTiles?.length && totalCount === 0) {
     return (
-      <DashboardEmptyState />
+      <ResourceEmptyState resourceType="integrations" />
     );
   }
 
