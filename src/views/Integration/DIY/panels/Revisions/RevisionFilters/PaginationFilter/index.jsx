@@ -19,7 +19,7 @@ export default function RevisionFilters() {
   const dispatch = useDispatch();
   const filterKey = getRevisionFilterKey(integrationId);
 
-  const totalRevisions = useSelector(state => (selectors.revisions(state, integrationId) || []).length);
+  const totalRevisions = useSelector(state => (selectors.filteredRevisions(state, integrationId) || []).length);
   const revisionsPagingFilter = useSelector(state =>
     selectors.filter(state, filterKey)?.paging,
   shallowEqual);

@@ -97,7 +97,7 @@ export default function ReviewRevertChangesDrawer({ integrationId }) {
       path="revert/:revisionId/review"
       variant="temporary"
       height="tall"
-      width="full">
+      width="xl">
       <ReviewRevertChangesDrawerContent integrationId={integrationId} parentUrl={match.url} />
     </RightDrawer>
   );

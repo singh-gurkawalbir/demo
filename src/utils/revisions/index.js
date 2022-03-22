@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { REVISION_STATUS, REVISION_TYPES } from '../constants';
 import { REQUIRED_MESSAGE } from '../messageStore';
 import { comparer, sortJsonByKeys } from '../sort';
@@ -78,13 +79,17 @@ export const getRevisionFilterKey = integrationId => `${integrationId}-revisions
 export const DEFAULT_OPTION = 'all';
 
 export const DEFAULT_REVISION_FILTERS = {
-  createdAt: undefined,
+  createdAt: {
+    startDate: moment().add(-1, 'y'),
+    endDate: new Date(),
+    preset: 'lastyear',
+  },
   status: DEFAULT_OPTION,
   user: DEFAULT_OPTION,
   type: DEFAULT_OPTION,
   paging: {
     currPage: 0,
-    rowsPerPage: 25,
+    rowsPerPage: DEFAULT_ROWS_PER_PAGE,
   },
   sort: {
     order: 'desc',

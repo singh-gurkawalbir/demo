@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { getRevisionFilterKey } from '../../../../../../../utils/revisions';
+import { getRevisionFilterKey, DEFAULT_REVISION_FILTERS } from '../../../../../../../utils/revisions';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import DateRangeSelector from '../../../../../../../components/DateRangeSelector';
@@ -39,9 +39,9 @@ export default function RevisionFilters() {
 
   return (
     <DateRangeSelector
+      clearable
       placement="right"
-      fixedPlaceholder="Created date"
-      clearValue={undefined}
+      clearValue={DEFAULT_REVISION_FILTERS.createdAt}
       onSave={handleDateFilter}
       value={selectedCreatedAt}
     />

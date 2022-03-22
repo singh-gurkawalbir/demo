@@ -85,7 +85,7 @@ export default function OpenRevertDrawer({ integrationId }) {
       path="revert/:tempRevId/open/:revertTo/revision/:revisionId"
       variant="temporary"
       height="tall"
-      width="full">
+      width="xl">
       <OpenRevertDrawerContent integrationId={integrationId} parentUrl={match.url} />
     </RightDrawer>
   );

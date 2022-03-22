@@ -69,7 +69,7 @@ export default function FinalRevert({ integrationId }) {
       path="revert/:revisionId/final"
       variant="temporary"
       height="tall"
-      width="full">
+      width="xl">
       <FinalRevertDrawerContent integrationId={integrationId} parentUrl={match.url} />
     </RightDrawer>
   );

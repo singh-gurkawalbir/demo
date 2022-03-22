@@ -43,10 +43,7 @@ export default function UserFilter() {
   );
 
   return (
-    <CeligoSelect
-      disabled={!usersListSet.size}
-      onChange={handleUserFilter}
-      value={selectedUser}>
+    <CeligoSelect onChange={handleUserFilter} value={selectedUser}>
       <MenuItem key={DEFAULT_OPTION} value={DEFAULT_OPTION}>
         Select user
       </MenuItem>
