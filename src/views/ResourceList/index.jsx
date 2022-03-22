@@ -25,11 +25,8 @@ import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDe
 import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
 import { TextButton } from '../../components/Buttons';
 import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
-import EmptyState from '../../components/EmptyState';
-import emptyStatesMetaData from '../../components/EmptyState/metadata';
-import FilledButton from '../../components/Buttons/FilledButton';
+import ResourceEmptyState from './ResourceEmptyState';
 
-const emptyStateResource = emptyStatesMetaData;
 const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
@@ -141,7 +138,6 @@ export default function ResourceList(props) {
   }, [dispatch, resourceType]);
 
   const actionProps = useMemo(() => ({ showTradingPartner }), [showTradingPartner]);
-  const resource = emptyStateResource[resourceType];
 
   return (
     <CheckPermissions
@@ -180,24 +176,7 @@ export default function ResourceList(props) {
             <>
               {list.total === 0
                 ? (
-                  <EmptyState
-                    title={resource.title}
-                    subTitle={resource.subTitle}
-                    type={resource.type}
-                  >
-                    <FilledButton
-                      data-test="addNewResource"
-                      href={`${location.pathname}/add/${resourceType}/${generateNewId()}`}>
-                      {resource.buttonLabel}
-                    </FilledButton>
-                    <TextButton
-                      data-test="openResourceDocLink"
-                      underline
-                      href={resource.link}
-                      target="_blank">
-                      {resource.linkLabel}
-                    </TextButton>
-                  </EmptyState>
+                  <ResourceEmptyState resourceType={resourceType} />
                 )
                 : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
             </>
