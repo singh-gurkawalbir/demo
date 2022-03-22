@@ -2567,13 +2567,7 @@ selectors.mkMappingHasLookupOption = () => {
 
   return createSelector(
     (state, resourceType, resourceId) => resourceSel(state, resourceType, resourceId),
-    connection => {
-      if (connection?.rdbms?.type === 'bigquery') {
-        return false;
-      }
-
-      return true;
-    },
+    connection => connection?.rdbms?.type !== 'bigquery',
   );
 };
 

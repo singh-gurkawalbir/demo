@@ -30,13 +30,9 @@ export default {
       label: 'Export type',
       helpKey: 'export.bigquery.type',
       defaultValue: r => {
-        const isNew = isNewId(r._id);
+        if (isNewId(r._id)) return '';
 
-        // if its create
-        if (isNew) return '';
-        const output = r && r.type;
-
-        return output || 'all';
+        return r?.type || 'all';
       },
       required: true,
       options: [
