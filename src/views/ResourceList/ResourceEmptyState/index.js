@@ -18,19 +18,11 @@ export default function ResourceEmptyState({resourceType}) {
           subTitle={resource.subTitle}
           type={resource.type}
         >
-          {resource.type === 'integrations' ? (
-            <FilledButton
-              data-test="create flow"
-              href="/integrations/none/flowBuilder/new">
-              {resource.buttonLabel}
-            </FilledButton>
-          ) : (
-            <FilledButton
-              data-test="addNewResource"
-              href={`${location.pathname}/add/${resourceType}/${generateNewId()}`}>
-              {resource.buttonLabel}
-            </FilledButton>
-          )}
+          <FilledButton
+            data-test={resource.type === 'integrations' ? 'create flow' : 'addNewResource'}
+            href={resource.type === 'integrations' ? '/integrations/none/flowBuilder/new' : `${location.pathname}/add/${resourceType}/${generateNewId()}`} >
+            {resource.buttonLabel}
+          </FilledButton>
           <TextButton
             data-test="openResourceDocLink"
             underline
@@ -38,10 +30,12 @@ export default function ResourceEmptyState({resourceType}) {
             target="_blank">
             {resource.linkLabel}
           </TextButton>
+
         </EmptyState>
       ) : (
         <NoResultMessageWrapper>You don&apos;t have any {resourceType}s.</NoResultMessageWrapper>
       )}
     </>
+
   );
 }
