@@ -2,14 +2,15 @@ import React, { useEffect, useMemo } from 'react';
 import {useSelector, useDispatch } from 'react-redux';
 import { FormControl, FormLabel, makeStyles } from '@material-ui/core';
 import Select, { components } from 'react-select';
-import actions from '../../../../actions';
-import { selectors } from '../../../../reducers';
-import Spinner from '../../../Spinner';
-import isLoggableAttr from '../../../../utils/isLoggableAttr';
-import FieldHelp from '../../FieldHelp';
-import FieldMessage from '../FieldMessage';
-import { CustomReactSelectStyles } from '../reactSelectStyles/styles';
-import ArrowDownIcon from '../../../icons/ArrowDownIcon';
+import actions from '../../../../../actions';
+import { selectors } from '../../../../../reducers';
+import Spinner from '../../../../Spinner';
+import isLoggableAttr from '../../../../../utils/isLoggableAttr';
+import FieldHelp from '../../../FieldHelp';
+import FieldMessage from '../../FieldMessage';
+import { CustomReactSelectStyles } from '../../reactSelectStyles/styles';
+import ArrowDownIcon from '../../../../icons/ArrowDownIcon';
+import ErrorMessage from './ErrorMessage';
 
 const useStyles = makeStyles({
   fullWidth: {
@@ -41,6 +42,7 @@ export const CloneSelect = props => {
     id,
     options,
     isLoggable,
+    integrationId,
   } = props;
   const classes = useStyles();
   const customStyles = CustomReactSelectStyles();
@@ -92,7 +94,11 @@ export const CloneSelect = props => {
             defaultMenuIsOpen={options?.length}
           />
         </span>
-        <FieldMessage {...props} />
+        {
+            options?.length
+              ? <FieldMessage {...props} />
+              : <ErrorMessage integrationId={integrationId} />
+        }
       </FormControl>
     </>
   );
@@ -100,12 +106,11 @@ export const CloneSelect = props => {
 
 export default function DynaIntegrationCloneSelect(props) {
   const classes = useStyles();
-  const { integrationId } = props;
+  const { integrationId, isValid } = props;
   const dispatch = useDispatch();
   const isLoadingCloneFamily = useSelector(state => selectors.isLoadingCloneFamily(state, integrationId));
   const cloneList = useSelector(state => selectors.cloneFamily(state, integrationId));
   const accountHasSandbox = useSelector(state => selectors.accountHasSandbox(state));
-  // const hasNoClonesToSelect = !isLoadingCloneFamily && !cloneList?.length;
 
   useEffect(() => {
     dispatch(actions.integrationLCM.cloneFamily.request(integrationId));
@@ -132,6 +137,7 @@ export default function DynaIntegrationCloneSelect(props) {
       {...props}
       options={newOptions}
       showEnvironment={accountHasSandbox}
+      isValid={isValid && cloneList?.length}
    />
   );
 }

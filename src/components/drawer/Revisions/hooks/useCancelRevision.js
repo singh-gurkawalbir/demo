@@ -8,14 +8,13 @@ import useConfirmDialog from '../../../ConfirmDialog';
 const INFO = {
   PULL: {
     TITLE: 'You\'ve got a merge in progress',
-    MESSAGE: 'Are you sure you want to close this installer? \n Your current merge in progress for your pull will be canceled ',
+    MESSAGE: 'Are you sure you want to close this installer? Your current merge in progress for your pull will be canceled ',
     CANCEL_BUTTON: 'Cancel merge',
     CONTINUE_BUTTON: 'Continue merge',
   },
   REVERT: {
-    // confirm on the content
-    TITLE: 'You\'ve got a revert merge in progress',
-    MESSAGE: 'Are you sure you want to close this installer? \n Your current merge in progress for your pull will be canceled ',
+    TITLE: 'You\'ve got a revert in progress',
+    MESSAGE: 'Are you sure you want to close this installer? The merges you made for this revert will be canceled ',
     CANCEL_BUTTON: 'Cancel merge',
     CONTINUE_BUTTON: 'Continue merge',
   },
