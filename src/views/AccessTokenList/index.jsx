@@ -17,6 +17,7 @@ import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import { TextButton } from '../../components/Buttons';
 import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import ResourceEmptyState from '../ResourceList/ResourceEmptyState';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -82,8 +83,9 @@ export default function AccessTokenList(props) {
             ) : (
               <div>
                 {list.total === 0
-                  ? <NoResultMessageWrapper>You don&apos;t have any API tokens.</NoResultMessageWrapper>
-                  : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+                  ? (
+                    <ResourceEmptyState resourceType="accesstokens" />
+                  ) : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
               </div>
             )}
           </LoadResources>

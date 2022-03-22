@@ -62,3 +62,23 @@ export const getTrimmedTitle = (title = '', maxLength = 40) => {
     ? `${title.substring(0, maxLength - 3)}...`
     : title;
 };
+
+export const getParsedMessage = message => {
+  if (!message) return message;
+
+  const formattedMessage = isJsonString(message) ? JSON.parse(message) : message;
+
+  let safeValue = '';
+
+  // this is to support double stringified messages
+  // we first parse it and then return the message as string type
+  if (typeof formattedMessage === 'string') {
+    safeValue = formattedMessage;
+  } else if (typeof formattedMessage === 'object') {
+    safeValue = JSON.stringify(formattedMessage);
+  } else {
+    safeValue = `${formattedMessage}`;
+  }
+
+  return safeValue;
+};

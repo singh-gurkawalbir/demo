@@ -63,41 +63,39 @@ export default function HomeCard({ sortedTiles }) {
   const {dragItemIndex, handleSortStart, handleSortEnd} = useSortableList(onSortEnd);
 
   return (
-    <>
-      <SortableList
-        className={classes.container}
-        onSortEnd={handleSortEnd}
-        updateBeforeSortStart={handleSortStart}
-        axis="xy"
-        useDragHandle>
-        {sortedTiles.map((t, index) => (
-          <SortableItem
-            key={getTileId(t)}
-            index={index}
-            hideSortableGhost={false}
-            value={(
-              <>
-                {t.ssLinkedConnectionId ? (
-                  <SuiteScriptTile
-                    tile={t}
-                    index={index}
-                    isDragInProgress={dragItemIndex !== undefined}
-                    isTileDragged={dragItemIndex === index}
+    <SortableList
+      className={classes.container}
+      onSortEnd={handleSortEnd}
+      updateBeforeSortStart={handleSortStart}
+      axis="xy"
+      useDragHandle>
+      {sortedTiles.map((t, index) => (
+        <SortableItem
+          key={getTileId(t)}
+          index={index}
+          hideSortableGhost={false}
+          value={(
+            <>
+              {t.ssLinkedConnectionId ? (
+                <SuiteScriptTile
+                  tile={t}
+                  index={index}
+                  isDragInProgress={dragItemIndex !== undefined}
+                  isTileDragged={dragItemIndex === index}
                   />
-                ) : (
-                  <Tile
-                    tile={t}
-                    index={index}
-                    isDragInProgress={dragItemIndex !== undefined}
-                    isTileDragged={dragItemIndex === index}
+              ) : (
+                <Tile
+                  tile={t}
+                  index={index}
+                  isDragInProgress={dragItemIndex !== undefined}
+                  isTileDragged={dragItemIndex === index}
                   />
-                )}
-              </>
+              )}
+            </>
             )}
           />
-        ))}
-      </SortableList>
-    </>
+      ))}
+    </SortableList>
   );
 }
 

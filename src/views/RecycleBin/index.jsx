@@ -18,6 +18,8 @@ import infoText from '../ResourceList/infoText';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
 import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import emptyStateResource from '../../components/EmptyState/metadata';
+import EmptyState from '../../components/EmptyState';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -39,6 +41,7 @@ const defaultFilter = {
   sort: { orderBy: 'doc.name', order: 'asc' },
 };
 
+const {recyclebin} = emptyStateResource;
 export default function RecycleBin(props) {
   const history = useHistory();
   const classes = useStyles();
@@ -98,7 +101,12 @@ export default function RecycleBin(props) {
             {list.count === 0 ? (
               <div>
                 {list.total === 0
-                  ? <NoResultMessageWrapper>Recycle bin is empty.</NoResultMessageWrapper>
+                  ? (
+                    <EmptyState
+                      title={recyclebin.title}
+                      subTitle={recyclebin.subTitle}
+                      type={recyclebin.type} />
+                  )
                   : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
               </div>
             ) : (
