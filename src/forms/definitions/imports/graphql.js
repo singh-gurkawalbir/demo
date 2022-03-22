@@ -1,9 +1,9 @@
-import { convertGraphQLQueryToHTTPBody, getGraphQLValues } from '../../../utils/graphql';
-
+import { convertGraphQLQueryToHTTPBody } from '../../../utils/graphql';
+import http from './http';
 /* eslint-disable no-param-reassign */
 export default {
   preSave: formValues => {
-    const retValues = { ...formValues };
+    const retValues = {...formValues};
 
     // graphql specific values
     retValues['/http/formType'] = 'graph_ql';
@@ -14,355 +14,39 @@ export default {
     retValues['/http/relativeURICreate'] = '/';
 
     // http.body
-    if (!retValues['/http/body']) {
-      retValues['/http/body'] = convertGraphQLQueryToHTTPBody({
-        query: retValues['/graphql/query'],
-        variables: retValues['/graphql/variables'],
-        operationName: retValues['/graphql/operationName'],
-      });
-    }
+    retValues['/http/body'] = convertGraphQLQueryToHTTPBody({
+      query: retValues['/graphql/query'],
+      variables: retValues['/graphql/variables'],
+      operationName: retValues['/graphql/operationName'],
+    });
+
     // http.bodyCreate
-    if (!retValues['/http/bodyCreate']) {
-      retValues['/http/bodyCreate'] = convertGraphQLQueryToHTTPBody({
-        query: retValues['/graphql/queryCreate'],
-        variables: retValues['/graphql/variablesCreate'],
-        operationName: retValues['/graphql/operationNameCreate'],
-      });
-    }
+    retValues['/http/bodyCreate'] = convertGraphQLQueryToHTTPBody({
+      query: retValues['/graphql/queryCreate'],
+      variables: retValues['/graphql/variablesCreate'],
+      operationName: retValues['/graphql/operationNameCreate'],
+    });
+
     // http.bodyUpdate
-    if (!retValues['/http/bodyUpdate']) {
-      retValues['/http/bodyUpdate'] = convertGraphQLQueryToHTTPBody({
-        query: retValues['/graphql/queryUpdate'],
-        variables: retValues['/graphql/variablesUpdate'],
-        operationName: retValues['/graphql/operationNameUpdate'],
-      });
-    }
+    retValues['/http/bodyUpdate'] = convertGraphQLQueryToHTTPBody({
+      query: retValues['/graphql/queryUpdate'],
+      variables: retValues['/graphql/variablesUpdate'],
+      operationName: retValues['/graphql/operationNameUpdate'],
+    });
 
     delete retValues['/graphql/query'];
     delete retValues['/graphql/variables'];
     delete retValues['/graphql/operationName'];
-
     delete retValues['/graphql/queryCreate'];
     delete retValues['/graphql/variablesCreate'];
     delete retValues['/graphql/operationNameCreate'];
-
     delete retValues['/graphql/queryUpdate'];
     delete retValues['/graphql/variablesUpdate'];
     delete retValues['/graphql/operationNameUpdate'];
-    // graphql specific values end
 
-    if (retValues['/http/response/successValues']) {
-      retValues['/http/response/successValues'] = [
-        retValues['/http/response/successValues'],
-      ];
-    }
-
-    if (retValues['/http/response/failValues']) {
-      retValues['/http/response/failValues'] = [
-        retValues['/http/response/failValues'],
-      ];
-    }
-
-    if (retValues['/http/method'] === 'COMPOSITE') {
-      if (retValues['/http/compositeType'] === 'createandupdate') {
-        retValues['/http/relativeURI'] = [
-          retValues['/http/relativeURIUpdate'],
-          retValues['/http/relativeURICreate'],
-        ];
-        retValues['/http/requestType'] = ['UPDATE', 'CREATE'];
-        retValues['/http/method'] = [
-          retValues['/http/compositeMethodUpdate'],
-          retValues['/http/compositeMethodCreate'],
-        ];
-
-        retValues['/http/resourceId'] = undefined;
-        retValues['/http/ignoreLookupName'] = undefined;
-        retValues['/http/ignoreExtract'] = undefined;
-
-        if (
-          retValues['/http/resourceIdPathCreate'] ||
-          retValues['/http/resourceIdPathUpdate']
-        ) {
-          retValues['/http/response/resourceIdPath'] = [
-            retValues['/http/resourceIdPathUpdate'],
-            retValues['/http/resourceIdPathCreate'],
-          ];
-        } else {
-          retValues['/http/response/resourceIdPath'] = undefined;
-        }
-
-        if (
-          retValues['/http/resourcePathCreate'] ||
-          retValues['/http/resourcePathUpdate']
-        ) {
-          retValues['/http/response/resourcePath'] = [
-            retValues['/http/resourcePathUpdate'],
-            retValues['/http/resourcePathCreate'],
-          ];
-        } else {
-          retValues['/http/response/resourcePath'] = undefined;
-        }
-
-        if (
-          retValues['/http/successPathCreate'] ||
-          retValues['/http/successPathUpdate']
-        ) {
-          retValues['/http/response/successPath'] = [
-            retValues['/http/successPathUpdate'],
-            retValues['/http/successPathCreate'],
-          ];
-        } else {
-          retValues['/http/response/successPath'] = undefined;
-        }
-
-        if (
-          retValues['/http/successValuesCreate'] ||
-          retValues['/http/successValuesUpdate']
-        ) {
-          retValues['/http/response/successValues'] = [
-            retValues['/http/successValuesUpdate'],
-            retValues['/http/successValuesCreate'],
-          ];
-        } else {
-          retValues['/http/response/successValues'] = undefined;
-        }
-
-        if (
-          retValues['/http/failPathCreate'] ||
-          retValues['/http/failPathUpdate']
-        ) {
-          retValues['/http/response/failPath'] = [
-            retValues['/http/failPathUpdate'],
-            retValues['/http/failPathCreate'],
-          ];
-        } else {
-          retValues['/http/response/failPath'] = undefined;
-        }
-
-        if (
-          retValues['/http/failValuesCreate'] ||
-          retValues['/http/failValuesUpdate']
-        ) {
-          retValues['/http/response/failValues'] = [
-            retValues['/http/failValuesUpdate'],
-            retValues['/http/failValuesCreate'],
-          ];
-        } else {
-          retValues['/http/response/failValues'] = undefined;
-        }
-
-        retValues['/http/body'] = [
-          retValues['/http/bodyUpdate'],
-          retValues['/http/bodyCreate'],
-        ];
-
-        retValues['/ignoreExisting'] = false;
-        retValues['/ignoreMissing'] = false;
-
-        if (retValues['/http/existingLookupName']) {
-          retValues['/http/existingExtract'] = undefined;
-        } else if (retValues['/http/existingExtract']) {
-          retValues['/http/existingLookupName'] = undefined;
-        } else {
-          retValues['/http/existingLookupName'] = undefined;
-          retValues['/http/existingExtract'] = undefined;
-        }
-      } else if (retValues['/http/compositeType'] === 'createandignore') {
-        retValues['/http/relativeURI'] = [retValues['/http/relativeURICreate']];
-        retValues['/http/method'] = [retValues['/http/compositeMethodCreate']];
-
-        retValues['/http/resourceId'] = undefined;
-        retValues['/http/ignoreLookupName'] = undefined;
-        retValues['/http/ignoreExtract'] = undefined;
-        retValues['/http/existingLookupName'] = undefined; // for create and update composite type
-        retValues['/http/existingExtract'] = undefined;
-
-        if (retValues['/http/resourceIdPathCreate']) {
-          retValues['/http/response/resourceIdPath'] = [
-            retValues['/http/resourceIdPathCreate'],
-          ];
-        } else {
-          retValues['/http/response/resourceIdPath'] = undefined;
-        }
-
-        if (retValues['/http/resourcePathCreate']) {
-          retValues['/http/response/resourcePath'] = [
-            retValues['/http/resourcePathCreate'],
-          ];
-        } else {
-          retValues['/http/response/resourcePath'] = undefined;
-        }
-
-        if (retValues['/http/successPathCreate']) {
-          retValues['/http/response/successPath'] = [
-            retValues['/http/successPathCreate'],
-          ];
-        } else {
-          retValues['/http/response/successPath'] = undefined;
-        }
-
-        if (retValues['/http/failPathCreate']) {
-          retValues['/http/response/failPath'] = [
-            retValues['/http/failPathCreate'],
-          ];
-        } else {
-          retValues['/http/response/failPath'] = undefined;
-        }
-
-        if (retValues['/http/successValuesCreate']) {
-          retValues['/http/response/successValues'] = [
-            retValues['/http/successValuesCreate'],
-          ];
-        } else {
-          retValues['/http/response/successValues'] = undefined;
-        }
-
-        if (retValues['/http/failValuesCreate']) {
-          retValues['/http/response/failValues'] = [
-            retValues['/http/failValuesCreate'],
-          ];
-        } else {
-          retValues['/http/response/failValues'] = undefined;
-        }
-
-        retValues['/http/body'] = [retValues['/http/bodyCreate']];
-
-        retValues['/ignoreExisting'] = true;
-        retValues['/ignoreMissing'] = false;
-
-        if (retValues['/http/ignoreExistingLookupName']) {
-          retValues['/http/ignoreExtract'] = undefined;
-          retValues['/http/ignoreLookupName'] = retValues['/http/ignoreExistingLookupName'];
-        } else if (retValues['/http/ignoreExistingExtract']) {
-          retValues['/http/ignoreLookupName'] = undefined;
-          retValues['/http/ignoreExtract'] = retValues['/http/ignoreExistingExtract'];
-        } else {
-          retValues['/http/ignoreLookupName'] = undefined;
-          retValues['/http/ignoreExtract'] = undefined;
-        }
-
-        retValues['/http/existingDataId'] = undefined;
-      } else if (retValues['/http/compositeType'] === 'updateandignore') {
-        retValues['/http/relativeURI'] = [retValues['/http/relativeURIUpdate']];
-        retValues['/http/method'] = [retValues['/http/compositeMethodUpdate']];
-
-        retValues['/http/resourceId'] = undefined;
-        retValues['/http/ignoreLookupName'] = undefined;
-        retValues['/http/ignoreExtract'] = undefined;
-        retValues['/http/existingLookupName'] = undefined; // for create and update composite type
-        retValues['/http/existingExtract'] = undefined;
-
-        if (retValues['/http/resourceIdPathUpdate']) {
-          retValues['/http/response/resourceIdPath'] = [
-            retValues['/http/resourceIdPathUpdate'],
-          ];
-        } else {
-          retValues['/http/response/resourceIdPath'] = undefined;
-        }
-
-        if (retValues['/http/resourcePathUpdate']) {
-          retValues['/http/response/resourcePath'] = [
-            retValues['/http/resourcePathUpdate'],
-          ];
-        } else {
-          retValues['/http/response/resourcePath'] = undefined;
-        }
-
-        if (retValues['/http/successPathUpdate']) {
-          retValues['/http/response/successPath'] = [
-            retValues['/http/successPathUpdate'],
-          ];
-        } else {
-          retValues['/http/response/successPath'] = undefined;
-        }
-
-        if (retValues['/http/failPathUpdate']) {
-          retValues['/http/response/failPath'] = [
-            retValues['/http/failPathUpdate'],
-          ];
-        } else {
-          retValues['/http/response/failPath'] = undefined;
-        }
-
-        if (retValues['/http/failValuesUpdate']) {
-          retValues['/http/response/failValues'] = [
-            retValues['/http/failValuesUpdate'],
-          ];
-        } else {
-          retValues['/http/response/failValues'] = undefined;
-        }
-
-        if (retValues['/http/successValuesUpdate']) {
-          retValues['/http/response/successValues'] = [
-            retValues['/http/successValuesUpdate'],
-          ];
-        } else {
-          retValues['/http/response/successValues'] = undefined;
-        }
-
-        retValues['/http/body'] = [retValues['/http/bodyUpdate']];
-
-        retValues['/ignoreExisting'] = false;
-        retValues['/ignoreMissing'] = true;
-
-        if (retValues['/http/ignoreNewLookupName']) {
-          retValues['/http/ignoreExtract'] = undefined;
-          retValues['/http/ignoreLookupName'] = retValues['/http/ignoreNewLookupName'];
-        } else if (retValues['/http/ignoreNewExtract']) {
-          retValues['/http/ignoreLookupName'] = undefined;
-          retValues['/http/ignoreExtract'] = retValues['/http/ignoreNewExtract'];
-        } else {
-          retValues['/http/ignoreLookupName'] = undefined;
-          retValues['/http/ignoreExtract'] = undefined;
-        }
-
-        retValues['/http/existingDataId'] = undefined;
-        retValues['/http/update/existingDataId'] = undefined;
-      }
-    } else {
-      retValues['/ignoreExisting'] = false;
-      retValues['/ignoreMissing'] = false;
-      retValues['/http/body'] = retValues['/http/body']
-        ? [retValues['/http/body']]
-        : [];
-      retValues['/http/ignoreLookupName'] = undefined;
-      retValues['/http/ignoreExtract'] = undefined;
-      retValues['/http/existingLookupName'] = undefined; // for create and update composite type
-      retValues['/http/existingExtract'] = undefined;
-      retValues['/http/existingDataId'] = undefined;
-      retValues['/http/update/existingDataId'] = undefined;
-    }
-
-    if (retValues['/inputMode'] !== 'blob') {
-      delete retValues['/blobKeyPath'];
-      delete retValues['/blob'];
-    } else {
-      retValues['/blob'] = true;
-    }
-    if (!retValues['/http/successMediaType']) {
-      retValues['/http/successMediaType'] = undefined;
-    }
-    if (!retValues['/http/errorMediaType']) {
-      retValues['/http/errorMediaType'] = undefined;
-    }
-    retValues['/statusExport'] = undefined;
-    delete retValues['/inputMode'];
-    delete retValues['/http/existingLookupType'];
-    delete retValues['/http/newLookupType'];
-    delete retValues['/http/lookupType'];
-    delete retValues['/http/ignoreExistingExtract'];
-    delete retValues['/http/ignoreNewExtract'];
-    delete retValues['/http/ignoreExistingLookupName'];
-    delete retValues['/http/ignoreNewLookupName'];
-
-    if (retValues['/oneToMany'] === 'false') {
-      retValues['/pathToMany'] = undefined;
-    }
-
-    return {
-      ...retValues,
-    };
+    return http.preSave(retValues);
   },
+
   fieldMap: {
     common: { formId: 'common' },
     dataMappings: { formId: 'dataMappings' },
@@ -1026,32 +710,6 @@ export default {
     'http.existingLookupName': {
       fieldId: 'http.existingLookupName',
     },
-    'http.successMediaType': {
-      fieldId: 'http.successMediaType',
-      visibleWhenAll: [
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    'http.errorMediaType': {
-      fieldId: 'http.errorMediaType',
-      visibleWhenAll: [
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     advancedSettings: {
       formId: 'advancedSettings',
     },
@@ -1064,12 +722,8 @@ export default {
         },
       ],
     },
-    'graphql.queryCreate': {
-      id: 'graphql.queryCreate',
-      type: 'uri',
-      label: 'Query',
-      required: true,
-      helpKey: 'connection.graphql.query',
+    graphqlCreate: {
+      formId: 'graphqlCreate',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1084,98 +738,9 @@ export default {
           is: ['records'],
         },
       ],
-      defaultValue: r => {
-        if (!r || !r.http || !r.http.method) {
-          return '';
-        }
-
-        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          if (r.http.method.length > 1) {
-            return getGraphQLValues({resource: r, field: 'query', path: 'http.body[1]'}) || '';
-          }
-
-          return getGraphQLValues({resource: r, field: 'query', path: 'http.body[0]'}) || '';
-        }
-
-        return '';
-      },
     },
-    'graphql.operationNameCreate': {
-      id: 'graphql.operationNameCreate',
-      type: 'uri',
-      label: 'Operation name',
-      helpKey: 'connection.graphql.operationName',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => {
-        if (!r || !r.http || !r.http.method) {
-          return '';
-        }
-
-        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          if (r.http.method.length > 1) {
-            return getGraphQLValues({resource: r, field: 'operationName', path: 'http.body[1]'}) || '';
-          }
-
-          return getGraphQLValues({resource: r, field: 'operationName', path: 'http.body[0]'}) || '';
-        }
-
-        return '';
-      },
-    },
-    'graphql.variablesCreate': {
-      id: 'graphql.variablesCreate',
-      type: 'uri',
-      label: 'Variables',
-      helpKey: 'connection.graphql.variables',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => {
-        if (!r || !r.http || !r.http.method) {
-          return '';
-        }
-
-        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          if (r.http.method.length > 1) {
-            return getGraphQLValues({resource: r, field: 'variables', path: 'http.body[1]'}) || '';
-          }
-
-          return getGraphQLValues({resource: r, field: 'variables', path: 'http.body[0]'}) || '';
-        }
-
-        return '';
-      },
-    },
-    'graphql.queryUpdate': {
-      id: 'graphql.queryUpdate',
-      type: 'uri',
-      label: 'Query',
-      required: true,
-      helpKey: 'connection.graphql.query',
+    graphqlUpdate: {
+      formId: 'graphqlUpdate',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1190,80 +755,6 @@ export default {
           is: ['records'],
         },
       ],
-      defaultValue: r => {
-        if (!r || !r.http || !r.http.method) {
-          return '';
-        }
-
-        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return getGraphQLValues({resource: r, field: 'query', path: 'http.body[0]'}) || '';
-        }
-
-        return '';
-      },
-    },
-    'graphql.operationNameUpdate': {
-      id: 'graphql.operationNameUpdate',
-      type: 'uri',
-      label: 'Operation name',
-      helpKey: 'connection.graphql.operationName',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'updateandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => {
-        if (!r || !r.http || !r.http.method) {
-          return '';
-        }
-
-        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return getGraphQLValues({resource: r, field: 'operationName', path: 'http.body[0]'}) || '';
-        }
-
-        return '';
-      },
-
-    },
-    'graphql.variablesUpdate': {
-      id: 'graphql.variablesUpdate',
-      type: 'uri',
-      label: 'Variables',
-      helpKey: 'connection.graphql.variables',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'updateandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => {
-        if (!r || !r.http || !r.http.method) {
-          return '';
-        }
-
-        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return getGraphQLValues({resource: r, field: 'variables', path: 'http.body[0]'}) || '';
-        }
-
-        return '';
-      },
     },
   },
   layout: {
@@ -1290,9 +781,7 @@ export default {
                 label: 'Create new records',
                 fields: [
                   'http.compositeMethodCreate',
-                  'graphql.queryCreate',
-                  'graphql.operationNameCreate',
-                  'graphql.variablesCreate',
+                  'graphqlCreate',
                 ],
               },
               {
@@ -1315,9 +804,7 @@ export default {
                 label: 'Update existing records',
                 fields: [
                   'http.compositeMethodUpdate',
-                  'graphql.queryUpdate',
-                  'graphql.operationNameUpdate',
-                  'graphql.variablesUpdate',
+                  'graphqlUpdate',
                 ],
               },
             ],
@@ -1360,8 +847,6 @@ export default {
           {
             fields: [
               'http.response.resourceIdPath',
-              // 'http.successMediaType',
-              // 'http.errorMediaType',
             ],
           },
         ],

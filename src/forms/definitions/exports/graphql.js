@@ -1,182 +1,44 @@
-import { convertGraphQLQueryToHTTPBody, getGraphQLValues } from '../../../utils/graphql';
+import { convertGraphQLQueryToHTTPBody, getGraphqlRelativeURI } from '../../../utils/graphql';
 import { isNewId } from '../../../utils/resource';
+import http from './http';
 
 export default {
   preSave: formValues => {
-    const retValues = { ...formValues };
+    const retValues = {...formValues};
 
-    // graphql specific values
     retValues['/http/formType'] = 'graph_ql';
+    retValues['/adaptorType'] = 'HTTPExport';
     retValues['/http/relativeURI'] = '/';
     retValues['/http/mediaType'] = 'json';
-    if (!retValues['/http/body']) {
-      retValues['/http/body'] = convertGraphQLQueryToHTTPBody({
+
+    retValues['/http/body'] = convertGraphQLQueryToHTTPBody({
+      query: retValues['/graphql/query'],
+      variables: retValues['/graphql/variables'],
+      operationName: retValues['/graphql/operationName'],
+    });
+    retValues['/http/paging/body'] = convertGraphQLQueryToHTTPBody({
+      query: retValues['/paging/graphql/query'],
+      variables: retValues['/paging/graphql/variables'],
+      operationName: retValues['/paging/graphql/operationName'],
+    });
+
+    if (retValues['/http/method'] === 'GET') {
+      retValues['/http/body'] = undefined;
+
+      retValues['/http/relativeURI'] = getGraphqlRelativeURI({
         query: retValues['/graphql/query'],
         variables: retValues['/graphql/variables'],
         operationName: retValues['/graphql/operationName'],
       });
     }
-    // graphql specific values end
-
-    if (retValues['/type'] === 'all') {
-      retValues['/type'] = undefined;
-      retValues['/test'] = undefined;
-      retValues['/delta'] = undefined;
-      retValues['/once'] = undefined;
-      retValues['/http/once'] = undefined;
-      delete retValues['/test/limit'];
-      delete retValues['/delta/dateFormat'];
-      delete retValues['/delta/lagOffset'];
-      delete retValues['/once/booleanField'];
-      delete retValues['/http/once/relativeURI'];
-      delete retValues['/http/once/body'];
-      delete retValues['/http/once/method'];
-    } else if (retValues['/type'] === 'test') {
-      retValues['/test/limit'] = 1;
-      retValues['/delta'] = undefined;
-      retValues['/once'] = undefined;
-      retValues['/http/once'] = undefined;
-      delete retValues['/delta/dateFormat'];
-      delete retValues['/delta/lagOffset'];
-      delete retValues['/once/booleanField'];
-      delete retValues['/http/once/relativeURI'];
-      delete retValues['/http/once/body'];
-      delete retValues['/http/once/method'];
-    } else if (retValues['/type'] === 'delta') {
-      retValues['/once'] = undefined;
-      retValues['/test'] = undefined;
-      retValues['/http/once'] = undefined;
-      delete retValues['/test/limit'];
-      delete retValues['/once/booleanField'];
-      delete retValues['/http/once/relativeURI'];
-      delete retValues['/http/once/body'];
-      delete retValues['/http/once/method'];
-    } else if (retValues['/type'] === 'once') {
-      retValues['/delta'] = undefined;
-      retValues['/test'] = undefined;
-      delete retValues['/test/limit'];
-      delete retValues['/delta/dateFormat'];
-      delete retValues['/delta/lagOffset'];
-    }
-
-    if (retValues['/outputMode'] === 'blob') {
-      retValues['/type'] = 'blob';
-    }
-
-    delete retValues['/outputMode'];
-
-    if (retValues['/http/paging/method'] === 'page') {
-      retValues['/http/paging/path'] = undefined;
-      retValues['/http/paging/relativeURI'] = undefined;
-      retValues['/http/paging/linkHeaderRelation'] = undefined;
-      retValues['/http/paging/skip'] = undefined;
-      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
-      retValues['/http/paging/resourcePath'] = undefined;
-      retValues['/http/paging/token'] = undefined;
-      retValues['/http/paging/body'] = undefined;
-    } else if (retValues['/http/paging/method'] === 'url') {
-      retValues['/http/paging/relativeURI'] = undefined;
-      retValues['/http/paging/linkHeaderRelation'] = undefined;
-      retValues['/http/paging/skip'] = undefined;
-      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
-      retValues['/http/paging/resourcePath'] = undefined;
-      retValues['/http/paging/token'] = undefined;
-      retValues['/http/paging/page'] = undefined;
-      retValues['/http/paging/maxPagePath'] = undefined;
-      retValues['/http/paging/maxCountPath'] = undefined;
-      retValues['/http/paging/body'] = undefined;
-    } else if (retValues['/http/paging/method'] === 'relativeuri') {
-      retValues['/http/paging/path'] = undefined;
-      retValues['/http/paging/linkHeaderRelation'] = undefined;
-      retValues['/http/paging/skip'] = undefined;
-      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
-      retValues['/http/paging/resourcePath'] = undefined;
-      retValues['/http/paging/token'] = undefined;
-      retValues['/http/paging/page'] = undefined;
-      retValues['/http/paging/maxPagePath'] = undefined;
-      retValues['/http/paging/maxCountPath'] = undefined;
-      retValues['/http/paging/body'] = undefined;
-    } else if (retValues['/http/paging/method'] === 'linkheader') {
-      retValues['/http/paging/path'] = undefined;
-      retValues['/http/paging/relativeURI'] = undefined;
-      retValues['/http/paging/skip'] = undefined;
-      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
-      retValues['/http/paging/resourcePath'] = undefined;
-      retValues['/http/paging/token'] = undefined;
-      retValues['/http/paging/page'] = undefined;
-      retValues['/http/paging/maxPagePath'] = undefined;
-      retValues['/http/paging/maxCountPath'] = undefined;
-      retValues['/http/paging/body'] = undefined;
-    } else if (retValues['/http/paging/method'] === 'skip') {
-      retValues['/http/paging/path'] = undefined;
-      retValues['/http/paging/relativeURI'] = undefined;
-      retValues['/http/paging/linkHeaderRelation'] = undefined;
-      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
-      retValues['/http/paging/resourcePath'] = undefined;
-      retValues['/http/paging/token'] = undefined;
-      retValues['/http/paging/page'] = undefined;
-      retValues['/http/paging/body'] = undefined;
-    } else if (retValues['/http/paging/method'] === 'token') {
-      retValues['/http/paging/linkHeaderRelation'] = undefined;
-      retValues['/http/paging/skip'] = undefined;
-      retValues['/http/paging/page'] = undefined;
-      retValues['/http/paging/maxPagePath'] = undefined;
-      retValues['/http/paging/maxCountPath'] = undefined;
-      retValues['/http/paging/body'] = undefined;
-    } else if (retValues['/http/paging/method'] === 'body') {
-      retValues['/http/paging/path'] = undefined;
-      retValues['/http/paging/body'] = convertGraphQLQueryToHTTPBody({
-        query: retValues['/paging/graphql/query'],
-        variables: retValues['/paging/graphql/variables'],
-        operationName: retValues['/paging/graphql/operationName'],
-      });
-      retValues['/http/paging/relativeURI'] = undefined;
-      retValues['/http/paging/resourcePath'] = undefined;
-      retValues['/http/paging/token'] = undefined;
-      retValues['/http/paging/linkHeaderRelation'] = undefined;
-      retValues['/http/paging/skip'] = undefined;
-      retValues['/http/paging/pathAfterFirstRequest'] = undefined;
-      retValues['/http/paging/page'] = undefined;
-      retValues['/http/paging/maxPagePath'] = undefined;
-      retValues['/http/paging/maxCountPath'] = undefined;
-    } else {
-      retValues['/http/paging'] = undefined;
-      delete retValues['/http/paging/method'];
-      delete retValues['/http/paging/path'];
-      delete retValues['/http/paging/relativeURI'];
-      delete retValues['/http/paging/resourcePath'];
-      delete retValues['/http/paging/token'];
-      delete retValues['/http/paging/linkHeaderRelation'];
-      delete retValues['/http/paging/skip'];
-      delete retValues['/http/paging/pathAfterFirstRequest'];
-      delete retValues['/http/paging/page'];
-      delete retValues['/http/paging/maxPagePath'];
-      delete retValues['/http/paging/maxCountPath'];
-      delete retValues['/http/paging/body'];
-      delete retValues['/http/paging/lastPageStatusCode'];
-      delete retValues['/http/paging/lastPagePath'];
-      delete retValues['/http/paging/lastPageValues'];
-    }
-
-    retValues['/statusExport'] = undefined;
-
-    // we need 2 separate UI fields for path for url and token paging methods
-    // to have diff help texts and labels
-    if (retValues['/http/paging/method'] === 'url') {
-      retValues['/http/paging/path'] = retValues['/http/paging/urlPath'];
-    } else if (retValues['/http/paging/method'] === 'token') {
-      retValues['/http/paging/path'] = retValues['/http/paging/tokenPath'];
-    }
-    delete retValues['/http/paging/urlPath'];
-    delete retValues['/http/paging/tokenPath'];
     delete retValues['/graphql/query'];
     delete retValues['/graphql/operationName'];
     delete retValues['/graphql/variables'];
-    retValues['/adaptorType'] = 'HTTPExport';
+    delete retValues['/paging/graphql/query'];
+    delete retValues['/paging/graphql/operationName'];
+    delete retValues['/paging/graphql/variables'];
 
-    return {
-      ...retValues,
-    };
+    return http.preSave(retValues);
   },
 
   fieldMap: {
@@ -354,43 +216,8 @@ export default {
     },
     formView: { fieldId: 'formView' },
     semiassistantoperationselect: {fieldId: 'semiassistantoperationselect', visibleWhenAll: [{field: 'formView', isNot: ['true']}]},
-    graphql: {
-      formId: 'graphql',
-    },
-    'paging.graphql.query': {
-      id: 'paging.graphql.query',
-      type: 'uri',
-      label: 'Query',
-      required: true,
-      helpKey: 'connection.graphql.query',
-      defaultValue: r => getGraphQLValues({resource: r, field: 'query', path: 'http.paging.body'}),
-      visibleWhen: [{
-        field: 'http.paging.method',
-        is: ['body'],
-      }],
-    },
-    'paging.graphql.operationName': {
-      id: 'paging.graphql.operationName',
-      type: 'uri',
-      label: 'Operation name',
-      helpKey: 'connection.graphql.operationName',
-      defaultValue: r => getGraphQLValues({resource: r, field: 'operationName', path: 'http.paging.body'}),
-      visibleWhen: [{
-        field: 'http.paging.method',
-        is: ['body'],
-      }],
-    },
-    'paging.graphql.variables': {
-      id: 'paging.graphql.variables',
-      type: 'uri',
-      label: 'Variables',
-      helpKey: 'connection.graphql.variables',
-      defaultValue: r => getGraphQLValues({resource: r, field: 'variables', path: 'http.paging.body'}),
-      visibleWhen: [{
-        field: 'http.paging.method',
-        is: ['body'],
-      }],
-    },
+    graphql: {formId: 'graphql'},
+    pagingGraphql: {formId: 'pagingGraphql' },
   },
 
   layout: {
@@ -424,9 +251,7 @@ export default {
         label: 'Does this API use paging?',
         fields: [
           'http.paging.method',
-          'paging.graphql.query',
-          'paging.graphql.operationName',
-          'paging.graphql.variables',
+          'pagingGraphql',
           'http.paging.skip',
           'http.paging.page',
           'http.paging.urlPath',

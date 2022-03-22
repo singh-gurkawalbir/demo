@@ -140,10 +140,11 @@ const connectors = [
     group: 'db',
   },
   {
-    id: 'graphql',
+    id: 'graph_ql',
     name: 'GraphQL',
-    type: 'graphql',
+    type: 'graph_ql',
     group: 'tech',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/4843857027227',
   },
   // Application connectors
   {

@@ -69,13 +69,15 @@ export default {
     label: 'Form view',
     visible: r => !r?.useTechAdaptorForm || !isEmpty(r?.assistantMetadata),
     defaultValue: r => {
-      if (adaptorTypeMap[r?.adaptorType] === 'graphql') {
-        if (!r?.http?.formType) return 'false';
+      if (!r) return 'false';
+      if (adaptorTypeMap[r.adaptorType] === 'graph_ql') {
+        if (!r.http) return 'false';
+        if (!r.http.formType) return 'false';
 
-        return r?.http?.formType === 'graph_ql' ? 'false' : 'true';
+        return r.http.formType === 'graph_ql' ? 'false' : 'true';
       }
 
-      return r && `${r.assistant || r?.http?.formType === 'graph_ql' ? 'false' : 'true'}`;
+      return `${r.assistant || (r.http && r.http.formType === 'graph_ql') ? 'false' : 'true'}`;
     },
     helpKey: 'formView',
   },

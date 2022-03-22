@@ -1,8 +1,9 @@
 import { convertGraphQLQueryToHTTPBody, getGraphqlRelativeURI } from '../../../utils/graphql';
+import http from './http';
 
 export default {
   preSave: formValues => {
-    const newValues = { ...formValues};
+    const newValues = {...formValues};
 
     newValues['/type'] = 'http';
     newValues['/http/formType'] = 'graph_ql';
@@ -12,159 +13,22 @@ export default {
       variables: newValues['/graphql/variables'],
       operationName: newValues['/graphql/operationName'],
     });
-
-    if (newValues['/mode'] === 'cloud') {
-      newValues['/_agentId'] = undefined;
-    }
-    delete newValues['/mode'];
-
-    if (!newValues['/http/rateLimit/failPath']) {
-      newValues['/http/rateLimit/failValues'] = undefined;
-    }
-
     if (newValues['/http/ping/method'] === 'GET') {
       newValues['/http/ping/body'] = undefined;
-      newValues['/http/ping/relativeURI'] = getGraphqlRelativeURI(newValues['/graphql/query'], newValues['/graphql/variables'], newValues['/graphql/operationName']);
+      newValues['/http/ping/relativeURI'] = getGraphqlRelativeURI({
+        query: newValues['/graphql/query'],
+        variables: newValues['/graphql/variables'],
+        operationName: newValues['/graphql/operationName'],
+      });
     }
     if (newValues['/http/ping/method'] === 'POST') {
       newValues['/http/ping/relativeURI'] = undefined;
     }
-    if (!newValues['/http/ping/method']) {
-      newValues['/http/ping/method'] = undefined;
-    }
-
-    if (newValues['/http/encrypted']) {
-      try {
-        newValues['/http/encrypted'] = JSON.parse(newValues['/http/encrypted']);
-      } catch (ex) {
-        newValues['/http/encrypted'] = undefined;
-      }
-    }
-
-    if (newValues['/http/custom/encrypted']) {
-      try {
-        newValues['/http/custom/encrypted'] = JSON.parse(
-          newValues['/http/custom/encrypted']
-        );
-      } catch (ex) {
-        newValues['/http/custom/encrypted'] = undefined;
-      }
-    }
-
-    if (newValues['/http/unencrypted']) {
-      try {
-        newValues['/http/unencrypted'] = JSON.parse(
-          newValues['/http/unencrypted']
-        );
-      } catch (ex) {
-        newValues['/http/unencrypted'] = undefined;
-      }
-    }
-
-    if (newValues['/http/custom/unencrypted']) {
-      try {
-        newValues['/http/custom/unencrypted'] = JSON.parse(
-          newValues['/http/custom/unencrypted']
-        );
-      } catch (ex) {
-        newValues['/http/custom/unencrypted'] = undefined;
-      }
-    }
-
-    if (
-      newValues['/http/auth/type'] !== 'basic' &&
-        newValues['/http/auth/type'] !== 'digest' &&
-        newValues['/http/auth/type'] !== 'wsse'
-    ) {
-      delete newValues['/http/auth/basic/username'];
-      delete newValues['/http/auth/basic/password'];
-      newValues['/http/auth/basic'] = undefined;
-    }
-
-    if (newValues['/http/auth/type'] === 'digest') {
-      newValues['/http/auth/basic/username'] = newValues['/http/auth/digest/username'];
-      newValues['/http/auth/basic/password'] = newValues['/http/auth/digest/password'];
-    }
-
-    if (
-      newValues['/http/auth/type'] !== 'token' ||
-        !formValues['/configureTokenRefresh']
-    ) {
-      newValues['/http/auth/token/refreshMethod'] = undefined;
-      newValues['/http/auth/token/refreshTokenPath'] = undefined;
-      newValues['/http/auth/token/refreshToken'] = undefined;
-      newValues['/http/auth/token/refreshHeaders'] = undefined;
-      newValues['/http/auth/token/refreshBody'] = undefined;
-      newValues['/http/auth/token/refreshRelativeURI'] = undefined;
-      newValues['/http/auth/token/refreshMediaType'] = undefined;
-    }
-
-    if (newValues['/http/auth/type'] === 'token' || newValues['/http/auth/type'] === 'oauth') {
-      if (newValues['/http/auth/token/scheme'] === 'Custom') {
-        newValues['/http/auth/token/scheme'] = newValues['/http/customAuthScheme'];
-      }
-    }
-
-    if (newValues['/http/auth/type'] !== 'token' && newValues['/http/auth/type'] !== 'oauth') {
-      newValues['/http/auth/oauth'] = undefined;
-      delete newValues['/http/auth/oauth/callbackURL'];
-      delete newValues['/http/auth/oauth/clientCredentialsLocation'];
-
-      newValues['/http/auth/token'] = undefined;
-      delete newValues['/http/auth/token/token'];
-      delete newValues['/http/auth/token/scheme'];
-      delete newValues['/http/auth/token/headerName'];
-      delete newValues['/http/auth/token/location'];
-      delete newValues['/http/auth/token/paramName'];
-    }
-
-    if (newValues['/http/auth/type'] !== 'cookie') {
-      if (newValues['/http/auth/cookie/method'] === 'GET') {
-        delete newValues['/http/auth/cookie/body'];
-      }
-
-      delete newValues['/http/auth/cookie/method'];
-      delete newValues['/http/auth/cookie/uri'];
-    }
-
-    if (newValues['/http/auth/type'] === 'wsse') {
-      newValues['/http/auth/token/headerName'] = newValues['/http/auth/wsse/headerName'];
-      newValues['/http/auth/basic/username'] = newValues['/http/auth/wsse/username'];
-      newValues['/http/auth/basic/password'] = newValues['/http/auth/wsse/password'];
-    }
-
-    if (newValues['/http/auth/type'] === 'custom') {
-      newValues['/http/encrypted'] = newValues['/http/custom/encrypted'];
-      newValues['/http/unencrypted'] = newValues['/http/custom/unencrypted'];
-    }
-    if (newValues['/http/auth/type'] === 'oauth') {
-      newValues['/http/auth/oauth/applicationType'] = 'custom';
-      newValues['/http/auth/token/refreshHeaders'] = newValues['/http/auth/oauth/refreshHeaders'];
-      newValues['/http/auth/token/refreshBody'] = newValues['/http/auth/oauth/refreshBody'];
-    }
-
-    if (!newValues['/http/auth/token/revoke/uri']) delete newValues['/http/auth/token/revoke/uri'];
-
-    if (!newValues['/http/auth/token/revoke/body']) delete newValues['/http/auth/token/revoke/body'];
-
-    if (!newValues['/http/auth/failPath']) {
-      newValues['/http/auth/failValues'] = undefined;
-    }
-
-    delete newValues['/http/auth/oauth/refreshHeaders'];
-    delete newValues['/http/auth/oauth/refreshBody'];
-    delete newValues['/http/custom/encrypted'];
-    delete newValues['/http/custom/unencrypted'];
-    delete newValues['/http/auth/digest/username'];
-    delete newValues['/http/auth/digest/password'];
-    delete newValues['/http/auth/wsse/username'];
-    delete newValues['/http/auth/wsse/password'];
-    delete newValues['/http/auth/wsse/headerName'];
     delete newValues['/graphql/query'];
     delete newValues['/graphql/operationName'];
     delete newValues['/graphql/variables'];
 
-    return newValues;
+    return http.preSave(newValues);
   },
   fieldMap: {
     name: { fieldId: 'name' },

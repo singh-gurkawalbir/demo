@@ -87,7 +87,7 @@ export default {
         application = 'rest';
       }
       if (r.type === 'http' && r.http?.formType === 'graph_ql') {
-        application = 'graphql';
+        application = 'graph_ql';
       }
       const app = applications.find(a => a.id === application) || {};
 

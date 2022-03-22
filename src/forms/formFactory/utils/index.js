@@ -926,7 +926,7 @@ export const destinationOptions = {
       value: 'lookupFiles',
     },
   ],
-  graphql: [
+  graph_ql: [
     {
       label: 'Import records into destination application',
       value: 'importRecords',

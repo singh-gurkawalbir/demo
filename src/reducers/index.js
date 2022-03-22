@@ -610,11 +610,7 @@ selectors.mkTileApplications = () => {
           const connection = connections.find(c => c._id === r);
 
           if (connection) {
-            if (connection.http?.formType === 'graph_ql') {
-              applications.push('graphql');
-            } else {
-              applications.push(connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type);
-            }
+            applications.push(connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type);
           }
         });
 
@@ -5207,8 +5203,8 @@ selectors.applicationType = (state, resourceType, id) => {
   if (adaptorType === 'http' && resourceObj?.http?.formType === 'rest') {
     adaptorType = 'rest';
   }
-  if (adaptorTypeMap[adaptorType] === 'graphql' || resourceObj?.http?.formType === 'graph_ql') {
-    adaptorType = 'graphql';
+  if (adaptorTypeMap[adaptorType] === 'graph_ql' || resourceObj?.http?.formType === 'graph_ql') {
+    adaptorType = 'graph_ql';
   }
   // For Data Loader cases, there is no image.
   if (getStagedValue('/type') === 'simple' || resourceObj?.type === 'simple') {
@@ -5847,6 +5843,16 @@ selectors.mkIsAnyFlowConnectionOffline = () => {
     (state, flowId) => flowConnections(state, flowId),
     flowConnections => flowConnections.some(c => c.offline)
   );
+};
+
+selectors.isAnyIntegrationConnectionOffline = (state, integrationId) => {
+  const integration = selectors.resource(state, 'integrations', integrationId);
+  const connections = selectors.resourceList(state, {
+    type: 'connections',
+  }).resources;
+  const connectionIds = integration?._registeredConnectionIds || emptyArray;
+
+  return connections.some(c => connectionIds.includes(c._id) && c.offline);
 };
 
 selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
@@ -6656,4 +6662,3 @@ selectors.globalSearchResults = createSelector(
   ],
   (_, resourceResults) => resourceResults
 );
-

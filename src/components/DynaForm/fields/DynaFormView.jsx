@@ -43,10 +43,10 @@ export default function FormView(props) {
       emptyObj
   );
   const { assistant: assistantName, http } = connection;
-  const isGraphql = http.formType === 'graph_ql';
+  const isGraphql = http?.formType === 'graph_ql';
 
   const options = useMemo(() => {
-    const matchingApplication = getApp(null, isGraphql ? 'graphql' : assistantName);
+    const matchingApplication = getApp(null, isGraphql ? 'graph_ql' : assistantName);
 
     if (matchingApplication) {
       const { name, type } = matchingApplication;

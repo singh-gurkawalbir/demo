@@ -13,7 +13,7 @@ export default {
             { field: 'outputMode', is: ['records'] },
           ];
         }
-        if (exportType === 'http' || exportType === 'rest' || exportType === 'graphql') {
+        if (exportType === 'http' || exportType === 'rest' || exportType === 'graph_ql') {
           return [
             {
               field: 'outputMode',
@@ -36,7 +36,7 @@ export default {
             { field: 'netsuite.api.type', isNot: [''] },
           ];
         }
-        if (exportType === 'http' || exportType === 'rest' || exportType === 'graphql') {
+        if (exportType === 'http' || exportType === 'rest' || exportType === 'graph_ql') {
           return [
             {
               field: 'outputMode',
@@ -52,7 +52,7 @@ export default {
       visibleWhenAll: r => {
         const exportType = getResourceSubType(r).type;
 
-        if (exportType === 'http' || exportType === 'rest' || exportType === 'graphql') {
+        if (exportType === 'http' || exportType === 'rest' || exportType === 'graph_ql') {
           return [
             {
               field: 'outputMode',
@@ -69,7 +69,7 @@ export default {
       visibleWhenAll: r => {
         const exportType = getResourceSubType(r).type;
 
-        if (exportType === 'graphql' || r?.http?.formType === 'graph_ql') {
+        if (exportType === 'graph_ql' || r?.http?.formType === 'graph_ql') {
           return [
             {
               field: 'outputMode',
@@ -86,7 +86,7 @@ export default {
       visibleWhenAll: r => {
         const exportType = getResourceSubType(r).type;
 
-        if (exportType === 'graphql' || r?.http?.formType === 'graph_ql') {
+        if (exportType === 'graph_ql' || r?.http?.formType === 'graph_ql') {
           return [
             {
               field: 'outputMode',

@@ -5,6 +5,7 @@ import exportOneToMany from './exportOneToMany';
 import netsuite from './netsuite';
 import fileAdvanced from './fileAdvanced';
 import graphql from './graphql';
+import pagingGraphql from './pagingGraphql';
 
 export default {
   common,
@@ -14,4 +15,5 @@ export default {
   fileAdvanced,
   ...netsuite,
   graphql,
+  pagingGraphql,
 };

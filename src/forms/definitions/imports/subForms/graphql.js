@@ -9,6 +9,8 @@ export default {
       required: true,
       helpKey: 'connection.graphql.query',
       defaultValue: r => getGraphQLValues({resource: r, field: 'query', path: 'http.body[0]'}),
+      noApi: true,
+      showLookup: false,
     },
     'graphql.operationName': {
       id: 'graphql.operationName',
@@ -16,6 +18,8 @@ export default {
       label: 'Operation name',
       helpKey: 'connection.graphql.operationName',
       defaultValue: r => getGraphQLValues({resource: r, field: 'operationName', path: 'http.body[0]'}),
+      noApi: true,
+      showLookup: false,
     },
     'graphql.variables': {
       id: 'graphql.variables',
@@ -23,6 +27,8 @@ export default {
       label: 'Variables',
       helpKey: 'connection.graphql.variables',
       defaultValue: r => getGraphQLValues({resource: r, field: 'variables', path: 'http.body[0]'}),
+      noApi: true,
+      showLookup: false,
     },
   },
   layout: {

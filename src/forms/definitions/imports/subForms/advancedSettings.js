@@ -25,7 +25,7 @@ export default {
         const importType = getResourceSubType(r).type;
 
         // this field should not be shown in graphql advanced section
-        if (importType === 'graphql' || r?.http?.formType === 'graph_ql') {
+        if (importType === 'graph_ql' || r?.http?.formType === 'graph_ql') {
           return false;
         }
 
