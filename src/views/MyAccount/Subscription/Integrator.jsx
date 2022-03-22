@@ -103,7 +103,7 @@ export default function Subscription() {
   const [upgradeRequested, setUpgradeRequested] = useState(false);
   const classes = useStyles();
   const getNumEnabledFlows = useCallback(() => {
-    dispatch(actions.user.org.accounts.requestNumEnabledFlows());
+    dispatch(actions.license.requestNumEnabledFlows());
   }, [dispatch]);
 
   useEffect(() => {
@@ -152,7 +152,7 @@ export default function Subscription() {
     );
     setUpgradeRequested(true);
 
-    return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
+    return dispatch(actions.license.requestUpdate('upgrade'));
   }, [dispatch]);
   const onRequestUpgradeClick = useCallback(() => {
     dispatch(
@@ -160,7 +160,7 @@ export default function Subscription() {
     );
     setUpgradeRequested(true);
 
-    return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
+    return dispatch(actions.license.requestUpdate('upgrade'));
   }, [dispatch]);
   const onRequestTrialExtensionClick = useCallback(() => {
     dispatch(
@@ -168,7 +168,7 @@ export default function Subscription() {
     );
     setUpgradeRequested(true);
 
-    return dispatch(actions.user.org.accounts.requestUpdate('reTrial'));
+    return dispatch(actions.license.requestUpdate('reTrial'));
   }, [dispatch]);
   const platformLicenseActionMessage = useSelector(state =>
     selectors.platformLicenseActionMessage(state)

@@ -27,7 +27,7 @@ export default function RunCell({
 
   return (
     <Status variant="success" size="mini" >
-      success
+      <Link to={`${match.url}/${flowId}/errorsList`}>success</Link>
     </Status>
   );
 }

@@ -496,6 +496,7 @@ export const connectorsList = () => {
 
   return connectors;
 };
+
 export const templatesList = () => {
   const templates = connectorsList();
 

@@ -1,13 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import PanelTitle from '../PanelTitle';
 import CodePanel from '../../panels/Code';
 
 const useStyles = makeStyles(theme => ({
   gridItem: {
-    border: 'solid 1px rgb(0,0,0,0.3)',
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
     overflow: 'hidden',
     minWidth: 150,
     minHeight: 100,
@@ -21,7 +22,11 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'stretch',
   },
-  panel: { flex: '1 1 100px', minHeight: 50, position: 'relative' },
+  panel: {
+    flex: '1 1 100px',
+    minHeight: 50,
+    position: 'relative',
+  },
 }));
 
 const overrides = { wrap: true };
@@ -44,9 +49,7 @@ export default function ErrorGridItem({ editorId }) {
   return (
     <div className={classes.gridItem}>
       <div className={classes.flexContainer}>
-        <PanelTitle>
-          <Typography color="error">Error</Typography>
-        </PanelTitle>
+        <PanelTitle titleColor="error" title="Error" />
         <div className={classes.panel} data-private>
           <CodePanel
             readOnly
@@ -54,7 +57,7 @@ export default function ErrorGridItem({ editorId }) {
             mode="text"
             name="error"
             value={errorText}
-        />
+          />
         </div>
       </div>
     </div>

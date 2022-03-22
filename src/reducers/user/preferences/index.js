@@ -70,12 +70,12 @@ export default (state = { environment: 'production' }, action) => {
         }
 
         break;
-      case actionTypes.UPDATE_PREFERENCES:
+      case actionTypes.USER.PREFERENCES.UPDATE:
         updatePreferences(draft, preferences);
 
         break;
 
-      case actionTypes.PIN_INTEGRATION:
+      case actionTypes.USER.PREFERENCES.PIN_INTEGRATION:
         {
           let {dashboard} = getAccountPreferences(draft);
 
@@ -92,7 +92,7 @@ export default (state = { environment: 'production' }, action) => {
 
         break;
 
-      case actionTypes.UNPIN_INTEGRATION:
+      case actionTypes.USER.PREFERENCES.UNPIN_INTEGRATION:
         {
           const {dashboard} = getAccountPreferences(draft);
 
@@ -121,6 +121,7 @@ selectors.userOwnPreferences = state => {
 
   return state;
 };
+selectors.defaultAShareId = state => state?.defaultAShareId;
 
 selectors.accountShareHeader = (preferences, path) => {
   const headers = {};

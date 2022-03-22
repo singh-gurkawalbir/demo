@@ -80,7 +80,7 @@ export function* updatePreferences() {
 }
 
 export function* requestTrialLicense() {
-  const { path, opts } = getRequestOptions(actionTypes.LICENSE_TRIAL_REQUEST);
+  const { path, opts } = getRequestOptions(actionTypes.LICENSE.TRIAL_REQUEST);
   let response;
 
   try {
@@ -92,12 +92,12 @@ export function* requestTrialLicense() {
   } catch (e) {
     return true;
   }
-  yield put(actions.user.org.accounts.trialLicenseIssued(response));
+  yield put(actions.license.trialLicenseIssued(response));
   yield call(getResourceCollection, {resourceType: 'licenses', refresh: true });
 }
 
 export function* requestLicenseUpgrade() {
-  const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPGRADE_REQUEST);
+  const { path, opts } = getRequestOptions(actionTypes.LICENSE.UPGRADE_REQUEST);
   let response;
 
   try {
@@ -124,11 +124,11 @@ export function* requestLicenseUpgrade() {
     return true;
   }
 
-  yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
+  yield put(actions.license.licenseUpgradeRequestSubmitted(response));
 }
 
 export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
-  const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPDATE_REQUEST, {
+  const { path, opts } = getRequestOptions(actionTypes.LICENSE.UPDATE_REQUEST, {
     actionType, connectorId, licenseId,
   });
   let response;
@@ -164,7 +164,7 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
     yield put(actions.resource.requestCollection('imports'));
     yield put(actions.resource.requestCollection('licenses'));
   } else {
-    yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
+    yield put(actions.license.licenseUpgradeRequestSubmitted(response));
   }
 }
 
@@ -279,7 +279,7 @@ export function* leaveAccount({ id }) {
 }
 
 export function* createUser({ user, asyncKey }) {
-  const requestOptions = getRequestOptions(actionTypes.USER_CREATE);
+  const requestOptions = getRequestOptions(actionTypes.USER.CREATE);
   const { path, opts } = requestOptions;
 
   yield put(actions.asyncTask.start(asyncKey));
@@ -304,7 +304,7 @@ export function* createUser({ user, asyncKey }) {
 export function* updateUser({ _id, user, asyncKey }) {
   yield put(actions.asyncTask.start(asyncKey));
 
-  const requestOptions = getRequestOptions(actionTypes.USER_UPDATE, {
+  const requestOptions = getRequestOptions(actionTypes.USER.UPDATE, {
     resourceId: _id,
   });
   const { path, opts } = requestOptions;
@@ -327,7 +327,7 @@ export function* updateUser({ _id, user, asyncKey }) {
 }
 
 export function* deleteUser({ _id }) {
-  const requestOptions = getRequestOptions(actionTypes.USER_DELETE, {
+  const requestOptions = getRequestOptions(actionTypes.USER.DELETE, {
     resourceId: _id,
   });
   const { path, opts } = requestOptions;
@@ -347,7 +347,7 @@ export function* deleteUser({ _id }) {
 }
 
 export function* disableUser({ _id, disabled }) {
-  const requestOptions = getRequestOptions(actionTypes.USER_DISABLE, {
+  const requestOptions = getRequestOptions(actionTypes.USER.DISABLE, {
     resourceId: _id,
   });
   const { path, opts } = requestOptions;
@@ -365,7 +365,7 @@ export function* disableUser({ _id, disabled }) {
   yield put(actions.user.org.users.disabled(_id));
 }
 export function* reinviteUser({ _id }) {
-  const requestOptions = getRequestOptions(actionTypes.USER_REINVITE, {
+  const requestOptions = getRequestOptions(actionTypes.USER.REINVITE, {
     resourceId: _id,
   });
   const { path, opts } = requestOptions;
@@ -386,7 +386,7 @@ export function* reinviteUser({ _id }) {
 }
 
 export function* makeOwner({ email }) {
-  const requestOptions = getRequestOptions(actionTypes.USER_MAKE_OWNER);
+  const requestOptions = getRequestOptions(actionTypes.USER.MAKE_OWNER);
   const { path, opts } = requestOptions;
 
   opts.body = { email, account: true };
@@ -505,7 +505,7 @@ export function* rejectSharedInvite({ resourceType, id }) {
 
 export function* requestNumEnabledFlows() {
   const { path, opts } = getRequestOptions(
-    actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST
+    actionTypes.LICENSE.NUM_ENABLED_FLOWS_REQUEST
   );
   let response;
 
@@ -518,11 +518,11 @@ export function* requestNumEnabledFlows() {
     return yield put(actions.api.failure(path, 'GET', error, false));
   }
 
-  yield put(actions.user.org.accounts.receivedNumEnabledFlows(response));
+  yield put(actions.license.receivedNumEnabledFlows(response));
 }
 export function* requestLicenseEntitlementUsage() {
   const { path, opts } = getRequestOptions(
-    actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST
+    actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST
   );
   let response;
 
@@ -535,7 +535,7 @@ export function* requestLicenseEntitlementUsage() {
     return yield put(actions.api.failure(path, 'GET', error, false));
   }
 
-  yield put(actions.user.org.accounts.receivedLicenseEntitlementUsage(response));
+  yield put(actions.license.receivedLicenseEntitlementUsage(response));
 }
 
 export function* addSuiteScriptLinkedConnection({ connectionId }) {
@@ -583,41 +583,41 @@ export function* deleteSuiteScriptLinkedConnection({ connectionId }) {
 }
 
 export const userSagas = [
-  takeLatest(actionTypes.UNLINK_WITH_GOOGLE, unlinkWithGoogle),
-  takeLatest(actionTypes.UPDATE_PROFILE, updateProfile),
-  takeLatest([actionTypes.UPDATE_PREFERENCES,
-    actionTypes.PIN_INTEGRATION,
-    actionTypes.UNPIN_INTEGRATION], updatePreferences),
-  takeEvery(actionTypes.LICENSE_TRIAL_REQUEST, requestTrialLicense),
-  takeEvery(actionTypes.LICENSE_UPGRADE_REQUEST, requestLicenseUpgrade),
-  takeEvery(actionTypes.USER_CHANGE_EMAIL, changeEmail),
-  takeEvery(actionTypes.USER_CHANGE_PASSWORD, changePassword),
-  takeEvery(actionTypes.ACCOUNT_LEAVE_REQUEST, leaveAccount),
-  takeEvery(actionTypes.ACCOUNT_SWITCH, switchAccount),
-  takeEvery(actionTypes.USER_CREATE, createUser),
-  takeEvery(actionTypes.USER_UPDATE, updateUser),
-  takeEvery(actionTypes.USER_DISABLE, disableUser),
-  takeEvery(actionTypes.USER_DELETE, deleteUser),
-  takeEvery(actionTypes.USER_MAKE_OWNER, makeOwner),
-  takeEvery(actionTypes.DEFAULT_ACCOUNT_SET, requestSharedStackNotifications),
-  takeEvery(actionTypes.SHARED_NOTIFICATION_ACCEPT, acceptSharedInvite),
-  takeEvery(actionTypes.SHARED_NOTIFICATION_REJECT, rejectSharedInvite),
+  takeLatest(actionTypes.USER.PROFILE.UNLINK_WITH_GOOGLE, unlinkWithGoogle),
+  takeLatest(actionTypes.USER.PROFILE.UPDATE, updateProfile),
+  takeLatest([actionTypes.USER.PREFERENCES.UPDATE,
+    actionTypes.USER.PREFERENCES.PIN_INTEGRATION,
+    actionTypes.USER.PREFERENCES.UNPIN_INTEGRATION], updatePreferences),
+  takeEvery(actionTypes.LICENSE.TRIAL_REQUEST, requestTrialLicense),
+  takeEvery(actionTypes.LICENSE.UPGRADE_REQUEST, requestLicenseUpgrade),
+  takeEvery(actionTypes.AUTH.USER.CHANGE_EMAIL, changeEmail),
+  takeEvery(actionTypes.AUTH.USER.CHANGE_PASSWORD, changePassword),
+  takeEvery(actionTypes.USER.ACCOUNT.LEAVE_REQUEST, leaveAccount),
+  takeEvery(actionTypes.USER.ACCOUNT.SWITCH, switchAccount),
+  takeEvery(actionTypes.USER.CREATE, createUser),
+  takeEvery(actionTypes.USER.UPDATE, updateUser),
+  takeEvery(actionTypes.USER.DISABLE, disableUser),
+  takeEvery(actionTypes.USER.DELETE, deleteUser),
+  takeEvery(actionTypes.USER.MAKE_OWNER, makeOwner),
+  takeEvery(actionTypes.AUTH.DEFAULT_ACCOUNT_SET, requestSharedStackNotifications),
+  takeEvery(actionTypes.USER.SHARED_NOTIFICATION_ACCEPT, acceptSharedInvite),
+  takeEvery(actionTypes.USER.SHARED_NOTIFICATION_REJECT, rejectSharedInvite),
   takeEvery(
-    actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST,
+    actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST,
     requestLicenseEntitlementUsage
   ),
   takeEvery(
-    actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST,
+    actionTypes.LICENSE.NUM_ENABLED_FLOWS_REQUEST,
     requestNumEnabledFlows
   ),
-  takeLatest(actionTypes.LICENSE_UPDATE_REQUEST, requestLicenseUpdate),
+  takeLatest(actionTypes.LICENSE.UPDATE_REQUEST, requestLicenseUpdate),
   takeEvery(
-    actionTypes.ACCOUNT_ADD_SUITESCRIPT_LINKED_CONNECTION,
+    actionTypes.USER.ACCOUNT.ADD_SUITESCRIPT_LINKED_CONNECTION,
     addSuiteScriptLinkedConnection
   ),
   takeEvery(
-    actionTypes.ACCOUNT_DELETE_SUITESCRIPT_LINKED_CONNECTION,
+    actionTypes.USER.ACCOUNT.DELETE_SUITESCRIPT_LINKED_CONNECTION,
     deleteSuiteScriptLinkedConnection
   ),
-  takeLatest(actionTypes.USER_REINVITE, reinviteUser),
+  takeLatest(actionTypes.USER.REINVITE, reinviteUser),
 ];

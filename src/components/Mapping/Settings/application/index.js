@@ -140,21 +140,10 @@ export default {
 
     // setting date fields
     if (formVal.fieldMappingType === 'standard') {
-      if (formVal.extractDateFormat) {
-        settings.extractDateFormat = formVal.extractDateFormat;
-      }
-
-      if (formVal.extractDateTimezone) {
-        settings.extractDateTimezone = formVal.extractDateTimezone;
-      }
-
-      if (formVal.generateDateFormat) {
-        settings.generateDateFormat = formVal.generateDateFormat;
-      }
-
-      if (formVal.generateDateTimezone) {
-        settings.generateDateTimezone = formVal.generateDateTimezone;
-      }
+      settings.extractDateFormat = formVal.extractDateFormat ? formVal.extractDateFormat : undefined;
+      settings.extractDateTimezone = formVal.extractDateTimezone ? formVal.extractDateTimezone : undefined;
+      settings.generateDateFormat = formVal.generateDateFormat ? formVal.generateDateFormat : undefined;
+      settings.generateDateTimezone = formVal.generateDateTimezone ? formVal.generateDateTimezone : undefined;
     }
 
     if ('discardIfEmpty' in formVal) {
