@@ -25,6 +25,7 @@ import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDe
 import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
 import { TextButton } from '../../components/Buttons';
 import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import ResourceEmptyState from './ResourceEmptyState';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -174,7 +175,9 @@ export default function ResourceList(props) {
           {list.count === 0 ? (
             <>
               {list.total === 0
-                ? <NoResultMessageWrapper>You don&apos;t have any ${createResourceLabel}s.</NoResultMessageWrapper>
+                ? (
+                  <ResourceEmptyState resourceType={resourceType} />
+                )
                 : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
             </>
           ) : (
