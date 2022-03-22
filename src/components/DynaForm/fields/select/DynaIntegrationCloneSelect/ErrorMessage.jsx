@@ -4,7 +4,7 @@ import { FormHelperText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ErrorIcon from '../../../../icons/ErrorIcon';
 import { selectors } from '../../../../../reducers';
-import { REQUIRED_MESSAGE } from '../../../../../utils/messageStore';
+import { INTEGRATION_CLONE_ERROR } from '../../../../../utils/revisions';
 
 const useStyles = makeStyles(theme => ({
   descriptionWrapper: {
@@ -26,7 +26,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function FieldMessage({ integrationId }) {
   const classes = useStyles();
-  const INTEGRATION_CLONE_ERROR = `${REQUIRED_MESSAGE}.You don't have any data to pull`;
   const hasNoClonesToSelect = useSelector(state => {
     const isLoadingCloneFamily = selectors.isLoadingCloneFamily(state, integrationId);
     const cloneList = selectors.cloneFamily(state, integrationId);
