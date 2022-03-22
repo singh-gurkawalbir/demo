@@ -28,6 +28,11 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.primary.main,
     },
   },
+  vertical: {
+    '& > .MuiButton-label': {
+      flexDirection: 'column',
+    },
+  },
 }));
 export default function TextButton(props) {
   const classes = useStyles(props);

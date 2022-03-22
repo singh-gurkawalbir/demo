@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import ExportIcon from '../../../components/icons/ExportsIcon';
 import DataLoaderIcon from '../../../components/icons/DataLoaderIcon';
 import LookupIcon from '../../../components/icons/LookUpIcon';
@@ -40,7 +39,7 @@ export const resourceButtonStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ResourceButton({ onClick, variant, className }) {
+export default function ResourceButton({ onClick, variant }) {
   const classes = resourceButtonStyles();
   const block = blockMap[variant];
 
@@ -48,7 +47,7 @@ export default function ResourceButton({ onClick, variant, className }) {
     <TextButton
       data-test={block.label}
       onClick={onClick}
-      className={clsx(classes.resourceButton, className)}
+      className={classes.resourceButton}
       vertical
       startIcon={<block.Icon />}>
       {block.label}

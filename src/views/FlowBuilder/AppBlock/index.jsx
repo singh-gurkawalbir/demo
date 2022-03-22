@@ -146,11 +146,6 @@ const useStyles = makeStyles(theme => ({
   pgContainerName: {
     background: theme.palette.common.white,
   },
-  flowBuilderResourceButton: {
-    '& > .MuiButton-label': {
-      flexDirection: 'column',
-    },
-  },
 }));
 
 export default function AppBlock({
@@ -355,7 +350,7 @@ export default function AppBlock({
           )}
         </div>
         <div className={classes.buttonContainer}>
-          <ResourceButton onClick={onBlockClick} variant={blockType} className={classes.flowBuilderResourceButton} />
+          <ResourceButton onClick={onBlockClick} variant={blockType} />
           <div className={classes.middleActionContainer}>
             {renderActions(middleActions)}
             {!expanded && hasActions ? (
