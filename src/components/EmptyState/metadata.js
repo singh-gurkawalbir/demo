@@ -31,7 +31,8 @@ export default {
     linkLabel: 'Learn more about exports',
     link: 'https://docs.celigo.com/hc/en-us/articles/226934107-What-are-exports-',
   },
-  apitokens: {
+  // NOTE: Discuss whether it should be access token or API tokens, in url it is access tokens 
+  accesstokens: {
     title: 'You don’t have any API tokens',
     subTitle: 'You can create standalone API tokens and then add them to your various integrations as needed, as well as manage individual API tokens, on this page.',
     type: 'apitokens',
