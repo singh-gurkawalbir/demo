@@ -247,7 +247,6 @@ export default {
     options: [
       {
         items: [
-          {label: 'JSON', value: 'json'},
           {label: 'XML', value: 'xml'},
           {label: 'Plaintext', value: 'plaintext'},
         ],
@@ -259,5 +258,6 @@ export default {
     type: 'uri',
     stage: 'responseMappingExtract',
     showLookup: false,
+    refreshOptionsOnChangesTo: ['webhook.successMediaType'],
   },
 };

@@ -139,7 +139,7 @@ export default {
     const contentType = fieldState?.options?.contentType || fieldState?.contentType || connectionMediaType;
     let resultMode;
 
-    if (fieldState?.type !== 'httprequestbody') {
+    if (fieldState?.type !== 'httprequestbody' && fieldState?.id !== 'webhook.successBody') {
       resultMode = 'text';
     } else if (fieldId === 'file.xml.body') {
       resultMode = 'xml';

@@ -30,8 +30,15 @@ export default {
         webHookToken: webHookTokenField.value,
       };
     }
+    if (fieldId !== 'webhook.successBody') {
+      return null;
+    }
 
-    return null;
+    const successMediaTypeField = fields.find(field => field.fieldId === 'webhook.successMediaType');
+
+    return {
+      contentType: successMediaTypeField.value || 'json',
+    };
   },
   preSave: (formValues, resource) => {
     const retValues = { ...formValues };
