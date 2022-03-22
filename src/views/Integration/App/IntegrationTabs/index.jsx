@@ -25,7 +25,7 @@ import GroupOfUsersIcon from '../../../../components/icons/GroupOfUsersIcon';
 import SingleUserIcon from '../../../../components/icons/SingleUserIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getAdminLevelTabs } from '../../../../utils/integrationApps';
-import PageContent from '../../../../components/PageContent';
+import TabContent from '../../../../components/TabContent';
 
 const getAllTabs = isUserInErrMgtTwoDotZero => [
   { path: 'settings', label: 'Settings', Icon: SettingsIcon, Panel: SettingsPanel},
@@ -119,9 +119,9 @@ export default function IntegrationTabsComponent() {
   }, [hasAddOns, isUserInErrMgtTwoDotZero, showAdminTab]);
 
   return (
-    <PageContent isIntegrationTabsWrapper>
+    <TabContent >
       <IntegrationTabs tabs={availableTabs} />
-    </PageContent>
+    </TabContent>
 
   );
 }

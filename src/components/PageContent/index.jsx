@@ -12,15 +12,9 @@ const useStyles = makeStyles(theme => ({
   pagingBar: {
     maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px +  ${theme.showMoreHeight}px))`,
   },
-  pageWrapperWithIntegrationTabs: {
-    '& > [role = tabpanel]': {
-      background: 'none',
-      padding: 0,
-      border: 'none',
-    },
-  },
+
 }));
-export default function PageContent({children, isPagingBar = false, isIntegrationTabsWrapper = false, className}) {
+export default function PageContent({children, isPagingBar = false, className}) {
   const classes = useStyles();
 
   return (
@@ -28,7 +22,6 @@ export default function PageContent({children, isPagingBar = false, isIntegratio
       className={clsx(
         classes.pageWrapper,
         {[classes.pagingBar]: isPagingBar},
-        {[classes.pageWrapperWithIntegrationTabs]: isIntegrationTabsWrapper},
         className)}>{children}
     </div>
   );
@@ -38,10 +31,8 @@ PageContent.propTypes = {
   children: PropTypes.element.isRequired,
   isPagingBar: PropTypes.bool,
   className: PropTypes.string,
-  isIntegrationTabsWrapper: PropTypes.bool,
 };
 
 PageContent.defaultProps = {
   isPagingBar: false,
-  isIntegrationTabsWrapper: false,
 };
