@@ -82,11 +82,10 @@ export default {
         Value: ({rowData: r}) => {
           const match = useRouteMatch();
 
-          return (r.numOpenError && (
-          <Status variant="error" size="mini" >
-            <Link data-test="account-dashboard-open-errors" to={`${match.url}/${r._flowId}/errorsList`}>{r.numOpenError} </Link>
-          </Status>
-          )
+          return (
+            <Status variant={r.numOpenError ? 'error' : 'success'} size="mini" >
+              <Link data-test="account-dashboard-open-errors" to={`${match.url}/${r._flowId}/errorsList`}>{r.numOpenError} </Link>
+            </Status>
           );
         },
       },

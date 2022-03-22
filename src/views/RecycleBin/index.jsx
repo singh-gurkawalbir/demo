@@ -19,6 +19,8 @@ import Spinner from '../../components/Spinner';
 import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
 import ActionGroup from '../../components/ActionGroup';
 import PageWrapper from '../../components/MainComponentWrapper';
+import emptyStateResource from '../../components/EmptyState/metadata';
+import EmptyState from '../../components/EmptyState';
 
 export const LoadingMask = ({message}) => (
   <Loader open>
@@ -31,6 +33,7 @@ const defaultFilter = {
   sort: { orderBy: 'doc.name', order: 'asc' },
 };
 
+const {recyclebin} = emptyStateResource;
 export default function RecycleBin(props) {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -89,7 +92,12 @@ export default function RecycleBin(props) {
             {list.count === 0 ? (
               <>
                 {list.total === 0
-                  ? <NoResultMessageWrapper noPadding>Recycle bin is empty.</NoResultMessageWrapper>
+                  ? (
+                    <EmptyState
+                      title={recyclebin.title}
+                      subTitle={recyclebin.subTitle}
+                      type={recyclebin.type} />
+                  )
                   : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
               </>
             ) : (

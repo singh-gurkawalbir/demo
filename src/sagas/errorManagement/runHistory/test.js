@@ -137,4 +137,36 @@ describe('requestRunHistory saga test cases', () => {
       )
       .run();
   });
+  test('should make api request for run history with integrationId as none when flow is a standalone flow', () => {
+    const flowId = 'flow-111';
+
+    const flow = {
+      _id: flowId,
+      pageGenerators: [],
+      pageProcessors: [],
+    };
+    const { path, opts } = getRequestOptions(actionTypes.ERROR_MANAGER.RUN_HISTORY.REQUEST, {
+      flowId,
+      integrationId: 'none',
+    });
+
+    return expectSaga(requestRunHistory, { flowId })
+      .provide([
+        [select(selectors.resource, 'flows', flowId), flow],
+        [call(apiCallWithRetry, {
+          path,
+          opts,
+          hidden: true,
+        }), sampleHistory],
+      ])
+      .call(apiCallWithRetry, {
+        path,
+        opts,
+        hidden: true,
+      })
+      .put(
+        actions.errorManager.runHistory.received({ flowId, runHistory: sampleHistory })
+      )
+      .run();
+  });
 });

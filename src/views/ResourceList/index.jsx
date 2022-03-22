@@ -21,10 +21,14 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import StackShareDrawer from '../../components/StackShare/Drawer';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
-import { TextButton } from '../../components/Buttons';
+import { TextButton, FilledButton } from '../../components/Buttons';
 import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
 import PageWrapper from '../../components/MainComponentWrapper';
 import ActionGroup from '../../components/ActionGroup';
+import EmptyState from '../../components/EmptyState';
+import emptyStatesMetaData from '../../components/EmptyState/metadata';
+
+const emptyStateResource = emptyStatesMetaData;
 
 const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
 const resourcesToLoad = resourceType => {
@@ -122,6 +126,7 @@ export default function ResourceList(props) {
 
   const actionProps = useMemo(() => ({ showTradingPartner }), [showTradingPartner]);
   const isPagingBar = list.count >= 100;
+  const resource = emptyStateResource[resourceType];
 
   return (
     <CheckPermissions
@@ -159,7 +164,26 @@ export default function ResourceList(props) {
           {list.count === 0 ? (
             <>
               {list.total === 0
-                ? <NoResultMessageWrapper>You don&apos;t have any ${createResourceLabel}s.</NoResultMessageWrapper>
+                ? (
+                  <EmptyState
+                    title={resource.title}
+                    subTitle={resource.subTitle}
+                    type={resource.type}
+                  >
+                    <FilledButton
+                      data-test="addNewResource"
+                      href={`${location.pathname}/add/${resourceType}/${generateNewId()}`}>
+                      {resource.buttonLabel}
+                    </FilledButton>
+                    <TextButton
+                      data-test="openResourceDocLink"
+                      underline
+                      href={resource.link}
+                      target="_blank">
+                      {resource.linkLabel}
+                    </TextButton>
+                  </EmptyState>
+                )
                 : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
             </>
           ) : (
