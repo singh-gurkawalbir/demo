@@ -1,7 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../../../../reducers';
-import ResourceTable from '../../../../../../ResourceTable';
+import CeligoTable from '../../../../../../CeligoTable';
+import revisionErrorsMetadata from '../../../../../../ResourceTable/revisionErrors/metadata';
 import ErrorInfoDrawer from '../ErrorInfoDrawer';
 
 export default function ErrorTable({ integrationId, revisionId }) {
@@ -13,7 +14,7 @@ export default function ErrorTable({ integrationId, revisionId }) {
 
   return (
     <>
-      <ResourceTable resourceType="revisionErrors" resources={revisionErrors} />
+      <CeligoTable {...revisionErrorsMetadata} data={revisionErrors} />
       <ErrorInfoDrawer integrationId={integrationId} revisionId={revisionId} />
     </>
   );

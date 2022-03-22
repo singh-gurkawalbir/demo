@@ -11,7 +11,8 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import ActionGroup from '../../../../../components/ActionGroup';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import RevisionFilters from './RevisionFilters';
-import ResourceTable from '../../../../../components/ResourceTable';
+import CeligoTable from '../../../../../components/CeligoTable';
+import revisionsMetadata from '../../../../../components/ResourceTable/revisions/metadata';
 import Spinner from '../../../../../components/Spinner';
 import ViewDetailsDrawer from '../../../../../components/drawer/Revisions/ViewDetails';
 import OpenPullDrawer from '../../../../../components/drawer/Revisions/Pull/Open';
@@ -93,10 +94,10 @@ const RevisionsList = ({ integrationId }) => {
 
   return (
     <>
-      <ResourceTable
-        resourceType="revisions"
+      <CeligoTable
+        {...revisionsMetadata}
         filterKey={getRevisionFilterKey(integrationId)}
-        resources={filteredRevisions}
+        data={filteredRevisions}
       />
       <NoRevisionsInfo />
     </>

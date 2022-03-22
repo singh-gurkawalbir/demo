@@ -1,4 +1,5 @@
 
+import { nanoid } from 'nanoid';
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 import { REVISION_TYPES, REVISION_CREATION_STATUS } from '../../../../utils/constants';
@@ -79,7 +80,7 @@ export default (state = {}, action) => {
           status: 'requested',
         };
         break;
-      case actionTypes.INTEGRATION_LCM.REVISION.RECEIVED_ERRORS:
+      case actionTypes.INTEGRATION_LCM.REVISION.RECEIVED_ERRORS: {
         if (!draft[integrationId]) {
           draft[integrationId] = {};
         }
@@ -89,9 +90,12 @@ export default (state = {}, action) => {
         if (!draft[integrationId][revisionId].errors) {
           draft[integrationId][revisionId].errors = {};
         }
+        const errorList = errors.map(e => ({...e, _id: nanoid() }));
+
         draft[integrationId][revisionId].errors.status = 'received';
-        draft[integrationId][revisionId].errors.data = errors || [];
+        draft[integrationId][revisionId].errors.data = errorList || [];
         break;
+      }
       default:
     }
   });

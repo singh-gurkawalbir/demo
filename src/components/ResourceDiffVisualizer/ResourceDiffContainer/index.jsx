@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import CollapsableContainer from '../CollapsableContainer';
 import Title from './Title';
 import DiffPanel from './DiffPanel';
+import { capitalizeFirstLetter } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   resourceContainer: {
@@ -16,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const getResourceTypeTitle = resourceType => `${resourceType[0].toUpperCase()}${resourceType.slice(1)}s`;
+const getResourceTypeTitle = resourceType => `${capitalizeFirstLetter(resourceType)}s`;
 
 export default function ResourceDiffContainer({ diff, titles, resourceType, forceExpand, integrationId }) {
   const classes = useStyles();
