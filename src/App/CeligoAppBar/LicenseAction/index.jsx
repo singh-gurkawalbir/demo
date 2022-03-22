@@ -200,7 +200,7 @@ function LicenseAction() {
   const entitlementOfEndpointsDialog = useCallback(() => {
     confirmDialog({
       title: 'Upgrade plan',
-      message: 'ou have reached the entitlement of endpoints for your free subscription. Upgrade to unlock your data integration potential with more endpoints.',
+      message: 'You have reached the entitlement of endpoints for your free subscription. Upgrade to unlock your data integration potential with more endpoints.',
       buttons: [
         { label: 'Request upgrade',
           onClick: () => {

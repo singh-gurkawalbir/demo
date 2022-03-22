@@ -70,7 +70,9 @@ export default function TileNotification({ content, expired, connectorId, licens
   const single = tileStatus === TILE_STATUS.IS_PENDING_SETUP || (!trialExpired && (isIntegrationV2 || !expired));
 
   const onClickBuyButton = useCallback(event => {
-    event?.stopPropagation();
+    if (event) {
+      event.stopPropagation();
+    }
     confirmDialog({
       title: 'Request to buy subscription',
       message: 'We will contact you to buy your subscription.',
