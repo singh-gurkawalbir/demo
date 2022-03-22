@@ -129,7 +129,7 @@ export default function DynaIntegrationCloneSelect(props) {
   );
 
   if (isLoadingCloneFamily) {
-    return <div className={classes.spinnerWrapper}><Spinner /></div>;
+    return <Spinner className={classes.spinnerWrapper} />;
   }
 
   return (

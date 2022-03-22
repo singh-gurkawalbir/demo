@@ -12,10 +12,10 @@ const useStyles = makeStyles({
 const anchorProps = {
   component: 'a',
   target: '_blank',
-  href: 'https://docs.celigo.com/hc/en-us/articles/360039326071-Handlebars-helper-reference',
+  href: 'https://docs.celigo.com/hc/en-us/articles/4844290103707',
 };
 
-export default function HandlebarGuide() {
+export default function RevisionsGuide() {
   const theme = useTheme();
   const classes = useStyles();
   const hasWideScreen = useMediaQuery(theme.breakpoints.up('md'));
@@ -30,11 +30,11 @@ export default function HandlebarGuide() {
           Revisions guide
         </TextButton>
       ) : (
-        <Tooltip title="Handlebars guide" placement="bottom" aria-label="handlebars guide" >
+        <Tooltip title="Revisions guide" placement="bottom" aria-label="revisions guide" >
           <IconButton
             {...anchorProps}
             className={classes.button}
-            aria-label="handlebars guide">
+            aria-label="revisions guide">
             <Icon />
           </IconButton>
         </Tooltip>

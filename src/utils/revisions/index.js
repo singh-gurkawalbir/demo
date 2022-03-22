@@ -129,7 +129,8 @@ const getDiffContent = (diff, type) => {
   };
 };
 
-export const getRevisionResourceLevelChanges = (overallDiff = {}, type, sortKeys = false) => {
+export const getRevisionResourceLevelChanges = (overallDiff, type, sortKeys = false) => {
+  if (!overallDiff) return;
   const { numConflicts } = overallDiff;
   const { before, after } = getDiffContent(overallDiff, type);
   const diffs = {};

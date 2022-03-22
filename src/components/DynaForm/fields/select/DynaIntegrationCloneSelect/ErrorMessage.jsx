@@ -36,16 +36,14 @@ export default function FieldMessage({ integrationId }) {
 
   if (hasNoClonesToSelect) {
     return (
-      <>
-        <FormHelperText
-          error
-          className={classes.descriptionWrapper}
-          component="div">
-          <div className={classes.error}>
-            <ErrorIcon className={classes.icon} /> {INTEGRATION_CLONE_ERROR}
-          </div>
-        </FormHelperText>
-      </>
+      <FormHelperText
+        error
+        className={classes.descriptionWrapper}
+        component="div">
+        <div className={classes.error}>
+          <ErrorIcon className={classes.icon} /> {INTEGRATION_CLONE_ERROR}
+        </div>
+      </FormHelperText>
     );
   }
 

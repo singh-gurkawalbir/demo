@@ -20,11 +20,7 @@ export default function ResourceDiffContent({ integrationId, type }) {
   const isResourceComparisonInProgress = useSelector(state => selectors.isResourceComparisonInProgress(state, integrationId));
   const isDiffExpanded = useSelector(state => selectors.isDiffExpanded(state, integrationId));
   // end selectors
-  const resourceDiffInfo = useMemo(() => {
-    if (revisionResourceDiff) {
-      return getRevisionResourceLevelChanges(revisionResourceDiff, type);
-    }
-  }, [revisionResourceDiff, type]);
+  const resourceDiffInfo = useMemo(() => getRevisionResourceLevelChanges(revisionResourceDiff, type), [revisionResourceDiff, type]);
 
   if (isResourceComparisonInProgress) {
     return <Spinner centerAll />;
