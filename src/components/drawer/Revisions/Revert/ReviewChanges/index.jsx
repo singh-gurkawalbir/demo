@@ -49,8 +49,7 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
     if (createdRevisionId) {
       history.replace(`${parentUrl}/revert/${createdRevisionId}/final`);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createdRevisionId]);
+  }, [createdRevisionId, history, parentUrl]);
 
   useEffect(() => {
     dispatch(actions.integrationLCM.compare.revertRequest(integrationId, revisionId));

@@ -147,6 +147,23 @@ const routes = [
           { path: '/notifications', breadcrumb: 'Notifications' },
         ],
       },
+      {
+        path: '/revisions',
+        breadcrumb: 'Revisions',
+
+        childRoutes: [
+          { path: '/pull/:revId/open', breadcrumb: 'Open pull'},
+          { path: '/pull/:revId/review', breadcrumb: 'Review pull changes'},
+          { path: '/pull/:revId/merge', breadcrumb: 'Merge pull changes'},
+          { path: '/revert/:tempRevId/open/toBefore/revision/revisionId', breadcrumb: 'Open revert'},
+          { path: '/revert/:tempRevId/open/toAfter/revision/revisionId', breadcrumb: 'Open revert'},
+          { path: '/revert/:revId/review', breadcrumb: 'Review revert changes'},
+          { path: '/revert/:revId/final', breadcrumb: 'Merge revert changes'},
+          { path: '/snapshot/:tempRevId/open', breadcrumb: 'Open snapshot' },
+          { path: '/view/:revId/mode/changes', breadcrumb: 'View resources changed'},
+          { path: '/view/:revId/mode/details', breadcrumb: 'View details'},
+        ],
+      },
       ...flowBuilderRoutes,
     ],
   },

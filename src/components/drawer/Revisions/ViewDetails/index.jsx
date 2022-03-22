@@ -88,6 +88,9 @@ function ViewRevisionDetailsContent({ integrationId, parentUrl }) {
     return ['details'];
   }, shallowEqual);
 
+  if (!accessibleTabs.includes(mode)) {
+    history.replace(parentUrl);
+  }
   const drawerTitle = useSelector(state => selectors.revision(state, integrationId, revisionId)?.description);
   const availableTabs = accessibleTabs.map(tabId => allTabs[tabId]);
 

@@ -56,8 +56,7 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
     if (createdRevisionId) {
       history.replace(`${parentUrl}/pull/${createdRevisionId}/merge`);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createdRevisionId]);
+  }, [createdRevisionId, history, parentUrl]);
 
   useEffect(() => {
     dispatch(actions.integrationLCM.compare.pullRequest(integrationId, revisionId));

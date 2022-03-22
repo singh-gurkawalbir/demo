@@ -11,7 +11,5 @@ export default function useHandleInvalidRevision({ integrationId, revisionId, pa
     if (!isValidRevision) {
       history.replace(parentUrl);
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isValidRevision]);
+  }, [isValidRevision, history, parentUrl]);
 }
