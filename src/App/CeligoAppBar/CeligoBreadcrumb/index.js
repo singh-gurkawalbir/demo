@@ -159,7 +159,7 @@ const routes = [
           { path: '/revert/:tempRevId/open/toAfter/revision/revisionId', breadcrumb: 'Open revert'},
           { path: '/revert/:revId/review', breadcrumb: 'Review revert changes'},
           { path: '/revert/:revId/final', breadcrumb: 'Merge revert changes'},
-          { path: '/snapshot/:tempRevId/open', breadcrumb: 'Open snapshot' },
+          { path: '/snapshot/:tempRevId/open', breadcrumb: 'Create snapshot' },
           { path: '/view/:revId/mode/changes', breadcrumb: 'View resources changed'},
           { path: '/view/:revId/mode/details', breadcrumb: 'View details'},
         ],
