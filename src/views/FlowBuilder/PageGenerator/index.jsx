@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
+import clsx from 'clsx';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -37,6 +38,7 @@ const PageGenerator = ({
   isViewMode,
   onDelete,
   openErrorCount,
+  className,
   ...pg
 }) => {
   const pending = !pg._exportId;
@@ -280,7 +282,7 @@ const PageGenerator = ({
   // console.log('render: <PageGenerator>');
 
   return (
-    <div className={classes.pgContainer}>
+    <div className={clsx(classes.pgContainer, className)}>
       <AppBlock
         integrationId={integrationId}
         name={blockName}
