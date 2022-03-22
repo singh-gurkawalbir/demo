@@ -1,28 +1,29 @@
 import React from 'react';
+import {makeStyles} from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import CollapsableContainer from '../CollapsableContainer';
 import ConflictsDiffViewer from '../ConflictsDiffViewer';
-// import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
-// import { serializeConflicts, fetchConflictsOnBothBases } from '../utils';
+
+const useStyles = makeStyles(theme => ({
+  conflictsContainer: {
+    margin: theme.spacing(1),
+  },
+}));
 
 export default function Conflicts({ conflicts }) {
-  if (!conflicts || !conflicts.length) return null;
+  const classes = useStyles();
 
-  // const { ours, theirs } = fetchConflictsOnBothBases(conflicts);
+  if (!conflicts || !conflicts.length) return null;
+  const Title = () => <Typography variant="body2"> Conflicts </Typography>;
 
   return (
-    <>
-      <h1> Conflicts </h1>
-      {/* <ReactDiffViewer
-        hideLineNumbers
-        compareMethod={DiffMethod.WORDS}
-        leftTitle="Ours"
-        rightTitle="Theirs"
-        oldValue={JSON.stringify(serializeConflicts(ours), null, 2)}
-        newValue={JSON.stringify(serializeConflicts(theirs), null, 2)}
-        /> */}
-      <ConflictsDiffViewer
-        leftTitle="Current"
-        rightTitle="Remote"
-       />
-    </>
+    <div className={classes.conflictsContainer}>
+      <CollapsableContainer title={<Title />}>
+        <ConflictsDiffViewer
+          leftTitle="Current"
+          rightTitle="Remote"
+          conflicts={conflicts} />
+      </CollapsableContainer>
+    </div>
   );
 }

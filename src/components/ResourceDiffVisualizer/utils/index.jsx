@@ -23,13 +23,30 @@ export function serializeConflicts(conflicts, basePath = '') {
 }
 
 export function fetchConflictsOnBothBases(conflicts = []) {
-  return conflicts.reduce((result, conflict) => {
-    const [ourConflict, theirConflict] = conflict;
-    const {ours, theirs} = result;
+  const conflictsInfo = conflicts.reduce((result, conflict) => {
+    const [currentConflict, remoteConflict] = conflict;
+    const {current, remote} = result;
 
     return {
-      ours: [...ours, ourConflict],
-      theirs: [...theirs, theirConflict],
+      current: [...current, currentConflict],
+      remote: [...remote, remoteConflict],
     };
-  }, { ours: [], theirs: []});
+  }, { current: [], remote: []});
+
+  const serializedConflicts = {
+    current: serializeConflicts(conflictsInfo.current),
+    remote: serializeConflicts(conflictsInfo.remote),
+  };
+  let i = 0;
+  const list = [];
+
+  while (i < conflicts.length) {
+    list.push({
+      current: serializedConflicts.current[i],
+      remote: serializedConflicts.remote[i],
+    });
+    i += 1;
+  }
+
+  return list;
 }
