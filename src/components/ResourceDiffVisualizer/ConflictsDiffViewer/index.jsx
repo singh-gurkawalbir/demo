@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     '& pre': {
       fontFamily: 'source sans pro',
       fontSize: 16,
-      marginTop: 0,
+      marginTop: theme.spacing(0.5),
       marginRight: theme.spacing(2),
       backgroundColor: theme.palette.background.paper2,
       padding: theme.spacing(1),
@@ -93,7 +93,6 @@ export default function ConflictsDiffViewer(props) {
         <Typography variant="body2"><b>{leftTitle}</b></Typography>
         <Typography variant="body2"><b>{rightTitle}</b></Typography>
       </div>
-
       {
         readableConflicts.map((conflict, index) => (
           <Conflict
