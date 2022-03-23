@@ -106,6 +106,7 @@ import { getSelectedRange } from '../utils/flowMetrics';
 import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
 import { filterMap } from '../components/GlobalSearch/filterMeta';
+import { getRevisionFilterKey, getFilteredRevisions } from '../utils/revisions';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -431,7 +432,7 @@ selectors.addNewChildSteps = (state, integrationId) => {
   return { steps: modifiedSteps };
 };
 
-selectors.currentStepPerMode = (state, { mode, integrationId, cloneResourceId, cloneResourceType }) => {
+selectors.currentStepPerMode = (state, { mode, integrationId, revisionId, cloneResourceId, cloneResourceType }) => {
   let steps = [];
 
   if (mode === 'install') {
@@ -442,6 +443,8 @@ selectors.currentStepPerMode = (state, { mode, integrationId, cloneResourceId, c
     steps = selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true })?.steps;
   } else if (mode === 'clone') {
     steps = selectors.cloneInstallSteps(state, cloneResourceType, cloneResourceId);
+  } else if (mode === 'revision') {
+    steps = selectors.currentRevisionInstallSteps(state, integrationId, revisionId);
   }
 
   return (steps || []).find(s => !!s.isCurrentStep);
@@ -2428,7 +2431,7 @@ selectors.mkDIYIntegrationFlowList = () => {
   return createSelector(
     state => state?.data?.resources?.integrations,
     state => state?.data?.resources?.flows,
-    (state, integrationId) => selectors.latestJobMap(state, integrationId || 'none')?.data,
+    (state, integrationId, childId) => selectors.latestJobMap(state, childId || integrationId || 'none')?.data,
     (state, integrationId) => integrationId,
     (_1, _2, childId) => childId,
     (_1, _2, _3, isUserInErrMgtTwoDotZero) => isUserInErrMgtTwoDotZero,
@@ -5211,7 +5214,9 @@ selectors.applicationType = (state, resourceType, id) => {
   if (adaptorType === 'http' && resourceObj?.http?.formType === 'rest') {
     adaptorType = 'rest';
   }
-
+  if (adaptorTypeMap[adaptorType] === 'graph_ql' || resourceObj?.http?.formType === 'graph_ql') {
+    adaptorType = 'graph_ql';
+  }
   // For Data Loader cases, there is no image.
   if (getStagedValue('/type') === 'simple' || resourceObj?.type === 'simple') {
     return '';
@@ -6679,3 +6684,72 @@ selectors.globalSearchResults = createSelector(
   (_, resourceResults) => resourceResults
 );
 
+selectors.revisionsFilter = (state, integrationId) => {
+  const filterKey = getRevisionFilterKey(integrationId);
+
+  return selectors.filter(state, filterKey);
+};
+
+selectors.filteredRevisions = createSelector(
+  selectors.revisions,
+  selectors.revisionsFilter,
+  (revisionsList, revisionsFilter) => getFilteredRevisions(revisionsList, revisionsFilter)
+);
+
+selectors.resourceName = (state, resourceId, resourceType) => {
+  if (!resourceId || !resourceType) return '';
+  const resource = selectors.resource(state, resourceType, resourceId);
+
+  return resource?.name || resource?.id;
+};
+
+selectors.resourceReferencesPerIntegration = createSelector(
+  selectors.resourceReferences,
+  state => state.data.resources.flows,
+  state => state.data.resources.integrations,
+  (resourceReferences, flowsList, integrationsList) => {
+    if (!resourceReferences) return null;
+    const flowReferences = resourceReferences.filter(ref => ref.resourceType === 'flows');
+    const results = [];
+
+    flowReferences.forEach(flowRef => {
+      const integrationId = flowsList?.find(f => f._id === flowRef.id)?._integrationId;
+      const integrationName = integrationsList?.find(i => i._id === integrationId)?.name;
+
+      results.push({
+        flowId: flowRef.id,
+        flowName: flowRef.name,
+        integrationId,
+        integrationName,
+      });
+    });
+
+    return results;
+  }
+);
+
+selectors.currentRevisionInstallSteps = createSelector(
+  selectors.revisionInstallSteps,
+  (state, _, revisionId) => selectors.updatedRevisionInstallStep(state, revisionId),
+  (revisionInstallSteps, updatedRevisionInstallStep) => revisionInstallSteps.map(step => {
+    if (step.isCurrentStep) {
+      return {...step, ...updatedRevisionInstallStep};
+    }
+
+    return step;
+  })
+);
+
+selectors.areAllRevisionInstallStepsCompleted = (state, integrationId, revisionId) => {
+  const installSteps = selectors.currentRevisionInstallSteps(state, integrationId, revisionId);
+
+  // TODO:  check for hidden step. Do we need to consider them?
+  return installSteps.every(step => step.completed);
+};
+
+selectors.accountHasSandbox = state => {
+  const accounts = selectors.accountSummary(state);
+  const selectedAccount = accounts?.find(a => a.selected);
+
+  return !!(selectedAccount?.hasSandbox || selectedAccount?.hasConnectorSandbox);
+};

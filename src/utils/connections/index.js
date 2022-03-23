@@ -80,6 +80,8 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
     expression.push({ 'rdbms.type': type });
   } else if (type === 'rest' || (type === 'http' && connection?.http?.formType === 'rest')) {
     expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
+  } else if (type === 'graph_ql' || (type === 'http' && connection?.http?.formType === 'graph_ql')) {
+    expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
   } else if (type === 'http') {
     expression.push({ 'http.formType': { $ne: 'rest' } });
     expression.push({ type });
@@ -175,6 +177,8 @@ export const amazonSellerCentralAuthURI = {
   A19VAU5U5O7RUS: 'https://sellercentral.amazon.sg/apps/authorize/consent',
   A39IBJ37TRP1C6: 'https://sellercentral.amazon.com.au/apps/authorize/consent',
   A1VC38T7YXB528: 'https://sellercentral.amazon.co.jp/apps/authorize/consent',
+  ARBP9OOSHTCHU: 'https://sellercentral.amazon.eg/apps/authorize/consent',
+  A17E79C6D8DWNP: 'https://sellercentral.amazon.sa/apps/authorize/consent',
 };
 
 export const amazonSellerCentralMarketPlaceOptions = {
@@ -193,7 +197,9 @@ export const amazonSellerCentralMarketPlaceOptions = {
     {label: 'Italy', value: 'APJ6JRA9NG5V4'},
     {label: 'Sweden', value: 'A2NODRKZP88ZB9'},
     {label: 'Poland', value: 'A1C3SOZRARQ6R3'},
+    {label: 'Egypt', value: 'ARBP9OOSHTCHU'},
     {label: 'Turkey', value: 'A33AVAJ2PDY3EV'},
+    {label: 'Saudi Arabia', value: 'A17E79C6D8DWNP'},
     {label: 'United Arab Emirates', value: 'A2VIGQ35RCS4UG'},
     {label: 'India', value: 'A21TJRUUN4KGV'},
   ],
@@ -207,7 +213,7 @@ export const amazonSellerCentralMarketPlaceOptions = {
 export const amazonSellerCentralBaseUriForNonMWSConnection = {
   northAmerica: 'https://sellingpartnerapi-na.amazon.com/',
   europe: 'https://sellingpartnerapi-eu.amazon.com/',
-  farEast: 'https://sellingpartnerapi-fe.amazon.com',
+  farEast: 'https://sellingpartnerapi-fe.amazon.com/',
 };
 
 export const amazonSellerCentralBaseUriForMWSConnection = {

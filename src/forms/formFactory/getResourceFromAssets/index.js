@@ -223,6 +223,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         meta = formMeta.connections.rdbms[type];
       } else if (resource?.http?.formType === 'rest' && type === 'http') {
         meta = formMeta.connections.rest;
+      } else if (type === 'graph_ql' || resource?.http?.formType === 'graph_ql') {
+        meta = formMeta.connections.graphql;
       } else {
         meta = formMeta.connections[type];
       }
@@ -272,6 +274,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           );
         } else if (resource?.http?.formType === 'rest' && type === 'http') {
           meta = meta.rest;
+        } else if (type === 'graph_ql' || resource?.http?.formType === 'graph_ql') {
+          meta = resource.useParentForm ? meta.http : meta.graphql;
         } else {
           meta = meta[type];
         }
@@ -325,6 +329,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           } else {
             meta = meta.json;
           }
+        } else if (type === 'graph_ql' || resource?.http?.formType === 'graph_ql') {
+          meta = resource.useParentForm ? meta.http : meta.graphql;
         } else {
           meta = meta[type];
         }

@@ -146,6 +146,13 @@ const connectors = [
     keywords: 'database,db',
     group: 'db',
   },
+  {
+    id: 'graph_ql',
+    name: 'GraphQL',
+    type: 'graph_ql',
+    group: 'tech',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/4843857027227',
+  },
   // Application connectors
   {
     id: 'activecampaign',
