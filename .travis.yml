@@ -4,6 +4,7 @@ node_js:
 cache:
   yarn: true
 script:
+  - yarn clearCache
   - yarn test
   - yarn run lint 
   - yarn build-storybook 
