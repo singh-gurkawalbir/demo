@@ -2562,16 +2562,11 @@ selectors.getResourceType = (state, { resourceType, resourceId }) => {
 };
 
 // As of now, we are not showing the lookup option for BigQuery imports
-selectors.mkMappingHasLookupOption = () => {
-  const resourceSel = selectors.makeResourceSelector();
+selectors.mappingHasLookupOption = (state, resourceType, connectionId) => {
+  const connection = selectors.resource(state, resourceType, connectionId) || {};
 
-  return createSelector(
-    (state, resourceType, resourceId) => resourceSel(state, resourceType, resourceId),
-    connection => connection?.rdbms?.type !== 'bigquery',
-  );
+  return connection?.rdbms?.type !== 'bigquery';
 };
-
-selectors.mappingHasLookupOption = selectors.mkMappingHasLookupOption();
 
 // this selector updates the field options based on the
 // parent field media type
