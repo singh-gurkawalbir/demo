@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardActions, Typography } from '@material-ui/core';
+import { Card, CardActions, Typography, Tooltip } from '@material-ui/core';
 import {applicationsList} from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
@@ -171,10 +171,10 @@ export default function MarketplaceList() {
         title: 'You have already used up your trial license',
         isHtml: true,
         allowedTags: ['b'],
-        message: 'Click <b>Request a demo</b> to have someone contact you to learn more about your needs.',
+        message: 'Click <b>Request demo</b> to have someone contact you to learn more about your needs.',
         buttons: [
           {
-            label: 'Request a demo',
+            label: 'Request demo',
             onClick: () => {
               requestDemo(connector);
             },
@@ -253,11 +253,13 @@ export default function MarketplaceList() {
                 </FilledButton>
                 )}
                 {connector.canRequestDemo && (
-                <FilledButton
-                  data-test="contactSales"
-                  onClick={() => requestDemo(connector)}>
-                  Request a demo
-                </FilledButton>
+                <Tooltip title="Have a solutions consultant contact me to demonstrate how this Integration App will automate my business processes." placement="bottom">
+                  <FilledButton
+                    data-test="contactSales"
+                    onClick={() => requestDemo(connector)}>
+                    Request demo
+                  </FilledButton>
+                </Tooltip>
                 )}
               </CardActions>
               <div className={classes.cardFooter}>
