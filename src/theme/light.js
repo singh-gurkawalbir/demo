@@ -151,7 +151,7 @@ export default {
       },
       outlinedSecondary: {
         borderColor: colors.celigoNeutral3,
-        color: colors.celigoNeutral8,
+        color: colors.celigoNeutral6,
         '&:hover': {
           color: colors.celigoNeutral6,
           backgroundColor: colors.celigoWhite,
