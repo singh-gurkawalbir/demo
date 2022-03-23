@@ -19,12 +19,12 @@ export const nodeSize = {
     height: 295,
   },
   router: {
-    width: 50,
-    height: 50,
+    width: 34,
+    height: 34,
   },
   terminalFree: {
-    width: 24,
-    height: 24,
+    width: 20,
+    height: 20,
   },
   terminalBlocked: {
     width: 1,
@@ -243,7 +243,8 @@ export const getPositionInEdge = (edgeCommands, position = 'center', offset = 0)
   } else { // right
     lengthFromStart = lengthOFEdges - offset;
   }
-  console.log(lengthOFEdges, lengthFromStart, position, offset);
+
+  // console.log(lengthOFEdges, lengthFromStart, position, offset);
 
   for (let i = 0; i < linePlotsCoordinates.length - 1; i += 1) {
     const coord1 = linePlotsCoordinates[i];

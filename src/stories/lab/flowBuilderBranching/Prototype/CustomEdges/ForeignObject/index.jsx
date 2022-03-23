@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import { getPositionInEdge } from '../../lib';
 
-const foreignObjectSize = 22;
+const foreignObjectSize = 20;
 
 export default function ForeignObject({edgePath, position, offset, children}) {
   const [edgeX, edgeY] = useMemo(() =>
@@ -10,7 +10,7 @@ export default function ForeignObject({edgePath, position, offset, children}) {
   return (
     <foreignObject
       width={foreignObjectSize}
-      height={foreignObjectSize}
+      height={foreignObjectSize + 1}
       x={edgeX - foreignObjectSize / 2}
       y={edgeY - foreignObjectSize / 2}
       requiredExtensions="http://www.w3.org/1999/xhtml">

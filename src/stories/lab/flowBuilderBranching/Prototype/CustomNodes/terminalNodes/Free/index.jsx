@@ -8,15 +8,17 @@ import DefaultHandle from '../../Handles/DefaultHandle';
 
 const useStyles = makeStyles(theme => ({
   container: {
-    width: 24,
-    height: 24,
+    width: 20,
+    height: 20,
   },
   terminal: {
     backgroundColor: theme.palette.common.white,
-    border: `solid 1px ${theme.palette.secondary.light}`,
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
     color: theme.palette.secondary.light,
     borderRadius: '50%',
     padding: 2,
+    width: 20,
+    height: 20,
   },
 }));
 
