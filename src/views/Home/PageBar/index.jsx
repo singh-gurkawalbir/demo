@@ -68,14 +68,24 @@ export default function IntegrationCeligoPageBar() {
 
       <ActionGroup>
         {permission.create && (
-        <TextButton
-          data-test="newIntegration"
-          component={Link}
-          startIcon={<AddIcon />}
-          to={`${location.pathname}/add/integrations/${generateNewId()}`}
-          >
-          Create integration
-        </TextButton>
+          <>
+            <TextButton
+              data-test="createFlow"
+              component={Link}
+              startIcon={<AddIcon />}
+              to="/integrations/none/flowBuilder/new"
+              >
+              Create flow
+            </TextButton>
+            <TextButton
+              data-test="newIntegration"
+              component={Link}
+              startIcon={<AddIcon />}
+              to={`${location.pathname}/add/integrations/${generateNewId()}`}
+              >
+              Create integration
+            </TextButton>
+          </>
         )}
         {permission.install && (
         <TextButton

@@ -92,7 +92,7 @@ export default {
       {
         items: [
           { label: 'SuiteScript 1.0', value: 'false' },
-          { label: 'SuiteScript 2.0 (beta)', value: 'true' },
+          { label: 'SuiteScript 2.0', value: 'true' },
         ],
       },
     ],

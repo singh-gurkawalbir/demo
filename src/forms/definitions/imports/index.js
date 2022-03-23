@@ -15,6 +15,7 @@ import salesforce from './salesforce';
 import newImport from './new';
 import dynamodb from './dynamodb';
 import commonfileprovider from './commonfileprovider';
+import graphql from './graphql';
 
 export default {
   common,
@@ -34,4 +35,5 @@ export default {
   salesforce,
   dynamodb,
   commonfileprovider,
+  graphql,
 };

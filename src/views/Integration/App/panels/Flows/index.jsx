@@ -31,7 +31,7 @@ import useFormOnCancelContext from '../../../../../components/FormOnCancelContex
 import { FORM_SAVE_STATUS, NO_RESULT_SEARCH_MESSAGE } from '../../../../../utils/constants';
 import DrawerTitleBar from '../../../../../components/drawer/TitleBar';
 import ActionGroup from '../../../../../components/ActionGroup';
-import NoResultMessageWrapper from '../../../../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../../../../components/NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -517,7 +517,7 @@ export default function FlowsPanel({ childId, integrationId }) {
       </div>
       <div className={classes.noSearchResults}>
         {(flowFilter.keyword && !flowSections.length) ? (
-          <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
+          <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>
         ) : ''}
       </div>
     </>

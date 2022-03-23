@@ -17,7 +17,7 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { SCOPES } from '../../../sagas/resourceForm';
 import { TextButton } from '../../../components/Buttons';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
-import NoResultMessageWrapper from '../../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../../components/NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -135,8 +135,8 @@ export default function Licenses(props) {
           {list.count === 0 ? (
             <div>
               {list.total === 0
-                ? <NoResultMessageWrapper>You don&apos;t have any licenses</NoResultMessageWrapper>
-                : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+                ? <NoResultTypography>You don&apos;t have any licenses</NoResultTypography>
+                : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
             </div>
           ) : (
             <CeligoTable

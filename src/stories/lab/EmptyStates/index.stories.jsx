@@ -1,8 +1,8 @@
 import React from 'react';
-import EmptyState from '.';
 import {FilledButton, TextButton} from '../../../components/Buttons';
 import AppBar from '../../mocks/AppBar';
 import PageBar from '../../mocks/PageBar';
+import EmptyState from '../../../components/EmptyState';
 
 export default {
   title: 'Lab/ Empty State',
