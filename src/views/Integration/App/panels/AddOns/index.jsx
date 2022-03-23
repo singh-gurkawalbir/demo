@@ -1,8 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Card, CardActions, Typography } from '@material-ui/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { Card, CardActions, Typography, makeStyles } from '@material-ui/core';
 import RawHtml from '../../../../../components/RawHtml';
 import PanelHeader from '../../../../../components/PanelHeader';
 import { LICENSE_UPGRADE_REQUEST, LICENSE_UPGRADE_SUCCESS_MESSAGE } from '../../../../../utils/messageStore';
@@ -14,6 +12,7 @@ import AddonInstallerButton from '../Admin/sections/Subscription/AddonInstallerB
 import FilledButton from '../../../../../components/Buttons/FilledButton';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
+import {gridViewStyles} from '../../../../Home/View/TileView/HomeCard';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -21,23 +20,6 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-  },
-  addOnContainer: {
-    // backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr));',
-    gridGap: theme.spacing(2),
-    '& > div': {
-      maxWidth: '100%',
-      minWidth: '100%',
-    },
-    [theme.breakpoints.down('xs')]: {
-      gridTemplateColumns: 'repeat(1, minmax(100%, 1fr));',
-    },
-    [theme.breakpoints.up('xs')]: {
-      gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr));',
-    },
   },
   card: {
     height: '318px',
@@ -77,6 +59,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function AddOnsPanel({ integrationId, childId }) {
   const classes = useStyles();
+  const gridViewClasses = gridViewStyles();
   const dispatch = useDispatch();
   // TODO: This integrationAppAddOnState selector doesn't actually return
   // addon state. It returns all IA settings state. This should be refactored
@@ -138,7 +121,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
     <div className={classes.root}>
       <PanelHeader title="Add-ons" />
 
-      <div className={classes.addOnContainer}>
+      <div className={gridViewClasses.container}>
         {addOnMetadata &&
           addOnMetadata.map(data => (
             <Card key={data.id} className={classes.card} elevation={0}>

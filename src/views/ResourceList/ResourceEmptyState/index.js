@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { FilledButton, TextButton } from '../../../components/Buttons';
 import EmptyState from '../../../components/EmptyState';
 import resourceTypeMetaData from '../../../components/EmptyState/metadata';
-import NoResultMessageWrapper from '../../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../../components/NoResultTypography';
 import { generateNewId } from '../../../utils/resource';
 
 export default function ResourceEmptyState({resourceType}) {
@@ -33,7 +33,7 @@ export default function ResourceEmptyState({resourceType}) {
 
         </EmptyState>
       ) : (
-        <NoResultMessageWrapper>You don&apos;t have any {resourceType}.</NoResultMessageWrapper>
+        <NoResultTypography>You don&apos;t have any {resourceType}.</NoResultTypography>
       )}
     </>
 
