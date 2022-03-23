@@ -312,6 +312,7 @@ const newConnections = [
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/360038589232-Set-up-a-connection-to-Constant-Contact',
   },
   {id: 'amazonsellingpartner', name: 'Amazon Seller Central', type: 'http', assistant: 'amazonsellingpartner'},
+  {id: 'recurlyv3', name: 'Recurly v3', type: 'http', assistant: 'recurlyv3'},
 ];
 
 connectors.sort(stringCompare('name'));
