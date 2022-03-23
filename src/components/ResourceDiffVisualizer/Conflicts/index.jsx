@@ -10,11 +10,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const Title = () => <Typography variant="body2"> Conflicts </Typography>;
+
 export default function Conflicts({ conflicts }) {
   const classes = useStyles();
 
   if (!conflicts || !conflicts.length) return null;
-  const Title = () => <Typography variant="body2"> Conflicts </Typography>;
 
   return (
     <div className={classes.conflictsContainer}>
