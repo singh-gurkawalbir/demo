@@ -7,6 +7,7 @@ export default {
     value = {},
     extractFields,
     isGroupedSampleData,
+    hasLookUpOption,
   }) => {
     const { generate, extract } = value;
     const extractfieldsOpts = [];
@@ -78,7 +79,7 @@ export default {
               items: [
                 { label: 'Standard', value: 'standard' },
                 { label: 'Hard-Coded', value: 'hardCoded' },
-                { label: 'Lookup', value: 'lookup' },
+                ...(hasLookUpOption ? [{ label: 'Lookup', value: 'lookup' }] : []),
                 { label: 'Multi-Field', value: 'multifield' },
               ],
             },

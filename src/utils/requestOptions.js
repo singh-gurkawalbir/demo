@@ -263,7 +263,7 @@ export default function getRequestOptions(
       };
     case actionTypes.LICENSE.NUM_ENABLED_FLOWS_REQUEST:
       return {
-        path: '/numEnabledFlows',
+        path: '/licenseEntitlementUsage',
         opts: { method: 'GET' },
       };
     case actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST:

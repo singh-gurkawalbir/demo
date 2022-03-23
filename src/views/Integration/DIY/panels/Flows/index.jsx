@@ -30,7 +30,7 @@ import FlowgroupDrawer from '../../../../../components/drawer/Flowgroup';
 import DragContainer from '../../../../../components/DragContainer';
 import FlowGroupRow from './FlowGroupRow';
 import { shouldHaveUnassignedSection } from '../../../../../utils/flows';
-import NoResultMessageWrapper from '../../../../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../../../../components/NoResultTypography';
 import InfoIcon from '../../../../../components/icons/InfoIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -364,19 +364,19 @@ export default function FlowsPanel({ integrationId, childId }) {
     };
   },
   shallowEqual);
-  const flowErrorCountStatus = useSelector(state => selectors.openErrorsStatus(state, integrationId));
+  const flowErrorCountStatus = useSelector(state => selectors.openErrorsStatus(state, childId || integrationId));
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
 
-    dispatch(actions.errorManager.integrationLatestJobs.requestPoll({ integrationId }));
-    dispatch(actions.errorManager.integrationErrors.requestPoll({ integrationId }));
+    dispatch(actions.errorManager.integrationLatestJobs.requestPoll({ integrationId: childId || integrationId }));
+    dispatch(actions.errorManager.integrationErrors.requestPoll({ integrationId: childId || integrationId }));
 
     return () => {
       dispatch(actions.errorManager.integrationLatestJobs.cancelPoll());
       dispatch(actions.errorManager.integrationErrors.cancelPoll());
     };
-  }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
+  }, [childId, dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const templateName = useSelector(state => {
@@ -485,7 +485,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       </div>
       <div className={classes.noSearchResults}>
         {(finalFilter.keyword && !flows.length && !flowGroupingsSections?.some(({title}) => title.toUpperCase().includes(finalFilter.keyword.toUpperCase()))) ? (
-          <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
+          <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>
         ) : ''}
       </div>
     </>

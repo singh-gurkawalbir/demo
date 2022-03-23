@@ -3114,7 +3114,7 @@ describe('integrationApps selector testcases', () => {
         expiresText: 'Expired on Aug 18th, 2020',
         showLicenseExpiringWarning: true,
         upgradeRequested: true,
-        upgradeText: 'UPGRADE REQUESTED',
+        upgradeText: 'Upgrade requested',
       });
     });
 

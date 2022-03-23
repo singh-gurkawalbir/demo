@@ -930,6 +930,20 @@ export const destinationOptions = {
       value: 'lookupFiles',
     },
   ],
+  graph_ql: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Look up additional records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Look up additional files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
   netsuite: [
     {
       label: 'Import records into destination application',

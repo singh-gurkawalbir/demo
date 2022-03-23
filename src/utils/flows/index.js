@@ -1238,7 +1238,7 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects = [], obj
       (name === UNASSIGNED_SECTION_NAME && !flowObject.doc?._flowGroupingId) || flowObject.doc?._flowGroupingId === groupId);
 
     if (!flowObjetsOfAFlowGroup.length) {
-      return [flowGroupObject];
+      return [flowGroupObject, { emptyMessage: 'No flows have been added to this group.' }];
     }
 
     flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1] = { ...flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1], isLastFlowInFlowGroup: true};

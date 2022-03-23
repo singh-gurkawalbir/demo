@@ -227,6 +227,7 @@ import bartender from './bartender';
 import zohoexpense from './zohoexpense';
 import jazzhr from './jazzhr';
 import segment from './segment';
+import microsoftpowerautomate from './microsoftpowerautomate';
 import happyreturns from './happyreturns';
 
 export default {
@@ -459,5 +460,6 @@ export default {
   zohoexpense,
   jazzhr,
   segment,
+  microsoftpowerautomate,
   happyreturns,
 };
