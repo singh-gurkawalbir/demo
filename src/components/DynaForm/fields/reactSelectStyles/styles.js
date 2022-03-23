@@ -92,9 +92,10 @@ export function CustomReactSelectStyles() {
         color: theme.palette.secondary.light,
       },
     }),
-    control: provided => ({
+    control: (provided, state) => ({
       ...provided,
       borderColor: theme.palette.secondary.lightest,
+      backgroundColor: state.isDisabled ? theme.palette.background.paper2 : theme.palette.background.paper,
       boxShadow: 'none',
       borderRadius: 2,
       '&:hover': {

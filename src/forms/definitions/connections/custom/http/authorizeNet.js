@@ -3,8 +3,8 @@ export default {
     const pingBody = {
       authenticateTestRequest: {
         merchantAuthentication: {
-          name: `${formValues['/http/encrypted/apiLoginID']}`,
-          transactionKey: `${formValues['/http/encrypted/transactionKey']}`,
+          name: '{{{connection.http.encrypted.apiLoginID}}}',
+          transactionKey: '{{{connection.http.encrypted.transactionKey}}}',
         },
       },
     };

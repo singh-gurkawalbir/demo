@@ -31,6 +31,7 @@ const useStyles = makeStyles(theme => ({
   },
   scrollTable: {
     overflow: 'auto',
+    paddingBottom: theme.spacing(4),
   },
   completeFlowTable: {
     minHeight: '300px',
