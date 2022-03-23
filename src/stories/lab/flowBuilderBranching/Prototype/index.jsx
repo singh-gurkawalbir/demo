@@ -1,12 +1,14 @@
-import React, { useEffect, useMemo, useReducer } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
 import { makeStyles } from '@material-ui/core';
 import ReactFlow,
 { MiniMap,
   Controls,
   ReactFlowProvider} from 'react-flow-renderer';
+import actions from './reducer/actions';
+import { getSomeExport, getSomePg } from './nodeGeneration';
 import TextButton from '../../../../components/Buttons/TextButton';
 import DefaultEdge from './CustomEdges/DefaultEdge';
-import { layoutElements, terminalNodeInVicinity } from './lib';
+import { generateId, layoutElements, terminalNodeInVicinity } from './lib';
 import { FlowProvider } from './Context';
 import PgNode from './CustomNodes/PgNode';
 import PpNode from './CustomNodes/PpNode';
@@ -97,8 +99,20 @@ export default ({resourceState}) => {
     console.log(resourceState);
   };
 
-  // eslint-disable-next-line no-alert
-  const handleAddSource = () => alert('add new source');
+  const handleAddSource = useCallback(() => {
+    const id = `new-${generateId()}`;
+    const flowNode = getSomePg(id);
+    const resourceNode = getSomeExport(id);
+
+    setState({
+      type: actions.ADD_NEW_STEP,
+      resourceType: 'exports',
+      path: '/pageGenerators/-',
+      flowNode,
+      resourceNode,
+      flowId: mergedFlow?._id});
+  }, []);
+
   // eslint-disable-next-line no-alert
   const handleAddDestination = () => alert('add new destination');
 
