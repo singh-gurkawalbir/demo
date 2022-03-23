@@ -642,8 +642,8 @@ describe('user selectors', () => {
     });
   });
   describe('drawerOpened selector', () => {
-    test('should return false if no state exists', () => {
-      expect(selectors.drawerOpened(undefined)).toEqual(false);
+    test('should return true if no state exists', () => {
+      expect(selectors.drawerOpened(undefined)).toEqual(true);
     });
 
     test('should return correct drawer opened flag for an org owner', () => {
@@ -657,7 +657,7 @@ describe('user selectors', () => {
 
       expect(selectors.drawerOpened(state)).toEqual(true);
     });
-    test('should return false for specific org owner account', () => {
+    test('should return true for any org owner account', () => {
       const state = reducer(
         {
           profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
@@ -666,7 +666,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.drawerOpened(state)).toEqual(false);
+      expect(selectors.drawerOpened(state)).toEqual(true);
     });
   });
   describe('expandSelected selector', () => {

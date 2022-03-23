@@ -152,6 +152,7 @@ function howToFindIdentifierFieldsMeta({
   operationDetails,
   pathParameterValues = {},
   lookupType,
+  identifierValue,
   lookupQueryParameterValues = {},
 }) {
   const lookupTypeOptions = [];
@@ -205,7 +206,7 @@ function howToFindIdentifierFieldsMeta({
   }
   const endPointHasQueryParams = operationDetails.url?.indexOf?.(':_') >= 0 || operationDetails.url?.[0]?.indexOf?.(':_') >= 0;
 
-  if (operationDetails.supportIgnoreExisting || operationDetails.askForHowToGetIdentifier || endPointHasQueryParams) {
+  if (operationDetails.supportIgnoreExisting || operationDetails.askForHowToGetIdentifier || endPointHasQueryParams || operationDetails.howToIdentifyExistingRecords) {
     if (lookupTypeOptions.length) {
       fields.push(lookupTypeField);
     }
@@ -214,8 +215,10 @@ function howToFindIdentifierFieldsMeta({
       const identifierPathParam = operationDetails.parameters.find(
         p => !!p.isIdentifier
       );
+      const identifierFieldId = `assistantMetadata.${operationDetails.howToIdentifyExistingRecords ? 'existingExtract' : `pathParams.${identifierPathParam?.id}`}`;
+      const identifierFieldValue = operationDetails.howToIdentifyExistingRecords ? identifierValue : pathParameterValues[identifierPathParam?.id];
       const identifierField = {
-        id: `assistantMetadata.pathParams.${identifierPathParam?.id}`,
+        id: identifierFieldId,
         label: 'Which field?',
         type: 'textwithflowsuggestion',
         showSuggestionsWithoutHandlebar: true,
@@ -223,7 +226,7 @@ function howToFindIdentifierFieldsMeta({
         required: true,
         helpText: `Specify the field – or field path for nested fields – in your exported data that contains the information necessary to identify which records in the destination application will be ignored when importing data. integrator.io will check each exported record to see whether the field is populated. If so, the record will be ignored; otherwise, it will be imported. For example, if you specify the field customerID, then integrator.io will check the destination app for the value of the customerID field of each exported record before importing (field does not have a value) or ignoring (field has a value). <br/>
         If a field contains special characters, enclose it in square brackets: [field-name]. Brackets can also indicate an array item, such as items[*].id.`,
-        value: pathParameterValues[identifierPathParam?.id],
+        value: identifierFieldValue,
         visibleWhenAll: [
           {
             field: 'assistantMetadata.lookupType',
@@ -338,6 +341,7 @@ export function fieldMeta({ resource, assistantData }) {
         operationDetails,
         pathParameterValues: assistantConfig.pathParams,
         lookupType: assistantConfig.lookupType,
+        identifierValue: assistantConfig.identifierValue,
         lookupQueryParameterValues: assistantConfig.lookupQueryParams,
       });
     }

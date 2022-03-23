@@ -34,6 +34,8 @@ export const INSTALL_STEP_TYPES = Object.freeze({
   STACK: 'Stack',
   FORM: 'form',
   URL: 'url',
+  MERGE: 'merge',
+  REVERT: 'revert',
 });
 export const UNINSTALL_STEP_TYPES = Object.freeze({
   FORM: 'form',
@@ -60,6 +62,22 @@ export const ACCOUNT_SSO_STATUS = Object.freeze({
   NOT_LINKED: 'not_linked',
   LINKED_TO_THIS_ACCOUNT: 'this_account',
   LINKED_TO_OTHER_ACCOUNT: 'other_account',
+});
+export const REVISION_TYPES = Object.freeze({
+  PULL: 'pull',
+  REVERT: 'revert',
+  SNAPSHOT: 'snapshot',
+});
+export const REVISION_STATUS = Object.freeze({
+  IN_PROGRESS: 'inprogress',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+  CANCELED: 'canceled',
+});
+export const REVISION_CREATION_STATUS = Object.freeze({
+  CREATION_IN_PROGRESS: 'creating',
+  CREATION_ERROR: 'create_error',
+  CREATED: 'created',
 });
 
 export const UI_FIELD_VALUES = Object.freeze(['/formView', '/uploadFile']);
