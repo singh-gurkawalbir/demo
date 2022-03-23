@@ -1997,6 +1997,14 @@ if you're using a production account, you'll find your API keys under the 'API M
   'concurall.connection.http.unencrypted.credtype': 'For connections from the App Center, use authtoken. if omitted, oauth2 will assume the type is password.',
   'azurestorageaccount.connecton.http.unencrypted.storageAccount':
 'Specify the name of the Azure storage account which contains the data.',
+  'graphql.baseURI':
+  'Provide the specific URI/endpoint on the GraphQL server. Your GraphQL server operates on a single endpoint (traditionally /graphql), and all requests are directed to this endpoint.',
+  'connection.graphql.query':
+  'Enter the query to be processed by GraphQL server. The supported operation type is either query or mutation. The operation type is required unless you\'re using the query shorthand syntax, in which case you can\'t supply a name or variable definitions for your operation. The query may also include an operation name, which is required for a multi-operations query.',
+  'connection.graphql.operationName':
+  'Provide the operation name if your query has two or more operations. Note that a request can only execute one operation at a time.',
+  'connection.graphql.variables':
+  'Define the <a href="https://docs.celigo.com/hc/en-us/articles/4409527888923-Work-with-JSON-data-in-integrator-io">JSON</a> variables used in your query. For example, if the query is "query HeroNameAndFriends($episode: Episode)", define the variable as {"episode":"JEDI"}.',
   'azurestorageaccount.connecton.http.unencrypted.tenantId':
 'Specify the tenant ID that identifies the Azure Active Directory tenant used for authentication.',
   'connection.netsuite.authType':
