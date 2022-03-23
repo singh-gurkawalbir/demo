@@ -163,20 +163,21 @@ function* installStep({ integrationId, revisionId, stepInfo }) {
   }
 }
 
-function* fetchRevisionErrors({integrationId, revisionId }) {
-  try {
-    const errors = yield call(apiCallWithRetry, {
-      path: `/integrations/${integrationId}/revisions/${revisionId}/errors`,
-      opts: {
-        method: 'GET',
-      },
-    });
+// export function* fetchRevisionErrors({integrationId, revisionId }) {
+//   try {
+//     const errors = yield call(apiCallWithRetry, {
+//       path: `/integrations/${integrationId}/revisions/${revisionId}/errors`,
+//       opts: {
+//         method: 'GET',
+//       },
+//     });
 
-    yield put(actions.integrationLCM.revision.receivedErrors(integrationId, revisionId, errors));
-  } catch (e) {
-    // TODO: check if we need to handle errors
-  }
-}
+//     // yield put(actions.integrationLCM.revision.receivedErrors(integrationId, revisionId, errors));
+//   } catch (e) {
+//     // TODO: check if we need to handle errors
+//   }
+//   yield 5;
+// }
 
 export default [
   takeLatest(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, requestIntegrationCloneFamily),
@@ -187,5 +188,5 @@ export default [
   takeLatest(actionTypes.INTEGRATION_LCM.COMPARE.REVISION_REQUEST, compareRevisionChanges),
   takeLatest(actionTypes.INTEGRATION_LCM.REVISION.CANCEL, cancelRevision),
   takeLatest(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, installStep),
-  takeLatest(actionTypes.INTEGRATION_LCM.REVISION.FETCH_ERRORS, fetchRevisionErrors),
+  // takeLatest(actionTypes.INTEGRATION_LCM.REVISION.FETCH_ERRORS, fetchRevisionErrors),
 ];
