@@ -1399,6 +1399,12 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Basic auth requires both username and password. Please enter your username here. If you are not sure which username and password to use then please check with your webhook provider.',
   'export.webhook.password':
 'Basic auth requires both username and password. Please enter your password here.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'export.webhook.successStatusCode':
+'integrator.io returns a 204 HTTP status code for all successful webhook requests by default. Use this list to select an alternate successful HTTP status code for the listener.',
+  'export.webhook.successMediaType':
+'integrator.io uses JSON as the default media type for success responses. Use this list to select an alternate media type.',
+  'export.webhook.successBody':
+'integrator.io returns an empty response body message for all successful webhook requests by default. Use this field to customize an HTTP response body returned for successful requests made to the listener.',
   'export.salesforce.soql.query':
 "Use the Salesforce Object Query Language (i.e. SOQL) to define what data you would like to export out of Salesforce.  For example: 'SELECT Id, Name FROM Account WHERE SendToBlah = TRUE'.  SOQL is an incredibly powerful query language with all sorts of capabilities, and lots of documentation and examples on the web.  If you need additional help understanding SOQL, or piecing together a specific query, then please contact Salesforce support.",
   'export.salesforce.id':

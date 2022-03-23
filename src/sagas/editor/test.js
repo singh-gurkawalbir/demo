@@ -1234,6 +1234,30 @@ describe('editor sagas', () => {
         .returns({data: { record: {name: 'Bob'} }, templateVersion: 2})
         .run();
     });
+    test('should call getFlowSampleData and get responseMappingExtract ( output of preSavePage hook ) stage data for webhook.successBody field', () => {
+      const editor = {
+        id: 'webhook.successBody',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'exports',
+        resourceId,
+        fieldId: 'webhook.successBody',
+        stage: 'responseMappingExtract',
+        formKey: 'new-123',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'webhook.successBody' })
+        .provide([
+          [select(selectors.editor, 'webhook.successBody'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.call.fn(getFlowSampleData), {name: 'Bob'}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {name: 'Bob'}}, templateVersion: 2}],
+        ])
+        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'exports', stage: 'responseMappingExtract', formKey: 'new-123'})
+        .returns({data: { record: {name: 'Bob'} }, templateVersion: 2})
+        .run();
+    });
     test('should call requestResourceFormSampleData incase of http/rest resource when paging is configured', () => {
       const editor = {
         id: 'restrelativeuri',
