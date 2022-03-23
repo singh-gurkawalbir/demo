@@ -35,6 +35,7 @@ export default function DynaUploadFile(props) {
   } = props;
   const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
+
   const dispatch = useDispatch();
   const [fileName, setFileName] = useState('');
   const uploadedFile = useSelector(

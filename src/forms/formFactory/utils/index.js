@@ -360,6 +360,10 @@ export const getFieldConfig = (field = {}, resource = {}, isSuiteScript) => {
   } else if (newField.type === 'file') {
     newField.type = 'uploadfile';
     newField.isIAField = true;
+  } else if (newField.type === 'uploadfile') {
+    newField.type = 'uploadfile';
+    newField.isIAField = true;
+    newField.sendS3Key = true;
   } else if (newField.type === 'matchingCriteria') {
     newField.type = 'matchingcriteria';
   } else if (newField.supportsRefresh && (newField.type === 'select' || newField.type === 'multiselect')) {

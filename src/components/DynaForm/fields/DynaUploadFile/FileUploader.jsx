@@ -60,6 +60,7 @@ export default function FileUploader(props) {
     required,
     handleFileChosen,
     fileName,
+    accept = true,
     uploadError,
     label,
     classProps = {},
@@ -68,6 +69,7 @@ export default function FileUploader(props) {
     color = 'secondary',
     isLoggable,
   } = props;
+
   const fileInput = useRef(null);
   const classes = useStyles();
   const handleClick = useCallback(() => {
@@ -101,6 +103,7 @@ export default function FileUploader(props) {
             data-test="uploadFile"
             id="fileUpload"
             type="file"
+            {...(accept ? { accept: '.xlsx,.xls' } : {})}
             ref={fileInput}
             className={classes.fileInput}
             onChange={handleFileChosen}
