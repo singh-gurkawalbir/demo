@@ -28,7 +28,7 @@ const ModalWrapper = ({setShowMessage}) => {
           check out our Marketplace.
         </a>
       </div>
-      <FilledButton data-test="requestForDemo" onClose={() => setShowMessage(false)}>
+      <FilledButton data-test="requestForDemo" onClick={() => setShowMessage(false)}>
         Close
       </FilledButton>
     </ModalDialog>
