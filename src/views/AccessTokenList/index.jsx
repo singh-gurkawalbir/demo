@@ -16,7 +16,7 @@ import CheckPermissions from '../../components/CheckPermissions';
 import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import { TextButton } from '../../components/Buttons';
-import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../components/NoResultTypography';
 import ResourceEmptyState from '../ResourceList/ResourceEmptyState';
 
 const useStyles = makeStyles(theme => ({
@@ -85,7 +85,7 @@ export default function AccessTokenList(props) {
                 {list.total === 0
                   ? (
                     <ResourceEmptyState resourceType="accesstokens" />
-                  ) : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+                  ) : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
               </div>
             )}
           </LoadResources>
