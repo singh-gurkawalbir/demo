@@ -65,7 +65,8 @@ export function* invokeProcessor({ editorId, processor, body }) {
       options: {
         connection,
         [resourceType === 'imports' ? 'import' : 'export']: resource,
-        fieldPath: fieldId,
+        // TODO: Siddharth, revert this change after completion of https://celigo.atlassian.net/browse/IO-25372
+        fieldPath: fieldId === 'webhook.successBody' ? 'dataURITemplate' : fieldId,
         timezone,
       },
     };
@@ -522,7 +523,7 @@ export function* requestEditorSampleData({
   // for exports with paging method configured, preview stages data needs to be passed for getContext to get proper editor sample data
   const isPagingMethodConfigured = !!(isOldRestResource ? resource?.rest?.pagingMethod : resource?.http?.paging?.method);
   const needPreviewStagesData = resourceType === 'exports' && isPagingMethodConfigured && previewDataDependentFieldIds.includes(fieldId);
-  const isExportAdvancedField = resourceType === 'exports' && ['dataURITemplate', 'traceKeyTemplate'].includes(fieldId);
+  const isExportAdvancedField = resourceType === 'exports' && ['dataURITemplate', 'traceKeyTemplate', 'webhook.successBody'].includes(fieldId);
   const isStandaloneExportAdvancedField = !flowId && isExportAdvancedField;
 
   if (showPreviewStageData || needPreviewStagesData || isStandaloneExportAdvancedField) {
@@ -549,7 +550,7 @@ export function* requestEditorSampleData({
 
       sampleData = parsedData?.data;
     } else if (stage && (isExportAdvancedField || (flowId && !isPageGenerator))) {
-      // Handles all PPs and PG with advanced field ID  ( dataURI and traceKey )
+      // Handles all PPs and PG with advanced field ID  ( dataURI and traceKey and webhook.successBody )
       sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage, formKey });
     }
   } else if (stage) {
@@ -579,7 +580,13 @@ export function* requestEditorSampleData({
     const flow = yield select(selectors.resource, 'flows', flowId);
 
     body.integrationId = flow?._integrationId;
-    body.fieldPath = fieldId || filterPath;
+
+    // TODO: Siddharth, revert this change after completion of https://celigo.atlassian.net/browse/IO-25372
+    if (fieldId === 'webhook.successBody') {
+      body.fieldPath = 'dataURITemplate';
+    } else {
+      body.fieldPath = fieldId || filterPath;
+    }
 
     if (needPreviewStagesData) {
       body.previewData = yield select(selectors.getResourceSampleDataStages, resourceId);

@@ -30,8 +30,15 @@ export default {
         webHookToken: webHookTokenField.value,
       };
     }
+    if (fieldId !== 'webhook.successBody') {
+      return null;
+    }
 
-    return null;
+    const successMediaTypeField = fields.find(field => field.fieldId === 'webhook.successMediaType');
+
+    return {
+      contentType: successMediaTypeField.value || 'json',
+    };
   },
   preSave: (formValues, resource) => {
     const retValues = { ...formValues };
@@ -91,6 +98,15 @@ export default {
     traceKeyTemplate: {
       fieldId: 'traceKeyTemplate',
     },
+    'webhook.successStatusCode': {
+      fieldId: 'webhook.successStatusCode',
+    },
+    'webhook.successMediaType': {
+      fieldId: 'webhook.successMediaType',
+    },
+    'webhook.successBody': {
+      fieldId: 'webhook.successBody',
+    },
   },
   layout: {
     type: 'collapse',
@@ -122,7 +138,18 @@ export default {
         label: 'Generate URL & sample data',
         fields: ['webhook.url', 'webhook.sampledata'],
       },
-      { collapsed: true, label: 'Advanced', fields: ['pageSize', 'dataURITemplate', 'skipRetries', 'traceKeyTemplate'] },
+      { collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'webhook.successStatusCode',
+          'webhook.successMediaType',
+          'webhook.successBody',
+          'pageSize',
+          'dataURITemplate',
+          'skipRetries',
+          'traceKeyTemplate',
+        ],
+      },
     ],
   },
 };
