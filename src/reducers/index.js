@@ -2427,7 +2427,7 @@ selectors.mkDIYIntegrationFlowList = () => {
   return createSelector(
     state => state?.data?.resources?.integrations,
     state => state?.data?.resources?.flows,
-    (state, integrationId) => selectors.latestJobMap(state, integrationId || 'none')?.data,
+    (state, integrationId, childId) => selectors.latestJobMap(state, childId || integrationId || 'none')?.data,
     (state, integrationId) => integrationId,
     (_1, _2, childId) => childId,
     (_1, _2, _3, isUserInErrMgtTwoDotZero) => isUserInErrMgtTwoDotZero,

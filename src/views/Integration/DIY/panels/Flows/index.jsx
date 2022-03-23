@@ -364,19 +364,19 @@ export default function FlowsPanel({ integrationId, childId }) {
     };
   },
   shallowEqual);
-  const flowErrorCountStatus = useSelector(state => selectors.openErrorsStatus(state, integrationId));
+  const flowErrorCountStatus = useSelector(state => selectors.openErrorsStatus(state, childId || integrationId));
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
 
-    dispatch(actions.errorManager.integrationLatestJobs.requestPoll({ integrationId }));
-    dispatch(actions.errorManager.integrationErrors.requestPoll({ integrationId }));
+    dispatch(actions.errorManager.integrationLatestJobs.requestPoll({ integrationId: childId || integrationId }));
+    dispatch(actions.errorManager.integrationErrors.requestPoll({ integrationId: childId || integrationId }));
 
     return () => {
       dispatch(actions.errorManager.integrationLatestJobs.cancelPoll());
       dispatch(actions.errorManager.integrationErrors.cancelPoll());
     };
-  }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
+  }, [childId, dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const templateName = useSelector(state => {

@@ -27,6 +27,8 @@ import CeligoDrawer from './CeligoDrawer';
 import PageContent from './PageContent';
 import { FormOnCancelProvider } from '../components/FormOnCancelContext';
 import UserActivityMonitor from './UserActivityMonitor';
+import * as pendo from '../utils/analytics/pendo';
+
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
 // <MuiThemeProvider>. That component is what injects the theme into
@@ -138,6 +140,7 @@ export default function App() {
      */
     if (domain === 'localhost.io') {
       gainsight.initialize({ tagKey: 'AP-CAGNPCDUT5BV-2' });
+      pendo.init({apiKey: '78f58e2a-2645-49fb-70cf-0fc21baff71f'});
     }
   }, []);
 
