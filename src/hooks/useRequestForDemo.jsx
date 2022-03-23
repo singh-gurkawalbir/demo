@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import actions from '../actions';
 import ModalDialog from '../components/ModalDialog';
 import { CONTACT_SALES_MESSAGE } from '../utils/messageStore';
+import { FilledButton } from '../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   link: {
@@ -16,7 +17,7 @@ const ModalWrapper = ({setShowMessage}) => {
 
   return (
     <ModalDialog show onClose={() => setShowMessage(false)}>
-      <div>Thank you! Your request has been received.</div>
+      <div>Thanks for your request !</div>
       <div>
         {CONTACT_SALES_MESSAGE}
         <a
@@ -24,9 +25,12 @@ const ModalWrapper = ({setShowMessage}) => {
           rel="noopener noreferrer"
           target="_blank"
           className={classes.link}>
-          http://www.celigo.com/integration-marketplace
+          check out our Marketplace.
         </a>
       </div>
+      <FilledButton data-test="requestForDemo" onClick={() => setShowMessage(false)}>
+        Close
+      </FilledButton>
     </ModalDialog>
   );
 };

@@ -87,6 +87,7 @@ export function* requestTrialLicense() {
     response = yield call(apiCallWithRetry, {
       path,
       opts,
+      hidden: true,
       message: 'Requesting trial license',
     });
   } catch (e) {
@@ -112,9 +113,9 @@ export function* requestLicenseUpgrade() {
       const errorsJSON = JSON.parse(e.message);
       const { errors } = errorsJSON;
 
-      const errorCode = errors && errors[0].code;
+      const errorCode = errors?.map(error => error.code) || [];
 
-      if (errorCode === 'ratelimit_exceeded') {
+      if (errorCode.includes('ratelimit_exceeded')) {
         return yield put(actions.api.failure(path, 'POST', 'You have already submitted an upgrade request. We will be in touch soon.', false));
       }
     // eslint-disable-next-line no-empty
@@ -147,11 +148,11 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
       const errorsJSON = JSON.parse(error.message);
       const { errors } = errorsJSON;
 
-      errorCode = errors && errors[0].code;
+      errorCode = errors?.map(error => error.code) || [];
     // eslint-disable-next-line no-empty
     } catch (e) {
     }
-    if (actionType === 'upgrade' && errorCode === 'ratelimit_exceeded') {
+    if (actionType === 'upgrade' && errorCode.includes('ratelimit_exceeded')) {
       return yield put(actions.api.failure(path, 'POST', 'You have already submitted an upgrade request. We will be in touch soon.', false));
     }
 
