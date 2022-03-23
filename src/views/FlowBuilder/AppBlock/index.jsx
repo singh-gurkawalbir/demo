@@ -44,8 +44,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     textAlign: 'center',
     marginTop: -85,
-    // background: theme.palette.background.default,
-    background: theme.palette.common.white,
+    background: theme.palette.background.default,
     borderRadius: [[0, 0, 20, 20]],
     position: 'relative',
     zIndex: theme.zIndex.bubbleName,
@@ -145,6 +144,11 @@ const useStyles = makeStyles(theme => ({
   },
   pgContainerName: {
     background: theme.palette.common.white,
+  },
+  flowBuilderResourceButton: {
+    '& > .MuiButton-label': {
+      flexDirection: 'column',
+    },
   },
 }));
 
@@ -350,7 +354,7 @@ export default function AppBlock({
           )}
         </div>
         <div className={classes.buttonContainer}>
-          <ResourceButton onClick={onBlockClick} variant={blockType} />
+          <ResourceButton onClick={onBlockClick} variant={blockType} className={classes.flowBuilderResourceButton} />
           <div className={classes.middleActionContainer}>
             {renderActions(middleActions)}
             {!expanded && hasActions ? (
