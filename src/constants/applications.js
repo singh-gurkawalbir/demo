@@ -140,6 +140,13 @@ const connectors = [
     group: 'db',
   },
   {
+    id: 'bigquerydatawarehouse',
+    name: 'Google BigQuery',
+    type: 'bigquerydatawarehouse',
+    keywords: 'database,db',
+    group: 'db',
+  },
+  {
     id: 'graph_ql',
     name: 'GraphQL',
     type: 'graph_ql',

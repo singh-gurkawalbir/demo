@@ -37,6 +37,7 @@ export const appTypeToAdaptorType = {
   mssql: 'RDBMS',
   oracle: 'RDBMS',
   snowflake: 'RDBMS',
+  bigquerydatawarehouse: 'RDBMS',
   netsuite: 'NetSuite',
   ftp: 'FTP',
   http: 'HTTP',
@@ -47,6 +48,23 @@ export const appTypeToAdaptorType = {
   webhook: 'Webhook',
   dynamodb: 'Dynamodb',
   graph_ql: 'GraphQL',
+};
+
+// the methods rdbmsSubTypeToAppType and rdbmsAppTypeToSubType are used to find rdbms subtype from the app.type of the application or vice-versa
+export const rdbmsSubTypeToAppType = rdbmsSubType => {
+  if (rdbmsSubType === 'bigquery') {
+    return 'bigquerydatawarehouse';
+  }
+
+  return rdbmsSubType;
+};
+
+export const rdbmsAppTypeToSubType = appType => {
+  if (appType === 'bigquerydatawarehouse') {
+    return 'bigquery';
+  }
+
+  return appType;
 };
 
 export const adaptorTypeMap = {
@@ -931,6 +949,10 @@ export const getAssistantFromResource = resource => {
 
   if (assistant === 'ebay' || assistant === 'ebayfinance') {
     return 'ebay';
+  }
+
+  if (assistant === 'googlecontacts' || assistant === 'googlecontactspeople') {
+    return 'googlecontacts';
   }
 
   return assistant;
