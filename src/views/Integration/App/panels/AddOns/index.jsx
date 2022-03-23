@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Card, CardActions, Typography, makeStyles } from '@material-ui/core';
 import RawHtml from '../../../../../components/RawHtml';
 import PanelHeader from '../../../../../components/PanelHeader';
-import { LICENSE_UPGRADE_REQUEST, LICENSE_UPGRADE_REQUEST_RECEIVED } from '../../../../../utils/messageStore';
+import { LICENSE_UPGRADE_REQUEST, LICENSE_UPGRADE_SUCCESS_MESSAGE } from '../../../../../utils/messageStore';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {isHTML} from '../../../../../utils/string';
@@ -99,12 +99,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
           licenseId,
         })
       );
-      const message = `${LICENSE_UPGRADE_REQUEST_RECEIVED}
-      
-      <a target="_blank" rel="noopener noreferrer"
-        href="/marketplace"><u>Checkout our Marketplace</u></a>  Integration Apps, templates for business process automation, and quickstart integration templates.`;
-
-      enquesnackbar({message: <RawHtml html={message} />, variant: 'success'});
+      enquesnackbar({message: <RawHtml html={LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
     },
 
     [dispatch, enquesnackbar, integrationId, licenseId]

@@ -637,6 +637,7 @@ describe('all modal sagas', () => {
           call(apiCallWithRetry, {
             path,
             opts,
+            hidden: true,
             message: 'Requesting trial license',
           }),
         );
@@ -667,6 +668,7 @@ describe('all modal sagas', () => {
           call(apiCallWithRetry, {
             path,
             opts,
+            hidden: true,
             message: 'Requesting trial license',
           }),
         );
