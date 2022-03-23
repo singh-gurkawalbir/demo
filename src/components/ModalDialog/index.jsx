@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     textTransform: 'inherit',
   },
   titleText: {
-    maxWidth: '95%',
+    maxWidth: `calc(100% - ${theme.spacing(4)}px)`,
     flex: 1,
     wordBreak: 'break-word',
     '& > .MuiTypography-root': {
