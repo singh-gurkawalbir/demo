@@ -124,6 +124,27 @@ export function layoutElements(elements = []) {
   return [...nodes, ...edges];
 }
 
+export function getAllPPNodes(flow = {}, elements) {
+  const steps = [];
+  const {routers = []} = flow;
+
+  routers.forEach((router = {}, routerIndex) => {
+    router.branches?.forEach((branch = {}, branchIndex) => {
+      branch.pageProcessors.forEach((pp = {}, ppIndex) => {
+        const element = elements.find(el => el.id === pp.id);
+        const stepName = element?.data?.resource?.name || pp.id;
+
+        steps.push({
+          id: pp.id,
+          name: stepName,
+          path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${ppIndex + 1}`,
+        });
+      });
+    });
+  });
+
+  return steps;
+}
 export function getConnectedEdges(id, direction = 'left', elements) {
   const handle = direction === 'left' ? 'target' : 'source';
   const edges = elements.filter(e => isEdge(e));

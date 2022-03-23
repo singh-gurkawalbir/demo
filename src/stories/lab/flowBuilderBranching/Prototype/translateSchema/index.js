@@ -60,7 +60,7 @@ const generatePGNodesAndEdges = (resourcesState, pageGenerators, targetId) => {
   return {nodes, edges};
 };
 
-const generatePPNodesAndEdges = (resourcesState, pageProcessors) => {
+const generatePPNodesAndEdges = (resourcesState, pageProcessors, branch) => {
   if (!pageProcessors || !pageProcessors.length) {
     return {nodes: [], edges: []};
   }
@@ -68,7 +68,10 @@ const generatePPNodesAndEdges = (resourcesState, pageProcessors) => {
   const nodes = pageProcessors.map(pp => ({
     id: pp.id,
     type: 'pp',
-    data: hydrateNodeData(resourcesState, pp),
+    data: {
+      resource: hydrateNodeData(resourcesState, pp),
+      branch,
+    },
   }));
 
   const edges = nodes.slice(0, nodes.length - 1).map((node, index) =>
@@ -123,7 +126,7 @@ const getGraphsMetadata = (resourceState, flow, routerId, branch) => {
   return router.branches.reduce((acc, branch) => {
     const { pageProcessors, _nextRouterId, name } = branch;
     // this is the branches metadata
-    const branchMeta = generatePPNodesAndEdges(resourceState, pageProcessors);
+    const branchMeta = generatePPNodesAndEdges(resourceState, pageProcessors, branch);
 
     const isRouterAlreadyConnected = isAMergeNode(acc.edges, _nextRouterId);
 

@@ -12,8 +12,10 @@ const getSomeNode = (id, isPG) => {
     };
   }
 
-  return {flowNode: getSomePpImport(id),
-    resourceNode: getSomeImport(id)};
+  return {
+    flowNode: getSomePpImport(id),
+    resourceNode: getSomeImport(id),
+  };
 };
 
 export const useHandleAddNode = edgeId => {
