@@ -345,6 +345,7 @@ export const REST_ASSISTANTS = [
   'googlesheets',
   'googlemail',
   'googlecontacts',
+  'googlecontactspeople',
   'hubspot',
   'freshdesk',
   'harvest',
@@ -454,7 +455,7 @@ export const FLOW_EVENT_REPORTS_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/arti
 export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
 export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
 
-export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle'];
+export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle', 'bigquerydatawarehouse'];
 
 export const AWS_REGIONS_LIST = [
   {
@@ -670,6 +671,7 @@ export const CONNECTORS_TO_IGNORE = [
   'constantcontactv3',
   'amazonsellingpartner',
   'ebayfinance',
+  'googlecontactspeople',
 ];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
@@ -752,10 +754,13 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
   'ebay',
   'ebayfinance',
   'amazonsellingpartner',
+  'googlecontacts',
+  'googlecontactspeople',
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];
 export const EBAY_TYPES = ['ebay', 'ebayfinance'];
+export const GOOGLE_CONTACTS_API = ['googlecontacts', 'googlecontactspeople'];
 export const POLLING_STATUS = {
   SLOW: 'slow down polling',
   RESUME: 'resume polling',
