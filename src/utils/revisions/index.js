@@ -81,7 +81,6 @@ export const DEFAULT_OPTION = 'all';
 export const DEFAULT_REVISION_FILTERS = {
   createdAt: {
     startDate: moment().add(-1, 'y'),
-    endDate: new Date(),
     preset: 'lastyear',
   },
   status: DEFAULT_OPTION,
