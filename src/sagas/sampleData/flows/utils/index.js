@@ -6,6 +6,7 @@ import { selectors } from '../../../../reducers';
 import { SCOPES } from '../../../resourceForm';
 
 export function* getConstructedResourceObj({ formKey, resourceId, resourceType }) {
+  if (!resourceId || !resourceType) return;
   if (!formKey) {
     let { merged: resource = {} } = yield select(
       selectors.resourceData,

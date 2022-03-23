@@ -80,6 +80,8 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
     expression.push({ 'rdbms.type': type });
   } else if (type === 'rest' || (type === 'http' && connection?.http?.formType === 'rest')) {
     expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
+  } else if (type === 'graph_ql' || (type === 'http' && connection?.http?.formType === 'graph_ql')) {
+    expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
   } else if (type === 'http') {
     expression.push({ 'http.formType': { $ne: 'rest' } });
     expression.push({ type });

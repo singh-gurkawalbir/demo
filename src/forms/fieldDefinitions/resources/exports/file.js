@@ -32,7 +32,11 @@ export default {
   },
   'file.fileNameStartsWith': {
     isLoggable: true,
-    type: 'uri',
+    type: r => {
+      if (r.assistant === 'googledrive' || r.assistant === 'azurestorageaccount') return 'text';
+
+      return 'uri';
+    },
     label: 'File name starts with',
     showExtract: false,
     showLookup: false,
@@ -55,7 +59,11 @@ export default {
   },
   'file.fileNameEndsWith': {
     isLoggable: true,
-    type: 'uri',
+    type: r => {
+      if (r.assistant === 'googledrive' || r.assistant === 'azurestorageaccount') return 'text';
+
+      return 'uri';
+    },
     label: 'File name ends with',
     showExtract: false,
     showLookup: false,

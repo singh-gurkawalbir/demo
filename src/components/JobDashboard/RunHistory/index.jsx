@@ -13,7 +13,7 @@ import { getSelectedRange } from '../../../utils/flowMetrics';
 import DateRangeSelector from '../../DateRangeSelector';
 import { FILTER_KEYS, ERROR_MANAGEMENT_RANGE_FILTERS } from '../../../utils/errorManagement';
 import Spinner from '../../Spinner';
-import NoResultMessageWrapper from '../../NoResultMessageWrapper';
+import NoResultTypography from '../../NoResultTypography';
 import { hashCode } from '../../../utils/string';
 import { TextButton } from '../../Buttons';
 import ActionGroup from '../../ActionGroup';
@@ -228,9 +228,9 @@ export default function RunHistory({ flowId, className }) {
 
       {!hasFlowRunHistory &&
         (
-        <NoResultMessageWrapper isBackground className={clsx({[classes.hideWrapper]: isLoadingHistory})}>
+        <NoResultTypography isBackground className={clsx({[classes.hideWrapper]: isLoadingHistory})}>
           You don&apos;t have any run history.
-        </NoResultMessageWrapper>
+        </NoResultTypography>
         )}
     </div>
   );

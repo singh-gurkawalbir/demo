@@ -5203,7 +5203,9 @@ selectors.applicationType = (state, resourceType, id) => {
   if (adaptorType === 'http' && resourceObj?.http?.formType === 'rest') {
     adaptorType = 'rest';
   }
-
+  if (adaptorTypeMap[adaptorType] === 'graph_ql' || resourceObj?.http?.formType === 'graph_ql') {
+    adaptorType = 'graph_ql';
+  }
   // For Data Loader cases, there is no image.
   if (getStagedValue('/type') === 'simple' || resourceObj?.type === 'simple') {
     return '';
@@ -5903,6 +5905,16 @@ selectors.mkIsAnyFlowConnectionOffline = () => {
     (state, flowId) => flowConnections(state, flowId),
     flowConnections => flowConnections.some(c => c.offline)
   );
+};
+
+selectors.isAnyIntegrationConnectionOffline = (state, integrationId) => {
+  const integration = selectors.resource(state, 'integrations', integrationId);
+  const connections = selectors.resourceList(state, {
+    type: 'connections',
+  }).resources;
+  const connectionIds = integration?._registeredConnectionIds || emptyArray;
+
+  return connections.some(c => connectionIds.includes(c._id) && c.offline);
 };
 
 selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
@@ -6712,4 +6724,3 @@ selectors.globalSearchResults = createSelector(
   ],
   (_, resourceResults) => resourceResults
 );
-

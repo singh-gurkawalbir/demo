@@ -116,14 +116,11 @@ export default {
     const actions = [];
 
     if (actionInProgress) return actions;
-
     if (retryDataKey) {
+      actions.push(EditRetryData);
       actions.push(Retry);
     }
     actions.push(ViewErrorDetails);
-    if (retryDataKey) {
-      actions.push(EditRetryData);
-    }
     if (reqAndResKey) {
       isResourceNetsuite
         ? actions.push(ViewNetsuiteRequest, ViewNetsuiteResponse)

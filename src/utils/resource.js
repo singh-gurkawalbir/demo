@@ -46,6 +46,7 @@ export const appTypeToAdaptorType = {
   as2: 'AS2',
   webhook: 'Webhook',
   dynamodb: 'Dynamodb',
+  graph_ql: 'GraphQL',
 };
 
 export const adaptorTypeMap = {
@@ -60,6 +61,8 @@ export const adaptorTypeMap = {
   HTTPImport: 'http',
   RESTImport: 'rest',
   RESTExport: 'rest',
+  GraphQLExport: 'graph_ql',
+  GraphQLImport: 'graph_ql',
   S3Export: 's3',
   RDBMSExport: 'rdbms',
   MongodbExport: 'mongodb',
