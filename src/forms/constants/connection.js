@@ -137,6 +137,7 @@ export default {
     'jazzhr',
     'segment',
     'happyreturns',
+    'brex',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
