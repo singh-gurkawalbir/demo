@@ -22,7 +22,7 @@ export default function RevisionFilters() {
 
   const handleDateFilter = useCallback(
     dateFilter => {
-      const selectedRange = getSelectedRange(dateFilter);
+      const selectedRange = getSelectedRange(dateFilter, true);
 
       dispatch(
         actions.patchFilter(filterKey, {

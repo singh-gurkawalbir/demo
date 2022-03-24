@@ -6189,6 +6189,15 @@ Object {
       "webhook.slackKey": Object {
         "fieldId": "webhook.slackKey",
       },
+      "webhook.successBody": Object {
+        "fieldId": "webhook.successBody",
+      },
+      "webhook.successMediaType": Object {
+        "fieldId": "webhook.successMediaType",
+      },
+      "webhook.successStatusCode": Object {
+        "fieldId": "webhook.successStatusCode",
+      },
       "webhook.token": Object {
         "fieldId": "webhook.token",
         "refreshOptionsOnChangesTo": Array [
@@ -6248,6 +6257,9 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "webhook.successStatusCode",
+                "webhook.successMediaType",
+                "webhook.successBody",
                 "pageSize",
                 "dataURITemplate",
                 "skipRetries",
