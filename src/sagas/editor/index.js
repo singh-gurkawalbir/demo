@@ -79,13 +79,17 @@ export function* invokeProcessor({ editorId, processor, body }) {
     let _mappings;
 
     if (editor.mappingPreviewType) {
-      // wait for previewMappings saga to complete the api call
-      yield take([
-        actionTypes.MAPPING.PREVIEW_RECEIVED,
-        actionTypes.MAPPING.PREVIEW_FAILED,
-      ]);
+      // wait for previewMappings saga to complete the api call if its status is requested
+      const previewStatus = (yield select(selectors.mapping))?.preview?.status;
 
-      // for salesforce and netsuite we return the previewMappings data
+      if (previewStatus === 'requested') {
+        yield take([
+          actionTypes.MAPPING.PREVIEW_RECEIVED,
+          actionTypes.MAPPING.PREVIEW_FAILED,
+        ]);
+      }
+
+      // for salesforce and netsuite we return the previewMappings updated state
       return (yield select(selectors.mapping))?.preview;
     }
     if (editorType === 'mappings') {
