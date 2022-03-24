@@ -38,6 +38,7 @@ export const appTypeToAdaptorType = {
   oracle: 'RDBMS',
   snowflake: 'RDBMS',
   bigquerydatawarehouse: 'RDBMS',
+  redshiftdatawarehouse: 'RDBMS',
   netsuite: 'NetSuite',
   ftp: 'FTP',
   http: 'HTTP',
@@ -56,12 +57,20 @@ export const rdbmsSubTypeToAppType = rdbmsSubType => {
     return 'bigquerydatawarehouse';
   }
 
+  if (rdbmsSubType === 'redshift') {
+    return 'redshiftdatawarehouse';
+  }
+
   return rdbmsSubType;
 };
 
 export const rdbmsAppTypeToSubType = appType => {
   if (appType === 'bigquerydatawarehouse') {
     return 'bigquery';
+  }
+
+  if (appType === 'redshiftdatawarehouse') {
+    return 'redshift';
   }
 
   return appType;

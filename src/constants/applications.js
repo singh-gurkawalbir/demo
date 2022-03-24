@@ -147,6 +147,13 @@ const connectors = [
     group: 'db',
   },
   {
+    id: 'redshiftdatawarehouse',
+    name: 'Amazon Redshift',
+    type: 'redshiftdatawarehouse',
+    keywords: 'database,db',
+    group: 'db',
+  },
+  {
     id: 'graph_ql',
     name: 'GraphQL',
     type: 'graph_ql',

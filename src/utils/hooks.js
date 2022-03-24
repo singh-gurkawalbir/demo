@@ -84,6 +84,7 @@ export function getSupportedHooksForResource(resource) {
     case 'snowflake':
     case 'mongodb':
     case 'bigquerydatawarehouse':
+    case 'redshiftdatawarehouse':
       unSupportedHooks = [];
       break;
     case 'ftp':

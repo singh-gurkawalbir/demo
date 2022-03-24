@@ -882,6 +882,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.rdbms.password': 'The password for the specified Username.',
   'snowflake.import.rdbms.queryType': "'Use bulk insert SQL query' to quickly insert batches of data efficiently. </br>'Use SQL query once per record' to execute a custom query per record. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
   'bigquery.import.rdbms.queryType': "'Use bulk insert SQL query' to quickly insert batches of data efficiently. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
+  'redshift.import.rdbms.queryType': "'Use bulk insert SQL query' to quickly insert batches of data efficiently. </br>'Use SQL query once per record' to execute a custom query per record. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
   'connection.rdbms.snowflake.warehouse':
 'Warehouse used for executing compute process.',
   'connection.rdbms.snowflake.schema':
@@ -897,6 +898,11 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.rdbms.bigquery.clientEmail': 'The email address for the Google Cloud service account used for authentication.',
   'connection.rdbms.bigquery.privateKey': 'The private key for the Google Cloud service account used for authentication.',
   'connection.rdbms.bigquery.dataset': 'The name of the dataset containing the tables and views being accessed.',
+  'connection.rdbms.redshift.region': "Name of the amazon redshift region to the location where the request is being made. If not set, by default 'us-east-1' is selected",
+  'connection.rdbms.redshift.accessKeyId': "Many of Amazon's APIs require an access key, and this field stores the 'id' for the access key that you want this connection to use.  Please check the AWS guides if you need more info about access keys and how to generate and/or find them in your AWS account.",
+  'connection.rdbms.redshift.secretAccessKey': 'When you create a new access key in your Amazon Redshift account, AWS will display both the access key id and the secret access key.  The secret access key will only be available once, and you should store it immediately in integrator.io (i.e. in this field).  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your secret access key safe.',
+  'connection.rdbms.redshift.database': 'redshift database that you want to connect.',
+  'connection.rdbms.redshift.clusterIdentifier': 'The name of the Redshift Cluster. <a href="https://docs.aws.amazon.com/redshift/latest/mgmt/configuring-connections.html" target="_blank">Learn more</a>.',
   'connection.rdbms.options':
 'Define additional configurations for the database connection that is available according to the database documentation. For example, you can configure the connection timeout if the SQL server you are trying to connect to is slow (default connection timeout for MS SQL server is 15000ms).',
   'connection.rdbms.concurrencyLevel':
