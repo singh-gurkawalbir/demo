@@ -106,7 +106,7 @@ const metadata = {
 
         if (!count) {
           return (
-            <Status variant="success" size="mini" onClick={handleErrorClick}>success</Status >
+            <Status variant="success" size="mini" onClick={handleErrorClick}>Success</Status >
           );
         }
 
