@@ -150,6 +150,9 @@ export default function DefaultEdge({
     // not close to the merge/router nodes.
     position = 'right';
     offset = 30;
+  } else if (sourceType === 'pp' && targetType !== 'pp') {
+    position = 'left';
+    offset = 70;
   }
 
   // The link icon is always rendered in the center, so if it is
@@ -177,7 +180,7 @@ export default function DefaultEdge({
       )}
 
       {showLinkIcon && (
-        <ForeignObject edgePath={edgePath} position="center" offset={30}>
+        <ForeignObject edgePath={edgePath} position={position} offset={offset + 30}>
           <UnlinkButton edgeId={id} />
         </ForeignObject>
       )}
