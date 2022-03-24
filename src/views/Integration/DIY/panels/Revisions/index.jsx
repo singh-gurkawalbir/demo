@@ -65,7 +65,7 @@ function DrawerDeclarations({ integrationId, hasMonitorLevelAccess }) {
 
 const RevisionsList = ({ integrationId }) => {
   const classes = useStyles();
-  const filteredRevisions = useSelector(state => selectors.filteredRevisions(state, integrationId));
+  const filteredRevisions = useSelector(state => selectors.getCurrPageFilteredRevisions(state, integrationId));
   const isLoadingRevisions = useSelector(state => selectors.isLoadingRevisions(state, integrationId));
   const hasNoRevisions = useSelector(state => selectors.integrationHasNoRevisions(state, integrationId));
 
