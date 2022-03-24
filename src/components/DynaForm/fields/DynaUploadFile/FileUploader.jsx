@@ -65,7 +65,7 @@ export default function FileUploader(props) {
     fileName,
     uploadError,
     label,
-    fileType,
+    mode,
     classProps = {},
     hideFileName = false,
     variant = 'outlined',
@@ -79,7 +79,7 @@ export default function FileUploader(props) {
     fileInput.current.value = '';
     fileInput.current.click();
   }, []);
-  const acceptedAttr = fileType ? acceptedFileTypes[fileType] : false;
+  const acceptedAttr = mode ? acceptedFileTypes[mode] : false;
 
   return (
     <FormControl className={clsx(classes.fileUploaderContainer, classProps.root)}>

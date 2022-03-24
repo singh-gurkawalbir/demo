@@ -33,6 +33,7 @@ export default function DynaUploadFile(props) {
     isIAField,
     placeholder,
     persistData = false,
+    _integrationId: integrationId,
   } = props;
   const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
@@ -43,6 +44,16 @@ export default function DynaUploadFile(props) {
     state => selectors.getUploadedFile(state, fileId),
     shallowEqual
   );
+  const templateRunKey = useSelector(state => selectors.integrationAppCustomTemplateRunKey(state, integrationId));
+
+  useEffect(() => {
+    if (templateRunKey) {
+      onFieldChange(id, templateRunKey);
+      dispatch(actions.integrationApp.utility.clearRunKey(integrationId));
+    }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [templateRunKey, integrationId, id]);
 
   useEffect(() => {
     const { status, file, rawFile, name } = uploadedFile || {};
@@ -51,7 +62,12 @@ export default function DynaUploadFile(props) {
       setFileName(name);
       if (isIAField) {
         if (sendS3Key) {
-          dispatch(actions.integrationApp.requestIAS3Key({resourceId, file }));
+          dispatch(actions.integrationApp.utility.requestS3Key({
+            integrationId,
+            file,
+            fileName: rawFile.name,
+            fileType: rawFile.type,
+          }));
         } else {
           onFieldChange(id, {
             file,
