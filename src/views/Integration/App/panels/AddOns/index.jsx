@@ -119,7 +119,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
       const message = `${LICENSE_UPGRADE_REQUEST_RECEIVED}
       
       <a target="_blank" rel="noopener noreferrer"
-        href="/marketplace"><u>Checkout our Marketplace</u></a>  Integration Apps, templates for business process automation, and quickstart integration templates.`;
+        href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with Integration Apps, Business Process Automation templates, and quickstart templates.`;
 
       enquesnackbar({message: <RawHtml html={message} />, variant: 'success'});
     },
@@ -133,7 +133,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
       title: 'Request add-on',
       message: LICENSE_UPGRADE_REQUEST,
       buttons: [
-        {label: 'Submit Request', onClick: handleContactSales(addonName)},
+        {label: 'Submit request', onClick: handleContactSales(addonName)},
         {label: 'Cancel', variant: 'text'},
       ],
     });
@@ -158,7 +158,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
                     <FilledButton
                       data-test="contactSales"
                       onClick={onRequestAddonClicked(data)}>
-                      Request Add-on
+                      Request add-on
                     </FilledButton>
                   )}
               </CardActions>
