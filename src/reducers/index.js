@@ -3339,36 +3339,42 @@ selectors.isProfileLoading = state => {
   return !!(state && fromComms.isLoading(state.comms, commKey));
 };
 
-selectors.availableUsersList = (state, integrationId) => {
-  const isAccountOwnerOrAdmin = selectors.isAccountOwnerOrAdmin(state);
-  let _users = [];
+selectors.availableUsersList = createSelector(
+  (_, integrationId) => integrationId,
+  selectors.usersList,
+  selectors.isAccountOwnerOrAdmin,
+  selectors.integrationUsersForOwner,
+  selectors.integrationUsers,
+  selectors.accountOwner,
+  (integrationId, usersList, isAccountOwnerOrAdmin, integrationUsersForOwner, integrationUsers, accountOwner) => {
+    let _users = [];
 
-  if (isAccountOwnerOrAdmin) {
-    if (integrationId) {
-      _users = selectors.integrationUsersForOwner(state, integrationId);
-    } else {
-      _users = selectors.usersList(state);
+    if (isAccountOwnerOrAdmin) {
+      if (integrationId) {
+        _users = integrationUsersForOwner;
+      } else {
+        _users = usersList;
+      }
+    } else if (integrationId) {
+      _users = integrationUsers;
     }
-  } else if (integrationId) {
-    _users = selectors.integrationUsers(state, integrationId);
+
+    if ((integrationId || isAccountOwnerOrAdmin) && _users?.length > 0) {
+      _users = [
+        {
+          _id: ACCOUNT_IDS.OWN,
+          accepted: true,
+          accessLevel: INTEGRATION_ACCESS_LEVELS.OWNER,
+          sharedWithUser: accountOwner,
+        },
+        ..._users,
+      ];
+    }
+
+    return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
   }
 
-  if ((integrationId || isAccountOwnerOrAdmin) && _users?.length > 0) {
-    const accountOwner = selectors.accountOwner(state);
-
-    _users = [
-      {
-        _id: ACCOUNT_IDS.OWN,
-        accepted: true,
-        accessLevel: INTEGRATION_ACCESS_LEVELS.OWNER,
-        sharedWithUser: accountOwner,
-      },
-      ..._users,
-    ];
-  }
-
-  return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
-};
+);
 
 selectors.platformLicense = createSelector(
   selectors.userPreferences,
