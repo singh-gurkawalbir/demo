@@ -637,6 +637,7 @@ describe('all modal sagas', () => {
           call(apiCallWithRetry, {
             path,
             opts,
+            hidden: true,
             message: 'Requesting trial license',
           }),
         );
@@ -667,6 +668,7 @@ describe('all modal sagas', () => {
           call(apiCallWithRetry, {
             path,
             opts,
+            hidden: true,
             message: 'Requesting trial license',
           }),
         );
@@ -1055,17 +1057,13 @@ describe('all modal sagas', () => {
 
       return expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
         .provide([
-          [call(apiCallWithRetry, {
-            path,
-            timeout: 5 * 60 * 1000,
-            opts,
-          })],
+          [matchers.call.fn(apiCallWithRetry)],
         ])
-        .call(apiCallWithRetry, {
-          path,
-          timeout: 5 * 60 * 1000,
-          opts,
-        })
+        .call.like({fn: apiCallWithRetry,
+          args: [{
+            path,
+            opts,
+          }]})
         .put(actions.resource.requestCollection('integrations'))
         .put(actions.resource.requestCollection('flows'))
         .put(actions.resource.requestCollection('exports'))
@@ -1085,17 +1083,13 @@ describe('all modal sagas', () => {
 
       return expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
         .provide([
-          [call(apiCallWithRetry, {
-            path,
-            timeout: 5 * 60 * 1000,
-            opts,
-          }), response],
+          [matchers.call.fn(apiCallWithRetry), response],
         ])
-        .call(apiCallWithRetry, {
-          path,
-          timeout: 5 * 60 * 1000,
-          opts,
-        })
+        .call.like({fn: apiCallWithRetry,
+          args: [{
+            path,
+            opts,
+          }]})
         .not.put(actions.resource.requestCollection('integrations'))
         .put(actions.license.licenseUpgradeRequestSubmitted(response))
         .run();
@@ -1111,17 +1105,13 @@ describe('all modal sagas', () => {
 
       return expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
         .provide([
-          [call(apiCallWithRetry, {
-            path,
-            timeout: 5 * 60 * 1000,
-            opts,
-          }), throwError(error)],
+          [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
-        .call(apiCallWithRetry, {
-          path,
-          timeout: 5 * 60 * 1000,
-          opts,
-        })
+        .call.like({fn: apiCallWithRetry,
+          args: [{
+            path,
+            opts,
+          }]})
         .put(actions.api.failure(path, 'POST', error, false))
         .not.put(actions.resource.requestCollection('integrations'))
         .not.put(actions.license.licenseUpgradeRequestSubmitted({}))

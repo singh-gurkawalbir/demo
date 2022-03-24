@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { selectors } from '../../../../reducers';
@@ -9,6 +9,7 @@ import Spinner from '../../../Spinner';
 import RunHistoryDrawer from '../../RunHistoryDrawer';
 import ErrorsListDrawer from '../../../../views/Integration/common/ErrorsList';
 import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
+import NoResultTypography from '../../../NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   jobTable: {
@@ -23,10 +24,6 @@ const useStyles = makeStyles(theme => ({
       paddingLeft: theme.spacing(2),
     },
   },
-  emptyMessage: {
-    marginTop: theme.spacing(2),
-    padding: theme.spacing(0, 2, 2),
-  },
   root: {
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
@@ -34,6 +31,7 @@ const useStyles = makeStyles(theme => ({
   },
   scrollTable: {
     overflow: 'auto',
+    paddingBottom: theme.spacing(4),
   },
   completeFlowTable: {
     minHeight: '300px',
@@ -66,7 +64,7 @@ export default function CompletedFlows() {
           </>
         )}
       </div>
-      {showEmptyMessage ? <Typography variant="body2" className={classes.emptyMessage}>You don&apos;t have any completed flows in the selected date range. </Typography> : ''}
+      {showEmptyMessage ? <NoResultTypography>You don&apos;t have any completed flows in the selected date range. </NoResultTypography> : ''}
       <RunHistoryDrawer />
       <ErrorsListDrawer />
     </div>

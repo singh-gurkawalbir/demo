@@ -172,7 +172,7 @@ export default function MultiSelectApplication(props) {
   return (
     <div className={classes.multiSelectWrapper} ref={ref}>
       <div className={classes.labelWrapper}>
-        <FormLabel htmlFor={id} required={required} error={!isValid}>
+        <FormLabel disabled={disabled} htmlFor={id} required={required} error={!isValid}>
           {label}
         </FormLabel>
         <FieldHelp {...props} />
@@ -183,6 +183,7 @@ export default function MultiSelectApplication(props) {
         required={required}
         className={classes.multiSelectWrapper}>
         <CustomSelect
+          isDisabled={disabled}
           {...isLoggableAttr(isLoggable)}
           isMulti
           hideApplicationImg={hideApplicationImg}

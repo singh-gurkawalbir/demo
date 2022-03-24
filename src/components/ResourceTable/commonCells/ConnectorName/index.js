@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getApp } from '../../../../constants/applications';
-import { getResourceSubType } from '../../../../utils/resource';
+import { getResourceSubType, rdbmsSubTypeToAppType } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 
 export default function ConnectorName({ resource }) {
   const { type, assistant, resourceType } = useMemo(() => getResourceSubType(resource), [resource]);
   const _connectionId = resource?._connectionId;
   const useRestForm = resource?.http?.formType === 'rest';
-  const rdbmsType = resource?.rdbms?.type;
+  const rdbmsType = rdbmsSubTypeToAppType(resource?.rdbms?.type);
   const rdbmsConnType = useSelector(state =>
-    selectors.resource(state, 'connections', _connectionId)?.rdbms?.type
+    rdbmsSubTypeToAppType(selectors.resource(state, 'connections', _connectionId)?.rdbms?.type)
   );
 
   const out = useMemo(() => {

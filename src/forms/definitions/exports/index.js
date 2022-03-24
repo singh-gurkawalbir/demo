@@ -18,6 +18,7 @@ import custom from './custom';
 import simple from './simple';
 import dynamodb from './dynamodb';
 import commonfileprovider from './commonfileprovider';
+import graphql from './graphql';
 
 export default {
   new: newExport,
@@ -40,4 +41,5 @@ export default {
   simple,
   dynamodb,
   commonfileprovider,
+  graphql,
 };

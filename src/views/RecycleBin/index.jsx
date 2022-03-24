@@ -1,5 +1,4 @@
 import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -17,18 +16,11 @@ import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
 import infoText from '../ResourceList/infoText';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
-import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../components/NoResultTypography';
+import ActionGroup from '../../components/ActionGroup';
+import PageContent from '../../components/PageContent';
 import emptyStateResource from '../../components/EmptyState/metadata';
 import EmptyState from '../../components/EmptyState';
-
-const useStyles = makeStyles(theme => ({
-  actions: {
-    display: 'flex',
-  },
-  resultContainer: {
-    padding: theme.spacing(3, 3, 12, 3),
-  },
-}));
 
 export const LoadingMask = ({message}) => (
   <Loader open>
@@ -44,7 +36,6 @@ const defaultFilter = {
 const {recyclebin} = emptyStateResource;
 export default function RecycleBin(props) {
   const history = useHistory();
-  const classes = useStyles();
   const dispatch = useDispatch();
   const filterKey = 'recycleBinTTL';
   const filter =
@@ -90,16 +81,16 @@ export default function RecycleBin(props) {
         {status === 'requested' && <LoadingMask message="Restoring..." />}
         <ResourceDrawer {...props} />
         <CeligoPageBar title="Recycle bin" infoText={infoText.recycleBin}>
-          <div className={classes.actions}>
+          <ActionGroup>
             <KeywordSearch
               filterKey={filterKey}
             />
-          </div>
+          </ActionGroup>
         </CeligoPageBar>
-        <div className={classes.resultContainer}>
+        <PageContent>
           <LoadResources required resources="recycleBinTTL">
             {list.count === 0 ? (
-              <div>
+              <>
                 {list.total === 0
                   ? (
                     <EmptyState
@@ -107,13 +98,13 @@ export default function RecycleBin(props) {
                       subTitle={recyclebin.subTitle}
                       type={recyclebin.type} />
                   )
-                  : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
-              </div>
+                  : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
+              </>
             ) : (
               <ResourceTable resources={list.resources} resourceType="recycleBinTTL" />
             )}
           </LoadResources>
-        </div>
+        </PageContent>
         <ShowMoreDrawer
           filterKey={filterKey}
           count={list.count}

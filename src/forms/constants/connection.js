@@ -136,6 +136,7 @@ export default {
     'bartender',
     'jazzhr',
     'segment',
+    'bigquerydatawarehouse',
     'happyreturns',
   ],
   OAUTH_APPLICATIONS: [
@@ -167,6 +168,7 @@ export default {
     'campaignmonitor',
     'googlesheets',
     'googlecontacts',
+    'googlecontactspeople',
     'googlemail',
     'googledrive',
     'googleanalytics',
@@ -221,6 +223,7 @@ export default {
     'docebo',
     'mercadolibre',
     'zohoexpense',
+    'microsoftpowerautomate',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',

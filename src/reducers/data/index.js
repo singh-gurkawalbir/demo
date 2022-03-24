@@ -4,6 +4,7 @@ import resources, { selectors as fromResources } from './resources';
 import integrationAShares, { selectors as fromIntegrationAShares } from './integrationAShares';
 import integrationApps, { selectors as fromIntegrationApps } from './integrationApps';
 import audit, { selectors as fromAudit } from './audit';
+import revisions, { selectors as fromRevisions } from './revisions';
 import jobs, { selectors as fromJobs } from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, { selectors as fromSuiteScript } from './suiteScript';
@@ -19,6 +20,7 @@ export default combineReducers({
   integrationApps,
   audit,
   jobs,
+  revisions,
   suiteScript,
   marketplace,
   fileDefinitions,
@@ -38,6 +40,7 @@ const subSelectors = {
   runningJobs: fromRunningJobs,
   completedJobs: fromCompletedJobs,
   fileDefinitions: fromFileDefinitions,
+  revisions: fromRevisions,
 };
 
 genSelectors(selectors, subSelectors);
