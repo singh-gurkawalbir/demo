@@ -50,7 +50,7 @@ export default function ErrorCell({
 
   if (!numOpenError) {
     return (
-      <Status variant="success" size="mini" onClick={handleErrorClick}>success</Status>
+      <Status variant="success" size="mini" onClick={handleErrorClick}>Success</Status>
     );
   }
 
