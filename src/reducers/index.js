@@ -71,6 +71,7 @@ import {
   isQueryBuilderSupported,
   filterAndSortResources,
   getUserAccessLevelOnConnection,
+  rdbmsSubTypeToAppType,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -105,6 +106,7 @@ import { getSelectedRange } from '../utils/flowMetrics';
 import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
 import { filterMap } from '../components/GlobalSearch/filterMeta';
+import { getRevisionFilterKey, getFilteredRevisions } from '../utils/revisions';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -430,7 +432,7 @@ selectors.addNewChildSteps = (state, integrationId) => {
   return { steps: modifiedSteps };
 };
 
-selectors.currentStepPerMode = (state, { mode, integrationId, cloneResourceId, cloneResourceType }) => {
+selectors.currentStepPerMode = (state, { mode, integrationId, revisionId, cloneResourceId, cloneResourceType }) => {
   let steps = [];
 
   if (mode === 'install') {
@@ -441,6 +443,8 @@ selectors.currentStepPerMode = (state, { mode, integrationId, cloneResourceId, c
     steps = selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true })?.steps;
   } else if (mode === 'clone') {
     steps = selectors.cloneInstallSteps(state, cloneResourceType, cloneResourceId);
+  } else if (mode === 'revision') {
+    steps = selectors.currentRevisionInstallSteps(state, integrationId, revisionId);
   }
 
   return (steps || []).find(s => !!s.isCurrentStep);
@@ -2427,7 +2431,7 @@ selectors.mkDIYIntegrationFlowList = () => {
   return createSelector(
     state => state?.data?.resources?.integrations,
     state => state?.data?.resources?.flows,
-    (state, integrationId) => selectors.latestJobMap(state, integrationId || 'none')?.data,
+    (state, integrationId, childId) => selectors.latestJobMap(state, childId || integrationId || 'none')?.data,
     (state, integrationId) => integrationId,
     (_1, _2, childId) => childId,
     (_1, _2, _3, isUserInErrMgtTwoDotZero) => isUserInErrMgtTwoDotZero,
@@ -2558,6 +2562,13 @@ selectors.getResourceType = (state, { resourceType, resourceId }) => {
   }
 
   return updatedResourceType;
+};
+
+// As of now, we are not showing the lookup option for BigQuery imports
+selectors.mappingHasLookupOption = (state, resourceType, connectionId) => {
+  const connection = selectors.resource(state, resourceType, connectionId) || {};
+
+  return connection?.rdbms?.type !== 'bigquery';
 };
 
 // this selector updates the field options based on the
@@ -5203,7 +5214,9 @@ selectors.applicationType = (state, resourceType, id) => {
   if (adaptorType === 'http' && resourceObj?.http?.formType === 'rest') {
     adaptorType = 'rest';
   }
-
+  if (adaptorTypeMap[adaptorType] === 'graph_ql' || resourceObj?.http?.formType === 'graph_ql') {
+    adaptorType = 'graph_ql';
+  }
   // For Data Loader cases, there is no image.
   if (getStagedValue('/type') === 'simple' || resourceObj?.type === 'simple') {
     return '';
@@ -5216,7 +5229,7 @@ selectors.applicationType = (state, resourceType, id) => {
       getStagedValue('/_connectionId') || (resourceObj?._connectionId)
     );
 
-    return connection && connection.rdbms && connection.rdbms.type;
+    return connection && connection.rdbms && rdbmsSubTypeToAppType(connection.rdbms.type);
   }
 
   if (adaptorType?.toUpperCase().startsWith('HTTP') && resourceObj?.http?.formType === 'rest' && !assistant) {
@@ -6275,7 +6288,7 @@ selectors.isEditorDisabled = (state, editorId) => {
 
 selectors.isEditorLookupSupported = (state, editorId) => {
   const editor = fromSession.editor(state?.session, editorId);
-  const {resultMode, fieldId, editorType, resourceType} = editor;
+  const {resultMode, fieldId, editorType, resourceType, resourceId} = editor;
   const fieldsWhichNotSupportlookup = [
     '_body',
     '_postBody',
@@ -6288,6 +6301,12 @@ selectors.isEditorLookupSupported = (state, editorId) => {
     'http.relativeURI',
     'rest.relativeURI',
   ];
+  const resource = selectors.resourceData(
+    state,
+    resourceType,
+    resourceId
+  )?.merged || emptyObject;
+  const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
 
   // lookups are only valid for http request body and sql query import fields (but not for lookup fields inside those)
   // and other text result fields
@@ -6299,6 +6318,10 @@ selectors.isEditorLookupSupported = (state, editorId) => {
   }
 
   if (fieldsWhichNotSupportlookup.includes(fieldId) || (resultMode === 'text' && editorType !== 'sql' && editorType !== 'databaseMapping')) {
+    return false;
+  }
+
+  if (connection.rdbms?.type === 'bigquery') {
     return false;
   }
 
@@ -6661,3 +6684,72 @@ selectors.globalSearchResults = createSelector(
   (_, resourceResults) => resourceResults
 );
 
+selectors.revisionsFilter = (state, integrationId) => {
+  const filterKey = getRevisionFilterKey(integrationId);
+
+  return selectors.filter(state, filterKey);
+};
+
+selectors.filteredRevisions = createSelector(
+  selectors.revisions,
+  selectors.revisionsFilter,
+  (revisionsList, revisionsFilter) => getFilteredRevisions(revisionsList, revisionsFilter)
+);
+
+selectors.resourceName = (state, resourceId, resourceType) => {
+  if (!resourceId || !resourceType) return '';
+  const resource = selectors.resource(state, resourceType, resourceId);
+
+  return resource?.name || resource?.id;
+};
+
+selectors.resourceReferencesPerIntegration = createSelector(
+  selectors.resourceReferences,
+  state => state.data.resources.flows,
+  state => state.data.resources.integrations,
+  (resourceReferences, flowsList, integrationsList) => {
+    if (!resourceReferences) return null;
+    const flowReferences = resourceReferences.filter(ref => ref.resourceType === 'flows');
+    const results = [];
+
+    flowReferences.forEach(flowRef => {
+      const integrationId = flowsList?.find(f => f._id === flowRef.id)?._integrationId;
+      const integrationName = integrationsList?.find(i => i._id === integrationId)?.name;
+
+      results.push({
+        flowId: flowRef.id,
+        flowName: flowRef.name,
+        integrationId,
+        integrationName,
+      });
+    });
+
+    return results;
+  }
+);
+
+selectors.currentRevisionInstallSteps = createSelector(
+  selectors.revisionInstallSteps,
+  (state, _, revisionId) => selectors.updatedRevisionInstallStep(state, revisionId),
+  (revisionInstallSteps, updatedRevisionInstallStep) => revisionInstallSteps.map(step => {
+    if (step.isCurrentStep) {
+      return {...step, ...updatedRevisionInstallStep};
+    }
+
+    return step;
+  })
+);
+
+selectors.areAllRevisionInstallStepsCompleted = (state, integrationId, revisionId) => {
+  const installSteps = selectors.currentRevisionInstallSteps(state, integrationId, revisionId);
+
+  // TODO:  check for hidden step. Do we need to consider them?
+  return installSteps.every(step => step.completed);
+};
+
+selectors.accountHasSandbox = state => {
+  const accounts = selectors.accountSummary(state);
+  const selectedAccount = accounts?.find(a => a.selected);
+
+  return !!(selectedAccount?.hasSandbox || selectedAccount?.hasConnectorSandbox);
+};

@@ -1284,6 +1284,11 @@ const license = {
     action(actionTypes.LICENSE.NUM_ENABLED_FLOWS_RECEIVED, { response }),
   receivedLicenseEntitlementUsage: response =>
     action(actionTypes.LICENSE.ENTITLEMENT_USAGE_RECEIVED, { response }),
+  clearActionMessage: () =>
+    action(actionTypes.LICENSE.CLEAR_ACTION_MESSAGE),
+  receivedLicenseErrorMessage: code => action(actionTypes.LICENSE.ERROR_MESSAGE_RECEIVED, { code }),
+  clearErrorMessage: () => action(actionTypes.LICENSE.CLEAR_ERROR_MESSAGE),
+
 };
 const importSampleData = {
   request: (resourceId, options, refreshCache) =>
@@ -2230,6 +2235,44 @@ const sso = {
   clearValidations: () => action(actionTypes.SSO.ORG_ID.VALIDATION_CLEAR),
 };
 
+const integrationLCM = {
+  cloneFamily: {
+    request: integrationId => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, { integrationId }),
+    received: (integrationId, cloneFamily) => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.RECEIVED, { integrationId, cloneFamily }),
+    receivedError: (integrationId, error) => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.RECEIVED_ERROR, { integrationId, error }),
+    clear: integrationId => action(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.CLEAR, { integrationId }),
+  },
+  compare: {
+    pullRequest: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.COMPARE.PULL_REQUEST, { integrationId, revisionId }),
+    revertRequest: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.COMPARE.REVERT_REQUEST, { integrationId, revisionId }),
+    revisionChanges: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.COMPARE.REVISION_REQUEST, { integrationId, revisionId }),
+    receivedDiff: (integrationId, diff) => action(actionTypes.INTEGRATION_LCM.COMPARE.RECEIVED_DIFF, { integrationId, diff }),
+    receivedDiffError: (integrationId, diffError) => action(actionTypes.INTEGRATION_LCM.COMPARE.RECEIVED_DIFF_ERROR, { integrationId, diffError }),
+    clear: integrationId => action(actionTypes.INTEGRATION_LCM.COMPARE.CLEAR, { integrationId }),
+    toggleExpandAll: integrationId => action(actionTypes.INTEGRATION_LCM.COMPARE.TOGGLE_EXPAND_ALL, { integrationId }),
+  },
+  revision: {
+    openPull: ({ integrationId, newRevisionId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.OPEN_PULL, { integrationId, newRevisionId, revisionInfo }),
+    openRevert: ({ integrationId, newRevisionId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.OPEN_REVERT, { integrationId, newRevisionId, revisionInfo }),
+    create: (integrationId, newRevisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CREATE, { integrationId, newRevisionId }),
+    created: (integrationId, newRevisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CREATED, { integrationId, newRevisionId }),
+    creationError: (integrationId, newRevisionId, creationError) => action(actionTypes.INTEGRATION_LCM.REVISION.CREATION_ERROR, { integrationId, newRevisionId, creationError }),
+    createSnapshot: ({ integrationId, newRevisionId, revisionInfo }) => action(actionTypes.INTEGRATION_LCM.REVISION.CREATE_SNAPSHOT, { integrationId, newRevisionId, revisionInfo }),
+    clear: integrationId => action(actionTypes.INTEGRATION_LCM.REVISION.CLEAR, { integrationId }),
+    cancel: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.CANCEL, { integrationId, revisionId }),
+    fetchErrors: (integrationId, revisionId) => action(actionTypes.INTEGRATION_LCM.REVISION.FETCH_ERRORS, { integrationId, revisionId }),
+    receivedErrors: (integrationId, revisionId, errors) => action(actionTypes.INTEGRATION_LCM.REVISION.RECEIVED_ERRORS, {integrationId, revisionId, errors }),
+  },
+  installSteps: {
+    installStep: (integrationId, revisionId, stepInfo) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, { revisionId, integrationId, stepInfo }),
+    updateStep: (revisionId, status) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.UPDATE, { revisionId, status }),
+    completedStepInstall: revisionId => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.DONE, { revisionId }),
+  },
+  revisions: {
+    request: integrationId => resource.requestCollection(`integrations/${integrationId}/revisions`),
+  },
+};
+
 export default {
   asyncTask,
   form,
@@ -2277,4 +2320,5 @@ export default {
   logs,
   sso,
   bottomDrawer,
+  integrationLCM,
 };

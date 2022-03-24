@@ -10,15 +10,12 @@ import SuiteScriptTile from './SuiteScriptTile';
 import SortableList from '../../../../components/Sortable/SortableList';
 import SortableItem from '../../../../components/Sortable/SortableItem';
 import useSortableList from '../../../../hooks/useSortableList';
-import EmptyState from '../../../../components/EmptyState';
-import { FilledButton, TextButton } from '../../../../components/Buttons';
-import emptyStateResource from '../../../../components/EmptyState/metadata';
+import PageContent from '../../../../components/PageContent';
 
-const useStyles = makeStyles(theme => ({
+export const gridViewStyles = makeStyles(theme => ({
   container: {
-    padding: theme.spacing(2),
-    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.spacing(2)}px + ${theme.pageBarHeight}px))`,
-    overflowY: 'auto',
+    padding: 0,
+    margin: 0,
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr));',
     gridGap: theme.spacing(2),
@@ -35,27 +32,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const {integrations} = emptyStateResource;
-
-export const DashboardEmptyState = () => (
-  <EmptyState
-    title={integrations.title}
-    subTitle={integrations.subTitle}
-    type={integrations.type}>
-    <FilledButton data-test="create flow" href="/integrations/none/flowBuilder/new">{integrations.buttonLabel}</FilledButton>
-    <TextButton
-      data-test="openResourceDocLink"
-      underline
-      href={integrations.link}
-      target="_blank">
-      {integrations.linkLabel}
-    </TextButton>
-  </EmptyState>
-);
-
 export default function HomeCard({ sortedTiles }) {
   const dispatch = useDispatch();
-  const classes = useStyles();
+  const classes = gridViewStyles();
   const preferences = useSelector(state => selectors.userPreferences(state));
   const tilesFromOtherEnvironment = useMemo(() => {
     const allSortedTileIds =
@@ -84,45 +63,41 @@ export default function HomeCard({ sortedTiles }) {
   const {dragItemIndex, handleSortStart, handleSortEnd} = useSortableList(onSortEnd);
 
   return (
-    <>
-      {sortedTiles.length === 0 ? (
-        <DashboardEmptyState />
-      ) : (
-        <SortableList
-          className={classes.container}
-          onSortEnd={handleSortEnd}
-          updateBeforeSortStart={handleSortStart}
-          axis="xy"
-          useDragHandle>
-          {sortedTiles.map((t, index) => (
-            <SortableItem
-              key={getTileId(t)}
-              index={index}
-              hideSortableGhost={false}
-              value={(
-                <>
-                  {t.ssLinkedConnectionId ? (
-                    <SuiteScriptTile
-                      tile={t}
-                      index={index}
-                      isDragInProgress={dragItemIndex !== undefined}
-                      isTileDragged={dragItemIndex === index}
+    <PageContent>
+      <SortableList
+        className={classes.container}
+        onSortEnd={handleSortEnd}
+        updateBeforeSortStart={handleSortStart}
+        axis="xy"
+        useDragHandle>
+        {sortedTiles.map((t, index) => (
+          <SortableItem
+            key={getTileId(t)}
+            index={index}
+            hideSortableGhost={false}
+            value={(
+              <>
+                {t.ssLinkedConnectionId ? (
+                  <SuiteScriptTile
+                    tile={t}
+                    index={index}
+                    isDragInProgress={dragItemIndex !== undefined}
+                    isTileDragged={dragItemIndex === index}
                   />
-                  ) : (
-                    <Tile
-                      tile={t}
-                      index={index}
-                      isDragInProgress={dragItemIndex !== undefined}
-                      isTileDragged={dragItemIndex === index}
+                ) : (
+                  <Tile
+                    tile={t}
+                    index={index}
+                    isDragInProgress={dragItemIndex !== undefined}
+                    isTileDragged={dragItemIndex === index}
                   />
-                  )}
-                </>
+                )}
+              </>
             )}
           />
-          ))}
-        </SortableList>
-      )}
-    </>
+        ))}
+      </SortableList>
+    </PageContent>
   );
 }
 
