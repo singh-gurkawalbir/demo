@@ -12,7 +12,8 @@ export const LICENSE_UPGRADE_REQUEST = 'We will contact you to discuss your add-
 export const LICENSE_UPGRADE_SUCCESS_MESSAGE = `${LICENSE_UPGRADE_REQUEST_RECEIVED}
       
 <a target="_blank" rel="noopener noreferrer"
-  href="/marketplace"><u>Checkout our Marketplace</u></a>  Integration Apps, templates for business process automation, and quickstart integration templates.`;
+href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with Integration Apps, Business Process Automation templates, and quickstart templates.`;
+
 export default {
   CONTACT_SALES_MESSAGE,
   MULTIPLE_INSTALLS,
