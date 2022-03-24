@@ -176,6 +176,7 @@ export default {
 'Please enter your subdomain here which you configured while activating your new Recurly account.',
   'recurly.connection.http.auth.basic.username':
 'Please enter your API key here. You can go to Integrations >> API Credentials to find it.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'recurly.connection.http.unencrypted.version': 'The API versions determines which API your connection will use.<br><b>Note:</b>The v2 APIs are going to be deprecated; use the v3 instead.',
   'cartrover.connection.http.auth.basic.username':
 'Please enter your API User. Navigate to Merchant view on left hand side and click on API keys section to find API User.',
   'cartrover.connection.http.auth.basic.password':

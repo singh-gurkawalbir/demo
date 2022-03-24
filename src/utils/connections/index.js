@@ -129,6 +129,17 @@ export const getEbayType = connection =>
   connection?.http?.baseURI?.includes('apiz') ? 'ebayfinance' : 'ebay';
 export const getGoogleContactsAPI = connection =>
   connection?.http?.baseURI?.includes('people.googleapis') ? 'googlecontactspeople' : 'googlecontacts';
+const getRecurlyType = connection => {
+  const addversion = connection?.http?.unencrypted?.version;
+
+  switch (addversion) {
+    case 'v3':
+      return 'recurlyv3';
+    default:
+  }
+
+  return 'recurly';
+};
 const getAmazonMWSType = connection => {
   const httpType = connection?.http?.type;
 
@@ -154,6 +165,9 @@ export const getAssistantFromConnection = (assistant, connection) => {
   }
   if (assistant === 'amazonmws') {
     return getAmazonMWSType(connection);
+  }
+  if (assistant === 'recurly') {
+    return getRecurlyType(connection);
   }
 
   return assistant;
