@@ -18,7 +18,7 @@ import { generateNewId } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import actions from '../../actions';
 import { TextButton } from '../../components/Buttons';
-import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../components/NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -87,8 +87,8 @@ export default function TemplateList(props) {
             {list.count === 0 ? (
               <Typography>
                 {list.total === 0
-                  ? <NoResultMessageWrapper>You don&apos;t have any templates</NoResultMessageWrapper>
-                  : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+                  ? <NoResultTypography>You don&apos;t have any templates</NoResultTypography>
+                  : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
               </Typography>
             ) : (
               <ResourceTable resources={list.resources} resourceType="templates" />

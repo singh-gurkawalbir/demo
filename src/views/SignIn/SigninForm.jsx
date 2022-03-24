@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     width: '100%',
     maxWidth: 500,
-    marginBottom: 125,
+    marginBottom: 112,
     [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
     },

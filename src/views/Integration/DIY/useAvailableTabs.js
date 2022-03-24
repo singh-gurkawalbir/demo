@@ -9,10 +9,12 @@ import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import OfflineConnectionsIcon from '../../../components/icons/OfflineConnectionsIcon';
 import SingleUserIcon from '../../../components/icons/SingleUserIcon';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
+import RevisionsIcon from '../../../components/icons/ViewResolvedHistoryIcon';
 import AuditLogPanel from './panels/AuditLog';
 import NotificationsPanel from './panels/Notifications';
 import SettingsPanel from './panels/Settings';
 import AdminPanel from './panels/Admin';
+import RevisionsPanel from './panels/Revisions';
 import UsersPanel from '../../../components/ManageUsersPanel';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
@@ -22,9 +24,10 @@ import { selectors } from '../../../reducers';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import GraphIcon from '../../../components/icons/GraphIcon';
 import { getTopLevelTabs } from '../../../utils/integrationApps';
+import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const getTabs = (isUserInErrMgtTwoDotZero, isAnyIntegrationConnectionOffline) => [
+const getTabs = ({ isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyIntegrationConnectionOffline, isIAFrameWork2 }) => [
   {
     path: 'settings',
     label: 'Settings',
@@ -74,6 +77,12 @@ const getTabs = (isUserInErrMgtTwoDotZero, isAnyIntegrationConnectionOffline) =>
     Icon: SingleUserIcon,
     Panel: AdminPanel,
   },
+  ...((!isStandaloneIntegration && !isIAFrameWork2) ? [{
+    path: 'revisions',
+    label: 'Revisions',
+    Icon: RevisionsIcon,
+    Panel: RevisionsPanel,
+  }] : []),
 ];
 const emptyObj = {};
 
@@ -81,10 +90,14 @@ export function useAvailableTabs() {
   const match = useRouteMatch();
 
   const { integrationId, childId } = match?.params;
+  const isStandaloneIntegration = integrationId === STANDALONE_INTEGRATION.id;
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  // TODO: commenting for now
+  // const isIAFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
+  const isIAFrameWork2 = false;
   const hideSettingsTab = useSelector(state => {
     const canEditSettingsForm =
           selectors.canEditSettingsForm(state, 'integrations', integrationId, (childId || integrationId));
@@ -127,7 +140,12 @@ export function useAvailableTabs() {
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
 
   const availableTabs = useMemo(() => getTopLevelTabs({
-    tabs: getTabs(isUserInErrMgtTwoDotZero, isAnyIntegrationConnectionOffline),
+    tabs: getTabs({
+      isUserInErrMgtTwoDotZero,
+      isStandaloneIntegration,
+      isAnyIntegrationConnectionOffline,
+      isIAFrameWork2,
+    }),
     isIntegrationApp,
     isParent,
     integrationId,
@@ -136,7 +154,7 @@ export function useAvailableTabs() {
     children,
     isMonitorLevelUser,
     hideSettingsTab,
-  }), [isUserInErrMgtTwoDotZero, isAnyIntegrationConnectionOffline, isIntegrationApp, isParent, integrationId, hasAddOns, supportsChild, children, isMonitorLevelUser, hideSettingsTab]);
+  }), [isUserInErrMgtTwoDotZero, isStandaloneIntegration, isIAFrameWork2, isAnyIntegrationConnectionOffline, isIntegrationApp, isParent, integrationId, hasAddOns, supportsChild, children, isMonitorLevelUser, hideSettingsTab]);
 
   return availableTabs;
 }

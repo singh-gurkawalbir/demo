@@ -14,6 +14,7 @@ import InfoIconButton from '../../../../../../../components/InfoIconButton';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
+import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 
 const emptyObject = {};
 const metadata = {
@@ -107,6 +108,7 @@ const useStyles = makeStyles(theme => ({
 export default function SubscriptionSection({ childId, integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const {confirmDialog} = useConfirmDialog();
   const match = useRouteMatch();
   const {
     supportsChild,
@@ -182,12 +184,27 @@ export default function SubscriptionSection({ childId, integrationId }) {
     upgradeRequested,
   } = license;
   const handleUpgrade = () => {
-    if (upgradeText === 'CONTACT US TO UPGRADE') {
-      dispatch(
-        actions.integrationApp.settings.requestUpgrade(integrationId, {
-          licenseId: license._id,
-        })
-      );
+    if (upgradeText === 'Request upgrade') {
+      confirmDialog({
+        title: 'Request upgrade',
+        message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+        buttons: [
+          {
+            label: 'Submit request',
+            onClick: () => {
+              dispatch(
+                actions.integrationApp.settings.requestUpgrade(integrationId, {
+                  licenseId: license._id,
+                })
+              );
+            },
+          },
+          {
+            label: 'Cancel',
+            variant: 'text',
+          },
+        ],
+      });
     } else {
       dispatch(actions.integrationApp.settings.upgrade(integrationId, license));
     }
@@ -254,7 +271,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 component={Link}
                 disabled={isLicenseExpired}
                 to={match.url.replace('admin/subscription', 'addons')}>
-                GET ADD-ONS
+                Get add-ons
               </FilledButton>
             </div>
           </div>

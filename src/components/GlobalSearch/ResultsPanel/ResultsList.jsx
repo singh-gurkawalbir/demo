@@ -5,7 +5,7 @@ import GenericRow from './types/Generic';
 import ConnectedRow from './types/Connected';
 import RecycleBinRow from './types/RecycleBin';
 import MarketplaceRow from './types/Marketplace';
-import NoResultMessageWrapper from '../../NoResultMessageWrapper';
+import NoResultTypography from '../../NoResultTypography';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
 
 // TODO: We need to create custom row types for several of
@@ -41,7 +41,7 @@ function ResultsList({ results, currentFocussed }) {
   if (!results?.length) {
     return (
       <div className={classes.root}>
-        <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
+        <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>
       </div>
     );
   }
