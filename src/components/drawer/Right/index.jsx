@@ -144,5 +144,5 @@ RightDrawer.propTypes = {
 RightDrawer.defaultProps = {
   width: 'default',
   height: 'short',
-  variant: 'permanent',
+  variant: 'temporary',
 };

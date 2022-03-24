@@ -70,7 +70,6 @@ export default function MappingDrawerRoute(props) {
         ]}
         height="tall"
         width={isMappingPreviewAvailable ? 'full' : 'default'}
-        variant="persistent"
       >
         <Switch>
           <Route

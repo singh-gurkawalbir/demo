@@ -86,7 +86,6 @@ export default function RunHistoryDrawer() {
       path=":flowId/runHistory"
       height="tall"
       width="full"
-      variant="permanent"
       onClose={handleClose}
         >
       <DrawerHeader title={`Run History: ${flow.name || flowId}`} />

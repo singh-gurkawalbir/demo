@@ -201,7 +201,6 @@ export default function QueuedJobsDrawer() {
       <RightDrawer
         height="tall"
         width="full"
-        variant="permanent"
         hideBackButton
         onClose={handleClose}
         path={paths}>

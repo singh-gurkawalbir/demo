@@ -143,8 +143,7 @@ export default function RetryDrawer({height, jobId, flowJobId}) {
     <RightDrawer
       path="editRetry/:retryId"
       height={height}
-      width="large"
-      variant="permanent">
+      width="large" >
       <DrawerHeader handleClose={setCancelTriggered} disableClose={disabled} title="Edit retry data" />
       <RetryForm asyncKey={asyncKey} jobId={jobId} flowJobId={flowJobId} />
     </RightDrawer>

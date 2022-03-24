@@ -92,7 +92,6 @@ export default function FlowStepDebugLogs({ flowId, resourceType, resourceId }) 
   return (
     <RightDrawer
       path="logs"
-      variant="permanent"
       height="tall"
       width="full"
       onClose={handleClose} >
