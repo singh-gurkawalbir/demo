@@ -13,7 +13,7 @@ import { OutlinedButton } from '../Buttons';
 const useStyles = makeStyles(theme => ({
   dialogTitle: {
     display: 'flex',
-    padding: `12px ${theme.spacing(2)}px`,
+    padding: theme.spacing(1.5, 2),
 
   },
   actionButton: {
