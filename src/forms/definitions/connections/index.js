@@ -13,6 +13,7 @@ import custom from './custom';
 import newImport from './new';
 import subForms from './subForms';
 import dynamodb from './dynamodb';
+import graphql from './graphql';
 
 export default {
   new: newImport,
@@ -30,4 +31,5 @@ export default {
   custom,
   subForms,
   dynamodb,
+  graphql,
 };

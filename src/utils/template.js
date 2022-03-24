@@ -6,6 +6,7 @@ import {
   SALESFORCE_DA_PACKAGE_URL,
   INSTALL_STEP_TYPES,
 } from './constants';
+import { rdbmsSubTypeToAppType } from './resource';
 import { capitalizeFirstLetter } from './string';
 
 export const getTemplateUrlName = applications => {
@@ -32,7 +33,7 @@ export const getApplication = conn => {
     }
 
     if (conn.type === 'rdbms' && conn.rdbms) {
-      return a.id === conn.rdbms.type;
+      return a.id === rdbmsSubTypeToAppType(conn.rdbms.type);
     }
 
     if (conn.type === 'http' && conn.http?.formType === 'rest') {

@@ -15,10 +15,9 @@ import infoText from '../ResourceList/infoText';
 import CheckPermissions from '../../components/CheckPermissions';
 import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
-import { TextButton, FilledButton } from '../../components/Buttons';
-import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
-import EmptyState from '../../components/EmptyState';
-import emptyStateResource from '../../components/EmptyState/metadata';
+import { TextButton } from '../../components/Buttons';
+import NoResultTypography from '../../components/NoResultTypography';
+import ResourceEmptyState from '../ResourceList/ResourceEmptyState';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -33,7 +32,6 @@ const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
 };
 
-const {apitokens} = emptyStateResource;
 export default function AccessTokenList(props) {
   const { integrationId, location } = props;
   const filter = useSelector(state =>
@@ -86,26 +84,8 @@ export default function AccessTokenList(props) {
               <div>
                 {list.total === 0
                   ? (
-                    <EmptyState
-                      title={apitokens.title}
-                      subTitle={apitokens.subTitle}
-                      type={apitokens.type}>
-                      <FilledButton
-                        data-test="newAccessToken"
-                        component={Link}
-                        to={`${location.pathname}/add/accesstokens/${generateNewId()}`}
-                      >{apitokens.buttonLabel}
-                      </FilledButton>
-                      <TextButton
-                        data-test="openResourceDocLink"
-                        underline
-                        href={apitokens.link}
-                        target="_blank">
-                        {apitokens.linkLabel}
-                      </TextButton>
-                    </EmptyState>
-                  )
-                  : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+                    <ResourceEmptyState resourceType="accesstokens" />
+                  ) : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
               </div>
             )}
           </LoadResources>
