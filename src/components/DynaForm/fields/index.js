@@ -144,6 +144,7 @@ import DynaAmazonRestrictedReportType from './DynaAmazonRestrictedReportType';
 import DynaFlowGroupName from './integrations/DynaFlowGroupName';
 import DynaFlowGroupsTiedToIntegrations from './integrations/DynaFlowGroupsTiedToIntegrations';
 import DynaTextUpdateDomain from './text/DynaTextUpdateDomain';
+import DynaIntegrationCloneSelect from './select/DynaIntegrationCloneSelect';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -299,4 +300,5 @@ export default {
   selectAmazonSellerCentralAPIType: DynaSelectAmazonSellerCentralAPIType,
   amazonRestrictedReportType: DynaAmazonRestrictedReportType,
   updatedomain: DynaTextUpdateDomain,
+  integrationcloneselect: DynaIntegrationCloneSelect,
 };

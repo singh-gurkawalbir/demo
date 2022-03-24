@@ -10,7 +10,7 @@ import DrawerHeader from '../../../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../drawer/Right/DrawerFooter';
 import { isNewId } from '../../../../../utils/resource';
-import { FilledButton } from '../../../../Buttons';
+import { FilledButton, TextButton } from '../../../../Buttons';
 import SaveAndCloseButtonGroupAuto from '../../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import useFormOnCancelContext from '../../../../FormOnCancelContext';
 import { getFormSaveStatusFromCommStatus } from '../../../../../utils/editor';
@@ -76,18 +76,14 @@ function ExpandModeDrawerContent() {
               <FilledButton
                 data-test="saveContent"
                 disabled={value === editorContent}
-                onClick={handleDone}
-                variant="contained"
-                color="primary">
+                onClick={handleDone}>
                 Done
               </FilledButton>
-              <FilledButton
+              <TextButton
                 data-test="closeContent"
-                onClick={handleClose}
-                variant="text"
-                color="secondary">
+                onClick={handleClose}>
                 Cancel
-              </FilledButton>
+              </TextButton>
             </>
           ) : (
             (

@@ -26,11 +26,15 @@ export default function assistantDefinition(
         'lookupType',
         'lookupQueryParams',
         'lookups',
+        'existingExtract',
       ].forEach(prop => {
         assistantMetadata[prop] = formValues[`/assistantMetadata/${prop}`];
       });
       if (assistantMetadata.assistant === 'amazonsellingpartner') {
         assistantMetadata.assistant = 'amazonmws';
+      }
+      if (assistantMetadata.assistant === 'recurlyv3') {
+        assistantMetadata.assistant = 'recurly';
       }
       const otherFormValues = omitBy(formValues, (v, k) =>
         k.includes('/assistantMetadata/')

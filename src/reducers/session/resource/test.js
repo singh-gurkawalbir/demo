@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
-import {LICENSE_TRIAL_ISSUED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../utils/constants';
+import { LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../utils/constants';
 
 describe('session.resource reducers', () => {
   test('reducer should return previous state if action is not handled.', () => {
@@ -75,7 +75,7 @@ describe('session.resource reducers', () => {
         undefined,
         actions.license.trialLicenseIssued()
       );
-      const expected = {platformLicenseActionMessage: LICENSE_TRIAL_ISSUED_MESSAGE};
+      const expected = {};
 
       expect(state).toEqual(expected);
     });
@@ -218,16 +218,6 @@ describe('session.resource reducers', () => {
         undefined
       );
       expect(selectors.platformLicenseActionMessage({})).toEqual(undefined);
-    });
-
-    test('should return correct platform license action message', () => {
-      const state = reducer(
-        undefined,
-        actions.license.trialLicenseIssued()
-      );
-      const expected = {platformLicenseActionMessage: LICENSE_TRIAL_ISSUED_MESSAGE};
-
-      expect(selectors.platformLicenseActionMessage(state)).toEqual(expected.platformLicenseActionMessage);
     });
     test('should return correct license upgrade action message', () => {
       const state = reducer(

@@ -8,6 +8,7 @@ import { selectors } from '../../../../../../../reducers';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import Addons from './Addons';
 import { FilledButton } from '../../../../../../../components/Buttons';
+import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -53,6 +54,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
+  const {confirmDialog} = useConfirmDialog();
 
   const isLicenseExpired = useSelector(state => selectors.isIntegrationAppLicenseExpired(state, integrationId));
   const [upgradeSettingsRequested, setUpgradeSettingsRequested] = useState(false);
@@ -70,12 +72,27 @@ export default function SubscriptionSection({ childId, integrationId }) {
     upgradeRequested,
   } = license;
   const handleUpgrade = () => {
-    if (upgradeText === 'CONTACT US TO UPGRADE') {
-      dispatch(
-        actions.integrationApp.settings.requestUpgrade(integrationId, {
-          licenseId: license._id,
-        })
-      );
+    if (upgradeText === 'Request upgrade') {
+      confirmDialog({
+        title: 'Request upgrade',
+        message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+        buttons: [
+          {
+            label: 'Submit request',
+            onClick: () => {
+              dispatch(
+                actions.integrationApp.settings.requestUpgrade(integrationId, {
+                  licenseId: license._id,
+                })
+              );
+            },
+          },
+          {
+            label: 'Cancel',
+            variant: 'text',
+          },
+        ],
+      });
     } else {
       setUpgradeSettingsRequested(true);
       dispatch(actions.integrationApp.settings.upgrade(integrationId, license));

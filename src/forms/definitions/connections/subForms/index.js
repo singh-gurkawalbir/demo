@@ -17,6 +17,7 @@ import httpRefreshToken from './httpRefreshToken';
 import restRefreshToken from './restRefreshToken';
 import httpOAuth from './httpOAuth';
 import httpOAuthOverrides from './httpOAuthOverrides';
+import graphql from './graphql';
 
 export default {
   genericOauthConnector,
@@ -38,4 +39,5 @@ export default {
   rdbmsAdvanced,
   wrapperAdvanced,
   fileAdvanced,
+  graphql,
 };

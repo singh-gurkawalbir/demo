@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import clsx from 'clsx';
 import { Link, useLocation, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { MODEL_PLURAL_TO_LABEL, generateNewId,
@@ -24,24 +22,11 @@ import StackShareDrawer from '../../components/StackShare/Drawer';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
 import { TextButton } from '../../components/Buttons';
-import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../components/NoResultTypography';
+import ResourceEmptyState from './ResourceEmptyState';
+import ActionGroup from '../../components/ActionGroup';
+import PageContent from '../../components/PageContent';
 
-const useStyles = makeStyles(theme => ({
-  actions: {
-    display: 'flex',
-  },
-  resultContainer: {
-    padding: theme.spacing(3, 3, 14, 3),
-    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
-    overflowY: 'auto',
-  },
-  noShowMoreContainer: {
-    paddingBottom: theme.spacing(3),
-  },
-  noResultWrapper: {
-    padding: theme.spacing(1),
-  },
-}));
 const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
 const resourcesToLoad = resourceType => {
   if (resourceType === 'exports' || resourceType === 'imports') {
@@ -73,7 +58,6 @@ export default function ResourceList(props) {
   const match = useRouteMatch();
   const { resourceType } = match.params;
   const dispatch = useDispatch();
-  const classes = useStyles();
   const filter =
     useSelector(state => selectors.filter(state, resourceType));
   const filterConfig = useMemo(
@@ -88,6 +72,7 @@ export default function ResourceList(props) {
     selectors.makeResourceListSelector,
     filterConfig
   );
+
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
   );
@@ -137,6 +122,7 @@ export default function ResourceList(props) {
   }, [dispatch, resourceType]);
 
   const actionProps = useMemo(() => ({ showTradingPartner }), [showTradingPartner]);
+  const isPagingBar = list.count >= 100;
 
   return (
     <CheckPermissions
@@ -156,7 +142,7 @@ export default function ResourceList(props) {
       <CeligoPageBar
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>
-        <div className={classes.actions}>
+        <ActionGroup>
           <KeywordSearch
             filterKey={resourceType}
           />
@@ -167,15 +153,17 @@ export default function ResourceList(props) {
             startIcon={<AddIcon />}>
             Create {createResourceLabel}
           </TextButton>
-        </div>
+        </ActionGroup>
       </CeligoPageBar>
-      <div className={clsx(classes.resultContainer, {[classes.noShowMoreContainer]: list.filtered === list.count }, {[classes.noResultWrapper]: list.count === 0})}>
+      <PageContent isPagingBar={isPagingBar}>
         <LoadResources required resources={resourcesToLoad(resourceType)}>
           {list.count === 0 ? (
             <>
               {list.total === 0
-                ? <NoResultMessageWrapper>You don&apos;t have any ${createResourceLabel}s.</NoResultMessageWrapper>
-                : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+                ? (
+                  <ResourceEmptyState resourceType={resourceType} />
+                )
+                : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
             </>
           ) : (
             <ResourceTable
@@ -185,7 +173,7 @@ export default function ResourceList(props) {
             />
           )}
         </LoadResources>
-      </div>
+      </PageContent>
       <ShowMoreDrawer
         filterKey={resourceType}
         count={list.count}

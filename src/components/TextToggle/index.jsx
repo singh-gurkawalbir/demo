@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: 'transparent',
       minWidth: 100,
       '& span': {
-        color: theme.palette.secondary.light,
+        color: theme.palette.secondary.main,
         lineHeight: '0px',
       },
     },

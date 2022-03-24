@@ -8,6 +8,7 @@ import DynaForm from '../../..';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import Spinner from '../../../../Spinner';
 import IsLoggableContextProvider from '../../../../IsLoggableContextProvider';
+import { useSelectorMemo } from '../../../../../hooks';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -29,15 +30,24 @@ export default function FormView({
     selectors.customSettingsForm(state, resourceId)
   );
 
-  useEffect(() => {
-    // reinitialize when resourceType, resourceId, sectionId changes...this is applicable for flowGroup settings use case
-    dispatch(actions.customSettings.formRequest(resourceType, resourceId, sectionId));
+  const settingsForm = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, resourceType, resourceId, sectionId) ?.settingsForm;
+  const settings = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, resourceType, resourceId, sectionId) ?.settings;
 
-    return () => { // clear settings on unmount
+  useEffect(() => {
+    // use effect will fire any time formState changes but...
+    // Only if the formState is missing do we need to perform an init.
+    if (!settingsFormState) {
+      dispatch(actions.customSettings.formRequest(resourceType, resourceId, sectionId));
+    }
+  }, [dispatch, settingsFormState, resourceId, resourceType, sectionId]);
+
+  useEffect(
+    () => () => {
+      // reload settings form when the settingsForm or settings changes
       dispatch(actions.customSettings.formClear(resourceId));
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resourceType, resourceId, sectionId]);
+    },
+    [dispatch, resourceId, settingsForm, settings]
+  );
 
   const updatedMeta = useMemo(() => {
     // sanitize all a tag elements within help texts

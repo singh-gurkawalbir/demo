@@ -13,7 +13,7 @@ import { OutlinedButton } from '../Buttons';
 const useStyles = makeStyles(theme => ({
   dialogTitle: {
     display: 'flex',
-    padding: theme.spacing(2),
+    padding: theme.spacing(1.5, 2),
 
   },
   actionButton: {
@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     textTransform: 'inherit',
   },
   titleText: {
-    maxWidth: '95%',
+    maxWidth: `calc(100% - ${theme.spacing(4)}px)`,
     flex: 1,
     wordBreak: 'break-word',
     '& > .MuiTypography-root': {

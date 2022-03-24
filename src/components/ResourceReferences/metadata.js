@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGetTableContext } from '../CeligoTable/TableContext';
-import ResourceLink from './ResourceLink';
+import ResourceLink from '../ResourceLink';
 
 export default {
   rowKey: 'id',

@@ -1,5 +1,5 @@
 export const CONTACT_SALES_MESSAGE =
-  'We will contact you soon to learn more about your needs. Meanwhile, please checkout';
+  'We will contact you soon to schedule your demo and discuss your business needs. In the meantime,';
 export const MULTIPLE_INSTALLS =
   'Looks like this Integration App is already installed in your account. If you would like to install another instance please provide a unique tag name so that we can help you differentiate this install from the others.';
 export const INTEGRATION_DELETE_VALIDATE =
@@ -7,8 +7,13 @@ export const INTEGRATION_DELETE_VALIDATE =
 export const FLOW_GROUP_DELETE_MESSAGE =
   'Only the flow group will be deleted. Its flows will be moved into “Unassigned”.';
 export const LICENSE_UPGRADE_REQUEST_RECEIVED =
-'Thanks for your interest! We will be in touch soon.';
+'Thanks for your request! We will be in touch soon.';
 export const LICENSE_UPGRADE_REQUEST = 'We will contact you to discuss your add-on request.';
+export const LICENSE_UPGRADE_SUCCESS_MESSAGE = `${LICENSE_UPGRADE_REQUEST_RECEIVED}
+      
+<a target="_blank" rel="noopener noreferrer"
+href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with Integration Apps, Business Process Automation templates, and quickstart templates.`;
+
 export default {
   CONTACT_SALES_MESSAGE,
   MULTIPLE_INSTALLS,

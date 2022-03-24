@@ -79,6 +79,7 @@ const metadata = {
     {
       key: 'errors',
       heading: 'Errors',
+      width: '15%',
       isLoggable: true,
       Value: ({rowData}) => {
         const { flowId, integrationId, childId, id, count } = rowData;
@@ -103,8 +104,10 @@ const metadata = {
           history.push(`${flowBuilderTo}/errors/${id}`);
         }, [flowBuilderTo, history, id]);
 
-        if (count === 0) {
-          return '0';
+        if (!count) {
+          return (
+            <Status variant="success" size="mini" onClick={handleErrorClick}>Success</Status >
+          );
         }
 
         return (
