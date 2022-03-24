@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import { makeStyles, Divider, Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
-import TextToggle from '../../../../components/TextToggle';
 import Spinner from '../../../../components/Spinner';
 import ErrorActionStatus from './ErrorActionStatus';
 
@@ -34,14 +33,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ErrorDrawerAction({ flowId, onChange }) {
+export default function ErrorDrawerAction({ flowId }) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const { resourceId, errorType } = match?.params || {};
-  const errorTypes = [
-    { label: 'Open errors', value: 'open' },
-    { label: 'Resolved errors', value: 'resolved' },
-  ];
+  const { resourceId } = match?.params || {};
   const retryStatus = useSelector(
     state => selectors.retryStatus(state, flowId, resourceId)
   );
@@ -70,13 +65,6 @@ export default function ErrorDrawerAction({ flowId, onChange }) {
           <ErrorActionStatus flowId={flowId} resourceId={resourceId} />
         )
       }
-      <TextToggle
-        value={errorType}
-        onChange={onChange}
-        exclusive
-        className={classes.errorDrawerActionToggle}
-        options={errorTypes}
-      />
     </>
   );
 }

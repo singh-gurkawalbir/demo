@@ -23,6 +23,8 @@ import flowStepLogs from './flowStepLogs/metadata';
 import runningFlows from './accountDashboard/runningFlows/metadata';
 import completedFlows from './accountDashboard/completedFlows/metadata';
 import homeTiles from './homeTiles/metadata';
+import revisions from './revisions/metadata';
+import revisionErrors from './revisionErrors/metadata';
 
 const metadata = {
   agents,
@@ -49,6 +51,8 @@ const metadata = {
   runningFlows,
   completedFlows,
   homeTiles,
+  revisions,
+  revisionErrors,
 };
 
 export default function (resourceType) {

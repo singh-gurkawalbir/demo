@@ -3,6 +3,7 @@ import { makeStyles, Typography, Link } from '@material-ui/core';
 import SigninForm from './SigninForm';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
+import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -14,11 +15,7 @@ const useStyles = makeStyles(theme => ({
       gridTemplateColumns: '100%',
     },
   },
-  gridImgWrapper: {
-    background: `center / contain no-repeat url('https://integrator-staging-ui-resources.s3.amazonaws.com/react/static/images/public-pages.svg'), ${theme.palette.background.default}`,
-    padding: theme.spacing(2),
-    backgroundOrigin: 'content-box, padding-box',
-
+  marketingContentWrapper: {
     [theme.breakpoints.down('sm')]: {
       display: 'none',
     },
@@ -70,6 +67,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function Signin(props) {
   const classes = useStyles();
+  // eslint-disable-next-line no-undef
+  const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
 
   return (
     <div className={classes.wrapper}>
@@ -96,7 +95,9 @@ export default function Signin(props) {
           )}
         </div>
       </div>
-      <div className={classes.gridImgWrapper} />
+      <div className={classes.marketingContentWrapper}>
+        <MarketingContentWithIframe contentUrl={contentUrl} />
+      </div>
     </div>
   );
 }

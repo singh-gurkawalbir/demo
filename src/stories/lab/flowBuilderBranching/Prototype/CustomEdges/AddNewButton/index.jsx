@@ -11,9 +11,13 @@ import { isNodeConnectedToRouter } from '../../lib';
 const useStyles = makeStyles(theme => ({
   addButton: {
     backgroundColor: theme.palette.common.white,
-    border: `solid 1px ${theme.palette.secondary.light}`,
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: 0,
     '& > span': {
+      width: 18,
+      height: 18,
+    },
+    '& * svg': {
       width: 20,
       height: 20,
     },

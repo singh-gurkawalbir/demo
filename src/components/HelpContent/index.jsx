@@ -131,7 +131,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
       )}
       {feedbackText ? (
         <>
-          {/* TODO:Azhar some styling required */}
+          {/* TODO:karthik some styling required */}
           <TextField
             data-private
             name="feedbackText"

@@ -1,28 +1,15 @@
 import React, { useCallback } from 'react';
-import clsx from 'clsx';
 import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
 import Completed from '../panels/Completed';
 import Running from '../panels/Running';
 import RunningIcon from '../../../components/icons/RunningFlowsIcon';
 import CompletedIcon from '../../../components/icons/CompletedFlowsIcon';
+import TabContent from '../../../components/TabContent';
 
 const useStyles = makeStyles(theme => ({
   tabContainer: {
     padding: theme.spacing(0, 3),
-  },
-  pageWrapper: {
-    padding: theme.spacing(3, 3, 4),
-    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
-    overflowY: 'auto',
-    '& > [role = tabpanel]': {
-      background: 'none',
-      padding: 0,
-      border: 'none',
-    },
-  },
-  integrationPageWrapper: {
-    padding: theme.spacing(0, 3, 4),
   },
   tabPanel: {
     background: theme.palette.background.paper,
@@ -57,7 +44,7 @@ export default function DashboardTabs() {
   const history = useHistory();
   const match = useRouteMatch();
 
-  const { dashboardTab, integrationId } = match.params;
+  const { dashboardTab } = match.params;
 
   let currentTabIndex = tabs.findIndex(t => t.path === dashboardTab);
 
@@ -77,7 +64,7 @@ export default function DashboardTabs() {
   );
 
   return (
-    <div className={clsx(classes.tabContainer, classes.pageWrapper, { [classes.integrationPageWrapper]: integrationId })}>
+    <TabContent>
       <Tabs
         value={currentTabIndex}
         onChange={handleTabChange}
@@ -110,6 +97,6 @@ export default function DashboardTabs() {
           <div>{currentTabIndex === i && <Panel {...match.params} />}</div>
         </div>
       ))}
-    </div>
+    </TabContent>
   );
 }
