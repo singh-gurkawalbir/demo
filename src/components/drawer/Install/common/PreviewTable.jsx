@@ -47,7 +47,19 @@ const useColumns = () => [
     Value: ({rowData: r}) => {
       const classes = useStyles();
 
-      if (r.groupName || r.emptyMessage) return <Typography variant={r?.groupName ? 'overline' : 'body2'} component="div" color="textSecondary" className={clsx({[classes.flowGroupTitle]: r?.groupName, [classes.emptyMessageContent]: r?.emptyMessage})}>{r?.groupName || r?.emptyMessage}</Typography>;
+      if (r.groupName || r.emptyMessage) {
+        return (
+          <Typography
+            variant={r?.groupName ? 'overline' : 'body2'}
+            component="div"
+            color="textSecondary"
+            className={clsx({
+              [classes.flowGroupTitle]: r?.groupName,
+              [classes.emptyMessageContent]: r?.emptyMessage})}>
+            {r?.groupName || r?.emptyMessage}
+          </Typography>
+        );
+      }
 
       return r?.doc?.name || r?.doc?._id;
     },
