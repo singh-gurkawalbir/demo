@@ -28,6 +28,7 @@ export default function DynaUploadFile(props) {
     resourceId,
     resourceType,
     onFieldChange,
+    sendS3Key,
     formKey,
     isIAField,
     placeholder,
@@ -49,17 +50,21 @@ export default function DynaUploadFile(props) {
     if (status === 'received') {
       setFileName(name);
       if (isIAField) {
-        onFieldChange(id, {
-          file,
-          type: 'file',
-          rawFile,
-          rowDelimiter: findRowDelimiter(file),
-          fileProps: {
-            name: rawFile.name,
-            size: rawFile.size,
-            type: rawFile.type,
-          },
-        });
+        if (sendS3Key) {
+          dispatch(actions.integrationApp.requestIAS3Key({resourceId, file }));
+        } else {
+          onFieldChange(id, {
+            file,
+            type: 'file',
+            rawFile,
+            rowDelimiter: findRowDelimiter(file),
+            fileProps: {
+              name: rawFile.name,
+              size: rawFile.size,
+              type: rawFile.type,
+            },
+          });
+        }
       } else {
         onFieldChange(id, file);
       }

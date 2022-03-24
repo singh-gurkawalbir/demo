@@ -885,6 +885,10 @@ const integrationApp = {
       ),
     submitFailed: params =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
+    requestS3Key: params => action(actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_S3_KEY, params),
+    receivedS3Key: params => action(actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_S3_KEY, params),
+    s3KeyError: params => action(actionTypes.INTEGRATION_APPS.SETTINGS.S3_KEY_FAILED, params),
+
   },
   installer: {
     init: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT, {

@@ -49,7 +49,10 @@ const useStyles = makeStyles(theme => ({
   },
 
 }));
-
+const acceptedFileTypes = {
+  csv: '.csv,.txt',
+  xlsx: '.xls,.xlsx,.xlsm',
+};
 export default function FileUploader(props) {
   const {
     disabled,
@@ -60,9 +63,9 @@ export default function FileUploader(props) {
     required,
     handleFileChosen,
     fileName,
-    accept = true,
     uploadError,
     label,
+    fileType,
     classProps = {},
     hideFileName = false,
     variant = 'outlined',
@@ -76,6 +79,7 @@ export default function FileUploader(props) {
     fileInput.current.value = '';
     fileInput.current.click();
   }, []);
+  const acceptedAttr = fileType ? acceptedFileTypes[fileType] : false;
 
   return (
     <FormControl className={clsx(classes.fileUploaderContainer, classProps.root)}>
@@ -103,7 +107,7 @@ export default function FileUploader(props) {
             data-test="uploadFile"
             id="fileUpload"
             type="file"
-            {...(accept ? { accept: '.xlsx,.xls' } : {})}
+            {...(acceptedAttr ? { accept: acceptedAttr } : {})}
             ref={fileInput}
             className={classes.fileInput}
             onChange={handleFileChosen}
