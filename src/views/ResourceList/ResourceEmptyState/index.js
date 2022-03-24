@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FilledButton, TextButton } from '../../../components/Buttons';
 import EmptyState from '../../../components/EmptyState';
 import resourceTypeMetaData from '../../../components/EmptyState/metadata';
@@ -19,8 +19,9 @@ export default function ResourceEmptyState({resourceType}) {
           type={resource.type}
         >
           <FilledButton
+            component={Link}
             data-test={resource.type === 'integrations' ? 'create flow' : 'addNewResource'}
-            href={resource.type === 'integrations' ? '/integrations/none/flowBuilder/new' : `${location.pathname}/add/${resourceType}/${generateNewId()}`} >
+            to={resource.type === 'integrations' ? '/integrations/none/flowBuilder/new' : `${location.pathname}/add/${resourceType}/${generateNewId()}`} >
             {resource.buttonLabel}
           </FilledButton>
           <TextButton
