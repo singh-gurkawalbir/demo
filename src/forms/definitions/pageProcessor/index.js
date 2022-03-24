@@ -1,5 +1,5 @@
 import {applicationsList, applicationsPlaceHolderText} from '../../../constants/applications';
-import { appTypeToAdaptorType } from '../../../utils/resource';
+import { appTypeToAdaptorType, rdbmsAppTypeToSubType } from '../../../utils/resource';
 import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
 import {getFilterExpressionForAssistant} from '../../../utils/connections';
 
@@ -182,9 +182,11 @@ export default {
       const expression = [];
 
       if (RDBMS_TYPES.includes(app.type)) {
-        expression.push({ 'rdbms.type': app.type });
+        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(app.type) });
       } else if (app.type === 'rest') {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
+      } else if (app.type === 'graph_ql') {
+        expression.push({ 'http.formType': 'graph_ql' });
       } else if (app.type === 'http') {
         expression.push({ 'http.formType': { $ne: 'rest' } });
         expression.push({ type: app.type });

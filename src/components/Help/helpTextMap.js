@@ -176,6 +176,7 @@ export default {
 'Please enter your subdomain here which you configured while activating your new Recurly account.',
   'recurly.connection.http.auth.basic.username':
 'Please enter your API key here. You can go to Integrations >> API Credentials to find it.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'recurly.connection.http.unencrypted.version': 'The API versions determines which API your connection will use.<br><b>Note:</b>The v2 APIs are going to be deprecated; use the v3 instead.',
   'cartrover.connection.http.auth.basic.username':
 'Please enter your API User. Navigate to Merchant view on left hand side and click on API keys section to find API User.',
   'cartrover.connection.http.auth.basic.password':
@@ -513,6 +514,11 @@ export default {
 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by SugarCRM. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
   'copper.connection.http.auth.token.token': 'Enter the API key of your Copper account.<br><b>Steps to get the API key:</b><br>1. Sign in to the Copper account.<br>2. Navigate to <b>Settings > Integrations > API Keys</b>.<br>3. Copy your <b>API key</b>. (If none exists yet, then create a new API key by clicking on <b>Generate API Key </b>button.)<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'copper.connection.http.unencrypted.email': 'Enter the email address that you use to login to Copper.',
+  'microsoftpowerautomate.connection.http.unencrypted.subdomain': 'Enter the subdomain of your Microsoft Power Automate account.<br><br><b>Steps to get the subdomain:</b><br>1. Sign in to your Microsoft Power Automate account.<br>2. Navigate to <b>Settings</b> → <b>Power Platform admin center</b>.<br>3. Select the environment you use to build your flows.<br>4. Copy the value under the environment URL and paste it into integrator.io. For example, if your environment URL is orgbe1234.crm.dynamics.com, then enter <b>orgbe1234.crm</b>.',
+  'microsoftpowerautomate.connection.http.unencrypted.tenantId': 'Enter the Tenant ID of your Azure application.<br><br><b>Steps to get the Tenant ID:</b><br>1. Sign in to your <a href=https://portal.azure.com/signin/index/>Azure portal</a>.<br>2. Under <b>Azure services</b>, click on <b>App registrations</b>.<br>3. Select the application which you will be using for Microsoft Power Automate.<br>4. In the overview tab under Essentials, you will find your <b>Directory (tenant) ID</b>.',
+  'microsoftpowerautomate.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><br><b>Steps to get the client ID and client secret:<br></b>1. Sign in to your <a href=https://portal.azure.com/signin/index/>Azure portal</a>.<br>2.Under <b>Azure services</b>, click <b>App registrations</b>.<br>3. Select the application that you will be using for Microsoft Power Automate.<br>4. On the <b>Overview</b> tab under <b>Essentials</b>, locate the <b>Application (client) ID</b>.<br>5. On the <b>Certificates & secrets</b> tab, click <b>New client secret</b>.',
+  'googlecontacts.connection.http.unencrypted.apiType': 'The API type determines which API your connection will use. The Contacts API is being deprecated; use the People API instead.',
+  'googlecontacts.connection.http.scopePeople': 'Scopes are named permissions that are provided when the connection is authorized. The list of supported scopes should be clearly documented in the API user guide. Connecting with a given scope allows your integration, for example, to export data or perform admin functions.',
   '15five.connection.http.auth.token.token': 'Enter the API key of your 15Five account.<br><b>Steps to get the API key:</b><br>1. Sign in to your 15Five account.<br>2. Navigate to <b>Settings > Features > Integrations</b> and enable to the right of the Public API option.<br>3. Once enabled, you will land on the <b>Company API keys</b> page.<br>3. Click the <b>Create new key</b> button, Add in a short name for your API key, and Click Save to save your name and setting.<br> <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'docebo.connection.http.baseURI': 'Enter the base URI of your Docebo account. For example, if <b>https://yoursubdomain.docebosaas.com/learn/signin</b> is the login URL, then <b>\'https://yoursubdomain.docebosaas.com\'</b> is the base URI',
   'breezyhr.connection.http.unencrypted.email': 'Enter the email of your Breezy HR account.',
@@ -597,7 +603,7 @@ export default {
   '3plcentral.connection.http.unencrypted.tpl':
 'Contact the 3PL Central Warehouse you are working with for this project and have them submit a request for REST API access to their 3PL Central Customer Success Manager.',
   '3plcentral.connection.http.unencrypted.userLoginId':
-'Contact the 3PL Central Warehouse you are working with for this project and have them submit a request for REST API access to their 3PL Central Customer Success Manager.',
+'Contact your 3PL Central Warehouse and submit a request for your User login ID or an authorization key. The authentication key will not work with transaction requests (orders, receivers, etc). For transaction requests, you must use a User login ID.',
   'sapbusinessone.connection.http.unencrypted.serverNameOrIP': 'Enter the Server name/IP. Contact your SAP Admin for further details.',
   'sapbusinessone.connection.http.unencrypted.port': 'Enter the Port number. Contact your SAP Admin for further details.',
   'sapbusinessone.connection.http.unencrypted.companyDatabase': 'Enter the Company Database. Contact your SAP Admin for further details.',
@@ -623,6 +629,8 @@ export default {
   'orderful.connection.http.unencrypted.version': 'Please enter the version of your Orderful account.',
   'orderful.connection.http.auth.token.token':
 'Please enter your API key here.Log into your Orderful Account->Settings > API Credentials, you can view your API token.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'happyreturns.connection.http.auth.token.token':
+'Enter the API key provided by Happy Returns.<br><b>Note: </b>Contact Happy Returns to get the API key.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'gorgias.connection.gorgiasSubdomain': 'Please enter your Gorgias subdomain. For example, in https://temp-portal.gorgias.com \'temp-portal\' is the subdomain.',
   'gorgias.connection.http.auth.basic.username':
 'Please enter the Username of your Gorgias account',
@@ -874,6 +882,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
   'snowflake.import.rdbms.queryType': "'Use bulk insert SQL query' to quickly insert batches of data efficiently. </br>'Use SQL query once per record' to execute a custom query per record. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
+  'bigquery.import.rdbms.queryType': "'Use bulk insert SQL query' to quickly insert batches of data efficiently. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
   'connection.rdbms.snowflake.warehouse':
 'Warehouse used for executing compute process.',
   'connection.rdbms.snowflake.schema':
@@ -885,6 +894,10 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Snowflake database that you want to connect.',
   'snowflake.connection.rdbms.user': 'Username to connect to Snowflake.',
   'snowflake.connection.rdbms.password': 'Password to connect to Snowflake.',
+  'connection.rdbms.bigquery.projectId': 'The unique identifier for the BigQuery project in the Google Cloud account.',
+  'connection.rdbms.bigquery.clientEmail': 'The email address for the Google Cloud service account used for authentication.',
+  'connection.rdbms.bigquery.privateKey': 'The private key for the Google Cloud service account used for authentication.',
+  'connection.rdbms.bigquery.dataset': 'The name of the dataset containing the tables and views being accessed.',
   'connection.rdbms.options':
 'Define additional configurations for the database connection that is available according to the database documentation. For example, you can configure the connection timeout if the SQL server you are trying to connect to is slow (default connection timeout for MS SQL server is 15000ms).',
   'connection.rdbms.concurrencyLevel':
@@ -1097,6 +1110,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'The specific connection you would like to use for your export or import.\nYou can pre-establish and save your connections using Menu > Connections. Each stored connection contains credentials along with other related information needed to access the desired application.\nIn addition, you can click the + icon beside this field to create a new connection.',
   'export.type':
 "There are multiple export types available to help support common integration patterns.  'All' will export all data, always.  'Delta' will only export data that has changed since the last time the data flow was run.  'Once' will only export data that has not been exported already, and will also automatically update records to mark them as exported.  'Test' will only export 1 record by default, and should be used while testing to avoid syncing lots of data.",
+  'export.bigquery.type':
+"There are multiple export types available to help support common integration patterns.  'All' will export all data, always.  'Delta' will only export data that has changed since the last time the data flow was run.  'Test' will only export 1 record by default, and should be used while testing to avoid syncing lots of data.",
   'export.lastModified':
 'System generated date/time to track the last time this resource was modified.',
   'export.apiIdentifier':
@@ -1385,6 +1400,12 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Basic auth requires both username and password. Please enter your username here. If you are not sure which username and password to use then please check with your webhook provider.',
   'export.webhook.password':
 'Basic auth requires both username and password. Please enter your password here.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'export.webhook.successStatusCode':
+'integrator.io returns a 204 HTTP status code for all successful webhook requests by default. Use this list to select an alternate successful HTTP status code for the listener.',
+  'export.webhook.successMediaType':
+'integrator.io uses JSON as the default media type for success responses. Use this list to select an alternate media type.',
+  'export.webhook.successBody':
+'integrator.io returns an empty response body message for all successful webhook requests by default. Use this field to customize an HTTP response body returned for successful requests made to the listener.',
   'export.salesforce.soql.query':
 "Use the Salesforce Object Query Language (i.e. SOQL) to define what data you would like to export out of Salesforce.  For example: 'SELECT Id, Name FROM Account WHERE SendToBlah = TRUE'.  SOQL is an incredibly powerful query language with all sorts of capabilities, and lots of documentation and examples on the web.  If you need additional help understanding SOQL, or piecing together a specific query, then please contact Salesforce support.",
   'export.salesforce.id':
@@ -1995,6 +2016,14 @@ if you're using a production account, you'll find your API keys under the 'API M
   'concurall.connection.http.unencrypted.credtype': 'For connections from the App Center, use authtoken. if omitted, oauth2 will assume the type is password.',
   'azurestorageaccount.connecton.http.unencrypted.storageAccount':
 'Specify the name of the Azure storage account which contains the data.',
+  'graphql.baseURI':
+  'Provide the specific URI/endpoint on the GraphQL server. Your GraphQL server operates on a single endpoint (traditionally /graphql), and all requests are directed to this endpoint.',
+  'connection.graphql.query':
+  'Enter the query to be processed by GraphQL server. The supported operation type is either query or mutation. The operation type is required unless you\'re using the query shorthand syntax, in which case you can\'t supply a name or variable definitions for your operation. The query may also include an operation name, which is required for a multi-operations query.',
+  'connection.graphql.operationName':
+  'Provide the operation name if your query has two or more operations. Note that a request can only execute one operation at a time.',
+  'connection.graphql.variables':
+  'Define the <a href="https://docs.celigo.com/hc/en-us/articles/4409527888923-Work-with-JSON-data-in-integrator-io">JSON</a> variables used in your query. For example, if the query is "query HeroNameAndFriends($episode: Episode)", define the variable as {"episode":"JEDI"}.',
   'azurestorageaccount.connecton.http.unencrypted.tenantId':
 'Specify the tenant ID that identifies the Azure Active Directory tenant used for authentication.',
   'connection.netsuite.authType':
@@ -2331,4 +2360,16 @@ use the custom option.`,
   'import.netsuite.file.folder': 'Specify the internal ID for the Netsuite File Cabinet folder where you want to import  your files. If the folder internal ID should be dynamic based on the data you are integrating, you can specify the JSON path to the field in your data containing the folder internal id values instead. For example, {{{myFileField.fileName}}}.',
   'import.netsuite.file.internalId': 'Enter a reference ID or expression to identify reference IDs of files to replace in the NetSuite File Cabinet.',
   'auditlogs.download': 'Download up to 1,000 records from the last year. Note that filters are not applied to a download.',
+  'revisions.pull': 'Pulling changes from one linked integration to another lets you see conflicts, review changes, and merge them from one integration to another. You can only pull data from a direct clone or source integration.. For example, clone Integration A as Integration B, then B to C, and B to D. You can create a pull between integrations A and B, B and C, B and D; but not between A and C, or C and D',
+  'pull.integration': 'The integration that you are pulling the changes from. This lists all direct clones of the current integration and existing parent clones.',
+  'pull.reviewChanges': 'Review the changes between the cloned and source integration. This list will show you all your changes in every export, import, flow, and script, but not API tokens or connections. You have to resolve all these conflicts before you can successfully merge the changes.',
+  'pull.mergeChanges': 'You can make changes to a source and cloned integration, then merge them. You must reconfigure your connections to merge your changes and there may be additional installation steps depending on available packages.',
+  'revert.create': 'When creating a revert, you are restoring to a revision of an integration. The revert action will also generate a revision',
+  'revert.description': 'Enter information about the revert',
+  'revert.revision.createdAt': 'The date and time of the revision you’ll revert to.',
+  'revert.revisionId': 'The revision you are reverting to.',
+  'revert.reviewChanges': 'Review the changes between your current revision and the revision that you are reverting to. This is a list of every change you’ve made to your exports, imports, flows, and scripts.',
+  'revert.finalRevertChanges': ' You can make changes to a source or cloned integration, then revert them. You must reconfigure your connections to revert your changes and there may be additional revert steps depending on necessary packages',
+  'snapshot.create': 'A snapshot is a saved capture of your integration that you can use to revert your integration at any point.',
+  'snapshot.description': 'Describe your snapshot so you can quickly identify the revision and any important details.',
 };

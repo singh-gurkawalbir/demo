@@ -43,8 +43,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     display: 'flex',
     textAlign: 'center',
-    top: -85,
-    marginBottom: -35,
+    marginTop: -85,
     background: theme.palette.background.default,
     borderRadius: [[0, 0, 20, 20]],
     position: 'relative',
@@ -222,7 +221,11 @@ export default function AppBlock({
       resource._connectionId
     );
 
-    return connection ? connection.assistant : '';
+    if (!connection) return '';
+    const {assistant, http} = connection;
+
+    if (assistant) return assistant;
+    if (http?.formType === 'graph_ql') return 'graph_ql';
   });
 
   useEffect(() => {

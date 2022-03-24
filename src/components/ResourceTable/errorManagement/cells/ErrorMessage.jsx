@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import RawHtml from '../../../RawHtml';
 import { selectors } from '../../../../reducers';
 import openExternalUrl from '../../../../utils/window';
+import {getParsedMessage} from '../../../../utils/string';
 import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
@@ -79,7 +80,7 @@ export default function ErrorMessage({errorId, message, flowId, resourceId, expo
     <div className={classes.wrapper}>
       <div className={classes.message} data-private>
         {isErrorRetryFailed && retryFailedTag}
-        <RawHtml html={message} options={options} className={classes.htmlMessage} />
+        <RawHtml html={getParsedMessage(message)} options={options} className={classes.htmlMessage} />
         <div>
           {exportRecordLink && (
           <TextButton

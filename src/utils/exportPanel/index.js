@@ -10,6 +10,7 @@ export const DEFAULT_RECORD_SIZE = 10;
 
 const applicationsWithPreviewPanel = [
   'http',
+  'graph_ql',
   'rest',
   'mongodb',
   'rdbms',
