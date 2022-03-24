@@ -5,7 +5,7 @@ import useOpenRevisionWhenValid from '../../../drawer/Revisions/hooks/useOpenRev
 
 export default {
   key: 'revertToAfterRevision',
-  useLabel: () => 'Revision to after this revision',
+  useLabel: () => 'Revert to after this revision',
   icon: RevertIcon,
   useOnClick: rowData => {
     const { _id: revisionId } = rowData;

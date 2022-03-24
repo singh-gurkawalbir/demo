@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { addYears, startOfDay } from 'date-fns';
 import { REVISION_STATUS, REVISION_TYPES } from '../constants';
 import { REQUIRED_MESSAGE } from '../messageStore';
 import { comparer, sortJsonByKeys } from '../sort';
@@ -80,8 +80,7 @@ export const DEFAULT_OPTION = 'all';
 
 export const DEFAULT_REVISION_FILTERS = {
   createdAt: {
-    startDate: moment().add(-1, 'y'),
-    endDate: new Date(),
+    startDate: startOfDay(addYears(new Date(), -1)),
     preset: 'lastyear',
   },
   status: DEFAULT_OPTION,

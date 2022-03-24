@@ -7,12 +7,13 @@ export const INTEGRATION_DELETE_VALIDATE =
 export const FLOW_GROUP_DELETE_MESSAGE =
   'Only the flow group will be deleted. Its flows will be moved into “Unassigned”.';
 export const LICENSE_UPGRADE_REQUEST_RECEIVED =
-'Thanks for your interest! We will be in touch soon.';
+'Thanks for your request! We will be in touch soon.';
 export const LICENSE_UPGRADE_REQUEST = 'We will contact you to discuss your add-on request.';
 export const LICENSE_UPGRADE_SUCCESS_MESSAGE = `${LICENSE_UPGRADE_REQUEST_RECEIVED}
       
 <a target="_blank" rel="noopener noreferrer"
-  href="/marketplace"><u>Checkout our Marketplace</u></a>  Integration Apps, templates for business process automation, and quickstart integration templates.`;
+href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with Integration Apps, Business Process Automation templates, and quickstart templates.`;
+
 export default {
   CONTACT_SALES_MESSAGE,
   MULTIPLE_INSTALLS,
