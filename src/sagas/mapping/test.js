@@ -880,10 +880,109 @@ describe('previewMappings saga', () => {
         },
         message: 'Loading',
       })
-      .put(actions.mapping.previewFailed())
+      .put(actions.mapping.previewFailed('xyz'))
       .run();
   });
+  test('should trigger mapping preview failed action correctly for Salesforce Import', () => {
+    const importRes = {
+      _id: importId,
+      _connectionId: 'conn11',
+      name: 'n1',
+      lookups: [],
+      adaptorType: 'SalesforceImport',
+      mapping: {
+        fields: [],
+        lists: [],
+      },
+      salesforce: {
+        sObjectType: 'account',
+      },
+    };
 
+    expectSaga(previewMappings)
+      .provide([
+        [select(selectors.mapping), {
+          mappings: [{extract: 'e1', generate: 'g1'}],
+          lookups: [{name: 'lookup1', isConditionalLookup: true}, {name: 'lookup2'}],
+          importId,
+          flowId,
+        }],
+        [select(selectors.resource, 'imports', importId), importRes],
+        [select(selectors.mappingGenerates, importId, undefined), []],
+        [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+        [call(apiCallWithRetry, {
+          path: `/connections/${connectionId}/mappingPreview`,
+          opts: {
+            method: 'PUT',
+            body: {
+              data: [],
+              importConfig: {
+                _id: 'i1',
+                _connectionId: 'conn1',
+                name: 'n1',
+                lookups: [],
+                adaptorType: 'SalesforceImport',
+                mapping: {
+                  fields: [
+                    {
+                      extract: 'e1',
+                      generate: 'g1',
+                    },
+                  ],
+                  lists: [],
+                },
+                salesforce: {
+                  sObjectType: 'account',
+                  lookups: [],
+                },
+              },
+            },
+          },
+          message: 'Loading',
+        }), [{errors: [{message: 'invalid lookup'}]}]],
+        [select(selectors.getSampleDataContext, {
+          flowId,
+          resourceId: importId,
+          stage: 'importMappingExtract',
+          resourceType: 'imports',
+        }), {data: []}],
+
+      ])
+      .call(apiCallWithRetry, {
+        path: '/connections/conn11/mappingPreview',
+        opts: {
+          method: 'PUT',
+          body: {
+            data: [
+
+            ],
+            importConfig: {
+              _id: 'i1',
+              _connectionId: 'conn11',
+              name: 'n1',
+              lookups: [],
+              adaptorType: 'SalesforceImport',
+              mapping: {
+                fields: [
+                  {
+                    extract: 'e1',
+                    generate: 'g1',
+                  },
+                ],
+                lists: [],
+              },
+              salesforce: {
+                sObjectType: 'account',
+                lookups: [],
+              },
+            },
+          },
+        },
+        message: 'Loading',
+      })
+      .put(actions.mapping.previewFailed({message: 'invalid lookup'}))
+      .run();
+  });
   test('should trigger mapping preview correctly for Netsuite subrecord import', () => {
     const subRecordMappingId = 'item[*].celigo_inventorydetail';
 
@@ -1239,7 +1338,7 @@ describe('previewMappings saga', () => {
         },
         message: 'Loading',
       })
-      .put(actions.mapping.previewFailed())
+      .put(actions.mapping.previewFailed('api failure'))
       .run();
   });
 });
