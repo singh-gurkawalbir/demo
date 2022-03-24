@@ -58,4 +58,13 @@ export const DRAWER_URLS = {
     'scriptLog/:scriptId/:index',
   ],
   SCRIPT_LOGS: 'viewLogs/:scriptId',
+  CREATE_SNAPSHOT: 'snapshot/:revId/open',
+  MERGE_PULL_CHANGES: 'pull/:revisionId/merge',
+  OPEN_PULL: 'pull/:revId/open',
+  REVIEW_PULL_CHANGES: 'pull/:revisionId/review',
+  FINAL_REVERT_STEP: 'revert/:revisionId/final',
+  OPEN_REVERT: 'revert/:tempRevId/open/:revertTo/revision/:revisionId',
+  REVIEW_REVERT_CHANGES: 'revert/:revisionId/review',
+  VIEW_REVISION_DETAILS: 'view/:revisionId/mode/:mode',
+  VIEW_REVISION_ERROR_INFO: 'error/:errorId',
 };
