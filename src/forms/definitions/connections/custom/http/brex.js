@@ -18,7 +18,7 @@ export default {
     'http.unencrypted.accountType': {
       id: 'http.unencrypted.accountType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       required: true,
       options: [
         {
