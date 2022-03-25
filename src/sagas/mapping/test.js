@@ -921,7 +921,7 @@ describe('previewMappings saga', () => {
   test('should trigger mapping preview failed action correctly for Salesforce Import', () => {
     const importRes = {
       _id: importId,
-      _connectionId: 'conn11',
+      _connectionId: 'conn111',
       name: 'n1',
       lookups: [],
       adaptorType: 'SalesforceImport',
@@ -946,35 +946,31 @@ describe('previewMappings saga', () => {
         [select(selectors.mappingGenerates, importId, undefined), []],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
         [call(apiCallWithRetry, {
-          path: `/connections/${connectionId}/mappingPreview`,
+          path: '/connections/conn111/mappingPreview',
           opts: {
             method: 'PUT',
             body: {
               data: [],
-              importConfig: {
-                _id: 'i1',
-                _connectionId: 'conn1',
-                name: 'n1',
-                lookups: [],
-                adaptorType: 'SalesforceImport',
-                mapping: {
-                  fields: [
-                    {
-                      extract: 'e1',
-                      generate: 'g1',
-                    },
-                  ],
-                  lists: [],
-                },
-                salesforce: {
-                  sObjectType: 'account',
-                  lookups: [],
-                },
-              },
+              importConfig:
+                 {
+                   _id: 'i1',
+                   _connectionId: 'conn111',
+                   name: 'n1',
+                   lookups: [],
+                   adaptorType: 'SalesforceImport',
+                   mapping: {fields: [{extract: 'e1', generate: 'g1'}],
+                     lists: [],
+                   },
+                   salesforce: {
+                     sObjectType: 'account',
+                     lookups: [{name: 'lookup2'}],
+                   },
+                 },
             },
           },
           message: 'Loading',
-        }), [{errors: [{message: 'invalid lookup'}]}]],
+        }
+        ), [{errors: [{message: 'invalid lookup'}]}]],
         [select(selectors.getSampleDataContext, {
           flowId,
           resourceId: importId,
@@ -983,38 +979,6 @@ describe('previewMappings saga', () => {
         }), {data: []}],
 
       ])
-      .call(apiCallWithRetry, {
-        path: '/connections/conn11/mappingPreview',
-        opts: {
-          method: 'PUT',
-          body: {
-            data: [
-
-            ],
-            importConfig: {
-              _id: 'i1',
-              _connectionId: 'conn11',
-              name: 'n1',
-              lookups: [],
-              adaptorType: 'SalesforceImport',
-              mapping: {
-                fields: [
-                  {
-                    extract: 'e1',
-                    generate: 'g1',
-                  },
-                ],
-                lists: [],
-              },
-              salesforce: {
-                sObjectType: 'account',
-                lookups: [],
-              },
-            },
-          },
-        },
-        message: 'Loading',
-      })
       .put(actions.mapping.previewFailed({message: 'invalid lookup'}))
       .run();
   });
@@ -1113,14 +1077,14 @@ describe('previewMappings saga', () => {
         [select(selectors.mappingGenerates, importId, undefined), []],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
         [call(apiCallWithRetry, {
-          path: `/connections/${connectionId}/mappingPreview`,
+          path: '/connections/conn11/mappingPreview',
           opts: {
             method: 'PUT',
             body: {
               data: [],
               importConfig: {
                 _id: 'i1',
-                _connectionId: 'conn1',
+                _connectionId: 'conn11',
                 name: 'n1',
                 lookups: [],
                 adaptorType: 'SalesforceImport',
