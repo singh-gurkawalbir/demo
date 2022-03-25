@@ -16,6 +16,8 @@ import Mapper2ExtractsTypeableSelect from './Source/Mapper2ExtractsTypeableSelec
 import {selectors} from '../../../../../../reducers';
 import Mapper2Generates from './Destination/Mapper2Generates';
 import actions from '../../../../../../actions';
+import useConfirmDialog from '../../../../../ConfirmDialog';
+import RawHtml from '../../../../../RawHtml';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -76,10 +78,13 @@ const Mapper2Row = React.memo(({
   disabled,
   generateDisabled,
   isEmptyRow,
+  hidden,
+  children,
 }) => {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
   const {
     flowId,
     importId,
@@ -94,10 +99,29 @@ const Mapper2Row = React.memo(({
     };
   }, shallowEqual);
 
+  const hasChildren = children?.length;
+
   const handleDeleteClick = useCallback(() => {
-    // todo ashu confirmation warning
-    dispatch(actions.mapping.v2.deleteRow(nodeKey));
-  }, [dispatch, nodeKey]);
+    if (!hasChildren) {
+      return dispatch(actions.mapping.v2.deleteRow(nodeKey));
+    }
+    confirmDialog({
+      title: 'Confirm delete',
+      message: 'Are you sure you want to delete this parent record row? All its child rows will be deleted as well.',
+      buttons: [
+        {
+          label: 'Delete',
+          onClick: () => {
+            dispatch(actions.mapping.v2.deleteRow(nodeKey));
+          },
+        },
+        {
+          label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [hasChildren, confirmDialog, dispatch, nodeKey]);
 
   const addNewRowHandler = useCallback(() => {
     dispatch(actions.mapping.v2.addRow(nodeKey));
@@ -106,9 +130,32 @@ const Mapper2Row = React.memo(({
   const onDataTypeChange = useCallback(e => {
     const newDataType = e.target.value;
 
-    // todo ashu confirmation warning
-    dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType));
-  }, [dispatch, nodeKey]);
+    if ((dataType === 'object' || dataType === 'objectarray') &&
+    newDataType !== 'object' && newDataType !== 'objectarray') {
+      const message = `Since only an "object" or "[object]" data type can have child rows, 
+      all of this parent record row's child rows will be deleted when your selected data type is applied. 
+      <br><br>Are you sure you want to continue?</br></br>`;
+
+      confirmDialog({
+        title: 'Confirm data type selection',
+        message: <RawHtml html={message} />,
+        buttons: [
+          {
+            label: 'Confirm',
+            onClick: () => {
+              dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType));
+            },
+          },
+          {
+            label: 'Cancel',
+            variant: 'text',
+          },
+        ],
+      });
+    } else {
+      dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType));
+    }
+  }, [confirmDialog, dataType, dispatch, nodeKey]);
 
   const handleBlur = useCallback((field, value) => {
     dispatch(actions.mapping.v2.patchField(field, nodeKey, value));
@@ -134,6 +181,8 @@ const Mapper2Row = React.memo(({
   const isHardCodedValue = !!hardCodedValue;
   const isHandlebarExp = handlebarRegex.test(extract);
 
+  if (hidden) return null;
+
   return (
     <div
       key={nodeKey}
@@ -153,7 +202,7 @@ const Mapper2Row = React.memo(({
           />
 
       </div>
-      {(dataType === 'object' || dataType === 'objectarray') && !extractValue && copySource === 'no' ? null : (
+      {dataType === 'object' && !extractValue && copySource === 'no' ? null : (
         <>
           <div className={classes.childHeader}>
             <Mapper2ExtractsTypeableSelect

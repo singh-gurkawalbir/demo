@@ -91,11 +91,6 @@ export default {
       settings.dataType = formVal.dataType || 'string';
     }
 
-    // todo ashu
-    // if ('useFirstRow' in formVal) {
-    //   settings.useFirstRow = formVal.useFirstRow;
-    // }
-
     settings.copySource = formVal.copySource;
     if (formVal.copySource === 'no') {
       settings.extract = '';
@@ -120,6 +115,7 @@ export default {
           break;
         case 'useNull':
           settings.hardCodedValue = null;
+          settings.default = '';
           break;
         case 'default':
           settings.hardCodedValue = Array.isArray(formVal.hardcodedDefault)

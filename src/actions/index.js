@@ -1492,7 +1492,7 @@ const mapping = {
     deleteRow: v2Key => action(actionTypes.MAPPING.V2.DELETE_ROW, { v2Key }),
     addRow: v2Key => action(actionTypes.MAPPING.V2.ADD_ROW, { v2Key }),
     updateDataType: (v2Key, newDataType) => action(actionTypes.MAPPING.V2.UPDATE_DATA_TYPE, { v2Key, newDataType }),
-    changeArrayTab: newTab => action(actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB, { newTab }),
+    changeArrayTab: (v2Key, newTabExtract) => action(actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB, { v2Key, newTabExtract }),
     patchField: (field, v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, v2Key, value }),
     patchSettings: (v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_SETTINGS, { v2Key, value }),
   },

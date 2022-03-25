@@ -128,11 +128,14 @@ export default function Mapper2Generates(props) {
             onFocus={handleFocus}
             disabled={isDisabled}
             multiline={isFocused}
-            placeholder={!generateDisabled && 'Destination record field'} />
+            placeholder={generateDisabled ? '' : 'Destination record field'} />
         </Tooltip >
 
         {/* todo ashu tooltip does not work for celigo select */}
-        <Tooltip disableFocusListener title={`Data type:${destDataType} - Click to change`} placement="bottom" >
+        <Tooltip
+          disableFocusListener
+          title={`Data type:${destDataType} - Click to change`}
+          placement="bottom" >
           <CeligoSelect
             disabled={isDisabled}
             className={classes.dataType}

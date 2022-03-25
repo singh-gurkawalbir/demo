@@ -32,6 +32,9 @@ const useStyles = makeStyles(theme => ({
       display: 'flex',
       position: 'relative',
       border: '1px solid transparent',
+      '&.hideRow': {
+        display: 'none',
+      },
       '&:hover': {
         '& .rc-tree-draggable-icon': {
           visibility: 'visible',

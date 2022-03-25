@@ -69,7 +69,7 @@ export default {
     lookups,
     importResource = {},
   }) => {
-    const {lookupName, extract, dataType: propDataType } = node;
+    const {lookupName, dataType: propDataType, copySource } = node;
 
     const {_connectionId: connectionId, adaptorType, _id: resourceId } = importResource;
 
@@ -103,26 +103,13 @@ export default {
             },
           ],
         },
-        // todo ashu
-        // useFirstRow: {
-        //   id: 'useFirstRow',
-        //   name: 'useFirstRow',
-        //   helpKey: 'mapping.useFirstRow',
-        //   noApi: true,
-        //   type: 'checkbox',
-        //   defaultValue: value.useFirstRow || false,
-        //   label: 'Use first row',
-        //   visibleWhenAll: [
-        //     { field: 'fieldMappingType', is: ['standard'] },
-        //   ],
-        // },
         copySource: {
           id: 'copySource',
           name: 'copySource',
           type: 'radiogroup',
           label: 'Would you like to copy an object from the source record as-is?',
           fullWidth: true,
-          defaultValue: extract ? 'yes' : 'no',
+          defaultValue: copySource || 'no',
           visibleWhen: [{ field: 'dataType', is: ['object', 'objectarray'] }],
           noApi: true,
           options: [
@@ -424,7 +411,6 @@ export default {
             { field: 'lookup.mode', is: ['dynamic'] },
           ],
         },
-        // lookup headers?? todo ashu
         'lookup.body': {
           id: 'lookup.body',
           name: '_body',
@@ -493,22 +479,6 @@ export default {
             { field: 'fieldMappingType', is: ['lookup'] },
           ],
         },
-        // todo ashu after BE confirmation
-        // lookupActionForMultiple: {
-        //     id: 'lookupActionForMultiple',
-        //     name: 'lookupActionForMultiple',
-        //     type: 'select',
-        //     defaultValue:
-        //       mappingUtil.getV2DefaultLookupActionValue(node, lookup),
-        //     label: 'If lookup succeeds with multiple results',
-        //     options: getDefaultActionOptions('lookup'),
-        //     helpKey: 'mapping.lookupAction',
-        //     noApi: true,
-        //     visibleWhenAll: [
-        //       { field: 'lookup.mode', is: ['dynamic', 'static'] },
-        //       { field: 'fieldMappingType', is: ['lookup'] },
-        //     ],
-        //   },
         lookupDefault: {
           id: 'lookupDefault',
           name: 'lookupDefault',
@@ -549,18 +519,21 @@ export default {
               'copySource',
               'fieldMappingType',
               'useDate',
-              'hardcodedAction',
-              'hardcodedDefault',
             ],
           },
           {
             type: 'indent',
             containers: [
               {
-                // type: 'indent',
                 fields: [
+                  'extractDateFormat',
+                  'extractDateTimezone',
+                  'generateDateFormat',
+                  'generateDateTimezone',
                   'standardAction',
                   'default',
+                  'hardcodedAction',
+                  'hardcodedDefault',
                   'expression',
                   'multifieldAction',
                   'multifieldDefault',
@@ -572,17 +545,7 @@ export default {
                   'lookup.mapList',
                   'lookup.name',
                   'lookupAction',
-                  // 'lookupActionForMultiple',
                   'lookupDefault',
-                ],
-                containers: [
-                  {
-                    fields: [
-                      'extractDateFormat',
-                      'extractDateTimezone',
-                      'generateDateFormat',
-                      'generateDateTimezone'],
-                  },
                 ],
               },
             ],

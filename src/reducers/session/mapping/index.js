@@ -1,10 +1,10 @@
 import shortid from 'shortid';
-import produce from 'immer';
+import { original, produce } from 'immer';
 import { differenceWith, isEqual, isEmpty } from 'lodash';
 import deepClone from 'lodash/cloneDeep';
 import { nanoid } from 'nanoid';
 import actionTypes from '../../../actions/types';
-import {isMappingEqual, isV2MappingsChanged, findNodeInTree, PRIMITIVE_DATA_TYPES, ARRAY_DATA_TYPES, getAllKeys} from '../../../utils/mapping';
+import {isMappingEqual, isV2MappingsChanged, findNodeInTree, PRIMITIVE_DATA_TYPES, ARRAY_DATA_TYPES, getAllKeys, rebuildNode, hideOtherTabRows} from '../../../utils/mapping';
 
 const emptyObj = {};
 const emptyArr = [];
@@ -39,6 +39,7 @@ export default (state = {}, action) => {
     expanded,
     expandedKeys,
     errors,
+    newTabExtract,
   } = action;
 
   return produce(state, draft => {
@@ -351,6 +352,10 @@ export default (state = {}, action) => {
             generateDisabled: true,
             disabled: draft.mapping.isMonitorLevelAccess,
             children: deepClone(draft.mapping.v2TreeData),
+            buildArrayHelper: [{
+              extract: '$',
+              mappings: deepClone(draft.mapping.v2TreeData),
+            }],
           };
 
           draft.mapping.v2TreeData = [node];
@@ -438,7 +443,7 @@ export default (state = {}, action) => {
 
         const newRowKey = nanoid();
 
-        if (newDataType === 'object' || newDataType === 'objectarray' || newDataType === 'arrayarray') {
+        if (newDataType === 'object' || newDataType === 'objectarray') {
           draft.mapping.expandedKeys.push(v2Key);
 
           if (isEmpty(node.children)) {
@@ -516,7 +521,7 @@ export default (state = {}, action) => {
 
       case actionTypes.MAPPING.V2.PATCH_FIELD: {
         if (!draft.mapping) break;
-        const {node} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
+        const {node, nodeSubArray, nodeIndexInSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
 
         if (node) {
           if (field === 'extract') {
@@ -525,10 +530,25 @@ export default (state = {}, action) => {
               node.hardCodedValue = value.replace(/(^")|("$)/g, '');
             } else {
               delete node.hardCodedValue;
-              if (value.includes(',')) {
+              if (ARRAY_DATA_TYPES.includes(node.dataType)) {
                 node.combinedExtract = value;
+                if (!value && (node.dataType === 'object' || node.dataType === 'objectarray')) {
+                  // delete all children if extract is empty
+                  const newRowKey = nanoid();
+
+                  node.children = [{
+                    key: newRowKey,
+                    title: '',
+                    parentKey: node.key,
+                    parentExtract: node.extract,
+                    dataType: 'string',
+                  }];
+                } else if (value && node.dataType === 'objectarray') {
+                  // handle tab view
+                  nodeSubArray[nodeIndexInSubArray] = rebuildNode(original(node), value);
+                }
               } else {
-                node.extract = value; // todo ashu handle comma separated
+                node.extract = value;
               }
             }
           } else {
@@ -542,6 +562,7 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.V2.PATCH_SETTINGS: {
         if (!draft.mapping) break;
         const {node} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
+        const prevCopy = node.copySource || 'no';
 
         if (node) {
           Object.assign(node, value);
@@ -560,9 +581,20 @@ export default (state = {}, action) => {
             delete node.hardCodedValue;
           }
 
-          if (value.copySource === 'yes') {
-            // delete child rows if object is to be copied as is
-            node.children = [];
+          if (prevCopy !== value.copySource) {
+            if (value.copySource === 'yes') {
+              // delete child rows if object is to be copied as is
+              node.children = [];
+            } else if (value.copySource === 'no') {
+              delete node.extract;
+              delete node.combinedExtract;
+              node.children = [{
+                key: nanoid(),
+                title: '',
+                parentKey: node.key,
+                dataType: 'string',
+              }];
+            }
           }
         }
 
@@ -572,6 +604,15 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.V2.ACTIVE_KEY: {
         if (!draft.mapping) break;
         draft.mapping.v2ActiveKey = v2Key;
+        break;
+      }
+
+      case actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB: {
+        if (!draft.mapping) break;
+        const {node} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
+
+        hideOtherTabRows(original(node), newTabExtract);
+
         break;
       }
 

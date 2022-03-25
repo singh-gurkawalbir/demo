@@ -16,7 +16,7 @@ import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
 import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../constants';
 import { TreeTitle } from '../../components/AFE/Editor/panels/Mappings/Mapper2/Source/ExtractsTree';
-// import TabRow from './TabbedRow';
+import TabRow from '../../components/AFE/Editor/panels/Mappings/Mapper2/TabbedRow';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
@@ -1554,14 +1554,15 @@ export default {
 };
 
 // #region Mapper2 utils
-export const RECORD_AS_INPUT_OPTIONS = [{
-  label: 'Record to record - { } to { }',
-  value: 'recrec',
-},
-{
-  label: 'Record to rows - { } to [ ]',
-  value: 'recrow',
-},
+export const RECORD_AS_INPUT_OPTIONS = [
+  {
+    label: 'Record to record - { } to { }',
+    value: 'recrec',
+  },
+  {
+    label: 'Record to rows - { } to [ ]',
+    value: 'recrow',
+  },
 ];
 
 export const ROWS_AS_INPUT_OPTIONS = [
@@ -1616,18 +1617,110 @@ export const DATA_TYPES_OPTIONS =
 export const getInputOutputFormat = (isGroupedSampleData, isGroupedOutput) => {
   if (isGroupedSampleData) {
     if (isGroupedOutput) {
-      return 'rowrow';
+      return ROWS_AS_INPUT_OPTIONS[1].label;
     }
 
-    return 'rowrec';
+    return ROWS_AS_INPUT_OPTIONS[0].label;
   } if (isGroupedOutput) {
-    return 'recrow';
+    return RECORD_AS_INPUT_OPTIONS[1].label;
   }
 
-  return 'recrec';
+  return RECORD_AS_INPUT_OPTIONS[0].label;
 };
 
-function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disabled) {
+// this util is for objectarray data type nodes when multiple extracts are given
+// to reconstruct the whole children and buildArrayHelper
+export const rebuildNode = (node, extract) => {
+  const clonedNode = deepClone(node);
+  const {key: parentKey, buildArrayHelper = [], multipleSources} = clonedNode;
+  const splitExtract = extract.split(',');
+
+  // if no extract, return
+  if (!splitExtract || !splitExtract.length) return clonedNode;
+
+  // for each extract, keep the buildArrayHelper if exists, else add new
+  splitExtract.forEach((extract, index) => {
+    if (index > 0 && !multipleSources) {
+      clonedNode.multipleSources = true;
+    }
+
+    if ((buildArrayHelper[index]?.extract || '$') === extract) {
+      // do nothing, already match
+      return;
+    }
+
+    buildArrayHelper[index] = {
+      extract,
+      mappings: [{
+        key: nanoid(), // todo ashu may not need this key
+        dataType: 'string',
+      }],
+    };
+  });
+
+  // remove remaining array helper
+  buildArrayHelper.splice(splitExtract.length);
+
+  const foundExtracts = [];
+
+  // filter the children array and only keep the ones which
+  // have the parentExtract same as one of the given extracts
+  clonedNode.children = clonedNode.children.filter(child => {
+    const {parentExtract = '$'} = child;
+
+    if (child.isTabNode) return true;
+
+    if (splitExtract.includes(parentExtract || '$')) {
+      foundExtracts.push(parentExtract || '$');
+
+      return true;
+    }
+
+    return false;
+  });
+
+  // find left over extracts so that new children rows can be pushed
+  const leftExtracts = splitExtract.filter(s => {
+    if (foundExtracts.includes(s)) return false;
+
+    return true;
+  });
+
+  // for all left over extracts, which are added new
+  // add new rows
+  if (leftExtracts.length) {
+    leftExtracts.forEach(e => {
+      const newRow = {
+        key: nanoid(),
+        title: '',
+        parentKey,
+        parentExtract: e,
+        dataType: 'string',
+      };
+
+      clonedNode.children.push(newRow);
+    });
+  }
+
+  if (buildArrayHelper.length === 1) {
+    // remove tab node
+    if (clonedNode.children?.[0]?.isTabNode) {
+      clonedNode.children.shift();
+    }
+  } else if (buildArrayHelper.length > 1 && !clonedNode.children?.[0]?.isTabNode) {
+    // add tab node
+    clonedNode.children.unshift({
+      key: nanoid(),
+      parentKey,
+      title: TabRow,
+      isTabNode: true,
+    });
+  }
+
+  return clonedNode;
+};
+
+function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disabled, hidden) {
   mappings.forEach(m => {
     const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract} = m;
     const children = [];
@@ -1643,6 +1736,8 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disa
       parentKey,
       parentExtract,
       disabled,
+      hidden,
+      className: hidden && 'hideRow',
       ...m,
     };
 
@@ -1686,16 +1781,18 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disa
             children.unshift({
               key: nanoid(),
               parentKey: currNodeKey,
-              // title: TabRow,
+              title: TabRow,
               isTabNode: true,
             });
+            iterateForParentTree(mappings, children, currNodeKey, extract || '$', disabled, true);
           } else {
             multipleSources = true;
+            iterateForParentTree(mappings, children, currNodeKey, extract, disabled, hidden);
           }
 
           nodeToPush.children = children;
 
-          iterateForParentTree(mappings, children, currNodeKey, extract, disabled);
+          // iterateForParentTree(mappings, children, currNodeKey, extract, disabled);
         });
         nodeToPush.combinedExtract = sourceExtract;
 
@@ -2284,7 +2381,7 @@ export const getFinalSelectedExtracts = (node, inputValue, isArrayType, isGroupe
   return newValue;
 };
 
-const isV2MappingObjEqual = (_mappingObj1, _mappingObj2) => {
+const isV2MappingObjEqual = (_mappingObj1 = {}, _mappingObj2 = {}) => {
   if ((!isEmpty(_mappingObj1.children) && isEmpty(_mappingObj2.children)) || (isEmpty(_mappingObj1.children) && !isEmpty(_mappingObj2.children))) return false;
 
   const {
@@ -2298,6 +2395,9 @@ const isV2MappingObjEqual = (_mappingObj1, _mappingObj2) => {
     children: c1,
     isNotEditable: e1,
     isRequired: req1,
+    hidden: h1,
+    className: cl1,
+    copySource: cs1,
     ...mappingObj1
   } = _mappingObj1;
   const {
@@ -2311,6 +2411,9 @@ const isV2MappingObjEqual = (_mappingObj1, _mappingObj2) => {
     children: c2,
     isNotEditable: e2,
     isRequired: req2,
+    hidden: h2,
+    className: cl2,
+    copySource: cs2,
     ...mappingObj2
   } = _mappingObj2;
 
@@ -2361,6 +2464,31 @@ export const getAllKeys = data => {
   });
 
   return flattenDeep(nestedKeys);
+};
+
+export const hideOtherTabRows = (node, newTabExtract, hidden) => {
+  if (!node.children?.length) return;
+
+  node.children.forEach(c => {
+    if (c.isTabNode) return;
+    if (hidden || c.parentExtract !== newTabExtract) {
+      // eslint-disable-next-line no-param-reassign
+      c.hidden = true;
+      // eslint-disable-next-line no-param-reassign
+      c.className = 'hideRow';
+
+      // update children hidden as well
+      hideOtherTabRows(c, c.combinedExtract || '$', true);
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      delete c.hidden;
+      // eslint-disable-next-line no-param-reassign
+      delete c.className;
+
+      // update children as well
+      hideOtherTabRows(c, c.combinedExtract || '$', false);
+    }
+  });
 };
 
 // #endregion
