@@ -52,6 +52,7 @@ export default function DefaultEdge({
   const { sourceType, targetType, points: edgePoints } = data;
   const isDragging = !!dragNodeId;
   const isConnectedToMerge = targetType === 'merge' || sourceType === 'merge';
+  const isConnectedToGenerator = sourceType === 'pg';
   const isTargetMerge = targetType === 'merge';
   const isSource = sourceType === 'pg';
   const isTerminal = targetType.includes('terminal');
@@ -178,7 +179,7 @@ export default function DefaultEdge({
 
       <BranchLabel id={id} branchName={data?.branch} />
 
-      {isDragging && !isTerminal && !isConnectedToMerge && (
+      {isDragging && !isTerminal && !isConnectedToMerge && !isConnectedToGenerator && (
         <ForeignObject
           onMouseOver={handleMouseOver}
           onMouseOut={handleMouseOut}
