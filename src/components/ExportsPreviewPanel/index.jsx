@@ -1,5 +1,6 @@
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
@@ -7,6 +8,12 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import Panels from './Panels';
 import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
+import TextToggle from '../TextToggle';
+import ActionGroup from '../ActionGroup';
+import { TextButton } from '../Buttons';
+import EditIcon from '../icons/EditIcon';
+import CeligoDivider from '../CeligoDivider';
+import RightDrawer from '../drawer/Right';
 
 const useStyles = makeStyles(theme => ({
   previewPanelWrapper: {
@@ -20,6 +27,10 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
+  },
+  actionGroupWrapper: {
+    display: 'flex',
+    marginBottom: theme.spacing(2),
   },
   previewDataHeading: {
     fontSize: 18,
@@ -71,13 +82,21 @@ function PreviewInfo({
   />
   );
 }
+const errorTypes = [
+  { label: 'Preview', value: 'preview' },
+  { label: 'Send', value: 'send' },
+];
 
 export default function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
   const classes = useStyles();
+  const match = useRouteMatch();
+  const history = useHistory();
   const availablePreviewStages = useSelector(state =>
     selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
   shallowEqual
   );
+  const dispatch = useDispatch();
+  const [toggleValue, setToggleValue] = useState(errorTypes[0].value);
   // TODO @Raghu: Refactor preview state as it is currently using sample data state
   // this local state controls view to show sample data only when user requests by clicking preview
   const [showPreviewData, setShowPreviewData] = useState(false);
@@ -93,30 +112,72 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw'),
   shallowEqual
   );
+  const onChange = useCallback(value => {
+    setToggleValue(value);
+    dispatch(actions.resourceFormSampleData.updateSampleDataType(resourceId, value));
+  }, [dispatch, resourceId]);
+
+  const handleClose = useCallback(() => {
+    if (history.length > 2) {
+      history.goBack();
+    } else {
+      history.replace(match.url);
+    }
+  }, [history, match.url]);
+
+  const onEditorClick = useCallback(() => {
+    history.push(`${match.url}/inputData`);
+  }, [match.url, history]);
 
   return (
-    <div
-      className={classes.previewPanelWrapper}>
-      <Typography className={classes.previewDataHeading}>
-        Preview data
-      </Typography>
-      <div className={classes.container}>
-        <PreviewInfo
-          resourceSampleData={resourceSampleData}
-          previewStageDataList={previewStageDataList}
-          resourceId={resourceId}
-          formKey={formKey}
-          setShowPreviewData={setShowPreviewData}
-          showPreviewData={showPreviewData}
+    <div>
+      <RightDrawer
+        path="inputData"
+        height="tall"
+        width="default"
+        variant="temporary"
+        onClose={handleClose} />
+      <div
+        className={classes.previewPanelWrapper}>
+        <Typography className={classes.previewDataHeading}>
+          Preview data
+        </Typography>
+
+        <div className={classes.container}>
+          {resourceType === 'imports' ? (
+            <div className={classes.actionGroupWrapper}>
+              <ActionGroup position="right">
+                <TextButton onClick={onEditorClick} startIcon={<EditIcon />}>
+                  Edit mock input
+                </TextButton>
+                <CeligoDivider position="right" />
+                <TextToggle
+                  value={toggleValue}
+                  onChange={onChange}
+                  exclusive
+                  className={classes.errorDrawerActionToggle}
+                  options={errorTypes}
+      />
+              </ActionGroup>
+            </div>
+          ) : ''}
+          <PreviewInfo
+            resourceSampleData={resourceSampleData}
+            previewStageDataList={previewStageDataList}
+            resourceId={resourceId}
+            formKey={formKey}
+            setShowPreviewData={setShowPreviewData}
+            showPreviewData={showPreviewData}
       />
 
-        <Panels.PreviewBody
-          resourceSampleData={resourceSampleData}
-          previewStageDataList={previewStageDataList}
-          availablePreviewStages={availablePreviewStages}
-          resourceId={resourceId}
-          showDefaultPreviewBody={!showPreviewData}
-          resourceType={resourceType} />
+          <Panels.PreviewBody
+            resourceSampleData={resourceSampleData}
+            previewStageDataList={previewStageDataList}
+            availablePreviewStages={availablePreviewStages}
+            resourceId={resourceId}
+            showDefaultPreviewBody={!showPreviewData}
+            resourceType={resourceType} />
+        </div>
       </div>
     </div>
   );

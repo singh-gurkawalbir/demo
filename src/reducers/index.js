@@ -4038,10 +4038,9 @@ selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {
  */
 selectors.canSelectRecordsInPreviewPanel = (state, formKey) => {
   const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, formKey);
-
-  if (isExportPreviewDisabled) return false;
-
   const { resourceId, resourceType } = selectors.formParentContext(state, formKey) || {};
+
+  if (isExportPreviewDisabled || resourceType === 'imports') return false;
 
   const resource = selectors.resourceData(state, resourceType, resourceId)?.merged || {};
   // TODO @Raghu: merge this as part of isRealTimeOrDistributedResource to handle this resourceType
@@ -5155,7 +5154,6 @@ selectors.isPreviewPanelAvailableForResource = (
   resourceType,
   flowId
 ) => {
-  if (resourceType !== 'exports') return false;
   const resourceObj = selectors.resourceData(
     state,
     resourceType,

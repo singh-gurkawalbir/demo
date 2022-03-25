@@ -116,45 +116,6 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
   }
 }
 
-export function* _requestImportPreviewData({ formKey, executeProcessors = false }) {
-  const { resourceObj, resourceId, flowId, integrationId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
-
-  // 'getFormattedResourceForPreview' util removes unnecessary props of resource that should not be sent in preview calls
-  const body = getFormattedResourceForPreview(resourceObj);
-
-  if (!executeProcessors) {
-    delete body.transform;
-    delete body.hooks;
-  }
-  // BE need flowId and integrationId in the preview call
-  // if in case integration settings were used in export
-  const flow = yield select(selectors.resource, 'flows', flowId);
-
-  // while working with newly created flows, flowId could be temporary UI generated. Rely on flow._id as flowId while making page processor preview call.
-  // refer IO-21519
-  body._flowId = flow?._id;
-  body._integrationId = integrationId !== STANDALONE_INTEGRATION.id ? integrationId : undefined;
-
-  const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
-
-  if (recordSize && !Number.isNaN(recordSize)) {
-    body.test = { limit: recordSize };
-  }
-
-  try {
-    const previewData = yield call(apiCallWithRetry, {
-      path: '/imports/preview',
-      opts: { method: 'POST', body },
-      hidden: true,
-    });
-
-    // handle state updates for real time resources here
-    yield put(actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData));
-  } catch (e) {
-    yield call(_handlePreviewError, { e, resourceId });
-  }
-}
-
 export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
 
@@ -331,9 +292,6 @@ export function* _requestPGExportSampleData({ formKey, refreshCache, executeProc
   }
   yield call(_requestExportPreviewData, { formKey, executeProcessors });
 }
-export function* _requestPGImportSampleData({ formKey, executeProcessors }) {
-  yield call(_requestImportPreviewData, { formKey, executeProcessors });
-}
 
 export function* _requestLookupSampleData({ formKey, refreshCache = false }) {
   const { resourceId, resourceObj, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
@@ -381,13 +339,10 @@ export function* _requestLookupSampleData({ formKey, refreshCache = false }) {
     yield call(_handlePreviewError, { e, resourceId });
   }
 }
-export function* _requestImportSampleData({ formKey, refreshCache = false }) {
-  const { resourceId, resourceObj, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
-  // make PP preview call incase of all other adaptors
-  const resourceType = 'imports';
-  const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
-  // const sampleDataType = yield select(selectors.typeOfSampleData, resourceId);
+export function* _requestPageProcessorSampleData({ formKey, refreshCache = false }) {
+  const { resourceId, resourceObj, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+  const recordSize = 1;
 
   // exclude sampleData property if exists on pageProcessor Doc
   // as preview call considers sampleData to show instead of fetching
@@ -409,7 +364,7 @@ export function* _requestImportSampleData({ formKey, refreshCache = false }) {
     const pageProcessorPreviewData = yield call(pageProcessorPreview, {
       flowId,
       _pageProcessorId: resourceId,
-      resourceType,
+      resourceType: 'imports',
       hidden: true,
       _pageProcessorDoc,
       throwOnError: true,
@@ -490,15 +445,22 @@ export function* _requestImportFileSampleData({ formKey }) {
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
-// export function* _requestImportSampleData({ formKey }) {
-//   // handle file related sample data for imports
-//   // make file adaptor sample data calls
-//   const { resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+export function* _requestImportSampleData({ formKey, refreshCache }) {
+  // handle file related sample data for imports
+  // make file adaptor sample data calls
+  const { resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
-//   if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj)) {
-//     yield call(_requestImportFileSampleData, { formKey });
-//   }
-// }
+  if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj)) {
+    yield call(_requestImportFileSampleData, { formKey });
+  }
+  const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, resourceObj?._id, 'imports');
+
+  if (isPreviewPanelAvailable) {
+    yield call(_requestPageProcessorSampleData, { formKey, refreshCache });
+  }
+
+  // is Preview panel available
+}
 
 export function* requestResourceFormSampleData({ formKey, options = {} }) {
   if (!formKey) {
@@ -510,13 +472,13 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
   yield delay(500);
 
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
-  if (resourceType === 'exports') {
-    const { refreshCache, executeProcessors } = options;
+  const { refreshCache, executeProcessors } = options;
 
+  if (resourceType === 'exports') {
     yield call(_requestExportSampleData, { formKey, refreshCache, executeProcessors });
   }
   if (resourceType === 'imports') {
-    yield call(_requestImportSampleData, { formKey });
+    yield call(_requestImportSampleData, { formKey, refreshCache});
   }
 }
 

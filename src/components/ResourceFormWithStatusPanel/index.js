@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
-      return '100%';
+      return props.variant === 'edit' ? '100%' : 660;
     },
     maxHeight: 'unset',
     padding: '0px !important',

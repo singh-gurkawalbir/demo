@@ -28,9 +28,11 @@ export function* pageProcessorPreview({
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
   const flow = yield call(filterPendingResources, { flow: deepClone(merged) });
+  const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, _pageProcessorId, 'imports');
+  const typeOfPreview = yield select(selectors.typeOfSampleData, _pageProcessorId);
 
-  // Incase of no pgs, preview call is stopped here
-  if (!flow.pageGenerators || !flow.pageGenerators.length) return;
+  // // Incase of no pgs, preview call is stopped here
+  if (!isPreviewPanelAvailable && (!flow.pageGenerators || !flow.pageGenerators.length)) return;
   // Incase of first new pp, pageProcessors does not exist on flow doc. So add default [] for pps
   flow.pageProcessors = flow.pageProcessors || [];
   const pageGeneratorMap = yield call(fetchFlowResources, {
@@ -50,6 +52,16 @@ export function* pageProcessorPreview({
     pageProcessorMap[_pageProcessorId] = {
       doc: _pageProcessorDoc,
     };
+  }
+  if (isPreviewPanelAvailable && typeOfPreview) {
+    if (!pageProcessorMap[_pageProcessorId]) {
+      pageProcessorMap[_pageProcessorId] = {};
+    }
+    if (typeOfPreview === 'send') {
+      pageProcessorMap[_pageProcessorId].options = {sendAndPreview: true};
+    } else {
+      pageProcessorMap[_pageProcessorId].options = {preview: true};
+    }
   }
 
   // Incase of a new Lookup / Import add that doc to flow explicitly as it is not yet saved

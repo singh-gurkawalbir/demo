@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
-      return '100%';
+      return props.match.isExact ? 660 : 150;
     },
     overflowX: 'hidden',
     // overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
-      return '100%';
+      return props.match.isExact ? '100%' : 660;
     },
     maxHeight: 'unset',
     padding: 0,
