@@ -5,7 +5,7 @@ export default {
     '/assistant': 'brex',
     '/http/auth/type': 'token',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://platform.${formValues['/http/accountType'] === 'staging' ? 'staging.brexapps' : 'brexapis'
+    '/http/baseURI': `https://platform.${formValues['/http/unencrypted/accountType'] === 'staging' ? 'staging.brexapps' : 'brexapis'
     }.com`,
     '/http/ping/relativeURI': '/v2/users',
     '/http/ping/method': 'GET',
@@ -15,10 +15,11 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'http.accountType': {
-      id: 'http.accountType',
+    'http.unencrypted.accountType': {
+      id: 'http.unencrypted.accountType',
       type: 'select',
-      label: 'Account type',
+      label: 'Account Type',
+      required: true,
       options: [
         {
           items: [
@@ -27,18 +28,7 @@ export default {
           ],
         },
       ],
-      defaultValue: r => {
-        const baseUri = r && r.http && r.http.baseURI;
-
-        if (baseUri) {
-          if (baseUri.indexOf('staging.brexapps') !== -1) {
-            return 'staging';
-          }
-
-          return 'production';
-        }
-      },
-      helpKey: 'brex.connection.http.accountType',
+      helpKey: 'brex.connection.http.unencrypted.accountType',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -58,7 +48,7 @@ export default {
       {
         collapsed: true,
         label: 'Application details',
-        fields: ['http.accountType', 'http.auth.token.token'],
+        fields: ['http.unencrypted.accountType', 'http.auth.token.token'],
       },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
