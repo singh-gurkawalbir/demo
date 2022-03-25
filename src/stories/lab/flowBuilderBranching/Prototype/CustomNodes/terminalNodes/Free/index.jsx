@@ -58,7 +58,6 @@ export default function TerminalFreeNode({ id }) {
           onMouseOver={handleMouseOver}
           onMouseOut={handleMouseOut}
           isDroppable
-          nodeId={id}
           className={classes.dropOffset}
           />
       ) : (

@@ -174,7 +174,6 @@ export default function DefaultEdge({
         style={style}
         className={classes.edgePath}
         d={edgePath}
-        // markerEnd={markerEnd}
       />
 
       <BranchLabel id={id} branchName={data?.branch} />
@@ -186,7 +185,7 @@ export default function DefaultEdge({
           edgePath={edgePath}
           position="center"
           size={34}>
-          <DiamondIcon isDroppable edgeId={id} />
+          <DiamondIcon isDroppable />
         </ForeignObject>
       )}
 
