@@ -1030,6 +1030,7 @@ describe('mapping reducer', () => {
           flowId: '123',
           preview: {
             status: 'requested',
+            errors: 'errors',
           },
         },
       };
@@ -1066,7 +1067,7 @@ describe('mapping reducer', () => {
           },
         },
       };
-      const state = reducer(initialState, actions.mapping.previewFailed());
+      const state = reducer(initialState, actions.mapping.previewFailed('errors'));
       const expectedState = {
         mapping: {
           mappings: [
@@ -1076,6 +1077,7 @@ describe('mapping reducer', () => {
           flowId: '123',
           preview: {
             status: 'error',
+            errors: 'errors',
           },
         },
       };

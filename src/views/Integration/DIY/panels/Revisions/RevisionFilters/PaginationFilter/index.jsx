@@ -19,10 +19,13 @@ export default function RevisionFilters() {
   const dispatch = useDispatch();
   const filterKey = getRevisionFilterKey(integrationId);
 
+  // selectors
   const totalRevisions = useSelector(state => (selectors.filteredRevisions(state, integrationId) || []).length);
+  const hasNoFilteredRevisions = useSelector(state => !selectors.getCurrPageFilteredRevisions(state, integrationId)?.length);
   const revisionsPagingFilter = useSelector(state =>
     selectors.filter(state, filterKey)?.paging,
   shallowEqual);
+  // end of selectors
 
   const handlePageChange = useCallback((e, newPage) => {
     dispatch(
@@ -40,10 +43,15 @@ export default function RevisionFilters() {
         paging: {
           ...revisionsPagingFilter,
           rowsPerPage: parseInt(e.target.value, 10),
+          currPage: 0,
         },
       })
     );
   }, [dispatch, filterKey, revisionsPagingFilter]);
+
+  if (hasNoFilteredRevisions) {
+    return null;
+  }
 
   return (
     <CeligoPagination

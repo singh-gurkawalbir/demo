@@ -1470,7 +1470,7 @@ const mapping = {
   requestPreview: () => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { }),
   previewReceived: value =>
     action(actionTypes.MAPPING.PREVIEW_RECEIVED, { value }),
-  previewFailed: () => action(actionTypes.MAPPING.PREVIEW_FAILED, { }),
+  previewFailed: errors => action(actionTypes.MAPPING.PREVIEW_FAILED, { errors }),
   setNSAssistantFormLoaded: value =>
     action(actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED, { value }),
   refreshGenerates: () => action(actionTypes.MAPPING.REFRESH_GENERATES, { }),
