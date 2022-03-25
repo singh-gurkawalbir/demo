@@ -6,7 +6,7 @@ export default {
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/baseURI': `https://${formValues['/http/unencrypted/subdomain']}.dynamics.com/api/data/v9.1`,
-    '/http/ping/relativeURI': ' /workflows',
+    '/http/ping/relativeURI': '/workflows',
     '/http/ping/method': 'GET',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',

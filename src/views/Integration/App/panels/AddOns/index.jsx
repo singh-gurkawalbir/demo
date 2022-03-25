@@ -99,6 +99,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
           licenseId,
         })
       );
+
       enquesnackbar({message: <RawHtml html={LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
     },
 
@@ -111,7 +112,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
       title: 'Request add-on',
       message: LICENSE_UPGRADE_REQUEST,
       buttons: [
-        {label: 'Submit Request', onClick: handleContactSales(addonName)},
+        {label: 'Submit request', onClick: handleContactSales(addonName)},
         {label: 'Cancel', variant: 'text'},
       ],
     });
@@ -136,7 +137,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
                     <FilledButton
                       data-test="contactSales"
                       onClick={onRequestAddonClicked(data)}>
-                      Request Add-on
+                      Request add-on
                     </FilledButton>
                   )}
               </CardActions>

@@ -520,16 +520,15 @@ export function* previewMappings() {
 
     if (cancelPreview) return;
 
-    if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
-      if (
-        preview?.data?.returnedObjects?.mappingErrors[0]?.error
-      ) {
-        return yield put(actions.mapping.previewFailed());
-      }
+    const error = preview?.data?.returnedObjects?.mappingErrors[0]?.error || preview?.[0]?.errors?.[0];
+
+    if (error) {
+      return yield put(actions.mapping.previewFailed(error));
     }
+
     yield put(actions.mapping.previewReceived(preview));
   } catch (e) {
-    yield put(actions.mapping.previewFailed());
+    yield put(actions.mapping.previewFailed(e));
   }
 }
 

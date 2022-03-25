@@ -38,6 +38,7 @@ export default (state = {}, action) => {
     version,
     expanded,
     expandedKeys,
+    errors,
   } = action;
 
   return produce(state, draft => {
@@ -240,12 +241,14 @@ export default (state = {}, action) => {
         if (draft.mapping) {
           draft.mapping.preview.data = value;
           draft.mapping.preview.status = 'received';
+          delete draft.mapping.preview.errors;
         }
         break;
       case actionTypes.MAPPING.PREVIEW_FAILED:
         if (draft.mapping) {
           delete draft.mapping.preview.data;
           draft.mapping.preview.status = 'error';
+          draft.mapping.preview.errors = errors;
         }
         break;
       case actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED:

@@ -20,8 +20,8 @@ const useStyles = makeStyles(theme => ({
     },
   },
   offlineIcon: {
-    margin: theme.spacing(1),
-    color: theme.palette.background.paper,
+    color: theme.palette.secondary.main,
+    width: 18,
   },
 }));
 
