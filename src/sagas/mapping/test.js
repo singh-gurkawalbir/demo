@@ -470,6 +470,7 @@ describe('mappingInit saga', () => {
     expectSaga(mappingInit, {flowId, importId})
       .provide([
         [call(fetchRequiredMappingData, {flowId, importId}), {}],
+        [call(apiCallWithRetry, {path: '/ui/assistants/3dcart', opts: {method: 'GET'}}), {export: {}, import: {}}],
         [select(selectors.resource, 'imports', importId), {
           _id: importId,
           _connectionId: 'conn1',
@@ -495,13 +496,20 @@ describe('mappingInit saga', () => {
           assistant: '3dcart',
         }), {export: {}, import: {}}],
       ])
-      .put.like(actions.mapping.initComplete({
-        mappings: [
-          {extract: 'b', generate: 'a', key: 'mock_key'},
-        ],
+      .put(actions.flowData.init({refresh: false}))
+      .put(actions.assistantMetadata.received({adaptorType: 'rest', assistant: '3dcart', metadata: {export: {}, import: {}}}))
+      .put(actions.flowData.requestStage(flowId, 'import27', 'preMap'))
+      .put(actions.flowData.requestStage(flowId, 'import27', 'processedFlowInput'))
+      .put(actions.flowData.requestStage(flowId, 'import27', 'flowInput'))
+      .put(actions.flowData.receivedPreviewData(flowId, 'import27', undefined, 'flowInput'))
+      .put(actions.flowData.receivedProcessorData(flowId, 'import27', 'processedFlowInput', {data: []}))
+      .put(actions.flowData.receivedProcessorData(flowId, 'import27', 'preMap', {data: []}))
+
+      .put(actions.mapping.initComplete({
+        mappings: [{ generate: 'a', extract: 'b', key: 'mock_key' }],
         lookups: [],
-        flowId,
-        importId,
+        flowId: 'flow27',
+        importId: 'import27',
         subRecordMappingId: undefined,
         isGroupedSampleData: true,
       }))
@@ -520,6 +528,12 @@ describe('mappingInit saga', () => {
     expectSaga(mappingInit, {flowId, importId})
       .provide([
         [call(fetchRequiredMappingData, {flowId, importId}), {}],
+        [call(apiCallWithRetry, {path: '/integrations/_i1/settings/getMappingMetadata',
+          opts: {
+            method: 'PUT',
+            body: {},
+          },
+          hidden: true}), {}],
         [select(selectors.resource, 'imports', importId), {
           _id: importId,
           _connectorId: '_c1',
@@ -541,6 +555,13 @@ describe('mappingInit saga', () => {
           resourceType: 'imports',
         }), {data: [{id: 'a'}]}],
       ])
+      .put(actions.flowData.init({refresh: false}))
+      .put(actions.flowData.requestStage(flowId, 'import28', 'preMap'))
+      .put(actions.flowData.requestStage(flowId, 'import28', 'processedFlowInput'))
+      .put(actions.flowData.requestStage(flowId, 'import28', 'flowInput'))
+      .put(actions.flowData.receivedPreviewData(flowId, 'import28', undefined, 'flowInput'))
+      .put(actions.flowData.receivedProcessorData(flowId, 'import28', 'processedFlowInput', {data: []}))
+      .put(actions.flowData.receivedProcessorData(flowId, 'import28', 'preMap', {data: []}))
       .put(actions.mapping.initComplete({
         mappings: [
           {extract: 'b', generate: 'a', key: 'mock_key'},
