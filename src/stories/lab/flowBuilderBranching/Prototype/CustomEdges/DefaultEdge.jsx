@@ -1,11 +1,13 @@
 import React, {useMemo} from 'react';
-import { getSmoothStepPath, getMarkerEnd } from 'react-flow-renderer';
+import { getSmoothStepPath } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
 import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles } from '../lib';
 import { useFlowContext } from '../Context';
 import AddNewButton from './AddNewButton';
 import UnlinkButton from './UnlinkButton';
 import ForeignObject from './ForeignObject';
+import DiamondIcon from '../icons/DiamondIcon';
+import actions from '../reducer/actions';
 
 const useStyles = makeStyles(theme => ({
   edgePath: {
@@ -43,13 +45,13 @@ export default function DefaultEdge({
   targetPosition,
   style = {},
   data,
-  arrowHeadType,
-  markerEndId,
 }) {
   const classes = useStyles();
-  const { elements } = useFlowContext();
+  const { elements, dragNodeId, setState } = useFlowContext();
   const hasSiblingEdges = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
   const { sourceType, targetType, points: edgePoints } = data;
+  const isDragging = !!dragNodeId;
+  const isConnectedToMerge = targetType === 'merge' || sourceType === 'merge';
   const isTargetMerge = targetType === 'merge';
   const isSource = sourceType === 'pg';
   const isTerminal = targetType.includes('terminal');
@@ -136,8 +138,12 @@ export default function DefaultEdge({
     return path;
   }, [edgePoints, isTargetMerge, isTerminal, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
 
-  const markerEnd = useMemo(() =>
-    getMarkerEnd(arrowHeadType, markerEndId), [arrowHeadType, markerEndId]);
+  const handleMouseOut = () => setState({type: actions.MERGE_TARGET_CLEAR});
+  const handleMouseOver = () => setState({
+    type: actions.MERGE_TARGET_SET,
+    targetType: 'edge',
+    targetId: id,
+  });
 
   let position = 'center';
   let offset = 10;
@@ -168,18 +174,29 @@ export default function DefaultEdge({
         style={style}
         className={classes.edgePath}
         d={edgePath}
-        markerEnd={markerEnd}
+        // markerEnd={markerEnd}
       />
 
       <BranchLabel id={id} branchName={data?.branch} />
 
-      {showAddIcon && (
+      {isDragging && !isTerminal && !isConnectedToMerge && (
+        <ForeignObject
+          onMouseOver={handleMouseOver}
+          onMouseOut={handleMouseOut}
+          edgePath={edgePath}
+          position="center"
+          size={34}>
+          <DiamondIcon isDroppable edgeId={id} />
+        </ForeignObject>
+      )}
+
+      {!isDragging && showAddIcon && (
         <ForeignObject edgePath={edgePath} position={position} offset={offset}>
           <AddNewButton edgeId={id} />
         </ForeignObject>
       )}
 
-      {showLinkIcon && (
+      {!isDragging && showLinkIcon && (
         <ForeignObject edgePath={edgePath} position={position} offset={offset + 30}>
           <UnlinkButton edgeId={id} />
         </ForeignObject>

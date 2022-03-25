@@ -27,11 +27,11 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-export default function DiamondIcon({isDroppable}) {
+export default function DiamondIcon({isDroppable, className, ...rest}) {
   const classes = useStyles();
 
   return (
-    <svg viewBox="0 0 34 34" className={clsx(classes.button)}>
+    <svg {...rest} viewBox="0 0 34 34" className={clsx(classes.button, className)}>
       <path d="m0,17l17,-17l17,17l-17,17l-17,-17z" className={clsx({[classes.dropBorder]: isDroppable})} />
 
       {isDroppable && (

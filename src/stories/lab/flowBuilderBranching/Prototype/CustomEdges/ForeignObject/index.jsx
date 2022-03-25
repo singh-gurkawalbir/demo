@@ -1,18 +1,18 @@
 import React, {useMemo} from 'react';
 import { getPositionInEdge } from '../../lib';
 
-const foreignObjectSize = 20;
-
-export default function ForeignObject({edgePath, position, offset, children}) {
+export default function ForeignObject({edgePath, position, offset = 0, size = 20, children, ...rest}) {
   const [edgeX, edgeY] = useMemo(() =>
     getPositionInEdge(edgePath, position, offset) || [], [edgePath, position, offset]);
 
   return (
     <foreignObject
-      width={foreignObjectSize}
-      height={foreignObjectSize + 1}
-      x={edgeX - foreignObjectSize / 2}
-      y={edgeY - foreignObjectSize / 2}
+      {...rest}
+      style={{zIndex: 9999, position: 'absolute'}}
+      width={size}
+      height={size + 1}
+      x={edgeX - size / 2}
+      y={edgeY - size / 2}
       requiredExtensions="http://www.w3.org/1999/xhtml">
       {children}
     </foreignObject>
