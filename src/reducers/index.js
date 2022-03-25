@@ -106,7 +106,7 @@ import { getSelectedRange } from '../utils/flowMetrics';
 import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
 import { filterMap } from '../components/GlobalSearch/filterMeta';
-import { getRevisionFilterKey, getFilteredRevisions } from '../utils/revisions';
+import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions } from '../utils/revisions';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -1599,7 +1599,7 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
-            (this.netsuite.account) &&
+            this.netsuite?.account &&
             (!environment || !!this.sandbox === (environment === 'sandbox')) &&
             ([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE].includes(accessLevel))
           );
@@ -6693,8 +6693,13 @@ selectors.revisionsFilter = (state, integrationId) => {
 selectors.filteredRevisions = createSelector(
   selectors.revisions,
   selectors.revisionsFilter,
-  (revisionsList, revisionsFilter) => getFilteredRevisions(revisionsList, revisionsFilter)
+  (revisionsList, revisionsFilter) => getFilteredRevisions(cloneDeep(revisionsList), revisionsFilter)
 );
+
+selectors.getCurrPageFilteredRevisions = createSelector(
+  selectors.filteredRevisions,
+  selectors.revisionsFilter,
+  (filteredRevisions, filters) => getPaginatedRevisions(filteredRevisions, filters));
 
 selectors.resourceName = (state, resourceId, resourceType) => {
   if (!resourceId || !resourceType) return '';

@@ -11,9 +11,9 @@ export default function RevisionFilters() {
   const { integrationId } = useParams();
   const dispatch = useDispatch();
   const filterKey = getRevisionFilterKey(integrationId);
-  const revisionsPagingFilter = useSelector(state => {
-      selectors.filter(state, filterKey)?.paging;
-  }, shallowEqual);
+  const revisionsPagingFilter = useSelector(state =>
+    selectors.filter(state, filterKey)?.paging,
+  shallowEqual);
   const selectedCreatedAt = useSelector(state => {
     const revisionFilter = selectors.filter(state, filterKey);
 
@@ -22,7 +22,7 @@ export default function RevisionFilters() {
 
   const handleDateFilter = useCallback(
     dateFilter => {
-      const selectedRange = getSelectedRange(dateFilter);
+      const selectedRange = getSelectedRange(dateFilter, true);
 
       dispatch(
         actions.patchFilter(filterKey, {
