@@ -13,8 +13,8 @@ export function* uploadCustomTemplate({
 
   try {
     return yield call(uploadFile, { file, fileType, fileName, uploadPath });
-  } catch (e) {
-    return undefined;
+  } catch (error) {
+    return yield put(actions.integrationApp.utility.s3KeyError({integrationId, error}));
     // @TODO handle error
   }
 }
