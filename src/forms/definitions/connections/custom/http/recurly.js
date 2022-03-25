@@ -1,17 +1,50 @@
 export default {
-  preSave: formValues => ({
-    ...formValues,
-    '/type': 'http',
-    '/assistant': 'recurly',
-    '/http/auth/type': 'basic',
-    '/http/mediaType': 'xml',
-    '/http/ping/relativeURI': '/v2/accounts',
-    '/http/auth/basic/password': '',
-    '/http/ping/method': 'GET',
-    '/http/baseURI': `https://${formValues['/recurlySubdomain']}.recurly.com`,
-  }),
+  preSave: formValues => {
+    const newValues = {...formValues};
+
+    if (newValues['/http/unencrypted/version'] === 'v3') {
+      newValues['/http/baseURI'] = 'https://v3.recurly.com';
+      newValues['/http/ping/relativeURI'] = '/accounts';
+      newValues['/http/headers'] = [
+        {
+          name: 'Accept',
+          value: 'application/vnd.recurly.v2021-02-25+json',
+        },
+      ];
+    } else {
+      newValues['/http/baseURI'] = `https://${formValues['/recurlySubdomain']}.recurly.com`;
+      newValues['/http/ping/relativeURI'] = '/v2/accounts';
+      newValues['/http/headers'] = undefined;
+    }
+
+    return {
+      ...newValues,
+      '/type': 'http',
+      '/assistant': 'recurly',
+      '/http/auth/type': 'basic',
+      '/http/mediaType': 'xml',
+      '/http/auth/basic/password': '',
+      '/http/ping/method': 'GET',
+    };
+  },
   fieldMap: {
     name: { fieldId: 'name' },
+    'http.unencrypted.version': {
+      id: 'http.unencrypted.version',
+      type: 'select',
+      label: 'API versions',
+      helpKey: 'recurly.connection.http.unencrypted.version',
+      required: true,
+      defaultValue: r => (r?.http?.unencrypted?.version) || 'v2',
+      options: [
+        {
+          items: [
+            { label: 'v3', value: 'v3' },
+            { label: 'v2', value: 'v2' },
+          ],
+        },
+      ],
+    },
     recurlySubdomain: {
       id: 'recurlySubdomain',
       type: 'text',
@@ -36,10 +69,12 @@ export default {
 
         return subdomain;
       },
+      visibleWhen: [{field: 'http.unencrypted.version', is: ['v2']}],
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       label: 'API key',
+      inputType: 'password',
       defaultValue: '',
       description:
         'Note: for security reasons this field must always be re-entered.',
@@ -56,7 +91,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['recurlySubdomain', 'http.auth.basic.username'] },
+        fields: ['http.unencrypted.version', 'recurlySubdomain', 'http.auth.basic.username'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

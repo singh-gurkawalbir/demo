@@ -49,7 +49,7 @@ function MarketPlaceRow({type, result, includeDivider}) {
       requestDemo(result);
     }
   }, [history, requestDemo, result, setOpen, type]);
-  const buttonLabel = type === 'marketplaceConnectors' ? 'Request a demo' : 'Preview';
+  const buttonLabel = type === 'marketplaceConnectors' ? 'Request demo' : 'Preview';
 
   if (!result) return null;
 

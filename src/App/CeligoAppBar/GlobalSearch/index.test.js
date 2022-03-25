@@ -507,13 +507,11 @@ describe('Globalsearch feature tests', () => {
       expect(screen.queryByLabelText(/Global search results/i)).toBeInTheDocument();
     });
     expect(screen.queryByText(/ADP IA/i)).toBeInTheDocument();
-    const requestForDemoButton = screen.queryByText('Request a demo');
+    const requestForDemoButton = screen.queryByText('Request demo');
 
     userEvent.click(requestForDemoButton);
     await waitFor(() => {
       expect(mockResolverFunction).toHaveBeenCalledTimes(1);
-      expect(screen.queryByText(/Thank you! Your request has been received/i)).toBeInTheDocument();
-      expect(screen.queryByText(/We will contact you soon to learn more about your needs. Meanwhile, please checkout/i)).toBeInTheDocument();
     });
   });
   test('Should navigate to that route on clicking on marketplace templates preview', async () => {

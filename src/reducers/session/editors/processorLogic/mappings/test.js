@@ -54,7 +54,72 @@ describe('mappings processor logic', () => {
 
       expect(processResult(editor, result)).toEqual(expectedOutput);
     });
+    test('should return the correct object from response if mapping preview type is salesforce', () => {
+      const editor = {
+        stage: 'importMappingExtract',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        mappingPreviewType: 'salesforce',
+      };
+      const result = {
+        data: [
+          {mappedObject: {id: 123}},
+        ],
+      };
+      const expectedOutput = {
+        data: [
+          {mappedObject: {id: 123}},
+        ],
+      };
 
+      expect(processResult(editor, result)).toEqual(expectedOutput);
+    });
+    test('should return the correct object from response if mapping preview type is netsuite', () => {
+      const editor = {
+        stage: 'importMappingExtract',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        mappingPreviewType: 'netsuite',
+      };
+      const result = {
+        data: {
+          data: {
+            returnedObjects: {
+              jsObjects: {
+                data: [
+                  {
+                    celigoIsElement: true,
+                    data: {
+                      nlobjFieldIds: {
+                        companyname: '123',
+                        phone: '234',
+                        fax: '123',
+                        custentity51: '123',
+                      },
+                      nlobjSublistIds: {},
+                    },
+                  },
+                ],
+              },
+              mappingErrors: [],
+            },
+          },
+        },
+      };
+      const expectedOutput = {
+        data: {
+          nlobjFieldIds: {
+            companyname: '123',
+            phone: '234',
+            fax: '123',
+            custentity51: '123',
+          },
+          nlobjSublistIds: {},
+        },
+      };
+
+      expect(processResult(editor, result)).toEqual(expectedOutput);
+    });
     test('should throw error if errors is returned in response', () => {
       const editor = {
         stage: 'importMappingExtract',
@@ -69,6 +134,23 @@ describe('mappings processor logic', () => {
 
       expect(() => {
         processResult(editor, result);
+      }).toThrowError('Message: Invalid mappings');
+    });
+
+    test('should throw error if errors is returned in response if mapping preview type is salesforce or netsuite', () => {
+      const editor = {
+        stage: 'importMappingExtract',
+        resourceId: 'res-123',
+        resourceType: 'imports',
+        mappingPreviewType: 'salesforce',
+      };
+      const result = {errors: {message: 'Invalid mappings'}};
+
+      expect(() => {
+        processResult(editor, result);
+      }).toThrowError('Message: Invalid mappings');
+      expect(() => {
+        processResult({...editor, mappingPreviewType: 'netsuite'}, result);
       }).toThrowError('Message: Invalid mappings');
     });
   });
