@@ -53,7 +53,13 @@ export default (state = {}, action) => {
           draft.mapping.status = 'requested';
         }
         break;
-      case actionTypes.MAPPING.INIT_COMPLETE:
+      case actionTypes.MAPPING.INIT_COMPLETE: {
+        const isGroupedOutput = !!(v2TreeData?.length === 1 && v2TreeData[0].dataType === 'objectarray' && !v2TreeData[0].generate);
+
+        if (isGroupedOutput) {
+          v2TreeData[0].generateDisabled = true;
+        }
+
         draft.mapping = {
           mappings,
           lookups,
@@ -67,12 +73,15 @@ export default (state = {}, action) => {
           isGroupedSampleData,
           isMonitorLevelAccess,
           version,
+          isGroupedOutput,
           mappingsCopy: deepClone(mappings),
           lookupsCopy: deepClone(lookups),
           v2MappingsCopy: deepClone(v2Mappings),
           v2TreeDataCopy: deepClone(v2TreeData),
         };
         break;
+      }
+
       case actionTypes.MAPPING.INIT_FAILED:
         draft.mapping = {
           status: 'error',
@@ -334,7 +343,7 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.V2.TOGGLE_OUTPUT: {
         if (!draft.mapping) break;
 
-        const oldFormat = draft.mapping.isGroupedOutput;
+        const oldFormat = draft.mapping.isGroupedOutput ? 'rows' : 'record';
 
         draft.mapping.isGroupedOutput = outputFormat === 'rows';
 
@@ -562,7 +571,6 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.V2.PATCH_SETTINGS: {
         if (!draft.mapping) break;
         const {node} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
-        const prevCopy = node.copySource || 'no';
 
         if (node) {
           Object.assign(node, value);
@@ -581,7 +589,7 @@ export default (state = {}, action) => {
             delete node.hardCodedValue;
           }
 
-          if (prevCopy !== value.copySource) {
+          if (value.dataType === 'object' || value.dataType === 'objectarray') {
             if (value.copySource === 'yes') {
               // delete child rows if object is to be copied as is
               node.children = [];
@@ -595,6 +603,8 @@ export default (state = {}, action) => {
                 dataType: 'string',
               }];
             }
+          } else {
+            node.children = [];
           }
         }
 

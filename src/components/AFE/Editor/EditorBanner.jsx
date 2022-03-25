@@ -17,10 +17,10 @@ const useStyles = makeStyles(theme => ({
 
 // currently only mappings editor supports notification
 // we can update this component in future when we need to show the banner for other editors
-export default function EditorBanner() {
+export default function EditorBanner({editorId}) {
   const classes = useStyles();
   const mappingVersion = useSelector(state => selectors.mappingVersion(state));
-  const {message, variant} = useSelector(state => selectors.mappingEditorNotification(state), shallowEqual);
+  const {message, variant} = useSelector(state => selectors.mappingEditorNotification(state, editorId), shallowEqual);
 
   if (!message) return null;
 

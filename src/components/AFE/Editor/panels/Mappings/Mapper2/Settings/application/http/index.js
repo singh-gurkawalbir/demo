@@ -41,7 +41,7 @@ const getDefaultActionOptions = (mappingType, dataType) => {
   if (dataType === 'boolean') {
     defaultOptions[0].items.pop();
   }
-  if (mappingType === 'hardCodedAction') {
+  if (mappingType === 'hardcodedAction') {
     defaultOptions[0].items.shift();
   } else if (mappingType === 'lookupAction') {
     defaultOptions[0].items.push({
@@ -110,7 +110,7 @@ export default {
           label: 'Would you like to copy an object from the source record as-is?',
           fullWidth: true,
           defaultValue: copySource || 'no',
-          visibleWhen: [{ field: 'dataType', is: ['object', 'objectarray'] }],
+          visibleWhenAll: [{ field: 'dataType', is: ['object', 'objectarray'] }],
           noApi: true,
           options: [
             {
@@ -244,6 +244,7 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['standard'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
         },
         default: {
@@ -256,10 +257,25 @@ export default {
           visibleWhenAll: [
             { field: 'standardAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['standard'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
           helpKey: 'mapping.default',
           noApi: true,
           defaultValue: node.default,
+        },
+        objectAction: {
+          id: 'objectAction',
+          name: 'objectAction',
+          type: 'select',
+          defaultValue: mappingUtil.getV2DefaultActionValue(node) || '',
+          refreshOptionsOnChangesTo: ['dataType'],
+          label: 'Action to take if source record field has no value',
+          helpKey: 'mapping.standardAction',
+          noApi: true,
+          visibleWhenAll: [
+            { field: 'dataType', is: ['object', 'objectarray'] },
+            { field: 'copySource', is: ['yes'] },
+          ],
         },
         hardcodedAction: {
           id: 'hardcodedAction',
@@ -272,6 +288,7 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['hardCoded'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
         },
         hardcodedDefault: {
@@ -284,6 +301,7 @@ export default {
           visibleWhenAll: [
             { field: 'hardcodedAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['hardCoded'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
           helpKey: 'mapping.hardcodedDefault',
           noApi: true,
@@ -292,13 +310,21 @@ export default {
         expression: {
           id: 'expression',
           name: 'expression',
-          type: 'text', // todo ashu this would be an afe field
+          type: 'uri', // todo ashu check with BE for fieldPath
+          connectionId,
+          resourceType: 'imports',
+          resourceId,
+          flowId,
+          showLookup: false,
           multiline: true,
           label: 'Handlebars expression',
           defaultValue: mappingUtil.getDefaultExpression(node),
           helpKey: 'mapping.expression',
           noApi: true,
-          visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['multifield'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
+          ],
         },
         multifieldAction: {
           id: 'multifieldAction',
@@ -309,8 +335,9 @@ export default {
           refreshOptionsOnChangesTo: ['dataType'],
           helpKey: 'mapping.standardAction',
           noApi: true,
-          visibleWhen: [
+          visibleWhenAll: [
             { field: 'fieldMappingType', is: ['multifield'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
         },
         multifieldDefault: {
@@ -323,6 +350,7 @@ export default {
           visibleWhenAll: [
             { field: 'multifieldAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['multifield'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
           helpKey: 'mapping.default',
           noApi: true,
@@ -336,7 +364,10 @@ export default {
           required: true,
           fullWidth: true,
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
-          visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
+          ],
           helpKey: 'mapping.lookup.mode',
           noApi: true,
           options: [
@@ -368,6 +399,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['static'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
         },
         'lookup.relativeURI': {
@@ -387,6 +419,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
         },
         'lookup.method': {
@@ -409,6 +442,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
         },
         'lookup.body': {
@@ -426,6 +460,7 @@ export default {
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
             { field: 'lookup.method', is: ['POST'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
         },
         'lookup.extract': {
@@ -441,6 +476,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
         },
         'lookup.name': {
@@ -456,6 +492,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic', 'static'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
           validWhen: {
             matchesRegEx: {
@@ -477,6 +514,7 @@ export default {
           visibleWhenAll: [
             { field: 'lookup.mode', is: ['dynamic', 'static'] },
             { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
         },
         lookupDefault: {
@@ -489,6 +527,7 @@ export default {
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
           helpKey: 'mapping.lookupDefault',
           noApi: true,
@@ -530,6 +569,7 @@ export default {
                   'extractDateTimezone',
                   'generateDateFormat',
                   'generateDateTimezone',
+                  'objectAction',
                   'standardAction',
                   'default',
                   'hardcodedAction',
@@ -563,6 +603,7 @@ export default {
       },
       optionsHandler: (fieldId, fields) => {
         if (fieldId === 'standardAction' ||
+        fieldId === 'objectAction' ||
         fieldId === 'hardcodedAction' ||
         fieldId === 'multifieldAction' ||
         fieldId === 'lookupAction') {

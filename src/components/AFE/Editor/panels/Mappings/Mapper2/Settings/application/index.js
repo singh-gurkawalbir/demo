@@ -83,6 +83,7 @@ export default {
   getFormattedValue: (node, formVal) => {
     const { generate, extract, lookup } = node;
     const settings = {};
+    let updatedLookup;
 
     settings.generate = generate;
 
@@ -91,24 +92,44 @@ export default {
       settings.dataType = formVal.dataType || 'string';
     }
 
+    // setting extract value
+    if (formVal.copySource !== 'yes') {
+      if (
+        formVal.fieldMappingType === 'standard' &&
+        extract &&
+        extract.indexOf('{{') !== -1
+      ) {
+        settings.extract = '';
+      } else if (formVal.fieldMappingType === 'multifield') {
+        settings.extract = formVal.expression;
+      } else if (formVal.fieldMappingType !== 'hardCoded') {
+        settings.extract = extract;
+      }
+    }
+
     settings.copySource = formVal.copySource;
     if (formVal.copySource === 'no') {
       settings.extract = '';
     }
 
-    // setting date fields
+    if (formVal.copySource === 'yes') {
+      switch (formVal.objectAction) {
+        case 'useNull':
+          settings.default = null;
+          break;
+        case 'discardIfEmpty':
+          settings.conditional = {};
+          settings.conditional.when = 'extract_not_empty';
+          break;
+        default:
+      }
+    } else     // setting date fields
     if (formVal.fieldMappingType === 'standard') {
       settings.extractDateFormat = formVal.extractDateFormat ? formVal.extractDateFormat : undefined;
       settings.extractDateTimezone = formVal.extractDateTimezone ? formVal.extractDateTimezone : undefined;
       settings.generateDateFormat = formVal.generateDateFormat ? formVal.generateDateFormat : undefined;
       settings.generateDateTimezone = formVal.generateDateTimezone ? formVal.generateDateTimezone : undefined;
-    }
-
-    if ('discardIfEmpty' in formVal) {
-      settings.discardIfEmpty = formVal.discardIfEmpty;
-    }
-
-    if (formVal.fieldMappingType === 'hardCoded') {
+    } else if (formVal.fieldMappingType === 'hardCoded') {
       switch (formVal.hardcodedAction) {
         case 'useEmptyString':
           settings.hardCodedValue = '';
@@ -162,24 +183,7 @@ export default {
           break;
         default:
       }
-    }
-
-    // setting extract value
-    if (
-      formVal.fieldMappingType === 'standard' &&
-      extract &&
-      extract.indexOf('{{') !== -1
-    ) {
-      settings.extract = '';
-    } else if (formVal.fieldMappingType === 'multifield') {
-      settings.extract = formVal.expression;
-    } else if (formVal.fieldMappingType !== 'hardCoded') {
-      settings.extract = extract;
-    }
-
-    let updatedLookup;
-
-    if (formVal.fieldMappingType === 'lookup') {
+    } else if (formVal.fieldMappingType === 'lookup') {
       if (formVal._mode === 'static') {
         const {_mapList = []} = formVal;
         let atleastOneValMapped = false;
@@ -223,6 +227,10 @@ export default {
         settings.conditional = {};
       }
       settings.conditional.when = formVal.conditionalWhen;
+    }
+    if (settings.dataType === 'object' || settings.dataType === 'objectarray') {
+      delete settings.hardCodedValue;
+      delete settings.lookupName;
     }
 
     return {

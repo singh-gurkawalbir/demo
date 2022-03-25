@@ -5375,7 +5375,11 @@ selectors.isMapper2Supported = state => {
   return !!(resource.adaptorType === 'HTTPImport' || resource.adaptorType === 'RESTImport');
 };
 
-selectors.mappingEditorNotification = state => {
+selectors.mappingEditorNotification = (state, editorId) => {
+  const {editorType} = fromSession.editor(state?.session, editorId);
+
+  if (editorType !== 'mappings') return emptyObject;
+
   const isMapper2Supported = selectors.isMapper2Supported(state);
   // we pick from original tree data as the banner should
   // depend only on the final saved state
@@ -6286,6 +6290,12 @@ selectors.editorHelperFunctions = selectors.mkEditorHelperFunctions();
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
   const { editorType, fieldId, flowId, resourceId, resourceType } = fromSession.editor(state?.session, editorId);
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+  const mappingVersion = selectors.mappingVersion(state);
+
+  // all afe fields for mapper2 should only support v2 AFE
+  if (mappingVersion === 2) {
+    return true;
+  }
 
   if (['outputFilter', 'exportFilter', 'inputFilter'].includes(editorType)) {
     return true;
@@ -6404,6 +6414,12 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   )?.merged || emptyObject;
   const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+  const mappingVersion = selectors.mappingVersion(state);
+
+  // all afe fields for mapper2 should only support v2 AFE
+  if (mappingVersion === 2) {
+    return {shouldGetContextFromBE: true};
+  }
 
   // for lookup fields, BE doesn't support v1/v2 yet
   if (fieldId?.startsWith('lookup') || fieldId?.startsWith('_')) {
