@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import { useParams } from 'react-router-dom';
 import CeligoSelect from '../../../../../../../components/CeligoSelect';
@@ -35,11 +35,19 @@ export default function UserFilter() {
     return revisionFilter?.user;
   });
 
+  const revisionsPagingFilter = useSelector(state =>
+    selectors.filter(state, filterKey)?.paging,
+  shallowEqual);
+
   const handleUserFilter = useCallback(
     e => {
-      dispatch(actions.patchFilter(filterKey, { user: e.target.value }));
+      dispatch(actions.patchFilter(filterKey, { user: e.target.value,
+        paging: {
+          ...revisionsPagingFilter,
+          currPage: 0,
+        } }));
     },
-    [dispatch, filterKey],
+    [dispatch, filterKey, revisionsPagingFilter],
   );
 
   return (

@@ -17,13 +17,14 @@ const useStyles = makeStyles(theme => ({
     wordWrap: 'break-word',
   },
   connectionIcon: {
+    padding: 0,
+    color: theme.palette.secondary.main,
     '&:hover': {
       backgroundColor: theme.palette.background.paper2,
     },
   },
-  freeTag: {
-    margin: theme.spacing(1),
-    color: theme.palette.background.paper,
+  offlineConnectionsIcon: {
+    width: 18,
   },
   flowLink: {
     display: 'inline',
@@ -55,7 +56,7 @@ function OfflineConnectionsIndicator({flowId, flowBuilderTo}) {
       onClick={onOfflineIconClick}
       tooltipProps={{title: 'Connection down', placement: 'bottom'}}
       buttonSize={{size: 'small'}}>
-      <OfflineConnectionsIcon className={classes.freeTag} />
+      <OfflineConnectionsIcon className={classes.offlineConnectionsIcon} />
     </IconButtonWithTooltip>
   );
 }
