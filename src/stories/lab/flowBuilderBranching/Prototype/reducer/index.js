@@ -231,6 +231,16 @@ const handleDeleteNode = (draft, action) => {
           op: 'remove',
           path: `/routers/${routerIndex}`,
         });
+        flow.routers.forEach((router, rIndex) => {
+          router.branches.forEach((branch, bIndex) => {
+            if (branch._nextRouterId === flow.routers[routerIndex]._id) {
+              staged[flowId].patch.push({
+                op: 'remove',
+                path: `/routers/${rIndex}/branches/${bIndex}/_nextRouterId`,
+              });
+            }
+          });
+        });
       } else {
         staged[flowId].patch.push({
           op: 'remove',

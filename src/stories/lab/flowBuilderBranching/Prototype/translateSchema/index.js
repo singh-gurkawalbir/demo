@@ -107,7 +107,7 @@ export const generateNodesAndEdgesFromBranchedFlow = (resourceState, flow) => {
   const routerVisited = {};
   const routersArr = [...routers];
   const populateRouterElements = router => {
-    if (!routerVisited[router._id]) {
+    if (router && !routerVisited[router._id]) {
       elements.push(generateRouterNode(router));
       router.branches.forEach(branch => {
         if (branch.pageProcessors.length) {
