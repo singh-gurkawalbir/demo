@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign */
-import { uniqBy } from 'lodash';
 import { generateDefaultEdge, generateId } from '../lib';
 import { generateNewTerminal, generateRouterNode } from '../nodeGeneration';
 
@@ -44,9 +43,9 @@ const hydrateNodeData = (resourcesState, node) => {
 
 // Note 'targeId' can be either a page processor Id if the flow schema is linear (old schema)
 // or it can be a router Id if the flow schema represents a branched flow.
-const generatePGNodesAndEdges = (resourcesState, pageGenerators, targetId) => {
+const generatePageGeneratorNodesAndEdges = (resourcesState, pageGenerators, targetId) => {
   if (!pageGenerators || !pageGenerators.length || !targetId) {
-    return {nodes: [], edges: []};
+    return [];
   }
 
   const nodes = pageGenerators.map(pg => ({
@@ -57,117 +56,103 @@ const generatePGNodesAndEdges = (resourcesState, pageGenerators, targetId) => {
 
   const edges = nodes.map(node => generateDefaultEdge(node.id, targetId));
 
-  return {nodes, edges};
+  return [...nodes, ...edges];
 };
 
-const generatePPNodesAndEdges = (resourcesState, pageProcessors, branch) => {
-  if (!pageProcessors || !pageProcessors.length) {
-    return {nodes: [], edges: []};
-  }
+const generatePageProcessorNodesAndEdges = (resourceState, pageProcessors, branch) => {
+  const edges = [];
 
-  const nodes = pageProcessors.map(pp => ({
-    id: pp.id,
-    type: 'pp',
-    data: {
-      resource: hydrateNodeData(resourcesState, pp),
-      branch,
-    },
-  }));
+  const nodes = pageProcessors.map((pageProcessor, index, collection) => {
+    if (index + 1 < collection.length) {
+      edges.push(generateDefaultEdge(pageProcessor.id, collection[index + 1].id));
+    }
 
-  const edges = nodes.slice(0, nodes.length - 1).map((node, index) =>
-    // connect to the node ahead
-    generateDefaultEdge(node.id, nodes[index + 1].id));
+    return {
+      id: pageProcessor.id,
+      type: 'pp',
+      data: {
+        resource: hydrateNodeData(resourceState, pageProcessor),
+        branch,
+      },
+    };
+  });
 
-  return {nodes, edges};
+  return [...edges, ...nodes];
 };
 
-const clubNodesAndEdges = metadatas => metadatas.reduce((acc, curr) => ({
-  nodes: [...acc?.nodes || [], ...curr?.nodes || []],
-  edges: [...acc?.edges || [], ...curr?.edges || []],
-}), {nodes: [], edges: []});
+const generateNodesAndEdgesFromNonBranchedFlow = (resourceState, flow) => {
+  const { _exportId, pageGenerators, pageProcessors = [], _importId } = flow;
+  const virtualRouter = {_id: generateId(), branches: []};
+  const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(resourceState, pageGenerators || [{_exportId, id: _exportId}], virtualRouter._id);
+  const pageProcessorNodesAndEdges = generatePageProcessorNodesAndEdges(resourceState, _importId ? [{_importId, id: _importId}] : pageProcessors);
+  const firstPPId = _importId || pageProcessors[0]?.id || _importId;
+  const lastPPId = _importId || pageProcessors[pageProcessors.length - 1]?.id || _importId;
 
-const generateMetadataFromNonBranchedFlow = (resourceState, flow) => {
-  const {pageGenerators, pageProcessors} = flow;
-  const pgMetadata = generatePPNodesAndEdges(resourceState, pageProcessors);
-  const firstPPId = pgMetadata.nodes[0].id;
-  const ppMetadata = generatePGNodesAndEdges(resourceState, pageGenerators, firstPPId);
+  const terminalNode = generateNewTerminal();
 
-  return clubNodesAndEdges([pgMetadata, ppMetadata]);
+  return [
+    ...pageGeneratorNodesAndEdges,
+    generateDefaultEdge(virtualRouter._id, firstPPId),
+    ...pageProcessorNodesAndEdges,
+    generateDefaultEdge(lastPPId, terminalNode.id),
+    terminalNode,
+  ];
 };
 
 export const getRouter = (routerId, flow = {}) => flow.routers?.find(r => r._id === routerId);
-const getLastNodeId = nodes => nodes?.[nodes?.length - 1]?.id;
-const generateMergeEdge = (sourceNodes, targetNodes) => {
-  const source = getLastNodeId(sourceNodes);
-  const target = targetNodes?.[0]?.id;
 
-  if (!source || !target) {
-    return [];
-  }
+export const generateNodesAndEdgesFromBranchedFlow = (resourceState, flow) => {
+  const {pageGenerators = [], routers = []} = flow;
+  const elements = [...generatePageGeneratorNodesAndEdges(resourceState, pageGenerators, routers[0]._id)];
+  const routerVisited = {};
+  const routersArr = [...routers];
+  const populateRouterElements = router => {
+    if (!routerVisited[router._id]) {
+      elements.push(generateRouterNode(router));
+      router.branches.forEach(branch => {
+        if (branch.pageProcessors.length) {
+          // draw an edge from router to first step of branch
+          const pageProcessorNodes = generatePageProcessorNodesAndEdges(resourceState, branch.pageProcessors, branch);
+          const branchStartEdge = generateDefaultEdge(router._id, branch.pageProcessors[0].id);
 
-  return [generateDefaultEdge(source, target)];
-};
+          elements.push(branchStartEdge);
+          if (branch._nextRouterId) {
+            elements.push(generateDefaultEdge(pageProcessorNodes[pageProcessorNodes.length - 1].id, branch._nextRouterId));
+            populateRouterElements(routers.find(r => r._id === branch._nextRouterId));
+          } else {
+            const terminalNode = generateNewTerminal(branch);
 
-const mergeNodesAndEdges = metadatas => metadatas.reduce((acc, curr) => ({
-  nodes: uniqBy([...acc.nodes, ...curr.nodes], 'id'),
-  edges: uniqBy([...acc.edges, ...generateMergeEdge(acc.nodes, curr.nodes), ...curr.edges], 'id'),
-}), {nodes: [], edges: []});
+            elements.push(terminalNode);
+            const terminalEdge = generateDefaultEdge(pageProcessorNodes[pageProcessorNodes.length - 1].id, terminalNode.id);
 
-const isAMergeNode = (edges, routerId) => edges.find(e => e.target === routerId);
+            elements.push(terminalEdge);
+          }
+          elements.push(...pageProcessorNodes);
+        } else
+        // its an empty branch without any steps
+        if (branch._nextRouterId) {
+          // join the router to the next router
+          elements.push(generateDefaultEdge(router._id, branch._nextRouterId));
 
-const getGraphsMetadata = (resourceState, flow, routerId, branch) => {
-  if (!routerId || !getRouter(routerId, flow)) {
-    return {nodes: [generateNewTerminal(branch)], edges: []};
-  }
-  const router = getRouter(routerId, flow);
+          populateRouterElements(routers.find(r => r._id === branch._nextRouterId));
+        } else {
+          // getnerate terminal edge
+          const terminalNode = generateNewTerminal(branch);
 
-  const routerNode = generateRouterNode(router);
+          elements.push(terminalNode);
+          const terminalEdge = generateDefaultEdge(router._id, terminalNode.id);
 
-  return router.branches.reduce((acc, branch) => {
-    const { pageProcessors, _nextRouterId, name } = branch;
-    // this is the branches metadata
-    const branchMeta = generatePPNodesAndEdges(resourceState, pageProcessors, branch);
-
-    const isRouterAlreadyConnected = isAMergeNode(acc.edges, _nextRouterId);
-
-    if (isRouterAlreadyConnected) {
-      const branchMetaMergedWithAncesstor = clubNodesAndEdges([branchMeta, {
-        nodes: [],
-        edges: [generateDefaultEdge(getLastNodeId(branchMeta.nodes), _nextRouterId)],
-      }]);
-
-      // connecting router to every branch
-      const branchEdge = {...generateDefaultEdge(routerId, branchMetaMergedWithAncesstor.nodes[0].id), data: {name}};
-
-      return clubNodesAndEdges([acc, {edges: [branchEdge]}, branchMetaMergedWithAncesstor]);
+          elements.push(terminalEdge);
+        }
+      });
+      // mark router as visited
+      routerVisited[router._id] = true;
     }
+  };
 
-    // this refers to the next routers metadata which can lead to another graph
+  routersArr.forEach(populateRouterElements);
 
-    const ancesstorMeta = getGraphsMetadata(resourceState, flow, _nextRouterId, branch);
-    const branchMetaMergedWithAncesstor = mergeNodesAndEdges([branchMeta, ancesstorMeta]);
-
-    // connecting router to every branch
-    const branchEdge = {...generateDefaultEdge(routerId, branchMetaMergedWithAncesstor.nodes[0].id), data: {name}};
-
-    return clubNodesAndEdges([acc, {edges: [branchEdge]}, branchMetaMergedWithAncesstor]);
-  }, {nodes: [routerNode], edges: []});
-};
-
-const getMetadataFromBranchedFlow = (resourceState, flow) => {
-  const {pageGenerators, pageProcessors, routers} = flow;
-
-  if (pageProcessors && pageProcessors.length) {
-    throw new Error('Invalid schema branched flow should not have pageProcessors');
-  }
-  const firstRouterId = routers[0]._id;
-
-  // Generate a node for each page generator and create an edge from all page generators to the first router
-  const pgMetadata = generatePGNodesAndEdges(resourceState, pageGenerators, firstRouterId);
-
-  const graphMeta = getGraphsMetadata(resourceState, flow, firstRouterId);
-
-  return Object.values(clubNodesAndEdges([pgMetadata, graphMeta])).flat();
+  return elements;
 };
 
 export const generateReactFlowGraph = (resourcesState, flow) => {
@@ -178,8 +163,8 @@ export const generateReactFlowGraph = (resourcesState, flow) => {
   const {routers} = flow;
 
   if (!routers || routers.length === 0) {
-    return generateMetadataFromNonBranchedFlow(resourcesState, flow);
+    return generateNodesAndEdgesFromNonBranchedFlow(resourcesState, flow);
   }
 
-  return getMetadataFromBranchedFlow(resourcesState, flow);
+  return generateNodesAndEdgesFromBranchedFlow(resourcesState, flow);
 };

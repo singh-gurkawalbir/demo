@@ -107,8 +107,8 @@ export function layoutElements(elements = []) {
         }});
     } else { // these are the edges...
       const edge = graph.edge({v: el.source, w: el.target});
-      const sourceType = nodes.find(n => n.id === el.source).type;
-      const targetType = nodes.find(n => n.id === el.target).type;
+      const sourceType = elements.find(n => n.id === el.source).type;
+      const targetType = elements.find(n => n.id === el.target).type;
 
       edges.push({
         ...el,

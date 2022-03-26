@@ -41,11 +41,18 @@ export const useHandleAddNode = edgeId => {
 export const handleMergeNode = (flow, elements, setState) => (sourceTerminalNode, targetTerminalNode) => {
   const edgeForSourceTerminalNode = elements.find(ele => ele.target === sourceTerminalNode);
   const edgeForTargetTerminalNode = elements.find(ele => ele.target === targetTerminalNode);
+  const targetNode = elements.find(ele => ele.id === targetTerminalNode);
+  let destinationPath;
 
   const sourcePath = getNextRouterPathForTerminalNode(flow, edgeForSourceTerminalNode);
-  const destinationPath = getNextRouterPathForTerminalNode(flow, edgeForTargetTerminalNode);
 
-  setState({type: actions.MERGE_TERMINAL_NODES, flow, sourcePath, destinationPath});
+  if (targetNode?.type === 'terminal') {
+    destinationPath = getNextRouterPathForTerminalNode(flow, edgeForTargetTerminalNode);
+    setState({type: actions.MERGE_TERMINAL_NODES, flow, sourcePath, destinationPath});
+  } else {
+    // target is a merge node
+    setState({type: actions.MERGE_BRANCH, flow, sourcePath, targetNode});
+  }
 };
 
 export const useHandleAddNewRouter = edgeId => {

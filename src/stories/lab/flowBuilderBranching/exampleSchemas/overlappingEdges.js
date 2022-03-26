@@ -2,8 +2,8 @@ import { getSomePg, getSomePpImport } from '../Prototype/nodeGeneration';
 
 const export1 = {_id: 'export1', name: 'The only export', connectorType: 'netsuite' };
 
-const import1 = {_id: 'import1', name: 'import1 with long name', connectorType: 'ftp' };
-const import2 = {_id: 'import2', name: 'Import Two', connectorType: 'http' };
+const import1 = {_id: 'import1', name: 'import1', connectorType: 'ftp' };
+const import2 = {_id: 'import2', name: 'import2', connectorType: 'http' };
 const import3 = {_id: 'import3', name: 'import3', isLookup: true, connectorType: 'http'};
 const import4 = {_id: 'import4', name: 'import4', isLookup: true, connectorType: 'ftp'};
 const import5 = {_id: 'import5', name: 'import5', isLookup: true, connectorType: 'netsuite'};
@@ -33,7 +33,7 @@ const branchFive = {
   description: 'some description 5',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import5')],
-  _nextRouterId: 'virtualRouter4',
+  _nextRouterId: 'fourthRouter',
   _id: 'branch-5',
 };
 
@@ -50,7 +50,7 @@ const branchSeven = {
   description: 'some description 7',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import7')],
-  _nextRouterId: 'virtualRouter4',
+  _nextRouterId: 'fourthRouter',
   _id: 'branch-7',
 };
 
@@ -68,7 +68,7 @@ const branchThree = {
   description: 'some description 3',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import3')],
-  _nextRouterId: 'virtualRouter4',
+  _nextRouterId: 'fourthRouter',
   _id: 'branch-2',
 };
 
@@ -132,7 +132,7 @@ const thirdRouter = {
 };
 
 const fourthRouter = {
-  _id: 'virtualRouter4',
+  _id: 'fourthRouter',
   branches: [branchSix],
 };
 

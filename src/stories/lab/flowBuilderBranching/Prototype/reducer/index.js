@@ -28,6 +28,7 @@ const mergeTerminalNodes = (draft, action) => {
   const { flow, sourcePath, destinationPath } = action;
   const sourceRouter = jsonPatch.getValueByPointer(flow, sourcePath);
   const destinationRouter = jsonPatch.getValueByPointer(flow, destinationPath);
+
   const {session} = draft;
   const {staged} = session;
 
@@ -175,6 +176,23 @@ const handleDeleteEdge = (draft, action) => {
   });
 };
 
+const mergeBranch = (draft, action) => {
+  const {flow, sourcePath, targetNode} = action;
+  const {session} = draft;
+  const {staged} = session;
+  const flowId = flow._id;
+
+  if (!staged[flowId]) {
+    staged[flowId] = {patch: []};
+  }
+
+  staged[flowId].patch.push({
+    op: 'replace',
+    path: sourcePath,
+    value: targetNode.id,
+  });
+};
+
 const handleDeleteNode = (draft, action) => {
   const {flow, path, isPageGenerator} = action;
   const {session} = draft;
@@ -241,6 +259,12 @@ export default function (state, action) {
 
       case actions.MERGE_TERMINAL_NODES: {
         mergeTerminalNodes(draft, action);
+
+        return;
+      }
+
+      case actions.MERGE_BRANCH: {
+        mergeBranch(draft, action);
 
         return;
       }
