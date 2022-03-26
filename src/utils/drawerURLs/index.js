@@ -1,4 +1,4 @@
-export const DRAWER_URLS = {
+const DRAWER_URL_REFS = {
   EDITOR: 'editor/:editorId',
   CONNECTION_DEBUGGER: 'configDebugger/:connectionId',
   FLOW_GROUP_ADD_EDIT: ['flowgroups/add', 'flowgroups/edit'],
@@ -68,3 +68,27 @@ export const DRAWER_URLS = {
   VIEW_REVISION_DETAILS: 'view/:revisionId/mode/:mode',
   VIEW_REVISION_ERROR_INFO: 'error/:errorId',
 };
+
+export const DRAWER_URL_PREFIX = 'ui-drawer';
+
+function constructDrawerUrls() {
+  const urlMap = {};
+
+  Object.keys(DRAWER_URL_REFS).forEach(key => {
+    const url = DRAWER_URL_REFS[key];
+
+    if (Array.isArray(url)) {
+      urlMap[key] = url.map(u => `${DRAWER_URL_PREFIX}/${u}`);
+    } else {
+      urlMap[key] = `${DRAWER_URL_PREFIX}/${url}`;
+    }
+  });
+
+  return urlMap;
+}
+
+export const DRAWER_URLS = constructDrawerUrls();
+
+export const hasMultipleDrawers = url =>
+  !!(url.match(new RegExp(DRAWER_URL_PREFIX, 'g'))?.length > 1);
+

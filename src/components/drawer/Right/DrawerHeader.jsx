@@ -1,11 +1,12 @@
 import React from 'react';
 import clsx from 'clsx';
 import { makeStyles, IconButton, Typography } from '@material-ui/core';
-import {matchPath, useHistory, useLocation} from 'react-router-dom';
+import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import CloseIcon from '../../icons/CloseIcon';
 import BackArrowIcon from '../../icons/BackArrowIcon';
 import InfoIconButton from '../../InfoIconButton';
 import Help from '../../Help';
+import { hasMultipleDrawers } from '../../../utils/drawerURLs';
 import { useDrawerContext } from './DrawerContext';
 
 const useStyles = makeStyles(theme => ({
@@ -55,7 +56,7 @@ export default function DrawerHeader({
   children,
   helpTitle,
   helpKey,
-  hideBackButton = false,
+  showBackButton = false,
   CloseButton,
   disableClose,
   className,
@@ -65,13 +66,16 @@ export default function DrawerHeader({
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
-  const { fullPath, onClose } = useDrawerContext();
-  const { isExact } = matchPath(location.pathname, fullPath) || {};
-  const showBackButton = !isExact && !hideBackButton;
+  const match = useRouteMatch();
+  const { onClose } = useDrawerContext();
+  // const showBackButton = !isExact && !hideBackButton;
+  // TODO @RAGHU: Handle showing back button on url redirection
+  const hasBackButton = showBackButton ||
+  (location.pathname === match.url && hasMultipleDrawers(match.url));
 
   return (
     <div className={clsx(classes.drawerHeader, className)}>
-      {showBackButton && (
+      {hasBackButton && (
         <IconButton
           size="small"
           data-test="backRightDrawer"
