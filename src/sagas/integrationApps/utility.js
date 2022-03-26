@@ -9,7 +9,7 @@ export function* uploadCustomTemplate({
   fileName = 'file.xlsx',
   fileType = 'application/text',
 }) {
-  const uploadPath = `/integrations/${integrationId}/utilities/generateSignedUrl`;
+  const uploadPath = `/integrations/${integrationId}/utilities/generateCategorySignedUrl`;
 
   try {
     return yield call(uploadFile, { file, fileType, fileName, uploadPath });

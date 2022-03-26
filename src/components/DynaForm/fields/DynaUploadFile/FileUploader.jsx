@@ -79,7 +79,11 @@ export default function FileUploader(props) {
     fileInput.current.value = '';
     fileInput.current.click();
   }, []);
-  const acceptedAttr = mode ? acceptedFileTypes[mode] : false;
+  let acceptedAttr;
+
+  if (mode) {
+    acceptedAttr = Array.isArray(mode) ? mode : acceptedFileTypes[mode];
+  }
 
   return (
     <FormControl className={clsx(classes.fileUploaderContainer, classProps.root)}>
