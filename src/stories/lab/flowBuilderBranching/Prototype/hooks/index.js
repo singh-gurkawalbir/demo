@@ -46,7 +46,7 @@ export const handleMergeNode = (flow, elements, setState) => (sourceTerminalNode
 
   const sourcePath = getNextRouterPathForTerminalNode(flow, edgeForSourceTerminalNode);
 
-  if (targetNode?.type === 'terminal') {
+  if (targetNode?.type.includes('terminal')) {
     destinationPath = getNextRouterPathForTerminalNode(flow, edgeForTargetTerminalNode);
     setState({type: actions.MERGE_TERMINAL_NODES, flow, sourcePath, destinationPath});
   } else {
