@@ -53,16 +53,6 @@ export function* pageProcessorPreview({
       doc: _pageProcessorDoc,
     };
   }
-  if (isPreviewPanelAvailable && typeOfPreview) {
-    if (!pageProcessorMap[_pageProcessorId]) {
-      pageProcessorMap[_pageProcessorId] = {};
-    }
-    if (typeOfPreview === 'send') {
-      pageProcessorMap[_pageProcessorId].options = {sendAndPreview: true};
-    } else {
-      pageProcessorMap[_pageProcessorId].options = {preview: true};
-    }
-  }
 
   // Incase of a new Lookup / Import add that doc to flow explicitly as it is not yet saved
   if (isNewId(_pageProcessorId)) {
@@ -121,6 +111,20 @@ export function* pageProcessorPreview({
     .some(
       pgInfo => pgInfo?.options?.runOfflineOptions
     );
+
+  if (isPreviewPanelAvailable && typeOfPreview) {
+    if (!pageProcessorMap[_pageProcessorId]) {
+      pageProcessorMap[_pageProcessorId] = {};
+    }
+    if (!pageProcessorMap[_pageProcessorId].options) {
+      pageProcessorMap[_pageProcessorId].options = {};
+    }
+    if (typeOfPreview === 'send') {
+      pageProcessorMap[_pageProcessorId].options.sendAndPreview = true;
+    } else {
+      pageProcessorMap[_pageProcessorId].options.preview = true;
+    }
+  }
 
   try {
     const previewData = yield call(apiCallWithRetry, {
