@@ -89,6 +89,9 @@ export default function PreviewInfo(props) {
   const canSelectRecords = useSelector(state =>
     selectors.canSelectRecordsInPreviewPanel(state, formKey)
   );
+  const toggleValue = useSelector(state =>
+    selectors.typeOfSampleData(state, resourceId)
+  );
   const isPreviewDisabled = useSelector(state =>
     selectors.isExportPreviewDisabled(state, formKey));
 
@@ -158,7 +161,7 @@ export default function PreviewInfo(props) {
             onClick={handlePreview}
             disabled={disablePreview}
             data-test="fetch-preview">
-            Preview <ArrowRightIcon />
+            { `${toggleValue[0].toUpperCase()}${toggleValue.slice(1)}`} <ArrowRightIcon />
           </OutlinedButton>
         </div>
         { canSelectRecords &&

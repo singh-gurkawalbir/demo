@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -14,11 +14,20 @@ import { TextButton } from '../Buttons';
 import EditIcon from '../icons/EditIcon';
 import CeligoDivider from '../CeligoDivider';
 import RightDrawer from '../drawer/Right';
+import FieldHelp from '../DynaForm/FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   previewPanelWrapper: {
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+  },
+  label: {
+    marginBottom: 6,
+    fontSize: 18,
+  },
+  labelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
   container: {
     background: theme.palette.common.white,
@@ -140,7 +149,25 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
       <div
         className={classes.previewPanelWrapper}>
         <Typography className={classes.previewDataHeading}>
-          Preview data
+          {resourceType === 'imports' ? (
+            <div className={classes.labelWrapper}>
+              <FormLabel className={classes.label}>Preview &amp; send</FormLabel>
+              <FieldHelp
+                id="previewandsend"
+                helpKey="import.previewAndSend"
+                label="Preview &amp; send" />
+            </div>
+          ) : 'Preview data'}
+          {/* {resourceType === 'imports' ? (
+            <div className={classes.labelWrapper}>
+            <FormLabel className={classes.label}>{label}</FormLabel>
+            {label}
+          </FormLabel>
+            <FieldHelp
+              id="Lookups"
+              helpKey="afe.lookups"
+              label="Preview &amp; send" />
+          ) : 'Preview data'} */}
         </Typography>
 
         <div className={classes.container}>
