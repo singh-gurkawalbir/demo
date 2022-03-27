@@ -4,6 +4,7 @@ import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
 import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
 import { difference } from 'lodash';
 import { JOB_STATUS } from '../../utils/constants';
+import { DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
 import JobDetail from './JobDetail';
 import ErrorDrawer from './ErrorDrawer';
 import actions from '../../actions';
@@ -154,7 +155,7 @@ export default function JobTable({
       numResolved,
     });
 
-    history.push(`${match.url}/viewErrors`);
+    history.push(`${match.url}/${DRAWER_URL_PREFIX}/viewErrors`);
   }, [history, match.url]);
 
   useEffect(() => {
@@ -168,7 +169,8 @@ export default function JobTable({
     // For reload case as there is no track of jobID, redirecting to the job table dashboard
     if (history.location.pathname.includes('/viewErrors') && !(_JobId || showErrorDialogFor?.jobId)) {
       const urlExtractFields = history.location.pathname.split('/');
-      const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf('viewErrors');
+      // TODO: @RAGHU, Do we need this logic?
+      const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf(DRAWER_URL_PREFIX);
       const strippedRoute = urlExtractFields.slice(0, -indexToBeStripped).join('/');
 
       history.replace(strippedRoute);

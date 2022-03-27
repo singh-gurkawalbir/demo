@@ -21,6 +21,7 @@ import DownloadIcon from '../icons/DownloadIcon';
 import ActionGroup from '../ActionGroup';
 import OutlinedButton from '../Buttons/OutlinedButton';
 import { getTextAfterCount } from '../../utils/string';
+import { DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
@@ -414,7 +415,7 @@ export default function JobErrorTable({
           component={Link}
           size="small"
           data-test="edit-retry"
-          to={`${match.url}/editRetry/${retryId}`}>
+          to={`${match.url}/${DRAWER_URL_PREFIX}/editRetry/${retryId}`}>
           <EditIcon />
         </IconButton>
       </Tooltip>

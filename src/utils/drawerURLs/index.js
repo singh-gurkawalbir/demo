@@ -15,9 +15,9 @@ const DRAWER_URL_REFS = {
   EM_DOWNLOAD_ERRORS: 'download/:type', // done
   EM_VIEW_ERROR_DETAILS: 'details/:errorId/:mode', // done
   FORM_INSTALL_STEP: 'form/:formType',
-  JOB_VIEW_ERRORS: 'viewErrors',
+  JOB_VIEW_ERRORS: 'viewErrors', // done
   QUEUED_JOBS: ['flows/:flowId/queuedJobs', ':flowId/queuedJobs'],
-  JOB_EDIT_RETRY: 'editRetry/:retryId',
+  JOB_EDIT_RETRY: 'editRetry/:retryId', // done
   FLOW_RUN_HISTORY: ':flowId/runHistory',
   INVITE_USER: 'invite',
   MANAGE_NOTIFICATIONS_SETUP: ':userEmail/manageNotifications',
