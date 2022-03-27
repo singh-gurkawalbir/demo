@@ -9,6 +9,7 @@ import KeywordSearch from '../../../KeywordSearch';
 import RefreshCard from '../RefreshCard';
 import ErrorActions from '../ErrorActions';
 import { selectors } from '../../../../reducers';
+import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 import actions from '../../../../actions';
 import { useIsFreshLoadData } from '..';
 import { useFetchErrors } from '../FetchErrorsHook';
@@ -128,7 +129,7 @@ export default function ErrorTableFilters({flowId, resourceId, isResolved, filte
     [dispatch, filterKey, errorFilter.paging]
   );
   const handleDownload = useCallback(() => {
-    history.push(`${match.url}/download/${errorType}`);
+    history.push(`${match.url}/${DRAWER_URL_PREFIX}/download/${errorType}`);
   }, [match.url, history, errorType]);
 
   const paginationOptions = useMemo(

@@ -12,6 +12,7 @@ import ErrorDrawerAction from './ErrorDrawerAction';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import DrawerHeaderSubTitle from '../../../../components/DrawerHeaderSubTitle';
 import Tabs from './Tabs';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 
 const emptySet = [];
 
@@ -38,7 +39,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const { pathname } = useLocation();
 
   const matchIncompleteErrorDrawerPath = matchPath(pathname, {
-    path: `${match.url}/errors/:resourceId`,
+    path: `${match.url}/${DRAWER_URL_PREFIX}/errors/:resourceId`,
   });
 
   if (matchIncompleteErrorDrawerPath?.isExact) {
@@ -49,11 +50,11 @@ export default function ErrorDetailsDrawer({ flowId }) {
   }
 
   const matchErrorDrawerPath = matchPath(pathname, {
-    path: `${match.url}/errors/:resourceId/:errorType`,
+    path: `${match.url}/${DRAWER_URL_PREFIX}/errors/:resourceId/:errorType`,
   });
 
   const matchErrorDrawerPathWithFilter = matchPath(pathname, {
-    path: `${match.url}/errors/:resourceId/filter/:flowJobId/:errorType`,
+    path: `${match.url}/${DRAWER_URL_PREFIX}/errors/:resourceId/filter/:flowJobId/:errorType`,
   });
   const resourceId = matchErrorDrawerPathWithFilter?.params?.resourceId || matchErrorDrawerPath?.params?.resourceId;
   const errorType = matchErrorDrawerPathWithFilter?.params?.errorType || matchErrorDrawerPath?.params?.errorType;
@@ -96,9 +97,9 @@ export default function ErrorDetailsDrawer({ flowId }) {
 
   const handleErrorTypeChange = useCallback(errorType => {
     if (matchErrorDrawerPathWithFilter) {
-      history.replace(`${match.url}/errors/${matchErrorDrawerPathWithFilter.params.resourceId}/filter/${matchErrorDrawerPathWithFilter.params.flowJobId}/${errorType}`);
+      history.replace(`${match.url}/${DRAWER_URL_PREFIX}/errors/${matchErrorDrawerPathWithFilter.params.resourceId}/filter/${matchErrorDrawerPathWithFilter.params.flowJobId}/${errorType}`);
     } else {
-      history.replace(`${match.url}/errors/${matchErrorDrawerPath.params.resourceId}/${errorType}`);
+      history.replace(`${match.url}/${DRAWER_URL_PREFIX}/errors/${matchErrorDrawerPath.params.resourceId}/${errorType}`);
     }
   }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath?.params?.resourceId]);
 
@@ -125,7 +126,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
 
   return (
     <RightDrawer
-      path={['errors/:resourceId/filter/:flowJobId/:errorType', 'errors/:resourceId/:errorType']}
+      path={DRAWER_URLS.EM_ERROR_DETAILS}
       width="full"
       onClose={handleClose}
       variant="temporary">

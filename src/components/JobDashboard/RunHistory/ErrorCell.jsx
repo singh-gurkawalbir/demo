@@ -9,6 +9,7 @@ import { emptyObject } from '../../../utils/constants';
 import StatusCircle from '../../StatusCircle';
 import actions from '../../../actions';
 import { getTextAfterCount } from '../../../utils/string';
+import { DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
 import Status from '../../Buttons/Status';
 
 const useStyles = makeStyles(theme => ({
@@ -45,7 +46,7 @@ export default function ErrorCell({
 
   const handleErrorClick = useCallback(() => {
     dispatch(actions.patchFilter(`${_flowId}-${_flowJobId}-${id}`, {...job}));
-    history.push(`${flowBuilderTo}/errors/${id}/filter/${_flowJobId}/open`);
+    history.push(`${flowBuilderTo}/${DRAWER_URL_PREFIX}/errors/${id}/filter/${_flowJobId}/open`);
   }, [_flowId, _flowJobId, dispatch, flowBuilderTo, history, id, job]);
 
   if (!numOpenError) {

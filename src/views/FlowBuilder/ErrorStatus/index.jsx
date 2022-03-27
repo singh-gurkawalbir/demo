@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../reducers';
+import { DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
 import Status from '../../../components/Buttons/Status';
 
 const useStyles = makeStyles(({
@@ -28,7 +29,7 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
 
   const handleStatus = useCallback(
     () => {
-      history.push(`${match.url}/errors/${resourceId}`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/errors/${resourceId}`);
     },
     [history, match.url, resourceId],
   );

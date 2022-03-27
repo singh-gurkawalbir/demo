@@ -11,8 +11,9 @@ const DRAWER_URL_REFS = {
   DYNA_NS_SUBRECORD: ['subrecords/:fieldId', 'subrecords'],
   CONDITIONAL_LOOKUP: ['conditionalLookup/edit/:lookupName', 'conditionalLookup/add'],
   ADD_EDIT_LOOKUP: ['lookups/edit/:lookupName', 'lookups/add'], // Is it linked with Line: 8 lookup ?
-  EM_DOWNLOAD_ERRORS: 'download/:type',
-  EM_VIEW_ERROR_DETAILS: 'details/:errorId/:mode',
+  EM_ERROR_DETAILS: ['errors/:resourceId/filter/:flowJobId/:errorType', 'errors/:resourceId/:errorType'], // done
+  EM_DOWNLOAD_ERRORS: 'download/:type', // done
+  EM_VIEW_ERROR_DETAILS: 'details/:errorId/:mode', // done
   FORM_INSTALL_STEP: 'form/:formType',
   JOB_VIEW_ERRORS: 'viewErrors',
   QUEUED_JOBS: ['flows/:flowId/queuedJobs', ':flowId/queuedJobs'],
@@ -28,7 +29,6 @@ const DRAWER_URL_REFS = {
   ],
   CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId',
   SHARE_STACKS: 'share/stacks/:stackId',
-  EM_ERROR_DETAILS: ['errors/:resourceId/filter/:flowJobId/:errorType', 'errors/:resourceId/:errorType'],
   HOOKS: 'hooks/:resourceType/:resourceId',
   LINE_GRAPH: 'charts',
   REPLACE_CONNECTION: 'replaceConnection/:connId',
@@ -78,8 +78,10 @@ function constructDrawerUrls() {
     const url = DRAWER_URL_REFS[key];
 
     if (Array.isArray(url)) {
-      urlMap[key] = url.map(u => `${DRAWER_URL_PREFIX}/${u}`);
+      // updates all urls with drawer url prefix incase of multiple urls
+      urlMap[key] = url.map(urlPath => `${DRAWER_URL_PREFIX}/${urlPath}`);
     } else {
+      // updates the url with drawer prefix
       urlMap[key] = `${DRAWER_URL_PREFIX}/${url}`;
     }
   });

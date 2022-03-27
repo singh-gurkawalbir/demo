@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import EditIcon from '../../../icons/EditIcon';
+import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 
 export default {
   key: 'editRetryData',
@@ -19,7 +20,7 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
-      history.push(`${match.url}/details/${errorId}/editRetry`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/details/${errorId}/editRetry`);
     }, [errorId, history, match.url]);
 
     return handleClick;

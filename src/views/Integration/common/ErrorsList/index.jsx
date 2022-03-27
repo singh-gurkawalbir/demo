@@ -19,6 +19,7 @@ import ResourceButton from '../../../FlowBuilder/ResourceButton';
 import { emptyObject } from '../../../../utils/constants';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import { getTextAfterCount } from '../../../../utils/string';
+import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 import Status from '../../../../components/Buttons/Status';
 
 const metadata = {
@@ -101,7 +102,7 @@ const metadata = {
         });
 
         const handleErrorClick = useCallback(() => {
-          history.push(`${flowBuilderTo}/errors/${id}`);
+          history.push(`${flowBuilderTo}/${DRAWER_URL_PREFIX}/errors/${id}`);
         }, [flowBuilderTo, history, id]);
 
         if (!count) {

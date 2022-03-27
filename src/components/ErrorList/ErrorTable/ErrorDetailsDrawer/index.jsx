@@ -12,6 +12,7 @@ import ErrorDetails from '../../ErrorDetails';
 import { selectors } from '../../../../reducers';
 import useFormOnCancelContext from '../../../FormOnCancelContext';
 import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../utils/constants';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 
 const emptySet = [];
 
@@ -21,7 +22,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   const history = useHistory();
 
   const { mode } = matchPath(pathname, {
-    path: `${match.url}/details/:errorId/:mode`,
+    path: `${match.url}/${DRAWER_URL_PREFIX}/details/:errorId/:mode`,
   })?.params || {};
 
   const allErrors = useSelector(state => {
@@ -35,7 +36,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   const showDrawer = useMemo(() => {
     if (!match.isExact) {
       const matchErrorPath = matchPath(pathname, {
-        path: `${match.url}/details/:errorId/:mode`,
+        path: `${match.url}/${DRAWER_URL_PREFIX}/details/:errorId/:mode`,
       });
 
       if (!matchErrorPath || !matchErrorPath.params) return true;
@@ -58,7 +59,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   }, [history]);
 
   const handleTabChange = useCallback((errorId, newValue) => {
-    history.replace(`${match.url}/details/${errorId}/${newValue}`);
+    history.replace(`${match.url}/${DRAWER_URL_PREFIX}/details/${errorId}/${newValue}`);
   }, [history, match.url]);
 
   const {setCancelTriggered} = useFormOnCancelContext(ERROR_DETAIL_ACTIONS_ASYNC_KEY);
@@ -70,7 +71,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
 
   return (
     <RightDrawer
-      path="details/:errorId/:mode"
+      path={DRAWER_URLS.EM_VIEW_ERROR_DETAILS}
       variant="temporary"
       width="large"
       hideBackButton>
