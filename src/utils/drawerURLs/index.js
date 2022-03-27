@@ -1,13 +1,13 @@
 const DRAWER_URL_REFS = {
   EDITOR: 'editor/:editorId',
-  CONNECTION_DEBUGGER: 'configDebugger/:connectionId',
-  FLOW_GROUP_ADD_EDIT: ['flowgroups/add', 'flowgroups/edit'],
+  CONNECTION_DEBUGGER: 'configDebugger/:connectionId', // done
+  FLOW_GROUP_ADD_EDIT: ['flowgroups/add', 'flowgroups/edit'], // done
   FLOW_STEP_DEBUG_LOGS: 'logs',
   INSTALL_INTEGRATION: 'installIntegration',
   INSTALL_TEMPLATE: 'installTemplate',
   LOOKUP: 'lookup', // has URL redirection for drawer content
   RESOURCE: ':operation(add|edit)/:resourceType/:id',
-  DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId',
+  DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId', // done
   DYNA_NS_SUBRECORD: ['subrecords/:fieldId', 'subrecords'],
   CONDITIONAL_LOOKUP: ['conditionalLookup/edit/:lookupName', 'conditionalLookup/add'],
   ADD_EDIT_LOOKUP: ['lookups/edit/:lookupName', 'lookups/add'], // Is it linked with Line: 8 lookup ?
@@ -42,7 +42,7 @@ const DRAWER_URL_REFS = {
     ':flowId/utilitymapping/:categoryId/depth/:depth/variations/:subCategoryId',
   ],
   FLOW_SETTINGS: ':flowId/settings',
-  FLOW_ERROR_LIST: ':flowId/errorsList',
+  FLOW_ERROR_LIST: ':flowId/errorsList', // done
   MAPPINGS: [
     'mapping/:flowId/:importId/:subRecordMappingId/view',
     'mapping/:flowId/:importId/view',
@@ -50,7 +50,7 @@ const DRAWER_URL_REFS = {
     'mapping/:flowId',
   ],
   DB_MAPPINGS: 'dbMapping/:flowId/:importId',
-  UPGRADE: 'upgrade',
+  ACCOUNT_UPGRADE: 'upgrade', // done - ** but not verified
   SUBSCRIPTION: ':env/:type', // TODO: add a name space in between env & type
   VIEW_REPORT_DETAILS: 'view/reportDetails/:reportId',
   SCRIPT_LOG_DETAILS: [

@@ -6,6 +6,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
+import { DRAWER_URLS } from '../../../utils/drawerURLs';
 import useForm from '../../Form';
 import RightDrawer from '../Right';
 import DrawerHeader from '../Right/DrawerHeader';
@@ -116,7 +117,7 @@ export default function ConfigConnectionDebugger() {
     <RightDrawer
       height="tall"
       width="medium"
-      path="configDebugger/:connectionId">
+      path={DRAWER_URLS.CONNECTION_DEBUGGER}>
       <DrawerHeader
         title="Debug connection"
         helpKey="connection.debug"

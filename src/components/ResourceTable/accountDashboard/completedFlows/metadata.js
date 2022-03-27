@@ -7,6 +7,7 @@ import NameCell from '../../commonCells/Name';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
+import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 import actions from '../../../../actions';
 import {FILTER_KEYS_AD, getTimeString, getDashboardIntegrationId} from '../../../../utils/accountDashboard';
 import Status from '../../../Buttons/Status';
@@ -84,7 +85,7 @@ export default {
 
           return (
             <Status variant={r.numOpenError ? 'error' : 'success'} size="mini" >
-              <Link data-test="account-dashboard-open-errors" to={`${match.url}/${r._flowId}/errorsList`}>{r.numOpenError} </Link>
+              <Link data-test="account-dashboard-open-errors" to={`${match.url}/${DRAWER_URL_PREFIX}/${r._flowId}/errorsList`}>{r.numOpenError} </Link>
             </Status>
           );
         },

@@ -19,7 +19,7 @@ import ResourceButton from '../../../FlowBuilder/ResourceButton';
 import { emptyObject } from '../../../../utils/constants';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import { getTextAfterCount } from '../../../../utils/string';
-import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 import Status from '../../../../components/Buttons/Status';
 
 const metadata = {
@@ -175,7 +175,9 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   const match = useRouteMatch();
   const history = useHistory();
   const location = useLocation();
-  const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/:flowId/errorsList`}) || {};
+  const { params: { flowId } = {} } = matchPath(location.pathname, {
+    path: `${match.path}/${DRAWER_URL_PREFIX}/:flowId/errorsList`,
+  }) || {};
   const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
@@ -186,17 +188,12 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   }, [match.url, history]);
 
   return (
-    <LoadResources
-      required="true"
-      resources="imports, exports, connections">
+    <LoadResources required="true" resources="imports, exports, connections">
       <RightDrawer
-        path=":flowId/errorsList"
+        path={DRAWER_URLS.FLOW_ERROR_LIST}
         height="tall"
-        onClose={handleClose}
-        variant="temporary">
-
+        onClose={handleClose}>
         <DrawerHeader title={`Flow: ${flow.name || flowId}`} />
-
         <DrawerContent>
           <ErrorsList integrationId={integrationId || flow._integrationId} childId={childId} />
         </DrawerContent>

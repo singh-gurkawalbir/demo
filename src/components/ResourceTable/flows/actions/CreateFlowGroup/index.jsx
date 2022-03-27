@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import AddIcon from '../../../../icons/AddIcon';
 import getRoutePath from '../../../../../utils/routePaths';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
 
 export default {
   key: 'createFlowGroup',
@@ -11,7 +12,7 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const openCreateFlowGroup = useCallback(() => {
-      history.push(getRoutePath(`${match.url}/flowgroups/add`));
+      history.push(getRoutePath(`${match.url}/${DRAWER_URL_PREFIX}/flowgroups/add`));
     }, [history, match.url]);
 
     return openCreateFlowGroup;

@@ -10,6 +10,7 @@ import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import ExpandEditorModal from './ExpandModeEditor/Modal';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
+import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -72,7 +73,7 @@ export default function DynaEditor(props) {
     if (expandMode === 'drawer') {
       const { formKey, id } = props;
 
-      history.push(`${match.url}/expand/${formKey}/${id}`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/expand/${formKey}/${id}`);
     } else {
       setShowEditor(!showEditor);
     }

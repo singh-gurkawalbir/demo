@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, LinearProgress, capitalize } from '@material-ui/core';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
+import { DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
 import actions from '../../../actions';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
@@ -144,7 +145,7 @@ export default function Subscription() {
   }
 
   const onStartFreeTrialClick = useCallback(() => {
-    history.push(`${match.url}/upgrade`);
+    history.push(`${match.url}/${DRAWER_URL_PREFIX}/upgrade`);
   }, [history, match.url]);
   const onRequestSubscriptionClick = useCallback(() => {
     dispatch(

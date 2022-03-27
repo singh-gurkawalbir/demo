@@ -14,6 +14,7 @@ import { FilledButton, TextButton } from '../../../../Buttons';
 import SaveAndCloseButtonGroupAuto from '../../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import useFormOnCancelContext from '../../../../FormOnCancelContext';
 import { getFormSaveStatusFromCommStatus } from '../../../../../utils/editor';
+import { DRAWER_URLS } from '../../../../../utils/drawerURLs';
 import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(() => ({
@@ -108,7 +109,7 @@ export default function ExpandModeDrawer() {
     <RightDrawer
       height="tall"
       width="full"
-      path="expand/:formKey/:fieldId">
+      path={DRAWER_URLS.DYNA_EDITOR_EXPAND}>
       <ExpandModeDrawerContent />
     </RightDrawer>
   );

@@ -18,6 +18,7 @@ import LoadResources from '../../../components/LoadResources';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import { TextButton, FilledButton } from '../../../components/Buttons';
+import { DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -152,7 +153,7 @@ export default function Endpoint() {
   const [needMoreNotification, setNeedMoreNotification] = useState(licenseActionDetails?.tier === 'free' && !showExpireMessage);
 
   const onStartFreeTrialClick = useCallback(() => {
-    history.push(`${match.url}/upgrade`);
+    history.push(`${match.url}/${DRAWER_URL_PREFIX}/upgrade`);
   }, [history, match.url]);
 
   const onTrialUpgradeClick = useCallback(() => {

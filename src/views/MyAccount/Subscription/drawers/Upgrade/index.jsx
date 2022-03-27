@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
 import actions from '../../../../../actions';
+import { DRAWER_URLS } from '../../../../../utils/drawerURLs';
 import RightDrawer from '../../../../../components/drawer/Right';
 import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
 import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
@@ -28,7 +29,7 @@ export default function UpgradeDrawer() {
   };
 
   return (
-    <RightDrawer height="tall" width="medium" path="upgrade" variant="temporary">
+    <RightDrawer height="tall" width="medium" path={DRAWER_URLS.ACCOUNT_UPGRADE} variant="temporary">
       <DrawerHeader title="Upgrade your subscription" />
       <DrawerContent>
         <Typography>
