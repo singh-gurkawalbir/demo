@@ -4,6 +4,7 @@ import RightDrawer from '../../../drawer/Right';
 import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import IsLoggableContextProvider from '../../../IsLoggableContextProvider';
 import UserFormWrapper from '../../UserFormWrapper';
+import { DRAWER_URLS } from '../../../../utils/drawerURLs';
 
 function ManagePermissions({ integrationId }) {
   const match = useRouteMatch();
@@ -14,7 +15,7 @@ function ManagePermissions({ integrationId }) {
 export default function ManagePermissionsDrawer({ integrationId }) {
   return (
     <RightDrawer
-      path="edit/:userId"
+      path={DRAWER_URLS.MANAGE_USER_PERMISSIONS}
       variant="temporary"
       width="medium">
       <DrawerHeader title="Manage user permissions" />

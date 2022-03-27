@@ -15,6 +15,7 @@ import SelectResource from '../../../../components/LineGraph/SelectResource';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import { getRoundedDate, getSelectedRange } from '../../../../utils/flowMetrics';
+import { DRAWER_URLS } from '../../../../utils/drawerURLs';
 import { TextButton } from '../../../../components/Buttons';
 
 const defaultPresets = [
@@ -151,7 +152,7 @@ export default function LineGraphDrawer({ flowId }) {
       height="short"
       width="full"
       onClose={handleClose}
-      path="charts">
+      path={DRAWER_URLS.FLOW_BUILDER_ANALYTICS}>
       <DrawerHeader title="Analytics" infoText={infoTextDashboard}>
         <TextButton startIcon={<RefreshIcon />} onClick={handleRefresh}>
           Refresh

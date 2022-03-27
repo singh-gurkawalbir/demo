@@ -3,6 +3,7 @@ import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../reducers';
+import { DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
 import AddIcon from '../icons/AddIcon';
 import PanelHeader from '../PanelHeader';
 import UsersList from './UsersList';
@@ -41,7 +42,7 @@ export default function ManageUsersPanel({ integrationId, childId }) {
   const history = useHistory();
   const isAccountOwner = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
 
-  const handleInvite = useCallback(() => history.push(`${match.url}/invite`), [history, match]);
+  const handleInvite = useCallback(() => history.push(`${match.url}/${DRAWER_URL_PREFIX}/invite`), [history, match]);
 
   return (
     <div className={classes.root}>

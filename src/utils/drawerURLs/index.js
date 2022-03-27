@@ -16,22 +16,22 @@ const DRAWER_URL_REFS = {
   EM_VIEW_ERROR_DETAILS: 'details/:errorId/:mode', // done
   FORM_INSTALL_STEP: 'form/:formType',
   JOB_VIEW_ERRORS: 'viewErrors', // done
-  QUEUED_JOBS: ['flows/:flowId/queuedJobs', ':flowId/queuedJobs'],
+  QUEUED_JOBS: ['flows/:flowId/queuedJobs', ':flowId/queuedJobs'], // done
   JOB_EDIT_RETRY: 'editRetry/:retryId', // done
   FLOW_RUN_HISTORY: ':flowId/runHistory', // done
-  INVITE_USER: 'invite',
-  MANAGE_NOTIFICATIONS_SETUP: ':userEmail/manageNotifications',
-  MANAGE_USER_PERMISSIONS: 'edit/:userId',
-  VIEW_NOTIFICATIONS_SETUP: ':userEmail/notifications',
+  INVITE_USER: 'invite', // done
+  MANAGE_NOTIFICATIONS_SETUP: ':userEmail/manageNotifications', // done
+  MANAGE_USER_PERMISSIONS: 'edit/:userId', // done
+  VIEW_NOTIFICATIONS_SETUP: ':userEmail/notifications', // done
   MAPPING_SETTINGS: [
     'settings/:mappingKey',
     'settings/category/:editorId/sections/:sectionId/:depth/:mappingKey',
   ],
   CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId',
-  SHARE_STACKS: 'share/stacks/:stackId',
+  SHARE_STACKS: 'share/stacks/:stackId', // has router for drawer content
   HOOKS: 'hooks/:resourceType/:resourceId',
-  LINE_GRAPH: 'charts',
-  REPLACE_CONNECTION: 'replaceConnection/:connId',
+  FLOW_BUILDER_ANALYTICS: 'charts', // done
+  REPLACE_CONNECTION: 'replaceConnection/:connId', // done
   FLOW_SCHEDULE: [':flowId/schedule', 'schedule'],
   SETTINGS: 'settings',
   ADD_CATEGORY_MAPPING: ':flowId/utilitymapping/:categoryId/addCategory',
@@ -52,7 +52,7 @@ const DRAWER_URL_REFS = {
   DB_MAPPINGS: 'dbMapping/:flowId/:importId',
   ACCOUNT_UPGRADE: 'upgrade', // done - ** but not verified
   SUBSCRIPTION: ':env/:type', // TODO: add a name space in between env & type
-  VIEW_REPORT_DETAILS: 'view/reportDetails/:reportId',
+  VIEW_REPORT_DETAILS: 'view/reportDetails/:reportId', // done
   SCRIPT_LOG_DETAILS: [
     'scriptLog/:scriptId/:flowId/:index',
     'scriptLog/:scriptId/:index',

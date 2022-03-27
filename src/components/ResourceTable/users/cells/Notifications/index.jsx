@@ -5,6 +5,7 @@ import { selectors } from '../../../../../reducers';
 import ShowContentIcon from '../../../../icons/ShowContentIcon';
 import EditIcon from '../../../../icons/EditIcon';
 import AddIcon from '../../../../icons/AddIcon';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
 
 export default function Notifications({ user, integrationId, childId }) {
   const match = useRouteMatch();
@@ -26,12 +27,12 @@ export default function Notifications({ user, integrationId, childId }) {
   });
 
   if (!canManageNotifications) {
-    return <Link to={`${match.url}/${userEmail}/notifications`}><ShowContentIcon /></Link>;
+    return <Link to={`${match.url}/${DRAWER_URL_PREFIX}/${userEmail}/notifications`}><ShowContentIcon /></Link>;
   }
 
   if (hasNotifications) {
-    return <Link to={`${match.url}/${userEmail}/manageNotifications`}><EditIcon /></Link>;
+    return <Link to={`${match.url}/${DRAWER_URL_PREFIX}/${userEmail}/manageNotifications`}><EditIcon /></Link>;
   }
 
-  return <Link to={`${match.url}/${userEmail}/manageNotifications`}><AddIcon /></Link>;
+  return <Link to={`${match.url}/${DRAWER_URL_PREFIX}/${userEmail}/manageNotifications`}><AddIcon /></Link>;
 }
