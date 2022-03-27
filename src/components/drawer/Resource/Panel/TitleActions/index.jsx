@@ -6,6 +6,7 @@ import InstallationGuideIcon from '../../../../icons/InstallationGuideIcon';
 import { KBDocumentation } from '../../../../../utils/connections';
 import DebugIcon from '../../../../icons/DebugIcon';
 import { selectors } from '../../../../../reducers';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
 import {applicationsList} from '../../../../../constants/applications';
 import ApplicationImg from '../../../../icons/ApplicationImg';
 import { TextButton } from '../../../../Buttons';
@@ -57,7 +58,7 @@ export default function TitleActions({ flowId }) {
     !!applicationType;
   const app = applications.find(a => a.id === applicationType) || {};
   const flowStepDrawerHandler = useCallback(() => {
-    history.push(`${match.url}/logs`);
+    history.push(`${match.url}/${DRAWER_URL_PREFIX}/logs`);
   }, [match.url, history]);
 
   return (

@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import ViewDetailsIcon from '../../../icons/ViewDetailsIcon';
+import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 
 export default {
   key: 'viewReport',
@@ -10,7 +11,7 @@ export default {
     const { _id } = rowData;
     const history = useHistory();
     const match = useRouteMatch();
-    const viewDetailsRoute = `${match.url}/view/reportDetails/${_id}`;
+    const viewDetailsRoute = `${match.url}/${DRAWER_URL_PREFIX}/view/reportDetails/${_id}`;
 
     return useCallback(() => {
       history.push(viewDetailsRoute);

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import CeligoTimeAgo from '../../../../CeligoTimeAgo';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles({
   root: {
@@ -28,7 +29,7 @@ export default function StatusCell({
     <div className={classes.root}>
       {isJobInQueuedStatus
         ? (
-          <Link to={`${history.location.pathname}/${flowId}/queuedJobs`}>
+          <Link to={`${history.location.pathname}/${DRAWER_URL_PREFIX}/${flowId}/queuedJobs`}>
             {lastExecutedAtSortJobStatus}
           </Link>
         )

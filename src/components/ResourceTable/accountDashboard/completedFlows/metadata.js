@@ -114,7 +114,7 @@ export default {
 
           const match = useRouteMatch();
 
-          return (r.numRuns && (<Link data-test="account-dashboard-run-history" to={`${match.url}/${r._flowId}/runHistory`}>{r.numRuns} </Link>)
+          return (r.numRuns && (<Link data-test="account-dashboard-run-history" to={`${match.url}/${DRAWER_URL_PREFIX}/${r._flowId}/runHistory`}>{r.numRuns} </Link>)
           );
         },
       },

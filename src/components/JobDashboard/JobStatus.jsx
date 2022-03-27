@@ -5,6 +5,7 @@ import { Button } from '@material-ui/core';
 import DashboardTag from '../tags/DashboardTag';
 import Spinner from '../Spinner';
 import { getJobStatusDetails } from '../../utils/jobdashboard';
+import { DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   state: {
@@ -33,7 +34,7 @@ export default function JobStatus({ job }) {
     (job.status === 'queued' ||
       (job.status === 'running' && !job.doneExporting));
   const handleQueuedJobsClick = useCallback(() => {
-    history.push(`${match.url}/flows/${job._flowId}/queuedJobs`);
+    history.push(`${match.url}/${DRAWER_URL_PREFIX}/flows/${job._flowId}/queuedJobs`);
   }, [history, job._flowId, match.url]);
 
   if (jobStatusDetails.showStatusTag) {

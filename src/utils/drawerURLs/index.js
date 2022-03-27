@@ -2,7 +2,7 @@ const DRAWER_URL_REFS = {
   EDITOR: 'editor/:editorId',
   CONNECTION_DEBUGGER: 'configDebugger/:connectionId', // done
   FLOW_GROUP_ADD_EDIT: ['flowgroups/add', 'flowgroups/edit'], // done
-  FLOW_STEP_DEBUG_LOGS: 'logs',
+  FLOW_STEP_DEBUG_LOGS: 'logs', // done
   INSTALL_INTEGRATION: 'installIntegration',
   INSTALL_TEMPLATE: 'installTemplate',
   LOOKUP: 'lookup', // has URL redirection for drawer content
@@ -18,7 +18,7 @@ const DRAWER_URL_REFS = {
   JOB_VIEW_ERRORS: 'viewErrors', // done
   QUEUED_JOBS: ['flows/:flowId/queuedJobs', ':flowId/queuedJobs'],
   JOB_EDIT_RETRY: 'editRetry/:retryId', // done
-  FLOW_RUN_HISTORY: ':flowId/runHistory',
+  FLOW_RUN_HISTORY: ':flowId/runHistory', // done
   INVITE_USER: 'invite',
   MANAGE_NOTIFICATIONS_SETUP: ':userEmail/manageNotifications',
   MANAGE_USER_PERMISSIONS: 'edit/:userId',

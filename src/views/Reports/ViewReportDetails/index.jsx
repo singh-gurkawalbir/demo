@@ -8,6 +8,7 @@ import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
 import LoadResources from '../../../components/LoadResources';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
+import { DRAWER_URLS } from '../../../utils/drawerURLs';
 import EventReportDetails from './EventReportDetails';
 
 const RowDetails = ({reportType}) => {
@@ -32,8 +33,7 @@ export default function ViewReportDetails() {
 
   return (
 
-    <RightDrawer path="view/reportDetails/:reportId" >
-
+    <RightDrawer path={DRAWER_URLS.VIEW_REPORT_DETAILS} >
       <DrawerHeader title="View report details" />
       <DrawerContent noPadding>
         <LoadResources required resources="integrations,flows">

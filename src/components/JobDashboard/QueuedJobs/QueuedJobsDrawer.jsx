@@ -6,6 +6,7 @@ import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { NO_PENDING_QUEUED_JOBS } from '../../../utils/messageStore';
+import { DRAWER_URLS } from '../../../utils/drawerURLs';
 import CancelIcon from '../../icons/CancelIcon';
 import LoadResources from '../../LoadResources';
 import { getStatus, getPages } from '../../../utils/jobdashboard';
@@ -160,7 +161,6 @@ function QueuedJobs({ connectionId}) {
 const connectionsFilterConfig = {
   type: 'connections',
 };
-const paths = ['flows/:flowId/queuedJobs', ':flowId/queuedJobs'];
 const flowJobConnectionsOptions = { ignoreBorrowedConnections: true };
 
 export default function QueuedJobsDrawer() {
@@ -169,7 +169,9 @@ export default function QueuedJobsDrawer() {
   const match = useRouteMatch();
   const history = useHistory();
   const [connectionId, setConnectionId] = useState();
-  const matchedPath = paths.find(p => matchPath(location.pathname, {path: `${match.path}/${p}`}));
+  // TODO: Revisit this logic of extracting flowId
+  // Move this inside Drawer content and extract from match.url
+  const matchedPath = DRAWER_URLS.QUEUED_JOBS.find(p => matchPath(location.pathname, {path: `${match.path}/${p}`}));
   const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/${matchedPath}`}) || {};
   const connectionsResourceList = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -203,7 +205,7 @@ export default function QueuedJobsDrawer() {
         width="full"
         hideBackButton
         onClose={handleClose}
-        path={paths}>
+        path={DRAWER_URLS.QUEUED_JOBS}>
         <DrawerHeader title={`Queued Jobs: ${connectionName}`} className={classes.queuedDrawerHeader}>
           {/* TODO: as per the mock we need help component <Help /> beside the select field */}
           <DynaSelect
