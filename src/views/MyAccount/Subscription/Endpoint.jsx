@@ -167,7 +167,7 @@ export default function Endpoint() {
         <li>Ability to daisy-chain flows</li>
       </ul>
 
-      <a href="">Learn how to make the most of your free trial  </a>
+      <a href= "https://www.celigo.com/ipaas-integration-platform/free-trial">Learn how to make the most of your free trial  </a>
       <p>After 30 days, your plan will revert to the free subscription plan with 1 enabled integration flow.</p>
       `,
       buttons: [
@@ -179,7 +179,7 @@ export default function Endpoint() {
               isHtml: true,
               message: `
                         <p>What will you integrate next?</p>
-                        <p><a href="#">Check out our Marketplace</a> to jumpstart your integrations with Integration Apps, Business Process Automation templates, and quickstart templates.</p>
+                        <p><a href="https://integrator.io/marketplace">Check out our Marketplace</a> to jumpstart your integrations with Integration Apps, Business Process Automation templates, and quickstart templates.</p>
               `,
               buttons: [
                 {
