@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import ViewResourcesChangedIcon from '../../../icons/ViewResourcesChangedIcon';
+import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 
 export default {
   key: 'viewChanges',
@@ -11,7 +12,7 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
-      history.push(`${match.url}/view/${revisionId}/mode/changes`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/view/${revisionId}/mode/changes`);
     }, [revisionId, history, match.url]);
 
     return handleClick;

@@ -10,6 +10,7 @@ import RevisionHeader from '../../components/RevisionHeader';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import FilledButton from '../../../../Buttons/FilledButton';
 import useHandleInvalidRevision from '../../hooks/useHandleInvalidRevision';
+import { DRAWER_URLS } from '../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {
@@ -66,7 +67,7 @@ export default function MergePullDrawer({ integrationId }) {
 
   return (
     <RightDrawer
-      path="pull/:revisionId/merge"
+      path={DRAWER_URLS.MERGE_PULL_CHANGES}
       variant="temporary"
       height="tall"
       width="xl">

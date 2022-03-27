@@ -14,6 +14,7 @@ import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import RevisionHeader from '../../components/RevisionHeader';
 import ResourceDiffDrawerContent from '../../components/ResourceDiffContent';
 import useHandleInvalidNewRevision from '../../hooks/useHandleInvalidNewRevision';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {
@@ -47,7 +48,7 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
 
   useEffect(() => {
     if (createdRevisionId) {
-      history.replace(`${parentUrl}/revert/${createdRevisionId}/final`);
+      history.replace(`${parentUrl}/${DRAWER_URL_PREFIX}/revert/${createdRevisionId}/final`);
     }
   }, [createdRevisionId, history, parentUrl]);
 
@@ -94,7 +95,7 @@ export default function ReviewRevertChangesDrawer({ integrationId }) {
 
   return (
     <RightDrawer
-      path="revert/:revisionId/review"
+      path={DRAWER_URLS.REVIEW_REVERT_CHANGES}
       variant="temporary"
       height="tall"
       width="xl">

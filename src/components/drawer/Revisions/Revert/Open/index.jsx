@@ -15,6 +15,7 @@ import {selectors } from '../../../../../reducers';
 import getMetadata from './metadata';
 import RevisionHeader from '../../components/RevisionHeader';
 import useHandleInvalidRevision from '../../hooks/useHandleInvalidRevision';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {
@@ -48,7 +49,7 @@ function OpenRevertDrawerContent({ integrationId, parentUrl }) {
     };
 
     dispatch(actions.integrationLCM.revision.openRevert({ integrationId, newRevisionId: tempRevId, revisionInfo }));
-    history.replace(`${parentUrl}/revert/${tempRevId}/review`);
+    history.replace(`${parentUrl}/${DRAWER_URL_PREFIX}/revert/${tempRevId}/review`);
   };
 
   return (
@@ -82,7 +83,7 @@ export default function OpenRevertDrawer({ integrationId }) {
 
   return (
     <RightDrawer
-      path="revert/:tempRevId/open/:revertTo/revision/:revisionId"
+      path={DRAWER_URLS.OPEN_REVERT}
       variant="temporary"
       height="tall"
       width="xl">

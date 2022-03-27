@@ -58,15 +58,15 @@ const DRAWER_URL_REFS = {
     'scriptLog/:scriptId/:index',
   ],
   SCRIPT_LOGS: 'viewLogs/:scriptId',
-  CREATE_SNAPSHOT: 'snapshot/:revId/open',
-  MERGE_PULL_CHANGES: 'pull/:revisionId/merge',
-  OPEN_PULL: 'pull/:revId/open',
-  REVIEW_PULL_CHANGES: 'pull/:revisionId/review',
-  FINAL_REVERT_STEP: 'revert/:revisionId/final',
-  OPEN_REVERT: 'revert/:tempRevId/open/:revertTo/revision/:revisionId',
-  REVIEW_REVERT_CHANGES: 'revert/:revisionId/review',
-  VIEW_REVISION_DETAILS: 'view/:revisionId/mode/:mode',
-  VIEW_REVISION_ERROR_INFO: 'error/:errorId',
+  CREATE_SNAPSHOT: 'snapshot/:revId/open', // done
+  OPEN_PULL: 'pull/:revId/open', // done
+  REVIEW_PULL_CHANGES: 'pull/:revisionId/review', // done
+  MERGE_PULL_CHANGES: 'pull/:revisionId/merge', // done
+  OPEN_REVERT: 'revert/:tempRevId/open/:revertTo/revision/:revisionId', // done
+  REVIEW_REVERT_CHANGES: 'revert/:revisionId/review', // done
+  FINAL_REVERT_STEP: 'revert/:revisionId/final', // done
+  VIEW_REVISION_DETAILS: 'view/:revisionId/mode/:mode', // done
+  VIEW_REVISION_ERROR_INFO: 'error/:errorId', // done
 };
 
 export const DRAWER_URL_PREFIX = 'ui-drawer';
@@ -93,4 +93,3 @@ export const DRAWER_URLS = constructDrawerUrls();
 
 export const hasMultipleDrawers = url =>
   !!(url.match(new RegExp(DRAWER_URL_PREFIX, 'g'))?.length > 1);
-

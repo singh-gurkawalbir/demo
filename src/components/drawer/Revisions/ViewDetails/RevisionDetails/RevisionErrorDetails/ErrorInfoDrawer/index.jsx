@@ -10,6 +10,7 @@ import DrawerFooter from '../../../../../Right/DrawerFooter';
 import { FilledButton } from '../../../../../../Buttons';
 import { selectors } from '../../../../../../../reducers';
 import DateTimeDisplay from '../../../../../../DateTimeDisplay';
+import { DRAWER_URLS } from '../../../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   details: {
@@ -58,7 +59,7 @@ export default function ErrorInfoDrawer({ integrationId, revisionId }) {
 
   return (
     <RightDrawer
-      path="error/:errorId"
+      path={DRAWER_URLS.VIEW_REVISION_ERROR_INFO}
       variant="temporary"
       height="tall">
       <ErrorInfoDrawerContent

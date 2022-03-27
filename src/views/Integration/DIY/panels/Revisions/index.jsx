@@ -7,6 +7,7 @@ import { TextButton } from '../../../../../components/Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { getRevisionFilterKey } from '../../../../../utils/revisions';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
 import PanelHeader from '../../../../../components/PanelHeader';
 import ActionGroup from '../../../../../components/ActionGroup';
 import AddIcon from '../../../../../components/icons/AddIcon';
@@ -125,11 +126,11 @@ export default function Revisions({ integrationId }) {
 
   const handleCreatePull = useOpenRevisionWhenValid({
     integrationId,
-    drawerURL: `${match.url}/pull/${nanoid()}/open`,
+    drawerURL: `${match.url}/${DRAWER_URL_PREFIX}/pull/${nanoid()}/open`,
   });
   const handleCreateSnapshot = useOpenRevisionWhenValid({
     integrationId,
-    drawerURL: `${match.url}/snapshot/${nanoid()}/open`,
+    drawerURL: `${match.url}/${DRAWER_URL_PREFIX}/snapshot/${nanoid()}/open`,
   });
 
   return (

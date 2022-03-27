@@ -14,6 +14,7 @@ import { selectors } from '../../../../../reducers';
 import RevisionHeader from '../../components/RevisionHeader';
 import ResourceDiffDrawerContent from '../../components/ResourceDiffContent';
 import useHandleInvalidNewRevision from '../../hooks/useHandleInvalidNewRevision';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   drawerHeaderWrapper: {
@@ -54,7 +55,7 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
 
   useEffect(() => {
     if (createdRevisionId) {
-      history.replace(`${parentUrl}/pull/${createdRevisionId}/merge`);
+      history.replace(`${parentUrl}/${DRAWER_URL_PREFIX}/pull/${createdRevisionId}/merge`);
     }
   }, [createdRevisionId, history, parentUrl]);
 
@@ -100,7 +101,7 @@ export default function ReviewChangesDrawer({ integrationId }) {
 
   return (
     <RightDrawer
-      path="pull/:revisionId/review"
+      path={DRAWER_URLS.REVIEW_PULL_CHANGES}
       variant="temporary"
       height="tall"
       width="xl">

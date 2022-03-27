@@ -13,6 +13,7 @@ import DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import { TextButton } from '../../../../Buttons';
 import getMetadata from './metadata';
 import RevisionHeader from '../../components/RevisionHeader';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {
@@ -40,7 +41,7 @@ function OpenPullDrawerContent({ integrationId, parentUrl }) {
     };
 
     dispatch(actions.integrationLCM.revision.openPull({ integrationId, newRevisionId: revId, revisionInfo }));
-    history.replace(`${parentUrl}/pull/${revId}/review`);
+    history.replace(`${parentUrl}/${DRAWER_URL_PREFIX}/pull/${revId}/review`);
   };
 
   return (
@@ -70,7 +71,7 @@ export default function OpenPullDrawer({ integrationId }) {
 
   return (
     <RightDrawer
-      path="pull/:revId/open"
+      path={DRAWER_URLS.OPEN_PULL}
       variant="temporary"
       height="tall"
       width="xl">

@@ -10,6 +10,7 @@ import InstallSteps from '../../components/InstallSteps';
 import RevisionHeader from '../../components/RevisionHeader';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import useHandleInvalidRevision from '../../hooks/useHandleInvalidRevision';
+import { DRAWER_URLS } from '../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {
@@ -66,7 +67,7 @@ export default function FinalRevert({ integrationId }) {
 
   return (
     <RightDrawer
-      path="revert/:revisionId/final"
+      path={DRAWER_URLS.FINAL_REVERT_STEP}
       variant="temporary"
       height="tall"
       width="xl">
