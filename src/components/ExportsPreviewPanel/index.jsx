@@ -13,8 +13,8 @@ import ActionGroup from '../ActionGroup';
 import { TextButton } from '../Buttons';
 import EditIcon from '../icons/EditIcon';
 import CeligoDivider from '../CeligoDivider';
-import RightDrawer from '../drawer/Right';
 import FieldHelp from '../DynaForm/FieldHelp';
+import MockInput from './MockInput';
 
 const useStyles = makeStyles(theme => ({
   previewPanelWrapper: {
@@ -126,26 +126,13 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
     dispatch(actions.resourceFormSampleData.updateSampleDataType(resourceId, value));
   }, [dispatch, resourceId]);
 
-  const handleClose = useCallback(() => {
-    if (history.length > 2) {
-      history.goBack();
-    } else {
-      history.replace(match.url);
-    }
-  }, [history, match.url]);
-
   const onEditorClick = useCallback(() => {
     history.push(`${match.url}/inputData`);
   }, [match.url, history]);
 
   return (
     <div>
-      <RightDrawer
-        path="inputData"
-        height="tall"
-        width="default"
-        variant="temporary"
-        onClose={handleClose} />
+      <MockInput formKey resourceId resourceType flowId />
       <div
         className={classes.previewPanelWrapper}>
         <Typography className={classes.previewDataHeading}>
@@ -158,16 +145,6 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
                 label="Preview &amp; send" />
             </div>
           ) : 'Preview data'}
-          {/* {resourceType === 'imports' ? (
-            <div className={classes.labelWrapper}>
-            <FormLabel className={classes.label}>{label}</FormLabel>
-            {label}
-          </FormLabel>
-            <FieldHelp
-              id="Lookups"
-              helpKey="afe.lookups"
-              label="Preview &amp; send" />
-          ) : 'Preview data'} */}
         </Typography>
 
         <div className={classes.container}>
