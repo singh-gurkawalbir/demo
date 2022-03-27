@@ -256,6 +256,52 @@ const handleDeleteNode = (draft, action) => {
   }
 };
 
+const handleDragStart = (draft, { nodeId }) => {
+  draft.session.fb.dragNodeId = nodeId;
+};
+
+const handleDragEnd = draft => {
+  delete draft.session.fb.dragNodeId;
+};
+
+const handleSetMergeTarget = (draft, { targetId, targetType }) => {
+  const { fb } = draft.session;
+
+  fb.mergeTargetId = targetId;
+  fb.mergeTargetType = targetType;
+};
+
+const handleClearMergeTarget = draft => {
+  delete draft.session.fb.mergeTargetId;
+  delete draft.session.fb.mergeTargetType;
+};
+
+const mergeDragSourceWithTarget = (dragNodeId, targetType, targetId) => {
+  // eslint-disable-next-line no-console
+  console.log(`Merging node "${dragNodeId}" with ${targetType} "${targetId}"`);
+
+  // Sravan, here we can do the merge logic? if this is not the pattern you had in mind, feel
+  // free to refactor as needed...I assumed that since we already had all the info in the state
+  // then the reducer would be a good place to do the merge. I assume once the state
+  // is updated, that a re-render would happen...
+};
+
+const handleMergeBranchNew = draft => {
+  const { fb } = draft.session;
+
+  // It's possible that a user releases the mouse while NOT on top of a valid merge target.
+  // if this is the case, we still want to reset the drag state, just skip the merge attempt.
+  if (fb.mergeTargetId && fb.mergeTargetType) {
+    mergeDragSourceWithTarget(fb.dragNodeId, fb.mergeTargetId, fb.mergeTargetType);
+  }
+
+  // After merge is complete, we need to reset the state to remove all the transient state
+  // used while dragging is being performed.
+  delete fb.dragNodeId;
+  delete fb.mergeTargetId;
+  delete fb.mergeTargetType;
+};
+
 export default function (state, action) {
   const {type } = action;
 
@@ -297,6 +343,36 @@ export default function (state, action) {
         return;
       }
 
+      case actions.DRAG_START: {
+        handleDragStart(draft, action);
+
+        return;
+      }
+
+      case actions.DRAG_END: {
+        handleDragEnd(draft, action);
+
+        return;
+      }
+
+      case actions.MERGE_TARGET_SET: {
+        handleSetMergeTarget(draft, action);
+
+        return;
+      }
+
+      case actions.MERGE_TARGET_CLEAR: {
+        handleClearMergeTarget(draft, action);
+
+        return;
+      }
+
+      case actions.MERGE_BRANCH_NEW: {
+        handleMergeBranchNew(draft, action);
+
+        return;
+      }
+
       default:
         return draft;
     }
@@ -333,7 +409,7 @@ const resourceDataModified = (
       // eslint-disable-next-line
       console.warn('unable to apply patch to the document. PatchSet = ', patch, 'document = ', master,ex);
       // Incase if we are not able to apply patchSet to document,
-      // catching the excpetion and assigning master to the merged.
+      // catching the exception and assigning master to the merged.
       merged = master;
     }
 

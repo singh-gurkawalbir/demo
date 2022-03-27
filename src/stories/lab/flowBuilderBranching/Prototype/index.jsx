@@ -8,7 +8,7 @@ import actions from './reducer/actions';
 import { getSomeExport, getSomePg } from './nodeGeneration';
 import TextButton from '../../../../components/Buttons/TextButton';
 import DefaultEdge from './CustomEdges/DefaultEdge';
-import { generateId, layoutElements, terminalNodeInVicinity } from './lib';
+import { generateId, layoutElements } from './lib';
 import { FlowProvider } from './Context';
 import PgNode from './CustomNodes/PgNode';
 import PpNode from './CustomNodes/PpNode';
@@ -18,7 +18,6 @@ import RouterNode from './CustomNodes/RouterNode';
 import MergeNode from './CustomNodes/MergeNode';
 import reducer, { resourceDataSelector } from './reducer';
 import { generateReactFlowGraph } from './translateSchema';
-import { handleMergeNode } from './hooks';
 import { Background } from './Background';
 import SourceTitle from './titles/SourceTitle';
 import DestinationTitle from './titles/DestinationTitle';
@@ -26,7 +25,7 @@ import DestinationTitle from './titles/DestinationTitle';
 const nodeTypes = {
   pg: PgNode,
   pp: PpNode,
-  terminalFree: TerminalFreeNode, // TerminalFreeNode,
+  terminalFree: TerminalFreeNode,
   terminalBlocked: TerminalBlockedNode,
   router: RouterNode,
   merge: MergeNode,
@@ -51,6 +50,7 @@ export default ({resourceState}) => {
   const [state, setState] = useReducer(reducer, {
     data: {resources: resourceState},
     session: {
+      fb: {},
       staged: {},
     },
   });
@@ -66,17 +66,14 @@ export default ({resourceState}) => {
     // console.log(elements);
   }, [elements]);
 
-  const handleMerge = handleMergeNode(mergedFlow, elements, setState);
+  // const handleMerge = handleMergeNode(mergedFlow, elements, setState);
 
-  const onNodeDragStop = (evt, source) => {
-    const target = terminalNodeInVicinity(source, updatedLayout);
+  const handleNodeDragStart = (evt, source) => {
+    setState({type: actions.DRAG_START, nodeId: source.id});
+  };
 
-    if (!target) {
-      return;
-    }
-
-    handleMerge(source.id, target);
-    // sometimes the selection sticks
+  const handleNodeDragStop = () => {
+    setState({type: actions.MERGE_BRANCH_NEW});
   };
 
   const handleCopySchema = () => {
@@ -119,12 +116,18 @@ export default ({resourceState}) => {
   return (
     <ReactFlowProvider>
       {/* add flow to the context so it is accessible to flowGraph beneath ..this will be replaced by the resourceDataSelector */}
-      <FlowProvider elements={elements} flow={mergedFlow} setState={setState}>
+      <FlowProvider
+        elements={elements}
+        flow={mergedFlow}
+        dragNodeId={state.session.fb.dragNodeId}
+        setState={setState}>
+
         <SourceTitle onClick={handleAddSource} />
         <DestinationTitle onClick={handleAddDestination} />
 
         <ReactFlow
-          onNodeDragStop={onNodeDragStop}
+          onNodeDragStart={handleNodeDragStart}
+          onNodeDragStop={handleNodeDragStop}
           nodesDraggable={false}
           elements={updatedLayout}
           nodeTypes={nodeTypes}
