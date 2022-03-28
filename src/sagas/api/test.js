@@ -29,13 +29,11 @@ describe('sendRequest saga', () => {
     global.fetch = unmockedFetch;
   });
 
-  test('should call first onRequest saga to generate a requestPayload', () => {
-    expectSaga(sendRequest, request)
-      .provide([
-        [matchers.call.fn(onRequestSaga), onRequestGeneratedPayload],
-      ])
-      .call(onRequestSaga, request).run();
-  });
+  test('should call first onRequest saga to generate a requestPayload', () => expectSaga(sendRequest, request)
+    .provide([
+      [matchers.call.fn(onRequestSaga), onRequestGeneratedPayload],
+    ])
+    .call(onRequestSaga, request).run());
 
   test('should call the onErrorSaga and bubble API exception when the response is in between a status code of 400 to 599', () => {
     const someErrorResp = {data: 'someErroredResponse',

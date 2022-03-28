@@ -1,7 +1,7 @@
 import fs from 'fs';
 import {rest} from 'msw';
 
-export const getAllDefaultEports = path => {
+export const getAllDefaultExports = path => {
   const filesInCurrentDirectory = fs.readdirSync(path);
 
   const mappedHandlers = {};
@@ -38,6 +38,10 @@ export const API = (() => {
 
   return {
     getOnce: handler('get', true),
+    putOnce: handler('put', true),
+    postOnce: handler('post', true),
+    deleteOnce: handler('delete', true),
+    patchOnce: handler('patch', true),
     get: handler('get'),
     put: handler('put'),
     post: handler('post'),

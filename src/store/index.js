@@ -7,7 +7,7 @@ import rootReducer from '../reducers';
 import rootSaga from '../sagas';
 import actions from '../actions';
 
-export const getCreatedStore = initialState => {
+export const getCreatedStore = () => {
 // eslint-disable-next-line import/no-mutable-exports
   let store;
 
@@ -56,7 +56,7 @@ export const getCreatedStore = initialState => {
       traceLimit: 25,
     })) || compose;
 
-  store = initialState ? createStore(rootReducer, initialState, composeEnhancers(applyMiddleware(...middleware))) : createStore(
+  store = createStore(
     rootReducer,
     composeEnhancers(applyMiddleware(...middleware))
   );

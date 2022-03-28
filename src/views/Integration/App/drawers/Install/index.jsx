@@ -440,7 +440,16 @@ export default function ConnectorInstallation(props) {
           )
         );
 
-        if (isFrameWork2) {
+        if (isTemplate && step.connectionId) {
+          dispatch(
+            actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
+              integrationId,
+              step.connectionId,
+              installerFunction,
+              isFrameWork2
+            )
+          );
+        } else if (isFrameWork2) {
           dispatch(
             actions.integrationApp.installer.scriptInstallStep(integrationId)
           );

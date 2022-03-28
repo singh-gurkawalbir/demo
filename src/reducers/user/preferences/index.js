@@ -121,6 +121,7 @@ selectors.userOwnPreferences = state => {
 
   return state;
 };
+selectors.defaultAShareId = state => state?.defaultAShareId;
 
 selectors.accountShareHeader = (preferences, path) => {
   const headers = {};

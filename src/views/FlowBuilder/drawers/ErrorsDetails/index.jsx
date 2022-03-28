@@ -11,6 +11,7 @@ import ErrorList from '../../../../components/ErrorList';
 import ErrorDrawerAction from './ErrorDrawerAction';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import DrawerHeaderSubTitle from '../../../../components/DrawerHeaderSubTitle';
+import Tabs from './Tabs';
 
 const emptySet = [];
 
@@ -20,6 +21,9 @@ const useStyles = makeStyles(theme => ({
   },
   boldErrorsCount: {
     fontWeight: 'bold',
+  },
+  removeBottomLine: {
+    borderBottom: 0,
   },
   title: {
     flexGrow: 1,
@@ -51,15 +55,17 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const matchErrorDrawerPathWithFilter = matchPath(pathname, {
     path: `${match.url}/errors/:resourceId/filter/:flowJobId/:errorType`,
   });
+  const resourceId = matchErrorDrawerPathWithFilter?.params?.resourceId || matchErrorDrawerPath?.params?.resourceId;
+  const errorType = matchErrorDrawerPathWithFilter?.params?.errorType || matchErrorDrawerPath?.params?.errorType;
 
   const isOpenErrorsLoaded = useSelector(state => {
-    const openErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId: matchErrorDrawerPathWithFilter?.params?.resourceId });
+    const openErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId});
 
     return openErrorDetails.status === 'received';
   });
   const flowJobId = matchErrorDrawerPathWithFilter?.params?.flowJobId;
   const allErrors = useSelector(state => {
-    const allErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId: matchErrorDrawerPathWithFilter?.params?.resourceId });
+    const allErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId });
 
     return allErrorDetails.errors || emptySet;
   });
@@ -97,7 +103,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath?.params?.resourceId]);
 
   useEffect(() => {
-    if (isOpenErrorsLoaded && !allErrors.length && matchErrorDrawerPathWithFilter?.params?.errorType === 'open' && childJob) {
+    if (isOpenErrorsLoaded && !allErrors.length && errorType === 'open') {
       handleErrorTypeChange('resolved');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -123,17 +129,16 @@ export default function ErrorDetailsDrawer({ flowId }) {
       width="full"
       onClose={handleClose}
       variant="temporary">
-
-      <DrawerHeader title={<Title />} hideBackButton>
+      <DrawerHeader className={classes.removeBottomLine} title={<Title />} hideBackButton>
         <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} />
       </DrawerHeader>
+      <Tabs onChange={handleErrorTypeChange} />
 
       <DrawerContent>
         {flowJobId ? (
           <Typography variant="body2" className={classes.errorsInRun}>
-            <span className={classes.boldErrorsCount}>{childJob?.numOpenError} error{childJob?.numOpenError !== 1 ? 's' : ''} in this run: </span>
-            <span> {allErrors.length} open  |  </span>
-            <span>{childJob?.numOpenError - allErrors.length} resolved</span>
+            <span className={classes.boldErrorsCount}>{childJob?.numOpenError} error{childJob?.numOpenError !== 1 ? 's' : ''} in this run </span>
+            {childJob?.numOpenError <= 1000 ? (<span><span>: {allErrors.length} open  |  </span><span>{childJob?.numOpenError - allErrors.length} resolved</span></span>) : ''}
           </Typography>
         ) : ''}
         <ErrorList flowId={flowId} />

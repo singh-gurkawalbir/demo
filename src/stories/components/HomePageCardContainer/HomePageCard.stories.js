@@ -26,24 +26,6 @@ import StatusCircle from '../../../components/StatusCircle/index';
 import withBoundingBox from './withBoundingBox';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(2),
-    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.spacing(2)}px + ${theme.pageBarHeight}px))`,
-    overflowY: 'auto',
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr));',
-    gridGap: theme.spacing(2),
-    position: 'relative',
-    '& > div': {
-      maxWidth: '100%',
-    },
-    [theme.breakpoints.down('xs')]: {
-      gridTemplateColumns: 'repeat(1, minmax(100%, 1fr));',
-    },
-    [theme.breakpoints.up('xs')]: {
-      gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr));',
-    },
-  },
   wrapper: {
     maxWidth: 310,
   },

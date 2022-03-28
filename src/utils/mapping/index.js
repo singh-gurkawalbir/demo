@@ -851,6 +851,8 @@ export default {
             toReturn = 'Oracle DB (SQL)';
           } else if (conn.rdbms?.type === 'postgresql') {
             toReturn = 'PostgreSQL';
+          } else if (conn.rdbms?.type === 'bigquery') {
+            toReturn = 'Google BigQuery';
           } else {
             toReturn = 'Snowflake';
           }

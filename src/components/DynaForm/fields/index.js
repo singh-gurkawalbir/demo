@@ -147,6 +147,7 @@ import DynaTextUpdateDomain from './text/DynaTextUpdateDomain';
 import DynaManageAliases from './aliases/DynaManageAliases';
 import DynaAliasId from './aliases/DynaAliasId';
 import DynaSelectAliasResource from './aliases/DynaSelectAliasResource';
+import DynaIntegrationCloneSelect from './select/DynaIntegrationCloneSelect';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -305,4 +306,5 @@ export default {
   aliasid: DynaAliasId,
   selectaliasresource: DynaSelectAliasResource,
   updatedomain: DynaTextUpdateDomain,
+  integrationcloneselect: DynaIntegrationCloneSelect,
 };

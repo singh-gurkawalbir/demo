@@ -15,7 +15,7 @@ import { FilledButton } from '../Buttons';
 
 const useStyles = makeStyles({
   NetsuiteRules: {
-    padding: [[0, 10]],
+    padding: [[10, 10]],
   },
 });
 

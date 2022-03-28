@@ -33,6 +33,8 @@ import {
   getAssistantFromResource,
   isOldRestAdaptor,
   getNextLinkRelativeUrl,
+  rdbmsSubTypeToAppType,
+  rdbmsAppTypeToSubType,
 } from './resource';
 
 describe('resource util tests', () => {
@@ -181,6 +183,24 @@ describe('resource util tests', () => {
         resourceType: 'connections',
         offline: true,
       });
+    });
+  });
+
+  describe('tests for util rdbmsSubTypeToAppType', () => {
+    test('should return correct appType for bigquery subtype', () => {
+      expect(rdbmsSubTypeToAppType('bigquery')).toEqual('bigquerydatawarehouse');
+    });
+    test('should return correct appType for snowflake subtype', () => {
+      expect(rdbmsSubTypeToAppType('snowflake')).toEqual('snowflake');
+    });
+  });
+
+  describe('tests for util rdbmsAppTypeToSubType', () => {
+    test('should return correct subtype for bigquerydatawarehouse apptype', () => {
+      expect(rdbmsAppTypeToSubType('bigquerydatawarehouse')).toEqual('bigquery');
+    });
+    test('should return correct appType for snowflake subtype', () => {
+      expect(rdbmsAppTypeToSubType('snowflake')).toEqual('snowflake');
     });
   });
 

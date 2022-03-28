@@ -6,6 +6,7 @@ import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../actions';
+import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { constructResourceFromFormValues } from '../utils';
 import { getResource, commitStagedChanges } from '../resources';
@@ -212,6 +213,96 @@ describe('editor sagas', () => {
           },
           hidden: true })
         .run();
+    });
+    test('should take mapping preview received action if preview data is requested and return the mappings preview state for ns or sf mappings', () => {
+      const editorState = {
+        resourceId: 'res-123',
+        flowId: 'flow-123',
+        resourceType: 'imports',
+        data: '[{"id": "123"}]',
+        editorType: 'mappings',
+        mappingPreviewType: 'salesforce',
+      };
+      const importRes = {
+        _id: 'res-123',
+        adaptorType: 'FTPImport',
+        _connectionId: 'conn-123',
+        file: {type: 'csv'},
+      };
+      const exportRes = {
+        _id: 'exp-123',
+        adaptorType: 'NetSuiteExport',
+        _connectionId: 'conn-456',
+        netsuite: {type: 'search'},
+      };
+      const mappings = [{
+        extract: 'id',
+        generate: 'id',
+        key: '17RxsaFmJW',
+      }];
+
+      return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), undefined],
+          [select(selectors.mapping), {mappings, lookups: [], preview: {data: 'some data', status: 'requested'}}],
+          [select(selectors.editor, editorId), editorState],
+          [select(selectors.resource, 'imports', 'res-123'), importRes],
+          [select(selectors.firstFlowPageGenerator, 'flow-123'), exportRes],
+          [matchers.take([
+            actionTypes.MAPPING.PREVIEW_RECEIVED,
+            actionTypes.MAPPING.PREVIEW_FAILED,
+          ]), actionTypes.MAPPING.PREVIEW_RECEIVED],
+        ])
+        .returns({data: 'some data', status: 'requested'})
+        .run();
+    });
+    test('should return the mappings preview state for ns or sf mappings if preview mappings call is successful/failed', () => {
+      const editorState = {
+        resourceId: 'res-123',
+        flowId: 'flow-123',
+        resourceType: 'imports',
+        data: '[{"id": "123"}]',
+        editorType: 'mappings',
+        mappingPreviewType: 'salesforce',
+      };
+      const importRes = {
+        _id: 'res-123',
+        adaptorType: 'FTPImport',
+        _connectionId: 'conn-123',
+        file: {type: 'csv'},
+      };
+      const exportRes = {
+        _id: 'exp-123',
+        adaptorType: 'NetSuiteExport',
+        _connectionId: 'conn-456',
+        netsuite: {type: 'search'},
+      };
+      const mappings = [{
+        extract: 'id',
+        generate: 'id',
+        key: '17RxsaFmJW',
+      }];
+
+      return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), undefined],
+          [select(selectors.mapping), {mappings, lookups: [], preview: {data: 'some data', status: 'success'}}],
+          [select(selectors.editor, editorId), editorState],
+          [select(selectors.resource, 'imports', 'res-123'), importRes],
+          [select(selectors.firstFlowPageGenerator, 'flow-123'), exportRes],
+        ])
+        .returns({data: 'some data', status: 'success'})
+        .run() &&
+        expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
+          .provide([
+            [matchers.call.fn(apiCallWithRetry), undefined],
+            [select(selectors.mapping), {mappings, lookups: [], preview: {data: 'some data', status: 'failed'}}],
+            [select(selectors.editor, editorId), editorState],
+            [select(selectors.resource, 'imports', 'res-123'), importRes],
+            [select(selectors.firstFlowPageGenerator, 'flow-123'), exportRes],
+          ])
+          .returns({data: 'some data', status: 'failed'})
+          .run();
     });
     test('should set correct request body and make api call if processor is mapperProcessor for mappings editor type with lookups', () => {
       const editorState = {
@@ -445,6 +536,157 @@ describe('editor sagas', () => {
         ])
         .not.put(actions.editor.previewFailed(editorId))
         .put(actions.editor.previewResponse(editorId, '999'))
+        .run();
+    });
+    test('should validate mappings and call invokeProcessor saga when skipPreview is not set', () => {
+      const editor = {
+        id: editorId,
+        editorType: 'mappings',
+        formKey: 'new-123',
+        data: '{"id": "999"}',
+        rule: '{{id}}',
+      };
+      const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
+
+      return expectSaga(requestPreview, { id: editorId})
+        .provide([
+          [select(selectors.editor, editorId), editor],
+          [select(selectors.mapping), {mappings}],
+          [call(invokeProcessor, {
+            editorId,
+            processor: 'mapperProcessor',
+            body: {} }), {data: [{mappedObject: 'test'}]}],
+        ])
+        .not.put(actions.editor.previewFailed(editorId))
+        .put(actions.editor.previewResponse(editorId, { data: 'test' }))
+        .run();
+    });
+    test('should validate mappings and dispatch request preview action when mappingPreviewType is salesforce and call invokeProcessor saga', () => {
+      const editor = {
+        id: editorId,
+        editorType: 'mappings',
+        formKey: 'new-123',
+        data: '{"id": "999"}',
+        rule: '{{id}}',
+        mappingPreviewType: 'salesforce',
+      };
+      const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
+
+      return expectSaga(requestPreview, { id: editorId})
+        .provide([
+          [select(selectors.editor, editorId), editor],
+          [select(selectors.mapping), {mappings}],
+          [call(invokeProcessor, {
+            editorId,
+            processor: 'mapperProcessor',
+            body: {} }), {data: [{mappedObject: 'test'}]}],
+        ])
+        .put(actions.mapping.requestPreview())
+        .not.put(actions.editor.previewFailed(editorId))
+        .put(actions.editor.previewResponse(editorId, { data: [{mappedObject: 'test'}] }))
+        .run();
+    });
+    test('should validate mappings and dispatch preview failed action when mappingPreviewType is salesforce or netsuite if previewMapping saga returns errors', () => {
+      const editor = {
+        id: editorId,
+        editorType: 'mappings',
+        formKey: 'new-123',
+        data: '{"id": "999"}',
+        rule: '{{id}}',
+        mappingPreviewType: 'salesforce',
+      };
+      const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
+
+      return expectSaga(requestPreview, { id: editorId})
+        .provide([
+          [select(selectors.editor, editorId), editor],
+          [select(selectors.mapping), {mappings}],
+          [call(invokeProcessor, {
+            editorId,
+            processor: 'mapperProcessor',
+            body: {} }), {errors: [{errors: 'test'}]}],
+        ])
+        .put(actions.mapping.requestPreview())
+        .put(actions.editor.previewFailed(editorId, { errorMessage: 'Message: [{"errors":"test"}]' }))
+        .run();
+    });
+    test('should validate mappings and dispatch request preview action when mappingPreviewType is netsuite and call invokeProcessor saga', () => {
+      const result = {
+        data: {
+          data: {
+            returnedObjects: {
+              jsObjects: {
+                data: [
+                  {
+                    celigoIsElement: true,
+                    data: {
+                      nlobjFieldIds: {
+                        companyname: '123',
+                        phone: '234',
+                        fax: '123',
+                        custentity51: '123',
+                      },
+                      nlobjSublistIds: {},
+                    },
+                  },
+                ],
+              },
+              mappingErrors: [],
+            },
+          },
+        },
+      };
+      const expectedOutput = {
+        data: {
+          nlobjFieldIds: {
+            companyname: '123',
+            phone: '234',
+            fax: '123',
+            custentity51: '123',
+          },
+          nlobjSublistIds: {},
+        },
+      };
+      const editor = {
+        id: editorId,
+        editorType: 'mappings',
+        formKey: 'new-123',
+        data: '{"id": "999"}',
+        rule: '{{id}}',
+        mappingPreviewType: 'netsuite',
+      };
+      const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
+
+      return expectSaga(requestPreview, { id: editorId})
+        .provide([
+          [select(selectors.editor, editorId), editor],
+          [select(selectors.mapping), {mappings, isNSAssistantFormLoaded: true}],
+          [call(invokeProcessor, {
+            editorId,
+            processor: 'mapperProcessor',
+            body: {} }), result],
+        ])
+        .put(actions.mapping.requestPreview())
+        .not.put(actions.editor.previewFailed(editorId))
+        .put(actions.editor.previewResponse(editorId, expectedOutput))
+        .run();
+    });
+    test('should dispatch validate failure if mappings are not valid', () => {
+      const editor = {
+        id: editorId,
+        editorType: 'mappings',
+        formKey: 'new-123',
+        data: '{"id": "999"}',
+        rule: '{{id}}',
+      };
+      const mappings = [{generate: 'g1'}];
+
+      return expectSaga(requestPreview, { id: editorId})
+        .provide([
+          [select(selectors.editor, editorId), editor],
+          [select(selectors.mapping), {mappings}],
+        ])
+        .put(actions.editor.validateFailure(editorId, {ruleError: 'Extract Fields missing for field(s): g1'}))
         .run();
     });
   });
@@ -1007,6 +1249,30 @@ describe('editor sagas', () => {
       return expectSaga(requestEditorSampleData, { id: 'traceKeyTemplate' })
         .provide([
           [select(selectors.editor, 'traceKeyTemplate'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.call.fn(getFlowSampleData), {name: 'Bob'}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {name: 'Bob'}}, templateVersion: 2}],
+        ])
+        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'exports', stage: 'responseMappingExtract', formKey: 'new-123'})
+        .returns({data: { record: {name: 'Bob'} }, templateVersion: 2})
+        .run();
+    });
+    test('should call getFlowSampleData and get responseMappingExtract ( output of preSavePage hook ) stage data for webhook.successBody field', () => {
+      const editor = {
+        id: 'webhook.successBody',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'exports',
+        resourceId,
+        fieldId: 'webhook.successBody',
+        stage: 'responseMappingExtract',
+        formKey: 'new-123',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'webhook.successBody' })
+        .provide([
+          [select(selectors.editor, 'webhook.successBody'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
           [matchers.call.fn(getFlowSampleData), {name: 'Bob'}],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true}],
