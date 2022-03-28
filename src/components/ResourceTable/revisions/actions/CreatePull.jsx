@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import CreatePullIcon from '../../../icons/AddIcon';
 
