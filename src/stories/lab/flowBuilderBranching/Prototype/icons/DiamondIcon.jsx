@@ -9,34 +9,40 @@ const useStyles = makeStyles(theme => ({
     fill: theme.palette.background.paper,
     stroke: theme.palette.secondary.lightest,
   },
-  dropBorder: {
+  // dropBorder: {
+  //   animation: '$dash 50s linear',
+  // },
+  droppable: {
     strokeDasharray: 4,
     strokeWidth: 2,
     stroke: theme.palette.primary.main,
-    // animation: '$dash 50s linear',
-  },
-  dropCenter: {
-    fill: theme.palette.primary.main,
-    stroke: theme.palette.primary.main,
+    fill: theme.palette.primary.lightest,
+    '&:hover': {
+      strokeDasharray: 0,
+      strokeWidth: 1,
+      stroke: theme.palette.primary.main,
+      fill: theme.palette.primary.main,
+    },
   },
   '@keyframes dash': {
     to: {
       strokeDashoffset: 500,
     },
   },
-
 }));
 
-export default function DiamondIcon({isDroppable}) {
+export default function DiamondIcon({isDroppable, className, ...rest}) {
   const classes = useStyles();
 
   return (
-    <svg viewBox="0 0 34 34" className={clsx(classes.button)}>
-      <path d="m0,17l17,-17l17,17l-17,17l-17,-17z" className={clsx({[classes.dropBorder]: isDroppable})} />
-
-      {isDroppable && (
-      <path d="m6,17l11,-11l11,11l-11,11l-11,-11z" className={classes.dropCenter} />
-      )}
+    <svg
+      {...rest}
+      viewBox="0 0 34 34"
+      className={clsx(
+        classes.button,
+        {[classes.droppable]: isDroppable},
+        className)}>
+      <path d="m0,17l17,-17l17,17l-17,17l-17,-17z" />
     </svg>
   );
 }

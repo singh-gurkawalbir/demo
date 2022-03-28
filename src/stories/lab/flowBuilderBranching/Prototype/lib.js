@@ -107,14 +107,16 @@ export function layoutElements(elements = []) {
         }});
     } else { // these are the edges...
       const edge = graph.edge({v: el.source, w: el.target});
-      const sourceType = nodes.find(n => n.id === el.source).type;
-      const targetType = nodes.find(n => n.id === el.target).type;
+      const source = nodes.find(n => n.id === el.source);
+      const target = nodes.find(n => n.id === el.target);
 
       edges.push({
         ...el,
         data: {
-          sourceType,
-          targetType,
+          sourceType: source.type,
+          targetType: target.type,
+          sourceId: source.id,
+          targetId: target.id,
           points: edge.points,
         },
       });
