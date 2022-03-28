@@ -46,9 +46,9 @@ const RevisionCreatedBy = ({ integrationId, revisionId }) => {
   const userName = useSelector(state => {
     const users = selectors.availableUsersList(state, integrationId);
 
-    const user = users.find(user => revision?._byUserId === user.sharedWithUser._id);
+    const user = users.find(user => revision?._createdByUserId === user.sharedWithUser._id);
 
-    if (!user) return revision?._byUserId;
+    if (!user) return revision?._createdByUserId;
 
     return user.sharedWithUser.name || user.sharedWithUser.email;
   });
