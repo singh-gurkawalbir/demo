@@ -12,7 +12,7 @@ export function* uploadCustomTemplate({
   const uploadPath = `/integrations/${integrationId}/utilities/generateCategorySignedUrl`;
 
   try {
-    return yield call(uploadFile, { file, fileType, fileName, uploadPath });
+    return yield call(uploadFile, { file, fileType, fileName, uploadPath, method: 'PUT' });
   } catch (error) {
     return yield put(actions.integrationApp.utility.s3KeyError({integrationId, error}));
     // @TODO handle error
