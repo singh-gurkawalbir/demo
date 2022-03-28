@@ -16,7 +16,7 @@ export function* uploadFile({
   file,
   fileName,
   uploadPath,
-  method,
+  opts,
 }) {
   const path =
     uploadPath ||
@@ -25,9 +25,7 @@ export function* uploadFile({
   try {
     const response = yield call(apiCallWithRetry, {
       path,
-      opts: {
-        method: method || 'GET',
-      },
+      ...(opts && {opts}),
       message: 'Getting signed URL for file upload',
     });
     const headers = {
