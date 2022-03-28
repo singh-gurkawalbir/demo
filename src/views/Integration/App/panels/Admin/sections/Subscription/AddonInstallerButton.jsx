@@ -90,13 +90,13 @@ export default function AddonInstallerButton({ resource, ...rest }) {
       return 'Uninstall';
     }
     if (resource.status === 'paritallyUninstalled') {
-      return 'Resume Uninstall';
+      return 'Resume uninstall';
     }
     if (resource.status === 'available') {
       return 'Install';
     }
     if (resource.status === 'partiallyInstalled') {
-      return 'Resume Install';
+      return 'Resume install';
     }
   };
 
