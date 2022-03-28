@@ -12,7 +12,7 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const openEditAlias = useCallback(() => {
-      history.push(getRoutePath(getRoutePath(`${match.url}/edit/${aliasId}`)));
+      history.push(getRoutePath(`${match.url}/edit/${aliasId}`));
     }, [history, match.url, aliasId]);
 
     return openEditAlias;

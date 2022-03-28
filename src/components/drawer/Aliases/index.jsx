@@ -75,6 +75,7 @@ const ManageAliases = ({ flowId, accessLevel, isIntegrationApp, height }) => {
             {...metadata}
             collapsable
             defaultExpand
+            isTitleBold
             actionProps={tableData.actionProps}
             noDataMessage={tableData.noAliasesMessage}
           />

@@ -8,10 +8,10 @@ import { validateAliasId } from '../../../../utils/resource';
 import DynaText from '../DynaText';
 
 export default function DynaAliasId(props) {
-  const { parentResourceId, parentResourceType, aliasData, formKey, id, value, required } = props;
+  const { aliasContextResourceId, aliasContextResourceType, aliasData, formKey, id, value, required } = props;
   const dispatch = useDispatch();
   const status = useSelector(state => selectors.asyncTaskStatus(state, formKey));
-  const resourceAliases = useSelectorMemo(selectors.makeOwnAliases, parentResourceType, parentResourceId);
+  const resourceAliases = useSelectorMemo(selectors.makeOwnAliases, aliasContextResourceType, aliasContextResourceId);
 
   const { isValid, message } = validateAliasId(value, aliasData?.alias, resourceAliases);
 

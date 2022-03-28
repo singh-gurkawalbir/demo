@@ -385,6 +385,7 @@ selectors.integrationInstallSteps = (state, id) => {
   });
 };
 
+// This selector returns the aliases defined at the resource level
 selectors.makeOwnAliases = () => {
   const resourceSelector = selectors.makeResourceSelector();
 
@@ -400,6 +401,9 @@ selectors.makeOwnAliases = () => {
 
 selectors.ownAliases = selectors.makeOwnAliases();
 
+// This selector returns the aliases defined at its parent level
+// If aliases are defined at both the integration and parentIntegration level,
+// if some of aliases have common aliasId among them, then aliases of integration takes precedence over parentInategration's
 selectors.makeInheritedAliases = () => {
   const resourceSel = selectors.makeResourceSelector();
   const integrationResourceSel = selectors.makeResourceSelector();
@@ -411,7 +415,7 @@ selectors.makeInheritedAliases = () => {
 
       if (!flow?._integrationId) return;
 
-      return integrationResourceSel(state, 'integrations', flow._integrationId)?.aliases.map(
+      return integrationResourceSel(state, 'integrations', flow._integrationId)?.aliases?.map(
         aliasData => ({...aliasData, parentResourceId: flow._integrationId })
       );
     },
@@ -424,7 +428,7 @@ selectors.makeInheritedAliases = () => {
 
       if (!integration?._parentId) return;
 
-      return parentIntegrationResourceSel(state, 'integrations', integration._parentId)?.aliases.map(
+      return parentIntegrationResourceSel(state, 'integrations', integration._parentId)?.aliases?.map(
         aliasData => ({...aliasData, parentResourceId: integration._parentId })
       );
     },
@@ -441,6 +445,7 @@ selectors.makeInheritedAliases = () => {
     });
 };
 
+// This selector returns the resourcelist for a given alias resourcetype
 selectors.makeAliasResources = () => {
   const resourceSel = selectors.makeResourceSelector();
   const integrationResourceSel = selectors.makeResourceSelector();
@@ -460,19 +465,25 @@ selectors.makeAliasResources = () => {
         integrationId = flow._integrationId;
       }
 
-      return integrationResourceSel(state, 'integrations', integrationId || aliasContextResourceId);
+      return integrationResourceSel(state, 'integrations', integrationId || aliasContextResourceId) || emptyObject;
     },
     (resourceType, resourceList, aliasContextResourceId, integration) => {
       const integrationId = integration._id;
       const registeredConnectionIds = integration._registeredConnectionIds;
 
+      if (!resourceList) return emptyList;
+
+      // should return connections registered to the integration in which alias is being defined
       if (resourceType === 'connections') {
         return resourceList.filter(res => registeredConnectionIds?.includes(res._id));
       }
+      // should return flows attached to the integration in which alias is being defined
+      // if the alias is being defined at flow level, should filter this particular flow
       if (resourceType === 'flows') {
         return resourceList.filter(res => (res._integrationId === integrationId) && (res._id !== aliasContextResourceId));
       }
 
+      // should return exports/imports whose connection is registered to the integration in which alias is being defined
       return resourceList.filter(res => registeredConnectionIds?.includes(res._connectionId));
     },
   );

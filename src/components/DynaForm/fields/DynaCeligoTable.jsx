@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function DynaCeligoTable(props) {
   const classes = useStyles();
-  const { title, collapsable = false, defaultExpand = false, data, noDataMessage } = props;
+  const { title, collapsable = false, defaultExpand = false, data, noDataMessage, isTitleBold } = props;
   const [shouldExpand, setShouldExpand] = useState(defaultExpand);
 
   return collapsable ? (
@@ -38,7 +38,7 @@ export default function DynaCeligoTable(props) {
         data-test={title}
         onClick={() => setShouldExpand(expand => !expand)}
         expandIcon={<ExpandMoreIcon />}>
-        <Typography>{title}</Typography>
+        <Typography variant={isTitleBold ? 'h6' : ''}>{title}</Typography>
       </AccordionSummary>
       <AccordionDetails className={classes.accordianDetails}>
         {(!data?.length && noDataMessage) ? <Typography className={classes.noDataMessage}>{noDataMessage}</Typography> : <CeligoTable {...props} />}

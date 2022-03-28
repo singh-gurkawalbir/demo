@@ -21,7 +21,7 @@ import InstallationGuideIcon from '../../icons/InstallationGuideIcon';
 import ActionGroup from '../../ActionGroup';
 import CeligoDivider from '../../CeligoDivider';
 
-const getFieldMeta = (parentResourceId, parentResourceType, aliasData, aliasResourceId, isEdit) => ({
+const getFieldMeta = (resourceId, resourceType, aliasData, aliasResourceId, isEdit) => ({
   fieldMap: {
     aliasId: {
       id: 'aliasId',
@@ -33,8 +33,8 @@ const getFieldMeta = (parentResourceId, parentResourceType, aliasData, aliasReso
       isEdit,
       required: true,
       noApi: true,
-      parentResourceId,
-      parentResourceType,
+      aliasContextResourceId: resourceId,
+      aliasContextResourceType: resourceType,
       aliasData,
     },
     description: {
@@ -74,17 +74,17 @@ const getFieldMeta = (parentResourceId, parentResourceType, aliasData, aliasReso
         ],
       }],
       required: true,
-      isLoggable: true,
     },
     aliasResourceName: {
       id: 'aliasResourceName',
       name: 'aliasResourceName',
       type: 'selectaliasresource',
-      label: 'Resource Name',
+      label: 'Resource name',
       helpKey: 'alias.resource',
       defaultValue: aliasResourceId,
+      aliasContextResourceId: resourceId,
+      aliasContextResourceType: resourceType,
       required: true,
-      isLoggable: true,
       refreshOptionsOnChangesTo: ['aliasResourceType'],
       visibleWhen: [
         {
@@ -102,8 +102,6 @@ const getFieldMeta = (parentResourceId, parentResourceType, aliasData, aliasReso
 
       return {
         aliasResourceType: resourceType?.value,
-        aliasContextResourceId: parentResourceId,
-        aliasContextResourceType: parentResourceType,
       };
     }
 

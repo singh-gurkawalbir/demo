@@ -34,7 +34,7 @@ export const selectors = {};
 selectors.allAliases = (state, resourceId) => {
   if (!state) return emptyObj;
 
-  return state[resourceId] || emptyObj;
+  return (state[resourceId] || emptyObj).map(aliasData => ({ _id: aliasData.alias, ...aliasData}));
 };
 
 // #endregion
