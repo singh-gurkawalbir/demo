@@ -16,8 +16,7 @@ import TerminalFreeNode from './CustomNodes/terminalNodes/Free';
 import TerminalBlockedNode from './CustomNodes/terminalNodes/Blocked';
 import RouterNode from './CustomNodes/RouterNode';
 import MergeNode from './CustomNodes/MergeNode';
-import reducer, { resourceDataSelector } from './reducer';
-import { generateReactFlowGraph } from './translateSchema';
+import reducer, { resourceDataSelector, elementsSelector } from './reducer';
 import { Background } from './Background';
 import SourceTitle from './titles/SourceTitle';
 import DestinationTitle from './titles/DestinationTitle';
@@ -55,16 +54,15 @@ export default ({resourceState}) => {
     },
   });
   const mergedFlow = resourceDataSelector(state, 'flows', flowIdToTest);
-  const elements = useMemo(() => generateReactFlowGraph(state.data.resources, mergedFlow), [mergedFlow, state.data.resources]);
+  const elements = elementsSelector(state);
 
   const updatedLayout = useMemo(() =>
     layoutElements(elements, 'LR'),
   [elements]);
 
   useEffect(() => {
-    // eslint-disable-next-line no-console
-    // console.log(elements);
-  }, [elements]);
+    setState({type: actions.SET_GRAPH_ELEMENTS, flow: mergedFlow});
+  }, [mergedFlow]);
 
   // const handleMerge = handleMergeNode(mergedFlow, elements, setState);
 
@@ -73,7 +71,7 @@ export default ({resourceState}) => {
   };
 
   const handleNodeDragStop = () => {
-    setState({type: actions.MERGE_BRANCH_NEW});
+    setState({type: actions.MERGE_BRANCH_NEW, flowId: mergedFlow._id});
   };
 
   const handleCopySchema = () => {
@@ -108,6 +106,7 @@ export default ({resourceState}) => {
       flowNode,
       resourceNode,
       flowId: mergedFlow?._id});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // eslint-disable-next-line no-alert

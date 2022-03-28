@@ -59,9 +59,9 @@ const generatePageGeneratorNodesAndEdges = (resourcesState, pageGenerators, targ
   return [...nodes, ...edges];
 };
 
-const generatePageProcessorNodesAndEdges = (resourceState, pageProcessors, branch) => {
+const generatePageProcessorNodesAndEdges = (resourceState, pageProcessors, branchData = {}) => {
   const edges = [];
-
+  const {branch, branchIndex, routerIndex} = branchData;
   const nodes = pageProcessors.map((pageProcessor, index, collection) => {
     if (index + 1 < collection.length) {
       edges.push(generateDefaultEdge(pageProcessor.id, collection[index + 1].id));
@@ -73,6 +73,7 @@ const generatePageProcessorNodesAndEdges = (resourceState, pageProcessors, branc
       data: {
         resource: hydrateNodeData(resourceState, pageProcessor),
         branch,
+        path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${index}`,
       },
     };
   });
@@ -108,22 +109,27 @@ export const generateNodesAndEdgesFromBranchedFlow = (resourceState, flow) => {
   const routersArr = [...routers];
   const populateRouterElements = router => {
     if (router && !routerVisited[router._id]) {
-      elements.push(generateRouterNode(router));
-      router.branches.forEach(branch => {
+      const routerIndex = routersArr.findIndex(r => r._id === router._id);
+
+      elements.push(generateRouterNode(router, routerIndex));
+      router.branches.forEach((branch, branchIndex) => {
         if (branch.pageProcessors.length) {
           // draw an edge from router to first step of branch
-          const pageProcessorNodes = generatePageProcessorNodesAndEdges(resourceState, branch.pageProcessors, branch);
+          const pageProcessorNodes = generatePageProcessorNodesAndEdges(resourceState, branch.pageProcessors, {branch, branchIndex, routerIndex});
           const branchStartEdge = generateDefaultEdge(router._id, branch.pageProcessors[0].id);
 
           elements.push(branchStartEdge);
           if (branch._nextRouterId) {
-            elements.push(generateDefaultEdge(pageProcessorNodes[pageProcessorNodes.length - 1].id, branch._nextRouterId));
-            populateRouterElements(routers.find(r => r._id === branch._nextRouterId));
+            elements.push(generateDefaultEdge(branch.pageProcessors[branch.pageProcessors.length - 1].id, branch._nextRouterId));
+            if (branch._nextRouterId !== router._id) {
+              // Safe check, branch should not point to its own router, causes a loop
+              populateRouterElements(routers.find(r => r._id === branch._nextRouterId));
+            }
           } else {
-            const terminalNode = generateNewTerminal(branch);
+            const terminalNode = generateNewTerminal({branch, branchIndex, routerIndex});
 
             elements.push(terminalNode);
-            const terminalEdge = generateDefaultEdge(pageProcessorNodes[pageProcessorNodes.length - 1].id, terminalNode.id);
+            const terminalEdge = generateDefaultEdge(branch.pageProcessors[branch.pageProcessors.length - 1].id, terminalNode.id);
 
             elements.push(terminalEdge);
           }
@@ -133,11 +139,13 @@ export const generateNodesAndEdgesFromBranchedFlow = (resourceState, flow) => {
         if (branch._nextRouterId) {
           // join the router to the next router
           elements.push(generateDefaultEdge(router._id, branch._nextRouterId));
-
-          populateRouterElements(routers.find(r => r._id === branch._nextRouterId));
+          if (branch._nextRouterId !== router._id) {
+            // Safe check, branch should not point to its own router, causes a loop
+            populateRouterElements(routers.find(r => r._id === branch._nextRouterId));
+          }
         } else {
           // getnerate terminal edge
-          const terminalNode = generateNewTerminal(branch);
+          const terminalNode = generateNewTerminal({branch, branchIndex, routerIndex});
 
           elements.push(terminalNode);
           const terminalEdge = generateDefaultEdge(router._id, terminalNode.id);
