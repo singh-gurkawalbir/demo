@@ -6,10 +6,8 @@ import actions from './actions';
 import { emptyList, emptyObject } from '../../../../../utils/constants';
 import { generateEmptyRouter, generateBranch } from '../nodeGeneration';
 import { generateReactFlowGraph, populateIds } from '../translateSchema';
-import { generateId } from '../lib';
+import { BranchPathRegex, generateId, PageProcessorPathRegex } from '../lib';
 
-const BranchPathRegex = /\/routers\/(\d)\/branches\/(\d)/;
-const pageProcessorPathRegex = /\/routers\/(\d)\/branches\/(\d)\/pageProcessors\/(\d)/;
 const addNewStep = (draft, action) => {
   const { path, resourceType, flowNode, resourceNode, flowId } = action;
 
@@ -223,8 +221,8 @@ const handleDeleteNode = (draft, action) => {
   } else
   // Page processors
   // Typical page processor looks like /routers/:routerIndex/branches/:branchIndex/pageProcessors/:pageProcessorIndex
-  if (pageProcessorPathRegex.test(path)) {
-    const [, routerIndex, branchIndex, pageProcessorIndex] = pageProcessorPathRegex.exec(path);
+  if (PageProcessorPathRegex.test(path)) {
+    const [, routerIndex, branchIndex, pageProcessorIndex] = PageProcessorPathRegex.exec(path);
     const pageProcessors = jsonPatch.getValueByPointer(flow, `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors`);
 
     if (pageProcessors.length === 1) {
@@ -536,3 +534,4 @@ export const resourceDataSelector = createSelector(
     return flow;
   });
 export const elementsSelector = state => state?.session?.fb?.elements || emptyList;
+export const elementsMapSelector = state => state?.session?.fb?.elementsMap || emptyObject;

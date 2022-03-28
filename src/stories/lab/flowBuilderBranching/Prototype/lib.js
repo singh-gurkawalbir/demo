@@ -9,6 +9,9 @@ import { isVirtualRouter } from './nodeGeneration';
 // the edge of this node boundary frame.
 export const handleOffset = 4;
 
+export const BranchPathRegex = /\/routers\/(\d)\/branches\/(\d)/;
+export const PageProcessorPathRegex = /\/routers\/(\d)\/branches\/(\d)\/pageProcessors\/(\d)/;
+
 export const nodeSize = {
   pp: {
     width: 275,
@@ -288,6 +291,28 @@ export const areMultipleEdgesConnectedToSameEdgeTarget = (edgeId, elements) => {
   const {target} = edge;
 
   return elements.filter(isEdge).filter(e => e.target === target).length > 1;
+};
+
+export const isDragNodeOnSameBranch = (drageNodeId, edgeId, elements) => {
+  if (!drageNodeId || !edgeId || !elements) {
+    return false;
+  }
+  const dragNodeElement = elements[drageNodeId];
+  const edgeElement = elements[edgeId];
+
+  if (!edgeElement || edgeElement.type !== 'default') {
+    return false;
+  }
+  const edgePathElement = elements[edgeElement.source]?.type === 'router' ? elements[edgeElement.target] : elements[edgeElement.source];
+
+  if (dragNodeElement && edgePathElement && BranchPathRegex.test(dragNodeElement.data.path) && BranchPathRegex.test(edgePathElement.data.path)) {
+    const [dragNodeBranch] = BranchPathRegex.exec(dragNodeElement.data.path);
+    const [edgeElementBranch] = BranchPathRegex.exec(edgePathElement.data.path);
+
+    return dragNodeBranch === edgeElementBranch;
+  }
+
+  return false;
 };
 
 export const isNodeConnectedToRouter = (nodeId, elements) => {

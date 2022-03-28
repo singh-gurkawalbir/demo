@@ -16,7 +16,7 @@ import TerminalFreeNode from './CustomNodes/terminalNodes/Free';
 import TerminalBlockedNode from './CustomNodes/terminalNodes/Blocked';
 import RouterNode from './CustomNodes/RouterNode';
 import MergeNode from './CustomNodes/MergeNode';
-import reducer, { resourceDataSelector, elementsSelector } from './reducer';
+import reducer, { resourceDataSelector, elementsSelector, elementsMapSelector } from './reducer';
 import { Background } from './Background';
 import SourceTitle from './titles/SourceTitle';
 import DestinationTitle from './titles/DestinationTitle';
@@ -55,6 +55,7 @@ export default ({resourceState}) => {
   });
   const mergedFlow = resourceDataSelector(state, 'flows', flowIdToTest);
   const elements = elementsSelector(state);
+  const elementsMap = elementsMapSelector(state);
 
   const updatedLayout = useMemo(() =>
     layoutElements(elements, 'LR'),
@@ -117,6 +118,7 @@ export default ({resourceState}) => {
       {/* add flow to the context so it is accessible to flowGraph beneath ..this will be replaced by the resourceDataSelector */}
       <FlowProvider
         elements={elements}
+        elementsMap={elementsMap}
         flow={mergedFlow}
         dragNodeId={state.session.fb.dragNodeId}
         setState={setState}>

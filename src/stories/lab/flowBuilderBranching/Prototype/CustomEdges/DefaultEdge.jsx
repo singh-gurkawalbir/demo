@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import { getSmoothStepPath } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
-import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles } from '../lib';
+import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles, isDragNodeOnSameBranch } from '../lib';
 import { useFlowContext } from '../Context';
 import AddNewButton from './AddNewButton';
 import UnlinkButton from './UnlinkButton';
@@ -18,23 +18,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const BranchLabel = (
-  {id, branchName}
-
-) => {
-  if (!branchName) {
-    return null;
-  }
-
-  return (
-    <text>
-      <textPath href={`#${id}`} startOffset="25%">
-        {branchName}
-      </textPath>
-    </text>
-  );
-};
-
 export default function DefaultEdge({
   id,
   sourceX,
@@ -47,7 +30,7 @@ export default function DefaultEdge({
   data,
 }) {
   const classes = useStyles();
-  const { elements, dragNodeId, setState } = useFlowContext();
+  const { elements, elementsMap, dragNodeId, setState } = useFlowContext();
   const hasSiblingEdges = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
   const { sourceType, targetType, points: edgePoints } = data;
   const isDragging = !!dragNodeId;
@@ -58,6 +41,9 @@ export default function DefaultEdge({
   const isTerminal = targetType.includes('terminal');
   const showLinkIcon = hasSiblingEdges && !isSource;
   const showAddIcon = !isSource;
+  const isDragNodeAndEdgeOnSameBranch = isDragNodeOnSameBranch(dragNodeId, id, elementsMap);
+
+  const isMergableEdge = !isTerminal && !isDragNodeAndEdgeOnSameBranch && !isConnectedToMerge && !isConnectedToGenerator;
 
   /*
   {"points":[{"x":1250,"y":494},{"x":1350,"y":555},{"x":1587.5,"y":555},{"x":1825,"y":555},{"x":1927,"y":421.5}]}
@@ -177,9 +163,7 @@ export default function DefaultEdge({
         d={edgePath}
       />
 
-      <BranchLabel id={id} branchName={data?.branch} />
-
-      {isDragging && !isTerminal && !isConnectedToMerge && !isConnectedToGenerator && (
+      {isDragging && isMergableEdge && (
         <ForeignObject
           onMouseOver={handleMouseOver}
           onMouseOut={handleMouseOut}
