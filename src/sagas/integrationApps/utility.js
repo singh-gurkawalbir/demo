@@ -5,6 +5,7 @@ import { uploadFile } from '../uploadFile';
 
 export function* uploadCustomTemplate({
   integrationId,
+  childId,
   file,
   fileName = 'file.xlsx',
   fileType = 'application/text',
@@ -12,7 +13,12 @@ export function* uploadCustomTemplate({
   const uploadPath = `/integrations/${integrationId}/utilities/generateCategorySignedUrl`;
   const opts = {
     method: 'PUT',
-    body: {},
+    body: {
+      integrationId,
+      childId,
+      fileName,
+      fileType,
+    },
   };
 
   try {
@@ -22,12 +28,13 @@ export function* uploadCustomTemplate({
     // @TODO handle error
   }
 }
-export function* generateS3Key({ integrationId, file, fileType, fileName }) {
+export function* generateS3Key({ integrationId, childId, file, fileType, fileName }) {
   let runKey;
 
   try {
     runKey = yield call(uploadCustomTemplate, {
       integrationId,
+      childId,
       file,
       fileType,
       fileName,

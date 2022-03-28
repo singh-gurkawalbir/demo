@@ -34,6 +34,7 @@ export default function DynaUploadFile(props) {
     placeholder,
     persistData = false,
     _integrationId: integrationId,
+    childId,
   } = props;
   const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
@@ -64,6 +65,7 @@ export default function DynaUploadFile(props) {
         if (sendS3Key) {
           dispatch(actions.integrationApp.utility.requestS3Key({
             integrationId,
+            childId,
             file,
             fileName: rawFile.name,
             fileType: rawFile.type,
