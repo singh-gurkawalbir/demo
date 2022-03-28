@@ -10,7 +10,7 @@ export default {
     <CopyToClipboard text={rowData.alias}>
       <TextButton
         data-test="copyToClipboard">
-        Copy Alias
+        Copy alias
       </TextButton>
     </CopyToClipboard>
   ),

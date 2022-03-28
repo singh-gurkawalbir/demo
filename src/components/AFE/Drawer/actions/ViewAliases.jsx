@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import getRoutePath from '../../../../utils/routePaths';
@@ -18,7 +19,7 @@ export default function ViewAliases({ editorId }) {
       integrationId: e.integrationId,
       flowId: e.flowId,
     };
-  });
+  }, shallowEqual);
 
   const handleClick = useCallback(() => {
     history.push(getRoutePath(`${match.url}/aliases/view`));
@@ -26,7 +27,7 @@ export default function ViewAliases({ editorId }) {
 
   return (
     <>
-      <AliasDrawerWrapper resourceId={integrationId || flowId} resourceType={integrationId ? 'integrations' : 'flows'} height="tall" />
+      <AliasDrawerWrapper resourceId={flowId || integrationId} resourceType={flowId ? 'flows' : 'integrations'} height="tall" />
       <TextButton
         startIcon={<InstallationGuideIcon />}
         onClick={handleClick}>

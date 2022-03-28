@@ -25,7 +25,7 @@ import GraphIcon from '../../../components/icons/GraphIcon';
 import { getTopLevelTabs } from '../../../utils/integrationApps';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const getTabs = isUserInErrMgtTwoDotZero => [
+const getTabs = (isUserInErrMgtTwoDotZero, isStandalone) => [
   {
     path: 'settings',
     label: 'Settings',
@@ -75,12 +75,13 @@ const getTabs = isUserInErrMgtTwoDotZero => [
     Icon: SingleUserIcon,
     Panel: AdminPanel,
   },
-  {
-    path: 'aliases',
-    label: 'Aliases',
-    Icon: InstallationGuideIcon,
-    Panel: AliasesPanel,
-  },
+  ...(!isStandalone
+    ? [{
+      path: 'aliases',
+      label: 'Aliases',
+      Icon: InstallationGuideIcon,
+      Panel: AliasesPanel }]
+    : []),
 ];
 const emptyObj = {};
 
@@ -92,6 +93,7 @@ export function useAvailableTabs() {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const isStandalone = integrationId === 'none';
   const hideSettingsTab = useSelector(state => {
     const canEditSettingsForm =
           selectors.canEditSettingsForm(state, 'integrations', integrationId, (childId || integrationId));
@@ -134,7 +136,7 @@ export function useAvailableTabs() {
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
 
   const availableTabs = useMemo(() => getTopLevelTabs({
-    tabs: getTabs(isUserInErrMgtTwoDotZero),
+    tabs: getTabs(isUserInErrMgtTwoDotZero, isStandalone),
     isIntegrationApp,
     isParent,
     integrationId,
@@ -143,7 +145,7 @@ export function useAvailableTabs() {
     children,
     isMonitorLevelUser,
     hideSettingsTab,
-  }), [children, hasAddOns, hideSettingsTab, integrationId, isIntegrationApp, isUserInErrMgtTwoDotZero, isMonitorLevelUser, isParent, supportsChild]);
+  }), [children, hasAddOns, hideSettingsTab, integrationId, isIntegrationApp, isUserInErrMgtTwoDotZero, isMonitorLevelUser, isParent, supportsChild, isStandalone]);
 
   return availableTabs;
 }

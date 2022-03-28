@@ -2385,16 +2385,14 @@ selectors.getScriptContext = createSelector(
 
       return flow._integrationId;
     },
-    (_1, { options }) => options,
   ],
-  (contextType, _flowId, _integrationId, options) => {
+  (contextType, _flowId, _integrationId) => {
     if (contextType === 'hook' && _integrationId) {
       return {
         type: 'hook',
         container: 'integration',
         _integrationId,
         _flowId,
-        _scriptId: options?.rule?._scriptId,
       };
     }
   }

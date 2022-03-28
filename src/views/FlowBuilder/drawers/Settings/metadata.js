@@ -80,6 +80,7 @@ export default function getSettingsMetadata(props) {
         name: 'manageAliases',
         type: 'managealiases',
         label: 'Aliases',
+        helpKey: 'flow.manageAliases',
       },
       settings: {
         id: 'settings',
@@ -99,11 +100,11 @@ export default function getSettingsMetadata(props) {
               label: 'General',
               fields: ['name', 'description', ...(isUserInErrMgtTwoDotZero ? ['notifyOnFlowError', 'autoResolveMatchingTraceKeys'] : []), '_runNextFlowIds'],
             },
-            {
+            (flow?._integrationId ? {
               collapsed: false,
               label: 'Advanced settings',
               fields: ['manageAliases'],
-            },
+            } : {}),
           ],
         },
         {

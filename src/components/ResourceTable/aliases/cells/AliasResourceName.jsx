@@ -10,8 +10,6 @@ export default function AliasResourceName({ alias }) {
   const resource = useSelectorMemo(selectors.makeResourceSelector, resourceType, id);
 
   return (
-    <>
-      <Typography>{resource?.name}</Typography>
-    </>
+    <Typography>{resource?.name}</Typography>
   );
 }

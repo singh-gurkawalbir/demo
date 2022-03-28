@@ -14,6 +14,7 @@ import AddIcon from '../../../../components/icons/AddIcon';
 import { useSelectorMemo } from '../../../../hooks';
 import getRoutePath from '../../../../utils/routePaths';
 import ViewAliasDetailsDrawer from '../../../../components/drawer/Aliases/ViewAliasesDetails';
+import { isIntegrationAppVersion2 } from '../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,7 +36,10 @@ export default function Aliases({ integrationId, childId }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  const currentIntegrationId = childId || integrationId;
+  const isIntegrationV2 = useSelector(state =>
+    isIntegrationAppVersion2(selectors.resource(state, 'integrations', integrationId), true)
+  );
+  const currentIntegrationId = isIntegrationV2 ? (childId || integrationId) : integrationId;
   const filterKey = `${currentIntegrationId}+aliases`;
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, currentIntegrationId));
   const accessLevel = useSelector(state =>

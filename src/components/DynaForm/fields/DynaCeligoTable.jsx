@@ -18,7 +18,9 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     marginBottom: theme.spacing(2),
   },
-
+  noDataMessage: {
+    padding: theme.spacing(1),
+  },
 }));
 export default function DynaCeligoTable(props) {
   const classes = useStyles();
@@ -39,7 +41,7 @@ export default function DynaCeligoTable(props) {
         <Typography>{title}</Typography>
       </AccordionSummary>
       <AccordionDetails className={classes.accordianDetails}>
-        {(!data?.length && noDataMessage) ? <Typography >{noDataMessage}</Typography> : <CeligoTable {...props} />}
+        {(!data?.length && noDataMessage) ? <Typography className={classes.noDataMessage}>{noDataMessage}</Typography> : <CeligoTable {...props} />}
       </AccordionDetails>
     </Accordion>
   ) : (

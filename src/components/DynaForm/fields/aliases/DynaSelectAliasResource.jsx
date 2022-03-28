@@ -3,19 +3,17 @@ import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
 import DynaSelect from '../DynaSelect';
 
-export default function DynaSelectAliasResource(props) {
-  const { options } = props;
-  const resourceList = useSelectorMemo(selectors.makeAliasResources, options?.resourceType, options?.parentResourceType, options?.parentResourceId) || [];
+export default function DynaSelectAliasResource({ options = {}, ...props}) {
+  const { aliasResourceType, aliasContextResourceId, aliasContextResourceType } = options;
+  const resourceList = useSelectorMemo(selectors.makeAliasResources, aliasResourceType, aliasContextResourceType, aliasContextResourceId);
   const selectOptions = useMemo(() => ([{
     items: resourceList.map(res => ({
       label: res.name,
       value: res._id,
     })),
-  }]), [options?.resourceType, resourceList]);
+  }]), [resourceList]);
 
   return (
-    <>
-      <DynaSelect {...props} options={selectOptions} />
-    </>
+    <DynaSelect {...props} options={selectOptions} />
   );
 }

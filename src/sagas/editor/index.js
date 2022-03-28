@@ -786,7 +786,7 @@ export function* initEditor({ id, editorType, options }) {
 
       formattedOptions = init({options: formattedOptions, resource, fieldState, fileDefinitionData});
     } else if (editorType === 'javascript') {
-      const scriptContext = yield select(selectors.getScriptContext, {flowId, contextType: 'hook', options: formattedOptions});
+      const scriptContext = yield select(selectors.getScriptContext, {flowId, contextType: 'hook'});
 
       formattedOptions = init({options: formattedOptions, resource, fieldState, flow, scriptContext});
     } else {

@@ -13,7 +13,7 @@ import SaveAndCloseButtonGroupForm from '../../SaveAndCloseButtonGroup/SaveAndCl
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../DynaForm';
 import { getResourceFromAlias } from '../../../utils/resource';
-import { FORM_SAVE_STATUS } from '../../../utils/constants';
+import { ALIAS_FORM_KEY, FORM_SAVE_STATUS } from '../../../utils/constants';
 import getRoutePath from '../../../utils/routePaths';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
@@ -21,30 +21,30 @@ import InstallationGuideIcon from '../../icons/InstallationGuideIcon';
 import ActionGroup from '../../ActionGroup';
 import CeligoDivider from '../../CeligoDivider';
 
-const ALIAS_FORM_KEY = 'resource-alias';
-
-const getFieldMeta = (parentResourceId, parentResourceType, alias, aliasResourceId, isEdit) => ({
+const getFieldMeta = (parentResourceId, parentResourceType, aliasData, aliasResourceId, isEdit) => ({
   fieldMap: {
     aliasId: {
       id: 'aliasId',
       name: 'aliasId',
       type: 'aliasid',
       label: 'Alias ID',
-      defaultValue: alias?.alias,
+      defaultValue: aliasData?.alias,
       helpKey: 'alias.aliasId',
       isEdit,
       required: true,
+      noApi: true,
       parentResourceId,
       parentResourceType,
-      alias,
+      aliasData,
     },
     description: {
       id: 'description',
       name: 'description',
       type: 'text',
       label: 'Alias description',
-      defaultValue: alias?.description,
+      defaultValue: aliasData?.description,
       helpKey: 'alias.description',
+      noApi: true,
     },
     aliasResourceType: {
       id: 'aliasResourceType',
@@ -52,7 +52,7 @@ const getFieldMeta = (parentResourceId, parentResourceType, alias, aliasResource
       type: 'select',
       label: 'Resource type',
       helpKey: 'alias.resourceType',
-      defaultValue: getResourceFromAlias(alias).resourceType || '',
+      defaultValue: getResourceFromAlias(aliasData).resourceType || '',
       options: [{
         items: [
           {
@@ -101,9 +101,9 @@ const getFieldMeta = (parentResourceId, parentResourceType, alias, aliasResource
       );
 
       return {
-        resourceType: resourceType?.value,
-        parentResourceId,
-        parentResourceType,
+        aliasResourceType: resourceType?.value,
+        aliasContextResourceId: parentResourceId,
+        aliasContextResourceType: parentResourceType,
       };
     }
 

@@ -98,8 +98,15 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
 
   // while working with newly created flows, flowId could be temporary UI generated. Rely on flow._id as flowId while making page processor preview call.
   // refer IO-21519
-  body._flowId = flow?._id;
-  body._integrationId = integrationId !== STANDALONE_INTEGRATION.id ? integrationId : undefined;
+  let path;
+
+  if (integrationId && integrationId !== STANDALONE_INTEGRATION.id && flow?._id) {
+    path = `/integrations/${integrationId}/flows/${flow?._id}/exports/preview`;
+  } else if (integrationId && integrationId !== STANDALONE_INTEGRATION.id && !flow?._id) {
+    path = `/integrations/${integrationId}/exports/preview`;
+  } else {
+    path = '/exports/preview';
+  }
 
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
 
@@ -109,7 +116,7 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
 
   try {
     const previewData = yield call(apiCallWithRetry, {
-      path: '/exports/preview',
+      path,
       opts: { method: 'POST', body },
       hidden: true,
     });

@@ -20,45 +20,37 @@ const useStyles = makeStyles(theme => ({
 const ViewAliasDetails = ({ resourceId, resourceType }) => {
   const classes = useStyles();
   const match = useRouteMatch();
-  const aliasId = match.params?.aliasId;
+  const { aliasId, parentResourceId} = match.params;
   const isInheritedAlias = match.url?.includes('inherited');
-  const resourceAliases = useSelectorMemo(selectors.makeOwnAliases, resourceType, resourceId);
-  const inheritedAliases = useSelectorMemo(selectors.makeInheritedAliases, resourceType, resourceId);
-  const aliasData = (isInheritedAlias ? inheritedAliases : resourceAliases).find(ra => ra.alias === aliasId) || {};
+  // If the alias is inherited, then the resource context level at which
+  // the alias is defined will always be integration
+  const aliasContextResourceType = isInheritedAlias ? 'integrations' : resourceType;
+  const aliasContextResourceId = isInheritedAlias ? parentResourceId : resourceId;
+  const resourceAliases = useSelectorMemo(selectors.makeOwnAliases, aliasContextResourceType, aliasContextResourceId);
+  const aliasData = resourceAliases.find(ra => ra.alias === aliasId) || {};
   const { id: aliasResourceId, resourceType: aliasResourceType } = getResourceFromAlias(aliasData);
   const aliasResource = useSelectorMemo(selectors.makeResourceSelector, aliasResourceType, aliasResourceId) || {};
-  const parentResource = useSelectorMemo(selectors.makeResourceSelector, 'integrations', aliasData?.parentResourceId) || {};
 
-  const dataToRender = useMemo(() => {
-    const data = {
-      'Alias ID': aliasData.alias,
-    };
+  const dataToRender = useMemo(() => ({
+    'Alias ID': aliasData.alias,
+    'Alias description': aliasData.description,
+    'Resource type': MODEL_PLURAL_TO_LABEL[aliasResourceType],
+    'Resource name': aliasResource.name,
+    'Resource ID': aliasResourceId,
+    'Parent resource': parentResourceId,
+  }), [aliasData, aliasResource, aliasResourceType, aliasResourceId, parentResourceId]);
 
-    if (aliasData.description) {
-      data['Alias description'] = aliasData.description;
-    }
-    data['Resource type'] = MODEL_PLURAL_TO_LABEL[aliasResourceType];
-    data['Resource Name'] = aliasResource.name;
-    data['Resource ID'] = aliasResourceId;
-
-    if (isInheritedAlias) {
-      data['Parent resource'] = true;
-    }
-
-    return data;
-  }, [aliasData, aliasResource, aliasResourceType, aliasResourceId, isInheritedAlias]);
-
-  return (
-    <>
-      {Object.keys(dataToRender).map(key => (
-        <div key={key} className={classes.aliasDetailContent}>
+  return Object.keys(dataToRender).map(key => (
+    <div key={key} className={classes.aliasDetailContent}>
+      {dataToRender[key] ? (
+        <>
           <Typography component="span" variant="h6" >{`${key}: `}</Typography>
-          {(key === 'Parent resource' && parentResource) ? (<NameCell al={{resourceType: 'integration', _resourceId: parentResource._id}} />)
-            : (<Typography component="span" >{dataToRender[key]}</Typography>)}
-        </div>
-      ))}
-    </>
-  );
+          <Typography component="span" >{key !== 'Parent resource' ? dataToRender[key] : ''}</Typography>
+          <NameCell al={{resourceType: 'integration', _resourceId: key === 'Parent resource' ? parentResourceId : ''}} />
+        </>
+      ) : ''}
+    </div>
+  ));
 };
 
 export default function ViewAliasDetailsDrawer({ resourceId, resourceType, height = 'short' }) {
@@ -74,12 +66,12 @@ export default function ViewAliasDetailsDrawer({ resourceId, resourceType, heigh
     <RightDrawer
       height={height}
       width="default"
-      path={['viewdetails/inherited/:aliasId', 'viewdetails/:aliasId']}
+      path={['viewdetails/:aliasId/inherited/:parentResourceId', 'viewdetails/:aliasId']}
     >
       <DrawerHeader
         title="View details"
         infoText={infoTextViewAliasDetails}
-        handleClose={handleClose} />
+      />
       <DrawerContent>
         <ViewAliasDetails resourceId={resourceId} resourceType={resourceType} />
       </DrawerContent>

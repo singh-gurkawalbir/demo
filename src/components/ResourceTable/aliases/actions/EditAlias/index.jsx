@@ -8,12 +8,12 @@ export default {
   useLabel: () => 'Edit alias',
   icon: EditIcon,
   useOnClick: rowData => {
-    const { alias } = rowData;
+    const { alias: aliasId } = rowData;
     const history = useHistory();
     const match = useRouteMatch();
     const openEditAlias = useCallback(() => {
-      history.push(getRoutePath(getRoutePath(`${match.url}/edit/${alias}`)));
-    }, [history, match.url, alias]);
+      history.push(getRoutePath(getRoutePath(`${match.url}/edit/${aliasId}`)));
+    }, [history, match.url, aliasId]);
 
     return openEditAlias;
   },

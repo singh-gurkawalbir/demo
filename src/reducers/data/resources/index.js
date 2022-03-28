@@ -391,54 +391,53 @@ selectors.makeOwnAliases = () => {
   return createSelector(
     (state, resourceType, id) => resourceSelector(state, resourceType, id)?.aliases,
     aliases => {
-      if (!aliases) return [];
+      if (!aliases) return emptyList;
 
       return aliases;
     }
   );
 };
 
+selectors.ownAliases = selectors.makeOwnAliases();
+
 selectors.makeInheritedAliases = () => {
   const resourceSel = selectors.makeResourceSelector();
   const integrationResourceSel = selectors.makeResourceSelector();
+  const parentIntegrationResourceSel = selectors.makeResourceSelector();
 
   return createSelector(
-    (state, resourceType, id) => {
-      if (resourceType === 'integrations') return id;
-
+    (state, id) => {
       const flow = resourceSel(state, 'flows', id);
 
-      if (!flow || !flow._integrationId) return null;
+      if (!flow?._integrationId) return;
 
-      return flow._integrationId;
+      return integrationResourceSel(state, 'integrations', flow._integrationId)?.aliases.map(
+        aliasData => ({...aliasData, parentResourceId: flow._integrationId })
+      );
     },
-    (state, resourceType, id) => {
-      if (resourceType === 'integrations') return null;
-
+    (state, id) => {
       const flow = resourceSel(state, 'flows', id);
 
-      if (!flow || !flow._integrationId) return null;
+      if (!flow || !flow._integrationId) return;
 
-      return integrationResourceSel(state, 'integrations', flow._integrationId)?.aliases;
+      const integration = integrationResourceSel(state, 'integrations', flow._integrationId);
+
+      if (!integration?._parentId) return;
+
+      return parentIntegrationResourceSel(state, 'integrations', integration._parentId)?.aliases.map(
+        aliasData => ({...aliasData, parentResourceId: integration._parentId })
+      );
     },
-    (parentResourceId, parentResourceAliases) => {
-      if (!parentResourceAliases) return [];
+    (integrationAliases, parentIntegrationAliases) => {
+      if (!integrationAliases && !parentIntegrationAliases) return emptyList;
 
-      return parentResourceAliases.map(aliasData => ({...aliasData, parentResourceId }));
-    });
-};
+      if (!parentIntegrationAliases) return integrationAliases;
 
-selectors.makeAllAliases = () => {
-  const resourceAliasesSel = selectors.makeOwnAliases();
-  const inheritedAliasesSel = selectors.makeInheritedAliases();
+      if (!integrationAliases) return parentIntegrationAliases;
 
-  return createSelector(
-    (state, resourceType, id) => resourceAliasesSel(state, resourceType, id),
-    (state, resourceType, id) => inheritedAliasesSel(state, resourceType, id),
-    (resourceAliases, inheritedAliases) => {
-      const filteredInheritedAliases = inheritedAliases.filter(aliasData => !resourceAliases.some(ra => ra.alias === aliasData.alias));
+      const filteredParentIntegrationAliases = parentIntegrationAliases.filter(aliasData => !integrationAliases.some(ia => ia.alias === aliasData.alias));
 
-      return [...resourceAliases, ...filteredInheritedAliases];
+      return [...integrationAliases, ...filteredParentIntegrationAliases];
     });
 };
 
@@ -447,22 +446,23 @@ selectors.makeAliasResources = () => {
   const integrationResourceSel = selectors.makeResourceSelector();
 
   return createSelector(
-    (_1, resourceType) => resourceType,
-    (state, resourceType) => selectors.resources(state, resourceType),
-    (state, _2, parentResourceType, parentResourceId) => {
+    (_1, aliasResourceType) => aliasResourceType,
+    (state, aliasResourceType) => selectors.resources(state, aliasResourceType),
+    (_1, _2, _3, aliasContextResourceId) => aliasContextResourceId,
+    (state, _2, aliasContextResourceType, aliasContextResourceId) => {
       let integrationId;
 
-      if (parentResourceType === 'flows') {
-        const flow = resourceSel(state, parentResourceType, parentResourceId);
+      if (aliasContextResourceType === 'flows') {
+        const flow = resourceSel(state, aliasContextResourceType, aliasContextResourceId);
 
-        if (!flow || !flow._integrationId) return null;
+        if (!flow || !flow._integrationId) return emptyObject;
 
         integrationId = flow._integrationId;
       }
 
-      return integrationResourceSel(state, 'integrations', integrationId || parentResourceId);
+      return integrationResourceSel(state, 'integrations', integrationId || aliasContextResourceId);
     },
-    (resourceType, resourceList, integration) => {
+    (resourceType, resourceList, aliasContextResourceId, integration) => {
       const integrationId = integration._id;
       const registeredConnectionIds = integration._registeredConnectionIds;
 
@@ -470,7 +470,7 @@ selectors.makeAliasResources = () => {
         return resourceList.filter(res => registeredConnectionIds?.includes(res._id));
       }
       if (resourceType === 'flows') {
-        return resourceList.filter(res => res._integrationId === integrationId);
+        return resourceList.filter(res => (res._integrationId === integrationId) && (res._id !== aliasContextResourceId));
       }
 
       return resourceList.filter(res => registeredConnectionIds?.includes(res._connectionId));

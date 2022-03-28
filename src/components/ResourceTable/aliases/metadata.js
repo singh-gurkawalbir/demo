@@ -16,19 +16,19 @@ export default {
       heading: 'Alias ID',
       Value: ({rowData: r}) => (
         <>
-          <Typography component="span" >{r?.alias}</Typography>
-          {r?.description && <InfoIconButton info={r?.description} placement="bottom-center" escapeUnsecuredDomains size="xs" />}
+          <Typography component="span" >{r.alias}</Typography>
+          <InfoIconButton info={r?.description} placement="bottom" escapeUnsecuredDomains size="xs" />
         </>
       ),
     },
     {
       key: 'name',
-      heading: 'Resource Name',
+      heading: 'Resource name',
       Value: ({rowData: r}) => <AliasResourceName alias={r} />,
     },
     {
       key: 'type',
-      heading: 'Resource Type',
+      heading: 'Resource type',
       Value: ({rowData: r}) => MODEL_PLURAL_TO_LABEL[getResourceFromAlias(r).resourceType],
       orderBy: 'type',
     },

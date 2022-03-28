@@ -336,6 +336,17 @@ const resource = {
   commitConflict: (id, conflict, scope) =>
     action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id, scope }),
 
+  aliases: {
+    requestAll: (resourceType, resourceId) =>
+      action(actionTypes.RESOURCE.REQUEST_ALL_ALIASES, { resourceType, resourceId }),
+    received: (resourceId, aliases) =>
+      action(actionTypes.RESOURCE.RECEIVED_ALIASES, {resourceId, aliases}),
+    clear: resourceId =>
+      action(actionTypes.RESOURCE.CLEAR_ALIASES, {resourceId}),
+    delete: (resourceId, resourceType, aliasId, asyncKey) =>
+      action(actionTypes.RESOURCE.DELETE_ALIAS, {resourceId, resourceType, aliasId, asyncKey}),
+  },
+
   integrations: {
     delete: integrationId =>
       action(actionTypes.INTEGRATION.DELETE, { integrationId }),

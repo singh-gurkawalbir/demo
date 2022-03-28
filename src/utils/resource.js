@@ -965,6 +965,33 @@ export const getNextLinkRelativeUrl = link => {
   return '';
 };
 
+export const validateAliasId = (aliasId, previousAliasId, aliases) => {
+  if (!aliasId) {
+    return {
+      isValid: false,
+      message: 'A value must be provided',
+    };
+  }
+
+  if (aliasId !== previousAliasId && aliases.some(ra => ra.alias === aliasId)) {
+    return {
+      isValid: false,
+      message: 'Use a different alias ID. You already have an alias ID registered with the same name.',
+    };
+  }
+
+  if (!/^[a-zA-Z0-9-_]+$/.test(aliasId)) {
+    return {
+      isValid: false,
+      message: 'Your alias ID must contain string type field, alphanumeric, hyphen and underscore characters only.',
+    };
+  }
+
+  return {
+    isValid: true,
+  };
+};
+
 export const getResourceFromAlias = alias => {
   if (!alias) return {};
 
