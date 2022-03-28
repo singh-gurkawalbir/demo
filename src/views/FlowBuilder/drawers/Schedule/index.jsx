@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
+import { DRAWER_URLS } from '../../../../utils/drawerURLs';
 import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
@@ -64,7 +65,7 @@ export default function ScheduleDrawer({flowId}) {
   const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
 
   return (
-    <RightDrawer path={[':flowId/schedule', 'schedule']}>
+    <RightDrawer path={DRAWER_URLS.FLOW_SCHEDULE}>
       <DrawerHeader title="Flow schedule" disableClose={disabled} handleClose={setCancelTriggered} />
       <DrawerForm flowId={flowId} formKey={formKey} />
     </RightDrawer>

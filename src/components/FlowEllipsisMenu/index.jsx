@@ -20,6 +20,7 @@ import CalendarIcon from '../icons/CalendarIcon';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import { getTemplateUrlName } from '../../utils/template';
 import getRoutePath from '../../utils/routePaths';
+import { DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -136,17 +137,18 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
           break;
 
         case 'schedule':
+          // TODO @Raghu: How to reproduce these URL redirections?
           if (flowDetails._connectorId) {
             history.push(
-              getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/schedule`)
+              getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/${DRAWER_URL_PREFIX}/schedule`)
             );
           } else if (templateName) {
             history.push(
-              getRoutePath(`/templates/${templateName}/${integrationId}/flowBuilder/${flowId}/schedule`)
+              getRoutePath(`/templates/${templateName}/${integrationId}/flowBuilder/${flowId}/${DRAWER_URL_PREFIX}/schedule`)
             );
           } else {
             history.push(
-              getRoutePath(`/integrations/${integrationId}/flowBuilder/${flowId}/schedule`)
+              getRoutePath(`/integrations/${integrationId}/flowBuilder/${flowId}/${DRAWER_URL_PREFIX}/schedule`)
             );
           }
 

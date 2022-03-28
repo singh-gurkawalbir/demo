@@ -4,6 +4,7 @@ import { useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { selectors } from '../../../../../../reducers';
+import { DRAWER_URLS } from '../../../../../../utils/drawerURLs';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/formFactory/utils';
 import LoadResources from '../../../../../../components/LoadResources';
 import { IAFormStateManager} from '..';
@@ -100,8 +101,7 @@ export default function SettingsDrawer(props) {
 
   return (
     <RightDrawer
-      path=":flowId/settings"
-      variant="temporary"
+      path={DRAWER_URLS.IA_FLOW_SETTINGS}
       height="tall"
       width="xl">
       <IASettings {...props} parentUrl={match.url} />

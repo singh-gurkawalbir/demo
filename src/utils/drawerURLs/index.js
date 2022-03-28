@@ -29,11 +29,11 @@ const DRAWER_URL_REFS = {
   ],
   CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId',
   SHARE_STACKS: 'share/stacks/:stackId', // has router for drawer content
-  HOOKS: 'hooks/:resourceType/:resourceId',
+  FLOW_BUILDER_HOOKS: 'hooks/:resourceType/:resourceId', // done
   FLOW_BUILDER_ANALYTICS: 'charts', // done
   REPLACE_CONNECTION: 'replaceConnection/:connId', // done
-  FLOW_SCHEDULE: [':flowId/schedule', 'schedule'],
-  SETTINGS: 'settings',
+  FLOW_SCHEDULE: [':flowId/schedule', 'schedule'], // done - pending testing
+  FLOW_BUILDER_SETTINGS: 'settings', // done
   ADD_CATEGORY_MAPPING: ':flowId/utilitymapping/:categoryId/addCategory',
   CATEGORY_MAPPING: ':flowId/utilitymapping/:categoryId',
   VARIATION_MAPPING_ATTRIBUTES: ':flowId/utilitymapping/:categoryId/depth/:depth/variationAttributes/:subCategoryId',
@@ -41,7 +41,7 @@ const DRAWER_URL_REFS = {
     ':flowId/utilitymapping/:categoryId/depth/:depth/variations/:subCategoryId/:variation',
     ':flowId/utilitymapping/:categoryId/depth/:depth/variations/:subCategoryId',
   ],
-  FLOW_SETTINGS: ':flowId/settings',
+  IA_FLOW_SETTINGS: ':flowId/settings', // done
   FLOW_ERROR_LIST: ':flowId/errorsList', // done
   MAPPINGS: [
     'mapping/:flowId/:importId/:subRecordMappingId/view',

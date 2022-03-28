@@ -5,13 +5,14 @@ import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
 import EditorDrawer from '../../../../components/AFE/Drawer';
 import ResourceDrawer from '../../../../components/drawer/Resource';
 import { useFormOnCancel } from '../../../../components/FormOnCancelContext';
+import { DRAWER_URLS } from '../../../../utils/drawerURLs';
 
 const formKey = 'hooksave';
 export default function HooksDrawer({ flowId, integrationId }) {
   const {setCancelTriggered, disabled} = useFormOnCancel(formKey);
 
   return (
-    <RightDrawer path="hooks/:resourceType/:resourceId">
+    <RightDrawer path={DRAWER_URLS.FLOW_BUILDER_HOOKS}>
       <DrawerHeader
         title="Hooks"
         helpKey="export.hooks"
