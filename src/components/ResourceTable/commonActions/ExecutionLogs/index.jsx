@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import AuditLogIcon from '../../../icons/AuditLogIcon';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
+import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 
 export default {
   key: 'viewExecutionLog',
@@ -28,7 +29,7 @@ export default {
 
       if (!flowId) {
         history.push(
-          `${location.pathname}/viewLogs/${scriptId}`
+          `${location.pathname}/${DRAWER_URL_PREFIX}/viewLogs/${scriptId}`
         );
       }
     }, [dispatch, flowId, history, location.pathname, scriptId]);

@@ -1,20 +1,40 @@
 const DRAWER_URL_REFS = {
   EDITOR: 'editor/:editorId',
-  CONNECTION_DEBUGGER: 'configDebugger/:connectionId', // done
-  FLOW_GROUP_ADD_EDIT: ['flowgroups/add', 'flowgroups/edit'], // done
-  FLOW_STEP_DEBUG_LOGS: 'logs', // done
   INSTALL_INTEGRATION: 'installIntegration',
   INSTALL_TEMPLATE: 'installTemplate',
   LOOKUP: 'lookup', // has URL redirection for drawer content
   RESOURCE: ':operation(add|edit)/:resourceType/:id',
-  DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId', // done
-  DYNA_NS_SUBRECORD: ['subrecords/:fieldId', 'subrecords'],
   CONDITIONAL_LOOKUP: ['conditionalLookup/edit/:lookupName', 'conditionalLookup/add'],
   ADD_EDIT_LOOKUP: ['lookups/edit/:lookupName', 'lookups/add'], // Is it linked with Line: 8 lookup ?
+  FORM_INSTALL_STEP: 'form/:formType',
+  MAPPING_SETTINGS: [
+    'settings/:mappingKey',
+    'settings/category/:editorId/sections/:sectionId/:depth/:mappingKey',
+  ],
+  CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId',
+  SHARE_STACKS: 'share/stacks/:stackId', // has router for drawer content
+  MAPPINGS: [
+    'mapping/:flowId/:importId/:subRecordMappingId/view',
+    'mapping/:flowId/:importId/view',
+    'mapping/:flowId/:importId',
+    'mapping/:flowId',
+  ],
+  DB_MAPPINGS: 'dbMapping/:flowId/:importId',
+  SCRIPT_LOG_DETAILS: [
+    'scriptLog/:scriptId/:flowId/:index',
+    'scriptLog/:scriptId/:index',
+  ],
+  SUBSCRIPTION: ':env/:type', // TODO: add a name space in between env & type
+  // ---------------------------------------------------------------------
+  NS_SUB_RECORD: ['subrecords/:fieldId', 'subrecords'],
+  SCRIPT_LOGS: 'viewLogs/:scriptId',
+  CONNECTION_DEBUGGER: 'configDebugger/:connectionId', // done
+  FLOW_GROUP_ADD_EDIT: ['flowgroups/add', 'flowgroups/edit'], // done
+  FLOW_STEP_DEBUG_LOGS: 'logs', // done
+  DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId', // done
   EM_ERROR_DETAILS: ['errors/:resourceId/filter/:flowJobId/:errorType', 'errors/:resourceId/:errorType'], // done
   EM_DOWNLOAD_ERRORS: 'download/:type', // done
   EM_VIEW_ERROR_DETAILS: 'details/:errorId/:mode', // done
-  FORM_INSTALL_STEP: 'form/:formType',
   JOB_VIEW_ERRORS: 'viewErrors', // done
   QUEUED_JOBS: ['flows/:flowId/queuedJobs', ':flowId/queuedJobs'], // done
   JOB_EDIT_RETRY: 'editRetry/:retryId', // done
@@ -23,12 +43,6 @@ const DRAWER_URL_REFS = {
   MANAGE_NOTIFICATIONS_SETUP: ':userEmail/manageNotifications', // done
   MANAGE_USER_PERMISSIONS: 'edit/:userId', // done
   VIEW_NOTIFICATIONS_SETUP: ':userEmail/notifications', // done
-  MAPPING_SETTINGS: [
-    'settings/:mappingKey',
-    'settings/category/:editorId/sections/:sectionId/:depth/:mappingKey',
-  ],
-  CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId',
-  SHARE_STACKS: 'share/stacks/:stackId', // has router for drawer content
   FLOW_BUILDER_HOOKS: 'hooks/:resourceType/:resourceId', // done
   FLOW_BUILDER_ANALYTICS: 'charts', // done
   REPLACE_CONNECTION: 'replaceConnection/:connId', // done
@@ -42,21 +56,8 @@ const DRAWER_URL_REFS = {
   ],
   IA_FLOW_SETTINGS: ':flowId/settings', // done
   FLOW_ERROR_LIST: ':flowId/errorsList', // done
-  MAPPINGS: [
-    'mapping/:flowId/:importId/:subRecordMappingId/view',
-    'mapping/:flowId/:importId/view',
-    'mapping/:flowId/:importId',
-    'mapping/:flowId',
-  ],
-  DB_MAPPINGS: 'dbMapping/:flowId/:importId',
   ACCOUNT_UPGRADE: 'upgrade', // done - ** but not verified
-  SUBSCRIPTION: ':env/:type', // TODO: add a name space in between env & type
   VIEW_REPORT_DETAILS: 'view/reportDetails/:reportId', // done
-  SCRIPT_LOG_DETAILS: [
-    'scriptLog/:scriptId/:flowId/:index',
-    'scriptLog/:scriptId/:index',
-  ],
-  SCRIPT_LOGS: 'viewLogs/:scriptId',
   CREATE_SNAPSHOT: 'snapshot/:revId/open', // done
   OPEN_PULL: 'pull/:revId/open', // done
   REVIEW_PULL_CHANGES: 'pull/:revisionId/review', // done
