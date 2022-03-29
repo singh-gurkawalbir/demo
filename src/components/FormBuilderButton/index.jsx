@@ -5,6 +5,7 @@ import { makeStyles, Button } from '@material-ui/core';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import FieldHelp from '../DynaForm/FieldHelp';
+import { editorDrawerUrl } from '../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -35,7 +36,7 @@ export default function FormBuilderButton({resourceId, resourceType, integration
           sectionId,
         })
       );
-      history.push(`${match.url}/editor/${customSettingsEditorId}`);
+      history.push(`${match.url}${editorDrawerUrl(customSettingsEditorId)}`);
     },
     [dispatch, customSettingsEditorId, history, match.url, resourceId, resourceType, sectionId, integrationId]
   );

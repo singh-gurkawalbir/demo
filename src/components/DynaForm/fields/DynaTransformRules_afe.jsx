@@ -10,6 +10,7 @@ import EditIcon from '../../icons/EditIcon';
 import CodeEditor from '../../CodeEditor2';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import actions from '../../../actions';
+import { editorDrawerUrl } from '../../../utils/drawerURLs';
 
 const useStyles = makeStyles({
   label: {
@@ -84,7 +85,7 @@ export default function DynaTransformRules_afe({
       onSave: handleSave,
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
+    history.push(`${match.url}${editorDrawerUrl(editorId)}`);
   }, [dispatch, editorId, flowId, formKey, handleSave, history, id, match.url, resourceId, resourceType, rule]);
 
   return (

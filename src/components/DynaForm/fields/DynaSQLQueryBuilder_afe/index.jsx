@@ -5,6 +5,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import DynaHandlebarPreview from '../DynaHandlebarPreview';
+import { editorDrawerUrl } from '../../../../utils/drawerURLs';
 
 export default function DynaSQLQueryBuilder_afe(props) {
   const {
@@ -63,7 +64,7 @@ export default function DynaSQLQueryBuilder_afe(props) {
       onSave: handleSave,
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
+    history.push(`${match.url}${editorDrawerUrl(editorId)}`);
   }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
 
   return (

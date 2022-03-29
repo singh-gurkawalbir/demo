@@ -15,6 +15,7 @@ import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowVal
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDataChange from '../DynaCsvParse_afe/FileDataChange';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
+import { editorDrawerUrl } from '../../../../utils/drawerURLs';
 
 const getParserValue = ({
   resourcePath,
@@ -172,7 +173,7 @@ export default function DynaXmlParse_afe({
       onSave: handleSave,
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
+    history.push(`${match.url}${editorDrawerUrl(editorId)}`);
   }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
 
   return (

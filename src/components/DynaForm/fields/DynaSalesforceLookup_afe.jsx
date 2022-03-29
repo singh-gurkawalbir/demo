@@ -10,6 +10,7 @@ import FilterIcon from '../../icons/FilterIcon';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 import { getValidRelativePath } from '../../../utils/routePaths';
+import { editorDrawerUrl } from '../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   lookupFieldWrapper: {
@@ -68,7 +69,7 @@ export default function DynaSalesforceLookup_afe(props) {
       customOptions: options,
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
+    history.push(`${match.url}${editorDrawerUrl(editorId)}`);
   }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, options]);
 
   return (

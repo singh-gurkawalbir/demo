@@ -14,6 +14,7 @@ import ActionButton from '../../../ActionButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
+import { editorDrawerUrl } from '../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   field: {
@@ -88,7 +89,7 @@ export default function ScriptView({
       onSave: handleSave,
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
+    history.push(`${match.url}${editorDrawerUrl(editorId)}`);
   }, [dispatch, editorId, flowId, resourceId, resourceType, hookStage, history, match.url, value, handleSave, formKey]);
 
   const options = useMemo(() => [{ items: allScripts.map(script => ({

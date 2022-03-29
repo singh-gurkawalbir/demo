@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useRouteMatch, Redirect } from 'react-router-dom';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
+import { editorDrawerUrl } from '../../../../utils/drawerURLs';
 
 // its crazy that the FB passes the full resource to all of these processor launchers.
 // we are already given the resourceType and Id so we can easily look it up here.
@@ -34,7 +35,7 @@ function TxLauncher({ flowId, resourceType, resourceId, onClose, open }) {
   }, [open]);
 
   return open
-    ? <Redirect push to={`${match.url}/editor/${editorId}`} />
+    ? <Redirect push to={`${match.url}${editorDrawerUrl(editorId)}`} />
     : null;
 }
 

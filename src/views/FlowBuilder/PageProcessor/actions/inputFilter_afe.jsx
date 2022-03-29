@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useRouteMatch, Redirect } from 'react-router-dom';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/InputFilterIcon';
+import { editorDrawerUrl } from '../../../../utils/drawerURLs';
 
 function InputFilterLauncher({ flowId, resourceType, resourceId, onClose, open }) {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ function InputFilterLauncher({ flowId, resourceType, resourceId, onClose, open }
   }, [open]);
 
   return open
-    ? <Redirect push to={`${match.url}/editor/${editorId}`} />
+    ? <Redirect push to={`${match.url}${editorDrawerUrl(editorId)}`} />
     : null;
 }
 

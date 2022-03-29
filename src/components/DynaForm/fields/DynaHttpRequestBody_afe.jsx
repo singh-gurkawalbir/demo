@@ -6,6 +6,7 @@ import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import { getParentResourceContext } from '../../../utils/connections';
 import DynaHandlebarPreview from './DynaHandlebarPreview';
+import { editorDrawerUrl } from '../../../utils/drawerURLs';
 
 export default function DynaHttpRequestBody_afe(props) {
   const {
@@ -57,7 +58,7 @@ export default function DynaHttpRequestBody_afe(props) {
       parentId,
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
+    history.push(`${match.url}${editorDrawerUrl(editorId)}`);
   }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url]);
 
   return (

@@ -1,5 +1,5 @@
 const DRAWER_URL_REFS = {
-  EDITOR: 'editor/:editorId',
+  EDITOR: 'editor/:editorId', // done - testing pending
   INSTALL_INTEGRATION: 'installIntegration',
   LOOKUP: 'lookup', // has URL redirection for drawer content
   RESOURCE: ':operation(add|edit)/:resourceType/:id',
@@ -93,3 +93,5 @@ export const DRAWER_URLS = constructDrawerUrls();
 
 export const hasMultipleDrawers = url =>
   !!(url.match(new RegExp(DRAWER_URL_PREFIX, 'g'))?.length > 1);
+
+export const editorDrawerUrl = editorId => `/${DRAWER_URL_PREFIX}/editor/${editorId}`;

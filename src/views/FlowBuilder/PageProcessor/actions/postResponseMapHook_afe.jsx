@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useRouteMatch, Redirect } from 'react-router-dom';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/HookIcon';
+import { editorDrawerUrl } from '../../../../utils/drawerURLs';
 
 function PostResponseMapHook({ flowId, resourceType, resourceId, onClose, open, resourceIndex }) {
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ function PostResponseMapHook({ flowId, resourceType, resourceId, onClose, open, 
   }, [open]);
 
   return open
-    ? <Redirect push to={`${match.url}/editor/${editorId}`} />
+    ? <Redirect push to={`${match.url}${editorDrawerUrl(editorId)}`} />
     : null;
 }
 

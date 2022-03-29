@@ -17,6 +17,7 @@ import ActionsRibbon from './ActionsRibbon';
 import { useDrawerContext } from '../../drawer/Right/DrawerContext';
 import useKeepUserSessionAlive from '../../../hooks/useKeepUserSessionAlive';
 import TitleHelp from './TitleHelp';
+import { DRAWER_URLS } from '../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
@@ -72,7 +73,7 @@ function RouterWrappedContent({ hideSave }) {
       const urlFields = match.url.split('/');
 
       // strip the '/editor...' suffix from the url
-      const redirectToParentRoute = urlFields.slice(0, urlFields.indexOf('editor')).join('/');
+      const redirectToParentRoute = urlFields.slice(0, urlFields.indexOf('editor') - 1).join('/');
 
       history.replace(redirectToParentRoute);
     }
@@ -114,8 +115,7 @@ function RouterWrappedContent({ hideSave }) {
 export default function EditorDrawer({ hideSave, hidePreview, width = 'full' }) {
   return (
     <RightDrawer
-      path="editor/:editorId"
-      variant="temporary"
+      path={DRAWER_URLS.EDITOR}
       height="tall"
       width={width}>
       <RouterWrappedContent hideSave={hideSave} hidePreview={hidePreview} />
