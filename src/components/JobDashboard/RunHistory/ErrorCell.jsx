@@ -60,13 +60,11 @@ export default function ErrorCell({
   }
 
   return (
-    <>
-      <TextButton
-        className={classes.errorButtonContainer}
-        onClick={handleErrorClick}
-        startIcon={<StatusCircle variant="error" size="mini" />}>
-        {numOpenError > 9999 ? '9999+ errors' : getTextAfterCount('error', numOpenError)}
-      </TextButton>
-    </>
+    <TextButton
+      className={classes.errorButtonContainer}
+      onClick={handleErrorClick}
+      startIcon={<StatusCircle variant="error" size="mini" />}>
+      {numOpenError > 9999 ? '9999+ errors' : getTextAfterCount('error', numOpenError)}
+    </TextButton>
   );
 }
