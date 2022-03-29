@@ -17,6 +17,7 @@ import EditorDrawer from '../../AFE/Drawer';
 import SaveAndCloseResourceForm from '../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 import { FORM_SAVE_STATUS } from '../../../utils/constants';
 import useFormOnCancelContext from '../../FormOnCancelContext';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
 
 const emptySet = [];
 const emptyObject = {};
@@ -279,27 +280,20 @@ export default function SettingsDrawer(props) {
 
   return (
     <RightDrawer
-      hideBackButton
-      variant="temporary"
-      disableBackdropClick
       onClose={setCancelTriggered}
-      path={[
-        'settings/:mappingKey',
-        'settings/category/:editorId/sections/:sectionId/:depth/:mappingKey',
-      ]}
-      height="tall"
-    >
+      path={DRAWER_URLS.MAPPING_SETTINGS}
+      height="tall">
       <DrawerHeader title="Settings" />
 
       <Switch>
         <Route
-          path={`${match.url}/settings/category/:editorId/sections/:sectionId/:depth/:mappingKey`}>
+          path={`${match.url}/${DRAWER_URL_PREFIX}/settings/category/:editorId/sections/:sectionId/:depth/:mappingKey`}>
           <CategoryMappingSettingsWrapper
             {...props}
             />
         </Route>
         <Route
-          path={`${match.url}/settings/:mappingKey`}>
+          path={`${match.url}/${DRAWER_URL_PREFIX}/settings/:mappingKey`}>
           <MappingSettingsWrapper
             {...props} />
         </Route>

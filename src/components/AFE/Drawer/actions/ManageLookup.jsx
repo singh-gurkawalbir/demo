@@ -12,6 +12,7 @@ import FieldHelp from '../../../DynaForm/FieldHelp';
 import LookupDrawer from '../../../drawer/Lookup';
 import * as completers from '../../Editor/panels/Handlebars/autocompleteSetup/completers';
 import { emptyObject } from '../../../../utils/constants';
+import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
 
 const useStyles = makeStyles({
@@ -71,9 +72,9 @@ export default function ManageLookup({ editorId }) {
   const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
   const handleEditorClick = () => {
     if (lookups?.length) {
-      history.push(`${match.url}/lookup`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/lookup`);
     } else {
-      history.push(`${match.url}/lookup/add`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/lookup/add`);
     }
   };
   const handleUpdate = lookups => {

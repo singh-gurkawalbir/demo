@@ -21,6 +21,7 @@ import { OutlinedButton, TextButton } from '../../Buttons';
 import { LOOKUP_DRAWER_FORM_KEY } from '../../../utils/constants';
 import { hashCode } from '../../../utils/string';
 import useFormOnCancelContext from '../../FormOnCancelContext';
+import { DRAWER_URLS } from '../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   listing: {
@@ -44,8 +45,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const rootPath = 'lookup';
-
 export default function LookupDrawer({
   lookups,
   onSave,
@@ -53,8 +52,7 @@ export default function LookupDrawer({
   disabled,
   resourceId,
   resourceType,
-  flowId,
-  hideBackButton = true }) {
+  flowId}) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
@@ -69,7 +67,7 @@ export default function LookupDrawer({
   // index of the currently selected lookup
   const [lookupIndex, setLookupIndex] = useState(0);
 
-  const fullPath = `${match.url}/${rootPath}`;
+  const fullPath = `${match.url}/${DRAWER_URLS.LOOKUP}`;
   const { isExact } = matchPath(location.pathname, fullPath) || {};
 
   let drawerTitle;
@@ -150,19 +148,15 @@ export default function LookupDrawer({
 
   return (
     <RightDrawer
-      path={rootPath}
+      path={DRAWER_URLS.LOOKUP}
       height="tall"
       width="default"
       variant="temporary"
       onClose={history.goBack}>
-      <DrawerHeader
-        title={drawerTitle}
-        hideBackButton={hideBackButton && !value.length}
-        handleClose={handleClose}
-      />
+      <DrawerHeader title={drawerTitle} handleClose={handleClose} showBackButton />
       <DrawerContent>
         <Switch>
-          <Route path={[`${match.url}/${rootPath}/add`, `${match.url}/${rootPath}/edit`]}>
+          <Route path={[`${match.url}/${DRAWER_URLS.LOOKUP}/add`, `${match.url}/${DRAWER_URLS.LOOKUP}/edit`]}>
             <AddEditLookup
               value={selectedLookup}
               error={error}
@@ -175,7 +169,7 @@ export default function LookupDrawer({
               remountCount={remountCount}
             />
           </Route>
-          <Route path={`${match.url}/${rootPath}`}>
+          <Route path={`${match.url}/${DRAWER_URLS.LOOKUP}`}>
             <>
               <TextButton
                 className={classes.actionButton}

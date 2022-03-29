@@ -13,6 +13,7 @@ import SelectQueryType from './DatabaseMapping_afe/SelectQueryType';
 import EditorDrawer from '../../components/AFE/Drawer';
 import useFormOnCancelContext from '../../components/FormOnCancelContext';
 import { MAPPINGS_FORM_KEY } from '../../utils/constants';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
 
 const MappingWrapper = ({integrationId}) => {
   const history = useHistory();
@@ -61,21 +62,14 @@ export default function MappingDrawerRoute(props) {
       required="true"
       resources="imports, exports, connections">
       <RightDrawer
-        hideBackButton
-        path={[
-          'mapping/:flowId/:importId/:subRecordMappingId/view',
-          'mapping/:flowId/:importId/view',
-          'mapping/:flowId/:importId',
-          'mapping/:flowId',
-        ]}
+        path={DRAWER_URLS.MAPPINGS}
         height="tall"
-        width={isMappingPreviewAvailable ? 'full' : 'default'}
-      >
+        width={isMappingPreviewAvailable ? 'full' : 'default'} >
         <Switch>
           <Route
             path={[
-              `${match.url}/mapping/:flowId/:importId/:subRecordMappingId/view`,
-              `${match.url}/mapping/:flowId/:importId/view`,
+              `${match.url}/${DRAWER_URL_PREFIX}/mapping/:flowId/:importId/:subRecordMappingId/view`,
+              `${match.url}/${DRAWER_URL_PREFIX}/mapping/:flowId/:importId/view`,
             ]} >
             <DrawerHeader
             // for new mappings afe, pass old drawer dataTest as dummy for automation
@@ -92,8 +86,8 @@ export default function MappingDrawerRoute(props) {
           <Route
             exact
             path={[
-              `${match.url}/mapping/:flowId`,
-              `${match.url}/mapping/:flowId/:importId`,
+              `${match.url}/${DRAWER_URL_PREFIX}/mapping/:flowId`,
+              `${match.url}/${DRAWER_URL_PREFIX}/mapping/:flowId/:importId`,
             ]}
             >
             <DrawerHeader title={title} />
@@ -109,7 +103,7 @@ export default function MappingDrawerRoute(props) {
         width="default"
         variant="temporary"
         hideBackButton
-        path="dbMapping/:flowId/:importId">
+        path={DRAWER_URLS.DB_MAPPINGS}>
 
         <DrawerHeader title="Select query type" />
 
@@ -119,7 +113,7 @@ export default function MappingDrawerRoute(props) {
       </RightDrawer>
 
       <Route
-        path={`${match.url}/queryBuilder/:flowId/:importId/:index/view`}>
+        path={`${match.url}/${DRAWER_URL_PREFIX}/queryBuilder/:flowId/:importId/:index/view`}>
         <DatabaseMapping />
         <EditorDrawer />
       </Route>

@@ -10,6 +10,7 @@ import EditIcon from '../../../icons/EditIcon';
 import ActionButton from '../../../ActionButton';
 import ConditionalLookupDrawer from './ConditionalLookup/Drawer';
 import actions from '../../../../actions';
+import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,13 +43,13 @@ export default function DynaSelectConditionalLookup(props) {
 
   const handleAddLookupClick = useCallback(
     () => {
-      history.push(`${match.url}/conditionalLookup/add`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/conditionalLookup/add`);
     },
     [history, match.url],
   );
   const handleEditLookupClick = useCallback(
     () => {
-      history.push(`${match.url}/conditionalLookup/edit/${value}`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/conditionalLookup/edit/${value}`);
     },
     [history, match.url, value],
   );

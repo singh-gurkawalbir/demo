@@ -1,28 +1,28 @@
 const DRAWER_URL_REFS = {
-  EDITOR: 'editor/:editorId', // done -  pending testing
   INSTALL_INTEGRATION: 'installIntegration',
-  LOOKUP: 'lookup', // has URL redirection for drawer content
-  RESOURCE: ':operation(add|edit)/:resourceType/:id', // done - pending testing
-  CONDITIONAL_LOOKUP: ['conditionalLookup/edit/:lookupName', 'conditionalLookup/add'],
-  ADD_EDIT_LOOKUP: ['lookups/edit/:lookupName', 'lookups/add'], // Is it linked with Line: 8 lookup ?
+  ADD_EDIT_LOOKUP: ['lookups/edit/:lookupName', 'lookups/add'],
+  SHARE_STACKS: 'share/stacks/:stackId', // has router for drawer content
+  SUBSCRIPTION: ':env/:type', // TODO: add a name space in between env & type
+  // ---------------------------------------------------------------------
+  LOOKUP: 'lookup', // done
   MAPPING_SETTINGS: [
     'settings/:mappingKey',
     'settings/category/:editorId/sections/:sectionId/:depth/:mappingKey',
-  ],
-  SHARE_STACKS: 'share/stacks/:stackId', // has router for drawer content
-  MAPPINGS: [
+  ], // done
+  CONDITIONAL_LOOKUP: ['conditionalLookup/edit/:lookupName', 'conditionalLookup/add'], // done
+  MAPPINGS: [ // done
     'mapping/:flowId/:importId/:subRecordMappingId/view',
     'mapping/:flowId/:importId/view',
     'mapping/:flowId/:importId',
     'mapping/:flowId',
   ],
-  DB_MAPPINGS: 'dbMapping/:flowId/:importId',
-  SCRIPT_LOG_DETAILS: [
+  DB_MAPPINGS: 'dbMapping/:flowId/:importId', // done - pending testing
+  SCRIPT_LOG_DETAILS: [ // done - pending testing
     'scriptLog/:scriptId/:flowId/:index',
     'scriptLog/:scriptId/:index',
   ],
-  SUBSCRIPTION: ':env/:type', // TODO: add a name space in between env & type
-  // ---------------------------------------------------------------------
+  EDITOR: 'editor/:editorId', // done -  pending testing
+  RESOURCE: ':operation(add|edit)/:resourceType/:id', // done - pending testing
   INSTALL_TEMPLATE: 'installTemplate/preview/:templateId', // done - global search not verified
   FORM_INSTALL_STEP: 'form/:formType', // done - not verified IA, addChild install/unistall
   CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId', // done - not verified IA, addChild install/unistall

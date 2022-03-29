@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import Icon from '../../../../components/icons/MapDataIcon';
+import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 
 // mappings are only disabled in case of monitor level access
 function ImportMapping({
@@ -15,7 +16,7 @@ function ImportMapping({
 
   useEffect(() => {
     if (open && match.path.indexOf('mapping') === -1) {
-      history.push(`${match.url}/mapping/${flowId}/${importId}`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/mapping/${flowId}/${importId}`);
       onClose();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

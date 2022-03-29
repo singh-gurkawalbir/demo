@@ -180,7 +180,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
             history.push(
               `${history.location.pathname}/${DRAWER_URL_PREFIX}/${flowId}/utilitymapping/commonAttributes`
             );
-          } else history.push(`${history.location.pathname}/mapping/${flowId}`);
+          } else history.push(`${history.location.pathname}/${DRAWER_URL_PREFIX}/mapping/${flowId}`);
 
           break;
 
