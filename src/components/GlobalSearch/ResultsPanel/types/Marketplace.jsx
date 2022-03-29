@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import DownArrowIcon from '../../../icons/ArrowDownIcon';
 import FilledButton from '../../../Buttons/FilledButton';
 import useRequestForDemo from '../../../../hooks/useRequestForDemo';
+import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 import { useGlobalSearchState } from '../../GlobalSearchContext/createGlobalSearchState';
 
 const useStyles = makeStyles(theme => ({
@@ -41,7 +42,7 @@ function MarketPlaceRow({type, result, includeDivider}) {
   const handleClick = useCallback(e => {
     e?.stopPropagation();
     if (type === 'marketplaceTemplates') {
-      const url = `/marketplace/${result?.applications?.[0]}/installTemplate/preview/${result?._id}`;
+      const url = `/marketplace/${result?.applications?.[0]}/${DRAWER_URL_PREFIX}/installTemplate/preview/${result?._id}`;
 
       setOpen(false);
       history.push(url);

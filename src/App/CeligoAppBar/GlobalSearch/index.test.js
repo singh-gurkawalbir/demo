@@ -7,6 +7,7 @@ import { isEmpty } from 'lodash';
 import { mockGetRequestOnce, mockPostRequestOnce, renderWithProviders} from '../../../test/test-utils';
 import GlobalSearch from '.';
 import actions from '../../../actions';
+import { DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
 import { runServer } from '../../../test/api/server';
 
 async function initGlobalSearch(ui = (<MemoryRouter><GlobalSearch /></MemoryRouter>)) {
@@ -526,7 +527,7 @@ describe('Globalsearch feature tests', () => {
     await initGlobalSearch(
       <MemoryRouter>
         <Switch>
-          <Route path="/marketplace/:application/installTemplate/preview/:templateId">
+          <Route path={`/marketplace/:application/${DRAWER_URL_PREFIX}/installTemplate/preview/:templateId`}>
             <Preview />
           </Route>
           <Route exact path="/">

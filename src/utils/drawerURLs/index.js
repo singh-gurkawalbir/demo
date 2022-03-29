@@ -1,7 +1,6 @@
 const DRAWER_URL_REFS = {
   EDITOR: 'editor/:editorId',
   INSTALL_INTEGRATION: 'installIntegration',
-  INSTALL_TEMPLATE: 'installTemplate',
   LOOKUP: 'lookup', // has URL redirection for drawer content
   RESOURCE: ':operation(add|edit)/:resourceType/:id',
   CONDITIONAL_LOOKUP: ['conditionalLookup/edit/:lookupName', 'conditionalLookup/add'],
@@ -24,8 +23,9 @@ const DRAWER_URL_REFS = {
   ],
   SUBSCRIPTION: ':env/:type', // TODO: add a name space in between env & type
   // ---------------------------------------------------------------------
-  FORM_INSTALL_STEP: 'form/:formType', // done
-  CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId', // done
+  INSTALL_TEMPLATE: 'installTemplate/preview/:templateId', // done - global search not verified
+  FORM_INSTALL_STEP: 'form/:formType', // done - not verified IA, addChild install/unistall
+  CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId', // done - not verified IA, addChild install/unistall
   NS_SUB_RECORD: ['subrecords/:fieldId', 'subrecords'],
   SCRIPT_LOGS: 'viewLogs/:scriptId',
   CONNECTION_DEBUGGER: 'configDebugger/:connectionId', // done
