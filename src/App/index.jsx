@@ -33,7 +33,6 @@ import * as pendo from '../utils/analytics/pendo';
 // We can only use the theme in components that are children of
 // <MuiThemeProvider>. That component is what injects the theme into
 // the child component context.
-
 const useStyles = makeStyles({
   root: {
     display: 'flex',
