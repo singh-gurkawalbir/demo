@@ -132,7 +132,12 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
 
   return (
     <div>
-      <MockInput formKey resourceId resourceType flowId />
+      <MockInput
+        formKey={formKey}
+        resourceId={resourceId}
+        resourceType={resourceType}
+        flowId={flowId}
+      />
       <div
         className={classes.previewPanelWrapper}>
         <Typography className={classes.previewDataHeading}>

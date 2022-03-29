@@ -113,6 +113,8 @@ export function* pageProcessorPreview({
     );
 
   if (isPreviewPanelAvailable && typeOfPreview) {
+    const mockData = yield select(selectors.getResourceMockData, _pageProcessorId);
+
     if (!pageProcessorMap[_pageProcessorId]) {
       pageProcessorMap[_pageProcessorId] = {};
     }
@@ -121,6 +123,7 @@ export function* pageProcessorPreview({
     }
     if (typeOfPreview === 'send') {
       pageProcessorMap[_pageProcessorId].options.sendAndPreview = true;
+      pageProcessorMap[_pageProcessorId].options.inputData = mockData;
     } else {
       pageProcessorMap[_pageProcessorId].options.preview = true;
     }

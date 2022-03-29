@@ -30,7 +30,23 @@ export function extractStages(sampleData) {
 }
 
 export default function (state = {}, action) {
-  const { type, sampleDataType, resourceId, status = 'requested', previewData, previewStagesData, previewError, parseData, rawData, csvData, recordSize, processor, processorData, processorError } = action;
+  const {
+    type,
+    sampleDataType,
+    resourceId,
+    status = 'requested',
+    previewData,
+    previewStagesData,
+    previewError,
+    parseData,
+    rawData,
+    csvData,
+    recordSize,
+    processor,
+    processorData,
+    processorError,
+    mockData,
+  } = action;
 
   return produce(state, draft => {
     const activeSendOrPreviewTab = draft[resourceId]?.typeOfSampleData || 'preview';
@@ -105,6 +121,12 @@ export default function (state = {}, action) {
         }
         draft[resourceId][activeSendOrPreviewTab].data[processor] = processorData;
         break;
+      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_MOCK_DATA:
+        if (!draft[resourceId].data) {
+          draft[resourceId].data = {};
+        }
+        draft[resourceId].data.mockData = mockData || DEFAULT_VALUE;
+        break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE:
         draft[resourceId][activeSendOrPreviewTab].recordSize = recordSize;
         break;
@@ -166,6 +188,7 @@ selectors.mkPreviewStageDataList = () => createSelector(
   (_1, _2, stages) => stages,
   (resourceIdSampleData, stages) => {
     if (!stages) return emptyObj;
+    console.log('resource id sample data', resourceIdSampleData);
 
     return stages.reduce((acc, stage) => {
       acc[stage] = getResourceSampleDataWithStatus(resourceIdSampleData, stage);
@@ -195,3 +218,5 @@ selectors.getAllParsableErrors = (state, resourceId) => {
   // if there are no stages return all errors and the complete error list would be visible in the preview editor
   return errors;
 };
+
+selectors.getResourceMockData = (state, resourceId) => state?.[resourceId]?.data?.mockData;
