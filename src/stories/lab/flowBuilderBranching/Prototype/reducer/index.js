@@ -5,7 +5,7 @@ import { createSelector } from 'reselect';
 import actions from './actions';
 import { emptyList, emptyObject } from '../../../../../utils/constants';
 import { generateEmptyRouter, generateBranch } from '../nodeGeneration';
-import { generateReactFlowGraph, populateIds } from '../translateSchema';
+import { generateReactFlowGraph, initialiseFlowForReactFlow } from '../translateSchema';
 import { BranchPathRegex, generateId, PageProcessorPathRegex } from '../lib';
 
 const addNewStep = (draft, action) => {
@@ -529,7 +529,7 @@ export const resourceDataSelector = createSelector(
   (resource, session, type, id) => {
     const flow = resourceDataModified(resource, session, type, id)?.merged;
 
-    populateIds(flow);
+    initialiseFlowForReactFlow(flow);
 
     return flow;
   });

@@ -65,8 +65,6 @@ export default ({resourceState}) => {
     setState({type: actions.SET_GRAPH_ELEMENTS, flow: mergedFlow});
   }, [mergedFlow]);
 
-  // const handleMerge = handleMergeNode(mergedFlow, elements, setState);
-
   const handleNodeDragStart = (evt, source) => {
     setState({type: actions.DRAG_START, nodeId: source.id});
   };

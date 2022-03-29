@@ -136,7 +136,7 @@ export function getAllPPNodes(flow = {}, elements) {
   routers.forEach((router = {}, routerIndex) => {
     router.branches?.forEach((branch = {}, branchIndex) => {
       branch.pageProcessors.forEach((pp = {}, ppIndex) => {
-        const element = elements.find(el => el.id === pp.id);
+        const element = elements[pp.id];
         const stepName = element?.data?.resource?.name || pp.id;
 
         steps.push({
@@ -283,7 +283,7 @@ export const areMultipleEdgesConnectedToSameEdgeTarget = (edgeId, elements) => {
   if (!edgeId || !elements) {
     return false;
   }
-  const edge = elements.find(ele => ele.id === edgeId);
+  const edge = elements.find(el => el.id === edgeId);
 
   if (!edge) {
     return false;
@@ -293,11 +293,11 @@ export const areMultipleEdgesConnectedToSameEdgeTarget = (edgeId, elements) => {
   return elements.filter(isEdge).filter(e => e.target === target).length > 1;
 };
 
-export const isDragNodeOnSameBranch = (drageNodeId, edgeId, elements) => {
-  if (!drageNodeId || !edgeId || !elements) {
+export const isDragNodeOnSameBranch = (dragNodeId, edgeId, elements) => {
+  if (!dragNodeId || !edgeId || !elements) {
     return false;
   }
-  const dragNodeElement = elements[drageNodeId];
+  const dragNodeElement = elements[dragNodeId];
   const edgeElement = elements[edgeId];
 
   if (!edgeElement || edgeElement.type !== 'default') {

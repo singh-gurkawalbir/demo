@@ -1,9 +1,10 @@
 /* eslint-disable no-param-reassign */
 import { generateDefaultEdge, generateId } from '../lib';
-import { generateNewTerminal, generateRouterNode } from '../nodeGeneration';
+import { generateNewTerminal, generateRouterNode, isVirtualRouter } from '../nodeGeneration';
 
-export const populateIds = flow => {
+export const initialiseFlowForReactFlow = flow => {
   if (!flow) return flow;
+  const routerMap = {};
   const { pageGenerators = [], pageProcessors = [], routers = [] } = flow;
 
   pageGenerators.forEach(pg => {
@@ -13,12 +14,33 @@ export const populateIds = flow => {
     pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${generateId()}`;
   });
   routers.forEach(({branches = []}) => {
-    branches.forEach(({pageProcessors = []}) => {
+    branches.forEach(branch => {
+      const {pageProcessors = [], _nextRouterId} = branch;
+
+      if (_nextRouterId) {
+        // set all incoming branches for all routers
+        routerMap[_nextRouterId] = routerMap[_nextRouterId] ? [...routerMap[_nextRouterId], branch] : [branch];
+      }
       pageProcessors.forEach(pp => {
         pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${generateId()}`;
       });
     });
   });
+
+  // iterate and delete all unnecessary merge nodes
+  let i = routers.length;
+
+  // eslint-disable-next-line no-plusplus
+  while (i--) {
+    if (isVirtualRouter(routers[i]) && routerMap[routers[i]._id] && routerMap[routers[i]._id].length === 1) {
+      // merge the pageProcessors of deleting router to its incoming branch
+      routerMap[routers[i]._id][0].pageProcessors = [...routerMap[routers[i]._id][0].pageProcessors, ...routers[i].branches[0].pageProcessors];
+      // assign the router's nextRouterId to incoming branch
+      routerMap[routers[i]._id][0]._nextRouterId = routers[i].branches[0]._nextRouterId;
+      // and delete the router
+      routers.splice(i, 1);
+    }
+  }
 };
 
 const hydrateNodeData = (resourcesState, node) => {
