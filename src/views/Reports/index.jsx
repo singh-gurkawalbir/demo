@@ -22,6 +22,7 @@ import RefreshIcon from '../../components/icons/RefreshIcon';
 import Spinner from '../../components/Spinner';
 import { TextButton } from '../../components/Buttons';
 import ActionGroup from '../../components/ActionGroup';
+import { resourceUrl } from '../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -260,7 +261,7 @@ export default function Reports() {
               <TextButton
                 data-test="addNewResource"
                 component={Link}
-                to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
+                to={`${location.pathname}${resourceUrl('add', resourceType, generateNewId())}`}
                 startIcon={<AddIcon />}>
                 Run report
               </TextButton>

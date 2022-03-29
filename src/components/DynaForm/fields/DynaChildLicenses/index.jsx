@@ -12,6 +12,7 @@ import { generateNewId } from '../../../../utils/resource';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import LoadResources from '../../../LoadResources';
 import { TextButton } from '../../../Buttons';
+import { resourceUrl } from '../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   actionChildLicense: {
@@ -87,7 +88,7 @@ export default function DynaChildLicense({ connectorId, resourceId, id, formKey}
     ];
 
     dispatch(actions.resource.patchStaged(newId, patchSet, SCOPES.VALUE));
-    history.push(`${match.url}/add/connectorLicenses/${newId}`);
+    history.push(`${match.url}${resourceUrl('add', 'connectorLicenses', newId)}`);
   }, [connectorId, history, match, parentLicense, dispatch]);
 
   return (

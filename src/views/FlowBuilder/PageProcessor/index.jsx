@@ -18,6 +18,7 @@ import responseTransformationAction from './actions/responseTransformation_afe';
 import proceedOnFailureAction from './actions/proceedOnFailure';
 import { actionsMap, isImportMappingAvailable } from '../../../utils/flows';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { resourceUrl } from '../../../utils/drawerURLs';
 
 const useStyles = makeStyles({
   ppContainer: {
@@ -145,8 +146,8 @@ const PageProcessor = ({
     }
 
     const to = pending
-      ? `${match.url}/add/pageProcessor/${newId}`
-      : `${match.url}/edit/${resourceType}/${resourceId}`;
+      ? `${match.url}${resourceUrl('add', 'pageProcessor', newId)}`
+      : `${match.url}${resourceUrl('edit', resourceType, resourceId)}`;
 
     if (match.isExact) {
       history.push(to);

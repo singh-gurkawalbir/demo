@@ -4,6 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../Right';
 import Panel, { redirectURlToParentListing } from './Panel';
 import { selectors } from '../../../reducers';
+import { DRAWER_URLS } from '../../../utils/drawerURLs';
 
 function ResourceDrawerContent(props) {
   const { flowId, integrationId } = props;
@@ -57,8 +58,7 @@ export default function ResourceDrawer({
 }) {
   return (
     <RightDrawer
-      path=":operation(add|edit)/:resourceType/:id"
-      variant="temporary"
+      path={DRAWER_URLS.RESOURCE}
       height="tall"
       flowId={flowId}>
       <ResourceDrawerContent flowId={flowId} integrationId={integrationId} />

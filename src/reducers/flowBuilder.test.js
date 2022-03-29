@@ -1,10 +1,11 @@
 /* global describe, expect, test */
 import { selectors } from '.';
+import { DRAWER_URL_PREFIX } from '../utils/drawerURLs';
 
 describe('Flow builder region selector testcases', () => {
   describe('selectors.getResourceEditUrl test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.getResourceEditUrl()).toEqual('/undefined/edit/undefined/undefined');
+      expect(selectors.getResourceEditUrl()).toEqual(`/undefined/${DRAWER_URL_PREFIX}/edit/undefined/undefined`);
     });
   });
 

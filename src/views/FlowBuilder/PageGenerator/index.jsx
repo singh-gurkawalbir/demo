@@ -19,6 +19,7 @@ import transformationAction from './actions/transformation_afe';
 import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter_afe';
 import { actionsMap } from '../../../utils/flows';
+import { resourceUrl } from '../../../utils/drawerURLs';
 
 const emptyObj = {};
 const useStyles = makeStyles({
@@ -141,10 +142,10 @@ const PageGenerator = ({
     }
 
     let to = pending
-      ? `${match.url}/add/pageGenerator/${newId}`
-      : `${match.url}/edit/exports/${pg._exportId}`;
+      ? `${match.url}${resourceUrl('add', 'pageGenerator', newId)}`
+      : `${match.url}${resourceUrl('edit', 'exports', pg._exportId)}`;
 
-    if (pending && isDataLoader) to = `${match.url}/edit/exports/${newId}`;
+    if (pending && isDataLoader) to = `${match.url}${resourceUrl('edit', 'exports', newId)}`;
 
     if (match.isExact) {
       history.push(to);

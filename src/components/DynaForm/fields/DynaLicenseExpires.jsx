@@ -4,12 +4,14 @@ import { useLocation } from 'react-router-dom';
 import DynaDateSelecor from './DynaDateSelector';
 import { selectors } from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
+import { DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
 
 export default function DynaLicenseExpires(props) {
   const location = useLocation();
   const { connectorId, id, resourceId } = props;
-  const trialLicenseTemplate = location.pathname.includes(`connectors/${connectorId}/edit/connectorLicenses/`) ||
-    location.pathname.includes(`connectors/${connectorId}/add/connectorLicenses/`);
+  // TODO @Raghu: Why are we looking for URL? remove this
+  const trialLicenseTemplate = location.pathname.includes(`connectors/${connectorId}/${DRAWER_URL_PREFIX}/edit/connectorLicenses/`) ||
+    location.pathname.includes(`connectors/${connectorId}/${DRAWER_URL_PREFIX}/add/connectorLicenses/`);
 
   const trialEnabled = useSelector(state => selectors.resource(state, 'connectors', connectorId)?.trialEnabled);
   //   If the “Enable trials” flag is set on the IA listing, following changes are also implemented in the Integration App author’s IO account:

@@ -12,6 +12,7 @@ import AddIcon from '../../../../../../components/icons/AddIcon';
 import { generateNewId } from '../../../../../../utils/resource';
 import actions from '../../../../../../actions';
 import { TextButton } from '../../../../../../components/Buttons';
+import { resourceUrl } from '../../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   resultContainer: {
@@ -46,7 +47,7 @@ export default function ApiTokenSection({ integrationId }) {
           onClick={() => {
             const newId = generateNewId();
 
-            history.push(`${location.pathname}/add/accesstokens/${newId}`);
+            history.push(`${location.pathname}${resourceUrl('add', 'accesstokens', newId)}`);
 
             const patchSet = [
               {
@@ -64,7 +65,7 @@ export default function ApiTokenSection({ integrationId }) {
             dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
           }}
           startIcon={<AddIcon />}>
-          Create API token
+          Create API tokens
         </TextButton>
       </PanelHeader>
 

@@ -8,6 +8,7 @@ import { selectors } from '../../reducers';
 import { emptyObject, UNASSIGNED_SECTION_ID } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import itemTypes from './itemTypes';
+import { resourceUrl } from '../../utils/drawerURLs';
 
 export const isNewFlowFn = flowId => !flowId || flowId?.startsWith('new');
 export const usePatchFlow = flowId => {
@@ -224,7 +225,7 @@ export function useHandleAddGenerator() {
     const newTempGeneratorId = generateNewId();
 
     pushOrReplaceHistory(
-      `${match.url}/add/pageGenerator/${newTempGeneratorId}`
+      `${match.url}${resourceUrl('add', 'pageGenerator', newTempGeneratorId)}`
     );
   }, [match.url, pushOrReplaceHistory]);
 
@@ -239,7 +240,7 @@ export function useHandleAddProcessor() {
     const newTempProcessorId = generateNewId();
 
     pushOrReplaceHistory(
-      `${match.url}/add/pageProcessor/${newTempProcessorId}`
+      `${match.url}${resourceUrl('add', 'pageProcessor', newTempProcessorId)}`
     );
   }, [match.url, pushOrReplaceHistory]);
 

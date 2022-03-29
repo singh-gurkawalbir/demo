@@ -1,8 +1,8 @@
 const DRAWER_URL_REFS = {
-  EDITOR: 'editor/:editorId', // done - testing pending
+  EDITOR: 'editor/:editorId', // done -  pending testing
   INSTALL_INTEGRATION: 'installIntegration',
   LOOKUP: 'lookup', // has URL redirection for drawer content
-  RESOURCE: ':operation(add|edit)/:resourceType/:id',
+  RESOURCE: ':operation(add|edit)/:resourceType/:id', // done - pending testing
   CONDITIONAL_LOOKUP: ['conditionalLookup/edit/:lookupName', 'conditionalLookup/add'],
   ADD_EDIT_LOOKUP: ['lookups/edit/:lookupName', 'lookups/add'], // Is it linked with Line: 8 lookup ?
   MAPPING_SETTINGS: [
@@ -95,3 +95,6 @@ export const hasMultipleDrawers = url =>
   !!(url.match(new RegExp(DRAWER_URL_PREFIX, 'g'))?.length > 1);
 
 export const editorDrawerUrl = editorId => `/${DRAWER_URL_PREFIX}/editor/${editorId}`;
+
+export const resourceUrl = (operation, resourceType, resourceId) => `/${DRAWER_URL_PREFIX}/${operation}/${resourceType}/${resourceId}`;
+

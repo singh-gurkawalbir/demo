@@ -5,6 +5,7 @@ import EmptyState from '../../../components/EmptyState';
 import resourceTypeMetaData from '../../../components/EmptyState/metadata';
 import NoResultTypography from '../../../components/NoResultTypography';
 import { generateNewId } from '../../../utils/resource';
+import { resourceUrl } from '../../../utils/drawerURLs';
 
 export default function ResourceEmptyState({resourceType}) {
   const resource = resourceTypeMetaData[resourceType];
@@ -21,7 +22,7 @@ export default function ResourceEmptyState({resourceType}) {
           <FilledButton
             component={Link}
             data-test={resource.type === 'integrations' ? 'create flow' : 'addNewResource'}
-            to={resource.type === 'integrations' ? '/integrations/none/flowBuilder/new' : `${location.pathname}/add/${resourceType}/${generateNewId()}`} >
+            to={resource.type === 'integrations' ? '/integrations/none/flowBuilder/new' : `${location.pathname}${resourceUrl('add', resourceType, generateNewId())}`} >
             {resource.buttonLabel}
           </FilledButton>
           <TextButton

@@ -19,6 +19,7 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import actions from '../../actions';
 import { TextButton } from '../../components/Buttons';
 import NoResultTypography from '../../components/NoResultTypography';
+import { resourceUrl } from '../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -75,7 +76,7 @@ export default function TemplateList(props) {
             <TextButton
               data-test="addNewListing"
               component={Link}
-              to={`${location.pathname}/add/templates/${generateNewId()}`}
+              to={`${location.pathname}${resourceUrl('add', 'templates', generateNewId())}`}
               startIcon={<AddIcon />}>
               Create template
             </TextButton>

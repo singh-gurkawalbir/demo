@@ -18,10 +18,11 @@ import { getParentResourceContext } from '../../../../utils/connections';
 import FlowStepRequestLogsDrawer from '../../FlowStepDebugLogs';
 import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
+import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 import TitleBar from './TitleBar';
 import DrawerContent from '../../Right/DrawerContent';
 
-const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
+const DRAWER_PATH = `/${DRAWER_URL_PREFIX}/:operation(add|edit)/:resourceType/:id`;
 export const isNestedDrawer = url => !!matchPath(url, {
   path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
   exact: true,
@@ -75,7 +76,7 @@ const useDetermineRequiredResources = type => useMemo(() => {
 }, [type]);
 
 export const redirectURlToParentListing = url => url.split('/')
-  .slice(0, -3)
+  .slice(0, -4)
   .join('/');
 export const useRedirectToParentRoute = initFailed => {
   const history = useHistory();
@@ -84,7 +85,8 @@ export const useRedirectToParentRoute = initFailed => {
   useEffect(() => {
     if (initFailed) {
       // remove the last 3 segments from the route ...
-      // /:operation(add|edit)/:resourceType/:id
+      // /ui-drawer/:operation(add|edit)/:resourceType/:id
+      // TODO: @Raghu: Can't we replace url with parentUrl - if we could pass till here?
       const stripedRoute = redirectURlToParentListing(match.url);
 
       history.replace(stripedRoute);

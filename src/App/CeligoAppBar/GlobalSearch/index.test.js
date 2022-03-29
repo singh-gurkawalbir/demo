@@ -565,7 +565,7 @@ describe('Globalsearch feature tests', () => {
     await initGlobalSearch(
       <MemoryRouter>
         <Switch>
-          <Route path="/connections/edit/connections/:id">
+          <Route path={`/connections/${DRAWER_URL_PREFIX}/edit/connections/:id`}>
             <Connections />
           </Route>
           <Route exact path="/">

@@ -19,6 +19,7 @@ import useIntegration from '../../../hooks/useIntegration';
 import { stringCompare } from '../../../utils/sort';
 import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
 import OnlineStatus from '../../OnlineStatus';
+import { resourceUrl } from '../../../utils/drawerURLs';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -110,7 +111,7 @@ const handleAddNewResource = args => {
     );
   }
 
-  history.push(`${location.pathname}/edit/${resourceType}/${newResourceId}`);
+  history.push(`${location.pathname}${resourceUrl('edit', resourceType, newResourceId)}`);
 };
 
 const useStyles = makeStyles(theme => ({
@@ -240,6 +241,7 @@ export default function DynaSelectResource(props) {
   }, [createdId]);
 
   // When adding a new resource and subsequently editing it disable selecting a new connection
+  // TODO @Raghu: Using URLs for condition! Do we need it?
   const isAddingANewResource =
     allowNew &&
     (location.pathname.endsWith(`/add/${resourceType}/${newResourceId}`) ||
@@ -343,7 +345,7 @@ export default function DynaSelectResource(props) {
       dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
     }
 
-    history.push(`${location.pathname}/edit/${resourceType}/${value}`);
+    history.push(`${location.pathname}${resourceUrl('edit', resourceType, value)}`);
   }, [isFrameWork2, connectorId, dispatch, expConnId, history, location.pathname, resourceType, statusExport, value]);
   const truncatedItems = items =>
     items.sort(stringCompare('label')).map(i => ({
