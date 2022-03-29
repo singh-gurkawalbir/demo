@@ -10,8 +10,7 @@ import DrawerContent from '../drawer/Right/DrawerContent';
 import InviteUser from './InviteUser';
 import SharedUserList from './SharedUserList';
 import { TextButton } from '../Buttons';
-
-const rootPath = 'share/stacks/:stackId';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
 
 export default function StackShareDrawer() {
   const dispatch = useDispatch();
@@ -22,21 +21,21 @@ export default function StackShareDrawer() {
     [dispatch]
   );
   const handleInviteClick = useCallback(() => {
-    history.push(`${history.location.pathname}/invite`);
+    history.push(`${history.location.pathname}/${DRAWER_URL_PREFIX}/invite`);
   }, [history]);
 
   const isInviteUser = history.location.pathname.includes('/invite');
 
   return (
     <RightDrawer
-      path={rootPath}
+      path={DRAWER_URLS.SHARE_STACKS}
       height="tall"
       width="large"
-      variant="temporary"
       helpKey={!isInviteUser && 'stack.sharing'}
-      helpTitle={!isInviteUser && 'Stack sharing'}
-      hideBackButton={!isInviteUser}>
-      <DrawerHeader title={isInviteUser ? 'Invite user' : 'Stack sharing'}>
+      helpTitle={!isInviteUser && 'Stack sharing'} >
+      <DrawerHeader
+        showBackButton={isInviteUser}
+        title={isInviteUser ? 'Invite user' : 'Stack sharing'}>
         {!isInviteUser && (
         <>
           <TextButton
@@ -56,10 +55,10 @@ export default function StackShareDrawer() {
       </DrawerHeader>
 
       <Switch>
-        <Route path={`${match.url}/${rootPath}/invite`}>
+        <Route path={`${match.url}/${DRAWER_URLS.SHARE_STACKS}/${DRAWER_URL_PREFIX}/invite`}>
           <InviteUser />
         </Route>
-        <Route path={`${match.url}/${rootPath}`}>
+        <Route path={`${match.url}/${DRAWER_URLS.SHARE_STACKS}`}>
           <DrawerContent>
             <SharedUserList />
           </DrawerContent>

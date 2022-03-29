@@ -1,9 +1,9 @@
 const DRAWER_URL_REFS = {
-  INSTALL_INTEGRATION: 'installIntegration',
-  ADD_EDIT_LOOKUP: ['lookups/edit/:lookupName', 'lookups/add'],
-  SHARE_STACKS: 'share/stacks/:stackId', // has router for drawer content
   SUBSCRIPTION: ':env/:type', // TODO: add a name space in between env & type
   // ---------------------------------------------------------------------
+  INSTALL_INTEGRATION: 'installIntegration', // done
+  SHARE_STACKS: 'share/stacks/:stackId', // done
+  ADD_EDIT_LOOKUP: ['lookups/edit/:lookupName', 'lookups/add'], // done
   LOOKUP: 'lookup', // done
   MAPPING_SETTINGS: [
     'settings/:mappingKey',

@@ -17,7 +17,7 @@ import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 import KeywordSearch from '../../../components/KeywordSearch';
 import actions from '../../../actions';
 import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../../../utils/home';
-import { resourceUrl } from '../../../utils/drawerURLs';
+import { resourceUrl, DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   viewIcon: {
@@ -93,7 +93,7 @@ export default function IntegrationCeligoPageBar() {
           data-test="installZip"
           component={Link}
           startIcon={<ZipUpIcon />}
-          to={`${location.pathname}/installIntegration`}
+          to={`${location.pathname}/${DRAWER_URL_PREFIX}/installIntegration`}
           >
           Install integration
         </TextButton>

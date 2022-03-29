@@ -12,6 +12,7 @@ import lookupUtil from '../../../../utils/lookup';
 import useFormContext from '../../../Form/FormContext';
 import EllipsisActionMenu from '../../../EllipsisActionMenu';
 import ActionGroup from '../../../ActionGroup';
+import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,13 +45,13 @@ export default function DynaSelectLookup(props) {
 
   const handleAddLookupClick = useCallback(
     () => {
-      history.push(`${match.url}/lookups/add`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/lookups/add`);
     },
     [history, match.url],
   );
   const handleEditLookupClick = useCallback(
     () => {
-      history.push(`${match.url}/lookups/edit/${value}`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/lookups/edit/${value}`);
     },
     [history, match.url, value],
   );
@@ -79,7 +80,7 @@ export default function DynaSelectLookup(props) {
         onFieldChange(lookupFieldId, modifiedLookup);
       }
       onFieldChange(id, newValue.name);
-      history.replace(`${match.url}/lookups/edit/${newValue.name}`);
+      history.replace(`${match.url}/${DRAWER_URL_PREFIX}/lookups/edit/${newValue.name}`);
     },
     [adaptorType, history, id, lookups, match.url, onFieldChange, value],
   );
