@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
   error: {
     width: '10.15%',
-    textAlign: 'center',
+    textAlign: 'left',
   },
   resolved: {
     width: '9%',

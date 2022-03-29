@@ -10,13 +10,18 @@ import StatusCircle from '../../StatusCircle';
 import actions from '../../../actions';
 import { getTextAfterCount } from '../../../utils/string';
 import Status from '../../Buttons/Status';
+import TextButton from '../../Buttons/TextButton';
 
 const useStyles = makeStyles(theme => ({
-  button: {
+  errorButtonContainer: {
     color: theme.palette.primary.main,
-    width: '100%',
-    cursor: 'pointer',
-    display: 'block',
+    '&:hover': {
+      color: theme.palette.primary.light,
+      background: 'none',
+    },
+    '& > * .MuiButton-startIcon': {
+      marginRight: 0,
+    },
   },
 }));
 export default function ErrorCell({
@@ -55,9 +60,13 @@ export default function ErrorCell({
   }
 
   return (
-    <div className={classes.button} onClick={handleErrorClick}>
-      <StatusCircle variant="error" size="mini" />
-      {numOpenError > 9999 ? '9999+ errors' : getTextAfterCount('error', numOpenError)}
-    </div >
+    <>
+      <TextButton
+        className={classes.errorButtonContainer}
+        onClick={handleErrorClick}
+        startIcon={<StatusCircle variant="error" size="mini" />}>
+        {numOpenError > 9999 ? '9999+ errors' : getTextAfterCount('error', numOpenError)}
+      </TextButton>
+    </>
   );
 }
