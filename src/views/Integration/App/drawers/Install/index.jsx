@@ -37,6 +37,7 @@ import HelpIcon from '../../../../../components/icons/HelpIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import TrashIcon from '../../../../../components/icons/TrashIcon';
 import { TextButton } from '../../../../../components/Buttons';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -147,7 +148,7 @@ export default function ConnectorInstallation(props) {
       setConnection({
         _connectionId: connectionId,
       });
-      history.replace(`${match.url}/configure/connections/${connectionId}`);
+      history.replace(`${match.url}/${DRAWER_URL_PREFIX}/configure/connections/${connectionId}`);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionId, dispatch, integrationId, openOauthConnection, oauthConnection]);
@@ -394,7 +395,7 @@ export default function ConnectorInstallation(props) {
         doc: sourceConnection,
         _connectionId,
       });
-      history.push(`${match.url}/configure/connections/${_connectionId || newId}`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/configure/connections/${_connectionId || newId}`);
     } else if (isFrameWork2 && !step.isTriggered && !installURL && !url && type !== 'stack') {
       dispatch(
         actions.integrationApp.installer.updateStep(
@@ -414,7 +415,7 @@ export default function ConnectorInstallation(props) {
         );
       }
       if (type === INSTALL_STEP_TYPES.FORM) {
-        history.push(`${match.url}/form/install`);
+        history.push(`${match.url}/${DRAWER_URL_PREFIX}/form/install`);
       }
     } else if (installURL || url || updatedUrl) {
       if (!step.isTriggered) {
@@ -439,7 +440,7 @@ export default function ConnectorInstallation(props) {
           )
         );
 
-        if (isTemplate && step.connectionId) {
+        if (!_connectorId && step.connectionId) {
           dispatch(
             actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
               integrationId,
@@ -467,7 +468,7 @@ export default function ConnectorInstallation(props) {
         const newStackId = generateNewId();
 
         setShowStackDialog(newStackId);
-        history.push(`${match.url}/configure/stacks/${newStackId}`);
+        history.push(`${match.url}/${DRAWER_URL_PREFIX}/configure/stacks/${newStackId}`);
       }
     } else if (!isEmpty(form)) {
       dispatch(actions.integrationApp.installer.updateStep(

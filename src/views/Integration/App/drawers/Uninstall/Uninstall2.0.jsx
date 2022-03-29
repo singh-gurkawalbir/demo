@@ -12,6 +12,7 @@ import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import Spinner from '../../../../../components/Spinner';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import openExternalUrl from '../../../../../utils/window';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -137,7 +138,7 @@ export default function Uninstaller2({ integration, integrationId }) {
         );
       } else {
         // when the type is form and step has form, open form step drawer
-        history.push(`${match.url}/form/uninstall`);
+        history.push(`${match.url}/${DRAWER_URL_PREFIX}/form/uninstall`);
       }
     }
   }, [dispatch, integrationId, history, match]);

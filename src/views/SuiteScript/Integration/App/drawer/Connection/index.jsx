@@ -18,6 +18,7 @@ import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import TextButton from '../../../../../../components/Buttons/TextButton';
 import ActionGroup from '../../../../../../components/ActionGroup';
+import { DRAWER_URL_PREFIX } from '../../../../../../utils/drawerURLs';
 
 export default function ConnectionDrawer({
   connectorId,
@@ -103,7 +104,7 @@ export default function ConnectionDrawer({
           SCOPES.VALUE
         )
       );
-      history.push(`${match.url}/configure/connections/${newId}`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/configure/connections/${newId}`);
       setAccount(null);
     }
   }, [account, dispatch, linkedConnectionId, history, match.url]);

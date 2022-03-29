@@ -26,6 +26,7 @@ import { SCOPES } from '../../sagas/resourceForm';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
 import { getApplication } from '../../utils/template';
+import { DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -157,7 +158,7 @@ export default function Clone() {
         )
       );
       setSelectedConnectionId({ newId, doc: connectionMap[_connectionId] });
-      history.push(`${match.url}/configure/connections/${newId}`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/configure/connections/${newId}`);
 
       // handle Installation step click
     } else if (type === INSTALL_STEP_TYPES.INSTALL_PACKAGE) {
@@ -200,7 +201,7 @@ export default function Clone() {
     } else if (type === INSTALL_STEP_TYPES.STACK) {
       const newStackId = generateNewId();
 
-      history.push(`${match.url}/configure/stacks/${newStackId}`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/configure/stacks/${newStackId}`);
     }
   };
 

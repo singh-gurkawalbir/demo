@@ -10,6 +10,7 @@ import actions from '../../../actions';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
+import { DRAWER_URLS } from '../../../utils/drawerURLs';
 
 function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler, parentUrl }) {
   const { formType } = useParams();
@@ -120,10 +121,7 @@ export default function FormStepDrawer({ integrationId, formSubmitHandler, formC
   const match = useRouteMatch();
 
   return (
-    <RightDrawer
-      path="form/:formType"
-      variant="temporary"
-      height="tall">
+    <RightDrawer path={DRAWER_URLS.FORM_INSTALL_STEP} height="tall">
       <FormStepContent
         integrationId={integrationId}
         formSubmitHandler={formSubmitHandler}

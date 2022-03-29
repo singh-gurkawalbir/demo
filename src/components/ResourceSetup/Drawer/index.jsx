@@ -13,6 +13,7 @@ import ResourceDrawer from '../../drawer/Resource';
 import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from '../../drawer/Resource/Panel/ResourceFormActionsPanel';
 import { isNewId, getConnectionType } from '../../../utils/resource';
+import { DRAWER_URLS } from '../../../utils/drawerURLs';
 import resourceConstants from '../../../forms/constants/connection';
 import EditorDrawer from '../../AFE/Drawer';
 
@@ -190,10 +191,7 @@ function ResourceSetupDrawerContent({
 }
 export default function ResourceSetupDrawer(props) {
   return (
-    <RightDrawer
-      path="configure/:resourceType/:resourceId"
-      height="tall"
-      variant="temporary">
+    <RightDrawer path={DRAWER_URLS.CONFIGURE_RESOURCE_SETUP} height="tall">
       <ResourceSetupDrawerContent {...props} />
       <EditorDrawer />
     </RightDrawer>

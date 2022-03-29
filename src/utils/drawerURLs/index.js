@@ -6,12 +6,10 @@ const DRAWER_URL_REFS = {
   RESOURCE: ':operation(add|edit)/:resourceType/:id',
   CONDITIONAL_LOOKUP: ['conditionalLookup/edit/:lookupName', 'conditionalLookup/add'],
   ADD_EDIT_LOOKUP: ['lookups/edit/:lookupName', 'lookups/add'], // Is it linked with Line: 8 lookup ?
-  FORM_INSTALL_STEP: 'form/:formType',
   MAPPING_SETTINGS: [
     'settings/:mappingKey',
     'settings/category/:editorId/sections/:sectionId/:depth/:mappingKey',
   ],
-  CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId',
   SHARE_STACKS: 'share/stacks/:stackId', // has router for drawer content
   MAPPINGS: [
     'mapping/:flowId/:importId/:subRecordMappingId/view',
@@ -26,6 +24,8 @@ const DRAWER_URL_REFS = {
   ],
   SUBSCRIPTION: ':env/:type', // TODO: add a name space in between env & type
   // ---------------------------------------------------------------------
+  FORM_INSTALL_STEP: 'form/:formType', // done
+  CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId', // done
   NS_SUB_RECORD: ['subrecords/:fieldId', 'subrecords'],
   SCRIPT_LOGS: 'viewLogs/:scriptId',
   CONNECTION_DEBUGGER: 'configDebugger/:connectionId', // done

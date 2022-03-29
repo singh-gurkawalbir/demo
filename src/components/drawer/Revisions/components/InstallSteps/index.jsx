@@ -13,6 +13,7 @@ import jsonUtil from '../../../../../utils/json';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import openExternalUrl from '../../../../../utils/window';
 import { INSTALL_STEP_TYPES, REVISION_TYPES } from '../../../../../utils/constants';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   installStepsWrapper: {
@@ -80,7 +81,7 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
           )
         );
       }
-      history.push(`${match.url}/configure/connections/${_connectionId || newId}`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/configure/connections/${_connectionId || newId}`);
     } else if (type === INSTALL_STEP_TYPES.URL) {
       if (!step.isTriggered) {
         dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'inProgress'));

@@ -25,6 +25,7 @@ import CloseIcon from '../../../../../components/icons/CloseIcon';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { TextButton } from '../../../../../components/Buttons';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -174,7 +175,7 @@ export default function IntegrationAppAddNewChild(props) {
         return false;
       }
 
-      history.push(`${match.url}/configure/connections/${_connectionId}`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/configure/connections/${_connectionId}`);
       // handle Installation step click
     } else if (installURL) {
       if (!step.isTriggered) {
@@ -213,7 +214,7 @@ export default function IntegrationAppAddNewChild(props) {
         undefined,
         true
       ));
-      history.push(`${match.url}/form/child`);
+      history.push(`${match.url}/${DRAWER_URL_PREFIX}/form/child`);
     } else if (!step.isTriggered) {
       dispatch(
         actions.integrationApp.child.updateStep(
