@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
@@ -15,9 +15,7 @@ import DrawerContent from '../../../../../../components/drawer/Right/DrawerConte
 import DrawerFooter from '../../../../../../components/drawer/Right/DrawerFooter';
 import { getTrimmedTitle } from '../../../../../../utils/string';
 
-function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
-  const match = useRouteMatch();
-  const { flowId } = match.params;
+function AddCategoryMappingDrawer({ integrationId, parentUrl, flowId }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const flowName = useSelector(state => {
@@ -219,21 +217,16 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
   );
 }
 
-export default function AddCategoryMappingDrawerRoute(props) {
-  const location = useLocation();
+export default function AddCategoryMappingDrawerRoute({ integrationId, flowId }) {
+  const match = useRouteMatch();
 
   return (
-    <RightDrawer
-      path=":flowId/utilitymapping/:categoryId/addCategory"
-      variant="temporary"
-      height="tall"
-      BackdropProps={{ invisible: true }}
-      width="large">
+    <RightDrawer path="addCategory" width="large" height="tall">
       <LoadResources required resources="flows,exports,imports,connections">
         <AddCategoryMappingDrawer
-          {...props}
-          parentUrl={location.pathname.replace(/\/addCategory$/, '')}
-        />
+          integrationId={integrationId}
+          flowId={flowId}
+          parentUrl={match.url} />
       </LoadResources>
     </RightDrawer>
   );

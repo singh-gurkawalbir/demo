@@ -47,6 +47,8 @@ import RightDrawer from '../../../../../../components/drawer/Right';
 import DrawerHeader from '../../../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../../../components/drawer/Right/DrawerFooter';
+import AddCategoryMappingDrawer from './AddCategory';
+import VariationMappingDrawer from './VariationMapping';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
@@ -531,6 +533,12 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
       </DrawerHeader>
       <DrawerContent>
         <CategoryMappingContent integrationId={integrationId} parentUrl={parentUrl} />
+        <AddCategoryMappingDrawer integrationId={integrationId} flowId={flowId} />
+        <VariationMappingDrawer
+          integrationId={integrationId}
+          flowId={flowId}
+          categoryId={categoryId}
+      />
       </DrawerContent>
       <DrawerFooter>
         <CategoryMappingFooter flowId={flowId} integrationId={integrationId} parentUrl={parentUrl} />
@@ -667,18 +675,16 @@ const CategoryMappingFooter = ({flowId, integrationId, parentUrl}) => {
       asyncKey={CATEGORY_MAPPING_ASYNC_KEY} />
   );
 };
-export default function CategoryMappingDrawerRoute(props) {
+export default function CategoryMappingDrawerRoute({ integrationId }) {
   const match = useRouteMatch();
 
   return (
     <RightDrawer
       path=":flowId/utilitymapping/:categoryId"
-      variant="temporary"
       height="tall"
-      width="large"
-      >
+      width="large" >
       <LoadResources required resources="exports,imports,connections">
-        <CategoryMappingDrawer {...props} parentUrl={match.url} />
+        <CategoryMappingDrawer integrationId={integrationId} parentUrl={match.url} />
       </LoadResources>
     </RightDrawer>
   );

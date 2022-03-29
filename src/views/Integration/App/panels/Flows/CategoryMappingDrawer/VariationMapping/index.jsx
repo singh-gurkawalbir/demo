@@ -1,7 +1,7 @@
 import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useCallback } from 'react';
-import { useRouteMatch, useHistory, useLocation } from 'react-router-dom';
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import LoadResources from '../../../../../../../components/LoadResources';
@@ -61,9 +61,9 @@ const useStyles = makeStyles(theme => ({
 
 export const variationUrlName = (variation = '') => variation.replace(/\//g, '__');
 
-function VariationMappingDrawer({ integrationId, parentUrl }) {
+function VariationMappingDrawer({ integrationId, flowId, categoryId, parentUrl }) {
   const match = useRouteMatch();
-  const { flowId, subCategoryId, variation: variationParamName, categoryId, depth } = match.params;
+  const { subCategoryId, variation: variationParamName, depth } = match.params;
   const variation = variationParamName?.replace(/__/g, '/');
   const classes = useStyles();
   const history = useHistory();
@@ -237,36 +237,37 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
   );
 }
 
-export default function VariationMappingDrawerRoute(props) {
-  const location = useLocation();
+export default function VariationMappingDrawerRoute({ integrationId, flowId, categoryId }) {
+  const match = useRouteMatch();
 
   return (
     <>
       <LoadResources required resources="flows,exports,imports,connections">
         <RightDrawer
-          path=":flowId/utilitymapping/:categoryId/depth/:depth/variationAttributes/:subCategoryId"
+          path="depth/:depth/variationAttributes/:subCategoryId"
           variant="temporary"
           height="tall"
           width="large">
           <VariationMappingDrawer
-            {...props}
-            parentUrl={location.pathname.replace(
-              /\/variationAttributes\/.*$/,
-              ''
-            )}
+            integrationId={integrationId}
+            flowId={flowId}
+            categoryId={categoryId}
+            parentUrl={match.url}
           />
         </RightDrawer>
         <RightDrawer
           path={[
-            ':flowId/utilitymapping/:categoryId/depth/:depth/variations/:subCategoryId/:variation',
-            ':flowId/utilitymapping/:categoryId/depth/:depth/variations/:subCategoryId',
+            'depth/:depth/variations/:subCategoryId/:variation',
+            'depth/:depth/variations/:subCategoryId',
           ]}
           variant="temporary"
           height="tall"
           width="large">
           <VariationMappingDrawer
-            {...props}
-            parentUrl={location.pathname.replace(/\/depth\/.*$/, '')}
+            integrationId={integrationId}
+            flowId={flowId}
+            categoryId={categoryId}
+            parentUrl={match.url}
           />
         </RightDrawer>
       </LoadResources>

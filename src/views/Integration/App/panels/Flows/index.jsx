@@ -13,8 +13,6 @@ import CeligoTable from '../../../../../components/CeligoTable';
 import flowTableMeta from '../../../../../components/ResourceTable/flows/metadata';
 import SettingsDrawer from './SettingsDrawer';
 import CategoryMappingDrawer from './CategoryMappingDrawer';
-import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCategory';
-import VariationMappingDrawer from './CategoryMappingDrawer/VariationMapping';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
@@ -423,21 +421,7 @@ function FlowList({ integrationId, childId }) {
         integrationId={integrationId}
       />
       {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}
-      <CategoryMappingDrawer
-        integrationId={integrationId}
-        childId={childId}
-        sectionId={sectionId}
-      />
-      <AddCategoryMappingDrawer
-        integrationId={integrationId}
-        childId={childId}
-        sectionId={sectionId}
-      />
-      <VariationMappingDrawer
-        integrationId={integrationId}
-        childId={childId}
-        sectionId={sectionId}
-      />
+      <CategoryMappingDrawer integrationId={integrationId} />
       <Header integrationId={integrationId} childId={childId} />
       <FlowsTable integrationId={integrationId} childId={childId} />
     </>
