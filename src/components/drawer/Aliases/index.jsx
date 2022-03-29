@@ -97,7 +97,7 @@ const ViewAliases = ({ resourceId, resourceType, height }) => {
 
   useEffect(() => {
     if (!allAliases) {
-      dispatch(actions.resource.aliases.requestAll(resourceType, resourceId));
+      dispatch(actions.resource.aliases.requestAll(resourceId, resourceType));
     }
 
     return () => (dispatch(actions.resource.aliases.clear(resourceId)));

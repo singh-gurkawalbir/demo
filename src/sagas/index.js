@@ -61,6 +61,7 @@ import { bottomDrawerSagas } from './bottomDrawer';
 import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
 import { getNextLinkRelativeUrl } from '../utils/resource';
 import flowGroupSagas from './flowGroups';
+import aliasSagas from './aliases';
 import { appSagas } from './app';
 import { sendRequest } from './api';
 
@@ -222,6 +223,7 @@ export function* allSagas() {
     ...ssoSagas,
     ...bottomDrawerSagas,
     ...flowGroupSagas,
+    ...aliasSagas,
     ...lifecycleManagementSagas,
   ]);
 }

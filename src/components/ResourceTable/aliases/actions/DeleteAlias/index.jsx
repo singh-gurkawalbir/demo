@@ -24,7 +24,7 @@ export default {
     const { confirmDialog } = useConfirmDialog();
 
     const deleteResource = useCallback(() => {
-      dispatch(actions.resource.aliases.delete(parentResourceType, parentResourceId, rowData.alias, ALIAS_FORM_KEY));
+      dispatch(actions.resource.aliases.delete(parentResourceId, parentResourceType, rowData.alias, ALIAS_FORM_KEY));
       setShowRef(true);
     }, [dispatch, parentResourceId, parentResourceType, rowData]);
 
@@ -48,10 +48,6 @@ export default {
     const handleResourceReferenceClose = useCallback(() => {
       setShowRef(false);
     }, []);
-
-    useEffect(() => () => dispatch(actions.resource.clearReferences()), [
-      dispatch,
-    ]);
 
     useEffect(() => {
       handleDelete();

@@ -6,15 +6,15 @@ import actions from '../../actions';
 import { patchResource, requestReferences } from '../resources';
 import { getResourceFromAlias } from '../../utils/resource';
 
-export function* requestAllAliases({ resourceId, resourceType }) {
-  const resource = yield select(selectors.resource, resourceType, resourceId);
-  const integrationId = resourceType === 'flows' ? resource._integrationId : resourceId;
+export function* requestAllAliases({ id, resourceType }) {
+  const resource = yield select(selectors.resource, resourceType, id);
+  const integrationId = resourceType === 'flows' ? resource._integrationId : id;
   let path;
 
   if (resourceType === 'integrations') {
     path = `/integrations/${integrationId}/aliases`;
   } else {
-    path = `/integrations/${integrationId}/flows/${resourceId}/aliases`;
+    path = `/integrations/${integrationId}/flows/${id}/aliases`;
   }
 
   try {
@@ -23,7 +23,7 @@ export function* requestAllAliases({ resourceId, resourceType }) {
       message: 'Requesting aliases',
     });
 
-    put(actions.resource.aliases.received(resourceId, response));
+    yield put(actions.resource.aliases.received(id, response));
   } catch (error) {
     return undefined;
   }

@@ -6,19 +6,19 @@ const emptyObj = {};
 export default function reducer(state = {}, action) {
   const {
     type,
-    resourceId,
+    id,
     aliases,
   } = action;
 
   return produce(state, draft => {
     switch (type) {
       case actionTypes.RESOURCE.RECEIVED_ALIASES: {
-        draft[resourceId] = aliases;
+        draft[id] = aliases;
         break;
       }
 
       case actionTypes.RESOURCE.CLEAR_ALIASES: {
-        delete draft[resourceId];
+        delete draft[id];
 
         break;
       }

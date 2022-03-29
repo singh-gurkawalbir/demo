@@ -337,14 +337,14 @@ const resource = {
     action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id, scope }),
 
   aliases: {
-    requestAll: (resourceType, resourceId) =>
-      action(actionTypes.RESOURCE.REQUEST_ALL_ALIASES, { resourceType, resourceId }),
-    received: (resourceId, aliases) =>
-      action(actionTypes.RESOURCE.RECEIVED_ALIASES, {resourceId, aliases}),
-    clear: resourceId =>
-      action(actionTypes.RESOURCE.CLEAR_ALIASES, {resourceId}),
-    delete: (resourceId, resourceType, aliasId, asyncKey) =>
-      action(actionTypes.RESOURCE.DELETE_ALIAS, {resourceId, resourceType, aliasId, asyncKey}),
+    requestAll: (id, resourceType) =>
+      action(actionTypes.RESOURCE.REQUEST_ALL_ALIASES, {id, resourceType}),
+    received: (id, aliases) =>
+      action(actionTypes.RESOURCE.RECEIVED_ALIASES, {id, aliases}),
+    clear: id =>
+      action(actionTypes.RESOURCE.CLEAR_ALIASES, {id}),
+    delete: (id, resourceType, aliasId, asyncKey) =>
+      action(actionTypes.RESOURCE.DELETE_ALIAS, {id, resourceType, aliasId, asyncKey}),
   },
 
   integrations: {

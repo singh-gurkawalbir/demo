@@ -38,6 +38,7 @@ import bottomDrawer, {selectors as fromBottomDrawer} from './bottomDrawer';
 import integrations, {selectors as fromIntegrations} from './integrations';
 import asyncTask, {selectors as fromAsyncTask} from './asyncTask';
 import lifeCycleManagement, {selectors as fromLifeCycleManagement} from './lifeCycleManagement';
+import aliases, {selectors as fromAliases} from './aliases';
 import { genSelectors } from '../util';
 
 export default combineReducers({
@@ -80,6 +81,7 @@ export default combineReducers({
   bottomDrawer,
   resourceFormSampleData,
   lifeCycleManagement,
+  aliases,
 });
 
 // #region PUBLIC SELECTORS
@@ -124,6 +126,7 @@ const subSelectors = {
   bottomDrawer: fromBottomDrawer,
   resourceFormSampleData: fromResourceFormSampleData,
   lifeCycleManagement: fromLifeCycleManagement,
+  aliases: fromAliases,
 };
 
 genSelectors(selectors, subSelectors);
