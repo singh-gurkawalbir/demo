@@ -149,63 +149,17 @@ export default function Endpoint() {
   );
   const showMessage = (licenseActionDetails?.tier === 'free' && licenseActionDetails?.expiresInDays < 10) || false;
   const [showExpireMessage, setShowExpireMessage] = useState(showMessage);
-  // const [needMoreNotification, setNeedMoreNotification] = useState(licenseActionDetails?.tier === 'free' && !showExpireMessage);
-  const [trialExpired, setTrialExpired] = useState(false);
+  const [needMoreNotification, setNeedMoreNotification] = useState(licenseActionDetails?.tier === 'free' && !showExpireMessage);
 
   const onStartFreeTrialClick = useCallback(() => {
-    confirmDialog({
-      title: 'Try unlimited flows free for 30 days',
-      isHtml: true,
-      message: `<p>You are currently enrolled in the free subscription plan that entitles you to 1 enabled integration flow between 2 endpoints</p>.
-
-      <Strong> your free trial now to experience optimal process automation for your business with full access to integrator.io. For 30 days, the unlimited flows trial gives you:</strong>
-      
-      <ul>
-        <li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
-        <li>Easy installation of Integration Apps and free templates from our vast library</li>
-        <li>Integrations with multiple imports or exports (orchestration)</li>
-        <li>Ad hoc data imports to thousands of applications</li>
-        <li>Ability to daisy-chain flows</li>
-      </ul>
-
-      <a href= "https://www.celigo.com/ipaas-integration-platform/free-trial">Learn how to make the most of your free trial  </a>
-      <p>After 30 days, your plan will revert to the free subscription plan with 1 enabled integration flow.</p>
-      `,
-      buttons: [
-        { label: 'Start free trial now',
-          onClick: () => {
-            history.push(`${match.url}/upgrade`);
-            confirmDialog({
-              title: 'Congratulations! Your unlimited flows trial starts now.',
-              isHtml: true,
-              message: `
-                        <p>What will you integrate next?</p>
-                        <p><a href="https://integrator.io/marketplace">Check out our Marketplace</a> to jumpstart your integrations with Integration Apps, Business Process Automation templates, and quickstart templates.</p>
-              `,
-              buttons: [
-                {
-                  label: 'Close',
-                },
-              ],
-            }, [history, confirmDialog, match.url]);
-          },
-        },
-        { label: 'Cancel',
-          variant: 'text',
-        },
-      ],
-    }, [confirmDialog, dispatch]);
-  }, [confirmDialog, history, match.url, dispatch]);
-
-  //   history.push(`${match.url}/upgrade`);
-  // }, [history, match.url]);
+    history.push(`${match.url}/upgrade`);
+  }, [history, match.url]);
 
   const onTrialUpgradeClick = useCallback(() => {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
     );
     setUpgradeRequested(true);
-    setTrialExpired(true);
     confirmDialog({
       title: 'Upgrade and keep all my flows running',
       message: 'Great idea. Who wants to stop the magic?.We`ll be in touch shortly to get you upgraded!',
@@ -249,8 +203,8 @@ export default function Endpoint() {
   const numberofUsedSandboxTradingPartners = licenseEntitlementUsage?.sandbox?.tradingPartnerUsage?.numConsumed;
   const numberofUsedSandboxAgents = licenseEntitlementUsage?.sandbox?.agentUsage?.numActive;
   const onCloseNotification = useCallback(() => {
-    setTrialExpired(false);
-  }, [setTrialExpired]);
+    setNeedMoreNotification(false);
+  }, [setNeedMoreNotification]);
   const requestLicenseEntitlementUsage = useCallback(() => {
     dispatch(actions.license.requestLicenseEntitlementUsage());
   }, [dispatch]);
@@ -285,7 +239,7 @@ export default function Endpoint() {
         </DrawerContent>
       </RightDrawer>
 
-      {trialExpired && (
+      {!upgradeRequested && !showExpireMessage && needMoreNotification && (
       <div className={classes.subscriptionNotificationToaster}>
         <NotificationToaster variant="info" size="large" onClose={onCloseNotification}>
           <Typography component="div" variant="h5" className={classes.subscriptionMessage}>
