@@ -145,6 +145,7 @@ const connectors = [
     type: 'bigquerydatawarehouse',
     keywords: 'database,db',
     group: 'db',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360042825892-Set-up-a-connection-to-Google-BigQuery',
   },
   {
     id: 'graph_ql',
