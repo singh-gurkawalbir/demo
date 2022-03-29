@@ -25,7 +25,7 @@ describe('integrationApps utility reducer test cases', () => {
           })
         );
 
-        expect(newState).toEqual({123: 'runKey'});
+        expect(newState).toEqual({123: { status: 'received', runKey: 'runKey'}});
       });
       test('should not affect any other integration id state', () => {
         state = {456: 'runkey2'};
@@ -39,7 +39,7 @@ describe('integrationApps utility reducer test cases', () => {
 
         expect(newState).toEqual({
           456: 'runkey2',
-          123: 'runKey',
+          123: { status: 'received', runKey: 'runKey'},
         });
       });
     });
@@ -75,13 +75,12 @@ describe('integrationApps utility reducer test cases', () => {
 describe('integrationApps utility selectors', () => {
   describe('integrationAppCustomTemplateRunKey', () => {
     test('should return empty state when no match found.', () => {
-      expect(selectors.integrationAppCustomTemplateRunKey(undefined, 'dummy')).toEqual({});
-      expect(selectors.integrationAppCustomTemplateRunKey({}, 'dummy')).toEqual({});
-      expect(selectors.integrationAppCustomTemplateRunKey(null, 'dummy')).toEqual({});
-      expect(selectors.integrationAppCustomTemplateRunKey(123, 'dummy')).toEqual({});
-      expect(selectors.integrationAppCustomTemplateRunKey(undefined, null)).toEqual({});
-      expect(selectors.integrationAppCustomTemplateRunKey({})).toEqual({});
-      expect(selectors.integrationAppCustomTemplateRunKey()).toEqual({});
+      expect(selectors.integrationAppCustomTemplateRunKey(undefined, 'dummy')).toEqual();
+      expect(selectors.integrationAppCustomTemplateRunKey({}, 'dummy')).toEqual();
+      expect(selectors.integrationAppCustomTemplateRunKey(123, 'dummy')).toEqual();
+      expect(selectors.integrationAppCustomTemplateRunKey(undefined, null)).toEqual();
+      expect(selectors.integrationAppCustomTemplateRunKey({})).toEqual();
+      expect(selectors.integrationAppCustomTemplateRunKey()).toEqual();
     });
 
     test('should return correct state data when a match is found.', () => {
@@ -96,6 +95,43 @@ describe('integrationApps utility selectors', () => {
       );
 
       expect(selectors.integrationAppCustomTemplateRunKey(newState, '123')).toEqual('runKey1');
+    });
+  });
+
+  describe('integrationAppCustomTemplateRunKeyStatus', () => {
+    test('should return empty state when no match found.', () => {
+      expect(selectors.integrationAppCustomTemplateRunKeyStatus(undefined, 'dummy')).toEqual();
+      expect(selectors.integrationAppCustomTemplateRunKeyStatus({}, 'dummy')).toEqual();
+      expect(selectors.integrationAppCustomTemplateRunKeyStatus(123, 'dummy')).toEqual();
+      expect(selectors.integrationAppCustomTemplateRunKeyStatus(undefined, null)).toEqual();
+      expect(selectors.integrationAppCustomTemplateRunKeyStatus({})).toEqual();
+      expect(selectors.integrationAppCustomTemplateRunKeyStatus()).toEqual();
+    });
+
+    test('should return correct state data when a match is found.', () => {
+      const newState = reducer(
+        undefined,
+        actions.integrationApp.utility.receivedS3Key(
+          {
+            integrationId: '123',
+            runKey: 'runKey1',
+          }
+        )
+      );
+
+      expect(selectors.integrationAppCustomTemplateRunKeyStatus(newState, '123')).toEqual('received');
+    });
+    test('should return correct state data when a match is found.', () => {
+      const newState = reducer(
+        undefined,
+        actions.integrationApp.utility.requestS3Key(
+          {
+            integrationId: '123',
+          }
+        )
+      );
+
+      expect(selectors.integrationAppCustomTemplateRunKeyStatus(newState, '123')).toEqual('requested');
     });
   });
 });

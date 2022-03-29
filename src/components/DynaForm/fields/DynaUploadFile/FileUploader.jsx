@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
+import Spinner from '../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -71,6 +72,7 @@ export default function FileUploader(props) {
     variant = 'outlined',
     color = 'secondary',
     isLoggable,
+    uploadInProgress,
   } = props;
 
   const fileInput = useRef(null);
@@ -95,17 +97,19 @@ export default function FileUploader(props) {
           <FieldHelp {...props} />
         </div>
         <div className={clsx(classes.uploadContainer, classProps.uploadFile)}>
-          <Button
-            variant={variant}
-            color={color}
-            onClick={handleClick}
-            name={name}
-            disabled={disabled}
-            required={required}
-            className={classes.uploadBtn}
-            data-test={id}>
-            Choose file
-          </Button>
+          {uploadInProgress ? <Spinner size="small" /> : (
+            <Button
+              variant={variant}
+              color={color}
+              onClick={handleClick}
+              name={name}
+              disabled={disabled}
+              required={required}
+              className={classes.uploadBtn}
+              data-test={id}>
+              Choose file
+            </Button>
+          )}
           <input
             {...isLoggableAttr(isLoggable)}
             data-test="uploadFile"
@@ -115,7 +119,7 @@ export default function FileUploader(props) {
             ref={fileInput}
             className={classes.fileInput}
             onChange={handleFileChosen}
-        />
+          />
           {!hideFileName && (fileName ? <p className={classes.fileValue} {...isLoggableAttr(isLoggable)}> {fileName}</p> : <p className={classes.defaultText}>No file chosen</p>)}
 
         </div>

@@ -46,6 +46,7 @@ export default function DynaUploadFile(props) {
     shallowEqual
   );
   const templateRunKey = useSelector(state => selectors.integrationAppCustomTemplateRunKey(state, integrationId));
+  const templateRunKeyStatus = useSelector(state => selectors.integrationAppCustomTemplateRunKeyStatus(state, integrationId));
 
   useEffect(() => {
     if (templateRunKey) {
@@ -131,6 +132,7 @@ export default function DynaUploadFile(props) {
       fileName={fileName}
       uploadError={uploadedFile && uploadedFile.error}
       handleFileChosen={handleFileChosen}
+      uploadInProgress={templateRunKeyStatus === 'requested'}
     />
   );
 }
