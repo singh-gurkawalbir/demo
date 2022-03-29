@@ -17,6 +17,7 @@ import RightDrawer from '../../../../../../../components/drawer/Right';
 import DrawerHeader from '../../../../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../../../../components/drawer/Right/DrawerFooter';
+import { DRAWER_URLS } from '../../../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   mappingHeader: {
@@ -170,6 +171,10 @@ function VariationMappingDrawer({ integrationId, flowId, categoryId, parentUrl }
       <DrawerHeader
         title={`Configure ${uiAssistant} variation themes: ${uiAssistant} - NetSuite`}
         handleClose={handleClose}
+        handleBack={handleClose}
+        // Pass handleBack to move to the previous drawer, to land in the utility mapping drawer
+        // as by default back button does go to the previous URL
+        // and this drawer internally has URL re-directions for different variation attributes
       />
       <DrawerContent>
         <div className={classes.root}>
@@ -213,8 +218,7 @@ function VariationMappingDrawer({ integrationId, flowId, categoryId, parentUrl }
                   sectionId={subCategoryId}
                   variation={variation}
                   depth={depth}
-                  isVariationAttributes={isVariationAttributes}
-                  />
+                  isVariationAttributes={isVariationAttributes} />
               </div>
             </div>
           </div>
@@ -241,36 +245,18 @@ export default function VariationMappingDrawerRoute({ integrationId, flowId, cat
   const match = useRouteMatch();
 
   return (
-    <>
-      <LoadResources required resources="flows,exports,imports,connections">
-        <RightDrawer
-          path="depth/:depth/variationAttributes/:subCategoryId"
-          variant="temporary"
-          height="tall"
-          width="large">
-          <VariationMappingDrawer
-            integrationId={integrationId}
-            flowId={flowId}
-            categoryId={categoryId}
-            parentUrl={match.url}
+    <LoadResources required resources="flows,exports,imports,connections">
+      <RightDrawer
+        path={DRAWER_URLS.VARIATION_MAPPING}
+        height="tall"
+        width="large">
+        <VariationMappingDrawer
+          integrationId={integrationId}
+          flowId={flowId}
+          categoryId={categoryId}
+          parentUrl={match.url}
           />
-        </RightDrawer>
-        <RightDrawer
-          path={[
-            'depth/:depth/variations/:subCategoryId/:variation',
-            'depth/:depth/variations/:subCategoryId',
-          ]}
-          variant="temporary"
-          height="tall"
-          width="large">
-          <VariationMappingDrawer
-            integrationId={integrationId}
-            flowId={flowId}
-            categoryId={categoryId}
-            parentUrl={match.url}
-          />
-        </RightDrawer>
-      </LoadResources>
-    </>
+      </RightDrawer>
+    </LoadResources>
   );
 }

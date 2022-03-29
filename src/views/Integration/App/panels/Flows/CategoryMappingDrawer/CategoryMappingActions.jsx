@@ -3,6 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '../../../../../../components/icons/AddIcon';
 import { TextButton } from '../../../../../../components/Buttons';
+import { DRAWER_URL_PREFIX } from '../../../../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -17,7 +18,7 @@ export default function CategoryMappingActions() {
   const history = useHistory();
   const match = useRouteMatch();
   const handleAddCategoryClick = () => {
-    history.push(`${match.url}/addCategory`);
+    history.push(`${match.url}/${DRAWER_URL_PREFIX}/addCategory`);
   };
 
   return (

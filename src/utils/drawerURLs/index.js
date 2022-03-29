@@ -34,12 +34,11 @@ const DRAWER_URL_REFS = {
   REPLACE_CONNECTION: 'replaceConnection/:connId', // done
   FLOW_SCHEDULE: [':flowId/schedule', 'schedule'], // done - pending testing
   FLOW_BUILDER_SETTINGS: 'settings', // done
-  ADD_CATEGORY_MAPPING: ':flowId/utilitymapping/:categoryId/addCategory',
-  CATEGORY_MAPPING: ':flowId/utilitymapping/:categoryId',
-  VARIATION_MAPPING_ATTRIBUTES: ':flowId/utilitymapping/:categoryId/depth/:depth/variationAttributes/:subCategoryId',
-  VARIATION_MAPPING: [
-    ':flowId/utilitymapping/:categoryId/depth/:depth/variations/:subCategoryId/:variation',
-    ':flowId/utilitymapping/:categoryId/depth/:depth/variations/:subCategoryId',
+  ADD_CATEGORY_MAPPING: 'addCategory', // done
+  CATEGORY_MAPPING: ':flowId/utilitymapping/:categoryId', // done
+  VARIATION_MAPPING: [ // done
+    'depth/:depth/variations/:subCategoryId/:variation',
+    'depth/:depth/variations/:subCategoryId',
   ],
   IA_FLOW_SETTINGS: ':flowId/settings', // done
   FLOW_ERROR_LIST: ':flowId/errorsList', // done

@@ -49,6 +49,7 @@ import DrawerContent from '../../../../../../components/drawer/Right/DrawerConte
 import DrawerFooter from '../../../../../../components/drawer/Right/DrawerFooter';
 import AddCategoryMappingDrawer from './AddCategory';
 import VariationMappingDrawer from './VariationMapping';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../../../utils/drawerURLs';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
@@ -260,7 +261,7 @@ function CategoryMappings({
   const handleVariation = useCallback(e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
-    history.push(`${match.url}/depth/${depth}/variations/${sectionId}`);
+    history.push(`${match.url}/${DRAWER_URL_PREFIX}/depth/${depth}/variations/${sectionId}`);
   }, [history, match.url, sectionId, depth]);
 
   if (!generateFields) {
@@ -680,7 +681,7 @@ export default function CategoryMappingDrawerRoute({ integrationId }) {
 
   return (
     <RightDrawer
-      path=":flowId/utilitymapping/:categoryId"
+      path={DRAWER_URLS.CATEGORY_MAPPING}
       height="tall"
       width="large" >
       <LoadResources required resources="exports,imports,connections">

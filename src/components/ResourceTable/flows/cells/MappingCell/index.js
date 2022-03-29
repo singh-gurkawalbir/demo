@@ -5,6 +5,7 @@ import MapDataIcon from '../../../../icons/MapDataIcon';
 import { selectors } from '../../../../../reducers';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
 
 export default function MappingCell({ flowId, childId }) {
   const history = useHistory();
@@ -17,7 +18,7 @@ export default function MappingCell({ flowId, childId }) {
   const handleClick = useCallback(() => {
     if (showUtilityMapping) {
       history.push(
-        `${history.location.pathname}/${flowId}/utilityMapping/commonAttributes`
+        `${history.location.pathname}/${DRAWER_URL_PREFIX}/${flowId}/utilityMapping/commonAttributes`
       );
     } else history.push(`${history.location.pathname}/mapping/${flowId}`);
   }, [history, showUtilityMapping, flowId]);

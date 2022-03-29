@@ -57,6 +57,7 @@ export default function DrawerHeader({
   helpTitle,
   helpKey,
   showBackButton = false,
+  handleBack,
   CloseButton,
   disableClose,
   className,
@@ -81,7 +82,7 @@ export default function DrawerHeader({
           data-test="backRightDrawer"
           aria-label="Close"
         // eslint-disable-next-line react/jsx-handler-names
-          onClick={history.goBack}>
+          onClick={handleBack || history.goBack}>
           <BackArrowIcon />
         </IconButton>
       )}
