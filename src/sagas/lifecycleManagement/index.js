@@ -157,6 +157,9 @@ function* installStep({ integrationId, revisionId, stepInfo }) {
       yield put(actions.resource.requestCollection('exports', null, true));
       yield put(actions.resource.requestCollection('imports', null, true));
       yield put(actions.resource.requestCollection('connections', null, true));
+      yield put(actions.resource.requestCollection('scripts', null, true));
+      yield put(actions.resource.requestCollection('filedefinitions', null, true));
+      yield put(actions.resource.requestCollection('asynchelpers', null, true));
     }
   } catch (e) {
   // TODO: Handle errors and trigger failed action
