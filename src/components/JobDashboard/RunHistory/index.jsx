@@ -172,6 +172,7 @@ export default function RunHistory({ flowId, className }) {
               placement="right"
               clearValue={defaultRange}
               onSave={handleDateFilter}
+              showCustomRangeValue
               value={selectedDate}
               customPresets={ERROR_MANAGEMENT_RANGE_FILTERS}
               fromDate={startOfDay(addDays(new Date(), -29))}
