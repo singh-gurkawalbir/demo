@@ -5,13 +5,14 @@ import EmptyState from '../../../components/EmptyState';
 import resourceTypeMetaData from '../../../components/EmptyState/metadata';
 import NoResultTypography from '../../../components/NoResultTypography';
 import { generateNewId } from '../../../utils/resource';
+import LoadResources from '../../../components/LoadResources';
 
 export default function ResourceEmptyState({resourceType}) {
   const resource = resourceTypeMetaData[resourceType];
   const location = useLocation();
 
   return (
-    <>
+    <LoadResources required resources={resourceType}>
       {resource?.type ? (
         <EmptyState
           title={resource.title}
@@ -36,7 +37,7 @@ export default function ResourceEmptyState({resourceType}) {
       ) : (
         <NoResultTypography>You don&apos;t have any {resourceType}.</NoResultTypography>
       )}
-    </>
+    </LoadResources>
 
   );
 }
