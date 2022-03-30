@@ -19,11 +19,11 @@ const getSomeNode = (id, isPG) => {
 };
 
 export const useHandleAddNode = edgeId => {
-  const {flow, elements, setState} = useFlowContext();
+  const {flow, elementsMap, setState} = useFlowContext();
 
   return () => {
-    const edge = elements.find(ele => ele.id === edgeId);
-    const path = getNodeInsertionPathForEdge(flow, edge, elements);
+    const edge = elementsMap[edgeId];
+    const path = getNodeInsertionPathForEdge(flow, edge, elementsMap);
 
     if (!path) return;
 
@@ -38,22 +38,12 @@ export const useHandleAddNode = edgeId => {
   };
 };
 
-export const handleMergeNode = (flow, elements, setState) => (sourceTerminalNode, targetTerminalNode) => {
-  const edgeForSourceTerminalNode = elements.find(ele => ele.target === sourceTerminalNode);
-  const edgeForTargetTerminalNode = elements.find(ele => ele.target === targetTerminalNode);
-
-  const sourcePath = getNextRouterPathForTerminalNode(flow, edgeForSourceTerminalNode);
-  const destinationPath = getNextRouterPathForTerminalNode(flow, edgeForTargetTerminalNode);
-
-  setState({type: actions.MERGE_TERMINAL_NODES, flow, sourcePath, destinationPath});
-};
-
 export const useHandleAddNewRouter = edgeId => {
-  const {flow, elements, setState} = useFlowContext();
+  const {flow, elementsMap, setState} = useFlowContext();
 
   return () => {
-    const edge = elements.find(ele => ele.id === edgeId);
-    const path = getNodeInsertionPathForEdge(flow, edge, elements);
+    const edge = elementsMap[edgeId];
+    const path = getNodeInsertionPathForEdge(flow, edge, elementsMap);
 
     if (!path) return;
 
@@ -62,10 +52,10 @@ export const useHandleAddNewRouter = edgeId => {
 };
 
 export const useHandleDeleteNode = nodeId => {
-  const { flow, elements, setState } = useFlowContext();
+  const { flow, elementsMap, setState } = useFlowContext();
 
   return () => {
-    const node = elements.find(ele => ele.id === nodeId);
+    const node = elementsMap[nodeId];
 
     const path = getPathOfPGOrPPNode(flow, nodeId);
 
@@ -76,11 +66,11 @@ export const useHandleDeleteNode = nodeId => {
 };
 
 export const useHandleDeleteEdge = edgeId => {
-  const {flow, elements, setState} = useFlowContext();
+  const {flow, elementsMap, setState} = useFlowContext();
 
   return () => {
-    const edge = elements.find(ele => ele.id === edgeId);
-    const sourceNode = elements.find(ele => ele.id === edge?.source);
+    const edge = elementsMap[edgeId];
+    const sourceNode = elementsMap[edge?.source];
     const isSourceNodeAPG = sourceNode.type === 'pg';
     const path = getNextRouterPathForTerminalNode(flow, edge);
     const sourceNodePath = getPathOfPGOrPPNode(flow, edge?.source);

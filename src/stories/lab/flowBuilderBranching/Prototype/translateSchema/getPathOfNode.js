@@ -95,12 +95,12 @@ export const isPageGenerator = path => {
 
   return segs[segs.length - 2] === 'pageGenerators';
 };
-export const getNodeInsertionPathForEdge = (flow, edge, elements = []) => {
+export const getNodeInsertionPathForEdge = (flow, edge, elements = {}) => {
   if (!edge) {
     return;
   }
   const {source, target} = edge;
-  const targetBranch = elements.find(ele => ele.id === target)?.data;
+  const targetBranch = elements[target]?.data;
 
   const targetPath = getPathOfPGOrPPNode(flow, target);
 

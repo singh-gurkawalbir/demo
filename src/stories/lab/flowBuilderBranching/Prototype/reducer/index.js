@@ -1,10 +1,12 @@
 import produce from 'immer';
 import jsonPatch from 'fast-json-patch';
+import keyBy from 'lodash/keyBy';
+import { createSelector } from 'reselect';
 import actions from './actions';
-import { emptyObject } from '../../../../../utils/constants';
-import { generateAnEmptyActualRouter, generateBranch } from '../nodeGeneration';
-import { populateIds } from '../translateSchema';
-import { generateId } from '../lib';
+import { emptyList, emptyObject } from '../../../../../utils/constants';
+import { generateEmptyRouter, generateBranch } from '../nodeGeneration';
+import { generateReactFlowGraph, initialiseFlowForReactFlow } from '../translateSchema';
+import { BranchPathRegex, generateId, PageProcessorPathRegex } from '../lib';
 
 const addNewStep = (draft, action) => {
   const { path, resourceType, flowNode, resourceNode, flowId } = action;
@@ -28,6 +30,7 @@ const mergeTerminalNodes = (draft, action) => {
   const { flow, sourcePath, destinationPath } = action;
   const sourceRouter = jsonPatch.getValueByPointer(flow, sourcePath);
   const destinationRouter = jsonPatch.getValueByPointer(flow, destinationPath);
+
   const {session} = draft;
   const {staged} = session;
 
@@ -46,7 +49,7 @@ const mergeTerminalNodes = (draft, action) => {
 
   if (!sourceRouter && !destinationRouter) {
     // create a new router
-    const router = generateAnEmptyActualRouter(true);
+    const router = generateEmptyRouter(true);
 
     staged[flowId].patch.push(...[
       {
@@ -102,7 +105,7 @@ const getBranchPath = path => {
 };
 
 const generateTwoBranchRouter = (remainingNodes, nextRouterId) => {
-  const origRouter = generateAnEmptyActualRouter();
+  const origRouter = generateEmptyRouter();
   const branch = {...generateBranch(),
     pageProcessors: remainingNodes,
     _nextRouterId: nextRouterId,
@@ -175,6 +178,23 @@ const handleDeleteEdge = (draft, action) => {
   });
 };
 
+const mergeBranch = (draft, action) => {
+  const {flow, sourcePath, targetNode} = action;
+  const {session} = draft;
+  const {staged} = session;
+  const flowId = flow._id;
+
+  if (!staged[flowId]) {
+    staged[flowId] = {patch: []};
+  }
+
+  staged[flowId].patch.push({
+    op: 'replace',
+    path: sourcePath,
+    value: targetNode.id,
+  });
+};
+
 const handleDeleteNode = (draft, action) => {
   const {flow, path, isPageGenerator} = action;
   const {session} = draft;
@@ -201,8 +221,8 @@ const handleDeleteNode = (draft, action) => {
   } else
   // Page processors
   // Typical page processor looks like /routers/:routerIndex/branches/:branchIndex/pageProcessors/:pageProcessorIndex
-  if (/\/routers\/(\d)\/branches\/(\d)\/pageProcessors\/(\d)/.test(path)) {
-    const [, routerIndex, branchIndex, pageProcessorIndex] = /\/routers\/(\d)\/branches\/(\d)\/pageProcessors\/(\d)/.exec(path);
+  if (PageProcessorPathRegex.test(path)) {
+    const [, routerIndex, branchIndex, pageProcessorIndex] = PageProcessorPathRegex.exec(path);
     const pageProcessors = jsonPatch.getValueByPointer(flow, `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors`);
 
     if (pageProcessors.length === 1) {
@@ -212,6 +232,16 @@ const handleDeleteNode = (draft, action) => {
         staged[flowId].patch.push({
           op: 'remove',
           path: `/routers/${routerIndex}`,
+        });
+        flow.routers.forEach((router, rIndex) => {
+          router.branches.forEach((branch, bIndex) => {
+            if (branch._nextRouterId === flow.routers[routerIndex]._id) {
+              staged[flowId].patch.push({
+                op: 'remove',
+                path: `/routers/${rIndex}/branches/${bIndex}/_nextRouterId`,
+              });
+            }
+          });
         });
       } else {
         staged[flowId].patch.push({
@@ -248,23 +278,103 @@ const handleClearMergeTarget = draft => {
   delete draft.session.fb.mergeTargetType;
 };
 
-const mergeDragSourceWithTarget = (dragNodeId, targetType, targetId) => {
-  // eslint-disable-next-line no-console
-  console.log(`Merging node "${dragNodeId}" with ${targetType} "${targetId}"`);
+const mergeDragSourceWithTarget = (flow, elements, staged, dragNodeId, targetId) => {
+  const flowId = flow._id;
+  const sourceElement = elements[dragNodeId];
+  const targetElement = elements[targetId];
 
-  // Sravan, here we can do the merge logic? if this is not the pattern you had in mind, feel
-  // free to refactor as needed...I assumed that since we already had all the info in the state
-  // then the reducer would be a good place to do the merge. I assume once the state
-  // is updated, that a re-render would happen...
+  if (!sourceElement || !targetElement) {
+    return;
+  }
+
+  if (!staged[flowId]) {
+    // eslint-disable-next-line no-param-reassign
+    staged[flowId] = {patch: []};
+  }
+  const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
+
+  if (sourceElement.type.includes('terminal') && targetElement.type.includes('terminal')) {
+    // merging two terminal nodes
+    const [, targetRouterIndex, targetBranchIndex] = BranchPathRegex.exec(targetElement.data.path);
+    const router = generateEmptyRouter(true);
+
+    staged[flowId].patch.push(...[
+      {
+        op: 'add',
+        path: `/routers/${sourceRouterIndex}/branches/${sourceBranchIndex}/_nextRouterId`,
+        value: router._id,
+      },
+      {
+        op: 'add',
+        path: `/routers/${targetRouterIndex}/branches/${targetBranchIndex}/_nextRouterId`,
+        value: router._id,
+      },
+      {
+        op: 'add',
+        path: '/routers/-',
+        value: router,
+      }]);
+  } else if (targetElement.type === 'merge') {
+    // merging terminal node to a merge node
+    staged[flowId].patch.push(...[
+      {
+        op: 'add',
+        path: `/routers/${sourceRouterIndex}/branches/${sourceBranchIndex}/_nextRouterId`,
+        value: targetElement.data.router._id,
+      },
+    ]);
+  } else if (targetElement.type === 'default') {
+    // Merging terminal node to an edge
+    const edgeSource = elements[targetElement.source];
+    const edgeTarget = elements[targetElement.target];
+
+    if (edgeSource.type === 'router' && edgeTarget.type === 'pp') {
+      // Merging between a router and a PP step
+
+      const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
+      const [, targetRouterIndex, targetBranchIndex] = BranchPathRegex.exec(edgeTarget.data.path);
+      const pageProcessors = jsonPatch.getValueByPointer(flow, `/routers/${targetRouterIndex}/branches/${targetBranchIndex}/pageProcessors`);
+
+      const initialTargetNextRouterId = jsonPatch.getValueByPointer(flow, `/routers/${targetRouterIndex}/branches/${targetBranchIndex}/_nextRouterId`);
+
+      const newVirtualRouter = generateEmptyRouter(true);
+
+      newVirtualRouter.branches = [{pageProcessors, _nextRouterId: initialTargetNextRouterId}];
+
+      staged[flowId].patch.push(...[
+        {
+          op: 'add',
+          path: '/routers/-',
+          value: newVirtualRouter,
+        },
+        {
+          op: 'replace',
+          path: `/routers/${sourceRouterIndex}/branches/${sourceBranchIndex}/_nextRouterId`,
+          value: newVirtualRouter._id,
+        },
+        {
+          op: 'replace',
+          path: `/routers/${targetRouterIndex}/branches/${targetBranchIndex}/pageProcessors`,
+          value: [],
+        },
+        {
+          op: 'replace',
+          path: `/routers/${targetRouterIndex}/branches/${targetBranchIndex}/_nextRouterId`,
+          value: newVirtualRouter._id,
+        },
+      ]);
+      // generating a virtual router in between
+    }
+  }
 };
 
 const handleMergeBranchNew = draft => {
-  const { fb } = draft.session;
+  const { fb, staged } = draft.session;
 
   // It's possible that a user releases the mouse while NOT on top of a valid merge target.
   // if this is the case, we still want to reset the drag state, just skip the merge attempt.
   if (fb.mergeTargetId && fb.mergeTargetType) {
-    mergeDragSourceWithTarget(fb.dragNodeId, fb.mergeTargetId, fb.mergeTargetType);
+    mergeDragSourceWithTarget(fb.flow, fb.elementsMap, staged, fb.dragNodeId, fb.mergeTargetId, fb.mergeTargetType);
   }
 
   // After merge is complete, we need to reset the state to remove all the transient state
@@ -287,6 +397,12 @@ export default function (state, action) {
 
       case actions.MERGE_TERMINAL_NODES: {
         mergeTerminalNodes(draft, action);
+
+        return;
+      }
+
+      case actions.MERGE_BRANCH: {
+        mergeBranch(draft, action);
 
         return;
       }
@@ -334,7 +450,15 @@ export default function (state, action) {
       }
 
       case actions.MERGE_BRANCH_NEW: {
-        handleMergeBranchNew(draft, action);
+        handleMergeBranchNew(draft);
+
+        return;
+      }
+
+      case actions.SET_GRAPH_ELEMENTS: {
+        draft.session.fb.elements = generateReactFlowGraph(draft.data.resources, action.flow);
+        draft.session.fb.elementsMap = keyBy(draft.session.fb.elements || [], 'id');
+        draft.session.fb.flow = action.flow;
 
         return;
       }
@@ -397,14 +521,17 @@ const resourceDataModified = (
 const getResource = (state, type, id) => state.data.resources[type].find(f => f._id === id);
 const getSessionState = (state, id) => state.session.staged?.[id];
 
-export const resourceDataSelector = (state, type, id) => {
-  const resource = getResource(state, type, id);
+export const resourceDataSelector = createSelector(
+  getResource,
+  (state, _, id) => getSessionState(state, id),
+  (_, type) => type,
+  (_, _1, id) => id,
+  (resource, session, type, id) => {
+    const flow = resourceDataModified(resource, session, type, id)?.merged;
 
-  const session = getSessionState(state, id);
+    initialiseFlowForReactFlow(flow);
 
-  const flow = resourceDataModified(resource, session, type, id)?.merged;
-
-  populateIds(flow);
-
-  return flow;
-};
+    return flow;
+  });
+export const elementsSelector = state => state?.session?.fb?.elements || emptyList;
+export const elementsMapSelector = state => state?.session?.fb?.elementsMap || emptyObject;

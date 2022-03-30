@@ -9,17 +9,21 @@ export const getSomePpImport = _importId =>
   ({responseMapping: {fields: [], lists: []}, type: 'import', _importId});
 export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
 
-export const generateRouterNode = router => ({
+export const generateRouterNode = (router, routerIndex) => ({
   id: router?._id || generateId(),
   type: isVirtualRouter(router) ? 'merge' : 'router',
-  data: router,
+  data: {
+    path: `/routers/${routerIndex}`,
+    router,
+  },
 });
-export const generateNewTerminal = branch => ({
+export const generateNewTerminal = ({branch, branchIndex, routerIndex} = {}) => ({
   id: generateId(),
   type: branch?.pageProcessors?.length !== 0 ? 'terminalFree' : 'terminalBlocked',
   draggable: branch?.pageProcessors?.length !== 0,
   data: {
     ...branch,
+    path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${branch.pageProcessors.length || '-'}`,
   },
 });
 
@@ -34,7 +38,7 @@ export const generateBranch = () => {
     _id: newId,
   };
 };
-export const generateAnEmptyActualRouter = isVirtual => ({
+export const generateEmptyRouter = isVirtual => ({
   _id: generateId(),
   ...(!isVirtual && { routeRecordsTo: {
     type: 'first_matching_branch',
