@@ -71,6 +71,10 @@ export default {
       xxl: 1920,
     },
   },
+  zIndex: {
+    bubbleName: 0,
+    bubble: 1,
+  },
   // global overrides for MUI styles...
   overrides: {
     MuiButton: {
@@ -375,10 +379,11 @@ export default {
         fontSize: '14px',
         lineHeight: '16px',
         letterSpacing: 0.5,
+        fontWeight: '700',
       },
       caption: {
-        fontFamily: 'source sans pro',
-        fontSize: '13px',
+        fontFamily: 'Roboto400',
+        fontSize: '0.75rem',
       },
     },
     MuiListItem: {
@@ -701,6 +706,7 @@ export default {
         fontWeight: 'normal',
       },
       textColorPrimary: {
+        color: colors.celigoNeutral8,
         '&.Mui-selected': {
           fontFamily: 'source sans pro semibold',
         },
@@ -880,3 +886,4 @@ export default {
     },
   },
 };
+

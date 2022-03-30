@@ -10,12 +10,12 @@ import SuiteScriptTile from './SuiteScriptTile';
 import SortableList from '../../../../components/Sortable/SortableList';
 import SortableItem from '../../../../components/Sortable/SortableItem';
 import useSortableList from '../../../../hooks/useSortableList';
+import PageContent from '../../../../components/PageContent';
 
-const useStyles = makeStyles(theme => ({
+export const gridViewStyles = makeStyles(theme => ({
   container: {
-    padding: theme.spacing(2),
-    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.spacing(2)}px + ${theme.pageBarHeight}px))`,
-    overflowY: 'auto',
+    padding: 0,
+    margin: 0,
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr));',
     gridGap: theme.spacing(2),
@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function HomeCard({ sortedTiles }) {
   const dispatch = useDispatch();
-  const classes = useStyles();
+  const classes = gridViewStyles();
   const preferences = useSelector(state => selectors.userPreferences(state));
   const tilesFromOtherEnvironment = useMemo(() => {
     const allSortedTileIds =
@@ -63,7 +63,7 @@ export default function HomeCard({ sortedTiles }) {
   const {dragItemIndex, handleSortStart, handleSortEnd} = useSortableList(onSortEnd);
 
   return (
-    <>
+    <PageContent>
       <SortableList
         className={classes.container}
         onSortEnd={handleSortEnd}
@@ -97,7 +97,7 @@ export default function HomeCard({ sortedTiles }) {
           />
         ))}
       </SortableList>
-    </>
+    </PageContent>
   );
 }
 

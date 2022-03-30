@@ -152,7 +152,7 @@ export default function AddOns({integrationId, childId}) {
             component={Link}
             disabled={isLicenseExpired}
             to={match.url.replace('admin/subscription', 'addons')}>
-            GET ADD-ONS
+            Get add-ons
           </FilledButton>
         </div>
       </div>

@@ -69,10 +69,6 @@ const useStyles = makeStyles(theme => ({
   componentsTable: {
     paddingTop: '20px',
   },
-  flowGroupTitle: {
-    textTransform: 'uppercase',
-    paddingTop: theme.spacing(1),
-  },
   flowGroupDescription: {
     marginTop: theme.spacing(2),
   },
@@ -81,6 +77,10 @@ const useStyles = makeStyles(theme => ({
   },
   flowInFlowGroupNameHover: {
     backgroundColor: theme.palette.background.paper,
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  flowGroupTitle: {
+    paddingTop: theme.spacing(1),
   },
 }));
 const integrationsFilterConfig = {
@@ -98,17 +98,13 @@ const useColumns = () => [
     useGetCellStyling: ({rowData: r}) => {
       const classes = useStyles();
       const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
-      const classFlowInFlowGroupName = groupName || isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
-      const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
 
-      return clsx(classFlowInFlowGroupName, classFlowInFlowGroupNameHover);
+      return clsx({[classes.flowInFlowGroupName]: !isLastFlowInFlowGroup, [classes.flowInFlowGroupNameHover]: groupName});
     },
     Value: ({rowData: r}) => {
       const classes = useStyles();
 
-      if (r?.groupName) {
-        return <Typography variant="overline" component="div" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>;
-      }
+      if (r.groupName || r.emptyMessage) return <Typography variant={r?.groupName ? 'overline' : 'body2'} component="div" color="textSecondary" className={clsx({[classes.flowGroupTitle]: r?.groupName, [classes.emptyMessageContent]: r?.emptyMessage})}>{r?.groupName || r?.emptyMessage}</Typography>;
 
       return r?.doc?.name || r?.doc?._id;
     },
@@ -120,10 +116,8 @@ const useColumns = () => [
     useGetCellStyling: ({rowData: r}) => {
       const classes = useStyles();
       const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
-      const classLastFlowInGroup = groupName || isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
-      const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
 
-      return clsx(classLastFlowInGroup, classFlowInFlowGroupNameHover);
+      return clsx({[classes.flowInFlowGroupName]: !isLastFlowInFlowGroup, [classes.flowInFlowGroupNameHover]: groupName});
     },
     Value: ({rowData: r}) => r?.doc?.description,
   },
@@ -131,7 +125,6 @@ const useColumns = () => [
 export default function ClonePreview(props) {
   const classes = useStyles(props);
   const { resourceType, resourceId } = props.match.params;
-  const [requested, setRequested] = useState(false);
   const [cloneRequested, setCloneRequested] = useState(false);
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
@@ -227,12 +220,10 @@ export default function ClonePreview(props) {
     resourceType,
   ]);
 
+  // fetches the latest preview components on every mount
   useEffect(() => {
-    if (!components || (isEmpty(components) && !requested)) {
-      dispatch(actions.clone.requestPreview(resourceType, resourceId));
-      setRequested(true);
-    }
-  }, [components, dispatch, requested, resourceId, resourceType]);
+    dispatch(actions.clone.requestPreview(resourceType, resourceId));
+  }, []);
   useEffect(() => {
     if (createdComponents) {
       dispatch(actions.template.clearTemplate(`${resourceType}-${resourceId}`));
@@ -533,3 +524,4 @@ export default function ClonePreview(props) {
     </LoadResources>
   );
 }
+

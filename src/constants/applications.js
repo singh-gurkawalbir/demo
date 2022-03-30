@@ -139,6 +139,21 @@ const connectors = [
     keywords: 'database,db',
     group: 'db',
   },
+  {
+    id: 'bigquerydatawarehouse',
+    name: 'Google BigQuery',
+    type: 'bigquerydatawarehouse',
+    keywords: 'database,db',
+    group: 'db',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360042825892-Set-up-a-connection-to-Google-BigQuery',
+  },
+  {
+    id: 'graph_ql',
+    name: 'GraphQL',
+    type: 'graph_ql',
+    group: 'tech',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/4843857027227',
+  },
   // Application connectors
   {
     id: 'activecampaign',
@@ -298,6 +313,7 @@ const newConnections = [
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/360038589232-Set-up-a-connection-to-Constant-Contact',
   },
   {id: 'amazonsellingpartner', name: 'Amazon Seller Central', type: 'http', assistant: 'amazonsellingpartner'},
+  {id: 'recurlyv3', name: 'Recurly v3', type: 'http', assistant: 'recurlyv3'},
 ];
 
 connectors.sort(stringCompare('name'));

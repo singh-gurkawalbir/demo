@@ -67,12 +67,6 @@ export default function RunDashboardActions({ flowId }) {
 
   const dashboardActionsMenu = useMemo(() => [
     {
-      Icon: CancelIcon,
-      action: 'cancel',
-      label: 'Cancel run',
-      disabled: !validDashboardActions.includes('cancel'),
-    },
-    {
       Icon: DownloadIntegrationIcon,
       action: 'downloadDiagnostics',
       label: 'Download diagnostics',
@@ -134,9 +128,6 @@ export default function RunDashboardActions({ flowId }) {
 
   const handleAction = useCallback(action => {
     switch (action) {
-      case 'cancel':
-        handleCancel();
-        break;
       case 'downloadDiagnostics':
         handleDownloadDiagnostics();
         break;
@@ -145,7 +136,7 @@ export default function RunDashboardActions({ flowId }) {
         break;
       default:
     }
-  }, [handleCancel, handleDownloadDiagnostics, handleDownloadFiles]);
+  }, [handleDownloadDiagnostics, handleDownloadFiles]);
 
   return (
     <div id={DRAGGABLE_SECTION_DIV_ID} className={classes.rightActionContainer}>
@@ -156,6 +147,12 @@ export default function RunDashboardActions({ flowId }) {
           disabled={status === 'requested'}
           startIcon={<RefreshIcon />}>
           Refresh
+        </TextButton>
+        <TextButton
+          onClick={handleCancel}
+          disabled={!validDashboardActions?.includes('cancel')}
+          startIcon={<CancelIcon />}>
+          Cancel run
         </TextButton>
         <EllipsisActionMenu actionsMenu={dashboardActionsMenu} onAction={handleAction} label="More" />
         {

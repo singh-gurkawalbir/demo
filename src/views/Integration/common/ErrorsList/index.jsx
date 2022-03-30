@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 import RightDrawer from '../../../../components/drawer/Right';
@@ -17,18 +17,9 @@ import { resourceCategory } from '../../../../utils/resource';
 import TextOverflowCell from '../../../../components/TextOverflowCell';
 import ResourceButton from '../../../FlowBuilder/ResourceButton';
 import { emptyObject } from '../../../../utils/constants';
-import StatusCircle from '../../../../components/StatusCircle';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import { getTextAfterCount } from '../../../../utils/string';
-
-const useStyles = makeStyles(theme => ({
-  button: {
-    color: theme.palette.primary.main,
-    width: '100%',
-    cursor: 'pointer',
-    display: 'block',
-  },
-}));
+import Status from '../../../../components/Buttons/Status';
 
 const metadata = {
   rowKey: 'id',
@@ -88,10 +79,10 @@ const metadata = {
     {
       key: 'errors',
       heading: 'Errors',
+      width: '15%',
       isLoggable: true,
       Value: ({rowData}) => {
         const { flowId, integrationId, childId, id, count } = rowData;
-        const classes = useStyles();
         const history = useHistory();
         const isDataLoader = useSelector(state =>
           selectors.isDataLoader(state, flowId)
@@ -113,15 +104,16 @@ const metadata = {
           history.push(`${flowBuilderTo}/errors/${id}`);
         }, [flowBuilderTo, history, id]);
 
-        if (count === 0) {
-          return '0';
+        if (!count) {
+          return (
+            <Status variant="success" size="mini" onClick={handleErrorClick}>Success</Status >
+          );
         }
 
         return (
-          <div className={classes.button} onClick={handleErrorClick}>
-            <StatusCircle variant="error" size="mini" />
+          <Status variant="error" size="mini" onClick={handleErrorClick}>
             {count > 9999 ? '9999+ errors' : getTextAfterCount('error', count)}
-          </div >
+          </Status>
         );
       },
     },

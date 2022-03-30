@@ -227,6 +227,10 @@ import bartender from './bartender';
 import zohoexpense from './zohoexpense';
 import jazzhr from './jazzhr';
 import segment from './segment';
+import microsoftpowerautomate from './microsoftpowerautomate';
+import happyreturns from './happyreturns';
+import brex from './brex';
+import microsoftdynamics365finance from './microsoftdynamics365finance';
 
 export default {
   channelape,
@@ -458,4 +462,8 @@ export default {
   zohoexpense,
   jazzhr,
   segment,
+  microsoftpowerautomate,
+  happyreturns,
+  brex,
+  microsoftdynamics365finance,
 };

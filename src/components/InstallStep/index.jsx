@@ -70,6 +70,7 @@ const useStyles = makeStyles(theme => ({
   imgBlock: {
     display: 'flex',
     maxWidth: 136,
+    alignItems: 'center',
     '& > img': {
       maxWidth: '100%',
       maxHeight: theme.spacing(3),

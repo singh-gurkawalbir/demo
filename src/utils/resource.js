@@ -37,6 +37,7 @@ export const appTypeToAdaptorType = {
   mssql: 'RDBMS',
   oracle: 'RDBMS',
   snowflake: 'RDBMS',
+  bigquerydatawarehouse: 'RDBMS',
   netsuite: 'NetSuite',
   ftp: 'FTP',
   http: 'HTTP',
@@ -46,6 +47,24 @@ export const appTypeToAdaptorType = {
   as2: 'AS2',
   webhook: 'Webhook',
   dynamodb: 'Dynamodb',
+  graph_ql: 'GraphQL',
+};
+
+// the methods rdbmsSubTypeToAppType and rdbmsAppTypeToSubType are used to find rdbms subtype from the app.type of the application or vice-versa
+export const rdbmsSubTypeToAppType = rdbmsSubType => {
+  if (rdbmsSubType === 'bigquery') {
+    return 'bigquerydatawarehouse';
+  }
+
+  return rdbmsSubType;
+};
+
+export const rdbmsAppTypeToSubType = appType => {
+  if (appType === 'bigquerydatawarehouse') {
+    return 'bigquery';
+  }
+
+  return appType;
 };
 
 export const adaptorTypeMap = {
@@ -60,6 +79,8 @@ export const adaptorTypeMap = {
   HTTPImport: 'http',
   RESTImport: 'rest',
   RESTExport: 'rest',
+  GraphQLExport: 'graph_ql',
+  GraphQLImport: 'graph_ql',
   S3Export: 's3',
   RDBMSExport: 'rdbms',
   MongodbExport: 'mongodb',
@@ -849,6 +870,10 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
   const isSandbox = environment === 'sandbox';
   let enabled = false;
 
+  if (!licenseActionDetails) {
+    return enabled;
+  }
+
   if (
     [
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
@@ -856,15 +881,20 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
     ].includes(accessLevel)
   ) {
+    if (licenseActionDetails.type === 'integrator') {
+      return true;
+    }
+
     if (isSandbox) {
-      enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofSandboxTradingPartners > 0;
+      enabled = licenseActionDetails.type === 'endpoint' && licenseActionDetails.totalNumberofSandboxTradingPartners > 0;
     } else {
-      enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofProductionTradingPartners > 0;
+      enabled = licenseActionDetails.type === 'endpoint' && licenseActionDetails.totalNumberofProductionTradingPartners > 0;
     }
   }
 
   return enabled;
 }
+
 export function isNetSuiteBatchExport(exportRes) {
   return exportRes?.netsuite?.type === 'search' || exportRes?.netsuite?.restlet?.searchId !== undefined;
 }
@@ -928,6 +958,10 @@ export const getAssistantFromResource = resource => {
 
   if (assistant === 'ebay' || assistant === 'ebayfinance') {
     return 'ebay';
+  }
+
+  if (assistant === 'googlecontacts' || assistant === 'googlecontactspeople') {
+    return 'googlecontacts';
   }
 
   return assistant;

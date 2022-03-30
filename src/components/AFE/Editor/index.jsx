@@ -164,6 +164,7 @@ export default function Editor({ editorId }) {
       supportsDefaultData: e.supportsDefaultData,
       saveError: e.saveMessage,
       resourceType: e.resourceType,
+      mappingPreviewType: e.mappingPreviewType,
     };
   }, shallowEqual);
   const handleDragStart = useCallback(event => {

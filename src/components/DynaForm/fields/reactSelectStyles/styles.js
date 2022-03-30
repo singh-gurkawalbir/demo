@@ -92,11 +92,13 @@ export function CustomReactSelectStyles() {
         color: theme.palette.secondary.light,
       },
     }),
-    control: provided => ({
+    control: (provided, state) => ({
       ...provided,
       borderColor: theme.palette.secondary.lightest,
+      backgroundColor: state.isDisabled ? theme.palette.background.paper2 : theme.palette.background.paper,
       boxShadow: 'none',
       borderRadius: 2,
+      height: theme.spacing(3),
       '&:hover': {
         borderColor: theme.palette.primary.main,
       },
@@ -113,13 +115,16 @@ export function CustomReactSelectStyles() {
     input: () => ({
       color: theme.palette.secondary.main,
       width: '100%',
+      padding: '0 7px',
       '& > div': {
         width: '100%',
       },
       '& * > input': {
         width: '100% !important',
         display: 'block !important',
-        fontFamily: 'source sans pro !important',
+        fontFamily: 'source sans pro',
+        fontSize: '15px !important',
+        letterSpacing: 'inherit',
       },
     }),
     placeholder: () => ({

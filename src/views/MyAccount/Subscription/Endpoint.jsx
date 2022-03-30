@@ -149,7 +149,7 @@ export default function Endpoint() {
   );
   const showMessage = (licenseActionDetails?.tier === 'free' && licenseActionDetails?.expiresInDays < 10) || false;
   const [showExpireMessage, setShowExpireMessage] = useState(showMessage);
-  const [needMoreNotification, setNeedMoreNotification] = useState(licenseActionDetails?.tier === 'free' && !showExpireMessage);
+  const [trialExpired, setTrialExpired] = useState(false);
 
   const onStartFreeTrialClick = useCallback(() => {
     history.push(`${match.url}/upgrade`);
@@ -174,22 +174,25 @@ export default function Endpoint() {
   }, [dispatch, confirmDialog]);
 
   const onRequestUpgradeClick = useCallback(() => {
-    dispatch(
-      actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
-    );
-    setUpgradeRequested(true);
     confirmDialog({
-      title: 'I need more flows!',
-      message: 'You are an integration master!. We`ll be in touch shortly to get you upgraded!.',
+      title: 'Request upgrade',
+      message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
       buttons: [
-        {
-          label: 'Close',
+        { label: 'Submit request',
+          onClick: () => {
+            dispatch(
+              actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+            );
+            setUpgradeRequested(true);
+            dispatch(actions.license.requestUpdate('upgrade'));
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
         },
       ],
     });
-
-    return dispatch(actions.license.requestUpdate('upgrade'));
-  }, [dispatch, confirmDialog]);
+  }, [confirmDialog, dispatch]);
   const licenseEntitlementUsage = useSelector(state => selectors.getLicenseEntitlementUsage(state));
   const numberofUsedEndpoints = licenseEntitlementUsage?.production?.endpointUsage?.numConsumed;
   const numberofUsedFlows = licenseEntitlementUsage?.production?.flowUsage?.numEnabled;
@@ -200,8 +203,8 @@ export default function Endpoint() {
   const numberofUsedSandboxTradingPartners = licenseEntitlementUsage?.sandbox?.tradingPartnerUsage?.numConsumed;
   const numberofUsedSandboxAgents = licenseEntitlementUsage?.sandbox?.agentUsage?.numActive;
   const onCloseNotification = useCallback(() => {
-    setNeedMoreNotification(false);
-  }, [setNeedMoreNotification]);
+    setTrialExpired(false);
+  }, [setTrialExpired]);
   const requestLicenseEntitlementUsage = useCallback(() => {
     dispatch(actions.license.requestLicenseEntitlementUsage());
   }, [dispatch]);
@@ -236,7 +239,7 @@ export default function Endpoint() {
         </DrawerContent>
       </RightDrawer>
 
-      {!showExpireMessage && needMoreNotification && (
+      {trialExpired && (
       <div className={classes.subscriptionNotificationToaster}>
         <NotificationToaster variant="info" size="large" onClose={onCloseNotification}>
           <Typography component="div" variant="h5" className={classes.subscriptionMessage}>
@@ -246,13 +249,13 @@ export default function Endpoint() {
               onClick={onRequestUpgradeClick}
               className={classes.subscriptionUpgradeLink}
               >
-              Upgrade today!
+              Request upgrade today!
             </TextButton>
           </Typography>
         </NotificationToaster>
       </div>
       )}
-      {showExpireMessage && (
+      {!upgradeRequested && showExpireMessage && (
       <div className={classes.subscriptionNotificationToaster}>
         <NotificationToaster variant="warning" size="large" onClose={onCloseExpireMessage}>
           <Typography component="div" variant="h5" className={classes.subscriptionMessage}>
@@ -323,13 +326,13 @@ export default function Endpoint() {
                 'request-upgrade'
               ) > -1 || licenseActionDetails.subscriptionActions.actions.indexOf(
                 'request-subscription'
-              ) > -1) && !licenseActionDetails.upgradeRequested && (
+              ) > -1) && (
               <FilledButton
                 onClick={onRequestUpgradeClick}
                 disabled={upgradeRequested}
                 className={classes.subscriptionUpgradeBtn}
              >
-                Upgrade now
+                {upgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
               </FilledButton>
               )}
               {licenseActionDetails.subscriptionActions.actions.indexOf(

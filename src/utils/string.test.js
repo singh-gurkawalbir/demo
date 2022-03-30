@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import { getTextAfterCount, camelCase, isHTML, getTrimmedTitle } from './string';
+import { getTextAfterCount, camelCase, isHTML, getTrimmedTitle, getParsedMessage } from './string';
 
 describe('getTextAfterCount util test cases', () => {
   test('should return correct string when count is zero', () => {
@@ -66,3 +66,36 @@ describe('getTrimmedTitle util test cases', () => {
   });
 });
 
+describe('getParsedMessage util test cases', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(getParsedMessage()).toBeUndefined();
+    expect(getParsedMessage(null)).toEqual(null);
+  });
+  test('should return original string if its not a valid json string', () => {
+    const message = '"{\\"error\\":\\"invalid_grant\\",\\"error_description\\":\\"AADSTS700082: The refresh token has expired due to inactivity.\\\\r\\\\nTrace ID: 7878\\\\r\\\\nCorrelation ID: 999\\\\r\\",\\"error_codes\\":[700082,\\"correlation_id\\":\\"9996c...';
+
+    expect(getParsedMessage(message)).toEqual(message);
+  });
+  test('should return nicely structured string if input is double stringified xml', () => {
+    const message = '"<?xml version=\\"1.0\\" encoding=\\"utf-8\\"?><Error><Code>ContainerNotFound</Code><Message>The specified container does not exist.\\nRequestId:000\\nTime:2022-01-13</Message></Error>"';
+    const output = '<?xml version="1.0" encoding="utf-8"?><Error><Code>ContainerNotFound</Code><Message>The specified container does not exist.\nRequestId:000\nTime:2022-01-13</Message></Error>';
+
+    expect(getParsedMessage(message)).toEqual(output);
+  });
+  test('should return nicely structured string if input is json string', () => {
+    const message = '"{\\"code\\":\\"invalid_credentials\\",\\"message\\":\\"You have to be logged in to perform this action.\\"}"';
+    const output = '{"code":"invalid_credentials","message":"You have to be logged in to perform this action."}';
+
+    expect(getParsedMessage(message)).toEqual(output);
+  });
+  test('should return original string if input is already json formatted', () => {
+    const message = '{"name":"INVALID_REQUEST","message":"Invalid request - see details.","debug_id":"da0f59843057d","details":[{"field":"end_date","value":"2021-08-09","location":"query","issue":"start_date is later than end_date"},{"field":"start_date","value":"2021-08-09","location":"query","issue":"start_date is later than end_date"}],"links":[]}';
+
+    expect(getParsedMessage(message)).toEqual(message);
+  });
+  test('should return original string if input is plain string', () => {
+    const message = 'Failed to load search with SearchId: 117865, because That search or mass update does not exist.';
+
+    expect(getParsedMessage(message)).toEqual(message);
+  });
+});

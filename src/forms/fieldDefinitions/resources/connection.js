@@ -1,5 +1,5 @@
 import { URI_VALIDATION_PATTERN, RDBMS_TYPES} from '../../../utils/constants';
-import { isNewId, getDomainUrl, getAssistantFromResource } from '../../../utils/resource';
+import { isNewId, getDomainUrl, getAssistantFromResource, rdbmsSubTypeToAppType, rdbmsAppTypeToSubType } from '../../../utils/resource';
 import { applicationsList} from '../../../constants/applications';
 import { getConstantContactVersion } from '../../../utils/connections';
 
@@ -15,8 +15,9 @@ export default {
         { _id: { $ne: r._id } },
       ];
 
-      if (RDBMS_TYPES.includes(r.type)) {
-        expression.push({ 'rdbms.type': r.type });
+      if (RDBMS_TYPES.includes(rdbmsSubTypeToAppType(r.type))) {
+        // rdbms subtype is required to filter the connections
+        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(r.type) });
       } else {
         // Should not borrow concurrency for ['ftp', 'as2', 's3']
         const destinationType = ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type;
@@ -81,10 +82,13 @@ export default {
       }
       const applications = applicationsList();
       let application = getAssistantFromResource(r) ||
-      (r.type === 'rdbms' ? r.rdbms.type : r.type);
+      (r.type === 'rdbms' ? rdbmsSubTypeToAppType(r.rdbms.type) : r.type);
 
       if (r.type === 'http' && r.http?.formType === 'rest') {
         application = 'rest';
+      }
+      if (r.type === 'http' && r.http?.formType === 'graph_ql') {
+        application = 'graph_ql';
       }
       const app = applications.find(a => a.id === application) || {};
 
@@ -227,6 +231,35 @@ export default {
         is: [''],
       },
     ],
+  },
+  'rdbms.bigquery.projectId': {
+    fieldId: 'rdbms.bigquery.projectId',
+    label: 'Project',
+    type: 'text',
+    required: true,
+  },
+  'rdbms.bigquery.clientEmail': {
+    fieldId: 'rdbms.bigquery.clientEmail',
+    label: 'Client email',
+    type: 'text',
+    required: true,
+  },
+  'rdbms.bigquery.privateKey': {
+    fieldId: 'rdbms.bigquery.privateKey',
+    label: 'Private key',
+    multiline: true,
+    type: 'text',
+    required: true,
+    inputType: 'password',
+    defaultValue: '',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+  },
+  'rdbms.bigquery.dataset': {
+    fieldId: 'rdbms.bigquery.dataset',
+    label: 'Dataset',
+    type: 'text',
+    required: true,
   },
   // #endregion rdbms
   // #region rest

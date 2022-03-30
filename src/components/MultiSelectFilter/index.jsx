@@ -71,11 +71,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(0.5),
   },
   multiSelectFilterPopper: {
-    left: '110px !important',
     top: '5px !important',
-  },
-  multiSelectFilterPopperArrow: {
-    left: '150px !important',
   },
   checkAction: {
     listStyle: 'none',
@@ -202,7 +198,7 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
-        placement="bottom-end"
+        placement="bottom-middle"
         restrictToParent={false}
         classes={{
           popper: classes.multiSelectFilterPopper,

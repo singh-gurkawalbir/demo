@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import PanelTitle from '../PanelTitle';
 import CodePanel from '../../panels/Code';
@@ -8,7 +8,8 @@ import CodePanel from '../../panels/Code';
 // utilizing the error section in grid to display console panel
 const useStyles = makeStyles(theme => ({
   gridItem: {
-    border: 'solid 1px rgb(0,0,0,0.3)',
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
     overflow: 'hidden',
     minWidth: 150,
     minHeight: 100,
@@ -36,9 +37,7 @@ export default function ConsoleGridItem({ editorId }) {
 
   return (
     <div className={classes.gridItem}>
-      <PanelTitle>
-        <Typography>Console</Typography>
-      </PanelTitle>
+      <PanelTitle title="Console" />
       <div className={classes.flexContainer} data-private>
         <CodePanel
           data-private

@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   dynaNsSearched: {
     paddingLeft: theme.spacing(1),
     width: '100%',
-    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+    borderLeft: `3px solid ${theme.palette.secondary.lightest}`,
   },
   radioGroupWrapper: {
     display: 'flex',
