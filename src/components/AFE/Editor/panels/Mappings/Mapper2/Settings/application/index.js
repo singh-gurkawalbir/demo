@@ -92,6 +92,8 @@ export default {
       settings.dataType = formVal.dataType || 'string';
     }
 
+    settings.copySource = formVal.copySource;
+
     // setting extract value
     if (formVal.copySource !== 'yes') {
       if (
@@ -107,8 +109,7 @@ export default {
       }
     }
 
-    settings.copySource = formVal.copySource;
-    if (formVal.copySource === 'no') {
+    if ((settings.dataType === 'object' || settings.dataType === 'objectarray') && formVal.copySource === 'no') {
       settings.extract = '';
     }
 

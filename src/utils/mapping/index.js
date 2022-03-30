@@ -1,5 +1,5 @@
 import deepClone from 'lodash/cloneDeep';
-import { uniqBy, isEmpty, isEqual, forEach, flattenDeep } from 'lodash';
+import { uniqBy, isEmpty, isEqual, forEach, flattenDeep, omit } from 'lodash';
 import { nanoid } from 'nanoid';
 import { adaptorTypeMap, isNetSuiteBatchExport, isFileAdaptor} from '../resource';
 // eslint-disable-next-line import/no-self-import
@@ -1577,7 +1577,7 @@ export const ROWS_AS_INPUT_OPTIONS = [
 ];
 
 export const PRIMITIVE_DATA_TYPES = ['string', 'number', 'boolean'];
-export const ARRAY_DATA_TYPES = ['stringarray', 'numberarray', 'booleanarray', 'objectarray', 'arrayarray'];
+export const ARRAY_DATA_TYPES = ['stringarray', 'numberarray', 'booleanarray', 'objectarray'];
 export const DATA_TYPES_OPTIONS =
 [
   {
@@ -1761,15 +1761,15 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disa
       if (!buildArrayHelper) {
         return;
       }
-      if (dataType === 'objectarray' || dataType === 'arrayarray') {
+      if (dataType === 'objectarray') {
         let sourceExtract;
         let multipleSources = false;
 
         buildArrayHelper.forEach(obj => {
-          const {extract, mappings} = obj;
+          const {extract = '$', mappings} = obj;
 
           //  sourceExtract = extract ? `${sourceExtract ? `${sourceExtract},` : ''}${extract}` : sourceExtract;
-          sourceExtract = `${sourceExtract ? `${sourceExtract},` : ''}${extract || '$'}`;
+          sourceExtract = `${sourceExtract ? `${sourceExtract},` : ''}${extract}`;
 
           if (!mappings) {
             return;
@@ -1784,7 +1784,9 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disa
               title: TabRow,
               isTabNode: true,
             });
-            iterateForParentTree(mappings, children, currNodeKey, extract || '$', disabled, true);
+            // since the first source is already pushed, all other children should
+            // be hidden now, as we show the first source tab by default
+            iterateForParentTree(mappings, children, currNodeKey, extract, disabled, true);
           } else {
             multipleSources = true;
             iterateForParentTree(mappings, children, currNodeKey, extract, disabled, hidden);
@@ -2119,7 +2121,7 @@ const mappings_record_to_record = {
   ],
 };
 
-export const getV2MappingsForResource = ({
+export const buildTreeFromResourceV2Mappings = ({
   importResource,
   // isFieldMapping = false,
   // isGroupedSampleData,
@@ -2144,6 +2146,100 @@ export const getV2MappingsForResource = ({
   const mappingsTreeData = generateTreeFromV2Mappings(v2MappingsCopy, disabled);
 
   return {mappingsTreeData, v2Mappings: v2MappingsCopy};
+};
+
+const KEYS_SPECIFIC_TO_UI_TREE = [
+  'key',
+  'title',
+  'parentKey',
+  'parentExtract',
+  'combinedExtract',
+  'className',
+  'hidden',
+  'disabled',
+  'copySource',
+  'children',
+];
+
+export const generateV2MappingsFromTree = ({v2TreeData = []}) => {
+  // console.log('v2TreeData', v2TreeData);
+
+  const _mappingsV2 = v2TreeData.map(node => {
+    let _node = deepClone(node);
+
+    const {dataType, isTabNode} = _node;
+
+    if (isTabNode) return;
+
+    if (PRIMITIVE_DATA_TYPES.includes(dataType)) {
+      // remove tree specific keys
+      _node = omit(_node, KEYS_SPECIFIC_TO_UI_TREE);
+
+      return _node;
+    }
+    if (dataType === 'object') {
+      const {children} = _node;
+      const _mappings = generateV2MappingsFromTree({v2TreeData: children});
+
+      // remove tree specific keys
+      _node = omit(_node, KEYS_SPECIFIC_TO_UI_TREE);
+      _node.mappings = _mappings;
+      delete _node.buildArrayHelper;
+
+      return _node;
+    }
+    // if (ARRAY_DATA_TYPES.includes(dataType)) {
+    //   const {children, combinedExtract} = _node;
+    //   const splitExtracts = combinedExtract?.split(',') || [];
+
+    //   if (dataType === 'objectarray') {
+    //     const buildArrayHelper = [];
+
+    //     splitExtracts.forEach((extract, index) => {
+    //       const subMappings = [];
+
+    //       buildArrayHelper[index] = {
+    //         extract,
+    //         mappings: subMappings,
+    //       };
+
+    //       children.forEach(c => {
+    //         if (c.isTabNode) return;
+    //         if (c.parentExtract === extract) {
+    //           subMappings.push();
+    //         }
+    //       });
+    //       _node.buildArrayHelper = buildArrayHelper;
+    //     });
+
+    //     // remove tree specific keys
+    //     _node = omit(_node, KEYS_SPECIFIC_TO_UI_TREE);
+    //     delete _node.mappings;
+
+    //     return _node;
+    //   }
+    //   // primitive array types
+
+    //   if (splitExtracts.length) {
+    //     _node.buildArrayHelper = splitExtracts.map(extract => ({
+    //       extract,
+    //     }));
+    //   } else {
+    //     delete _node.buildArrayHelper;
+    //   }
+    //   // remove tree specific keys
+    //   _node = omit(_node, KEYS_SPECIFIC_TO_UI_TREE);
+    //   delete _node.mappings;
+
+    //   return _node;
+    // }
+
+    return _node;
+  });
+
+  // console.log('_mappingsV2', _mappingsV2);
+
+  return _mappingsV2;
 };
 
 export function allowDrop({ dragNode, dropNode, dropPosition }) {

@@ -179,7 +179,7 @@ const Mapper2Row = React.memo(({
   const isLookup = !!lookupName;
   const isStaticLookup = !!(lookup.name && lookup.map);
   const isHardCodedValue = !!hardCodedValue;
-  const isHandlebarExp = handlebarRegex.test(extract);
+  const isHandlebarExp = handlebarRegex.test(extractValue);
 
   if (hidden) return null;
 

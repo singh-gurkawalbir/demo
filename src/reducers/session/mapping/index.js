@@ -230,6 +230,7 @@ export default (state = {}, action) => {
           draft.mapping.validationErrMsg = undefined;
           draft.mapping.mappingsCopy = deepClone(draft.mapping.mappings);
           draft.mapping.lookupsCopy = deepClone(draft.mapping.lookups);
+          draft.mapping.v2TreeDataCopy = deepClone(draft.mapping.v2TreeData);
         }
         break;
       case actionTypes.MAPPING.SAVE_FAILED:
@@ -603,6 +604,10 @@ export default (state = {}, action) => {
                 dataType: 'string',
               }];
             }
+          } else if (ARRAY_DATA_TYPES.includes(value.dataType)) {
+            delete node.extract;
+            node.combinedExtract = value.extract;
+            node.children = [];
           } else {
             node.children = [];
           }
