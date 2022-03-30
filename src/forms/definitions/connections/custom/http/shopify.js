@@ -255,6 +255,7 @@ export default {
           scopes: [
             'read_users',
             'write_users',
+            'read_gift_cards',
           ]},
       ],
       visibleWhenAll: r => {
