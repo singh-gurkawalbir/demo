@@ -10,9 +10,14 @@ import LoadResources from '../../../components/LoadResources';
 export default function ResourceEmptyState({resourceType}) {
   const resource = resourceTypeMetaData[resourceType];
   const location = useLocation();
+  let requiredResources = [resourceType];
+
+  if (resourceType === 'integrations' || resourceType === 'tiles') {
+    requiredResources = ['integrations', 'tiles'];
+  }
 
   return (
-    <LoadResources required resources={resourceType}>
+    <LoadResources required resources={requiredResources}>
       {resource?.type ? (
         <EmptyState
           title={resource.title}
