@@ -138,6 +138,7 @@ export default {
     'segment',
     'bigquerydatawarehouse',
     'happyreturns',
+    'brex',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
