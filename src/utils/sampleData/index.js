@@ -513,6 +513,40 @@ export const wrapExportFileSampleData = records => {
   return { page_of_records };
 };
 
+// this util unwraps the sample data wrapped by wrapExportFileSampleData
+export const unwrapExportFileSampleData = sampleData => {
+  if (!sampleData || typeof sampleData !== 'object') return;
+
+  const {page_of_records} = sampleData;
+
+  if (!page_of_records || !Array.isArray(page_of_records) || page_of_records.length === 0) return;
+
+  const records = [];
+
+  if (page_of_records.length === 1) {
+    const {record, rows} = page_of_records[0];
+
+    if (record) return record;
+    if (!rows) return;
+  }
+
+  page_of_records.forEach(page => {
+    const {record, rows} = page;
+    const rowRecords = [];
+
+    if (record) {
+      records.push(record);
+    } else if (rows) {
+      rows.forEach(row => {
+        rowRecords.push(row);
+      });
+      records.push(rowRecords);
+    }
+  });
+
+  return records.length > 0 && records;
+};
+
 // this util method will wrap the sample data with correct context fields
 // according to the 'stage' passed. This will be used for all the editors sample data
 export const wrapSampleDataWithContext = ({

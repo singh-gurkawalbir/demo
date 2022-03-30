@@ -12,7 +12,7 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 import { FilledButton } from '../../Buttons';
 import CodePanel from '../../AFE/Editor/panels/Code';
-import { wrapExportFileSampleData } from '../../../utils/sampleData';
+import { unwrapExportFileSampleData, wrapExportFileSampleData } from '../../../utils/sampleData';
 import Spinner from '../../Spinner';
 import { safeParse } from '../../../utils/string';
 
@@ -31,14 +31,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const parseMockData = input => {
-  const mockData = safeParse(input);
-
-  return mockData?.page_of_records?.[0]?.record || mockData?.page_of_records?.[0]?.rows;
-};
-
 function RouterWrappedContent(props) {
-  console.log('props', props);
   const { handleClose, formKey, resourceId, resourceType, flowId } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -51,25 +44,19 @@ function RouterWrappedContent(props) {
   useEffect(() => {
     dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true }));
   }, [dispatch, formKey]);
+
   const availablePreviewStages = useSelector(state =>
     selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId), shallowEqual
   );
   const previewStages = useMemo(() => availablePreviewStages.map(({value}) => value), [availablePreviewStages]);
 
-  console.log('resourceSampleDataStatus', resourceSampleDataStatus);
-  console.log('previewStages', previewStages);
   const previewStageDataList = useSelectorMemo(selectors.mkPreviewStageDataList, resourceId, previewStages);
 
   const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
 
-  // useEffect(() => {
-  //   setMockData(previewStageDataList?.preview?.data);
-  // }, []);
-  console.log('previewStageDataList', previewStageDataList);
-
   const handleChange = newValue => {
     setMockData(newValue);
-    const parsedMockData = parseMockData(newValue);
+    const parsedMockData = unwrapExportFileSampleData(safeParse(newValue));
 
     if (!parsedMockData) {
       // throw some error for invalid json and data not being in the correct format
@@ -80,8 +67,6 @@ function RouterWrappedContent(props) {
     setError(false);
     dispatch(actions.resourceFormSampleData.setMockData(resourceId, parsedMockData));
   };
-
-  console.log('mockData', mockData);
 
   const value = mockData || resourceMockData || wrapExportFileSampleData(previewStageDataList?.preview?.data);
 
