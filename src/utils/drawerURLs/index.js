@@ -21,7 +21,7 @@ const DRAWER_URL_REFS = {
     'scriptLog/:scriptId/:flowId/:index',
     'scriptLog/:scriptId/:index',
   ],
-  EDITOR: 'editor/:editorId',  // pending testing
+  EDITOR: 'editor/:editorId',
   RESOURCE: ':operation(add|edit)/:resourceType/:id',  // pending testing
   INSTALL_TEMPLATE: 'installTemplate/preview/:templateId',
   FORM_INSTALL_STEP: 'form/:formType',  // not verified IA, addChild install/unistall

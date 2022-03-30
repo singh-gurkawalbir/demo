@@ -7,6 +7,8 @@ import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
 import {HOME_PAGE_PATH} from '../../utils/constants';
+import { resourceUrl } from '../../utils/drawerURLs';
+import { generateNewId } from '../../utils/resource';
 
 export default function AmpersandRoutesHandler({ match }) {
   const {
@@ -39,19 +41,19 @@ export default function AmpersandRoutesHandler({ match }) {
     case getRoutePath('/integrations/create'):
       return (
         <Redirect
-          to={getRoutePath(`${HOME_PAGE_PATH}/add/integrations/new-${shortid.generate()}`)}
+          to={getRoutePath(`${HOME_PAGE_PATH}${resourceUrl('add', 'integrations', generateNewId())}`)}
       />
       );
     case getRoutePath('/:resourceType/create'):
       return (
         <Redirect
-          to={getRoutePath(`/${match.params.resourceType}/add/${match.params.resourceType}/new-${shortid.generate()}`)}
+          to={getRoutePath(`/${match.params.resourceType}${resourceUrl('add', match.params.resourceType, generateNewId())}`)}
       />
       );
     case getRoutePath('/:resourceType/:resourceId/edit'):
       return (
         <Redirect
-          to={getRoutePath(`/${match.params.resourceType}/edit/${match.params.resourceType}/${match.params.connectorId}`)}
+          to={getRoutePath(`/${match.params.resourceType}${resourceUrl('edit', match.params.resourceType, match.params.connectorId)}`)}
         />
       );
     case getRoutePath('/data-loader'):
@@ -85,13 +87,13 @@ export default function AmpersandRoutesHandler({ match }) {
     case getRoutePath('/integrations/:integrationId/orchestrations/:flowId/:resourceType/create'):
       return (
         <Redirect
-          to={getRoutePath(`/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}/add/${match.params.resourceType === 'exports' ? 'pageGenerator' : 'pageProcessor'}/new=${shortid.generate()}`)}
+          to={getRoutePath(`/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}${resourceUrl('add', match.params.resourceType === 'exports' ? 'pageGenerator' : 'pageProcessor', generateNewId())}`)}
     />
       );
     case getRoutePath('/integrations/:integrationId/orchestrations/:flowId/:resourceType/:resourceId/edit'):
       return (
         <Redirect
-          to={getRoutePath(`/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}/edit/${match.params.resourceType === 'exports' ? 'pageGenerator' : 'pageProcessor'}/${match.params.resourceId}`)}
+          to={getRoutePath(`/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}${resourceUrl('edit', match.params.resourceType === 'exports' ? 'pageGenerator' : 'pageProcessor', match.params.resourceId)}`)}
     />
       );
     case getRoutePath('/integrations/:integrationId/flows/create'):
@@ -111,13 +113,13 @@ export default function AmpersandRoutesHandler({ match }) {
     case getRoutePath('/connectors/:connectorId/licenses/create'):
       return (
         <Redirect
-          to={getRoutePath(`/connectors/${match.params.connectorId}/connectorLicenses/add/connectorLicenses/new-${shortid.generate()}`)}
+          to={getRoutePath(`/connectors/${match.params.connectorId}/connectorLicenses${resourceUrl('add', 'connectorLicenses', generateNewId())}`)}
       />
       );
     case getRoutePath('/connectors/:connectorId/licenses/:licenseId/edit'):
       return (
         <Redirect
-          to={getRoutePath(`/connectors/${match.params.connectorId}/connectorLicenses/edit/connectorLicenses/${match.params.licenseId}`)}
+          to={getRoutePath(`/connectors/${match.params.connectorId}/connectorLicenses${resourceUrl('edit', 'connectorLicenses', match.params.licenseId)}`)}
       />
       );
     case getRoutePath('/clone/integrations/:_integrationId/:resourceType/:resourceId/preview'):
@@ -174,7 +176,7 @@ export default function AmpersandRoutesHandler({ match }) {
 
       return (
         <Redirect
-          to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${childId}/admin/apitoken/edit/accesstokens/${accessTokenId}`)}
+          to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${childId}/admin/apitoken${resourceUrl('edit', 'accesstokens', accessTokenId)}`)}
       />
       );
 
