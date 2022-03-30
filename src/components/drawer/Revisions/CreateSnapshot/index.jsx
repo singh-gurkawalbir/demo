@@ -105,7 +105,6 @@ export default function CreateSnapshotDrawer({ integrationId }) {
   return (
     <RightDrawer
       path={DRAWER_URLS.CREATE_SNAPSHOT}
-      variant="temporary"
       height="tall"
       width="xl">
       <CreateSnapshotDrawerContent integrationId={integrationId} parentUrl={match.url} />

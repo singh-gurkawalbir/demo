@@ -128,8 +128,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
     <RightDrawer
       path={DRAWER_URLS.EM_ERROR_DETAILS}
       width="full"
-      onClose={handleClose}
-      variant="temporary">
+      onClose={handleClose}>
       <DrawerHeader className={classes.removeBottomLine} title={<Title />} hideBackButton>
         <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} />
       </DrawerHeader>

@@ -84,7 +84,6 @@ export default function OpenRevertDrawer({ integrationId }) {
   return (
     <RightDrawer
       path={DRAWER_URLS.OPEN_REVERT}
-      variant="temporary"
       height="tall"
       width="xl">
       <OpenRevertDrawerContent integrationId={integrationId} parentUrl={match.url} />

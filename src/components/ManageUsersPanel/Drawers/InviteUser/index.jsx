@@ -6,10 +6,7 @@ import { DRAWER_URLS } from '../../../../utils/drawerURLs';
 
 export default function InviteUserDrawer() {
   return (
-    <RightDrawer
-      path={DRAWER_URLS.INVITE_USER}
-      variant="temporary"
-      width="medium">
+    <RightDrawer path={DRAWER_URLS.INVITE_USER} width="medium">
       <DrawerHeader title="Invite user" />
       <UserFormWrapper />
     </RightDrawer>

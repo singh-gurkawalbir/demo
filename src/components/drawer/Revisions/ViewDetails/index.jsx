@@ -152,7 +152,6 @@ export default function ViewRevisionDetails({ integrationId }) {
   return (
     <RightDrawer
       path={DRAWER_URLS.VIEW_REVISION_DETAILS}
-      variant="temporary"
       height="tall"
       width="xl">
       <ViewRevisionDetailsContent integrationId={integrationId} parentUrl={match.url} />

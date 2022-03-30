@@ -58,10 +58,7 @@ export default function ErrorInfoDrawer({ integrationId, revisionId }) {
   const match = useRouteMatch();
 
   return (
-    <RightDrawer
-      path={DRAWER_URLS.VIEW_REVISION_ERROR_INFO}
-      variant="temporary"
-      height="tall">
+    <RightDrawer path={DRAWER_URLS.VIEW_REVISION_ERROR_INFO} height="tall">
       <ErrorInfoDrawerContent
         integrationId={integrationId}
         revisionId={revisionId}

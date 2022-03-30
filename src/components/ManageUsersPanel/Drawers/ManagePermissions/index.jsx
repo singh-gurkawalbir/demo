@@ -14,10 +14,7 @@ function ManagePermissions({ integrationId }) {
 }
 export default function ManagePermissionsDrawer({ integrationId }) {
   return (
-    <RightDrawer
-      path={DRAWER_URLS.MANAGE_USER_PERMISSIONS}
-      variant="temporary"
-      width="medium">
+    <RightDrawer path={DRAWER_URLS.MANAGE_USER_PERMISSIONS} width="medium">
       <DrawerHeader title="Manage user permissions" />
       <IsLoggableContextProvider isLoggable>
         <ManagePermissions integrationId={integrationId} />

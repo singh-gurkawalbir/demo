@@ -101,8 +101,6 @@ export default function MappingDrawerRoute(props) {
       <RightDrawer
         height="tall"
         width="default"
-        variant="temporary"
-        hideBackButton
         path={DRAWER_URLS.DB_MAPPINGS}>
 
         <DrawerHeader title="Select query type" />

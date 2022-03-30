@@ -102,7 +102,6 @@ export default function ReviewChangesDrawer({ integrationId }) {
   return (
     <RightDrawer
       path={DRAWER_URLS.REVIEW_PULL_CHANGES}
-      variant="temporary"
       height="tall"
       width="xl">
       <ReviewChangesDrawerContent integrationId={integrationId} parentUrl={match.url} />

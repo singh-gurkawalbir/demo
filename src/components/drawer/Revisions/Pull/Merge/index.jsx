@@ -68,7 +68,6 @@ export default function MergePullDrawer({ integrationId }) {
   return (
     <RightDrawer
       path={DRAWER_URLS.MERGE_PULL_CHANGES}
-      variant="temporary"
       height="tall"
       width="xl">
       <MergePullDrawerContent integrationId={integrationId} parentUrl={match.url} />

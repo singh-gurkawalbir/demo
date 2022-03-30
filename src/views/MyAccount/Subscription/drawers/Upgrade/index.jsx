@@ -29,7 +29,7 @@ export default function UpgradeDrawer() {
   };
 
   return (
-    <RightDrawer height="tall" width="medium" path={DRAWER_URLS.ACCOUNT_UPGRADE} variant="temporary">
+    <RightDrawer height="tall" width="medium" path={DRAWER_URLS.ACCOUNT_UPGRADE}>
       <DrawerHeader title="Upgrade your subscription" />
       <DrawerContent>
         <Typography>

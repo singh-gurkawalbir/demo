@@ -151,7 +151,6 @@ export default function LookupDrawer({
       path={DRAWER_URLS.LOOKUP}
       height="tall"
       width="default"
-      variant="temporary"
       onClose={history.goBack}>
       <DrawerHeader title={drawerTitle} handleClose={handleClose} showBackButton />
       <DrawerContent>

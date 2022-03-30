@@ -144,10 +144,7 @@ function SubRecordDrawer(props) {
 
 export default function SubRecordDrawerRoute(props) {
   return (
-    <RightDrawer
-      path={DRAWER_URLS.NS_SUB_RECORD}
-      variant="temporary"
-      height="tall">
+    <RightDrawer path={DRAWER_URLS.NS_SUB_RECORD} height="tall">
       <SubRecordDrawer {...props} />
     </RightDrawer>
   );

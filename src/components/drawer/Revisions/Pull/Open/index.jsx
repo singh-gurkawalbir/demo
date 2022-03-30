@@ -72,7 +72,6 @@ export default function OpenPullDrawer({ integrationId }) {
   return (
     <RightDrawer
       path={DRAWER_URLS.OPEN_PULL}
-      variant="temporary"
       height="tall"
       width="xl">
       <OpenPullDrawerContent integrationId={integrationId} parentUrl={match.url} />
