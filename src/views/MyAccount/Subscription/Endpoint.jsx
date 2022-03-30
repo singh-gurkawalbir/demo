@@ -18,7 +18,7 @@ import LoadResources from '../../../components/LoadResources';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import { TextButton, FilledButton } from '../../../components/Buttons';
-import { DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX, DRAWER_URLS } from '../../../utils/drawerURLs';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -231,7 +231,7 @@ export default function Endpoint() {
     <>
       <UpgradeDrawer />
       <RightDrawer
-        path=":env/:type"
+        path={DRAWER_URLS.SUBSCRIPTION}
         height="tall"
         onClose={handleClose}>
         <DrawerHeader title={titleMap[title]} />

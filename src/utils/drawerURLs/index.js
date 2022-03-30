@@ -1,6 +1,5 @@
 const DRAWER_URL_REFS = {
-  SUBSCRIPTION: ':env/:type', // TODO: add a name space in between env & type
-  // ---------------------------------------------------------------------
+  SUBSCRIPTION: ':env/:type',
   INSTALL_INTEGRATION: 'installIntegration',
   SHARE_STACKS: 'share/stacks/:stackId',
   ADD_EDIT_LOOKUP: ['lookups/edit/:lookupName', 'lookups/add'],
