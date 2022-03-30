@@ -38,12 +38,15 @@ function RouterWrappedContent(props) {
   const [mockData, setMockData] = useState();
   const [error, setError] = useState(false);
   const resourceSampleDataStatus = useSelector(state =>
-    selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw').status,
+    selectors.getResourceSampleDataWithStatus(state, resourceId, 'preview').status,
   );
+  const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
 
   useEffect(() => {
-    dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true }));
-  }, [dispatch, formKey]);
+    if (!resourceMockData && !['requested', 'received'].includes(resourceSampleDataStatus)) {
+      dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true }));
+    }
+  }, [dispatch, formKey, resourceMockData, resourceSampleDataStatus]);
 
   const availablePreviewStages = useSelector(state =>
     selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId), shallowEqual
@@ -51,8 +54,6 @@ function RouterWrappedContent(props) {
   const previewStages = useMemo(() => availablePreviewStages.map(({value}) => value), [availablePreviewStages]);
 
   const previewStageDataList = useSelectorMemo(selectors.mkPreviewStageDataList, resourceId, previewStages);
-
-  const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
 
   const handleChange = newValue => {
     setMockData(newValue);
@@ -69,6 +70,7 @@ function RouterWrappedContent(props) {
   };
 
   const value = mockData || resourceMockData || wrapExportFileSampleData(previewStageDataList?.preview?.data);
+  const showEditor = ['received', 'error'].includes(resourceSampleDataStatus) || resourceMockData || mockData;
 
   return (
     <>
@@ -77,7 +79,7 @@ function RouterWrappedContent(props) {
         {resourceSampleDataStatus === 'requested' && (
         <Spinner centerAll />
         )}
-        {['received', 'error'].includes(resourceSampleDataStatus) && (
+        { showEditor && (
           <CodePanel
             name="data"
             mode="json"

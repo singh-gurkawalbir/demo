@@ -105,7 +105,9 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
   shallowEqual
   );
   const dispatch = useDispatch();
-  const [toggleValue, setToggleValue] = useState(errorTypes[0].value);
+  const toggleValue = useSelector(state =>
+    selectors.typeOfSampleData(state, resourceId)
+  );
   // TODO @Raghu: Refactor preview state as it is currently using sample data state
   // this local state controls view to show sample data only when user requests by clicking preview
   const [showPreviewData, setShowPreviewData] = useState(false);
@@ -122,7 +124,6 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
   shallowEqual
   );
   const onChange = useCallback(value => {
-    setToggleValue(value);
     dispatch(actions.resourceFormSampleData.updateSampleDataType(resourceId, value));
   }, [dispatch, resourceId]);
 

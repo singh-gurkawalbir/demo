@@ -188,7 +188,6 @@ selectors.mkPreviewStageDataList = () => createSelector(
   (_1, _2, stages) => stages,
   (resourceIdSampleData, stages) => {
     if (!stages) return emptyObj;
-    console.log('resource id sample data', resourceIdSampleData);
 
     return stages.reduce((acc, stage) => {
       acc[stage] = getResourceSampleDataWithStatus(resourceIdSampleData, stage);
