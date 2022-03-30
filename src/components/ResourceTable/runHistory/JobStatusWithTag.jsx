@@ -9,7 +9,7 @@ export default function JobStatusWithTag({job}) {
     return null;
   }
 
-  if(jobStatus === 'completed'  && job.numOpenError) {
+  if (jobStatus === 'completed' && job.numOpenError) {
     jobStatus = 'completedWithErrors';
   }
 
