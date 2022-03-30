@@ -43,7 +43,7 @@ function RouterWrappedContent(props) {
   const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
 
   useEffect(() => {
-    if (!resourceMockData && !['requested', 'received'].includes(resourceSampleDataStatus)) {
+    if (!resourceMockData && !resourceSampleDataStatus) {
       dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true }));
     }
   }, [dispatch, formKey, resourceMockData, resourceSampleDataStatus]);
@@ -69,7 +69,7 @@ function RouterWrappedContent(props) {
     dispatch(actions.resourceFormSampleData.setMockData(resourceId, parsedMockData));
   };
 
-  const value = mockData || resourceMockData || wrapExportFileSampleData(previewStageDataList?.preview?.data);
+  const value = mockData || wrapExportFileSampleData(resourceMockData) || (resourceSampleDataStatus !== 'error' && wrapExportFileSampleData(previewStageDataList?.preview?.data));
   const showEditor = ['received', 'error'].includes(resourceSampleDataStatus) || resourceMockData || mockData;
 
   return (
