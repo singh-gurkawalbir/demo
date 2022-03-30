@@ -229,6 +229,7 @@ import jazzhr from './jazzhr';
 import segment from './segment';
 import microsoftpowerautomate from './microsoftpowerautomate';
 import happyreturns from './happyreturns';
+import brex from './brex';
 
 export default {
   channelape,
@@ -462,4 +463,5 @@ export default {
   segment,
   microsoftpowerautomate,
   happyreturns,
+  brex,
 };
