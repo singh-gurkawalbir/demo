@@ -9,8 +9,8 @@ import DynaSelect from '../DynaSelect';
 
 export default function DynaSelectAliasResource({ options = {}, ...props}) {
   const dispatch = useDispatch();
-  const { aliasResourceType, aliasContextResourceId, aliasContextResourceType } = options;
-  const { id, formKey, required } = props;
+  const { aliasResourceType } = options;
+  const { id, formKey, required, aliasContextResourceId, aliasContextResourceType } = props;
   const resourceList = useSelectorMemo(selectors.makeAliasResources, aliasResourceType, aliasContextResourceType, aliasContextResourceId) || emptyList;
   const selectOptions = useMemo(() => ([{
     items: resourceList.map(res => ({

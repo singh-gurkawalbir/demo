@@ -34,6 +34,10 @@ export const MARKETPLACE_HELPINFO = 'Jump-start your integrations with our Quick
 export const REQUIRED_MESSAGE = 'A value must be provided';
 // #endregion form messages
 
+export const ALIAS_DELETE_CONFIRM_MESSAGE = 'Are you sure you want to delete your alias? If you delete it, then any resources that reference the alias will now reference the ID. You’ll need to update the resource with a new or existing alias if you want to reference a different alias.';
+export const MANAGE_ALIASES_HELPINFO = 'Use this page to see all of your aliases for this flow, as well as any integration-level aliases (inherited aliases). You can create a new alias for this flow (top right), or use the Actions menu to edit, copy, delete, or view details for a flow-level alias.  Inherited aliases are passed down to the flow from the integration. However, keep in mind that if you reference both a flow-level alias and an integration-level alias for a resource in a script, the flow-level alias will take precedence. Use the Actions menu for Inherited aliases to copy an alias or view its details. To create, edit, or delete one of these aliases, navigate to the integration instead and use the Alias tab. <a href="https://docs.celigo.com/hc/en-us/articles/4454740861979" target="_blank">Learn more about aliases</a>.';
+export const VIEW_ALIASES_HELPINFO = 'View the list of aliases defined for your resources (flows, connections, export, and imports).';
+
 export const NETSUITE_ASSISTANT_LAUNCH_ERROR = `Unable to load NetSuite Assistant for one of the following reasons:
 • It is disabled in recent versions of Google Chrome (and available in other browsers)
 • Newer NetSuite record types are not yet supported 

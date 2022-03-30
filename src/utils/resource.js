@@ -4,6 +4,8 @@ import parseLinkHeader from 'parse-link-header';
 import { isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from './constants';
 import { stringCompare } from './sort';
+import { REQUIRED_MESSAGE } from './messageStore';
+import { ALIAS_VALIDATION_ERROR_MESSAGE, DUPLICATE_ALIAS_ERROR_MESSAGE } from './errorStore';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -994,21 +996,21 @@ export const validateAliasId = (aliasId, previousAliasId, aliases) => {
   if (!aliasId) {
     return {
       isValid: false,
-      message: 'A value must be provided',
+      message: REQUIRED_MESSAGE,
     };
   }
 
   if (aliasId !== previousAliasId && aliases.some(ra => ra.alias === aliasId)) {
     return {
       isValid: false,
-      message: 'Use a different alias ID. You already have an alias ID registered with the same name.',
+      message: DUPLICATE_ALIAS_ERROR_MESSAGE,
     };
   }
 
   if (!/^[a-zA-Z0-9-_]+$/.test(aliasId)) {
     return {
       isValid: false,
-      message: 'Your alias ID must contain string type field, alphanumeric, hyphen and underscore characters only.',
+      message: ALIAS_VALIDATION_ERROR_MESSAGE,
     };
   }
 

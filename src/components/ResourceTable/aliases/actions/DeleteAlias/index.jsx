@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { ALIAS_FORM_KEY } from '../../../../../utils/constants';
+import { ALIAS_DELETE_CONFIRM_MESSAGE } from '../../../../../utils/messageStore';
 import { getResourceFromAlias } from '../../../../../utils/resource';
 import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 import useConfirmDialog from '../../../../ConfirmDialog';
@@ -15,7 +16,7 @@ export default {
   icon: TrashIcon,
   Component: ({rowData}) => {
     const {resourceId: parentResourceId, resourceType: parentResourceType} = useGetTableContext();
-    const { id, resourceType } = getResourceFromAlias(rowData);
+    const { id, resourceType } = useMemo(() => getResourceFromAlias(rowData), [rowData]);
     const dispatch = useDispatch();
     const [showRef, setShowRef] = useState(false);
     const resourceReferences = useSelector(state =>
@@ -31,11 +32,12 @@ export default {
     const handleDelete = useCallback(() => {
       confirmDialog({
         title: 'Delete alias?',
-        message: 'Are you sure you want to delete your alias? If you delete it, then any resources that reference the alias will now reference the ID. You’ll need to update the resource with a new or existing alias if you want to reference a different alias.',
+        message: ALIAS_DELETE_CONFIRM_MESSAGE,
         buttons: [
           {
             label: 'Delete alias',
             onClick: deleteResource,
+            error: true,
           },
           {
             label: 'Cancel',

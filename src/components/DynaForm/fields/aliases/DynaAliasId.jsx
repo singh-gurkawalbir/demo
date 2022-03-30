@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../../actions';
-import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
 import { FORM_SAVE_STATUS } from '../../../../utils/constants';
 import { validateAliasId } from '../../../../utils/resource';
@@ -11,8 +10,7 @@ export default function DynaAliasId(props) {
   const { aliasContextResourceId, aliasContextResourceType, aliasData, formKey, id, value, required } = props;
   const dispatch = useDispatch();
   const status = useSelector(state => selectors.asyncTaskStatus(state, formKey));
-  const resourceAliases = useSelectorMemo(selectors.makeOwnAliases, aliasContextResourceType, aliasContextResourceId);
-
+  const resourceAliases = useSelector(state => selectors.ownAliases(state, aliasContextResourceType, aliasContextResourceId));
   const { isValid, message } = validateAliasId(value, aliasData?.alias, resourceAliases);
 
   useEffect(() => {

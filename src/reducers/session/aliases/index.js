@@ -1,7 +1,7 @@
 import { produce } from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
-
-const emptyObj = {};
+import { emptyList } from '../../../utils/constants';
 
 export default function reducer(state = {}, action) {
   const {
@@ -31,10 +31,13 @@ export default function reducer(state = {}, action) {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.allAliases = (state, resourceId) => {
-  if (!state) return emptyObj;
+selectors.allAliases = createSelector(
+  (state, resourceId) => state && state[resourceId],
+  aliases => {
+    if (!aliases) return emptyList;
 
-  return (state[resourceId] || emptyObj).map(aliasData => ({ _id: aliasData.alias, ...aliasData}));
-};
+    return aliases.map(aliasData => ({ _id: aliasData.alias, ...aliasData}));
+  },
+);
 
 // #endregion

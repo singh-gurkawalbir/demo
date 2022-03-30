@@ -18,10 +18,15 @@ export function* requestAllAliases({ id, resourceType }) {
   }
 
   try {
-    const response = yield call(apiCallWithRetry, {
+    let response = yield call(apiCallWithRetry, {
       path,
+      opts: { method: 'GET' },
       message: 'Requesting aliases',
     });
+
+    if (response !== undefined && !Array.isArray(response)) {
+      response = undefined;
+    }
 
     yield put(actions.resource.aliases.received(id, response));
   } catch (error) {

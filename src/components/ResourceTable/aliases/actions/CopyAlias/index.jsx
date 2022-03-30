@@ -9,12 +9,12 @@ export default {
   useLabel: rowData => (
     <CopyToClipboard text={rowData.alias}>
       <TextButton
-        data-test="copyToClipboard">
+        data-test="copyToClipboard"
+        startIcon={<CopyIcon />}>
         Copy alias
       </TextButton>
     </CopyToClipboard>
   ),
-  icon: CopyIcon,
   useOnClick: () => {
     const [enquesnackbar] = useEnqueueSnackbar();
 

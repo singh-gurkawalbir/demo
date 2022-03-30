@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
+import { shallowEqual, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useSelectorMemo } from '../../../hooks';
@@ -10,6 +11,7 @@ import RightDrawer from '../Right';
 import DrawerContent from '../Right/DrawerContent';
 import DrawerFooter from '../Right/DrawerFooter';
 import DrawerHeader from '../Right/DrawerHeader';
+import { emptyObject } from '../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   aliasDetailContent: {
@@ -26,10 +28,14 @@ const ViewAliasDetails = ({ resourceId, resourceType }) => {
   // the alias is defined will always be integration
   const aliasContextResourceType = isInheritedAlias ? 'integrations' : resourceType;
   const aliasContextResourceId = isInheritedAlias ? parentResourceId : resourceId;
-  const resourceAliases = useSelectorMemo(selectors.makeOwnAliases, aliasContextResourceType, aliasContextResourceId);
-  const aliasData = resourceAliases.find(ra => ra.alias === aliasId) || {};
+  const aliasData = useSelector(state => {
+    const resourceAliases = selectors.ownAliases(state, aliasContextResourceType, aliasContextResourceId);
+
+    return resourceAliases.find(ra => ra.alias === aliasId) || emptyObject;
+  }, shallowEqual);
+
   const { id: aliasResourceId, resourceType: aliasResourceType } = getResourceFromAlias(aliasData);
-  const aliasResource = useSelectorMemo(selectors.makeResourceSelector, aliasResourceType, aliasResourceId) || {};
+  const aliasResource = useSelectorMemo(selectors.makeResourceSelector, aliasResourceType, aliasResourceId) || emptyObject;
 
   const dataToRender = useMemo(() => ({
     'Alias ID': aliasData.alias,

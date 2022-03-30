@@ -1,8 +1,7 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
-import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
 import { useFormOnCancel } from '../../FormOnCancelContext';
 import RightDrawer from '../Right';
@@ -12,7 +11,6 @@ import DrawerFooter from '../Right/DrawerFooter';
 import SaveAndCloseButtonGroupForm from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../DynaForm';
-import { getResourceFromAlias } from '../../../utils/resource';
 import { ALIAS_FORM_KEY, FORM_SAVE_STATUS } from '../../../utils/constants';
 import getRoutePath from '../../../utils/routePaths';
 import actions from '../../../actions';
@@ -20,113 +18,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import InstallationGuideIcon from '../../icons/InstallationGuideIcon';
 import ActionGroup from '../../ActionGroup';
 import CeligoDivider from '../../CeligoDivider';
-
-const getFieldMeta = (resourceId, resourceType, aliasData, aliasResourceId, isEdit) => ({
-  fieldMap: {
-    aliasId: {
-      id: 'aliasId',
-      name: 'aliasId',
-      type: 'aliasid',
-      label: 'Alias ID',
-      defaultValue: aliasData?.alias,
-      helpKey: 'alias.aliasId',
-      isEdit,
-      required: true,
-      noApi: true,
-      aliasContextResourceId: resourceId,
-      aliasContextResourceType: resourceType,
-      aliasData,
-    },
-    description: {
-      id: 'description',
-      name: 'description',
-      type: 'text',
-      label: 'Alias description',
-      defaultValue: aliasData?.description,
-      helpKey: 'alias.description',
-      noApi: true,
-    },
-    aliasResourceType: {
-      id: 'aliasResourceType',
-      name: 'aliasResourceType',
-      type: 'select',
-      label: 'Resource type',
-      helpKey: 'alias.resourceType',
-      defaultValue: getResourceFromAlias(aliasData).resourceType || '',
-      options: [{
-        items: [
-          {
-            label: 'Connection',
-            value: 'connections',
-          },
-          {
-            label: 'Export',
-            value: 'exports',
-          },
-          {
-            label: 'Flow',
-            value: 'flows',
-          },
-          {
-            label: 'Import',
-            value: 'imports',
-          },
-        ],
-      }],
-      required: true,
-    },
-    aliasResourceName: {
-      id: 'aliasResourceName',
-      name: 'aliasResourceName',
-      type: 'selectaliasresource',
-      label: 'Resource name',
-      helpKey: 'alias.resource',
-      defaultValue: aliasResourceId,
-      aliasContextResourceId: resourceId,
-      aliasContextResourceType: resourceType,
-      required: true,
-      refreshOptionsOnChangesTo: ['aliasResourceType'],
-      visibleWhen: [
-        {
-          field: 'aliasResourceType',
-          isNot: [''],
-        },
-      ],
-    },
-  },
-  optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'aliasResourceName') {
-      const resourceType = fields.find(
-        field => field.id === 'aliasResourceType'
-      );
-
-      return {
-        aliasResourceType: resourceType?.value,
-      };
-    }
-
-    return null;
-  },
-  layout: {
-    containers: [
-      {
-        fields: [
-          'aliasId', 'description', 'aliasResourceType',
-        ],
-      },
-      {
-        type: 'indent',
-        containers: [
-          {
-            fields: [
-              'aliasResourceName',
-            ],
-          },
-        ],
-      },
-    ],
-  },
-});
+import getFieldMeta from './CreateAliasFormMeta';
 
 const AliasForm = ({ resourceId, resourceType, isEdit, parentUrl }) => {
   const match = useRouteMatch();
@@ -137,16 +29,14 @@ const AliasForm = ({ resourceId, resourceType, isEdit, parentUrl }) => {
   const [isFormSaveTriggered, setIsFormSaveTriggered] = useState(false);
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const asyncTaskStatus = useSelector(state => selectors.asyncTaskStatus(state, ALIAS_FORM_KEY));
-  const resourceAliases = useSelectorMemo(selectors.makeOwnAliases, resourceType, resourceId);
+  const resourceAliases = useSelector(state => selectors.ownAliases(state, resourceType, resourceId));
   const formVal = useSelector(state => selectors.formValueTrimmed(state, ALIAS_FORM_KEY), shallowEqual);
-
-  let alias;
+  let aliasData;
 
   if (isEdit) {
-    alias = resourceAliases.find(ra => ra.alias === aliasId);
+    aliasData = resourceAliases.find(ra => ra.alias === aliasId);
   }
-  const { id: aliasResourceId } = getResourceFromAlias(alias);
-  const fieldMeta = getFieldMeta(resourceId, resourceType, alias, aliasResourceId, isEdit);
+  const fieldMeta = useMemo(() => getFieldMeta(resourceId, resourceType, aliasData, isEdit), [resourceId, resourceType, aliasData, isEdit]);
 
   useFormInitWithPermissions({formKey: ALIAS_FORM_KEY, fieldMeta, optionsHandler: fieldMeta?.optionsHandler, remount: remountCount});
 

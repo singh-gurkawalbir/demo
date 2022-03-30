@@ -11,7 +11,6 @@ import CeligoTable from '../../../../components/CeligoTable';
 import CreateAliasDrawer from '../../../../components/drawer/Aliases/CreateAliases';
 import metadata from '../../../../components/ResourceTable/aliases/metadata';
 import AddIcon from '../../../../components/icons/AddIcon';
-import { useSelectorMemo } from '../../../../hooks';
 import getRoutePath from '../../../../utils/routePaths';
 import ViewAliasDetailsDrawer from '../../../../components/drawer/Aliases/ViewAliasesDetails';
 import { isIntegrationAppVersion2 } from '../../../../utils/integrationApps';
@@ -49,7 +48,7 @@ export default function Aliases({ integrationId, childId }) {
       currentIntegrationId,
     ).accessLevel
   );
-  const aliases = useSelectorMemo(selectors.makeOwnAliases, 'integrations', currentIntegrationId);
+  const aliases = useSelector(state => selectors.ownAliases(state, 'integrations', currentIntegrationId));
   const handleClick = useCallback(() => {
     history.push(getRoutePath(`${match.url}/add`));
   }, [history, match]);

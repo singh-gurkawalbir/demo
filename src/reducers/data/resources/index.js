@@ -386,24 +386,15 @@ selectors.integrationInstallSteps = (state, id) => {
 };
 
 // This selector returns the aliases defined at the resource level
-selectors.makeOwnAliases = () => {
+selectors.ownAliases = (state, resourceType, id) => {
   const resourceSelector = selectors.makeResourceSelector();
 
-  return createSelector(
-    (state, resourceType, id) => resourceSelector(state, resourceType, id)?.aliases,
-    aliases => {
-      if (!aliases) return emptyList;
-
-      return aliases;
-    }
-  );
+  return resourceSelector(state, resourceType, id)?.aliases || emptyList;
 };
-
-selectors.ownAliases = selectors.makeOwnAliases();
 
 // This selector returns the aliases defined at its parent level
 // If aliases are defined at both the integration and parentIntegration level,
-// if some of aliases have common aliasId among them, then aliases of integration takes precedence over parentInategration's
+// if some of aliases have common aliasId among them, then aliases of integration takes precedence over parentIntegration's
 selectors.makeInheritedAliases = () => {
   const resourceSel = selectors.makeResourceSelector();
   const integrationResourceSel = selectors.makeResourceSelector();

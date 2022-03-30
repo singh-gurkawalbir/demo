@@ -19,6 +19,7 @@ import CeligoDivider from '../../CeligoDivider';
 import ViewAliasDetailsDrawer from './ViewAliasesDetails';
 import getRoutePath from '../../../utils/routePaths';
 import actions from '../../../actions';
+import { MANAGE_ALIASES_HELPINFO, VIEW_ALIASES_HELPINFO } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   accordianWrapper: {
@@ -27,6 +28,12 @@ const useStyles = makeStyles(theme => ({
   },
   noAliases: {
     padding: theme.spacing(2),
+  },
+  manageAliases: {
+    marginBottom: theme.spacing(2),
+    '&:last-child': {
+      marginBottom: 0,
+    },
   },
 }));
 
@@ -66,7 +73,7 @@ const ManageAliases = ({ flowId, accessLevel, isIntegrationApp, height }) => {
       <CreateAliasDrawer resourceId={flowId} resourceType="flows" height={height} />
       <ViewAliasDetailsDrawer resourceId={flowId} resourceType="flows" height={height} />
       {aliasesTableData.map(tableData => (
-        <div key={tableData.title} >
+        <div key={tableData.title} className={classes.manageAliases}>
           <DynaCeligoTable
             className={classes.accordianWrapper}
             title={tableData.title}
@@ -89,19 +96,20 @@ const ViewAliases = ({ resourceId, resourceType, height }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const filterKey = `${resourceId}+viewAliases`;
-  const allAliases = useSelector(state => selectors.allAliases(state, resourceType, resourceId));
+  const allAliases = useSelector(state => selectors.allAliases(state, resourceId));
   const actionProps = useMemo(() => ({
     resourceType,
     resourceId,
   }), [resourceType, resourceId]);
 
   useEffect(() => {
-    if (!allAliases) {
+    if (!allAliases.length) {
       dispatch(actions.resource.aliases.requestAll(resourceId, resourceType));
     }
 
     return () => (dispatch(actions.resource.aliases.clear(resourceId)));
-  }, [dispatch, resourceId, resourceType, allAliases]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -137,9 +145,6 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
     history.push(getRoutePath(`${match.url}/aliases/manage/add`));
   }, [history, match]);
 
-  const infoTextManageAliases = 'Use this page to see all of your aliases for this flow, as well as any integration-level aliases (inherited aliases). You can create a new alias for this flow (top right), or use the Actions menu to edit, copy, delete, or view details for a flow-level alias.  Inherited aliases are passed down to the flow from the integration. However, keep in mind that if you reference both a flow-level alias and an integration-level alias for a resource in a script, the flow-level alias will take precedence. Use the Actions menu for Inherited aliases to copy an alias or view its details. To create, edit, or delete one of these aliases, navigate to the integration instead and use the Alias tab. <a href="https://docs.celigo.com/hc/en-us/articles/4454740861979" target="_blank">Learn more about aliases</a>.';
-  const infoTextViewAliases = 'View the list of aliases defined for your resources (flows, connections, export, and imports).';
-
   return (
     <RightDrawer
       variant="temporary"
@@ -151,7 +156,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
         <Route path={`${match.url}/aliases/manage`} >
           <DrawerHeader
             title="Manage Aliases"
-            infoText={infoTextManageAliases}>
+            infoText={MANAGE_ALIASES_HELPINFO}>
             {accessLevel !== 'monitor' ? (
               <>
                 <TextButton
@@ -177,7 +182,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
         <Route path={`${match.url}/aliases/view`} >
           <DrawerHeader
             title="View Aliases"
-            infoText={infoTextViewAliases} />
+            infoText={VIEW_ALIASES_HELPINFO} />
           <DrawerContent>
             <ViewAliases resourceId={resourceId} resourceType={resourceType} height={height} />
           </DrawerContent>
