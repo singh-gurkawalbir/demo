@@ -104,6 +104,7 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
     selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
   shallowEqual
   );
+  const isLookup = useSelector(state => selectors.isLookUpExport(state, { flowId, resourceId, resourceType }));
   const dispatch = useDispatch();
   const toggleValue = useSelector(state =>
     selectors.typeOfSampleData(state, resourceId)
@@ -154,20 +155,24 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
         </Typography>
 
         <div className={classes.container}>
-          {resourceType === 'imports' ? (
+          {resourceType === 'imports' || isLookup ? (
             <div className={classes.actionGroupWrapper}>
               <ActionGroup position="right">
                 <TextButton onClick={onEditorClick} startIcon={<EditIcon />}>
                   Edit mock input
                 </TextButton>
-                <CeligoDivider position="right" />
-                <TextToggle
-                  value={toggleValue}
-                  onChange={onChange}
-                  exclusive
-                  className={classes.errorDrawerActionToggle}
-                  options={errorTypes}
-      />
+                {!isLookup && (
+                <>
+                  <CeligoDivider position="right" />
+                  <TextToggle
+                    value={toggleValue}
+                    onChange={onChange}
+                    exclusive
+                    className={classes.errorDrawerActionToggle}
+                    options={errorTypes}
+                />
+                </>
+                )}
               </ActionGroup>
             </div>
           ) : ''}
@@ -178,7 +183,7 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
             formKey={formKey}
             setShowPreviewData={setShowPreviewData}
             showPreviewData={showPreviewData}
-      />
+          />
 
           <Panels.PreviewBody
             resourceSampleData={resourceSampleData}
@@ -186,7 +191,8 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
             availablePreviewStages={availablePreviewStages}
             resourceId={resourceId}
             showDefaultPreviewBody={!showPreviewData}
-            resourceType={resourceType} />
+            resourceType={resourceType}
+          />
         </div>
       </div>
     </div>
