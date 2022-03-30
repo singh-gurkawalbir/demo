@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
+import messageStore from '../../../../constants/messages';
 import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
 import { emptyList } from '../../../../utils/constants';
@@ -30,7 +31,10 @@ export default function DynaSelectAliasResource({ options = {}, ...props}) {
 
     dispatch(actions.form.forceFieldState(formKey)(id, {
       isValid: false,
-      errorMessages: `A value must be provided. Create a ${MODEL_PLURAL_TO_LABEL[aliasResourceType].toLowerCase()} if you don’t have any ${aliasResourceType} configured.`,
+      errorMessages: messageStore('NO_ALIAS_RESOURCE_MESSAGE', {
+        label: MODEL_PLURAL_TO_LABEL[aliasResourceType].toLowerCase(),
+        resourceType: aliasResourceType,
+      }),
     }));
   }, [dispatch, formKey, id, resourceList, required, aliasResourceType]);
 

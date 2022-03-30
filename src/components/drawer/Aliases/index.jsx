@@ -20,6 +20,7 @@ import ViewAliasDetailsDrawer from './ViewAliasesDetails';
 import getRoutePath from '../../../utils/routePaths';
 import actions from '../../../actions';
 import { MANAGE_ALIASES_HELPINFO, VIEW_ALIASES_HELPINFO } from '../../../utils/messageStore';
+import { NO_ALIASES_MESSAGE } from '../../../utils/errorStore';
 
 const useStyles = makeStyles(theme => ({
   accordianWrapper: {
@@ -37,19 +38,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const NO_ALIASES_MESSAGE = 'You don’t have any aliases.';
-
-const ManageAliases = ({ flowId, accessLevel, isIntegrationApp, height }) => {
+const ManageAliases = ({ flowId, accessLevel, canUserPublish, height }) => {
   const classes = useStyles();
   const resourceAliases = useSelectorMemo(selectors.makeOwnAliases, 'flows', flowId);
   const inheritedAliases = useSelectorMemo(selectors.makeInheritedAliases, flowId);
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
   const actionProps = useMemo(() => ({
-    isIntegrationApp,
+    canUserPublish,
     accessLevel,
     resourceType: 'flows',
     resourceId: flowId,
-  }), [isIntegrationApp, accessLevel, flowId]);
+  }), [canUserPublish, accessLevel, flowId]);
 
   const aliasesTableData = useMemo(() => ([
     {
@@ -132,11 +131,10 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
   const history = useHistory();
   const resource = useSelectorMemo(selectors.makeResourceSelector, resourceType, resourceId);
   const integrationId = resourceType === 'integrations' ? resourceId : resource?._integrationId;
-  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
+  const canUserPublish = useSelector(state => selectors.canUserPublish(state));
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state, 'integrations', integrationId).accessLevel
   );
-
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
@@ -157,7 +155,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
           <DrawerHeader
             title="Manage Aliases"
             infoText={MANAGE_ALIASES_HELPINFO}>
-            {accessLevel !== 'monitor' ? (
+            {accessLevel !== 'monitor' && canUserPublish ? (
               <>
                 <TextButton
                   startIcon={<AddIcon />}
@@ -169,7 +167,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
             ) : ''}
           </DrawerHeader>
           <DrawerContent>
-            <ManageAliases flowId={resourceId} height={height} accessLevel={accessLevel} isIntegrationApp={isIntegrationApp} />
+            <ManageAliases flowId={resourceId} height={height} accessLevel={accessLevel} canUserPublish={canUserPublish} />
           </DrawerContent>
           <DrawerFooter>
             <FilledButton

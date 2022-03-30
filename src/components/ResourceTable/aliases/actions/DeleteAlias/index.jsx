@@ -56,17 +56,12 @@ export default {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    return (
-      <>
-        {showRef && resourceReferences && resourceReferences.length && (
-          <ResourceReferences
-            title
-            resourceType={resourceType}
-            resourceId={id}
-            onClose={handleResourceReferenceClose}
-          />
-        )}
-      </>
-    );
+    return (showRef && resourceReferences && resourceReferences.length && (
+      <ResourceReferences
+        title
+        resourceType={resourceType}
+        resourceId={id}
+        onClose={handleResourceReferenceClose} />
+    ));
   },
 };

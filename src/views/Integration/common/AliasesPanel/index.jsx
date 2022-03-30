@@ -14,6 +14,8 @@ import AddIcon from '../../../../components/icons/AddIcon';
 import getRoutePath from '../../../../utils/routePaths';
 import ViewAliasDetailsDrawer from '../../../../components/drawer/Aliases/ViewAliasesDetails';
 import { isIntegrationAppVersion2 } from '../../../../utils/integrationApps';
+import { NO_ALIASES_MESSAGE } from '../../../../utils/errorStore';
+import { ALIAS_PANEL_HELPINFO } from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,7 +42,6 @@ export default function Aliases({ integrationId, childId }) {
   );
   const currentIntegrationId = isIntegrationV2 ? (childId || integrationId) : integrationId;
   const filterKey = `${currentIntegrationId}+aliases`;
-  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, currentIntegrationId));
   const accessLevel = useSelector(state =>
     selectors.resourcePermissions(
       state,
@@ -48,26 +49,25 @@ export default function Aliases({ integrationId, childId }) {
       currentIntegrationId,
     ).accessLevel
   );
+  const canUserPublish = useSelector(state => selectors.canUserPublish(state));
   const aliases = useSelector(state => selectors.ownAliases(state, 'integrations', currentIntegrationId));
   const handleClick = useCallback(() => {
     history.push(getRoutePath(`${match.url}/add`));
   }, [history, match]);
 
-  const infoTextAliases = 'An alias provides an easy way to reference a specific resource in your integration when you\'re building scripts. For example, instead of referring to a flow ID in a script, you can use an alias for that flow instead. This makes your script portable across environments and prevents you from having to manually change the referenced ID later. Use the Aliases tab to see all aliases that have been defined for this integration\'s flows, connections, imports, and exports. You can also create a new alias (top right), or use the Actions menu to edit, copy, delete, or view details for an alias. <a href="https://docs.celigo.com/hc/en-us/articles/4454740861979" target="_blank">Learn more about aliases</a>.';
-  const NO_ALIASES_MESSAGE = 'You don’t have any aliases.';
   const actionProps = useMemo(() => ({
-    isIntegrationApp,
+    canUserPublish,
     accessLevel,
     hasManageAccess: true,
     resourceType: 'integrations',
     resourceId: currentIntegrationId,
-  }), [isIntegrationApp, accessLevel, currentIntegrationId]);
+  }), [canUserPublish, accessLevel, currentIntegrationId]);
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Aliases" infoText={infoTextAliases} className={classes.aliasesHeader} >
+      <PanelHeader title="Aliases" infoText={ALIAS_PANEL_HELPINFO} className={classes.aliasesHeader} >
         <ActionGroup>
-          {accessLevel !== 'monitor' && !isIntegrationApp && (
+          {accessLevel !== 'monitor' && canUserPublish && (
           <TextButton
             startIcon={<AddIcon />}
             onClick={handleClick}>

@@ -34,8 +34,8 @@ export default {
     },
   ],
   useRowActions: () => {
-    const { isIntegrationApp, accessLevel, hasManageAccess } = useGetTableContext();
-    const hasEditPermissions = !isIntegrationApp && (accessLevel !== 'monitor') && hasManageAccess;
+    const { canUserPublish, accessLevel, hasManageAccess } = useGetTableContext();
+    const hasEditPermissions = canUserPublish && (accessLevel !== 'monitor') && hasManageAccess;
 
     const actions = [];
 

@@ -29,8 +29,8 @@ export function* requestAllAliases({ id, resourceType }) {
     }
 
     yield put(actions.resource.aliases.received(id, response));
-  } catch (error) {
-    return undefined;
+  } catch (e) {
+    // do nothing
   }
 }
 
@@ -58,8 +58,8 @@ export function* deleteAlias({ id, resourceType, aliasId, asyncKey }) {
     }
 
     yield call(patchResource, { id, resourceType, patchSet, asyncKey });
-  } catch (error) {
-    return undefined;
+  } catch (e) {
+    // do nothing
   }
 }
 

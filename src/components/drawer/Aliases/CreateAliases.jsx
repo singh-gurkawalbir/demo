@@ -38,7 +38,7 @@ const AliasForm = ({ resourceId, resourceType, isEdit, parentUrl }) => {
   }
   const fieldMeta = useMemo(() => getFieldMeta(resourceId, resourceType, aliasData, isEdit), [resourceId, resourceType, aliasData, isEdit]);
 
-  useFormInitWithPermissions({formKey: ALIAS_FORM_KEY, fieldMeta, optionsHandler: fieldMeta?.optionsHandler, remount: remountCount});
+  useFormInitWithPermissions({formKey: ALIAS_FORM_KEY, fieldMeta, optionsHandler: fieldMeta.optionsHandler, remount: remountCount});
 
   useEffect(() => {
     if (!isFormSaveTriggered || !(asyncTaskStatus === FORM_SAVE_STATUS.COMPLETE)) {

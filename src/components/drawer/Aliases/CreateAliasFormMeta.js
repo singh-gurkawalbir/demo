@@ -54,6 +54,7 @@ export default function getFieldMeta(resourceId, resourceType, aliasData, isEdit
           ],
         }],
         required: true,
+        noApi: true,
       },
       aliasResourceName: {
         id: 'aliasResourceName',
@@ -65,6 +66,7 @@ export default function getFieldMeta(resourceId, resourceType, aliasData, isEdit
         aliasContextResourceId: resourceId,
         aliasContextResourceType: resourceType,
         required: true,
+        noApi: true,
         refreshOptionsOnChangesTo: ['aliasResourceType'],
         visibleWhen: [
           {
