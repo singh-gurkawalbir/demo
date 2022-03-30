@@ -84,7 +84,7 @@ export const useRedirectToParentRoute = initFailed => {
 
   useEffect(() => {
     if (initFailed) {
-      // remove the last 3 segments from the route ...
+      // remove the last 4 segments from the route ...
       // /ui-drawer/:operation(add|edit)/:resourceType/:id
       // TODO: @Raghu: Can't we replace url with parentUrl - if we could pass till here?
       const stripedRoute = redirectURlToParentListing(match.url);

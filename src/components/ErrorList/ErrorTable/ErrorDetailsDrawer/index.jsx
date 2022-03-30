@@ -22,7 +22,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   const history = useHistory();
 
   const { mode } = matchPath(pathname, {
-    path: `${match.url}/${DRAWER_URL_PREFIX}/details/:errorId/:mode`,
+    path: `${match.url}/${DRAWER_URLS.EM_VIEW_ERROR_DETAILS}`,
   })?.params || {};
 
   const allErrors = useSelector(state => {
@@ -36,7 +36,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   const showDrawer = useMemo(() => {
     if (!match.isExact) {
       const matchErrorPath = matchPath(pathname, {
-        path: `${match.url}/${DRAWER_URL_PREFIX}/details/:errorId/:mode`,
+        path: `${match.url}/${DRAWER_URLS.EM_VIEW_ERROR_DETAILS}`,
       });
 
       if (!matchErrorPath || !matchErrorPath.params) return true;

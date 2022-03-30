@@ -65,7 +65,7 @@ export default function ApiTokenSection({ integrationId }) {
             dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
           }}
           startIcon={<AddIcon />}>
-          Create API tokens
+          Create API token
         </TextButton>
       </PanelHeader>
 
