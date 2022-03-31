@@ -120,8 +120,12 @@ export default function MockInput({formKey, resourceId, resourceType, flowId}) {
       width="default"
       onClose={handleClose} >
       <RouterWrappedContent
-        formKey={formKey} resourceId={resourceId} resourceType={resourceType} flowId={flowId}
-        handleClose={handleClose} />
+        formKey={formKey}
+        resourceId={resourceId}
+        resourceType={resourceType}
+        flowId={flowId}
+        handleClose={handleClose}
+      />
     </RightDrawer>
   );
 }

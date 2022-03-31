@@ -51,6 +51,8 @@ export default function (state = {}, action) {
   return produce(state, draft => {
     const activeSendOrPreviewTab = draft[resourceId]?.typeOfSampleData || 'preview';
 
+    if (!resourceId) return;
+
     if (!draft[resourceId] || !draft[resourceId][activeSendOrPreviewTab]) {
       if (!draft[resourceId]) {
         draft[resourceId] = {};
