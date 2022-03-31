@@ -1071,8 +1071,25 @@ describe('resourceFormSampleData reducer', () => {
 });
 
 describe('sampleData selectors', () => {
-  const resourceId = '[resourceId]';
+  const resourceId = '123';
 
+  describe('typeOfSampleData selector', () => {
+    test('should return default sample data type for invalid arguments', () => {
+      expect(selectors.typeOfSampleData()).toEqual('preview');
+      expect(selectors.typeOfSampleData({}, 123)).toEqual('preview');
+      expect(selectors.typeOfSampleData({123: {data: '123'}}, 123)).toEqual('preview');
+    });
+    test('should return correct sample data type for send sample data type', () => {
+      const state = reducer({}, actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send'));
+
+      expect(selectors.typeOfSampleData(state, resourceId)).toEqual('send');
+    });
+    test('should return correct sample data type for preview sample data type', () => {
+      const state = reducer({}, actions.resourceFormSampleData.updateSampleDataType(resourceId, 'preview'));
+
+      expect(selectors.typeOfSampleData(state, resourceId)).toEqual('preview');
+    });
+  });
   describe('getResourceSampleDataWithStatus', () => {
     test('should return state object with undefined keys when state is empty.', () => {
       const expectedOutput = {data: undefined, error: undefined, status: undefined};
@@ -1083,7 +1100,7 @@ describe('sampleData selectors', () => {
       expect(selectors.getResourceSampleDataWithStatus({}, resourceId)).toEqual(expectedOutput);
     });
 
-    test('should return correct state when match is found.', () => {
+    test('should return correct state when match is found for preview sample data type', () => {
       const parsedData = [{
         users: [
           {
@@ -1095,14 +1112,46 @@ describe('sampleData selectors', () => {
       const stage = 'parse';
 
       const initialState = {
-        456: { status: 'received', data: {} },
-        789: { status: 'received', data: {} },
+        456: { preview: {status: 'received', data: {}} },
+        789: { preview: {status: 'received', data: {}} },
       };
 
       const expectedOutput = {data: parsedData, error: undefined, status: 'received'};
 
       const parseState = reducer(
         initialState,
+        actions.resourceFormSampleData.setParseData(resourceId, parsedData)
+      );
+      const receivedState = reducer(
+        parseState,
+        actions.resourceFormSampleData.setStatus(resourceId, 'received')
+      );
+
+      expect(selectors.getResourceSampleDataWithStatus(receivedState, resourceId, stage)).toEqual(expectedOutput);
+    });
+    test('should return correct state when match is found for send sample data type', () => {
+      const parsedData = [{
+        users: [
+          {
+            name: 'user1',
+            id: '1',
+          },
+        ],
+      }];
+      const stage = 'parse';
+
+      const initialState = {
+        456: { preview: {status: 'received', data: {}} },
+        789: { preview: {status: 'received', data: {}} },
+      };
+
+      const expectedOutput = {data: parsedData, error: undefined, status: 'received'};
+      const sendState = reducer(
+        initialState,
+        actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send')
+      );
+      const parseState = reducer(
+        sendState,
         actions.resourceFormSampleData.setParseData(resourceId, parsedData)
       );
       const receivedState = reducer(
@@ -1119,21 +1168,23 @@ describe('sampleData selectors', () => {
 
     const initialState = {
       [resourceId]: {
-        status: 'received',
-        data: {
-          parse: [{
-            name: 'Bob',
-            age: 23,
-          }],
-          raw: [{
-            url: 'https://api.mocki.io/v1/awe',
-            statusCode: 200,
-            body: '{"name":"Bob","age":23}',
-          }],
-          request: [{
-            url: 'https://api.mocki.io/v1/awe',
-            method: 'GET',
-          }]},
+        preview: {
+          status: 'received',
+          data: {
+            parse: [{
+              name: 'Bob',
+              age: 23,
+            }],
+            raw: [{
+              url: 'https://api.mocki.io/v1/awe',
+              statusCode: 200,
+              body: '{"name":"Bob","age":23}',
+            }],
+            request: [{
+              url: 'https://api.mocki.io/v1/awe',
+              method: 'GET',
+            }]},
+        },
       },
       456: { status: 'received', data: {} },
       789: { status: 'received', data: {} },
@@ -1164,7 +1215,7 @@ describe('sampleData selectors', () => {
     test('should return empty object if stages are not passed', () => {
       expect(sel(initialState, resourceId)).toEqual({});
     });
-    test('should return correct stage data object if stages are passed', () => {
+    test('should return correct stage data object if stages are passed for preview sample data type', () => {
       const previewStages = ['parse', 'preview', 'raw'];
       const expectedOutput = {
         parse: {
@@ -1197,15 +1248,72 @@ describe('sampleData selectors', () => {
 
       expect(sel(initialState, resourceId, previewStages)).toEqual(expectedOutput);
     });
+    test('should return correct stage data object if stages are passed for send sample data type', () => {
+      const initialSendState = {
+        [resourceId]: {
+          typeOfSampleData: 'send',
+          send: {
+            status: 'received',
+            data: {
+              parse: [{
+                name: 'Bob',
+                age: 23,
+              }],
+              raw: [{
+                url: 'https://api.mocki.io/v1/awe',
+                statusCode: 200,
+                body: '{"name":"Bob","age":23}',
+              }],
+              request: [{
+                url: 'https://api.mocki.io/v1/awe',
+                method: 'GET',
+              }]},
+          },
+        },
+        456: { status: 'received', data: {} },
+        789: { status: 'received', data: {} },
+      };
+      const previewStages = ['parse', 'preview', 'raw'];
+      const expectedOutput = {
+        parse: {
+          data: {
+            name: 'Bob',
+            age: 23,
+          },
+          error: undefined,
+          status: 'received',
+        },
+        preview: {
+          data: [{
+            name: 'Bob',
+            age: 23,
+          }],
+          error: undefined,
+          status: 'received',
+        },
+        raw: {
+          data: [{
+            url: 'https://api.mocki.io/v1/awe',
+            statusCode: 200,
+            body: '{"name":"Bob","age":23}',
+          }],
+          error: undefined,
+          status: 'received',
+        },
+
+      };
+
+      expect(sel(initialSendState, resourceId, previewStages)).toEqual(expectedOutput);
+    });
   });
 
-  describe('getResourceSampleDataWithStatus', () => {
+  describe('getAllParsableErrors', () => {
     test('should return all parsable errors when there are no stages in the response, this scenario occurs when IO errors out', () => {
       const error = {
         errors: [{field: 'http', code: 'missing_required_field', message: 'http subschema not defined'}],
       };
       const initialState = {
-        [resourceId]: { status: 'requested' },
+        [resourceId]: { preview: {status: 'requested'} },
       };
 
       const newState = reducer(
@@ -1213,7 +1321,7 @@ describe('sampleData selectors', () => {
         actions.resourceFormSampleData.receivedPreviewError(resourceId, error)
       );
 
-      expect(selectors.getAllParsableErrors(newState, '[resourceId]'))
+      expect(selectors.getAllParsableErrors(newState, resourceId))
         .toEqual([{field: 'http', code: 'missing_required_field', message: 'http subschema not defined'}]);
     });
     test('should return no errors when there are stages in the response, this scenario occurs when the endpoint errors out', () => {
@@ -1247,64 +1355,132 @@ describe('sampleData selectors', () => {
       expect(selectors.getAllParsableErrors(newState, '[resourceId]')).toEqual(undefined);
     });
   });
-});
+  describe('getResourceSampleDataStages', () => {
+    const initialState = {
+      123: {
+        preview: {
+          status: 'received',
+          data: {
+            parse: [{
+              name: 'Bob',
+              age: 23,
+            }],
+            raw: [{
+              url: 'https://api.mocki.io/v1/awe',
+              statusCode: 200,
+              body: '{"name":"Bob","age":23}',
+            }],
+            request: [{
+              url: 'https://api.mocki.io/v1/awe',
+              method: 'GET',
+            }]},
+        },
+      },
+      456: { status: 'received', data: {} },
+      789: { status: 'received', data: {} },
+      111: { status: 'requested'},
+    };
 
-describe('getResourceSampleDataStages', () => {
-  const initialState = {
-    123: {
-      status: 'received',
-      data: {
-        parse: [{
-          name: 'Bob',
-          age: 23,
-        }],
-        raw: [{
-          url: 'https://api.mocki.io/v1/awe',
-          statusCode: 200,
-          body: '{"name":"Bob","age":23}',
-        }],
-        request: [{
-          url: 'https://api.mocki.io/v1/awe',
-          method: 'GET',
-        }]},
-    },
-    456: { status: 'received', data: {} },
-    789: { status: 'received', data: {} },
-    111: { status: 'requested'},
-  };
+    test('should return empty list if there is no sample data for the passed resourceId', () => {
+      expect(selectors.getResourceSampleDataStages({}, '111')).toEqual([]);
+      expect(selectors.getResourceSampleDataStages(initialState, '111')).toEqual([]);
+      expect(selectors.getResourceSampleDataStages(initialState, '456')).toEqual([]);
+    });
+    test('should return correct stage data list if the state has stages corresponding to the passed resourceId for preview sample data type', () => {
+      const expectedOutput = [
+        {
+          name: 'parse',
+          data: [{
+            name: 'Bob',
+            age: 23,
+          }],
+        },
+        {
+          name: 'raw',
+          data: [{
+            url: 'https://api.mocki.io/v1/awe',
+            statusCode: 200,
+            body: '{"name":"Bob","age":23}',
+          }],
+        },
+        {
+          name: 'request',
+          data: [{
+            url: 'https://api.mocki.io/v1/awe',
+            method: 'GET',
+          }],
+        },
+      ];
 
-  test('should return empty list if there is no sample data for the passed resourceId', () => {
-    expect(selectors.getResourceSampleDataStages({}, '111')).toEqual([]);
-    expect(selectors.getResourceSampleDataStages(initialState, '111')).toEqual([]);
-    expect(selectors.getResourceSampleDataStages(initialState, '456')).toEqual([]);
+      expect(selectors.getResourceSampleDataStages(initialState, '123')).toEqual(expectedOutput);
+    });
+    test('should return correct stage data list if the state has stages corresponding to the passed resourceId for send sample data type', () => {
+      const initialSendState = {
+        123: {
+          typeOfSampleData: 'send',
+          send: {
+            status: 'received',
+            data: {
+              parse: [{
+                name: 'Bob',
+                age: 23,
+              }],
+              raw: [{
+                url: 'https://api.mocki.io/v1/awe',
+                statusCode: 200,
+                body: '{"name":"Bob","age":23}',
+              }],
+              request: [{
+                url: 'https://api.mocki.io/v1/awe',
+                method: 'GET',
+              }]},
+          },
+        },
+        456: { status: 'received', data: {} },
+        789: { status: 'received', data: {} },
+        111: { status: 'requested'},
+      };
+      const expectedOutput = [
+        {
+          name: 'parse',
+          data: [{
+            name: 'Bob',
+            age: 23,
+          }],
+        },
+        {
+          name: 'raw',
+          data: [{
+            url: 'https://api.mocki.io/v1/awe',
+            statusCode: 200,
+            body: '{"name":"Bob","age":23}',
+          }],
+        },
+        {
+          name: 'request',
+          data: [{
+            url: 'https://api.mocki.io/v1/awe',
+            method: 'GET',
+          }],
+        },
+      ];
+
+      expect(selectors.getResourceSampleDataStages(initialSendState, '123')).toEqual(expectedOutput);
+    });
   });
-  test('should return correct stage data list if the state has stages corresponding to the passed resourceId', () => {
-    const expectedOutput = [
-      {
-        name: 'parse',
-        data: [{
-          name: 'Bob',
-          age: 23,
-        }],
-      },
-      {
-        name: 'raw',
-        data: [{
-          url: 'https://api.mocki.io/v1/awe',
-          statusCode: 200,
-          body: '{"name":"Bob","age":23}',
-        }],
-      },
-      {
-        name: 'request',
-        data: [{
-          url: 'https://api.mocki.io/v1/awe',
-          method: 'GET',
-        }],
-      },
-    ];
+  describe('getResourceMockData', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(selectors.getResourceMockData({}, resourceId)).toBeUndefined();
+      expect(selectors.getResourceMockData({})).toBeUndefined();
+      expect(selectors.getResourceMockData({123: {}}, resourceId)).toBeUndefined();
+    });
+    test('should return correct mock data for a resourceid', () => {
+      const state = reducer(
+        {}, actions.resourceFormSampleData.setMockData(resourceId, {data: '123'})
+      );
 
-    expect(selectors.getResourceSampleDataStages(initialState, '[resourceId]')).toEqual(expectedOutput);
+      expect(selectors.getResourceMockData(state, resourceId)).toEqual({data: '123'});
+    });
   });
 });
 
