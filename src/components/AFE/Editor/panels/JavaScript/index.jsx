@@ -117,11 +117,6 @@ export default function JavaScriptPanel({ editorId }) {
     }
   }, [scriptId, scriptContent, patchRule, requestScript, fetchScriptContent]);
 
-  const defaultItem = (
-    <MenuItem key="__placeholder" value="">
-      None
-    </MenuItem>
-  );
   const scriptOptions = allScripts.map(s => (
     <MenuItem key={s._id} value={s._id}>
       {s.name}
@@ -159,7 +154,7 @@ export default function JavaScriptPanel({ editorId }) {
               disabled={disabled}
               MenuProps={menuProps}
               onChange={handleScriptChange}>
-              {[defaultItem, ...scriptOptions]}
+              {scriptOptions}
             </CeligoSelect>
           </FormControl>
           <FormControl className={classes.jsPanelFormControl}>
