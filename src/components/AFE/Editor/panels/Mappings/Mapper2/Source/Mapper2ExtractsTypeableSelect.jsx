@@ -1,7 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@material-ui/core';
-import clsx from 'clsx';
 import isLoggableAttr from '../../../../../../../utils/isLoggableAttr';
 import ArrowDownIcon from '../../../../../../icons/ArrowDownIcon';
 import useOnClickOutside from '../../../../../../../hooks/useClickOutSide';
@@ -35,10 +34,10 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
     pointerEvents: 'none',
   },
-  srcDataType: {
-    fontStyle: 'italic',
-    color: theme.palette.secondary.light,
-  },
+  // srcDataType: {
+  //   fontStyle: 'italic',
+  //   color: theme.palette.secondary.light,
+  // },
   textFieldWithDataType: {
     '&> * .MuiFilledInput-input': {
       paddingRight: theme.spacing(10),
@@ -105,10 +104,9 @@ export default function Mapper2ExtractsTypeableSelect({
   const classes = useStyles();
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState(propValue);
-  const [srcDataType, setSrcDataType] = useState();
+  const [isTruncated, setIsTruncated] = useState(false);
   const containerRef = useRef();
   const inputFieldRef = useRef();
-  const [isTruncated, setIsTruncated] = useState(false);
 
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
@@ -160,7 +158,8 @@ export default function Mapper2ExtractsTypeableSelect({
         <TextField
           {...isLoggableAttr(isLoggable)}
           onMouseMove={handleMouseOver}
-          className={clsx(classes.customTextField, {[classes.textFieldWithDataType]: srcDataType})}
+          // className={clsx(classes.customTextField, {[classes.textFieldWithDataType]: srcDataType})}
+          className={classes.customTextField}
           variant="filled"
           autoFocus={isFocused}
           value={inputValue}
@@ -169,12 +168,23 @@ export default function Mapper2ExtractsTypeableSelect({
           disabled={disabled}
           multiline={isFocused}
           placeholder="Source record field"
+          // InputProps={{
+          //   endAdornment: hideDropdown
+          //     ? (<Typography variant="caption" className={classes.srcDataType}>{srcDataType}</Typography>)
+          //     : (
+          //       <InputAdornment className={classes.autoSuggestDropdown} position="start">
+          //         <Typography variant="caption" className={classes.srcDataType}>{srcDataType}</Typography>
+          //         <ArrowDownIcon />
+          //       </InputAdornment>
+          //     ),
+          //   inputProps: {
+          //     ref: inputFieldRef,
+          //   },
+          // }}
           InputProps={{
-            endAdornment: hideDropdown
-              ? (<Typography variant="caption" className={classes.srcDataType}>{srcDataType}</Typography>)
-              : (
+            endAdornment: !hideDropdown &&
+              (
                 <InputAdornment className={classes.autoSuggestDropdown} position="start">
-                  <Typography variant="caption" className={classes.srcDataType}>{srcDataType}</Typography>
                   <ArrowDownIcon />
                 </InputAdornment>
               ),
@@ -198,7 +208,7 @@ export default function Mapper2ExtractsTypeableSelect({
         setIsFocused={setIsFocused}
         flowId={flowId}
         resourceId={importId}
-        setSrcDataType={setSrcDataType} />
+        />
       )}
 
     </FormControl>

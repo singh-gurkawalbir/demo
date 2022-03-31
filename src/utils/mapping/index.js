@@ -1554,6 +1554,8 @@ export default {
 };
 
 // #region Mapper2 utils
+export const getDefaultExtract = isGroupedSampleData => isGroupedSampleData ? '$[*]' : '$';
+
 export const RECORD_AS_INPUT_OPTIONS = [
   {
     label: 'Record to record - { } to { }',
@@ -1633,13 +1635,13 @@ export const getInputOutputFormat = (isGroupedSampleData, isGroupedOutput) => {
 export const rebuildNode = (node, extract) => {
   const clonedNode = deepClone(node);
   const {key: parentKey, buildArrayHelper = [], multipleSources} = clonedNode;
-  const splitExtract = extract.split(',');
+  const splitExtracts = extract.split(',');
 
   // if no extract, return
-  if (!splitExtract || !splitExtract.length) return clonedNode;
+  if (!splitExtracts || !splitExtracts.length) return clonedNode;
 
   // for each extract, keep the buildArrayHelper if exists, else add new
-  splitExtract.forEach((extract, index) => {
+  splitExtracts.forEach((extract, index) => {
     if (index > 0 && !multipleSources) {
       clonedNode.multipleSources = true;
     }
@@ -1659,7 +1661,7 @@ export const rebuildNode = (node, extract) => {
   });
 
   // remove remaining array helper
-  buildArrayHelper.splice(splitExtract.length);
+  buildArrayHelper.splice(splitExtracts.length);
 
   const foundExtracts = [];
 
@@ -1670,7 +1672,7 @@ export const rebuildNode = (node, extract) => {
 
     if (child.isTabNode) return true;
 
-    if (splitExtract.includes(parentExtract || '$')) {
+    if (splitExtracts.includes(parentExtract || '$')) {
       foundExtracts.push(parentExtract || '$');
 
       return true;
@@ -1680,7 +1682,7 @@ export const rebuildNode = (node, extract) => {
   });
 
   // find left over extracts so that new children rows can be pushed
-  const leftExtracts = splitExtract.filter(s => {
+  const leftExtracts = splitExtracts.filter(s => {
     if (foundExtracts.includes(s)) return false;
 
     return true;
@@ -2452,7 +2454,7 @@ export const filterExtractsNode = (node, propValue, inputValue) => {
 // this util handles the comma separated values use-case
 // and returns the final input after user selects a node
 export const getFinalSelectedExtracts = (node, inputValue, isArrayType, isGroupedSampleData) => {
-  const prefix = isGroupedSampleData ? '$[*]' : '$';
+  const prefix = getDefaultExtract(isGroupedSampleData);
   const {jsonPath = ''} = node;
   const fullJsonPath = jsonPath ? `${prefix}.${jsonPath}` : prefix;
   let newValue = fullJsonPath;

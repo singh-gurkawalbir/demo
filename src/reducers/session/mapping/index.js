@@ -541,6 +541,7 @@ export default (state = {}, action) => {
             } else {
               delete node.hardCodedValue;
               if (ARRAY_DATA_TYPES.includes(node.dataType)) {
+                delete node.extract; // array data types do not have direct 'extract' prop
                 node.combinedExtract = value;
                 if (!value && (node.dataType === 'object' || node.dataType === 'objectarray')) {
                   // delete all children if extract is empty
@@ -564,6 +565,8 @@ export default (state = {}, action) => {
           } else {
             node[field] = value;
           }
+
+          delete node.isEmptyRow;
         }
 
         break;

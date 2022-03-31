@@ -122,7 +122,6 @@ const ExtractsTree = React.memo((
     onBlur,
     flowId,
     resourceId,
-    setSrcDataType,
   }) => {
   const classes = useStyles();
   const isArrayType = destDataType.includes('array');
@@ -137,18 +136,11 @@ const ExtractsTree = React.memo((
   const onSelect = useCallback((keys, e) => {
     const newValue = getFinalSelectedExtracts(e.node, inputValue, isArrayType, isGroupedSampleData);
 
-    const splitByComma = inputValue.split(',');
-    const valuesLen = splitByComma.length;
-
-    // set source data type only if its a single value
-    // todo ashu this should be handled for lookup, handlebar, hard-coded values also
-    if (valuesLen > 1) { setSrcDataType(''); } else { setSrcDataType(e.node.dataType); }
-
     setInputValue(newValue);
     setIsFocused(false);
     if (propValue !== newValue) { onBlur(newValue); }
     e.nativeEvent.stopImmediatePropagation();
-  }, [propValue, inputValue, isArrayType, onBlur, setInputValue, setIsFocused, setSrcDataType, isGroupedSampleData]);
+  }, [inputValue, isArrayType, isGroupedSampleData, onBlur, propValue, setInputValue, setIsFocused]);
 
   const onExpand = useCallback((expandedKeys, {nativeEvent}) => {
     setIsFocused(true);
