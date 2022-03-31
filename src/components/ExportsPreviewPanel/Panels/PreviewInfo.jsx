@@ -9,6 +9,7 @@ import SelectPreviewRecordsSize from '../SelectPreviewRecordsSize';
 import { selectors } from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import {OutlinedButton} from '../../Buttons';
+import { capitalizeFirstLetter } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {
@@ -161,7 +162,8 @@ export default function PreviewInfo(props) {
             onClick={handlePreview}
             disabled={disablePreview}
             data-test="fetch-preview">
-            { `${toggleValue[0].toUpperCase()}${toggleValue.slice(1)}`} <ArrowRightIcon />
+            {capitalizeFirstLetter(toggleValue)}
+            <ArrowRightIcon />
           </OutlinedButton>
         </div>
         { canSelectRecords &&

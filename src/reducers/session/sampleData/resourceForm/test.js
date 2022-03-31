@@ -19,7 +19,7 @@ describe('resourceFormSampleData reducer', () => {
 
     expect(currState).toEqual({});
   });
-  describe('UPDATE_SAMPLE_DATA_TYPE action', () => {
+  describe('UPDATE_DATA_TYPE action', () => {
     test('should update the state with status = requested', () => {
       const initialState = {
         456: { status: 'received', data: {} },
@@ -32,14 +32,14 @@ describe('resourceFormSampleData reducer', () => {
       };
       const newState = reducer(
         initialState,
-        actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send')
+        actions.resourceFormSampleData.updateType(resourceId, 'send')
       );
 
       expect(newState).toEqual(expectedStateWithSendSampleDataType);
 
       const newState1 = reducer(
         initialState,
-        actions.resourceFormSampleData.updateSampleDataType(resourceId, 'preview')
+        actions.resourceFormSampleData.updateType(resourceId, 'preview')
       );
       const expectedStateWithPreviewSampleDataType = {
         456: { status: 'received', data: {}},
@@ -287,7 +287,7 @@ describe('resourceFormSampleData reducer', () => {
       };
       const sendState = reducer(
         initialState,
-        actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send')
+        actions.resourceFormSampleData.updateType(resourceId, 'send')
       );
 
       const newState1 = reducer(
@@ -369,7 +369,7 @@ describe('resourceFormSampleData reducer', () => {
       };
       const sendState = reducer(
         initialState,
-        actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send')
+        actions.resourceFormSampleData.updateType(resourceId, 'send')
       );
       const newState1 = reducer(
         sendState,
@@ -432,7 +432,7 @@ describe('resourceFormSampleData reducer', () => {
       };
       const sendState = reducer(
         initialState,
-        actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send')
+        actions.resourceFormSampleData.updateType(resourceId, 'send')
       );
       const newState1 = reducer(
         sendState,
@@ -483,7 +483,7 @@ describe('resourceFormSampleData reducer', () => {
       };
       const sendState = reducer(
         initialState,
-        actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send')
+        actions.resourceFormSampleData.updateType(resourceId, 'send')
       );
       const newState1 = reducer(
         sendState,
@@ -546,7 +546,7 @@ describe('resourceFormSampleData reducer', () => {
       };
       const sendState = reducer(
         initialState,
-        actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send')
+        actions.resourceFormSampleData.updateType(resourceId, 'send')
       );
       const newStateSend = reducer(
         sendState,
@@ -577,7 +577,7 @@ describe('resourceFormSampleData reducer', () => {
       };
       const sendState = reducer(
         initialState,
-        actions.resourceFormSampleData.updateSampleDataType('456', 'send')
+        actions.resourceFormSampleData.updateType('456', 'send')
       );
       const newStateSend = reducer(
         sendState,
@@ -615,7 +615,7 @@ describe('resourceFormSampleData reducer', () => {
       };
       const sendState = reducer(
         initialState,
-        actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send')
+        actions.resourceFormSampleData.updateType(resourceId, 'send')
       );
 
       const newStateSend = reducer(
@@ -692,7 +692,7 @@ describe('resourceFormSampleData reducer', () => {
       };
       const sendState = reducer(
         initialState,
-        actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send')
+        actions.resourceFormSampleData.updateType(resourceId, 'send')
       );
       const newStateSend = reducer(
         sendState,
@@ -750,7 +750,7 @@ describe('resourceFormSampleData reducer', () => {
       };
       const sendState = reducer(
         initialState,
-        actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send')
+        actions.resourceFormSampleData.updateType(resourceId, 'send')
       );
       const newStateSend = reducer(
         sendState,
@@ -957,7 +957,7 @@ describe('resourceFormSampleData reducer', () => {
       };
       const sendState = reducer(
         initialState,
-        actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send')
+        actions.resourceFormSampleData.updateType(resourceId, 'send')
       );
       const newState1 = reducer(
         sendState,
@@ -1058,7 +1058,7 @@ describe('resourceFormSampleData reducer', () => {
       };
       const sendState = reducer(
         initialState,
-        actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send')
+        actions.resourceFormSampleData.updateType(resourceId, 'send')
       );
       const newStateSend = reducer(
         sendState,
@@ -1080,12 +1080,12 @@ describe('sampleData selectors', () => {
       expect(selectors.typeOfSampleData({123: {data: '123'}}, 123)).toEqual('preview');
     });
     test('should return correct sample data type for send sample data type', () => {
-      const state = reducer({}, actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send'));
+      const state = reducer({}, actions.resourceFormSampleData.updateType(resourceId, 'send'));
 
       expect(selectors.typeOfSampleData(state, resourceId)).toEqual('send');
     });
     test('should return correct sample data type for preview sample data type', () => {
-      const state = reducer({}, actions.resourceFormSampleData.updateSampleDataType(resourceId, 'preview'));
+      const state = reducer({}, actions.resourceFormSampleData.updateType(resourceId, 'preview'));
 
       expect(selectors.typeOfSampleData(state, resourceId)).toEqual('preview');
     });
@@ -1148,7 +1148,7 @@ describe('sampleData selectors', () => {
       const expectedOutput = {data: parsedData, error: undefined, status: 'received'};
       const sendState = reducer(
         initialState,
-        actions.resourceFormSampleData.updateSampleDataType(resourceId, 'send')
+        actions.resourceFormSampleData.updateType(resourceId, 'send')
       );
       const parseState = reducer(
         sendState,

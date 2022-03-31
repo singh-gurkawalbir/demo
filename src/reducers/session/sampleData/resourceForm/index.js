@@ -63,7 +63,7 @@ export default function (state = {}, action) {
     }
 
     switch (type) {
-      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_SAMPLE_DATA_TYPE:
+      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_DATA_TYPE:
         draft[resourceId].typeOfSampleData = sampleDataType;
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_STATUS:

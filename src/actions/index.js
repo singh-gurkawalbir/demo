@@ -1384,7 +1384,7 @@ const resourceFormSampleData = {
   updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
   clear: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR, { resourceId }),
   clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),
-  updateSampleDataType: (resourceId, sampleDataType) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_SAMPLE_DATA_TYPE, { resourceId, sampleDataType }),
+  updateType: (resourceId, sampleDataType) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_DATA_TYPE, { resourceId, sampleDataType }),
 };
 const app = {
   polling: {

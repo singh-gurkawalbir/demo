@@ -71,8 +71,9 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
  * @params - resource , resourceType and connection obj
  */
 export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
+  if (!resource) return false;
   if (resourceType === 'imports') {
-    return resource?.adaptorType === 'HTTPImport' || (connection?.isHTTP && connection?.type === 'rest');
+    return resource.adaptorType === 'HTTPImport' || (connection && connection.isHTTP && connection.type === 'rest');
   }
 
   if (resourceType !== 'exports') return false;

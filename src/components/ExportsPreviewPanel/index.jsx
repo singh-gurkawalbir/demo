@@ -125,7 +125,7 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
   shallowEqual
   );
   const onChange = useCallback(value => {
-    dispatch(actions.resourceFormSampleData.updateSampleDataType(resourceId, value));
+    dispatch(actions.resourceFormSampleData.updateType(resourceId, value));
   }, [dispatch, resourceId]);
 
   const onEditorClick = useCallback(() => {

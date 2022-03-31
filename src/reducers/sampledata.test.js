@@ -296,9 +296,11 @@ describe('Sample data region selector testcases', () => {
         session: {
           resourceFormSampleData: {
             'export-123': {
-              recordSize: 10,
-              status: 'received',
-              data: { raw: jsonContent },
+              preview: {
+                recordSize: 10,
+                status: 'received',
+                data: { raw: jsonContent },
+              },
             },
           },
         },
@@ -312,10 +314,12 @@ describe('Sample data region selector testcases', () => {
         session: {
           resourceFormSampleData: {
             'export-123': {
-              recordSize: 10,
-              status: 'received',
-              data: {
-                csv: csvContent,
+              preview: {
+                recordSize: 10,
+                status: 'received',
+                data: {
+                  csv: csvContent,
+                },
               },
             },
           },
