@@ -211,26 +211,23 @@ export const resourceUrl = (operation, resourceType, resourceId) => `/${DRAWER_U
  * Ex: For path 'settings/:mappingKey', pathProps = {mappingKey: 'key-123' }
  * Final path would be 'settings/key-123'
  */
-export const getDrawerPath = ({ drawerType, prefix = '', ...pathProps}) => {
-  if (!drawerType) return '';
-  const drawerPath = DRAWER_URLS[drawerType];
+export const buildDrawerUrl = ({ path, baseUrl = '', params = {} }) => {
+  if (!path) return '';
 
-  if (!drawerPath) return '';
-
-  const drawerPathSegments = drawerPath.split('/').map(prop => {
+  const drawerPathSegments = path.split('/').map(prop => {
     if (prop.startsWith(':')) {
       const param = prop.slice(1);
 
-      if (!pathProps[param]) {
+      if (!params[param]) {
         throw new Error('Provide value for the Drawer path param', param);
       }
 
       // replace the prop with the actual value
-      return pathProps[param];
+      return params[param];
     }
 
     return prop;
   });
 
-  return `${prefix}/${drawerPathSegments.join('/')}`;
+  return `${baseUrl}/${DRAWER_URL_PREFIX}/${drawerPathSegments.join('/')}`;
 };
