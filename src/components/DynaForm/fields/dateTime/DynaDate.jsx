@@ -108,7 +108,8 @@ export default function DynaDate(props) {
           disableToolbar
           disabled={disabled}
           className={classes.keyBoardDateWrapper}
-          variant="inline"
+          variant="dialog"
+          clearable
           fullWidth
           format={dateFormat}
           onKeyDown={e => {
