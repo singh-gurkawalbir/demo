@@ -1,5 +1,5 @@
 import MomentDateFnsUtils from '@date-io/moment';
-import React, {useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
 import {
