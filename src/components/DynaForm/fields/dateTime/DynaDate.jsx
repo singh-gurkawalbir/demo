@@ -101,6 +101,7 @@ export default function DynaDate(props) {
         <FieldHelp {...props} />
       </div>
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils} variant="filled">
+
         <KeyboardDatePicker
           {...isLoggableAttr(isLoggable)}
           autoOk={closeOnSelect}
