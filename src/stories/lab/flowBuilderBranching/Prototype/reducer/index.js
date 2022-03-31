@@ -1,4 +1,4 @@
-import produce from 'immer';
+import produce, { original } from 'immer';
 import jsonPatch from 'fast-json-patch';
 import keyBy from 'lodash/keyBy';
 import { createSelector } from 'reselect';
@@ -6,7 +6,7 @@ import actions from './actions';
 import { emptyList, emptyObject } from '../../../../../utils/constants';
 import { generateEmptyRouter, generateBranch } from '../nodeGeneration';
 import { generateReactFlowGraph, initialiseFlowForReactFlow } from '../translateSchema';
-import { BranchPathRegex, generateId, PageProcessorPathRegex } from '../lib';
+import { BranchPathRegex, generateId, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../lib';
 
 const addNewStep = (draft, action) => {
   const { path, resourceType, flowNode, resourceNode, flowId } = action;
@@ -293,7 +293,7 @@ const mergeDragSourceWithTarget = (flow, elements, staged, dragNodeId, targetId)
   }
   const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
 
-  if (sourceElement.type.includes('terminal') && targetElement.type.includes('terminal')) {
+  if (sourceElement.type === GRAPH_ELEMENTS_TYPE.TERMINAL && targetElement.type === GRAPH_ELEMENTS_TYPE.TERMINAL) {
     // merging two terminal nodes
     const [, targetRouterIndex, targetBranchIndex] = BranchPathRegex.exec(targetElement.data.path);
     const router = generateEmptyRouter(true);
@@ -328,10 +328,9 @@ const mergeDragSourceWithTarget = (flow, elements, staged, dragNodeId, targetId)
     const edgeSource = elements[targetElement.source];
     const edgeTarget = elements[targetElement.target];
 
-    if (edgeSource.type === 'router' && edgeTarget.type === 'pp') {
+    if (edgeSource.type === GRAPH_ELEMENTS_TYPE.ROUTER && edgeTarget.type === GRAPH_ELEMENTS_TYPE.PP_STEP) {
       // Merging between a router and a PP step
 
-      const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
       const [, targetRouterIndex, targetBranchIndex] = BranchPathRegex.exec(edgeTarget.data.path);
       const pageProcessors = jsonPatch.getValueByPointer(flow, `/routers/${targetRouterIndex}/branches/${targetBranchIndex}/pageProcessors`);
 
@@ -363,7 +362,32 @@ const mergeDragSourceWithTarget = (flow, elements, staged, dragNodeId, targetId)
           value: newVirtualRouter._id,
         },
       ]);
-      // generating a virtual router in between
+    } else if (edgeSource.type === 'pp' && edgeTarget.type === 'router') {
+      // Merging between a PP and a router step
+      const [, edgeSourceRouterIndex, edgeSourceBranchIndex] = BranchPathRegex.exec(edgeSource.data.path);
+
+      const newVirtualRouter = generateEmptyRouter(true);
+
+      newVirtualRouter.branches = [{pageProcessors: [], _nextRouterId: edgeTarget.id}];
+
+      staged[flowId].patch.push(...[
+        {
+          op: 'add',
+          path: '/routers/-',
+          value: newVirtualRouter,
+        },
+        {
+          op: 'replace',
+          path: `/routers/${edgeSourceRouterIndex}/branches/${edgeSourceBranchIndex}/_nextRouterId`,
+          value: newVirtualRouter._id,
+        },
+        {
+          op: 'replace',
+          path: `/routers/${sourceRouterIndex}/branches/${sourceBranchIndex}/_nextRouterId`,
+          value: newVirtualRouter._id,
+        },
+      ]);
+      console.log('staged', original(staged));
     }
   }
 };

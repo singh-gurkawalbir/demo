@@ -1,4 +1,4 @@
-import { generateId } from './lib';
+import { generateId, GRAPH_ELEMENTS_TYPE } from './lib';
 
 export const getSomeImport = _id => ({_id, connectorType: 'ftp', label: _id});
 export const getSomeExport = _exportId => ({_id: _exportId, connectorType: 'ftp', label: _exportId});
@@ -11,7 +11,7 @@ export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !route
 
 export const generateRouterNode = (router, routerIndex) => ({
   id: router?._id || generateId(),
-  type: isVirtualRouter(router) ? 'merge' : 'router',
+  type: isVirtualRouter(router) ? GRAPH_ELEMENTS_TYPE.MERGE : GRAPH_ELEMENTS_TYPE.ROUTER,
   data: {
     path: `/routers/${routerIndex}`,
     router,
@@ -19,8 +19,8 @@ export const generateRouterNode = (router, routerIndex) => ({
 });
 export const generateNewTerminal = ({branch, branchIndex, routerIndex} = {}) => ({
   id: generateId(),
-  type: branch?.pageProcessors?.length !== 0 ? 'terminalFree' : 'terminalBlocked',
-  draggable: branch?.pageProcessors?.length !== 0,
+  type: GRAPH_ELEMENTS_TYPE.TERMINAL,
+  draggable: true,
   data: {
     ...branch,
     path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${branch.pageProcessors.length || '-'}`,

@@ -9,8 +9,17 @@ import { isVirtualRouter } from './nodeGeneration';
 // the edge of this node boundary frame.
 export const handleOffset = 4;
 
+export const RouterPathRegex = /\/routers\/(\d)/;
 export const BranchPathRegex = /\/routers\/(\d)\/branches\/(\d)/;
 export const PageProcessorPathRegex = /\/routers\/(\d)\/branches\/(\d)\/pageProcessors\/(\d)/;
+
+export const GRAPH_ELEMENTS_TYPE = {
+  ROUTER: 'router',
+  MERGE: 'merge',
+  EDGE: 'default',
+  TERMINAL: 'terminal',
+  PP_STEP: 'pp',
+};
 
 export const nodeSize = {
   pp: {
@@ -25,13 +34,9 @@ export const nodeSize = {
     width: 34,
     height: 34,
   },
-  terminalFree: {
+  terminal: {
     width: 20,
     height: 20,
-  },
-  terminalBlocked: {
-    width: 1,
-    height: 1,
   },
   merge: {
     width: 34,
@@ -98,7 +103,7 @@ export function layoutElements(elements = []) {
       const node = graph.node(el.id);
       const size = nodeSize[el.type];
       const offsetY = 0;
-      const offsetX = el.type?.includes('terminal') ? nodeSize.pp.width / 2 - nodeSize[el.type].width / 2 : 0;
+      const offsetX = el.type === GRAPH_ELEMENTS_TYPE.TERMINAL ? nodeSize.pp.width / 2 - nodeSize[el.type].width / 2 : 0;
 
       // We are shifting the dagre node position that returns centerpoint (x,y)
       // to the top left so it matches the react-flow node anchor point (top left).
@@ -168,11 +173,11 @@ export function findNodeIndex(id, elements) {
 const RANGE = 20;
 const inRange = (coordinate, dropCoordinate) => (dropCoordinate - RANGE) <= coordinate && (dropCoordinate + RANGE) >= coordinate;
 const isMergableNode = (node = {}) => {
-  if (node.type === 'terminalFree' || node.type === 'merge') {
+  if (node.type === GRAPH_ELEMENTS_TYPE.TERMINAL || node.type === GRAPH_ELEMENTS_TYPE.MERGE) {
     return true;
   }
   // Is router node virtual?
-  if (node.type === 'router' && node.data) {
+  if (node.type === GRAPH_ELEMENTS_TYPE.ROUTER && node.data) {
     return isVirtualRouter(node.data);
   }
 

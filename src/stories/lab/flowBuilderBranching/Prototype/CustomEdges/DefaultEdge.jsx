@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import { getSmoothStepPath } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
-import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles, isDragNodeOnSameBranch } from '../lib';
+import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles, isDragNodeOnSameBranch, GRAPH_ELEMENTS_TYPE } from '../lib';
 import { useFlowContext } from '../Context';
 import AddNewButton from './AddNewButton';
 import UnlinkButton from './UnlinkButton';
@@ -38,7 +38,7 @@ export default function DefaultEdge({
   const isConnectedToGenerator = sourceType === 'pg';
   const isTargetMerge = targetType === 'merge';
   const isSource = sourceType === 'pg';
-  const isTerminal = targetType.includes('terminal');
+  const isTerminal = targetType === GRAPH_ELEMENTS_TYPE.TERMINAL;
   const showLinkIcon = hasSiblingEdges && !isSource;
   const showAddIcon = !isSource;
   const isDragNodeAndEdgeOnSameBranch = isDragNodeOnSameBranch(dragNodeId, id, elementsMap);
@@ -135,10 +135,7 @@ export default function DefaultEdge({
   let position = 'center';
   let offset = 10;
 
-  if (targetType === 'terminalBlocked') {
-    position = 'right';
-    offset = 1;
-  } else if (targetType === 'pp' && sourceType !== 'pp') {
+  if (targetType === 'pp' && sourceType !== 'pp') {
     // we want the add button to be positioned close to the pp,
     // not close to the merge/router nodes.
     position = 'right';

@@ -12,8 +12,7 @@ import { generateId, layoutElements } from './lib';
 import { FlowProvider } from './Context';
 import PgNode from './CustomNodes/PgNode';
 import PpNode from './CustomNodes/PpNode';
-import TerminalFreeNode from './CustomNodes/terminalNodes/Free';
-import TerminalBlockedNode from './CustomNodes/terminalNodes/Blocked';
+import TerminalNode from './CustomNodes/terminalNodes/Free';
 import RouterNode from './CustomNodes/RouterNode';
 import MergeNode from './CustomNodes/MergeNode';
 import reducer, { resourceDataSelector, elementsSelector, elementsMapSelector } from './reducer';
@@ -24,8 +23,7 @@ import DestinationTitle from './titles/DestinationTitle';
 const nodeTypes = {
   pg: PgNode,
   pp: PpNode,
-  terminalFree: TerminalFreeNode,
-  terminalBlocked: TerminalBlockedNode,
+  terminal: TerminalNode,
   router: RouterNode,
   merge: MergeNode,
 };
