@@ -214,20 +214,7 @@ export const resourceUrl = (operation, resourceType, resourceId) => `/${DRAWER_U
 export const buildDrawerUrl = ({ path, baseUrl = '', params = {} }) => {
   if (!path) return '';
 
-  const drawerPathSegments = path.split('/').map(prop => {
-    if (prop.startsWith(':')) {
-      const param = prop.slice(1);
+  const drawerPath = Object.keys(params).reduce((url, param) => url.replace(`:${param}`, params[param]), path);
 
-      if (!params[param]) {
-        throw new Error('Provide value for the Drawer path param', param);
-      }
-
-      // replace the prop with the actual value
-      return params[param];
-    }
-
-    return prop;
-  });
-
-  return `${baseUrl}/${DRAWER_URL_PREFIX}/${drawerPathSegments.join('/')}`;
+  return `${baseUrl}/${DRAWER_URL_PREFIX}/${drawerPath}`;
 };
