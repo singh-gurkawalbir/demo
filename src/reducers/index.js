@@ -106,7 +106,7 @@ import { getSelectedRange } from '../utils/flowMetrics';
 import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
 import { filterMap } from '../components/GlobalSearch/filterMeta';
-import { getRevisionFilterKey, getFilteredRevisions } from '../utils/revisions';
+import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions } from '../utils/revisions';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -3350,36 +3350,42 @@ selectors.isProfileLoading = state => {
   return !!(state && fromComms.isLoading(state.comms, commKey));
 };
 
-selectors.availableUsersList = (state, integrationId) => {
-  const isAccountOwnerOrAdmin = selectors.isAccountOwnerOrAdmin(state);
-  let _users = [];
+selectors.availableUsersList = createSelector(
+  (_, integrationId) => integrationId,
+  selectors.usersList,
+  selectors.isAccountOwnerOrAdmin,
+  selectors.integrationUsersForOwner,
+  selectors.integrationUsers,
+  selectors.accountOwner,
+  (integrationId, usersList, isAccountOwnerOrAdmin, integrationUsersForOwner, integrationUsers, accountOwner) => {
+    let _users = [];
 
-  if (isAccountOwnerOrAdmin) {
-    if (integrationId) {
-      _users = selectors.integrationUsersForOwner(state, integrationId);
-    } else {
-      _users = selectors.usersList(state);
+    if (isAccountOwnerOrAdmin) {
+      if (integrationId) {
+        _users = integrationUsersForOwner;
+      } else {
+        _users = usersList;
+      }
+    } else if (integrationId) {
+      _users = integrationUsers;
     }
-  } else if (integrationId) {
-    _users = selectors.integrationUsers(state, integrationId);
+
+    if ((integrationId || isAccountOwnerOrAdmin) && _users?.length > 0) {
+      _users = [
+        {
+          _id: ACCOUNT_IDS.OWN,
+          accepted: true,
+          accessLevel: INTEGRATION_ACCESS_LEVELS.OWNER,
+          sharedWithUser: accountOwner,
+        },
+        ..._users,
+      ];
+    }
+
+    return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
   }
 
-  if ((integrationId || isAccountOwnerOrAdmin) && _users?.length > 0) {
-    const accountOwner = selectors.accountOwner(state);
-
-    _users = [
-      {
-        _id: ACCOUNT_IDS.OWN,
-        accepted: true,
-        accessLevel: INTEGRATION_ACCESS_LEVELS.OWNER,
-        sharedWithUser: accountOwner,
-      },
-      ..._users,
-    ];
-  }
-
-  return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
-};
+);
 
 selectors.platformLicense = createSelector(
   selectors.userPreferences,
@@ -6693,8 +6699,13 @@ selectors.revisionsFilter = (state, integrationId) => {
 selectors.filteredRevisions = createSelector(
   selectors.revisions,
   selectors.revisionsFilter,
-  (revisionsList, revisionsFilter) => getFilteredRevisions(revisionsList, revisionsFilter)
+  (revisionsList, revisionsFilter) => getFilteredRevisions(cloneDeep(revisionsList), revisionsFilter)
 );
+
+selectors.getCurrPageFilteredRevisions = createSelector(
+  selectors.filteredRevisions,
+  selectors.revisionsFilter,
+  (filteredRevisions, filters) => getPaginatedRevisions(filteredRevisions, filters));
 
 selectors.resourceName = (state, resourceId, resourceType) => {
   if (!resourceId || !resourceType) return '';

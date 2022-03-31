@@ -103,8 +103,7 @@ const DIFF_TITLES_BY_TYPE = {
 };
 
 export const getFilteredRevisions = (revisions = [], filters = {}) => {
-  const { createdAt, status, user, type, sort = {}, paging = {} } = filters;
-  const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = paging;
+  const { createdAt, status, user, type, sort = {} } = filters;
 
   const filteredRevisions = revisions.filter(revision => {
     if (status !== DEFAULT_OPTION && revision.status !== status) return false;
@@ -116,9 +115,13 @@ export const getFilteredRevisions = (revisions = [], filters = {}) => {
     return true;
   });
 
-  filteredRevisions.sort(comparer(sort));
+  return filteredRevisions.sort(comparer(sort));
+};
 
-  return filteredRevisions.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
+export const getPaginatedRevisions = (revisions = [], filters) => {
+  const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = filters?.paging || {};
+
+  return revisions.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
 };
 
 const getDiffContent = (diff, type) => {
