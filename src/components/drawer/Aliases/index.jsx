@@ -48,7 +48,6 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
   const isAliasActionCompleted = useSelector(state => selectors.aliasActionStatus(state, flowId));
   const actionProps = useMemo(() => ({
-    hasManageAccess,
     resourceType: 'flows',
     resourceId: flowId,
   }), [hasManageAccess, flowId]);
@@ -58,7 +57,7 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
       data: resourceAliases.map(aliasData => ({...aliasData, _id: `${flowId}-${aliasData.alias}`})),
       title: 'Aliases',
       filterKey: `${flowId}+aliases`,
-      actionProps,
+      actionProps: {...actionProps, hasManageAccess},
       noAliasesMessage: errorMessageStore('NO_CUSTOM_ALIASES_MESSAGE'),
     },
     {
