@@ -439,7 +439,7 @@ export default function ConnectorInstallation(props) {
           )
         );
 
-        if (isTemplate && step.connectionId) {
+        if (!_connectorId && step.connectionId) {
           dispatch(
             actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
               integrationId,
