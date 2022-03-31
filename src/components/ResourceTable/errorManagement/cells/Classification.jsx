@@ -16,11 +16,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Classification({ error }) {
+export default function Classification({ error, isResolved }) {
   const classes = useStyles();
   const { classification, retryAt } = error;
 
-  if (classification === CLASSIFICATION_LABELS_MAP.intermittent && !!retryAt) {
+  if (classification === CLASSIFICATION_LABELS_MAP.intermittent && !!retryAt && !isResolved) {
     return (
       <span className={classes.wrapper}>
         {classification}
