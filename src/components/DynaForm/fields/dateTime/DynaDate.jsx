@@ -127,7 +127,7 @@ export default function DynaDate(props) {
           maxDate={new Date()}
           InputProps={{ className: classes.inputDate }}
           keyboardIcon={<CalendarIcon className={classes.iconWrapper} />}
-        />
+          />
         <FieldMessage {...props} />
       </MuiPickersUtilsProvider>
     </>
