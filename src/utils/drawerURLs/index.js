@@ -70,6 +70,111 @@ const DRAWER_URL_REFS = {
   VIEW_REVISION_ERROR_INFO: 'error/:errorId',
 };
 
+export const drawerPaths = {
+  MAPPINGS: {
+    SUB_RECORD: 'mapping/:flowId/:importId/:subRecordMappingId/view',
+    MAPPINGS: [
+      'mapping/:flowId/:importId/view',
+      'mapping/:flowId/:importId',
+      'mapping/:flowId',
+    ],
+    CATEGORY_MAPPING: {
+      ROOT: ':flowId/utilitymapping/:categoryId',
+      ADD: 'addCategory',
+      VARIATION_MAPPING: {
+        ROOT: 'depth/:depth/variations/:subCategoryId',
+        VARIATION: 'depth/:depth/variations/:subCategoryId/:variation',
+      },
+    },
+    LOOKUP: 'lookup',
+    ADD_LOOKUP: 'lookups/add',
+    EDIT_LOOKUP: 'lookups/edit/:lookupName',
+    SETTINGS: 'settings/:mappingKey',
+    CATEGORY_MAPPING_SETTINGS: 'settings/category/:editorId/sections/:sectionId/:depth/:mappingKey',
+    CONDITIONAL_LOOKUP: {
+      ADD: 'conditionalLookup/add',
+      EDIT: 'conditionalLookup/edit/:lookupName',
+    },
+  },
+  ACCOUNT: {
+    VIEW_REPORT_DETAILS: 'view/reportDetails/:reportId',
+    SUBSCRIPTION: ':env/:type',
+    UPGRADE: 'upgrade',
+    INVITE_USER: 'invite',
+    MANAGE_NOTIFICATIONS_SETUP: ':userEmail/manageNotifications',
+    MANAGE_USER_PERMISSIONS: 'edit/:userId',
+    VIEW_NOTIFICATIONS_SETUP: ':userEmail/notifications',
+  },
+  LCM: {
+    CREATE_SNAPSHOT: 'snapshot/:revId/open',
+    OPEN_PULL: 'pull/:revId/open',
+    REVIEW_PULL_CHANGES: 'pull/:revisionId/review',
+    MERGE_PULL_CHANGES: 'pull/:revisionId/merge',
+    OPEN_REVERT: 'revert/:tempRevId/open/:revertTo/revision/:revisionId',
+    REVIEW_REVERT_CHANGES: 'revert/:revisionId/review',
+    FINAL_REVERT_STEP: 'revert/:revisionId/final',
+    VIEW_REVISION_DETAILS: 'view/:revisionId/mode/:mode',
+    VIEW_REVISION_ERROR_INFO: 'error/:errorId',
+  },
+  INSTALL: {
+    INTEGRATION: 'installIntegration',
+    TEMPLATE: 'installTemplate/preview/:templateId',
+    FORM_STEP: 'form/:formType',
+    CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId',
+  },
+  FLOW_BUILDER: {
+    FLOW_RUN_HISTORY: ':flowId/runHistory',
+    FLOW_BUILDER_HOOKS: 'hooks/:resourceType/:resourceId',
+    FLOW_BUILDER_ANALYTICS: 'charts',
+    SCHEDULE: 'schedule',
+    FLOW_SCHEDULE: ':flowId/schedule',
+    FLOW_BUILDER_SETTINGS: 'settings',
+    IA_FLOW_SETTINGS: ':flowId/settings',
+  },
+  INTEGRATION: {
+    FLOW_GROUP: {
+      ADD: 'flowgroups/add',
+      EDIT: 'flowgroups/edit',
+    },
+  },
+  ERROR_MANAGEMENT: {
+    V1: {
+      JOB_VIEW_ERRORS: 'viewErrors',
+      FLOW_LEVEL_QUEUED_JOBS: ':flowId/queuedJobs',
+      INTEGRATION_LEVEL_QUEUED_JOBS: 'flows/:flowId/queuedJobs',
+      JOB_EDIT_RETRY: 'editRetry/:retryId',
+    },
+    V2: {
+      ERROR_DETAILS: 'errors/:resourceId/:errorType',
+      JOB_ERROR_DETAILS: 'errors/:resourceId/filter/:flowJobId/:errorType',
+      DOWNLOAD_ERRORS: 'download/:type',
+      VIEW_ERROR_DETAILS: 'details/:errorId/:mode',
+      FLOW_ERROR_LIST: ':flowId/errorsList',
+    },
+  },
+  DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId',
+  LOGS: {
+    SCRIPT: 'viewLogs/:scriptId',
+    FLOW_SCRIPT_DETAIL: 'scriptLog/:scriptId/:flowId/:index',
+    SCRIPT_DETAIL: 'scriptLog/:scriptId/:index',
+    FLOW_STEP_DEBUG: 'logs',
+  },
+  RESOURCE: {
+    ADD: 'add/:resourceType/:id',
+    EDIT: 'edit/:resourceType/:id',
+    NS_SUB_RECORD: {
+      ADD: 'subrecords',
+      EDIT: 'subrecords/:fieldId',
+    },
+    CONNECTION: {
+      DEBUGGER: 'configDebugger/:connectionId',
+      REPLACE: 'replaceConnection/:connId',
+    },
+  },
+  SHARE_STACKS: 'share/stacks/:stackId',
+  EDITOR: 'editor/:editorId',
+};
+
 export const DRAWER_URL_PREFIX = 'ui-drawer';
 
 function constructDrawerUrls() {
@@ -131,4 +236,3 @@ export const getDrawerPath = ({ drawerType, prefix = '', ...pathProps}) => {
 
   return `${prefix}/${drawerPathSegments.join('/')}`;
 };
-
