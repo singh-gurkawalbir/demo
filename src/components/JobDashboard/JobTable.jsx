@@ -3,24 +3,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
 import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
 import { difference } from 'lodash';
+import clsx from 'clsx';
 import { JOB_STATUS } from '../../utils/constants';
 import JobDetail from './JobDetail';
 import ErrorDrawer from './ErrorDrawer';
 import actions from '../../actions';
 import Spinner from '../Spinner';
 import { selectors } from '../../reducers';
+import { JobDetailsStyles } from './ChildJobDetail';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    width: '98%',
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
-    overflowX: 'auto',
-  },
-  title: {
-    marginBottom: theme.spacing(2),
-    float: 'left',
-  },
   table: {
     minWidth: 700,
     position: 'relative',
@@ -29,46 +21,13 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: 40,
   },
   name: {
-    width: '18.15%',
     wordBreak: 'break-word',
     [theme.breakpoints.down('md')]: {
       wordBreak: 'normal',
     },
   },
-  status: {
-    width: '10.15%',
-  },
-  success: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  ignore: {
-    width: '7.5%',
-    textAlign: 'right',
-  },
   error: {
-    width: '10.15%',
     textAlign: 'right',
-  },
-  resolved: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  pages: {
-    width: '7.5%',
-    textAlign: 'right',
-  },
-  duration: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  completed: {
-    width: '11.5%',
-    whiteSpace: 'no-wrap',
-  },
-  actions: {
-    width: '7.5%',
-    textAlign: 'center',
   },
   tableContainer: {
     overflowX: 'auto',
@@ -84,7 +43,8 @@ export default function JobTable({
   integrationName,
   isFlowBuilderView,
 }) {
-  const classes = useStyles();
+  const classes = JobDetailsStyles();
+  const jobDetailsClasses = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const [openedJobErrors, setOpenedJobErrors] = useState(false);
@@ -196,10 +156,10 @@ export default function JobTable({
 
       ) : (
         <div className={classes.tableContainer}>
-          <Table className={classes.table}>
+          <Table className={clsx(classes.table, jobDetailsClasses.table)}>
             <TableHead>
               <TableRow>
-                <TableCell className={classes.checkFlow}>
+                <TableCell className={clsx(classes.checkFlow, jobDetailsClasses.checkFlow)}>
                   <Checkbox
                     disabled={jobsInCurrentPage.length === 0}
                     checked={isSelectAllChecked}
@@ -208,11 +168,11 @@ export default function JobTable({
                     inputProps={{ 'aria-label': 'Select all jobs' }}
               />
                 </TableCell>
-                <TableCell className={classes.name}>Flow</TableCell>
+                <TableCell className={clsx(classes.name, jobDetailsClasses.name)}>Flow</TableCell>
                 <TableCell className={classes.status}>Status</TableCell>
                 <TableCell className={classes.success}>Success</TableCell>
                 <TableCell className={classes.ignore}>Ignored</TableCell>
-                <TableCell className={classes.error}>Errors</TableCell>
+                <TableCell className={clsx(classes.error, jobDetailsClasses.error)}>Errors</TableCell>
                 <TableCell className={classes.resolved}>Resolved</TableCell>
                 <TableCell className={classes.pages}>Pages</TableCell>
                 <TableCell className={classes.duration}>Duration</TableCell>

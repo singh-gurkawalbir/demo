@@ -1,88 +1,42 @@
 import React, { } from 'react';
 import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
+import clsx from 'clsx';
 import JobDetail from './JobDetail';
 import HeaderWithHelpText from '../../ResourceTable/commonCells/HeaderWithHelpText';
+import { JobDetailsStyles } from '../ChildJobDetail';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    width: '98%',
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
-    overflowX: 'auto',
-  },
-  title: {
-    marginBottom: theme.spacing(2),
-    float: 'left',
-  },
   table: {
     minWidth: 700,
     position: 'relative',
   },
-  checkFlow: {
-    paddingLeft: 40,
-  },
   name: {
-    width: '18.15%',
     wordBreak: 'break-word',
     [theme.breakpoints.down('md')]: {
       wordBreak: 'normal',
     },
   },
-  status: {
-    width: '10.15%',
-  },
-  success: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  ignore: {
-    width: '7.5%',
-    textAlign: 'right',
-  },
   started: {
     width: '11.5%',
-    whiteSpace: 'no-wrap',
-  },
-  error: {
-    width: '10.15%',
-    textAlign: 'left',
-  },
-  resolved: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  pages: {
-    width: '7.5%',
-    textAlign: 'right',
-  },
-  duration: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  completed: {
-    width: '11.5%',
-    whiteSpace: 'no-wrap',
-  },
-  actions: {
-    width: '7.5%',
-    textAlign: 'center',
+    whiteSpace: 'nowrap',
   },
 }));
 
 export default function JobTable({
   jobsInCurrentPage,
 }) {
-  const classes = useStyles();
+  const classes = JobDetailsStyles();
+  const jobDetailsClasses = useStyles();
 
   return (
     <>
-      <Table className={classes.table}>
+      <Table className={clsx(classes.table, jobDetailsClasses.table)}>
         <TableHead>
           <TableRow>
-            <TableCell className={classes.name}> <HeaderWithHelpText title="Flow" helpKey="runHistory.flow" /></TableCell>
+            <TableCell className={clsx(classes.name, jobDetailsClasses.name)}> <HeaderWithHelpText title="Flow" helpKey="runHistory.flow" /></TableCell>
             <TableCell className={classes.status}>Status</TableCell>
             <TableCell className={classes.duration}>Duration</TableCell>
-            <TableCell className={classes.started}>Started</TableCell>
+            <TableCell className={clsx(classes.started, jobDetailsClasses.started)}>Started</TableCell>
             <TableCell className={classes.completed}>Completed</TableCell>
             <TableCell className={classes.success}>Success</TableCell>
             <TableCell className={classes.ignore}>Ignored</TableCell>
