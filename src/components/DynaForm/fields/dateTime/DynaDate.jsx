@@ -1,5 +1,5 @@
 import MomentDateFnsUtils from '@date-io/moment';
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
 import {
@@ -101,7 +101,6 @@ export default function DynaDate(props) {
         <FieldHelp {...props} />
       </div>
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils} variant="filled">
-
         <KeyboardDatePicker
           {...isLoggableAttr(isLoggable)}
           autoOk={closeOnSelect}
@@ -125,9 +124,10 @@ export default function DynaDate(props) {
           }}
           value={dateValue}
           onChange={setDateValue}
+          maxDate={new Date()}
           InputProps={{ className: classes.inputDate }}
           keyboardIcon={<CalendarIcon className={classes.iconWrapper} />}
-          />
+        />
         <FieldMessage {...props} />
       </MuiPickersUtilsProvider>
     </>
