@@ -73,11 +73,11 @@ const DRAWER_URL_REFS = {
 export const drawerPaths = {
   MAPPINGS: {
     SUB_RECORD: 'mapping/:flowId/:importId/:subRecordMappingId/view',
-    MAPPINGS: [
-      'mapping/:flowId/:importId/view',
-      'mapping/:flowId/:importId',
-      'mapping/:flowId',
-    ],
+    IMPORT: {
+      ROOT: 'mapping/:flowId/:importId',
+      LIST_ALL: 'mapping/:flowId',
+      VIEW: 'mapping/:flowId/:importId/view',
+    },
     CATEGORY_MAPPING: {
       ROOT: ':flowId/utilitymapping/:categoryId',
       ADD: 'addCategory',
@@ -86,9 +86,6 @@ export const drawerPaths = {
         VARIATION: 'depth/:depth/variations/:subCategoryId/:variation',
       },
     },
-    LOOKUP: 'lookup',
-    ADD_LOOKUP: 'lookups/add',
-    EDIT_LOOKUP: 'lookups/edit/:lookupName',
     SETTINGS: 'settings/:mappingKey',
     CATEGORY_MAPPING_SETTINGS: 'settings/category/:editorId/sections/:sectionId/:depth/:mappingKey',
     CONDITIONAL_LOOKUP: {
@@ -123,19 +120,13 @@ export const drawerPaths = {
     CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId',
   },
   FLOW_BUILDER: {
-    FLOW_RUN_HISTORY: ':flowId/runHistory',
-    FLOW_BUILDER_HOOKS: 'hooks/:resourceType/:resourceId',
-    FLOW_BUILDER_ANALYTICS: 'charts',
+    RUN_HISTORY: ':flowId/runHistory',
+    HOOKS: 'hooks/:resourceType/:resourceId',
+    ANALYTICS: 'charts',
     SCHEDULE: 'schedule',
     FLOW_SCHEDULE: ':flowId/schedule',
-    FLOW_BUILDER_SETTINGS: 'settings',
-    IA_FLOW_SETTINGS: ':flowId/settings',
-  },
-  INTEGRATION: {
-    FLOW_GROUP: {
-      ADD: 'flowgroups/add',
-      EDIT: 'flowgroups/edit',
-    },
+    SETTINGS: 'settings',
+    IA_SETTINGS: ':flowId/settings',
   },
   ERROR_MANAGEMENT: {
     V1: {
@@ -152,7 +143,6 @@ export const drawerPaths = {
       FLOW_ERROR_LIST: ':flowId/errorsList',
     },
   },
-  DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId',
   LOGS: {
     SCRIPT: 'viewLogs/:scriptId',
     FLOW_SCRIPT_DETAIL: 'scriptLog/:scriptId/:flowId/:index',
@@ -162,17 +152,25 @@ export const drawerPaths = {
   RESOURCE: {
     ADD: 'add/:resourceType/:id',
     EDIT: 'edit/:resourceType/:id',
-    NS_SUB_RECORD: {
-      ADD: 'subrecords',
-      EDIT: 'subrecords/:fieldId',
-    },
-    CONNECTION: {
-      DEBUGGER: 'configDebugger/:connectionId',
-      REPLACE: 'replaceConnection/:connId',
-    },
   },
+  CONNECTION: {
+    DEBUGGER: 'configDebugger/:connectionId',
+    REPLACE: 'replaceConnection/:connId',
+  },
+  NS_SUB_RECORD: {
+    ADD: 'subrecords',
+    EDIT: 'subrecords/:fieldId',
+  },
+  FLOW_GROUP: {
+    ADD: 'flowgroups/add',
+    EDIT: 'flowgroups/edit',
+  },
+  LOOKUP: 'lookup',
+  ADD_LOOKUP: 'lookups/add',
+  EDIT_LOOKUP: 'lookups/edit/:lookupName',
   SHARE_STACKS: 'share/stacks/:stackId',
   EDITOR: 'editor/:editorId',
+  DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId',
 };
 
 export const DRAWER_URL_PREFIX = 'ui-drawer';
