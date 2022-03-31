@@ -8,12 +8,24 @@ export default function reducer(state = {}, action) {
     type,
     id,
     aliases,
+    aliasId,
+    status,
   } = action;
 
   return produce(state, draft => {
     switch (type) {
       case actionTypes.RESOURCE.RECEIVED_ALIASES: {
-        draft[id] = aliases;
+        draft[id] = {
+          aliases,
+        };
+        break;
+      }
+
+      case actionTypes.RESOURCE.ALIAS_ACTION_STATUS: {
+        draft[id] = {
+          aliasId,
+          status,
+        };
         break;
       }
 
@@ -32,7 +44,7 @@ export default function reducer(state = {}, action) {
 export const selectors = {};
 
 selectors.allAliases = createSelector(
-  (state, resourceId) => state && state[resourceId],
+  (state, resourceId) => state && state[resourceId] && state[resourceId].aliases,
   aliases => {
     if (!aliases) return emptyList;
 
@@ -40,4 +52,7 @@ selectors.allAliases = createSelector(
   },
 );
 
+selectors.aliasActionStatus = (state, id) => state?.[id]?.status;
+
+selectors.savedAliasId = (state, id) => state?.[id]?.aliasId;
 // #endregion

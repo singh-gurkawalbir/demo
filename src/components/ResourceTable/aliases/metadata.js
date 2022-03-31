@@ -34,17 +34,15 @@ export default {
     },
   ],
   useRowActions: () => {
-    const { canUserPublish, accessLevel, hasManageAccess } = useGetTableContext();
-    const hasEditPermissions = canUserPublish && (accessLevel !== 'monitor') && hasManageAccess;
-
+    const { hasManageAccess } = useGetTableContext();
     const actions = [];
 
-    if (hasEditPermissions) {
+    if (hasManageAccess) {
       actions.push(EditAlias);
     }
     actions.push(CopyAlias);
     actions.push(ViewAliasDetails);
-    if (hasEditPermissions) {
+    if (hasManageAccess) {
       actions.push(DeleteAlias);
     }
 

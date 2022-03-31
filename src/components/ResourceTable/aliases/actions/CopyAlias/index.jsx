@@ -1,6 +1,7 @@
 import React, { useCallback} from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
+import messageStore from '../../../../../utils/messageStore';
 import TextButton from '../../../../Buttons/TextButton';
 import CopyIcon from '../../../../icons/CopyIcon';
 
@@ -19,7 +20,7 @@ export default {
     const [enquesnackbar] = useEnqueueSnackbar();
 
     const handleCopy = useCallback(() => {
-      enquesnackbar({ message: 'Alias copied to clipboard.' });
+      enquesnackbar({ message: messageStore('ALIAS_COPIED_MESSAGE') });
     }, [enquesnackbar]);
 
     return handleCopy;

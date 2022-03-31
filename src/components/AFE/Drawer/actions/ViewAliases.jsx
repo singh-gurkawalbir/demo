@@ -12,13 +12,15 @@ export default function ViewAliases({ editorId }) {
   const history = useHistory();
   const match = useRouteMatch();
 
-  const { integrationId, flowId, resourceType } = useSelector(state => {
-    const e = selectors.editor(state, editorId);
+  const { resourceId, resourceType } = useSelector(state => {
+    const { integrationId, flowId, resourceId, resourceType } = selectors.editor(state, editorId);
+
+    // for flow custom settings it's id is present in resourceId
+    const tempFlowId = resourceType === 'flows' ? resourceId : flowId;
 
     return {
-      integrationId: e.integrationId,
-      flowId: e.flowId,
-      resourceType: e.resourceType,
+      resourceId: resourceType === 'integrations' ? integrationId : tempFlowId,
+      resourceType: resourceType === 'integrations' ? 'integrations' : 'flows',
     };
   }, shallowEqual);
 
@@ -28,7 +30,7 @@ export default function ViewAliases({ editorId }) {
 
   return (
     <>
-      <AliasDrawerWrapper resourceId={resourceType === 'integrations' ? integrationId : flowId} resourceType={resourceType === 'integrations' ? 'integrations' : 'flows'} height="tall" />
+      <AliasDrawerWrapper resourceId={resourceId} resourceType={resourceType} height="tall" />
       <TextButton
         startIcon={<InstallationGuideIcon />}
         onClick={handleClick}>

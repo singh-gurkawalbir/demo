@@ -3,12 +3,11 @@ import { apiCallWithRetry } from '..';
 import { selectors } from '../../reducers';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
-import { patchResource, requestReferences } from '../resources';
-import { getResourceFromAlias } from '../../utils/resource';
+import { patchResource } from '../resources';
 
 export function* requestAllAliases({ id, resourceType }) {
   const resource = yield select(selectors.resource, resourceType, id);
-  const integrationId = resourceType === 'flows' ? resource._integrationId : id;
+  const integrationId = resourceType === 'flows' ? resource?._integrationId : id;
   let path;
 
   if (resourceType === 'integrations') {
@@ -34,11 +33,58 @@ export function* requestAllAliases({ id, resourceType }) {
   }
 }
 
+export function* createOrUpdateAlias({ id, resourceType, aliasId, isEdit, asyncKey }) {
+  const resourceAliases = yield select(selectors.ownAliases, resourceType, id);
+  const formVal = yield select(selectors.formValueTrimmed, asyncKey);
+  const newAliasId = formVal.aliasId.toLowerCase();            // alias name will always be in lower case characters
+  const newAlias = {
+    alias: newAliasId,
+    description: formVal.description,
+  };
+
+  if (formVal.aliasResourceType === 'connections') {
+    newAlias._connectionId = formVal.aliasResourceName;
+  } else if (formVal.aliasResourceType === 'exports') {
+    newAlias._exportId = formVal.aliasResourceName;
+  } else if (formVal.aliasResourceType === 'flows') {
+    newAlias._flowId = formVal.aliasResourceName;
+  } else {
+    newAlias._importId = formVal.aliasResourceName;
+  }
+
+  let newResourceAliases;
+
+  if (isEdit) {
+    newResourceAliases = resourceAliases.map(aliasData => {
+      if (!(aliasData.alias === aliasId)) return aliasData;
+
+      return newAlias;
+    });
+  } else {
+    newResourceAliases = [...resourceAliases, newAlias];
+  }
+
+  const patchSet = [
+    {
+      op: 'replace',
+      path: '/aliases',
+      value: newResourceAliases,
+    },
+  ];
+
+  yield put(actions.asyncTask.start(asyncKey));
+  try {
+    yield call(patchResource, { id, resourceType, patchSet });
+
+    yield put(actions.resource.aliases.actionStatus(id, newAliasId, 'save'));
+  } catch (e) {
+    // do nothing
+  }
+  yield put(actions.asyncTask.success(asyncKey));
+}
+
 export function* deleteAlias({ id, resourceType, aliasId, asyncKey }) {
   const resourceAliases = yield select(selectors.ownAliases, resourceType, id);
-  const aliasData = resourceAliases.find(ra => ra.alias === aliasId);
-  const { resourceType: aliasResourceType, id: aliasResourceId } = getResourceFromAlias(aliasData);
-
   const patchSet = [
     {
       op: 'replace',
@@ -48,16 +94,9 @@ export function* deleteAlias({ id, resourceType, aliasId, asyncKey }) {
   ];
 
   try {
-    const resourceReferences = yield call(requestReferences, {
-      resourceType: aliasResourceType,
-      id: aliasResourceId,
-    });
-
-    if (resourceReferences && Object.keys(resourceReferences).length) {
-      return;
-    }
-
     yield call(patchResource, { id, resourceType, patchSet, asyncKey });
+
+    yield put(actions.resource.aliases.actionStatus(id, '', 'delete'));
   } catch (e) {
     // do nothing
   }
@@ -65,5 +104,6 @@ export function* deleteAlias({ id, resourceType, aliasId, asyncKey }) {
 
 export default [
   takeLatest(actionTypes.RESOURCE.REQUEST_ALL_ALIASES, requestAllAliases),
+  takeEvery(actionTypes.RESOURCE.CREATE_OR_UPDATE_ALIAS, createOrUpdateAlias),
   takeEvery(actionTypes.RESOURCE.DELETE_ALIAS, deleteAlias),
 ];

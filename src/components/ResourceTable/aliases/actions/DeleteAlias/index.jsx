@@ -1,38 +1,29 @@
-import React, { useCallback, useEffect, useMemo, useState} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import { selectors } from '../../../../../reducers';
 import { ALIAS_FORM_KEY } from '../../../../../utils/constants';
-import { ALIAS_DELETE_CONFIRM_MESSAGE } from '../../../../../utils/messageStore';
-import { getResourceFromAlias } from '../../../../../utils/resource';
+import messageStore from '../../../../../utils/messageStore';
 import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import TrashIcon from '../../../../icons/TrashIcon';
-import ResourceReferences from '../../../../ResourceReferences';
 
 export default {
   key: 'deleteAlias',
   useLabel: () => 'Delete alias',
   icon: TrashIcon,
-  Component: ({rowData}) => {
-    const {resourceId: parentResourceId, resourceType: parentResourceType} = useGetTableContext();
-    const { id, resourceType } = useMemo(() => getResourceFromAlias(rowData), [rowData]);
+  useOnClick: ({alias: aliasId}) => {
+    const {resourceId: aliasContextResourceId, resourceType: aliasContextResourceType} = useGetTableContext();
     const dispatch = useDispatch();
-    const [showRef, setShowRef] = useState(false);
-    const resourceReferences = useSelector(state =>
-      selectors.resourceReferences(state)
-    );
     const { confirmDialog } = useConfirmDialog();
 
     const deleteResource = useCallback(() => {
-      dispatch(actions.resource.aliases.delete(parentResourceId, parentResourceType, rowData.alias, ALIAS_FORM_KEY));
-      setShowRef(true);
-    }, [dispatch, parentResourceId, parentResourceType, rowData]);
+      dispatch(actions.resource.aliases.delete(aliasContextResourceId, aliasContextResourceType, aliasId, ALIAS_FORM_KEY[aliasContextResourceType]));
+    }, [dispatch, aliasContextResourceId, aliasContextResourceType, aliasId]);
 
     const handleDelete = useCallback(() => {
       confirmDialog({
         title: 'Delete alias?',
-        message: ALIAS_DELETE_CONFIRM_MESSAGE,
+        message: messageStore('ALIAS_DELETE_CONFIRM_MESSAGE'),
         buttons: [
           {
             label: 'Delete alias',
@@ -47,21 +38,6 @@ export default {
       });
     }, [confirmDialog, deleteResource]);
 
-    const handleResourceReferenceClose = useCallback(() => {
-      setShowRef(false);
-    }, []);
-
-    useEffect(() => {
-      handleDelete();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    return (showRef && resourceReferences && resourceReferences.length && (
-      <ResourceReferences
-        title
-        resourceType={resourceType}
-        resourceId={id}
-        onClose={handleResourceReferenceClose} />
-    ));
+    return handleDelete;
   },
 };

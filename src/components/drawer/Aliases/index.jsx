@@ -19,8 +19,9 @@ import CeligoDivider from '../../CeligoDivider';
 import ViewAliasDetailsDrawer from './ViewAliasesDetails';
 import getRoutePath from '../../../utils/routePaths';
 import actions from '../../../actions';
-import { MANAGE_ALIASES_HELPINFO, VIEW_ALIASES_HELPINFO } from '../../../utils/messageStore';
-import { NO_ALIASES_MESSAGE } from '../../../utils/errorStore';
+import messageStore from '../../../utils/messageStore';
+import errorMessageStore from '../../../utils/errorStore';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   accordianWrapper: {
@@ -38,34 +39,50 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const ManageAliases = ({ flowId, accessLevel, canUserPublish, height }) => {
+const ManageAliases = ({ flowId, hasManageAccess, height }) => {
   const classes = useStyles();
-  const resourceAliases = useSelectorMemo(selectors.makeOwnAliases, 'flows', flowId);
+  const dispatch = useDispatch();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
+  const resourceAliases = useSelector(state => selectors.ownAliases(state, 'flows', flowId));
   const inheritedAliases = useSelectorMemo(selectors.makeInheritedAliases, flowId);
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
+  const isAliasActionCompleted = useSelector(state => selectors.aliasActionStatus(state, flowId));
   const actionProps = useMemo(() => ({
-    canUserPublish,
-    accessLevel,
+    hasManageAccess,
     resourceType: 'flows',
     resourceId: flowId,
-  }), [canUserPublish, accessLevel, flowId]);
+  }), [hasManageAccess, flowId]);
 
   const aliasesTableData = useMemo(() => ([
     {
       data: resourceAliases.map(aliasData => ({...aliasData, _id: `${flowId}-${aliasData.alias}`})),
       title: 'Aliases',
       filterKey: `${flowId}+aliases`,
-      actionProps: {...actionProps, hasManageAccess: true},
-      noAliasesMessage: 'You don’t have any custom aliases.',
+      actionProps,
+      noAliasesMessage: errorMessageStore('NO_CUSTOM_ALIASES_MESSAGE'),
     },
     {
       data: inheritedAliases.map(aliasData => ({...aliasData, _id: `${flow._integrationId}-${aliasData.alias}`})),
       title: 'Inherited aliases',
       filterKey: `${flow._integrationId}+inheritedAliases`,
       actionProps,
-      noAliasesMessage: 'You don’t have any inherited aliases.',
+      noAliasesMessage: errorMessageStore('NO_INHERITED_ALIASES_MESSAGE'),
     },
   ]), [resourceAliases, inheritedAliases, flowId, flow, actionProps]);
+
+  useEffect(() => {
+    if (!isAliasActionCompleted) return;
+
+    if (isAliasActionCompleted === 'delete') {
+      enqueueSnackbar({ message: messageStore('ALIAS_DELETE_MESSAGE')});
+    }
+
+    if (isAliasActionCompleted === 'save') {
+      enqueueSnackbar({ message: messageStore('ALIAS_SAVE_MESSAGE')});
+    }
+
+    dispatch(actions.resource.aliases.clear(flowId));
+  }, [isAliasActionCompleted, flowId, enqueueSnackbar, dispatch]);
 
   return (
     <>
@@ -121,7 +138,7 @@ const ViewAliases = ({ resourceId, resourceType, height }) => {
           {...metadata}
           actionProps={actionProps}
         />
-      ) : (<Typography className={classes.noAliases}>{NO_ALIASES_MESSAGE}</Typography>)}
+      ) : (<Typography className={classes.noAliases}>{errorMessageStore('NO_ALIASES_MESSAGE')}</Typography>)}
     </>
   );
 };
@@ -131,10 +148,12 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
   const history = useHistory();
   const resource = useSelectorMemo(selectors.makeResourceSelector, resourceType, resourceId);
   const integrationId = resourceType === 'integrations' ? resourceId : resource?._integrationId;
+  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
   const canUserPublish = useSelector(state => selectors.canUserPublish(state));
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state, 'integrations', integrationId).accessLevel
   );
+  const hasManageAccess = accessLevel !== 'monitor' && (!isIntegrationApp || (isIntegrationApp && canUserPublish));
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
@@ -154,8 +173,8 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
         <Route path={`${match.url}/aliases/manage`} >
           <DrawerHeader
             title="Manage Aliases"
-            infoText={MANAGE_ALIASES_HELPINFO}>
-            {accessLevel !== 'monitor' && canUserPublish ? (
+            infoText={messageStore('MANAGE_ALIASES_HELPINFO')}>
+            {hasManageAccess ? (
               <>
                 <TextButton
                   startIcon={<AddIcon />}
@@ -167,7 +186,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
             ) : ''}
           </DrawerHeader>
           <DrawerContent>
-            <ManageAliases flowId={resourceId} height={height} accessLevel={accessLevel} canUserPublish={canUserPublish} />
+            <ManageAliases flowId={resourceId} height={height} hasManageAccess={hasManageAccess} />
           </DrawerContent>
           <DrawerFooter>
             <FilledButton
@@ -180,7 +199,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
         <Route path={`${match.url}/aliases/view`} >
           <DrawerHeader
             title="View Aliases"
-            infoText={VIEW_ALIASES_HELPINFO} />
+            infoText={messageStore('VIEW_ALIASES_HELPINFO')} />
           <DrawerContent>
             <ViewAliases resourceId={resourceId} resourceType={resourceType} height={height} />
           </DrawerContent>

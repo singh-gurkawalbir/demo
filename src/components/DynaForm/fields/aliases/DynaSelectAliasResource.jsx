@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
-import messageStore from '../../../../constants/messages';
 import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
 import { emptyList } from '../../../../utils/constants';
+import errorMessageStore from '../../../../utils/errorStore';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import DynaSelect from '../DynaSelect';
 
@@ -31,7 +31,7 @@ export default function DynaSelectAliasResource({ options = {}, ...props}) {
 
     dispatch(actions.form.forceFieldState(formKey)(id, {
       isValid: false,
-      errorMessages: messageStore('NO_ALIAS_RESOURCE_MESSAGE', {
+      errorMessages: errorMessageStore('NO_ALIAS_RESOURCE_MESSAGE', {
         label: MODEL_PLURAL_TO_LABEL[aliasResourceType].toLowerCase(),
         resourceType: aliasResourceType,
       }),

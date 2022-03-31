@@ -3,7 +3,7 @@ import React, {useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import { REQUIRED_MESSAGE } from '../../../utils/messageStore';
+import messageStore from '../../../utils/messageStore';
 import DynaURI from './DynaURI_afe';
 
 const emptyObj = {};
@@ -39,7 +39,7 @@ export default function DynaRelativeUri_afe(props) {
     let errorMessages = deltaMsg || pagingMsg;
 
     if (required && !value) {
-      errorMessages = REQUIRED_MESSAGE;
+      errorMessages = messageStore('REQUIRED_MESSAGE');
     }
 
     // if there are validations error, show the error message

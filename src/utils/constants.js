@@ -704,7 +704,10 @@ export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
 
 export const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
 
-export const ALIAS_FORM_KEY = 'resource-alias';
+export const ALIAS_FORM_KEY = Object.freeze({
+  integrations: 'integration-alias',
+  flows: 'flow-alias',
+});
 
 export const UNASSIGNED_SECTION_ID = 'unassigned';
 export const UNASSIGNED_SECTION_NAME = 'Unassigned';
