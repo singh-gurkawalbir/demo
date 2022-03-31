@@ -21,10 +21,12 @@ const DRAWER_URL_REFS = {
     'scriptLog/:scriptId/:index',
   ],
   EDITOR: 'editor/:editorId',
-  RESOURCE: ':operation(add|edit)/:resourceType/:id',  // pending testing
+  RESOURCE: ':operation(add|edit)/:resourceType/:id',
+  ADD_RESOURCE: 'add/:resourceType/:id',
+  EDIT_RESOURCE: 'edit/:resourceType/:id',
   INSTALL_TEMPLATE: 'installTemplate/preview/:templateId',
   FORM_INSTALL_STEP: 'form/:formType',  // not verified IA, addChild install/unistall
-  CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId',  // not verified IA, addChild install/unistall
+  CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId',
   NS_SUB_RECORD: ['subrecords/:fieldId', 'subrecords'],
   SCRIPT_LOGS: 'viewLogs/:scriptId',
   CONNECTION_DEBUGGER: 'configDebugger/:connectionId',
@@ -96,4 +98,37 @@ export const hasMultipleDrawers = url =>
 export const editorDrawerUrl = editorId => `/${DRAWER_URL_PREFIX}/editor/${editorId}`;
 
 export const resourceUrl = (operation, resourceType, resourceId) => `/${DRAWER_URL_PREFIX}/${operation}/${resourceType}/${resourceId}`;
+
+/**
+ *
+ * @param {drawerType} Key for the DRAWER_URLS to get to the target URL
+ * @param {drawerIndex} Index for the list of urls against the passed key , if the DRAWER_URLS[key] is an array
+ * @param {prefix}
+ * ...pathProps - values for the configurable paths to replace with and get the actual path
+ * Ex: For path 'settings/:mappingKey', pathProps = {mappingKey: 'key-123' }
+ * Final path would be 'settings/key-123'
+ */
+export const getDrawerPath = ({ drawerType, prefix = '', ...pathProps}) => {
+  if (!drawerType) return '';
+  const drawerPath = DRAWER_URLS[drawerType];
+
+  if (!drawerPath) return '';
+
+  const drawerPathSegments = drawerPath.split('/').map(prop => {
+    if (prop.startsWith(':')) {
+      const param = prop.slice(1);
+
+      if (!pathProps[param]) {
+        throw new Error('Provide value for the Drawer path param', param);
+      }
+
+      // replace the prop with the actual value
+      return pathProps[param];
+    }
+
+    return prop;
+  });
+
+  return `${prefix}/${drawerPathSegments.join('/')}`;
+};
 
