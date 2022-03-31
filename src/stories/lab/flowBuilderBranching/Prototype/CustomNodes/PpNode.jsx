@@ -43,6 +43,7 @@ const useStyles = makeStyles(theme => ({
   },
   branchName: {
     display: 'none',
+    textTransform: 'none',
   },
 }));
 
@@ -103,7 +104,7 @@ export default function PageProcessor({ data = {}, id }) {
       <div className={classes.contentContainer} >
         <div>
           <div className={clsx(classes.branchContainer, {[classes.firstBranchStep]: isFirst})}>
-            <Typography variant="caption" className={classes.branchName}>
+            <Typography variant="overline" className={classes.branchName}>
               {branch.name}
             </Typography>
           </div>
