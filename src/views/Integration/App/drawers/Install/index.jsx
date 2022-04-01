@@ -104,7 +104,6 @@ export default function ConnectorInstallation(props) {
     parentId: integration._parentId,
   } : emptyObject, [integration]);
 
-  const isTemplate = !_connectorId;
   const {
     name: childIntegrationName,
     id: childIntegrationId,
@@ -440,7 +439,7 @@ export default function ConnectorInstallation(props) {
           )
         );
 
-        if (isTemplate && step.connectionId) {
+        if (!_connectorId && step.connectionId) {
           dispatch(
             actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
               integrationId,
@@ -569,7 +568,6 @@ export default function ConnectorInstallation(props) {
                 handleStepClick={handleStepClick}
                 index={index + 1}
                 step={step}
-                isTemplate={isTemplate}
                 integrationId={integrationId}
                 isFrameWork2={isFrameWork2}
               />
