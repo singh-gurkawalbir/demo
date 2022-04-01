@@ -11,7 +11,7 @@ import EditorDrawer from '../../components/AFE/Drawer';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ActionsRibbon from '../../components/AFE/Drawer/ActionsRibbon';
 import { TextButton } from '../../components/Buttons';
-import { editorDrawerUrl } from '../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../utils/rightDrawer';
 
 const ExampleMenu = loadable(() =>
   retry(() => import(/* webpackChunkName: 'ExampleMenu' */ './ExampleMenu'))

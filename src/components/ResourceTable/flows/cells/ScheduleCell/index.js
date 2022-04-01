@@ -4,7 +4,7 @@ import { Chip } from '@material-ui/core';
 import CalendarIcon from '../../../../icons/CalendarIcon';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
-import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
 
 export default function ScheduleCell({flowId, name, actionProps}) {
   const history = useHistory();

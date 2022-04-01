@@ -4,7 +4,7 @@ import RightDrawer from '../../Right';
 import DrawerHeader from '../../Right/DrawerHeader';
 import DrawerContent from '../../Right/DrawerContent';
 import Preview from './Preview';
-import { DRAWER_URLS } from '../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../utils/rightDrawer';
 
 export default function InstallTemplateDrawer() {
   const match = useRouteMatch();

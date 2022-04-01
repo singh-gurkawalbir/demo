@@ -11,7 +11,7 @@ import ActionButton from '../../ActionButton';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import actions from '../../../actions';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
-import { editorDrawerUrl } from '../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   textField: {

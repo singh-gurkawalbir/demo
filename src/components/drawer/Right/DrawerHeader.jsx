@@ -6,13 +6,13 @@ import CloseIcon from '../../icons/CloseIcon';
 import BackArrowIcon from '../../icons/BackArrowIcon';
 import InfoIconButton from '../../InfoIconButton';
 import Help from '../../Help';
-import { hasMultipleDrawers } from '../../../utils/drawerURLs';
+import { hasMultipleDrawers } from '../../../utils/rightDrawer';
 import { useDrawerContext } from './DrawerContext';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
     display: 'flex',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(2, 3),
     '& > :not(:last-child)': {

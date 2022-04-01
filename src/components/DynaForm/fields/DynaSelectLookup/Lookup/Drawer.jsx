@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import Lookup from '.';
 import RightDrawer from '../../../../drawer/Right';
 import DrawerHeader from '../../../../drawer/Right/DrawerHeader';
-import { DRAWER_URLS } from '../../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../../utils/rightDrawer';
 
 export default function LookupDrawer(props) {
   const history = useHistory();

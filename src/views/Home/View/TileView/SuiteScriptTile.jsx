@@ -23,7 +23,7 @@ import { selectors } from '../../../../reducers';
 import CeligoTruncate from '../../../../components/CeligoTruncate';
 import Status from '../../../../components/Buttons/Status';
 import { useSelectorMemo } from '../../../../hooks';
-import { resourceUrl } from '../../../../utils/drawerURLs';
+import { resourceUrl } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   tileName: {

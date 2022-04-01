@@ -13,7 +13,7 @@ import DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import { TextButton } from '../../../../Buttons';
 import getMetadata from './metadata';
 import RevisionHeader from '../../components/RevisionHeader';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {

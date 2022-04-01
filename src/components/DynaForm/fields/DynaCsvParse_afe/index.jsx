@@ -15,7 +15,7 @@ import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowVal
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDataChange from './FileDataChange';
 import { OutlinedButton } from '../../../Buttons';
-import { editorDrawerUrl } from '../../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   container: {

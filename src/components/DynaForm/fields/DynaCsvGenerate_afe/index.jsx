@@ -15,7 +15,7 @@ import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
 import { emptyObject } from '../../../../utils/constants';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
-import { editorDrawerUrl } from '../../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   csvContainer: {

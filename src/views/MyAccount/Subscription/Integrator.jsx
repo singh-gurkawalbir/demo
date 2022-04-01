@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, LinearProgress, capitalize } from '@material-ui/core';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
-import { DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
 import actions from '../../../actions';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';

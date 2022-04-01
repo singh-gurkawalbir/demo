@@ -12,7 +12,7 @@ import AddIcon from '../../../../../../components/icons/AddIcon';
 import { generateNewId } from '../../../../../../utils/resource';
 import actions from '../../../../../../actions';
 import { TextButton } from '../../../../../../components/Buttons';
-import { resourceUrl } from '../../../../../../utils/drawerURLs';
+import { resourceUrl } from '../../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   resultContainer: {

@@ -18,7 +18,7 @@ import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import TextButton from '../../../../../../components/Buttons/TextButton';
 import ActionGroup from '../../../../../../components/ActionGroup';
-import { DRAWER_URL_PREFIX } from '../../../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../../../utils/rightDrawer';
 
 export default function ConnectionDrawer({
   connectorId,

@@ -49,7 +49,7 @@ import DrawerContent from '../../../../../../components/drawer/Right/DrawerConte
 import DrawerFooter from '../../../../../../components/drawer/Right/DrawerFooter';
 import AddCategoryMappingDrawer from './AddCategory';
 import VariationMappingDrawer from './VariationMapping';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../../../utils/drawerURLs';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../../../utils/rightDrawer';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({

@@ -15,7 +15,7 @@ import {OutlinedButton, TextButton} from '../../Buttons';
 import ActionGroup from '../../ActionGroup';
 import { selectors } from '../../../reducers';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
-import { DRAWER_URLS } from '../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../utils/rightDrawer';
 
 const fieldMeta = {
   fieldMap: {

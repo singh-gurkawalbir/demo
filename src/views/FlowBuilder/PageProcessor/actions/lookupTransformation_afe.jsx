@@ -3,7 +3,7 @@ import { useRouteMatch, Redirect } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
-import { editorDrawerUrl } from '../../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../../utils/rightDrawer';
 
 function LookupTransformationLauncher({ flowId, resourceType, resourceId, onClose, open }) {
   const dispatch = useDispatch();

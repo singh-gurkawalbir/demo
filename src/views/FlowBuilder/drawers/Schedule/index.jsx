@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
-import { DRAWER_URLS } from '../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../utils/rightDrawer';
 import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../components/drawer/Right/DrawerContent';

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import HttpIcon from '../../../icons/HttpIcon';
-import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
 
 export default {
   key: 'HTTP response errors',

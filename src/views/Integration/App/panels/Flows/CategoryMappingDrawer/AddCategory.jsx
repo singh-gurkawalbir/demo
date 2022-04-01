@@ -14,7 +14,7 @@ import DrawerHeader from '../../../../../../components/drawer/Right/DrawerHeader
 import DrawerContent from '../../../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../../../components/drawer/Right/DrawerFooter';
 import { getTrimmedTitle } from '../../../../../../utils/string';
-import { DRAWER_URLS } from '../../../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../../../utils/rightDrawer';
 
 function AddCategoryMappingDrawer({ integrationId, parentUrl, flowId }) {
   const dispatch = useDispatch();

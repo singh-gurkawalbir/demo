@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import CeligoTimeAgo from '../../../../CeligoTimeAgo';
-import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles({
   root: {

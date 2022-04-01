@@ -5,7 +5,7 @@ import { selectors } from '../../../../../reducers';
 import ShowContentIcon from '../../../../icons/ShowContentIcon';
 import EditIcon from '../../../../icons/EditIcon';
 import AddIcon from '../../../../icons/AddIcon';
-import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
 
 export default function Notifications({ user, integrationId, childId }) {
   const match = useRouteMatch();

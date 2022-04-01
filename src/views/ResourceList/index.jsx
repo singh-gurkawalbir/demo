@@ -26,7 +26,7 @@ import NoResultTypography from '../../components/NoResultTypography';
 import ResourceEmptyState from './ResourceEmptyState';
 import ActionGroup from '../../components/ActionGroup';
 import PageContent from '../../components/PageContent';
-import { resourceUrl } from '../../utils/drawerURLs';
+import { resourceUrl } from '../../utils/rightDrawer';
 
 const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
 const resourcesToLoad = resourceType => {

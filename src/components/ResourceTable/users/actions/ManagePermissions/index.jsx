@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
 
 export default {
   key: 'managePermissions',

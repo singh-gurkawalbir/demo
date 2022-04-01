@@ -6,7 +6,7 @@ import InstallationGuideIcon from '../../../../icons/InstallationGuideIcon';
 import { KBDocumentation } from '../../../../../utils/connections';
 import DebugIcon from '../../../../icons/DebugIcon';
 import { selectors } from '../../../../../reducers';
-import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
 import {applicationsList} from '../../../../../constants/applications';
 import ApplicationImg from '../../../../icons/ApplicationImg';
 import { TextButton } from '../../../../Buttons';

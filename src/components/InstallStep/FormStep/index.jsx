@@ -10,7 +10,7 @@ import actions from '../../../actions';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
-import { DRAWER_URLS } from '../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../utils/rightDrawer';
 
 function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler, parentUrl }) {
   const { formType } = useParams();

@@ -18,7 +18,7 @@ import { SCOPES } from '../../../sagas/resourceForm';
 import { TextButton } from '../../../components/Buttons';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
 import NoResultTypography from '../../../components/NoResultTypography';
-import { resourceUrl } from '../../../utils/drawerURLs';
+import { resourceUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   actions: {

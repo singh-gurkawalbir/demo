@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import InfoIconButton from '../InfoIconButton';
-import { resourceUrl } from '../../utils/drawerURLs';
+import { resourceUrl } from '../../utils/rightDrawer';
 
 export default function ResourceDrawerLink({
   resourceType,

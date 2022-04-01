@@ -4,7 +4,7 @@ import { LinearProgress, Typography} from '@material-ui/core';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import { TextButton } from '../../../components/Buttons';
-import { DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   featureText: {

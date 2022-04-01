@@ -9,7 +9,7 @@ import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import { getParentResourceContext } from '../../../utils/connections';
-import { editorDrawerUrl } from '../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   dynaURIActionButton: {

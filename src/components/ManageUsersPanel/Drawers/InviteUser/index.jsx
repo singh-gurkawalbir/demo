@@ -2,7 +2,7 @@ import React from 'react';
 import RightDrawer from '../../../drawer/Right';
 import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import UserFormWrapper from '../../UserFormWrapper';
-import { DRAWER_URLS } from '../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../utils/rightDrawer';
 
 export default function InviteUserDrawer() {
   return (

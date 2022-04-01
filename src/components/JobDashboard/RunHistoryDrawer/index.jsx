@@ -12,7 +12,7 @@ import { emptyObject } from '../../../utils/constants';
 import RunHistory from '../RunHistory';
 import {FILTER_KEYS_AD, getDashboardIntegrationId} from '../../../utils/accountDashboard';
 import {FILTER_KEYS} from '../../../utils/errorManagement';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
 import actions from '../../../actions';
 
 const useStyles = makeStyles(theme => ({

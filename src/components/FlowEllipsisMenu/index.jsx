@@ -20,7 +20,7 @@ import CalendarIcon from '../icons/CalendarIcon';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import { getTemplateUrlName } from '../../utils/template';
 import getRoutePath from '../../utils/routePaths';
-import { DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {

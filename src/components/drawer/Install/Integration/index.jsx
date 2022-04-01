@@ -5,7 +5,7 @@ import DrawerHeader from '../../Right/DrawerHeader';
 import DrawerContent from '../../Right/DrawerContent';
 import UploadFile from './UploadFile';
 import Preview from './Preview';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
 
 export default function InstallIntegrationDrawer() {
   const match = useRouteMatch();

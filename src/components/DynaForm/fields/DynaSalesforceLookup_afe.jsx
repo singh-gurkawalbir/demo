@@ -10,7 +10,7 @@ import FilterIcon from '../../icons/FilterIcon';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 import { getValidRelativePath } from '../../../utils/routePaths';
-import { editorDrawerUrl } from '../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   lookupFieldWrapper: {

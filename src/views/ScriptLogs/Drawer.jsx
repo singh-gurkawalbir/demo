@@ -8,7 +8,7 @@ import RightDrawer from '../../components/drawer/Right';
 import DrawerHeader from '../../components/drawer/Right/DrawerHeader';
 import LoadResources from '../../components/LoadResources';
 import actions from '../../actions';
-import { DRAWER_URLS } from '../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   scriptLogsDrawerHeader: {

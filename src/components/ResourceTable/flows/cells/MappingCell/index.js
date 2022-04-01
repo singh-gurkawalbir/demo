@@ -5,7 +5,7 @@ import MapDataIcon from '../../../../icons/MapDataIcon';
 import { selectors } from '../../../../../reducers';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
-import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
 
 export default function MappingCell({ flowId, childId }) {
   const history = useHistory();

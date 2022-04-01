@@ -11,7 +11,7 @@ import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
-import { editorDrawerUrl } from '../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   dynaNetsuiteLookupFormControl: {

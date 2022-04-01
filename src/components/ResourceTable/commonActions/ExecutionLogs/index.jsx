@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import AuditLogIcon from '../../../icons/AuditLogIcon';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
-import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
 
 export default {
   key: 'viewExecutionLog',

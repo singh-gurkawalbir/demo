@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '../../../../../../components/icons/AddIcon';
 import { TextButton } from '../../../../../../components/Buttons';
-import { DRAWER_URL_PREFIX } from '../../../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   button: {

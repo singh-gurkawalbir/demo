@@ -5,7 +5,7 @@ import {selectors} from '../../reducers';
 import actions from '../../actions';
 import MappingWrapper from './MappingWrapper';
 import Spinner from '../Spinner';
-import { editorDrawerUrl } from '../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../utils/rightDrawer';
 
 export default function Mapping(props) {
   const {flowId, importId, subRecordMappingId } = props;

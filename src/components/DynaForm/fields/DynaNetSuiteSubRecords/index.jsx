@@ -19,7 +19,7 @@ import {
 import AddIcon from '../../../icons/AddIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import ActionGroup from '../../../ActionGroup';
-import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
 
 export const UseDynaNetsuiteSubRecordsStyles = makeStyles(theme => ({
   subrecords: {

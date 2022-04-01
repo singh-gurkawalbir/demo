@@ -7,7 +7,7 @@ import { isEmpty } from 'lodash';
 import { mockGetRequestOnce, mockPostRequestOnce, renderWithProviders} from '../../../test/test-utils';
 import GlobalSearch from '.';
 import actions from '../../../actions';
-import { DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
 import { runServer } from '../../../test/api/server';
 
 async function initGlobalSearch(ui = (<MemoryRouter><GlobalSearch /></MemoryRouter>)) {

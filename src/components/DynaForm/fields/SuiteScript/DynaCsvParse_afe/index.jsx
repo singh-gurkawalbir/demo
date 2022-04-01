@@ -14,7 +14,7 @@ import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPerm
 import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
 import { getValidRelativePath } from '../../../../../utils/routePaths';
 import FileDataChange from '../../DynaCsvParse_afe/FileDataChange';
-import { editorDrawerUrl } from '../../../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   container: {

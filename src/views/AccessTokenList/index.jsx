@@ -15,7 +15,7 @@ import infoText from '../ResourceList/infoText';
 import CheckPermissions from '../../components/CheckPermissions';
 import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
-import { resourceUrl } from '../../utils/drawerURLs';
+import { resourceUrl } from '../../utils/rightDrawer';
 import { TextButton } from '../../components/Buttons';
 import NoResultTypography from '../../components/NoResultTypography';
 import ResourceEmptyState from '../ResourceList/ResourceEmptyState';

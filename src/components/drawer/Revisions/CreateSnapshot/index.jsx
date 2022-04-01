@@ -14,7 +14,7 @@ import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import { TextButton } from '../../../Buttons';
 import Spinner from '../../../Spinner';
 import RevisionHeader from '../components/RevisionHeader';
-import { DRAWER_URLS } from '../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {

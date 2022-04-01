@@ -17,7 +17,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { emptyList, emptyObject, FORM_SAVE_STATUS, FLOW_GROUP_FORM_KEY } from '../../../utils/constants';
 import { getFlowGroup } from '../../../utils/flows';
 import getRoutePath from '../../../utils/routePaths';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
 
 const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit, flowGroupId) => ({
   fieldMap: {

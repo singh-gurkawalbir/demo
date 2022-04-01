@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useRouteMatch, Redirect } from 'react-router-dom';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/OutputFilterIcon';
-import { editorDrawerUrl } from '../../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../../utils/rightDrawer';
 
 function ExportFilterLauncher({ flowId, resourceType, resourceId, onClose, open }) {
   const dispatch = useDispatch();

@@ -1,6 +1,6 @@
 /* global describe, expect, test */
 import { selectors } from '.';
-import { DRAWER_URL_PREFIX } from '../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../utils/rightDrawer';
 
 describe('Flow builder region selector testcases', () => {
   describe('selectors.getResourceEditUrl test cases', () => {

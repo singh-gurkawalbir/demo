@@ -15,7 +15,7 @@ import ExpandAllResourceDiff from '../components/ExpandAllResourceDiff';
 import useHandleInvalidRevision from '../hooks/useHandleInvalidRevision';
 import ActionGroup from '../../../ActionGroup';
 import { FilledButton } from '../../../Buttons';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
 
 const allTabs = {
   changes: { type: 'changes', label: 'View resources changed' },

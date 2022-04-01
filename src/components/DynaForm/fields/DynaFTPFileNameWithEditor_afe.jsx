@@ -10,7 +10,7 @@ import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import { IMPORT_FLOW_DATA_STAGE } from '../../../utils/flowData';
 import useFormContext from '../../Form/FormContext';
-import { editorDrawerUrl } from '../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   dynaActionButton: {

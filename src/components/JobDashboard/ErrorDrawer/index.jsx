@@ -10,7 +10,7 @@ import JobErrorTable from '../JobErrorTable';
 import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
 import { JOB_STATUS } from '../../../utils/constants';
-import { DRAWER_URLS } from '../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles({
   wrapperErrorDrawer: {

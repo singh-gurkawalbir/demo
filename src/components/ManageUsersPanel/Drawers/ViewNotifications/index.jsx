@@ -10,7 +10,7 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import useGetNotificationOptions from '../../../../hooks/useGetNotificationOptions';
 import DynaForm from '../../../DynaForm';
 import LoadResources from '../../../LoadResources';
-import { DRAWER_URLS } from '../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../utils/rightDrawer';
 
 function ViewNotifications({ integrationId, childId, onClose }) {
   const match = useRouteMatch();

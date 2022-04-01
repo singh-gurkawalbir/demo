@@ -21,7 +21,7 @@ import { OutlinedButton, TextButton } from '../../Buttons';
 import { LOOKUP_DRAWER_FORM_KEY } from '../../../utils/constants';
 import { hashCode } from '../../../utils/string';
 import useFormOnCancelContext from '../../FormOnCancelContext';
-import { DRAWER_URLS } from '../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   listing: {

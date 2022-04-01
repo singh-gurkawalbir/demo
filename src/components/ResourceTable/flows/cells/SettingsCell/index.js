@@ -3,7 +3,7 @@ import { useHistory, Link } from 'react-router-dom';
 import SettingsIcon from '../../../../icons/SettingsIcon';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
-import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
 
 export default function SettingsCell({flowId, name, actionProps}) {
   const history = useHistory();

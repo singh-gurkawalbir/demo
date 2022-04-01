@@ -14,7 +14,7 @@ import { FilledButton, TextButton } from '../../../../Buttons';
 import SaveAndCloseButtonGroupAuto from '../../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import useFormOnCancelContext from '../../../../FormOnCancelContext';
 import { getFormSaveStatusFromCommStatus } from '../../../../../utils/editor';
-import { drawerPaths } from '../../../../../utils/drawerURLs';
+import { drawerPaths } from '../../../../../utils/rightDrawer';
 import isLoggableAttr from '../../../../../utils/isLoggableAttr';
 
 const useStyles = makeStyles(() => ({

@@ -10,7 +10,7 @@ import DrawerFooter from '../../../../../Right/DrawerFooter';
 import { FilledButton } from '../../../../../../Buttons';
 import { selectors } from '../../../../../../../reducers';
 import DateTimeDisplay from '../../../../../../DateTimeDisplay';
-import { DRAWER_URLS } from '../../../../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   details: {

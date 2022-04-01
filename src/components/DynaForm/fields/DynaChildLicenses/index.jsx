@@ -12,7 +12,7 @@ import { generateNewId } from '../../../../utils/resource';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import LoadResources from '../../../LoadResources';
 import { TextButton } from '../../../Buttons';
-import { resourceUrl } from '../../../../utils/drawerURLs';
+import { resourceUrl } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   actionChildLicense: {

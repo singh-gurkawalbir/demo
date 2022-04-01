@@ -11,7 +11,7 @@ import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDefinitionChange from './FileDefinitionChange';
 import { OutlinedButton } from '../../../Buttons';
 import { safeParse } from '../../../../utils/string';
-import { editorDrawerUrl } from '../../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../../utils/rightDrawer';
 
 /*
  * This editor is shown in case of :

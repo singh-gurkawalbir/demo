@@ -12,7 +12,7 @@ import lookupUtil from '../../../../utils/lookup';
 import useFormContext from '../../../Form/FormContext';
 import EllipsisActionMenu from '../../../EllipsisActionMenu';
 import ActionGroup from '../../../ActionGroup';
-import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {

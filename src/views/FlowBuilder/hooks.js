@@ -8,7 +8,7 @@ import { selectors } from '../../reducers';
 import { emptyObject, UNASSIGNED_SECTION_ID } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import itemTypes from './itemTypes';
-import { resourceUrl } from '../../utils/drawerURLs';
+import { resourceUrl } from '../../utils/rightDrawer';
 
 export const isNewFlowFn = flowId => !flowId || flowId?.startsWith('new');
 export const usePatchFlow = flowId => {

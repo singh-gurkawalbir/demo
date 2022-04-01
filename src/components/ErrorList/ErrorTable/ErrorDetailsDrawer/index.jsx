@@ -12,7 +12,7 @@ import ErrorDetails from '../../ErrorDetails';
 import { selectors } from '../../../../reducers';
 import useFormOnCancelContext from '../../../FormOnCancelContext';
 import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../utils/constants';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
 
 const emptySet = [];
 

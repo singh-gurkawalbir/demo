@@ -5,7 +5,7 @@ import EmptyState from '../../../components/EmptyState';
 import resourceTypeMetaData from '../../../components/EmptyState/metadata';
 import NoResultTypography from '../../../components/NoResultTypography';
 import { generateNewId } from '../../../utils/resource';
-import { resourceUrl } from '../../../utils/drawerURLs';
+import { resourceUrl } from '../../../utils/rightDrawer';
 import LoadResources from '../../../components/LoadResources';
 
 export default function ResourceEmptyState({resourceType}) {

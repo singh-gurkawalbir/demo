@@ -10,7 +10,7 @@ import InstallSteps from '../../components/InstallSteps';
 import RevisionHeader from '../../components/RevisionHeader';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import useHandleInvalidRevision from '../../hooks/useHandleInvalidRevision';
-import { DRAWER_URLS } from '../../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {

@@ -107,7 +107,7 @@ import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCom
 import { getTemplateUrlName } from '../utils/template';
 import { filterMap } from '../components/GlobalSearch/filterMeta';
 import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions } from '../utils/revisions';
-import { resourceUrl } from '../utils/drawerURLs';
+import { resourceUrl } from '../utils/rightDrawer';
 
 const emptyArray = [];
 const emptyObject = {};

@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch, Redirect } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/MapDataIcon';
-import { editorDrawerUrl } from '../../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../../utils/rightDrawer';
 
 function ResponseMapping({
   flowId,

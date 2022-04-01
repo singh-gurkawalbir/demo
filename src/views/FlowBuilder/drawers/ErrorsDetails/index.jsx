@@ -12,7 +12,7 @@ import ErrorDrawerAction from './ErrorDrawerAction';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import DrawerHeaderSubTitle from '../../../../components/DrawerHeaderSubTitle';
 import Tabs from './Tabs';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
 
 const emptySet = [];
 

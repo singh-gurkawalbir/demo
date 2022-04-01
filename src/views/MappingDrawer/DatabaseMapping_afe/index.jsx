@@ -5,7 +5,7 @@ import { useRouteMatch, Redirect } from 'react-router-dom';
 import { selectors } from '../../../reducers';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import actions from '../../../actions';
-import { editorDrawerUrl } from '../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../utils/rightDrawer';
 
 const emptyObject = {};
 

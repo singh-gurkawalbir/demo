@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import EditIcon from '../../../icons/EditIcon';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
-import { resourceUrl } from '../../../../utils/drawerURLs';
+import { resourceUrl } from '../../../../utils/rightDrawer';
 
 export default {
   key: 'edit',

@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import EditIcon from '../../../../icons/EditIcon';
 import getRoutePath from '../../../../../utils/routePaths';
 import { UNASSIGNED_SECTION_ID } from '../../../../../utils/constants';
-import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
 
 export default {
   key: 'editFlowGroup',

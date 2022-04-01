@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import ReplaceConnectionForm from './form';
 import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
-import { DRAWER_URLS } from '../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../utils/rightDrawer';
 
 export default function ReplaceConnectionDrawer({
   flowId,

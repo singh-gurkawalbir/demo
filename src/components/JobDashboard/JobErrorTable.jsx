@@ -21,7 +21,7 @@ import DownloadIcon from '../icons/DownloadIcon';
 import ActionGroup from '../ActionGroup';
 import OutlinedButton from '../Buttons/OutlinedButton';
 import { getTextAfterCount } from '../../utils/string';
-import { DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },

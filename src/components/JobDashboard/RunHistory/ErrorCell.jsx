@@ -9,7 +9,7 @@ import { emptyObject } from '../../../utils/constants';
 import StatusCircle from '../../StatusCircle';
 import actions from '../../../actions';
 import { getTextAfterCount } from '../../../utils/string';
-import { DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
 import Status from '../../Buttons/Status';
 
 const useStyles = makeStyles(theme => ({

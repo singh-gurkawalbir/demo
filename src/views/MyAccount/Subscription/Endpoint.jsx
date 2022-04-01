@@ -18,7 +18,7 @@ import LoadResources from '../../../components/LoadResources';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import { TextButton, FilledButton } from '../../../components/Buttons';
-import { DRAWER_URL_PREFIX, DRAWER_URLS } from '../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX, DRAWER_URLS } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {

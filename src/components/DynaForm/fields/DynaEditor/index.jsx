@@ -10,7 +10,7 @@ import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import ExpandEditorModal from './ExpandModeEditor/Modal';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
-import { buildDrawerUrl, drawerPaths } from '../../../../utils/drawerURLs';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   label: {

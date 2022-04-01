@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import Spinner from '../../../Spinner';
-import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   uploadButton: {

@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import DynaDateSelecor from './DynaDateSelector';
 import { selectors } from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
-import { DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
 
 export default function DynaLicenseExpires(props) {
   const location = useLocation();

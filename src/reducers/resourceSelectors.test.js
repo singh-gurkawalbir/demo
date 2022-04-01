@@ -6,7 +6,7 @@ import {
   INTEGRATION_ACCESS_LEVELS,
 } from '../utils/constants';
 
-import { DRAWER_URL_PREFIX } from '../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../utils/rightDrawer';
 
 describe('tests for reducer selectors', () => {
   describe('resourceList', () => {

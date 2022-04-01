@@ -11,7 +11,7 @@ import ActionButton from '../../ActionButton';
 import ScriptsIcon from '../../icons/ScriptsIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { getValidRelativePath } from '../../../utils/routePaths';
-import { editorDrawerUrl } from '../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles({
   formField: {

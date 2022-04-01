@@ -14,7 +14,7 @@ import RightDrawer from '../../../../drawer/Right';
 import DrawerHeader from '../../../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../drawer/Right/DrawerFooter';
-import { DRAWER_URLS } from '../../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../../utils/rightDrawer';
 
 function SubRecordDrawer(props) {
   const history = useHistory();

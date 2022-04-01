@@ -15,7 +15,7 @@ import {selectors } from '../../../../../reducers';
 import getMetadata from './metadata';
 import RevisionHeader from '../../components/RevisionHeader';
 import useHandleInvalidRevision from '../../hooks/useHandleInvalidRevision';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {

@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import nanoid from 'nanoid';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import CreatePullIcon from '../../../icons/AddIcon';
-import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
 
 export default {
   key: 'createPull',

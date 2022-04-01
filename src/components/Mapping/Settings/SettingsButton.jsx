@@ -5,7 +5,7 @@ import SettingsIcon from '../../icons/SettingsIcon';
 import ActionButton from '../../ActionButton';
 import {selectors} from '../../../reducers';
 import { emptyObject } from '../../../utils/constants';
-import { DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
 
 /**
  * disabled property set to true in case of monitor level access

@@ -6,7 +6,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import { DRAWER_URLS } from '../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../utils/rightDrawer';
 import useForm from '../../Form';
 import RightDrawer from '../Right';
 import DrawerHeader from '../Right/DrawerHeader';

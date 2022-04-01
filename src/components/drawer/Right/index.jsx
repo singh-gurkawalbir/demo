@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom';
 import { makeStyles, Drawer } from '@material-ui/core';
 import { selectors } from '../../../reducers';
+import { DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
 import { DrawerProvider } from './DrawerContext';
 
 const useStyles = makeStyles(theme => ({
@@ -113,7 +114,11 @@ export default function RightDrawerRoute(props) {
   let fullPath;
   const match = useRouteMatch();
 
-  const getFullPath = path => match.url === '/' ? path : `${match.url}/${path}`;
+  const getFullPath = path => {
+    const drawerPath = path.startsWith(DRAWER_URL_PREFIX) ? path : `${DRAWER_URL_PREFIX}/${path}`;
+
+    return match.url === '/' ? drawerPath : `${match.url}/${drawerPath}`;
+  };
 
   if (typeof path === 'string' || typeof path === 'number') {
     fullPath = getFullPath(path);

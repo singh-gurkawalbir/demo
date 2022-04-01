@@ -10,7 +10,7 @@ import EditIcon from '../../../icons/EditIcon';
 import ActionButton from '../../../ActionButton';
 import ConditionalLookupDrawer from './ConditionalLookup/Drawer';
 import actions from '../../../../actions';
-import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {

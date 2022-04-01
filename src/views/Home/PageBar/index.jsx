@@ -17,7 +17,7 @@ import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 import KeywordSearch from '../../../components/KeywordSearch';
 import actions from '../../../actions';
 import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../../../utils/home';
-import { resourceUrl, DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
+import { resourceUrl, DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   viewIcon: {

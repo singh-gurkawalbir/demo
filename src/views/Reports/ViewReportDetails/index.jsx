@@ -8,7 +8,7 @@ import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
 import LoadResources from '../../../components/LoadResources';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
-import { DRAWER_URLS } from '../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../utils/rightDrawer';
 import EventReportDetails from './EventReportDetails';
 
 const RowDetails = ({reportType}) => {

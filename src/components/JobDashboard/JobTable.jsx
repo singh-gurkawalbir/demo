@@ -4,7 +4,7 @@ import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
 import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
 import { difference } from 'lodash';
 import { JOB_STATUS } from '../../utils/constants';
-import { DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../utils/rightDrawer';
 import JobDetail from './JobDetail';
 import ErrorDrawer from './ErrorDrawer';
 import actions from '../../actions';

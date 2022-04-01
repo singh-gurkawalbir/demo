@@ -10,7 +10,7 @@ import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import actions from '../../../actions';
-import { editorDrawerUrl } from '../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   salesforceFormControl: {

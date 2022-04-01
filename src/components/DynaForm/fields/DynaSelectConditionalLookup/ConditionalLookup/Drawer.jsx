@@ -4,7 +4,7 @@ import ConditionalLookup from '.';
 import RightDrawer from '../../../../drawer/Right';
 import DrawerHeader from '../../../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../drawer/Right/DrawerContent';
-import { DRAWER_URLS } from '../../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../../utils/rightDrawer';
 
 function ConditionalLookupDrawerHeader() {
   const match = useRouteMatch();

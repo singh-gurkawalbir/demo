@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import DownArrowIcon from '../../../icons/ArrowDownIcon';
 import FilledButton from '../../../Buttons/FilledButton';
 import useRequestForDemo from '../../../../hooks/useRequestForDemo';
-import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
 import { useGlobalSearchState } from '../../GlobalSearchContext/createGlobalSearchState';
 
 const useStyles = makeStyles(theme => ({

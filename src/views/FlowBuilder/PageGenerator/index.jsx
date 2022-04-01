@@ -19,7 +19,7 @@ import transformationAction from './actions/transformation_afe';
 import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter_afe';
 import { actionsMap } from '../../../utils/flows';
-import { resourceUrl } from '../../../utils/drawerURLs';
+import { resourceUrl } from '../../../utils/rightDrawer';
 
 const emptyObj = {};
 const useStyles = makeStyles({

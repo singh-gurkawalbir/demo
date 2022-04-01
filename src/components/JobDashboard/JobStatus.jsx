@@ -5,7 +5,7 @@ import { Button } from '@material-ui/core';
 import DashboardTag from '../tags/DashboardTag';
 import Spinner from '../Spinner';
 import { getJobStatusDetails } from '../../utils/jobdashboard';
-import { DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   state: {

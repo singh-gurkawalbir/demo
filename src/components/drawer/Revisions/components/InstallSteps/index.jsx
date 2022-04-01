@@ -13,7 +13,7 @@ import jsonUtil from '../../../../../utils/json';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import openExternalUrl from '../../../../../utils/window';
 import { INSTALL_STEP_TYPES, REVISION_TYPES } from '../../../../../utils/constants';
-import { DRAWER_URL_PREFIX } from '../../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   installStepsWrapper: {

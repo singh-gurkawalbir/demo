@@ -17,7 +17,7 @@ import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigCon
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { TextButton } from '../../../../../components/Buttons';
 import ActionGroup from '../../../../../components/ActionGroup';
-import { resourceUrl } from '../../../../../utils/drawerURLs';
+import { resourceUrl } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {

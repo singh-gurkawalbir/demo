@@ -21,7 +21,7 @@ import FilledButton from '../../components/Buttons/FilledButton';
 import getImageUrl from '../../utils/image';
 import PageContent from '../../components/PageContent';
 import { gridViewStyles } from '../Home/View/TileView/HomeCard';
-import { DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   pageCenter: {

@@ -10,7 +10,7 @@ import EditIcon from '../../icons/EditIcon';
 import CodeEditor from '../../CodeEditor2';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import actions from '../../../actions';
-import { editorDrawerUrl } from '../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles({
   label: {

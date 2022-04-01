@@ -19,7 +19,7 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import actions from '../../actions';
 import { TextButton } from '../../components/Buttons';
 import NoResultTypography from '../../components/NoResultTypography';
-import { resourceUrl } from '../../utils/drawerURLs';
+import { resourceUrl } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   actions: {

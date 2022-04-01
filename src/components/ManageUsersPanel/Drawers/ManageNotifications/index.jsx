@@ -18,7 +18,7 @@ import SaveAndCloseButtonGroupForm from '../../../SaveAndCloseButtonGroup/SaveAn
 import commKeyGen from '../../../../utils/commKeyGenerator';
 import { useFormOnCancel } from '../../../FormOnCancelContext/index';
 import { MANAGE_NOTIFICATIONS_FORM_KEY } from '../../../../utils/constants';
-import { DRAWER_URLS } from '../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../utils/rightDrawer';
 
 function ManageNotifications({ integrationId, childId, onClose }) {
   const match = useRouteMatch();

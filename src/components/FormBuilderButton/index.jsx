@@ -5,7 +5,7 @@ import { makeStyles, Button } from '@material-ui/core';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import FieldHelp from '../DynaForm/FieldHelp';
-import { editorDrawerUrl } from '../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   button: {

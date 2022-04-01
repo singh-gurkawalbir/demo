@@ -15,7 +15,7 @@ import ApplicationImg from '../../icons/ApplicationImg';
 import { selectors } from '../../../reducers';
 import { FilledButton } from '../../Buttons';
 import {getFlowStepLabel} from '../../../utils/flowStepLogs';
-import { DRAWER_URLS } from '../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../utils/rightDrawer';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({

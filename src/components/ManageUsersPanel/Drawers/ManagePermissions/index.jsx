@@ -4,7 +4,7 @@ import RightDrawer from '../../../drawer/Right';
 import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import IsLoggableContextProvider from '../../../IsLoggableContextProvider';
 import UserFormWrapper from '../../UserFormWrapper';
-import { DRAWER_URLS } from '../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../utils/rightDrawer';
 
 function ManagePermissions({ integrationId }) {
   const match = useRouteMatch();

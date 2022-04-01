@@ -17,7 +17,7 @@ import EditorDrawer from '../../AFE/Drawer';
 import SaveAndCloseResourceForm from '../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 import { FORM_SAVE_STATUS } from '../../../utils/constants';
 import useFormOnCancelContext from '../../FormOnCancelContext';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../utils/drawerURLs';
+import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
 
 const emptySet = [];
 const emptyObject = {};

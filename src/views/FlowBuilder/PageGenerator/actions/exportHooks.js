@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouteMatch, Redirect } from 'react-router-dom';
 import Icon from '../../../../components/icons/HookIcon';
-import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
 
 function ExportHooks(props) {
   const { open, onClose, resourceType, resourceId } = props;

@@ -14,7 +14,7 @@ import ActionButton from '../../../ActionButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
-import { editorDrawerUrl } from '../../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   field: {

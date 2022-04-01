@@ -6,7 +6,7 @@ import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import { getParentResourceContext } from '../../../utils/connections';
 import DynaHandlebarPreview from './DynaHandlebarPreview';
-import { editorDrawerUrl } from '../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../utils/rightDrawer';
 
 export default function DynaHttpRequestBody_afe(props) {
   const {

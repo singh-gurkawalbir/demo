@@ -22,7 +22,7 @@ import RefreshIcon from '../../components/icons/RefreshIcon';
 import Spinner from '../../components/Spinner';
 import { TextButton } from '../../components/Buttons';
 import ActionGroup from '../../components/ActionGroup';
-import { resourceUrl } from '../../utils/drawerURLs';
+import { resourceUrl } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   actions: {

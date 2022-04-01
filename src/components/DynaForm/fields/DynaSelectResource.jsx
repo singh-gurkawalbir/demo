@@ -19,7 +19,7 @@ import useIntegration from '../../../hooks/useIntegration';
 import { stringCompare } from '../../../utils/sort';
 import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
 import OnlineStatus from '../../OnlineStatus';
-import { resourceUrl } from '../../../utils/drawerURLs';
+import { resourceUrl } from '../../../utils/rightDrawer';
 
 const emptyArray = [];
 const handleAddNewResource = args => {

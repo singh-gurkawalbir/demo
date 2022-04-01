@@ -8,7 +8,7 @@ import RawHtml from '../../../../../../../components/RawHtml';
 import actions from '../../../../../../../actions';
 import EditorDrawer from '../../../../../../../components/AFE/Drawer';
 import { TextButton } from '../../../../../../../components/Buttons';
-import { editorDrawerUrl } from '../../../../../../../utils/drawerURLs';
+import { editorDrawerUrl } from '../../../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {

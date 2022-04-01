@@ -10,7 +10,7 @@ import RevisionHeader from '../../components/RevisionHeader';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import FilledButton from '../../../../Buttons/FilledButton';
 import useHandleInvalidRevision from '../../hooks/useHandleInvalidRevision';
-import { DRAWER_URLS } from '../../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {

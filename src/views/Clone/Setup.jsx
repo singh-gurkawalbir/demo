@@ -26,7 +26,7 @@ import { SCOPES } from '../../sagas/resourceForm';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
 import { getApplication } from '../../utils/template';
-import { DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {

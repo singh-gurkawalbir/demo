@@ -17,7 +17,7 @@ import RightDrawer from '../../../../../../../components/drawer/Right';
 import DrawerHeader from '../../../../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../../../../components/drawer/Right/DrawerFooter';
-import { DRAWER_URLS } from '../../../../../../../utils/drawerURLs';
+import { DRAWER_URLS } from '../../../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   mappingHeader: {

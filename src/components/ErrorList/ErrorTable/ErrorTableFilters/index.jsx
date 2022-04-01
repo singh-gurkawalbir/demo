@@ -9,7 +9,7 @@ import KeywordSearch from '../../../KeywordSearch';
 import RefreshCard from '../RefreshCard';
 import ErrorActions from '../ErrorActions';
 import { selectors } from '../../../../reducers';
-import { DRAWER_URL_PREFIX } from '../../../../utils/drawerURLs';
+import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
 import actions from '../../../../actions';
 import { useIsFreshLoadData } from '..';
 import { useFetchErrors } from '../FetchErrorsHook';

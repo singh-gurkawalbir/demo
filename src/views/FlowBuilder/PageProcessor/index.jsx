@@ -18,7 +18,7 @@ import responseTransformationAction from './actions/responseTransformation_afe';
 import proceedOnFailureAction from './actions/proceedOnFailure';
 import { actionsMap, isImportMappingAvailable } from '../../../utils/flows';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { resourceUrl } from '../../../utils/drawerURLs';
+import { resourceUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles({
   ppContainer: {
