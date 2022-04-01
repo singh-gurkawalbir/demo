@@ -149,10 +149,10 @@ export default function InstallationStep(props) {
   const { step, index, handleStepClick, mode = 'install', templateId, integrationId, isFrameWork2 } = props;
   const dispatch = useDispatch();
   const [verified, setVerified] = useState(false);
-  const isTemplate = useSelector(state => {
+  const isIntegrationApp = useSelector(state => {
     const integrationSettings = selectors.integrationAppSettings(state, integrationId);
 
-    return !integrationSettings?._connectorId;
+    return !!integrationSettings?._connectorId;
   });
 
   const connection = useSelector(state => {
@@ -190,7 +190,7 @@ export default function InstallationStep(props) {
       } else if (
         step.isCurrentStep &&
         (step.installURL || step.url) &&
-        isTemplate &&
+        !isIntegrationApp &&
         step.connectionId
       ) {
         dispatch(
@@ -211,7 +211,7 @@ export default function InstallationStep(props) {
         setVerified(true);
       }
     }
-  }, [connection, dispatch, integrationId, isFrameWork2, isTemplate, step, templateId, verified]);
+  }, [connection, dispatch, integrationId, isFrameWork2, isIntegrationApp, step, templateId, verified]);
 
   if (!step) {
     return null;
