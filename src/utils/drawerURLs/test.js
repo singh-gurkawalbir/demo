@@ -1,0 +1,23 @@
+/* global expect, describe, test */
+
+import { DRAWER_URL_PREFIX, buildDrawerUrl } from '.';
+
+describe('buildDrawerUrl testcases', () => {
+  const baseUrl = 'http://localhost.io:4000/integrations';
+
+  test('should give expected drawer URL for the passed props', () => {
+    const drawerPath = 'errors/:resourceId/filter/:flowJobId/:errorType';
+    const params = {
+      resourceId: 'e1',
+      flowJobId: 'f1',
+      errorType: 'open',
+    };
+    const expectedUrl = `${baseUrl}/${DRAWER_URL_PREFIX}/errors/e1/filter/f1/open`;
+
+    expect(buildDrawerUrl({
+      path: drawerPath,
+      baseUrl,
+      params,
+    })).toBe(expectedUrl);
+  });
+});
