@@ -1,6 +1,6 @@
 import { useFlowContext } from '../Context';
 import actions from '../reducer/actions';
-import { getNextRouterPathForTerminalNode, getNodeInsertionPathForEdge, getPathOfPGOrPPNode, isPageGenerator } from '../translateSchema/getPathOfNode';
+import { getNodeInsertionPathForEdge, getPathOfPGOrPPNode, isPageGenerator } from '../translateSchema/getPathOfNode';
 import { getSomeExport, getSomeImport, getSomePg, getSomePpImport } from '../nodeGeneration';
 import { generateId } from '../lib';
 
@@ -66,23 +66,9 @@ export const useHandleDeleteNode = nodeId => {
 };
 
 export const useHandleDeleteEdge = edgeId => {
-  const {flow, elementsMap, setState} = useFlowContext();
+  const { setState } = useFlowContext();
 
   return () => {
-    const edge = elementsMap[edgeId];
-    const sourceNode = elementsMap[edge?.source];
-    const isSourceNodeAPG = sourceNode.type === 'pg';
-    const path = getNextRouterPathForTerminalNode(flow, edge);
-    const sourceNodePath = getPathOfPGOrPPNode(flow, edge?.source);
-
-    if (isSourceNodeAPG) {
-      if (sourceNodePath) {
-        return setState({type: actions.DELETE_STEP, flow, path: sourceNodePath, isPageGenerator: true});
-      }
-
-      return;
-    }
-    if (!path) return;
-    setState({type: actions.DELETE_EDGE, flow, path});
+    setState({type: actions.DELETE_EDGE, edgeId});
   };
 };

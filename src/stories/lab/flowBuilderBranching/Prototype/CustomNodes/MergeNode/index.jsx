@@ -16,7 +16,7 @@ const useStyles = makeStyles(() => ({
 export default function MergeNode({id}) {
   const classes = useStyles();
   const { dragNodeId, setState, flow } = useFlowContext();
-  const firstRouterId = flow.routers[0]._id;
+  const firstRouterId = flow.routers[0]?._id;
   const isDroppable = !!dragNodeId && firstRouterId !== id;
 
   const handleMouseOut = () => setState({type: actions.MERGE_TARGET_CLEAR});

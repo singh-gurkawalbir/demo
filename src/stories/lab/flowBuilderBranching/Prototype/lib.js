@@ -19,6 +19,7 @@ export const GRAPH_ELEMENTS_TYPE = {
   EDGE: 'default',
   TERMINAL: 'terminal',
   PP_STEP: 'pp',
+  PG_STEP: 'pg',
 };
 
 export const nodeSize = {
@@ -60,11 +61,14 @@ export function generateId() {
   return nanoid(6);
 }
 
-export function generateDefaultEdge(source, target) {
+export function generateDefaultEdge(source, target, {routerIndex, branchIndex} = {}) {
   return {
     id: `${source}-${target}`,
     source,
     target,
+    data: {
+      path: `/routers/${routerIndex}/branches/${branchIndex}`,
+    },
     type: 'default',
   };
 }

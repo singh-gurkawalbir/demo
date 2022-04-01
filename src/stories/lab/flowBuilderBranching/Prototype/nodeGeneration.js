@@ -17,13 +17,13 @@ export const generateRouterNode = (router, routerIndex) => ({
     router,
   },
 });
-export const generateNewTerminal = ({branch, branchIndex, routerIndex} = {}) => ({
+export const generateNewTerminal = ({branch = {}, branchIndex, routerIndex} = {}) => ({
   id: generateId(),
   type: GRAPH_ELEMENTS_TYPE.TERMINAL,
   draggable: true,
   data: {
     ...branch,
-    path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${branch.pageProcessors.length || '-'}`,
+    path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${branch.pageProcessors?.length || '-'}`,
   },
 });
 

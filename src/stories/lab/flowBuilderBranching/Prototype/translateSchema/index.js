@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { generateDefaultEdge, generateId } from '../lib';
-import { generateNewTerminal, generateRouterNode, isVirtualRouter } from '../nodeGeneration';
+import { generateNewTerminal, generateRouterNode } from '../nodeGeneration';
 
 export const initialiseFlowForReactFlow = flow => {
   if (!flow) return flow;
@@ -26,21 +26,6 @@ export const initialiseFlowForReactFlow = flow => {
       });
     });
   });
-
-  // iterate and delete all unnecessary merge nodes
-  let i = routers.length;
-
-  // eslint-disable-next-line no-plusplus
-  while (i--) {
-    if (isVirtualRouter(routers[i]) && routerMap[routers[i]._id] && routerMap[routers[i]._id].length === 1) {
-      // merge the pageProcessors of deleting router to its incoming branch
-      routerMap[routers[i]._id][0].pageProcessors = [...routerMap[routers[i]._id][0].pageProcessors, ...routers[i].branches[0].pageProcessors];
-      // assign the router's nextRouterId to incoming branch
-      routerMap[routers[i]._id][0]._nextRouterId = routers[i].branches[0]._nextRouterId;
-      // and delete the router
-      routers.splice(i, 1);
-    }
-  }
 };
 
 const hydrateNodeData = (resourcesState, node) => {
@@ -138,7 +123,7 @@ export const generateNodesAndEdgesFromBranchedFlow = (resourceState, flow) => {
         if (branch.pageProcessors.length) {
           // draw an edge from router to first step of branch
           const pageProcessorNodes = generatePageProcessorNodesAndEdges(resourceState, branch.pageProcessors, {branch, branchIndex, routerIndex});
-          const branchStartEdge = generateDefaultEdge(router._id, branch.pageProcessors[0].id);
+          const branchStartEdge = generateDefaultEdge(router._id, branch.pageProcessors[0].id, {routerIndex, branchIndex});
 
           elements.push(branchStartEdge);
           if (branch._nextRouterId) {
@@ -151,7 +136,7 @@ export const generateNodesAndEdgesFromBranchedFlow = (resourceState, flow) => {
             const terminalNode = generateNewTerminal({branch, branchIndex, routerIndex});
 
             elements.push(terminalNode);
-            const terminalEdge = generateDefaultEdge(branch.pageProcessors[branch.pageProcessors.length - 1].id, terminalNode.id);
+            const terminalEdge = generateDefaultEdge(branch.pageProcessors[branch.pageProcessors.length - 1].id, terminalNode.id, {routerIndex, branchIndex});
 
             elements.push(terminalEdge);
           }
@@ -160,7 +145,7 @@ export const generateNodesAndEdgesFromBranchedFlow = (resourceState, flow) => {
         // its an empty branch without any steps
         if (branch._nextRouterId) {
           // join the router to the next router
-          elements.push(generateDefaultEdge(router._id, branch._nextRouterId));
+          elements.push(generateDefaultEdge(router._id, branch._nextRouterId, {routerIndex, branchIndex}));
           if (branch._nextRouterId !== router._id) {
             // Safe check, branch should not point to its own router, causes a loop
             populateRouterElements(routers.find(r => r._id === branch._nextRouterId));
@@ -170,7 +155,7 @@ export const generateNodesAndEdgesFromBranchedFlow = (resourceState, flow) => {
           const terminalNode = generateNewTerminal({branch, branchIndex, routerIndex});
 
           elements.push(terminalNode);
-          const terminalEdge = generateDefaultEdge(router._id, terminalNode.id);
+          const terminalEdge = generateDefaultEdge(router._id, terminalNode.id, {routerIndex, branchIndex});
 
           elements.push(terminalEdge);
         }
