@@ -1,12 +1,12 @@
 /* global expect, describe, test */
 
-import { DRAWER_URL_PREFIX, buildDrawerUrl } from '.';
+import { DRAWER_URL_PREFIX, buildDrawerUrl, drawerPaths } from '.';
 
 describe('buildDrawerUrl testcases', () => {
   const baseUrl = 'http://localhost.io:4000/integrations';
 
   test('should give expected drawer URL for the passed props', () => {
-    const drawerPath = 'errors/:resourceId/filter/:flowJobId/:errorType';
+    const drawerPath = drawerPaths.ERROR_MANAGEMENT.V2.JOB_ERROR_DETAILS;
     const params = {
       resourceId: 'e1',
       flowJobId: 'f1',

@@ -1,3 +1,5 @@
+import cloneDeep from 'lodash/cloneDeep';
+
 const DRAWER_URL_REFS = {
   SUBSCRIPTION: ':env/:type',
   INSTALL_INTEGRATION: 'installIntegration',
@@ -70,7 +72,23 @@ const DRAWER_URL_REFS = {
   VIEW_REVISION_ERROR_INFO: 'error/:errorId',
 };
 
-export const drawerPaths = {
+export const DRAWER_URL_PREFIX = 'ui-drawer';
+
+function drawerUrlPrefixedPaths(paths) {
+  const prefixedPaths = cloneDeep(paths);
+
+  Object.keys(prefixedPaths).forEach(path => {
+    if (typeof prefixedPaths[path] === 'object') {
+      prefixedPaths[path] = drawerUrlPrefixedPaths(prefixedPaths[path]);
+    } else {
+      prefixedPaths[path] = `${DRAWER_URL_PREFIX}/${prefixedPaths[path]}`;
+    }
+  });
+
+  return prefixedPaths;
+}
+
+export const drawerPaths = drawerUrlPrefixedPaths({
   MAPPINGS: {
     SUB_RECORD: 'mapping/:flowId/:importId/:subRecordMappingId/view',
     IMPORT: {
@@ -171,9 +189,7 @@ export const drawerPaths = {
   SHARE_STACKS: 'share/stacks/:stackId',
   EDITOR: 'editor/:editorId',
   DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId',
-};
-
-export const DRAWER_URL_PREFIX = 'ui-drawer';
+});
 
 function constructDrawerUrls() {
   const urlMap = {};
@@ -216,5 +232,5 @@ export const buildDrawerUrl = ({ path, baseUrl = '', params = {} }) => {
 
   const drawerPath = Object.keys(params).reduce((url, param) => url.replace(`:${param}`, params[param]), path);
 
-  return `${baseUrl}/${DRAWER_URL_PREFIX}/${drawerPath}`;
+  return `${baseUrl}/${drawerPath}`;
 };
