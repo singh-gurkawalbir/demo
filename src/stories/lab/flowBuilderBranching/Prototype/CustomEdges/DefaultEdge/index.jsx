@@ -1,20 +1,24 @@
 import React, {useMemo} from 'react';
 import { getSmoothStepPath } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
-import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles, isDragNodeOnSameBranch } from '../lib';
-import { useFlowContext } from '../Context';
-import AddNewButton from './AddNewButton';
-import UnlinkButton from './UnlinkButton';
-import ForeignObject from './ForeignObject';
-import DiamondIcon from '../icons/DiamondIcon';
-import actions from '../reducer/actions';
+import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles, isDragNodeOnSameBranch } from '../../lib';
+import { useFlowContext } from '../../Context';
+import AddNewButton from '../AddNewButton';
+import UnlinkButton from '../UnlinkButton';
+import ForeignObject from '../ForeignObject';
+import DiamondIcon from '../../icons/DiamondIcon';
+import actions from '../../reducer/actions';
 
 const useStyles = makeStyles(theme => ({
   edgePath: {
+    pointerEvents: 'all',
     strokeDasharray: 4,
     strokeWidth: 2,
     stroke: theme.palette.secondary.lightest, // celigo neutral 3
-    fill: 'none',
+    fill: 'transparent',
+    '&:hover': { // temporary rule to help trace overlapping paths.
+      stroke: theme.palette.primary.lightest,
+    },
   },
 }));
 
@@ -37,10 +41,11 @@ export default function DefaultEdge({
   const isConnectedToMerge = targetType === 'merge' || sourceType === 'merge';
   const isConnectedToGenerator = sourceType === 'pg';
   const isTargetMerge = targetType === 'merge';
-  const isSource = sourceType === 'pg';
+  const isSourceRouter = sourceType === 'router';
+  const isSourceGenerator = sourceType === 'pg';
   const isTerminal = targetType.includes('terminal');
-  const showLinkIcon = hasSiblingEdges && !isSource;
-  const showAddIcon = !isSource;
+  const showLinkIcon = hasSiblingEdges && !isSourceGenerator;
+  const showAddIcon = !isSourceGenerator;
   const isDragNodeAndEdgeOnSameBranch = isDragNodeOnSameBranch(dragNodeId, id, elementsMap);
 
   const isMergableEdge = !isTerminal && !isDragNodeAndEdgeOnSameBranch && !isConnectedToMerge && !isConnectedToGenerator;
@@ -100,20 +105,26 @@ export default function DefaultEdge({
     points.forEach((p, i) => {
       if (i === 0) {
         path = `M${points[0].x},${points[0].y} `;
-      } else
-      // for the last point (that defines an edge), we want to draw the vertical line first so that
-      // a node always connects to a horizontal line since our diagram is L-> R,
-      // while all other points should translate to horizontal first (leaving a node)
+      } else if (i === 1 && isSourceRouter) { // first line
+        // When the source is a router, we want to draw the lines vertically first to branch off
+        // the edges asap. Not only for better looks, but also this prevents unwanted overlapping
+        // edges in some use-cases.
+        drawLine(p, 'y');
+        drawLine(p, 'x');
+      } else if (i === points.length - 1 && !isTargetMerge) { // last point
+        // for the last point (that defines an edge), we want to draw the vertical line first so that
+        // a node always connects to a horizontal line since our diagram is L-> R,
+        // while all other points should translate to horizontal first (leaving a node)
 
-      // the problem with the above logic is with dotted lines. If the lines are
-      // not all the same length, then the overlapping edges for a merge node will
-      // render the dashes at different offsets and appear as a solid line. Not
-      // sure how to fix this.
+        // the problem with the above logic is with dotted lines. If the lines are
+        // not all the same length, then the overlapping edges for a merge node will
+        // render the dashes at different offsets and appear as a solid line. Not
+        // sure how to fix this.
 
-      // Also note that if an edge's target is a merge node, then we always want to render
-      // the x line first, as we don't want overlapping lines when multiple edges share the
-      // same final y position.
-      if (i === points.length - 1 && !isTargetMerge) { // last point
+        // Also note that if an edge's target is a merge node, then we always want to render
+        // the x line first, as we don't want overlapping lines when multiple edges share the
+        // same final y position.
+
         drawLine(p, 'y');
         drawLine(p, 'x');
       } else {
