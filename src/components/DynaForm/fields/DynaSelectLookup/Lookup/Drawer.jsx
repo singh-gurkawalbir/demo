@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import Lookup from '.';
 import RightDrawer from '../../../../drawer/Right';
 import DrawerHeader from '../../../../drawer/Right/DrawerHeader';
-import { DRAWER_URLS } from '../../../../../utils/rightDrawer';
+import { drawerPaths } from '../../../../../utils/rightDrawer';
 
 export default function LookupDrawer(props) {
   const history = useHistory();
@@ -12,7 +12,7 @@ export default function LookupDrawer(props) {
 
   return (
     <RightDrawer
-      path={DRAWER_URLS.ADD_EDIT_LOOKUP}
+      path={[drawerPaths.LOOKUPS.ADD, drawerPaths.LOOKUPS.EDIT]}
       height="tall"
       width="default">
       <DrawerHeader title={`${isEdit ? 'Edit' : 'Create'} lookup`} />

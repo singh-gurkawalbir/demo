@@ -21,7 +21,7 @@ import { OutlinedButton, TextButton } from '../../Buttons';
 import { LOOKUP_DRAWER_FORM_KEY } from '../../../utils/constants';
 import { hashCode } from '../../../utils/string';
 import useFormOnCancelContext from '../../FormOnCancelContext';
-import { DRAWER_URLS } from '../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   listing: {
@@ -67,8 +67,11 @@ export default function LookupDrawer({
   // index of the currently selected lookup
   const [lookupIndex, setLookupIndex] = useState(0);
 
-  const fullPath = `${match.url}/${DRAWER_URLS.LOOKUP}`;
-  const { isExact } = matchPath(location.pathname, fullPath) || {};
+  const addLookupPath = buildDrawerUrl({ path: drawerPaths.LOOKUP.ADD, baseUrl: match.url });
+  const editLookupPath = buildDrawerUrl({ path: drawerPaths.LOOKUP.EDIT, baseUrl: match.url });
+  const rootLookupPath = buildDrawerUrl({ path: drawerPaths.LOOKUP.ROOT, baseUrl: match.url});
+
+  const { isExact } = matchPath(location.pathname, rootLookupPath) || {};
 
   let drawerTitle;
 
@@ -96,15 +99,15 @@ export default function LookupDrawer({
   const handleEdit = useCallback(index => () => {
     // set the lookupIndex to currently selected lookup
     setLookupIndex(index);
-    history.push(`${location.pathname}/edit`);
-  }, [history, location.pathname]);
+    history.push(editLookupPath);
+  }, [history, editLookupPath]);
 
   const handleAdd = useCallback(() => {
     setError();
     // set the lookupIndex to add new lookup to value array at the end
     setLookupIndex(value.length);
-    history.push(`${location.pathname}/add`);
-  }, [history, location.pathname, value]);
+    history.push(addLookupPath);
+  }, [history, addLookupPath, value]);
 
   const handleSubmit = useCallback(
     (isEdit, val, shouldClose) => {
@@ -148,14 +151,15 @@ export default function LookupDrawer({
 
   return (
     <RightDrawer
-      path={DRAWER_URLS.LOOKUP}
+      path={drawerPaths.LOOKUP.ROOT}
       height="tall"
       width="default"
       onClose={history.goBack}>
       <DrawerHeader title={drawerTitle} handleClose={handleClose} showBackButton />
       <DrawerContent>
         <Switch>
-          <Route path={[`${match.url}/${DRAWER_URLS.LOOKUP}/add`, `${match.url}/${DRAWER_URLS.LOOKUP}/edit`]}>
+          <Route
+            path={[addLookupPath, editLookupPath]}>
             <AddEditLookup
               value={selectedLookup}
               error={error}
@@ -168,7 +172,7 @@ export default function LookupDrawer({
               remountCount={remountCount}
             />
           </Route>
-          <Route path={`${match.url}/${DRAWER_URLS.LOOKUP}`}>
+          <Route path={rootLookupPath}>
             <>
               <TextButton
                 className={classes.actionButton}

@@ -167,9 +167,15 @@ export const drawerPaths = {
     ADD: 'flowgroups/add',
     EDIT: 'flowgroups/edit',
   },
-  LOOKUP: 'lookup',
-  ADD_LOOKUP: 'lookups/add',
-  EDIT_LOOKUP: 'lookups/edit/:lookupName',
+  LOOKUP: {
+    ROOT: 'lookup',
+    ADD: 'lookup/add',
+    EDIT: 'lookup/edit',
+  },
+  LOOKUPS: {
+    ADD: 'lookups/add',
+    EDIT: 'lookups/edit/:lookupName',
+  },
   SHARE_STACKS: 'share/stacks/:stackId', // done
   EDITOR: 'editor/:editorId',
   DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId', // done
