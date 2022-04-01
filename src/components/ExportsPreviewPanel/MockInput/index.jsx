@@ -15,6 +15,8 @@ import CodePanel from '../../AFE/Editor/panels/Code';
 import { unwrapExportFileSampleData, wrapExportFileSampleData } from '../../../utils/sampleData';
 import Spinner from '../../Spinner';
 import { safeParse } from '../../../utils/string';
+import FieldMessage from '../../DynaForm/fields/FieldMessage';
+import PanelTitle from '../../AFE/Editor/gridItems/PanelTitle';
 
 const useStyles = makeStyles(theme => ({
   helpTextButton: {
@@ -36,7 +38,7 @@ function RouterWrappedContent(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [mockData, setMockData] = useState();
-  const [error, setError] = useState(false);
+  const [error, setError] = useState();
   const resourceSampleDataStatus = useSelector(state =>
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'preview').status,
   );
@@ -57,16 +59,21 @@ function RouterWrappedContent(props) {
 
   const handleChange = newValue => {
     setMockData(newValue);
-    const parsedMockData = unwrapExportFileSampleData(safeParse(newValue));
+    const parsedMockData = safeParse(newValue);
+    const unwrappedMockData = unwrapExportFileSampleData(parsedMockData);
 
-    if (!parsedMockData) {
-      // throw some error for invalid json and data not being in the correct format
-      setError(true);
+    if (!parsedMockData || !unwrappedMockData) {
+      // throw error for invalid json and data not being in the connonical format
+      if (!parsedMockData) {
+        setError('Mock input must be valid JSON');
+      } else {
+        setError('Mock input must contain page_of_records');
+      }
 
       return;
     }
-    setError(false);
-    dispatch(actions.resourceFormSampleData.setMockData(resourceId, parsedMockData));
+    setError(undefined);
+    dispatch(actions.resourceFormSampleData.setMockData(resourceId, unwrappedMockData));
   };
 
   const value = mockData || wrapExportFileSampleData(resourceMockData) || (resourceSampleDataStatus !== 'error' && wrapExportFileSampleData(previewStageDataList?.preview?.data));
@@ -80,15 +87,17 @@ function RouterWrappedContent(props) {
         <Spinner centerAll />
         )}
         { showEditor && (
-          <CodePanel
-            name="data"
-            mode="json"
-            value={value}
-            onChange={handleChange}
-            hasError={error}
-          />
+          <>
+            <PanelTitle title="Input" />
+            <CodePanel
+              name="data"
+              mode="json"
+              value={value}
+              onChange={handleChange} />
+          </>
         )}
       </DrawerContent>
+      <FieldMessage errorMessages={error} />
       <DrawerFooter>
         <FilledButton
           data-test="saveandcloseinputdata"
