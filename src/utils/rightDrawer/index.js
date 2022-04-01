@@ -163,16 +163,16 @@ export const drawerPaths = {
     ADD: 'subrecords',
     EDIT: 'subrecords/:fieldId',
   },
-  FLOW_GROUP: {
+  FLOW_GROUP: { // done
     ADD: 'flowgroups/add',
     EDIT: 'flowgroups/edit',
   },
-  LOOKUP: {
+  LOOKUP: { // done
     ROOT: 'lookup',
     ADD: 'lookup/add',
     EDIT: 'lookup/edit',
   },
-  LOOKUPS: {
+  LOOKUPS: { // done
     ADD: 'lookups/add',
     EDIT: 'lookups/edit/:lookupName',
   },

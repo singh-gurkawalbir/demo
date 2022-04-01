@@ -17,7 +17,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { emptyList, emptyObject, FORM_SAVE_STATUS, FLOW_GROUP_FORM_KEY } from '../../../utils/constants';
 import { getFlowGroup } from '../../../utils/flows';
 import getRoutePath from '../../../utils/routePaths';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit, flowGroupId) => ({
   fieldMap: {
@@ -91,9 +91,12 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
     // if the create flow group form is saved
     // we will open the edit flow group form of the newly created flow group
     if (!isEdit) {
-      history.replace(
-        getRoutePath(`/integrations/${integrationId}/flows/sections/${newGroupId}/${DRAWER_URL_PREFIX}/flowgroups/edit`)
-      );
+      const newPathWithCreatedFlowGroup = getRoutePath(`integrations/${integrationId}/flows/sections/${newGroupId}`);
+
+      history.replace(buildDrawerUrl({
+        path: drawerPaths.FLOW_GROUP.EDIT,
+        baseUrl: newPathWithCreatedFlowGroup,
+      }));
     }
   }, [history, isFormSaveTriggered, asyncTaskStatus, integrationId, newGroupId, isEdit]);
 
@@ -137,7 +140,7 @@ export default function FlowgroupDrawer({ integrationId }) {
     <RightDrawer
       height="tall"
       width="medium"
-      path={DRAWER_URLS.FLOW_GROUP_ADD_EDIT}
+      path={[drawerPaths.FLOW_GROUP.ADD, drawerPaths.FLOW_GROUP.EDIT]}
     >
       <DrawerHeader
         title={`${isEdit ? 'Edit' : 'Create'} flow group`}
