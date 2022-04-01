@@ -4,63 +4,10 @@ import keyBy from 'lodash/keyBy';
 import { createSelector } from 'reselect';
 import actions from './actions';
 import { emptyList, emptyObject } from '../../../../../utils/constants';
-import { generateEmptyRouter, generateBranch, isVirtualRouter } from '../nodeGeneration';
+import { generateEmptyRouter, generateBranch } from '../nodeGeneration';
 import { generateReactFlowGraph, initialiseFlowForReactFlow } from '../translateSchema';
 import { BranchPathRegex, generateId, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../lib';
 
-const getRouterMap = routers => {
-  const routerMap = {};
-
-  routers.forEach(({branches = []}, routerIndex) => {
-    branches.forEach((branch, branchIndex) => {
-      const { _nextRouterId } = branch;
-
-      if (_nextRouterId) {
-        // set all incoming branches for all routers
-        routerMap[_nextRouterId] = routerMap[_nextRouterId]
-          ? [...routerMap[_nextRouterId], { branch, routerIndex, branchIndex }]
-          : [{ branch, routerIndex, branchIndex }];
-      }
-    });
-  });
-
-  return routerMap;
-};
-
-const deleteUnnecessaryMergeNodes = (draft, {_id, routers = []} = {}) => {
-  const { session } = draft;
-  const { staged } = session;
-  const flowId = _id;
-  const routerMap = getRouterMap(routers);
-
-  if (!staged[flowId]) {
-    staged[flowId] = {patch: []};
-  }
-  routers.forEach((router = {}) => {
-    if (isVirtualRouter(router) && routerMap[router._id] && routerMap[router._id].length === 1) {
-      const { routerIndex, branchIndex } = routerMap[router._id];
-      const pageProcessors = [
-        ...routers[routerIndex].branches[branchIndex].pageProcessors,
-        ...router.branches[0].pageProcessors,
-      ];
-
-      staged[flowId].patch.push({
-        op: 'replace',
-        path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors`,
-        value: pageProcessors,
-      });
-      staged[flowId].patch.push({
-        op: 'replace',
-        path: `/routers/${routerIndex}/branches/${branchIndex}/_nextRouterId`,
-        value: router.branches[0]._nextRouterId,
-      });
-      staged[flowId].patch.push({
-        op: 'remove',
-        path: `/routers/${routerIndex}`,
-      });
-    }
-  });
-};
 const addNewStep = (draft, action) => {
   const { path, resourceType, flowNode, resourceNode, flowId } = action;
 
@@ -455,7 +402,6 @@ export default function (state, action) {
       }
 
       case actions.SET_GRAPH_ELEMENTS: {
-        deleteUnnecessaryMergeNodes(draft, action.flow);
         draft.session.fb.elements = generateReactFlowGraph(draft.data.resources, action.flow);
         draft.session.fb.elementsMap = keyBy(draft.session.fb.elements || [], 'id');
         draft.session.fb.flow = action.flow;

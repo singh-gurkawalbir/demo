@@ -4,7 +4,6 @@ import { generateNewTerminal, generateRouterNode } from '../nodeGeneration';
 
 export const initialiseFlowForReactFlow = flow => {
   if (!flow) return flow;
-  const routerMap = {};
   const { pageGenerators = [], pageProcessors = [], routers = [] } = flow;
 
   pageGenerators.forEach(pg => {
@@ -15,12 +14,8 @@ export const initialiseFlowForReactFlow = flow => {
   });
   routers.forEach(({branches = []}) => {
     branches.forEach(branch => {
-      const {pageProcessors = [], _nextRouterId} = branch;
+      const {pageProcessors = []} = branch;
 
-      if (_nextRouterId) {
-        // set all incoming branches for all routers
-        routerMap[_nextRouterId] = routerMap[_nextRouterId] ? [...routerMap[_nextRouterId], branch] : [branch];
-      }
       pageProcessors.forEach(pp => {
         pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${generateId()}`;
       });
