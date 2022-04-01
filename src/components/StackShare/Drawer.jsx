@@ -10,7 +10,7 @@ import DrawerContent from '../drawer/Right/DrawerContent';
 import InviteUser from './InviteUser';
 import SharedUserList from './SharedUserList';
 import { TextButton } from '../Buttons';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../utils/drawerURLs';
+import { drawerPaths, buildDrawerUrl } from '../../utils/drawerURLs';
 
 export default function StackShareDrawer() {
   const dispatch = useDispatch();
@@ -21,14 +21,17 @@ export default function StackShareDrawer() {
     [dispatch]
   );
   const handleInviteClick = useCallback(() => {
-    history.push(`${history.location.pathname}/${DRAWER_URL_PREFIX}/invite`);
-  }, [history]);
+    history.push(`${buildDrawerUrl({
+      path: drawerPaths.ACCOUNT.INVITE_USER,
+      baseUrl: `${match.url}/${drawerPaths.SHARE_STACKS}`,
+    })}`);
+  }, [history, match.url]);
 
   const isInviteUser = history.location.pathname.includes('/invite');
 
   return (
     <RightDrawer
-      path={DRAWER_URLS.SHARE_STACKS}
+      path={drawerPaths.SHARE_STACKS}
       height="tall"
       width="large"
       helpKey={!isInviteUser && 'stack.sharing'}
@@ -55,10 +58,10 @@ export default function StackShareDrawer() {
       </DrawerHeader>
 
       <Switch>
-        <Route path={`${match.url}/${DRAWER_URLS.SHARE_STACKS}/${DRAWER_URL_PREFIX}/invite`}>
+        <Route path={`${match.url}/${drawerPaths.SHARE_STACKS}/${drawerPaths.ACCOUNT.INVITE_USER}`}>
           <InviteUser />
         </Route>
-        <Route path={`${match.url}/${DRAWER_URLS.SHARE_STACKS}`}>
+        <Route path={`${match.url}/${drawerPaths.SHARE_STACKS}`}>
           <DrawerContent>
             <SharedUserList />
           </DrawerContent>
