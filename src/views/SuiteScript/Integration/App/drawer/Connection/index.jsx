@@ -135,6 +135,7 @@ export default function ConnectionDrawer({
   return (
     <>
       <RightDrawer
+        isSuitescript
         path="setConnection"
         height="tall"
         width="medium"
