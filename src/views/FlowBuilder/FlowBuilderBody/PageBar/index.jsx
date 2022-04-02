@@ -18,7 +18,7 @@ import RunFlowButton from '../../../../components/RunFlowButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import { emptyObject } from '../../../../utils/constants';
-import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import useBottomDrawer from '../../drawers/BottomDrawer/useBottomDrawer';
 import { isNewFlowFn, useHandleExitClick, usePatchFlow, usePushOrReplaceHistory } from '../../hooks';
 import LastRun from '../../LastRun';
@@ -170,7 +170,7 @@ const PageBarChildren = ({integrationId, flowId}) => {
 
   const handleDrawerOpen = useCallback(
     path => {
-      pushOrReplaceHistory(`${match.url}/${path}`);
+      pushOrReplaceHistory(buildDrawerUrl({ path, baseUrl: match.url }));
     },
     [match.url, pushOrReplaceHistory]
   );
@@ -217,14 +217,14 @@ const PageBarChildren = ({integrationId, flowId}) => {
           tooltipProps={tooltipSchedule}
           disabled={isNewFlow}
           data-test="scheduleFlow"
-          onClick={handleDrawerClick(`${DRAWER_URL_PREFIX}/schedule`)}>
+          onClick={handleDrawerClick(drawerPaths.FLOW_BUILDER.SCHEDULE)}>
           <CalendarIcon />
         </IconButtonWithTooltip>
       )}
       <IconButtonWithTooltip
         tooltipProps={tooltipSettings}
         disabled={isNewFlow}
-        onClick={handleDrawerClick(`${DRAWER_URL_PREFIX}/settings`)}
+        onClick={handleDrawerClick(drawerPaths.FLOW_BUILDER.SETTINGS)}
         data-test="flowSettings">
         <SettingsIcon />
       </IconButtonWithTooltip>

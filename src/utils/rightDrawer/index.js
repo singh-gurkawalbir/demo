@@ -121,7 +121,7 @@ export const drawerPaths = {
     FORM_STEP: 'form/:formType',
     CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId',
   },
-  FLOW_BUILDER: {
+  FLOW_BUILDER: { // done
     RUN_HISTORY: ':flowId/runHistory',
     HOOKS: 'hooks/:resourceType/:resourceId',
     ANALYTICS: 'charts',

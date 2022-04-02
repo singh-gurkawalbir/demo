@@ -7,7 +7,7 @@ import NameCell from '../../commonCells/Name';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
-import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
+import { DRAWER_URL_PREFIX, drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 import actions from '../../../../actions';
 import {FILTER_KEYS_AD, getTimeString, getDashboardIntegrationId} from '../../../../utils/accountDashboard';
 import Status from '../../../Buttons/Status';
@@ -113,9 +113,19 @@ export default {
           const {rowData: r} = props;
 
           const match = useRouteMatch();
+          const runHistoryPath = buildDrawerUrl({
+            path: drawerPaths.FLOW_BUILDER.RUN_HISTORY,
+            baseUrl: match.url,
+            params: { flowId: r._flowId },
+          });
 
-          return (r.numRuns && (<Link data-test="account-dashboard-run-history" to={`${match.url}/${DRAWER_URL_PREFIX}/${r._flowId}/runHistory`}>{r.numRuns} </Link>)
-          );
+          return (r.numRuns && (
+            <Link
+              data-test="account-dashboard-run-history"
+              to={runHistoryPath}>
+              {r.numRuns}
+            </Link>
+          ));
         },
       },
       {

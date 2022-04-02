@@ -4,7 +4,7 @@ import { Chip } from '@material-ui/core';
 import CalendarIcon from '../../../../icons/CalendarIcon';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
-import { DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 export default function ScheduleCell({flowId, name, actionProps}) {
   const history = useHistory();
@@ -29,7 +29,11 @@ export default function ScheduleCell({flowId, name, actionProps}) {
         component={Link}
         data-test={`flowSchedule-${name}`}
         // TODO @Raghu: Why are we using location.pathname? Doesn't match.url help like we do at other places?
-        to={`${history.location.pathname}/${DRAWER_URL_PREFIX}/${flowId}/schedule`}>
+        to={buildDrawerUrl({
+          path: drawerPaths.FLOW_BUILDER.FLOW_SCHEDULE,
+          baseUrl: history.location.pathname,
+          params: { flowId },
+        })}>
         <CalendarIcon color="secondary" />
       </IconButtonWithTooltip>
     </RemoveMargin>

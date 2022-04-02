@@ -20,7 +20,7 @@ import CalendarIcon from '../icons/CalendarIcon';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import { getTemplateUrlName } from '../../utils/template';
 import getRoutePath from '../../utils/routePaths';
-import { DRAWER_URL_PREFIX } from '../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths, DRAWER_URL_PREFIX } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -139,17 +139,20 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
         case 'schedule':
           // TODO @Raghu: How to reproduce these URL redirections?
           if (flowDetails._connectorId) {
-            history.push(
-              getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/${DRAWER_URL_PREFIX}/schedule`)
-            );
+            history.push(buildDrawerUrl({
+              path: drawerPaths.FLOW_BUILDER.SCHEDULE,
+              baseUrl: getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}`),
+            }));
           } else if (templateName) {
-            history.push(
-              getRoutePath(`/templates/${templateName}/${integrationId}/flowBuilder/${flowId}/${DRAWER_URL_PREFIX}/schedule`)
-            );
+            history.push(buildDrawerUrl({
+              path: drawerPaths.FLOW_BUILDER.SCHEDULE,
+              baseUrl: getRoutePath(`/templates/${templateName}/${integrationId}/flowBuilder/${flowId}`),
+            }));
           } else {
-            history.push(
-              getRoutePath(`/integrations/${integrationId}/flowBuilder/${flowId}/${DRAWER_URL_PREFIX}/schedule`)
-            );
+            history.push(buildDrawerUrl({
+              path: drawerPaths.FLOW_BUILDER.SCHEDULE,
+              baseUrl: getRoutePath(`/integrations/${integrationId}/flowBuilder/${flowId}`),
+            }));
           }
 
           break;
