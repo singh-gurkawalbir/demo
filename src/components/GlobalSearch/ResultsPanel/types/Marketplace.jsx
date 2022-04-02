@@ -4,8 +4,9 @@ import { useHistory } from 'react-router-dom';
 import DownArrowIcon from '../../../icons/ArrowDownIcon';
 import FilledButton from '../../../Buttons/FilledButton';
 import useRequestForDemo from '../../../../hooks/useRequestForDemo';
-import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { useGlobalSearchState } from '../../GlobalSearchContext/createGlobalSearchState';
+import getRoutePath from '../../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   rootExpanded: {
@@ -42,7 +43,11 @@ function MarketPlaceRow({type, result, includeDivider}) {
   const handleClick = useCallback(e => {
     e?.stopPropagation();
     if (type === 'marketplaceTemplates') {
-      const url = `/marketplace/${result?.applications?.[0]}/${DRAWER_URL_PREFIX}/installTemplate/preview/${result?._id}`;
+      const url = buildDrawerUrl({
+        path: drawerPaths.INSTALL.TEMPLATE_PREVIEW,
+        baseUrl: getRoutePath(`marketplace/${result?.applications?.[0]}`),
+        params: { templateId: result?._id },
+      });
 
       setOpen(false);
       history.push(url);

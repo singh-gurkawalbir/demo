@@ -13,7 +13,7 @@ import ResourceDrawer from '../../drawer/Resource';
 import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from '../../drawer/Resource/Panel/ResourceFormActionsPanel';
 import { isNewId, getConnectionType } from '../../../utils/resource';
-import { DRAWER_URLS } from '../../../utils/rightDrawer';
+import { drawerPaths } from '../../../utils/rightDrawer';
 import resourceConstants from '../../../forms/constants/connection';
 import EditorDrawer from '../../AFE/Drawer';
 
@@ -202,7 +202,7 @@ export default function ResourceSetupDrawer(props) {
   const match = useRouteMatch();
 
   return (
-    <RightDrawer path={DRAWER_URLS.CONFIGURE_RESOURCE_SETUP} height="tall">
+    <RightDrawer path={drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP} height="tall">
       <ResourceSetupDrawerContent {...props} parentUrl={match.url} />
       <EditorDrawer />
     </RightDrawer>

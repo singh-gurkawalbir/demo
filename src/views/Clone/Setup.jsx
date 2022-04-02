@@ -26,7 +26,7 @@ import { SCOPES } from '../../sagas/resourceForm';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
 import { getApplication } from '../../utils/template';
-import { DRAWER_URL_PREFIX } from '../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -158,8 +158,11 @@ export default function Clone() {
         )
       );
       setSelectedConnectionId({ newId, doc: connectionMap[_connectionId] });
-      history.push(`${match.url}/${DRAWER_URL_PREFIX}/configure/connections/${newId}`);
-
+      history.push(buildDrawerUrl({
+        path: drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP,
+        baseUrl: match.url,
+        params: { resourceType: 'connections', resourceId: newId },
+      }));
       // handle Installation step click
     } else if (type === INSTALL_STEP_TYPES.INSTALL_PACKAGE) {
       if (!step.isTriggered) {
@@ -201,7 +204,11 @@ export default function Clone() {
     } else if (type === INSTALL_STEP_TYPES.STACK) {
       const newStackId = generateNewId();
 
-      history.push(`${match.url}/${DRAWER_URL_PREFIX}/configure/stacks/${newStackId}`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP,
+        baseUrl: match.url,
+        params: { resourceType: 'stacks', resourceId: newStackId },
+      }));
     }
   };
 

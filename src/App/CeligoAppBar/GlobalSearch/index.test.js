@@ -7,8 +7,9 @@ import { isEmpty } from 'lodash';
 import { mockGetRequestOnce, mockPostRequestOnce, renderWithProviders} from '../../../test/test-utils';
 import GlobalSearch from '.';
 import actions from '../../../actions';
-import { DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths, DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
 import { runServer } from '../../../test/api/server';
+import getRoutePath from '../../../utils/routePaths';
 
 async function initGlobalSearch(ui = (<MemoryRouter><GlobalSearch /></MemoryRouter>)) {
   const { store, utils } = renderWithProviders(ui);
@@ -527,7 +528,11 @@ describe('Globalsearch feature tests', () => {
     await initGlobalSearch(
       <MemoryRouter>
         <Switch>
-          <Route path={`/marketplace/:application/${DRAWER_URL_PREFIX}/installTemplate/preview/:templateId`}>
+          <Route
+            path={buildDrawerUrl({
+              path: drawerPaths.INSTALL.TEMPLATE_PREVIEW,
+              baseUrl: getRoutePath('marketplace/:application'),
+            })}>
             <Preview />
           </Route>
           <Route exact path="/">

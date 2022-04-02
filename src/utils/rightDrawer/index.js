@@ -115,9 +115,10 @@ export const drawerPaths = {
     VIEW_REVISION_DETAILS: 'view/:revisionId/mode/:mode',
     VIEW_REVISION_ERROR_INFO: 'error/:errorId',
   },
-  INSTALL: {
+  INSTALL: { // done
     INTEGRATION: 'installIntegration',
-    TEMPLATE: 'installTemplate/preview/:templateId',
+    INTEGRATION_PREVIEW: 'preview/:templateId',
+    TEMPLATE_PREVIEW: 'installTemplate/preview/:templateId',
     FORM_STEP: 'form/:formType',
     CONFIGURE_RESOURCE_SETUP: 'configure/:resourceType/:resourceId',
   },

@@ -4,7 +4,7 @@ import RightDrawer from '../../Right';
 import DrawerHeader from '../../Right/DrawerHeader';
 import DrawerContent from '../../Right/DrawerContent';
 import Preview from './Preview';
-import { DRAWER_URLS } from '../../../../utils/rightDrawer';
+import { drawerPaths } from '../../../../utils/rightDrawer';
 
 export default function InstallTemplateDrawer() {
   const match = useRouteMatch();
@@ -16,7 +16,7 @@ export default function InstallTemplateDrawer() {
   return (
     <RightDrawer
       onClose={handleClose}
-      path={DRAWER_URLS.INSTALL_TEMPLATE}
+      path={drawerPaths.INSTALL.TEMPLATE_PREVIEW}
       height="tall"
       width="large">
       <DrawerHeader title="Install template" />
