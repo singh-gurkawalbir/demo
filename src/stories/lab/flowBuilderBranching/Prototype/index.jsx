@@ -60,7 +60,7 @@ export default ({resourceState}) => {
   [elements]);
 
   useEffect(() => {
-    setState({type: actions.SET_GRAPH_ELEMENTS, flow: mergedFlow});
+    setState({type: actions.INIT_FLOW_GRAPH, flow: mergedFlow});
   }, [mergedFlow]);
 
   const handleNodeDragStart = (evt, source) => {
