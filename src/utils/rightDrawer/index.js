@@ -95,7 +95,7 @@ export const drawerPaths = {
       EDIT: 'conditionalLookup/edit/:lookupName',
     },
   },
-  ACCOUNT: {
+  ACCOUNT: { // done
     VIEW_REPORT_DETAILS: 'view/reportDetails/:reportId',
     SUBSCRIPTION: ':env/:type',
     UPGRADE: 'upgrade',

@@ -4,7 +4,7 @@ import { LinearProgress, Typography} from '@material-ui/core';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import { TextButton } from '../../../components/Buttons';
-import { DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   featureText: {
@@ -47,7 +47,11 @@ export default function ProgressBar({ usedCount, totalCount, env, type, setTitle
   };
   const onButtonClick = useCallback(
     () => {
-      history.replace(`${match.url}/${DRAWER_URL_PREFIX}/${env}/${type}`);
+      history.replace(buildDrawerUrl({
+        path: drawerPaths.ACCOUNT.SUBSCRIPTION,
+        baseUrl: match.url,
+        params: { env, type },
+      }));
       setTitle(type);
     }, [history, match, env, type, setTitle]);
 
