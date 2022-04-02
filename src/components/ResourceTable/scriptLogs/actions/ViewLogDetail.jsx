@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
-import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 export default {
   key: 'viewLogDetail',
@@ -13,11 +13,11 @@ export default {
     const history = useHistory();
 
     return useCallback(() => {
-      const detailPath = flowId ? `/scriptLog/${scriptId}/${flowId}/${index}` : `/scriptLog/${scriptId}/${index}`;
-
-      history.push(
-        `${location.pathname}/${DRAWER_URL_PREFIX}${detailPath}`
-      );
+      history.push(buildDrawerUrl({
+        path: flowId ? drawerPaths.LOGS.FLOW_SCRIPT_DETAIL : drawerPaths.LOGS.SCRIPT_DETAIL,
+        baseUrl: location.pathname,
+        params: { scriptId, index, flowId },
+      }));
     }, [flowId, history, index, location.pathname, scriptId]);
   },
 };

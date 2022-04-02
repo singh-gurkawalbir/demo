@@ -145,7 +145,7 @@ export const drawerPaths = {
       FLOW_ERROR_LIST: ':flowId/errorsList',
     },
   },
-  LOGS: {
+  LOGS: { // done
     SCRIPT: 'viewLogs/:scriptId',
     FLOW_SCRIPT_DETAIL: 'scriptLog/:scriptId/:flowId/:index',
     SCRIPT_DETAIL: 'scriptLog/:scriptId/:index',
@@ -155,7 +155,7 @@ export const drawerPaths = {
     ADD: 'add/:resourceType/:id',
     EDIT: 'edit/:resourceType/:id',
   },
-  CONNECTION: {
+  CONNECTION: { // done
     DEBUGGER: 'configDebugger/:connectionId',
     REPLACE: 'replaceConnection/:connId',
   },

@@ -6,7 +6,7 @@ import InstallationGuideIcon from '../../../../icons/InstallationGuideIcon';
 import { KBDocumentation } from '../../../../../utils/connections';
 import DebugIcon from '../../../../icons/DebugIcon';
 import { selectors } from '../../../../../reducers';
-import { DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 import {applicationsList} from '../../../../../constants/applications';
 import ApplicationImg from '../../../../icons/ApplicationImg';
 import { TextButton } from '../../../../Buttons';
@@ -58,7 +58,7 @@ export default function TitleActions({ flowId }) {
     !!applicationType;
   const app = applications.find(a => a.id === applicationType) || {};
   const flowStepDrawerHandler = useCallback(() => {
-    history.push(`${match.url}/${DRAWER_URL_PREFIX}/logs`);
+    history.push(buildDrawerUrl({ path: drawerPaths.LOGS.FLOW_STEP_DEBUG, baseUrl: match.url }));
   }, [match.url, history]);
 
   return (
