@@ -7,13 +7,15 @@ import NoResultTypography from '../../../components/NoResultTypography';
 import { generateNewId } from '../../../utils/resource';
 import LoadResources from '../../../components/LoadResources';
 
+const tileDependencies = ['integrations', 'tiles'];
+
 export default function ResourceEmptyState({resourceType}) {
   const resource = resourceTypeMetaData[resourceType];
   const location = useLocation();
   let requiredResources = [resourceType];
 
   if (resourceType === 'integrations' || resourceType === 'tiles') {
-    requiredResources = ['integrations', 'tiles'];
+    requiredResources = tileDependencies;
   }
 
   return (
