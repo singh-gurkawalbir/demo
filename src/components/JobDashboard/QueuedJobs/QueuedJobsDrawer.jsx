@@ -6,7 +6,7 @@ import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { NO_PENDING_QUEUED_JOBS } from '../../../utils/messageStore';
-import { DRAWER_URLS } from '../../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import CancelIcon from '../../icons/CancelIcon';
 import LoadResources from '../../LoadResources';
 import { getStatus, getPages } from '../../../utils/jobdashboard';
@@ -163,16 +163,29 @@ const connectionsFilterConfig = {
 };
 const flowJobConnectionsOptions = { ignoreBorrowedConnections: true };
 
+const queuedJobsDrawerPaths = [
+  drawerPaths.ERROR_MANAGEMENT.V1.INTEGRATION_LEVEL_QUEUED_JOBS,
+  drawerPaths.ERROR_MANAGEMENT.V1.FLOW_LEVEL_QUEUED_JOBS,
+];
+
 export default function QueuedJobsDrawer() {
   const classes = useStyles();
   const location = useLocation();
   const match = useRouteMatch();
   const history = useHistory();
   const [connectionId, setConnectionId] = useState();
-  // TODO: Revisit this logic of extracting flowId
+  // TODO @Raghu: Revisit this logic of extracting flowId
   // Move this inside Drawer content and extract from match.url
-  const matchedPath = DRAWER_URLS.QUEUED_JOBS.find(p => matchPath(location.pathname, {path: `${match.path}/${p}`}));
-  const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/${matchedPath}`}) || {};
+  // const matchedPath = queuedJobsDrawerPaths.find(p => matchPath(location.pathname, {path: `${match.path}/${p}`}));
+  const matchedPath = queuedJobsDrawerPaths.find(p => matchPath(location.pathname, {path: buildDrawerUrl({
+    path: p,
+    baseUrl: match.path,
+  })}));
+  // const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/${matchedPath}`}) || {};
+  const { params: { flowId } = {} } = matchPath(location.pathname, {path: buildDrawerUrl({
+    path: matchedPath,
+    baseUrl: match.path,
+  })}) || {};
   const connectionsResourceList = useSelectorMemo(
     selectors.makeResourceListSelector,
     connectionsFilterConfig
@@ -205,7 +218,7 @@ export default function QueuedJobsDrawer() {
         width="full"
         hideBackButton
         onClose={handleClose}
-        path={DRAWER_URLS.QUEUED_JOBS}>
+        path={queuedJobsDrawerPaths}>
         <DrawerHeader title={`Queued Jobs: ${connectionName}`} className={classes.queuedDrawerHeader}>
           {/* TODO: as per the mock we need help component <Help /> beside the select field */}
           <DynaSelect

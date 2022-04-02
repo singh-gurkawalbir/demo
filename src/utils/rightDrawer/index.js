@@ -132,8 +132,8 @@ export const drawerPaths = {
     IA_SETTINGS: ':flowId/settings',
   },
   ERROR_MANAGEMENT: {
-    V1: {
-      JOB_VIEW_ERRORS: 'viewErrors',
+    V1: { // done
+      VIEW_JOB_ERRORS: 'viewErrors',
       FLOW_LEVEL_QUEUED_JOBS: ':flowId/queuedJobs',
       INTEGRATION_LEVEL_QUEUED_JOBS: 'flows/:flowId/queuedJobs',
       JOB_EDIT_RETRY: 'editRetry/:retryId',
