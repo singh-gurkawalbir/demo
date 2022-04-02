@@ -159,7 +159,7 @@ export const drawerPaths = {
     DEBUGGER: 'configDebugger/:connectionId',
     REPLACE: 'replaceConnection/:connId',
   },
-  NS_SUB_RECORD: {
+  NS_SUB_RECORD: { // done
     ADD: 'subrecords',
     EDIT: 'subrecords/:fieldId',
   },
