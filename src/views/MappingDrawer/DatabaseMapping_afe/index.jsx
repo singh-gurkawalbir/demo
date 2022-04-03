@@ -5,7 +5,7 @@ import { useRouteMatch, Redirect } from 'react-router-dom';
 import { selectors } from '../../../reducers';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import actions from '../../../actions';
-import { editorDrawerUrl } from '../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const emptyObject = {};
 
@@ -45,6 +45,11 @@ export default function DatabaseMapping_afe() {
   }
 
   return (
-    <Redirect to={`${match.url}${editorDrawerUrl(editorId)}`} />
+    <Redirect
+      to={buildDrawerUrl({
+        path: drawerPaths.EDITOR,
+        baseUrl: match.url,
+        params: { editorId },
+      })} />
   );
 }

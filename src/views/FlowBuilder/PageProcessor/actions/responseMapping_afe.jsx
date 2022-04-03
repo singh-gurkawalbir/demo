@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch, Redirect } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/MapDataIcon';
-import { editorDrawerUrl } from '../../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 function ResponseMapping({
   flowId,
@@ -33,7 +33,14 @@ function ResponseMapping({
   }, [flowId, history, onClose, open, resourceId]);
 
   return open
-    ? <Redirect push to={`${match.url}${editorDrawerUrl(editorId)}`} />
+    ? (
+      <Redirect
+        push to={buildDrawerUrl({
+          path: drawerPaths.EDITOR,
+          baseUrl: match.url,
+          params: { editorId },
+        })} />
+    )
     : null;
 }
 

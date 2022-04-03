@@ -167,7 +167,7 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
           actions.resourceFormSampleData.receivedProcessorError(resourceId, processorOutput.error)
         );
       }
-      const previewData = processorOutput.data;
+      const previewData = processorOutput?.data;
 
       yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
       yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
@@ -192,7 +192,7 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
           actions.resourceFormSampleData.receivedProcessorError(resourceId, processorOutput.error)
         );
       }
-      const previewData = processorOutput.data;
+      const previewData = processorOutput?.data;
 
       yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
       yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));

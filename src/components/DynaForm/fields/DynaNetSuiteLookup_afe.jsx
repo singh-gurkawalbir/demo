@@ -11,7 +11,7 @@ import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
-import { editorDrawerUrl } from '../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   dynaNetsuiteLookupFormControl: {
@@ -80,7 +80,11 @@ export default function DynaNetSuiteLookup_afe(props) {
       customOptions: options,
     }));
 
-    history.push(`${match.url}${editorDrawerUrl(editorId)}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
   }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, options]);
 
   return (

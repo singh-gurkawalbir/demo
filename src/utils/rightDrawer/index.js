@@ -178,7 +178,7 @@ export const drawerPaths = {
     EDIT: 'lookups/edit/:lookupName',
   },
   SHARE_STACKS: 'share/stacks/:stackId', // done
-  EDITOR: 'editor/:editorId',
+  EDITOR: 'editor/:editorId', // done
   DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId', // done
 };
 

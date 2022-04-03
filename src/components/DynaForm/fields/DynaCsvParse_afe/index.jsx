@@ -15,7 +15,7 @@ import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowVal
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDataChange from './FileDataChange';
 import { OutlinedButton } from '../../../Buttons';
-import { editorDrawerUrl } from '../../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -123,7 +123,11 @@ export default function DynaCsvParse_afe(props) {
       onSave: handleSave,
     }));
 
-    history.push(`${match.url}${editorDrawerUrl(editorId)}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
   }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
 
   return (

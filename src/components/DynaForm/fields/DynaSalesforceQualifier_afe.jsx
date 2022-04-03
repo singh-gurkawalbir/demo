@@ -10,7 +10,7 @@ import FieldMessage from './FieldMessage';
 import FieldHelp from '../FieldHelp';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import actions from '../../../actions';
-import { editorDrawerUrl } from '../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   salesforceFormControl: {
@@ -78,7 +78,11 @@ export default function DynaSalesforceQualifier_afe(props) {
       connectionId,
     }));
 
-    history.push(`${match.url}${editorDrawerUrl(editorId)}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
   }, [dispatch, editorId, flowId, formKey, handleSave, history, id, match.url, resourceId, resourceType, options, connectionId]);
 
   return (

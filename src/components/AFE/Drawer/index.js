@@ -17,7 +17,7 @@ import ActionsRibbon from './ActionsRibbon';
 import { useDrawerContext } from '../../drawer/Right/DrawerContext';
 import useKeepUserSessionAlive from '../../../hooks/useKeepUserSessionAlive';
 import TitleHelp from './TitleHelp';
-import { DRAWER_URLS } from '../../../utils/rightDrawer';
+import { drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
@@ -115,7 +115,7 @@ function RouterWrappedContent({ hideSave }) {
 export default function EditorDrawer({ hideSave, hidePreview, width = 'full' }) {
   return (
     <RightDrawer
-      path={DRAWER_URLS.EDITOR}
+      path={drawerPaths.EDITOR}
       height="tall"
       width={width}>
       <RouterWrappedContent hideSave={hideSave} hidePreview={hidePreview} />

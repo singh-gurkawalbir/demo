@@ -11,7 +11,7 @@ import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDefinitionChange from './FileDefinitionChange';
 import { OutlinedButton } from '../../../Buttons';
 import { safeParse } from '../../../../utils/string';
-import { editorDrawerUrl } from '../../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 /*
  * This editor is shown in case of :
@@ -82,7 +82,11 @@ export default function DynaFileDefinitionEditor_afe(props) {
       onSave: handleSave,
     }));
 
-    history.push(`${match.url}${editorDrawerUrl(editorId)}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
   }, [dispatch, editorId, flowId, formKey, handleSave, history, id, match.url, editorType, resourceId, resourceType]);
 
   return (

@@ -11,7 +11,7 @@ import EditorDrawer from '../../components/AFE/Drawer';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ActionsRibbon from '../../components/AFE/Drawer/ActionsRibbon';
 import { TextButton } from '../../components/Buttons';
-import { editorDrawerUrl } from '../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 
 const ExampleMenu = loadable(() =>
   retry(() => import(/* webpackChunkName: 'ExampleMenu' */ './ExampleMenu'))
@@ -62,7 +62,11 @@ export default function Editors() {
   const [editorId, setEditorId] = useState();
 
   const handleFullScreen = () => {
-    history.push(`/playground${editorDrawerUrl(editorId)}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: '/playground',
+      params: { editorId },
+    }));
     setEditorId();
   };
 

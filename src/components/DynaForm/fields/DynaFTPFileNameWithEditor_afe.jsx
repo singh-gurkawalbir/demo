@@ -10,7 +10,7 @@ import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import { IMPORT_FLOW_DATA_STAGE } from '../../../utils/flowData';
 import useFormContext from '../../Form/FormContext';
-import { editorDrawerUrl } from '../../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   dynaActionButton: {
@@ -54,7 +54,11 @@ export default function DynaFTPFileNameWithEditor_afe(props) {
       onSave: handleSave,
     }));
 
-    history.push(`${match.url}${editorDrawerUrl(editorId)}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
   }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
 
   const updateFileNameExtension = useCallback(() => {
