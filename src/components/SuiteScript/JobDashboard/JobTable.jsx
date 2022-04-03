@@ -7,21 +7,13 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
 import { difference } from 'lodash';
+import clsx from 'clsx';
 import JobDetail from './JobDetail';
 import { JOB_STATUS } from '../../../utils/constants';
 import JobErrorDialog from './JobErrorDialog';
+import { JobDetailsStyles } from '../../JobDashboard/ChildJobDetail';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    width: '98%',
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
-    overflowX: 'auto',
-  },
-  title: {
-    marginBottom: theme.spacing(2),
-    float: 'left',
-  },
   table: {
     minWidth: 700,
     position: 'relative',
@@ -30,48 +22,14 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: 40,
     width: '2%',
   },
-  tablePaginationRoot: { float: 'right' },
   name: {
-    width: '18.15%',
     wordBreak: 'break-word',
     [theme.breakpoints.down('md')]: {
       wordBreak: 'normal',
     },
   },
-  status: {
-    width: '10.15%',
-  },
-  success: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  ignore: {
-    width: '7.5%',
-    textAlign: 'right',
-  },
   error: {
-    width: '10.15%',
     textAlign: 'right',
-  },
-  resolved: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  pages: {
-    width: '7.5%',
-    textAlign: 'right',
-  },
-  duration: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  completed: {
-    width: '11.5%',
-    whiteSpace: 'no-wrap',
-  },
-  actions: {
-    width: '7.5%',
-    textAlign: 'center',
   },
 }));
 
@@ -85,7 +43,8 @@ export default function JobTable({
   integrationName,
   isFlowBuilderView,
 }) {
-  const classes = useStyles();
+  const classes = JobDetailsStyles();
+  const jobDetailsClasses = useStyles();
   const [showErrorDialogFor, setShowErrorDialogFor] = useState({});
   const selectableJobsInCurrentPage = jobsInCurrentPage.filter(
     j =>
@@ -137,10 +96,10 @@ export default function JobTable({
 
   return (
     <>
-      <Table className={classes.table}>
+      <Table className={clsx(classes.table, jobDetailsClasses.table)}>
         <TableHead>
           <TableRow>
-            <TableCell className={classes.checkFlow}>
+            <TableCell className={clsx(classes.checkFlow, jobDetailsClasses.checkFlow)}>
               <Checkbox
                 disabled={jobsInCurrentPage.length === 0}
                 checked={isSelectAllChecked}
@@ -149,11 +108,11 @@ export default function JobTable({
                 inputProps={{ 'aria-label': 'Select all jobs' }}
               />
             </TableCell>
-            <TableCell className={classes.name}>Flow</TableCell>
+            <TableCell className={clsx(classes.name, jobDetailsClasses.name)}>Flow</TableCell>
             <TableCell className={classes.status}>Status</TableCell>
             <TableCell className={classes.success}>Success</TableCell>
             <TableCell className={classes.ignore}>Ignored</TableCell>
-            <TableCell className={classes.error}>Errors</TableCell>
+            <TableCell className={clsx(classes.error, jobDetailsClasses.error)}>Errors</TableCell>
             <TableCell className={classes.duration}>Duration</TableCell>
             <TableCell className={classes.completed}>Completed</TableCell>
             <TableCell className={classes.actions}>Actions</TableCell>
