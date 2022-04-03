@@ -14,7 +14,7 @@ import { selectors } from '../../../../../reducers';
 import RevisionHeader from '../../components/RevisionHeader';
 import ResourceDiffDrawerContent from '../../components/ResourceDiffContent';
 import useHandleInvalidNewRevision from '../../hooks/useHandleInvalidNewRevision';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   drawerHeaderWrapper: {
@@ -55,7 +55,11 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
 
   useEffect(() => {
     if (createdRevisionId) {
-      history.replace(`${parentUrl}/${DRAWER_URL_PREFIX}/pull/${createdRevisionId}/merge`);
+      history.replace(buildDrawerUrl({
+        path: drawerPaths.LCM.MERGE_PULL_CHANGES,
+        baseUrl: parentUrl,
+        params: { revisionId: createdRevisionId },
+      }));
     }
   }, [createdRevisionId, history, parentUrl]);
 
@@ -101,7 +105,7 @@ export default function ReviewChangesDrawer({ integrationId }) {
 
   return (
     <RightDrawer
-      path={DRAWER_URLS.REVIEW_PULL_CHANGES}
+      path={drawerPaths.LCM.REVIEW_PULL_CHANGES}
       height="tall"
       width="xl">
       <ReviewChangesDrawerContent integrationId={integrationId} parentUrl={match.url} />

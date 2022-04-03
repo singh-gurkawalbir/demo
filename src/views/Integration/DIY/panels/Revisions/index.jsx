@@ -7,7 +7,7 @@ import { TextButton } from '../../../../../components/Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { getRevisionFilterKey } from '../../../../../utils/revisions';
-import { DRAWER_URL_PREFIX } from '../../../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 import PanelHeader from '../../../../../components/PanelHeader';
 import ActionGroup from '../../../../../components/ActionGroup';
 import AddIcon from '../../../../../components/icons/AddIcon';
@@ -126,11 +126,19 @@ export default function Revisions({ integrationId }) {
 
   const handleCreatePull = useOpenRevisionWhenValid({
     integrationId,
-    drawerURL: `${match.url}/${DRAWER_URL_PREFIX}/pull/${nanoid()}/open`,
+    drawerURL: buildDrawerUrl({
+      path: drawerPaths.LCM.OPEN_PULL,
+      baseUrl: match.url,
+      params: { revId: nanoid() },
+    }),
   });
   const handleCreateSnapshot = useOpenRevisionWhenValid({
     integrationId,
-    drawerURL: `${match.url}/${DRAWER_URL_PREFIX}/snapshot/${nanoid()}/open`,
+    drawerURL: buildDrawerUrl({
+      path: drawerPaths.LCM.CREATE_SNAPSHOT,
+      baseUrl: match.url,
+      params: { revId: nanoid() },
+    }),
   });
 
   return (

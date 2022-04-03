@@ -10,7 +10,7 @@ import DrawerFooter from '../../../../../Right/DrawerFooter';
 import { FilledButton } from '../../../../../../Buttons';
 import { selectors } from '../../../../../../../reducers';
 import DateTimeDisplay from '../../../../../../DateTimeDisplay';
-import { DRAWER_URLS } from '../../../../../../../utils/rightDrawer';
+import { drawerPaths } from '../../../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   details: {
@@ -58,7 +58,7 @@ export default function ErrorInfoDrawer({ integrationId, revisionId }) {
   const match = useRouteMatch();
 
   return (
-    <RightDrawer path={DRAWER_URLS.VIEW_REVISION_ERROR_INFO} height="tall">
+    <RightDrawer path={drawerPaths.LCM.VIEW_REVISION_ERROR_INFO} height="tall">
       <ErrorInfoDrawerContent
         integrationId={integrationId}
         revisionId={revisionId}

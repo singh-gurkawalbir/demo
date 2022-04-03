@@ -15,7 +15,7 @@ import ExpandAllResourceDiff from '../components/ExpandAllResourceDiff';
 import useHandleInvalidRevision from '../hooks/useHandleInvalidRevision';
 import ActionGroup from '../../../ActionGroup';
 import { FilledButton } from '../../../Buttons';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 const allTabs = {
   changes: { type: 'changes', label: 'View resources changed' },
@@ -95,7 +95,11 @@ function ViewRevisionDetailsContent({ integrationId, parentUrl }) {
   const drawerTitle = useSelector(state => selectors.revision(state, integrationId, revisionId)?.description);
   const availableTabs = accessibleTabs.map(tabId => allTabs[tabId]);
 
-  const handleModeChange = (_, newMode) => history.push(`${parentUrl}/${DRAWER_URL_PREFIX}/view/${revisionId}/mode/${newMode}`);
+  const handleModeChange = (_, newMode) => history.push(buildDrawerUrl({
+    path: drawerPaths.LCM.VIEW_REVISION_DETAILS,
+    baseUrl: parentUrl,
+    params: { revisionId, mode: newMode },
+  }));
   const onClose = () => {
     history.replace(parentUrl);
   };
@@ -151,7 +155,7 @@ export default function ViewRevisionDetails({ integrationId }) {
 
   return (
     <RightDrawer
-      path={DRAWER_URLS.VIEW_REVISION_DETAILS}
+      path={drawerPaths.LCM.VIEW_REVISION_DETAILS}
       height="tall"
       width="xl">
       <ViewRevisionDetailsContent integrationId={integrationId} parentUrl={match.url} />
