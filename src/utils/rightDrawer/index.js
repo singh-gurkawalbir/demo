@@ -74,7 +74,9 @@ export const DRAWER_URL_PREFIX = 'ui-drawer';
 
 export const drawerPaths = {
   MAPPINGS: { // done
+    DB: 'dbMapping/:flowId/:importId', // pending testing
     SUB_RECORD: 'mapping/:flowId/:importId/:subRecordMappingId/view',
+    QUERY_BUILDER: 'queryBuilder/:flowId/:importId/:index/view', // pending testing
     IMPORT: {
       ROOT: 'mapping/:flowId/:importId',
       LIST_ALL: 'mapping/:flowId',

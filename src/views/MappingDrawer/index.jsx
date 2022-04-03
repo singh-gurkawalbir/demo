@@ -13,7 +13,7 @@ import SelectQueryType from './DatabaseMapping_afe/SelectQueryType';
 import EditorDrawer from '../../components/AFE/Drawer';
 import useFormOnCancelContext from '../../components/FormOnCancelContext';
 import { MAPPINGS_FORM_KEY } from '../../utils/constants';
-import { DRAWER_URLS, DRAWER_URL_PREFIX, drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 
 const MappingWrapper = ({integrationId}) => {
   const history = useHistory();
@@ -106,7 +106,7 @@ export default function MappingDrawerRoute(props) {
       <RightDrawer
         height="tall"
         width="default"
-        path={DRAWER_URLS.DB_MAPPINGS}>
+        path={drawerPaths.MAPPINGS.DB}>
 
         <DrawerHeader title="Select query type" />
 
@@ -116,7 +116,10 @@ export default function MappingDrawerRoute(props) {
       </RightDrawer>
 
       <Route
-        path={`${match.url}/${DRAWER_URL_PREFIX}/queryBuilder/:flowId/:importId/:index/view`}>
+        path={buildDrawerUrl({
+          path: drawerPaths.MAPPINGS.QUERY_BUILDER,
+          baseUrl: match.url,
+        })}>
         <DatabaseMapping />
         <EditorDrawer />
       </Route>

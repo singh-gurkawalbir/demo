@@ -19,7 +19,7 @@ import ResourceButton from '../../../FlowBuilder/ResourceButton';
 import { emptyObject } from '../../../../utils/constants';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import { getTextAfterCount } from '../../../../utils/string';
-import { buildDrawerUrl, drawerPaths, DRAWER_URLS } from '../../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import Status from '../../../../components/Buttons/Status';
 
 const metadata = {
@@ -198,7 +198,7 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   return (
     <LoadResources required="true" resources="imports, exports, connections">
       <RightDrawer
-        path={DRAWER_URLS.FLOW_ERROR_LIST}
+        path={drawerPaths.ERROR_MANAGEMENT.V2.FLOW_ERROR_LIST}
         height="tall"
         onClose={handleClose}>
         <DrawerHeader title={`Flow: ${flow.name || flowId}`} />
