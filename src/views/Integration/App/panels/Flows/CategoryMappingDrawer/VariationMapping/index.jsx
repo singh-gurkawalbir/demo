@@ -17,7 +17,7 @@ import RightDrawer from '../../../../../../../components/drawer/Right';
 import DrawerHeader from '../../../../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../../../../components/drawer/Right/DrawerFooter';
-import { DRAWER_URLS } from '../../../../../../../utils/rightDrawer';
+import { drawerPaths } from '../../../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   mappingHeader: {
@@ -247,7 +247,10 @@ export default function VariationMappingDrawerRoute({ integrationId, flowId, cat
   return (
     <LoadResources required resources="flows,exports,imports,connections">
       <RightDrawer
-        path={DRAWER_URLS.VARIATION_MAPPING}
+        path={[
+          drawerPaths.MAPPINGS.CATEGORY_MAPPING.VARIATION_MAPPING.VARIATION,
+          drawerPaths.MAPPINGS.CATEGORY_MAPPING.VARIATION_MAPPING.ROOT,
+        ]}
         height="tall"
         width="large">
         <VariationMappingDrawer

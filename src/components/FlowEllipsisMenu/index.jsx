@@ -20,7 +20,7 @@ import CalendarIcon from '../icons/CalendarIcon';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import { getTemplateUrlName } from '../../utils/template';
 import getRoutePath from '../../utils/routePaths';
-import { buildDrawerUrl, drawerPaths, DRAWER_URL_PREFIX } from '../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -180,10 +180,18 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
 
         case 'mapping':
           if (flowDetails.showUtilityMapping) {
-            history.push(
-              `${history.location.pathname}/${DRAWER_URL_PREFIX}/${flowId}/utilitymapping/commonAttributes`
-            );
-          } else history.push(`${history.location.pathname}/${DRAWER_URL_PREFIX}/mapping/${flowId}`);
+            history.push(buildDrawerUrl({
+              path: drawerPaths.MAPPINGS.CATEGORY_MAPPING.ROOT,
+              baseUrl: history.location.pathname,
+              params: { flowId, categoryId: 'commonAttributes' },
+            }));
+          } else {
+            history.push(buildDrawerUrl({
+              path: drawerPaths.MAPPINGS.IMPORT.LIST_ALL,
+              baseUrl: history.location.pathname,
+              params: { flowId },
+            }));
+          }
 
           break;
 

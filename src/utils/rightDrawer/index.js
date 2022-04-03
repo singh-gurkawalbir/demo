@@ -73,7 +73,7 @@ const DRAWER_URL_REFS = {
 export const DRAWER_URL_PREFIX = 'ui-drawer';
 
 export const drawerPaths = {
-  MAPPINGS: {
+  MAPPINGS: { // done
     SUB_RECORD: 'mapping/:flowId/:importId/:subRecordMappingId/view',
     IMPORT: {
       ROOT: 'mapping/:flowId/:importId',
@@ -104,7 +104,7 @@ export const drawerPaths = {
     MANAGE_USER_PERMISSIONS: 'edit/:userId',
     VIEW_NOTIFICATIONS_SETUP: ':userEmail/notifications',
   },
-  LCM: {
+  LCM: { // done
     CREATE_SNAPSHOT: 'snapshot/:revId/open',
     OPEN_PULL: 'pull/:revId/open',
     REVIEW_PULL_CHANGES: 'pull/:revisionId/review',

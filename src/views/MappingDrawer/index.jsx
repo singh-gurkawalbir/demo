@@ -13,7 +13,7 @@ import SelectQueryType from './DatabaseMapping_afe/SelectQueryType';
 import EditorDrawer from '../../components/AFE/Drawer';
 import useFormOnCancelContext from '../../components/FormOnCancelContext';
 import { MAPPINGS_FORM_KEY } from '../../utils/constants';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../utils/rightDrawer';
+import { DRAWER_URLS, DRAWER_URL_PREFIX, drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 
 const MappingWrapper = ({integrationId}) => {
   const history = useHistory();
@@ -62,14 +62,19 @@ export default function MappingDrawerRoute(props) {
       required="true"
       resources="imports, exports, connections">
       <RightDrawer
-        path={DRAWER_URLS.MAPPINGS}
+        path={[
+          drawerPaths.MAPPINGS.SUB_RECORD,
+          drawerPaths.MAPPINGS.IMPORT.VIEW,
+          drawerPaths.MAPPINGS.IMPORT.ROOT,
+          drawerPaths.MAPPINGS.IMPORT.LIST_ALL,
+        ]}
         height="tall"
         width={isMappingPreviewAvailable ? 'full' : 'default'} >
         <Switch>
           <Route
             path={[
-              `${match.url}/${DRAWER_URL_PREFIX}/mapping/:flowId/:importId/:subRecordMappingId/view`,
-              `${match.url}/${DRAWER_URL_PREFIX}/mapping/:flowId/:importId/view`,
+              buildDrawerUrl({ path: drawerPaths.MAPPINGS.SUB_RECORD, baseUrl: match.url}),
+              buildDrawerUrl({ path: drawerPaths.MAPPINGS.IMPORT.VIEW, baseUrl: match.url}),
             ]} >
             <DrawerHeader
             // for new mappings afe, pass old drawer dataTest as dummy for automation
@@ -86,8 +91,8 @@ export default function MappingDrawerRoute(props) {
           <Route
             exact
             path={[
-              `${match.url}/${DRAWER_URL_PREFIX}/mapping/:flowId`,
-              `${match.url}/${DRAWER_URL_PREFIX}/mapping/:flowId/:importId`,
+              buildDrawerUrl({ path: drawerPaths.MAPPINGS.IMPORT.LIST_ALL, baseUrl: match.url}),
+              buildDrawerUrl({ path: drawerPaths.MAPPINGS.IMPORT.ROOT, baseUrl: match.url}),
             ]}
             >
             <DrawerHeader title={title} />

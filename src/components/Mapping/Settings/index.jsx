@@ -17,7 +17,7 @@ import EditorDrawer from '../../AFE/Drawer';
 import SaveAndCloseResourceForm from '../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 import { FORM_SAVE_STATUS } from '../../../utils/constants';
 import useFormOnCancelContext from '../../FormOnCancelContext';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 
 const emptySet = [];
 const emptyObject = {};
@@ -278,24 +278,22 @@ export default function SettingsDrawer(props) {
   const match = useRouteMatch();
   const {setCancelTriggered} = useFormOnCancelContext(formKey);
 
+  // TODO @Raghu: Back button is not automatically shown for category mapping settings
+  // Hence added showBackButton.. Revisit
   return (
     <RightDrawer
       onClose={setCancelTriggered}
-      path={DRAWER_URLS.MAPPING_SETTINGS}
+      path={[drawerPaths.MAPPINGS.SETTINGS, drawerPaths.MAPPINGS.CATEGORY_MAPPING_SETTINGS]}
       height="tall">
-      <DrawerHeader title="Settings" />
-
+      <DrawerHeader title="Settings" showBackButton />
       <Switch>
         <Route
-          path={`${match.url}/${DRAWER_URL_PREFIX}/settings/category/:editorId/sections/:sectionId/:depth/:mappingKey`}>
-          <CategoryMappingSettingsWrapper
-            {...props}
-            />
+          path={buildDrawerUrl({ path: drawerPaths.MAPPINGS.CATEGORY_MAPPING_SETTINGS, baseUrl: match.url })}>
+          <CategoryMappingSettingsWrapper {...props} />
         </Route>
         <Route
-          path={`${match.url}/${DRAWER_URL_PREFIX}/settings/:mappingKey`}>
-          <MappingSettingsWrapper
-            {...props} />
+          path={buildDrawerUrl({ path: drawerPaths.MAPPINGS.SETTINGS, baseUrl: match.url })}>
+          <MappingSettingsWrapper {...props} />
         </Route>
 
       </Switch>

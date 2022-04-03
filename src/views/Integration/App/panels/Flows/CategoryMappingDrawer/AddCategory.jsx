@@ -14,7 +14,7 @@ import DrawerHeader from '../../../../../../components/drawer/Right/DrawerHeader
 import DrawerContent from '../../../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../../../components/drawer/Right/DrawerFooter';
 import { getTrimmedTitle } from '../../../../../../utils/string';
-import { DRAWER_URLS } from '../../../../../../utils/rightDrawer';
+import { drawerPaths } from '../../../../../../utils/rightDrawer';
 
 function AddCategoryMappingDrawer({ integrationId, parentUrl, flowId }) {
   const dispatch = useDispatch();
@@ -222,7 +222,7 @@ export default function AddCategoryMappingDrawerRoute({ integrationId, flowId })
   const match = useRouteMatch();
 
   return (
-    <RightDrawer path={DRAWER_URLS.ADD_CATEGORY_MAPPING} width="large" height="tall">
+    <RightDrawer path={drawerPaths.MAPPINGS.CATEGORY_MAPPING.ADD} width="large" height="tall">
       <LoadResources required resources="flows,exports,imports,connections">
         <AddCategoryMappingDrawer
           integrationId={integrationId}
