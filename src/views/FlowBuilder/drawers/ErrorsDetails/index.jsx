@@ -12,7 +12,7 @@ import ErrorDrawerAction from './ErrorDrawerAction';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import DrawerHeaderSubTitle from '../../../../components/DrawerHeaderSubTitle';
 import Tabs from './Tabs';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 const emptySet = [];
 
@@ -39,22 +39,34 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const { pathname } = useLocation();
 
   const matchIncompleteErrorDrawerPath = matchPath(pathname, {
-    path: `${match.url}/${DRAWER_URL_PREFIX}/errors/:resourceId`,
+    path: `${match.url}/errors/:resourceId`,
   });
 
   if (matchIncompleteErrorDrawerPath?.isExact) {
     // when error type is not specified in the url, it adds open and opens Open errors by default
     // Note: The url specified in the emails regarding errors to the users does not specify the error type
     // This helps not to modify any dependent places to update url
-    history.replace(`${matchIncompleteErrorDrawerPath.url}/open`);
+    const openErrorsUrl = buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.ERROR_DETAILS,
+      baseUrl: match.url,
+      params: {...matchIncompleteErrorDrawerPath.params, errorType: 'open'},
+    });
+
+    history.replace(openErrorsUrl);
   }
 
   const matchErrorDrawerPath = matchPath(pathname, {
-    path: `${match.url}/${DRAWER_URL_PREFIX}/errors/:resourceId/:errorType`,
+    path: buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.ERROR_DETAILS,
+      baseUrl: match.url,
+    }),
   });
 
   const matchErrorDrawerPathWithFilter = matchPath(pathname, {
-    path: `${match.url}/${DRAWER_URL_PREFIX}/errors/:resourceId/filter/:flowJobId/:errorType`,
+    path: buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.JOB_ERROR_DETAILS,
+      baseUrl: match.url,
+    }),
   });
   const resourceId = matchErrorDrawerPathWithFilter?.params?.resourceId || matchErrorDrawerPath?.params?.resourceId;
   const errorType = matchErrorDrawerPathWithFilter?.params?.errorType || matchErrorDrawerPath?.params?.errorType;
@@ -97,11 +109,23 @@ export default function ErrorDetailsDrawer({ flowId }) {
 
   const handleErrorTypeChange = useCallback(errorType => {
     if (matchErrorDrawerPathWithFilter) {
-      history.replace(`${match.url}/${DRAWER_URL_PREFIX}/errors/${matchErrorDrawerPathWithFilter.params.resourceId}/filter/${matchErrorDrawerPathWithFilter.params.flowJobId}/${errorType}`);
+      const changedFilteredErrorUrl = buildDrawerUrl({
+        path: drawerPaths.ERROR_MANAGEMENT.V2.JOB_ERROR_DETAILS,
+        baseUrl: match.url,
+        params: { ...matchErrorDrawerPathWithFilter.params, errorType},
+      });
+
+      history.replace(changedFilteredErrorUrl);
     } else {
-      history.replace(`${match.url}/${DRAWER_URL_PREFIX}/errors/${matchErrorDrawerPath.params.resourceId}/${errorType}`);
+      const changedErrorUrl = buildDrawerUrl({
+        path: drawerPaths.ERROR_MANAGEMENT.V2.ERROR_DETAILS,
+        baseUrl: match.url,
+        params: { ...matchErrorDrawerPath.params, errorType },
+      });
+
+      history.replace(changedErrorUrl);
     }
-  }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath?.params?.resourceId]);
+  }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath]);
 
   useEffect(() => {
     if (isOpenErrorsLoaded && !allErrors.length && errorType === 'open') {
@@ -126,7 +150,10 @@ export default function ErrorDetailsDrawer({ flowId }) {
 
   return (
     <RightDrawer
-      path={DRAWER_URLS.EM_ERROR_DETAILS}
+      path={[
+        drawerPaths.ERROR_MANAGEMENT.V2.JOB_ERROR_DETAILS,
+        drawerPaths.ERROR_MANAGEMENT.V2.ERROR_DETAILS,
+      ]}
       width="full"
       onClose={handleClose}>
       <DrawerHeader className={classes.removeBottomLine} title={<Title />} hideBackButton>

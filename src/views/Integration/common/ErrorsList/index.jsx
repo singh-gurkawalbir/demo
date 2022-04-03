@@ -19,7 +19,7 @@ import ResourceButton from '../../../FlowBuilder/ResourceButton';
 import { emptyObject } from '../../../../utils/constants';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import { getTextAfterCount } from '../../../../utils/string';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths, DRAWER_URLS } from '../../../../utils/rightDrawer';
 import Status from '../../../../components/Buttons/Status';
 
 const metadata = {
@@ -102,7 +102,12 @@ const metadata = {
         });
 
         const handleErrorClick = useCallback(() => {
-          history.push(`${flowBuilderTo}/${DRAWER_URL_PREFIX}/errors/${id}`);
+          history.push(buildDrawerUrl({
+            path: drawerPaths.ERROR_MANAGEMENT.V2.ERROR_DETAILS,
+            baseUrl: flowBuilderTo,
+            params: { resourceId: id, errorType: 'open'},
+          }));
+          history.push();
         }, [flowBuilderTo, history, id]);
 
         if (!count) {
@@ -176,7 +181,10 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   const history = useHistory();
   const location = useLocation();
   const { params: { flowId } = {} } = matchPath(location.pathname, {
-    path: `${match.path}/${DRAWER_URL_PREFIX}/:flowId/errorsList`,
+    path: buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.FLOW_ERROR_LIST,
+      baseUrl: match.path,
+    }),
   }) || {};
   const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,

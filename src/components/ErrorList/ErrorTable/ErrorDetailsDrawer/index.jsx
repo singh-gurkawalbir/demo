@@ -12,7 +12,7 @@ import ErrorDetails from '../../ErrorDetails';
 import { selectors } from '../../../../reducers';
 import useFormOnCancelContext from '../../../FormOnCancelContext';
 import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../utils/constants';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 const emptySet = [];
 
@@ -22,7 +22,10 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   const history = useHistory();
 
   const { mode } = matchPath(pathname, {
-    path: `${match.url}/${DRAWER_URLS.EM_VIEW_ERROR_DETAILS}`,
+    path: buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.VIEW_ERROR_DETAILS,
+      baseUrl: match.url,
+    }),
   })?.params || {};
 
   const allErrors = useSelector(state => {
@@ -36,7 +39,10 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   const showDrawer = useMemo(() => {
     if (!match.isExact) {
       const matchErrorPath = matchPath(pathname, {
-        path: `${match.url}/${DRAWER_URLS.EM_VIEW_ERROR_DETAILS}`,
+        path: buildDrawerUrl({
+          path: drawerPaths.ERROR_MANAGEMENT.V2.VIEW_ERROR_DETAILS,
+          baseUrl: match.url,
+        }),
       });
 
       if (!matchErrorPath || !matchErrorPath.params) return true;
@@ -59,7 +65,11 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   }, [history]);
 
   const handleTabChange = useCallback((errorId, newValue) => {
-    history.replace(`${match.url}/${DRAWER_URL_PREFIX}/details/${errorId}/${newValue}`);
+    history.replace(buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.VIEW_ERROR_DETAILS,
+      baseUrl: match.url,
+      params: { errorId, mode: newValue },
+    }));
   }, [history, match.url]);
 
   const {setCancelTriggered} = useFormOnCancelContext(ERROR_DETAIL_ACTIONS_ASYNC_KEY);
@@ -70,7 +80,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   }
 
   return (
-    <RightDrawer path={DRAWER_URLS.EM_VIEW_ERROR_DETAILS} width="large" >
+    <RightDrawer path={drawerPaths.ERROR_MANAGEMENT.V2.VIEW_ERROR_DETAILS} width="large" >
       <DrawerHeader title="View error details" handleClose={onClose} />
       <ErrorDetails
         flowId={flowId}

@@ -138,7 +138,7 @@ export const drawerPaths = {
       INTEGRATION_LEVEL_QUEUED_JOBS: 'flows/:flowId/queuedJobs',
       JOB_EDIT_RETRY: 'editRetry/:retryId',
     },
-    V2: {
+    V2: { // done
       ERROR_DETAILS: 'errors/:resourceId/:errorType',
       JOB_ERROR_DETAILS: 'errors/:resourceId/filter/:flowJobId/:errorType',
       DOWNLOAD_ERRORS: 'download/:type',

@@ -7,12 +7,10 @@ import { flowbuilderUrl } from '../../../utils/flows';
 import { emptyObject } from '../../../utils/constants';
 import actions from '../../../actions';
 import { getTextAfterCount } from '../../../utils/string';
-import { DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import Status from '../../Buttons/Status';
 
-export default function ErrorCell({
-  job,
-}) {
+export default function ErrorCell({ job }) {
   const { _integrationId, _flowId, _childId, _flowJobId, _exportId, numOpenError, _importId } = job;
   const dispatch = useDispatch();
   const id = _exportId || _importId;
@@ -35,7 +33,11 @@ export default function ErrorCell({
 
   const handleErrorClick = useCallback(() => {
     dispatch(actions.patchFilter(`${_flowId}-${_flowJobId}-${id}`, {...job}));
-    history.push(`${flowBuilderTo}/${DRAWER_URL_PREFIX}/errors/${id}/filter/${_flowJobId}/open`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.JOB_ERROR_DETAILS,
+      baseUrl: flowBuilderTo,
+      params: { resourceId: id, flowJobId: _flowJobId, errorType: 'open'},
+    }));
   }, [_flowId, _flowJobId, dispatch, flowBuilderTo, history, id, job]);
 
   if (!numOpenError) {
