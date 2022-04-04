@@ -7,7 +7,7 @@ import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import Panels from './Panels';
-import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
+import { DEFAULT_RECORD_SIZE, IMPORT_PREVIEW_ERROR_TYPES } from '../../utils/exportPanel';
 import TextToggle from '../TextToggle';
 import ActionGroup from '../ActionGroup';
 import { TextButton } from '../Buttons';
@@ -94,12 +94,8 @@ function PreviewInfo({
   />
   );
 }
-const errorTypes = [
-  { label: 'Preview', value: 'preview' },
-  { label: 'Send', value: 'send' },
-];
 
-export default function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
+export default function PreviewPanel({resourceId, formKey, resourceType, flowId }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
@@ -172,7 +168,7 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
                     onChange={onChange}
                     exclusive
                     className={classes.errorDrawerActionToggle}
-                    options={errorTypes}
+                    options={IMPORT_PREVIEW_ERROR_TYPES}
                 />
                 </>
                 )}

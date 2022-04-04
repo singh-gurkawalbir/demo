@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import isEmpty from 'lodash/isEmpty';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
@@ -46,7 +47,7 @@ function RouterWrappedContent(props) {
   const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
 
   useEffect(() => {
-    if (!resourceMockData && !resourceSampleDataStatus) {
+    if (isEmpty(resourceMockData) && !resourceSampleDataStatus) {
       dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true }));
     }
   }, [dispatch, formKey, resourceMockData, resourceSampleDataStatus]);
@@ -74,12 +75,19 @@ function RouterWrappedContent(props) {
       return;
     }
     setError(undefined);
-    dispatch(actions.resourceFormSampleData.setMockData(resourceId, unwrappedMockData));
   };
 
   const value = mockData ||
     (resourceMockData && wrapExportFileSampleData(resourceMockData)) ||
     (resourceSampleDataStatus !== 'error' && wrapExportFileSampleData(previewStageDataList?.preview?.data));
+
+  const handleDone = useCallback(() => {
+    const parsedMockData = safeParse(value);
+    const unwrappedMockData = unwrapExportFileSampleData(parsedMockData);
+
+    dispatch(actions.resourceFormSampleData.setMockData(resourceId, unwrappedMockData));
+    handleClose();
+  }, [dispatch, handleClose, resourceId, value]);
 
   return (
     <>
@@ -103,7 +111,8 @@ function RouterWrappedContent(props) {
       <DrawerFooter>
         <FilledButton
           data-test="saveandcloseinputdata"
-          onClick={handleClose}>
+          onClick={handleDone}
+          disabled={!!error}>
           Done
         </FilledButton>
       </DrawerFooter>

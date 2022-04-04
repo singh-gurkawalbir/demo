@@ -124,3 +124,8 @@ export const getLatestReqResData = (previewData, stage) => {
 };
 
 export const getRequestURL = previewData => getLatestReqResData(previewData, 'request')?.url;
+
+export const IMPORT_PREVIEW_ERROR_TYPES = [
+  { label: 'Preview', value: 'preview' },
+  { label: 'Send', value: 'send' },
+];

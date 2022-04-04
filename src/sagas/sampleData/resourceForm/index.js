@@ -349,7 +349,6 @@ export function* _requestLookupSampleData({ formKey, refreshCache = false }) {
 
 export function* _requestPageProcessorSampleData({ formKey, refreshCache = false }) {
   const { resourceId, resourceObj, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
-  const recordSize = 1;
 
   // exclude sampleData property if exists on pageProcessor Doc
   // as preview call considers sampleData to show instead of fetching
@@ -361,10 +360,6 @@ export function* _requestPageProcessorSampleData({ formKey, refreshCache = false
     const oneToMany = _pageProcessorDoc.oneToMany === 'true';
 
     _pageProcessorDoc = { ..._pageProcessorDoc, oneToMany };
-  }
-  // add recordSize if passed to limit number of records from preview
-  if (recordSize && !Number.isNaN(recordSize)) {
-    _pageProcessorDoc.test = { limit: recordSize };
   }
 
   const mockInput = yield select(selectors.getResourceMockData, resourceId);

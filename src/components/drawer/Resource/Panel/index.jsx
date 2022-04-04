@@ -8,7 +8,7 @@ import { selectors } from '../../../../reducers';
 import { isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
 import EditorDrawer from '../../../AFE/Drawer';
 import ExpandModeEditorDrawer from '../../../DynaForm/fields/DynaEditor/ExpandModeEditor/Drawer';
-import PreviewPanel from '../../../ExportsPreviewPanel';
+import PreviewPanel from '../../../PreviewPanel';
 import LoadResources from '../../../LoadResources';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
