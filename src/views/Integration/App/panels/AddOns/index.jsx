@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Card, CardActions, Typography, makeStyles } from '@material-ui/core';
 import RawHtml from '../../../../../components/RawHtml';
 import PanelHeader from '../../../../../components/PanelHeader';
-import { LICENSE_UPGRADE_REQUEST, LICENSE_UPGRADE_SUCCESS_MESSAGE } from '../../../../../utils/messageStore';
+import messageStore from '../../../../../utils/messageStore';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {isHTML} from '../../../../../utils/string';
@@ -100,7 +100,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
         })
       );
 
-      enquesnackbar({message: <RawHtml html={LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
+      enquesnackbar({message: <RawHtml html={messageStore('LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
     },
 
     [dispatch, enquesnackbar, integrationId, licenseId]
@@ -110,7 +110,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
 
     confirmDialog({
       title: 'Request add-on',
-      message: LICENSE_UPGRADE_REQUEST,
+      message: messageStore('LICENSE_UPGRADE_REQUEST'),
       buttons: [
         {label: 'Submit request', onClick: handleContactSales(addonName)},
         {label: 'Cancel', variant: 'text'},

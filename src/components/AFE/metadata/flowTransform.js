@@ -1,6 +1,7 @@
 import ToggleTransformMode from '../Drawer/actions/ToggleTransformMode';
 import transformMetadata from './transform';
 import javascriptMetadata from './javascript';
+import ViewAliases from '../Drawer/actions/ViewAliases';
 
 export default {
   type: 'flowTransform',
@@ -17,6 +18,7 @@ export default {
   drawer: {
     showLayoutToggle: true,
     actions: [
+      { component: ViewAliases, position: 'right' },
       { component: ToggleTransformMode, position: 'right' },
     ],
   },

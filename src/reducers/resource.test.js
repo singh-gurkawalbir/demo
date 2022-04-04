@@ -6381,7 +6381,7 @@ describe('resource region selector testcases', () => {
 
     test('should return expected script context for valid state and flow id', () => {
       expect(selectors.getScriptContext(state, {contextType: 'hook',
-        flowId: 'flow2'})).toEqual({_integrationId: 'integrationId1', container: 'integration', type: 'hook'});
+        flowId: 'flow2'})).toEqual({_integrationId: 'integrationId1', container: 'integration', type: 'hook', _flowId: 'flow2'});
     });
     test('should return undefined if given flow does not contains integrtion id', () => {
       expect(selectors.getScriptContext(state, {contextType: 'hook',

@@ -9,6 +9,7 @@ import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import OfflineConnectionsIcon from '../../../components/icons/OfflineConnectionsIcon';
 import SingleUserIcon from '../../../components/icons/SingleUserIcon';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
+import InstallationGuideIcon from '../../../components/icons/InstallationGuideIcon';
 import RevisionsIcon from '../../../components/icons/ViewResolvedHistoryIcon';
 import AuditLogPanel from './panels/AuditLog';
 import NotificationsPanel from './panels/Notifications';
@@ -20,6 +21,7 @@ import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
 import AnalyticsPanel from './panels/Analytics';
+import AliasesPanel from '../common/AliasesPanel';
 import { selectors } from '../../../reducers';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import GraphIcon from '../../../components/icons/GraphIcon';
@@ -77,6 +79,13 @@ const getTabs = ({ isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyInteg
     Icon: SingleUserIcon,
     Panel: AdminPanel,
   },
+  ...(!isStandaloneIntegration
+    ? [{
+      path: 'aliases',
+      label: 'Aliases',
+      Icon: InstallationGuideIcon,
+      Panel: AliasesPanel }]
+    : []),
   ...((!isStandaloneIntegration && !isIntegrationApp) ? [{
     path: 'revisions',
     label: 'Revisions',
