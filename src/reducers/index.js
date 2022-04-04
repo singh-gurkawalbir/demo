@@ -5867,6 +5867,10 @@ selectors.isAnyIntegrationConnectionOffline = (state, integrationId) => {
   const connections = selectors.resourceList(state, {
     type: 'connections',
   }).resources;
+
+  if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+    return connections.some(c => c.offline);
+  }
   const connectionIds = integration?._registeredConnectionIds || emptyArray;
 
   return connections.some(c => connectionIds.includes(c._id) && c.offline);
