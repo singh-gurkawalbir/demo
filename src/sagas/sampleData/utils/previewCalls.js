@@ -1,5 +1,6 @@
 import { select, call } from 'redux-saga/effects';
 import deepClone from 'lodash/cloneDeep';
+import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import { apiCallWithRetry } from '../../index';
@@ -123,7 +124,7 @@ export function* pageProcessorPreview({
 
     const mockData = yield select(selectors.getResourceMockData, _pageProcessorId);
 
-    pageProcessorMap[_pageProcessorId].options.inputData = mockData;
+    pageProcessorMap[_pageProcessorId].options.inputData = !isEmpty(mockData) ? mockData : undefined;
 
     if (typeOfPreview === 'send') {
       pageProcessorMap[_pageProcessorId].options.sendAndPreview = true;

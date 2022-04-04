@@ -151,7 +151,7 @@ describe('resourceFormSampleData reducer', () => {
       const expectedState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
-        [resourceId]: { preview: {status: 'received', data: expectedPreviewStagesData }},
+        [resourceId]: { data: {}, preview: {status: 'received', data: expectedPreviewStagesData }},
       };
       const newState = reducer(
         initialState,
@@ -164,12 +164,12 @@ describe('resourceFormSampleData reducer', () => {
       const initialState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
-        [resourceId]: {typeOfSampleData: 'send'},
+        [resourceId]: {data: {}, typeOfSampleData: 'send'},
       };
       const expectedState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
-        [resourceId]: { send: {status: 'received', data: expectedPreviewStagesData }, typeOfSampleData: 'send'},
+        [resourceId]: { data: {}, send: {status: 'received', data: expectedPreviewStagesData }, typeOfSampleData: 'send'},
       };
       const newState = reducer(
         initialState,
@@ -187,7 +187,7 @@ describe('resourceFormSampleData reducer', () => {
       const expectedState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
-        [resourceId]: { preview: {status: 'received', data: expectedPreviewStagesData} },
+        [resourceId]: { data: {}, preview: {status: 'received', data: expectedPreviewStagesData} },
       };
       const newState = reducer(
         initialFilledState,
@@ -205,7 +205,7 @@ describe('resourceFormSampleData reducer', () => {
       const expectedState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
-        [resourceId]: { send: {status: 'received', data: expectedPreviewStagesData}, typeOfSampleData: 'send', preview: {status: 'received', data: {}} },
+        [resourceId]: { data: {}, send: {status: 'received', data: expectedPreviewStagesData}, typeOfSampleData: 'send', preview: {status: 'received', data: {}} },
       };
       const newState = reducer(
         initialFilledState,
