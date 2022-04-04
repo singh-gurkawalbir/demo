@@ -127,6 +127,7 @@ export default {
       data: options.data || data,
       rule: options.rule || rule,
       settings,
+      context: options.settingsContext,
       insertStubKey: 'formInit',
       activeProcessor: mode,
       originalData: options.data || data,

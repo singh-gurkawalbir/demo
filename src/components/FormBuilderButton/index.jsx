@@ -5,6 +5,7 @@ import { makeStyles, Button } from '@material-ui/core';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import FieldHelp from '../DynaForm/FieldHelp';
+import useResourceSettingsContext from '../../hooks/useResourceSettingsContext';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -23,6 +24,7 @@ export default function FormBuilderButton({resourceId, resourceType, integration
   const allowFormEdit = useSelector(state =>
     selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)
   );
+  const settingsContext = useResourceSettingsContext(resourceType, resourceId, integrationId);
 
   const toggleEditMode = useCallback(
     e => {
@@ -33,6 +35,7 @@ export default function FormBuilderButton({resourceId, resourceType, integration
           resourceId,
           resourceType,
           sectionId,
+          settingsContext,
         })
       );
       history.push(`${match.url}/editor/${customSettingsEditorId}`);
