@@ -17,6 +17,7 @@ import Spinner from '../../Spinner';
 import { safeParse } from '../../../utils/string';
 import FieldMessage from '../../DynaForm/fields/FieldMessage';
 import PanelTitle from '../../AFE/Editor/gridItems/PanelTitle';
+import { drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   helpTextButton: {
@@ -124,8 +125,7 @@ export default function MockInput({formKey, resourceId, resourceType, flowId}) {
 
   return (
     <RightDrawer
-      path="inputData"
-      variant="permanent"
+      path={drawerPaths.PREVIEW_PANEL_MOCK_INPUT}
       height="tall"
       width="default"
       onClose={handleClose} >

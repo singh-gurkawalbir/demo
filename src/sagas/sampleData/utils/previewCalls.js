@@ -25,12 +25,13 @@ export function* pageProcessorPreview({
   refresh = false,
   includeStages = false,
   runOffline = false,
+  mockInput,
+  typeOfPreview,
 }) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
   const flow = yield call(filterPendingResources, { flow: deepClone(merged) });
   const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, _pageProcessorId, 'imports');
-  const typeOfPreview = yield select(selectors.typeOfSampleData, _pageProcessorId);
   const isLookUp = yield select(selectors.isLookUpExport, { flowId, resourceId: _pageProcessorId, resourceType: 'exports' });
 
   // // Incase of no pgs, preview call is stopped here
@@ -121,10 +122,7 @@ export function* pageProcessorPreview({
     if (!pageProcessorMap[_pageProcessorId].options) {
       pageProcessorMap[_pageProcessorId].options = {};
     }
-
-    const mockData = yield select(selectors.getResourceMockData, _pageProcessorId);
-
-    pageProcessorMap[_pageProcessorId].options.inputData = !isEmpty(mockData) ? mockData : undefined;
+    pageProcessorMap[_pageProcessorId].options.inputData = !isEmpty(mockInput) ? mockInput : undefined;
 
     if (typeOfPreview === 'send') {
       pageProcessorMap[_pageProcessorId].options.sendAndPreview = true;

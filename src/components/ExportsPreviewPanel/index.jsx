@@ -15,6 +15,7 @@ import EditIcon from '../icons/EditIcon';
 import CeligoDivider from '../CeligoDivider';
 import FieldHelp from '../DynaForm/FieldHelp';
 import MockInput from './MockInput';
+import {drawerPaths, buildDrawerUrl} from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   previewPanelWrapper: {
@@ -131,7 +132,7 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
   }, [dispatch, resourceId]);
 
   const onEditorClick = useCallback(() => {
-    history.push(`${match.url}/inputData`);
+    history.push(buildDrawerUrl({path: drawerPaths.PREVIEW_PANEL_MOCK_INPUT, baseUrl: match.url}));
   }, [match.url, history]);
 
   return (

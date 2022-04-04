@@ -367,8 +367,13 @@ export function* _requestPageProcessorSampleData({ formKey, refreshCache = false
     _pageProcessorDoc.test = { limit: recordSize };
   }
 
+  const mockInput = yield select(selectors.getResourceMockData, resourceId);
+  const typeOfPreview = yield select(selectors.typeOfSampleData, resourceId);
+
   try {
     const pageProcessorPreviewData = yield call(pageProcessorPreview, {
+      mockInput,
+      typeOfPreview,
       flowId,
       _pageProcessorId: resourceId,
       resourceType: 'imports',
