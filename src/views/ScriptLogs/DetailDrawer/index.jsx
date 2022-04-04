@@ -7,6 +7,7 @@ import { selectors } from '../../../reducers';
 import DrawerContent from '../../../components/drawer/Right/DrawerContent';
 import RightDrawer from '../../../components/drawer/Right';
 import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
+import { drawerPaths } from '../../../utils/rightDrawer';
 
 const emptyObj = {};
 const useStyles = makeStyles(theme => ({
@@ -106,13 +107,7 @@ const ScriptLogDrawerBody = () => {
 };
 export default function ViewLogDetailDrawer() {
   return (
-    <RightDrawer
-      variant="temporary"
-      path={[
-        'scriptLog/:scriptId/:flowId/:index',
-        'scriptLog/:scriptId/:index',
-      ]}
-      >
+    <RightDrawer path={[drawerPaths.LOGS.FLOW_SCRIPT_DETAIL, drawerPaths.LOGS.SCRIPT_DETAIL]}>
       <ScriptLogDetailDrawerHeader />
       <DrawerContent>
         <ScriptLogDrawerBody />

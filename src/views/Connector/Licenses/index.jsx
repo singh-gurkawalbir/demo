@@ -18,6 +18,7 @@ import { SCOPES } from '../../../sagas/resourceForm';
 import { TextButton } from '../../../components/Buttons';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
 import NoResultTypography from '../../../components/NoResultTypography';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -105,7 +106,11 @@ export default function Licenses(props) {
 
     dispatch(actions.resource.patchStaged(newId, patchSet, SCOPES.VALUE));
 
-    history.push(`${location.pathname}/add/connectorLicenses/${newId}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.RESOURCE.ADD,
+      baseUrl: location.pathname,
+      params: { resourceType: 'connectorLicenses', id: newId },
+    }));
   }, [connectorId, connector, history, location, dispatch]);
 
   if (!connector) {

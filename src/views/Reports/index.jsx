@@ -22,6 +22,7 @@ import RefreshIcon from '../../components/icons/RefreshIcon';
 import Spinner from '../../components/Spinner';
 import { TextButton } from '../../components/Buttons';
 import ActionGroup from '../../components/ActionGroup';
+import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -260,7 +261,11 @@ export default function Reports() {
               <TextButton
                 data-test="addNewResource"
                 component={Link}
-                to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
+                to={buildDrawerUrl({
+                  path: drawerPaths.RESOURCE.ADD,
+                  baseUrl: location.pathname,
+                  params: { resourceType, id: generateNewId() },
+                })}
                 startIcon={<AddIcon />}>
                 Run report
               </TextButton>

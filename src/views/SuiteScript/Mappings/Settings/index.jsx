@@ -187,6 +187,7 @@ function MappingSettingsWrapper(props) {
 export default function SettingsDrawer(props) {
   return (
     <RightDrawer
+      isSuitescript
       hideBackButton
       variant="temporary"
       disableBackdropClick

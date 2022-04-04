@@ -3,6 +3,7 @@ import { useHistory, Link } from 'react-router-dom';
 import SettingsIcon from '../../../../icons/SettingsIcon';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 export default function SettingsCell({flowId, name, actionProps}) {
   const history = useHistory();
@@ -20,7 +21,11 @@ export default function SettingsCell({flowId, name, actionProps}) {
         // disabled={!showSettings}
         component={Link}
         data-test={`flowSettings-${name}`}
-        to={`${history.location.pathname}/${flowId}/settings`}>
+        to={buildDrawerUrl({
+          path: drawerPaths.FLOW_BUILDER.IA_SETTINGS,
+          baseUrl: history.location.pathname,
+          params: { flowId },
+        })}>
         <SettingsIcon color="secondary" />
       </IconButtonWithTooltip>
     </RemoveMargin>

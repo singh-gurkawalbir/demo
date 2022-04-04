@@ -14,6 +14,7 @@ import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import { TextButton } from '../../../Buttons';
 import Spinner from '../../../Spinner';
 import RevisionHeader from '../components/RevisionHeader';
+import { drawerPaths } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
@@ -103,8 +104,7 @@ export default function CreateSnapshotDrawer({ integrationId }) {
 
   return (
     <RightDrawer
-      path="snapshot/:revId/open"
-      variant="temporary"
+      path={drawerPaths.LCM.CREATE_SNAPSHOT}
       height="tall"
       width="xl">
       <CreateSnapshotDrawerContent integrationId={integrationId} parentUrl={match.url} />

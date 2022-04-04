@@ -11,6 +11,7 @@ import ActionButton from '../../ActionButton';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import actions from '../../../actions';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -100,7 +101,11 @@ export default function DynaNetSuiteQualifier_afe(props) {
       customOptions: options,
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
   }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, options]);
 
   return (

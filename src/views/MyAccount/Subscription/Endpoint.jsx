@@ -18,6 +18,7 @@ import LoadResources from '../../../components/LoadResources';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import { TextButton, FilledButton } from '../../../components/Buttons';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -152,7 +153,7 @@ export default function Endpoint() {
   const [trialExpired, setTrialExpired] = useState(false);
 
   const onStartFreeTrialClick = useCallback(() => {
-    history.push(`${match.url}/upgrade`);
+    history.push(buildDrawerUrl({ path: drawerPaths.ACCOUNT.UPGRADE, baseUrl: match.url}));
   }, [history, match.url]);
 
   const onTrialUpgradeClick = useCallback(() => {
@@ -230,7 +231,7 @@ export default function Endpoint() {
     <>
       <UpgradeDrawer />
       <RightDrawer
-        path=":env/:type"
+        path={drawerPaths.ACCOUNT.SUBSCRIPTION}
         height="tall"
         onClose={handleClose}>
         <DrawerHeader title={titleMap[title]} />
