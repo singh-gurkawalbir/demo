@@ -31,7 +31,7 @@ export function* pageProcessorPreview({
   const flow = yield call(filterPendingResources, { flow: deepClone(merged) });
   const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, _pageProcessorId, 'imports');
   const typeOfPreview = yield select(selectors.typeOfSampleData, _pageProcessorId);
-  const isLookup = yield select(selectors.isLookUpExport, {flowId, _pageProcessorId, resourceType});
+  const isLookUp = yield select(selectors.isLookUpExport, { flowId, resourceId: _pageProcessorId, resourceType: 'exports' });
 
   // // Incase of no pgs, preview call is stopped here
   if (!isPreviewPanelAvailable && (!flow.pageGenerators || !flow.pageGenerators.length)) return;
@@ -114,7 +114,7 @@ export function* pageProcessorPreview({
       pgInfo => pgInfo?.options?.runOfflineOptions
     );
 
-  if ((isPreviewPanelAvailable && typeOfPreview) || isLookup) {
+  if ((isPreviewPanelAvailable && typeOfPreview) || isLookUp) {
     if (!pageProcessorMap[_pageProcessorId]) {
       pageProcessorMap[_pageProcessorId] = {};
     }
