@@ -6421,7 +6421,7 @@ selectors.applicationName = (state, _expOrImpId) => {
   } else {
     const connection = selectors.resource(state, 'connections', _connectionId) || {};
 
-    appType = connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type;
+    appType = connection.assistant || rdbmsSubTypeToAppType(connection.rdbms?.type) || connection.http?.formType || connection.type;
   }
 
   return getApp(appType)?.name;
