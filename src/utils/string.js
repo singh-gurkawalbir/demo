@@ -82,3 +82,8 @@ export const getParsedMessage = message => {
 
   return safeValue;
 };
+export const getPlainText = message => {
+  let tempDOMelement = document.createElement('div');
+  tempDOMelement.innerHTML = message;
+  return tempDOMelement.textContent || tempDOMelement.innerText || '';
+};
