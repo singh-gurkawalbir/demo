@@ -19,6 +19,7 @@ import ActionGroup from '../../ActionGroup';
 import CeligoDivider from '../../CeligoDivider';
 import getFieldMeta from './CreateAliasFormMeta';
 import messageStore from '../../../utils/messageStore';
+import { drawerPaths } from '../../../utils/rightDrawer';
 
 const anchorProps = {
   component: 'a',
@@ -104,8 +105,7 @@ export default function CreateAliasDrawer({resourceId, resourceType, height = 's
     <RightDrawer
       height={height}
       width="default"
-      path={['add', 'edit/:aliasId']}
-    >
+      path={[drawerPaths.ALIASES.ADD, drawerPaths.ALIASES.EDIT]} >
       <DrawerHeader
         title={isEdit ? 'Edit alias' : 'Create alias'}
         infoText={isEdit ? messageStore('EDIT_ALIAS_FORM_HELPINFO') : messageStore('CREATE_ALIAS_FORM_HELPINFO')}
