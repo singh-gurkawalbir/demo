@@ -121,6 +121,7 @@ export default function Panel(props) {
     dispatch(actions.resourceForm.submitAborted(resourceType, id));
     onClose();
     dispatch(actions.resource.clearStaged(id));
+    dispatch(actions.resourceFormSampleData.updateType(id, 'preview'));
   }, [dispatch, id, onClose, resourceType]);
   // if this form is for a page processor, we don't know if
   // the new resource is an export or import. We determine this by
