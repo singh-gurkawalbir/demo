@@ -465,8 +465,6 @@ export function* _requestImportSampleData({ formKey, refreshCache }) {
   if (isPreviewPanelAvailable) {
     yield call(_requestPageProcessorSampleData, { formKey, refreshCache });
   }
-
-  // is Preview panel available
 }
 
 export function* requestResourceFormSampleData({ formKey, options = {} }) {
