@@ -17,7 +17,7 @@ import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 import KeywordSearch from '../../../components/KeywordSearch';
 import actions from '../../../actions';
 import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../../../utils/home';
-import { resourceUrl, DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths, DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   viewIcon: {
@@ -82,8 +82,11 @@ export default function IntegrationCeligoPageBar() {
               data-test="newIntegration"
               component={Link}
               startIcon={<AddIcon />}
-              to={`${location.pathname}${resourceUrl('add', 'integrations', generateNewId())}`}
-              >
+              to={buildDrawerUrl({
+                path: drawerPaths.RESOURCE.ADD,
+                baseUrl: location.pathname,
+                params: { resourceType: 'integrations', id: generateNewId() },
+              })} >
               Create integration
             </TextButton>
           </>

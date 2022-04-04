@@ -26,7 +26,7 @@ import NoResultTypography from '../../components/NoResultTypography';
 import ResourceEmptyState from './ResourceEmptyState';
 import ActionGroup from '../../components/ActionGroup';
 import PageContent from '../../components/PageContent';
-import { resourceUrl } from '../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 
 const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
 const resourcesToLoad = resourceType => {
@@ -150,7 +150,11 @@ export default function ResourceList(props) {
           <TextButton
             data-test="addNewResource"
             component={Link}
-            to={`${location.pathname}${resourceUrl('add', resourceType, generateNewId())}`}
+            to={buildDrawerUrl({
+              path: drawerPaths.RESOURCE.ADD,
+              baseUrl: location.pathname,
+              params: { resourceType, id: generateNewId() },
+            })}
             startIcon={<AddIcon />}>
             Create {createResourceLabel}
           </TextButton>

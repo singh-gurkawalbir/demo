@@ -15,7 +15,7 @@ import infoText from '../ResourceList/infoText';
 import CheckPermissions from '../../components/CheckPermissions';
 import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
-import { resourceUrl } from '../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 import { TextButton } from '../../components/Buttons';
 import NoResultTypography from '../../components/NoResultTypography';
 import ResourceEmptyState from '../ResourceList/ResourceEmptyState';
@@ -67,8 +67,11 @@ export default function AccessTokenList(props) {
               data-test="newAccessToken"
               component={Link}
               startIcon={<AddIcon />}
-              to={`${location.pathname}${resourceUrl('add', 'accesstokens', generateNewId())}`}
-              >
+              to={buildDrawerUrl({
+                path: drawerPaths.RESOURCE.ADD,
+                baseUrl: location.pathname,
+                params: { resourceType: 'accesstokens', id: generateNewId() },
+              })} >
               Create API token
             </TextButton>
           </div>

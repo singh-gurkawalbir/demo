@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import EditIcon from '../../../icons/EditIcon';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
-import { resourceUrl } from '../../../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 export default {
   key: 'edit',
@@ -34,7 +34,11 @@ export default {
     }
 
     const handleClick = useCallback(() => {
-      history.push(`${match.url}${resourceUrl('edit', resourceType, rowData._id)}`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.RESOURCE.EDIT,
+        baseUrl: match.url,
+        params: { resourceType, id: rowData._id },
+      }));
     }, [history, match.url, rowData._id, resourceType]);
 
     return handleClick;

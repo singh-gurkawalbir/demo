@@ -18,7 +18,7 @@ import responseTransformationAction from './actions/responseTransformation_afe';
 import proceedOnFailureAction from './actions/proceedOnFailure';
 import { actionsMap, isImportMappingAvailable } from '../../../utils/flows';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { resourceUrl } from '../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles({
   ppContainer: {
@@ -146,8 +146,16 @@ const PageProcessor = ({
     }
 
     const to = pending
-      ? `${match.url}${resourceUrl('add', 'pageProcessor', newId)}`
-      : `${match.url}${resourceUrl('edit', resourceType, resourceId)}`;
+      ? buildDrawerUrl({
+        path: drawerPaths.RESOURCE.ADD,
+        baseUrl: match.url,
+        params: { resourceType: 'pageProcessor', id: newId },
+      })
+      : buildDrawerUrl({
+        path: drawerPaths.RESOURCE.EDIT,
+        baseUrl: match.url,
+        params: { resourceType, id: resourceId },
+      });
 
     if (match.isExact) {
       history.push(to);

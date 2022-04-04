@@ -19,7 +19,7 @@ import transformationAction from './actions/transformation_afe';
 import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter_afe';
 import { actionsMap } from '../../../utils/flows';
-import { resourceUrl } from '../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const emptyObj = {};
 const useStyles = makeStyles({
@@ -142,10 +142,24 @@ const PageGenerator = ({
     }
 
     let to = pending
-      ? `${match.url}${resourceUrl('add', 'pageGenerator', newId)}`
-      : `${match.url}${resourceUrl('edit', 'exports', pg._exportId)}`;
+      ? buildDrawerUrl({
+        path: drawerPaths.RESOURCE.ADD,
+        baseUrl: match.url,
+        params: { resourceType: 'pageGenerator', id: newId },
+      })
+      : buildDrawerUrl({
+        path: drawerPaths.RESOURCE.EDIT,
+        baseUrl: match.url,
+        params: { resourceType: 'exports', id: pg._exportId },
+      });
 
-    if (pending && isDataLoader) to = `${match.url}${resourceUrl('edit', 'exports', newId)}`;
+    if (pending && isDataLoader) {
+      to = buildDrawerUrl({
+        path: drawerPaths.RESOURCE.EDIT,
+        baseUrl: match.url,
+        params: { resourceType: 'exports', id: newId },
+      });
+    }
 
     if (match.isExact) {
       history.push(to);

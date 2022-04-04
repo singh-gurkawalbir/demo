@@ -16,7 +16,7 @@ import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigCon
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { TextButton } from '../../../../../components/Buttons';
 import ActionGroup from '../../../../../components/ActionGroup';
-import { resourceUrl } from '../../../../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -102,7 +102,11 @@ export default function ConnectionsPanel({ integrationId, childId }) {
     const newId = generateNewId();
 
     setTempId(newId);
-    history.push(`${location.pathname}${resourceUrl('add', 'connections', newId)}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.RESOURCE.ADD,
+      baseUrl: location.pathname,
+      params: { resourceType: 'connections', id: newId },
+    }));
 
     if (!isStandalone) {
       const patchSet = [

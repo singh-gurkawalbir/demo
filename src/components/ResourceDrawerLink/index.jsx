@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import InfoIconButton from '../InfoIconButton';
-import { resourceUrl } from '../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 
 export default function ResourceDrawerLink({
   resourceType,
@@ -36,7 +36,11 @@ export default function ResourceDrawerLink({
         // We "know (guess) that a drawer is already opened if the route path is not
         // an exact match (url already contains drawer route segment)"
         replace={!match.isExact}
-        to={`${match.url}${resourceUrl('edit', resourceType, resource._id)}`}>
+        to={buildDrawerUrl({
+          path: drawerPaths.RESOURCE.EDIT,
+          baseUrl: match.url,
+          params: { resourceType, id: resource._id },
+        })}>
         {linkLabel}
       </Link>
       { resource.description && <InfoIconButton info={resource.description} escapeUnsecuredDomains size="xs" />}

@@ -155,6 +155,7 @@ export const drawerPaths = {
     FLOW_STEP_DEBUG: 'logs',
   },
   RESOURCE: {
+    ROOT: ':operation(add|edit)/:resourceType/:id',
     ADD: 'add/:resourceType/:id',
     EDIT: 'edit/:resourceType/:id',
   },

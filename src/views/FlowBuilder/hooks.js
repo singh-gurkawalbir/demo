@@ -8,7 +8,7 @@ import { selectors } from '../../reducers';
 import { emptyObject, UNASSIGNED_SECTION_ID } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import itemTypes from './itemTypes';
-import { resourceUrl } from '../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 
 export const isNewFlowFn = flowId => !flowId || flowId?.startsWith('new');
 export const usePatchFlow = flowId => {
@@ -223,10 +223,13 @@ export function useHandleAddGenerator() {
   const pushOrReplaceHistory = usePushOrReplaceHistory();
   const handleAddGenerator = useCallback(() => {
     const newTempGeneratorId = generateNewId();
+    const addPGUrl = buildDrawerUrl({
+      path: drawerPaths.RESOURCE.ADD,
+      baseUrl: match.url,
+      params: { resourceType: 'pageGenerator', id: newTempGeneratorId },
+    });
 
-    pushOrReplaceHistory(
-      `${match.url}${resourceUrl('add', 'pageGenerator', newTempGeneratorId)}`
-    );
+    pushOrReplaceHistory(addPGUrl);
   }, [match.url, pushOrReplaceHistory]);
 
   return handleAddGenerator;
@@ -238,10 +241,13 @@ export function useHandleAddProcessor() {
 
   const handleAddProcessor = useCallback(() => {
     const newTempProcessorId = generateNewId();
+    const addPPUrl = buildDrawerUrl({
+      path: drawerPaths.RESOURCE.ADD,
+      baseUrl: match.url,
+      params: { resourceType: 'pageProcessor', id: newTempProcessorId },
+    });
 
-    pushOrReplaceHistory(
-      `${match.url}${resourceUrl('add', 'pageProcessor', newTempProcessorId)}`
-    );
+    pushOrReplaceHistory(addPPUrl);
   }, [match.url, pushOrReplaceHistory]);
 
   return handleAddProcessor;

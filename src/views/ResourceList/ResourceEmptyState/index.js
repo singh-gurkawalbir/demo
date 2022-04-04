@@ -5,7 +5,7 @@ import EmptyState from '../../../components/EmptyState';
 import resourceTypeMetaData from '../../../components/EmptyState/metadata';
 import NoResultTypography from '../../../components/NoResultTypography';
 import { generateNewId } from '../../../utils/resource';
-import { resourceUrl } from '../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import LoadResources from '../../../components/LoadResources';
 
 export default function ResourceEmptyState({resourceType}) {
@@ -16,6 +16,12 @@ export default function ResourceEmptyState({resourceType}) {
   if (resourceType === 'integrations' || resourceType === 'tiles') {
     requiredResources = ['integrations', 'tiles'];
   }
+
+  const createResourceUrl = buildDrawerUrl({
+    path: drawerPaths.RESOURCE.ADD,
+    baseUrl: location.pathname,
+    params: { resourceType, id: generateNewId() },
+  });
 
   return (
     <LoadResources required resources={requiredResources}>
@@ -28,7 +34,9 @@ export default function ResourceEmptyState({resourceType}) {
           <FilledButton
             component={Link}
             data-test={resource.type === 'integrations' ? 'create flow' : 'addNewResource'}
-            to={resource.type === 'integrations' ? '/integrations/none/flowBuilder/new' : `${location.pathname}${resourceUrl('add', resourceType, generateNewId())}`} >
+            to={resource.type === 'integrations'
+              ? '/integrations/none/flowBuilder/new'
+              : createResourceUrl} >
             {resource.buttonLabel}
           </FilledButton>
           <TextButton
