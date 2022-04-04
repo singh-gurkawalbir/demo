@@ -116,8 +116,6 @@ export const drawerPaths = {
 export const hasMultipleDrawers = url =>
   !!(url.match(new RegExp(DRAWER_URL_PREFIX, 'g'))?.length > 1);
 
-export const resourceUrl = (operation, resourceType, resourceId) => `/${DRAWER_URL_PREFIX}/${operation}/${resourceType}/${resourceId}`;
-
 /**
  *
  * @param {drawerType} Key for the DRAWER_URLS to get to the target URL

@@ -7,7 +7,7 @@ import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
 import {HOME_PAGE_PATH} from '../../utils/constants';
-import { resourceUrl } from '../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 import { generateNewId } from '../../utils/resource';
 
 export default function AmpersandRoutesHandler({ match }) {
@@ -41,19 +41,31 @@ export default function AmpersandRoutesHandler({ match }) {
     case getRoutePath('/integrations/create'):
       return (
         <Redirect
-          to={getRoutePath(`${HOME_PAGE_PATH}${resourceUrl('add', 'integrations', generateNewId())}`)}
+          to={getRoutePath(buildDrawerUrl({
+            path: drawerPaths.RESOURCE.ADD,
+            baseUrl: HOME_PAGE_PATH,
+            params: { resourceType: 'integrations', resourceId: generateNewId()},
+          }))}
       />
       );
     case getRoutePath('/:resourceType/create'):
       return (
         <Redirect
-          to={getRoutePath(`/${match.params.resourceType}${resourceUrl('add', match.params.resourceType, generateNewId())}`)}
+          to={getRoutePath(buildDrawerUrl({
+            path: drawerPaths.RESOURCE.ADD,
+            baseUrl: match.params.resourceType,
+            params: { resourceType: match.params.resourceType, resourceId: generateNewId()},
+          }))}
       />
       );
     case getRoutePath('/:resourceType/:resourceId/edit'):
       return (
         <Redirect
-          to={getRoutePath(`/${match.params.resourceType}${resourceUrl('edit', match.params.resourceType, match.params.connectorId)}`)}
+          to={getRoutePath(buildDrawerUrl({
+            path: drawerPaths.RESOURCE.EDIT,
+            baseUrl: match.params.resourceType,
+            params: { resourceType: match.params.resourceType, resourceId: match.params.connectorId},
+          }))}
         />
       );
     case getRoutePath('/data-loader'):
@@ -87,13 +99,27 @@ export default function AmpersandRoutesHandler({ match }) {
     case getRoutePath('/integrations/:integrationId/orchestrations/:flowId/:resourceType/create'):
       return (
         <Redirect
-          to={getRoutePath(`/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}${resourceUrl('add', match.params.resourceType === 'exports' ? 'pageGenerator' : 'pageProcessor', generateNewId())}`)}
+          to={getRoutePath(buildDrawerUrl({
+            baseUrl: `integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}`,
+            path: drawerPaths.RESOURCE.ADD,
+            params: {
+              resourceType: match.params.resourceType === 'exports' ? 'pageGenerator' : 'pageProcessor',
+              id: generateNewId(),
+            },
+          }))}
     />
       );
     case getRoutePath('/integrations/:integrationId/orchestrations/:flowId/:resourceType/:resourceId/edit'):
       return (
         <Redirect
-          to={getRoutePath(`/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}${resourceUrl('edit', match.params.resourceType === 'exports' ? 'pageGenerator' : 'pageProcessor', match.params.resourceId)}`)}
+          to={getRoutePath(buildDrawerUrl({
+            baseUrl: `integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}`,
+            path: drawerPaths.RESOURCE.EDIT,
+            params: {
+              resourceType: match.params.resourceType === 'exports' ? 'pageGenerator' : 'pageProcessor',
+              id: match.params.resourceId,
+            },
+          }))}
     />
       );
     case getRoutePath('/integrations/:integrationId/flows/create'):
@@ -113,13 +139,21 @@ export default function AmpersandRoutesHandler({ match }) {
     case getRoutePath('/connectors/:connectorId/licenses/create'):
       return (
         <Redirect
-          to={getRoutePath(`/connectors/${match.params.connectorId}/connectorLicenses${resourceUrl('add', 'connectorLicenses', generateNewId())}`)}
+          to={getRoutePath(buildDrawerUrl({
+            baseUrl: `connectors/${match.params.connectorId}/connectorLicenses`,
+            path: drawerPaths.RESOURCE.ADD,
+            params: { resourceType: 'connectorLicenses', id: generateNewId() },
+          }))}
       />
       );
     case getRoutePath('/connectors/:connectorId/licenses/:licenseId/edit'):
       return (
         <Redirect
-          to={getRoutePath(`/connectors/${match.params.connectorId}/connectorLicenses${resourceUrl('edit', 'connectorLicenses', match.params.licenseId)}`)}
+          to={getRoutePath(buildDrawerUrl({
+            baseUrl: `connectors/${match.params.connectorId}/connectorLicenses`,
+            path: drawerPaths.RESOURCE.EDIT,
+            params: { resourceType: 'connectorLicenses', id: match.params.licenseId },
+          }))}
       />
       );
     case getRoutePath('/clone/integrations/:_integrationId/:resourceType/:resourceId/preview'):
@@ -176,7 +210,11 @@ export default function AmpersandRoutesHandler({ match }) {
 
       return (
         <Redirect
-          to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${childId}/admin/apitoken${resourceUrl('edit', 'accesstokens', accessTokenId)}`)}
+          to={getRoutePath(buildDrawerUrl({
+            baseUrl: `integrationapps/${integrationAppName}/${integrationId}/child/${childId}/admin/apitoken`,
+            path: drawerPaths.RESOURCE.EDIT,
+            params: { resourceType: 'accesstokens', id: accessTokenId },
+          }))}
       />
       );
 
