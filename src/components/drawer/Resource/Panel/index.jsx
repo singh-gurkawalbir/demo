@@ -18,11 +18,11 @@ import { getParentResourceContext } from '../../../../utils/connections';
 import FlowStepRequestLogsDrawer from '../../FlowStepDebugLogs';
 import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
-import { DRAWER_URL_PREFIX } from '../../../../utils/rightDrawer';
+import { DRAWER_URL_PREFIX, drawerPaths } from '../../../../utils/rightDrawer';
 import TitleBar from './TitleBar';
 import DrawerContent from '../../Right/DrawerContent';
 
-const DRAWER_PATH = `/${DRAWER_URL_PREFIX}/:operation(add|edit)/:resourceType/:id`;
+const DRAWER_PATH = `/${DRAWER_URL_PREFIX}/${drawerPaths.RESOURCE.ROOT}`;
 export const isNestedDrawer = url => !!matchPath(url, {
   path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
   exact: true,

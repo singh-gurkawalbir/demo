@@ -18,7 +18,7 @@ import suiteScriptRoutes from './suiteScript';
 import getRoutePath from '../../../utils/routePaths';
 import ConnectorCrumb from './crumbs/Connector';
 import {HOME_PAGE_PATH} from '../../../utils/constants';
-import { DRAWER_URLS, DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import FlowStepDebugLogs from './crumbs/FlowStepDebugLogs';
 import FlowGroupCrumb from './crumbs/FlowGroup';
 
@@ -65,14 +65,14 @@ const flowBuilderRoutes = [
     path: '/flowBuilder/:flowId',
     breadcrumb: 'Flow Builder',
     childRoutes: [
-      { path: `/${DRAWER_URL_PREFIX}/schedule`, breadcrumb: 'Schedule' },
-      { path: `/${DRAWER_URLS.FLOW_BUILDER_SETTINGS}`, breadcrumb: 'Settings' },
+      { path: buildDrawerUrl({path: drawerPaths.FLOW_BUILDER.SCHEDULE}), breadcrumb: 'Schedule' },
+      { path: buildDrawerUrl({path: drawerPaths.FLOW_BUILDER.SETTINGS}), breadcrumb: 'Settings' },
     ],
   },
   {
     path: '/dataLoader/:flowId',
     breadcrumb: 'Data Loader',
-    childRoutes: [{ path: `/${DRAWER_URLS.FLOW_BUILDER_SETTINGS}`, breadcrumb: 'Settings' }],
+    childRoutes: [{ path: buildDrawerUrl({path: drawerPaths.FLOW_BUILDER.SETTINGS}), breadcrumb: 'Settings' }],
   },
 ];
 // These routes are shared for IAs with and without /child/ url segment.
@@ -151,18 +151,6 @@ const routes = [
       {
         path: '/revisions',
         breadcrumb: 'Revisions',
-
-        childRoutes: [
-          { path: `/${DRAWER_URLS.OPEN_PULL}`, breadcrumb: 'Open pull'},
-          { path: `/${DRAWER_URLS.REVIEW_PULL_CHANGES}`, breadcrumb: 'Review pull changes'},
-          { path: `/${DRAWER_URLS.MERGE_PULL_CHANGES}`, breadcrumb: 'Merge pull changes'},
-          { path: `/${DRAWER_URLS.OPEN_REVERT}`, breadcrumb: 'Open revert'},
-          { path: `/${DRAWER_URLS.REVIEW_REVERT_CHANGES}`, breadcrumb: 'Review revert changes'},
-          { path: `/${DRAWER_URLS.FINAL_REVERT_STEP}`, breadcrumb: 'Merge revert changes'},
-          { path: `/${DRAWER_URLS.CREATE_SNAPSHOT}`, breadcrumb: 'Create snapshot' },
-          { path: `/${DRAWER_URL_PREFIX}/view/:revId/mode/changes`, breadcrumb: 'View resources changed'},
-          { path: `/${DRAWER_URL_PREFIX}/view/:revId/mode/details`, breadcrumb: 'View details'},
-        ],
       },
       ...flowBuilderRoutes,
     ],
@@ -325,11 +313,11 @@ const commonChildRoutes = [
   // metadata needs to be carried in the url.. keeping it simple for now.
   { path: '/clone', breadcrumb: 'Clone' },
   {
-    path: `/${DRAWER_URL_PREFIX}/add/:resourceType/:id`,
+    path: buildDrawerUrl({path: drawerPaths.RESOURCE.ADD}),
     breadcrumb: AddResourceTypeCrumb,
   },
   {
-    path: `/${DRAWER_URL_PREFIX}/edit/:resourceType/:id`,
+    path: buildDrawerUrl({path: drawerPaths.RESOURCE.EDIT}),
     breadcrumb: EditResourceTypeCrumb,
     childRoutes: [
       { path: '/logs', breadcrumb: FlowStepDebugLogs },

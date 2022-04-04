@@ -7,7 +7,7 @@ import { isEmpty } from 'lodash';
 import { mockGetRequestOnce, mockPostRequestOnce, renderWithProviders} from '../../../test/test-utils';
 import GlobalSearch from '.';
 import actions from '../../../actions';
-import { buildDrawerUrl, drawerPaths, DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import { runServer } from '../../../test/api/server';
 import getRoutePath from '../../../utils/routePaths';
 
@@ -570,7 +570,12 @@ describe('Globalsearch feature tests', () => {
     await initGlobalSearch(
       <MemoryRouter>
         <Switch>
-          <Route path={`/connections/${DRAWER_URL_PREFIX}/edit/connections/:id`}>
+          <Route
+            path={buildDrawerUrl({
+              path: drawerPaths.RESOURCE.EDIT,
+              baseUrl: getRoutePath('connections'),
+              params: { resourceType: 'connections' },
+            })}>
             <Connections />
           </Route>
           <Route exact path="/">

@@ -5,7 +5,7 @@ import SettingsIcon from '../../icons/SettingsIcon';
 import ActionButton from '../../ActionButton';
 import {selectors} from '../../../reducers';
 import { emptyObject } from '../../../utils/constants';
-import { DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 /**
  * disabled property set to true in case of monitor level access
@@ -40,9 +40,17 @@ export default function MappingSettingsButton(props) {
   });
   const handleBtnClick = useCallback(() => {
     if (isCategoryMapping) {
-      history.push(`${history.location.pathname}/${DRAWER_URL_PREFIX}/settings/category/${editorId}/sections/${sectionId}/${depth}/${mappingKey}`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.MAPPINGS.CATEGORY_MAPPING_SETTINGS,
+        baseUrl: history.location.pathname,
+        params: { editorId, sectionId, depth, mappingKey },
+      }));
     } else {
-      history.push(`${history.location.pathname}/${DRAWER_URL_PREFIX}/settings/${mappingKey}`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.MAPPINGS.SETTINGS,
+        baseUrl: history.location.pathname,
+        params: { mappingKey },
+      }));
     }
   }, [editorId, history, isCategoryMapping, mappingKey, sectionId, depth]);
 
