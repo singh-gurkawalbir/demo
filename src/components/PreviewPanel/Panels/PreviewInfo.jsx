@@ -2,6 +2,7 @@ import React, { useMemo, useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import isEmpty from 'lodash/isEmpty';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
 import { getPreviewDataPageSizeInfo } from '../../../utils/exportPanel';
 import FieldMessage from '../../DynaForm/fields/FieldMessage';
@@ -101,7 +102,7 @@ export default function PreviewInfo(props) {
   const records = Object.prototype.hasOwnProperty.call(previewStageDataList, 'preview')
     ? previewStageDataList.preview
     : previewStageDataList.parse;
-  const mockInputDataAbsent = resourceType === 'imports' && !records.data && !resourceMockData;
+  const mockInputDataAbsent = resourceType === 'imports' && !records.data && isEmpty(resourceMockData);
   const sampleDataStatus = useMemo(() => {
     const { status, error } = resourceSampleData;
 

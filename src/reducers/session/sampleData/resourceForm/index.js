@@ -72,8 +72,8 @@ export default function (state = {}, action) {
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_STAGES:
         draft[resourceId][activeSendOrPreviewTab].status = 'received';
         draft[resourceId][activeSendOrPreviewTab].data = extractStages(previewStagesData);
-        if (!draft[resourceId].data) draft[resourceId].data = {};
-        if (previewStagesData.data) draft[resourceId].data.mockData = previewStagesData.data;
+        if (!draft[resourceId].data) { draft[resourceId].data = {}; }
+        if (previewStagesData && previewStagesData.data) { draft[resourceId].data.mockData = previewStagesData.data; }
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_ERROR:
         draft[resourceId][activeSendOrPreviewTab].status = 'error';
