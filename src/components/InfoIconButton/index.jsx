@@ -39,6 +39,7 @@ export default function InfoIconButton({ info, size = 'small', className, escape
   if (!info || !info.length) {
     return null;
   }
+  
   return (
     <>
       <IconButton
