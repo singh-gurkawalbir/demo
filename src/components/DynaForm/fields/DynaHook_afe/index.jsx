@@ -10,7 +10,7 @@ import FieldHelp from '../../FieldHelp';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
-import { REQUIRED_MESSAGE } from '../../../../utils/messageStore';
+import messageStore from '../../../../utils/messageStore';
 import StackView from './StackView';
 import ScriptView from './ScriptView';
 
@@ -96,7 +96,7 @@ export default function DynaHook_afe({
       if (isValid) {
         dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
       } else {
-        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: REQUIRED_MESSAGE}));
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: messageStore('REQUIRED_MESSAGE')}));
       }
     }
   }, [id, dispatch, formKey, value, resourceType]);
