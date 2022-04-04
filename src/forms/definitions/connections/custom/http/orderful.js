@@ -24,7 +24,6 @@ export default {
       options: [
         {
           items: [
-            { label: 'V2', value: 'v2' },
             { label: 'V3', value: 'v3' },
           ],
         },
