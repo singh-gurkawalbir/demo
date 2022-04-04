@@ -5,6 +5,7 @@ import { selectors } from '../../../../../reducers';
 import ShowContentIcon from '../../../../icons/ShowContentIcon';
 import EditIcon from '../../../../icons/EditIcon';
 import AddIcon from '../../../../icons/AddIcon';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 export default function Notifications({ user, integrationId, childId }) {
   const match = useRouteMatch();
@@ -26,12 +27,36 @@ export default function Notifications({ user, integrationId, childId }) {
   });
 
   if (!canManageNotifications) {
-    return <Link to={`${match.url}/${userEmail}/notifications`}><ShowContentIcon /></Link>;
+    return (
+      <Link
+        to={buildDrawerUrl({
+          path: drawerPaths.ACCOUNT.VIEW_NOTIFICATIONS_SETUP,
+          baseUrl: match.url,
+          params: { userEmail },
+        })}><ShowContentIcon />
+      </Link>
+    );
   }
 
   if (hasNotifications) {
-    return <Link to={`${match.url}/${userEmail}/manageNotifications`}><EditIcon /></Link>;
+    return (
+      <Link
+        to={buildDrawerUrl({
+          path: drawerPaths.ACCOUNT.MANAGE_NOTIFICATIONS_SETUP,
+          baseUrl: match.url,
+          params: { userEmail },
+        })}><EditIcon />
+      </Link>
+    );
   }
 
-  return <Link to={`${match.url}/${userEmail}/manageNotifications`}><AddIcon /></Link>;
+  return (
+    <Link
+      to={buildDrawerUrl({
+        path: drawerPaths.ACCOUNT.MANAGE_NOTIFICATIONS_SETUP,
+        baseUrl: match.url,
+        params: { userEmail },
+      })}><AddIcon />
+    </Link>
+  );
 }

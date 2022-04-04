@@ -21,6 +21,7 @@ import FilledButton from '../../components/Buttons/FilledButton';
 import getImageUrl from '../../utils/image';
 import PageContent from '../../components/PageContent';
 import { gridViewStyles } from '../Home/View/TileView/HomeCard';
+import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   pageCenter: {
@@ -291,7 +292,11 @@ export default function MarketplaceList() {
                 <FilledButton
                   data-test="installTemplate"
                   component={Link}
-                  to={`${match.url}/installTemplate/preview/${template._id}`}>
+                  to={buildDrawerUrl({
+                    path: drawerPaths.INSTALL.TEMPLATE_PREVIEW,
+                    baseUrl: match.url,
+                    params: { templateId: template._id },
+                  })}>
                   Preview
                 </FilledButton>
               </CardActions>

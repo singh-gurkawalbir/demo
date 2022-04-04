@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom';
 import { makeStyles, Drawer } from '@material-ui/core';
 import { selectors } from '../../../reducers';
+import { DRAWER_URL_PREFIX } from '../../../utils/rightDrawer';
 import { DrawerProvider } from './DrawerContext';
 
 const useStyles = makeStyles(theme => ({
@@ -98,7 +99,7 @@ function RightDrawer(props) {
           }
         ),
       }}
-      onClose={handleClose}>
+     >
       <div className={classes.childrenWrapper}>
         <DrawerProvider height={height} fullPath={fullPath} onClose={handleClose}>
           {children}
@@ -109,11 +110,19 @@ function RightDrawer(props) {
 }
 
 export default function RightDrawerRoute(props) {
-  const { path } = props;
+  const { path, isSuitescript } = props;
   let fullPath;
   const match = useRouteMatch();
 
-  const getFullPath = path => match.url === '/' ? path : `${match.url}/${path}`;
+  const getFullPath = path => {
+    // Drawer prefix gets added to all the drawer paths other than Suitescript drawers
+    // TODO @Raghu: Decide on whether to add changes to suitescript or not
+    const drawerPath = (isSuitescript || path.startsWith(DRAWER_URL_PREFIX))
+      ? path
+      : `${DRAWER_URL_PREFIX}/${path}`;
+
+    return match.url === '/' ? drawerPath : `${match.url}/${drawerPath}`;
+  };
 
   if (typeof path === 'string' || typeof path === 'number') {
     fullPath = getFullPath(path);
@@ -144,5 +153,5 @@ RightDrawer.propTypes = {
 RightDrawer.defaultProps = {
   width: 'default',
   height: 'short',
-  variant: 'permanent',
+  variant: 'temporary',
 };
