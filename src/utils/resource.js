@@ -4,6 +4,8 @@ import parseLinkHeader from 'parse-link-header';
 import { isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from './constants';
 import { stringCompare } from './sort';
+import messageStore from './messageStore';
+import errorMessageStore from './errorStore';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -998,6 +1000,64 @@ export const getNextLinkRelativeUrl = link => {
 
   return '';
 };
+
+export const validateAliasId = (aliasId, previousAliasId, aliases) => {
+  if (!aliasId) {
+    return {
+      isValid: false,
+      message: messageStore('REQUIRED_MESSAGE'),
+    };
+  }
+
+  if (aliasId !== previousAliasId && aliases.some(ra => ra.alias === aliasId)) {
+    return {
+      isValid: false,
+      message: errorMessageStore('DUPLICATE_ALIAS_ERROR_MESSAGE'),
+    };
+  }
+
+  if (!/^[a-zA-Z0-9-_]+$/.test(aliasId)) {
+    return {
+      isValid: false,
+      message: errorMessageStore('ALIAS_VALIDATION_ERROR_MESSAGE'),
+    };
+  }
+
+  return {
+    isValid: true,
+  };
+};
+
+export const getResourceFromAlias = alias => {
+  if (!alias) return {};
+
+  if (alias._connectionId) {
+    return {
+      id: alias._connectionId,
+      resourceType: 'connections',
+    };
+  }
+
+  if (alias._flowId) {
+    return {
+      id: alias._flowId,
+      resourceType: 'flows',
+    };
+  }
+
+  if (alias._exportId) {
+    return {
+      id: alias._exportId,
+      resourceType: 'exports',
+    };
+  }
+
+  return {
+    id: alias._importId,
+    resourceType: 'imports',
+  };
+};
+
 export const AUDIT_LOGS_RANGE_FILTERS = [
   {id: 'last1hour', label: 'Last hour'},
   {id: 'today', label: 'Today'},

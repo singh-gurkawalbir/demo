@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../actions';
 import ModalDialog from '../components/ModalDialog';
-import { CONTACT_SALES_MESSAGE } from '../utils/messageStore';
+import messageStore from '../utils/messageStore';
 import { FilledButton } from '../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
@@ -19,7 +19,7 @@ const ModalWrapper = ({setShowMessage}) => {
     <ModalDialog show onClose={() => setShowMessage(false)}>
       <div>Thanks for your request !</div>
       <div>
-        {CONTACT_SALES_MESSAGE}
+        {messageStore('CONTACT_SALES_MESSAGE')}
         <a
           href="http://www.celigo.com/integration-marketplace"
           rel="noopener noreferrer"

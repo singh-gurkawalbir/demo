@@ -1,6 +1,7 @@
 import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
 import JavaScriptPanel from '../Editor/panels/JavaScript';
+import ViewAliases from '../Drawer/actions/ViewAliases';
 
 export default {
   type: 'javascript',
@@ -30,4 +31,9 @@ export default {
       }),
     },
   ],
+  drawer: {
+    actions: [
+      { component: ViewAliases, position: 'right' },
+    ],
+  },
 };
