@@ -5,6 +5,7 @@ import MapDataIcon from '../../../../icons/MapDataIcon';
 import { selectors } from '../../../../../reducers';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 export default function MappingCell({ flowId, childId }) {
   const history = useHistory();
@@ -16,10 +17,18 @@ export default function MappingCell({ flowId, childId }) {
   );
   const handleClick = useCallback(() => {
     if (showUtilityMapping) {
-      history.push(
-        `${history.location.pathname}/${flowId}/utilityMapping/commonAttributes`
-      );
-    } else history.push(`${history.location.pathname}/mapping/${flowId}`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.MAPPINGS.CATEGORY_MAPPING.ROOT,
+        baseUrl: history.location.pathname,
+        params: { flowId, categoryId: 'commonAttributes' },
+      }));
+    } else {
+      history.push(buildDrawerUrl({
+        path: drawerPaths.MAPPINGS.IMPORT.LIST_ALL,
+        baseUrl: history.location.pathname,
+        params: { flowId },
+      }));
+    }
   }, [history, showUtilityMapping, flowId]);
 
   if (!showMapping) return null;

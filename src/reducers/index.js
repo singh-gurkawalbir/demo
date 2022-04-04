@@ -107,6 +107,7 @@ import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCom
 import { getTemplateUrlName } from '../utils/template';
 import { filterMap } from '../components/GlobalSearch/filterMeta';
 import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions } from '../utils/revisions';
+import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -5840,7 +5841,11 @@ selectors.getResourceEditUrl = (state, resourceType, resourceId, childId, sectio
     return getRoutePath(`${iaUrlPrefix || `/integrations/${resourceId}`}/flows`);
   }
 
-  return getRoutePath(`${resourceType}/edit/${resourceType}/${resourceId}`);
+  return getRoutePath(buildDrawerUrl({
+    path: drawerPaths.RESOURCE.EDIT,
+    baseUrl: resourceType,
+    params: { resourceType, id: resourceId },
+  }));
 };
 
 selectors.mkFlowConnectionList = () => createSelector(

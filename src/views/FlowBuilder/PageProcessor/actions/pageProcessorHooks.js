@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouteMatch, Redirect } from 'react-router-dom';
 import Icon from '../../../../components/icons/HookIcon';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 function PageProcessorHooks(props) {
   const { open, onClose, resourceType, resourceId } = props;
@@ -10,7 +11,14 @@ function PageProcessorHooks(props) {
 
   onClose();
 
-  return <Redirect push to={`${match.url}/hooks/${resourceType}/${resourceId}`} />;
+  return (
+    <Redirect
+      push to={buildDrawerUrl({
+        path: drawerPaths.FLOW_BUILDER.HOOKS,
+        baseUrl: match.url,
+        params: { resourceType, resourceId },
+      })} />
+  );
 }
 
 export default {

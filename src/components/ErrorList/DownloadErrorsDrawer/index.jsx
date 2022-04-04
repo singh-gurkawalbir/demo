@@ -15,6 +15,7 @@ import {OutlinedButton, TextButton} from '../../Buttons';
 import ActionGroup from '../../ActionGroup';
 import { selectors } from '../../../reducers';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
+import { drawerPaths } from '../../../utils/rightDrawer';
 
 const fieldMeta = {
   fieldMap: {
@@ -129,13 +130,9 @@ export default function DownloadErrorsDrawer({ flowId, resourceId }) {
 
   return (
     <RightDrawer
-      path="download/:type"
-      variant="temporary"
-      width="small"
-      hideBackButton>
-
+      path={drawerPaths.ERROR_MANAGEMENT.V2.DOWNLOAD_ERRORS}
+      width="small">
       <DrawerHeader title="Download errors" />
-
       <DownloadErrors
        // TODO: @Raghu, this is not ideal..pls take to @Dave for details.
        // It would be best if the error form and buttons were

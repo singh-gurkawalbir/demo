@@ -14,6 +14,7 @@ import ActionButton from '../../../ActionButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   field: {
@@ -88,7 +89,11 @@ export default function ScriptView({
       onSave: handleSave,
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
   }, [dispatch, editorId, flowId, resourceId, resourceType, hookStage, history, match.url, value, handleSave, formKey]);
 
   const options = useMemo(() => [{ items: allScripts.map(script => ({
@@ -111,8 +116,7 @@ export default function ScriptView({
             required={required}
             isValid={isValidHookField('_scriptId')}
             onFieldChange={handleFieldChange('_scriptId')}
-            options={options}
-                  />
+            options={options} />
         </FormControl>
       </div>
       <ActionButton

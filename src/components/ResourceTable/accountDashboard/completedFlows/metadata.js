@@ -7,6 +7,7 @@ import NameCell from '../../commonCells/Name';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../../commonCells/MultiSelectColumnFilter';
 import { selectors } from '../../../../reducers';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 import actions from '../../../../actions';
 import {FILTER_KEYS_AD, getTimeString, getDashboardIntegrationId} from '../../../../utils/accountDashboard';
 import Status from '../../../Buttons/Status';
@@ -84,7 +85,15 @@ export default {
 
           return (
             <Status variant={r.numOpenError ? 'error' : 'success'} size="mini" >
-              <Link data-test="account-dashboard-open-errors" to={`${match.url}/${r._flowId}/errorsList`}>{r.numOpenError} </Link>
+              <Link
+                data-test="account-dashboard-open-errors"
+                to={buildDrawerUrl({
+                  path: drawerPaths.ERROR_MANAGEMENT.V2.FLOW_ERROR_LIST,
+                  baseUrl: match.url,
+                  params: { flowId: r._flowId },
+                })}>
+                {r.numOpenError}
+              </Link>
             </Status>
           );
         },
@@ -112,9 +121,19 @@ export default {
           const {rowData: r} = props;
 
           const match = useRouteMatch();
+          const runHistoryPath = buildDrawerUrl({
+            path: drawerPaths.FLOW_BUILDER.RUN_HISTORY,
+            baseUrl: match.url,
+            params: { flowId: r._flowId },
+          });
 
-          return (r.numRuns && (<Link data-test="account-dashboard-run-history" to={`${match.url}/${r._flowId}/runHistory`}>{r.numRuns} </Link>)
-          );
+          return (r.numRuns && (
+            <Link
+              data-test="account-dashboard-run-history"
+              to={runHistoryPath}>
+              {r.numRuns}
+            </Link>
+          ));
         },
       },
       {
