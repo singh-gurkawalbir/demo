@@ -48,12 +48,11 @@ const useStyles = makeStyles(theme => ({
 
   title: {
     display: 'flex',
-    fontSize: 14,
     padding: theme.spacing(4, 0, 6, 0),
     alignItems: 'center',
     marginBottom: theme.spacing(0.5),
     justifyContent: 'center',
-    color: theme.palette.secondary.main,
+    color: theme.palette.secondary.light,
     fontFamily: 'Roboto400',
   },
   destinationTitle: {

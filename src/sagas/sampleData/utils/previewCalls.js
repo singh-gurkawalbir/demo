@@ -10,7 +10,7 @@ import {
 } from './flowDataUtils';
 import { getFormattedResourceForPreview, getPostDataForDeltaExport, isPostDataNeededInResource } from '../../../utils/flowData';
 import { isNewId } from '../../../utils/resource';
-import { EMPTY_RAW_DATA } from '../../../utils/constants';
+import { EMPTY_RAW_DATA, STANDALONE_INTEGRATION } from '../../../utils/constants';
 import { getConstructedResourceObj } from '../flows/utils';
 
 export function* pageProcessorPreview({
@@ -201,17 +201,20 @@ export function* exportPreview({
     delete body.rawData;
   }
 
-  const path = '/exports/preview';
-
   // BE need flowId and integrationId in the preview call
   // if in case integration settings were used in export
   const flow = yield select(selectors.resource, 'flows', flowId);
 
-  if (!isNewId(flowId)) {
-    body._flowId = flowId;
+  let path;
+
+  if (flow?._integrationId && flow?._integrationId !== STANDALONE_INTEGRATION.id && flow?._id) {
+    path = `/integrations/${flow._integrationId}/flows/${flowId}/exports/preview`;
+  } else if (flow?._integrationId && flow?._integrationId !== STANDALONE_INTEGRATION.id && !flow?._id) {
+    path = `/integrations/${flow._integrationId}/exports/preview`;
+  } else {
+    path = '/exports/preview';
   }
 
-  body._integrationId = flow?._integrationId;
   try {
     const previewData = yield call(apiCallWithRetry, {
       path,
