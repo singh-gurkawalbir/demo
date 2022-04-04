@@ -6,7 +6,6 @@ import { IconButton } from '@material-ui/core';
 import ArrowPopper from '../ArrowPopper';
 import TooltipContent from '../TooltipContent';
 import InfoIcon from '../icons/InfoIcon';
-import { getPlainText } from '../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   small: {
@@ -40,7 +39,6 @@ export default function InfoIconButton({ info, size = 'small', className, escape
   if (!info || !info.length) {
     return null;
   }
-  info = getPlainText(info);
   return (
     <>
       <IconButton
