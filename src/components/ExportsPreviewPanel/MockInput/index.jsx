@@ -76,7 +76,7 @@ function RouterWrappedContent(props) {
     dispatch(actions.resourceFormSampleData.setMockData(resourceId, unwrappedMockData));
   };
 
-  const value = mockData || wrapExportFileSampleData(resourceMockData) || (resourceSampleDataStatus !== 'error' && wrapExportFileSampleData(previewStageDataList?.preview?.data));
+  const value = mockData || (resourceSampleDataStatus !== 'error' && wrapExportFileSampleData(previewStageDataList?.preview?.data));
   const showEditor = ['received', 'error'].includes(resourceSampleDataStatus) || resourceMockData || mockData;
 
   return (

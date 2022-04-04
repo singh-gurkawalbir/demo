@@ -10,6 +10,7 @@ import { selectors } from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import {OutlinedButton} from '../../Buttons';
 import { capitalizeFirstLetter } from '../../../utils/string';
+import { MOCK_INPUT_RECORD_ABSENT } from '../../../utils/errorStore';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {
@@ -83,6 +84,7 @@ export default function PreviewInfo(props) {
     resourceId,
     showPreviewData,
     formKey,
+    resourceType,
   } = props;
   const classes = useStyles(props);
   const [isValidRecordSize, setIsValidRecordSize] = useState(true);
@@ -95,13 +97,30 @@ export default function PreviewInfo(props) {
   );
   const isPreviewDisabled = useSelector(state =>
     selectors.isExportPreviewDisabled(state, formKey));
-
+  const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
+  const records = Object.prototype.hasOwnProperty.call(previewStageDataList, 'preview')
+    ? previewStageDataList.preview
+    : previewStageDataList.parse;
+  const mockInputDataAbsent = resourceType === 'imports' && !records.data && !resourceMockData;
   const sampleDataStatus = useMemo(() => {
     const { status, error } = resourceSampleData;
 
     if (status === 'requested') return <Typography variant="body2"> Testing </Typography>;
 
-    if (status === 'received') return <Typography variant="body2"> Success! </Typography>;
+    if (status === 'received') {
+      if (mockInputDataAbsent) {
+        return (
+          <>
+            <FieldMessage
+              errorMessages="1 error"
+            />
+            <Typography variant="body2">{MOCK_INPUT_RECORD_ABSENT}</Typography>
+          </>
+        );
+      }
+
+      return <Typography variant="body2"> Success! </Typography>;
+    }
 
     if (status === 'error') {
       const errorCount = error?.length || 0;
@@ -112,7 +131,7 @@ export default function PreviewInfo(props) {
         />
       );
     }
-  }, [resourceSampleData]);
+  }, [mockInputDataAbsent, resourceSampleData]);
 
   const sampleDataOverview = useMemo(() => {
     if (resourceSampleData.status === 'error') {
@@ -124,18 +143,13 @@ export default function PreviewInfo(props) {
     }
 
     if (resourceSampleData.status === 'received') {
-      const records =
-        Object.prototype.hasOwnProperty.call(previewStageDataList, 'preview')
-          ? previewStageDataList.preview
-          : previewStageDataList.parse;
-
-      return (
+      return !mockInputDataAbsent && (
         <Typography variant="body2">
           {getPreviewDataPageSizeInfo(records)}
         </Typography>
       );
     }
-  }, [previewStageDataList, resourceSampleData.status]);
+  }, [mockInputDataAbsent, records, resourceSampleData.status]);
 
   const handlePreview = useCallback(
     () => {

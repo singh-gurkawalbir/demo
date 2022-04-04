@@ -56,6 +56,7 @@ function PreviewInfo({
   previewStageDataList,
   showPreviewData,
   setShowPreviewData,
+  resourceType,
 }) {
   const dispatch = useDispatch();
 
@@ -88,6 +89,7 @@ function PreviewInfo({
       formKey={formKey}
       resourceId={resourceId}
       showPreviewData={showPreviewData}
+      resourceType={resourceType}
   />
   );
 }
@@ -183,6 +185,7 @@ export default function ExportsPreviewPanel({resourceId, formKey, resourceType, 
             formKey={formKey}
             setShowPreviewData={setShowPreviewData}
             showPreviewData={showPreviewData}
+            resourceType={resourceType}
           />
 
           <Panels.PreviewBody

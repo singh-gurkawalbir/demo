@@ -40,11 +40,12 @@ export default function PreviewBody(props) {
   // Else the last stage is taken as the default stage
   const defaultPanel = useMemo(() => {
     if (!availablePreviewStages.length) return;
+    if (resourceType === 'imports') return 'request';
     const defaultStage = availablePreviewStages.find(stage => stage.default === true);
     const lastStage = availablePreviewStages[availablePreviewStages.length - 1];
 
     return defaultStage ? defaultStage.value : lastStage.value;
-  }, [availablePreviewStages]);
+  }, [availablePreviewStages, resourceType]);
   const parseAllErrors = useSelector(state => selectors.getAllParsableErrors(state, resourceId), shallowEqual);
   const shouldShowParseTab = !!parseAllErrors;
 
