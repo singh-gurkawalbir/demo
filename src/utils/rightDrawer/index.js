@@ -125,12 +125,10 @@ export const hasMultipleDrawers = url =>
   !!(url.match(new RegExp(DRAWER_URL_PREFIX, 'g'))?.length > 1);
 
 /**
- *
- * @param {drawerType} Key for the DRAWER_URLS to get to the target URL
- * @param {drawerIndex} Index for the list of urls against the passed key , if the DRAWER_URLS[key] is an array
- * @param {prefix}
- * ...pathProps - values for the configurable paths to replace with and get the actual path
- * Ex: For path 'settings/:mappingKey', pathProps = {mappingKey: 'key-123' }
+ * @param {path} String Drawer path that the Drawer listens to
+ * @param {baseUrl} String the base url to which the drawer path gets appended to
+ * @param {params} Object values for the configurable paths to replace with and get the actual path
+ * Ex: For path 'settings/:mappingKey', params = {mappingKey: 'key-123' }
  * Final path would be 'settings/key-123'
  */
 export const buildDrawerUrl = ({ path, baseUrl = '', params = {} }) => {
