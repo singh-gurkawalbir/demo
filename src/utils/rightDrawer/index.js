@@ -19,6 +19,7 @@ export const drawerPaths = {
       },
     },
     SETTINGS: 'settings/:mappingKey',
+    V2_SETTINGS: 'settings/v2/:nodeKey/:generate',
     CATEGORY_MAPPING_SETTINGS: 'settings/category/:editorId/sections/:sectionId/:depth/:mappingKey',
     CONDITIONAL_LOOKUP: {
       ADD: 'conditionalLookup/add',

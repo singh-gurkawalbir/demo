@@ -18,6 +18,7 @@ import Mapper2Generates from './Destination/Mapper2Generates';
 import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import RawHtml from '../../../../../RawHtml';
+import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -171,7 +172,12 @@ const Mapper2Row = React.memo(({
 
   const handleSettingsClick = useCallback(() => {
     dispatch(actions.mapping.v2.updateActiveKey(nodeKey));
-    history.push(`${history.location.pathname}/settings/v2/${nodeKey}/${generate}`);
+
+    history.push(buildDrawerUrl({
+      path: drawerPaths.MAPPINGS.V2_SETTINGS,
+      baseUrl: history.location.pathname,
+      params: { nodeKey, generate },
+    }));
   }, [dispatch, history, nodeKey, generate]);
 
   const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
