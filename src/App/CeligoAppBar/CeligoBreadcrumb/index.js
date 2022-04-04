@@ -134,6 +134,7 @@ const routes = [
       { path: '/auditlog', breadcrumb: 'Audit log' },
       { path: '/notifications', breadcrumb: 'Notifications' },
       { path: '/analytics', breadcrumb: 'Analytics' },
+      { path: '/aliases', breadcrumb: 'Aliases' },
       {
         path: '/admin',
         breadcrumb: 'Admin',
