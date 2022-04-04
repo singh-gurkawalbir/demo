@@ -5,7 +5,7 @@ import { Typography, makeStyles, Divider } from '@material-ui/core';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import { NO_PENDING_QUEUED_JOBS } from '../../../utils/messageStore';
+import messageStore from '../../../utils/messageStore';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import CancelIcon from '../../icons/CancelIcon';
 import LoadResources from '../../LoadResources';
@@ -151,7 +151,7 @@ function QueuedJobs({ connectionId}) {
         {connectionJobs && connectionJobs.length > 0 ? (
           <CeligoTable data={connectionJobs} {...metadata} />
         ) : (
-          <Typography variant="body1">{NO_PENDING_QUEUED_JOBS}</Typography>
+          <Typography variant="body1">{messageStore('NO_PENDING_QUEUED_JOBS')}</Typography>
         )}
       </div>
     </div>

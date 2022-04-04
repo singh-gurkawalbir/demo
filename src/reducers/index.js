@@ -58,7 +58,7 @@ import {
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
   AFE_SAVE_STATUS,
   UNASSIGNED_SECTION_NAME} from '../utils/constants';
-import { LICENSE_EXPIRED } from '../utils/messageStore';
+import messageStore from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -2383,19 +2383,21 @@ selectors.mkConnectionIdsUsedInSelectedFlows = () => createSelector(
  */
 selectors.getScriptContext = createSelector(
   [
-    (state, { contextType }) => contextType,
+    (_1, { contextType }) => contextType,
+    (_1, { flowId }) => flowId,
     (state, { flowId }) => {
       const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
 
       return flow._integrationId;
     },
   ],
-  (contextType, _integrationId) => {
+  (contextType, _flowId, _integrationId) => {
     if (contextType === 'hook' && _integrationId) {
       return {
         type: 'hook',
         container: 'integration',
         _integrationId,
+        _flowId,
       };
     }
   }
@@ -3627,7 +3629,7 @@ selectors.isLicenseValidToEnableFlow = state => {
 
   if (license.hasExpired) {
     licenseDetails.enable = false;
-    licenseDetails.message = LICENSE_EXPIRED;
+    licenseDetails.message = messageStore('LICENSE_EXPIRED');
   }
 
   return licenseDetails;

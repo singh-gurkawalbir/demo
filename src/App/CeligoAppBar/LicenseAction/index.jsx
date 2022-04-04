@@ -10,7 +10,7 @@ import { platformLicenseActionDetails } from '../../../utils/license';
 import {PillButton, TextButton} from '../../../components/Buttons';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import RawHtml from '../../../components/RawHtml';
-import { LICENSE_UPGRADE_SUCCESS_MESSAGE } from '../../../utils/messageStore';
+import messageStore from '../../../utils/messageStore';
 
 const useStyles = makeStyles({
   inTrial: {
@@ -229,7 +229,7 @@ function LicenseAction() {
 
   useEffect(() => {
     if (platformLicenseActionMessage) {
-      enquesnackbar({message: <RawHtml html={LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
+      enquesnackbar({message: <RawHtml html={messageStore('LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
       dispatch(actions.license.clearActionMessage());
     }
   }, [dispatch, enquesnackbar, platformLicenseActionMessage]);
