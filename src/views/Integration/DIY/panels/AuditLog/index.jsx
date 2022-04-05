@@ -20,23 +20,15 @@ const useStyles = makeStyles(theme => ({
 function useLoadRevisions(integrationId) {
   // move this hook to a global folder when there are much more use cases to load revisions
   const dispatch = useDispatch();
-  const isLoadingRevisions = useSelector(state => {
-    const status = selectors.revisionsFetchStatus(state, integrationId);
-
-    return !status || status === 'requested';
-  });
-
-  const isRevisionsCollectionRequested = useSelector(state =>
-    !!selectors.revisionsFetchStatus(state, integrationId)
-  );
+  const revisionsFetchStatus = useSelector(state => selectors.revisionsFetchStatus(state, integrationId));
 
   useEffect(() => {
-    if (!isRevisionsCollectionRequested) {
+    if (!revisionsFetchStatus) {
       dispatch(actions.integrationLCM.revisions.request(integrationId));
     }
-  }, [integrationId, dispatch, isRevisionsCollectionRequested]);
+  }, [integrationId, dispatch, revisionsFetchStatus]);
 
-  return !isLoadingRevisions;
+  return !revisionsFetchStatus || revisionsFetchStatus === 'requested';
 }
 
 export default function AuditLogSection({ integrationId, childId }) {
