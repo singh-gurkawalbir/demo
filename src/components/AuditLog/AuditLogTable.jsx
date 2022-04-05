@@ -30,7 +30,11 @@ export default function AuditLogTable({ resourceType, isFixed, resourceId, filte
       {childId, take}
     ));
 
-  const actionProps = useMemo(() => ({ childId }), [childId]);
+  const actionProps = useMemo(() => ({
+    childId,
+    integrationId: resourceType === 'integrations' ? resourceId : undefined }),
+  [childId, resourceType, resourceId]
+  );
 
   return (
     <div className={clsx(classes.root, className)}>
