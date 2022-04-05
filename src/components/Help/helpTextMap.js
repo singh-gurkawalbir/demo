@@ -1729,6 +1729,9 @@ if you're using a production account, you'll find your API keys under the 'API M
   'import.dynamodb.expressionAttributeValues':
 ' If you need to compare an attribute with a value, define an expression attribute value as a placeholder. Expression attribute values in Amazon DynamoDB are substitutes for the actual values that you want to compare—values that you might not know until runtime. An expression attribute value must begin with a colon ( and be followed by one or more alphanumeric character. Refer to the DynamoDB documentation for the expected projection object syntax and operators.',
   'import.dynamodb.ignoreExtract': '',
+  'import.previewAndSend': `Toggle the Preview/Send button to either preview the request that will be sent to the destination application, or manually send requests to the destination application.</br></br>
+  <ul><li> Preview – Click Preview to see the HTTP request constructed with a sample record from your flow data, according to your import configurations.</li></br></br>
+  <li>Send – Click Send to initiate an import request to the destination application and view its HTTP request, response, and parsed output.</li></ul>`,
   'integration._id':
 'System generated primary unique identifier for your integration.  For API users, this value should be used for GET and PUT requests.',
   'integration.name':
@@ -1958,6 +1961,7 @@ if you're using a production account, you'll find your API keys under the 'API M
 'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
   'import.expression':
 'This field represents your complete handlebars expression. You have the freedom to manually enter an expression, or use the function and field drop-downs above to help construct it.',
+  'import.editMockInput': 'Use this mock data to preview and send import requests. The data can be modified to test different import scenarios, or to help with import configurations. The mock input is stored temporarily for the duration of the session, and is used for testing purposes only.',
   'jobErrors.helpSummary':
 'You can view the error source, code and message, as well as when the error occurred. Hover over each error to click the … Actions to access the record where the error occurred and make any necessary changes. Once you’ve tracked down and resolved your error, resolve it from the Actions or button toolbar. You can also retry errors, such as something due to an intermittent connection failure. If you have a lot of errors, you’ll want to download them into a csv, then mark them resolved or retried, and upload your processed errors.',
   'connection.useSFTP': '',
@@ -2051,7 +2055,7 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Save your client ID and client secret in iClient for an added layer of security.',
   'connection.http.clientCertificates.key': 'Select a .KEY private key file.',
   'connection.http.clientCertificates.cert':
-'Select a certificate of .PEM or .PFX format.',
+'Select a certificate in PEM format.',
   'connection.http.clientCertificates.passphrase':
 'Enter a passphrase if you need to further protect this certificate file.',
   'connection.marketplaceRegion':

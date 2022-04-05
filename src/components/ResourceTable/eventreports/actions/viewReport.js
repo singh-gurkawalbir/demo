@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import ViewDetailsIcon from '../../../icons/ViewDetailsIcon';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 export default {
   key: 'viewReport',
@@ -10,7 +11,11 @@ export default {
     const { _id } = rowData;
     const history = useHistory();
     const match = useRouteMatch();
-    const viewDetailsRoute = `${match.url}/view/reportDetails/${_id}`;
+    const viewDetailsRoute = buildDrawerUrl({
+      path: drawerPaths.ACCOUNT.VIEW_REPORT_DETAILS,
+      baseUrl: match.url,
+      params: { reportId: _id },
+    });
 
     return useCallback(() => {
       history.push(viewDetailsRoute);

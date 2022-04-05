@@ -11,6 +11,8 @@ import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
 import messageStore from '../../../../utils/messageStore';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
+
 import StackView from './StackView';
 import ScriptView from './ScriptView';
 
@@ -127,7 +129,11 @@ export default function DynaHook_afe({
     setNewScriptId(() => {
       const _newScriptId = generateNewId();
 
-      history.push(`${match.url}/add/scripts/${_newScriptId}`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.RESOURCE.ADD,
+        baseUrl: match.url,
+        params: { resourceType: 'scripts', id: _newScriptId },
+      }));
 
       return _newScriptId;
     });

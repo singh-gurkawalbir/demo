@@ -15,6 +15,7 @@ import ApplicationImg from '../../icons/ApplicationImg';
 import { selectors } from '../../../reducers';
 import { FilledButton } from '../../Buttons';
 import {getFlowStepLabel} from '../../../utils/flowStepLogs';
+import { drawerPaths } from '../../../utils/rightDrawer';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
@@ -91,12 +92,15 @@ export default function FlowStepDebugLogs({ flowId, resourceType, resourceId }) 
 
   return (
     <RightDrawer
-      path="logs"
-      variant="permanent"
+      path={drawerPaths.LOGS.FLOW_STEP_DEBUG}
       height="tall"
       width="full"
       onClose={handleClose} >
-      <RouterWrappedContent flowId={flowId} resourceType={resourceType} resourceId={resourceId} handleClose={handleClose} />
+      <RouterWrappedContent
+        flowId={flowId}
+        resourceType={resourceType}
+        resourceId={resourceId}
+        handleClose={handleClose} />
     </RightDrawer>
   );
 }

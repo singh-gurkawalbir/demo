@@ -4,16 +4,10 @@ import { useTheme } from '@material-ui/core';
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
 import Conflicts from '../../Conflicts';
 
-const getDiffValues = (diff, resourceType) => {
-  if (resourceType === 'script') {
-    return { oldValue: diff.before, newValue: diff.after};
-  }
-
-  return {
-    oldValue: JSON.stringify(diff.before, null, 2),
-    newValue: JSON.stringify(diff.after, null, 2),
-  };
-};
+const getDiffValues = diff => ({
+  oldValue: typeof diff.before === 'string' ? diff.before : JSON.stringify(diff.before, null, 2),
+  newValue: typeof diff.after === 'string' ? diff.after : JSON.stringify(diff.after, null, 2),
+});
 
 const DEFAULT_DIFF_TITLES = { before: 'Before changes', after: 'After changes'};
 

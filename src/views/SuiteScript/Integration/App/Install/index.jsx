@@ -354,6 +354,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
             handleSubmitComplete={handleSubmitComplete} />
           {ssConnection && (
           <RightDrawer
+            isSuitescript
             path="editConnection"
             height="tall"
             width="medium">

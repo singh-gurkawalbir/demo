@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import nanoid from 'nanoid';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import CreatePullIcon from '../../../icons/AddIcon';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 export default {
   key: 'createPull',
@@ -11,7 +12,11 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
-      history.push(`${match.url}/pull/${nanoid()}/open`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.LCM.OPEN_PULL,
+        baseUrl: match.url,
+        params: { revId: nanoid() },
+      }));
     }, [history, match.url]);
 
     return handleClick;

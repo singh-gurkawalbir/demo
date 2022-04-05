@@ -5,6 +5,7 @@ import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Checkbox 
 import { difference } from 'lodash';
 import clsx from 'clsx';
 import { JOB_STATUS } from '../../utils/constants';
+import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 import JobDetail from './JobDetail';
 import ErrorDrawer from './ErrorDrawer';
 import actions from '../../actions';
@@ -114,7 +115,10 @@ export default function JobTable({
       numResolved,
     });
 
-    history.push(`${match.url}/viewErrors`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V1.VIEW_JOB_ERRORS,
+      baseUrl: match.url,
+    }));
   }, [history, match.url]);
 
   useEffect(() => {
@@ -128,7 +132,9 @@ export default function JobTable({
     // For reload case as there is no track of jobID, redirecting to the job table dashboard
     if (history.location.pathname.includes('/viewErrors') && !(_JobId || showErrorDialogFor?.jobId)) {
       const urlExtractFields = history.location.pathname.split('/');
-      const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf('viewErrors');
+      // TODO: @RAGHU, Do we need this logic?
+      // considers drawer prefix before view errors, so + 1
+      const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf('viewErrors') + 1;
       const strippedRoute = urlExtractFields.slice(0, -indexToBeStripped).join('/');
 
       history.replace(strippedRoute);
