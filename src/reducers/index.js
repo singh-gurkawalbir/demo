@@ -58,7 +58,7 @@ import {
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
   AFE_SAVE_STATUS,
   UNASSIGNED_SECTION_NAME} from '../utils/constants';
-import { LICENSE_EXPIRED } from '../utils/messageStore';
+import messageStore from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -107,6 +107,7 @@ import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCom
 import { getTemplateUrlName } from '../utils/template';
 import { filterMap } from '../components/GlobalSearch/filterMeta';
 import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions } from '../utils/revisions';
+import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -2382,19 +2383,21 @@ selectors.mkConnectionIdsUsedInSelectedFlows = () => createSelector(
  */
 selectors.getScriptContext = createSelector(
   [
-    (state, { contextType }) => contextType,
+    (_1, { contextType }) => contextType,
+    (_1, { flowId }) => flowId,
     (state, { flowId }) => {
       const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
 
       return flow._integrationId;
     },
   ],
-  (contextType, _integrationId) => {
+  (contextType, _flowId, _integrationId) => {
     if (contextType === 'hook' && _integrationId) {
       return {
         type: 'hook',
         container: 'integration',
         _integrationId,
+        _flowId,
       };
     }
   }
@@ -3626,7 +3629,7 @@ selectors.isLicenseValidToEnableFlow = state => {
 
   if (license.hasExpired) {
     licenseDetails.enable = false;
-    licenseDetails.message = LICENSE_EXPIRED;
+    licenseDetails.message = messageStore('LICENSE_EXPIRED');
   }
 
   return licenseDetails;
@@ -4044,10 +4047,9 @@ selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {
  */
 selectors.canSelectRecordsInPreviewPanel = (state, formKey) => {
   const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, formKey);
-
-  if (isExportPreviewDisabled) return false;
-
   const { resourceId, resourceType } = selectors.formParentContext(state, formKey) || {};
+
+  if (isExportPreviewDisabled || resourceType === 'imports') return false;
 
   const resource = selectors.resourceData(state, resourceType, resourceId)?.merged || {};
   // TODO @Raghu: merge this as part of isRealTimeOrDistributedResource to handle this resourceType
@@ -5161,7 +5163,6 @@ selectors.isPreviewPanelAvailableForResource = (
   resourceType,
   flowId
 ) => {
-  if (resourceType !== 'exports') return false;
   const resourceObj = selectors.resourceData(
     state,
     resourceType,
@@ -5838,7 +5839,11 @@ selectors.getResourceEditUrl = (state, resourceType, resourceId, childId, sectio
     return getRoutePath(`${iaUrlPrefix || `/integrations/${resourceId}`}/flows`);
   }
 
-  return getRoutePath(`${resourceType}/edit/${resourceType}/${resourceId}`);
+  return getRoutePath(buildDrawerUrl({
+    path: drawerPaths.RESOURCE.EDIT,
+    baseUrl: resourceType,
+    params: { resourceType, id: resourceId },
+  }));
 };
 
 selectors.mkFlowConnectionList = () => createSelector(
@@ -5867,6 +5872,10 @@ selectors.isAnyIntegrationConnectionOffline = (state, integrationId) => {
   const connections = selectors.resourceList(state, {
     type: 'connections',
   }).resources;
+
+  if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+    return connections.some(c => c.offline);
+  }
   const connectionIds = integration?._registeredConnectionIds || emptyArray;
 
   return connections.some(c => connectionIds.includes(c._id) && c.offline);
@@ -6421,7 +6430,7 @@ selectors.applicationName = (state, _expOrImpId) => {
   } else {
     const connection = selectors.resource(state, 'connections', _connectionId) || {};
 
-    appType = connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type;
+    appType = connection.assistant || rdbmsSubTypeToAppType(connection.rdbms?.type) || connection.http?.formType || connection.type;
   }
 
   return getApp(appType)?.name;

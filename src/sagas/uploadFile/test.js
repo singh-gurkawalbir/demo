@@ -5,10 +5,10 @@ import * as matchers from 'redux-saga-test-plan/matchers';
 import { apiCallWithRetry } from '../index';
 import { uploadFile, previewZip, processFile, configureFileReader, uploadRawData } from '.';
 import actions from '../../actions';
-import messageStore from '../../constants/messages';
 import {
   getCsvFromXlsx,
 } from '../../utils/file';
+import errorMessageStore from '../../utils/errorStore';
 
 describe('uploadFile saga', () => {
   const resourceId = '123';
@@ -194,6 +194,6 @@ describe('processFile saga', () => {
     .run());
   test('should be able to dispatch processError if file size exceeds', () => expectSaga(processFile, { fileId, file: file1, fileType, fileProps})
     .provide([[matchers.call.fn(configureFileReader), fileContent]])
-    .put(actions.file.processError({ fileId, error: messageStore('FILE_SIZE_EXCEEDED') }))
+    .put(actions.file.processError({ fileId, error: errorMessageStore('FILE_SIZE_EXCEEDED') }))
     .run());
 });

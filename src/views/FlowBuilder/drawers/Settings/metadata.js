@@ -75,6 +75,13 @@ export default function getSettingsMetadata(props) {
         helpKey: 'flow.autoResolveMatchingTraceKeys',
         label: 'Auto-resolve errors with matching trace key',
       },
+      manageAliases: {
+        id: 'manageAliases',
+        name: 'manageAliases',
+        type: 'managealiases',
+        label: 'Aliases',
+        helpKey: 'flow.manageAliases',
+      },
       settings: {
         id: 'settings',
         name: 'settings',
@@ -93,6 +100,11 @@ export default function getSettingsMetadata(props) {
               label: 'General',
               fields: ['name', 'description', ...(isUserInErrMgtTwoDotZero ? ['notifyOnFlowError', 'autoResolveMatchingTraceKeys'] : []), '_runNextFlowIds'],
             },
+            (flow?._integrationId ? {
+              collapsed: false,
+              label: 'Advanced settings',
+              fields: ['manageAliases'],
+            } : {}),
           ],
         },
         {

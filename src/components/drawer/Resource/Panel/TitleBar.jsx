@@ -1,15 +1,13 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { IconButton, makeStyles, Typography } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
 import DrawerHeader from '../../Right/DrawerHeader';
 import CloseButton from './CloseButton';
-import Back from '../../../icons/BackArrowIcon';
 import { isNewId } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import TitleActions from './TitleActions';
-import { isNestedDrawer } from '.';
 
 const useStyles = makeStyles(theme => ({
   backButton: {
@@ -54,7 +52,7 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
   return `${opTitle} ${resourceLabel.toLowerCase()}`;
 };
 
-const ResourceTitle = ({ flowId, onClose }) => {
+const ResourceTitle = ({ flowId }) => {
   const classes = useStyles();
   const location = useLocation();
   const match = useRouteMatch();
@@ -77,27 +75,14 @@ const ResourceTitle = ({ flowId, onClose }) => {
     [id, location.search, resourceLabel, resourceType]
   );
 
-  const showBackButton = isNestedDrawer(match.url);
-
   return (
-    <>
-      <div className={classes.title}>
-        {showBackButton && (
-        <IconButton
-          data-test="backDrawer"
-          className={classes.backButton}
-          onClick={onClose}>
-          <Back />
-        </IconButton>
-        )}
-
-        <div className={classes.titleImgBlock}>
-          <Typography variant="h4" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: showBackButton})}>
-            {title}
-          </Typography>
-        </div>
+    <div className={classes.title}>
+      <div className={classes.titleImgBlock}>
+        <Typography variant="h4" className={clsx(classes.titleText)}>
+          {title}
+        </Typography>
       </div>
-    </>
+    </div>
   );
 };
 
@@ -106,10 +91,9 @@ export default function TitleBar({ flowId, formKey, onClose }) {
 
   return (
     <DrawerHeader
-      title={<ResourceTitle flowId={flowId} onClose={onClose} />}
+      title={<ResourceTitle flowId={flowId} />}
       CloseButton={ResourceCloseButton}
-      hideBackButton
-    >
+      handleBack={onClose} >
       <TitleActions flowId={flowId} />
     </DrawerHeader>
   );

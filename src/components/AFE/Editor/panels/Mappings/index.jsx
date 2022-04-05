@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import {useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {selectors} from '../../../../../reducers';
 import Spinner from '../../../../Spinner';
@@ -11,6 +11,7 @@ import AutoMapperButton from '../../../../Mapping/AutoMapperButton';
 import { dataAsString } from '../../../../../utils/editor';
 import MappingRow from '../../../../Mapping/MappingRow';
 import { emptyObject } from '../../../../../utils/constants';
+import NoResultTypography from '../../../../NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   mappingDrawerContent: {
@@ -122,7 +123,7 @@ export default function MappingWrapper({ editorId }) {
   }, [mappingStatus]);
 
   if (mappingStatus === 'error') {
-    return (<Typography>Failed to load mapping.</Typography>);
+    return (<NoResultTypography size="small" >Failed to load mapping.</NoResultTypography>);
   }
   if (mappingStatus !== 'received') {
     return (

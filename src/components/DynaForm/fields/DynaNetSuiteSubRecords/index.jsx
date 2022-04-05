@@ -19,6 +19,7 @@ import {
 import AddIcon from '../../../icons/AddIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import ActionGroup from '../../../ActionGroup';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 export const UseDynaNetsuiteSubRecordsStyles = makeStyles(theme => ({
   subrecords: {
@@ -211,7 +212,9 @@ export default function DynaNetSuiteSubRecords(props) {
       <div className={classes.subrecords}>
         <div className={classes.header}>
           <Typography variant="body2">Subrecord imports</Typography>
-          <Link to={`${match.url}/subrecords`} className={classes.link}>
+          <Link
+            to={buildDrawerUrl({ path: drawerPaths.NS_SUB_RECORD.ADD, baseUrl: match.url })}
+            className={classes.link}>
             <AddIcon />
             Add subrecord
           </Link>
@@ -228,7 +231,11 @@ export default function DynaNetSuiteSubRecords(props) {
                   fontSize="small"
                   data-test="edit-subrecord"
                   component={Link}
-                  to={`${match.url}/subrecords/${sr.fieldId}`}>
+                  to={buildDrawerUrl({
+                    path: drawerPaths.NS_SUB_RECORD.EDIT,
+                    baseUrl: match.url,
+                    params: { fieldId: sr.fieldId },
+                  })}>
                   <EditIcon />
                 </ActionButton>
                 <ActionButton

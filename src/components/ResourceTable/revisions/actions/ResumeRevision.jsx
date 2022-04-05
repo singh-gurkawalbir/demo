@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import ResumeIcon from '../../../icons/RunIcon';
 import { REVISION_TYPES } from '../../../../utils/constants';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 export default {
   key: 'resumeRevision',
@@ -13,10 +14,18 @@ export default {
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
       if (type === REVISION_TYPES.PULL) {
-        history.push(`${match.url}/pull/${revisionId}/merge`);
+        history.push(buildDrawerUrl({
+          path: drawerPaths.LCM.MERGE_PULL_CHANGES,
+          baseUrl: match.url,
+          params: { revisionId },
+        }));
       }
       if (type === REVISION_TYPES.REVERT) {
-        history.push(`${match.url}/revert/${revisionId}/final`);
+        history.push(buildDrawerUrl({
+          path: drawerPaths.LCM.FINAL_REVERT_STEP,
+          baseUrl: match.url,
+          params: { revisionId },
+        }));
       }
     }, [revisionId, type, history, match.url]);
 

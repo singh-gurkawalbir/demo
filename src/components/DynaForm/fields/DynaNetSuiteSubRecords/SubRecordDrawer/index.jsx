@@ -14,6 +14,7 @@ import RightDrawer from '../../../../drawer/Right';
 import DrawerHeader from '../../../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../drawer/Right/DrawerFooter';
+import { drawerPaths } from '../../../../../utils/rightDrawer';
 
 function SubRecordDrawer(props) {
   const history = useHistory();
@@ -143,10 +144,7 @@ function SubRecordDrawer(props) {
 
 export default function SubRecordDrawerRoute(props) {
   return (
-    <RightDrawer
-      path={['subrecords/:fieldId', 'subrecords']}
-      variant="temporary"
-      height="tall">
+    <RightDrawer path={[drawerPaths.NS_SUB_RECORD.EDIT, drawerPaths.NS_SUB_RECORD.ADD]} height="tall">
       <SubRecordDrawer {...props} />
     </RightDrawer>
   );
