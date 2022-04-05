@@ -299,6 +299,7 @@ export default {
           name: '_mapList',
           type: 'staticMap',
           valueLabel: 'Import field value',
+          required: false,
           // commMetaPath:  commMetaPath  to be added based on metadata type
           // connectionId:  connection  to be added based on metadata type
           label: '',
@@ -307,6 +308,7 @@ export default {
           keyName: 'export',
           keyLabel: 'Export field value',
           valueName: 'import',
+
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
