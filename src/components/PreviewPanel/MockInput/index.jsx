@@ -4,6 +4,7 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import isEmpty from 'lodash/isEmpty';
+import { Paper } from '@material-ui/core';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
@@ -21,17 +22,16 @@ import PanelTitle from '../../AFE/Editor/gridItems/PanelTitle';
 import { drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
-  helpTextButton: {
-    padding: 0,
+  editMockContentWrapper: {
+    paddingBottom: 0,
   },
-  appLogo: {
-    paddingRight: theme.spacing(2),
-    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+  editMockPanelWrapper: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
-  titleHeader: {
-    '& > h4': {
-      marginRight: `${theme.spacing(-0.5)}px !important`,
-    },
+  editMockCodeWrapper: {
+    overflow: 'auto',
+    height: `calc(100vh - ${theme.spacing(32)}px)`,
   },
 }));
 
@@ -91,23 +91,25 @@ function RouterWrappedContent(props) {
 
   return (
     <>
-      <DrawerHeader title="Edit mock input" helpKey="import.editMockInput" hideBackButton className={classes.titleHeader} />
-      <DrawerContent noPadding >
+      <DrawerHeader title="Edit mock input" helpKey="import.editMockInput" hideBackButton />
+      <DrawerContent className={classes.editMockContentWrapper} >
         {resourceSampleDataStatus === 'requested' && (
         <Spinner centerAll />
         )}
         { resourceSampleDataStatus !== 'requested' && (
-          <>
+          <div className={classes.editMockPanelWrapper}>
             <PanelTitle title="Input" />
-            <CodePanel
-              name="data"
-              mode="json"
-              value={value}
-              onChange={handleChange} />
-          </>
+            <Paper elevation={0} className={classes.editMockCodeWrapper}>
+              <CodePanel
+                name="data"
+                mode="json"
+                value={value}
+                onChange={handleChange} />
+            </Paper>
+          </div>
         )}
+        <FieldMessage errorMessages={error} />
       </DrawerContent>
-      <FieldMessage errorMessages={error} />
       <DrawerFooter>
         <FilledButton
           data-test="saveandcloseinputdata"
