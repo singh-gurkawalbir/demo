@@ -91,6 +91,18 @@ export function getPathParams({
     actualPathWithoutQueryParams
   );
 
+  const pathParamRegex = new RegExp(pathParametersInfo.reduce((acc, cur) => acc.replace(`:_${cur.id}`, '(.*)'), `${relativePathWithPrefixAndSuffix.replace(/[-{}(\\)[\]+?.,\\^$|#\s]/g, '\\$&')}`));
+
+  if (pathParamRegex.test(actualPathWithoutQueryParams)) {
+    const [, ...values] = pathParamRegex.exec(actualPathWithoutQueryParams);
+
+    return values.reduce((acc, cur, index) => {
+      acc[pathParametersInfo[index].id] = cur;
+
+      return acc;
+    }, {});
+  }
+
   // Get tokens by splitting both relative and actual path
   // ex: actualPath = "/applicants/name/John/from_apply_date/today/buu/page/20/Delivery(34)"
   // ex: relativePath = "/applicants/name/:_name/from_apply_date/:_fromapplydate/:_bar/page/:_page/Delivery(:_deliveryId)""
