@@ -2,9 +2,9 @@ export const DRAWER_URL_PREFIX = 'ui-drawer';
 
 export const drawerPaths = {
   MAPPINGS: {
-    DB: 'dbMapping/:flowId/:importId', // pending testing
+    DB: 'dbMapping/:flowId/:importId',
     SUB_RECORD: 'mapping/:flowId/:importId/:subRecordMappingId/view',
-    QUERY_BUILDER: 'queryBuilder/:flowId/:importId/:index/view', // pending testing
+    QUERY_BUILDER: 'queryBuilder/:flowId/:importId/:index/view',
     IMPORT: {
       ROOT: 'mapping/:flowId/:importId',
       LIST_ALL: 'mapping/:flowId',
