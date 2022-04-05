@@ -70,7 +70,12 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
  * Currently we support only Exports as it is an Incremental release
  * @params - resource , resourceType and connection obj
  */
-export const isPreviewPanelAvailable = (resource, resourceType) => {
+export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
+  if (!resource) return false;
+  if (resourceType === 'imports') {
+    return resource.adaptorType === 'HTTPImport' || (connection && connection.isHTTP && connection.type === 'rest');
+  }
+
   if (resourceType !== 'exports') return false;
 
   // for blob exports, preview panel is not applicable
@@ -119,3 +124,8 @@ export const getLatestReqResData = (previewData, stage) => {
 };
 
 export const getRequestURL = previewData => getLatestReqResData(previewData, 'request')?.url;
+
+export const IMPORT_PREVIEW_ERROR_TYPES = [
+  { label: 'Preview', value: 'preview' },
+  { label: 'Send', value: 'send' },
+];

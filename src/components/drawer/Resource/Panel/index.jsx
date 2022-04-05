@@ -8,7 +8,7 @@ import { selectors } from '../../../../reducers';
 import { isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
 import EditorDrawer from '../../../AFE/Drawer';
 import ExpandModeEditorDrawer from '../../../DynaForm/fields/DynaEditor/ExpandModeEditor/Drawer';
-import ExportsPreviewPanel from '../../../ExportsPreviewPanel';
+import PreviewPanel from '../../../PreviewPanel';
 import LoadResources from '../../../LoadResources';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
@@ -123,6 +123,7 @@ export default function Panel(props) {
     dispatch(actions.resourceForm.submitAborted(resourceType, id));
     onClose();
     dispatch(actions.resource.clearStaged(id));
+    dispatch(actions.resourceFormSampleData.updateType(id, 'preview'));
   }, [dispatch, id, onClose, resourceType]);
   // if this form is for a page processor, we don't know if
   // the new resource is an export or import. We determine this by
@@ -205,7 +206,7 @@ export default function Panel(props) {
               onCloseNotificationToaster={onCloseNotificationToaster}
           />
             {showPreviewPanel && (
-              <ExportsPreviewPanel
+              <PreviewPanel
                 resourceId={id}
                 formKey={formKey}
                 resourceType={resourceType}

@@ -2106,8 +2106,10 @@ describe('suiteScriptFileExportSampleData selector', () => {
     };
     state.session.resourceFormSampleData = {
       [resourceId]: {
-        data: {
-          raw: 'CUSTOMER|ID|TYPE\nDummy|123|Retail',
+        preview: {
+          data: {
+            raw: 'CUSTOMER|ID|TYPE\nDummy|123|Retail',
+          },
         },
       },
     };
