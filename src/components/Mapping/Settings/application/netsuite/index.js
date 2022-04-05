@@ -307,7 +307,6 @@ export default {
           keyName: 'export',
           keyLabel: 'Export field value',
           valueName: 'import',
-
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
