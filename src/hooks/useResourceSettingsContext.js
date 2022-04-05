@@ -9,7 +9,9 @@ export default function useResourceSettingsContext(resourceType, resourceId, int
   const isIntegrationV2 = useSelector(state =>
     isIntegrationAppVersion2(selectors.resource(state, 'integrations', integrationId), true)
   );
-  const resourceContext = {};
+  const resourceContext = {
+    type: 'settings',
+  };
   const url = history.location.pathname;
   const urlExtractFields = url.split('/');
 

@@ -8,7 +8,7 @@ export default {
   useLabel: () => 'View details',
   icon: ViewDetailsIcon,
   useOnClick: rowData => {
-    const { alias: aliasId, parentResourceId } = rowData;
+    const { alias: aliasId, _parentId: parentResourceId } = rowData;
     const history = useHistory();
     const match = useRouteMatch();
     const openViewDetails = useCallback(() => {

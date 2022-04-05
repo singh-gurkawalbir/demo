@@ -407,7 +407,7 @@ selectors.makeInheritedAliases = () => {
       if (!flow?._integrationId) return;
 
       return integrationResourceSel(state, 'integrations', flow._integrationId)?.aliases?.map(
-        aliasData => ({...aliasData, parentResourceId: flow._integrationId })
+        aliasData => ({...aliasData, _parentId: flow._integrationId })
       );
     },
     (state, id) => {
@@ -420,7 +420,7 @@ selectors.makeInheritedAliases = () => {
       if (!integration?._parentId) return;
 
       return parentIntegrationResourceSel(state, 'integrations', integration._parentId)?.aliases?.map(
-        aliasData => ({...aliasData, parentResourceId: integration._parentId })
+        aliasData => ({...aliasData, _parentId: integration._parentId })
       );
     },
     (integrationAliases, parentIntegrationAliases) => {
