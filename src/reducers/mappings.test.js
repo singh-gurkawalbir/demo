@@ -365,7 +365,7 @@ describe('Mappings region selector testcases', () => {
       expect(selectors.isPreviewPanelAvailableForResource()).toBeFalsy();
     });
     test('should return false if resource is not an export', () => {
-      expect(selectors.isPreviewPanelAvailableForResource(state, 1, 'imports', 1)).toBeFalsy();
+      expect(selectors.isPreviewPanelAvailableForResource(state, '1', 'imports', 1)).toBeFalsy();
     });
     test('should return true if resource is a Data loader export', () => {
       expect(selectors.isPreviewPanelAvailableForResource(state, '2', 'exports', 2)).toBeTruthy();

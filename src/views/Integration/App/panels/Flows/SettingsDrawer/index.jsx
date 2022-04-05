@@ -66,9 +66,10 @@ function IASettings({ integrationId, childId, parentUrl }) {
         {
           resource: flow,
           isFlow: true,
+          childId,
         }
       ),
-    [fields, flow, integrationId, sections]
+    [fields, flow, integrationId, childId, sections]
   );
   const { formState, handleClose } = useIASettingsStateWithHandleClose(
     integrationId,

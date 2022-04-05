@@ -42,9 +42,10 @@ export default function GeneralPanel({ integrationId, childId }) {
       integrationSettingsToDynaFormMetadata(
         generalSectionMetadata,
         integrationId,
-        true
+        true,
+        {childId}
       ),
-    [generalSectionMetadata, integrationId]
+    [generalSectionMetadata, childId, integrationId]
   );
   const formState = useSelector(
     state => selectors.integrationAppSettingsFormState(state, integrationId),

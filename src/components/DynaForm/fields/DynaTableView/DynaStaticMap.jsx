@@ -21,7 +21,7 @@ export default function DynaStaticMap(props) {
     {
       id: keyName,
       label: keyLabel,
-      required: true,
+      required: false,
       options: keyOptions,
       readOnly: disabled,
       type: keyOptions ? 'autosuggest' : 'input',
@@ -30,7 +30,7 @@ export default function DynaStaticMap(props) {
     {
       id: valueName,
       label: valueLabel,
-      required: true,
+      required: false,
       options: valueOptions,
       readOnly: disabled,
       type: valueOptions ? 'autosuggest' : 'input',
