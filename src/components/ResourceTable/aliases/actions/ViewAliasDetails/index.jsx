@@ -1,7 +1,7 @@
 import { useCallback} from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import getRoutePath from '../../../../../utils/routePaths';
 import ViewDetailsIcon from '../../../../icons/ViewDetailsIcon';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 export default {
   key: 'viewAliasDetails',
@@ -12,7 +12,18 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const openViewDetails = useCallback(() => {
-      history.push(getRoutePath(parentResourceId ? `${match.url}/viewdetails/${aliasId}/inherited/${parentResourceId}` : `${match.url}/viewdetails/${aliasId}`));
+      const inheritedAliasDetailsDrawerPath = buildDrawerUrl({
+        path: drawerPaths.ALIASES.VIEW_INHERITED_DETAILS,
+        baseUrl: match.url,
+        params: { aliasId, parentResourceId },
+      });
+      const aliasDetailsDrawerPath = buildDrawerUrl({
+        path: drawerPaths.ALIASES.VIEW_DETAILS,
+        baseUrl: match.url,
+        params: { aliasId },
+      });
+
+      history.push(parentResourceId ? inheritedAliasDetailsDrawerPath : aliasDetailsDrawerPath);
     }, [history, match.url, aliasId, parentResourceId]);
 
     return openViewDetails;
