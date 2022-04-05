@@ -17,10 +17,10 @@ import CreateAliasDrawer from './CreateAliases';
 import DrawerContent from '../Right/DrawerContent';
 import CeligoDivider from '../../CeligoDivider';
 import ViewAliasDetailsDrawer from './ViewAliasesDetails';
-import getRoutePath from '../../../utils/routePaths';
 import actions from '../../../actions';
 import messageStore from '../../../utils/messageStore';
 import errorMessageStore from '../../../utils/errorStore';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
@@ -50,7 +50,7 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
   const actionProps = useMemo(() => ({
     resourceType: 'flows',
     resourceId: flowId,
-  }), [hasManageAccess, flowId]);
+  }), [flowId]);
 
   const aliasesTableData = useMemo(() => ([
     {
@@ -67,7 +67,7 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
       actionProps,
       noAliasesMessage: errorMessageStore('NO_INHERITED_ALIASES_MESSAGE'),
     },
-  ]), [resourceAliases, inheritedAliases, flowId, flow, actionProps]);
+  ]), [resourceAliases, inheritedAliases, flowId, flow, actionProps, hasManageAccess]);
 
   useEffect(() => {
     if (!isAliasActionCompleted) return;
@@ -156,19 +156,28 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
     history.goBack();
   }, [history]);
 
+  const manageAliasesDrawerUrl = buildDrawerUrl({
+    path: drawerPaths.ALIASES.MANAGE,
+    baseUrl: match.url,
+  });
+  const viewAliasesDrawerUrl = buildDrawerUrl({
+    path: drawerPaths.ALIASES.VIEW,
+    baseUrl: match.url,
+  });
   const handleCreateAliasDrawer = useCallback(() => {
-    history.push(getRoutePath(`${match.url}/aliases/manage/add`));
-  }, [history, match]);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.ALIASES.ADD,
+      baseUrl: manageAliasesDrawerUrl,
+    }));
+  }, [history, manageAliasesDrawerUrl]);
 
   return (
     <RightDrawer
-      variant="temporary"
       height={height}
       width="default"
-      path={['aliases/manage', 'aliases/view']}
-    >
+      path={[drawerPaths.ALIASES.MANAGE, drawerPaths.ALIASES.VIEW]} >
       <Switch>
-        <Route path={`${match.url}/aliases/manage`} >
+        <Route path={manageAliasesDrawerUrl} >
           <DrawerHeader
             title="Manage Aliases"
             infoText={messageStore('MANAGE_ALIASES_HELPINFO')}>
@@ -177,7 +186,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
                 <TextButton
                   startIcon={<AddIcon />}
                   onClick={handleCreateAliasDrawer}>
-                    Create alias
+                  Create alias
                 </TextButton>
                 <CeligoDivider position="right" />
               </>
@@ -194,7 +203,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
             </FilledButton>
           </DrawerFooter>
         </Route>
-        <Route path={`${match.url}/aliases/view`} >
+        <Route path={viewAliasesDrawerUrl} >
           <DrawerHeader
             title="View Aliases"
             infoText={messageStore('VIEW_ALIASES_HELPINFO')} />
