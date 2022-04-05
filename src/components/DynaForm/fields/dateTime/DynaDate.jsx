@@ -125,6 +125,7 @@ export default function DynaDate(props) {
           }}
           value={dateValue}
           onChange={setDateValue}
+          disableFuture={props.disableFuture}
           InputProps={{ className: classes.inputDate }}
           keyboardIcon={<CalendarIcon className={classes.iconWrapper} />}
           />
