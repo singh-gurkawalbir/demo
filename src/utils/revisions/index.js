@@ -1,9 +1,9 @@
 import { addYears, startOfDay } from 'date-fns';
 import { REVISION_STATUS, REVISION_TYPES } from '../constants';
-import { REQUIRED_MESSAGE } from '../messageStore';
+import messageStore from '../messageStore';
 import { comparer, sortJsonByKeys } from '../sort';
 
-export const INTEGRATION_CLONE_ERROR = `${REQUIRED_MESSAGE}.You don't have any data to pull`;
+export const INTEGRATION_CLONE_ERROR = `${messageStore('REQUIRED_MESSAGE')}.You don't have any data to pull`;
 
 export const DEFAULT_ROWS_PER_PAGE = 50;
 export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];

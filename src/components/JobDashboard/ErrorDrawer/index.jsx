@@ -10,6 +10,7 @@ import JobErrorTable from '../JobErrorTable';
 import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
 import { JOB_STATUS } from '../../../utils/constants';
+import { drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles({
   wrapperErrorDrawer: {
@@ -104,10 +105,9 @@ export default function ErrorDrawer({
 
   return (
     <RightDrawer
-      path="viewErrors"
+      path={drawerPaths.ERROR_MANAGEMENT.V1.VIEW_JOB_ERRORS}
       height={height}
       width="full"
-      variant="temporary"
       helpKey="jobErrors.helpSummary"
       helpTitle="Job errors"
       onClose={handleClose}>

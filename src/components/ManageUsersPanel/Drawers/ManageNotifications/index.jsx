@@ -18,6 +18,7 @@ import SaveAndCloseButtonGroupForm from '../../../SaveAndCloseButtonGroup/SaveAn
 import commKeyGen from '../../../../utils/commKeyGenerator';
 import { useFormOnCancel } from '../../../FormOnCancelContext/index';
 import { MANAGE_NOTIFICATIONS_FORM_KEY } from '../../../../utils/constants';
+import { drawerPaths } from '../../../../utils/rightDrawer';
 
 function ManageNotifications({ integrationId, childId, onClose }) {
   const match = useRouteMatch();
@@ -132,11 +133,7 @@ export default function ManageNotificationsDrawer({ integrationId, childId }) {
   const {disabled, setCancelTriggered} = useFormOnCancel(MANAGE_NOTIFICATIONS_FORM_KEY);
 
   return (
-    <RightDrawer
-      path=":userEmail/manageNotifications"
-      variant="temporary"
-      width="medium"
-      hideBackButton>
+    <RightDrawer path={drawerPaths.ACCOUNT.MANAGE_NOTIFICATIONS_SETUP} width="medium" >
       <DrawerHeader disableClose={disabled} handleClose={setCancelTriggered} title="Manage notifications" />
       <ManageNotifications integrationId={integrationId} childId={childId} onClose={handleClose} />
     </RightDrawer>

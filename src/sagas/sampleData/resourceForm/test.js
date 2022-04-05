@@ -354,7 +354,7 @@ describe('resourceFormSampleData sagas', () => {
       .not.call.fn(_requestExportSampleData)
       .not.call.fn(_requestImportSampleData)
       .run());
-    test('should dispatch requested status and call _requestExportSampleData with refreshCache option incase of exports resourceType ', () => {
+    test('should dispatch requested status and call _requestExportSampleData with refreshCache option incase of imports resourceType ', () => {
       const resourceId = 'import-123';
 
       return expectSaga(requestResourceFormSampleData, { formKey })
@@ -365,10 +365,10 @@ describe('resourceFormSampleData sagas', () => {
         .delay(500)
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
         .not.call.fn(_requestExportSampleData)
-        .call(_requestImportSampleData, { formKey })
+        .call(_requestImportSampleData, { formKey, refreshCache: undefined })
         .run(500);
     });
-    test('should dispatch requested status and call _requestImportSampleData incase of imports resourceType ', () => {
+    test('should dispatch requested status and call _requestImportSampleData incase of exports resourceType ', () => {
       const refreshCache = true;
 
       return expectSaga(requestResourceFormSampleData, { formKey, options: {refreshCache} })
@@ -609,11 +609,10 @@ describe('resourceFormSampleData sagas', () => {
         settings: {},
       };
 
+      const path = `/integrations/${integrationId}/flows/${flowId}/exports/preview`;
       const body = {
         _id: '123',
         adaptorType: 'RESTExport',
-        _flowId: flowId,
-        _integrationId: integrationId,
         test: {
           limit: sampleDataRecordSize,
         },
@@ -625,13 +624,13 @@ describe('resourceFormSampleData sagas', () => {
           [select(selectors.resource, 'flows', flowId), flow],
           [select(selectors.sampleDataRecordSize, resourceId), sampleDataRecordSize],
           [call(apiCallWithRetry, {
-            path: '/exports/preview',
+            path,
             opts: { method: 'POST', body },
             hidden: true,
           }), { test: 5 }],
         ])
         .call(apiCallWithRetry, {
-          path: '/exports/preview',
+          path,
           opts: { method: 'POST', body },
           hidden: true,
         })
@@ -656,6 +655,7 @@ describe('resourceFormSampleData sagas', () => {
         settings: {},
       };
 
+      const path = `/integrations/${integrationId}/flows/${flowId}/exports/preview`;
       const body = {
         _id: '123',
         adaptorType: 'RESTExport',
@@ -666,8 +666,6 @@ describe('resourceFormSampleData sagas', () => {
             function: 'fn',
           },
         },
-        _flowId: flowId,
-        _integrationId: integrationId,
         test: {
           limit: sampleDataRecordSize,
         },
@@ -679,13 +677,13 @@ describe('resourceFormSampleData sagas', () => {
           [select(selectors.resource, 'flows', flowId), flow],
           [select(selectors.sampleDataRecordSize, resourceId), sampleDataRecordSize],
           [call(apiCallWithRetry, {
-            path: '/exports/preview',
+            path,
             opts: { method: 'POST', body },
             hidden: true,
           }), { test: 5 }],
         ])
         .call(apiCallWithRetry, {
-          path: '/exports/preview',
+          path,
           opts: { method: 'POST', body },
           hidden: true,
         })
@@ -705,8 +703,6 @@ describe('resourceFormSampleData sagas', () => {
 
       const body = {
         ...resourceObj,
-        _flowId: flowId,
-        _integrationId: undefined,
         test: {
           limit: sampleDataRecordSize,
         },

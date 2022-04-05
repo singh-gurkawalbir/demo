@@ -34,17 +34,18 @@ export default function PreviewBody(props) {
 
   const classes = useStyles(props);
   const [defaultTab, setDefaultTab] = useState();
-
+  const activeSendOrPreviewTab = useSelector(state => selectors.typeOfSampleData(state, resourceId));
   // Default panel is the panel shown by default when export panel is launched
   // We can configure it in the metadata with 'default' as true
   // Else the last stage is taken as the default stage
   const defaultPanel = useMemo(() => {
     if (!availablePreviewStages.length) return;
+    if (resourceType === 'imports') return activeSendOrPreviewTab === 'preview' ? 'request' : 'raw';
     const defaultStage = availablePreviewStages.find(stage => stage.default === true);
     const lastStage = availablePreviewStages[availablePreviewStages.length - 1];
 
     return defaultStage ? defaultStage.value : lastStage.value;
-  }, [availablePreviewStages]);
+  }, [activeSendOrPreviewTab, availablePreviewStages, resourceType]);
   const parseAllErrors = useSelector(state => selectors.getAllParsableErrors(state, resourceId), shallowEqual);
   const shouldShowParseTab = !!parseAllErrors;
 
@@ -55,6 +56,7 @@ export default function PreviewBody(props) {
     }
 
     if (resourceSampleData.status === 'error') {
+      if (activeSendOrPreviewTab === 'preview') return 'request';
       if (shouldShowParseTab) {
         return setDefaultTab('preview');
       }
@@ -62,7 +64,7 @@ export default function PreviewBody(props) {
         return setDefaultTab('raw');
       }
     }
-  }, [resourceSampleData.status, defaultPanel, handlePanelViewChange, availablePreviewStages, shouldShowParseTab]);
+  }, [resourceSampleData.status, defaultPanel, handlePanelViewChange, availablePreviewStages, shouldShowParseTab, activeSendOrPreviewTab]);
 
   if (showDefaultPreviewBody) {
     return (

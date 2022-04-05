@@ -62,10 +62,15 @@ describe('isPreviewPanelAvailable util', () => {
 
     expect(isPreviewPanelAvailable(resource)).toBe(false);
   });
-  test('should return false if the resourceType is not exports', () => {
+  test('should return false if the resourceType is not exports or imports', () => {
     const resource = { _id: 1, adaptorType: 'HTTPExport'};
 
-    expect(isPreviewPanelAvailable(resource, 'imports')).toBe(false);
+    expect(isPreviewPanelAvailable(resource, 'pageGenerator')).toBe(false);
+  });
+  test('should return true if the resource is HTTP import', () => {
+    const resource = { _id: 1, adaptorType: 'HTTPImport'};
+
+    expect(isPreviewPanelAvailable(resource, 'imports')).toBe(true);
   });
   test('should return false if the resource is of blob type is not exports', () => {
     const blobResource1 = { _id: 1, adaptorType: 'HTTPExport', type: 'blob'};

@@ -69,7 +69,7 @@ export default {
         return <SelectClassification {...tableContext} />;
       },
       isLoggable: true,
-      Value: ({rowData: r}) => <Classification error={r} />,
+      Value: ({rowData: r}) => <Classification error={r} isResolved />,
       width: '10%',
     },
     {

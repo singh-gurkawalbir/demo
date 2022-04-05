@@ -15,7 +15,7 @@ import {
   validateField,
   isLonger,
 } from '.';
-import { REQUIRED_MESSAGE } from '../../messageStore';
+import messageStore from '../../messageStore';
 import { createField } from '../test';
 import { allAreTrue, noneAreTrue, someAreTrue } from './validator';
 
@@ -203,7 +203,7 @@ describe('validateField', () => {
 
     expect(testField.isValid).toBe(false);
     expect(testField.isDiscretelyInvalid).toBe(true);
-    expect(testField.errorMessages).toBe(REQUIRED_MESSAGE);
+    expect(testField.errorMessages).toBe(messageStore('REQUIRED_MESSAGE'));
   });
 
   test('field validation rules not processed without value', () => {

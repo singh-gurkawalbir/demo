@@ -4,6 +4,7 @@ import ConditionalLookup from '.';
 import RightDrawer from '../../../../drawer/Right';
 import DrawerHeader from '../../../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../drawer/Right/DrawerContent';
+import { drawerPaths } from '../../../../../utils/rightDrawer';
 
 function ConditionalLookupDrawerHeader() {
   const match = useRouteMatch();
@@ -15,11 +16,9 @@ function ConditionalLookupDrawerHeader() {
 export default function ConditionalLookupDrawer(props) {
   return (
     <RightDrawer
-      path={['conditionalLookup/edit/:lookupName', 'conditionalLookup/add']}
+      path={[drawerPaths.MAPPINGS.CONDITIONAL_LOOKUP.EDIT, drawerPaths.MAPPINGS.CONDITIONAL_LOOKUP.ADD]}
       height="tall"
-      width="default"
-      variant="temporary"
-      >
+      width="default">
       <ConditionalLookupDrawerHeader />
       <DrawerContent>
         <ConditionalLookup {...props} />

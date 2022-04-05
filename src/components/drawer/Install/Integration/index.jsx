@@ -1,38 +1,40 @@
 import React, { useCallback } from 'react';
-import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
+import { Switch, Route, useRouteMatch, useHistory, useLocation } from 'react-router-dom';
 import RightDrawer from '../../Right';
 import DrawerHeader from '../../Right/DrawerHeader';
 import DrawerContent from '../../Right/DrawerContent';
 import UploadFile from './UploadFile';
 import Preview from './Preview';
-
-const rootPath = 'installIntegration';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 export default function InstallIntegrationDrawer() {
   const match = useRouteMatch();
   const history = useHistory();
+  const location = useLocation();
   const handleClose = useCallback(() => {
-    // we don't know if there were other history events, so we cant just do history.goBack.
-    // we can however just remove all segments of the url including and AFTER the rootPath of the drawer.
-    const newUrl = match.url.split(rootPath)[0];
-
-    history.push(newUrl);
+    history.replace(match.url);
   }, [history, match.url]);
+  const installIntegrationPath = buildDrawerUrl({
+    path: drawerPaths.INSTALL.INTEGRATION,
+    baseUrl: match.url,
+  });
 
   return (
     <RightDrawer
       onClose={handleClose}
-      path={rootPath}
+      path={drawerPaths.INSTALL.INTEGRATION}
       height="tall">
-
-      <DrawerHeader title="Install integration" />
-
+      <DrawerHeader title="Install integration" showBackButton={location.pathname.includes('/preview')} />
       <DrawerContent>
         <Switch>
-          <Route path={`${match.url}/${rootPath}/preview/:templateId`}>
+          <Route
+            path={buildDrawerUrl({
+              path: drawerPaths.INSTALL.INTEGRATION_PREVIEW,
+              baseUrl: installIntegrationPath,
+            })}>
             <Preview />
           </Route>
-          <Route path={`${match.url}/${rootPath}`}>
+          <Route path={installIntegrationPath}>
             <UploadFile />
           </Route>
         </Switch>

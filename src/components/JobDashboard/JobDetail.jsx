@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { difference } from 'lodash';
 import actions from '../../actions';
-import ChildJobDetail from './ChildJobDetail';
+import ChildJobDetail, { JobDetailsStyles } from './ChildJobDetail';
 import { JOB_STATUS } from '../../utils/constants';
 import JobStatus from './JobStatus';
 import { getPages, getSuccess } from '../../utils/jobdashboard';
@@ -19,7 +19,7 @@ import ArrowUpIcon from '../icons/ArrowUpIcon';
 import DateTimeDisplay from '../DateTimeDisplay';
 import ErrorCountCell from './ErrorCountCell';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   checkAction: {
     listStyle: 'none',
     padding: 0,
@@ -39,50 +39,11 @@ const useStyles = makeStyles(theme => ({
   checkIcon: {
     padding: 0,
   },
-  name: {
-    width: '18.15%',
-  },
-  status: {
-    width: '10.15%',
-  },
-  success: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  ignore: {
-    width: '7.5%',
-    textAlign: 'right',
-  },
   error: {
-    width: '10.15%',
     textAlign: 'right',
-  },
-  errorCount: {
-    color: theme.palette.error.dark,
-  },
-  resolved: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  pages: {
-    width: '7.5%',
-    textAlign: 'right',
-  },
-  duration: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  completed: {
-    width: '11.5%',
-    whiteSpace: 'nowrap',
-  },
-  actions: {
-    width: '7.5%',
-    textAlign: 'center',
   },
   checkActionBorder: {
     paddingLeft: '13px',
-    borderLeft: `5px solid ${theme.palette.primary.main}`,
   },
 }));
 
@@ -95,7 +56,8 @@ export default function JobDetail({
   integrationName,
   isFlowBuilderView,
 }) {
-  const classes = useStyles();
+  const classes = JobDetailsStyles();
+  const jobDetailsClasses = useStyles();
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
   const isSelected = !!(
@@ -222,13 +184,14 @@ export default function JobDetail({
         <TableCell
           className={clsx({
             [classes.checkActionBorder]: isSelected && expanded && job.children,
+            [jobDetailsClasses.checkActionBorder]: isSelected && expanded && job.children,
           })}>
-          <ul className={classes.checkAction}>
+          <ul className={clsx(classes.checkAction, jobDetailsClasses.checkAction)}>
             <li>
               {job.uiStatus !== JOB_STATUS.QUEUED && (
                 <IconButton
                   data-test="toggleJobDetail"
-                  className={classes.moreIcon}
+                  className={clsx(classes.moreIcon, jobDetailsClasses.moreIcon)}
                   onClick={handleExpandCollapseClick}>
                   <RowIcon expanded={expanded} childLoaded={job.children} />
                 </IconButton>
@@ -238,7 +201,7 @@ export default function JobDetail({
               <Checkbox
                 disabled={!(job.retriable || job.numError)}
                 checked={isSelected}
-                className={classes.checkIcon}
+                className={clsx(classes.checkIcon, jobDetailsClasses.checkIcon)}
                 color="primary"
                 onChange={event => handleSelectChange(event)}
               />
@@ -258,7 +221,7 @@ export default function JobDetail({
           isJobInProgress={isJobInProgress}
           isError
           onClick={() => handleViewErrorsClick(false)}
-          className={clsx(classes.error, {
+          className={clsx(classes.error, jobDetailsClasses.error, {
             [classes.errorCount]: job.numError > 0,
           })}
            />

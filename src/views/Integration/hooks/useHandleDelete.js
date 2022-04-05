@@ -8,7 +8,7 @@ import getRoutePath from '../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../utils/integrationApps';
 import { emptyObject, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../../utils/constants';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import { INTEGRATION_DELETE_VALIDATE } from '../../../utils/messageStore';
+import messageStore from '../../../utils/messageStore';
 import actions from '../../../actions';
 
 export default function useHandleDelete(_integrationId) {
@@ -65,7 +65,7 @@ export default function useHandleDelete(_integrationId) {
   // For Diy/templates
   if (showSnackbar && cantDelete) {
     enqueueSnackbar({
-      message: INTEGRATION_DELETE_VALIDATE,
+      message: messageStore('INTEGRATION_DELETE_VALIDATE'),
       variant: 'info',
     });
     dispatch(actions.resource.clearReferences());

@@ -44,9 +44,10 @@ export default function ConfigureSettings({ integrationId, childId, sectionId })
       integrationSettingsToDynaFormMetadata(
         flowSettingsMeta,
         integrationId,
-        true
+        true,
+        {childId}
       ),
-    [flowSettingsMeta, integrationId]
+    [flowSettingsMeta, childId, integrationId]
   );
   const formState = useSelector(
     state =>

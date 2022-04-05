@@ -27,7 +27,7 @@ export default function ErrorList({ flowId }) {
     if (!isErrorFilterMetadataRequested) {
       dispatch(actions.errorManager.filterMetadata.request());
     }
-  }, [dispatch, isErrorFilterMetadataRequested]);
+  }, [dispatch, errorType]);
 
   useEffect(() => {
     dispatch(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId}));

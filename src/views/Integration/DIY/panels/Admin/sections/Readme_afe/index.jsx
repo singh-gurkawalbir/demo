@@ -8,6 +8,7 @@ import RawHtml from '../../../../../../../components/RawHtml';
 import actions from '../../../../../../../actions';
 import EditorDrawer from '../../../../../../../components/AFE/Drawer';
 import { TextButton } from '../../../../../../../components/Buttons';
+import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -52,7 +53,11 @@ export default function ReadmeSection({ integrationId }) {
       data: 'dummy data',
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
   }, [dispatch, history, integrationId, match.url]);
 
   return (

@@ -28,19 +28,34 @@ export default function DynaUploadFile(props) {
     resourceId,
     resourceType,
     onFieldChange,
+    sendS3Key,
     formKey,
     isIAField,
     placeholder,
     persistData = false,
+    _integrationId: integrationId,
+    childId,
   } = props;
   const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
+
   const dispatch = useDispatch();
   const [fileName, setFileName] = useState('');
   const uploadedFile = useSelector(
     state => selectors.getUploadedFile(state, fileId),
     shallowEqual
   );
+  const templateRunKey = useSelector(state => selectors.integrationAppCustomTemplateRunKey(state, integrationId));
+  const templateRunKeyStatus = useSelector(state => selectors.integrationAppCustomTemplateRunKeyStatus(state, integrationId));
+
+  useEffect(() => {
+    if (templateRunKey) {
+      onFieldChange(id, templateRunKey);
+      dispatch(actions.integrationApp.utility.clearRunKey(integrationId));
+    }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [templateRunKey, integrationId, id]);
 
   useEffect(() => {
     const { status, file, rawFile, name } = uploadedFile || {};
@@ -48,17 +63,27 @@ export default function DynaUploadFile(props) {
     if (status === 'received') {
       setFileName(name);
       if (isIAField) {
-        onFieldChange(id, {
-          file,
-          type: 'file',
-          rawFile,
-          rowDelimiter: findRowDelimiter(file),
-          fileProps: {
-            name: rawFile.name,
-            size: rawFile.size,
-            type: rawFile.type,
-          },
-        });
+        if (sendS3Key) {
+          dispatch(actions.integrationApp.utility.requestS3Key({
+            integrationId,
+            childId,
+            file,
+            fileName: rawFile.name,
+            fileType: rawFile.type,
+          }));
+        } else {
+          onFieldChange(id, {
+            file,
+            type: 'file',
+            rawFile,
+            rowDelimiter: findRowDelimiter(file),
+            fileProps: {
+              name: rawFile.name,
+              size: rawFile.size,
+              type: rawFile.type,
+            },
+          });
+        }
       } else {
         onFieldChange(id, file);
       }
@@ -107,6 +132,7 @@ export default function DynaUploadFile(props) {
       fileName={fileName}
       uploadError={uploadedFile && uploadedFile.error}
       handleFileChosen={handleFileChosen}
+      uploadInProgress={templateRunKeyStatus === 'requested'}
     />
   );
 }

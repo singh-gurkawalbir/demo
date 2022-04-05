@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import ShareStackIcon from '../../../../icons/ShareStackIcon';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 // Todo fix icon after other PR merge
 export default {
@@ -12,7 +13,11 @@ export default {
     const match = useRouteMatch();
     const history = useHistory();
     const openShareStackURL = useCallback(() => {
-      history.push(`${match.url}/share/stacks/${stackId}`);
+      history.push(buildDrawerUrl({
+        baseUrl: match.url,
+        path: drawerPaths.SHARE_STACKS,
+        params: { stackId },
+      }));
     }, [history, match.url, stackId]);
 
     return openShareStackURL;

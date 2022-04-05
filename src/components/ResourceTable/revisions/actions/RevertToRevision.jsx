@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 import { useRouteMatch } from 'react-router-dom';
 import RevertIcon from '../../../icons/ViewResolvedHistoryIcon';
 import useOpenRevisionWhenValid from '../../../drawer/Revisions/hooks/useOpenRevisionWhenValid';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 export default {
   key: 'revertToRevision',
@@ -14,7 +15,15 @@ export default {
 
     return useOpenRevisionWhenValid({
       integrationId,
-      drawerURL: `${match.url}/revert/${nanoid()}/open/toBefore/revision/${revisionId}`,
+      drawerURL: buildDrawerUrl({
+        path: drawerPaths.LCM.OPEN_REVERT,
+        baseUrl: match.url,
+        params: {
+          tempRevId: nanoid(),
+          revertTo: 'toBefore',
+          revisionId,
+        },
+      }),
     });
   },
 };

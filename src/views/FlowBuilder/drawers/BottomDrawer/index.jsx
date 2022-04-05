@@ -82,9 +82,6 @@ const useStyles = makeStyles(theme => ({
       marginTop: -3,
     },
   },
-  connectionWarning: {
-    color: theme.palette.error.main,
-  },
   rightActionContainer: {
     flexGrow: 1,
     display: 'flex',
@@ -363,7 +360,7 @@ export default function BottomDrawer({
                       key={tabType}
                       icon={
                         isAnyFlowConnectionOffline ? (
-                          <OfflineConnectionsIcon className={classes.connectionWarning} />
+                          <OfflineConnectionsIcon />
                         ) : (
                           <ConnectionsIcon />
                         )
