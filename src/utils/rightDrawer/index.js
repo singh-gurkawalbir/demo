@@ -111,6 +111,7 @@ export const drawerPaths = {
   SHARE_STACKS: 'share/stacks/:stackId', // done
   EDITOR: 'editor/:editorId', // done
   DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId', // done
+  PREVIEW_PANEL_MOCK_INPUT: 'inputData',
 };
 
 export const hasMultipleDrawers = url =>

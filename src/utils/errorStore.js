@@ -1,3 +1,5 @@
+export const MOCK_INPUT_RECORD_ABSENT = 'At least 1 mock input record is required. Mock records must pass through the input filter and hooks to qualify.';
+
 const messages = {
   FILE_SIZE_EXCEEDED: 'File exceeds max file size',
   FILE_TYPE_INVALID: 'Please select valid {{{fileType}}} file',
