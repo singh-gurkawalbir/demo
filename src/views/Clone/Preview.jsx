@@ -77,7 +77,7 @@ const useStyles = makeStyles(theme => ({
   },
   flowInFlowGroupNameHover: {
     backgroundColor: theme.palette.background.paper,
-    borderTop: `1px solid ${theme.palette.secondary.lightest} !important`,
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
   flowGroupTitle: {
     paddingTop: theme.spacing(1),

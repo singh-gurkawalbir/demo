@@ -120,6 +120,8 @@ export const getUniqueFieldId = (fieldId, resource, connection) => {
 
     case 'http.auth.oauth.refreshBody':
       return 'http.auth.token.refreshBody';
+    case 'salesforce.soql':
+      return 'salesforce.soql.query';
     default:
   }
 

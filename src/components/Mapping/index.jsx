@@ -5,6 +5,7 @@ import {selectors} from '../../reducers';
 import actions from '../../actions';
 import MappingWrapper from './MappingWrapper';
 import Spinner from '../Spinner';
+import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 
 export default function Mapping(props) {
   const {flowId, importId, subRecordMappingId } = props;
@@ -54,6 +55,13 @@ export default function Mapping(props) {
 
   return (
     !shouldInitEditor ? <MappingWrapper {...props} />
-      : <Redirect to={`${match.url}/editor/${editorId}`} />
+      : (
+        <Redirect
+          to={buildDrawerUrl({
+            path: drawerPaths.EDITOR,
+            baseUrl: match.url,
+            params: { editorId },
+          })} />
+      )
   );
 }

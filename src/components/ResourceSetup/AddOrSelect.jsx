@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
@@ -58,15 +58,6 @@ export default function AddOrSelect(props) {
   const newId = useSelector(state =>
     selectors.createdResourceId(state, resourceId)
   );
-
-  const isAuthorized = useSelector(state =>
-    selectors.isAuthorized(state, newId)
-  );
-
-  useEffect(() => {
-    if (isAuthorized) onSubmitComplete(newId, isAuthorized);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthorized, newId]);
 
   const handleTypeChange = (id, value) => {
     setUseNew(value === 'new');

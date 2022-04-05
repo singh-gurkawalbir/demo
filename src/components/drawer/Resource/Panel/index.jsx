@@ -8,7 +8,7 @@ import { selectors } from '../../../../reducers';
 import { isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
 import EditorDrawer from '../../../AFE/Drawer';
 import ExpandModeEditorDrawer from '../../../DynaForm/fields/DynaEditor/ExpandModeEditor/Drawer';
-import ExportsPreviewPanel from '../../../ExportsPreviewPanel';
+import PreviewPanel from '../../../PreviewPanel';
 import LoadResources from '../../../LoadResources';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
@@ -18,10 +18,11 @@ import { getParentResourceContext } from '../../../../utils/connections';
 import FlowStepRequestLogsDrawer from '../../FlowStepDebugLogs';
 import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
+import { DRAWER_URL_PREFIX, drawerPaths } from '../../../../utils/rightDrawer';
 import TitleBar from './TitleBar';
 import DrawerContent from '../../Right/DrawerContent';
 
-const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
+const DRAWER_PATH = `/${DRAWER_URL_PREFIX}/${drawerPaths.RESOURCE.ROOT}`;
 export const isNestedDrawer = url => !!matchPath(url, {
   path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
   exact: true,
@@ -75,7 +76,7 @@ const useDetermineRequiredResources = type => useMemo(() => {
 }, [type]);
 
 export const redirectURlToParentListing = url => url.split('/')
-  .slice(0, -3)
+  .slice(0, -4)
   .join('/');
 export const useRedirectToParentRoute = initFailed => {
   const history = useHistory();
@@ -83,8 +84,9 @@ export const useRedirectToParentRoute = initFailed => {
 
   useEffect(() => {
     if (initFailed) {
-      // remove the last 3 segments from the route ...
-      // /:operation(add|edit)/:resourceType/:id
+      // remove the last 4 segments from the route ...
+      // /ui-drawer/:operation(add|edit)/:resourceType/:id
+      // TODO: @Raghu: Can't we replace url with parentUrl - if we could pass till here?
       const stripedRoute = redirectURlToParentListing(match.url);
 
       history.replace(stripedRoute);
@@ -121,6 +123,7 @@ export default function Panel(props) {
     dispatch(actions.resourceForm.submitAborted(resourceType, id));
     onClose();
     dispatch(actions.resource.clearStaged(id));
+    dispatch(actions.resourceFormSampleData.updateType(id, 'preview'));
   }, [dispatch, id, onClose, resourceType]);
   // if this form is for a page processor, we don't know if
   // the new resource is an export or import. We determine this by
@@ -203,7 +206,7 @@ export default function Panel(props) {
               onCloseNotificationToaster={onCloseNotificationToaster}
           />
             {showPreviewPanel && (
-              <ExportsPreviewPanel
+              <PreviewPanel
                 resourceId={id}
                 formKey={formKey}
                 resourceType={resourceType}

@@ -872,6 +872,10 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
   const isSandbox = environment === 'sandbox';
   let enabled = false;
 
+  if (!licenseActionDetails) {
+    return enabled;
+  }
+
   if (
     [
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
@@ -879,15 +883,20 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
     ].includes(accessLevel)
   ) {
+    if (licenseActionDetails.type === 'integrator') {
+      return true;
+    }
+
     if (isSandbox) {
-      enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofSandboxTradingPartners > 0;
+      enabled = licenseActionDetails.type === 'endpoint' && licenseActionDetails.totalNumberofSandboxTradingPartners > 0;
     } else {
-      enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofProductionTradingPartners > 0;
+      enabled = licenseActionDetails.type === 'endpoint' && licenseActionDetails.totalNumberofProductionTradingPartners > 0;
     }
   }
 
   return enabled;
 }
+
 export function isNetSuiteBatchExport(exportRes) {
   return exportRes?.netsuite?.type === 'search' || exportRes?.netsuite?.restlet?.searchId !== undefined;
 }

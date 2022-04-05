@@ -6,6 +6,7 @@ import actions from '../../actions';
 import { selectors } from '../../reducers';
 import FieldHelp from '../DynaForm/FieldHelp';
 import useResourceSettingsContext from '../../hooks/useResourceSettingsContext';
+import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -38,7 +39,11 @@ export default function FormBuilderButton({resourceId, resourceType, integration
           settingsContext,
         })
       );
-      history.push(`${match.url}/editor/${customSettingsEditorId}`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.EDITOR,
+        baseUrl: match.url,
+        params: { editorId: customSettingsEditorId },
+      }));
     },
     [dispatch, customSettingsEditorId, history, match.url, resourceId, resourceType, sectionId, integrationId]
   );

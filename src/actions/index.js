@@ -907,6 +907,12 @@ const integrationApp = {
     submitFailed: params =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
+  utility: {
+    requestS3Key: params => action(actionTypes.INTEGRATION_APPS.UTILITY.REQUEST_S3_KEY, params),
+    receivedS3Key: params => action(actionTypes.INTEGRATION_APPS.UTILITY.RECEIVED_S3_RUN_KEY, params),
+    clearRunKey: integrationId => action(actionTypes.INTEGRATION_APPS.UTILITY.CLEAR_RUN_KEY, {integrationId}),
+    s3KeyError: params => action(actionTypes.INTEGRATION_APPS.UTILITY.S3_KEY_FAILED, params),
+  },
   installer: {
     init: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT, {
       id: integrationId,
@@ -1401,9 +1407,11 @@ const resourceFormSampleData = {
   setPreviewData: (resourceId, previewData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PREVIEW_DATA, { resourceId, previewData }),
   setCsvFileData: (resourceId, csvData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_CSV_FILE_DATA, { resourceId, csvData }),
   setProcessorData: ({resourceId, processor, processorData}) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PROCESSOR_DATA, { resourceId, processor, processorData }),
+  setMockData: (resourceId, mockData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_MOCK_DATA, { resourceId, mockData }),
   updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
   clear: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR, { resourceId }),
   clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),
+  updateType: (resourceId, sampleDataType) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_DATA_TYPE, { resourceId, sampleDataType }),
 };
 const app = {
   polling: {
