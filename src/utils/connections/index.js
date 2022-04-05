@@ -151,6 +151,17 @@ const getAmazonMWSType = connection => {
 
   return 'amazonmws';
 };
+const getLoopReturnsVersion = connection => {
+  const version = connection?.http?.baseURI;
+
+  switch (version) {
+    case 'https://api.loopreturns.com/api/v2':
+      return 'loopreturnsv2';
+    default:
+  }
+
+  return 'loopreturns';
+};
 export const getAssistantFromConnection = (assistant, connection) => {
   if (!MULTIPLE_AUTH_TYPE_ASSISTANTS.includes(assistant)) { return assistant; }
 
@@ -168,6 +179,9 @@ export const getAssistantFromConnection = (assistant, connection) => {
   }
   if (assistant === 'recurly') {
     return getRecurlyType(connection);
+  }
+  if (assistant === 'loopreturns') {
+    return getLoopReturnsVersion(connection);
   }
 
   return assistant;
