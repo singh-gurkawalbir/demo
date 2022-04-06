@@ -359,7 +359,7 @@ describe('resourceFormSampleData sagas', () => {
 
       return expectSaga(requestResourceFormSampleData, { formKey })
         .provide([
-          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceType: 'imports' }],
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceType: 'imports', resourceObj: {} }],
           [call(_requestImportSampleData, { formKey }), {}],
         ])
         .delay(500)
@@ -421,9 +421,9 @@ describe('resourceFormSampleData sagas', () => {
       .provide([
         [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId, resourceObj: {} }],
         [select(selectors.isLookUpExport, {flowId, resourceId, resourceType: 'exports'}), true],
-        [call(_requestLookupSampleData, { formKey, refreshCache, isMockInput: undefined }), {}],
+        [call(_requestLookupSampleData, { formKey, refreshCache, isMockInput: undefined, addMockData: true }), {}],
       ])
-      .call(_requestLookupSampleData, { formKey, refreshCache, isMockInput: undefined })
+      .call(_requestLookupSampleData, { formKey, refreshCache, isMockInput: undefined, addMockData: true })
       .not.call.fn(_requestPGExportSampleData)
       .run());
     test('should call _requestFileSampleData incase of suitescript file resource', () => {
@@ -985,7 +985,8 @@ describe('resourceFormSampleData sagas', () => {
             throwOnError: true,
             includeStages: true,
             refresh: false,
-            isMockInput: false,
+            isMockInput: undefined,
+            addMockData: undefined,
           }), previewData],
         ])
         .not.call.fn(_requestFileSampleData)
@@ -998,7 +999,8 @@ describe('resourceFormSampleData sagas', () => {
           throwOnError: true,
           includeStages: true,
           refresh: false,
-          isMockInput: false,
+          isMockInput: undefined,
+          addMockData: undefined,
         })
         .put(actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData))
         .run();
