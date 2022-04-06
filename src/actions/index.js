@@ -262,6 +262,10 @@ const resource = {
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh, integrationId }),
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
+  requestCollectionSent: (resourceType, refresh, integrationId) =>
+    action(actionTypes.RESOURCE.REQUEST_COLLECTION_SENT, {integrationId, resourceType, refresh}),
+  collectionReceived: params => action(actionTypes.RESOURCE.COLLECTION_RECEIVED, params),
+
   updated: (resourceType, resourceId, master, patch, context) =>
     action(actionTypes.RESOURCE.UPDATED, {
       resourceType,

@@ -7,7 +7,7 @@ export default (state = {}, action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.RESOURCE.REQUEST_COLLECTION:
+      case actionTypes.RESOURCE.REQUEST_COLLECTION_SENT:
         if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
           if (!draft[integrationId]) {
             draft[integrationId] = {};
@@ -17,7 +17,7 @@ export default (state = {}, action) => {
           draft[resourceType] = 'requested';
         }
         break;
-      case actionTypes.RESOURCE.RECEIVED_COLLECTION:
+      case actionTypes.RESOURCE.COLLECTION_RECEIVED:
         if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
           if (!draft[integrationId]) {
             draft[integrationId] = {};
