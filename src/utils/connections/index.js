@@ -152,9 +152,9 @@ const getAmazonMWSType = connection => {
   return 'amazonmws';
 };
 const getLoopReturnsVersion = connection => {
-  const version = connection?.http?.baseURI;
+  const baseUri = connection?.http?.baseURI;
 
-  switch (version) {
+  switch (baseUri) {
     case 'https://api.loopreturns.com/api/v2':
       return 'loopreturnsv2';
     default:
