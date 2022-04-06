@@ -19,7 +19,7 @@ export default function DynaManageAliases({ id, label, resourceContext, ...props
 
   return (
     <>
-      <AliasDrawerWrapper resourceId={resourceContext.resourceId} />
+      <AliasDrawerWrapper resourceType={resourceContext.resourceType} resourceId={resourceContext.resourceId} />
       <FormControl>
         <div>
           <FormLabel>
