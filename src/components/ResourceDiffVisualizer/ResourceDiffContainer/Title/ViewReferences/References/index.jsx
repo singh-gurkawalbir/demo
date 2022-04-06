@@ -12,6 +12,8 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    padding: theme.spacing(2, 2, 0, 2),
+    textAlign: 'center',
   },
   tabContent: {
     flexGrow: 1,
@@ -78,13 +80,13 @@ export default function References({ resourceId, resourceType, integrationId }) 
   }, [dispatch, resourceType, resourceId]);
 
   if (!resourceReferences) {
-    return <Spinner />;
+    return <Spinner centerAll />;
   }
 
   if (!resourceReferences.length) {
     return (
       <div className={classes.references}>
-        No references
+        This resource isn’t being used anywhere.
       </div>
     );
   }

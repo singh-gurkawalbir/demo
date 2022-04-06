@@ -40,8 +40,8 @@ function ErrorInfoDrawerContent({ integrationId, revisionId, parentUrl }) {
       <DrawerHeader title="View error" handleClose={onClose} />
       <DrawerContent>
         <Typography className={classes.details}><b>Timestamp</b><br /><DateTimeDisplay dateTime={revisionError.createdAt} /></Typography>
-        <Typography className={classes.details}><b>Code</b><br /><DateTimeDisplay dateTime={revisionError.code} /></Typography>
-        <Typography className={classes.details}><b>Message</b><br /><DateTimeDisplay dateTime={revisionError.message} /></Typography>
+        <Typography className={classes.details}><b>Code</b><br />{revisionError.code}</Typography>
+        <Typography className={classes.details}><b>Message</b><br />{revisionError.message}</Typography>
       </DrawerContent>
       <DrawerFooter>
         <FilledButton
