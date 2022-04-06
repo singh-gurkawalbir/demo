@@ -365,7 +365,7 @@ describe('resourceFormSampleData sagas', () => {
         .delay(500)
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
         .not.call.fn(_requestExportSampleData)
-        .call(_requestImportSampleData, { formKey, refreshCache: undefined })
+        .call(_requestImportSampleData, { formKey, refreshCache: undefined, isMockInput: undefined })
         .run(500);
     });
     test('should dispatch requested status and call _requestImportSampleData incase of exports resourceType ', () => {
@@ -378,7 +378,7 @@ describe('resourceFormSampleData sagas', () => {
         ])
         .delay(500)
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
-        .call(_requestExportSampleData, { formKey, refreshCache, executeProcessors: undefined })
+        .call(_requestExportSampleData, { formKey, refreshCache, executeProcessors: undefined, isMockInput: undefined})
         .not.call.fn(_requestImportSampleData)
         .run(500);
     });
@@ -419,11 +419,11 @@ describe('resourceFormSampleData sagas', () => {
     });
     test('should call _requestLookupSampleData if the resource is a PP lookup', () => expectSaga(_requestExportSampleData, { formKey, refreshCache })
       .provide([
-        [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId }],
+        [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId, resourceObj: {} }],
         [select(selectors.isLookUpExport, {flowId, resourceId, resourceType: 'exports'}), true],
-        [call(_requestLookupSampleData, { formKey, refreshCache }), {}],
+        [call(_requestLookupSampleData, { formKey, refreshCache, isMockInput: undefined }), {}],
       ])
-      .call(_requestLookupSampleData, { formKey, refreshCache })
+      .call(_requestLookupSampleData, { formKey, refreshCache, isMockInput: undefined })
       .not.call.fn(_requestPGExportSampleData)
       .run());
     test('should call _requestFileSampleData incase of suitescript file resource', () => {
@@ -985,6 +985,7 @@ describe('resourceFormSampleData sagas', () => {
             throwOnError: true,
             includeStages: true,
             refresh: false,
+            isMockInput: false,
           }), previewData],
         ])
         .not.call.fn(_requestFileSampleData)
@@ -997,6 +998,7 @@ describe('resourceFormSampleData sagas', () => {
           throwOnError: true,
           includeStages: true,
           refresh: false,
+          isMockInput: false,
         })
         .put(actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData))
         .run();

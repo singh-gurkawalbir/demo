@@ -223,5 +223,5 @@ selectors.getAllParsableErrors = (state, resourceId) => {
 };
 
 selectors.getResourceMockData = (state, resourceId) => state?.[resourceId]?.data?.mockData;
-selectors.getResourceDefaultMockData = (state, resourceId) => state?.[resourceId]?.data?.defaultMockData;
 
+selectors.getResourceDefaultMockData = (state, resourceId) => state?.[resourceId]?.data?.defaultMockData;

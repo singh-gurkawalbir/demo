@@ -43,6 +43,7 @@ function RouterWrappedContent(props) {
   const resourceSampleDataStatus = useSelector(state =>
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'preview').status,
   );
+  const resourceDefaultMockData = useSelector(state => selectors.getResourceDefaultMockData(state, resourceId));
   const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
 
   useEffect(() => {
@@ -50,7 +51,6 @@ function RouterWrappedContent(props) {
       dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true, isMockInput: true }));
     }
   }, [dispatch, formKey, resourceMockData, resourceSampleDataStatus]);
-  const resourceDefaultMockData = useSelector(state => selectors.getResourceDefaultMockData(state, resourceId));
 
   const handleChange = newValue => {
     setMockData(newValue);
