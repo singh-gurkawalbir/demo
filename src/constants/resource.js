@@ -19,6 +19,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_PLURAL = Object.freeze({
   license: 'licenses',
   api: 'apis',
   eventreport: 'eventreports',
+  revision: 'revisions',
 });
 export const RESOURCE_TYPE_PLURAL_TO_SINGULAR = Object.freeze(
   invert(RESOURCE_TYPE_SINGULAR_TO_PLURAL)
@@ -40,6 +41,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
   license: 'License',
   agent: 'Agent',
   eventreport: 'Event report',
+  revision: 'Revision',
 });
 export const RESOURCE_TYPE_LABEL_TO_SINGULAR = Object.freeze(
   invert(RESOURCE_TYPE_SINGULAR_TO_LABEL)
