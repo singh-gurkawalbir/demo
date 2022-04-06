@@ -5,7 +5,7 @@ export default {
     '/assistant': 'sapbydesign',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
-    '/http/ping/relativeURI': '/sap/byd/odata/cust/v1/vmumaterial',
+    '/http/ping/relativeURI': '/sap/byd/odata',
     '/http/ping/method': 'GET',
     '/http/baseURI': `https://${formValues['/http/unencrypted/tenantHostname']}.sapbydesign.com`,
     '/http/headers': [
