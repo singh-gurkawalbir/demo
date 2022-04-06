@@ -18,7 +18,7 @@ export default {
     isLoggable: true,
     type: 'flowstiedtointegrations',
     label: 'Flows',
-    helpText: 'Select a “child” integration, such as stores or banks, to narrow the flows available for this report.',
+    helpText: 'Select one or more flows in this integration to include in the report.',
     placeholder: 'Choose flows',
     required: true,
   },
