@@ -54,9 +54,9 @@ const AliasForm = ({ resourceId, resourceType, isEdit, parentUrl }) => {
       return;
     }
 
-    // if the create alias form is saved
+    // if the alias form is saved
     // we will open the edit alias form of the newly created alias
-    if (!isEdit) {
+    if (aliasId !== savedAliasId) {
       history.replace(
         buildDrawerUrl({
           path: drawerPaths.ALIASES.EDIT,
@@ -65,7 +65,7 @@ const AliasForm = ({ resourceId, resourceType, isEdit, parentUrl }) => {
         })
       );
     }
-  }, [history, isFormSaveTriggered, isAliasActionCompleted, savedAliasId, parentUrl, isEdit, handleClose, dispatch]);
+  }, [history, isFormSaveTriggered, isAliasActionCompleted, savedAliasId, parentUrl, aliasId, handleClose, dispatch]);
 
   const handleSave = useCallback(closeAfterSave => {
     dispatch(actions.resource.aliases.createOrUpdate(resourceId, resourceType, aliasId, isEdit, ALIAS_FORM_KEY[resourceType]));
