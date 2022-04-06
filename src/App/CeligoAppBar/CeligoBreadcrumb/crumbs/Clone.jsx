@@ -1,9 +1,9 @@
 import React, {useCallback} from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import LoadResources from '../../../../components/LoadResources';
-import { useHistory } from 'react-router-dom';
 import getRoutePath from '../../../../utils/routePaths';
 
 export default function CloneCrumb({ resourceId, resourceType }) {
@@ -14,7 +14,8 @@ export default function CloneCrumb({ resourceId, resourceType }) {
   const history = useHistory();
 
   let path;
-  switch(resourceType) {
+
+  switch (resourceType) {
     case 'integrations':
       path = getRoutePath(`/integrations/${resource._id}`);
       break;
@@ -34,10 +35,9 @@ export default function CloneCrumb({ resourceId, resourceType }) {
     e.preventDefault();
     e.stopPropagation();
 
-    if(path === 'goBack') {
+    if (path === 'goBack') {
       history.goBack();
-    }
-    else {
+    } else {
       history.push(path);
     }
   }, [history]);
