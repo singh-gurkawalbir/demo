@@ -1,13 +1,14 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
+import { INTEGRATION_DEPENDENT_RESOURCES } from '../../../utils/constants';
 
 export default (state = {}, action) => {
   const { type, integrationId, resourceType } = action;
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.RESOURCE.REQUEST_COLLECTION_SENT:
-        if (integrationId) {
+      case actionTypes.RESOURCE.REQUEST_COLLECTION:
+        if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
           if (!draft[integrationId]) {
             draft[integrationId] = {};
           }
@@ -16,8 +17,8 @@ export default (state = {}, action) => {
           draft[resourceType] = 'requested';
         }
         break;
-      case actionTypes.RESOURCE.COLLECTION_RECEIVED:
-        if (integrationId) {
+      case actionTypes.RESOURCE.RECEIVED_COLLECTION:
+        if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
           if (!draft[integrationId]) {
             draft[integrationId] = {};
           }
@@ -36,7 +37,7 @@ export default (state = {}, action) => {
 export const selectors = {};
 
 selectors.isResourceStatusLoading = (state, integrationId, resourceType) => {
-  if (integrationId) {
+  if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
     return state[integrationId][resourceType] === 'requested';
   }
 
@@ -44,7 +45,7 @@ selectors.isResourceStatusLoading = (state, integrationId, resourceType) => {
 };
 
 selectors.isResourceStatusLoaded = (state, integrationId, resourceType) => {
-  if (integrationId) {
+  if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
     return state[integrationId][resourceType] === 'received';
   }
 
