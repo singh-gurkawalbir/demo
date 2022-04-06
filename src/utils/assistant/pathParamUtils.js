@@ -1,3 +1,5 @@
+import { escapeRegExp } from 'lodash';
+
 const getRelativeURLWithPrefixAndSuffix = (
   pathInfo,
   relativeURL,
@@ -93,7 +95,7 @@ export function getPathParams({
 
   // construct a new Regex replacing all pathParameter ids with regex placeholder which matches anything and captures it "(.*)"
   const pathParamRegex = new RegExp(pathParametersInfo.reduce((acc, cur) =>
-    acc.replace(`:_${cur.id}`, '(.*)'), `${relativePathWithPrefixAndSuffix.replace(/[-{}(\\)[\]+?.,\\^$|#\s]/g, '\\$&')}`));
+    acc.replace(`:_${cur.id}`, '(.*)'), escapeRegExp(relativePathWithPrefixAndSuffix)));
 
   if (pathParamRegex.test(actualPathWithoutQueryParams)) {
     const [, ...values] = pathParamRegex.exec(actualPathWithoutQueryParams);
