@@ -10,6 +10,7 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import useGetNotificationOptions from '../../../../hooks/useGetNotificationOptions';
 import DynaForm from '../../../DynaForm';
 import LoadResources from '../../../LoadResources';
+import { drawerPaths } from '../../../../utils/rightDrawer';
 
 function ViewNotifications({ integrationId, childId, onClose }) {
   const match = useRouteMatch();
@@ -76,10 +77,7 @@ export default function ViewNotificationsDrawer({ integrationId, childId }) {
   const handleClose = useCallback(() => history.replace(`${match.url}`), [history, match]);
 
   return (
-    <RightDrawer
-      path=":userEmail/notifications"
-      variant="temporary"
-      width="medium">
+    <RightDrawer path={drawerPaths.ACCOUNT.VIEW_NOTIFICATIONS_SETUP} width="medium">
       <DrawerHeader title="View notifications" />
       <ViewNotifications integrationId={integrationId} childId={childId} onClose={handleClose} />
     </RightDrawer>

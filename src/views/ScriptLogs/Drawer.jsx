@@ -8,6 +8,7 @@ import RightDrawer from '../../components/drawer/Right';
 import DrawerHeader from '../../components/drawer/Right/DrawerHeader';
 import LoadResources from '../../components/LoadResources';
 import actions from '../../actions';
+import { drawerPaths } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   scriptLogsDrawerHeader: {
@@ -62,14 +63,8 @@ const ScriptLogsDrawerHeader = () => {
 };
 export default function ScriptLogsDrawerRoute() {
   return (
-    <LoadResources
-      required="true"
-      resources="imports,exports,scripts">
-      <RightDrawer
-        path="viewLogs/:scriptId"
-        width="full"
-        variant="persistent"
-        >
+    <LoadResources required="true" resources="imports,exports,scripts">
+      <RightDrawer path={drawerPaths.LOGS.SCRIPT} width="full" >
         <ScriptLogsDrawerHeader />
         <ScriptLogsWrapper />
       </RightDrawer>

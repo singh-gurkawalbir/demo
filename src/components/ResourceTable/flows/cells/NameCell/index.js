@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
   offlineConnectionsIcon: {
     width: 18,
+    color: theme.palette.primary.main,
   },
   flowLink: {
     display: 'inline',

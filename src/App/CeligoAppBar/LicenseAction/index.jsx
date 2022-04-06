@@ -10,7 +10,7 @@ import { platformLicenseActionDetails } from '../../../utils/license';
 import {PillButton, TextButton} from '../../../components/Buttons';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import RawHtml from '../../../components/RawHtml';
-import { LICENSE_UPGRADE_SUCCESS_MESSAGE } from '../../../utils/messageStore';
+import messageStore from '../../../utils/messageStore';
 
 const useStyles = makeStyles({
   inTrial: {
@@ -32,13 +32,13 @@ const useStyles = makeStyles({
 function StartFreeTrialConfirmationMessage() {
   return (
     <div>
-      <b>You cannot enable more than one flow at a time with your current free subscription plan.</b>
-      <br /><br />Start your free trial or upgrade your plan to unlock your data integration potential with more flows.
-      <br /><br /><b>FREE UNLIMITED FLOWS TRIAL </b>
+      <b>You are currently enrolled in the free subscription plan that entitles you to 1 enabled integration flow between 2 endpoints. </b>
+      <br /><br />
+      <b>Start your free trial now to experience optimal process automation for your business with full access to integrator.io. For 30 days, the unlimited flows trial gives you: </b>
+      <br /><br /> <br />
 
-      <br /><br />Experience optimal process automation for your business with full access to integratior.io.
-      For 30 days, you will get:
-      <ul><li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
+      <ul>
+        <li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
         <li>Easy installation of Integration Apps and free templates from our vast library</li>
         <li>Integrations with multiple imports or exports (orchestration)</li>
         <li>Ad hoc data imports to thousands of applications</li>
@@ -47,11 +47,13 @@ function StartFreeTrialConfirmationMessage() {
 
       <br />
       <a
-        target="_blank" rel="noopener noreferrer"
+        target="_blank"
+        rel="noopener noreferrer"
         href="https://docs.celigo.com/hc/en-us/articles/4414582961819-Learn-how-to-make-the-most-of-your-free-trial"><u>Learn how to make the most of your free trial </u>
       </a>
 
-      <br /><br />After 30 days, your plan will revert to the free subscription plan with 1 enabled integration flow.
+      <br /><br />
+      After 30 days, your plan will revert to the free subscription plan with 1 enabled integration flow.
     </div>
   );
 }
@@ -78,7 +80,7 @@ function LicenseAction() {
   const startFreeTrialDialog = useCallback(() => {
     const message = `What will you integrate next?
       <br/><br/><a target="_blank" rel="noopener noreferrer"
-  href="/marketplace"><u>Checkout our Marketplace</u></a>  Integration Apps, templates for business process automation, and quickstart integration templates.`;
+  href="/marketplace"><u>Checkout our Marketplace</u></a> to jumpstart your integrations with Integration Apps, Business Process Automation templates, and quickstart templates.`;
 
     confirmDialog({
       title: 'Congratulations! Your unlimited flows trial starts now',
@@ -178,7 +180,7 @@ function LicenseAction() {
 
   const startFreeTrialConfirmationDialog = useCallback(() => {
     confirmDialog({
-      title: 'Try unlimited flows free for 30 days or upgrade plan',
+      title: 'Try unlimited flows free for 30 days',
       message: <StartFreeTrialConfirmationMessage />,
       buttons: [
         { label: 'Start free trial',
@@ -187,15 +189,12 @@ function LicenseAction() {
             startFreeTrialDialog();
           },
         },
-        { label: 'Request upgrade',
-          onClick: requestUpgradeDialog,
-        },
         { label: 'Cancel',
           variant: 'text',
         },
       ],
     });
-  }, [confirmDialog, dispatch, requestUpgradeDialog, startFreeTrialDialog]);
+  }, [confirmDialog, dispatch, startFreeTrialDialog]);
 
   const entitlementOfEndpointsDialog = useCallback(() => {
     confirmDialog({
@@ -230,7 +229,7 @@ function LicenseAction() {
 
   useEffect(() => {
     if (platformLicenseActionMessage) {
-      enquesnackbar({message: <RawHtml html={LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
+      enquesnackbar({message: <RawHtml html={messageStore('LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
       dispatch(actions.license.clearActionMessage());
     }
   }, [dispatch, enquesnackbar, platformLicenseActionMessage]);

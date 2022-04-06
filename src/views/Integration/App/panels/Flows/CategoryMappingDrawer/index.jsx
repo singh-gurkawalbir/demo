@@ -47,6 +47,9 @@ import RightDrawer from '../../../../../../components/drawer/Right';
 import DrawerHeader from '../../../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../../../components/drawer/Right/DrawerFooter';
+import AddCategoryMappingDrawer from './AddCategory';
+import VariationMappingDrawer from './VariationMapping';
+import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
@@ -258,7 +261,11 @@ function CategoryMappings({
   const handleVariation = useCallback(e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
-    history.push(`${match.url}/depth/${depth}/variations/${sectionId}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.MAPPINGS.CATEGORY_MAPPING.VARIATION_MAPPING.ROOT,
+      baseUrl: match.url,
+      params: { depth, subCategoryId: sectionId },
+    }));
   }, [history, match.url, sectionId, depth]);
 
   if (!generateFields) {
@@ -531,6 +538,12 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
       </DrawerHeader>
       <DrawerContent>
         <CategoryMappingContent integrationId={integrationId} parentUrl={parentUrl} />
+        <AddCategoryMappingDrawer integrationId={integrationId} flowId={flowId} />
+        <VariationMappingDrawer
+          integrationId={integrationId}
+          flowId={flowId}
+          categoryId={categoryId}
+      />
       </DrawerContent>
       <DrawerFooter>
         <CategoryMappingFooter flowId={flowId} integrationId={integrationId} parentUrl={parentUrl} />
@@ -667,18 +680,16 @@ const CategoryMappingFooter = ({flowId, integrationId, parentUrl}) => {
       asyncKey={CATEGORY_MAPPING_ASYNC_KEY} />
   );
 };
-export default function CategoryMappingDrawerRoute(props) {
+export default function CategoryMappingDrawerRoute({ integrationId }) {
   const match = useRouteMatch();
 
   return (
     <RightDrawer
-      path=":flowId/utilitymapping/:categoryId"
-      variant="temporary"
+      path={drawerPaths.MAPPINGS.CATEGORY_MAPPING.ROOT}
       height="tall"
-      width="large"
-      >
-      <LoadResources integrationId={props.integrationId} required resources="exports,imports,connections">
-        <CategoryMappingDrawer {...props} parentUrl={match.url} />
+      width="large" >
+      <LoadResources required integrationId={integrationId} resources="exports,imports,connections">
+        <CategoryMappingDrawer integrationId={integrationId} parentUrl={match.url} />
       </LoadResources>
     </RightDrawer>
   );

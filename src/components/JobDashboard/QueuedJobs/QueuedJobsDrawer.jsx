@@ -5,7 +5,8 @@ import { Typography, makeStyles, Divider } from '@material-ui/core';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import { NO_PENDING_QUEUED_JOBS } from '../../../utils/messageStore';
+import messageStore from '../../../utils/messageStore';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import CancelIcon from '../../icons/CancelIcon';
 import LoadResources from '../../LoadResources';
 import { getStatus, getPages } from '../../../utils/jobdashboard';
@@ -150,7 +151,7 @@ function QueuedJobs({ connectionId}) {
         {connectionJobs && connectionJobs.length > 0 ? (
           <CeligoTable data={connectionJobs} {...metadata} />
         ) : (
-          <Typography variant="body1">{NO_PENDING_QUEUED_JOBS}</Typography>
+          <Typography variant="body1">{messageStore('NO_PENDING_QUEUED_JOBS')}</Typography>
         )}
       </div>
     </div>
@@ -160,8 +161,12 @@ function QueuedJobs({ connectionId}) {
 const connectionsFilterConfig = {
   type: 'connections',
 };
-const paths = ['flows/:flowId/queuedJobs', ':flowId/queuedJobs'];
 const flowJobConnectionsOptions = { ignoreBorrowedConnections: true };
+
+const queuedJobsDrawerPaths = [
+  drawerPaths.ERROR_MANAGEMENT.V1.INTEGRATION_LEVEL_QUEUED_JOBS,
+  drawerPaths.ERROR_MANAGEMENT.V1.FLOW_LEVEL_QUEUED_JOBS,
+];
 
 export default function QueuedJobsDrawer({integrationId}) {
   const classes = useStyles();
@@ -169,8 +174,18 @@ export default function QueuedJobsDrawer({integrationId}) {
   const match = useRouteMatch();
   const history = useHistory();
   const [connectionId, setConnectionId] = useState();
-  const matchedPath = paths.find(p => matchPath(location.pathname, {path: `${match.path}/${p}`}));
-  const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/${matchedPath}`}) || {};
+  // TODO @Raghu: Revisit this logic of extracting flowId
+  // Move this inside Drawer content and extract from match.url
+  // const matchedPath = queuedJobsDrawerPaths.find(p => matchPath(location.pathname, {path: `${match.path}/${p}`}));
+  const matchedPath = queuedJobsDrawerPaths.find(p => matchPath(location.pathname, {path: buildDrawerUrl({
+    path: p,
+    baseUrl: match.path,
+  })}));
+  // const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/${matchedPath}`}) || {};
+  const { params: { flowId } = {} } = matchPath(location.pathname, {path: buildDrawerUrl({
+    path: matchedPath,
+    baseUrl: match.path,
+  })}) || {};
   const connectionsResourceList = useSelectorMemo(
     selectors.makeResourceListSelector,
     connectionsFilterConfig
@@ -201,10 +216,9 @@ export default function QueuedJobsDrawer({integrationId}) {
       <RightDrawer
         height="tall"
         width="full"
-        variant="permanent"
         hideBackButton
         onClose={handleClose}
-        path={paths}>
+        path={queuedJobsDrawerPaths}>
         <DrawerHeader title={`Queued Jobs: ${connectionName}`} className={classes.queuedDrawerHeader}>
           {/* TODO: as per the mock we need help component <Help /> beside the select field */}
           <DynaSelect

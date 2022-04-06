@@ -41,6 +41,7 @@ export default {
     resourceType: 'connections',
     parentResourceType: 'imports',
     label: 'Connection',
+    skipDefault: true,
     appTypeIsStatic: true,
     allowEdit: true,
     connectionId: r => r?._connectionId,

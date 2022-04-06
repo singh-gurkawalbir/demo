@@ -30,7 +30,7 @@ export default function FlowNameWithFlowGroupCell({ flowId, integrationId }) {
 
   return (
     <>
-      <NameCell al={{resourceType: 'flow', _resourceId: flowId, sectionId}} actionProps={tableContext} />
+      <NameCell al={{resourceType: 'flow', _resourceId: flowId, sectionId}} actionProps={{...tableContext, childId: integrationId}} />
       {sectionName && <Typography variant="body2" color="textSecondary">{sectionName}</Typography>}
     </>
   );

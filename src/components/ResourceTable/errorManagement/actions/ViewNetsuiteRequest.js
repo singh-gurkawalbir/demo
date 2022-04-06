@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import HttpIcon from '../../../icons/HttpIcon';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 export default {
   key: 'netsuite-view-request',
@@ -11,7 +12,11 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
-      history.push(`${match.url}/details/${errorId}/request`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.ERROR_MANAGEMENT.V2.VIEW_ERROR_DETAILS,
+        baseUrl: match.url,
+        params: { errorId, mode: 'request' },
+      }));
     }, [errorId, history, match.url]);
 
     return handleClick;

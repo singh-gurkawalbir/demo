@@ -8,7 +8,7 @@ import {
   generateCSVFields,
   getFileColumns,
 } from '.';
-import messageStore from '../../constants/messages';
+import errorMessageStore from '../errorStore';
 
 describe('isValidFileType util', () => {
   test('should return true if fileType is empty eg ADP connector', () => {
@@ -91,7 +91,7 @@ describe('getUploadedFileStatus util', () => {
     };
     const expectedObj = {
       success: false,
-      error: messageStore('FILE_SIZE_EXCEEDED'),
+      error: errorMessageStore('FILE_SIZE_EXCEEDED'),
     };
 
     expect(getUploadedFileStatus(file, 'json', {maxSize: 1000})).toEqual(expectedObj);
@@ -105,7 +105,7 @@ describe('getUploadedFileStatus util', () => {
     };
     const expectedObj = {
       success: false,
-      error: messageStore('FILE_TYPE_INVALID', {fileType: 'json'}),
+      error: errorMessageStore('FILE_TYPE_INVALID', {fileType: 'json'}),
     };
 
     expect(getUploadedFileStatus(file, 'json', {maxSize: 1000})).toEqual(expectedObj);
@@ -140,9 +140,9 @@ describe('getFileReaderOptions util', () => {
 
 describe('getJSONContentFromString util', () => {
   test('should return error if provided data is empty or not a json string', () => {
-    expect(getJSONContentFromString()).toEqual({ success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
-    expect(getJSONContentFromString('')).toEqual({ success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
-    expect(getJSONContentFromString('{some}')).toEqual({ success: false, error: messageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
+    expect(getJSONContentFromString()).toEqual({ success: false, error: errorMessageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
+    expect(getJSONContentFromString('')).toEqual({ success: false, error: errorMessageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
+    expect(getJSONContentFromString('{some}')).toEqual({ success: false, error: errorMessageStore('FILE_TYPE_INVALID', {fileType: 'JSON'})});
   });
   test('should return success with parsed content if valid json string is provided', () => {
     expect(getJSONContentFromString('{"key":"value"}')).toEqual({ success: true, data: {key: 'value'}});

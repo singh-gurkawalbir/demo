@@ -1,5 +1,6 @@
 import { select, call } from 'redux-saga/effects';
 import deepClone from 'lodash/cloneDeep';
+import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import { apiCallWithRetry } from '../../index';
@@ -10,7 +11,7 @@ import {
 } from './flowDataUtils';
 import { getFormattedResourceForPreview, getPostDataForDeltaExport, isPostDataNeededInResource } from '../../../utils/flowData';
 import { isNewId } from '../../../utils/resource';
-import { EMPTY_RAW_DATA } from '../../../utils/constants';
+import { EMPTY_RAW_DATA, STANDALONE_INTEGRATION } from '../../../utils/constants';
 import { getConstructedResourceObj } from '../flows/utils';
 
 export function* pageProcessorPreview({
@@ -24,13 +25,17 @@ export function* pageProcessorPreview({
   refresh = false,
   includeStages = false,
   runOffline = false,
+  mockInput,
+  typeOfPreview,
 }) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
   const flow = yield call(filterPendingResources, { flow: deepClone(merged) });
+  const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, _pageProcessorId, 'imports');
+  const isLookUp = yield select(selectors.isLookUpExport, { flowId, resourceId: _pageProcessorId, resourceType: 'exports' });
 
-  // Incase of no pgs, preview call is stopped here
-  if (!flow.pageGenerators || !flow.pageGenerators.length) return;
+  // // Incase of no pgs, preview call is stopped here
+  if (!isPreviewPanelAvailable && (!flow.pageGenerators || !flow.pageGenerators.length)) return;
   // Incase of first new pp, pageProcessors does not exist on flow doc. So add default [] for pps
   flow.pageProcessors = flow.pageProcessors || [];
   const pageGeneratorMap = yield call(fetchFlowResources, {
@@ -110,6 +115,22 @@ export function* pageProcessorPreview({
       pgInfo => pgInfo?.options?.runOfflineOptions
     );
 
+  if ((isPreviewPanelAvailable && typeOfPreview) || isLookUp) {
+    if (!pageProcessorMap[_pageProcessorId]) {
+      pageProcessorMap[_pageProcessorId] = {};
+    }
+    if (!pageProcessorMap[_pageProcessorId].options) {
+      pageProcessorMap[_pageProcessorId].options = {};
+    }
+    pageProcessorMap[_pageProcessorId].options.inputData = !isEmpty(mockInput) ? mockInput : undefined;
+
+    if (typeOfPreview === 'send') {
+      pageProcessorMap[_pageProcessorId].options.sendAndPreview = true;
+    } else {
+      pageProcessorMap[_pageProcessorId].options.preview = true;
+    }
+  }
+
   try {
     const previewData = yield call(apiCallWithRetry, {
       path: '/pageProcessors/preview',
@@ -179,17 +200,20 @@ export function* exportPreview({
     delete body.rawData;
   }
 
-  const path = '/exports/preview';
-
   // BE need flowId and integrationId in the preview call
   // if in case integration settings were used in export
   const flow = yield select(selectors.resource, 'flows', flowId);
 
-  if (!isNewId(flowId)) {
-    body._flowId = flowId;
+  let path;
+
+  if (flow?._integrationId && flow?._integrationId !== STANDALONE_INTEGRATION.id && flow?._id) {
+    path = `/integrations/${flow._integrationId}/flows/${flowId}/exports/preview`;
+  } else if (flow?._integrationId && flow?._integrationId !== STANDALONE_INTEGRATION.id && !flow?._id) {
+    path = `/integrations/${flow._integrationId}/exports/preview`;
+  } else {
+    path = '/exports/preview';
   }
 
-  body._integrationId = flow?._integrationId;
   try {
     const previewData = yield call(apiCallWithRetry, {
       path,

@@ -93,8 +93,15 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
 
   // while working with newly created flows, flowId could be temporary UI generated. Rely on flow._id as flowId while making page processor preview call.
   // refer IO-21519
-  body._flowId = flow?._id;
-  body._integrationId = integrationId !== STANDALONE_INTEGRATION.id ? integrationId : undefined;
+  let path;
+
+  if (integrationId && integrationId !== STANDALONE_INTEGRATION.id && flow?._id) {
+    path = `/integrations/${integrationId}/flows/${flow?._id}/exports/preview`;
+  } else if (integrationId && integrationId !== STANDALONE_INTEGRATION.id && !flow?._id) {
+    path = `/integrations/${integrationId}/exports/preview`;
+  } else {
+    path = '/exports/preview';
+  }
 
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
 
@@ -104,7 +111,7 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
 
   try {
     const previewData = yield call(apiCallWithRetry, {
-      path: '/exports/preview',
+      path,
       opts: { method: 'POST', body },
       hidden: true,
     });
@@ -167,7 +174,7 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
           actions.resourceFormSampleData.receivedProcessorError(resourceId, processorOutput.error)
         );
       }
-      const previewData = processorOutput.data;
+      const previewData = processorOutput?.data;
 
       yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
       yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
@@ -192,7 +199,7 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
           actions.resourceFormSampleData.receivedProcessorError(resourceId, processorOutput.error)
         );
       }
-      const previewData = processorOutput.data;
+      const previewData = processorOutput?.data;
 
       yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
       yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
@@ -340,6 +347,46 @@ export function* _requestLookupSampleData({ formKey, refreshCache = false }) {
   }
 }
 
+export function* _requestPageProcessorSampleData({ formKey, refreshCache = false }) {
+  const { resourceId, resourceObj, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+
+  // exclude sampleData property if exists on pageProcessor Doc
+  // as preview call considers sampleData to show instead of fetching
+  const { transform, filter, hooks, sampleData, ...constructedResourceObj } = resourceObj;
+
+  let _pageProcessorDoc = constructedResourceObj;
+
+  if (_pageProcessorDoc.oneToMany) {
+    const oneToMany = _pageProcessorDoc.oneToMany === 'true';
+
+    _pageProcessorDoc = { ..._pageProcessorDoc, oneToMany };
+  }
+
+  const mockInput = yield select(selectors.getResourceMockData, resourceId);
+  const typeOfPreview = yield select(selectors.typeOfSampleData, resourceId);
+
+  try {
+    const pageProcessorPreviewData = yield call(pageProcessorPreview, {
+      mockInput,
+      typeOfPreview,
+      flowId,
+      _pageProcessorId: resourceId,
+      resourceType: 'imports',
+      hidden: true,
+      _pageProcessorDoc,
+      throwOnError: true,
+      includeStages: true,
+      refresh: refreshCache,
+    });
+
+    yield put(
+      actions.resourceFormSampleData.receivedPreviewStages(resourceId, pageProcessorPreviewData)
+    );
+  } catch (e) {
+    yield call(_handlePreviewError, { e, resourceId });
+  }
+}
+
 export function* _requestExportSampleData({ formKey, refreshCache, executeProcessors }) {
   const { resourceId, flowId, ssLinkedConnectionId, resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
@@ -405,13 +452,18 @@ export function* _requestImportFileSampleData({ formKey }) {
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
-export function* _requestImportSampleData({ formKey }) {
+export function* _requestImportSampleData({ formKey, refreshCache }) {
   // handle file related sample data for imports
   // make file adaptor sample data calls
   const { resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj)) {
     yield call(_requestImportFileSampleData, { formKey });
+  }
+  const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, resourceObj?._id, 'imports');
+
+  if (isPreviewPanelAvailable) {
+    yield call(_requestPageProcessorSampleData, { formKey, refreshCache });
   }
 }
 
@@ -425,13 +477,13 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
   yield delay(500);
 
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
-  if (resourceType === 'exports') {
-    const { refreshCache, executeProcessors } = options;
+  const { refreshCache, executeProcessors } = options;
 
+  if (resourceType === 'exports') {
     yield call(_requestExportSampleData, { formKey, refreshCache, executeProcessors });
   }
   if (resourceType === 'imports') {
-    yield call(_requestImportSampleData, { formKey });
+    yield call(_requestImportSampleData, { formKey, refreshCache});
   }
 }
 
