@@ -33,7 +33,7 @@ const useStyles = makeStyles(() => ({
 export function ModalTitle({ resourceId, resourceType, action, integrationId }) {
   const classes = useStyles();
   const resourceName = useSelector(state => selectors.resourceName(state, resourceId, resourceType));
-  const showReferences = shouldShowReferences(resourceType);
+  const showReferences = shouldShowReferences(resourceType, action);
 
   return (
     <>
