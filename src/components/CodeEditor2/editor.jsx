@@ -125,6 +125,8 @@ export default function CodeEditor({
     if (aceEditor?.current) {
       if (readOnly) {
         aceEditor.current.editor.setStyle(classes.editorReadOnlyPanel);
+      } else {
+        aceEditor.current.editor.unsetStyle(classes.editorReadOnlyPanel);
       }
       if (hasError) {
         aceEditor.current.editor.setStyle(classes.editorErrorWrapper);
