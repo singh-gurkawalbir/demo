@@ -2,6 +2,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { FormLabel } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import FilterPanel from '../../AFE/Editor/panels/SalesforceLookupFilter';
@@ -18,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   },
   refreshFiltersButton: {
     minWidth: 0,
-    padding: 0,
+    padding: theme.spacing(0, 1),
   },
 
 }));
@@ -78,7 +79,9 @@ export default function DynaSalesforceLookupFilters_afe(props) {
   return (
     <>
       <div className={classes.refreshFilters}>
-        Refresh search filters
+        <FormLabel required>
+          Refresh search filters
+        </FormLabel>
         <TextButton
           startIcon={<RefreshIcon />}
           data-test="refreshLookupFilters"
