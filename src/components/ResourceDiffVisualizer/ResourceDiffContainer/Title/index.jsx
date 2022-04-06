@@ -22,7 +22,7 @@ export default function DiffContainerTitle({ resourceDiff, resourceType, integra
   const { resourceId, action = REVISION_DIFF_ACTIONS.UPDATE } = resourceDiff;
   const classes = useStyles();
   const resourceName = useSelector(state => selectors.resourceName(state, resourceId, resourceType));
-  const showReferences = shouldShowReferences(resourceType);
+  const showReferences = shouldShowReferences(resourceType, action);
   const numConflicts = resourceDiff?.conflicts?.length;
 
   return (
