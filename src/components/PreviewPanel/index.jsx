@@ -58,6 +58,7 @@ function PreviewInfo({
   showPreviewData,
   setShowPreviewData,
   resourceType,
+  toggleValue,
 }) {
   const dispatch = useDispatch();
 
@@ -70,8 +71,8 @@ function PreviewInfo({
 
   const handlePreview = useCallback(() => {
     fetchExportPreviewData();
-    setShowPreviewData(true);
-  }, [fetchExportPreviewData, setShowPreviewData]);
+    setShowPreviewData(showPreviewData => ({...showPreviewData, [toggleValue]: true}));
+  }, [fetchExportPreviewData, setShowPreviewData, toggleValue]);
 
   // on close of the panel, updates record size to default
   // remove this action, if in future we need to retain record size
@@ -89,7 +90,7 @@ function PreviewInfo({
       previewStageDataList={previewStageDataList}
       formKey={formKey}
       resourceId={resourceId}
-      showPreviewData={showPreviewData}
+      showPreviewData={showPreviewData[toggleValue]}
       resourceType={resourceType}
   />
   );
@@ -110,7 +111,7 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
   );
   // TODO @Raghu: Refactor preview state as it is currently using sample data state
   // this local state controls view to show sample data only when user requests by clicking preview
-  const [showPreviewData, setShowPreviewData] = useState(false);
+  const [showPreviewData, setShowPreviewData] = useState({preview: false, send: false});
   // get the map of all the stages with their respective sampleData for the stages
   const previewStages = useMemo(() => availablePreviewStages.map(({value}) => value), [availablePreviewStages]);
 
@@ -183,6 +184,7 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
             setShowPreviewData={setShowPreviewData}
             showPreviewData={showPreviewData}
             resourceType={resourceType}
+            toggleValue={toggleValue}
           />
 
           <Panels.PreviewBody
@@ -190,7 +192,7 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
             previewStageDataList={previewStageDataList}
             availablePreviewStages={availablePreviewStages}
             resourceId={resourceId}
-            showDefaultPreviewBody={!showPreviewData}
+            showDefaultPreviewBody={!showPreviewData[toggleValue]}
             resourceType={resourceType}
           />
         </div>
