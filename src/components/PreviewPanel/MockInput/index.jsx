@@ -1,15 +1,15 @@
 /* eslint-disable camelcase */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import isEmpty from 'lodash/isEmpty';
+import { Paper } from '@material-ui/core';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import actions from '../../../actions';
-import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 import { FilledButton } from '../../Buttons';
 import CodePanel from '../../AFE/Editor/panels/Code';
@@ -21,22 +21,21 @@ import PanelTitle from '../../AFE/Editor/gridItems/PanelTitle';
 import { drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
-  helpTextButton: {
-    padding: 0,
+  editMockContentWrapper: {
+    paddingBottom: 0,
   },
-  appLogo: {
-    paddingRight: theme.spacing(2),
-    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+  editMockPanelWrapper: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
-  titleHeader: {
-    '& > h4': {
-      marginRight: `${theme.spacing(-0.5)}px !important`,
-    },
+  editMockCodeWrapper: {
+    overflow: 'auto',
+    height: `calc(100vh - ${theme.spacing(32)}px)`,
   },
 }));
 
 function RouterWrappedContent(props) {
-  const { handleClose, formKey, resourceId, resourceType, flowId } = props;
+  const { handleClose, formKey, resourceId } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [mockData, setMockData] = useState();
@@ -48,16 +47,10 @@ function RouterWrappedContent(props) {
 
   useEffect(() => {
     if (isEmpty(resourceMockData) && !resourceSampleDataStatus) {
-      dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true }));
+      dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true, isMockInput: true }));
     }
   }, [dispatch, formKey, resourceMockData, resourceSampleDataStatus]);
-
-  const availablePreviewStages = useSelector(state =>
-    selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId), shallowEqual
-  );
-  const previewStages = useMemo(() => availablePreviewStages.map(({value}) => value), [availablePreviewStages]);
-
-  const previewStageDataList = useSelectorMemo(selectors.mkPreviewStageDataList, resourceId, previewStages);
+  const resourceDefaultMockData = useSelector(state => selectors.getResourceDefaultMockData(state, resourceId));
 
   const handleChange = newValue => {
     setMockData(newValue);
@@ -79,7 +72,7 @@ function RouterWrappedContent(props) {
 
   const value = mockData ||
     (resourceMockData && wrapExportFileSampleData(resourceMockData)) ||
-    (resourceSampleDataStatus !== 'error' && wrapExportFileSampleData(previewStageDataList?.preview?.data));
+    (wrapExportFileSampleData(resourceDefaultMockData, resourceSampleDataStatus));
 
   const handleDone = useCallback(() => {
     const parsedMockData = safeParse(value);
@@ -91,23 +84,25 @@ function RouterWrappedContent(props) {
 
   return (
     <>
-      <DrawerHeader title="Edit mock input" helpKey="import.editMockInput" hideBackButton className={classes.titleHeader} />
-      <DrawerContent noPadding >
+      <DrawerHeader title="Edit mock input" helpKey="import.editMockInput" hideBackButton />
+      <DrawerContent className={classes.editMockContentWrapper} >
         {resourceSampleDataStatus === 'requested' && (
         <Spinner centerAll />
         )}
         { resourceSampleDataStatus !== 'requested' && (
-          <>
+          <div className={classes.editMockPanelWrapper}>
             <PanelTitle title="Input" />
-            <CodePanel
-              name="data"
-              mode="json"
-              value={value}
-              onChange={handleChange} />
-          </>
+            <Paper elevation={0} className={classes.editMockCodeWrapper}>
+              <CodePanel
+                name="data"
+                mode="json"
+                value={value}
+                onChange={handleChange} />
+            </Paper>
+          </div>
         )}
+        <FieldMessage errorMessages={error} />
       </DrawerContent>
-      <FieldMessage errorMessages={error} />
       <DrawerFooter>
         <FilledButton
           data-test="saveandcloseinputdata"
