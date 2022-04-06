@@ -26,7 +26,7 @@ export default {
     isLoggable: true,
     type: 'reportdaterange',
     label: 'Date range',
-    helpText: 'Pick a convenient predefined window ending now, or click Custom to specify up to a three-day range within the last 30 days. Be sure to click Apply after entering a range.',
+    helpText: 'Pick a convenient predefined window ending now, or click <b>Custom</b> to specify up to a three-day range within the last 30 days. Be sure to click <b>Apply</b> after entering a range.',
     fullWidth: true,
     placeholder: 'Choose date range',
     defaultValue: '',
