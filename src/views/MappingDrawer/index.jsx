@@ -59,7 +59,8 @@ export default function MappingDrawerRoute(props) {
     // Also check for dummy route implementation on Right Drawer
     <LoadResources
       required="true"
-      resources="imports, exports, connections">
+      integrationId={integrationId}
+      resources="imports,exports,connections">
       <RightDrawer
         hideBackButton
         path={[

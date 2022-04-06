@@ -229,7 +229,7 @@ export default function AddCategoryMappingDrawerRoute(props) {
       height="tall"
       BackdropProps={{ invisible: true }}
       width="large">
-      <LoadResources required resources="flows,exports,imports,connections">
+      <LoadResources integrationId={props.integrationId} required resources="flows,exports,imports,connections">
         <AddCategoryMappingDrawer
           {...props}
           parentUrl={location.pathname.replace(/\/addCategory$/, '')}

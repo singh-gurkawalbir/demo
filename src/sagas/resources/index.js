@@ -717,7 +717,7 @@ export function* deleteIntegration({ integrationId }) {
   yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
 }
 
-export function* getResourceCollection({ resourceType, refresh }) {
+export function* getResourceCollection({ resourceType, refresh, integrationId }) {
   let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
 
@@ -740,8 +740,12 @@ export function* getResourceCollection({ resourceType, refresh }) {
   if (resourceType === 'notifications') {
     path = '/notifications?users=all';
   }
+  if (integrationId && ['exports', 'imports', 'flows', 'connections'].includes(resourceType)) {
+    path = `/integrations/${integrationId}/${resourceType}`;
+  }
 
   try {
+    yield put(actions.resource.requestCollectionSent(resourceType, refresh, integrationId));
     let collection = yield call(apiCallWithPaging, {
       path,
       hidden: hideNetWorkSnackbar,
@@ -776,13 +780,14 @@ export function* getResourceCollection({ resourceType, refresh }) {
       collection = undefined;
     }
 
-    yield put(actions.resource.receivedCollection(resourceType, collection));
+    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
+    yield put(actions.resource.collectionReceived({resourceType, refresh, integrationId}));
 
     return collection;
   } catch (error) {
     // generic message to the user that the
     // saga failed and services team working on it
-
+    yield put(actions.resource.collectionReceived({resourceType, refresh, integrationId}));
   }
 }
 

@@ -178,7 +178,7 @@ export default function Panel(props) {
     <>
       <TitleBar formKey={formKey} flowId={flowId} onClose={onClose} />
       <DrawerContent className={classes.root}>
-        <LoadResources required resources={requiredResources}>
+        <LoadResources required integrationId={integrationId} resources={requiredResources}>
           <div
             className={clsx({
               [classes.baseForm]: resourceType === 'exports',

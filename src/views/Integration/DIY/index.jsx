@@ -7,11 +7,11 @@ import PageBar from './PageBar';
 import TabRedirection from './TabRedirection';
 import EditorDrawer from '../../../components/AFE/Drawer';
 
-export default function IntegrationDIY() {
+export default function IntegrationDIY({integrationId}) {
   return (
     <>
       <ResourceDrawer />
-      <QueuedJobsDrawer />
+      <QueuedJobsDrawer integrationId={integrationId} />
       <LoadResources required resources="integrations,marketplacetemplates">
         <TabRedirection>
           <PageBar />

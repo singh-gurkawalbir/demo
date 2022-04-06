@@ -258,8 +258,11 @@ const resource = {
     action(actionTypes.RESOURCE.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
   clearChildIntegration: () => action(actionTypes.RESOURCE.CLEAR_CHILD_INTEGRATION),
 
-  requestCollection: (resourceType, message, refresh) =>
-    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
+  requestCollection: (resourceType, message, refresh, integrationId) =>
+    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh, integrationId }),
+  requestCollectionSent: (resourceType, refresh, integrationId) =>
+    action(actionTypes.RESOURCE.REQUEST_COLLECTION_SENT, {integrationId, resourceType, refresh}),
+  collectionReceived: params => action(actionTypes.RESOURCE.COLLECTION_RECEIVED, params),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
@@ -271,10 +274,11 @@ const resource = {
       patch,
       context,
     }),
-  receivedCollection: (resourceType, collection) =>
+  receivedCollection: (resourceType, collection, integrationId) =>
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
       resourceType,
       collection,
+      integrationId,
     }),
   clearCollection: resourceType =>
     action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),

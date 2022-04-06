@@ -58,7 +58,11 @@ function ViewNotifications({ integrationId, childId, onClose }) {
   }, [flowHash, connHash]);
 
   return (
-    <LoadResources required resources="notifications,flows,connections">
+    <LoadResources
+      required
+      integrationId={integrationId}
+      resources="notifications,flows,connections"
+     >
       <DrawerContent>
         <DynaForm formKey={formKey} />
       </DrawerContent>

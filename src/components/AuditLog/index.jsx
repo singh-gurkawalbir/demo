@@ -60,7 +60,7 @@ export default function AuditLog({
   return (
     <LoadResources
       required
-      resources="integrations, flows, exports, imports, connections">
+      resources="integrations, flows,exports,imports,connections">
       <>
         {isLoadingAuditLog
           ? <Spinner loading size="large" className={classes.spinnerContainer} /> : (

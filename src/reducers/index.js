@@ -2066,6 +2066,26 @@ selectors.allResourceStatus = (
   selectors.resourceStatusModified(resourceState, networkCommState, resourceType.trim())
 );
 
+selectors.makeAllResourcesStatus = createSelector(
+  state => state?.session?.loadResources,
+  (_, resources) => resources,
+  (_, _1, integrationId) => integrationId,
+  (resourcesState = emptyObject, resources = emptyArray, integrationId) => {
+    const allResources = typeof resources === 'string' ? resources.split(',') : resources;
+
+    return allResources.map(resource => {
+      const currentState = integrationId && ['exports', 'imports', 'flows', 'connections'] ? resourcesState[integrationId]?.[resource.trim()] : resourcesState?.[resource.trim()];
+
+      return {
+        resourceType: resource.trim(),
+        isLoading: currentState === 'requested',
+        isReady: currentState === 'received',
+        shouldSendRequest: !currentState,
+      };
+    });
+  }
+);
+
 selectors.makeAllResourceStatusSelector = () =>
   createSelector(
     selectors.resourceState,

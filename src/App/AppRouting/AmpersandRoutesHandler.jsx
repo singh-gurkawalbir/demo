@@ -24,7 +24,7 @@ export default function AmpersandRoutesHandler({ match }) {
   const integrationAppName = getIntegrationAppUrlName(integrationName);
 
   if (integrationId && !integrationName) {
-    return <LoadResources required resources="integrations,flows" />;
+    return <LoadResources required resources="integrations" />;
   }
 
   switch (match.path) {

@@ -242,7 +242,7 @@ export default function VariationMappingDrawerRoute(props) {
 
   return (
     <>
-      <LoadResources required resources="flows,exports,imports,connections">
+      <LoadResources integrationId={props.integrationId} required resources="flows,exports,imports,connections">
         <RightDrawer
           path=":flowId/utilitymapping/:categoryId/depth/:depth/variationAttributes/:subCategoryId"
           variant="temporary"

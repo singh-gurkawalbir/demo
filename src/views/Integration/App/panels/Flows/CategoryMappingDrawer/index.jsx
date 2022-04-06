@@ -677,7 +677,7 @@ export default function CategoryMappingDrawerRoute(props) {
       height="tall"
       width="large"
       >
-      <LoadResources required resources="exports,imports,connections">
+      <LoadResources integrationId={props.integrationId} required resources="exports,imports,connections">
         <CategoryMappingDrawer {...props} parentUrl={match.url} />
       </LoadResources>
     </RightDrawer>

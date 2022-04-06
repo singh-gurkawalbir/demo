@@ -108,7 +108,11 @@ function ManageNotifications({ integrationId, childId, onClose }) {
   }, [flowValues, connectionValues, flows, connections]);
 
   return (
-    <LoadResources required resources="notifications,flows,connections">
+    <LoadResources
+      required
+      integrationId={integrationId}
+      resources="notifications,flows,connections"
+    >
       <DrawerContent>
         <DynaForm formKey={MANAGE_NOTIFICATIONS_FORM_KEY} />
       </DrawerContent>
