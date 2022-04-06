@@ -56,7 +56,9 @@ export default function PreviewBody(props) {
     }
 
     if (resourceSampleData.status === 'error') {
-      if (activeSendOrPreviewTab === 'preview') return 'request';
+      if (activeSendOrPreviewTab === 'preview') {
+        return setDefaultTab('request');
+      }
       if (shouldShowParseTab) {
         return setDefaultTab('preview');
       }
