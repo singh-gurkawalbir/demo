@@ -7,10 +7,12 @@ export default {
       key: 'code',
       heading: 'Code',
       Value: ({rowData: r}) => r.code,
+      width: '20%',
     }, {
       key: 'message',
       heading: 'Message',
       Value: ({ rowData: r }) => r.message,
+      width: '60%',
     }, {
       key: 'actions',
       heading: 'Actions',

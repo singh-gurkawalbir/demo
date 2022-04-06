@@ -108,7 +108,7 @@ export const getFilteredRevisions = (revisions = [], filters = {}) => {
   const filteredRevisions = revisions.filter(revision => {
     if (status !== DEFAULT_OPTION && revision.status !== status) return false;
     if (type !== DEFAULT_OPTION && revision.type !== type) return false;
-    if (user !== DEFAULT_OPTION && revision._byUserId !== user) return false;
+    if (user !== DEFAULT_OPTION && revision._createdByUserId !== user) return false;
     if (createdAt?.startDate && revision.createdAt < createdAt.startDate.toISOString()) return false;
     if (createdAt?.endDate && revision.createdAt > createdAt.endDate.toISOString()) return false;
 
