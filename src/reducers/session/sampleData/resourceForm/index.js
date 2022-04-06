@@ -73,7 +73,7 @@ export default function (state = {}, action) {
         draft[resourceId][activeSendOrPreviewTab].status = 'received';
         draft[resourceId][activeSendOrPreviewTab].data = extractStages(previewStagesData);
         if (!draft[resourceId].data) draft[resourceId].data = {};
-        if (previewStagesData.data) draft[resourceId].data.mockData = previewStagesData.data;
+        if (previewStagesData.data) draft[resourceId].data.defaultData = previewStagesData.data;
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_ERROR:
         draft[resourceId][activeSendOrPreviewTab].status = 'error';
@@ -223,3 +223,5 @@ selectors.getAllParsableErrors = (state, resourceId) => {
 };
 
 selectors.getResourceMockData = (state, resourceId) => state?.[resourceId]?.data?.mockData;
+selectors.getResourceDefaultMockData = (state, resourceId) => state?.[resourceId]?.data?.defaultMockData;
+

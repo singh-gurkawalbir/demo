@@ -25,6 +25,7 @@ export function* pageProcessorPreview({
   refresh = false,
   includeStages = false,
   runOffline = false,
+  isMockInput,
   mockInput,
   typeOfPreview,
 }) {
@@ -115,7 +116,7 @@ export function* pageProcessorPreview({
       pgInfo => pgInfo?.options?.runOfflineOptions
     );
 
-  if ((isPreviewPanelAvailable && typeOfPreview) || isLookUp) {
+  if (!isMockInput && ((isPreviewPanelAvailable && typeOfPreview) || isLookUp)) {
     if (!pageProcessorMap[_pageProcessorId]) {
       pageProcessorMap[_pageProcessorId] = {};
     }

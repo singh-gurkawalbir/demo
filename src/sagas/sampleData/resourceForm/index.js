@@ -300,7 +300,7 @@ export function* _requestPGExportSampleData({ formKey, refreshCache, executeProc
   yield call(_requestExportPreviewData, { formKey, executeProcessors });
 }
 
-export function* _requestLookupSampleData({ formKey, refreshCache = false }) {
+export function* _requestLookupSampleData({ formKey, refreshCache = false, isMockInput = false }) {
   const { resourceId, resourceObj, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
   const isRestCsvExport = yield select(selectors.isRestCsvMediaTypeExport, resourceId);
 
@@ -332,6 +332,7 @@ export function* _requestLookupSampleData({ formKey, refreshCache = false }) {
       flowId,
       _pageProcessorId: resourceId,
       resourceType,
+      isMockInput,
       hidden: true,
       _pageProcessorDoc,
       throwOnError: true,
@@ -347,7 +348,7 @@ export function* _requestLookupSampleData({ formKey, refreshCache = false }) {
   }
 }
 
-export function* _requestPageProcessorSampleData({ formKey, refreshCache = false }) {
+export function* _requestPageProcessorSampleData({ formKey, refreshCache = false, isMockInput }) {
   const { resourceId, resourceObj, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   // exclude sampleData property if exists on pageProcessor Doc
@@ -370,6 +371,7 @@ export function* _requestPageProcessorSampleData({ formKey, refreshCache = false
       mockInput,
       typeOfPreview,
       flowId,
+      isMockInput,
       _pageProcessorId: resourceId,
       resourceType: 'imports',
       hidden: true,
@@ -387,7 +389,7 @@ export function* _requestPageProcessorSampleData({ formKey, refreshCache = false
   }
 }
 
-export function* _requestExportSampleData({ formKey, refreshCache, executeProcessors }) {
+export function* _requestExportSampleData({ formKey, refreshCache, executeProcessors, isMockInput }) {
   const { resourceId, flowId, ssLinkedConnectionId, resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   if (ssLinkedConnectionId) {
@@ -400,7 +402,7 @@ export function* _requestExportSampleData({ formKey, refreshCache, executeProces
   const isLookUpExport = yield select(selectors.isLookUpExport, { flowId, resourceId, resourceType: 'exports' });
 
   if (isLookUpExport) {
-    yield call(_requestLookupSampleData, { formKey, refreshCache });
+    yield call(_requestLookupSampleData, { formKey, refreshCache, isMockInput });
   } else {
     yield call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors });
   }
@@ -452,7 +454,7 @@ export function* _requestImportFileSampleData({ formKey }) {
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
-export function* _requestImportSampleData({ formKey, refreshCache }) {
+export function* _requestImportSampleData({ formKey, refreshCache, isMockInput }) {
   // handle file related sample data for imports
   // make file adaptor sample data calls
   const { resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
@@ -463,7 +465,7 @@ export function* _requestImportSampleData({ formKey, refreshCache }) {
   const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, resourceObj?._id, 'imports');
 
   if (isPreviewPanelAvailable) {
-    yield call(_requestPageProcessorSampleData, { formKey, refreshCache });
+    yield call(_requestPageProcessorSampleData, { formKey, refreshCache, isMockInput });
   }
 }
 
@@ -477,13 +479,13 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
   yield delay(500);
 
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
-  const { refreshCache, executeProcessors } = options;
+  const { refreshCache, executeProcessors, isMockInput } = options;
 
   if (resourceType === 'exports') {
-    yield call(_requestExportSampleData, { formKey, refreshCache, executeProcessors });
+    yield call(_requestExportSampleData, { formKey, refreshCache, executeProcessors, isMockInput });
   }
   if (resourceType === 'imports') {
-    yield call(_requestImportSampleData, { formKey, refreshCache});
+    yield call(_requestImportSampleData, { formKey, refreshCache, isMockInput});
   }
 }
 
