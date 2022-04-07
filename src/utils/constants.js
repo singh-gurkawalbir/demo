@@ -673,6 +673,7 @@ export const CONNECTORS_TO_IGNORE = [
   'ebayfinance',
   'googlecontactspeople',
   'recurlyv3',
+  'loopreturnsv2',
 ];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
@@ -764,6 +765,8 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
   'googlecontactspeople',
   'recurly',
   'recurlyv3',
+  'loopreturns',
+  'loopreturnsv2',
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];

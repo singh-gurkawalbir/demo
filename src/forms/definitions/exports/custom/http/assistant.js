@@ -32,6 +32,9 @@ export default function assistantDefinition(
       if (assistantMetadata.assistant === 'recurlyv3') {
         assistantMetadata.assistant = 'recurly';
       }
+      if (assistantMetadata.assistant === 'loopreturnsv2') {
+        assistantMetadata.assistant = 'loopreturns';
+      }
       const otherFormValues = omitBy(formValues, (v, k) =>
         k.includes('/assistantMetadata/')
       );
