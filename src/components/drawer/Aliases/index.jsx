@@ -43,9 +43,11 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const resourceAliases = useSelector(state => selectors.ownAliases(state, 'flows', flowId));
-  const inheritedAliases = useSelectorMemo(selectors.makeInheritedAliases, flowId);
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
+  const aliasesFilterKey = `${flowId}+aliases`;
+  const inheritedAliasesFilterKey = `${flow._integrationId}+inheritedAliases`;
+  const resourceAliases = useSelector(state => selectors.ownAliases(state, 'flows', flowId, aliasesFilterKey));
+  const inheritedAliases = useSelector(state => selectors.inheritedAliases(state, flowId, inheritedAliasesFilterKey));
   const isAliasActionCompleted = useSelector(state => selectors.aliasActionStatus(state, flowId));
   const actionProps = useMemo(() => ({
     resourceType: 'flows',
@@ -56,18 +58,18 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
     {
       data: resourceAliases.map(aliasData => ({...aliasData, _id: `${flowId}-${aliasData.alias}`})),
       title: 'Aliases',
-      filterKey: `${flowId}+aliases`,
+      filterKey: aliasesFilterKey,
       actionProps: {...actionProps, hasManageAccess},
       noAliasesMessage: errorMessageStore('NO_CUSTOM_ALIASES_MESSAGE'),
     },
     {
       data: inheritedAliases.map(aliasData => ({...aliasData, _id: `${flow._integrationId}-${aliasData.alias}`})),
       title: 'Inherited aliases',
-      filterKey: `${flow._integrationId}+inheritedAliases`,
+      filterKey: inheritedAliasesFilterKey,
       actionProps,
       noAliasesMessage: errorMessageStore('NO_INHERITED_ALIASES_MESSAGE'),
     },
-  ]), [resourceAliases, inheritedAliases, flowId, flow, actionProps, hasManageAccess]);
+  ]), [resourceAliases, inheritedAliases, flowId, flow, aliasesFilterKey, inheritedAliasesFilterKey, actionProps, hasManageAccess]);
 
   useEffect(() => {
     if (!isAliasActionCompleted) return;
@@ -111,7 +113,7 @@ const ViewAliases = ({ resourceId, resourceType, height }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const filterKey = `${resourceId}+viewAliases`;
-  const allAliases = useSelector(state => selectors.allAliases(state, resourceId));
+  const allAliases = useSelector(state => selectors.allAliases(state, resourceId, filterKey));
   const actionProps = useMemo(() => ({
     resourceType,
     resourceId,
