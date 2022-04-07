@@ -2216,3 +2216,6 @@ export function isAmazonHybridConnection(connection) {
 export function isLoopReturnsv2Connection(connection) {
   return connection?.assistant === 'loopreturns' && connection?.http?.unencrypted?.version === 'v2';
 }
+export function isAcumaticaEcommerceConnection(connection) {
+  return connection?.assistant === 'acumatica' && connection?.http?.unencrypted?.endpointName === 'ecommerce';
+}
