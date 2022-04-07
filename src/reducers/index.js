@@ -2068,7 +2068,7 @@ selectors.allResourceStatus = (
   selectors.resourceStatusModified(resourceState, networkCommState, resourceType.trim())
 );
 
-selectors.makeAllResourcesStatus = createSelector(
+selectors.makeAllResourcesStatus = () => createSelector(
   state => state?.session?.loadResources,
   (_, resources) => resources,
   (_, _1, integrationId) => integrationId,
