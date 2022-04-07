@@ -486,10 +486,10 @@ export const extractRawSampleDataFromOneToManySampleData = (sampleData, resource
  * For the time being this is used for csv/xml export sample data view
  * TODO: Discuss on this being replaced with API call, once we finalize AFE 2.0 requirements
  */
-export const wrapExportFileSampleData = records => {
+export const wrapExportFileSampleData = (records, status) => {
   const page_of_records = [];
 
-  if (!records || typeof records !== 'object') {
+  if (!records || typeof records !== 'object' || status === 'error') {
     page_of_records.push({ record: {} });
 
     return { page_of_records };

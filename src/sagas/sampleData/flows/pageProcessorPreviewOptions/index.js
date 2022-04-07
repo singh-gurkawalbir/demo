@@ -5,6 +5,7 @@
  * 3. FTP, NS, SF, AS2, Web hook
  */
 import { call, select } from 'redux-saga/effects';
+import isEmpty from 'lodash/isEmpty';
 import {
   getPostDataForDeltaExport,
   isUIDataExpectedForResource,
@@ -62,12 +63,41 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
   if (isIntegrationApp(flow) && sampleData && !refresh) return sampleData;
 }
 
-export default function* getPreviewOptionsForResource({ resource, flow, refresh, runOffline }) {
+export default function* getPreviewOptionsForResource({
+  resource,
+  flow,
+  refresh,
+  runOffline,
+  _pageProcessorId,
+  isMockInput,
+  addMockData,
+}) {
   const connection = yield select(
     selectors.resource,
     'connections',
     resource?._connectionId
   );
+  const {_id: resourceId} = resource || {};
+
+  if (addMockData) {
+    const options = {};
+    const mockInput = yield select(selectors.getResourceMockData, resourceId);
+    const typeOfPreview = yield select(selectors.typeOfSampleData, resourceId);
+
+    const shouldAddMockData = addMockData && ((_pageProcessorId !== resourceId) || !isMockInput);
+
+    if (shouldAddMockData) {
+      options.inputData = !isEmpty(mockInput) ? mockInput : undefined;
+
+      if (typeOfPreview === 'send') {
+        options.sendAndPreview = true;
+      } else {
+        options.preview = true;
+      }
+    }
+
+    return options;
+  }
 
   const uiData = isUIDataExpectedForResource(resource, connection)
     ? yield call(_getUIDataForResource, { resource, connection, flow, refresh })
