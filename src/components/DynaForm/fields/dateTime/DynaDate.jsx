@@ -114,6 +114,9 @@ export default function DynaDate(props) {
           onKeyDown={e => {
             // this is specifically for qa to inject their date time string
             // they should alter the input dom to add a qa attribute prior to injection for date time
+            if (e.keyCode === 8 || e.keyCode === 46) {
+              setDateValue(null);
+            }
             if (e.target.hasAttribute('qa')) return;
 
             e.preventDefault();
