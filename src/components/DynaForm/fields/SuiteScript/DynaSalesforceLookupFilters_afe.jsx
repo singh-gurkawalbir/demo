@@ -2,7 +2,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
+import { FormLabel, IconButton } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import FilterPanel from '../../../AFE/Editor/panels/SalesforceLookupFilter';
@@ -12,15 +12,7 @@ import RefreshIcon from '../../../icons/RefreshIcon';
 const useStyles = makeStyles(theme => ({
   refreshFilters: {
     marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
     display: 'inline-block !important',
-  },
-  refreshFiltersButton: {
-    minWidth: 0,
-    padding: 0,
-  },
-  salesForceLookupFilterIcon: {
-    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -90,16 +82,14 @@ export default function DynaSalesforceLookupFilters_afe(props) {
   return (
     <>
       <div className={classes.refreshFilters}>
-        Refresh search filters
-        <Button
+        <FormLabel required>Refresh search filters</FormLabel>
+        <IconButton
           data-test="refreshLookupFilters"
-          className={classes.refreshFiltersButton}
-          variant="text"
-          color="primary"
-          onClick={handleRefreshFiltersClick}>
-          <RefreshIcon className={classes.salesForceLookupFilterIcon} />
-        </Button>
-
+          onClick={handleRefreshFiltersClick}
+          size="small"
+          color="inherit">
+          <RefreshIcon />
+        </IconButton>
       </div>
       {/* query expressions can be loggable */}
       <FilterPanel
