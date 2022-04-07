@@ -579,6 +579,7 @@ export default {
 'Please enter your Access Secret here. This can be obtained by reaching out to Ware2Go support team.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Access secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'ware2go.connection.http.unencrypted.merchantId':
 'Please enter your Merchant Id here. This can be obtained by reaching out to Ware2Go support team.',
+  'ware2go.connection.http.platformversion': 'Select your Ware2Go account platform version:<br>1. Select <b>Platform 1</b> to connect using the <b>Access token</b> and <b>Access secret</b> (or) select <b>Platform2</b> to connect using a <b>Username</b> and <b>Password</b>.',
   'ware2go.connection.http.unencrypted.username': 'Please enter the username of your Ware2Go account here.',
   'ware2go.connection.http.unencrypted.password': 'Please enter the password of your Ware2Go account here.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'messagemedia.connection.http.auth.basic.username':
