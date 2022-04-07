@@ -38,7 +38,7 @@ export default {
     }, {
       key: 'user',
       heading: 'User',
-      Value: ({ rowData: r }) => <UserName userId={r._byUserId} integrationId={integrationId} />,
+      Value: ({ rowData: r }) => <UserName userId={r._createdByUserId} integrationId={integrationId} />,
     }];
 
     return columns;

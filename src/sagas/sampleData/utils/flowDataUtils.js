@@ -100,7 +100,15 @@ export function* fetchResourceDataForNewFlowResource({
   return getFormattedResourceForPreview(newResource);
 }
 
-export function* fetchFlowResources({ flow, type, refresh, runOffline }) {
+export function* fetchFlowResources({
+  flow,
+  type,
+  refresh,
+  runOffline,
+  _pageProcessorId,
+  isMockInput,
+  addMockData,
+}) {
   const resourceMap = {};
   const resourceList = flow?.[type];
 
@@ -135,11 +143,18 @@ export function* fetchFlowResources({ flow, type, refresh, runOffline }) {
 
         resourceMap[resourceId].options = {};
 
-        if (resourceType === 'exports') {
+        if (resourceType === 'exports' || resourceType === 'imports') {
           // Gets required uiData (for real time exports - FTP, NS, SF, Web hook) and postData to pass for Page processors
           resourceMap[resourceId].options = yield call(
             getPreviewOptionsForResource,
-            { resource, flow, refresh, runOffline }
+            { resource,
+              flow,
+              refresh,
+              runOffline,
+              isMockInput,
+              addMockData,
+              _pageProcessorId,
+            }
           );
         }
       }

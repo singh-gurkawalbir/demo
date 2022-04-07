@@ -11,7 +11,7 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../utils/constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
-import { isAmazonHybridConnection } from '../../../utils/assistant';
+import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection } from '../../../utils/assistant';
 
 const emptyObj = {};
 const isParent = true;
@@ -142,7 +142,7 @@ export default function FormView(props) {
   };
 
   const isFlowBuilderAssistant = flowId && (isGraphql ||
-    (assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection)));
+    (assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection) && !isLoopReturnsv2Connection(connection) && !isAcumaticaEcommerceConnection(connection)));
 
   return isFlowBuilderAssistant ? (
     <DynaSelect

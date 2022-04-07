@@ -108,7 +108,7 @@ export const getFilteredRevisions = (revisions = [], filters = {}) => {
   const filteredRevisions = revisions.filter(revision => {
     if (status !== DEFAULT_OPTION && revision.status !== status) return false;
     if (type !== DEFAULT_OPTION && revision.type !== type) return false;
-    if (user !== DEFAULT_OPTION && revision._byUserId !== user) return false;
+    if (user !== DEFAULT_OPTION && revision._createdByUserId !== user) return false;
     if (createdAt?.startDate && revision.createdAt < createdAt.startDate.toISOString()) return false;
     if (createdAt?.endDate && revision.createdAt > createdAt.endDate.toISOString()) return false;
 
@@ -134,20 +134,19 @@ const getDiffContent = (diff, type) => {
   const [beforeKey, afterKey] = RESOURCE_DIFF_KEYS_BY_TYPE[type] || ['before', 'after'];
 
   return {
-    before: diff[beforeKey],
-    after: diff[afterKey],
+    before: diff[beforeKey] || {},
+    after: diff[afterKey] || {},
   };
 };
 
-export const getRevisionResourceLevelChanges = (overallDiff, type, sortKeys = false) => {
+export const getRevisionResourceLevelChanges = (overallDiff, type, ignoreSort = false) => {
   if (!overallDiff) return;
   const { numConflicts } = overallDiff;
   const { before, after } = getDiffContent(overallDiff, type);
   const diffs = {};
   const resourcesTypes = Object.keys(after);
-  // Ignore Sorting keys for now
   const NOOP = obj => obj;
-  const sortFn = sortKeys ? sortJsonByKeys : NOOP;
+  const sortFn = ignoreSort ? NOOP : sortJsonByKeys;
 
   resourcesTypes.forEach(resourceType => {
     if (!diffs[resourceType]) {
@@ -181,8 +180,9 @@ export const getRevisionResourceLevelChanges = (overallDiff, type, sortKeys = fa
   return { numConflicts, diffs, titles: DIFF_TITLES_BY_TYPE[type] };
 };
 
-export const shouldShowReferences = resourceType => {
-  const VALID_RESOURCE_TYPES_WITH_REFERENCES = ['exports', 'imports', 'connections'];
+export const shouldShowReferences = (resourceType, action) => {
+  const VALID_RESOURCE_TYPES_WITH_REFERENCES = ['exports', 'imports'];
 
-  return VALID_RESOURCE_TYPES_WITH_REFERENCES.includes(resourceType);
+  // We do not show references if the resource is a newly created one or not one of the above resource types
+  return VALID_RESOURCE_TYPES_WITH_REFERENCES.includes(resourceType) && action !== REVISION_DIFF_ACTIONS.NEW;
 };

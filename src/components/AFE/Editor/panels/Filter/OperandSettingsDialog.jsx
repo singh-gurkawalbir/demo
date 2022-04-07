@@ -5,6 +5,7 @@ import DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { TextButton } from '../../../../Buttons';
 import { emptyObject } from '../../../../../utils/constants';
+import ActionGroup from '../../../../ActionGroup';
 
 const transformations = {
   number: [
@@ -133,11 +134,13 @@ export default function OperandSettingsDialog({
   });
 
   return (
-    <ModalDialog show>
-      <span>Operand settings</span>
+    <ModalDialog show onClose={onClose}>
+      <>Operand settings</>
       <>
         <DynaForm
           formKey={formKey} />
+      </>
+      <ActionGroup>
         <DynaSubmit
           formKey={formKey}
           data-test="saveOperandSettings"
@@ -149,7 +152,7 @@ export default function OperandSettingsDialog({
           onClick={onClose}>
           Cancel
         </TextButton>
-      </>
+      </ActionGroup>
     </ModalDialog>
   );
 }

@@ -10,7 +10,7 @@ import getRoutePath from '../../utils/routePaths';
 import LoadResources from '../LoadResources';
 import { emptyList, HOME_PAGE_PATH} from '../../utils/constants';
 import useConfirmDialog from '../ConfirmDialog';
-import FilledButton from '../Buttons';
+import { FilledButton } from '../Buttons';
 
 const useStyles = makeStyles(theme => ({
   contentWrapper: {
