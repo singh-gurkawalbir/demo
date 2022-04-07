@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { useSelectorMemo } from '../../hooks';
@@ -7,7 +7,11 @@ import { selectors } from '../../reducers';
 export default function LoadResources({ children, resources, required, integrationId }) {
   const dispatch = useDispatch();
   const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
-  const resourceStatus = useSelectorMemo(selectors.makeAllResourcesStatus, resources, integrationId);
+  const allResources = useMemo(() => typeof resources === 'string'
+    ? resources.split(',').map(r => r?.trim())
+    : resources,
+  [resources]);
+  const resourceStatus = useSelectorMemo(selectors.mkResourceStatus, allResources, integrationId);
   const isAllDataReady = !resourceStatus.some(resource => !resource.isReady);
 
   useEffect(() => {

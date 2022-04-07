@@ -1,6 +1,7 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
-import { INTEGRATION_DEPENDENT_RESOURCES } from '../../../utils/constants';
+import { emptyList, INTEGRATION_DEPENDENT_RESOURCES } from '../../../utils/constants';
 
 export default (state = {}, action) => {
   const { type, integrationId, resourceType } = action;
@@ -36,18 +37,24 @@ export default (state = {}, action) => {
 
 export const selectors = {};
 
-selectors.isResourceStatusLoading = (state, integrationId, resourceType) => {
-  if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
-    return state[integrationId][resourceType] === 'requested';
-  }
+selectors.mkResourceStatus = () => createSelector(
+  (_, resources) => resources,
+  (state, resources, integrationId) => resources.reduce((hash, resource, index) => {
+    let statusString = state[resource] || '';
 
-  return state[resourceType] === 'requested';
-};
+    if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resource) && statusString !== 'received') {
+      statusString = (state[integrationId]?.[resource] || '');
+    }
 
-selectors.isResourceStatusLoaded = (state, integrationId, resourceType) => {
-  if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
-    return state[integrationId][resourceType] === 'received';
-  }
+    return hash + (index === 0 ? '' : '|') + statusString;
+  }, ''),
+  (resources, hashString) => hashString ? hashString.split('|').map((status, index) => (
+    {
+      resourceType: resources[index],
+      isLoading: status === 'requested',
+      isReady: status === 'received',
+      shouldSendRequest: !status,
+    }
+  )) : emptyList
+);
 
-  return state[resourceType] === 'received';
-};
