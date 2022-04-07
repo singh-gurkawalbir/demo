@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import isEmpty from 'lodash/isEmpty';
@@ -10,7 +10,6 @@ import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import actions from '../../../actions';
-import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 import { FilledButton } from '../../Buttons';
 import CodePanel from '../../AFE/Editor/panels/Code';
@@ -36,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function RouterWrappedContent(props) {
-  const { handleClose, formKey, resourceId, resourceType, flowId } = props;
+  const { handleClose, formKey, resourceId } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [mockData, setMockData] = useState();
@@ -44,20 +43,14 @@ function RouterWrappedContent(props) {
   const resourceSampleDataStatus = useSelector(state =>
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'preview').status,
   );
+  const resourceDefaultMockData = useSelector(state => selectors.getResourceDefaultMockData(state, resourceId));
   const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
 
   useEffect(() => {
     if (isEmpty(resourceMockData) && !resourceSampleDataStatus) {
-      dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true }));
+      dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true, isMockInput: true }));
     }
   }, [dispatch, formKey, resourceMockData, resourceSampleDataStatus]);
-
-  const availablePreviewStages = useSelector(state =>
-    selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId), shallowEqual
-  );
-  const previewStages = useMemo(() => availablePreviewStages.map(({value}) => value), [availablePreviewStages]);
-
-  const previewStageDataList = useSelectorMemo(selectors.mkPreviewStageDataList, resourceId, previewStages);
 
   const handleChange = newValue => {
     setMockData(newValue);
@@ -79,7 +72,7 @@ function RouterWrappedContent(props) {
 
   const value = mockData ||
     (resourceMockData && wrapExportFileSampleData(resourceMockData)) ||
-    (resourceSampleDataStatus !== 'error' && wrapExportFileSampleData(previewStageDataList?.preview?.data));
+    (wrapExportFileSampleData(resourceDefaultMockData, resourceSampleDataStatus));
 
   const handleDone = useCallback(() => {
     const parsedMockData = safeParse(value);
