@@ -58,7 +58,7 @@ import {
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
   AFE_SAVE_STATUS,
   UNASSIGNED_SECTION_NAME,
-  INTEGRATION_DEPENDENT_RESOURCES} from '../utils/constants';
+} from '../utils/constants';
 import messageStore from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -2066,26 +2066,6 @@ selectors.allResourceStatus = (
   : resourceTypes
 ).map(resourceType =>
   selectors.resourceStatusModified(resourceState, networkCommState, resourceType.trim())
-);
-
-selectors.makeAllResourcesStatus = () => createSelector(
-  state => state?.session?.loadResources,
-  (_, resources) => resources,
-  (_, _1, integrationId) => integrationId,
-  (resourcesState = emptyObject, resources = emptyArray, integrationId) => {
-    const allResources = typeof resources === 'string' ? resources.split(',') : resources;
-
-    return allResources.map(resource => {
-      const currentState = integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resource) ? resourcesState[integrationId]?.[resource.trim()] : resourcesState?.[resource.trim()];
-
-      return {
-        resourceType: resource.trim(),
-        isLoading: currentState === 'requested',
-        isReady: currentState === 'received',
-        shouldSendRequest: !currentState,
-      };
-    });
-  }
 );
 
 selectors.makeAllResourceStatusSelector = () =>

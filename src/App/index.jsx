@@ -13,7 +13,7 @@ import ConflictAlertDialog from '../components/ConflictAlertDialog';
 import { selectors } from '../reducers';
 import actions from '../actions';
 import Signin from '../views/SignIn';
-// import * as gainsight from '../utils/analytics/gainsight';
+import * as gainsight from '../utils/analytics/gainsight';
 import { getDomain } from '../utils/resource';
 import getRoutePath from '../utils/routePaths';
 import colors from '../theme/colors';
@@ -27,7 +27,7 @@ import CeligoDrawer from './CeligoDrawer';
 import PageContent from './PageContent';
 import { FormOnCancelProvider } from '../components/FormOnCancelContext';
 import UserActivityMonitor from './UserActivityMonitor';
-// import * as pendo from '../utils/analytics/pendo';
+import * as pendo from '../utils/analytics/pendo';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -139,8 +139,8 @@ export default function App() {
      * for their "Product Mapper" to work properly.
      */
     if (domain === 'localhost.io') {
-      // gainsight.initialize({ tagKey: 'AP-CAGNPCDUT5BV-2' });
-      // pendo.init({apiKey: '78f58e2a-2645-49fb-70cf-0fc21baff71f'});
+      gainsight.initialize({ tagKey: 'AP-CAGNPCDUT5BV-2' });
+      pendo.init({apiKey: '78f58e2a-2645-49fb-70cf-0fc21baff71f'});
     }
   }, []);
 
