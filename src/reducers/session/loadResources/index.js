@@ -8,7 +8,7 @@ export default (state = {}, action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.RESOURCE.REQUEST_COLLECTION_SENT:
+      case actionTypes.RESOURCE.COLLECTION_REQUEST_SENT:
         if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
           if (!draft[integrationId]) {
             draft[integrationId] = {};
@@ -18,7 +18,7 @@ export default (state = {}, action) => {
           draft[resourceType] = 'requested';
         }
         break;
-      case actionTypes.RESOURCE.COLLECTION_RECEIVED:
+      case actionTypes.RESOURCE.COLLECTION_REQUEST_SUCCEEDED:
         if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
           if (!draft[integrationId]) {
             draft[integrationId] = {};
@@ -28,7 +28,16 @@ export default (state = {}, action) => {
           draft[resourceType] = 'received';
         }
         break;
-
+      case actionTypes.RESOURCE.COLLECTION_REQUEST_FAILED:
+        if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
+          if (!draft[integrationId]) {
+            draft[integrationId] = {};
+          }
+          draft[integrationId][resourceType] = 'failed';
+        } else {
+          draft[resourceType] = 'failed';
+        }
+        break;
       default:
         return state;
     }
@@ -40,10 +49,10 @@ export const selectors = {};
 selectors.mkResourceStatus = () => createSelector(
   (_, resources) => resources,
   (state, resources, integrationId) => resources.reduce((hash, resource, index) => {
-    let statusString = state[resource] || '';
+    let statusString = state?.[resource] || '';
 
     if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resource) && statusString !== 'received') {
-      statusString = (state[integrationId]?.[resource] || '');
+      statusString = (state?.[integrationId]?.[resource] || '');
     }
 
     return hash + (index === 0 ? '' : '|') + statusString;
@@ -53,7 +62,7 @@ selectors.mkResourceStatus = () => createSelector(
       resourceType: resources[index],
       isLoading: status === 'requested',
       isReady: status === 'received',
-      shouldSendRequest: !status,
+      shouldSendRequest: !status || status === 'failed',
     }
   )) : emptyList
 );

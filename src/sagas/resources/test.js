@@ -1391,7 +1391,7 @@ availableResources.forEach(type => {
       // next() of generator functions always return:
       // { done: [true|false], value: {[right side of yield]} }
       expect(saga.next().value).toEqual(
-        put(actions.resource.requestCollectionSent(type))
+        put(actions.resource.collectionRequestSent(type))
       );
       const callEffect = saga.next().value;
 
@@ -1415,7 +1415,7 @@ availableResources.forEach(type => {
         put(actions.resource.receivedCollection(type, mockCollection))
       );
 
-      expect(saga.next().value).toEqual(put(actions.resource.collectionReceived({resourceType: type})));
+      expect(saga.next().value).toEqual(put(actions.resource.collectionRequestSucceeded({resourceType: type})));
 
       const final = saga.next();
 
@@ -1431,7 +1431,7 @@ availableResources.forEach(type => {
       const effect = saga.next().value;
 
       expect(effect).toEqual(
-        put(actions.resource.requestCollectionSent(type))
+        put(actions.resource.collectionRequestSent(type))
       );
       const callEffect = saga.next().value;
 
@@ -1439,7 +1439,7 @@ availableResources.forEach(type => {
 
       const final = saga.throw();
 
-      expect(final.value).toEqual(put(actions.resource.collectionReceived({resourceType: type})));
+      expect(final.value).toEqual(put(actions.resource.collectionRequestFailed({resourceType: type})));
 
       expect(saga.next().done).toBe(true);
     });

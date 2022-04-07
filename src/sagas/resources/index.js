@@ -745,7 +745,7 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
   }
 
   try {
-    yield put(actions.resource.requestCollectionSent(resourceType, refresh, integrationId));
+    yield put(actions.resource.collectionRequestSent(resourceType, integrationId));
     let collection = yield call(apiCallWithPaging, {
       path,
       hidden: hideNetWorkSnackbar,
@@ -781,13 +781,13 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     }
 
     yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
-    yield put(actions.resource.collectionReceived({resourceType, refresh, integrationId}));
+    yield put(actions.resource.collectionRequestSucceeded({resourceType, integrationId}));
 
     return collection;
   } catch (error) {
     // generic message to the user that the
     // saga failed and services team working on it
-    yield put(actions.resource.collectionReceived({resourceType, refresh, integrationId}));
+    yield put(actions.resource.collectionRequestFailed({resourceType, integrationId}));
   }
 }
 
