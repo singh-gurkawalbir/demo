@@ -1,6 +1,5 @@
 import { select, call } from 'redux-saga/effects';
 import deepClone from 'lodash/cloneDeep';
-import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import { apiCallWithRetry } from '../../index';
@@ -25,14 +24,13 @@ export function* pageProcessorPreview({
   refresh = false,
   includeStages = false,
   runOffline = false,
-  mockInput,
-  typeOfPreview,
+  isMockInput,
+  addMockData,
 }) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
   const flow = yield call(filterPendingResources, { flow: deepClone(merged) });
   const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, _pageProcessorId, 'imports');
-  const isLookUp = yield select(selectors.isLookUpExport, { flowId, resourceId: _pageProcessorId, resourceType: 'exports' });
 
   // // Incase of no pgs, preview call is stopped here
   if (!isPreviewPanelAvailable && (!flow.pageGenerators || !flow.pageGenerators.length)) return;
@@ -47,6 +45,9 @@ export function* pageProcessorPreview({
   const pageProcessorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageProcessors',
+    _pageProcessorId,
+    isMockInput,
+    addMockData,
     // runOffline, Run offline is currently not supported for PPs
   });
 
@@ -54,6 +55,7 @@ export function* pageProcessorPreview({
   if (_pageProcessorDoc) {
     pageProcessorMap[_pageProcessorId] = {
       doc: _pageProcessorDoc,
+      options: pageProcessorMap[_pageProcessorId].options,
     };
   }
 
@@ -114,22 +116,6 @@ export function* pageProcessorPreview({
     .some(
       pgInfo => pgInfo?.options?.runOfflineOptions
     );
-
-  if ((isPreviewPanelAvailable && typeOfPreview) || isLookUp) {
-    if (!pageProcessorMap[_pageProcessorId]) {
-      pageProcessorMap[_pageProcessorId] = {};
-    }
-    if (!pageProcessorMap[_pageProcessorId].options) {
-      pageProcessorMap[_pageProcessorId].options = {};
-    }
-    pageProcessorMap[_pageProcessorId].options.inputData = !isEmpty(mockInput) ? mockInput : undefined;
-
-    if (typeOfPreview === 'send') {
-      pageProcessorMap[_pageProcessorId].options.sendAndPreview = true;
-    } else {
-      pageProcessorMap[_pageProcessorId].options.preview = true;
-    }
-  }
 
   try {
     const previewData = yield call(apiCallWithRetry, {
