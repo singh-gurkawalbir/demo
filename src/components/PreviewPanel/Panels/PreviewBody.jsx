@@ -56,7 +56,7 @@ export default function PreviewBody(props) {
     }
 
     if (resourceSampleData.status === 'error') {
-      if (activeSendOrPreviewTab === 'preview') {
+      if (resourceType === 'imports' && activeSendOrPreviewTab === 'preview') {
         return setDefaultTab('request');
       }
       if (shouldShowParseTab) {
@@ -66,7 +66,7 @@ export default function PreviewBody(props) {
         return setDefaultTab('raw');
       }
     }
-  }, [resourceSampleData.status, defaultPanel, handlePanelViewChange, availablePreviewStages, shouldShowParseTab, activeSendOrPreviewTab]);
+  }, [resourceSampleData.status, defaultPanel, handlePanelViewChange, availablePreviewStages, shouldShowParseTab, activeSendOrPreviewTab, resourceType]);
 
   if (showDefaultPreviewBody) {
     return (
