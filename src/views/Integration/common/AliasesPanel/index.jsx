@@ -54,8 +54,7 @@ export default function Aliases({ integrationId, childId }) {
       currentIntegrationId,
     ).accessLevel
   );
-  const canUserPublish = useSelector(state => selectors.canUserPublish(state));
-  const hasManageAccess = accessLevel !== 'monitor' && (!isIntegrationApp || (isIntegrationApp && canUserPublish));
+  const hasManageAccess = accessLevel !== 'monitor' && !isIntegrationApp;
   const aliases = useSelector(state => {
     const tempAliases = selectors.ownAliases(state, 'integrations', currentIntegrationId);
 

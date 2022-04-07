@@ -148,11 +148,10 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
   const resource = useSelectorMemo(selectors.makeResourceSelector, resourceType, resourceId);
   const integrationId = resourceType === 'integrations' ? resourceId : resource?._integrationId;
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
-  const canUserPublish = useSelector(state => selectors.canUserPublish(state));
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state, 'integrations', integrationId).accessLevel
   );
-  const hasManageAccess = accessLevel !== 'monitor' && (!isIntegrationApp || (isIntegrationApp && canUserPublish));
+  const hasManageAccess = accessLevel !== 'monitor' && !isIntegrationApp;
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
