@@ -393,6 +393,7 @@ export const REST_ASSISTANTS = [
   'wish',
   'exacterp',
   'acumatica',
+  'acumaticaecommerce',
   'myobessentials',
   'zohomail',
   'bronto',
@@ -674,6 +675,7 @@ export const CONNECTORS_TO_IGNORE = [
   'googlecontactspeople',
   'recurlyv3',
   'loopreturnsv2',
+  'acumaticaecommerce',
 ];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
@@ -762,6 +764,8 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
   'recurlyv3',
   'loopreturns',
   'loopreturnsv2',
+  'acumatica',
+  'acumaticaecommerce',
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];

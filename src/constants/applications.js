@@ -315,6 +315,7 @@ const newConnections = [
   {id: 'amazonsellingpartner', name: 'Amazon Seller Central', type: 'http', assistant: 'amazonsellingpartner'},
   {id: 'recurlyv3', name: 'Recurly v3', type: 'http', assistant: 'recurlyv3'},
   {id: 'loopreturnsv2', name: 'Loop Returns', type: 'http', assistant: 'loopreturnsv2'},
+  {id: 'acumaticaecommerce', name: 'Acumatica', type: 'rest', assistant: 'acumaticaecommerce'},
 ];
 
 connectors.sort(stringCompare('name'));

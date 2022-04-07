@@ -4,7 +4,7 @@ import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
 import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
 import { getAssistantFromResource, getResourceSubType, isNewId, rdbmsSubTypeToAppType } from '../../../utils/resource';
-import { isAmazonHybridConnection, isLoopReturnsv2Connection } from '../../../utils/assistant';
+import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection } from '../../../utils/assistant';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -261,8 +261,12 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         } else if (FILE_PROVIDER_ASSISTANTS.includes(resource.assistant)) {
           // Common metadata for both the file providers googledrive and azurestorageaccount
           meta = meta.commonfileprovider;
+        } else if (isLoopReturnsv2Connection(connection)) {
+          meta = meta[type];
+        } else if (isAcumaticaEcommerceConnection(connection)) {
+          meta = meta[type];
         } else if (
-          resource && !isAmazonHybridConnection(connection) && !isLoopReturnsv2Connection(connection) &&
+          resource && !isAmazonHybridConnection(connection) &&
             (resource.useParentForm !== undefined
               ? !resource.useParentForm && resource.assistant
               : resource.assistant) && !resource.useTechAdaptorForm

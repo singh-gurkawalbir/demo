@@ -162,6 +162,17 @@ const getLoopReturnsVersion = connection => {
 
   return 'loopreturns';
 };
+const getAcumaticaEndpointName = connection => {
+  const acumaticaEndpointName = connection?.http?.unencrypted?.endpointName;
+
+  switch (acumaticaEndpointName) {
+    case 'ecommerce':
+      return 'acumaticaecommerce';
+    default:
+  }
+
+  return 'acumatica';
+};
 export const getAssistantFromConnection = (assistant, connection) => {
   if (!MULTIPLE_AUTH_TYPE_ASSISTANTS.includes(assistant)) { return assistant; }
 
@@ -182,6 +193,9 @@ export const getAssistantFromConnection = (assistant, connection) => {
   }
   if (assistant === 'loopreturns') {
     return getLoopReturnsVersion(connection);
+  }
+  if (assistant === 'acumatica') {
+    return getAcumaticaEndpointName(connection);
   }
 
   return assistant;
