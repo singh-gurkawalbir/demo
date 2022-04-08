@@ -1,5 +1,5 @@
 import dateTimezones from '../../../../../../../../../utils/dateTimezones';
-import mappingUtil from '../../../../../../../../../utils/mapping';
+import mappingUtil, {ARRAY_DATA_TYPES} from '../../../../../../../../../utils/mapping';
 import dateFormats from '../../../../../../../../../utils/dateFormats';
 
 const conditionalOptions = [
@@ -130,16 +130,7 @@ export default {
           helpKey: 'mapping.fieldMappingType',
           noApi: true,
           skipSort: true,
-          options: [
-            {
-              items: [
-                { label: 'Standard', value: 'standard' },
-                { label: 'Hard-coded', value: 'hardCoded' },
-                { label: 'Lookup', value: 'lookup' },
-                { label: 'Handlebars expression', value: 'multifield' },
-              ],
-            },
-          ],
+          refreshOptionsOnChangesTo: ['dataType'],
           visibleWhenAll: [
             { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
@@ -614,6 +605,34 @@ export default {
           const options = getDefaultActionOptions(fieldId, dataTypeField?.value);
 
           return options;
+        }
+
+        if (fieldId === 'fieldMappingType') {
+          const dataTypeField = fields.find(
+            field => field.id === 'dataType'
+          );
+
+          if (ARRAY_DATA_TYPES.includes(dataTypeField?.value)) {
+            return [
+              {
+                items: [
+                  { label: 'Standard', value: 'standard' },
+                  { label: 'Hard-coded', value: 'hardCoded' },
+                ],
+              },
+            ];
+          }
+
+          return [
+            {
+              items: [
+                { label: 'Standard', value: 'standard' },
+                { label: 'Hard-coded', value: 'hardCoded' },
+                { label: 'Lookup', value: 'lookup' },
+                { label: 'Handlebars expression', value: 'multifield' },
+              ],
+            },
+          ];
         }
 
         return null;

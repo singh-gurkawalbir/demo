@@ -30,7 +30,6 @@ export default (state = {}, action) => {
     outputFormat,
     newVersion,
     v2TreeData,
-    v2Mappings,
     v2Key,
     newDataType,
     isMonitorLevelAccess,
@@ -39,7 +38,7 @@ export default (state = {}, action) => {
     expanded,
     expandedKeys,
     errors,
-    newTabExtract,
+    newTabIndex,
   } = action;
 
   return produce(state, draft => {
@@ -64,7 +63,6 @@ export default (state = {}, action) => {
           mappings,
           lookups,
           v2TreeData,
-          v2Mappings,
           expandedKeys: [],
           flowId,
           importId,
@@ -76,7 +74,6 @@ export default (state = {}, action) => {
           isGroupedOutput,
           mappingsCopy: deepClone(mappings),
           lookupsCopy: deepClone(lookups),
-          v2MappingsCopy: deepClone(v2Mappings),
           v2TreeDataCopy: deepClone(v2TreeData),
         };
         break;
@@ -417,7 +414,6 @@ export default (state = {}, action) => {
           }
         }
 
-        // todo ashu delete from v2Mappings as well
         break;
       }
 
@@ -438,7 +434,6 @@ export default (state = {}, action) => {
           });
         }
 
-        // todo ashu add in v2Mappings as well
         break;
       }
 
@@ -474,7 +469,6 @@ export default (state = {}, action) => {
           }
         }
 
-        // todo ashu update in v2Mappings as well
         break;
       }
 
@@ -525,7 +519,6 @@ export default (state = {}, action) => {
           dropSubArr.splice(dropSubArrIndex + 1, 0, dragObj);
         }
 
-        // todo ashu add in v2Mappings as well
         break;
       }
 
@@ -543,7 +536,9 @@ export default (state = {}, action) => {
               if (ARRAY_DATA_TYPES.includes(node.dataType)) {
                 delete node.extract; // array data types do not have direct 'extract' prop
                 node.combinedExtract = value;
-                if (!value && (node.dataType === 'object' || node.dataType === 'objectarray')) {
+                if (node.copySource === 'yes') {
+                  node.children = [];
+                } else if (!value && (node.dataType === 'object' || node.dataType === 'objectarray')) {
                   // delete all children if extract is empty
                   const newRowKey = nanoid();
 
@@ -627,9 +622,9 @@ export default (state = {}, action) => {
 
       case actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB: {
         if (!draft.mapping) break;
-        const {node} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
+        const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
 
-        hideOtherTabRows(original(node), newTabExtract);
+        nodeSubArray[nodeIndexInSubArray] = hideOtherTabRows(original(node), newTabIndex);
 
         break;
       }

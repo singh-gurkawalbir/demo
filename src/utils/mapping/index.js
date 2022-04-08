@@ -1630,40 +1630,80 @@ export const getInputOutputFormat = (isGroupedSampleData, isGroupedOutput) => {
   return RECORD_AS_INPUT_OPTIONS[0].label;
 };
 
-// this util is for objectarray data type nodes when multiple extracts are given
-// to reconstruct the whole children and buildArrayHelper
-export const rebuildNode = (node, extract) => {
+export const hideOtherTabRows = (node, newTabIndex, hidden) => {
   const clonedNode = deepClone(node);
-  const {key: parentKey, buildArrayHelper = [], multipleSources} = clonedNode;
+
+  if (!clonedNode.children?.length) return clonedNode;
+
+  clonedNode.children = clonedNode.children.map(c => {
+    const clonedChild = {...c};
+
+    if (clonedChild.isTabNode) return clonedChild;
+
+    // if parent is passing hidden as true, then all children should be hidden
+    if (hidden) {
+      clonedChild.hidden = true;
+      clonedChild.className = 'hideRow';
+
+      // update children hidden as well
+      return hideOtherTabRows(clonedChild, newTabIndex, true);
+    }
+
+    // if parent is passing hidden as false explicitly, then all children should be shown
+    if (hidden === false) {
+      delete clonedChild.hidden;
+      delete clonedChild.className;
+
+      // update children as well
+      return hideOtherTabRows(clonedChild, newTabIndex, false);
+    }
+
+    // else if hidden is undefined, then check on the tab index
+    if (clonedChild.tabIndex !== newTabIndex) {
+      clonedChild.hidden = true;
+      clonedChild.className = 'hideRow';
+
+      // update children hidden as well
+      return hideOtherTabRows(clonedChild, newTabIndex, true);
+    }
+    delete clonedChild.hidden;
+    delete clonedChild.className;
+
+    // update children as well
+    return hideOtherTabRows(clonedChild, newTabIndex, false);
+  });
+
+  return clonedNode;
+};
+
+// this util is for objectarray data type nodes when multiple extracts are given
+// to reconstruct the whole children and tabMap
+export const rebuildNode = (node, extract) => {
   const splitExtracts = extract.split(',');
 
   // if no extract, return
-  if (!splitExtracts || !splitExtracts.length) return clonedNode;
+  if (!splitExtracts || !splitExtracts.length) return node;
 
-  // for each extract, keep the buildArrayHelper if exists, else add new
+  // update hidden prop and only show 0th tab children
+  const clonedNode = hideOtherTabRows(node, 0);
+
+  const {key: parentKey, multipleSources, tabMap = {}} = clonedNode;
+
+  const copyTabMap = {};
+
+  // for each extract, keep the tabMap if exists, else add new
   splitExtracts.forEach((extract, index) => {
+    const uniqueExtract = extract === '$' ? `${extract}_${index}` : extract; // todo ashu handle $[8]
+
     if (index > 0 && !multipleSources) {
       clonedNode.multipleSources = true;
     }
 
-    if ((buildArrayHelper[index]?.extract || '$') === extract) {
-      // do nothing, already match
-      return;
+    if (tabMap[index] === uniqueExtract) {
+      // add in the new copyTabMap
+      copyTabMap[index] = uniqueExtract;
     }
-
-    buildArrayHelper[index] = {
-      extract,
-      mappings: [{
-        key: nanoid(), // todo ashu may not need this key
-        dataType: 'string',
-      }],
-    };
   });
-
-  // remove remaining array helper
-  buildArrayHelper.splice(splitExtracts.length);
-
-  const foundExtracts = [];
 
   // filter the children array and only keep the ones which
   // have the parentExtract same as one of the given extracts
@@ -1672,9 +1712,7 @@ export const rebuildNode = (node, extract) => {
 
     if (child.isTabNode) return true;
 
-    if (splitExtracts.includes(parentExtract || '$')) {
-      foundExtracts.push(parentExtract || '$');
-
+    if (splitExtracts[child.tabIndex] === (parentExtract || '$')) {
       return true;
     }
 
@@ -1682,34 +1720,30 @@ export const rebuildNode = (node, extract) => {
   });
 
   // find left over extracts so that new children rows can be pushed
-  const leftExtracts = splitExtracts.filter(s => {
-    if (foundExtracts.includes(s)) return false;
+  splitExtracts.forEach((s, index) => {
+    if (copyTabMap[index]) return;
+    copyTabMap[index] = s === '$' ? `${s}_${index}` : s; // todo ashu handle $[*]
+    const hidden = index > 0;
+    const newRow = {
+      key: nanoid(),
+      title: '',
+      parentKey,
+      parentExtract: s,
+      tabIndex: index,
+      dataType: 'string',
+      hidden, // hiding the new rows if those are not in 0th tab
+      className: hidden && 'hideRow',
+    };
 
-    return true;
+    clonedNode.children.push(newRow);
   });
 
-  // for all left over extracts, which are added new
-  // add new rows
-  if (leftExtracts.length) {
-    leftExtracts.forEach(e => {
-      const newRow = {
-        key: nanoid(),
-        title: '',
-        parentKey,
-        parentExtract: e,
-        dataType: 'string',
-      };
-
-      clonedNode.children.push(newRow);
-    });
-  }
-
-  if (buildArrayHelper.length === 1) {
+  if (Object.keys(copyTabMap).length === 1) {
     // remove tab node
     if (clonedNode.children?.[0]?.isTabNode) {
       clonedNode.children.shift();
     }
-  } else if (buildArrayHelper.length > 1 && !clonedNode.children?.[0]?.isTabNode) {
+  } else if (Object.keys(copyTabMap).length > 1 && !clonedNode.children?.[0]?.isTabNode) {
     // add tab node
     clonedNode.children.unshift({
       key: nanoid(),
@@ -1718,25 +1752,24 @@ export const rebuildNode = (node, extract) => {
       isTabNode: true,
     });
   }
+  clonedNode.tabMap = copyTabMap;
+  delete clonedNode.buildArrayHelper; // this will be rebuilt when saving to BE
 
   return clonedNode;
 };
 
-function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disabled, hidden) {
+function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disabled, hidden, tabIndex) {
   mappings.forEach(m => {
     const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract} = m;
     const children = [];
     const currNodeKey = nanoid();
-
-    // add same key in the mappings schema as well
-    // eslint-disable-next-line no-param-reassign
-    m.key = currNodeKey;
 
     const nodeToPush = {
       key: currNodeKey,
       title: '',
       parentKey,
       parentExtract,
+      tabIndex,
       disabled,
       hidden,
       className: hidden && 'hideRow',
@@ -1763,21 +1796,33 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disa
       if (!buildArrayHelper) {
         return;
       }
+      let combinedExtract;
+
       if (dataType === 'objectarray') {
-        let sourceExtract;
         let multipleSources = false;
+        const tabMap = {}; // to store extract and its tab index map
+        let tabIndex = -1;
 
         buildArrayHelper.forEach(obj => {
           const {extract = '$', mappings} = obj;
+          let newExtract = extract;
 
           //  sourceExtract = extract ? `${sourceExtract ? `${sourceExtract},` : ''}${extract}` : sourceExtract;
-          sourceExtract = `${sourceExtract ? `${sourceExtract},` : ''}${extract}`;
+          combinedExtract = `${combinedExtract ? `${combinedExtract},` : ''}${extract}`;
 
           if (!mappings) {
             return;
           }
 
+          // we need this tabMap in case duplicate extracts are
+          // present for different buildArrayHelper
+          tabIndex += 1;
+          if (extract === '$') { // todo ashu handle for $[*] {
+            newExtract = `${extract}_${tabIndex}`;
+          }
+
           if (multipleSources && !nodeToPush.multipleSources) {
+            tabMap[tabIndex] = newExtract;
             nodeToPush.multipleSources = true;
 
             children.unshift({
@@ -1788,29 +1833,28 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disa
             });
             // since the first source is already pushed, all other children should
             // be hidden now, as we show the first source tab by default
-            iterateForParentTree(mappings, children, currNodeKey, extract, disabled, true);
+            iterateForParentTree(mappings, children, currNodeKey, extract, disabled, true, tabIndex);
           } else {
+            tabMap[tabIndex] = newExtract;
             multipleSources = true;
-            iterateForParentTree(mappings, children, currNodeKey, extract, disabled, hidden);
+            iterateForParentTree(mappings, children, currNodeKey, extract, disabled, hidden, tabIndex);
           }
 
           nodeToPush.children = children;
-
-          // iterateForParentTree(mappings, children, currNodeKey, extract, disabled);
+          nodeToPush.tabMap = tabMap;
         });
-        nodeToPush.combinedExtract = sourceExtract;
+
+        nodeToPush.combinedExtract = combinedExtract;
 
         return;
       }
 
-      // for primitive array types
-      let extract;
-
+      // for primitive array types only extracts are supported, not 'mappings'
       buildArrayHelper.forEach(obj => {
-        extract = `${extract ? `${extract},` : ''}${obj.extract}`;
+        combinedExtract = `${combinedExtract ? `${combinedExtract},` : ''}${obj.extract}`;
       });
 
-      nodeToPush.combinedExtract = extract;
+      nodeToPush.combinedExtract = combinedExtract;
     }
   });
 
@@ -2147,7 +2191,7 @@ export const buildTreeFromResourceV2Mappings = ({
 
   const mappingsTreeData = generateTreeFromV2Mappings(v2MappingsCopy, disabled);
 
-  return {mappingsTreeData, v2Mappings: v2MappingsCopy};
+  return mappingsTreeData;
 };
 
 const KEYS_SPECIFIC_TO_UI_TREE = [
@@ -2155,12 +2199,14 @@ const KEYS_SPECIFIC_TO_UI_TREE = [
   'title',
   'parentKey',
   'parentExtract',
+  'tabIndex',
   'combinedExtract',
   'className',
   'hidden',
   'disabled',
   'copySource',
   'children',
+  'tabMap',
 ];
 
 export const generateV2MappingsFromTree = ({v2TreeData = []}) => {
@@ -2562,31 +2608,6 @@ export const getAllKeys = data => {
   });
 
   return flattenDeep(nestedKeys);
-};
-
-export const hideOtherTabRows = (node, newTabExtract, hidden) => {
-  if (!node.children?.length) return;
-
-  node.children.forEach(c => {
-    if (c.isTabNode) return;
-    if (hidden || c.parentExtract !== newTabExtract) {
-      // eslint-disable-next-line no-param-reassign
-      c.hidden = true;
-      // eslint-disable-next-line no-param-reassign
-      c.className = 'hideRow';
-
-      // update children hidden as well
-      hideOtherTabRows(c, c.combinedExtract || '$', true);
-    } else {
-      // eslint-disable-next-line no-param-reassign
-      delete c.hidden;
-      // eslint-disable-next-line no-param-reassign
-      delete c.className;
-
-      // update children as well
-      hideOtherTabRows(c, c.combinedExtract || '$', false);
-    }
-  });
 };
 
 // #endregion

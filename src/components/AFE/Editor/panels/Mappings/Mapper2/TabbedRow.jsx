@@ -30,15 +30,16 @@ function generateTabs(treeData, key) {
 
   const {node} = findNodeInTree(treeData, 'key', key);
 
-  node.buildArrayHelper?.forEach((obj, i) => {
-    const {extract, mappings} = obj;
+  if (node.tabMap) {
+    Object.keys(node.tabMap).forEach(index => {
+      const extract = node.tabMap[index];
 
-    if (!mappings) return;
-    tabs.push({
-      id: extract || `$_${i}`,
-      label: extract || '$',
+      tabs.push({
+        id: extract,
+        label: extract.startsWith('$_') ? '$' : extract, // todo ashu handle $[*]
+      });
     });
-  });
+  }
 
   return tabs;
 }
@@ -53,10 +54,9 @@ function TabbedRow({parentKey}) {
 
   const handleTabChange = useCallback((event, newValue) => {
     setTabValue(newValue);
-    const newTabExtract = tabs[newValue].label;
 
-    dispatch(actions.mapping.v2.changeArrayTab(parentKey, newTabExtract));
-  }, [dispatch, parentKey, tabs]);
+    dispatch(actions.mapping.v2.changeArrayTab(parentKey, newValue));
+  }, [dispatch, parentKey]);
 
   return (
     <div className={classes.tabComponentRoot}>

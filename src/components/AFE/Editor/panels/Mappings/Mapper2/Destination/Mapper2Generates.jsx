@@ -1,10 +1,9 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, TextField, Tooltip, MenuItem } from '@material-ui/core';
+import { FormControl, TextField, Tooltip, MenuItem, Select } from '@material-ui/core';
 import isLoggableAttr from '../../../../../../../utils/isLoggableAttr';
 import useOnClickOutside from '../../../../../../../hooks/useClickOutSide';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
-import CeligoSelect from '../../../../../../CeligoSelect';
 import { DATA_TYPES_OPTIONS } from '../../../../../../../utils/mapping';
 import { TooltipTitle } from '../Source/Mapper2ExtractsTypeableSelect';
 
@@ -52,6 +51,45 @@ const useStyles = makeStyles(theme => ({
   },
 })
 );
+
+function SelectDataType({destDataType, onDataTypeChange, isDisabled}) {
+  const classes = useStyles();
+
+  const [open, setOpen] = useState(false);
+  const openSelect = useCallback(() => {
+    setOpen(true);
+  }, []);
+  const closeSelect = useCallback(
+    () => {
+      setOpen(false);
+    }, []
+  );
+
+  /* todo ashu tooltip does not work for celigo select */
+
+  return (
+    <Tooltip
+      disableFocusListener
+      title={open ? '' : `Data type: ${destDataType} - Click to change`}
+      placement="bottom" >
+      <Select
+        disabled={isDisabled}
+        open={open}
+        onOpen={openSelect}
+        onClose={closeSelect}
+        className={classes.dataType}
+        onChange={onDataTypeChange}
+        displayEmpty
+        value={destDataType} >
+        {DATA_TYPES_OPTIONS.map(opt => (
+          <MenuItem key={opt.id} value={opt.id}>
+            {opt.label}
+          </MenuItem>
+        ))}
+      </Select>
+    </Tooltip>
+  );
+}
 
 export default function Mapper2Generates(props) {
   const {
@@ -131,24 +169,12 @@ export default function Mapper2Generates(props) {
             placeholder={generateDisabled ? '' : 'Destination record field'} />
         </Tooltip >
 
-        {/* todo ashu tooltip does not work for celigo select */}
-        <Tooltip
-          disableFocusListener
-          title={`Data type:${destDataType} - Click to change`}
-          placement="bottom" >
-          <CeligoSelect
-            disabled={isDisabled}
-            className={classes.dataType}
-            onChange={onDataTypeChange}
-            displayEmpty
-            value={destDataType} >
-            {DATA_TYPES_OPTIONS.map(opt => (
-              <MenuItem key={opt.id} value={opt.id}>
-                {opt.label}
-              </MenuItem>
-            ))}
-          </CeligoSelect>
-        </Tooltip>
+        <SelectDataType
+          destDataType={destDataType}
+          onDataTypeChange={onDataTypeChange}
+          isDisabled={isDisabled}
+        />
+
       </div>
     </FormControl>
   );

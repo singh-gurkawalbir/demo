@@ -258,11 +258,11 @@ export function* mappingInit({
   const isMonitorLevelAccess = yield select(selectors.isFormAMonitorLevelAccess, flowResource?._integrationId);
 
   let version = 1;
-  let v2Output = {};
+  let mappingsTreeData;
 
   // IAs, non http/rest don't support mapper2
   if (!importResource._connectorId && (importResource.adaptorType === 'HTTPImport' || importResource.adaptorType === 'RESTImport')) {
-    v2Output = buildTreeFromResourceV2Mappings({
+    mappingsTreeData = buildTreeFromResourceV2Mappings({
       importResource,
       isFieldMapping: false,
       isGroupedSampleData,
@@ -273,10 +273,9 @@ export function* mappingInit({
     });
     // todo ashu
     // const lookups12 = lookupUtil.getLookupFromResource(importResource) || [];
-    const {v2Mappings} = v2Output;
 
     if (
-      v2Mappings?.length && !(v2Mappings.length === 1 && v2Mappings[0].isEmptyRow)
+      mappingsTreeData?.length && !(mappingsTreeData.length === 1 && mappingsTreeData[0].isEmptyRow)
     ) {
       version = 2;
     }
@@ -289,8 +288,7 @@ export function* mappingInit({
         key: shortid.generate(),
       })),
       lookups,
-      v2TreeData: v2Output.mappingsTreeData,
-      v2Mappings: v2Output.v2Mappings,
+      v2TreeData: mappingsTreeData,
       version,
       flowId,
       importId,
