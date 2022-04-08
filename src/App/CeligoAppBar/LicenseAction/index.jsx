@@ -12,7 +12,7 @@ import useConfirmDialog from '../../../components/ConfirmDialog';
 import RawHtml from '../../../components/RawHtml';
 import messageStore from '../../../utils/messageStore';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   inTrial: {
     marginTop: -2,
     borderRadius: 17,
@@ -27,17 +27,25 @@ const useStyles = makeStyles({
   titleStatusPanel: {
     fontSize: 15,
   },
-});
+  startFreeTrialOptions: {
+    paddingLeft: theme.spacing(2),
+    '& > li': {
+      paddingBottom: theme.spacing(0.5),
+    },
+  },
+}));
 
 function StartFreeTrialConfirmationMessage() {
+  const classes = useStyles();
+
   return (
     <div>
-      <b>You are currently enrolled in the free subscription plan that entitles you to 1 enabled integration flow between 2 endpoints. </b>
+      You are currently enrolled in the free subscription plan that entitles you to 1 enabled integration flow between 2 endpoints.
       <br /><br />
       <b>Start your free trial now to experience optimal process automation for your business with full access to integrator.io. For 30 days, the unlimited flows trial gives you: </b>
-      <br /><br /> <br />
+      <br />
 
-      <ul>
+      <ul className={classes.startFreeTrialOptions}>
         <li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
         <li>Easy installation of Integration Apps and free templates from our vast library</li>
         <li>Integrations with multiple imports or exports (orchestration)</li>
@@ -45,11 +53,11 @@ function StartFreeTrialConfirmationMessage() {
         <li>Ability to daisy-chain flows.</li>
       </ul>
 
-      <br />
       <a
         target="_blank"
         rel="noopener noreferrer"
-        href="https://docs.celigo.com/hc/en-us/articles/4414582961819-Learn-how-to-make-the-most-of-your-free-trial"><u>Learn how to make the most of your free trial </u>
+        href="https://docs.celigo.com/hc/en-us/articles/4414582961819-Learn-how-to-make-the-most-of-your-free-trial">
+        Learn how to make the most of your free trial
       </a>
 
       <br /><br />
@@ -80,10 +88,10 @@ function LicenseAction() {
   const startFreeTrialDialog = useCallback(() => {
     const message = `What will you integrate next?
       <br/><br/><a target="_blank" rel="noopener noreferrer"
-  href="/marketplace"><u>Checkout our Marketplace</u></a> to jumpstart your integrations with Integration Apps, Business Process Automation templates, and quickstart templates.`;
+  href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with Integration Apps, Business Process Automation templates, and quickstart templates.`;
 
     confirmDialog({
-      title: 'Congratulations! Your unlimited flows trial starts now',
+      title: 'Congratulations! Your unlimited flows trial starts now.',
       message: <RawHtml html={message} />,
       buttons: [
         { label: 'Close',
@@ -109,6 +117,7 @@ function LicenseAction() {
       ],
     });
   }, [confirmDialog, dispatch]);
+
   const requestUpgradeDialog = useCallback(() => {
     confirmDialog({
       title: 'Upgrade plan',
@@ -183,7 +192,7 @@ function LicenseAction() {
       title: 'Try unlimited flows free for 30 days',
       message: <StartFreeTrialConfirmationMessage />,
       buttons: [
-        { label: 'Start free trial',
+        { label: 'Start free trial now',
           onClick: () => {
             dispatch(actions.license.requestTrialLicense());
             startFreeTrialDialog();
