@@ -249,18 +249,14 @@ export default function AppRouting() {
         component={Integration}
         />
       <Route
-        // Slight hack here, Included a minimum word length of 4 for integrationId to exclude add, edit to match integration id
-        // integrationId will never contain less than 5 characters
-        path={[getRoutePath('/templates/:templateName/:integrationId([\\w-]{5,})/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
-          getRoutePath('/templates/:templateName/:integrationId([\\w-]{5,})/:tab/sections/:sectionId')]}
+        path={[getRoutePath('/templates/:templateName/:integrationId([a-f\\d]{24})/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
+          getRoutePath('/templates/:templateName/:integrationId([a-f\\d]{24})/:tab/sections/:sectionId')]}
         component={Integration}
         />
 
       <Route
-        // Slight hack here, Included a minimum word length of 4 for integrationId to exclude add, edit to match integration id
-        // integrationId will never contain less than 5 characters
-        path={[getRoutePath('/templates/:templateName/:integrationId([\\w-]{5,})/dashboard/:dashboardTab(runningFlows|completedFlows)'),
-          getRoutePath('/templates/:templateName/:integrationId([\\w-]{5,})/:tab')]}
+        path={[getRoutePath('/templates/:templateName/:integrationId([a-f\\d]{24})/dashboard/:dashboardTab(runningFlows|completedFlows)'),
+          getRoutePath('/templates/:templateName/:integrationId([a-f\\d]{24})/:tab')]}
         component={Integration}
         />
 
