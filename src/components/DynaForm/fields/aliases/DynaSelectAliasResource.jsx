@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
-import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
 import { emptyList } from '../../../../utils/constants';
 import errorMessageStore from '../../../../utils/errorStore';
@@ -13,7 +12,7 @@ export default function DynaSelectAliasResource({ options = {}, ...props}) {
   const dispatch = useDispatch();
   const { aliasResourceType } = options;
   const { id, formKey, aliasContextResourceId, aliasContextResourceType, value } = props;
-  const resourceList = useSelectorMemo(selectors.makeAliasResources, aliasResourceType, aliasContextResourceType, aliasContextResourceId) || emptyList;
+  const resourceList = useSelector(state => selectors.aliasResources(state, aliasResourceType, aliasContextResourceType, aliasContextResourceId) || emptyList);
   const selectOptions = useMemo(() => ([{
     items: resourceList.map(res => ({
       label: res.name,
