@@ -42,3 +42,5 @@ export default function messageStore(key, argsObj) {
 
   return str;
 }
+
+export const NONE_TIER_USER_ERROR = 'Your username is not part of shared account access anymore. Please have the account owner invited you to this account.';
