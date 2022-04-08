@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../reducers';
 import AppRouting from '../AppRouting';
@@ -21,21 +21,19 @@ const useStyles = makeStyles(theme => ({
 export default function PageContent() {
   const classes = useStyles();
 
-  const licenseActionDetails = useSelector(state =>
-    selectors.platformLicenseWithMetadata(state),
-  shallowEqual);
+  const isNoneTierLicense = useSelector(state => selectors.platformLicenseWithMetadata(state).isNone);
 
   const [enqueueSnackbar] = useEnqueueSnackbar();
 
   useEffect(() => {
-    if (!licenseActionDetails.isNone) return;
+    if (!isNoneTierLicense) return;
     enqueueSnackbar({
       message: NONE_TIER_USER_ERROR,
       variant: 'error',
       persist: true,
     });
-  }, [enqueueSnackbar, licenseActionDetails.isNone]);
-  if (licenseActionDetails.isNone) return null;
+  }, [enqueueSnackbar, isNoneTierLicense]);
+  if (isNoneTierLicense) return null;
 
   return (
     <main className={classes.content}>
