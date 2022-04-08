@@ -33,6 +33,9 @@ const useStyles = makeStyles(theme => ({
       paddingBottom: theme.spacing(0.5),
     },
   },
+  hideUpgradeButton: {
+    display: 'none',
+  },
 }));
 
 function StartFreeTrialConfirmationMessage() {
@@ -71,6 +74,7 @@ function LicenseAction() {
   const {confirmDialog} = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
+  const [upgradeButton, setUpgradeButton] = useState(true);
   const platformLicense = useSelector(state => selectors.platformLicense(state));
   const licenseActionDetails = platformLicenseActionDetails(platformLicense);
   const platformLicenseActionMessage = useSelector(state =>
@@ -107,7 +111,7 @@ function LicenseAction() {
       buttons: [
         { label: 'Submit request',
           onClick: () => {
-            setUpgradeRequested(true);
+            setUpgradeButton(false);
             dispatch(actions.license.requestLicenseUpgrade());
           },
         },
@@ -116,7 +120,7 @@ function LicenseAction() {
         },
       ],
     });
-  }, [confirmDialog, dispatch]);
+  }, [confirmDialog, dispatch, setUpgradeButton]);
 
   const requestUpgradeDialog = useCallback(() => {
     confirmDialog({
@@ -275,8 +279,7 @@ function LicenseAction() {
         <PillButton
           fill={!upgradeRequested}
           disableElevation
-          disabled={upgradeRequested}
-          className={classes.inTrial}
+          className={clsx(classes.inTrial, {[classes.hideUpgradeButton]: upgradeButton === false})}
           data-test={licenseActionDetails.label}
           onClick={handleClick}>
           {licenseActionDetails.label}
