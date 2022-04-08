@@ -42,9 +42,5 @@ export default function messageStore(key, argsObj) {
 
   return str;
 }
-export const NETSUITE_ASSISTANT_LAUNCH_ERROR = `Unable to load NetSuite Assistant for one of the following reasons:
-• It is disabled in recent versions of Google Chrome (and available in other browsers)
-• Newer NetSuite record types are not yet supported 
-We are currently working with NetSuite to resolve these problems.`;
 
 export const NONE_TIER_USER_ERROR = 'Your username is not part of shared account access anymore. Please have the account owner invited you to this account.';
