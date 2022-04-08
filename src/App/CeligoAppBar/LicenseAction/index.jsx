@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
       paddingBottom: theme.spacing(0.5),
     },
   },
-  hideUpgradeButton: {
+  hideElement: {
     display: 'none',
   },
 }));
@@ -75,6 +75,7 @@ function LicenseAction() {
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
   const [upgradeButton, setUpgradeButton] = useState(true);
+  const [subscriptionRenew, setSubscriptionRenew] = useState(true);
   const platformLicense = useSelector(state => selectors.platformLicense(state));
   const licenseActionDetails = platformLicenseActionDetails(platformLicense);
   const platformLicenseActionMessage = useSelector(state =>
@@ -139,14 +140,29 @@ function LicenseAction() {
     });
   }, [confirmDialog, submitUpgradeDialog]);
 
+  const startFreeTrialConfirmationDialog = useCallback(() => {
+    confirmDialog({
+      title: 'Try unlimited flows free for 30 days',
+      message: <StartFreeTrialConfirmationMessage />,
+      buttons: [
+        { label: 'Start free trial now',
+          onClick: () => {
+            dispatch(
+              actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+            );
+            dispatch(actions.license.requestTrialLicense());
+            startFreeTrialDialog();
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, dispatch, startFreeTrialDialog]);
   const handleClick = useCallback(() => {
     if (licenseActionDetails.action === 'startTrial') {
-      dispatch(
-        actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
-      );
-      dispatch(actions.license.requestTrialLicense());
-
-      return startFreeTrialDialog();
+      return startFreeTrialConfirmationDialog();
     }
 
     if (licenseActionDetails.action === 'upgrade') {
@@ -179,6 +195,7 @@ function LicenseAction() {
           {
             label: 'Submit request',
             onClick: () => {
+              setSubscriptionRenew(false);
               dispatch(actions.license.requestUpdate('ioRenewal'));
             },
           },
@@ -189,25 +206,7 @@ function LicenseAction() {
         ],
       });
     }
-  }, [confirmDialog, dispatch, licenseActionDetails.action, startFreeTrialDialog, submitUpgradeDialog]);
-
-  const startFreeTrialConfirmationDialog = useCallback(() => {
-    confirmDialog({
-      title: 'Try unlimited flows free for 30 days',
-      message: <StartFreeTrialConfirmationMessage />,
-      buttons: [
-        { label: 'Start free trial now',
-          onClick: () => {
-            dispatch(actions.license.requestTrialLicense());
-            startFreeTrialDialog();
-          },
-        },
-        { label: 'Cancel',
-          variant: 'text',
-        },
-      ],
-    });
-  }, [confirmDialog, dispatch, startFreeTrialDialog]);
+  }, [confirmDialog, dispatch, licenseActionDetails.action, startFreeTrialConfirmationDialog, submitUpgradeDialog]);
 
   const entitlementOfEndpointsDialog = useCallback(() => {
     confirmDialog({
@@ -262,12 +261,11 @@ function LicenseAction() {
         <NotificationToaster
           variant={licenseActionDetails.action === 'expired' ? 'error' : 'info'}
           transparent
-          className={clsx(classes.licenseActionDetailsWrapper)}>
+          className={clsx(classes.licenseActionDetailsWrapper, {[classes.hideElement]: subscriptionRenew === false})}>
           <Typography component="div" variant="body2" className={classes.titleStatusPanel}>
             {licenseActionDetails.action === 'expired' ? 'Your subscription has expired.' : 'Your subscription was renewed.'}
           </Typography>
           <TextButton
-            disabled={upgradeRequested}
             data-test="renewOrResumeNow"
             color="primary"
             onClick={handleClick}>
@@ -279,7 +277,7 @@ function LicenseAction() {
         <PillButton
           fill={!upgradeRequested}
           disableElevation
-          className={clsx(classes.inTrial, {[classes.hideUpgradeButton]: upgradeButton === false})}
+          className={clsx(classes.inTrial, {[classes.hideElement]: upgradeButton === false})}
           data-test={licenseActionDetails.label}
           onClick={handleClick}>
           {licenseActionDetails.label}
