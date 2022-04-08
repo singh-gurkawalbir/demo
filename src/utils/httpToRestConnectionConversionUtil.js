@@ -62,6 +62,9 @@ function generateConnectionRestSubDocFromHttpSubDoc(httpDoc, assistantName) {
     'auth.oauth.scopeDelimiter': 'scopeDelimiter',
     'auth.oauth.accessTokenPath': 'oauth.accessTokenPath',
     'auth.oauth.grantType': 'oauth.grantType',
+    'auth.oauth.clientCredentialsLocation': 'oauth.clientCredentialsLocation',
+    'auth.oauth.accessTokenBody': 'oauth.accessTokenBody',
+    'auth.oauth.accessTokenHeaders': 'oauth.accessTokenHeaders',
     'auth.oauth.username': 'oauth.username',
     'auth.oauth.password_crypt': 'oauth.password_crypt',
     'auth.oauth.password_salt': 'oauth.password_salt',
@@ -222,6 +225,12 @@ function replaceHTTPrefWithCorrespondingREST(str) {
     return str.replace(
       'connection.http.auth.token.token',
       'connection.rest.bearerToken'
+    );
+  }
+  if (str.indexOf('connection.http.auth.oauth.scope') !== -1) {
+    return str.replace(
+      'connection.http.auth.oauth.scope',
+      'connection.rest.scope'
     );
   }
 
