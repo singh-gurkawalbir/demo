@@ -29,6 +29,7 @@ export default function AuditLog({
   users,
   resourceType,
   resourceId,
+  integrationId,
   onClick,
   isFixed,
   childId,
@@ -59,6 +60,7 @@ export default function AuditLog({
   return (
     <LoadResources
       required
+      integrationId={integrationId}
       resources="integrations,flows,exports,imports,connections">
       <>
         {isLoadingAuditLog

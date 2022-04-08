@@ -26,6 +26,7 @@ export default function AuditLogSection({ integrationId, childId }) {
       <AuditLog
         resourceType="integrations"
         resourceId={integrationId}
+        integrationId={integrationId}
         childId={childId}
       />
     </div>
