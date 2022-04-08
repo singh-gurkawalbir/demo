@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import PanelHeader from '../../../../components/PanelHeader';
 import ActionGroup from '../../../../components/ActionGroup';
@@ -18,6 +18,7 @@ import messageStore from '../../../../utils/messageStore';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import actions from '../../../../actions';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
+import NoResultTypography from '../../../../components/NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,9 +30,6 @@ const useStyles = makeStyles(theme => ({
   },
   aliasesHeader: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-  },
-  noAliases: {
-    padding: theme.spacing(2),
   },
 }));
 
@@ -114,7 +112,7 @@ export default function Aliases({ integrationId, childId }) {
             actionProps={actionProps}
           />
           )
-          : <Typography className={classes.noAliases}>{errorMessageStore('NO_ALIASES_MESSAGE')}</Typography>}
+          : <NoResultTypography>{errorMessageStore('NO_ALIASES_MESSAGE')}</NoResultTypography>}
       </LoadResources>
     </div>
   );

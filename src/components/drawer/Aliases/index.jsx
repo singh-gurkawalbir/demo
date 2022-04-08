@@ -22,14 +22,12 @@ import messageStore from '../../../utils/messageStore';
 import errorMessageStore from '../../../utils/errorStore';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import NoResultTypography from '../../NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   accordianWrapper: {
     marginBottom: theme.spacing(2),
     width: '100%',
-  },
-  noAliases: {
-    padding: theme.spacing(2),
   },
   manageAliases: {
     marginBottom: theme.spacing(2),
@@ -139,7 +137,7 @@ const ViewAliases = ({ resourceId, resourceType, height }) => {
           {...metadata}
           actionProps={actionProps}
         />
-      ) : (<Typography className={classes.noAliases}>{errorMessageStore('NO_ALIASES_MESSAGE')}</Typography>)}
+      ) : (<NoResultTypography>{errorMessageStore('NO_ALIASES_MESSAGE')}</NoResultTypography>)}
     </>
   );
 };
