@@ -43,9 +43,9 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  const aliasesFilterKey = `${flowId}-aliases`;
+  const inheritedAliasesFilterKey = `${flowId}-inheritedAliases`;
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
-  const aliasesFilterKey = `${flowId}+aliases`;
-  const inheritedAliasesFilterKey = `${flow._integrationId}+inheritedAliases`;
   const resourceAliases = useSelector(state => selectors.ownAliases(state, 'flows', flowId, aliasesFilterKey));
   const inheritedAliases = useSelector(state => selectors.inheritedAliases(state, flowId, inheritedAliasesFilterKey));
   const isAliasActionCompleted = useSelector(state => selectors.aliasActionStatus(state, flowId));
@@ -112,7 +112,7 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
 const ViewAliases = ({ resourceId, resourceType, height }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const filterKey = `${resourceId}+viewAliases`;
+  const filterKey = `${resourceId}-viewAliases`;
   const allAliases = useSelector(state => selectors.allAliases(state, resourceId, filterKey));
   const actionProps = useMemo(() => ({
     resourceType,

@@ -45,7 +45,7 @@ export default function Aliases({ integrationId, childId }) {
     isIntegrationAppVersion2(selectors.resource(state, 'integrations', integrationId), true)
   );
   const currentIntegrationId = isIntegrationV2 ? (childId || integrationId) : integrationId;
-  const filterKey = `${currentIntegrationId}+aliases`;
+  const filterKey = `${currentIntegrationId}-aliases`;
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
   const accessLevel = useSelector(state =>
     selectors.resourcePermissions(
