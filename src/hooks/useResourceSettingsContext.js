@@ -42,7 +42,7 @@ export default function useResourceSettingsContext(resourceType, resourceId, int
   }
 
   const flowindex = urlExtractFields.findIndex(
-    element => element === 'flowBuilder'
+    element => element === 'flowBuilder' || element === 'dataLoader'
   );
 
   if (flowindex !== -1) {
