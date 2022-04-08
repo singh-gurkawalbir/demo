@@ -1,25 +1,15 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
+import { IconButton } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import Spinner from '../../../../Spinner';
 import RefreshIcon from '../../../../icons/RefreshIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import { TextButton } from '../../../../Buttons';
-
-const useStyles = makeStyles(theme => ({
-  refreshFiltersButton: {
-    minWidth: 0,
-    padding: 0,
-    marginLeft: theme.spacing(1),
-  },
-}));
 
 export default function RefreshSearchFilters({ editorId }) {
   const dispatch = useDispatch();
-  const classes = useStyles();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const {resourceType, formKey, resourceId, fieldId, editorType} = useSelector(state => {
     const e = selectors.editor(state, editorId);
@@ -88,14 +78,14 @@ export default function RefreshSearchFilters({ editorId }) {
         <FormLabel disabled={disabled} required={required} >
           Refresh  search filters
         </FormLabel>
-        {/* Todo: (Karthik) please check,there is no text in children in that case we can use the IconButton */}
-        <TextButton
+        <IconButton
           disabled={disabled}
           data-test="refreshLookupFilters"
-          className={classes.refreshFiltersButton}
-          onClick={handleRefreshFiltersClick}>
+          onClick={handleRefreshFiltersClick}
+          size="small"
+          color="inherit">
           <RefreshIcon />
-        </TextButton>
+        </IconButton>
       </div>
     </>
   );
