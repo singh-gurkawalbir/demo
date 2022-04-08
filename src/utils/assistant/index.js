@@ -2212,3 +2212,10 @@ export function isAppConstantContact(application) {
 export function isAmazonHybridConnection(connection) {
   return connection?.assistant === 'amazonmws' && connection?.http?.type === 'Amazon-Hybrid';
 }
+
+export function isLoopReturnsv2Connection(connection) {
+  return connection?.assistant === 'loopreturns' && connection?.http?.unencrypted?.version === 'v2';
+}
+export function isAcumaticaEcommerceConnection(connection) {
+  return connection?.assistant === 'acumatica' && connection?.http?.unencrypted?.endpointName === 'ecommerce';
+}

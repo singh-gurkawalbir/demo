@@ -21,6 +21,7 @@ export default function IntegrationAppUninstallation({ match }) {
       install: i.install,
       installSteps: i.installSteps,
       uninstallSteps: i.uninstallSteps,
+      settings: i.settings,
     }
     : emptyobj, [i]);
 

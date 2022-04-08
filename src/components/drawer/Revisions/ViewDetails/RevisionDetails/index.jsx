@@ -35,20 +35,34 @@ const useStyles = makeStyles(theme => ({
     '&:last-child': {
       marginBottom: 0,
     },
+    '& b': {
+      marginRight: theme.spacing(1),
+    },
   },
   container: {
     margin: theme.spacing(2),
   },
 }));
 
+const RevisionInfoRow = ({ children }) => {
+  const classes = useStyles();
+
+  return (
+    <Typography variant="body2" className={classes.revisionInfoRow}>
+      <b>{children[0]}</b>
+      <span>{children[1]}</span>
+    </Typography>
+  );
+};
+
 const RevisionCreatedBy = ({ integrationId, revisionId }) => {
   const revision = useSelector(state => selectors.revision(state, integrationId, revisionId));
   const userName = useSelector(state => {
     const users = selectors.availableUsersList(state, integrationId);
 
-    const user = users.find(user => revision?._byUserId === user.sharedWithUser._id);
+    const user = users.find(user => revision?._createdByUserId === user.sharedWithUser._id);
 
-    if (!user) return revision?._byUserId;
+    if (!user) return revision?._createdByUserId;
 
     return user.sharedWithUser.name || user.sharedWithUser.email;
   });
@@ -57,67 +71,111 @@ const RevisionCreatedBy = ({ integrationId, revisionId }) => {
 };
 
 const RevertDetails = ({ integrationId, revisionId }) => {
-  const classes = useStyles();
-
   const revision = useSelector(state => selectors.revision(state, integrationId, revisionId));
   const revertToRevision = useSelector(state => selectors.revision(state, integrationId, revision._revertToRevisionId));
 
   return (
     <>
-      <Typography variant="body2" className={classes.revisionInfoRow}>
-        <b>Reverted from revision description:</b> {revertToRevision.description}
-      </Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Date created:</b> <DateTimeDisplay dateTime={revision.createdAt} /></Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Reverted from created date:</b> <DateTimeDisplay dateTime={revertToRevision.createdAt} /></Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Type:</b> {REVISION_TYPE_LABELS[revision.type]}</Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Status:</b> {REVISION_STATUS_LABELS[revision.status]}</Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Created by:</b>
+      <RevisionInfoRow>
+        Reverted from revision description:
+        {revertToRevision.description}
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        Date created:
+        <DateTimeDisplay dateTime={revision.createdAt} />
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        Reverted from created date:
+        <DateTimeDisplay dateTime={revertToRevision.createdAt} />
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        Type:
+        {REVISION_TYPE_LABELS[revision.type]}
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        Status:
+        {REVISION_STATUS_LABELS[revision.status]}
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        Created by:
         <RevisionCreatedBy integrationId={integrationId} revisionId={revisionId} />
-      </Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Revision ID:</b> {revision._id}</Typography>
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        Revision ID:
+        {revision._id}
+      </RevisionInfoRow>
     </>
   );
 };
 const SnapshotDetails = ({ integrationId, revisionId }) => {
-  const classes = useStyles();
   const revision = useSelector(state => selectors.revision(state, integrationId, revisionId));
 
   return (
     <>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Date created:</b> <DateTimeDisplay dateTime={revision.createdAt} /></Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Created by:</b>
+      <RevisionInfoRow>
+        Date created:
+        <DateTimeDisplay dateTime={revision.createdAt} />
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        Created by:
         <RevisionCreatedBy integrationId={integrationId} revisionId={revisionId} />
-      </Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Type:</b> {REVISION_TYPE_LABELS[revision.type]}</Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Status:</b> {REVISION_STATUS_LABELS[revision.status]}</Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Revision ID:</b> {revision._id}</Typography>
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        Type:
+        {REVISION_TYPE_LABELS[revision.type]}
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        Status:
+        {REVISION_STATUS_LABELS[revision.status]}
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        Revision ID:
+        {revision._id}
+      </RevisionInfoRow>
     </>
   );
 };
 const PullDetails = ({ integrationId, revisionId }) => {
-  const classes = useStyles();
   const revision = useSelector(state => selectors.revision(state, integrationId, revisionId));
 
   return (
     <>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Date created:</b> <DateTimeDisplay dateTime={revision.createdAt} /></Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Type:</b> {REVISION_TYPE_LABELS[revision.type]}</Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Status:</b> {REVISION_STATUS_LABELS[revision.status]}</Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Created by:</b>
+      <RevisionInfoRow>
+        Date created:
+        <DateTimeDisplay dateTime={revision.createdAt} />
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        Type:
+        {REVISION_TYPE_LABELS[revision.type]}
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        Status:
+        {REVISION_STATUS_LABELS[revision.status]}
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        Created by:
         <RevisionCreatedBy integrationId={integrationId} revisionId={revisionId} />
-      </Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}>
-        <b>From integration name: </b>
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        From integration name:
         <ResourceLnk
           name={revision.fromIntegrationName}
           id={revision._fromIntegrationId}
           resourceType="integrations" />
-      </Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>From integration ID:</b> {revision._fromIntegrationId}</Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>From environment:</b>
+      </RevisionInfoRow>
+
+      <RevisionInfoRow>
+        From integration ID:
+        {revision._fromIntegrationId}
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        From environment:
         {revision.fromIntegrationIsSandbox ? ' Sandbox' : ' Production'}
-      </Typography>
-      <Typography variant="body2" className={classes.revisionInfoRow}><b>Revision ID:</b> {revision._id}</Typography>
+      </RevisionInfoRow>
+      <RevisionInfoRow>
+        Revision ID:
+        {revision._id}
+      </RevisionInfoRow>
     </>
   );
 };

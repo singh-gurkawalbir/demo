@@ -25,6 +25,7 @@ const fieldMeta = {
       type: 'date',
       label: 'From',
       closeOnSelect: true,
+      disableFuture: true,
     },
     toDate: {
       id: 'toDate',
@@ -32,6 +33,7 @@ const fieldMeta = {
       type: 'date',
       label: 'To',
       closeOnSelect: true,
+      disableFuture: true,
     },
   },
 };

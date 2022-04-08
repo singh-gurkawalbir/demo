@@ -153,6 +153,28 @@ const getAmazonMWSType = connection => {
 
   return 'amazonmws';
 };
+const getLoopReturnsVersion = connection => {
+  const baseUri = connection?.http?.baseURI;
+
+  switch (baseUri) {
+    case 'https://api.loopreturns.com/api/v2':
+      return 'loopreturnsv2';
+    default:
+  }
+
+  return 'loopreturns';
+};
+const getAcumaticaEndpointName = connection => {
+  const acumaticaEndpointName = connection?.http?.unencrypted?.endpointName;
+
+  switch (acumaticaEndpointName) {
+    case 'ecommerce':
+      return 'acumaticaecommerce';
+    default:
+  }
+
+  return 'acumatica';
+};
 export const getAssistantFromConnection = (assistant, connection) => {
   if (!MULTIPLE_AUTH_TYPE_ASSISTANTS.includes(assistant)) { return assistant; }
 
@@ -170,6 +192,12 @@ export const getAssistantFromConnection = (assistant, connection) => {
   }
   if (assistant === 'recurly') {
     return getRecurlyType(connection);
+  }
+  if (assistant === 'loopreturns') {
+    return getLoopReturnsVersion(connection);
+  }
+  if (assistant === 'acumatica') {
+    return getAcumaticaEndpointName(connection);
   }
 
   return assistant;

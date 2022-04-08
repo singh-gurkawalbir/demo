@@ -71,15 +71,24 @@ export function* createOrUpdateAlias({ id, resourceType, aliasId, isEdit, asyncK
       value: newResourceAliases,
     },
   ];
+  let response;
 
   yield put(actions.asyncTask.start(asyncKey));
   try {
-    yield call(patchResource, { id, resourceType, patchSet });
-
-    yield put(actions.resource.aliases.actionStatus(id, newAliasId, 'save'));
+    response = yield call(patchResource, { id, resourceType, patchSet });
   } catch (e) {
-    // do nothing
+    yield put(actions.asyncTask.failed(asyncKey));
+
+    return;
   }
+
+  if (response?.error) {
+    yield put(actions.asyncTask.failed(asyncKey));
+
+    return;
+  }
+
+  yield put(actions.resource.aliases.actionStatus(id, newAliasId, 'save'));
   yield put(actions.asyncTask.success(asyncKey));
 }
 
@@ -92,13 +101,16 @@ export function* deleteAlias({ id, resourceType, aliasId, asyncKey }) {
       value: resourceAliases.filter(aliasData => aliasData.alias !== aliasId),
     },
   ];
+  let response;
 
   try {
-    yield call(patchResource, { id, resourceType, patchSet, asyncKey });
-
-    yield put(actions.resource.aliases.actionStatus(id, '', 'delete'));
+    response = yield call(patchResource, { id, resourceType, patchSet, asyncKey });
   } catch (e) {
-    // do nothing
+    return;
+  }
+
+  if (!response?.error) {
+    yield put(actions.resource.aliases.actionStatus(id, '', 'delete'));
   }
 }
 

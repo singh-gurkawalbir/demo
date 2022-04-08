@@ -1,7 +1,7 @@
 import { useCallback} from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import getRoutePath from '../../../../../utils/routePaths';
 import EditIcon from '../../../../icons/EditIcon';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 export default {
   key: 'editAlias',
@@ -12,7 +12,11 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const openEditAlias = useCallback(() => {
-      history.push(getRoutePath(`${match.url}/edit/${aliasId}`));
+      history.push(buildDrawerUrl({
+        path: drawerPaths.ALIASES.EDIT,
+        baseUrl: match.url,
+        params: { aliasId },
+      }));
     }, [history, match.url, aliasId]);
 
     return openEditAlias;
