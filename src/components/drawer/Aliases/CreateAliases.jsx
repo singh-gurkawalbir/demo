@@ -12,13 +12,13 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import DynaForm from '../../DynaForm';
 import TextButton from '../../Buttons/TextButton';
 import { ALIAS_FORM_KEY } from '../../../utils/constants';
-import getRoutePath from '../../../utils/routePaths';
 import actions from '../../../actions';
 import InstallationGuideIcon from '../../icons/InstallationGuideIcon';
 import ActionGroup from '../../ActionGroup';
 import CeligoDivider from '../../CeligoDivider';
 import getFieldMeta from './CreateAliasFormMeta';
 import messageStore from '../../../utils/messageStore';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 
 const anchorProps = {
   component: 'a',
@@ -54,14 +54,18 @@ const AliasForm = ({ resourceId, resourceType, isEdit, parentUrl }) => {
       return;
     }
 
-    // if the create alias form is saved
+    // if the alias form is saved
     // we will open the edit alias form of the newly created alias
-    if (!isEdit) {
+    if (aliasId !== savedAliasId) {
       history.replace(
-        getRoutePath(`${parentUrl}/edit/${savedAliasId}`)
+        buildDrawerUrl({
+          path: drawerPaths.ALIASES.EDIT,
+          baseUrl: parentUrl,
+          params: { aliasId: savedAliasId },
+        })
       );
     }
-  }, [history, isFormSaveTriggered, isAliasActionCompleted, savedAliasId, parentUrl, isEdit, handleClose, dispatch]);
+  }, [history, isFormSaveTriggered, isAliasActionCompleted, savedAliasId, parentUrl, aliasId, handleClose, dispatch]);
 
   const handleSave = useCallback(closeAfterSave => {
     dispatch(actions.resource.aliases.createOrUpdate(resourceId, resourceType, aliasId, isEdit, ALIAS_FORM_KEY[resourceType]));
@@ -104,8 +108,7 @@ export default function CreateAliasDrawer({resourceId, resourceType, height = 's
     <RightDrawer
       height={height}
       width="default"
-      path={['add', 'edit/:aliasId']}
-    >
+      path={[drawerPaths.ALIASES.ADD, drawerPaths.ALIASES.EDIT]} >
       <DrawerHeader
         title={isEdit ? 'Edit alias' : 'Create alias'}
         infoText={isEdit ? messageStore('EDIT_ALIAS_FORM_HELPINFO') : messageStore('CREATE_ALIAS_FORM_HELPINFO')}

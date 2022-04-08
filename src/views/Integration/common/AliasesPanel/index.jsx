@@ -11,13 +11,13 @@ import CeligoTable from '../../../../components/CeligoTable';
 import CreateAliasDrawer from '../../../../components/drawer/Aliases/CreateAliases';
 import metadata from '../../../../components/ResourceTable/aliases/metadata';
 import AddIcon from '../../../../components/icons/AddIcon';
-import getRoutePath from '../../../../utils/routePaths';
 import ViewAliasDetailsDrawer from '../../../../components/drawer/Aliases/ViewAliasesDetails';
 import { isIntegrationAppVersion2 } from '../../../../utils/integrationApps';
 import errorMessageStore from '../../../../utils/errorStore';
 import messageStore from '../../../../utils/messageStore';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import actions from '../../../../actions';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,7 +45,7 @@ export default function Aliases({ integrationId, childId }) {
     isIntegrationAppVersion2(selectors.resource(state, 'integrations', integrationId), true)
   );
   const currentIntegrationId = isIntegrationV2 ? (childId || integrationId) : integrationId;
-  const filterKey = `${currentIntegrationId}+aliases`;
+  const filterKey = `${currentIntegrationId}-aliases`;
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
   const accessLevel = useSelector(state =>
     selectors.resourcePermissions(
@@ -54,17 +54,19 @@ export default function Aliases({ integrationId, childId }) {
       currentIntegrationId,
     ).accessLevel
   );
-  const canUserPublish = useSelector(state => selectors.canUserPublish(state));
-  const hasManageAccess = accessLevel !== 'monitor' && (!isIntegrationApp || (isIntegrationApp && canUserPublish));
+  const hasManageAccess = accessLevel !== 'monitor' && !isIntegrationApp;
   const aliases = useSelector(state => {
-    const tempAliases = selectors.ownAliases(state, 'integrations', currentIntegrationId);
+    const tempAliases = selectors.ownAliases(state, 'integrations', currentIntegrationId, filterKey);
 
     return tempAliases.map(aliasData => ({ ...aliasData, _id: aliasData.alias }));
   }, shallowEqual);
   const isAliasActionCompleted = useSelector(state => selectors.aliasActionStatus(state, currentIntegrationId));
 
   const handleClick = useCallback(() => {
-    history.push(getRoutePath(`${match.url}/add`));
+    history.push(buildDrawerUrl({
+      path: drawerPaths.ALIASES.ADD,
+      baseUrl: match.url,
+    }));
   }, [history, match]);
 
   const actionProps = useMemo(() => ({

@@ -17,10 +17,10 @@ import CreateAliasDrawer from './CreateAliases';
 import DrawerContent from '../Right/DrawerContent';
 import CeligoDivider from '../../CeligoDivider';
 import ViewAliasDetailsDrawer from './ViewAliasesDetails';
-import getRoutePath from '../../../utils/routePaths';
 import actions from '../../../actions';
 import messageStore from '../../../utils/messageStore';
 import errorMessageStore from '../../../utils/errorStore';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
@@ -43,31 +43,33 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const resourceAliases = useSelector(state => selectors.ownAliases(state, 'flows', flowId));
-  const inheritedAliases = useSelectorMemo(selectors.makeInheritedAliases, flowId);
+  const aliasesFilterKey = `${flowId}-aliases`;
+  const inheritedAliasesFilterKey = `${flowId}-inheritedAliases`;
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
+  const resourceAliases = useSelector(state => selectors.ownAliases(state, 'flows', flowId, aliasesFilterKey));
+  const inheritedAliases = useSelector(state => selectors.inheritedAliases(state, flowId, inheritedAliasesFilterKey));
   const isAliasActionCompleted = useSelector(state => selectors.aliasActionStatus(state, flowId));
   const actionProps = useMemo(() => ({
     resourceType: 'flows',
     resourceId: flowId,
-  }), [hasManageAccess, flowId]);
+  }), [flowId]);
 
   const aliasesTableData = useMemo(() => ([
     {
       data: resourceAliases.map(aliasData => ({...aliasData, _id: `${flowId}-${aliasData.alias}`})),
       title: 'Aliases',
-      filterKey: `${flowId}+aliases`,
+      filterKey: aliasesFilterKey,
       actionProps: {...actionProps, hasManageAccess},
       noAliasesMessage: errorMessageStore('NO_CUSTOM_ALIASES_MESSAGE'),
     },
     {
       data: inheritedAliases.map(aliasData => ({...aliasData, _id: `${flow._integrationId}-${aliasData.alias}`})),
       title: 'Inherited aliases',
-      filterKey: `${flow._integrationId}+inheritedAliases`,
+      filterKey: inheritedAliasesFilterKey,
       actionProps,
       noAliasesMessage: errorMessageStore('NO_INHERITED_ALIASES_MESSAGE'),
     },
-  ]), [resourceAliases, inheritedAliases, flowId, flow, actionProps]);
+  ]), [resourceAliases, inheritedAliases, flowId, flow, aliasesFilterKey, inheritedAliasesFilterKey, actionProps, hasManageAccess]);
 
   useEffect(() => {
     if (!isAliasActionCompleted) return;
@@ -110,8 +112,8 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
 const ViewAliases = ({ resourceId, resourceType, height }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const filterKey = `${resourceId}+viewAliases`;
-  const allAliases = useSelector(state => selectors.allAliases(state, resourceId));
+  const filterKey = `${resourceId}-viewAliases`;
+  const allAliases = useSelector(state => selectors.allAliases(state, resourceId, filterKey));
   const actionProps = useMemo(() => ({
     resourceType,
     resourceId,
@@ -148,28 +150,36 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
   const resource = useSelectorMemo(selectors.makeResourceSelector, resourceType, resourceId);
   const integrationId = resourceType === 'integrations' ? resourceId : resource?._integrationId;
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
-  const canUserPublish = useSelector(state => selectors.canUserPublish(state));
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state, 'integrations', integrationId).accessLevel
   );
-  const hasManageAccess = accessLevel !== 'monitor' && (!isIntegrationApp || (isIntegrationApp && canUserPublish));
+  const hasManageAccess = accessLevel !== 'monitor' && !isIntegrationApp;
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
 
+  const manageAliasesDrawerUrl = buildDrawerUrl({
+    path: drawerPaths.ALIASES.MANAGE,
+    baseUrl: match.url,
+  });
+  const viewAliasesDrawerUrl = buildDrawerUrl({
+    path: drawerPaths.ALIASES.VIEW,
+    baseUrl: match.url,
+  });
   const handleCreateAliasDrawer = useCallback(() => {
-    history.push(getRoutePath(`${match.url}/aliases/manage/add`));
-  }, [history, match]);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.ALIASES.ADD,
+      baseUrl: manageAliasesDrawerUrl,
+    }));
+  }, [history, manageAliasesDrawerUrl]);
 
   return (
     <RightDrawer
-      variant="temporary"
       height={height}
       width="default"
-      path={['aliases/manage', 'aliases/view']}
-    >
+      path={[drawerPaths.ALIASES.MANAGE, drawerPaths.ALIASES.VIEW]} >
       <Switch>
-        <Route path={`${match.url}/aliases/manage`} >
+        <Route path={manageAliasesDrawerUrl} >
           <DrawerHeader
             title="Manage Aliases"
             infoText={messageStore('MANAGE_ALIASES_HELPINFO')}>
@@ -178,7 +188,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
                 <TextButton
                   startIcon={<AddIcon />}
                   onClick={handleCreateAliasDrawer}>
-                    Create alias
+                  Create alias
                 </TextButton>
                 <CeligoDivider position="right" />
               </>
@@ -195,7 +205,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
             </FilledButton>
           </DrawerFooter>
         </Route>
-        <Route path={`${match.url}/aliases/view`} >
+        <Route path={viewAliasesDrawerUrl} >
           <DrawerHeader
             title="View Aliases"
             infoText={messageStore('VIEW_ALIASES_HELPINFO')} />

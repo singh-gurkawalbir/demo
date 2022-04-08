@@ -151,12 +151,14 @@ function* installStep({ integrationId, revisionId, stepInfo }) {
 
     yield put(actions.integrationLCM.installSteps.completedStepInstall(revisionId));
     if (isInstallationDone) {
-    // TODO: revisit what needs to be fetched again
       yield put(actions.resource.request('integrations', integrationId));
       yield put(actions.resource.requestCollection('flows', null, true));
       yield put(actions.resource.requestCollection('exports', null, true));
       yield put(actions.resource.requestCollection('imports', null, true));
       yield put(actions.resource.requestCollection('connections', null, true));
+      yield put(actions.resource.requestCollection('scripts', null, true));
+      yield put(actions.resource.requestCollection('filedefinitions', null, true));
+      yield put(actions.resource.requestCollection('asynchelpers', null, true));
     }
   } catch (e) {
   // TODO: Handle errors and trigger failed action

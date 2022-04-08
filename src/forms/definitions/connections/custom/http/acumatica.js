@@ -4,7 +4,7 @@ export default {
 
     if (retValues['/http/auth/type'] === 'cookie') {
       retValues['/http/baseURI'] = `${formValues['/instanceURI']}/entity/${
-        formValues['/http/unencrypted/endpointName']
+        formValues['/http/unencrypted/endpointName'].toLowerCase()
       }/${formValues['/http/unencrypted/endpointVersion']}`;
       retValues['/http/auth/cookie/method'] = 'POST';
       retValues['/http/auth/cookie/successStatusCode'] = 204;
@@ -15,10 +15,11 @@ export default {
       }/entity/auth/login`;
       retValues['/http/auth/cookie/body'] = `{"name": "${
         formValues['/http/unencrypted/username']
-      }","password": "${formValues['/http/encrypted/password']}","company": "${
+      }","password": "{{{connection.http.encrypted.password}}}","company": "${
         formValues['/http/unencrypted/company']
       }"}`;
       retValues['/http/encrypted/cookieString'] = '';
+      retValues['/http/unencrypted/endpointName'] = `${formValues['/http/unencrypted/endpointName'].toLowerCase()}`;
       retValues['/http/auth/token/token'] = '';
       delete retValues['/http/auth/oauth/authURI'];
       delete retValues['/http/auth/oauth/tokenURI'];
@@ -30,7 +31,7 @@ export default {
     } else {
       retValues['/http/baseURI'] = `${
         formValues['/oauth/instanceURI']
-      }/entity/${formValues['/http/unencrypted/endpointName']}/${
+      }/entity/${formValues['/http/unencrypted/endpointName'].toLowerCase()}/${
         formValues['/http/unencrypted/endpointVersion']
       }`;
       retValues['/http/auth/oauth/authURI'] = `${
@@ -39,6 +40,7 @@ export default {
       retValues['/http/auth/oauth/tokenURI'] = `${
         formValues['/oauth/instanceURI']
       }/identity/connect/token`;
+      retValues['/http/unencrypted/endpointName'] = `${formValues['/http/unencrypted/endpointName'].toLowerCase()}`;
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
       delete retValues['/http/auth/cookie/method'];
       delete retValues['/http/auth/cookie/successStatusCode'];
