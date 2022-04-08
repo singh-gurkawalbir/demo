@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardActions, Typography } from '@material-ui/core';
+import { Card, CardActions, Typography, Tooltip } from '@material-ui/core';
 import {applicationsList} from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
@@ -22,7 +22,6 @@ import getImageUrl from '../../utils/image';
 import PageContent from '../../components/PageContent';
 import { gridViewStyles } from '../Home/View/TileView/HomeCard';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
-import ButtonWithTooltip from '../../components/Buttons/ButtonWithTooltip';
 
 const useStyles = makeStyles(theme => ({
   pageCenter: {
@@ -255,14 +254,15 @@ export default function MarketplaceList() {
                 </FilledButton>
                 )}
                 {connector.canRequestDemo && (
-                <ButtonWithTooltip
-                  tooltipProps={{title: 'Have a solutions consultant contact me to demonstrate how this Integration App will automate my business processes.'}}>
-                  <FilledButton
-                    data-test="contactSales"
-                    onClick={() => requestDemo(connector)}>
-                    Request demo
-                  </FilledButton>
-                </ButtonWithTooltip>
+                <Tooltip title="Have a solutions consultant contact me to demonstrate how this Integration App will automate my business processes." placement="bottom">
+                  <span>
+                    <FilledButton
+                      data-test="contactSales"
+                      onClick={() => requestDemo(connector)}>
+                      Request demo
+                    </FilledButton>
+                  </span>
+                </Tooltip>
                 )}
               </CardActions>
               <div className={classes.cardFooter}>
