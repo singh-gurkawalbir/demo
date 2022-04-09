@@ -292,6 +292,8 @@ export default {
 'The username of your ServiceNow account.',
   'servicenow.connection.http.auth.basic.password':
 'The password of your ServiceNow account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'servicenow.connection.http.auth.type': 'Please select Authentication type.',
+  'servicenow.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><br><b>Steps to get the client ID and client secret:<br></b>1. Sign in to your ServiceNow instance.<br>2. Activate the OAuth 2.0 plugin.<br>3. Set the system property <b>com.snc.platform.security.oauth.is.active</b> to true.<br>4. Navigate to <b>System OAuth</b> > <b>Application Registry</b>.<br>5. Click <b>New</b> and then click <b>Create an OAuth API endpoint for external clients</b>.<br>6. Record the <b>client_id</b> and <b>client_secret</b> values from the previous step.',
   'shipstation.connection.http.auth.basic.username':
 'The API Key of your ShipStation account.',
   'shipstation.connection.http.auth.basic.password':
