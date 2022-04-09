@@ -439,7 +439,9 @@ export const updateFileProviderFormValues = formValues => {
     newValues['/file/xlsx'] = undefined;
     newValues['/file/xml'] = undefined;
     newValues['/file/csv'] = undefined;
-    newValues['/file/skipAggregation'] = true;
+    if (newValues['/file/type']) {
+      newValues['/file/skipAggregation'] = true;
+    }
     // TODO: Ashok needs to revisit on delete form values.
     delete newValues['/file/csv/rowsToSkip'];
     delete newValues['/file/csv/trimSpaces'];
