@@ -58,7 +58,6 @@ export default function DynaScriptContent(props) {
       options.scriptFunctionStub &&
       scriptHookStubs[options.scriptFunctionStub]
     ) {
-      // TODO @Raghu: Revisit updating script content
       const updatedScriptContent =
         value + scriptHookStubs[options.scriptFunctionStub];
 
