@@ -354,6 +354,7 @@ selectors.integrationInstallSteps = createSelector(
 
     let netsuiteConnIndex = 0;
     let salesforceConnIndex = 0;
+    // passing connectionId as _connId in case of 'Integrator Bundle' and 'Integrator Adaptor Package'
 
     return installSteps.map(step => {
       if (step.installURL || step.url) {
@@ -366,7 +367,7 @@ selectors.integrationInstallSteps = createSelector(
 
           return {
             ...step,
-            connectionId,
+            _connId: connectionId,
           };
         } if (step.name.includes('Integrator Adaptor Package')) {
           const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
@@ -375,7 +376,7 @@ selectors.integrationInstallSteps = createSelector(
 
           return {
             ...step,
-            connectionId,
+            _connId: connectionId,
           };
         }
       }
