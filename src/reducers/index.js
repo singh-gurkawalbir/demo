@@ -72,6 +72,7 @@ import {
   filterAndSortResources,
   getUserAccessLevelOnConnection,
   rdbmsSubTypeToAppType,
+  getResourceFromAlias,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -6851,3 +6852,107 @@ selectors.accountHasSandbox = state => {
 
   return !!(selectedAccount?.hasSandbox || selectedAccount?.hasConnectorSandbox);
 };
+
+// This selector returns the aliases defined at the resource level
+selectors.ownAliases = createSelector(
+  (state, resourceType, id) => selectors.resource(state, resourceType, id)?.aliases || emptyArray,
+  (state, _1, _2, filterKey) => selectors.filter(state, filterKey),
+  (aliases, aliasesFilter) => {
+    const tempAliases = aliases.map(aliasData => ({ type: getResourceFromAlias(aliasData).resourceType, ...aliasData }));
+
+    return aliasesFilter?.sort ? tempAliases.sort(comparer(aliasesFilter.sort)) : aliases;
+  });
+
+// This selector returns the aliases defined at its parent level
+// If aliases are defined at both the integration and parentIntegration level,
+// if some of aliases have common aliasId among them, then aliases of integration takes precedence over parentIntegration's
+selectors.inheritedAliases = createSelector(
+  (state, id) => {
+    const flow = selectors.resource(state, 'flows', id);
+
+    if (!flow?._integrationId) return;
+
+    return selectors.resource(state, 'integrations', flow._integrationId)?.aliases?.map(
+      aliasData => ({...aliasData, _parentId: flow._integrationId, type: getResourceFromAlias(aliasData).resourceType })
+    );
+  },
+  (state, id) => {
+    const flow = selectors.resource(state, 'flows', id);
+
+    if (!flow || !flow._integrationId) return;
+
+    const integration = selectors.resource(state, 'integrations', flow._integrationId);
+
+    if (!integration?._parentId) return;
+
+    return selectors.resource(state, 'integrations', integration._parentId)?.aliases?.map(
+      aliasData => ({...aliasData, _parentId: integration._parentId, type: getResourceFromAlias(aliasData).resourceType })
+    );
+  },
+  (state, _1, filterKey) => selectors.filter(state, filterKey),
+  (integrationAliases, parentIntegrationAliases, aliasesFilter) => {
+    if (!integrationAliases && !parentIntegrationAliases) return emptyArray;
+
+    let allInheritedAliases;
+
+    if (parentIntegrationAliases && integrationAliases) {
+      const filteredParentIntegrationAliases = parentIntegrationAliases.filter(aliasData => !integrationAliases.some(ia => ia.alias === aliasData.alias));
+
+      allInheritedAliases = [...integrationAliases, ...filteredParentIntegrationAliases];
+    } else if (integrationAliases) {
+      allInheritedAliases = [...integrationAliases];
+    } else {
+      allInheritedAliases = [...parentIntegrationAliases];
+    }
+
+    return aliasesFilter?.sort ? allInheritedAliases.sort(comparer(aliasesFilter.sort)) : allInheritedAliases;
+  });
+
+// This selector returns the resourcelist for a given alias resourcetype
+selectors.aliasResources = createSelector(
+  (_1, aliasResourceType) => aliasResourceType,
+  (state, aliasResourceType) => selectors.resources(state, aliasResourceType),
+  (_1, _2, _3, aliasContextResourceId) => aliasContextResourceId,
+  (state, _2, aliasContextResourceType, aliasContextResourceId) => {
+    let integrationId;
+
+    if (aliasContextResourceType === 'flows') {
+      const flow = selectors.resource(state, aliasContextResourceType, aliasContextResourceId);
+
+      if (!flow || !flow._integrationId) return emptyObject;
+
+      integrationId = flow._integrationId;
+    }
+
+    return selectors.resource(state, 'integrations', integrationId || aliasContextResourceId) || emptyObject;
+  },
+  (resourceType, resourceList, aliasContextResourceId, integration) => {
+    const integrationId = integration._id;
+    const registeredConnectionIds = integration._registeredConnectionIds;
+
+    if (!resourceList) return emptyArray;
+
+    // should return connections registered to the integration in which alias is being defined
+    if (resourceType === 'connections') {
+      return resourceList.filter(res => registeredConnectionIds?.includes(res._id));
+    }
+    // should return flows attached to the integration in which alias is being defined
+    // if the alias is being defined at flow level, should filter this particular flow
+    if (resourceType === 'flows') {
+      return resourceList.filter(res => (res._integrationId === integrationId) && (res._id !== aliasContextResourceId));
+    }
+
+    // should return exports/imports whose connection is registered to the integration in which alias is being defined
+    return resourceList.filter(res => registeredConnectionIds?.includes(res._connectionId));
+  });
+
+selectors.allAliases = createSelector(
+  (state, resourceId) => state.session.aliases[resourceId]?.aliases,
+  (state, _1, filterKey) => selectors.filter(state, filterKey),
+  (aliases, aliasesFilter) => {
+    if (!aliases) return emptyArray;
+
+    const allAliases = aliases.map(aliasData => ({ _id: aliasData.alias, type: getResourceFromAlias(aliasData).resourceType, ...aliasData}));
+
+    return aliasesFilter?.sort ? allAliases.sort(comparer(aliasesFilter.sort)) : allAliases;
+  });
