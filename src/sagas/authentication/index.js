@@ -35,9 +35,10 @@ export function* retrievingOrgDetails() {
       actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
     ),
   ]);
+  const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
   const defaultAShareId = yield select(selectors.defaultAShareId);
 
-  if (defaultAShareId === 'own') {
+  if ((!defaultAShareId && !hasAcceptedAccounts) || defaultAShareId === 'own') {
     yield call(
       getResourceCollection,
       actions.license.requestLicenses('Retrieving licenses')
@@ -188,13 +189,6 @@ export function* retrieveAppInitializationResources() {
         environment: 'production',
       })
     );
-
-    if (calculatedDefaultAShareId === ACCOUNT_IDS.OWN) {
-      yield call(
-        getResourceCollection,
-        actions.license.requestLicenses('Retrieving licenses')
-      );
-    }
   }
 
   yield put(actions.auth.defaultAccountSet());
