@@ -98,12 +98,12 @@ export default function PreviewInfo(props) {
   );
   const isPreviewDisabled = useSelector(state =>
     selectors.isExportPreviewDisabled(state, formKey));
-  const resourceDefaultMockData = useSelector(state => selectors.getResourceDefaultMockData(state, resourceId));
   const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
   const records = Object.prototype.hasOwnProperty.call(previewStageDataList, 'preview')
     ? previewStageDataList.preview
     : previewStageDataList.parse;
-  const mockInputDataAbsent = resourceType === 'imports' && !records.data && isEmpty(resourceMockData) && isEmpty(resourceDefaultMockData);
+  const mockInputDataAbsent = resourceType === 'imports' && !records?.data && isEmpty(resourceMockData);
+
   const sampleDataStatus = useMemo(() => {
     const { status, error } = resourceSampleData;
 
