@@ -57,7 +57,7 @@ selectors.mkResourceStatus = () => createSelector(
 
     return hash + (index === 0 ? '' : '|') + statusString;
   }, ''),
-  (resources, hashString) => hashString ? hashString.split('|').map((status, index) => (
+  (resources, hashString) => resources.length ? hashString.split('|').map((status, index) => (
     {
       resourceType: resources[index],
       isLoading: status === 'requested',
