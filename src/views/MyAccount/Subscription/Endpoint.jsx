@@ -19,6 +19,9 @@ import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import { TextButton, FilledButton } from '../../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import RawHtml from '../../../components/RawHtml';
+import messageStore from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -131,6 +134,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Endpoint() {
   const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
@@ -186,6 +190,7 @@ export default function Endpoint() {
             );
             setUpgradeRequested(true);
             dispatch(actions.license.requestUpdate('upgrade'));
+            enquesnackbar({message: <RawHtml html={messageStore('LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
           },
         },
         { label: 'Cancel',
@@ -193,7 +198,7 @@ export default function Endpoint() {
         },
       ],
     });
-  }, [confirmDialog, dispatch]);
+  }, [confirmDialog, dispatch, enquesnackbar]);
   const licenseEntitlementUsage = useSelector(state => selectors.getLicenseEntitlementUsage(state));
   const numberofUsedEndpoints = licenseEntitlementUsage?.production?.endpointUsage?.numConsumed;
   const numberofUsedFlows = licenseEntitlementUsage?.production?.flowUsage?.numEnabled;
