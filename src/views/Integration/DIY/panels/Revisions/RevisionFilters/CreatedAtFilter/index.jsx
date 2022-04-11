@@ -41,6 +41,7 @@ export default function RevisionFilters() {
     <DateRangeSelector
       clearable
       placement="right"
+      placeholder="Select date created"
       clearValue={DEFAULT_REVISION_FILTERS.createdAt}
       onSave={handleDateFilter}
       value={selectedCreatedAt}

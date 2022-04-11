@@ -82,3 +82,19 @@ export const getParsedMessage = message => {
 
   return safeValue;
 };
+
+export const escapeSpecialChars = message => {
+  let escapedMessage = message;
+
+  if (!escapedMessage) return escapedMessage;
+
+  try {
+    // stringify escapes special chars
+    // but if oldValue was already a string, then we need to remove extra double quotes
+    escapedMessage = JSON.stringify(escapedMessage).replace(/^"|"$/g, '');
+  } catch (e) {
+  // do nothing
+  }
+
+  return escapedMessage;
+};
