@@ -18,7 +18,17 @@ export default function OldValue({ auditLog, oldValue = '', newValue = '' }) {
   const handleClose = useCallback(() => setShowDialog(false), []);
 
   if (!hasLongLength(oldValue, newValue)) {
-    return typeof oldValue === 'string' ? oldValue : JSON.stringify(oldValue);
+    let displayValue = oldValue;
+
+    try {
+      // stringify escapes special chars
+      // but if oldValue was already a string, then we need to remove extra double quotes
+      displayValue = JSON.stringify(displayValue).replace(/^"|"$/g, '');
+    } catch (e) {
+    // do nothing
+    }
+
+    return displayValue;
   }
 
   return (
