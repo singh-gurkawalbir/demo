@@ -188,6 +188,13 @@ export function* retrieveAppInitializationResources() {
         environment: 'production',
       })
     );
+
+    if (calculatedDefaultAShareId === ACCOUNT_IDS.OWN) {
+      yield call(
+        getResourceCollection,
+        actions.license.requestLicenses('Retrieving licenses')
+      );
+    }
   }
 
   yield put(actions.auth.defaultAccountSet());
