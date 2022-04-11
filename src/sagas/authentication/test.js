@@ -219,6 +219,13 @@ describe('initialize all app relevant resources sagas', () => {
       expect(saga.next().value).toEqual(
         all([getOrgUsersEffect, getOrgAccountsEffect])
       );
+      const hasAcceptedAccountsEffects = select(
+        selectors.hasAcceptedAccounts
+      );
+
+      expect(saga.next().value).toEqual(
+        hasAcceptedAccountsEffects
+      );
       const defaultAShareIdEffects = select(
         selectors.defaultAShareId
       );
