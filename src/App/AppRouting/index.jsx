@@ -249,18 +249,14 @@ export default function AppRouting() {
         component={Integration}
         />
       <Route
-        // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
-        // templateName has structure of application2-application2 will contain atleast 5 characters
-        path={[getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
-          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab/sections/:sectionId')]}
+        path={[getRoutePath('/templates/:templateName/:integrationId([a-f\\d]{24})/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
+          getRoutePath('/templates/:templateName/:integrationId([a-f\\d]{24})/:tab/sections/:sectionId')]}
         component={Integration}
         />
 
       <Route
-        // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
-        // templateName has structure of application2-application2 will contain atleast 5 characters
-        path={[getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dashboard/:dashboardTab(runningFlows|completedFlows)'),
-          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab')]}
+        path={[getRoutePath('/templates/:templateName/:integrationId([a-f\\d]{24})/dashboard/:dashboardTab(runningFlows|completedFlows)'),
+          getRoutePath('/templates/:templateName/:integrationId([a-f\\d]{24})/:tab')]}
         component={Integration}
         />
 

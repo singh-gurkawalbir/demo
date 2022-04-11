@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Card, CardActions, Typography, makeStyles } from '@material-ui/core';
+import clsx from 'clsx';
 import RawHtml from '../../../../../components/RawHtml';
 import PanelHeader from '../../../../../components/PanelHeader';
 import messageStore from '../../../../../utils/messageStore';
@@ -54,6 +55,9 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     bottom: 10,
     paddingLeft: 0,
+  },
+  addOnContainer: {
+    padding: theme.spacing(0, 2, 2),
   },
 }));
 
@@ -122,7 +126,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
     <div className={classes.root}>
       <PanelHeader title="Add-ons" />
 
-      <div className={gridViewClasses.container}>
+      <div className={clsx(gridViewClasses.container, classes.addOnContainer)}>
         {addOnMetadata &&
           addOnMetadata.map(data => (
             <Card key={data.id} className={classes.card} elevation={0}>

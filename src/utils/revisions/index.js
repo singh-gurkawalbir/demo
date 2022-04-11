@@ -139,15 +139,14 @@ const getDiffContent = (diff, type) => {
   };
 };
 
-export const getRevisionResourceLevelChanges = (overallDiff, type, sortKeys = false) => {
+export const getRevisionResourceLevelChanges = (overallDiff, type, ignoreSort = false) => {
   if (!overallDiff) return;
   const { numConflicts } = overallDiff;
   const { before, after } = getDiffContent(overallDiff, type);
   const diffs = {};
   const resourcesTypes = Object.keys(after);
-  // Ignore Sorting keys for now
   const NOOP = obj => obj;
-  const sortFn = sortKeys ? sortJsonByKeys : NOOP;
+  const sortFn = ignoreSort ? NOOP : sortJsonByKeys;
 
   resourcesTypes.forEach(resourceType => {
     if (!diffs[resourceType]) {
