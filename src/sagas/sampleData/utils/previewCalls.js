@@ -12,6 +12,7 @@ import { getFormattedResourceForPreview, getPostDataForDeltaExport, isPostDataNe
 import { isNewId } from '../../../utils/resource';
 import { EMPTY_RAW_DATA, STANDALONE_INTEGRATION } from '../../../utils/constants';
 import { getConstructedResourceObj } from '../flows/utils';
+import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
 
 export function* pageProcessorPreview({
   flowId,
@@ -55,7 +56,7 @@ export function* pageProcessorPreview({
   if (_pageProcessorDoc) {
     pageProcessorMap[_pageProcessorId] = {
       doc: _pageProcessorDoc,
-      options: pageProcessorMap[_pageProcessorId].options,
+      options: pageProcessorMap[_pageProcessorId]?.options,
     };
   }
 
@@ -76,6 +77,16 @@ export function* pageProcessorPreview({
           resourceType,
         }),
       };
+    }
+
+    // in case of new imports, add mock input
+    if (addMockData) {
+      pageProcessorMap[_pageProcessorId].options = yield call(getPreviewOptionsForResource, {
+        resource: {_id: _pageProcessorId},
+        _pageProcessorId,
+        isMockInput,
+        addMockData,
+      });
     }
   }
 
