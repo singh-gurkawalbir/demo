@@ -450,7 +450,7 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
 }
 
 // #region Mapper2 utils
-export const getDefaultExtract = isGroupedSampleData => isGroupedSampleData ? '$[*]' : '$';
+export const getDefaultExtractPath = isGroupedSampleData => isGroupedSampleData ? '$[*]' : '$';
 
 export const RECORD_AS_INPUT_OPTIONS = [
   {
@@ -473,21 +473,6 @@ export const ROWS_AS_INPUT_OPTIONS = [
     value: 'rowrow',
   },
 ];
-
-// const KEYS_SPECIFIC_TO_UI_TREE = [
-//   'key',
-//   'title',
-//   'parentKey',
-//   'parentExtract',
-//   'tabIndex',
-//   'combinedExtract',
-//   'className',
-//   'hidden',
-//   'disabled',
-//   'copySource',
-//   'children',
-//   'tabMap',
-// ];
 export const PRIMITIVE_DATA_TYPES = ['string', 'number', 'boolean'];
 export const ARRAY_DATA_TYPES = ['stringarray', 'numberarray', 'booleanarray', 'objectarray'];
 export const MAPPING_DATA_TYPES = Object.freeze({
@@ -500,7 +485,6 @@ export const MAPPING_DATA_TYPES = Object.freeze({
   OBJECTARRAY: 'objectarray',
   OBJECT: 'object',
 });
-
 export const DATA_TYPES_DROPDOWN_OPTIONS =
 [
   {
@@ -599,7 +583,7 @@ export const hideOtherTabRows = (node, newTabIndex, hidden) => {
 
 // this util is for object array data type nodes when multiple extracts are given
 // to reconstruct the whole children and tabMap
-export const rebuildNode = (node, extract) => {
+export const rebuildNode = (node, extract, isGroupedSampleData) => {
   const splitExtracts = extract.split(',');
 
   // if no extract, return
@@ -614,7 +598,7 @@ export const rebuildNode = (node, extract) => {
 
   // for each extract, keep the tabMap if exists, else add new
   splitExtracts.forEach((extract, index) => {
-    const uniqueExtract = extract === '$' ? `${extract}_${index}` : extract; // todo ashu handle $[8]
+    const uniqueExtract = (extract === '$' || extract === '$[*]') ? `${extract}_${index}` : extract;
 
     if (index > 0 && !multipleSources) {
       clonedNode.multipleSources = true;
@@ -629,11 +613,11 @@ export const rebuildNode = (node, extract) => {
   // filter the children array and only keep the ones which
   // have the parentExtract same as one of the given extracts
   clonedNode.children = clonedNode.children.filter(child => {
-    const {parentExtract = '$'} = child;
+    const {parentExtract = getDefaultExtractPath(isGroupedSampleData)} = child;
 
     if (child.isTabNode) return true;
 
-    if (splitExtracts[child.tabIndex] === (parentExtract || '$')) {
+    if (splitExtracts[child.tabIndex] === parentExtract) {
       return true;
     }
 
@@ -643,7 +627,7 @@ export const rebuildNode = (node, extract) => {
   // find left over extracts so that new children rows can be pushed
   splitExtracts.forEach((s, index) => {
     if (copyTabMap[index]) return;
-    copyTabMap[index] = s === '$' ? `${s}_${index}` : s; // todo ashu handle $[*]
+    copyTabMap[index] = (s === '$' || s === '$[*]') ? `${s}_${index}` : s;
     const hidden = index > 0;
     const newRow = {
       key: nanoid(),
@@ -679,7 +663,7 @@ export const rebuildNode = (node, extract) => {
   return clonedNode;
 };
 
-function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disabled, hidden, tabIndex) {
+function iterateForParentTree({mappings, treeData, parentKey, parentExtract, disabled, hidden, tabIndex, isGroupedSampleData}) {
   mappings.forEach(m => {
     const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract} = m;
     const children = [];
@@ -707,7 +691,15 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disa
       if (objMappings) {
         nodeToPush.children = children;
 
-        iterateForParentTree(objMappings, children, currNodeKey, currNodeExtract, disabled);
+        iterateForParentTree({
+          mappings: objMappings,
+          treeData: children,
+          parentKey: currNodeKey,
+          parentExtract: currNodeExtract,
+          disabled,
+          isGroupedSampleData});
+      } else if (currNodeExtract) {
+        nodeToPush.copySource = 'yes';
       }
 
       return;
@@ -725,10 +717,9 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disa
         let tabIndex = -1;
 
         buildArrayHelper.forEach(obj => {
-          const {extract = '$', mappings} = obj;
+          const {extract = getDefaultExtractPath(isGroupedSampleData), mappings} = obj;
           let newExtract = extract;
 
-          //  sourceExtract = extract ? `${sourceExtract ? `${sourceExtract},` : ''}${extract}` : sourceExtract;
           combinedExtract = `${combinedExtract ? `${combinedExtract},` : ''}${extract}`;
 
           if (!mappings) {
@@ -738,7 +729,7 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disa
           // we need this tabMap in case duplicate extracts are
           // present for different buildArrayHelper
           tabIndex += 1;
-          if (extract === '$') { // todo ashu handle for $[*] {
+          if (extract === '$' || extract === '$[*]') {
             newExtract = `${extract}_${tabIndex}`;
           }
 
@@ -754,15 +745,35 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disa
             });
             // since the first source is already pushed, all other children should
             // be hidden now, as we show the first source tab by default
-            iterateForParentTree(mappings, children, currNodeKey, extract, disabled, true, tabIndex);
+            iterateForParentTree({
+              mappings,
+              treeData: children,
+              parentKey: currNodeKey,
+              parentExtract: extract,
+              disabled,
+              hidden: true,
+              tabIndex,
+              isGroupedSampleData}
+            );
           } else {
             tabMap[tabIndex] = newExtract;
             multipleSources = true;
-            iterateForParentTree(mappings, children, currNodeKey, extract, disabled, hidden, tabIndex);
+            iterateForParentTree({
+              mappings,
+              treeData: children,
+              parentKey: currNodeKey,
+              parentExtract: extract,
+              disabled,
+              hidden,
+              tabIndex,
+              isGroupedSampleData});
           }
 
           nodeToPush.children = children;
           nodeToPush.tabMap = tabMap;
+          if (!nodeToPush.children.length) {
+            nodeToPush.copySource = 'yes';
+          }
         });
 
         nodeToPush.combinedExtract = combinedExtract;
@@ -782,7 +793,7 @@ function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disa
   return treeData;
 }
 
-export function generateTreeFromV2Mappings(mappings, disabled) {
+export function generateTreeFromV2Mappings(mappings, disabled, isGroupedSampleData) {
   const treeData = [];
   const emptyRowKey = nanoid();
 
@@ -806,7 +817,7 @@ export function generateTreeFromV2Mappings(mappings, disabled) {
     return emptyMappingsTree;
   }
 
-  return iterateForParentTree(mappings, treeData, '', '', disabled);
+  return iterateForParentTree({mappings, treeData, disabled, isGroupedSampleData});
 }
 
 // eslint-disable-next-line camelcase
@@ -838,18 +849,19 @@ const mappings_record_to_record = {
     {
       generate: 'my_mothers_name',
       dataType: 'object',
-      mappings: [
-        {
-          generate: 'first_name',
-          dataType: 'string',
-          extract: '$.mother.fName',
-        },
-        {
-          generate: 'last_name',
-          dataType: 'string',
-          extract: '$.mother.lName',
-        },
-      ],
+      extract: 'my_mothersExtract',
+      // mappings: [
+      //   {
+      //     generate: 'first_name',
+      //     dataType: 'string',
+      //     extract: '$.mother.fName',
+      //   },
+      //   {
+      //     generate: 'last_name',
+      //     dataType: 'string',
+      //     extract: '$.mother.lName',
+      //   },
+      // ],
     },
     {
       generate: 'my_many_first_names',
@@ -1090,11 +1102,7 @@ const mappings_record_to_record = {
 
 export const buildTreeFromResourceV2Mappings = ({
   importResource,
-  // isFieldMapping = false,
-  // isGroupedSampleData,
-  // isPreviewSuccess,
-  // options = {},
-  // exportResource,
+  isGroupedSampleData,
   disabled,
 }) => {
   if (!importResource) {
@@ -1106,16 +1114,13 @@ export const buildTreeFromResourceV2Mappings = ({
   // creating deep copy of mapping object to avoid alteration to resource mapping object
   const v2MappingsCopy = deepClone(v2Mappings);
 
-  // if (isFieldMapping) return v2MappingsCopy;
-
-  // todo ashu handle isRequiredMapping for assistants
-
-  const mappingsTreeData = generateTreeFromV2Mappings(v2MappingsCopy, disabled);
+  // TODO: handle isRequiredMapping for assistants
+  const mappingsTreeData = generateTreeFromV2Mappings(v2MappingsCopy, disabled, isGroupedSampleData);
 
   return mappingsTreeData;
 };
 
-export const hasV2Mappings = treeData => {
+export const hasV2MappingsInTreeData = treeData => {
   if (!treeData || !treeData.length || (treeData.length === 1 && treeData[0].isEmptyRow)) {
     return false;
   }
@@ -1127,6 +1132,7 @@ const buildV2MappingsFromTree = ({v2TreeData, _mappingsToSave}) => {
   v2TreeData.forEach(mapping => {
     const {
       generate,
+      generateDisabled,
       dataType,
       extract,
       extractDateFormat,
@@ -1141,7 +1147,7 @@ const buildV2MappingsFromTree = ({v2TreeData, _mappingsToSave}) => {
       combinedExtract,
       isTabNode} = mapping;
 
-    if (isTabNode || !generate) return;
+    if (isTabNode || (!generateDisabled && !generate)) return;
 
     const newMapping = {
       generate,
@@ -1248,7 +1254,7 @@ const buildV2MappingsFromTree = ({v2TreeData, _mappingsToSave}) => {
 export const generateFinalV2Mappings = ({v2TreeData}) => {
   const _mappingsToSave = [];
 
-  if (!hasV2Mappings(v2TreeData)) {
+  if (!hasV2MappingsInTreeData(v2TreeData)) {
     return _mappingsToSave;
   }
 
@@ -1467,7 +1473,7 @@ export const filterExtractsNode = (node, propValue, inputValue) => {
 // this util handles the comma separated values use-case
 // and returns the final input after user selects a node
 export const getFinalSelectedExtracts = (node, inputValue, isArrayType, isGroupedSampleData) => {
-  const prefix = getDefaultExtract(isGroupedSampleData);
+  const prefix = getDefaultExtractPath(isGroupedSampleData);
   const {jsonPath = ''} = node;
   const fullJsonPath = jsonPath ? `${prefix}.${jsonPath}` : prefix;
   let newValue = fullJsonPath;
@@ -1504,7 +1510,6 @@ const isV2MappingObjEqual = (_mappingObj1 = {}, _mappingObj2 = {}) => {
     mappings: m1,
     buildArrayHelper: b1,
     children: c1,
-    isNotEditable: e1,
     isRequired: req1,
     hidden: h1,
     className: cl1,
@@ -1522,7 +1527,6 @@ const isV2MappingObjEqual = (_mappingObj1 = {}, _mappingObj2 = {}) => {
     mappings: m2,
     buildArrayHelper: b2,
     children: c2,
-    isNotEditable: e2,
     isRequired: req2,
     hidden: h2,
     className: cl2,
@@ -1573,7 +1577,16 @@ const isV2MappingsValid = ({
   mappingsWithoutGenerates = [],
   missingExtractGenerateNames = []}) => {
   v2TreeData.forEach(mapping => {
-    const {parentKey, tabIndex = 0, generate, copySource, extract, dataType, combinedExtract, isTabNode} = mapping;
+    const {
+      parentKey,
+      tabIndex = 0,
+      generate,
+      generateDisabled,
+      copySource,
+      extract,
+      dataType,
+      combinedExtract,
+      isTabNode} = mapping;
 
     if (isTabNode) return;
 
@@ -1587,7 +1600,7 @@ const isV2MappingsValid = ({
       }
       // eslint-disable-next-line no-param-reassign
       dupMap[dupKey] = generate;
-    } else {
+    } else if (!generateDisabled) {
       mappingsWithoutGenerates.push(mapping);
 
       return;
@@ -1672,7 +1685,7 @@ const validateV2TreeMappings = (v2TreeData, lookups) => {
   if (missingExtractGenerateNames.length) {
     return {
       isSuccess: false,
-      errMessage: `Extract Fields missing for field(s): ${missingExtractGenerateNames.join(
+      errMessage: `Extract fields missing for field(s): ${missingExtractGenerateNames.join(
         ','
       )}`,
     };
@@ -2701,14 +2714,14 @@ export default {
     if (missingExtractGenerateNames.length) {
       return {
         isSuccess: false,
-        errMessage: `Extract Fields missing for field(s): ${missingExtractGenerateNames.join(
+        errMessage: `Extract fields missing for field(s): ${missingExtractGenerateNames.join(
           ','
         )}`,
       };
     }
 
     // validate v2 mappings as well
-    if (v2TreeData?.length) {
+    if (hasV2MappingsInTreeData(v2TreeData)) {
       return validateV2TreeMappings(v2TreeData, lookups);
     }
 

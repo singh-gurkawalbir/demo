@@ -301,7 +301,7 @@ export default {
         expression: {
           id: 'expression',
           name: 'expression',
-          type: 'uri', // todo ashu check with BE for fieldPath
+          type: 'uri',
           connectionId,
           resourceType: 'imports',
           resourceId,

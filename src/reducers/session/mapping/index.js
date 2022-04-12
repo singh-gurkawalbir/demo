@@ -558,7 +558,9 @@ export default (state = {}, action) => {
                   }];
                 } else if (value && node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
                   // handle tab view
-                  nodeSubArray[nodeIndexInSubArray] = rebuildNode(original(node), value);
+                  const {isGroupedSampleData} = draft.mapping;
+
+                  nodeSubArray[nodeIndexInSubArray] = rebuildNode(original(node), value, isGroupedSampleData);
                 }
 
                 // array data types do not have direct 'extract' prop
@@ -570,6 +572,8 @@ export default (state = {}, action) => {
                 node.extract = value;
               }
             }
+          } else if (node.isRequired) {
+            // do nothing as no changes can be made to 'generate' of a required mapping
           } else {
             node[field] = value;
           }

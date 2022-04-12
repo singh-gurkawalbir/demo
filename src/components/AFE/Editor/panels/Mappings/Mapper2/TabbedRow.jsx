@@ -33,10 +33,17 @@ function generateTabs(treeData, key) {
   if (node.tabMap) {
     Object.keys(node.tabMap).forEach(index => {
       const extract = node.tabMap[index];
+      let label = extract;
+
+      if (extract.startsWith('$_')) {
+        label = '$';
+      } else if (extract.startsWith('$[*]_')) {
+        label = '$[*]';
+      }
 
       tabs.push({
         id: extract,
-        label: extract.startsWith('$_') ? '$' : extract, // todo ashu handle $[*]
+        label,
       });
     });
   }

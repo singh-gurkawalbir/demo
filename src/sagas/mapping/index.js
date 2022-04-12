@@ -7,7 +7,7 @@ import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
 import {selectors} from '../../reducers';
 import { commitStagedChanges } from '../resources';
-import mappingUtil, {buildTreeFromResourceV2Mappings, generateFinalV2Mappings} from '../../utils/mapping';
+import mappingUtil, {buildTreeFromResourceV2Mappings, generateFinalV2Mappings, hasV2MappingsInTreeData} from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
 import { getResourceSubType } from '../../utils/resource';
@@ -264,19 +264,12 @@ export function* mappingInit({
   if (!importResource._connectorId && (importResource.adaptorType === 'HTTPImport' || importResource.adaptorType === 'RESTImport')) {
     mappingsTreeData = buildTreeFromResourceV2Mappings({
       importResource,
-      isFieldMapping: false,
       isGroupedSampleData,
-      isPreviewSuccess,
       options,
-      exportResource,
       disabled: isMonitorLevelAccess,
     });
-    // todo ashu
-    // const lookups12 = lookupUtil.getLookupFromResource(importResource) || [];
 
-    if (
-      mappingsTreeData?.length && !(mappingsTreeData.length === 1 && mappingsTreeData[0].isEmptyRow)
-    ) {
+    if (hasV2MappingsInTreeData(mappingsTreeData) || !formattedMappings?.length) {
       version = 2;
     }
   }
@@ -414,7 +407,13 @@ export function* saveMappings() {
 
   if (resp && (resp.error || resp.conflict)) return yield put(actions.mapping.saveFailed());
 
-  yield put(actions.mapping.saveComplete());
+  // yield put(actions.mapping.saveComplete());
+  // todo ashu this needs to be tested
+  yield put(actions.mapping.init({
+    flowId,
+    importId,
+    subRecordMappingId,
+  }));
 }
 
 export function* previewMappings() {

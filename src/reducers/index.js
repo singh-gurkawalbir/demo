@@ -82,7 +82,7 @@ import {
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
-import mappingUtil, { constructExtractsTree, hasV2Mappings } from '../utils/mapping';
+import mappingUtil, { constructExtractsTree, hasV2MappingsInTreeData } from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare, comparer } from '../utils/sort';
@@ -5404,7 +5404,7 @@ selectors.mappingEditorNotification = (state, editorId) => {
 
   let resourceHasV2Mappings;
 
-  if (!hasV2Mappings(treeData)) {
+  if (!hasV2MappingsInTreeData(treeData)) {
     resourceHasV2Mappings = false;
   } else {
     resourceHasV2Mappings = true;

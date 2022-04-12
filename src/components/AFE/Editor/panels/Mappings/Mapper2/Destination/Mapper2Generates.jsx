@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
 })
 );
 
-function SelectDataType({destDataType, onDataTypeChange, isDisabled}) {
+function SelectDataType({destDataType, onDataTypeChange, disabled}) {
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
@@ -73,7 +73,7 @@ function SelectDataType({destDataType, onDataTypeChange, isDisabled}) {
       title={open ? '' : `Data type: ${destDataType} - Click to change`}
       placement="bottom" >
       <Select
-        disabled={isDisabled}
+        disabled={disabled}
         open={open}
         onOpen={openSelect}
         onClose={closeSelect}
@@ -96,7 +96,6 @@ export default function Mapper2Generates(props) {
     dataType: destDataType = MAPPING_DATA_TYPES.STRING,
     id,
     disabled,
-    generateDisabled,
     isLoggable,
     value: propValue = '',
     onDataTypeChange,
@@ -133,8 +132,6 @@ export default function Mapper2Generates(props) {
   useOnClickOutside(containerRef, isFocused && handleBlur);
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
 
-  const isDisabled = generateDisabled || disabled;
-
   return (
     <FormControl
       data-test={id}
@@ -145,7 +142,7 @@ export default function Mapper2Generates(props) {
         <Tooltip
           disableFocusListener
           placement="bottom"
-          title={(isFocused || generateDisabled || (!isTruncated && inputValue)) ? '' : (
+          title={(isFocused || (!isTruncated && inputValue)) ? '' : (
             <TooltipTitle
               isTruncated={isTruncated}
               inputValue={inputValue}
@@ -164,15 +161,15 @@ export default function Mapper2Generates(props) {
             value={inputValue}
             onChange={handleChange}
             onFocus={handleFocus}
-            disabled={isDisabled}
+            disabled={disabled}
             multiline={isFocused}
-            placeholder={generateDisabled ? '' : 'Destination record field'} />
+            placeholder="Destination record field" />
         </Tooltip >
 
         <SelectDataType
           destDataType={destDataType}
           onDataTypeChange={onDataTypeChange}
-          isDisabled={isDisabled}
+          disabled={disabled}
         />
 
       </div>

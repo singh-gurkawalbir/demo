@@ -12,6 +12,7 @@ import HandlebarsExpressionIcon from '../../../../../icons/HandlebarsExpressionI
 import DynamicLookupIcon from '../../../../../icons/DynamicLookupIcon';
 import HardCodedIcon from '../../../../../icons/HardCodedIcon';
 import SettingsIcon from '../../../../../icons/SettingsIcon';
+import LockIcon from '../../../../../icons/LockIcon';
 import Mapper2ExtractsTypeableSelect from './Source/Mapper2ExtractsTypeableSelect';
 import {selectors} from '../../../../../../reducers';
 import Mapper2Generates from './Destination/Mapper2Generates';
@@ -44,6 +45,9 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     color: theme.palette.text.hint,
     height: theme.spacing(3),
+  },
+  lockedIcon: {
+    right: theme.spacing(5),
   },
   actionsMapping: {
     display: 'flex',
@@ -79,6 +83,7 @@ const Mapper2Row = React.memo(({
   lookupName,
   disabled,
   generateDisabled,
+  isRequired,
   isEmptyRow,
   hidden,
   children,
@@ -201,8 +206,7 @@ const Mapper2Row = React.memo(({
           key={generate}
           id={`fieldMappingGenerate-${nodeKey}`}
           value={generate}
-          disabled={disabled}
-          generateDisabled={generateDisabled}
+          disabled={generateDisabled || isRequired || disabled}
           dataType={dataType}
           onBlur={handleGenerateBlur}
           onDataTypeChange={onDataTypeChange}
@@ -235,6 +239,11 @@ const Mapper2Row = React.memo(({
         {(isLookup && !isStaticLookup) && <RightIcon title="Dynamic lookup" Icon={DynamicLookupIcon} />}
         {isHandlebarExp && !isLookup && <RightIcon title="Handlebars expression" Icon={HandlebarsExpressionIcon} />}
         {isHardCodedValue && !isLookup && <RightIcon title="Hard-coded" Icon={HardCodedIcon} />}
+        {isRequired && (
+        <RightIcon
+          title="This field is required by the application you are importing into"
+          Icon={LockIcon} className={clsx({[classes.lockedIcon]: isLookup || isHandlebarExp || isHardCodedValue})} />
+        )}
         <ActionButton
           data-test={`fieldMappingSettings-${nodeKey}`}
           disabled={disabled || !generate}
@@ -250,7 +259,7 @@ const Mapper2Row = React.memo(({
         <ActionButton
           data-test={`fieldMappingRemove-${nodeKey}`}
           aria-label="delete"
-          disabled={isEmptyRow || generateDisabled || disabled}
+          disabled={isEmptyRow || generateDisabled || isRequired || disabled}
           onClick={handleDeleteClick}
           key="delete_button"
           className={classes.deleteMapping}>
