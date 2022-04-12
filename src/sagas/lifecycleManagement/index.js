@@ -1,4 +1,5 @@
 import { put, select, call, takeLatest } from 'redux-saga/effects';
+import { isEmpty } from 'lodash';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { REVISION_TYPES } from '../../utils/constants';
@@ -6,6 +7,8 @@ import { VALID_REVERT_TO_QUERIES, VALID_REVISION_TYPES_FOR_CREATION } from '../.
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import inferErrorMessages from '../../utils/inferErrorMessages';
+import { isOauth } from '../../utils/resource';
+import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
 
 export function* requestIntegrationCloneFamily({ integrationId }) {
   try {
@@ -136,6 +139,30 @@ function* cancelRevision({ integrationId, revisionId }) {
   }
 }
 
+function* handleOAuthConnectionStep({ revisionId, integrationId, connectionDoc }) {
+  const revisionInstallSteps = yield select(selectors.revisionInstallSteps, integrationId, revisionId);
+  const currentConnectionStep = revisionInstallSteps.find(step => step.completed === false && step._connectionId);
+
+  if (currentConnectionStep?._connectionId && !isEmpty(connectionDoc)) {
+    // Incase of user configuring a new connection, connectionDoc is passed in request body above
+    // In that case, fetch the latest connection Doc created
+    yield put(actions.resource.request('connections', currentConnectionStep._connectionId));
+  }
+
+  if (currentConnectionStep?._connectionId && isOauth(connectionDoc)) {
+    try {
+      yield put(actions.integrationLCM.installSteps.setOauthConnectionMode({
+        connectionId: currentConnectionStep._connectionId,
+        revisionId,
+        openOauthConnection: true,
+      }));
+      yield call(openOAuthWindowForConnection, currentConnectionStep._connectionId);
+    } catch (e) {
+      // could not close the window
+    }
+  }
+}
+
 function* installStep({ integrationId, revisionId, stepInfo }) {
   try {
     const updatedRevision = yield call(apiCallWithRetry, {
@@ -159,7 +186,15 @@ function* installStep({ integrationId, revisionId, stepInfo }) {
       yield put(actions.resource.requestCollection('scripts', null, true));
       yield put(actions.resource.requestCollection('filedefinitions', null, true));
       yield put(actions.resource.requestCollection('asynchelpers', null, true));
+
+      return;
     }
+    // Does needed actions incase of oAuth connection step
+    yield call(handleOAuthConnectionStep, {
+      integrationId,
+      revisionId,
+      connectionDoc: stepInfo.connection,
+    });
   } catch (e) {
   // TODO: Handle errors and trigger failed action
   }
