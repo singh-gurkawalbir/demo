@@ -264,8 +264,8 @@ const resource = {
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
   collectionRequestSent: (resourceType, integrationId) =>
     action(actionTypes.RESOURCE.COLLECTION_REQUEST_SENT, {integrationId, resourceType}),
-  collectionRequestSucceeded: params => action(actionTypes.RESOURCE.COLLECTION_REQUEST_SUCCEEDED, params),
-  collectionRequestFailed: params => action(actionTypes.RESOURCE.COLLECTION_REQUEST_FAILED, params),
+  collectionRequestSucceeded: ({ resourceType, integrationId }) => action(actionTypes.RESOURCE.COLLECTION_REQUEST_SUCCEEDED, { resourceType, integrationId }),
+  collectionRequestFailed: ({resourceType, integrationId}) => action(actionTypes.RESOURCE.COLLECTION_REQUEST_FAILED, {resourceType, integrationId}),
 
   updated: (resourceType, resourceId, master, patch, context) =>
     action(actionTypes.RESOURCE.UPDATED, {
