@@ -1,5 +1,5 @@
 import deepClone from 'lodash/cloneDeep';
-import { uniqBy, isEmpty, isEqual, forEach, flattenDeep, omit } from 'lodash';
+import { uniqBy, isEmpty, isEqual, forEach, flattenDeep } from 'lodash';
 import { nanoid } from 'nanoid';
 import { adaptorTypeMap, isNetSuiteBatchExport, isFileAdaptor} from '../resource';
 // eslint-disable-next-line import/no-self-import
@@ -448,6 +448,1256 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
 
   return modifiedExtract;
 }
+
+// #region Mapper2 utils
+export const getDefaultExtract = isGroupedSampleData => isGroupedSampleData ? '$[*]' : '$';
+
+export const RECORD_AS_INPUT_OPTIONS = [
+  {
+    label: 'Record to record - { } to { }',
+    value: 'recrec',
+  },
+  {
+    label: 'Record to rows - { } to [ ]',
+    value: 'recrow',
+  },
+];
+
+export const ROWS_AS_INPUT_OPTIONS = [
+  {
+    label: 'Rows to record - [ ] to { }',
+    value: 'rowrec',
+  },
+  {
+    label: 'Rows to rows - [ ] to [ ]',
+    value: 'rowrow',
+  },
+];
+
+// const KEYS_SPECIFIC_TO_UI_TREE = [
+//   'key',
+//   'title',
+//   'parentKey',
+//   'parentExtract',
+//   'tabIndex',
+//   'combinedExtract',
+//   'className',
+//   'hidden',
+//   'disabled',
+//   'copySource',
+//   'children',
+//   'tabMap',
+// ];
+export const PRIMITIVE_DATA_TYPES = ['string', 'number', 'boolean'];
+export const ARRAY_DATA_TYPES = ['stringarray', 'numberarray', 'booleanarray', 'objectarray'];
+export const MAPPING_DATA_TYPES = Object.freeze({
+  STRING: 'string',
+  NUMBER: 'number',
+  BOOLEAN: 'boolean',
+  STRINGARRAY: 'stringarray',
+  NUMBERARRAY: 'numberarray',
+  BOOLEANARRAY: 'booleanarray',
+  OBJECTARRAY: 'objectarray',
+  OBJECT: 'object',
+});
+
+export const DATA_TYPES_DROPDOWN_OPTIONS =
+[
+  {
+    id: 'string',
+    label: 'string',
+  },
+  {
+    id: 'number',
+    label: 'number',
+  },
+  {
+    id: 'boolean',
+    label: 'boolean',
+  },
+  {
+    id: 'object',
+    label: 'object',
+  },
+  {
+    id: 'stringarray',
+    label: '[string]',
+  },
+  {
+    id: 'numberarray',
+    label: '[number]',
+  },
+  {
+    id: 'booleanarray',
+    label: '[boolean]',
+  },
+  {
+    id: 'objectarray',
+    label: '[object]',
+  },
+];
+
+export const getInputOutputFormat = (isGroupedSampleData, isGroupedOutput) => {
+  if (isGroupedSampleData) {
+    if (isGroupedOutput) {
+      return ROWS_AS_INPUT_OPTIONS[1].label;
+    }
+
+    return ROWS_AS_INPUT_OPTIONS[0].label;
+  } if (isGroupedOutput) {
+    return RECORD_AS_INPUT_OPTIONS[1].label;
+  }
+
+  return RECORD_AS_INPUT_OPTIONS[0].label;
+};
+
+export const hideOtherTabRows = (node, newTabIndex, hidden) => {
+  const clonedNode = deepClone(node);
+
+  if (!clonedNode.children?.length) return clonedNode;
+
+  clonedNode.children = clonedNode.children.map(c => {
+    const clonedChild = {...c};
+
+    if (clonedChild.isTabNode) return clonedChild;
+
+    // if parent is passing hidden as true, then all children should be hidden
+    if (hidden) {
+      clonedChild.hidden = true;
+      clonedChild.className = 'hideRow';
+
+      // update children hidden as well
+      return hideOtherTabRows(clonedChild, newTabIndex, true);
+    }
+
+    // if parent is passing hidden as false explicitly, then all children should be shown
+    if (hidden === false) {
+      delete clonedChild.hidden;
+      delete clonedChild.className;
+
+      // update children as well
+      return hideOtherTabRows(clonedChild, newTabIndex, false);
+    }
+
+    // else if hidden is undefined, then check on the tab index
+    if (clonedChild.tabIndex !== newTabIndex) {
+      clonedChild.hidden = true;
+      clonedChild.className = 'hideRow';
+
+      // update children hidden as well
+      return hideOtherTabRows(clonedChild, newTabIndex, true);
+    }
+    delete clonedChild.hidden;
+    delete clonedChild.className;
+
+    // update children as well
+    return hideOtherTabRows(clonedChild, newTabIndex, false);
+  });
+
+  return clonedNode;
+};
+
+// this util is for object array data type nodes when multiple extracts are given
+// to reconstruct the whole children and tabMap
+export const rebuildNode = (node, extract) => {
+  const splitExtracts = extract.split(',');
+
+  // if no extract, return
+  if (!splitExtracts || !splitExtracts.length) return node;
+
+  // update hidden prop and only show 0th tab children
+  const clonedNode = hideOtherTabRows(node, 0);
+
+  const {key: parentKey, multipleSources, tabMap = {}} = clonedNode;
+
+  const copyTabMap = {};
+
+  // for each extract, keep the tabMap if exists, else add new
+  splitExtracts.forEach((extract, index) => {
+    const uniqueExtract = extract === '$' ? `${extract}_${index}` : extract; // todo ashu handle $[8]
+
+    if (index > 0 && !multipleSources) {
+      clonedNode.multipleSources = true;
+    }
+
+    if (tabMap[index] === uniqueExtract) {
+      // add in the new copyTabMap
+      copyTabMap[index] = uniqueExtract;
+    }
+  });
+
+  // filter the children array and only keep the ones which
+  // have the parentExtract same as one of the given extracts
+  clonedNode.children = clonedNode.children.filter(child => {
+    const {parentExtract = '$'} = child;
+
+    if (child.isTabNode) return true;
+
+    if (splitExtracts[child.tabIndex] === (parentExtract || '$')) {
+      return true;
+    }
+
+    return false;
+  });
+
+  // find left over extracts so that new children rows can be pushed
+  splitExtracts.forEach((s, index) => {
+    if (copyTabMap[index]) return;
+    copyTabMap[index] = s === '$' ? `${s}_${index}` : s; // todo ashu handle $[*]
+    const hidden = index > 0;
+    const newRow = {
+      key: nanoid(),
+      title: '',
+      parentKey,
+      parentExtract: s,
+      tabIndex: index,
+      dataType: MAPPING_DATA_TYPES.STRING,
+      hidden, // hiding the new rows if those are not in 0th tab
+      className: hidden && 'hideRow',
+    };
+
+    clonedNode.children.push(newRow);
+  });
+
+  if (Object.keys(copyTabMap).length === 1) {
+    // remove tab node
+    if (clonedNode.children?.[0]?.isTabNode) {
+      clonedNode.children.shift();
+    }
+  } else if (Object.keys(copyTabMap).length > 1 && !clonedNode.children?.[0]?.isTabNode) {
+    // add tab node
+    clonedNode.children.unshift({
+      key: nanoid(),
+      parentKey,
+      title: TabRow,
+      isTabNode: true,
+    });
+  }
+  clonedNode.tabMap = copyTabMap;
+  delete clonedNode.buildArrayHelper; // this will be rebuilt when saving to BE
+
+  return clonedNode;
+};
+
+function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disabled, hidden, tabIndex) {
+  mappings.forEach(m => {
+    const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract} = m;
+    const children = [];
+    const currNodeKey = nanoid();
+
+    const nodeToPush = {
+      key: currNodeKey,
+      title: '',
+      parentKey,
+      parentExtract,
+      tabIndex,
+      disabled,
+      hidden,
+      className: hidden && 'hideRow',
+      ...m,
+    };
+
+    treeData.push(nodeToPush);
+
+    if (PRIMITIVE_DATA_TYPES.includes(dataType)) {
+      // nothing to do
+      return;
+    }
+    if (dataType === MAPPING_DATA_TYPES.OBJECT) {
+      if (objMappings) {
+        nodeToPush.children = children;
+
+        iterateForParentTree(objMappings, children, currNodeKey, currNodeExtract, disabled);
+      }
+
+      return;
+    }
+    if (ARRAY_DATA_TYPES.includes(dataType)) {
+      // invalid mappings, nothing to do
+      if (!buildArrayHelper) {
+        return;
+      }
+      let combinedExtract;
+
+      if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+        let multipleSources = false;
+        const tabMap = {}; // to store extract and its tab index map
+        let tabIndex = -1;
+
+        buildArrayHelper.forEach(obj => {
+          const {extract = '$', mappings} = obj;
+          let newExtract = extract;
+
+          //  sourceExtract = extract ? `${sourceExtract ? `${sourceExtract},` : ''}${extract}` : sourceExtract;
+          combinedExtract = `${combinedExtract ? `${combinedExtract},` : ''}${extract}`;
+
+          if (!mappings) {
+            return;
+          }
+
+          // we need this tabMap in case duplicate extracts are
+          // present for different buildArrayHelper
+          tabIndex += 1;
+          if (extract === '$') { // todo ashu handle for $[*] {
+            newExtract = `${extract}_${tabIndex}`;
+          }
+
+          if (multipleSources && !nodeToPush.multipleSources) {
+            tabMap[tabIndex] = newExtract;
+            nodeToPush.multipleSources = true;
+
+            children.unshift({
+              key: nanoid(),
+              parentKey: currNodeKey,
+              title: TabRow,
+              isTabNode: true,
+            });
+            // since the first source is already pushed, all other children should
+            // be hidden now, as we show the first source tab by default
+            iterateForParentTree(mappings, children, currNodeKey, extract, disabled, true, tabIndex);
+          } else {
+            tabMap[tabIndex] = newExtract;
+            multipleSources = true;
+            iterateForParentTree(mappings, children, currNodeKey, extract, disabled, hidden, tabIndex);
+          }
+
+          nodeToPush.children = children;
+          nodeToPush.tabMap = tabMap;
+        });
+
+        nodeToPush.combinedExtract = combinedExtract;
+
+        return;
+      }
+
+      // for primitive array types only extracts are supported, not 'mappings'
+      buildArrayHelper.forEach(obj => {
+        combinedExtract = `${combinedExtract ? `${combinedExtract},` : ''}${obj.extract}`;
+      });
+
+      nodeToPush.combinedExtract = combinedExtract;
+    }
+  });
+
+  return treeData;
+}
+
+export function generateTreeFromV2Mappings(mappings, disabled) {
+  const treeData = [];
+  const emptyRowKey = nanoid();
+
+  // we need empty title to be passed here
+  // for each node as the parent Tree is handling the titleRender for all
+  // if empty title is not set here, then a dummy '---' title gets shown on each row hover
+  const emptyMappingsTree = [{
+    key: emptyRowKey,
+    isEmptyRow: true,
+    title: '',
+    disabled,
+    dataType: MAPPING_DATA_TYPES.STRING,
+  }];
+
+  if (isEmpty(mappings)) {
+    mappings.push({
+      key: emptyRowKey,
+      dataType: MAPPING_DATA_TYPES.STRING,
+    });
+
+    return emptyMappingsTree;
+  }
+
+  return iterateForParentTree(mappings, treeData, '', '', disabled);
+}
+
+// eslint-disable-next-line camelcase
+const mappings_record_to_record = {
+  mappings: [
+    {
+      generate: 'my_first_name',
+      dataType: 'string',
+      extract: '$.fName',
+    },
+    {
+      generate: 'my_last_name',
+      dataType: 'string',
+      // extract: '$.lName',
+      hardCodedValue: 'henderson',
+    },
+    // expressions continue to use handlebars, NOT jsonpath
+    {
+      generate: 'my_full_name',
+      dataType: 'string',
+      extract: '{{record.fName}} {{record.lName}}',
+    },
+    // mapping settings is supported via handlebars only
+    {
+      generate: 'my_custom_setting',
+      dataType: 'string',
+      extract: '{{settings.flow.XYZ}}',
+    },
+    {
+      generate: 'my_mothers_name',
+      dataType: 'object',
+      mappings: [
+        {
+          generate: 'first_name',
+          dataType: 'string',
+          extract: '$.mother.fName',
+        },
+        {
+          generate: 'last_name',
+          dataType: 'string',
+          extract: '$.mother.lName',
+        },
+      ],
+    },
+    {
+      generate: 'my_many_first_names',
+      dataType: 'stringarray',
+      buildArrayHelper: [
+        { extract: '$.fname' },
+        { extract: '$.altFirstName'},
+        { extract: '$.additionalFirstNames' },
+      ],
+    },
+    {
+      generate: 'two_of_my_fav_names',
+      dataType: 'objectarray',
+      buildArrayHelper: [
+        {
+          mappings: [
+            {
+              generate: 'my_first_name',
+              dataType: 'string',
+              extract: '$.fName',
+            },
+            {
+              generate: 'my_last_name',
+              dataType: 'string',
+              extract: '$.lName',
+            },
+          ],
+        },
+        {
+          mappings: [
+            {
+              generate: 'my_first_name',
+              dataType: 'string',
+              extract: '$.altFirstName',
+            },
+            {
+              generate: 'my_last_name',
+              dataType: 'string',
+              extract: '$.lName',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      generate: 'my_siblings',
+      dataType: 'objectarray',
+      buildArrayHelper: [
+        {
+          extract: '$.siblings[*]',
+          mappings: [
+            {
+              generate: 'sibling_first_name',
+              dataType: 'string',
+              extract: '$.siblings.fName',
+            },
+            {
+              generate: 'sibling_last_name',
+              dataType: 'string',
+              extract: '$.siblings.lName',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      generate: 'all_the_children',
+      dataType: 'objectarray',
+      buildArrayHelper: [
+        {
+          extract: '$.siblings[*].children[*]',
+          mappings: [
+            {
+              generate: 'first_name',
+              dataType: 'string',
+              extract: '$.siblings.children.fName',
+            },
+            {
+              generate: 'last_name',
+              dataType: 'string',
+              extract: '$.siblings.lName',
+            },
+            {
+              generate: 'full_name',
+              dataType: 'string',
+              extract: '{{record.siblings.children.fName}} {{record.siblings.lName}}',
+            },
+          ],
+        },
+        {
+          extract: '$.children[*]',
+          mappings: [
+            {
+              generate: 'my_child_first_name',
+              dataType: 'string',
+              extract: '$.children.firstName',
+            },
+            {
+              generate: 'my_child_last_name',
+              dataType: 'string',
+              extract: '$.lName',
+            },
+            {
+              generate: 'full_name',
+              dataType: 'string',
+              extract: '{{record.children.firstName}} {{record.lName}}',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      generate: 'family_tree_from_mom_perspective',
+      dataType: 'object',
+      mappings: [
+        {
+          generate: 'first_name',
+          dataType: 'string',
+          extract: '$.mother.fName',
+        },
+        {
+          generate: 'last_name',
+          dataType: 'string',
+          extract: '$.mother.lName',
+        },
+        {
+          generate: 'children',
+          dataType: 'objectarray',
+          buildArrayHelper: [
+            {
+              extract: '$.siblings[*]',
+              mappings: [
+                {
+                  generate: 'first_name',
+                  dataType: 'string',
+                  extract: '$.siblings.fName',
+                },
+                {
+                  generate: 'last_name',
+                  dataType: 'string',
+                  extract: '$.siblings.lName',
+                },
+                {
+                  generate: 'grandchildren',
+                  dataType: 'objectarray',
+                  buildArrayHelper: [
+                    {
+                      extract: '$.siblings.children[*]',
+                      mappings: [
+                        {
+                          generate: 'first_name',
+                          dataType: 'string',
+                          extract: '$.siblings.children.fName',
+                        },
+                        {
+                          generate: 'last_name',
+                          dataType: 'string',
+                          extract: '$.siblings.lName',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              mappings: [
+                {
+                  generate: 'first_name',
+                  dataType: 'string',
+                  extract: '$.fName',
+                },
+                {
+                  generate: 'last_name',
+                  dataType: 'string',
+                  extract: '$.lName',
+                },
+                {
+                  generate: 'grandchildren',
+                  dataType: 'objectarray',
+                  buildArrayHelper: [
+                    {
+                      extract: '$.children[*]',
+                      mappings: [
+                        {
+                          generate: 'first_name',
+                          dataType: 'string',
+                          extract: '$.children.firstName',
+                        },
+                        {
+                          generate: 'last_name',
+                          dataType: 'string',
+                          extract: '$.lName',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    // {
+    //   generate: 'my_nephews_and_nieces_but_maintain_arrays_of_siblings',
+    //   dataType: 'arrayarray',
+    //   buildArrayHelper: [
+    //     {
+    //       extract: '$.siblings[*]',
+    //       mappings: [
+    //         {
+    //           dataType: 'objectarray',
+    //           buildArrayHelper: [
+    //             {
+    //               extract: '$.siblings.children[*]',
+    //               mappings: [
+    //                 {
+    //                   generate: 'first_name',
+    //                   dataType: 'string',
+    //                   extract: '$.siblings.children.firstName',
+    //                 },
+    //                 {
+    //                   generate: 'last_name',
+    //                   dataType: 'string',
+    //                   extract: '$.siblings.lName',
+    //                 },
+    //               ],
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // },
+  ],
+};
+
+export const buildTreeFromResourceV2Mappings = ({
+  importResource,
+  // isFieldMapping = false,
+  // isGroupedSampleData,
+  // isPreviewSuccess,
+  // options = {},
+  // exportResource,
+  disabled,
+}) => {
+  if (!importResource) {
+    return;
+  }
+
+  const v2Mappings = importResource.mappings || mappings_record_to_record.mappings || [];
+
+  // creating deep copy of mapping object to avoid alteration to resource mapping object
+  const v2MappingsCopy = deepClone(v2Mappings);
+
+  // if (isFieldMapping) return v2MappingsCopy;
+
+  // todo ashu handle isRequiredMapping for assistants
+
+  const mappingsTreeData = generateTreeFromV2Mappings(v2MappingsCopy, disabled);
+
+  return mappingsTreeData;
+};
+
+export const hasV2Mappings = treeData => {
+  if (!treeData || !treeData.length || (treeData.length === 1 && treeData[0].isEmptyRow)) {
+    return false;
+  }
+
+  return true;
+};
+
+const buildV2MappingsFromTree = ({v2TreeData, _mappingsToSave}) => {
+  v2TreeData.forEach(mapping => {
+    const {
+      generate,
+      dataType,
+      extract,
+      extractDateFormat,
+      extractDateTimezone,
+      generateDateFormat,
+      generateDateTimezone,
+      hardCodedValue,
+      lookupName,
+      default: mappingDefault,
+      conditional = {},
+      children,
+      combinedExtract,
+      isTabNode} = mapping;
+
+    if (isTabNode || !generate) return;
+
+    const newMapping = {
+      generate,
+      dataType,
+      extract,
+      extractDateFormat,
+      extractDateTimezone,
+      generateDateFormat,
+      generateDateTimezone,
+      hardCodedValue,
+      lookupName,
+      default: mappingDefault,
+      conditional: {
+        when: conditional.when,
+      },
+    };
+
+    if (PRIMITIVE_DATA_TYPES.includes(dataType)) {
+      _mappingsToSave.push(newMapping);
+
+      return;
+    }
+    if (dataType === MAPPING_DATA_TYPES.OBJECT) {
+      // if extract is empty and children exists, then we add sub mappings
+      // else if extract exists, then no sub mappings are needed as we copy from source as is
+      if (!extract && children?.length) {
+        newMapping.mappings = [];
+        buildV2MappingsFromTree({v2TreeData: children, _mappingsToSave: newMapping.mappings});
+      }
+      _mappingsToSave.push(newMapping);
+
+      return;
+    }
+    if (ARRAY_DATA_TYPES.includes(dataType)) {
+      const splitExtracts = combinedExtract?.split(',') || [];
+
+      if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+        const buildArrayHelper = [];
+
+        newMapping.buildArrayHelper = buildArrayHelper;
+
+        if (!splitExtracts.length) {
+          // invalid mapping as no combinedExtracts are given
+          // each extract is mandatory for now
+          return;
+        }
+        if (!children?.length || (children.length === 1 && children[0].isTabNode)) {
+          splitExtracts.forEach(extract => {
+            buildArrayHelper.push({
+              extract,
+            });
+          });
+          _mappingsToSave.push(newMapping);
+
+          return;
+        }
+
+        // both extract and sub mappings exist
+
+        splitExtracts.forEach(extract => {
+          const matchingChildren = children.filter(c => {
+            if (c.parentExtract === extract) {
+              return true;
+            }
+
+            return false;
+          });
+
+          const subMappings = [];
+          const newHelper = {
+            extract,
+            mappings: subMappings,
+          };
+
+          buildArrayHelper.push(newHelper);
+
+          buildV2MappingsFromTree({v2TreeData: matchingChildren, _mappingsToSave: subMappings});
+        });
+        _mappingsToSave.push(newMapping);
+
+        return;
+      }
+
+      // primitive array types
+
+      if (hardCodedValue) {
+        // no buildArrayHelper in this case
+        _mappingsToSave.push(newMapping);
+
+        return;
+      }
+      if (splitExtracts.length) {
+        newMapping.buildArrayHelper = splitExtracts.map(extract => ({
+          extract,
+        }));
+        _mappingsToSave.push(newMapping);
+      } else {
+        // invalid mapping
+      }
+    }
+  });
+};
+
+export const generateFinalV2Mappings = ({v2TreeData}) => {
+  const _mappingsToSave = [];
+
+  if (!hasV2Mappings(v2TreeData)) {
+    return _mappingsToSave;
+  }
+
+  buildV2MappingsFromTree({v2TreeData, _mappingsToSave});
+
+  return _mappingsToSave;
+};
+
+export function allowDrop({ dragNode, dropNode, dropPosition }) {
+  const {parentKey: dragNodeParentKey, isTabNode: dragNodeIsTab} = dragNode;
+  const {key: dropNodeKey, parentKey: dropNodeParentKey, isTabNode: dropNodeIsTab} = dropNode;
+
+  if (dragNodeIsTab || dropNodeIsTab) return false;
+
+  // dropping a child node at the 0th position in the children list
+  if (dropPosition === 0 && dragNodeParentKey === dropNodeKey) return true;
+
+  // nodes can only be dropped at same level
+  if ((dragNodeParentKey && !dropNodeParentKey) ||
+    (!dragNodeParentKey && dropNodeParentKey)) {
+    return false;
+  }
+
+  if (dragNodeParentKey && dropNodeParentKey && dragNodeParentKey !== dropNodeParentKey) {
+    return false;
+  }
+
+  return true;
+}
+
+export const findNodeInTree = (data, prop, value) => {
+  let node;
+  let nodeSubArray;
+  let nodeIndexInSubArray;
+
+  // using lodash forEach here as it provides a way to exit from loop
+  // unlike Array forEach function
+  forEach(data, (item, i, arr) => {
+    if (item[prop] === value) {
+      node = item;
+      nodeSubArray = arr;
+      nodeIndexInSubArray = i;
+
+      // if found exit from loop
+      return false;
+    }
+    if (item.children) {
+      const returnToParent = findNodeInTree(item.children, prop, value);
+
+      node = returnToParent.node;
+      nodeSubArray = returnToParent.nodeSubArray;
+      nodeIndexInSubArray = returnToParent.nodeIndexInSubArray;
+
+      // if found exit from loop
+      if (node) return false;
+    }
+  });
+
+  return {node, nodeSubArray, nodeIndexInSubArray};
+};
+
+export const TYPEOF_TO_DATA_TYPE = {
+  '[object String]': 'string',
+  '[object Number]': 'number',
+  '[object Boolean]': 'boolean',
+  '[object Null]': 'string',
+};
+
+function iterateForExtracts(dataIn, treeData, parentKey, parentFieldName = '', propValues, selectedKeys) {
+  // iterate over all keys and construct the tree
+  Object.keys(dataIn).forEach(property => {
+    if (property in dataIn) {
+      const v = dataIn[property];
+      const type = Object.prototype.toString.apply(v);
+      const key = nanoid();
+      const jsonPath = `${parentFieldName ? `${parentFieldName}.` : ''}${property}`;
+
+      // if the value is already selected, then mark the node selected to highlight it
+      const selected = propValues.includes(jsonPath);
+
+      if (selected) {
+        selectedKeys.push(key);
+      }
+
+      if (type !== '[object Array]' && type !== '[object Object]') {
+        treeData.push({
+          key,
+          parentKey,
+          title: TreeTitle,
+          jsonPath,
+          fieldName: property,
+          dataType: TYPEOF_TO_DATA_TYPE[type],
+        });
+
+        return;
+      }
+
+      if (type === '[object Object]') {
+        const children = [];
+
+        treeData.push({
+          key,
+          parentKey,
+          title: TreeTitle,
+          jsonPath,
+          fieldName: property,
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          children,
+        });
+
+        iterateForExtracts(v, children, key, jsonPath, propValues, selectedKeys);
+
+        return;
+      }
+
+      if (type === '[object Array]') {
+        if (Object.prototype.toString.apply(v[0]) === '[object Object]' && !isEmpty(v[0])) {
+          const children = [];
+
+          treeData.push({
+            key,
+            parentKey,
+            title: TreeTitle,
+            jsonPath: `${jsonPath}[*]`,
+            fieldName: property,
+            dataType: '[object]',
+            children,
+          });
+          const selected = propValues.includes(`${jsonPath}[*]`);
+
+          if (selected) selectedKeys.push(key);
+
+          iterateForExtracts(getUnionObject(v), children, key, `${jsonPath}[*]`, propValues, selectedKeys);
+
+          return;
+        }
+
+        // primitive array
+        const valueType = Object.prototype.toString.apply(v[0]);
+
+        treeData.push({
+          key,
+          parentKey,
+          title: TreeTitle,
+          jsonPath,
+          fieldName: property,
+          dataType: `[${TYPEOF_TO_DATA_TYPE[valueType]}]`,
+        });
+      }
+    }
+  });
+}
+
+export const constructExtractsTree = (dataIn, propValues) => {
+  const treeData = [];
+  const children = [];
+
+  if (!dataIn) return treeData;
+
+  const dataObj = pickFirstObject(dataIn);
+
+  const key = nanoid();
+
+  // add first default $ path
+  treeData.push({
+    key,
+    title: TreeTitle,
+    dataType: Array.isArray(dataIn) ? '[object]' : 'object',
+    fieldName: '$',
+    children,
+  });
+  const selectedKeys = [];
+
+  iterateForExtracts(dataObj, children, key, '', propValues, selectedKeys);
+  // console.log('treeData', treeData);
+
+  return {treeData, selectedKeys};
+};
+
+// this util takes care of filtering the tree when some input
+// is typed into the search
+export const filterExtractsNode = (node, propValue, inputValue) => {
+  // if node is already selected, do not mark it as filtered
+  if (node.selected) return false;
+
+  // if no change has been made in input, then no need to filter
+  // this should work because propValue should get updated once you update the extract field
+  if (propValue === inputValue) return false;
+
+  const searchKey = node.jsonPath || '';
+  const splitInput = inputValue.split(',');
+
+  const newT = splitInput.filter(i => {
+    const inp = i.replace('$.', '');
+
+    // if inp ends with [*], then look for exact match
+    // so that we only highlight the parent row for such cases
+    if (inp.endsWith('[*]')) {
+      if (searchKey.toUpperCase() === inp.toUpperCase()) return true;
+
+      return false;
+    }
+
+    if (inp && searchKey && searchKey.toUpperCase().indexOf(inp.toUpperCase()) > -1) {
+      return true;
+    }
+
+    return false;
+  });
+
+  if (isEmpty(newT)) return false;
+
+  return true;
+};
+
+// this util handles the comma separated values use-case
+// and returns the final input after user selects a node
+export const getFinalSelectedExtracts = (node, inputValue, isArrayType, isGroupedSampleData) => {
+  const prefix = getDefaultExtract(isGroupedSampleData);
+  const {jsonPath = ''} = node;
+  const fullJsonPath = jsonPath ? `${prefix}.${jsonPath}` : prefix;
+  let newValue = fullJsonPath;
+
+  const splitByComma = inputValue.split(',');
+  const valuesLen = splitByComma.length;
+
+  // handle comma separated scenario for array data types
+  if (isArrayType) {
+    const lastChar = inputValue.charAt(inputValue.length - 1);
+
+    // if user has typed comma before selecting new value, we append the new value
+    // else replace the last value after comma
+    if (lastChar === ',') {
+      newValue = inputValue + fullJsonPath;
+    } else {
+      splitByComma[valuesLen - 1] = fullJsonPath;
+      newValue = splitByComma.join(',');
+    }
+  }
+
+  return newValue;
+};
+
+const isV2MappingObjEqual = (_mappingObj1 = {}, _mappingObj2 = {}) => {
+  if ((!isEmpty(_mappingObj1.children) && isEmpty(_mappingObj2.children)) || (isEmpty(_mappingObj1.children) && !isEmpty(_mappingObj2.children))) return false;
+
+  const {
+    key: key1,
+    parentKey: pKey1,
+    title: t1,
+    disabled: d1,
+    parentExtract: p1,
+    mappings: m1,
+    buildArrayHelper: b1,
+    children: c1,
+    isNotEditable: e1,
+    isRequired: req1,
+    hidden: h1,
+    className: cl1,
+    copySource: cs1,
+    tabIndex: ti1,
+    tabMap: tm1,
+    ...mappingObj1
+  } = _mappingObj1;
+  const {
+    key: key2,
+    parentKey: pKey2,
+    title: t2,
+    disabled: d2,
+    parentExtract: p2,
+    mappings: m2,
+    buildArrayHelper: b2,
+    children: c2,
+    isNotEditable: e2,
+    isRequired: req2,
+    hidden: h2,
+    className: cl2,
+    copySource: cs2,
+    tabIndex: ti2,
+    tabMap: tm2,
+    ...mappingObj2
+  } = _mappingObj2;
+
+  const isEqualObj = isEqual(mappingObj1, mappingObj2);
+
+  if (!isEqualObj) return false;
+
+  if (!_mappingObj1.children && !_mappingObj2.children) return isEqualObj;
+
+  // both have children so need to compare children now
+  let isChildrenEqual = true;
+
+  for (let i = 0; i < _mappingObj1.children.length; i += 1) {
+    isChildrenEqual = isV2MappingObjEqual(_mappingObj1.children[i], _mappingObj2.children[i]);
+    if (!isChildrenEqual) {
+      break;
+    }
+  }
+
+  return isChildrenEqual;
+};
+
+export const isV2MappingsChanged = (tree1, tree2) => {
+  let isV2MappingsChanged = tree1.length !== tree2.length;
+
+  if (isV2MappingsChanged) return true;
+
+  // change of order of mappings is treated as Mapping change
+  for (let i = 0; i < tree1.length; i += 1) {
+    isV2MappingsChanged = !isV2MappingObjEqual(tree1[i], tree2[i]);
+    if (isV2MappingsChanged) break;
+  }
+
+  return isV2MappingsChanged;
+};
+
+const isV2MappingsValid = ({
+  v2TreeData,
+  lookups,
+  dupMap = {},
+  duplicateMappings = [],
+  mappingsWithoutGenerates = [],
+  missingExtractGenerateNames = []}) => {
+  v2TreeData.forEach(mapping => {
+    const {parentKey, tabIndex = 0, generate, copySource, extract, dataType, combinedExtract, isTabNode} = mapping;
+
+    if (isTabNode) return;
+
+    if (generate) {
+      const dupKey = parentKey ? `${parentKey}-${tabIndex}-${generate}` : generate;
+
+      if (dupMap[dupKey]) {
+        duplicateMappings.push(generate);
+
+        return;
+      }
+      // eslint-disable-next-line no-param-reassign
+      dupMap[dupKey] = generate;
+    } else {
+      mappingsWithoutGenerates.push(mapping);
+
+      return;
+    }
+
+    let mappingsWithoutExtract;
+
+    if (ARRAY_DATA_TYPES.includes(dataType)) {
+      if (copySource === 'yes' && !combinedExtract) {
+        mappingsWithoutExtract = true;
+      }
+
+      if (!('hardCodedValue' in mapping || combinedExtract)) {
+        mappingsWithoutExtract = true;
+      }
+    } else if (dataType === MAPPING_DATA_TYPES.OBJECT) {
+      // object data type can have empty extract if children are mapped
+      // meaning copySource is false
+      if (copySource === 'yes' && !extract) {
+        mappingsWithoutExtract = true;
+      }
+    } else if (!('hardCodedValue' in mapping || extract)) {
+      mappingsWithoutExtract = true;
+    }
+    if (mappingsWithoutExtract) {
+      if (mapping.lookupName) {
+        const lookup = lookups.find(l => l.name === mapping.lookupName);
+
+        // check if mapping has dynamic lookup
+        if (!lookup || lookup.map) {
+          missingExtractGenerateNames.push(mapping.generate);
+
+          return;
+        }
+      } else {
+        missingExtractGenerateNames.push(mapping.generate);
+
+        return;
+      }
+    }
+
+    if (mapping.children?.length) {
+      isV2MappingsValid({
+        v2TreeData: mapping.children,
+        lookups,
+        dupMap,
+        duplicateMappings,
+        mappingsWithoutGenerates,
+        missingExtractGenerateNames});
+    }
+  });
+};
+
+const validateV2TreeMappings = (v2TreeData, lookups) => {
+  const duplicateMappings = [];
+  const mappingsWithoutGenerates = [];
+  const missingExtractGenerateNames = [];
+
+  isV2MappingsValid({
+    v2TreeData,
+    lookups,
+    duplicateMappings,
+    mappingsWithoutGenerates,
+    missingExtractGenerateNames});
+
+  if (duplicateMappings.length) {
+    return {
+      isSuccess: false,
+      errMessage: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
+        ','
+      )}`,
+    };
+  }
+
+  if (mappingsWithoutGenerates.length) {
+    return {
+      isSuccess: false,
+      errMessage: 'One or more generate fields missing',
+    };
+  }
+
+  if (missingExtractGenerateNames.length) {
+    return {
+      isSuccess: false,
+      errMessage: `Extract Fields missing for field(s): ${missingExtractGenerateNames.join(
+        ','
+      )}`,
+    };
+  }
+
+  return { isSuccess: true };
+};
+
+// this util returns ALL the keys of the tree data in a flat array format
+export const getAllKeys = data => {
+  if (!data) return emptyList;
+  const nestedKeys = data.map(node => {
+    let childKeys = [];
+
+    if (node.children) {
+      childKeys = getAllKeys(node.children);
+    }
+
+    return [childKeys, node.key];
+  });
+
+  return flattenDeep(nestedKeys);
+};
+
+// #endregion
 
 export default {
   getDefaultDataType: value => {
@@ -1396,7 +2646,7 @@ export default {
       return mappings;
   },
 
-  validateMappings: (mappings, lookups) => {
+  validateMappings: (mappings, lookups, v2TreeData) => {
     const duplicateMappings = mappings
       .filter(e => !!e.generate)
       .map(e => e.generate)
@@ -1455,6 +2705,11 @@ export default {
           ','
         )}`,
       };
+    }
+
+    // validate v2 mappings as well
+    if (v2TreeData?.length) {
+      return validateV2TreeMappings(v2TreeData, lookups);
     }
 
     return { isSuccess: true };
@@ -1553,1061 +2808,3 @@ export default {
   // #endregion
 };
 
-// #region Mapper2 utils
-export const getDefaultExtract = isGroupedSampleData => isGroupedSampleData ? '$[*]' : '$';
-
-export const RECORD_AS_INPUT_OPTIONS = [
-  {
-    label: 'Record to record - { } to { }',
-    value: 'recrec',
-  },
-  {
-    label: 'Record to rows - { } to [ ]',
-    value: 'recrow',
-  },
-];
-
-export const ROWS_AS_INPUT_OPTIONS = [
-  {
-    label: 'Rows to record - [ ] to { }',
-    value: 'rowrec',
-  },
-  {
-    label: 'Rows to rows - [ ] to [ ]',
-    value: 'rowrow',
-  },
-];
-
-export const PRIMITIVE_DATA_TYPES = ['string', 'number', 'boolean'];
-export const ARRAY_DATA_TYPES = ['stringarray', 'numberarray', 'booleanarray', 'objectarray'];
-export const DATA_TYPES_OPTIONS =
-[
-  {
-    id: 'string',
-    label: 'string',
-  },
-  {
-    id: 'number',
-    label: 'number',
-  },
-  {
-    id: 'boolean',
-    label: 'boolean',
-  },
-  {
-    id: 'object',
-    label: 'object',
-  },
-  {
-    id: 'stringarray',
-    label: '[string]',
-  },
-  {
-    id: 'numberarray',
-    label: '[number]',
-  },
-  {
-    id: 'booleanarray',
-    label: '[boolean]',
-  },
-  {
-    id: 'objectarray',
-    label: '[object]',
-  },
-];
-
-export const getInputOutputFormat = (isGroupedSampleData, isGroupedOutput) => {
-  if (isGroupedSampleData) {
-    if (isGroupedOutput) {
-      return ROWS_AS_INPUT_OPTIONS[1].label;
-    }
-
-    return ROWS_AS_INPUT_OPTIONS[0].label;
-  } if (isGroupedOutput) {
-    return RECORD_AS_INPUT_OPTIONS[1].label;
-  }
-
-  return RECORD_AS_INPUT_OPTIONS[0].label;
-};
-
-export const hideOtherTabRows = (node, newTabIndex, hidden) => {
-  const clonedNode = deepClone(node);
-
-  if (!clonedNode.children?.length) return clonedNode;
-
-  clonedNode.children = clonedNode.children.map(c => {
-    const clonedChild = {...c};
-
-    if (clonedChild.isTabNode) return clonedChild;
-
-    // if parent is passing hidden as true, then all children should be hidden
-    if (hidden) {
-      clonedChild.hidden = true;
-      clonedChild.className = 'hideRow';
-
-      // update children hidden as well
-      return hideOtherTabRows(clonedChild, newTabIndex, true);
-    }
-
-    // if parent is passing hidden as false explicitly, then all children should be shown
-    if (hidden === false) {
-      delete clonedChild.hidden;
-      delete clonedChild.className;
-
-      // update children as well
-      return hideOtherTabRows(clonedChild, newTabIndex, false);
-    }
-
-    // else if hidden is undefined, then check on the tab index
-    if (clonedChild.tabIndex !== newTabIndex) {
-      clonedChild.hidden = true;
-      clonedChild.className = 'hideRow';
-
-      // update children hidden as well
-      return hideOtherTabRows(clonedChild, newTabIndex, true);
-    }
-    delete clonedChild.hidden;
-    delete clonedChild.className;
-
-    // update children as well
-    return hideOtherTabRows(clonedChild, newTabIndex, false);
-  });
-
-  return clonedNode;
-};
-
-// this util is for objectarray data type nodes when multiple extracts are given
-// to reconstruct the whole children and tabMap
-export const rebuildNode = (node, extract) => {
-  const splitExtracts = extract.split(',');
-
-  // if no extract, return
-  if (!splitExtracts || !splitExtracts.length) return node;
-
-  // update hidden prop and only show 0th tab children
-  const clonedNode = hideOtherTabRows(node, 0);
-
-  const {key: parentKey, multipleSources, tabMap = {}} = clonedNode;
-
-  const copyTabMap = {};
-
-  // for each extract, keep the tabMap if exists, else add new
-  splitExtracts.forEach((extract, index) => {
-    const uniqueExtract = extract === '$' ? `${extract}_${index}` : extract; // todo ashu handle $[8]
-
-    if (index > 0 && !multipleSources) {
-      clonedNode.multipleSources = true;
-    }
-
-    if (tabMap[index] === uniqueExtract) {
-      // add in the new copyTabMap
-      copyTabMap[index] = uniqueExtract;
-    }
-  });
-
-  // filter the children array and only keep the ones which
-  // have the parentExtract same as one of the given extracts
-  clonedNode.children = clonedNode.children.filter(child => {
-    const {parentExtract = '$'} = child;
-
-    if (child.isTabNode) return true;
-
-    if (splitExtracts[child.tabIndex] === (parentExtract || '$')) {
-      return true;
-    }
-
-    return false;
-  });
-
-  // find left over extracts so that new children rows can be pushed
-  splitExtracts.forEach((s, index) => {
-    if (copyTabMap[index]) return;
-    copyTabMap[index] = s === '$' ? `${s}_${index}` : s; // todo ashu handle $[*]
-    const hidden = index > 0;
-    const newRow = {
-      key: nanoid(),
-      title: '',
-      parentKey,
-      parentExtract: s,
-      tabIndex: index,
-      dataType: 'string',
-      hidden, // hiding the new rows if those are not in 0th tab
-      className: hidden && 'hideRow',
-    };
-
-    clonedNode.children.push(newRow);
-  });
-
-  if (Object.keys(copyTabMap).length === 1) {
-    // remove tab node
-    if (clonedNode.children?.[0]?.isTabNode) {
-      clonedNode.children.shift();
-    }
-  } else if (Object.keys(copyTabMap).length > 1 && !clonedNode.children?.[0]?.isTabNode) {
-    // add tab node
-    clonedNode.children.unshift({
-      key: nanoid(),
-      parentKey,
-      title: TabRow,
-      isTabNode: true,
-    });
-  }
-  clonedNode.tabMap = copyTabMap;
-  delete clonedNode.buildArrayHelper; // this will be rebuilt when saving to BE
-
-  return clonedNode;
-};
-
-function iterateForParentTree(mappings, treeData, parentKey, parentExtract, disabled, hidden, tabIndex) {
-  mappings.forEach(m => {
-    const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract} = m;
-    const children = [];
-    const currNodeKey = nanoid();
-
-    const nodeToPush = {
-      key: currNodeKey,
-      title: '',
-      parentKey,
-      parentExtract,
-      tabIndex,
-      disabled,
-      hidden,
-      className: hidden && 'hideRow',
-      ...m,
-    };
-
-    treeData.push(nodeToPush);
-
-    if (PRIMITIVE_DATA_TYPES.includes(dataType)) {
-      // nothing to do
-      return;
-    }
-    if (dataType === 'object') {
-      if (objMappings) {
-        nodeToPush.children = children;
-
-        iterateForParentTree(objMappings, children, currNodeKey, currNodeExtract, disabled);
-      }
-
-      return;
-    }
-    if (ARRAY_DATA_TYPES.includes(dataType)) {
-      // invalid mappings, nothing to do
-      if (!buildArrayHelper) {
-        return;
-      }
-      let combinedExtract;
-
-      if (dataType === 'objectarray') {
-        let multipleSources = false;
-        const tabMap = {}; // to store extract and its tab index map
-        let tabIndex = -1;
-
-        buildArrayHelper.forEach(obj => {
-          const {extract = '$', mappings} = obj;
-          let newExtract = extract;
-
-          //  sourceExtract = extract ? `${sourceExtract ? `${sourceExtract},` : ''}${extract}` : sourceExtract;
-          combinedExtract = `${combinedExtract ? `${combinedExtract},` : ''}${extract}`;
-
-          if (!mappings) {
-            return;
-          }
-
-          // we need this tabMap in case duplicate extracts are
-          // present for different buildArrayHelper
-          tabIndex += 1;
-          if (extract === '$') { // todo ashu handle for $[*] {
-            newExtract = `${extract}_${tabIndex}`;
-          }
-
-          if (multipleSources && !nodeToPush.multipleSources) {
-            tabMap[tabIndex] = newExtract;
-            nodeToPush.multipleSources = true;
-
-            children.unshift({
-              key: nanoid(),
-              parentKey: currNodeKey,
-              title: TabRow,
-              isTabNode: true,
-            });
-            // since the first source is already pushed, all other children should
-            // be hidden now, as we show the first source tab by default
-            iterateForParentTree(mappings, children, currNodeKey, extract, disabled, true, tabIndex);
-          } else {
-            tabMap[tabIndex] = newExtract;
-            multipleSources = true;
-            iterateForParentTree(mappings, children, currNodeKey, extract, disabled, hidden, tabIndex);
-          }
-
-          nodeToPush.children = children;
-          nodeToPush.tabMap = tabMap;
-        });
-
-        nodeToPush.combinedExtract = combinedExtract;
-
-        return;
-      }
-
-      // for primitive array types only extracts are supported, not 'mappings'
-      buildArrayHelper.forEach(obj => {
-        combinedExtract = `${combinedExtract ? `${combinedExtract},` : ''}${obj.extract}`;
-      });
-
-      nodeToPush.combinedExtract = combinedExtract;
-    }
-  });
-
-  return treeData;
-}
-
-export function generateTreeFromV2Mappings(mappings, disabled) {
-  const treeData = [];
-  const emptyRowKey = nanoid();
-
-  // we need empty title to be passed here
-  // for each node as the parent Tree is handling the titleRender for all
-  // if empty title is not set here, then a dummy '---' title gets shown on each row hover
-  const emptyMappingsTree = [{
-    key: emptyRowKey,
-    isEmptyRow: true,
-    title: '',
-    disabled,
-    dataType: 'string',
-  }];
-
-  if (isEmpty(mappings)) {
-    mappings.push({
-      key: emptyRowKey,
-      dataType: 'string',
-    });
-
-    return emptyMappingsTree;
-  }
-
-  return iterateForParentTree(mappings, treeData, '', '', disabled);
-}
-
-// eslint-disable-next-line camelcase
-const mappings_record_to_record = {
-  mappings: [
-    {
-      generate: 'my_first_name',
-      dataType: 'string',
-      extract: '$.fName',
-    },
-    {
-      generate: 'my_last_name',
-      dataType: 'string',
-      // extract: '$.lName',
-      hardCodedValue: 'henderson',
-    },
-    // expressions continue to use handlebars, NOT jsonpath
-    {
-      generate: 'my_full_name',
-      dataType: 'string',
-      extract: '{{record.fName}} {{record.lName}}',
-    },
-    // mapping settings is supported via handlebars only
-    {
-      generate: 'my_custom_setting',
-      dataType: 'string',
-      extract: '{{settings.flow.XYZ}}',
-    },
-    {
-      generate: 'my_mothers_name',
-      dataType: 'object',
-      mappings: [
-        {
-          generate: 'first_name',
-          dataType: 'string',
-          extract: '$.mother.fName',
-        },
-        {
-          generate: 'last_name',
-          dataType: 'string',
-          extract: '$.mother.lName',
-        },
-      ],
-    },
-    {
-      generate: 'my_many_first_names',
-      dataType: 'stringarray',
-      buildArrayHelper: [
-        { extract: '$.fname' },
-        { extract: '$.altFirstName'},
-        { extract: '$.additionalFirstNames' },
-      ],
-    },
-    {
-      generate: 'two_of_my_fav_names',
-      dataType: 'objectarray',
-      buildArrayHelper: [
-        {
-          mappings: [
-            {
-              generate: 'my_first_name',
-              dataType: 'string',
-              extract: '$.fName',
-            },
-            {
-              generate: 'my_last_name',
-              dataType: 'string',
-              extract: '$.lName',
-            },
-          ],
-        },
-        {
-          mappings: [
-            {
-              generate: 'my_first_name',
-              dataType: 'string',
-              extract: '$.altFirstName',
-            },
-            {
-              generate: 'my_last_name',
-              dataType: 'string',
-              extract: '$.lName',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      generate: 'my_siblings',
-      dataType: 'objectarray',
-      buildArrayHelper: [
-        {
-          extract: '$.siblings[*]',
-          mappings: [
-            {
-              generate: 'sibling_first_name',
-              dataType: 'string',
-              extract: '$.siblings.fName',
-            },
-            {
-              generate: 'sibling_last_name',
-              dataType: 'string',
-              extract: '$.siblings.lName',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      generate: 'all_the_children',
-      dataType: 'objectarray',
-      buildArrayHelper: [
-        {
-          extract: '$.siblings[*].children[*]',
-          mappings: [
-            {
-              generate: 'first_name',
-              dataType: 'string',
-              extract: '$.siblings.children.fName',
-            },
-            {
-              generate: 'last_name',
-              dataType: 'string',
-              extract: '$.siblings.lName',
-            },
-            {
-              generate: 'full_name',
-              dataType: 'string',
-              extract: '{{record.siblings.children.fName}} {{record.siblings.lName}}',
-            },
-          ],
-        },
-        {
-          extract: '$.children[*]',
-          mappings: [
-            {
-              generate: 'my_child_first_name',
-              dataType: 'string',
-              extract: '$.children.firstName',
-            },
-            {
-              generate: 'my_child_last_name',
-              dataType: 'string',
-              extract: '$.lName',
-            },
-            {
-              generate: 'full_name',
-              dataType: 'string',
-              extract: '{{record.children.firstName}} {{record.lName}}',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      generate: 'family_tree_from_mom_perspective',
-      dataType: 'object',
-      mappings: [
-        {
-          generate: 'first_name',
-          dataType: 'string',
-          extract: '$.mother.fName',
-        },
-        {
-          generate: 'last_name',
-          dataType: 'string',
-          extract: '$.mother.lName',
-        },
-        {
-          generate: 'children',
-          dataType: 'objectarray',
-          buildArrayHelper: [
-            {
-              extract: '$.siblings[*]',
-              mappings: [
-                {
-                  generate: 'first_name',
-                  dataType: 'string',
-                  extract: '$.siblings.fName',
-                },
-                {
-                  generate: 'last_name',
-                  dataType: 'string',
-                  extract: '$.siblings.lName',
-                },
-                {
-                  generate: 'grandchildren',
-                  dataType: 'objectarray',
-                  buildArrayHelper: [
-                    {
-                      extract: '$.siblings.children[*]',
-                      mappings: [
-                        {
-                          generate: 'first_name',
-                          dataType: 'string',
-                          extract: '$.siblings.children.fName',
-                        },
-                        {
-                          generate: 'last_name',
-                          dataType: 'string',
-                          extract: '$.siblings.lName',
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              mappings: [
-                {
-                  generate: 'first_name',
-                  dataType: 'string',
-                  extract: '$.fName',
-                },
-                {
-                  generate: 'last_name',
-                  dataType: 'string',
-                  extract: '$.lName',
-                },
-                {
-                  generate: 'grandchildren',
-                  dataType: 'objectarray',
-                  buildArrayHelper: [
-                    {
-                      extract: '$.children[*]',
-                      mappings: [
-                        {
-                          generate: 'first_name',
-                          dataType: 'string',
-                          extract: '$.children.firstName',
-                        },
-                        {
-                          generate: 'last_name',
-                          dataType: 'string',
-                          extract: '$.lName',
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    // {
-    //   generate: 'my_nephews_and_nieces_but_maintain_arrays_of_siblings',
-    //   dataType: 'arrayarray',
-    //   buildArrayHelper: [
-    //     {
-    //       extract: '$.siblings[*]',
-    //       mappings: [
-    //         {
-    //           dataType: 'objectarray',
-    //           buildArrayHelper: [
-    //             {
-    //               extract: '$.siblings.children[*]',
-    //               mappings: [
-    //                 {
-    //                   generate: 'first_name',
-    //                   dataType: 'string',
-    //                   extract: '$.siblings.children.firstName',
-    //                 },
-    //                 {
-    //                   generate: 'last_name',
-    //                   dataType: 'string',
-    //                   extract: '$.siblings.lName',
-    //                 },
-    //               ],
-    //             },
-    //           ],
-    //         },
-    //       ],
-    //     },
-    //   ],
-    // },
-  ],
-};
-
-export const buildTreeFromResourceV2Mappings = ({
-  importResource,
-  // isFieldMapping = false,
-  // isGroupedSampleData,
-  // isPreviewSuccess,
-  // options = {},
-  // exportResource,
-  disabled,
-}) => {
-  if (!importResource) {
-    return;
-  }
-
-  const v2Mappings = importResource.mappings || mappings_record_to_record.mappings || [];
-
-  // creating deep copy of mapping object to avoid alteration to resource mapping object
-  const v2MappingsCopy = deepClone(v2Mappings);
-
-  // if (isFieldMapping) return v2MappingsCopy;
-
-  // todo ashu handle isRequiredMapping for assistants
-
-  const mappingsTreeData = generateTreeFromV2Mappings(v2MappingsCopy, disabled);
-
-  return mappingsTreeData;
-};
-
-const KEYS_SPECIFIC_TO_UI_TREE = [
-  'key',
-  'title',
-  'parentKey',
-  'parentExtract',
-  'tabIndex',
-  'combinedExtract',
-  'className',
-  'hidden',
-  'disabled',
-  'copySource',
-  'children',
-  'tabMap',
-];
-
-export const generateV2MappingsFromTree = ({v2TreeData = []}) => {
-  // console.log('v2TreeData', v2TreeData);
-
-  const _mappingsV2 = v2TreeData.map(node => {
-    let _node = deepClone(node);
-
-    const {dataType, isTabNode} = _node;
-
-    if (isTabNode) return;
-
-    if (PRIMITIVE_DATA_TYPES.includes(dataType)) {
-      // remove tree specific keys
-      _node = omit(_node, KEYS_SPECIFIC_TO_UI_TREE);
-
-      return _node;
-    }
-    if (dataType === 'object') {
-      const {children} = _node;
-      const _mappings = generateV2MappingsFromTree({v2TreeData: children});
-
-      // remove tree specific keys
-      _node = omit(_node, KEYS_SPECIFIC_TO_UI_TREE);
-      _node.mappings = _mappings;
-      delete _node.buildArrayHelper;
-
-      return _node;
-    }
-    // if (ARRAY_DATA_TYPES.includes(dataType)) {
-    //   const {children, combinedExtract} = _node;
-    //   const splitExtracts = combinedExtract?.split(',') || [];
-
-    //   if (dataType === 'objectarray') {
-    //     const buildArrayHelper = [];
-
-    //     splitExtracts.forEach((extract, index) => {
-    //       const subMappings = [];
-
-    //       buildArrayHelper[index] = {
-    //         extract,
-    //         mappings: subMappings,
-    //       };
-
-    //       children.forEach(c => {
-    //         if (c.isTabNode) return;
-    //         if (c.parentExtract === extract) {
-    //           subMappings.push();
-    //         }
-    //       });
-    //       _node.buildArrayHelper = buildArrayHelper;
-    //     });
-
-    //     // remove tree specific keys
-    //     _node = omit(_node, KEYS_SPECIFIC_TO_UI_TREE);
-    //     delete _node.mappings;
-
-    //     return _node;
-    //   }
-    //   // primitive array types
-
-    //   if (splitExtracts.length) {
-    //     _node.buildArrayHelper = splitExtracts.map(extract => ({
-    //       extract,
-    //     }));
-    //   } else {
-    //     delete _node.buildArrayHelper;
-    //   }
-    //   // remove tree specific keys
-    //   _node = omit(_node, KEYS_SPECIFIC_TO_UI_TREE);
-    //   delete _node.mappings;
-
-    //   return _node;
-    // }
-
-    return _node;
-  });
-
-  // console.log('_mappingsV2', _mappingsV2);
-
-  return _mappingsV2;
-};
-
-export function allowDrop({ dragNode, dropNode, dropPosition }) {
-  const {parentKey: dragNodeParentKey, isTabNode: dragNodeIsTab} = dragNode;
-  const {key: dropNodeKey, parentKey: dropNodeParentKey, isTabNode: dropNodeIsTab} = dropNode;
-
-  if (dragNodeIsTab || dropNodeIsTab) return false;
-
-  // dropping a child node at the 0th position in the children list
-  if (dropPosition === 0 && dragNodeParentKey === dropNodeKey) return true;
-
-  // nodes can only be dropped at same level
-  if ((dragNodeParentKey && !dropNodeParentKey) ||
-    (!dragNodeParentKey && dropNodeParentKey)) {
-    return false;
-  }
-
-  if (dragNodeParentKey && dropNodeParentKey && dragNodeParentKey !== dropNodeParentKey) {
-    return false;
-  }
-
-  return true;
-}
-
-export const findNodeInTree = (data, prop, value) => {
-  let node;
-  let nodeSubArray;
-  let nodeIndexInSubArray;
-
-  // using lodash forEach here as it provides a way to exit from loop
-  // unlike Array forEach function
-  forEach(data, (item, i, arr) => {
-    if (item[prop] === value) {
-      node = item;
-      nodeSubArray = arr;
-      nodeIndexInSubArray = i;
-
-      // if found exit from loop
-      return false;
-    }
-    if (item.children) {
-      const returnToParent = findNodeInTree(item.children, prop, value);
-
-      node = returnToParent.node;
-      nodeSubArray = returnToParent.nodeSubArray;
-      nodeIndexInSubArray = returnToParent.nodeIndexInSubArray;
-
-      // if found exit from loop
-      if (node) return false;
-    }
-  });
-
-  return {node, nodeSubArray, nodeIndexInSubArray};
-};
-
-export const TYPEOF_TO_DATA_TYPE = {
-  '[object String]': 'string',
-  '[object Number]': 'number',
-  '[object Boolean]': 'boolean',
-  '[object Null]': 'string',
-};
-
-function iterateForExtracts(dataIn, treeData, parentKey, parentFieldName = '', propValues, selectedKeys) {
-  // iterate over all keys and construct the tree
-  Object.keys(dataIn).forEach(property => {
-    if (property in dataIn) {
-      const v = dataIn[property];
-      const type = Object.prototype.toString.apply(v);
-      const key = nanoid();
-      const jsonPath = `${parentFieldName ? `${parentFieldName}.` : ''}${property}`;
-
-      // if the value is already selected, then mark the node selected to highlight it
-      const selected = propValues.includes(jsonPath);
-
-      if (selected) {
-        selectedKeys.push(key);
-      }
-
-      if (type !== '[object Array]' && type !== '[object Object]') {
-        treeData.push({
-          key,
-          parentKey,
-          title: TreeTitle,
-          jsonPath,
-          fieldName: property,
-          dataType: TYPEOF_TO_DATA_TYPE[type],
-        });
-
-        return;
-      }
-
-      if (type === '[object Object]') {
-        const children = [];
-
-        treeData.push({
-          key,
-          parentKey,
-          title: TreeTitle,
-          jsonPath,
-          fieldName: property,
-          dataType: 'object',
-          children,
-        });
-
-        iterateForExtracts(v, children, key, jsonPath, propValues, selectedKeys);
-
-        return;
-      }
-
-      if (type === '[object Array]') {
-        if (Object.prototype.toString.apply(v[0]) === '[object Object]' && !isEmpty(v[0])) {
-          const children = [];
-
-          treeData.push({
-            key,
-            parentKey,
-            title: TreeTitle,
-            jsonPath: `${jsonPath}[*]`,
-            fieldName: property,
-            dataType: '[object]',
-            children,
-          });
-          const selected = propValues.includes(`${jsonPath}[*]`);
-
-          if (selected) selectedKeys.push(key);
-
-          iterateForExtracts(getUnionObject(v), children, key, `${jsonPath}[*]`, propValues, selectedKeys);
-
-          return;
-        }
-
-        // primitive array
-        const valueType = Object.prototype.toString.apply(v[0]);
-
-        treeData.push({
-          key,
-          parentKey,
-          title: TreeTitle,
-          jsonPath,
-          fieldName: property,
-          dataType: `[${TYPEOF_TO_DATA_TYPE[valueType]}]`,
-        });
-      }
-    }
-  });
-}
-
-export const constructExtractsTree = (dataIn, propValues) => {
-  const treeData = [];
-  const children = [];
-
-  if (!dataIn) return treeData;
-
-  const dataObj = pickFirstObject(dataIn);
-
-  const key = nanoid();
-
-  // add first default $ path
-  treeData.push({
-    key,
-    title: TreeTitle,
-    dataType: Array.isArray(dataIn) ? '[object]' : 'object',
-    fieldName: '$',
-    children,
-  });
-  const selectedKeys = [];
-
-  iterateForExtracts(dataObj, children, key, '', propValues, selectedKeys);
-  // console.log('treeData', treeData);
-
-  return {treeData, selectedKeys};
-};
-
-// this util takes care of filtering the tree when some input
-// is typed into the search
-export const filterExtractsNode = (node, propValue, inputValue) => {
-  // if node is already selected, do not mark it as filtered
-  if (node.selected) return false;
-
-  // if no change has been made in input, then no need to filter
-  // this should work because propValue should get updated once you update the extract field
-  if (propValue === inputValue) return false;
-
-  const searchKey = node.jsonPath || '';
-  const splitInput = inputValue.split(',');
-
-  const newT = splitInput.filter(i => {
-    const inp = i.replace('$.', '');
-
-    // if inp ends with [*], then look for exact match
-    // so that we only highlight the parent row for such cases
-    if (inp.endsWith('[*]')) {
-      if (searchKey.toUpperCase() === inp.toUpperCase()) return true;
-
-      return false;
-    }
-
-    if (inp && searchKey && searchKey.toUpperCase().indexOf(inp.toUpperCase()) > -1) {
-      return true;
-    }
-
-    return false;
-  });
-
-  if (isEmpty(newT)) return false;
-
-  return true;
-};
-
-// this util handles the comma separated values use-case
-// and returns the final input after user selects a node
-export const getFinalSelectedExtracts = (node, inputValue, isArrayType, isGroupedSampleData) => {
-  const prefix = getDefaultExtract(isGroupedSampleData);
-  const {jsonPath = ''} = node;
-  const fullJsonPath = jsonPath ? `${prefix}.${jsonPath}` : prefix;
-  let newValue = fullJsonPath;
-
-  const splitByComma = inputValue.split(',');
-  const valuesLen = splitByComma.length;
-
-  // handle comma separated scenario for array data types
-  if (isArrayType) {
-    const lastChar = inputValue.charAt(inputValue.length - 1);
-
-    // if user has typed comma before selecting new value, we append the new value
-    // else replace the last value after comma
-    if (lastChar === ',') {
-      newValue = inputValue + fullJsonPath;
-    } else {
-      splitByComma[valuesLen - 1] = fullJsonPath;
-      newValue = splitByComma.join(',');
-    }
-  }
-
-  return newValue;
-};
-
-const isV2MappingObjEqual = (_mappingObj1 = {}, _mappingObj2 = {}) => {
-  if ((!isEmpty(_mappingObj1.children) && isEmpty(_mappingObj2.children)) || (isEmpty(_mappingObj1.children) && !isEmpty(_mappingObj2.children))) return false;
-
-  const {
-    key: key1,
-    parentKey: pKey1,
-    title: t1,
-    disabled: d1,
-    parentExtract: p1,
-    mappings: m1,
-    buildArrayHelper: b1,
-    children: c1,
-    isNotEditable: e1,
-    isRequired: req1,
-    hidden: h1,
-    className: cl1,
-    copySource: cs1,
-    ...mappingObj1
-  } = _mappingObj1;
-  const {
-    key: key2,
-    parentKey: pKey2,
-    title: t2,
-    disabled: d2,
-    parentExtract: p2,
-    mappings: m2,
-    buildArrayHelper: b2,
-    children: c2,
-    isNotEditable: e2,
-    isRequired: req2,
-    hidden: h2,
-    className: cl2,
-    copySource: cs2,
-    ...mappingObj2
-  } = _mappingObj2;
-
-  const isEqualObj = isEqual(mappingObj1, mappingObj2);
-
-  if (!isEqualObj) return false;
-
-  if (!_mappingObj1.children && !_mappingObj2.children) return isEqualObj;
-
-  // both have children so need to compare children now
-  let isChildrenEqual = true;
-
-  for (let i = 0; i < _mappingObj1.children.length; i += 1) {
-    isChildrenEqual = isV2MappingObjEqual(_mappingObj1.children[i], _mappingObj2.children[i]);
-    if (!isChildrenEqual) {
-      break;
-    }
-  }
-
-  return isChildrenEqual;
-};
-
-export const isV2MappingsChanged = (tree1, tree2) => {
-  let isV2MappingsChanged = tree1.length !== tree2.length;
-
-  if (isV2MappingsChanged) return true;
-
-  // change of order of mappings is treated as Mapping change
-  for (let i = 0; i < tree1.length; i += 1) {
-    isV2MappingsChanged = !isV2MappingObjEqual(tree1[i], tree2[i]);
-    if (isV2MappingsChanged) break;
-  }
-
-  return isV2MappingsChanged;
-};
-
-// this util returns ALL the keys of the tree data in a flat array format
-export const getAllKeys = data => {
-  if (!data) return emptyList;
-  const nestedKeys = data.map(node => {
-    let childKeys = [];
-
-    if (node.children) {
-      childKeys = getAllKeys(node.children);
-    }
-
-    return [childKeys, node.key];
-  });
-
-  return flattenDeep(nestedKeys);
-};
-
-// #endregion

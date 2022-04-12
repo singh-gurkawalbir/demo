@@ -4,7 +4,16 @@ import { differenceWith, isEqual, isEmpty } from 'lodash';
 import deepClone from 'lodash/cloneDeep';
 import { nanoid } from 'nanoid';
 import actionTypes from '../../../actions/types';
-import {isMappingEqual, isV2MappingsChanged, findNodeInTree, PRIMITIVE_DATA_TYPES, ARRAY_DATA_TYPES, getAllKeys, rebuildNode, hideOtherTabRows} from '../../../utils/mapping';
+import {
+  isMappingEqual,
+  isV2MappingsChanged,
+  findNodeInTree,
+  PRIMITIVE_DATA_TYPES,
+  ARRAY_DATA_TYPES,
+  getAllKeys,
+  rebuildNode,
+  hideOtherTabRows,
+  MAPPING_DATA_TYPES} from '../../../utils/mapping';
 
 const emptyObj = {};
 const emptyArr = [];
@@ -53,7 +62,7 @@ export default (state = {}, action) => {
         }
         break;
       case actionTypes.MAPPING.INIT_COMPLETE: {
-        const isGroupedOutput = !!(v2TreeData?.length === 1 && v2TreeData[0].dataType === 'objectarray' && !v2TreeData[0].generate);
+        const isGroupedOutput = !!(v2TreeData?.length === 1 && v2TreeData[0].dataType === MAPPING_DATA_TYPES.OBJECTARRAY && !v2TreeData[0].generate);
 
         if (isGroupedOutput) {
           v2TreeData[0].generateDisabled = true;
@@ -355,7 +364,7 @@ export default (state = {}, action) => {
           const node = {
             key: newRowKey,
             title: '',
-            dataType: 'objectarray',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generateDisabled: true,
             disabled: draft.mapping.isMonitorLevelAccess,
             children: deepClone(draft.mapping.v2TreeData),
@@ -407,7 +416,7 @@ export default (state = {}, action) => {
             draft.mapping.v2TreeData.push({
               key: emptyRowKey,
               title: '',
-              dataType: 'string',
+              dataType: MAPPING_DATA_TYPES.STRING,
               disabled: draft.mapping.isMonitorLevelAccess,
               isEmptyRow: true,
             });
@@ -430,7 +439,7 @@ export default (state = {}, action) => {
             title: '',
             parentKey: node.parentKey,
             parentExtract: node.parentExtract,
-            dataType: 'string',
+            dataType: MAPPING_DATA_TYPES.STRING,
           });
         }
 
@@ -448,7 +457,7 @@ export default (state = {}, action) => {
 
         const newRowKey = nanoid();
 
-        if (newDataType === 'object' || newDataType === 'objectarray') {
+        if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
           draft.mapping.expandedKeys.push(v2Key);
 
           if (isEmpty(node.children)) {
@@ -457,7 +466,7 @@ export default (state = {}, action) => {
               title: '',
               parentKey: node.key,
               parentExtract: node.extract,
-              dataType: 'string',
+              dataType: MAPPING_DATA_TYPES.STRING,
             }];
           }
           break;
@@ -534,11 +543,9 @@ export default (state = {}, action) => {
             } else {
               delete node.hardCodedValue;
               if (ARRAY_DATA_TYPES.includes(node.dataType)) {
-                delete node.extract; // array data types do not have direct 'extract' prop
-                node.combinedExtract = value;
                 if (node.copySource === 'yes') {
                   node.children = [];
-                } else if (!value && (node.dataType === 'object' || node.dataType === 'objectarray')) {
+                } else if (!value && (node.dataType === MAPPING_DATA_TYPES.OBJECT || node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY)) {
                   // delete all children if extract is empty
                   const newRowKey = nanoid();
 
@@ -547,11 +554,17 @@ export default (state = {}, action) => {
                     title: '',
                     parentKey: node.key,
                     parentExtract: node.extract,
-                    dataType: 'string',
+                    dataType: MAPPING_DATA_TYPES.STRING,
                   }];
-                } else if (value && node.dataType === 'objectarray') {
+                } else if (value && node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
                   // handle tab view
                   nodeSubArray[nodeIndexInSubArray] = rebuildNode(original(node), value);
+                }
+
+                // array data types do not have direct 'extract' prop
+                if (nodeSubArray[nodeIndexInSubArray]) {
+                  delete nodeSubArray[nodeIndexInSubArray].extract;
+                  nodeSubArray[nodeIndexInSubArray].combinedExtract = value;
                 }
               } else {
                 node.extract = value;
@@ -588,7 +601,7 @@ export default (state = {}, action) => {
             delete node.hardCodedValue;
           }
 
-          if (value.dataType === 'object' || value.dataType === 'objectarray') {
+          if (value.dataType === MAPPING_DATA_TYPES.OBJECT || value.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
             if (value.copySource === 'yes') {
               // delete child rows if object is to be copied as is
               node.children = [];
@@ -599,7 +612,7 @@ export default (state = {}, action) => {
                 key: nanoid(),
                 title: '',
                 parentKey: node.key,
-                dataType: 'string',
+                dataType: MAPPING_DATA_TYPES.STRING,
               }];
             }
           } else if (ARRAY_DATA_TYPES.includes(value.dataType)) {

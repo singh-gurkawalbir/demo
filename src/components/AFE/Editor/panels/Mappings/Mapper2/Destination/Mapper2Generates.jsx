@@ -4,7 +4,7 @@ import { FormControl, TextField, Tooltip, MenuItem, Select } from '@material-ui/
 import isLoggableAttr from '../../../../../../../utils/isLoggableAttr';
 import useOnClickOutside from '../../../../../../../hooks/useClickOutSide';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
-import { DATA_TYPES_OPTIONS } from '../../../../../../../utils/mapping';
+import { DATA_TYPES_DROPDOWN_OPTIONS, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import { TooltipTitle } from '../Source/Mapper2ExtractsTypeableSelect';
 
 const useStyles = makeStyles(theme => ({
@@ -81,7 +81,7 @@ function SelectDataType({destDataType, onDataTypeChange, isDisabled}) {
         onChange={onDataTypeChange}
         displayEmpty
         value={destDataType} >
-        {DATA_TYPES_OPTIONS.map(opt => (
+        {DATA_TYPES_DROPDOWN_OPTIONS.map(opt => (
           <MenuItem key={opt.id} value={opt.id}>
             {opt.label}
           </MenuItem>
@@ -93,7 +93,7 @@ function SelectDataType({destDataType, onDataTypeChange, isDisabled}) {
 
 export default function Mapper2Generates(props) {
   const {
-    dataType: destDataType = 'string',
+    dataType: destDataType = MAPPING_DATA_TYPES.STRING,
     id,
     disabled,
     generateDisabled,

@@ -6,6 +6,7 @@ import ArrowDownIcon from '../../../../../../icons/ArrowDownIcon';
 import useOnClickOutside from '../../../../../../../hooks/useClickOutSide';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import ExtractsTree from './ExtractsTree';
+import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -89,7 +90,7 @@ export const TooltipTitle = ({
 };
 
 export default function Mapper2ExtractsTypeableSelect({
-  dataType: destDataType = 'string',
+  dataType: destDataType = MAPPING_DATA_TYPES.STRING,
   id,
   disabled,
   isLoggable,

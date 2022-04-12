@@ -2,6 +2,7 @@
 import { nanoid } from 'nanoid';
 import { adaptorTypeMap } from '../../../../../../../../utils/resource';
 import httpMappingSettings from './http';
+import { MAPPING_DATA_TYPES } from '../../../../../../../../utils/mapping';
 
 const getFormattedLookup = (lookup, formVal, settings) => {
   const lookupTmp = {};
@@ -89,7 +90,7 @@ export default {
 
     if ('dataType' in formVal) {
       // default data type is always string
-      settings.dataType = formVal.dataType || 'string';
+      settings.dataType = formVal.dataType || MAPPING_DATA_TYPES.STRING;
     }
 
     settings.copySource = formVal.copySource;
@@ -109,7 +110,7 @@ export default {
       }
     }
 
-    if ((settings.dataType === 'object' || settings.dataType === 'objectarray') && formVal.copySource === 'no') {
+    if ((settings.dataType === MAPPING_DATA_TYPES.OBJECT || settings.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) && formVal.copySource === 'no') {
       settings.extract = '';
     }
 
@@ -229,7 +230,7 @@ export default {
       }
       settings.conditional.when = formVal.conditionalWhen;
     }
-    if (settings.dataType === 'object' || settings.dataType === 'objectarray') {
+    if (settings.dataType === MAPPING_DATA_TYPES.OBJECT || settings.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
       delete settings.hardCodedValue;
       delete settings.lookupName;
     }

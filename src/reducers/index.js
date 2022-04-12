@@ -82,7 +82,7 @@ import {
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
-import mappingUtil, { constructExtractsTree } from '../utils/mapping';
+import mappingUtil, { constructExtractsTree, hasV2Mappings } from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare, comparer } from '../utils/sort';
@@ -5402,19 +5402,19 @@ selectors.mappingEditorNotification = (state, editorId) => {
   // depend only on the final saved state
   const treeData = selectors.mapping(state)?.v2TreeDataCopy || [];
 
-  let hasV2Mappings;
+  let resourceHasV2Mappings;
 
-  if (!treeData.length || (treeData.length === 1 && treeData[0].isEmptyRow)) {
-    hasV2Mappings = false;
+  if (!hasV2Mappings(treeData)) {
+    resourceHasV2Mappings = false;
   } else {
-    hasV2Mappings = true;
+    resourceHasV2Mappings = true;
   }
   const mappingVersion = selectors.mappingVersion(state);
 
   if (!isMapper2Supported) return emptyObject;
 
   // if v2 mappings exist, no v2 message is shown and only show v1 message
-  if (hasV2Mappings) {
+  if (resourceHasV2Mappings) {
     if (mappingVersion === 2) return emptyObject;
 
     return {

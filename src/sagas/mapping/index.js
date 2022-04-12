@@ -7,7 +7,7 @@ import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
 import {selectors} from '../../reducers';
 import { commitStagedChanges } from '../resources';
-import mappingUtil, {buildTreeFromResourceV2Mappings, generateV2MappingsFromTree} from '../../utils/mapping';
+import mappingUtil, {buildTreeFromResourceV2Mappings, generateFinalV2Mappings} from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
 import { getResourceSubType } from '../../utils/resource';
@@ -390,11 +390,11 @@ export function* saveMappings() {
   }
 
   // save v2 mappings as well
-  const _mappingsV2 = generateV2MappingsFromTree({v2TreeData});
+  const _mappingsV2 = generateFinalV2Mappings({v2TreeData});
 
   patch.push({
     op: _mappingsV2 ? 'replace' : 'add',
-    path: '/mappings',
+    path: '/mappings', // v2 mappings path
     value: _mappingsV2,
   });
 
@@ -543,13 +543,14 @@ export function* previewMappings() {
 export function* validateMappings() {
   const {
     mappings,
+    v2TreeData,
     lookups,
     validationErrMsg,
   } = yield select(selectors.mapping);
   const {
     isSuccess,
     errMessage,
-  } = mappingUtil.validateMappings(mappings, lookups);
+  } = mappingUtil.validateMappings(mappings, lookups, v2TreeData);
   const newValidationErrMsg = isSuccess ? undefined : errMessage;
 
   if (newValidationErrMsg !== validationErrMsg) {
@@ -558,27 +559,6 @@ export function* validateMappings() {
   const {importId} = yield select(selectors.mapping);
 
   yield call(autoEvaluateProcessorWithCancel, { id: `mappings-${importId}` });
-}
-
-export function* validateV2Mappings() {
-  const {
-    mappings,
-    lookups,
-    validationErrMsg,
-  } = yield select(selectors.mapping);
-  const {
-    isSuccess,
-    errMessage,
-  } = mappingUtil.validateMappings(mappings, lookups);
-  const newValidationErrMsg = isSuccess ? undefined : errMessage;
-
-  if (newValidationErrMsg !== validationErrMsg) {
-    yield put(actions.mapping.setValidationMsg(newValidationErrMsg));
-  }
-  const {importId} = yield select(selectors.mapping);
-
-  yield call(autoEvaluateProcessorWithCancel, { id: `mappings-${importId}` });
-  // todo ashu add v2 validations
 }
 
 export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
@@ -762,12 +742,10 @@ export const mappingSagas = [
     actionTypes.MAPPING.DELETE,
     actionTypes.MAPPING.UPDATE_LOOKUP,
     actionTypes.MAPPING.PATCH_SETTINGS,
-  ], validateMappings),
-  takeLatest(actionTypes.MAPPING.AUTO_MAPPER.REQUEST, getAutoMapperSuggestion),
-  takeLatest([
     actionTypes.MAPPING.V2.DELETE_ROW,
     actionTypes.MAPPING.V2.ADD_ROW,
     actionTypes.MAPPING.V2.PATCH_FIELD,
     actionTypes.MAPPING.V2.PATCH_SETTINGS,
-  ], validateV2Mappings),
+  ], validateMappings),
+  takeLatest(actionTypes.MAPPING.AUTO_MAPPER.REQUEST, getAutoMapperSuggestion),
 ];

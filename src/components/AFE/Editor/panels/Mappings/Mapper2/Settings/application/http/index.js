@@ -1,5 +1,5 @@
 import dateTimezones from '../../../../../../../../../utils/dateTimezones';
-import mappingUtil, {ARRAY_DATA_TYPES} from '../../../../../../../../../utils/mapping';
+import mappingUtil, {ARRAY_DATA_TYPES, MAPPING_DATA_TYPES} from '../../../../../../../../../utils/mapping';
 import dateFormats from '../../../../../../../../../utils/dateFormats';
 
 const conditionalOptions = [
@@ -28,7 +28,7 @@ const getDefaultActionOptions = (mappingType, dataType) => {
     },
   ];
 
-  if (dataType === 'object' || dataType === 'objectarray') {
+  if (dataType === MAPPING_DATA_TYPES.OBJECT || dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
     return [
       {
         items: [
@@ -38,7 +38,7 @@ const getDefaultActionOptions = (mappingType, dataType) => {
       },
     ];
   }
-  if (dataType === 'boolean') {
+  if (dataType === MAPPING_DATA_TYPES.BOOLEAN) {
     defaultOptions[0].items.pop();
   }
   if (mappingType === 'hardcodedAction') {

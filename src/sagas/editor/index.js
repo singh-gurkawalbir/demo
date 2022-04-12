@@ -23,7 +23,7 @@ import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
-import mappingUtil from '../../utils/mapping';
+import mappingUtil, { generateFinalV2Mappings } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
 
 /**
@@ -93,19 +93,28 @@ export function* invokeProcessor({ editorId, processor, body }) {
       return (yield select(selectors.mapping))?.preview;
     }
     if (editorType === 'mappings') {
-      const mappings = (yield select(selectors.mapping))?.mappings;
       const lookups = (yield select(selectors.mapping))?.lookups;
-      const importResource = yield select(selectors.resource, 'imports', resourceId);
-      const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+      const mappingVersion = yield select(selectors.mappingVersion);
 
-      _mappings = mappingUtil.generateFieldsAndListMappingForApp({
-        mappings,
-        isGroupedSampleData: Array.isArray(flowSampleData),
-        isPreviewSuccess: !!flowSampleData,
-        importResource,
-        exportResource,
-      });
-      _mappings = {..._mappings, lookups};
+      if (mappingVersion === 2) {
+        const v2TreeData = (yield select(selectors.mapping))?.v2TreeData;
+        const _mappingsV2 = generateFinalV2Mappings({v2TreeData});
+
+        _mappings = {mappings: _mappingsV2, lookups};
+      } else {
+        const mappings = (yield select(selectors.mapping))?.mappings;
+        const importResource = yield select(selectors.resource, 'imports', resourceId);
+        const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+
+        _mappings = mappingUtil.generateFieldsAndListMappingForApp({
+          mappings,
+          isGroupedSampleData: Array.isArray(flowSampleData),
+          isPreviewSuccess: !!flowSampleData,
+          importResource,
+          exportResource,
+        });
+        _mappings = {..._mappings, lookups};
+      }
     } else if (editorType === 'responseMappings') {
       const mappings = (yield select(selectors.responseMapping))?.mappings;
 

@@ -19,6 +19,7 @@ import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import RawHtml from '../../../../../RawHtml';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
+import { MAPPING_DATA_TYPES } from '../../../../../../utils/mapping';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -131,8 +132,8 @@ const Mapper2Row = React.memo(({
   const onDataTypeChange = useCallback(e => {
     const newDataType = e.target.value;
 
-    if ((dataType === 'object' || dataType === 'objectarray') &&
-    newDataType !== 'object' && newDataType !== 'objectarray') {
+    if ((dataType === MAPPING_DATA_TYPES.OBJECT || dataType === MAPPING_DATA_TYPES.OBJECTARRAY) &&
+    newDataType !== MAPPING_DATA_TYPES.OBJECT && newDataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
       const message = `Since only an "object" or "[object]" data type can have child rows, 
       all of this parent record row's child rows will be deleted when your selected data type is applied. 
       <br><br>Are you sure you want to continue?</br></br>`;
@@ -208,7 +209,7 @@ const Mapper2Row = React.memo(({
           />
 
       </div>
-      {dataType === 'object' && !extractValue && copySource === 'no' ? null : (
+      {dataType === MAPPING_DATA_TYPES.OBJECT && !extractValue && copySource === 'no' ? null : (
         <>
           <div className={classes.childHeader}>
             <Mapper2ExtractsTypeableSelect
