@@ -63,7 +63,7 @@ const ScriptLogsDrawerHeader = () => {
 };
 export default function ScriptLogsDrawerRoute() {
   return (
-    <LoadResources required="true" resources="imports, exports, scripts">
+    <LoadResources required="true" resources="imports,exports,scripts">
       <RightDrawer path={drawerPaths.LOGS.SCRIPT} width="full" >
         <ScriptLogsDrawerHeader />
         <ScriptLogsWrapper />

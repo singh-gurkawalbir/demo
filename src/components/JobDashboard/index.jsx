@@ -399,7 +399,7 @@ export default function JobDashboard({
   });
 
   return (
-    <LoadResources required resources="integrations,flows,exports,imports">
+    <LoadResources required integrationId={integrationId} resources="integrations,flows,exports,imports">
       <Filters
         filterKey={filterKey}
         integrationId={integrationId}

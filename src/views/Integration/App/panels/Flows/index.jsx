@@ -371,7 +371,7 @@ const FlowsTable = ({integrationId, childId}) => {
   }), [childId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, sectionId]);
 
   return (
-    <LoadResources required resources="flows,exports">
+    <LoadResources required integrationId={integrationId} resources="flows,exports">
       <CeligoTable
         data={flows}
         filterKey={filterKey}
@@ -409,7 +409,7 @@ function FlowList({ integrationId, childId }) {
   return (
     <>
       <ScheduleDrawer />
-      <QueuedJobsDrawer />
+      <QueuedJobsDrawer integrationId={integrationId} />
       <SettingsDrawer integrationId={integrationId} childId={childId} />
       <MappingDrawer integrationId={integrationId} />
       {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}

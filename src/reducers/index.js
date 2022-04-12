@@ -57,7 +57,8 @@ import {
   NO_ENVIRONMENT_RESOURCE_TYPES,
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
   AFE_SAVE_STATUS,
-  UNASSIGNED_SECTION_NAME} from '../utils/constants';
+  UNASSIGNED_SECTION_NAME,
+} from '../utils/constants';
 import messageStore from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -4708,7 +4709,15 @@ selectors.netsuiteAccountHasSuiteScriptIntegrations = (state, connectionId) => {
 
 selectors.canLinkSuiteScriptIntegrator = (state, connectionId) => {
   const preferences = selectors.userPreferences(state);
+  const permissions = selectors.userPermissions(state);
 
+  const hasAccountLevelEditAccess = [
+    USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+    USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+    USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+  ].includes(permissions.accessLevel);
+
+  if (!hasAccountLevelEditAccess) return false;
   if (preferences && preferences.ssConnectionIds) {
     if (preferences.ssConnectionIds.includes(connectionId)) {
       return true;

@@ -372,7 +372,11 @@ export default function DynaSelectResource(props) {
 
   return (
     <div className={classes.root}>
-      <LoadResources required resources={resourceType !== 'connectorLicenses' ? resourceType : []}>
+      <LoadResources
+        integrationId={integrationId}
+        required
+        resources={resourceType !== 'connectorLicenses' ? resourceType : []}
+      >
         {multiselect ? (
           <DynaMultiSelect
             {...props}
