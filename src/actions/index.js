@@ -2285,6 +2285,12 @@ const integrationLCM = {
         connectionId,
         openOauthConnection,
       }),
+    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId }) =>
+      action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_BUNDLE_INSTALL, {
+        revisionId,
+        connectionId,
+        integrationId,
+      }),
   },
   revisions: {
     request: integrationId => resource.requestCollection(`integrations/${integrationId}/revisions`),

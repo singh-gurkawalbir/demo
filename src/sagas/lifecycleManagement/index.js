@@ -215,6 +215,46 @@ export function* fetchRevisionErrors({integrationId, revisionId }) {
   }
 }
 
+export function* verifyBundleOrPackageInstall({
+  integrationId,
+  connectionId,
+  revisionId,
+}) {
+  const path = `/connections/${connectionId}/distributed`;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      message: 'Verifying Bundle/Package Installation...',
+    });
+  } catch (error) {
+    yield put(actions.integrationLCM.installSteps.updateStep(revisionId, 'failed'));
+
+    return;
+  }
+
+  if (response?.success) {
+    yield put(actions.integrationLCM.installSteps.installStep(integrationId, revisionId));
+  } else if (
+    response &&
+      !response.success &&
+      (response.resBody || response.message)
+  ) {
+    // TODO @Raghu: Why do we need this condition to be handled?
+    // Similar pattern has been used at other places like IA/template install bundle verification
+    yield put(actions.integrationLCM.installSteps.updateStep(revisionId, 'failed'));
+    yield put(
+      actions.api.failure(
+        path,
+        'GET',
+        response.resBody || response.message,
+        false
+      )
+    );
+  }
+}
+
 export default [
   takeLatest(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, requestIntegrationCloneFamily),
   takeLatest(actionTypes.INTEGRATION_LCM.REVISION.CREATE, createRevision),
@@ -225,4 +265,5 @@ export default [
   takeLatest(actionTypes.INTEGRATION_LCM.REVISION.CANCEL, cancelRevision),
   takeLatest(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, installStep),
   takeLatest(actionTypes.INTEGRATION_LCM.REVISION.FETCH_ERRORS, fetchRevisionErrors),
+  takeLatest(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_BUNDLE_INSTALL, verifyBundleOrPackageInstall),
 ];

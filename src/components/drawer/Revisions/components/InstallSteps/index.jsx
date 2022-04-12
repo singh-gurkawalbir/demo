@@ -160,7 +160,7 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
             index={index + 1}
             step={step}
             integrationId={integrationId}
-          />
+            revisionId={revisionId} />
         ))}
       </div>
       <ResourceSetupDrawer
