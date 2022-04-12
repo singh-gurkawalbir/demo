@@ -19,13 +19,8 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.title,
   },
   content: {
-    paddingTop: '10px',
-    paddingBottom: '8px',
-    maxHeight: '300px',
+    padding: theme.spacing(1, 0),
     overflowY: 'auto',
-    fontFamily: 'Roboto400',
-    color: theme.palette.text.primary,
-    fontSize: '14px',
     lineHeight: '22px',
     whiteSpace: 'normal',
     wordBreak: 'break-word',
@@ -150,7 +145,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
         </>
       ) : (
         <>
-          <div className={classes.content}>{children}</div>
+          <Typography variant="subtitle2" component="div" className={classes.content}>{children}</Typography>
           <div className={classes.action}>
             <Typography className={classes.actionTitle}>
               Was this helpful?
