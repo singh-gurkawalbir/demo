@@ -17,7 +17,7 @@ export default function DynaExportSelect(props) {
   );
   const dispatch = useDispatch();
   const onFetch = useCallback(() => {
-    dispatch(actions.exportData.request(kind, key, exportResource));
+    dispatch(actions.exportData.request(kind, key, exportResource, resourceContext));
   }, [dispatch, kind, key, exportResource]);
 
   if (!kind || !key || !exportResource) {
