@@ -50,6 +50,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
   },
   flowTitle: {
+    // TODO: Karthik use flowSectionTitle component
     minHeight: 42,
   },
 }));
@@ -237,7 +238,7 @@ export default function SettingsForm({integrationId: parentIntegrationId, childI
                 activeClassName={classes.activeListItem}
                 to={sectionId}
                 data-test={sectionId}>
-                <CeligoTruncate line={3}>{title}</CeligoTruncate>
+                <CeligoTruncate lines={3}>{title}</CeligoTruncate>
               </NavLink>
             </ListItem>
           ))}
