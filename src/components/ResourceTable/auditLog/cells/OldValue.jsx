@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { hasLongLength } from '../utils';
 import DiffDialog from '../DiffDialog';
 import { TextButton } from '../../../Buttons';
+import { escapeSpecialChars } from '../../../../utils/string';
 
 const useStyles = makeStyles({
   clickBtn: {
@@ -18,7 +19,7 @@ export default function OldValue({ auditLog, oldValue = '', newValue = '' }) {
   const handleClose = useCallback(() => setShowDialog(false), []);
 
   if (!hasLongLength(oldValue, newValue)) {
-    return typeof oldValue === 'string' ? oldValue : JSON.stringify(oldValue);
+    return escapeSpecialChars(oldValue);
   }
 
   return (

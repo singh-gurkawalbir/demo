@@ -29,6 +29,7 @@ export default function DiffPanel({ resourceDiff, titles = {} }) {
     contentText: {
       fontFamily: 'source sans pro semibold',
       color: theme.palette.secondary.light,
+      wordBreak: 'break-word', // @IO-25758 Handles overflow of content incase of huge string which distorts UI
     },
   };
 
