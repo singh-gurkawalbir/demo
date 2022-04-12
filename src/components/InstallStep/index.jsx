@@ -199,7 +199,7 @@ export default function InstallationStep(props) {
         step.isCurrentStep &&
         (step.installURL || step.url) &&
         !isIntegrationApp &&
-        step.connectionId
+        step._connId
       ) {
         dispatch(
           actions.integrationApp.installer.updateStep(
@@ -211,7 +211,7 @@ export default function InstallationStep(props) {
         dispatch(
           actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
             integrationId,
-            step.connectionId,
+            step._connId,
             step.installerFunction,
             isFrameWork2
           )

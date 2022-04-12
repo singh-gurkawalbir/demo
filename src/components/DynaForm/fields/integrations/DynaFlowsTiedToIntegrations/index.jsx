@@ -145,7 +145,7 @@ export default function DynaFlowsTiedToIntegration(props) {
 
   return (
 
-    <LoadResources required resources="flows" >
+    <LoadResources required integrationId={integrationId} resources="flows" >
       <TypeableSelect {...props} disabled={!(selectedIntegrationId || integrationId)} options={options} />
     </LoadResources>
 

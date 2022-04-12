@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import { getTextAfterCount, camelCase, isHTML, getTrimmedTitle, getParsedMessage } from './string';
+import { getTextAfterCount, camelCase, isHTML, getTrimmedTitle, getParsedMessage, escapeSpecialChars } from './string';
 
 describe('getTextAfterCount util test cases', () => {
   test('should return correct string when count is zero', () => {
@@ -97,5 +97,20 @@ describe('getParsedMessage util test cases', () => {
     const message = 'Failed to load search with SearchId: 117865, because That search or mass update does not exist.';
 
     expect(getParsedMessage(message)).toEqual(message);
+  });
+});
+
+describe('escapeSpecialChars util test cases', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(escapeSpecialChars()).toBeUndefined();
+    expect(escapeSpecialChars(null)).toEqual(null);
+  });
+  test('should return correct string with escaped chars if present', () => {
+    expect(escapeSpecialChars('false')).toEqual('false');
+    expect(escapeSpecialChars(true)).toEqual('true');
+    expect(escapeSpecialChars('\n')).toEqual('\\n');
+    expect(escapeSpecialChars('\r\n')).toEqual('\\r\\n');
+    expect(escapeSpecialChars('*')).toEqual('*');
+    expect(escapeSpecialChars({id: '[]'})).toEqual(JSON.stringify({id: '[]'}));
   });
 });

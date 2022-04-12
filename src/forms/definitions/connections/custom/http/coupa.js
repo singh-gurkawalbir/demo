@@ -7,30 +7,38 @@ export default {
       retValues['/http/auth/oauth/clientCredentialsLocation'] = 'body';
       retValues['/http/auth/oauth/grantType'] = 'clientcredentials';
       retValues['/http/auth/oauth/tokenURI'] = `https://${formValues['/http/coupaSubdomain']}.com/oauth2/token`;
-      retValues['/http/auth/oauth/accessTokenBody'] = `{"grant_type": "client_credentials","scope":"${formValues['/http/auth/oauth/scope'].join(' ')}","client_id":"{{{clientId}}}","client_secret":"{{{clientSecret}}}"}`;
+      retValues['/http/auth/oauth/accessTokenBody'] = '{"grant_type": "client_credentials","scope":"{{{join connection.http.auth.oauth.scopeDelimiter connection.http.auth.oauth.scope}}}","client_id":"{{{clientId}}}","client_secret":"{{{clientSecret}}}"}';
       retValues['/http/auth/oauth/accessTokenHeaders'] = [
         {
           name: 'Content-Type',
           value: 'application/x-www-form-urlencoded',
         },
       ];
-      retValues['/http/auth/token/refreshBody'] = `{"grant_type": "client_credentials","scope":"${formValues['/http/auth/oauth/scope'].join(' ')}","client_id":"{{{clientId}}}","client_secret":"{{{clientSecret}}}"}`;
+      retValues['/http/auth/token/refreshBody'] = '{"grant_type": "client_credentials","scope":"{{{join connection.http.auth.oauth.scopeDelimiter connection.http.auth.oauth.scope}}}","client_id":"{{{clientId}}}","client_secret":"{{{clientSecret}}}"}';
       retValues['/http/auth/token/refreshMethod'] = 'POST';
       retValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
       retValues['/http/auth/token/refreshTokenPath'] = 'access_token';
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/headerName'] = 'Authorization';
       retValues['/http/auth/token/scheme'] = 'Bearer';
+      retValues['/http/auth/token/token'] = undefined;
     } else {
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/headerName'] = 'X-COUPA-API-KEY';
       retValues['/http/auth/token/scheme'] = ' ';
-      delete retValues['/http/auth/oauth/authURI'];
       delete retValues['/http/auth/oauth/tokenURI'];
       delete retValues['/http/auth/oauth/scopeDelimiter'];
       delete retValues['/http/auth/oauth/scope'];
       delete retValues['/http/auth/oauth/callbackURL'];
       delete retValues['/http/_iClientId'];
+      delete retValues['/http/auth/token/refreshBody'];
+      delete retValues['/http/auth/token/refreshMethod'];
+      delete retValues['/http/auth/token/refreshMediaType'];
+      delete retValues['/http/auth/token/refreshTokenPath'];
+      delete retValues['/http/auth/oauth/accessTokenBody'];
+      delete retValues['/http/auth/oauth/accessTokenHeaders'];
+      delete retValues['/http/auth/oauth/clientCredentialsLocation'];
+      delete retValues['/http/auth/oauth/grantType'];
     }
 
     return {
@@ -122,7 +130,6 @@ export default {
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
-      helpKey: 'coupa.connection.http.auth.oauth.scope',
       required: true,
       scopes: [
         {
