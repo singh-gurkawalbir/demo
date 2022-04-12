@@ -1,4 +1,3 @@
-import { addYears, startOfDay } from 'date-fns';
 import { REVISION_STATUS, REVISION_TYPES } from '../constants';
 import messageStore from '../messageStore';
 import { comparer, sortJsonByKeys } from '../sort';
@@ -80,8 +79,8 @@ export const DEFAULT_OPTION = 'all';
 
 export const DEFAULT_REVISION_FILTERS = {
   createdAt: {
-    startDate: startOfDay(addYears(new Date(), -1)),
-    preset: 'lastyear',
+    // By default no date is selected, so that all revisions are shown to the user
+    preset: null,
   },
   status: DEFAULT_OPTION,
   user: DEFAULT_OPTION,
