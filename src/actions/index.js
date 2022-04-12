@@ -2284,6 +2284,18 @@ const integrationLCM = {
     installStep: (integrationId, revisionId, stepInfo) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, { revisionId, integrationId, stepInfo }),
     updateStep: (revisionId, status) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.UPDATE, { revisionId, status }),
     completedStepInstall: revisionId => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.DONE, { revisionId }),
+    setOauthConnectionMode: ({ revisionId, connectionId, openOauthConnection }) =>
+      action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.RECEIVED_OAUTH_CONNECTION_STATUS, {
+        revisionId,
+        connectionId,
+        openOauthConnection,
+      }),
+    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId }) =>
+      action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_BUNDLE_INSTALL, {
+        revisionId,
+        connectionId,
+        integrationId,
+      }),
   },
   revisions: {
     request: integrationId => resource.requestCollection(`integrations/${integrationId}/revisions`),
