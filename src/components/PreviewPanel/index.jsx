@@ -104,7 +104,6 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
     selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
   shallowEqual
   );
-  const isLookup = useSelector(state => selectors.isLookUpExport(state, { flowId, resourceId, resourceType }));
   const dispatch = useDispatch();
   const toggleValue = useSelector(state =>
     selectors.typeOfSampleData(state, resourceId)
@@ -155,24 +154,20 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
         </Typography>
 
         <div className={classes.container}>
-          {resourceType === 'imports' || isLookup ? (
+          {resourceType === 'imports' ? (
             <div className={classes.actionGroupWrapper}>
               <ActionGroup position="right">
                 <TextButton onClick={onEditorClick} startIcon={<EditIcon />}>
                   Edit mock input
                 </TextButton>
-                {!isLookup && (
-                <>
-                  <CeligoDivider position="right" />
-                  <TextToggle
-                    value={toggleValue}
-                    onChange={onChange}
-                    exclusive
-                    className={classes.errorDrawerActionToggle}
-                    options={IMPORT_PREVIEW_ERROR_TYPES}
+                <CeligoDivider position="right" />
+                <TextToggle
+                  value={toggleValue}
+                  onChange={onChange}
+                  exclusive
+                  className={classes.errorDrawerActionToggle}
+                  options={IMPORT_PREVIEW_ERROR_TYPES}
                 />
-                </>
-                )}
               </ActionGroup>
             </div>
           ) : ''}

@@ -29,6 +29,7 @@ export default function AuditLog({
   users,
   resourceType,
   resourceId,
+  integrationId,
   onClick,
   isFixed,
   childId,
@@ -59,7 +60,8 @@ export default function AuditLog({
   return (
     <LoadResources
       required
-      resources="integrations, flows, exports, imports, connections">
+      integrationId={integrationId}
+      resources="integrations,flows,exports,imports,connections">
       <>
         {isLoadingAuditLog
           ? <Spinner loading size="large" className={classes.spinnerContainer} /> : (
