@@ -96,8 +96,7 @@ const useStyles = makeStyles(theme => ({
 export default function Subscription() {
   const dispatch = useDispatch();
   const match = useRouteMatch();
-  const enquesnackbar = useEnqueueSnackbar();
-
+  const [enquesnackbar] = useEnqueueSnackbar();
   const history = useHistory();
   const {confirmDialog} = useConfirmDialog();
   const licenseActionDetails = useSelector(state =>
