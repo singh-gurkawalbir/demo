@@ -91,7 +91,7 @@ export default function AttachFlows({ integrationId, flowGroupingId }) {
           <div>
             <LoadResources
               required
-              resources="flows, connections, exports, imports">
+              resources="flows,connections,exports,imports">
               <CeligoTable
                 data={flows}
                 onSelectChange={handleSelectChange}

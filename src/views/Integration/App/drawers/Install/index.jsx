@@ -452,11 +452,11 @@ export default function ConnectorInstallation(props) {
           )
         );
 
-        if (!_connectorId && step.connectionId) {
+        if (!_connectorId && step._connId) {
           dispatch(
             actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
               integrationId,
-              step.connectionId,
+              step._connId,
               installerFunction,
               isFrameWork2
             )

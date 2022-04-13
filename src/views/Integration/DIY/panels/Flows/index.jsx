@@ -186,7 +186,7 @@ const FlowListingTable = ({
         />
       </Grid>
       <Grid item className={classes.content}>
-        <LoadResources required resources="flows">
+        <LoadResources integrationId={integrationId} required resources="flows">
           <CeligoTable
             data={groupedFlows}
             filterKey={filterKey}
@@ -429,7 +429,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         <MappingDrawerRoute integrationId={integrationId} />
         {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}
         <ScheduleDrawer />
-        <QueuedJobsDrawer />
+        <QueuedJobsDrawer integrationId={integrationId} />
         <FlowgroupDrawer integrationId={integrationId} />
 
         <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoTextFlow} className={classes.flowPanelTitle}>
@@ -473,7 +473,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           </Typography>
         ) : ''}
 
-        <LoadResources required resources="flows, exports">
+        <LoadResources required integrationId={integrationId} resources="flows,exports">
           <FlowListing
             integrationId={currentIntegrationId}
             filterKey={filterKey}
