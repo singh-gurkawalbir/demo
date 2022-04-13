@@ -2,11 +2,7 @@ export default {
   compact: {
     gridTemplateColumns: '1fr auto 1fr',
     gridTemplateRows: '1fr auto 1fr auto 0fr',
-    gridTemplateAreas: `"rule dragBar_v_0 data"
-                        "rule dragBar_v_0 dragBar_h_0"
-                        "rule dragBar_v_0 result"
-                        "dragBar_h_1 dragBar_h_1 dragBar_h_1"
-                        "error error error"`,
+    gridTemplateAreas: '"rule dragBar_v_0 data" "rule dragBar_v_0 dragBar_h_0" "rule dragBar_v_0 result" "dragBar_h_1 dragBar_h_1 dragBar_h_1"  "error error error"',
   },
   compact2: {
     gridTemplateColumns: '1fr 1fr',
