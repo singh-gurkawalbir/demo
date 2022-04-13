@@ -264,8 +264,8 @@ const resource = {
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
   collectionRequestSent: (resourceType, integrationId) =>
     action(actionTypes.RESOURCE.COLLECTION_REQUEST_SENT, {integrationId, resourceType}),
-  collectionRequestSucceeded: params => action(actionTypes.RESOURCE.COLLECTION_REQUEST_SUCCEEDED, params),
-  collectionRequestFailed: params => action(actionTypes.RESOURCE.COLLECTION_REQUEST_FAILED, params),
+  collectionRequestSucceeded: ({ resourceType, integrationId }) => action(actionTypes.RESOURCE.COLLECTION_REQUEST_SUCCEEDED, { resourceType, integrationId }),
+  collectionRequestFailed: ({resourceType, integrationId}) => action(actionTypes.RESOURCE.COLLECTION_REQUEST_FAILED, {resourceType, integrationId}),
 
   updated: (resourceType, resourceId, master, patch, context) =>
     action(actionTypes.RESOURCE.UPDATED, {
@@ -2298,6 +2298,18 @@ const integrationLCM = {
     installStep: (integrationId, revisionId, stepInfo) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, { revisionId, integrationId, stepInfo }),
     updateStep: (revisionId, status) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.UPDATE, { revisionId, status }),
     completedStepInstall: revisionId => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.DONE, { revisionId }),
+    setOauthConnectionMode: ({ revisionId, connectionId, openOauthConnection }) =>
+      action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.RECEIVED_OAUTH_CONNECTION_STATUS, {
+        revisionId,
+        connectionId,
+        openOauthConnection,
+      }),
+    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId }) =>
+      action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_BUNDLE_INSTALL, {
+        revisionId,
+        connectionId,
+        integrationId,
+      }),
   },
   revisions: {
     request: integrationId => resource.requestCollection(`integrations/${integrationId}/revisions`),

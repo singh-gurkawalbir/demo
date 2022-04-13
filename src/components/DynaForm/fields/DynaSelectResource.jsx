@@ -373,7 +373,6 @@ export default function DynaSelectResource(props) {
   return (
     <div className={classes.root}>
       <LoadResources
-        integrationId={integrationId}
         required
         resources={resourceType !== 'connectorLicenses' ? resourceType : []}
       >

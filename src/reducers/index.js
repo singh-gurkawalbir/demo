@@ -355,6 +355,7 @@ selectors.integrationInstallSteps = createSelector(
 
     let netsuiteConnIndex = 0;
     let salesforceConnIndex = 0;
+    // passing connectionId as _connId in case of 'Integrator Bundle' and 'Integrator Adaptor Package'
 
     return installSteps.map(step => {
       if (step.installURL || step.url) {
@@ -367,7 +368,7 @@ selectors.integrationInstallSteps = createSelector(
 
           return {
             ...step,
-            connectionId,
+            _connId: connectionId,
           };
         } if (step.name.includes('Integrator Adaptor Package')) {
           const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
@@ -376,7 +377,7 @@ selectors.integrationInstallSteps = createSelector(
 
           return {
             ...step,
-            connectionId,
+            _connId: connectionId,
           };
         }
       }
@@ -6839,14 +6840,28 @@ selectors.resourceReferencesPerIntegration = createSelector(
 selectors.currentRevisionInstallSteps = createSelector(
   selectors.revisionInstallSteps,
   (state, _, revisionId) => selectors.updatedRevisionInstallStep(state, revisionId),
-  (revisionInstallSteps, updatedRevisionInstallStep) => revisionInstallSteps.map(step => {
-    if (step.isCurrentStep) {
-      return {...step, ...updatedRevisionInstallStep};
-    }
+  (revisionInstallSteps, updatedRevisionInstallStep) => {
+    const updatedSteps = revisionInstallSteps.map(step => {
+      if (step.isCurrentStep) {
+        return {...step, ...updatedRevisionInstallStep};
+      }
 
-    return step;
-  })
-);
+      return step;
+    });
+
+    return updatedSteps.reduce((steps, currStep) => {
+      if (currStep.url && currStep._forSourceConnectionId) {
+        // Incase of Bundle Install step, fetch related connection step's connectionId and populate the same on this step
+        const connectionId = updatedSteps.find(step => step?.sourceConnection?._id === currStep._forSourceConnectionId)?._connectionId;
+
+        if (connectionId) {
+          return [...steps, {...currStep, connectionId}];
+        }
+      }
+
+      return [...steps, currStep];
+    }, []);
+  });
 
 selectors.areAllRevisionInstallStepsCompleted = (state, integrationId, revisionId) => {
   const installSteps = selectors.currentRevisionInstallSteps(state, integrationId, revisionId);
