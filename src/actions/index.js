@@ -260,11 +260,15 @@ const resource = {
     action(actionTypes.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
   clearChildIntegration: () => action(actionTypes.CLEAR_CHILD_INTEGRATION),
 
-  requestCollection: (resourceType, message, refresh) =>
-    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
+  requestCollection: (resourceType, message, refresh, integrationId) =>
+    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh, integrationId }),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
+  collectionRequestSent: (resourceType, integrationId) =>
+    action(actionTypes.RESOURCE.COLLECTION_REQUEST_SENT, {integrationId, resourceType}),
+  collectionRequestSucceeded: ({resourceType, integrationId}) => action(actionTypes.RESOURCE.COLLECTION_REQUEST_SUCCEEDED, {resourceType, integrationId}),
+  collectionRequestFailed: ({resourceType, integrationId}) => action(actionTypes.RESOURCE.COLLECTION_REQUEST_FAILED, {resourceType, integrationId}),
   updated: (resourceType, resourceId, master, patch, context) =>
     action(actionTypes.RESOURCE.UPDATED, {
       resourceType,
@@ -273,10 +277,11 @@ const resource = {
       patch,
       context,
     }),
-  receivedCollection: (resourceType, collection) =>
+  receivedCollection: (resourceType, collection, integrationId) =>
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
       resourceType,
       collection,
+      integrationId,
     }),
   clearCollection: resourceType =>
     action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),

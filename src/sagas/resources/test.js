@@ -631,8 +631,12 @@ availableResources.forEach(type => {
       let mockCollection = [{ id: 1 }, { id: 2 }];
       let mockSharedStacks = [{ id: 3 }, { id: 4 }];
       let effect;
+
       // next() of generator functions always return:
       // { done: [true|false], value: {[right side of yield]} }
+      expect(saga.next().value).toEqual(
+        put(actions.resource.collectionRequestSent(type))
+      );
       const callEffect = saga.next().value;
 
       expect(callEffect).toEqual(call(apiCallWithPaging, { path }));
@@ -654,6 +658,7 @@ availableResources.forEach(type => {
       expect(effect).toEqual(
         put(actions.resource.receivedCollection(type, mockCollection))
       );
+      expect(saga.next().value).toEqual(put(actions.resource.collectionRequestSucceeded({resourceType: type})));
 
       const final = saga.next();
 
@@ -666,14 +671,20 @@ availableResources.forEach(type => {
         actions.resource.requestCollection(type)
       );
       const path = `/${type}`;
+      const effect = saga.next().value;
+
+      expect(effect).toEqual(
+        put(actions.resource.collectionRequestSent(type))
+      );
       const callEffect = saga.next().value;
 
       expect(callEffect).toEqual(call(apiCallWithPaging, { path }));
 
       const final = saga.throw();
 
-      expect(final.done).toBe(true);
-      expect(final.value).toBeUndefined();
+      expect(final.value).toEqual(put(actions.resource.collectionRequestFailed({resourceType: type})));
+
+      expect(saga.next().done).toBe(true);
     });
   });
 

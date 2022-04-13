@@ -272,7 +272,7 @@ export default function VariationMappingDrawerRoute(props) {
   const location = useLocation();
 
   return (
-    <LoadResources required resources="flows,exports,imports,connections">
+    <LoadResources required integrationId={props.integrationId} resources="flows,exports,imports,connections">
       <Switch>
         <Route
           exact

@@ -254,7 +254,7 @@ export default function CategoryMappingDrawerRoute(props) {
     <Route
       exact
       path={`${match.url}/:flowId/utilitymapping/:categoryId/addCategory`}>
-      <LoadResources required resources="flows,exports,imports,connections">
+      <LoadResources required integrationId={props.integrationId} resources="flows,exports,imports,connections">
         <AddCategoryMappingDrawer
           {...props}
           parentUrl={location.pathname.replace(/\/addCategory$/, '')}

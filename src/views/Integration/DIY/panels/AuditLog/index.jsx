@@ -22,7 +22,12 @@ export default function AuditLogSection({ integrationId, childId }) {
   return (
     <div className={classes.root}>
       <PanelHeader title="Audit log" infoText={infoTextAuditLog} />
-      <AuditLog resourceType="integrations" resourceId={childId || integrationId} childId={childId} />
+      <AuditLog
+        resourceType="integrations"
+        integrationId={childId || integrationId}
+        resourceId={childId || integrationId}
+        childId={childId}
+       />
     </div>
   );
 }

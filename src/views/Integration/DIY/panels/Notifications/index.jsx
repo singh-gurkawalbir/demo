@@ -137,7 +137,7 @@ export default function NotificationsSection({ integrationId, childId }) {
     <div className={classes.root}>
       <PanelHeader title="Notifications" infoText={infoTextNotifications} />
 
-      <LoadResources required resources="notifications,flows,connections">
+      <LoadResources required integrationId={integrationId} resources="notifications,flows,connections">
         <div className={classes.form}>
           <DynaForm formKey={formKey} />
 

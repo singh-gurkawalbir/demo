@@ -37,6 +37,8 @@ import sso, {selectors as fromSSO} from './sso';
 import bottomDrawer, {selectors as fromBottomDrawer} from './bottomDrawer';
 import integrations, {selectors as fromIntegrations} from './integrations';
 import asyncTask, {selectors as fromAsyncTask} from './asyncTask';
+import loadResources, { selectors as fromLoadResources } from './loadResources';
+
 import { genSelectors } from '../util';
 
 export default combineReducers({
@@ -78,6 +80,7 @@ export default combineReducers({
   sso,
   bottomDrawer,
   resourceFormSampleData,
+  loadResources,
 });
 
 // #region PUBLIC SELECTORS
@@ -121,6 +124,7 @@ const subSelectors = {
   sso: fromSSO,
   bottomDrawer: fromBottomDrawer,
   resourceFormSampleData: fromResourceFormSampleData,
+  loadResources: fromLoadResources,
 };
 
 genSelectors(selectors, subSelectors);

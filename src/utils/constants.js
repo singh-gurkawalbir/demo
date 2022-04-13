@@ -62,6 +62,7 @@ export const ACCOUNT_SSO_STATUS = Object.freeze({
   LINKED_TO_OTHER_ACCOUNT: 'other_account',
 });
 
+export const INTEGRATION_DEPENDENT_RESOURCES = ['exports', 'imports', 'connections', 'flows'];
 export const UI_FIELD_VALUES = Object.freeze(['/formView', '/uploadFile']);
 export const SALESFORCE_DA_PACKAGE_URL =
   'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000000Y9kv';

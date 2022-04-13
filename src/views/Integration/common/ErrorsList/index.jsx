@@ -195,7 +195,8 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   return (
     <LoadResources
       required="true"
-      resources="imports, exports, connections">
+      integrationId={integrationId}
+      resources="imports,exports,connections">
       <RightDrawer
         path=":flowId/errorsList"
         height="tall"

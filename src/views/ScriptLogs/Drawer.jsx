@@ -64,7 +64,7 @@ export default function ScriptLogsDrawerRoute() {
   return (
     <LoadResources
       required="true"
-      resources="imports, exports, scripts">
+      resources="imports,exports,scripts">
       <RightDrawer
         path="viewLogs/:scriptId"
         width="full"
