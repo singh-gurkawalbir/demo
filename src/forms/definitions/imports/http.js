@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 export default {
-  preSave: formValues => {
+  preSave: (formValues, _, { connection } = {}) => {
     const retValues = { ...formValues };
 
     if (retValues['/http/response/successValues']) {
@@ -317,6 +317,10 @@ export default {
 
     if (retValues['/oneToMany'] === 'false') {
       retValues['/pathToMany'] = undefined;
+    }
+
+    if (connection?.http?.type === 'Amazon-SP-API') {
+      retValues['/unencrypted/apiType'] = 'Amazon-SP-API';
     }
 
     return {
