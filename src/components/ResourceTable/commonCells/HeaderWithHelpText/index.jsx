@@ -7,21 +7,13 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     marginLeft: theme.spacing(1),
   },
-  textWithHelpIconWrapper: {
-    display: 'flex',
-    alignItems: 'flex-start',
-  },
-  title: {
-    whiteSpace: 'nowrap',
-  },
 }));
 
 export default function HeaderWithHelpText({ title, helpKey }) {
   const classes = useStyles();
 
   return (
-    <span className={classes.textWithHelpIconWrapper}>
-      <span className={classes.title}>{title}</span>
+    <span>{title}
       <Help
         title={title}
         helpKey={helpKey}
