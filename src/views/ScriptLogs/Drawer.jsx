@@ -62,17 +62,20 @@ const ScriptLogsDrawerHeader = () => {
 };
 export default function ScriptLogsDrawerRoute() {
   return (
-    <LoadResources
-      required="true"
-      resources="imports,exports,scripts">
-      <RightDrawer
-        path="viewLogs/:scriptId"
-        width="full"
-        variant="persistent"
-        >
-        <ScriptLogsDrawerHeader />
-        <ScriptLogsWrapper />
-      </RightDrawer>
-    </LoadResources>
+
+    <RightDrawer
+      path="viewLogs/:scriptId"
+      width="full"
+      variant="persistent"
+    >
+      <LoadResources
+        required="true"
+        resources="imports,exports,scripts">
+        <>
+          <ScriptLogsDrawerHeader />
+          <ScriptLogsWrapper />
+        </>
+      </LoadResources>
+    </RightDrawer>
   );
 }

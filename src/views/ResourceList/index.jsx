@@ -170,7 +170,7 @@ export default function ResourceList(props) {
         </div>
       </CeligoPageBar>
       <div className={clsx(classes.resultContainer, {[classes.noShowMoreContainer]: list.filtered === list.count }, {[classes.noResultWrapper]: list.count === 0})}>
-        <LoadResources required resources={resourcesToLoad(resourceType)}>
+        <LoadResources required integrationId="none" resources={resourcesToLoad(resourceType)}>
           {list.count === 0 ? (
             <>
               {list.total === 0
