@@ -2147,7 +2147,7 @@ const customSettings = {
     }),
 };
 const exportData = {
-  request: (kind, identifier, resource, resourceContext) =>
+  request: ({kind, identifier, resource, resourceContext}) =>
     action(actionTypes.EXPORTDATA.REQUEST, {
       kind,
       identifier,

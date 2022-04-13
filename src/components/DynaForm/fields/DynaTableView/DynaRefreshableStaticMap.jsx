@@ -118,9 +118,9 @@ export default function DynaRefreshableStaticMap(props) {
 
   const handleRefreshClick = useCallback(column => {
     if (column === keyName && isExportRefresh(eKind, eKey, eExportResource)) {
-      dispatch(actions.exportData.request(eKind, eKey, eExportResource, resContext));
+      dispatch(actions.exportData.request({kind: eKind, identifier: eKey, resource: eExportResource, resourceContext: resContext}));
     } else if (column === valueName && isExportRefresh(gKind, gKey, gExportResource)) {
-      dispatch(actions.exportData.request(gKind, gKey, gExportResource, resContext));
+      dispatch(actions.exportData.request({kind: gKind, identifier: gKey, resource: gExportResource, resourceContext: resContext}));
     } else {
       dispatch(
         actions.metadata.refresh(
@@ -151,10 +151,10 @@ export default function DynaRefreshableStaticMap(props) {
 
   useEffect(() => {
     if (optionsMap?.[0].supportsRefresh && isExportRefresh(eKind, eKey, eExportResource)) {
-      dispatch(actions.exportData.request(eKind, eKey, eExportResource, resContext));
+      dispatch(actions.exportData.request({kind: eKind, identifier: eKey, resource: eExportResource, resourceContext: resContext}));
     }
     if (optionsMap?.[1].supportsRefresh && isExportRefresh(gKind, gKey, gExportResource)) {
-      dispatch(actions.exportData.request(gKind, gKey, gExportResource, resContext));
+      dispatch(actions.exportData.request({kind: gKind, identifier: gKey, resource: gExportResource, resourceContext: resContext}));
     } else if (!metadata && !disableOptionsLoad) {
       dispatch(
         actions.metadata.request(
