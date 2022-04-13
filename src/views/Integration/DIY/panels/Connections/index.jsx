@@ -172,7 +172,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
         </ActionGroup>
       </PanelHeader>
 
-      <LoadResources required resources="connections">
+      <LoadResources required integrationId={integrationId} resources="connections">
         <CeligoTable
           data={connections}
           filterKey={filterKey}

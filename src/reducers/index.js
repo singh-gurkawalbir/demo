@@ -57,7 +57,8 @@ import {
   NO_ENVIRONMENT_RESOURCE_TYPES,
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
   AFE_SAVE_STATUS,
-  UNASSIGNED_SECTION_NAME} from '../utils/constants';
+  UNASSIGNED_SECTION_NAME,
+} from '../utils/constants';
 import messageStore from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -354,6 +355,7 @@ selectors.integrationInstallSteps = createSelector(
 
     let netsuiteConnIndex = 0;
     let salesforceConnIndex = 0;
+    // passing connectionId as _connId in case of 'Integrator Bundle' and 'Integrator Adaptor Package'
 
     return installSteps.map(step => {
       if (step.installURL || step.url) {
@@ -366,7 +368,7 @@ selectors.integrationInstallSteps = createSelector(
 
           return {
             ...step,
-            connectionId,
+            _connId: connectionId,
           };
         } if (step.name.includes('Integrator Adaptor Package')) {
           const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
@@ -375,7 +377,7 @@ selectors.integrationInstallSteps = createSelector(
 
           return {
             ...step,
-            connectionId,
+            _connId: connectionId,
           };
         }
       }
@@ -4708,7 +4710,15 @@ selectors.netsuiteAccountHasSuiteScriptIntegrations = (state, connectionId) => {
 
 selectors.canLinkSuiteScriptIntegrator = (state, connectionId) => {
   const preferences = selectors.userPreferences(state);
+  const permissions = selectors.userPermissions(state);
 
+  const hasAccountLevelEditAccess = [
+    USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+    USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+    USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+  ].includes(permissions.accessLevel);
+
+  if (!hasAccountLevelEditAccess) return false;
   if (preferences && preferences.ssConnectionIds) {
     if (preferences.ssConnectionIds.includes(connectionId)) {
       return true;
@@ -6752,14 +6762,28 @@ selectors.resourceReferencesPerIntegration = createSelector(
 selectors.currentRevisionInstallSteps = createSelector(
   selectors.revisionInstallSteps,
   (state, _, revisionId) => selectors.updatedRevisionInstallStep(state, revisionId),
-  (revisionInstallSteps, updatedRevisionInstallStep) => revisionInstallSteps.map(step => {
-    if (step.isCurrentStep) {
-      return {...step, ...updatedRevisionInstallStep};
-    }
+  (revisionInstallSteps, updatedRevisionInstallStep) => {
+    const updatedSteps = revisionInstallSteps.map(step => {
+      if (step.isCurrentStep) {
+        return {...step, ...updatedRevisionInstallStep};
+      }
 
-    return step;
-  })
-);
+      return step;
+    });
+
+    return updatedSteps.reduce((steps, currStep) => {
+      if (currStep.url && currStep._forSourceConnectionId) {
+        // Incase of Bundle Install step, fetch related connection step's connectionId and populate the same on this step
+        const connectionId = updatedSteps.find(step => step?.sourceConnection?._id === currStep._forSourceConnectionId)?._connectionId;
+
+        if (connectionId) {
+          return [...steps, {...currStep, connectionId}];
+        }
+      }
+
+      return [...steps, currStep];
+    }, []);
+  });
 
 selectors.areAllRevisionInstallStepsCompleted = (state, integrationId, revisionId) => {
   const installSteps = selectors.currentRevisionInstallSteps(state, integrationId, revisionId);

@@ -146,7 +146,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function InstallationStep(props) {
   const classes = useStyles(props.step || {});
-  const { step, index, handleStepClick, mode = 'install', templateId, integrationId, isFrameWork2 } = props;
+  const { step, index, handleStepClick, mode = 'install', templateId, integrationId, revisionId, isFrameWork2 } = props;
   const dispatch = useDispatch();
   const [verified, setVerified] = useState(false);
   const isIntegrationApp = useSelector(state => {
@@ -169,7 +169,15 @@ export default function InstallationStep(props) {
 
   useEffect(() => {
     if (step && !step.completed && !verified) {
-      if (
+      if (revisionId && step.url && step.connectionId) {
+        dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'verify'));
+        dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
+          integrationId,
+          connectionId: step.connectionId,
+          revisionId,
+        }));
+        setVerified(true);
+      } else if (
         connection &&
         step.type === INSTALL_STEP_TYPES.INSTALL_PACKAGE
       ) {
@@ -191,7 +199,7 @@ export default function InstallationStep(props) {
         step.isCurrentStep &&
         (step.installURL || step.url) &&
         !isIntegrationApp &&
-        step.connectionId
+        step._connId
       ) {
         dispatch(
           actions.integrationApp.installer.updateStep(
@@ -203,7 +211,7 @@ export default function InstallationStep(props) {
         dispatch(
           actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
             integrationId,
-            step.connectionId,
+            step._connId,
             step.installerFunction,
             isFrameWork2
           )
@@ -211,7 +219,7 @@ export default function InstallationStep(props) {
         setVerified(true);
       }
     }
-  }, [connection, dispatch, integrationId, isFrameWork2, isIntegrationApp, step, templateId, verified]);
+  }, [connection, dispatch, integrationId, revisionId, isFrameWork2, isIntegrationApp, step, templateId, verified]);
 
   if (!step) {
     return null;
