@@ -2,18 +2,18 @@ import React, { useCallback, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import { Button } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
+import ActionGroup from '../ActionGroup';
+import OutlinedButton from '../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    padding: '12px',
-    minWidth: '319px',
-    maxWidth: '319px',
-    borderRadius: '4px',
+    padding: theme.spacing(1.5),
+    minWidth: theme.spacing(40),
+    maxWidth: theme.spacing(40),
+    borderRadius: 4,
     textAlign: 'left',
-    overflow: 'hidden',
   },
   title: {
     color: theme.palette.text.title,
@@ -31,61 +31,25 @@ const useStyles = makeStyles(theme => ({
       overflowX: 'auto',
     },
   },
-  action: {
-    borderTop: '1px solid',
-    borderColor: theme.palette.divider,
-    width: '100%',
-    overflow: 'hidden',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  actionTitle: {
-    paddingTop: 10,
-    width: '60%',
-  },
   caption: {
     wordBreak: 'break-word',
   },
   actionButtons: {
-    paddingTop: '8px',
-    '& Button': {
-      borderColor: theme.palette.divider,
-      padding: '3px 5px',
-      background: 'none',
-      float: 'left',
-      minWidth: '30px',
-      marginRight: '5px',
-      textTransform: 'capitalize',
-      borderRadius: '2px',
-      lineHeight: 'normal',
-      fontSize: '12px',
-      letterSpacing: '0px',
-    },
-    '& Button:last-child': {
-      marginRight: '0px',
+    minWidth: 'auto',
+    '&:not(:last-child)': {
+      marginRight: theme.spacing(1),
     },
   },
   feedbackTextField: {
     margin: theme.spacing(1, 0),
     width: '100%',
     '& > div': {
-      padding: 0,
-      '& > textarea': {
-        padding: 12,
-      },
-      '& > fieldset': {
-        borderColor: theme.palette.secondary.lightest,
-      },
-      '&:hover .MuiOutlinedInput-notchedOutline': {
-        borderColor: theme.palette.primary.main,
-      },
+      padding: theme.spacing(1.5),
     },
-    '& > div.Mui-focused': {
-      '& .MuiOutlinedInput-notchedOutline': {
-        borderWidth: '1px',
-      },
-    },
+  },
+  actionWrapper: {
+    display: 'flex',
+    paddingTop: theme.spacing(1),
   },
 }));
 
@@ -126,7 +90,6 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
       )}
       {feedbackText ? (
         <>
-          {/* TODO:karthik some styling required */}
           <TextField
             data-private
             name="feedbackText"
@@ -136,36 +99,36 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
             variant="outlined"
             className={classes.feedbackTextField}
           />
-          <Button
-            variant="outlined"
-            color="primary"
+          <OutlinedButton
             onClick={handleSendFeedbackText}>
             Submit
-          </Button>
+          </OutlinedButton>
         </>
       ) : (
         <>
           <Typography variant="subtitle2" component="div" className={classes.content}>{children}</Typography>
-          <div className={classes.action}>
-            <Typography className={classes.actionTitle}>
-              Was this helpful?
-            </Typography>
-            <div className={classes.actionButtons}>
-              <Button
+          <div className={classes.actionWrapper}>
+            <ActionGroup>
+              <Typography>Was this helpful?</Typography>
+            </ActionGroup>
+            <ActionGroup position="right">
+              <OutlinedButton
                 data-test="yesContentHelpful"
-                variant="outlined"
-                onClick={handleUpdateFeedBack(true)}
-                color="secondary">
-                Yes
-              </Button>
-              <Button
-                data-test="noContentHelpful"
-                variant="outlined"
                 color="secondary"
-                onClick={handleUpdateFeedBack(false)}>
+                size="small"
+                onClick={handleUpdateFeedBack(true)}
+                className={classes.actionButtons}>
+                Yes
+              </OutlinedButton>
+              <OutlinedButton
+                data-test="noContentHelpful"
+                color="secondary"
+                size="small"
+                onClick={handleUpdateFeedBack(false)}
+                className={classes.actionButtons}>
                 No
-              </Button>
-            </div>
+              </OutlinedButton>
+            </ActionGroup>
           </div>
         </>
       )}
