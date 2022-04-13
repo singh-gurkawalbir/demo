@@ -101,11 +101,15 @@ export default function PreviewInfo(props) {
   );
   const isPreviewDisabled = useSelector(state =>
     selectors.isExportPreviewDisabled(state, formKey));
+  const resourceDefaultMockData = useSelector(state => selectors.getResourceDefaultMockData(state, resourceId));
   const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
   const records = Object.prototype.hasOwnProperty.call(previewStageDataList, 'preview')
     ? previewStageDataList.preview
     : previewStageDataList.parse;
-  const mockInputDataAbsent = resourceType === 'imports' && !records?.data && isEmpty(resourceMockData);
+  const isMockInputDataAbsent = resourceType === 'imports' &&
+                              !records.data &&
+                              isEmpty(resourceMockData) &&
+                              isEmpty(resourceDefaultMockData);
 
   const sampleDataStatus = useMemo(() => {
     const { status, error, message } = resourceSampleData;
@@ -113,7 +117,7 @@ export default function PreviewInfo(props) {
     if (status === 'requested') return <Typography variant="body2"> Testing </Typography>;
 
     if (status === 'received') {
-      if (mockInputDataAbsent) {
+      if (isMockInputDataAbsent) {
         return (
           <>
             <FieldMessage
@@ -138,7 +142,7 @@ export default function PreviewInfo(props) {
         />
       );
     }
-  }, [mockInputDataAbsent, resourceSampleData]);
+  }, [isMockInputDataAbsent, resourceSampleData]);
 
   const sampleDataOverview = useMemo(() => {
     if (resourceSampleData.status === 'error') {
@@ -150,13 +154,13 @@ export default function PreviewInfo(props) {
     }
 
     if (resourceSampleData.status === 'received') {
-      return !mockInputDataAbsent && !resourceSampleData.message && (
+      return !isMockInputDataAbsent && !resourceSampleData.message && (
         <Typography variant="body2">
           {getPreviewDataPageSizeInfo(records)}
         </Typography>
       );
     }
-  }, [mockInputDataAbsent, records, resourceSampleData.message, resourceSampleData?.status]);
+  }, [isMockInputDataAbsent, records, resourceSampleData.message, resourceSampleData?.status]);
 
   const handlePreview = useCallback(
     () => {

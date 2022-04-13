@@ -68,6 +68,10 @@ export default function (state = {}, action) {
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_STATUS:
         draft[resourceId][activeSendOrPreviewTab].status = status;
+        // when new sample data is requested, clear the defaultMockData if it exists
+        if (status === 'requested' && draft[resourceId].data && draft[resourceId].data.defaultMockData) {
+          draft[resourceId].data.defaultMockData = undefined;
+        }
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_STAGES:
         draft[resourceId][activeSendOrPreviewTab].status = 'received';
