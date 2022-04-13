@@ -10,9 +10,9 @@ import OutlinedButton from '../Buttons/OutlinedButton';
 const useStyles = makeStyles(theme => ({
   wrapper: {
     padding: theme.spacing(1.5),
-    minWidth: theme.spacing(40),
-    maxWidth: theme.spacing(40),
-    borderRadius: 4,
+    minWidth: '319px',
+    maxWidth: '319px',
+    borderRadius: theme.spacing(0.5),
     textAlign: 'left',
   },
   title: {
@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
   caption: {
     wordBreak: 'break-word',
   },
-  actionButtons: {
+  actionButton: {
     minWidth: 'auto',
     '&:not(:last-child)': {
       marginRight: theme.spacing(1),
@@ -108,16 +108,14 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
         <>
           <Typography variant="subtitle2" component="div" className={classes.content}>{children}</Typography>
           <div className={classes.actionWrapper}>
-            <ActionGroup>
-              <Typography>Was this helpful?</Typography>
-            </ActionGroup>
+            <Typography>Was this helpful?</Typography>
             <ActionGroup position="right">
               <OutlinedButton
                 data-test="yesContentHelpful"
                 color="secondary"
                 size="small"
                 onClick={handleUpdateFeedBack(true)}
-                className={classes.actionButtons}>
+                className={classes.actionButton}>
                 Yes
               </OutlinedButton>
               <OutlinedButton
@@ -125,7 +123,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
                 color="secondary"
                 size="small"
                 onClick={handleUpdateFeedBack(false)}
-                className={classes.actionButtons}>
+                className={classes.actionButton}>
                 No
               </OutlinedButton>
             </ActionGroup>
