@@ -11,6 +11,7 @@ import { generateNewId } from '../../../../../utils/resource';
 import jsonUtil from '../../../../../utils/json';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import openExternalUrl from '../../../../../utils/window';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { INSTALL_STEP_TYPES, REVISION_TYPES } from '../../../../../utils/constants';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
@@ -43,6 +44,37 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
   const revisionType = useSelector(state =>
     selectors.revisionType(state, integrationId, revisionId)
   );
+
+  const oAuthConnectionId = useSelector(state =>
+    selectors.revisionInstallStepOAuthConnectionId(state, revisionId)
+  );
+  const hasOpenedOAuthConnection = useSelector(state =>
+    selectors.hasOpenedOAuthRevisionInstallStep(state, revisionId)
+  );
+
+  const oAuthConnection = useSelectorMemo(selectors.makeResourceSelector, 'connections', oAuthConnectionId);
+
+  useEffect(() => {
+    if (hasOpenedOAuthConnection && oAuthConnection) {
+      dispatch(actions.integrationLCM.installSteps.setOauthConnectionMode({
+        connectionId: oAuthConnectionId,
+        revisionId,
+        openOauthConnection: false,
+      }));
+      history.push(buildDrawerUrl({
+        path: drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP,
+        baseUrl: match.url,
+        params: { resourceType: 'connections', resourceId: oAuthConnectionId },
+      }));
+    }
+  }, [
+    hasOpenedOAuthConnection,
+    oAuthConnection,
+    oAuthConnectionId,
+    dispatch,
+    history,
+    match.url,
+    revisionId]);
 
   useEffect(() => {
     if (areAllRevisionInstallStepsCompleted) {
@@ -128,7 +160,7 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
             index={index + 1}
             step={step}
             integrationId={integrationId}
-          />
+            revisionId={revisionId} />
         ))}
       </div>
       <ResourceSetupDrawer

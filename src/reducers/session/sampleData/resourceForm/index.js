@@ -72,6 +72,7 @@ export default function (state = {}, action) {
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_STAGES:
         draft[resourceId][activeSendOrPreviewTab].status = 'received';
         draft[resourceId][activeSendOrPreviewTab].data = extractStages(previewStagesData);
+        draft[resourceId][activeSendOrPreviewTab].message = previewStagesData?.message;
         if (!draft[resourceId].data) draft[resourceId].data = {};
         if (previewStagesData && previewStagesData.data) draft[resourceId].data.defaultMockData = previewStagesData.data;
         break;
@@ -179,6 +180,7 @@ const getResourceSampleDataWithStatus = (resourceIdSampleData, stage) => ({
   data: getResourceSampleData(resourceIdSampleData, stage),
   status: resourceIdSampleData?.status,
   error: resourceIdSampleData?.error,
+  message: resourceIdSampleData?.message,
 });
 
 selectors.getResourceSampleDataWithStatus = (state, resourceId, stage) => {

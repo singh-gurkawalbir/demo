@@ -1,4 +1,5 @@
 import React, { useMemo, useCallback, useState } from 'react';
+import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -57,7 +58,9 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
   },
-
+  previewMessage: {
+    justifyContent: 'center',
+  },
   previewBtn: {
     minHeight: theme.spacing(5),
     color: theme.palette.primary.main,
@@ -105,7 +108,7 @@ export default function PreviewInfo(props) {
   const mockInputDataAbsent = resourceType === 'imports' && !records?.data && isEmpty(resourceMockData);
 
   const sampleDataStatus = useMemo(() => {
-    const { status, error } = resourceSampleData;
+    const { status, error, message } = resourceSampleData;
 
     if (status === 'requested') return <Typography variant="body2"> Testing </Typography>;
 
@@ -119,6 +122,8 @@ export default function PreviewInfo(props) {
             <Typography variant="body2">{MOCK_INPUT_RECORD_ABSENT}</Typography>
           </>
         );
+      } if (message) {
+        return <Typography variant="body2"> {message} </Typography>;
       }
 
       return <Typography variant="body2"> Success! </Typography>;
@@ -145,13 +150,13 @@ export default function PreviewInfo(props) {
     }
 
     if (resourceSampleData.status === 'received') {
-      return !mockInputDataAbsent && (
+      return !mockInputDataAbsent && !resourceSampleData.message && (
         <Typography variant="body2">
           {getPreviewDataPageSizeInfo(records)}
         </Typography>
       );
     }
-  }, [mockInputDataAbsent, records, resourceSampleData.status]);
+  }, [mockInputDataAbsent, records, resourceSampleData.message, resourceSampleData?.status]);
 
   const handlePreview = useCallback(
     () => {
@@ -195,7 +200,11 @@ export default function PreviewInfo(props) {
         {
           showPreviewData &&
           (
-            <div className={classes.previewDataRight}>
+            <div
+              className={clsx(classes.previewDataRight, {
+                [classes.previewMessage]: resourceSampleData?.message,
+              })}>
+
               {sampleDataStatus && <div> {sampleDataStatus}</div>}
               {sampleDataOverview && (
               <div className={classes.msgSuccess}>{sampleDataOverview} </div>
