@@ -23,6 +23,7 @@ import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
 import salesforceQualificationCriteria from './salesforceQualificationCriteria';
 import mappings from './mappings';
 import responseMappings from './responseMappings';
+import router from './router';
 
 const map = {
   csvParser,
@@ -50,6 +51,7 @@ const map = {
   salesforceQualificationCriteria,
   mappings,
   responseMappings,
+  router,
 };
 export default map;
 

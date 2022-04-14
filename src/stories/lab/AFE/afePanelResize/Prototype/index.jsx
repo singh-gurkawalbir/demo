@@ -7,7 +7,7 @@ import React, { useState, useRef } from 'react';
 // using the now-older version, as the interface may have slightly changed over 2 major releases.
 import ReactResizeDetector from 'react-resize-detector';
 import { makeStyles } from '@material-ui/core';
-import SinglePanelGridItem from '../../../../components/AFE/Editor/gridItems/SinglePanelGridItem';
+import SinglePanelGridItem from '../../../../../components/AFE/Editor/gridItems/SinglePanelGridItem';
 import DragHandleGridItem from './DragHandleGridItem';
 
 const minGridSize = 150;

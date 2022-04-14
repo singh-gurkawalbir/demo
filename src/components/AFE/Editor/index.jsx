@@ -167,6 +167,7 @@ export default function Editor({ editorId }) {
       mappingPreviewType: e.mappingPreviewType,
     };
   }, shallowEqual);
+
   const handleDragStart = useCallback(event => {
     let { target } = event;
     let gridArea;
@@ -274,6 +275,7 @@ export default function Editor({ editorId }) {
   }, [enquesnackbar, editorContext.saveError]);
 
   const {editorType, layout} = editorContext;
+
   const gridAreas = layouts[layout].gridTemplateAreas;
   const handles = getDragHandles(gridAreas, showErrorDragBar);
 
