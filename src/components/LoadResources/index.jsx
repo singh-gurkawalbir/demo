@@ -4,16 +4,23 @@ import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 
-export default function LoadResources({ children, resources, required, integrationId }) {
+export default function LoadResources({ children, resources, required, lazyResources = [], integrationId }) {
   const dispatch = useDispatch();
   const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
 
-  const allResources = useMemo(() => typeof resources === 'string'
+  const requiredResources = useMemo(() => typeof resources === 'string'
     ? resources.split(',').map(r => r?.trim())
     : resources,
   [resources]);
+  const lazyLoadResources = useMemo(() => typeof lazyResources === 'string'
+    ? lazyResources.split(',').map(r => r?.trim())
+    : lazyResources,
+  [lazyResources]);
+  const allResources = useMemo(() => [...requiredResources, ...lazyLoadResources], [requiredResources, lazyLoadResources]);
+
   const resourceStatus = useSelectorMemo(selectors.mkResourceStatus, allResources, integrationId);
   const isAllDataReady = !resourceStatus.some(resource => !resource.isReady);
+  const isAllRequiredDataReady = !resourceStatus.some(resource => !resource.isReady && !lazyLoadResources.includes(resource.resourceType));
 
   useEffect(() => {
     if (!isAllDataReady) {
@@ -27,7 +34,7 @@ export default function LoadResources({ children, resources, required, integrati
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, isAllDataReady, resources, defaultAShareId]);
 
-  if (isAllDataReady || !required) {
+  if (isAllRequiredDataReady || !required) {
     return children || null;
   }
 

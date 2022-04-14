@@ -737,8 +737,15 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
   if (resourceType === 'notifications') {
     path = '/notifications?users=all';
   }
-  if (integrationId && INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
-    path = `/integrations/${integrationId}/${resourceType}`;
+  if (integrationId) {
+    if (INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
+      path = `/integrations/${integrationId}/${resourceType}`;
+    }
+    const integration = yield select(selectors.resource, 'integrations', integrationId);
+
+    if (!integration) {
+      yield call(getResource, {resourceType: 'integrations', id: integrationId});
+    }
   }
 
   try {

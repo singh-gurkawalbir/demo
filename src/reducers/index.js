@@ -1629,25 +1629,14 @@ selectors.makeMarketPlaceConnectorsSelector = () => {
 
 selectors.mkTiles = () => createSelector(
   state => state?.data?.resources?.tiles,
-  state => state?.data?.resources?.integrations,
   state => state?.data?.resources?.flows,
   state => selectors.currentEnvironment(state),
   state => selectors.publishedConnectors(state),
   state => selectors.userPermissions(state),
-  (allTiles = emptyArray, integrations = emptyArray, flows = emptyArray, currentEnvironment, published = emptyArray, permissions) => {
+  (allTiles = emptyArray, flows = emptyArray, currentEnvironment, published = emptyArray, permissions) => {
     const tiles = allTiles.filter(t => (!!t.sandbox === (currentEnvironment === 'sandbox')));
 
-    const hasStandaloneTile = tiles.find(
-      t => t._integrationId === STANDALONE_INTEGRATION.id
-    );
-
-    if (hasStandaloneTile) {
-      integrations = [
-        ...integrations,
-        { _id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name },
-      ];
-    }
-    integrations = integrations.map(i => {
+    const permissionMap = tiles.reduce((acc, t) => {
       if (
         [
           USER_ACCESS_LEVELS.ACCOUNT_OWNER,
@@ -1656,42 +1645,34 @@ selectors.mkTiles = () => createSelector(
           USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
         ].includes(permissions.accessLevel)
       ) {
-        return {
-          ...i,
-          permissions: {
-            accessLevel: permissions.integrations.all.accessLevel,
-            connections: {
-              edit: permissions.integrations.all.connections.edit,
-            },
+        acc[t._integrationId] = {
+          accessLevel: permissions.integrations.all.accessLevel,
+          connections: {
+            edit: permissions.integrations.all.connections.edit,
+          },
+        };
+      } else {
+        acc[t._integrationId] = {
+          accessLevel: (permissions.integrations[t._integrationId] || permissions.integrations.all)?.accessLevel,
+          connections: {
+            edit: (permissions.integrations[t._integrationId] || permissions.integrations.all)?.connections?.edit,
           },
         };
       }
 
-      return {
-        ...i,
-        permissions: {
-          accessLevel: (permissions.integrations[i._id] || permissions.integrations.all)?.accessLevel,
-          connections: {
-            edit:
-                  (permissions.integrations[i._id] || permissions.integrations.all)?.connections?.edit,
-          },
-        },
-      };
-    });
+      return acc;
+    }, {});
 
-    let integration;
     let connector;
     let status;
 
     return tiles.map(t => {
-      integration = integrations.find(i => i._id === t._integrationId) || {};
-      const integrationId = integration._id;
       let flowsNameAndDescription = '';
 
-      if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+      if (t._connectorId && t.mode === INTEGRATION_MODES.UNINSTALL) {
         status = TILE_STATUS.UNINSTALL;
       } else if (
-        integration.mode === INTEGRATION_MODES.INSTALL || integration.mode === INTEGRATION_MODES.UNINSTALL
+        t.mode === INTEGRATION_MODES.INSTALL || t.mode === INTEGRATION_MODES.UNINSTALL
       ) {
         status = TILE_STATUS.IS_PENDING_SETUP;
       } else if (t.numError && t.numError > 0) {
@@ -1717,8 +1698,8 @@ selectors.mkTiles = () => createSelector(
           flowsNameAndDescription,
           sortablePropType: -1,
           integration: {
-            mode: integration.mode,
-            permissions: integration.permissions,
+            mode: t.mode,
+            permissions: permissionMap[t._integrationId],
           },
           connector: {
             owner: connector.user.company || connector.user.name,
@@ -1730,11 +1711,11 @@ selectors.mkTiles = () => createSelector(
       // adding flow names and descriptions to be used for searching tiles
       flowsNameAndDescription = flows
         .filter(f => {
-          if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+          if (!t._integrationId || t._integrationId === STANDALONE_INTEGRATION.id) {
             return !f._integrationId && !!f.sandbox === (currentEnvironment === 'sandbox');
           }
 
-          return f._integrationId === integrationId;
+          return f._integrationId === t._integrationId;
         })
         .reduce((result, f) => `${result}|${f.name || ''}|${f.description || ''}`, '');
 
@@ -1745,7 +1726,7 @@ selectors.mkTiles = () => createSelector(
         flowsNameAndDescription,
         sortablePropType: t.numFlows || 0,
         integration: {
-          permissions: integration.permissions,
+          permissions: permissionMap[t._integrationId],
         },
       };
     });
@@ -1831,25 +1812,21 @@ selectors.mkFilteredHomeTiles = () => {
 };
 
 selectors.mkHomeTileRedirectUrl = () => {
-  const resourceSelector = selectors.makeResourceSelector();
   const marketplaceResourceSel = selectors.makeResourceSelector();
 
   return createSelector(
     (_, tile) => tile,
     state => selectors.isOwnerUserInErrMgtTwoDotZero(state),
-    (state, tile) => resourceSelector(state, 'integrations', tile?._integrationId),
     (state, tile) => {
-      const integration = resourceSelector(state, 'integrations', tile?._integrationId);
-
-      if (integration?._templateId) {
-        const template = marketplaceResourceSel(state, 'marketplacetemplates', integration._templateId);
+      if (tile?._templateId) {
+        const template = marketplaceResourceSel(state, 'marketplacetemplates', tile._templateId);
 
         return getTemplateUrlName(template?.applications);
       }
 
       return null;
     },
-    (tile, isUserInErrMgtTwoDotZero, integration, templateName) => {
+    (tile, isUserInErrMgtTwoDotZero, templateName) => {
       // separate logic for suitescript tiles
       if (tile.ssLinkedConnectionId) {
         let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
@@ -1874,7 +1851,6 @@ selectors.mkHomeTileRedirectUrl = () => {
         };
       }
 
-      const isCloned = integration?.install?.find(step => step?.isClone);
       const integrationAppTileName =
         tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
 
@@ -1891,7 +1867,7 @@ selectors.mkHomeTileRedirectUrl = () => {
 
       if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         if (tile._connectorId) {
-          urlToIntegrationSettings = `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
+          urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
         } else {
           urlToIntegrationSettings = `integrations/${tile._integrationId}/setup`;
         }

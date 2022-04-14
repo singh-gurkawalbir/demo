@@ -16,11 +16,6 @@ const DEFAULT_FILTERS = {
 export default function HomeView() {
   const dispatch = useDispatch();
   const isListView = useSelector(state => selectors.isHomeListView(state));
-  const searchInput = useSelector(state => selectors.filter(state, FILTER_KEY)?.keyword);
-
-  // lazily load flows, only if search input is entered
-  const resourcesToLoad = searchInput ? 'published,connections,marketplacetemplates,flows'
-    : 'published,connections,marketplacetemplates';
 
   useEffect(() => {
     dispatch(actions.patchFilter(FILTER_KEY, DEFAULT_FILTERS));
@@ -30,7 +25,7 @@ export default function HomeView() {
   }, []);
 
   return (
-    <LoadResources required resources={resourcesToLoad}>
+    <LoadResources required resources="published,connections,marketplacetemplates" lazyResources="flows">
       {isListView
         ? <ListView />
         : <TileView />}
