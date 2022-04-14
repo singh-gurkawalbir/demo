@@ -25,6 +25,7 @@ import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
 import mappingUtil from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
+import { GRAPHQL_FIELD_MAP, isGraphqlField } from '../../utils/graphql';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -585,9 +586,8 @@ export function* requestEditorSampleData({
 
     body.integrationId = flow?._integrationId;
 
-    // TODO: Siddharth, revert this change after completion of https://celigo.atlassian.net/browse/IO-25372
-    if (fieldId === 'webhook.successBody') {
-      body.fieldPath = 'dataURITemplate';
+    if (isGraphqlField(fieldId)) {
+      body.fieldPath = GRAPHQL_FIELD_MAP[resourceType][fieldId];
     } else {
       body.fieldPath = fieldId || filterPath;
     }

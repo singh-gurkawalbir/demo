@@ -1,5 +1,5 @@
 /* global expect, describe, test */
-import {convertGraphQLQueryToHTTPBody, getGraphQLObj, getGraphqlRelativeURI, getGraphQLValues, isGraphqlResource} from '.';
+import {convertGraphQLQueryToHTTPBody, getGraphQLObj, getGraphqlRelativeURI, getGraphQLValues, GRAPHQL_FIELD_MAP, isGraphqlField, isGraphqlResource} from '.';
 
 describe('graphql utils: ', () => {
   describe('convertGraphQLQueryToHTTPBody test cases', () => {
@@ -100,6 +100,32 @@ describe('graphql utils: ', () => {
     });
     test('should return false if http.formType is not graph_ql', () => {
       expect(isGraphqlResource({http: {formType: 'http'}})).toBeFalsy();
+    });
+  });
+  describe('isGraphqlField util', () => {
+    test('should not throw exception for invalid arguments', () => {
+      expect(isGraphqlResource()).toBeFalsy();
+      expect(isGraphqlResource({})).toBeFalsy();
+      expect(isGraphqlResource({test: '123'})).toBeFalsy();
+      expect(isGraphqlResource('test')).toBeFalsy();
+    });
+    test('should return true for graphql fields', () => {
+      ['exports', 'imports', 'connections'].forEach(resourceType => {
+        const graphqlFields = GRAPHQL_FIELD_MAP[resourceType];
+
+        Object.keys(graphqlFields).forEach(field => {
+          expect(isGraphqlField(field)).toBeTruthy();
+        });
+      });
+    });
+    test('should return false for non graphql fields', () => {
+      [
+        'http.body',
+        'http.paging.body',
+        'dummyfield',
+      ].forEach(field => {
+        expect(isGraphqlField(field)).toBeFalsy();
+      });
     });
   });
 });

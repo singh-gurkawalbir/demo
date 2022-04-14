@@ -75,3 +75,36 @@ export function isGraphqlResource(resource) {
 
   return type === 'graph_ql' || resource.http?.formType === 'graph_ql';
 }
+
+export function isGraphqlField(fieldId) {
+  if (!fieldId) return false;
+
+  return fieldId.includes('graphql');
+}
+
+export const GRAPHQL_FIELD_MAP = {
+  connections: {
+    'graphql.query': 'http.ping.body',
+    'graphql.operationName': 'http.ping.body',
+    'graphql.variables': 'http.ping.body',
+  },
+  exports: {
+    'graphql.query': 'http.body',
+    'graphql.operationName': 'http.body',
+    'graphql.variables': 'http.body',
+    'paging.graphql.query': 'http.paging.body',
+    'paging.graphql.operationName': 'http.paging.body',
+    'paging.graphql.variables': 'http.paging.body',
+  },
+  imports: {
+    'graphql.query': 'http.body',
+    'graphql.operationName': 'http.body',
+    'graphql.variables': 'http.body',
+    'graphql.queryCreate': 'http.body',
+    'graphql.operationNameCreate': 'http.body',
+    'graphql.variablesCreate': 'http.body',
+    'graphql.queryUpdate': 'http.body',
+    'graphql.operationNameUpdate': 'http.body',
+    'graphql.variablesUpdate': 'http.body',
+  },
+};
