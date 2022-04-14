@@ -108,7 +108,7 @@ import { getSelectedRange } from '../utils/flowMetrics';
 import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
 import { filterMap } from '../components/GlobalSearch/filterMeta';
-import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions } from '../utils/revisions';
+import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions, REVISION_DIFF_ACTIONS } from '../utils/revisions';
 import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 
 const emptyArray = [];
@@ -6727,11 +6727,21 @@ selectors.getCurrPageFilteredRevisions = createSelector(
   selectors.revisionsFilter,
   (filteredRevisions, filters) => getPaginatedRevisions(filteredRevisions, filters));
 
-selectors.resourceName = (state, resourceId, resourceType) => {
+selectors.diffResourceName = (state, { resourceId, resourceType, resourceDiff }) => {
   if (!resourceId || !resourceType) return '';
   const resource = selectors.resource(state, resourceType, resourceId);
 
-  return resource?.name || resource?.id;
+  if (resource?.name) {
+    return resource.name;
+  }
+  // If the resource does not exist and it is about to create a new resource as part of the revision
+  // Then fetch resource name from the diff document
+  if (resourceDiff?.action === REVISION_DIFF_ACTIONS.NEW && resourceDiff?.after?.name) {
+    return resourceDiff.after.name;
+  }
+
+  // If neither of the above cases are applied, fall back to showing resourceId
+  return resourceId;
 };
 
 selectors.resourceReferencesPerIntegration = createSelector(
