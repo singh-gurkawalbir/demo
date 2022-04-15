@@ -28,7 +28,6 @@ export default function TileActions({tile}) {
 
   const canUninstallIA = useSelector(state => !selectors.isFormAMonitorLevelAccess(state, _integrationId));
 
-  console.log('canUninstallIA', canUninstallIA);
   const isConfigPending = status === TILE_STATUS.IS_PENDING_SETUP || status === TILE_STATUS.UNINSTALL;
 
   const canCloneIA = integrationAppUtil.isCloningSupported(_connectorId, name) && accessLevel !== 'monitor' && !supportsMultiStore;
