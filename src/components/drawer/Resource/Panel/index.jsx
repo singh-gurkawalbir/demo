@@ -350,7 +350,7 @@ export default function Panel(props) {
             formKey={formKey}
           />
         </div>
-        <LoadResources required resources={requiredResources}>
+        <LoadResources required integrationId={integrationId} resources={requiredResources}>
           <div
             className={clsx({
               [classes.baseForm]: resourceType === 'exports',
