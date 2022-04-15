@@ -944,20 +944,14 @@ describe('Flow sample data utility sagas', () => {
               { resource: pg1,
                 flow,
                 refresh: undefined,
-                runOffline: undefined,
-                isMockInput: undefined,
-                addMockData: undefined,
-                _pageProcessorId: undefined}
+                runOffline: undefined }
             ), {}],
             [call(
               getPreviewOptionsForResource,
               { resource: pg2,
                 flow,
                 refresh: undefined,
-                runOffline: undefined,
-                isMockInput: undefined,
-                addMockData: undefined,
-                _pageProcessorId: undefined}
+                runOffline: undefined}
             ), {}],
           ])
           .returns(flowResourcesMap)
@@ -1027,9 +1021,7 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+              }
             ), {}],
             [call(
               getPreviewOptionsForResource,
@@ -1037,9 +1029,18 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                _pageProcessorId: undefined,
+              }
+            ), {}],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pp3,
+                flow,
+                refresh: undefined,
+                runOffline: undefined,
                 isMockInput: undefined,
-                addMockData: undefined }
+                addMockData: undefined,
+                _pageProcessorId: pp3._id,
+              }
             ), {}],
           ])
           .returns(flowResourcesMap)
@@ -1092,9 +1093,7 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+              }
             ), pg1Options],
             [call(
               getPreviewOptionsForResource,
@@ -1102,9 +1101,7 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+              }
             ), pg2Options],
           ])
           .run();
@@ -1175,9 +1172,7 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh,
                 runOffline,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+              }
             ), pg1Options],
             [call(
               getPreviewOptionsForResource,
@@ -1185,9 +1180,7 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh,
                 runOffline,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+              }
             ), pg2OptionsWithRunOffline],
           ])
           .run();
@@ -1270,9 +1263,7 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+              }
             ), { uiData: pg1.sampleData }],
             [call(
               getPreviewOptionsForResource,
@@ -1280,9 +1271,7 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+              }
             ), { uiData: undefined }],
           ])
           .returns(flowResourcesMap)

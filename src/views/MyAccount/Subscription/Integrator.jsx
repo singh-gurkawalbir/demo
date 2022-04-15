@@ -11,6 +11,9 @@ import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import FilledButton from '../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../components/ConfirmDialog';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import RawHtml from '../../../components/RawHtml';
+import messageStore from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -93,6 +96,7 @@ const useStyles = makeStyles(theme => ({
 export default function Subscription() {
   const dispatch = useDispatch();
   const match = useRouteMatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const history = useHistory();
   const {confirmDialog} = useConfirmDialog();
   const licenseActionDetails = useSelector(state =>
@@ -168,6 +172,7 @@ export default function Subscription() {
             setUpgradeRequested(true);
 
             dispatch(actions.license.requestUpdate('upgrade'));
+            enquesnackbar({message: <RawHtml html={messageStore('LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
           },
         },
         { label: 'Cancel',
@@ -175,7 +180,7 @@ export default function Subscription() {
         },
       ],
     });
-  }, [confirmDialog, dispatch]);
+  }, [confirmDialog, dispatch, enquesnackbar]);
 
   return (
     <>
