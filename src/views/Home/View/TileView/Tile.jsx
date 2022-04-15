@@ -268,6 +268,10 @@ function Tile({
             tileStatus={tile.status}
             isIntegrationV2={tile.iaV2}
             integrationId={tile._integrationId}
+            mode={tile.mode}
+            name={tile.name}
+            _connectorId={tile._connectorId}
+            supportsMultiStore={tile.supportsMultiStore}
             resumable={resumable}
             accessLevel={accessLevel}
           />
