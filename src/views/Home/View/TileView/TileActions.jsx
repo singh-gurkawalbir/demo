@@ -13,7 +13,6 @@ import useHandleDelete from '../../../Integration/hooks/useHandleDelete';
 import { STANDALONE_INTEGRATION, TILE_STATUS } from '../../../../utils/constants';
 
 export default function TileActions({tile}) {
-  console.log('Tile Actions', tile);
   const history = useHistory();
   const dispatch = useDispatch();
   const { _integrationId, _connectorId, name, status, supportsMultiStore, mode } = tile || {};
