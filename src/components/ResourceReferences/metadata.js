@@ -10,9 +10,16 @@ export default {
       heading: 'Name',
       isLoggable: true,
       Value: ({rowData: r}) => {
-        const {onClose} = useGetTableContext();
+        const { onClose, integrationId } = useGetTableContext();
 
-        return <ResourceLink name={r.name} resourceType={r.resourceType} id={r.id} onClick={onClose} />;
+        return (
+          <ResourceLink
+            integrationId={integrationId}
+            name={r.name}
+            resourceType={r.resourceType}
+            id={r.id}
+            onClick={onClose} />
+        );
       },
     },
     {

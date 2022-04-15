@@ -132,6 +132,7 @@ function TabPanel({ children, value, index, className }) {
 }
 export default function BottomDrawer({
   flowId,
+  integrationId,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -478,7 +479,7 @@ export default function BottomDrawer({
                 tabPanelValue = <ScriptPanel flowId={flowId} />;
                 break;
               case 'auditLogs':
-                tabPanelValue = <AuditPanel flowId={flowId} />;
+                tabPanelValue = <AuditPanel flowId={flowId} integrationId={integrationId} />;
 
                 break;
               case 'scriptLogs':

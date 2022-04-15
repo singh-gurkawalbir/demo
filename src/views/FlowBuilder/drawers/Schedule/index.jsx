@@ -42,7 +42,7 @@ function DrawerForm(props) {
   // TODO: Ashok: Connector specific things to be added for schedule drawer
   // incase of !isViewMode && isIntegrationApp
   return (
-    <LoadResources required resources="flows">
+    <LoadResources required integrationId={flow?._integrationId} resources="flows">
       <DrawerContent className={classes.scheduleContainer}>
         <Paper elevation={0} className={classes.paperDefault}>
           <FlowScheduleForm formKey={formKey} flow={flow} />

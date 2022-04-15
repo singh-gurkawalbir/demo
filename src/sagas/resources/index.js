@@ -11,7 +11,7 @@ import getRequestOptions, { pingConnectionParentContext } from '../../utils/requ
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
-import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH } from '../../utils/constants';
+import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH, INTEGRATION_DEPENDENT_RESOURCES, STANDALONE_INTEGRATION } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
@@ -714,7 +714,7 @@ export function* deleteIntegration({ integrationId }) {
   yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
 }
 
-export function* getResourceCollection({ resourceType, refresh }) {
+export function* getResourceCollection({ resourceType, refresh, integrationId }) {
   let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
 
@@ -737,8 +737,20 @@ export function* getResourceCollection({ resourceType, refresh }) {
   if (resourceType === 'notifications') {
     path = '/notifications?users=all';
   }
+  if (integrationId) {
+    if (INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
+      path = `/integrations/${integrationId}/${resourceType}`;
+    }
+    const integration = yield select(selectors.resource, 'integrations', integrationId);
+
+    if (!integration && integrationId !== STANDALONE_INTEGRATION.id) {
+      yield call(getResource, {resourceType: 'integrations', id: integrationId});
+    }
+  }
 
   try {
+    yield put(actions.resource.collectionRequestSent(resourceType, integrationId));
+
     let collection = yield call(apiCallWithPaging, {
       path,
       hidden: hideNetWorkSnackbar,
@@ -773,13 +785,14 @@ export function* getResourceCollection({ resourceType, refresh }) {
       collection = undefined;
     }
 
-    yield put(actions.resource.receivedCollection(resourceType, collection));
+    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
+    yield put(actions.resource.collectionRequestSucceeded({resourceType, integrationId}));
 
     return collection;
   } catch (error) {
     // generic message to the user that the
     // saga failed and services team working on it
-
+    yield put(actions.resource.collectionRequestFailed({resourceType, integrationId}));
   }
 }
 

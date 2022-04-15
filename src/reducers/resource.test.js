@@ -2771,12 +2771,14 @@ describe('resource region selector testcases', () => {
         _connectorId: 'connector1',
         name: 'Connector 1',
         numFlows: 6,
+        mode: 'settings',
       },
       {
         _integrationId: 'integration6',
         _connectorId: 'connector1',
         tag: 'tag 1',
         name: 'Connector 1',
+        mode: 'settings',
         numError: 36,
         numFlows: 7,
       },
@@ -2785,6 +2787,7 @@ describe('resource region selector testcases', () => {
         _connectorId: 'connector1',
         tag: 'tag 2',
         name: 'Connector 1',
+        mode: 'settings',
         numError: 49,
         offlineConnections: ['conn1'],
         numFlows: 8,
@@ -2794,6 +2797,7 @@ describe('resource region selector testcases', () => {
         _connectorId: 'connector2',
         name: 'Connector 2',
         numFlows: 9,
+        mode: 'install',
       },
       {
         _integrationId: 'integration9',
@@ -2801,6 +2805,7 @@ describe('resource region selector testcases', () => {
         name: 'Connector 2',
         tag: 'test tag',
         numFlows: 10,
+        mode: 'install',
         offlineConnections: ['conn1', 'conn2'],
       },
     ];
@@ -3449,7 +3454,12 @@ describe('resource region selector testcases', () => {
             flowsNameAndDescription: '',
             integration: {
               mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,
@@ -3616,7 +3626,12 @@ describe('resource region selector testcases', () => {
             flowsNameAndDescription: '',
             integration: {
               mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,
@@ -3756,7 +3771,14 @@ describe('resource region selector testcases', () => {
               owner: 'Company 1',
             },
             flowsNameAndDescription: '',
-            integration: {},
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
             key: 'connector1',
             lastErrorAt: 1,
             name: 'Integration Two',
@@ -3794,7 +3816,14 @@ describe('resource region selector testcases', () => {
             _integrationId: 'integration10',
             applications: [],
             flowsNameAndDescription: '',
-            integration: {},
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
             key: 'integration10',
             name: 'Integration ten',
             numError: 2,
@@ -3946,7 +3975,12 @@ describe('resource region selector testcases', () => {
             flowsNameAndDescription: '',
             integration: {
               mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,
@@ -4137,7 +4171,12 @@ describe('resource region selector testcases', () => {
             flowsNameAndDescription: '',
             integration: {
               mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,
@@ -4193,7 +4232,12 @@ describe('resource region selector testcases', () => {
             flowsNameAndDescription: '',
             integration: {
               mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,
@@ -4400,7 +4444,12 @@ describe('resource region selector testcases', () => {
             flowsNameAndDescription: '',
             integration: {
               mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,
@@ -4527,7 +4576,12 @@ describe('resource region selector testcases', () => {
             flowsNameAndDescription: '',
             integration: {
               mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,
@@ -4646,7 +4700,6 @@ describe('resource region selector testcases', () => {
             _connectorId: 'connector1',
             _integrationId: 'suitescript2',
             key: 'connection1_suitescript2',
-            name: undefined,
             numFlows: 10,
             pinned: false,
             sortablePropType: -1,
@@ -4655,7 +4708,6 @@ describe('resource region selector testcases', () => {
           {
             _integrationId: 'suitescript2',
             key: 'connection3_suitescript2',
-            name: undefined,
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection3',
@@ -4697,8 +4749,12 @@ describe('resource region selector testcases', () => {
             },
             flowsNameAndDescription: '',
             integration: {
-              mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,

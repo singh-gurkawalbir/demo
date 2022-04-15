@@ -104,7 +104,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function QueuedJobs({ connectionId}) {
+function QueuedJobs({ connectionId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const connectionJobs = useSelector(state =>
@@ -163,7 +163,7 @@ const connectionsFilterConfig = {
 const paths = ['flows/:flowId/queuedJobs', ':flowId/queuedJobs'];
 const flowJobConnectionsOptions = { ignoreBorrowedConnections: true };
 
-export default function QueuedJobsDrawer() {
+export default function QueuedJobsDrawer({integrationId}) {
   const classes = useStyles();
   const location = useLocation();
   const match = useRouteMatch();
@@ -197,7 +197,7 @@ export default function QueuedJobsDrawer() {
   }, [history]);
 
   return (
-    <LoadResources required resources="flows,connections">
+    <LoadResources required integrationId={integrationId} resources="flows,connections">
       <RightDrawer
         height="tall"
         width="full"
