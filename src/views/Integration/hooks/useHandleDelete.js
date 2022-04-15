@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import getRoutePath from '../../../utils/routePaths';
@@ -11,19 +10,18 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { INTEGRATION_DELETE_VALIDATE } from '../../../utils/messageStore';
 import actions from '../../../actions';
 
-export default function useHandleDelete(_integrationId) {
+export default function useHandleDelete(_integrationId, ops = emptyObject) {
   // this hook returns a callback function to handle deleting/uninstalling integrations
   const history = useHistory();
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
-  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, _integrationId) || emptyObject;
-  const integrationAppTileName = getIntegrationAppUrlName(integration.name) || '';
-  const supportsMultiStore = integration?.settings?.supportsMultiStore;
+  const { supportsMultiStore, _connectorId, name } = ops;
+
+  const integrationAppTileName = getIntegrationAppUrlName(name) || '';
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state).accessLevel
   );
-  const {_connectorId} = integration;
   const dispatch = useDispatch();
 
   const resourceReferences = useSelector(state =>

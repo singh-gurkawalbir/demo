@@ -3634,6 +3634,101 @@ selectors.userPermissionsOnConnection = (state, connectionId) => {
   return emptyObject;
 };
 
+selectors.resourcePermissionsForTile = (
+  state,
+  resourceType,
+  resourceId,
+  tileOps = {}
+) => {
+  const {childResourceType, _connectorId, _parentId} = tileOps;
+
+  // to support parent-child integration permissions
+  if (resourceType === 'integrations') {
+    if (_parentId) {
+      return selectors.resourcePermissions(
+        state,
+        resourceType,
+        _parentId,
+        childResourceType
+      );
+    }
+  }
+  //  when resourceType == connection and resourceID = connectionId, we fetch connection
+  //  permission by checking for highest order connection permission under integrations
+  if (resourceType === 'connections' && resourceId) {
+    return selectors.userPermissionsOnConnection(state, resourceId) || emptyObject;
+  }
+
+  const permissions = selectors.userPermissions(state);
+
+  // TODO: userPermissions should be written to handle when there isn't a state and in those circumstances
+  // should return null rather than an empty object for all cases
+  if (!permissions || isEmpty(permissions)) return emptyObject;
+
+  // special case, where resourceType == integrations. Its childResource,
+  // ie. connections, flows can be retrieved by passing childResourceType
+  if (resourceType === 'integrations' && (childResourceType || resourceId)) {
+    if (
+      [
+        USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+        USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+      ].includes(permissions.accessLevel)
+    ) {
+      const value =
+       _connectorId
+         ? permissions.integrations.connectors
+         : permissions.integrations.all;
+
+      // filtering child resource
+      return (
+        (childResourceType ? value && value[childResourceType] : value) ||
+        emptyObject
+      );
+    }
+    if (resourceId) {
+      let value = permissions[resourceType][resourceId];
+
+      if (!value && resourceType === 'integrations') {
+        value = permissions[resourceType].all;
+      }
+
+      // remove tile level permissions added to connector while are not valid.
+      if (_connectorId) {
+        const connectorTilePermission = {
+          accessLevel: value.accessLevel,
+          flows: {
+            edit: value.flow && value.flow.edit,
+          },
+          connections: {
+            edit: value.connections && value.connections.edit,
+            create: value.connections && value.connections.create,
+          },
+          edit: value.edit,
+          delete: value.delete,
+        };
+
+        value = connectorTilePermission;
+      }
+
+      return (
+        (childResourceType ? value && value[childResourceType] : value) ||
+        emptyObject
+      );
+    }
+
+    return emptyObject;
+  }
+  if (resourceType) {
+    return resourceId
+      ? permissions[resourceType][resourceId]
+      : permissions[resourceType];
+  }
+
+  return permissions || emptyObject;
+};
+
 selectors.resourcePermissions = (
   state,
   resourceType,
