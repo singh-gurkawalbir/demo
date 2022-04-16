@@ -21,9 +21,11 @@ export default function SinglePanelGridItem({area, title, children, helpKey, ref
   return (
     <PanelGridItem gridArea={area} ref={ref}>
       <div className={classes.flexContainer}>
+        { title && (
         <div className={classes.title}>
           <PanelTitle title={title} helpKey={helpKey} />
         </div>
+        )}
         <div className={classes.panel} {...isLoggableAttr(isLoggable)}>
           {children}
         </div>
