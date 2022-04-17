@@ -103,11 +103,7 @@ export default function PreviewInfo(props) {
     selectors.isExportPreviewDisabled(state, formKey));
   const resourceDefaultMockData = useSelector(state => selectors.getResourceDefaultMockData(state, resourceId));
   const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
-  const records = Object.prototype.hasOwnProperty.call(previewStageDataList, 'preview')
-    ? previewStageDataList.preview
-    : previewStageDataList.parse;
   const isMockInputDataAbsent = resourceType === 'imports' &&
-                              !records.data &&
                               isEmpty(resourceMockData) &&
                               isEmpty(resourceDefaultMockData);
 
@@ -154,13 +150,17 @@ export default function PreviewInfo(props) {
     }
 
     if (resourceSampleData.status === 'received') {
+      const records = Object.prototype.hasOwnProperty.call(previewStageDataList, 'preview')
+        ? previewStageDataList.preview
+        : previewStageDataList.parse;
+
       return !isMockInputDataAbsent && !resourceSampleData.message && (
         <Typography variant="body2">
           {getPreviewDataPageSizeInfo(records)}
         </Typography>
       );
     }
-  }, [isMockInputDataAbsent, records, resourceSampleData.message, resourceSampleData?.status]);
+  }, [isMockInputDataAbsent, previewStageDataList, resourceSampleData.message, resourceSampleData.status]);
 
   const handlePreview = useCallback(
     () => {
