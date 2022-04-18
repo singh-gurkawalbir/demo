@@ -1590,6 +1590,7 @@ const recursivelyValidateV2Mappings = ({
   v2TreeData.forEach(mapping => {
     const {
       parentKey,
+      parentExtract,
       generate,
       generateDisabled,
       copySource,
@@ -1601,7 +1602,7 @@ const recursivelyValidateV2Mappings = ({
     if (isTabNode) return;
 
     if (generate) {
-      const dupKey = parentKey ? `${parentKey}-${generate}` : generate;
+      const dupKey = parentKey ? `${parentKey}-${parentExtract}-${generate}` : generate;
 
       // dupMap stores a list of mappings with generate
       // if it already has an entry for same generate, then its a duplicate mapping
