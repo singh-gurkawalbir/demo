@@ -14,7 +14,7 @@ import {
   hideOtherTabRows,
   MAPPING_DATA_TYPES,
   getDefaultExtractPath,
-  getTabLabel} from '../../../utils/mapping';
+  getUniqueExtractId} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
 // this util will update parent reference props on children
@@ -29,16 +29,16 @@ const updateChildrenProps = (children, parentNode) => {
   if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
     return childrenCopy.map(c => ({
       ...c,
-      parentExtract: combinedExtract, // for now combinedExtract will always contain 1 extract
+      parentExtract: getUniqueExtractId(combinedExtract, 0), // for now combinedExtract will always contain 1 extract
       parentKey: key,
-      tabIndex: 0,
     }));
   }
 
   // remove parent row reference from children for other data types
   return childrenCopy.reduce((acc, c) => {
     if (c.isTabNode) return acc;
-    const {parentExtract, parentKey, tabIndex, ...rest} = c;
+    const {parentExtract, parentKey,
+      ...rest} = c;
 
     acc.push(rest);
 
@@ -64,7 +64,7 @@ const updateDataType = (draft, node, oldDataType, newDataType) => {
     delete newNode.lookupName;
     delete newNode.default;
 
-    const parentExtract = newNode.combinedExtract?.split(',')?.[0];
+    const parentExtract = getUniqueExtractId(newNode.combinedExtract?.split(',')?.[0], 0);
 
     if (isEmpty(newNode.children)) {
       newNode.children = [{
@@ -72,21 +72,20 @@ const updateDataType = (draft, node, oldDataType, newDataType) => {
         title: '',
         parentKey: newNode.key,
         parentExtract,
-        tabIndex: newDataType === MAPPING_DATA_TYPES.OBJECTARRAY ? 0 : undefined,
         dataType: MAPPING_DATA_TYPES.STRING,
       }];
     }
 
     if (newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-      if (!newNode.tabMap) {
-        newNode.tabMap = {
-          0: getTabLabel(parentExtract, 0),
-        };
-      }
+      // if (!newNode.tabMap) {
+      //   newNode.tabMap = {
+      //     0: getUniqueExtractId(parentExtract, 0),
+      //   };
+      // }
     } else {
       // combinedExtract is used only for array data types to store comma separated values
       delete newNode.combinedExtract;
-      delete newNode.tabMap;
+      // delete newNode.tabMap;
     }
 
     return newNode;
@@ -131,7 +130,8 @@ export default (state = {}, action) => {
     expanded,
     expandedKeys,
     errors,
-    newTabIndex,
+    newTabValue,
+    newTabExtractId,
   } = action;
 
   return produce(state, draft => {
@@ -455,9 +455,9 @@ export default (state = {}, action) => {
             generateDisabled: true,
             disabled: draft.mapping.isMonitorLevelAccess,
             combinedExtract: defaultExtract,
-            tabMap: {
-              0: getTabLabel(defaultExtract, 0),
-            },
+            // tabMap: {
+            //   0: getUniqueExtractId(defaultExtract, 0),
+            // },
           };
 
           node.children = updateChildrenProps(draft.mapping.v2TreeData, node);
@@ -525,7 +525,6 @@ export default (state = {}, action) => {
             title: '',
             parentKey: node.parentKey,
             parentExtract: node.parentExtract,
-            tabIndex: node.tabIndex,
             dataType: MAPPING_DATA_TYPES.STRING,
           });
         }
@@ -618,15 +617,11 @@ export default (state = {}, action) => {
                     key: newRowKey,
                     title: '',
                     parentKey: node.key,
-                    parentExtract: node.extract,
-                    tabIndex: node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY ? 0 : undefined,
                     dataType: MAPPING_DATA_TYPES.STRING,
                   }];
                 } else if (value && node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
                   // handle tab view
-                  const {isGroupedSampleData} = draft.mapping;
-
-                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(original(node), value, isGroupedSampleData);
+                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(original(node), value);
                 }
 
                 // array data types do not have direct 'extract' prop
@@ -703,7 +698,8 @@ export default (state = {}, action) => {
         if (!draft.mapping) break;
         const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
 
-        nodeSubArray[nodeIndexInSubArray] = hideOtherTabRows(original(node), newTabIndex);
+        nodeSubArray[nodeIndexInSubArray] = hideOtherTabRows(original(node), newTabExtractId);
+        nodeSubArray[nodeIndexInSubArray].activeTab = newTabValue;
 
         break;
       }

@@ -536,7 +536,7 @@ export const getInputOutputFormat = (isGroupedSampleData, isGroupedOutput) => {
 
 // for object array multiple extracts view,
 // mark non active tabs children as hidden
-export const hideOtherTabRows = (node, newTabIndex, hidden) => {
+export const hideOtherTabRows = (node, newTabExtractId, hidden) => {
   const clonedNode = deepClone(node);
 
   if (!clonedNode.children?.length) return clonedNode;
@@ -552,7 +552,7 @@ export const hideOtherTabRows = (node, newTabIndex, hidden) => {
       clonedChild.className = 'hideRow';
 
       // update children hidden as well
-      return hideOtherTabRows(clonedChild, newTabIndex, true);
+      return hideOtherTabRows(clonedChild, newTabExtractId, true);
     }
 
     // if parent is passing hidden as false explicitly, then all children should be shown
@@ -561,72 +561,80 @@ export const hideOtherTabRows = (node, newTabIndex, hidden) => {
       delete clonedChild.className;
 
       // update children as well
-      return hideOtherTabRows(clonedChild, newTabIndex, false);
+      return hideOtherTabRows(clonedChild, newTabExtractId, false);
     }
 
     // else if hidden is undefined, then check on the tab index
-    if (clonedChild.tabIndex !== newTabIndex) {
+    if (clonedChild.parentExtract !== newTabExtractId) {
       clonedChild.hidden = true;
       clonedChild.className = 'hideRow';
 
       // update children hidden as well
-      return hideOtherTabRows(clonedChild, newTabIndex, true);
+      return hideOtherTabRows(clonedChild, newTabExtractId, true);
     }
     delete clonedChild.hidden;
     delete clonedChild.className;
 
     // update children as well
-    return hideOtherTabRows(clonedChild, newTabIndex, false);
+    return hideOtherTabRows(clonedChild, newTabExtractId, false);
   });
 
   return clonedNode;
 };
 
-export const getTabLabel = (extract, index) => {
+export const getUniqueExtractId = (extract, index) => {
+  if (!extract) { return ''; }
+  // currently only supporting root level duplicate extracts
+  // todo for future
   if (extract === '$' || extract === '$[*]') {
-    return `${extract}_${index}`;
+    return `${extract}|${index}`;
   }
 
   return extract;
 };
 
-// this util is for object array data type nodes when multiple extracts are given
-// to reconstruct the whole children and tabMap
-export const rebuildObjectArrayNode = (node, extract = '', isGroupedSampleData) => {
+export const getExtractFromUniqueId = extractId => {
+  const pipeIndex = extractId?.indexOf('|');
+
+  if (pipeIndex > 0) {
+    return extractId.substring(0, pipeIndex);
+  }
+
+  return extractId;
+};
+
+// this util is for object array data type nodes when multiple extracts are given,
+// to reconstruct the whole children array
+export const rebuildObjectArrayNode = (node, extract = '') => {
   const splitExtracts = extract.split(',');
 
   // if no extract, return
   if (!splitExtracts || !splitExtracts.length) return node;
 
-  // update hidden prop and only show 0th tab children
-  const clonedNode = hideOtherTabRows(node, 0);
+  // update hidden prop and only show first extract children
+  const clonedNode = hideOtherTabRows(node, getUniqueExtractId(splitExtracts[0], 0));
 
-  const {key: parentKey, multipleSources, tabMap = {}} = clonedNode;
+  // set active tab to 0th
+  clonedNode.activeTab = 0;
 
-  const copyTabMap = {};
+  const {key: parentKey} = clonedNode;
 
-  // for each extract, keep the tabMap if exists, else add new
-  splitExtracts.forEach((extract, index) => {
-    const uniqueExtract = getTabLabel(extract, index);
+  const foundExtractsUniqueId = [];
 
-    if (index > 0 && !multipleSources) {
-      clonedNode.multipleSources = true;
-    }
-
-    if (tabMap[index] === uniqueExtract) {
-      // add in the new copyTabMap
-      copyTabMap[index] = uniqueExtract;
-    }
-  });
-
-  // filter the children array and only keep the ones which
-  // have the parentExtract same as one of the given extracts
   clonedNode.children = clonedNode.children.filter(child => {
-    const {parentExtract = getDefaultExtractPath(isGroupedSampleData)} = child;
+    const {parentExtract} = child;
 
-    if (child.isTabNode) return true;
+    if (child.isTabNode) {
+      return true;
+    }
+    const uniqueExtract = getExtractFromUniqueId(parentExtract);
 
-    if (splitExtracts[child.tabIndex] === parentExtract) {
+    const newIndex = splitExtracts.findIndex(s => uniqueExtract === s);
+
+    // only keep the children which have matching parentExtract
+    if (newIndex !== -1) {
+      foundExtractsUniqueId.push(parentExtract);
+
       return true;
     }
 
@@ -634,16 +642,20 @@ export const rebuildObjectArrayNode = (node, extract = '', isGroupedSampleData) 
   });
 
   // find left over extracts so that new children rows can be pushed
-  splitExtracts.forEach((extract, index) => {
-    if (copyTabMap[index]) return;
-    copyTabMap[index] = getTabLabel(extract, index);
-    const hidden = index > 0;
+  splitExtracts.forEach((e, i) => {
+    if (!e) return;
+    const extract = getUniqueExtractId(e, i);
+
+    if (foundExtractsUniqueId.includes(extract)) {
+      return;
+    }
+
+    const hidden = i > 0;
     const newRow = {
       key: generateUniqueKey(),
       title: '',
       parentKey,
       parentExtract: extract,
-      tabIndex: index,
       dataType: MAPPING_DATA_TYPES.STRING,
       hidden, // hiding the new rows if those are not in 0th tab
       className: hidden && 'hideRow',
@@ -652,12 +664,12 @@ export const rebuildObjectArrayNode = (node, extract = '', isGroupedSampleData) 
     clonedNode.children.push(newRow);
   });
 
-  if (Object.keys(copyTabMap).length === 1) {
+  if (splitExtracts.length === 1) {
     // remove tab node
-    if (clonedNode.children?.[0]?.isTabNode) {
+    if (clonedNode.children[0].isTabNode) {
       clonedNode.children.shift();
     }
-  } else if (Object.keys(copyTabMap).length > 1 && !clonedNode.children?.[0]?.isTabNode) {
+  } else if (splitExtracts.length > 1 && !clonedNode.children[0].isTabNode) {
     // add tab node
     clonedNode.children.unshift({
       key: generateUniqueKey(),
@@ -666,13 +678,12 @@ export const rebuildObjectArrayNode = (node, extract = '', isGroupedSampleData) 
       isTabNode: true,
     });
   }
-  clonedNode.tabMap = copyTabMap;
   delete clonedNode.buildArrayHelper; // this will be rebuilt when saving to BE
 
   return clonedNode;
 };
 
-function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, parentExtract, disabled, hidden, tabIndex, isGroupedSampleData}) {
+function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, parentExtract, disabled, hidden, isGroupedSampleData}) {
   mappings.forEach(m => {
     const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract} = m;
     const children = [];
@@ -683,7 +694,6 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
       title: '',
       parentKey,
       parentExtract,
-      tabIndex,
       disabled,
       hidden,
       className: hidden && 'hideRow',
@@ -705,7 +715,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
           mappings: objMappings,
           treeData: children,
           parentKey: currNodeKey,
-          parentExtract: currNodeExtract,
+          // parentExtract: currNodeExtract,
           disabled,
           isGroupedSampleData});
       } else if (currNodeExtract) { // if object mapping has extract, then it is copied from source as is with no children
@@ -725,12 +735,9 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
 
       if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
         let multipleSources = false;
-        const tabMap = {}; // to store extract and its tab index map
-        let tabIndex = -1;
 
-        buildArrayHelper.forEach(obj => {
+        buildArrayHelper.forEach((obj, index) => {
           const {extract = getDefaultExtractPath(isGroupedSampleData), mappings} = obj;
-          let newExtract = extract;
 
           combinedExtract = `${combinedExtract ? `${combinedExtract},` : ''}${extract}`;
 
@@ -738,16 +745,11 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
             return;
           }
 
-          // we need this tabMap in case duplicate extracts are
-          // present for different buildArrayHelper
-          tabIndex += 1;
-          if (extract === '$' || extract === '$[*]') {
-            newExtract = `${extract}_${tabIndex}`;
-          }
+          const newExtract = getUniqueExtractId(extract, index);
+          let isHidden = hidden;
 
           // found more than 1 extracts, insert a tab node
           if (multipleSources && !nodeToPush.multipleSources) {
-            tabMap[tabIndex] = newExtract;
             nodeToPush.multipleSources = true;
 
             children.unshift({
@@ -758,32 +760,21 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
             });
             // since the first source is already pushed, all other children should
             // be hidden now, as we show the first source tab by default
-            recursivelyBuildTreeFromV2Mappings({
-              mappings,
-              treeData: children,
-              parentKey: currNodeKey,
-              parentExtract: extract,
-              disabled,
-              hidden: true,
-              tabIndex,
-              isGroupedSampleData}
-            );
+            isHidden = true;
           } else {
-            tabMap[tabIndex] = newExtract;
             multipleSources = true;
-            recursivelyBuildTreeFromV2Mappings({
-              mappings,
-              treeData: children,
-              parentKey: currNodeKey,
-              parentExtract: extract,
-              disabled,
-              hidden,
-              tabIndex,
-              isGroupedSampleData});
           }
+          recursivelyBuildTreeFromV2Mappings({
+            mappings,
+            treeData: children,
+            parentKey: currNodeKey,
+            parentExtract: newExtract,
+            disabled,
+            hidden: isHidden,
+            isGroupedSampleData}
+          );
 
           nodeToPush.children = children;
-          nodeToPush.tabMap = tabMap;
           if (!nodeToPush.children.length) {
             nodeToPush.copySource = 'yes';
           }
@@ -1210,6 +1201,7 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave}) => {
         // no children exists, so only save extract
         if (!children?.length || (children.length === 1 && children[0].isTabNode)) {
           splitExtracts.forEach(extract => {
+            if (!extract) return;
             buildArrayHelper.push({
               extract,
             });
@@ -1221,9 +1213,10 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave}) => {
 
         // both extract and sub mappings exist
         splitExtracts.forEach((extract, index) => {
+          if (!extract) return;
           // find the children which matches the given extract index
           const matchingChildren = children.filter(c => {
-            if (c.tabIndex === index) {
+            if (c.parentExtract === getUniqueExtractId(extract, index)) {
               return true;
             }
 
@@ -1254,9 +1247,13 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave}) => {
       }
       // no sub mappings are supported for primitive arrays
       if (splitExtracts.length) {
-        newMapping.buildArrayHelper = splitExtracts.map(extract => ({
-          extract,
-        }));
+        newMapping.buildArrayHelper = splitExtracts.map(extract => {
+          if (!extract) return;
+
+          return {
+            extract,
+          };
+        });
         _mappingsToSave.push(newMapping);
       } else {
         // invalid mapping
@@ -1455,6 +1452,7 @@ export const filterExtractsNode = (node, propValue, inputValue) => {
   const splitInput = inputValue.split(',');
 
   const matchedPaths = splitInput.filter(i => {
+    if (!i) return false;
     // replace '$.' and '$[*].' as we are not storing these prefixes in each node jsonPath as well
     // for better searching
     const inputPath = i.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
@@ -1527,8 +1525,7 @@ const recursivelyCompareV2Mappings = (_mappingObj1 = {}, _mappingObj2 = {}) => {
     hidden: h1,
     className: cl1,
     copySource: cs1,
-    tabIndex: ti1,
-    tabMap: tm1,
+    activeTab: ta1,
     ...mappingObj1
   } = _mappingObj1;
   const {
@@ -1544,8 +1541,7 @@ const recursivelyCompareV2Mappings = (_mappingObj1 = {}, _mappingObj2 = {}) => {
     hidden: h2,
     className: cl2,
     copySource: cs2,
-    tabIndex: ti2,
-    tabMap: tm2,
+    activeTab: ta2,
     ...mappingObj2
   } = _mappingObj2;
 
@@ -1594,7 +1590,6 @@ const recursivelyValidateV2Mappings = ({
   v2TreeData.forEach(mapping => {
     const {
       parentKey,
-      tabIndex = 0,
       generate,
       generateDisabled,
       copySource,
@@ -1606,7 +1601,7 @@ const recursivelyValidateV2Mappings = ({
     if (isTabNode) return;
 
     if (generate) {
-      const dupKey = parentKey ? `${parentKey}-${tabIndex}-${generate}` : generate;
+      const dupKey = parentKey ? `${parentKey}-${generate}` : generate;
 
       // dupMap stores a list of mappings with generate
       // if it already has an entry for same generate, then its a duplicate mapping

@@ -1,7 +1,7 @@
-import React, {useMemo, useState, useCallback} from 'react';
+import React, {useMemo, useCallback} from 'react';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import {findNodeInTree} from '../../../../../../utils/mapping';
+import {findNodeInTree, getUniqueExtractId} from '../../../../../../utils/mapping';
 import {selectors} from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 
@@ -24,32 +24,18 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-function generateTabs(treeData, key) {
+function generateTabs(parentNode) {
   const tabs = [];
 
-  const {node} = findNodeInTree(treeData, 'key', key);
+  if (parentNode?.combinedExtract) {
+    const splitExtracts = parentNode.combinedExtract.split(',');
 
-  // tabMap structure:
-  // {
-  //   0: '$_0',
-  //   1: '$.siblings[*]',
-  //   2: '$_2',
-  // }
-
-  if (node?.tabMap) {
-    Object.keys(node.tabMap).forEach(index => {
-      const extract = node.tabMap[index];
-      let label = extract;
-
-      if (extract.startsWith('$_')) {
-        label = '$';
-      } else if (extract.startsWith('$[*]_')) {
-        label = '$[*]';
-      }
+    splitExtracts.forEach((extract, index) => {
+      if (!extract) return;
 
       tabs.push({
-        id: extract,
-        label,
+        id: getUniqueExtractId(extract, index),
+        label: extract,
       });
     });
   }
@@ -60,21 +46,20 @@ function generateTabs(treeData, key) {
 function TabbedRow({parentKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [tabValue, setTabValue] = useState(0);
   const treeData = useSelector(state => selectors.v2MappingsTreeData(state));
-  const tabs = useMemo(() => generateTabs(treeData, parentKey), [parentKey, treeData]);
+  const parentNode = useMemo(() => (findNodeInTree(treeData, 'key', parentKey)?.node), [parentKey, treeData]);
+
+  const tabs = useMemo(() => generateTabs(parentNode), [parentNode]);
 
   const handleTabChange = useCallback((event, newValue) => {
-    setTabValue(newValue);
-
-    dispatch(actions.mapping.v2.changeArrayTab(parentKey, newValue));
-  }, [dispatch, parentKey]);
+    dispatch(actions.mapping.v2.changeArrayTab(parentKey, newValue, tabs[newValue].id));
+  }, [dispatch, parentKey, tabs]);
 
   return (
     <div className={classes.tabComponentRoot}>
       <Tabs
         className={classes.tabsContainer}
-        value={tabValue}
+        value={parentNode?.activeTab || 0}
         onChange={handleTabChange}
         indicatorColor="primary"
         textColor="primary"
