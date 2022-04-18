@@ -1,5 +1,5 @@
 /* global expect, describe, test */
-import {convertGraphQLQueryToHTTPBody, getGraphQLObj, getGraphqlRelativeURI, getGraphQLValues, GRAPHQL_FIELD_MAP, isGraphqlField, isGraphqlResource} from '.';
+import {convertGraphqlFieldIdToHTTPFieldId, convertGraphQLQueryToHTTPBody, getGraphQLObj, getGraphqlRelativeURI, getGraphQLValues, GRAPHQL_FIELDS, isGraphqlField, isGraphqlResource} from '.';
 
 describe('graphql utils: ', () => {
   describe('convertGraphQLQueryToHTTPBody test cases', () => {
@@ -109,15 +109,13 @@ describe('graphql utils: ', () => {
       expect(isGraphqlResource({test: '123'})).toBeFalsy();
       expect(isGraphqlResource('test')).toBeFalsy();
     });
-    test('should return true for graphql fields', () => {
-      ['exports', 'imports', 'connections'].forEach(resourceType => {
-        const graphqlFields = GRAPHQL_FIELD_MAP[resourceType];
 
-        Object.keys(graphqlFields).forEach(field => {
-          expect(isGraphqlField(field)).toBeTruthy();
-        });
+    test('should return true for graphql fields', () => {
+      GRAPHQL_FIELDS.forEach(field => {
+        expect(isGraphqlField(field)).toBeTruthy();
       });
     });
+
     test('should return false for non graphql fields', () => {
       [
         'http.body',
@@ -126,6 +124,47 @@ describe('graphql utils: ', () => {
       ].forEach(field => {
         expect(isGraphqlField(field)).toBeFalsy();
       });
+    });
+  });
+  describe('convertGraphqlFieldIdToHTTPFieldId util', () => {
+    test('should return empty string if no parameters are passed', () => {
+      expect(convertGraphqlFieldIdToHTTPFieldId()).toBeUndefined();
+    });
+    test('should correctly return field id in case ignoreExisting/ignoreMissing is set on the resource', () => {
+      const resource1 = {
+        _id: '123',
+        adaptorType: 'HTTPImport',
+        ignoreExisting: true,
+      };
+      const resource2 = {
+        _id: '123',
+        adaptorType: 'HTTPImport',
+        ignoreExisting: false,
+      };
+
+      expect(convertGraphqlFieldIdToHTTPFieldId('graphql.queryCreate', resource1)).toEqual('http.body');
+      expect(convertGraphqlFieldIdToHTTPFieldId('graphql.operationNameCreate', resource1)).toEqual('http.body');
+      expect(convertGraphqlFieldIdToHTTPFieldId('graphql.variablesCreate', resource1)).toEqual('http.body');
+      expect(convertGraphqlFieldIdToHTTPFieldId('graphql.queryUpdate', resource2)).toEqual('http.body.0');
+      expect(convertGraphqlFieldIdToHTTPFieldId('graphql.operationNameUpdate', resource2)).toEqual('http.body.0');
+      expect(convertGraphqlFieldIdToHTTPFieldId('graphql.variablesUpdate', resource2)).toEqual('http.body.0');
+    });
+
+    test('should return correct fieldId for paging fields', () => {
+      expect(convertGraphqlFieldIdToHTTPFieldId('paging.graphql.query')).toEqual('http.paging.body');
+      expect(convertGraphqlFieldIdToHTTPFieldId('paging.graphql.operationName')).toEqual('http.paging.body');
+      expect(convertGraphqlFieldIdToHTTPFieldId('paging.graphql.variables')).toEqual('http.paging.body');
+    });
+
+    test('should return correct fieldId for graphql export and import fields', () => {
+      expect(convertGraphqlFieldIdToHTTPFieldId('graphql.query')).toEqual('http.body');
+      expect(convertGraphqlFieldIdToHTTPFieldId('graphql.operationName')).toEqual('http.body');
+      expect(convertGraphqlFieldIdToHTTPFieldId('graphql.variables')).toEqual('http.body');
+    });
+    test('should return correct fieldId for graphql connection fields', () => {
+      expect(convertGraphqlFieldIdToHTTPFieldId('graphql.query', {}, 'connections')).toEqual('http.ping.body');
+      expect(convertGraphqlFieldIdToHTTPFieldId('graphql.operationName', {}, 'connections')).toEqual('http.ping.body');
+      expect(convertGraphqlFieldIdToHTTPFieldId('graphql.variables', {}, 'connections')).toEqual('http.ping.body');
     });
   });
 });

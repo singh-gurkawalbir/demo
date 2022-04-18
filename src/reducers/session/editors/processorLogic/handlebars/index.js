@@ -1,7 +1,7 @@
 import util from '../../../../../utils/json';
 import { isOldRestAdaptor, inferResourceType } from '../../../../../utils/resource';
 import { PAGING_FIELD_IDS } from '../../../../../utils/editor';
-import { GRAPHQL_JSON_FIELDS } from '../../../../../utils/graphql';
+import { GRAPHQL_JSON_FIELDS, isGraphqlField } from '../../../../../utils/graphql';
 
 /* this util is used to read field label and generate editor title from it
 * eg, label = 'Build HTTP request body', editor title would be same i.e. 'Build HTTP request body'
@@ -42,6 +42,9 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
   }
   // lookup fields don't support toggle yet
   if (fieldId?.startsWith('lookup') || fieldId === '_body' || fieldId === '_relativeURI') return false;
+
+  // graphql fields only support AFE2
+  if (isGraphqlField(fieldId)) return false;
 
   // traceKeyTemplate field doesn't support toggle.
   if (fieldId === 'traceKeyTemplate') return false;

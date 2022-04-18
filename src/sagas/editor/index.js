@@ -25,7 +25,6 @@ import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
 import mappingUtil from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
-import { GRAPHQL_FIELD_MAP, isGraphqlField } from '../../utils/graphql';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -586,11 +585,7 @@ export function* requestEditorSampleData({
 
     body.integrationId = flow?._integrationId;
 
-    if (isGraphqlField(fieldId)) {
-      body.fieldPath = GRAPHQL_FIELD_MAP[resourceType][fieldId];
-    } else {
-      body.fieldPath = fieldId || filterPath;
-    }
+    body.fieldPath = fieldId || filterPath;
 
     if (needPreviewStagesData) {
       body.previewData = yield select(selectors.getResourceSampleDataStages, resourceId);
@@ -826,7 +821,7 @@ export function* initEditor({ id, editorType, options }) {
   const stateOptions = {
     editorType,
     ...formattedOptions,
-    fieldId: getUniqueFieldId(fieldId, resource, connection),
+    fieldId: getUniqueFieldId(fieldId, resource, connection, resourceType),
     ...featuresMap(formattedOptions)[editorType],
     originalRule,
     sampleDataStatus: 'requested',
