@@ -1,6 +1,5 @@
 /* global describe, test, expect */
 
-import { GRAPHQL_FIELDS } from '../../../../../utils/graphql';
 import processorLogic, { _constructEditorTitle, _editorSupportsV1V2data } from './index';
 
 const {
@@ -38,11 +37,6 @@ describe('handlebars processor logic', () => {
       expect(_editorSupportsV1V2data({fieldId: '_body'})).toEqual(false);
       expect(_editorSupportsV1V2data({fieldId: '_relativeURI'})).toEqual(false);
       expect(_editorSupportsV1V2data({fieldId: 'lookup.body'})).toEqual(false);
-    });
-    test('should return false for graphql fields', () => {
-      GRAPHQL_FIELDS.forEach(fieldId => {
-        expect(_editorSupportsV1V2data({fieldId})).toEqual(false);
-      });
     });
     test('should return false for traceKeyTemplate field', () => {
       expect(_editorSupportsV1V2data({fieldId: 'traceKeyTemplate'})).toEqual(false);

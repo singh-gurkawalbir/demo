@@ -859,7 +859,51 @@ describe('tests for reducer selectors', () => {
       );
     });
   });
+  describe('selectors.isGraphqlResource test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.isGraphqlResource()).toBeFalsy();
+    });
+    const resourceId = 'new-123';
 
+    test('should return true for new graphql resource', () => {
+      const resourceType = 'exports';
+      const state = reducer(
+        undefined,
+        actions.resource.received(resourceType, {
+          _id: resourceId,
+          type: 'graph_ql',
+        })
+      );
+
+      expect(selectors.isGraphqlResource(state, resourceId, resourceType)).toBeTruthy();
+    });
+    test('should return true for existing graphql resource', () => {
+      const resourceType = 'exports';
+      const state = reducer(
+        undefined,
+        actions.resource.received(resourceType, {
+          _id: resourceId,
+          http: {formType: 'graph_ql'},
+          type: 'http',
+        })
+      );
+
+      expect(selectors.isGraphqlResource(state, resourceId, resourceType)).toBeTruthy();
+    });
+    test('should return false for non graphql resources', () => {
+      const resourceType = 'exports';
+      const state = reducer(
+        undefined,
+        actions.resource.received(resourceType, {
+          _id: resourceId,
+          http: {formType: 'http'},
+          type: 'http',
+        })
+      );
+
+      expect(selectors.isGraphqlResource(state, resourceId, resourceType)).toBeFalsy();
+    });
+  });
   describe('tests for util isPageGenerator', () => {
     test('should return false if resourceType is imports', () => {
       expect(selectors.isPageGenerator(undefined, 'f1', 'i1', 'imports')).toEqual(false);
