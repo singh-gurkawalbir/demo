@@ -72,6 +72,8 @@ export default {
         items: [
           { label: 'SHA-1', value: 'sha1' },
           { label: 'SHA-256', value: 'sha256' },
+          { label: 'SHA-318', value: 'sha318' },
+          { label: 'SHA-512', value: 'sha512' },
         ],
       },
     ],
