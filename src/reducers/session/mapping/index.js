@@ -563,6 +563,9 @@ export default (state = {}, action) => {
         // Find dragObject and remove from current position
         const {node: dragObj, nodeSubArray: dragSubArr, nodeIndexInSubArray: dragSubArrIndex} = findNodeInTree(v2TreeData, 'key', dragKey);
 
+        // if dropping at same level, nothing to do
+        if (dragDropInfo.dropPosition === dragSubArrIndex) break;
+
         dragSubArr.splice(dragSubArrIndex, 1);
 
         // find drop position

@@ -1276,10 +1276,15 @@ export const buildV2MappingsFromTree = ({v2TreeData}) => {
 
 // handles drag/drop logic for tree data
 export function allowDrop({ dragNode, dropNode, dropPosition }) {
-  const {parentKey: dragNodeParentKey, isTabNode: dragNodeIsTab} = dragNode;
-  const {key: dropNodeKey, parentKey: dropNodeParentKey, isTabNode: dropNodeIsTab} = dropNode;
+  const {parentKey: dragNodeParentKey, isTabNode: dragNodeIsTab, hidden: dragNodeIsHidden} = dragNode;
+  const {key: dropNodeKey, parentKey: dropNodeParentKey, isTabNode: dropNodeIsTab, hidden: dropNodeIsHidden} = dropNode;
 
-  if (dragNodeIsTab || dropNodeIsTab) return false;
+  if (dragNodeIsHidden || dropNodeIsHidden) return false;
+
+  if (dragNodeIsTab) return false;
+
+  // can't drop above tab node
+  if (dropNode?.children?.[0]?.isTabNode && dropPosition === 0) return false;
 
   // dropping a child node at the 0th position in the children list
   if (dropPosition === 0 && dragNodeParentKey === dropNodeKey) return true;
@@ -1293,6 +1298,10 @@ export function allowDrop({ dragNode, dropNode, dropPosition }) {
   if (dragNodeParentKey && dropNodeParentKey && dragNodeParentKey !== dropNodeParentKey) {
     return false;
   }
+
+  // can drop just below tab node
+  if (dropNodeIsTab && dropPosition === 1) return true;
+  if (dropNodeIsTab) return false;
 
   return true;
 }
