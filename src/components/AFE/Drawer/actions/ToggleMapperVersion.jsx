@@ -15,12 +15,9 @@ export default function ToggleMapperVersion({ editorId }) {
   const mappingVersion = useSelector(state => selectors.mappingVersion(state));
   const saveInProgress = useSelector(state => selectors.isEditorSaveInProgress(state, editorId));
 
-  const handleVersionToggle = useCallback(
-    newVersion => {
-      dispatch(actions.mapping.toggleVersion(newVersion));
-    },
-    [dispatch]
-  );
+  const handleVersionToggle = useCallback(newVersion => {
+    dispatch(actions.mapping.toggleVersion(newVersion));
+  }, [dispatch]);
 
   if (!showToggle) return null;
 

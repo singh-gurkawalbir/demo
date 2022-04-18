@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function InputOutputTitle({title, helpKey}) {
   const classes = useStyles();
+  const mappingVersion = useSelector(state => selectors.mappingVersion(state));
   const message = useSelector(state => {
     const {isGroupedSampleData, isGroupedOutput} = selectors.mapping(state) || {};
 
@@ -35,8 +36,6 @@ export default function InputOutputTitle({title, helpKey}) {
 
     return title === 'Input' ? inputTitle : outputTitle;
   });
-
-  const mappingVersion = useSelector(state => selectors.mappingVersion(state));
 
   // return the old title if its not mapper2 view
   if (mappingVersion !== 2) {

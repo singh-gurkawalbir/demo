@@ -12,15 +12,14 @@ import HandlebarsExpressionIcon from '../../../../../icons/HandlebarsExpressionI
 import DynamicLookupIcon from '../../../../../icons/DynamicLookupIcon';
 import HardCodedIcon from '../../../../../icons/HardCodedIcon';
 import SettingsIcon from '../../../../../icons/SettingsIcon';
-import LockIcon from '../../../../../icons/LockIcon';
 import Mapper2ExtractsTypeableSelect from './Source/Mapper2ExtractsTypeableSelect';
 import {selectors} from '../../../../../../reducers';
 import Mapper2Generates from './Destination/Mapper2Generates';
 import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
-import RawHtml from '../../../../../RawHtml';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
 import { MAPPING_DATA_TYPES } from '../../../../../../utils/mapping';
+import messageStore from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -92,21 +91,18 @@ const Mapper2Row = React.memo(({
   const history = useHistory();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
-  const {
-    flowId,
-    importId,
-    lookup} = useSelector(state => {
-    const e = selectors.mapping(state);
-    const lookup = (lookupName && e.lookups?.find(lookup => lookup.name === lookupName)) || {};
+  const { flowId, importId, lookup} = useSelector(state => {
+    const mapping = selectors.mapping(state);
+    const lookup = (lookupName && mapping.lookups?.find(lookup => lookup.name === lookupName)) || {};
 
     return {
-      flowId: e.flowId,
-      importId: e.importId,
+      flowId: mapping.flowId,
+      importId: mapping.importId,
       lookup,
     };
   }, shallowEqual);
 
-  const hasChildren = children?.length;
+  const hasChildren = !!children?.length;
 
   const handleDeleteClick = useCallback(() => {
     if (!hasChildren) {
@@ -114,7 +110,7 @@ const Mapper2Row = React.memo(({
     }
     confirmDialog({
       title: 'Confirm delete',
-      message: 'Are you sure you want to delete this parent record row? All its child rows will be deleted as well.',
+      message: messageStore('MAPPER2_DELETE_ROW_WARNING'),
       buttons: [
         {
           label: 'Delete',
@@ -133,36 +129,6 @@ const Mapper2Row = React.memo(({
   const addNewRowHandler = useCallback(() => {
     dispatch(actions.mapping.v2.addRow(nodeKey));
   }, [dispatch, nodeKey]);
-
-  const onDataTypeChange = useCallback(e => {
-    const newDataType = e.target.value;
-
-    if ((dataType === MAPPING_DATA_TYPES.OBJECT || dataType === MAPPING_DATA_TYPES.OBJECTARRAY) &&
-    newDataType !== MAPPING_DATA_TYPES.OBJECT && newDataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
-      const message = `Since only an "object" or "[object]" data type can have child rows, 
-      all of this parent record row's child rows will be deleted when your selected data type is applied. 
-      <br><br>Are you sure you want to continue?</br></br>`;
-
-      confirmDialog({
-        title: 'Confirm data type selection',
-        message: <RawHtml html={message} />,
-        buttons: [
-          {
-            label: 'Confirm',
-            onClick: () => {
-              dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType));
-            },
-          },
-          {
-            label: 'Cancel',
-            variant: 'text',
-          },
-        ],
-      });
-    } else {
-      dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType));
-    }
-  }, [confirmDialog, dataType, dispatch, nodeKey]);
 
   const handleBlur = useCallback((field, value) => {
     dispatch(actions.mapping.v2.patchField(field, nodeKey, value));
@@ -193,45 +159,43 @@ const Mapper2Row = React.memo(({
   const isHardCodedValue = !!hardCodedValue;
   const isHandlebarExp = handlebarRegex.test(extractValue);
 
+  // this prop is used for object array tab view
+  // where some children needs to be hidden
   if (hidden) return null;
 
   return (
     <div
       key={nodeKey}
       className={classes.innerRowRoot}>
-
       <div className={classes.childHeader}>
         <Mapper2Generates
-          isLoggable
-          key={generate}
+          // key={generate}
           id={`fieldMappingGenerate-${nodeKey}`}
+          nodeKey={nodeKey}
           value={generate}
           disabled={generateDisabled || isRequired || disabled}
           dataType={dataType}
           onBlur={handleGenerateBlur}
-          onDataTypeChange={onDataTypeChange}
           />
-
       </div>
+
       {dataType === MAPPING_DATA_TYPES.OBJECT && !extractValue && copySource === 'no' ? null : (
-        <>
-          <div className={classes.childHeader}>
-            <Mapper2ExtractsTypeableSelect
-              isLoggable
-              key={extractValue}
-              id={`fieldMappingExtract-${nodeKey}`}
-              value={extractValue}
-              disabled={disabled}
-              dataType={dataType}
-              importId={importId}
-              flowId={flowId}
-              onBlur={handleExtractBlur}
-              isLookup={isLookup}
-              isHardCodedValue={isHardCodedValue}
-              isHandlebarExp={isHandlebarExp}
+        <div className={classes.childHeader}>
+          <Mapper2ExtractsTypeableSelect
+            // key={extractValue}
+            id={`fieldMappingExtract-${nodeKey}`}
+            nodeKey={nodeKey}
+            value={extractValue}
+            disabled={disabled}
+            dataType={dataType}
+            importId={importId}
+            flowId={flowId}
+            onBlur={handleExtractBlur}
+            isLookup={isLookup}
+            isHardCodedValue={isHardCodedValue}
+            isHandlebarExp={isHandlebarExp}
             />
-          </div>
-        </>
+        </div>
       )}
 
       <div className={classes.actionsMapping}>
@@ -239,11 +203,11 @@ const Mapper2Row = React.memo(({
         {(isLookup && !isStaticLookup) && <RightIcon title="Dynamic lookup" Icon={DynamicLookupIcon} />}
         {isHandlebarExp && !isLookup && <RightIcon title="Handlebars expression" Icon={HandlebarsExpressionIcon} />}
         {isHardCodedValue && !isLookup && <RightIcon title="Hard-coded" Icon={HardCodedIcon} />}
-        {isRequired && (
+        {/* {isRequired && (
         <RightIcon
           title="This field is required by the application you are importing into"
           Icon={LockIcon} className={clsx({[classes.lockedIcon]: isLookup || isHandlebarExp || isHardCodedValue})} />
-        )}
+        )} */}
         <ActionButton
           data-test={`fieldMappingSettings-${nodeKey}`}
           disabled={disabled || !generate}
@@ -253,7 +217,12 @@ const Mapper2Row = React.memo(({
           <SettingsIcon />
         </ActionButton>
 
-        <ActionButton onClick={addNewRowHandler} disabled={generateDisabled || disabled}>
+        <ActionButton
+          data-test={`fieldMappingAdd-${nodeKey}`}
+          aria-label="add"
+          onClick={addNewRowHandler}
+          key="add_button"
+          disabled={generateDisabled || disabled}>
           <AddIcon />
         </ActionButton>
         <ActionButton

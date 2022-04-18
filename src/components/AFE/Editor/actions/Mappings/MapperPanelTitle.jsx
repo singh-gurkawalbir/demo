@@ -144,6 +144,7 @@ function OutputFormatsList({isGroupedSampleData, isGroupedOutput, disabled}) {
   return (
     <>
       <TextButton
+        data-test="changeOutputFormat"
         onClick={handleMenu}
         disabled={disabled}
         endIcon={<ArrowDownIcon />}
@@ -189,7 +190,7 @@ function OutputFormatsList({isGroupedSampleData, isGroupedOutput, disabled}) {
 export default function MapperPanelTitle({editorId, title, helpKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const {mappingVersion, flowId, importId, isGroupedSampleData, isGroupedOutput} = useSelector(state => {
     const mapping = selectors.mapping(state) || {};
 
@@ -201,7 +202,6 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
       isGroupedOutput: mapping.isGroupedOutput,
     };
   }, shallowEqual);
-  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
 
   const isExtractsLoading = useSelector(state => {
     const extractStatus = selectors.getSampleDataContext(state, {
@@ -214,21 +214,19 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
     return extractStatus === 'requested';
   });
 
-  const handleRefreshFlowDataClick = useCallback(
-    () => {
-      const refreshCache = true;
+  const handleRefreshFlowDataClick = useCallback(() => {
+    const refreshCache = true;
 
-      dispatch(
-        actions.flowData.requestSampleData(
-          flowId,
-          importId,
-          'imports',
-          'importMappingExtract',
-          refreshCache
-        )
-      );
-    }, [dispatch, flowId, importId]
-  );
+    dispatch(
+      actions.flowData.requestSampleData(
+        flowId,
+        importId,
+        'imports',
+        'importMappingExtract',
+        refreshCache
+      )
+    );
+  }, [dispatch, flowId, importId]);
 
   const handleToggleRows = useCallback(shouldExpand => {
     dispatch(actions.mapping.v2.toggleRows(shouldExpand));

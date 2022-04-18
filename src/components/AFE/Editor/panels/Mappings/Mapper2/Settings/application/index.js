@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
-import { nanoid } from 'nanoid';
 import { adaptorTypeMap } from '../../../../../../../../utils/resource';
 import httpMappingSettings from './http';
 import { MAPPING_DATA_TYPES } from '../../../../../../../../utils/mapping';
+import { generateUniqueKey } from '../../../../../../../../utils/string';
 
 const getFormattedLookup = (lookup, formVal, settings) => {
   const lookupTmp = {};
@@ -11,7 +11,7 @@ const getFormattedLookup = (lookup, formVal, settings) => {
     lookupTmp.name = formVal.name;
   } else {
     // generating random lookup name
-    lookupTmp.name = nanoid();
+    lookupTmp.name = generateUniqueKey();
   }
 
   if (formVal._mode === 'dynamic') {
@@ -87,6 +87,7 @@ export default {
     let updatedLookup;
 
     settings.generate = generate;
+    settings.description = formVal.description;
 
     if ('dataType' in formVal) {
       // default data type is always string

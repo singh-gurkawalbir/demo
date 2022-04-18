@@ -1,7 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@material-ui/core';
-import isLoggableAttr from '../../../../../../../utils/isLoggableAttr';
 import ArrowDownIcon from '../../../../../../icons/ArrowDownIcon';
 import useOnClickOutside from '../../../../../../../hooks/useClickOutSide';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
@@ -54,7 +53,7 @@ const useStyles = makeStyles(theme => ({
 export const TooltipTitle = ({
   isTruncated,
   inputValue,
-  hideDropdown,
+  hideSourceDropdown,
   isLookup,
   isHardCodedValue,
   isHandlebarExp,
@@ -67,7 +66,7 @@ export const TooltipTitle = ({
   if (isTruncated) {
     title = inputValue;
   }
-  if (hideDropdown) {
+  if (hideSourceDropdown) {
     if (isLookup) {
       hideDropdownMsg = 'Lookups do not provide source record field list';
     } else if (isHardCodedValue) {
@@ -78,7 +77,7 @@ export const TooltipTitle = ({
   }
 
   if (!inputValue) return fieldType;
-  if (!hideDropdown) return title;
+  if (!hideSourceDropdown) return title;
 
   return (
     <>
@@ -93,7 +92,6 @@ export default function Mapper2ExtractsTypeableSelect({
   dataType: destDataType = MAPPING_DATA_TYPES.STRING,
   id,
   disabled,
-  isLoggable,
   value: propValue = '',
   importId,
   flowId,
@@ -117,6 +115,8 @@ export default function Mapper2ExtractsTypeableSelect({
     e.stopPropagation();
     const { value } = e.target;
 
+    // this is required to get the input field offsets during handleMouseOver
+    // to show the tooltip accordingly
     e.target.setSelectionRange(value.length, value.length);
     setIsFocused(true);
   }, []);
@@ -129,11 +129,12 @@ export default function Mapper2ExtractsTypeableSelect({
   useOnClickOutside(containerRef, isFocused && handleBlur);
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
 
-  const hideDropdown = isLookup || isHardCodedValue || isHandlebarExp;
-
   const handleMouseOver = useCallback(() => {
     setIsTruncated(inputFieldRef.current.offsetWidth < inputFieldRef.current.scrollWidth);
   }, []);
+
+  const hideSourceDropdown = isLookup || isHardCodedValue || isHandlebarExp;
+  const hideTooltip = isFocused || (inputValue && !isTruncated && !hideSourceDropdown);
 
   return (
     <FormControl
@@ -144,11 +145,11 @@ export default function Mapper2ExtractsTypeableSelect({
       <Tooltip
         disableFocusListener
         placement="bottom"
-        title={(isFocused || (!isTruncated && !hideDropdown && inputValue)) ? '' : (
+        title={hideTooltip ? '' : (
           <TooltipTitle
             isTruncated={isTruncated}
             inputValue={inputValue}
-            hideDropdown={hideDropdown}
+            hideSourceDropdown={hideSourceDropdown}
             isLookup={isLookup}
             isHardCodedValue={isHardCodedValue}
             isHandlebarExp={isHandlebarExp}
@@ -157,7 +158,7 @@ export default function Mapper2ExtractsTypeableSelect({
         )} >
 
         <TextField
-          {...isLoggableAttr(isLoggable)}
+          isLoggable
           onMouseMove={handleMouseOver}
           // className={clsx(classes.customTextField, {[classes.textFieldWithDataType]: srcDataType})}
           className={classes.customTextField}
@@ -170,7 +171,7 @@ export default function Mapper2ExtractsTypeableSelect({
           multiline={isFocused}
           placeholder="Source record field"
           // InputProps={{
-          //   endAdornment: hideDropdown
+          //   endAdornment: hideSourceDropdown
           //     ? (<Typography variant="caption" className={classes.srcDataType}>{srcDataType}</Typography>)
           //     : (
           //       <InputAdornment className={classes.autoSuggestDropdown} position="start">
@@ -183,7 +184,7 @@ export default function Mapper2ExtractsTypeableSelect({
           //   },
           // }}
           InputProps={{
-            endAdornment: !hideDropdown &&
+            endAdornment: !hideSourceDropdown &&
               (
                 <InputAdornment className={classes.autoSuggestDropdown} position="start">
                   <ArrowDownIcon />
@@ -192,15 +193,13 @@ export default function Mapper2ExtractsTypeableSelect({
             inputProps: {
               ref: inputFieldRef,
             },
-          }}
-   />
+          }} />
       </Tooltip >
 
-      {/* only render tree component if its focussed and not disabled */}
-      {isFocused && !disabled && !hideDropdown && (
+      {/* only render tree component if field is focussed and not disabled */}
+      {isFocused && !disabled && !hideSourceDropdown && (
       <ExtractsTree
         key={id}
-        id={id}
         destDataType={destDataType}
         propValue={propValue}
         inputValue={inputValue}

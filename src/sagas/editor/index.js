@@ -23,7 +23,7 @@ import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
-import mappingUtil, { generateFinalV2Mappings } from '../../utils/mapping';
+import mappingUtil, { buildV2MappingsFromTree } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
 
 /**
@@ -98,7 +98,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
 
       if (mappingVersion === 2) {
         const v2TreeData = (yield select(selectors.mapping))?.v2TreeData;
-        const _mappingsV2 = generateFinalV2Mappings({v2TreeData});
+        const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
 
         _mappings = {mappings: _mappingsV2, lookups};
       } else {

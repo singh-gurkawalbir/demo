@@ -7,7 +7,7 @@ import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
 import {selectors} from '../../reducers';
 import { commitStagedChanges } from '../resources';
-import mappingUtil, {buildTreeFromResourceV2Mappings, generateFinalV2Mappings, hasV2MappingsInTreeData} from '../../utils/mapping';
+import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, hasV2MappingsInTreeData} from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
 import { getResourceSubType } from '../../utils/resource';
@@ -262,7 +262,7 @@ export function* mappingInit({
 
   // IAs, non http/rest don't support mapper2
   if (!importResource._connectorId && (importResource.adaptorType === 'HTTPImport' || importResource.adaptorType === 'RESTImport')) {
-    mappingsTreeData = buildTreeFromResourceV2Mappings({
+    mappingsTreeData = buildTreeFromV2Mappings({
       importResource,
       isGroupedSampleData,
       options,
@@ -383,7 +383,7 @@ export function* saveMappings() {
   }
 
   // save v2 mappings as well
-  const _mappingsV2 = generateFinalV2Mappings({v2TreeData});
+  const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
 
   patch.push({
     op: _mappingsV2 ? 'replace' : 'add',
@@ -407,13 +407,7 @@ export function* saveMappings() {
 
   if (resp && (resp.error || resp.conflict)) return yield put(actions.mapping.saveFailed());
 
-  // yield put(actions.mapping.saveComplete());
-  // todo ashu this needs to be tested
-  yield put(actions.mapping.init({
-    flowId,
-    importId,
-    subRecordMappingId,
-  }));
+  yield put(actions.mapping.saveComplete());
 }
 
 export function* previewMappings() {
@@ -745,6 +739,8 @@ export const mappingSagas = [
     actionTypes.MAPPING.V2.ADD_ROW,
     actionTypes.MAPPING.V2.PATCH_FIELD,
     actionTypes.MAPPING.V2.PATCH_SETTINGS,
+    actionTypes.MAPPING.V2.TOGGLE_OUTPUT,
+    actionTypes.MAPPING.V2.UPDATE_DATA_TYPE,
   ], validateMappings),
   takeLatest(actionTypes.MAPPING.AUTO_MAPPER.REQUEST, getAutoMapperSuggestion),
 ];

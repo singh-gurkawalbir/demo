@@ -1,7 +1,6 @@
 import React, {useMemo, useState, useCallback} from 'react';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import {isEqual} from 'lodash';
 import {findNodeInTree} from '../../../../../../utils/mapping';
 import {selectors} from '../../../../../../reducers';
 import actions from '../../../../../../actions';
@@ -30,7 +29,14 @@ function generateTabs(treeData, key) {
 
   const {node} = findNodeInTree(treeData, 'key', key);
 
-  if (node.tabMap) {
+  // tabMap structure:
+  // {
+  //   0: '$_0',
+  //   1: '$.siblings[*]',
+  //   2: '$_2',
+  // }
+
+  if (node?.tabMap) {
     Object.keys(node.tabMap).forEach(index => {
       const extract = node.tabMap[index];
       let label = extract;
@@ -55,8 +61,7 @@ function TabbedRow({parentKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [tabValue, setTabValue] = useState(0);
-  // todo ashu use makeselector
-  const treeData = useSelector(state => selectors.v2MappingsTreeData(state), isEqual);
+  const treeData = useSelector(state => selectors.v2MappingsTreeData(state));
   const tabs = useMemo(() => generateTabs(treeData, parentKey), [parentKey, treeData]);
 
   const handleTabChange = useCallback((event, newValue) => {

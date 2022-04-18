@@ -28,6 +28,12 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integ
   DIY_INSTALL_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the resources in this integration, but  updates to the original integration will not affect this new copy. This integration has not been reviewed by Celigo. Make sure you trust the author before installing, and carefully review all components in the integration before proceeding.',
   CELIGO_AUTHORED_TEMPLATE_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account.',
   THIRD_PARTY_TEMPLATE_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account. This template has not been reviewed by Celigo. Make sure you trust the publisher before installing, and carefully review all components in the integration before proceeding.',
+  MAPPER2_DELETE_ROW_WARNING: 'Are you sure you want to delete this parent record row? All its child rows will be deleted as well.',
+  MAPPER2_DATA_TYPE_WARNING: `Since only an "object" or "[object]" data type can have child rows, 
+  all of this parent record row's child rows will be deleted when your selected data type is applied. 
+  <br><br>Are you sure you want to continue?</br></br>`,
+  MAPPER1_REFERENCE_INFO: 'Your 1.0 mappings are for reference only and will no longer be applied. To re-apply them, remove your 2.0 mappings and save from either toggle screen.',
+  MAPPER2_BANNER_WARNING: 'If you have entered 2.0 mappings and save from either toggle screen, your 2.0 mappings will be applied instead of 1.0 mappings. To apply 1.0 mappings, remove any 2.0 mappings and save from either toggle screen.',
 };
 
 export default function messageStore(key, argsObj) {

@@ -82,7 +82,7 @@ import {
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
-import mappingUtil, { constructExtractsTree, hasV2MappingsInTreeData } from '../utils/mapping';
+import mappingUtil, { buildExtractsTree } from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare, comparer } from '../utils/sort';
@@ -5394,39 +5394,34 @@ selectors.isMapper2Supported = state => {
 };
 
 selectors.mappingEditorNotification = (state, editorId) => {
-  const {editorType} = fromSession.editor(state?.session, editorId);
-
-  if (editorType !== 'mappings') return emptyObject;
-
+  const {editorType, resourceId} = fromSession.editor(state?.session, editorId);
   const isMapper2Supported = selectors.isMapper2Supported(state);
-  // we pick from original tree data as the banner should
-  // depend only on the final saved state
-  const treeData = selectors.mapping(state)?.v2TreeDataCopy || [];
 
-  let resourceHasV2Mappings;
+  if (editorType !== 'mappings' || !isMapper2Supported) return emptyObject;
 
-  if (!hasV2MappingsInTreeData(treeData)) {
-    resourceHasV2Mappings = false;
-  } else {
+  const importResource = selectors.resource(state, 'imports', resourceId);
+
+  let resourceHasV2Mappings = false;
+
+  if (importResource?.mappings?.length) {
     resourceHasV2Mappings = true;
   }
-  const mappingVersion = selectors.mappingVersion(state);
 
-  if (!isMapper2Supported) return emptyObject;
+  const mappingVersion = selectors.mappingVersion(state);
 
   // if v2 mappings exist, no v2 message is shown and only show v1 message
   if (resourceHasV2Mappings) {
     if (mappingVersion === 2) return emptyObject;
 
     return {
-      message: 'Your 1.0 mappings are for reference only and will no longer be applied. To re-apply them, remove your 2.0 mappings and save from either toggle screen.',
+      message: messageStore('MAPPER1_REFERENCE_INFO'),
       variant: 'info',
     };
   }
   if (mappingVersion === 1) return emptyObject;
 
   return {
-    message: 'If you have entered 2.0 mappings and save from either toggle screen, your 2.0 mappings will be applied instead of 1.0 mappings. To apply 1.0 mappings, remove any 2.0 mappings and save from either toggle screen.',
+    message: messageStore('MAPPER2_BANNER_WARNING'),
     variant: 'warning',
   };
 };
@@ -5442,8 +5437,8 @@ selectors.mkBuildExtractsTree = () => createSelector(
 
     return flowData;
   },
-  (state, {searchValues}) => searchValues,
-  (flowData, searchValues) => constructExtractsTree(flowData, searchValues)
+  (state, {selectedValues}) => selectedValues,
+  (flowData, selectedValues) => buildExtractsTree(flowData, selectedValues)
 );
 
 // #endregion MAPPING END

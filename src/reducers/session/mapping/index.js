@@ -2,18 +2,102 @@ import shortid from 'shortid';
 import { original, produce } from 'immer';
 import { differenceWith, isEqual, isEmpty } from 'lodash';
 import deepClone from 'lodash/cloneDeep';
-import { nanoid } from 'nanoid';
 import actionTypes from '../../../actions/types';
 import {
   isMappingEqual,
-  isV2MappingsChanged,
+  compareV2Mappings,
   findNodeInTree,
   PRIMITIVE_DATA_TYPES,
   ARRAY_DATA_TYPES,
   getAllKeys,
-  rebuildNode,
+  rebuildObjectArrayNode,
   hideOtherTabRows,
-  MAPPING_DATA_TYPES} from '../../../utils/mapping';
+  MAPPING_DATA_TYPES,
+  getDefaultExtractPath,
+  getTabLabel} from '../../../utils/mapping';
+import { generateUniqueKey } from '../../../utils/string';
+
+// this util will update parent reference props on children
+// when data type is updated
+const updateChildrenProps = (children, parentNode) => {
+  if (!children || !children.length) return children;
+  const childrenCopy = deepClone(children);
+
+  const {key, dataType, combinedExtract} = parentNode;
+
+  // only for object array data type, add parent reference fields
+  if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+    return childrenCopy.map(c => ({
+      ...c,
+      parentExtract: combinedExtract, // for now combinedExtract will always contain 1 extract
+      parentKey: key,
+      tabIndex: 0,
+    }));
+  }
+
+  // remove parent row reference from children for other data types
+  return childrenCopy.reduce((acc, c) => {
+    if (c.isTabNode) return acc;
+    const {parentExtract, parentKey, tabIndex, ...rest} = c;
+
+    acc.push(rest);
+
+    return acc;
+  }, []);
+};
+
+const updateDataType = (draft, node, oldDataType, newDataType) => {
+  const newNode = deepClone(node);
+  const newRowKey = generateUniqueKey();
+
+  if (oldDataType !== newDataType) {
+    // always delete children if data type is changed
+    delete newNode.children;
+  }
+
+  if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+    draft.mapping.expandedKeys.push(newNode.key);
+    newNode.combinedExtract = newNode.combinedExtract || newNode.extract || getDefaultExtractPath(draft.mapping.isGroupedSampleData);
+
+    delete newNode.extract;
+    delete newNode.hardCodedValue;
+    delete newNode.lookupName;
+    delete newNode.default;
+
+    const parentExtract = newNode.combinedExtract?.split(',')?.[0];
+
+    if (isEmpty(newNode.children)) {
+      newNode.children = [{
+        key: newRowKey,
+        title: '',
+        parentKey: newNode.key,
+        parentExtract,
+        tabIndex: newDataType === MAPPING_DATA_TYPES.OBJECTARRAY ? 0 : undefined,
+        dataType: MAPPING_DATA_TYPES.STRING,
+      }];
+    }
+
+    if (newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+      if (!newNode.tabMap) {
+        newNode.tabMap = {
+          0: getTabLabel(parentExtract, 0),
+        };
+      }
+    } else {
+      // combinedExtract is used only for array data types to store comma separated values
+      delete newNode.combinedExtract;
+      delete newNode.tabMap;
+    }
+
+    return newNode;
+  }
+  // now handle the primitive data types or which can not have children
+  if (PRIMITIVE_DATA_TYPES.includes(newDataType) || ARRAY_DATA_TYPES.includes(newDataType)) {
+    delete newNode.children;
+  }
+
+  return newNode;
+};
 
 const emptyObj = {};
 const emptyArr = [];
@@ -360,19 +444,23 @@ export default (state = {}, action) => {
           // top disabled row already exists
           if (draft.mapping.v2TreeData[0]?.generateDisabled) break;
 
-          const newRowKey = nanoid();
+          const defaultExtract = getDefaultExtractPath(draft.mapping.isGroupedSampleData);
+
+          const newRowKey = generateUniqueKey();
+
           const node = {
             key: newRowKey,
             title: '',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generateDisabled: true,
             disabled: draft.mapping.isMonitorLevelAccess,
-            children: deepClone(draft.mapping.v2TreeData),
-            buildArrayHelper: [{
-              extract: '$',
-              mappings: deepClone(draft.mapping.v2TreeData),
-            }],
+            combinedExtract: defaultExtract,
+            tabMap: {
+              0: getTabLabel(defaultExtract, 0),
+            },
           };
+
+          node.children = updateChildrenProps(draft.mapping.v2TreeData, node);
 
           draft.mapping.v2TreeData = [node];
           draft.mapping.expandedKeys.push(newRowKey);
@@ -380,9 +468,7 @@ export default (state = {}, action) => {
           // top disabled row does not exist
           if (!draft.mapping.v2TreeData[0]?.generateDisabled) break;
 
-          const children = draft.mapping.v2TreeData[0]?.children;
-
-          draft.mapping.v2TreeData = deepClone(children);
+          draft.mapping.v2TreeData = updateChildrenProps(draft.mapping.v2TreeData[0]?.children, {});
         }
 
         break;
@@ -411,7 +497,7 @@ export default (state = {}, action) => {
 
           // add empty row if all the mappings have been deleted
           if (isEmpty(draft.mapping.v2TreeData)) {
-            const emptyRowKey = nanoid();
+            const emptyRowKey = generateUniqueKey();
 
             draft.mapping.v2TreeData.push({
               key: emptyRowKey,
@@ -432,13 +518,14 @@ export default (state = {}, action) => {
         const {node, nodeSubArray, nodeIndexInSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
 
         if (nodeIndexInSubArray >= 0) {
-          const newRowKey = nanoid();
+          const newRowKey = generateUniqueKey();
 
           nodeSubArray.splice(nodeIndexInSubArray + 1, 0, {
             key: newRowKey,
             title: '',
             parentKey: node.parentKey,
             parentExtract: node.parentExtract,
+            tabIndex: node.tabIndex,
             dataType: MAPPING_DATA_TYPES.STRING,
           });
         }
@@ -449,34 +536,12 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.V2.UPDATE_DATA_TYPE: {
         if (!draft.mapping) break;
 
-        const {node} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
+        const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
 
         if (isEmpty(node)) break;
 
-        node.dataType = newDataType;
-
-        const newRowKey = nanoid();
-
-        if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-          draft.mapping.expandedKeys.push(v2Key);
-
-          if (isEmpty(node.children)) {
-            node.children = [{
-              key: newRowKey,
-              title: '',
-              parentKey: node.key,
-              parentExtract: node.extract,
-              dataType: MAPPING_DATA_TYPES.STRING,
-            }];
-          }
-          break;
-        }
-        // now handle the primitive data types or which can not have children
-        if (PRIMITIVE_DATA_TYPES.includes(newDataType) || ARRAY_DATA_TYPES.includes(newDataType)) {
-          if (!isEmpty(node.children)) {
-            delete node.children;
-          }
-        }
+        nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, node.dataType, newDataType);
+        nodeSubArray[nodeIndexInSubArray].dataType = newDataType;
 
         break;
       }
@@ -547,25 +612,27 @@ export default (state = {}, action) => {
                   node.children = [];
                 } else if (!value && (node.dataType === MAPPING_DATA_TYPES.OBJECT || node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY)) {
                   // delete all children if extract is empty
-                  const newRowKey = nanoid();
+                  const newRowKey = generateUniqueKey();
 
                   node.children = [{
                     key: newRowKey,
                     title: '',
                     parentKey: node.key,
                     parentExtract: node.extract,
+                    tabIndex: node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY ? 0 : undefined,
                     dataType: MAPPING_DATA_TYPES.STRING,
                   }];
                 } else if (value && node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
                   // handle tab view
                   const {isGroupedSampleData} = draft.mapping;
 
-                  nodeSubArray[nodeIndexInSubArray] = rebuildNode(original(node), value, isGroupedSampleData);
+                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(original(node), value, isGroupedSampleData);
                 }
 
                 // array data types do not have direct 'extract' prop
                 if (nodeSubArray[nodeIndexInSubArray]) {
                   delete nodeSubArray[nodeIndexInSubArray].extract;
+                  delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
                   nodeSubArray[nodeIndexInSubArray].combinedExtract = value;
                 }
               } else {
@@ -586,9 +653,11 @@ export default (state = {}, action) => {
 
       case actionTypes.MAPPING.V2.PATCH_SETTINGS: {
         if (!draft.mapping) break;
-        const {node} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
+        const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
 
         if (node) {
+          const oldDataType = node.dataType;
+
           Object.assign(node, value);
 
           // removing lookups
@@ -610,14 +679,7 @@ export default (state = {}, action) => {
               // delete child rows if object is to be copied as is
               node.children = [];
             } else if (value.copySource === 'no') {
-              delete node.extract;
-              delete node.combinedExtract;
-              node.children = [{
-                key: nanoid(),
-                title: '',
-                parentKey: node.key,
-                dataType: MAPPING_DATA_TYPES.STRING,
-              }];
+              nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, oldDataType, value.dataType);
             }
           } else if (ARRAY_DATA_TYPES.includes(value.dataType)) {
             delete node.extract;
@@ -691,7 +753,7 @@ selectors.mappingChanged = state => {
 
   // check for v2 mappings
   if (!isCombinedMappingsChanged) {
-    isCombinedMappingsChanged = isV2MappingsChanged(v2TreeData, v2TreeDataCopy);
+    isCombinedMappingsChanged = compareV2Mappings(v2TreeData, v2TreeDataCopy);
   }
 
   return !!isCombinedMappingsChanged;

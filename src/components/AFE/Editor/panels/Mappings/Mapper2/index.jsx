@@ -1,7 +1,6 @@
 import React, {useCallback} from 'react';
 import Tree from 'rc-tree';
-import {isEqual} from 'lodash';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ArrowUpIcon from '../../../../../icons/ArrowUpIcon';
@@ -112,10 +111,9 @@ const dragConfig = {
 export default function Mapper2({editorId}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const treeData = useSelector(state => selectors.v2MappingsTreeData(state), isEqual);
-  const expandedKeys = useSelector(state => selectors.v2MappingExpandedKeys(state), shallowEqual);
+  const treeData = useSelector(state => selectors.v2MappingsTreeData(state));
+  const expandedKeys = useSelector(state => selectors.v2MappingExpandedKeys(state));
   const activeKey = useSelector(state => selectors.v2ActiveKey(state));
 
   const onDropHandler = useCallback(info => {
@@ -124,6 +122,7 @@ export default function Mapper2({editorId}) {
 
   // this function ensures the row can be dragged via the drag handle only
   // and not from any other place
+  // this is a hack added as rc-tree module supports dragging from anywhere on row
   const onDragStart = useCallback(({event}) => {
     if (event.target.id !== 'dragHandle') {
       event.preventDefault();
@@ -144,6 +143,7 @@ export default function Mapper2({editorId}) {
         titleRender={Row}
         treeData={treeData}
         showLine
+        selectable={false}
         defaultExpandAll={false}
         expandedKeys={expandedKeys}
         onExpand={onExpandHandler}

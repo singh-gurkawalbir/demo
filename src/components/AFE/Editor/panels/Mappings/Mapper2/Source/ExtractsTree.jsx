@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Tree from 'rc-tree';
 import {isEmpty} from 'lodash';
@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Divider, Typography } from '@material-ui/core';
 import {SwitcherIcon} from '../index';
 import {selectors} from '../../../../../../../reducers';
-import {filterExtractsNode, getFinalSelectedExtracts, getAllKeys} from '../../../../../../../utils/mapping';
+import {filterExtractsNode, getFinalSelectedExtracts} from '../../../../../../../utils/mapping';
 import { useSelectorMemo } from '../../../../../../../hooks';
 
 const useStyles = makeStyles(theme => ({
@@ -93,27 +93,27 @@ const useStyles = makeStyles(theme => ({
 })
 );
 
-const TitleExtracts = React.memo(({fieldName, dataType}) => {
+const TitleExtracts = ({propName, dataType}) => {
   const classes = useStyles();
 
   return (
     <div className={classes.treeTitle} >
-      <span>{fieldName}</span>
+      <span>{propName}</span>
       <Typography
         variant="body2" color="textSecondary" >
         {dataType}
       </Typography>
     </div>
   );
-});
+};
 
 // this is the component rendered for each row inside extracts tree
 export const TreeTitle = props => <TitleExtracts {...props} key={`title-${props.key}`} />;
 
-// this component renders the whole extracts tree
+// this component renders the whole source fields tree
 // based on the sample data
 const ExtractsTree = React.memo((
-  {id,
+  {
     destDataType,
     propValue,
     inputValue = '',
@@ -124,14 +124,18 @@ const ExtractsTree = React.memo((
     resourceId,
   }) => {
   const classes = useStyles();
-  const isArrayType = destDataType.includes('array');
-  const searchValues = useMemo(() => propValue.replaceAll('$.', '').split(','), [propValue]);
   const isGroupedSampleData = useSelector(state => selectors.mapping(state).isGroupedSampleData);
 
-  const {treeData, selectedKeys} = useSelectorMemo(selectors.mkBuildExtractsTree, {flowId, resourceId, searchValues});
-  const allKeys = useMemo(() => getAllKeys(treeData), [treeData]);
+  // replace '$.' and '$[*].' as we are not storing these prefixes in each node jsonPath as well
+  // for better searching
+  // note: if we move this below splot logic in the selector directly,
+  // then we need to ensure that this returns a cached array else mkBuildExtractsTree will always run
+  const selectedValues = useMemo(() => propValue.replace(/(\$\.)|(\$\[\*\]\.)/g, '').split(','), [propValue]);
 
-  const [expandedKeys, setExpandedKeys] = useState(allKeys);
+  // build the tree and highlight selected keys, based on the saved extract values
+  const {treeData, selectedKeys} = useSelectorMemo(selectors.mkBuildExtractsTree, {flowId, resourceId, selectedValues});
+
+  const isArrayType = destDataType.includes('array');
 
   const onSelect = useCallback((keys, e) => {
     const newValue = getFinalSelectedExtracts(e.node, inputValue, isArrayType, isGroupedSampleData);
@@ -144,11 +148,14 @@ const ExtractsTree = React.memo((
 
   const onExpand = useCallback((expandedKeys, {nativeEvent}) => {
     setIsFocused(true);
-    setExpandedKeys(expandedKeys);
     nativeEvent.stopImmediatePropagation();
   }, [setIsFocused]);
 
-  const filterTreeNode = useCallback(node => filterExtractsNode(node, propValue, inputValue), [inputValue, propValue]);
+  // this function runs for every node
+  // and returns true if input value matches current node in the dropdown
+  const filterTreeNode = useCallback(node =>
+    filterExtractsNode(node, propValue, inputValue),
+  [inputValue, propValue]);
 
   if (isEmpty(treeData)) return null;
 
@@ -166,20 +173,18 @@ const ExtractsTree = React.memo((
       </div>
 
       <Tree
-        key={`extractsTree-${id}`}
         className={classes.childTree}
-        selectedKeys={selectedKeys} // todo ashu verify this
+        multiple
+        defaultSelectedKeys={selectedKeys}
         treeData={treeData}
         showLine={false}
         switcherIcon={SwitcherIcon}
         defaultExpandAll
-        expandedKeys={expandedKeys}
         onSelect={onSelect}
         onExpand={onExpand}
         filterTreeNode={filterTreeNode}
          />
     </div>
-
   );
 });
 

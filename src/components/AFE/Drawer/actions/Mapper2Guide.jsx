@@ -30,6 +30,7 @@ export default function Mapper2Guide() {
     <>
       <TextButton
         {...anchorProps}
+        data-test="mapper2Guide"
         className={classes.button}
         startIcon={<InfoIcon />}>
         Learn about Mapper 2.0&apos;s advantages

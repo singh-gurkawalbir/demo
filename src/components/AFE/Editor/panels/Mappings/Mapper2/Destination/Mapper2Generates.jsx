@@ -1,11 +1,11 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, TextField, Tooltip, MenuItem, Select } from '@material-ui/core';
-import isLoggableAttr from '../../../../../../../utils/isLoggableAttr';
+import { FormControl, TextField, Tooltip } from '@material-ui/core';
 import useOnClickOutside from '../../../../../../../hooks/useClickOutSide';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
-import { DATA_TYPES_DROPDOWN_OPTIONS, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
+import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import { TooltipTitle } from '../Source/Mapper2ExtractsTypeableSelect';
+import DestinationDataType from './DestinationDataType';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -35,71 +35,16 @@ const useStyles = makeStyles(theme => ({
       border: `1px solid ${theme.palette.primary.main}`,
     },
   },
-  dataType: {
-    border: 'none',
-    fontStyle: 'italic',
-    color: theme.palette.primary.main,
-    width: theme.spacing(12),
-    padding: 0,
-    '& .MuiSvgIcon-root': {
-      display: 'none',
-    },
-    '& .MuiSelect-selectMenu': {
-      padding: 0,
-      margin: 0,
-    },
-  },
-})
-);
-
-function SelectDataType({destDataType, onDataTypeChange, disabled}) {
-  const classes = useStyles();
-
-  const [open, setOpen] = useState(false);
-  const openSelect = useCallback(() => {
-    setOpen(true);
-  }, []);
-  const closeSelect = useCallback(
-    () => {
-      setOpen(false);
-    }, []
-  );
-
-  /* todo ashu tooltip does not work for celigo select */
-
-  return (
-    <Tooltip
-      disableFocusListener
-      title={open ? '' : `Data type: ${destDataType} - Click to change`}
-      placement="bottom" >
-      <Select
-        disabled={disabled}
-        open={open}
-        onOpen={openSelect}
-        onClose={closeSelect}
-        className={classes.dataType}
-        onChange={onDataTypeChange}
-        displayEmpty
-        value={destDataType} >
-        {DATA_TYPES_DROPDOWN_OPTIONS.map(opt => (
-          <MenuItem key={opt.id} value={opt.id}>
-            {opt.label}
-          </MenuItem>
-        ))}
-      </Select>
-    </Tooltip>
-  );
-}
+}));
 
 export default function Mapper2Generates(props) {
   const {
-    dataType: destDataType = MAPPING_DATA_TYPES.STRING,
+    dataType = MAPPING_DATA_TYPES.STRING,
     id,
     disabled,
-    isLoggable,
     value: propValue = '',
-    onDataTypeChange,
     onBlur,
+    nodeKey,
   } = props;
   const classes = useStyles();
   const [isFocused, setIsFocused] = useState(false);
@@ -116,6 +61,8 @@ export default function Mapper2Generates(props) {
     e.stopPropagation();
     const { value } = e.target;
 
+    // this is required to get the input field offsets during handleMouseOver
+    // to show the tooltip accordingly
     e.target.setSelectionRange(value.length, value.length);
     setIsFocused(true);
   }, []);
@@ -150,7 +97,7 @@ export default function Mapper2Generates(props) {
               />
           )} >
           <TextField
-            {...isLoggableAttr(isLoggable)}
+            isLoggable
             onMouseMove={handleMouseOver}
             inputProps={{
               ref: inputFieldRef,
@@ -166,10 +113,10 @@ export default function Mapper2Generates(props) {
             placeholder="Destination record field" />
         </Tooltip >
 
-        <SelectDataType
-          destDataType={destDataType}
-          onDataTypeChange={onDataTypeChange}
+        <DestinationDataType
+          dataType={dataType}
           disabled={disabled}
+          nodeKey={nodeKey}
         />
 
       </div>
