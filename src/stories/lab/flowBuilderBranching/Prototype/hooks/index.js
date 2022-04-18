@@ -51,18 +51,3 @@ export const useHandleAddNewRouter = edgeId => {
   };
 };
 
-export const useHandleDeleteNode = nodeId => {
-  const { setState } = useFlowContext();
-
-  return () => {
-    setState({type: actions.DELETE_STEP, nodeId});
-  };
-};
-
-export const useHandleDeleteEdge = edgeId => {
-  const { setState } = useFlowContext();
-
-  return () => {
-    setState({type: actions.DELETE_EDGE, edgeId});
-  };
-};

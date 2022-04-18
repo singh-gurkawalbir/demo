@@ -3,7 +3,7 @@ import { generateId, GRAPH_ELEMENTS_TYPE } from './lib';
 export const getSomeImport = _id => ({_id, connectorType: 'ftp', label: _id});
 export const getSomeExport = _exportId => ({_id: _exportId, connectorType: 'ftp', label: _exportId});
 
-export const getSomePg = _exportId => ({_exportId, skipRetries: true});
+export const getSomePg = _exportId => ({_exportId, skipRetries: true, id: _exportId});
 
 export const getSomePpImport = _importId =>
   ({responseMapping: {fields: [], lists: []}, type: 'import', _importId});

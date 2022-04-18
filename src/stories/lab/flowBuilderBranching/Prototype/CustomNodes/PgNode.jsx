@@ -5,8 +5,9 @@ import AppBlock from '../../../../../views/FlowBuilder/AppBlock';
 import exportHooksAction from '../../../../../views/FlowBuilder/PageGenerator/actions/exportHooks';
 import transformationAction from '../../../../../views/FlowBuilder/PageGenerator/actions/transformation_afe';
 import exportFilterAction from '../../../../../views/FlowBuilder/PageGenerator/actions/exportFilter_afe';
-import { useHandleDeleteNode } from '../hooks';
 import DefaultHandle from './Handles/DefaultHandle';
+import { useFlowContext } from '../Context';
+import actions from '../reducer/actions';
 
 const generatorActions = [
   {
@@ -33,8 +34,12 @@ export default function PageGenerator(props) {
   const { data, id } = props;
   const { name: label, connectorType } = data;
   const classes = useStyles();
+  const {setState, flow} = useFlowContext();
 
-  const handleDelete = useHandleDeleteNode(id);
+  const handleDelete = () => {
+    setState({type: actions.DELETE_STEP, nodeId: id});
+    setState({type: actions.SAVE, flowId: flow._id});
+  };
 
   return (
     <div className={classes.root}>

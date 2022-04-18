@@ -4,10 +4,93 @@ import keyBy from 'lodash/keyBy';
 import { createSelector } from 'reselect';
 import actions from './actions';
 import { emptyList, emptyObject } from '../../../../../utils/constants';
-import { generateEmptyRouter, generateBranch } from '../nodeGeneration';
-import { generateReactFlowGraph, initialiseFlowForReactFlow } from '../translateSchema';
+import { generateEmptyRouter, generateBranch, getSomePg, getSomeExport } from '../nodeGeneration';
+import { generateReactFlowGraph, initializeFlowForReactFlow } from '../translateSchema';
 import { BranchPathRegex, generateId, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../lib';
 
+const getResource = (state, type, id) => state.data.resources[type].find(f => f._id === id);
+const resourceDataModified = (
+  resourceIdState,
+  stagedIdState,
+  resourceType,
+  id
+) => {
+  if (!resourceType || !id) return emptyObject;
+  const master = resourceIdState;
+  const { patch, conflict } = stagedIdState || {};
+
+  if (!master && !patch) return { merged: emptyObject };
+
+  let merged;
+  let lastChange;
+
+  if (patch) {
+    try {
+      // If the patch is not deep cloned, its values are also mutated and
+      // on some operations can corrupt the merged result.
+      const patchResult = jsonPatch.applyPatch(
+        master ? jsonPatch.deepClone(master) : {},
+        jsonPatch.deepClone(patch)
+      );
+
+      merged = patchResult.newDocument;
+    } catch (ex) {
+      // eslint-disable-next-line
+      console.warn('unable to apply patch to the document. PatchSet = ', patch, 'document = ', master,ex);
+      // Incase if we are not able to apply patchSet to document,
+      // catching the exception and assigning master to the merged.
+      merged = master;
+    }
+
+    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
+  }
+
+  const data = {
+    master,
+    patch,
+    lastChange,
+    merged: merged || master,
+  };
+
+  if (conflict) data.conflict = conflict;
+
+  return data;
+};
+const updateFlow = (draft, flowId) => {
+  const { session = {} } = draft;
+  const { staged } = session;
+  const resource = getResource(draft, 'flows', flowId);
+
+  const flow = resourceDataModified(resource, staged[flowId], 'flows', flowId)?.merged;
+
+  const flowIndex = draft.data.resources.flows.findIndex(f => f._id === flowId);
+
+  draft.data.resources.flows[flowIndex] = flow;
+  draft.session.staged = {};
+};
+
+const addNewSource = draft => {
+  const id = `new-${generateId()}`;
+  const { session = {}, data = {} } = draft;
+  const { staged, fb = {} } = session;
+  const { flow } = fb;
+  const flowId = flow._id;
+  const resourceType = 'exports';
+  const flowNode = getSomePg(id);
+  const resourceNode = getSomeExport(id);
+
+  if (!staged[flowId]) {
+    staged[flowId] = {patch: []};
+  }
+
+  staged[flowId].patch.push({
+    op: 'add',
+    path: '/pageGenerators/-',
+    value: flowNode,
+  });
+
+  data.resources[resourceType].push(resourceNode);
+};
 const addNewStep = (draft, action) => {
   const { path, resourceType, flowNode, resourceNode, flowId } = action;
 
@@ -412,6 +495,16 @@ export default function (state, action) {
 
   return produce(state, draft => {
     switch (type) {
+      case actions.SAVE: {
+        updateFlow(draft, action.flowId);
+
+        return;
+      }
+      case actions.ADD_NEW_PG_STEP: {
+        addNewSource(draft, action);
+
+        return;
+      }
       case actions.ADD_NEW_STEP: {
         addNewStep(draft, action);
 
@@ -480,56 +573,6 @@ export default function (state, action) {
   });
 }
 
-const resourceDataModified = (
-  resourceIdState,
-  stagedIdState,
-  resourceType,
-  id
-) => {
-  if (!resourceType || !id) return emptyObject;
-
-  const master = resourceIdState;
-  const { patch, conflict } = stagedIdState || {};
-
-  if (!master && !patch) return { merged: emptyObject };
-
-  let merged;
-  let lastChange;
-
-  if (patch) {
-    try {
-      // If the patch is not deep cloned, its values are also mutated and
-      // on some operations can corrupt the merged result.
-      const patchResult = jsonPatch.applyPatch(
-        master ? jsonPatch.deepClone(master) : {},
-        jsonPatch.deepClone(patch)
-      );
-
-      merged = patchResult.newDocument;
-    } catch (ex) {
-      // eslint-disable-next-line
-      console.warn('unable to apply patch to the document. PatchSet = ', patch, 'document = ', master,ex);
-      // Incase if we are not able to apply patchSet to document,
-      // catching the exception and assigning master to the merged.
-      merged = master;
-    }
-
-    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
-  }
-
-  const data = {
-    master,
-    patch,
-    lastChange,
-    merged: merged || master,
-  };
-
-  if (conflict) data.conflict = conflict;
-
-  return data;
-};
-
-const getResource = (state, type, id) => state.data.resources[type].find(f => f._id === id);
 const getSessionState = (state, id) => state.session.staged?.[id];
 
 export const resourceDataSelector = createSelector(
@@ -540,7 +583,7 @@ export const resourceDataSelector = createSelector(
   (resource, session, type, id) => {
     const flow = resourceDataModified(resource, session, type, id)?.merged;
 
-    initialiseFlowForReactFlow(flow);
+    initializeFlowForReactFlow(flow);
 
     return flow;
   });

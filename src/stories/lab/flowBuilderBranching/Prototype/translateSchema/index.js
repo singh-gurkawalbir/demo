@@ -2,7 +2,7 @@
 import { generateDefaultEdge, generateId } from '../lib';
 import { generateNewTerminal, generateRouterNode } from '../nodeGeneration';
 
-export const initialiseFlowForReactFlow = flow => {
+export const initializeFlowForReactFlow = flow => {
   if (!flow) return flow;
   const { pageGenerators = [], pageProcessors = [], routers = [] } = flow;
 
@@ -107,6 +107,7 @@ export const getRouter = (routerId, flow = {}) => flow.routers?.find(r => r._id 
 
 export const generateNodesAndEdgesFromBranchedFlow = (resourceState, flow) => {
   const {pageGenerators = [], routers = []} = flow;
+
   const elements = [...generatePageGeneratorNodesAndEdges(resourceState, pageGenerators, routers[0]._id)];
   const routerVisited = {};
   const routersArr = [...routers];
