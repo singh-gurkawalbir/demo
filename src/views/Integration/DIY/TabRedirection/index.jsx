@@ -2,6 +2,7 @@ import React, { useEffect} from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { generatePath, Redirect, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
+import LoadResources from '../../../../components/LoadResources';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import { HOME_PAGE_PATH } from '../../../../utils/constants';
@@ -227,6 +228,10 @@ export default function TabRedirection({children: componentChildren}) {
   // TODO: <ResourceDrawer> Can be further optimized to take advantage
   // of the 'useRouteMatch' hook now available in react-router-dom to break
   // the need for parent components passing any props at all.
-  return componentChildren;
+  return supportsChild ? (
+    <LoadResources required resources="flows,exports,imports">
+      {componentChildren}
+    </LoadResources>
+  ) : componentChildren;
 }
 

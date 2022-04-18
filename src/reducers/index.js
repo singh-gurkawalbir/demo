@@ -556,7 +556,7 @@ selectors.mkTileApplications = () => {
         return emptyArray;
       }
       if (!tile._connectorId) {
-        integration?._registeredConnectionIds?.forEach(r => {
+        tile?._registeredConnectionIds?.forEach(r => {
           const connection = connections.find(c => c._id === r);
 
           if (connection) {

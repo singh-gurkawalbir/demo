@@ -280,9 +280,9 @@ describe('resource region selector testcases', () => {
       } };
 
     test('should return all applications from registered connections for diy integrations for list view', () => {
-      expect(selector(listViewState, {_integrationId: 'diyIntegration'})).toEqual(['Square', 'mssql']);
-      expect(selector(listViewState, {_integrationId: 'diyIntegration1'})).toEqual(['rest', 'http']);
-      expect(selector(listViewState, {_integrationId: 'diyIntegration2'})).toEqual(['Square', 'rest']);
+      expect(selector(listViewState, {_integrationId: 'diyIntegration', _registeredConnectionIds: [1, 2]})).toEqual(['Square', 'mssql']);
+      expect(selector(listViewState, {_integrationId: 'diyIntegration1', _registeredConnectionIds: [3, 4]})).toEqual(['rest', 'http']);
+      expect(selector(listViewState, {_integrationId: 'diyIntegration2', _registeredConnectionIds: [1, 3]})).toEqual(['Square', 'rest']);
       expect(selector(listViewState, {_integrationId: 'none'})).toEqual([]);
     });
 
