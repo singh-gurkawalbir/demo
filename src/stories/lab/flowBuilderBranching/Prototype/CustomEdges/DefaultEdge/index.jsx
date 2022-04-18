@@ -108,7 +108,7 @@ export default function DefaultEdge({
       } else if (i === 1 && isSourceRouter) { // first line
         // When the source is a router, we want to draw the lines vertically first to branch off
         // the edges asap. Not only for better looks, but also this prevents unwanted overlapping
-        // edges in some use-cases.
+        // edges in some use-git cases.
         drawLine(p, 'y');
         drawLine(p, 'x');
       } else if (i === points.length - 1 && !isTargetMerge) { // last point

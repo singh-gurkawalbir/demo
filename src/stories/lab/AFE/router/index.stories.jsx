@@ -1,8 +1,8 @@
-import Editor from '../../../components/AFE/Editor';
+import Editor from '../../../../components/AFE/Editor';
 import Template from './Template';
 
 export default {
-  title: 'Lab/Mapping AFE',
+  title: 'Lab/AFE/Branching AFE',
   component: Editor,
 };
 
