@@ -91,6 +91,14 @@ export const GRAPHQL_FIELDS = [
   'graphql.variablesUpdate',
 ];
 
+export const GRAPHQL_HTTP_FIELDS = [
+  'http.ping.body',
+  'http.body',
+  'http.body.0',
+  'http.body.1',
+  'http.paging.body',
+];
+
 export function isGraphqlField(fieldId) {
   if (!fieldId) return false;
 

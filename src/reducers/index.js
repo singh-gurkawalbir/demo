@@ -110,7 +110,7 @@ import { getTemplateUrlName } from '../utils/template';
 import { filterMap } from '../components/GlobalSearch/filterMeta';
 import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions, REVISION_DIFF_ACTIONS } from '../utils/revisions';
 import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
-import { isGraphqlResource } from '../utils/graphql';
+import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -6266,7 +6266,8 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
   if (['outputFilter', 'exportFilter', 'inputFilter'].includes(editorType)) {
     return true;
   }
-  if (isGraphqlResource) return true;
+  // graphql fields only support v2 data
+  if (isGraphqlResource && GRAPHQL_HTTP_FIELDS.includes(fieldId)) return true;
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
   const fieldsWithOnlyV2DataSupport = [
