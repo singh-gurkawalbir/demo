@@ -823,6 +823,16 @@ availableResources.forEach(type => {
   });
 });
 
+describe('getResourceCollection saga for connectorLicenses', () => {
+  test('should dispatch collection request and succeeded call with connectorLicenses resource type for licenses route', () => expectSaga(getResourceCollection, {resourceType: 'connectors/60936ec22b22fe4803a3a22c/licenses'})
+    .provide([
+      [matchers.call.fn(apiCallWithPaging), []],
+    ])
+    .put(actions.resource.collectionRequestSent('connectorLicenses'))
+    .put(actions.resource.collectionRequestSucceeded({resourceType: 'connectorLicenses'}))
+    .run());
+});
+
 describe('updateIntegrationSettings saga', () => {
   const childId = 'childId';
   const integrationId = 'int-123';
