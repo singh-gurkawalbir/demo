@@ -110,6 +110,7 @@ import { getTemplateUrlName } from '../utils/template';
 import { filterMap } from '../components/GlobalSearch/filterMeta';
 import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions, REVISION_DIFF_ACTIONS } from '../utils/revisions';
 import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
+import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -6307,6 +6308,16 @@ selectors.mkEditorHelperFunctions = () => createSelector(
 );
 selectors.editorHelperFunctions = selectors.mkEditorHelperFunctions();
 
+selectors.isGraphqlResource = (state, resourceId, resourceType) => {
+  const { merged: resource } = selectors.resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+
+  return isGraphqlResource(resource);
+};
+
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
   const { editorType, fieldId, flowId, resourceId, resourceType } = fromSession.editor(state?.session, editorId);
@@ -6321,6 +6332,11 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
   if (['outputFilter', 'exportFilter', 'inputFilter'].includes(editorType)) {
     return true;
   }
+
+  const isGraphqlResource = selectors.isGraphqlResource(state, resourceId, resourceType);
+
+  // graphql fields only support v2 data
+  if (isGraphqlResource && GRAPHQL_HTTP_FIELDS.includes(fieldId)) return true;
 
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
