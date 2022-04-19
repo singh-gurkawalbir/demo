@@ -747,9 +747,14 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
       yield call(getResource, {resourceType: 'integrations', id: integrationId});
     }
   }
+  let updatedResourceType = resourceType;
 
   try {
-    yield put(actions.resource.collectionRequestSent(resourceType, integrationId));
+    // TODO: move these resource types to actual routes logic to a common place
+    if (/connectors\/.*\/licenses/.test(resourceType)) {
+      updatedResourceType = 'connectorLicenses';
+    }
+    yield put(actions.resource.collectionRequestSent(updatedResourceType, integrationId));
 
     let collection = yield call(apiCallWithPaging, {
       path,
@@ -786,13 +791,13 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     }
 
     yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
-    yield put(actions.resource.collectionRequestSucceeded({resourceType, integrationId}));
+    yield put(actions.resource.collectionRequestSucceeded({resourceType: updatedResourceType, integrationId}));
 
     return collection;
   } catch (error) {
     // generic message to the user that the
     // saga failed and services team working on it
-    yield put(actions.resource.collectionRequestFailed({resourceType, integrationId}));
+    yield put(actions.resource.collectionRequestFailed({resourceType: updatedResourceType, integrationId}));
   }
 }
 
