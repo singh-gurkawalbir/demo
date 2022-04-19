@@ -183,7 +183,7 @@ export default {
     'http.paging.pathAfterFirstRequest': {
       fieldId: 'http.paging.pathAfterFirstRequest',
     },
-    'http.paging.resourcePath': { fieldId: 'http.paging.resourcePath', defaultValue: 'data' },
+    'http.paging.resourcePath': { fieldId: 'http.paging.resourcePath' },
     'http.paging.maxPagePath': { fieldId: 'http.paging.maxPagePath' },
     'http.paging.maxCountPath': { fieldId: 'http.paging.maxCountPath' },
     'http.paging.lastPageStatusCode': {
