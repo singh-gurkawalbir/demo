@@ -101,7 +101,7 @@ export default function Aliases({ integrationId, childId }) {
         </ActionGroup>
       </PanelHeader>
 
-      <LoadResources required integrationId={integrationId} resources="integrations,flows,connections,imports,exports" >
+      <LoadResources required resources="integrations,flows,connections,imports,exports" >
         <CreateAliasDrawer resourceId={currentIntegrationId} resourceType="integrations" />
         <ViewAliasDetailsDrawer resourceId={currentIntegrationId} resourceType="integrations" />
         {aliases?.length ? (
