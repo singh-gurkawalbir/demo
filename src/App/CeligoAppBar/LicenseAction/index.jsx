@@ -69,7 +69,7 @@ function StartFreeTrialConfirmationMessage() {
   );
 }
 
-function SubscriptionOrFreeConfirmMessage() {
+function StartFreeOrRequestUpgradeConfirmMessage() {
   const classes = useStyles();
 
   return (
@@ -194,10 +194,10 @@ function LicenseAction() {
     });
   }, [confirmDialog, dispatch, startFreeTrialDialog]);
 
-  const subscriptionOrFreeTrialDialog = useCallback(() => {
+  const startFreeOrRequestUpgradeDialog = useCallback(() => {
     confirmDialog({
       title: 'Try unlimited flows free for 30 days or upgrade plan',
-      message: <SubscriptionOrFreeConfirmMessage />,
+      message: <StartFreeOrRequestUpgradeConfirmMessage />,
       buttons: [
         { label: 'Start free trial',
           onClick: () => {
@@ -288,7 +288,7 @@ function LicenseAction() {
   useEffect(() => {
     if (licenseErrorCode === 'subscription_required') {
       if (licenseActionDetails.action === 'startTrial') {
-        subscriptionOrFreeTrialDialog();
+        startFreeOrRequestUpgradeDialog();
       } else {
         requestUpgradeDialog();
       }
@@ -297,7 +297,7 @@ function LicenseAction() {
       entitlementOfEndpointsDialog();
       dispatch(actions.license.clearErrorMessage());
     }
-  }, [dispatch, entitlementOfEndpointsDialog, licenseActionDetails.action, licenseErrorCode, requestUpgradeDialog, subscriptionOrFreeTrialDialog]);
+  }, [dispatch, entitlementOfEndpointsDialog, licenseActionDetails.action, licenseErrorCode, requestUpgradeDialog, startFreeOrRequestUpgradeDialog]);
 
   useEffect(() => {
     if (platformLicenseActionMessage) {
