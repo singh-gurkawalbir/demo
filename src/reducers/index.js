@@ -5400,13 +5400,19 @@ selectors.mappingEditorNotification = (state, editorId) => {
 
   if (editorType !== 'mappings' || !isMapper2Supported) return emptyObject;
 
-  const importResource = selectors.resource(state, 'imports', resourceId);
+  const {mappings} = selectors.resource(state, 'imports', resourceId) || {};
 
-  let resourceHasV2Mappings = false;
+  const resourceHasV2Mappings = !!mappings?.length;
 
-  if (importResource?.mappings?.length) {
-    resourceHasV2Mappings = true;
-  }
+  // todo ashu need to confirm with UX
+  // const { fields = [], lists = [] } = mapping || {};
+
+  // const resourceHasV1Mappings = !!(fields.length || lists.length);
+
+  // // if both mappings don't exist, no message to be displayed
+  // if (!resourceHasV1Mappings && !resourceHasV2Mappings) {
+  //   return emptyObject;
+  // }
 
   const mappingVersion = selectors.mappingVersion(state);
 

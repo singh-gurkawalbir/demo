@@ -132,6 +132,22 @@ export default {
       settings.extractDateTimezone = formVal.extractDateTimezone ? formVal.extractDateTimezone : undefined;
       settings.generateDateFormat = formVal.generateDateFormat ? formVal.generateDateFormat : undefined;
       settings.generateDateTimezone = formVal.generateDateTimezone ? formVal.generateDateTimezone : undefined;
+      switch (formVal.standardAction) {
+        case 'useEmptyString':
+          settings.default = '';
+          break;
+        case 'useNull':
+          settings.default = null;
+          break;
+        case 'default':
+          settings.default = formVal.default;
+          break;
+        case 'discardIfEmpty':
+          settings.conditional = {};
+          settings.conditional.when = 'extract_not_empty';
+          break;
+        default:
+      }
     } else if (formVal.fieldMappingType === 'hardCoded') {
       switch (formVal.hardcodedAction) {
         case 'useEmptyString':
@@ -145,23 +161,6 @@ export default {
           settings.hardCodedValue = Array.isArray(formVal.hardcodedDefault)
             ? formVal.hardcodedDefault.join(',')
             : formVal.hardcodedDefault;
-          break;
-        case 'discardIfEmpty':
-          settings.conditional = {};
-          settings.conditional.when = 'extract_not_empty';
-          break;
-        default:
-      }
-    } else if (formVal.fieldMappingType === 'standard') {
-      switch (formVal.standardAction) {
-        case 'useEmptyString':
-          settings.default = '';
-          break;
-        case 'useNull':
-          settings.default = null;
-          break;
-        case 'default':
-          settings.default = formVal.default;
           break;
         case 'discardIfEmpty':
           settings.conditional = {};
@@ -223,6 +222,9 @@ export default {
       updatedLookup = getFormattedLookup(lookup, formVal, settings);
 
       settings.lookupName = updatedLookup && updatedLookup.name;
+      if (formVal._mode === 'dynamic') {
+        settings.extract = '';
+      }
     }
 
     if (formVal.conditionalWhen) {

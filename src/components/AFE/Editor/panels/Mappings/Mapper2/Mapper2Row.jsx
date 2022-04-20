@@ -23,8 +23,15 @@ import messageStore from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
+    flex: 1,
     '&:first-child': {
       marginRight: theme.spacing(1),
+    },
+    '&>div': {
+      width: '100%',
+    },
+    '&:nth-of-type(2)': {
+      flex: 1,
     },
   },
   innerRowRoot: {
@@ -51,9 +58,15 @@ const useStyles = makeStyles(theme => ({
   actionsMapping: {
     display: 'flex',
     alignItems: 'baseline',
+    flex: 1,
   },
   deleteMapping: {
     visibility: 'hidden',
+  },
+  noExtractField: {
+    '&>:last-child': {
+      flex: 2,
+    },
   },
 }));
 
@@ -158,6 +171,7 @@ const Mapper2Row = React.memo(({
   const isStaticLookup = !!(lookup.name && lookup.map);
   const isHardCodedValue = !!hardCodedValue;
   const isHandlebarExp = handlebarRegex.test(extractValue);
+  const hideExtractField = dataType === MAPPING_DATA_TYPES.OBJECT && !extractValue && copySource === 'no';
 
   // this prop is used for object array tab view
   // where some children needs to be hidden
@@ -166,10 +180,10 @@ const Mapper2Row = React.memo(({
   return (
     <div
       key={nodeKey}
-      className={classes.innerRowRoot}>
+      className={clsx(classes.innerRowRoot, {[classes.noExtractField]: hideExtractField})}>
       <div className={classes.childHeader}>
         <Mapper2Generates
-          // key={generate}
+          key={generate}
           id={`fieldMappingGenerate-${nodeKey}`}
           nodeKey={nodeKey}
           value={generate}
@@ -179,10 +193,10 @@ const Mapper2Row = React.memo(({
           />
       </div>
 
-      {dataType === MAPPING_DATA_TYPES.OBJECT && !extractValue && copySource === 'no' ? null : (
+      {hideExtractField ? null : (
         <div className={classes.childHeader}>
           <Mapper2ExtractsTypeableSelect
-            // key={extractValue}
+            key={extractValue}
             id={`fieldMappingExtract-${nodeKey}`}
             nodeKey={nodeKey}
             value={extractValue}
@@ -211,6 +225,8 @@ const Mapper2Row = React.memo(({
         <ActionButton
           data-test={`fieldMappingSettings-${nodeKey}`}
           disabled={disabled || !generate}
+          tooltip={generate ? '' : 'Enter destination record field to configure settings'} // todo ashu
+          placement="bottom-start"
           aria-label="settings"
           onClick={handleSettingsClick}
           key="settings">

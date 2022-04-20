@@ -734,8 +734,6 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
       let combinedExtract;
 
       if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-        let multipleSources = false;
-
         buildArrayHelper.forEach((obj, index) => {
           const {extract = getDefaultExtractPath(isGroupedSampleData), mappings} = obj;
 
@@ -748,10 +746,10 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
           const newExtract = getUniqueExtractId(extract, index);
           let isHidden = hidden;
 
-          // found more than 1 extracts, insert a tab node
-          if (multipleSources && !nodeToPush.multipleSources) {
-            nodeToPush.multipleSources = true;
+          const shouldAddTabRow = index > 0 && !children?.[0]?.isTabNode;
 
+          // found more than 1 extracts, insert a tab node
+          if (shouldAddTabRow) {
             children.unshift({
               key: generateUniqueKey(),
               parentKey: currNodeKey,
@@ -761,9 +759,8 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
             // since the first source is already pushed, all other children should
             // be hidden now, as we show the first source tab by default
             isHidden = true;
-          } else {
-            multipleSources = true;
           }
+
           recursivelyBuildTreeFromV2Mappings({
             mappings,
             treeData: children,
@@ -1077,6 +1074,151 @@ const mappings_record_to_record = {
     // },
   ],
 };
+// // eslint-disable-next-line camelcase
+// const mappings_rows_to_rows = {
+//   mappings: [
+//     {
+//       dataType: 'objectarray',
+//       buildArrayHelper: [
+//         {
+//           extract: '$[*]',
+//           mappings: [
+//             {
+//               generate: 'first_name',
+//               dataType: 'string',
+//               extract: '$.fName',
+//             },
+//             {
+//               generate: 'last_name',
+//               dataType: 'string',
+//               extract: '$.lName',
+//             },
+//             {
+//               generate: 'child_first_name',
+//               dataType: 'string',
+//               extract: '$.childFName',
+//             },
+//           ],
+//         },
+//       ],
+//     },
+//   ],
+// };
+// // eslint-disable-next-line camelcase
+// const mappings_ns_subrecord_object_based_data = {
+//   mappings: [
+//     {
+//       generate: 'entity',
+//       dataType: 'string',
+//       extract: '$.customer',
+//     },
+//     {
+//       generate: 'items',
+//       dataType: 'objectarray',
+//       buildArrayHelper: [
+//         {
+//           extract: '$.items[*]',
+//           mappings: [
+//             {
+//               generate: 'celigo_inventorydetail',
+//               dataType: 'object',
+//               mappings: [
+//                 {
+//                   generate: 'inventoryassignment',
+//                   dataType: 'objectarray',
+//                   buildArrayHelper: [
+//                     {
+//                       extract: '$.items.inventory[*]',
+//                       mappings: [
+//                         {
+//                           generate: 'quantity',
+//                           dataType: 'number',
+//                           extract: '$.items.inventory.sQty',
+//                         },
+//                         {
+//                           generate: 'sno',
+//                           dataType: 'string',
+//                           extract: '$.items.inventory.sno',
+//                         },
+//                       ],
+//                     },
+//                   ],
+//                 },
+//               ],
+//             },
+//             {
+//               generate: 'item',
+//               dataType: 'string',
+//               extract: '$.items.sku',
+//             },
+//             {
+//               generate: 'quantity',
+//               dataType: 'number',
+//               extract: '$.items.quantity',
+//             },
+//           ],
+//         },
+//       ],
+//     },
+//   ],
+// };
+// // eslint-disable-next-line camelcase
+// const mappings_ns_subrecord_array_based_data = {
+//   mappings: [
+//     {
+//       generate: 'entity',
+//       dataType: 'string',
+//       extract: '$[0].customer',
+//     },
+//     {
+//       generate: 'items',
+//       dataType: 'objectarray',
+//       buildArrayHelper: [
+//         {
+//           extract: '$[*]',
+//           mappings: [
+//             {
+//               generate: 'celigo_inventorydetail',
+//               dataType: 'object',
+//               mappings: [
+//                 {
+//                   generate: 'inventoryassignment',
+//                   dataType: 'objectarray',
+//                   buildArrayHelper: [
+//                     {
+//                       mappings: [
+//                         {
+//                           generate: 'quantity',
+//                           dataType: 'number',
+//                           extract: '$.sQty',
+//                         },
+//                         {
+//                           generate: 'sno',
+//                           dataType: 'string',
+//                           extract: '$.sno',
+//                         },
+//                       ],
+//                     },
+//                   ],
+//                 },
+//               ],
+//             },
+//             {
+//               generate: 'item',
+//               dataType: 'string',
+//               extract: '$.sku',
+//             },
+//             {
+//               generate: 'quantity',
+//               dataType: 'number',
+//               extract: '$.sQty',
+//             },
+//           ],
+//         },
+//       ],
+//     },
+//   ],
+// };
 
 export const buildTreeFromV2Mappings = ({
   importResource,
@@ -1535,6 +1677,7 @@ const recursivelyCompareV2Mappings = (_mappingObj1 = {}, _mappingObj2 = {}) => {
     className: cl1,
     copySource: cs1,
     activeTab: ta1,
+    isEmptyRow: i1,
     ...mappingObj1
   } = _mappingObj1;
   const {
@@ -1551,6 +1694,7 @@ const recursivelyCompareV2Mappings = (_mappingObj1 = {}, _mappingObj2 = {}) => {
     className: cl2,
     copySource: cs2,
     activeTab: ta2,
+    isEmptyRow: i2,
     ...mappingObj2
   } = _mappingObj2;
 
