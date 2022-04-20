@@ -38,7 +38,7 @@ export default function DashboardPanel({ integrationId, childId }) {
 
   return (
     <div className={classes.root}>
-      <LoadResources integrationId={integrationId} required resources="flows">
+      <LoadResources required integrationId={integrationId} resources="flows">
         {!isUserInErrMgtTwoDotZero ? <PanelHeader title="Dashboard" infoText={infoTextDashboard} /> : ''}
         {isUserInErrMgtTwoDotZero
           ? <IntegrationDashboard integrationId={childId || integrationId} />
