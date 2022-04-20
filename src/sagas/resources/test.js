@@ -1415,9 +1415,6 @@ availableResources.forEach(type => {
         put(actions.resource.receivedCollection(type, mockCollection))
       );
       expect(saga.next().value).toEqual(put(actions.resource.collectionRequestSucceeded({resourceType: type})));
-
-      expect(saga.next().value).toEqual(put(actions.resource.collectionRequestSucceeded({resourceType: type})));
-
       const final = saga.next();
 
       expect(final.done).toBe(true);
