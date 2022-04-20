@@ -5404,16 +5404,6 @@ selectors.mappingEditorNotification = (state, editorId) => {
 
   const resourceHasV2Mappings = !!mappings?.length;
 
-  // todo ashu need to confirm with UX
-  // const { fields = [], lists = [] } = mapping || {};
-
-  // const resourceHasV1Mappings = !!(fields.length || lists.length);
-
-  // // if both mappings don't exist, no message to be displayed
-  // if (!resourceHasV1Mappings && !resourceHasV2Mappings) {
-  //   return emptyObject;
-  // }
-
   const mappingVersion = selectors.mappingVersion(state);
 
   // if v2 mappings exist, no v2 message is shown and only show v1 message
