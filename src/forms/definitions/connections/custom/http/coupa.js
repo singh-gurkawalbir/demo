@@ -68,8 +68,8 @@ export default {
       options: [
         {
           items: [
-            { label: 'Token(Depreacated)', value: 'token' },
-            { label: 'OAuth 2.0(Client credentials)', value: 'oauth' },
+            { label: 'Token (Deprecated)', value: 'token' },
+            { label: 'OAuth 2.0 (Client credentials)', value: 'oauth' },
           ],
         },
       ],
@@ -251,7 +251,7 @@ export default {
             'travel_booking.user.write',
             'treasury.cash_management.delete',
             'treasury.cash_management.read',
-            'treasury.caash_management.write',
+            'treasury.cash_management.write',
           ],
         },
       ],
