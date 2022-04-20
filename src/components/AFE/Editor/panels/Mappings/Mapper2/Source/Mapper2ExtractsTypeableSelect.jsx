@@ -12,7 +12,6 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     display: 'flex',
     marginBottom: 0,
-    width: theme.spacing(34),
     '& > .MuiFilledInput-multiline': {
       border: `1px solid ${theme.palette.secondary.lightest}`,
       paddingRight: 0,
@@ -76,7 +75,8 @@ export const TooltipTitle = ({
     }
   }
 
-  if (!inputValue) return fieldType;
+  // dynamic lookup will have empty input value, so need to show tooltip in that case
+  if (!inputValue && !isLookup) return fieldType;
   if (!hideSourceDropdown) return title;
 
   return (

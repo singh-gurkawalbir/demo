@@ -13,6 +13,7 @@ import actions from '../../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   treeRoot: {
+    flex: 1,
     '& .rc-tree-indent-unit': {
       display: 'inline-block',
       width: theme.spacing(9),
@@ -46,6 +47,16 @@ const useStyles = makeStyles(theme => ({
           },
         },
       },
+      '&[draggable="false"]': {
+        '& .rc-tree-node-content-wrapper': {
+          flex: 1,
+        },
+        '&:hover': {
+          '& .rc-tree-draggable-icon': {
+            visibility: 'hidden',
+          },
+        },
+      },
     },
     '& .rc-tree-switcher,.rc-tree-draggable-icon': {
       alignSelf: 'center',
@@ -61,7 +72,7 @@ const useStyles = makeStyles(theme => ({
       visibility: 'hidden',
     },
     '& .rc-tree-node-content-wrapper': {
-      // width: 500,
+      flex: 1,
     },
     '& .rc-tree-treenode-active': {
       backgroundColor: theme.palette.background.paper2,

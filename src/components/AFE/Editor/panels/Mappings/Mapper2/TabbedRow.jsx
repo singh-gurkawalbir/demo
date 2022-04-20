@@ -10,14 +10,12 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     marginLeft: theme.spacing(-9),
   },
-
   tabsContainer: {
     minWidth: 150,
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     marginBottom: theme.spacing(1),
   },
   tab: {
-    // minWidth: 'auto',
     color: theme.palette.secondary.main,
     fontSize: 14,
   },

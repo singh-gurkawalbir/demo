@@ -23,7 +23,6 @@ const useStyles = makeStyles(theme => ({
   mapField: {
     display: 'flex',
     position: 'relative',
-    width: theme.spacing(34),
     alignItems: 'center',
     borderRadius: 2,
     border: `1px solid ${theme.palette.secondary.lightest}`,

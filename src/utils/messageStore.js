@@ -31,9 +31,9 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integ
   MAPPER2_DELETE_ROW_WARNING: 'Are you sure you want to delete this parent record row? All its child rows will be deleted as well.',
   MAPPER2_DATA_TYPE_WARNING: `Since only an "object" or "[object]" data type can have child rows, 
   all of this parent record row's child rows will be deleted when your selected data type is applied. 
-  <br><br>Are you sure you want to continue?</br></br>`,
-  MAPPER1_REFERENCE_INFO: 'Your 1.0 mappings are for reference only and will no longer be applied. To re-apply them, remove your 2.0 mappings and save from either toggle screen.',
-  MAPPER2_BANNER_WARNING: 'If you have entered 2.0 mappings and save from either toggle screen, your 2.0 mappings will be applied instead of 1.0 mappings. To apply 1.0 mappings, remove any 2.0 mappings and save from either toggle screen.',
+  <br><br>Are you sure you want to continue?`,
+  MAPPER1_REFERENCE_INFO: 'Your 1.0 mappings are for reference only and will be ignored. Delete all 2.0 mappings to use 1.0 mappings instead.',
+  MAPPER2_BANNER_WARNING: 'Any 2.0 mappings that you enter will be applied when you click <b>Save</b>, even if you toggle back to Mapper 1.0. To apply 1.0 mappings instead, delete all mappings from Mapper 2.0 and click <b>Save</b>. <a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/4536629083035-Mapper-2-0"> Mapper 2.0 advantages</a>',
 };
 
 export default function messageStore(key, argsObj) {

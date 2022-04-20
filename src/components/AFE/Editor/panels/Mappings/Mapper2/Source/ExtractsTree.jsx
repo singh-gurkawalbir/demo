@@ -40,8 +40,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
   childTree: {
+    paddingBottom: theme.spacing(1),
     '& .rc-tree-indent-unit': {
-      width: '16px !important',
+      width: theme.spacing(3),
     },
     '& .rc-tree-indent-unit:before': {
       display: 'none',
@@ -50,9 +51,8 @@ const useStyles = makeStyles(theme => ({
       width: 0,
     },
     '& .rc-tree-treenode': {
-      height: theme.spacing(4),
       cursor: 'pointer',
-      paddingLeft: theme.spacing(2),
+      padding: theme.spacing(0.5, 0, 0.5, 2),
       alignItems: 'center',
     },
     '& .rc-tree-treenode-selected': {
@@ -85,10 +85,15 @@ const useStyles = makeStyles(theme => ({
   treeTitle: {
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     '& .MuiTypography-root': {
       fontStyle: 'italic',
       size: 14,
+      paddingLeft: theme.spacing(1),
     },
+  },
+  treePropName: {
+    wordBreak: 'break-all',
   },
 })
 );
@@ -98,7 +103,7 @@ const TitleExtracts = ({propName, dataType}) => {
 
   return (
     <div className={classes.treeTitle} >
-      <span>{propName}</span>
+      <span className={classes.treePropName}>{propName}</span>
       <Typography
         variant="body2" color="textSecondary" >
         {dataType}

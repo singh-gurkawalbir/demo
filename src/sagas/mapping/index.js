@@ -382,6 +382,7 @@ export function* saveMappings() {
     }
   }
 
+  // todo ashu should we do this only if v2 mappings dirty?
   // save v2 mappings as well
   const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
 

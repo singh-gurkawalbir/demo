@@ -33,7 +33,7 @@ export default function Mapper2Guide() {
         data-test="mapper2Guide"
         className={classes.button}
         startIcon={<InfoIcon />}>
-        Learn about Mapper 2.0&apos;s advantages
+        Mapper 2.0 advantages
       </TextButton>
       <CeligoDivider position="right" />
     </>

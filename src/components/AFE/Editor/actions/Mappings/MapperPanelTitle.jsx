@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import clsx from 'clsx';
 import { IconButton, Tooltip, List, ListItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
@@ -32,9 +33,6 @@ const useStyles = makeStyles(theme => ({
     '& > :not(:last-child)': {
       marginRight: theme.spacing(1),
     },
-    '& > :first-child': {
-      marginRight: 0,
-    },
   },
   refresh: {
     fontFamily: 'Roboto400',
@@ -43,25 +41,14 @@ const useStyles = makeStyles(theme => ({
   currentContainer: {
     fontFamily: 'Roboto400',
     fontSize: 14,
-    height: theme.spacing(2),
-    color: theme.palette.secondary.main,
-    padding: 0,
-    paddingRight: theme.spacing(1),
-    marginRight: theme.spacing(-1),
-    '& svg': {
-      marginLeft: theme.spacing(0.5),
-    },
-    '&:hover': {
-      background: 'none',
-      color: theme.palette.text.secondary,
-      '& svg': {
-        color: theme.palette.text.secondary,
-      },
-    },
   },
   actionsMenuPopper: {
     maxWidth: 250,
     top: `${theme.spacing(1)}px !important`,
+    left: `${theme.spacing(1)}px !important`,
+  },
+  actionsMenuPopperArrow: {
+    left: '224px !important',
   },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
@@ -104,6 +91,17 @@ const useStyles = makeStyles(theme => ({
       '&:before': {
         background: theme.palette.primary.main,
       },
+    },
+  },
+  itemSelected: {
+    position: 'relative',
+    '&:before': {
+      content: '""',
+      width: '3px',
+      height: '100%',
+      position: 'absolute',
+      background: theme.palette.primary.main,
+      left: '0px',
     },
   },
   listWrapper: {
@@ -160,7 +158,7 @@ function OutputFormatsList({isGroupedSampleData, isGroupedOutput, disabled}) {
         onClose={handleClose}
         placement="bottom-end"
         restrictToParent={false}
-        classes={{ popper: classes.actionsMenuPopper }}
+        classes={{ popper: classes.actionsMenuPopper, arrow: classes.actionsMenuPopperArrow}}
         open={open}
         anchorEl={anchorEl}
         >
@@ -171,7 +169,9 @@ function OutputFormatsList({isGroupedSampleData, isGroupedOutput, disabled}) {
           {(isGroupedSampleData ? ROWS_AS_INPUT_OPTIONS : RECORD_AS_INPUT_OPTIONS).map(({label, value}) => (
             <ListItem
               button
-              className={classes.itemRoot}
+              className={clsx(classes.itemRoot, {
+                [classes.itemSelected]: label === getInputOutputFormat(isGroupedSampleData, isGroupedOutput),
+              })}
               classes={{
                 root: classes.itemRoot,
                 container: classes.itemContainer,

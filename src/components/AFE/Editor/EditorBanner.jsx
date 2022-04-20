@@ -4,6 +4,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import NotificationToaster from '../../NotificationToaster';
+import RawHtml from '../../RawHtml';
 
 const useStyles = makeStyles(theme => ({
   titleStatusPanel: {
@@ -19,7 +20,6 @@ const useStyles = makeStyles(theme => ({
 // we can update this component in future when we need to show the banner for other editors
 export default function EditorBanner({editorId}) {
   const classes = useStyles();
-  const mappingVersion = useSelector(state => selectors.mappingVersion(state));
   const {message, variant} = useSelector(state => selectors.mappingEditorNotification(state, editorId), shallowEqual);
 
   if (!message) return null;
@@ -31,8 +31,7 @@ export default function EditorBanner({editorId}) {
       onClose
       className={classes.notification}>
       <Typography variant="h6" className={classes.titleStatusPanel}>
-        {message}
-        {mappingVersion === 2 && <a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/4536629083035-Mapper-2-0"> Learn about Mapper 2.0’s advantages</a>}
+        <RawHtml html={message} />
       </Typography>
     </NotificationToaster>
   );
