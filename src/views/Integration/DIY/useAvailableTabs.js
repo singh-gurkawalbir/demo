@@ -79,13 +79,12 @@ const getTabs = ({ isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyInteg
     Icon: SingleUserIcon,
     Panel: AdminPanel,
   },
-  ...(!isStandaloneIntegration
-    ? [{
-      path: 'aliases',
-      label: 'Aliases',
-      Icon: InstallationGuideIcon,
-      Panel: AliasesPanel }]
-    : []),
+  ...((!isStandaloneIntegration && !isIntegrationApp) ? [{
+    path: 'aliases',
+    label: 'Aliases',
+    Icon: InstallationGuideIcon,
+    Panel: AliasesPanel,
+  }] : []),
   ...((!isStandaloneIntegration && !isIntegrationApp) ? [{
     path: 'revisions',
     label: 'Revisions',
