@@ -1,3 +1,4 @@
+import produce from 'immer';
 import React, { useMemo, useState } from 'react';
 // import { useDispatch } from 'react-redux';
 import { makeStyles,
@@ -42,6 +43,7 @@ const useStyles = makeStyles(theme => ({
   },
   summaryContainer: {
     display: 'flex',
+    alignItems: 'center',
     width: '100%',
   },
   accordion: {
@@ -73,6 +75,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   index: {
+    flex: 'none',
     textAlign: 'center',
     marginRight: theme.spacing(1.5),
     paddingTop: 2,
@@ -137,7 +140,12 @@ export default function RouterPanel(/* { editorId } */) {
 
   const formKey = useFormInitWithPermissions({ fieldMeta });
   // eslint-disable-next-line no-alert
-  const handleTitleChange = e => alert(e);
+  const handleTitleChange = (title, position) => {
+    setBranchData(
+      produce(branchData, draft => {
+        draft[position].name = title;
+      }));
+  };
 
   const DragHandle = sortableHandle(() => <GripperIcon />);
 
@@ -146,6 +154,11 @@ export default function RouterPanel(/* { editorId } */) {
       {children}
     </ul>
   ));
+
+  const handleMenuClick = event => {
+    event.stopPropagation();
+    console.log('launch menu');
+  };
 
   const SortableItem = sortableElement(({branch, position}) => (
     <li className={classes.listItem}>
@@ -165,19 +178,20 @@ export default function RouterPanel(/* { editorId } */) {
           >
             <div className={classes.summaryContainer}>
               <DragHandle />
-              {/* <ArrowDownIcon /> */}
 
               <div className={classes.branchName}>
                 <EditableText
+                  // multiline
+                  allowOverflow
                   text={branch.name}
                   // disabled={!canEdit}
                   defaultText="Unnamed branch: Click to add name"
-                  onChange={handleTitleChange}
+                  onChange={title => handleTitleChange(title, position)}
                   inputClassName={classes.editableTextInput}
                 />
               </div>
 
-              <IconButton size="small">
+              <IconButton size="small" onClick={handleMenuClick}>
                 <EllipsisHorizontalIcon />
               </IconButton>
             </div>
