@@ -20,8 +20,8 @@ export default function AuditPanel({ flowId, integrationId }) {
   return (
     <AuditLog
       resourceType="flows"
-      resourceId={flowId}
       integrationId={integrationId}
+      resourceId={flowId}
       className={classes.auditLog}
       isFixed={false}
       />

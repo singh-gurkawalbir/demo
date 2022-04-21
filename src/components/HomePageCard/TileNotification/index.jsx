@@ -60,7 +60,23 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TileNotification({ content, expired, connectorId, licenseId, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, tileStatus, trialExpired}) {
+export default function TileNotification({
+  content,
+  expired,
+  connectorId,
+  licenseId,
+  integrationId,
+  isIntegrationV2,
+  mode,
+  name,
+  _connectorId,
+  supportsMultiStore,
+  resumable,
+  accessLevel,
+  showTrialLicenseMessage,
+  tileStatus,
+  trialExpired,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const {confirmDialog} = useConfirmDialog();
@@ -137,7 +153,7 @@ export default function TileNotification({ content, expired, connectorId, licens
     }
   }, [accessLevel, confirmDialog, connectorId, dispatch, enquesnackbar, integrationId, licenseId, onClickBuyButton, resumable, showTrialLicenseMessage]);
 
-  const handleUninstall = useHandleDelete(integrationId);
+  const handleUninstall = useHandleDelete(integrationId, {mode, supportsMultiStore, name, _connectorId});
 
   return (
     <div className={classes.trialExpireWrapper}>
@@ -188,6 +204,5 @@ export default function TileNotification({ content, expired, connectorId, licens
       </div>
       <div />
     </div>
-
   );
 }

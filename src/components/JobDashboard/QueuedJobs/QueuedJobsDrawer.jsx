@@ -105,7 +105,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function QueuedJobs({ connectionId}) {
+function QueuedJobs({ connectionId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const connectionJobs = useSelector(state =>
