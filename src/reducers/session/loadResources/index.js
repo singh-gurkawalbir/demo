@@ -66,4 +66,3 @@ selectors.mkResourceStatus = () => createSelector(
     }
   )) : emptyList
 );
-
