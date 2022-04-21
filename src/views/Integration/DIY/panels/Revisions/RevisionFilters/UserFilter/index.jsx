@@ -14,7 +14,7 @@ export default function UserFilter() {
   const filterKey = getRevisionFilterKey(integrationId);
   const integrationUsers = useFetchIntegrationUsers(integrationId);
 
-  const usersListSet = useSelector(state => {
+  const usersList = useSelector(state => {
     const uniqUserIds = selectors.uniqueUserIdsFromRevisions(state, integrationId);
 
     return uniqUserIds.map(userId => {
@@ -56,7 +56,7 @@ export default function UserFilter() {
         Select user
       </MenuItem>
       {
-        usersListSet.map(user => (
+        usersList.map(user => (
           <MenuItem key={user.id} value={user.id} data-private>
             {user.name}
           </MenuItem>
