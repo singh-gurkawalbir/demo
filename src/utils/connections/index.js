@@ -1,7 +1,7 @@
 import { matchPath } from 'react-router-dom';
 import { PING_STATES } from '../../reducers/comms/ping';
 import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, GOOGLE_CONTACTS_API, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../constants';
-import { rdbmsAppTypeToSubType, rdbmsSubTypeToAppType } from '../resource';
+import { rdbmsSubTypeToAppType } from '../resource';
 
 export const getStatusVariantAndMessage = ({
   resourceType,
@@ -88,9 +88,9 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
 
   if (hideOwnConnection) { expression.push({ _id: {$ne: _id} }); }
 
-  if (RDBMS_TYPES.includes(rdbmsSubTypeToAppType(type))) {
+  if (type === 'rdbms' && RDBMS_TYPES.includes(rdbmsSubTypeToAppType(connection?.rdbms?.type))) {
     // rdbms subtype is required to filter the connections
-    expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(type) });
+    expression.push({ 'rdbms.type': connection.rdbms.type });
   } else if (type === 'rest' || (type === 'http' && connection?.http?.formType === 'rest')) {
     expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
   } else if (type === 'graph_ql' || (type === 'http' && connection?.http?.formType === 'graph_ql')) {
@@ -120,7 +120,10 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   } else {
     const andingExpressions = { $and: expression };
 
-    options = { filter: andingExpressions, appType: type };
+    options = {
+      filter: andingExpressions,
+      appType: type === 'rdbms' ? rdbmsSubTypeToAppType(connection?.rdbms?.type) : type,
+    };
   }
 
   return options;
