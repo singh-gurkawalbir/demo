@@ -705,21 +705,28 @@ export default (state = {}, action) => {
           // handle if data type changed
           if (oldDataType !== newDataType) {
             nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, oldDataType, newDataType);
-          } else if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-            if (value.copySource === 'yes') {
-              // delete child rows if object is to be copied as is
-              node.children = [];
-            } else if (value.copySource === 'no') {
-              delete node.extract;
-              delete node.combinedExtract;
-              draft.mapping.expandedKeys.push(node.key);
+          } else if (value.copySource === 'yes') {
+            // delete child rows if object is to be copied as is
+            if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+              delete node.children;
+            }
+          } else { // copySource is no
+            // expand parent node
+            draft.mapping.expandedKeys.push(node.key);
+            delete node.extract;
 
+            if (isEmpty(node.children)) {
               node.children = [{
                 key: generateUniqueKey(),
                 title: '',
                 parentKey: node.key,
+                parentExtract: getUniqueExtractId(node.combinedExtract?.split(',')?.[0], 0),
                 dataType: MAPPING_DATA_TYPES.STRING,
               }];
+            }
+
+            if (newDataType === MAPPING_DATA_TYPES.OBJECT) {
+              delete node.combinedExtract;
             }
           }
         }

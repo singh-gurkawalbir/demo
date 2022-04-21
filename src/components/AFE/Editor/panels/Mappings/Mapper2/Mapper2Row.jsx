@@ -20,6 +20,7 @@ import useConfirmDialog from '../../../../../ConfirmDialog';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
 import { MAPPING_DATA_TYPES } from '../../../../../../utils/mapping';
 import messageStore from '../../../../../../utils/messageStore';
+import InfoIconButton from '../../../../../InfoIconButton';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -68,6 +69,10 @@ const useStyles = makeStyles(theme => ({
       flex: 2,
     },
   },
+  infoIcon: {
+    marginRight: 0,
+    padding: 0,
+  },
 }));
 
 const RightIcon = ({title, Icon, className}) => {
@@ -82,6 +87,18 @@ const RightIcon = ({title, Icon, className}) => {
       </div>
     </Tooltip>
   );
+};
+
+const getInfoMessage = (dataType, copySource) => {
+  if (copySource === 'yes') {
+    if (dataType === MAPPING_DATA_TYPES.OBJECT) {
+      return 'Child fields are not displayed here because they vary by input record. For child fields to be added, select "No" for "Would you like to copy an object from the source record as-is?" in this row’s Settings.';
+    } if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+      return 'Child fields are not displayed here because they vary by input record. For child fields to be added, select "No" for "Would you like to copy an object array from the source record as-is?" in this row’s Settings.';
+    }
+  }
+
+  return '';
 };
 
 const Mapper2Row = React.memo(({
@@ -213,6 +230,11 @@ const Mapper2Row = React.memo(({
       )}
 
       <div className={classes.actionsMapping}>
+        <InfoIconButton
+          className={classes.infoIcon}
+          placement="bottom"
+          info={getInfoMessage(dataType, copySource)} />
+
         {isStaticLookup && <RightIcon title="Static lookup" Icon={StaticLookupIcon} />}
         {(isLookup && !isStaticLookup) && <RightIcon title="Dynamic lookup" Icon={DynamicLookupIcon} />}
         {isHandlebarExp && !isLookup && <RightIcon title="Handlebars expression" Icon={HandlebarsExpressionIcon} />}

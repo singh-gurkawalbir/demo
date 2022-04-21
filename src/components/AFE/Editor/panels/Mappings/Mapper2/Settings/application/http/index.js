@@ -107,7 +107,10 @@ export default {
           id: 'copySource',
           name: 'copySource',
           type: 'radiogroup',
-          label: 'Would you like to copy an object from the source record as-is?',
+          refreshOptionsOnChangesTo: ['dataType'],
+          label: propDataType === MAPPING_DATA_TYPES.OBJECT
+            ? 'Would you like to copy an object from the source record as-is?'
+            : 'Would you like to copy an object array from the source record as-is?',
           fullWidth: true,
           defaultValue: copySource || 'no',
           visibleWhenAll: [{ field: 'dataType', is: ['object', 'objectarray'] }],
@@ -593,25 +596,21 @@ export default {
         ],
       },
       optionsHandler: (fieldId, fields) => {
+        const dataTypeField = fields.find(
+          field => field.id === 'dataType'
+        );
+
         if (fieldId === 'standardAction' ||
         fieldId === 'objectAction' ||
         fieldId === 'hardcodedAction' ||
         fieldId === 'multifieldAction' ||
         fieldId === 'lookupAction') {
-          const dataTypeField = fields.find(
-            field => field.id === 'dataType'
-          );
-
           const options = getDefaultActionOptions(fieldId, dataTypeField?.value);
 
           return options;
         }
 
         if (fieldId === 'fieldMappingType') {
-          const dataTypeField = fields.find(
-            field => field.id === 'dataType'
-          );
-
           if (ARRAY_DATA_TYPES.includes(dataTypeField?.value)) {
             return [
               {
@@ -633,6 +632,16 @@ export default {
               ],
             },
           ];
+        }
+
+        if (fieldId === 'copySource') {
+          const copySourceField = fields.find(
+            field => field.id === 'copySource'
+          );
+
+          copySourceField.label = dataTypeField?.value === MAPPING_DATA_TYPES.OBJECT
+            ? 'Would you like to copy an object from the source record as-is?'
+            : 'Would you like to copy an object array from the source record as-is?';
         }
 
         return null;
