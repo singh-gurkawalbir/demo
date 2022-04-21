@@ -1,14 +1,19 @@
 /* eslint-disable no-param-reassign */
-import { ClickAwayListener, IconButton, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { ClickAwayListener, IconButton, List, ListItem, ListItemIcon, ListItemText, makeStyles } from '@material-ui/core';
 import React from 'react';
 import ArrowPopper from '../../../../../ArrowPopper';
 import EllipsisHorizontalIcon from '../../../../../icons/EllipsisHorizontalIcon';
 import AddIcon from '../../../../../icons/AddIcon';
 import TrashIcon from '../../../../../icons/TrashIcon';
 
+const useStyles = makeStyles({
+  root: { minWidth: 36 },
+});
+
 export default function MoreActionsButton() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const classes = useStyles();
 
   const handleCloseMenu = event => {
     event.stopPropagation();
@@ -36,14 +41,14 @@ export default function MoreActionsButton() {
       >
         <List dense>
           <ListItem button onClick={handleCloseMenu}>
-            <ListItemIcon>
+            <ListItemIcon classes={{root: classes.root}}>
               <AddIcon />
             </ListItemIcon>
-            <ListItemText>Add Description longer and</ListItemText>
+            <ListItemText>Add Description</ListItemText>
           </ListItem>
 
           <ListItem button onClick={handleCloseMenu}>
-            <ListItemIcon>
+            <ListItemIcon classes={{root: classes.root}}>
               <TrashIcon />
             </ListItemIcon>
             <ListItemText>Delete branch</ListItemText>
