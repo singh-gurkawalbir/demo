@@ -23,7 +23,6 @@ import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../../../utils/consta
 import { tileStatus, isTileStatusConnectionDown } from '../../../../utils/home';
 import getRoutePath from '../../../../utils/routePaths';
 import actions from '../../../../actions';
-import { isIntegrationAppVersion2 } from '../../../../utils/integrationApps';
 import TileNotification from '../../../../components/HomePageCard/TileNotification';
 import { useSelectorMemo } from '../../../../hooks';
 import CeligoTruncate from '../../../../components/CeligoTruncate';
@@ -125,9 +124,6 @@ function Tile({
   const classes = useStyles();
   const dispatch = useDispatch();
   const numFlowsText = getTextAfterCount('Flow', tile.numFlows);
-  const isIntegrationV2 = useSelector(state =>
-    isIntegrationAppVersion2(selectors.resource(state, 'integrations', tile && tile._integrationId), true)
-  );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -139,7 +135,8 @@ function Tile({
     urlToIntegrationSettings,
     urlToIntegrationUsers,
     urlToIntegrationConnections,
-    urlToIntegrationStatus} = useSelectorMemo(selectors.mkHomeTileRedirectUrl, tile);
+    urlToIntegrationStatus,
+  } = useSelectorMemo(selectors.mkHomeTileRedirectUrl, tile);
 
   const accessLevel = tile.integration?.permissions?.accessLevel;
   const status = tileStatus(tile);
@@ -262,12 +259,22 @@ function Tile({
         </Footer>{
           tile._connectorId && licenseMessageContent && (
           <TileNotification
-            content={licenseMessageContent} showTrialLicenseMessage={showTrialLicenseMessage} expired={expired} connectorId={tile._connectorId}
+            content={licenseMessageContent}
+            showTrialLicenseMessage={showTrialLicenseMessage}
+            expired={expired}
+            connectorId={tile._connectorId}
             trialExpired={trialExpired}
             licenseId={licenseId}
             tileStatus={tile.status}
-            isIntegrationV2={isIntegrationV2} integrationId={tile._integrationId}
-            resumable={resumable} accessLevel={accessLevel} />
+            isIntegrationV2={tile.iaV2}
+            integrationId={tile._integrationId}
+            mode={tile.mode}
+            name={tile.name}
+            _connectorId={tile._connectorId}
+            supportsMultiStore={tile.supportsMultiStore}
+            resumable={resumable}
+            accessLevel={accessLevel}
+          />
           )
         }
       </HomePageCardContainer>

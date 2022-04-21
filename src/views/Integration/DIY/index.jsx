@@ -12,7 +12,7 @@ export default function IntegrationDIY({integrationId}) {
     <>
       <ResourceDrawer />
       <QueuedJobsDrawer integrationId={integrationId} />
-      <LoadResources required resources="integrations,marketplacetemplates">
+      <LoadResources required resources="marketplacetemplates">
         <TabRedirection>
           <PageBar />
           <IntegrationTabs />
