@@ -249,8 +249,9 @@ const handleDeleteNode = (draft, action) => {
 
     if (pageProcessors.length === 1) {
       const branches = jsonPatch.getValueByPointer(flow, `/routers/${routerIndex}/branches`);
+      const routers = jsonPatch.getValueByPointer(flow, '/routers');
 
-      if (branches.length === 1) {
+      if (branches.length === 1 && routers.length > 1) {
         staged[flowId].patch.push({
           op: 'remove',
           path: `/routers/${routerIndex}`,
