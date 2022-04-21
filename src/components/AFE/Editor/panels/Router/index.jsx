@@ -1,29 +1,11 @@
+import produce from 'immer';
 import React, { useMemo, useState } from 'react';
-// import { useDispatch } from 'react-redux';
-import { makeStyles,
-  Typography,
-  Divider,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  IconButton,
-} from '@material-ui/core';
-import {
-  sortableContainer,
-  sortableElement,
-  sortableHandle,
-} from 'react-sortable-hoc';
-
+import { makeStyles, Divider } from '@material-ui/core';
+import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import DynaForm from '../../../../DynaForm';
-import ArrowDownIcon from '../../../../icons/ArrowDownIcon';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-import EllipsisHorizontalIcon from '../../../../icons/EllipsisHorizontalIcon';
-import GripperIcon from '../../../../icons/GripperIcon';
-import EditableText from '../../../../EditableText';
-
-// import actions from '../../../../../actions';
-// import { selectors } from '../../../../../reducers';
-// import CodePanel from '../Code';
+import BranchItem from './BranchItem';
+import fieldMetadata from './fieldMeta';
 
 const moveArrayItem = (arr, oldIndex, newIndex) => {
   const newArr = [...arr];
@@ -42,6 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
   summaryContainer: {
     display: 'flex',
+    alignItems: 'center',
     width: '100%',
   },
   accordion: {
@@ -73,6 +56,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   index: {
+    flex: 'none',
     textAlign: 'center',
     marginRight: theme.spacing(1.5),
     paddingTop: 2,
@@ -97,49 +81,15 @@ const mockBranchData = [
 export default function RouterPanel(/* { editorId } */) {
   const classes = useStyles();
   const [branchData, setBranchData] = useState(mockBranchData);
-  // const dispatch = useDispatch();
-  //  const rule = useSelector(state => selectors.editorRule(state, editorId));
-  //  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  //  const { errorLine, error} = useSelector(state => selectors.editorPreviewError(state, editorId));
-  // const handleChange = newRule => {
-  //   dispatch(actions.editor.patchRule(editorId, newRule));
-  // };
-
-  const fieldMeta = useMemo(() => ({
-    fieldMap: {
-      branchType: {
-        id: 'branchType',
-        name: 'branchType',
-        helpText: 'We need help text!',
-        type: 'radiogroup',
-        label: 'Branching type',
-        description: 'Records will flow through',
-        // showOptionsHorizontally: true,
-        // fullWidth: true,
-        options: [
-          {
-            items: [
-              { value: 'first', label: 'First matching branch' },
-              { value: 'all', label: 'All matching branches' },
-            ],
-          },
-        ],
-        defaultValue: 'first',
-      },
-      branches: {
-        id: 'branches',
-        label: 'Branches',
-        type: 'labeltitle',
-        helpText: 'We need help text!',
-      },
-    },
-  }), []);
-
+  const fieldMeta = useMemo(() => (fieldMetadata), []);
   const formKey = useFormInitWithPermissions({ fieldMeta });
-  // eslint-disable-next-line no-alert
-  const handleTitleChange = e => alert(e);
 
-  const DragHandle = sortableHandle(() => <GripperIcon />);
+  const handleNameChange = (title, position) => {
+    setBranchData(
+      produce(branchData, draft => {
+        draft[position].name = title;
+      }));
+  };
 
   const SortableContainer = sortableContainer(({children}) => (
     <ul className={classes.branchList}>
@@ -147,48 +97,8 @@ export default function RouterPanel(/* { editorId } */) {
     </ul>
   ));
 
-  const SortableItem = sortableElement(({branch, position}) => (
-    <li className={classes.listItem}>
-      <Typography component="div" variant="overline" className={classes.index}>
-        {position}
-      </Typography>
-
-      <div className={classes.accordionContainer}>
-        <Accordion
-          elevation={0}
-          square
-          className={classes.accordion}>
-          <AccordionSummary
-            classes={{expandIcon: classes.expandIcon}}
-            className={classes.accordionSummary}
-            expandIcon={<ArrowDownIcon />}
-          >
-            <div className={classes.summaryContainer}>
-              <DragHandle />
-              {/* <ArrowDownIcon /> */}
-
-              <div className={classes.branchName}>
-                <EditableText
-                  text={branch.name}
-                  // disabled={!canEdit}
-                  defaultText="Unnamed branch: Click to add name"
-                  onChange={handleTitleChange}
-                  inputClassName={classes.editableTextInput}
-                />
-              </div>
-
-              <IconButton size="small">
-                <EllipsisHorizontalIcon />
-              </IconButton>
-            </div>
-          </AccordionSummary>
-
-          <AccordionDetails className={classes.accordionDetails}>
-            Filter!
-          </AccordionDetails>
-        </Accordion>
-      </div>
-    </li>
+  const SortableItem = sortableElement(props => (
+    <BranchItem {...props} />
   ));
 
   const handleSortEnd = ({oldIndex, newIndex}) => {
@@ -203,7 +113,12 @@ export default function RouterPanel(/* { editorId } */) {
 
       <SortableContainer onSortEnd={handleSortEnd} useDragHandle>
         { branchData.map((b, i) => (
-          <SortableItem key={b.name} index={i} position={i} branch={b} />
+          <SortableItem
+            key={b.name}
+            index={i} // The HOC does not proxy index to child, so we need `position` as well.
+            position={i}
+            branchName={b.name}
+            onNameChange={handleNameChange} />
         ))}
       </SortableContainer>
     </div>
