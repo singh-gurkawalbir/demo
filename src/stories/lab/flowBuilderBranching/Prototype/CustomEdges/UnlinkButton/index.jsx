@@ -1,7 +1,8 @@
 import React from 'react';
 import { IconButton, makeStyles } from '@material-ui/core';
 import UnLinkIcon from '../../../../../../components/icons/unLinkedIcon';
-import { useHandleDeleteEdge } from '../../hooks';
+import actions from '../../reducer/actions';
+import { useFlowContext } from '../../Context';
 
 const useStyles = makeStyles(theme => ({
   addButton: {
@@ -21,7 +22,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function UnlinkButton({edgeId}) {
   const classes = useStyles();
-  const handleDeleteEdge = useHandleDeleteEdge(edgeId);
+  const { setState, flow } = useFlowContext();
+
+  const handleDeleteEdge = () => {
+    setState({type: actions.DELETE_EDGE, edgeId});
+    setState({type: actions.SAVE, flowId: flow._id});
+  };
 
   return (
     <IconButton

@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import { getSmoothStepPath } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
-import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles, isDragNodeOnSameBranch } from '../../lib';
+import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles, isDragNodeOnSameBranch, GRAPH_ELEMENTS_TYPE } from '../../lib';
 import { useFlowContext } from '../../Context';
 import AddNewButton from '../AddNewButton';
 import UnlinkButton from '../UnlinkButton';
@@ -38,12 +38,12 @@ export default function DefaultEdge({
   const hasSiblingEdges = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
   const { sourceType, targetType, points: edgePoints } = data;
   const isDragging = !!dragNodeId;
-  const isConnectedToMerge = targetType === 'merge' || sourceType === 'merge';
-  const isConnectedToGenerator = sourceType === 'pg';
-  const isTargetMerge = targetType === 'merge';
-  const isSourceRouter = sourceType === 'router';
-  const isSourceGenerator = sourceType === 'pg';
-  const isTerminal = targetType.includes('terminal');
+  const isConnectedToMerge = targetType === GRAPH_ELEMENTS_TYPE.MERGE || sourceType === GRAPH_ELEMENTS_TYPE.MERGE;
+  const isConnectedToGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
+  const isTargetMerge = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
+  const isSourceRouter = sourceType === GRAPH_ELEMENTS_TYPE.ROUTER;
+  const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
+  const isTerminal = targetType === GRAPH_ELEMENTS_TYPE.TERMINAL;
   const showLinkIcon = hasSiblingEdges && !isSourceGenerator;
   const showAddIcon = !isSourceGenerator;
   const isDragNodeAndEdgeOnSameBranch = isDragNodeOnSameBranch(dragNodeId, id, elementsMap);
@@ -146,10 +146,7 @@ export default function DefaultEdge({
   let position = 'center';
   let offset = 10;
 
-  if (targetType === 'terminalBlocked') {
-    position = 'right';
-    offset = 1;
-  } else if (targetType === 'pp' && sourceType !== 'pp') {
+  if (targetType === 'pp' && sourceType !== 'pp') {
     // we want the add button to be positioned close to the pp,
     // not close to the merge/router nodes.
     position = 'right';

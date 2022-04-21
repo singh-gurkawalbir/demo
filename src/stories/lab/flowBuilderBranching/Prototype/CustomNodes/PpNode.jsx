@@ -12,7 +12,8 @@ import lookupTransformationAction from '../../../../../views/FlowBuilder/PagePro
 import responseTransformationAction from '../../../../../views/FlowBuilder/PageProcessor/actions/responseTransformation_afe';
 // import responseMapping from '../../../../../views/FlowBuilder/PageProcessor/actions/responseMapping_afe';
 import DefaultHandle from './Handles/DefaultHandle';
-import { useHandleDeleteNode } from '../hooks';
+import { useFlowContext } from '../Context';
+import actions from '../reducer/actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -95,7 +96,12 @@ export default function PageProcessor({ data = {}, id }) {
     return processorActions;
   }, [isLookup]);
 
-  const handleDelete = useHandleDeleteNode(id);
+  const {setState, flow} = useFlowContext();
+
+  const handleDelete = () => {
+    setState({type: actions.DELETE_STEP, nodeId: id});
+    setState({type: actions.SAVE, flowId: flow._id});
+  };
 
   return (
     <div className={classes.root}>

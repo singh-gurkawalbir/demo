@@ -1,19 +1,18 @@
-import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
+import React, { useEffect, useMemo, useReducer } from 'react';
 import { makeStyles } from '@material-ui/core';
-import ReactFlow,
-{ MiniMap,
+import ReactFlow, {
+  MiniMap,
   Controls,
-  ReactFlowProvider} from 'react-flow-renderer';
+  ReactFlowProvider,
+} from 'react-flow-renderer';
 import actions from './reducer/actions';
-import { getSomeExport, getSomePg } from './nodeGeneration';
 import TextButton from '../../../../components/Buttons/TextButton';
 import DefaultEdge from './CustomEdges/DefaultEdge';
-import { generateId, layoutElements } from './lib';
+import { layoutElements } from './lib';
 import { FlowProvider } from './Context';
 import PgNode from './CustomNodes/PgNode';
 import PpNode from './CustomNodes/PpNode';
-import TerminalFreeNode from './CustomNodes/terminalNodes/Free';
-import TerminalBlockedNode from './CustomNodes/terminalNodes/Blocked';
+import TerminalNode from './CustomNodes/terminalNodes/Free';
 import RouterNode from './CustomNodes/RouterNode';
 import MergeNode from './CustomNodes/MergeNode';
 import reducer, { resourceDataSelector, elementsSelector, elementsMapSelector } from './reducer';
@@ -24,8 +23,7 @@ import DestinationTitle from './titles/DestinationTitle';
 const nodeTypes = {
   pg: PgNode,
   pp: PpNode,
-  terminalFree: TerminalFreeNode,
-  terminalBlocked: TerminalBlockedNode,
+  terminal: TerminalNode,
   router: RouterNode,
   merge: MergeNode,
 };
@@ -62,7 +60,7 @@ export default ({resourceState}) => {
   [elements]);
 
   useEffect(() => {
-    setState({type: actions.SET_GRAPH_ELEMENTS, flow: mergedFlow});
+    setState({type: actions.INIT_FLOW_GRAPH, flow: mergedFlow});
   }, [mergedFlow]);
 
   const handleNodeDragStart = (evt, source) => {
@@ -93,23 +91,10 @@ export default ({resourceState}) => {
     console.log(resourceState);
   };
 
-  const handleAddSource = useCallback(() => {
-    const id = `new-${generateId()}`;
-    const flowNode = getSomePg(id);
-    const resourceNode = getSomeExport(id);
-
-    setState({
-      type: actions.ADD_NEW_STEP,
-      resourceType: 'exports',
-      path: '/pageGenerators/-',
-      flowNode,
-      resourceNode,
-      flowId: mergedFlow?._id});
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // eslint-disable-next-line no-alert
-  const handleAddDestination = () => alert('add new destination');
+  const handleAddNewSource = () => {
+    setState({type: actions.ADD_NEW_PG_STEP});
+    setState({type: actions.SAVE, flowId: mergedFlow._id});
+  };
 
   return (
     <ReactFlowProvider>
@@ -121,8 +106,8 @@ export default ({resourceState}) => {
         dragNodeId={state.session.fb.dragNodeId}
         setState={setState}>
 
-        <SourceTitle onClick={handleAddSource} />
-        <DestinationTitle onClick={handleAddDestination} />
+        <SourceTitle onClick={handleAddNewSource} />
+        <DestinationTitle />
 
         <ReactFlow
           onNodeDragStart={handleNodeDragStart}
