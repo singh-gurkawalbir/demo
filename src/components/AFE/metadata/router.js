@@ -19,12 +19,12 @@ export default {
         props: { mode: 'json' },
       },
       {
-        title: 'Input',
+        title: activeProcessor === 'javascript' ? 'Function input' : 'Input',
         area: 'form',
         Panel: DataPanel,
       },
       {
-        title: 'Output',
+        title: activeProcessor === 'javascript' ? 'Function output' : 'Output',
         area: 'values',
         Panel: ResultPanel,
       },
