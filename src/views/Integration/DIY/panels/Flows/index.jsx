@@ -186,7 +186,7 @@ const FlowListingTable = ({
         />
       </Grid>
       <Grid item className={classes.content}>
-        <LoadResources integrationId={integrationId} required resources="flows">
+        <LoadResources required integrationId={integrationId} resources="flows">
           <CeligoTable
             data={groupedFlows}
             filterKey={filterKey}

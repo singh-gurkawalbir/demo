@@ -136,7 +136,7 @@ const mergeResourceCollection = (draft, resourceType, response) => {
   let newCollection;
 
   if (draft[resourceType]) {
-    newCollection = uniqBy([...response, ...draft[resourceType]], '_id');
+    newCollection = uniqBy([...(response || []), ...draft[resourceType]], '_id');
   } else {
     newCollection = response;
   }
