@@ -78,6 +78,7 @@ export default function useHandleDelete(_integrationId) {
       buttons: [
         {
           label: 'Delete',
+          error: true,
           onClick: () => {
             dispatch(actions.resource.integrations.delete(_integrationId));
             setShowSnackbar(true);

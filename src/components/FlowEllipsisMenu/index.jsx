@@ -168,6 +168,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
             buttons: [
               {
                 label: 'Delete',
+                error: true,
                 onClick: deleteFlow,
               },
               {

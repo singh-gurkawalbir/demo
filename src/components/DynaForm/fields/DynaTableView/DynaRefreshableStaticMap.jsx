@@ -8,6 +8,8 @@ import DynaTableView from './DynaTable';
 import { makeExportResource } from '../../../../utils/exportData';
 import { emptyObject } from '../../../../utils/constants';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
+import useIntegration from '../../../../hooks/useIntegration';
+import useResourceSettingsContext from '../../../../hooks/useResourceSettingsContext';
 
 const isExportRefresh = (kind, key, exportResource) => !!(kind && key && exportResource);
 const fixedListOptions = fixedList => {
@@ -45,6 +47,8 @@ export default function DynaRefreshableStaticMap(props) {
   const dispatch = useDispatch();
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
+  const integrationId = useIntegration(resourceType, resourceId);
+  const resContext = useResourceSettingsContext(resourceType, resourceId, integrationId);
   const { _connectionId: resConnectionId, _connectorId: resConnectorId } = useSelector(state => (selectors.resource(state, resourceType, resourceId) || emptyObject));
   const { kind: eKind, key: eKey, exportResource: eExportResource } = useMemo(() => makeExportResource(keyResource, resConnectionId, resConnectorId), [keyResource, resConnectionId, resConnectorId]);
   const { kind: gKind, key: gKey, exportResource: gExportResource } = useMemo(() => makeExportResource(valueResource, resConnectionId, resConnectorId), [resConnectionId, resConnectorId, valueResource]);
@@ -135,9 +139,9 @@ export default function DynaRefreshableStaticMap(props) {
 
   const handleRefreshClick = useCallback(column => {
     if (column === keyName && isExportRefresh(eKind, eKey, eExportResource)) {
-      dispatch(actions.exportData.request(eKind, eKey, eExportResource));
+      dispatch(actions.exportData.request({kind: eKind, identifier: eKey, resource: eExportResource, resourceContext: resContext}));
     } else if (column === valueName && isExportRefresh(gKind, gKey, gExportResource)) {
-      dispatch(actions.exportData.request(gKind, gKey, gExportResource));
+      dispatch(actions.exportData.request({kind: gKind, identifier: gKey, resource: gExportResource, resourceContext: resContext}));
     } else {
       dispatch(
         actions.metadata.refresh(
@@ -147,7 +151,7 @@ export default function DynaRefreshableStaticMap(props) {
         )
       );
     }
-  }, [commMetaPath, connectionId, dispatch, eExportResource, eKey, eKind, gExportResource, gKey, gKind, keyName, options.commMetaPath, valueName]);
+  }, [commMetaPath, connectionId, dispatch, eExportResource, eKey, eKind, gExportResource, gKey, gKind, keyName, options.commMetaPath, valueName, resContext]);
 
   const handleFieldChange = useCallback((id, val) => {
     if (!preferMapValueAsNum) {
@@ -168,10 +172,10 @@ export default function DynaRefreshableStaticMap(props) {
 
   useEffect(() => {
     if (optionsMap?.[0].supportsRefresh && isExportRefresh(eKind, eKey, eExportResource)) {
-      dispatch(actions.exportData.request(eKind, eKey, eExportResource));
+      dispatch(actions.exportData.request({kind: eKind, identifier: eKey, resource: eExportResource, resourceContext: resContext}));
     }
     if (optionsMap?.[1].supportsRefresh && isExportRefresh(gKind, gKey, gExportResource)) {
-      dispatch(actions.exportData.request(gKind, gKey, gExportResource));
+      dispatch(actions.exportData.request({kind: gKind, identifier: gKey, resource: gExportResource, resourceContext: resContext}));
     } else if (!metadata && !disableOptionsLoad) {
       dispatch(
         actions.metadata.request(

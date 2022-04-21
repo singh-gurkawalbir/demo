@@ -906,7 +906,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'snowflake.connection.rdbms.password': 'Password to connect to Snowflake.',
   'connection.rdbms.bigquery.projectId': 'The unique identifier for the BigQuery project in the Google Cloud account.',
   'connection.rdbms.bigquery.clientEmail': 'The email address for the Google Cloud service account used for authentication.',
-  'connection.rdbms.bigquery.privateKey': 'The private key for the Google Cloud service account used for authentication.',
+  'connection.rdbms.bigquery.privateKey': 'First, copy the private key from the Google portal for the service account that you want to use to authenticate the connection. Before you add it to integrator.io you must replace all newline characters (\\n) throughout the private key:<br>1. Paste the private key into a text editor.<br>2. Find \\n.<br>3. With your cursor in that location, delete the \\n characters and press Enter or Return.<br>4. Repeat this for each instance of \\n.<br>5. Copy and paste the reformatted private key into integrator.io.',
   'connection.rdbms.bigquery.dataset': 'The name of the dataset containing the tables and views being accessed.',
   'connection.rdbms.options':
 'Define additional configurations for the database connection that is available according to the database documentation. For example, you can configure the connection timeout if the SQL server you are trying to connect to is slow (default connection timeout for MS SQL server is 15000ms).',
