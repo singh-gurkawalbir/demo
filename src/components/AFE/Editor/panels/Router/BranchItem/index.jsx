@@ -60,12 +60,12 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   expanded: {
-    marginBottom: 32,
-    backgroundColor: 'red',
+    marginBottom: '16px !important',
+    // backgroundColor: 'red',
   },
 }));
 
-const DragHandle = sortableHandle(() => <GripperIcon />);
+const DragHandle = sortableHandle(() => <GripperIcon style={{cursor: 'grab'}} />);
 
 export default function RouterPanel({expandable, position, branchName, onNameChange}) {
   const classes = useStyles();

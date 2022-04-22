@@ -95,7 +95,7 @@ export default function RouterPanel({ editorId }) {
 
       <Divider orientation="horizontal" className={classes.divider} />
 
-      <SortableContainer onSortEnd={handleSortEnd} useDragHandle>
+      <SortableContainer lockAxis="y" onSortEnd={handleSortEnd} useDragHandle>
         { branchData.map((b, i) => (
           <SortableItem
             expandable={activeProcessor === 'filter'}
