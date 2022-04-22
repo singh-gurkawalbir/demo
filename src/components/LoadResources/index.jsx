@@ -4,7 +4,7 @@ import actions from '../../actions';
 import { useSelectorMemo } from '../../hooks';
 import { selectors } from '../../reducers';
 
-export default function LoadResources({ children, resources, required, lazyResources = [], integrationId }) {
+export default function LoadResources({ children, resources, required, lazyResources = [], integrationId, spinner }) {
   const dispatch = useDispatch();
   const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
 
@@ -38,5 +38,5 @@ export default function LoadResources({ children, resources, required, lazyResou
     return children || null;
   }
 
-  return null;
+  return spinner || null;
 }

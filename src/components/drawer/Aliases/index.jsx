@@ -23,6 +23,7 @@ import errorMessageStore from '../../../utils/errorStore';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import NoResultTypography from '../../NoResultTypography';
+import LoadResources from '../../LoadResources';
 
 const useStyles = makeStyles(theme => ({
   accordianWrapper: {
@@ -84,7 +85,7 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
   }, [isAliasActionCompleted, flowId, enqueueSnackbar, dispatch]);
 
   return (
-    <>
+    <LoadResources required resources="flows,connections,imports,exports" >
       <CreateAliasDrawer resourceId={flowId} resourceType="flows" height={height} />
       <ViewAliasDetailsDrawer resourceId={flowId} resourceType="flows" height={height} />
       {aliasesTableData.map(tableData => (
@@ -103,7 +104,7 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
           />
         </div>
       ))}
-    </>
+    </LoadResources>
   );
 };
 
@@ -127,7 +128,7 @@ const ViewAliases = ({ resourceId, resourceType, height }) => {
   }, []);
 
   return (
-    <>
+    <LoadResources required resources="flows,connections,imports,exports" >
       <ViewAliasDetailsDrawer resourceId={resourceId} resourceType={resourceType} height={height} />
       {allAliases.length ? (
         <CeligoTable
@@ -138,7 +139,7 @@ const ViewAliases = ({ resourceId, resourceType, height }) => {
           actionProps={actionProps}
         />
       ) : (<NoResultTypography>{errorMessageStore('NO_ALIASES_MESSAGE')}</NoResultTypography>)}
-    </>
+    </LoadResources>
   );
 };
 
