@@ -1,7 +1,7 @@
 import get from 'lodash/get';
 import qs from 'qs';
 import { getResourceSubType } from '../resource';
-import { safeParse } from '../string';
+import { isJsonString, safeParse } from '../string';
 
 // should return http request body from query, variables and operation name
 // Example graphql HTTP request body {
@@ -17,13 +17,7 @@ export function convertGraphQLQueryToHTTPBody({query, variables, operationName})
     httpBody.operationName = operationName;
   }
   if (variables !== '') {
-    try {
-      httpBody.variables = JSON.parse(variables);
-    } catch (e) {
-      // incase of invalid JSON variables, store them in httpBody as string
-      // for future use, the user will get an error during the preview call for invalid JSON variables
-      httpBody.variables = variables;
-    }
+    httpBody.variables = isJsonString(variables) ? JSON.parse(variables) : variables;
   }
 
   return JSON.stringify(httpBody);
@@ -64,7 +58,7 @@ export function getGraphQLValues({resource, field, path, relativeURIPath}) {
 
   const fieldValue = graphqlObj?.[field];
 
-  if (field === 'variables' && typeof fieldValue === 'object') {
+  if (typeof fieldValue === 'object') {
     return JSON.stringify(fieldValue);
   }
 
