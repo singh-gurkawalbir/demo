@@ -3,17 +3,29 @@ import { ClickAwayListener, IconButton, List, ListItem, ListItemIcon, ListItemTe
 import React from 'react';
 import ArrowPopper from '../../../../../ArrowPopper';
 import EllipsisHorizontalIcon from '../../../../../icons/EllipsisHorizontalIcon';
-import AddIcon from '../../../../../icons/AddIcon';
+import EditIcon from '../../../../../icons/EditIcon';
 import TrashIcon from '../../../../../icons/TrashIcon';
 
 const useStyles = makeStyles({
   root: { minWidth: 36 },
 });
 
+const BranchListItem = ({onClick, text, children}) => {
+  const classes = useStyles();
+
+  return (
+    <ListItem button onClick={onClick}>
+      <ListItemIcon classes={{root: classes.root}}>
+        {children}
+      </ListItemIcon>
+      <ListItemText>{text}</ListItemText>
+    </ListItem>
+  );
+};
+
 export default function MoreActionsButton() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-  const classes = useStyles();
 
   const handleCloseMenu = event => {
     event.stopPropagation();
@@ -40,19 +52,13 @@ export default function MoreActionsButton() {
         onClose={handleCloseMenu}
       >
         <List dense>
-          <ListItem button onClick={handleCloseMenu}>
-            <ListItemIcon classes={{root: classes.root}}>
-              <AddIcon />
-            </ListItemIcon>
-            <ListItemText>Add Description</ListItemText>
-          </ListItem>
+          <BranchListItem text="Edit branch name/description" onClick={handleCloseMenu}>
+            <EditIcon />
+          </BranchListItem>
 
-          <ListItem button onClick={handleCloseMenu}>
-            <ListItemIcon classes={{root: classes.root}}>
-              <TrashIcon />
-            </ListItemIcon>
-            <ListItemText>Delete branch</ListItemText>
-          </ListItem>
+          <BranchListItem text="Delete branch" onClick={handleCloseMenu}>
+            <TrashIcon />
+          </BranchListItem>
         </List>
       </ArrowPopper>
     </>

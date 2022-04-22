@@ -1,11 +1,14 @@
 import produce from 'immer';
+import { useSelector } from 'react-redux';
 import React, { useMemo, useState } from 'react';
-import { makeStyles, Divider } from '@material-ui/core';
+import { makeStyles, Divider, Typography } from '@material-ui/core';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import DynaForm from '../../../../DynaForm';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import BranchItem from './BranchItem';
 import fieldMetadata from './fieldMeta';
+import Help from '../../../../Help';
+import { selectors } from '../../../../../reducers';
 
 const moveArrayItem = (arr, oldIndex, newIndex) => {
   const newArr = [...arr];
@@ -22,52 +25,18 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     overflow: 'auto',
   },
-  summaryContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    width: '100%',
-  },
-  accordion: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    marginBottom: theme.spacing(2),
-  },
-  accordionSummary: {
-    width: '100%',
-  },
-  accordionDetails: {
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-    display: 'block',
-  },
-  branchName: {
-    marginLeft: theme.spacing(4),
-    flexGrow: 1,
-  },
-  expandIcon: {
-    position: 'absolute',
-    left: theme.spacing(5),
-  },
   branchList: {
     listStyle: 'none',
     marginLeft: 0,
     paddingLeft: 0,
   },
-  listItem: {
+  heading: {
+    marginBottom: theme.spacing(1),
     display: 'flex',
   },
-  index: {
-    flex: 'none',
-    textAlign: 'center',
-    marginRight: theme.spacing(1.5),
-    paddingTop: 2,
-    width: 22,
-    height: 22,
-    borderRadius: 16,
-    backgroundColor: theme.palette.text.hint,
-    color: theme.palette.common.white,
-  },
-  accordionContainer: {
-    flexGrow: 1,
+  helpButton: {
+    padding: 0,
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -78,11 +47,13 @@ const mockBranchData = [
   { id: '3', name: 'Branch 1.2' },
 ];
 
-export default function RouterPanel(/* { editorId } */) {
+export default function RouterPanel({ editorId }) {
   const classes = useStyles();
   const [branchData, setBranchData] = useState(mockBranchData);
   const fieldMeta = useMemo(() => (fieldMetadata), []);
   const formKey = useFormInitWithPermissions({ fieldMeta });
+  const activeProcessor = useSelector(state =>
+    selectors.editor(state, editorId).activeProcessor);
 
   const handleNameChange = (title, position) => {
     setBranchData(
@@ -97,23 +68,37 @@ export default function RouterPanel(/* { editorId } */) {
     </ul>
   ));
 
-  const SortableItem = sortableElement(props => (
-    <BranchItem {...props} />
-  ));
+  const SortableItem = sortableElement(props => <BranchItem {...props} />);
 
   const handleSortEnd = ({oldIndex, newIndex}) => {
     setBranchData(items => (moveArrayItem(items, oldIndex, newIndex)));
   };
 
+  const BranchHeading = ({helpText, children}) => (
+    <div className={classes.heading}>
+      <Typography variant="h5">{children}</Typography>
+      <Help
+        title={children}
+        className={classes.helpButton}
+        helpText={helpText}
+    />
+    </div>
+  );
+
   return (
     <div className={classes.panelContent}>
+      <BranchHeading helpText="Missing branch type help!">Branching type</BranchHeading>
+
       <DynaForm formKey={formKey} />
+
+      <BranchHeading helpText="Missing branches help text">Branches</BranchHeading>
 
       <Divider orientation="horizontal" className={classes.divider} />
 
       <SortableContainer onSortEnd={handleSortEnd} useDragHandle>
         { branchData.map((b, i) => (
           <SortableItem
+            expandable={activeProcessor === 'filter'}
             key={b.name}
             index={i} // The HOC does not proxy index to child, so we need `position` as well.
             position={i}
