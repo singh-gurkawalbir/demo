@@ -686,7 +686,7 @@ describe('editor sagas', () => {
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings}],
         ])
-        .put(actions.editor.validateFailure(editorId, {ruleError: 'Extract Fields missing for field(s): g1'}))
+        .put(actions.editor.validateFailure(editorId, {ruleError: 'Extract fields missing for field(s): g1'}))
         .run();
     });
   });

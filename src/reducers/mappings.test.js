@@ -1,6 +1,7 @@
 /* global describe, expect, test */
 import reducer, { selectors } from '.';
 import actions from '../actions';
+import messageStore from '../utils/messageStore';
 
 describe('Mappings region selector testcases', () => {
   const flows = [
@@ -807,6 +808,318 @@ describe('Mappings region selector testcases', () => {
       };
 
       expect(selectors.responseMappingInput(state, 'imports', 'imp-456', 'flow-123')).toEqual(output);
+    });
+  });
+
+  describe('selectors.isMapper2Supported test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.isMapper2Supported()).toEqual(false);
+      expect(selectors.isMapper2Supported(null)).toEqual(false);
+    });
+    test('should return false for exports', () => {
+      const state = {
+        session: {
+          mapping: {
+            mapping: {
+            },
+          },
+        },
+      };
+
+      expect(selectors.isMapper2Supported(state)).toEqual(false);
+    });
+    test('should return false for IAs', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              _connectorId: 'test123',
+            }],
+          },
+        },
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+            },
+          },
+        },
+      };
+
+      expect(selectors.isMapper2Supported(state)).toEqual(false);
+    });
+    test('should return false for non-http/rest imports', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              adaptorType: 'FTPImport',
+            }],
+          },
+        },
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+            },
+          },
+        },
+      };
+
+      expect(selectors.isMapper2Supported(state)).toEqual(false);
+    });
+    test('should return true for http/rest import', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              adaptorType: 'HTTPImport',
+            }],
+          },
+        },
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+            },
+          },
+        },
+      };
+
+      expect(selectors.isMapper2Supported(state)).toEqual(true);
+    });
+  });
+
+  describe('selectors.mappingEditorNotification test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.mappingEditorNotification()).toEqual({});
+      expect(selectors.mappingEditorNotification(null)).toEqual({});
+    });
+    test('should return empty object if editor type is not mappings', () => {
+      const state = {
+        session: {
+          mapping: {
+            mapping: {
+            },
+          },
+          editors: {
+            _body: {
+              resourceId: 'imp-123',
+              resourceType: 'imports',
+              editorType: 'handlebars',
+            },
+          },
+        },
+      };
+
+      expect(selectors.mappingEditorNotification(state, '_body')).toEqual({});
+    });
+    test('should return empty object if mapper2 is not supported', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              adaptorType: 'FTPImport',
+            }],
+          },
+        },
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+            },
+          },
+          editors: {
+            mappings: {
+              resourceId: 'imp-123',
+              resourceType: 'imports',
+              editorType: 'mappings',
+            },
+          },
+        },
+      };
+
+      expect(selectors.mappingEditorNotification(state, 'mappings')).toEqual({});
+    });
+    test('should return empty object if resource is not found', () => {
+      const state = {
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+            },
+          },
+          editors: {
+            mappings: {
+              resourceId: 'imp-123',
+              resourceType: 'imports',
+              editorType: 'mappings',
+            },
+          },
+        },
+      };
+
+      expect(selectors.mappingEditorNotification(state, 'mappings')).toEqual({});
+    });
+    test('should return empty object if no v1 and v2 mappings exist', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              adaptorType: 'HTTPImport',
+            }],
+          },
+        },
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+            },
+          },
+          editors: {
+            mappings: {
+              resourceId: 'imp-123',
+              resourceType: 'imports',
+              editorType: 'mappings',
+            },
+          },
+        },
+      };
+
+      expect(selectors.mappingEditorNotification(state, 'mappings')).toEqual({});
+    });
+    test('should return empty object if v2 mappings exist and active version is 2', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              adaptorType: 'HTTPImport',
+              mappings: [{extract: 'abc', generate: 'def', dataType: 'string'}],
+              mapping: {fields: [{extract: 'abc', generate: 'def', dataType: 'string'}], lists: []},
+            }],
+          },
+        },
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              version: 2,
+            },
+          },
+          editors: {
+            mappings: {
+              resourceId: 'imp-123',
+              resourceType: 'imports',
+              editorType: 'mappings',
+            },
+          },
+        },
+      };
+
+      expect(selectors.mappingEditorNotification(state, 'mappings')).toEqual({});
+    });
+    test('should return empty object if only v1 mappings exist and active version is 1', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              adaptorType: 'HTTPImport',
+              mapping: {fields: [{extract: 'abc', generate: 'def', dataType: 'string'}], lists: []},
+            }],
+          },
+        },
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              version: 1,
+            },
+          },
+          editors: {
+            mappings: {
+              resourceId: 'imp-123',
+              resourceType: 'imports',
+              editorType: 'mappings',
+            },
+          },
+        },
+      };
+
+      expect(selectors.mappingEditorNotification(state, 'mappings')).toEqual({});
+    });
+    test('should return correct info message if v2 mappings exist and active version is 1', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              adaptorType: 'HTTPImport',
+              mappings: [{extract: 'abc', generate: 'def', dataType: 'string'}],
+              mapping: {fields: [{extract: 'abc', generate: 'def', dataType: 'string'}], lists: []},
+            }],
+          },
+        },
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              version: 1,
+            },
+          },
+          editors: {
+            mappings: {
+              resourceId: 'imp-123',
+              resourceType: 'imports',
+              editorType: 'mappings',
+            },
+          },
+        },
+      };
+
+      expect(selectors.mappingEditorNotification(state, 'mappings')).toEqual({
+        message: messageStore('MAPPER1_REFERENCE_INFO'),
+        variant: 'info',
+      });
+    });
+    test('should return correct warning message if only v1 mappings exist and active version is 2', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              adaptorType: 'HTTPImport',
+              mapping: {fields: [{extract: 'abc', generate: 'def', dataType: 'string'}], lists: []},
+            }],
+          },
+        },
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              version: 2,
+            },
+          },
+          editors: {
+            mappings: {
+              resourceId: 'imp-123',
+              resourceType: 'imports',
+              editorType: 'mappings',
+            },
+          },
+        },
+      };
+
+      expect(selectors.mappingEditorNotification(state, 'mappings')).toEqual({
+        message: messageStore('MAPPER2_BANNER_WARNING'),
+        variant: 'warning',
+      });
     });
   });
 });

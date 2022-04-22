@@ -998,6 +998,71 @@ describe('flow sample data sagas', () => {
         .call.fn(_processMappingData)
         .run();
     });
+    test('should call _processMappingData for mapper processor when stage is importMapping and v2 mappings exist', () => {
+      const resourceType = 'imports';
+      const resourceId = 'import-123';
+      const mappings = [
+        {
+
+          extract: 'AAAAAAAAAAAAA',
+          generate: 'Purchase Order Acknowledge Date',
+          dataType: 'string',
+        },
+      ];
+      const restImport = {
+        _id: 'import-123',
+        name: 'rest import',
+        adaptorType: 'RESTImport',
+        mappings,
+      };
+      const preProcessedSampleData = { count: 5 };
+      const preProcessedData = {
+        records: {
+          count: 5,
+        },
+        setting: {},
+      };
+      const stage = 'importMapping';
+
+      return expectSaga(requestProcessorData, {
+        flowId,
+        resourceId,
+        resourceType,
+        processor: stage,
+      })
+        .provide([
+          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restImport }],
+          [call(getFlowStageData, {
+            flowId,
+            resourceId,
+            resourceType,
+            stage,
+            isInitialized: true,
+          }), preProcessedData],
+          [select(selectors.getSampleDataContext, {
+            flowId,
+            resourceId,
+            resourceType,
+            stage,
+          }), {data: preProcessedSampleData}],
+          [matchers.call.fn(apiCallWithRetry), undefined],
+        ])
+        .call(getFlowStageData, {
+          flowId,
+          resourceId,
+          resourceType,
+          stage,
+          isInitialized: true,
+        })
+        .call(_processMappingData, {
+          flowId,
+          resourceId,
+          mappings,
+          stage,
+          preProcessedData,
+        })
+        .run();
+    });
     test('should call getPreProcessedResponseMappingData and call _processMappingData if mappings exist for responseMapping stage', () => {
       const restExport = {
         _id: 'export-123',

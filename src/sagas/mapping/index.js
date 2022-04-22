@@ -382,15 +382,19 @@ export function* saveMappings() {
     }
   }
 
+  const isMapper2Supported = yield select(selectors.isMapper2Supported);
+
   // todo ashu should we do this only if v2 mappings dirty?
   // save v2 mappings as well
-  const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
+  if (isMapper2Supported) {
+    const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
 
-  patch.push({
-    op: _mappingsV2 ? 'replace' : 'add',
-    path: '/mappings', // v2 mappings path
-    value: _mappingsV2,
-  });
+    patch.push({
+      op: _mappingsV2 ? 'replace' : 'add',
+      path: '/mappings', // v2 mappings path
+      value: _mappingsV2,
+    });
+  }
 
   yield put(actions.resource.patchStaged(importId, patch, SCOPES.VALUE));
 
