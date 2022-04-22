@@ -23,6 +23,8 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     marginBottom: theme.spacing(2),
+    borderRadius: 0,
+    padding: 0,
   },
   accordionSummary: {
     width: '100%',
@@ -30,6 +32,11 @@ const useStyles = makeStyles(theme => ({
   accordionDetails: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     display: 'block',
+    padding: 0,
+    '& > div > div': {
+      margin: 0,
+      border: 'none',
+    },
   },
   branchName: {
     marginLeft: theme.spacing(1),

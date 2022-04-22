@@ -38,6 +38,9 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     marginLeft: theme.spacing(1),
   },
+  grabbing: {
+    cursor: 'grabbing',
+  },
 }));
 
 // This is a mock and should match branch schema of the data-layer.
@@ -77,7 +80,16 @@ export default function RouterPanel({ editorId }) {
 
   const SortableItem = sortableElement(props => <BranchItem {...props} />);
 
+  const handleSortStart = (_, event) => {
+    // we only want mouse events (not keyboard navigation) to trigger
+    // mouse cursor changes...
+    if (event instanceof MouseEvent) {
+      document.body.classList.add(classes.grabbing);
+    }
+  };
+
   const handleSortEnd = ({oldIndex, newIndex}) => {
+    document.body.classList.remove(classes.grabbing);
     setBranchData(items => (moveArrayItem(items, oldIndex, newIndex)));
   };
 
@@ -102,7 +114,11 @@ export default function RouterPanel({ editorId }) {
 
       <Divider orientation="horizontal" className={classes.divider} />
 
-      <SortableContainer lockAxis="y" onSortEnd={handleSortEnd} useDragHandle>
+      <SortableContainer
+        lockAxis="y"
+        onSortStart={handleSortStart}
+        onSortEnd={handleSortEnd}
+        useDragHandle>
         { branchData.map((b, i) => (
           <SortableItem
             expandable={activeProcessor === 'filter'}
