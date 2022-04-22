@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React from 'react';
 import { makeStyles,
   Typography,
@@ -31,8 +32,11 @@ const useStyles = makeStyles(theme => ({
     display: 'block',
   },
   branchName: {
-    marginLeft: theme.spacing(4),
+    marginLeft: theme.spacing(1),
     flexGrow: 1,
+  },
+  expandable: {
+    marginLeft: theme.spacing(4),
   },
   expandIcon: {
     position: 'absolute',
@@ -55,11 +59,15 @@ const useStyles = makeStyles(theme => ({
   accordionContainer: {
     flexGrow: 1,
   },
+  expanded: {
+    marginBottom: 32,
+    backgroundColor: 'red',
+  },
 }));
 
 const DragHandle = sortableHandle(() => <GripperIcon />);
 
-export default function RouterPanel({position, branchName, onNameChange}) {
+export default function RouterPanel({expandable, position, branchName, onNameChange}) {
   const classes = useStyles();
 
   return (
@@ -72,16 +80,20 @@ export default function RouterPanel({position, branchName, onNameChange}) {
         <Accordion
           elevation={0}
           square
+          classes={{expanded: classes.expanded}}
           className={classes.accordion}>
           <AccordionSummary
             classes={{expandIcon: classes.expandIcon}}
             className={classes.accordionSummary}
-            expandIcon={<ArrowDownIcon />}
+            expandIcon={expandable && <ArrowDownIcon />}
           >
             <div className={classes.summaryContainer}>
               <DragHandle />
-
-              <div className={classes.branchName}>
+              <div
+                className={clsx(
+                  classes.branchName,
+                  {[classes.expandable]: expandable}
+                )}>
                 <EditableText
                   // multiline
                   allowOverflow
@@ -97,9 +109,11 @@ export default function RouterPanel({position, branchName, onNameChange}) {
             </div>
           </AccordionSummary>
 
+          {expandable && (
           <AccordionDetails className={classes.accordionDetails}>
             <BranchFilter />
           </AccordionDetails>
+          )}
         </Accordion>
       </div>
     </li>

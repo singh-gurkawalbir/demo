@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { useSelector } from 'react-redux';
 import React, { useMemo, useState } from 'react';
 import { makeStyles, Divider, Typography } from '@material-ui/core';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
@@ -7,6 +8,7 @@ import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPerm
 import BranchItem from './BranchItem';
 import fieldMetadata from './fieldMeta';
 import Help from '../../../../Help';
+import { selectors } from '../../../../../reducers';
 
 const moveArrayItem = (arr, oldIndex, newIndex) => {
   const newArr = [...arr];
@@ -45,11 +47,13 @@ const mockBranchData = [
   { id: '3', name: 'Branch 1.2' },
 ];
 
-export default function RouterPanel(/* { editorId } */) {
+export default function RouterPanel({ editorId }) {
   const classes = useStyles();
   const [branchData, setBranchData] = useState(mockBranchData);
   const fieldMeta = useMemo(() => (fieldMetadata), []);
   const formKey = useFormInitWithPermissions({ fieldMeta });
+  const activeProcessor = useSelector(state =>
+    selectors.editor(state, editorId).activeProcessor);
 
   const handleNameChange = (title, position) => {
     setBranchData(
@@ -94,6 +98,7 @@ export default function RouterPanel(/* { editorId } */) {
       <SortableContainer onSortEnd={handleSortEnd} useDragHandle>
         { branchData.map((b, i) => (
           <SortableItem
+            expandable={activeProcessor === 'filter'}
             key={b.name}
             index={i} // The HOC does not proxy index to child, so we need `position` as well.
             position={i}
