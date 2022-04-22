@@ -67,7 +67,9 @@ const useStyles = makeStyles(theme => ({
 
 const DragHandle = sortableHandle(() => <GripperIcon style={{cursor: 'grab'}} />);
 
-export default function RouterPanel({expandable, position, branchName, onNameChange}) {
+export default function RouterPanel({
+  expandable, expanded, position, branchName, onNameChange, onToggleExpand}
+) {
   const classes = useStyles();
 
   return (
@@ -79,6 +81,8 @@ export default function RouterPanel({expandable, position, branchName, onNameCha
       <div className={classes.accordionContainer}>
         <Accordion
           elevation={0}
+          onChange={(event, expanded) => onToggleExpand(expanded, position)}
+          expanded={!!expanded}
           square
           classes={{expanded: classes.expanded}}
           className={classes.accordion}>

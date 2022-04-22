@@ -62,6 +62,13 @@ export default function RouterPanel({ editorId }) {
       }));
   };
 
+  const handleToggleExpand = (expanded, position) => {
+    setBranchData(
+      produce(branchData, draft => {
+        draft[position].expanded = expanded;
+      }));
+  };
+
   const SortableContainer = sortableContainer(({children}) => (
     <ul className={classes.branchList}>
       {children}
@@ -99,6 +106,8 @@ export default function RouterPanel({ editorId }) {
         { branchData.map((b, i) => (
           <SortableItem
             expandable={activeProcessor === 'filter'}
+            expanded={b.expanded}
+            onToggleExpand={handleToggleExpand}
             key={b.name}
             index={i} // The HOC does not proxy index to child, so we need `position` as well.
             position={i}
