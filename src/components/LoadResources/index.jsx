@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { useSelectorMemo } from '../../hooks';
@@ -38,5 +38,5 @@ export default function LoadResources({ children, resources, required, lazyResou
     return children || null;
   }
 
-  return spinner ? <>{spinner}</> : null;
+  return spinner || null;
 }
