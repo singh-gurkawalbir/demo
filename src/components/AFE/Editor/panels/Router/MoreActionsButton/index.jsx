@@ -1,29 +1,16 @@
 /* eslint-disable no-param-reassign */
 import React, { useState, useCallback } from 'react';
-import { ClickAwayListener, IconButton, List, ListItem, ListItemIcon, ListItemText, makeStyles } from '@material-ui/core';
+import {
+  ClickAwayListener,
+  IconButton,
+  MenuItem,
+} from '@material-ui/core';
 import ArrowPopper from '../../../../../ArrowPopper';
 import EllipsisHorizontalIcon from '../../../../../icons/EllipsisHorizontalIcon';
 import EditIcon from '../../../../../icons/EditIcon';
 import TrashIcon from '../../../../../icons/TrashIcon';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import RawHtml from '../../../../../RawHtml';
-
-const useStyles = makeStyles({
-  root: { minWidth: 36 },
-});
-
-const BranchListItem = ({onClick, text, children}) => {
-  const classes = useStyles();
-
-  return (
-    <ListItem button onClick={onClick}>
-      <ListItemIcon classes={{root: classes.root}}>
-        {children}
-      </ListItemIcon>
-      <ListItemText>{text}</ListItemText>
-    </ListItem>
-  );
-};
 
 export default function MoreActionsButton() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -86,15 +73,12 @@ export default function MoreActionsButton() {
         placement="bottom-end"
         onClose={handleCloseMenu}
       >
-        <List dense>
-          <BranchListItem text="Edit branch name/description" onClick={handleCloseMenu}>
-            <EditIcon />
-          </BranchListItem>
-
-          <BranchListItem text="Delete branch" onClick={handleDeleteBranch}>
-            <TrashIcon />
-          </BranchListItem>
-        </List>
+        <MenuItem onClick={handleCloseMenu}>
+          <EditIcon /> Edit branch name/description
+        </MenuItem>
+        <MenuItem onClick={handleDeleteBranch}>
+          <TrashIcon /> Delete branch
+        </MenuItem>
       </ArrowPopper>
     </>
   );
