@@ -68,6 +68,9 @@ const useStyles = makeStyles(theme => ({
       flex: 2,
     },
   },
+  settingsButton: {
+    marginBlock: 'auto', // todo karthik pls verify this
+  },
 }));
 
 const RightIcon = ({title, Icon, className}) => {
@@ -222,16 +225,20 @@ const Mapper2Row = React.memo(({
           title="This field is required by the application you are importing into"
           Icon={LockIcon} className={clsx({[classes.lockedIcon]: isLookup || isHandlebarExp || isHardCodedValue})} />
         )} */}
-        <ActionButton
-          data-test={`fieldMappingSettings-${nodeKey}`}
-          disabled={disabled || !generate}
-          tooltip={generate ? '' : 'Enter destination record field to configure settings'} // todo ashu
-          placement="bottom-start"
-          aria-label="settings"
-          onClick={handleSettingsClick}
-          key="settings">
-          <SettingsIcon />
-        </ActionButton>
+        <Tooltip
+          placement="bottom"
+          title={(!generate && !generateDisabled) ? 'Enter destination record field to configure settings' : ''}>
+          <div className={classes.settingsButton}>
+            <ActionButton
+              data-test={`fieldMappingSettings-${nodeKey}`}
+              disabled={disabled || !generate}
+              aria-label="settings"
+              onClick={handleSettingsClick}
+              key="settings">
+              <SettingsIcon />
+            </ActionButton>
+          </div>
+        </Tooltip>
 
         <ActionButton
           data-test={`fieldMappingAdd-${nodeKey}`}

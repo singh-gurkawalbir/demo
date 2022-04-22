@@ -19,7 +19,7 @@ const getFormattedLookup = (lookup, formVal, settings) => {
     lookupTmp.relativeURI = formVal._relativeURI;
     lookupTmp.extract = formVal._extract;
     lookupTmp.postBody = formVal._body;
-    lookupTmp.body = formVal._body; // todo ashu test this
+    lookupTmp.body = formVal._body;
   } else {
     lookupTmp.map = {};
     (formVal._mapList || []).forEach(obj => {

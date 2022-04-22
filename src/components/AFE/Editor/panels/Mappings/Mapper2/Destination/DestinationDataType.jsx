@@ -144,19 +144,20 @@ export default function DestinationDataType({dataType, disabled, nodeKey}) {
     }
   }, [confirmDialog, dataType, dispatch, nodeKey, handleClose]);
 
-  /* todo ashu tooltip does not work for celigo select */
-
   return (
     <>
       <Tooltip
         title={open ? '' : `Data type: ${selectedDataTypeLabel} - Click to change`}
         placement="bottom" >
-        <TextButton
-          onClick={handleMenu}
-          disabled={disabled}
-          className={classes.dataType} >
-          {selectedDataTypeLabel}
-        </TextButton>
+        {/* todo karthik */}
+        <div>
+          <TextButton
+            onClick={handleMenu}
+            disabled={disabled}
+            className={classes.dataType} >
+            {selectedDataTypeLabel}
+          </TextButton>
+        </div>
       </Tooltip>
 
       <ArrowPopper

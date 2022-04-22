@@ -156,7 +156,7 @@ export default {
           label: 'Source record field date format',
           placeholder: '',
           options: {
-            suggestions: dateFormats, // todo ashu add more options
+            suggestions: dateFormats,
           },
           labelName: 'name',
           valueName: 'value',
