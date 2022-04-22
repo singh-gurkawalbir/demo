@@ -12,6 +12,7 @@ import EditableText from '../../../../../EditableText';
 import GripperIcon from '../../../../../icons/GripperIcon';
 import MoreActionsButton from '../MoreActionsButton';
 import BranchFilter from '../BranchFilter';
+import InfoIconButton from '../../../../../InfoIconButton';
 
 const useStyles = makeStyles(theme => ({
   summaryContainer: {
@@ -40,6 +41,8 @@ const useStyles = makeStyles(theme => ({
   },
   branchName: {
     marginLeft: theme.spacing(1),
+  },
+  description: {
     flexGrow: 1,
   },
   expandable: {
@@ -75,7 +78,7 @@ const useStyles = makeStyles(theme => ({
 const DragHandle = sortableHandle(() => <GripperIcon style={{cursor: 'grab'}} />);
 
 export default function RouterPanel({
-  expandable, expanded, position, branchName, onNameChange, onToggleExpand}
+  expandable, expanded, position, branchName, description, onNameChange, onToggleExpand}
 ) {
   const classes = useStyles();
 
@@ -106,15 +109,19 @@ export default function RouterPanel({
                   {[classes.expandable]: expandable}
                 )}>
                 <EditableText
-                  // multiline
                   allowOverflow
                   text={branchName}
-                  // disabled={!canEdit}
                   defaultText="Unnamed branch: Click to add name"
                   onChange={title => onNameChange(title, position)}
                   inputClassName={classes.editableTextInput}
                 />
               </div>
+
+              {description && (
+                <div className={classes.description}>
+                  <InfoIconButton size="xs" info={description} />
+                </div>
+              )}
 
               <MoreActionsButton />
             </div>

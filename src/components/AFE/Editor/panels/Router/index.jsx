@@ -128,6 +128,7 @@ export default function RouterPanel({ editorId }) {
             index={i} // The HOC does not proxy index to child, so we need `position` as well.
             position={i}
             branchName={b.name}
+            description={b.description}
             onNameChange={handleNameChange} />
         ))}
       </SortableContainer>
