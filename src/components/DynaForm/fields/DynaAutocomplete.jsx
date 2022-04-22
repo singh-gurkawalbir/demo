@@ -154,7 +154,7 @@ export default function DynaAutocomplete(props) {
             onOpen={() => { setModalOpen(true); }}
             onClose={() => { setModalOpen(false); }}
             getOptionLabel={option => (
-              actualOptions.find(opt => opt.value === `${option}`)?.label || `${option}`
+              `${actualOptions.find(opt => opt.value === option)?.label || option}`
             )}
             data-test={dataTest || id}
             value={value}
