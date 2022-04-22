@@ -7,6 +7,7 @@ import { selectors } from '../../../../reducers';
 import DynaTableView from './DynaTable';
 import { makeExportResource } from '../../../../utils/exportData';
 import { emptyObject } from '../../../../utils/constants';
+import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import useIntegration from '../../../../hooks/useIntegration';
 import useResourceSettingsContext from '../../../../hooks/useResourceSettingsContext';
 
@@ -52,8 +53,28 @@ export default function DynaRefreshableStaticMap(props) {
   const { kind: eKind, key: eKey, exportResource: eExportResource } = useMemo(() => makeExportResource(keyResource, resConnectionId, resConnectorId), [keyResource, resConnectionId, resConnectorId]);
   const { kind: gKind, key: gKey, exportResource: gExportResource } = useMemo(() => makeExportResource(valueResource, resConnectionId, resConnectorId), [resConnectionId, resConnectorId, valueResource]);
 
-  const { status: eStatus, data: eData } = useSelector(state => selectors.exportData(state, eKey));
-  const { status: gStatus, data: gData } = useSelector(state => selectors.exportData(state, gKey));
+  const { status: eStatus, data: eData, error: eError } = useSelector(state => selectors.exportData(state, eKey));
+  const { status: gStatus, data: gData, error: gError } = useSelector(state => selectors.exportData(state, gKey));
+
+  const [enquesnackbar] = useEnqueueSnackbar();
+
+  useEffect(() => {
+    if (eError) {
+      enquesnackbar({
+        message: eError,
+        variant: 'error',
+      });
+    }
+  }, [enquesnackbar, eError]);
+
+  useEffect(() => {
+    if (gError) {
+      enquesnackbar({
+        message: gError,
+        variant: 'error',
+      });
+    }
+  }, [enquesnackbar, gError]);
 
   const disableOptionsLoad = options.disableFetch || disableFetch;
 
