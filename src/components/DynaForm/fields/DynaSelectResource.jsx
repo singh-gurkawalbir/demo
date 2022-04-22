@@ -20,6 +20,7 @@ import { stringCompare } from '../../../utils/sort';
 import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
 import OnlineStatus from '../../OnlineStatus';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
+import Spinner from '../../Spinner';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -175,7 +176,6 @@ function ConnectionLoadingChip(props) {
     <OnlineStatus offline={isConnectionOffline} />
   );
 }
-
 export default function DynaSelectResource(props) {
   const {
     disabled,
@@ -374,54 +374,58 @@ export default function DynaSelectResource(props) {
     <div className={classes.root}>
       <LoadResources
         required
+        spinner={<Spinner size="medium" />}
         resources={resourceType !== 'connectorLicenses' ? resourceType : []}
       >
-        {multiselect ? (
-          <DynaMultiSelect
-            {...props}
-            disabled={disableSelect}
-            options={[{ items: resourceItems || [] }]}
-          />
-        ) : (
-          <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
-            <DynaSelect
+        <>
+          {multiselect ? (
+            <DynaMultiSelect
               {...props}
               disabled={disableSelect}
-              removeHelperText={isAddingANewResource}
-              options={[{ items: truncatedItems(resourceItems || []) }]}
+              options={[{ items: resourceItems || [] }]}
           />
-            {resourceType === 'connections' && !!value && !skipPingConnection && (
-            <ConnectionLoadingChip
-              connectionId={value}
-              flowId={flowId}
-              integrationId={integrationId || integrationIdFromUrl}
-              parentType={resourceContext.resourceType}
-              parentId={resourceContext.resourceId} />
+          ) : (
+            <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
+              <DynaSelect
+                {...props}
+                disabled={disableSelect}
+                removeHelperText={isAddingANewResource}
+                options={[{ items: truncatedItems(resourceItems || []) }]}
+          />
+              {resourceType === 'connections' && !!value && !skipPingConnection && (
+              <ConnectionLoadingChip
+                connectionId={value}
+                flowId={flowId}
+                integrationId={integrationId || integrationIdFromUrl}
+                parentType={resourceContext.resourceType}
+                parentId={resourceContext.resourceId} />
+              )}
+            </div>
+
+          )}
+          <div className={classes.dynaSelectMultiSelectActions}>
+            {allowNew && (
+            <ActionButton
+              data-test="addNewResource"
+              onClick={handleAddNewResourceMemo}>
+              <AddIcon />
+            </ActionButton>
             )}
+
+            {allowEdit && (
+            // Disable adding a new resource when the user has selected an existing resource
+            <ActionButton
+              disabled={!value}
+              data-test="editNewResource"
+              onClick={handleEditResource}>
+              <EditIcon />
+            </ActionButton>
+            )}
+
           </div>
-
-        )}
+        </>
       </LoadResources>
-      <div className={classes.dynaSelectMultiSelectActions}>
-        {allowNew && (
-          <ActionButton
-            data-test="addNewResource"
-            onClick={handleAddNewResourceMemo}>
-            <AddIcon />
-          </ActionButton>
-        )}
 
-        {allowEdit && (
-          // Disable adding a new resource when the user has selected an existing resource
-          <ActionButton
-            disabled={!value}
-            data-test="editNewResource"
-            onClick={handleEditResource}>
-            <EditIcon />
-          </ActionButton>
-        )}
-
-      </div>
     </div>
   );
 }

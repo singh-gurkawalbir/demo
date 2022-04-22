@@ -70,7 +70,7 @@ describe('connections utils test cases', () => {
 
       expect(getReplaceConnectionExpression({_id: 'conn123', type: 'rest', assistant: 'shopify'}, true, 'childId', 'int-123', 'connectorId')).toEqual(output);
     });
-    test('should return correct expression if connection type is mysql', () => {
+    test('should return correct expression if connection type is rdbms and rdbmsSubtype is mysql', () => {
       const output = {
         appType: 'mysql',
         filter: {
@@ -88,7 +88,7 @@ describe('connections utils test cases', () => {
         },
       };
 
-      expect(getReplaceConnectionExpression({_id: 'conn123', type: 'mysql'}, true, 'childId', 'int-123', null, true)).toEqual(output);
+      expect(getReplaceConnectionExpression({_id: 'conn123', type: 'rdbms', rdbms: { type: 'mysql' }}, true, 'childId', 'int-123', null, true)).toEqual(output);
     });
   });
 
