@@ -224,6 +224,13 @@ export default {
               { $and: [{ adaptorType: 'HTTPExport' }, { 'http.formType': 'rest' }] },
             ],
           });
+        } else if (app.type === 'graph_ql') {
+          expression.push({
+            $or: [
+              { adaptorType: 'GRAPHQLExport' },
+              { $and: [{ adaptorType: 'HTTPExport' }, { 'http.formType': 'graph_ql' }] },
+            ],
+          });
         } else if (app.type === 'http') {
           expression.push({
             adaptorType: `${adaptorTypePrefix}Export`,

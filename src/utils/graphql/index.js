@@ -17,7 +17,13 @@ export function convertGraphQLQueryToHTTPBody({query, variables, operationName})
     httpBody.operationName = operationName;
   }
   if (variables !== '') {
-    httpBody.variables = variables;
+    try {
+      httpBody.variables = JSON.parse(variables);
+    } catch (e) {
+      // incase of invalid JSON variables, store them in httpBody as string
+      // for future use, the user will get an error during the preview call for invalid JSON variables
+      httpBody.variables = variables;
+    }
   }
 
   return JSON.stringify(httpBody);
@@ -56,7 +62,13 @@ export function getGraphQLValues({resource, field, path, relativeURIPath}) {
 
   const graphqlObj = getGraphQLObj(value);
 
-  return graphqlObj?.[field];
+  const fieldValue = graphqlObj?.[field];
+
+  if (field === 'variables' && typeof fieldValue === 'object') {
+    return JSON.stringify(fieldValue);
+  }
+
+  return fieldValue;
 }
 
 export const GRAPHQL_JSON_FIELDS = [
