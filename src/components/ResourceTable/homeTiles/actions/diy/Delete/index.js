@@ -8,18 +8,20 @@ export default {
   key: 'deleteIntegration',
   useLabel: () => 'Delete integration',
   icon: TrashIcon,
-  useHasAccess: ({_integrationId}) => {
-    const canDelete = useSelector(state => selectors.resourcePermissions(
+  useHasAccess: tile => {
+    const canDelete = useSelector(state => selectors.resourcePermissionsForTile(
       state,
       'integrations',
-      _integrationId
+      tile._integrationId,
+      tile
     )?.delete);
 
     return canDelete;
   },
   Component: ({rowData}) => {
-    const {_integrationId} = rowData;
-    const handleDelete = useHandleDelete(_integrationId);
+    const {_integrationId, _connectorId, supportsMultiStore, name, mode} = rowData;
+
+    const handleDelete = useHandleDelete(_integrationId, {_connectorId, supportsMultiStore, name, mode});
 
     useEffect(() => {
       handleDelete();

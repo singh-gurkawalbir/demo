@@ -1414,9 +1414,7 @@ availableResources.forEach(type => {
       expect(effect).toEqual(
         put(actions.resource.receivedCollection(type, mockCollection))
       );
-
       expect(saga.next().value).toEqual(put(actions.resource.collectionRequestSucceeded({resourceType: type})));
-
       const final = saga.next();
 
       expect(final.done).toBe(true);
@@ -1597,6 +1595,16 @@ availableResources.forEach(type => {
       expect(final.done).toBe(true);
     });
   });
+});
+
+describe('getResourceCollection saga for connectorLicenses', () => {
+  test('should dispatch collection request and succeeded call with connectorLicenses resource type for licenses route', () => expectSaga(getResourceCollection, {resourceType: 'connectors/60936ec22b22fe4803a3a22c/licenses'})
+    .provide([
+      [matchers.call.fn(apiCallWithPaging), []],
+    ])
+    .put(actions.resource.collectionRequestSent('connectorLicenses'))
+    .put(actions.resource.collectionRequestSucceeded({resourceType: 'connectorLicenses'}))
+    .run());
 });
 
 describe('getResourceCollection saga', () => {

@@ -29,9 +29,9 @@ export default function AuditLog({
   users,
   resourceType,
   resourceId,
-  integrationId,
   onClick,
   isFixed,
+  integrationId,
   childId,
 }) {
   const classes = useStyles();
