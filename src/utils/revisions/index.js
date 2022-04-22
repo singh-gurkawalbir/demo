@@ -1,4 +1,3 @@
-import { addYears, startOfDay } from 'date-fns';
 import { REVISION_STATUS, REVISION_TYPES } from '../constants';
 import messageStore from '../messageStore';
 import { comparer, sortJsonByKeys } from '../sort';
@@ -62,6 +61,7 @@ export const REVISION_DIFF_ACTIONS = {
   ADD: 'add',
   NEW: 'new',
   DELETED: 'deleted',
+  REMOVED: 'removed',
   UPDATE: 'update',
   CONFLICT: 'conflict',
 };
@@ -70,6 +70,7 @@ export const REVISION_DIFF_ACTION_LABELS = {
   [REVISION_DIFF_ACTIONS.ADD]: 'Add',
   [REVISION_DIFF_ACTIONS.NEW]: 'New',
   [REVISION_DIFF_ACTIONS.DELETED]: 'Deleted',
+  [REVISION_DIFF_ACTIONS.REMOVED]: 'Removed',
   [REVISION_DIFF_ACTIONS.UPDATE]: 'Update',
   [REVISION_DIFF_ACTIONS.CONFLICT]: 'Conflict',
 };
@@ -80,8 +81,8 @@ export const DEFAULT_OPTION = 'all';
 
 export const DEFAULT_REVISION_FILTERS = {
   createdAt: {
-    startDate: startOfDay(addYears(new Date(), -1)),
-    preset: 'lastyear',
+    // By default no date is selected, so that all revisions are shown to the user
+    preset: null,
   },
   status: DEFAULT_OPTION,
   user: DEFAULT_OPTION,
@@ -156,7 +157,14 @@ export const getRevisionResourceLevelChanges = (overallDiff, type, ignoreSort = 
 
     Object.keys(resources).forEach(id => {
       const [resourceId, action = REVISION_DIFF_ACTIONS.UPDATE] = id.split('.');
-      const resourceDiff = { resourceId, action };
+      // Incase of resources deleted action, only incase of flow , resources are actually deleted
+      // In other cases, only the references are removed but the resources do exist.
+      // So UI need to consider this as removed action instead of deleted
+      // Ref: @IO-25890
+      const diffAction = (action === REVISION_DIFF_ACTIONS.DELETED && resourceType !== 'flow')
+        ? REVISION_DIFF_ACTIONS.REMOVED
+        : action;
+      const resourceDiff = { resourceId, action: diffAction };
       const {$conflicts, ...rest} = after[resourceType][id];
       // TODO: confirm on script diffs - we do show script changes but not script name as of now
       const afterContent = resourceType === 'script' ? (rest['$blob.conflict'] || rest.$blob) : sortFn(rest);

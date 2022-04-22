@@ -116,7 +116,7 @@ export default {
         return type;
       }
 
-      if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+      if (r.http.method?.length > 1 || r.ignoreMissing || r.ignoreExisting) {
         if (r.http.method.length > 1) {
           type = 'createandupdate';
         } else if (r.http.method.length === 1) {

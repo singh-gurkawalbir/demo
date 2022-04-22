@@ -90,6 +90,7 @@ export default {
         buttons: [
           {
             label: 'Delete',
+            error: true,
             onClick: deleteResource,
           },
           {

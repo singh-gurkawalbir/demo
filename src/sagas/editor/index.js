@@ -585,12 +585,7 @@ export function* requestEditorSampleData({
 
     body.integrationId = flow?._integrationId;
 
-    // TODO: Siddharth, revert this change after completion of https://celigo.atlassian.net/browse/IO-25372
-    if (fieldId === 'webhook.successBody') {
-      body.fieldPath = 'dataURITemplate';
-    } else {
-      body.fieldPath = fieldId || filterPath;
-    }
+    body.fieldPath = fieldId || filterPath;
 
     if (needPreviewStagesData) {
       body.previewData = yield select(selectors.getResourceSampleDataStages, resourceId);
@@ -826,7 +821,7 @@ export function* initEditor({ id, editorType, options }) {
   const stateOptions = {
     editorType,
     ...formattedOptions,
-    fieldId: getUniqueFieldId(fieldId, resource, connection),
+    fieldId: getUniqueFieldId(fieldId, resource, connection, resourceType),
     ...featuresMap(formattedOptions)[editorType],
     originalRule,
     sampleDataStatus: 'requested',

@@ -110,6 +110,10 @@ describe('editor utils test cases', () => {
       expect(getUniqueFieldId('rdbms.query2')).toEqual('rdbms.query');
       expect(getUniqueFieldId('http.auth.oauth.refreshBody')).toEqual('http.auth.token.refreshBody');
     });
+    test('should correctly return field id in case of graphql field', () => {
+      expect(getUniqueFieldId('graphql.query')).toEqual('http.body');
+      expect(getUniqueFieldId('graphql.variables', {}, {}, 'connections')).toEqual('http.ping.body');
+    });
   });
 
   describe('resolveValue util', () => {

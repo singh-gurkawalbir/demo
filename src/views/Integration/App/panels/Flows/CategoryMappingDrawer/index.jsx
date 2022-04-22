@@ -688,7 +688,7 @@ export default function CategoryMappingDrawerRoute({ integrationId }) {
       path={drawerPaths.MAPPINGS.CATEGORY_MAPPING.ROOT}
       height="tall"
       width="large" >
-      <LoadResources required resources="exports,imports,connections">
+      <LoadResources required integrationId={integrationId} resources="exports,imports,connections">
         <CategoryMappingDrawer integrationId={integrationId} parentUrl={match.url} />
       </LoadResources>
     </RightDrawer>
