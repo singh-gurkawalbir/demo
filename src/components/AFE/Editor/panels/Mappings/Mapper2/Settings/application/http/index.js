@@ -109,8 +109,8 @@ export default {
           type: 'radiogroup',
           refreshOptionsOnChangesTo: ['dataType'],
           label: propDataType === MAPPING_DATA_TYPES.OBJECT
-            ? 'Would you like to copy an object from the source record as-is?'
-            : 'Would you like to copy an object array from the source record as-is?',
+            ? 'Copy an object from the source record as-is?'
+            : 'Copy an object array from the source record as-is?',
           fullWidth: true,
           defaultValue: copySource || 'no',
           visibleWhenAll: [{ field: 'dataType', is: ['object', 'objectarray'] }],
@@ -640,8 +640,8 @@ export default {
           );
 
           copySourceField.label = dataTypeField?.value === MAPPING_DATA_TYPES.OBJECT
-            ? 'Would you like to copy an object from the source record as-is?'
-            : 'Would you like to copy an object array from the source record as-is?';
+            ? 'Copy an object from the source record as-is?'
+            : 'Copy an object array from the source record as-is?';
         }
 
         return null;
