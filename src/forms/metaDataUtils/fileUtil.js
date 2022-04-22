@@ -221,8 +221,7 @@ fileAdvanced: { formId: 'fileAdvanced' },
   label: 'XML document',
   refreshOptionsOnChangesTo: ['file.type'],
   required: true,
-  helpKey: 'import.file.XMLDocument',
-  helpText: 'This field is used to define the XML document that will get sent to the destination application endpoint.',
+  helpKey: 'import.file.ftp.XMLDocument',
   visibleWhenAll: [
     {
       field: 'file.type',

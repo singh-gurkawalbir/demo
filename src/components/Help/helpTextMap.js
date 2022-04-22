@@ -1682,6 +1682,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'import.file.batchSize':
 'Set this field to limit the number of files processed in a single batch request. Setting this field will not limit the total number of files you can process in a flow. This field allows you to optimize for really big files where bigger batches might experience network timeout errors vs. really small files where processing 1000 files in a single batch keeps the flow more performant. 1000 is the max value allowed.',
   'import.ftp.backupDirectoryPath': 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.',
+  'import.file.ftp.XMLDocument': 'This field is used to define the XML document that will get sent to the destination application endpoint.',
   'import.gdrive.directoryPath':
 'Specify google drive folder containing the files to be transferred.  For example, if you set this field to \'MySite/Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will first look for a parent folder \'MySite\', and then for a child folder \'Items\', and then transfer all files into folder \'Items\'',
   'import.azure.containerName':
