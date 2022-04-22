@@ -117,11 +117,11 @@ export default function RouterPanel({
                 />
               </div>
 
-              {description && (
-                <div className={classes.description}>
-                  <InfoIconButton size="xs" info={description} />
-                </div>
-              )}
+              <div className={classes.description}>
+                {description && (
+                <InfoIconButton size="xs" info={description} />
+                )}
+              </div>
 
               <MoreActionsButton />
             </div>
