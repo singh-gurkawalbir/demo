@@ -3,10 +3,9 @@ export default {
     branchType: {
       id: 'branchType',
       name: 'branchType',
-      helpText: 'We need help text!',
       type: 'radiogroup',
-      label: 'Branching type',
-      description: 'Records will flow through',
+      label: 'Records will flow through:',
+      // description: '',
       // showOptionsHorizontally: true,
       // fullWidth: true,
       options: [
@@ -18,12 +17,6 @@ export default {
         },
       ],
       defaultValue: 'first',
-    },
-    branches: {
-      id: 'branches',
-      label: 'Branches',
-      type: 'labeltitle',
-      helpText: 'We need help text!',
     },
   },
 };

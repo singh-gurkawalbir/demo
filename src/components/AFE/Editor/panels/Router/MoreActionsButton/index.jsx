@@ -3,7 +3,7 @@ import { ClickAwayListener, IconButton, List, ListItem, ListItemIcon, ListItemTe
 import React from 'react';
 import ArrowPopper from '../../../../../ArrowPopper';
 import EllipsisHorizontalIcon from '../../../../../icons/EllipsisHorizontalIcon';
-import AddIcon from '../../../../../icons/AddIcon';
+import EditIcon from '../../../../../icons/EditIcon';
 import TrashIcon from '../../../../../icons/TrashIcon';
 
 const useStyles = makeStyles({
@@ -52,8 +52,8 @@ export default function MoreActionsButton() {
         onClose={handleCloseMenu}
       >
         <List dense>
-          <BranchListItem text="Add description" onClick={handleCloseMenu}>
-            <AddIcon />
+          <BranchListItem text="Edit branch name/description" onClick={handleCloseMenu}>
+            <EditIcon />
           </BranchListItem>
 
           <BranchListItem text="Delete branch" onClick={handleCloseMenu}>

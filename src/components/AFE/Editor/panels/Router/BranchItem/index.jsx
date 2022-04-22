@@ -10,13 +10,9 @@ import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
 import EditableText from '../../../../../EditableText';
 import GripperIcon from '../../../../../icons/GripperIcon';
 import MoreActionsButton from '../MoreActionsButton';
+import BranchFilter from '../BranchFilter';
 
 const useStyles = makeStyles(theme => ({
-  panelContent: {
-    padding: theme.spacing(1),
-    height: '100%',
-    overflow: 'auto',
-  },
   summaryContainer: {
     display: 'flex',
     alignItems: 'center',
@@ -41,11 +37,6 @@ const useStyles = makeStyles(theme => ({
   expandIcon: {
     position: 'absolute',
     left: theme.spacing(5),
-  },
-  branchList: {
-    listStyle: 'none',
-    marginLeft: 0,
-    paddingLeft: 0,
   },
   listItem: {
     display: 'flex',
@@ -107,7 +98,7 @@ export default function RouterPanel({position, branchName, onNameChange}) {
           </AccordionSummary>
 
           <AccordionDetails className={classes.accordionDetails}>
-            Filter!
+            <BranchFilter />
           </AccordionDetails>
         </Accordion>
       </div>
