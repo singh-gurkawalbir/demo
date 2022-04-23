@@ -38,6 +38,9 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     marginLeft: theme.spacing(1),
   },
+  grabbing: {
+    cursor: 'grabbing',
+  },
 }));
 
 // This is a mock and should match branch schema of the data-layer.
@@ -62,6 +65,13 @@ export default function RouterPanel({ editorId }) {
       }));
   };
 
+  const handleToggleExpand = (expanded, position) => {
+    setBranchData(
+      produce(branchData, draft => {
+        draft[position].expanded = expanded;
+      }));
+  };
+
   const SortableContainer = sortableContainer(({children}) => (
     <ul className={classes.branchList}>
       {children}
@@ -70,7 +80,16 @@ export default function RouterPanel({ editorId }) {
 
   const SortableItem = sortableElement(props => <BranchItem {...props} />);
 
+  const handleSortStart = (_, event) => {
+    // we only want mouse events (not keyboard navigation) to trigger
+    // mouse cursor changes...
+    if (event instanceof MouseEvent) {
+      document.body.classList.add(classes.grabbing);
+    }
+  };
+
   const handleSortEnd = ({oldIndex, newIndex}) => {
+    document.body.classList.remove(classes.grabbing);
     setBranchData(items => (moveArrayItem(items, oldIndex, newIndex)));
   };
 
@@ -95,14 +114,21 @@ export default function RouterPanel({ editorId }) {
 
       <Divider orientation="horizontal" className={classes.divider} />
 
-      <SortableContainer onSortEnd={handleSortEnd} useDragHandle>
+      <SortableContainer
+        lockAxis="y"
+        onSortStart={handleSortStart}
+        onSortEnd={handleSortEnd}
+        useDragHandle>
         { branchData.map((b, i) => (
           <SortableItem
             expandable={activeProcessor === 'filter'}
+            expanded={b.expanded}
+            onToggleExpand={handleToggleExpand}
             key={b.name}
             index={i} // The HOC does not proxy index to child, so we need `position` as well.
             position={i}
             branchName={b.name}
+            description={b.description}
             onNameChange={handleNameChange} />
         ))}
       </SortableContainer>

@@ -12,6 +12,7 @@ import EditableText from '../../../../../EditableText';
 import GripperIcon from '../../../../../icons/GripperIcon';
 import MoreActionsButton from '../MoreActionsButton';
 import BranchFilter from '../BranchFilter';
+import InfoIconButton from '../../../../../InfoIconButton';
 
 const useStyles = makeStyles(theme => ({
   summaryContainer: {
@@ -23,6 +24,8 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     marginBottom: theme.spacing(2),
+    borderRadius: 0,
+    padding: 0,
   },
   accordionSummary: {
     width: '100%',
@@ -30,9 +33,16 @@ const useStyles = makeStyles(theme => ({
   accordionDetails: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     display: 'block',
+    padding: 0,
+    '& > div > div': {
+      margin: 0,
+      border: 'none',
+    },
   },
   branchName: {
     marginLeft: theme.spacing(1),
+  },
+  description: {
     flexGrow: 1,
   },
   expandable: {
@@ -60,14 +70,16 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   expanded: {
-    marginBottom: 32,
-    backgroundColor: 'red',
+    marginBottom: '16px !important',
+    // backgroundColor: 'red',
   },
 }));
 
-const DragHandle = sortableHandle(() => <GripperIcon />);
+const DragHandle = sortableHandle(() => <GripperIcon style={{cursor: 'grab'}} />);
 
-export default function RouterPanel({expandable, position, branchName, onNameChange}) {
+export default function RouterPanel({
+  expandable, expanded, position, branchName, description, onNameChange, onToggleExpand}
+) {
   const classes = useStyles();
 
   return (
@@ -79,6 +91,8 @@ export default function RouterPanel({expandable, position, branchName, onNameCha
       <div className={classes.accordionContainer}>
         <Accordion
           elevation={0}
+          onChange={(event, expanded) => onToggleExpand(expanded, position)}
+          expanded={!!expanded}
           square
           classes={{expanded: classes.expanded}}
           className={classes.accordion}>
@@ -95,14 +109,18 @@ export default function RouterPanel({expandable, position, branchName, onNameCha
                   {[classes.expandable]: expandable}
                 )}>
                 <EditableText
-                  // multiline
                   allowOverflow
                   text={branchName}
-                  // disabled={!canEdit}
                   defaultText="Unnamed branch: Click to add name"
                   onChange={title => onNameChange(title, position)}
                   inputClassName={classes.editableTextInput}
                 />
+              </div>
+
+              <div className={classes.description}>
+                {description && (
+                <InfoIconButton size="xs" info={description} />
+                )}
               </div>
 
               <MoreActionsButton />

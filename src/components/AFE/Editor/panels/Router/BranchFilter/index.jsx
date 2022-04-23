@@ -5,6 +5,7 @@ import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 import jQuery from 'jquery';
 import '../../Filter/queryBuilder.css';
 import config from '../../Filter/config';
+import './qbOverrides.css';
 
 export default function BranchFilter() {
   const qbuilder = useRef(null);
