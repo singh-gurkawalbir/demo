@@ -27,6 +27,7 @@ export default {
   getResponseMappingExtracts: (resourceType, adaptorType) => {
     if (resourceType === 'imports') {
       if (['RESTImport', 'HTTPImport'].includes(adaptorType)) { return [...IMPORT_RESPONSE_MAPPING_EXTRACTS, 'headers']; }
+      if (['FTPImport', 'S3Import'].includes(adaptorType)) { return ['name', ...IMPORT_RESPONSE_MAPPING_EXTRACTS]; }
 
       return IMPORT_RESPONSE_MAPPING_EXTRACTS;
     }
