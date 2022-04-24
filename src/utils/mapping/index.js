@@ -1250,11 +1250,6 @@ export const buildTreeFromV2Mappings = ({
   }];
 
   if (isEmpty(v2MappingsCopy)) {
-    v2MappingsCopy.push({
-      key: emptyRowKey,
-      dataType: MAPPING_DATA_TYPES.STRING,
-    });
-
     return emptyMappingsTree;
   }
 
