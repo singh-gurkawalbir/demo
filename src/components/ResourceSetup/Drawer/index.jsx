@@ -204,6 +204,7 @@ function ResourceSetupDrawerContent({
             cancelButtonLabel="Cancel"
             submitButtonLabel="Save & close"
             onCancel={handleClose}
+            integrationId={integrationId}
               />
         </>
       )}
