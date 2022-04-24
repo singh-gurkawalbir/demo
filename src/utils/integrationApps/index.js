@@ -1,3 +1,4 @@
+import isEmpty from 'lodash/isEmpty';
 import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION, FORM_SAVE_STATUS, CATEGORY_MAPPING_SAVE_STATUS } from '../constants';
 
 export const getIntegrationAppUrlName = integrationAppName => {
@@ -230,7 +231,8 @@ export default {
       step.type === 'connection' ||
       step.type === 'ssConnection' ||
       step.sourceConnection ||
-      step.type === INSTALL_STEP_TYPES.FORM
+      step.type === INSTALL_STEP_TYPES.FORM ||
+      !isEmpty(step.form)
     ) {
       if (step.completed) {
         stepText = isUninstall ? 'Uninstalled' : 'Configured';

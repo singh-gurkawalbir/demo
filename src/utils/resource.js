@@ -859,6 +859,9 @@ export function getConnectionType(resource) {
       return `${assistant}-oauth`;
     }
   }
+  if (['basic', 'token'].includes(resource?.http?.auth?.type)) {
+    return `${assistant}=${resource.http.auth.type}`;
+  }
 
   if (assistant) return assistant;
 
