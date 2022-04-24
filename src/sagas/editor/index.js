@@ -23,7 +23,7 @@ import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
-import mappingUtil, { buildV2MappingsFromTree } from '../../utils/mapping';
+import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
 
 /**
@@ -94,10 +94,10 @@ export function* invokeProcessor({ editorId, processor, body }) {
     }
     if (editorType === 'mappings') {
       const lookups = (yield select(selectors.mapping))?.lookups;
-      const mappingVersion = yield select(selectors.mappingVersion);
+      const v2TreeData = (yield select(selectors.mapping))?.v2TreeData;
 
-      if (mappingVersion === 2) {
-        const v2TreeData = (yield select(selectors.mapping))?.v2TreeData;
+      // give preference to v2 mappings always
+      if (hasV2MappingsInTreeData(v2TreeData)) {
         const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
 
         _mappings = {mappings: _mappingsV2, lookups};
