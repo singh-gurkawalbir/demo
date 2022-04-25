@@ -8392,7 +8392,6 @@ Object {
       },
       "file.xml.body": Object {
         "connectionId": [Function],
-        "helpKey": "import.ftp.XMLDocument",
         "id": "file.xml.body",
         "label": "XML document",
         "refreshOptionsOnChangesTo": Array [
@@ -10397,7 +10396,6 @@ Object {
       },
       "file.xml.body": Object {
         "connectionId": [Function],
-        "helpKey": "import.ftp.XMLDocument",
         "id": "file.xml.body",
         "label": "XML document",
         "refreshOptionsOnChangesTo": Array [
