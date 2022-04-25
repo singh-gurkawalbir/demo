@@ -1494,7 +1494,7 @@ const mapping = {
   save: ({ match }) => action(actionTypes.MAPPING.SAVE, { match }),
   saveFailed: () => action(actionTypes.MAPPING.SAVE_FAILED, { }),
   saveComplete: () => action(actionTypes.MAPPING.SAVE_COMPLETE, { }),
-  requestPreview: () => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { }),
+  requestPreview: editorId => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { editorId }),
   previewReceived: value =>
     action(actionTypes.MAPPING.PREVIEW_RECEIVED, { value }),
   previewFailed: errors => action(actionTypes.MAPPING.PREVIEW_FAILED, { errors }),
