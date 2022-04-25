@@ -82,7 +82,7 @@ import {
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
-import mappingUtil, { buildExtractsTree } from '../utils/mapping';
+import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare, comparer } from '../utils/sort';
@@ -5502,21 +5502,6 @@ selectors.mappingEditorNotification = (state, editorId) => {
     variant: 'warning',
   };
 };
-
-selectors.mkBuildExtractsTree = () => createSelector(
-  (state, {flowId, resourceId}) => {
-    const flowData = selectors.getSampleDataContext(state, {
-      flowId,
-      resourceId,
-      stage: 'importMappingExtract',
-      resourceType: 'imports',
-    }).data;
-
-    return flowData;
-  },
-  (state, {selectedValues}) => selectedValues,
-  (flowData, selectedValues) => buildExtractsTree(flowData, selectedValues)
-);
 
 // #endregion MAPPING END
 

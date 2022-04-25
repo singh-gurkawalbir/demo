@@ -14,7 +14,6 @@ import { isJsonString, generateUniqueKey } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
 import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../constants';
-import { TreeTitle } from '../../components/AFE/Editor/panels/Mappings/Mapper2/Source/ExtractsTree';
 import TabRow from '../../components/AFE/Editor/panels/Mappings/Mapper2/TabbedRow';
 
 const isCsvOrXlsxResource = resource => {
@@ -1500,7 +1499,7 @@ function recursivelyBuildExtractsTree({dataObj, treeData, parentKey, parentJsonP
     const nodeToPush = {
       key,
       parentKey,
-      title: TreeTitle,
+      title: '',
       jsonPath,
       propName,
       dataType: TYPEOF_TO_DATA_TYPE[type],
@@ -1566,7 +1565,7 @@ export const buildExtractsTree = (sampleData, selectedValues) => {
   // add first default $ path
   treeData.push({
     key,
-    title: TreeTitle,
+    title: '',
     dataType: Array.isArray(sampleData) ? '[object]' : 'object',
     propName: '$',
     children,

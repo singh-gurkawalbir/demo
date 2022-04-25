@@ -6,6 +6,7 @@ import useOnClickOutside from '../../../../../../../hooks/useClickOutSide';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import ExtractsTree from './ExtractsTree';
 import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
+import messageStore from '../../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -60,18 +61,18 @@ export const TooltipTitle = ({
 }) => {
   const classes = useStyles();
   let title = '';
-  let hideDropdownMsg = '';
+  let hideDropdownMsgKey = '';
 
   if (isTruncated) {
     title = inputValue;
   }
   if (hideSourceDropdown) {
     if (isLookup) {
-      hideDropdownMsg = 'Lookups do not provide source record field list';
+      hideDropdownMsgKey = 'LOOKUP_SOURCE_TOOLTIP';
     } else if (isHardCodedValue) {
-      hideDropdownMsg = 'Hard-coded values do not provide source record field list';
+      hideDropdownMsgKey = 'HARD_CODED_SOURCE_TOOLTIP';
     } else if (isHandlebarExp) {
-      hideDropdownMsg = 'Handlebars expression do not provide source record field list';
+      hideDropdownMsgKey = 'HANDLEBARS_SOURCE_TOOLTIP';
     }
   }
 
@@ -81,7 +82,7 @@ export const TooltipTitle = ({
 
   return (
     <>
-      <Typography variant="caption" color="inherit">{hideDropdownMsg}</Typography>
+      <Typography variant="caption" color="inherit">{messageStore(hideDropdownMsgKey)}</Typography>
       {title && <Divider orientation="horizontal" className={classes.divider} />}
       <Typography variant="caption" color="inherit">{title}</Typography>
     </>

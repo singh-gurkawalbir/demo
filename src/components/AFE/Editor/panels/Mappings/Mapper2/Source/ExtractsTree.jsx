@@ -113,7 +113,7 @@ const TitleExtracts = ({propName, dataType}) => {
 };
 
 // this is the component rendered for each row inside extracts tree
-export const TreeTitle = props => <TitleExtracts {...props} key={`title-${props.key}`} />;
+const TreeTitle = props => <TitleExtracts {...props} key={`title-${props.key}`} />;
 
 // this component renders the whole source fields tree
 // based on the sample data
@@ -179,6 +179,7 @@ const ExtractsTree = React.memo((
 
       <Tree
         className={classes.childTree}
+        titleRender={TreeTitle}
         multiple
         defaultSelectedKeys={selectedKeys}
         treeData={treeData}
