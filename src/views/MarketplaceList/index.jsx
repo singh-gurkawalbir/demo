@@ -255,11 +255,13 @@ export default function MarketplaceList() {
                 )}
                 {connector.canRequestDemo && (
                 <Tooltip title="Have a solutions consultant contact me to demonstrate how this Integration App will automate my business processes." placement="bottom">
-                  <FilledButton
-                    data-test="contactSales"
-                    onClick={() => requestDemo(connector)}>
-                    Request demo
-                  </FilledButton>
+                  <span>
+                    <FilledButton
+                      data-test="contactSales"
+                      onClick={() => requestDemo(connector)}>
+                      Request demo
+                    </FilledButton>
+                  </span>
                 </Tooltip>
                 )}
               </CardActions>

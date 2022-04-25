@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
 import FilledButton from '../../Buttons/FilledButton';
@@ -22,14 +22,13 @@ import messageStore from '../../../utils/messageStore';
 import errorMessageStore from '../../../utils/errorStore';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import NoResultTypography from '../../NoResultTypography';
+import LoadResources from '../../LoadResources';
 
 const useStyles = makeStyles(theme => ({
   accordianWrapper: {
     marginBottom: theme.spacing(2),
     width: '100%',
-  },
-  noAliases: {
-    padding: theme.spacing(2),
   },
   manageAliases: {
     marginBottom: theme.spacing(2),
@@ -43,9 +42,11 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const resourceAliases = useSelector(state => selectors.ownAliases(state, 'flows', flowId));
-  const inheritedAliases = useSelectorMemo(selectors.makeInheritedAliases, flowId);
+  const aliasesFilterKey = `${flowId}-aliases`;
+  const inheritedAliasesFilterKey = `${flowId}-inheritedAliases`;
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
+  const resourceAliases = useSelector(state => selectors.ownAliases(state, 'flows', flowId, aliasesFilterKey));
+  const inheritedAliases = useSelector(state => selectors.inheritedAliases(state, flowId, inheritedAliasesFilterKey));
   const isAliasActionCompleted = useSelector(state => selectors.aliasActionStatus(state, flowId));
   const actionProps = useMemo(() => ({
     resourceType: 'flows',
@@ -56,18 +57,18 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
     {
       data: resourceAliases.map(aliasData => ({...aliasData, _id: `${flowId}-${aliasData.alias}`})),
       title: 'Aliases',
-      filterKey: `${flowId}+aliases`,
+      filterKey: aliasesFilterKey,
       actionProps: {...actionProps, hasManageAccess},
       noAliasesMessage: errorMessageStore('NO_CUSTOM_ALIASES_MESSAGE'),
     },
     {
       data: inheritedAliases.map(aliasData => ({...aliasData, _id: `${flow._integrationId}-${aliasData.alias}`})),
       title: 'Inherited aliases',
-      filterKey: `${flow._integrationId}+inheritedAliases`,
+      filterKey: inheritedAliasesFilterKey,
       actionProps,
       noAliasesMessage: errorMessageStore('NO_INHERITED_ALIASES_MESSAGE'),
     },
-  ]), [resourceAliases, inheritedAliases, flowId, flow, actionProps, hasManageAccess]);
+  ]), [resourceAliases, inheritedAliases, flowId, flow, aliasesFilterKey, inheritedAliasesFilterKey, actionProps, hasManageAccess]);
 
   useEffect(() => {
     if (!isAliasActionCompleted) return;
@@ -84,7 +85,7 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
   }, [isAliasActionCompleted, flowId, enqueueSnackbar, dispatch]);
 
   return (
-    <>
+    <LoadResources required resources="flows,connections,imports,exports" >
       <CreateAliasDrawer resourceId={flowId} resourceType="flows" height={height} />
       <ViewAliasDetailsDrawer resourceId={flowId} resourceType="flows" height={height} />
       {aliasesTableData.map(tableData => (
@@ -103,15 +104,15 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
           />
         </div>
       ))}
-    </>
+    </LoadResources>
   );
 };
 
 const ViewAliases = ({ resourceId, resourceType, height }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const filterKey = `${resourceId}+viewAliases`;
-  const allAliases = useSelector(state => selectors.allAliases(state, resourceId));
+  const filterKey = `${resourceId}-viewAliases`;
+  const allAliases = useSelector(state => selectors.allAliases(state, resourceId, filterKey));
   const actionProps = useMemo(() => ({
     resourceType,
     resourceId,
@@ -127,7 +128,7 @@ const ViewAliases = ({ resourceId, resourceType, height }) => {
   }, []);
 
   return (
-    <>
+    <LoadResources required resources="flows,connections,imports,exports" >
       <ViewAliasDetailsDrawer resourceId={resourceId} resourceType={resourceType} height={height} />
       {allAliases.length ? (
         <CeligoTable
@@ -137,8 +138,8 @@ const ViewAliases = ({ resourceId, resourceType, height }) => {
           {...metadata}
           actionProps={actionProps}
         />
-      ) : (<Typography className={classes.noAliases}>{errorMessageStore('NO_ALIASES_MESSAGE')}</Typography>)}
-    </>
+      ) : (<NoResultTypography>{errorMessageStore('NO_ALIASES_MESSAGE')}</NoResultTypography>)}
+    </LoadResources>
   );
 };
 

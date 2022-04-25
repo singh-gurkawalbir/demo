@@ -1,7 +1,5 @@
 import { produce } from 'immer';
-import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
-import { emptyList } from '../../../utils/constants';
 
 export default function reducer(state = {}, action) {
   const {
@@ -42,15 +40,6 @@ export default function reducer(state = {}, action) {
 
 // #region PUBLIC SELECTORS
 export const selectors = {};
-
-selectors.allAliases = createSelector(
-  (state, resourceId) => state && state[resourceId] && state[resourceId].aliases,
-  aliases => {
-    if (!aliases) return emptyList;
-
-    return aliases.map(aliasData => ({ _id: aliasData.alias, ...aliasData}));
-  },
-);
 
 selectors.aliasActionStatus = (state, id) => state?.[id]?.status;
 

@@ -83,7 +83,7 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
         />
       </DrawerHeader>
       <DrawerContent>
-        <ResourceDiffDrawerContent integrationId={integrationId} type="pull" />
+        <ResourceDiffDrawerContent integrationId={integrationId} type="pull" parentUrl={parentUrl} />
       </DrawerContent>
       <DrawerFooter>
         <FilledButton disabled={isRevisionCreationInProgress || !hasReceivedResourceDiff} onClick={handleCreateRevision} >

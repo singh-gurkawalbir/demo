@@ -83,7 +83,7 @@ describe('javascript processor logic', () => {
     });
   });
   describe('patchSet util', () => {
-    test('should return the foregroundPatches containing /content path', () => {
+    test('should return the backgroundPatches containing /content path', () => {
       const editor = {
         id: 'script-123',
         stage: 'hook',
@@ -96,7 +96,7 @@ describe('javascript processor logic', () => {
         },
       };
       const expectedPatches = {
-        foregroundPatches: [{
+        backgroundPatches: [{
           patch: [
             {
               op: 'replace',

@@ -1,32 +1,29 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import {makeStyles} from '@material-ui/core/styles';
 import Spinner from '../../../../Spinner';
 import ResourceDiffVisualizer from '../../../../ResourceDiffVisualizer';
+import ResourceDiffError from './ResourceDiffError';
 import { selectors } from '../../../../../reducers';
 import { getRevisionResourceLevelChanges } from '../../../../../utils/revisions';
 
-const useStyles = makeStyles(theme => ({
-  error: {
-    color: theme.palette.error.main,
-  },
-}));
-
-export default function ResourceDiffContent({ integrationId, type }) {
-  const classes = useStyles();
-  // selectors
+export default function ResourceDiffContent({ integrationId, type, parentUrl }) {
   const revisionResourceDiff = useSelector(state => selectors.revisionResourceDiff(state, integrationId));
-  const revisionResourceDiffError = useSelector(state => selectors.revisionResourceDiffError(state, integrationId));
+  const hasResourceDiffError = useSelector(state => !!selectors.revisionResourceDiffError(state, integrationId));
   const isResourceComparisonInProgress = useSelector(state => selectors.isResourceComparisonInProgress(state, integrationId));
   const isDiffExpanded = useSelector(state => selectors.isDiffExpanded(state, integrationId));
-  // end selectors
+
   const resourceDiffInfo = useMemo(() => getRevisionResourceLevelChanges(revisionResourceDiff, type), [revisionResourceDiff, type]);
 
   if (isResourceComparisonInProgress) {
     return <Spinner centerAll />;
   }
-  if (revisionResourceDiffError) {
-    return <div className={classes.error}> {revisionResourceDiffError} </div>;
+  if (hasResourceDiffError) {
+    return (
+      <ResourceDiffError
+        integrationId={integrationId}
+        type={type}
+        parentUrl={parentUrl} />
+    );
   }
 
   return (

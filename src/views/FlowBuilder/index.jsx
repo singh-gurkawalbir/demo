@@ -51,14 +51,14 @@ export default function FlowBuilder() {
   // #endregion
 
   return (
-    <LoadResources required resources="imports, exports, flows, scripts">
+    <LoadResources integrationId={integrationId} required resources="imports,exports,flows,scripts">
       <Redirection>
         <ResourceDrawer flowId={flowId} integrationId={integrationId} />
         <ConfigConnectionDebugger />
         <HooksDrawer flowId={flowId} integrationId={integrationId} />
         <ScheduleDrawer flowId={flowId} />
         <ChartsDrawer flowId={flowId} />
-        <QueuedJobsDrawer />
+        <QueuedJobsDrawer integrationId={integrationId} />
         <EditorDrawer />
         <ErrorDetailsDrawer flowId={flowId} />
         <IsLoggableContextProvider isLoggable>

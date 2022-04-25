@@ -1,7 +1,8 @@
 import { matchPath } from 'react-router-dom';
 import { PING_STATES } from '../../reducers/comms/ping';
 import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, GOOGLE_CONTACTS_API, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../constants';
-import { rdbmsAppTypeToSubType, rdbmsSubTypeToAppType } from '../resource';
+import { rdbmsSubTypeToAppType } from '../resource';
+import { DRAWER_URL_PREFIX } from '../rightDrawer';
 
 export const getStatusVariantAndMessage = ({
   resourceType,
@@ -88,9 +89,9 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
 
   if (hideOwnConnection) { expression.push({ _id: {$ne: _id} }); }
 
-  if (RDBMS_TYPES.includes(rdbmsSubTypeToAppType(type))) {
+  if (type === 'rdbms' && RDBMS_TYPES.includes(rdbmsSubTypeToAppType(connection?.rdbms?.type))) {
     // rdbms subtype is required to filter the connections
-    expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(type) });
+    expression.push({ 'rdbms.type': connection.rdbms.type });
   } else if (type === 'rest' || (type === 'http' && connection?.http?.formType === 'rest')) {
     expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
   } else if (type === 'graph_ql' || (type === 'http' && connection?.http?.formType === 'graph_ql')) {
@@ -120,7 +121,10 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   } else {
     const andingExpressions = { $and: expression };
 
-    options = { filter: andingExpressions, appType: type };
+    options = {
+      filter: andingExpressions,
+      appType: type === 'rdbms' ? rdbmsSubTypeToAppType(connection?.rdbms?.type) : type,
+    };
   }
 
   return options;
@@ -164,6 +168,17 @@ const getLoopReturnsVersion = connection => {
 
   return 'loopreturns';
 };
+const getAcumaticaEndpointName = connection => {
+  const acumaticaEndpointName = connection?.http?.unencrypted?.endpointName;
+
+  switch (acumaticaEndpointName) {
+    case 'ecommerce':
+      return 'acumaticaecommerce';
+    default:
+  }
+
+  return 'acumatica';
+};
 export const getAssistantFromConnection = (assistant, connection) => {
   if (!MULTIPLE_AUTH_TYPE_ASSISTANTS.includes(assistant)) { return assistant; }
 
@@ -184,6 +199,9 @@ export const getAssistantFromConnection = (assistant, connection) => {
   }
   if (assistant === 'loopreturns') {
     return getLoopReturnsVersion(connection);
+  }
+  if (assistant === 'acumatica') {
+    return getAcumaticaEndpointName(connection);
   }
 
   return assistant;
@@ -280,6 +298,6 @@ export const getParentResourceContext = url => {
   const CONN_DRAWER_PATH = '/:operation(add|edit)/connections/:connId';
 
   return matchPath(url, {
-    path: `/**${RESOURCE_DRAWER_PATH}${CONN_DRAWER_PATH}`,
+    path: `/**${RESOURCE_DRAWER_PATH}/${DRAWER_URL_PREFIX}${CONN_DRAWER_PATH}`,
     exact: true})?.params || {};
 };

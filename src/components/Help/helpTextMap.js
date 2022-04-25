@@ -292,6 +292,8 @@ export default {
 'The username of your ServiceNow account.',
   'servicenow.connection.http.auth.basic.password':
 'The password of your ServiceNow account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'servicenow.connection.http.auth.type': 'Please select Authentication type.',
+  'servicenow.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><br><b>Steps to get the client ID and client secret:<br></b>1. Sign in to your ServiceNow instance.<br>2. Activate the OAuth 2.0 plugin.<br>3. Set the system property <b>com.snc.platform.security.oauth.is.active</b> to true.<br>4. Navigate to <b>System OAuth</b> > <b>Application Registry</b>.<br>5. Click <b>New</b> and then click <b>Create an OAuth API endpoint for external clients</b>.<br>6. Record the <b>client_id</b> and <b>client_secret</b> values from the previous step.',
   'shipstation.connection.http.auth.basic.username':
 'The API Key of your ShipStation account.',
   'shipstation.connection.http.auth.basic.password':
@@ -496,6 +498,8 @@ export default {
 'Please enter your API key here. This can be obtained from Account Settings in REST API section.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.coupaSubdomain':
 'Please enter the subdomain of your account here which can be obtained from the login url.',
+  'coupa.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><br> <b> Steps to get the Client ID and secret</b><br>1. Sign in to your Coupa account as an administrator.</b>.<br>2. Navigate to <b>Profile > Projects > All Setup Items > Integrations > Oauth2/OpenID Connect Clients > Create</b>.<br>3. Select <b>Grant Type</b> as <b>Client credentials</b> and input the required details for the fields <b>Name</b>,<b> Login</b>, <b>Contact First Name</b>, <b>Contact Last Name</b> and <b>Contact Email</b>.<br>4. Select the <b>Scopes</b> as per the requirement.<br>5. Click on <b>Save</b> to get the value of Client ID and secret.',
+  'coupa.connection.http.auth.type': 'Please select Authentication type.',
   'coupa.connection.http.auth.token.token':
 'Please enter API Key of your Coupa account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.microsoftDynamics365Subdomain':
@@ -583,6 +587,7 @@ export default {
 'Please enter your Access Secret here. This can be obtained by reaching out to Ware2Go support team.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Access secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'ware2go.connection.http.unencrypted.merchantId':
 'Please enter your Merchant Id here. This can be obtained by reaching out to Ware2Go support team.',
+  'ware2go.connection.http.platformversion': 'Select your Ware2Go account platform version:<br>1. Select <b>Platform 1</b> to connect using the <b>Access token</b> and <b>Access secret</b> (or) select <b>Platform2</b> to connect using a <b>Username</b> and <b>Password</b>.',
   'ware2go.connection.http.unencrypted.username': 'Please enter the username of your Ware2Go account here.',
   'ware2go.connection.http.unencrypted.password': 'Please enter the password of your Ware2Go account here.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'messagemedia.connection.http.auth.basic.username':
@@ -901,7 +906,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'snowflake.connection.rdbms.password': 'Password to connect to Snowflake.',
   'connection.rdbms.bigquery.projectId': 'The unique identifier for the BigQuery project in the Google Cloud account.',
   'connection.rdbms.bigquery.clientEmail': 'The email address for the Google Cloud service account used for authentication.',
-  'connection.rdbms.bigquery.privateKey': 'The private key for the Google Cloud service account used for authentication.',
+  'connection.rdbms.bigquery.privateKey': 'First, copy the private key from the Google portal for the service account that you want to use to authenticate the connection. Before you add it to integrator.io you must replace all newline characters (\\n) throughout the private key:<br>1. Paste the private key into a text editor.<br>2. Find \\n.<br>3. With your cursor in that location, delete the \\n characters and press Enter or Return.<br>4. Repeat this for each instance of \\n.<br>5. Copy and paste the reformatted private key into integrator.io.',
   'connection.rdbms.bigquery.dataset': 'The name of the dataset containing the tables and views being accessed.',
   'connection.rdbms.options':
 'Define additional configurations for the database connection that is available according to the database documentation. For example, you can configure the connection timeout if the SQL server you are trying to connect to is slow (default connection timeout for MS SQL server is 15000ms).',
@@ -2375,9 +2380,9 @@ use the custom option.`,
   'import.netsuite.file.internalId': 'Enter a reference ID or expression to identify reference IDs of files to replace in the NetSuite File Cabinet.',
   'auditlogs.download': 'Download up to 1,000 records from the last year. Note that filters are not applied to a download.',
   'revisions.pull': 'Pulling changes from one linked integration to another lets you see conflicts, review changes, and merge them from one integration to another. You can only pull data from a direct clone or source integration.. For example, clone Integration A as Integration B, then B to C, and B to D. You can create a pull between integrations A and B, B and C, B and D; but not between A and C, or C and D',
-  'pull.integration': 'The integration that you are pulling the changes from. This lists all direct clones of the current integration and existing parent clones.',
-  'pull.reviewChanges': 'Review the changes between the cloned and source integration. This list will show you all your changes in every export, import, flow, and script, but not API tokens or connections. You have to resolve all these conflicts before you can successfully merge the changes.',
-  'pull.mergeChanges': 'You can make changes to a source and cloned integration, then merge them. You must reconfigure your connections to merge your changes and there may be additional installation steps depending on available packages.',
+  'pull.integration': 'Select the remote production or sandbox integration from which you pull changes. All linked integrations are displayed, which includes clones of this integration and the integration from which it was cloned.',
+  'pull.reviewChanges': 'Review the changes between the current and remote integration. You can see all your integration resource changes, except for sensitive resources like API tokens and connections. You must resolve conflicts before you can continue to merge your changes. You’ll configure any new connections in the Merge changes step.',
+  'pull.mergeChanges': 'You must first configure any new connections that are coming from the remote integration. There may be additional installations steps depending on the type of connection, including installing remote packages. You can cancel your merge at any time, or close the window and resume your merge later.',
   'revert.create': 'When creating a revert, you are restoring to a revision of an integration. The revert action will also generate a revision',
   'revert.description': 'Enter information about the revert',
   'revert.revision.createdAt': 'The date and time of the revision you’ll revert to.',

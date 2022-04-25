@@ -5,7 +5,7 @@ export default (state = {}, action) => {
   const { type, resourceType, collection } = action;
 
   return produce(state, draft => {
-    if (!resourceType && type !== actionTypes.RESOURCE.RECEIVED_COLLECTION) {
+    if (!resourceType || type !== actionTypes.RESOURCE.RECEIVED_COLLECTION) {
       return;
     }
 
