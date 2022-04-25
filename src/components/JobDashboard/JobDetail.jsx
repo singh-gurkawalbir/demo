@@ -39,9 +39,9 @@ const useStyles = makeStyles(() => ({
   checkIcon: {
     padding: 0,
   },
-  error: {
-    textAlign: 'right',
-  },
+  // error: {
+  //   textAlign: 'left',
+  // },
   checkActionBorder: {
     paddingLeft: '13px',
   },

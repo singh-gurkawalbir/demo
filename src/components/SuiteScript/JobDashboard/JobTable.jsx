@@ -28,9 +28,9 @@ const useStyles = makeStyles(theme => ({
       wordBreak: 'normal',
     },
   },
-  error: {
-    textAlign: 'right',
-  },
+  // error: {
+  //   textAlign: 'left',
+  // },
 }));
 
 export default function JobTable({

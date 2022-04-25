@@ -23,9 +23,9 @@ const useStyles = makeStyles(() => ({
   checkIcon: {
     padding: 0,
   },
-  error: {
-    textAlign: 'right',
-  },
+  // error: {
+  //   textAlign: 'left',
+  // },
   stateBtn: {
     float: 'right',
     padding: 0,
