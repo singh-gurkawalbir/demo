@@ -243,12 +243,9 @@ export default {
           ],
         });
       } else if (app.type === 'graph_ql') {
-        expression.push({
-          $or: [
-            { adaptorType: `GRAPHQL${adaptorTypeSuffix}` },
-            { $and: [{ adaptorType: `HTTP${adaptorTypeSuffix}` }, { 'http.formType': 'graph_ql' }] },
-          ],
-        });
+        expression.push(
+          { $and: [{ adaptorType: `HTTP${adaptorTypeSuffix}` }, { 'http.formType': 'graph_ql' }] },
+        );
       } else if (app.type === 'http') {
         expression.push({
           adaptorType,

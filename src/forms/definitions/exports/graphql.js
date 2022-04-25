@@ -83,7 +83,7 @@ export default {
           is: ['xml'],
         },
       ],
-      defaultValue: r => r?.resourceType === 'lookupFiles' || r?.type === 'blob' ? '' : 'data',
+      defaultValue: r => (r?.http?.response?.resourcePath) || (r?.resourceType === 'lookupFiles' || r?.type === 'blob' ? '' : 'data'),
     },
     type: {
       id: 'type',
