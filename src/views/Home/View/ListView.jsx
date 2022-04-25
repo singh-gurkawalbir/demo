@@ -16,7 +16,7 @@ export default function ListView() {
 
   if (!filteredTiles?.length && totalCount === 0) {
     return (
-      <ResourceEmptyState resourceType="integrations" />
+      <ResourceEmptyState resourceType="tiles" />
     );
   }
 
