@@ -232,6 +232,7 @@ export default {
       step.type === 'ssConnection' ||
       step.sourceConnection ||
       step.type === INSTALL_STEP_TYPES.FORM ||
+      // IA1.0 doesnt have type on their step scheam, instead check for 'form' property populated
       !isEmpty(step.form)
     ) {
       if (step.completed) {
