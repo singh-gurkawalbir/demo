@@ -21,7 +21,7 @@ const PARSERS = {
  * For all other cases with, we use new mechanism
  */
 
-export const getGroupEmptyValues = (newGroupByFields, oldResourceDoc, fileType, newKeyColumns = []) => {
+export const shouldGroupEmptyValues = (newGroupByFields, oldResourceDoc, fileType, newKeyColumns = []) => {
   const {groupByFields = [], groupEmptyValues} = oldResourceDoc?.file || {};
   const keyColumns = oldResourceDoc?.file?.[fileType]?.keyColumns || [];
 
@@ -45,7 +45,7 @@ export const generateFileParserOptionsFromResource = (resource = {}, oldResource
   const fileType = resource?.file?.type;
   const fields = resource?.file?.[fileType] || {};
   const {sortByFields = [], groupByFields = []} = resource?.file || {};
-  const groupEmptyValues = getGroupEmptyValues(groupByFields, oldResourceDoc, fileType, fields.keyColumns);
+  const groupEmptyValues = shouldGroupEmptyValues(groupByFields, oldResourceDoc, fileType, fields.keyColumns);
 
   if (!fileType) {
     return;

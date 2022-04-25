@@ -14,7 +14,7 @@ import {
   generateFileParserOptionsFromResource,
   parseFileData,
   parseFileDefinition,
-  getGroupEmptyValues,
+  shouldGroupEmptyValues,
 } from './fileParserUtils';
 import {
   fetchPageProcessorPreview,
@@ -44,10 +44,10 @@ import { commitStagedChanges } from '../../resources';
 
 describe('Flow sample data utility sagas', () => {
   describe('fileParserUtils sagas', () => {
-    describe('getGroupEmptyValues util', () => {
+    describe('shouldGroupEmptyValues util', () => {
       test('should return undefined if there are no newGroupByFields and keyColumns', () => {
-        expect(getGroupEmptyValues([], {}, 'json', [])).toBeUndefined();
-        expect(getGroupEmptyValues([], {}, 'csv', [])).toBeUndefined();
+        expect(shouldGroupEmptyValues([], {}, 'json', [])).toBeUndefined();
+        expect(shouldGroupEmptyValues([], {}, 'csv', [])).toBeUndefined();
       });
       test('should return true if there are newGroupByFields and oldResourceDoc has no groupByFields or keyColumns', () => {
         const newGroupByFields = ['column0', 'column1'];
@@ -60,8 +60,8 @@ describe('Flow sample data utility sagas', () => {
           },
         };
 
-        expect(getGroupEmptyValues(newGroupByFields, oldResourceDoc, 'json', [])).toBeTruthy();
-        expect(getGroupEmptyValues([], oldResourceDoc, 'csv', newKeyColumns)).toBeTruthy();
+        expect(shouldGroupEmptyValues(newGroupByFields, oldResourceDoc, 'json', [])).toBeTruthy();
+        expect(shouldGroupEmptyValues([], oldResourceDoc, 'csv', newKeyColumns)).toBeTruthy();
       });
       test('should return boolean groupEmptyValues if there are newGroupByFields and oldResourceDoc has groupByFields', () => {
         const newGroupByFields = ['column0', 'column1'];
@@ -89,9 +89,9 @@ describe('Flow sample data utility sagas', () => {
           },
         };
 
-        expect(getGroupEmptyValues(newGroupByFields, oldResourceDoc1, 'json', [])).toBeFalsy();
-        expect(getGroupEmptyValues([], oldResourceDoc2, 'csv', newKeyColumns)).toBeFalsy();
-        expect(getGroupEmptyValues(newGroupByFields, oldResourceDoc3, 'csv', [])).toBeTruthy();
+        expect(shouldGroupEmptyValues(newGroupByFields, oldResourceDoc1, 'json', [])).toBeFalsy();
+        expect(shouldGroupEmptyValues([], oldResourceDoc2, 'csv', newKeyColumns)).toBeFalsy();
+        expect(shouldGroupEmptyValues(newGroupByFields, oldResourceDoc3, 'csv', [])).toBeTruthy();
       });
     });
     describe('generateFileParserOptionsFromResource util', () => {
