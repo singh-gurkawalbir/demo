@@ -221,7 +221,7 @@ fileAdvanced: { formId: 'fileAdvanced' },
   label: 'XML document',
   refreshOptionsOnChangesTo: ['file.type'],
   required: true,
-  helpKey: 'import.file.ftp.XMLDocument',
+  helpKey: 'import.ftp.XMLDocument',
   visibleWhenAll: [
     {
       field: 'file.type',

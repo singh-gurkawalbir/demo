@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(2),
   },
   noRevisions: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(3),
   },
 }));
 
