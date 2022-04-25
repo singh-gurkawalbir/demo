@@ -14,6 +14,7 @@ import {
   generateFileParserOptionsFromResource,
   parseFileData,
   parseFileDefinition,
+  getGroupEmptyValues,
 } from './fileParserUtils';
 import {
   fetchPageProcessorPreview,
@@ -43,6 +44,56 @@ import { commitStagedChanges } from '../../resources';
 
 describe('Flow sample data utility sagas', () => {
   describe('fileParserUtils sagas', () => {
+    describe('getGroupEmptyValues util', () => {
+      test('should return undefined if there are no newGroupByFields and keyColumns', () => {
+        expect(getGroupEmptyValues([], {}, 'json', [])).toBeUndefined();
+        expect(getGroupEmptyValues([], {}, 'csv', [])).toBeUndefined();
+      });
+      test('should return true if there are newGroupByFields and oldResourceDoc has no groupByFields or keyColumns', () => {
+        const newGroupByFields = ['column0', 'column1'];
+        const newKeyColumns = ['column0', 'column1'];
+        const oldResourceDoc = {
+          file: {
+            type: 'csv',
+            csv: {
+            },
+          },
+        };
+
+        expect(getGroupEmptyValues(newGroupByFields, oldResourceDoc, 'json', [])).toBeTruthy();
+        expect(getGroupEmptyValues([], oldResourceDoc, 'csv', newKeyColumns)).toBeTruthy();
+      });
+      test('should return boolean groupEmptyValues if there are newGroupByFields and oldResourceDoc has groupByFields', () => {
+        const newGroupByFields = ['column0', 'column1'];
+        const newKeyColumns = ['column0', 'column1'];
+        const oldResourceDoc1 = {
+          file: {
+            type: 'json',
+            groupByFields: ['column0'],
+          },
+        };
+        const oldResourceDoc2 = {
+          file: {
+            type: 'csv',
+            csv: {
+              keyColumns: ['column0'],
+            },
+            groupEmptyValues: false,
+          },
+        };
+        const oldResourceDoc3 = {
+          file: {
+            type: 'csv',
+            groupByFields: ['column0'],
+            groupEmptyValues: true,
+          },
+        };
+
+        expect(getGroupEmptyValues(newGroupByFields, oldResourceDoc1, 'json', [])).toBeFalsy();
+        expect(getGroupEmptyValues([], oldResourceDoc2, 'csv', newKeyColumns)).toBeFalsy();
+        expect(getGroupEmptyValues(newGroupByFields, oldResourceDoc3, 'csv', [])).toBeTruthy();
+      });
+    });
     describe('generateFileParserOptionsFromResource util', () => {
       test('should return undefined if the resource is not of file type', () => {
         const resource = { _id: 'id-123', adaptorType: 'RESTSExport', name: 'test'};
@@ -104,6 +155,7 @@ describe('Flow sample data utility sagas', () => {
           trimSpaces: true,
           sortByFields: [],
           groupByFields: ['column0'],
+          groupEmptyValues: true,
         };
 
         expect(generateFileParserOptionsFromResource(ftpCsvResource)).toEqual(expectedOptions);
@@ -133,6 +185,7 @@ describe('Flow sample data utility sagas', () => {
           trimSpaces: true,
           sortByFields: [],
           groupByFields: ['column0'],
+          groupEmptyValues: true,
         };
 
         expect(generateFileParserOptionsFromResource(ftpCsvResource)).toEqual(expectedOptions);
@@ -258,6 +311,7 @@ describe('Flow sample data utility sagas', () => {
           resourcePath: 'test',
           sortByFields: ['users'],
           groupByFields: ['users'],
+          groupEmptyValues: true,
         };
 
         expect(generateFileParserOptionsFromResource(ftpJsonResource)).toEqual(expectedOptions);
@@ -321,6 +375,146 @@ describe('Flow sample data utility sagas', () => {
 
         expect(generateFileParserOptionsFromResource(ftpFileDefResource)).toEqual(expectedOptions);
       });
+      test('should return correct csv parse rules object incase of csv file resource which has group by fields and oldResource doc also has groupByFields with no groupEmptyValues', () => {
+        const ftpCsvResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0'],
+          },
+        };
+        const oldFtpResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0', 'column1'],
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          sortByFields: [],
+          groupByFields: ['column0'],
+          groupEmptyValues: false,
+        };
+
+        expect(generateFileParserOptionsFromResource(ftpCsvResource, oldFtpResource)).toEqual(expectedOptions);
+      });
+      test('should return correct csv parse rules object incase of csv file resource which has group by fields and oldResource doc also has groupByFields with groupEmptyValues as false', () => {
+        const ftpCsvResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0'],
+          },
+        };
+        const oldFtpResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0', 'column1'],
+            groupEmptyValues: false,
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          sortByFields: [],
+          groupByFields: ['column0'],
+          groupEmptyValues: false,
+        };
+
+        expect(generateFileParserOptionsFromResource(ftpCsvResource, oldFtpResource)).toEqual(expectedOptions);
+      });
+      test('should return correct csv parse rules object incase of csv file resource which has group by fields and oldResource doc also has groupByFields with groupEmptyValues as true', () => {
+        const ftpCsvResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0'],
+          },
+        };
+        const oldFtpResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0', 'column1'],
+            groupEmptyValues: true,
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          sortByFields: [],
+          groupByFields: ['column0'],
+          groupEmptyValues: true,
+        };
+
+        expect(generateFileParserOptionsFromResource(ftpCsvResource, oldFtpResource)).toEqual(expectedOptions);
+      });
     });
     describe('parseFileData saga', () => {
       test('should not call evaluateExternalProcessor saga if the resource is empty/null', () =>
@@ -373,6 +567,21 @@ describe('Flow sample data utility sagas', () => {
             },
           },
         };
+        const oldFtpCsvResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+          },
+        };
         const sampleData = "occurredAt,source,code,message,traceKey,exportDataURI,importDataURI,oIndex,retryDataKey,errorId,legacyId,_flowJobId,classification,classifiedBy,retryAt\n09/30/2020 12:08:47 pm,connection,DOWNLOAD_ERROR,File object doesn't exist: ftp://unittest@ftp.celigo.com:************@ftp.celigo.com/TEST,,,,0,,840452691,,5f7427f5f874d353bd4bd6f7,missing,autopilot\n";
         const processedData = {
           occurredAt: '09/30/2020 12:08:47 pm',
@@ -399,6 +608,7 @@ describe('Flow sample data utility sagas', () => {
 
         return expectSaga(parseFileData, {sampleData, resource: ftpCsvResource })
           .provide([
+            [select(selectors.resource, 'exports', ftpCsvResource._id), oldFtpCsvResource],
             [call(evaluateExternalProcessor, { processorData }), processedData],
           ])
           .call.fn(evaluateExternalProcessor)
@@ -418,6 +628,18 @@ describe('Flow sample data utility sagas', () => {
             },
           },
         };
+        const oldFtpCsvResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: '\n',
+            },
+          },
+        };
         const sampleData = { test: 5 };
         const processorData = {
           data: sampleData,
@@ -430,6 +652,7 @@ describe('Flow sample data utility sagas', () => {
 
         return expectSaga(parseFileData, {sampleData, resource: ftpCsvResource })
           .provide([
+            [select(selectors.resource, 'exports', ftpCsvResource._id), oldFtpCsvResource],
             [call(evaluateExternalProcessor, { processorData }), throwError(error)],
           ])
           .call.fn(evaluateExternalProcessor)
