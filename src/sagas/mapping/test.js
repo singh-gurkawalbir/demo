@@ -987,7 +987,7 @@ describe('previewMappings saga', () => {
   const exportId = 'e1';
   const connectionId = 'conn1';
 
-  test('should trigger mapping preview failed action in case of incorrect importId', () => expectSaga(previewMappings)
+  test('should trigger mapping preview failed action in case of incorrect importId', () => expectSaga(previewMappings, {})
     .provide([
       [select(selectors.mapping), {
         mappings: [{extract: 'e1', generate: 'g1', lookupName: 'l1'}],
@@ -1004,7 +1004,7 @@ describe('previewMappings saga', () => {
   test('should trigger mapping preview correctly for Netsuite Import', () => {
     const importRes = {_id: importId, _connectionId: connectionId, name: 'n1', lookups: [], adaptorType: 'NetSuiteDistributedImport', netsuite_da: {recordType: 'account', mapping: {fields: [], lists: []}}};
 
-    return expectSaga(previewMappings)
+    return expectSaga(previewMappings, {})
       .provide([
         [select(selectors.mapping), {
           mappings: [{extract: 'e1', generate: 'g1'}],
@@ -1055,7 +1055,7 @@ describe('previewMappings saga', () => {
   test('should trigger mapping preview failed action correctly for Netsuite Import', () => {
     const importRes = {_id: importId, _connectionId: connectionId, name: 'n1', lookups: [], adaptorType: 'NetSuiteDistributedImport', netsuite_da: {recordType: 'account', mapping: {fields: [], lists: []}}};
 
-    return expectSaga(previewMappings)
+    return expectSaga(previewMappings, {})
       .provide([
         [select(selectors.mapping), {
           mappings: [{extract: 'e1', generate: 'g1'}],
@@ -1118,7 +1118,7 @@ describe('previewMappings saga', () => {
       },
     };
 
-    return expectSaga(previewMappings)
+    return expectSaga(previewMappings, {})
       .provide([
         [select(selectors.mapping), {
           mappings: [{extract: 'e1', generate: 'g1'}],
@@ -1183,7 +1183,7 @@ describe('previewMappings saga', () => {
                     mapping: {fields: [{extract: 'e1', generate: 'g1', internalId: false}], lists: []},
                   }}]}]}}};
 
-    return expectSaga(previewMappings)
+    return expectSaga(previewMappings, {})
       .provide([
         [select(selectors.mapping), {
           subRecordMappingId,
@@ -1289,7 +1289,7 @@ describe('previewMappings saga', () => {
       },
     };
 
-    return expectSaga(previewMappings)
+    return expectSaga(previewMappings, {})
       .provide([
         [select(selectors.mapping), {
           mappings: [{extract: 'e1', generate: 'g1'}],
@@ -1327,7 +1327,105 @@ describe('previewMappings saga', () => {
       .put(actions.mapping.previewReceived({previewData: 'xyz'}))
       .run();
   });
+  test('should trigger mapping preview success action correctly with editor sample data', () => {
+    const importRes = {
+      _id: importId,
+      _connectionId: 'conn11',
+      name: 'n1',
+      lookups: [],
+      adaptorType: 'SalesforceImport',
+      mapping: {
+        fields: [],
+        lists: [],
+      },
+      salesforce: {
+        sObjectType: 'account',
+      },
+    };
+    const editorId = '123';
 
+    expectSaga(previewMappings, {editorId})
+      .provide([
+        [select(selectors.mapping), {
+          mappings: [{extract: 'e1', generate: 'g1'}],
+          lookups: [{name: 'lookup1', isConditionalLookup: true}, {name: 'lookup2'}],
+          importId,
+          flowId,
+        }],
+        [select(selectors.resource, 'imports', importId), importRes],
+        [select(selectors.mappingGenerates, importId, undefined), []],
+        [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+        [call(apiCallWithRetry, {
+          path: '/connections/conn11/mappingPreview',
+          opts: {
+            method: 'PUT',
+            body: {
+              data: [],
+              importConfig: {
+                _id: 'i1',
+                _connectionId: 'conn11',
+                name: 'n1',
+                lookups: [],
+                adaptorType: 'SalesforceImport',
+                mapping: {
+                  fields: [
+                    {
+                      extract: 'e1',
+                      generate: 'g1',
+                    },
+                  ],
+                  lists: [],
+                },
+                salesforce: {
+                  sObjectType: 'account',
+                  lookups: [],
+                },
+              },
+            },
+          },
+          message: 'Loading',
+        }), {previewData: 'xyz'}],
+        [select(selectors.getSampleDataContext, {
+          flowId,
+          resourceId: importId,
+          stage: 'importMappingExtract',
+          resourceType: 'imports',
+        }), {data: []}],
+        [select(selectors.editor, editorId), {data: [{id: '1'}]}],
+      ])
+      .call(apiCallWithRetry, {
+        path: '/connections/conn11/mappingPreview',
+        opts: {
+          method: 'PUT',
+          body: {
+            data: [{id: '1'}],
+            importConfig: {
+              _id: 'i1',
+              _connectionId: 'conn11',
+              name: 'n1',
+              lookups: [],
+              adaptorType: 'SalesforceImport',
+              mapping: {
+                fields: [
+                  {
+                    extract: 'e1',
+                    generate: 'g1',
+                  },
+                ],
+                lists: [],
+              },
+              salesforce: {
+                sObjectType: 'account',
+                lookups: [],
+              },
+            },
+          },
+        },
+        message: 'Loading',
+      })
+      .put(actions.mapping.previewReceived({previewData: 'xyz'}))
+      .run();
+  });
   test('should trigger mapping preview success action correctly for HTTPImport Import', () => {
     const importRes = {
       _id: importId,
@@ -1364,7 +1462,7 @@ describe('previewMappings saga', () => {
       },
     };
 
-    return expectSaga(previewMappings)
+    return expectSaga(previewMappings, {})
       .provide([
         [select(selectors.mapping), {
           mappings: [{extract: 'e1', generate: 'g1'}],
@@ -1440,7 +1538,7 @@ describe('previewMappings saga', () => {
       },
     };
 
-    return expectSaga(previewMappings)
+    return expectSaga(previewMappings, {})
       .provide([
         [select(selectors.mapping), {
           mappings: [{extract: 'e1', generate: 'g1'}],
