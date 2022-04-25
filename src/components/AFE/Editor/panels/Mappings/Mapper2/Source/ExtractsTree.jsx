@@ -41,35 +41,39 @@ const useStyles = makeStyles(theme => ({
   },
   childTree: {
     paddingBottom: theme.spacing(1),
-    '& .rc-tree-indent-unit': {
-      width: theme.spacing(3),
+    '& .childTree-indent-unit': {
+      display: 'inline-block',
+      width: theme.spacing(1),
+      position: 'relative',
+      height: '100%',
     },
-    '& .rc-tree-indent-unit:before': {
-      display: 'none',
-    },
-    '& .rc-tree-switcher-noop': {
-      width: 0,
-    },
-    '& .rc-tree-treenode': {
+    '& .childTree-treenode': {
       cursor: 'pointer',
-      padding: theme.spacing(0.5, 0, 0.5, 2),
+      display: 'flex',
+      position: 'relative',
+      padding: theme.spacing(1, 0, 0.5, 2),
       alignItems: 'center',
     },
-    '& .rc-tree-treenode-selected': {
+    '& .childTree-switcher': {
+      width: theme.spacing(1),
+    },
+    '& .childTree-switcher-noop': {
+      width: theme.spacing(1),
+    },
+    '& .childTree-treenode-selected': {
       backgroundColor: theme.palette.background.paper2,
       borderLeft: `3px solid ${theme.palette.primary.main}`,
     },
-    '& .rc-tree-treenode:hover': {
+    '& .childTree-treenode:hover': {
       backgroundColor: theme.palette.background.paper2,
     },
     '& .filter-node': {
       backgroundColor: theme.palette.secondary.lightest,
     },
-    '& .rc-tree-node-content-wrapper': {
-      display: 'flex',
+    '& .childTree-node-content-wrapper': {
       width: '100%',
-      flexDirection: 'column',
       paddingRight: theme.spacing(2),
+      paddingLeft: theme.spacing(2),
     },
     '& .MuiIconButton-sizeSmall': {
       marginRight: 5,
@@ -77,9 +81,6 @@ const useStyles = makeStyles(theme => ({
     '& .MuiIconButton-label': {
       width: '12px',
       height: '12px',
-    },
-    '& .rc-tree-switcher,.rc-tree-draggable-icon': {
-      margin: theme.spacing(0),
     },
   },
   treeTitle: {
@@ -179,6 +180,7 @@ const ExtractsTree = React.memo((
 
       <Tree
         className={classes.childTree}
+        prefixCls="childTree"
         titleRender={TreeTitle}
         multiple
         defaultSelectedKeys={selectedKeys}
