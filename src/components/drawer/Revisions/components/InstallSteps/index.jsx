@@ -120,6 +120,7 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
     } else if (type === INSTALL_STEP_TYPES.URL) {
       if (!step.isTriggered) {
         dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'inProgress'));
+        // If user hits url step for the first time, redirect him to the url to let him login and install
         openExternalUrl({ url });
       } else {
         if (step.verifying) {
@@ -127,7 +128,15 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
         }
 
         dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'verify')); // status changes to verifying
-        dispatch(actions.integrationLCM.installSteps.installStep(integrationId, revisionId)); // makes api call to update steps
+        if (step.connectionId) {
+          // Incase of url step, step is expected to have a linked connectionId for which the bundle install is verified
+          // If step is already triggered, first verify if package is installed and further install the step else show error
+          dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
+            integrationId,
+            connectionId: step.connectionId,
+            revisionId,
+          }));
+        }
       }
     } else if (!step.isTriggered) {
       // For Merge and Revert steps

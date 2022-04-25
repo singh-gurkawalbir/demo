@@ -1,7 +1,7 @@
 import get from 'lodash/get';
 import qs from 'qs';
 import { getResourceSubType } from '../resource';
-import { safeParse } from '../string';
+import { isJsonString, safeParse } from '../string';
 
 // should return http request body from query, variables and operation name
 // Example graphql HTTP request body {
@@ -17,7 +17,7 @@ export function convertGraphQLQueryToHTTPBody({query, variables, operationName})
     httpBody.operationName = operationName;
   }
   if (variables !== '') {
-    httpBody.variables = variables;
+    httpBody.variables = isJsonString(variables) ? JSON.parse(variables) : variables;
   }
 
   return JSON.stringify(httpBody);
@@ -56,7 +56,13 @@ export function getGraphQLValues({resource, field, path, relativeURIPath}) {
 
   const graphqlObj = getGraphQLObj(value);
 
-  return graphqlObj?.[field];
+  const fieldValue = graphqlObj?.[field];
+
+  if (typeof fieldValue === 'object') {
+    return JSON.stringify(fieldValue);
+  }
+
+  return fieldValue;
 }
 
 export const GRAPHQL_JSON_FIELDS = [
