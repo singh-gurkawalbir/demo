@@ -698,6 +698,7 @@ export default (state = {}, action) => {
           if ('hardCodedValue' in value) {
             delete node.extract;
             delete node.combinedExtract;
+            delete node.default;
           } else {
             delete node.hardCodedValue;
           }

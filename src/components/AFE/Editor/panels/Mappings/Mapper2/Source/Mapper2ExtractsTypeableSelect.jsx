@@ -76,8 +76,8 @@ export const TooltipTitle = ({
     }
   }
 
-  // dynamic lookup will have empty input value, so need to show tooltip in that case
-  if (!inputValue && !isLookup) return fieldType;
+  // dynamic lookup and hard-coded value will/can have empty input value, so need to show tooltip in that case
+  if (!inputValue && !isLookup && !isHardCodedValue) return fieldType;
   if (!hideSourceDropdown) return title;
 
   return (

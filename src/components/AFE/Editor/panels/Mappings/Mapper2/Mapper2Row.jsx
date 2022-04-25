@@ -172,7 +172,7 @@ const Mapper2Row = React.memo(({
   const extractValue = combinedExtract || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
   const isLookup = !!lookupName;
   const isStaticLookup = !!(lookup.name && lookup.map);
-  const isHardCodedValue = !!hardCodedValue;
+  const isHardCodedValue = hardCodedValue !== undefined;
   const isHandlebarExp = handlebarRegex.test(extractValue);
   const hideExtractField = dataType === MAPPING_DATA_TYPES.OBJECT && !extractValue && copySource === 'no';
 

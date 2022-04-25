@@ -155,7 +155,6 @@ export default {
           break;
         case 'useNull':
           settings.hardCodedValue = null;
-          settings.default = '';
           break;
         case 'default':
           settings.hardCodedValue = Array.isArray(formVal.hardcodedDefault)

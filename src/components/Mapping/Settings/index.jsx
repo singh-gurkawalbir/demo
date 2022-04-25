@@ -301,7 +301,8 @@ export default function SettingsDrawer(props) {
       height="tall"
     >
 
-      <DrawerHeader title={<Title />} showBackButton />
+      {/* handleBack is added for v2 mapping settings as back button needs to update the active key as well */}
+      <DrawerHeader title={<Title />} showBackButton handleBack={setCancelTriggered} />
       <Switch>
         <Route
           path={buildDrawerUrl({ path: drawerPaths.MAPPINGS.CATEGORY_MAPPING_SETTINGS, baseUrl: match.url })}>
