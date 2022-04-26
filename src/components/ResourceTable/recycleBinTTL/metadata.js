@@ -32,7 +32,11 @@ export default {
       heading: 'Auto purge',
       isLoggable: true,
       Value: ({rowData: r}) => {
-        let restoreWithin = Math.ceil((30 * 24 * 60 * 60 * 1000 - (Date.now() - new Date(r.doc && r.doc.lastModified))) / 1000);
+        let restoreWithin = Math.ceil(
+          (30 * 24 * 60 * 60 * 1000 -
+            (Date.now() - new Date(r.doc && r.doc.lastModified))) /
+            1000
+        );
 
         if (restoreWithin < 60) {
           return getTextAfterCount('second', restoreWithin);
