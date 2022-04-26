@@ -66,6 +66,11 @@ export default {
               pattern: '{{uuid}}',
             },
           },
+          {
+            matchesRegEx: {
+              pattern: '{{random "(uuid|UUID)"\\s*\\d*}}',
+            },
+          },
         ],
       },
     },
