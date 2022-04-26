@@ -61,11 +61,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function IntegrationAppAddNewChild(props) {
+export default function IntegrationAppAddNewChild() {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  const { integrationId } = props.match.params;
+  const { integrationId } = match.params;
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const [requestedSteps, setRequestedSteps] = useState(false);
   const dispatch = useDispatch();
@@ -73,6 +73,7 @@ export default function IntegrationAppAddNewChild(props) {
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
 
   const [initialChildren] = useState(integration.children);
+
   const showUninstall = !!(
     integration &&
     integration.settings &&
@@ -113,20 +114,20 @@ export default function IntegrationAppAddNewChild(props) {
       dispatch(actions.integrationApp.child.clearSteps(integrationId));
       dispatch(actions.resource.request('integrations', integrationId));
       dispatch(actions.resource.requestCollection('flows'));
-      dispatch(actions.resource.requestCollection('exports'));
-      dispatch(actions.resource.requestCollection('imports'));
-      dispatch(actions.resource.requestCollection('connections'));
+      dispatch(actions.resource.requestCollection('exports', undefined, undefined, integrationId));
+      dispatch(actions.resource.requestCollection('imports', undefined, undefined, integrationId));
+      dispatch(actions.resource.requestCollection('connections', undefined, undefined, integrationId));
       if (integrationChildren && initialChildren && integrationChildren.length > initialChildren.length) {
         const newChild = differenceBy(integrationChildren, initialChildren, 'value');
 
         childId = newChild?.length && newChild[0].value;
       }
       if (childId) {
-        props.history.push(
+        history.push(
           getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${childId}/flows`)
         );
       } else {
-        props.history.push(
+        history.push(
           getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)
         );
       }
@@ -137,7 +138,7 @@ export default function IntegrationAppAddNewChild(props) {
     integrationAppName,
     integrationId,
     isSetupComplete,
-    props.history]);
+    history]);
 
   const formCloseHandler = useCallback(() => {
     dispatch(actions.integrationApp.child.updateStep(
@@ -215,7 +216,7 @@ export default function IntegrationAppAddNewChild(props) {
       dispatch(actions.integrationApp.child.updateStep(
         integrationId,
         installerFunction,
-        undefined,
+        'inProgress',
         true
       ));
       history.push(buildDrawerUrl({

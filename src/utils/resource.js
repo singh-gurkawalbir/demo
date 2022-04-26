@@ -859,6 +859,10 @@ export function getConnectionType(resource) {
       return `${assistant}-oauth`;
     }
   }
+  if (['basic', 'token'].includes(resource?.http?.auth?.type)) {
+    // small hack here. adding auth type to assistant, so the assistant wouldnt match in oauth applications list.
+    return `${assistant}=${resource.http.auth.type}`;
+  }
 
   if (assistant) return assistant;
 
