@@ -149,7 +149,7 @@ export default function DestinationDataType({dataType, disabled, nodeKey}) {
       <Tooltip
         title={open ? '' : `Data type: ${selectedDataTypeLabel} - Click to change`}
         placement="bottom" >
-        {/* todo karthik */}
+        {/* this div needs to be added to render the tooltip correctly */}
         <div>
           <TextButton
             onClick={handleMenu}

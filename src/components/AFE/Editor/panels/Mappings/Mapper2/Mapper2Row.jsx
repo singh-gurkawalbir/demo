@@ -69,7 +69,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   settingsButton: {
-    marginBlock: 'auto', // todo karthik pls verify this
+    marginBlock: 'auto',
   },
 }));
 
@@ -228,6 +228,7 @@ const Mapper2Row = React.memo(({
         <Tooltip
           placement="bottom"
           title={(!generate && !generateDisabled) ? 'Enter destination record field to configure settings' : ''}>
+          {/* this div needs to be added to render the tooltip correctly when settings is disabled */}
           <div className={classes.settingsButton}>
             <ActionButton
               data-test={`fieldMappingSettings-${nodeKey}`}
