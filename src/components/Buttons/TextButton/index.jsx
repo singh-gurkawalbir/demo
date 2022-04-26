@@ -44,7 +44,6 @@ export default function TextButton(props) {
       color="secondary"
       className={clsx(classes.root, {[classes.error]: error}, {[classes.underline]: underline}, {[classes.vertical]: vertical}, className)}
       disableElevation
-      disableFocusRipple
       {...rest}>
       {children}
     </Button>
