@@ -154,7 +154,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'file.type',
-        is: ['csv', 'json', 'xlsx'],
+        is: ['csv', 'json', 'xlsx', 'xml'],
       },
     ],
   },

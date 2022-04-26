@@ -1480,7 +1480,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'import.lastModified':
 'System generated datetime to track the last time this resource was modified.',
   'import.uploadFile':
-'Please provide a sample file that this transfer would need to process. We will use the sample file to auto set various fields (where possible), and also to help you map data in a subsequent step. The sample file that you provide does not need to be overly large, but it should contain all the fields that you want to work with, and also be in the same format that the transfer will need to generate when running in a production capacity.',
+' Please provide a sample file that this transfer would need to process. We will use the sample file to auto-set various fields (where possible), and also help you map data in a subsequent step. The sample file that you provide does not need to be overly large (at max 5 records), but it should contain all the fields that you want to work with, and also be in the same format that the transfer will need to generate when running in a production capacity.',
   'import.traceKeyTemplate':
 'Define a <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> that integrator.io will use to identify a unique record for a parent-child record combination. You can use a single field such as {{{field1}}} or use a handlebar expression. When this field is set, you will override the platform default child record trace key field. The child record trace key template value will include the parent record trace key in the format ‘parent_record_trace_key - child_record_trace_key’.',
   'import.apiIdentifier':
