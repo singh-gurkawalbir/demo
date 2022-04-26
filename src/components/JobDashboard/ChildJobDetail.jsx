@@ -31,7 +31,7 @@ export const JobDetailsStyles = makeStyles(theme => ({
   },
   error: {
     width: '9.15%',
-    textAlign: 'left',
+    textAlign: 'right',
   },
   resolved: {
     width: '9%',
