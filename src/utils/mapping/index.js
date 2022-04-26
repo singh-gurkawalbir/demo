@@ -14,7 +14,6 @@ import { isJsonString, generateUniqueKey } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
 import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../constants';
-import TabRow from '../../components/AFE/Editor/panels/Mappings/Mapper2/TabbedRow';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
@@ -673,7 +672,7 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
     clonedNode.children.unshift({
       key: generateUniqueKey(),
       parentKey,
-      title: TabRow,
+      title: '',
       isTabNode: true,
     });
   }
@@ -752,7 +751,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
             children.unshift({
               key: generateUniqueKey(),
               parentKey: currNodeKey,
-              title: TabRow,
+              title: '',
               isTabNode: true,
             });
             // since the first source is already pushed, all other children should

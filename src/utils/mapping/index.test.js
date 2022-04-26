@@ -3375,7 +3375,7 @@ describe('mapping utils', () => {
         lookups: [],
         result: {
           isSuccess: false,
-          errMessage: 'Extract Fields missing for field(s): b',
+          errMessage: 'Extract fields missing for field(s): b',
         },
       },
       {
@@ -3396,7 +3396,7 @@ describe('mapping utils', () => {
         lookups: [{name: 'lookup1', map: {a: 'b'}}],
         result: {
           isSuccess: false,
-          errMessage: 'Extract Fields missing for field(s): b',
+          errMessage: 'Extract fields missing for field(s): b',
         },
       },
     ];

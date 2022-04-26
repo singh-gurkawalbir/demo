@@ -511,6 +511,7 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.MAPPING.V2.UPDATE_EXPANDED_KEYS:
+        if (!draft.mapping) break;
         draft.mapping.expandedKeys = expandedKeys;
         break;
 

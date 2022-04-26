@@ -20,6 +20,7 @@ import useConfirmDialog from '../../../../../ConfirmDialog';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
 import { MAPPING_DATA_TYPES } from '../../../../../../utils/mapping';
 import messageStore from '../../../../../../utils/messageStore';
+import TabRow from './TabbedRow';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -87,22 +88,24 @@ const RightIcon = ({title, Icon, className}) => {
   );
 };
 
-const Mapper2Row = React.memo(({
-  nodeKey,
-  combinedExtract,
-  extract,
-  copySource = 'no',
-  generate,
-  hardCodedValue,
-  dataType,
-  lookupName,
-  disabled,
-  generateDisabled,
-  isRequired,
-  isEmptyRow,
-  hidden,
-  children,
-}) => {
+const Mapper2Row = React.memo(props => {
+  const {
+    nodeKey,
+    isTabNode,
+    combinedExtract,
+    extract,
+    copySource = 'no',
+    generate,
+    hardCodedValue,
+    dataType,
+    lookupName,
+    disabled,
+    generateDisabled,
+    isRequired,
+    isEmptyRow,
+    hidden,
+    children,
+  } = props;
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -175,6 +178,12 @@ const Mapper2Row = React.memo(({
   const isHardCodedValue = hardCodedValue !== undefined;
   const isHandlebarExp = handlebarRegex.test(extractValue);
   const hideExtractField = dataType === MAPPING_DATA_TYPES.OBJECT && !extractValue && copySource === 'no';
+
+  // object array data types will have tabbed row node
+  // in case of multiple extracts
+  if (isTabNode) {
+    return <TabRow {...props} />;
+  }
 
   // this prop is used for object array tab view
   // where some children needs to be hidden
