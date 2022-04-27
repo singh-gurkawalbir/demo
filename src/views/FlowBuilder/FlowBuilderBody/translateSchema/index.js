@@ -2,27 +2,6 @@
 import { generateDefaultEdge, generateId, GRAPH_ELEMENTS_TYPE } from '../lib';
 import { generateNewTerminal, generateRouterNode } from '../nodeGeneration';
 
-export const initializeFlowForReactFlow = flow => {
-  if (!flow) return flow;
-  const { pageGenerators = [], pageProcessors = [], routers = [] } = flow;
-
-  pageGenerators.forEach(pg => {
-    pg.id = pg._exportId || pg._connectionId || pg.application || `none-${generateId()}`;
-  });
-  pageProcessors.forEach(pp => {
-    pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${generateId()}`;
-  });
-  routers.forEach(({branches = []}) => {
-    branches.forEach(branch => {
-      const {pageProcessors = []} = branch;
-
-      pageProcessors.forEach(pp => {
-        pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${generateId()}`;
-      });
-    });
-  });
-};
-
 const hydrateNodeData = (resourcesState, node) => {
   if (node._exportId) {
     return resourcesState?.exports?.find(ele => ele._id === node.id);

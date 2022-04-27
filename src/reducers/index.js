@@ -111,6 +111,7 @@ import { filterMap } from '../components/GlobalSearch/filterMeta';
 import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions, REVISION_DIFF_ACTIONS } from '../utils/revisions';
 import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
+import { initializeFlowForReactFlow } from '../utils/flows/flowbuilder';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -2141,6 +2142,23 @@ selectors.makeResourceDataSelector = () => {
     (_1, _2, id) => id,
 
     (resourceIdState, stagedIdState, resourceType, id) => selectors.resourceDataModified(resourceIdState, stagedIdState, resourceType, id)
+  );
+};
+
+selectors.makeFlowDataForFlowBuilder = () => {
+  const cachedResourceSelector = selectors.makeResourceDataSelector();
+
+  return createSelector(
+    (state, flowId) => cachedResourceSelector(
+      state,
+      'flows',
+      flowId
+    )?.merged,
+    flow => {
+      initializeFlowForReactFlow(flow);
+
+      return flow;
+    }
   );
 };
 // Please use makeResourceDataSelector in JSX as it is cached selector.

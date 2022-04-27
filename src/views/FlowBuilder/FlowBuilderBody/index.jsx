@@ -18,6 +18,7 @@ import MergeNode from './CustomNodes/MergeNode';
 import BackgroundPanel from './Background';
 import SourceTitle from './titles/SourceTitle';
 import DestinationTitle from './titles/DestinationTitle';
+import { useSelectorMemo } from '../../../hooks';
 
 const useCalcCanvasStyle = () => {
   const theme = useTheme();
@@ -106,7 +107,9 @@ function Canvas({flowId, integrationId}) {
   // const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const calcCanvasStyle = useCalcCanvasStyle();
-  const mergedFlow = useSelector(state => selectors.resourceData(state, 'flows', flowId));
+  const mergedFlow = useSelectorMemo(selectors.makeFlowDataForFlowBuilder, flowId);
+
+  console.log('mergedFlow', mergedFlow);
   const elements = useSelector(state => selectors.fbElements(state, flowId));
   const dragNodeId = useSelector(state => selectors.fbDragNodeId(state, flowId));
   const elementsMap = useSelector(state => selectors.fbElementsMap(state, flowId));
