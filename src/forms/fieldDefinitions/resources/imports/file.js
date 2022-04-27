@@ -61,6 +61,11 @@ export default {
               pattern: '{{timestamp "(?=.*x).*"}}|{{timestamp "(?=.*X).*"}}|{{timestamp "(?=.*mm)(?=.*ss).*"}}',
             },
           },
+          {
+            matchesRegEx: {
+              pattern: '{{uuid}}',
+            },
+          },
         ],
       },
     },
@@ -299,19 +304,11 @@ export default {
     isLoggable: true,
     type: 'select',
     label: 'File encoding',
+    refreshOptionsOnChangesTo: 'file.type',
     visibleWhenAll: [
       {
         field: 'outputMode',
         is: ['records'],
-      },
-    ],
-    options: [
-      {
-        items: [
-          { label: 'UTF-8', value: 'utf8' },
-          { label: 'Windows-1252', value: 'win1252' },
-          { label: 'UTF-16LE', value: 'utf-16le' },
-        ],
       },
     ],
   },

@@ -4,6 +4,7 @@ import { useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { selectors } from '../../../../../../reducers';
+import { drawerPaths } from '../../../../../../utils/rightDrawer';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/formFactory/utils';
 import LoadResources from '../../../../../../components/LoadResources';
 import { IAFormStateManager} from '..';
@@ -65,9 +66,10 @@ function IASettings({ integrationId, childId, parentUrl }) {
         {
           resource: flow,
           isFlow: true,
+          childId,
         }
       ),
-    [fields, flow, integrationId, sections]
+    [fields, flow, integrationId, childId, sections]
   );
   const { formState, handleClose } = useIASettingsStateWithHandleClose(
     integrationId,
@@ -77,7 +79,7 @@ function IASettings({ integrationId, childId, parentUrl }) {
   );
 
   return (
-    <LoadResources required resources="exports,imports,flows,connections">
+    <LoadResources required integrationId={integrationId} resources="exports,imports,flows,connections">
       <IAFormStateManager
         className={clsx(classes.settingsDrawerForm, {
           [classes.settingsDrawerCamForm]: sections,
@@ -100,8 +102,7 @@ export default function SettingsDrawer(props) {
 
   return (
     <RightDrawer
-      path=":flowId/settings"
-      variant="temporary"
+      path={drawerPaths.FLOW_BUILDER.IA_SETTINGS}
       height="tall"
       width="xl">
       <IASettings {...props} parentUrl={match.url} />

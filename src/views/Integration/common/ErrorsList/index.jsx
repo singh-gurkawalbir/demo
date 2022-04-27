@@ -19,6 +19,7 @@ import ResourceButton from '../../../FlowBuilder/ResourceButton';
 import { emptyObject } from '../../../../utils/constants';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import { getTextAfterCount } from '../../../../utils/string';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import Status from '../../../../components/Buttons/Status';
 
 const metadata = {
@@ -101,12 +102,17 @@ const metadata = {
         });
 
         const handleErrorClick = useCallback(() => {
-          history.push(`${flowBuilderTo}/errors/${id}`);
+          history.push(buildDrawerUrl({
+            path: drawerPaths.ERROR_MANAGEMENT.V2.ERROR_DETAILS,
+            baseUrl: flowBuilderTo,
+            params: { resourceId: id, errorType: 'open'},
+          }));
+          history.push();
         }, [flowBuilderTo, history, id]);
 
         if (!count) {
           return (
-            <Status variant="success" size="mini" onClick={handleErrorClick}>success</Status >
+            <Status variant="success" size="mini" onClick={handleErrorClick}>Success</Status >
           );
         }
 
@@ -174,7 +180,12 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   const match = useRouteMatch();
   const history = useHistory();
   const location = useLocation();
-  const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/:flowId/errorsList`}) || {};
+  const { params: { flowId } = {} } = matchPath(location.pathname, {
+    path: buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.FLOW_ERROR_LIST,
+      baseUrl: match.path,
+    }),
+  }) || {};
   const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
@@ -185,17 +196,12 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   }, [match.url, history]);
 
   return (
-    <LoadResources
-      required="true"
-      resources="imports, exports, connections">
+    <LoadResources required="true" integrationId={integrationId} resources="imports,exports,connections">
       <RightDrawer
-        path=":flowId/errorsList"
+        path={drawerPaths.ERROR_MANAGEMENT.V2.FLOW_ERROR_LIST}
         height="tall"
-        onClose={handleClose}
-        variant="temporary">
-
+        onClose={handleClose}>
         <DrawerHeader title={`Flow: ${flow.name || flowId}`} />
-
         <DrawerContent>
           <ErrorsList integrationId={integrationId || flow._integrationId} childId={childId} />
         </DrawerContent>

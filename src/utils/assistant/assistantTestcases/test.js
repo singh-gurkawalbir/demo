@@ -4032,6 +4032,77 @@ describe('getPathParams util function cases', () => {
       pathParametersInfo: pathParams,
     })).toMatchObject(expected);
   });
+
+  test('should return required params when only one param present with config settings', () => {
+    const relativePath = '/PositionEntity(\':_externalCode\')';
+    const actualPath = '/PositionEntity(\'1001594\')';
+    const expected = {
+      externalCode: '1001594',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: [
+        {
+          id: 'externalCode',
+          name: 'ExternalCode',
+          config: {
+            prefix: "('",
+            suffix: "')",
+          },
+        }],
+    })).toMatchObject(expected);
+  });
+
+  test('should return required params when two path params are present with config settings', () => {
+    const relativePath = '/PerSocialAccount:_domain,:_personIdExternal';
+    const actualPath = "/PerSocialAccount(domain='twitter',personIdExternal='EMP121212')";
+    const expected = {
+      personIdExternal: 'EMP121212',
+      domain: 'twitter',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: [
+        {
+          id: 'domain',
+          name: 'Domain',
+          config: {
+            prefix: "(domain='",
+            suffix: "'",
+          },
+        }, {
+          id: 'personIdExternal',
+          name: 'PersonalIdExternal',
+          config: {
+            prefix: "personIdExternal='",
+            suffix: "')",
+          },
+        }],
+    })).toMatchObject(expected);
+  });
+
+  test('should return required params when two path params are present and are wrapped in parenthesis', () => {
+    const relativePath = '/v1.0/companies(:_companyid)/salesOrders(:_sid)/salesOrderLines';
+    const actualPath = '/v1.0/companies({{{_PARENT.ids}}})/salesOrders({{{data.id}}})/salesOrderLines';
+    const expected = {
+      companyid: '{{{_PARENT.ids}}}',
+      sid: '{{{data.id}}}',
+    };
+
+    expect(getPathParams({
+      relativePath,
+      actualPath,
+      pathParametersInfo: [
+        {id: 'companyid'},
+        {id: 'sid'},
+      ],
+    })).toMatchObject(expected);
+  });
+
   test('should return optional when only optional params are present', () => {
     const relativePath = 'some/thing:_action2:_action3/some/other';
     const actualPath = 'some/thing/action2/sdf/action3/sdfa/some/other';

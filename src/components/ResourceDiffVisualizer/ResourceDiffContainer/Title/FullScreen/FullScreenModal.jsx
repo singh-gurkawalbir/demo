@@ -30,25 +30,27 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export function ModalTitle({ resourceId, resourceType, action, integrationId }) {
+export function ModalTitle({ resourceId, resourceType, action, integrationId, resourceDiff }) {
   const classes = useStyles();
-  const resourceName = useSelector(state => selectors.resourceName(state, resourceId, resourceType));
-  const showReferences = shouldShowReferences(resourceType);
+  const resourceName = useSelector(state => selectors.diffResourceName(state, {
+    resourceId,
+    resourceType,
+    resourceDiff,
+  }));
+  const showReferences = shouldShowReferences(resourceType, action);
 
   return (
-    <>
-      <div className={classes.title}>
-        <Typography variant="body2"> {resourceName || resourceId} </Typography>
-        <CeligoDivider />
-        <Typography variant="body2"> Action: {REVISION_DIFF_ACTION_LABELS[action]} </Typography>
-        {showReferences && (
+    <div className={classes.title}>
+      <Typography variant="body2"> {resourceName} </Typography>
+      <CeligoDivider />
+      <Typography variant="body2"> Action: {REVISION_DIFF_ACTION_LABELS[action]} </Typography>
+      {showReferences && (
         <ActionGroup position="right" className={classes.referencesFullscreenAction}>
           <ViewReferences resourceId={resourceId} resourceType={resourceType} integrationId={integrationId} />
           <CeligoDivider />
         </ActionGroup>
-        )}
-      </div>
-    </>
+      )}
+    </div>
   );
 }
 export default function FullScreenModal({resourceType, resourceDiff, titles, onClose, integrationId }) {
@@ -60,7 +62,11 @@ export default function FullScreenModal({resourceType, resourceDiff, titles, onC
       show onClose={onClose} maxWidth="lg"
       className={classes.referencesFullscreenModal}>
       <ModalTitle
-        resourceId={resourceId} resourceType={resourceType} action={action} integrationId={integrationId} />
+        resourceId={resourceId}
+        resourceType={resourceType}
+        action={action}
+        resourceDiff={resourceDiff}
+        integrationId={integrationId} />
       <DiffPanel resourceDiff={resourceDiff} titles={titles} />
     </ModalDialog>
   );

@@ -145,6 +145,7 @@ const connectors = [
     type: 'bigquerydatawarehouse',
     keywords: 'database,db',
     group: 'db',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360042825892-Set-up-a-connection-to-Google-BigQuery',
   },
   {
     id: 'graph_ql',
@@ -313,6 +314,8 @@ const newConnections = [
   },
   {id: 'amazonsellingpartner', name: 'Amazon Seller Central', type: 'http', assistant: 'amazonsellingpartner'},
   {id: 'recurlyv3', name: 'Recurly v3', type: 'http', assistant: 'recurlyv3'},
+  {id: 'loopreturnsv2', name: 'Loop Returns', type: 'http', assistant: 'loopreturnsv2'},
+  {id: 'acumaticaecommerce', name: 'Acumatica', type: 'rest', assistant: 'acumaticaecommerce'},
 ];
 
 connectors.sort(stringCompare('name'));

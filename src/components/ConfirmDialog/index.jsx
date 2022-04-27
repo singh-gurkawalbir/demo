@@ -93,6 +93,7 @@ const ConfirmDialog = (
             const buttonProps = {
               'data-test': button.dataTest || button.label,
               key: button.label,
+              error: button.error,
               className: clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'}),
               onClick: handleButtonClick(button),
             };

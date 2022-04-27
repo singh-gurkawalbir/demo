@@ -5,6 +5,7 @@
  * 3. FTP, NS, SF, AS2, Web hook
  */
 import { call, select } from 'redux-saga/effects';
+import isEmpty from 'lodash/isEmpty';
 import {
   getPostDataForDeltaExport,
   isUIDataExpectedForResource,
@@ -62,13 +63,50 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
   if (isIntegrationApp(flow) && sampleData && !refresh) return sampleData;
 }
 
-export default function* getPreviewOptionsForResource({ resource, flow, refresh, runOffline }) {
+export function* _getMockDataOptionsForResource({
+  addMockData,
+  _pageProcessorId,
+  isMockInput,
+  resourceId,
+}) {
+  const options = {};
+
+  if (!addMockData) return options;
+
+  const mockInput = yield select(selectors.getResourceMockData, resourceId);
+  const typeOfPreview = yield select(selectors.typeOfSampleData, resourceId);
+
+  const shouldAddMockData = addMockData && ((_pageProcessorId !== resourceId) || !isMockInput);
+
+  if (shouldAddMockData) {
+    options.inputData = !isEmpty(mockInput) ? mockInput : undefined;
+
+    if (typeOfPreview === 'send') {
+      options.sendAndPreview = true;
+    } else {
+      options.preview = true;
+    }
+  }
+
+  return options;
+}
+
+export default function* getPreviewOptionsForResource({
+  resource,
+  flow,
+  refresh,
+  runOffline,
+  _pageProcessorId,
+  isMockInput,
+  addMockData,
+}) {
   const connection = yield select(
     selectors.resource,
     'connections',
     resource?._connectionId
   );
-
+  const {_id: resourceId} = resource || {};
+  const mockDataOptions = yield call(_getMockDataOptionsForResource, {addMockData, _pageProcessorId, isMockInput, resourceId});
   const uiData = isUIDataExpectedForResource(resource, connection)
     ? yield call(_getUIDataForResource, { resource, connection, flow, refresh })
     : undefined;
@@ -86,8 +124,8 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
       runOfflineSource: 'db',
     };
 
-    return type === 'delta' ? { runOfflineOptions, postData } : { runOfflineOptions };
+    return type === 'delta' ? { ...mockDataOptions, runOfflineOptions, postData } : { ...mockDataOptions, runOfflineOptions };
   }
 
-  return type === 'delta' ? { uiData, postData } : { uiData, files };
+  return type === 'delta' ? { ...mockDataOptions, uiData, postData } : { ...mockDataOptions, uiData, files };
 }

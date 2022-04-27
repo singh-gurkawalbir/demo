@@ -10,33 +10,45 @@ import DrawerContent from '../drawer/Right/DrawerContent';
 import InviteUser from './InviteUser';
 import SharedUserList from './SharedUserList';
 import { TextButton } from '../Buttons';
-
-const rootPath = 'share/stacks/:stackId';
+import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 
 export default function StackShareDrawer() {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
+
+  const shareStacksUrl = buildDrawerUrl({
+    path: drawerPaths.SHARE_STACKS,
+    baseUrl: match.url,
+  });
+  const inviteUserUrl = buildDrawerUrl({
+    path: drawerPaths.ACCOUNT.INVITE_USER,
+    baseUrl: shareStacksUrl,
+  });
+
   const handleRefreshClick = useCallback(
     () => dispatch(actions.resource.requestCollection('sshares')),
     [dispatch]
   );
   const handleInviteClick = useCallback(() => {
-    history.push(`${history.location.pathname}/invite`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.ACCOUNT.INVITE_USER,
+      baseUrl: `${history.location.pathname}`,
+    }));
   }, [history]);
 
   const isInviteUser = history.location.pathname.includes('/invite');
 
   return (
     <RightDrawer
-      path={rootPath}
+      path={drawerPaths.SHARE_STACKS}
       height="tall"
       width="large"
-      variant="temporary"
       helpKey={!isInviteUser && 'stack.sharing'}
-      helpTitle={!isInviteUser && 'Stack sharing'}
-      hideBackButton={!isInviteUser}>
-      <DrawerHeader title={isInviteUser ? 'Invite user' : 'Stack sharing'}>
+      helpTitle={!isInviteUser && 'Stack sharing'} >
+      <DrawerHeader
+        showBackButton={isInviteUser}
+        title={isInviteUser ? 'Invite user' : 'Stack sharing'}>
         {!isInviteUser && (
         <>
           <TextButton
@@ -56,10 +68,10 @@ export default function StackShareDrawer() {
       </DrawerHeader>
 
       <Switch>
-        <Route path={`${match.url}/${rootPath}/invite`}>
+        <Route path={inviteUserUrl}>
           <InviteUser />
         </Route>
-        <Route path={`${match.url}/${rootPath}`}>
+        <Route path={shareStacksUrl}>
           <DrawerContent>
             <SharedUserList />
           </DrawerContent>

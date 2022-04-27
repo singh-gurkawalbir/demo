@@ -215,6 +215,9 @@ export default function SelectApplication(props) {
       padding: '0px',
       overflowY: 'auto',
     }),
+    input: () => ({
+      padding: 0,
+    }),
   });
   const customStyles = mergedStyles();
 

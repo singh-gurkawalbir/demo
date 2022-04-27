@@ -67,6 +67,36 @@ describe('AFE region selectors test cases', () => {
 
       expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
     });
+    test('should return true for graphql resource and graphql http field', () => {
+      state.data.resources.exports = [{
+        _id: '123',
+        type: 'graph_ql',
+      }];
+      state.session.editors[editorId] = {
+        id: editorId,
+        resourceType: 'exports',
+        resourceId: '123',
+        fieldId: 'http.body',
+        stage: 'flowInput',
+      };
+
+      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
+    });
+    test('should return false for graphql resource when fieldId is not a graphql http field', () => {
+      state.data.resources.exports = [{
+        _id: '123',
+        type: 'graph_ql',
+      }];
+      state.session.editors[editorId] = {
+        id: editorId,
+        resourceType: 'exports',
+        resourceId: '123',
+        fieldId: 'abc',
+        stage: 'flowInput',
+      };
+
+      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(false);
+    });
     test('should return false if resource is a page generator', () => {
       state.data.resources.exports = [{
         _id: '123',

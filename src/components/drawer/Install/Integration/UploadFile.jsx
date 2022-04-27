@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import Spinner from '../../../Spinner';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   uploadButton: {
@@ -66,7 +67,11 @@ export default function UploadFile() {
 
   useEffect(() => {
     if (isFileUploaded) {
-      history.push(`${location.pathname}/preview/${templateId}`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.INSTALL.INTEGRATION_PREVIEW,
+        baseUrl: location.pathname,
+        params: { templateId },
+      }));
       setUploadInProgress(false);
       dispatch(actions.template.clearUploaded(templateId));
     }

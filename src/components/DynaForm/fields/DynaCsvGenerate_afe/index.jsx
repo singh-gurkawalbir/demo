@@ -15,6 +15,7 @@ import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
 import { emptyObject } from '../../../../utils/constants';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   csvContainer: {
@@ -145,7 +146,11 @@ export default function DynaCsvGenerate_afe(props) {
       onSave: handleSave,
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
   }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
 
   return (

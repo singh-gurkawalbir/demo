@@ -1387,8 +1387,12 @@ availableResources.forEach(type => {
       let mockCollection = [{ id: 1 }, { id: 2 }];
       let mockSharedStacks = [{ id: 3 }, { id: 4 }];
       let effect;
+
       // next() of generator functions always return:
       // { done: [true|false], value: {[right side of yield]} }
+      expect(saga.next().value).toEqual(
+        put(actions.resource.collectionRequestSent(type))
+      );
       const callEffect = saga.next().value;
 
       expect(callEffect).toEqual(call(apiCallWithPaging, { path }));
@@ -1410,7 +1414,7 @@ availableResources.forEach(type => {
       expect(effect).toEqual(
         put(actions.resource.receivedCollection(type, mockCollection))
       );
-
+      expect(saga.next().value).toEqual(put(actions.resource.collectionRequestSucceeded({resourceType: type})));
       const final = saga.next();
 
       expect(final.done).toBe(true);
@@ -1422,14 +1426,20 @@ availableResources.forEach(type => {
         actions.resource.requestCollection(type)
       );
       const path = `/${type}`;
+      const effect = saga.next().value;
+
+      expect(effect).toEqual(
+        put(actions.resource.collectionRequestSent(type))
+      );
       const callEffect = saga.next().value;
 
       expect(callEffect).toEqual(call(apiCallWithPaging, { path }));
 
       const final = saga.throw();
 
-      expect(final.done).toBe(true);
-      expect(final.value).toBeUndefined();
+      expect(final.value).toEqual(put(actions.resource.collectionRequestFailed({resourceType: type})));
+
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -1585,6 +1595,16 @@ availableResources.forEach(type => {
       expect(final.done).toBe(true);
     });
   });
+});
+
+describe('getResourceCollection saga for connectorLicenses', () => {
+  test('should dispatch collection request and succeeded call with connectorLicenses resource type for licenses route', () => expectSaga(getResourceCollection, {resourceType: 'connectors/60936ec22b22fe4803a3a22c/licenses'})
+    .provide([
+      [matchers.call.fn(apiCallWithPaging), []],
+    ])
+    .put(actions.resource.collectionRequestSent('connectorLicenses'))
+    .put(actions.resource.collectionRequestSucceeded({resourceType: 'connectorLicenses'}))
+    .run());
 });
 
 describe('getResourceCollection saga', () => {

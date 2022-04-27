@@ -292,6 +292,8 @@ export default {
 'The username of your ServiceNow account.',
   'servicenow.connection.http.auth.basic.password':
 'The password of your ServiceNow account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'servicenow.connection.http.auth.type': 'Please select Authentication type.',
+  'servicenow.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><br><b>Steps to get the client ID and client secret:<br></b>1. Sign in to your ServiceNow instance.<br>2. Activate the OAuth 2.0 plugin.<br>3. Set the system property <b>com.snc.platform.security.oauth.is.active</b> to true.<br>4. Navigate to <b>System OAuth</b> > <b>Application Registry</b>.<br>5. Click <b>New</b> and then click <b>Create an OAuth API endpoint for external clients</b>.<br>6. Record the <b>client_id</b> and <b>client_secret</b> values from the previous step.',
   'shipstation.connection.http.auth.basic.username':
 'The API Key of your ShipStation account.',
   'shipstation.connection.http.auth.basic.password':
@@ -496,6 +498,8 @@ export default {
 'Please enter your API key here. This can be obtained from Account Settings in REST API section.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.coupaSubdomain':
 'Please enter the subdomain of your account here which can be obtained from the login url.',
+  'coupa.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><br> <b> Steps to get the Client ID and secret</b><br>1. Sign in to your Coupa account as an administrator.</b>.<br>2. Navigate to <b>Profile > Projects > All Setup Items > Integrations > Oauth2/OpenID Connect Clients > Create</b>.<br>3. Select <b>Grant Type</b> as <b>Client credentials</b> and input the required details for the fields <b>Name</b>,<b> Login</b>, <b>Contact First Name</b>, <b>Contact Last Name</b> and <b>Contact Email</b>.<br>4. Select the <b>Scopes</b> as per the requirement.<br>5. Click on <b>Save</b> to get the value of Client ID and secret.',
+  'coupa.connection.http.auth.type': 'Please select Authentication type.',
   'coupa.connection.http.auth.token.token':
 'Please enter API Key of your Coupa account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.microsoftDynamics365Subdomain':
@@ -517,6 +521,7 @@ export default {
   'microsoftpowerautomate.connection.http.unencrypted.subdomain': 'Enter the subdomain of your Microsoft Power Automate account.<br><br><b>Steps to get the subdomain:</b><br>1. Sign in to your Microsoft Power Automate account.<br>2. Navigate to <b>Settings</b> → <b>Power Platform admin center</b>.<br>3. Select the environment you use to build your flows.<br>4. Copy the value under the environment URL and paste it into integrator.io. For example, if your environment URL is orgbe1234.crm.dynamics.com, then enter <b>orgbe1234.crm</b>.',
   'microsoftpowerautomate.connection.http.unencrypted.tenantId': 'Enter the Tenant ID of your Azure application.<br><br><b>Steps to get the Tenant ID:</b><br>1. Sign in to your <a href=https://portal.azure.com/signin/index/>Azure portal</a>.<br>2. Under <b>Azure services</b>, click on <b>App registrations</b>.<br>3. Select the application which you will be using for Microsoft Power Automate.<br>4. In the overview tab under Essentials, you will find your <b>Directory (tenant) ID</b>.',
   'microsoftpowerautomate.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><br><b>Steps to get the client ID and client secret:<br></b>1. Sign in to your <a href=https://portal.azure.com/signin/index/>Azure portal</a>.<br>2.Under <b>Azure services</b>, click <b>App registrations</b>.<br>3. Select the application that you will be using for Microsoft Power Automate.<br>4. On the <b>Overview</b> tab under <b>Essentials</b>, locate the <b>Application (client) ID</b>.<br>5. On the <b>Certificates & secrets</b> tab, click <b>New client secret</b>.',
+  'microsoftdynamics365finance.connection.http.unencrypted.subdomain': 'Enter your Microsoft Dynamics 365 Finance subdomain. <br><b>Steps to get the subdomain:</b><br>1. Sign in to the LCS portal.<br>2. Select the corresponding project.<br>3. Scroll right to the Environment pane, click on the deployed topology.<br>4. On the top right corner, under the Login drop-down, launch your instance by clicking the <b>Log on to environment</b> option.<br>5. You will find your Subdomain in the address bar.',
   'googlecontacts.connection.http.unencrypted.apiType': 'The API type determines which API your connection will use. The Contacts API is being deprecated; use the People API instead.',
   'googlecontacts.connection.http.scopePeople': 'Scopes are named permissions that are provided when the connection is authorized. The list of supported scopes should be clearly documented in the API user guide. Connecting with a given scope allows your integration, for example, to export data or perform admin functions.',
   '15five.connection.http.auth.token.token': 'Enter the API key of your 15Five account.<br><b>Steps to get the API key:</b><br>1. Sign in to your 15Five account.<br>2. Navigate to <b>Settings > Features > Integrations</b> and enable to the right of the Public API option.<br>3. Once enabled, you will land on the <b>Company API keys</b> page.<br>3. Click the <b>Create new key</b> button, Add in a short name for your API key, and Click Save to save your name and setting.<br> <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
@@ -571,6 +576,9 @@ export default {
   'faire.connection.http.accountType': 'Please select your environment here.',
   'faire.connection.http.encrypted.apiKey':
 'Please Enter the access token got from Faire support. This can be obtained from the Settings section and API Access token subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API access token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.Multiple layers of protection, including AES 256 encryption, are in place to keep your access token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'brex.connection.http.unencrypted.accountType': 'Please select your environment here.',
+  'brex.connection.http.auth.token.token':
+'Enter the API token provided by Brex.<br><b>Steps to get the API Token:</b><br>1. Sign in to <a href="https://dashboard.brex.com/">Brex account</a> as an <a href= "https://developer.brex.com/docs/roles_permissions_scopes">account admin</a>.<br>2. Go to <a href="https://dashboard.brex.com/settings/developer">Developer > Settings</a>.<br>3. Click <b><i>Create Token</i></b>.<br>4. Create a name for your token that will help you identify it. Choose what level of data access you need for your application; these are the <a href="https://developer.brex.com/docs/roles_permissions_scopes">scopes</a> your token will have.<br>5. The next screen will confirm your previous selections. Make sure it looks good, then select <b><i>Allow access</i></b>.<br>6. Your token is now created. Copy and store the token securely. You won\'t be able to see it again.<br><b>Note: </b>User tokens will expire if they are not used to make an API call for 30 days.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'ware2go.connection.http.accountType':
 'Please select your environment here. Select Staging if the account is created on https://openapi.staging.ware2goproject.com/ware2go. Select Production if the account is created on https://openapi.ware2goproject.com/ware2go.',
   'ware2go.connection.http.auth.basic.username':
@@ -579,6 +587,7 @@ export default {
 'Please enter your Access Secret here. This can be obtained by reaching out to Ware2Go support team.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Access secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'ware2go.connection.http.unencrypted.merchantId':
 'Please enter your Merchant Id here. This can be obtained by reaching out to Ware2Go support team.',
+  'ware2go.connection.http.platformversion': 'Select your Ware2Go account platform version:<br>1. Select <b>Platform 1</b> to connect using the <b>Access token</b> and <b>Access secret</b> (or) select <b>Platform2</b> to connect using a <b>Username</b> and <b>Password</b>.',
   'ware2go.connection.http.unencrypted.username': 'Please enter the username of your Ware2Go account here.',
   'ware2go.connection.http.unencrypted.password': 'Please enter the password of your Ware2Go account here.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'messagemedia.connection.http.auth.basic.username':
@@ -617,6 +626,7 @@ export default {
   'zohoexpense.connection.http.unencrypted.organizationId': 'Enter your Organization ID. <br><b>Steps to get the Organization ID:</b><br>1. Sign in to your Zoho Expense account.<br>2. Copy your Organization ID from the top right corner in the <b>My Organizations</b> tab.',
   'jazzhr.connection.http.auth.token.token': 'Enter your JazzHR API key. <br><b>Steps to get the API key:</b><br>1. Log in to your JazzHR account.<br> 2. On the dashboard, navigate to <b>Settings</b> → <b>Integration</b>.<br>3. Copy your API key. <br><b>Note:</b> Only Super Administrators, Recruiting Administrators, or Developers have visibility of the API Key.<br><br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'segment.connection.http.encrypted.writeKey': 'Enter the Write key for your Segment source. The write key is a unique identifier for each source. It lets Segment know which source is sending the data, and which destinations should receive that data.<br><b>Steps to get the Write key:</b><br>1. Sign in to your Segment account.<br>2. From the Dashboard navigate to <b>Sources</b>, select the respective source.<br>3. Go to <b>Settings</b> -> <b>API keys</b>.<br>4. Copy the Write key.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'loopreturns.connection.http.unencrypted.version': 'The API versions determines which API your connection will use.',
   'loopreturns.connection.http.auth.token.token': `Please enter your API key here. Log into your Loop Returns Account. Go to Settings > Developers, you can generate an API key or use an existing one.
 <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.`,
   'clover.connection.http.unencrypted.environment': 'Please select the environment of your Clover account.',
@@ -896,7 +906,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'snowflake.connection.rdbms.password': 'Password to connect to Snowflake.',
   'connection.rdbms.bigquery.projectId': 'The unique identifier for the BigQuery project in the Google Cloud account.',
   'connection.rdbms.bigquery.clientEmail': 'The email address for the Google Cloud service account used for authentication.',
-  'connection.rdbms.bigquery.privateKey': 'The private key for the Google Cloud service account used for authentication.',
+  'connection.rdbms.bigquery.privateKey': 'First, copy the private key from the Google portal for the service account that you want to use to authenticate the connection. Before you add it to integrator.io you must replace all newline characters (\\n) throughout the private key:<br>1. Paste the private key into a text editor.<br>2. Find \\n.<br>3. With your cursor in that location, delete the \\n characters and press Enter or Return.<br>4. Repeat this for each instance of \\n.<br>5. Copy and paste the reformatted private key into integrator.io.',
   'connection.rdbms.bigquery.dataset': 'The name of the dataset containing the tables and views being accessed.',
   'connection.rdbms.options':
 'Define additional configurations for the database connection that is available according to the database documentation. For example, you can configure the connection timeout if the SQL server you are trying to connect to is slow (default connection timeout for MS SQL server is 15000ms).',
@@ -1444,6 +1454,11 @@ if you're using a production account, you'll find your API keys under the 'API M
   'flow._runNextFlowIds':
 'Select one or more flows that you would like to run automatically whenever this flow completes. The next flow must be enabled, and it cannot be a realtime flow. (Note that the current flow may run again even though the next flow is in progress.) ',
   'flow.autoResolveMatchingTraceKeys': 'Enable <b>Auto-resolve errors with matching trace key</b> to resolve other open errors with the same <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> (unique field identifier).',
+  'flow.manageAliases': 'Use this page to see all of your aliases for this flow, as well as any integration-level aliases (inherited aliases). You can create a new alias for this flow (top right), or use the Actions menu to edit, copy, delete, or view details for a flow-level alias.  Inherited aliases are passed down to the flow from the integration. However, keep in mind that if you reference both a flow-level alias and an integration-level alias for a resource in a script, the flow-level alias will take precedence. Use the Actions menu for Inherited aliases to copy an alias or view its details. To create, edit, or delete one of these aliases, navigate to the integration instead and use the Alias tab. <a href="https://docs.celigo.com/hc/en-us/articles/4454740861979" target="_blank">Learn more about aliases</a>.',
+  'alias.aliasId': 'Enter a descriptive, unique name to use as the Alias ID. This is what you will use in scripts to refer to the resource. Use only letters, numbers, hyphens(-) and/or underscores(_). For example, shopify_flow_neworders or netsuite-connection2_prod',
+  'alias.description': 'Enter a description that provides more context on how the resource is used in your integration.',
+  'alias.resourceType': 'Select the type of resource this alias will reference (such as a flow or import). Once you select the type, you can choose from a list of resources matching this type.',
+  'alias.resource': 'Select the specific resource for this alias to reference. For example, if you selected Connection as the Resource type and your integration has three connections, choose the one you want this alias to reference.',
   'iclient._id':
 'System generated primary unique identifier for your iClient.  For API users, this value should be used for GET and PUT requests.',
   'iclient.lastModified':
@@ -1720,6 +1735,9 @@ if you're using a production account, you'll find your API keys under the 'API M
   'import.dynamodb.expressionAttributeValues':
 ' If you need to compare an attribute with a value, define an expression attribute value as a placeholder. Expression attribute values in Amazon DynamoDB are substitutes for the actual values that you want to compare—values that you might not know until runtime. An expression attribute value must begin with a colon ( and be followed by one or more alphanumeric character. Refer to the DynamoDB documentation for the expected projection object syntax and operators.',
   'import.dynamodb.ignoreExtract': '',
+  'import.previewAndSend': `Toggle the Preview/Send button to either preview the request that will be sent to the destination application, or manually send requests to the destination application.</br></br>
+  <ul><li> Preview – Click Preview to see the HTTP request constructed with a sample record from your flow data, according to your import configurations.</li></br></br>
+  <li>Send – Click Send to initiate an import request to the destination application and view its HTTP request, response, and parsed output.</li></ul>`,
   'integration._id':
 'System generated primary unique identifier for your integration.  For API users, this value should be used for GET and PUT requests.',
   'integration.name':
@@ -1949,6 +1967,7 @@ if you're using a production account, you'll find your API keys under the 'API M
 'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
   'import.expression':
 'This field represents your complete handlebars expression. You have the freedom to manually enter an expression, or use the function and field drop-downs above to help construct it.',
+  'import.editMockInput': 'Use this mock data to preview and send import requests. The data can be modified to test different import scenarios, or to help with import configurations. The mock input is stored temporarily for the duration of the session, and is used for testing purposes only.',
   'jobErrors.helpSummary':
 'You can view the error source, code and message, as well as when the error occurred. Hover over each error to click the … Actions to access the record where the error occurred and make any necessary changes. Once you’ve tracked down and resolved your error, resolve it from the Actions or button toolbar. You can also retry errors, such as something due to an intermittent connection failure. If you have a lot of errors, you’ll want to download them into a csv, then mark them resolved or retried, and upload your processed errors.',
   'connection.useSFTP': '',
@@ -2042,7 +2061,7 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Save your client ID and client secret in iClient for an added layer of security.',
   'connection.http.clientCertificates.key': 'Select a .KEY private key file.',
   'connection.http.clientCertificates.cert':
-'Select a certificate of .PEM or .PFX format.',
+'Select a certificate in PEM format.',
   'connection.http.clientCertificates.passphrase':
 'Enter a passphrase if you need to further protect this certificate file.',
   'connection.marketplaceRegion':
@@ -2361,9 +2380,9 @@ use the custom option.`,
   'import.netsuite.file.internalId': 'Enter a reference ID or expression to identify reference IDs of files to replace in the NetSuite File Cabinet.',
   'auditlogs.download': 'Download up to 1,000 records from the last year. Note that filters are not applied to a download.',
   'revisions.pull': 'Pulling changes from one linked integration to another lets you see conflicts, review changes, and merge them from one integration to another. You can only pull data from a direct clone or source integration.. For example, clone Integration A as Integration B, then B to C, and B to D. You can create a pull between integrations A and B, B and C, B and D; but not between A and C, or C and D',
-  'pull.integration': 'The integration that you are pulling the changes from. This lists all direct clones of the current integration and existing parent clones.',
-  'pull.reviewChanges': 'Review the changes between the cloned and source integration. This list will show you all your changes in every export, import, flow, and script, but not API tokens or connections. You have to resolve all these conflicts before you can successfully merge the changes.',
-  'pull.mergeChanges': 'You can make changes to a source and cloned integration, then merge them. You must reconfigure your connections to merge your changes and there may be additional installation steps depending on available packages.',
+  'pull.integration': 'Select the remote production or sandbox integration from which you pull changes. All linked integrations are displayed, which includes clones of this integration and the integration from which it was cloned.',
+  'pull.reviewChanges': 'Review the changes between the current and remote integration. You can see all your integration resource changes, except for sensitive resources like API tokens and connections. You must resolve conflicts before you can continue to merge your changes. You’ll configure any new connections in the Merge changes step.',
+  'pull.mergeChanges': 'You must first configure any new connections that are coming from the remote integration. There may be additional installations steps depending on the type of connection, including installing remote packages. You can cancel your merge at any time, or close the window and resume your merge later.',
   'revert.create': 'When creating a revert, you are restoring to a revision of an integration. The revert action will also generate a revision',
   'revert.description': 'Enter information about the revert',
   'revert.revision.createdAt': 'The date and time of the revision you’ll revert to.',

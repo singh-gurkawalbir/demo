@@ -80,6 +80,7 @@ export const REVISION_CREATION_STATUS = Object.freeze({
   CREATED: 'created',
 });
 
+export const INTEGRATION_DEPENDENT_RESOURCES = ['exports', 'imports', 'connections', 'flows'];
 export const UI_FIELD_VALUES = Object.freeze(['/formView', '/uploadFile']);
 export const SALESFORCE_DA_PACKAGE_URL =
   'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000000Y9kv';
@@ -393,6 +394,7 @@ export const REST_ASSISTANTS = [
   'wish',
   'exacterp',
   'acumatica',
+  'acumaticaecommerce',
   'myobessentials',
   'zohomail',
   'bronto',
@@ -673,6 +675,8 @@ export const CONNECTORS_TO_IGNORE = [
   'ebayfinance',
   'googlecontactspeople',
   'recurlyv3',
+  'loopreturnsv2',
+  'acumaticaecommerce',
 ];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
@@ -703,6 +707,11 @@ export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
 });
 
 export const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
+
+export const ALIAS_FORM_KEY = Object.freeze({
+  integrations: 'integration-alias',
+  flows: 'flow-alias',
+});
 
 export const UNASSIGNED_SECTION_ID = 'unassigned';
 export const UNASSIGNED_SECTION_NAME = 'Unassigned';
@@ -759,6 +768,10 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
   'googlecontactspeople',
   'recurly',
   'recurlyv3',
+  'loopreturns',
+  'loopreturnsv2',
+  'acumatica',
+  'acumaticaecommerce',
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];

@@ -92,6 +92,7 @@ export default function ResourceItemsBranch({onEditorChange, flowId, resourceId}
   }, shallowEqual);
 
   const handleViewResource = (resourceType, resourceId) => {
+    // TODO @Raghu: Do we need a change in drawer url here?
     history.push(`/playground/edit/${resourceType}/${resourceId}`);
   };
 

@@ -5,11 +5,15 @@ import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { DynaGenericSelect } from './DynaRefreshableSelect/RefreshGenericResource';
 import { makeExportResource } from '../../../utils/exportData';
+import useIntegration from '../../../hooks/useIntegration';
+import useResourceSettingsContext from '../../../hooks/useResourceSettingsContext';
 
 export default function DynaExportSelect(props) {
   const { resourceContext, resource, id, type } = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
+  const integrationId = useIntegration(resourceType, resourceId);
+  const resContext = useResourceSettingsContext(resourceType, resourceId, integrationId);
   const { _connectionId: resConnectionId, _connectorId: resConnectorId } = useSelector(state => (selectors.resource(state, resourceType, resourceId) || {}));
   const { kind, key, exportResource } = makeExportResource(resource, resConnectionId, resConnectorId);
   const { status, data, error: errorMessage } = useSelector(state =>
@@ -17,8 +21,8 @@ export default function DynaExportSelect(props) {
   );
   const dispatch = useDispatch();
   const onFetch = useCallback(() => {
-    dispatch(actions.exportData.request(kind, key, exportResource));
-  }, [dispatch, kind, key, exportResource]);
+    dispatch(actions.exportData.request({kind, identifier: key, resource: exportResource, resourceContext: resContext}));
+  }, [dispatch, kind, key, exportResource, resContext]);
 
   if (!kind || !key || !exportResource) {
     return (

@@ -941,11 +941,17 @@ describe('Flow sample data utility sagas', () => {
             ), { merged: pg2}],
             [call(
               getPreviewOptionsForResource,
-              { resource: pg1, flow, refresh: undefined, runOffline: undefined }
+              { resource: pg1,
+                flow,
+                refresh: undefined,
+                runOffline: undefined }
             ), {}],
             [call(
               getPreviewOptionsForResource,
-              { resource: pg2, flow, refresh: undefined, runOffline: undefined }
+              { resource: pg2,
+                flow,
+                refresh: undefined,
+                runOffline: undefined}
             ), {}],
           ])
           .returns(flowResourcesMap)
@@ -984,9 +990,9 @@ describe('Flow sample data utility sagas', () => {
         };
 
         const flowResourcesMap = {
-          'lookup-123': {doc: {...pp1, sampleResponseData: lookupResponseData}, options: {}},
-          'lookup-456': {doc: {...pp2, sampleResponseData: lookupResponseData}, options: {}},
-          'import-123': {doc: {...pp3, sampleResponseData}, options: {}},
+          'lookup-123': {doc: {...pp1, sampleResponseData: lookupResponseData}, options: { }},
+          'lookup-456': {doc: {...pp2, sampleResponseData: lookupResponseData}, options: { }},
+          'import-123': {doc: {...pp3, sampleResponseData}, options: { uiData: undefined, files: undefined }},
         };
 
         return expectSaga(fetchFlowResources, { flow, type: 'pageProcessors' })
@@ -1011,11 +1017,30 @@ describe('Flow sample data utility sagas', () => {
             ), { merged: pp3}],
             [call(
               getPreviewOptionsForResource,
-              { resource: pp1, flow, refresh: undefined, runOffline: undefined }
+              { resource: pp1,
+                flow,
+                refresh: undefined,
+                runOffline: undefined,
+              }
             ), {}],
             [call(
               getPreviewOptionsForResource,
-              { resource: pp2, flow, refresh: undefined, runOffline: undefined }
+              { resource: pp2,
+                flow,
+                refresh: undefined,
+                runOffline: undefined,
+              }
+            ), {}],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pp3,
+                flow,
+                refresh: undefined,
+                runOffline: undefined,
+                isMockInput: undefined,
+                addMockData: undefined,
+                _pageProcessorId: pp3._id,
+              }
             ), {}],
           ])
           .returns(flowResourcesMap)
@@ -1064,11 +1089,19 @@ describe('Flow sample data utility sagas', () => {
             ), { merged: pg2}],
             [call(
               getPreviewOptionsForResource,
-              { resource: pg1, flow, refresh: undefined, runOffline: undefined }
+              { resource: pg1,
+                flow,
+                refresh: undefined,
+                runOffline: undefined,
+              }
             ), pg1Options],
             [call(
               getPreviewOptionsForResource,
-              { resource: pg2, flow, refresh: undefined, runOffline: undefined }
+              { resource: pg2,
+                flow,
+                refresh: undefined,
+                runOffline: undefined,
+              }
             ), pg2Options],
           ])
           .run();
@@ -1135,11 +1168,19 @@ describe('Flow sample data utility sagas', () => {
             ), { merged: pg2}],
             [call(
               getPreviewOptionsForResource,
-              { resource: pg1, flow, refresh, runOffline }
+              { resource: pg1,
+                flow,
+                refresh,
+                runOffline,
+              }
             ), pg1Options],
             [call(
               getPreviewOptionsForResource,
-              { resource: pg2, flow, refresh, runOffline }
+              { resource: pg2,
+                flow,
+                refresh,
+                runOffline,
+              }
             ), pg2OptionsWithRunOffline],
           ])
           .run();
@@ -1218,11 +1259,19 @@ describe('Flow sample data utility sagas', () => {
             ), { merged: pg2}],
             [call(
               getPreviewOptionsForResource,
-              { resource: pg1, flow, refresh: undefined, runOffline: undefined }
+              { resource: pg1,
+                flow,
+                refresh: undefined,
+                runOffline: undefined,
+              }
             ), { uiData: pg1.sampleData }],
             [call(
               getPreviewOptionsForResource,
-              { resource: pg2, flow, refresh: undefined, runOffline: undefined }
+              { resource: pg2,
+                flow,
+                refresh: undefined,
+                runOffline: undefined,
+              }
             ), { uiData: undefined }],
           ])
           .returns(flowResourcesMap)
@@ -1958,6 +2007,9 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
+              _pageProcessorId,
+              isMockInput: undefined,
+              addMockData: undefined,
             }), pageProcessorMap],
             [call(fetchResourceDataForNewFlowResource, {
               resourceId: _pageProcessorId,
@@ -1982,7 +2034,8 @@ describe('Flow sample data utility sagas', () => {
         const _pageProcessorDoc = { _id: '456', name: 'test import', adaptorType: 'RESTImport', oneToMany: true, pathToMany: 'users.addresses'};
         const pageGeneratorMap = {
           'export-123': {
-            doc: { _id: '123', name: 'test', adaptorType: 'RESTExport'}, options: {},
+            doc: { _id: '123', name: 'test', adaptorType: 'RESTExport' },
+            options: {},
           },
         };
         const previousPageProcessorMap = {
@@ -1990,15 +2043,23 @@ describe('Flow sample data utility sagas', () => {
             doc: { _id: '123', name: 'test', adaptorType: 'RESTImport'}, options: {},
           },
           'import-111': {
-            doc: { _id: '456', name: 'test import', adaptorType: 'RESTImport'},
+            doc: { _id: '456', name: 'test import', adaptorType: 'RESTImport'}, options: {},
           },
         };
         const pageProcessorMap = {
           'import-123': {
-            doc: { _id: '123', name: 'test', adaptorType: 'RESTImport'}, options: {},
+            doc: { _id: '123', name: 'test', adaptorType: 'RESTImport' },
+            options: {},
           },
           'import-111': {
-            doc: _pageProcessorDoc,
+            doc: {
+              _id: '456',
+              name: 'test import',
+              adaptorType: 'RESTImport',
+              oneToMany: true,
+              pathToMany: 'users.addresses',
+            },
+            options: {},
           },
         };
         const body = {
@@ -2038,6 +2099,9 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
+              _pageProcessorId,
+              isMockInput: undefined,
+              addMockData: undefined,
             }), previousPageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
           ])
@@ -2105,6 +2169,9 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
+              _pageProcessorId,
+              isMockInput: undefined,
+              addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
           ])
@@ -2211,6 +2278,9 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
+              _pageProcessorId,
+              isMockInput: undefined,
+              addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
           ])
@@ -2254,11 +2324,6 @@ describe('Flow sample data utility sagas', () => {
             },
           },
         };
-        const _pageProcessorDocWithoutProcessorsConfig = {
-          _id: _pageProcessorId,
-          name: 'test lookup',
-          adaptorType: 'RESTExport',
-        };
         const pageGeneratorMap = {
           'export-123': {
             doc: {
@@ -2285,11 +2350,17 @@ describe('Flow sample data utility sagas', () => {
           },
         };
         const updatedPageProcessorMap = {
-          [_pageProcessorId]: {
-            doc: _pageProcessorDocWithoutProcessorsConfig,
+          'lookup-111': {
+            doc: {
+              _id: 'lookup-111',
+              name: 'test lookup',
+              adaptorType: 'RESTExport',
+            },
+            options: undefined,
           },
           'import-123': {
-            doc: { _id: '123', name: 'test', adaptorType: 'RESTImport'}, options: {},
+            doc: { _id: '123', name: 'test', adaptorType: 'RESTImport' },
+            options: {},
           },
         };
         const body = {
@@ -2329,6 +2400,9 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
+              _pageProcessorId,
+              isMockInput: undefined,
+              addMockData: undefined,
             }), pageProcessorMapWithoutPageProcessorDoc],
             [call(apiCallWithRetry, apiOptions), previewData],
           ])
@@ -2405,6 +2479,9 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
+              _pageProcessorId,
+              isMockInput: undefined,
+              addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
           ])
@@ -2477,6 +2554,9 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
+              _pageProcessorId,
+              isMockInput: undefined,
+              addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
           ])
@@ -2549,6 +2629,9 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
+              _pageProcessorId,
+              isMockInput: undefined,
+              addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), throwError(error)],
           ])
@@ -2629,6 +2712,9 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
+              _pageProcessorId,
+              isMockInput: undefined,
+              addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), throwError(error)],
             [call(pageProcessorPreview, {
@@ -2660,6 +2746,27 @@ describe('Flow sample data utility sagas', () => {
       });
     });
     describe('exportPreview saga', () => {
+      const resourceId = 'export-123';
+      const resource = {
+        name: 'Test export',
+        _id: resourceId,
+        type: 'once',
+        rest: {
+          once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5 }},
+          relativeURI: '/api/v2/users.json',
+        },
+        rawData: 'raw1234',
+        adaptorType: 'RESTExport',
+      };
+      const formattedResourceWithoutOnceDoc = {
+        name: 'Test export',
+        _id: resourceId,
+        rest: {
+          relativeURI: '/api/v2/users.json',
+        },
+        adaptorType: 'RESTExport',
+        rawData: 'raw1234',
+      };
       const previewData = {
         data: [{
           users: [
@@ -2702,30 +2809,7 @@ describe('Flow sample data utility sagas', () => {
         .returns(undefined)
         .run());
       test('should format the resourceObject, put hidden true and include runOfflineOptions if runOffline is true and resource has valid rawData', () => {
-        const resourceId = 'export-123';
-        const resource = {
-          name: 'Test export',
-          _id: resourceId,
-          type: 'once',
-          rest: {
-            once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5 }},
-            relativeURI: '/api/v2/users.json',
-          },
-          rawData: 'raw1234',
-          adaptorType: 'RESTExport',
-        };
-        const formattedResourceWithoutOnceDoc = {
-          name: 'Test export',
-          _id: resourceId,
-          rest: {
-            relativeURI: '/api/v2/users.json',
-          },
-          adaptorType: 'RESTExport',
-          rawData: 'raw1234',
-        };
         const body = {
-          _flowId: 'f1',
-          _integrationId: 'i1',
           ...formattedResourceWithoutOnceDoc,
           verbose: true,
           runOfflineOptions: {
@@ -2736,6 +2820,7 @@ describe('Flow sample data utility sagas', () => {
         const hidden = false;
 
         const flowId = 'f1';
+        const path = `/integrations/i1/flows/${flowId}/exports/preview`;
 
         return expectSaga(exportPreview, { resourceId, runOffline: true, hidden, flowId })
           .provide([
@@ -2746,7 +2831,7 @@ describe('Flow sample data utility sagas', () => {
               SCOPES.VALUE
             ), { merged: resource }],
             [call(apiCallWithRetry, {
-              path: '/exports/preview',
+              path,
               opts: { method: 'POST', body },
               message: 'Loading',
               hidden: true,
@@ -2759,8 +2844,75 @@ describe('Flow sample data utility sagas', () => {
           .returns(previewData)
           .run();
       });
+      test('should format the resourceObject, put hidden true and include runOfflineOptions if runOffline is true and resource has valid rawData and it is a standalone resource', () => {
+        const body = {
+          ...formattedResourceWithoutOnceDoc,
+          verbose: true,
+          runOfflineOptions: {
+            runOffline: true,
+            runOfflineSource: 'db',
+          },
+        };
+        const hidden = false;
+
+        const flowId = 'f1';
+        const path = '/exports/preview';
+
+        return expectSaga(exportPreview, { resourceId, runOffline: true, hidden, flowId })
+          .provide([
+            [select(
+              selectors.resourceData,
+              'exports',
+              resourceId,
+              SCOPES.VALUE
+            ), { merged: resource }],
+            [call(apiCallWithRetry, {
+              path,
+              opts: { method: 'POST', body },
+              message: 'Loading',
+              hidden: true,
+            }), previewData],
+            [select(selectors.resource, 'flows', flowId), {}],
+          ])
+          .returns(previewData)
+          .run();
+      });
+      test('should format the resourceObject, put hidden true and include runOfflineOptions if runOffline is true and resource has valid rawData and resource belongs to a new flow', () => {
+        const body = {
+          ...formattedResourceWithoutOnceDoc,
+          verbose: true,
+          runOfflineOptions: {
+            runOffline: true,
+            runOfflineSource: 'db',
+          },
+        };
+        const hidden = false;
+
+        const flowId = 'new-f1';
+        const path = '/integrations/i1/exports/preview';
+
+        return expectSaga(exportPreview, { resourceId, runOffline: true, hidden, flowId })
+          .provide([
+            [select(
+              selectors.resourceData,
+              'exports',
+              resourceId,
+              SCOPES.VALUE
+            ), { merged: resource }],
+            [call(apiCallWithRetry, {
+              path,
+              opts: { method: 'POST', body },
+              message: 'Loading',
+              hidden: true,
+            }), previewData],
+            [select(selectors.resource, 'flows', flowId), {
+              _integrationId: 'i1',
+            }],
+          ])
+          .returns(previewData)
+          .run();
+      });
       test('should not include runOfflineOptions even if runOffline is true but resource does not have valid rawData', () => {
-        const resourceId = 'export-123';
         const resource = {
           name: 'Test export',
           _id: resourceId,
@@ -2780,9 +2932,8 @@ describe('Flow sample data utility sagas', () => {
             relativeURI: '/api/v2/users.json',
           },
           adaptorType: 'RESTExport',
-          _flowId: flowId,
-          _integrationId: 'i1',
         };
+        const path = `/integrations/i1/flows/${flowId}/exports/preview`;
 
         return expectSaga(exportPreview, { resourceId, runOffline: true, flowId })
           .provide([
@@ -2793,7 +2944,7 @@ describe('Flow sample data utility sagas', () => {
               SCOPES.VALUE
             ), { merged: resource }],
             [call(apiCallWithRetry, {
-              path: '/exports/preview',
+              path,
               opts: { method: 'POST', body: formattedResourceWithoutOnceDoc },
               message: 'Loading',
               hidden: false,
@@ -2807,7 +2958,6 @@ describe('Flow sample data utility sagas', () => {
           .run();
       });
       test('should throw error when apiCall throws error and throwOnError is true', () => {
-        const resourceId = 'export-123';
         const flowId = '23';
         const _integrationId = '34';
         const resource = {
@@ -2823,13 +2973,12 @@ describe('Flow sample data utility sagas', () => {
         const formattedResourceWithoutOnceDoc = {
           name: 'Test export',
           _id: resourceId,
-          _integrationId,
-          _flowId: flowId,
           rest: {
             relativeURI: '/api/v2/INVALID_URI.json',
           },
           adaptorType: 'RESTExport',
         };
+        const path = `/integrations/${_integrationId}/flows/${flowId}/exports/preview`;
         const error = JSON.stringify({
           errors: [{status: 404, message: '{"code":" Invalid relative uri"}'}],
         });
@@ -2847,7 +2996,7 @@ describe('Flow sample data utility sagas', () => {
               'flows',
               flowId), {_integrationId, _id: flowId}],
             [call(apiCallWithRetry, {
-              path: '/exports/preview',
+              path,
               opts: { method: 'POST', body: formattedResourceWithoutOnceDoc },
               message: 'Loading',
               hidden: false,
@@ -2857,7 +3006,6 @@ describe('Flow sample data utility sagas', () => {
           .run();
       });
       test('should not throw error when apiCall throws error and throwOnError is false', () => {
-        const resourceId = 'export-123';
         const flowId = '23';
         const _integrationId = '34';
         const resource = {
@@ -2873,13 +3021,12 @@ describe('Flow sample data utility sagas', () => {
         const formattedResourceWithoutOnceDoc = {
           name: 'Test export',
           _id: resourceId,
-          _integrationId,
-          _flowId: flowId,
           rest: {
             relativeURI: '/api/v2/INVALID_URI.json',
           },
           adaptorType: 'RESTExport',
         };
+        const path = `/integrations/${_integrationId}/flows/${flowId}/exports/preview`;
         const error = JSON.stringify({
           errors: [{status: 404, message: '{"code":" Invalid relative uri"}'}],
         });
@@ -2897,7 +3044,7 @@ describe('Flow sample data utility sagas', () => {
               'flows',
               flowId), {_integrationId, _id: flowId}],
             [call(apiCallWithRetry, {
-              path: '/exports/preview',
+              path,
               opts: { method: 'POST', body: formattedResourceWithoutOnceDoc },
               message: 'Loading',
               hidden: false,
@@ -2907,39 +3054,17 @@ describe('Flow sample data utility sagas', () => {
           .run();
       });
       test('should not throw error when apiCall throws error for Offline mode and call exportPreview saga again without runOffline', () => {
-        const resourceId = 'export-123';
         const flowId = '23';
         const _integrationId = '34';
-        const resource = {
-          name: 'Test export',
-          _id: resourceId,
-          type: 'once',
-          rest: {
-            once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5 }},
-            relativeURI: '/api/v2/users.json',
-          },
-          rawData: 'raw1234',
-          adaptorType: 'RESTExport',
-        };
-        const formattedResourceWithoutOnceDoc = {
-          name: 'Test export',
-          _id: resourceId,
-          rest: {
-            relativeURI: '/api/v2/users.json',
-          },
-          adaptorType: 'RESTExport',
-          rawData: 'raw1234',
-        };
         const body = {
           ...formattedResourceWithoutOnceDoc,
-          _integrationId,
-          _flowId: flowId,
           verbose: true,
           runOfflineOptions: {
             runOffline: true,
             runOfflineSource: 'db',
           },
         };
+        const path = `/integrations/${_integrationId}/flows/${flowId}/exports/preview`;
         const error = JSON.stringify({
           errors: [{status: 404, message: '{"code":" Invalid S3 key"}'}],
         });
@@ -2959,7 +3084,7 @@ describe('Flow sample data utility sagas', () => {
               'flows',
               flowId), {_integrationId, _id: flowId}],
             [call(apiCallWithRetry, {
-              path: '/exports/preview',
+              path,
               opts: { method: 'POST', body },
               message: 'Loading',
               hidden: true,

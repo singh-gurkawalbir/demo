@@ -801,6 +801,7 @@ describe('getFormattedResourceForPreview util', () => {
       _id: 'asdf2345',
       name: 'FTP Import',
       sampleResponseData: {
+        name: '',
         _json: '',
         dataURI: '',
         errors: '',

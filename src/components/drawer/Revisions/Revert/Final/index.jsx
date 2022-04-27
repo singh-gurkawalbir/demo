@@ -10,6 +10,7 @@ import InstallSteps from '../../components/InstallSteps';
 import RevisionHeader from '../../components/RevisionHeader';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
 import useHandleInvalidRevision from '../../hooks/useHandleInvalidRevision';
+import { drawerPaths } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {
@@ -66,8 +67,7 @@ export default function FinalRevert({ integrationId }) {
 
   return (
     <RightDrawer
-      path="revert/:revisionId/final"
-      variant="temporary"
+      path={drawerPaths.LCM.FINAL_REVERT_STEP}
       height="tall"
       width="xl">
       <FinalRevertDrawerContent integrationId={integrationId} parentUrl={match.url} />

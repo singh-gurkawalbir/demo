@@ -7,6 +7,7 @@ import { TextButton } from '../../../../../components/Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { getRevisionFilterKey } from '../../../../../utils/revisions';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 import PanelHeader from '../../../../../components/PanelHeader';
 import ActionGroup from '../../../../../components/ActionGroup';
 import AddIcon from '../../../../../components/icons/AddIcon';
@@ -65,7 +66,7 @@ function DrawerDeclarations({ integrationId, hasMonitorLevelAccess }) {
 
 const RevisionsList = ({ integrationId }) => {
   const classes = useStyles();
-  const filteredRevisions = useSelector(state => selectors.filteredRevisions(state, integrationId));
+  const filteredRevisions = useSelector(state => selectors.getCurrPageFilteredRevisions(state, integrationId));
   const isLoadingRevisions = useSelector(state => selectors.isLoadingRevisions(state, integrationId));
   const hasNoRevisions = useSelector(state => selectors.integrationHasNoRevisions(state, integrationId));
 
@@ -125,11 +126,19 @@ export default function Revisions({ integrationId }) {
 
   const handleCreatePull = useOpenRevisionWhenValid({
     integrationId,
-    drawerURL: `${match.url}/pull/${nanoid()}/open`,
+    drawerURL: buildDrawerUrl({
+      path: drawerPaths.LCM.OPEN_PULL,
+      baseUrl: match.url,
+      params: { revId: nanoid() },
+    }),
   });
   const handleCreateSnapshot = useOpenRevisionWhenValid({
     integrationId,
-    drawerURL: `${match.url}/snapshot/${nanoid()}/open`,
+    drawerURL: buildDrawerUrl({
+      path: drawerPaths.LCM.CREATE_SNAPSHOT,
+      baseUrl: match.url,
+      params: { revId: nanoid() },
+    }),
   });
 
   return (
@@ -156,7 +165,7 @@ export default function Revisions({ integrationId }) {
       </PanelHeader>
       <RevisionFilters />
       <RevisionsList integrationId={integrationId} />
-      <LoadResources resources="flows,integrations">
+      <LoadResources integrationId={integrationId} resources="flows,integrations">
         <DrawerDeclarations
           integrationId={integrationId}
           hasMonitorLevelAccess={hasMonitorLevelAccess}

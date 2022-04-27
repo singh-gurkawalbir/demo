@@ -27,6 +27,8 @@ import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { ReferencedFieldsModal } from '../../../../DynaForm/fields/DynaSalesforceExportComponents/DynaTreeModal';
 import { selectors } from '../../../../../reducers';
 import { stringCompare } from '../../../../../utils/sort';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import Spinner from '../../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -62,6 +64,10 @@ export default function SalesforceQualificationCriteriaPanel({ editorId }) {
       sObjectType: e.customOptions?.sObjectType,
     };
   }, shallowEqual);
+
+  const commMetaPath = useSelector(state =>
+    selectors.editor(state, editorId).customOptions?.commMetaPath);
+  const commFiltersMetadata = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, 'salesforce-recordType')?.data;
 
   const filters = useMemo(() => [...unsortedFilters].sort(stringCompare('label')), [unsortedFilters]);
 
@@ -127,7 +133,7 @@ export default function SalesforceQualificationCriteriaPanel({ editorId }) {
   }, [patchEditor]);
 
   useEffect(() => {
-    if (filtersMetadata) {
+    if (filtersMetadata && commFiltersMetadata) {
       const filtersConfig = getAllFiltersConfig(
         filtersMetadata,
         referenceFields
@@ -245,7 +251,8 @@ export default function SalesforceQualificationCriteriaPanel({ editorId }) {
 
   return (
     <div className={classes.container}>
-      <div className="salesforce-Qualifier" ref={qbuilder} />
+      {!commFiltersMetadata ? (<Spinner centerAll />)
+        : (<div className="salesforce-Qualifier" ref={qbuilder} />)}
       {openModal ? (
         <ReferencedFieldsModal
           handleClose={toggleDialog}

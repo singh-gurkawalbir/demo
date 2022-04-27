@@ -1,7 +1,9 @@
 import React, { useMemo, useCallback, useState } from 'react';
+import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import isEmpty from 'lodash/isEmpty';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
 import { getPreviewDataPageSizeInfo } from '../../../utils/exportPanel';
 import FieldMessage from '../../DynaForm/fields/FieldMessage';
@@ -9,6 +11,8 @@ import SelectPreviewRecordsSize from '../SelectPreviewRecordsSize';
 import { selectors } from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import {OutlinedButton} from '../../Buttons';
+import { capitalizeFirstLetter } from '../../../utils/string';
+import { MOCK_INPUT_RECORD_ABSENT } from '../../../utils/errorStore';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {
@@ -54,7 +58,9 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
   },
-
+  previewMessage: {
+    justifyContent: 'center',
+  },
   previewBtn: {
     minHeight: theme.spacing(5),
     color: theme.palette.primary.main,
@@ -82,6 +88,7 @@ export default function PreviewInfo(props) {
     resourceId,
     showPreviewData,
     formKey,
+    resourceType,
   } = props;
   const classes = useStyles(props);
   const [isValidRecordSize, setIsValidRecordSize] = useState(true);
@@ -89,15 +96,38 @@ export default function PreviewInfo(props) {
   const canSelectRecords = useSelector(state =>
     selectors.canSelectRecordsInPreviewPanel(state, formKey)
   );
+  const toggleValue = useSelector(state =>
+    selectors.typeOfSampleData(state, resourceId)
+  );
   const isPreviewDisabled = useSelector(state =>
     selectors.isExportPreviewDisabled(state, formKey));
+  const resourceDefaultMockData = useSelector(state => selectors.getResourceDefaultMockData(state, resourceId));
+  const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
+  const isMockInputDataAbsent = resourceType === 'imports' &&
+                              isEmpty(resourceMockData) &&
+                              isEmpty(resourceDefaultMockData);
 
   const sampleDataStatus = useMemo(() => {
-    const { status, error } = resourceSampleData;
+    const { status, error, message } = resourceSampleData;
 
     if (status === 'requested') return <Typography variant="body2"> Testing </Typography>;
 
-    if (status === 'received') return <Typography variant="body2"> Success! </Typography>;
+    if (status === 'received') {
+      if (isMockInputDataAbsent) {
+        return (
+          <>
+            <FieldMessage
+              errorMessages="1 error"
+            />
+            <Typography variant="body2">{MOCK_INPUT_RECORD_ABSENT}</Typography>
+          </>
+        );
+      } if (message) {
+        return <Typography variant="body2"> {message} </Typography>;
+      }
+
+      return <Typography variant="body2"> Success! </Typography>;
+    }
 
     if (status === 'error') {
       const errorCount = error?.length || 0;
@@ -108,7 +138,7 @@ export default function PreviewInfo(props) {
         />
       );
     }
-  }, [resourceSampleData]);
+  }, [isMockInputDataAbsent, resourceSampleData]);
 
   const sampleDataOverview = useMemo(() => {
     if (resourceSampleData.status === 'error') {
@@ -120,18 +150,17 @@ export default function PreviewInfo(props) {
     }
 
     if (resourceSampleData.status === 'received') {
-      const records =
-        Object.prototype.hasOwnProperty.call(previewStageDataList, 'preview')
-          ? previewStageDataList.preview
-          : previewStageDataList.parse;
+      const records = Object.prototype.hasOwnProperty.call(previewStageDataList, 'preview')
+        ? previewStageDataList.preview
+        : previewStageDataList.parse;
 
-      return (
+      return !isMockInputDataAbsent && !resourceSampleData.message && (
         <Typography variant="body2">
           {getPreviewDataPageSizeInfo(records)}
         </Typography>
       );
     }
-  }, [previewStageDataList, resourceSampleData.status]);
+  }, [isMockInputDataAbsent, previewStageDataList, resourceSampleData.message, resourceSampleData.status]);
 
   const handlePreview = useCallback(
     () => {
@@ -158,7 +187,8 @@ export default function PreviewInfo(props) {
             onClick={handlePreview}
             disabled={disablePreview}
             data-test="fetch-preview">
-            Preview <ArrowRightIcon />
+            {capitalizeFirstLetter(toggleValue)}
+            <ArrowRightIcon />
           </OutlinedButton>
         </div>
         { canSelectRecords &&
@@ -174,7 +204,11 @@ export default function PreviewInfo(props) {
         {
           showPreviewData &&
           (
-            <div className={classes.previewDataRight}>
+            <div
+              className={clsx(classes.previewDataRight, {
+                [classes.previewMessage]: resourceSampleData?.message,
+              })}>
+
               {sampleDataStatus && <div> {sampleDataStatus}</div>}
               {sampleDataOverview && (
               <div className={classes.msgSuccess}>{sampleDataOverview} </div>

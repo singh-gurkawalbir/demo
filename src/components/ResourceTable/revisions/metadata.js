@@ -22,23 +22,27 @@ export default {
       key: 'description',
       heading: 'Description',
       Value: ({rowData: r}) => r.description,
+      width: '40%',
     }, {
       key: 'createdAt',
       heading: 'Date created',
       Value: ({ rowData: r }) => <CeligoTimeAgo date={r.createdAt} />,
       orderBy: 'createdAt',
+      width: 200,
     }, {
       key: 'type',
       heading: 'Type',
       Value: ({ rowData: r }) => REVISION_TYPE_LABELS[r.type],
+      width: 100,
     }, {
       key: 'status',
       heading: 'Status',
       Value: ({ rowData: r }) => REVISION_STATUS_LABELS[r.status],
+      width: 150,
     }, {
       key: 'user',
       heading: 'User',
-      Value: ({ rowData: r }) => <UserName userId={r._byUserId} integrationId={integrationId} />,
+      Value: ({ rowData: r }) => <UserName userId={r._createdByUserId} integrationId={integrationId} />,
     }];
 
     return columns;

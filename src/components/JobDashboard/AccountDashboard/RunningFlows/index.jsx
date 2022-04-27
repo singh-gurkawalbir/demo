@@ -17,6 +17,9 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  noResultRunningFlows: {
+    paddingLeft: 0,
+  },
 }));
 const filterKey = FILTER_KEYS_AD.RUNNING;
 
@@ -74,7 +77,7 @@ export default function RunningFlows() {
           </>
         )}
       </div>
-      {!jobs?.length && !isRunningJobsCollectionLoading ? <NoResultTypography>You don&apos;t have any running flows. </NoResultTypography> : ''}
+      {!jobs?.length && !isRunningJobsCollectionLoading ? <NoResultTypography className={classes.noResultRunningFlows}>You don&apos;t have any running flows. </NoResultTypography> : ''}
     </>
   );
 }
