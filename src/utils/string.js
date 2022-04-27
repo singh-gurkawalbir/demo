@@ -11,7 +11,7 @@ export const safeParse = o => {
   }
 };
 export function generateId(num) {
-  return num ? nanoid(num) : nanoid;
+  return num ? nanoid(num) : nanoid(6);
 }
 
 export const camelCase = (str = '') => {

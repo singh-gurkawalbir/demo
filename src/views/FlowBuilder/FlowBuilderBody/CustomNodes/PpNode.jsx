@@ -50,9 +50,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function PageProcessor({ data = {}, id }) {
-  const { branch, isFirst } = data;
+  const { branch = {}, isFirst } = data;
   const dispatch = useDispatch();
-  const { name: label, isLookup, connectorType } = data.resource || {};
+  const { name: label = 'test', isLookup, connectorType } = data.resource || {};
   const classes = useStyles();
 
   const processorActions = useMemo(() => {

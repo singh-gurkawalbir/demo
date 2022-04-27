@@ -32,8 +32,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function PageGenerator(props) {
-  const { data, id } = props;
-  const { name: label, connectorType } = data;
+  const { data = {}, id } = props;
+  const { name: label = 'test', connectorType } = data;
   const classes = useStyles();
   const { flow } = useFlowContext();
   const flowId = flow?._id;
