@@ -18,8 +18,8 @@ const messages = {
   EDIT_ALIAS_FORM_HELPINFO: 'Editing an alias is helpful when you\'ve built an improved flow or other resource and want all of the scripts that reference the alias to use the new resource. You can update any of the fields for an alias as needed, but keep in mind this may have implications on any scripts that currently reference the alias. <br><b>CAUTION:</b> *If you change the Alias ID (name), it is not updated in existing scripts. <br>*Only change the type and select a new resource matching that type only if you\'re certain this will not adversely impact any existing scripts that reference the alias. <a href="https://docs.celigo.com/hc/en-us/articles/4454740861979" target="_blank">Learn more about aliases</a>.',
   CREATE_ALIAS_FORM_HELPINFO: 'An alias provides an easy way to reference a specific resource in your integration when you\'re building scripts. You can create aliases for flows, connections, imports, and exports.',
   NETSUITE_ASSISTANT_LAUNCH_ERROR: `Unable to load NetSuite Assistant for one of the following reasons:
-• It is disabled in recent versions of Google Chrome (and available in other browsers)
-• Newer NetSuite record types are not yet supported 
+• It is disabled in recent versions of Google Chrome, Firefox and Safari
+• Newer NetSuite record types are not yet supported
 We are currently working with NetSuite to resolve these problems.`,
   LICENSE_UPGRADE_SUCCESS_MESSAGE: `Thanks for your request! We will be in touch soon.
 

@@ -26,6 +26,9 @@ const useStyles = makeStyles(theme => ({
     width: '11.5%',
     whiteSpace: 'nowrap',
   },
+  errorWrapper: {
+    textAlign: 'left',
+  },
 }));
 
 export default function ChildJobDetail({
@@ -49,7 +52,7 @@ export default function ChildJobDetail({
       <TableCell className={classes.success}>{job.numSuccess}</TableCell>
 
       <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
-      <TableCell className={classes.error}><ErrorCell job={job} /></TableCell>
+      <TableCell className={clsx(jobDetailsClasses.error, classes.errorWrapper)}><ErrorCell job={job} /></TableCell>
       <TableCell className={classes.pages}>{job.type === 'export' ? job.numPagesGenerated || job.numPagesProcessed : job.numPagesProcessed}</TableCell>
       <TableCell />
 

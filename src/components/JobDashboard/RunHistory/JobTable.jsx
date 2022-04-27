@@ -20,6 +20,9 @@ const useStyles = makeStyles(theme => ({
     width: '11.5%',
     whiteSpace: 'nowrap',
   },
+  errorWrapper: {
+    textAlign: 'left',
+  },
 }));
 
 export default function JobTable({
@@ -40,7 +43,7 @@ export default function JobTable({
             <TableCell className={classes.completed}>Completed</TableCell>
             <TableCell className={classes.success}>Success</TableCell>
             <TableCell className={classes.ignore}>Ignored</TableCell>
-            <TableCell className={classes.error}><HeaderWithHelpText title="Errors" helpKey="runHistory.errors" /></TableCell>
+            <TableCell className={clsx(classes.error, jobDetailsClasses.errorWrapper)}><HeaderWithHelpText title="Errors" helpKey="runHistory.errors" /></TableCell>
             <TableCell className={classes.pages}>Pages</TableCell>
             <TableCell className={classes.actions}>Actions</TableCell>
           </TableRow>

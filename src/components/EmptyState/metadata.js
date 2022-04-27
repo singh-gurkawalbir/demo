@@ -7,6 +7,14 @@ export default {
     linkLabel: 'Learn how to develop integrations in Flow Builder',
     link: 'https://docs.celigo.com/hc/en-us/articles/360025919171-Develop-integrations-in-Flow-Builder',
   },
+  tiles: {
+    title: 'Jumpstart your data integration',
+    subTitle: 'You can access, manage, and monitor flows within integrations on this page.',
+    type: 'integrations',
+    buttonLabel: 'Create flow',
+    linkLabel: 'Learn how to develop integrations in flow builder',
+    link: 'https://docs.celigo.com/hc/en-us/articles/360025919171-Develop-integrations-in-Flow-Builder',
+  },
   connections: {
     title: 'You don’t have any connections',
     subTitle: 'Connections store credentials and other access information for an application. See all of your connections at a glance, determine where they’re being used, and make edits on this page.',
