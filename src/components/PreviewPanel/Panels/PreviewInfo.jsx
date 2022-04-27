@@ -156,11 +156,11 @@ export default function PreviewInfo(props) {
 
       return !isMockInputDataAbsent && !resourceSampleData.message && (
         <Typography variant="body2">
-          {getPreviewDataPageSizeInfo(records)}
+          {getPreviewDataPageSizeInfo(records, resourceType)}
         </Typography>
       );
     }
-  }, [isMockInputDataAbsent, previewStageDataList, resourceSampleData.message, resourceSampleData.status]);
+  }, [isMockInputDataAbsent, previewStageDataList, resourceSampleData.message, resourceSampleData.status, resourceType]);
 
   const handlePreview = useCallback(
     () => {

@@ -106,7 +106,7 @@ export default function CreateSnapshotDrawer({ integrationId }) {
     <RightDrawer
       path={drawerPaths.LCM.CREATE_SNAPSHOT}
       height="tall"
-      width="xl">
+      width="medium">
       <CreateSnapshotDrawerContent integrationId={integrationId} parentUrl={match.url} />
     </RightDrawer>
   );

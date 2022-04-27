@@ -158,7 +158,7 @@ export function* requestPreview({ id }) {
       return yield put(actions.editor.validateFailure(id, violations));
     }
     if (editor.mappingPreviewType) {
-      yield put(actions.mapping.requestPreview());
+      yield put(actions.mapping.requestPreview(id));
     }
   }
 
