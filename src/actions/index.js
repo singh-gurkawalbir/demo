@@ -1297,6 +1297,7 @@ const user = {
   },
 };
 const license = {
+  refreshCollection: () => action(actionTypes.LICENSE.REFRESH_COLLECTION),
   requestLicenses: message =>
     resource.requestCollection('licenses', undefined, message),
   requestTrialLicense: () => action(actionTypes.LICENSE.TRIAL_REQUEST, {}),
