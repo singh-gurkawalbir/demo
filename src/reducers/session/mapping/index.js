@@ -17,6 +17,17 @@ import {
   getUniqueExtractId} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
+const expandRow = (draft, key) => {
+  if (!draft || !key) return;
+
+  if (draft.mapping.expandedKeys) {
+    draft.mapping.expandedKeys.push(key);
+
+    return;
+  }
+  draft.mapping.expandedKeys = [key];
+};
+
 // this util will update parent reference props on children
 // when data type is updated
 const updateChildrenProps = (children, parentNode, dataType) => {
@@ -67,7 +78,8 @@ const updateDataType = (draft, node, oldDataType, newDataType) => {
   if (oldDataType === newDataType) return node;
 
   if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-    draft.mapping.expandedKeys.push(newNode.key);
+    expandRow(draft, newNode.key);
+
     newNode.combinedExtract = newNode.combinedExtract || newNode.extract || getDefaultExtractPath(draft.mapping.isGroupedSampleData);
 
     delete newNode.hardCodedValue;
@@ -486,7 +498,7 @@ export default (state = {}, action) => {
           node.children = updateChildrenProps(draft.mapping.v2TreeData, node, MAPPING_DATA_TYPES.OBJECTARRAY);
 
           draft.mapping.v2TreeData = [node];
-          draft.mapping.expandedKeys.push(newRowKey);
+          expandRow(draft, newRowKey);
         } else {
           // top disabled row does not exist
           if (!draft.mapping.v2TreeData[0]?.generateDisabled) break;
@@ -577,12 +589,12 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.V2.DRAG_DROP: {
         if (!draft.mapping) break;
 
-        const {node: dropNode, dragNode} = dragDropInfo;
+        const {node: dropNode = {}, dragNode = {}} = dragDropInfo;
         const dropKey = dropNode.key;
         const dragKey = dragNode.key;
         const dragParentKey = dragNode.parentKey;
-        const dropPos = dropNode.pos.split('-');
-        const dragPos = dragNode.pos.split('-');
+        const dropPos = dropNode.pos?.split('-') || [];
+        const dragPos = dragNode.pos?.split('-') || [];
         const dragNodeIndex = Number(dragPos[dragPos.length - 1]);
         const dropNodeIndex = Number(dropPos[dropPos.length - 1]);
         const dropPosition = dragDropInfo.dropPosition - dropNodeIndex;
@@ -592,23 +604,21 @@ export default (state = {}, action) => {
         // Find dragObject and remove from current position
         const {node: dragObj, nodeSubArray: dragSubArr, nodeIndexInSubArray: dragSubArrIndex} = findNodeInTree(v2TreeData, 'key', dragKey);
 
-        // if dropping at same level, nothing to do
-        if (dragDropInfo.dropPosition === dragSubArrIndex) break;
-
-        dragSubArr.splice(dragSubArrIndex, 1);
-
         // find drop position
         const {nodeSubArray: dropSubArr, nodeIndexInSubArray: dropSubArrIndex } = findNodeInTree(v2TreeData, 'key', dropKey);
 
-        // child node is being dragged and dropped at top (0th index) of the children list
-        if (dropPosition === 0 && dragParentKey === dropKey) {
+        // non 0th child node is being dragged and dropped at top (0th index) of the children list
+        if (dropPosition === 0 && dragParentKey === dropKey && dragNodeIndex !== 0) {
           const {children = []} = dropSubArr[dropNodeIndex];
           const hasTabbedRow = children[0]?.isTabNode;
 
           // if child is already at 0th position, nothing to do
           if (dragNodeIndex === 0 || (hasTabbedRow && dragNodeIndex === 1)) return;
 
-          // retain the tabbed row
+          // remove dragged node from its curr pos
+          dragSubArr.splice(dragSubArrIndex, 1);
+
+          // retain the tabbed row and add dragged node to new pos
           if (hasTabbedRow) {
             children.splice(1, 0, dragObj);
           } else {
@@ -617,10 +627,17 @@ export default (state = {}, action) => {
         } else if (dropPosition === -1) { // drag obj inserted before drop node
           if (dropSubArrIndex === dragNodeIndex) return;
 
+          // remove dragged node from its curr pos
+          dragSubArr.splice(dragSubArrIndex, 1);
+          // add dragged node to new pos
           dropSubArr.splice(dropSubArrIndex, 0, dragObj);
-        } else { // drag obj inserted after drop node
+        } else if (dropPosition === 1) {
+          // drag obj inserted after drop node
           if (dropSubArrIndex + 1 === dragNodeIndex) return;
 
+          // remove dragged node from its curr pos
+          dragSubArr.splice(dragSubArrIndex, 1);
+          // add dragged node to new pos
           dropSubArr.splice(dropSubArrIndex + 1, 0, dragObj);
         }
 
@@ -714,7 +731,8 @@ export default (state = {}, action) => {
             } else {
               // copySource is no
               // expand parent node
-              draft.mapping.expandedKeys.push(node.key);
+              expandRow(draft, node.key);
+
               delete node.extract;
 
               if (isEmpty(node.children)) {
@@ -746,6 +764,8 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB: {
         if (!draft.mapping) break;
         const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
+
+        if (isEmpty(node)) break;
 
         nodeSubArray[nodeIndexInSubArray] = hideOtherTabRows(original(node), newTabExtractId);
         nodeSubArray[nodeIndexInSubArray].activeTab = newTabValue;
