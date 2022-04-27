@@ -518,6 +518,7 @@ export const connectorsList = () => {
 export const templatesList = () => {
   const templates = connectorsList();
 
+  console.log('connectorsList', templates);
   templates.push({ label: 'Salesforce.org', value: 'salesforce.org', icon: 'salesforce.org', type: 'salesforce.org' });
   templates.sort(stringCompare('label'));
 

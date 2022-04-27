@@ -784,3 +784,5 @@ export const POLLING_STATUS = {
 };
 
 Object.freeze(POLLING_STATUS);
+
+export const FB_SOURCE_COLUMN_WIDTH = 450;

@@ -1,17 +1,23 @@
-import { IconButton, makeStyles, Typography, useTheme } from '@material-ui/core';
+import { makeStyles, useTheme } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useEffect, useMemo } from 'react';
+import ReactFlow, { MiniMap, Controls, ReactFlowProvider} from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
-import AddIcon from '../../../components/icons/AddIcon';
 import { selectors } from '../../../reducers';
 import useBottomDrawer from '../drawers/BottomDrawer/useBottomDrawer';
-import {
-  useHandleAddGenerator, useHandleAddProcessor,
-} from '../hooks';
 import PageBar from './PageBar';
-import PageGenerators from './PageGenerators';
-import PageProcessors from './PageProcessors';
+import DefaultEdge from './CustomEdges/DefaultEdge';
+import { layoutElements } from './lib';
+import { FlowProvider } from './Context';
+import PgNode from './CustomNodes/PgNode';
+import PpNode from './CustomNodes/PpNode';
+import TerminalNode from './CustomNodes/terminalNodes/Free';
+import RouterNode from './CustomNodes/RouterNode';
+import MergeNode from './CustomNodes/MergeNode';
+import BackgroundPanel from './Background';
+import SourceTitle from './titles/SourceTitle';
+import DestinationTitle from './titles/DestinationTitle';
 
 const useCalcCanvasStyle = () => {
   const theme = useTheme();
@@ -79,51 +85,51 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function AddGenerator({integrationId, flowId}) {
-  const classes = useStyles();
+const nodeTypes = {
+  pg: PgNode,
+  pp: PpNode,
+  terminal: TerminalNode,
+  router: RouterNode,
+  merge: MergeNode,
+};
 
-  const handleAddGenerator = useHandleAddGenerator();
-  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
+const edgeTypes = {
+  default: DefaultEdge,
+};
 
-  return (
-
-    <IconButton
-      data-test="addGenerator"
-      disabled={isViewMode}
-      className={classes.roundBtn}
-      onClick={handleAddGenerator}>
-      <AddIcon />
-    </IconButton>
-  );
-}
-function AddProcessor({ integrationId, flowId}) {
-  const classes = useStyles();
-
-  const handleAddProcessor = useHandleAddProcessor();
-  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
-
-  return (
-    <IconButton
-      disabled={isViewMode}
-      data-test="addProcessor"
-      className={classes.roundBtn}
-      onClick={handleAddProcessor}>
-      <AddIcon />
-    </IconButton>
-  );
-}
 function Canvas({flowId, integrationId}) {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
-  const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
-
-  const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
-
+  console.log('integrationId', integrationId);
+  // const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
+  // const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-
-  const showAddPageProcessor = useSelector(state => selectors.shouldShowAddPageProcessor(state, flowId));
-
   const calcCanvasStyle = useCalcCanvasStyle();
+  const mergedFlow = useSelector(state => selectors.resourceData(state, 'flows', flowId));
+  const elements = useSelector(state => selectors.fbElements(state, flowId));
+  const dragNodeId = useSelector(state => selectors.fbDragNodeId(state, flowId));
+  const elementsMap = useSelector(state => selectors.fbElementsMap(state, flowId));
+
+  const updatedLayout = useMemo(() =>
+    layoutElements(elements, 'LR'),
+  [elements]);
+
+  useEffect(() => {
+    dispatch(actions.flow.initializeFlowGraph(mergedFlow));
+  }, [mergedFlow, dispatch]);
+
+  const handleNodeDragStart = (evt, source) => {
+    dispatch(actions.flow.dragStart(flowId, source.id));
+  };
+
+  const handleNodeDragStop = () => {
+    dispatch(actions.flow.mergeBranch(flowId));
+  };
+
+  const handleAddNewSource = () => {
+    dispatch(actions.flow.addNewPGStep());
+  };
 
   return (
 
@@ -134,43 +140,35 @@ function Canvas({flowId, integrationId}) {
       style={calcCanvasStyle}>
       <div className={classes.canvas}>
         {/* CANVAS START */}
-        <div
-          className={classes.generatorRoot}
-        >
-          <Typography
-            component="div"
-            className={clsx(classes.title, classes.sourceTitle)}
-            variant="overline">
-            {isDataLoaderFlow ? 'SOURCE' : 'SOURCES'}
-            {!isDataLoaderFlow && !isFreeFlow && (
-              <AddGenerator integrationId={integrationId} flowId={flowId} />
-            )}
-          </Typography>
-          <PageGenerators
-            integrationId={integrationId}
-            flowId={flowId}
-          />
-        </div>
-        <div className={classes.processorRoot}>
-          <Typography
-            component="div"
-            className={clsx(classes.title, classes.destinationTitle)}
-            variant="overline">
-            {isDataLoaderFlow
-              ? 'DESTINATION APPLICATION'
-              : 'DESTINATIONS & LOOKUPS '}
+        <ReactFlowProvider>
+          {/* add flow to the context so it is accessible to flowGraph beneath ..this will be replaced by the resourceDataSelector */}
+          <FlowProvider
+            elements={elements}
+            elementsMap={elementsMap}
+            flow={mergedFlow}
+            dragNodeId={dragNodeId}
+          >
 
-            {showAddPageProcessor && !isFreeFlow && (
-            <AddProcessor integrationId={integrationId} flowId={flowId} />
-            )}
-          </Typography>
-          <PageProcessors
-            integrationId={integrationId}
-            flowId={flowId}
-          />
-        </div>
+            <SourceTitle onClick={handleAddNewSource} />
+            <DestinationTitle />
+
+            <ReactFlow
+              onNodeDragStart={handleNodeDragStart}
+              onNodeDragStop={handleNodeDragStop}
+              nodesDraggable={false}
+              elements={updatedLayout}
+              nodeTypes={nodeTypes}
+              edgeTypes={edgeTypes}
+        >
+              <BackgroundPanel />
+            </ReactFlow>
+          </FlowProvider>
+
+          <MiniMap />
+          <Controls />
+        </ReactFlowProvider>
+        {/* CANVAS END */}
       </div>
-      {/* CANVAS END */}
     </div>
   );
 }

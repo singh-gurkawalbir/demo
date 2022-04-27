@@ -76,7 +76,8 @@ export default function EditableText({
     }
   }
 
-  const handleEditClick = () => {
+  const handleEditClick = event => {
+    event.stopPropagation();
     if (!disabled) setIsEdit(true);
   };
 
@@ -104,7 +105,7 @@ export default function EditableText({
             { [classes.overflowText]: !allowOverflow },
             className
           )}>
-          <span onClick={handleEditClick}>{text || defaultText}</span>
+          <div onClick={handleEditClick}>{text || defaultText}</div>
         </div>
       )}
     </>

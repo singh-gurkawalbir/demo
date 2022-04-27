@@ -181,6 +181,10 @@ export default function reducer(state = {}, action) {
             // if metadata is updated, reset form output
             delete draft[id].formOutput;
           }
+        } else if (draft[id].editorType === 'router') {
+          if (mode) {
+            draft[id].layout = `${mode === 'filter' ? 'json' : 'script'}FormBuilder`;
+          }
         }
         break;
       }
