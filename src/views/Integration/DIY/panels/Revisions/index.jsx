@@ -32,9 +32,10 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
+    paddingBottom: theme.spacing(2),
   },
   noRevisions: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(3),
   },
 }));
 
@@ -71,7 +72,7 @@ const RevisionsList = ({ integrationId }) => {
   const hasNoRevisions = useSelector(state => selectors.integrationHasNoRevisions(state, integrationId));
 
   if (isLoadingRevisions) {
-    return <Spinner centerAll />;
+    return <Spinner loading size="large" />;
   }
 
   const NoRevisionsInfo = () => {

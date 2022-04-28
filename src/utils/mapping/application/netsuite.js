@@ -438,10 +438,13 @@ export default {
   isNSMappingAssistantSupported: () => {
     const browser = Browser.getParser(window.navigator.userAgent);
     const { name, version } = browser.getBrowser();
+    const browserVersion = parseInt(version, 10);
 
     // Chrome browser with versions >= 91 are not supported for NS Assistant to launch Iframe
     // Ref https://celigo.atlassian.net/browse/IO-21921
-    if (name === 'Chrome' && parseInt(version, 10) >= 91) {
+    if ((name === 'Chrome' && browserVersion >= 91) ||
+        (name === 'Firefox' && browserVersion >= 98) ||
+        (name === 'Safari' && browserVersion >= 15)) {
       return false;
     }
 

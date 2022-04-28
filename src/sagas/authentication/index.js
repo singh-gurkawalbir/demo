@@ -38,7 +38,7 @@ export function* retrievingOrgDetails() {
   const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
   const defaultAShareId = yield select(selectors.defaultAShareId);
 
-  if ((!defaultAShareId && !hasAcceptedAccounts) || defaultAShareId === 'own') {
+  if (!hasAcceptedAccounts && (!defaultAShareId || defaultAShareId === 'own')) {
     yield call(
       getResourceCollection,
       actions.license.requestLicenses('Retrieving licenses')

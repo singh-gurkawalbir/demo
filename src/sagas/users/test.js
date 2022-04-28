@@ -37,6 +37,7 @@ import {
   requestLicenseEntitlementUsage,
   addSuiteScriptLinkedConnection,
   deleteSuiteScriptLinkedConnection,
+  refreshLicensesCollection,
 } from '.';
 import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../utils/constants';
 import getRequestOptions from '../../utils/requestOptions';
@@ -1068,7 +1069,7 @@ describe('all modal sagas', () => {
         .put(actions.resource.requestCollection('flows'))
         .put(actions.resource.requestCollection('exports'))
         .put(actions.resource.requestCollection('imports'))
-        .put(actions.resource.requestCollection('licenses'))
+        .put(actions.license.refreshCollection())
         .not.put(actions.license.licenseUpgradeRequestSubmitted({}))
         .run();
     });
@@ -1247,6 +1248,32 @@ describe('all modal sagas', () => {
           'Could not unlink suitescript integrator'
         )
       )
+      .run()
+    );
+  });
+  describe('refreshLicensesCollection saga', () => {
+    test('should dispatch request collection of ashares if it is a shared account', () => expectSaga(refreshLicensesCollection)
+      .provide([
+        [select(selectors.defaultAShareId), 'someAshareId'],
+      ])
+      .put(actions.resource.requestCollection('shared/ashares'))
+      .not.put(actions.resource.requestCollection('licenses'))
+      .run()
+    );
+    test('should dispatch request collection of licenses if there is no ashareId', () => expectSaga(refreshLicensesCollection)
+      .provide([
+        [select(selectors.defaultAShareId)],
+      ])
+      .not.put(actions.resource.requestCollection('shared/ashares'))
+      .put(actions.resource.requestCollection('licenses'))
+      .run()
+    );
+    test('should dispatch request collection of licenses if the ashareId is own', () => expectSaga(refreshLicensesCollection)
+      .provide([
+        [select(selectors.defaultAShareId), 'own'],
+      ])
+      .not.put(actions.resource.requestCollection('shared/ashares'))
+      .put(actions.resource.requestCollection('licenses'))
       .run()
     );
   });

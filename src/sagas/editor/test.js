@@ -581,7 +581,7 @@ describe('editor sagas', () => {
             processor: 'mapperProcessor',
             body: {} }), {data: [{mappedObject: 'test'}]}],
         ])
-        .put(actions.mapping.requestPreview())
+        .put(actions.mapping.requestPreview(editorId))
         .not.put(actions.editor.previewFailed(editorId))
         .put(actions.editor.previewResponse(editorId, { data: [{mappedObject: 'test'}] }))
         .run();
@@ -606,7 +606,7 @@ describe('editor sagas', () => {
             processor: 'mapperProcessor',
             body: {} }), {errors: [{errors: 'test'}]}],
         ])
-        .put(actions.mapping.requestPreview())
+        .put(actions.mapping.requestPreview(editorId))
         .put(actions.editor.previewFailed(editorId, { errorMessage: 'Message: [{"errors":"test"}]' }))
         .run();
     });
@@ -666,7 +666,7 @@ describe('editor sagas', () => {
             processor: 'mapperProcessor',
             body: {} }), result],
         ])
-        .put(actions.mapping.requestPreview())
+        .put(actions.mapping.requestPreview(editorId))
         .not.put(actions.editor.previewFailed(editorId))
         .put(actions.editor.previewResponse(editorId, expectedOutput))
         .run();

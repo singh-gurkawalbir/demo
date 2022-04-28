@@ -63,7 +63,6 @@ const useStyles = makeStyles(theme => ({
   },
   previewBtn: {
     minHeight: theme.spacing(5),
-    color: theme.palette.primary.main,
   },
   error: {
     color: 'red',
@@ -156,11 +155,11 @@ export default function PreviewInfo(props) {
 
       return !isMockInputDataAbsent && !resourceSampleData.message && (
         <Typography variant="body2">
-          {getPreviewDataPageSizeInfo(records)}
+          {getPreviewDataPageSizeInfo(records, resourceType)}
         </Typography>
       );
     }
-  }, [isMockInputDataAbsent, previewStageDataList, resourceSampleData.message, resourceSampleData.status]);
+  }, [isMockInputDataAbsent, previewStageDataList, resourceSampleData.message, resourceSampleData.status, resourceType]);
 
   const handlePreview = useCallback(
     () => {
