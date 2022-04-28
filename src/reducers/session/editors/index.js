@@ -186,6 +186,7 @@ export default function reducer(state = {}, action) {
             draft[id].layout = `${mode === 'filter' ? 'json' : 'script'}FormBuilder`;
           }
         }
+
         break;
       }
 

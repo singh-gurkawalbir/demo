@@ -52,11 +52,9 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
     background: theme.palette.background.paper,
   },
-
   title: {
     display: 'flex',
     padding: theme.spacing(4, 0, 6, 0),
-    alignItems: 'center',
     marginBottom: theme.spacing(0.5),
     justifyContent: 'center',
     color: theme.palette.secondary.light,

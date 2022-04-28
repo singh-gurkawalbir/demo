@@ -416,28 +416,6 @@ selectors.integrationUninstallSteps = (state, { integrationId, isFrameWork2 }) =
   return { steps: modifiedSteps, error, isFetched, isComplete };
 };
 
-selectors.addNewChildSteps = (state, integrationId) => {
-  const addNewChildSteps = fromSession.addNewChildSteps(
-    state && state.session,
-    integrationId
-  );
-  const { steps } = addNewChildSteps;
-
-  if (!steps || !Array.isArray(steps)) {
-    return addNewChildSteps;
-  }
-
-  const modifiedSteps = produce(steps, draft => {
-    const unCompletedStep = draft.find(s => !s.completed);
-
-    if (unCompletedStep) {
-      unCompletedStep.isCurrentStep = true;
-    }
-  });
-
-  return { steps: modifiedSteps };
-};
-
 selectors.currentStepPerMode = (state, { mode, integrationId, revisionId, cloneResourceId, cloneResourceType }) => {
   let steps = [];
 

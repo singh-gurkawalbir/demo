@@ -21,7 +21,7 @@ function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler, p
     state => selectors.currentStepPerMode(state, { mode: formType, integrationId })
   );
 
-  if (!currentStep || !currentStep.isTriggered) {
+  if (!currentStep || !currentStep.isTriggered || currentStep.verifying) {
     // When the url is invalid or When the step is either completed/failed
     // isTriggered is false and goes back to parent url
     history.replace(parentUrl);
@@ -45,7 +45,7 @@ function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler, p
           dispatch(actions.integrationApp.child.updateStep(
             integrationId,
             installerFunction,
-            'inProgress',
+            'verify',
             false
           ));
           dispatch(
@@ -56,6 +56,12 @@ function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler, p
             )
           );
         } else {
+          dispatch(actions.integrationApp.installer.updateStep(
+            integrationId,
+            installerFunction,
+            'verify',
+            false
+          ));
           dispatch(
             actions.integrationApp.installer.installStep(
               integrationId,

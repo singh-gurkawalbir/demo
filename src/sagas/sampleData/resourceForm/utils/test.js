@@ -205,6 +205,7 @@ describe('resource form sample data util saga test cases', () => {
           rowDelimiter: undefined,
           sortByFields: [],
           groupByFields: [],
+          groupEmptyValues: undefined,
         },
       };
 
@@ -212,6 +213,7 @@ describe('resource form sample data util saga test cases', () => {
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), formInfo],
           [select(selectors.getUploadedFile, 'id-123-uploadFile'), uploadedFileObj],
+          [select(selectors.resource, 'exports', 'id-123'), null],
         ])
         .returns(output)
         .run();
@@ -240,6 +242,7 @@ describe('resource form sample data util saga test cases', () => {
           rowDelimiter: undefined,
           sortByFields: [],
           groupByFields: [],
+          groupEmptyValues: undefined,
         },
       };
 
@@ -247,6 +250,7 @@ describe('resource form sample data util saga test cases', () => {
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), formInfo],
           [select(selectors.getUploadedFile, 'id-123-uploadFile'), uploadedFileObj],
+          [select(selectors.resource, 'exports', 'id-123'), null],
         ])
         .returns(output)
         .run();
@@ -278,6 +282,7 @@ describe('resource form sample data util saga test cases', () => {
           rule: undefined,
           sortByFields: [],
           groupByFields: [],
+          groupEmptyValues: undefined,
         },
       };
       const options = {
@@ -320,6 +325,7 @@ describe('resource form sample data util saga test cases', () => {
           rowDelimiter: undefined,
           sortByFields: [],
           groupByFields: [],
+          groupEmptyValues: undefined,
         },
       };
 
