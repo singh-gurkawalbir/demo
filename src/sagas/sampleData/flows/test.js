@@ -1003,7 +1003,6 @@ describe('flow sample data sagas', () => {
       const resourceId = 'import-123';
       const mappings = [
         {
-
           extract: 'AAAAAAAAAAAAA',
           generate: 'Purchase Order Acknowledge Date',
           dataType: 'string',

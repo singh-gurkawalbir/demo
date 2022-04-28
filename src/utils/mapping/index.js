@@ -24,7 +24,7 @@ const isCsvOrXlsxResource = resource => {
   return false;
 };
 
-const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
+export const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
 export const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
   if (wrapped) {
     return (

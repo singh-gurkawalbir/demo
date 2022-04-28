@@ -5431,7 +5431,7 @@ selectors.responseMappingInput = (state, resourceType, resourceId, flowId) => {
 };
 
 selectors.isMapper2Supported = state => {
-  const importId = selectors.mapping(state)?.importId;
+  const {importId} = selectors.mapping(state);
 
   if (!importId) return false;
 

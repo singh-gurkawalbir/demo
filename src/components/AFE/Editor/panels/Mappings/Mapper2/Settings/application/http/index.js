@@ -246,7 +246,7 @@ export default {
           name: 'default',
           type: 'text',
           label: 'Custom value',
-          placeholder: 'Custom Value',
+          placeholder: 'Custom value',
           required: true,
           visibleWhenAll: [
             { field: 'standardAction', is: ['default'] },
@@ -339,7 +339,7 @@ export default {
           name: 'multifieldDefault',
           type: 'text',
           label: 'Custom value',
-          placeholder: 'Custom Value',
+          placeholder: 'Custom value',
           required: true,
           visibleWhenAll: [
             { field: 'multifieldAction', is: ['default'] },

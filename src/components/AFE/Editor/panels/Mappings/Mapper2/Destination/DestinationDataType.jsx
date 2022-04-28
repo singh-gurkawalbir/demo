@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     '&.Mui-disabled': {
       height: 38,
-    }, // todo ashu doesnt work
+    },
   },
   listPopper: {
     maxWidth: 250,

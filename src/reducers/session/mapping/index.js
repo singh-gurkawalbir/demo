@@ -530,21 +530,23 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.V2.DELETE_ROW: {
         if (!draft.mapping) break;
 
-        const {nodeSubArray, nodeIndexInSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
+        const {node, nodeSubArray, nodeIndexInSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
 
         if (nodeIndexInSubArray >= 0) {
           nodeSubArray.splice(nodeIndexInSubArray, 1);
 
           // add empty row if all the mappings have been deleted
-          if (isEmpty(draft.mapping.v2TreeData)) {
+          if (isEmpty(nodeSubArray)) {
             const emptyRowKey = generateUniqueKey();
 
-            draft.mapping.v2TreeData.push({
+            nodeSubArray.push({
               key: emptyRowKey,
               title: '',
               dataType: MAPPING_DATA_TYPES.STRING,
               disabled: draft.mapping.isMonitorLevelAccess,
               isEmptyRow: true,
+              parentExtract: node.parentExtract,
+              parentKey: node.parentKey,
             });
           }
         }
@@ -780,7 +782,6 @@ export default (state = {}, action) => {
 
 export const selectors = {};
 
-// #region PUBLIC SELECTORS
 selectors.mapping = state => {
   if (!state || !state.mapping) {
     return emptyObj;
@@ -797,7 +798,6 @@ selectors.v2MappingsTreeData = state => {
   return state.mapping.v2TreeData || emptyArr;
 };
 
-// #region PUBLIC SELECTORS
 selectors.mappingChanged = state => {
   if (!state || !state.mapping) {
     return false;
@@ -824,7 +824,17 @@ selectors.mappingChanged = state => {
   return !!isCombinedMappingsChanged;
 };
 
-// #region PUBLIC SELECTORS
+selectors.v2MappingChanged = state => {
+  if (!state || !state.mapping) {
+    return false;
+  }
+
+  const { v2TreeData = [], v2TreeDataCopy = [] } = state.mapping;
+  const isV2MappingsChanged = compareV2Mappings(v2TreeData, v2TreeDataCopy);
+
+  return !!isV2MappingsChanged;
+};
+
 selectors.mappingSaveStatus = state => {
   if (!state || !state.mapping) {
     return emptyObj;

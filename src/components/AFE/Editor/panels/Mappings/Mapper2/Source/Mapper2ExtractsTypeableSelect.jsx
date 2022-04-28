@@ -135,6 +135,8 @@ export default function Mapper2ExtractsTypeableSelect({
   }, []);
 
   const hideSourceDropdown = isLookup || isHardCodedValue || isHandlebarExp;
+  // tooltip is only visible when not in focus and for truncated values
+  // and/or source dropdown is hidden
   const hideTooltip = isFocused || (inputValue && !isTruncated && !hideSourceDropdown);
 
   return (

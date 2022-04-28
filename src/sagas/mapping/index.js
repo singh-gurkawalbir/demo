@@ -384,10 +384,10 @@ export function* saveMappings() {
   }
 
   const isMapper2Supported = yield select(selectors.isMapper2Supported);
+  const isV2MappingsChanged = yield select(selectors.v2MappingChanged);
 
-  // todo ashu should we do this only if v2 mappings dirty?
-  // save v2 mappings as well
-  if (isMapper2Supported) {
+  // save v2 mappings as well only when anything changed
+  if (isMapper2Supported && isV2MappingsChanged) {
     const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
 
     patch.push({

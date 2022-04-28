@@ -167,7 +167,7 @@ const ExtractsTree = React.memo((
 
   return (
     <div
-      onClick={e => e.stopPropagation()}
+      // onClick={e => e.stopPropagation()}
       className={classes.dropdown}>
       <div className={classes.message}>
         <Divider />

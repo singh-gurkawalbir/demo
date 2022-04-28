@@ -2,6 +2,8 @@ import {useEffect} from 'react';
 
 const emptyFunc = () => {};
 export default function useOnClickOutside(ref, handler) {
+  // in case the handler is not passed
+  // default it to empty function as its added as a dependency in useEffect
   const currHandler = handler || emptyFunc;
 
   useEffect(

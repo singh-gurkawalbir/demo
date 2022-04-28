@@ -118,11 +118,19 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function OutputFormatsList({isGroupedSampleData, isGroupedOutput, disabled}) {
+function OutputFormatsList({disabled}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = !!anchorEl;
+  const {isGroupedSampleData, isGroupedOutput} = useSelector(state => {
+    const mapping = selectors.mapping(state);
+
+    return {
+      isGroupedSampleData: mapping.isGroupedSampleData,
+      isGroupedOutput: mapping.isGroupedOutput,
+    };
+  }, shallowEqual);
 
   const handleMenu = useCallback(
     event => {
@@ -191,15 +199,13 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const {mappingVersion, flowId, importId, isGroupedSampleData, isGroupedOutput} = useSelector(state => {
-    const mapping = selectors.mapping(state) || {};
+  const {mappingVersion, flowId, importId} = useSelector(state => {
+    const mapping = selectors.mapping(state);
 
     return {
       mappingVersion: mapping.version,
       flowId: mapping.flowId,
       importId: mapping.importId,
-      isGroupedSampleData: mapping.isGroupedSampleData,
-      isGroupedOutput: mapping.isGroupedOutput,
     };
   }, shallowEqual);
 
@@ -248,11 +254,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
         />
       )}
       <ActionGroup position="right" className={classes.actions}>
-        <OutputFormatsList
-          isGroupedSampleData={isGroupedSampleData}
-          isGroupedOutput={isGroupedOutput}
-          disabled={disabled}
-        />
+        <OutputFormatsList disabled={disabled} />
 
         <CeligoDivider position="right" />
 

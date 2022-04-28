@@ -818,9 +818,18 @@ describe('Mappings region selector testcases', () => {
     });
     test('should return false for exports', () => {
       const state = {
+        data: {
+          resources: {
+            exports: [{
+              _id: 'exp-123',
+              _connectorId: 'test123',
+            }],
+          },
+        },
         session: {
           mapping: {
             mapping: {
+              importId: 'exp-123',
             },
           },
         },

@@ -18,7 +18,7 @@ import Mapper2Generates from './Destination/Mapper2Generates';
 import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
-import { MAPPING_DATA_TYPES } from '../../../../../../utils/mapping';
+import { MAPPING_DATA_TYPES, handlebarRegex } from '../../../../../../utils/mapping';
 import messageStore from '../../../../../../utils/messageStore';
 import TabRow from './TabbedRow';
 
@@ -171,7 +171,6 @@ const Mapper2Row = React.memo(props => {
     }));
   }, [dispatch, history, nodeKey, generate]);
 
-  const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
   const extractValue = combinedExtract || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
   const isLookup = !!lookupName;
   const isStaticLookup = !!(lookup.name && lookup.map);
@@ -179,15 +178,15 @@ const Mapper2Row = React.memo(props => {
   const isHandlebarExp = handlebarRegex.test(extractValue);
   const hideExtractField = dataType === MAPPING_DATA_TYPES.OBJECT && !extractValue && copySource === 'no';
 
+  // this prop is used for object array tab view
+  // where some children needs to be hidden
+  if (hidden) return null;
+
   // object array data types will have tabbed row node
   // in case of multiple extracts
   if (isTabNode) {
     return <TabRow {...props} />;
   }
-
-  // this prop is used for object array tab view
-  // where some children needs to be hidden
-  if (hidden) return null;
 
   return (
     <div
