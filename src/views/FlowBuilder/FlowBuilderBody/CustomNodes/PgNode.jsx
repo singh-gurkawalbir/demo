@@ -1,25 +1,12 @@
 import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position } from 'react-flow-renderer';
-import { useDispatch } from 'react-redux';
-import AppBlock from '../../AppBlock';
-import exportHooksAction from '../../PageGenerator/actions/exportHooks';
-import transformationAction from '../../PageGenerator/actions/transformation_afe';
-import exportFilterAction from '../../PageGenerator/actions/exportFilter_afe';
+import { useDispatch, useSelector } from 'react-redux';
 import DefaultHandle from './Handles/DefaultHandle';
 import { useFlowContext } from '../Context';
 import actions from '../../../../actions';
-
-const generatorActions = [
-  {
-    ...transformationAction,
-    isUsed: true,
-  },
-  {
-    ...exportFilterAction,
-  },
-  { ...exportHooksAction, isUsed: true },
-];
+import { selectors } from '../../../../reducers';
+import PageGenerator from '../../PageGenerator';
 
 const useStyles = makeStyles(theme => ({
   pgContainer: {
@@ -31,13 +18,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function PageGenerator(props) {
+export default function PageGeneratorNode(props) {
   const { data = {}, id } = props;
-  const { name: label = 'test', connectorType } = data;
   const classes = useStyles();
   const { flow } = useFlowContext();
   const flowId = flow?._id;
   const dispatch = useDispatch();
+  const flowErrorsMap = useSelector(state => selectors.openErrorsMap(state, flowId));
+  const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow._integrationId, flowId));
 
   const handleDelete = useCallback(() => {
     dispatch(actions.flow.deleteStep(flowId, id));
@@ -46,18 +35,15 @@ export default function PageGenerator(props) {
   return (
     <div className={classes.root}>
       <div className={classes.pgContainer}>
-        <AppBlock
-          name={label}
-          connectorType={connectorType}
-          blockType="export"
+        <PageGenerator
+          className={classes.pageGenerator}
+          {...data}
           onDelete={handleDelete}
-          actions={generatorActions}
-          resource={{}}
-          resourceId={id}
-          resourceType="exports"
-          index="0"
-          isPageGenerator
-      />
+          flowId={flowId}
+          integrationId={flow._integrationId}
+          openErrorCount={(flowErrorsMap && flowErrorsMap[data._exportId]) || 0}
+          isViewMode={isViewMode || isFreeFlow}
+        />
       </div>
 
       <DefaultHandle type="source" position={Position.Right} />

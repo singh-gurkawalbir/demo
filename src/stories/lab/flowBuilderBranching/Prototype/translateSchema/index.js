@@ -76,6 +76,7 @@ const generatePageProcessorNodesAndEdges = (resourceState, pageProcessors, branc
         resource: hydrateNodeData(resourceState, pageProcessor),
         branch,
         isFirst: index === 0,
+        isLast: index === (collection.length - 1),
         path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${index}`,
       },
     };

@@ -1,20 +1,14 @@
 import clsx from 'clsx';
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position } from 'react-flow-renderer';
 import { Typography } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
-import AppBlock from '../../AppBlock';
-import importMappingAction from '../../PageProcessor/actions/importMapping';
-import inputFilterAction from '../../PageProcessor/actions/inputFilter_afe';
-import pageProcessorHooksAction from '../../PageProcessor/actions/pageProcessorHooks';
-import outputFilterAction from '../../PageProcessor/actions/outputFilter_afe';
-import lookupTransformationAction from '../../PageProcessor/actions/lookupTransformation_afe';
-import responseTransformationAction from '../../PageProcessor/actions/responseTransformation_afe';
-import responseMapping from '../../PageProcessor/actions/responseMapping_afe';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectors } from '../../../../reducers';
 import DefaultHandle from './Handles/DefaultHandle';
 import { useFlowContext } from '../Context';
 import actions from '../../../../actions';
+import PageProcessor from '../../PageProcessor';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,60 +43,24 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function PageProcessor({ data = {}, id }) {
-  const { branch = {}, isFirst } = data;
+export default function PageProcessorNode({ data = {}, id }) {
+  const { branch = {}, isFirst, isLast } = data;
   const dispatch = useDispatch();
-  const { name: label = 'test', isLookup, connectorType } = data.resource || {};
   const classes = useStyles();
 
-  const processorActions = useMemo(() => {
-    const processorActions = [
-      {
-        ...inputFilterAction,
-        isUsed: true,
-        helpKey: 'fb.pp.inputFilter',
-      },
-    ];
-
-    if (isLookup) {
-      processorActions.push(
-        {
-          ...lookupTransformationAction,
-          isUsed: true,
-        },
-        {
-          ...outputFilterAction,
-        },
-        {
-          ...pageProcessorHooksAction,
-          isUsed: true,
-          helpKey: 'fb.pp.exports.hooks',
-        }
-      );
-    } else {
-      processorActions.push(
-        {
-          ...importMappingAction,
-          isUsed: true,
-        },
-        {
-          ...responseTransformationAction,
-        },
-      );
-    }
-    processorActions.push({
-      ...responseMapping,
-      isUsed: true,
-    });
-
-    return processorActions;
-  }, [isLookup]);
-
   const { flow } = useFlowContext();
+  const flowId = flow._id;
+  const integrationId = flow._integrationId;
+  const flowErrorsMap = useSelector(state => selectors.openErrorsMap(state, flowId));
+  const isMonitorLevelAccess = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
+  );
+  const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
 
   const handleDelete = useCallback(() => {
     dispatch(actions.flow.deleteStep(flow._id, id));
-  }, []);
+  }, [dispatch, id]);
 
   return (
     <div className={classes.root}>
@@ -116,18 +74,16 @@ export default function PageProcessor({ data = {}, id }) {
             </Typography>
           </div>
 
-          <AppBlock
-            name={label}
+          <PageProcessor
+            {...data.resource}
             onDelete={handleDelete}
-            connectorType={connectorType}
-            blockType={isLookup ? 'export' : 'import'}
-            index={id}
-            resource={{}}
-            resourceId={id}
-            resourceIndex={4}
-            resourceType={isLookup ? 'exports' : 'imports'}
-            actions={processorActions}
-        />
+            flowId={flowId}
+            integrationId={integrationId}
+            openErrorCount={(flowErrorsMap && flowErrorsMap[data.resource?._importId || data.resource?._exportId]) || 0}
+            isViewMode={isViewMode || isFreeFlow}
+            isMonitorLevelAccess={isMonitorLevelAccess}
+            isLast={isLast}
+          />
         </div>
       </div>
 

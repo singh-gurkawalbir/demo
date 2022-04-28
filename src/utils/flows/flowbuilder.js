@@ -100,26 +100,6 @@ export const initializeFlowForReactFlow = flow => {
   });
 };
 
-const hydrateNodeData = (resourcesState, node) => {
-  if (node._exportId) {
-    return resourcesState?.exports?.find(ele => ele._id === node.id);
-  }
-  if (node._importId) {
-    return resourcesState?.imports?.find(ele => ele._id === node.id);
-  }
-  if (node._connectionId) {
-    return resourcesState?.connections?.find(ele => ele._id === node.id);
-  }
-
-  if (node.application) {
-    return {
-      application: node.application,
-    };
-  }
-
-  return null;
-};
-
 // Note 'targeId' can be either a page processor Id if the flow schema is linear (old schema)
 // or it can be a router Id if the flow schema represents a branched flow.
 const generatePageGeneratorNodesAndEdges = (resourcesState, pageGenerators, targetId) => {
@@ -130,14 +110,10 @@ const generatePageGeneratorNodesAndEdges = (resourcesState, pageGenerators, targ
   const nodes = pageGenerators.map(pg => ({
     id: pg.id,
     type: 'pg',
-    data: hydrateNodeData(resourcesState, pg),
+    data: {...pg},
   }));
 
-  console.log('nodes', nodes);
-  console.log('targetId', targetId);
   const edges = nodes.map(node => generateDefaultEdge(node.id, targetId));
-
-  console.log('edges', edges);
 
   return [...nodes, ...edges];
 };
@@ -154,7 +130,7 @@ const generatePageProcessorNodesAndEdges = (resourceState, pageProcessors, branc
       id: pageProcessor.id,
       type: GRAPH_ELEMENTS_TYPE.PP_STEP,
       data: {
-        resource: hydrateNodeData(resourceState, pageProcessor),
+        resource: {...pageProcessor},
         branch,
         isFirst: index === 0,
         path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${index}`,
@@ -169,16 +145,10 @@ const generateNodesAndEdgesFromNonBranchedFlow = (resourceState, flow) => {
   const { _exportId, pageGenerators, pageProcessors = [], _importId } = flow;
   const virtualRouter = {_id: generateId(), branches: []};
 
-  console.log('virtualRouter', virtualRouter);
   const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(resourceState, pageGenerators || [{_exportId, id: _exportId}], virtualRouter._id);
   const pageProcessorNodesAndEdges = generatePageProcessorNodesAndEdges(resourceState, _importId ? [{_importId, id: _importId}] : pageProcessors);
   const firstPPId = _importId || pageProcessors[0]?.id || _importId;
   const lastPPId = _importId || pageProcessors[pageProcessors.length - 1]?.id || _importId;
-
-  console.log('pageGeneratorNdoesandedges', pageGeneratorNodesAndEdges);
-  console.log('pageProcessorNodesandedges', pageProcessorNodesAndEdges);
-  console.log('firstPPId', firstPPId);
-  console.log('lastPPId', lastPPId);
 
   const terminalNode = generateNewTerminal();
 
