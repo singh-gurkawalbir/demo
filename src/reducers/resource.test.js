@@ -7683,10 +7683,10 @@ describe('resource region selector testcases', () => {
     test('should return false if the connection is of bigquery rdbms subtype', () => {
       expect(selectors.mappingHasLookupOption(state, 'connections', 'connection2')).toEqual(false);
     });
-    test('should return true if the connection is not of bigquery rdbms subtype', () => {
+    test('should return false if the connection is of snowflake rdbms subtype', () => {
       expect(selectors.mappingHasLookupOption(state, 'connections', 'connection3')).toEqual(false);
     });
-    test('should return true if the connection is not of bigquery rdbms subtype', () => {
+    test('should return true if the connection is not of bigquery or snowflake rdbms subtype', () => {
       expect(selectors.mappingHasLookupOption(state, 'connections', 'connection4')).toEqual(true);
     });
     test('should return true if the connection is of not rdbms type', () => {
