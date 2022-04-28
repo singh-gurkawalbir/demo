@@ -1,4 +1,5 @@
 import stableStringify from 'fast-json-stable-stringify';
+import { nanoid } from 'nanoid';
 
 export const safeParse = o => {
   if (typeof o === 'object' || !o) return o;
@@ -9,6 +10,9 @@ export const safeParse = o => {
     return undefined;
   }
 };
+export function generateId(num) {
+  return num ? nanoid(num) : nanoid(6);
+}
 
 export const camelCase = (str = '') => {
   if (typeof str === 'string' && str.length) {

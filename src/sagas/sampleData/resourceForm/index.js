@@ -456,7 +456,7 @@ export function* _requestImportSampleData({ formKey, refreshCache, isMockInput }
   const { resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj)) {
-    yield call(_requestImportFileSampleData, { formKey });
+    return yield call(_requestImportFileSampleData, { formKey });
   }
 
   // as part of IO-23131, we support mock input data for imports

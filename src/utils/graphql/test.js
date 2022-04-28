@@ -10,11 +10,17 @@ describe('graphql utils: ', () => {
     test('should return correct http body for given parameters', () =>
       expect(convertGraphQLQueryToHTTPBody({query: '123'})).toEqual(JSON.stringify({query: '123'})));
     test('should return correct http body for given parameters like query and variables', () =>
-      expect(convertGraphQLQueryToHTTPBody({query: '123', variables: '456'})).toEqual(JSON.stringify({query: '123', variables: '456'})));
+      expect(convertGraphQLQueryToHTTPBody({query: '123', variables: '456'})).toEqual(JSON.stringify({query: '123', variables: 456})));
+    test('should return correct http body for given parameters like query and variables', () =>
+      expect(convertGraphQLQueryToHTTPBody({query: '123', variables: '{"tryVar":2}'})).toEqual(JSON.stringify({query: '123', variables: {tryVar: 2}})));
     test('should return correct http body for given parameters like query and operationName', () =>
       expect(convertGraphQLQueryToHTTPBody({query: '123', operationName: '456'})).toEqual(JSON.stringify({query: '123', operationName: '456'})));
     test('should return correct http body for all given parameters', () =>
-      expect(convertGraphQLQueryToHTTPBody({query: '123', operationName: '456', variables: '891'})).toEqual(JSON.stringify({query: '123', operationName: '456', variables: '891'})));
+      expect(convertGraphQLQueryToHTTPBody({query: '123', operationName: '456', variables: '891'})).toEqual(JSON.stringify({query: '123', operationName: '456', variables: 891})));
+    test('should return correct http body for all given parameters', () =>
+      expect(convertGraphQLQueryToHTTPBody({query: '123', operationName: '456', variables: '{"tryVar":2}'})).toEqual(JSON.stringify({query: '123', operationName: '456', variables: {tryVar: 2}})));
+    test('should return correct http body for all variables if variables is not valid JSON', () =>
+      expect(convertGraphQLQueryToHTTPBody({query: '123', operationName: '456', variables: '{"tryVar":2'})).toEqual(JSON.stringify({query: '123', operationName: '456', variables: '{"tryVar":2'})));
     test('should return empty string if query is absent', () =>
       expect(convertGraphQLQueryToHTTPBody({variables: '123'})).toEqual(''));
   });
@@ -58,6 +64,17 @@ describe('graphql utils: ', () => {
         relativeURI: '?query=123&variables=456',
       },
     };
+    const resource1 = {
+      http: {
+        body: JSON.stringify({query: '123', operationName: '456', variables: '{"tryVar": 2'}),
+      },
+    };
+    const resource2 = {
+      http: {
+        body: JSON.stringify({query: '123', operationName: '456', variables: {tryVar: 2}}),
+        relativeURI: '?query=123&variables=456',
+      },
+    };
 
     test('should not throw exception for invalid arguments', () => {
       expect(getGraphQLValues({})).toBeUndefined();
@@ -68,6 +85,8 @@ describe('graphql utils: ', () => {
       expect(getGraphQLValues({resource, field: 'query', path: 'http.body'})).toEqual('123');
       expect(getGraphQLValues({resource, field: 'operationName', path: 'http.body'})).toEqual('456');
       expect(getGraphQLValues({resource, field: 'variables', path: 'http.body'})).toEqual('891');
+      expect(getGraphQLValues({resource: resource2, field: 'variables', path: 'http.body'})).toEqual(JSON.stringify({tryVar: 2}));
+      expect(getGraphQLValues({resource: resource1, field: 'variables', path: 'http.body'})).toEqual('{"tryVar": 2');
     });
     test('should parse the resource for the given path and get the correct field if the resource path value is not stringified json object', () => {
       expect(getGraphQLValues({resource, field: 'query', path: 'http.relativeURI'})).toEqual('123');

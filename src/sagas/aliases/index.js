@@ -88,7 +88,7 @@ export function* createOrUpdateAlias({ id, resourceType, aliasId, isEdit, asyncK
     return;
   }
 
-  yield put(actions.resource.aliases.actionStatus(id, newAliasId, 'save'));
+  yield put(actions.resource.aliases.actionStatus(id, newAliasId, isEdit ? 'edit' : 'save'));
   yield put(actions.asyncTask.success(asyncKey));
 }
 

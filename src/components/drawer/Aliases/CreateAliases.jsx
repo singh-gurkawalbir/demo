@@ -50,7 +50,7 @@ const AliasForm = ({ resourceId, resourceType, isEdit, parentUrl }) => {
   }, [history]);
 
   useEffect(() => {
-    if (!isFormSaveTriggered || !(isAliasActionCompleted === 'save')) {
+    if (!isFormSaveTriggered || !(isAliasActionCompleted === 'save' || isAliasActionCompleted === 'edit')) {
       return;
     }
 
