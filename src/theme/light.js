@@ -154,9 +154,9 @@ export default {
         borderColor: colors.celigoNeutral3,
         color: colors.celigoNeutral6,
         '&:hover': {
-          color: colors.celigoNeutral6,
+          color: colors.celigoAccent3,
           backgroundColor: colors.celigoWhite,
-          borderColor: colors.celigoNeutral3,
+          borderColor: colors.celigoAccent3,
         },
         '&:disabled': {
           color: colors.celigoNeutral4,

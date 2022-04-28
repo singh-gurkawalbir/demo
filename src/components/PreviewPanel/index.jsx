@@ -158,20 +158,24 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
         </Typography>
 
         <div className={classes.container}>
-          {isSendVisible ? (
+          {resourceType === 'imports' ? (
             <div className={classes.actionGroupWrapper}>
               <ActionGroup position="right">
                 <TextButton onClick={onEditorClick} startIcon={<EditIcon />}>
                   Edit mock input
                 </TextButton>
-                <CeligoDivider position="right" />
-                <TextToggle
-                  value={toggleValue}
-                  onChange={onChange}
-                  exclusive
-                  className={classes.errorDrawerActionToggle}
-                  options={IMPORT_PREVIEW_ERROR_TYPES}
+                {isSendVisible ? (
+                  <>
+                    <CeligoDivider position="right" />
+                    <TextToggle
+                      value={toggleValue}
+                      onChange={onChange}
+                      exclusive
+                      className={classes.errorDrawerActionToggle}
+                      options={IMPORT_PREVIEW_ERROR_TYPES}
                 />
+                  </>
+                ) : ''}
               </ActionGroup>
             </div>
           ) : ''}
