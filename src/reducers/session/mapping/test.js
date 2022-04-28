@@ -1,5 +1,5 @@
 /* global describe, test, expect, jest */
-import reducer, { selectors } from '.';
+import reducer, { selectors, expandRow, updateChildrenProps, updateDataType } from '.';
 import actions from '../../../actions';
 import {MAPPING_DATA_TYPES} from '../../../utils/mapping';
 import {generateUniqueKey} from '../../../utils/string';
@@ -3446,6 +3446,86 @@ describe('mapping selectors', () => {
       expect(selectors.mappingChanged(state)).toEqual(false);
     });
   });
+  describe('selectors.v2MappingChanged', () => {
+    test('should return false if state does not exist', () => {
+      expect(selectors.v2MappingChanged()).toEqual(false);
+      expect(selectors.v2MappingChanged(null)).toEqual(false);
+      expect(selectors.v2MappingChanged({})).toEqual(false);
+      expect(selectors.v2MappingChanged({mapping: {}})).toEqual(false);
+    });
+    test('should return false if v2 mappings not changed', () => {
+      const state = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+          importId: '123',
+          flowId: '123',
+          saveStatus: 'completed',
+          v2TreeDataCopy: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+          mappingsCopy: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+        },
+      };
+
+      expect(selectors.v2MappingChanged(state)).toEqual(false);
+    });
+    test('should return true if v2 mappings not changed', () => {
+      const state = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+          importId: '123',
+          flowId: '123',
+          saveStatus: 'completed',
+          v2TreeDataCopy: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'new-name',
+              extract: '$.fname',
+            },
+          ],
+          mappingsCopy: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+        },
+      };
+
+      expect(selectors.v2MappingChanged(state)).toEqual(true);
+    });
+  });
   describe('selectors.autoMapper', () => {
     test('should return empty object if state does not exist', () => {
       expect(selectors.autoMapper()).toEqual({});
@@ -3601,6 +3681,299 @@ describe('mapping selectors', () => {
       };
 
       expect(selectors.v2ActiveKey(state)).toEqual('key1');
+    });
+  });
+});
+
+describe('mapping utils', () => {
+  describe('expandRow util', () => {
+    test('should do nothing if state or key does not exist', () => {
+      expect(expandRow()).toBeUndefined();
+      expect(expandRow(null, null)).toBeUndefined();
+    });
+    test('should add new key in the expandedKeys state if exists', () => {
+      const state = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key1', 'key2', 'key3'],
+        },
+      };
+      const updatedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key1', 'key2', 'key3', 'key4'],
+        },
+      };
+
+      expandRow(state, 'key4');
+      expect(state).toEqual(updatedState);
+    });
+    test('should create expandedKeys array with passed key if it does not exist', () => {
+      const state = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+        },
+      };
+      const updatedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key1'],
+        },
+      };
+
+      expandRow(state, 'key1');
+      expect(state).toEqual(updatedState);
+    });
+  });
+  describe('updateChildrenProps util', () => {
+    test('should return original children if its falsy', () => {
+      expect(updateChildrenProps()).toBeUndefined();
+      expect(updateChildrenProps(null)).toBeNull();
+      expect(updateChildrenProps([])).toEqual([]);
+    });
+    test('should update parent node reference props in the children and return new children array if data type is object array', () => {
+      const children = [{
+        key: 'c1',
+        extract: '$.fname',
+        generate: 'fname',
+        dataType: 'string',
+      }];
+      const parentNode = {
+        key: 'key1',
+        combinedExtract: '$.siblings[*]',
+        generate: 'siblings',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+      };
+
+      const newChildren = [
+        {
+          key: 'c1',
+          extract: '$.fname',
+          generate: 'fname',
+          dataType: 'string',
+          parentExtract: '$.siblings[*]',
+          parentKey: 'key1',
+          isEmptyRow: false,
+        },
+      ];
+
+      expect(updateChildrenProps(children, parentNode, MAPPING_DATA_TYPES.OBJECTARRAY)).toEqual(newChildren);
+    });
+    test('should remove parent node reference props in the children and return new children array if data type is not object array', () => {
+      const children = [{
+        key: 'c1',
+        extract: '$.fname',
+        generate: 'fname',
+        dataType: 'string',
+        parentExtract: '$.siblings[*]',
+        parentKey: 'key1',
+        isEmptyRow: false,
+      },
+      {
+        key: 'c1',
+        extract: '$.fname',
+        generate: 'fname',
+        dataType: 'string',
+        parentExtract: '$.children[*]',
+        parentKey: 'key1',
+        isEmptyRow: false,
+      }];
+      const parentNode = {
+        key: 'key1',
+        combinedExtract: '$.siblings[*]',
+        generate: 'siblings',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+      };
+
+      const newChildren = [
+        {
+          key: 'c1',
+          extract: '$.fname',
+          generate: 'fname',
+          dataType: 'string',
+        },
+      ];
+
+      expect(updateChildrenProps(children, parentNode, MAPPING_DATA_TYPES.OBJECT)).toEqual(newChildren);
+    });
+  });
+  describe('updateDataType util', () => {
+    const state = {
+      mapping: {
+        importId: 'imp-123',
+        flowId: 'flow-123',
+        version: 2,
+      },
+    };
+
+    test('should return original node if its falsy', () => {
+      expect(updateDataType()).toBeUndefined();
+      expect(updateDataType({}, null)).toBeNull();
+    });
+    test('should return original node if old and new data types are same', () => {
+      const node = {
+        key: 'key1',
+        generate: 'fname',
+        extract: '$.fname',
+        dataType: MAPPING_DATA_TYPES.STRING,
+      };
+
+      expect(updateDataType(state, node, MAPPING_DATA_TYPES.STRING, MAPPING_DATA_TYPES.STRING)).toBe(node);
+    });
+    test('should remove children if new data type is object array with copy source as yes', () => {
+      const node = {
+        key: 'key1',
+        generate: 'fname',
+        extract: '$.fname',
+        copySource: 'yes',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+        children: [{}],
+      };
+
+      const newNode = {
+        key: 'key1',
+        generate: 'fname',
+        combinedExtract: '$.fname',
+        copySource: 'yes',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+      };
+
+      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECT, MAPPING_DATA_TYPES.OBJECTARRAY)).toEqual(newNode);
+    });
+    test('should add empty row to children if new data type is object array with copy source as no and no existing children', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const node = {
+        key: 'key1',
+        generate: 'fname',
+        extract: '$.fname',
+        dataType: MAPPING_DATA_TYPES.STRING,
+      };
+
+      const newNode = {
+        key: 'key1',
+        generate: 'fname',
+        combinedExtract: '$.fname',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        children: [{
+          key: 'new_key',
+          title: '',
+          parentKey: 'key1',
+          parentExtract: '$.fname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      };
+
+      expect(updateDataType(state, node, MAPPING_DATA_TYPES.STRING, MAPPING_DATA_TYPES.OBJECTARRAY)).toEqual(newNode);
+    });
+    test('should delete existing children if new data type is object with copy source as yes', () => {
+      const node = {
+        key: 'key1',
+        generate: 'fname',
+        combinedExtract: '$.fname[*]',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        copySource: 'yes',
+        children: [{
+          key: 'c1',
+          extract: '$.child1',
+          generate: 'child1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      };
+
+      const newNode = {
+        key: 'key1',
+        generate: 'fname',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+        copySource: 'yes',
+        extract: '$.fname[*]',
+      };
+
+      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT)).toEqual(newNode);
+    });
+    test('should delete existing children and add empty row to children if new data type is object with copy source as no', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const node = {
+        key: 'key1',
+        generate: 'fname',
+        combinedExtract: '$.fname[*]',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        children: [{
+          key: 'c1',
+          extract: '$.child1',
+          generate: 'child1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      };
+
+      const newNode = {
+        key: 'key1',
+        generate: 'fname',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+        children: [{
+          key: 'new_key',
+          title: '',
+          parentKey: 'key1',
+          parentExtract: '',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      };
+
+      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT)).toEqual(newNode);
+    });
+    test('should delete existing children if new data type is primitive array', () => {
+      const node = {
+        key: 'key1',
+        generate: 'fname',
+        combinedExtract: '$.fname[*]',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        children: [{
+          key: 'c1',
+          extract: '$.child1',
+          generate: 'child1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      };
+
+      const newNode = {
+        key: 'key1',
+        generate: 'fname',
+        dataType: MAPPING_DATA_TYPES.STRINGARRAY,
+        combinedExtract: '$.fname[*]',
+      };
+
+      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.STRINGARRAY)).toEqual(newNode);
+    });
+    test('should delete existing children if new data type is primitive type', () => {
+      const node = {
+        key: 'key1',
+        generate: 'fname',
+        combinedExtract: '$.fname[*]',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        children: [{
+          key: 'c1',
+          extract: '$.child1',
+          generate: 'child1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      };
+
+      const newNode = {
+        key: 'key1',
+        generate: 'fname',
+        dataType: MAPPING_DATA_TYPES.NUMBER,
+      };
+
+      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.NUMBER)).toEqual(newNode);
     });
   });
 });

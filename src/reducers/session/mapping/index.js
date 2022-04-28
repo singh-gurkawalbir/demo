@@ -17,7 +17,7 @@ import {
   getUniqueExtractId} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
-const expandRow = (draft, key) => {
+export const expandRow = (draft, key) => {
   if (!draft || !key) return;
 
   if (draft.mapping.expandedKeys) {
@@ -30,7 +30,7 @@ const expandRow = (draft, key) => {
 
 // this util will update parent reference props on children
 // when data type is updated
-const updateChildrenProps = (children, parentNode, dataType) => {
+export const updateChildrenProps = (children, parentNode, dataType) => {
   if (!children || !children.length) return children;
   const childrenCopy = deepClone(children);
 
@@ -70,12 +70,16 @@ const updateChildrenProps = (children, parentNode, dataType) => {
 };
 
 // updates specific to data type change
-const updateDataType = (draft, node, oldDataType, newDataType) => {
+export const updateDataType = (draft, node, oldDataType, newDataType) => {
+  if (!node) return node;
+
   const newNode = deepClone(node);
   const newRowKey = generateUniqueKey();
 
   // data type not changed, nothing to do
   if (oldDataType === newDataType) return node;
+
+  newNode.dataType = newDataType;
 
   if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
     expandRow(draft, newNode.key);
@@ -582,7 +586,6 @@ export default (state = {}, action) => {
         if (isEmpty(node)) break;
 
         nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, node.dataType, newDataType);
-        nodeSubArray[nodeIndexInSubArray].dataType = newDataType;
         delete nodeSubArray[nodeIndexInSubArray].isEmptyRow;
 
         break;
