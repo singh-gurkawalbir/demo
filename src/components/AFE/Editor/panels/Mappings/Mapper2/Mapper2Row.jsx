@@ -51,14 +51,14 @@ const useStyles = makeStyles(theme => ({
   lockIcon: {
     marginLeft: theme.spacing(1),
     color: theme.palette.text.hint,
-    height: theme.spacing(3),
+    height: 22,
   },
   lockedIcon: {
     right: theme.spacing(5),
   },
   actionsMapping: {
     display: 'flex',
-    alignItems: 'baseline',
+    alignItems: 'center',
     flex: 1,
   },
   deleteMapping: {
@@ -69,8 +69,8 @@ const useStyles = makeStyles(theme => ({
       flex: 2,
     },
   },
-  settingsButton: {
-    marginBlock: 'auto',
+  rowActionButton: {
+    alignItems: 'baseline',
   },
 }));
 
@@ -237,13 +237,14 @@ const Mapper2Row = React.memo(props => {
           placement="bottom"
           title={(!generate && !generateDisabled) ? 'Enter destination record field to configure settings' : ''}>
           {/* this div needs to be added to render the tooltip correctly when settings is disabled */}
-          <div className={classes.settingsButton}>
+          <div>
             <ActionButton
               data-test={`fieldMappingSettings-${nodeKey}`}
               disabled={disabled || !generate}
               aria-label="settings"
               onClick={handleSettingsClick}
-              key="settings">
+              key="settings"
+              className={classes.rowActionButton}>
               <SettingsIcon />
             </ActionButton>
           </div>
@@ -254,7 +255,8 @@ const Mapper2Row = React.memo(props => {
           aria-label="add"
           onClick={addNewRowHandler}
           key="add_button"
-          disabled={generateDisabled || disabled}>
+          disabled={generateDisabled || disabled}
+          className={classes.rowActionButton}>
           <AddIcon />
         </ActionButton>
         <ActionButton

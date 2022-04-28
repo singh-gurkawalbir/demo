@@ -48,7 +48,8 @@ const useStyles = makeStyles(theme => ({
     left: `${theme.spacing(1)}px !important`,
   },
   actionsMenuPopperArrow: {
-    left: '224px !important',
+    left: 'auto !important',
+    right: theme.spacing(0.5),
   },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
@@ -77,7 +78,7 @@ const useStyles = makeStyles(theme => ({
   itemRoot: {
     wordBreak: 'break-word',
     padding: theme.spacing(1),
-    paddingRight: '20%',
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     '&:before': {
       content: '""',
       width: '3px',
@@ -92,6 +93,9 @@ const useStyles = makeStyles(theme => ({
         background: theme.palette.primary.main,
       },
     },
+    '&:last-child': {
+      borderBottom: 'none',
+    },
   },
   itemSelected: {
     position: 'relative',
@@ -105,7 +109,6 @@ const useStyles = makeStyles(theme => ({
     },
   },
   listWrapper: {
-    minWidth: 250,
     maxHeight: 650,
     overflowY: 'auto',
   },
@@ -114,7 +117,6 @@ const useStyles = makeStyles(theme => ({
     fontSize: 16,
     lineHeight: '39px',
     fontFamily: 'source sans pro',
-
   },
 }));
 

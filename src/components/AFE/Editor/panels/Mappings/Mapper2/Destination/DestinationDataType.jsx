@@ -19,23 +19,24 @@ const useStyles = makeStyles(theme => ({
     border: 'none',
     fontStyle: 'italic',
     color: theme.palette.primary.main,
-    width: theme.spacing(12),
+    width: theme.spacing(9),
     padding: 0,
+    justifyContent: 'flex-start',
     '&.Mui-disabled': {
       height: 38,
+      backgroundColor: theme.palette.background.paper2,
     },
   },
   listPopper: {
-    maxWidth: 250,
-    left: '116px !important',
+    maxWidth: theme.spacing(31),
     top: '5px !important',
   },
   listPopperArrow: {
-    left: '65px !important',
+    left: `${theme.spacing(11)}px !important`,
   },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    maxWidth: 248,
+    maxWidth: theme.spacing(31),
     '& button': {
       minWidth: 0,
       display: 'none',
@@ -60,7 +61,7 @@ const useStyles = makeStyles(theme => ({
   itemRoot: {
     wordBreak: 'break-word',
     padding: theme.spacing(1),
-    paddingRight: '20%',
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     '&:before': {
       content: '""',
       width: '3px',
@@ -75,6 +76,9 @@ const useStyles = makeStyles(theme => ({
         background: theme.palette.primary.main,
       },
     },
+    '&:last-child': {
+      borderBottom: 'none',
+    },
   },
   itemSelected: {
     position: 'relative',
@@ -88,14 +92,17 @@ const useStyles = makeStyles(theme => ({
     },
   },
   listWrapper: {
-    minWidth: 230,
-    maxHeight: 352,
+    minWidth: theme.spacing(20),
+    maxHeight: theme.spacing(32),
     overflowY: 'auto',
   },
   itemRootName: {
     margin: 0,
     fontSize: 15,
     lineHeight: '42px',
+  },
+  actionsMenuPopperArrow: {
+    left: '50px !important',
   },
 }));
 
