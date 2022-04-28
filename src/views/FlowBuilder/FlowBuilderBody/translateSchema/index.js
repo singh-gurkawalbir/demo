@@ -1,27 +1,6 @@
 /* eslint-disable no-param-reassign */
-import { generateDefaultEdge, generateId } from '../lib';
+import { generateDefaultEdge, generateId, GRAPH_ELEMENTS_TYPE } from '../lib';
 import { generateNewTerminal, generateRouterNode } from '../nodeGeneration';
-
-export const initializeFlowForReactFlow = flow => {
-  if (!flow) return flow;
-  const { pageGenerators = [], pageProcessors = [], routers = [] } = flow;
-
-  pageGenerators.forEach(pg => {
-    pg.id = pg._exportId || pg._connectionId || pg.application || `none-${generateId()}`;
-  });
-  pageProcessors.forEach(pp => {
-    pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${generateId()}`;
-  });
-  routers.forEach(({branches = []}) => {
-    branches.forEach(branch => {
-      const {pageProcessors = []} = branch;
-
-      pageProcessors.forEach(pp => {
-        pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${generateId()}`;
-      });
-    });
-  });
-};
 
 const hydrateNodeData = (resourcesState, node) => {
   if (node._exportId) {
@@ -71,12 +50,11 @@ const generatePageProcessorNodesAndEdges = (resourceState, pageProcessors, branc
 
     return {
       id: pageProcessor.id,
-      type: 'pp',
+      type: GRAPH_ELEMENTS_TYPE.PP_STEP,
       data: {
         resource: hydrateNodeData(resourceState, pageProcessor),
         branch,
         isFirst: index === 0,
-        isLast: index === (collection.length - 1),
         path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${index}`,
       },
     };

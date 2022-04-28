@@ -1,46 +1,103 @@
 /* eslint-disable no-param-reassign */
-import { generateDefaultEdge, generateId } from '../lib';
-import { generateNewTerminal, generateRouterNode } from '../nodeGeneration';
+
+import { generateId } from '../string';
+
+export const GRAPH_ELEMENTS_TYPE = {
+  ROUTER: 'router',
+  MERGE: 'merge',
+  EDGE: 'default',
+  TERMINAL: 'terminal',
+  PP_STEP: 'pp',
+  PG_STEP: 'pg',
+};
+
+export function generateDefaultEdge(source, target, {routerIndex, branchIndex} = {}) {
+  return {
+    id: `${source}-${target}`,
+    source,
+    target,
+    data: {
+      path: `/routers/${routerIndex}/branches/${branchIndex}`,
+    },
+    type: 'default',
+  };
+}
+export const getSomeImport = _id => ({_id, connectorType: 'ftp', label: _id});
+export const getSomeExport = _exportId => ({_id: _exportId, connectorType: 'ftp', label: _exportId});
+
+export const getSomePg = _exportId => ({_exportId, skipRetries: true, id: _exportId});
+
+export const getSomePpImport = _importId =>
+  ({responseMapping: {fields: [], lists: []}, type: 'import', _importId});
+export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
+
+export const generateRouterNode = (router, routerIndex) => ({
+  id: router?._id || generateId(),
+  type: isVirtualRouter(router) ? GRAPH_ELEMENTS_TYPE.MERGE : GRAPH_ELEMENTS_TYPE.ROUTER,
+  data: {
+    path: `/routers/${routerIndex}`,
+    router,
+  },
+});
+export const generateNewTerminal = ({branch = {}, branchIndex, routerIndex} = {}) => ({
+  id: generateId(),
+  type: GRAPH_ELEMENTS_TYPE.TERMINAL,
+  draggable: true,
+  data: {
+    ...branch,
+    path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${branch.pageProcessors?.length || '-'}`,
+  },
+});
+
+export const generateBranch = () => {
+  const newId = generateId();
+
+  return {
+    name: newId,
+    description: 'some description',
+    inputFilter: {},
+    pageProcessors: [],
+    _id: newId,
+  };
+};
+export const generateEmptyRouter = isVirtual => ({
+  _id: generateId(),
+  ...(!isVirtual && { routeRecordsTo: {
+    type: 'first_matching_branch',
+    default: undefined,
+  }}),
+  ...(!isVirtual && { routeRecordsUsing: {
+    type: 'input_filters',
+    default: undefined,
+  }}),
+  branches: [{
+    pageProcessors: [{application: `none-${generateId()}`}],
+  }],
+  ...(!isVirtual && { script: {
+    _scriptId: { type: 'something', ref: 'Script' },
+    function: { type: 'something' },
+  } }),
+});
 
 export const initializeFlowForReactFlow = flow => {
   if (!flow) return flow;
   const { pageGenerators = [], pageProcessors = [], routers = [] } = flow;
 
   pageGenerators.forEach(pg => {
-    pg.id = pg._exportId || pg._connectionId || pg.application || `none-${generateId()}`;
+    pg.id = pg._exportId || pg._connectionId || pg.application || `none-${generateId(6)}`;
   });
   pageProcessors.forEach(pp => {
-    pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${generateId()}`;
+    pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${generateId(6)}`;
   });
   routers.forEach(({branches = []}) => {
     branches.forEach(branch => {
       const {pageProcessors = []} = branch;
 
       pageProcessors.forEach(pp => {
-        pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${generateId()}`;
+        pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${generateId(6)}`;
       });
     });
   });
-};
-
-const hydrateNodeData = (resourcesState, node) => {
-  if (node._exportId) {
-    return resourcesState?.exports?.find(ele => ele._id === node.id);
-  }
-  if (node._importId) {
-    return resourcesState?.imports?.find(ele => ele._id === node.id);
-  }
-  if (node._connectionId) {
-    return resourcesState?.connections?.find(ele => ele._id === node.id);
-  }
-
-  if (node.application) {
-    return {
-      application: node.application,
-    };
-  }
-
-  return null;
 };
 
 // Note 'targeId' can be either a page processor Id if the flow schema is linear (old schema)
@@ -53,7 +110,7 @@ const generatePageGeneratorNodesAndEdges = (resourcesState, pageGenerators, targ
   const nodes = pageGenerators.map(pg => ({
     id: pg.id,
     type: 'pg',
-    data: hydrateNodeData(resourcesState, pg),
+    data: {...pg},
   }));
 
   const edges = nodes.map(node => generateDefaultEdge(node.id, targetId));
@@ -71,12 +128,11 @@ const generatePageProcessorNodesAndEdges = (resourceState, pageProcessors, branc
 
     return {
       id: pageProcessor.id,
-      type: 'pp',
+      type: GRAPH_ELEMENTS_TYPE.PP_STEP,
       data: {
-        resource: hydrateNodeData(resourceState, pageProcessor),
+        resource: {...pageProcessor},
         branch,
         isFirst: index === 0,
-        isLast: index === (collection.length - 1),
         path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${index}`,
       },
     };
@@ -88,6 +144,7 @@ const generatePageProcessorNodesAndEdges = (resourceState, pageProcessors, branc
 const generateNodesAndEdgesFromNonBranchedFlow = (resourceState, flow) => {
   const { _exportId, pageGenerators, pageProcessors = [], _importId } = flow;
   const virtualRouter = {_id: generateId(), branches: []};
+
   const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(resourceState, pageGenerators || [{_exportId, id: _exportId}], virtualRouter._id);
   const pageProcessorNodesAndEdges = generatePageProcessorNodesAndEdges(resourceState, _importId ? [{_importId, id: _importId}] : pageProcessors);
   const firstPPId = _importId || pageProcessors[0]?.id || _importId;
@@ -97,6 +154,7 @@ const generateNodesAndEdgesFromNonBranchedFlow = (resourceState, flow) => {
 
   return [
     ...pageGeneratorNodesAndEdges,
+    generateRouterNode(virtualRouter, 0),
     generateDefaultEdge(virtualRouter._id, firstPPId),
     ...pageProcessorNodesAndEdges,
     generateDefaultEdge(lastPPId, terminalNode.id),
@@ -181,3 +239,4 @@ export const generateReactFlowGraph = (resourcesState, flow) => {
 
   return generateNodesAndEdgesFromBranchedFlow(resourcesState, flow);
 };
+

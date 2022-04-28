@@ -2055,6 +2055,19 @@ const errorManager = {
   },
 };
 const flow = {
+  addNewPGStep: props => action(actionTypes.FLOW.ADD_NEW_PG_STEP, props),
+  addNewPPStep: (flowId, path) => action(actionTypes.FLOW.ADD_NEW_STEP, {flowId, path}),
+  addNewRouter: (flowId, path) => action(actionTypes.FLOW.ADD_NEW_ROUTER, {flowId, path}),
+  dragStart: props => action(actionTypes.FLOW.DRAG_START, props),
+  dragEnd: props => action(actionTypes.FLOW.DRAG_END, props),
+  mergeTargetSet: (flowId, targetType, targetId) => action(actionTypes.FLOW.MERGE_TARGET_SET, {flowId, targetType, targetId}),
+  mergeTargetClear: flowId => action(actionTypes.FLOW.MERGE_TARGET_CLEAR, {flowId}),
+  mergeBranch: props => action(actionTypes.FLOW.MERGE_BRANCH, props),
+  deleteStep: (flowId, stepId) => action(actionTypes.FLOW.DELETE_STEP, {flowId, stepId}),
+  deleteEdge: (flowId, edgeId) => action(actionTypes.FLOW.DELETE_EDGE, {flowId, edgeId}),
+  mergeTerminalNodes: props => action(actionTypes.FLOW.MERGE_TERMINAL_NODES, props),
+  initializeFlowGraph: flow => action(actionTypes.FLOW.INIT_FLOW_GRAPH, { flow }),
+  saveFlow: props => action(actionTypes.FLOW.SAVE, props),
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
   runDataLoader: ({ flowId, customStartDate, fileContent, fileType, fileName }) =>
