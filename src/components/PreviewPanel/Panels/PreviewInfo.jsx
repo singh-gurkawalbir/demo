@@ -63,7 +63,6 @@ const useStyles = makeStyles(theme => ({
   },
   previewBtn: {
     minHeight: theme.spacing(5),
-    color: theme.palette.primary.main,
   },
   error: {
     color: 'red',
