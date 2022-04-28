@@ -1,5 +1,4 @@
 import ToggleFilterMode from '../Drawer/actions/ToggleFilterMode';
-import ViewAliases from '../Drawer/actions/ViewAliases';
 import filterMetadata from './filter';
 import javascriptMetadata from './javascript';
 
@@ -18,7 +17,6 @@ export default {
   drawer: {
     showLayoutToggle: true,
     actions: [
-      { component: ViewAliases, position: 'right' },
       { component: ToggleFilterMode, position: 'right' },
     ],
   },
