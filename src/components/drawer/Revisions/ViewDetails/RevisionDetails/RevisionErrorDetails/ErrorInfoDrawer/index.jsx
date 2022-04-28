@@ -10,6 +10,7 @@ import DrawerFooter from '../../../../../Right/DrawerFooter';
 import { FilledButton } from '../../../../../../Buttons';
 import { selectors } from '../../../../../../../reducers';
 import DateTimeDisplay from '../../../../../../DateTimeDisplay';
+import { drawerPaths } from '../../../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   details: {
@@ -39,8 +40,8 @@ function ErrorInfoDrawerContent({ integrationId, revisionId, parentUrl }) {
       <DrawerHeader title="View error" handleClose={onClose} />
       <DrawerContent>
         <Typography className={classes.details}><b>Timestamp</b><br /><DateTimeDisplay dateTime={revisionError.createdAt} /></Typography>
-        <Typography className={classes.details}><b>Code</b><br /><DateTimeDisplay dateTime={revisionError.code} /></Typography>
-        <Typography className={classes.details}><b>Message</b><br /><DateTimeDisplay dateTime={revisionError.message} /></Typography>
+        <Typography className={classes.details}><b>Code</b><br />{revisionError.code}</Typography>
+        <Typography className={classes.details}><b>Message</b><br />{revisionError.message}</Typography>
       </DrawerContent>
       <DrawerFooter>
         <FilledButton
@@ -57,10 +58,7 @@ export default function ErrorInfoDrawer({ integrationId, revisionId }) {
   const match = useRouteMatch();
 
   return (
-    <RightDrawer
-      path="error/:errorId"
-      variant="temporary"
-      height="tall">
+    <RightDrawer path={drawerPaths.LCM.VIEW_REVISION_ERROR_INFO} height="tall">
       <ErrorInfoDrawerContent
         integrationId={integrationId}
         revisionId={revisionId}

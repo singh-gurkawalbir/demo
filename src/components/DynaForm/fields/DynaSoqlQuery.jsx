@@ -11,6 +11,7 @@ import ActionButton from '../../ActionButton';
 import ScriptsIcon from '../../icons/ScriptsIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { getValidRelativePath } from '../../../utils/routePaths';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles({
   formField: {
@@ -111,7 +112,11 @@ export default function DynaSoqlQuery(props) {
       onSave: handleSave,
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
   }, [dispatch, id, formKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
 
   return (

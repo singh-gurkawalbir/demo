@@ -1,9 +1,8 @@
-import moment from 'moment';
 import { REVISION_STATUS, REVISION_TYPES } from '../constants';
-import { REQUIRED_MESSAGE } from '../messageStore';
+import messageStore from '../messageStore';
 import { comparer, sortJsonByKeys } from '../sort';
 
-export const INTEGRATION_CLONE_ERROR = `${REQUIRED_MESSAGE}.You don't have any data to pull`;
+export const INTEGRATION_CLONE_ERROR = `${messageStore('REQUIRED_MESSAGE')}.You don't have any data to pull`;
 
 export const DEFAULT_ROWS_PER_PAGE = 50;
 export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
@@ -62,6 +61,7 @@ export const REVISION_DIFF_ACTIONS = {
   ADD: 'add',
   NEW: 'new',
   DELETED: 'deleted',
+  REMOVED: 'removed',
   UPDATE: 'update',
   CONFLICT: 'conflict',
 };
@@ -70,6 +70,7 @@ export const REVISION_DIFF_ACTION_LABELS = {
   [REVISION_DIFF_ACTIONS.ADD]: 'Add',
   [REVISION_DIFF_ACTIONS.NEW]: 'New',
   [REVISION_DIFF_ACTIONS.DELETED]: 'Deleted',
+  [REVISION_DIFF_ACTIONS.REMOVED]: 'Removed',
   [REVISION_DIFF_ACTIONS.UPDATE]: 'Update',
   [REVISION_DIFF_ACTIONS.CONFLICT]: 'Conflict',
 };
@@ -80,9 +81,8 @@ export const DEFAULT_OPTION = 'all';
 
 export const DEFAULT_REVISION_FILTERS = {
   createdAt: {
-    startDate: moment().add(-1, 'y'),
-    endDate: new Date(),
-    preset: 'lastyear',
+    // By default no date is selected, so that all revisions are shown to the user
+    preset: null,
   },
   status: DEFAULT_OPTION,
   user: DEFAULT_OPTION,
@@ -104,22 +104,25 @@ const DIFF_TITLES_BY_TYPE = {
 };
 
 export const getFilteredRevisions = (revisions = [], filters = {}) => {
-  const { createdAt, status, user, type, sort = {}, paging = {} } = filters;
-  const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = paging;
+  const { createdAt, status, user, type, sort = {} } = filters;
 
   const filteredRevisions = revisions.filter(revision => {
     if (status !== DEFAULT_OPTION && revision.status !== status) return false;
     if (type !== DEFAULT_OPTION && revision.type !== type) return false;
-    if (user !== DEFAULT_OPTION && revision._byUserId !== user) return false;
+    if (user !== DEFAULT_OPTION && revision._createdByUserId !== user) return false;
     if (createdAt?.startDate && revision.createdAt < createdAt.startDate.toISOString()) return false;
     if (createdAt?.endDate && revision.createdAt > createdAt.endDate.toISOString()) return false;
 
     return true;
   });
 
-  filteredRevisions.sort(comparer(sort));
+  return filteredRevisions.sort(comparer(sort));
+};
 
-  return filteredRevisions.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
+export const getPaginatedRevisions = (revisions = [], filters) => {
+  const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = filters?.paging || {};
+
+  return revisions.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
 };
 
 const getDiffContent = (diff, type) => {
@@ -132,20 +135,19 @@ const getDiffContent = (diff, type) => {
   const [beforeKey, afterKey] = RESOURCE_DIFF_KEYS_BY_TYPE[type] || ['before', 'after'];
 
   return {
-    before: diff[beforeKey],
-    after: diff[afterKey],
+    before: diff[beforeKey] || {},
+    after: diff[afterKey] || {},
   };
 };
 
-export const getRevisionResourceLevelChanges = (overallDiff, type, sortKeys = false) => {
+export const getRevisionResourceLevelChanges = (overallDiff, type, ignoreSort = false) => {
   if (!overallDiff) return;
   const { numConflicts } = overallDiff;
   const { before, after } = getDiffContent(overallDiff, type);
   const diffs = {};
   const resourcesTypes = Object.keys(after);
-  // Ignore Sorting keys for now
   const NOOP = obj => obj;
-  const sortFn = sortKeys ? sortJsonByKeys : NOOP;
+  const sortFn = ignoreSort ? NOOP : sortJsonByKeys;
 
   resourcesTypes.forEach(resourceType => {
     if (!diffs[resourceType]) {
@@ -155,7 +157,14 @@ export const getRevisionResourceLevelChanges = (overallDiff, type, sortKeys = fa
 
     Object.keys(resources).forEach(id => {
       const [resourceId, action = REVISION_DIFF_ACTIONS.UPDATE] = id.split('.');
-      const resourceDiff = { resourceId, action };
+      // Incase of resources deleted action, only incase of flow , resources are actually deleted
+      // In other cases, only the references are removed but the resources do exist.
+      // So UI need to consider this as removed action instead of deleted
+      // Ref: @IO-25890
+      const diffAction = (action === REVISION_DIFF_ACTIONS.DELETED && resourceType !== 'flow')
+        ? REVISION_DIFF_ACTIONS.REMOVED
+        : action;
+      const resourceDiff = { resourceId, action: diffAction };
       const {$conflicts, ...rest} = after[resourceType][id];
       // TODO: confirm on script diffs - we do show script changes but not script name as of now
       const afterContent = resourceType === 'script' ? (rest['$blob.conflict'] || rest.$blob) : sortFn(rest);
@@ -179,8 +188,9 @@ export const getRevisionResourceLevelChanges = (overallDiff, type, sortKeys = fa
   return { numConflicts, diffs, titles: DIFF_TITLES_BY_TYPE[type] };
 };
 
-export const shouldShowReferences = resourceType => {
-  const VALID_RESOURCE_TYPES_WITH_REFERENCES = ['exports', 'imports', 'connections'];
+export const shouldShowReferences = (resourceType, action) => {
+  const VALID_RESOURCE_TYPES_WITH_REFERENCES = ['exports', 'imports'];
 
-  return VALID_RESOURCE_TYPES_WITH_REFERENCES.includes(resourceType);
+  // We do not show references if the resource is a newly created one or not one of the above resource types
+  return VALID_RESOURCE_TYPES_WITH_REFERENCES.includes(resourceType) && action !== REVISION_DIFF_ACTIONS.NEW;
 };

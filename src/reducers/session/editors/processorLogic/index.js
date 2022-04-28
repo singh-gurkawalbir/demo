@@ -251,7 +251,7 @@ export const featuresMap = options => ({
     autoEvaluate: false,
   },
   responseMappings: {
-    layout: 'compactRow',
+    layout: 'compact',
     autoEvaluate: false,
   },
   router: {

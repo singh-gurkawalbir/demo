@@ -138,6 +138,7 @@ export default {
     'segment',
     'bigquerydatawarehouse',
     'happyreturns',
+    'brex',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -224,6 +225,7 @@ export default {
     'mercadolibre',
     'zohoexpense',
     'microsoftpowerautomate',
+    'microsoftdynamics365finance',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',

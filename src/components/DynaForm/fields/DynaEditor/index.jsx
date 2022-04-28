@@ -10,6 +10,7 @@ import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import ExpandEditorModal from './ExpandModeEditor/Modal';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -72,7 +73,11 @@ export default function DynaEditor(props) {
     if (expandMode === 'drawer') {
       const { formKey, id } = props;
 
-      history.push(`${match.url}/expand/${formKey}/${id}`);
+      history.push(`${buildDrawerUrl({
+        path: drawerPaths.DYNA_EDITOR_EXPAND,
+        baseUrl: match.url,
+        params: { formKey, fieldId: id },
+      })}`);
     } else {
       setShowEditor(!showEditor);
     }

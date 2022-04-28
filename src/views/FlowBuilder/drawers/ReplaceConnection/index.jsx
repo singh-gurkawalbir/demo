@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import ReplaceConnectionForm from './form';
 import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
+import { drawerPaths } from '../../../../utils/rightDrawer';
 
 export default function ReplaceConnectionDrawer({
   flowId,
@@ -18,7 +19,7 @@ export default function ReplaceConnectionDrawer({
 
   return (
     <RightDrawer
-      path="replaceConnection/:connId"
+      path={drawerPaths.CONNECTION.REPLACE}
       height="short"
       onClose={handleClose}>
       <DrawerHeader title={`Replace connection: ${connName}`} />

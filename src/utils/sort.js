@@ -54,9 +54,9 @@ export const comparer = ({ order, orderBy }) =>
 export const sortJsonByKeys = obj => {
   const isObject = typeof obj === 'object' && !Array.isArray(obj);
 
-  if (!isObject) return obj;
+  if (!obj || !isObject) return obj;
   const keys = Object.keys(obj);
-  // TODO: Handle blacklisting some properties which are order sensitive
+
   const sortedKeys = [...keys].sort((a, b) => a.localeCompare(b));
 
   return sortedKeys.reduce((newObj, key) => ({...newObj, [key]: sortJsonByKeys(obj[key])}), {});

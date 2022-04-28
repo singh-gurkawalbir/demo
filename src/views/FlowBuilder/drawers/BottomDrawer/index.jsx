@@ -82,9 +82,6 @@ const useStyles = makeStyles(theme => ({
       marginTop: -3,
     },
   },
-  connectionWarning: {
-    color: theme.palette.error.main,
-  },
   rightActionContainer: {
     flexGrow: 1,
     display: 'flex',
@@ -132,6 +129,7 @@ function TabPanel({ children, value, index, className }) {
 }
 export default function BottomDrawer({
   flowId,
+  integrationId,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -363,7 +361,7 @@ export default function BottomDrawer({
                       key={tabType}
                       icon={
                         isAnyFlowConnectionOffline ? (
-                          <OfflineConnectionsIcon className={classes.connectionWarning} />
+                          <OfflineConnectionsIcon />
                         ) : (
                           <ConnectionsIcon />
                         )
@@ -490,7 +488,7 @@ export default function BottomDrawer({
                 tabPanelValue = <ScriptPanel flowId={flowId} />;
                 break;
               case 'auditLogs':
-                tabPanelValue = <AuditPanel flowId={flowId} />;
+                tabPanelValue = <AuditPanel flowId={flowId} integrationId={integrationId} />;
 
                 break;
               case 'scriptLogs':

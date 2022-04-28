@@ -37,6 +37,7 @@ import HelpIcon from '../../../../../components/icons/HelpIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import TrashIcon from '../../../../../components/icons/TrashIcon';
 import { TextButton } from '../../../../../components/Buttons';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -104,7 +105,6 @@ export default function ConnectorInstallation(props) {
     parentId: integration._parentId,
   } : emptyObject, [integration]);
 
-  const isTemplate = !_connectorId;
   const {
     name: childIntegrationName,
     id: childIntegrationId,
@@ -148,7 +148,11 @@ export default function ConnectorInstallation(props) {
       setConnection({
         _connectionId: connectionId,
       });
-      history.replace(`${match.url}/configure/connections/${connectionId}`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP,
+        baseUrl: match.url,
+        params: { resourceType: 'connections', resourceId: connectionId },
+      }));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionId, dispatch, integrationId, openOauthConnection, oauthConnection]);
@@ -395,7 +399,11 @@ export default function ConnectorInstallation(props) {
         doc: sourceConnection,
         _connectionId,
       });
-      history.push(`${match.url}/configure/connections/${_connectionId || newId}`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP,
+        baseUrl: match.url,
+        params: { resourceType: 'connections', resourceId: _connectionId || newId },
+      }));
     } else if (isFrameWork2 && !step.isTriggered && !installURL && !url && type !== 'stack') {
       dispatch(
         actions.integrationApp.installer.updateStep(
@@ -415,7 +423,11 @@ export default function ConnectorInstallation(props) {
         );
       }
       if (type === INSTALL_STEP_TYPES.FORM) {
-        history.push(`${match.url}/form/install`);
+        history.push(buildDrawerUrl({
+          path: drawerPaths.INSTALL.FORM_STEP,
+          baseUrl: match.url,
+          params: { formType: 'install' },
+        }));
       }
     } else if (installURL || url || updatedUrl) {
       if (!step.isTriggered) {
@@ -440,11 +452,11 @@ export default function ConnectorInstallation(props) {
           )
         );
 
-        if (isTemplate && step.connectionId) {
+        if (!_connectorId && step._connId) {
           dispatch(
             actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
               integrationId,
-              step.connectionId,
+              step._connId,
               installerFunction,
               isFrameWork2
             )
@@ -468,7 +480,11 @@ export default function ConnectorInstallation(props) {
         const newStackId = generateNewId();
 
         setShowStackDialog(newStackId);
-        history.push(`${match.url}/configure/stacks/${newStackId}`);
+        history.push(buildDrawerUrl({
+          path: drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP,
+          baseUrl: match.url,
+          params: { resourceType: 'stacks', resourceId: newStackId },
+        }));
       }
     } else if (!isEmpty(form)) {
       dispatch(actions.integrationApp.installer.updateStep(
@@ -569,7 +585,6 @@ export default function ConnectorInstallation(props) {
                 handleStepClick={handleStepClick}
                 index={index + 1}
                 step={step}
-                isTemplate={isTemplate}
                 integrationId={integrationId}
                 isFrameWork2={isFrameWork2}
               />

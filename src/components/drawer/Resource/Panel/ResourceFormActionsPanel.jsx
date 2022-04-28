@@ -132,7 +132,7 @@ export default function ResourceFormActionsPanel(props) {
       return [{id: 'saveandclosegroup', mode: 'group'}];
     }
 
-    return [{id: 'nextandcancel', mode: 'group', submitButtonLabel: 'Next', closeAfterSave: false}];
+    return [{id: 'nextandcancel', mode: 'group', submitButtonLabel: 'Next', closeAfterSave: true}];
   }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource]);
 
   if (!formState.initComplete) return null;

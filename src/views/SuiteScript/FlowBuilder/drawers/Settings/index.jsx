@@ -116,7 +116,7 @@ export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, fl
   });
 
   return (
-    <RightDrawer path="settings" width="medium">
+    <RightDrawer isSuitescript path="settings" width="medium">
       <DrawerHeader title="Settings" />
       <DrawerContent>
         <DynaForm formKey={formKey} />

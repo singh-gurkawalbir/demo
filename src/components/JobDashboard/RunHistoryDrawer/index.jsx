@@ -12,6 +12,7 @@ import { emptyObject } from '../../../utils/constants';
 import RunHistory from '../RunHistory';
 import {FILTER_KEYS_AD, getDashboardIntegrationId} from '../../../utils/accountDashboard';
 import {FILTER_KEYS} from '../../../utils/errorManagement';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import actions from '../../../actions';
 
 const useStyles = makeStyles(theme => ({
@@ -41,7 +42,15 @@ export default function RunHistoryDrawer() {
   const history = useHistory();
   const dispatch = useDispatch();
   const location = useLocation();
-  const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/:flowId/runHistory`}) || {};
+  // TODO: Why are we extracting params here to get flowId?
+  // Can't we do below logic inside the drawer content?
+  // This becomes very complicated when we refactor any URL related stuff also triggers unnecessary re renders
+  const { params: { flowId } = {} } = matchPath(location.pathname, {
+    path: buildDrawerUrl({
+      path: drawerPaths.FLOW_BUILDER.RUN_HISTORY,
+      baseUrl: match.path,
+    }),
+  }) || {};
   const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
@@ -83,17 +92,13 @@ export default function RunHistoryDrawer() {
 
   return (
     <RightDrawer
-      path=":flowId/runHistory"
+      path={drawerPaths.FLOW_BUILDER.RUN_HISTORY}
       height="tall"
       width="full"
-      variant="permanent"
-      onClose={handleClose}
-        >
+      onClose={handleClose} >
       <DrawerHeader title={`Run History: ${flow.name || flowId}`} />
       <DrawerContent className={classes.runHistoryDrawer}>
-        <RunHistory
-          flowId={flowId} className={classes.runHistoryPage}
-            />
+        <RunHistory flowId={flowId} className={classes.runHistoryPage} />
       </DrawerContent>
     </RightDrawer>
   );

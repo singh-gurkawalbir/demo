@@ -10,8 +10,9 @@ import {
 } from './flowDataUtils';
 import { getFormattedResourceForPreview, getPostDataForDeltaExport, isPostDataNeededInResource } from '../../../utils/flowData';
 import { isNewId } from '../../../utils/resource';
-import { EMPTY_RAW_DATA } from '../../../utils/constants';
+import { EMPTY_RAW_DATA, STANDALONE_INTEGRATION } from '../../../utils/constants';
 import { getConstructedResourceObj } from '../flows/utils';
+import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
 
 export function* pageProcessorPreview({
   flowId,
@@ -24,13 +25,16 @@ export function* pageProcessorPreview({
   refresh = false,
   includeStages = false,
   runOffline = false,
+  isMockInput,
+  addMockData,
 }) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
   const flow = yield call(filterPendingResources, { flow: deepClone(merged) });
+  const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, _pageProcessorId, 'imports');
 
-  // Incase of no pgs, preview call is stopped here
-  if (!flow.pageGenerators || !flow.pageGenerators.length) return;
+  // // Incase of no pgs, preview call is stopped here
+  if (!isPreviewPanelAvailable && (!flow.pageGenerators || !flow.pageGenerators.length)) return;
   // Incase of first new pp, pageProcessors does not exist on flow doc. So add default [] for pps
   flow.pageProcessors = flow.pageProcessors || [];
   const pageGeneratorMap = yield call(fetchFlowResources, {
@@ -42,6 +46,9 @@ export function* pageProcessorPreview({
   const pageProcessorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageProcessors',
+    _pageProcessorId,
+    isMockInput,
+    addMockData,
     // runOffline, Run offline is currently not supported for PPs
   });
 
@@ -49,6 +56,7 @@ export function* pageProcessorPreview({
   if (_pageProcessorDoc) {
     pageProcessorMap[_pageProcessorId] = {
       doc: _pageProcessorDoc,
+      options: pageProcessorMap[_pageProcessorId]?.options,
     };
   }
 
@@ -69,6 +77,16 @@ export function* pageProcessorPreview({
           resourceType,
         }),
       };
+    }
+
+    // in case of new imports, add mock input
+    if (addMockData) {
+      pageProcessorMap[_pageProcessorId].options = yield call(getPreviewOptionsForResource, {
+        resource: {_id: _pageProcessorId},
+        _pageProcessorId,
+        isMockInput,
+        addMockData,
+      });
     }
   }
 
@@ -179,17 +197,20 @@ export function* exportPreview({
     delete body.rawData;
   }
 
-  const path = '/exports/preview';
-
   // BE need flowId and integrationId in the preview call
   // if in case integration settings were used in export
   const flow = yield select(selectors.resource, 'flows', flowId);
 
-  if (!isNewId(flowId)) {
-    body._flowId = flowId;
+  let path;
+
+  if (flow?._integrationId && flow?._integrationId !== STANDALONE_INTEGRATION.id && flow?._id) {
+    path = `/integrations/${flow._integrationId}/flows/${flowId}/exports/preview`;
+  } else if (flow?._integrationId && flow?._integrationId !== STANDALONE_INTEGRATION.id && !flow?._id) {
+    path = `/integrations/${flow._integrationId}/exports/preview`;
+  } else {
+    path = '/exports/preview';
   }
 
-  body._integrationId = flow?._integrationId;
   try {
     const previewData = yield call(apiCallWithRetry, {
       path,

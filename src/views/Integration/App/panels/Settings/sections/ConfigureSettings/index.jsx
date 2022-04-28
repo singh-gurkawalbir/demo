@@ -44,9 +44,10 @@ export default function ConfigureSettings({ integrationId, childId, sectionId })
       integrationSettingsToDynaFormMetadata(
         flowSettingsMeta,
         integrationId,
-        true
+        true,
+        {childId}
       ),
-    [flowSettingsMeta, integrationId]
+    [flowSettingsMeta, childId, integrationId]
   );
   const formState = useSelector(
     state =>
@@ -62,6 +63,7 @@ export default function ConfigureSettings({ integrationId, childId, sectionId })
   return (
     <LoadResources
       required
+      integrationId={integrationId}
       resources={['flows', 'exports', 'imports', 'connections']}>
       {formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING && <SavingMask />}
       <IsLoggableContextProvider isLoggable>

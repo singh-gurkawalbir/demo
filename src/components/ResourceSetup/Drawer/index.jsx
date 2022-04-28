@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
@@ -13,6 +13,7 @@ import ResourceDrawer from '../../drawer/Resource';
 import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from '../../drawer/Resource/Panel/ResourceFormActionsPanel';
 import { isNewId, getConnectionType } from '../../../utils/resource';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import resourceConstants from '../../../forms/constants/connection';
 import EditorDrawer from '../../AFE/Drawer';
 
@@ -36,6 +37,7 @@ function ResourceSetupDrawerContent({
   cloneResourceType,
   cloneResourceId,
   revisionId,
+  parentUrl,
 }) {
   const { resourceId, resourceType } = useParams();
   const history = useHistory();
@@ -48,8 +50,13 @@ function ResourceSetupDrawerContent({
     }
   });
 
+  /**
+   * Incase of oAuth connections, once user submits the connectionDoc, we re-open the drawer with created connId
+   * So, isAuthorized selector always points to the current connId ( which is a created one once reopened)
+   * Once, isAuthorized is true, we automatically trigger the handleSubmit fn and close this drawer
+   */
   const isAuthorized = useSelector(state =>
-    selectors.isAuthorized(state, createdConnectionId || resourceId)
+    selectors.isAuthorized(state, resourceId)
   );
   const connectionDoc = useSelector(state => {
     if (resourceType !== 'connections') return;
@@ -103,20 +110,19 @@ function ResourceSetupDrawerContent({
       : resourceObj.type;
   }
 
-  useEffect(() => {
-    if (isAuthorized && !canSelectExistingResources) {
-      onSubmitComplete(resourceId, isAuthorized);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthorized, resourceId, canSelectExistingResources]);
-
   const title = `Set up ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`;
 
   const formKey = getAsyncKey(resourceType, resourceId);
   const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
 
-  const goBackToParentUrl = useCallback(() => history.goBack(), [history]);
-
+  const goBackToParentUrl = useCallback(() => history.replace(parentUrl), [history, parentUrl]);
+  const reLaunchDrawerWithCreatedConnectionId = useCallback(connectionId => {
+    history.replace(buildDrawerUrl({
+      path: drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP,
+      baseUrl: parentUrl,
+      params: { resourceType: 'connections', resourceId: connectionId },
+    }));
+  }, [history, parentUrl]);
   const handleSubmitComplete = useCallback((...args) => {
     const onSubmitCb = resourceType === 'connections' ? onSubmitComplete : handleStackSetupDone;
 
@@ -127,6 +133,13 @@ function ResourceSetupDrawerContent({
         if (connectionDoc && oAuthApplications.includes(getConnectionType(connectionDoc)) && !isAuthorized) {
           // Step should not be marked as completed until Oauth application authorization is completed on other window.
           // So does not proceed further to call onSubmit fb and do post submit action dispatches
+          // TODO @Raghu: Revisit this code
+          // Currently, only incase of clone , this part of code gets executed as connectionDoc remains null for other use cases
+          // But ideally, all oAuth related use cases should fall under this if condition and should be handled
+          if (mode === 'clone' && createdConnectionId) {
+            reLaunchDrawerWithCreatedConnectionId(createdConnectionId);
+          }
+
           return;
         }
       }
@@ -135,7 +148,7 @@ function ResourceSetupDrawerContent({
     if (onSubmitCb && typeof onSubmitCb === 'function') {
       onSubmitCb(...args);
     }
-  }, [resourceType, onSubmitComplete, handleStackSetupDone, goBackToParentUrl, mode, connectionDoc, isAuthorized]);
+  }, [resourceType, onSubmitComplete, handleStackSetupDone, goBackToParentUrl, mode, connectionDoc, isAuthorized, createdConnectionId, reLaunchDrawerWithCreatedConnectionId]);
 
   const handleClose = useCallback((...args) => {
     const onCloseCb = resourceType === 'connections' ? onClose : handleStackClose;
@@ -149,9 +162,19 @@ function ResourceSetupDrawerContent({
     }
   }, [resourceType, onClose, handleStackClose, goBackToParentUrl, mode]);
 
+  useEffect(() => {
+    // This is for oAuth connections
+    // When oAuth connections are saved and user logs in successfully, isAuthorized returns true
+    // and eventually we trigger handleSubmitComplete to do further updates to install steps
+    if (isAuthorized) {
+      handleSubmitComplete(resourceId, isAuthorized);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthorized, resourceId]);
+
   return (
     <>
-      <DrawerHeader disableClose={disabled} title={title} handleClose={!canSelectExistingResources ? onClose : setCancelTriggered} />
+      <DrawerHeader disableClose={disabled} title={title} handleClose={canSelectExistingResources ? setCancelTriggered : handleClose} />
       {canSelectExistingResources ? (
         <AddOrSelect
           resourceId={resourceId}
@@ -181,6 +204,7 @@ function ResourceSetupDrawerContent({
             cancelButtonLabel="Cancel"
             submitButtonLabel="Save & close"
             onCancel={handleClose}
+            integrationId={integrationId}
               />
         </>
       )}
@@ -189,12 +213,11 @@ function ResourceSetupDrawerContent({
   );
 }
 export default function ResourceSetupDrawer(props) {
+  const match = useRouteMatch();
+
   return (
-    <RightDrawer
-      path="configure/:resourceType/:resourceId"
-      height="tall"
-      variant="temporary">
-      <ResourceSetupDrawerContent {...props} />
+    <RightDrawer path={drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP} height="tall">
+      <ResourceSetupDrawerContent {...props} parentUrl={match.url} />
       <EditorDrawer />
     </RightDrawer>
   );

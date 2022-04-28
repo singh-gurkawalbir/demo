@@ -68,13 +68,13 @@ selectors.revision = (state = defaultState, integrationId, revisionId) => {
 };
 selectors.uniqueUserIdsFromRevisions = createSelector(
   selectors.revisions,
-  revisionsList => revisionsList.reduce((userIds, revision) => {
-    if (revision._byUserId) {
-      userIds.add(revision._byUserId);
+  revisionsList => Array.from(revisionsList.reduce((userIds, revision) => {
+    if (revision._createdByUserId) {
+      userIds.add(revision._createdByUserId);
     }
 
     return userIds;
-  }, new Set())
+  }, new Set()))
 );
 selectors.revisionsFetchStatus = (state = defaultState, integrationId) => state[integrationId]?.status;
 

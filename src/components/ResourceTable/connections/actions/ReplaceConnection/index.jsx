@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 import ReplaceIcon from '../../../../icons/ReplaceIcon';
 
 export default {
@@ -25,7 +26,11 @@ export default {
     const match = useRouteMatch();
 
     return useCallback(() => {
-      history.push(`${match.url}/replaceConnection/${connectionId}`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.CONNECTION.REPLACE,
+        baseUrl: match.url,
+        params: { connId: connectionId },
+      }));
     }, [history, connectionId, match.url]);
   },
 };

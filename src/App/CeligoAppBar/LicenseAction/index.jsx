@@ -10,9 +10,9 @@ import { platformLicenseActionDetails } from '../../../utils/license';
 import {PillButton, TextButton} from '../../../components/Buttons';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import RawHtml from '../../../components/RawHtml';
-import { LICENSE_UPGRADE_SUCCESS_MESSAGE } from '../../../utils/messageStore';
+import messageStore from '../../../utils/messageStore';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   inTrial: {
     marginTop: -2,
     borderRadius: 17,
@@ -27,31 +27,77 @@ const useStyles = makeStyles({
   titleStatusPanel: {
     fontSize: 15,
   },
-});
+  startFreeTrialOptions: {
+    paddingLeft: theme.spacing(2),
+    '& > li': {
+      paddingBottom: theme.spacing(0.5),
+    },
+  },
+  hideElement: {
+    display: 'none',
+  },
+}));
 
 function StartFreeTrialConfirmationMessage() {
+  const classes = useStyles();
+
   return (
     <div>
-      <b>You cannot enable more than one flow at a time with your current free subscription plan.</b>
-      <br /><br />Start your free trial or upgrade your plan to unlock your data integration potential with more flows.
-      <br /><br /><b>FREE UNLIMITED FLOWS TRIAL </b>
+      You are currently enrolled in the free subscription plan that entitles you to 1 enabled integration flow between 2 endpoints.
+      <br /><br />
+      <b>Start your free trial now to experience optimal process automation for your business with full access to integrator.io. For 30 days, the unlimited flows trial gives you: </b>
+      <br />
 
-      <br /><br />Experience optimal process automation for your business with full access to integratior.io.
-      For 30 days, you will get:
-      <ul><li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
+      <ul className={classes.startFreeTrialOptions}>
+        <li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
         <li>Easy installation of Integration Apps and free templates from our vast library</li>
         <li>Integrations with multiple imports or exports (orchestration)</li>
         <li>Ad hoc data imports to thousands of applications</li>
         <li>Ability to daisy-chain flows.</li>
       </ul>
 
-      <br />
       <a
-        target="_blank" rel="noopener noreferrer"
-        href="https://docs.celigo.com/hc/en-us/articles/4414582961819-Learn-how-to-make-the-most-of-your-free-trial"><u>Learn how to make the most of your free trial </u>
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://docs.celigo.com/hc/en-us/articles/4414582961819-Learn-how-to-make-the-most-of-your-free-trial">
+        Learn how to make the most of your free trial
       </a>
 
-      <br /><br />After 30 days, your plan will revert to the free subscription plan with 1 enabled integration flow.
+      <br /><br />
+      After 30 days, your plan will revert to the free subscription plan with 1 enabled integration flow.
+    </div>
+  );
+}
+
+function StartFreeOrRequestUpgradeConfirmMessage() {
+  const classes = useStyles();
+
+  return (
+    <div>
+      <b>You cannot enable more than one flow at a time with your current free subscription plan.</b>
+      <br /><br />
+      Start your free trial or upgrade your plan to unlock your data integration potential with more flows.
+      <br /> <br />
+      <b>FREE UNLIMITED FLOWS TRIAL</b>
+      <br /> <br />
+      Experience optimal process automation for your business with full access to integrator.io. For 30 days, you will get:
+      <ul className={classes.startFreeTrialOptions}>
+        <li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
+        <li>Easy installation of Integration Apps and free templates from our vast library</li>
+        <li>Integrations with multiple imports or exports (orchestration)</li>
+        <li>Ad hoc data imports to thousands of applications</li>
+        <li>Ability to daisy-chain flows.</li>
+      </ul>
+
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://docs.celigo.com/hc/en-us/articles/4414582961819-Learn-how-to-make-the-most-of-your-free-trial">
+        Learn how to make the most of your free trial
+      </a>
+
+      <br /><br />
+      After 30 days, your plan will revert to the free subscription plan with 1 enabled integration flow.
     </div>
   );
 }
@@ -61,6 +107,8 @@ function LicenseAction() {
   const {confirmDialog} = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
+  const [upgradeButton, setUpgradeButton] = useState(true);
+  const [subscriptionRenew, setSubscriptionRenew] = useState(true);
   const platformLicense = useSelector(state => selectors.platformLicense(state));
   const licenseActionDetails = platformLicenseActionDetails(platformLicense);
   const platformLicenseActionMessage = useSelector(state =>
@@ -78,10 +126,10 @@ function LicenseAction() {
   const startFreeTrialDialog = useCallback(() => {
     const message = `What will you integrate next?
       <br/><br/><a target="_blank" rel="noopener noreferrer"
-  href="/marketplace"><u>Checkout our Marketplace</u></a>  Integration Apps, templates for business process automation, and quickstart integration templates.`;
+  href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with Integration Apps, Business Process Automation templates, and quickstart templates.`;
 
     confirmDialog({
-      title: 'Congratulations! Your unlimited flows trial starts now',
+      title: 'Congratulations! Your unlimited flows trial starts now.',
       message: <RawHtml html={message} />,
       buttons: [
         { label: 'Close',
@@ -97,7 +145,7 @@ function LicenseAction() {
       buttons: [
         { label: 'Submit request',
           onClick: () => {
-            setUpgradeRequested(true);
+            setUpgradeButton(false);
             dispatch(actions.license.requestLicenseUpgrade());
           },
         },
@@ -106,7 +154,8 @@ function LicenseAction() {
         },
       ],
     });
-  }, [confirmDialog, dispatch]);
+  }, [confirmDialog, dispatch, setUpgradeButton]);
+
   const requestUpgradeDialog = useCallback(() => {
     confirmDialog({
       title: 'Upgrade plan',
@@ -124,14 +173,56 @@ function LicenseAction() {
     });
   }, [confirmDialog, submitUpgradeDialog]);
 
+  const startFreeTrialConfirmationDialog = useCallback(() => {
+    confirmDialog({
+      title: 'Try unlimited flows free for 30 days',
+      message: <StartFreeTrialConfirmationMessage />,
+      buttons: [
+        { label: 'Start free trial now',
+          onClick: () => {
+            dispatch(
+              actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+            );
+            dispatch(actions.license.requestTrialLicense());
+            startFreeTrialDialog();
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, dispatch, startFreeTrialDialog]);
+
+  const startFreeOrRequestUpgradeDialog = useCallback(() => {
+    confirmDialog({
+      title: 'Try unlimited flows free for 30 days or upgrade plan',
+      message: <StartFreeOrRequestUpgradeConfirmMessage />,
+      buttons: [
+        { label: 'Start free trial',
+          onClick: () => {
+            dispatch(
+              actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+            );
+            dispatch(actions.license.requestTrialLicense());
+            startFreeTrialDialog();
+          },
+        },
+        { label: 'Request upgrade',
+          onClick: () => {
+            submitUpgradeDialog();
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, dispatch, startFreeTrialDialog, submitUpgradeDialog]);
+
   const handleClick = useCallback(() => {
     if (licenseActionDetails.action === 'startTrial') {
-      dispatch(
-        actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
-      );
-      dispatch(actions.license.requestTrialLicense());
-
-      return startFreeTrialDialog();
+      return startFreeTrialConfirmationDialog();
     }
 
     if (licenseActionDetails.action === 'upgrade') {
@@ -164,6 +255,7 @@ function LicenseAction() {
           {
             label: 'Submit request',
             onClick: () => {
+              setSubscriptionRenew(false);
               dispatch(actions.license.requestUpdate('ioRenewal'));
             },
           },
@@ -174,28 +266,7 @@ function LicenseAction() {
         ],
       });
     }
-  }, [confirmDialog, dispatch, licenseActionDetails.action, startFreeTrialDialog, submitUpgradeDialog]);
-
-  const startFreeTrialConfirmationDialog = useCallback(() => {
-    confirmDialog({
-      title: 'Try unlimited flows free for 30 days or upgrade plan',
-      message: <StartFreeTrialConfirmationMessage />,
-      buttons: [
-        { label: 'Start free trial',
-          onClick: () => {
-            dispatch(actions.license.requestTrialLicense());
-            startFreeTrialDialog();
-          },
-        },
-        { label: 'Request upgrade',
-          onClick: requestUpgradeDialog,
-        },
-        { label: 'Cancel',
-          variant: 'text',
-        },
-      ],
-    });
-  }, [confirmDialog, dispatch, requestUpgradeDialog, startFreeTrialDialog]);
+  }, [confirmDialog, dispatch, licenseActionDetails.action, startFreeTrialConfirmationDialog, submitUpgradeDialog]);
 
   const entitlementOfEndpointsDialog = useCallback(() => {
     confirmDialog({
@@ -217,7 +288,7 @@ function LicenseAction() {
   useEffect(() => {
     if (licenseErrorCode === 'subscription_required') {
       if (licenseActionDetails.action === 'startTrial') {
-        startFreeTrialConfirmationDialog();
+        startFreeOrRequestUpgradeDialog();
       } else {
         requestUpgradeDialog();
       }
@@ -226,11 +297,11 @@ function LicenseAction() {
       entitlementOfEndpointsDialog();
       dispatch(actions.license.clearErrorMessage());
     }
-  }, [dispatch, entitlementOfEndpointsDialog, licenseActionDetails.action, licenseErrorCode, requestUpgradeDialog, startFreeTrialConfirmationDialog]);
+  }, [dispatch, entitlementOfEndpointsDialog, licenseActionDetails.action, licenseErrorCode, requestUpgradeDialog, startFreeOrRequestUpgradeDialog]);
 
   useEffect(() => {
     if (platformLicenseActionMessage) {
-      enquesnackbar({message: <RawHtml html={LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
+      enquesnackbar({message: <RawHtml html={messageStore('LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
       dispatch(actions.license.clearActionMessage());
     }
   }, [dispatch, enquesnackbar, platformLicenseActionMessage]);
@@ -250,12 +321,11 @@ function LicenseAction() {
         <NotificationToaster
           variant={licenseActionDetails.action === 'expired' ? 'error' : 'info'}
           transparent
-          className={clsx(classes.licenseActionDetailsWrapper)}>
+          className={clsx(classes.licenseActionDetailsWrapper, {[classes.hideElement]: subscriptionRenew === false})}>
           <Typography component="div" variant="body2" className={classes.titleStatusPanel}>
             {licenseActionDetails.action === 'expired' ? 'Your subscription has expired.' : 'Your subscription was renewed.'}
           </Typography>
           <TextButton
-            disabled={upgradeRequested}
             data-test="renewOrResumeNow"
             color="primary"
             onClick={handleClick}>
@@ -267,8 +337,7 @@ function LicenseAction() {
         <PillButton
           fill={!upgradeRequested}
           disableElevation
-          disabled={upgradeRequested}
-          className={classes.inTrial}
+          className={clsx(classes.inTrial, {[classes.hideElement]: upgradeButton === false})}
           data-test={licenseActionDetails.label}
           onClick={handleClick}>
           {licenseActionDetails.label}

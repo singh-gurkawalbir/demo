@@ -6,6 +6,8 @@ import {
   INTEGRATION_ACCESS_LEVELS,
 } from '../utils/constants';
 
+import { DRAWER_URL_PREFIX } from '../utils/rightDrawer';
+
 describe('tests for reducer selectors', () => {
   describe('resourceList', () => {
     const emptyResult = {
@@ -122,7 +124,7 @@ describe('tests for reducer selectors', () => {
       );
 
       expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toEqual(
-        `/${resourceType}/edit/${resourceType}/${resourceId}`
+        `/${resourceType}/${DRAWER_URL_PREFIX}/edit/${resourceType}/${resourceId}`
       );
     });
 
@@ -136,7 +138,7 @@ describe('tests for reducer selectors', () => {
       );
 
       expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toEqual(
-        `/${resourceType}/edit/${resourceType}/${resourceId}`
+        `/${resourceType}/${DRAWER_URL_PREFIX}/edit/${resourceType}/${resourceId}`
       );
     });
 
@@ -857,7 +859,51 @@ describe('tests for reducer selectors', () => {
       );
     });
   });
+  describe('selectors.isGraphqlResource test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.isGraphqlResource()).toBeFalsy();
+    });
+    const resourceId = 'new-123';
 
+    test('should return true for new graphql resource', () => {
+      const resourceType = 'exports';
+      const state = reducer(
+        undefined,
+        actions.resource.received(resourceType, {
+          _id: resourceId,
+          type: 'graph_ql',
+        })
+      );
+
+      expect(selectors.isGraphqlResource(state, resourceId, resourceType)).toBeTruthy();
+    });
+    test('should return true for existing graphql resource', () => {
+      const resourceType = 'exports';
+      const state = reducer(
+        undefined,
+        actions.resource.received(resourceType, {
+          _id: resourceId,
+          http: {formType: 'graph_ql'},
+          type: 'http',
+        })
+      );
+
+      expect(selectors.isGraphqlResource(state, resourceId, resourceType)).toBeTruthy();
+    });
+    test('should return false for non graphql resources', () => {
+      const resourceType = 'exports';
+      const state = reducer(
+        undefined,
+        actions.resource.received(resourceType, {
+          _id: resourceId,
+          http: {formType: 'http'},
+          type: 'http',
+        })
+      );
+
+      expect(selectors.isGraphqlResource(state, resourceId, resourceType)).toBeFalsy();
+    });
+  });
   describe('tests for util isPageGenerator', () => {
     test('should return false if resourceType is imports', () => {
       expect(selectors.isPageGenerator(undefined, 'f1', 'i1', 'imports')).toEqual(false);
@@ -2108,7 +2154,7 @@ describe('tests for reducer selectors', () => {
       expect(selectors.canLinkSuiteScriptIntegrator(undefined, 'c1')).toEqual(false);
     });
 
-    test('should return true if connId present in ssLinkedConnectionList', () => {
+    test('should return false if connId present in ssLinkedConnectionList but not admin/owner', () => {
       const preferences = {
         ssConnectionIds: [
           'c1',
@@ -2121,6 +2167,68 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('preferences', preferences)
       );
 
+      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toEqual(false);
+    });
+
+    test('should return true if connId present in ssLinkedConnectionList and user is owner', () => {
+      const preferences = {
+        ssConnectionIds: [
+          'c1',
+          'c2',
+        ],
+      };
+
+      const state = reducer(
+        {user: {
+          profile: { email: 'something@test.com', name: 'First Last', allowedToPublish: false },
+          preferences: { defaultAShareId: 'own' },
+          org: {
+            accounts: [
+              {
+                _id: 'own',
+                ownerUser: {
+                  email: 'owner@test.com',
+                  allowedToPublish: true,
+                  name: 'owner 1',
+                },
+              },
+            ],
+          },
+        }},
+        actions.resource.received('preferences', preferences)
+      );
+
+      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toEqual(true);
+    });
+    test('should return true if connId present in ssLinkedConnectionList for admin', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: { email: 'something@test.com', name: 'First Last', allowedToPublish: false },
+            preferences: { defaultAShareId: 'ashare1' },
+            org: {
+              accounts: [
+                {
+                  accessLevel: 'administrator',
+                  _id: 'ashare1',
+                  ownerUser: {
+                    email: 'owner@test.com',
+                    allowedToPublish: true,
+                    name: 'owner 1',
+                    ssConnectionIds: [
+                      'c1',
+                      'c2',
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        },
+        actions.resource.received('RANDEOM')
+      );
+
+      console.log('state', state.user.preferences.ssConnectionIds);
       expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toEqual(true);
     });
 
@@ -2198,7 +2306,7 @@ describe('tests for reducer selectors', () => {
         })
       );
 
-      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toEqual(true);
+      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toEqual(false);
     });
   });
 

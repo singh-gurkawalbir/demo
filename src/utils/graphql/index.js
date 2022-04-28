@@ -75,3 +75,96 @@ export function isGraphqlResource(resource) {
 
   return type === 'graph_ql' || resource.http?.formType === 'graph_ql';
 }
+
+export const GRAPHQL_FIELDS = [
+  'graphql.query',
+  'graphql.operationName',
+  'graphql.variables',
+  'paging.graphql.query',
+  'paging.graphql.operationName',
+  'paging.graphql.variables',
+  'graphql.queryCreate',
+  'graphql.operationNameCreate',
+  'graphql.variablesCreate',
+  'graphql.queryUpdate',
+  'graphql.operationNameUpdate',
+  'graphql.variablesUpdate',
+];
+
+export const GRAPHQL_HTTP_FIELDS = [
+  'http.ping.body',
+  'http.body',
+  'http.body.0',
+  'http.body.1',
+  'http.paging.body',
+];
+
+export function isGraphqlField(fieldId) {
+  if (!fieldId) return false;
+
+  return GRAPHQL_FIELDS.includes(fieldId);
+}
+
+export function convertGraphqlFieldIdToHTTPFieldId(fieldId, resource, resourceType) {
+  const {ignoreExisting, ignoreMissing} = resource || {};
+
+  switch (fieldId) {
+    case 'graphql.query':
+      if (resourceType === 'connections') { return 'http.ping.body'; }
+
+      return 'http.body';
+
+    case 'graphql.operationName':
+      if (resourceType === 'connections') { return 'http.ping.body'; }
+
+      return 'http.body';
+
+    case 'graphql.variables':
+      if (resourceType === 'connections') { return 'http.ping.body'; }
+
+      return 'http.body';
+
+    case 'graphql.queryCreate':
+      if (ignoreExisting || ignoreMissing) { return 'http.body'; }
+
+      return 'http.body.1';
+
+    case 'graphql.operationNameCreate':
+      if (ignoreExisting || ignoreMissing) { return 'http.body'; }
+
+      return 'http.body.1';
+
+    case 'graphql.variablesCreate':
+      if (ignoreExisting || ignoreMissing) { return 'http.body'; }
+
+      return 'http.body.1';
+
+    case 'graphql.queryUpdate':
+      if (ignoreExisting || ignoreMissing) { return 'http.body'; }
+
+      return 'http.body.0';
+
+    case 'graphql.operationNameUpdate':
+      if (ignoreExisting || ignoreMissing) { return 'http.body'; }
+
+      return 'http.body.0';
+
+    case 'graphql.variablesUpdate':
+      if (ignoreExisting || ignoreMissing) { return 'http.body'; }
+
+      return 'http.body.0';
+
+    case 'paging.graphql.query':
+      return 'http.paging.body';
+
+    case 'paging.graphql.operationName':
+      return 'http.paging.body';
+
+    case 'paging.graphql.variables':
+      return 'http.paging.body';
+
+    default:
+  }
+
+  return fieldId;
+}

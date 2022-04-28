@@ -28,6 +28,7 @@ export default function SuiteScriptMappingDrawer(props) {
 
   return (
     <RightDrawer
+      isSuitescript
       path={['mapping', ':flowId/mapping']}
       height="tall"
       width={showFullWidth ? 'full' : 'large'}

@@ -77,6 +77,7 @@ export function ResourceTypeFilter(props) {
           'stack',
           'asynchelper',
           'filedefinition',
+          'revision',
         ],
   };
 

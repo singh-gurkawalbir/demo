@@ -18,6 +18,7 @@ import LoadResources from '../../../components/LoadResources';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import { TextButton, FilledButton } from '../../../components/Buttons';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -149,10 +150,10 @@ export default function Endpoint() {
   );
   const showMessage = (licenseActionDetails?.tier === 'free' && licenseActionDetails?.expiresInDays < 10) || false;
   const [showExpireMessage, setShowExpireMessage] = useState(showMessage);
-  const [needMoreNotification, setNeedMoreNotification] = useState(licenseActionDetails?.tier === 'free' && !showExpireMessage);
+  const [trialExpired, setTrialExpired] = useState(false);
 
   const onStartFreeTrialClick = useCallback(() => {
-    history.push(`${match.url}/upgrade`);
+    history.push(buildDrawerUrl({ path: drawerPaths.ACCOUNT.UPGRADE, baseUrl: match.url}));
   }, [history, match.url]);
 
   const onTrialUpgradeClick = useCallback(() => {
@@ -203,8 +204,8 @@ export default function Endpoint() {
   const numberofUsedSandboxTradingPartners = licenseEntitlementUsage?.sandbox?.tradingPartnerUsage?.numConsumed;
   const numberofUsedSandboxAgents = licenseEntitlementUsage?.sandbox?.agentUsage?.numActive;
   const onCloseNotification = useCallback(() => {
-    setNeedMoreNotification(false);
-  }, [setNeedMoreNotification]);
+    setTrialExpired(false);
+  }, [setTrialExpired]);
   const requestLicenseEntitlementUsage = useCallback(() => {
     dispatch(actions.license.requestLicenseEntitlementUsage());
   }, [dispatch]);
@@ -230,7 +231,7 @@ export default function Endpoint() {
     <>
       <UpgradeDrawer />
       <RightDrawer
-        path=":env/:type"
+        path={drawerPaths.ACCOUNT.SUBSCRIPTION}
         height="tall"
         onClose={handleClose}>
         <DrawerHeader title={titleMap[title]} />
@@ -239,7 +240,7 @@ export default function Endpoint() {
         </DrawerContent>
       </RightDrawer>
 
-      {!upgradeRequested && !showExpireMessage && needMoreNotification && (
+      {trialExpired && (
       <div className={classes.subscriptionNotificationToaster}>
         <NotificationToaster variant="info" size="large" onClose={onCloseNotification}>
           <Typography component="div" variant="h5" className={classes.subscriptionMessage}>

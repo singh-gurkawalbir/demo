@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useEffect, useState } from 'react';
 import { useParams, useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import RightDrawer from '../../drawer/Right';
@@ -10,11 +10,13 @@ import actions from '../../../actions';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
+import { drawerPaths } from '../../../utils/rightDrawer';
 
 function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler, parentUrl }) {
   const { formType } = useParams();
   const dispatch = useDispatch();
   const history = useHistory();
+  const [receivedFormMeta, setReceivedFormMeta] = useState(false);
   const currentStep = useSelector(
     state => selectors.currentStepPerMode(state, { mode: formType, integrationId })
   );
@@ -100,7 +102,13 @@ function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler, p
     }
   }, [formCloseHandler, handleClose]);
 
-  const formKey = useFormInitWithPermissions({ fieldMeta: formMetaData });
+  const formKey = useFormInitWithPermissions({ fieldMeta: formMetaData, remount: receivedFormMeta });
+
+  useEffect(() => {
+    if (formMetaData && !receivedFormMeta) {
+      setReceivedFormMeta(true);
+    }
+  }, [formMetaData, receivedFormMeta]);
 
   return (
     <>
@@ -120,10 +128,7 @@ export default function FormStepDrawer({ integrationId, formSubmitHandler, formC
   const match = useRouteMatch();
 
   return (
-    <RightDrawer
-      path="form/:formType"
-      variant="temporary"
-      height="tall">
+    <RightDrawer path={drawerPaths.INSTALL.FORM_STEP} height="tall">
       <FormStepContent
         integrationId={integrationId}
         formSubmitHandler={formSubmitHandler}

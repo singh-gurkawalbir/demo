@@ -23,7 +23,7 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import { hashCode } from '../../utils/string';
 import { emptyObject, HOME_PAGE_PATH, UNASSIGNED_SECTION_ID } from '../../utils/constants';
-import { CLONE_DESCRIPTION } from '../../utils/messageStore';
+import messageStore from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -77,7 +77,7 @@ const useStyles = makeStyles(theme => ({
   },
   flowInFlowGroupNameHover: {
     backgroundColor: theme.palette.background.paper,
-    borderTop: `1px solid ${theme.palette.secondary.lightest} !important`,
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
   flowGroupTitle: {
     paddingTop: theme.spacing(1),
@@ -504,7 +504,7 @@ export default function ClonePreview(props) {
 
   return (
     <LoadResources resources="flows,exports,imports,integrations" required>
-      <CeligoPageBar title={`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`} infoText={CLONE_DESCRIPTION} />
+      <CeligoPageBar title={`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`} infoText={messageStore('CLONE_DESCRIPTION')} />
       <>
         <Grid container>
           <Grid className={classes.componentPadding} item xs={12}>

@@ -1,7 +1,7 @@
 import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useCallback } from 'react';
-import { useRouteMatch, useHistory, useLocation } from 'react-router-dom';
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import LoadResources from '../../../../../../../components/LoadResources';
@@ -17,6 +17,7 @@ import RightDrawer from '../../../../../../../components/drawer/Right';
 import DrawerHeader from '../../../../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../../../../components/drawer/Right/DrawerFooter';
+import { drawerPaths } from '../../../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   mappingHeader: {
@@ -61,9 +62,9 @@ const useStyles = makeStyles(theme => ({
 
 export const variationUrlName = (variation = '') => variation.replace(/\//g, '__');
 
-function VariationMappingDrawer({ integrationId, parentUrl }) {
+function VariationMappingDrawer({ integrationId, flowId, categoryId, parentUrl }) {
   const match = useRouteMatch();
-  const { flowId, subCategoryId, variation: variationParamName, categoryId, depth } = match.params;
+  const { subCategoryId, variation: variationParamName, depth } = match.params;
   const variation = variationParamName?.replace(/__/g, '/');
   const classes = useStyles();
   const history = useHistory();
@@ -170,6 +171,10 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
       <DrawerHeader
         title={`Configure ${uiAssistant} variation themes: ${uiAssistant} - NetSuite`}
         handleClose={handleClose}
+        handleBack={handleClose}
+        // Pass handleBack to move to the previous drawer, to land in the utility mapping drawer
+        // as by default back button does go to the previous URL
+        // and this drawer internally has URL re-directions for different variation attributes
       />
       <DrawerContent>
         <div className={classes.root}>
@@ -213,8 +218,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
                   sectionId={subCategoryId}
                   variation={variation}
                   depth={depth}
-                  isVariationAttributes={isVariationAttributes}
-                  />
+                  isVariationAttributes={isVariationAttributes} />
               </div>
             </div>
           </div>
@@ -237,39 +241,25 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
   );
 }
 
-export default function VariationMappingDrawerRoute(props) {
-  const location = useLocation();
+export default function VariationMappingDrawerRoute({ integrationId, flowId, categoryId }) {
+  const match = useRouteMatch();
 
   return (
-    <>
-      <LoadResources required resources="flows,exports,imports,connections">
-        <RightDrawer
-          path=":flowId/utilitymapping/:categoryId/depth/:depth/variationAttributes/:subCategoryId"
-          variant="temporary"
-          height="tall"
-          width="large">
-          <VariationMappingDrawer
-            {...props}
-            parentUrl={location.pathname.replace(
-              /\/variationAttributes\/.*$/,
-              ''
-            )}
+    <LoadResources required integrationId={integrationId} resources="flows,exports,imports,connections">
+      <RightDrawer
+        path={[
+          drawerPaths.MAPPINGS.CATEGORY_MAPPING.VARIATION_MAPPING.VARIATION,
+          drawerPaths.MAPPINGS.CATEGORY_MAPPING.VARIATION_MAPPING.ROOT,
+        ]}
+        height="tall"
+        width="large">
+        <VariationMappingDrawer
+          integrationId={integrationId}
+          flowId={flowId}
+          categoryId={categoryId}
+          parentUrl={match.url}
           />
-        </RightDrawer>
-        <RightDrawer
-          path={[
-            ':flowId/utilitymapping/:categoryId/depth/:depth/variations/:subCategoryId/:variation',
-            ':flowId/utilitymapping/:categoryId/depth/:depth/variations/:subCategoryId',
-          ]}
-          variant="temporary"
-          height="tall"
-          width="large">
-          <VariationMappingDrawer
-            {...props}
-            parentUrl={location.pathname.replace(/\/depth\/.*$/, '')}
-          />
-        </RightDrawer>
-      </LoadResources>
-    </>
+      </RightDrawer>
+    </LoadResources>
   );
 }

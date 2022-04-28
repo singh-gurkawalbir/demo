@@ -45,7 +45,6 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     marginTop: -85,
     background: theme.palette.background.default,
-    // background: theme.palette.common.white,
     borderRadius: [[0, 0, 20, 20]],
     position: 'relative',
     zIndex: theme.zIndex.bubbleName,

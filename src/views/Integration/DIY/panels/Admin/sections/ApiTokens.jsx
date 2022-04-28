@@ -12,6 +12,7 @@ import AddIcon from '../../../../../../components/icons/AddIcon';
 import { generateNewId } from '../../../../../../utils/resource';
 import actions from '../../../../../../actions';
 import { TextButton } from '../../../../../../components/Buttons';
+import { drawerPaths, buildDrawerUrl } from '../../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   resultContainer: {
@@ -41,7 +42,11 @@ export default function ApiTokenSection({ integrationId }) {
           onClick={() => {
             const newId = generateNewId();
 
-            history.push(`${location.pathname}/add/accesstokens/${newId}`);
+            history.push(buildDrawerUrl({
+              path: drawerPaths.RESOURCE.ADD,
+              baseUrl: location.pathname,
+              params: { resourceType: 'accesstokens', id: newId },
+            }));
 
             const patchSet = [
               {

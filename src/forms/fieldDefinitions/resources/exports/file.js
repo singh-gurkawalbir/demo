@@ -112,19 +112,11 @@ export default {
     isLoggable: true,
     type: 'select',
     label: 'File encoding',
+    refreshOptionsOnChangesTo: 'file.type',
     visibleWhenAll: [
       {
         field: 'outputMode',
         is: ['records'],
-      },
-    ],
-    options: [
-      {
-        items: [
-          { label: 'UTF-8', value: 'utf8' },
-          { label: 'Windows-1252', value: 'win1252' },
-          { label: 'UTF-16LE', value: 'utf-16le' },
-        ],
       },
     ],
   },
@@ -196,12 +188,24 @@ export default {
     sampleData: r => r && r.sampleData,
     defaultValue: r => (r.file?.sortByFields) || '',
     label: 'Sort records by fields',
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
   },
   'file.groupByFields': {
     isLoggable: true,
     type: 'sortandgroup',
     label: 'Group records by fields',
     defaultValue: r => r.file?.groupByFields || r.file?.csv?.keyColumns || r.file?.xlsx?.keyColumns,
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
   },
   pgpdecrypt: {
     type: 'fileencryptdecrypt',
