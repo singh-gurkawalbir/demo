@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(1),
   },
 }));
+
 export default function SubNavMenuItem({name, errorCount, isGripperVisible = false, onMouseEnter, onMouseLeave}) {
   const classes = useStyles(isGripperVisible);
 

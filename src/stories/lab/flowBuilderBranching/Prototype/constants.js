@@ -1,0 +1,1 @@
+export const FB_SOURCE_COLUMN_WIDTH = 450;
