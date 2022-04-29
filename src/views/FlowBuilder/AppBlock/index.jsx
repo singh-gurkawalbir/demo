@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     zIndex: theme.zIndex.bubble,
   },
-  draggable: { cursor: 'move' },
+  // draggable: { cursor: 'move' },
   name: {
     height: 150,
     overflow: 'hidden',

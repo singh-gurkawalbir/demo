@@ -15,6 +15,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     width: 250,
     margin: theme.spacing(0, -0.5),
+    cursor: 'default',
   },
 }));
 

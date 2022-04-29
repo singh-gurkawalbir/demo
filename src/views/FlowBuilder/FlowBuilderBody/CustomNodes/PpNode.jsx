@@ -13,6 +13,7 @@ import PageProcessor from '../../PageProcessor';
 const useStyles = makeStyles(theme => ({
   root: {
     width: 250,
+    cursor: 'default',
   },
   contentContainer: {
     display: 'flex',
