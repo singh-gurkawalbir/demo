@@ -1582,9 +1582,9 @@ export const buildExtractsTree = (sampleData, selectedValues) => {
   return {treeData, selectedKeys};
 };
 
-// this util takes care of filtering the tree when some input
+// this util takes care of filtering the extracts tree when some input
 // is typed into the search
-export const filterExtractsNode = (node, propValue, inputValue) => {
+export const filterExtractsNode = (node = {}, propValue, inputValue) => {
   // if node is already selected, do not mark it as filtered
   if (node.selected) return false;
 
@@ -1625,17 +1625,17 @@ export const filterExtractsNode = (node, propValue, inputValue) => {
 
 // this util handles the comma separated values use-case
 // and returns the final input after user selects a node
-export const getFinalSelectedExtracts = (node, inputValue, isArrayType, isGroupedSampleData) => {
+export const getFinalSelectedExtracts = (node, inputValue = '', isArrayType, isGroupedSampleData) => {
   const prefix = getDefaultExtractPath(isGroupedSampleData);
-  const {jsonPath = ''} = node;
+  const {jsonPath = ''} = node || {};
   const fullJsonPath = jsonPath ? `${prefix}.${jsonPath}` : prefix;
   let newValue = fullJsonPath;
 
-  const splitInput = inputValue.split(',');
-  const valuesLen = splitInput.length;
-
   // handle comma separated scenario for array data types
   if (isArrayType) {
+    const splitInput = inputValue.split(',');
+    const valuesLen = splitInput.length;
+
     const lastChar = inputValue.charAt(inputValue.length - 1);
 
     // if user has typed comma before selecting new value, we append the new value
@@ -1711,7 +1711,7 @@ const recursivelyCompareV2Mappings = (_mappingObj1 = {}, _mappingObj2 = {}) => {
 };
 
 // handles the dirty check to enable/disable save button
-export const compareV2Mappings = (tree1, tree2) => {
+export const compareV2Mappings = (tree1 = [], tree2 = []) => {
   let isV2MappingsChanged = tree1.length !== tree2.length;
 
   if (isV2MappingsChanged) return true;
@@ -2955,7 +2955,7 @@ export default {
       }
     }
   },
-  getV2DefaultLookupActionValue: (value, lookup = {}) => {
+  getV2DefaultLookupActionValue: (value = {}, lookup = {}) => {
     if (value.conditional?.when === 'extract_not_empty') {
       return 'discardIfEmpty';
     }
