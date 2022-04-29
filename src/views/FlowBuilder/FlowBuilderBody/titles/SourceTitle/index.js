@@ -1,8 +1,6 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
-import { selectors } from '../../../../../reducers';
 import Title from '../Title';
 import { FB_SOURCE_COLUMN_WIDTH } from '../../../../../utils/constants';
 import useMenuDrawerWidth from '../../../../../hooks/useMenuDrawerWidth';
