@@ -72,7 +72,8 @@ const useStyles = makeStyles(theme => ({
     '& .filter-node': {
       '& .childTree-title': {
         '& span': {
-          backgroundColor: theme.palette.secondary.lightest,
+          backgroundColor: theme.palette.secondary.contrastText,
+          lineHeight: 1,
         },
       },
     },
