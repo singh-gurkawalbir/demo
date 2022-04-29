@@ -2,7 +2,7 @@ import { values, keyBy, cloneDeep } from 'lodash';
 import shortid from 'shortid';
 import parseLinkHeader from 'parse-link-header';
 import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from './constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from '../constants';
 import { stringCompare } from './sort';
 import messageStore from './messageStore';
 import errorMessageStore from './errorStore';

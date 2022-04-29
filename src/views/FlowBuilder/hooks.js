@@ -5,7 +5,7 @@ import actions from '../../actions';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
-import { emptyObject, UNASSIGNED_SECTION_ID } from '../../utils/constants';
+import { emptyObject, UNASSIGNED_SECTION_ID } from '../../constants';
 import { generateNewId } from '../../utils/resource';
 import itemTypes from './itemTypes';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';

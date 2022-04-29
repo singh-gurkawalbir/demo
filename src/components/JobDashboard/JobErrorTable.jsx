@@ -5,7 +5,7 @@ import {makeStyles, TablePagination, IconButton, Tooltip, Divider, Typography} f
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import { JOB_STATUS } from '../../utils/constants';
+import { JOB_STATUS } from '../../constants';
 import { generateNewId } from '../../utils/resource';
 import EditIcon from '../icons/EditIcon';
 import ChevronRight from '../icons/ArrowRightIcon';

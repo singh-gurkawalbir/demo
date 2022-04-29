@@ -6,7 +6,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { Typography, IconButton } from '@material-ui/core';
 import { reverse } from 'lodash';
 import CeligoTable from '../CeligoTable';
-import { JOB_STATUS } from '../../utils/constants';
+import { JOB_STATUS } from '../../constants';
 import DateTimeDisplay from '../DateTimeDisplay';
 import CloseIcon from '../icons/CloseIcon';
 

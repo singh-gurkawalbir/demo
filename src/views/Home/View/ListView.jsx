@@ -5,7 +5,7 @@ import ResourceTable from '../../../components/ResourceTable';
 import ShowMoreDrawer from '../../../components/drawer/ShowMore';
 import { FILTER_KEY } from '../../../utils/home';
 import NoResultTypography from '../../../components/NoResultTypography';
-import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
+import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
 import ResourceEmptyState from '../../ResourceList/ResourceEmptyState';
 import PageContent from '../../../components/PageContent';
 

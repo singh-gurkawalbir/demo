@@ -1,0 +1,23 @@
+export const RESOLVED_GRAPH_DATAPOINTS = ['users', 'auto'];
+export const AUTO_PILOT_DATA_POINT = 'auto';
+export const LINE_GRAPH_TYPES = Object.freeze({
+  SUCCESS: 'success',
+  AVERAGE_TIME_TAKEN: 'averageTimeTaken',
+  ERROR: 'error',
+  IGNORED: 'ignored',
+  RESOLVED: 'resolved',
+});
+export const LINE_GRAPH_CATEGORIES = [
+  LINE_GRAPH_TYPES.SUCCESS,
+  LINE_GRAPH_TYPES.AVERAGE_TIME_TAKEN,
+  LINE_GRAPH_TYPES.ERROR,
+  LINE_GRAPH_TYPES.IGNORED,
+  LINE_GRAPH_TYPES.RESOLVED,
+];
+export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
+  [LINE_GRAPH_TYPES.SUCCESS]: 's',
+  [LINE_GRAPH_TYPES.AVERAGE_TIME_TAKEN]: 'att',
+  [LINE_GRAPH_TYPES.ERROR]: 'e',
+  [LINE_GRAPH_TYPES.IGNORED]: 'i',
+  [LINE_GRAPH_TYPES.RESOLVED]: 'r',
+});

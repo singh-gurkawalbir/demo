@@ -21,7 +21,7 @@ import {
   IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES,
   VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA,
 } from './utils';
-import { STANDALONE_INTEGRATION } from '../../../utils/constants';
+import { STANDALONE_INTEGRATION } from '../../../constants';
 import { previewFileData } from '../../../utils/exportPanel';
 import { processJsonSampleData } from '../../../utils/sampleData';
 import { evaluateExternalProcessor } from '../../editor';

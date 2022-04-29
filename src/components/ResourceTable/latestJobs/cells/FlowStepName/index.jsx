@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import { JOB_STATUS } from '../../../../../utils/constants';
+import { JOB_STATUS } from '../../../../../constants';
 import { selectors } from '../../../../../reducers';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';

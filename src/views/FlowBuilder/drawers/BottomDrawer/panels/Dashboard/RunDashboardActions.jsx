@@ -8,7 +8,7 @@ import RunFlowButton from '../../../../../../components/RunFlowButton';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
-import { JOB_STATUS } from '../../../../../../utils/constants';
+import { JOB_STATUS } from '../../../../../../constants';
 import EllipsisActionMenu from '../../../../../../components/EllipsisActionMenu';
 import JobFilesDownloadDialog from '../../../../../../components/JobDashboard/JobFilesDownloadDialog';
 import { DRAGGABLE_SECTION_DIV_ID } from '../..';

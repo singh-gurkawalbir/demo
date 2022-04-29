@@ -8,7 +8,7 @@ import {
   JOB_TYPES,
   JOB_STATUS,
   STANDALONE_INTEGRATION,
-} from '../../../utils/constants';
+} from '../../../constants';
 import {
   DEFAULT_STATE,
   parseJobs,

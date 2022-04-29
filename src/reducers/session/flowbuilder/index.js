@@ -1,6 +1,6 @@
 import produce from 'immer';
 import { keyBy } from 'lodash';
-import { emptyList } from '../../../utils/constants';
+import { emptyList } from '../../../constants';
 import actionTypes from '../../../actions/types';
 import { generateReactFlowGraph } from '../../../utils/flows/flowbuilder';
 

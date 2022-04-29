@@ -2,7 +2,7 @@
 import sortBy from 'lodash/sortBy';
 import { getAllApplications, getTileId, sortTiles, tileCompare, tileStatus } from '.';
 import { applicationsList } from '../../constants/applications';
-import {TILE_STATUS} from '../constants';
+import {TILE_STATUS} from '../../constants';
 
 const tiles = [
   {

@@ -11,7 +11,7 @@ import getRequestOptions, { pingConnectionParentContext } from '../../utils/requ
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
-import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH, INTEGRATION_DEPENDENT_RESOURCES, STANDALONE_INTEGRATION } from '../../utils/constants';
+import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH, INTEGRATION_DEPENDENT_RESOURCES, STANDALONE_INTEGRATION } from '../../constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';

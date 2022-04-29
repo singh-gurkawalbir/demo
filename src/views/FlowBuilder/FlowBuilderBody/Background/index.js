@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
-import { FB_SOURCE_COLUMN_WIDTH } from '../../../../utils/constants';
+import { FB_SOURCE_COLUMN_WIDTH } from '../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   svgBg: {

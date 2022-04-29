@@ -11,7 +11,7 @@ import CeligoDivider from '../../../CeligoDivider';
 import FieldHelp from '../../../DynaForm/FieldHelp';
 import LookupDrawer from '../../../drawer/Lookup';
 import * as completers from '../../Editor/panels/Handlebars/autocompleteSetup/completers';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
 

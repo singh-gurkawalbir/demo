@@ -13,7 +13,7 @@ import { getRecordTypeForAutoMapper } from '../assistant';
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
-import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../constants';
+import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../../constants';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;

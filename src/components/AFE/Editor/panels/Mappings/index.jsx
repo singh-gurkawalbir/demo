@@ -10,7 +10,7 @@ import SettingsDrawer from '../../../../Mapping/Settings';
 import AutoMapperButton from '../../../../Mapping/AutoMapperButton';
 import { dataAsString } from '../../../../../utils/editor';
 import MappingRow from '../../../../Mapping/MappingRow';
-import { emptyObject } from '../../../../../utils/constants';
+import { emptyObject } from '../../../../../constants';
 import NoResultTypography from '../../../../NoResultTypography';
 
 const useStyles = makeStyles(theme => ({

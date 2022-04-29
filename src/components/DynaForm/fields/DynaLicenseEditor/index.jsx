@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 import DynaEditor from '../DynaEditor';
 
 export default function DynaLicenseEditor(props) {

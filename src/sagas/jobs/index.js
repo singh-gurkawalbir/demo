@@ -17,7 +17,7 @@ import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
-import { JOB_TYPES, STANDALONE_INTEGRATION } from '../../utils/constants';
+import { JOB_TYPES, STANDALONE_INTEGRATION } from '../../constants';
 import {FILTER_KEYS_AD} from '../../utils/accountDashboard';
 import { pollApiRequests } from '../app';
 

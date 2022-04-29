@@ -1,5 +1,5 @@
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-import { AFE_SAVE_STATUS, FORM_SAVE_STATUS } from '../constants';
+import { AFE_SAVE_STATUS, FORM_SAVE_STATUS } from '../../constants';
 import { convertGraphqlFieldIdToHTTPFieldId, isGraphqlField } from '../graphql';
 import { isOldRestAdaptor } from '../resource';
 
