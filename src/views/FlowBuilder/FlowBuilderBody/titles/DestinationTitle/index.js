@@ -4,6 +4,7 @@ import { useStoreState } from 'react-flow-renderer';
 import Title from '../Title';
 import AddNodeMenuPopper from './BranchMenuPopper';
 import { FB_SOURCE_COLUMN_WIDTH } from '../../../../../utils/constants';
+import useMenuDrawerWidth from '../../../../../hooks/useMenuDrawerWidth';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -14,10 +15,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DestinationTitle() {
+  const menuWidth = useMenuDrawerWidth();
+
   // we dont care about the y axis since we always want 100% y axis coverage,
   // regardless of pan or zoom settings.
   const [x,, scale] = useStoreState(s => s.transform);
-  const columnWidth = Math.max(0, FB_SOURCE_COLUMN_WIDTH * scale + x);
+  const columnWidth = Math.max(0, FB_SOURCE_COLUMN_WIDTH * scale + x + menuWidth);
 
   const xOffset = columnWidth;
   const classes = useStyles({xOffset, columnWidth});
