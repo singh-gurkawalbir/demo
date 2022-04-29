@@ -41,8 +41,10 @@ const useStyles = makeStyles(theme => ({
   },
   childTree: {
     paddingBottom: theme.spacing(1),
+    '& .childTree-indent': {
+      display: 'flex',
+    },
     '& .childTree-indent-unit': {
-      display: 'inline-block',
       width: theme.spacing(1),
       position: 'relative',
       height: '100%',
@@ -51,7 +53,7 @@ const useStyles = makeStyles(theme => ({
       cursor: 'pointer',
       display: 'flex',
       position: 'relative',
-      padding: theme.spacing(1, 0, 0.5, 2),
+      padding: theme.spacing(1, 0, 1, 2),
       alignItems: 'center',
     },
     '& .childTree-switcher': {
@@ -68,7 +70,11 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.background.paper2,
     },
     '& .filter-node': {
-      backgroundColor: theme.palette.secondary.lightest,
+      '& .childTree-title': {
+        '& span': {
+          backgroundColor: theme.palette.secondary.lightest,
+        },
+      },
     },
     '& .childTree-node-content-wrapper': {
       width: '100%',

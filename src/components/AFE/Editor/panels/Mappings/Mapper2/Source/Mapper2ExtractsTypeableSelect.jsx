@@ -34,10 +34,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
     pointerEvents: 'none',
   },
-  // srcDataType: {
-  //   fontStyle: 'italic',
-  //   color: theme.palette.secondary.light,
-  // },
   textFieldWithDataType: {
     '&> * .MuiFilledInput-input': {
       paddingRight: theme.spacing(10),

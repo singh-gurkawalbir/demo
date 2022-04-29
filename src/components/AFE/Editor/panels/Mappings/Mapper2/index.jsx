@@ -23,9 +23,9 @@ const useStyles = makeStyles(theme => ({
     '& .rc-tree-indent-unit:before': {
       position: 'absolute',
       top: '-9px',
-      right: '30px',
+      right: '29px',
       bottom: '7px',
-      borderRight: '1px solid #d9d9d9',
+      borderRight: `1px solid ${theme.palette.secondary.contrastText}`,
       content: '""',
     },
     '& .rc-tree-treenode': {
