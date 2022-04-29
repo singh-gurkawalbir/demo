@@ -36,7 +36,6 @@ const useStyles = makeStyles(theme => ({
   },
   helpButton: {
     padding: 0,
-    marginLeft: theme.spacing(1),
   },
   grabbing: {
     cursor: 'grabbing',

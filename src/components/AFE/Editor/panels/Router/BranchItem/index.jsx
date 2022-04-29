@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
   },
   description: {
     flexGrow: 1,
-    marginTop: 2,
+    marginTop: 3,
   },
   expandable: {
     marginLeft: theme.spacing(4),
