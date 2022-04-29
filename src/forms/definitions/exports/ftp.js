@@ -19,6 +19,7 @@ export default {
         newValues['/file/output'] = 'metadata';
       } else newValues['/file/output'] = 'blobKeys';
       newValues['/file/type'] = undefined;
+      newValues['/type'] = 'blob';
     } else {
       newValues['/file/output'] = 'records';
     }
