@@ -141,7 +141,7 @@ const ExtractsTree = React.memo((
 
   // replace '$.' and '$[*].' as we are not storing these prefixes in each node jsonPath as well
   // for better searching
-  // note: if we move this below splot logic in the selector directly,
+  // note: if we move this below split logic in the selector directly,
   // then we need to ensure that this returns a cached array else mkBuildExtractsTree will always run
   const selectedValues = useMemo(() => propValue.replace(/(\$\.)|(\$\[\*\]\.)/g, '').split(','), [propValue]);
 

@@ -534,15 +534,13 @@ export const getInputOutputFormat = (isGroupedSampleData, isGroupedOutput) => {
 
 // for object array multiple extracts view,
 // mark non active tabs children as hidden
-export const hideOtherTabRows = (node, newTabExtractId, hidden) => {
+export const hideOtherTabRows = (node, newTabExtract, hidden) => {
   const clonedNode = deepClone(node);
 
-  if (!clonedNode.children?.length) return clonedNode;
+  if (!clonedNode || !clonedNode.children?.length) return clonedNode;
 
   clonedNode.children = clonedNode.children.map(c => {
     const clonedChild = {...c};
-
-    if (clonedChild.isTabNode) return clonedChild;
 
     // if parent is passing hidden as true, then all children should be hidden
     if (hidden) {
@@ -550,7 +548,7 @@ export const hideOtherTabRows = (node, newTabExtractId, hidden) => {
       clonedChild.className = 'hideRow';
 
       // update children hidden as well
-      return hideOtherTabRows(clonedChild, newTabExtractId, true);
+      return hideOtherTabRows(clonedChild, newTabExtract, true);
     }
 
     // if parent is passing hidden as false explicitly, then all children should be shown
@@ -559,22 +557,24 @@ export const hideOtherTabRows = (node, newTabExtractId, hidden) => {
       delete clonedChild.className;
 
       // update children as well
-      return hideOtherTabRows(clonedChild, newTabExtractId, false);
+      return hideOtherTabRows(clonedChild, newTabExtract, false);
     }
 
+    if (clonedChild.isTabNode) return clonedChild;
+
     // else if hidden is undefined, then check on the tab index
-    if (clonedChild.parentExtract !== newTabExtractId) {
+    if (clonedChild.parentExtract !== newTabExtract) {
       clonedChild.hidden = true;
       clonedChild.className = 'hideRow';
 
       // update children hidden as well
-      return hideOtherTabRows(clonedChild, newTabExtractId, true);
+      return hideOtherTabRows(clonedChild, newTabExtract, true);
     }
     delete clonedChild.hidden;
     delete clonedChild.className;
 
     // update children as well
-    return hideOtherTabRows(clonedChild, newTabExtractId, false);
+    return hideOtherTabRows(clonedChild, newTabExtract, false);
   });
 
   return clonedNode;
@@ -607,17 +607,24 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
   const splitExtracts = extract.split(',');
 
   // if no extract, return
-  if (!splitExtracts || !splitExtracts.length) return node;
+  if (isEmpty(node) || !splitExtracts || !splitExtracts.length) return node;
+
+  if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) return node;
 
   // update hidden prop and only show first extract children
   const clonedNode = hideOtherTabRows(node, getUniqueExtractId(splitExtracts[0], 0));
 
   // set active tab to 0th
   clonedNode.activeTab = 0;
+  clonedNode.combinedExtract = extract;
 
   const {key: parentKey} = clonedNode;
 
   const foundExtractsUniqueId = [];
+
+  if (!clonedNode.children) {
+    clonedNode.children = [];
+  }
 
   clonedNode.children = clonedNode.children.filter(child => {
     const {parentExtract} = child;
@@ -664,10 +671,10 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
 
   if (splitExtracts.length === 1) {
     // remove tab node
-    if (clonedNode.children[0].isTabNode) {
+    if (clonedNode.children[0]?.isTabNode) {
       clonedNode.children.shift();
     }
-  } else if (splitExtracts.length > 1 && !clonedNode.children[0].isTabNode) {
+  } else if (splitExtracts.length > 1 && !clonedNode.children[0]?.isTabNode) {
     // add tab node
     clonedNode.children.unshift({
       key: generateUniqueKey(),
@@ -1411,6 +1418,8 @@ export const buildV2MappingsFromTree = ({v2TreeData}) => {
 
 // handles drag/drop logic for tree data
 export function allowDrop({ dragNode, dropNode, dropPosition }) {
+  if (!dragNode || !dropNode) return false;
+
   const {parentKey: dragNodeParentKey, isTabNode: dragNodeIsTab, hidden: dragNodeIsHidden} = dragNode;
   const {key: dropNodeKey, parentKey: dropNodeParentKey, isTabNode: dropNodeIsTab, hidden: dropNodeIsHidden} = dropNode;
 
@@ -1481,7 +1490,7 @@ export const TYPEOF_TO_DATA_TYPE = {
   '[object Null]': 'string',
 };
 
-function recursivelyBuildExtractsTree({dataObj, treeData, parentKey, parentJsonPath = '', selectedValues, selectedKeys}) {
+function recursivelyBuildExtractsTree({dataObj, treeData, parentKey, parentJsonPath = '', selectedValues = [], selectedKeys}) {
   // iterate over all keys and construct the tree
   Object.keys(dataObj).forEach(propName => {
     const v = dataObj[propName];

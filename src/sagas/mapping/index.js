@@ -386,7 +386,7 @@ export function* saveMappings() {
   const isMapper2Supported = yield select(selectors.isMapper2Supported);
   const isV2MappingsChanged = yield select(selectors.v2MappingChanged);
 
-  // save v2 mappings as well only when anything changed
+  // save v2 mappings only when anything changed
   if (isMapper2Supported && isV2MappingsChanged) {
     const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
 

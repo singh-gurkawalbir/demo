@@ -915,12 +915,13 @@ describe('saveMappings saga', () => {
       .put(actions.mapping.saveComplete())
       .run();
   });
-  test('should trigger patch staged action for v2 mappings as well if adaptor supports v2 mappings', () => expectSaga(saveMappings)
+  test('should trigger patch staged action for v2 mappings as well if adaptor supports v2 mappings and v2 mappings are changed', () => expectSaga(saveMappings)
     .provide([
       [select(selectors.mapping), {
         mappings: [{extract: 'e1', generate: 'g1'}],
         lookups: [{name: 'lookup1', isConditionalLookup: true}, {name: 'lookup2'}],
-        v2TreeData: [{extract: 'id', generate: 'id', dataType: 'string', key: 'unique'}],
+        v2TreeData: [{extract: 'id', generate: 'new-id', dataType: 'string', key: 'unique'}],
+        v2TreeDataCopy: [{extract: 'id', generate: 'id', dataType: 'string', key: 'unique'}],
         importId,
         flowId,
       }],
@@ -928,6 +929,7 @@ describe('saveMappings saga', () => {
       [select(selectors.mappingGenerates, importId, undefined), []],
       [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
       [select(selectors.isMapper2Supported), true],
+      [select(selectors.v2MappingChanged), true],
       [call(commitStagedChanges, {
         resourceType: 'imports',
         id: importId,
@@ -956,7 +958,7 @@ describe('saveMappings saga', () => {
         op: 'replace',
         path: '/mappings',
         value: [{
-          generate: 'id',
+          generate: 'new-id',
           dataType: 'string',
           extract: 'id',
           description: undefined,
@@ -969,6 +971,54 @@ describe('saveMappings saga', () => {
           default: undefined,
           conditional: {when: undefined},
         }],
+      },
+    ], SCOPES.VALUE))
+    .call(commitStagedChanges, {
+      resourceType: 'imports',
+      id: importId,
+      scope: SCOPES.VALUE,
+      context: { flowId },
+    })
+    .put(actions.mapping.saveComplete())
+    .run());
+  test('should not trigger patch staged action for v2 mappings path if adaptor supports v2 mappings and no v2 mappings are changed', () => expectSaga(saveMappings)
+    .provide([
+      [select(selectors.mapping), {
+        mappings: [{extract: 'e1', generate: 'g1'}],
+        lookups: [{name: 'lookup1', isConditionalLookup: true}, {name: 'lookup2'}],
+        v2TreeData: [{extract: 'id', generate: 'id', dataType: 'string', key: 'unique'}],
+        v2TreeDataCopy: [{extract: 'id', generate: 'id', dataType: 'string', key: 'unique'}],
+        importId,
+        flowId,
+      }],
+      [select(selectors.resource, 'imports', importId), {_id: importId, name: 'n1', lookups: [], adaptorType: 'HTTPImport'}],
+      [select(selectors.mappingGenerates, importId, undefined), []],
+      [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+      [select(selectors.isMapper2Supported), true],
+      [select(selectors.v2MappingChanged), false],
+      [call(commitStagedChanges, {
+        resourceType: 'imports',
+        id: importId,
+        scope: SCOPES.VALUE,
+        context: { flowId },
+      }), {}],
+      [select(selectors.getSampleDataContext, {
+        flowId,
+        resourceId: importId,
+        stage: 'importMappingExtract',
+        resourceType: 'imports',
+      }), {data: []}],
+    ])
+    .put(actions.resource.patchStaged(importId, [
+      {
+        op: 'replace',
+        path: '/mapping',
+        value: {fields: [{generate: 'g1', extract: 'e1'}], lists: []},
+      },
+      {
+        op: 'replace',
+        path: '/http/lookups',
+        value: [{ name: 'lookup2' }],
       },
     ], SCOPES.VALUE))
     .call(commitStagedChanges, {
