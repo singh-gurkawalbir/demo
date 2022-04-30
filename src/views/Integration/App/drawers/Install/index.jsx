@@ -246,7 +246,7 @@ export default function ConnectorInstallation() {
       dispatch(actions.resource.request('integrations', integrationId));
       dispatch(actions.resource.requestCollection('flows', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('exports', undefined, undefined, integrationId));
-      dispatch(actions.resource.requestCollection('licenses'));
+      dispatch(actions.license.refreshCollection());
       dispatch(actions.resource.requestCollection('imports', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('connections', undefined, undefined, integrationId));
 
