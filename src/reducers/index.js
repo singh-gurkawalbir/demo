@@ -135,6 +135,7 @@ const rootReducer = (state, action) => {
 
       case actionTypes.APP_DELETE_DATA_STATE:
         delete draft.data;
+        delete draft.session.loadResources;
 
         break;
 
