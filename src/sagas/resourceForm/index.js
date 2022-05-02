@@ -443,6 +443,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     'flows',
     flowId
   )) || emptyObject;
+  const elementsMap = yield select(selectors.fbElementsMap, flowId);
 
   // if its an existing resource and original flow document does not have any references to newly created PG or PP
   // then we can go ahead and update it...if it has existing references no point creating additional create patches
@@ -459,20 +460,20 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     createdId
   );
 
-  let addIndexPP = flowDoc?.pageProcessors?.length || 0;
-  let addIndexPG = flowDoc?.pageGenerators?.length || 0;
+  const addIndexPP = flowDoc?.pageProcessors?.length || 0;
+  const addIndexPG = flowDoc?.pageGenerators?.length || 0;
 
   // Incoming resourceIds that model new PP or PGs (are prefixed with 'new-')  may contain a suffix
   // identifying if the resource should replace an existing pending resource, or if absent, add a new
   // resource. If this index suffix exists, we replace the pending PP/PG at that location, otherwise we
   // add a new one.
-  const [, pendingIndex] = tempResourceId?.split('.');
+  const [, pendingId] = tempResourceId?.split('.');
   let pending = false;
+  let stepPath;
 
-  if (pendingIndex) {
+  if (pendingId) {
     pending = true;
-    addIndexPP = pendingIndex;
-    addIndexPG = pendingIndex;
+    stepPath = elementsMap[pendingId]?.data?.path;
   }
 
   let flowPatches = [];
@@ -482,7 +483,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
       flowPatches = [
         {
           op: pending ? 'replace' : 'add',
-          path: `/pageProcessors/${addIndexPP}`,
+          path: stepPath || `/pageProcessors/${addIndexPP}`,
           value: { type: 'export', _exportId: createdId },
         },
       ];
@@ -505,7 +506,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
         flowPatches = [
           {
             op: pending ? 'replace' : 'add',
-            path: `/pageGenerators/${addIndexPG}`,
+            path: stepPath || `/pageGenerators/${addIndexPG}`,
             value: { _exportId: createdId },
           },
         ];
@@ -516,7 +517,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     flowPatches = [
       {
         op: pending ? 'replace' : 'add',
-        path: `/pageProcessors/${addIndexPP}`,
+        path: stepPath || `/pageProcessors/${addIndexPP}`,
         value: { type: 'import', _importId: createdId },
       },
     ];

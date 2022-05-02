@@ -15,7 +15,7 @@ export default function reducer(state = {}, action) {
         if (!draft[flowId]) {
           draft[flowId] = {};
         }
-        draft[flowId].elements = generateReactFlowGraph({}, flow);
+        draft[flowId].elements = generateReactFlowGraph(flow);
         draft[flowId].elementsMap = keyBy(draft[flowId].elements || [], 'id');
         draft[flowId].flow = flow;
       }

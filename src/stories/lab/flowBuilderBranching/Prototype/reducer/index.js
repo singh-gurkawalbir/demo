@@ -236,7 +236,7 @@ const handleDeleteNode = (draft, action) => {
       staged[flowId].patch.push({
         op: 'add',
         path,
-        value: {application: `none=${generateId()}`},
+        value: {application: `none-${generateId()}`},
       });
     }
   } else

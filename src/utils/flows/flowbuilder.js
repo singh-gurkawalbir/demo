@@ -105,15 +105,15 @@ export const initializeFlowForReactFlow = flowDoc => {
 
 // Note 'targeId' can be either a page processor Id if the flow schema is linear (old schema)
 // or it can be a router Id if the flow schema represents a branched flow.
-const generatePageGeneratorNodesAndEdges = (resourcesState, pageGenerators, targetId) => {
+const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId) => {
   if (!pageGenerators || !pageGenerators.length || !targetId) {
     return [];
   }
 
-  const nodes = pageGenerators.map(pg => ({
+  const nodes = pageGenerators.map((pg, index) => ({
     id: pg.id,
     type: 'pg',
-    data: {...pg},
+    data: {...pg, path: `/pageGenerators/${index}`},
   }));
 
   const edges = nodes.map(node => generateDefaultEdge(node.id, targetId));
@@ -121,7 +121,7 @@ const generatePageGeneratorNodesAndEdges = (resourcesState, pageGenerators, targ
   return [...nodes, ...edges];
 };
 
-const generatePageProcessorNodesAndEdges = (resourceState, pageProcessors, branchData = {}) => {
+const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}) => {
   const edges = [];
   const {branch, branchIndex, routerIndex} = branchData;
   const nodes = pageProcessors.map((pageProcessor, index, collection) => {
@@ -144,12 +144,12 @@ const generatePageProcessorNodesAndEdges = (resourceState, pageProcessors, branc
   return [...edges, ...nodes];
 };
 
-const generateNodesAndEdgesFromNonBranchedFlow = (resourceState, flow) => {
+const generateNodesAndEdgesFromNonBranchedFlow = flow => {
   const { _exportId, pageGenerators, pageProcessors = [], _importId } = flow;
   const virtualRouter = {_id: generateId(), branches: []};
 
-  const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(resourceState, pageGenerators || [{_exportId, id: _exportId}], virtualRouter._id);
-  const pageProcessorNodesAndEdges = generatePageProcessorNodesAndEdges(resourceState, _importId ? [{_importId, id: _importId}] : pageProcessors);
+  const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(pageGenerators || [{_exportId, id: _exportId}], virtualRouter._id);
+  const pageProcessorNodesAndEdges = generatePageProcessorNodesAndEdges(_importId ? [{_importId, id: _importId}] : pageProcessors);
   const firstPPId = _importId || pageProcessors[0]?.id || _importId;
   const lastPPId = _importId || pageProcessors[pageProcessors.length - 1]?.id || _importId;
 
@@ -167,10 +167,10 @@ const generateNodesAndEdgesFromNonBranchedFlow = (resourceState, flow) => {
 
 export const getRouter = (routerId, flow = {}) => flow.routers?.find(r => r._id === routerId);
 
-export const generateNodesAndEdgesFromBranchedFlow = (resourceState, flow) => {
+export const generateNodesAndEdgesFromBranchedFlow = flow => {
   const {pageGenerators = [], routers = []} = flow;
 
-  const elements = [...generatePageGeneratorNodesAndEdges(resourceState, pageGenerators, routers[0]._id)];
+  const elements = [...generatePageGeneratorNodesAndEdges(pageGenerators, routers[0]._id)];
   const routerVisited = {};
   const routersArr = [...routers];
   const populateRouterElements = router => {
@@ -181,7 +181,7 @@ export const generateNodesAndEdgesFromBranchedFlow = (resourceState, flow) => {
       router.branches.forEach((branch, branchIndex) => {
         if (branch.pageProcessors.length) {
           // draw an edge from router to first step of branch
-          const pageProcessorNodes = generatePageProcessorNodesAndEdges(resourceState, branch.pageProcessors, {branch, branchIndex, routerIndex});
+          const pageProcessorNodes = generatePageProcessorNodesAndEdges(branch.pageProcessors, {branch, branchIndex, routerIndex});
           const branchStartEdge = generateDefaultEdge(router._id, branch.pageProcessors[0].id, {routerIndex, branchIndex});
 
           elements.push(branchStartEdge);
@@ -229,7 +229,7 @@ export const generateNodesAndEdgesFromBranchedFlow = (resourceState, flow) => {
   return elements;
 };
 
-export const generateReactFlowGraph = (resourcesState, flow) => {
+export const generateReactFlowGraph = flow => {
   if (!flow) {
     return;
   }
@@ -237,9 +237,9 @@ export const generateReactFlowGraph = (resourcesState, flow) => {
   const {routers} = flow;
 
   if (!routers || routers.length === 0) {
-    return generateNodesAndEdgesFromNonBranchedFlow(resourcesState, flow);
+    return generateNodesAndEdgesFromNonBranchedFlow(flow);
   }
 
-  return generateNodesAndEdgesFromBranchedFlow(resourcesState, flow);
+  return generateNodesAndEdgesFromBranchedFlow(flow);
 };
 
