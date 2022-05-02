@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 import { adaptorTypeMap } from '../../../utils/resource';
 import actionTypes from '../../../actions/types';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
-import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
+import { FILE_PROVIDER_ASSISTANTS } from '../../../constants';
 import { getIAFlowSettings, getScriptsReferencedInFlow, isIntegrationApp } from '../../../utils/flows';
 import mappingUtil from '../../../utils/mapping';
 import getRoutePath from '../../../utils/routePaths';

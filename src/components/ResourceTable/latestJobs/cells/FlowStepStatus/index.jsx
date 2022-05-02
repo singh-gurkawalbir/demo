@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { JOB_STATUS } from '../../../../../utils/constants';
+import { JOB_STATUS } from '../../../../../constants';
 import Spinner from '../../../../Spinner';
 import JobStatus from '../../../../JobDashboard/JobStatus';
 import { JOB_UI_STATUS } from '../../../../../utils/jobdashboard';

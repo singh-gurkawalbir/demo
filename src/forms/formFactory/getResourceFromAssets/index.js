@@ -2,7 +2,7 @@ import produce from 'immer';
 
 import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
-import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
+import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS } from '../../../constants';
 import { getAssistantFromResource, getResourceSubType, isNewId, rdbmsSubTypeToAppType } from '../../../utils/resource';
 import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection } from '../../../utils/assistant';
 

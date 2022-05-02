@@ -12,7 +12,7 @@ import DatabaseMapping from './DatabaseMapping_afe';
 import SelectQueryType from './DatabaseMapping_afe/SelectQueryType';
 import EditorDrawer from '../../components/AFE/Drawer';
 import useFormOnCancelContext from '../../components/FormOnCancelContext';
-import { MAPPINGS_FORM_KEY } from '../../utils/constants';
+import { MAPPINGS_FORM_KEY } from '../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 
 const MappingWrapper = ({integrationId}) => {

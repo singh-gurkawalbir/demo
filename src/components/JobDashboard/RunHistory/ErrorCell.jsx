@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { selectors } from '../../../reducers';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { flowbuilderUrl } from '../../../utils/flows';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import actions from '../../../actions';
 import { getTextAfterCount } from '../../../utils/string';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';

@@ -19,7 +19,7 @@ import {
 } from '../../utils/session';
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
-import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE } from '../../utils/constants';
+import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 import { getDomain } from '../../utils/resource';
 import inferErrorMessages from '../../utils/inferErrorMessages';

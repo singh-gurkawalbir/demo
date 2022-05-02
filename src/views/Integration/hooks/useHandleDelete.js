@@ -5,7 +5,7 @@ import { selectors } from '../../../reducers';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import getRoutePath from '../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../utils/integrationApps';
-import { emptyObject, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../../utils/constants';
+import { emptyObject, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../../constants';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import messageStore from '../../../utils/messageStore';
 import actions from '../../../actions';

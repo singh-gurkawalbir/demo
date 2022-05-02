@@ -1,4 +1,4 @@
-import { HELP_CENTER_BASE_URL } from '../../utils/constants';
+import { HELP_CENTER_BASE_URL } from '../../constants';
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
 export default {
   formView: 'The application specific form is customized to help configure your resource for this particular application. However, if you would like more flexibility, choose the universal connector form (e.g. REST or HTTP) instead, which is a generic form.',

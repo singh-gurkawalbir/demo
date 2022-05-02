@@ -12,7 +12,7 @@ import jsonUtil from '../../../../../utils/json';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import openExternalUrl from '../../../../../utils/window';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import { INSTALL_STEP_TYPES, REVISION_TYPES } from '../../../../../utils/constants';
+import { INSTALL_STEP_TYPES, REVISION_TYPES } from '../../../../../constants';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({

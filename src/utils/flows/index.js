@@ -11,7 +11,7 @@ import {
   isValidResourceReference,
   isFileAdaptor,
 } from '../resource';
-import { emptyList, emptyObject, STANDALONE_INTEGRATION, JOB_STATUS, UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../constants';
+import { emptyList, emptyObject, STANDALONE_INTEGRATION, JOB_STATUS, UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../../constants';
 import { JOB_UI_STATUS } from '../jobdashboard';
 import getRoutePath from '../routePaths';
 import {HOOKS_IN_IMPORT_EXPORT_RESOURCE} from '../scriptHookStubs';

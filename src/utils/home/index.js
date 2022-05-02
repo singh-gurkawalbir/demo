@@ -1,5 +1,5 @@
 import sortBy from 'lodash/sortBy';
-import { TILE_STATUS } from '../constants';
+import { TILE_STATUS } from '../../constants';
 import {applicationsList} from '../../constants/applications';
 import { getTextAfterCount } from '../string';
 import { stringCompare } from '../sort';

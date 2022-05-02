@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 import actions from '../../actions';
-import { ACCOUNT_IDS } from '../../utils/constants';
+import { ACCOUNT_IDS } from '../../constants';
 import reducer, { selectors, DEFAULT_EDITOR_THEME } from '.';
 
 describe('user selectors', () => {

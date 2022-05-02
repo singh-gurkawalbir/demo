@@ -9,7 +9,7 @@ import DrawerContent from '../../drawer/Right/DrawerContent';
 import JobErrorTable from '../JobErrorTable';
 import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
-import { JOB_STATUS } from '../../../utils/constants';
+import { JOB_STATUS } from '../../../constants';
 import { drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles({

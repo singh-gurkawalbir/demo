@@ -41,7 +41,7 @@ import { capitalizeFirstLetter, getTrimmedTitle } from '../../../../../../utils/
 import SaveAndCloseButtonGroupAuto from '../../../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import { getFormStatusFromCategoryMappingStatus } from '../../../../../../utils/integrationApps';
 import { useFormOnCancel } from '../../../../../../components/FormOnCancelContext';
-import { CATEGORY_MAPPING_SAVE_STATUS, CATEGORY_MAPPING_ASYNC_KEY } from '../../../../../../utils/constants';
+import { CATEGORY_MAPPING_SAVE_STATUS, CATEGORY_MAPPING_ASYNC_KEY } from '../../../../../../constants';
 import { TextButton } from '../../../../../../components/Buttons';
 import RightDrawer from '../../../../../../components/drawer/Right';
 import DrawerHeader from '../../../../../../components/drawer/Right/DrawerHeader';

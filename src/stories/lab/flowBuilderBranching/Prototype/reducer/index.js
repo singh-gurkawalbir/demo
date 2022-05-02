@@ -3,7 +3,7 @@ import jsonPatch from 'fast-json-patch';
 import keyBy from 'lodash/keyBy';
 import { createSelector } from 'reselect';
 import actions from './actions';
-import { emptyList, emptyObject } from '../../../../../utils/constants';
+import { emptyList, emptyObject } from '../../../../../constants';
 import { generateEmptyRouter, generateBranch, getSomePg, getSomeExport } from '../nodeGeneration';
 import { generateReactFlowGraph, initializeFlowForReactFlow } from '../translateSchema';
 import { BranchPathRegex, generateId, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../lib';

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import {makeStyles} from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
-import { TILE_STATUS } from '../../../../../utils/constants';
+import { TILE_STATUS } from '../../../../../constants';
 import { tileStatus, isTileStatusConnectionDown } from '../../../../../utils/home';
 import actions from '../../../../../actions';
 import { useSelectorMemo } from '../../../../../hooks';

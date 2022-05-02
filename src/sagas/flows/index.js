@@ -4,7 +4,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
 import { selectors } from '../../reducers';
-import { JOB_STATUS, JOB_TYPES, EMPTY_RAW_DATA } from '../../utils/constants';
+import { JOB_STATUS, JOB_TYPES, EMPTY_RAW_DATA } from '../../constants';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
 

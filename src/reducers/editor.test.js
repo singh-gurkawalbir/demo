@@ -1,6 +1,6 @@
 /* global describe, expect, beforeEach, test */
 import { selectors } from '.';
-import { USER_ACCESS_LEVELS } from '../utils/constants';
+import { USER_ACCESS_LEVELS } from '../constants';
 
 describe('AFE region selectors test cases', () => {
   const editorId = 'abc';

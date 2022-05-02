@@ -11,7 +11,7 @@ import IconButtonWithTooltip from '../IconButtonWithTooltip';
 import {
   EMPTY_RAW_DATA,
   MAX_DATA_LOADER_FILE_SIZE,
-} from '../../utils/constants';
+} from '../../constants';
 import Spinner from '../Spinner';
 import { TextButton } from '../Buttons';
 

@@ -1,4 +1,4 @@
-import { JOB_STATUS } from '../constants';
+import { JOB_STATUS } from '../../constants';
 import { getJobDuration } from '../../reducers/data/jobs/util';
 
 export const FLOW_STEP_STATUS = {

@@ -17,7 +17,7 @@ import {
 } from '../../../utils/flowData';
 import { isIntegrationApp } from '../../../utils/flows';
 import { isJsonString } from '../../../utils/string';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import { isFileAdaptor } from '../../../utils/resource';
 
 /*

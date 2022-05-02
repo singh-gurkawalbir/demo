@@ -5,7 +5,7 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../../constants/resource
 import { selectors } from '../../../../reducers';
 import {
   STANDALONE_INTEGRATION,
-} from '../../../../utils/constants';
+} from '../../../../constants';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import getRoutePath from '../../../../utils/routePaths';
 

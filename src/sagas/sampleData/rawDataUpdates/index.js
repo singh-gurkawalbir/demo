@@ -17,7 +17,7 @@ import {
 import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource } from './utils';
 import saveTransformationRulesForNewXMLExport from '../utils/xmlTransformationRulesGenerator';
-import { emptyObject, FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
+import { emptyObject, FILE_PROVIDER_ASSISTANTS } from '../../../constants';
 
 export function* _fetchAndSaveRawDataForResource({ type, resourceId, flowId }) {
   const resourceObj = yield select(

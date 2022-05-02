@@ -7,7 +7,7 @@ import actionTypes from '../../../../../actions/types';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
-import { ACCOUNT_IDS, ACCOUNT_SSO_STATUS, USER_ACCESS_LEVELS } from '../../../../../utils/constants';
+import { ACCOUNT_IDS, ACCOUNT_SSO_STATUS, USER_ACCESS_LEVELS } from '../../../../../constants';
 
 export default function RequireAccountSSO({ user }) {
   const { accountSSORequired, _id: userId, sharedWithUser = {} } = user;

@@ -1,4 +1,4 @@
-import { REVISION_STATUS, REVISION_TYPES } from '../constants';
+import { REVISION_STATUS, REVISION_TYPES } from '../../constants';
 import messageStore from '../messageStore';
 import { comparer, sortJsonByKeys } from '../sort';
 

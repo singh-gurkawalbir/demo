@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
 import Title from '../Title';
 import AddNodeMenuPopper from './BranchMenuPopper';
-import { FB_SOURCE_COLUMN_WIDTH } from '../../../../../utils/constants';
+import { FB_SOURCE_COLUMN_WIDTH } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   title: {

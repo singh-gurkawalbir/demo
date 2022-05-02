@@ -5,7 +5,7 @@ import {
   NETSUITE_BUNDLE_URL,
   SALESFORCE_DA_PACKAGE_URL,
   INSTALL_STEP_TYPES,
-} from './constants';
+} from '../constants';
 import { rdbmsSubTypeToAppType } from './resource';
 import { capitalizeFirstLetter } from './string';
 

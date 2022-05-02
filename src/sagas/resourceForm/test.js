@@ -26,7 +26,7 @@ import {
 } from '.';
 import { createPayload, pingConnectionWithId } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
-import { FORM_SAVE_STATUS } from '../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../constants';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '..';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';

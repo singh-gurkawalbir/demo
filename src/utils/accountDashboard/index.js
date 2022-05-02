@@ -1,5 +1,5 @@
 import { addDays, startOfDay } from 'date-fns';
-import { JOB_STATUS } from '../constants';
+import { JOB_STATUS } from '../../constants';
 
 export const FILTER_KEYS_AD = {
   RUNNING: 'runningFlows',
