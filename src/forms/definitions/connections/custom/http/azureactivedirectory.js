@@ -13,7 +13,6 @@ export default {
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/oauth/scope': [
-      ...['offline_access'],
       ...formValues['/http/auth/oauth/scope'],
     ],
     '/http/auth/token/refreshMediaType': 'urlencoded',
@@ -23,6 +22,7 @@ export default {
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
+        'Directory.AccessAsUser.All',
         'offline_access',
         'User.Export.All',
         'User.Invite.All',
@@ -34,6 +34,7 @@ export default {
         'UserActivity.ReadWrite.CreatedByApp',
         'UserTimelineActivity.Write.CreatedByApp',
       ],
+      defaultValue: r => (r?.http?.auth?.oauth.scope) || ['offline_access'],
     },
     application: {
       fieldId: 'application',
