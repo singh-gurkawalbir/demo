@@ -1,7 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
@@ -24,16 +23,6 @@ const useStyles = makeStyles({
   ppContainer: {
     display: 'flex',
     alignItems: 'center',
-  },
-  lineRight: {
-    minWidth: 150,
-  },
-  lineLeft: {
-    minWidth: 50,
-  },
-  dottedLine: {
-    alignSelf: 'start',
-    marginTop: 85,
   },
   pending: {
     minWidth: 50,
@@ -260,14 +249,10 @@ const PageProcessor = ({
   return (
     <>
       <div className={classes.ppContainer}>
-        {index === 0 && (
-          /* Initial left line connecting Source Apps */
-          <div className={clsx(classes.dottedLine, classes.lineLeft)} />
-        )}
         <AppBlock
           integrationId={integrationId}
           name={name}
-          onDelete={onDelete(name)}
+          onDelete={onDelete}
           openErrorCount={openErrorCount}
           isViewMode={isViewMode}
           isMonitorLevelAccess={isMonitorLevelAccess}
@@ -277,23 +262,13 @@ const PageProcessor = ({
           blockType={blockType}
           flowId={flowId}
           index={index}
+          id={pp.id}
           resource={resource}
           resourceId={resourceId}
           resourceIndex={index}
           resourceType={resourceType}
           actions={processorActions}
         />
-        {!isLast && (
-          /* Right connecting line between Page Processors is not needed
-             for the last App (nothing to connect) */
-          <div
-            className={clsx({
-              [classes.dottedLine]: !pending,
-              [classes.lineRight]: !pending,
-              [classes.pending]: pending,
-            })}
-          />
-        )}
       </div>
     </>
   );

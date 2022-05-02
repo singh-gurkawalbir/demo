@@ -1,15 +1,8 @@
 /* eslint-disable no-param-reassign */
 
+import { cloneDeep } from 'lodash';
+import { GRAPH_ELEMENTS_TYPE } from '../../constants';
 import { generateId } from '../string';
-
-export const GRAPH_ELEMENTS_TYPE = {
-  ROUTER: 'router',
-  MERGE: 'merge',
-  EDGE: 'default',
-  TERMINAL: 'terminal',
-  PP_STEP: 'pp',
-  PG_STEP: 'pg',
-};
 
 export function generateDefaultEdge(source, target, {routerIndex, branchIndex} = {}) {
   return {
@@ -79,8 +72,9 @@ export const generateEmptyRouter = isVirtual => ({
   } }),
 });
 
-export const initializeFlowForReactFlow = flow => {
-  if (!flow) return flow;
+export const initializeFlowForReactFlow = flowDoc => {
+  if (!flowDoc) return flowDoc;
+  const flow = cloneDeep(flowDoc);
   const { pageGenerators = [], pageProcessors = [], routers = [] } = flow;
 
   pageGenerators.forEach(pg => {
@@ -98,6 +92,15 @@ export const initializeFlowForReactFlow = flow => {
       });
     });
   });
+  if (pageProcessors.length && !routers.length) {
+    flow.routers = [{
+      _id: generateId(6),
+      branches: [{_id: generateId(6), name: 'Branch 1.0', pageProcessors}],
+    }];
+    delete flow.pageProcessors;
+  }
+
+  return flow;
 };
 
 // Note 'targeId' can be either a page processor Id if the flow schema is linear (old schema)

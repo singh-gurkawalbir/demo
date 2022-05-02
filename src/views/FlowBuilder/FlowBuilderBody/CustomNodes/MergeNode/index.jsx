@@ -19,7 +19,7 @@ export default function MergeNode({id}) {
   const { dragNodeId, flow } = useFlowContext();
   const flowId = flow?._id;
   const dispatch = useDispatch();
-  const firstRouterId = flow.routers?.[0]?._id;
+  const firstRouterId = flow?.routers?.[0]?._id;
   const isDroppable = !!dragNodeId && firstRouterId !== id;
 
   const handleMouseOut = useCallback(() => {

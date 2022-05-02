@@ -301,7 +301,7 @@ const PageGenerator = ({
       <AppBlock
         integrationId={integrationId}
         name={blockName}
-        onDelete={!isDataLoader && onDelete(blockName)}
+        onDelete={!isDataLoader && onDelete}
         isViewMode={isViewMode}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}
@@ -313,6 +313,7 @@ const PageGenerator = ({
         resourceId={resourceId}
         resourceType="exports"
         index={index}
+        id={pg.id}
         schedule={schedule}
         openErrorCount={openErrorCount}
         isPageGenerator

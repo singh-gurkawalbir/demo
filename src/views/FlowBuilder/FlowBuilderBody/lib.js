@@ -138,26 +138,25 @@ export function layoutElements(elements = []) {
   return [...nodes, ...edges];
 }
 
-export function getAllPPNodes(flow = {}, elements) {
-  const steps = [];
-  const {routers = []} = flow;
+export function getAllFlowBranches(flow) {
+  const branches = [];
 
-  routers.forEach((router = {}, routerIndex) => {
-    router.branches?.forEach((branch = {}, branchIndex) => {
-      branch.pageProcessors.forEach((pp = {}, ppIndex) => {
-        const element = elements[pp.id];
-        const stepName = element?.data?.resource?.name || pp.id;
+  if (!flow) return branches;
+  const { routers = [] } = flow;
 
-        steps.push({
-          id: pp.id,
-          name: stepName,
-          path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${ppIndex + 1}`,
+  if (routers.length) {
+    routers.forEach((router = {}, routerIndex) => {
+      router.branches?.forEach((branch = {}, branchIndex) => {
+        branches.push({
+          id: branch._id,
+          name: branch.name,
+          path: `/routers/${routerIndex}/branches/${branchIndex}`,
         });
       });
     });
-  });
+  }
 
-  return steps;
+  return branches;
 }
 export function getConnectedEdges(id, direction = 'left', elements) {
   const handle = direction === 'left' ? 'target' : 'source';

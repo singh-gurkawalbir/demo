@@ -2055,8 +2055,8 @@ const errorManager = {
   },
 };
 const flow = {
-  addNewPGStep: props => action(actionTypes.FLOW.ADD_NEW_PG_STEP, props),
-  addNewPPStep: (flowId, path) => action(actionTypes.FLOW.ADD_NEW_STEP, {flowId, path}),
+  addNewPGStep: flowId => action(actionTypes.FLOW.ADD_NEW_PG_STEP, {flowId}),
+  addNewPPStep: (flowId, path) => action(actionTypes.FLOW.ADD_NEW_PP_STEP, {flowId, path}),
   addNewRouter: (flowId, path) => action(actionTypes.FLOW.ADD_NEW_ROUTER, {flowId, path}),
   dragStart: props => action(actionTypes.FLOW.DRAG_START, props),
   dragEnd: props => action(actionTypes.FLOW.DRAG_END, props),
