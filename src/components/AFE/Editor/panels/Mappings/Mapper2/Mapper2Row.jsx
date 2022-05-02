@@ -25,6 +25,8 @@ import TabRow from './TabbedRow';
 const useStyles = makeStyles(theme => ({
   childHeader: {
     flex: 1,
+    minWidth: theme.spacing(38),
+    maxWidth: theme.spacing(50),
     '&:first-child': {
       marginRight: theme.spacing(1),
     },

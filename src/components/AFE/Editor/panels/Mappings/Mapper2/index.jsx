@@ -85,6 +85,14 @@ const useStyles = makeStyles(theme => ({
       top: '50%',
       transform: 'translateY(-50%)',
     },
+    '& .rc-tree-list-holder': {
+      display: 'flex',
+      flexWrap: 'nowrap',
+      overflowX: 'auto',
+      '&>div': {
+        flex: '0 0 auto',
+      },
+    },
   },
   mappingDrawerContent: {
     height: '100%',
