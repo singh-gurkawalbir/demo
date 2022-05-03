@@ -7,11 +7,21 @@ import { selectors } from '../../reducers';
 import { generateId } from '../../utils/string';
 
 export function* createNewPGStep({ flowId }) {
-  const patchSet = [{
+  const originalFlow = yield select(selectors.resourceData, 'flows', flowId)?.merged;
+  const patchSet = [];
+
+  if (!originalFlow?.pageGenerators) {
+    patchSet.push({
+      op: 'add',
+      path: '/pageGenerators',
+      value: [],
+    });
+  }
+  patchSet.push({
     op: 'add',
     path: '/pageGenerators/-',
     value: {application: `none-${generateId(6)}`},
-  }];
+  });
 
   yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
 }
@@ -121,11 +131,18 @@ export function* createNewPPStep({ flowId, path: branchPath }) {
       value: {application: `none-${generateId(6)}`},
     }];
   } else {
-    patchSet = [{
+    if (!flow?.pageProcessors) {
+      patchSet.push({
+        op: 'add',
+        path: '/pageProcessors',
+        value: [],
+      });
+    }
+    patchSet.push({
       op: 'add',
       path: '/pageProcessors/-',
       value: {application: `none-${generateId(6)}`},
-    }];
+    });
   }
 
   yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));

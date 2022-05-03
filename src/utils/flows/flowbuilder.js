@@ -139,22 +139,34 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}) => 
 };
 
 const generateNodesAndEdgesFromNonBranchedFlow = flow => {
-  const { _exportId, pageGenerators, pageProcessors = [], _importId } = flow;
+  const { _exportId, pageGenerators = [], pageProcessors = [], _importId } = flow;
   const virtualRouter = {_id: generateId(), branches: []};
 
-  const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(pageGenerators || [{_exportId, id: _exportId}], virtualRouter._id);
+  const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(_exportId ? [{_exportId, id: _exportId}] : pageGenerators, virtualRouter._id);
   const pageProcessorNodesAndEdges = generatePageProcessorNodesAndEdges(_importId ? [{_importId, id: _importId}] : pageProcessors);
   const firstPPId = _importId || pageProcessors[0]?.id || _importId;
   const lastPPId = _importId || pageProcessors[pageProcessors.length - 1]?.id || _importId;
 
   const terminalNode = generateNewTerminal();
 
+  if (!_exportId && !pageGenerators.length) {
+    return [];
+  }
+  if (!firstPPId) {
+    return [
+      ...pageGeneratorNodesAndEdges,
+      generateRouterNode(virtualRouter, 0),
+      generateDefaultEdge(virtualRouter._id, terminalNode.id, {routerIndex: 0, branchIndex: 0}),
+      terminalNode,
+    ];
+  }
+
   return [
     ...pageGeneratorNodesAndEdges,
     generateRouterNode(virtualRouter, 0),
-    generateDefaultEdge(virtualRouter._id, firstPPId),
+    generateDefaultEdge(virtualRouter._id, firstPPId, {routerIndex: 0, branchIndex: 0}),
     ...pageProcessorNodesAndEdges,
-    generateDefaultEdge(lastPPId, terminalNode.id),
+    generateDefaultEdge(lastPPId, terminalNode.id, {routerIndex: 0, branchIndex: 0}),
     terminalNode,
   ];
 };

@@ -1,7 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useFlowContext } from '../Context';
-import { getNodeInsertionPathForEdge } from '../translateSchema/getPathOfNode';
 import actions from '../../../../actions';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { generateEmptyRouter } from '../../../../utils/flows/flowbuilder';
@@ -12,11 +11,9 @@ export const useHandleAddNode = edgeId => {
 
   return () => {
     const edge = elementsMap[edgeId];
-    const path = getNodeInsertionPathForEdge(flow, edge, elementsMap);
 
-    if (!path) return;
-
-    dispatch(actions.flow.addNewPPStep(flow._id, path));
+    if (!edge) return;
+    dispatch(actions.flow.addNewPPStep(flow._id, edge.data?.path));
   };
 };
 
