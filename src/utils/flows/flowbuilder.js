@@ -55,20 +55,14 @@ export const generateBranch = () => {
 };
 export const generateEmptyRouter = isVirtual => ({
   _id: generateId(),
-  ...(!isVirtual && { routeRecordsTo: {
-    type: 'first_matching_branch',
-    default: undefined,
-  }}),
-  ...(!isVirtual && { routeRecordsUsing: {
-    type: 'input_filters',
-    default: undefined,
-  }}),
+  ...(!isVirtual && { routeRecordsTo: 'first_matching_branch'}),
+  ...(!isVirtual && { routeRecordsUsing: 'input_filters'}),
   branches: [{
     pageProcessors: [{application: `none-${generateId()}`}],
   }],
   ...(!isVirtual && { script: {
-    _scriptId: { type: 'something', ref: 'Script' },
-    function: { type: 'something' },
+    _scriptId: undefined,
+    function: undefined,
   } }),
 });
 

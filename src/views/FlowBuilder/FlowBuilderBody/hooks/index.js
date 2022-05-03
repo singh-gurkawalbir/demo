@@ -4,6 +4,7 @@ import { useFlowContext } from '../Context';
 import { getNodeInsertionPathForEdge } from '../translateSchema/getPathOfNode';
 import actions from '../../../../actions';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import { generateEmptyRouter } from '../../../../utils/flows/flowbuilder';
 
 export const useHandleAddNode = edgeId => {
   const { flow, elementsMap } = useFlowContext();
@@ -25,12 +26,17 @@ export const useHandleAddNewRouter = edgeId => {
   const match = useRouteMatch();
   const history = useHistory();
   const editorId = `router-${edgeId}`;
+  const router = generateEmptyRouter();
 
   return () => {
     const edge = elementsMap[edgeId];
 
     dispatch(actions.editor.init(editorId, 'router', {
       flowId: flow?._id,
+      resourceType: 'flows',
+      resourceId: flow?._id,
+      router,
+      integrationId: flow?._integrationId,
       edgeId,
       edge,
     }));

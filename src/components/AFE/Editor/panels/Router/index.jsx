@@ -42,18 +42,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-// This is a mock and should match branch schema of the data-layer.
-const mockBranchData = [
-  { id: '1', name: 'Branch 1.0', description: 'sample description'},
-  { id: '2', name: 'Branch 1.1', description: 'sample description that is really really long, to see how things render when the text wraps to another line.'},
-  { id: '3', name: 'Branch 1.2' },
-];
-
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
-  const [branchData, setBranchData] = useState(mockBranchData);
   const fieldMeta = useMemo(() => (fieldMetadata), []);
   const formKey = useFormInitWithPermissions({ fieldMeta });
+  const rule = useSelector(state => selectors.editorRule(state, editorId));
+  const [branchData, setBranchData] = useState(rule.branches);
+
   const activeProcessor = useSelector(state =>
     selectors.editor(state, editorId).activeProcessor);
 

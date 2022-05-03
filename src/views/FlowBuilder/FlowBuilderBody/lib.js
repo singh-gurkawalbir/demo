@@ -2,7 +2,7 @@
 import { nanoid } from 'nanoid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
-import { isVirtualRouter } from './nodeGeneration';
+import { isVirtualRouter } from '../../../utils/flows/flowbuilder';
 
 // react-flow handles by default sit just outside of the node boundary.
 // this offset is the number of pixels the left or right handle is offset from

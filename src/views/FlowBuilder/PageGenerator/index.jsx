@@ -166,21 +166,7 @@ const PageGenerator = ({
     } else {
       history.replace(to);
     }
-  }, [
-    dispatch,
-    history,
-    isDataLoader,
-    match.isExact,
-    match.url,
-    pending,
-    pg._connectionId,
-    pg._exportId,
-    pg.application,
-    pg.webhookOnly,
-    rdbmsAppType,
-    resource,
-    index,
-  ]);
+  }, [pending, match.url, match.isExact, pg._exportId, pg.application, pg.id, pg.webhookOnly, pg._connectionId, isDataLoader, resource, dispatch, rdbmsAppType, history]);
   const getApplication = useCallback(() => {
     if (isDataLoader) {
       return {
