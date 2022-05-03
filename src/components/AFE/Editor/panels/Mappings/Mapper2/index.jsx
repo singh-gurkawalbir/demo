@@ -173,9 +173,8 @@ export default function Mapper2({editorId}) {
         draggable={dragConfig}
         onDragStart={onDragStart}
         disabled={disabled}
-        // height={500}
-      //   itemHeight={50}
-      //   virtual={false}
+        height={4000}
+        itemHeight={60}
             />
     </div>
   );

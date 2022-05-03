@@ -14039,10 +14039,10 @@ rc-resize-observer@^1.0.0:
     rc-util "^5.15.0"
     resize-observer-polyfill "^1.5.1"
 
-rc-tree@5.4.4:
-  version "5.4.4"
-  resolved "https://registry.yarnpkg.com/rc-tree/-/rc-tree-5.4.4.tgz#2ea3663ad3c566aef79a46ba6a1e050d24323e01"
-  integrity sha512-2qoObRgp31DBXmVzMJmo4qmwP20XEa4hR3imWQtRPcgN3pmljW3WKFmZRrYdOFHz7CyTnRsFZR065bBkIoUpiA==
+rc-tree@^5.4.4:
+  version "5.6.1"
+  resolved "https://registry.yarnpkg.com/rc-tree/-/rc-tree-5.6.1.tgz#85c545188826a73151c41473930fd2696130399e"
+  integrity sha512-kjxdI2jiYT2dWFT3NZ9FIR6L5Hf+LVXP0zUUr7e0vX/KVwC9cZ1l8PO//u5tvmzky9z7EC6ENx7TK7i+PNANAw==
   dependencies:
     "@babel/runtime" "^7.10.1"
     classnames "2.x"
