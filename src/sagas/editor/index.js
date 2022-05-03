@@ -77,6 +77,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
   } else if (processor === 'mapperProcessor') {
     const flowSampleData = safeParse(data);
     const importResource = yield select(selectors.resource, 'imports', resourceId);
+    const options = {};
     let _mappings;
 
     if (editor.mappingPreviewType) {
@@ -102,7 +103,8 @@ export function* invokeProcessor({ editorId, processor, body }) {
         const connection = yield select(selectors.resource, 'connections', importResource?._connectionId);
         const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
 
-        _mappings = {mappings: _mappingsV2, lookups, type: connection?.type};
+        _mappings = {mappings: _mappingsV2, lookups};
+        options.connection = connection;
       } else {
         const mappings = (yield select(selectors.mapping))?.mappings;
         const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
@@ -127,6 +129,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
         rules: [_mappings],
       },
       data: data ? [flowSampleData] : [],
+      options,
     };
   }
 

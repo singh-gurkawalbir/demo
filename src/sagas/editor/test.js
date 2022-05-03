@@ -195,6 +195,7 @@ describe('editor sagas', () => {
           }],
         },
         data: [[{id: '123'}]],
+        options: {},
       };
 
       return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
@@ -368,6 +369,7 @@ describe('editor sagas', () => {
           }],
         },
         data: [[{id: '123'}]],
+        options: {},
       };
 
       return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
@@ -409,6 +411,7 @@ describe('editor sagas', () => {
           }],
         },
         data: [[{id: '123'}]],
+        options: {},
       };
 
       return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
@@ -433,6 +436,15 @@ describe('editor sagas', () => {
         resourceType: 'imports',
         data: '[{"id": "123"}]',
         editorType: 'mappings',
+      };
+      const importRes = {
+        _id: 'res-123',
+        adaptorType: 'HTTPImport',
+        _connectionId: 'conn-123',
+      };
+      const connRes = {
+        _id: 'conn-123',
+        type: 'http',
       };
       const mappings = [{
         extract: 'id',
@@ -466,6 +478,9 @@ describe('editor sagas', () => {
           }],
         },
         data: [[{id: '123'}]],
+        options: {
+          connection: connRes,
+        },
       };
 
       return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
@@ -473,6 +488,8 @@ describe('editor sagas', () => {
           [matchers.call.fn(apiCallWithRetry), undefined],
           [select(selectors.mapping), {v2TreeData, mappings, lookups: []}],
           [select(selectors.editor, editorId), editorState],
+          [select(selectors.resource, 'imports', 'res-123'), importRes],
+          [select(selectors.resource, 'connections', 'conn-123'), connRes],
         ])
         .call(apiCallWithRetry, {
           path: '/processors/mapperProcessor',
