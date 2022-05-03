@@ -85,6 +85,16 @@ export default function Filters(props) {
     resourceType,
     resourceId
   ));
+  const [filters, setFilters] = useState(
+    {
+
+      resourceType: OPTION_ALL.id,
+      _resourceId: OPTION_ALL.id,
+      byUser: OPTION_ALL.id,
+      source: OPTION_ALL.id,
+    }
+  );
+
   const handleDateFilter = useCallback(
     dateFilter => {
       setDate(dateFilter);
@@ -98,20 +108,11 @@ export default function Filters(props) {
           resourceType,
           resourceId,
           childId,
-          filters: { fromDate, toDate },
+          filters: { fromDate, toDate, ...filters },
         }
       ));
-    }, [childId, dispatch, resourceId, resourceType]);
+    }, [childId, dispatch, resourceId, resourceType, filters]);
 
-  const [filters, setFilters] = useState(
-    {
-
-      resourceType: OPTION_ALL.id,
-      _resourceId: OPTION_ALL.id,
-      byUser: OPTION_ALL.id,
-      source: OPTION_ALL.id,
-    }
-  );
   const canDownloadLogs = useSelector(state =>
     selectors.auditLogs(
       state,

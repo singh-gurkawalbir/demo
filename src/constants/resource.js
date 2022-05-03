@@ -42,6 +42,10 @@ export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
   agent: 'Agent',
   eventreport: 'Event report',
   revision: 'Revision',
+  api: 'My API',
+  ssoclient: 'SSO Client',
+  user: 'User',
+  notification: 'Notification',
 });
 export const RESOURCE_TYPE_LABEL_TO_SINGULAR = Object.freeze(
   invert(RESOURCE_TYPE_SINGULAR_TO_LABEL)

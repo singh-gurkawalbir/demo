@@ -322,7 +322,7 @@ export default function getRequestOptions(
       let path = resourceType ? `/${childId ? 'flows' : resourceType}/audit/signedURL` : '/audit/signedURL';
 
       const body = resourceType && {_resourceIds: flowIds || [resourceId]};
-      const { fromDate, toDate } = filters || {};
+      const { fromDate, toDate, byUser, resourceType: filterResourceType, source } = filters || {};
       const fromKey = 'from';
       const toKey = 'to';
 
@@ -339,6 +339,15 @@ export default function getRequestOptions(
         path += `?${fromKey}=${fromDate}`;
       } else if (toDate) {
         path += `?${toKey}=${toDate}`;
+      }
+      if (byUser) {
+        path += `&user=${byUser}`;
+      }
+      if (source) {
+        path += `&source=${source}`;
+      }
+      if (filterResourceType) {
+        path += `&resourceType=${filterResourceType}`;
       }
       const opts = { method, body };
 

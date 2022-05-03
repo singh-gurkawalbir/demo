@@ -78,6 +78,12 @@ export function ResourceTypeFilter(props) {
           'asynchelper',
           'filedefinition',
           'revision',
+          'script',
+          'api',
+          'accesstoken',
+          'ssoclient',
+          'agent',
+          'user',
         ],
   };
 
