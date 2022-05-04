@@ -8,7 +8,7 @@ import {
   getSubsequentStages,
   isRawDataPatchSet,
 } from '../../../../utils/flowData';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 
 export function* _updateResponseMapping({ flowId, resourceIndex }) {
   const flow = (yield select(

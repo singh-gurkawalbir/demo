@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions, { availableResources } from '../../../actions';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
 import mappingUtil from '../../../utils/mapping';
 import { getIAFlowSettings } from '../../../utils/flows';

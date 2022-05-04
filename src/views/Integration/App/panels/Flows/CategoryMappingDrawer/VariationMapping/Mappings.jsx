@@ -13,7 +13,7 @@ import TrashIcon from '../../../../../../../components/icons/TrashIcon';
 import DynaTypeableSelect from '../../../../../../../components/DynaForm/fields/DynaTypeableSelect';
 import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
-import { emptyList } from '../../../../../../../utils/constants';
+import { emptyList } from '../../../../../../../constants';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({

@@ -28,7 +28,7 @@ import actions from '../../../actions';
 import Spinner from '../../Spinner';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import {COMM_STATES} from '../../../reducers/comms/networkComms';
-import { LINE_GRAPH_CATEGORIES, LINE_GRAPH_TYPES, RESOLVED_GRAPH_DATAPOINTS } from '../../../utils/constants';
+import { LINE_GRAPH_CATEGORIES, LINE_GRAPH_TYPES, RESOLVED_GRAPH_DATAPOINTS } from '../../../constants';
 import { getIcon, DataIcon, getResourceName } from '../Common';
 
 const useStyles = makeStyles(theme => ({

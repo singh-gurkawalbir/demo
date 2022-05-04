@@ -1,6 +1,6 @@
 /* global describe, expect, test */
 import { selectors } from '.';
-import { ACCOUNT_IDS } from '../utils/constants';
+import { ACCOUNT_IDS } from '../constants';
 
 describe('users region selector testcases', () => {
   describe('selectors.userState test cases', () => {

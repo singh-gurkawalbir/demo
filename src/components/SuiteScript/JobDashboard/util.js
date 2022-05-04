@@ -1,4 +1,4 @@
-import { JOB_STATUS } from '../../../utils/constants';
+import { JOB_STATUS } from '../../../constants';
 
 const JOB_UI_STATUS = Object.freeze({
   [JOB_STATUS.QUEUED]: 'Waiting in Queue...',

@@ -1,7 +1,7 @@
 /*
  * All utility functions related to Exports Preview Panel
  */
-import { FILE_PROVIDER_ASSISTANTS } from '../constants';
+import { FILE_PROVIDER_ASSISTANTS } from '../../constants';
 import { adaptorTypeMap } from '../resource';
 
 export const DEFAULT_RECORD_SIZE = 10;

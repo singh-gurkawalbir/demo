@@ -7,7 +7,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import { PING_STATES } from '../../../../../reducers/comms/ping';
 import TestButton, { PingMessage } from './TestButton';
 import useHandleClickWhenValid from '../hooks/useHandleClickWhenValid';
-import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../../../../constants';
 import SaveAndCloseResourceForm from '../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 
 const ConfirmDialog = props => {

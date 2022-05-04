@@ -26,7 +26,7 @@ import { _fetchResourceInfoFromFormKey, extractFileSampleDataProps, executeTrans
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import { getCsvFromXlsx } from '../../../utils/file';
-import { STANDALONE_INTEGRATION } from '../../../utils/constants';
+import { STANDALONE_INTEGRATION } from '../../../constants';
 import {
   constructResourceFromFormValues,
   constructSuiteScriptResourceFromFormValues,

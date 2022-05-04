@@ -52,7 +52,7 @@ import {
 import actionTypes from '../../actions/types';
 import commKeyGenerator from '../../utils/commKeyGenerator';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-import {HOME_PAGE_PATH} from '../../utils/constants';
+import {HOME_PAGE_PATH} from '../../constants';
 import { APIException } from '../api/requestInterceptors/utils';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';

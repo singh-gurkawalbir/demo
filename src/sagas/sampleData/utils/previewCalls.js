@@ -10,7 +10,7 @@ import {
 } from './flowDataUtils';
 import { getFormattedResourceForPreview, getPostDataForDeltaExport, isPostDataNeededInResource } from '../../../utils/flowData';
 import { isNewId } from '../../../utils/resource';
-import { EMPTY_RAW_DATA, STANDALONE_INTEGRATION } from '../../../utils/constants';
+import { EMPTY_RAW_DATA, STANDALONE_INTEGRATION } from '../../../constants';
 import { getConstructedResourceObj } from '../flows/utils';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
 

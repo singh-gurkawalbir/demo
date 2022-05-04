@@ -7,7 +7,7 @@ import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   emptyList,
-} from '../../../../utils/constants';
+} from '../../../../constants';
 
 // this could be moved into some common place... just testing this now.
 expect.extend({

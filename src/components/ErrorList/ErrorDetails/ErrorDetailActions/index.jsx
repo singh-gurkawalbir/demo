@@ -6,7 +6,7 @@ import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import useHandleCancelBasic from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancelBasic';
 import SaveAndCloseMiniButtonGroup from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniButtonGroup';
-import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../utils/constants';
+import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../constants';
 import { TextButton, FilledButton, OutlinedButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({

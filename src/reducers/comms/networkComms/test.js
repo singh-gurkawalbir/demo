@@ -6,7 +6,7 @@
 import reducer, { COMM_STATES, COMM_STATES as STATES, selectors } from './index';
 import actions from '../../../actions';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import { changeEmailParams, changePasswordParams } from '../../../sagas/api/apiPaths';
 
 // Reference: JEST "matcher" doc: https://jestjs.io/docs/en/using-matchers

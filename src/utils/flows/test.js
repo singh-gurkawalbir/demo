@@ -45,7 +45,7 @@ import {
   getFlowGroup,
   mappingFlowsToFlowGroupings,
 } from '.';
-import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../constants';
+import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../../constants';
 import getRoutePath from '../routePaths';
 
 const integration = {

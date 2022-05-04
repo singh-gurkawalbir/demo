@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import getDomPurify from '../../utils/domPurify';
-import { ALLOWED_HTML_TAGS } from '../../utils/constants';
+import { ALLOWED_HTML_TAGS } from '../../constants';
 import isLoggableAttr from '../../utils/isLoggableAttr';
 
 export default function RawHtml({ html, options = {}, isLoggable, ...props }) {

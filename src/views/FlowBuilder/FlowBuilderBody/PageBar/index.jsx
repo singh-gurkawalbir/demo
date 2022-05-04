@@ -17,7 +17,7 @@ import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import RunFlowButton from '../../../../components/RunFlowButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import useBottomDrawer from '../../drawers/BottomDrawer/useBottomDrawer';
 import { isNewFlowFn, useHandleExitClick, usePatchFlow, usePushOrReplaceHistory } from '../../hooks';

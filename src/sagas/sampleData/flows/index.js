@@ -55,7 +55,7 @@ import {
   isRestCsvMediaTypeExport,
 } from '../../../utils/resource';
 import { isIntegrationApp } from '../../../utils/flows';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import { getConstructedResourceObj } from './utils';
 
 const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['exports', 'imports', 'connections'];

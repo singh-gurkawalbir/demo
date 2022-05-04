@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
-import { LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../utils/constants';
+import { LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../constants';
 
 const defaultObject = { numEnabledPaidFlows: 0, numEnabledSandboxFlows: 0 };
 

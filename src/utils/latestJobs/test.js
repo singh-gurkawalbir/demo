@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import { JOB_STATUS } from '../constants';
+import { JOB_STATUS } from '../../constants';
 import {
   getFlowStepsYetToBeCreated,
   generatePendingFlowSteps,

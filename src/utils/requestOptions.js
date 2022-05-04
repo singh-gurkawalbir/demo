@@ -1,6 +1,6 @@
 import moment from 'moment';
 import actionTypes from '../actions/types';
-import { JOB_TYPES, JOB_STATUS, STANDALONE_INTEGRATION } from './constants';
+import { JOB_TYPES, JOB_STATUS, STANDALONE_INTEGRATION } from '../constants';
 import { getStaticCodesList } from './flowStepLogs';
 import { getSelectedRange } from './flowMetrics';
 import { isNewId } from './resource';

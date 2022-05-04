@@ -7,7 +7,7 @@ import { selectors } from '../../reducers';
 import { commitStagedChanges } from '../resources';
 import { requestSampleData } from '../sampleData/flows';
 import responseMappingUtil from '../../utils/responseMapping';
-import { emptyObject } from '../../utils/constants';
+import { emptyObject } from '../../constants';
 import { autoEvaluateProcessorWithCancel } from '../editor';
 
 export function* responseMappingInit({ flowId, resourceId, resourceType }) {

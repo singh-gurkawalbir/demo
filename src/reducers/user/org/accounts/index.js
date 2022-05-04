@@ -9,7 +9,7 @@ import {
   INTEGRATION_ACCESS_LEVELS,
   USAGE_TIER_NAMES,
   USAGE_TIER_HOURS,
-} from '../../../../utils/constants';
+} from '../../../../constants';
 
 const emptyList = [];
 

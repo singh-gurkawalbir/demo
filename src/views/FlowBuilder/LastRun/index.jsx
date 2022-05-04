@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
-import { JOB_STATUS } from '../../../utils/constants';
+import { JOB_STATUS } from '../../../constants';
 import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
 import RefreshIcon from '../../../components/icons/RefreshIcon';
 import Spinner from '../../../components/Spinner';

@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
+import { JOB_STATUS, JOB_TYPES } from '../../constants';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import useConfirmDialog from '../ConfirmDialog';
