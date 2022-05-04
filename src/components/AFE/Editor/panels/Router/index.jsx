@@ -72,7 +72,7 @@ export default function RouterPanel({ editorId }) {
     </ul>
   ));
 
-  const SortableItem = sortableElement(props => <BranchItem {...props} />);
+  const SortableItem = sortableElement(props => <BranchItem {...props} editorId={editorId} />);
 
   const handleSortStart = (_, event) => {
     // we only want mouse events (not keyboard navigation) to trigger
