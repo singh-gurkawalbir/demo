@@ -17,6 +17,32 @@ export const useHandleAddNode = edgeId => {
   };
 };
 
+export const useHandleRouterClick = routerId => {
+  const {flow} = useFlowContext();
+  const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const history = useHistory();
+  const editorId = `router-${routerId}`;
+  const router = flow.routers.find(r => r._id === routerId);
+
+  if (!router) return;
+
+  return () => {
+    dispatch(actions.editor.init(editorId, 'router', {
+      flowId: flow?._id,
+      resourceType: 'flows',
+      resourceId: flow?._id,
+      router,
+      integrationId: flow?._integrationId,
+    }));
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
+  };
+};
+
 export const useHandleAddNewRouter = edgeId => {
   const {flow, elementsMap} = useFlowContext();
   const dispatch = useDispatch();
