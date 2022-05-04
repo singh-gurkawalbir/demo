@@ -44,6 +44,7 @@ const useStyles = makeStyles(theme => ({
   },
   description: {
     flexGrow: 1,
+    marginTop: 3,
   },
   expandable: {
     marginLeft: theme.spacing(4),
@@ -78,8 +79,15 @@ const useStyles = makeStyles(theme => ({
 const DragHandle = sortableHandle(() => <GripperIcon style={{cursor: 'grab'}} />);
 
 export default function RouterPanel({
-  expandable, expanded, position, branchName, description, onNameChange, onToggleExpand}
-) {
+  expandable,
+  expanded,
+  position,
+  branchName,
+  description,
+  onNameChange,
+  onToggleExpand,
+  editorId,
+}) {
   const classes = useStyles();
 
   return (
@@ -129,7 +137,7 @@ export default function RouterPanel({
 
           {expandable && (
           <AccordionDetails className={classes.accordionDetails}>
-            <BranchFilter />
+            <BranchFilter editorId={editorId} position={position} />
           </AccordionDetails>
           )}
         </Accordion>

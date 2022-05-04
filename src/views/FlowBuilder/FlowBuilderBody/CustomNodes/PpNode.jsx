@@ -13,6 +13,7 @@ import PageProcessor from '../../PageProcessor';
 const useStyles = makeStyles(theme => ({
   root: {
     width: 250,
+    cursor: 'default',
   },
   contentContainer: {
     display: 'flex',
@@ -43,14 +44,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function PageProcessorNode({ data = {}, id }) {
+export default function PageProcessorNode({ data = {} }) {
   const { branch = {}, isFirst, isLast } = data;
   const dispatch = useDispatch();
   const classes = useStyles();
 
   const { flow } = useFlowContext();
   const flowId = flow._id;
-  const integrationId = flow._integrationId;
+  const integrationId = flow?._integrationId;
   const flowErrorsMap = useSelector(state => selectors.openErrorsMap(state, flowId));
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
@@ -58,9 +59,9 @@ export default function PageProcessorNode({ data = {}, id }) {
   const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
 
-  const handleDelete = useCallback(() => {
+  const handleDelete = useCallback(id => {
     dispatch(actions.flow.deleteStep(flow._id, id));
-  }, [dispatch, id]);
+  }, [dispatch]);
 
   return (
     <div className={classes.root}>

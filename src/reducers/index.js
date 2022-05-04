@@ -143,6 +143,7 @@ const rootReducer = (state, action) => {
 
       case actionTypes.APP.DELETE_DATA_STATE:
         delete draft.data;
+        delete draft.session.loadResources;
 
         break;
 
@@ -2132,13 +2133,10 @@ selectors.makeFlowDataForFlowBuilder = () => {
       'flows',
       flowId
     )?.merged,
-    flow => {
-      initializeFlowForReactFlow(flow);
-
-      return flow;
-    }
+    flow => initializeFlowForReactFlow(flow)
   );
 };
+selectors.flowDataForFlowBuilder = selectors.makeFlowDataForFlowBuilder();
 // Please use makeResourceDataSelector in JSX as it is cached selector.
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();

@@ -1454,7 +1454,7 @@ const editor = {
   initComplete: (id, options) => action(actionTypes.EDITOR.INIT_COMPLETE, { id, options }),
   changeLayout: (id, newLayout) => action(actionTypes.EDITOR.CHANGE_LAYOUT, { id, newLayout }),
   patchFeatures: (id, featuresPatch) => action(actionTypes.EDITOR.PATCH.FEATURES, { id, featuresPatch }),
-  patchRule: (id, rulePatch) => action(actionTypes.EDITOR.PATCH.RULE, { id, rulePatch }),
+  patchRule: (id, rulePatch, options) => action(actionTypes.EDITOR.PATCH.RULE, { id, rulePatch, ...options }),
   patchData: (id, dataPatch) => action(actionTypes.EDITOR.PATCH.DATA, { id, dataPatch }),
   patchFileKeyColumn: (id, fileKeyPatchType, fileKeyPatch) => action(actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN, { id, fileKeyPatchType, fileKeyPatch }),
   clear: id => action(actionTypes.EDITOR.CLEAR, { id }),
@@ -2055,8 +2055,8 @@ const errorManager = {
   },
 };
 const flow = {
-  addNewPGStep: props => action(actionTypes.FLOW.ADD_NEW_PG_STEP, props),
-  addNewPPStep: (flowId, path) => action(actionTypes.FLOW.ADD_NEW_STEP, {flowId, path}),
+  addNewPGStep: flowId => action(actionTypes.FLOW.ADD_NEW_PG_STEP, {flowId}),
+  addNewPPStep: (flowId, path) => action(actionTypes.FLOW.ADD_NEW_PP_STEP, {flowId, path}),
   addNewRouter: (flowId, path) => action(actionTypes.FLOW.ADD_NEW_ROUTER, {flowId, path}),
   dragStart: props => action(actionTypes.FLOW.DRAG_START, props),
   dragEnd: props => action(actionTypes.FLOW.DRAG_END, props),

@@ -5,9 +5,6 @@ export default {
       name: 'branchType',
       type: 'radiogroup',
       label: 'Records will flow through:',
-      // description: '',
-      // showOptionsHorizontally: true,
-      // fullWidth: true,
       options: [
         {
           items: [

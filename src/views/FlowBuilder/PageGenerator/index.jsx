@@ -137,7 +137,7 @@ const PageGenerator = ({
 
       // for pending resource, passing the PG index in newId
       // which will be used in saga to add or replace the pending resource
-      newId = `${newId}.${index}`;
+      newId = `${newId}.${pg.id}`;
       dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
     }
 
@@ -166,21 +166,7 @@ const PageGenerator = ({
     } else {
       history.replace(to);
     }
-  }, [
-    dispatch,
-    history,
-    isDataLoader,
-    match.isExact,
-    match.url,
-    pending,
-    pg._connectionId,
-    pg._exportId,
-    pg.application,
-    pg.webhookOnly,
-    rdbmsAppType,
-    resource,
-    index,
-  ]);
+  }, [pending, match.url, match.isExact, pg._exportId, pg.application, pg.id, pg.webhookOnly, pg._connectionId, isDataLoader, resource, dispatch, rdbmsAppType, history]);
   const getApplication = useCallback(() => {
     if (isDataLoader) {
       return {
@@ -301,7 +287,7 @@ const PageGenerator = ({
       <AppBlock
         integrationId={integrationId}
         name={blockName}
-        onDelete={!isDataLoader && onDelete(blockName)}
+        onDelete={!isDataLoader && onDelete}
         isViewMode={isViewMode}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}
@@ -313,6 +299,7 @@ const PageGenerator = ({
         resourceId={resourceId}
         resourceType="exports"
         index={index}
+        id={pg.id}
         schedule={schedule}
         openErrorCount={openErrorCount}
         isPageGenerator

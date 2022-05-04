@@ -4,6 +4,7 @@ import { Position } from 'react-flow-renderer';
 import { Badge, IconButton } from '@material-ui/core';
 import Icon from '../../../../../components/icons/BranchIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
+import { useHandleRouterClick } from '../../hooks';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -27,12 +28,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function RouterNode({data = {}}) {
-  const { routeRecordsTo } = data;
+  const { router = {} } = data;
+  const { routeRecordsTo, _id: routerId } = router;
   const badgeContent = routeRecordsTo?.type === 'all_matching_branches' ? 'ALL' : '1ST';
   const classes = useStyles();
+  const handleRouterClick = useHandleRouterClick(routerId);
 
   return (
-    <div className={classes.container}>
+    <div className={classes.container} onClick={handleRouterClick}>
       <DefaultHandle type="target" position={Position.Left} />
 
       <IconButton size="small" className={classes.button}>

@@ -3,20 +3,20 @@ import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
 
 export default {
   processor: ({ activeProcessor }) => activeProcessor,
-  init: ({resource, options}) => {
+  init: ({ options }) => {
     let activeProcessor = 'filter';
+    const { router = {} } = options;
+    const { routeRecordsUsing, script = {} } = router;
 
-    const filterObj = resource?.filter || {};
-    const { script = {}, expression = {} } = filterObj;
     const rule = {
-      filter: expression.rules || [],
+      filter: router,
       javascript: {
         fetchScriptContent: true,
       },
     };
 
     // set values only if undefined (to pass dirty check correctly)
-    if (script._scriptId) {
+    if (routeRecordsUsing === 'script') {
       rule.javascript.scriptId = script._scriptId;
       activeProcessor = 'javascript';
     }

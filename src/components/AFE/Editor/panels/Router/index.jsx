@@ -9,6 +9,7 @@ import BranchItem from './BranchItem';
 import fieldMetadata from './fieldMeta';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';
+import { emptyList } from '../../../../../constants';
 
 const moveArrayItem = (arr, oldIndex, newIndex) => {
   const newArr = [...arr];
@@ -36,25 +37,18 @@ const useStyles = makeStyles(theme => ({
   },
   helpButton: {
     padding: 0,
-    marginLeft: theme.spacing(1),
   },
   grabbing: {
     cursor: 'grabbing',
   },
 }));
-
-// This is a mock and should match branch schema of the data-layer.
-const mockBranchData = [
-  { id: '1', name: 'Branch 1.0', description: 'sample description'},
-  { id: '2', name: 'Branch 1.1', description: 'sample description that is really really long, to see how things render when the text wraps to another line.'},
-  { id: '3', name: 'Branch 1.2' },
-];
-
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
-  const [branchData, setBranchData] = useState(mockBranchData);
   const fieldMeta = useMemo(() => (fieldMetadata), []);
   const formKey = useFormInitWithPermissions({ fieldMeta });
+  const branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList);
+  const [branchData, setBranchData] = useState(branches);
+
   const activeProcessor = useSelector(state =>
     selectors.editor(state, editorId).activeProcessor);
 
@@ -78,7 +72,7 @@ export default function RouterPanel({ editorId }) {
     </ul>
   ));
 
-  const SortableItem = sortableElement(props => <BranchItem {...props} />);
+  const SortableItem = sortableElement(props => <BranchItem {...props} editorId={editorId} />);
 
   const handleSortStart = (_, event) => {
     // we only want mouse events (not keyboard navigation) to trigger
