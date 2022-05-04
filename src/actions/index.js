@@ -2304,6 +2304,28 @@ const integrationLCM = {
   },
 };
 
+const mfa = {
+  requestUserSettings: () => action(actionTypes.MFA.USER_SETTINGS.REQUEST),
+  receivedUserSettings: userSettings => action(actionTypes.MFA.USER_SETTINGS.RECEIVED, { userSettings }),
+  setUp: mfaConfig => action(actionTypes.MFA.USER_SETTINGS.SETUP, { mfaConfig }),
+  requestAccountSettings: () => action(actionTypes.MFA.ACCOUNT_SETTINGS.REQUEST),
+  receivedAccountSettings: accountSettings => action(actionTypes.MFA.ACCOUNT_SETTINGS.RECEIVED, { accountSettings }),
+  updateAccountSettings: accountSettings => action(actionTypes.MFA.ACCOUNT_SETTINGS.UPDATE, { accountSettings }),
+  requestSecretCode: isQRCode => action(actionTypes.MFA.SECRET_CODE.REQUEST, { isQRCode }),
+  receivedSecretCode: isQRCode => action(actionTypes.MFA.SECRET_CODE.RECEIVED, { isQRCode }),
+  showSecretCode: () => action(actionTypes.MFA.SECRET_CODE.SHOW),
+  showQrCode: () => action(actionTypes.MFA.QR_CODE.SHOW),
+  secretCodeError: secretCodeError => action(actionTypes.MFA.SECRET_CODE.ERROR, { secretCodeError }),
+  qrCodeError: qrCodeError => action(actionTypes.MFA.QR_CODE.ERROR, { qrCodeError }),
+  resetMFA: aShareId => action(actionTypes.MFA.RESET, { aShareId }),
+  updateDevice: deviceInfo => action(actionTypes.MFA.UPDATE_DEVICE, { deviceInfo }),
+  deleteDevice: deviceName => action(actionTypes.MFA.DELETE_DEVICE, { deviceName }),
+  verifyMobileCode: code => action(actionTypes.MFA.MOBILE_CODE.VERIFY, { code }),
+  mobileCodeVerified: (status, error) => action(actionTypes.MFA.MOBILE_CODE.STATUS, { status, error }),
+  requestSessionInfo: () => action(actionTypes.MFA.SESSION_INFO.REQUEST),
+  receivedSessionInfo: sessionInfo => action(actionTypes.MFA.SESSION_INFO.RECEIVED, { sessionInfo }),
+};
+
 export default {
   asyncTask,
   form,
@@ -2350,6 +2372,7 @@ export default {
   hooks,
   logs,
   sso,
+  mfa,
   bottomDrawer,
   integrationLCM,
 };
