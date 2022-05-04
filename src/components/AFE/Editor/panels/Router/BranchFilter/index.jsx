@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
-import { cloneDeep, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -25,13 +25,11 @@ import { safeParse } from '../../../../../../utils/string';
 const defaultData = {};
 
 export default function BranchFilter({editorId, position}) {
-  console.log('position', position);
   const qbuilder = useRef(null);
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const data = useSelector(state => selectors.editorData(state, editorId) || defaultData);
   const rule = useSelector(state => selectors.editorRule(state, editorId));
 
-  console.log('rule', rule);
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
   const [rules, setRules] = useState();
   const [filtersMetadata, setFiltersMetadata] = useState();
@@ -39,17 +37,7 @@ export default function BranchFilter({editorId, position}) {
   const dispatch = useDispatch();
   const patchEditor = useCallback(
     value => {
-      const newRule = cloneDeep(rule);
-
-      if (!rule?.branches?.[position]) {
-        return;
-      }
-      if (!rule.branches[position].inputFilter) {
-        newRule.branches[position].inputFilter = {rules: []};
-      }
-      newRule.branches[position].inputFilter.rules = value;
-
-      dispatch(actions.editor.patchRule(editorId, newRule));
+      dispatch(actions.editor.patchRule(editorId, value, {rulePath: `branches[${position}].inputFilter.rules`}));
     },
     [dispatch, position, editorId]
   );
@@ -129,7 +117,6 @@ export default function BranchFilter({editorId, position}) {
     if (isValid()) {
       const rule = getRules();
 
-      console.log('rule', rule);
       patchEditor(rule);
     }
   };

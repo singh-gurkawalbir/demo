@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import { original, produce } from 'immer';
+import { set } from 'lodash';
 import deepClone from 'lodash/cloneDeep';
 import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
@@ -14,6 +15,7 @@ export default function reducer(state = {}, action) {
     options,
     featuresPatch,
     rulePatch,
+    rulePath,
     dataPatch,
     result,
     error,
@@ -125,7 +127,9 @@ export default function reducer(state = {}, action) {
           Array.isArray(rulePatch) ||
           draftRule === undefined;
 
-        if (!shouldReplace) {
+        if (rulePath) {
+          set(draftRule, rulePath, rulePatch);
+        } else if (!shouldReplace) {
           Object.assign(draftRule, deepClone(rulePatch));
         } else if (ap) {
           draft[id].rule[ap] = rulePatch;

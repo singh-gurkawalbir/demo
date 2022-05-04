@@ -9,6 +9,7 @@ import BranchItem from './BranchItem';
 import fieldMetadata from './fieldMeta';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';
+import { emptyList } from '../../../../../constants';
 
 const moveArrayItem = (arr, oldIndex, newIndex) => {
   const newArr = [...arr];
@@ -41,13 +42,12 @@ const useStyles = makeStyles(theme => ({
     cursor: 'grabbing',
   },
 }));
-
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
   const fieldMeta = useMemo(() => (fieldMetadata), []);
   const formKey = useFormInitWithPermissions({ fieldMeta });
-  const rule = useSelector(state => selectors.editorRule(state, editorId));
-  const [branchData, setBranchData] = useState(rule.branches);
+  const branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList);
+  const [branchData, setBranchData] = useState(branches);
 
   const activeProcessor = useSelector(state =>
     selectors.editor(state, editorId).activeProcessor);
