@@ -1,21 +1,22 @@
 import React from 'react';
 import { List, ListItem, ListItemText } from '@material-ui/core';
-import { dispatch } from 'd3';
+import { useDispatch } from 'react-redux';
 import ArrowPopper from '../../../../../components/ArrowPopper';
 import { useFlowContext } from '../../Context';
-import { getAllPPNodes } from '../../lib';
+import { getAllFlowBranches } from '../../lib';
 import actions from '../../../../../actions';
 
 export default function AddNodeMenuPopper({ anchorEl, handleClose }) {
   const open = Boolean(anchorEl);
+  const dispatch = useDispatch();
   const { flow, elements } = useFlowContext();
 
-  const allPPSteps = getAllPPNodes(flow, elements);
+  const branches = getAllFlowBranches(flow, elements);
 
-  const handleCallback = stepId => () => {
-    const step = allPPSteps.find(s => s.id === stepId);
+  const handleCallback = branchId => () => {
+    const branch = branches.find(s => s.id === branchId);
 
-    dispatch(actions.flow.addNewPPStep(flow._id, step.path));
+    dispatch(actions.flow.addNewPPStep(flow._id, branch.path));
     handleClose();
   };
 
@@ -27,7 +28,7 @@ export default function AddNodeMenuPopper({ anchorEl, handleClose }) {
       onClose={handleClose}>
 
       <List dense>
-        {allPPSteps.map(({name, id}) => (
+        {branches.map(({name, id}) => (
           <ListItem
             button
             onClick={handleCallback(id)}

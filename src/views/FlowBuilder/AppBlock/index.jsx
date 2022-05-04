@@ -170,6 +170,7 @@ export default function AppBlock({
   schedule,
   index,
   openErrorCount,
+  id,
   ...rest
 }) {
   const classes = useStyles();
@@ -241,7 +242,7 @@ export default function AppBlock({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleDelete = useCallback(index => () => onDelete(index), [onDelete]);
+  const handleDelete = useCallback(id => () => onDelete(id), []);
   const handleExpandClick = useCallback(() => setExpanded(true), []);
   const handleMouseOver = useCallback(
     isOver => () => {
@@ -320,7 +321,7 @@ export default function AppBlock({
             <IconButton
               size="small"
               className={classes.deleteButton}
-              onClick={handleDelete(index)}
+              onClick={handleDelete(id)}
               data-test={`remove-${isPageGenerator ? 'pg' : 'pp'}`}>
               <CloseIcon />
             </IconButton>

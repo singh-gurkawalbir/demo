@@ -1,6 +1,6 @@
 import { makeStyles, useTheme } from '@material-ui/core';
 import clsx from 'clsx';
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import ReactFlow, { MiniMap, Controls, ReactFlowProvider} from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
@@ -128,9 +128,9 @@ function Canvas({flowId, integrationId}) {
     dispatch(actions.flow.mergeBranch(flowId));
   };
 
-  const handleAddNewSource = () => {
-    dispatch(actions.flow.addNewPGStep());
-  };
+  const handleAddNewSource = useCallback(() => {
+    dispatch(actions.flow.addNewPGStep(flowId));
+  }, [dispatch, flowId]);
 
   return (
 

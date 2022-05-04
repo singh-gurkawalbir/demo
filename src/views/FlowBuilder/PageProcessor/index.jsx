@@ -130,7 +130,7 @@ const PageProcessor = ({
 
       // for pending resource, passing the PP index in newId
       // which will be used in saga to add or replace the pending resource
-      newId = `${newId}.${index}`;
+      newId = `${newId}.${pp.id}`;
       dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
     }
 
@@ -252,7 +252,7 @@ const PageProcessor = ({
         <AppBlock
           integrationId={integrationId}
           name={name}
-          onDelete={onDelete(name)}
+          onDelete={onDelete}
           openErrorCount={openErrorCount}
           isViewMode={isViewMode}
           isMonitorLevelAccess={isMonitorLevelAccess}
@@ -262,6 +262,7 @@ const PageProcessor = ({
           blockType={blockType}
           flowId={flowId}
           index={index}
+          id={pp.id}
           resource={resource}
           resourceId={resourceId}
           resourceIndex={index}

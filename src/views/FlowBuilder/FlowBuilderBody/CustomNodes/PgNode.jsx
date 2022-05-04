@@ -20,18 +20,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function PageGeneratorNode(props) {
-  const { data = {}, id } = props;
+  const { data = {} } = props;
   const classes = useStyles();
   const { flow } = useFlowContext();
   const flowId = flow?._id;
   const dispatch = useDispatch();
   const flowErrorsMap = useSelector(state => selectors.openErrorsMap(state, flowId));
   const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
-  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow._integrationId, flowId));
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow?._integrationId, flowId));
 
-  const handleDelete = useCallback(() => {
+  const handleDelete = useCallback(id => {
     dispatch(actions.flow.deleteStep(flowId, id));
-  }, [dispatch, flowId, id]);
+  }, [dispatch, flowId]);
 
   return (
     <div className={classes.root}>
@@ -41,7 +41,7 @@ export default function PageGeneratorNode(props) {
           {...data}
           onDelete={handleDelete}
           flowId={flowId}
-          integrationId={flow._integrationId}
+          integrationId={flow?._integrationId}
           openErrorCount={(flowErrorsMap && flowErrorsMap[data._exportId]) || 0}
           isViewMode={isViewMode || isFreeFlow}
         />

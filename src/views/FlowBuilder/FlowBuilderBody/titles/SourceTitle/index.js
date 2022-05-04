@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SourceTitle({onClick}) {
+const SourceTitle = ({onClick}) => {
   const menuWidth = useMenuDrawerWidth();
 
   //  + drawerWidth[drawerOpened]
@@ -43,4 +43,5 @@ export default function SourceTitle({onClick}) {
       SOURCES
     </Title>
   );
-}
+};
+export default React.memo(SourceTitle);

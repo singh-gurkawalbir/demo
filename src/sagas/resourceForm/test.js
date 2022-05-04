@@ -572,17 +572,17 @@ describe('resourceForm sagas', () => {
       };
       const patches = [{ op: 'add', path: '/pageGenerators', value: [] },
         { op: 'replace',
-          path: '/pageGenerators/1',
+          path: '/pageGenerators/0',
           value: { _exportId: 'res-123' } }];
 
-      return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'new-123.1', 'flow-123')
+      return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'new-123.0', 'flow-123')
         .provide([
           [select(
             selectors.resourceData,
             'flows',
             'flow-123'
           ), data],
-          [select(selectors.createdResourceId, 'new-123.1'), 'res-123'],
+          [select(selectors.createdResourceId, 'new-123.0'), 'res-123'],
         ])
         .returns(patches)
         .run();

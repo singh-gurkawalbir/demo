@@ -157,6 +157,8 @@ export default function AlertDialog() {
           },
         ],
       });
+    } else {
+      confirmDialog(null);
     }
   }, [confirmDialog, dispatch, showSessionStatus]);
 

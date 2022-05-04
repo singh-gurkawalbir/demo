@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
+import { generateNewTerminal, generateRouterNode } from '../../../../utils/flows/flowbuilder';
 import { generateDefaultEdge, generateId, GRAPH_ELEMENTS_TYPE } from '../lib';
-import { generateNewTerminal, generateRouterNode } from '../nodeGeneration';
 
 const hydrateNodeData = (resourcesState, node) => {
   if (node._exportId) {
