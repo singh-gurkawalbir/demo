@@ -16,6 +16,7 @@ export function generateDefaultEdge(source, target, {routerIndex, branchIndex, h
     type: 'default',
   };
 }
+export const shortId = () => generateId(6);
 export const getSomeImport = _id => ({_id, connectorType: 'ftp', label: _id});
 export const getSomeExport = _exportId => ({_id: _exportId, connectorType: 'ftp', label: _exportId});
 
@@ -26,7 +27,7 @@ export const getSomePpImport = _importId =>
 export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
 
 export const generateRouterNode = (router, routerIndex) => ({
-  id: router?.id || generateId(),
+  id: router?.id || shortId(),
   type: isVirtualRouter(router) ? GRAPH_ELEMENTS_TYPE.MERGE : GRAPH_ELEMENTS_TYPE.ROUTER,
   data: {
     path: `/routers/${routerIndex}`,
@@ -34,7 +35,7 @@ export const generateRouterNode = (router, routerIndex) => ({
   },
 });
 export const generateNewTerminal = ({branch = {}, branchIndex, routerIndex} = {}) => ({
-  id: generateId(),
+  id: shortId(),
   type: GRAPH_ELEMENTS_TYPE.TERMINAL,
   draggable: true,
   data: {
@@ -44,7 +45,7 @@ export const generateNewTerminal = ({branch = {}, branchIndex, routerIndex} = {}
 });
 
 export const generateBranch = () => {
-  const newId = generateId();
+  const newId = shortId();
 
   return {
     name: newId,
@@ -54,11 +55,11 @@ export const generateBranch = () => {
   };
 };
 export const generateEmptyRouter = isVirtual => ({
-  id: generateId(),
+  id: shortId(),
   ...(!isVirtual && { routeRecordsTo: 'first_matching_branch'}),
   ...(!isVirtual && { routeRecordsUsing: 'input_filters'}),
   branches: [{
-    pageProcessors: [{application: `none-${generateId()}`}],
+    pageProcessors: [{application: `none-${shortId()}`}],
   }],
   ...(!isVirtual && { script: {
     _scriptId: undefined,
@@ -72,23 +73,23 @@ export const initializeFlowForReactFlow = flowDoc => {
   const { pageGenerators = [], pageProcessors = [], routers = [] } = flow;
 
   pageGenerators.forEach(pg => {
-    pg.id = pg._exportId || pg._connectionId || pg.application || `none-${generateId(6)}`;
+    pg.id = pg._exportId || pg._connectionId || pg.application || `none-${shortId()}`;
   });
   pageProcessors.forEach(pp => {
-    pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${generateId(6)}`;
+    pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${shortId()}`;
   });
   routers.forEach(({branches = []}) => {
     branches.forEach(branch => {
       const {pageProcessors = []} = branch;
 
       pageProcessors.forEach(pp => {
-        pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${generateId(6)}`;
+        pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${shortId()}`;
       });
     });
   });
   if (pageProcessors.length && !routers.length) {
     flow.routers = [{
-      id: generateId(6),
+      id: shortId(),
       branches: [{name: 'Branch 1.0', pageProcessors}],
     }];
     delete flow.pageProcessors;
@@ -140,7 +141,7 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}) => 
 
 const generateNodesAndEdgesFromNonBranchedFlow = flow => {
   const { _exportId, pageGenerators = [], pageProcessors = [], _importId } = flow;
-  const virtualRouter = {id: generateId(), branches: []};
+  const virtualRouter = {id: `none-${shortId()}`, branches: []};
 
   const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(_exportId ? [{_exportId, id: _exportId}] : pageGenerators, virtualRouter.id);
   const pageProcessorNodesAndEdges = generatePageProcessorNodesAndEdges(_importId ? [{_importId, id: _importId}] : pageProcessors);
@@ -148,11 +149,10 @@ const generateNodesAndEdgesFromNonBranchedFlow = flow => {
   const lastPPId = _importId || pageProcessors[pageProcessors.length - 1]?.id || _importId;
 
   const terminalNode = generateNewTerminal();
+  const dummyPGId = `none-${shortId()}`;
+  const dummyPPId = `none-${shortId()}`;
 
   if (!_exportId && !pageGenerators.length) {
-    const dummyPGId = `none-${generateId(6)}`;
-    const dummyPPId = `none-${generateId(6)}`;
-
     return [{
       id: dummyPGId,
       type: GRAPH_ELEMENTS_TYPE.PG_STEP,
@@ -173,9 +173,15 @@ const generateNodesAndEdgesFromNonBranchedFlow = flow => {
   if (!firstPPId) {
     return [
       ...pageGeneratorNodesAndEdges,
-      generateRouterNode(virtualRouter, 0),
-      generateDefaultEdge(virtualRouter.id, terminalNode.id, {routerIndex: 0, branchIndex: 0}),
-      terminalNode,
+      {
+        id: virtualRouter.id,
+        type: GRAPH_ELEMENTS_TYPE.PP_STEP,
+        data: {
+          resource: {application: virtualRouter.id, id: virtualRouter.id},
+          isFirst: true,
+          path: '/routers/0/branches/0/pageProcessors/0',
+        },
+      },
     ];
   }
 
