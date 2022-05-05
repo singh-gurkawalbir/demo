@@ -233,7 +233,7 @@ const PageGenerator = ({
     resourceId,
   ]);
   const blockName = pending
-    ? 'Pending configuration'
+    ? ''
     : resource.name || resource.id;
   const { connectorType, assistant, blockType } = getApplication();
 

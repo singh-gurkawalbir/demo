@@ -116,7 +116,7 @@ function Canvas({flowId, integrationId}) {
   [elements]);
 
   useEffect(() => {
-    dispatch(actions.flow.initializeFlowGraph(mergedFlow));
+    dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow));
   }, [mergedFlow, dispatch]);
 
   const handleNodeDragStart = (evt, source) => {
@@ -146,6 +146,7 @@ function Canvas({flowId, integrationId}) {
             elements={elements}
             elementsMap={elementsMap}
             flow={mergedFlow}
+            flowId={flowId}
             dragNodeId={dragNodeId}
           >
 

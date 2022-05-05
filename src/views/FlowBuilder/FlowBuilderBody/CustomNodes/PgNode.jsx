@@ -22,8 +22,7 @@ const useStyles = makeStyles(theme => ({
 export default function PageGeneratorNode(props) {
   const { data = {} } = props;
   const classes = useStyles();
-  const { flow } = useFlowContext();
-  const flowId = flow?._id;
+  const { flow, flowId } = useFlowContext();
   const dispatch = useDispatch();
   const flowErrorsMap = useSelector(state => selectors.openErrorsMap(state, flowId));
   const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));

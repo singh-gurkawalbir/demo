@@ -5,20 +5,18 @@ import actionTypes from '../../../actions/types';
 import { generateReactFlowGraph } from '../../../utils/flows/flowbuilder';
 
 export default function reducer(state = {}, action) {
-  const { type, flow } = action;
+  const { type, flow, flowId } = action;
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.FLOW.INIT_FLOW_GRAPH: {
-        const flowId = flow?._id;
-
+      case actionTypes.FLOW.INIT_FLOW_GRAPH:
         if (!draft[flowId]) {
           draft[flowId] = {};
         }
         draft[flowId].elements = generateReactFlowGraph(flow);
         draft[flowId].elementsMap = keyBy(draft[flowId].elements || [], 'id');
         draft[flowId].flow = flow;
-      }
+
         break;
       default:
         break;

@@ -148,7 +148,6 @@ export function getAllFlowBranches(flow) {
     routers.forEach((router = {}, routerIndex) => {
       router.branches?.forEach((branch = {}, branchIndex) => {
         branches.push({
-          id: branch._id,
           name: branch.name,
           path: `/routers/${routerIndex}/branches/${branchIndex}`,
         });

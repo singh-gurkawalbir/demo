@@ -72,10 +72,10 @@ export function* deleteStep({flowId, stepId}) {
           });
           flow.routers.forEach((router, rIndex) => {
             router.branches.forEach((branch, bIndex) => {
-              if (branch._nextRouterId === flow.routers[routerIndex]._id) {
+              if (branch.nextRouterId === flow.routers[routerIndex].id) {
                 patchSet.push({
                   op: 'remove',
-                  path: `/routers/${rIndex}/branches/${bIndex}/_nextRouterId`,
+                  path: `/routers/${rIndex}/branches/${bIndex}/nextRouterId`,
                 });
               }
             });
