@@ -143,7 +143,7 @@ export default function FormView(props) {
   const isAcumaticaEcommerceImport = (resourceType === 'imports') && isAcumaticaEcommerceConnection(connection);
   const isLoopReturnsv2import = (resourceType === 'imports') && isLoopReturnsv2Connection(connection);
   const isFlowBuilderAssistant = flowId && (isGraphql ||
-    (assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection) && !isAcumaticaEcommerceImport && isLoopReturnsv2import && !isMicrosoftBusinessCentralOdataConnection(connection)));
+    (assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection) && !isAcumaticaEcommerceImport && !isLoopReturnsv2import && !isMicrosoftBusinessCentralOdataConnection(connection)));
 
   return isFlowBuilderAssistant ? (
     <DynaSelect

@@ -320,9 +320,9 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           meta = meta.commonfileprovider;
         } else if (
           resource && resource.assistant !== 'openair' && !isAmazonHybridConnection(connection) &&
-              (resource.useParentForm !== undefined
-                ? !resource.useParentForm && resource.assistant
-                : resource.assistant) && !resource.useTechAdaptorForm
+            (resource.useParentForm !== undefined
+              ? !resource.useParentForm && resource.assistant
+              : resource.assistant) && !resource.useTechAdaptorForm
         ) {
           meta = meta.custom.http.assistantDefinition(
             resource._id,
