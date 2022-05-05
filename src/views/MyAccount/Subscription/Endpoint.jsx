@@ -176,6 +176,26 @@ export default function Endpoint() {
 
   const onRequestUpgradeClick = useCallback(() => {
     confirmDialog({
+      title: 'Request upgrade',
+      message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+      buttons: [
+        { label: 'Submit request',
+          onClick: () => {
+            dispatch(
+              actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+            );
+            setUpgradeRequested(true);
+            dispatch(actions.license.requestUpdate('upgrade'));
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, dispatch]);
+  const onRequestFlowsUpgradeClick = useCallback(() => {
+    confirmDialog({
       title: 'Request more flows',
       message: 'We will contact you to discuss your business needs and recommend a subscription upgrade.',
       buttons: [
@@ -340,7 +360,7 @@ export default function Endpoint() {
                 'add-more-flows'
               ) > -1 && (
               <FilledButton
-                onClick={onRequestUpgradeClick}
+                onClick={onRequestFlowsUpgradeClick}
                 disabled={upgradeRequested}
                 className={classes.subscriptionUpgradeBtn}
              >
