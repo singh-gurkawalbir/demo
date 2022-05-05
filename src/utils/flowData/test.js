@@ -855,11 +855,36 @@ describe('getResourceStageUpdatedFromPatch util', () => {
   });
 });
 describe('getSampleFileMeta util', () => {
-  test('should return correct fileMeta', () => {
+  test('should return correct fileMeta for non FTP file exports', () => {
+    const resource = {
+      adaptorType: 'S3Export',
+    };
+
+    expect(getSampleFileMeta(resource)).toEqual([
+      {
+        fileMeta: {
+          fileName: 'sampleFileName',
+        },
+      },
+    ]);
     expect(getSampleFileMeta()).toEqual([
       {
         fileMeta: {
           fileName: 'sampleFileName',
+        },
+      },
+    ]);
+  });
+  test('should return correct fileMeta for FTP file exports', () => {
+    const resource = {
+      adaptorType: 'FTPExport',
+    };
+
+    expect(getSampleFileMeta(resource)).toEqual([
+      {
+        fileMeta: {
+          fileName: 'sampleFileName',
+          fileSize: 1234,
         },
       },
     ]);
