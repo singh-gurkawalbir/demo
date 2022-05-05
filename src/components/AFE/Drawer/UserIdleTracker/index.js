@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useState } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import { useDispatch, useSelector } from 'react-redux';
