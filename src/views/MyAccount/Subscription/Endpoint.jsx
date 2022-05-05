@@ -176,8 +176,8 @@ export default function Endpoint() {
 
   const onRequestUpgradeClick = useCallback(() => {
     confirmDialog({
-      title: 'Request upgrade',
-      message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+      title: 'Request more flows',
+      message: 'We will contact you to discuss your business needs and recommend a subscription upgrade.',
       buttons: [
         { label: 'Submit request',
           onClick: () => {
@@ -344,7 +344,7 @@ export default function Endpoint() {
                 disabled={upgradeRequested}
                 className={classes.subscriptionUpgradeBtn}
              >
-                Add more flows
+                Request more flows
               </FilledButton>
               )}
             </div>
