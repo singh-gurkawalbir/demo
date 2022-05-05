@@ -1507,7 +1507,7 @@ describe('pageProcessorPreviewOptions sagas', () => {
           ],
         ])
         .run();
-      const files = getSampleFileMeta();
+      const files = getSampleFileMeta(fileAdaptorResource);
 
       expect(returnValue).toEqual({ uiData, files });
     });
