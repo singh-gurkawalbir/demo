@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: '#d6e4ed',
     borderStyle: 'solid',
     overflow: 'auto',
-    maxHeight: '300px',
+    maxHeight: theme.spacing(40),
     boxShadow: 'none',
     borderRadius: 0,
     marginTop: 0,

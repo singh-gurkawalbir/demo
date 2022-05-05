@@ -14,6 +14,10 @@ import actions from '../../../../../../actions';
 const useStyles = makeStyles(theme => ({
   treeRoot: {
     flex: 1,
+    '& .rc-tree-list': {
+      minHeight: '100%',
+      display: 'flex',
+    },
     '& .rc-tree-indent-unit': {
       display: 'inline-block',
       width: theme.spacing(9),
@@ -86,12 +90,20 @@ const useStyles = makeStyles(theme => ({
       transform: 'translateY(-50%)',
     },
     '& .rc-tree-list-holder': {
-      display: 'flex',
-      flexWrap: 'nowrap',
-      overflowX: 'auto',
+      // flexWrap: 'nowrap',
+      // display: 'flex',
+      // minHeight: '100%',
+      flex: '0 0 auto',
       '&>div': {
-        flex: '0 0 auto',
+        // flex: '0 0 auto',
+        overflow: 'visible !important',
       },
+    },
+    '& .rc-tree-list-scrollbar': {
+      display: 'none !important',
+    },
+    '& .rc-tree-list-holder-inner': {
+      position: 'relative !important',
     },
   },
   mappingDrawerContent: {
