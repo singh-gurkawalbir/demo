@@ -7,7 +7,7 @@ import { selectors } from '../../reducers';
 import { generateId } from '../../utils/string';
 
 export function* createNewPGStep({ flowId }) {
-  const originalFlow = yield select(selectors.resourceData, 'flows', flowId)?.merged;
+  const originalFlow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
   const patchSet = [];
 
   if (!originalFlow?.pageGenerators) {
@@ -27,9 +27,9 @@ export function* createNewPGStep({ flowId }) {
 }
 
 export function* deleteStep({flowId, stepId}) {
-  const elementsMap = yield select(selectors.fbElementsMap, flowId);
+  const elementsMap = yield select(selectors.fbGraphElementsMap, flowId);
   const flow = yield select(selectors.fbFlow, flowId);
-  const originalFlow = yield select(selectors.resourceData, 'flows', flowId)?.merged;
+  const originalFlow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
   const patchSet = [];
 
   const step = elementsMap[stepId];
@@ -122,7 +122,7 @@ export function* deleteStep({flowId, stepId}) {
 
 export function* createNewPPStep({ flowId, path: branchPath }) {
   let patchSet = [];
-  const flow = yield select(selectors.resourceData, 'flows', flowId)?.merged;
+  const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
 
   if (flow?.routers?.length) {
     patchSet = [{

@@ -107,10 +107,9 @@ function Canvas({flowId, integrationId}) {
   const calcCanvasStyle = useCalcCanvasStyle();
   const mergedFlow = useSelectorMemo(selectors.makeFlowDataForFlowBuilder, flowId);
 
-  console.log('mergedFlow', mergedFlow);
-  const elements = useSelector(state => selectors.fbElements(state, flowId));
+  const elements = useSelector(state => selectors.fbGraphElements(state, flowId));
   const dragNodeId = useSelector(state => selectors.fbDragNodeId(state, flowId));
-  const elementsMap = useSelector(state => selectors.fbElementsMap(state, flowId));
+  const elementsMap = useSelector(state => selectors.fbGraphElementsMap(state, flowId));
 
   const updatedLayout = useMemo(() =>
     layoutElements(elements, 'LR'),

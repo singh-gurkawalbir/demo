@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import { getResourceSubType, generateNewId, isFileAdaptor} from '../../../utils/resource';
+import { getResourceSubType, generateNewId, resourceCategory} from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
 import inputFilterAction from './actions/inputFilter_afe';
 import pageProcessorHooksAction from './actions/pageProcessorHooks';
@@ -59,26 +59,8 @@ const PageProcessor = ({
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
   );
-  // TODO: move this logic to util function and use "resourceCategory" function
-  let blockType = pp.type === 'export' ? 'lookup' : 'import';
 
-  if (
-    (['RESTExport', 'HTTPExport', 'NetSuiteExport', 'SalesforceExport'].indexOf(
-      resource.adaptorType
-    ) >= 0 &&
-      resource.type === 'blob') ||
-      (isFileAdaptor(resource) && resource.adaptorType.includes('Export'))
-  ) {
-    blockType = 'exportTransfer';
-  } else if (
-    (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
-      resource.adaptorType
-    ) >= 0 &&
-      resource.blob) ||
-      (isFileAdaptor(resource) && resource.adaptorType.includes('Import'))
-  ) {
-    blockType = 'importTransfer';
-  }
+  const blockType = pending ? 'newPP' : resourceCategory(resource, !!pp._exportId, !!pp._importId);
 
   const showMapping = flowDetails._connectorId ? flowDetails.showMapping : true;
 
@@ -244,7 +226,7 @@ const PageProcessor = ({
   // #endregion
   // console.log('render: <PageProcessor>');
   // console.log(pp, usedActions);
-  const name = pending ? 'Pending configuration' : resource.name || resource.id;
+  const name = pending ? '' : resource.name || resource.id;
 
   return (
     <>

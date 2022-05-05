@@ -29,8 +29,8 @@ export default function reducer(state = {}, action) {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.fbElements = (state, flowId) => (state && state[flowId] && state[flowId].elements) || emptyList;
-selectors.fbElementsMap = (state, flowId) => (state && state[flowId]?.elementsMap) || emptyObject;
+selectors.fbGraphElements = (state, flowId) => (state && state[flowId] && state[flowId].elements) || emptyList;
+selectors.fbGraphElementsMap = (state, flowId) => (state && state[flowId]?.elementsMap) || emptyObject;
 selectors.fbFlow = (state, flowId) => state && state[flowId]?.flow;
 selectors.fbDragNodeId = (state, flowId) => state?.[flowId]?.dragNodeId;
 
