@@ -61,13 +61,14 @@ export function generateId() {
   return nanoid(6);
 }
 
-export function generateDefaultEdge(source, target, {routerIndex, branchIndex} = {}) {
+export function generateDefaultEdge(source, target, {routerIndex, branchIndex, processorCount} = {}) {
   return {
     id: `${source}-${target}`,
     source,
     target,
     data: {
       path: `/routers/${routerIndex}/branches/${branchIndex}`,
+      processorCount,
     },
     type: 'default',
   };
@@ -148,7 +149,6 @@ export function getAllFlowBranches(flow) {
     routers.forEach((router = {}, routerIndex) => {
       router.branches?.forEach((branch = {}, branchIndex) => {
         branches.push({
-          id: branch._id,
           name: branch.name,
           path: `/routers/${routerIndex}/branches/${branchIndex}`,
         });

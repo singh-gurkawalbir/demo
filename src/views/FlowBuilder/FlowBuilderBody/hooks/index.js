@@ -6,32 +6,32 @@ import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { generateEmptyRouter } from '../../../../utils/flows/flowbuilder';
 
 export const useHandleAddNode = edgeId => {
-  const { flow, elementsMap } = useFlowContext();
+  const { elementsMap, flowId } = useFlowContext();
   const dispatch = useDispatch();
 
   return () => {
     const edge = elementsMap[edgeId];
 
     if (!edge) return;
-    dispatch(actions.flow.addNewPPStep(flow._id, edge.data?.path));
+    dispatch(actions.flow.addNewPPStep(flowId, edge.data?.path));
   };
 };
 
 export const useHandleRouterClick = routerId => {
-  const {flow} = useFlowContext();
+  const { flow, flowId } = useFlowContext();
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
   const editorId = `router-${routerId}`;
-  const router = flow.routers.find(r => r._id === routerId);
+  const router = flow.routers.find(r => r.id === routerId);
 
   if (!router) return;
 
   return () => {
     dispatch(actions.editor.init(editorId, 'router', {
-      flowId: flow?._id,
+      flowId,
       resourceType: 'flows',
-      resourceId: flow?._id,
+      resourceId: flowId,
       router,
       integrationId: flow?._integrationId,
     }));
@@ -44,7 +44,7 @@ export const useHandleRouterClick = routerId => {
 };
 
 export const useHandleAddNewRouter = edgeId => {
-  const {flow, elementsMap} = useFlowContext();
+  const { flow, elementsMap, flowId } = useFlowContext();
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
@@ -55,9 +55,9 @@ export const useHandleAddNewRouter = edgeId => {
     const edge = elementsMap[edgeId];
 
     dispatch(actions.editor.init(editorId, 'router', {
-      flowId: flow?._id,
+      flowId,
       resourceType: 'flows',
-      resourceId: flow?._id,
+      resourceId: flowId,
       router,
       integrationId: flow?._integrationId,
       edgeId,

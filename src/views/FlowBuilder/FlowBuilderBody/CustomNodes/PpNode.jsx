@@ -49,8 +49,7 @@ export default function PageProcessorNode({ data = {} }) {
   const dispatch = useDispatch();
   const classes = useStyles();
 
-  const { flow } = useFlowContext();
-  const flowId = flow._id;
+  const { flow, flowId } = useFlowContext();
   const integrationId = flow?._integrationId;
   const flowErrorsMap = useSelector(state => selectors.openErrorsMap(state, flowId));
   const isMonitorLevelAccess = useSelector(state =>
@@ -60,7 +59,7 @@ export default function PageProcessorNode({ data = {} }) {
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
 
   const handleDelete = useCallback(id => {
-    dispatch(actions.flow.deleteStep(flow._id, id));
+    dispatch(actions.flow.deleteStep(flowId, id));
   }, [dispatch]);
 
   return (

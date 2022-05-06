@@ -211,13 +211,18 @@ const PageGenerator = ({
 
     const app = applications.find(a => a.id === pg.application) || {};
 
+    if (pending) {
+      blockType = 'newPG';
+    } else {
+      blockType = pg.webhookOnly || isRealTimeOrDistributedResource(resource)
+        ? 'listener'
+        : 'export';
+    }
+
     return {
       connectorType: app.type,
       assistant: app.assistant,
-      blockType:
-        pg.webhookOnly || isRealTimeOrDistributedResource(resource)
-          ? 'listener'
-          : 'export',
+      blockType,
     };
   }, [
     isDataLoader,
@@ -228,7 +233,7 @@ const PageGenerator = ({
     resourceId,
   ]);
   const blockName = pending
-    ? 'Pending configuration'
+    ? ''
     : resource.name || resource.id;
   const { connectorType, assistant, blockType } = getApplication();
 

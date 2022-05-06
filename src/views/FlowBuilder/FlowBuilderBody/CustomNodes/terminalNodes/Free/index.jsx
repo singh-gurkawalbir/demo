@@ -38,8 +38,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function TerminalFreeNode({ id }) {
   const classes = useStyles();
-  const { dragNodeId, flow } = useFlowContext();
-  const flowId = flow?._id;
+  const { dragNodeId, flowId } = useFlowContext();
   const dispatch = useDispatch();
   const isDroppable = dragNodeId && dragNodeId !== id;
   const isBeingDragged = dragNodeId && dragNodeId === id;
