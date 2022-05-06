@@ -7,7 +7,7 @@ import { useFlowContext } from '../../Context';
 import AddNewButton from '../AddNewButton';
 import UnlinkButton from '../UnlinkButton';
 import ForeignObject from '../ForeignObject';
-import DiamondMergeIcon from '../../../../../components/icons/DiamondMergeIcon';
+import DiamondMergeIcon from '../../DiamondMergeIcon';
 import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({

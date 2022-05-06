@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
-import Icon from '../../../../../components/icons/DiamondMergeIcon';
+import DiamondMergeIcon from '../../DiamondMergeIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
 import { useFlowContext } from '../../Context';
 import actions from '../../../../../actions';
@@ -38,7 +38,7 @@ export default function MergeNode({id}) {
       >
       <DefaultHandle type="target" position={Position.Left} />
 
-      <Icon isDroppable={isDroppable} />
+      <DiamondMergeIcon isDroppable={isDroppable} />
 
       <DefaultHandle type="source" position={Position.Right} />
     </div>
