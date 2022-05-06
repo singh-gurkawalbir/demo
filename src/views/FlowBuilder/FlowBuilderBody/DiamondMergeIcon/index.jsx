@@ -1,17 +1,15 @@
 import clsx from 'clsx';
 import React from 'react';
 import { makeStyles } from '@material-ui/core/';
+import DiamondIcon from '../../../../components/icons/DiamondIcon';
 
 const useStyles = makeStyles(theme => ({
-  button: {
+  icon: {
     width: 34,
     height: 34,
     fill: theme.palette.background.paper,
     stroke: theme.palette.secondary.lightest,
   },
-  // dropBorder: {
-  //   animation: '$dash 50s linear',
-  // },
   droppable: {
     strokeDasharray: 4,
     strokeWidth: 2,
@@ -31,18 +29,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DiamondIcon({isDroppable, className, ...rest}) {
+export default function DiamondMergeIcon({isDroppable, className, ...rest}) {
   const classes = useStyles();
 
   return (
-    <svg
-      {...rest}
-      viewBox="0 0 34 34"
+    <DiamondIcon
       className={clsx(
-        classes.button,
+        classes.icon,
         {[classes.droppable]: isDroppable},
-        className)}>
-      <path d="m0,17l17,-17l17,17l-17,17l-17,-17z" />
-    </svg>
+        className)}
+      {...rest} />
   );
 }

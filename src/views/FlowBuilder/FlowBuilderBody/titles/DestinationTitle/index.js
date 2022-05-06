@@ -4,7 +4,6 @@ import { useStoreState } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
 import Title from '../Title';
 import AddNodeMenuPopper from './BranchMenuPopper';
-import useMenuDrawerWidth from '../../../../../hooks/useMenuDrawerWidth';
 import { FB_SOURCE_COLUMN_WIDTH } from '../../../../../constants';
 import { useSelectorMemo } from '../../../../../hooks';
 import { selectors } from '../../../../../reducers';
@@ -20,8 +19,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const DestinationTitle = () => {
-  const menuWidth = useMenuDrawerWidth();
-
   const { flow, flowId } = useFlowContext();
   const flowOriginal = useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)?.merged;
 
@@ -29,7 +26,7 @@ const DestinationTitle = () => {
   // regardless of pan or zoom settings.
   const dispatch = useDispatch();
   const [x,, scale] = useStoreState(s => s.transform);
-  const columnWidth = Math.max(0, FB_SOURCE_COLUMN_WIDTH * scale + x + menuWidth);
+  const columnWidth = Math.max(0, FB_SOURCE_COLUMN_WIDTH * scale + x);
   const xOffset = columnWidth;
   const classes = useStyles({xOffset, columnWidth});
   const [anchorEl, setAnchorEl] = React.useState(null);

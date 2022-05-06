@@ -97,8 +97,8 @@ const edgeTypes = {
 };
 
 function Canvas({flowId, integrationId}) {
-  const classes = useStyles();
   const dispatch = useDispatch();
+  const classes = useStyles();
 
   console.log('integrationId', integrationId);
   // const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
@@ -132,7 +132,6 @@ function Canvas({flowId, integrationId}) {
   }, [dispatch, flowId]);
 
   return (
-
     <div
       className={clsx(classes.canvasContainer, {
         [classes.canvasShift]: drawerOpened,
@@ -141,7 +140,8 @@ function Canvas({flowId, integrationId}) {
       <div className={classes.canvas}>
         {/* CANVAS START */}
         <ReactFlowProvider>
-          {/* add flow to the context so it is accessible to flowGraph beneath ..this will be replaced by the resourceDataSelector */}
+          {/* add flow to the context so it is accessible to flowGraph beneath
+          //...this will be replaced by the resourceDataSelector */}
           <FlowProvider
             elements={elements}
             elementsMap={elementsMap}
@@ -149,9 +149,6 @@ function Canvas({flowId, integrationId}) {
             flowId={flowId}
             dragNodeId={dragNodeId}
           >
-
-            <SourceTitle onClick={handleAddNewSource} />
-            <DestinationTitle />
 
             <ReactFlow
               onNodeDragStart={handleNodeDragStart}
@@ -161,23 +158,20 @@ function Canvas({flowId, integrationId}) {
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
         >
+              <SourceTitle onClick={handleAddNewSource} />
+              <DestinationTitle />
               <BackgroundPanel />
+              <MiniMap />
+              <Controls showInteractive={false} />
             </ReactFlow>
           </FlowProvider>
-
-          <MiniMap />
-          <Controls />
         </ReactFlowProvider>
         {/* CANVAS END */}
       </div>
     </div>
   );
 }
-export default function FlowBuilderBody(
-  {
-    flowId, integrationId,
-  }
-) {
+export default function FlowBuilderBody({ flowId, integrationId }) {
   const dispatch = useDispatch();
 
   useEffect(() => (() => {
@@ -185,15 +179,9 @@ export default function FlowBuilderBody(
   }), [dispatch]);
 
   return (
-
     <>
-      <PageBar
-        flowId={flowId} integrationId={integrationId}
-      />
-      <Canvas
-        flowId={flowId} integrationId={integrationId}
-      />
-
+      <PageBar flowId={flowId} integrationId={integrationId} />
+      <Canvas flowId={flowId} integrationId={integrationId} />
     </>
   );
 }
