@@ -19,8 +19,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const DestinationTitle = () => {
-  const {flow} = useFlowContext();
-  const flowOriginal = useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flow?._id)?.merged;
+  const { flow, flowId } = useFlowContext();
+  const flowOriginal = useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)?.merged;
 
   // we dont care about the y axis since we always want 100% y axis coverage,
   // regardless of pan or zoom settings.

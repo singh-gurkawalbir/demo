@@ -443,7 +443,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     'flows',
     flowId
   )) || emptyObject;
-  const elementsMap = yield select(selectors.fbElementsMap, flowId);
+  const elementsMap = yield select(selectors.fbGraphElementsMap, flowId);
 
   // if its an existing resource and original flow document does not have any references to newly created PG or PP
   // then we can go ahead and update it...if it has existing references no point creating additional create patches
