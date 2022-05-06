@@ -165,7 +165,7 @@ const generateNodesAndEdgesFromNonBranchedFlow = flow => {
       data: {
         resource: {application: dummyPPId, id: dummyPGId},
         isFirst: true,
-        path: '/routers/0/branches/0/pageProcessors/0',
+        path: '/pageProcessors/0',
       },
     },
     ];
@@ -179,7 +179,7 @@ const generateNodesAndEdgesFromNonBranchedFlow = flow => {
         data: {
           resource: {application: virtualRouter.id, id: virtualRouter.id},
           isFirst: true,
-          path: '/routers/0/branches/0/pageProcessors/0',
+          path: '/pageProcessors/0',
         },
       },
     ];
