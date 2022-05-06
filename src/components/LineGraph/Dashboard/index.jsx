@@ -138,6 +138,7 @@ export default function LineGraphDrawer({ integrationId, childId }) {
 
           <DateRangeSelector
             onSave={handleDateRangeChange}
+            showCustomRangeValue
             value={{
               startDate: new Date(rangePreference.startDate),
               endDate: new Date(rangePreference.endDate),

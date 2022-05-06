@@ -217,6 +217,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
             placement="right"
             customPresets={rangeFilters}
             clearValue={defaultRange}
+            showCustomRangeValue
             onSave={handleDateRangeChange}
             fromDate={startOfDay(addDays(new Date(), -29))}
             showTime />
