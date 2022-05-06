@@ -61,13 +61,14 @@ export function generateId() {
   return nanoid(6);
 }
 
-export function generateDefaultEdge(source, target, {routerIndex, branchIndex} = {}) {
+export function generateDefaultEdge(source, target, {routerIndex, branchIndex, processorCount} = {}) {
   return {
     id: `${source}-${target}`,
     source,
     target,
     data: {
       path: `/routers/${routerIndex}/branches/${branchIndex}`,
+      processorCount,
     },
     type: 'default',
   };

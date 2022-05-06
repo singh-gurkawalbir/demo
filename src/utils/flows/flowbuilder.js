@@ -4,13 +4,14 @@ import { cloneDeep } from 'lodash';
 import { GRAPH_ELEMENTS_TYPE } from '../../constants';
 import { generateId } from '../string';
 
-export function generateDefaultEdge(source, target, {routerIndex, branchIndex, hidden} = {}) {
+export function generateDefaultEdge(source, target, {routerIndex, branchIndex, hidden, processorCount} = {}) {
   return {
     id: `${source}-${target}`,
     source,
     target,
     data: {
       path: `/routers/${routerIndex}/branches/${branchIndex}`,
+      processorCount,
     },
     hidden,
     type: 'default',
@@ -121,7 +122,9 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}) => 
   const {branch, branchIndex, routerIndex} = branchData;
   const nodes = pageProcessors.map((pageProcessor, index, collection) => {
     if (index + 1 < collection.length) {
-      edges.push(generateDefaultEdge(pageProcessor.id, collection[index + 1].id, branchData));
+      const processorCount = pageProcessor._exportId || pageProcessor._importId ? 3 : 0;
+
+      edges.push(generateDefaultEdge(pageProcessor.id, collection[index + 1].id, {...branchData, processorCount}));
     }
 
     return {
