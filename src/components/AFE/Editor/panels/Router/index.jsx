@@ -1,6 +1,5 @@
-import produce from 'immer';
-import { useSelector } from 'react-redux';
-import React, { useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import React, { useMemo } from 'react';
 import { makeStyles, Divider, Typography } from '@material-ui/core';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import DynaForm from '../../../../DynaForm';
@@ -9,9 +8,10 @@ import BranchItem from './BranchItem';
 import fieldMetadata from './fieldMeta';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';
-import { emptyList } from '../../../../../constants';
+import { emptyList, emptyObject } from '../../../../../constants';
 import { TextButton } from '../../../../Buttons';
 import AddIcon from '../../../../icons/AddIcon';
+import actions from '../../../../../actions';
 
 const moveArrayItem = (arr, oldIndex, newIndex) => {
   const newArr = [...arr];
@@ -47,10 +47,18 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const fieldMeta = useMemo(() => (fieldMetadata), []);
   const formKey = useFormInitWithPermissions({ fieldMeta });
   const branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList);
-  const [branchData, setBranchData] = useState(branches);
+  const routerIndex = useSelector(state => selectors.editor(state, editorId)?.routerIndex || emptyObject);
+
+  branches.forEach((branch, index) => {
+    if (!branch.name) {
+      // eslint-disable-next-line no-param-reassign
+      branch.name = `Branch ${routerIndex}.${index}`;
+    }
+  });
 
   const activeProcessor = useSelector(state =>
     selectors.editor(state, editorId).activeProcessor);
@@ -75,17 +83,11 @@ export default function RouterPanel({ editorId }) {
   );
 
   const handleNameChange = (title, position) => {
-    setBranchData(
-      produce(branchData, draft => {
-        draft[position].name = title;
-      }));
+    dispatch(actions.editor.patchRule(editorId, title, {rulePath: `branches[${position}].name`}));
   };
 
   const handleToggleExpand = (expanded, position) => {
-    setBranchData(
-      produce(branchData, draft => {
-        draft[position].expanded = expanded;
-      }));
+    dispatch(actions.editor.patchRule(editorId, expanded, {rulePath: `branches[${position}].expanded`}));
   };
 
   const handleSortStart = (_, event) => {
@@ -98,13 +100,11 @@ export default function RouterPanel({ editorId }) {
 
   const handleSortEnd = ({oldIndex, newIndex}) => {
     document.body.classList.remove(classes.grabbing);
-    setBranchData(items => (moveArrayItem(items, oldIndex, newIndex)));
+    dispatch(actions.editor.patchRule(editorId, (moveArrayItem(branches, oldIndex, newIndex)), {rulePath: 'branches'}));
   };
 
   const handleAddBranch = () => {
-    // eslint-disable-next-line no-console
-    // dispatch(actions.flow.addBranch({flowId}));
-    console.log('TODO: add new Branch');
+    dispatch(actions.editor.patchRule(editorId, [...branches, {pageProcessors: []}], {rulePath: 'branches'}));
   };
 
   return (
@@ -122,7 +122,7 @@ export default function RouterPanel({ editorId }) {
         onSortStart={handleSortStart}
         onSortEnd={handleSortEnd}
         useDragHandle>
-        { branchData.map((b, i) => (
+        { branches.map((b, i) => (
           <SortableItem
             expandable={activeProcessor === 'filter'}
             expanded={b.expanded}

@@ -24,6 +24,7 @@ export const useHandleRouterClick = routerId => {
   const history = useHistory();
   const editorId = `router-${routerId}`;
   const router = flow.routers.find(r => r.id === routerId);
+  const routerIndex = flow.routers.findIndex(r => r.id === routerId) + 1;
 
   if (!router) return;
 
@@ -33,6 +34,7 @@ export const useHandleRouterClick = routerId => {
       resourceType: 'flows',
       resourceId: flowId,
       router,
+      routerIndex,
       integrationId: flow?._integrationId,
     }));
     history.push(buildDrawerUrl({
@@ -59,6 +61,7 @@ export const useHandleAddNewRouter = edgeId => {
       resourceType: 'flows',
       resourceId: flowId,
       router,
+      routerIndex: flow.routers.length + 1,
       integrationId: flow?._integrationId,
       edgeId,
       edge,
