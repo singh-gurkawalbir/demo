@@ -12,7 +12,7 @@ import { layoutElements } from './lib';
 import { FlowProvider } from './Context';
 import PgNode from './CustomNodes/PgNode';
 import PpNode from './CustomNodes/PpNode';
-import TerminalNode from './CustomNodes/terminalNodes/Free';
+import TerminalNode from './CustomNodes/TerminalNode';
 import RouterNode from './CustomNodes/RouterNode';
 import MergeNode from './CustomNodes/MergeNode';
 import BackgroundPanel from './Background';

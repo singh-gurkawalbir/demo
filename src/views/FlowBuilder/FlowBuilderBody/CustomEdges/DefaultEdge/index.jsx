@@ -23,6 +23,38 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+function getPositionAndOffset(targetType, sourceType, showLinkIcon, processorCount) {
+  let position = 'center';
+  let offset = 10;
+
+  if (targetType === GRAPH_ELEMENTS_TYPE.PP_STEP && sourceType !== GRAPH_ELEMENTS_TYPE.PP_STEP) {
+    // we want the add button to be positioned close to the pp,
+    // not close to the merge/router nodes.
+    position = 'right';
+    offset = 30;
+  } else if (sourceType === GRAPH_ELEMENTS_TYPE.PP_STEP && targetType !== GRAPH_ELEMENTS_TYPE.PP_STEP) {
+    position = 'left';
+    offset = 70;
+  }
+
+  if (processorCount > 0) {
+    // The left and center positions are not valid if a step has processors since
+    // they would overlap a left positioned edge button, or sometimes even a center position
+    // edge button if the edge is short (shortest linear node -> node edge).
+    // In this case, we will set the position to 'left', and hardcode an offset that will clear the
+    // max processors. Later we can make this dynamic in case a user doesn't have the processors configured,
+    // or has not expanded them via the shop-processor icon (+) in the step.
+    if (position === 'left' || (position === 'center' && processorCount > 2)) {
+      position = 'left';
+      offset = processorCount * 44 + 28;
+    }
+
+    console.log('processors!', position, offset);
+  }
+
+  return {position, offset};
+}
+
 export default function DefaultEdge({
   id,
   sourceX,
@@ -38,7 +70,7 @@ export default function DefaultEdge({
   const dispatch = useDispatch();
   const { elements, elementsMap, dragNodeId, flow } = useFlowContext();
   const hasSiblingEdges = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
-  const { sourceType, targetType, points: edgePoints } = data;
+  const { sourceType, targetType, points: edgePoints, processorCount } = data;
   const isDragging = !!dragNodeId;
   const isConnectedToMerge = targetType === GRAPH_ELEMENTS_TYPE.MERGE || sourceType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isConnectedToGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
@@ -136,7 +168,16 @@ export default function DefaultEdge({
     });
 
     return path;
-  }, [edgePoints, isTargetMerge, isTerminal, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
+  }, [edgePoints,
+    isSourceRouter,
+    isTargetMerge,
+    isTerminal,
+    sourcePosition,
+    sourceX,
+    sourceY,
+    targetPosition,
+    targetX,
+    targetY]);
 
   const handleMouseOut = useCallback(() => {
     dispatch(actions.flow.mergeTargetClear(flow._id));
@@ -146,24 +187,8 @@ export default function DefaultEdge({
     dispatch(actions.flow.mergeTargetSet(flow._id, 'edge', id));
   }, [dispatch]);
 
-  let position = 'center';
-  let offset = 10;
-
-  if (targetType === GRAPH_ELEMENTS_TYPE.PP_STEP && sourceType !== GRAPH_ELEMENTS_TYPE.PP_STEP) {
-    // we want the add button to be positioned close to the pp,
-    // not close to the merge/router nodes.
-    position = 'right';
-    offset = 30;
-  } else if (sourceType === GRAPH_ELEMENTS_TYPE.PP_STEP && targetType !== GRAPH_ELEMENTS_TYPE.PP_STEP) {
-    position = 'left';
-    offset = 70;
-  }
-
-  // The link icon is always rendered in the center, so if it is
-  // visible, then the add icon needs to be offset to prevent an overlap.
-  if (showLinkIcon && position === 'center') {
-    offset = -10;
-  }
+  const { position, offset } =
+    getPositionAndOffset(targetType, sourceType, showLinkIcon, processorCount);
 
   return (
     <>
@@ -192,7 +217,7 @@ export default function DefaultEdge({
       )}
 
       {!isDragging && showLinkIcon && (
-        <ForeignObject edgePath={edgePath} position={position} offset={offset + 30}>
+        <ForeignObject edgePath={edgePath} position={position} offset={offset + 40}>
           <UnlinkButton edgeId={id} />
         </ForeignObject>
       )}
