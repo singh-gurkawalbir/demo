@@ -5,11 +5,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Position } from 'react-flow-renderer';
 import { Tooltip } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import DiamondIcon from '../../../../../../components/icons/DiamondIcon';
-import TerminalIcon from '../../../../../../components/icons/MergeIcon';
-import DefaultHandle from '../../Handles/DefaultHandle';
-import { useFlowContext } from '../../../Context';
-import actions from '../../../../../../actions';
+import DiamondIcon from '../../../../../components/icons/DiamondIcon';
+import TerminalIcon from '../../../../../components/icons/MergeIcon';
+import DefaultHandle from '../Handles/DefaultHandle';
+import { useFlowContext } from '../../Context';
+import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TerminalFreeNode({ id }) {
+export default function TerminalNode({ id }) {
   const classes = useStyles();
   const { dragNodeId, flowId } = useFlowContext();
   const dispatch = useDispatch();

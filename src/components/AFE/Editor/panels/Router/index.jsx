@@ -10,6 +10,8 @@ import fieldMetadata from './fieldMeta';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';
 import { emptyList } from '../../../../../constants';
+import { TextButton } from '../../../../Buttons';
+import AddIcon from '../../../../icons/AddIcon';
 
 const moveArrayItem = (arr, oldIndex, newIndex) => {
   const newArr = [...arr];
@@ -30,6 +32,7 @@ const useStyles = makeStyles(theme => ({
     listStyle: 'none',
     marginLeft: 0,
     paddingLeft: 0,
+    marginBottom: 0,
   },
   heading: {
     marginBottom: theme.spacing(1),
@@ -52,6 +55,25 @@ export default function RouterPanel({ editorId }) {
   const activeProcessor = useSelector(state =>
     selectors.editor(state, editorId).activeProcessor);
 
+  const SortableContainer = sortableContainer(({children}) => (
+    <ul className={classes.branchList}>
+      {children}
+    </ul>
+  ));
+
+  const SortableItem = sortableElement(props => <BranchItem {...props} editorId={editorId} />);
+
+  const BranchHeading = ({helpText, children}) => (
+    <div className={classes.heading}>
+      <Typography variant="h5">{children}</Typography>
+      <Help
+        title={children}
+        className={classes.helpButton}
+        helpText={helpText}
+    />
+    </div>
+  );
+
   const handleNameChange = (title, position) => {
     setBranchData(
       produce(branchData, draft => {
@@ -66,14 +88,6 @@ export default function RouterPanel({ editorId }) {
       }));
   };
 
-  const SortableContainer = sortableContainer(({children}) => (
-    <ul className={classes.branchList}>
-      {children}
-    </ul>
-  ));
-
-  const SortableItem = sortableElement(props => <BranchItem {...props} editorId={editorId} />);
-
   const handleSortStart = (_, event) => {
     // we only want mouse events (not keyboard navigation) to trigger
     // mouse cursor changes...
@@ -87,16 +101,11 @@ export default function RouterPanel({ editorId }) {
     setBranchData(items => (moveArrayItem(items, oldIndex, newIndex)));
   };
 
-  const BranchHeading = ({helpText, children}) => (
-    <div className={classes.heading}>
-      <Typography variant="h5">{children}</Typography>
-      <Help
-        title={children}
-        className={classes.helpButton}
-        helpText={helpText}
-    />
-    </div>
-  );
+  const handleAddBranch = () => {
+    // eslint-disable-next-line no-console
+    // dispatch(actions.flow.addBranch({flowId}));
+    console.log('TODO: add new Branch');
+  };
 
   return (
     <div className={classes.panelContent}>
@@ -126,6 +135,8 @@ export default function RouterPanel({ editorId }) {
             onNameChange={handleNameChange} />
         ))}
       </SortableContainer>
+
+      <TextButton onClick={handleAddBranch}><AddIcon />Add branch</TextButton>
     </div>
   );
 }

@@ -108,7 +108,14 @@ export function layoutElements(elements = []) {
       const node = graph.node(el.id);
       const size = nodeSize[el.type];
       const offsetY = 0;
-      const offsetX = el.type === GRAPH_ELEMENTS_TYPE.TERMINAL ? nodeSize.pp.width / 2 - nodeSize[el.type].width / 2 : 0;
+
+      // We override the x position of terminal nodes so that they render a shorter edge path.
+      // most times a terminal node will only require a short horizontal edge and it looks better
+      // if this edge is shorted, which is accomplished by shifting th terminal node left by 1/2 the
+      // size of a step. This way, nodes visually line-up when branching.
+      const offsetX = el.type === GRAPH_ELEMENTS_TYPE.TERMINAL
+        ? nodeSize.pp.width / 2 - nodeSize[el.type].width / 2
+        : 0;
 
       // We are shifting the dagre node position that returns centerpoint (x,y)
       // to the top left so it matches the react-flow node anchor point (top left).
@@ -119,9 +126,10 @@ export function layoutElements(elements = []) {
           y: node.y - size.height / 2 - offsetY,
         }});
     } else { // these are the edges...
-      const edge = graph.edge({v: el.source, w: el.target});
+      const { points } = graph.edge({v: el.source, w: el.target});
       const source = elements.find(n => n.id === el.source);
       const target = elements.find(n => n.id === el.target);
+      const edge = elements.find(n => n.id === `${el.source}-${el.target}`);
 
       edges.push({
         ...el,
@@ -130,7 +138,8 @@ export function layoutElements(elements = []) {
           targetType: target.type,
           sourceId: source.id,
           targetId: target.id,
-          points: edge.points,
+          points,
+          ...edge.data,
         },
       });
     }
