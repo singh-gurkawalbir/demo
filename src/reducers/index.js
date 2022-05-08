@@ -6475,7 +6475,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   }
 
   if (
-    ['flowTransform', 'responseTransform', 'netsuiteLookupFilter', 'salesforceLookupFilter'].includes(editorType) ||
+    ['flowTransform', 'responseTransform', 'netsuiteLookupFilter', 'salesforceLookupFilter', 'router'].includes(editorType) ||
   HOOK_STAGES.includes(stage)
   ) {
     return {shouldGetContextFromBE: false, sampleData};

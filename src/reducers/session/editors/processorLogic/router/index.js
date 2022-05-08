@@ -1,5 +1,6 @@
-import { isEqual } from 'lodash';
 import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
+import filter from '../filter';
+import javascript from '../javascript';
 
 export default {
   processor: ({ activeProcessor }) => activeProcessor,
@@ -11,6 +12,7 @@ export default {
     const rule = {
       filter: router,
       javascript: {
+        router,
         fetchScriptContent: true,
       },
     };
@@ -29,30 +31,53 @@ export default {
     };
   },
 
-  requestBody: editor => ({
-    rules: { version: '1', rules: [editor.rule || []] },
-    data: editor.data,
-  }),
+  requestBody: editor => {
+    if (editor.activeProcessor === 'filter') {
+      return filter.requestBody({
+        data: editor.data?.filter,
+        rule: editor.rule?.filter,
+      });
+    }
+
+    return javascript.requestBody({
+      data: editor.data?.javascript,
+      rule: editor.rule?.javascript,
+      context: editor.context,
+    });
+  },
   // No point performing parsing or validation when it is an object
   validate: editor => {
-    const { data, rule } = editor;
-    let dataError;
+    if (editor.activeProcessor === 'filter') {
+      return filter.validate({
+        data: editor.data?.filter,
+        rule: editor.rule?.filter,
+      });
+    }
 
-    if (!data) dataError = 'Must provide some sample data.';
-
-    return {
-      dataError,
-      ruleError: !!rule,
-    };
+    return javascript.validate({
+      data: editor.data?.javascript,
+    });
   },
   dirty: editor => {
-    const {
-      originalRule = [],
-      rule = [],
-    } = editor;
-
-    return !isEqual(originalRule, rule);
+    if (editor.activeProcessor === 'javascript') {
+      return filter.dirty({
+        rule: editor.rule?.filter,
+        originalRule: editor.originalRule?.filter,
+      });
+    }
   },
-  processResult: (editor, result) => ({data: result?.data?.[0]}),
-  preSaveValidate: editor => ({saveError: !!editor}),
+  processResult: (editor, result) => {
+    if (editor.activeProcessor === 'filter') {
+      return filter.processResult(editor, result);
+    }
+
+    return javascript.processResult(editor, result);
+  },
+  preSaveValidate: editor => {
+    if (editor.activeProcessor === 'filter') {
+      return filter.preSaveValidate({rule: editor.rule?.filter});
+    }
+
+    return {saveError: false};
+  },
 };

@@ -157,6 +157,9 @@ export default function reducer(state = {}, action) {
         const mode = draft[id].activeProcessor;
 
         if (mode) {
+          if (!draft[id].data) {
+            draft[id].data = {};
+          }
           draft[id].data[mode] = dataPatch;
         } else {
           draft[id].data = dataPatch;

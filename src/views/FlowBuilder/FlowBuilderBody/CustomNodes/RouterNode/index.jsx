@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function RouterNode({data = {}}) {
   const { router = {} } = data;
-  const { routeRecordsTo, _id: routerId } = router;
+  const { routeRecordsTo, id: routerId } = router;
   const badgeContent = routeRecordsTo?.type === 'all_matching_branches' ? 'ALL' : '1ST';
   const classes = useStyles();
   const handleRouterClick = useHandleRouterClick(routerId);

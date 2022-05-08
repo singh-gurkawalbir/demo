@@ -23,18 +23,19 @@ export const useHandleRouterClick = routerId => {
   const match = useRouteMatch();
   const history = useHistory();
   const editorId = `router-${routerId}`;
-  const router = flow.routers.find(r => r.id === routerId);
-  const routerIndex = flow.routers.findIndex(r => r.id === routerId) + 1;
-
-  if (!router) return;
 
   return () => {
+    const router = flow.routers.find(r => r.id === routerId);
+    const routerIndex = flow.routers.findIndex(r => r.id === routerId) + 1;
+
+    if (!router) return;
     dispatch(actions.editor.init(editorId, 'router', {
       flowId,
       resourceType: 'flows',
       resourceId: flowId,
       router,
       routerIndex,
+      stage: 'inputFilter',
       integrationId: flow?._integrationId,
     }));
     history.push(buildDrawerUrl({
@@ -64,6 +65,7 @@ export const useHandleAddNewRouter = edgeId => {
       routerIndex: flow.routers.length + 1,
       integrationId: flow?._integrationId,
       edgeId,
+      stage: 'inputFilter',
       edge,
     }));
     history.push(buildDrawerUrl({
