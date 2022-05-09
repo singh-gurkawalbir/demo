@@ -6,7 +6,7 @@ import reducer, { selectors } from '.';
 import actions from '../actions';
 import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../utils/constants';
 import { stringCompare } from '../utils/sort';
-import { LICENSE_EXPIRED } from '../utils/messageStore';
+import messageStore from '../utils/messageStore';
 
 describe('Accounts region selector testcases', () => {
   describe('isAccountOwnerOrAdmin selector', () => {
@@ -1008,7 +1008,7 @@ describe('Accounts region selector testcases', () => {
           },
         };
 
-    const expected = {enable: false, message: LICENSE_EXPIRED};
+    const expected = {enable: false, message: messageStore('LICENSE_EXPIRED')};
 
     test('should return false for expired license', () => {
       expect(selectors.isLicenseValidToEnableFlow(expiredState)).toEqual(expected);

@@ -26,7 +26,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function AuditLog({
   className,
-  affectedResources,
   users,
   resourceType,
   resourceId,
@@ -68,7 +67,6 @@ export default function AuditLog({
           ? <Spinner loading size="large" className={classes.spinnerContainer} /> : (
             <div className={clsx(classes.root, className)}>
               <Filters
-                affectedResources={affectedResources}
                 resourceDetails={resourceDetails}
                 users={users}
                 childId={childId}

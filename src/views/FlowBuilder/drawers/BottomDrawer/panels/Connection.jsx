@@ -53,7 +53,7 @@ export default function ConnectionPanel({ flowId }) {
 
   return (
     <div className={classes.root}>
-      <LoadResources required integrationId={integrationId} resources="connections">
+      <LoadResources integrationId={integrationId} required resources="connections">
         <CeligoTable
           data={flowConnections}
           filterKey="connections"

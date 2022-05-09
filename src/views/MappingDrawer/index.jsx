@@ -13,6 +13,7 @@ import SelectQueryType from './DatabaseMapping_afe/SelectQueryType';
 import EditorDrawer from '../../components/AFE/Drawer';
 import useFormOnCancelContext from '../../components/FormOnCancelContext';
 import { MAPPINGS_FORM_KEY } from '../../utils/constants';
+import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 
 const MappingWrapper = ({integrationId}) => {
   const history = useHistory();
@@ -60,24 +61,21 @@ export default function MappingDrawerRoute(props) {
     <LoadResources
       required="true"
       integrationId={integrationId}
-      resources="imports, exports, connections">
+      resources="imports,exports,connections">
       <RightDrawer
-        hideBackButton
         path={[
-          'mapping/:flowId/:importId/:subRecordMappingId/view',
-          'mapping/:flowId/:importId/view',
-          'mapping/:flowId/:importId',
-          'mapping/:flowId',
+          drawerPaths.MAPPINGS.SUB_RECORD,
+          drawerPaths.MAPPINGS.IMPORT.VIEW,
+          drawerPaths.MAPPINGS.IMPORT.ROOT,
+          drawerPaths.MAPPINGS.IMPORT.LIST_ALL,
         ]}
         height="tall"
-        width={isMappingPreviewAvailable ? 'full' : 'default'}
-        variant="persistent"
-      >
+        width={isMappingPreviewAvailable ? 'full' : 'default'} >
         <Switch>
           <Route
             path={[
-              `${match.url}/mapping/:flowId/:importId/:subRecordMappingId/view`,
-              `${match.url}/mapping/:flowId/:importId/view`,
+              buildDrawerUrl({ path: drawerPaths.MAPPINGS.SUB_RECORD, baseUrl: match.url}),
+              buildDrawerUrl({ path: drawerPaths.MAPPINGS.IMPORT.VIEW, baseUrl: match.url}),
             ]} >
             <DrawerHeader
             // for new mappings afe, pass old drawer dataTest as dummy for automation
@@ -94,8 +92,8 @@ export default function MappingDrawerRoute(props) {
           <Route
             exact
             path={[
-              `${match.url}/mapping/:flowId`,
-              `${match.url}/mapping/:flowId/:importId`,
+              buildDrawerUrl({ path: drawerPaths.MAPPINGS.IMPORT.LIST_ALL, baseUrl: match.url}),
+              buildDrawerUrl({ path: drawerPaths.MAPPINGS.IMPORT.ROOT, baseUrl: match.url}),
             ]}
             >
             <DrawerHeader title={title} />
@@ -109,9 +107,7 @@ export default function MappingDrawerRoute(props) {
       <RightDrawer
         height="tall"
         width="default"
-        variant="temporary"
-        hideBackButton
-        path="dbMapping/:flowId/:importId">
+        path={drawerPaths.MAPPINGS.DB}>
 
         <DrawerHeader title="Select query type" />
 
@@ -121,7 +117,10 @@ export default function MappingDrawerRoute(props) {
       </RightDrawer>
 
       <Route
-        path={`${match.url}/queryBuilder/:flowId/:importId/:index/view`}>
+        path={buildDrawerUrl({
+          path: drawerPaths.MAPPINGS.QUERY_BUILDER,
+          baseUrl: match.url,
+        })}>
         <DatabaseMapping />
         <EditorDrawer />
       </Route>

@@ -44,5 +44,23 @@ describe('netsuiteQualificationCriteria processor logic', () => {
 
       expect(init({options, fieldState})).toEqual(expectedOutput);
     });
+    test('should correctly return the rule as [] along with options if field state value is empty', () => {
+      const options = {
+        resourceId: '99999',
+        resourceType: 'exports',
+        data: 'dummy data',
+      };
+      const fieldState = {
+      };
+      const expectedOutput = {
+        resourceId: '99999',
+        resourceType: 'exports',
+        data: 'dummy data',
+        rule: [],
+      };
+
+      expect(init({options, fieldState})).toEqual(expectedOutput);
+      expect(init({options})).toEqual(expectedOutput);
+    });
   });
 });

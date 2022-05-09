@@ -15,15 +15,13 @@ import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
-  getConnectionType,
   generateNewId,
   isOauth,
 } from '../../../../../utils/resource';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
-import resourceConstants from '../../../../../forms/constants/connection';
-import ResourceSetupDrawer from '../../../../../components/ResourceSetup';
+import ResourceSetupDrawer from '../../../../../components/ResourceSetup/Drawer';
 import InstallationStep from '../../../../../components/InstallStep';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
@@ -39,6 +37,7 @@ import HelpIcon from '../../../../../components/icons/HelpIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import TrashIcon from '../../../../../components/icons/TrashIcon';
 import { TextButton } from '../../../../../components/Buttons';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -71,21 +70,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const oAuthApplications = [
-  ...resourceConstants.OAUTH_APPLICATIONS,
-  'netsuite-oauth',
-  'shopify-oauth',
-  'acumatica-oauth',
-  'hubspot-oauth',
-  'amazonmws-oauth',
-];
-
-export default function ConnectorInstallation(props) {
+export default function ConnectorInstallation() {
   const classes = useStyles();
-  const { integrationId } = props.match.params;
   const [stackId, setShowStackDialog] = useState(null);
   const history = useHistory();
   const match = useRouteMatch();
+  const { integrationId } = match.params;
   const [connection, setConnection] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
@@ -115,7 +105,6 @@ export default function ConnectorInstallation(props) {
     parentId: integration._parentId,
   } : emptyObject, [integration]);
 
-  const isTemplate = !_connectorId;
   const {
     name: childIntegrationName,
     id: childIntegrationId,
@@ -143,52 +132,10 @@ export default function ConnectorInstallation(props) {
     return integrationApp && integrationApp.helpURL;
   });
   const installSteps = useSelector(state =>
-    selectors.integrationInstallSteps(state, integrationId)
+    selectors.integrationInstallSteps(state, integrationId),
+  shallowEqual
   );
-  const templateInstallSteps = useMemo(() => {
-    if (!isTemplate) return installSteps;
 
-    const bundleInstallationForNetsuiteConnections = installSteps.filter(step => step.sourceConnection?.type === 'netsuite');
-    const bundleInstallationForSalesforceConnections = installSteps.filter(step => step.sourceConnection?.type === 'salesforce');
-
-    let netsuiteConnIndex = 0;
-    let salesforceConnIndex = 0;
-
-    return installSteps.map(step => {
-      if (step.installURL || step.url) {
-        if (
-          step.name.includes('Integrator Bundle')
-        ) {
-          const connectionId = bundleInstallationForNetsuiteConnections[netsuiteConnIndex]?._connectionId;
-
-          netsuiteConnIndex += 1;
-
-          return {
-            ...step,
-            connectionId,
-          };
-        } if (step.name.includes('Integrator Adaptor Package')) {
-          const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
-
-          salesforceConnIndex += 1;
-
-          return {
-            ...step,
-            connectionId,
-          };
-        }
-      }
-
-      return step;
-    });
-  }, [installSteps, isTemplate]);
-  const currentStep = useMemo(() => installSteps.find(s => s.isCurrentStep), [
-    installSteps,
-  ]);
-  const currStepIndex = useMemo(() => installSteps.indexOf(currentStep), [
-    currentStep,
-    installSteps,
-  ]);
   const { openOauthConnection, connectionId } = useSelector(
     state => selectors.canOpenOauthConnection(state, integrationId),
     (left, right) => (left.openOauthConnection === right.openOauthConnection && left.connectionId === right.connectionId)
@@ -202,18 +149,15 @@ export default function ConnectorInstallation(props) {
       setConnection({
         _connectionId: connectionId,
       });
+      history.push(buildDrawerUrl({
+        path: drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP,
+        baseUrl: match.url,
+        params: { resourceType: 'connections', resourceId: connectionId },
+      }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionId, dispatch, integrationId, openOauthConnection, oauthConnection]);
 
-  const selectedConnectionType = useSelector(state => {
-    const selectedConnection = selectors.resource(
-      state,
-      'connections',
-      connection && connection._connectionId
-    );
-
-    return getConnectionType(selectedConnection);
-  });
   const integrationAppName = getIntegrationAppUrlName(integrationName);
   const integrationChildAppName = getIntegrationAppUrlName(childIntegrationName);
   const handleClose = useCallback(() => {
@@ -258,13 +202,6 @@ export default function ConnectorInstallation(props) {
       // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
       const step = installSteps.find(s => s.isCurrentStep);
 
-      if (
-        oAuthApplications.includes(selectedConnectionType) &&
-        !isAuthorized
-      ) {
-        return;
-      }
-
       dispatch(
         actions.integrationApp.installer.updateStep(
           integrationId,
@@ -300,7 +237,6 @@ export default function ConnectorInstallation(props) {
       installSteps,
       integrationId,
       isFrameWork2,
-      selectedConnectionType,
     ]
   );
 
@@ -308,11 +244,11 @@ export default function ConnectorInstallation(props) {
     if (isSetupComplete) {
       // redirect to integration Settings
       dispatch(actions.resource.request('integrations', integrationId));
-      dispatch(actions.resource.requestCollection('flows'));
-      dispatch(actions.resource.requestCollection('exports'));
-      dispatch(actions.resource.requestCollection('licenses'));
-      dispatch(actions.resource.requestCollection('imports'));
-      dispatch(actions.resource.requestCollection('connections'));
+      dispatch(actions.resource.requestCollection('flows', undefined, undefined, integrationId));
+      dispatch(actions.resource.requestCollection('exports', undefined, undefined, integrationId));
+      dispatch(actions.license.refreshCollection());
+      dispatch(actions.resource.requestCollection('imports', undefined, undefined, integrationId));
+      dispatch(actions.resource.requestCollection('connections', undefined, undefined, integrationId));
 
       if (mode === 'settings') {
         if (
@@ -321,25 +257,25 @@ export default function ConnectorInstallation(props) {
           childIntegrationMode === 'install'
         ) {
           setIsSetupComplete(false);
-          props.history.push(
+          history.push(
             getRoutePath(`/integrationapps/${integrationChildAppName}/${childIntegrationId}/setup`)
           );
         } else if (parentId) {
-          props.history.push(
+          history.push(
             getRoutePath(`/integrationapps/${integrationAppName}/${parentId}/child/${integrationId}/flows`)
           );
         } else if (integrationInstallSteps && integrationInstallSteps.length > 0) {
           if (_connectorId) {
-            props.history.push(
+            history.push(
               getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}`)
             );
           } else {
-            props.history.push(
+            history.push(
               getRoutePath(`/integrations/${integrationId}/flows`)
             );
           }
         } else {
-          props.history.push(
+          history.push(
             getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)
           );
         }
@@ -351,7 +287,7 @@ export default function ConnectorInstallation(props) {
     integrationAppName,
     integrationId,
     isSetupComplete,
-    props.history,
+    history,
     childIntegrationId,
     childIntegrationMode,
     integrationChildAppName,
@@ -397,12 +333,12 @@ export default function ConnectorInstallation(props) {
                 );
               } else {
                 history.push(
-                  getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${urlExtractFields[index + 1]}`)
+                  getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${urlExtractFields[index + 1]}`)
                 );
               }
             } else if (supportsMultiStore) {
               history.push(
-                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`)
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${childId}`)
               );
             } else {
               history.push(
@@ -464,6 +400,11 @@ export default function ConnectorInstallation(props) {
         doc: sourceConnection,
         _connectionId,
       });
+      history.push(buildDrawerUrl({
+        path: drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP,
+        baseUrl: match.url,
+        params: { resourceType: 'connections', resourceId: _connectionId || newId },
+      }));
     } else if (isFrameWork2 && !step.isTriggered && !installURL && !url && type !== 'stack') {
       dispatch(
         actions.integrationApp.installer.updateStep(
@@ -477,11 +418,17 @@ export default function ConnectorInstallation(props) {
         dispatch(
           actions.integrationApp.installer.getCurrentStep(integrationId, step)
         );
-        // history.push(`${match.url}/form/${index}`);
       } else {
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(integrationId)
         );
+      }
+      if (type === INSTALL_STEP_TYPES.FORM) {
+        history.push(buildDrawerUrl({
+          path: drawerPaths.INSTALL.FORM_STEP,
+          baseUrl: match.url,
+          params: { formType: 'install' },
+        }));
       }
     } else if (installURL || url || updatedUrl) {
       if (!step.isTriggered) {
@@ -506,7 +453,16 @@ export default function ConnectorInstallation(props) {
           )
         );
 
-        if (isFrameWork2) {
+        if (!_connectorId && step._connId) {
+          dispatch(
+            actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
+              integrationId,
+              step._connId,
+              installerFunction,
+              isFrameWork2
+            )
+          );
+        } else if (isFrameWork2) {
           dispatch(
             actions.integrationApp.installer.scriptInstallStep(integrationId)
           );
@@ -521,7 +477,16 @@ export default function ConnectorInstallation(props) {
       }
       // handle Action step click
     } else if (type === 'stack') {
-      if (!stackId) setShowStackDialog(generateNewId());
+      if (!stackId) {
+        const newStackId = generateNewId();
+
+        setShowStackDialog(newStackId);
+        history.push(buildDrawerUrl({
+          path: drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP,
+          baseUrl: match.url,
+          params: { resourceType: 'stacks', resourceId: newStackId },
+        }));
+      }
     } else if (!isEmpty(form)) {
       dispatch(actions.integrationApp.installer.updateStep(
         integrationId,
@@ -529,6 +494,11 @@ export default function ConnectorInstallation(props) {
         'inProgress',
         form
       ));
+      history.push(buildDrawerUrl({
+        path: drawerPaths.INSTALL.FORM_STEP,
+        baseUrl: match.url,
+        params: { formType: 'install' },
+      }));
     } else if (!step.isTriggered) {
       dispatch(
         actions.integrationApp.installer.updateStep(
@@ -603,45 +573,6 @@ export default function ConnectorInstallation(props) {
 
         </div>
       </CeligoPageBar>
-      {connection &&
-        (connection._connectionId ? (
-          <ResourceSetupDrawer
-            resourceId={connection._connectionId}
-            onClose={handleClose}
-            onSubmitComplete={handleSubmitComplete}
-          />
-        ) : (
-          <ResourceSetupDrawer
-            resourceId={connection.newId}
-            resource={connection.doc}
-            resourceType="connections"
-            // eslint-disable-next-line no-nested-ternary
-            connectionType={connection.doc.type === 'http'
-              ? (connection.doc?.http?.formType === 'rest' ? 'rest' : 'http')
-              : connection.doc.type}
-            onClose={handleClose}
-            onSubmitComplete={handleSubmitComplete}
-            addOrSelect={!_connectorId}
-          />
-        ))}
-      {stackId && (
-        <ResourceSetupDrawer
-          onClose={handleStackClose}
-          addOrSelect
-          resourceId={stackId}
-          resourceType="stacks"
-          onSubmitComplete={handleStackSetupDone}
-        />
-      )}
-      {currentStep && currentStep.formMeta && (
-        <FormStepDrawer
-          integrationId={integrationId}
-          formMeta={currentStep.formMeta}
-          installerFunction={currentStep.installerFunction}
-          title={currentStep.name}
-          index={currStepIndex + 1}
-        />
-      )}
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
           {helpUrl ? (
@@ -654,13 +585,12 @@ export default function ConnectorInstallation(props) {
             <Typography className={classes.message}>{`Complete the steps below to install your ${_connectorId ? 'integration app' : 'integration'}.`}</Typography>
           )}
           <div className={classes.installIntegrationSteps}>
-            {(isTemplate ? templateInstallSteps : installSteps).map((step, index) => (
+            {installSteps.map((step, index) => (
               <InstallationStep
                 key={step.name}
                 handleStepClick={handleStepClick}
                 index={index + 1}
                 step={step}
-                isTemplate={isTemplate}
                 integrationId={integrationId}
                 isFrameWork2={isFrameWork2}
               />
@@ -668,6 +598,15 @@ export default function ConnectorInstallation(props) {
           </div>
         </div>
       </div>
+      <FormStepDrawer integrationId={integrationId} />
+      <ResourceSetupDrawer
+        integrationId={integrationId}
+        onClose={handleClose}
+        onSubmitComplete={handleSubmitComplete}
+        handleStackSetupDone={handleStackSetupDone}
+        handleStackClose={handleStackClose}
+        mode="install"
+      />
     </LoadResources>
   );
 }

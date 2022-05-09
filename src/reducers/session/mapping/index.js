@@ -25,6 +25,7 @@ export default (state = {}, action) => {
     isGroupedSampleData,
     failMsg,
     failSeverity,
+    errors,
   } = action;
 
   return produce(state, draft => {
@@ -208,22 +209,26 @@ export default (state = {}, action) => {
         }
         break;
       case actionTypes.MAPPING.PREVIEW_REQUESTED:
-        if (draft.mapping.preview) {
-          draft.mapping.preview.status = 'requested';
-        } else {
-          draft.mapping.preview = { status: 'requested' };
+        if (draft.mapping) {
+          if (draft.mapping.preview) {
+            draft.mapping.preview.status = 'requested';
+          } else {
+            draft.mapping.preview = { status: 'requested' };
+          }
         }
         break;
       case actionTypes.MAPPING.PREVIEW_RECEIVED:
         if (draft.mapping) {
           draft.mapping.preview.data = value;
           draft.mapping.preview.status = 'received';
+          delete draft.mapping.preview.errors;
         }
         break;
       case actionTypes.MAPPING.PREVIEW_FAILED:
         if (draft.mapping) {
           delete draft.mapping.preview.data;
           draft.mapping.preview.status = 'error';
+          draft.mapping.preview.errors = errors;
         }
         break;
       case actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED:
@@ -332,7 +337,7 @@ selectors.mappingChanged = state => {
       lookupsCopy.length !== lookups.length || lookupsDiff.length;
   }
 
-  return isMappingsChanged;
+  return !!isMappingsChanged;
 };
 
 // #region PUBLIC SELECTORS

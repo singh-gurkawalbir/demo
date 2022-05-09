@@ -1,28 +1,18 @@
 import React, { useMemo} from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import { Route, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
 import clsx from 'clsx';
 import { selectors } from '../../../../../../reducers';
+import { drawerPaths } from '../../../../../../utils/rightDrawer';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/formFactory/utils';
 import LoadResources from '../../../../../../components/LoadResources';
 import { IAFormStateManager} from '..';
 import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
+import RightDrawer from '../../../../../../components/drawer/Right';
 import EditorDrawer from '../../../../../../components/AFE/Drawer';
 
 const useStyles = makeStyles(theme => ({
-  drawerPaper: {
-    marginTop: theme.appBarHeight,
-    // until we re-design the IA settings forms, we NEED this width to prevent
-    // wrapping of some fields that makes the interface MUCH less usable.
-    width: 1300,
-    border: 'solid 1px',
-    borderColor: theme.palette.secondary.lightest,
-    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
-    zIndex: theme.zIndex.drawer + 1,
-    paddingBottom: theme.appBarHeight,
-  },
   settingsDrawerForm: {
     overflowY: 'auto',
     padding: theme.spacing(2, 3),
@@ -48,7 +38,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function SettingsDrawer({ integrationId, childId, parentUrl }) {
+function IASettings({ integrationId, childId, parentUrl }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const { flowId } = match.params;
@@ -76,9 +66,10 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
         {
           resource: flow,
           isFlow: true,
+          childId,
         }
       ),
-    [fields, flow, integrationId, sections]
+    [fields, flow, integrationId, childId, sections]
   );
   const { formState, handleClose } = useIASettingsStateWithHandleClose(
     integrationId,
@@ -87,17 +78,8 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
     parentUrl
   );
 
-  // Todo: Sravan, we should use Rightdrawer here
   return (
-    <Drawer
-      // variant="persistent"
-      anchor="right"
-      open={!!match}
-      classes={{
-        paper: classes.drawerPaper,
-      }}
-      >
-
+    <LoadResources required integrationId={integrationId} resources="exports,imports,flows,connections">
       <IAFormStateManager
         className={clsx(classes.settingsDrawerForm, {
           [classes.settingsDrawerCamForm]: sections,
@@ -110,21 +92,21 @@ function SettingsDrawer({ integrationId, childId, parentUrl }) {
         fieldMeta={flowSettingsMemo}
         onCancel={handleClose}
         isDrawer
-
       />
-    </Drawer>
+    </LoadResources>
   );
 }
 
-export default function SettingsDrawerRoute(props) {
+export default function SettingsDrawer(props) {
   const match = useRouteMatch();
 
   return (
-    <Route path={`${match.url}/:flowId/settings`}>
-      <LoadResources required integrationId={props.integrationId} resources="exports,imports,flows,connections">
-        <SettingsDrawer {...props} parentUrl={match.url} />
-      </LoadResources>
+    <RightDrawer
+      path={drawerPaths.FLOW_BUILDER.IA_SETTINGS}
+      height="tall"
+      width="xl">
+      <IASettings {...props} parentUrl={match.url} />
       <EditorDrawer />
-    </Route>
+    </RightDrawer>
   );
 }

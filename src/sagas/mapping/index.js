@@ -19,6 +19,7 @@ import { getMappingMetadata as getIAMappingMetadata } from '../integrationApps/s
 import { getAssistantConnectorType } from '../../constants/applications';
 import { autoEvaluateProcessorWithCancel } from '../editor';
 import { getAssistantFromConnection } from '../../utils/connections';
+import { safeParse } from '../../utils/string';
 
 export function* fetchRequiredMappingData({
   flowId,
@@ -375,7 +376,7 @@ export function* saveMappings() {
   yield put(actions.mapping.saveComplete());
 }
 
-export function* previewMappings() {
+export function* previewMappings({editorId}) {
   const {
     mappings,
     lookups,
@@ -396,14 +397,18 @@ export function* previewMappings() {
     netsuiteRecordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
   }
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+
+  const editorSampleData = (yield select(selectors.editor, editorId)).data;
+
   const {data: flowSampleData} = yield select(selectors.getSampleDataContext, {
     flowId,
     resourceId: importId,
     stage: 'importMappingExtract',
     resourceType: 'imports',
   });
-  const isGroupedSampleData = Array.isArray(flowSampleData);
-  const isPreviewSuccess = !!flowSampleData;
+  const sampleData = editorId ? safeParse(editorSampleData) : flowSampleData;
+  const isGroupedSampleData = Array.isArray(sampleData);
+  const isPreviewSuccess = !!sampleData;
   let _mappings = mappings.map(
     ({ index, hardCodedValueTmp, key, ...others }) => others
   );
@@ -420,7 +425,7 @@ export function* previewMappings() {
   const { _connectionId } = importResource;
   let path = `/connections/${_connectionId}/mappingPreview`;
   const requestBody = {
-    data: flowSampleData,
+    data: sampleData,
   };
   const filteredLookups = lookups.filter(({name, isConditionalLookup}) => {
     if (isConditionalLookup) {
@@ -486,16 +491,15 @@ export function* previewMappings() {
 
     if (cancelPreview) return;
 
-    if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
-      if (
-        preview?.data?.returnedObjects?.mappingErrors[0]?.error
-      ) {
-        return yield put(actions.mapping.previewFailed());
-      }
+    const error = preview?.data?.returnedObjects?.mappingErrors[0]?.error || preview?.[0]?.errors?.[0];
+
+    if (error) {
+      return yield put(actions.mapping.previewFailed(error));
     }
+
     yield put(actions.mapping.previewReceived(preview));
   } catch (e) {
-    yield put(actions.mapping.previewFailed());
+    yield put(actions.mapping.previewFailed(e));
   }
 }
 

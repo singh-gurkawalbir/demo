@@ -52,6 +52,7 @@ import latestFlowJobsSagas from './errorManagement/latestJobs/flows';
 import errorMetadataSagas from './errorManagement/metadata';
 import runHistorySagas from './errorManagement/runHistory';
 import { customSettingsSagas } from './customSettings';
+import lifecycleManagementSagas from './lifecycleManagement';
 import exportDataSagas from './exportData';
 import {logsSagas} from './logs';
 import ssoSagas from './sso';
@@ -60,6 +61,7 @@ import { bottomDrawerSagas } from './bottomDrawer';
 import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
 import { getNextLinkRelativeUrl } from '../utils/resource';
 import flowGroupSagas from './flowGroups';
+import aliasSagas from './aliases';
 import { appSagas } from './app';
 import { sendRequest } from './api';
 
@@ -221,15 +223,17 @@ export function* allSagas() {
     ...ssoSagas,
     ...bottomDrawerSagas,
     ...flowGroupSagas,
+    ...aliasSagas,
+    ...lifecycleManagementSagas,
   ]);
 }
 
 export default function* rootSaga() {
   const t = yield fork(allSagas);
   const {logrocket, logout, switchAcc} = yield race({
-    logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-    logout: take(actionsTypes.USER_LOGOUT),
-    switchAcc: take(actionsTypes.ABORT_ALL_SAGAS_AND_SWITCH_ACC),
+    logrocket: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR),
+    logout: take(actionsTypes.AUTH.USER.LOGOUT),
+    switchAcc: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC),
   });
 
   // stop the main sagas

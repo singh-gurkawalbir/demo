@@ -30,7 +30,7 @@ import FlowgroupDrawer from '../../../../../components/drawer/Flowgroup';
 import DragContainer from '../../../../../components/DragContainer';
 import FlowGroupRow from './FlowGroupRow';
 import { shouldHaveUnassignedSection } from '../../../../../utils/flows';
-import NoResultMessageWrapper from '../../../../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../../../../components/NoResultTypography';
 import InfoIcon from '../../../../../components/icons/InfoIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -473,7 +473,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           </Typography>
         ) : ''}
 
-        <LoadResources required integrationId={integrationId} resources="flows, exports">
+        <LoadResources required integrationId={integrationId} resources="flows,exports">
           <FlowListing
             integrationId={currentIntegrationId}
             filterKey={filterKey}
@@ -485,7 +485,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       </div>
       <div className={classes.noSearchResults}>
         {(finalFilter.keyword && !flows.length && !flowGroupingsSections?.some(({title}) => title.toUpperCase().includes(finalFilter.keyword.toUpperCase()))) ? (
-          <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
+          <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>
         ) : ''}
       </div>
     </>

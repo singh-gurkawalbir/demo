@@ -5,11 +5,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, LinearProgress, capitalize } from '@material-ui/core';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import actions from '../../../actions';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import FilledButton from '../../../components/Buttons/FilledButton';
+import useConfirmDialog from '../../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -93,7 +94,7 @@ export default function Subscription() {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
-  const [enquesnackbar] = useEnqueueSnackbar();
+  const {confirmDialog} = useConfirmDialog();
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
   );
@@ -103,7 +104,7 @@ export default function Subscription() {
   const [upgradeRequested, setUpgradeRequested] = useState(false);
   const classes = useStyles();
   const getNumEnabledFlows = useCallback(() => {
-    dispatch(actions.user.org.accounts.requestNumEnabledFlows());
+    dispatch(actions.license.requestNumEnabledFlows());
   }, [dispatch]);
 
   useEffect(() => {
@@ -144,7 +145,7 @@ export default function Subscription() {
   }
 
   const onStartFreeTrialClick = useCallback(() => {
-    history.push(`${match.url}/upgrade`);
+    history.push(buildDrawerUrl({ path: drawerPaths.ACCOUNT.UPGRADE, baseUrl: match.url}));
   }, [history, match.url]);
   const onRequestSubscriptionClick = useCallback(() => {
     dispatch(
@@ -152,33 +153,29 @@ export default function Subscription() {
     );
     setUpgradeRequested(true);
 
-    return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
+    return dispatch(actions.license.requestUpdate('upgrade'));
   }, [dispatch]);
   const onRequestUpgradeClick = useCallback(() => {
-    dispatch(
-      actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
-    );
-    setUpgradeRequested(true);
+    confirmDialog({
+      title: 'Request upgrade',
+      message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+      buttons: [
+        { label: 'Submit request',
+          onClick: () => {
+            dispatch(
+              actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+            );
+            setUpgradeRequested(true);
 
-    return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
-  }, [dispatch]);
-  const onRequestTrialExtensionClick = useCallback(() => {
-    dispatch(
-      actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
-    );
-    setUpgradeRequested(true);
-
-    return dispatch(actions.user.org.accounts.requestUpdate('reTrial'));
-  }, [dispatch]);
-  const platformLicenseActionMessage = useSelector(state =>
-    selectors.platformLicenseActionMessage(state)
-  );
-
-  useEffect(() => {
-    if (platformLicenseActionMessage) {
-      enquesnackbar({ message: platformLicenseActionMessage });
-    }
-  }, [enquesnackbar, platformLicenseActionMessage]);
+            dispatch(actions.license.requestUpdate('upgrade'));
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, dispatch]);
 
   return (
     <>
@@ -346,26 +343,6 @@ export default function Subscription() {
                           Request upgrade
                         </FilledButton>
                       )}
-                      {licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'request-trial-extension'
-                      ) > -1 && <span>-or-</span>}
-                      {licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'request-trial-extension'
-                      ) > -1 && (
-                        <FilledButton
-                          onClick={onRequestTrialExtensionClick}
-                          disabled={upgradeRequested}
-                         >
-                          Request trial extension
-                        </FilledButton>
-                      )}
-                      <a
-                        className={classes.linkCompare}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href="https://www.celigo.com/ipaas-integration-platform/#Pricing">
-                        Compare plans
-                      </a>
                     </div>
                   </div>
           )}

@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     fontFamily: props => props.bold ? 'Roboto500' : 'Roboto400',
     '&:focus': {
-      color: props => props.color === 'secondary' ? theme.palette.text.secondary : theme.palette.primary.main,
+      color: props => props.color === 'secondary' ? theme.palette.text.primary : theme.palette.primary.main,
     },
   },
   error: {
@@ -20,6 +20,14 @@ const useStyles = makeStyles(theme => ({
       color: `${theme.palette.error.main} !important`,
     },
   },
+  underline: {
+    color: theme.palette.primary.dark,
+    textDecoration: 'underline',
+    '&:hover': {
+      textDecoration: 'underline',
+      color: theme.palette.primary.main,
+    },
+  },
   vertical: {
     '& > .MuiButton-label': {
       flexDirection: 'column',
@@ -28,13 +36,13 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function TextButton(props) {
   const classes = useStyles(props);
-  const {children, className, vertical = false, error, bold, ...rest} = props;
+  const {children, error, bold, vertical = false, underline, className, ...rest} = props;
 
   return (
     <Button
       variant="text"
       color="secondary"
-      className={clsx(classes.root, {[classes.error]: error}, {[classes.vertical]: vertical}, className)}
+      className={clsx(classes.root, {[classes.error]: error}, {[classes.underline]: underline}, {[classes.vertical]: vertical}, className)}
       disableElevation
       {...rest}>
       {children}

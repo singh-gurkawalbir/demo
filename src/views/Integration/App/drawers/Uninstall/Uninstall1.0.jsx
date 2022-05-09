@@ -55,7 +55,7 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const {_id, mode, name, children} = integration;
+  const {_id, mode, name, children, settings} = integration;
   const integrationAppName = getIntegrationAppUrlName(name);
   const isUninstallComplete = useSelector(state =>
     selectors.isUninstallComplete(state, { integrationId, childId })
@@ -63,6 +63,7 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
   const { steps: uninstallSteps, error } = useSelector(state =>
     selectors.integrationUninstallSteps(state, { integrationId }), shallowEqual
   );
+  const {defaultSectionId} = settings || {};
 
   useEffect(() => {
     if (!error && !uninstallSteps) {
@@ -99,15 +100,9 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
         );
         history.push(getRoutePath(HOME_PAGE_PATH));
       }
+      if (defaultSectionId === childId) { dispatch(actions.integrationApp.child.clearSteps(integrationId)); }
     }
-  }, [
-    dispatch,
-    history,
-    mode,
-    integrationAppName,
-    integrationId,
-    isUninstallComplete,
-  ]);
+  }, [dispatch, history, mode, integrationAppName, integrationId, isUninstallComplete, defaultSectionId, childId]);
 
   if (!integration || !integration._id) {
     return <LoadResources required resources="integrations" />;

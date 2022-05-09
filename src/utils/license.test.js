@@ -117,13 +117,13 @@ describe('license util function test', () => {
       expect(upgradeButtonText({}, {})).toEqual('');
       expect(upgradeButtonText(new Date(), new Date())).toEqual('');
       expect(upgradeButtonText(undefined, null, null)).toEqual('');
-      expect(upgradeButtonText([], null, 123)).toEqual('UPGRADE REQUESTED');
-      expect(upgradeButtonText([], [], [])).toEqual('UPGRADE REQUESTED');
-      expect(upgradeButtonText(123, [], {})).toEqual('UPGRADE REQUESTED');
+      expect(upgradeButtonText([], null, 123)).toEqual('Upgrade requested');
+      expect(upgradeButtonText([], [], [])).toEqual('Upgrade requested');
+      expect(upgradeButtonText(123, [], {})).toEqual('Upgrade requested');
       expect(upgradeButtonText(null, {}, null)).toEqual('');
-      expect(upgradeButtonText(null, [], 'string')).toEqual('UPGRADE REQUESTED');
+      expect(upgradeButtonText(null, [], 'string')).toEqual('Upgrade requested');
       expect(upgradeButtonText({}, {}, null)).toEqual('');
-      expect(upgradeButtonText(new Date(), new Date(), new Date())).toEqual('UPGRADE REQUESTED');
+      expect(upgradeButtonText(new Date(), new Date(), new Date())).toEqual('Upgrade requested');
     });
 
     test('should return always return empty string for custom fba licensed integration', () => {
@@ -151,7 +151,7 @@ describe('license util function test', () => {
         settings: {
           connectorEdition: 'starter',
         },
-      })).toEqual('UPGRADE');
+      })).toEqual('Upgrade');
     });
 
     test('should return correct upgrade status for license and highest edition are same', () => {
@@ -175,7 +175,7 @@ describe('license util function test', () => {
         settings: {
           connectorEdition: 'starter',
         },
-      })).toEqual('CONTACT US TO UPGRADE');
+      })).toEqual('Request upgrade');
     });
 
     test('should return correct upgrade status for license and installed edition and highest edition are same', () => {
@@ -313,7 +313,7 @@ describe('platformLicenseActionDetails function test', () => {
     const expected = {
       action: 'upgrade',
       expiresSoon: false,
-      label: 'Upgrade now -',
+      label: 'Request upgrade now -',
       daysLeft: '10 days left',
     };
     const license = selectors.platformLicense(state);
@@ -350,7 +350,7 @@ describe('platformLicenseActionDetails function test', () => {
       };
     const expected = {
       action: 'upgrade',
-      label: 'UPGRADE NOW',
+      label: 'Request Upgrade now',
     };
     const license = selectors.platformLicense(state);
 

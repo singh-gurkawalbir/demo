@@ -165,7 +165,7 @@ export default (state = {}, action) => {
   if (
     resourceType &&
       resourceType.startsWith('integrations/') &&
-      (resourceType.endsWith('/ashares') || resourceType.endsWith('/audit'))
+      (resourceType.endsWith('/ashares') || resourceType.endsWith('/audit') || resourceType.endsWith('/revisions'))
   ) {
     return state;
   }

@@ -50,6 +50,9 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.common.white,
     position: 'relative',
   },
+  editorReadOnlyPanel: {
+    background: theme.palette.background.paper2,
+  },
 }));
 
 const editorProp = { $blockScrolling: true };
@@ -120,6 +123,11 @@ export default function CodeEditor({
 
   useEffect(() => {
     if (aceEditor?.current) {
+      if (readOnly) {
+        aceEditor.current.editor.setStyle(classes.editorReadOnlyPanel);
+      } else {
+        aceEditor.current.editor.unsetStyle(classes.editorReadOnlyPanel);
+      }
       if (hasError) {
         aceEditor.current.editor.setStyle(classes.editorErrorWrapper);
       } else if (hasWarning) {
@@ -129,7 +137,7 @@ export default function CodeEditor({
         aceEditor.current.editor.unsetStyle(classes.editorWarningWrapper);
       }
     }
-  }, [classes.editorErrorWrapper, classes.editorWarningWrapper, hasError, hasWarning]);
+  }, [classes.editorErrorWrapper, classes.editorWarningWrapper, classes.editorReadOnlyPanel, hasError, hasWarning, readOnly]);
 
   return (
     <>

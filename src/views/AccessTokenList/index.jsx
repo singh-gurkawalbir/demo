@@ -15,8 +15,10 @@ import infoText from '../ResourceList/infoText';
 import CheckPermissions from '../../components/CheckPermissions';
 import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
+import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 import { TextButton } from '../../components/Buttons';
-import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../components/NoResultTypography';
+import ResourceEmptyState from '../ResourceList/ResourceEmptyState';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -65,8 +67,11 @@ export default function AccessTokenList(props) {
               data-test="newAccessToken"
               component={Link}
               startIcon={<AddIcon />}
-              to={`${location.pathname}/add/accesstokens/${generateNewId()}`}
-              >
+              to={buildDrawerUrl({
+                path: drawerPaths.RESOURCE.ADD,
+                baseUrl: location.pathname,
+                params: { resourceType: 'accesstokens', id: generateNewId() },
+              })} >
               Create API token
             </TextButton>
           </div>
@@ -82,8 +87,9 @@ export default function AccessTokenList(props) {
             ) : (
               <div>
                 {list.total === 0
-                  ? <NoResultMessageWrapper>You don&apos;t have any API tokens.</NoResultMessageWrapper>
-                  : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+                  ? (
+                    <ResourceEmptyState resourceType="accesstokens" />
+                  ) : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
               </div>
             )}
           </LoadResources>

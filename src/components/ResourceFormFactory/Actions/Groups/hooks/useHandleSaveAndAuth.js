@@ -22,7 +22,7 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId,
     disableLoad:
         !resource._connectorId ||
         !(
-          ['shopify', 'squareup', 'hubspot'].includes(resource.assistant) ||
+          ['shopify', 'squareup', 'hubspot', 'microsoftbusinesscentral'].includes(resource.assistant) ||
           (resource.type === 'salesforce' && resource.newIA)
         ),
   });
@@ -32,7 +32,7 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId,
 
       if (
         resource._connectorId &&
-          ((['shopify', 'hubspot'].includes(resource.assistant) &&
+          ((['shopify', 'hubspot', 'microsoftbusinesscentral'].includes(resource.assistant) &&
           values['/http/auth/type'] === 'oauth') || resource.assistant === 'squareup')
       ) {
         newValues['/http/_iClientId'] =
@@ -81,7 +81,7 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId,
 
         if (
           resource._connectorId &&
-             ['shopify', 'squareup', 'hubspot'].includes(resource.assistant) &&
+             ['shopify', 'squareup', 'hubspot', 'microsoftbusinesscentral'].includes(resource.assistant) &&
               values['/http/auth/type'] === 'oauth'
         ) {
           showError = false;
@@ -99,6 +99,24 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId,
             !(
               values['/http/scopeProduction'] &&
                   values['/http/scopeProduction'].length
+            )
+          ) {
+            showError = true;
+          }
+        } else if (resource.assistant === 'googlecontacts') {
+          if (values['/http/unencrypted/apiType'] === 'googlecontactspeople') {
+            if (
+              !(
+                values['/http/scopePeople'] &&
+                    values['/http/scopePeople'].length
+              )
+            ) {
+              showError = true;
+            }
+          } else if (
+            !(
+              values['/http/auth/oauth/scope'] &&
+                  values['/http/auth/oauth/scope'].length
             )
           ) {
             showError = true;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
@@ -13,6 +13,7 @@ import {
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import ResourceFormActionsPanel from '../drawer/Resource/Panel/ResourceFormActionsPanel';
 import SaveAndCloseMiniResourceForm from '../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
+import DrawerContent from '../drawer/Right/DrawerContent';
 
 const useStyles = makeStyles(theme => ({
   resourceFormWrapper: {
@@ -57,14 +58,6 @@ export default function AddOrSelect(props) {
   const newId = useSelector(state =>
     selectors.createdResourceId(state, resourceId)
   );
-
-  const isAuthorized = useSelector(state =>
-    selectors.isAuthorized(state, newId)
-  );
-
-  useEffect(() => {
-    if (isAuthorized) onSubmitComplete(newId, isAuthorized);
-  }, [isAuthorized, newId, onSubmitComplete]);
 
   const handleTypeChange = (id, value) => {
     setUseNew(value === 'new');
@@ -112,7 +105,7 @@ export default function AddOrSelect(props) {
 
   return (
     <LoadResources resources={resourceType}>
-      <div className={classes.resourceFormWrapper}>
+      <DrawerContent>
         <RadioGroup
           value={props.value}
           id="selectType"
@@ -133,7 +126,6 @@ export default function AddOrSelect(props) {
         {/* div wrapping is imp. since child component is reusable component and it inherits parent top parent. Validate before removing */}
         <div>
           {useNew ? (
-
             <ResourceFormWithStatusPanel
               formKey={formKey}
               heightOffset="250"
@@ -142,15 +134,11 @@ export default function AddOrSelect(props) {
               resourceId={resourceId}
               onSubmitComplete={handleSubmitComplete}
             />
-
           ) : (
-
             <DynaForm formKey={formKey} />
-
           )}
         </div>
-      </div>
-
+      </DrawerContent>
       {useNew ? (
         <ResourceFormActionsPanel
           formKey={formKey}

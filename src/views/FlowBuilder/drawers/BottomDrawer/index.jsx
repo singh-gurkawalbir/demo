@@ -13,7 +13,6 @@ import DebugIcon from '../../../../components/icons/DebugIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
 import RunningFlowsIcon from '../../../../components/icons/RunningFlowsIcon';
 import RunHistoryIcon from '../../../../components/icons/CompletedFlowsIcon';
-import WarningIcon from '../../../../components/icons/WarningIcon';
 import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/Dashboard/RunDashboardPanel';
@@ -28,6 +27,7 @@ import Spinner from '../../../../components/Spinner';
 import ScriptLogs from '../../../ScriptLogs';
 import ScriptsIcon from '../../../../components/icons/ScriptsIcon';
 import ConnectionLogs from '../../../ConnectionLogs';
+import OfflineConnectionsIcon from '../../../../components/icons/OfflineConnectionsIcon';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -81,9 +81,6 @@ const useStyles = makeStyles(theme => ({
       height: theme.spacing(2),
       marginTop: -3,
     },
-  },
-  connectionWarning: {
-    color: theme.palette.error.main,
   },
   rightActionContainer: {
     flexGrow: 1,
@@ -154,6 +151,9 @@ export default function BottomDrawer({
 
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const defaultBottomDrawerTab = useSelector(
+    state => selectors.filter(state, 'bottomDrawer')?.defaultTab
   );
 
   const minDrawerHeight = 41;
@@ -237,6 +237,15 @@ export default function BottomDrawer({
       dispatch(actions.logs.connections.clear({clearAllLogs: true}));
     },
   [dispatch]);
+  useEffect(() => {
+    if (defaultBottomDrawerTab && tabs?.length) {
+      const defaultTabIndex = tabs?.findIndex(a => a.tabType === defaultBottomDrawerTab);
+
+      dispatch(actions.bottomDrawer.setActiveTab({index: defaultTabIndex}));
+      dispatch(actions.clearFilter('bottomDrawer'));
+    }
+  },
+  [defaultBottomDrawerTab, dispatch, tabs]);
 
   useEffect(() => {
     if (isDragging === false) {
@@ -352,7 +361,7 @@ export default function BottomDrawer({
                       key={tabType}
                       icon={
                         isAnyFlowConnectionOffline ? (
-                          <WarningIcon className={classes.connectionWarning} />
+                          <OfflineConnectionsIcon />
                         ) : (
                           <ConnectionsIcon />
                         )

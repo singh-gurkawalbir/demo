@@ -79,6 +79,11 @@ describe('editor utils test cases', () => {
 
       expect(getUniqueFieldId('http.relativeURICreate', resource1)).toEqual('rest.relativeURI');
       expect(getUniqueFieldId('http.relativeURIUpdate', resource2)).toEqual('rest.relativeURI.0');
+      expect(getUniqueFieldId('http.bodyCreate', resource1)).toEqual('rest.body');
+      expect(getUniqueFieldId('http.bodyUpdate', resource2)).toEqual('rest.body.0');
+      expect(getUniqueFieldId('http.relativeURI', resource2)).toEqual('rest.relativeURI');
+      expect(getUniqueFieldId('http.once.relativeURI', resource2)).toEqual('rest.once.relativeURI');
+      expect(getUniqueFieldId('http.body', resource2)).toEqual('rest.body');
     });
 
     test('should return http field ids for new rest exports incase of rest fields  ', () => {
@@ -90,6 +95,8 @@ describe('editor utils test cases', () => {
       expect(getUniqueFieldId('rest.relativeURI', resource)).toEqual('http.relativeURI');
       expect(getUniqueFieldId('rest.postBody', resource)).toEqual('http.body');
       expect(getUniqueFieldId('rest.once.postBody', resource)).toEqual('http.once.body');
+      expect(getUniqueFieldId('rest.pagingPostBody', resource)).toEqual('http.paging.body');
+      expect(getUniqueFieldId('rest.nextPageRelativeURI', resource)).toEqual('http.paging.relativeURI');
     });
 
     test('should return unique fieldId', () => {
@@ -99,6 +106,13 @@ describe('editor utils test cases', () => {
       expect(getUniqueFieldId('http.bodyUpdate')).toEqual('http.body.0');
       expect(getUniqueFieldId('http.relativeURIUpdate')).toEqual('http.relativeURI.0');
       expect(getUniqueFieldId('http.relativeURICreate')).toEqual('http.relativeURI.1');
+      expect(getUniqueFieldId('rdbms.query1')).toEqual('rdbms.query');
+      expect(getUniqueFieldId('rdbms.query2')).toEqual('rdbms.query');
+      expect(getUniqueFieldId('http.auth.oauth.refreshBody')).toEqual('http.auth.token.refreshBody');
+    });
+    test('should correctly return field id in case of graphql field', () => {
+      expect(getUniqueFieldId('graphql.query')).toEqual('http.body');
+      expect(getUniqueFieldId('graphql.variables', {}, {}, 'connections')).toEqual('http.ping.body');
     });
   });
 

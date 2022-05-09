@@ -3,8 +3,8 @@ import produce from 'immer';
 import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
 import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
-import { getAssistantFromResource, getResourceSubType, isNewId } from '../../../utils/resource';
-import { isAmazonHybridConnection } from '../../../utils/assistant';
+import { getAssistantFromResource, getResourceSubType, isNewId, rdbmsSubTypeToAppType } from '../../../utils/resource';
+import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection } from '../../../utils/assistant';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -218,11 +218,13 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         const rdbmsSubType = resource.rdbms.type;
 
         // when editing rdms connection we lookup for the resource subtype
-        meta = formMeta.connections.rdbms[rdbmsSubType];
+        meta = formMeta.connections.rdbms[rdbmsSubTypeToAppType(rdbmsSubType)];
       } else if (RDBMS_TYPES.includes(type)) {
         meta = formMeta.connections.rdbms[type];
       } else if (resource?.http?.formType === 'rest' && type === 'http') {
         meta = formMeta.connections.rest;
+      } else if (type === 'graph_ql' || resource?.http?.formType === 'graph_ql') {
+        meta = formMeta.connections.graphql;
       } else {
         meta = formMeta.connections[type];
       }
@@ -251,12 +253,20 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           // when editing rdbms connection we lookup for the resource subtype
           if (rdbmsSubType === 'snowflake') {
             meta = meta.rdbms.snowflake;
+          } else if (rdbmsSubType === 'bigquery') {
+            meta = meta.rdbms.bigquerydatawarehouse;
           } else {
             meta = meta.rdbms.sql;
           }
         } else if (FILE_PROVIDER_ASSISTANTS.includes(resource.assistant)) {
           // Common metadata for both the file providers googledrive and azurestorageaccount
           meta = meta.commonfileprovider;
+        } else if (isLoopReturnsv2Connection(connection)) {
+          meta = meta[type];
+        } else if (isAcumaticaEcommerceConnection(connection)) {
+          meta = meta[type];
+        } else if (isMicrosoftBusinessCentralOdataConnection(connection)) {
+          meta = meta[type];
         } else if (
           resource && !isAmazonHybridConnection(connection) &&
             (resource.useParentForm !== undefined
@@ -270,6 +280,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           );
         } else if (resource?.http?.formType === 'rest' && type === 'http') {
           meta = meta.rest;
+        } else if (type === 'graph_ql' || resource?.http?.formType === 'graph_ql') {
+          meta = resource.useParentForm ? meta.http : meta.graphql;
         } else {
           meta = meta[type];
         }
@@ -282,6 +294,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       if (meta) {
         if (isNew) {
           meta = meta.new;
+        } else if (isMicrosoftBusinessCentralOdataConnection(connection)) {
+          meta = meta[type].json;
         } else if (type === 'rdbms') {
           const rdbmsSubType =
               connection && connection.rdbms && connection.rdbms.type;
@@ -290,6 +304,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           if (rdbmsSubType === 'snowflake') {
             // TODO:both seems to be duplicated
             meta = meta.rdbms.snowflake;
+          } else if (rdbmsSubType === 'bigquery') {
+            meta = meta.rdbms.bigquerydatawarehouse;
           } else {
             meta = meta.rdbms.sql;
           }
@@ -321,6 +337,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           } else {
             meta = meta.json;
           }
+        } else if (type === 'graph_ql' || resource?.http?.formType === 'graph_ql') {
+          meta = resource.useParentForm ? meta.http : meta.graphql;
         } else {
           meta = meta[type];
         }

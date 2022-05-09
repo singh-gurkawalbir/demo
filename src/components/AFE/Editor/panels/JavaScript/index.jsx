@@ -194,7 +194,7 @@ export default function JavaScriptPanel({ editorId }) {
             <CodePanel
               name="code"
               id="code"
-              readOnly={disabled}
+              readOnly={disabled || !scriptId}
               value={code}
               mode="javascript"
               onChange={handleCodeChange}

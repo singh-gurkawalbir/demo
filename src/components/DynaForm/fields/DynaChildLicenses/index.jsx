@@ -12,6 +12,7 @@ import { generateNewId } from '../../../../utils/resource';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import LoadResources from '../../../LoadResources';
 import { TextButton } from '../../../Buttons';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   actionChildLicense: {
@@ -19,6 +20,7 @@ const useStyles = makeStyles(theme => ({
     top: theme.spacing(1),
     right: 0,
   },
+  // TODO: (Azhar) make a component
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
   },
@@ -86,7 +88,11 @@ export default function DynaChildLicense({ connectorId, resourceId, id, formKey}
     ];
 
     dispatch(actions.resource.patchStaged(newId, patchSet, SCOPES.VALUE));
-    history.push(`${match.url}/add/connectorLicenses/${newId}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.RESOURCE.ADD,
+      baseUrl: match.url,
+      params: { resourceType: 'connectorLicenses', id: newId },
+    }));
   }, [connectorId, history, match, parentLicense, dispatch]);
 
   return (

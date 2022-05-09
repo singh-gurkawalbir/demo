@@ -5,6 +5,7 @@ import {selectors} from '../../reducers';
 import actions from '../../actions';
 import MappingWrapper from './MappingWrapper';
 import Spinner from '../Spinner';
+import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 
 export default function Mapping(props) {
   const {flowId, importId, subRecordMappingId } = props;
@@ -13,7 +14,8 @@ export default function Mapping(props) {
   const editorId = `mappings-${importId}`;
   const mappingStatus = useSelector(state => selectors.mapping(state).status);
   const isEditorActive = useSelector(state => selectors.editor(state, editorId).editorType);
-  const isMappingPreviewAvailable = useSelector(state => !!selectors.mappingPreviewType(state, importId));
+  const mappingPreviewType = useSelector(state => selectors.mappingPreviewType(state, importId));
+  const shouldInitEditor = mappingPreviewType !== 'http' && !subRecordMappingId;
 
   useEffect(() => {
     /** initiate a mapping init each time user opens mapping. Sample data is loaded */
@@ -32,7 +34,7 @@ export default function Mapping(props) {
 
   useEffect(() => {
     // initialize editor only when mapping init is complete
-    if (!isEditorActive && !isMappingPreviewAvailable && (mappingStatus && mappingStatus !== 'requested')) {
+    if (!isEditorActive && shouldInitEditor && (mappingStatus && mappingStatus !== 'requested')) {
       dispatch(actions.editor.init(editorId, 'mappings', {
         flowId,
         resourceId: importId,
@@ -40,10 +42,11 @@ export default function Mapping(props) {
         subRecordMappingId,
         stage: 'importMappingExtract',
         data: {}, // adding dummy data here. Actual data gets loaded once the mapping init is complete
+        mappingPreviewType: mappingPreviewType === 'http' ? undefined : mappingPreviewType,
       }));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMappingPreviewAvailable, mappingStatus]);
+  }, [shouldInitEditor, mappingStatus]);
 
   // let the mapping init and sample data load happen so that the state is updated
   if (!mappingStatus || mappingStatus === 'requested') {
@@ -51,7 +54,14 @@ export default function Mapping(props) {
   }
 
   return (
-    isMappingPreviewAvailable ? <MappingWrapper {...props} />
-      : <Redirect to={`${match.url}/editor/${editorId}`} />
+    !shouldInitEditor ? <MappingWrapper {...props} />
+      : (
+        <Redirect
+          to={buildDrawerUrl({
+            path: drawerPaths.EDITOR,
+            baseUrl: match.url,
+            params: { editorId },
+          })} />
+      )
   );
 }

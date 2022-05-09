@@ -11,6 +11,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import ActionGroup from '../../ActionGroup';
 import { FilledButton, TextButton} from '../../Buttons';
 import useHandleDelete from '../../../views/Integration/hooks/useHandleDelete';
+import useConfirmDialog from '../../ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   trialExpireWrapper: {
@@ -78,11 +79,34 @@ export default function TileNotification({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const {confirmDialog} = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
-  // Single means only button displayed here (Buy or renew), unistall button will be added if it is not single.
+  // Single means only one button displayed here (Buy or renew), uninstall button will be added if it is not single.
   const single = tileStatus === TILE_STATUS.IS_PENDING_SETUP || (!trialExpired && (isIntegrationV2 || !expired));
 
+  const onClickBuyButton = useCallback(event => {
+    if (event) {
+      event.stopPropagation();
+    }
+    confirmDialog({
+      title: 'Request to buy subscription',
+      message: 'We will contact you to buy your subscription.',
+      buttons: [
+        {
+          label: 'Submit request',
+          onClick: () => {
+            setUpgradeRequested(true);
+            dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
+          },
+        },
+        {
+          label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, connectorId, dispatch, licenseId]);
   const onClickRenewOrReactivateButton = useCallback(event => {
     event.stopPropagation();
     setUpgradeRequested(true);
@@ -90,17 +114,44 @@ export default function TileNotification({
       if (![INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel)) {
         enquesnackbar({ message: 'Contact your account owner to reactivate this integration app.', variant: 'error' });
       } else {
-        dispatch(actions.integrationApp.license.resume(integrationId));
+        confirmDialog({
+          title: 'Request to reactivate subscription',
+          message: 'We will contact you to reactivate your subscription.',
+          buttons: [
+            {
+              label: 'Submit request',
+              onClick: () => {
+                dispatch(actions.integrationApp.license.resume(integrationId));
+              },
+            },
+            {
+              label: 'Cancel',
+              variant: 'text',
+            },
+          ],
+        });
       }
+    } else if (showTrialLicenseMessage) {
+      onClickBuyButton();
     } else {
-      dispatch(actions.user.org.accounts.requestUpdate('connectorRenewal', connectorId, licenseId));
+      confirmDialog({
+        title: 'Request to renew subscription',
+        message: 'We will contact you to renew your subscription.',
+        buttons: [
+          {
+            label: 'Submit request',
+            onClick: () => {
+              dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
+            },
+          },
+          {
+            label: 'Cancel',
+            variant: 'text',
+          },
+        ],
+      });
     }
-  }, [accessLevel, connectorId, dispatch, enquesnackbar, integrationId, licenseId, resumable]);
-  const onClickBuyButton = useCallback(event => {
-    event.stopPropagation();
-    setUpgradeRequested(true);
-    dispatch(actions.user.org.accounts.requestUpdate('connectorRenewal', connectorId, licenseId));
-  }, [connectorId, dispatch, licenseId]);
+  }, [accessLevel, confirmDialog, connectorId, dispatch, enquesnackbar, integrationId, licenseId, onClickBuyButton, resumable, showTrialLicenseMessage]);
 
   const handleUninstall = useHandleDelete(integrationId, {mode, supportsMultiStore, name, _connectorId});
 
@@ -122,7 +173,7 @@ export default function TileNotification({
             onClick={onClickRenewOrReactivateButton}
             data-test="RenewOrReactivate"
            >
-            {resumable ? 'Reactivate' : 'Renew'}
+            {resumable ? 'Request to reactivate' : 'Request to renew'}
           </FilledButton>
         )}
         {single && showTrialLicenseMessage && (
@@ -131,7 +182,7 @@ export default function TileNotification({
             onClick={onClickBuyButton}
             data-test="buy"
             >
-            Buy
+            Request to buy
           </FilledButton>
         )}
         {!single && (
@@ -141,7 +192,7 @@ export default function TileNotification({
             onClick={onClickRenewOrReactivateButton}
             data-test="RenewOrReactivateDouble"
            >
-            {showTrialLicenseMessage ? 'Buy' : 'Renew'}
+            {showTrialLicenseMessage ? 'Request to buy' : 'Request to renew'}
           </FilledButton>
           <TextButton
             data-test="uninstall"

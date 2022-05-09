@@ -11,8 +11,8 @@ const FINISHED_JOB_STATUSES = [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STAT
 const IN_PROGRESS_JOB_STATUSES = [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING];
 
 export function* refreshForMultipleFlowJobs({ flowId, job, latestJobs }) {
-  const exportChildJob = job.children?.find(cJob => cJob?.type === 'export') || {};
-  const prevStateOfJob = latestJobs.find(prevJob => prevJob._id === job._id) || {};
+  const exportChildJob = job?.children?.find(cJob => cJob?.type === 'export') || {};
+  const prevStateOfJob = latestJobs?.find(prevJob => prevJob._id === job._id) || {};
   const prevStateOfExportChildJob = prevStateOfJob.children?.find(cJob => cJob?.type === 'export') || {};
 
   // if the export job is not completed or this job is the last pg job, no need to refresh
@@ -34,13 +34,12 @@ export function* getJobFamily({ flowId, jobId }) {
   try {
     const job = yield call(apiCallWithRetry, { path, opts, hidden: true });
 
-    const latestJobsState = yield select(selectors.latestFlowJobsList, flowId) || {};
+    const latestJobsState = (yield select(selectors.latestFlowJobsList, flowId)) || {};
 
     yield put(actions.errorManager.latestFlowJobs.receivedJobFamily({flowId, job }));
     yield call(refreshForMultipleFlowJobs, {flowId, job, latestJobs: latestJobsState.data || []});
   } catch (error) {
     //  handle errors
-    // TODO @Raghu: Check how to handle errors if exist
   }
 }
 
@@ -99,7 +98,6 @@ export function* requestLatestJobs({ flowId }) {
     yield put(actions.errorManager.latestFlowJobs.requestInProgressJobsPoll({ flowId }));
   } catch (error) {
     // handle errors
-    // TODO @Raghu: Check how to handle errors if exist
   }
 }
 
@@ -112,7 +110,7 @@ export function* cancelJob({ jobId }) {
   try {
     yield call(apiCallWithRetry, { path, opts });
   } catch (error) {
-    // TODO @Raghu: Check how to handle errors if exist
+    // Errors
   }
 }
 

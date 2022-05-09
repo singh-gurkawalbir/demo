@@ -1,4 +1,5 @@
 import { List, ListItem, ListItemText, makeStyles } from '@material-ui/core';
+import moment from 'moment';
 import addYears from 'date-fns/addYears';
 import React, { useCallback, useMemo, useState } from 'react';
 import clsx from 'clsx';
@@ -7,7 +8,9 @@ import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import startOfDay from 'date-fns/startOfDay';
 import endOfDay from 'date-fns/endOfDay';
+import { useSelector } from 'react-redux';
 import ArrowPopper from '../ArrowPopper';
+import { selectors } from '../../reducers';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import ActionButton from '../ActionButton';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
@@ -156,6 +159,18 @@ const DateRange = props => {
   />
   );
 };
+const getButtonLabel = ({fixedPlaceholder, presets, selectedRange, selectedRangeValue, placeholder}) => {
+  if (fixedPlaceholder) {
+    return fixedPlaceholder;
+  }
+  const presetLabel = presets.find(preset => preset.id === selectedRange.preset)?.label;
+
+  if (presetLabel && presetLabel !== 'Custom') {
+    return presetLabel;
+  }
+
+  return selectedRangeValue || placeholder;
+};
 
 export default function DateRangeSelector({
   value = {},
@@ -169,6 +184,7 @@ export default function DateRangeSelector({
   placement,
   Icon,
   disabled,
+  showCustomRangeValue,
   fullWidthBtn,
   placeholder = 'Select range',
   fixedPlaceholder,
@@ -182,6 +198,7 @@ export default function DateRangeSelector({
   isCalendar,
 }) {
   const defaultValue = getSelectedRange(defaultPreset);
+  const dateFormat = useSelector(state => selectors.userProfilePreferencesProps(state)?.dateFormat || 'DD/MM/YY');
   const { startDate = defaultValue.startDate, endDate = defaultValue.endDate, preset = defaultValue.preset } = value;
   const [initalValue, setInitialValue] = useState(
     {
@@ -193,7 +210,11 @@ export default function DateRangeSelector({
   const [reset, setReset] = useState(false);
 
   const [selectedRange, setSelectedRange] = useState(initalValue);
+  let selectedRangeValue = selectedRange.preset;
 
+  if (showCustomRangeValue && selectedRange.preset === 'custom') {
+    selectedRangeValue = `${moment(selectedRange.startDate).format(dateFormat)}-${moment(selectedRange.endDate).format(dateFormat)}`;
+  }
   const setSelectedRangeWithConstraint = useCallback(selected => {
     const {startDate, endDate} = selected;
 
@@ -256,7 +277,8 @@ export default function DateRangeSelector({
             disabled={!!disabled}
             onClick={toggleClick}
             className={clsx(classes.dateRangePopperBtn, {[classes.dateRangePopperBtnFull]: fullWidthBtn})}>
-            {fixedPlaceholder || presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset || placeholder}<ArrowDownIcon />
+            {getButtonLabel({fixedPlaceholder, presets, selectedRange, selectedRangeValue, placeholder})}
+            <ArrowDownIcon />
           </OutlinedButton>
         )
       }

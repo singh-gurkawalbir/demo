@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGetTableContext } from '../CeligoTable/TableContext';
-import ResourceLink from './ResourceLink';
+import ResourceLink from '../ResourceLink';
 
 export default {
   rowKey: 'id',
@@ -10,7 +10,7 @@ export default {
       heading: 'Name',
       isLoggable: true,
       Value: ({rowData: r}) => {
-        const { onClose, integrationId } = useGetTableContext();
+        const {onClose, integrationId} = useGetTableContext();
 
         return (
           <ResourceLink
@@ -18,7 +18,8 @@ export default {
             name={r.name}
             resourceType={r.resourceType}
             id={r.id}
-            onClick={onClose} />
+            onClick={onClose}
+          />
         );
       },
     },

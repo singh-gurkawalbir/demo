@@ -171,7 +171,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     // eslint-disable-next-line prefer-destructuring
     merged = resp.merged;
   } else if (
-    ['exports', 'imports', 'connections', 'flows', 'integrations', 'apis', 'eventreports'].includes(
+    ['exports', 'imports', 'connections', 'flows', 'integrations', 'apis', 'eventreports', 'asyncHelpers'].includes(
       resourceType
     ) || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))
   ) {
@@ -215,6 +215,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   // Forimports convert the lookup structure and rest placeholders to support http structure
   if (!merged.assistant && merged?.http?.formType === 'rest' && merged.adaptorType === 'HTTPImport') {
     merged = importConversionUtil.convertImportJSONObjRESTtoHTTP(merged);
+  }
+  if (['exports', 'imports'].includes(resourceType)) {
+    delete merged.adaptorType;
   }
   if (resourceType === 'exports' && merged._rest) {
     delete merged._rest;
@@ -1033,14 +1036,14 @@ export function* requestQueuedJobs({ connectionId }) {
   yield put(actions.connection.receivedQueuedJobs(response, connectionId));
 }
 
-function* startPollingForQueuedJobs({ connectionId }) {
+export function* startPollingForQueuedJobs({ connectionId }) {
   const watcher = yield fork(requestQueuedJobs, { connectionId });
 
   yield take(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL);
   yield cancel(watcher);
 }
 
-function* startPollingForConnectionStatus({ integrationId }) {
+export function* startPollingForConnectionStatus({ integrationId }) {
   const watcher = yield fork(refreshConnectionStatus, { integrationId });
 
   yield take(actionTypes.CONNECTION.STATUS_CANCEL_POLL);
@@ -1177,7 +1180,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
   takeLatest(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST_POLL, startPollingForQueuedJobs),
   takeLatest(actionTypes.CONNECTION.STATUS_REQUEST_POLL, startPollingForConnectionStatus),
-  takeEvery(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, requestQueuedJobs),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
   takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
   takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),

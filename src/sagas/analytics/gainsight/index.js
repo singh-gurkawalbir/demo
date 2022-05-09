@@ -255,20 +255,8 @@ function trackFlowRun(a) {
   });
 }
 
-function trackConnDebug(a) {
-  if (!a.id || !a.debugDurInMins || !a.match?.url || !a.match.url.includes('/flowBuilder/')) return;
-  const flowId = a.match?.params?.flowId;
-
-  if (!flowId) return;
-  gainsight.track('CUSTOM_CONNECTION_DEBUGGER_ENABLED', {
-    connectionId: a.id,
-    flowId,
-    duration: a.debugDurInMins,
-  });
-}
-
 export const gainsightSagas = [
-  takeEvery(actionTypes.DEFAULT_ACCOUNT_SET, identifyUser),
+  takeEvery(actionTypes.AUTH.DEFAULT_ACCOUNT_SET, identifyUser),
   takeEvery(actionTypes.RESOURCE.CREATED, trackResourceCreatedEvent),
   takeEvery(actionTypes.ANALYTICS.GAINSIGHT.TRACK_EVENT, trackEvent),
   takeEvery(actionTypes.JOB.RESOLVE_SELECTED, trackResolve),
@@ -285,5 +273,4 @@ export const gainsightSagas = [
   takeEvery(actionTypes.HOOKS.SAVE, trackHookSave),
   takeEvery(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, trackFlowEnableDisable),
   takeEvery(actionTypes.FLOW.RUN_REQUESTED, trackFlowRun),
-  takeEvery(actionTypes.CONNECTION.ENABLE_DEBUG, trackConnDebug),
 ];

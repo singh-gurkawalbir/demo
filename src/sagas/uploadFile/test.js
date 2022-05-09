@@ -3,18 +3,19 @@ import { throwError } from 'redux-saga-test-plan/providers';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { apiCallWithRetry } from '../index';
-import { uploadFile, previewZip, processFile, configureFileReader } from '.';
+import { uploadFile, previewZip, processFile, configureFileReader, uploadRawData } from '.';
 import actions from '../../actions';
-import messageStore from '../../constants/messages';
 import {
   getCsvFromXlsx,
 } from '../../utils/file';
+import errorMessageStore from '../../utils/errorStore';
 
 describe('uploadFile saga', () => {
   const resourceId = '123';
   const resourceType = 'templates';
   const fileType = 'application/zip';
   const file = { _id: '456', name: 'someFile' };
+  const fileName = 'testfile';
   const response = { signedURL: 'someURL', runKey: 'runKey' };
 
   // This is the part where we mock `fetch`
@@ -33,6 +34,11 @@ describe('uploadFile saga', () => {
     .call.fn(apiCallWithRetry)
     .returns('runKey')
     .run());
+  test('should update the headers correctly if fileName exists and succeed on successful api call', () => expectSaga(uploadFile, { resourceType, resourceId, fileType, file, fileName })
+    .provide([[matchers.call.fn(apiCallWithRetry), response]])
+    .call.fn(apiCallWithRetry)
+    .returns('runKey')
+    .run());
   test('should handle api error properly', () => {
     const error = new Error('error');
 
@@ -42,6 +48,30 @@ describe('uploadFile saga', () => {
       ])
       .call.fn(apiCallWithRetry)
       .returns(undefined)
+      .run();
+  });
+});
+
+describe('uploadRawData saga', () => {
+  const fileType = 'application/zip';
+  const file = { _id: '456', name: 'someFile' };
+  const runKey = '1234';
+
+  test('should call uploadFile saga', () => expectSaga(uploadRawData, {file, fileType})
+    .provide([
+      [matchers.call.fn(uploadFile), runKey]])
+    .call.fn(uploadFile)
+    .returns(runKey)
+    .run());
+
+  test('should handle api error if exception is thrown on uploadFile call', () => {
+    const error = new Error('error');
+
+    return expectSaga(uploadRawData, { file, fileType})
+      .provide([
+        [matchers.call.fn(uploadFile), throwError(error)],
+      ])
+      .call.fn(uploadFile)
       .run();
   });
 });
@@ -117,6 +147,7 @@ describe('processFile saga', () => {
   const fileProps = {};
   const fileId = 'field1';
   const fileContent = { test: 5 };
+  const validJson = '{"name": "test"}';
 
   test('should be able to dispatch processedFile if valid file is uploaded', () => expectSaga(processFile, { fileId, file, fileType, fileProps})
     .provide([[matchers.call.fn(configureFileReader), fileContent]])
@@ -139,6 +170,16 @@ describe('processFile saga', () => {
       })
     )
     .run());
+  test('should be able to dispatch processedFile if valid json file uploaded', () => expectSaga(processFile, { fileId, file: jsonFile, fileType: 'json', fileProps})
+    .provide([[matchers.call.fn(configureFileReader), validJson]])
+    .call.fn(configureFileReader)
+    .put(
+      actions.file.processedFile({
+        fileId,
+        file: {name: 'test'},
+        fileProps: { name: undefined, size: undefined, fileType: 'json', rawFile: '' },
+      }))
+    .run());
   test('should be able to dispatch processError if invalid xlsx file uploaded', () => expectSaga(processFile, { fileId, file: xlsxFile, fileType: 'xlsx', fileProps})
     .provide([[matchers.call.fn(configureFileReader), {}],
       [matchers.call.fn(getCsvFromXlsx), {error: 'Invalid xlsx file'}]])
@@ -153,6 +194,6 @@ describe('processFile saga', () => {
     .run());
   test('should be able to dispatch processError if file size exceeds', () => expectSaga(processFile, { fileId, file: file1, fileType, fileProps})
     .provide([[matchers.call.fn(configureFileReader), fileContent]])
-    .put(actions.file.processError({ fileId, error: messageStore('FILE_SIZE_EXCEEDED') }))
+    .put(actions.file.processError({ fileId, error: errorMessageStore('FILE_SIZE_EXCEEDED') }))
     .run());
 });

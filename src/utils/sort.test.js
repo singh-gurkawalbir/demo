@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-const { stringCompare, celigoListCompare } = require('./sort');
+const { stringCompare, celigoListCompare, sortJsonByKeys } = require('./sort');
 
 describe('Sort util function test', () => {
   describe('stringCompare function test', () => {
@@ -868,6 +868,62 @@ describe('Sort util function test', () => {
         { id: 'test[*].sublist' },
       ]
       );
+    });
+  });
+
+  describe('sortJsonByKeys util test', () => {
+    test('should return the passed param if it is not an array or object', () => {
+      expect(sortJsonByKeys('test')).toBe('test');
+      expect(sortJsonByKeys(123)).toBe(123);
+      expect(sortJsonByKeys(null)).toBe(null);
+    });
+    test('should sort the json by keys and return the expected result', () => {
+      const sample = {
+        b: 50,
+        c: 10,
+        a: 20,
+        d: 4,
+        f: 11,
+        e: 12,
+      };
+      const expected = {
+        a: 20,
+        b: 50,
+        c: 10,
+        d: 4,
+        e: 12,
+        f: 11,
+      };
+
+      expect(sortJsonByKeys(sample)).toEqual(expected);
+    });
+    test('should also sort the nested arrays/objects and return the sorted result', () => {
+      const sample = {
+        b: 50,
+        c: 10,
+        a: { r: 12, p: 10, s: 23, q: 11 },
+        d: 4,
+        f: [
+          {
+            nestedArray: { y: 1, x: 2, z: 3 },
+          },
+        ],
+        e: { m: 1, n: 2, l: 3},
+      };
+      const expected = {
+        a: { p: 10, q: 11, r: 12, s: 23 },
+        b: 50,
+        c: 10,
+        d: 4,
+        e: { l: 3, m: 1, n: 2},
+        f: [
+          {
+            nestedArray: { x: 2, y: 1, z: 3 },
+          },
+        ],
+      };
+
+      expect(sortJsonByKeys(sample)).toEqual(expected);
     });
   });
 });

@@ -175,7 +175,7 @@ export default function SelectApplication(props) {
 
   const handleFocus = useCallback(() => {
     const refState = ref?.current?.state;
-    const inputValue = refState.value?.label;
+    const inputValue = refState?.value?.label;
 
     if (inputValue) {
       setInputValue(inputValue);
@@ -198,7 +198,7 @@ export default function SelectApplication(props) {
 
   const handleBlur = () => {
     const refState = ref?.current?.state;
-    const selectedValue = refState.value?.label;
+    const selectedValue = refState?.value?.label;
 
     if (selectedValue) {
       setInputValue(selectedValue);
@@ -214,6 +214,9 @@ export default function SelectApplication(props) {
       maxHeight: 'calc(100vh - 320px)',
       padding: '0px',
       overflowY: 'auto',
+    }),
+    input: () => ({
+      padding: 0,
     }),
   });
   const customStyles = mergedStyles();
@@ -244,6 +247,7 @@ export default function SelectApplication(props) {
         onInputChange={handleInputChange}
         onChange={handleChange}
         onFocus={handleFocus}
+        autoFocus
         onBlur={handleBlur}
         styles={customStyles}
         filterOption={filterOptions}

@@ -43,11 +43,6 @@ export default (
           draft.retryStatus[flowId][resourceId] = status;
         }
         break;
-      case actionTypes.ERROR_MANAGER.RETRY_STATUS.CLEAR:
-        if (flowId && draft.retryStatus[flowId]) {
-          draft.retryStatus[flowId] = {};
-        }
-        break;
       default:
     }
   });

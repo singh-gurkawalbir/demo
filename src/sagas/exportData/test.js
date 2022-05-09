@@ -38,7 +38,7 @@ describe('exportData saga', () => {
           'expecting array. try transform?'
         )
       )
-      .dispatch(actions.exportData.request(kind, identifier, resource))
+      .dispatch(actions.exportData.request({kind, identifier, resource}))
       .silentRun();
   });
 
@@ -57,7 +57,7 @@ describe('exportData saga', () => {
     })
       .provide([[matchers.call.fn(apiCallWithRetry), { data: mockData }]])
       .put(actions.exportData.receive(kind, identifier, mockData))
-      .dispatch(actions.exportData.request(kind, identifier, resource))
+      .dispatch(actions.exportData.request({kind, identifier, resource}))
       .silentRun();
   });
 
@@ -76,7 +76,7 @@ describe('exportData saga', () => {
     })
       .provide([[matchers.call.fn(apiCallWithRetry), { data: mockData }]])
       .put(actions.exportData.receive(kind, identifier, mockData))
-      .dispatch(actions.exportData.request(kind, identifier, resource))
+      .dispatch(actions.exportData.request({kind, identifier, resource}))
       .silentRun();
   });
 
@@ -95,7 +95,7 @@ describe('exportData saga', () => {
     })
       .provide([[matchers.call.fn(apiCallWithRetry), { data: mockData }]])
       .put(actions.exportData.receive(kind, identifier, mockData))
-      .dispatch(actions.exportData.request(kind, identifier, resource))
+      .dispatch(actions.exportData.request({kind, identifier, resource}))
       .silentRun();
   });
 
@@ -119,7 +119,35 @@ describe('exportData saga', () => {
     })
       .provide([[matchers.call.fn(apiCallWithRetry), throwError(mockError)]])
       .put(actions.exportData.receiveError(kind, identifier, 'netsuite subschema not defined'))
-      .dispatch(actions.exportData.request(kind, identifier, resource))
+      .dispatch(actions.exportData.request({kind, identifier, resource}))
       .silentRun();
+  });
+  test('should handle custom error when there is invalid response or when the preview data is not an array', () => {
+    const kind = 'virtual';
+    const identifier = 'foo';
+    const resource = {
+      myExport: 1,
+    };
+
+    const test1 = expectSaga(saga, {
+      kind,
+      identifier,
+      resource,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry)]])
+      .put(actions.exportData.receiveError(kind, identifier, 'no export response'))
+      .dispatch(actions.exportData.request({kind, identifier, resource}))
+      .silentRun();
+    const test2 = expectSaga(saga, {
+      kind,
+      identifier,
+      resource,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), { data: { test: 5 }}]])
+      .put(actions.exportData.receiveError(kind, identifier, 'expecting array. try transform?'))
+      .dispatch(actions.exportData.request({kind, identifier, resource}))
+      .silentRun();
+
+    return test1 && test2;
   });
 });

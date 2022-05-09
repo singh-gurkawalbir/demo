@@ -1,6 +1,6 @@
-import React, { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { Redirect, useHistory } from 'react-router-dom';
+import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
@@ -12,6 +12,7 @@ import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import Spinner from '../../../../../components/Spinner';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import openExternalUrl from '../../../../../utils/window';
+import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -51,6 +52,7 @@ const useStyles = makeStyles(theme => ({
 export default function Uninstaller2({ integration, integrationId }) {
   const classes = useStyles();
   const history = useHistory();
+  const match = useRouteMatch();
   const dispatch = useDispatch();
   const {mode, name} = integration;
   const { steps: uninstallSteps, isFetched, error, isComplete } = useSelector(state =>
@@ -60,9 +62,6 @@ export default function Uninstaller2({ integration, integrationId }) {
   const isIAUninstallComplete = useSelector(state =>
     selectors.isIAV2UninstallComplete(state, { integrationId })
   );
-  const currentStep = useMemo(() => uninstallSteps && uninstallSteps.find(s => s.isCurrentStep), [
-    uninstallSteps,
-  ]);
 
   useEffect(() => {
     // we only want to do init, if mode is yet not uninstall
@@ -137,12 +136,18 @@ export default function Uninstaller2({ integration, integrationId }) {
             integrationId,
           )
         );
+      } else {
+        // when the type is form and step has form, open form step drawer
+        history.push(buildDrawerUrl({
+          path: drawerPaths.INSTALL.FORM_STEP,
+          baseUrl: match.url,
+          params: { formType: 'uninstall' },
+        }));
       }
     }
-  }, [dispatch, integrationId]);
+  }, [dispatch, integrationId, history, match]);
 
   const formCloseHandler = useCallback(() => {
-    // history.goBack();
     dispatch(
       actions.integrationApp.uninstaller2.updateStep(integrationId, 'reset')
     );
@@ -155,7 +160,6 @@ export default function Uninstaller2({ integration, integrationId }) {
           formVal
         )
       );
-      // history.goBack();
     },
     [dispatch, integrationId]
   );
@@ -176,17 +180,6 @@ export default function Uninstaller2({ integration, integrationId }) {
         // Todo: (Mounika) please add the helpText
         // infoText="we need to have the help text for the following."
          />
-      {currentStep && currentStep.isTriggered && currentStep.form && (
-      <FormStepDrawer
-        integrationId={integrationId}
-        formMeta={currentStep.form}
-        title={currentStep.name}
-            // index={currStepIndex + 1}
-        formCloseHandler={formCloseHandler}
-        formSubmitHandler={formSubmitHandler}
-            // path={`form/${currStepIndex + 1}`}
-        />
-      )}
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
           <Typography className={classes.message}>
@@ -206,6 +199,11 @@ export default function Uninstaller2({ integration, integrationId }) {
           </div>
         </div>
       </div>
+      <FormStepDrawer
+        integrationId={integrationId}
+        formCloseHandler={formCloseHandler}
+        formSubmitHandler={formSubmitHandler}
+      />
     </div>
   );
 }

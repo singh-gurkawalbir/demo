@@ -71,6 +71,10 @@ export default {
       xxl: 1920,
     },
   },
+  zIndex: {
+    bubbleName: 0,
+    bubble: 1,
+  },
   // global overrides for MUI styles...
   overrides: {
     MuiButton: {
@@ -149,9 +153,9 @@ export default {
         borderColor: colors.celigoNeutral3,
         color: colors.celigoNeutral6,
         '&:hover': {
-          color: colors.celigoNeutral6,
+          color: colors.celigoAccent3,
           backgroundColor: colors.celigoWhite,
-          borderColor: colors.celigoNeutral3,
+          borderColor: colors.celigoAccent3,
         },
         '&:disabled': {
           color: colors.celigoNeutral4,

@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
 import actions from '../../../../../actions';
+import { drawerPaths } from '../../../../../utils/rightDrawer';
 import RightDrawer from '../../../../../components/drawer/Right';
 import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
 import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
@@ -22,13 +23,13 @@ export default function UpgradeDrawer() {
 
   const onStartFreeTrialInterestedClick = () => {
     dispatch(actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED'));
-    dispatch(actions.user.org.accounts.requestTrialLicense());
+    dispatch(actions.license.requestTrialLicense());
 
     history.goBack();
   };
 
   return (
-    <RightDrawer height="tall" width="medium" path="upgrade" variant="temporary">
+    <RightDrawer height="tall" width="medium" path={drawerPaths.ACCOUNT.UPGRADE}>
       <DrawerHeader title="Upgrade your subscription" />
       <DrawerContent>
         <Typography>

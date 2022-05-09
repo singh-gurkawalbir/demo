@@ -11,13 +11,19 @@ const isPrimitive = p =>
   typeof p === 'number' ||
   typeof p === 'string';
 
-function* getData({ kind, identifier: id, resource }) {
+function* getData({ kind, identifier: id, resource, resourceContext = {} }) {
   let path;
   let method;
   let body;
 
   if (kind === 'virtual') {
-    path = '/exports/preview';
+    if (resourceContext._integrationId && resourceContext._flowId) {
+      path = `/integrations/${resourceContext._integrationId}/flows/${resourceContext._flowId}/exports/preview`;
+    } else if (resourceContext._integrationId) {
+      path = `/integrations/${resourceContext._integrationId}/exports/preview`;
+    } else {
+      path = '/exports/preview';
+    }
     method = 'POST';
     body = { ...resource };
 

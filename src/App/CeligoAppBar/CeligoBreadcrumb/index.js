@@ -18,6 +18,7 @@ import suiteScriptRoutes from './suiteScript';
 import getRoutePath from '../../../utils/routePaths';
 import ConnectorCrumb from './crumbs/Connector';
 import {HOME_PAGE_PATH} from '../../../utils/constants';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import FlowStepDebugLogs from './crumbs/FlowStepDebugLogs';
 import FlowGroupCrumb from './crumbs/FlowGroup';
 
@@ -64,14 +65,14 @@ const flowBuilderRoutes = [
     path: '/flowBuilder/:flowId',
     breadcrumb: 'Flow Builder',
     childRoutes: [
-      { path: '/schedule', breadcrumb: 'Schedule' },
-      { path: '/settings', breadcrumb: 'Settings' },
+      { path: buildDrawerUrl({path: drawerPaths.FLOW_BUILDER.SCHEDULE}), breadcrumb: 'Schedule' },
+      { path: buildDrawerUrl({path: drawerPaths.FLOW_BUILDER.SETTINGS}), breadcrumb: 'Settings' },
     ],
   },
   {
     path: '/dataLoader/:flowId',
     breadcrumb: 'Data Loader',
-    childRoutes: [{ path: '/settings', breadcrumb: 'Settings' }],
+    childRoutes: [{ path: buildDrawerUrl({path: drawerPaths.FLOW_BUILDER.SETTINGS}), breadcrumb: 'Settings' }],
   },
 ];
 // These routes are shared for IAs with and without /child/ url segment.
@@ -134,6 +135,7 @@ const routes = [
       { path: '/auditlog', breadcrumb: 'Audit log' },
       { path: '/notifications', breadcrumb: 'Notifications' },
       { path: '/analytics', breadcrumb: 'Analytics' },
+      { path: '/aliases', breadcrumb: 'Aliases' },
       {
         path: '/admin',
         breadcrumb: 'Admin',
@@ -146,6 +148,10 @@ const routes = [
           { path: '/audit', breadcrumb: 'Audit log' },
           { path: '/notifications', breadcrumb: 'Notifications' },
         ],
+      },
+      {
+        path: '/revisions',
+        breadcrumb: 'Revisions',
       },
       ...flowBuilderRoutes,
     ],
@@ -308,11 +314,11 @@ const commonChildRoutes = [
   // metadata needs to be carried in the url.. keeping it simple for now.
   { path: '/clone', breadcrumb: 'Clone' },
   {
-    path: '/add/:resourceType/:id',
+    path: buildDrawerUrl({path: drawerPaths.RESOURCE.ADD}),
     breadcrumb: AddResourceTypeCrumb,
   },
   {
-    path: '/edit/:resourceType/:id',
+    path: buildDrawerUrl({path: drawerPaths.RESOURCE.EDIT}),
     breadcrumb: EditResourceTypeCrumb,
     childRoutes: [
       { path: '/logs', breadcrumb: FlowStepDebugLogs },

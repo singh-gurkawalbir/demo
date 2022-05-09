@@ -17,7 +17,8 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { SCOPES } from '../../../sagas/resourceForm';
 import { TextButton } from '../../../components/Buttons';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
-import NoResultMessageWrapper from '../../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../../components/NoResultTypography';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -105,7 +106,11 @@ export default function Licenses(props) {
 
     dispatch(actions.resource.patchStaged(newId, patchSet, SCOPES.VALUE));
 
-    history.push(`${location.pathname}/add/connectorLicenses/${newId}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.RESOURCE.ADD,
+      baseUrl: location.pathname,
+      params: { resourceType: 'connectorLicenses', id: newId },
+    }));
   }, [connectorId, connector, history, location, dispatch]);
 
   if (!connector) {
@@ -135,8 +140,8 @@ export default function Licenses(props) {
           {list.count === 0 ? (
             <div>
               {list.total === 0
-                ? <NoResultMessageWrapper>You don&apos;t have any licenses</NoResultMessageWrapper>
-                : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+                ? <NoResultTypography>You don&apos;t have any licenses</NoResultTypography>
+                : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
             </div>
           ) : (
             <CeligoTable

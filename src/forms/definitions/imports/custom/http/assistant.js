@@ -9,7 +9,7 @@ export default function assistantDefinition(
 ) {
   return {
     ...fieldMeta({ resource, assistantData }),
-    preSave: formValues => {
+    preSave: (formValues, _, {connection} = {}) => {
       const assistantMetadata = {
         pathParams: {},
       };
@@ -33,6 +33,9 @@ export default function assistantDefinition(
       if (assistantMetadata.assistant === 'amazonsellingpartner') {
         assistantMetadata.assistant = 'amazonmws';
       }
+      if (assistantMetadata.assistant === 'recurlyv3') {
+        assistantMetadata.assistant = 'recurly';
+      }
       const otherFormValues = omitBy(formValues, (v, k) =>
         k.includes('/assistantMetadata/')
       );
@@ -49,6 +52,10 @@ export default function assistantDefinition(
         headers: formValues['/assistantMetadata/headers'],
         assistantData: formValues['/assistantMetadata/assistantData'],
       });
+
+      if (connection?.http?.type === 'Amazon-SP-API') {
+        otherFormValues['/unencrypted/apiType'] = 'Amazon-SP-API';
+      }
 
       return { ...otherFormValues, ...importDoc };
     },

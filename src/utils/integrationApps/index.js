@@ -1,3 +1,4 @@
+import isEmpty from 'lodash/isEmpty';
 import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION, FORM_SAVE_STATUS, CATEGORY_MAPPING_SAVE_STATUS } from '../constants';
 
 export const getIntegrationAppUrlName = integrationAppName => {
@@ -205,17 +206,34 @@ export const getIntegrationApp = ({ _connectorId, name }) => {
 
 export default {
   getStepText: (step = {}, mode) => {
+    // TODO: move this to a generic util file as Install steps are not just used in IAs
     let stepText = '';
     let showSpinner = false;
     const isUninstall = mode === 'uninstall';
 
-    if (
+    if (step.type === INSTALL_STEP_TYPES.MERGE) {
+      if (step.isTriggered) {
+        stepText = 'Merging';
+        showSpinner = true;
+      } else {
+        stepText = 'Merge';
+      }
+    } else if (step.type === INSTALL_STEP_TYPES.REVERT) {
+      if (step.isTriggered) {
+        stepText = 'Reverting';
+        showSpinner = true;
+      } else {
+        stepText = 'Revert';
+      }
+    } else if (
       step._connectionId ||
       step.type === INSTALL_STEP_TYPES.STACK ||
       step.type === 'connection' ||
       step.type === 'ssConnection' ||
       step.sourceConnection ||
-      step.type === INSTALL_STEP_TYPES.FORM
+      step.type === INSTALL_STEP_TYPES.FORM ||
+      // IA1.0 doesnt have type on their step scheam, instead check for 'form' property populated
+      !isEmpty(step.form)
     ) {
       if (step.completed) {
         stepText = isUninstall ? 'Uninstalled' : 'Configured';

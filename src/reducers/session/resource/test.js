@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
-import {LICENSE_TRIAL_ISSUED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../utils/constants';
+import { LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../utils/constants';
 
 describe('session.resource reducers', () => {
   test('reducer should return previous state if action is not handled.', () => {
@@ -69,52 +69,52 @@ describe('session.resource reducers', () => {
       expect(state.new123).toEqual(dbId);
     });
   });
-  describe('LICENSE_TRIAL_ISSUED action', () => {
+  describe('LICENSE.TRIAL_ISSUED action', () => {
     test('should store the license trial issued message', () => {
       const state = reducer(
         undefined,
-        actions.user.org.accounts.trialLicenseIssued()
+        actions.license.trialLicenseIssued()
       );
-      const expected = {platformLicenseActionMessage: LICENSE_TRIAL_ISSUED_MESSAGE};
+      const expected = {};
 
       expect(state).toEqual(expected);
     });
   });
-  describe('LICENSE_UPGRADE_REQUEST_SUBMITTED action', () => {
+  describe('LICENSE.UPGRADE_REQUEST_SUBMITTED action', () => {
     test('should store the license upgrade request submitted message', () => {
       const state = reducer(
         undefined,
-        actions.user.org.accounts.licenseUpgradeRequestSubmitted()
+        actions.license.licenseUpgradeRequestSubmitted()
       );
       const expected = {platformLicenseActionMessage: LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE};
 
       expect(state).toEqual(expected);
     });
   });
-  describe('LICENSE_NUM_ENABLED_FLOWS_RECEIVED action', () => {
+  describe('LICENSE.NUM_ENABLED_FLOWS_RECEIVED action', () => {
     test('should store the number of enabled flows info', () => {
       const response = {numEnabledPaidFlows: 2, numEnabledSandboxFlows: 2, numEnabledFreeFlows: 1 };
       const state = reducer(
         undefined,
-        actions.user.org.accounts.receivedNumEnabledFlows(response)
+        actions.license.receivedNumEnabledFlows(response)
       );
 
       expect(state.numEnabledFlows).toEqual(response);
     });
   });
-  describe('LICENSE_ENTITLEMENT_USAGE_RECEIVED action', () => {
+  describe('LICENSE.ENTITLEMENT_USAGE_RECEIVED action', () => {
     test('should store the license entitlement usage info', () => {
       const response = {production: {agentUsage: {numActive: 2}, flowUsage: {numEnabled: 2}, endpointUsage: {numConsumed: 11}, tradingPartnerUsage: {numConsumed: 4} }, sandbox: {agentUsage: {numActive: 2}, flowUsage: {numEnabled: 2}, endpointUsage: {numConsumed: 11}, tradingPartnerUsage: {numConsumed: 4} }};
 
       const state = reducer(
         undefined,
-        actions.user.org.accounts.receivedLicenseEntitlementUsage(response)
+        actions.license.receivedLicenseEntitlementUsage(response)
       );
 
       expect(state.licenseEntitlementUsage).toEqual(response);
     });
   });
-  describe('UPDATE_CHILD_INTEGRATION action', () => {
+  describe('RESOURCE.UPDATE_CHILD_INTEGRATION action', () => {
     test('should store the parent child integration map info', () => {
       const parentId = 'parentId';
       const childId = 'childId';
@@ -128,7 +128,7 @@ describe('session.resource reducers', () => {
       expect(state).toEqual(expected);
     });
   });
-  describe('CLEAR_CHILD_INTEGRATION action', () => {
+  describe('RESOURCE.CLEAR_CHILD_INTEGRATION action', () => {
     test('should be able to clear parent child integration map if any', () => {
       const parentId = 'parentId';
       const childId = 'childId';
@@ -219,20 +219,10 @@ describe('session.resource reducers', () => {
       );
       expect(selectors.platformLicenseActionMessage({})).toEqual(undefined);
     });
-
-    test('should return correct platform license action message', () => {
-      const state = reducer(
-        undefined,
-        actions.user.org.accounts.trialLicenseIssued()
-      );
-      const expected = {platformLicenseActionMessage: LICENSE_TRIAL_ISSUED_MESSAGE};
-
-      expect(selectors.platformLicenseActionMessage(state)).toEqual(expected.platformLicenseActionMessage);
-    });
     test('should return correct license upgrade action message', () => {
       const state = reducer(
         undefined,
-        actions.user.org.accounts.licenseUpgradeRequestSubmitted()
+        actions.license.licenseUpgradeRequestSubmitted()
       );
       const expected = {platformLicenseActionMessage: LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE};
 
@@ -284,7 +274,7 @@ describe('session.resource reducers', () => {
       const response = {numEnabledPaidFlows: 2, numEnabledSandboxFlows: 2, numEnabledFreeFlows: 1 };
       const state = reducer(
         undefined,
-        actions.user.org.accounts.receivedNumEnabledFlows(response)
+        actions.license.receivedNumEnabledFlows(response)
       );
       const expected = {
         numEnabledPaidFlows: 2,
@@ -308,7 +298,7 @@ describe('session.resource reducers', () => {
 
       const state = reducer(
         undefined,
-        actions.user.org.accounts.receivedLicenseEntitlementUsage(response)
+        actions.license.receivedLicenseEntitlementUsage(response)
       );
 
       expect(selectors.getLicenseEntitlementUsage(state)).toEqual(response);

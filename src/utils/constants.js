@@ -34,6 +34,8 @@ export const INSTALL_STEP_TYPES = Object.freeze({
   STACK: 'Stack',
   FORM: 'form',
   URL: 'url',
+  MERGE: 'merge',
+  REVERT: 'revert',
 });
 export const UNINSTALL_STEP_TYPES = Object.freeze({
   FORM: 'form',
@@ -60,6 +62,22 @@ export const ACCOUNT_SSO_STATUS = Object.freeze({
   NOT_LINKED: 'not_linked',
   LINKED_TO_THIS_ACCOUNT: 'this_account',
   LINKED_TO_OTHER_ACCOUNT: 'other_account',
+});
+export const REVISION_TYPES = Object.freeze({
+  PULL: 'pull',
+  REVERT: 'revert',
+  SNAPSHOT: 'snapshot',
+});
+export const REVISION_STATUS = Object.freeze({
+  IN_PROGRESS: 'inprogress',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+  CANCELED: 'canceled',
+});
+export const REVISION_CREATION_STATUS = Object.freeze({
+  CREATION_IN_PROGRESS: 'creating',
+  CREATION_ERROR: 'create_error',
+  CREATED: 'created',
 });
 
 export const INTEGRATION_DEPENDENT_RESOURCES = ['exports', 'imports', 'connections', 'flows'];
@@ -328,6 +346,7 @@ export const REST_ASSISTANTS = [
   'googlesheets',
   'googlemail',
   'googlecontacts',
+  'googlecontactspeople',
   'hubspot',
   'freshdesk',
   'harvest',
@@ -375,6 +394,7 @@ export const REST_ASSISTANTS = [
   'wish',
   'exacterp',
   'acumatica',
+  'acumaticaecommerce',
   'myobessentials',
   'zohomail',
   'bronto',
@@ -433,10 +453,11 @@ export const SUBMIT_TICKET_URL =
 export const WHATS_NEW_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/categories/360002687611`;
 export const COMMUNITY_URL = 'https://docs.celigo.com/hc/en-us/community/topics';
+export const FLOW_EVENT_REPORTS_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4402565285389`;
 export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
 export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
 
-export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle'];
+export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle', 'bigquerydatawarehouse'];
 
 export const AWS_REGIONS_LIST = [
   {
@@ -652,6 +673,10 @@ export const CONNECTORS_TO_IGNORE = [
   'constantcontactv3',
   'amazonsellingpartner',
   'ebayfinance',
+  'googlecontactspeople',
+  'recurlyv3',
+  'loopreturnsv2',
+  'acumaticaecommerce',
 ];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
@@ -682,6 +707,11 @@ export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
 });
 
 export const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
+
+export const ALIAS_FORM_KEY = Object.freeze({
+  integrations: 'integration-alias',
+  flows: 'flow-alias',
+});
 
 export const UNASSIGNED_SECTION_ID = 'unassigned';
 export const UNASSIGNED_SECTION_NAME = 'Unassigned';
@@ -734,10 +764,19 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
   'ebay',
   'ebayfinance',
   'amazonsellingpartner',
+  'googlecontacts',
+  'googlecontactspeople',
+  'recurly',
+  'recurlyv3',
+  'loopreturns',
+  'loopreturnsv2',
+  'acumatica',
+  'acumaticaecommerce',
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];
 export const EBAY_TYPES = ['ebay', 'ebayfinance'];
+export const GOOGLE_CONTACTS_API = ['googlecontacts', 'googlecontactspeople'];
 export const POLLING_STATUS = {
   SLOW: 'slow down polling',
   RESUME: 'resume polling',

@@ -11,7 +11,7 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../utils/constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
-import { isAmazonHybridConnection } from '../../../utils/assistant';
+import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection } from '../../../utils/assistant';
 
 const emptyObj = {};
 const isParent = true;
@@ -42,9 +42,11 @@ export default function FormView(props) {
       selectors.resource(state, 'connections', staggedResource._connectionId) ||
       emptyObj
   );
-  const { assistant: assistantName } = connection;
+  const { assistant: assistantName, http } = connection;
+  const isGraphql = http?.formType === 'graph_ql';
+
   const options = useMemo(() => {
-    const matchingApplication = getApp(null, assistantName);
+    const matchingApplication = getApp(null, isGraphql ? 'graph_ql' : assistantName);
 
     if (matchingApplication) {
       const { name, type } = matchingApplication;
@@ -54,7 +56,7 @@ export default function FormView(props) {
         {
           items: [
             // if type is REST then we should show REST API
-            { label: type && (type.toUpperCase() === 'REST' ? 'REST API' : type.toUpperCase()), value: `${isParent}` },
+            { label: isGraphql ? 'HTTP' : type && (type.toUpperCase() === 'REST' ? 'REST API' : type.toUpperCase()), value: `${isParent}` },
             { label: name, value: `${!isParent}` },
           ],
         },
@@ -64,7 +66,7 @@ export default function FormView(props) {
     // if i cant find a matching application this is not an assistant
 
     return null;
-  }, [assistantName]);
+  }, [assistantName, isGraphql]);
 
   useSetInitializeFormData(props);
   const onFieldChangeFn = (id, selectedApplication) => {
@@ -87,17 +89,28 @@ export default function FormView(props) {
       assistantData,
     });
     const finalValues = preSave(formContext.value, staggedRes, { connection });
+    const newFinalValues = {...finalValues};
 
     staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
 
     // if assistant is selected back again assign it to the export to the export obj as well
     if (
       selectedApplication !== `${isParent}` &&
-      staggedRes['/assistant'] === undefined
-    ) staggedRes['/assistant'] = assistantName;
-
+      staggedRes['/assistant'] === undefined &&
+      !isGraphql
+    ) {
+      staggedRes['/assistant'] = assistantName;
+    } else if (isGraphql) {
+      if (selectedApplication !== `${isParent}`) {
+        staggedRes['/http/formType'] = 'graph_ql';
+      } else {
+        // set http.formType prop to http to use http form from the export/import as it is now using parent form');
+        staggedRes['/http/formType'] = 'http';
+        newFinalValues['/http/formType'] = 'http';
+      }
+    }
     const allPatches = sanitizePatchSet({
-      patchSet: defaultPatchSetConverter({ ...staggedRes, ...finalValues }),
+      patchSet: defaultPatchSetConverter({ ...staggedRes, ...newFinalValues }),
       fieldMeta: resourceFormState.fieldMeta,
       resource: {},
     });
@@ -127,9 +140,10 @@ export default function FormView(props) {
       )
     );
   };
-
-  const isFlowBuilderAssistant =
-    flowId && assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection);
+  const isAcumaticaEcommerceImport = (resourceType === 'imports') && isAcumaticaEcommerceConnection(connection);
+  const isLoopReturnsv2import = (resourceType === 'imports') && isLoopReturnsv2Connection(connection);
+  const isFlowBuilderAssistant = flowId && (isGraphql ||
+    (assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection) && !isMicrosoftBusinessCentralOdataConnection(connection) && !isAcumaticaEcommerceImport && !isLoopReturnsv2import));
 
   return isFlowBuilderAssistant ? (
     <DynaSelect

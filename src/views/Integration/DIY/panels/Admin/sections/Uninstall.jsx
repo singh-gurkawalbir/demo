@@ -57,7 +57,7 @@ export default function UninstallSection({ childId, integrationId }) {
                 );
               } else {
                 history.push(
-                  getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${urlExtractFields[index + 1]}`)
+                  getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${urlExtractFields[index + 1]}`)
                 );
               }
             } else if (
@@ -65,7 +65,7 @@ export default function UninstallSection({ childId, integrationId }) {
               integration.settings.supportsMultiStore
             ) {
               history.push(
-                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`)
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${childId}`)
               );
             } else {
               history.push(

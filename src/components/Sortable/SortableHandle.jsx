@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     paddingTop: 6,
   },
 }));
-const SortableDragHandle = ({className = '', isVisible}) => {
+export const SortableDragHandle = ({className = '', isVisible}) => {
   const classes = useStyles();
 
   return (

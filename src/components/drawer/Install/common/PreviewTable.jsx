@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
   },
   flowInFlowGroupNameHover: {
     backgroundColor: theme.palette.background.paper,
-    borderTop: `1px solid ${theme.palette.secondary.lightest} !important`,
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
   flowGroupTitle: {
     paddingTop: theme.spacing(1),
@@ -47,7 +47,19 @@ const useColumns = () => [
     Value: ({rowData: r}) => {
       const classes = useStyles();
 
-      if (r.groupName || r.emptyMessage) return <Typography variant={r?.groupName ? 'overline' : 'body2'} component="div" color="textSecondary" className={clsx({[classes.flowGroupTitle]: r?.groupName, [classes.emptyMessageContent]: r?.emptyMessage})}>{r?.groupName || r?.emptyMessage}</Typography>;
+      if (r.groupName || r.emptyMessage) {
+        return (
+          <Typography
+            variant={r?.groupName ? 'overline' : 'body2'}
+            component="div"
+            color="textSecondary"
+            className={clsx({
+              [classes.flowGroupTitle]: r?.groupName,
+              [classes.emptyMessageContent]: r?.emptyMessage})}>
+            {r?.groupName || r?.emptyMessage}
+          </Typography>
+        );
+      }
 
       return r?.doc?.name || r?.doc?._id;
     },

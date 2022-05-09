@@ -1,6 +1,7 @@
 import {applicationsList, applicationsPlaceHolderText} from '../../../../constants/applications';
 import { getFilterExpressionForAssistant } from '../../../../utils/connections';
 import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../../utils/constants';
+import { rdbmsAppTypeToSubType } from '../../../../utils/resource';
 
 const visibleWhen = [
   {
@@ -17,6 +18,7 @@ const appTypeToAdaptorType = {
   mssql: 'RDBMS',
   oracle: 'RDBMS',
   snowflake: 'RDBMS',
+  bigquerydatawarehouse: 'RDBMS',
   netsuite: 'NetSuiteDistributed',
   ftp: 'FTP',
   http: 'HTTP',
@@ -26,6 +28,7 @@ const appTypeToAdaptorType = {
   as2: 'AS2',
   webhook: 'Webhook',
   dynamodb: 'Dynamodb',
+  graph_ql: 'GraphQL',
 };
 
 export default {
@@ -113,9 +116,11 @@ export default {
       const expression = [];
 
       if (RDBMS_TYPES.includes(app.type)) {
-        expression.push({ 'rdbms.type': app.type });
+        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(app.type) });
       } else if (app.type === 'rest') {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
+      } else if (app.type === 'graph_ql') {
+        expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
       } else if (app.type === 'http') {
         expression.push({ 'http.formType': { $ne: 'rest' } });
         expression.push({ type: app.type });

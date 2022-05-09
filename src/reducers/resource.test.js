@@ -6437,7 +6437,7 @@ describe('resource region selector testcases', () => {
 
     test('should return expected script context for valid state and flow id', () => {
       expect(selectors.getScriptContext(state, {contextType: 'hook',
-        flowId: 'flow2'})).toEqual({_integrationId: 'integrationId1', container: 'integration', type: 'hook'});
+        flowId: 'flow2'})).toEqual({_integrationId: 'integrationId1', container: 'integration', type: 'hook', _flowId: 'flow2'});
     });
     test('should return undefined if given flow does not contains integrtion id', () => {
       expect(selectors.getScriptContext(state, {contextType: 'hook',
@@ -7647,6 +7647,42 @@ describe('resource region selector testcases', () => {
     });
     test('should return passed resource type if its neither pageGenerator nor pageProcessor', () => {
       expect(selectors.getResourceType(state, { resourceType: 'imports', resourceId: 'res-123' })).toEqual('imports');
+    });
+  });
+
+  describe('selectors.mappingHasLookupOption test cases', () => {
+    const state = {
+      data: {
+        resources: {
+          connections: [
+            {
+              _id: 'connection1',
+              type: 'http',
+              http: {mediaType: 'xml'},
+            },
+            {
+              _id: 'connection2',
+              type: 'rdbms',
+              rdbms: {type: 'bigquery'},
+            },
+            {
+              _id: 'connection3',
+              type: 'rdbms',
+              rdbms: {type: 'snowflake'},
+            },
+          ],
+        },
+      },
+    };
+
+    test('should return false if the connection is of bigquery rdbms subtype', () => {
+      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection2')).toEqual(false);
+    });
+    test('should return true if the connection is not of bigquery rdbms subtype', () => {
+      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection3')).toEqual(true);
+    });
+    test('should return true if the connection is of not rdbms type', () => {
+      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection1')).toEqual(true);
     });
   });
 

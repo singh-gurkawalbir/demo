@@ -4,7 +4,7 @@ import ApplicationsList from './ApplicationsList';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import KeywordSearch from '../../components/KeywordSearch';
 import { selectors } from '../../reducers';
-import { MARKETPLACE_HELPINFO } from '../../utils/messageStore';
+import messageStore from '../../utils/messageStore';
 
 export default function Marketplace() {
   const filterKey = 'marketplace';
@@ -12,7 +12,7 @@ export default function Marketplace() {
 
   return (
     <>
-      <CeligoPageBar title="Marketplace" infoText={MARKETPLACE_HELPINFO}>
+      <CeligoPageBar title="Marketplace" infoText={messageStore('MARKETPLACE_HELPINFO')}>
         <KeywordSearch filterKey={filterKey} />
       </CeligoPageBar>
       <ApplicationsList filter={filter} />

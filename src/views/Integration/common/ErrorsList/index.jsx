@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 import RightDrawer from '../../../../components/drawer/Right';
@@ -17,18 +17,10 @@ import { resourceCategory } from '../../../../utils/resource';
 import TextOverflowCell from '../../../../components/TextOverflowCell';
 import ResourceButton from '../../../FlowBuilder/ResourceButton';
 import { emptyObject } from '../../../../utils/constants';
-import StatusCircle from '../../../../components/StatusCircle';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import { getTextAfterCount } from '../../../../utils/string';
-
-const useStyles = makeStyles(theme => ({
-  button: {
-    color: theme.palette.primary.main,
-    width: '100%',
-    cursor: 'pointer',
-    display: 'block',
-  },
-}));
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import Status from '../../../../components/Buttons/Status';
 
 const metadata = {
   rowKey: 'id',
@@ -88,10 +80,10 @@ const metadata = {
     {
       key: 'errors',
       heading: 'Errors',
+      width: '15%',
       isLoggable: true,
       Value: ({rowData}) => {
         const { flowId, integrationId, childId, id, count } = rowData;
-        const classes = useStyles();
         const history = useHistory();
         const isDataLoader = useSelector(state =>
           selectors.isDataLoader(state, flowId)
@@ -110,18 +102,23 @@ const metadata = {
         });
 
         const handleErrorClick = useCallback(() => {
-          history.push(`${flowBuilderTo}/errors/${id}`);
+          history.push(buildDrawerUrl({
+            path: drawerPaths.ERROR_MANAGEMENT.V2.ERROR_DETAILS,
+            baseUrl: flowBuilderTo,
+            params: { resourceId: id, errorType: 'open'},
+          }));
         }, [flowBuilderTo, history, id]);
 
-        if (count === 0) {
-          return '0';
+        if (!count) {
+          return (
+            <Status variant="success" size="mini" onClick={handleErrorClick}>Success</Status >
+          );
         }
 
         return (
-          <div className={classes.button} onClick={handleErrorClick}>
-            <StatusCircle variant="error" size="mini" />
+          <Status variant="error" size="mini" onClick={handleErrorClick}>
             {count > 9999 ? '9999+ errors' : getTextAfterCount('error', count)}
-          </div >
+          </Status>
         );
       },
     },
@@ -182,7 +179,12 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   const match = useRouteMatch();
   const history = useHistory();
   const location = useLocation();
-  const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/:flowId/errorsList`}) || {};
+  const { params: { flowId } = {} } = matchPath(location.pathname, {
+    path: buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.FLOW_ERROR_LIST,
+      baseUrl: match.path,
+    }),
+  }) || {};
   const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
@@ -193,18 +195,12 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   }, [match.url, history]);
 
   return (
-    <LoadResources
-      required="true"
-      integrationId={integrationId}
-      resources="imports,exports,connections">
+    <LoadResources required="true" integrationId={integrationId} resources="imports,exports,connections">
       <RightDrawer
-        path=":flowId/errorsList"
+        path={drawerPaths.ERROR_MANAGEMENT.V2.FLOW_ERROR_LIST}
         height="tall"
-        onClose={handleClose}
-        variant="temporary">
-
+        onClose={handleClose}>
         <DrawerHeader title={`Flow: ${flow.name || flowId}`} />
-
         <DrawerContent>
           <ErrorsList integrationId={integrationId || flow._integrationId} childId={childId} />
         </DrawerContent>

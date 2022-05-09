@@ -1,18 +1,11 @@
-import { Drawer, makeStyles, Typography } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useCallback } from 'react';
-import {
-  useRouteMatch,
-  useHistory,
-  Route,
-  useLocation,
-  Switch,
-} from 'react-router-dom';
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import LoadResources from '../../../../../../../components/LoadResources';
 import ApplicationImg from '../../../../../../../components/icons/ApplicationImg';
-import DrawerTitleBar from '../TitleBar';
 import VariationAttributesList from './AttributesList';
 import VariationMappings from './MappingsWrapper';
 import actions from '../../../../../../../actions';
@@ -20,21 +13,13 @@ import Spinner from '../../../../../../../components/Spinner';
 import { capitalizeFirstLetter } from '../../../../../../../utils/string';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import TextButton from '../../../../../../../components/Buttons/TextButton';
-import ActionGroup from '../../../../../../../components/ActionGroup';
+import RightDrawer from '../../../../../../../components/drawer/Right';
+import DrawerHeader from '../../../../../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../../../../components/drawer/Right/DrawerContent';
+import DrawerFooter from '../../../../../../../components/drawer/Right/DrawerFooter';
+import { drawerPaths } from '../../../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
-  drawerPaper: {
-    // marginTop: theme.appBarHeight,
-    width: '60%',
-    border: 'solid 1px',
-    borderColor: theme.palette.secondary.lightest,
-    backgroundColor: theme.palette.background.default,
-    zIndex: theme.zIndex.drawer + 1,
-    overflowX: 'hidden',
-  },
-  saveButtonGroup: {
-    margin: '10px 10px 10px 24px',
-  },
   mappingHeader: {
     padding: theme.spacing(1),
     marginLeft: '20px',
@@ -66,9 +51,6 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     padding: theme.spacing(0, 3, 3, 0),
   },
-  header: {
-    // background: theme.palette.primary.main,
-  },
   variationMapWrapper: {
     display: 'flex',
   },
@@ -80,9 +62,9 @@ const useStyles = makeStyles(theme => ({
 
 export const variationUrlName = (variation = '') => variation.replace(/\//g, '__');
 
-function VariationMappingDrawer({ integrationId, parentUrl }) {
+function VariationMappingDrawer({ integrationId, flowId, categoryId, parentUrl }) {
   const match = useRouteMatch();
-  const { flowId, subCategoryId, variation: variationParamName, categoryId, depth } = match.params;
+  const { subCategoryId, variation: variationParamName, depth } = match.params;
   const variation = variationParamName?.replace(/__/g, '/');
   const classes = useStyles();
   const history = useHistory();
@@ -180,125 +162,104 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
     return null;
   }
 
+  if (!metadataLoaded) {
+    return <Spinner centerAll />;
+  }
+
   return (
     <>
-      <Drawer
-        anchor="right"
-        open={!!match}
-        BackdropProps={{ invisible: true }}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-        onClose={handleClose}>
-        <DrawerTitleBar
-          title={`Configure ${uiAssistant} variation themes: ${uiAssistant} - NetSuite`}
-          flowId={flowId}
-          addCategory
-          backToParent
-          onClose={handleClose}
-        />
-        {metadataLoaded ? (
-          <div className={classes.root}>
-            <div className={classes.variationMapWrapper}>
-              {!isVariationAttributes && (
-                <div className={classes.subNav}>
-                  <VariationAttributesList
-                    integrationId={integrationId}
-                    flowId={flowId}
-                    categoryId={subCategoryId}
-                    depth={depth}
-                  />
-                </div>
-              )}
-              <div className={classes.content}>
-                <PanelHeader
-                  className={classes.header}
-                  title="Map variant attributes"
+      <DrawerHeader
+        title={`Configure ${uiAssistant} variation themes: ${uiAssistant} - NetSuite`}
+        handleClose={handleClose}
+        handleBack={handleClose}
+        // Pass handleBack to move to the previous drawer, to land in the utility mapping drawer
+        // as by default back button does go to the previous URL
+        // and this drawer internally has URL re-directions for different variation attributes
+      />
+      <DrawerContent>
+        <div className={classes.root}>
+          <div className={classes.variationMapWrapper}>
+            {!isVariationAttributes && (
+            <div className={classes.subNav}>
+              <VariationAttributesList
+                integrationId={integrationId}
+                flowId={flowId}
+                categoryId={subCategoryId}
+                depth={depth} />
+            </div>
+            )}
+            <div className={classes.content}>
+              <PanelHeader
+                className={classes.header}
+                title="Map variant attributes"
                 />
-                <div className={classes.mappingHeader}>
-                  <div className={classes.mappingChild}>
-                    <Typography variant="h5" className={classes.childHeader}>
-                      {uiAssistant}
-                    </Typography>
-                    <ApplicationImg
-                      assistant={uiAssistant.toLowerCase()}
-                      size="small"
+              <div className={classes.mappingHeader}>
+                <div className={classes.mappingChild}>
+                  <Typography variant="h5" className={classes.childHeader}>
+                    {uiAssistant}
+                  </Typography>
+                  <ApplicationImg
+                    assistant={uiAssistant.toLowerCase()}
+                    size="small"
                     />
-                  </div>
-                  <div className={classes.mappingChild}>
-                    <Typography variant="h5" className={classes.childHeader}>
-                      NetSuite
-                    </Typography>
-                    <ApplicationImg assistant="netsuite" />
-                  </div>
                 </div>
-                <div className={classes.mappingWrapper}>
-                  <VariationMappings
-                    integrationId={integrationId}
-                    flowId={flowId}
-                    categoryId={categoryId}
-                    sectionId={subCategoryId}
-                    variation={variation}
-                    depth={depth}
-                    isVariationAttributes={isVariationAttributes}
-                  />
+                <div className={classes.mappingChild}>
+                  <Typography variant="h5" className={classes.childHeader}>
+                    NetSuite
+                  </Typography>
+                  <ApplicationImg assistant="netsuite" />
                 </div>
-                <ActionGroup className={classes.saveButtonGroup}>
-                  <FilledButton
-                    id={flowId}
-                    data-test="saveImportMapping"
-                    onClick={handleSave}>
-                    Save
-                  </FilledButton>
-                  <TextButton
-                    data-test="saveImportMapping"
-                    onClick={handleCancel}>
-                    Close
-                  </TextButton>
-                </ActionGroup>
+              </div>
+              <div className={classes.mappingWrapper}>
+                <VariationMappings
+                  integrationId={integrationId}
+                  flowId={flowId}
+                  categoryId={categoryId}
+                  sectionId={subCategoryId}
+                  variation={variation}
+                  depth={depth}
+                  isVariationAttributes={isVariationAttributes} />
               </div>
             </div>
           </div>
-        ) : (
-          <Spinner centerAll />
-        )}
-      </Drawer>
+        </div>
+      </DrawerContent>
+      <DrawerFooter>
+        <FilledButton
+          id={flowId}
+          data-test="saveVariationMapping"
+          onClick={handleSave}>
+          Save
+        </FilledButton>
+        <TextButton
+          data-test="closeVariationMapping"
+          onClick={handleCancel}>
+          Close
+        </TextButton>
+      </DrawerFooter>
     </>
   );
 }
 
-export default function VariationMappingDrawerRoute(props) {
+export default function VariationMappingDrawerRoute({ integrationId, flowId, categoryId }) {
   const match = useRouteMatch();
-  const location = useLocation();
 
   return (
-    <LoadResources required integrationId={props.integrationId} resources="flows,exports,imports,connections">
-      <Switch>
-        <Route
-          exact
-          path={[
-            `${match.url}/:flowId/utilitymapping/:categoryId/depth/:depth/variationAttributes/:subCategoryId`,
-          ]}>
-          <VariationMappingDrawer
-            {...props}
-            parentUrl={location.pathname.replace(
-              /\/variationAttributes\/.*$/,
-              ''
-            )}
+    <LoadResources required integrationId={integrationId} resources="flows,exports,imports,connections">
+      <RightDrawer
+        path={[
+          drawerPaths.MAPPINGS.CATEGORY_MAPPING.VARIATION_MAPPING.VARIATION,
+          drawerPaths.MAPPINGS.CATEGORY_MAPPING.VARIATION_MAPPING.ROOT,
+        ]}
+        height="tall"
+        width="large">
+        <VariationMappingDrawer
+          integrationId={integrationId}
+          flowId={flowId}
+          categoryId={categoryId}
+          parentUrl={match.url}
           />
-        </Route>
-        <Route
-          exact
-          path={[
-            `${match.url}/:flowId/utilitymapping/:categoryId/depth/:depth/variations/:subCategoryId`,
-            `${match.url}/:flowId/utilitymapping/:categoryId/depth/:depth/variations/:subCategoryId/:variation`,
-          ]}>
-          <VariationMappingDrawer
-            {...props}
-            parentUrl={location.pathname.replace(/\/depth\/.*$/, '')}
-          />
-        </Route>
-      </Switch>
+      </RightDrawer>
     </LoadResources>
   );
 }

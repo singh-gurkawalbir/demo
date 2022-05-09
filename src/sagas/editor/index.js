@@ -65,7 +65,8 @@ export function* invokeProcessor({ editorId, processor, body }) {
       options: {
         connection,
         [resourceType === 'imports' ? 'import' : 'export']: resource,
-        fieldPath: fieldId,
+        // TODO: Siddharth, revert this change after completion of https://celigo.atlassian.net/browse/IO-25372
+        fieldPath: fieldId === 'webhook.successBody' ? 'dataURITemplate' : fieldId,
         timezone,
       },
     };
@@ -77,6 +78,20 @@ export function* invokeProcessor({ editorId, processor, body }) {
     const flowSampleData = safeParse(data);
     let _mappings;
 
+    if (editor.mappingPreviewType) {
+      // wait for previewMappings saga to complete the api call if its status is requested
+      const previewStatus = (yield select(selectors.mapping))?.preview?.status;
+
+      if (previewStatus === 'requested') {
+        yield take([
+          actionTypes.MAPPING.PREVIEW_RECEIVED,
+          actionTypes.MAPPING.PREVIEW_FAILED,
+        ]);
+      }
+
+      // for salesforce and netsuite we return the previewMappings updated state
+      return (yield select(selectors.mapping))?.preview;
+    }
     if (editorType === 'mappings') {
       const mappings = (yield select(selectors.mapping))?.mappings;
       const lookups = (yield select(selectors.mapping))?.lookups;
@@ -141,6 +156,9 @@ export function* requestPreview({ id }) {
       };
 
       return yield put(actions.editor.validateFailure(id, violations));
+    }
+    if (editor.mappingPreviewType) {
+      yield put(actions.mapping.requestPreview(id));
     }
   }
 
@@ -509,7 +527,7 @@ export function* requestEditorSampleData({
   // for exports with paging method configured, preview stages data needs to be passed for getContext to get proper editor sample data
   const isPagingMethodConfigured = !!(isOldRestResource ? resource?.rest?.pagingMethod : resource?.http?.paging?.method);
   const needPreviewStagesData = resourceType === 'exports' && isPagingMethodConfigured && previewDataDependentFieldIds.includes(fieldId);
-  const isExportAdvancedField = resourceType === 'exports' && ['dataURITemplate', 'traceKeyTemplate'].includes(fieldId);
+  const isExportAdvancedField = resourceType === 'exports' && ['dataURITemplate', 'traceKeyTemplate', 'webhook.successBody'].includes(fieldId);
   const isStandaloneExportAdvancedField = !flowId && isExportAdvancedField;
 
   if (showPreviewStageData || needPreviewStagesData || isStandaloneExportAdvancedField) {
@@ -536,7 +554,7 @@ export function* requestEditorSampleData({
 
       sampleData = parsedData?.data;
     } else if (stage && (isExportAdvancedField || (flowId && !isPageGenerator))) {
-      // Handles all PPs and PG with advanced field ID  ( dataURI and traceKey )
+      // Handles all PPs and PG with advanced field ID  ( dataURI and traceKey and webhook.successBody )
       sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage, formKey });
     }
   } else if (stage) {
@@ -566,6 +584,7 @@ export function* requestEditorSampleData({
     const flow = yield select(selectors.resource, 'flows', flowId);
 
     body.integrationId = flow?._integrationId;
+
     body.fieldPath = fieldId || filterPath;
 
     if (needPreviewStagesData) {
@@ -802,7 +821,7 @@ export function* initEditor({ id, editorType, options }) {
   const stateOptions = {
     editorType,
     ...formattedOptions,
-    fieldId: getUniqueFieldId(fieldId, resource, connection),
+    fieldId: getUniqueFieldId(fieldId, resource, connection, resourceType),
     ...featuresMap(formattedOptions)[editorType],
     originalRule,
     sampleDataStatus: 'requested',

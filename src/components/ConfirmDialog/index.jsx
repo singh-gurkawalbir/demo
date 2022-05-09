@@ -1,9 +1,8 @@
 import React, { useState, useCallback, useContext } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, TextField } from '@material-ui/core';
 import clsx from 'clsx';
 import ModalDialog from '../ModalDialog';
 import RawHtml from '../RawHtml';
-import Prompt from '../Prompt';
 import ActionGroup from '../ActionGroup';
 import { TextButton, FilledButton, OutlinedButton } from '../Buttons';
 
@@ -12,6 +11,11 @@ const useStyles = makeStyles(theme => ({
     fontSize: 15,
     lineHeight: '19px',
     color: theme.palette.secondary.main,
+  },
+  formField: {
+    paddingTop: theme.spacing(1),
+    width: '100%',
+    marginTop: theme.spacing(1),
   },
   containerButtons: {
     position: 'relative',
@@ -31,6 +35,7 @@ const ConfirmDialog = (
     allowedTags,
     onClose,
     maxWidth,
+    isPrompt = false,
     buttons = [
       { label: 'No', variant: 'text' },
       { label: 'Yes' },
@@ -39,14 +44,18 @@ const ConfirmDialog = (
     hideClose = false,
   }) => {
   const classes = useStyles();
+  const [inputValue, setInputValue] = useState('');
   const handleButtonClick = useCallback(
     button => () => {
       onClose();
-      button.onClick?.();
+      button.onClick?.(isPrompt ? inputValue : undefined);
     },
-    [onClose]
+    [onClose, isPrompt, inputValue]
   );
 
+  const handleTagChange = e => {
+    setInputValue(e.target.value);
+  };
   const handleClose = useCallback(() => {
     if (typeof onDialogClose === 'function') {
       onDialogClose();
@@ -58,17 +67,33 @@ const ConfirmDialog = (
   return (
     <ModalDialog show onClose={hideClose ? undefined : handleClose} maxWidth={maxWidth}>
       {title}
-      {isHtml ? (
-        <RawHtml className={classes.message} html={message} options={{allowedTags}} />
-      ) : (
-        <div className={classes.message}>{message}</div>
-      )}
+      <>
+        {isHtml ? (
+          <RawHtml className={classes.message} html={message} options={{allowedTags}} />
+        ) : (
+          <div className={classes.message}>{message}</div>
+        )}
+        {isPrompt && (
+        <TextField
+          autoComplete="off"
+          key="integrationTag"
+          data-test="integrationTag"
+          name="integrationTag"
+          placeholder="tag"
+          value={inputValue}
+          variant="filled"
+          onChange={handleTagChange}
+          className={classes.formField}
+        />
+        )}
+      </>
       <div className={classes.containerButtons}>
         <ActionGroup>
           {buttons.map(button => {
             const buttonProps = {
               'data-test': button.dataTest || button.label,
               key: button.label,
+              error: button.error,
               className: clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'}),
               onClick: handleButtonClick(button),
             };
@@ -117,12 +142,7 @@ export const ConfirmDialogProvider = ({ children }) => {
   return (
     <ConfirmDialogContext.Provider
       value={{ setConfirmDialogProps }}>
-      {!!confirmDialogProps &&
-        (confirmDialogProps.isPrompt ? (
-          <Prompt {...confirmDialogProps} onClose={onClose} />
-        ) : (
-          <ConfirmDialog {...confirmDialogProps} onClose={onClose} />
-        ))}
+      {!!confirmDialogProps && <ConfirmDialog {...confirmDialogProps} onClose={onClose} />}
       {children}
     </ConfirmDialogContext.Provider>
   );
@@ -145,7 +165,6 @@ export default function useConfirmDialog() {
   );
   const saveDiscardDialog = useCallback(
     ({onSave, onDiscard}) => {
-      // console.log(({onSave, onDiscard}));
       setConfirmDialogProps({
         title: 'You’ve got unsaved changes',
         message: 'Are you sure you want to leave this page and lose your unsaved changes?',

@@ -1,11 +1,6 @@
-import { Drawer, makeStyles } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Route, useHistory,
-
-  useLocation, useRouteMatch,
-} from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
@@ -13,35 +8,22 @@ import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
 import Spinner from '../../../../../../components/Spinner';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
-import DrawerTitleBar from './TitleBar';
 import { TextButton } from '../../../../../../components/Buttons';
+import RightDrawer from '../../../../../../components/drawer/Right';
+import DrawerHeader from '../../../../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../../../components/drawer/Right/DrawerContent';
+import DrawerFooter from '../../../../../../components/drawer/Right/DrawerFooter';
+import { getTrimmedTitle } from '../../../../../../utils/string';
+import { drawerPaths } from '../../../../../../utils/rightDrawer';
 
-const useStyles = makeStyles(theme => ({
-  drawerPaper: {
-    width: '60%',
-    border: 'solid 1px',
-    borderColor: theme.palette.secondary.lightest,
-    // boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
-    zIndex: theme.zIndex.drawer + 1,
-  },
-  form: {
-    maxHeight: 'calc(100vh - 180px)',
-    padding: theme.spacing(2, 3),
-  },
-  addCategoryDrawerForm: {
-    padding: '16px 24px',
-  },
-  addCategoryDrawerFormActions: {
-    margin: '0px 24px',
-  },
-}));
-
-function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
-  const match = useRouteMatch();
-  const { flowId } = match.params;
-  const classes = useStyles();
+function AddCategoryMappingDrawer({ integrationId, parentUrl, flowId }) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const flowName = useSelector(state => {
+    const flow = selectors.resource(state, 'flows', flowId);
+
+    return flow ? flow.name : flowId;
+  });
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
   );
@@ -208,58 +190,45 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
     optionsHandler: fieldMeta.optionsHandler,
   });
 
+  if (!metadataLoaded) {
+    return <Spinner centerAll />;
+  }
+
   return (
-    <Drawer
-      anchor="right"
-      classes={{
-        paper: classes.drawerPaper,
-      }}
-      BackdropProps={{ invisible: true }}
-      open={!!match}>
-      <DrawerTitleBar
-        flowId={flowId}
-        addCategory
-        onClose={handleClose}
-        backToParent
+    <>
+      <DrawerHeader
+        title={`Add category: ${getTrimmedTitle(flowName)}`}
+        handleClose={handleClose}
       />
-      {metadataLoaded ? (
-        <>
-          <DynaForm
-            formKey={formKey}
-            className={classes.addCategoryDrawerForm} />
-          <div className={classes.addCategoryDrawerFormActions}>
-            <DynaSubmit
-              formKey={formKey}
-              data-test="addCategory"
-              onClick={handleSave}>
-              Add Category
-            </DynaSubmit>
-            <TextButton onClick={handleClose}>
-              Cancel
-            </TextButton>
-          </div>
-        </>
-      ) : (
-        <Spinner centerAll />
-      )}
-    </Drawer>
+      <DrawerContent>
+        <DynaForm formKey={formKey} />
+      </DrawerContent>
+      <DrawerFooter>
+        <DynaSubmit
+          formKey={formKey}
+          data-test="addCategory"
+          onClick={handleSave}>
+          Add category
+        </DynaSubmit>
+        <TextButton onClick={handleClose}>
+          Cancel
+        </TextButton>
+      </DrawerFooter>
+    </>
   );
 }
 
-export default function CategoryMappingDrawerRoute(props) {
+export default function AddCategoryMappingDrawerRoute({ integrationId, flowId }) {
   const match = useRouteMatch();
-  const location = useLocation();
 
   return (
-    <Route
-      exact
-      path={`${match.url}/:flowId/utilitymapping/:categoryId/addCategory`}>
-      <LoadResources required integrationId={props.integrationId} resources="flows,exports,imports,connections">
+    <RightDrawer path={drawerPaths.MAPPINGS.CATEGORY_MAPPING.ADD} width="large" height="tall">
+      <LoadResources required integrationId={integrationId} resources="flows,exports,imports,connections">
         <AddCategoryMappingDrawer
-          {...props}
-          parentUrl={location.pathname.replace(/\/addCategory$/, '')}
-        />
+          integrationId={integrationId}
+          flowId={flowId}
+          parentUrl={match.url} />
       </LoadResources>
-    </Route>
+    </RightDrawer>
   );
 }

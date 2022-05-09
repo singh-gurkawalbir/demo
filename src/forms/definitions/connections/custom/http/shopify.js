@@ -175,14 +175,14 @@ export default {
       required: true,
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.version) ||
-        '2021-07',
+        '2022-04',
       visible: r => !(r?._connectorId),
       options: [
         {
           items: [
-            { label: '2021-07', value: '2021-07' },
             { label: '2021-10', value: '2021-10' },
             { label: '2022-01', value: '2022-01' },
+            { label: '2022-04', value: '2022-04' },
           ],
         },
       ],
@@ -255,6 +255,8 @@ export default {
           scopes: [
             'read_users',
             'write_users',
+            'read_gift_cards',
+            'write_gift_cards',
           ]},
       ],
       visibleWhenAll: r => {

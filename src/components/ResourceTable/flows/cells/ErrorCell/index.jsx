@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 import Status from '../../../../Buttons/Status';
 
 export default function RunCell({
@@ -20,14 +21,28 @@ export default function RunCell({
   if (flowErrorCount) {
     return (
       <Status variant="error" size="mini" >
-        <Link to={`${match.url}/${flowId}/errorsList`}>{flowErrorCount} {flowErrorCount === 1 ? 'error' : 'errors'}</Link>
+        <Link
+          to={buildDrawerUrl({
+            path: drawerPaths.ERROR_MANAGEMENT.V2.FLOW_ERROR_LIST,
+            baseUrl: match.url,
+            params: { flowId },
+          })}>
+          {flowErrorCount} {flowErrorCount === 1 ? 'error' : 'errors'}
+        </Link>
       </Status>
     );
   }
 
   return (
     <Status variant="success" size="mini" >
-      success
+      <Link
+        to={buildDrawerUrl({
+          path: drawerPaths.ERROR_MANAGEMENT.V2.FLOW_ERROR_LIST,
+          baseUrl: match.url,
+          params: { flowId },
+        })}>
+        Success
+      </Link>
     </Status>
   );
 }

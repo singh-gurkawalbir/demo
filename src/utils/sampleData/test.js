@@ -16,6 +16,7 @@ import getFormattedSampleData, {
   extractRawSampleDataFromOneToManySampleData,
   wrapExportFileSampleData,
   wrapSampleDataWithContext,
+  unwrapExportFileSampleData,
 } from '.';
 
 describe('getFormattedSampleData util', () => {
@@ -965,7 +966,49 @@ describe('wrapExportFileSampleData util', () => {
     expect(wrapExportFileSampleData(records)).toEqual(expectedData);
   });
 });
+describe('unwrapExportFileSampleData util', () => {
+  test('should return empty page_of_records record if sample input is empty or not of object type', () => {
+    expect(unwrapExportFileSampleData()).toBeFalsy();
+    expect(unwrapExportFileSampleData('dummy')).toBeFalsy();
+    expect(unwrapExportFileSampleData({ page_of_records: [{ record: {} }] })).toEqual({});
+  });
+  test('should unwrap the wrapped sample data and return the original input if input is a non-array type', () => {
+    const records = {
+      name: 'Bob',
+      age: 23,
+    };
 
+    expect(unwrapExportFileSampleData(wrapExportFileSampleData(records))).toEqual(records);
+  });
+  test('should correctly unwrap the wrapped page_of_records and rows structure if input records is array of objects', () => {
+    const records = [
+      {
+        CONTRACT_PRICE: '20',
+        CUSTOMER_NUMBER: 'C82828',
+      },
+      {
+        CONTRACT_PRICE: '14',
+        CUSTOMER_NUMBER: 'C98890',
+      },
+    ];
+
+    expect(unwrapExportFileSampleData(wrapExportFileSampleData(records))).toEqual(records);
+  });
+  test('should correctly unwrap the wrapped page_of_records and rows structure if input records is array of arrays (grouped data)', () => {
+    const records = [
+      [{
+        CONTRACT_PRICE: '20',
+        CUSTOMER_NUMBER: 'C82828',
+      }],
+      [{
+        CONTRACT_PRICE: '14',
+        CUSTOMER_NUMBER: 'C98890',
+      }],
+    ];
+
+    expect(unwrapExportFileSampleData(wrapExportFileSampleData(records))).toEqual(records);
+  });
+});
 describe('wrapSampleDataWithContext util', () => {
   let integration; let resource; let flow; let connection; let
     sampleData;
@@ -1202,6 +1245,54 @@ describe('wrapSampleDataWithContext util', () => {
             fileMeta:
               {
                 fileName: 'sampleFileName',
+              },
+          },
+        ],
+        errors: [],
+        _exportId: 'some resource id',
+        _connectionId: 'some connection id',
+        _flowId: 'some flow id',
+        _integrationId: 'some integration id',
+        pageIndex: 0,
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flowGrouping: {},
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+
+    // delta type resource
+    resource.type = 'delta';
+    expectedData.data.lastExportDateTime = expect.any(String);
+    expectedData.data.currentExportDateTime = expect.any(String);
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
+  test('should return correctly wrapped sample data if stage is preSavePage and resource is FTP export', () => {
+    const stage = 'preSavePage';
+
+    resource.adaptorType = 'FTPExport';
+
+    const expectedData = {
+      status: 'received',
+      data: {
+        data: [{
+          id: 333,
+          phone: '1234',
+        }],
+        files: [
+          {
+            fileMeta:
+              {
+                fileName: 'sampleFileName',
+                fileSize: 1234,
               },
           },
         ],

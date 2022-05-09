@@ -486,10 +486,10 @@ export const extractRawSampleDataFromOneToManySampleData = (sampleData, resource
  * For the time being this is used for csv/xml export sample data view
  * TODO: Discuss on this being replaced with API call, once we finalize AFE 2.0 requirements
  */
-export const wrapExportFileSampleData = records => {
+export const wrapExportFileSampleData = (records, status) => {
   const page_of_records = [];
 
-  if (!records || typeof records !== 'object') {
+  if (!records || typeof records !== 'object' || status === 'error') {
     page_of_records.push({ record: {} });
 
     return { page_of_records };
@@ -511,6 +511,40 @@ export const wrapExportFileSampleData = records => {
   });
 
   return { page_of_records };
+};
+
+// this util unwraps the sample data wrapped by wrapExportFileSampleData
+export const unwrapExportFileSampleData = sampleData => {
+  if (!sampleData || typeof sampleData !== 'object') return;
+
+  const {page_of_records} = sampleData;
+
+  if (!page_of_records || !Array.isArray(page_of_records) || page_of_records.length === 0) return;
+
+  const records = [];
+
+  if (page_of_records.length === 1) {
+    const {record, rows} = page_of_records[0];
+
+    if (record) return record;
+    if (!rows) return;
+  }
+
+  page_of_records.forEach(page => {
+    const {record, rows} = page;
+    const rowRecords = [];
+
+    if (record) {
+      records.push(record);
+    } else if (rows) {
+      rows.forEach(row => {
+        rowRecords.push(row);
+      });
+      records.push(rowRecords);
+    }
+  });
+
+  return records.length > 0 && records;
 };
 
 // this util method will wrap the sample data with correct context fields
@@ -630,6 +664,7 @@ export const wrapSampleDataWithContext = ({
               fileMeta:
                 {
                   fileName: 'sampleFileName',
+                  fileSize: resource.adaptorType === 'FTPExport' ? 1234 : undefined,
                 },
             },
           ],

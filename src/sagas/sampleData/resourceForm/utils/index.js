@@ -62,7 +62,7 @@ export function* _fetchResourceInfoFromFormKey({ formKey }) {
  * Checks if the constructed body from formValues has same file type as saved resource
  * and if body has sampleData
  */
-function* _hasSampleDataOnResource({ formKey }) {
+export function* _hasSampleDataOnResource({ formKey }) {
   const { resourceObj, resourceId, resourceType } = yield call(_fetchResourceInfoFromFormKey, { formKey });
   const resource = yield select(selectors.resource, resourceType, resourceId);
 
@@ -96,9 +96,10 @@ export function* extractFileSampleDataProps({ formKey }) {
   const fileProps = resourceObj.file[fileType] || {};
   const fileId = `${resourceId}-uploadFile`;
   const uploadedFileObj = yield select(selectors.getUploadedFile, fileId);
+  const oldResourceDoc = yield select(selectors.resource, 'exports', resourceObj._id);
   const { file: uploadedFile } = uploadedFileObj || {};
   const hasSampleData = yield call(_hasSampleDataOnResource, { formKey });
-  const parserOptions = generateFileParserOptionsFromResource(resourceObj);
+  const parserOptions = generateFileParserOptionsFromResource(resourceObj, oldResourceDoc);
 
   if (FILE_DEFINITION_TYPES.includes(fileType)) {
     const fieldState = yield select(selectors.fieldState, formKey, 'file.filedefinition.rules');

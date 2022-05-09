@@ -4611,7 +4611,7 @@ Object {
                 "value": "false",
               },
               Object {
-                "label": "SuiteScript 2.0 (beta)",
+                "label": "SuiteScript 2.0",
                 "value": "true",
               },
             ],
@@ -4727,7 +4727,7 @@ Object {
                 "value": "false",
               },
               Object {
-                "label": "SuiteScript 2.0 (beta)",
+                "label": "SuiteScript 2.0",
                 "value": "true",
               },
             ],
@@ -6189,6 +6189,15 @@ Object {
       "webhook.slackKey": Object {
         "fieldId": "webhook.slackKey",
       },
+      "webhook.successBody": Object {
+        "fieldId": "webhook.successBody",
+      },
+      "webhook.successMediaType": Object {
+        "fieldId": "webhook.successMediaType",
+      },
+      "webhook.successStatusCode": Object {
+        "fieldId": "webhook.successStatusCode",
+      },
       "webhook.token": Object {
         "fieldId": "webhook.token",
         "refreshOptionsOnChangesTo": Array [
@@ -6248,6 +6257,9 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "webhook.successStatusCode",
+                "webhook.successMediaType",
+                "webhook.successBody",
                 "pageSize",
                 "dataURITemplate",
                 "skipRetries",
@@ -8380,6 +8392,7 @@ Object {
       },
       "file.xml.body": Object {
         "connectionId": [Function],
+        "helpKey": "import.ftp.XMLDocument",
         "id": "file.xml.body",
         "label": "XML document",
         "refreshOptionsOnChangesTo": Array [
@@ -10384,6 +10397,7 @@ Object {
       },
       "file.xml.body": Object {
         "connectionId": [Function],
+        "helpKey": "import.ftp.XMLDocument",
         "id": "file.xml.body",
         "label": "XML document",
         "refreshOptionsOnChangesTo": Array [

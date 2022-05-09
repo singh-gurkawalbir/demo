@@ -1,8 +1,60 @@
-import { useSelector } from 'react-redux';
+import React, {useCallback} from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
 import { JOB_STATUS } from '../../../../../utils/constants';
 import { selectors } from '../../../../../reducers';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import OfflineConnectionsIcon from '../../../../icons/OfflineConnectionsIcon';
+import actions from '../../../../../actions';
 
-export default function FlowStepName({ job }) {
+const useStyles = makeStyles(theme => ({
+  root: {
+    // display: 'flex',
+    maxWidth: 300,
+    wordWrap: 'break-word',
+  },
+  connectionIcon: {
+    '&:hover': {
+      backgroundColor: theme.palette.background.paper2,
+    },
+  },
+  offlineIcon: {
+    color: theme.palette.secondary.main,
+    width: 18,
+  },
+}));
+
+function OfflineConnectionsIndicator({resourceType, resourceId}) {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const resource = useSelectorMemo(selectors.makeResourceSelector, resourceType, resourceId);
+
+  const isOffline = useSelector(state =>
+    selectors.isConnectionOffline(state, resource?._connectionId)
+  );
+
+  const onOfflineIconClick = useCallback(
+    () => {
+      dispatch(actions.bottomDrawer.setActiveTab({tabType: 'connections'}));
+    },
+    [dispatch]);
+
+  if (!isOffline) { return null; }
+
+  return (
+    <IconButtonWithTooltip
+      className={classes.connectionIcon}
+      onClick={onOfflineIconClick}
+      tooltipProps={{title: 'Connection down', placement: 'bottom'}}
+      buttonSize={{size: 'small'}}>
+      <OfflineConnectionsIcon className={classes.offlineIcon} />
+    </IconButtonWithTooltip>
+  );
+}
+
+function FlowName({ job }) {
   const exportName = useSelector(state => {
     const exportObj = selectors.resource(state, 'exports', job._exportId);
 
@@ -22,4 +74,17 @@ export default function FlowStepName({ job }) {
   // Incase of Old flows , we show Export/Import instead of names as they don't exist for old resources
   // Referred to EM 1.0 Jobs for this behaviour
   return job.name || (job._exportId ? 'Export' : 'Import');
+}
+
+export default function FlowStepName({ job }) {
+  const classes = useStyles();
+  const resourceType = job?._exportId ? 'exports' : 'imports';
+  const resourceId = job?._exportId || job?._importId;
+
+  return (
+    <div className={classes.root}>
+      <FlowName job={job} />
+      <OfflineConnectionsIndicator resourceType={resourceType} resourceId={resourceId} />
+    </div>
+  );
 }

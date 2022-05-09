@@ -54,3 +54,47 @@ export default { hashCode, isJsonString, safeParse, capitalizeFirstLetter };
 export const isHTML = text => /<\/?[a-z][\s\S]*>/i.test(text);
 
 export const getTextAfterCount = (displayText, valueCount = 0) => `${valueCount} ${valueCount === 1 ? displayText : `${displayText}s`}`;
+
+export const getTrimmedTitle = (title = '', maxLength = 40) => {
+  if (maxLength < 4) return title;
+
+  return title.length > maxLength
+    ? `${title.substring(0, maxLength - 3)}...`
+    : title;
+};
+
+export const getParsedMessage = message => {
+  if (!message) return message;
+
+  const formattedMessage = isJsonString(message) ? JSON.parse(message) : message;
+
+  let safeValue = '';
+
+  // this is to support double stringified messages
+  // we first parse it and then return the message as string type
+  if (typeof formattedMessage === 'string') {
+    safeValue = formattedMessage;
+  } else if (typeof formattedMessage === 'object') {
+    safeValue = JSON.stringify(formattedMessage);
+  } else {
+    safeValue = `${formattedMessage}`;
+  }
+
+  return safeValue;
+};
+
+export const escapeSpecialChars = message => {
+  let escapedMessage = message;
+
+  if (!escapedMessage) return escapedMessage;
+
+  try {
+    // stringify escapes special chars
+    // but if oldValue was already a string, then we need to remove extra double quotes
+    escapedMessage = JSON.stringify(escapedMessage).replace(/^"|"$/g, '');
+  } catch (e) {
+  // do nothing
+  }
+
+  return escapedMessage;
+};
