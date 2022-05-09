@@ -12,9 +12,9 @@ export default function GenericAdaptorNotification({className, onClose}) {
           target="_blank"
           rel="noopener noreferrer"
           href="mailto:product_feedback@celigo.com">
-          <u>Let us know</u>
+          <u>Let us know to prioritize this</u>
         </a>
-        {' '}to prioritize this too!
+        {' '}too!
       </Typography>
     </NotificationToaster>
   );
