@@ -295,7 +295,11 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         if (isNew) {
           meta = meta.new;
         } else if (isMicrosoftBusinessCentralOdataConnection(connection)) {
-          meta = meta[type].json;
+          if (type === 'http') {
+            meta = meta[type];
+          } else {
+            meta = meta[type].json;
+          }
         } else if (type === 'rdbms') {
           const rdbmsSubType =
               connection && connection.rdbms && connection.rdbms.type;
