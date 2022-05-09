@@ -1,7 +1,8 @@
 /* eslint-disable no-param-reassign */
 
 import { cloneDeep } from 'lodash';
-import { GRAPH_ELEMENTS_TYPE } from '../../constants';
+import jsonPatch from 'fast-json-patch';
+import { BranchPathRegex, GRAPH_ELEMENTS_TYPE } from '../../constants';
 import { generateId } from '../string';
 
 export function generateDefaultEdge(source, target, {routerIndex, branchIndex, hidden, processorCount} = {}) {
@@ -274,5 +275,174 @@ export const generateReactFlowGraph = flow => {
   }
 
   return generateNodesAndEdgesFromBranchedFlow(flow);
+};
+
+const mergeBetweenPPAndRouter = ({edgeSource, patchSet, sourceElement, edgeTarget}) => {
+  const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
+  const [, edgeSourceRouterIndex, edgeSourceBranchIndex] = BranchPathRegex.exec(edgeSource.data.path);
+
+  const newVirtualRouter = generateEmptyRouter(true);
+
+  newVirtualRouter.branches = [{pageProcessors: [], nextRouterId: edgeTarget.id}];
+
+  patchSet.push(...[
+    {
+      op: 'add',
+      path: '/routers/-',
+      value: newVirtualRouter,
+    },
+    {
+      op: 'replace',
+      path: `/routers/${edgeSourceRouterIndex}/branches/${edgeSourceBranchIndex}/nextRouterId`,
+      value: newVirtualRouter.id,
+    },
+    {
+      op: 'replace',
+      path: `/routers/${sourceRouterIndex}/branches/${sourceBranchIndex}/nextRouterId`,
+      value: newVirtualRouter.id,
+    },
+  ]);
+};
+
+const mergeTerminalNodes = ({ patchSet, sourceElement, targetElement }) => {
+  const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
+  // merging two terminal nodes
+  const [, targetRouterIndex, targetBranchIndex] = BranchPathRegex.exec(targetElement.data.path);
+  const router = generateEmptyRouter(true);
+
+  patchSet.push(...[
+    {
+      op: 'add',
+      path: `/routers/${sourceRouterIndex}/branches/${sourceBranchIndex}/nextRouterId`,
+      value: router.id,
+    },
+    {
+      op: 'add',
+      path: `/routers/${targetRouterIndex}/branches/${targetBranchIndex}/nextRouterId`,
+      value: router.id,
+    },
+    {
+      op: 'add',
+      path: '/routers/-',
+      value: router,
+    }]);
+};
+
+const mergeBetweenRouterAndPP = ({flowDoc, edgeTarget, patchSet, sourceElement}) => {
+  const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
+
+  const [, targetRouterIndex, targetBranchIndex] = BranchPathRegex.exec(edgeTarget.data.path);
+  const pageProcessors = jsonPatch.getValueByPointer(flowDoc, `/routers/${targetRouterIndex}/branches/${targetBranchIndex}/pageProcessors`);
+
+  const initialTargetNextRouterId = jsonPatch.getValueByPointer(flowDoc, `/routers/${targetRouterIndex}/branches/${targetBranchIndex}/_nextRouterId`);
+
+  const newVirtualRouter = generateEmptyRouter(true);
+
+  newVirtualRouter.branches = [{pageProcessors, nextRouterId: initialTargetNextRouterId}];
+
+  patchSet.push(...[
+    {
+      op: 'add',
+      path: '/routers/-',
+      value: newVirtualRouter,
+    },
+    {
+      op: 'replace',
+      path: `/routers/${sourceRouterIndex}/branches/${sourceBranchIndex}/nextRouterId`,
+      value: newVirtualRouter.id,
+    },
+    {
+      op: 'replace',
+      path: `/routers/${targetRouterIndex}/branches/${targetBranchIndex}/pageProcessors`,
+      value: [],
+    },
+    {
+      op: 'replace',
+      path: `/routers/${targetRouterIndex}/branches/${targetBranchIndex}/nextRouterId`,
+      value: newVirtualRouter.id,
+    },
+  ]);
+};
+const splitPPArray = (ar, index) => {
+  const firstHalf = ar.splice(0, index);
+  const secondHalf = ar.splice(index - 1, ar.length);
+
+  return [firstHalf, secondHalf];
+};
+const mergeBetweenTwoPPSteps = ({flow, targetElement, sourceElement, staged}) => {
+  const flowId = flow._id;
+  const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
+  const [, edgeRouterIndex, edgeBranchIndex] = BranchPathRegex.exec(targetElement.data.path);
+  const newVirtualRouter = generateEmptyRouter(true);
+  const {pageProcessors = [], nextRouterId: originalNextRouterId} = flow.routers[edgeRouterIndex].branches[edgeBranchIndex];
+  const insertionIndex = pageProcessors.findIndex(pp => pp.id === targetElement.target);
+  const [firstHalf, secondHalf] = splitPPArray(pageProcessors, insertionIndex);
+
+  newVirtualRouter.branches = [{pageProcessors: secondHalf, nextRouterId: originalNextRouterId }];
+  staged[flowId].patch.push(...[
+    {
+      op: 'add',
+      path: `/routers/${sourceRouterIndex}/branches/${sourceBranchIndex}/nextRouterId`,
+      value: newVirtualRouter.id,
+    },
+    {
+      op: 'add',
+      path: `/routers/${edgeRouterIndex}/branches/${edgeBranchIndex}/nextRouterId`,
+      value: newVirtualRouter.id,
+    },
+    {
+      op: 'add',
+      path: `/routers/${edgeRouterIndex}/branches/${edgeBranchIndex}/pageProcessors`,
+      value: firstHalf,
+    },
+    {
+      op: 'add',
+      path: '/routers/-',
+      value: newVirtualRouter,
+    },
+  ]);
+};
+
+const mergeTerminalToAnEdge = ({ flowDoc, elements, patchSet, sourceElement, targetElement }) => {
+  // Merging terminal node to an edge
+
+  const edgeSource = elements[targetElement.source];
+  const edgeTarget = elements[targetElement.target];
+
+  if (edgeSource.type === GRAPH_ELEMENTS_TYPE.ROUTER && edgeTarget.type === GRAPH_ELEMENTS_TYPE.PP_STEP) {
+    // Merging between a router and a PP step
+
+    mergeBetweenRouterAndPP({flowDoc, patchSet, sourceElement, edgeTarget});
+  } else if (edgeSource.type === GRAPH_ELEMENTS_TYPE.PP_STEP && edgeTarget.type === GRAPH_ELEMENTS_TYPE.ROUTER) {
+    // Merging between a PP and a router step
+
+    mergeBetweenPPAndRouter({flowDoc, edgeSource, patchSet, sourceElement, edgeTarget});
+  } else if (edgeSource.type === GRAPH_ELEMENTS_TYPE.PP_STEP && edgeTarget.type === GRAPH_ELEMENTS_TYPE.PP_STEP) {
+    mergeBetweenTwoPPSteps({flowDoc, targetElement, sourceElement, patchSet});
+  }
+};
+
+export const mergeDragSourceWithTarget = (flowDoc, elements, dragNodeId, targetId, patchSet) => {
+  const sourceElement = elements[dragNodeId];
+  const targetElement = elements[targetId];
+
+  if (!sourceElement || !targetElement) {
+    return;
+  }
+  const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
+
+  if (sourceElement.type === GRAPH_ELEMENTS_TYPE.TERMINAL && targetElement.type === GRAPH_ELEMENTS_TYPE.TERMINAL) {
+    // merging two terminal nodes
+    mergeTerminalNodes({sourceElement, targetElement, patchSet});
+  } else if (targetElement.type === GRAPH_ELEMENTS_TYPE.MERGE) {
+    // merging terminal node to a merge node
+    patchSet.push({
+      op: 'add',
+      path: `/routers/${sourceRouterIndex}/branches/${sourceBranchIndex}/nextRouterId`,
+      value: targetElement.data.router.id,
+    });
+  } else if (targetElement.type === GRAPH_ELEMENTS_TYPE.EDGE) {
+    mergeTerminalToAnEdge({flowDoc, elements, sourceElement, targetElement, patchSet});
+  }
 };
 

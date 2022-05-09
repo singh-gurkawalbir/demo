@@ -65,6 +65,8 @@ export default {
         originalRule: editor.originalRule?.filter,
       });
     }
+
+    return true;
   },
   processResult: (editor, result) => {
     if (editor.activeProcessor === 'filter') {
@@ -73,11 +75,55 @@ export default {
 
     return javascript.processResult(editor, result);
   },
-  preSaveValidate: editor => {
-    if (editor.activeProcessor === 'filter') {
-      return filter.preSaveValidate({rule: editor.rule?.filter});
+  patchSet: editor => {
+    const patches = {
+      foregroundPatches: undefined,
+      backgroundPatches: [],
+    };
+    const {
+      rule,
+      resourceId,
+      resourceType,
+      router,
+      routerIndex,
+      activeProcessor,
+    } = editor;
+    const { javascript} = rule || {};
+    const {scriptId, code, entryFunction } = javascript || {};
+
+    const type = activeProcessor === 'filter' ? 'input_filters' : 'script';
+    const path = `/routers/${routerIndex}`;
+    const value = {
+      routeRecordsUsing: type,
+      id: router.id,
+      routeRecordsTo: rule[activeProcessor].routeRecordsTo,
+      branches: rule[activeProcessor].branches,
+      script: {
+        scriptId,
+        function: entryFunction,
+      },
+    };
+
+    patches.foregroundPatches = [{
+      patch: [{ op: 'replace', path, value }],
+      resourceType,
+      resourceId,
+    }];
+
+    if (type === 'script') {
+      patches.backgroundPatches.push({
+        patch: [
+          {
+            op: 'replace',
+            path: '/content',
+            value: code,
+          },
+        ],
+        resourceType: 'scripts',
+        resourceId: scriptId,
+      });
     }
 
-    return {saveError: false};
+    return patches;
   },
 };

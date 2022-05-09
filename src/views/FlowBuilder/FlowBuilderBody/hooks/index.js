@@ -26,7 +26,7 @@ export const useHandleRouterClick = routerId => {
 
   return () => {
     const router = flow.routers.find(r => r.id === routerId);
-    const routerIndex = flow.routers.findIndex(r => r.id === routerId) + 1;
+    const routerIndex = flow.routers.findIndex(r => r.id === routerId);
 
     if (!router) return;
     dispatch(actions.editor.init(editorId, 'router', {

@@ -78,7 +78,7 @@ const useStyles = makeStyles(theme => ({
 
 const DragHandle = sortableHandle(() => <GripperIcon style={{cursor: 'grab'}} />);
 
-export default function RouterPanel({
+export default function BranchItem({
   expandable,
   expanded,
   position,
