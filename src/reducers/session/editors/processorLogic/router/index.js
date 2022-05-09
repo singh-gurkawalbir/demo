@@ -12,7 +12,7 @@ export default {
     const rule = {
       filter: router,
       javascript: {
-        router,
+        ...router,
         fetchScriptContent: true,
       },
     };
@@ -60,9 +60,9 @@ export default {
   },
   dirty: editor => {
     if (editor.activeProcessor === 'javascript') {
-      return filter.dirty({
-        rule: editor.rule?.filter,
-        originalRule: editor.originalRule?.filter,
+      return javascript.dirty({
+        rule: editor.rule?.javascript,
+        originalRule: editor.originalRule?.javascript,
       });
     }
 

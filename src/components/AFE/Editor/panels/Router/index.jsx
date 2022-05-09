@@ -68,8 +68,7 @@ export default function RouterPanel({ editorId }) {
     }
   }, [branches, editorId, routerIndex, dispatch]);
 
-  const activeProcessor = useSelector(state =>
-    selectors.editor(state, editorId).activeProcessor);
+  const activeProcessor = useSelector(state => selectors.editor(state, editorId).activeProcessor);
 
   const SortableContainer = sortableContainer(({children}) => (
     <ul className={classes.branchList}>
