@@ -50,10 +50,10 @@ function StartFreeTrialConfirmationMessage() {
 
       <ul className={classes.startFreeTrialOptions}>
         <li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
-        <li>Ability to enable unlimited flows in Business Process Automations &amp; integration templates</li>
+        <li>Ability to enable unlimited flows in Marketplace templates</li>
         <li>Integrations with multiple imports or exports (orchestration)</li>
         <li>Ad hoc data imports to thousands of applications</li>
-        <li>Ability to daisy-chain flows.</li>
+        <li>Ability to daisy-chain flows</li>
       </ul>
 
       <a
@@ -83,10 +83,10 @@ function StartFreeOrRequestUpgradeConfirmMessage() {
       Experience optimal process automation for your business with full access to integrator.io. For 30 days, you will get:
       <ul className={classes.startFreeTrialOptions}>
         <li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
-        <li>Ability to enable unlimited flows in Business Process Automations &amp; integration templates</li>
+        <li>Ability to enable unlimited flows in Marketplace templates</li>
         <li>Integrations with multiple imports or exports (orchestration)</li>
         <li>Ad hoc data imports to thousands of applications</li>
-        <li>Ability to daisy-chain flows.</li>
+        <li>Ability to daisy-chain flows</li>
       </ul>
 
       <a
@@ -126,7 +126,7 @@ function LicenseAction() {
   const startFreeTrialDialog = useCallback(() => {
     const message = `What will you integrate next?
       <br/><br/><a target="_blank" rel="noopener noreferrer"
-  href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with Integration Apps & templates.`;
+  href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with Integration Apps & Templates.`;
 
     confirmDialog({
       title: 'Congratulations! Your unlimited flows trial starts now.',
