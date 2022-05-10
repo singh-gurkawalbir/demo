@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core';
 import { endOfDay } from 'date-fns';
 import { AUDIT_LOG_SOURCE_LABELS } from '../../constants/auditLog';
 import { selectors } from '../../reducers';
-import { ResourceTypeFilter, ResourceIdFilter } from './ResourceFilters';
+import { ResourceTypeFilter, ResourceIdFilter, AuditLogActionFilter } from './ResourceFilters';
 import CeligoSelect from '../CeligoSelect';
 import ActionGroup from '../ActionGroup';
 import DateRangeSelector from '../DateRangeSelector';
@@ -92,6 +92,7 @@ export default function Filters(props) {
       _resourceId: OPTION_ALL.id,
       byUser: OPTION_ALL.id,
       source: OPTION_ALL.id,
+      event: OPTION_ALL.id,
     }
   );
 
@@ -217,6 +218,12 @@ export default function Filters(props) {
               ))}
             </CeligoSelect>
           </FormControl>
+          <AuditLogActionFilter
+            {...props}
+            classes={classes}
+            filters={filters}
+            onChange={handleChange}
+          />
         </ActionGroup>
         <ActionGroup position="right" className={classes.downloadButton}>
           <DateRangeSelector

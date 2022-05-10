@@ -8,7 +8,9 @@ export const AUDIT_LOG_SOURCE_LABELS = {
 };
 export const AUDIT_LOG_EVENT_LABELS = {
   create: 'Create',
-  delete: 'Delete',
   update: 'Update',
+  delete: 'Delete',
+  signin: 'Sign in',
+  signout: 'Sign out',
   view: 'View',
 };
