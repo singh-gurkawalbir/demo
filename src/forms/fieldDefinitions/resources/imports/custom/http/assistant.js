@@ -10,14 +10,14 @@ export default {
     isLoggable: true,
     type: 'assistantoptions',
     assistantFieldType: 'resource',
-    label: 'API name',
+    label: 'Resources',
     required: true,
   },
   'assistantMetadata.operation': {
     isLoggable: true,
     type: 'assistantoptions',
     assistantFieldType: 'operation',
-    label: 'Operation',
+    label: 'API Endpoints',
     required: true,
   },
   'assistantMetadata.ignoreExisting': {

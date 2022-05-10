@@ -28,7 +28,9 @@ import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 import { getAssistantFromConnection } from '../../utils/connections';
 import { getAssistantConnectorType } from '../../constants/applications';
-import { constructResourceFromFormValues } from '../utils';
+import { constructResourceFromFormValues,
+  updateFinalMetadataWithHttpFramework,
+} from '../utils';
 
 export const SCOPES = {
   META: 'meta',
@@ -81,6 +83,16 @@ export function* createFormValuesPatchSet({
     const iClients = yield select(selectors.resourceList, {
       type: 'iClients',
     });
+
+    // const { resources: httpConnectors = [] } = yield select(selectors.resourceList, {
+    //   type: 'httpconnectors',
+    //   filter: {
+    //     $where() {
+    //       return this.name === values?.application;
+    //     },
+    //   },
+    // });
+    // finalValues = preSave({...values, httpConnector: httpConnectors?.[0]}, resource, {iClients, connection});
 
     // stock preSave handler present...
     finalValues = preSave(values, resource, {iClients, connection});
@@ -886,12 +898,14 @@ export function* initFormValues({
     assistantData = yield select(selectors.assistantData, {
       adaptorType,
       assistant: connectionAssistant,
+      connectionId: connection?._id,
     });
 
     if (!assistantData) {
       assistantData = yield call(requestAssistantMetadata, {
         adaptorType,
         assistant: connectionAssistant,
+        connectionId: connection?._id,
       });
     }
   }
@@ -918,6 +932,20 @@ export function* initFormValues({
       // standard form init fn...
 
       finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow);
+    }
+    if (resourceType === 'connections' && assistant) {
+      const { resources = [] } = yield select(selectors.resourceList, {
+        type: 'httpconnectors',
+        filter: {
+          $where() {
+            return this.name === assistant;
+          },
+        },
+      });
+
+      if (resources.length) {
+        finalFieldMeta = updateFinalMetadataWithHttpFramework(finalFieldMeta, resources[0], resource);
+      }
     }
 
     // console.log('finalFieldMeta', finalFieldMeta);

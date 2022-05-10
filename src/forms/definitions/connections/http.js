@@ -103,6 +103,14 @@ export default {
       newValues['/http/auth/oauth'] = undefined;
       delete newValues['/http/auth/oauth/callbackURL'];
       delete newValues['/http/auth/oauth/clientCredentialsLocation'];
+      delete newValues['/http/auth/oauth/accessTokenBody'];
+      delete newValues['/http/auth/oauth/authURI'];
+      delete newValues['/http/auth/oauth/grantType'];
+      delete newValues['/http/auth/oauth/tokenURI'];
+      delete newValues['/http/auth/oauth/refreshBody'];
+
+      delete newValues['/http/auth/oauth/scope'];
+      delete newValues['/http/auth/oauth/scopeDelimiter'];
 
       newValues['/http/auth/token'] = undefined;
       delete newValues['/http/auth/token/token'];

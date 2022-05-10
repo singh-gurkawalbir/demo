@@ -1,7 +1,7 @@
 import {applicationsList, applicationsPlaceHolderText} from '../../../../constants/applications';
 
 export default {
-  preSave: ({ application, ...rest }) => {
+  preSave: ({ application, httpConnector, ...rest }) => {
     const applications = applicationsList();
 
     const app = applications.find(a => a.id === application) || {};
@@ -11,6 +11,18 @@ export default {
       '/type': app.type,
       '/application': app.name,
     };
+
+    // if (httpConnector) {
+    //   const connectionTemplate = httpConnector.versions[0].supportedBy.connection;
+
+    //   if (connectionTemplate) {
+    //     const settingsForm = connectionTemplate.preConfiguredFields.find(fields => fields.path === 'settingsForm');
+
+    //     if (settingsForm) {
+    //       newValues['/settingsForm'] = {form: {...settingsForm.values[0]}};
+    //     }
+    //   }
+    // }
 
     if (app.assistant) {
       newValues['/assistant'] = app.assistant;

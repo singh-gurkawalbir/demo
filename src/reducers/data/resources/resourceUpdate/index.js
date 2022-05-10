@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { isEqual, uniqBy } from 'lodash';
 import actionTypes from '../../../../actions/types';
-import { convertOldFlowSchemaToNewOne, populateRestSchema } from '../../../../utils/flows';
+import { convertOldFlowSchemaToNewOne, populateRestSchema, convertOldConnectionSchemaToNewOne } from '../../../../utils/flows';
 
 export const initializationResources = ['profile', 'preferences'];
 const accountResources = ['ashares', 'shared/ashares', 'licenses'];
@@ -38,6 +38,11 @@ function replaceOrInsertResource(draft, resourceType, resourceValue) {
 
   if (type === 'flows') resource = convertOldFlowSchemaToNewOne(resource);
   if (type === 'exports') resource = populateRestSchema(resource);
+  if (type === 'connections') {
+    const httpConnectors = [...draft.httpconnectors];
+
+    resource = convertOldConnectionSchemaToNewOne(resource, httpConnectors);
+  }
 
   if (!draft[type]) {
     draft[type] = [resource];
@@ -110,6 +115,14 @@ const addResourceCollection = (draft, resourceType, collection) => {
     const newCollection = collection?.map?.(convertOldFlowSchemaToNewOne);
 
     updateStateWhenValueDiff(draft, 'flows', newCollection || []);
+
+    return;
+  }
+  if (resourceType === 'connections') {
+    const httpConnectors = [...draft.httpconnectors];
+    const newCollection = collection?.map?.(connection => convertOldConnectionSchemaToNewOne(connection, httpConnectors));
+
+    updateStateWhenValueDiff(draft, 'connections', newCollection || []);
 
     return;
   }

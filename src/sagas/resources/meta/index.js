@@ -7,6 +7,7 @@ import commKeyGenerator from '../../../utils/commKeyGenerator';
 import getRequestOptions from '../../../utils/requestOptions';
 import { isJsonString } from '../../../utils/string';
 import { apiCallWithRetry } from '../../index';
+import {getHTTPConnectorMetadata} from '../../utils';
 
 const parseErrorMessage = error => {
   // Handling error statuses in  between 400 and 500 to show customized error
@@ -173,7 +174,7 @@ export function* getNetsuiteOrSalesforceMetaTakeLatestPerAction(params) {
   });
 }
 
-export function* requestAssistantMetadata({ adaptorType = 'rest', assistant }) {
+export function* requestAssistantMetadata({ adaptorType = 'rest', assistant}) {
   const { path, opts } = getRequestOptions(
     actionTypes.METADATA.ASSISTANT_REQUEST,
     {
@@ -189,11 +190,31 @@ export function* requestAssistantMetadata({ adaptorType = 'rest', assistant }) {
   if (commStatus && commStatus.status !== COMM_STATES.ERROR) {
     return;
   }
-
   let metadata;
 
+  if (assistant) {
+    const { resources: httpConnectors = [] } = yield select(selectors.resourceList, {
+      type: 'httpconnectors',
+      filter: {
+        $where() {
+          return this.name === assistant;
+        },
+      },
+    });
+    const { resources: httpResources = [] } = yield select(selectors.resourceList, {
+      type: 'httpconnectorresources',
+    });
+    const { resources: httpEndpoints = [] } = yield select(selectors.resourceList, {
+      type: 'httpconnectorendpoints',
+    });
+
+    if (httpConnectors?.length) {
+      metadata = getHTTPConnectorMetadata(httpConnectors[0], httpResources, httpEndpoints);
+    }
+  }
+
   try {
-    metadata = yield call(apiCallWithRetry, { path, opts });
+    if (!metadata) { metadata = yield call(apiCallWithRetry, { path, opts }); }
   } catch (error) {
     return;
   }

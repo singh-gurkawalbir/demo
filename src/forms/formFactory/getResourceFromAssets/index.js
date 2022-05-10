@@ -192,6 +192,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
     case 'connections':
       if (isNew) {
         meta = formMeta.connections.new;
+      } else if (resource?.assistant === 'shopify') {
+        meta = formMeta.connections.http;
       } else if (resource && resource.assistant === 'financialforce') {
         // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
 

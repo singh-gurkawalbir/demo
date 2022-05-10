@@ -249,7 +249,7 @@ function howToFindIdentifierFieldsMeta({
     if (lookupTypeOptions.find(opt => opt.value === 'lookup')) {
       const configureLookupQueryParametersField = {
         fieldId: 'assistantMetadata.lookupQueryParams',
-        label: 'Configure search parameters',
+        label: 'Query parameters',
         // required: hasRequiredParameters,
         value: !isEmpty(lookupQueryParameterValues)
           ? lookupQueryParameterValues

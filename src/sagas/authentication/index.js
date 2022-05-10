@@ -57,6 +57,23 @@ export function* retrievingUserDetails() {
   );
 }
 
+export function* retrievingHttpConnectorDetails() {
+  yield all([
+    call(
+      getResourceCollection,
+      actions.resource.requestCollection('httpconnectors')
+    ),
+    call(
+      getResourceCollection,
+      actions.resource.requestCollection('httpconnectorendpoints')
+    ),
+    call(
+      getResourceCollection,
+      actions.resource.requestCollection('httpconnectorresources')
+    ),
+  ]);
+}
+
 export function* retrievingAssistantDetails() {
   const collection = yield call(
     getResourceCollection,
@@ -166,6 +183,7 @@ export function* retrieveAppInitializationResources() {
   yield all([
     call(retrievingOrgDetails),
     call(retrievingAssistantDetails),
+    call(retrievingHttpConnectorDetails),
   ]);
 
   yield put(actions.app.fetchUiVersion());
