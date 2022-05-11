@@ -691,7 +691,7 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
     exportAdaptorSubSchema.relativeURI &&
     exportAdaptorSubSchema.relativeURI.indexOf('?') > 0
   ) {
-    let toParseQueryString = exportAdaptorSubSchema.relativeURI.split('?')?.[1];
+    let toParseQueryString = exportAdaptorSubSchema.relativeURI.split('?')[1];
 
     if (urlMatch.urlParts && urlMatch.urlParts[urlMatch.urlParts.length - 1]) {
       toParseQueryString = urlMatch.urlParts[urlMatch.urlParts.length - 1];
