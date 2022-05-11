@@ -2,6 +2,7 @@ import RouterPanel from '../Editor/panels/Router';
 import JavaScriptPanel from '../Editor/panels/JavaScript';
 import DataPanel from '../Editor/panels/Data';
 import ToggleFilterMode from '../Drawer/actions/ToggleFilterMode';
+import RouterMenu from '../Drawer/actions/RouterMenu';
 import ResultPanel from '../Editor/panels/Result';
 
 export default {
@@ -46,6 +47,7 @@ export default {
   drawer: {
     actions: [
       { component: ToggleFilterMode, position: 'right' },
+      { component: RouterMenu, position: 'menu' },
     ],
   },
 };

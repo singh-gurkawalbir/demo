@@ -7,11 +7,15 @@ import editorMetadata from '../../metadata';
 import PreviewButtonGroup from '../actions/PreviewButtonGroup';
 import ToggleLayout from '../actions/ToggleLayout';
 import ActionGroup from '../../../ActionGroup';
+import CeligoDivider from '../../../CeligoDivider';
 
 const useStyles = makeStyles({
   ribbon: {
     display: 'flex',
     width: '100%',
+  },
+  menuIcon: {
+    marginRight: '4px !important',
   },
 });
 
@@ -25,7 +29,14 @@ export default function ActionsRibbon({ editorId, className }) {
   const { showLayoutToggle, actions: drawerActions = [] } = drawer;
   const leftActions = drawerActions.filter(a => a.position === 'left');
   // Note: we default to right. currently only the afe1/2 data toggle is left aligned.
-  const rightActions = drawerActions.filter(a => a.position !== 'left');
+  const rightActions = drawerActions.filter(a => a.position === 'right');
+  const menuActions = drawerActions.filter(a => a.position === 'menu');
+
+  if (menuActions.length > 1) {
+    throw new Error(`Only 1 menu action is allowed. Found ${menuActions.length}`);
+  }
+
+  const MenuAction = menuActions.length ? menuActions[0].component : null;
 
   return (
     <div className={clsx(classes.ribbon, className)}>
@@ -43,6 +54,18 @@ export default function ActionsRibbon({ editorId, className }) {
         <PreviewButtonGroup editorId={editorId} />}
 
         { showLayoutToggle && <ToggleLayout editorId={editorId} /> }
+
+        { MenuAction && (
+          <>
+            <CeligoDivider position="left" />
+
+            <div className={classes.menuIcon}>
+              <MenuAction editorId={editorId} />
+            </div>
+
+            <CeligoDivider position="left" />
+          </>
+        ) }
       </ActionGroup>
     </div>
   );

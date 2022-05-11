@@ -102,8 +102,8 @@ export default function RouterPanel({ editorId }) {
   };
 
   const handleAddBranch = () => {
-    // eslint-disable-next-line no-console
     // dispatch(actions.flow.addBranch({flowId}));
+    // eslint-disable-next-line no-console
     console.log('TODO: add new Branch');
   };
 
