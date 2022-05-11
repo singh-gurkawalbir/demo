@@ -7,6 +7,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import { useHistory } from 'react-router-dom';
+import sortBy from 'lodash/sortBy';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
@@ -209,7 +210,7 @@ function AccountList() {
         onClose={handleClose}>
         <List
           dense className={classes.listWrapper}>
-          {accounts.map(a => (
+          {sortBy(accounts, ['company']).map(a => (
             <ListItem
               button
               onClick={() => {
