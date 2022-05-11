@@ -16,51 +16,44 @@ const hasPatch = patches => patches && patches.length;
 const isPathPresentAndValueDiff = patchArr => patch =>
   patchArr.some(p => p.path === patch.path && p.value !== patch.value);
 
-export const getHTTPConnectorMetadata = (httpConnector, httpResources, httpEndpoints) => {
-  const metadata = {
-    export: {
-      labels: {
-        version: 'API Version',
-      },
-    },
-    import: {
-      labels: {
-        version: 'API Version',
-      },
-    },
-  };
+const getExportVersions = (httpConnector, httpResources, httpEndpoints) => {
   const exportPreConfiguredFields = httpConnector.versions[0].supportedBy.export.preConfiguredFields;
   const pagingField = exportPreConfiguredFields.find(f => f.path === 'paging');
   const pagingValues = pagingField.values || [];
+  const exportData = {
+    labels: {
+      version: 'API Version',
+    },
+  };
 
   // eslint-disable-next-line prefer-destructuring
-  metadata.export.paging = pagingValues[0];
+  exportData.paging = pagingValues[0];
 
   const versions = httpConnector.versions.map(v => ({version: v.name, _id: v._id}));
 
-  metadata.export.versions = versions;
-  metadata.export.versions.forEach((v, i) => {
+  exportData.versions = versions;
+  exportData.versions.forEach((v, i) => {
     const filteredHttpResources = httpResources.filter(r => r._versionIds?.includes(v._id));
 
     if (filteredHttpResources.length) {
-      if (!metadata.export.versions[i].resources) {
-        metadata.export.versions[i].resources = [];
+      if (!exportData.versions[i].resources) {
+        exportData.versions[i].resources = [];
       }
-      metadata.export.versions[i].resources = filteredHttpResources.map(httpResource => {
+      exportData.versions[i].resources = filteredHttpResources.map(httpResource => {
         const resourcePath = httpResource?.supportedBy?.export?.preConfiguredFields?.find(f => f.path === 'resourcePath')?.values?.[0];
 
         return {
           id: httpResource._id, name: httpResource.name, resourcePath,
         };
       });
-      if (metadata.export.versions[i].resources.length) {
-        metadata.export.versions[i].resources.forEach((r, j) => {
+      if (exportData.versions[i].resources.length) {
+        exportData.versions[i].resources.forEach((r, j) => {
           const filteredHttpEndpoints = httpEndpoints.filter(e => e._httpConnectorResourceIds?.includes(r.id));
-          const {resourcePath} = metadata.export.versions[i].resources[j];
+          const {resourcePath} = exportData.versions[i].resources[j];
 
           if (filteredHttpEndpoints.length) {
-            if (!metadata.export.versions[i].resources[j].endpoints) {
-              metadata.export.versions[i].resources[j].endpoints = [];
+            if (!exportData.versions[i].resources[j].endpoints) {
+              exportData.versions[i].resources[j].endpoints = [];
             }
             filteredHttpEndpoints.forEach(httpEndpoint => {
               if (httpEndpoint?.supportedBy?.type === 'export') {
@@ -73,7 +66,7 @@ export const getHTTPConnectorMetadata = (httpConnector, httpResources, httpEndpo
                   id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, resourcePath: httpEndpoint.resourcePath || resourcePath, supportedExportTypes, delta, queryParameters,
                 };
 
-                metadata.export.versions[i].resources[j].endpoints.push(ep);
+                exportData.versions[i].resources[j].endpoints.push(ep);
               }
             });
           }
@@ -81,6 +74,76 @@ export const getHTTPConnectorMetadata = (httpConnector, httpResources, httpEndpo
       }
     }
   });
+
+  return exportData;
+};
+export const getHTTPConnectorMetadata = (httpConnector, httpResources, httpEndpoints) => {
+  const metadata = {
+    // export: {
+    //   labels: {
+    //     version: 'API Version',
+    //   },
+    // },
+    import: {
+      labels: {
+        version: 'API Version',
+      },
+    },
+  };
+  const exportData = getExportVersions(httpConnector, httpResources, httpEndpoints);
+  // const exportPreConfiguredFields = httpConnector.versions[0].supportedBy.export.preConfiguredFields;
+  // const pagingField = exportPreConfiguredFields.find(f => f.path === 'paging');
+  // const pagingValues = pagingField.values || [];
+
+  // // eslint-disable-next-line prefer-destructuring
+  // metadata.export.paging = pagingValues[0];
+
+  // const versions = httpConnector.versions.map(v => ({version: v.name, _id: v._id}));
+
+  // metadata.export.versions = versions;
+  // metadata.export.versions.forEach((v, i) => {
+  //   const filteredHttpResources = httpResources.filter(r => r._versionIds?.includes(v._id));
+
+  //   if (filteredHttpResources.length) {
+  //     if (!metadata.export.versions[i].resources) {
+  //       metadata.export.versions[i].resources = [];
+  //     }
+  //     metadata.export.versions[i].resources = filteredHttpResources.map(httpResource => {
+  //       const resourcePath = httpResource?.supportedBy?.export?.preConfiguredFields?.find(f => f.path === 'resourcePath')?.values?.[0];
+
+  //       return {
+  //         id: httpResource._id, name: httpResource.name, resourcePath,
+  //       };
+  //     });
+  //     if (metadata.export.versions[i].resources.length) {
+  //       metadata.export.versions[i].resources.forEach((r, j) => {
+  //         const filteredHttpEndpoints = httpEndpoints.filter(e => e._httpConnectorResourceIds?.includes(r.id));
+  //         const {resourcePath} = metadata.export.versions[i].resources[j];
+
+  //         if (filteredHttpEndpoints.length) {
+  //           if (!metadata.export.versions[i].resources[j].endpoints) {
+  //             metadata.export.versions[i].resources[j].endpoints = [];
+  //           }
+  //           filteredHttpEndpoints.forEach(httpEndpoint => {
+  //             if (httpEndpoint?.supportedBy?.type === 'export') {
+  //               const supportedExportTypes = httpEndpoint?.supportedBy?.fieldsUserMustSet?.find(f => f.path === 'type')?.values;
+  //               const delta = httpEndpoint?.supportedBy?.preConfiguredFields?.find(f => f.path === 'delta')?.values?.[0];
+
+  //               const queryParameters = httpEndpoint?.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.fieldType || 'textarea' }));
+
+  //               const ep = {
+  //                 id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, resourcePath: httpEndpoint.resourcePath || resourcePath, supportedExportTypes, delta, queryParameters,
+  //               };
+
+  //               metadata.export.versions[i].resources[j].endpoints.push(ep);
+  //             }
+  //           });
+  //         }
+  //       });
+  //     }
+  //   }
+  // });
+  const versions = httpConnector.versions.map(v => ({version: v.name, _id: v._id}));
 
   metadata.import.versions = versions;
   metadata.import.versions.forEach((v, i) => {
@@ -162,6 +225,7 @@ export const getHTTPConnectorMetadata = (httpConnector, httpResources, httpEndpo
       }
     }
   });
+  metadata.export = exportData;
 
   return metadata;
 };
