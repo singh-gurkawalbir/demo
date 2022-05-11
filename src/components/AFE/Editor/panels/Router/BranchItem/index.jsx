@@ -86,6 +86,7 @@ export default function BranchItem({
   description,
   onNameChange,
   onToggleExpand,
+  pageProcessors,
   editorId,
 }) {
   const classes = useStyles();
@@ -131,7 +132,7 @@ export default function BranchItem({
                 )}
               </div>
 
-              <MoreActionsButton />
+              <MoreActionsButton pageProcessors={pageProcessors} />
             </div>
           </AccordionSummary>
 

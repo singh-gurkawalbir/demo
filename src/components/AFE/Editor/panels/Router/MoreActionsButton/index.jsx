@@ -12,7 +12,7 @@ import TrashIcon from '../../../../../icons/TrashIcon';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import RawHtml from '../../../../../RawHtml';
 
-export default function MoreActionsButton() {
+export default function MoreActionsButton({pageProcessors = []}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const open = Boolean(anchorEl);
@@ -29,10 +29,8 @@ export default function MoreActionsButton() {
   const handleDeleteBranch = useCallback(event => {
     handleCloseMenu(event);
 
-    /* TODO: fetch configured/unconfigured steps and replace below */
-    /* If it is too hard to get both counts, we can replace with total step count */
-    const configuredCount = 3;
-    const unconfiguredCount = 2;
+    const configuredCount = pageProcessors.filter(pp => !!pp.type).length;
+    const unconfiguredCount = pageProcessors.filter(pp => !pp.type).length;
     const message = `<p>Are you sure you want to delete this branch?</p>
       <p>This will also remove all steps/branchings inside this branch 
       (${configuredCount} configured steps, ${unconfiguredCount} unconfigured steps).</p>`;
