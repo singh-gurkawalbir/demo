@@ -7,7 +7,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import { useHistory } from 'react-router-dom';
-import sortBy from 'lodash/sortBy';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
@@ -16,6 +15,7 @@ import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import getRoutePath from '../../../utils/routePaths';
 import TrashIcon from '../../../components/icons/TrashIcon';
 import { TextButton } from '../../../components/Buttons';
+import { stringCompare } from '../../../utils/sort';
 
 const useStyles = makeStyles(theme => ({
   currentAccount: {
@@ -210,7 +210,7 @@ function AccountList() {
         onClose={handleClose}>
         <List
           dense className={classes.listWrapper}>
-          {sortBy(accounts, ['company']).map(a => (
+          {accounts.sort(stringCompare('company')).map(a => (
             <ListItem
               button
               onClick={() => {
