@@ -56,7 +56,7 @@ export const REVISION_STATUS_LABELS = {
 };
 
 export const REVISION_IN_PROGRESS_ERROR = 'You have a pull, snapshot, or revert in progress.';
-export const NO_CLONE_FAMILY_TO_PULL_FROM_ERROR = "You don't have any data to pull. Learn more about cloning and pulling your integrations.";
+export const NO_CLONE_FAMILY_TO_PULL_FROM_ERROR = "You don't have any data to pull. Learn more about <a target='_blank' href='https://docs.celigo.com/hc/en-us/articles/4844290103707'> cloning and pulling your integrations</>.";
 
 export const REVISION_DIFF_ACTIONS = {
   ADD: 'add',
