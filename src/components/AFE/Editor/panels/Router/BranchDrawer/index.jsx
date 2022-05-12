@@ -32,7 +32,6 @@ const formKey = 'branchDrawer';
 export default function BranchDrawer({ flowId }) {
   const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
   const match = useRouteMatch();
-  const groupId = match?.params?.sectionId || '';
 
   useFormInitWithPermissions({ formKey, fieldMeta });
 

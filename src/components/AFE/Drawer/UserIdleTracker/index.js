@@ -1,9 +1,8 @@
-
 import { useCallback, useEffect, useState } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 import { useDispatch, useSelector } from 'react-redux';
-import actions from '../actions';
-import { selectors } from '../reducers';
+import actions from '../../../../actions';
+import { selectors } from '../../../../reducers';
 
 const DEBOUNCE_DURATION = 1000 * 1;
 
@@ -14,9 +13,11 @@ Number(process.env.SESSION_WARNING_INTERVAL_PRIOR_TO_EXPIRATION) -
 
 const getTimeElapsedDuringSession = sessionValidTimestamp => Date.now() - sessionValidTimestamp;
 
-const useKeepUserSessionAlive = () => {
+export default function UserIdleTracker() {
   const sessionValidTimestamp = useSelector(state => selectors.sessionValidTimestamp(state));
+
   const isSessionExpiredOrInWarning = useSelector(state => !!selectors.showSessionStatus(state));
+
   const dispatch = useDispatch();
   const [isUserActive, setIsUserActive] = useState(false);
 
@@ -54,6 +55,7 @@ const useKeepUserSessionAlive = () => {
     setIsUserActive(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionValidTimestamp]);
-};
 
-export default useKeepUserSessionAlive;
+  return null;
+}
+
