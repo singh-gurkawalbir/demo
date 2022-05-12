@@ -41,8 +41,6 @@ export default function MoreActionsButton({position, pageProcessors = []}) {
   const handleDeleteBranch = useCallback(event => {
     handleCloseMenu(event);
 
-    /* TODO: fetch configured/unconfigured steps and replace below */
-    /* If it is too hard to get both counts, we can replace with total step count */
     const configuredCount = pageProcessors.filter(pp => !!pp.type).length;
     const unconfiguredCount = pageProcessors.filter(pp => !pp.type).length;
     const message = `<p>Are you sure you want to delete this branch?</p>
@@ -63,7 +61,7 @@ export default function MoreActionsButton({position, pageProcessors = []}) {
       ],
     });
   },
-  [confirmDialog]
+  [confirmDialog, pageProcessors]
   );
 
   return (

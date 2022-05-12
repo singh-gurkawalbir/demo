@@ -1275,6 +1275,54 @@ describe('wrapSampleDataWithContext util', () => {
 
     expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
   });
+  test('should return correctly wrapped sample data if stage is preSavePage and resource is FTP export', () => {
+    const stage = 'preSavePage';
+
+    resource.adaptorType = 'FTPExport';
+
+    const expectedData = {
+      status: 'received',
+      data: {
+        data: [{
+          id: 333,
+          phone: '1234',
+        }],
+        files: [
+          {
+            fileMeta:
+              {
+                fileName: 'sampleFileName',
+                fileSize: 1234,
+              },
+          },
+        ],
+        errors: [],
+        _exportId: 'some resource id',
+        _connectionId: 'some connection id',
+        _flowId: 'some flow id',
+        _integrationId: 'some integration id',
+        pageIndex: 0,
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flowGrouping: {},
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+
+    // delta type resource
+    resource.type = 'delta';
+    expectedData.data.lastExportDateTime = expect.any(String);
+    expectedData.data.currentExportDateTime = expect.any(String);
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
   test('should return correctly wrapped sample data if stage is preMap', () => {
     const stage = 'preMap';
 

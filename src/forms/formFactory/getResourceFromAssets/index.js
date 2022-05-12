@@ -4,7 +4,7 @@ import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
 import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS } from '../../../constants';
 import { getAssistantFromResource, getResourceSubType, isNewId, rdbmsSubTypeToAppType } from '../../../utils/resource';
-import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection } from '../../../utils/assistant';
+import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection } from '../../../utils/assistant';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -265,6 +265,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           meta = meta[type];
         } else if (isAcumaticaEcommerceConnection(connection)) {
           meta = meta[type];
+        } else if (isMicrosoftBusinessCentralOdataConnection(connection)) {
+          meta = meta[type];
         } else if (
           resource && !isAmazonHybridConnection(connection) &&
             (resource.useParentForm !== undefined
@@ -292,6 +294,12 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       if (meta) {
         if (isNew) {
           meta = meta.new;
+        } else if (isMicrosoftBusinessCentralOdataConnection(connection)) {
+          if (type === 'http') {
+            meta = meta[type];
+          } else {
+            meta = meta[type].json;
+          }
         } else if (type === 'rdbms') {
           const rdbmsSubType =
               connection && connection.rdbms && connection.rdbms.type;

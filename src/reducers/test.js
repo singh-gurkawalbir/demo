@@ -26,7 +26,7 @@ describe('Reducers in the root reducer', () => {
       },
     });
   });
-  test('should delete just the data part of the redux state', () => {
+  test('should delete just the data part of the redux state and also delete loadresources session state', () => {
     const someInitialState = {
       user: { profile: { email: 'sds' } },
     };
@@ -37,6 +37,7 @@ describe('Reducers in the root reducer', () => {
       count: 1,
     });
     expect(state.data).toEqual(undefined);
+    expect(state.session.loadResources).toEqual(undefined);
   });
 });
 

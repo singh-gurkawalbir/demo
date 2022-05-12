@@ -1,18 +1,16 @@
-import produce from 'immer';
-import { useSelector } from 'react-redux';
-import React, { useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
 import { makeStyles, Divider, Typography } from '@material-ui/core';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
-import DynaForm from '../../../../DynaForm';
-import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-import BranchItem from './BranchItem';
-import fieldMetadata from './fieldMeta';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';
 import { emptyList } from '../../../../../constants';
 import { TextButton } from '../../../../Buttons';
 import AddIcon from '../../../../icons/AddIcon';
+import actions from '../../../../../actions';
+import DynaRadioGroup from '../../../../DynaForm/fields/radiogroup/DynaRadioGroup';
 import BranchDrawer from './BranchDrawer';
+import BranchItem from './BranchItem';
 
 const moveArrayItem = (arr, oldIndex, newIndex) => {
   const newArr = [...arr];
@@ -46,18 +44,18 @@ const useStyles = makeStyles(theme => ({
     cursor: 'grabbing',
   },
 }));
-
-export const routerAfeFormKey = 'routerAfe';
-
+const branchHashFn = branches => (branches || []).reduce((hashString, branch) => `${hashString}-${branch.name}|${branch.description}|${branch.expanded}`, '');
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
-  const fieldMeta = useMemo(() => (fieldMetadata), []);
+  const dispatch = useDispatch();
+  const branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList,
+    (left, right) => branchHashFn(left) === branchHashFn(right)
+  );
+  const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
+  const routerIndex = useSelector(state => selectors.editor(state, editorId)?.routerIndex || 0);
+  const allowSorting = routeRecordsTo === 'first_matching_branch';
 
-  useFormInitWithPermissions({ formKey: routerAfeFormKey, fieldMeta });
-  const branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList);
-  const [branchData, setBranchData] = useState(branches);
-  const activeProcessor = useSelector(state =>
-    selectors.editor(state, editorId).activeProcessor);
+  const activeProcessor = useSelector(state => selectors.editor(state, editorId).activeProcessor);
 
   const SortableContainer = sortableContainer(({children}) => (
     <ul className={classes.branchList}>
@@ -79,17 +77,11 @@ export default function RouterPanel({ editorId }) {
   );
 
   const handleNameChange = (title, position) => {
-    setBranchData(
-      produce(branchData, draft => {
-        draft[position].name = title;
-      }));
+    dispatch(actions.editor.patchRule(editorId, title, {rulePath: `branches[${position}].name`}));
   };
 
   const handleToggleExpand = (expanded, position) => {
-    setBranchData(
-      produce(branchData, draft => {
-        draft[position].expanded = expanded;
-      }));
+    dispatch(actions.editor.patchRule(editorId, expanded, {rulePath: `branches[${position}].expanded`}));
   };
 
   const handleSortStart = (_, event) => {
@@ -102,13 +94,15 @@ export default function RouterPanel({ editorId }) {
 
   const handleSortEnd = ({oldIndex, newIndex}) => {
     document.body.classList.remove(classes.grabbing);
-    setBranchData(items => (moveArrayItem(items, oldIndex, newIndex)));
+    dispatch(actions.editor.patchRule(editorId, (moveArrayItem(branches, oldIndex, newIndex)), {rulePath: 'branches'}));
   };
 
   const handleAddBranch = () => {
-    // dispatch(actions.flow.addBranch({flowId}));
-    // eslint-disable-next-line no-console
-    console.log('TODO: add new Branch');
+    dispatch(actions.editor.patchRule(editorId, [...branches, {name: `Branch ${routerIndex}.${branches.length}`, pageProcessors: []}], {rulePath: 'branches'}));
+  };
+
+  const updatedOnFieldChange = (id, val) => {
+    dispatch(actions.editor.patchRule(editorId, val, {rulePath: 'routeRecordsTo'}));
   };
 
   return (
@@ -116,7 +110,22 @@ export default function RouterPanel({ editorId }) {
       <BranchDrawer editorId={editorId} />
       <BranchHeading helpText="Missing branch type help!">Branching type</BranchHeading>
 
-      <DynaForm formKey={routerAfeFormKey} />
+      <DynaRadioGroup
+        id="branchType"
+        name="branchType"
+        type="radiogroup"
+        label="Records will flow through:"
+        options={[
+          {
+            items: [
+              { value: 'first_matching_branch', label: 'First matching branch' },
+              { value: 'all_matching_branches', label: 'All matching branches' },
+            ],
+          },
+        ]}
+        defaultValue={routeRecordsTo}
+        onFieldChange={updatedOnFieldChange}
+      />
 
       <BranchHeading helpText="Missing branches help text">Branches</BranchHeading>
 
@@ -127,7 +136,7 @@ export default function RouterPanel({ editorId }) {
         onSortStart={handleSortStart}
         onSortEnd={handleSortEnd}
         useDragHandle>
-        { branchData.map((b, i) => (
+        {branches.map((b, i) => (
           <SortableItem
             expandable={activeProcessor === 'filter'}
             expanded={b.expanded}
@@ -136,6 +145,8 @@ export default function RouterPanel({ editorId }) {
             index={i} // The HOC does not proxy index to child, so we need `position` as well.
             position={i}
             branchName={b.name}
+            pageProcessors={b.pageProcessors}
+            allowSorting={allowSorting}
             description={b.description}
             onNameChange={handleNameChange} />
         ))}

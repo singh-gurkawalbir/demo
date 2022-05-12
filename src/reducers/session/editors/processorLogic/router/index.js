@@ -1,16 +1,26 @@
-import { isEqual } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
+import filter from '../filter';
+import javascript from '../javascript';
 
 export default {
   processor: ({ activeProcessor }) => activeProcessor,
   init: ({ options }) => {
     let activeProcessor = 'filter';
-    const { router = {} } = options;
+    const { router = {}, routerIndex } = options;
     const { routeRecordsUsing, script = {} } = router;
+    const routerObj = cloneDeep(router);
 
+    (routerObj.branches || []).forEach((branch, index) => {
+      if (!branch.name) {
+        // eslint-disable-next-line no-param-reassign
+        branch.name = `Branch ${routerIndex}.${index}`;
+      }
+    });
     const rule = {
-      filter: router,
+      filter: routerObj,
       javascript: {
+        ...routerObj,
         fetchScriptContent: true,
       },
     };
@@ -29,30 +39,99 @@ export default {
     };
   },
 
-  requestBody: editor => ({
-    rules: { version: '1', rules: [editor.rule || []] },
-    data: editor.data,
-  }),
+  requestBody: editor => {
+    if (editor.activeProcessor === 'filter') {
+      return filter.requestBody({
+        data: editor.data?.filter,
+        rule: editor.rule?.filter,
+      });
+    }
+
+    return javascript.requestBody({
+      data: editor.data?.javascript,
+      rule: editor.rule?.javascript,
+      context: editor.context,
+    });
+  },
   // No point performing parsing or validation when it is an object
   validate: editor => {
-    const { data, rule } = editor;
-    let dataError;
+    if (editor.activeProcessor === 'filter') {
+      return filter.validate({
+        data: editor.data?.filter,
+        rule: editor.rule?.filter,
+      });
+    }
 
-    if (!data) dataError = 'Must provide some sample data.';
-
-    return {
-      dataError,
-      ruleError: !!rule,
-    };
+    return javascript.validate({
+      data: editor.data?.javascript,
+    });
   },
   dirty: editor => {
-    const {
-      originalRule = [],
-      rule = [],
-    } = editor;
+    if (editor.activeProcessor === 'javascript') {
+      return javascript.dirty({
+        rule: editor.rule?.javascript,
+        originalRule: editor.originalRule?.javascript,
+      });
+    }
 
-    return !isEqual(originalRule, rule);
+    return true;
   },
-  processResult: (editor, result) => ({data: result?.data?.[0]}),
-  preSaveValidate: editor => ({saveError: !!editor}),
+  processResult: (editor, result) => {
+    if (editor.activeProcessor === 'filter') {
+      return filter.processResult(editor, result);
+    }
+
+    return javascript.processResult(editor, result);
+  },
+  patchSet: editor => {
+    const patches = {
+      foregroundPatches: undefined,
+      backgroundPatches: [],
+    };
+    const {
+      rule,
+      resourceId,
+      resourceType,
+      router,
+      routerIndex,
+      activeProcessor,
+    } = editor;
+    const { javascript} = rule || {};
+    const {scriptId, code, entryFunction } = javascript || {};
+
+    const type = activeProcessor === 'filter' ? 'input_filters' : 'script';
+    const path = `/routers/${routerIndex}`;
+    const value = {
+      routeRecordsUsing: type,
+      id: router.id,
+      routeRecordsTo: rule[activeProcessor].routeRecordsTo,
+      branches: rule[activeProcessor].branches,
+      script: {
+        scriptId,
+        function: entryFunction,
+      },
+    };
+
+    patches.foregroundPatches = [{
+      patch: [{ op: 'replace', path, value }],
+      resourceType,
+      resourceId,
+    }];
+
+    if (type === 'script') {
+      patches.backgroundPatches.push({
+        patch: [
+          {
+            op: 'replace',
+            path: '/content',
+            value: code,
+          },
+        ],
+        resourceType: 'scripts',
+        resourceId: scriptId,
+      });
+    }
+
+    return patches;
+  },
 };

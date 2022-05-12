@@ -108,7 +108,7 @@ function Canvas({flowId, integrationId}) {
   const mergedFlow = useSelectorMemo(selectors.makeFlowDataForFlowBuilder, flowId);
 
   const elements = useSelector(state => selectors.fbGraphElements(state, flowId));
-  const dragNodeId = useSelector(state => selectors.fbDragNodeId(state, flowId));
+  const dragStepId = useSelector(state => selectors.fbDragStepId(state, flowId));
   const elementsMap = useSelector(state => selectors.fbGraphElementsMap(state, flowId));
 
   const updatedLayout = useMemo(() =>
@@ -147,7 +147,7 @@ function Canvas({flowId, integrationId}) {
             elementsMap={elementsMap}
             flow={mergedFlow}
             flowId={flowId}
-            dragNodeId={dragNodeId}
+            dragNodeId={dragStepId}
           >
 
             <ReactFlow
