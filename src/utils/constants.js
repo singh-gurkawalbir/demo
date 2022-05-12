@@ -705,7 +705,7 @@ export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
   [LINE_GRAPH_TYPES.IGNORED]: 'i',
   [LINE_GRAPH_TYPES.RESOLVED]: 'r',
 });
-export const AUTHENTICATION_LABLES = Object.freeze({
+export const AUTHENTICATION_LABELS = Object.freeze({
   basic: 'Basic',
   token: 'Token',
   oauth: 'OAuth 2.0',

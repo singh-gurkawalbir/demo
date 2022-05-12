@@ -5,7 +5,7 @@ import util from '../../utils/array';
 import { selectors } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { createFormValuesPatchSet as createSuiteScriptFormValuesPatchSet } from '../suiteScript/resourceForm';
-import {AUTHENTICATION_LABLES} from '../../utils/constants';
+import { AUTHENTICATION_LABELS} from '../../utils/constants';
 
 const generateReplaceAndRemoveLastModified = patches =>
   (patches &&
@@ -237,13 +237,43 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector) 
     const preConfiguredField = connectionTemplate.preConfiguredFields.find(field => key === field.path);
     const fieldUserMustSet = connectionTemplate.fieldsUserMustSet.find(field => key === field.path);
 
-    if (fieldUserMustSet) {
+    if (key === 'http.auth.oauth.scope') {
+      const field = preConfiguredField || fieldUserMustSet;
+      const scopes = field.values?.map(f => {
+        if (f.name) {
+          return {subHeader: f.name, scopes: f.scopes};
+        }
+
+        return f;
+      });
+
+      if (scopes) {
+        tempFiledMeta.fieldMap[key].type = 'selectscopes';
+      }
+
+      tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], scopes};
+    } else if (fieldUserMustSet) {
       tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: true};
-      if (key === 'http.auth.type') {
+      if (fieldUserMustSet.values.length > 1) {
         const options = [
           {
             items: fieldUserMustSet.values.map(opt => ({
-              label: AUTHENTICATION_LABLES[opt],
+              label: AUTHENTICATION_LABELS[opt] || opt,
+              value: opt,
+            })),
+          },
+        ];
+
+        if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: fieldUserMustSet.values?.[0]}; }
+
+        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options};
+      }
+    } else if (preConfiguredField) {
+      if (preConfiguredField.values.length > 1) {
+        const options = [
+          {
+            items: preConfiguredField.values.map(opt => ({
+              label: AUTHENTICATION_LABELS[opt] || opt,
               value: opt,
             })),
           },
@@ -251,12 +281,13 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector) 
 
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options};
       }
-    } else if (preConfiguredField) {
-      if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values[0]}; }
+      if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]}; }
     } else if (!tempFiledMeta.fieldMap[key].required && key !== 'settings') {
       tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
     } else if (key === 'http._iClientId') {
       tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
+    } else if (key === 'http.baseURI') {
+      if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.versions?.[0]?.baseURIs?.[0]}; }
     }
 
     return tempFiledMeta.fieldMap[key];
