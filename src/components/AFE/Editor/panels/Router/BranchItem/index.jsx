@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles,
   Typography,
   Accordion,
@@ -13,6 +14,8 @@ import GripperIcon from '../../../../../icons/GripperIcon';
 import MoreActionsButton from '../MoreActionsButton';
 import BranchFilter from '../BranchFilter';
 import InfoIconButton from '../../../../../InfoIconButton';
+import { selectors } from '../../../../../../reducers';
+import { routerAfeFormKey } from '..';
 
 const useStyles = makeStyles(theme => ({
   summaryContainer: {
@@ -51,7 +54,7 @@ const useStyles = makeStyles(theme => ({
   },
   expandIcon: {
     position: 'absolute',
-    left: theme.spacing(5),
+    left: allowSorting => theme.spacing(allowSorting ? 5 : 2),
   },
   listItem: {
     display: 'flex',
@@ -72,7 +75,9 @@ const useStyles = makeStyles(theme => ({
   },
   expanded: {
     marginBottom: '16px !important',
-    // backgroundColor: 'red',
+  },
+  focused: {
+    backgroundColor: `${theme.palette.common.white} !important`,
   },
 }));
 
@@ -88,7 +93,9 @@ export default function RouterPanel({
   onToggleExpand,
   editorId,
 }) {
-  const classes = useStyles();
+  const branchType = useSelector(state => selectors.formState(state, routerAfeFormKey).value?.branchType);
+  const allowSorting = branchType === 'first';
+  const classes = useStyles(allowSorting);
 
   return (
     <li className={classes.listItem}>
@@ -105,12 +112,12 @@ export default function RouterPanel({
           classes={{expanded: classes.expanded}}
           className={classes.accordion}>
           <AccordionSummary
-            classes={{expandIcon: classes.expandIcon}}
+            classes={{expandIcon: classes.expandIcon, focused: classes.focused}}
             className={classes.accordionSummary}
             expandIcon={expandable && <ArrowDownIcon />}
           >
             <div className={classes.summaryContainer}>
-              <DragHandle />
+              {allowSorting && <DragHandle /> }
               <div
                 className={clsx(
                   classes.branchName,
