@@ -256,6 +256,7 @@ export default {
             'read_users',
             'write_users',
             'read_gift_cards',
+            'write_gift_cards',
           ]},
       ],
       visibleWhenAll: r => {
