@@ -1,5 +1,7 @@
 /* eslint-disable no-param-reassign */
 import React, { useState, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
+
 import {
   ClickAwayListener,
   IconButton,
@@ -10,9 +12,11 @@ import EllipsisHorizontalIcon from '../../../../../icons/EllipsisHorizontalIcon'
 import EditIcon from '../../../../../icons/EditIcon';
 import TrashIcon from '../../../../../icons/TrashIcon';
 import useConfirmDialog from '../../../../../ConfirmDialog';
+import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
 import RawHtml from '../../../../../RawHtml';
 
-export default function MoreActionsButton() {
+export default function MoreActionsButton({position, pageProcessors = []}) {
+  const history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const open = Boolean(anchorEl);
@@ -26,13 +30,21 @@ export default function MoreActionsButton() {
     setAnchorEl(event.currentTarget);
   };
 
+  const handleEdit = () => {
+    history.push(buildDrawerUrl({
+      path: drawerPaths.FLOW_BUILDER.BRANCH_EDIT,
+      baseUrl: history.location.pathname,
+      params: { position },
+    }));
+  };
+
   const handleDeleteBranch = useCallback(event => {
     handleCloseMenu(event);
 
     /* TODO: fetch configured/unconfigured steps and replace below */
     /* If it is too hard to get both counts, we can replace with total step count */
-    const configuredCount = 3;
-    const unconfiguredCount = 2;
+    const configuredCount = pageProcessors.filter(pp => !!pp.type).length;
+    const unconfiguredCount = pageProcessors.filter(pp => !pp.type).length;
     const message = `<p>Are you sure you want to delete this branch?</p>
       <p>This will also remove all steps/branchings inside this branch 
       (${configuredCount} configured steps, ${unconfiguredCount} unconfigured steps).</p>`;
@@ -69,7 +81,7 @@ export default function MoreActionsButton() {
         placement="bottom-end"
         onClose={handleCloseMenu}
       >
-        <MenuItem onClick={handleCloseMenu}>
+        <MenuItem onClick={handleEdit}>
           <EditIcon /> Edit branch name/description
         </MenuItem>
 

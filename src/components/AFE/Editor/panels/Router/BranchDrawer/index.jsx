@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
-import { useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../../../../drawer/Right';
 import LoadResources from '../../../../../LoadResources';
 import DrawerContent from '../../../../../drawer/Right/DrawerContent';
@@ -10,6 +9,7 @@ import DynaForm from '../../../../../DynaForm';
 import SaveAndCloseButtonGroupForm from '../../../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import { useFormOnCancel } from '../../../../../FormOnCancelContext';
+import { drawerPaths } from '../../../../../../utils/rightDrawer';
 
 const fieldMeta = {
   fieldMap: {
@@ -27,18 +27,24 @@ const fieldMeta = {
   },
 };
 
-const formKey = 'branchDrawer';
+// const formKey = 'branchDrawer';
 
-export default function BranchDrawer({ flowId }) {
+export default function BranchDrawer({ editorId }) {
+  const formKey = useFormInitWithPermissions({ fieldMeta });
   const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
   const match = useRouteMatch();
-  const groupId = match?.params?.sectionId || '';
+  const history = useHistory();
+  const position = match?.params?.position;
 
-  useFormInitWithPermissions({ formKey, fieldMeta });
+  const handleSave = values => {
+    console.log(editorId, position, values);
+  };
+  const handleClose = history.goBack();
 
-  /* TODO: We can set the drawer path to anything fi the below has match-path conflicts. */
+  /* TODO: We can set the drawer path to anything if the below
+     has match-path conflicts, or not providing the proper datum. */
   return (
-    <RightDrawer height="tall" width="small" path="branch/edit/:position">
+    <RightDrawer height="tall" width="small" path={drawerPaths.FLOW_BUILDER.BRANCH_EDIT}>
       <DrawerHeader
         title="Edit branch name/description"
         disableClose={disabled}
@@ -49,7 +55,10 @@ export default function BranchDrawer({ flowId }) {
         </DrawerContent>
 
         <DrawerFooter>
-          <SaveAndCloseButtonGroupForm formKey={formKey} />
+          <SaveAndCloseButtonGroupForm
+            onClose={handleClose}
+            onSave={handleSave}
+            formKey={formKey} />
         </DrawerFooter>
       </LoadResources>
     </RightDrawer>

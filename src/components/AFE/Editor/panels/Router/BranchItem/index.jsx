@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { makeStyles,
   Typography,
   Accordion,
@@ -14,8 +13,6 @@ import GripperIcon from '../../../../../icons/GripperIcon';
 import MoreActionsButton from '../MoreActionsButton';
 import BranchFilter from '../BranchFilter';
 import InfoIconButton from '../../../../../InfoIconButton';
-import { selectors } from '../../../../../../reducers';
-import { routerAfeFormKey } from '..';
 
 const useStyles = makeStyles(theme => ({
   summaryContainer: {
@@ -83,7 +80,7 @@ const useStyles = makeStyles(theme => ({
 
 const DragHandle = sortableHandle(() => <GripperIcon style={{cursor: 'grab'}} />);
 
-export default function RouterPanel({
+export default function BranchItem({
   expandable,
   expanded,
   position,
@@ -91,10 +88,10 @@ export default function RouterPanel({
   description,
   onNameChange,
   onToggleExpand,
+  pageProcessors,
   editorId,
+  allowSorting,
 }) {
-  const branchType = useSelector(state => selectors.formState(state, routerAfeFormKey).value?.branchType);
-  const allowSorting = branchType === 'first';
   const classes = useStyles(allowSorting);
 
   return (
@@ -138,7 +135,7 @@ export default function RouterPanel({
                 )}
               </div>
 
-              <MoreActionsButton />
+              <MoreActionsButton position={position} pageProcessors={pageProcessors} />
             </div>
           </AccordionSummary>
 

@@ -12,6 +12,7 @@ import { selectors } from '../../../../../reducers';
 import { emptyList } from '../../../../../constants';
 import { TextButton } from '../../../../Buttons';
 import AddIcon from '../../../../icons/AddIcon';
+import BranchDrawer from './BranchDrawer';
 
 const moveArrayItem = (arr, oldIndex, newIndex) => {
   const newArr = [...arr];
@@ -112,6 +113,7 @@ export default function RouterPanel({ editorId }) {
 
   return (
     <div className={classes.panelContent}>
+      <BranchDrawer editorId={editorId} />
       <BranchHeading helpText="Missing branch type help!">Branching type</BranchHeading>
 
       <DynaForm formKey={routerAfeFormKey} />
