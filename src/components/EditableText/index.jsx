@@ -50,7 +50,7 @@ export default function EditableText({
   allowOverflow = false,
 }) {
   const classes = useStyles();
-  const [isEdit, setIsEdit] = useState(false);
+  const [isEdit, setIsEdit] = useState(true);
   const [value, setValue] = useState(text);
 
   function handleCancel() {
