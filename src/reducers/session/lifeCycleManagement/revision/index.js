@@ -5,7 +5,7 @@ import actionTypes from '../../../../actions/types';
 import { REVISION_TYPES, REVISION_CREATION_STATUS } from '../../../../constants';
 
 export default (state = {}, action) => {
-  const { integrationId, type, revisionInfo, newRevisionId, revisionId, errors, creationError } = action;
+  const { integrationId, type, revisionInfo, newRevisionId, revisionId, errors = [], creationError } = action;
 
   if (!integrationId) return state;
 
@@ -126,7 +126,7 @@ selectors.isRevisionCreationInProgress = (state, integrationId, revisionId) =>
   selectors.tempRevisionInfo(state, integrationId, revisionId)?.status === REVISION_CREATION_STATUS.CREATION_IN_PROGRESS;
 
 selectors.isRevisionErrorsFetchInProgress = (state, integrationId, revisionId) =>
-  !!selectors.revisionErrorsInfo(state, integrationId, revisionId)?.status === 'requested';
+  selectors.revisionErrorsInfo(state, integrationId, revisionId)?.status === 'requested';
 
 selectors.isRevisionErrorsRequested = (state, integrationId, revisionId) =>
   !!selectors.revisionErrorsInfo(state, integrationId, revisionId)?.status;

@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 
 export default (state = {}, action) => {
-  const { revisionId, type, status, url, openOauthConnection, connectionId } = action;
+  const { revisionId, type, status, openOauthConnection, connectionId } = action;
 
   if (!revisionId) return state;
 
@@ -12,7 +12,6 @@ export default (state = {}, action) => {
         if (!draft[revisionId]) {
           draft[revisionId] = {};
         }
-        draft[revisionId].updatedUrl = url;
 
         if (status === 'inProgress') {
           draft[revisionId].isTriggered = true;

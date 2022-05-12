@@ -85,8 +85,7 @@ export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
 
     return resource.adaptorType === 'HTTPImport' ||
     (connection && connection.isHTTP && connection.type === 'rest') ||
-    (connection && connection.http?.formType === 'rest') ||
-    (connection && connection.http?.formType === 'graph_ql');
+    ((['rest', 'graph_ql', 'assistant'].includes(connection?.http?.formType)));
   }
 
   if (resourceType !== 'exports') return false;
