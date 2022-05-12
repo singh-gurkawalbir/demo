@@ -28,8 +28,14 @@ export default function RouterMenu() {
   const handleDelete = useCallback(event => {
     handleCloseMenu(event);
 
-    /* TODO: What is this message supposed to say? */
-    const message = '<p>Are you sure you want to delete all branching?</p>';
+    /* TODO: fetch configured/unconfigured steps and replace below */
+    /* If it is too hard to get both counts, we can replace with total step count */
+    const configuredCount = 3;
+    const unconfiguredCount = 2;
+    const message = `<p>Are you sure you want to delete this branching router?</p>
+      <p>In the first branch, all steps/branching routers will persist and become a linear flow.</p>
+      <p>All other branches and all steps/branching routers inside 
+      (${configuredCount} configured steps, ${unconfiguredCount} unconfigured steps). will be removed</p>`;
 
     confirmDialog({
       title: 'Confirm delete',

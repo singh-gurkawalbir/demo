@@ -15,7 +15,7 @@ const useStyles = makeStyles({
     width: '100%',
   },
   menuIcon: {
-    marginRight: '4px !important',
+    marginRight: '6px !important',
   },
 });
 
