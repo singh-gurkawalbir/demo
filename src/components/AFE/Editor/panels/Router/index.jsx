@@ -45,13 +45,16 @@ const useStyles = makeStyles(theme => ({
     cursor: 'grabbing',
   },
 }));
+
+export const routerAfeFormKey = 'routerAfe';
+
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
   const fieldMeta = useMemo(() => (fieldMetadata), []);
-  const formKey = useFormInitWithPermissions({ fieldMeta });
+
+  useFormInitWithPermissions({ formKey: routerAfeFormKey, fieldMeta });
   const branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList);
   const [branchData, setBranchData] = useState(branches);
-
   const activeProcessor = useSelector(state =>
     selectors.editor(state, editorId).activeProcessor);
 
@@ -111,7 +114,7 @@ export default function RouterPanel({ editorId }) {
     <div className={classes.panelContent}>
       <BranchHeading helpText="Missing branch type help!">Branching type</BranchHeading>
 
-      <DynaForm formKey={formKey} />
+      <DynaForm formKey={routerAfeFormKey} />
 
       <BranchHeading helpText="Missing branches help text">Branches</BranchHeading>
 
