@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   },
   expandIcon: {
     position: 'absolute',
-    left: theme.spacing(5),
+    left: allowSorting => theme.spacing(allowSorting ? 5 : 2),
   },
   listItem: {
     display: 'flex',
@@ -72,7 +72,9 @@ const useStyles = makeStyles(theme => ({
   },
   expanded: {
     marginBottom: '16px !important',
-    // backgroundColor: 'red',
+  },
+  focused: {
+    backgroundColor: `${theme.palette.common.white} !important`,
   },
 }));
 
@@ -88,8 +90,9 @@ export default function BranchItem({
   onToggleExpand,
   pageProcessors,
   editorId,
+  allowSorting,
 }) {
-  const classes = useStyles();
+  const classes = useStyles(allowSorting);
 
   return (
     <li className={classes.listItem}>
@@ -106,12 +109,12 @@ export default function BranchItem({
           classes={{expanded: classes.expanded}}
           className={classes.accordion}>
           <AccordionSummary
-            classes={{expandIcon: classes.expandIcon}}
+            classes={{expandIcon: classes.expandIcon, focused: classes.focused}}
             className={classes.accordionSummary}
             expandIcon={expandable && <ArrowDownIcon />}
           >
             <div className={classes.summaryContainer}>
-              <DragHandle />
+              {allowSorting && <DragHandle /> }
               <div
                 className={clsx(
                   classes.branchName,

@@ -52,6 +52,7 @@ export default function RouterPanel({ editorId }) {
   );
   const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
   const routerIndex = useSelector(state => selectors.editor(state, editorId)?.routerIndex || 0);
+  const allowSorting = routeRecordsTo === 'first_matching_branch';
 
   useEffect(() => {
     let noNameBranchFound = false;
@@ -158,6 +159,7 @@ export default function RouterPanel({ editorId }) {
             position={i}
             branchName={b.name}
             pageProcessors={b.pageProcessors}
+            allowSorting={allowSorting}
             description={b.description}
             onNameChange={handleNameChange} />
         ))}
