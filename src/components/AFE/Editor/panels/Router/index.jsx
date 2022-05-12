@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { makeStyles, Divider, Typography } from '@material-ui/core';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import BranchItem from './BranchItem';
@@ -54,21 +54,6 @@ export default function RouterPanel({ editorId }) {
   const routerIndex = useSelector(state => selectors.editor(state, editorId)?.routerIndex || 0);
   const allowSorting = routeRecordsTo === 'first_matching_branch';
 
-  useEffect(() => {
-    let noNameBranchFound = false;
-
-    branches.forEach((branch, index) => {
-      if (!branch.name) {
-        // eslint-disable-next-line no-param-reassign
-        branch.name = `Branch ${routerIndex + 1}.${index}`;
-        noNameBranchFound = true;
-      }
-    });
-    if (noNameBranchFound) {
-      dispatch(actions.editor.patchRule(editorId, branches, {rulePath: 'branches'}));
-    }
-  }, [branches, editorId, routerIndex, dispatch]);
-
   const activeProcessor = useSelector(state => selectors.editor(state, editorId).activeProcessor);
 
   const SortableContainer = sortableContainer(({children}) => (
@@ -112,7 +97,7 @@ export default function RouterPanel({ editorId }) {
   };
 
   const handleAddBranch = () => {
-    dispatch(actions.editor.patchRule(editorId, [...branches, {name: `Branch ${routerIndex + 1}.${branches.length}`, pageProcessors: []}], {rulePath: 'branches'}));
+    dispatch(actions.editor.patchRule(editorId, [...branches, {name: `Branch ${routerIndex}.${branches.length}`, pageProcessors: []}], {rulePath: 'branches'}));
   };
 
   const updatedOnFieldChange = (id, val) => {

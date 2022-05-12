@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
 import filter from '../filter';
 import javascript from '../javascript';
@@ -6,13 +7,20 @@ export default {
   processor: ({ activeProcessor }) => activeProcessor,
   init: ({ options }) => {
     let activeProcessor = 'filter';
-    const { router = {} } = options;
+    const { router = {}, routerIndex } = options;
     const { routeRecordsUsing, script = {} } = router;
+    const routerObj = cloneDeep(router);
 
+    (routerObj.branches || []).forEach((branch, index) => {
+      if (!branch.name) {
+        // eslint-disable-next-line no-param-reassign
+        branch.name = `Branch ${routerIndex}.${index}`;
+      }
+    });
     const rule = {
-      filter: router,
+      filter: routerObj,
       javascript: {
-        ...router,
+        ...routerObj,
         fetchScriptContent: true,
       },
     };
