@@ -72,7 +72,9 @@ const useStyles = makeStyles(theme => ({
   },
   expanded: {
     marginBottom: '16px !important',
-    // backgroundColor: 'red',
+  },
+  focused: {
+    backgroundColor: `${theme.palette.common.white} !important`,
   },
 }));
 
@@ -105,7 +107,7 @@ export default function RouterPanel({
           classes={{expanded: classes.expanded}}
           className={classes.accordion}>
           <AccordionSummary
-            classes={{expandIcon: classes.expandIcon}}
+            classes={{expandIcon: classes.expandIcon, focused: classes.focused}}
             className={classes.accordionSummary}
             expandIcon={expandable && <ArrowDownIcon />}
           >
