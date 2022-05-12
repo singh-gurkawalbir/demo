@@ -90,20 +90,12 @@ const useStyles = makeStyles(theme => ({
       transform: 'translateY(-50%)',
     },
     '& .rc-tree-list-holder': {
-      // flexWrap: 'nowrap',
-      // display: 'flex',
-      // minHeight: '100%',
-      flex: '0 0 auto',
+      flexWrap: 'nowrap',
+      display: 'flex',
+      minHeight: '100%',
       '&>div': {
-        // flex: '0 0 auto',
-        overflow: 'visible !important',
+        flex: '0 0 auto',
       },
-    },
-    '& .rc-tree-list-scrollbar': {
-      display: 'none !important',
-    },
-    '& .rc-tree-list-holder-inner': {
-      position: 'relative !important',
     },
   },
   mappingDrawerContent: {

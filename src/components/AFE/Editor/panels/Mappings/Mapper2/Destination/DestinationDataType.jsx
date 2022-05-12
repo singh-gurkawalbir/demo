@@ -21,7 +21,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
     width: theme.spacing(9),
     padding: 0,
-    justifyContent: 'flex-start',
     '&.Mui-disabled': {
       height: 38,
       backgroundColor: theme.palette.background.paper2,
