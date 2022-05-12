@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     '& .MuiFilledInput-input': {
       border: 'none',
+      paddingRight: 0,
     },
     '&:hover': {
       border: `1px solid ${theme.palette.primary.main}`,
