@@ -58,3 +58,10 @@ selectors.cloneFamilyFetchError = (state, integrationId) => {
   return state[integrationId].error;
 };
 
+selectors.hasNoCloneFamily = (state, integrationId) => {
+  const isLoadingCloneFamily = selectors.isLoadingCloneFamily(state, integrationId);
+  const cloneList = selectors.cloneFamily(state, integrationId);
+
+  return !isLoadingCloneFamily && !cloneList?.length;
+};
+
