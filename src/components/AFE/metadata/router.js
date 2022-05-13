@@ -46,7 +46,7 @@ export default {
   },
   drawer: {
     actions: [
-      { component: ToggleMode, position: 'right', type: 'filter' },
+      { component: ToggleMode, position: 'right' },
       { component: RouterMenu, position: 'menu' },
     ],
   },

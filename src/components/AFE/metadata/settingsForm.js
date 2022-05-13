@@ -46,7 +46,7 @@ export default {
   drawer: {
     actions: [
       { component: ViewAliases, position: 'right' },
-      { component: ToggleMode, position: 'right', type: 'form' },
+      { component: ToggleMode, position: 'right', variant: 'form' },
     ],
   },
 };

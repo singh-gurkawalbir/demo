@@ -42,13 +42,13 @@ export default function ActionsRibbon({ editorId, className }) {
     <div className={clsx(classes.ribbon, className)}>
       <ActionGroup>
         { // eslint-disable-next-line react/no-array-index-key
-          leftActions.map((a, i) => <a.component key={i} editorId={editorId} type={a.type} />)
+          leftActions.map((a, i) => <a.component key={i} editorId={editorId} variant={a.variant} />)
         }
       </ActionGroup>
 
       <ActionGroup position="right">
         { // eslint-disable-next-line react/no-array-index-key
-          rightActions.map((a, i) => <a.component key={i} editorId={editorId} type={a.type} />)
+          rightActions.map((a, i) => <a.component key={i} editorId={editorId} variant={a.variant} />)
         }
         {!hidePreview &&
         <PreviewButtonGroup editorId={editorId} />}
