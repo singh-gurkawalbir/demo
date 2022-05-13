@@ -12,7 +12,6 @@ import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   edgePath: {
-    pointerEvents: 'all',
     strokeDasharray: 4,
     strokeWidth: 2,
     stroke: theme.palette.secondary.lightest, // celigo neutral 3
@@ -48,8 +47,6 @@ function getPositionAndOffset(targetType, sourceType, showLinkIcon, processorCou
       position = 'left';
       offset = processorCount * 44 + 28;
     }
-
-    console.log('processors!', position, offset);
   }
 
   return {position, offset};
