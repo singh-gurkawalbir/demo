@@ -35,7 +35,7 @@ export const useHandleRouterClick = routerId => {
       resourceId: flowId,
       router,
       routerIndex,
-      stage: 'inputFilter',
+      stage: 'postResponseMapHook',
       integrationId: flow?._integrationId,
     }));
     history.push(buildDrawerUrl({
@@ -65,7 +65,7 @@ export const useHandleAddNewRouter = edgeId => {
       routerIndex: flow.routers.length + 1,
       integrationId: flow?._integrationId,
       edgeId,
-      stage: 'inputFilter',
+      stage: 'postResponseMapHook',
       edge,
     }));
     history.push(buildDrawerUrl({

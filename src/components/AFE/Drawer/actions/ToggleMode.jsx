@@ -20,7 +20,7 @@ const toggleOptions = {
 
 export default function ToggleMode({ editorId, type }) {
   const dispatch = useDispatch();
-  const activeProcessor = useSelector(state => selectors.editor(state, editorId).activeProcessor);
+  const activeProcessor = useSelector(state => selectors.editorActiveProcessor(state, editorId));
   const saveInProgress = useSelector(state => {
     const {saveStatus} = selectors.editor(state, editorId);
 

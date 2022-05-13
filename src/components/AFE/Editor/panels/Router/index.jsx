@@ -58,7 +58,7 @@ export default function RouterPanel({ editorId }) {
   const routerIndex = useSelector(state => selectors.editor(state, editorId)?.routerIndex || 0);
   const allowSorting = routeRecordsTo === 'first_matching_branch';
 
-  const activeProcessor = useSelector(state => selectors.editor(state, editorId).activeProcessor);
+  const activeProcessor = useSelector(state => selectors.editorActiveProcessor(state, editorId));
 
   const SortableContainer = sortableContainer(({children}) => (
     <ul className={classes.branchList}>
