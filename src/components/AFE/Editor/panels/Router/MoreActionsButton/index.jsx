@@ -1,5 +1,7 @@
 /* eslint-disable no-param-reassign */
 import React, { useState, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
+
 import {
   ClickAwayListener,
   IconButton,
@@ -10,9 +12,11 @@ import EllipsisHorizontalIcon from '../../../../../icons/EllipsisHorizontalIcon'
 import EditIcon from '../../../../../icons/EditIcon';
 import TrashIcon from '../../../../../icons/TrashIcon';
 import useConfirmDialog from '../../../../../ConfirmDialog';
+import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
 import RawHtml from '../../../../../RawHtml';
 
-export default function MoreActionsButton({pageProcessors = []}) {
+export default function MoreActionsButton({position, pageProcessors = []}) {
+  const history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const open = Boolean(anchorEl);
@@ -24,6 +28,14 @@ export default function MoreActionsButton({pageProcessors = []}) {
   const handleOpenMenu = event => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleEdit = () => {
+    history.push(buildDrawerUrl({
+      path: drawerPaths.FLOW_BUILDER.BRANCH_EDIT,
+      baseUrl: history.location.pathname,
+      params: { position },
+    }));
   };
 
   const handleDeleteBranch = useCallback(event => {
@@ -49,7 +61,7 @@ export default function MoreActionsButton({pageProcessors = []}) {
       ],
     });
   },
-  [confirmDialog]
+  [confirmDialog, pageProcessors]
   );
 
   return (
@@ -67,7 +79,7 @@ export default function MoreActionsButton({pageProcessors = []}) {
         placement="bottom-end"
         onClose={handleCloseMenu}
       >
-        <MenuItem onClick={handleCloseMenu}>
+        <MenuItem onClick={handleEdit}>
           <EditIcon /> Edit branch name/description
         </MenuItem>
 

@@ -41,6 +41,8 @@ const useStyles = makeStyles(theme => ({
   },
   branchName: {
     marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: '100%',
   },
   description: {
     flexGrow: 1,
@@ -135,7 +137,7 @@ export default function BranchItem({
                 )}
               </div>
 
-              <MoreActionsButton pageProcessors={pageProcessors} />
+              <MoreActionsButton position={position} pageProcessors={pageProcessors} />
             </div>
           </AccordionSummary>
 
