@@ -5441,7 +5441,7 @@ selectors.isMapper2Supported = state => {
   // IAs don't support mapper2
   if (!resource || resource._connectorId) return false;
 
-  return !!(resource.adaptorType === 'HTTPImport' || resource.adaptorType === 'RESTImport');
+  return !!((resource.adaptorType === 'HTTPImport' || resource.adaptorType === 'RESTImport') && resource.http?.type !== 'file');
 };
 
 selectors.mappingEditorNotification = (state, editorId) => {

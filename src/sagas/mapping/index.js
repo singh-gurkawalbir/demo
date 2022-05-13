@@ -262,7 +262,9 @@ export function* mappingInit({
   let mappingsTreeData;
 
   // IAs, non http/rest don't support mapper2
-  if (!importResource._connectorId && (importResource.adaptorType === 'HTTPImport' || importResource.adaptorType === 'RESTImport')) {
+  if (!importResource._connectorId &&
+    (importResource.adaptorType === 'HTTPImport' || importResource.adaptorType === 'RESTImport') &&
+    importResource.http?.type !== 'file') {
     mappingsTreeData = buildTreeFromV2Mappings({
       importResource,
       isGroupedSampleData,
