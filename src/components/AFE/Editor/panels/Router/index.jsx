@@ -37,6 +37,9 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1),
     display: 'flex',
   },
+  branchingType: {
+    marginBottom: theme.spacing(1),
+  },
   helpButton: {
     padding: 0,
   },
@@ -109,23 +112,25 @@ export default function RouterPanel({ editorId }) {
     <div className={classes.panelContent}>
       <BranchDrawer editorId={editorId} />
       <BranchHeading helpText="Missing branch type help!">Branching type</BranchHeading>
-
-      <DynaRadioGroup
-        id="branchType"
-        name="branchType"
-        type="radiogroup"
-        label="Records will flow through:"
-        options={[
-          {
-            items: [
-              { value: 'first_matching_branch', label: 'First matching branch' },
-              { value: 'all_matching_branches', label: 'All matching branches' },
-            ],
-          },
-        ]}
-        defaultValue={routeRecordsTo}
-        onFieldChange={updatedOnFieldChange}
+      <div className={classes.branchingType}>
+        <DynaRadioGroup
+          id="branchType"
+          name="branchType"
+          isValid // there are no validations on this field, hence always valid
+          type="radiogroup"
+          label="Records will flow through:"
+          options={[
+            {
+              items: [
+                { value: 'first_matching_branch', label: 'First matching branch' },
+                { value: 'all_matching_branches', label: 'All matching branches' },
+              ],
+            },
+          ]}
+          defaultValue={routeRecordsTo}
+          onFieldChange={updatedOnFieldChange}
       />
+      </div>
 
       <BranchHeading helpText="Missing branches help text">Branches</BranchHeading>
 
