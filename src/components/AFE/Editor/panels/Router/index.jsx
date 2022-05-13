@@ -43,12 +43,12 @@ const useStyles = makeStyles(theme => ({
     cursor: 'grabbing',
   },
 }));
-const branchHashFn = branches => (branches || []).reduce((hashString, branch) => `${hashString}-${branch.name}|${branch.description}|${branch.expanded}`, '');
+const getBranchHash = branches => (branches || []).reduce((hashString, branch) => `${hashString}-${branch.name}|${branch.description}|${branch.expanded}`, '');
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList,
-    (left, right) => branchHashFn(left) === branchHashFn(right)
+    (left, right) => getBranchHash(left) === getBranchHash(right)
   );
   const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
   const routerIndex = useSelector(state => selectors.editor(state, editorId)?.routerIndex || 0);
