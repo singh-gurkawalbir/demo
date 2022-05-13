@@ -29,6 +29,7 @@ export default function InfoIconButton({ info, size = 'small', className, escape
   const [anchorEl, setAnchorEl] = useState(null);
 
   function handleInfoOpen(event) {
+    event.stopPropagation();
     setAnchorEl(event.currentTarget);
   }
 

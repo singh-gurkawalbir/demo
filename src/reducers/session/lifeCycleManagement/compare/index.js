@@ -16,6 +16,7 @@ export default (state = {}, action) => {
           draft[integrationId] = {};
         }
         draft[integrationId].status = 'requested';
+        delete draft[integrationId].error;
         break;
       case actionTypes.INTEGRATION_LCM.COMPARE.RECEIVED_DIFF:
         if (!draft[integrationId]) {

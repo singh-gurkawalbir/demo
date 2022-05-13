@@ -194,6 +194,26 @@ export default function Endpoint() {
       ],
     });
   }, [confirmDialog, dispatch]);
+  const onRequestFlowsUpgradeClick = useCallback(() => {
+    confirmDialog({
+      title: 'Request more flows',
+      message: 'We will contact you to discuss your business needs and recommend an upgrade to your subscription.',
+      buttons: [
+        { label: 'Submit request',
+          onClick: () => {
+            dispatch(
+              actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+            );
+            setUpgradeRequested(true);
+            dispatch(actions.license.requestUpdate('upgrade'));
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, dispatch]);
   const licenseEntitlementUsage = useSelector(state => selectors.getLicenseEntitlementUsage(state));
   const numberofUsedEndpoints = licenseEntitlementUsage?.production?.endpointUsage?.numConsumed;
   const numberofUsedFlows = licenseEntitlementUsage?.production?.flowUsage?.numEnabled;
@@ -340,11 +360,11 @@ export default function Endpoint() {
                 'add-more-flows'
               ) > -1 && (
               <FilledButton
-                onClick={onRequestUpgradeClick}
+                onClick={onRequestFlowsUpgradeClick}
                 disabled={upgradeRequested}
                 className={classes.subscriptionUpgradeBtn}
              >
-                Add more flows
+                Request more flows
               </FilledButton>
               )}
             </div>

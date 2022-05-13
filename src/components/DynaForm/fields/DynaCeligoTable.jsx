@@ -8,6 +8,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import ExpandMoreIcon from '../../icons/ArrowDownIcon';
 import CeligoTable from '../../CeligoTable';
+import NoResultTypography from '../../NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   accordianDetails: {
@@ -41,7 +42,7 @@ export default function DynaCeligoTable(props) {
         <Typography variant={isTitleBold ? 'h6' : ''}>{title}</Typography>
       </AccordionSummary>
       <AccordionDetails className={classes.accordianDetails}>
-        {(!data?.length && noDataMessage) ? <Typography className={classes.noDataMessage}>{noDataMessage}</Typography> : <CeligoTable {...props} />}
+        {(!data?.length && noDataMessage) ? <NoResultTypography>{noDataMessage}</NoResultTypography> : <CeligoTable {...props} />}
       </AccordionDetails>
     </Accordion>
   ) : (
