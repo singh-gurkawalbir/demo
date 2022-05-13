@@ -2,7 +2,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import React from 'react';
 import { makeStyles, Divider, Typography } from '@material-ui/core';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
-import BranchItem from './BranchItem';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';
 import { emptyList } from '../../../../../constants';
@@ -10,6 +9,8 @@ import { TextButton } from '../../../../Buttons';
 import AddIcon from '../../../../icons/AddIcon';
 import actions from '../../../../../actions';
 import DynaRadioGroup from '../../../../DynaForm/fields/radiogroup/DynaRadioGroup';
+import BranchDrawer from './BranchDrawer';
+import BranchItem from './BranchItem';
 
 const moveArrayItem = (arr, oldIndex, newIndex) => {
   const newArr = [...arr];
@@ -106,6 +107,7 @@ export default function RouterPanel({ editorId }) {
 
   return (
     <div className={classes.panelContent}>
+      <BranchDrawer editorId={editorId} />
       <BranchHeading helpText="Missing branch type help!">Branching type</BranchHeading>
 
       <DynaRadioGroup

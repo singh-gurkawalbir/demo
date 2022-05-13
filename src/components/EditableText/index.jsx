@@ -50,7 +50,7 @@ export default function EditableText({
   allowOverflow = false,
 }) {
   const classes = useStyles();
-  const [isEdit, setIsEdit] = useState(false);
+  const [isEdit, setIsEdit] = useState(true);
   const [value, setValue] = useState(text);
 
   function handleCancel() {
@@ -82,6 +82,8 @@ export default function EditableText({
     if (!disabled) setIsEdit(true);
   };
 
+  const handleInputClick = e => e.stopPropagation();
+
   return (
     <>
       {isEdit ? (
@@ -91,6 +93,7 @@ export default function EditableText({
           onChange={e => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={handleChange}
+          onClick={handleInputClick}
           value={value}
           className={clsx(
             classes.input,
