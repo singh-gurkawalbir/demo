@@ -2,7 +2,7 @@ import FormDefinitionPanel from '../Editor/panels/formBuilder/FormDefinition';
 import JavaScriptPanel from '../Editor/panels/JavaScript';
 import FormPreviewPanel from '../Editor/panels/formBuilder/FormPreview';
 import OutputPanel from '../Editor/panels/formBuilder/Output';
-import ToggleFormMode from '../Drawer/actions/ToggleFormMode';
+import ToggleMode from '../Drawer/actions/ToggleMode';
 import ViewAliases from '../Drawer/actions/ViewAliases';
 
 export default {
@@ -46,7 +46,7 @@ export default {
   drawer: {
     actions: [
       { component: ViewAliases, position: 'right' },
-      { component: ToggleFormMode, position: 'right' },
+      { component: ToggleMode, position: 'right', type: 'form' },
     ],
   },
 };
