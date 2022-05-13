@@ -4,9 +4,8 @@ import filter from '../filter';
 import javascript from '../javascript';
 
 export default {
-  processor: ({ activeProcessor }) => activeProcessor,
   init: ({ options }) => {
-    let activeProcessor = 'filter';
+    const activeProcessor = 'filter';
     const { router = {}, routerIndex } = options;
     const { routeRecordsUsing, script = {} } = router;
     const routerObj = cloneDeep(router);
@@ -18,66 +17,63 @@ export default {
       }
     });
     const rule = {
-      filter: routerObj,
-      javascript: {
-        ...routerObj,
-        fetchScriptContent: true,
-      },
+      ...routerObj,
+      mode: activeProcessor,
+      fetchScriptContent: true,
     };
 
     // set values only if undefined (to pass dirty check correctly)
     if (routeRecordsUsing === 'script') {
-      rule.javascript.scriptId = script._scriptId;
-      activeProcessor = 'javascript';
+      rule.scriptId = script._scriptId;
+      rule.mode = 'javascript';
     }
-    rule.javascript.entryFunction = script.function || hooksToFunctionNamesMap.router;
+    rule.entryFunction = script.function || hooksToFunctionNamesMap.router;
 
     return {
       ...options,
       rule,
-      activeProcessor,
     };
   },
 
   requestBody: editor => {
-    if (editor.activeProcessor === 'filter') {
+    if (editor.rule.mode === 'filter') {
       return filter.requestBody({
-        data: editor.data?.filter,
-        rule: editor.rule?.filter,
+        data: editor.data,
+        rule: editor.rule,
       });
     }
 
     return javascript.requestBody({
-      data: editor.data?.javascript,
-      rule: editor.rule?.javascript,
+      data: editor.data,
+      rule: editor.rule,
       context: editor.context,
     });
   },
   // No point performing parsing or validation when it is an object
   validate: editor => {
-    if (editor.activeProcessor === 'filter') {
+    if (editor.rule.mode === 'filter') {
       return filter.validate({
-        data: editor.data?.filter,
-        rule: editor.rule?.filter,
+        data: editor.data,
+        rule: editor.rule,
       });
     }
 
     return javascript.validate({
-      data: editor.data?.javascript,
+      data: editor.data,
     });
   },
   dirty: editor => {
-    if (editor.activeProcessor === 'javascript') {
+    if (editor.rule.mode === 'javascript') {
       return javascript.dirty({
-        rule: editor.rule?.javascript,
-        originalRule: editor.originalRule?.javascript,
+        rule: editor.rule,
+        originalRule: editor.originalRule,
       });
     }
 
     return true;
   },
   processResult: (editor, result) => {
-    if (editor.activeProcessor === 'filter') {
+    if (editor.rule.mode === 'filter') {
       return filter.processResult(editor, result);
     }
 
@@ -94,18 +90,16 @@ export default {
       resourceType,
       router,
       routerIndex,
-      activeProcessor,
     } = editor;
-    const { javascript} = rule || {};
-    const {scriptId, code, entryFunction } = javascript || {};
+    const {scriptId, code, entryFunction, mode } = rule || {};
 
-    const type = activeProcessor === 'filter' ? 'input_filters' : 'script';
+    const type = mode === 'filter' ? 'input_filters' : 'script';
     const path = `/routers/${routerIndex}`;
     const value = {
       routeRecordsUsing: type,
       id: router.id,
-      routeRecordsTo: rule[activeProcessor].routeRecordsTo,
-      branches: rule[activeProcessor].branches,
+      routeRecordsTo: rule.routeRecordsTo,
+      branches: rule.branches,
       script: {
         scriptId,
         function: entryFunction,

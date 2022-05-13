@@ -1,4 +1,4 @@
-import ToggleTransformMode from '../Drawer/actions/ToggleTransformMode';
+import ToggleMode from '../Drawer/actions/ToggleMode';
 import transformMetadata from './transform';
 import javascriptMetadata from './javascript';
 
@@ -17,7 +17,7 @@ export default {
   drawer: {
     showLayoutToggle: true,
     actions: [
-      { component: ToggleTransformMode, position: 'right' },
+      { component: ToggleMode, position: 'right', type: 'transform' },
     ],
   },
 };

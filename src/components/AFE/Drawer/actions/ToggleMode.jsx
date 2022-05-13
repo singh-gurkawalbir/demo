@@ -4,14 +4,23 @@ import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import TextToggle from '../../../TextToggle';
 
-const toggleOptions = [
-  { label: 'JSON', value: 'json' },
-  { label: 'Script', value: 'script' },
-];
+const toggleOptions = {
+  filter: [
+    { label: 'Rules', value: 'filter' },
+    { label: 'JavaScript', value: 'javascript' },
+  ],
+  form: [
+    { label: 'JSON', value: 'json' },
+    { label: 'Script', value: 'script' },
+  ],
+  transform: [
+    { label: 'Rules', value: 'transform' },
+    { label: 'JavaScript', value: 'javascript' },
+  ]};
 
-export default function ToggleFormMode({ editorId }) {
+export default function ToggleMode({ editorId, type }) {
   const dispatch = useDispatch();
-  const activeProcessor = useSelector(state => selectors.editor(state, editorId).activeProcessor);
+  const activeProcessor = useSelector(state => selectors.editorActiveProcessor(state, editorId));
   const saveInProgress = useSelector(state => {
     const {saveStatus} = selectors.editor(state, editorId);
 
@@ -25,7 +34,7 @@ export default function ToggleFormMode({ editorId }) {
       value={activeProcessor}
       onChange={handleToggle}
       exclusive
-      options={toggleOptions}
+      options={toggleOptions[type]}
     />
   );
 }

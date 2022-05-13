@@ -37,6 +37,9 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1),
     display: 'flex',
   },
+  branchingType: {
+    marginBottom: theme.spacing(1),
+  },
   helpButton: {
     padding: 0,
   },
@@ -44,18 +47,18 @@ const useStyles = makeStyles(theme => ({
     cursor: 'grabbing',
   },
 }));
-const branchHashFn = branches => (branches || []).reduce((hashString, branch) => `${hashString}-${branch.name}|${branch.description}|${branch.expanded}`, '');
+const getBranchHash = branches => (branches || []).reduce((hashString, branch) => `${hashString}-${branch.name}|${branch.description}|${branch.expanded}`, '');
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList,
-    (left, right) => branchHashFn(left) === branchHashFn(right)
+    (left, right) => getBranchHash(left) === getBranchHash(right)
   );
   const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
   const routerIndex = useSelector(state => selectors.editor(state, editorId)?.routerIndex || 0);
   const allowSorting = routeRecordsTo === 'first_matching_branch';
 
-  const activeProcessor = useSelector(state => selectors.editor(state, editorId).activeProcessor);
+  const activeProcessor = useSelector(state => selectors.editorActiveProcessor(state, editorId));
 
   const SortableContainer = sortableContainer(({children}) => (
     <ul className={classes.branchList}>
@@ -109,23 +112,25 @@ export default function RouterPanel({ editorId }) {
     <div className={classes.panelContent}>
       <BranchDrawer editorId={editorId} />
       <BranchHeading helpText="Missing branch type help!">Branching type</BranchHeading>
-
-      <DynaRadioGroup
-        id="branchType"
-        name="branchType"
-        type="radiogroup"
-        label="Records will flow through:"
-        options={[
-          {
-            items: [
-              { value: 'first_matching_branch', label: 'First matching branch' },
-              { value: 'all_matching_branches', label: 'All matching branches' },
-            ],
-          },
-        ]}
-        defaultValue={routeRecordsTo}
-        onFieldChange={updatedOnFieldChange}
+      <div className={classes.branchingType}>
+        <DynaRadioGroup
+          id="branchType"
+          name="branchType"
+          isValid // there are no validations on this field, hence always valid
+          type="radiogroup"
+          label="Records will flow through:"
+          options={[
+            {
+              items: [
+                { value: 'first_matching_branch', label: 'First matching branch' },
+                { value: 'all_matching_branches', label: 'All matching branches' },
+              ],
+            },
+          ]}
+          defaultValue={routeRecordsTo}
+          onFieldChange={updatedOnFieldChange}
       />
+      </div>
 
       <BranchHeading helpText="Missing branches help text">Branches</BranchHeading>
 
