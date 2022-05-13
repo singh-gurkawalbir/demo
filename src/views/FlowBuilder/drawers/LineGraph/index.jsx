@@ -159,7 +159,6 @@ export default function LineGraphDrawer({ flowId }) {
         </TextButton>
         <DateRangeSelector
           onSave={handleDateRangeChange}
-          showCustomRangeValue
           customPresets={customPresets}
           value={{
             startDate: new Date(rangePreference.startDate),
