@@ -101,7 +101,7 @@ export default {
       routeRecordsTo: rule.routeRecordsTo,
       branches: rule.branches,
       script: {
-        scriptId,
+        _scriptId: scriptId,
         function: entryFunction,
       },
     };
