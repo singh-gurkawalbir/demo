@@ -11,6 +11,9 @@ const useStyles = makeStyles(() => ({
   container: {
     width: 34,
     height: 34,
+    '&:hover': {
+      cursor: 'default',
+    },
   },
 }));
 
