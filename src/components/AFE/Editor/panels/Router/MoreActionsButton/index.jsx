@@ -30,7 +30,8 @@ export default function MoreActionsButton({position, pageProcessors = []}) {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleEdit = () => {
+  const handleEdit = e => {
+    e.stopPropagation();
     history.push(buildDrawerUrl({
       path: drawerPaths.FLOW_BUILDER.BRANCH_EDIT,
       baseUrl: history.location.pathname,
