@@ -58,7 +58,7 @@ export default {
           },
           {
             matchesRegEx: {
-              pattern: '{{timestamp "(?=.*x).*"}}|{{timestamp "(?=.*X).*"}}|{{timestamp "(?=.*mm)(?=.*ss).*"}}',
+              pattern: '{{timestamp}}|{{timestamp "(?=.*x).*"}}|{{timestamp "(?=.*X).*"}}|{{timestamp "(?=.*mm)(?=.*ss).*"}}',
             },
           },
           {
