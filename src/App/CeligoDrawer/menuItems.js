@@ -149,7 +149,7 @@ export default function menuItems(
       ],
     },
     {
-      label: 'Celigo University',
+      label: 'Celigo university',
       Icon: UniversityIcon,
       href: getUniversityUrl,
       component: 'a',
@@ -159,6 +159,11 @@ export default function menuItems(
       label: 'Marketplace',
       Icon: MarketplaceIcon,
       path: '/marketplace',
+    },
+    {
+      label: 'Celigo portal',
+      Icon: WhatsNewIcon,
+      path: '/celigoPortal',
     },
   ];
 
