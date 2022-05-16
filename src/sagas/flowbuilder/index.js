@@ -171,9 +171,25 @@ export function* mergeBranch({flowId}) {
   yield put(actions.flow.mergeTargetClear(flowId));
 }
 
+export function* deleteEdge({ flowId, edgeId }) {
+  const elementsMap = yield select(selectors.fbGraphElementsMap, flowId);
+
+  const edge = elementsMap[edgeId];
+
+  if (!edge) { return; }
+  // remove the nextRouterId references
+  const patchSet = [{
+    op: 'remove',
+    path: `${edge.data.path}/nextRouterId`,
+  }];
+
+  yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
+}
+
 export default [
   takeEvery(actionTypes.FLOW.ADD_NEW_PG_STEP, createNewPGStep),
   takeEvery(actionTypes.FLOW.ADD_NEW_PP_STEP, createNewPPStep),
   takeEvery(actionTypes.FLOW.DELETE_STEP, deleteStep),
   takeEvery(actionTypes.FLOW.MERGE_BRANCH, mergeBranch),
+  takeEvery(actionTypes.FLOW.DELETE_EDGE, deleteEdge),
 ];
