@@ -1,7 +1,10 @@
-/* global describe, test, expect */
-
-import reducer, { selectors } from '.';
+/* global describe, test, expect, jest */
+import reducer, { selectors, expandRow, updateChildrenProps, updateDataType } from '.';
 import actions from '../../../actions';
+import {MAPPING_DATA_TYPES} from '../../../utils/mapping';
+import {generateUniqueKey} from '../../../utils/string';
+
+jest.mock('../../../utils/string');
 
 describe('mapping reducer', () => {
   test('should return initial state when action is not matched', () => {
@@ -51,6 +54,43 @@ describe('mapping reducer', () => {
         lookupsCopy: [
           {name: 'lookup1', map: {x: 'y'}},
         ],
+        expandedKeys: [],
+        isGroupedOutput: false,
+      },
+    };
+
+    expect(state).toEqual(expectedState);
+  });
+  test('should update the state on init complete with v2 data and isGroupedOutput as true', () => {
+    const flowId = '123';
+    const resourceId = '123';
+    const options = {
+      importId: resourceId,
+      flowId,
+      v2TreeData: [{
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        buildArrayHelper: [],
+      }],
+    };
+
+    const state = reducer(undefined, actions.mapping.initComplete(options));
+    const expectedState = {
+      mapping: {
+        v2TreeData: [{
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          generateDisabled: true,
+          buildArrayHelper: [],
+        }],
+        isGroupedOutput: true,
+        flowId,
+        importId: resourceId,
+        status: 'received',
+        v2TreeDataCopy: [{
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          generateDisabled: true,
+          buildArrayHelper: [],
+        }],
+        expandedKeys: [],
       },
     };
 
@@ -1265,6 +1305,1949 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
   });
+  describe('MAPPING.TOGGLE_VERSION action', () => {
+    test('should correctly update the version', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 1,
+        },
+      };
+      const state = reducer(initialState, actions.mapping.toggleVersion(2));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.V2.TOGGLE_OUTPUT action', () => {
+    test('should do nothing if old and new formats are same', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          isGroupedOutput: true,
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.toggleOutput('rows'));
+
+      expect(state).toBe(initialState);
+    });
+    test('should only update isGroupedOutput flag if new format is rows and a root disabled row already exists', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          isGroupedOutput: false,
+          v2TreeData: [{
+            key: 'some_key',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generateDisabled: true,
+            children: [],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.toggleOutput('rows'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          isGroupedOutput: true,
+          v2TreeData: [{
+            key: 'some_key',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generateDisabled: true,
+            children: [],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should correctly insert parent node if new format is rows', () => {
+      generateUniqueKey.mockReturnValue('new-key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          isGroupedOutput: false,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            extract: '$.fname',
+            generate: 'fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            extract: '$.lname',
+            generate: 'lname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.toggleOutput('rows'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          isGroupedOutput: true,
+          expandedKeys: [
+            'new-key',
+          ],
+          v2TreeData: [{
+            key: 'new-key',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generateDisabled: true,
+            combinedExtract: '$',
+            title: '',
+            children: [{
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              extract: '$.fname',
+              generate: 'fname',
+              isEmptyRow: false,
+              parentExtract: '$|0',
+              parentKey: 'new-key',
+            },
+            {
+              key: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              extract: '$.lname',
+              generate: 'lname',
+              isEmptyRow: false,
+              parentExtract: '$|0',
+              parentKey: 'new-key',
+            }],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should only update isGroupedOutput flag if new format is record and a root disabled row does not exist', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          isGroupedOutput: true,
+          v2TreeData: [{
+            key: 'some_key',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.toggleOutput('record'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          isGroupedOutput: false,
+          v2TreeData: [{
+            key: 'some_key',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should correctly remove parent node if new format is record', () => {
+      generateUniqueKey.mockReturnValue('new-key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          isGroupedOutput: true,
+          v2TreeData: [{
+            key: 'new-key',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generateDisabled: true,
+            combinedExtract: '$',
+            title: '',
+            children: [{
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              extract: '$.fname',
+              generate: 'fname',
+              isEmptyRow: false,
+              parentExtract: '$|0',
+              parentKey: 'new-key',
+            },
+            {
+              key: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              extract: '$.lname',
+              generate: 'lname',
+              isEmptyRow: false,
+              parentExtract: '$|0',
+              parentKey: 'new-key',
+            }],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.toggleOutput('record'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          isGroupedOutput: false,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            extract: '$.fname',
+            generate: 'fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            extract: '$.lname',
+            generate: 'lname',
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.V2.TOGGLE_ROWS action', () => {
+    test('should set expandedKeys as empty array if passed flag is false', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['some_key'],
+          v2TreeData: [{
+            key: 'some_key',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            extract: '$.fname',
+            generate: 'fname',
+            children: [],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.toggleRows(false));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: [],
+          v2TreeData: [{
+            key: 'some_key',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            extract: '$.fname',
+            generate: 'fname',
+            children: [],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should set expandedKeys as all parent keys if passed flag is true', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: [],
+          v2TreeData: [{
+            key: 'some_key',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            extract: '$.fname',
+            generate: 'fname',
+            children: [{
+              key: 'c1_key',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              extract: '$.fname',
+              generate: 'fname',
+              children: [{
+                key: 'c2_key',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                extract: '$.fname',
+                generate: 'fname',
+              }],
+            }],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.toggleRows(true));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['c2_key', 'c1_key', 'some_key'],
+          v2TreeData: [{
+            key: 'some_key',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            extract: '$.fname',
+            generate: 'fname',
+            children: [{
+              key: 'c1_key',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              extract: '$.fname',
+              generate: 'fname',
+              children: [{
+                key: 'c2_key',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                extract: '$.fname',
+                generate: 'fname',
+              }],
+            }],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.V2.UPDATE_EXPANDED_KEYS action', () => {
+    test('should reset expandedKeys with the passed new keys', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key1', 'key2', 'key3'],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.updateExpandedKeys(['key2', 'key4']));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key2', 'key4'],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.V2.DELETE_ROW action', () => {
+    test('should do nothing if row is not found', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.deleteRow('key1'));
+
+      expect(state).toBe(initialState);
+    });
+    test('should delete the row from the tree data', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'lname',
+            extract: '$.lname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.deleteRow('key1'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'lname',
+              extract: '$.lname',
+            }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should delete the row from the tree data and insert empty row if all mappings are removed', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.deleteRow('key1'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'new_key',
+              title: '',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              isEmptyRow: true,
+            }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.V2.ADD_ROW action', () => {
+    test('should do nothing if row is not found', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.addRow('key1'));
+
+      expect(state).toBe(initialState);
+    });
+    test('should add a new row at next sibling index of the passed row', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'lname',
+            children: [{
+              key: 'c1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child1',
+              extract: '$.child1',
+              parentKey: 'key2',
+            },
+            {
+              key: 'c2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child2',
+              extract: '$.child2',
+              parentKey: 'key2',
+            }],
+          },
+          {
+            key: 'key3',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test',
+            extract: '$.test',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.addRow('c1'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'lname',
+            children: [{
+              key: 'c1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child1',
+              extract: '$.child1',
+              parentKey: 'key2',
+            },
+            {
+              key: 'new_key',
+              title: '',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            },
+            {
+              key: 'c2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child2',
+              extract: '$.child2',
+              parentKey: 'key2',
+            }],
+          },
+          {
+            key: 'key3',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test',
+            extract: '$.test',
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.V2.UPDATE_DATA_TYPE action', () => {
+    test('should do nothing if row is not found', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.updateDataType('key1', MAPPING_DATA_TYPES.STRING));
+
+      expect(state).toBe(initialState);
+    });
+    test('should correctly update the new data type as string', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            isEmptyRow: true,
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.updateDataType('key1', MAPPING_DATA_TYPES.NUMBER));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.NUMBER,
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should correctly update the new data type as object', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRINGARRAY,
+            generate: 'names',
+            combinedExtract: '$.name1,$.name2',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.updateDataType('key1', MAPPING_DATA_TYPES.OBJECT));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key1'],
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'names',
+            children: [{
+              key: 'new_key',
+              title: '',
+              parentKey: 'key1',
+              parentExtract: '',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            }],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.V2.DRAG_DROP action', () => {
+    test('should do nothing if drop index is same as the original row index', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'lname',
+            extract: '$.lname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.dropRow({
+        dropPosition: 1,
+        dragNode: {
+          key: 'key2',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'lname',
+          extract: '$.lname',
+          pos: '0-1',
+        },
+        node: {
+          key: 'key1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'fname',
+          extract: '$.fname',
+          pos: '0-0',
+        },
+      }));
+
+      expect(state).toBe(initialState);
+    });
+    test('should correctly insert dragged node to the new position when no children are involved', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'lname',
+            extract: '$.lname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.dropRow({
+        dropPosition: -1,
+        dragNode: {
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'lname',
+          extract: '$.lname',
+          key: 'key2',
+          pos: '0-1',
+        },
+        node: {
+          key: 'key1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'fname',
+          extract: '$.fname',
+          pos: '0-0',
+        },
+
+      }));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'lname',
+              extract: '$.lname',
+            },
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should do nothing if drop index is same as the original row index in children array', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'lname',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+            ],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.dropRow({
+        dropPosition: 1,
+        dragNode: {
+          dataType: MAPPING_DATA_TYPES.STRING,
+          extract: '$.child1',
+          generate: 'child1',
+          key: 'c1',
+          parentExtract: '',
+          parentKey: 'key2',
+          pos: '0-1-0',
+        },
+        node: {
+          key: 'key2',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'lname',
+          children: [
+            {
+              key: 'c1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child1',
+              extract: '$.child1',
+              parentExtract: '',
+              parentKey: 'key2',
+            },
+            {
+              key: 'c2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child2',
+              extract: '$.child2',
+              parentExtract: '',
+              parentKey: 'key2',
+            },
+          ],
+          pos: '0-1',
+        },
+      }));
+
+      expect(state).toBe(initialState);
+    });
+    test('should correctly insert dragged node to the new position within children array', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'lname',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c3',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child3',
+                extract: '$.child3',
+                parentExtract: '',
+                parentKey: 'key3',
+              },
+            ],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.dropRow({
+        dropPosition: 1,
+        dragNode: {
+          key: 'c3',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'child3',
+          extract: '$.child3',
+          parentExtract: '',
+          parentKey: 'key3',
+          pos: '0-1-2',
+        },
+        node: {
+          key: 'c1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'child1',
+          extract: '$.child1',
+          parentExtract: '',
+          parentKey: 'key2',
+          pos: '0-1-0',
+        },
+
+      }));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'lname',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c3',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child3',
+                extract: '$.child3',
+                parentExtract: '',
+                parentKey: 'key3',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+            ],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should correctly insert dragged node when the drop position is 0th in children array', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'lname',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+            ],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.dropRow({
+        dropPosition: 1,
+        dragNode: {
+          dataType: MAPPING_DATA_TYPES.STRING,
+          extract: '$.child2',
+          generate: 'child2',
+          key: 'c2',
+          parentExtract: '',
+          parentKey: 'key2',
+          pos: '0-1-1',
+        },
+        node: {
+          key: 'key2',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'lname',
+          children: [
+            {
+              key: 'c1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child1',
+              extract: '$.child1',
+              parentExtract: '',
+              parentKey: 'key2',
+            },
+            {
+              key: 'c2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child2',
+              extract: '$.child2',
+              parentExtract: '',
+              parentKey: 'key2',
+            },
+          ],
+          pos: '0-1',
+        },
+
+      }));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'lname',
+            children: [
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+            ],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should correctly insert dragged node when the drop position is 0th in children array for object array parent', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generate: 'mothers_side',
+            combinedExtract: '$.siblings[*],$.children[*]',
+            activeTab: 0,
+            children: [
+              {
+                key: 'c1',
+                isTabNode: true,
+                parentKey: 'key2',
+              },
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '$.siblings[*]',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '$.siblings[*]',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c3',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child3',
+                extract: '$.child3',
+                parentExtract: '$.children[*]',
+                parentKey: 'key2',
+              },
+            ],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.dropRow({
+        dropPosition: 1,
+        dragNode: {
+          key: 'c2',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'child2',
+          extract: '$.child2',
+          parentExtract: '$.siblings[*]',
+          parentKey: 'key2',
+          pos: '0-1-2',
+        },
+        node: {
+          key: 'c1',
+          isTabNode: true,
+          parentKey: 'key2',
+          pos: '0-1-0',
+        },
+
+      }));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generate: 'mothers_side',
+            combinedExtract: '$.siblings[*],$.children[*]',
+            activeTab: 0,
+            children: [
+              {
+                key: 'c1',
+                isTabNode: true,
+                parentKey: 'key2',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '$.siblings[*]',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '$.siblings[*]',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c3',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child3',
+                extract: '$.child3',
+                parentExtract: '$.children[*]',
+                parentKey: 'key2',
+              },
+            ],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.V2.PATCH_FIELD action', () => {
+    test('should do nothing if row is not found', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchField('extract', 'key1', 'new-value'));
+
+      expect(state).toBe(initialState);
+    });
+    test('should do nothing if isRequired is true and patch is for generate field', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+            isRequired: true,
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchField('generate', 'key1', 'new-value'));
+
+      expect(state).toBe(initialState);
+    });
+    test('should correctly update the generate field', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+            isEmptyRow: true,
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchField('generate', 'key1', 'new-fname'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'new-fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should patch hard-coded extract correctly', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchField('extract', 'key1', '"custom value"'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            hardCodedValue: 'custom value',
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should patch non hard-coded extract correctly if data type is not of array types', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            hardCodedValue: 'custom value',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchField('extract', 'key1', '$.fname'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should patch extract correctly when copy source is yes and remove all children', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            copySource: 'yes',
+            generate: 'fname',
+            extract: '$.fname[*]',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchField('extract', 'key1', '$.siblings[*]'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            copySource: 'yes',
+            generate: 'fname',
+            combinedExtract: '$.siblings[*]',
+            children: [],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should update correctly when new extract is empty and data type is object array', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generate: 'fname',
+            combinedExtract: '$.fname[*]',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentKey: 'key1',
+                parentExtract: '$.fname[*]',
+              },
+            ],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchField('extract', 'key1', ''));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generate: 'fname',
+            combinedExtract: '',
+            children: [
+              {
+                key: 'new_key',
+                title: '',
+                parentKey: 'key1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+              },
+            ],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should update correctly when new extract is not empty and data type is object array', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generate: 'fname',
+            combinedExtract: '$.fname[*]',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentKey: 'key1',
+                parentExtract: '$.fname[*]',
+              },
+            ],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchField('extract', 'key1', '$.fname[*],$.lname[*]'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generate: 'fname',
+            combinedExtract: '$.fname[*],$.lname[*]',
+            activeTab: 0,
+            children: [
+              {
+                key: 'new_key',
+                parentKey: 'key1',
+                isTabNode: true,
+                title: '',
+              },
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentKey: 'key1',
+                parentExtract: '$.fname[*]',
+              },
+              {
+                key: 'new_key',
+                title: '',
+                parentKey: 'key1',
+                parentExtract: '$.lname[*]',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                hidden: true,
+                className: 'hideRow',
+              },
+            ],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.V2.PATCH_SETTINGS action', () => {
+    test('should do nothing if row is not found', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', {extract: 'test'}));
+
+      expect(state).toBe(initialState);
+    });
+    test('should patch settings correctly if lookup is defined', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+        },
+      };
+      const settings = { dataType: MAPPING_DATA_TYPES.STRING, lookupName: 'new-lookup'};
+      const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', settings));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+              lookupName: 'new-lookup',
+            },
+          ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should patch multi-field correctly', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              hardCodedValue: 'some value',
+            },
+          ],
+        },
+      };
+      const settings = { dataType: MAPPING_DATA_TYPES.STRING, extract: '{{Base Price}}'};
+      const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', settings));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '{{Base Price}}',
+            },
+          ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should patch conditional mapping settings correctly', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+        },
+      };
+      const settings = { dataType: MAPPING_DATA_TYPES.STRING, conditional: {when: 'extract_not_empty'}};
+      const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', settings));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+              conditional: {when: 'extract_not_empty'},
+            },
+          ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should patch hard-coded value correctly', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+              default: 'testing',
+            },
+          ],
+        },
+      };
+      const settings = { dataType: MAPPING_DATA_TYPES.STRING, hardCodedValue: null };
+      const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', settings));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              hardCodedValue: null,
+            },
+          ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should patch new data type correctly', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+              generate: 'mothers_side',
+              combinedExtract: '$.siblings[*],$.children[*]',
+              activeTab: 0,
+              children: [
+                {
+                  key: 'c1',
+                  isTabNode: true,
+                  parentKey: 'key2',
+                },
+                {
+                  key: 'c2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'child2',
+                  extract: '$.child2',
+                  parentExtract: '$.siblings[*]',
+                  parentKey: 'key2',
+                },
+                {
+                  key: 'c1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'child1',
+                  extract: '$.child1',
+                  parentExtract: '$.siblings[*]',
+                  parentKey: 'key2',
+                },
+                {
+                  key: 'c3',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'child3',
+                  extract: '$.child3',
+                  parentExtract: '$.children[*]',
+                  parentKey: 'key2',
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const settings = { dataType: MAPPING_DATA_TYPES.OBJECT };
+      const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', settings));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key1'],
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              generate: 'mothers_side',
+              children: [
+                {
+                  key: 'new_key',
+                  title: '',
+                  parentKey: 'key1',
+                  parentExtract: '',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should remove all children if copySource is yes', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+              generate: 'mothers_side',
+              combinedExtract: '$.siblings[*],$.children[*]',
+              activeTab: 0,
+              children: [
+                {
+                  key: 'c1',
+                  isTabNode: true,
+                  parentKey: 'key2',
+                },
+                {
+                  key: 'c2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'child2',
+                  extract: '$.child2',
+                  parentExtract: '$.siblings[*]',
+                  parentKey: 'key2',
+                },
+                {
+                  key: 'c1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'child1',
+                  extract: '$.child1',
+                  parentExtract: '$.siblings[*]',
+                  parentKey: 'key2',
+                },
+                {
+                  key: 'c3',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'child3',
+                  extract: '$.child3',
+                  parentExtract: '$.children[*]',
+                  parentKey: 'key2',
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const settings = { dataType: MAPPING_DATA_TYPES.OBJECTARRAY, copySource: 'yes' };
+      const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', settings));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+              generate: 'mothers_side',
+              combinedExtract: '$.siblings[*],$.children[*]',
+              activeTab: 0,
+              copySource: 'yes',
+            },
+          ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should add empty child row if copySource is no and children do not exist', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              generate: 'mothers_side',
+              extract: '$.mothers',
+            },
+          ],
+        },
+      };
+      const settings = { dataType: MAPPING_DATA_TYPES.OBJECT, copySource: 'no' };
+      const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', settings));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key1'],
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              generate: 'mothers_side',
+              copySource: 'no',
+              children: [
+                {
+                  key: 'new_key',
+                  title: '',
+                  parentKey: 'key1',
+                  parentExtract: '',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.V2.ACTIVE_KEY action', () => {
+    test('should correctly update the active key', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2ActiveKey: '',
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.updateActiveKey('key1'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2ActiveKey: 'key1',
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+  describe('MAPPING.V2.CHANGE_ARRAY_TAB action', () => {
+    test('should do nothing if row is not found', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.changeArrayTab('key1', 0, '$.fname'));
+
+      expect(state).toBe(initialState);
+    });
+    test('should correctly update the activeTab and hide other tab children', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+              generate: 'mothers_side',
+              combinedExtract: '$.siblings[*],$.children[*]',
+              activeTab: 0,
+              children: [
+                {
+                  key: 'c1',
+                  isTabNode: true,
+                  parentKey: 'key2',
+                },
+                {
+                  key: 'c2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'child2',
+                  extract: '$.child2',
+                  parentExtract: '$.siblings[*]',
+                  parentKey: 'key2',
+                },
+                {
+                  key: 'c1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'child1',
+                  extract: '$.child1',
+                  parentExtract: '$.siblings[*]',
+                  parentKey: 'key2',
+                },
+                {
+                  key: 'c3',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'child3',
+                  extract: '$.child3',
+                  parentExtract: '$.children[*]',
+                  parentKey: 'key2',
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.changeArrayTab('key1', 1, '$.children[*]'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+              generate: 'mothers_side',
+              combinedExtract: '$.siblings[*],$.children[*]',
+              activeTab: 1,
+              children: [
+                {
+                  key: 'c1',
+                  isTabNode: true,
+                  parentKey: 'key2',
+                },
+                {
+                  key: 'c2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'child2',
+                  extract: '$.child2',
+                  parentExtract: '$.siblings[*]',
+                  parentKey: 'key2',
+                  hidden: true,
+                  className: 'hideRow',
+                },
+                {
+                  key: 'c1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'child1',
+                  extract: '$.child1',
+                  parentExtract: '$.siblings[*]',
+                  parentKey: 'key2',
+                  hidden: true,
+                  className: 'hideRow',
+                },
+                {
+                  key: 'c3',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'child3',
+                  extract: '$.child3',
+                  parentExtract: '$.children[*]',
+                  parentKey: 'key2',
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+  });
+
   test('should do nothing and not fail for all below actions if state does not exist', () => {
     const afterSave = reducer({}, actions.mapping.save({}));
     const afterSaveComplete = reducer(afterSave, actions.mapping.saveComplete());
@@ -1277,8 +3260,20 @@ describe('mapping reducer', () => {
     const afterAutoMap = reducer(afterValidation, actions.mapping.autoMapper.request());
     const afterAutoMapReceived = reducer(afterAutoMap, actions.mapping.autoMapper.received([{key: 'key2', generate: 'xyz2', extract: 'xyz2'}]));
     const afterAutoMapFailed = reducer(afterAutoMapReceived, actions.mapping.autoMapper.failed(1, 'error msg'));
+    const afterToggleVersion = reducer(afterAutoMapFailed, actions.mapping.toggleVersion(2));
+    const afterToggleOutput = reducer(afterToggleVersion, actions.mapping.v2.toggleOutput('rows'));
+    const afterToggleRows = reducer(afterToggleOutput, actions.mapping.v2.toggleRows(true));
+    const afterExpandedKeys = reducer(afterToggleRows, actions.mapping.v2.updateExpandedKeys([]));
+    const afterDeleteRow = reducer(afterExpandedKeys, actions.mapping.v2.deleteRow('some_key'));
+    const afterAddRow = reducer(afterDeleteRow, actions.mapping.v2.addRow('some_key'));
+    const afterUpdateDataType = reducer(afterAddRow, actions.mapping.v2.updateDataType('some_key', MAPPING_DATA_TYPES.STRING));
+    const afterDragDrop = reducer(afterUpdateDataType, actions.mapping.v2.dropRow({}));
+    const afterPatchField = reducer(afterDragDrop, actions.mapping.v2.patchField('generate', 'some_key', {}));
+    const afterPatchSettings = reducer(afterPatchField, actions.mapping.v2.patchSettings('some_key', {}));
+    const afterUpdateActiveKey = reducer(afterPatchSettings, actions.mapping.v2.updateActiveKey('some_key'));
+    const afterChangeTab = reducer(afterUpdateActiveKey, actions.mapping.v2.changeArrayTab('some_key', 1, '$'));
 
-    expect(afterAutoMapFailed).toEqual({});
+    expect(afterChangeTab).toEqual({});
   });
 });
 
@@ -1364,6 +3359,172 @@ describe('mapping selectors', () => {
 
       expect(selectors.mappingChanged(state)).toEqual(false);
     });
+    test('should return true if v1 mappings not changed but v2 changed', () => {
+      const state = {
+        mapping: {
+          lookups: [
+            {name: 'lookup1', map: {x: 'y'}},
+          ],
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+          importId: '123',
+          flowId: '123',
+          saveStatus: 'completed',
+          v2TreeDataCopy: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'new-name',
+              extract: '$.fname',
+            },
+          ],
+          mappingsCopy: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          lookupsCopy: [
+            {name: 'lookup1', map: {x: 'y'}},
+          ],
+        },
+      };
+
+      expect(selectors.mappingChanged(state)).toEqual(true);
+    });
+    test('should return false if v1,v2 mappings and lookups did not change', () => {
+      const state = {
+        mapping: {
+          lookups: [
+            {name: 'lookup1', map: {x: 'y'}},
+          ],
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+          importId: '123',
+          flowId: '123',
+          saveStatus: 'completed',
+          v2TreeDataCopy: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+          mappingsCopy: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup1'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          lookupsCopy: [
+            {name: 'lookup1', map: {x: 'y'}},
+          ],
+        },
+      };
+
+      expect(selectors.mappingChanged(state)).toEqual(false);
+    });
+  });
+  describe('selectors.v2MappingChanged', () => {
+    test('should return false if state does not exist', () => {
+      expect(selectors.v2MappingChanged()).toEqual(false);
+      expect(selectors.v2MappingChanged(null)).toEqual(false);
+      expect(selectors.v2MappingChanged({})).toEqual(false);
+      expect(selectors.v2MappingChanged({mapping: {}})).toEqual(false);
+    });
+    test('should return false if v2 mappings not changed', () => {
+      const state = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+          importId: '123',
+          flowId: '123',
+          saveStatus: 'completed',
+          v2TreeDataCopy: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+          mappingsCopy: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+        },
+      };
+
+      expect(selectors.v2MappingChanged(state)).toEqual(false);
+    });
+    test('should return true if v2 mappings not changed', () => {
+      const state = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+          importId: '123',
+          flowId: '123',
+          saveStatus: 'completed',
+          v2TreeDataCopy: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'new-name',
+              extract: '$.fname',
+            },
+          ],
+          mappingsCopy: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+            {key: 'key2', generate: 'xyz2', extract: 'xyz'},
+            {key: 'key3', generate: 'xyz3', extract: 'xyz'},
+          ],
+        },
+      };
+
+      expect(selectors.v2MappingChanged(state)).toEqual(true);
+    });
   });
   describe('selectors.autoMapper', () => {
     test('should return empty object if state does not exist', () => {
@@ -1392,6 +3553,427 @@ describe('mapping selectors', () => {
         failMsg: 'some message',
         status: 'error',
       });
+    });
+  });
+  describe('selectors.v2MappingsTreeData', () => {
+    test('should return empty array if state does not exist', () => {
+      expect(selectors.v2MappingsTreeData()).toEqual([]);
+      expect(selectors.v2MappingsTreeData(null)).toEqual([]);
+      expect(selectors.v2MappingsTreeData({})).toEqual([]);
+      expect(selectors.v2MappingsTreeData({mapping: {}})).toEqual([]);
+    });
+    test('should return v2TreeData', () => {
+      const state = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+        },
+      };
+
+      expect(selectors.v2MappingsTreeData(state)).toEqual([
+        {
+          key: 'key1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'fname',
+          extract: '$.fname',
+        },
+      ]);
+    });
+  });
+  describe('selectors.mappingVersion', () => {
+    test('should return undefined if state does not exist', () => {
+      expect(selectors.mappingVersion()).toBeUndefined();
+      expect(selectors.mappingVersion(null)).toBeUndefined();
+      expect(selectors.mappingVersion({})).toBeUndefined();
+      expect(selectors.mappingVersion({mapping: {}})).toBeUndefined();
+    });
+    test('should return mapping version', () => {
+      const state = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+        },
+      };
+
+      expect(selectors.mappingVersion(state)).toEqual(2);
+    });
+  });
+  describe('selectors.v2MappingExpandedKeys', () => {
+    test('should return empty array if state does not exist', () => {
+      expect(selectors.v2MappingExpandedKeys()).toEqual([]);
+      expect(selectors.v2MappingExpandedKeys(null)).toEqual([]);
+      expect(selectors.v2MappingExpandedKeys({})).toEqual([]);
+      expect(selectors.v2MappingExpandedKeys({mapping: {}})).toEqual([]);
+    });
+    test('should return expanded keys', () => {
+      const state = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          version: 2,
+          expandedKeys: ['key1'],
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+        },
+      };
+
+      expect(selectors.v2MappingExpandedKeys(state)).toEqual(['key1']);
+    });
+  });
+  describe('selectors.v2ActiveKey', () => {
+    test('should return undefined if state does not exist', () => {
+      expect(selectors.v2ActiveKey()).toBeUndefined();
+      expect(selectors.v2ActiveKey(null)).toBeUndefined();
+      expect(selectors.v2ActiveKey({})).toBeUndefined();
+      expect(selectors.v2ActiveKey({mapping: {}})).toBeUndefined();
+    });
+    test('should return active key', () => {
+      const state = {
+        mapping: {
+          mappings: [
+            {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          ],
+          importId: '123',
+          flowId: '123',
+          version: 2,
+          v2ActiveKey: 'key1',
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+        },
+      };
+
+      expect(selectors.v2ActiveKey(state)).toEqual('key1');
+    });
+  });
+});
+
+describe('mapping utils', () => {
+  describe('expandRow util', () => {
+    test('should do nothing if state or key does not exist', () => {
+      expect(expandRow()).toBeUndefined();
+      expect(expandRow(null, null)).toBeUndefined();
+    });
+    test('should add new key in the expandedKeys state if exists', () => {
+      const state = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key1', 'key2', 'key3'],
+        },
+      };
+      const updatedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key1', 'key2', 'key3', 'key4'],
+        },
+      };
+
+      expandRow(state, 'key4');
+      expect(state).toEqual(updatedState);
+    });
+    test('should create expandedKeys array with passed key if it does not exist', () => {
+      const state = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+        },
+      };
+      const updatedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key1'],
+        },
+      };
+
+      expandRow(state, 'key1');
+      expect(state).toEqual(updatedState);
+    });
+  });
+  describe('updateChildrenProps util', () => {
+    test('should return original children if its falsy', () => {
+      expect(updateChildrenProps()).toBeUndefined();
+      expect(updateChildrenProps(null)).toBeNull();
+      expect(updateChildrenProps([])).toEqual([]);
+    });
+    test('should update parent node reference props in the children and return new children array if data type is object array', () => {
+      const children = [{
+        key: 'c1',
+        extract: '$.fname',
+        generate: 'fname',
+        dataType: 'string',
+      }];
+      const parentNode = {
+        key: 'key1',
+        combinedExtract: '$.siblings[*]',
+        generate: 'siblings',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+      };
+
+      const newChildren = [
+        {
+          key: 'c1',
+          extract: '$.fname',
+          generate: 'fname',
+          dataType: 'string',
+          parentExtract: '$.siblings[*]',
+          parentKey: 'key1',
+          isEmptyRow: false,
+        },
+      ];
+
+      expect(updateChildrenProps(children, parentNode, MAPPING_DATA_TYPES.OBJECTARRAY)).toEqual(newChildren);
+    });
+    test('should remove parent node reference props in the children and return new children array if data type is not object array', () => {
+      const children = [{
+        key: 'c1',
+        extract: '$.fname',
+        generate: 'fname',
+        dataType: 'string',
+        parentExtract: '$.siblings[*]',
+        parentKey: 'key1',
+        isEmptyRow: false,
+      },
+      {
+        key: 'c1',
+        extract: '$.fname',
+        generate: 'fname',
+        dataType: 'string',
+        parentExtract: '$.children[*]',
+        parentKey: 'key1',
+        isEmptyRow: false,
+      }];
+      const parentNode = {
+        key: 'key1',
+        combinedExtract: '$.siblings[*]',
+        generate: 'siblings',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+      };
+
+      const newChildren = [
+        {
+          key: 'c1',
+          extract: '$.fname',
+          generate: 'fname',
+          dataType: 'string',
+        },
+      ];
+
+      expect(updateChildrenProps(children, parentNode, MAPPING_DATA_TYPES.OBJECT)).toEqual(newChildren);
+    });
+  });
+  describe('updateDataType util', () => {
+    const state = {
+      mapping: {
+        importId: 'imp-123',
+        flowId: 'flow-123',
+        version: 2,
+      },
+    };
+
+    test('should return original node if its falsy', () => {
+      expect(updateDataType()).toBeUndefined();
+      expect(updateDataType({}, null)).toBeNull();
+    });
+    test('should return original node if old and new data types are same', () => {
+      const node = {
+        key: 'key1',
+        generate: 'fname',
+        extract: '$.fname',
+        dataType: MAPPING_DATA_TYPES.STRING,
+      };
+
+      expect(updateDataType(state, node, MAPPING_DATA_TYPES.STRING, MAPPING_DATA_TYPES.STRING)).toBe(node);
+    });
+    test('should remove children if new data type is object array with copy source as yes', () => {
+      const node = {
+        key: 'key1',
+        generate: 'fname',
+        extract: '$.fname',
+        copySource: 'yes',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+        children: [{}],
+      };
+
+      const newNode = {
+        key: 'key1',
+        generate: 'fname',
+        combinedExtract: '$.fname',
+        copySource: 'yes',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+      };
+
+      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECT, MAPPING_DATA_TYPES.OBJECTARRAY)).toEqual(newNode);
+    });
+    test('should add empty row to children if new data type is object array with copy source as no and no existing children', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const node = {
+        key: 'key1',
+        generate: 'fname',
+        extract: '$.fname',
+        dataType: MAPPING_DATA_TYPES.STRING,
+      };
+
+      const newNode = {
+        key: 'key1',
+        generate: 'fname',
+        combinedExtract: '$.fname',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        children: [{
+          key: 'new_key',
+          title: '',
+          parentKey: 'key1',
+          parentExtract: '$.fname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      };
+
+      expect(updateDataType(state, node, MAPPING_DATA_TYPES.STRING, MAPPING_DATA_TYPES.OBJECTARRAY)).toEqual(newNode);
+    });
+    test('should delete existing children if new data type is object with copy source as yes', () => {
+      const node = {
+        key: 'key1',
+        generate: 'fname',
+        combinedExtract: '$.fname[*]',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        copySource: 'yes',
+        children: [{
+          key: 'c1',
+          extract: '$.child1',
+          generate: 'child1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      };
+
+      const newNode = {
+        key: 'key1',
+        generate: 'fname',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+        copySource: 'yes',
+        extract: '$.fname[*]',
+      };
+
+      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT)).toEqual(newNode);
+    });
+    test('should delete existing children and add empty row to children if new data type is object with copy source as no', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const node = {
+        key: 'key1',
+        generate: 'fname',
+        combinedExtract: '$.fname[*]',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        children: [{
+          key: 'c1',
+          extract: '$.child1',
+          generate: 'child1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      };
+
+      const newNode = {
+        key: 'key1',
+        generate: 'fname',
+        dataType: MAPPING_DATA_TYPES.OBJECT,
+        children: [{
+          key: 'new_key',
+          title: '',
+          parentKey: 'key1',
+          parentExtract: '',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      };
+
+      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT)).toEqual(newNode);
+    });
+    test('should delete existing children if new data type is primitive array', () => {
+      const node = {
+        key: 'key1',
+        generate: 'fname',
+        combinedExtract: '$.fname[*]',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        children: [{
+          key: 'c1',
+          extract: '$.child1',
+          generate: 'child1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      };
+
+      const newNode = {
+        key: 'key1',
+        generate: 'fname',
+        dataType: MAPPING_DATA_TYPES.STRINGARRAY,
+        combinedExtract: '$.fname[*]',
+      };
+
+      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.STRINGARRAY)).toEqual(newNode);
+    });
+    test('should delete existing children if new data type is primitive type', () => {
+      const node = {
+        key: 'key1',
+        generate: 'fname',
+        combinedExtract: '$.fname[*]',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        children: [{
+          key: 'c1',
+          extract: '$.child1',
+          generate: 'child1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      };
+
+      const newNode = {
+        key: 'key1',
+        generate: 'fname',
+        dataType: MAPPING_DATA_TYPES.NUMBER,
+      };
+
+      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.NUMBER)).toEqual(newNode);
     });
   });
 });
