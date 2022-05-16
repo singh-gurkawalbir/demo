@@ -4,7 +4,7 @@ import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
 import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
 import { getAssistantFromResource, getResourceSubType, isNewId, rdbmsSubTypeToAppType } from '../../../utils/resource';
-import { isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, shouldLoadAssistantFormForImports, shouldLoadAssistantFormForExports } from '../../../utils/assistant';
+import { isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, shouldLoadAssistantFormForImports, shouldLoadAssistantFormForExports, isEbayFinanceConnection } from '../../../utils/assistant';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -264,6 +264,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         } else if (isLoopReturnsv2Connection(connection)) {
           meta = meta[type];
         } else if (isAcumaticaEcommerceConnection(connection)) {
+          meta = meta[type];
+        } else if (isEbayFinanceConnection(connection)) {
           meta = meta[type];
         } else if (isMicrosoftBusinessCentralOdataConnection(connection)) {
           meta = meta[type];

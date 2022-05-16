@@ -2797,6 +2797,149 @@ describe('convertFromExport', () => {
       assistantData,
       'rest',
     ],
+    [ // special use case for microsoft power automate export
+      {
+        bodyParams: {},
+        exportType: undefined,
+        operation: 'get_all_users_with_whom_a_cloud_flow_is_shared',
+        operationDetails: {
+          doesNotSupportPaging: true,
+          errorMediaType: 'json',
+          headers: {},
+          headersMetadata: [],
+          id: 'get_all_users_with_whom_a_cloud_flow_is_shared',
+          name: 'Get all users with whom a cloud flow is shared',
+          pathParameters: [],
+          queryParameters: [{id: '@tid', name: 'Target', required: true}],
+          requestMediaType: 'json',
+          response: {resourcePath: 'PrincipalAccesses'},
+          successMediaType: 'json',
+          supportedExportTypes: ['test'],
+          url: '/RetrieveSharedPrincipalsAndAccess(Target=@tid)'},
+        pathParams: {},
+        queryParams: {'@tid': "{'@odata.id':'workflows(00000000-0000-0000-0000-000000000002)'}"},
+        resource: 'flows',
+        version: 'v9.1'},
+      {
+        _id: '627b6c627ca3007138a67d67',
+        name: 'Get PowerAutmate all users with whom a cloud flow is shared',
+        _connectionId: '623b19d570398d37e82dfdb0',
+        apiIdentifier: 'ea5117b5d1',
+        asynchronous: true,
+        assistant: 'microsoftpowerautomate',
+        oneToMany: false,
+        sandbox: false,
+        assistantMetadata: {
+          resource: 'flows',
+          version: 'v9.1',
+          operation: 'get_all_users_with_whom_a_cloud_flow_is_shared',
+        },
+        parsers: [],
+        http: {
+          relativeURI: "/RetrieveSharedPrincipalsAndAccess(Target=@tid)?@tid={'@odata.id':'workflows(00000000-0000-0000-0000-000000000002)'}",
+          method: 'GET',
+          headers: [],
+          requestMediaType: 'json',
+          successMediaType: 'json',
+          errorMediaType: 'json',
+          formType: 'assistant',
+          response: {
+            resourcePath: 'PrincipalAccesses',
+            successValues: [],
+          },
+        },
+        adaptorType: 'HTTPExport',
+      },
+      {
+        export: {
+          labels: {
+            version: 'API Version',
+            resource: 'Resource',
+            endpoint: 'Operation',
+          },
+          successMediaType: 'json',
+          errorMediaType: 'json',
+          requestMediaType: 'json',
+          paging: {
+            method: 'url',
+            path: '@odata.nextLink',
+          },
+          versions: [
+            {
+              version: 'v9.1',
+              resources: [
+                {
+                  id: 'flows',
+                  name: 'Flows',
+                  endpoints: [
+                    {
+                      id: 'list_flows',
+                      url: '/workflows',
+                      name: 'List flows',
+                      response: {
+                        resourcePath: 'value',
+                      },
+                      headers: [
+                        {
+                          name: 'prefer',
+                          value: 'odata.maxpagesize=100',
+                        },
+                      ],
+                      supportedExportTypes: [
+                        'delta',
+                        'test',
+                      ],
+                      queryParameters: [
+                        {
+                          id: '$filter',
+                          name: 'Filter',
+                          fieldType: 'input',
+                        },
+                        {
+                          id: '$select',
+                          name: 'Select',
+                          fieldType: 'input',
+                        },
+                        {
+                          id: '$top',
+                          name: 'Top',
+                          fieldType: 'input',
+                        },
+                        {
+                          id: '$orderby',
+                          name: 'Orderby',
+                          fieldType: 'input',
+                        },
+                      ],
+                    },
+                    {
+                      id: 'get_all_users_with_whom_a_cloud_flow_is_shared',
+                      url: '/RetrieveSharedPrincipalsAndAccess(Target=@tid)',
+                      name: 'Get all users with whom a cloud flow is shared',
+                      doesNotSupportPaging: true,
+                      response: {
+                        resourcePath: 'PrincipalAccesses',
+                      },
+                      supportedExportTypes: [
+                        'test',
+                      ],
+                      queryParameters: [
+                        {
+                          id: '@tid',
+                          name: 'Target',
+                          required: true,
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      'http',
+    ],
   ];
 
   each(testCases).test(
