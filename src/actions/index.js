@@ -108,7 +108,7 @@ const auth = {
   clearStore: () => action(actionTypes.AUTH.CLEAR_STORE),
   abortAllSagasAndInitLR: opts => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
-  initSession: () => action(actionTypes.AUTH.INIT_SESSION),
+  initSession: opts => action(actionTypes.AUTH.INIT_SESSION, { opts }),
   changePassword: updatedPassword =>
     action(actionTypes.AUTH.USER.CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
