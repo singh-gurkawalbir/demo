@@ -2213,6 +2213,10 @@ export function isAmazonHybridConnection(connection) {
   return connection?.assistant === 'amazonmws' && connection?.http?.type === 'Amazon-Hybrid';
 }
 
+export function isAmazonSellingPartnerConnection(connection) {
+  return connection?.assistant === 'amazonmws' && connection?.http?.type === 'Amazon-SP-API';
+}
+
 export function isLoopReturnsv2Connection(connection) {
   return connection?.assistant === 'loopreturns' && connection?.http?.unencrypted?.version === 'v2';
 }
@@ -2223,3 +2227,19 @@ export function isMicrosoftBusinessCentralOdataConnection(connection) {
   return connection?.assistant === 'microsoftbusinesscentral' && connection?.http?.unencrypted?.apiType === 'odata';
 }
 
+export function shouldLoadAssistantFormForImports(resource, connection) {
+  return resource &&
+          !isAmazonHybridConnection(connection) &&
+          (resource.useParentForm !== undefined
+            ? !resource.useParentForm && resource.assistant
+            : resource.assistant) && (!resource.useTechAdaptorForm || isAmazonSellingPartnerConnection(connection));
+}
+
+export function shouldLoadAssistantFormForExports(resource, connection) {
+  return resource &&
+          resource.assistant !== 'openair' &&
+          !isAmazonHybridConnection(connection) &&
+          (resource.useParentForm !== undefined
+            ? !resource.useParentForm && resource.assistant
+            : resource.assistant) && !resource.useTechAdaptorForm;
+}
