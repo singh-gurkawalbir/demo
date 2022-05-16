@@ -46,7 +46,6 @@ export function convertSalesforceLookupFilterExpression(expression, data = [], s
         value: (typeof rightValue?.value === 'string')
           ? rightValue.value?.replace(/(^'\{{3})(.*)(\}{3}')$/g, '$2') // support double, triple braces
           ?.replace(/(^'\{{2})(.*)(\}{2}')$/g, '$2')
-          ?.replace(/(^')(.*)(')$/g, '$2') // single braces will be considered as hard-coded input so remove qoutes
           ?.replace(/^\w+\s/, '')
           : '',
       };
@@ -78,11 +77,11 @@ export function convertSalesforceLookupFilterExpression(expression, data = [], s
     .replace(/{{{/g, "'{{{")
     .replace(/}}}\)/g, "}}}')")
     : expression
-      .replace(/{{{/g, "'<<<") // support single, double, triple braces
+      .replace(/\s+{{{/g, "'<<<") // support single, double, triple braces
       .replace(/}}}\)/g, ">>>')")
-      .replace(/{{/g, "'<<")
+      .replace(/\s+{{/g, "'<<")
       .replace(/}}\)/g, ">>')")
-      .replace(/{/g, "'<")
+      .replace(/\s+{/g, "'<")
       .replace(/}\)/g, ">')")
       .replaceAll('<', '{')
       .replaceAll('>', '}');
