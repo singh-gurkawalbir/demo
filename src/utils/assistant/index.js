@@ -2227,3 +2227,6 @@ export function isMicrosoftBusinessCentralOdataConnection(connection) {
   return connection?.assistant === 'microsoftbusinesscentral' && connection?.http?.unencrypted?.apiType === 'odata';
 }
 
+export function isEbayFinanceConnection(connection) {
+  return connection?.assistant === 'ebayfinance';
+}
