@@ -1,9 +1,11 @@
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useFlowContext } from '../Context';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
-import { generateEmptyRouter } from '../../../../utils/flows/flowbuilder';
+import { generateEmptyRouter, getNewRouterPatchSet } from '../../../../utils/flows/flowbuilder';
+import { useSelectorMemo } from '../../../../hooks';
 
 export const useHandleAddNode = edgeId => {
   const { elementsMap, flowId } = useFlowContext();
@@ -51,10 +53,14 @@ export const useHandleAddNewRouter = edgeId => {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
-  const editorId = `router-${edgeId}`;
+  const originalFlow = useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId);
+
   const router = generateEmptyRouter();
+  const editorId = `router-${router.id}`;
 
   return () => {
+    const patchSet = getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow});
+
     const edge = elementsMap[edgeId];
 
     dispatch(actions.editor.init(editorId, 'router', {
@@ -62,9 +68,10 @@ export const useHandleAddNewRouter = edgeId => {
       resourceType: 'flows',
       resourceId: flowId,
       router,
-      routerIndex: flow.routers.length + 1,
+      routerIndex: flow.routers.length,
       integrationId: flow?._integrationId,
       edgeId,
+      prePatches: patchSet,
       stage: 'postResponseMapHook',
       edge,
     }));

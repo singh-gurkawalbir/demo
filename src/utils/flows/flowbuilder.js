@@ -75,11 +75,15 @@ export const initializeFlowForReactFlow = flowDoc => {
   const { pageGenerators = [], pageProcessors = [], routers = [] } = flow;
 
   pageGenerators.forEach(pg => {
-    pg.id = pg._exportId || pg._connectionId || pg.application || `none-${shortId()}`;
+    pg.id = pg._exportId || `none-${shortId()}`;
   });
-  pageProcessors.forEach(pp => {
-    pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${shortId()}`;
-  });
+  if (pageProcessors.length && !routers.length) {
+    routers.push({
+      id: shortId(),
+      branches: [{name: 'Branch 1.0', pageProcessors}],
+    });
+    delete flow.pageProcessors;
+  }
   routers.forEach(({branches = []}) => {
     branches.forEach(branch => {
       const {pageProcessors = []} = branch;
@@ -89,13 +93,7 @@ export const initializeFlowForReactFlow = flowDoc => {
       });
     });
   });
-  if (pageProcessors.length && !routers.length) {
-    flow.routers = [{
-      id: shortId(),
-      branches: [{name: 'Branch 1.0', pageProcessors}],
-    }];
-    delete flow.pageProcessors;
-  }
+  flow.routers = routers;
 
   return flow;
 };
@@ -364,8 +362,8 @@ const mergeBetweenRouterAndPP = ({flowDoc, edgeTarget, patchSet, sourceElement})
   ]);
 };
 const splitPPArray = (ar, index) => {
-  const firstHalf = ar.splice(0, index);
-  const secondHalf = ar.splice(index - 1, ar.length);
+  const firstHalf = ar.slice(0, index);
+  const secondHalf = ar.slice(index, ar.length);
 
   return [firstHalf, secondHalf];
 };
@@ -444,5 +442,53 @@ export const mergeDragSourceWithTarget = (flowDoc, elements, dragNodeId, targetI
   } else if (targetElement.type === GRAPH_ELEMENTS_TYPE.EDGE) {
     mergeTerminalToAnEdge({flowDoc, elements, sourceElement, targetElement, patchSet});
   }
+};
+
+export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, originalFlow}) => {
+  const patchSet = [];
+  const edge = elementsMap[edgeId];
+  const branchPath = edge.data.path;
+  const processorArray = cloneDeep(jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`));
+  const nextRouterId = jsonPatch.getValueByPointer(flow, `${branchPath}/nextRouterId`);
+
+  const insertionIndex = processorArray.findIndex(pp => pp.id === edge.target);
+
+  let firstHalf;
+  let secondHalf;
+
+  if (insertionIndex !== -1) {
+    [firstHalf, secondHalf] = splitPPArray(processorArray, insertionIndex);
+  } else {
+    firstHalf = processorArray;
+    secondHalf = [{}];
+  }
+
+  if (!originalFlow.routers) {
+    patchSet.push({
+      op: 'add',
+      path: '/routers',
+      value: flow.routers,
+    });
+  }
+  patchSet.push({
+    op: 'replace',
+    path: `${branchPath}/pageProcessors`,
+    value: firstHalf,
+  });
+
+  router.branches[0].pageProcessors = secondHalf;
+  router.nextRouterId = nextRouterId;
+
+  patchSet.push(...[{
+    op: 'replace',
+    path: `${branchPath}/_nextRouterId`,
+    value: router.id,
+  }, {
+    op: 'add',
+    path: '/routers/-',
+    value: router,
+  }]);
+
+  return patchSet;
 };
 

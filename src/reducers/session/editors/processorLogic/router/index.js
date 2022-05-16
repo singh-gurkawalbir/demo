@@ -90,6 +90,8 @@ export default {
       resourceType,
       router,
       routerIndex,
+      prePatches,
+      flowId,
     } = editor;
     const {scriptId, code, entryFunction, activeProcessor } = rule || {};
 
@@ -106,11 +108,13 @@ export default {
       },
     };
 
-    patches.foregroundPatches = [{
-      patch: [{ op: 'replace', path, value }],
-      resourceType,
-      resourceId,
-    }];
+    patches.foregroundPatches = [
+      ...(Array.isArray(prePatches) ? [{resourceType: 'flows', resourceId: flowId, patch: prePatches}] : []),
+      {
+        patch: [{ op: 'replace', path, value }],
+        resourceType,
+        resourceId,
+      }];
 
     if (type === 'script') {
       patches.backgroundPatches.push({

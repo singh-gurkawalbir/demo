@@ -3,7 +3,6 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { selectors } from '../../../../../../reducers';
 import RightDrawer from '../../../../../drawer/Right';
-import LoadResources from '../../../../../LoadResources';
 import DrawerContent from '../../../../../drawer/Right/DrawerContent';
 import DrawerHeader from '../../../../../drawer/Right/DrawerHeader';
 import DrawerFooter from '../../../../../drawer/Right/DrawerFooter';
@@ -73,7 +72,8 @@ function RouterWrappedContent({editorId}) {
         <SaveAndCloseButtonGroupForm
           onClose={handleClose}
           onSave={handleSave}
-          formKey={formKey} />
+          formKey={formKey}
+        />
       </DrawerFooter>
     </>
   );
@@ -84,9 +84,7 @@ export default function BranchDrawer({ editorId }) {
      has match-path conflicts, or not providing the proper datum. */
   return (
     <RightDrawer height="tall" width="small" path={drawerPaths.FLOW_BUILDER.BRANCH_EDIT}>
-      <LoadResources required resources="flows">
-        <RouterWrappedContent editorId={editorId} />
-      </LoadResources>
+      <RouterWrappedContent editorId={editorId} />
     </RightDrawer>
   );
 }
