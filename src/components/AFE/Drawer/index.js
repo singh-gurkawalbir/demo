@@ -17,6 +17,7 @@ import ActionsRibbon from './ActionsRibbon';
 import { useDrawerContext } from '../../drawer/Right/DrawerContext';
 import useKeepUserSessionAlive from '../../../hooks/useKeepUserSessionAlive';
 import TitleHelp from './TitleHelp';
+import EditorBanner from '../Editor/EditorBanner';
 import { drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -100,6 +101,7 @@ function RouterWrappedContent({ hideSave }) {
       </DrawerHeader>
 
       <DrawerContent>
+        <EditorBanner editorId={editorId} />
         <Editor editorId={editorId} />
       </DrawerContent>
 

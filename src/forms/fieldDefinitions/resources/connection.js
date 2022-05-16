@@ -1045,7 +1045,7 @@ export default {
     label: 'Host',
     required: true,
     description:
-      'If the FTP server is behind a firewall please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, and 52.71.48.248.',
+      'If the FTP server is behind a firewall, please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, 52.71.48.248, and 44.204.21.0/24.',
   },
   'ftp.type': {
     isLoggable: true,

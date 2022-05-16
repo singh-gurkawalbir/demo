@@ -108,7 +108,7 @@ describe('installConnector saga', () => {
       put(actions.resource.requestCollection('connections'))
     );
     expect(saga.next().value).toEqual(
-      put(actions.resource.requestCollection('licenses'))
+      put(actions.license.refreshCollection())
     );
 
     expect(saga.next().done).toEqual(true);
@@ -161,7 +161,7 @@ describe('installConnector saga', () => {
       .put(actions.resource.requestCollection('integrations'))
       .put(actions.resource.requestCollection('tiles'))
       .put(actions.resource.requestCollection('connections'))
-      .put(actions.resource.requestCollection('licenses'))
+      .put(actions.license.refreshCollection())
       .run();
   });
 });

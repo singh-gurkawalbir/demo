@@ -159,7 +159,26 @@ export default function DynaTypeableSelect(props) {
   const selectedValue = !isTyping && suggestions.find(suggestionItem => suggestionItem.value === value);
   // Dont resolve to value while user is typing
   const inputVal = (!isTyping && selectedValue?.label) || value;
-  const customStyles = CustomReactSelectStyles();
+  const customReactSelectStyles = CustomReactSelectStyles();
+
+  const mergedStyles = () => ({
+    ...customReactSelectStyles,
+    input: () => ({
+      width: '100%',
+      padding: '0 7px',
+      '& > div': {
+        width: '100%',
+      },
+      '& * > input': {
+        width: '100% !important',
+        fontFamily: 'source sans pro',
+        fontSize: '15px !important',
+        letterSpacing: 'inherit',
+      },
+    }),
+  });
+  const customStyles = mergedStyles();
+
   const filterOption = (options, rawInput) => {
     if (showAllSuggestions) return true;
     if (!options.label || !options.value) return false;

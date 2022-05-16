@@ -664,6 +664,7 @@ export const wrapSampleDataWithContext = ({
               fileMeta:
                 {
                   fileName: 'sampleFileName',
+                  fileSize: resource.adaptorType === 'FTPExport' ? 1234 : undefined,
                 },
             },
           ],

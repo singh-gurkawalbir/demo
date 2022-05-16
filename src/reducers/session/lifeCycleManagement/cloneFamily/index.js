@@ -47,7 +47,7 @@ selectors.cloneFamily = (state, integrationId) => {
 };
 
 selectors.isLoadingCloneFamily = (state, integrationId) => {
-  if (!state || !integrationId || !state[integrationId]) return;
+  if (!state || !integrationId || !state[integrationId]) return false;
 
   return state[integrationId].status === 'requested';
 };
