@@ -281,6 +281,7 @@ const routes = [
     ],
   },
   { path: getRoutePath('/recycleBin'), breadcrumb: 'Recycle-bin' },
+  { path: getRoutePath('/celigoPortal'), breadcrumb: 'Celigo-portal' },
   { path: getRoutePath('/apis'), breadcrumb: 'My APIs' },
   {
     path: getRoutePath('/myAccount'),

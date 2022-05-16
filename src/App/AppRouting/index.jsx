@@ -24,6 +24,9 @@ const Marketplace = loadable(() =>
 const MarketplaceList = loadable(() =>
   retry(() => import(/* webpackChunkName: 'MarketplaceList' */ '../../views/MarketplaceList'))
 );
+const CeligoPortal = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'CeligoPortal' */ '../../views/CeligoPortal'))
+);
 const UpgradeEM = loadable(() =>
   retry(() => import(/* webpackChunkName: 'UpgradeErrorManagement' */ '../../views/UpgradeErrorManagement'))
 );
@@ -277,6 +280,7 @@ export default function AppRouting() {
       <Route path={getRoutePath(HOME_PAGE_PATH)} component={Home} />
       <Route path={getRoutePath('/dashboard/:dashboardTab(runningFlows|completedFlows)')} component={Dashboard} />
       <Route path={getRoutePath('/recycleBin')} component={RecycleBin} />
+      <Route path={getRoutePath('/celigoPortal')} component={CeligoPortal} />
       <Route
         path={[
           getRoutePath('/reports/:reportType'),
