@@ -1055,28 +1055,6 @@ export function convertOldFlowSchemaToNewOne(flow) {
   return updatedFlow;
 }
 
-export function convertOldConnectionSchemaToNewOne(connection, httpConnectors) {
-  const httpConnector = httpConnectors.find(conn => (conn.name === connection.assistant) && conn.published);
-
-  if (httpConnector && !connection.newFrameWork && httpConnector.supportedBy) {
-    const connectionTemplate = httpConnector.supportedBy.connection;
-
-    if (connectionTemplate && !connection.settingsForm) {
-      const settingsForm = connectionTemplate.preConfiguredFields.find(fields => fields.path === 'settingsForm');
-
-      if (settingsForm) {
-        const finalConnObj = {...connection, newFrameWork: {...httpConnector}, settingsForm: {form: {...settingsForm.values[0]}}};
-
-        return finalConnObj;
-      }
-    }
-
-    return {...connection, newFrameWork: {...httpConnector}};
-  }
-
-  return connection;
-}
-
 export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => !!(flow && (
   (flow.pageGenerators &&
      flow.pageGenerators.some(({_exportId}) => _exportId === resourceId)) ||

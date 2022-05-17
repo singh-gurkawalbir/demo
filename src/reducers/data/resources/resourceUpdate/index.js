@@ -38,12 +38,6 @@ function replaceOrInsertResource(draft, resourceType, resourceValue) {
 
   if (type === 'flows') resource = convertOldFlowSchemaToNewOne(resource);
   if (type === 'exports') resource = populateRestSchema(resource);
-  // if (type === 'connections') {
-  //   const httpConnectors = [...draft.httpconnectors];
-
-  //   resource = convertOldConnectionSchemaToNewOne(resource, httpConnectors);
-  // }
-
   if (!draft[type]) {
     draft[type] = [resource];
 
@@ -118,14 +112,6 @@ const addResourceCollection = (draft, resourceType, collection) => {
 
     return;
   }
-  // if (resourceType === 'connections') {
-  //   const httpConnectors = [...draft.httpconnectors];
-  //   const newCollection = collection?.map?.(connection => convertOldConnectionSchemaToNewOne(connection, httpConnectors));
-
-  //   updateStateWhenValueDiff(draft, 'connections', newCollection || []);
-
-  //   return;
-  // }
 
   // we need to convert http subdoc to rest subdoc for REST exports.
   // Once rest is deprecated in backend, UI still needs to support REST forms and REST export form needs rest subdoc

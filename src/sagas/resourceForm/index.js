@@ -28,8 +28,7 @@ import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 import { getAssistantFromConnection } from '../../utils/connections';
 import { getAssistantConnectorType } from '../../constants/applications';
-import { constructResourceFromFormValues,
-} from '../utils';
+import { constructResourceFromFormValues } from '../utils';
 
 export const SCOPES = {
   META: 'meta',
@@ -887,14 +886,12 @@ export function* initFormValues({
     assistantData = yield select(selectors.assistantData, {
       adaptorType,
       assistant: connectionAssistant,
-      connectionId: connection?._id,
     });
 
     if (!assistantData) {
       assistantData = yield call(requestAssistantMetadata, {
         adaptorType,
         assistant: connectionAssistant,
-        connectionId: connection?._id,
       });
     }
   }
@@ -932,28 +929,10 @@ export function* initFormValues({
         });
 
         httpConnector = resources?.[0];
-
-        // if (resources.length) {
-        //   finalFieldMeta = updateFinalMetadataWithHttpFramework(finalFieldMeta, resources[0], resource);
-        // }
       }
 
       finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow, httpConnector);
     }
-    // if (resourceType === 'connections' && assistant) {
-    //   const { resources = [] } = yield select(selectors.resourceList, {
-    //     type: 'httpconnectors',
-    //     filter: {
-    //       $where() {
-    //         return this.published && this.name === assistant;
-    //       },
-    //     },
-    //   });
-
-    //   if (resources.length) {
-    //     finalFieldMeta = updateFinalMetadataWithHttpFramework(finalFieldMeta, resources[0], resource);
-    //   }
-    // }
 
     // console.log('finalFieldMeta', finalFieldMeta);
     yield put(
