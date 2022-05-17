@@ -19,7 +19,7 @@ export default function CeligoPortal() {
 
   return (
     <>
-      <CeligoPageBar title="Celigo portal" infoText={messageStore('MARKETPLACE_HELPINFO')} />
+      <CeligoPageBar title="Celigo portal" infoText={messageStore('PORTAL_HELPINFO')} />
       <div className={classes.container}>
         <Iframe
           url={contentUrl}
