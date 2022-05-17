@@ -816,7 +816,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
 
   let pagingRelativeURI = operationDetails.paging?.nextPageRelativeURI || operationDetails.paging?.relativeURI;
 
-  operationDetails.pathParameters.forEach(pathParam => {
+  operationDetails.pathParameters?.forEach(pathParam => {
     if (pathParams) {
       let pathParamValue = pathParams[pathParam.id];
 
@@ -846,7 +846,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
   let exportType;
   const allQueryParams = {};
 
-  operationDetails.queryParameters.forEach(queryParam => {
+  operationDetails.queryParameters?.forEach(queryParam => {
     allQueryParams[queryParam.id] = queryParam.defaultValue;
 
     if (!queryParam.readOnly) {
