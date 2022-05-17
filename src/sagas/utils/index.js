@@ -1,4 +1,5 @@
 import jsonPatch, { deepClone, applyPatch } from 'fast-json-patch';
+import { sortBy } from 'lodash';
 import * as _ from 'lodash';
 import { select, call } from 'redux-saga/effects';
 import util from '../../utils/array';
@@ -215,8 +216,8 @@ export const getHTTPConnectorMetadata = (httpConnector, httpResources, httpEndpo
 
   return metadata;
 };
-export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector) => {
-  const connectionTemplate = connector.versions[0].supportedBy.connection;
+export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, resource) => {
+  const connectionTemplate = connector.supportedBy.connection;
   const tempFiledMeta = _.cloneDeep(finalFieldMeta);
 
   Object.keys(tempFiledMeta.fieldMap).map(key => {
@@ -273,12 +274,68 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector) 
     } else if (key === 'http._iClientId') {
       tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
     } else if (key === 'http.baseURI') {
-      if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.versions?.[0]?.baseURIs?.[0]}; }
+      if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.versions?.[0]?.baseURIs?.[0] + connector?.versions?.[0]?.relativeURI}; }
     }
 
     return tempFiledMeta.fieldMap[key];
   }
   );
+  let unEncryptedFields = [];
+  const versions = connector.versions?.map(v => v.name);
+  const versionOptions = [
+    {
+      items: versions.map(opt => ({
+        label: AUTHENTICATION_LABELS[opt] || opt,
+        value: opt,
+      })),
+    },
+  ];
+
+  if (versionOptions?.length) {
+    unEncryptedFields.push({
+      field: {
+        label: 'API Verison',
+        name: '/http/unencrypted/version',
+        id: 'http.unencrypted.version',
+        fieldId: 'http.unencrypted.version',
+        type: versions.length > 1 ? 'select' : 'text',
+        options: versionOptions,
+        required: true,
+        defaultValue: resource?.http?.unencrypted?.version || versions?.[0],
+      },
+    });
+  }
+  const preConfiguredUnencryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'unEncryptedFields');
+
+  if (preConfiguredUnencryptedFields.values?.length > 0) {
+    preConfiguredUnencryptedFields.values.forEach(fld => {
+      unEncryptedFields.push({
+        position: fld.position,
+        field: {
+          label: fld.label,
+          name: `/http/unencrypted/${fld.id}`,
+          id: `http.unencrypted.${fld.id}`,
+          fieldId: `http.unencrypted.${fld.id}`,
+          helpText: fld.helpText,
+          type: fld.type || 'text',
+          required: !!fld.required,
+          options: fld.options,
+          defaultValue: resource?.http?.unencrypted?.[fld.id],
+        },
+      });
+    });
+  }
+
+  unEncryptedFields = sortBy(unEncryptedFields, 'position');
+  if (unEncryptedFields) {
+    for (let i = 0; i < unEncryptedFields.length; i += 1) {
+      unEncryptedFields[i] = unEncryptedFields[i].field;
+      tempFiledMeta.fieldMap[unEncryptedFields[i].id] = unEncryptedFields[i];
+      if (tempFiledMeta?.layout?.containers?.[0]?.containers?.[1]?.fields) {
+        tempFiledMeta.layout.containers[0].containers[1]?.fields.push(unEncryptedFields[i].id);
+      } else if (tempFiledMeta?.layout?.containers[1]?.fields) { tempFiledMeta.layout.containers[1].fields.push(unEncryptedFields[i].id); }
+    }
+  }
 
   return tempFiledMeta;
 };

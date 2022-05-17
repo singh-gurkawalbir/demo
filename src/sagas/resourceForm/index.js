@@ -29,7 +29,6 @@ import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 import { getAssistantFromConnection } from '../../utils/connections';
 import { getAssistantConnectorType } from '../../constants/applications';
 import { constructResourceFromFormValues,
-  updateFinalMetadataWithHttpFramework,
 } from '../utils';
 
 export const SCOPES = {
@@ -83,16 +82,6 @@ export function* createFormValuesPatchSet({
     const iClients = yield select(selectors.resourceList, {
       type: 'iClients',
     });
-
-    // const { resources: httpConnectors = [] } = yield select(selectors.resourceList, {
-    //   type: 'httpconnectors',
-    //   filter: {
-    //     $where() {
-    //       return this.name === values?.application;
-    //     },
-    //   },
-    // });
-    // finalValues = preSave({...values, httpConnector: httpConnectors?.[0]}, resource, {iClients, connection});
 
     // stock preSave handler present...
     finalValues = preSave(values, resource, {iClients, connection});
@@ -930,23 +919,41 @@ export function* initFormValues({
 
     if (typeof defaultFormAssets.init === 'function') {
       // standard form init fn...
+      let httpConnector;
 
-      finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow);
-    }
-    if (resourceType === 'connections' && assistant) {
-      const { resources = [] } = yield select(selectors.resourceList, {
-        type: 'httpconnectors',
-        filter: {
-          $where() {
-            return this.name === assistant;
+      if (resourceType === 'connections' && assistant === 'shopify') {
+        const { resources = [] } = yield select(selectors.resourceList, {
+          type: 'httpconnectors',
+          filter: {
+            $where() {
+              return this.published && this.name === assistant;
+            },
           },
-        },
-      });
+        });
 
-      if (resources.length) {
-        finalFieldMeta = updateFinalMetadataWithHttpFramework(finalFieldMeta, resources[0], resource);
+        httpConnector = resources?.[0];
+
+        // if (resources.length) {
+        //   finalFieldMeta = updateFinalMetadataWithHttpFramework(finalFieldMeta, resources[0], resource);
+        // }
       }
+
+      finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow, httpConnector);
     }
+    // if (resourceType === 'connections' && assistant) {
+    //   const { resources = [] } = yield select(selectors.resourceList, {
+    //     type: 'httpconnectors',
+    //     filter: {
+    //       $where() {
+    //         return this.published && this.name === assistant;
+    //       },
+    //     },
+    //   });
+
+    //   if (resources.length) {
+    //     finalFieldMeta = updateFinalMetadataWithHttpFramework(finalFieldMeta, resources[0], resource);
+    //   }
+    // }
 
     // console.log('finalFieldMeta', finalFieldMeta);
     yield put(

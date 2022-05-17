@@ -1,4 +1,15 @@
+import {
+  updateFinalMetadataWithHttpFramework,
+} from '../../../sagas/utils';
+
 export default {
+  init: (fieldMeta, resource, flow, httpConnector) => {
+    if (!httpConnector) {
+      return fieldMeta;
+    }
+
+    return updateFinalMetadataWithHttpFramework(fieldMeta, httpConnector, resource);
+  },
   preSave: formValues => {
     const newValues = { ...formValues};
 
