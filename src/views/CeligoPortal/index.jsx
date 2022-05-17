@@ -15,7 +15,7 @@ export default function CeligoPortal() {
   const classes = useStyles();
 
   // eslint-disable-next-line no-undef
-  const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
+  const contentUrl = (getDomain() === 'eu.integrator.io' ? PORTAL_URL_EU : PORTAL_URL);
 
   return (
     <>
@@ -23,7 +23,7 @@ export default function CeligoPortal() {
       <div className={classes.container}>
         <Iframe
           url={contentUrl}
-          title="Announcement"
+          title="Celigo portal"
           width="100%"
           height="100%"
           frameBorder={0} />
