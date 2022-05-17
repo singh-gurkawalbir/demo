@@ -2526,11 +2526,11 @@ selectors.getResourceType = (state, { resourceType, resourceId }) => {
   return updatedResourceType;
 };
 
-// As of now, we are not showing the lookup option for BigQuery imports
+// As of now, we are not showing the lookup option for BigQuery and snowflake imports
 selectors.mappingHasLookupOption = (state, resourceType, connectionId) => {
   const connection = selectors.resource(state, resourceType, connectionId) || {};
 
-  return connection?.rdbms?.type !== 'bigquery';
+  return !['bigquery', 'snowflake'].includes(connection?.rdbms?.type);
 };
 
 // this selector updates the field options based on the
