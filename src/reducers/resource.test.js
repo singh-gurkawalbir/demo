@@ -7670,6 +7670,11 @@ describe('resource region selector testcases', () => {
               type: 'rdbms',
               rdbms: {type: 'snowflake'},
             },
+            {
+              _id: 'connection4',
+              type: 'rdbms',
+              rdbms: {type: 'mysql'},
+            },
           ],
         },
       },
@@ -7678,8 +7683,11 @@ describe('resource region selector testcases', () => {
     test('should return false if the connection is of bigquery rdbms subtype', () => {
       expect(selectors.mappingHasLookupOption(state, 'connections', 'connection2')).toEqual(false);
     });
-    test('should return true if the connection is not of bigquery rdbms subtype', () => {
-      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection3')).toEqual(true);
+    test('should return false if the connection is of snowflake rdbms subtype', () => {
+      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection3')).toEqual(false);
+    });
+    test('should return true if the connection is not of bigquery or snowflake rdbms subtype', () => {
+      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection4')).toEqual(true);
     });
     test('should return true if the connection is of not rdbms type', () => {
       expect(selectors.mappingHasLookupOption(state, 'connections', 'connection1')).toEqual(true);

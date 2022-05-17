@@ -26,6 +26,9 @@ import {
   isMetaRequiredValuesMet,
   isAppConstantContact,
   isAmazonHybridConnection,
+  isAmazonSellingPartnerConnection,
+  shouldLoadAssistantFormForImports,
+  shouldLoadAssistantFormForExports,
 } from '..';
 import { getPathParams } from '../pathParamUtils';
 
@@ -4325,5 +4328,96 @@ describe('isAmazonHybridConnection util test cases', () => {
   });
   test('should return false if connection assistant is amazonmws and http type is Amazon-SP-API', () => {
     expect(isAmazonHybridConnection({assistant: 'amazonsellercentral', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
+  });
+});
+
+describe('isAmazonSellingPartnerConnection util test cases', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(isAmazonSellingPartnerConnection()).toBeFalsy();
+  });
+  test('should return true if connection assistant is amazonmws and http type is Amazon-SP-API', () => {
+    expect(isAmazonSellingPartnerConnection({assistant: 'amazonmws', http: {type: 'Amazon-SP-API'}})).toBeTruthy();
+  });
+  test('should return false if connection assistant is not amazonmws and http type is Amazon-SP-API', () => {
+    expect(isAmazonSellingPartnerConnection({assistant: 'amazonsellercentral', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
+  });
+  test('should return false if connection assistant is amazonmws and http type is Amazon-Hybrid', () => {
+    expect(isAmazonSellingPartnerConnection({assistant: 'amazonmws', http: {type: 'Amazon-Hybrid'}})).toBeFalsy();
+  });
+});
+
+describe('shouldLoadAssistantFormForImports util', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(shouldLoadAssistantFormForImports()).toBeFalsy();
+    expect(shouldLoadAssistantFormForImports('', '')).toBeFalsy();
+    expect(shouldLoadAssistantFormForImports({id: 1})).toBeFalsy();
+    expect(shouldLoadAssistantFormForImports(undefined, {id: 1})).toBeFalsy();
+  });
+
+  test('should return false if connection is of Amazon hybrid', () => {
+    expect(shouldLoadAssistantFormForImports({}, {assistant: 'amazonmws', http: {type: 'Amazon-Hybrid'}})).toBeFalsy();
+  });
+
+  test('should return false if useParentForm is true for the resource', () => {
+    expect(shouldLoadAssistantFormForImports({useParentForm: true})).toBeFalsy();
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazon', useParentForm: true})).toBeFalsy();
+  });
+
+  test('should return false if resource is not an assistant', () => {
+    expect(shouldLoadAssistantFormForImports({adaptorType: 'HTTPImport'})).toBeFalsy();
+  });
+
+  test('should return true if resource is an assistant', () => {
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazon', adaptorType: 'HTTPImport'})).toBeTruthy();
+  });
+
+  test('should return false if useTechAdaptorForm is true for the resource', () => {
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazon', useTechAdaptorForm: true})).toBeFalsy();
+  });
+
+  test('should return true if useTechAdaptorForm is false for the resource', () => {
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazon', useTechAdaptorForm: false})).toBeTruthy();
+  });
+
+  test('should return true if resource is an assistant and connection is of Amazon selling partner', () => {
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazonmws', useTechAdaptorForm: true}, {assistant: 'amazonmws', http: {type: 'Amazon-SP-API'}})).toBeTruthy();
+  });
+});
+
+describe('shouldLoadAssistantFormForExports util', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(shouldLoadAssistantFormForExports()).toBeFalsy();
+    expect(shouldLoadAssistantFormForExports('', '')).toBeFalsy();
+    expect(shouldLoadAssistantFormForExports({id: 1})).toBeFalsy();
+    expect(shouldLoadAssistantFormForExports(undefined, {id: 1})).toBeFalsy();
+  });
+
+  test('should return false if connection is of Amazon hybrid', () => {
+    expect(shouldLoadAssistantFormForExports({}, {assistant: 'amazonmws', http: {type: 'Amazon-Hybrid'}})).toBeFalsy();
+  });
+
+  test('should return false if useParentForm is true for the resource', () => {
+    expect(shouldLoadAssistantFormForExports({useParentForm: true})).toBeFalsy();
+    expect(shouldLoadAssistantFormForExports({assistant: 'amazon', useParentForm: true})).toBeFalsy();
+  });
+
+  test('should return false if resource is not an assistant', () => {
+    expect(shouldLoadAssistantFormForExports({adaptorType: 'HTTPImport'})).toBeFalsy();
+  });
+
+  test('should return true if resource is an assistant', () => {
+    expect(shouldLoadAssistantFormForExports({assistant: 'amazon', adaptorType: 'HTTPImport'})).toBeTruthy();
+  });
+
+  test('should return false if useTechAdaptorForm is true for the resource', () => {
+    expect(shouldLoadAssistantFormForExports({assistant: 'amazon', useTechAdaptorForm: true})).toBeFalsy();
+  });
+
+  test('should return true if useTechAdaptorForm is false for the resource', () => {
+    expect(shouldLoadAssistantFormForExports({assistant: 'amazon', useTechAdaptorForm: false})).toBeTruthy();
+  });
+
+  test('should return false if resource is openair assistant', () => {
+    expect(shouldLoadAssistantFormForExports({assistant: 'openair', useTechAdaptorForm: true}, {assistant: 'amazonmws', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
   });
 });
