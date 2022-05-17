@@ -7,6 +7,7 @@ export default {
       id: 'file.compressFiles',
       type: 'checkbox',
       label: 'Compress files',
+      helpKey: 'import.file.compressFiles',
       defaultValue: r => !!(r && r.file && r.file.compressionFormat),
     },
     'file.compressionFormat': {

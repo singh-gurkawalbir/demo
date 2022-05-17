@@ -135,6 +135,7 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
     id: 'file.decompressFiles',
     type: 'checkbox',
     label: 'Decompress files',
+    key: 'export.files.decompressFiles',
     visibleWhen: [
       {
         field: 'outputMode',
