@@ -1895,8 +1895,10 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Please select the file format that most closely matches your needs. If the exact format is not found, select the closest template. You will have an opportunity to modify the rules within this template by using the “File Definition Editor” below.',
   'import.filedefinitionRules':
 'File Definition Rules are used by our platform to generate your EDI file. Once you have selected a template that most closely matches your needs, this editor is used at a minimum, to modify those rules to indicate where to find your data values. If you did not find an exact template match, this editor can also be used to make changes to an existing template or even write your own from scratch. \n Within the editor, the “Available Resources” pane holds all the data that you can reference within the file definition rules. The “File Definition Rules” pane holds the instructions in JSON format that will be used to generate your EDI file. The Generated Import field shows, in real-time, the generated output based on your defined rules.',
-  'import.file.compressFile':
-'Set this field to true if you would like to compress files before they are posted to the import application.',
+  'import.file.compressFiles':
+'If you would like to compress files before they are posted to the import application, set this field to True. Once you check this field, a dropdown field appears for you to choose the compression format',
+  'export.file.decompressFiles':
+'If you’re exporting compressed files, set this field to True. Once you check this field, a dropdown field appears for you to choose the compression format',
   'import.ftp.useUploadInProgressTempFile':
 'Some FTP sites require that a file use a temporary file name pattern while an upload is in progress, and then after an upload is complete that a file be renamed to officially let the FTP site know that no more data is expected, and that the file can safely be processed by another application.',
   'import.netsuite.referenceField':
