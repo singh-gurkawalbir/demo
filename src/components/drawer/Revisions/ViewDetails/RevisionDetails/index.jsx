@@ -58,8 +58,12 @@ const RevisionInfoRow = ({ children }) => {
 const RevisionCreatedBy = ({ integrationId, revisionId }) => {
   const revision = useSelector(state => selectors.revision(state, integrationId, revisionId));
   const userName = useSelector(state => {
-    const users = selectors.availableUsersList(state, integrationId);
+    let users = selectors.availableUsersList(state, integrationId);
+    const accountOwner = selectors.accountOwner(state);
 
+    if (!users?.length) {
+      users = [{ sharedWithUser: accountOwner }];
+    }
     const user = users.find(user => revision?._createdByUserId === user.sharedWithUser._id);
 
     if (!user) return revision?._createdByUserId;
