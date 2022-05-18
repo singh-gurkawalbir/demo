@@ -327,6 +327,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           type: fld.type || 'text',
           required: !!fld.required,
           options: fld.options,
+          validWhen: fld.validWhen,
           defaultValue: resource?.http?.unencrypted?.[fld.id],
         },
       });
