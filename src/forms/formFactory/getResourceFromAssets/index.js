@@ -2,7 +2,7 @@ import produce from 'immer';
 
 import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
-import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
+import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS, HTTP_FRAMEWORK_SUPPORTED_ASSISTANTS} from '../../../utils/constants';
 import { getAssistantFromResource, getResourceSubType, isNewId, rdbmsSubTypeToAppType } from '../../../utils/resource';
 import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection } from '../../../utils/assistant';
 
@@ -183,7 +183,7 @@ const getSuiteScriptFormMeta = ({resourceType, resource}) => {
 
   return meta;
 };
-const getFormMeta = ({resourceType, isNew, resource, connection, assistantData}) => {
+const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, httpConnector}) => {
   let meta;
 
   const { type } = getResourceSubType(resource);
@@ -192,7 +192,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
     case 'connections':
       if (isNew) {
         meta = formMeta.connections.new;
-      } else if (resource?.assistant === 'shopify') {
+      } else if (httpConnector && HTTP_FRAMEWORK_SUPPORTED_ASSISTANTS.includes(resource?.assistant)) {
         meta = formMeta.connections.http;
       } else if (resource && resource.assistant === 'financialforce') {
         // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
@@ -394,6 +394,7 @@ const getResourceFormAssets = ({
   assistantData,
   connection,
   ssLinkedConnectionId,
+  httpConnector,
 }) => {
   let meta;
 
@@ -404,7 +405,7 @@ const getResourceFormAssets = ({
     if (ssLinkedConnectionId) {
       meta = getSuiteScriptFormMeta({resourceType, resource});
     } else {
-      meta = getFormMeta({resourceType, isNew, resource, connection, assistantData});
+      meta = getFormMeta({resourceType, isNew, resource, connection, assistantData, httpConnector});
     }
   } catch (e) {
     throw new Error(`cannot load metadata assets ${resourceType} ${resource?._id}`);

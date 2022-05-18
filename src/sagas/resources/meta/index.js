@@ -197,18 +197,19 @@ export function* requestAssistantMetadata({ adaptorType = 'rest', assistant}) {
       type: 'httpconnectors',
       filter: {
         $where() {
-          return this.name === assistant;
+          return this.name === assistant && this.published;
         },
       },
     });
-    const { resources: httpResources = [] } = yield select(selectors.resourceList, {
-      type: 'httpconnectorresources',
-    });
-    const { resources: httpEndpoints = [] } = yield select(selectors.resourceList, {
-      type: 'httpconnectorendpoints',
-    });
 
     if (httpConnectors?.length) {
+      const { resources: httpResources = [] } = yield select(selectors.resourceList, {
+        type: 'httpconnectorresources',
+      });
+      const { resources: httpEndpoints = [] } = yield select(selectors.resourceList, {
+        type: 'httpconnectorendpoints',
+      });
+
       metadata = getHTTPConnectorMetadata(httpConnectors[0], httpResources, httpEndpoints);
     }
   }

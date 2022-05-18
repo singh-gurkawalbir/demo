@@ -69,22 +69,23 @@ export function* createFormValuesPatchSet({
       resource._connectionId
     );
   }
+  const {resources: httpConnectors} = yield select(selectors.resourceList, {
+    type: 'httpconnectors',
+  });
+  const httpConnector = httpConnectors?.find(conn => (conn.name === resource.assistant) && conn.published);
 
   const { preSave } = getResourceFormAssets({
     resourceType,
     resource,
     connection,
     isNew: formState.isNew,
+    httpConnector,
   });
 
   if (typeof preSave === 'function') {
     const iClients = yield select(selectors.resourceList, {
       type: 'iClients',
     });
-    const {resources: httpConnectors} = yield select(selectors.resourceList, {
-      type: 'httpconnectors',
-    });
-    const httpConnector = httpConnectors?.find(conn => (conn.name === resource.assistant) && conn.published);
 
     // stock preSave handler present...
     finalValues = preSave(values, resource, {iClients, connection, httpConnector});
@@ -899,6 +900,11 @@ export function* initFormValues({
       });
     }
   }
+  const {resources: httpConnectors} = yield select(selectors.resourceList, {
+    type: 'httpconnectors',
+  });
+  const httpConnector = httpConnectors?.find(conn => (conn.name === resource.assistant) && conn.published);
+
   try {
     const defaultFormAssets = getResourceFormAssets({
       resourceType,
@@ -906,6 +912,7 @@ export function* initFormValues({
       isNew,
       assistantData,
       connection,
+      httpConnector,
     });
 
     const form = defaultFormAssets.fieldMeta;
@@ -920,21 +927,6 @@ export function* initFormValues({
 
     if (typeof defaultFormAssets.init === 'function') {
       // standard form init fn...
-      let httpConnector;
-
-      if (resourceType === 'connections' && assistant === 'shopify') {
-        const { resources = [] } = yield select(selectors.resourceList, {
-          type: 'httpconnectors',
-          filter: {
-            $where() {
-              return this.published && this.name === assistant;
-            },
-          },
-        });
-
-        httpConnector = resources?.[0];
-      }
-
       finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow, httpConnector);
     }
 

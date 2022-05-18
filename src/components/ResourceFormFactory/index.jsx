@@ -60,6 +60,7 @@ export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, 
 
   return <Form {...props} {...formState} key={count} />;
 };
+const httpConnectorsFilterConfig = {type: 'httpconnectors'};
 
 const ResourceFormFactory = props => {
   const { resourceType, resourceId, isNew, flowId, integrationId } = props;
@@ -74,6 +75,11 @@ const ResourceFormFactory = props => {
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', resource && resource._connectionId)
   );
+  const httpConnectors = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    httpConnectorsFilterConfig
+  ).resources;
+  const httpConnector = httpConnectors?.find(conn => (conn.name === resource.assistant) && conn.published);
   const dispatch = useDispatch();
   const handleInitForm = useCallback(
     () => {
@@ -124,6 +130,7 @@ const ResourceFormFactory = props => {
           isNew,
           connection,
           integrationId,
+          httpConnector,
         });
       } catch (e) {
         metadataAssets = {};
@@ -131,7 +138,7 @@ const ResourceFormFactory = props => {
 
       return metadataAssets;
     },
-    [connection, isNew, resource, resourceType, integrationId]
+    [resourceType, resource, isNew, connection, integrationId, httpConnector]
   );
   const { fieldMeta, skipClose } = formState;
 
