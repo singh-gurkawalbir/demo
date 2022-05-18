@@ -1,5 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
+import { emptyList } from '../../../utils/constants';
 import { stringCompare } from '../../../utils/sort';
 
 const emptyObj = {};
@@ -118,7 +119,7 @@ selectors.preBuiltFileDefinitions = (state, format) => ({
       state.preBuiltFileDefinitions &&
       state.preBuiltFileDefinitions.data &&
       state.preBuiltFileDefinitions.data[format]) ||
-    [],
+    emptyList,
   status:
     state &&
     state.preBuiltFileDefinitions &&
