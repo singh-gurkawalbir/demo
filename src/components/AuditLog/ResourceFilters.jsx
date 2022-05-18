@@ -90,6 +90,7 @@ export function ResourceTypeFilter(props) {
           'ssoclient',
           'agent',
           'user',
+          'notification',
         ],
   };
 

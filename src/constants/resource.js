@@ -43,7 +43,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
   eventreport: 'Event report',
   revision: 'Revision',
   api: 'My API',
-  ssoclient: 'SSO Client',
+  ssoclient: 'SSO client',
   user: 'User',
   notification: 'Notification',
 });
