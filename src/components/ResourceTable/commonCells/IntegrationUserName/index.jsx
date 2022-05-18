@@ -5,12 +5,8 @@ import { selectors } from '../../../../reducers';
 
 export default function IntegrationUserName({ userId, integrationId }) {
   const userName = useSelector(state => {
-    let integrationUsers = selectors.availableUsersList(state, integrationId);
-    const accountOwner = selectors.accountOwner(state);
+    const integrationUsers = selectors.allUsersList(state, integrationId);
 
-    if (!integrationUsers?.length) {
-      integrationUsers = [{ sharedWithUser: accountOwner }];
-    }
     const user = integrationUsers?.find(user => userId === user.sharedWithUser._id);
 
     if (!user) return userId;

@@ -3349,6 +3349,21 @@ selectors.availableUsersList = createSelector(
 
 );
 
+selectors.allUsersList = createSelector(
+  selectors.availableUsersList,
+  selectors.accountOwner,
+  (users, accountOwner) => {
+    if (users?.length) {
+      return users;
+    }
+
+    return [{
+      _id: ACCOUNT_IDS.OWN,
+      sharedWithUser: accountOwner,
+    }];
+  }
+);
+
 selectors.platformLicense = createSelector(
   selectors.userPreferences,
   // TODO: Surya make it even more granular the selector
