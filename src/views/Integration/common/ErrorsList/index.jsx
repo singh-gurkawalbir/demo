@@ -107,7 +107,6 @@ const metadata = {
             baseUrl: flowBuilderTo,
             params: { resourceId: id, errorType: 'open'},
           }));
-          history.push();
         }, [flowBuilderTo, history, id]);
 
         if (!count) {

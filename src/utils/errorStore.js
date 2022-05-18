@@ -7,8 +7,8 @@ const messages = {
   NO_ALIASES_MESSAGE: 'You don’t have any aliases.',
   NO_CUSTOM_ALIASES_MESSAGE: 'You don’t have any custom aliases.',
   NO_INHERITED_ALIASES_MESSAGE: 'You don’t have any inherited aliases.',
-  DUPLICATE_ALIAS_ERROR_MESSAGE: 'Use a different alias ID. You already have an alias ID registered with the same name.',
-  ALIAS_VALIDATION_ERROR_MESSAGE: 'Your alias ID must contain string type field, alphanumeric, hyphen and underscore characters only.',
+  DUPLICATE_ALIAS_ERROR_MESSAGE: 'An alias with the same ID already exists. Provide a different ID.',
+  ALIAS_VALIDATION_ERROR_MESSAGE: 'Aliases can only contain alphanumeric, hyphen (-), or underscore (_) characters.',
 };
 
 export default function errorMessageStore(key, argsObj) {

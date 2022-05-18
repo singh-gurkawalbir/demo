@@ -259,13 +259,26 @@ export const isUIDataExpectedForResource = (resource, connection) =>
 
 export const isFileMetaExpectedForResource = resource => isFileAdaptor(resource);
 // Gives sample file data
-export const getSampleFileMeta = () => [
-  {
-    fileMeta: {
-      fileName: 'sampleFileName',
+export const getSampleFileMeta = resource => {
+  if (resource?.adaptorType === 'FTPExport') {
+    return [
+      {
+        fileMeta: {
+          fileName: 'sampleFileName',
+          fileSize: 1234,
+        },
+      },
+    ];
+  }
+
+  return [
+    {
+      fileMeta: {
+        fileName: 'sampleFileName',
+      },
     },
-  },
-];
+  ];
+};
 
 /*
  * Gives a sample data for Blob resource
