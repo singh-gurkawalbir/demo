@@ -3059,7 +3059,6 @@ Object {
       },
       "file.decompressFiles": Object {
         "defaultValue": [Function],
-        "helpkey": "export.files.decompressFiles",
         "id": "file.decompressFiles",
         "label": "Decompress files",
         "type": "checkbox",
@@ -3633,7 +3632,6 @@ Object {
       },
       "file.decompressFiles": Object {
         "defaultValue": [Function],
-        "helpkey": "export.files.decompressFiles",
         "id": "file.decompressFiles",
         "label": "Decompress files",
         "type": "checkbox",
@@ -5364,7 +5362,6 @@ Object {
       },
       "file.decompressFiles": Object {
         "defaultValue": [Function],
-        "helpkey": "export.files.decompressFiles",
         "id": "file.decompressFiles",
         "label": "Decompress files",
         "type": "checkbox",
