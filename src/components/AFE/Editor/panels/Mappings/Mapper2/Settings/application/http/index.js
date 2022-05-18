@@ -482,7 +482,7 @@ export default {
           required: true,
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only',
-          helpKey: 'import.v2.lookups.name',
+          helpKey: 'import.v2.lookup.name',
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -504,7 +504,7 @@ export default {
             mappingUtil.getV2DefaultLookupActionValue(node, lookup),
           label: 'If lookup fails',
           refreshOptionsOnChangesTo: ['dataType'],
-          // helpKey: 'mapping.lookupAction',
+          helpKey: 'mapping.v2.lookupAction',
           noApi: true,
           visibleWhenAll: [
             { field: 'lookup.mode', is: ['dynamic', 'static'] },
