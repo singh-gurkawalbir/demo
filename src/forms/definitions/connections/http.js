@@ -1,6 +1,7 @@
 import {
   updateFinalMetadataWithHttpFramework,
 } from '../../../sagas/utils';
+import { updateHTTPFrameworkFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
   init: (fieldMeta, resource, flow, httpConnector) => {
@@ -10,8 +11,8 @@ export default {
 
     return updateFinalMetadataWithHttpFramework(fieldMeta, httpConnector, resource);
   },
-  preSave: formValues => {
-    const newValues = { ...formValues};
+  preSave: (formValues, resource, options) => {
+    let newValues = { ...formValues};
 
     if (newValues['/mode'] === 'cloud') {
       newValues['/_agentId'] = undefined;
@@ -173,6 +174,9 @@ export default {
     delete newValues['/http/auth/wsse/username'];
     delete newValues['/http/auth/wsse/password'];
     delete newValues['/http/auth/wsse/headerName'];
+    if (options.httpConnector) {
+      newValues = updateHTTPFrameworkFormValues(newValues, resource, options.httpConnector);
+    }
 
     return newValues;
   },

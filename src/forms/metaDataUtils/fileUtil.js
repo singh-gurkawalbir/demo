@@ -649,3 +649,89 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
 
   return null;
 };
+export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnector) => {
+  const retValues = { ...formValues };
+
+  if (resource?.assistant === 'shopify') {
+    if (retValues['/http/auth/type'] === 'oauth') {
+      if (
+        resource &&
+        !resource._connectorId &&
+        resource.http &&
+        resource.http._iClientId
+      ) {
+        retValues['/http/_iClientId'] = undefined;
+      }
+    }
+    if (
+      resource &&
+      resource._connectorId) {
+      retValues['/http/baseURI'] = `https://${
+        formValues['/http/unencrypted/storeName']
+      }.myshopify.com`;
+      retValues['/http/ping/relativeURI'] = '/admin/orders.json';
+
+      if (
+        retValues['/http/auth/oauth/scope'] &&
+        !!retValues['/http/auth/oauth/scope'].length
+      ) {
+        const scope = retValues['/http/auth/oauth/scope'].find(
+          str => str !== 'read_analytics'
+        );
+
+        if (scope) {
+          const scopeId = /^(read_|write_)(\w*)/.test(scope)
+            ? /^(read_|write_)(\w*)/.exec(scope)[2]
+            : '';
+          const pingURIs = {
+            content: '/admin/articles/authors.json',
+            themes: '/admin/themes.json',
+            products: '/admin/products/count.json',
+            customers: '/admin/customers/count.json',
+            orders: '/admin/orders/count.json',
+            script_tags: '/admin/script_tags/count.json',
+            fulfillments: '/admin/fulfillment_services.json?scope=all',
+            shipping: '/admin/carrier_services.json',
+            users: '/admin/users.json',
+          };
+
+          retValues['/http/ping/relativeURI'] = pingURIs[scopeId];
+        }
+      }
+    } else if (
+      retValues['/http/auth/oauth/scope'] &&
+        !!retValues['/http/auth/oauth/scope'].length
+    ) {
+      const scope = retValues['/http/auth/oauth/scope'].find(
+        str => str !== 'read_analytics'
+      );
+
+      if (scope) {
+        const scopeId = /^(read_|write_)(\w*)/.test(scope)
+          ? /^(read_|write_)(\w*)/.exec(scope)[2]
+          : '';
+        const pingURIs = {
+          content: '/articles/authors.json',
+          themes: '/themes.json',
+          products: '/products/count.json',
+          customers: '/customers/count.json',
+          orders: '/orders/count.json',
+          script_tags: '/script_tags/count.json',
+          fulfillments: '/fulfillment_services.json?scope=all',
+          shipping: '/carrier_services.json',
+          users: '/users.json',
+        };
+
+        retValues['/http/ping/relativeURI'] = pingURIs[scopeId];
+      }
+    }
+  }
+  retValues['/_httpConnectorId'] = httpConnector?._id;
+  if (retValues['/http/unencrypted/version']) {
+    const version = httpConnector.versions?.find(ver => ver.name === retValues['/http/unencrypted/version']);
+
+    retValues['/_httpConnectorVersionId'] = version?._id;
+  }
+
+  return retValues;
+};

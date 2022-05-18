@@ -81,9 +81,13 @@ export function* createFormValuesPatchSet({
     const iClients = yield select(selectors.resourceList, {
       type: 'iClients',
     });
+    const {resources: httpConnectors} = yield select(selectors.resourceList, {
+      type: 'httpconnectors',
+    });
+    const httpConnector = httpConnectors?.find(conn => (conn.name === resource.assistant) && conn.published);
 
     // stock preSave handler present...
-    finalValues = preSave(values, resource, {iClients, connection});
+    finalValues = preSave(values, resource, {iClients, connection, httpConnector});
   }
 
   const patchSet = sanitizePatchSet({
