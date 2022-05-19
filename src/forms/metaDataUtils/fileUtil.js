@@ -724,11 +724,11 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnecto
       }
     }
   }
-  retValues['/_httpConnectorId'] = httpConnector?._id;
+  retValues['/http/_httpConnectorId'] = httpConnector?._id;
   if (retValues['/http/unencrypted/version']) {
     const version = httpConnector.versions?.find(ver => ver.name === retValues['/http/unencrypted/version']);
 
-    retValues['/_httpConnectorVersionId'] = version?._id;
+    retValues['/http/_httpConnectorVersionId'] = version?._id;
   }
 
   return retValues;
