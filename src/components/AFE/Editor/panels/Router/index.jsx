@@ -47,7 +47,16 @@ const useStyles = makeStyles(theme => ({
     cursor: 'grabbing',
   },
 }));
+
 const getBranchHash = branches => (branches || []).reduce((hashString, branch) => `${hashString}-${branch.name}|${branch.description}|${branch.expanded}`, '');
+const SortableItem = sortableElement(props => <BranchItem {...props} />);
+
+const SortableContainer = sortableContainer(({children, className}) => (
+  <ul className={className}>
+    {children}
+  </ul>
+));
+
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -59,14 +68,6 @@ export default function RouterPanel({ editorId }) {
   const allowSorting = routeRecordsTo === 'first_matching_branch';
 
   const activeProcessor = useSelector(state => selectors.editorActiveProcessor(state, editorId));
-
-  const SortableContainer = sortableContainer(({children}) => (
-    <ul className={classes.branchList}>
-      {children}
-    </ul>
-  ));
-
-  const SortableItem = sortableElement(props => <BranchItem {...props} editorId={editorId} />);
 
   const BranchHeading = ({helpText, children}) => (
     <div className={classes.heading}>
@@ -111,7 +112,9 @@ export default function RouterPanel({ editorId }) {
   return (
     <div className={classes.panelContent}>
       <BranchDrawer editorId={editorId} />
+
       <BranchHeading helpText="Missing branch type help!">Branching type</BranchHeading>
+
       <div className={classes.branchingType}>
         <DynaRadioGroup
           id="branchType"
@@ -137,6 +140,7 @@ export default function RouterPanel({ editorId }) {
       <Divider orientation="horizontal" className={classes.divider} />
 
       <SortableContainer
+        className={classes.branchList}
         lockAxis="y"
         onSortStart={handleSortStart}
         onSortEnd={handleSortEnd}
@@ -150,6 +154,7 @@ export default function RouterPanel({ editorId }) {
             index={i} // The HOC does not proxy index to child, so we need `position` as well.
             position={i}
             branchName={b.name}
+            editorId={editorId}
             pageProcessors={b.pageProcessors}
             allowSorting={allowSorting}
             description={b.description}
