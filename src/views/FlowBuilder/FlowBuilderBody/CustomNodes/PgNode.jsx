@@ -38,7 +38,7 @@ export default function PageGeneratorNode(props) {
         <PageGenerator
           className={classes.pageGenerator}
           {...data}
-          onDelete={handleDelete}
+          onDelete={!data.hideDelete && handleDelete}
           flowId={flowId}
           integrationId={flow?._integrationId}
           openErrorCount={(flowErrorsMap && flowErrorsMap[data._exportId]) || 0}

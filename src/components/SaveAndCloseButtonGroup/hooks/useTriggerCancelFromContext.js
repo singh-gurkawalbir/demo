@@ -8,7 +8,7 @@ export default function useTriggerCancelFromContext(formKey, onCloseWithDiscardW
   } = useFormOnCancelContext(formKey);
 
   useEffect(() => {
-    if (cancelTriggeredForAsyncKey === formKey && onCloseWithDiscardWarning) {
+    if (formKey && cancelTriggeredForAsyncKey === formKey && onCloseWithDiscardWarning) {
       onCloseWithDiscardWarning();
       closeCancelTriggered();
     }

@@ -102,7 +102,7 @@ export default function RouterPanel({ editorId }) {
   };
 
   const handleAddBranch = () => {
-    dispatch(actions.editor.patchRule(editorId, [...branches, {name: `Branch ${routerIndex}.${branches.length}`, pageProcessors: []}], {rulePath: 'branches'}));
+    dispatch(actions.editor.patchRule(editorId, [...branches, {name: `Branch ${routerIndex + 1}.${branches.length}`, pageProcessors: []}], {rulePath: 'branches'}));
   };
 
   const updatedOnFieldChange = (id, val) => {

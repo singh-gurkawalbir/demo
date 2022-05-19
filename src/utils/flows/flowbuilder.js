@@ -61,7 +61,7 @@ export const generateEmptyRouter = isVirtual => ({
   ...(!isVirtual && { routeRecordsTo: 'first_matching_branch'}),
   ...(!isVirtual && { routeRecordsUsing: 'input_filters'}),
   branches: [{
-    pageProcessors: [{application: `none-${shortId()}`}],
+    pageProcessors: [{setupInProgress: true}],
   }],
   ...(!isVirtual && { script: {
     _scriptId: undefined,
@@ -74,28 +74,33 @@ export const initializeFlowForReactFlow = flowDoc => {
   const flow = cloneDeep(flowDoc);
   const { pageGenerators = [], pageProcessors = [], routers = [] } = flow;
 
+  if (!pageGenerators.length) {
+    pageGenerators.push({setupInProgress: true});
+  }
+  if (!pageProcessors.length && !routers.length) {
+    pageProcessors.push({setupInProgress: true});
+  }
   pageGenerators.forEach(pg => {
-    pg.id = pg._exportId || pg._connectionId || pg.application || `none-${shortId()}`;
+    pg.id = pg._exportId || `none-${shortId()}`;
   });
-  pageProcessors.forEach(pp => {
-    pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${shortId()}`;
-  });
+  if (pageProcessors.length && !routers.length) {
+    routers.push({
+      id: shortId(),
+      branches: [{name: 'Branch 1.0', pageProcessors}],
+    });
+    delete flow.pageProcessors;
+  }
   routers.forEach(({branches = []}) => {
     branches.forEach(branch => {
       const {pageProcessors = []} = branch;
 
       pageProcessors.forEach(pp => {
-        pp.id = pp._importId || pp._exportId || pp._connectionId || pp.application || `none-${shortId()}`;
+        pp.id = pp._importId || pp._exportId || `none-${shortId()}`;
       });
     });
   });
-  if (pageProcessors.length && !routers.length) {
-    flow.routers = [{
-      id: shortId(),
-      branches: [{name: 'Branch 1.0', pageProcessors}],
-    }];
-    delete flow.pageProcessors;
-  }
+  flow.pageGenerators = pageGenerators;
+  flow.routers = routers;
 
   return flow;
 };
@@ -106,11 +111,10 @@ const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId) => {
   if (!pageGenerators || !pageGenerators.length || !targetId) {
     return [];
   }
-
-  const nodes = pageGenerators.map((pg, index) => ({
+  const nodes = pageGenerators.map((pg, index, collection) => ({
     id: pg.id,
-    type: 'pg',
-    data: {...pg, path: `/pageGenerators/${index}`},
+    type: GRAPH_ELEMENTS_TYPE.PG_STEP,
+    data: {...pg, path: `/pageGenerators/${index}`, hideDelete: collection.length === 1 && pg.setupInProgress },
   }));
 
   const edges = nodes.map(node => generateDefaultEdge(node.id, targetId));
@@ -122,10 +126,16 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}) => 
   const edges = [];
   const {branch, branchIndex, routerIndex} = branchData;
   const nodes = pageProcessors.map((pageProcessor, index, collection) => {
+    let hideDelete = false;
+
     if (index + 1 < collection.length) {
       const processorCount = pageProcessor._exportId || pageProcessor._importId ? 3 : 0;
 
       edges.push(generateDefaultEdge(pageProcessor.id, collection[index + 1].id, {...branchData, processorCount}));
+    }
+    // hide delete option if only one unconfigured pageProcessor present
+    if (routerIndex === 0 && pageProcessor.setupInProgress && collection.length === 1 && !branch.nextRouterId) {
+      hideDelete = true;
     }
 
     return {
@@ -134,6 +144,7 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}) => 
       data: {
         resource: {...pageProcessor},
         branch,
+        hideDelete,
         isFirst: index === 0,
         path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${index}`,
       },
@@ -145,54 +156,15 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}) => 
 
 const generateNodesAndEdgesFromNonBranchedFlow = flow => {
   const { _exportId, pageGenerators = [], pageProcessors = [], _importId } = flow;
-  const virtualRouter = {id: `none-${shortId()}`, branches: []};
-
-  const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(_exportId ? [{_exportId, id: _exportId}] : pageGenerators, virtualRouter.id);
+  const firstPPId = _importId || pageProcessors[0]?.id;
+  const lastPPId = _importId || pageProcessors[pageProcessors.length - 1]?.id;
+  const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(_exportId ? [{_exportId, id: _exportId}] : pageGenerators, firstPPId);
   const pageProcessorNodesAndEdges = generatePageProcessorNodesAndEdges(_importId ? [{_importId, id: _importId}] : pageProcessors);
-  const firstPPId = _importId || pageProcessors[0]?.id || _importId;
-  const lastPPId = _importId || pageProcessors[pageProcessors.length - 1]?.id || _importId;
 
   const terminalNode = generateNewTerminal();
-  const dummyPGId = `none-${shortId()}`;
-  const dummyPPId = `none-${shortId()}`;
-
-  if (!_exportId && !pageGenerators.length) {
-    return [{
-      id: dummyPGId,
-      type: GRAPH_ELEMENTS_TYPE.PG_STEP,
-      data: {application: dummyPGId, id: dummyPGId, path: '/pageGenerators/0'},
-    },
-    generateDefaultEdge(dummyPGId, dummyPPId, {routerIndex: 0, branchIndex: 0, hidden: true}),
-    {
-      id: dummyPPId,
-      type: GRAPH_ELEMENTS_TYPE.PP_STEP,
-      data: {
-        resource: {application: dummyPPId, id: dummyPGId},
-        isFirst: true,
-        path: '/pageProcessors/0',
-      },
-    },
-    ];
-  }
-  if (!firstPPId) {
-    return [
-      ...pageGeneratorNodesAndEdges,
-      {
-        id: virtualRouter.id,
-        type: GRAPH_ELEMENTS_TYPE.PP_STEP,
-        data: {
-          resource: {application: virtualRouter.id, id: virtualRouter.id},
-          isFirst: true,
-          path: '/pageProcessors/0',
-        },
-      },
-    ];
-  }
 
   return [
     ...pageGeneratorNodesAndEdges,
-    generateRouterNode(virtualRouter, 0),
-    generateDefaultEdge(virtualRouter.id, firstPPId, {routerIndex: 0, branchIndex: 0}),
     ...pageProcessorNodesAndEdges,
     generateDefaultEdge(lastPPId, terminalNode.id, {routerIndex: 0, branchIndex: 0}),
     terminalNode,
@@ -203,22 +175,34 @@ export const getRouter = (routerId, flow = {}) => flow.routers?.find(r => r.id =
 
 export const generateNodesAndEdgesFromBranchedFlow = flow => {
   const {pageGenerators = [], routers = []} = flow;
+  let firstPPId = routers[0].id;
 
-  const elements = [...generatePageGeneratorNodesAndEdges(pageGenerators, routers[0].id)];
+  if (isVirtualRouter(routers[0])) {
+    if (routers[0].branches[0].pageProcessors.length) {
+      firstPPId = routers[0].branches[0].pageProcessors[0].id;
+    } else if (routers[0].branches[0].nextRouterId) {
+      firstPPId = routers[0].branches[0].nextRouterId;
+    }
+  }
+  const elements = [...generatePageGeneratorNodesAndEdges(pageGenerators, firstPPId)];
   const routerVisited = {};
   const routersArr = [...routers];
   const populateRouterElements = router => {
     if (router && !routerVisited[router.id]) {
       const routerIndex = routersArr.findIndex(r => r.id === router.id);
 
-      elements.push(generateRouterNode(router, routerIndex));
+      if (routerIndex !== 0 || !isVirtualRouter(router)) {
+        elements.push(generateRouterNode(router, routerIndex));
+      }
       router.branches.forEach((branch, branchIndex) => {
         if (branch.pageProcessors.length) {
           // draw an edge from router to first step of branch
           const pageProcessorNodes = generatePageProcessorNodesAndEdges(branch.pageProcessors, {branch, branchIndex, routerIndex});
-          const branchStartEdge = generateDefaultEdge(router.id, branch.pageProcessors[0].id, {routerIndex, branchIndex});
 
-          elements.push(branchStartEdge);
+          if (routerIndex !== 0 || !isVirtualRouter(router)) {
+            elements.push(generateDefaultEdge(router.id, branch.pageProcessors[0].id, {routerIndex, branchIndex}));
+          }
+
           if (branch.nextRouterId) {
             elements.push(generateDefaultEdge(branch.pageProcessors[branch.pageProcessors.length - 1].id, branch.nextRouterId, {routerIndex, branchIndex}));
             if (branch.nextRouterId !== router.id) {
@@ -238,7 +222,9 @@ export const generateNodesAndEdgesFromBranchedFlow = flow => {
         // its an empty branch without any steps
         if (branch.nextRouterId) {
           // join the router to the next router
-          elements.push(generateDefaultEdge(router.id, branch.nextRouterId, {routerIndex, branchIndex}));
+          if (routerIndex !== 0 || !isVirtualRouter(router)) {
+            elements.push(generateDefaultEdge(router.id, branch.nextRouterId, {routerIndex, branchIndex}));
+          }
           if (branch.nextRouterId !== router.id) {
             // Safe check, branch should not point to its own router, causes a loop
             populateRouterElements(routers.find(r => r.id === branch.nextRouterId));
@@ -270,6 +256,7 @@ export const generateReactFlowGraph = flow => {
 
   const {routers} = flow;
 
+  console.log('flow', flow);
   if (!routers || routers.length === 0) {
     return generateNodesAndEdgesFromNonBranchedFlow(flow);
   }
@@ -364,8 +351,8 @@ const mergeBetweenRouterAndPP = ({flowDoc, edgeTarget, patchSet, sourceElement})
   ]);
 };
 const splitPPArray = (ar, index) => {
-  const firstHalf = ar.splice(0, index);
-  const secondHalf = ar.splice(index - 1, ar.length);
+  const firstHalf = ar.slice(0, index);
+  const secondHalf = ar.slice(index, ar.length);
 
   return [firstHalf, secondHalf];
 };
@@ -444,5 +431,53 @@ export const mergeDragSourceWithTarget = (flowDoc, elements, dragNodeId, targetI
   } else if (targetElement.type === GRAPH_ELEMENTS_TYPE.EDGE) {
     mergeTerminalToAnEdge({flowDoc, elements, sourceElement, targetElement, patchSet});
   }
+};
+
+export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, originalFlow}) => {
+  const patchSet = [];
+  const edge = elementsMap[edgeId];
+  const branchPath = edge.data.path;
+  const processorArray = cloneDeep(jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`));
+  const nextRouterId = jsonPatch.getValueByPointer(flow, `${branchPath}/nextRouterId`);
+
+  const insertionIndex = processorArray.findIndex(pp => pp.id === edge.target);
+
+  let firstHalf;
+  let secondHalf;
+
+  if (insertionIndex !== -1) {
+    [firstHalf, secondHalf] = splitPPArray(processorArray, insertionIndex);
+  } else {
+    firstHalf = processorArray;
+    secondHalf = [{}];
+  }
+
+  if (!originalFlow.routers) {
+    patchSet.push({
+      op: 'add',
+      path: '/routers',
+      value: flow.routers,
+    });
+  }
+  patchSet.push({
+    op: 'replace',
+    path: `${branchPath}/pageProcessors`,
+    value: firstHalf,
+  });
+
+  router.branches[0].pageProcessors = secondHalf;
+  router.nextRouterId = nextRouterId;
+
+  patchSet.push(...[{
+    op: 'replace',
+    path: `${branchPath}/_nextRouterId`,
+    value: router.id,
+  }, {
+    op: 'add',
+    path: '/routers/-',
+    value: router,
+  }]);
+
+  return patchSet;
 };
 

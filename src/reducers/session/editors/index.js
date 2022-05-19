@@ -191,7 +191,7 @@ export default function reducer(state = {}, action) {
         } else if (draft[id].editorType === 'router') {
           if (mode) {
             delete draft[id].activeProcessor;
-            draft[id].rule.mode = mode;
+            draft[id].rule.activeProcessor = mode;
             draft[id].layout = `${mode === 'filter' ? 'json' : 'script'}FormBuilder`;
           }
         }
@@ -342,7 +342,7 @@ selectors.editorResult = (state, id) => {
 selectors.editorActiveProcessor = (state, id) => {
   if (!state[id]) return;
 
-  return state[id].activeProcessor || state[id].rule?.mode;
+  return state[id].activeProcessor || state[id].rule?.activeProcessor;
 };
 
 selectors.editorRule = (state, id) => {

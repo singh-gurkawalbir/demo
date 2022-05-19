@@ -13,19 +13,19 @@ export default {
     (routerObj.branches || []).forEach((branch, index) => {
       if (!branch.name) {
         // eslint-disable-next-line no-param-reassign
-        branch.name = `Branch ${routerIndex}.${index}`;
+        branch.name = `Branch ${routerIndex + 1}.${index}`;
       }
     });
     const rule = {
       ...routerObj,
-      mode: activeProcessor,
+      activeProcessor,
       fetchScriptContent: true,
     };
 
     // set values only if undefined (to pass dirty check correctly)
     if (routeRecordsUsing === 'script') {
       rule.scriptId = script._scriptId;
-      rule.mode = 'javascript';
+      rule.activeProcessor = 'javascript';
     }
     rule.entryFunction = script.function || hooksToFunctionNamesMap.router;
 
@@ -36,7 +36,7 @@ export default {
   },
 
   requestBody: editor => {
-    if (editor.rule.mode === 'filter') {
+    if (editor.rule.activeProcessor === 'filter') {
       return filter.requestBody({
         data: editor.data,
         rule: editor.rule,
@@ -51,7 +51,7 @@ export default {
   },
   // No point performing parsing or validation when it is an object
   validate: editor => {
-    if (editor.rule.mode === 'filter') {
+    if (editor.rule.activeProcessor === 'filter') {
       return filter.validate({
         data: editor.data,
         rule: editor.rule,
@@ -63,7 +63,7 @@ export default {
     });
   },
   dirty: editor => {
-    if (editor.rule.mode === 'javascript') {
+    if (editor.rule.activeProcessor === 'javascript') {
       return javascript.dirty({
         rule: editor.rule,
         originalRule: editor.originalRule,
@@ -73,7 +73,7 @@ export default {
     return true;
   },
   processResult: (editor, result) => {
-    if (editor.rule.mode === 'filter') {
+    if (editor.rule.activeProcessor === 'filter') {
       return filter.processResult(editor, result);
     }
 
@@ -90,10 +90,12 @@ export default {
       resourceType,
       router,
       routerIndex,
+      prePatches,
+      flowId,
     } = editor;
-    const {scriptId, code, entryFunction, mode } = rule || {};
+    const {scriptId, code, entryFunction, activeProcessor } = rule || {};
 
-    const type = mode === 'filter' ? 'input_filters' : 'script';
+    const type = activeProcessor === 'filter' ? 'input_filters' : 'script';
     const path = `/routers/${routerIndex}`;
     const value = {
       routeRecordsUsing: type,
@@ -101,16 +103,18 @@ export default {
       routeRecordsTo: rule.routeRecordsTo,
       branches: rule.branches,
       script: {
-        scriptId,
+        _scriptId: scriptId,
         function: entryFunction,
       },
     };
 
-    patches.foregroundPatches = [{
-      patch: [{ op: 'replace', path, value }],
-      resourceType,
-      resourceId,
-    }];
+    patches.foregroundPatches = [
+      ...(Array.isArray(prePatches) ? [{resourceType: 'flows', resourceId: flowId, patch: prePatches}] : []),
+      {
+        patch: [{ op: 'replace', path, value }],
+        resourceType,
+        resourceId,
+      }];
 
     if (type === 'script') {
       patches.backgroundPatches.push({

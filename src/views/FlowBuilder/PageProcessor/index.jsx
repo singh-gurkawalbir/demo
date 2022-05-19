@@ -42,7 +42,7 @@ const PageProcessor = ({
   openErrorCount,
   ...pp
 }) => {
-  const pending = !!pp._connectionId || pp.application?.startsWith?.('none');
+  const pending = pp.setupInProgress || (!pp._exportId && !pp._importId);
   const resourceId = pp._connectionId || pp._exportId || pp._importId;
   const resourceType = pp.type === 'export' ? 'exports' : 'imports';
   const classes = useStyles();

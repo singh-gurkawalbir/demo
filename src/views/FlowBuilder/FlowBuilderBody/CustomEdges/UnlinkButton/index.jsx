@@ -24,10 +24,10 @@ const useStyles = makeStyles(theme => ({
 export default function UnlinkButton({edgeId}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { flow } = useFlowContext();
+  const { flowId } = useFlowContext();
 
   const handleDeleteEdge = () => {
-    dispatch(actions.flow.deleteEdge(flow._id, edgeId));
+    dispatch(actions.flow.deleteEdge(flowId, edgeId));
   };
 
   return (

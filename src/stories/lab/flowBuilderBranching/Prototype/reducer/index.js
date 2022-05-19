@@ -165,7 +165,7 @@ const handleAddNewRouter = (draft, action) => {
     [firstHalf, secondHalf] = splitPPArray(ppPgArr, insertionIndex);
   } else {
     firstHalf = ppPgArr;
-    secondHalf = [{application: `none-${generateId()}`}];
+    secondHalf = [{}];
   }
 
   if (!staged[flowId]) {

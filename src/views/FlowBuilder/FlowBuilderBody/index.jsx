@@ -96,13 +96,9 @@ const edgeTypes = {
   default: DefaultEdge,
 };
 
-function Canvas({flowId, integrationId}) {
+function Canvas({ flowId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-
-  console.log('integrationId', integrationId);
-  // const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
-  // const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const calcCanvasStyle = useCalcCanvasStyle();
   const mergedFlow = useSelectorMemo(selectors.makeFlowDataForFlowBuilder, flowId);
@@ -117,7 +113,7 @@ function Canvas({flowId, integrationId}) {
 
   useEffect(() => {
     dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow));
-  }, [mergedFlow, dispatch]);
+  }, [mergedFlow, dispatch, flowId]);
 
   const handleNodeDragStart = (evt, source) => {
     dispatch(actions.flow.dragStart(flowId, source.id));

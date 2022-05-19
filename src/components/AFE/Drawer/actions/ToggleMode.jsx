@@ -18,7 +18,7 @@ const toggleOptions = {
     { label: 'JavaScript', value: 'javascript' },
   ]};
 
-export default function ToggleMode({ editorId, type }) {
+export default function ToggleMode({ editorId, variant = 'filter' }) {
   const dispatch = useDispatch();
   const activeProcessor = useSelector(state => selectors.editorActiveProcessor(state, editorId));
   const saveInProgress = useSelector(state => {
@@ -34,7 +34,7 @@ export default function ToggleMode({ editorId, type }) {
       value={activeProcessor}
       onChange={handleToggle}
       exclusive
-      options={toggleOptions[type]}
+      options={toggleOptions[variant]}
     />
   );
 }

@@ -17,7 +17,7 @@ export default {
   drawer: {
     showLayoutToggle: true,
     actions: [
-      { component: ToggleMode, position: 'right', type: 'transform' },
+      { component: ToggleMode, position: 'right', variant: 'transform' },
     ],
   },
 };

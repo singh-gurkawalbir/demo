@@ -28,7 +28,11 @@ export default function BranchFilter({editorId, position}) {
   const qbuilder = useRef(null);
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const data = useSelector(state => selectors.editorData(state, editorId) || defaultData);
-  const rule = useSelector(state => selectors.editorRule(state, editorId));
+  const rule = useSelector(state => {
+    const editorRule = selectors.editorRule(state, editorId);
+
+    return editorRule?.branches?.[position]?.inputFilter?.rules;
+  });
 
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
   const [rules, setRules] = useState();
@@ -50,7 +54,7 @@ export default function BranchFilter({editorId, position}) {
 
   const jsonPathsFromData = useMemo(() => {
     const jsonPaths = getJSONPaths(
-      jsonData.rows ? jsonData.rows[0] : jsonData.record,
+      jsonData,
       null,
       {
         wrapSpecialChars: true,
