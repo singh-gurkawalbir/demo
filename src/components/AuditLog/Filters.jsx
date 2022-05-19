@@ -226,6 +226,7 @@ export default function Filters(props) {
             clearValue={defaultRange}
             onSave={handleDateFilter}
             value={date}
+            showCustomRangeValue
             customPresets={AUDIT_LOGS_RANGE_FILTERS}
          />
           <Help

@@ -4274,12 +4274,12 @@ selectors.sampleDataWrapper = createSelector(
     (state, params) => params.sampleData || selectors.getSampleDataContext(state, params),
     (state, params) => {
       if (['postMap', 'postSubmit'].includes(params.stage)) {
-        return selectors.getSampleDataContext(state, { ...params, stage: 'preMap' });
+        return selectors.getSampleDataContext(state, { ...params, stage: 'importMappingExtract' });
       }
     },
     (state, params) => {
       if (params.stage === 'postSubmit') {
-        return selectors.getSampleDataContext(state, { ...params, stage: 'postMap' });
+        return selectors.getSampleDataContext(state, { ...params, stage: 'postMapOutput' });
       }
     },
     (state, { flowId }) => selectors.resource(state, 'flows', flowId) || emptyObject,

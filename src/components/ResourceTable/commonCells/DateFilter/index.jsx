@@ -89,6 +89,7 @@ export default function SelectDate({
         Icon={FilterIcon}
         value={selectedDate}
         customPresets={customPresets}
+        showCustomRangeValue
         showTime={showTime}
         fromDate={fromDate}
          />
