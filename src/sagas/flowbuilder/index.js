@@ -4,26 +4,34 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../../constants';
 import { selectors } from '../../reducers';
-import { generateId } from '../../utils/string';
 import { mergeDragSourceWithTarget } from '../../utils/flows/flowbuilder';
 
 export function* createNewPGStep({ flowId }) {
   const originalFlow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
   const patchSet = [];
 
+  console.log('originalFlow', originalFlow);
   if (!originalFlow?.pageGenerators) {
+    console.log('should be here');
     patchSet.push({
       op: 'add',
       path: '/pageGenerators',
       value: [],
     });
+  } else if (!originalFlow.pageGenerators.length) {
+    patchSet.push({
+      op: 'add',
+      path: '/pageGenerators/-',
+      value: {setupInProgress: true},
+    });
   }
   patchSet.push({
     op: 'add',
     path: '/pageGenerators/-',
-    value: {application: `none-${generateId(6)}`},
+    value: {setupInProgress: true},
   });
 
+  console.log('patchSet', patchSet);
   yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
 }
 
@@ -51,7 +59,7 @@ export function* deleteStep({flowId, stepId}) {
         patchSet.push({
           op: 'add',
           path,
-          value: {application: `none-${generateId()}`},
+          value: {setupInProgress: true},
         });
       }
     } else
@@ -95,7 +103,7 @@ export function* deleteStep({flowId, stepId}) {
       }
     }
   } else if (isPageGenerator) {
-    const pgIndex = flow.pageGenerators.findIndex(pg => pg._exportId === stepId || pg._connectionId === stepId || pg.application === stepId);
+    const pgIndex = flow.pageGenerators.findIndex(pg => pg._exportId === stepId);
 
     patchSet.push({
       op: 'remove',
@@ -106,11 +114,11 @@ export function* deleteStep({flowId, stepId}) {
       patchSet.push({
         op: 'add',
         path: '/pageGenerators/-',
-        value: {application: `none-${generateId()}`},
+        value: {setupInProgress: true},
       });
     }
   } else {
-    const ppIndex = flow.pageGenerators.findIndex(pg => pg._importId === stepId || pg._exportId === stepId || pg._connectionId === stepId || pg.application === stepId);
+    const ppIndex = flow.pageGenerators.findIndex(pg => pg._importId === stepId || pg._exportId === stepId);
 
     patchSet.push({
       op: 'remove',
@@ -129,7 +137,7 @@ export function* createNewPPStep({ flowId, path: branchPath }) {
     patchSet = [{
       op: 'add',
       path: `${branchPath}/pageProcessors/-`,
-      value: {application: `none-${generateId(6)}`},
+      value: {setupInProgress: true},
     }];
   } else {
     if (!flow?.pageProcessors) {
@@ -142,7 +150,7 @@ export function* createNewPPStep({ flowId, path: branchPath }) {
     patchSet.push({
       op: 'add',
       path: '/pageProcessors/-',
-      value: {application: `none-${generateId(6)}`},
+      value: {setupInProgress: true},
     });
   }
 

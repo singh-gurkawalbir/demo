@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function PageProcessorNode({ data = {} }) {
-  const { branch = {}, isFirst, isLast } = data;
+  const { branch = {}, isFirst, isLast, hideDelete } = data;
   const dispatch = useDispatch();
   const classes = useStyles();
 
@@ -76,7 +76,7 @@ export default function PageProcessorNode({ data = {} }) {
 
           <PageProcessor
             {...data.resource}
-            onDelete={handleDelete}
+            onDelete={!hideDelete && handleDelete}
             flowId={flowId}
             integrationId={integrationId}
             openErrorCount={(flowErrorsMap && flowErrorsMap[data.resource?._importId || data.resource?._exportId]) || 0}
