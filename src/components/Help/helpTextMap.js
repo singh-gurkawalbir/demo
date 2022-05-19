@@ -1340,6 +1340,8 @@ if you're using a production account, you'll find your API keys under the 'API M
   'export.file.filedefinition.rules':
 'File definition rules are used by our platform to understand how to parse custom files. The file parser helper allows you to modify our templated rules to solve more specific file parsing requirements. Within the editor, you can use the rules panel to describe how a custom file should be parsed into JSON records, and then you can use the sample file and output panels to test your rules.',
   'export.pgpdecrypt': 'Use this option to decrypt files. This option is enabled only when you have configured at least one cryptographic system in the connection and selected the parse file option. If it is unchecked, then decryption will not be performed when files are parsed.',
+  'export.file.decompressFiles':
+'If you’re exporting compressed files, set this field to <b>True</b>. Once you check this field, a dropdown field appears for you to choose the compression format',
   'export.file.decrypt': 'Select the algorithm to decrypt files. Make sure you choose the same algorithm that is used to encrypt the files.',
   'export.file.encoding':
 'The file encoding indicates how the individual characters in your data are represented on the file system. The default encoding is utf-8. Depending on the source system of the data, the encoding can take on different formats. Current supported formats are: utf-8, win-1254 and utf-16le. If you do not know what encoding your data is, in most cases it will be utf-8.',
@@ -1390,7 +1392,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'export.ftp.backupDirectoryPath': 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.',
   'export.unencrypted.apiType': '<b>Selling Partner API (SP-API)</b>: The Selling Partner API is a REST-based API and is an evolution of the legacy Amazon Marketplace Web Service (MWS) APIs. It’s recommended you integrate using SP-APIs.<br><b>Marketplace Web Service API (MWS)</b>: Amazon Marketplace Web Service (Amazon MWS) is the legacy web service API.',
   'export.s3.region':
-"Name of the amazon s3 region to the location where the request is being made. If not set, by default 'us-east-1' is selected",
+  "Name of the amazon s3 region to the location where the request is being made. If not set, by default 'us-east-1' is selected",
   'export.webhook.provider':
 "Many popular webhooks have been exposed here for your convenience.  If you don't see the application that you need please log a support ticket so we can prioritize accordingly.  If you are creating your own webhook please choose 'Custom'.",
   'export.webhook.verify':
@@ -1895,8 +1897,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Please select the file format that most closely matches your needs. If the exact format is not found, select the closest template. You will have an opportunity to modify the rules within this template by using the “File Definition Editor” below.',
   'import.filedefinitionRules':
 'File Definition Rules are used by our platform to generate your EDI file. Once you have selected a template that most closely matches your needs, this editor is used at a minimum, to modify those rules to indicate where to find your data values. If you did not find an exact template match, this editor can also be used to make changes to an existing template or even write your own from scratch. \n Within the editor, the “Available Resources” pane holds all the data that you can reference within the file definition rules. The “File Definition Rules” pane holds the instructions in JSON format that will be used to generate your EDI file. The Generated Import field shows, in real-time, the generated output based on your defined rules.',
-  'import.file.compressFile':
-'Set this field to true if you would like to compress files before they are posted to the import application.',
+  'import.file.compressFiles':
+'If you would like to compress files before they are posted to the import application, set this field to <b>True</b>. Once you check this field, a dropdown field appears for you to choose the compression format',
   'import.ftp.useUploadInProgressTempFile':
 'Some FTP sites require that a file use a temporary file name pattern while an upload is in progress, and then after an upload is complete that a file be renamed to officially let the FTP site know that no more data is expected, and that the file can safely be processed by another application.',
   'import.netsuite.referenceField':
