@@ -89,7 +89,10 @@ function generateConnectionRestSubDocFromHttpSubDoc(httpDoc, assistantName) {
     'auth.cookie.body': 'cookieAuth.body',
     'auth.cookie.method': 'cookieAuth.method',
     'auth.cookie.successStatusCode': 'cookieAuth.successStatusCode',
+    _httpConnectorId: '_httpConnectorId',
+    _httpConnectorVersionId: '_httpConnectorVersionId',
   };
+
   let restDoc = {};
 
   _.forEach(connPropMap, (value, key) => {
