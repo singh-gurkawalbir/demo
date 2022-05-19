@@ -85,8 +85,7 @@ export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
 
     return resource.adaptorType === 'HTTPImport' ||
     (connection && connection.isHTTP && connection.type === 'rest') ||
-    (connection && connection.http?.formType === 'rest') ||
-    (connection && connection.http?.formType === 'graph_ql');
+    ((['rest', 'graph_ql', 'assistant'].includes(connection?.http?.formType)));
   }
 
   if (resourceType !== 'exports') return false;
@@ -105,7 +104,8 @@ export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
   return applicationsWithPreviewPanel.includes(appType);
 };
 
-export const getPreviewDataPageSizeInfo = previewData => {
+export const getPreviewDataPageSizeInfo = (previewData, resourceType) => {
+  if (resourceType === 'imports') return '1 Page, 1 Records';
   if (!previewData || !previewData.data) return '1 Page, 0 Records';
   const records = previewData.data;
   const pageSize = Array.isArray(records) ? records.length : 1;

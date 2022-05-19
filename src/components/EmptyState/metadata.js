@@ -1,10 +1,10 @@
 export default {
-  integrations: {
+  tiles: {
     title: 'Jumpstart your data integrations',
     subTitle: 'Flows move and transform data between applications. Flows are stored inside the Standalone flows tile, or within integrations, which you can manage on this page.',
     type: 'integrations',
     buttonLabel: 'Create flow',
-    linkLabel: 'Learn how to develop integrations in Flow Builder',
+    linkLabel: 'Learn how to develop integrations in flow builder',
     link: 'https://docs.celigo.com/hc/en-us/articles/360025919171-Develop-integrations-in-Flow-Builder',
   },
   connections: {

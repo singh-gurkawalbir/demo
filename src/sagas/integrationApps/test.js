@@ -1769,7 +1769,7 @@ describe('uninstaller saga', () => {
       ])
       .put(actions.resource.requestCollection('integrations'))
       .put(actions.resource.requestCollection('tiles'))
-      .put(actions.resource.requestCollection('licenses'))
+      .put(actions.license.refreshCollection())
       .run());
     test('should not put any collection requests if resource call fails', () => {
       const error = { code: 'dummy', message: 'dummy' };
@@ -1785,7 +1785,7 @@ describe('uninstaller saga', () => {
         ])
         .not.put(actions.resource.requestCollection('integrations'))
         .not.put(actions.resource.requestCollection('tiles'))
-        .not.put(actions.resource.requestCollection('licenses'))
+        .not.put(actions.license.refreshCollection())
         .run();
     });
   });

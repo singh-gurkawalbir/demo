@@ -142,6 +142,7 @@ const rootReducer = (state, action) => {
 
       case actionTypes.APP.DELETE_DATA_STATE:
         delete draft.data;
+        delete draft.session.loadResources;
 
         break;
 
@@ -413,28 +414,6 @@ selectors.integrationUninstallSteps = (state, { integrationId, isFrameWork2 }) =
   });
 
   return { steps: modifiedSteps, error, isFetched, isComplete };
-};
-
-selectors.addNewChildSteps = (state, integrationId) => {
-  const addNewChildSteps = fromSession.addNewChildSteps(
-    state && state.session,
-    integrationId
-  );
-  const { steps } = addNewChildSteps;
-
-  if (!steps || !Array.isArray(steps)) {
-    return addNewChildSteps;
-  }
-
-  const modifiedSteps = produce(steps, draft => {
-    const unCompletedStep = draft.find(s => !s.completed);
-
-    if (unCompletedStep) {
-      unCompletedStep.isCurrentStep = true;
-    }
-  });
-
-  return { steps: modifiedSteps };
 };
 
 selectors.currentStepPerMode = (state, { mode, integrationId, revisionId, cloneResourceId, cloneResourceType }) => {
@@ -4280,12 +4259,12 @@ selectors.sampleDataWrapper = createSelector(
     (state, params) => params.sampleData || selectors.getSampleDataContext(state, params),
     (state, params) => {
       if (['postMap', 'postSubmit'].includes(params.stage)) {
-        return selectors.getSampleDataContext(state, { ...params, stage: 'preMap' });
+        return selectors.getSampleDataContext(state, { ...params, stage: 'importMappingExtract' });
       }
     },
     (state, params) => {
       if (params.stage === 'postSubmit') {
-        return selectors.getSampleDataContext(state, { ...params, stage: 'postMap' });
+        return selectors.getSampleDataContext(state, { ...params, stage: 'postMapOutput' });
       }
     },
     (state, { flowId }) => selectors.resource(state, 'flows', flowId) || emptyObject,
