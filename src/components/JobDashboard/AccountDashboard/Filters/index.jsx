@@ -167,6 +167,7 @@ export default function Filters({filterKey}) {
               placement="right"
               clearValue={DEFAULT_RANGE}
               onSave={handleDateFilter}
+              showCustomRangeValue
               value={selectedDate}
               customPresets={ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS}
               fromDate={startOfDay(addDays(new Date(), -29))}
