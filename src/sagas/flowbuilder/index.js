@@ -10,9 +10,7 @@ export function* createNewPGStep({ flowId }) {
   const originalFlow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
   const patchSet = [];
 
-  console.log('originalFlow', originalFlow);
   if (!originalFlow?.pageGenerators) {
-    console.log('should be here');
     patchSet.push({
       op: 'add',
       path: '/pageGenerators',
@@ -31,7 +29,6 @@ export function* createNewPGStep({ flowId }) {
     value: {setupInProgress: true},
   });
 
-  console.log('patchSet', patchSet);
   yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
 }
 
