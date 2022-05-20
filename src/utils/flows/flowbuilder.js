@@ -256,7 +256,6 @@ export const generateReactFlowGraph = flow => {
 
   const {routers} = flow;
 
-  console.log('flow', flow);
   if (!routers || routers.length === 0) {
     return generateNodesAndEdgesFromNonBranchedFlow(flow);
   }
