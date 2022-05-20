@@ -30,9 +30,6 @@ const useStyles = makeStyles(theme => ({
     maxWidth: theme.spacing(31),
     top: '5px !important',
   },
-  listPopperArrow: {
-    left: `${theme.spacing(11)}px !important`,
-  },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     maxWidth: theme.spacing(31),
@@ -172,7 +169,6 @@ export default function DestinationDataType({dataType, disabled, nodeKey}) {
         anchorEl={anchorEl}
         classes={{
           popper: classes.listPopper,
-          arrow: classes.listPopperArrow,
         }}
         placement="bottom-end"
         onClose={handleClose}>
