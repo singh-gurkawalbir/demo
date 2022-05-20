@@ -7611,6 +7611,52 @@ describe('resource region selector testcases', () => {
     });
   });
 
+  describe('selectors.showNotificationForTechAdaptorForm', () => {
+    const state = {
+      data: {
+        resources: {
+          connections: [
+            {
+              _id: 'connection1',
+              type: 'http',
+              http: {mediaType: 'xml'},
+            },
+            {
+              _id: 'connection2',
+              assistant: 'amazonmws',
+              type: 'http',
+              http: {type: 'Amazon-SP-API'},
+            },
+          ],
+        },
+      },
+      session: {
+        stage: {
+          123: {patch: [{op: 'replace', path: '/_connectionId', value: 'connection2'}]},
+          2: {patch: [{op: 'replace', path: '/useTechAdaptorForm', value: false}]},
+          3: {patch: [{op: 'replace', path: '/useTechAdaptorForm', value: true}]},
+        },
+      },
+    };
+
+    test('should not throw exception for invalid arguments', () => {
+      expect(selectors.showNotificationForTechAdaptorForm()).toBeFalsy();
+      expect(selectors.showNotificationForTechAdaptorForm({})).toBeFalsy();
+      expect(selectors.showNotificationForTechAdaptorForm({}, '123')).toBeFalsy();
+    });
+
+    test('should return false if resource uses amazon sp-api connection', () => {
+      expect(selectors.showNotificationForTechAdaptorForm(state, '123')).toBeFalsy();
+    });
+
+    test('should return false if resource uses assistant form', () => {
+      expect(selectors.showNotificationForTechAdaptorForm(state, '2')).toBeFalsy();
+    });
+
+    test('should return true if resource uses tech adaptor form', () => {
+      expect(selectors.showNotificationForTechAdaptorForm(state, '3')).toBeTruthy();
+    });
+  });
   describe('selectors.getResourceType test cases', () => {
     const state = {
       session: {
