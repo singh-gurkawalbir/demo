@@ -7,6 +7,7 @@ import util, {
   wrapTextForSpecialChars,
   isMappingEqual,
   extractMappingFieldsFromCsv,
+  MAPPING_DATA_TYPES,
 } from '.';
 
 describe('isEqual', () => {
@@ -3375,7 +3376,7 @@ describe('mapping utils', () => {
         lookups: [],
         result: {
           isSuccess: false,
-          errMessage: 'Extract Fields missing for field(s): b',
+          errMessage: 'Extract fields missing for field(s): b',
         },
       },
       {
@@ -3396,13 +3397,280 @@ describe('mapping utils', () => {
         lookups: [{name: 'lookup1', map: {a: 'b'}}],
         result: {
           isSuccess: false,
-          errMessage: 'Extract Fields missing for field(s): b',
+          errMessage: 'Extract fields missing for field(s): b',
+        },
+      },
+      {
+        mappings: [
+          {extract: 'a', generate: 'a'},
+          {extract: 'a', generate: 'b'},
+        ],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+        ],
+        result: {isSuccess: true},
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+          {
+            key: 'key2',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: 'You have duplicate mappings for the field(s): fname',
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+          {
+            key: 'key2',
+            generate: 'lname',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            children: [{
+              key: 'c1',
+              extract: 'child1',
+              generate: 'fname',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            }],
+          },
+        ],
+        result: { isSuccess: true },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '$.fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: 'One or more generate fields missing',
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            generateDisabled: true,
+            extract: '$',
+          },
+        ],
+        result: {isSuccess: true },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+          {
+            key: 'key2',
+            generate: 'lname',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            children: [{
+              key: 'c1',
+              extract: 'child1',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            }],
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: 'One or more generate fields missing',
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+          {
+            key: 'key2',
+            generate: 'lname',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            copySource: 'yes',
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: 'Extract fields missing for field(s): lname',
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+          {
+            key: 'key2',
+            generate: 'lname',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            copySource: 'yes',
+            combinedExtract: '$.siblings[*]',
+          },
+        ],
+        result: {isSuccess: true},
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+          {
+            key: 'key2',
+            generate: 'lname',
+            dataType: MAPPING_DATA_TYPES.NUMBERARRAY,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: 'Extract fields missing for field(s): lname',
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+          {
+            key: 'key2',
+            generate: 'lname',
+            dataType: MAPPING_DATA_TYPES.NUMBERARRAY,
+            hardCodedValue: '["1", "2"]',
+          },
+        ],
+        result: {isSuccess: true},
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            generate: 'lname',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            copySource: 'yes',
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: 'Extract fields missing for field(s): lname',
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            generate: 'lname',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            children: [{
+              key: 'c1',
+              generate: 'child1',
+              extract: '$.child1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            }],
+          },
+        ],
+        result: {isSuccess: true},
+      },
+      {
+        mappings: [],
+        lookups: [{name: 'lookup1'}],
+        v2TreeData: [
+          {
+            key: 'key1',
+            generate: 'lname',
+            dataType: MAPPING_DATA_TYPES.NUMBER,
+            lookupName: 'lookup1',
+          },
+        ],
+        result: {isSuccess: true},
+      },
+      {
+        mappings: [],
+        lookups: [{name: 'lookup1', map: {}}],
+        v2TreeData: [
+          {
+            key: 'key1',
+            generate: 'lname',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            children: [{
+              key: 'c1',
+              generate: 'child1',
+              dataType: MAPPING_DATA_TYPES.NUMBER,
+              lookupName: 'lookup1',
+            }],
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: 'Extract fields missing for field(s): child1',
         },
       },
     ];
 
-    testCases.forEach(({mappings, lookups, result}) => {
-      expect(util.validateMappings(mappings, lookups)).toEqual(result);
+    testCases.forEach(({mappings, lookups, v2TreeData, result}) => {
+      expect(util.validateMappings(mappings, lookups, v2TreeData)).toEqual(result);
     });
   });
   test('getExtractPaths util', () => {

@@ -38,13 +38,20 @@ function RouterWrappedContent(props) {
   const { handleClose, formKey, resourceId } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [mockData, setMockData] = useState();
   const [error, setError] = useState();
   const resourceSampleDataStatus = useSelector(state =>
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'preview').status,
   );
   const resourceDefaultMockData = useSelector(state => selectors.getResourceDefaultMockData(state, resourceId));
   const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
+
+  const [value, setValue] = useState(resourceMockData ? wrapExportFileSampleData(resourceMockData) : '');
+
+  useEffect(() => {
+    if (resourceSampleDataStatus === 'received' && !resourceMockData) {
+      setValue(wrapExportFileSampleData(resourceDefaultMockData));
+    }
+  }, [resourceDefaultMockData, resourceMockData, resourceSampleDataStatus]);
 
   useEffect(() => {
     if (isEmpty(resourceMockData) && !resourceSampleDataStatus) {
@@ -53,7 +60,7 @@ function RouterWrappedContent(props) {
   }, [dispatch, formKey, resourceMockData, resourceSampleDataStatus]);
 
   const handleChange = newValue => {
-    setMockData(newValue);
+    setValue(newValue);
     const parsedMockData = safeParse(newValue);
     const unwrappedMockData = unwrapExportFileSampleData(parsedMockData);
 
@@ -69,10 +76,6 @@ function RouterWrappedContent(props) {
     }
     setError(undefined);
   };
-
-  const value = mockData ||
-    (resourceMockData && wrapExportFileSampleData(resourceMockData)) ||
-    (wrapExportFileSampleData(resourceDefaultMockData, resourceSampleDataStatus));
 
   const handleDone = useCallback(() => {
     const parsedMockData = safeParse(value);
