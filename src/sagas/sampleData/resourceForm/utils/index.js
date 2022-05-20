@@ -51,8 +51,6 @@ export function* _fetchResourceInfoFromFormKey({ formKey }) {
     resourceType,
   })) || {};
 
-  console.log(resourceObj);
-
   return {
     formState,
     ...parentContext,
