@@ -239,6 +239,7 @@ export default function Filters({
           placement={isFlowBuilderView ? 'right' : 'bottom'}
           customPresets={rangeFilters}
           clearValue={defaultRange}
+          showCustomRangeValue
           onSave={handleDateRangeChange}
           fromDate={startOfDay(addDays(new Date(), -29))}
           showTime={false} />
