@@ -15,7 +15,7 @@ export default {
   panels: ({layout, mappingPreviewType}) => {
     const panels = [
       {
-        title: ({editorId}) => <MapperPanelTitle editorId={editorId} title="Rules" helpKey="afe.mappings.v2rule" />,
+        title: ({editorId}) => <MapperPanelTitle editorId={editorId} title="Rules" helpKey="afe.mappings.v2.rule" />,
         area: 'rule',
         isLoggable: true,
         Panel: MappingsPanel,
