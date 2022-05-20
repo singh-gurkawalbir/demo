@@ -161,6 +161,10 @@ export default {
         field: 'file.type',
         is: ['csv', 'json', 'xlsx', 'xml'],
       },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
   },
   'file.csv': {
@@ -182,6 +186,10 @@ export default {
         field: 'file.type',
         is: ['csv'],
       },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
   },
   'file.xlsx.includeHeader': {
@@ -192,6 +200,10 @@ export default {
       {
         field: 'file.type',
         is: ['xlsx'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },

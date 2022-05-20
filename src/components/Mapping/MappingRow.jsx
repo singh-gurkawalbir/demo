@@ -15,6 +15,7 @@ import ActionButton from '../ActionButton';
 import TrashIcon from '../icons/TrashIcon';
 import MappingSettingsButton from './Settings/SettingsButton';
 import SortableHandle from '../Sortable/SortableHandle';
+import {handlebarRegex} from '../../utils/mapping';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -202,7 +203,6 @@ export default function MappingRow({
     }
   }, [isRowDragged]);
 
-  const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
   const isLookup = !!lookupName;
   const isMultiField = handlebarRegex.test(extract);
   const isHardCodedValue = !!hardCodedValue;

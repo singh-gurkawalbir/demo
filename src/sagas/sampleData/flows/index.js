@@ -9,7 +9,7 @@ import {
   cancel,
 } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
-import { keys } from 'lodash';
+import { keys, cloneDeep } from 'lodash';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
@@ -465,21 +465,26 @@ export function* requestProcessorData({
     hasNoRulesToProcess = true;
   } else if (stage === 'importMapping') {
     // mapping fields are processed here against raw data
-    const mappings = mappingUtil.getMappingFromResource({
-      importResource: resource,
-      isFieldMapping: true,
-    });
+    let resourceMappings;
 
-    // Incase of no fields/lists inside mappings , no need to make a processor call
-    if (
-      preProcessedData &&
-      mappings &&
-      (mappings.fields.length || mappings.lists.length)
-    ) {
+    if (resource?.mappings?.length) { // v2 mappings, if present, are applied during import
+      resourceMappings = cloneDeep(resource.mappings);
+    } else {
+      resourceMappings = mappingUtil.getMappingFromResource({
+        importResource: resource,
+        isFieldMapping: true,
+      });
+      // Incase of no fields/lists inside mappings , no need to make a processor call
+      if (!resourceMappings.fields.length && !resourceMappings.lists.length) {
+        hasNoRulesToProcess = true;
+      }
+    }
+
+    if (!hasNoRulesToProcess && preProcessedData && resourceMappings) {
       return yield call(_processMappingData, {
         flowId,
         resourceId,
-        mappings,
+        mappings: resourceMappings,
         stage,
         preProcessedData,
       });

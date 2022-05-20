@@ -102,7 +102,7 @@ import { HOOK_STAGES } from '../utils/editor';
 import { getTextAfterCount, capitalizeFirstLetter } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as FLOWSTEP_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as FLOWSTEP_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/flowStepLogs';
-import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
+import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE, isAmazonSellingPartnerConnection } from '../utils/assistant';
 import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
 import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
@@ -948,6 +948,18 @@ selectors.getEventReportIntegrationName = (state, r) => {
   // if there is no integration associated to a flow then its a standalone flow
 
   return integration?.name || STANDALONE_INTEGRATION.name;
+};
+
+selectors.showNotificationForTechAdaptorForm = (state, resourceId) => {
+  const staggedPatches = selectors.stagedResource(state, resourceId)?.patch;
+  const connectionId = staggedPatches?.find(p => p.op === 'replace' && p.path === '/_connectionId')?.value;
+  const connection = selectors.resource(state, 'connections', connectionId);
+
+  if (isAmazonSellingPartnerConnection(connection)) return false;
+
+  return !!staggedPatches?.find(
+      p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
+    )?.value;
 };
 
 // It will give list of flows which to be displayed in flows filter in account dashboard.
@@ -2526,11 +2538,11 @@ selectors.getResourceType = (state, { resourceType, resourceId }) => {
   return updatedResourceType;
 };
 
-// As of now, we are not showing the lookup option for BigQuery imports
+// As of now, we are not showing the lookup option for BigQuery and snowflake imports
 selectors.mappingHasLookupOption = (state, resourceType, connectionId) => {
   const connection = selectors.resource(state, resourceType, connectionId) || {};
 
-  return connection?.rdbms?.type !== 'bigquery';
+  return !['bigquery', 'snowflake'].includes(connection?.rdbms?.type);
 };
 
 // this selector updates the field options based on the
@@ -3347,6 +3359,21 @@ selectors.availableUsersList = createSelector(
     return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
   }
 
+);
+
+selectors.allUsersList = createSelector(
+  selectors.availableUsersList,
+  selectors.accountOwner,
+  (users, accountOwner) => {
+    if (users?.length) {
+      return users;
+    }
+
+    return [{
+      _id: ACCOUNT_IDS.OWN,
+      sharedWithUser: accountOwner,
+    }];
+  }
 );
 
 selectors.platformLicense = createSelector(
@@ -5431,6 +5458,57 @@ selectors.responseMappingInput = (state, resourceType, resourceId, flowId) => {
   return responseMappingUtil.getResponseMappingDefaultInput(resourceType, preProcessedData, resource?.adaptorType);
 };
 
+selectors.isMapper2Supported = state => {
+  const {importId} = selectors.mapping(state);
+
+  if (!importId) return false;
+
+  const resource = selectors.resource(state, 'imports', importId);
+
+  // IAs don't support mapper2
+  if (!resource || resource._connectorId) return false;
+
+  return !!((resource.adaptorType === 'HTTPImport' || resource.adaptorType === 'RESTImport') && resource.http?.type !== 'file');
+};
+
+selectors.mappingEditorNotification = (state, editorId) => {
+  const {editorType, resourceId} = fromSession.editor(state?.session, editorId);
+  const isMapper2Supported = selectors.isMapper2Supported(state);
+
+  if (editorType !== 'mappings' || !isMapper2Supported) return emptyObject;
+
+  const {mapping, mappings} = selectors.resource(state, 'imports', resourceId) || {};
+
+  const resourceHasV2Mappings = !!mappings?.length;
+
+  const { fields = [], lists = [] } = mapping || {};
+
+  const resourceHasV1Mappings = !!(fields.length || lists.length);
+
+  // if both mappings don't exist, no message to be displayed
+  if (!resourceHasV1Mappings && !resourceHasV2Mappings) {
+    return emptyObject;
+  }
+
+  const mappingVersion = selectors.mappingVersion(state);
+
+  // if v2 mappings exist, no v2 message is shown and only show v1 message
+  if (resourceHasV2Mappings) {
+    if (mappingVersion === 2) return emptyObject;
+
+    return {
+      message: messageStore('MAPPER1_REFERENCE_INFO'),
+      variant: 'info',
+    };
+  }
+  if (mappingVersion === 1) return emptyObject;
+
+  return {
+    message: messageStore('MAPPER2_BANNER_WARNING'),
+    variant: 'warning',
+  };
+};
+
 // #endregion MAPPING END
 
 // DO NOT DELETE, might be needed later
@@ -6311,13 +6389,22 @@ selectors.isGraphqlResource = (state, resourceId, resourceType) => {
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
   const { editorType, fieldId, flowId, resourceId, resourceType } = fromSession.editor(state?.session, editorId);
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
-  const isGraphqlResource = selectors.isGraphqlResource(state, resourceId, resourceType);
+  const mappingVersion = selectors.mappingVersion(state);
+
+  // all afe fields for mapper2 should only support v2 AFE
+  if (mappingVersion === 2) {
+    return true;
+  }
 
   if (['outputFilter', 'exportFilter', 'inputFilter'].includes(editorType)) {
     return true;
   }
+
+  const isGraphqlResource = selectors.isGraphqlResource(state, resourceId, resourceType);
+
   // graphql fields only support v2 data
   if (isGraphqlResource && GRAPHQL_HTTP_FIELDS.includes(fieldId)) return true;
+
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
   const fieldsWithOnlyV2DataSupport = [
@@ -6431,6 +6518,12 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   )?.merged || emptyObject;
   const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+  const mappingVersion = selectors.mappingVersion(state);
+
+  // all afe fields for mapper2 should only support v2 AFE
+  if (mappingVersion === 2) {
+    return {shouldGetContextFromBE: true};
+  }
 
   // for lookup fields, BE doesn't support v1/v2 yet
   if (fieldId?.startsWith('lookup') || fieldId?.startsWith('_')) {

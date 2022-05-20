@@ -323,6 +323,10 @@ export default {
       retValues['/unencrypted/apiType'] = 'Amazon-SP-API';
     }
 
+    if (!retValues['/http/configureAsyncHelper']) {
+      retValues['/http/_asyncHelperId'] = undefined;
+    }
+
     return {
       ...retValues,
     };

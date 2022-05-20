@@ -1934,6 +1934,14 @@ describe('isActionUsed', () => {
       },
       adaptorType: 'NetSuiteDistributedImport',
     };
+    const importHTTPWithOnlyV2Mappings = {
+      adaptorType: 'HTTPImport',
+      mappings: [{
+        generate: 'abc',
+        extract: 'def',
+        dataType: 'string',
+      }],
+    };
 
     test('should return true if resource is of type netsuite distributed with mapping containing both fields and lists', () => {
       expect(isActionUsed(importNSDistributedMappingWithFieldsAndLists, resourceType, flowNode, action)).toEqual(true);
@@ -1946,6 +1954,9 @@ describe('isActionUsed', () => {
     });
     test('should return false if resource is of type netsuite distributed without both fields and lists defined in mapping', () => {
       expect(isActionUsed(importNSDistributedMappingWithoutFieldsAndLists, resourceType, flowNode, action)).toEqual(false);
+    });
+    test('should return true if only v2 mappings exist', () => {
+      expect(isActionUsed(importHTTPWithOnlyV2Mappings, resourceType, flowNode, action)).toEqual(true);
     });
   });
 

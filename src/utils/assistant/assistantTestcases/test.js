@@ -26,6 +26,9 @@ import {
   isMetaRequiredValuesMet,
   isAppConstantContact,
   isAmazonHybridConnection,
+  isAmazonSellingPartnerConnection,
+  shouldLoadAssistantFormForImports,
+  shouldLoadAssistantFormForExports,
 } from '..';
 import { getPathParams } from '../pathParamUtils';
 
@@ -2794,6 +2797,149 @@ describe('convertFromExport', () => {
       assistantData,
       'rest',
     ],
+    [ // special use case for microsoft power automate export
+      {
+        bodyParams: {},
+        exportType: undefined,
+        operation: 'get_all_users_with_whom_a_cloud_flow_is_shared',
+        operationDetails: {
+          doesNotSupportPaging: true,
+          errorMediaType: 'json',
+          headers: {},
+          headersMetadata: [],
+          id: 'get_all_users_with_whom_a_cloud_flow_is_shared',
+          name: 'Get all users with whom a cloud flow is shared',
+          pathParameters: [],
+          queryParameters: [{id: '@tid', name: 'Target', required: true}],
+          requestMediaType: 'json',
+          response: {resourcePath: 'PrincipalAccesses'},
+          successMediaType: 'json',
+          supportedExportTypes: ['test'],
+          url: '/RetrieveSharedPrincipalsAndAccess(Target=@tid)'},
+        pathParams: {},
+        queryParams: {'@tid': "{'@odata.id':'workflows(00000000-0000-0000-0000-000000000002)'}"},
+        resource: 'flows',
+        version: 'v9.1'},
+      {
+        _id: '627b6c627ca3007138a67d67',
+        name: 'Get PowerAutmate all users with whom a cloud flow is shared',
+        _connectionId: '623b19d570398d37e82dfdb0',
+        apiIdentifier: 'ea5117b5d1',
+        asynchronous: true,
+        assistant: 'microsoftpowerautomate',
+        oneToMany: false,
+        sandbox: false,
+        assistantMetadata: {
+          resource: 'flows',
+          version: 'v9.1',
+          operation: 'get_all_users_with_whom_a_cloud_flow_is_shared',
+        },
+        parsers: [],
+        http: {
+          relativeURI: "/RetrieveSharedPrincipalsAndAccess(Target=@tid)?@tid={'@odata.id':'workflows(00000000-0000-0000-0000-000000000002)'}",
+          method: 'GET',
+          headers: [],
+          requestMediaType: 'json',
+          successMediaType: 'json',
+          errorMediaType: 'json',
+          formType: 'assistant',
+          response: {
+            resourcePath: 'PrincipalAccesses',
+            successValues: [],
+          },
+        },
+        adaptorType: 'HTTPExport',
+      },
+      {
+        export: {
+          labels: {
+            version: 'API Version',
+            resource: 'Resource',
+            endpoint: 'Operation',
+          },
+          successMediaType: 'json',
+          errorMediaType: 'json',
+          requestMediaType: 'json',
+          paging: {
+            method: 'url',
+            path: '@odata.nextLink',
+          },
+          versions: [
+            {
+              version: 'v9.1',
+              resources: [
+                {
+                  id: 'flows',
+                  name: 'Flows',
+                  endpoints: [
+                    {
+                      id: 'list_flows',
+                      url: '/workflows',
+                      name: 'List flows',
+                      response: {
+                        resourcePath: 'value',
+                      },
+                      headers: [
+                        {
+                          name: 'prefer',
+                          value: 'odata.maxpagesize=100',
+                        },
+                      ],
+                      supportedExportTypes: [
+                        'delta',
+                        'test',
+                      ],
+                      queryParameters: [
+                        {
+                          id: '$filter',
+                          name: 'Filter',
+                          fieldType: 'input',
+                        },
+                        {
+                          id: '$select',
+                          name: 'Select',
+                          fieldType: 'input',
+                        },
+                        {
+                          id: '$top',
+                          name: 'Top',
+                          fieldType: 'input',
+                        },
+                        {
+                          id: '$orderby',
+                          name: 'Orderby',
+                          fieldType: 'input',
+                        },
+                      ],
+                    },
+                    {
+                      id: 'get_all_users_with_whom_a_cloud_flow_is_shared',
+                      url: '/RetrieveSharedPrincipalsAndAccess(Target=@tid)',
+                      name: 'Get all users with whom a cloud flow is shared',
+                      doesNotSupportPaging: true,
+                      response: {
+                        resourcePath: 'PrincipalAccesses',
+                      },
+                      supportedExportTypes: [
+                        'test',
+                      ],
+                      queryParameters: [
+                        {
+                          id: '@tid',
+                          name: 'Target',
+                          required: true,
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      'http',
+    ],
   ];
 
   each(testCases).test(
@@ -4182,5 +4328,96 @@ describe('isAmazonHybridConnection util test cases', () => {
   });
   test('should return false if connection assistant is amazonmws and http type is Amazon-SP-API', () => {
     expect(isAmazonHybridConnection({assistant: 'amazonsellercentral', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
+  });
+});
+
+describe('isAmazonSellingPartnerConnection util test cases', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(isAmazonSellingPartnerConnection()).toBeFalsy();
+  });
+  test('should return true if connection assistant is amazonmws and http type is Amazon-SP-API', () => {
+    expect(isAmazonSellingPartnerConnection({assistant: 'amazonmws', http: {type: 'Amazon-SP-API'}})).toBeTruthy();
+  });
+  test('should return false if connection assistant is not amazonmws and http type is Amazon-SP-API', () => {
+    expect(isAmazonSellingPartnerConnection({assistant: 'amazonsellercentral', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
+  });
+  test('should return false if connection assistant is amazonmws and http type is Amazon-Hybrid', () => {
+    expect(isAmazonSellingPartnerConnection({assistant: 'amazonmws', http: {type: 'Amazon-Hybrid'}})).toBeFalsy();
+  });
+});
+
+describe('shouldLoadAssistantFormForImports util', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(shouldLoadAssistantFormForImports()).toBeFalsy();
+    expect(shouldLoadAssistantFormForImports('', '')).toBeFalsy();
+    expect(shouldLoadAssistantFormForImports({id: 1})).toBeFalsy();
+    expect(shouldLoadAssistantFormForImports(undefined, {id: 1})).toBeFalsy();
+  });
+
+  test('should return false if connection is of Amazon hybrid', () => {
+    expect(shouldLoadAssistantFormForImports({}, {assistant: 'amazonmws', http: {type: 'Amazon-Hybrid'}})).toBeFalsy();
+  });
+
+  test('should return false if useParentForm is true for the resource', () => {
+    expect(shouldLoadAssistantFormForImports({useParentForm: true})).toBeFalsy();
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazon', useParentForm: true})).toBeFalsy();
+  });
+
+  test('should return false if resource is not an assistant', () => {
+    expect(shouldLoadAssistantFormForImports({adaptorType: 'HTTPImport'})).toBeFalsy();
+  });
+
+  test('should return true if resource is an assistant', () => {
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazon', adaptorType: 'HTTPImport'})).toBeTruthy();
+  });
+
+  test('should return false if useTechAdaptorForm is true for the resource', () => {
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazon', useTechAdaptorForm: true})).toBeFalsy();
+  });
+
+  test('should return true if useTechAdaptorForm is false for the resource', () => {
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazon', useTechAdaptorForm: false})).toBeTruthy();
+  });
+
+  test('should return true if resource is an assistant and connection is of Amazon selling partner', () => {
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazonmws', useTechAdaptorForm: true}, {assistant: 'amazonmws', http: {type: 'Amazon-SP-API'}})).toBeTruthy();
+  });
+});
+
+describe('shouldLoadAssistantFormForExports util', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(shouldLoadAssistantFormForExports()).toBeFalsy();
+    expect(shouldLoadAssistantFormForExports('', '')).toBeFalsy();
+    expect(shouldLoadAssistantFormForExports({id: 1})).toBeFalsy();
+    expect(shouldLoadAssistantFormForExports(undefined, {id: 1})).toBeFalsy();
+  });
+
+  test('should return false if connection is of Amazon hybrid', () => {
+    expect(shouldLoadAssistantFormForExports({}, {assistant: 'amazonmws', http: {type: 'Amazon-Hybrid'}})).toBeFalsy();
+  });
+
+  test('should return false if useParentForm is true for the resource', () => {
+    expect(shouldLoadAssistantFormForExports({useParentForm: true})).toBeFalsy();
+    expect(shouldLoadAssistantFormForExports({assistant: 'amazon', useParentForm: true})).toBeFalsy();
+  });
+
+  test('should return false if resource is not an assistant', () => {
+    expect(shouldLoadAssistantFormForExports({adaptorType: 'HTTPImport'})).toBeFalsy();
+  });
+
+  test('should return true if resource is an assistant', () => {
+    expect(shouldLoadAssistantFormForExports({assistant: 'amazon', adaptorType: 'HTTPImport'})).toBeTruthy();
+  });
+
+  test('should return false if useTechAdaptorForm is true for the resource', () => {
+    expect(shouldLoadAssistantFormForExports({assistant: 'amazon', useTechAdaptorForm: true})).toBeFalsy();
+  });
+
+  test('should return true if useTechAdaptorForm is false for the resource', () => {
+    expect(shouldLoadAssistantFormForExports({assistant: 'amazon', useTechAdaptorForm: false})).toBeTruthy();
+  });
+
+  test('should return false if resource is openair assistant', () => {
+    expect(shouldLoadAssistantFormForExports({assistant: 'openair', useTechAdaptorForm: true}, {assistant: 'amazonmws', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
   });
 });
