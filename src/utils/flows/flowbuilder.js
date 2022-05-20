@@ -321,7 +321,7 @@ const mergeBetweenRouterAndPP = ({flowDoc, edgeTarget, patchSet, sourceElement})
   const [, targetRouterIndex, targetBranchIndex] = BranchPathRegex.exec(edgeTarget.data.path);
   const pageProcessors = jsonPatch.getValueByPointer(flowDoc, `/routers/${targetRouterIndex}/branches/${targetBranchIndex}/pageProcessors`);
 
-  const initialTargetNextRouterId = jsonPatch.getValueByPointer(flowDoc, `/routers/${targetRouterIndex}/branches/${targetBranchIndex}/_nextRouterId`);
+  const initialTargetNextRouterId = jsonPatch.getValueByPointer(flowDoc, `/routers/${targetRouterIndex}/branches/${targetBranchIndex}/nextRouterId`);
 
   const newVirtualRouter = generateEmptyRouter(true);
 
@@ -449,7 +449,7 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
     [firstHalf, secondHalf] = splitPPArray(processorArray, insertionIndex);
   } else {
     firstHalf = processorArray;
-    secondHalf = [{}];
+    secondHalf = [{setupInProgress: true}];
   }
 
   if (!originalFlow.routers) {
@@ -457,6 +457,10 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
       op: 'add',
       path: '/routers',
       value: flow.routers,
+    });
+    patchSet.push({
+      op: 'remove',
+      path: '/pageProcessors',
     });
   }
   patchSet.push({
@@ -470,7 +474,7 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
 
   patchSet.push(...[{
     op: 'replace',
-    path: `${branchPath}/_nextRouterId`,
+    path: `${branchPath}/nextRouterId`,
     value: router.id,
   }, {
     op: 'add',
