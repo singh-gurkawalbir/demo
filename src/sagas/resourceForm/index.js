@@ -473,7 +473,9 @@ export function* getFlowUpdatePatchesForNewPGorPP(
 
   if (pendingId) {
     pending = true;
-    stepPath = elementsMap[pendingId]?.data?.path;
+    if (flowDoc?.routers?.length) {
+      stepPath = elementsMap[pendingId]?.data?.path;
+    }
   }
 
   let flowPatches = [];
