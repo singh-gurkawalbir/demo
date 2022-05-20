@@ -1807,7 +1807,9 @@ selectors.mkFilteredHomeTiles = () => {
 
       if (isListView && applications && !applications.includes('all')) {
         // filter on applications
-        filteredTiles = filteredTiles.filter(t => t.applications?.some(a => applications.includes(a)));
+        filteredTiles = filteredTiles.filter(
+          tile => tile.applications?.some(tileApp => applications.some(app => tileApp.includes(app)))
+        );
       }
 
       if (isListView && pinnedIntegrations?.length && filteredTiles.length) {
