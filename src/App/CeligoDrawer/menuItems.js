@@ -26,6 +26,7 @@ import HelpIcon from '../../components/icons/HelpIcon';
 import MyApiIcon from '../../components/icons/MyApiIcon';
 import IntegrationAppsIcon from '../../components/icons/IntegrationAppsIcon';
 import getRoutePath from '../../utils/routePaths';
+import PortalIcon from '../../components/icons/PortalIcon';
 
 export default function menuItems(
   userProfile,
@@ -161,9 +162,9 @@ export default function menuItems(
       path: '/marketplace',
     },
     {
-      label: 'Celigo portal',
-      Icon: WhatsNewIcon,
-      path: '/celigoPortal',
+      label: 'Feature roadmap',
+      Icon: PortalIcon,
+      path: '/featureRoadmap',
     },
   ];
 
