@@ -6,6 +6,8 @@ export default {
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://graph.microsoft.com',
+    '/http/ping/relativeURI': '/v1.0/users',
+    '/http/ping/method': 'GET',
     '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
     '/http/auth/oauth/tokenURI':
