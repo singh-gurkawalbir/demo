@@ -730,6 +730,12 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnecto
 
     retValues['/http/_httpConnectorVersionId'] = version?._id;
   }
+  if (!resource?._id || isNewId(resource?._id)) {
+    const settingFields = httpConnector?.supportedBy?.connection?.preConfiguredFields?.find(field => field.path === 'settingsForm');
+    const fieldMap = settingFields?.values?.[0];
+
+    if (fieldMap) { retValues['/settingsForm'] = {form: fieldMap}; }
+  }
 
   return retValues;
 };

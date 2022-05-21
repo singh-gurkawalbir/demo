@@ -1,8 +1,8 @@
 import jsonPatch, { deepClone, applyPatch } from 'fast-json-patch';
-import { sortBy } from 'lodash';
 import * as _ from 'lodash';
 import { select, call } from 'redux-saga/effects';
 import util from '../../utils/array';
+import { isNewId } from '../../utils/resource';
 import { selectors } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { createFormValuesPatchSet as createSuiteScriptFormValuesPatchSet } from '../suiteScript/resourceForm';
@@ -62,7 +62,7 @@ const getExportMetadata = (httpConnector, httpResources, httpEndpoints) => {
   // eslint-disable-next-line prefer-destructuring
   exportData.paging = pagingValues?.[0];
 
-  const versions = [httpConnector.versions.map(v => ({version: v.name, _id: v._id}))[0]];
+  const versions = httpConnector.versions.map(v => ({version: v.name, _id: v._id}));
 
   exportData.versions = versions;
   exportData.versions.forEach((v, i) => {
@@ -125,7 +125,7 @@ const getImportMetadata = (httpConnector, httpResources, httpEndpoints) => {
     },
 
   };
-  const versions = [httpConnector.versions.map(v => ({version: v.name, _id: v._id}))[0]];
+  const versions = httpConnector.versions.map(v => ({version: v.name, _id: v._id}));
 
   importData.versions = versions;
   importData.versions.forEach((v, i) => {
@@ -287,7 +287,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
     return tempFiledMeta.fieldMap[key];
   }
   );
-  let unEncryptedFields = [];
+  const unEncryptedFields = [];
   const versions = connector.versions?.map(v => v.name);
   const versionOptions = [
     {
@@ -312,29 +312,28 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       },
     });
   }
-  const preConfiguredUnencryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'unEncryptedFields');
+  // const preConfiguredUnencryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'unEncryptedFields');
 
-  if (preConfiguredUnencryptedFields.values?.length > 0) {
-    preConfiguredUnencryptedFields.values.forEach(fld => {
-      unEncryptedFields.push({
-        position: fld.position,
-        field: {
-          label: fld.label,
-          name: `/http/unencrypted/${fld.id}`,
-          id: `http.unencrypted.${fld.id}`,
-          fieldId: `http.unencrypted.${fld.id}`,
-          helpText: fld.helpText,
-          type: fld.type || 'text',
-          required: !!fld.required,
-          options: fld.options,
-          validWhen: fld.validWhen,
-          defaultValue: resource?.http?.unencrypted?.[fld.id],
-        },
-      });
-    });
-  }
+  // if (preConfiguredUnencryptedFields?.values?.length > 0) {
+  //   preConfiguredUnencryptedFields.values.forEach(fld => {
+  //     unEncryptedFields.push({
+  //       position: fld.position,
+  //       field: {
+  //         label: fld.label,
+  //         name: `/http/unencrypted/${fld.id}`,
+  //         id: `http.unencrypted.${fld.id}`,
+  //         fieldId: `http.unencrypted.${fld.id}`,
+  //         helpText: fld.helpText,
+  //         type: fld.type || 'text',
+  //         required: !!fld.required,
+  //         options: fld.options,
+  //         validWhen: fld.validWhen,
+  //         defaultValue: resource?.http?.unencrypted?.[fld.id],
+  //       },
+  //     });
+  //   });
+  // }
 
-  unEncryptedFields = sortBy(unEncryptedFields, 'position');
   if (unEncryptedFields) {
     for (let i = 0; i < unEncryptedFields.length; i += 1) {
       unEncryptedFields[i] = unEncryptedFields[i].field;
@@ -343,6 +342,39 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         tempFiledMeta.layout.containers[0].containers[1]?.fields.push(unEncryptedFields[i].id);
       } else if (tempFiledMeta?.layout?.containers[1]?.fields) { tempFiledMeta.layout.containers[1].fields.push(unEncryptedFields[i].id); }
     }
+  }
+  if (isNewId(resource._id)) {
+    const settingFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'settingsForm');
+    const fieldMap = settingFields?.values?.[0].fieldMap;
+    const fields = [];
+
+    Object.entries(fieldMap).forEach(([, value]) => {
+      fields.push({
+        field: {
+          label: value.label,
+          name: `/settings/${value.id}`,
+          id: `settings.${value.id}`,
+          fieldId: `settings.${value.id}`,
+          helpText: value.helpText,
+          type: value.type || 'text',
+          required: !!value.required,
+          options: value.options,
+          validWhen: value.validWhen,
+        },
+      });
+
+      if (fields) {
+        const fieldIds = [];
+
+        for (let i = 0; i < fields.length; i += 1) {
+          fields[i] = fields[i].field;
+          tempFiledMeta.fieldMap[fields[i].id] = fields[i];
+          fieldIds.push(fields[i].id);
+          // if (tempFiledMeta?.layout?.containers[1]?.fields) { tempFiledMeta.layout.containers[1].fields.push(fields[i].id); }
+        }
+        tempFiledMeta.layout?.containers?.push({fields: fieldIds, label: 'Custom settings'});
+      }
+    });
   }
 
   return tempFiledMeta;
