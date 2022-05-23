@@ -5,7 +5,7 @@ import jsonPatch from 'fast-json-patch';
 import { BranchPathRegex, GRAPH_ELEMENTS_TYPE } from '../../constants';
 import { generateId } from '../string';
 
-export function generateDefaultEdge(source, target, {routerIndex, branchIndex, hidden, processorCount} = {}) {
+export function generateDefaultEdge(source, target, {routerIndex = 0, branchIndex = 0, hidden, processorCount} = {}) {
   return {
     id: `${source}-${target}`,
     source,

@@ -59,7 +59,7 @@ export const useHandleAddNewRouter = edgeId => {
   const editorId = `router-${router.id}`;
 
   return () => {
-    const patchSet = getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow});
+    const patchSet = getNewRouterPatchSet({ elementsMap, flow, router, edgeId, originalFlow });
 
     const edge = elementsMap[edgeId];
 
