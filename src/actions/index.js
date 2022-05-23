@@ -2065,6 +2065,7 @@ const flow = {
   mergeBranch: flowId => action(actionTypes.FLOW.MERGE_BRANCH, { flowId }),
   deleteStep: (flowId, stepId) => action(actionTypes.FLOW.DELETE_STEP, {flowId, stepId}),
   deleteEdge: (flowId, edgeId) => action(actionTypes.FLOW.DELETE_EDGE, {flowId, edgeId}),
+  deleteRouter: (flowId, routerId) => action(actionTypes.FLOW.DELETE_ROUTER, {flowId, routerId}),
   initializeFlowGraph: (flowId, flow) => action(actionTypes.FLOW.INIT_FLOW_GRAPH, { flowId, flow }),
   saveFlow: props => action(actionTypes.FLOW.SAVE, props),
   run: ({ flowId, customStartDate, options }) =>

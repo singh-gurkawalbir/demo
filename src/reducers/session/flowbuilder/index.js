@@ -58,4 +58,38 @@ selectors.fbDragStepId = (state, flowId) => state?.[flowId]?.dragStepId;
 selectors.fbMergeTargetType = (state, flowId) => state?.[flowId]?.mergeTargetType;
 selectors.fbMergeTargetId = (state, flowId) => state?.[flowId]?.mergeTargetId;
 
+selectors.fbRouterStepsInfo = (state, flowId, routerId) => {
+  let configuredCount = 0;
+  let unconfiguredCount = 0;
+  const visitedRouters = {};
+  const flow = state && state[flowId]?.flow;
+
+  if (flow && flow.routers && flow.routers.length) {
+    const routerStepsCount = routerId => {
+      const router = flow.routers.find(r => r.id === routerId);
+
+      if (router && !visitedRouters[routerId]) {
+        visitedRouters[routerId] = true;
+
+        (router.branches || []).forEach(branch => {
+          (branch.pageProcessors || []).forEach(pp => {
+            if (pp.setupInProgress || (!pp._exportId && !pp._importId)) {
+              unconfiguredCount += 1;
+            } else {
+              configuredCount += 1;
+            }
+          });
+          if (branch.nextRouterId) {
+            routerStepsCount(branch.nextRouterId);
+          }
+        });
+      }
+    };
+
+    routerStepsCount(routerId);
+  }
+
+  return {configuredCount, unconfiguredCount};
+};
+
 // #endregion

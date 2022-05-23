@@ -191,10 +191,77 @@ export function* deleteEdge({ flowId, edgeId }) {
   yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
 }
 
+export function* deleteRouter({flowId, routerId}) {
+  const flow = yield select(selectors.fbFlow, flowId);
+  const {routers = []} = flow;
+  const patchSet = [];
+
+  const router = routers.find(r => r.id === routerId);
+
+  if (router) {
+    const preceedingRouter = routers.find(r => r.branches.find(branch => branch.nextRouterId === routerId));
+
+    if (preceedingRouter) {
+      const routerIndex = routers.findIndex(r => r.id === routerId);
+      const precedingRouterIndex = routers.findIndex(r => r.id === preceedingRouter.id);
+      const preceedingBranchIndex = preceedingRouter.branches.findIndex(branch => branch.nextRouterId === routerId);
+      const pageProcessors = jsonPatch.getValueByPointer(flow, `/routers/${precedingRouterIndex}/branches/${preceedingBranchIndex}/pageProcessors`);
+      const routerPageProcessors = jsonPatch.getValueByPointer(flow, `/routers/${routerIndex}/branches/0/pageProcessors`);
+      const nextRouterId = jsonPatch.getValueByPointer(flow, `/routers/${routerIndex}/branches/0/nextRouterId`);
+
+      patchSet.push({
+        op: 'replace',
+        path: `/routers/${precedingRouterIndex}/branches/${preceedingBranchIndex}/pageProcessors`,
+        value: [...pageProcessors, ...routerPageProcessors],
+      });
+      patchSet.push({
+        op: 'replace',
+        path: `/routers/${precedingRouterIndex}/branches/${preceedingBranchIndex}/nextRouterId`,
+        value: nextRouterId,
+      });
+      patchSet.push({
+        op: 'remove',
+        path: `/routers/${routerIndex}`,
+      });
+
+      // skip first router for the check, as nothing points to first router
+      const exemptRouters = [routers[0].id, routerId];
+      const orphanRouter = router => {
+        if (exemptRouters.includes(router.id)) return false;
+
+        return !routers.some(r => r.branches.some(branch => branch.nextRouterId === routerId));
+      };
+      let orphanRouterIndex = routers.findIndex(orphanRouter);
+
+      while (orphanRouterIndex > -1) {
+        patchSet.push({
+          op: 'remove',
+          path: `/routers/${routerIndex}`,
+        });
+        exemptRouters.push(routers[routerIndex].id);
+        orphanRouterIndex = routers.findIndex(orphanRouter);
+      }
+    } else if (routers[0].id === routerId) {
+      if (router.branches.length > 1) {
+        router.branches.forEach((_, branchIndex) => {
+          if (branchIndex !== 0) {
+            patchSet.push({
+              op: 'remove',
+              path: `/routers/0/branches/${branchIndex}`,
+            });
+          }
+        });
+      }
+    }
+    yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
+  }
+}
+
 export default [
   takeEvery(actionTypes.FLOW.ADD_NEW_PG_STEP, createNewPGStep),
   takeEvery(actionTypes.FLOW.ADD_NEW_PP_STEP, createNewPPStep),
   takeEvery(actionTypes.FLOW.DELETE_STEP, deleteStep),
   takeEvery(actionTypes.FLOW.MERGE_BRANCH, mergeBranch),
   takeEvery(actionTypes.FLOW.DELETE_EDGE, deleteEdge),
+  takeEvery(actionTypes.FLOW.DELETE_ROUTER, deleteRouter),
 ];

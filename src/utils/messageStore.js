@@ -28,6 +28,10 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integ
   DIY_INSTALL_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the resources in this integration, but  updates to the original integration will not affect this new copy. This integration has not been reviewed by Celigo. Make sure you trust the author before installing, and carefully review all components in the integration before proceeding.',
   CELIGO_AUTHORED_TEMPLATE_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account.',
   THIRD_PARTY_TEMPLATE_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account. This template has not been reviewed by Celigo. Make sure you trust the publisher before installing, and carefully review all components in the integration before proceeding.',
+  ROUTER_DELETE_CONFIRMATION_MESSAGE: `<p>Are you sure you want to delete this branching router?</p>
+  <p>In the first branch, all steps/branching routers will persist and become a linear flow.</p>
+  <p>All other branches and all steps/branching routers inside 
+  ({{configuredCount}} configured steps, {{unconfiguredCount}} unconfigured steps). will be removed</p>`,
 };
 
 export default function messageStore(key, argsObj) {
@@ -36,8 +40,8 @@ export default function messageStore(key, argsObj) {
   if (!str) return '';
   if (!argsObj || typeof argsObj !== 'object') return str;
 
-  Object.keys(argsObj).forEach(key => {
-    str = str.replace(`{{{${key}}}}`, argsObj[key]);
+  Object.keys(argsObj).forEach(arg => {
+    str = str.replace(`{{${arg}}}`, argsObj[arg]);
   });
 
   return str;
