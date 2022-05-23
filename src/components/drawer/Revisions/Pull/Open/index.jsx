@@ -16,7 +16,7 @@ import getMetadata from './metadata';
 import RevisionHeader from '../../components/RevisionHeader';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 import ErrorContent from '../../../../ErrorContent';
-import { NO_CLONE_FAMILY_TO_PULL_FROM_ERROR } from '../../../../../utils/revisions';
+import messageStore from '../../../../../utils/messageStore';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(() => ({
@@ -67,7 +67,7 @@ function OpenPullDrawerContent({ integrationId, parentUrl }) {
       onClose();
 
       enquesnackbar({
-        message: <ErrorContent error={NO_CLONE_FAMILY_TO_PULL_FROM_ERROR} />,
+        message: <ErrorContent error={messageStore('NO_CLONE_FAMILY_TO_PULL_FROM_ERROR')} />,
         variant: 'error',
       });
     }

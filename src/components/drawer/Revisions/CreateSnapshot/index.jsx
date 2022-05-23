@@ -8,7 +8,7 @@ import DrawerContent from '../../Right/DrawerContent';
 import DrawerFooter from '../../Right/DrawerFooter';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import { SNAPSHOT_SUCCESS } from '../../../../utils/revisions';
+import messageStore from '../../../../utils/messageStore';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
@@ -63,7 +63,7 @@ function CreateSnapshotDrawerContent({ integrationId, parentUrl }) {
 
   useEffect(() => {
     if (createdSnapshotId) {
-      enqueueSnackbar({ message: SNAPSHOT_SUCCESS });
+      enqueueSnackbar({ message: messageStore('SNAPSHOT_SUCCESS') });
       onClose();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

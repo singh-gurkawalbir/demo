@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import ErrorContent from '../../../ErrorContent';
-import { REVISION_IN_PROGRESS_ERROR, NO_CLONE_FAMILY_TO_PULL_FROM_ERROR } from '../../../../utils/revisions';
+import messageStore from '../../../../utils/messageStore';
 
 export default function useOpenRevisionWhenValid({ integrationId, drawerURL, isCreatePull }) {
   const [enquesnackbar] = useEnqueueSnackbar();
@@ -19,14 +19,14 @@ export default function useOpenRevisionWhenValid({ integrationId, drawerURL, isC
   const openRevisionHandler = useCallback(() => {
     if (isAnyRevisionInProgress) {
       return enquesnackbar({
-        message: <ErrorContent error={REVISION_IN_PROGRESS_ERROR} />,
+        message: <ErrorContent error={messageStore('REVISION_IN_PROGRESS_ERROR')} />,
         variant: 'error',
       });
     }
     if (isCreatePull && hasNoCloneFamily) {
       // Incase of create pull, we show an error if there are no clones to pull from
       return enquesnackbar({
-        message: <ErrorContent error={NO_CLONE_FAMILY_TO_PULL_FROM_ERROR} />,
+        message: <ErrorContent error={messageStore('NO_CLONE_FAMILY_TO_PULL_FROM_ERROR')} />,
         variant: 'error',
       });
     }
