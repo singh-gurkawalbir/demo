@@ -4,6 +4,7 @@ import Tree from 'rc-tree';
 import {isEmpty} from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider, Typography } from '@material-ui/core';
+import clsx from 'clsx';
 import {SwitcherIcon} from '../index';
 import {selectors} from '../../../../../../../reducers';
 import {filterExtractsNode, getFinalSelectedExtracts} from '../../../../../../../utils/mapping';
@@ -16,8 +17,8 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     zIndex: theme.zIndex.drawer + 1,
     top: 'calc(100% - 1px)',
-    borderWidth: '0px 1px 1px 1px',
-    borderColor: '#d6e4ed',
+    borderWidth: '0 1px 1px 1px',
+    borderColor: theme.palette.secondary.lightest,
     borderStyle: 'solid',
     overflow: 'auto',
     maxHeight: theme.spacing(40),
@@ -103,6 +104,14 @@ const useStyles = makeStyles(theme => ({
   treePropName: {
     wordBreak: 'break-all',
   },
+  top: {
+    top: 'auto',
+    bottom: 'calc(100% - 1px)',
+    borderWidth: '1px',
+  },
+  hideDivider: {
+    display: 'none',
+  },
 })
 );
 
@@ -135,6 +144,7 @@ const ExtractsTree = React.memo((
     onBlur,
     flowId,
     resourceId,
+    menuPlacement,
   }) => {
   const classes = useStyles();
   const isGroupedSampleData = useSelector(state => selectors.mapping(state).isGroupedSampleData);
@@ -174,9 +184,9 @@ const ExtractsTree = React.memo((
 
   return (
     <div
-      className={classes.dropdown}>
+      className={clsx(classes.dropdown, {[classes.top]: menuPlacement === 'top'})}>
       <div className={classes.message}>
-        <Divider />
+        <Divider className={{[classes.hideDivider]: menuPlacement === 'top'}} />
         <ul>
           <li>Type or select source record field</li>
           {isArrayType && <li>Separate additional fields with a comma (,)</li>}
