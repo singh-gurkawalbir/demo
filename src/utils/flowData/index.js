@@ -288,7 +288,7 @@ export const getBlobResourceSampleData = () => ({
 });
 
 export const isOneToManyResource = resource =>
-  !!(resource && resource.oneToMany && resource.pathToMany);
+  !!(resource && resource.oneToMany);
 
 /*
  * Cases where postData needs to be passed in resource while previewing

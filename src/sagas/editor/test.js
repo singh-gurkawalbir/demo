@@ -195,6 +195,7 @@ describe('editor sagas', () => {
           }],
         },
         data: [[{id: '123'}]],
+        options: {},
       };
 
       return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
@@ -368,6 +369,7 @@ describe('editor sagas', () => {
           }],
         },
         data: [[{id: '123'}]],
+        options: {},
       };
 
       return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
@@ -409,6 +411,7 @@ describe('editor sagas', () => {
           }],
         },
         data: [[{id: '123'}]],
+        options: {},
       };
 
       return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
@@ -426,7 +429,77 @@ describe('editor sagas', () => {
           hidden: true })
         .run();
     });
+    test('should set correct request body and make api call if processor is mapperProcessor for mappings editor type and v2 mappings exist', () => {
+      const editorState = {
+        resourceId: 'res-123',
+        flowId: 'flow-123',
+        resourceType: 'imports',
+        data: '[{"id": "123"}]',
+        editorType: 'mappings',
+      };
+      const importRes = {
+        _id: 'res-123',
+        adaptorType: 'HTTPImport',
+        _connectionId: 'conn-123',
+      };
+      const connRes = {
+        _id: 'conn-123',
+        type: 'http',
+      };
+      const mappings = [{
+        extract: 'id',
+        generate: 'id',
+        key: '17RxsaFmJW',
+      }];
+      const v2TreeData = [{
+        generate: 'new-obj',
+        dataType: 'object',
+        extract: 'parents',
+      }];
 
+      const expectedBody = {
+        rules: {
+          rules: [{
+            mappings: [{
+              generate: 'new-obj',
+              dataType: 'object',
+              extract: 'parents',
+              description: undefined,
+              extractDateFormat: undefined,
+              extractDateTimezone: undefined,
+              generateDateFormat: undefined,
+              generateDateTimezone: undefined,
+              hardCodedValue: undefined,
+              lookupName: undefined,
+              default: undefined,
+              conditional: {when: undefined},
+            }],
+            lookups: [],
+          }],
+        },
+        data: [[{id: '123'}]],
+        options: {
+          connection: connRes,
+        },
+      };
+
+      return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), undefined],
+          [select(selectors.mapping), {v2TreeData, mappings, lookups: []}],
+          [select(selectors.editor, editorId), editorState],
+          [select(selectors.resource, 'imports', 'res-123'), importRes],
+          [select(selectors.resource, 'connections', 'conn-123'), connRes],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/mapperProcessor',
+          opts: {
+            method: 'POST',
+            body: expectedBody,
+          },
+          hidden: true })
+        .run();
+    });
     test('should make api call with passed arguments', () => {
       const body = 'somebody';
 
@@ -686,7 +759,7 @@ describe('editor sagas', () => {
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings}],
         ])
-        .put(actions.editor.validateFailure(editorId, {ruleError: 'Extract Fields missing for field(s): g1'}))
+        .put(actions.editor.validateFailure(editorId, {ruleError: 'Extract fields missing for field(s): g1'}))
         .run();
     });
   });
