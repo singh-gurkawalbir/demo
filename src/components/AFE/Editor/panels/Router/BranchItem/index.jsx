@@ -57,6 +57,9 @@ const useStyles = makeStyles(theme => ({
   },
   listItem: {
     display: 'flex',
+    // must be higher than the drawer z-index, otherwise when dragging
+    // the list item "disappears" under the drawer.
+    zIndex: 1301,
   },
   index: {
     flex: 'none',
