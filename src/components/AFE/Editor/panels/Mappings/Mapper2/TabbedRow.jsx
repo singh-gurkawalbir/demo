@@ -8,7 +8,7 @@ import actions from '../../../../../../actions';
 const useStyles = makeStyles(theme => ({
   tabComponentRoot: {
     display: 'flex',
-    marginLeft: theme.spacing(-9),
+    marginLeft: theme.spacing(-5),
   },
   tabsContainer: {
     minWidth: 150,
@@ -19,7 +19,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     fontSize: 14,
   },
-
 }));
 
 function generateTabs(parentNode) {
