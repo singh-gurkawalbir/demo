@@ -61,7 +61,7 @@ export default function DefaultEdge({
   */
 
   const edgePath = useMemo(() => {
-    if (isTerminal) {
+    if (isTerminal && !isSourceRouter) {
       const sp = getSmoothStepPath({
         sourceX,
         sourceY,
@@ -134,7 +134,7 @@ export default function DefaultEdge({
     });
 
     return path;
-  }, [edgePoints, isTargetMerge, isTerminal, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
+  }, [edgePoints, isSourceRouter, isTargetMerge, isTerminal, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
 
   const handleMouseOut = () => setState({type: actions.MERGE_TARGET_CLEAR});
   const handleMouseOver = () => setState({

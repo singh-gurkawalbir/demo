@@ -72,14 +72,13 @@ export default function DefaultEdge({
   const isConnectedToMerge = targetType === GRAPH_ELEMENTS_TYPE.MERGE || sourceType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isConnectedToGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
   const isTargetMerge = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
+  const isTargetTerminal = targetType === GRAPH_ELEMENTS_TYPE.TERMINAL;
   const isSourceRouter = sourceType === GRAPH_ELEMENTS_TYPE.ROUTER;
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
-  const isTerminal = targetType === GRAPH_ELEMENTS_TYPE.TERMINAL;
   const showLinkIcon = hasSiblingEdges && !isSourceGenerator;
   const showAddIcon = !isSourceGenerator;
   const isDragNodeAndEdgeOnSameBranch = isDragNodeOnSameBranch(dragNodeId, id, elementsMap);
-
-  const isMergableEdge = !isTerminal && !isDragNodeAndEdgeOnSameBranch && !isConnectedToMerge && !isConnectedToGenerator;
+  const isMergableEdge = !isTargetTerminal && !isDragNodeAndEdgeOnSameBranch && !isConnectedToMerge && !isConnectedToGenerator;
 
   /*
   {"points":[{"x":1250,"y":494},{"x":1350,"y":555},{"x":1587.5,"y":555},{"x":1825,"y":555},{"x":1927,"y":421.5}]}
@@ -92,7 +91,7 @@ export default function DefaultEdge({
   */
 
   const edgePath = useMemo(() => {
-    if (isTerminal) {
+    if (isTargetTerminal && !isSourceRouter) {
       const sp = getSmoothStepPath({
         sourceX,
         sourceY,
@@ -139,7 +138,7 @@ export default function DefaultEdge({
       } else if (i === 1 && isSourceRouter) { // first line
         // When the source is a router, we want to draw the lines vertically first to branch off
         // the edges asap. Not only for better looks, but also this prevents unwanted overlapping
-        // edges in some use-git cases.
+        // edges in some use-cases.
         drawLine(p, 'y');
         drawLine(p, 'x');
       } else if (i === points.length - 1 && !isTargetMerge) { // last point
@@ -168,7 +167,7 @@ export default function DefaultEdge({
   }, [edgePoints,
     isSourceRouter,
     isTargetMerge,
-    isTerminal,
+    isTargetTerminal,
     sourcePosition,
     sourceX,
     sourceY,
@@ -178,11 +177,11 @@ export default function DefaultEdge({
 
   const handleMouseOut = useCallback(() => {
     dispatch(actions.flow.mergeTargetClear(flow._id));
-  }, [dispatch]);
+  }, [dispatch, flow._id]);
 
   const handleMouseOver = useCallback(() => {
     dispatch(actions.flow.mergeTargetSet(flow._id, 'edge', id));
-  }, [dispatch]);
+  }, [dispatch, flow._id, id]);
 
   const { position, offset } =
     getPositionAndOffset(targetType, sourceType, showLinkIcon, processorCount);
