@@ -745,6 +745,8 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
           combinedExtract = `${combinedExtract ? `${combinedExtract},` : ''}${extract}`;
 
           if (!mappings) {
+            nodeToPush.copySource = 'yes';
+
             return;
           }
 
@@ -777,9 +779,6 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
           );
 
           nodeToPush.children = children;
-          if (!nodeToPush.children.length) {
-            nodeToPush.copySource = 'yes';
-          }
         });
 
         nodeToPush.combinedExtract = combinedExtract;
@@ -1206,12 +1205,49 @@ export const filterExtractsNode = (node = {}, propValue, inputValue) => {
   return true;
 };
 
+// recursively look for nearest parentExtract for a given node
+const findParentExtractForNode = (treeData, nodeKey) => {
+  const {node} = findNodeInTree(treeData, 'key', nodeKey);
+
+  if (!node || !node.parentKey) return '';
+
+  if (node.parentExtract) return node.parentExtract;
+
+  return findParentExtractForNode(treeData, node.parentKey);
+};
+
 // this util handles the comma separated values use-case
 // and returns the final input after user selects a node
-export const getFinalSelectedExtracts = (node, inputValue = '', isArrayType, isGroupedSampleData) => {
+export const getFinalSelectedExtracts = (node, inputValue = '', isArrayType, isGroupedSampleData, nodeKey, treeData) => {
   const prefix = getDefaultExtractPath(isGroupedSampleData);
   const {jsonPath = ''} = node || {};
-  const fullJsonPath = jsonPath ? `${prefix}.${jsonPath}` : prefix;
+  let fullJsonPath = jsonPath ? `${prefix}.${jsonPath}` : prefix;
+
+  // for child rows with parent extract
+  // the children json path should not include [*] in the parent path
+  const parentExtract = findParentExtractForNode(treeData, nodeKey);
+
+  if (parentExtract) {
+    const splitParentExtract = parentExtract.split('.') || [];
+    const splitFullJsonPath = fullJsonPath.split('.') || [];
+
+    splitParentExtract.forEach((e, i) => {
+      const uniqueExt = getExtractFromUniqueId(e);
+
+      // match the parent path on curr index with the current node json path
+      // and remove [*] from child path
+      if (uniqueExt.includes('[*]')) {
+        if (splitFullJsonPath[i] === uniqueExt) {
+          splitFullJsonPath[i] = splitFullJsonPath[i].replace('[*]', '');
+        }
+      } else if (splitFullJsonPath[i] === `${uniqueExt}[*]`) {
+        splitFullJsonPath[i] = splitFullJsonPath[i].replace('[*]', '');
+      }
+    });
+
+    fullJsonPath = splitFullJsonPath.join('.');
+  }
+
   let newValue = fullJsonPath;
 
   // handle comma separated scenario for array data types
@@ -2559,6 +2595,11 @@ export default {
         default:
           return 'default';
       }
+    }
+  },
+  getV2DefaultExpression: value => {
+    if (value.extract?.indexOf('{{') !== -1) {
+      return value.extract;
     }
   },
   // #endregion
