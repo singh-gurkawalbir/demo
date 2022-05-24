@@ -512,6 +512,19 @@ export default (state = {}, action) => {
               combinedExtract: draft.mapping.v2TreeData[0].combinedExtract, // pass old node combinedExtract to pick first extract
             },
             MAPPING_DATA_TYPES.OBJECT);
+
+          // add empty row if no children were found
+          if (isEmpty(draft.mapping.v2TreeData)) {
+            const emptyRowKey = generateUniqueKey();
+
+            draft.mapping.v2TreeData.push({
+              key: emptyRowKey,
+              title: '',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              disabled: draft.mapping.isMonitorLevelAccess,
+              isEmptyRow: true,
+            });
+          }
         }
 
         break;
