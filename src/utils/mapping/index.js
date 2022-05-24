@@ -753,19 +753,20 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
           const newExtract = getUniqueExtractId(extract, index);
           let isHidden = hidden;
 
-          const shouldAddTabRow = index > 0 && !children?.[0]?.isTabNode;
-
-          // found more than 1 extracts, insert a tab node
-          if (shouldAddTabRow) {
-            children.unshift({
-              key: generateUniqueKey(),
-              parentKey: currNodeKey,
-              title: '',
-              isTabNode: true,
-            });
+          if (index > 0) {
             // since the first source is already pushed, all other children should
             // be hidden now, as we show the first source tab by default
             isHidden = true;
+
+            // found more than 1 extracts, insert a tab node if not already added
+            if (!children?.[0]?.isTabNode) {
+              children.unshift({
+                key: generateUniqueKey(),
+                parentKey: currNodeKey,
+                title: '',
+                isTabNode: true,
+              });
+            }
           }
 
           recursivelyBuildTreeFromV2Mappings({
@@ -1106,6 +1107,14 @@ function recursivelyBuildExtractsTree({dataObj, treeData, parentKey, parentJsonP
     }
 
     if (type === '[object Array]') {
+      // if empty array, consider it as object array
+      if (isEmpty(v)) {
+        nodeToPush.jsonPath = `${jsonPath}[*]`;
+        nodeToPush.dataType = '[object]';
+
+        return;
+      }
+
       if (Object.prototype.toString.apply(v[0]) === '[object Object]' && !isEmpty(v[0])) {
         const children = [];
 

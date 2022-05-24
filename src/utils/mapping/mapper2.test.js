@@ -955,6 +955,42 @@ describe('v2 mapping utils', () => {
               extract: '$.items[*]',
             }],
           },
+          {
+            generate: 'test',
+            dataType: 'objectarray',
+            buildArrayHelper: [
+              {
+                extract: '$.children[*]',
+                mappings: [
+                  {
+                    extract: 'a',
+                    generate: 'a',
+                    dataType: 'string',
+                  },
+                ],
+              },
+              {
+                extract: '$.mother',
+                mappings: [
+                  {
+                    extract: 'b',
+                    generate: 'b',
+                    dataType: 'string',
+                  },
+                ],
+              },
+              {
+                extract: '$.father',
+                mappings: [
+                  {
+                    extract: 'c',
+                    generate: 'c',
+                    dataType: 'string',
+                  },
+                ],
+              },
+            ],
+          },
         ],
       };
 
@@ -1325,6 +1361,84 @@ describe('v2 mapping utils', () => {
         }],
         copySource: 'yes',
         combinedExtract: '$.items[*]',
+      },
+      {
+        key: 'new_key',
+        title: '',
+        disabled: false,
+        generate: 'test',
+        dataType: 'objectarray',
+        buildArrayHelper: [
+          {
+            extract: '$.children[*]',
+            mappings: [
+              {
+                extract: 'a',
+                generate: 'a',
+                dataType: 'string',
+              },
+            ],
+          },
+          {
+            extract: '$.mother',
+            mappings: [
+              {
+                extract: 'b',
+                generate: 'b',
+                dataType: 'string',
+              },
+            ],
+          },
+          {
+            extract: '$.father',
+            mappings: [
+              {
+                extract: 'c',
+                generate: 'c',
+                dataType: 'string',
+              },
+            ],
+          },
+        ],
+        children: [{
+          key: 'new_key',
+          parentKey: 'new_key',
+          title: '',
+          isTabNode: true,
+        }, {
+          key: 'new_key',
+          title: '',
+          parentKey: 'new_key',
+          parentExtract: '$.children[*]',
+          disabled: false,
+          generate: 'a',
+          dataType: 'string',
+          extract: 'a',
+        }, {
+          key: 'new_key',
+          title: '',
+          parentKey: 'new_key',
+          parentExtract: '$.mother',
+          disabled: false,
+          hidden: true,
+          className: 'hideRow',
+          generate: 'b',
+          dataType: 'string',
+          extract: 'b',
+        },
+        {
+          key: 'new_key',
+          title: '',
+          parentKey: 'new_key',
+          parentExtract: '$.father',
+          disabled: false,
+          hidden: true,
+          className: 'hideRow',
+          generate: 'c',
+          dataType: 'string',
+          extract: 'c',
+        }],
+        combinedExtract: '$.children[*],$.mother,$.father',
       },
       ];
 
@@ -2307,6 +2421,7 @@ describe('v2 mapping utils', () => {
         lName: 'henderson',
         altFirstName: 'scooter',
         additionalFirstNames: ['scoots', 'mchendrix'],
+        addresses: [],
         children: [
           {
             firstName: 'abby',
@@ -2390,6 +2505,14 @@ describe('v2 mapping utils', () => {
               key: 'new_key',
               parentKey: 'new_key',
               propName: 'additionalFirstNames',
+              title: '',
+            },
+            {
+              dataType: '[object]',
+              jsonPath: 'addresses[*]',
+              key: 'new_key',
+              parentKey: 'new_key',
+              propName: 'addresses',
               title: '',
             },
             {
@@ -2529,6 +2652,7 @@ describe('v2 mapping utils', () => {
           motherFName: 'mary',
           motherLName: 'henderson',
           childFName: 'paige',
+          addresses: [],
         },
         {
           fName: 'scott',
@@ -2584,6 +2708,14 @@ describe('v2 mapping utils', () => {
               key: 'new_key',
               parentKey: 'new_key',
               propName: 'childFName',
+              title: '',
+            },
+            {
+              dataType: '[object]',
+              jsonPath: 'addresses[*]',
+              key: 'new_key',
+              parentKey: 'new_key',
+              propName: 'addresses',
               title: '',
             },
           ],
