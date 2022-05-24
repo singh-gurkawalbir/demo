@@ -231,7 +231,15 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
     const preConfiguredField = connectionTemplate.preConfiguredFields.find(field => key === field.path);
     const fieldUserMustSet = connectionTemplate.fieldsUserMustSet.find(field => key === field.path);
 
-    if (key === 'http.auth.oauth.scope') {
+    if (key === 'http.ping.relativeURI') {
+      if (!tempFiledMeta.fieldMap[key].defaultValue) {
+        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]};
+      } else if (resource.http.unencrypted.version) {
+        tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resource.http.unencrypted.version}`, '');
+      } else if (connector.versions?.[0]?.name) {
+        tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${connector.versions?.[0]?.name}`, '');
+      }
+    } else if (key === 'http.auth.oauth.scope') {
       const field = preConfiguredField || fieldUserMustSet;
       const scopes = field.values?.map(f => {
         if (f.name) {
@@ -281,7 +289,9 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
     } else if (key === 'http._iClientId') {
       tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
     } else if (key === 'http.baseURI') {
-      if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.versions?.[0]?.baseURIs?.[0] + connector?.versions?.[0]?.relativeURI}; }
+      if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.versions?.[0]?.baseURIs?.[0] }; } else if (resource.http.unencrypted.version) {
+        tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resource.http.unencrypted.version}`, '');
+      }
     }
 
     return tempFiledMeta.fieldMap[key];
@@ -307,8 +317,14 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         fieldId: 'http.unencrypted.version',
         type: versions.length > 1 ? 'select' : 'text',
         options: versionOptions,
-        required: true,
-        defaultValue: resource?.http?.unencrypted?.version || versions?.[0],
+        defaultValue: () => {
+          if (isNewId(resource._id)) {
+            return versions?.[0];
+          }
+
+          return resource?.http?.unencrypted?.version;
+        },
+
       },
     });
   }

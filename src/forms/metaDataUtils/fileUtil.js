@@ -723,6 +723,13 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnecto
         retValues['/http/ping/relativeURI'] = pingURIs[scopeId];
       }
     }
+    if (retValues['/http/unencrypted/version']) {
+      retValues['/http/baseURI'] += `/${retValues['/http/unencrypted/version']}`;
+    } else {
+      const versionRelativeURI = httpConnector.versions?.[0]?.relativeURI;
+
+      retValues['/http/ping/relativeURI'] = versionRelativeURI + retValues['/http/ping/relativeURI'];
+    }
   }
   retValues['/http/_httpConnectorId'] = httpConnector?._id;
   if (retValues['/http/unencrypted/version']) {
