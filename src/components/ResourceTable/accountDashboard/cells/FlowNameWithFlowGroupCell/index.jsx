@@ -11,6 +11,8 @@ export default function FlowNameWithFlowGroupCell({ flowId, integrationId }) {
   const tableContext = useGetTableContext();
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
   const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
+  const istwoDotZeroFrameWork = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
+  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, integrationId);
   const flowSectionsForIA1 = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId);
   let sectionName;
@@ -30,7 +32,13 @@ export default function FlowNameWithFlowGroupCell({ flowId, integrationId }) {
 
   return (
     <>
-      <NameCell al={{resourceType: 'flow', _resourceId: flowId, sectionId}} actionProps={{...tableContext, childId: integrationId}} />
+      <NameCell
+        al={{resourceType: 'flow', _resourceId: flowId, sectionId}}
+        actionProps={{
+          ...tableContext,
+          childId: istwoDotZeroFrameWork && integration._parentId ? integrationId : undefined,
+        }}
+      />
       {sectionName && <Typography variant="body2" color="textSecondary">{sectionName}</Typography>}
     </>
   );
