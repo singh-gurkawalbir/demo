@@ -816,7 +816,7 @@ export function getFlowDetails(flow, integration, exports, childId) {
     draft.isRunnable = isRunnable(flow, exports);
     draft.canSchedule = showScheduleIcon(flow, exports);
     draft.isDeltaFlow = isDeltaFlow(flow, exports);
-    const flowSettings = getIAFlowSettings(integration, flow._id, childId);
+    const flowSettings = getIAFlowSettings(integration, flow._id, childId) || emptyObject;
 
     draft.showMapping = !!flowSettings.showMapping;
     draft.hasSettings = !!(
