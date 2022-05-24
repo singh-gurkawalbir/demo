@@ -5471,6 +5471,26 @@ selectors.isMapper2Supported = state => {
   return !!((resource.adaptorType === 'HTTPImport' || resource.adaptorType === 'RESTImport') && resource.http?.type !== 'file');
 };
 
+selectors.resourceHasMappings = (state, importId) => {
+  const resource = selectors.resource(state, 'imports', importId);
+
+  if (!resource) return false;
+
+  // v2 mappings
+  if (resource.mappings?.length) {
+    return true;
+  }
+
+  // v1 mappings
+  const mappings = mappingUtil.getMappingFromResource({
+    importResource: resource,
+    isFieldMapping: true,
+  });
+  const { fields = [], lists = [] } = mappings || {};
+
+  return !!(fields.length || lists.length);
+};
+
 selectors.mappingEditorNotification = (state, editorId) => {
   const {editorType, resourceId} = fromSession.editor(state?.session, editorId);
   const isMapper2Supported = selectors.isMapper2Supported(state);
