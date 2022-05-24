@@ -39,6 +39,14 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integ
   HARD_CODED_SOURCE_TOOLTIP: 'Hard-coded values do not provide source record field list',
   HANDLEBARS_SOURCE_TOOLTIP: 'Handlebars expression do not provide source record field list',
   // #endregion
+  // #region LCM
+  REVISION_IN_PROGRESS_ERROR: 'You have a pull, snapshot, or revert in progress.',
+  NO_CLONE_FAMILY_TO_PULL_FROM_ERROR: "You don't have any data to pull. Learn more about <a target='_blank' href='https://docs.celigo.com/hc/en-us/articles/4844290103707'> cloning and pulling your integrations</>.",
+  PULL_MERGE_SUCCESS: 'You\'ve successfully merged your pull.',
+  REVERT_SUCCESS: 'You\'ve successfully reverted your changes.',
+  SNAPSHOT_SUCCESS: 'You\'ve successfully created a snapshot.',
+  // #endregion
+
 };
 
 export default function messageStore(key, argsObj) {

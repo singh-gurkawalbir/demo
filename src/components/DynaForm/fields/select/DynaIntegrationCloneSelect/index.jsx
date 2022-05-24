@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo } from 'react';
-import {useSelector, useDispatch } from 'react-redux';
+import React, { useMemo } from 'react';
+import {useSelector } from 'react-redux';
 import { FormControl, FormLabel, makeStyles } from '@material-ui/core';
 import Select, { components } from 'react-select';
-import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import Spinner from '../../../../Spinner';
 import isLoggableAttr from '../../../../../utils/isLoggableAttr';
@@ -10,7 +9,6 @@ import FieldHelp from '../../../FieldHelp';
 import FieldMessage from '../../FieldMessage';
 import { CustomReactSelectStyles } from '../../reactSelectStyles/styles';
 import ArrowDownIcon from '../../../../icons/ArrowDownIcon';
-import ErrorMessage from './ErrorMessage';
 
 const useStyles = makeStyles({
   fullWidth: {
@@ -42,7 +40,6 @@ export const CloneSelect = props => {
     id,
     options,
     isLoggable,
-    integrationId,
   } = props;
   const classes = useStyles();
   const customStyles = CustomReactSelectStyles();
@@ -94,11 +91,7 @@ export const CloneSelect = props => {
             defaultMenuIsOpen={options?.length}
           />
         </span>
-        {
-            options?.length
-              ? <FieldMessage {...props} />
-              : <ErrorMessage integrationId={integrationId} />
-        }
+        { !!options?.length && <FieldMessage {...props} /> }
       </FormControl>
     </>
   );
@@ -107,16 +100,9 @@ export const CloneSelect = props => {
 export default function DynaIntegrationCloneSelect(props) {
   const classes = useStyles();
   const { integrationId, isValid } = props;
-  const dispatch = useDispatch();
   const isLoadingCloneFamily = useSelector(state => selectors.isLoadingCloneFamily(state, integrationId));
   const cloneList = useSelector(state => selectors.cloneFamily(state, integrationId));
   const accountHasSandbox = useSelector(state => selectors.accountHasSandbox(state));
-
-  useEffect(() => {
-    dispatch(actions.integrationLCM.cloneFamily.request(integrationId));
-
-    return () => dispatch(actions.integrationLCM.cloneFamily.clear(integrationId));
-  }, [dispatch, integrationId]);
 
   const newOptions = useMemo(
     () => (cloneList || []).map(clone =>
