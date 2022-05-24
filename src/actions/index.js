@@ -314,7 +314,17 @@ const resource = {
   undoStaged: (id, scope) =>
     action(actionTypes.RESOURCE.STAGE_UNDO, { id, scope }),
 
-  patchAndCommitStaged: (resourceType, resourceId, patch, { scope, context, asyncKey, parentContext, options } = {}) => action(actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT, {
+  patchAndCommitStaged: (
+    resourceType,
+    resourceId,
+    patch,
+    {
+      scope,
+      context,
+      asyncKey,
+      parentContext,
+      options,
+    } = {}) => action(actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT, {
     resourceType,
     id: resourceId,
     patch,
@@ -2055,19 +2065,19 @@ const errorManager = {
   },
 };
 const flow = {
-  addNewPGStep: flowId => action(actionTypes.FLOW.ADD_NEW_PG_STEP, {flowId}),
-  addNewPPStep: (flowId, path) => action(actionTypes.FLOW.ADD_NEW_PP_STEP, {flowId, path}),
-  addNewRouter: (flowId, router) => action(actionTypes.FLOW.ADD_NEW_ROUTER, {flowId, router}),
-  dragStart: (flowId, stepId) => action(actionTypes.FLOW.DRAG_START, {flowId, stepId}),
+  addNewPGStep: flowId => action(actionTypes.FLOW.ADD_NEW_PG_STEP, { flowId }),
+  addNewPPStep: (flowId, path) => action(actionTypes.FLOW.ADD_NEW_PP_STEP, { flowId, path }),
+  addNewRouter: (flowId, router) => action(actionTypes.FLOW.ADD_NEW_ROUTER, { flowId, router }),
+  dragStart: (flowId, stepId) => action(actionTypes.FLOW.DRAG_START, { flowId, stepId }),
   dragEnd: flowId => action(actionTypes.FLOW.DRAG_END, { flowId }),
-  mergeTargetSet: (flowId, targetType, targetId) => action(actionTypes.FLOW.MERGE_TARGET_SET, {flowId, targetType, targetId}),
-  mergeTargetClear: flowId => action(actionTypes.FLOW.MERGE_TARGET_CLEAR, {flowId}),
+  mergeTargetSet: (flowId, targetType, targetId) => action(actionTypes.FLOW.MERGE_TARGET_SET, { flowId, targetType, targetId }),
+  mergeTargetClear: flowId => action(actionTypes.FLOW.MERGE_TARGET_CLEAR, { flowId }),
   mergeBranch: flowId => action(actionTypes.FLOW.MERGE_BRANCH, { flowId }),
-  deleteStep: (flowId, stepId) => action(actionTypes.FLOW.DELETE_STEP, {flowId, stepId}),
-  deleteEdge: (flowId, edgeId) => action(actionTypes.FLOW.DELETE_EDGE, {flowId, edgeId}),
-  deleteRouter: (flowId, routerId) => action(actionTypes.FLOW.DELETE_ROUTER, {flowId, routerId}),
+  deleteStep: (flowId, stepId) => action(actionTypes.FLOW.DELETE_STEP, { flowId, stepId }),
+  deleteEdge: (flowId, edgeId) => action(actionTypes.FLOW.DELETE_EDGE, { flowId, edgeId }),
+  deleteRouter: (flowId, routerId) => action(actionTypes.FLOW.DELETE_ROUTER, { flowId, routerId }),
   initializeFlowGraph: (flowId, flow) => action(actionTypes.FLOW.INIT_FLOW_GRAPH, { flowId, flow }),
-  saveFlow: props => action(actionTypes.FLOW.SAVE, props),
+  setSaveStatus: (flowId, status) => action(actionTypes.FLOW.SET_SAVE_STATUS, { flowId, status }),
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
   runDataLoader: ({ flowId, customStartDate, fileContent, fileType, fileName }) =>

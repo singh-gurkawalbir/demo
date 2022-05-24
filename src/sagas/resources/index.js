@@ -405,6 +405,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
         link: merged.netsuite.linkSuiteScriptIntegrator }
     );
   }
+  if (resourceType === 'flows') {
+    yield put(actions.flow.setSaveStatus(id));
+  }
 }
 
 export function* commitStagedChangesWrapper({ asyncKey, ...props }) {

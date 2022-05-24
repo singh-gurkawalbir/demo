@@ -7,6 +7,7 @@ import { selectors } from '../../reducers';
 import { mergeDragSourceWithTarget } from '../../utils/flows/flowbuilder';
 
 export function* createNewPGStep({ flowId }) {
+  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
   const originalFlow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
   const patchSet = [];
 
@@ -33,6 +34,7 @@ export function* createNewPGStep({ flowId }) {
 }
 
 export function* deleteStep({flowId, stepId}) {
+  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
   const elementsMap = yield select(selectors.fbGraphElementsMap, flowId);
   const flow = yield select(selectors.fbFlow, flowId);
   const originalFlow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
@@ -127,6 +129,7 @@ export function* deleteStep({flowId, stepId}) {
 }
 
 export function* createNewPPStep({ flowId, path: branchPath }) {
+  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
   let patchSet = [];
   const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
 
@@ -155,6 +158,7 @@ export function* createNewPPStep({ flowId, path: branchPath }) {
 }
 
 export function* mergeBranch({flowId}) {
+  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
   const flow = yield select(selectors.fbFlow, flowId);
   const elementsMap = yield select(selectors.fbGraphElementsMap, flowId);
   const mergeTargetId = yield select(selectors.fbMergeTargetId, flowId);
@@ -177,6 +181,8 @@ export function* mergeBranch({flowId}) {
 }
 
 export function* deleteEdge({ flowId, edgeId }) {
+  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
+
   const elementsMap = yield select(selectors.fbGraphElementsMap, flowId);
 
   const edge = elementsMap[edgeId];
@@ -192,6 +198,8 @@ export function* deleteEdge({ flowId, edgeId }) {
 }
 
 export function* deleteRouter({flowId, routerId}) {
+  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
+
   const flow = yield select(selectors.fbFlow, flowId);
   const {routers = []} = flow;
   const patchSet = [];
