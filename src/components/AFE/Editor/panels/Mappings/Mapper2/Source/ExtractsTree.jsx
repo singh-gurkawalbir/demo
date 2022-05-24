@@ -136,6 +136,7 @@ const TreeTitle = props => <TitleExtracts {...props} key={`title-${props.key}`} 
 // based on the sample data
 const ExtractsTree = React.memo((
   {
+    nodeKey,
     destDataType,
     propValue,
     inputValue = '',
@@ -148,6 +149,7 @@ const ExtractsTree = React.memo((
   }) => {
   const classes = useStyles();
   const isGroupedSampleData = useSelector(state => selectors.mapping(state).isGroupedSampleData);
+  const mappingsTreeData = useSelector(state => selectors.v2MappingsTreeData(state));
 
   // replace '$.' and '$[*].' as we are not storing these prefixes in each node jsonPath as well
   // for better searching
@@ -161,13 +163,13 @@ const ExtractsTree = React.memo((
   const isArrayType = destDataType.includes('array');
 
   const onSelect = useCallback((keys, e) => {
-    const newValue = getFinalSelectedExtracts(e.node, inputValue, isArrayType, isGroupedSampleData);
+    const newValue = getFinalSelectedExtracts(e.node, inputValue, isArrayType, isGroupedSampleData, nodeKey, mappingsTreeData);
 
     setInputValue(newValue);
     setIsFocused(false);
     if (propValue !== newValue) { onBlur(newValue); }
     e.nativeEvent.stopImmediatePropagation();
-  }, [inputValue, isArrayType, isGroupedSampleData, onBlur, propValue, setInputValue, setIsFocused]);
+  }, [inputValue, isArrayType, isGroupedSampleData, onBlur, propValue, setInputValue, setIsFocused, nodeKey, mappingsTreeData]);
 
   const onExpand = useCallback((expandedKeys, {nativeEvent}) => {
     setIsFocused(true);

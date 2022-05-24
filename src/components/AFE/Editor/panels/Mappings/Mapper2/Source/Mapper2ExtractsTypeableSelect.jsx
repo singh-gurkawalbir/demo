@@ -86,6 +86,7 @@ export const TooltipTitle = ({
 };
 
 export default function Mapper2ExtractsTypeableSelect({
+  nodeKey,
   dataType: destDataType = MAPPING_DATA_TYPES.STRING,
   id,
   disabled,
@@ -204,6 +205,7 @@ export default function Mapper2ExtractsTypeableSelect({
       {isFocused && !disabled && !hideSourceDropdown && (
       <ExtractsTree
         key={id}
+        nodeKey={nodeKey}
         destDataType={destDataType}
         propValue={propValue}
         inputValue={inputValue}
