@@ -3,7 +3,6 @@ import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { selectors } from '../../../reducers';
-import { emptyObject } from '../../../utils/constants';
 
 export function* checkHasIntegrations({ connectionId }) {
   const requestOptions = {
@@ -27,14 +26,10 @@ export function* checkHasIntegrations({ connectionId }) {
     connectionId
   );
 
-  if (connection.netsuite === undefined) {
-    connection.netsuite = { account: emptyObject };
-  }
-
   if (response) {
     yield put(
       actions.suiteScript.account.receivedHasIntegrations(
-        connection.netsuite.account,
+        connection?.netsuite?.account,
         response.hasIntegrations
       )
     );
