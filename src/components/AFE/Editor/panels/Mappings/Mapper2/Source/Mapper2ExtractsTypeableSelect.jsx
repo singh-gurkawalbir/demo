@@ -136,6 +136,11 @@ export default function Mapper2ExtractsTypeableSelect({
   // and/or source dropdown is hidden
   const hideTooltip = isFocused || (inputValue && !isTruncated && !hideSourceDropdown);
 
+  const windowHeight = window.innerHeight;
+  const {y: elementPosFromTop = 0} = containerRef?.current?.getBoundingClientRect() || {};
+
+  const menuPlacement = windowHeight - elementPosFromTop > 460 ? 'bottom' : 'top';
+
   return (
     <FormControl
       data-test={id}
@@ -209,6 +214,7 @@ export default function Mapper2ExtractsTypeableSelect({
         setIsFocused={setIsFocused}
         flowId={flowId}
         resourceId={importId}
+        menuPlacement={menuPlacement}
         />
       )}
 
