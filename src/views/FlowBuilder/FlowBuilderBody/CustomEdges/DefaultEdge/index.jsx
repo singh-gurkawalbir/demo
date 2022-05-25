@@ -69,8 +69,6 @@ export default function DefaultEdge({
   const hasSiblingEdges = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
   const { sourceType, targetType, points: edgePoints, processorCount, mergableTerminals = [] } = data;
   const isDragging = !!dragNodeId;
-  const isConnectedToMerge = targetType === GRAPH_ELEMENTS_TYPE.MERGE || sourceType === GRAPH_ELEMENTS_TYPE.MERGE;
-  const isConnectedToGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
   const isTargetMerge = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isTargetTerminal = targetType === GRAPH_ELEMENTS_TYPE.TERMINAL;
   const isSourceRouter = sourceType === GRAPH_ELEMENTS_TYPE.ROUTER;
@@ -78,7 +76,7 @@ export default function DefaultEdge({
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
   const showLinkIcon = hasSiblingEdges && !isSourceGenerator;
   const showAddIcon = !isSourceGenerator || (isSourceGenerator && !isTargetRouter);
-  const isMergableEdge = mergableTerminals.includes(dragNodeId) && !isConnectedToGenerator && !isConnectedToMerge;
+  const isMergableEdge = mergableTerminals.includes(dragNodeId);
 
   /*
   {"points":[{"x":1250,"y":494},{"x":1350,"y":555},{"x":1587.5,"y":555},{"x":1825,"y":555},{"x":1927,"y":421.5}]}

@@ -225,6 +225,17 @@ const populateMergeData = (flow, elements) => {
 
   elements.forEach(element => {
     if (element.type === GRAPH_ELEMENTS_TYPE.EDGE) {
+      const targetElement = elements.find(el => el.id === element.target);
+      const sourceElement = elements.find(el => el.id === element.target);
+
+      if (sourceElement && targetElement && (
+        sourceElement.type === GRAPH_ELEMENTS_TYPE.PG_STEP || // is connected to Page generator => cant merge to page generators
+        sourceElement.type === GRAPH_ELEMENTS_TYPE.MERGE || // is edge emerging out of merge router => same as merging to the router
+        targetElement.type === GRAPH_ELEMENTS_TYPE.MERGE || // is an edge to a merge router => same as merging to the router
+        targetElement.type === GRAPH_ELEMENTS_TYPE.TERMINAL // is an edge to a terminal node => will create a merge router when terminal nodes merge anyway
+      )) {
+        return;
+      }
       terminalNodes.forEach(terminalNode => {
         if (BranchPathRegex.test(terminalNode.data.path)) {
           const [, terminalRouterIndex, terminalBranchIndex] = BranchPathRegex.exec(terminalNode.data.path);
