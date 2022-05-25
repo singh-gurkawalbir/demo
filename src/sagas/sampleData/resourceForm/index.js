@@ -352,7 +352,7 @@ export function* _requestPageProcessorSampleData({ formKey, refreshCache = false
 
   // exclude sampleData property if exists on pageProcessor Doc
   // as preview call considers sampleData to show instead of fetching
-  const { transform, filter, hooks, sampleData, ...constructedResourceObj } = resourceObj;
+  const { sampleData, ...constructedResourceObj } = resourceObj;
 
   let _pageProcessorDoc = constructedResourceObj;
 

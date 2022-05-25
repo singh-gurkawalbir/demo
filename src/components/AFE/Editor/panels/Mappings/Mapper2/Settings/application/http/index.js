@@ -312,7 +312,7 @@ export default {
           showLookup: false,
           multiline: true,
           label: 'Handlebars expression',
-          defaultValue: mappingUtil.getDefaultExpression(node),
+          defaultValue: mappingUtil.getV2DefaultExpression(node),
           helpKey: 'mapping.v2.expression',
           noApi: true,
           visibleWhenAll: [
