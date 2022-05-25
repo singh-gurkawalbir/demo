@@ -150,7 +150,7 @@ export default function DestinationDataType({dataType, disabled, nodeKey}) {
   return (
     <>
       <Tooltip
-        title={open ? '' : `Data type: ${selectedDataTypeLabel} - Click to change`}
+        title={disabled || open ? '' : `Data type: ${selectedDataTypeLabel} - Click to change`}
         placement="bottom" >
         {/* this div needs to be added to render the tooltip correctly */}
         <div>

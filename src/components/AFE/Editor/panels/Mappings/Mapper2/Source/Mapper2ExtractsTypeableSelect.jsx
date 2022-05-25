@@ -134,7 +134,7 @@ export default function Mapper2ExtractsTypeableSelect({
   const hideSourceDropdown = isLookup || isHardCodedValue || isHandlebarExp;
   // tooltip is only visible when not in focus and for truncated values
   // and/or source dropdown is hidden
-  const hideTooltip = isFocused || (inputValue && !isTruncated && !hideSourceDropdown);
+  const hideTooltip = isFocused || (!inputValue && disabled) || (inputValue && !isTruncated && !hideSourceDropdown);
 
   const windowHeight = window.innerHeight;
   const {y: elementPosFromTop = 0} = containerRef?.current?.getBoundingClientRect() || {};
@@ -174,7 +174,7 @@ export default function Mapper2ExtractsTypeableSelect({
           onFocus={handleFocus}
           disabled={disabled}
           multiline={isFocused}
-          placeholder="Source record field"
+          placeholder={!disabled && 'Source record field'}
           // InputProps={{
           //   endAdornment: hideSourceDropdown
           //     ? (<Typography variant="caption" className={classes.srcDataType}>{srcDataType}</Typography>)

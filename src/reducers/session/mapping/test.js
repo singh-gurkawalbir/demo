@@ -1529,6 +1529,46 @@ describe('mapping reducer', () => {
 
       expect(state).toEqual(expectedState);
     });
+    test('should correctly add empty row if no matching children were found for record format', () => {
+      generateUniqueKey.mockReturnValue('new-key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          isGroupedOutput: true,
+          v2TreeData: [{
+            key: 'new-key',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generateDisabled: true,
+            combinedExtract: '',
+            title: '',
+            children: [{
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            }],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.toggleOutput('record'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          isGroupedOutput: false,
+          v2TreeData: [{
+            key: 'new-key',
+            title: '',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            isEmptyRow: true,
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
   });
   describe('MAPPING.V2.TOGGLE_ROWS action', () => {
     test('should set expandedKeys as empty array if passed flag is false', () => {
