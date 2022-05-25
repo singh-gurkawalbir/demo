@@ -1818,8 +1818,15 @@ selectors.mkFilteredHomeTiles = () => {
       let filteredTiles = filterAndSortResources(homeTiles, filterConfig, !isListView, comparer);
 
       if (isListView && applications && !applications.includes('all')) {
-        // filter on applications
-        filteredTiles = filteredTiles.filter(t => t.applications?.some(a => applications.includes(a)));
+        // filter on applications, for applications which have multiple versions/metadata, temporary assistant name
+        // will be a substring of the actual assistant name
+        // for e.g, user selects 'constantcontact' in the filters (which is a temporary assistant),
+        // resources will have assistants 'constantcontactv2' or 'constantcontactv3',
+        // below filter will ensure that all versions of constant contact are filtered as 'constantcontact' is a substring of
+        // both 'constantcontactv2' or 'constantcontactv3'
+        filteredTiles = filteredTiles.filter(
+          tile => tile.applications?.some(tileApp => applications.some(app => tileApp.includes(app)))
+        );
       }
 
       if (isListView && pinnedIntegrations?.length && filteredTiles.length) {

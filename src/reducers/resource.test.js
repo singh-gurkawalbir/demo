@@ -4204,56 +4204,107 @@ describe('resource region selector testcases', () => {
 
       expect(filteredHomeTiles(newState)).toEqual(expected);
     });
-    test('should return tiles filtered by applications for list view', () => {
-      const initialState = reducer(state, actions.patchFilter(FILTER_KEY,
-        {
-          applications: [
-            'http',
-          ],
-        }));
-      const newState = reducer(initialState, actions.user.preferences.update({dashboard: {view: LIST_VIEW}}));
-      const expected = {
-        filteredCount: 1,
-        filteredTiles: [
+    describe('should return tiles filtered by applications for list view ', () => {
+      test('for applications with single version', () => {
+        const initialState = reducer(state, actions.patchFilter(FILTER_KEY,
           {
-            _connectorId: 'connector1',
-            _integrationId: 'connector1',
             applications: [
               'http',
-              'app2',
             ],
-            connector: {
+          }));
+        const newState = reducer(initialState, actions.user.preferences.update({dashboard: {view: LIST_VIEW}}));
+        const expected = {
+          filteredCount: 1,
+          filteredTiles: [
+            {
+              _connectorId: 'connector1',
+              _integrationId: 'connector1',
               applications: [
                 'http',
                 'app2',
               ],
-              owner: 'Company 1',
-            },
-            flowsNameAndDescription: '',
-            integration: {
-              mode: undefined,
-              permissions: {
-                accessLevel: 'owner',
-                connections: {
-                  edit: true,
+              connector: {
+                applications: [
+                  'http',
+                  'app2',
+                ],
+                owner: 'Company 1',
+              },
+              flowsNameAndDescription: '',
+              integration: {
+                mode: undefined,
+                permissions: {
+                  accessLevel: 'owner',
+                  connections: {
+                    edit: true,
+                  },
                 },
               },
+              key: 'connector1',
+              lastErrorAt: 1,
+              name: 'Integration Two',
+              numError: 4,
+              numFlows: 3,
+              pinned: false,
+              sortablePropType: -1,
+              status: 'has_errors',
             },
-            key: 'connector1',
-            lastErrorAt: 1,
-            name: 'Integration Two',
-            numError: 4,
-            numFlows: 3,
-            pinned: false,
-            sortablePropType: -1,
-            status: 'has_errors',
-          },
-        ],
-        perPageCount: 1,
-        totalCount: 4,
-      };
+          ],
+          perPageCount: 1,
+          totalCount: 4,
+        };
 
-      expect(filteredHomeTiles(newState)).toEqual(expected);
+        expect(filteredHomeTiles(newState)).toEqual(expected);
+      });
+      test('for applications with multiple versions', () => {
+        const stateWithNewConnections = reducer(state,
+          actions.resource.receivedCollection('connections', [
+            ...connections,
+            {
+              _id: 'connection5',
+              assistant: 'constantcontactv3',
+            },
+          ]));
+        const stateWithNewApps = reducer(stateWithNewConnections,
+          actions.resource.receivedCollection('tiles', [
+            ...standaloneTiles,
+            ...tiles,
+            {
+              _integrationId: 'integration1',
+              _registeredConnectionIds: ['connection5'],
+            },
+          ]));
+        const initialState = reducer(stateWithNewApps, actions.patchFilter(FILTER_KEY,
+          {
+            applications: [
+              'constantcontact',
+            ],
+          }));
+        const newState = reducer(initialState, actions.user.preferences.update({dashboard: {view: LIST_VIEW}}));
+        const expected = {
+          filteredCount: 1,
+          filteredTiles: [
+            {
+              _integrationId: 'integration1',
+              _registeredConnectionIds: ['connection5'],
+              applications: ['constantcontactv3'],
+              flowsNameAndDescription: '',
+              integration: {
+                permissions:
+                  {
+                    accessLevel: 'owner',
+                    connections: {edit: true}},
+              },
+              key: 'integration1',
+              pinned: false,
+              sortablePropType: 0,
+              status: 'success'}],
+          perPageCount: 1,
+          totalCount: 5,
+        };
+
+        expect(filteredHomeTiles(newState)).toEqual(expected);
+      });
     });
     describe('should return tiles filtered by the search filter applied', () => {
       const newState = reducer(state, actions.patchFilter(FILTER_KEY,
