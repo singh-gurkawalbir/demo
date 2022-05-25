@@ -2,7 +2,7 @@ import React, {useCallback, useMemo} from 'react';
 import { getSmoothStepPath } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles, isDragNodeOnSameBranch, GRAPH_ELEMENTS_TYPE } from '../../lib';
+import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles, GRAPH_ELEMENTS_TYPE } from '../../lib';
 import { useFlowContext } from '../../Context';
 import AddNewButton from '../AddNewButton';
 import UnlinkButton from '../UnlinkButton';
@@ -65,9 +65,9 @@ export default function DefaultEdge({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { elements, elementsMap, dragNodeId, flow } = useFlowContext();
+  const { elements, dragNodeId, flow } = useFlowContext();
   const hasSiblingEdges = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
-  const { sourceType, targetType, points: edgePoints, processorCount } = data;
+  const { sourceType, targetType, points: edgePoints, processorCount, mergableTerminals = [] } = data;
   const isDragging = !!dragNodeId;
   const isConnectedToMerge = targetType === GRAPH_ELEMENTS_TYPE.MERGE || sourceType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isConnectedToGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
@@ -78,8 +78,7 @@ export default function DefaultEdge({
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
   const showLinkIcon = hasSiblingEdges && !isSourceGenerator;
   const showAddIcon = !isSourceGenerator || (isSourceGenerator && !isTargetRouter);
-  const isDragNodeAndEdgeOnSameBranch = isDragNodeOnSameBranch(dragNodeId, id, elementsMap);
-  const isMergableEdge = !isTargetTerminal && !isDragNodeAndEdgeOnSameBranch && !isConnectedToMerge && !isConnectedToGenerator;
+  const isMergableEdge = mergableTerminals.includes(dragNodeId) && !isConnectedToGenerator && !isConnectedToMerge;
 
   /*
   {"points":[{"x":1250,"y":494},{"x":1350,"y":555},{"x":1587.5,"y":555},{"x":1825,"y":555},{"x":1927,"y":421.5}]}
