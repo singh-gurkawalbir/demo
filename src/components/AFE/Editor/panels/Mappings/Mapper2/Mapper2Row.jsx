@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   childHeader: {
     flex: 1,
     minWidth: theme.spacing(38),
-    maxWidth: theme.spacing(50),
+    maxWidth: theme.spacing(38),
     '&:first-child': {
       marginRight: theme.spacing(1),
     },
@@ -36,6 +36,10 @@ const useStyles = makeStyles(theme => ({
     '&:nth-of-type(2)': {
       flex: 1,
     },
+  },
+  childHeaderLarge: {
+    minWidth: theme.spacing(50),
+    maxWidth: theme.spacing(50),
   },
   innerRowRoot: {
     display: 'flex',
@@ -179,6 +183,7 @@ const Mapper2Row = React.memo(props => {
   const isHardCodedValue = hardCodedValue !== undefined;
   const isHandlebarExp = handlebarRegex.test(extractValue);
   const hideExtractField = dataType === MAPPING_DATA_TYPES.OBJECT && !extractValue && copySource === 'no';
+  const layout = useSelector(state => selectors.editorLayout(state, `mappings-${importId}`));
 
   // this prop is used for object array tab view
   // where some children needs to be hidden
@@ -194,7 +199,7 @@ const Mapper2Row = React.memo(props => {
     <div
       key={nodeKey}
       className={clsx(classes.innerRowRoot, {[classes.noExtractField]: hideExtractField})}>
-      <div className={classes.childHeader}>
+      <div className={clsx(classes.childHeader, {[classes.childHeaderLarge]: layout === 'compactRow'})}>
         <Mapper2Generates
           key={generate}
           id={`fieldMappingGenerate-${nodeKey}`}
@@ -207,7 +212,7 @@ const Mapper2Row = React.memo(props => {
       </div>
 
       {hideExtractField ? null : (
-        <div className={classes.childHeader}>
+        <div className={clsx(classes.childHeader, {[classes.childHeaderLarge]: layout === 'compactRow'})}>
           <Mapper2ExtractsTypeableSelect
             key={extractValue}
             id={`fieldMappingExtract-${nodeKey}`}

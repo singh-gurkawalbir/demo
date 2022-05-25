@@ -101,7 +101,7 @@ const useStyles = makeStyles(theme => ({
   mappingDrawerContent: {
     height: '100%',
     display: 'flex',
-    padding: theme.spacing(3, 3, 0),
+    paddingTop: theme.spacing(3, 0, 0),
     overflow: 'auto',
   },
 })

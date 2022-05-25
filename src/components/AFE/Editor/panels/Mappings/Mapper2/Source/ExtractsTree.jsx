@@ -12,19 +12,8 @@ import { useSelectorMemo } from '../../../../../../../hooks';
 
 const useStyles = makeStyles(theme => ({
   dropdown: {
-    backgroundColor: 'white',
-    position: 'absolute',
-    width: '100%',
-    zIndex: theme.zIndex.drawer + 1,
-    top: 'calc(100% - 1px)',
-    borderWidth: '0 1px 1px 1px',
-    borderColor: theme.palette.secondary.lightest,
-    borderStyle: 'solid',
     overflow: 'auto',
-    maxHeight: theme.spacing(40),
-    boxShadow: 'none',
-    borderRadius: 0,
-    marginTop: 0,
+    maxHeight: theme.spacing(39),
   },
   message: {
     fontSize: 14,
@@ -186,7 +175,7 @@ const ExtractsTree = React.memo((
     <div
       className={clsx(classes.dropdown, {[classes.top]: menuPlacement === 'top'})}>
       <div className={classes.message}>
-        <Divider className={{[classes.hideDivider]: menuPlacement === 'top'}} />
+        {/* <Divider className={{[classes.hideDivider]: menuPlacement === 'top'}} /> */}
         <ul>
           <li>Type or select source record field</li>
           {isArrayType && <li>Separate additional fields with a comma (,)</li>}
