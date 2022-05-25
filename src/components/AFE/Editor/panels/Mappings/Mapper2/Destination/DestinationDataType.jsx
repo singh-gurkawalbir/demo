@@ -21,6 +21,9 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
     width: theme.spacing(9),
     padding: 0,
+    '&:focus': {
+      color: theme.palette.primary.main,
+    },
     '&.Mui-disabled': {
       height: 38,
       backgroundColor: theme.palette.background.paper2,
@@ -67,7 +70,7 @@ const useStyles = makeStyles(theme => ({
       left: '0px',
     },
     '&:hover': {
-      background: 'none',
+      background: theme.palette.background.paper2,
       '&:before': {
         background: theme.palette.primary.main,
       },
@@ -78,6 +81,7 @@ const useStyles = makeStyles(theme => ({
   },
   itemSelected: {
     position: 'relative',
+    backgroundColor: theme.palette.background.paper2,
     '&:before': {
       content: '""',
       width: '3px',
