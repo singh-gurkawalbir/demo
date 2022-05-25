@@ -6,7 +6,9 @@ import javascript from '../javascript';
 export default {
   init: ({ options }) => {
     const activeProcessor = 'filter';
-    const { router = {}, routerIndex } = options;
+    const { router = {}, routerIndex, prePatches } = options;
+    const editorTitle = prePatches ? 'Add branching' : 'Edit branching';
+
     const { routeRecordsUsing, script = {} } = router;
     const routerObj = cloneDeep(router);
 
@@ -32,6 +34,7 @@ export default {
     return {
       ...options,
       rule,
+      editorTitle,
     };
   },
 

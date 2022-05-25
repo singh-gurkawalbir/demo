@@ -5,16 +5,29 @@ import {
   IconButton,
   MenuItem,
 } from '@material-ui/core';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { selectors } from '../../../../reducers';
 import ArrowPopper from '../../../ArrowPopper';
 import EllipsisHorizontalIcon from '../../../icons/EllipsisHorizontalIcon';
 import TrashIcon from '../../../icons/TrashIcon';
 import useConfirmDialog from '../../../ConfirmDialog';
 import RawHtml from '../../../RawHtml';
+import messageStore from '../../../../utils/messageStore';
+import actions from '../../../../actions';
 
-export default function RouterMenu() {
+export default function RouterMenu({ editorId }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const history = useHistory();
   const { confirmDialog } = useConfirmDialog();
   const open = Boolean(anchorEl);
+  const dispatch = useDispatch();
+  const flowId = useSelector(state => selectors.editor(state, editorId)?.flowId);
+  const routerId = useSelector(state => selectors.editorRule(state, editorId)?.id);
+  const {
+    configuredCount,
+    unconfiguredCount,
+  } = useSelector(state => selectors.fbRouterStepsInfo(state, flowId, routerId), shallowEqual);
 
   const handleCloseMenu = event => {
     event.stopPropagation();
@@ -28,14 +41,7 @@ export default function RouterMenu() {
   const handleDelete = useCallback(event => {
     handleCloseMenu(event);
 
-    /* TODO: fetch configured/unconfigured steps and replace below */
-    /* If it is too hard to get both counts, we can replace with total step count */
-    const configuredCount = 3;
-    const unconfiguredCount = 2;
-    const message = `<p>Are you sure you want to delete this branching router?</p>
-      <p>In the first branch, all steps/branching routers will persist and become a linear flow.</p>
-      <p>All other branches and all steps/branching routers inside 
-      (${configuredCount} configured steps, ${unconfiguredCount} unconfigured steps). will be removed</p>`;
+    const message = messageStore('ROUTER_DELETE_CONFIRMATION_MESSAGE', {configuredCount, unconfiguredCount});
 
     confirmDialog({
       title: 'Confirm delete',
@@ -44,13 +50,15 @@ export default function RouterMenu() {
         {
           label: 'Confirm',
           onClick: () => {
-            /* TODO: dispatch action to delete router */
+            dispatch(actions.flow.deleteRouter(flowId, routerId));
+            history.goBack();
           },
         },
         { label: 'Cancel', variant: 'text' },
       ],
     });
   },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   [confirmDialog]
   );
 
