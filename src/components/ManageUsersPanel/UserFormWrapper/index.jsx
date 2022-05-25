@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import UserForm from './UserForm';
 import {
@@ -11,12 +11,14 @@ import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
 import useCommStatus from '../../../hooks/useCommStatus';
+import { selectors } from '../../../reducers';
 
 export default function UserFormWrapper({ userId }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const [actionsToClear, setActionsToClear] = useState();
   const [disableSave, setDisableSave] = useState(false);
+  const { name, email: userEmail } = useSelector(selectors.userProfile);
   const handleSaveClick = useCallback(
     ({ email, accessLevel, integrationsToMonitor, integrationsToManage, accountSSORequired }) => {
       const aShareData = {
@@ -26,6 +28,18 @@ export default function UserFormWrapper({ userId }) {
         integrationAccessLevel: [],
         accountSSORequired,
       };
+
+      dispatch(
+        actions.analytics.gainsight.trackEvent('MY_ACCOUNT', {
+          operation: 'Invite sent',
+          timestamp: new Date(),
+          recipient: email,
+          senderName: name,
+          senderEmail: userEmail,
+          permission: accessLevel,
+          tab: 'User',
+        })
+      );
 
       if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
         integrationsToManage.forEach(_integrationId =>
@@ -59,7 +73,7 @@ export default function UserFormWrapper({ userId }) {
       }
       setDisableSave(true);
     },
-    [userId, dispatch]
+    [userId, name, userEmail, dispatch]
   );
 
   const handleClose = useCallback(() => history.goBack(), [history]);

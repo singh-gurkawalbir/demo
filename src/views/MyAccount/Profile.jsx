@@ -130,6 +130,14 @@ export default function ProfilePanel() {
     const { timeFormat, dateFormat, showRelativeDateTime } = completePayloadCopy;
     const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime };
 
+    dispatch(
+      actions.analytics.gainsight.trackEvent('MY_ACCOUNT', {
+        operation: 'Developer mode',
+        timestamp: new Date(),
+        status: completePayloadCopy.developer ? 'Enabled' : 'Disabled',
+        tab: 'Profile',
+      })
+    );
     dispatch(actions.user.preferences.update(preferencesPayload));
     // deleting preferences from completePayloadCopy
     delete completePayloadCopy.timeFormat;
