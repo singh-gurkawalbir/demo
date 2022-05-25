@@ -119,7 +119,7 @@ export default function ArrowPopper({
   onClose = () => {}, // default to noop.
   className,
   offsetPopper,
-  boundaryElement,
+  boundaryElement = 'viewport',
   restrictToParent = true,
   preventOverflow = true,
   ...rest

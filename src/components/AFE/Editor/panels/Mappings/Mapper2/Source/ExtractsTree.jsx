@@ -4,7 +4,6 @@ import Tree from 'rc-tree';
 import {isEmpty} from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider, Typography } from '@material-ui/core';
-import clsx from 'clsx';
 import {SwitcherIcon} from '../index';
 import {selectors} from '../../../../../../../reducers';
 import {filterExtractsNode, getFinalSelectedExtracts} from '../../../../../../../utils/mapping';
@@ -93,14 +92,6 @@ const useStyles = makeStyles(theme => ({
   treePropName: {
     wordBreak: 'break-all',
   },
-  top: {
-    top: 'auto',
-    bottom: 'calc(100% - 1px)',
-    borderWidth: '1px',
-  },
-  hideDivider: {
-    display: 'none',
-  },
 })
 );
 
@@ -134,7 +125,6 @@ const ExtractsTree = React.memo((
     onBlur,
     flowId,
     resourceId,
-    menuPlacement,
   }) => {
   const classes = useStyles();
   const isGroupedSampleData = useSelector(state => selectors.mapping(state).isGroupedSampleData);
@@ -175,9 +165,8 @@ const ExtractsTree = React.memo((
 
   return (
     <div
-      className={clsx(classes.dropdown, {[classes.top]: menuPlacement === 'top'})}>
+      className={classes.dropdown}>
       <div className={classes.message}>
-        {/* <Divider className={{[classes.hideDivider]: menuPlacement === 'top'}} /> */}
         <ul>
           <li>Type or select source record field</li>
           {isArrayType && <li>Separate additional fields with a comma (,)</li>}
