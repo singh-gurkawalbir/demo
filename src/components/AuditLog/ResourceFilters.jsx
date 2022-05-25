@@ -189,13 +189,11 @@ export function ResourceIdFilter(props) {
   );
 }
 
-export function AuditLogActionFilter(props) {
-  const {
-    classes,
-    filters,
-    onChange,
-  } = props;
-
+export function AuditLogActionFilter({
+  classes,
+  filters,
+  onChange,
+}) {
   return (
     <FormControl className={classes.formControl}>
       <CeligoSelect

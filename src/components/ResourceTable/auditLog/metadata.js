@@ -34,7 +34,7 @@ export default {
     },
     {
       key: 'resource',
-      heading: 'Resource  type',
+      heading: 'Resource type',
       isLoggable: true,
       Value: ({rowData: al}) => RESOURCE_TYPE_SINGULAR_TO_LABEL[al.resourceType],
       width: '10%',
