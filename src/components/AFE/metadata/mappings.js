@@ -7,6 +7,7 @@ import ToggleMapperVersion from '../Drawer/actions/ToggleMapperVersion';
 import InputOutputTitle from '../Editor/actions/Mappings/InputOutputTitle';
 import MapperPanelTitle from '../Editor/actions/Mappings/MapperPanelTitle';
 import AssistantPanel from '../Editor/panels/Mappings/Assistant/Panel';
+// import actions from '../../../actions';
 
 export default {
   type: 'mappings',
@@ -29,7 +30,12 @@ export default {
           area: 'assistant',
           Panel: AssistantPanel,
           helpKey: `${mappingPreviewType === 'netsuite' ? 'afe.mappings.netsuite.assistant' : 'afe.mappings.salesforce.assistant'}`,
-        },
+          refreshAction: editor => editor.refreshAction,
+          // {
+          //   console.log('editor', editor);
+          //
+          // },
+        }
       );
     }
 

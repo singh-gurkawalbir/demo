@@ -729,7 +729,7 @@ export function* initSampleData({ id }) {
 }
 
 export function* initEditor({ id, editorType, options }) {
-  const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId, ssLinkedConnectionId} = options || {};
+  const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId, ssLinkedConnectionId, mappingPreviewType} = options || {};
 
   let fieldState = {};
   let formState = {};
@@ -758,6 +758,7 @@ export function* initEditor({ id, editorType, options }) {
 
   const init = processorLogic.init(editorType);
 
+  console.log('resource before', resource, mappingPreviewType);
   if (init) {
     if (editorType === 'handlebars' || editorType === 'sql' || editorType === 'databaseMapping') {
       const { _connectionId: connectionId } = resource || {};
@@ -821,6 +822,13 @@ export function* initEditor({ id, editorType, options }) {
       const scriptContext = yield select(selectors.getScriptContext, {flowId, contextType: 'hook'});
 
       formattedOptions = init({options: formattedOptions, resource, fieldState, flow, scriptContext});
+    } else if (editorType === 'mappings' && mappingPreviewType === 'salesforce') {
+      const {recordTypeId, searchLayoutable} = (yield select(selectors.getSalesforceMasterRecordTypeInfo, resource._id)).data;
+      const { _connectionId: connectionId, salesforce} = resource || {};
+      const {sObjectType} = salesforce || {};
+      const salesforcelayoutId = searchLayoutable ? recordTypeId : undefined;
+
+      formattedOptions = init({options: formattedOptions, salesforcelayoutId, sObjectType, connectionId, mappingPreviewType, resource, fieldState, flow});
     } else {
       formattedOptions = init({options: formattedOptions, resource, fieldState, flow});
     }
