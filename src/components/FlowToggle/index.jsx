@@ -25,9 +25,8 @@ export default function FlowToggle({
   const classes = useStyles();
   const dispatch = useDispatch();
   const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
-  const { onOffInProgress } = useSelector(
+  const onOffInProgress = useSelector(
     state => selectors.isOnOffInProgress(state, flow._id),
-    (left, right) => left.onOffInProgress === right.onOffInProgress
   );
   const istwoDotZeroFrameWork = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
 
