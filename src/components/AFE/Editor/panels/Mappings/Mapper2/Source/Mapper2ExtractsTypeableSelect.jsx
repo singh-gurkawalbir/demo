@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@material-ui/core';
 import clsx from 'clsx';
 import ArrowDownIcon from '../../../../../../icons/ArrowDownIcon';
-import useOnClickOutside from '../../../../../../../hooks/useClickOutSide';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import ExtractsTree from './ExtractsTree';
 import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
@@ -48,7 +47,8 @@ const useStyles = makeStyles(theme => ({
   extractListPopper: {
     width: theme.spacing(50),
     borderRadius: 0,
-    top: '0 !important',
+    top: '2px !important',
+    border: 'none',
   },
   extractListPopperCompact: {
     width: theme.spacing(38),
@@ -59,6 +59,10 @@ const useStyles = makeStyles(theme => ({
   extractPopperPaper: {
     boxShadow: 'none',
     borderRadius: 0,
+    border: `1px solid ${theme.palette.secondary.lightest}`,
+    '&:empty': {
+      display: 'none',
+    },
   },
 })
 );
@@ -120,7 +124,6 @@ export default function Mapper2ExtractsTypeableSelect({
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState(propValue);
   const [isTruncated, setIsTruncated] = useState(false);
-  const containerRef = useRef();
   const inputFieldRef = useRef();
 
   const handleChange = useCallback(event => {
@@ -138,13 +141,18 @@ export default function Mapper2ExtractsTypeableSelect({
     setIsFocused(true);
   }, []);
 
-  const handleBlur = useCallback(() => {
+  const handleBlur = useCallback(event => {
+    // handleBlur gets called by ClickAwayListener inside ArrowPopper to close the dropdown
+    // if a click was made outside the dropdown.
+    // But we should not consider the input textarea as "outside the dropdown" and dropdown should not be closed
+    // when input field is clicked, hence below condition is added
+    if (event?.target?.id === `${nodeKey}-mapper2SourceTextField`) return;
+
     setIsFocused(false);
     setAnchorEl(null);
     if (propValue !== inputValue) { onBlur(inputValue); }
-  }, [propValue, inputValue, onBlur]);
+  }, [nodeKey, propValue, inputValue, onBlur]);
 
-  useOnClickOutside(containerRef, isFocused && handleBlur);
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
 
   const handleMouseOver = useCallback(() => {
@@ -160,7 +168,6 @@ export default function Mapper2ExtractsTypeableSelect({
     <FormControl
       data-test={id}
       key={id}
-      ref={containerRef}
       >
       <Tooltip
         disableFocusListener
@@ -177,9 +184,9 @@ export default function Mapper2ExtractsTypeableSelect({
         />
         )} >
         <TextField
+          id={`${nodeKey}-mapper2SourceTextField`}
           isLoggable
           onMouseMove={handleMouseOver}
-          // className={clsx(classes.customTextField, {[classes.textFieldWithDataType]: srcDataType})}
           className={classes.customTextField}
           variant="filled"
           autoFocus={isFocused}
@@ -189,19 +196,6 @@ export default function Mapper2ExtractsTypeableSelect({
           disabled={disabled}
           multiline={isFocused}
           placeholder={!disabled && 'Source record field'}
-          // InputProps={{
-          //   endAdornment: hideSourceDropdown
-          //     ? (<Typography variant="caption" className={classes.srcDataType}>{srcDataType}</Typography>)
-          //     : (
-          //       <InputAdornment className={classes.autoSuggestDropdown} position="start">
-          //         <Typography variant="caption" className={classes.srcDataType}>{srcDataType}</Typography>
-          //         <ArrowDownIcon />
-          //       </InputAdornment>
-          //     ),
-          //   inputProps: {
-          //     ref: inputFieldRef,
-          //   },
-          // }}
           InputProps={{
             endAdornment: !hideSourceDropdown &&
               (
@@ -212,40 +206,47 @@ export default function Mapper2ExtractsTypeableSelect({
             inputProps: {
               ref: inputFieldRef,
             },
-          }} />
+          }}
+           />
       </Tooltip >
+
       {/* only render tree component if field is focussed and not disabled.
       Here we are wrapping tree component with ArrowPopper to correctly handle the
       dropdown placement logic
       */}
-      {isFocused && !disabled && !hideSourceDropdown && (
+
       <ArrowPopper
         placement="bottom"
         id="extractPopper"
-        open={!!anchorEl}
+        open={isFocused}
         anchorEl={anchorEl}
+        onClose={handleBlur}
         preventOverflow={false}
         offsetPopper="0,6"
         classes={{
-          popper: clsx(classes.extractListPopper, {[classes.extractListPopperCompact]: editorLayout === 'compact2'}),
+          popper: clsx(classes.extractListPopper, {
+            [classes.extractListPopperCompact]: editorLayout === 'compact2',
+          }),
           arrow: classes.extractPopperArrow,
           paper: classes.extractPopperPaper,
         }}
         >
-        <ExtractsTree
-          key={id}
-          nodeKey={nodeKey}
-          destDataType={destDataType}
-          propValue={propValue}
-          inputValue={inputValue}
-          onBlur={onBlur}
-          setInputValue={setInputValue}
-          setIsFocused={setIsFocused}
-          flowId={flowId}
-          resourceId={importId}
+        {isFocused && !disabled && !hideSourceDropdown && (
+          <ExtractsTree
+            key={id}
+            nodeKey={nodeKey}
+            destDataType={destDataType}
+            propValue={propValue}
+            inputValue={inputValue}
+            onBlur={onBlur}
+            setInputValue={setInputValue}
+            setIsFocused={setIsFocused}
+            flowId={flowId}
+            resourceId={importId}
         />
+        )}
       </ArrowPopper>
-      )}
+
     </FormControl>
   );
 }

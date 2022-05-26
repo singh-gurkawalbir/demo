@@ -36,6 +36,12 @@ const useStyles = makeStyles(theme => ({
     },
     '&:nth-of-type(2)': {
       flex: 1,
+      '& .MuiFilledInput-multiline': {
+        minHeight: theme.spacing(5),
+        '&:hover': {
+          borderColor: theme.palette.primary.main,
+        },
+      },
     },
   },
   childHeaderLarge: {
