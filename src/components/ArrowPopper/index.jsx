@@ -118,7 +118,10 @@ export default function ArrowPopper({
   classes: overrideClasses,
   onClose = () => {}, // default to noop.
   className,
+  offsetPopper,
+  boundaryElement = 'viewport',
   restrictToParent = true,
+  preventOverflow = true,
   ...rest
 }) {
   const [arrowEl, setArrowEl] = useState(null);
@@ -127,6 +130,7 @@ export default function ArrowPopper({
     const _modifiers = {
       flip: {
         enabled: true,
+        boundariesElement: boundaryElement,
       },
       arrow: {
         enabled: true,
@@ -134,15 +138,21 @@ export default function ArrowPopper({
       },
     };
 
+    if (offsetPopper) {
+      _modifiers.offset = {
+        offset: offsetPopper,
+      };
+    }
+
     if (restrictToParent) {
       _modifiers.preventOverflow = {
-        enabled: true,
+        enabled: preventOverflow,
         boundariesElement: 'scrollParent',
       };
     }
 
     return _modifiers;
-  }, [arrowEl, restrictToParent]);
+  }, [arrowEl, restrictToParent, preventOverflow, offsetPopper, boundaryElement]);
 
   return (
     <Popper

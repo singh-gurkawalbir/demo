@@ -4,7 +4,6 @@ import Tree from 'rc-tree';
 import {isEmpty} from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider, Typography } from '@material-ui/core';
-import clsx from 'clsx';
 import {SwitcherIcon} from '../index';
 import {selectors} from '../../../../../../../reducers';
 import {filterExtractsNode, getFinalSelectedExtracts} from '../../../../../../../utils/mapping';
@@ -12,33 +11,22 @@ import { useSelectorMemo } from '../../../../../../../hooks';
 
 const useStyles = makeStyles(theme => ({
   dropdown: {
-    backgroundColor: 'white',
-    position: 'absolute',
-    width: '100%',
-    zIndex: theme.zIndex.drawer + 1,
-    top: 'calc(100% - 1px)',
-    borderWidth: '0 1px 1px 1px',
-    borderColor: theme.palette.secondary.lightest,
-    borderStyle: 'solid',
     overflow: 'auto',
-    maxHeight: theme.spacing(40),
-    boxShadow: 'none',
-    borderRadius: 0,
-    marginTop: 0,
+    maxHeight: theme.spacing(39),
   },
   message: {
     fontSize: 14,
     lineHeight: '14px',
     color: theme.palette.secondary.light,
-    margin: theme.spacing(0, 2, 2, 2),
-    '& ul': {
-      paddingLeft: theme.spacing(2),
-      fontStyle: 'italic',
-      lineHeight: 1,
-      '& li+li': {
-        marginTop: theme.spacing(2),
-      },
+    margin: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
+    fontStyle: 'italic',
+    '& li+li': {
+      marginTop: theme.spacing(2),
     },
+  },
+  messageDivider: {
+    margin: theme.spacing(1, 2),
   },
   childTree: {
     paddingBottom: theme.spacing(1),
@@ -104,14 +92,6 @@ const useStyles = makeStyles(theme => ({
   treePropName: {
     wordBreak: 'break-all',
   },
-  top: {
-    top: 'auto',
-    bottom: 'calc(100% - 1px)',
-    borderWidth: '1px',
-  },
-  hideDivider: {
-    display: 'none',
-  },
 })
 );
 
@@ -145,7 +125,6 @@ const ExtractsTree = React.memo((
     onBlur,
     flowId,
     resourceId,
-    menuPlacement,
   }) => {
   const classes = useStyles();
   const isGroupedSampleData = useSelector(state => selectors.mapping(state).isGroupedSampleData);
@@ -186,15 +165,12 @@ const ExtractsTree = React.memo((
 
   return (
     <div
-      className={clsx(classes.dropdown, {[classes.top]: menuPlacement === 'top'})}>
-      <div className={classes.message}>
-        <Divider className={{[classes.hideDivider]: menuPlacement === 'top'}} />
-        <ul>
-          <li>Type or select source record field</li>
-          {isArrayType && <li>Separate additional fields with a comma (,)</li>}
-        </ul>
-        <Divider />
-      </div>
+      className={classes.dropdown}>
+      <ul className={classes.message}>
+        <li>Type or select source record field</li>
+        {isArrayType && <li>Separate additional fields with a comma (,)</li>}
+      </ul>
+      <Divider className={classes.messageDivider} />
 
       <Tree
         className={classes.childTree}
