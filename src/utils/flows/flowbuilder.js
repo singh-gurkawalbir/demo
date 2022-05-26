@@ -1,11 +1,55 @@
 /* eslint-disable no-param-reassign */
 
-import { cloneDeep } from 'lodash';
+import { cloneDeep, uniq, uniqBy } from 'lodash';
 import jsonPatch from 'fast-json-patch';
 import { BranchPathRegex, GRAPH_ELEMENTS_TYPE } from '../../constants';
 import { generateId } from '../string';
 
-export function generateDefaultEdge(source, target, {routerIndex, branchIndex, hidden, processorCount} = {}) {
+export const getAllRouterPaths = flow => {
+  const { routers = [] } = flow || {};
+  const paths = [];
+
+  const pathToTerminal = (routerId, paths, path) => {
+    const router = routers.find(r => r.id === routerId);
+
+    if (!router) return;
+    path.push(router.id);
+    (router.branches || []).forEach(branch => {
+      if (branch.nextRouterId) {
+        pathToTerminal(branch.nextRouterId, paths, [...path]);
+      } else {
+        paths.push(path);
+      }
+    });
+  };
+
+  pathToTerminal(routers[0].id, paths, []);
+
+  return uniqBy(paths, path => path.join(','));
+};
+
+export const getPreceedingRoutersMap = flow => {
+  const { routers = [] } = flow || {};
+  const routerPaths = getAllRouterPaths(flow);
+  const map = {};
+
+  routers.forEach(router => {
+    const preceedingRouters = [];
+
+    routerPaths.forEach(path => {
+      const index = path.findIndex(p => p === router.id);
+
+      if (index > -1) {
+        preceedingRouters.push(...path.slice(0, index));
+      }
+    });
+    map[router.id] = uniq(preceedingRouters);
+  });
+
+  return map;
+};
+
+export function generateDefaultEdge(source, target, {routerIndex = 0, branchIndex = 0, hidden, processorCount} = {}) {
   return {
     id: `${source}-${target}`,
     source,
@@ -173,6 +217,55 @@ const generateNodesAndEdgesFromNonBranchedFlow = flow => {
 
 export const getRouter = (routerId, flow = {}) => flow.routers?.find(r => r.id === routerId);
 
+const populateMergeData = (flow, elements) => {
+  const terminalNodes = elements.filter(el => el.type === GRAPH_ELEMENTS_TYPE.TERMINAL);
+  const { routers = [] } = flow;
+
+  const preceedingRoutersMap = getPreceedingRoutersMap(flow);
+
+  elements.forEach(element => {
+    if (element.type === GRAPH_ELEMENTS_TYPE.EDGE) {
+      const targetElement = elements.find(el => el.id === element.target);
+      const sourceElement = elements.find(el => el.id === element.target);
+
+      if (sourceElement && targetElement && (
+        sourceElement.type === GRAPH_ELEMENTS_TYPE.PG_STEP || // is connected to Page generator => cant merge to page generators
+        sourceElement.type === GRAPH_ELEMENTS_TYPE.MERGE || // is edge emerging out of merge router => same as merging to the router
+        targetElement.type === GRAPH_ELEMENTS_TYPE.MERGE || // is an edge to a merge router => same as merging to the router
+        targetElement.type === GRAPH_ELEMENTS_TYPE.TERMINAL // is an edge to a terminal node => will create a merge router when terminal nodes merge anyway
+      )) {
+        return;
+      }
+      terminalNodes.forEach(terminalNode => {
+        if (BranchPathRegex.test(terminalNode.data.path)) {
+          const [, terminalRouterIndex, terminalBranchIndex] = BranchPathRegex.exec(terminalNode.data.path);
+          const terminalRouterId = routers[terminalRouterIndex]?.id;
+
+          const [, edgeRouterIndex, edgeBranchIndex] = BranchPathRegex.exec(element.data.path);
+          const edgeRouterId = routers[edgeRouterIndex]?.id;
+
+          if (edgeRouterId === terminalRouterId) {
+            if (terminalBranchIndex !== edgeBranchIndex) {
+              if (!element.data.mergableTerminals) {
+                element.data.mergableTerminals = [];
+              }
+              element.data.mergableTerminals.push(terminalNode.id);
+            }
+          } else {
+            const preceedingRouters = preceedingRoutersMap[terminalRouterId];
+
+            if (!preceedingRouters.includes(edgeRouterId)) {
+              if (!element.data.mergableTerminals) {
+                element.data.mergableTerminals = [];
+              }
+              element.data.mergableTerminals.push(terminalNode.id);
+            }
+          }
+        }
+      });
+    }
+  });
+};
 export const generateNodesAndEdgesFromBranchedFlow = flow => {
   const {pageGenerators = [], routers = []} = flow;
   let firstPPId = routers[0].id;
@@ -245,6 +338,7 @@ export const generateNodesAndEdgesFromBranchedFlow = flow => {
   };
 
   routersArr.forEach(populateRouterElements);
+  populateMergeData(flow, elements);
 
   return elements;
 };
@@ -256,7 +350,6 @@ export const generateReactFlowGraph = flow => {
 
   const {routers} = flow;
 
-  // console.log('flow', flow);
   if (!routers || routers.length === 0) {
     return generateNodesAndEdgesFromNonBranchedFlow(flow);
   }
