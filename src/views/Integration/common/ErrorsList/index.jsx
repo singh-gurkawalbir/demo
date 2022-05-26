@@ -31,7 +31,7 @@ const metadata = {
       isLoggable: true,
       Value: ({rowData}) => {
         const { type, id } = rowData;
-        const applicationType = useSelector(state => selectors.applicationType(state, type, id));
+        const applicationType = useSelector(state => selectors.applicationType(state, type, id)) || '';
         const isDataLoader = useSelector(state => selectors.isDataLoaderExport(state, id));
         const assistantType = useSelector(state => {
           const { _connectionId} = selectors.resource(state, type, id) || {};
