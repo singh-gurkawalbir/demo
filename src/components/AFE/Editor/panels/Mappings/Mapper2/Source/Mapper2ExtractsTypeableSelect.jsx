@@ -1,5 +1,4 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@material-ui/core';
 import clsx from 'clsx';
@@ -10,7 +9,6 @@ import ExtractsTree from './ExtractsTree';
 import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import messageStore from '../../../../../../../utils/messageStore';
 import ArrowPopper from '../../../../../../ArrowPopper';
-import {selectors} from '../../../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -53,8 +51,7 @@ const useStyles = makeStyles(theme => ({
     top: '0 !important',
   },
   extractListPopperCompact: {
-    width: '100%',
-    top: 'auto !important',
+    width: theme.spacing(38),
   },
   extractPopperArrow: {
     display: 'none',
@@ -65,6 +62,7 @@ const useStyles = makeStyles(theme => ({
   },
 })
 );
+
 export const TooltipTitle = ({
   isTruncated,
   inputValue,
@@ -102,6 +100,7 @@ export const TooltipTitle = ({
     </>
   );
 };
+
 export default function Mapper2ExtractsTypeableSelect({
   nodeKey,
   dataType: destDataType = MAPPING_DATA_TYPES.STRING,
@@ -114,6 +113,7 @@ export default function Mapper2ExtractsTypeableSelect({
   isLookup,
   isHardCodedValue,
   isHandlebarExp,
+  editorLayout,
 }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -123,11 +123,10 @@ export default function Mapper2ExtractsTypeableSelect({
   const containerRef = useRef();
   const inputFieldRef = useRef();
 
-  const layout = useSelector(state => selectors.editorLayout(state, `mappings-${importId}`));
-
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
   }, []);
+
   const handleFocus = useCallback(e => {
     e.stopPropagation();
     setAnchorEl(e.currentTarget);
@@ -138,6 +137,7 @@ export default function Mapper2ExtractsTypeableSelect({
     e.target.setSelectionRange(value.length, value.length);
     setIsFocused(true);
   }, []);
+
   const handleBlur = useCallback(() => {
     setIsFocused(false);
     setAnchorEl(null);
@@ -146,9 +146,11 @@ export default function Mapper2ExtractsTypeableSelect({
 
   useOnClickOutside(containerRef, isFocused && handleBlur);
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
+
   const handleMouseOver = useCallback(() => {
     setIsTruncated(inputFieldRef.current.offsetWidth < inputFieldRef.current.scrollWidth);
   }, []);
+
   const hideSourceDropdown = isLookup || isHardCodedValue || isHandlebarExp;
   // tooltip is only visible when not in focus and for truncated values
   // and/or source dropdown is hidden
@@ -212,19 +214,20 @@ export default function Mapper2ExtractsTypeableSelect({
             },
           }} />
       </Tooltip >
-      {/* only render tree component if field is focussed and not disabled */}
+      {/* only render tree component if field is focussed and not disabled.
+      Here we are wrapping tree component with ArrowPopper to correctly handle the
+      dropdown placement logic
+      */}
       {isFocused && !disabled && !hideSourceDropdown && (
       <ArrowPopper
         placement="bottom"
         id="extractPopper"
         open={!!anchorEl}
         anchorEl={anchorEl}
-        disablePortal={layout === 'compact2'}
         preventOverflow={false}
         offsetPopper="0,6"
-        boundaryElement="scrollParent"
         classes={{
-          popper: clsx(classes.extractListPopper, {[classes.extractListPopperCompact]: layout === 'compact2'}),
+          popper: clsx(classes.extractListPopper, {[classes.extractListPopperCompact]: editorLayout === 'compact2'}),
           arrow: classes.extractPopperArrow,
           paper: classes.extractPopperPaper,
         }}

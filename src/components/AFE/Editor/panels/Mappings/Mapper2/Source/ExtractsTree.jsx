@@ -164,8 +164,7 @@ const ExtractsTree = React.memo((
   if (isEmpty(treeData)) return null;
 
   return (
-    <div
-      className={classes.dropdown}>
+    <div className={classes.dropdown}>
       <ul className={classes.message}>
         <li>Type or select source record field</li>
         {isArrayType && <li>Separate additional fields with a comma (,)</li>}
