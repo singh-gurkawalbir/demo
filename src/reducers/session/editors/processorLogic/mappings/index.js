@@ -1,22 +1,12 @@
-import actions from '../../../../../actions';
-
 export default {
   processor: 'mapperProcessor',
-  init: ({options, resource, salesforcelayoutId, sObjectType, connectionId, mappingPreviewType}) => {
+  init: ({options, resource}) => {
     const importName = resource?.name;
     const editorTitle = importName ? `Edit Mapping: ${importName}` : 'Edit Mapping';
-    let refreshAction;
-
-    if (mappingPreviewType === 'salesforce') {
-      const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${salesforcelayoutId}`;
-
-      refreshAction = actions.metadata.request(connectionId, commMetaPath, {refreshCache: true});
-    }
 
     return {
       ...options,
       editorTitle,
-      refreshAction,
     };
   },
   requestBody: () => ({
@@ -50,4 +40,3 @@ export default {
     return { data: finalResult || '' };
   },
 };
-

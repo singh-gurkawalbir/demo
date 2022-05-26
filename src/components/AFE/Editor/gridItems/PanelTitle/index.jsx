@@ -1,10 +1,8 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { useDispatch } from 'react-redux';
 import Help from '../../../../Help';
-import RefreshIcon from '../../../../icons/RefreshIcon';
 
 const useStyles = makeStyles(theme => ({
   titleContainer: {
@@ -30,13 +28,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function PanelTitle({ title, children, className, helpKey, titleColor, refreshAction}) {
+export default function PanelTitle({ title, children, className, helpKey, titleColor}) {
   const classes = useStyles();
-  const dispatch = useDispatch();
-
-  const handleRefreshClick = useCallback(() => {
-    dispatch(refreshAction);
-  }, [dispatch, refreshAction]);
 
   return (
     <div className={clsx(classes.titleContainer, className)}>
@@ -46,11 +39,6 @@ export default function PanelTitle({ title, children, className, helpKey, titleC
           title={title}
           className={classes.helpButton}
           helpKey={helpKey}
-        />
-      )}
-      {refreshAction && (
-        <RefreshIcon
-          onClick={handleRefreshClick}
         />
       )}
     </div>

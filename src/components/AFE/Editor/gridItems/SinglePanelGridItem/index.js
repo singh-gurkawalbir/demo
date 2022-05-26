@@ -15,7 +15,7 @@ const useStyles = makeStyles({
   panel: { flex: '1 1 100px', minHeight: 50, position: 'relative' },
 });
 
-export default function SinglePanelGridItem({area, title, children, helpKey, ref, isLoggable, refreshAction}) {
+export default function SinglePanelGridItem({area, title, children, helpKey, ref, isLoggable}) {
   const classes = useStyles();
 
   return (
@@ -23,7 +23,7 @@ export default function SinglePanelGridItem({area, title, children, helpKey, ref
       <div className={classes.flexContainer}>
         { title && (
         <div className={classes.title}>
-          <PanelTitle title={title} helpKey={helpKey} refreshAction={refreshAction} />
+          <PanelTitle title={title} helpKey={helpKey} />
         </div>
         )}
         <div className={classes.panel} {...isLoggableAttr(isLoggable)}>

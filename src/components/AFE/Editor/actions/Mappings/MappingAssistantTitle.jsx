@@ -1,0 +1,114 @@
+import React, { useCallback } from 'react';
+// import { Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { IconButton } from '@material-ui/core';
+import Help from '../../../../Help';
+import { selectors } from '../../../../../reducers';
+import actions from '../../../../../actions';
+// import ActionGroup from '../../../../ActionGroup';
+import RefreshIcon from '../../../../icons/RefreshIcon';
+
+const useStyles = makeStyles(theme => ({
+  wrapper: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  helpButton: {
+    padding: 0,
+    margin: 2,
+    // width: '100%',
+  },
+  message: {
+    backgroundColor: theme.palette.secondary.lightest,
+    borderRadius: 4,
+    padding: theme.spacing(0.5, 2),
+    color: theme.palette.secondary.darkest,
+    fontFamily: 'Roboto400',
+    lineHeight: 1,
+  },
+  refreshicon: {
+    // backgroundColor: theme.palette.secondary.lightest,
+    position: 'absolute',
+    right: '30px',
+    justifyContent: 'flex-end',
+    // display: 'flex',
+    // color: theme.palette.secondary.darkest,
+    // alignSelf: 'flex-end',
+    // justifyContent: 'top',
+  },
+}));
+
+export default function MappingAssistantTitle({editorId}) {
+  const classes = useStyles();
+  const {mappingPreviewType, resourceId} = useSelector(state => {
+    const e = selectors.editor(state, editorId);
+
+    return {
+      mappingPreviewType: e.mappingPreviewType,
+      resourceId: e.resourceId,
+    };
+  });
+
+  const dispatch = useDispatch();
+  // return the old title if its not mapper2 view
+  const helpKey = `${mappingPreviewType === 'netsuite' ? 'afe.mappings.netsuite.assistant' : 'afe.mappings.salesforce.assistant'}`;
+  const title = `${mappingPreviewType === 'netsuite' ? 'NetSuite' : 'Salesforce'} mapping assistant`;
+
+  const {adaptorType, _connectionId: connectionId, salesforce} = useSelector(state =>
+    selectors.resource(state, 'imports', resourceId)
+  );
+  const {sObjectType} = salesforce;
+  const salesforcelayoutId = useSelector(state => {
+    if (adaptorType === 'SalesforceImport') {
+      const salesforceMasterRecordTypeInfo = selectors.getSalesforceMasterRecordTypeInfo(state, resourceId);
+
+      if (salesforceMasterRecordTypeInfo?.data) {
+        const {recordTypeId, searchLayoutable} = salesforceMasterRecordTypeInfo.data;
+
+        if (searchLayoutable) {
+          return recordTypeId;
+        }
+      }
+    }
+  });
+
+  const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${salesforcelayoutId}`;
+
+  const showRefreshIconForSalesforce = connectionId && sObjectType && salesforcelayoutId;
+  const handleRefreshClick = useCallback(() => {
+    if (showRefreshIconForSalesforce) {
+      dispatch(
+        actions.metadata.request(
+          connectionId,
+          commMetaPath,
+          {refreshCache: true}
+        )
+      );
+    }
+  }, [commMetaPath, connectionId, dispatch, showRefreshIconForSalesforce]);
+
+  console.log('title', title);
+
+  return (
+    <div className={classes.wrapper}>
+      {title}
+      {helpKey && (
+        <Help
+          title={title}
+          className={classes.helpButton}
+          helpKey={helpKey}
+        />
+      )}
+      {showRefreshIconForSalesforce && (
+        <IconButton
+          variant="contained"
+          color="secondary"
+          className={classes.refreshicon}
+          onClick={handleRefreshClick}>
+          <RefreshIcon />
+        </IconButton>
+      )}
+    </div>
+  );
+}

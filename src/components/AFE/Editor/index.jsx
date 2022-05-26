@@ -165,7 +165,6 @@ export default function Editor({ editorId }) {
       saveError: e.saveMessage,
       resourceType: e.resourceType,
       mappingPreviewType: e.mappingPreviewType,
-      refreshAction: e.refreshAction,
     };
   }, shallowEqual);
 
@@ -318,8 +317,7 @@ export default function Editor({ editorId }) {
               key={p.area}
               dragBar={p.dragBar}
               title={resolveValue(p.title, editorContext)}
-              helpKey={resolveValue(p.helpKey, editorContext)}
-              refreshAction={resolveValue(p.refreshAction, editorContext)}>
+              helpKey={resolveValue(p.helpKey, editorContext)}>
               <p.Panel editorId={editorId} {...resolveValue(p.props, editorContext)} />
             </SinglePanelGridItem>
           )
