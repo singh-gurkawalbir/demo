@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 // import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';
@@ -9,7 +9,7 @@ import actions from '../../../../../actions';
 // import ActionGroup from '../../../../ActionGroup';
 import RefreshIcon from '../../../../icons/RefreshIcon';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   wrapper: {
     display: 'flex',
     alignItems: 'center',
@@ -17,30 +17,18 @@ const useStyles = makeStyles(theme => ({
   helpButton: {
     padding: 0,
     margin: 2,
-    // width: '100%',
-  },
-  message: {
-    backgroundColor: theme.palette.secondary.lightest,
-    borderRadius: 4,
-    padding: theme.spacing(0.5, 2),
-    color: theme.palette.secondary.darkest,
-    fontFamily: 'Roboto400',
-    lineHeight: 1,
   },
   refreshicon: {
-    // backgroundColor: theme.palette.secondary.lightest,
     position: 'absolute',
     right: '30px',
     justifyContent: 'flex-end',
-    // display: 'flex',
-    // color: theme.palette.secondary.darkest,
-    // alignSelf: 'flex-end',
-    // justifyContent: 'top',
   },
-}));
+});
 
 export default function MappingAssistantTitle({editorId}) {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const {mappingPreviewType, resourceId} = useSelector(state => {
     const e = selectors.editor(state, editorId);
 
@@ -48,17 +36,17 @@ export default function MappingAssistantTitle({editorId}) {
       mappingPreviewType: e.mappingPreviewType,
       resourceId: e.resourceId,
     };
-  });
+  }, shallowEqual);
 
-  const dispatch = useDispatch();
-  // return the old title if its not mapper2 view
   const helpKey = `${mappingPreviewType === 'netsuite' ? 'afe.mappings.netsuite.assistant' : 'afe.mappings.salesforce.assistant'}`;
   const title = `${mappingPreviewType === 'netsuite' ? 'NetSuite' : 'Salesforce'} mapping assistant`;
 
   const {adaptorType, _connectionId: connectionId, salesforce} = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
-  );
-  const {sObjectType} = salesforce;
+  ) || {};
+
+  const {sObjectType} = salesforce || {};
+
   const salesforcelayoutId = useSelector(state => {
     if (adaptorType === 'SalesforceImport') {
       const salesforceMasterRecordTypeInfo = selectors.getSalesforceMasterRecordTypeInfo(state, resourceId);
@@ -75,7 +63,7 @@ export default function MappingAssistantTitle({editorId}) {
 
   const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${salesforcelayoutId}`;
 
-  const showRefreshIconForSalesforce = connectionId && sObjectType && salesforcelayoutId;
+  const showRefreshIconForSalesforce = mappingPreviewType === 'salesforce' && connectionId && sObjectType && salesforcelayoutId;
   const handleRefreshClick = useCallback(() => {
     if (showRefreshIconForSalesforce) {
       dispatch(
@@ -87,8 +75,6 @@ export default function MappingAssistantTitle({editorId}) {
       );
     }
   }, [commMetaPath, connectionId, dispatch, showRefreshIconForSalesforce]);
-
-  console.log('title', title);
 
   return (
     <div className={classes.wrapper}>
