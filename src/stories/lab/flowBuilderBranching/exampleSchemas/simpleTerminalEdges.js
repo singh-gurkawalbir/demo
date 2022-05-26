@@ -1,4 +1,4 @@
-import { getSomePg, getSomePpImport } from '../Prototype/nodeGeneration';
+import { getSomePg, getSomePpImport } from '../../../../utils/flows/flowbuilder';
 
 const branchOne = {
   name: 'First Branch',
