@@ -50,6 +50,7 @@ const useStyles = makeStyles(theme => ({
   extractListPopper: {
     width: theme.spacing(50),
     borderRadius: 0,
+    top: '0 !important',
   },
   extractListPopperCompact: {
     width: '100%',

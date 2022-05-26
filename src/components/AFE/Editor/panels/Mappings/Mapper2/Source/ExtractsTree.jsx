@@ -18,15 +18,15 @@ const useStyles = makeStyles(theme => ({
     fontSize: 14,
     lineHeight: '14px',
     color: theme.palette.secondary.light,
-    margin: theme.spacing(0, 2, 2, 2),
-    '& ul': {
-      paddingLeft: theme.spacing(2),
-      fontStyle: 'italic',
-      lineHeight: 1,
-      '& li+li': {
-        marginTop: theme.spacing(2),
-      },
+    margin: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
+    fontStyle: 'italic',
+    '& li+li': {
+      marginTop: theme.spacing(2),
     },
+  },
+  messageDivider: {
+    margin: theme.spacing(1, 2),
   },
   childTree: {
     paddingBottom: theme.spacing(1),
@@ -166,13 +166,11 @@ const ExtractsTree = React.memo((
   return (
     <div
       className={classes.dropdown}>
-      <div className={classes.message}>
-        <ul>
-          <li>Type or select source record field</li>
-          {isArrayType && <li>Separate additional fields with a comma (,)</li>}
-        </ul>
-        <Divider />
-      </div>
+      <ul className={classes.message}>
+        <li>Type or select source record field</li>
+        {isArrayType && <li>Separate additional fields with a comma (,)</li>}
+      </ul>
+      <Divider className={classes.messageDivider} />
 
       <Tree
         className={classes.childTree}
