@@ -43,4 +43,4 @@ selectors.getLastExportDateTime = (state, flowId) => {
 
 selectors.isOnOffInProgress = (state, flowId) => !!(state && state[flowId] && state[flowId].onOffInProgress);
 
-selectors.flowRunStatus = (state, flowId) => ({ runStatus: state?.[flowId]?.runStatus || '' });
+selectors.flowRunStatus = (state, flowId) => state?.[flowId]?.runStatus;
