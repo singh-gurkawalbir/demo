@@ -106,7 +106,8 @@ export function Canvas({ flowId, fullscreen }) {
   const dragStepId = useSelector(state => selectors.fbDragStepId(state, flowId));
   const elementsMap = useSelector(state => selectors.fbGraphElementsMap(state, flowId));
 
-  // console.log(flowId, mergedFlow, drawerOpened);
+  console.log(flowId, mergedFlow, fullscreen);
+
   const updatedLayout = useMemo(() =>
     layoutElements(elements, 'LR'),
   [elements]);
