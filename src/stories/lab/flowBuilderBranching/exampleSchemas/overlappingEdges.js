@@ -1,4 +1,4 @@
-import { getSomePg, getSomePpImport } from '../Prototype/nodeGeneration';
+import { getSomePg, getSomePpImport } from '../../../../utils/flows/flowbuilder';
 
 const export1 = {_id: 'export1', name: 'The only export', connectorType: 'netsuite' };
 
