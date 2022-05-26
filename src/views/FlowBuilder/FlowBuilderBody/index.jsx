@@ -1,5 +1,4 @@
 import { makeStyles, useTheme } from '@material-ui/core';
-import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import ReactFlow, { MiniMap, Controls, ReactFlowProvider} from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,32 +18,31 @@ import BackgroundPanel from './Background';
 import SourceTitle from './titles/SourceTitle';
 import DestinationTitle from './titles/DestinationTitle';
 import { useSelectorMemo } from '../../../hooks';
+import useMenuDrawerWidth from '../../../hooks/useMenuDrawerWidth';
 
-const useCalcCanvasStyle = () => {
+const useCalcCanvasStyle = fullscreen => {
   const theme = useTheme();
   const [bottomDrawerHeight] = useBottomDrawer();
-
+  const height = fullscreen
+    ? 0
+    : bottomDrawerHeight + theme.appBarHeight + theme.pageBarHeight;
   const calcCanvasStyle = useMemo(() => ({
-    height: `calc(100vh - ${bottomDrawerHeight + theme.appBarHeight + theme.pageBarHeight}px)`,
-  }), [bottomDrawerHeight, theme.appBarHeight, theme.pageBarHeight]);
+    height: `calc(100vh - ${height}px)`,
+  }), [height]);
 
   return calcCanvasStyle;
 };
 
 // TODO: (AZHAR) suitescript and normal styles are repeating
 const useStyles = makeStyles(theme => ({
-  canvasContainer: {
-    // border: 'solid 1px black',
+  canvasContainer: drawerWidth => ({
     overflow: 'hidden',
-    width: `calc(100vw - ${theme.drawerWidthMinimized}px)`,
+    width: `calc(100vw - ${drawerWidth}px)`,
     transition: theme.transitions.create(['width', 'height'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-  },
-  canvasShift: {
-    width: `calc(100vw - ${theme.drawerWidth}px)`,
-  },
+  }),
   canvas: {
     width: '100%',
     height: '100%',
@@ -96,16 +94,19 @@ const edgeTypes = {
   default: DefaultEdge,
 };
 
-function Canvas({ flowId }) {
+export function Canvas({ flowId, fullscreen }) {
   const dispatch = useDispatch();
-  const classes = useStyles();
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const calcCanvasStyle = useCalcCanvasStyle();
+  const menuDrawerWidth = useMenuDrawerWidth();
+  const drawerWidth = fullscreen ? 0 : menuDrawerWidth;
+  const classes = useStyles(drawerWidth);
+  const calcCanvasStyle = useCalcCanvasStyle(fullscreen);
   const mergedFlow = useSelectorMemo(selectors.makeFlowDataForFlowBuilder, flowId);
 
   const elements = useSelector(state => selectors.fbGraphElements(state, flowId));
   const dragStepId = useSelector(state => selectors.fbDragStepId(state, flowId));
   const elementsMap = useSelector(state => selectors.fbGraphElementsMap(state, flowId));
+
+  console.log(flowId, mergedFlow, fullscreen);
 
   const updatedLayout = useMemo(() =>
     layoutElements(elements, 'LR'),
@@ -129,9 +130,7 @@ function Canvas({ flowId }) {
 
   return (
     <div
-      className={clsx(classes.canvasContainer, {
-        [classes.canvasShift]: drawerOpened,
-      })}
+      className={classes.canvasContainer}
       style={calcCanvasStyle}>
       <div className={classes.canvas}>
         {/* CANVAS START */}
@@ -167,6 +166,7 @@ function Canvas({ flowId }) {
     </div>
   );
 }
+
 export default function FlowBuilderBody({ flowId, integrationId }) {
   const dispatch = useDispatch();
 
