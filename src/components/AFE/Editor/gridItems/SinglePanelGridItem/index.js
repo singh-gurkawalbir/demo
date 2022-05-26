@@ -18,8 +18,6 @@ const useStyles = makeStyles({
 export default function SinglePanelGridItem({area, title, children, helpKey, ref, isLoggable, refreshAction}) {
   const classes = useStyles();
 
-  console.log('refresh options in panel', refreshAction);
-
   return (
     <PanelGridItem gridArea={area} ref={ref}>
       <div className={classes.flexContainer}>

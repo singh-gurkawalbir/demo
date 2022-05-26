@@ -758,7 +758,6 @@ export function* initEditor({ id, editorType, options }) {
 
   const init = processorLogic.init(editorType);
 
-  console.log('resource before', resource, mappingPreviewType);
   if (init) {
     if (editorType === 'handlebars' || editorType === 'sql' || editorType === 'databaseMapping') {
       const { _connectionId: connectionId } = resource || {};

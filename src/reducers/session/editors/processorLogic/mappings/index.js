@@ -7,13 +7,11 @@ export default {
     const editorTitle = importName ? `Edit Mapping: ${importName}` : 'Edit Mapping';
     let refreshAction;
 
-    console.log('mappingPreviewType', mappingPreviewType);
     if (mappingPreviewType === 'salesforce') {
       const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${salesforcelayoutId}`;
 
       refreshAction = actions.metadata.request(connectionId, commMetaPath, {refreshCache: true});
     }
-    console.log('refresAction', refreshAction);
 
     return {
       ...options,
