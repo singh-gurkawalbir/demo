@@ -147,13 +147,7 @@ const ExtractsTree = React.memo((
     setInputValue(newValue);
     setIsFocused(false);
     if (propValue !== newValue) { onBlur(newValue); }
-    e.nativeEvent.stopImmediatePropagation();
   }, [inputValue, isArrayType, isGroupedSampleData, onBlur, propValue, setInputValue, setIsFocused, nodeKey, mappingsTreeData]);
-
-  const onExpand = useCallback((expandedKeys, {nativeEvent}) => {
-    setIsFocused(true);
-    nativeEvent.stopImmediatePropagation();
-  }, [setIsFocused]);
 
   // this function runs for every node
   // and returns true if input value matches current node in the dropdown
@@ -164,8 +158,7 @@ const ExtractsTree = React.memo((
   if (isEmpty(treeData)) return null;
 
   return (
-    <div
-      className={classes.dropdown}>
+    <div className={classes.dropdown}>
       <ul className={classes.message}>
         <li>Type or select source record field</li>
         {isArrayType && <li>Separate additional fields with a comma (,)</li>}
@@ -183,7 +176,6 @@ const ExtractsTree = React.memo((
         switcherIcon={SwitcherIcon}
         defaultExpandAll
         onSelect={onSelect}
-        onExpand={onExpand}
         filterTreeNode={filterTreeNode}
          />
     </div>

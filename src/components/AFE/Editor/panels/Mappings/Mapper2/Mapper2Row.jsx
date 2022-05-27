@@ -21,6 +21,7 @@ import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer
 import { MAPPING_DATA_TYPES, handlebarRegex } from '../../../../../../utils/mapping';
 import messageStore from '../../../../../../utils/messageStore';
 import TabRow from './TabbedRow';
+import { getMappingsEditorId } from '../../../../../../utils/editor';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -35,6 +36,12 @@ const useStyles = makeStyles(theme => ({
     },
     '&:nth-of-type(2)': {
       flex: 1,
+      '& .MuiFilledInput-multiline': {
+        minHeight: theme.spacing(5),
+        '&:hover': {
+          borderColor: theme.palette.primary.main,
+        },
+      },
     },
   },
   childHeaderLarge: {
@@ -126,6 +133,7 @@ const Mapper2Row = React.memo(props => {
       lookup,
     };
   }, shallowEqual);
+  const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(importId)));
 
   const hasChildren = !!children?.length;
 
@@ -183,7 +191,6 @@ const Mapper2Row = React.memo(props => {
   const isHardCodedValue = hardCodedValue !== undefined;
   const isHandlebarExp = handlebarRegex.test(extractValue);
   const hideExtractField = dataType === MAPPING_DATA_TYPES.OBJECT && !extractValue && copySource === 'no';
-  const layout = useSelector(state => selectors.editorLayout(state, `mappings-${importId}`));
 
   // this prop is used for object array tab view
   // where some children needs to be hidden
@@ -199,7 +206,7 @@ const Mapper2Row = React.memo(props => {
     <div
       key={nodeKey}
       className={clsx(classes.innerRowRoot, {[classes.noExtractField]: hideExtractField})}>
-      <div className={clsx(classes.childHeader, {[classes.childHeaderLarge]: layout === 'compactRow'})}>
+      <div className={clsx(classes.childHeader, {[classes.childHeaderLarge]: editorLayout === 'compactRow'})}>
         <Mapper2Generates
           key={generate}
           id={`fieldMappingGenerate-${nodeKey}`}
@@ -212,7 +219,7 @@ const Mapper2Row = React.memo(props => {
       </div>
 
       {hideExtractField ? null : (
-        <div className={clsx(classes.childHeader, {[classes.childHeaderLarge]: layout === 'compactRow'})}>
+        <div className={clsx(classes.childHeader, {[classes.childHeaderLarge]: editorLayout === 'compactRow'})}>
           <Mapper2ExtractsTypeableSelect
             key={extractValue}
             id={`fieldMappingExtract-${nodeKey}`}
@@ -226,6 +233,7 @@ const Mapper2Row = React.memo(props => {
             isLookup={isLookup}
             isHardCodedValue={isHardCodedValue}
             isHandlebarExp={isHandlebarExp}
+            editorLayout={editorLayout}
             />
         </div>
       )}
