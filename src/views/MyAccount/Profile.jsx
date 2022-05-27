@@ -130,6 +130,7 @@ export default function ProfilePanel() {
     const { timeFormat, dateFormat, showRelativeDateTime } = completePayloadCopy;
     const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime };
 
+    // track event if there is any action for Developer mode
     if (preferences.developer !== completePayloadCopy.developer) {
       dispatch(
         actions.analytics.gainsight.trackEvent('MY_ACCOUNT', {

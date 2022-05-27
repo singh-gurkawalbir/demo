@@ -29,6 +29,7 @@ export default function UserFormWrapper({ userId }) {
         accountSSORequired,
       };
 
+      // track event if fresh invite was sent
       if (!userId) {
         dispatch(
           actions.analytics.gainsight.trackEvent('MY_ACCOUNT', {
