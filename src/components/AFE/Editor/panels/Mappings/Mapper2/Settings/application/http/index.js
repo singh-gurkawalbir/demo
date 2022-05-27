@@ -148,6 +148,7 @@ export default {
           label: 'Destination record field is date field',
           visibleWhenAll: [
             { field: 'dataType', is: ['string', 'number'] },
+            { field: 'fieldMappingType', is: ['standard'] },
           ],
         },
         extractDateFormat: {
@@ -166,6 +167,8 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'useDate', is: [true] },
+            { field: 'dataType', is: ['string', 'number'] },
+            { field: 'fieldMappingType', is: ['standard'] },
           ],
         },
         extractDateTimezone: {
@@ -187,6 +190,8 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'useDate', is: [true] },
+            { field: 'dataType', is: ['string', 'number'] },
+            { field: 'fieldMappingType', is: ['standard'] },
           ],
         },
         generateDateFormat: {
@@ -205,6 +210,8 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'useDate', is: [true] },
+            { field: 'dataType', is: ['string', 'number'] },
+            { field: 'fieldMappingType', is: ['standard'] },
           ],
         },
         generateDateTimezone: {
@@ -226,6 +233,8 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'useDate', is: [true] },
+            { field: 'dataType', is: ['string', 'number'] },
+            { field: 'fieldMappingType', is: ['standard'] },
           ],
         },
         standardAction: {
