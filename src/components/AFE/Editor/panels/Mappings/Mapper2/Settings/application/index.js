@@ -176,7 +176,7 @@ export default {
           settings.default = null;
           break;
         case 'default':
-          settings.default = formVal.default;
+          settings.default = formVal.multifieldDefault;
           break;
         case 'discardIfEmpty':
           settings.conditional = {};
