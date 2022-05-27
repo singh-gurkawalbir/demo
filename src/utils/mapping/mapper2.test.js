@@ -2864,7 +2864,7 @@ describe('v2 mapping utils', () => {
 
       expect(compareV2Mappings(newData, origData)).toEqual(true);
     });
-    test('should return true if children were removed', () => {
+    test('should return true if all children were removed', () => {
       const origData = [
         {
           key: 'key1',
@@ -2888,6 +2888,48 @@ describe('v2 mapping utils', () => {
           generate: 'fname',
           dataType: MAPPING_DATA_TYPES.OBJECT,
           copySource: 'yes',
+        },
+      ];
+
+      expect(compareV2Mappings(newData, origData)).toEqual(true);
+    });
+    test('should return true if some children were removed', () => {
+      const origData = [
+        {
+          key: 'key1',
+          combinedExtract: '$.fname[*]',
+          generate: 'fname',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          children: [
+            {
+              key: 'c1',
+              extract: '$.child1',
+              generate: 'child1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            },
+            {
+              key: 'c2',
+              extract: '$.child2',
+              generate: 'child2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            },
+          ],
+        },
+      ];
+      const newData = [
+        {
+          key: 'key1',
+          combinedExtract: '$.fname[*]',
+          generate: 'fname',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          children: [
+            {
+              key: 'c1',
+              extract: '$.child1',
+              generate: 'child1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            },
+          ],
         },
       ];
 
