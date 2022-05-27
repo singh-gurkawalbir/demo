@@ -86,7 +86,7 @@ const useStyles = makeStyles(theme => ({
       flex: 1,
     },
     '& .rc-tree-treenode-active': {
-      backgroundColor: theme.palette.primary.highlight,
+      backgroundColor: theme.palette.primary.lightest,
       borderLeft: `3px solid ${theme.palette.primary.main}`,
     },
     '& .MuiFilledInput-multiline': {
