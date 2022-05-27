@@ -75,7 +75,6 @@ export default function ProfilePanel() {
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
-  const {developer} = preferences;
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
   const isUserAllowedOnlySSOSignIn = useSelector(state => selectors.isUserAllowedOnlySSOSignIn(state));
 
@@ -131,14 +130,16 @@ export default function ProfilePanel() {
     const { timeFormat, dateFormat, showRelativeDateTime } = completePayloadCopy;
     const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime };
 
-    developer !== completePayloadCopy.developer && dispatch(
-      actions.analytics.gainsight.trackEvent('MY_ACCOUNT', {
-        operation: 'Developer mode',
-        timestamp: new Date(),
-        status: completePayloadCopy.developer ? 'Enabled' : 'Disabled',
-        tab: 'Profile',
-      })
-    );
+    if (preferences.developer !== completePayloadCopy.developer) {
+      dispatch(
+        actions.analytics.gainsight.trackEvent('MY_ACCOUNT', {
+          operation: 'Developer mode',
+          timestamp: new Date(),
+          status: completePayloadCopy.developer ? 'Enabled' : 'Disabled',
+          tab: 'Profile',
+        })
+      );
+    }
     dispatch(actions.user.preferences.update(preferencesPayload));
     // deleting preferences from completePayloadCopy
     delete completePayloadCopy.timeFormat;
@@ -146,7 +147,7 @@ export default function ProfilePanel() {
     delete completePayloadCopy.showRelativeDateTime;
 
     dispatch(actions.user.profile.update(completePayloadCopy));
-  }, [dispatch, developer]);
+  }, [dispatch, preferences.developer]);
 
   const handleLinkWithGoogle = useCallback(() => {
     dispatch(actions.auth.linkWithGoogle(getRoutePath('/myAccount/profile')));

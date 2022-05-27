@@ -29,17 +29,19 @@ export default function UserFormWrapper({ userId }) {
         accountSSORequired,
       };
 
-      !userId && dispatch(
-        actions.analytics.gainsight.trackEvent('MY_ACCOUNT', {
-          operation: 'Invite sent',
-          timestamp: new Date(),
-          recipient: email,
-          senderName: name,
-          senderEmail: userEmail,
-          permission: accessLevel,
-          tab: 'User',
-        })
-      );
+      if (!userId) {
+        dispatch(
+          actions.analytics.gainsight.trackEvent('MY_ACCOUNT', {
+            operation: 'Invite sent',
+            timestamp: new Date(),
+            recipient: email,
+            senderName: name,
+            senderEmail: userEmail,
+            permission: accessLevel,
+            tab: 'User',
+          })
+        );
+      }
 
       if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
         integrationsToManage.forEach(_integrationId =>
