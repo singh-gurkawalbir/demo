@@ -14,6 +14,7 @@ import { isJsonString, generateUniqueKey } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
 import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../constants';
+import errorMessageStore from '../errorStore';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
@@ -745,25 +746,28 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
           combinedExtract = `${combinedExtract ? `${combinedExtract},` : ''}${extract}`;
 
           if (!mappings) {
+            nodeToPush.copySource = 'yes';
+
             return;
           }
 
           const newExtract = getUniqueExtractId(extract, index);
           let isHidden = hidden;
 
-          const shouldAddTabRow = index > 0 && !children?.[0]?.isTabNode;
-
-          // found more than 1 extracts, insert a tab node
-          if (shouldAddTabRow) {
-            children.unshift({
-              key: generateUniqueKey(),
-              parentKey: currNodeKey,
-              title: '',
-              isTabNode: true,
-            });
+          if (index > 0) {
             // since the first source is already pushed, all other children should
             // be hidden now, as we show the first source tab by default
             isHidden = true;
+
+            // found more than 1 extracts, insert a tab node if not already added
+            if (!children?.[0]?.isTabNode) {
+              children.unshift({
+                key: generateUniqueKey(),
+                parentKey: currNodeKey,
+                title: '',
+                isTabNode: true,
+              });
+            }
           }
 
           recursivelyBuildTreeFromV2Mappings({
@@ -777,9 +781,6 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
           );
 
           nodeToPush.children = children;
-          if (!nodeToPush.children.length) {
-            nodeToPush.copySource = 'yes';
-          }
         });
 
         nodeToPush.combinedExtract = combinedExtract;
@@ -1107,6 +1108,14 @@ function recursivelyBuildExtractsTree({dataObj, treeData, parentKey, parentJsonP
     }
 
     if (type === '[object Array]') {
+      // if empty array, consider it as object array
+      if (isEmpty(v)) {
+        nodeToPush.jsonPath = `${jsonPath}[*]`;
+        nodeToPush.dataType = '[object]';
+
+        return;
+      }
+
       if (Object.prototype.toString.apply(v[0]) === '[object Object]' && !isEmpty(v[0])) {
         const children = [];
 
@@ -1206,12 +1215,49 @@ export const filterExtractsNode = (node = {}, propValue, inputValue) => {
   return true;
 };
 
+// recursively look for nearest parentExtract for a given node
+const findParentExtractForNode = (treeData, nodeKey) => {
+  const {node} = findNodeInTree(treeData, 'key', nodeKey);
+
+  if (!node || !node.parentKey) return '';
+
+  if (node.parentExtract) return node.parentExtract;
+
+  return findParentExtractForNode(treeData, node.parentKey);
+};
+
 // this util handles the comma separated values use-case
 // and returns the final input after user selects a node
-export const getFinalSelectedExtracts = (node, inputValue = '', isArrayType, isGroupedSampleData) => {
+export const getFinalSelectedExtracts = (node, inputValue = '', isArrayType, isGroupedSampleData, nodeKey, treeData) => {
   const prefix = getDefaultExtractPath(isGroupedSampleData);
   const {jsonPath = ''} = node || {};
-  const fullJsonPath = jsonPath ? `${prefix}.${jsonPath}` : prefix;
+  let fullJsonPath = jsonPath ? `${prefix}.${jsonPath}` : prefix;
+
+  // for child rows with parent extract
+  // the children json path should not include [*] in the parent path
+  const parentExtract = findParentExtractForNode(treeData, nodeKey);
+
+  if (parentExtract) {
+    const splitParentExtract = parentExtract.split('.') || [];
+    const splitFullJsonPath = fullJsonPath.split('.') || [];
+
+    splitParentExtract.forEach((e, i) => {
+      const uniqueExt = getExtractFromUniqueId(e);
+
+      // match the parent path on curr index with the current node json path
+      // and remove [*] from child path
+      if (uniqueExt.includes('[*]')) {
+        if (splitFullJsonPath[i] === uniqueExt) {
+          splitFullJsonPath[i] = splitFullJsonPath[i].replace('[*]', '');
+        }
+      } else if (splitFullJsonPath[i] === `${uniqueExt}[*]`) {
+        splitFullJsonPath[i] = splitFullJsonPath[i].replace('[*]', '');
+      }
+    });
+
+    fullJsonPath = splitFullJsonPath.join('.');
+  }
+
   let newValue = fullJsonPath;
 
   // handle comma separated scenario for array data types
@@ -1412,25 +1458,21 @@ const validateV2Mappings = (v2TreeData, lookups) => {
   if (duplicateMappings.length) {
     return {
       isSuccess: false,
-      errMessage: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
-        ','
-      )}`,
+      errMessage: errorMessageStore('MAPPER2_DUP_GENERATE', {fields: duplicateMappings.join(',')}),
     };
   }
 
   if (mappingsWithoutGenerates.length) {
     return {
       isSuccess: false,
-      errMessage: 'One or more generate fields missing',
+      errMessage: errorMessageStore('MAPPER_MISSING_GENERATE'),
     };
   }
 
   if (missingExtractGenerateNames.length) {
     return {
       isSuccess: false,
-      errMessage: `Extract fields missing for field(s): ${missingExtractGenerateNames.join(
-        ','
-      )}`,
+      errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: missingExtractGenerateNames.join(',')}),
     };
   }
 
@@ -2413,9 +2455,7 @@ export default {
     if (duplicateMappings.length) {
       return {
         isSuccess: false,
-        errMessage: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
-          ','
-        )}`,
+        errMessage: errorMessageStore('MAPPER1_DUP_GENERATE', {fields: duplicateMappings.join(',')}),
       };
     }
 
@@ -2428,7 +2468,7 @@ export default {
     if (mappingsWithoutGenerates.length) {
       return {
         isSuccess: false,
-        errMessage: 'One or more generate fields missing',
+        errMessage: errorMessageStore('MAPPER_MISSING_GENERATE'),
       };
     }
     const mappingsWithoutExtract = mappings.filter(mapping => {
@@ -2457,9 +2497,7 @@ export default {
     if (missingExtractGenerateNames.length) {
       return {
         isSuccess: false,
-        errMessage: `Extract fields missing for field(s): ${missingExtractGenerateNames.join(
-          ','
-        )}`,
+        errMessage: errorMessageStore('MAPPER1_MISSING_EXTRACT', {fields: missingExtractGenerateNames.join(',')}),
       };
     }
 
@@ -2559,6 +2597,11 @@ export default {
         default:
           return 'default';
       }
+    }
+  },
+  getV2DefaultExpression: value => {
+    if (value.extract?.indexOf('{{') !== -1) {
+      return value.extract;
     }
   },
   // #endregion

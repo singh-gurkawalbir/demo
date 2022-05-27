@@ -124,9 +124,7 @@ function LicenseAction() {
   );
 
   const startFreeTrialDialog = useCallback(() => {
-    const message = `What will you integrate next?
-      <br/><br/><a target="_blank" rel="noopener noreferrer"
-  href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with Integration Apps & Templates.`;
+    const message = messageStore('CONTACT_SALES_MESSAGE');
 
     confirmDialog({
       title: 'Congratulations! Your unlimited flows trial starts now.',

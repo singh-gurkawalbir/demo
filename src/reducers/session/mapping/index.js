@@ -512,6 +512,19 @@ export default (state = {}, action) => {
               combinedExtract: draft.mapping.v2TreeData[0].combinedExtract, // pass old node combinedExtract to pick first extract
             },
             MAPPING_DATA_TYPES.OBJECT);
+
+          // add empty row if no children were found
+          if (isEmpty(draft.mapping.v2TreeData)) {
+            const emptyRowKey = generateUniqueKey();
+
+            draft.mapping.v2TreeData.push({
+              key: emptyRowKey,
+              title: '',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              disabled: draft.mapping.isMonitorLevelAccess,
+              isEmptyRow: true,
+            });
+          }
         }
 
         break;
@@ -606,7 +619,7 @@ export default (state = {}, action) => {
 
         const {v2TreeData} = draft.mapping;
 
-        // Find dragObject and remove from current position
+        // Find dragObject
         const {node: dragObj, nodeSubArray: dragSubArr, nodeIndexInSubArray: dragSubArrIndex} = findNodeInTree(v2TreeData, 'key', dragKey);
 
         // find drop position
@@ -634,16 +647,24 @@ export default (state = {}, action) => {
 
           // remove dragged node from its curr pos
           dragSubArr.splice(dragSubArrIndex, 1);
+
+          // after the dragged node was removed, find the drop node index again as it could have been changed
+          const {nodeIndexInSubArray} = findNodeInTree(v2TreeData, 'key', dropKey);
+
           // add dragged node to new pos
-          dropSubArr.splice(dropSubArrIndex, 0, dragObj);
+          dropSubArr.splice(nodeIndexInSubArray, 0, dragObj);
         } else if (dropPosition === 1) {
           // drag obj inserted after drop node
           if (dropSubArrIndex + 1 === dragNodeIndex) return;
 
           // remove dragged node from its curr pos
           dragSubArr.splice(dragSubArrIndex, 1);
+
+          // after the dragged node was removed, find the drop node index again as it could have been changed
+          const {nodeIndexInSubArray} = findNodeInTree(v2TreeData, 'key', dropKey);
+
           // add dragged node to new pos
-          dropSubArr.splice(dropSubArrIndex + 1, 0, dragObj);
+          dropSubArr.splice(nodeIndexInSubArray + 1, 0, dragObj);
         }
 
         break;

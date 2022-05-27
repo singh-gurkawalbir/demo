@@ -9,6 +9,7 @@ import util, {
   extractMappingFieldsFromCsv,
   MAPPING_DATA_TYPES,
 } from '.';
+import errorMessageStore from '../errorStore';
 
 describe('isEqual', () => {
   const testCases = [
@@ -3354,7 +3355,7 @@ describe('mapping utils', () => {
         lookups: [],
         result: {
           isSuccess: false,
-          errMessage: 'You have duplicate mappings for the field(s): a',
+          errMessage: errorMessageStore('MAPPER1_DUP_GENERATE', {fields: 'a'}),
         },
       },
       {
@@ -3365,7 +3366,7 @@ describe('mapping utils', () => {
         lookups: [],
         result: {
           isSuccess: false,
-          errMessage: 'One or more generate fields missing',
+          errMessage: errorMessageStore('MAPPER_MISSING_GENERATE'),
         },
       },
       {
@@ -3376,7 +3377,7 @@ describe('mapping utils', () => {
         lookups: [],
         result: {
           isSuccess: false,
-          errMessage: 'Extract fields missing for field(s): b',
+          errMessage: errorMessageStore('MAPPER1_MISSING_EXTRACT', {fields: 'b'}),
         },
       },
       {
@@ -3397,7 +3398,7 @@ describe('mapping utils', () => {
         lookups: [{name: 'lookup1', map: {a: 'b'}}],
         result: {
           isSuccess: false,
-          errMessage: 'Extract fields missing for field(s): b',
+          errMessage: errorMessageStore('MAPPER1_MISSING_EXTRACT', {fields: 'b'}),
         },
       },
       {
@@ -3435,7 +3436,7 @@ describe('mapping utils', () => {
         ],
         result: {
           isSuccess: false,
-          errMessage: 'You have duplicate mappings for the field(s): fname',
+          errMessage: errorMessageStore('MAPPER2_DUP_GENERATE', {fields: 'fname'}),
         },
       },
       {
@@ -3475,7 +3476,7 @@ describe('mapping utils', () => {
         ],
         result: {
           isSuccess: false,
-          errMessage: 'One or more generate fields missing',
+          errMessage: errorMessageStore('MAPPER_MISSING_GENERATE'),
         },
       },
       {
@@ -3514,7 +3515,7 @@ describe('mapping utils', () => {
         ],
         result: {
           isSuccess: false,
-          errMessage: 'One or more generate fields missing',
+          errMessage: errorMessageStore('MAPPER_MISSING_GENERATE'),
         },
       },
       {
@@ -3536,7 +3537,7 @@ describe('mapping utils', () => {
         ],
         result: {
           isSuccess: false,
-          errMessage: 'Extract fields missing for field(s): lname',
+          errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: 'lname'}),
         },
       },
       {
@@ -3577,7 +3578,7 @@ describe('mapping utils', () => {
         ],
         result: {
           isSuccess: false,
-          errMessage: 'Extract fields missing for field(s): lname',
+          errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: 'lname'}),
         },
       },
       {
@@ -3612,7 +3613,7 @@ describe('mapping utils', () => {
         ],
         result: {
           isSuccess: false,
-          errMessage: 'Extract fields missing for field(s): lname',
+          errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: 'lname'}),
         },
       },
       {
@@ -3664,7 +3665,7 @@ describe('mapping utils', () => {
         ],
         result: {
           isSuccess: false,
-          errMessage: 'Extract fields missing for field(s): child1',
+          errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: 'child1'}),
         },
       },
     ];

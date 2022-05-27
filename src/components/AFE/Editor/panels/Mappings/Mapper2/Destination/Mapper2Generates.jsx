@@ -79,6 +79,8 @@ export default function Mapper2Generates(props) {
   useOnClickOutside(containerRef, isFocused && handleBlur);
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
 
+  const hideTooltip = isFocused || (!inputValue && disabled) || (inputValue && !isTruncated);
+
   return (
     <FormControl
       data-test={id}
@@ -89,7 +91,7 @@ export default function Mapper2Generates(props) {
         <Tooltip
           disableFocusListener
           placement="bottom"
-          title={(isFocused || (!isTruncated && inputValue)) ? '' : (
+          title={hideTooltip ? '' : (
             <TooltipTitle
               isTruncated={isTruncated}
               inputValue={inputValue}
@@ -110,7 +112,7 @@ export default function Mapper2Generates(props) {
             onFocus={handleFocus}
             disabled={disabled}
             multiline={isFocused}
-            placeholder="Destination record field" />
+            placeholder={!disabled && 'Destination record field'} />
         </Tooltip >
 
         <DestinationDataType
