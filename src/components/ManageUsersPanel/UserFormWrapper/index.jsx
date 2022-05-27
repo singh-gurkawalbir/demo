@@ -29,7 +29,7 @@ export default function UserFormWrapper({ userId }) {
         accountSSORequired,
       };
 
-      dispatch(
+      !userId && dispatch(
         actions.analytics.gainsight.trackEvent('MY_ACCOUNT', {
           operation: 'Invite sent',
           timestamp: new Date(),
