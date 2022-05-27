@@ -739,7 +739,7 @@ export default {
   },
   'unencrypted.feedType': {
     type: 'select',
-    label: 'Feed content type',
+    label: 'Feed type',
     helpKey: 'import.unencrypted.feedType',
     noApi: true,
     visibleWhenAll: [
