@@ -44,6 +44,7 @@ const useStyles = makeStyles(theme => ({
       position: 'relative',
       padding: theme.spacing(1, 0, 1, 2),
       alignItems: 'center',
+      borderLeft: '3px solid transparent',
     },
     '& .childTree-switcher': {
       width: theme.spacing(1),
@@ -51,12 +52,9 @@ const useStyles = makeStyles(theme => ({
     '& .childTree-switcher-noop': {
       width: theme.spacing(1),
     },
-    '& .childTree-treenode-selected': {
+    '& .childTree-treenode-selected,& .childTree-treenode:hover': {
       backgroundColor: theme.palette.background.paper2,
-      borderLeft: `3px solid ${theme.palette.primary.main}`,
-    },
-    '& .childTree-treenode:hover': {
-      backgroundColor: theme.palette.background.paper2,
+      borderColor: theme.palette.primary.main,
     },
     '& .filter-node': {
       '& .childTree-title': {

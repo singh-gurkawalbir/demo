@@ -24,7 +24,7 @@ export default {
       toggle: colors.celigoNeutral7,
     },
     primary: {
-      bright: colors.celigoAccent5,
+      highlight: colors.celigoAccent5,
       light: colors.celigoAccent3,
       main: colors.celigoAccent2,
       dark: colors.celigoAccent1,

@@ -88,7 +88,7 @@ const useStyles = makeStyles(theme => ({
       left: '0px',
     },
     '&:hover': {
-      background: 'none',
+      backgroundColor: theme.palette.background.paper2,
       '&:before': {
         background: theme.palette.primary.main,
       },
@@ -99,6 +99,7 @@ const useStyles = makeStyles(theme => ({
   },
   itemSelected: {
     position: 'relative',
+    backgroundColor: theme.palette.background.paper2,
     '&:before': {
       content: '""',
       width: '3px',
