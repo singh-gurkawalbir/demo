@@ -2,6 +2,7 @@ import React from 'react';
 import { useStore } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import TextButton from '../../../../components/Buttons/TextButton';
+import useShowDebugTools from '../../../../hooks/useShowDebugTools';
 
 const useStyles = makeStyles(() => ({
   button: {
@@ -49,6 +50,7 @@ function getResourceIds(flow) {
 export function ExportFlowStateButton({flowId}) {
   const classes = useStyles();
   const store = useStore();
+  const showButton = useShowDebugTools();
 
   const handleClick = () => {
     const state = store.getState();
@@ -61,10 +63,10 @@ export function ExportFlowStateButton({flowId}) {
 
     // console.log(exportIds, importIds, allExports, allImports);
     // eslint-disable-next-line no-console
-    console.log({flow, exports, imports});
+    console.log({flows: [flow], exports, imports});
   };
 
-  return (
+  return showButton && (
     <TextButton className={classes.button} onClick={handleClick}>
       Export flow state
     </TextButton>
