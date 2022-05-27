@@ -14,6 +14,7 @@ import { isJsonString, generateUniqueKey } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
 import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../constants';
+import errorMessageStore from '../errorStore';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
@@ -1457,25 +1458,21 @@ const validateV2Mappings = (v2TreeData, lookups) => {
   if (duplicateMappings.length) {
     return {
       isSuccess: false,
-      errMessage: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
-        ','
-      )}`,
+      errMessage: errorMessageStore('MAPPER2_DUP_GENERATE', {fields: duplicateMappings.join(',')}),
     };
   }
 
   if (mappingsWithoutGenerates.length) {
     return {
       isSuccess: false,
-      errMessage: 'One or more generate fields missing',
+      errMessage: errorMessageStore('MAPPER_MISSING_GENERATE'),
     };
   }
 
   if (missingExtractGenerateNames.length) {
     return {
       isSuccess: false,
-      errMessage: `Extract fields missing for field(s): ${missingExtractGenerateNames.join(
-        ','
-      )}`,
+      errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: missingExtractGenerateNames.join(',')}),
     };
   }
 
@@ -2458,9 +2455,7 @@ export default {
     if (duplicateMappings.length) {
       return {
         isSuccess: false,
-        errMessage: `You have duplicate mappings for the field(s): ${duplicateMappings.join(
-          ','
-        )}`,
+        errMessage: errorMessageStore('MAPPER1_DUP_GENERATE', {fields: duplicateMappings.join(',')}),
       };
     }
 
@@ -2473,7 +2468,7 @@ export default {
     if (mappingsWithoutGenerates.length) {
       return {
         isSuccess: false,
-        errMessage: 'One or more generate fields missing',
+        errMessage: errorMessageStore('MAPPER_MISSING_GENERATE'),
       };
     }
     const mappingsWithoutExtract = mappings.filter(mapping => {
@@ -2502,9 +2497,7 @@ export default {
     if (missingExtractGenerateNames.length) {
       return {
         isSuccess: false,
-        errMessage: `Extract fields missing for field(s): ${missingExtractGenerateNames.join(
-          ','
-        )}`,
+        errMessage: errorMessageStore('MAPPER1_MISSING_EXTRACT', {fields: missingExtractGenerateNames.join(',')}),
       };
     }
 
