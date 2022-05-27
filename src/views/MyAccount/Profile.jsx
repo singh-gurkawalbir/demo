@@ -75,6 +75,7 @@ export default function ProfilePanel() {
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
+  const {developer} = preferences;
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
   const isUserAllowedOnlySSOSignIn = useSelector(state => selectors.isUserAllowedOnlySSOSignIn(state));
 
@@ -130,7 +131,7 @@ export default function ProfilePanel() {
     const { timeFormat, dateFormat, showRelativeDateTime } = completePayloadCopy;
     const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime };
 
-    dispatch(
+    developer !== completePayloadCopy.developer && dispatch(
       actions.analytics.gainsight.trackEvent('MY_ACCOUNT', {
         operation: 'Developer mode',
         timestamp: new Date(),
@@ -145,7 +146,7 @@ export default function ProfilePanel() {
     delete completePayloadCopy.showRelativeDateTime;
 
     dispatch(actions.user.profile.update(completePayloadCopy));
-  }, [dispatch]);
+  }, [dispatch, developer]);
 
   const handleLinkWithGoogle = useCallback(() => {
     dispatch(actions.auth.linkWithGoogle(getRoutePath('/myAccount/profile')));
