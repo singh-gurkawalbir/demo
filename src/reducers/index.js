@@ -102,7 +102,7 @@ import { HOOK_STAGES } from '../utils/editor';
 import { getTextAfterCount, capitalizeFirstLetter } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as FLOWSTEP_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as FLOWSTEP_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/flowStepLogs';
-import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
+import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE, isAmazonSellingPartnerConnection } from '../utils/assistant';
 import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
 import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
@@ -948,6 +948,18 @@ selectors.getEventReportIntegrationName = (state, r) => {
   // if there is no integration associated to a flow then its a standalone flow
 
   return integration?.name || STANDALONE_INTEGRATION.name;
+};
+
+selectors.showNotificationForTechAdaptorForm = (state, resourceId) => {
+  const staggedPatches = selectors.stagedResource(state, resourceId)?.patch;
+  const connectionId = staggedPatches?.find(p => p.op === 'replace' && p.path === '/_connectionId')?.value;
+  const connection = selectors.resource(state, 'connections', connectionId);
+
+  if (isAmazonSellingPartnerConnection(connection)) return false;
+
+  return !!staggedPatches?.find(
+      p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
+    )?.value;
 };
 
 // It will give list of flows which to be displayed in flows filter in account dashboard.
@@ -5457,6 +5469,26 @@ selectors.isMapper2Supported = state => {
   if (!resource || resource._connectorId) return false;
 
   return !!((resource.adaptorType === 'HTTPImport' || resource.adaptorType === 'RESTImport') && resource.http?.type !== 'file');
+};
+
+selectors.resourceHasMappings = (state, importId) => {
+  const resource = selectors.resource(state, 'imports', importId);
+
+  if (!resource) return false;
+
+  // v2 mappings
+  if (resource.mappings?.length) {
+    return true;
+  }
+
+  // v1 mappings
+  const mappings = mappingUtil.getMappingFromResource({
+    importResource: resource,
+    isFieldMapping: true,
+  });
+  const { fields = [], lists = [] } = mappings || {};
+
+  return !!(fields.length || lists.length);
 };
 
 selectors.mappingEditorNotification = (state, editorId) => {

@@ -42,6 +42,7 @@ export default function DynaHandlebarPreview({
   required,
   helpText,
   helpKey,
+  noApi,
   resourceContext,
   onFieldChange,
   onEditorClick,
@@ -63,7 +64,7 @@ export default function DynaHandlebarPreview({
           <FormLabel required={required}>
             {label}
           </FormLabel>
-          <FieldHelp {...{ id, label, helpText, helpKey, resourceContext}} />
+          <FieldHelp {...{ id, label, helpText, helpKey, noApi, resourceContext}} />
         </div>
         <div className={classes.editorContainer}>
           <div className={classes.editorBorder} {...isLoggableAttr(isLoggable)}>

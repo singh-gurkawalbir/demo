@@ -1299,6 +1299,7 @@ export default {
       ],
     },
     'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
+    'unencrypted.feedType': {fieldId: 'unencrypted.feedType'},
   },
   layout: {
     type: 'collapse',
@@ -1327,6 +1328,7 @@ export default {
           'http.requestMediaType',
           'http.lookups',
           'http.batchSize',
+          'unencrypted.feedType',
           'http.body',
           'uploadFile',
         ],

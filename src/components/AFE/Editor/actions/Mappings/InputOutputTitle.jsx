@@ -56,13 +56,11 @@ export default function InputOutputTitle({title, helpKey}) {
   return (
     <div className={classes.wrapper}>
       <Typography variant="body1" component="div">{title}</Typography>
-      {helpKey && (
-        <Help
-          title={title}
-          className={classes.helpButton}
-          helpKey={helpKey}
+      <Help
+        title={title}
+        className={classes.helpButton}
+        helpKey={title === 'Input' ? 'afe.mappings.v2.input' : 'afe.mappings.v2.output'}
         />
-      )}
 
       <ActionGroup position="right">
         <Typography variant="caption" className={classes.message}>{message}</Typography>

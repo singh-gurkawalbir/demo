@@ -21,12 +21,13 @@ import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer
 import { MAPPING_DATA_TYPES, handlebarRegex } from '../../../../../../utils/mapping';
 import messageStore from '../../../../../../utils/messageStore';
 import TabRow from './TabbedRow';
+import { getMappingsEditorId } from '../../../../../../utils/editor';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
     flex: 1,
     minWidth: theme.spacing(38),
-    maxWidth: theme.spacing(50),
+    maxWidth: theme.spacing(38),
     '&:first-child': {
       marginRight: theme.spacing(1),
     },
@@ -35,7 +36,17 @@ const useStyles = makeStyles(theme => ({
     },
     '&:nth-of-type(2)': {
       flex: 1,
+      '& .MuiFilledInput-multiline': {
+        minHeight: theme.spacing(5),
+        '&:hover': {
+          borderColor: theme.palette.primary.main,
+        },
+      },
     },
+  },
+  childHeaderLarge: {
+    minWidth: theme.spacing(50),
+    maxWidth: theme.spacing(50),
   },
   innerRowRoot: {
     display: 'flex',
@@ -122,6 +133,7 @@ const Mapper2Row = React.memo(props => {
       lookup,
     };
   }, shallowEqual);
+  const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(importId)));
 
   const hasChildren = !!children?.length;
 
@@ -194,7 +206,7 @@ const Mapper2Row = React.memo(props => {
     <div
       key={nodeKey}
       className={clsx(classes.innerRowRoot, {[classes.noExtractField]: hideExtractField})}>
-      <div className={classes.childHeader}>
+      <div className={clsx(classes.childHeader, {[classes.childHeaderLarge]: editorLayout === 'compactRow'})}>
         <Mapper2Generates
           key={generate}
           id={`fieldMappingGenerate-${nodeKey}`}
@@ -207,7 +219,7 @@ const Mapper2Row = React.memo(props => {
       </div>
 
       {hideExtractField ? null : (
-        <div className={classes.childHeader}>
+        <div className={clsx(classes.childHeader, {[classes.childHeaderLarge]: editorLayout === 'compactRow'})}>
           <Mapper2ExtractsTypeableSelect
             key={extractValue}
             id={`fieldMappingExtract-${nodeKey}`}
@@ -221,6 +233,7 @@ const Mapper2Row = React.memo(props => {
             isLookup={isLookup}
             isHardCodedValue={isHardCodedValue}
             isHandlebarExp={isHandlebarExp}
+            editorLayout={editorLayout}
             />
         </div>
       )}
