@@ -5,7 +5,7 @@ const branchOne = {
   description: 'some description 1',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import1')],
-  _id: 'branch-1',
+  id: 'branch-1',
 };
 
 const branchTwo = {
@@ -13,11 +13,11 @@ const branchTwo = {
   description: 'some description',
   inputFilter: {},
   pageProcessors: [],
-  _id: 'branch-2',
+  id: 'branch-2',
 };
 
 const firstRouter = {
-  _id: 'firstRouter',
+  id: 'firstRouter',
   routeRecordsTo: {
     type: 'first_matching_branch',
     default: undefined,
@@ -33,14 +33,12 @@ const firstRouter = {
   },
 };
 
-const flowSchema = {
-  _id: 'flow1',
-  routers: [firstRouter],
-  pageGenerators: [getSomePg('export1')],
-};
-
 export default {
-  flows: [flowSchema],
-  exports: [{_id: 'export1', name: 'The only export', connectorType: 'netsuite' }],
-  imports: [{_id: 'import1', name: 'import1 with long name', connectorType: 'ftp' }],
+  flows: [{
+    id: 'flow1',
+    routers: [firstRouter],
+    pageGenerators: [getSomePg('export1')],
+  }],
+  exports: [{id: 'export1', name: 'The only export', connectorType: 'netsuite' }],
+  imports: [{id: 'import1', name: 'import1 with long name', connectorType: 'ftp' }],
 };
