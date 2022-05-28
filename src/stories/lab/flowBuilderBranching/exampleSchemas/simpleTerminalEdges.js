@@ -25,14 +25,12 @@ const firstRouter = {
   },
 };
 
-const flowSchema = {
-  _id: 'flow1',
-  routers: [firstRouter],
-  pageGenerators: [getSomePg('export1')],
-};
-
 export default {
-  flows: [flowSchema],
-  exports: [{_id: 'export1', name: 'The only export', connectorType: 'netsuite' }],
-  imports: [{_id: 'import1', name: 'import1 with long name', connectorType: 'ftp' }],
+  flows: [{
+    id: 'flow1',
+    routers: [firstRouter],
+    pageGenerators: [getSomePg('export1')],
+  }],
+  exports: [{id: 'export1', name: 'The only export', connectorType: 'netsuite' }],
+  imports: [{id: 'import1', name: 'import1 with long name', connectorType: 'ftp' }],
 };

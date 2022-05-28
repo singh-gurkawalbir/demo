@@ -67,9 +67,9 @@ export const getSomeImport = _id => ({_id, connectorType: 'ftp', label: _id});
 export const getSomeExport = _exportId => ({_id: _exportId, connectorType: 'ftp', label: _exportId});
 
 export const getSomePg = _exportId => ({_exportId, skipRetries: true, id: _exportId});
-
 export const getSomePpImport = _importId =>
   ({responseMapping: {fields: [], lists: []}, type: 'import', _importId});
+
 export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
 
 export const generateRouterNode = (router, routerIndex) => ({
@@ -80,6 +80,7 @@ export const generateRouterNode = (router, routerIndex) => ({
     router,
   },
 });
+
 export const generateNewTerminal = ({branch = {}, branchIndex, routerIndex} = {}) => ({
   id: shortId(),
   type: GRAPH_ELEMENTS_TYPE.TERMINAL,
@@ -100,6 +101,7 @@ export const generateBranch = () => {
     pageProcessors: [],
   };
 };
+
 export const generateEmptyRouter = isVirtual => ({
   id: shortId(),
   ...(!isVirtual && { routeRecordsTo: 'first_matching_branch'}),
@@ -266,6 +268,7 @@ const populateMergeData = (flow, elements) => {
     }
   });
 };
+
 export const generateNodesAndEdgesFromBranchedFlow = flow => {
   const {pageGenerators = [], routers = []} = flow;
   let firstPPId = routers[0].id;
@@ -323,7 +326,7 @@ export const generateNodesAndEdgesFromBranchedFlow = flow => {
             populateRouterElements(routers.find(r => r.id === branch.nextRouterId));
           }
         } else {
-          // getnerate terminal edge
+          // generate terminal edge
           const terminalNode = generateNewTerminal({branch, branchIndex, routerIndex});
 
           elements.push(terminalNode);

@@ -19,6 +19,7 @@ import SourceTitle from './titles/SourceTitle';
 import DestinationTitle from './titles/DestinationTitle';
 import { useSelectorMemo } from '../../../hooks';
 import useMenuDrawerWidth from '../../../hooks/useMenuDrawerWidth';
+import { ExportFlowStateButton } from './ExportFlowStateButton';
 
 const useCalcCanvasStyle = fullscreen => {
   const theme = useTheme();
@@ -106,7 +107,7 @@ export function Canvas({ flowId, fullscreen }) {
   const dragStepId = useSelector(state => selectors.fbDragStepId(state, flowId));
   const elementsMap = useSelector(state => selectors.fbGraphElementsMap(state, flowId));
 
-  console.log(flowId, mergedFlow, fullscreen);
+  // console.log(flowId, mergedFlow, fullscreen);
 
   const updatedLayout = useMemo(() =>
     layoutElements(elements, 'LR'),
@@ -157,6 +158,7 @@ export function Canvas({ flowId, fullscreen }) {
               <DestinationTitle />
               <BackgroundPanel />
               <MiniMap />
+              <ExportFlowStateButton flowId={flowId} />
               <Controls showInteractive={false} />
             </ReactFlow>
           </FlowProvider>

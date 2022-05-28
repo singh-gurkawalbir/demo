@@ -130,25 +130,9 @@ selectors.resourceIdState = (state, resourceType, id) => {
 // #region PUBLIC SELECTORS
 // TODO:Deprecate this selector and use makeResourceSelector
 selectors.resource = (state, resourceType, id) => {
-  // console.log('fetch', resourceType, id);
-
   const match = selectors.resourceIdState(state, resourceType, id);
 
   if (!match) return null;
-
-  // TODO: Santosh. This is an example of a bad practice where the selector, which should
-  // only return some part of the state, is actually mutating the state prior to returning
-  // the value.  Instead, the reducer should do the work of normalizing the data if needed.
-  // I don't know why this code is here. Either the RECEIVE_RESOURCE_* should do this, or
-  // the components) using this property should be smart enough to work with an undefined prop.
-  // Could you find the best solution for this? I favour the latter if that approach is easy.
-  // if (['exports', 'imports'].includes(resourceType)) {
-  //   if (match.assistant && !match.assistantMetadata) {
-  //     // TODO:mutating a reference of the redux state..we have to fix this
-  //     // if this reducer was implemented in immer ...it would have pointed this error
-  //     match.assistantMetadata = {};
-  //   }
-  // }
 
   return match;
 };
