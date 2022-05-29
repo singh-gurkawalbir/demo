@@ -4,6 +4,8 @@ export default {
   preSave: (formValues, _, { connection } = {}) => {
     const retValues = { ...formValues };
 
+    retValues['/parsers'] = ([...(retValues.ErrorParser || []), ...(retValues.ResponseParser || [])]);
+
     if (retValues['/http/successMediaType'] === 'csv') {
       retValues['/file/type'] = 'csv';
     } else if (
@@ -397,6 +399,7 @@ export default {
       label: 'CSV parser helper',
       helpKey: 'file.csvParse',
       ignoreSortAndGroup: true,
+      isHttp: true,
       defaultValue: r => r?.file?.csv || {
         columnDelimiter: ',',
         rowDelimiter: '\n',
@@ -405,14 +408,40 @@ export default {
         rowsToSkip: 0,
         trimSpaces: true,
       },
-      visibleWhenAll: [
+      visibleWhen: [
         {
           field: 'outputMode',
           is: ['records'],
         },
+      ],
+    },
+    xmlParserForSuccessResponse: {
+      id: 'xmlParserForSuccessResponse',    //  confirm id values
+      type: 'xmlparse',
+      name: 'ResponseParser',
+      label: 'XML parser helper',
+      isHttp: true,
+      isSuccess: true,
+      defaultValue: r => r?.parsers.find(parser => parser.name === 'ResponseParser').rules,
+      visibleWhen: [
         {
-          field: 'http.successMediaType',
-          is: ['csv'],
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    xmlParserForErrorResponse: {
+      id: 'xmlParserForErrorResponse',    //  confirm id values
+      type: 'xmlparse',
+      name: 'ErrorParser',
+      label: 'XML parser helper',
+      isHttp: true,
+      isSuccess: false,
+      defaultValue: r => r?.parsers.find(parser => parser.name === 'ErrorParser'),
+      visibleWhen: [
+        {
+          field: 'outputMode',
+          is: ['records'],
         },
       ],
     },
@@ -528,16 +557,30 @@ export default {
             ],
           },
           {
-            type: 'indent',
+            type: 'indentWithHeader',
+            header: 'Parse Success Responses',
+            helpKey: 'http.parseSuccessResponses',
+            isSuccess: true,
             containers: [
               {fields: [
                 'file.csv',
+                'xmlParserForSuccessResponse',    //  replace with id values
               ]},
             ],
           },
           {
             fields: [
               'http.errorMediaType',
+            ],
+          },
+          {
+            type: 'indentWithHeader',
+            header: 'Parse Error Responses',
+            helpKey: 'http.parseErrorResponses',
+            containers: [
+              {fields: [
+                'xmlParserForErrorResponse',    //  replace with id values
+              ]},
             ],
           },
         ],
