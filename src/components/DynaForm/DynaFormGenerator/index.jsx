@@ -11,6 +11,7 @@ import {
   SuiteScriptTabIACompleteSave,
 } from './TabComponent';
 import IndentedComponents from './IndentedComponents';
+import IndentedComponentsWithHeader from './IndentedComponentsWithHeader';
 import BoxComponents from './BoxComponents';
 
 // TODO: Checked with little change
@@ -86,6 +87,8 @@ export default function FormGenerator(props) {
     ConvertedContainer = BoxComponents;
   } else if (type === 'indent') {
     ConvertedContainer = IndentedComponents;
+  } else if (type === 'indentWithHeader') {
+    ConvertedContainer = IndentedComponentsWithHeader;
   } else if (type === 'column') {
     ConvertedContainer = ColumnComponents;
   } else if (type === 'tabIA') {
