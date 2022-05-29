@@ -26,6 +26,7 @@ const getParserValue = ({
   textNodeName,
   listNodes,
   includeNodes,
+  name,
   excludeNodes}) => {
   const rules = {
     V0_json: V0_json === 'true',
@@ -44,6 +45,7 @@ const getParserValue = ({
       type: 'xml',
       version: 1,
       rules,
+      name,
     },
   ];
 
@@ -82,6 +84,10 @@ export default function DynaXmlParse_afe({
   disabled,
   flowId,
   label,
+  formKey,
+  isHttp,
+  isSuccess,
+  name,
   formKey: parentFormKey,
 }) {
   const classes = useStyles();
@@ -91,11 +97,20 @@ export default function DynaXmlParse_afe({
   const editorId = getValidRelativePath(id);
   const [remountKey, setRemountKey] = useState(1);
 
+  const show = useSelector(state => selectors.showParser(state, formKey, 'xml', isSuccess));
+
   const resourcePath = useSelector(state =>
-    selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
+    isHttp ? selectors.resource(state, resourceType, resourceId)?.http?.response?.resourcePath : selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
+
   const getInitOptions = useCallback(
-    val => ({ resourcePath, ...val?.[0]?.rules}),
-    [resourcePath],
+    val => {
+      if (isHttp) {
+        return name === 'ResponseParser' ? { resourcePath, ...val } : { resourcePath, ...val?.rules };
+      }
+
+      return ({ resourcePath, ...val?.[0]?.rules});
+    },
+    [isHttp, name, resourcePath],
   );
   const options = useMemo(() => getInitOptions(value), [getInitOptions, value]);
   const [form, setForm] = useState(getForm(options, resourceId));
@@ -111,6 +126,7 @@ export default function DynaXmlParse_afe({
           value:
             {
               type: 'xml',
+              name,
               version: 1,
               rules: {
                 V0_json: true,
@@ -123,7 +139,7 @@ export default function DynaXmlParse_afe({
 
       dispatch(actions.resource.patchStaged(resourceId, patch, 'value'));
     }
-  }, [options, dispatch, resourceId]);
+  }, [name, options, dispatch, resourceId]);
 
   const handleSave = useCallback((editorValues = {}) => {
     const { rule } = editorValues;
@@ -135,10 +151,9 @@ export default function DynaXmlParse_afe({
     onFieldChange(id, parsersValue);
     dispatch(actions.resourceFormSampleData.request(parentFormKey));
   }, [id, onFieldChange, resourceId, parentFormKey, dispatch]);
-
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
-      const parsersValue = getParserValue(newOptions);
+      const parsersValue = getParserValue({...newOptions, name});
 
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
@@ -148,10 +163,10 @@ export default function DynaXmlParse_afe({
         onFieldChange(id, parsersValue, touched);
       }
     },
-    [id, onFieldChange]
+    [name, id, onFieldChange]
   );
 
-  const parseFormKey = 'xmlParserFields';
+  const parseFormKey = name || 'xmlParserFields';
 
   useUpdateParentForm(parseFormKey, handleFormChange);
   useSetSubFormShowValidations(parentFormKey, parseFormKey);
@@ -179,6 +194,8 @@ export default function DynaXmlParse_afe({
       params: { editorId },
     }));
   }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
+
+  if (isHttp && !show) return null;
 
   return (
     <>
