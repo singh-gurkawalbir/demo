@@ -2392,4 +2392,6 @@ use the custom option.`,
   'revert.finalRevertChanges': ' You can make changes to a source or cloned integration, then revert them. You must reconfigure your connections to revert your changes and there may be additional revert steps depending on necessary packages',
   'snapshot.create': 'A snapshot is a saved capture of your integration that you can use to revert your integration at any point.',
   'snapshot.description': 'Describe your snapshot so you can quickly identify the revision and any important details.',
+  'http.parseSuccessResponses': 'Fill Something Here',
+  'http.parseErrorResponses': 'Fill Something Here',
 };
