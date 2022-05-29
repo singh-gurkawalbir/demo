@@ -74,28 +74,32 @@ selectors.fbRouterStepsInfo = (state, flowId, routerId) => {
   const flow = state && state[flowId]?.flow;
 
   if (flow && flow.routers && flow.routers.length) {
-    const routerStepsCount = routerId => {
+    const routerStepsCount = (routerId, ignoreFirstBranch, ignoreAll) => {
       const router = flow.routers.find(r => r.id === routerId);
 
       if (router && !visitedRouters[routerId]) {
         visitedRouters[routerId] = true;
 
-        (router.branches || []).forEach(branch => {
+        (router.branches || []).forEach((branch, index) => {
+          const isSurvivingBranch = (ignoreFirstBranch && index === 0) || ignoreAll;
+
           (branch.pageProcessors || []).forEach(pp => {
-            if (pp.setupInProgress || (!pp._exportId && !pp._importId)) {
-              unconfiguredCount += 1;
-            } else {
-              configuredCount += 1;
+            if (!isSurvivingBranch) {
+              if (pp.setupInProgress || (!pp._exportId && !pp._importId)) {
+                unconfiguredCount += 1;
+              } else {
+                configuredCount += 1;
+              }
             }
           });
           if (branch.nextRouterId) {
-            routerStepsCount(branch.nextRouterId);
+            routerStepsCount(branch.nextRouterId, false, isSurvivingBranch);
           }
         });
       }
     };
 
-    routerStepsCount(routerId);
+    routerStepsCount(routerId, true, false);
   }
 
   return {configuredCount, unconfiguredCount};
