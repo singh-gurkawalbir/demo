@@ -1,6 +1,7 @@
 import produce from 'immer';
-import { sortBy } from 'lodash';
 import actionTypes from '../../../actions/types';
+import { emptyList } from '../../../utils/constants';
+import { stringCompare } from '../../../utils/sort';
 
 const emptyObj = {};
 const addSubHeaderElement = (acc, curr) => {
@@ -23,44 +24,23 @@ export function _generateFileDefinitionOptions({ definitions }) {
     label: name,
     value: _id,
   }));
-
-  definitionOptions.forEach(definition => {
-    if (['delimited/x12', 'delimited'].includes(definition.format)) {
-      categorizedDefinitionMap.edi = [
-        ...(categorizedDefinitionMap.edi || []),
-        definition,
-      ];
-    }
-
-    if (definition.format === 'delimited/edifact') {
-      categorizedDefinitionMap.ediFact = [
-        ...(categorizedDefinitionMap.ediFact || []),
-        definition,
-      ];
-    }
-
-    if (definition.format === 'fixed') {
-      categorizedDefinitionMap.fixed = [
-        ...(categorizedDefinitionMap.fixed || []),
-        definition,
-      ];
-    }
-  });
   // Sort based on Vendor and label for all formats
   const sortByKeys = ['vendor', 'label'];
 
-  categorizedDefinitionMap.edi = sortBy(
-    categorizedDefinitionMap.edi,
-    sortByKeys
-  ).reduce(addSubHeaderElement, []);
-  categorizedDefinitionMap.ediFact = sortBy(
-    categorizedDefinitionMap.ediFact,
-    sortByKeys
-  ).reduce(addSubHeaderElement, []);
-  categorizedDefinitionMap.fixed = sortBy(
-    categorizedDefinitionMap.fixed,
-    sortByKeys
-  ).reduce(addSubHeaderElement, []);
+  categorizedDefinitionMap.edi = definitionOptions
+    .filter(definition => ['delimited/x12', 'delimited'].includes(definition.format))
+    .sort(stringCompare(sortByKeys))
+    .reduce(addSubHeaderElement, []);
+
+  categorizedDefinitionMap.ediFact = definitionOptions
+    .filter(definition => definition.format === 'delimited/edifact')
+    .sort(stringCompare(sortByKeys))
+    .reduce(addSubHeaderElement, []);
+
+  categorizedDefinitionMap.fixed = definitionOptions
+    .filter(definition => definition.format === 'fixed')
+    .sort(stringCompare(sortByKeys))
+    .reduce(addSubHeaderElement, []);
 
   return categorizedDefinitionMap;
 }
@@ -139,7 +119,7 @@ selectors.preBuiltFileDefinitions = (state, format) => ({
       state.preBuiltFileDefinitions &&
       state.preBuiltFileDefinitions.data &&
       state.preBuiltFileDefinitions.data[format]) ||
-    [],
+    emptyList,
   status:
     state &&
     state.preBuiltFileDefinitions &&

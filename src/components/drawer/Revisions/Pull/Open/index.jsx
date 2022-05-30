@@ -1,5 +1,5 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../../Right';
@@ -7,6 +7,7 @@ import DrawerHeader from '../../../Right/DrawerHeader';
 import DrawerContent from '../../../Right/DrawerContent';
 import DrawerFooter from '../../../Right/DrawerFooter';
 import actions from '../../../../../actions';
+import { selectors } from '../../../../../reducers';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../../../DynaForm';
 import DynaSubmit from '../../../../DynaForm/DynaSubmit';
@@ -14,6 +15,9 @@ import { TextButton } from '../../../../Buttons';
 import getMetadata from './metadata';
 import RevisionHeader from '../../components/RevisionHeader';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
+import ErrorContent from '../../../../ErrorContent';
+import messageStore from '../../../../../utils/messageStore';
+import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {
@@ -26,13 +30,20 @@ const useStyles = makeStyles(() => ({
 function OpenPullDrawerContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const classes = useStyles();
-  const { revId } = match.params;
   const history = useHistory();
   const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
+  const { revId } = match.params;
+
+  const hasNoCloneFamily = useSelector(state => selectors.hasNoCloneFamily(state, integrationId));
   const formKey = useFormInitWithPermissions({ fieldMeta: getMetadata({integrationId}) });
-  const onClose = () => {
-    history.replace(parentUrl);
-  };
+
+  const onClose = useCallback(
+    () => {
+      history.replace(parentUrl);
+    },
+    [history, parentUrl],
+  );
 
   const handleCreateRevision = formValues => {
     const revisionInfo = {
@@ -47,6 +58,20 @@ function OpenPullDrawerContent({ integrationId, parentUrl }) {
       params: { revisionId: revId },
     }));
   };
+
+  useEffect(() => {
+    if (hasNoCloneFamily) {
+      // when user directly lands on open pull drawer and
+      // If the integration does not have any clones to pull from
+      // then close the drawer and show the error message to the user
+      onClose();
+
+      enquesnackbar({
+        message: <ErrorContent error={messageStore('NO_CLONE_FAMILY_TO_PULL_FROM_ERROR')} />,
+        variant: 'error',
+      });
+    }
+  }, [hasNoCloneFamily, enquesnackbar, onClose]);
 
   return (
     <>

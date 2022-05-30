@@ -32,8 +32,8 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId,
 
       if (
         resource._connectorId &&
-          ((['shopify', 'hubspot', 'microsoftbusinesscentral'].includes(resource.assistant) &&
-          values['/http/auth/type'] === 'oauth') || resource.assistant === 'squareup')
+          ((['shopify', 'hubspot'].includes(resource.assistant) &&
+          values['/http/auth/type'] === 'oauth') || ['squareup', 'microsoftbusinesscentral'].includes(resource.assistant))
       ) {
         newValues['/http/_iClientId'] =
             iClients && iClients[0] && iClients[0]._id;
