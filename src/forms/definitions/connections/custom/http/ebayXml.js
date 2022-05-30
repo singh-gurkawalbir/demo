@@ -25,8 +25,6 @@ export default {
       '<WarningLevel>High</WarningLevel>\n' +
     '</GetTokenStatusRequest>',
     '/http/ping/method': 'POST',
-    '/http/rateLimit/failPath': '/GetTokenStatusResponse/TokenStatus/Status',
-    '/http/rateLimit/failValues': ['200'],
   }),
   fieldMap: {
     name: { fieldId: 'name' },
