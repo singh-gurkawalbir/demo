@@ -1541,6 +1541,9 @@ describe('v2 mapping utils', () => {
     test('should return false if only one default row exists', () => {
       expect(hasV2MappingsInTreeData([{key: 'key1', isEmptyRow: true}])).toEqual(false);
     });
+    test('should return false if only one default row exists in rows output mode', () => {
+      expect(hasV2MappingsInTreeData([{key: 'key1', generateDisabled: true, children: [{key: 'c1', isEmptyRow: true}]}])).toEqual(false);
+    });
     test('should return true if tree data exists', () => {
       expect(hasV2MappingsInTreeData([{key: 'key1', extract: 'e1', generate: 'g1', dataType: 'string'}])).toEqual(true);
     });

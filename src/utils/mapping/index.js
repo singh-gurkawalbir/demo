@@ -839,7 +839,9 @@ export const buildTreeFromV2Mappings = ({
 };
 
 export const hasV2MappingsInTreeData = treeData => {
-  if (!treeData || !treeData.length || (treeData.length === 1 && treeData[0].isEmptyRow)) {
+  if (!treeData || !treeData.length ||
+  (treeData.length === 1 && treeData[0].isEmptyRow) ||
+  (treeData.length === 1 && treeData[0].generateDisabled && !treeData[0].combinedExtract && treeData[0].children?.length === 1 && treeData[0].children[0].isEmptyRow)) {
     return false;
   }
 
