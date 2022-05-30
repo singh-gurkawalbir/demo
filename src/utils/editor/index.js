@@ -3,6 +3,7 @@ import { AFE_SAVE_STATUS, FORM_SAVE_STATUS } from '../constants';
 import { convertGraphqlFieldIdToHTTPFieldId, isGraphqlField } from '../graphql';
 import { isOldRestAdaptor } from '../resource';
 
+export const getMappingsEditorId = importId => `mappings-${importId}`;
 export const HOOK_STAGES = [
   'postResponseMapHook',
   'preSavePage',

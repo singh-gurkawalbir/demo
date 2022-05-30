@@ -948,6 +948,49 @@ describe('v2 mapping utils', () => {
               },
             ],
           },
+          {
+            generate: 'items',
+            dataType: 'objectarray',
+            buildArrayHelper: [{
+              extract: '$.items[*]',
+            }],
+          },
+          {
+            generate: 'test',
+            dataType: 'objectarray',
+            buildArrayHelper: [
+              {
+                extract: '$.children[*]',
+                mappings: [
+                  {
+                    extract: 'a',
+                    generate: 'a',
+                    dataType: 'string',
+                  },
+                ],
+              },
+              {
+                extract: '$.mother',
+                mappings: [
+                  {
+                    extract: 'b',
+                    generate: 'b',
+                    dataType: 'string',
+                  },
+                ],
+              },
+              {
+                extract: '$.father',
+                mappings: [
+                  {
+                    extract: 'c',
+                    generate: 'c',
+                    dataType: 'string',
+                  },
+                ],
+              },
+            ],
+          },
         ],
       };
 
@@ -1306,7 +1349,98 @@ describe('v2 mapping utils', () => {
           }],
           combinedExtract: '$.siblings[*],$',
         }],
-      }];
+      },
+      {
+        key: 'new_key',
+        title: '',
+        disabled: false,
+        generate: 'items',
+        dataType: 'objectarray',
+        buildArrayHelper: [{
+          extract: '$.items[*]',
+        }],
+        copySource: 'yes',
+        combinedExtract: '$.items[*]',
+      },
+      {
+        key: 'new_key',
+        title: '',
+        disabled: false,
+        generate: 'test',
+        dataType: 'objectarray',
+        buildArrayHelper: [
+          {
+            extract: '$.children[*]',
+            mappings: [
+              {
+                extract: 'a',
+                generate: 'a',
+                dataType: 'string',
+              },
+            ],
+          },
+          {
+            extract: '$.mother',
+            mappings: [
+              {
+                extract: 'b',
+                generate: 'b',
+                dataType: 'string',
+              },
+            ],
+          },
+          {
+            extract: '$.father',
+            mappings: [
+              {
+                extract: 'c',
+                generate: 'c',
+                dataType: 'string',
+              },
+            ],
+          },
+        ],
+        children: [{
+          key: 'new_key',
+          parentKey: 'new_key',
+          title: '',
+          isTabNode: true,
+        }, {
+          key: 'new_key',
+          title: '',
+          parentKey: 'new_key',
+          parentExtract: '$.children[*]',
+          disabled: false,
+          generate: 'a',
+          dataType: 'string',
+          extract: 'a',
+        }, {
+          key: 'new_key',
+          title: '',
+          parentKey: 'new_key',
+          parentExtract: '$.mother',
+          disabled: false,
+          hidden: true,
+          className: 'hideRow',
+          generate: 'b',
+          dataType: 'string',
+          extract: 'b',
+        },
+        {
+          key: 'new_key',
+          title: '',
+          parentKey: 'new_key',
+          parentExtract: '$.father',
+          disabled: false,
+          hidden: true,
+          className: 'hideRow',
+          generate: 'c',
+          dataType: 'string',
+          extract: 'c',
+        }],
+        combinedExtract: '$.children[*],$.mother,$.father',
+      },
+      ];
 
       expect(buildTreeFromV2Mappings({importResource, isGroupedSampleData: false, disabled: false})).toEqual(v2TreeData);
     });
@@ -2287,6 +2421,7 @@ describe('v2 mapping utils', () => {
         lName: 'henderson',
         altFirstName: 'scooter',
         additionalFirstNames: ['scoots', 'mchendrix'],
+        addresses: [],
         children: [
           {
             firstName: 'abby',
@@ -2370,6 +2505,14 @@ describe('v2 mapping utils', () => {
               key: 'new_key',
               parentKey: 'new_key',
               propName: 'additionalFirstNames',
+              title: '',
+            },
+            {
+              dataType: '[object]',
+              jsonPath: 'addresses[*]',
+              key: 'new_key',
+              parentKey: 'new_key',
+              propName: 'addresses',
               title: '',
             },
             {
@@ -2509,6 +2652,7 @@ describe('v2 mapping utils', () => {
           motherFName: 'mary',
           motherLName: 'henderson',
           childFName: 'paige',
+          addresses: [],
         },
         {
           fName: 'scott',
@@ -2566,6 +2710,14 @@ describe('v2 mapping utils', () => {
               propName: 'childFName',
               title: '',
             },
+            {
+              dataType: '[object]',
+              jsonPath: 'addresses[*]',
+              key: 'new_key',
+              parentKey: 'new_key',
+              propName: 'addresses',
+              title: '',
+            },
           ],
         },
       ];
@@ -2617,6 +2769,33 @@ describe('v2 mapping utils', () => {
       expect(getFinalSelectedExtracts({jsonPath: 'children.lname'}, '$.fname', true)).toEqual('$.children.lname');
       expect(getFinalSelectedExtracts({jsonPath: 'siblings[*]'}, '$.fname,$.lname', true)).toEqual('$.fname,$.siblings[*]');
       expect(getFinalSelectedExtracts({jsonPath: 'lname'}, '$.fname,', true, true)).toEqual('$.fname,$[*].lname');
+    });
+    test('should correctly return the json path if parent key and parent extract are present', () => {
+      const treeData = [{
+        key: 'key1',
+        combinedExtract: '$.items[*]',
+        dataType: 'objectarray',
+        children: [{
+          key: 'c1',
+          parentKey: 'key1',
+          parentExtract: '$.items[*]',
+          dataType: 'object',
+          children: [
+            {
+              key: 'c2',
+              parentKey: 'c1',
+              dataType: 'string',
+            },
+          ],
+        }],
+      },
+      {
+        key: 'key2',
+        dataType: 'string',
+      }];
+
+      expect(getFinalSelectedExtracts({jsonPath: 'items[*].inv_detail.name'}, '', true, false, 'c2', treeData)).toEqual('$.items.inv_detail.name');
+      expect(getFinalSelectedExtracts({jsonPath: 'items[*].name'}, '', true, false, 'key2', treeData)).toEqual('$.items[*].name');
     });
   });
   describe('compareV2Mappings util', () => {

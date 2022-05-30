@@ -124,7 +124,7 @@ function LicenseAction() {
   );
 
   const startFreeTrialDialog = useCallback(() => {
-    const message = messageStore('CONTACT_SALES_MESSAGE');
+    const message = messageStore('LICENSE_TRIAL_ISSUED');
 
     confirmDialog({
       title: 'Congratulations! Your unlimited flows trial starts now.',
