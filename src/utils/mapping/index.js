@@ -1324,7 +1324,8 @@ const recursivelyCompareV2Mappings = (_mappingObj1 = {}, _mappingObj2 = {}) => {
 
   if (!isEqualObj) return false;
 
-  if (!_mappingObj1.children && !_mappingObj2.children) return isEqualObj;
+  if (!_mappingObj1.children && !_mappingObj2.children) return true;
+  if (_mappingObj1.children.length !== _mappingObj2.children.length) return false;
 
   // both have children so need to compare children now
   let isChildrenEqual = true;
