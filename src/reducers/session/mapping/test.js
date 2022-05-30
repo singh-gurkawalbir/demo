@@ -1529,6 +1529,46 @@ describe('mapping reducer', () => {
 
       expect(state).toEqual(expectedState);
     });
+    test('should correctly add empty row if no matching children were found for record format', () => {
+      generateUniqueKey.mockReturnValue('new-key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          isGroupedOutput: true,
+          v2TreeData: [{
+            key: 'new-key',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generateDisabled: true,
+            combinedExtract: '',
+            title: '',
+            children: [{
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            }],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.toggleOutput('record'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          isGroupedOutput: false,
+          v2TreeData: [{
+            key: 'new-key',
+            title: '',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            isEmptyRow: true,
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
   });
   describe('MAPPING.V2.TOGGLE_ROWS action', () => {
     test('should set expandedKeys as empty array if passed flag is false', () => {
@@ -1962,7 +2002,7 @@ describe('mapping reducer', () => {
 
       expect(state).toBe(initialState);
     });
-    test('should correctly insert dragged node to the new position when no children are involved', () => {
+    test('should correctly insert dragged node to the new position when no children are involved[1]', () => {
       const initialState = {
         mapping: {
           importId: 'imp-123',
@@ -2019,6 +2059,174 @@ describe('mapping reducer', () => {
               extract: '$.fname',
             },
           ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should correctly insert dragged node to the new position when no children are involved[2]', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test1',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test2',
+            extract: '$.lname',
+          },
+          {
+            key: 'key3',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test3',
+            extract: '$.fname',
+          },
+          {
+            key: 'key4',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test4',
+            extract: '$.fname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.dropRow({
+        dropPosition: 3,
+        dragNode: {
+          key: 'key2',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'test2',
+          extract: '$.lname',
+          pos: '0-1',
+        },
+        node: {
+          key: 'key3',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'test3',
+          extract: '$.fname',
+          pos: '0-2',
+        },
+
+      }));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test1',
+            extract: '$.fname',
+          },
+          {
+            key: 'key3',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test3',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test2',
+            extract: '$.lname',
+          },
+          {
+            key: 'key4',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test4',
+            extract: '$.fname',
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should correctly insert dragged node to the new position when no children are involved[3]', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test1',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test2',
+            extract: '$.lname',
+          },
+          {
+            key: 'key3',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test3',
+            extract: '$.fname',
+          },
+          {
+            key: 'key4',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test4',
+            extract: '$.fname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.dropRow({
+        dropPosition: 1,
+        dragNode: {
+          key: 'key3',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'test3',
+          extract: '$.fname',
+          pos: '0-2',
+        },
+        node: {
+          key: 'key1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'test1',
+          extract: '$.fname',
+          pos: '0-0',
+        },
+
+      }));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test1',
+            extract: '$.fname',
+          },
+          {
+            key: 'key3',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test3',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test2',
+            extract: '$.lname',
+          },
+          {
+            key: 'key4',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'test4',
+            extract: '$.fname',
+          }],
         },
       };
 

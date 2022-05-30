@@ -20,6 +20,7 @@ import { getAssistantConnectorType } from '../../constants/applications';
 import { autoEvaluateProcessorWithCancel } from '../editor';
 import { getAssistantFromConnection } from '../../utils/connections';
 import { safeParse } from '../../utils/string';
+import { getMappingsEditorId } from '../../utils/editor';
 
 export function* fetchRequiredMappingData({
   flowId,
@@ -563,7 +564,7 @@ export function* validateMappings() {
   }
   const {importId} = yield select(selectors.mapping);
 
-  yield call(autoEvaluateProcessorWithCancel, { id: `mappings-${importId}` });
+  yield call(autoEvaluateProcessorWithCancel, { id: getMappingsEditorId(importId) });
 }
 
 export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {

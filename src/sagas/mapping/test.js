@@ -27,6 +27,7 @@ import { commitStagedChanges } from '../resources';
 import { autoEvaluateProcessorWithCancel } from '../editor';
 import {generateUniqueKey} from '../../utils/string';
 import { MAPPING_DATA_TYPES } from '../../utils/mapping';
+import errorMessageStore from '../../utils/errorStore';
 
 jest.mock('../../utils/string');
 
@@ -1665,7 +1666,7 @@ describe('validateMappings saga', () => {
       }],
       [call(autoEvaluateProcessorWithCancel, { id: 'mappings-123' }), undefined],
     ])
-    .put(actions.mapping.setValidationMsg('Extract fields missing for field(s): g2'))
+    .put(actions.mapping.setValidationMsg(errorMessageStore('MAPPER1_MISSING_EXTRACT', {fields: 'g2'})))
     .call(autoEvaluateProcessorWithCancel, { id: 'mappings-123' })
     .run());
 });

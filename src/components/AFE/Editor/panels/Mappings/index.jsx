@@ -8,7 +8,7 @@ import TopPanel from '../../../../Mapping/TopPanel';
 import DragContainer from '../../../../DragContainer';
 import SettingsDrawer from '../../../../Mapping/Settings';
 import AutoMapperButton from '../../../../Mapping/AutoMapperButton';
-import { dataAsString } from '../../../../../utils/editor';
+import { dataAsString, getMappingsEditorId } from '../../../../../utils/editor';
 import MappingRow from '../../../../Mapping/MappingRow';
 import { emptyObject } from '../../../../../utils/constants';
 import Mapper2 from './Mapper2';
@@ -117,7 +117,7 @@ export default function MappingWrapper({ editorId }) {
 
   useEffect(() => {
     if (mappingStatus === 'received') {
-      dispatch(actions.editor.sampleDataReceived(`mappings-${importId}`, sampleInput));
+      dispatch(actions.editor.sampleDataReceived(getMappingsEditorId(importId), sampleInput));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mappingStatus]);
