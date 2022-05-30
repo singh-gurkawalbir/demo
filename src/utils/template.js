@@ -40,6 +40,10 @@ export const getApplication = conn => {
       return a.id === 'rest';
     }
 
+    if (conn.type === 'http' && conn.http?.formType === 'graph_ql') {
+      return a.id === 'graph_ql';
+    }
+
     return a.id === conn.type;
   }) || {};
 
