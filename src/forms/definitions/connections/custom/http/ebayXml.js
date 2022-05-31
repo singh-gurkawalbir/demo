@@ -25,6 +25,7 @@ export default {
       '<WarningLevel>High</WarningLevel>\n' +
     '</GetTokenStatusRequest>',
     '/http/ping/method': 'POST',
+    '/http/headers': [{ name: 'X-EBAY-API-CALL-NAME', value: 'GetTokenStatus' }],
   }),
   fieldMap: {
     name: { fieldId: 'name' },
