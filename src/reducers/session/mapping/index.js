@@ -738,6 +738,9 @@ export default (state = {}, action) => {
           if (!value.conditional?.when && node?.conditional?.when) {
             delete node.conditional.when;
           }
+          if (value?.conditional?.when === 'extract_not_empty') {
+            delete node.default;
+          }
 
           if ('hardCodedValue' in value) {
             delete node.extract;
