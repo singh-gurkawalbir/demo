@@ -1573,9 +1573,9 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
         }
 
         if (connection.type === 'http') {
-          if (connection.http?.formType === 'graph_ql') {
+          if (connection.http?.formType) {
             return (
-            this.http?.formType === 'graph_ql' &&
+            this.http?.formType === connection.http?.formType &&
             this.type === 'http' &&
             !this._connectorId &&
             (!environment || !!this.sandbox === (environment === 'sandbox'))

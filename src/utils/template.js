@@ -36,12 +36,8 @@ export const getApplication = conn => {
       return a.id === rdbmsSubTypeToAppType(conn.rdbms.type);
     }
 
-    if (conn.type === 'http' && conn.http?.formType === 'rest') {
-      return a.id === 'rest';
-    }
-
-    if (conn.type === 'http' && conn.http?.formType === 'graph_ql') {
-      return a.id === 'graph_ql';
+    if (conn.type === 'http' && conn.http?.formType) {
+      return a.id === conn.http.formType;
     }
 
     return a.id === conn.type;
