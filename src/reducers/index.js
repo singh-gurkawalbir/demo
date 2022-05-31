@@ -1573,6 +1573,15 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
         }
 
         if (connection.type === 'http') {
+          if (connection.http?.formType) {
+            return (
+            this.http?.formType === connection.http?.formType &&
+            this.type === 'http' &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+            );
+          }
+
           return (
             this.http?.formType !== 'rest' &&
             this.type === 'http' &&
