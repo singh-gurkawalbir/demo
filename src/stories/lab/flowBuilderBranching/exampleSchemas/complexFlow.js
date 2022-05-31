@@ -33,8 +33,7 @@ const firstBranch = {
   inputFilter: {},
   pageProcessors: [getSomePpImport('import2'), getSomePpImport('import3')],
   // what if we want to have a merge
-  _nextRouterId: 'secondRouter',
-  _id: 'branch-1',
+  nextRouterId: 'secondRouter',
 };
 
 const secondBranch = {
@@ -42,7 +41,6 @@ const secondBranch = {
   description: 'some description',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import4'), getSomePpImport('import5')],
-  _id: 'branch-2',
 };
 
 const branchOne = {
@@ -53,7 +51,6 @@ const branchOne = {
   pageProcessors: [getSomePpImport('import6'), getSomePpImport('import7')],
   // what if we want to have a merge
   //   _nextRouterId: { type: Schema.Types.ObjectId },
-  _id: 'branch-1',
 };
 
 const branchTwo = {
@@ -61,19 +58,12 @@ const branchTwo = {
   description: 'some description',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import8'), getSomePpImport('import9')],
-  _id: 'branch-2',
 };
 
 const firstRouter = {
-  _id: 'firstRouter',
-  routeRecordsTo: {
-    type: 'first_matching_branch',
-    default: undefined,
-  },
-  routeRecordsUsing: {
-    type: 'input_filters',
-    default: undefined,
-  },
+  id: 'firstRouter',
+  routeRecordsTo: 'first_matching_branch',
+  routeRecordsUsing: 'input_filters',
   branches: [firstBranch, secondBranch],
   script: {
     _scriptId: { type: 'something', ref: 'Script' },
@@ -82,15 +72,9 @@ const firstRouter = {
 };
 
 const secondRouter = {
-  _id: 'secondRouter',
-  routeRecordsTo: {
-    type: 'first_matching_branch',
-    default: undefined,
-  },
-  routeRecordsUsing: {
-    type: 'input_filters',
-    default: undefined,
-  },
+  id: 'secondRouter',
+  routeRecordsTo: 'first_matching_branch',
+  routeRecordsUsing: 'input_filters',
   branches: [branchOne, branchTwo],
   script: {
     _scriptId: { type: 'something', ref: 'Script' },
@@ -103,12 +87,11 @@ const virtualBranch = {
   description: 'some description',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import1')],
-  _id: 'firstVirtualBranch',
-  _nextRouterId: 'firstRouter',
+  nextRouterId: 'firstRouter',
 };
 
 const virtualRouterForFirstPP = {
-  _id: 'virtualRouter',
+  id: 'virtualRouter',
   branches: [virtualBranch],
 };
 

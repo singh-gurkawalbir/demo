@@ -612,6 +612,7 @@ describe('resource region selector testcases', () => {
         disableRunFlow: true,
         disableSlider: true,
         hasSettings: false,
+        isSetupInProgress: false,
         isDeltaFlow: true,
         isRealtime: false,
         isRunnable: true,
@@ -758,6 +759,7 @@ describe('resource region selector testcases', () => {
         isDeltaFlow: true,
         isRealtime: false,
         isRunnable: true,
+        isSetupInProgress: false,
         isSimpleImport: false,
         pageGenerators: [
           {

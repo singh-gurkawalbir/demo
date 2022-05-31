@@ -141,10 +141,8 @@ describe('session.flows selectors', () => {
     });
   });
   describe('isOnOffInProgress', () => {
-    const defaultObject = { onOffInProgress: false };
-
     test('should return defaultObject when state is undefined.', () => {
-      expect(selectors.isOnOffInProgress(undefined, flowId)).toEqual(defaultObject);
+      expect(selectors.isOnOffInProgress(undefined, flowId)).toEqual(false);
     });
 
     test('should return correct isOnOffInProgress flag', () => {
@@ -153,22 +151,18 @@ describe('session.flows selectors', () => {
       let newState = reducer(oldState,
         actions.flow.isOnOffActionInprogress(true, flowId)
       );
-      let expected = {onOffInProgress: true };
 
-      expect(selectors.isOnOffInProgress(newState, flowId)).toEqual(expected);
+      expect(selectors.isOnOffInProgress(newState, flowId)).toEqual(true);
       newState = reducer(oldState,
         actions.flow.isOnOffActionInprogress(false, flowId)
       );
-      expected = {onOffInProgress: false };
 
-      expect(selectors.isOnOffInProgress(newState, flowId)).toEqual(expected);
+      expect(selectors.isOnOffInProgress(newState, flowId)).toEqual(false);
     });
   });
   describe('flowRunStatus', () => {
-    const defaultObject = { runStatus: '' };
-
     test('should return defaultObject when state is undefined.', () => {
-      expect(selectors.flowRunStatus(undefined, flowId)).toEqual(defaultObject);
+      expect(selectors.flowRunStatus(undefined, flowId)).toEqual();
     });
 
     test('should return correct runStatus flag', () => {
@@ -177,13 +171,13 @@ describe('session.flows selectors', () => {
       let newState = reducer(oldState,
         actions.flow.runActionStatus('Started', flowId)
       );
-      let expected = {runStatus: 'Started' };
+      let expected = 'Started';
 
       expect(selectors.flowRunStatus(newState, flowId)).toEqual(expected);
       newState = reducer(oldState,
         actions.flow.runActionStatus('Done', flowId)
       );
-      expected = {runStatus: 'Done' };
+      expected = 'Done';
 
       expect(selectors.flowRunStatus(newState, flowId)).toEqual(expected);
     });

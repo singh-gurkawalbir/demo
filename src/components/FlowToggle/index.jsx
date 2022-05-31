@@ -8,6 +8,7 @@ import useConfirmDialog from '../ConfirmDialog';
 import { selectors } from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import Spinner from '../Spinner';
+import { useSelectorMemo } from '../../hooks';
 
 const useStyles = makeStyles({
   spinnerFlowToggle: {
@@ -15,7 +16,7 @@ const useStyles = makeStyles({
   },
 });
 export default function FlowToggle({
-  resource: flow,
+  flowId,
   disabled,
   childId,
   integrationId,
@@ -24,10 +25,10 @@ export default function FlowToggle({
   const { confirmDialog } = useConfirmDialog();
   const classes = useStyles();
   const dispatch = useDispatch();
+  const flow = useSelectorMemo(selectors.mkFlowDetails, flowId, childId);
   const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
-  const { onOffInProgress } = useSelector(
+  const onOffInProgress = useSelector(
     state => selectors.isOnOffInProgress(state, flow._id),
-    (left, right) => left.onOffInProgress === right.onOffInProgress
   );
   const istwoDotZeroFrameWork = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
 

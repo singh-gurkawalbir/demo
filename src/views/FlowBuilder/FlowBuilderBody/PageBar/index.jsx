@@ -202,7 +202,7 @@ const PageBarChildren = ({integrationId, flowId}) => {
         <div className={clsx(classes.flowToggle)}>
           <FlowToggle
             integrationId={integrationId}
-            resource={flowDetails}
+            flowId={flowId}
             childId={match.params?.childId}
             disabled={isNewFlow || isMonitorLevelAccess}
             isConnector={isIAType}

@@ -44,6 +44,7 @@ import {
   shouldHaveUnassignedSection,
   getFlowGroup,
   mappingFlowsToFlowGroupings,
+  isSetupInProgress,
 } from '.';
 import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../../constants';
 import getRoutePath from '../routePaths';
@@ -663,6 +664,50 @@ const multiStoreApp = {
     ],
   },
 };
+
+describe('isSetupInProgress', () => {
+  const flow1 = {pageGenerators: [{_exportId: 'export1'}, {setupInProgress: true}]};
+  const flow2 = {pageGenerators: [{_exportId: 'export1'}, {_exportId: 'export2'}]};
+  const flow3 = {
+    pageGenerators: [{_exportId: 'export1'}, {_exportId: 'export2'}],
+    pageProcessors: [{type: 'export', _exportId: 'export1'}, {type: 'import', _importId: 'export2'}],
+  };
+  const flow4 = {
+    pageGenerators: [{_exportId: 'export1'}, {_exportId: 'export2'}],
+    pageProcessors: [{type: 'export', _exportId: 'export1'}, {setupInProgress: true}],
+  };
+  const flow5 = {
+    pageGenerators: [{_exportId: 'export1'}, {setupInProgress: true}],
+    pageProcessors: [{setupInProgress: true}, {setupInProgress: true}],
+  };
+  const flow6 = {
+    pageGenerators: [{_exportId: 'export1'}, {_exportId: 'export2'}],
+    routers: [
+      {branches: [{name: 'branch1', pageProcessors: []}]},
+      {branches: [{name: 'branch1', pageProcessors: [{setupInProgress: true}]}]},
+    ],
+  };
+  const flow7 = {
+    pageGenerators: [{_exportId: 'export1'}, {_exportId: 'export2'}],
+    routers: [
+      {branches: [{name: 'branch1', pageProcessors: [{type: 'export', _exportId: 'e1'}]}]},
+      {branches: [{name: 'branch1', pageProcessors: [{_importId: 'i1'}]}]}],
+  };
+
+  test('should return false when flow is empty', () => {
+    expect(isSetupInProgress()).toEqual(false);
+  });
+
+  test('should return correct value when flow setup is in progress', () => {
+    expect(isSetupInProgress(flow1)).toEqual(true);
+    expect(isSetupInProgress(flow2)).toEqual(false);
+    expect(isSetupInProgress(flow3)).toEqual(false);
+    expect(isSetupInProgress(flow4)).toEqual(true);
+    expect(isSetupInProgress(flow5)).toEqual(true);
+    expect(isSetupInProgress(flow6)).toEqual(true);
+    expect(isSetupInProgress(flow7)).toEqual(false);
+  });
+});
 
 describe('isDeltaFlow', () => {
   const exportsWithDeltaType = [
@@ -2903,6 +2948,7 @@ describe('getFlowDetails', () => {
       isRealtime: true,
       isSimpleImport: false,
       isRunnable: false,
+      isSetupInProgress: false,
       canSchedule: false,
       disableSlider: false,
       isDeltaFlow: false,
@@ -2925,6 +2971,7 @@ describe('getFlowDetails', () => {
       isRealtime: false,
       isSimpleImport: true,
       isRunnable: true,
+      isSetupInProgress: false,
       canSchedule: false,
       disableSlider: false,
       isDeltaFlow: false,
@@ -2946,6 +2993,7 @@ describe('getFlowDetails', () => {
       ],
       isRealtime: false,
       isSimpleImport: false,
+      isSetupInProgress: false,
       isRunnable: false,
       canSchedule: true,
       disableSlider: false,
@@ -2967,6 +3015,7 @@ describe('getFlowDetails', () => {
       isRealtime: false,
       isSimpleImport: false,
       isRunnable: false,
+      isSetupInProgress: false,
       canSchedule: true,
       disableSlider: true,
       isDeltaFlow: false,
