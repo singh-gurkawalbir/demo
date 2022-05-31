@@ -162,9 +162,9 @@ export default function menuItems(
       path: '/marketplace',
     },
     {
-      label: 'Feature roadmap',
+      label: 'Product portal',
       Icon: PortalIcon,
-      path: '/featureRoadmap',
+      path: '/productPortal',
     },
   ];
 

@@ -24,8 +24,8 @@ const Marketplace = loadable(() =>
 const MarketplaceList = loadable(() =>
   retry(() => import(/* webpackChunkName: 'MarketplaceList' */ '../../views/MarketplaceList'))
 );
-const FeatureRoadmap = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'FeatureRoadmap' */ '../../views/FeatureRoadmap'))
+const ProductPortal = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'ProductPortal' */ '../../views/ProductPortal'))
 );
 const UpgradeEM = loadable(() =>
   retry(() => import(/* webpackChunkName: 'UpgradeErrorManagement' */ '../../views/UpgradeErrorManagement'))
@@ -280,7 +280,7 @@ export default function AppRouting() {
       <Route path={getRoutePath(HOME_PAGE_PATH)} component={Home} />
       <Route path={getRoutePath('/dashboard/:dashboardTab(runningFlows|completedFlows)')} component={Dashboard} />
       <Route path={getRoutePath('/recycleBin')} component={RecycleBin} />
-      <Route path={getRoutePath('/featureRoadmap')} component={FeatureRoadmap} />
+      <Route path={getRoutePath('/productPortal')} component={ProductPortal} />
       <Route
         path={[
           getRoutePath('/reports/:reportType'),

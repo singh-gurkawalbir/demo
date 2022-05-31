@@ -9,7 +9,7 @@ const useStyles = makeStyles({
     height: '100%',
   },
 });
-export default function FeatureRoadmap() {
+export default function ProductPortal() {
   const classes = useStyles();
 
   // eslint-disable-next-line no-undef
@@ -19,7 +19,7 @@ export default function FeatureRoadmap() {
     <div className={classes.container}>
       <Iframe
         url={contentUrl}
-        title="Feature roadmap"
+        title="Product portal"
         width="100%"
         height="100%"
         frameBorder={0} />
