@@ -1,7 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 import React from 'react';
 import Iframe from 'react-iframe';
-import { getDomain } from '../../utils/resource';
 
 const useStyles = makeStyles({
   container: {
@@ -12,8 +11,7 @@ const useStyles = makeStyles({
 export default function ProductPortal() {
   const classes = useStyles();
 
-  // eslint-disable-next-line no-undef
-  const contentUrl = (getDomain() === 'eu.integrator.io' ? PORTAL_URL_EU : PORTAL_URL);
+  const contentUrl = process.env.PORTAL_URL;
 
   return (
     <div className={classes.container}>
