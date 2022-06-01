@@ -839,7 +839,9 @@ export const buildTreeFromV2Mappings = ({
 };
 
 export const hasV2MappingsInTreeData = treeData => {
-  if (!treeData || !treeData.length || (treeData.length === 1 && treeData[0].isEmptyRow)) {
+  if (!treeData || !treeData.length ||
+  (treeData.length === 1 && treeData[0].isEmptyRow) ||
+  (treeData.length === 1 && treeData[0].generateDisabled && !treeData[0].combinedExtract && treeData[0].children?.length === 1 && treeData[0].children[0].isEmptyRow)) {
     return false;
   }
 
@@ -1215,15 +1217,32 @@ export const filterExtractsNode = (node = {}, propValue, inputValue) => {
   return true;
 };
 
+// recursively look for all parentExtracts for a given node
+export const findAllParentExtractsForNode = (treeData, output = [], nodeKey) => {
+  const {node} = findNodeInTree(treeData, 'key', nodeKey);
+
+  if (!node || !node.parentKey) return output;
+
+  // get the grand parents first
+  // this sequence is required by BE
+  findAllParentExtractsForNode(treeData, output, node.parentKey);
+
+  if (node.parentExtract) {
+    output.push(node.parentExtract);
+  }
+
+  return output;
+};
+
 // recursively look for nearest parentExtract for a given node
-const findParentExtractForNode = (treeData, nodeKey) => {
+export const findNearestParentExtractForNode = (treeData, nodeKey) => {
   const {node} = findNodeInTree(treeData, 'key', nodeKey);
 
   if (!node || !node.parentKey) return '';
 
   if (node.parentExtract) return node.parentExtract;
 
-  return findParentExtractForNode(treeData, node.parentKey);
+  return findNearestParentExtractForNode(treeData, node.parentKey);
 };
 
 // this util handles the comma separated values use-case
@@ -1235,7 +1254,7 @@ export const getFinalSelectedExtracts = (node, inputValue = '', isArrayType, isG
 
   // for child rows with parent extract
   // the children json path should not include [*] in the parent path
-  const parentExtract = findParentExtractForNode(treeData, nodeKey);
+  const parentExtract = findNearestParentExtractForNode(treeData, nodeKey);
 
   if (parentExtract) {
     const splitParentExtract = parentExtract.split('.') || [];
@@ -1324,7 +1343,8 @@ const recursivelyCompareV2Mappings = (_mappingObj1 = {}, _mappingObj2 = {}) => {
 
   if (!isEqualObj) return false;
 
-  if (!_mappingObj1.children && !_mappingObj2.children) return isEqualObj;
+  if (!_mappingObj1.children && !_mappingObj2.children) return true;
+  if (_mappingObj1.children.length !== _mappingObj2.children.length) return false;
 
   // both have children so need to compare children now
   let isChildrenEqual = true;

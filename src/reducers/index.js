@@ -6558,7 +6558,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
 
   // all afe fields for mapper2 should only support v2 AFE
   if (mappingVersion === 2) {
-    return {shouldGetContextFromBE: true};
+    return {shouldGetContextFromBE: true, isMapperField: true};
   }
 
   // for lookup fields, BE doesn't support v1/v2 yet

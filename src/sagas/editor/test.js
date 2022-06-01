@@ -1669,6 +1669,112 @@ describe('editor sagas', () => {
         .returns({ data: {connection: {name: 'HTTP connection'}}, templateVersion: undefined })
         .run();
     });
+    test('should add uiContext in the request body when the field type is from mappings', () => {
+      const editor = {
+        id: 'expression',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'imports',
+        resourceId,
+        stage: 'importMappingExtract',
+        fieldId: 'expression',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'expression' })
+        .provide([
+          [select(selectors.editor, 'expression'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}, status: 'received'}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, isMapperField: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {id: 999}}, templateVersion: 2}],
+          [select(selectors.resource, 'flows', flowId), {_integrationId: 'Integration-1234'}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              sampleData: {id: 999},
+              templateVersion: undefined,
+              flowId,
+              integrationId: 'Integration-1234',
+              import: { oneToMany: false },
+              fieldPath: 'expression',
+              uiContext: 'mapper2_0',
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .returns({ data: { record: {id: 999}}, templateVersion: 2 })
+        .run();
+    });
+    test('should add mapper2_0 in the request body when the field type is from mappings and row has parent extracts', () => {
+      const editor = {
+        id: 'expression',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'imports',
+        resourceId,
+        stage: 'importMappingExtract',
+        fieldId: 'expression',
+        mapper2RowKey: 'c2',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'expression' })
+        .provide([
+          [select(selectors.editor, 'expression'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}, status: 'received'}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, isMapperField: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {id: 999}}, templateVersion: 2}],
+          [select(selectors.resource, 'flows', flowId), {_integrationId: 'Integration-1234'}],
+          [select(selectors.mapping), {
+            v2TreeData: [
+              {
+                key: 'k1',
+                combinedExtract: '$.siblings[*]',
+                dataType: 'objectarray',
+                children: [{
+                  key: 'c1',
+                  combinedExtract: '$.siblings.children[*]',
+                  parentKey: 'k1',
+                  parentExtract: '$.siblings[*]',
+                  dataType: 'objectarray',
+                  children: [{
+                    key: 'c2',
+                    extract: '$.siblings.children.qty',
+                    parentExtract: '$.siblings.children[*]',
+                    parentKey: 'c1',
+                    dataType: 'string',
+                  }],
+                }],
+              },
+            ]}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              sampleData: {id: 999},
+              templateVersion: undefined,
+              flowId,
+              integrationId: 'Integration-1234',
+              import: { oneToMany: false },
+              fieldPath: 'expression',
+              uiContext: 'mapper2_0',
+              mapper2_0: {
+                arrayExtracts: ['$.siblings[*]', '$.siblings.children[*]'],
+              },
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .returns({ data: { record: {id: 999}}, templateVersion: 2 })
+        .run();
+    });
   });
   describe('initSampleData saga', () => {
     test('should do nothing if editor does not exist', () => expectSaga(initSampleData, { id: editorId })
