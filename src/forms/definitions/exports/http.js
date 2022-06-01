@@ -422,7 +422,7 @@ export default {
       label: 'XML parser helper',
       isHttp: true,
       isSuccess: true,
-      defaultValue: r => r?.parsers?.find(parser => parser.name === 'ResponseParser').rules,
+      defaultValue: r => Array.isArray(r?.parsers) && r.parsers?.find(parser => parser.name === 'ResponseParser')?.rules,
       visibleWhen: [
         {
           field: 'outputMode',

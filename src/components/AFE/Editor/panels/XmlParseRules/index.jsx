@@ -26,13 +26,16 @@ export default function XmlParseRules({ editorId }) {
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const rule = useSelector(state => selectors.editorRule(state, editorId));
-  const resourceId = useSelector(state => selectors.editor(state, editorId).resourceId);
+  const editor = useSelector(state => selectors.editor(state, editorId));
+  const resourceId = { editor };
   const formContext = useFormContext(formKey);
 
   // Since the form metadata is used only once, we don't need to refresh the
   // metadata cache on rule changes... we just need the original rule to set the
   // starting values.
   // eslint-disable-next-line react-hooks/exhaustive-deps
+
+  if (editor.fieldId === 'xmlParserForSuccessResponse') rule.isHttp = true;
   const fieldMeta = useMemo(() => getForm(rule, resourceId), [resourceId]);
 
   useFormInitWithPermissions({ formKey, disabled, fieldMeta });

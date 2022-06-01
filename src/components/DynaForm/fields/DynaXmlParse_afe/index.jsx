@@ -104,7 +104,7 @@ export default function DynaXmlParse_afe({
   const getInitOptions = useCallback(
     val => {
       if (isHttp) {
-        return name === 'ResponseParser' ? { resourcePath, ...val } : { resourcePath, ...val?.rules };
+        return name === 'ResponseParser' ? { resourcePath, ...val, isHttp: true } : { resourcePath, ...val?.rules, isHttp: true };
       }
 
       return ({ resourcePath, ...val?.[0]?.rules});
