@@ -272,14 +272,14 @@ export default {
       },
     ],
   },
-  'rdbms.redshift.accessKeyId': {
-    id: 'rdbms.redshift.accessKeyId',
+  'rdbms.redshift.aws.accessKeyId': {
+    id: 'rdbms.redshift.aws.accessKeyId',
     type: 'text',
     label: 'Access Key Id',
     required: true,
   },
-  'rdbms.redshift.secretAccessKey': {
-    id: 'rdbms.redshift.secretAccessKey',
+  'rdbms.redshift.aws.secretAccessKey': {
+    id: 'rdbms.redshift.aws.secretAccessKey',
     type: 'text',
     label: 'Secret Access Key',
     defaultValue: '',

@@ -12,11 +12,11 @@ export default {
     'rdbms.redshift.region': {
       fieldId: 'rdbms.redshift.region',
     },
-    'rdbms.redshift.accessKeyId': {
-      fieldId: 'rdbms.redshift.accessKeyId',
+    'rdbms.redshift.aws.accessKeyId': {
+      fieldId: 'rdbms.redshift.aws.accessKeyId',
     },
-    'rdbms.redshift.secretAccessKey': {
-      fieldId: 'rdbms.redshift.secretAccessKey',
+    'rdbms.redshift.aws.secretAccessKey': {
+      fieldId: 'rdbms.redshift.aws.secretAccessKey',
     },
     'rdbms.database': {
       fieldId: 'rdbms.database',
@@ -38,8 +38,8 @@ export default {
         label: 'Application details',
         fields: [
           'rdbms.redshift.region',
-          'rdbms.redshift.accessKeyId',
-          'rdbms.redshift.secretAccessKey',
+          'rdbms.redshift.aws.accessKeyId',
+          'rdbms.redshift.aws.secretAccessKey',
           'rdbms.database',
           'rdbms.redshift.clusterIdentifier',
         ] },
