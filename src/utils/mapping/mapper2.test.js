@@ -3,6 +3,8 @@ import util, {
   MAPPING_DATA_TYPES,
   getAllKeys,
   compareV2Mappings,
+  findAllParentExtractsForNode,
+  findNearestParentExtractForNode,
   getFinalSelectedExtracts,
   filterExtractsNode,
   buildExtractsTree,
@@ -1541,6 +1543,9 @@ describe('v2 mapping utils', () => {
     test('should return false if only one default row exists', () => {
       expect(hasV2MappingsInTreeData([{key: 'key1', isEmptyRow: true}])).toEqual(false);
     });
+    test('should return false if only one default row exists in rows output mode', () => {
+      expect(hasV2MappingsInTreeData([{key: 'key1', generateDisabled: true, children: [{key: 'c1', isEmptyRow: true}]}])).toEqual(false);
+    });
     test('should return true if tree data exists', () => {
       expect(hasV2MappingsInTreeData([{key: 'key1', extract: 'e1', generate: 'g1', dataType: 'string'}])).toEqual(true);
     });
@@ -2752,6 +2757,116 @@ describe('v2 mapping utils', () => {
     });
     test('should return true for parent node if input value ends with [*]', () => {
       expect(filterExtractsNode({jsonPath: 'siblings[*]'}, '', '$.siblings[*]')).toEqual(true);
+    });
+  });
+  describe('findAllParentExtractsForNode util', () => {
+    const treeData = [
+      {
+        key: 'k1',
+        extract: '$.name',
+        dataType: 'string',
+      },
+      {
+        key: 'k2',
+        combinedExtract: '$.siblings[*]',
+        dataType: 'objectarray',
+        children: [{
+          key: 'c1',
+          combinedExtract: '$.siblings.children[*]',
+          parentKey: 'k2',
+          parentExtract: '$.siblings[*]',
+          dataType: 'objectarray',
+          children: [{
+            key: 'c2',
+            extract: '$.siblings.children.qty',
+            parentExtract: '$.siblings.children[*]',
+            parentKey: 'c1',
+            dataType: 'string',
+          }],
+        }],
+      },
+      {
+        key: 'k3',
+        combinedExtract: '$.items[*]',
+        dataType: 'objectarray',
+        children: [{
+          key: 'k3-c1',
+          parentKey: 'k3',
+          parentExtract: '$.items[*]',
+          dataType: 'object',
+          children: [{
+            key: 'k3-c2',
+            extract: '$.items.qty',
+            parentKey: 'k3-c1',
+            dataType: 'string',
+          }],
+        }],
+      },
+    ];
+
+    test('should not throw exception for invalid args', () => {
+      expect(findAllParentExtractsForNode()).toEqual([]);
+      expect(findAllParentExtractsForNode(null, null, null)).toEqual(null);
+    });
+    test('should correctly return parent extracts for give node', () => {
+      expect(findAllParentExtractsForNode(treeData, [], 'k1')).toEqual([]);
+      expect(findAllParentExtractsForNode(treeData, [], 'c2')).toEqual(['$.siblings[*]', '$.siblings.children[*]']);
+      expect(findAllParentExtractsForNode(treeData, [], 'k3-c2')).toEqual(['$.items[*]']);
+    });
+  });
+  describe('findNearestParentExtractForNode util', () => {
+    const v2TreeData = [
+      {
+        key: 'k1',
+        extract: '$.name',
+        dataType: 'string',
+      },
+      {
+        key: 'k2',
+        combinedExtract: '$.siblings[*]',
+        dataType: 'objectarray',
+        children: [{
+          key: 'c1',
+          combinedExtract: '$.siblings.children[*]',
+          parentKey: 'k2',
+          parentExtract: '$.siblings[*]',
+          dataType: 'objectarray',
+          children: [{
+            key: 'c2',
+            extract: '$.siblings.children.qty',
+            parentExtract: '$.siblings.children[*]',
+            parentKey: 'c1',
+            dataType: 'string',
+          }],
+        }],
+      },
+      {
+        key: 'k3',
+        combinedExtract: '$.items[*]',
+        dataType: 'objectarray',
+        children: [{
+          key: 'k3-c1',
+          parentKey: 'k3',
+          parentExtract: '$.items[*]',
+          dataType: 'object',
+          children: [{
+            key: 'k3-c2',
+            extract: '$.items.qty',
+            parentKey: 'k3-c1',
+            dataType: 'string',
+          }],
+        }],
+      },
+    ];
+
+    test('should not throw exception for invalid args', () => {
+      expect(findNearestParentExtractForNode()).toEqual('');
+      expect(findNearestParentExtractForNode(null, null)).toEqual('');
+    });
+    test('should correctly return parent extracts for give node', () => {
+      expect(findNearestParentExtractForNode(v2TreeData, 'k1')).toEqual('');
+      expect(findNearestParentExtractForNode(v2TreeData, 'c2')).toEqual('$.siblings.children[*]');
+      expect(findNearestParentExtractForNode(v2TreeData, 'k3-c2')).toEqual('$.items[*]');
     });
   });
   describe('getFinalSelectedExtracts util', () => {

@@ -19,6 +19,7 @@ export default function DynaHttpRequestBody_afe(props) {
     arrayIndex,
     formKey,
     stage,
+    mapper2RowKey,
   } = props;
   const dispatch = useDispatch();
   const history = useHistory();
@@ -56,6 +57,7 @@ export default function DynaHttpRequestBody_afe(props) {
       onSave: handleSave,
       parentType,
       parentId,
+      mapper2RowKey,
     }));
 
     history.push(buildDrawerUrl({
@@ -63,7 +65,7 @@ export default function DynaHttpRequestBody_afe(props) {
       baseUrl: match.url,
       params: { editorId },
     }));
-  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url]);
+  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url, mapper2RowKey]);
 
   return (
     <DynaHandlebarPreview {...props} onEditorClick={handleEditorClick} />
