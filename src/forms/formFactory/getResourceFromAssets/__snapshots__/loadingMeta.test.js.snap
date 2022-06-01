@@ -3930,7 +3930,7 @@ Object {
         "isHttp": true,
         "label": "CSV parser helper",
         "type": "csvparse",
-        "visibleWhen": Array [
+        "visibleWhenAll": Array [
           Object {
             "field": "outputMode",
             "is": Array [
@@ -4147,23 +4147,6 @@ Object {
       "unencrypted.restrictedReportType": Object {
         "fieldId": "unencrypted.restrictedReportType",
       },
-      "xmlParserForErrorResponse": Object {
-        "defaultValue": [Function],
-        "id": "xmlParserForErrorResponse",
-        "isHttp": true,
-        "isSuccess": false,
-        "label": "XML parser helper",
-        "name": "ErrorParser",
-        "type": "xmlparse",
-        "visibleWhen": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
       "xmlParserForSuccessResponse": Object {
         "defaultValue": [Function],
         "id": "xmlParserForSuccessResponse",
@@ -4279,18 +4262,6 @@ Object {
                   "fields": Array [
                     "http.errorMediaType",
                   ],
-                },
-                Object {
-                  "containers": Array [
-                    Object {
-                      "fields": Array [
-                        "xmlParserForErrorResponse",
-                      ],
-                    },
-                  ],
-                  "header": "Parse Error Responses",
-                  "helpKey": "http.parseErrorResponses",
-                  "type": "indentWithHeader",
                 },
               ],
               "label": "Non-standard API response patterns",

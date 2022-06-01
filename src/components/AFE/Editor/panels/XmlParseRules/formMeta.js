@@ -42,6 +42,7 @@ export default function getForm(options, resourceId) {
             message: "Resource path should start with '/'",
           },
         },
+        visible: !options?.isHttp,
       },
       trimSpaces: {
         id: 'trimSpaces',

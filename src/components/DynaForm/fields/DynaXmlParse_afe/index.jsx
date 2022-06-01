@@ -86,7 +86,6 @@ export default function DynaXmlParse_afe({
   label,
   formKey,
   isHttp,
-  isSuccess,
   name,
   formKey: parentFormKey,
 }) {
@@ -97,7 +96,7 @@ export default function DynaXmlParse_afe({
   const editorId = getValidRelativePath(id);
   const [remountKey, setRemountKey] = useState(1);
 
-  const show = useSelector(state => selectors.showParser(state, formKey, 'xml', isSuccess));
+  const show = useSelector(state => selectors.showParser(state, formKey, 'xml'));
 
   const resourcePath = useSelector(state =>
     isHttp ? selectors.resource(state, resourceType, resourceId)?.http?.response?.resourcePath : selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);

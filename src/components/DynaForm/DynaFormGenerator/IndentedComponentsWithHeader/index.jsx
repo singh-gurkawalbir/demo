@@ -27,23 +27,22 @@ const useStyles = makeStyles(theme => ({
 
 export default function IndentedComponentsWithHeader(props) {
   const { containers, fieldMap, layout, formKey } = props;
-  const { header, helpKey, isSuccess } = layout;
+  const { header, helpKey } = layout;
+  const classes = useStyles();
 
-  let show = useSelector(state => (selectors.showParser(state, formKey, 'csv', isSuccess) || selectors.showParser(state, formKey, 'xml', isSuccess)));
+  let show = useSelector(state => (selectors.showParser(state, formKey, 'csv') || selectors.showParser(state, formKey, 'xml')));
 
   if (!header) {
     show = false;
   }
 
-  const classes = useStyles();
-  const transformedContainers =
+  const transformedContainers = show ? (
     containers?.map((container, index) => {
       const {label, ...rest } = container;
 
       return (
         // eslint-disable-next-line react/no-array-index-key
         <Fragment key={index}>
-          {show && (
           <Typography variant="body2" className={classes.indentTitle}>
             {header}
             <Help
@@ -51,7 +50,7 @@ export default function IndentedComponentsWithHeader(props) {
               helpKey={helpKey}
                 />
           </Typography>
-          )}
+
           <div className={classes.indentFields}>
             {label && <Typography>{label}</Typography>}
 
@@ -59,7 +58,7 @@ export default function IndentedComponentsWithHeader(props) {
           </div>
         </Fragment>
       );
-    });
+    })) : null;
 
   return <div className={classes.fieldsContainer}>{transformedContainers}</div>;
 }

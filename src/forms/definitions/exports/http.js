@@ -4,7 +4,7 @@ export default {
   preSave: (formValues, _, { connection } = {}) => {
     const retValues = { ...formValues };
 
-    retValues['/parsers'] = ([...(retValues.ErrorParser || []), ...(retValues.ResponseParser || [])]);
+    retValues['/parsers'] = ([...(retValues.ResponseParser || [])]);
 
     if (retValues['/http/successMediaType'] === 'csv') {
       retValues['/file/type'] = 'csv';
@@ -408,7 +408,7 @@ export default {
         rowsToSkip: 0,
         trimSpaces: true,
       },
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'outputMode',
           is: ['records'],
@@ -416,28 +416,13 @@ export default {
       ],
     },
     xmlParserForSuccessResponse: {
-      id: 'xmlParserForSuccessResponse',    //  confirm id values
+      id: 'xmlParserForSuccessResponse',
       type: 'xmlparse',
       name: 'ResponseParser',
       label: 'XML parser helper',
       isHttp: true,
       isSuccess: true,
-      defaultValue: r => r?.parsers.find(parser => parser.name === 'ResponseParser').rules,
-      visibleWhen: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    xmlParserForErrorResponse: {
-      id: 'xmlParserForErrorResponse',    //  confirm id values
-      type: 'xmlparse',
-      name: 'ErrorParser',
-      label: 'XML parser helper',
-      isHttp: true,
-      isSuccess: false,
-      defaultValue: r => r?.parsers.find(parser => parser.name === 'ErrorParser'),
+      defaultValue: r => r?.parsers?.find(parser => parser.name === 'ResponseParser').rules,
       visibleWhen: [
         {
           field: 'outputMode',
@@ -564,23 +549,13 @@ export default {
             containers: [
               {fields: [
                 'file.csv',
-                'xmlParserForSuccessResponse',    //  replace with id values
+                'xmlParserForSuccessResponse',
               ]},
             ],
           },
           {
             fields: [
               'http.errorMediaType',
-            ],
-          },
-          {
-            type: 'indentWithHeader',
-            header: 'Parse Error Responses',
-            helpKey: 'http.parseErrorResponses',
-            containers: [
-              {fields: [
-                'xmlParserForErrorResponse',    //  replace with id values
-              ]},
             ],
           },
         ],

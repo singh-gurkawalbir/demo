@@ -2393,5 +2393,4 @@ use the custom option.`,
   'snapshot.create': 'A snapshot is a saved capture of your integration that you can use to revert your integration at any point.',
   'snapshot.description': 'Describe your snapshot so you can quickly identify the revision and any important details.',
   'http.parseSuccessResponses': 'Fill Something Here',
-  'http.parseErrorResponses': 'Fill Something Here',
 };

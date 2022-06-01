@@ -6740,40 +6740,15 @@ selectors.showAmazonRestrictedReportType = (state, formKey) => {
           relativeURI?.startsWith('/reports/2021-06-30/documents/');
 };
 
-selectors.showParser = (state, formKey, parser, isSuccess) => {
-  //  CSV Parser ( At present, exists only for success responses )
-  if (parser === 'csv') {
-    const overriddenMediaType = selectors.fieldState(state, formKey, 'http.successMediaType')?.value;
-
-    if (overriddenMediaType) return overriddenMediaType === parser;
-
-    const connectionId = selectors.fieldState(state, formKey, '_connectionId')?.value;
-    const connectionDetails = selectors.resource(state, 'connections', connectionId)?.http;
-
-    return connectionDetails?.successMediaType === parser;
-  }
-
-  //  XML Parser for success response
-  if (isSuccess) {
-    const overriddenMediaType = selectors.fieldState(state, formKey, 'http.successMediaType')?.value;
-
-    if (overriddenMediaType) return overriddenMediaType === parser;
-
-    const connectionId = selectors.fieldState(state, formKey, '_connectionId')?.value;
-    const connectionDetails = selectors.resource(state, 'connections', connectionId)?.http;
-
-    return connectionDetails?.successMediaType === parser || (!connectionDetails?.successMediaType && connectionDetails?.mediaType === parser);
-  }
-
-  //  XML Parser for error response
-  const overriddenMediaType = selectors.fieldState(state, formKey, 'http.errorMediaType')?.value;
+selectors.showParser = (state, formKey, parser) => {
+  const overriddenMediaType = selectors.fieldState(state, formKey, 'http.successMediaType')?.value;
 
   if (overriddenMediaType) return overriddenMediaType === parser;
 
   const connectionId = selectors.fieldState(state, formKey, '_connectionId')?.value;
   const connectionDetails = selectors.resource(state, 'connections', connectionId)?.http;
 
-  return connectionDetails?.errorMediaType === parser || (!connectionDetails?.errorMediaType && connectionDetails?.mediaType === parser);
+  return (connectionDetails?.successMediaType === parser) || (!connectionDetails?.successMediaType && connectionDetails?.mediaType === parser);
 };
 
 const resourceListSelector = selectors.makeResourceListSelector();
