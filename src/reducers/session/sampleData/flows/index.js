@@ -1,8 +1,10 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
 import { getSampleDataStage } from '../../../../utils/flowData';
 import { isPageGeneratorResource } from '../../../../utils/flows';
 import { clearInvalidPgOrPpStates, clearInvalidStagesForPgOrPp, getFirstOutOfOrderIndex } from './utils';
+import { buildExtractsTree } from '../../../../utils/mapping';
 
 export default function (state = {}, action) {
   const {
@@ -266,23 +268,40 @@ selectors.getFlowDataState = (state, flowId, resourceId) => {
   return resourceMap[resourceId] || DEFAULT_VALUE;
 };
 
-selectors.getSampleDataContext = (
-  state,
-  { flowId, resourceId, resourceType, stage }
-) => {
-  // returns input data for that stage to populate
-  const flow = state?.[flowId];
-  const sampleDataStage = getSampleDataStage(stage, resourceType);
+selectors.getSampleDataContext = createSelector(
+  (state, {flowId}) => state?.[flowId],
+  (state, {resourceId}) => resourceId,
+  (state, {resourceType }) => resourceType,
+  (state, { stage }) => stage,
+  (flow, resourceId, resourceType, stage) => {
+    // returns input data for that stage to populate
+    const sampleDataStage = getSampleDataStage(stage, resourceType);
 
-  if (!flow || !sampleDataStage || !resourceId) return DEFAULT_VALUE;
-  const resourceMap = isPageGeneratorResource(flow, resourceId)
-    ? flow.pageGeneratorsMap
-    : flow.pageProcessorsMap;
-  const flowStageContext =
-    resourceMap &&
-    resourceMap[resourceId] &&
-    resourceMap[resourceId][sampleDataStage];
+    if (!flow || !sampleDataStage || !resourceId) return DEFAULT_VALUE;
+    const resourceMap = isPageGeneratorResource(flow, resourceId)
+      ? flow.pageGeneratorsMap
+      : flow.pageProcessorsMap;
+    const flowStageContext =
+  resourceMap &&
+  resourceMap[resourceId] &&
+  resourceMap[resourceId][sampleDataStage];
 
-  return flowStageContext || DEFAULT_VALUE;
-};
+    return flowStageContext || DEFAULT_VALUE;
+  });
 
+// get mapper2 tree structure for extracts
+// from flow sample data
+selectors.mkBuildExtractsTree = () => createSelector(
+  (state, {flowId, resourceId}) => {
+    const flowData = selectors.getSampleDataContext(state, {
+      flowId,
+      resourceId,
+      stage: 'importMappingExtract',
+      resourceType: 'imports',
+    }).data;
+
+    return flowData;
+  },
+  (state, {selectedValues}) => selectedValues,
+  (flowData, selectedValues) => buildExtractsTree(flowData, selectedValues)
+);

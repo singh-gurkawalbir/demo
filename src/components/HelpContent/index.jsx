@@ -50,6 +50,8 @@ const useStyles = makeStyles(theme => ({
   actionWrapper: {
     display: 'flex',
     paddingTop: theme.spacing(1),
+    borderTop: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
 }));
 

@@ -23,7 +23,7 @@ import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
-import mappingUtil from '../../utils/mapping';
+import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
 
 /**
@@ -76,6 +76,8 @@ export function* invokeProcessor({ editorId, processor, body }) {
     }
   } else if (processor === 'mapperProcessor') {
     const flowSampleData = safeParse(data);
+    const importResource = yield select(selectors.resource, 'imports', resourceId);
+    const options = {};
     let _mappings;
 
     if (editor.mappingPreviewType) {
@@ -93,19 +95,29 @@ export function* invokeProcessor({ editorId, processor, body }) {
       return (yield select(selectors.mapping))?.preview;
     }
     if (editorType === 'mappings') {
-      const mappings = (yield select(selectors.mapping))?.mappings;
       const lookups = (yield select(selectors.mapping))?.lookups;
-      const importResource = yield select(selectors.resource, 'imports', resourceId);
-      const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+      const v2TreeData = (yield select(selectors.mapping))?.v2TreeData;
 
-      _mappings = mappingUtil.generateFieldsAndListMappingForApp({
-        mappings,
-        isGroupedSampleData: Array.isArray(flowSampleData),
-        isPreviewSuccess: !!flowSampleData,
-        importResource,
-        exportResource,
-      });
-      _mappings = {..._mappings, lookups};
+      // give preference to v2 mappings always
+      if (hasV2MappingsInTreeData(v2TreeData)) {
+        const connection = yield select(selectors.resource, 'connections', importResource?._connectionId);
+        const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
+
+        _mappings = {mappings: _mappingsV2, lookups};
+        options.connection = connection;
+      } else {
+        const mappings = (yield select(selectors.mapping))?.mappings;
+        const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+
+        _mappings = mappingUtil.generateFieldsAndListMappingForApp({
+          mappings,
+          isGroupedSampleData: Array.isArray(flowSampleData),
+          isPreviewSuccess: !!flowSampleData,
+          importResource,
+          exportResource,
+        });
+        _mappings = {..._mappings, lookups};
+      }
     } else if (editorType === 'responseMappings') {
       const mappings = (yield select(selectors.responseMapping))?.mappings;
 
@@ -117,6 +129,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
         rules: [_mappings],
       },
       data: data ? [flowSampleData] : [],
+      options,
     };
   }
 
@@ -147,8 +160,8 @@ export function* requestPreview({ id }) {
   // since mappings are stored in separate state
   // we validate the same here
   if (editor.editorType === 'mappings') {
-    const {mappings, lookups} = yield select(selectors.mapping);
-    const {errMessage} = mappingUtil.validateMappings(mappings, lookups);
+    const {mappings, lookups, v2TreeData} = yield select(selectors.mapping);
+    const {errMessage} = mappingUtil.validateMappings(mappings, lookups, v2TreeData);
 
     if (errMessage) {
       const violations = {

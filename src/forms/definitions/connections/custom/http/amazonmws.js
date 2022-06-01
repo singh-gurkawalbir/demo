@@ -61,30 +61,13 @@ export default {
     'http.type': {
       id: 'http.type',
       label: 'API type',
-      type: 'select',
+      type: 'amazonmwstype',
       required: true,
       helpKey: 'amazonmws.connection.http.type',
       defaultDisabled: r => !isNewId(r?._id),
       defaultValue: r => isNewId(r?._id) ? '' : (r?.http?.type || 'Amazon-MWS'),
       skipSort: true,
-      options: [
-        {
-          items: [
-            {
-              value: 'Amazon-SP-API',
-              label: 'Selling Partner API (SP-API)',
-            },
-            {
-              value: 'Amazon-Hybrid',
-              label: 'Hybrid Selling Partner API (SP-API and MWS)',
-            },
-            {
-              value: 'Amazon-MWS',
-              label: 'Marketplace Web Service API (MWS)',
-            },
-          ],
-        },
-      ],
+      resourceId: r => r?._id,
     },
     'http.unencrypted.sellingRegion': {
       id: 'http.unencrypted.sellingRegion',

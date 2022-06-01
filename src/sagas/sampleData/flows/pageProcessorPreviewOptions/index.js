@@ -112,7 +112,7 @@ export default function* getPreviewOptionsForResource({
     : undefined;
   const postData = getPostDataForDeltaExport(resource);
   const files = isFileMetaExpectedForResource(resource)
-    ? getSampleFileMeta()
+    ? getSampleFileMeta(resource)
     : undefined;
   const { type, rawData } = resource || {};
 

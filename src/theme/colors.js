@@ -11,7 +11,7 @@ export default {
   celigoAccent2: '#1D76C7',
   celigoAccent3: '#00A1E1',
   celigoAccent4: '#37B5ED',
-  celigoAccent5: '#A1D9F5',
+  celigoAccent5: '#A9D1F5',
 
   celigoNeutral1: '#F8FAFF',
   celigoNeutral2: '#F0F5F9',
