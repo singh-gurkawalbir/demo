@@ -3927,19 +3927,14 @@ Object {
         "helpKey": "file.csvParse",
         "id": "file.csv",
         "ignoreSortAndGroup": true,
+        "isHttp": true,
         "label": "CSV parser helper",
         "type": "csvparse",
-        "visibleWhenAll": Array [
+        "visibleWhen": Array [
           Object {
             "field": "outputMode",
             "is": Array [
               "records",
-            ],
-          },
-          Object {
-            "field": "http.successMediaType",
-            "is": Array [
-              "csv",
             ],
           },
         ],
@@ -4152,6 +4147,40 @@ Object {
       "unencrypted.restrictedReportType": Object {
         "fieldId": "unencrypted.restrictedReportType",
       },
+      "xmlParserForErrorResponse": Object {
+        "defaultValue": [Function],
+        "id": "xmlParserForErrorResponse",
+        "isHttp": true,
+        "isSuccess": false,
+        "label": "XML parser helper",
+        "name": "ErrorParser",
+        "type": "xmlparse",
+        "visibleWhen": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "xmlParserForSuccessResponse": Object {
+        "defaultValue": [Function],
+        "id": "xmlParserForSuccessResponse",
+        "isHttp": true,
+        "isSuccess": true,
+        "label": "XML parser helper",
+        "name": "ResponseParser",
+        "type": "xmlparse",
+        "visibleWhen": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
     },
     "layout": Object {
       "containers": Array [
@@ -4237,15 +4266,31 @@ Object {
                     Object {
                       "fields": Array [
                         "file.csv",
+                        "xmlParserForSuccessResponse",
                       ],
                     },
                   ],
-                  "type": "indent",
+                  "header": "Parse Success Responses",
+                  "helpKey": "http.parseSuccessResponses",
+                  "isSuccess": true,
+                  "type": "indentWithHeader",
                 },
                 Object {
                   "fields": Array [
                     "http.errorMediaType",
                   ],
+                },
+                Object {
+                  "containers": Array [
+                    Object {
+                      "fields": Array [
+                        "xmlParserForErrorResponse",
+                      ],
+                    },
+                  ],
+                  "header": "Parse Error Responses",
+                  "helpKey": "http.parseErrorResponses",
+                  "type": "indentWithHeader",
                 },
               ],
               "label": "Non-standard API response patterns",
