@@ -30,6 +30,7 @@ import { requestSampleData } from '../sampleData/flows';
 import { apiCallWithRetry } from '../index';
 import { APIException } from '../api/requestInterceptors/utils';
 import processorLogic from '../../reducers/session/editors/processorLogic';
+import errorMessageStore from '../../utils/errorStore';
 
 const editorId = 'httpbody';
 
@@ -759,7 +760,7 @@ describe('editor sagas', () => {
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings}],
         ])
-        .put(actions.editor.validateFailure(editorId, {ruleError: 'Extract fields missing for field(s): g1'}))
+        .put(actions.editor.validateFailure(editorId, {ruleError: errorMessageStore('MAPPER1_MISSING_EXTRACT', {fields: 'g1'})}))
         .run();
     });
   });

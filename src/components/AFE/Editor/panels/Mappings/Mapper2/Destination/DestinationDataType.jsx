@@ -21,6 +21,9 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
     width: theme.spacing(9),
     padding: 0,
+    '&:focus': {
+      color: theme.palette.primary.main,
+    },
     '&.Mui-disabled': {
       height: 38,
       backgroundColor: theme.palette.background.paper2,
@@ -29,9 +32,6 @@ const useStyles = makeStyles(theme => ({
   listPopper: {
     maxWidth: theme.spacing(31),
     top: '5px !important',
-  },
-  listPopperArrow: {
-    left: `${theme.spacing(11)}px !important`,
   },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
@@ -70,7 +70,7 @@ const useStyles = makeStyles(theme => ({
       left: '0px',
     },
     '&:hover': {
-      background: 'none',
+      background: theme.palette.background.paper2,
       '&:before': {
         background: theme.palette.primary.main,
       },
@@ -81,6 +81,7 @@ const useStyles = makeStyles(theme => ({
   },
   itemSelected: {
     position: 'relative',
+    backgroundColor: theme.palette.background.paper2,
     '&:before': {
       content: '""',
       width: '3px',
@@ -153,7 +154,7 @@ export default function DestinationDataType({dataType, disabled, nodeKey}) {
   return (
     <>
       <Tooltip
-        title={open ? '' : `Data type: ${selectedDataTypeLabel} - Click to change`}
+        title={disabled || open ? '' : `Data type: ${selectedDataTypeLabel} - Click to change`}
         placement="bottom" >
         {/* this div needs to be added to render the tooltip correctly */}
         <div>
@@ -172,7 +173,6 @@ export default function DestinationDataType({dataType, disabled, nodeKey}) {
         anchorEl={anchorEl}
         classes={{
           popper: classes.listPopper,
-          arrow: classes.listPopperArrow,
         }}
         placement="bottom-end"
         onClose={handleClose}>

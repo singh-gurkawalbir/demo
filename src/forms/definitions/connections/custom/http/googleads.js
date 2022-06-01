@@ -5,9 +5,10 @@ export default {
     '/assistant': 'googleads',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': 'https://googleads.googleapis.com/',
-    '/http/ping/relativeURI': `/v7/customers/${formValues['/http/unencrypted/customerId']}`,
-    '/http/ping/method': 'GET',
+    '/http/baseURI': `https://googleads.googleapis.com/${formValues['/http/unencrypted/version']}`,
+    '/http/ping/relativeURI': `/customers/${formValues['/http/unencrypted/customerId']}`,
+    '/http/ping/method': 'POST',
+    '/http/ping/body': '{"query": "SELECT campaign.name FROM campaign"}',
     '/http/auth/oauth/authURI': 'https://accounts.google.com/o/oauth2/auth?prompt=consent&access_type=offline',
     '/http/auth/oauth/tokenURI': 'https://accounts.google.com/o/oauth2/token',
     '/http/auth/token/location': 'header',
@@ -33,6 +34,16 @@ export default {
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
+    },
+    'http.unencrypted.version': {
+      id: 'http.unencrypted.version',
+      type: 'text',
+      label: 'Version',
+      required: true,
+      helpKey: 'googleads.connection.http.unencrypted.version',
+      defaultValue: r =>
+        (r?.http?.unencrypted?.endpointVersion) ||
+        'v7',
     },
     'http.encrypted.developerToken': {
       id: 'http.encrypted.developerToken',
@@ -75,6 +86,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: [
+          'http.unencrypted.version',
           'http.encrypted.developerToken',
           'http.unencrypted.customerId',
           'http.unencrypted.loginCustomerId',

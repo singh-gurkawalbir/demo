@@ -20,14 +20,14 @@ const useStyles = makeStyles(theme => ({
     },
     '& .rc-tree-indent-unit': {
       display: 'inline-block',
-      width: theme.spacing(9),
+      width: theme.spacing(5),
       position: 'relative',
       height: '100%',
     },
     '& .rc-tree-indent-unit:before': {
       position: 'absolute',
       top: '-9px',
-      right: '29px',
+      right: theme.spacing(1),
       bottom: '7px',
       borderRight: `1px solid ${theme.palette.secondary.contrastText}`,
       content: '""',
@@ -66,12 +66,19 @@ const useStyles = makeStyles(theme => ({
       alignSelf: 'center',
       margin: theme.spacing(1, 0),
     },
+    '& .rc-tree-switcher': {
+      '&>.MuiIconButton-root': {
+        padding: 0,
+      },
+    },
     '& .rc-tree-switcher-noop': {
-      width: 30,
+      width: theme.spacing(3),
     },
     '& .rc-tree-draggable-icon': {
       '&>div': {
         paddingTop: 0,
+        minWidth: theme.spacing(2.5),
+        width: theme.spacing(2.5),
       },
       visibility: 'hidden',
     },
@@ -79,7 +86,7 @@ const useStyles = makeStyles(theme => ({
       flex: 1,
     },
     '& .rc-tree-treenode-active': {
-      backgroundColor: theme.palette.background.paper2,
+      backgroundColor: theme.palette.primary.lightest,
       borderLeft: `3px solid ${theme.palette.primary.main}`,
     },
     '& .MuiFilledInput-multiline': {
@@ -101,7 +108,7 @@ const useStyles = makeStyles(theme => ({
   mappingDrawerContent: {
     height: '100%',
     display: 'flex',
-    padding: theme.spacing(3, 3, 0),
+    paddingTop: theme.spacing(3),
     overflow: 'auto',
   },
 })

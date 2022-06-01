@@ -11,33 +11,22 @@ import { useSelectorMemo } from '../../../../../../../hooks';
 
 const useStyles = makeStyles(theme => ({
   dropdown: {
-    backgroundColor: 'white',
-    position: 'absolute',
-    width: '100%',
-    zIndex: theme.zIndex.drawer + 1,
-    top: 'calc(100% - 1px)',
-    borderWidth: '0px 1px 1px 1px',
-    borderColor: '#d6e4ed',
-    borderStyle: 'solid',
     overflow: 'auto',
-    maxHeight: theme.spacing(40),
-    boxShadow: 'none',
-    borderRadius: 0,
-    marginTop: 0,
+    maxHeight: theme.spacing(39),
   },
   message: {
     fontSize: 14,
     lineHeight: '14px',
     color: theme.palette.secondary.light,
-    margin: theme.spacing(0, 2, 2, 2),
-    '& ul': {
-      paddingLeft: theme.spacing(2),
-      fontStyle: 'italic',
-      lineHeight: 1,
-      '& li+li': {
-        marginTop: theme.spacing(2),
-      },
+    margin: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
+    fontStyle: 'italic',
+    '& li+li': {
+      marginTop: theme.spacing(2),
     },
+  },
+  messageDivider: {
+    margin: theme.spacing(1, 2),
   },
   childTree: {
     paddingBottom: theme.spacing(1),
@@ -55,6 +44,7 @@ const useStyles = makeStyles(theme => ({
       position: 'relative',
       padding: theme.spacing(1, 0, 1, 2),
       alignItems: 'center',
+      borderLeft: '3px solid transparent',
     },
     '& .childTree-switcher': {
       width: theme.spacing(1),
@@ -62,12 +52,9 @@ const useStyles = makeStyles(theme => ({
     '& .childTree-switcher-noop': {
       width: theme.spacing(1),
     },
-    '& .childTree-treenode-selected': {
+    '& .childTree-treenode-selected,& .childTree-treenode:hover': {
       backgroundColor: theme.palette.background.paper2,
-      borderLeft: `3px solid ${theme.palette.primary.main}`,
-    },
-    '& .childTree-treenode:hover': {
-      backgroundColor: theme.palette.background.paper2,
+      borderColor: theme.palette.primary.main,
     },
     '& .filter-node': {
       '& .childTree-title': {
@@ -127,6 +114,7 @@ const TreeTitle = props => <TitleExtracts {...props} key={`title-${props.key}`} 
 // based on the sample data
 const ExtractsTree = React.memo((
   {
+    nodeKey,
     destDataType,
     propValue,
     inputValue = '',
@@ -138,6 +126,7 @@ const ExtractsTree = React.memo((
   }) => {
   const classes = useStyles();
   const isGroupedSampleData = useSelector(state => selectors.mapping(state).isGroupedSampleData);
+  const mappingsTreeData = useSelector(state => selectors.v2MappingsTreeData(state));
 
   // replace '$.' and '$[*].' as we are not storing these prefixes in each node jsonPath as well
   // for better searching
@@ -151,18 +140,12 @@ const ExtractsTree = React.memo((
   const isArrayType = destDataType.includes('array');
 
   const onSelect = useCallback((keys, e) => {
-    const newValue = getFinalSelectedExtracts(e.node, inputValue, isArrayType, isGroupedSampleData);
+    const newValue = getFinalSelectedExtracts(e.node, inputValue, isArrayType, isGroupedSampleData, nodeKey, mappingsTreeData);
 
     setInputValue(newValue);
     setIsFocused(false);
     if (propValue !== newValue) { onBlur(newValue); }
-    e.nativeEvent.stopImmediatePropagation();
-  }, [inputValue, isArrayType, isGroupedSampleData, onBlur, propValue, setInputValue, setIsFocused]);
-
-  const onExpand = useCallback((expandedKeys, {nativeEvent}) => {
-    setIsFocused(true);
-    nativeEvent.stopImmediatePropagation();
-  }, [setIsFocused]);
+  }, [inputValue, isArrayType, isGroupedSampleData, onBlur, propValue, setInputValue, setIsFocused, nodeKey, mappingsTreeData]);
 
   // this function runs for every node
   // and returns true if input value matches current node in the dropdown
@@ -173,16 +156,12 @@ const ExtractsTree = React.memo((
   if (isEmpty(treeData)) return null;
 
   return (
-    <div
-      className={classes.dropdown}>
-      <div className={classes.message}>
-        <Divider />
-        <ul>
-          <li>Type or select source record field</li>
-          {isArrayType && <li>Separate additional fields with a comma (,)</li>}
-        </ul>
-        <Divider />
-      </div>
+    <div className={classes.dropdown}>
+      <ul className={classes.message}>
+        <li>Type or select source record field</li>
+        {isArrayType && <li>Separate additional fields with a comma (,)</li>}
+      </ul>
+      <Divider className={classes.messageDivider} />
 
       <Tree
         className={classes.childTree}
@@ -195,7 +174,6 @@ const ExtractsTree = React.memo((
         switcherIcon={SwitcherIcon}
         defaultExpandAll
         onSelect={onSelect}
-        onExpand={onExpand}
         filterTreeNode={filterTreeNode}
          />
     </div>

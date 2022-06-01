@@ -53,12 +53,21 @@ describe('template util function test', () => {
       expect(getApplication({type: 'ftp'})).toEqual({id: 'ftp', name: 'FTP'});
       expect(getApplication({type: 'netsuite'})).toEqual({id: 'netsuite', name: 'NetSuite'});
       expect(getApplication({type: 'salesforce'})).toEqual({id: 'salesforce', name: 'Salesforce'});
+      expect(getApplication({type: 'http'})).toEqual({id: 'http', name: 'HTTP'});
     });
 
     test('should return correct application details when rbdms connection is passed', () => {
       expect(getApplication({type: 'rdbms', rdbms: {type: 'mssql'}})).toEqual({id: 'mssql', name: 'Microsoft SQL'});
       expect(getApplication({type: 'rdbms', rdbms: {type: 'mysql'}})).toEqual({id: 'mysql', name: 'MySQL'});
       expect(getApplication({type: 'rdbms', rdbms: {type: 'oracle'}})).toEqual({id: 'oracle', name: 'Oracle DB (SQL)'});
+    });
+
+    test('should return correct application details when rest connection is passed', () => {
+      expect(getApplication({type: 'http', http: {formType: 'rest'}})).toEqual({id: 'rest', name: 'REST API'});
+    });
+
+    test('should return correct application details when graph_ql connection is passed', () => {
+      expect(getApplication({type: 'http', http: {formType: 'graph_ql'}})).toEqual({id: 'graph_ql', name: 'GraphQL'});
     });
   });
 
