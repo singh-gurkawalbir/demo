@@ -14,6 +14,7 @@ import { selectors } from '../../../../../reducers';
 import RevisionHeader from '../../components/RevisionHeader';
 import ResourceDiffDrawerContent from '../../components/ResourceDiffContent';
 import useHandleInvalidNewRevision from '../../hooks/useHandleInvalidNewRevision';
+import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   drawerHeaderWrapper: {
@@ -54,7 +55,11 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
 
   useEffect(() => {
     if (createdRevisionId) {
-      history.replace(`${parentUrl}/pull/${createdRevisionId}/merge`);
+      history.replace(buildDrawerUrl({
+        path: drawerPaths.LCM.MERGE_PULL_CHANGES,
+        baseUrl: parentUrl,
+        params: { revisionId: createdRevisionId },
+      }));
     }
   }, [createdRevisionId, history, parentUrl]);
 
@@ -78,14 +83,14 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
         />
       </DrawerHeader>
       <DrawerContent>
-        <ResourceDiffDrawerContent integrationId={integrationId} type="pull" />
+        <ResourceDiffDrawerContent integrationId={integrationId} type="pull" parentUrl={parentUrl} />
       </DrawerContent>
       <DrawerFooter>
         <FilledButton disabled={isRevisionCreationInProgress || !hasReceivedResourceDiff} onClick={handleCreateRevision} >
           { isRevisionCreationInProgress ? <Spinner size="small" className={classes.inProgressSpinner} /> : null } Next
         </FilledButton>
         <TextButton
-          data-test="cancelCreatePull"
+          data-test="cancelReviewPulll"
           disabled={isRevisionCreationInProgress}
           onClick={onClose}>
           Close
@@ -100,8 +105,7 @@ export default function ReviewChangesDrawer({ integrationId }) {
 
   return (
     <RightDrawer
-      path="pull/:revisionId/review"
-      variant="temporary"
+      path={drawerPaths.LCM.REVIEW_PULL_CHANGES}
       height="tall"
       width="xl">
       <ReviewChangesDrawerContent integrationId={integrationId} parentUrl={match.url} />

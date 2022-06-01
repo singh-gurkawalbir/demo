@@ -11,7 +11,7 @@ import { JOB_STATUS } from '../../utils/constants';
 import DateTimeDisplay from '../DateTimeDisplay';
 import ErrorCountCell from './ErrorCountCell';
 
-const useStyles = makeStyles(theme => ({
+export const JobDetailsStyles = makeStyles(theme => ({
   checkAction: {
     paddingLeft: 58,
   },
@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     width: '18.15%',
   },
   status: {
-    width: '10.15',
+    width: '10.15%',
   },
   success: {
     width: '9%',
@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'right',
   },
   error: {
-    width: '10.15%',
+    width: '9.15%',
     textAlign: 'right',
   },
   resolved: {
@@ -77,7 +77,7 @@ export default function ChildJobDetail({
     JOB_STATUS.RUNNING,
     JOB_STATUS.RETRYING,
   ].includes(job.uiStatus);
-  const classes = useStyles();
+  const classes = JobDetailsStyles();
   const isSelectable = !!(job.retriable || job.numError);
   const parentSelectionInfo = selectedJobs[parentJob._id] || {
     selected: false,

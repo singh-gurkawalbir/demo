@@ -80,6 +80,7 @@ export const REVISION_CREATION_STATUS = Object.freeze({
   CREATED: 'created',
 });
 
+export const INTEGRATION_DEPENDENT_RESOURCES = ['exports', 'imports', 'connections', 'flows'];
 export const UI_FIELD_VALUES = Object.freeze(['/formView', '/uploadFile']);
 export const SALESFORCE_DA_PACKAGE_URL =
   'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000000Y9kv';
@@ -393,6 +394,7 @@ export const REST_ASSISTANTS = [
   'wish',
   'exacterp',
   'acumatica',
+  'acumaticaecommerce',
   'myobessentials',
   'zohomail',
   'bronto',
@@ -657,7 +659,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];
 export const ALLOWED_HTML_TAGS =
   ['p', 'pre', 's', 'b', 'a', 'small', 'i', 'font', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'br', 'big', 'center', 'del', 'em', 'strong', 'sub', 'sup', 'table', 'td', 'tr', 'th', 'tt', 'title'];
-export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your trial of unlimited flows starts now - what will you integrate next?';
+export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your unlimited flows trial starts now - what will you integrate next?';
 export const LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Your request has been received. We will contact you soon.';
 export const FILE_PROVIDER_ASSISTANTS = ['googledrive', 'azurestorageaccount'];
 export const CONNECTORS_TO_IGNORE = [
@@ -672,6 +674,9 @@ export const CONNECTORS_TO_IGNORE = [
   'amazonsellingpartner',
   'ebayfinance',
   'googlecontactspeople',
+  'recurlyv3',
+  'loopreturnsv2',
+  'acumaticaecommerce',
 ];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
@@ -702,6 +707,11 @@ export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
 });
 
 export const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
+
+export const ALIAS_FORM_KEY = Object.freeze({
+  integrations: 'integration-alias',
+  flows: 'flow-alias',
+});
 
 export const UNASSIGNED_SECTION_ID = 'unassigned';
 export const UNASSIGNED_SECTION_NAME = 'Unassigned';
@@ -756,6 +766,12 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
   'amazonsellingpartner',
   'googlecontacts',
   'googlecontactspeople',
+  'recurly',
+  'recurlyv3',
+  'loopreturns',
+  'loopreturnsv2',
+  'acumatica',
+  'acumaticaecommerce',
 ];
 
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];

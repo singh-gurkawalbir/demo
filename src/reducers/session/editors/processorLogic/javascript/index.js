@@ -56,7 +56,7 @@ export default {
     const { code, scriptId } = editor.rule || {};
 
     const patches = {
-      foregroundPatches: [{
+      backgroundPatches: [{
         patch: [
           {
             op: 'replace',

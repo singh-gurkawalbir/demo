@@ -17,6 +17,8 @@ import EditorDrawer from '../../AFE/Drawer';
 import SaveAndCloseResourceForm from '../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 import { FORM_SAVE_STATUS } from '../../../utils/constants';
 import useFormOnCancelContext from '../../FormOnCancelContext';
+import MappingsSettingsV2Wrapper from '../../AFE/Editor/panels/Mappings/Mapper2/Settings';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 
 const emptySet = [];
 const emptyObject = {};
@@ -273,35 +275,51 @@ function CategoryMappingSettingsWrapper(props) {
     />
   );
 }
+
+function Title() {
+  const match = useRouteMatch();
+  const {nodeKey, generate} = match.params;
+
+  if (!nodeKey) return 'Settings';
+
+  return `Settings - destination field: ${generate}`;
+}
 export default function SettingsDrawer(props) {
   const match = useRouteMatch();
   const {setCancelTriggered} = useFormOnCancelContext(formKey);
 
+  // TODO @Raghu: Back button is not automatically shown for category mapping settings
+  // Hence added showBackButton.. Revisit
   return (
     <RightDrawer
-      hideBackButton
-      variant="temporary"
-      disableBackdropClick
       onClose={setCancelTriggered}
       path={[
-        'settings/:mappingKey',
-        'settings/category/:editorId/sections/:sectionId/:depth/:mappingKey',
+        drawerPaths.MAPPINGS.V2_SETTINGS,
+        drawerPaths.MAPPINGS.SETTINGS,
+        drawerPaths.MAPPINGS.CATEGORY_MAPPING_SETTINGS,
       ]}
       height="tall"
     >
-      <DrawerHeader title="Settings" />
 
+      {/* handleBack is added for v2 mapping settings as back button needs to update the active key as well */}
+      <DrawerHeader
+        helpTitle="Settings"
+        helpKey="afe.mappings.settings"
+        title={<Title />}
+        showBackButton
+        handleBack={setCancelTriggered} />
       <Switch>
         <Route
-          path={`${match.url}/settings/category/:editorId/sections/:sectionId/:depth/:mappingKey`}>
-          <CategoryMappingSettingsWrapper
-            {...props}
-            />
+          path={buildDrawerUrl({ path: drawerPaths.MAPPINGS.CATEGORY_MAPPING_SETTINGS, baseUrl: match.url })}>
+          <CategoryMappingSettingsWrapper {...props} />
         </Route>
         <Route
-          path={`${match.url}/settings/:mappingKey`}>
-          <MappingSettingsWrapper
-            {...props} />
+          path={buildDrawerUrl({ path: drawerPaths.MAPPINGS.V2_SETTINGS, baseUrl: match.url })}>
+          <MappingsSettingsV2Wrapper {...props} />
+        </Route>
+        <Route
+          path={buildDrawerUrl({ path: drawerPaths.MAPPINGS.SETTINGS, baseUrl: match.url })}>
+          <MappingSettingsWrapper {...props} />
         </Route>
 
       </Switch>

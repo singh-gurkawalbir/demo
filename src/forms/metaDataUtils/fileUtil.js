@@ -221,6 +221,7 @@ fileAdvanced: { formId: 'fileAdvanced' },
   label: 'XML document',
   refreshOptionsOnChangesTo: ['file.type'],
   required: true,
+  helpKey: 'import.ftp.XMLDocument',
   visibleWhenAll: [
     {
       field: 'file.type',
@@ -439,7 +440,9 @@ export const updateFileProviderFormValues = formValues => {
     newValues['/file/xlsx'] = undefined;
     newValues['/file/xml'] = undefined;
     newValues['/file/csv'] = undefined;
-    newValues['/file/skipAggregation'] = true;
+    if (newValues['/file/type']) {
+      newValues['/file/skipAggregation'] = true;
+    }
     // TODO: Ashok needs to revisit on delete form values.
     delete newValues['/file/csv/rowsToSkip'];
     delete newValues['/file/csv/trimSpaces'];
@@ -507,6 +510,29 @@ export const getFileProviderExportsOptionsHandler = (fieldId, fields) => {
       definitionId: definition && definition.value,
       resourcePath: resourcePath && resourcePath.value,
     };
+  }
+  if (fieldId === 'file.encoding') {
+    const fileType = fields.find(field => field.id === 'file.type');
+
+    if (fileType.value === 'xlsx') {
+      return [
+        {
+          items: [
+            { label: 'UTF-8', value: 'utf8' },
+          ],
+        },
+      ];
+    }
+
+    return [
+      {
+        items: [
+          { label: 'UTF-8', value: 'utf8' },
+          { label: 'Windows-1252', value: 'win1252' },
+          { label: 'UTF-16LE', value: 'utf-16le' },
+        ],
+      },
+    ];
   }
 };
 
@@ -594,9 +620,29 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
     const fileType = fields.find(field => field.id === 'file.type');
     const skipAggregationField = fields.find(field => field.id === fieldId);
 
-    if (['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value)) {
-      skipAggregationField.value = true;
+    skipAggregationField.value = ['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value);
+  } else if (fieldId === 'file.encoding') {
+    const fileType = fields.find(field => field.id === 'file.type');
+
+    if (fileType.value === 'xlsx') {
+      return [
+        {
+          items: [
+            { label: 'UTF-8', value: 'utf8' },
+          ],
+        },
+      ];
     }
+
+    return [
+      {
+        items: [
+          { label: 'UTF-8', value: 'utf8' },
+          { label: 'Windows-1252', value: 'win1252' },
+          { label: 'UTF-16LE', value: 'utf-16le' },
+        ],
+      },
+    ];
   }
 
   return null;

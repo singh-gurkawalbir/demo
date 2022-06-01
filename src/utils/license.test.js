@@ -350,7 +350,7 @@ describe('platformLicenseActionDetails function test', () => {
       };
     const expected = {
       action: 'upgrade',
-      label: 'Upgrade now',
+      label: 'Request upgrade now',
     };
     const license = selectors.platformLicense(state);
 

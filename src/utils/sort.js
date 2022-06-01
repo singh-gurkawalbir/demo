@@ -11,6 +11,21 @@ const isNumber = el => {
 };
 
 export const stringCompare = (sortProperty, isDescending) => (a, b) => {
+  if (Array.isArray(sortProperty)) {
+    if (sortProperty.length) {
+      let index = 0;
+      let sortValue = 0;
+
+      while (sortValue === 0 && index < sortProperty.length) {
+        sortValue = stringCompare(sortProperty[index], isDescending)(a, b);
+        index += 1;
+      }
+
+      return sortValue;
+    }
+
+    return 0;
+  }
   const firstEl = sortProperty && isObject(a) ? get(a, sortProperty) || '' : a;
   const secondEl = sortProperty && isObject(b) ? get(b, sortProperty) || '' : b;
 
@@ -54,9 +69,9 @@ export const comparer = ({ order, orderBy }) =>
 export const sortJsonByKeys = obj => {
   const isObject = typeof obj === 'object' && !Array.isArray(obj);
 
-  if (!isObject) return obj;
+  if (!obj || !isObject) return obj;
   const keys = Object.keys(obj);
-  // TODO: Handle blacklisting some properties which are order sensitive
+
   const sortedKeys = [...keys].sort((a, b) => a.localeCompare(b));
 
   return sortedKeys.reduce((newObj, key) => ({...newObj, [key]: sortJsonByKeys(obj[key])}), {});

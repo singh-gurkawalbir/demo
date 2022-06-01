@@ -25,6 +25,7 @@ import databaseMapping from './databaseMapping';
 import flowTransform from './flowTransform';
 import mappings from './mappings';
 import responseMappings from './responseMappings';
+import router from './router';
 
 const logicMap = {
   handlebars,
@@ -53,6 +54,7 @@ const logicMap = {
   salesforceQualificationCriteria,
   mappings,
   responseMappings,
+  router,
 };
 
 export function getLogic(editor) {
@@ -245,12 +247,20 @@ export const featuresMap = options => ({
     hidePreview: true,
   },
   mappings: {
-    layout: 'compact',
+    layout: 'compact2',
     autoEvaluate: false,
   },
   responseMappings: {
-    layout: 'compactRow',
+    layout: 'compact2',
     autoEvaluate: false,
+  },
+  router: {
+    autoEvaluate: false,
+    // We need to generalize the layout name below. Here we are using
+    // the same layout as for settings form. We need to find a generic name
+    // for the pair of layouts.
+    // also the css grid template needs to rename "hook" to "script".
+    layout: `${options?.activeProcessor === 'filter' ? 'json' : 'script'}FormBuilder`,
   },
 });
 

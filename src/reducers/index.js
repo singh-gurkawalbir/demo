@@ -57,8 +57,9 @@ import {
   NO_ENVIRONMENT_RESOURCE_TYPES,
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
   AFE_SAVE_STATUS,
-  UNASSIGNED_SECTION_NAME} from '../utils/constants';
-import { LICENSE_EXPIRED } from '../utils/messageStore';
+  UNASSIGNED_SECTION_NAME,
+} from '../utils/constants';
+import messageStore from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -72,6 +73,7 @@ import {
   filterAndSortResources,
   getUserAccessLevelOnConnection,
   rdbmsSubTypeToAppType,
+  getResourceFromAlias,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -100,13 +102,15 @@ import { HOOK_STAGES } from '../utils/editor';
 import { getTextAfterCount, capitalizeFirstLetter } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as FLOWSTEP_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as FLOWSTEP_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/flowStepLogs';
-import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE } from '../utils/assistant';
+import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE, isAmazonSellingPartnerConnection } from '../utils/assistant';
 import {FILTER_KEYS_AD} from '../utils/accountDashboard';
 import { getSelectedRange } from '../utils/flowMetrics';
 import { FILTER_KEY as HOME_FILTER_KEY, LIST_VIEW, sortTiles, getTileId, tileCompare } from '../utils/home';
 import { getTemplateUrlName } from '../utils/template';
 import { filterMap } from '../components/GlobalSearch/filterMeta';
-import { getRevisionFilterKey, getFilteredRevisions } from '../utils/revisions';
+import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions, REVISION_DIFF_ACTIONS } from '../utils/revisions';
+import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
+import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -138,6 +142,7 @@ const rootReducer = (state, action) => {
 
       case actionTypes.APP.DELETE_DATA_STATE:
         delete draft.data;
+        delete draft.session.loadResources;
 
         break;
 
@@ -352,6 +357,7 @@ selectors.integrationInstallSteps = createSelector(
 
     let netsuiteConnIndex = 0;
     let salesforceConnIndex = 0;
+    // passing connectionId as _connId in case of 'Integrator Bundle' and 'Integrator Adaptor Package'
 
     return installSteps.map(step => {
       if (step.installURL || step.url) {
@@ -364,7 +370,7 @@ selectors.integrationInstallSteps = createSelector(
 
           return {
             ...step,
-            connectionId,
+            _connId: connectionId,
           };
         } if (step.name.includes('Integrator Adaptor Package')) {
           const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
@@ -373,7 +379,7 @@ selectors.integrationInstallSteps = createSelector(
 
           return {
             ...step,
-            connectionId,
+            _connId: connectionId,
           };
         }
       }
@@ -408,28 +414,6 @@ selectors.integrationUninstallSteps = (state, { integrationId, isFrameWork2 }) =
   });
 
   return { steps: modifiedSteps, error, isFetched, isComplete };
-};
-
-selectors.addNewChildSteps = (state, integrationId) => {
-  const addNewChildSteps = fromSession.addNewChildSteps(
-    state && state.session,
-    integrationId
-  );
-  const { steps } = addNewChildSteps;
-
-  if (!steps || !Array.isArray(steps)) {
-    return addNewChildSteps;
-  }
-
-  const modifiedSteps = produce(steps, draft => {
-    const unCompletedStep = draft.find(s => !s.completed);
-
-    if (unCompletedStep) {
-      unCompletedStep.isCurrentStep = true;
-    }
-  });
-
-  return { steps: modifiedSteps };
 };
 
 selectors.currentStepPerMode = (state, { mode, integrationId, revisionId, cloneResourceId, cloneResourceType }) => {
@@ -610,7 +594,7 @@ selectors.mkTileApplications = () => {
         return emptyArray;
       }
       if (!tile._connectorId) {
-        integration?._registeredConnectionIds?.forEach(r => {
+        tile?._registeredConnectionIds?.forEach(r => {
           const connection = connections.find(c => c._id === r);
 
           if (connection) {
@@ -964,6 +948,18 @@ selectors.getEventReportIntegrationName = (state, r) => {
   // if there is no integration associated to a flow then its a standalone flow
 
   return integration?.name || STANDALONE_INTEGRATION.name;
+};
+
+selectors.showNotificationForTechAdaptorForm = (state, resourceId) => {
+  const staggedPatches = selectors.stagedResource(state, resourceId)?.patch;
+  const connectionId = staggedPatches?.find(p => p.op === 'replace' && p.path === '/_connectionId')?.value;
+  const connection = selectors.resource(state, 'connections', connectionId);
+
+  if (isAmazonSellingPartnerConnection(connection)) return false;
+
+  return !!staggedPatches?.find(
+      p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
+    )?.value;
 };
 
 // It will give list of flows which to be displayed in flows filter in account dashboard.
@@ -1577,6 +1573,15 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
         }
 
         if (connection.type === 'http') {
+          if (connection.http?.formType) {
+            return (
+            this.http?.formType === connection.http?.formType &&
+            this.type === 'http' &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+            );
+          }
+
           return (
             this.http?.formType !== 'rest' &&
             this.type === 'http' &&
@@ -1599,7 +1604,7 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
-            (this.netsuite.account) &&
+            this.netsuite?.account &&
             (!environment || !!this.sandbox === (environment === 'sandbox')) &&
             ([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE].includes(accessLevel))
           );
@@ -1683,25 +1688,14 @@ selectors.makeMarketPlaceConnectorsSelector = () => {
 
 selectors.mkTiles = () => createSelector(
   state => state?.data?.resources?.tiles,
-  state => state?.data?.resources?.integrations,
   state => state?.data?.resources?.flows,
   state => selectors.currentEnvironment(state),
   state => selectors.publishedConnectors(state),
   state => selectors.userPermissions(state),
-  (allTiles = emptyArray, integrations = emptyArray, flows = emptyArray, currentEnvironment, published = emptyArray, permissions) => {
+  (allTiles = emptyArray, flows = emptyArray, currentEnvironment, published = emptyArray, permissions) => {
     const tiles = allTiles.filter(t => (!!t.sandbox === (currentEnvironment === 'sandbox')));
 
-    const hasStandaloneTile = tiles.find(
-      t => t._integrationId === STANDALONE_INTEGRATION.id
-    );
-
-    if (hasStandaloneTile) {
-      integrations = [
-        ...integrations,
-        { _id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name },
-      ];
-    }
-    integrations = integrations.map(i => {
+    const permissionMap = tiles.reduce((acc, t) => {
       if (
         [
           USER_ACCESS_LEVELS.ACCOUNT_OWNER,
@@ -1710,42 +1704,34 @@ selectors.mkTiles = () => createSelector(
           USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
         ].includes(permissions.accessLevel)
       ) {
-        return {
-          ...i,
-          permissions: {
-            accessLevel: permissions.integrations.all.accessLevel,
-            connections: {
-              edit: permissions.integrations.all.connections.edit,
-            },
+        acc[t._integrationId] = {
+          accessLevel: permissions.integrations.all.accessLevel,
+          connections: {
+            edit: permissions.integrations.all.connections.edit,
+          },
+        };
+      } else {
+        acc[t._integrationId] = {
+          accessLevel: (permissions.integrations[t._integrationId] || permissions.integrations.all)?.accessLevel,
+          connections: {
+            edit: (permissions.integrations[t._integrationId] || permissions.integrations.all)?.connections?.edit,
           },
         };
       }
 
-      return {
-        ...i,
-        permissions: {
-          accessLevel: (permissions.integrations[i._id] || permissions.integrations.all)?.accessLevel,
-          connections: {
-            edit:
-                  (permissions.integrations[i._id] || permissions.integrations.all)?.connections?.edit,
-          },
-        },
-      };
-    });
+      return acc;
+    }, {});
 
-    let integration;
     let connector;
     let status;
 
     return tiles.map(t => {
-      integration = integrations.find(i => i._id === t._integrationId) || {};
-      const integrationId = integration._id;
       let flowsNameAndDescription = '';
 
-      if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+      if (t._connectorId && t.mode === INTEGRATION_MODES.UNINSTALL) {
         status = TILE_STATUS.UNINSTALL;
       } else if (
-        integration.mode === INTEGRATION_MODES.INSTALL || integration.mode === INTEGRATION_MODES.UNINSTALL
+        t.mode === INTEGRATION_MODES.INSTALL || t.mode === INTEGRATION_MODES.UNINSTALL
       ) {
         status = TILE_STATUS.IS_PENDING_SETUP;
       } else if (t.numError && t.numError > 0) {
@@ -1771,8 +1757,8 @@ selectors.mkTiles = () => createSelector(
           flowsNameAndDescription,
           sortablePropType: -1,
           integration: {
-            mode: integration.mode,
-            permissions: integration.permissions,
+            mode: t.mode,
+            permissions: permissionMap[t._integrationId],
           },
           connector: {
             owner: connector.user.company || connector.user.name,
@@ -1784,11 +1770,11 @@ selectors.mkTiles = () => createSelector(
       // adding flow names and descriptions to be used for searching tiles
       flowsNameAndDescription = flows
         .filter(f => {
-          if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+          if (!t._integrationId || t._integrationId === STANDALONE_INTEGRATION.id) {
             return !f._integrationId && !!f.sandbox === (currentEnvironment === 'sandbox');
           }
 
-          return f._integrationId === integrationId;
+          return f._integrationId === t._integrationId;
         })
         .reduce((result, f) => `${result}|${f.name || ''}|${f.description || ''}`, '');
 
@@ -1799,7 +1785,7 @@ selectors.mkTiles = () => createSelector(
         flowsNameAndDescription,
         sortablePropType: t.numFlows || 0,
         integration: {
-          permissions: integration.permissions,
+          permissions: permissionMap[t._integrationId],
         },
       };
     });
@@ -1841,8 +1827,15 @@ selectors.mkFilteredHomeTiles = () => {
       let filteredTiles = filterAndSortResources(homeTiles, filterConfig, !isListView, comparer);
 
       if (isListView && applications && !applications.includes('all')) {
-        // filter on applications
-        filteredTiles = filteredTiles.filter(t => t.applications?.some(a => applications.includes(a)));
+        // filter on applications, for applications which have multiple versions/metadata, temporary assistant name
+        // will be a substring of the actual assistant name
+        // for e.g, user selects 'constantcontact' in the filters (which is a temporary assistant),
+        // resources will have assistants 'constantcontactv2' or 'constantcontactv3',
+        // below filter will ensure that all versions of constant contact are filtered as 'constantcontact' is a substring of
+        // both 'constantcontactv2' or 'constantcontactv3'
+        filteredTiles = filteredTiles.filter(
+          tile => tile.applications?.some(tileApp => applications.some(app => tileApp.includes(app)))
+        );
       }
 
       if (isListView && pinnedIntegrations?.length && filteredTiles.length) {
@@ -1885,25 +1878,21 @@ selectors.mkFilteredHomeTiles = () => {
 };
 
 selectors.mkHomeTileRedirectUrl = () => {
-  const resourceSelector = selectors.makeResourceSelector();
   const marketplaceResourceSel = selectors.makeResourceSelector();
 
   return createSelector(
     (_, tile) => tile,
     state => selectors.isOwnerUserInErrMgtTwoDotZero(state),
-    (state, tile) => resourceSelector(state, 'integrations', tile?._integrationId),
     (state, tile) => {
-      const integration = resourceSelector(state, 'integrations', tile?._integrationId);
-
-      if (integration?._templateId) {
-        const template = marketplaceResourceSel(state, 'marketplacetemplates', integration._templateId);
+      if (tile?._templateId) {
+        const template = marketplaceResourceSel(state, 'marketplacetemplates', tile._templateId);
 
         return getTemplateUrlName(template?.applications);
       }
 
       return null;
     },
-    (tile, isUserInErrMgtTwoDotZero, integration, templateName) => {
+    (tile, isUserInErrMgtTwoDotZero, templateName) => {
       // separate logic for suitescript tiles
       if (tile.ssLinkedConnectionId) {
         let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
@@ -1928,7 +1917,6 @@ selectors.mkHomeTileRedirectUrl = () => {
         };
       }
 
-      const isCloned = integration?.install?.find(step => step?.isClone);
       const integrationAppTileName =
         tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
 
@@ -1945,7 +1933,7 @@ selectors.mkHomeTileRedirectUrl = () => {
 
       if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         if (tile._connectorId) {
-          urlToIntegrationSettings = `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
+          urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
         } else {
           urlToIntegrationSettings = `integrations/${tile._integrationId}/setup`;
         }
@@ -2382,19 +2370,21 @@ selectors.mkConnectionIdsUsedInSelectedFlows = () => createSelector(
  */
 selectors.getScriptContext = createSelector(
   [
-    (state, { contextType }) => contextType,
+    (_1, { contextType }) => contextType,
+    (_1, { flowId }) => flowId,
     (state, { flowId }) => {
       const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
 
       return flow._integrationId;
     },
   ],
-  (contextType, _integrationId) => {
+  (contextType, _flowId, _integrationId) => {
     if (contextType === 'hook' && _integrationId) {
       return {
         type: 'hook',
         container: 'integration',
         _integrationId,
+        _flowId,
       };
     }
   }
@@ -2564,7 +2554,7 @@ selectors.getResourceType = (state, { resourceType, resourceId }) => {
   return updatedResourceType;
 };
 
-// As of now, we are not showing the lookup option for BigQuery imports
+// As of now, we are not showing the lookup option for BigQuery and snowflake imports
 selectors.mappingHasLookupOption = (state, resourceType, connectionId) => {
   const connection = selectors.resource(state, resourceType, connectionId) || {};
 
@@ -3350,36 +3340,57 @@ selectors.isProfileLoading = state => {
   return !!(state && fromComms.isLoading(state.comms, commKey));
 };
 
-selectors.availableUsersList = (state, integrationId) => {
-  const isAccountOwnerOrAdmin = selectors.isAccountOwnerOrAdmin(state);
-  let _users = [];
+selectors.availableUsersList = createSelector(
+  (_, integrationId) => integrationId,
+  selectors.usersList,
+  selectors.isAccountOwnerOrAdmin,
+  selectors.integrationUsersForOwner,
+  selectors.integrationUsers,
+  selectors.accountOwner,
+  (integrationId, usersList, isAccountOwnerOrAdmin, integrationUsersForOwner, integrationUsers, accountOwner) => {
+    let _users = [];
 
-  if (isAccountOwnerOrAdmin) {
-    if (integrationId) {
-      _users = selectors.integrationUsersForOwner(state, integrationId);
-    } else {
-      _users = selectors.usersList(state);
+    if (isAccountOwnerOrAdmin) {
+      if (integrationId) {
+        _users = integrationUsersForOwner;
+      } else {
+        _users = usersList;
+      }
+    } else if (integrationId) {
+      _users = integrationUsers;
     }
-  } else if (integrationId) {
-    _users = selectors.integrationUsers(state, integrationId);
+
+    if ((integrationId || isAccountOwnerOrAdmin) && _users?.length > 0) {
+      _users = [
+        {
+          _id: ACCOUNT_IDS.OWN,
+          accepted: true,
+          accessLevel: INTEGRATION_ACCESS_LEVELS.OWNER,
+          sharedWithUser: accountOwner,
+        },
+        ..._users,
+      ];
+    }
+
+    return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
   }
 
-  if ((integrationId || isAccountOwnerOrAdmin) && _users?.length > 0) {
-    const accountOwner = selectors.accountOwner(state);
+);
 
-    _users = [
-      {
-        _id: ACCOUNT_IDS.OWN,
-        accepted: true,
-        accessLevel: INTEGRATION_ACCESS_LEVELS.OWNER,
-        sharedWithUser: accountOwner,
-      },
-      ..._users,
-    ];
+selectors.allUsersList = createSelector(
+  selectors.availableUsersList,
+  selectors.accountOwner,
+  (users, accountOwner) => {
+    if (users?.length) {
+      return users;
+    }
+
+    return [{
+      _id: ACCOUNT_IDS.OWN,
+      sharedWithUser: accountOwner,
+    }];
   }
-
-  return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
-};
+);
 
 selectors.platformLicense = createSelector(
   selectors.userPreferences,
@@ -3620,7 +3631,7 @@ selectors.isLicenseValidToEnableFlow = state => {
 
   if (license.hasExpired) {
     licenseDetails.enable = false;
-    licenseDetails.message = LICENSE_EXPIRED;
+    licenseDetails.message = messageStore('LICENSE_EXPIRED');
   }
 
   return licenseDetails;
@@ -3717,6 +3728,101 @@ selectors.userPermissionsOnConnection = (state, connectionId) => {
   }
 
   return emptyObject;
+};
+
+selectors.resourcePermissionsForTile = (
+  state,
+  resourceType,
+  resourceId,
+  tileOps = {}
+) => {
+  const {childResourceType, _connectorId, _parentId} = tileOps;
+
+  // to support parent-child integration permissions
+  if (resourceType === 'integrations') {
+    if (_parentId) {
+      return selectors.resourcePermissions(
+        state,
+        resourceType,
+        _parentId,
+        childResourceType
+      );
+    }
+  }
+  //  when resourceType == connection and resourceID = connectionId, we fetch connection
+  //  permission by checking for highest order connection permission under integrations
+  if (resourceType === 'connections' && resourceId) {
+    return selectors.userPermissionsOnConnection(state, resourceId) || emptyObject;
+  }
+
+  const permissions = selectors.userPermissions(state);
+
+  // TODO: userPermissions should be written to handle when there isn't a state and in those circumstances
+  // should return null rather than an empty object for all cases
+  if (!permissions || isEmpty(permissions)) return emptyObject;
+
+  // special case, where resourceType == integrations. Its childResource,
+  // ie. connections, flows can be retrieved by passing childResourceType
+  if (resourceType === 'integrations' && (childResourceType || resourceId)) {
+    if (
+      [
+        USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+        USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+      ].includes(permissions.accessLevel)
+    ) {
+      const value =
+       _connectorId
+         ? permissions.integrations.connectors
+         : permissions.integrations.all;
+
+      // filtering child resource
+      return (
+        (childResourceType ? value && value[childResourceType] : value) ||
+        emptyObject
+      );
+    }
+    if (resourceId) {
+      let value = permissions[resourceType][resourceId];
+
+      if (!value && resourceType === 'integrations') {
+        value = permissions[resourceType].all;
+      }
+
+      // remove tile level permissions added to connector while are not valid.
+      if (_connectorId) {
+        const connectorTilePermission = {
+          accessLevel: value.accessLevel,
+          flows: {
+            edit: value.flow && value.flow.edit,
+          },
+          connections: {
+            edit: value.connections && value.connections.edit,
+            create: value.connections && value.connections.create,
+          },
+          edit: value.edit,
+          delete: value.delete,
+        };
+
+        value = connectorTilePermission;
+      }
+
+      return (
+        (childResourceType ? value && value[childResourceType] : value) ||
+        emptyObject
+      );
+    }
+
+    return emptyObject;
+  }
+  if (resourceType) {
+    return resourceId
+      ? permissions[resourceType][resourceId]
+      : permissions[resourceType];
+  }
+
+  return permissions || emptyObject;
 };
 
 selectors.resourcePermissions = (
@@ -4038,10 +4144,9 @@ selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {
  */
 selectors.canSelectRecordsInPreviewPanel = (state, formKey) => {
   const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, formKey);
-
-  if (isExportPreviewDisabled) return false;
-
   const { resourceId, resourceType } = selectors.formParentContext(state, formKey) || {};
+
+  if (isExportPreviewDisabled || resourceType === 'imports') return false;
 
   const resource = selectors.resourceData(state, resourceType, resourceId)?.merged || {};
   // TODO @Raghu: merge this as part of isRealTimeOrDistributedResource to handle this resourceType
@@ -4197,12 +4302,12 @@ selectors.sampleDataWrapper = createSelector(
     (state, params) => params.sampleData || selectors.getSampleDataContext(state, params),
     (state, params) => {
       if (['postMap', 'postSubmit'].includes(params.stage)) {
-        return selectors.getSampleDataContext(state, { ...params, stage: 'preMap' });
+        return selectors.getSampleDataContext(state, { ...params, stage: 'importMappingExtract' });
       }
     },
     (state, params) => {
       if (params.stage === 'postSubmit') {
-        return selectors.getSampleDataContext(state, { ...params, stage: 'postMap' });
+        return selectors.getSampleDataContext(state, { ...params, stage: 'postMapOutput' });
       }
     },
     (state, { flowId }) => selectors.resource(state, 'flows', flowId) || emptyObject,
@@ -4699,7 +4804,15 @@ selectors.netsuiteAccountHasSuiteScriptIntegrations = (state, connectionId) => {
 
 selectors.canLinkSuiteScriptIntegrator = (state, connectionId) => {
   const preferences = selectors.userPreferences(state);
+  const permissions = selectors.userPermissions(state);
 
+  const hasAccountLevelEditAccess = [
+    USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+    USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+    USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+  ].includes(permissions.accessLevel);
+
+  if (!hasAccountLevelEditAccess) return false;
   if (preferences && preferences.ssConnectionIds) {
     if (preferences.ssConnectionIds.includes(connectionId)) {
       return true;
@@ -5155,7 +5268,6 @@ selectors.isPreviewPanelAvailableForResource = (
   resourceType,
   flowId
 ) => {
-  if (resourceType !== 'exports') return false;
   const resourceObj = selectors.resourceData(
     state,
     resourceType,
@@ -5360,6 +5472,77 @@ selectors.responseMappingInput = (state, resourceType, resourceId, flowId) => {
   const resource = selectors.resource(state, resourceType, resourceId);
 
   return responseMappingUtil.getResponseMappingDefaultInput(resourceType, preProcessedData, resource?.adaptorType);
+};
+
+selectors.isMapper2Supported = state => {
+  const {importId} = selectors.mapping(state);
+
+  if (!importId) return false;
+
+  const resource = selectors.resource(state, 'imports', importId);
+
+  // IAs don't support mapper2
+  if (!resource || resource._connectorId) return false;
+
+  return !!((resource.adaptorType === 'HTTPImport' || resource.adaptorType === 'RESTImport') && resource.http?.type !== 'file');
+};
+
+selectors.resourceHasMappings = (state, importId) => {
+  const resource = selectors.resource(state, 'imports', importId);
+
+  if (!resource) return false;
+
+  // v2 mappings
+  if (resource.mappings?.length) {
+    return true;
+  }
+
+  // v1 mappings
+  const mappings = mappingUtil.getMappingFromResource({
+    importResource: resource,
+    isFieldMapping: true,
+  });
+  const { fields = [], lists = [] } = mappings || {};
+
+  return !!(fields.length || lists.length);
+};
+
+selectors.mappingEditorNotification = (state, editorId) => {
+  const {editorType, resourceId} = fromSession.editor(state?.session, editorId);
+  const isMapper2Supported = selectors.isMapper2Supported(state);
+
+  if (editorType !== 'mappings' || !isMapper2Supported) return emptyObject;
+
+  const {mapping, mappings} = selectors.resource(state, 'imports', resourceId) || {};
+
+  const resourceHasV2Mappings = !!mappings?.length;
+
+  const { fields = [], lists = [] } = mapping || {};
+
+  const resourceHasV1Mappings = !!(fields.length || lists.length);
+
+  // if both mappings don't exist, no message to be displayed
+  if (!resourceHasV1Mappings && !resourceHasV2Mappings) {
+    return emptyObject;
+  }
+
+  const mappingVersion = selectors.mappingVersion(state);
+
+  // if v2 mappings exist, no v2 message is shown and only show v1 message
+  if (resourceHasV2Mappings) {
+    if (mappingVersion === 2) return emptyObject;
+
+    return {
+      message: messageStore('MAPPER1_REFERENCE_INFO'),
+      variant: 'info',
+    };
+  }
+  if (mappingVersion === 1) return emptyObject;
+
+  return {
+    message: messageStore('MAPPER2_BANNER_WARNING'),
+    variant: 'warning',
+  };
 };
 
 // #endregion MAPPING END
@@ -5832,7 +6015,11 @@ selectors.getResourceEditUrl = (state, resourceType, resourceId, childId, sectio
     return getRoutePath(`${iaUrlPrefix || `/integrations/${resourceId}`}/flows`);
   }
 
-  return getRoutePath(`${resourceType}/edit/${resourceType}/${resourceId}`);
+  return getRoutePath(buildDrawerUrl({
+    path: drawerPaths.RESOURCE.EDIT,
+    baseUrl: resourceType,
+    params: { resourceType, id: resourceId },
+  }));
 };
 
 selectors.mkFlowConnectionList = () => createSelector(
@@ -5861,6 +6048,10 @@ selectors.isAnyIntegrationConnectionOffline = (state, integrationId) => {
   const connections = selectors.resourceList(state, {
     type: 'connections',
   }).resources;
+
+  if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+    return connections.some(c => c.offline);
+  }
   const connectionIds = integration?._registeredConnectionIds || emptyArray;
 
   return connections.some(c => connectionIds.includes(c._id) && c.offline);
@@ -6220,14 +6411,35 @@ selectors.mkEditorHelperFunctions = () => createSelector(
 );
 selectors.editorHelperFunctions = selectors.mkEditorHelperFunctions();
 
+selectors.isGraphqlResource = (state, resourceId, resourceType) => {
+  const { merged: resource } = selectors.resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+
+  return isGraphqlResource(resource);
+};
+
 // this selector returns true if the field/editor supports only AFE2.0 data
 selectors.editorSupportsOnlyV2Data = (state, editorId) => {
   const { editorType, fieldId, flowId, resourceId, resourceType } = fromSession.editor(state?.session, editorId);
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+  const mappingVersion = selectors.mappingVersion(state);
+
+  // all afe fields for mapper2 should only support v2 AFE
+  if (mappingVersion === 2) {
+    return true;
+  }
 
   if (['outputFilter', 'exportFilter', 'inputFilter'].includes(editorType)) {
     return true;
   }
+
+  const isGraphqlResource = selectors.isGraphqlResource(state, resourceId, resourceType);
+
+  // graphql fields only support v2 data
+  if (isGraphqlResource && GRAPHQL_HTTP_FIELDS.includes(fieldId)) return true;
 
   // no use case yet where any PG field supports only v2 data
   if (isPageGenerator) return false;
@@ -6342,6 +6554,12 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   )?.merged || emptyObject;
   const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+  const mappingVersion = selectors.mappingVersion(state);
+
+  // all afe fields for mapper2 should only support v2 AFE
+  if (mappingVersion === 2) {
+    return {shouldGetContextFromBE: true};
+  }
 
   // for lookup fields, BE doesn't support v1/v2 yet
   if (fieldId?.startsWith('lookup') || fieldId?.startsWith('_')) {
@@ -6415,7 +6633,7 @@ selectors.applicationName = (state, _expOrImpId) => {
   } else {
     const connection = selectors.resource(state, 'connections', _connectionId) || {};
 
-    appType = connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type;
+    appType = connection.assistant || rdbmsSubTypeToAppType(connection.rdbms?.type) || connection.http?.formType || connection.type;
   }
 
   return getApp(appType)?.name;
@@ -6693,14 +6911,29 @@ selectors.revisionsFilter = (state, integrationId) => {
 selectors.filteredRevisions = createSelector(
   selectors.revisions,
   selectors.revisionsFilter,
-  (revisionsList, revisionsFilter) => getFilteredRevisions(revisionsList, revisionsFilter)
+  (revisionsList, revisionsFilter) => getFilteredRevisions(cloneDeep(revisionsList), revisionsFilter)
 );
 
-selectors.resourceName = (state, resourceId, resourceType) => {
+selectors.getCurrPageFilteredRevisions = createSelector(
+  selectors.filteredRevisions,
+  selectors.revisionsFilter,
+  (filteredRevisions, filters) => getPaginatedRevisions(filteredRevisions, filters));
+
+selectors.diffResourceName = (state, { resourceId, resourceType, resourceDiff }) => {
   if (!resourceId || !resourceType) return '';
   const resource = selectors.resource(state, resourceType, resourceId);
 
-  return resource?.name || resource?.id;
+  if (resource?.name) {
+    return resource.name;
+  }
+  // If the resource does not exist and it is about to create a new resource as part of the revision
+  // Then fetch resource name from the diff document
+  if (resourceDiff?.action === REVISION_DIFF_ACTIONS.NEW && resourceDiff?.after?.name) {
+    return resourceDiff.after.name;
+  }
+
+  // If neither of the above cases are applied, fall back to showing resourceId
+  return resourceId;
 };
 
 selectors.resourceReferencesPerIntegration = createSelector(
@@ -6731,14 +6964,28 @@ selectors.resourceReferencesPerIntegration = createSelector(
 selectors.currentRevisionInstallSteps = createSelector(
   selectors.revisionInstallSteps,
   (state, _, revisionId) => selectors.updatedRevisionInstallStep(state, revisionId),
-  (revisionInstallSteps, updatedRevisionInstallStep) => revisionInstallSteps.map(step => {
-    if (step.isCurrentStep) {
-      return {...step, ...updatedRevisionInstallStep};
-    }
+  (revisionInstallSteps, updatedRevisionInstallStep) => {
+    const updatedSteps = revisionInstallSteps.map(step => {
+      if (step.isCurrentStep) {
+        return {...step, ...updatedRevisionInstallStep};
+      }
 
-    return step;
-  })
-);
+      return step;
+    });
+
+    return updatedSteps.reduce((steps, currStep) => {
+      if (currStep.url && currStep._forSourceConnectionId) {
+        // Incase of Bundle Install step, fetch related connection step's connectionId and populate the same on this step
+        const connectionId = updatedSteps.find(step => step?.sourceConnection?._id === currStep._forSourceConnectionId)?._connectionId;
+
+        if (connectionId) {
+          return [...steps, {...currStep, connectionId}];
+        }
+      }
+
+      return [...steps, currStep];
+    }, []);
+  });
 
 selectors.areAllRevisionInstallStepsCompleted = (state, integrationId, revisionId) => {
   const installSteps = selectors.currentRevisionInstallSteps(state, integrationId, revisionId);
@@ -6753,3 +7000,107 @@ selectors.accountHasSandbox = state => {
 
   return !!(selectedAccount?.hasSandbox || selectedAccount?.hasConnectorSandbox);
 };
+
+// This selector returns the aliases defined at the resource level
+selectors.ownAliases = createSelector(
+  (state, resourceType, id) => selectors.resource(state, resourceType, id)?.aliases || emptyArray,
+  (state, _1, _2, filterKey) => selectors.filter(state, filterKey),
+  (aliases, aliasesFilter) => {
+    const tempAliases = aliases.map(aliasData => ({ type: getResourceFromAlias(aliasData).resourceType, ...aliasData }));
+
+    return aliasesFilter?.sort ? tempAliases.sort(comparer(aliasesFilter.sort)) : aliases;
+  });
+
+// This selector returns the aliases defined at its parent level
+// If aliases are defined at both the integration and parentIntegration level,
+// if some of aliases have common aliasId among them, then aliases of integration takes precedence over parentIntegration's
+selectors.inheritedAliases = createSelector(
+  (state, id) => {
+    const flow = selectors.resource(state, 'flows', id);
+
+    if (!flow?._integrationId) return;
+
+    return selectors.resource(state, 'integrations', flow._integrationId)?.aliases?.map(
+      aliasData => ({...aliasData, _parentId: flow._integrationId, type: getResourceFromAlias(aliasData).resourceType })
+    );
+  },
+  (state, id) => {
+    const flow = selectors.resource(state, 'flows', id);
+
+    if (!flow || !flow._integrationId) return;
+
+    const integration = selectors.resource(state, 'integrations', flow._integrationId);
+
+    if (!integration?._parentId) return;
+
+    return selectors.resource(state, 'integrations', integration._parentId)?.aliases?.map(
+      aliasData => ({...aliasData, _parentId: integration._parentId, type: getResourceFromAlias(aliasData).resourceType })
+    );
+  },
+  (state, _1, filterKey) => selectors.filter(state, filterKey),
+  (integrationAliases, parentIntegrationAliases, aliasesFilter) => {
+    if (!integrationAliases && !parentIntegrationAliases) return emptyArray;
+
+    let allInheritedAliases;
+
+    if (parentIntegrationAliases && integrationAliases) {
+      const filteredParentIntegrationAliases = parentIntegrationAliases.filter(aliasData => !integrationAliases.some(ia => ia.alias === aliasData.alias));
+
+      allInheritedAliases = [...integrationAliases, ...filteredParentIntegrationAliases];
+    } else if (integrationAliases) {
+      allInheritedAliases = [...integrationAliases];
+    } else {
+      allInheritedAliases = [...parentIntegrationAliases];
+    }
+
+    return aliasesFilter?.sort ? allInheritedAliases.sort(comparer(aliasesFilter.sort)) : allInheritedAliases;
+  });
+
+// This selector returns the resourcelist for a given alias resourcetype
+selectors.aliasResources = createSelector(
+  (_1, aliasResourceType) => aliasResourceType,
+  (state, aliasResourceType) => selectors.resources(state, aliasResourceType),
+  (_1, _2, _3, aliasContextResourceId) => aliasContextResourceId,
+  (state, _2, aliasContextResourceType, aliasContextResourceId) => {
+    let integrationId;
+
+    if (aliasContextResourceType === 'flows') {
+      const flow = selectors.resource(state, aliasContextResourceType, aliasContextResourceId);
+
+      if (!flow || !flow._integrationId) return emptyObject;
+
+      integrationId = flow._integrationId;
+    }
+
+    return selectors.resource(state, 'integrations', integrationId || aliasContextResourceId) || emptyObject;
+  },
+  (resourceType, resourceList, aliasContextResourceId, integration) => {
+    const integrationId = integration._id;
+    const registeredConnectionIds = integration._registeredConnectionIds;
+
+    if (!resourceList) return emptyArray;
+
+    // should return connections registered to the integration in which alias is being defined
+    if (resourceType === 'connections') {
+      return resourceList.filter(res => registeredConnectionIds?.includes(res._id));
+    }
+    // should return flows attached to the integration in which alias is being defined
+    // if the alias is being defined at flow level, should filter this particular flow
+    if (resourceType === 'flows') {
+      return resourceList.filter(res => (res._integrationId === integrationId) && (res._id !== aliasContextResourceId));
+    }
+
+    // should return exports/imports whose connection is registered to the integration in which alias is being defined
+    return resourceList.filter(res => registeredConnectionIds?.includes(res._connectionId));
+  });
+
+selectors.allAliases = createSelector(
+  (state, resourceId) => state.session.aliases[resourceId]?.aliases,
+  (state, _1, filterKey) => selectors.filter(state, filterKey),
+  (aliases, aliasesFilter) => {
+    if (!aliases) return emptyArray;
+
+    const allAliases = aliases.map(aliasData => ({ _id: aliasData.alias, type: getResourceFromAlias(aliasData).resourceType, ...aliasData}));
+
+    return aliasesFilter?.sort ? allAliases.sort(comparer(aliasesFilter.sort)) : allAliases;
+  });

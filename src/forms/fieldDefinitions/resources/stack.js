@@ -19,6 +19,7 @@ export default {
       },
     ],
     label: 'Type',
+    required: true,
   },
   'lambda.language': {
     isLoggable: true,
@@ -67,6 +68,7 @@ export default {
         is: ['lambda'],
       },
     ],
+    required: true,
   },
   'lambda.secretAccessKey': {
     type: 'text',
@@ -77,11 +79,13 @@ export default {
         is: ['lambda'],
       },
     ],
+    required: true,
   },
   'lambda.awsRegion': {
     isLoggable: false,
     type: 'select',
     label: 'AWS region',
+    required: true,
     options: [
       {
         items: [
@@ -115,6 +119,7 @@ export default {
     isLoggable: true,
     type: 'text',
     label: 'Function name',
+    required: true,
     visibleWhen: [
       {
         field: 'type',

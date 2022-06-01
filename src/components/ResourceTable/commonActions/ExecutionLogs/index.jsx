@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import AuditLogIcon from '../../../icons/AuditLogIcon';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 export default {
   key: 'viewExecutionLog',
@@ -24,12 +25,13 @@ export default {
       // bottomDrawer is supported in flow builder
       if (flowId) {
         dispatch(actions.bottomDrawer.addTab({tabType: 'scriptLogs', resourceId: scriptId}));
-      }
-
-      if (!flowId) {
-        history.push(
-          `${location.pathname}/viewLogs/${scriptId}`
-        );
+      } else {
+        // opens a drawer incase of script resource
+        history.push(buildDrawerUrl({
+          path: drawerPaths.LOGS.SCRIPT,
+          baseUrl: location.pathname, // TODO: @Raghu Is match.url not sufficient?
+          params: { scriptId },
+        }));
       }
     }, [dispatch, flowId, history, location.pathname, scriptId]);
   },

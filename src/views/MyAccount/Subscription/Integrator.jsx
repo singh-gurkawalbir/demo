@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, LinearProgress, capitalize } from '@material-ui/core';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import actions from '../../../actions';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
@@ -144,7 +145,7 @@ export default function Subscription() {
   }
 
   const onStartFreeTrialClick = useCallback(() => {
-    history.push(`${match.url}/upgrade`);
+    history.push(buildDrawerUrl({ path: drawerPaths.ACCOUNT.UPGRADE, baseUrl: match.url}));
   }, [history, match.url]);
   const onRequestSubscriptionClick = useCallback(() => {
     dispatch(
@@ -184,7 +185,7 @@ export default function Subscription() {
         {licenseActionDetails && licenseActionDetails.isNone && (
         <div className={classes.block}>
           <Typography
-            varaint="h2"
+            variant="h2"
             color="primary"
             className={classes.headingMaster}>
             You currently dont have any subscription.
@@ -193,7 +194,7 @@ export default function Subscription() {
             <FilledButton onClick={onStartFreeTrialClick}>
               Get unlimited flows
             </FilledButton>
-            <Typography varaint="body2" className={classes.description}>
+            <Typography variant="body2" className={classes.description}>
               Start a 30 day free trial to explore the full capabilities of
               integrator.io. At the end of the trial, you get to keep one
               active flow forever.

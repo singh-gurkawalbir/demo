@@ -68,7 +68,7 @@ export default function EditableText({
   }
 
   function handleKeyDown(e) {
-    // console.log(e.key);
+    // console.log(e.key, 'keydown');
     if (e.key === 'Enter') {
       handleChange();
     } else if (e.key === 'Escape') {
@@ -76,7 +76,9 @@ export default function EditableText({
     }
   }
 
-  const handleEditClick = () => {
+  const handleEditClick = event => {
+    event.stopPropagation();
+    // console.log('edit click: stop prop');
     if (!disabled) setIsEdit(true);
   };
 
@@ -104,7 +106,7 @@ export default function EditableText({
             { [classes.overflowText]: !allowOverflow },
             className
           )}>
-          <span onClick={handleEditClick}>{text || defaultText}</span>
+          <div onClick={handleEditClick}>{text || defaultText}</div>
         </div>
       )}
     </>

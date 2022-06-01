@@ -280,9 +280,9 @@ describe('resource region selector testcases', () => {
       } };
 
     test('should return all applications from registered connections for diy integrations for list view', () => {
-      expect(selector(listViewState, {_integrationId: 'diyIntegration'})).toEqual(['Square', 'mssql']);
-      expect(selector(listViewState, {_integrationId: 'diyIntegration1'})).toEqual(['rest', 'http']);
-      expect(selector(listViewState, {_integrationId: 'diyIntegration2'})).toEqual(['Square', 'rest']);
+      expect(selector(listViewState, {_integrationId: 'diyIntegration', _registeredConnectionIds: [1, 2]})).toEqual(['Square', 'mssql']);
+      expect(selector(listViewState, {_integrationId: 'diyIntegration1', _registeredConnectionIds: [3, 4]})).toEqual(['rest', 'http']);
+      expect(selector(listViewState, {_integrationId: 'diyIntegration2', _registeredConnectionIds: [1, 3]})).toEqual(['Square', 'rest']);
       expect(selector(listViewState, {_integrationId: 'none'})).toEqual([]);
     });
 
@@ -2771,12 +2771,14 @@ describe('resource region selector testcases', () => {
         _connectorId: 'connector1',
         name: 'Connector 1',
         numFlows: 6,
+        mode: 'settings',
       },
       {
         _integrationId: 'integration6',
         _connectorId: 'connector1',
         tag: 'tag 1',
         name: 'Connector 1',
+        mode: 'settings',
         numError: 36,
         numFlows: 7,
       },
@@ -2785,6 +2787,7 @@ describe('resource region selector testcases', () => {
         _connectorId: 'connector1',
         tag: 'tag 2',
         name: 'Connector 1',
+        mode: 'settings',
         numError: 49,
         offlineConnections: ['conn1'],
         numFlows: 8,
@@ -2794,6 +2797,7 @@ describe('resource region selector testcases', () => {
         _connectorId: 'connector2',
         name: 'Connector 2',
         numFlows: 9,
+        mode: 'install',
       },
       {
         _integrationId: 'integration9',
@@ -2801,6 +2805,7 @@ describe('resource region selector testcases', () => {
         name: 'Connector 2',
         tag: 'test tag',
         numFlows: 10,
+        mode: 'install',
         offlineConnections: ['conn1', 'conn2'],
       },
     ];
@@ -3449,7 +3454,12 @@ describe('resource region selector testcases', () => {
             flowsNameAndDescription: '',
             integration: {
               mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,
@@ -3616,7 +3626,12 @@ describe('resource region selector testcases', () => {
             flowsNameAndDescription: '',
             integration: {
               mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,
@@ -3756,7 +3771,14 @@ describe('resource region selector testcases', () => {
               owner: 'Company 1',
             },
             flowsNameAndDescription: '',
-            integration: {},
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
             key: 'connector1',
             lastErrorAt: 1,
             name: 'Integration Two',
@@ -3794,7 +3816,14 @@ describe('resource region selector testcases', () => {
             _integrationId: 'integration10',
             applications: [],
             flowsNameAndDescription: '',
-            integration: {},
+            integration: {
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
+            },
             key: 'integration10',
             name: 'Integration ten',
             numError: 2,
@@ -3946,7 +3975,12 @@ describe('resource region selector testcases', () => {
             flowsNameAndDescription: '',
             integration: {
               mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,
@@ -4137,7 +4171,12 @@ describe('resource region selector testcases', () => {
             flowsNameAndDescription: '',
             integration: {
               mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,
@@ -4165,51 +4204,107 @@ describe('resource region selector testcases', () => {
 
       expect(filteredHomeTiles(newState)).toEqual(expected);
     });
-    test('should return tiles filtered by applications for list view', () => {
-      const initialState = reducer(state, actions.patchFilter(FILTER_KEY,
-        {
-          applications: [
-            'http',
-          ],
-        }));
-      const newState = reducer(initialState, actions.user.preferences.update({dashboard: {view: LIST_VIEW}}));
-      const expected = {
-        filteredCount: 1,
-        filteredTiles: [
+    describe('should return tiles filtered by applications for list view ', () => {
+      test('for applications with single version', () => {
+        const initialState = reducer(state, actions.patchFilter(FILTER_KEY,
           {
-            _connectorId: 'connector1',
-            _integrationId: 'connector1',
             applications: [
               'http',
-              'app2',
             ],
-            connector: {
+          }));
+        const newState = reducer(initialState, actions.user.preferences.update({dashboard: {view: LIST_VIEW}}));
+        const expected = {
+          filteredCount: 1,
+          filteredTiles: [
+            {
+              _connectorId: 'connector1',
+              _integrationId: 'connector1',
               applications: [
                 'http',
                 'app2',
               ],
-              owner: 'Company 1',
+              connector: {
+                applications: [
+                  'http',
+                  'app2',
+                ],
+                owner: 'Company 1',
+              },
+              flowsNameAndDescription: '',
+              integration: {
+                mode: undefined,
+                permissions: {
+                  accessLevel: 'owner',
+                  connections: {
+                    edit: true,
+                  },
+                },
+              },
+              key: 'connector1',
+              lastErrorAt: 1,
+              name: 'Integration Two',
+              numError: 4,
+              numFlows: 3,
+              pinned: false,
+              sortablePropType: -1,
+              status: 'has_errors',
             },
-            flowsNameAndDescription: '',
-            integration: {
-              mode: undefined,
-              permissions: undefined,
-            },
-            key: 'connector1',
-            lastErrorAt: 1,
-            name: 'Integration Two',
-            numError: 4,
-            numFlows: 3,
-            pinned: false,
-            sortablePropType: -1,
-            status: 'has_errors',
-          },
-        ],
-        perPageCount: 1,
-        totalCount: 4,
-      };
+          ],
+          perPageCount: 1,
+          totalCount: 4,
+        };
 
-      expect(filteredHomeTiles(newState)).toEqual(expected);
+        expect(filteredHomeTiles(newState)).toEqual(expected);
+      });
+      test('for applications with multiple versions', () => {
+        const stateWithNewConnections = reducer(state,
+          actions.resource.receivedCollection('connections', [
+            ...connections,
+            {
+              _id: 'connection5',
+              assistant: 'constantcontactv3',
+            },
+          ]));
+        const stateWithNewApps = reducer(stateWithNewConnections,
+          actions.resource.receivedCollection('tiles', [
+            ...standaloneTiles,
+            ...tiles,
+            {
+              _integrationId: 'integration1',
+              _registeredConnectionIds: ['connection5'],
+            },
+          ]));
+        const initialState = reducer(stateWithNewApps, actions.patchFilter(FILTER_KEY,
+          {
+            applications: [
+              'constantcontact',
+            ],
+          }));
+        const newState = reducer(initialState, actions.user.preferences.update({dashboard: {view: LIST_VIEW}}));
+        const expected = {
+          filteredCount: 1,
+          filteredTiles: [
+            {
+              _integrationId: 'integration1',
+              _registeredConnectionIds: ['connection5'],
+              applications: ['constantcontactv3'],
+              flowsNameAndDescription: '',
+              integration: {
+                permissions:
+                  {
+                    accessLevel: 'owner',
+                    connections: {edit: true}},
+              },
+              key: 'integration1',
+              pinned: false,
+              sortablePropType: 0,
+              status: 'success'}],
+          perPageCount: 1,
+          totalCount: 5,
+        };
+
+        expect(filteredHomeTiles(newState)).toEqual(expected);
+      });
     });
     describe('should return tiles filtered by the search filter applied', () => {
       const newState = reducer(state, actions.patchFilter(FILTER_KEY,
@@ -4400,7 +4495,12 @@ describe('resource region selector testcases', () => {
             flowsNameAndDescription: '',
             integration: {
               mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,
@@ -4527,7 +4627,12 @@ describe('resource region selector testcases', () => {
             flowsNameAndDescription: '',
             integration: {
               mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,
@@ -4646,7 +4751,6 @@ describe('resource region selector testcases', () => {
             _connectorId: 'connector1',
             _integrationId: 'suitescript2',
             key: 'connection1_suitescript2',
-            name: undefined,
             numFlows: 10,
             pinned: false,
             sortablePropType: -1,
@@ -4655,7 +4759,6 @@ describe('resource region selector testcases', () => {
           {
             _integrationId: 'suitescript2',
             key: 'connection3_suitescript2',
-            name: undefined,
             pinned: false,
             sortablePropType: 0,
             ssLinkedConnectionId: 'connection3',
@@ -4697,8 +4800,12 @@ describe('resource region selector testcases', () => {
             },
             flowsNameAndDescription: '',
             integration: {
-              mode: undefined,
-              permissions: undefined,
+              permissions: {
+                accessLevel: 'owner',
+                connections: {
+                  edit: true,
+                },
+              },
             },
             key: 'connector1',
             lastErrorAt: 1,
@@ -6381,7 +6488,7 @@ describe('resource region selector testcases', () => {
 
     test('should return expected script context for valid state and flow id', () => {
       expect(selectors.getScriptContext(state, {contextType: 'hook',
-        flowId: 'flow2'})).toEqual({_integrationId: 'integrationId1', container: 'integration', type: 'hook'});
+        flowId: 'flow2'})).toEqual({_integrationId: 'integrationId1', container: 'integration', type: 'hook', _flowId: 'flow2'});
     });
     test('should return undefined if given flow does not contains integrtion id', () => {
       expect(selectors.getScriptContext(state, {contextType: 'hook',
@@ -7555,6 +7662,52 @@ describe('resource region selector testcases', () => {
     });
   });
 
+  describe('selectors.showNotificationForTechAdaptorForm', () => {
+    const state = {
+      data: {
+        resources: {
+          connections: [
+            {
+              _id: 'connection1',
+              type: 'http',
+              http: {mediaType: 'xml'},
+            },
+            {
+              _id: 'connection2',
+              assistant: 'amazonmws',
+              type: 'http',
+              http: {type: 'Amazon-SP-API'},
+            },
+          ],
+        },
+      },
+      session: {
+        stage: {
+          123: {patch: [{op: 'replace', path: '/_connectionId', value: 'connection2'}]},
+          2: {patch: [{op: 'replace', path: '/useTechAdaptorForm', value: false}]},
+          3: {patch: [{op: 'replace', path: '/useTechAdaptorForm', value: true}]},
+        },
+      },
+    };
+
+    test('should not throw exception for invalid arguments', () => {
+      expect(selectors.showNotificationForTechAdaptorForm()).toBeFalsy();
+      expect(selectors.showNotificationForTechAdaptorForm({})).toBeFalsy();
+      expect(selectors.showNotificationForTechAdaptorForm({}, '123')).toBeFalsy();
+    });
+
+    test('should return false if resource uses amazon sp-api connection', () => {
+      expect(selectors.showNotificationForTechAdaptorForm(state, '123')).toBeFalsy();
+    });
+
+    test('should return false if resource uses assistant form', () => {
+      expect(selectors.showNotificationForTechAdaptorForm(state, '2')).toBeFalsy();
+    });
+
+    test('should return true if resource uses tech adaptor form', () => {
+      expect(selectors.showNotificationForTechAdaptorForm(state, '3')).toBeTruthy();
+    });
+  });
   describe('selectors.getResourceType test cases', () => {
     const state = {
       session: {

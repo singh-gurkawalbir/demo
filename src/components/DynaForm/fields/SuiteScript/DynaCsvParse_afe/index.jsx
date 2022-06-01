@@ -14,6 +14,7 @@ import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPerm
 import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
 import { getValidRelativePath } from '../../../../../utils/routePaths';
 import FileDataChange from '../../DynaCsvParse_afe/FileDataChange';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -143,7 +144,11 @@ export default function DynaCsvParse_afe(props) {
       ssLinkedConnectionId,
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
   }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId, ssLinkedConnectionId]);
 
   return (

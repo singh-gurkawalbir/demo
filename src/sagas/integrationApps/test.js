@@ -33,6 +33,8 @@ import { preUninstall, uninstallIntegration, uninstallStep as uninstallStepGen }
 import { initUninstall, uninstallStep, requestSteps } from './uninstaller2.0';
 import { resumeIntegration } from './resume';
 import openExternalUrl from '../../utils/window';
+import { generateS3Key } from './utility';
+import { uploadFile } from '../uploadFile';
 
 describe('installer saga', () => {
   describe('initInstall generator', () => {
@@ -1767,7 +1769,7 @@ describe('uninstaller saga', () => {
       ])
       .put(actions.resource.requestCollection('integrations'))
       .put(actions.resource.requestCollection('tiles'))
-      .put(actions.resource.requestCollection('licenses'))
+      .put(actions.license.refreshCollection())
       .run());
     test('should not put any collection requests if resource call fails', () => {
       const error = { code: 'dummy', message: 'dummy' };
@@ -1783,7 +1785,7 @@ describe('uninstaller saga', () => {
         ])
         .not.put(actions.resource.requestCollection('integrations'))
         .not.put(actions.resource.requestCollection('tiles'))
-        .not.put(actions.resource.requestCollection('licenses'))
+        .not.put(actions.license.refreshCollection())
         .run();
     });
   });
@@ -1945,6 +1947,38 @@ describe('resumeIntegration Saga', () => {
     return expectSaga(resumeIntegration, { integrationId })
       .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
       .call.fn(apiCallWithRetry)
+      .run();
+  });
+});
+describe('integrationApp utility Saga', () => {
+  const integrationId = 'intId';
+
+  test('should make API call and get S3 runkey from Integration Extension server', () =>
+    expectSaga(generateS3Key, {
+      integrationId,
+      file: 'sample content',
+      fileType: 'text/palin',
+      fileName: 'Samplefile.txt',
+    })
+      .provide([
+        [matchers.call.fn(uploadFile), 'runKey'],
+      ])
+      .put(actions.integrationApp.utility.receivedS3Key('runKey'))
+      .run());
+
+  test('should dispatch failed action if API call throws error', () => {
+    const error = { message: 'Upload Error' };
+
+    expectSaga(generateS3Key, {
+      integrationId,
+      file: 'sample content',
+      fileType: 'text/palin',
+      fileName: 'Samplefile.txt',
+    })
+      .provide([
+        [matchers.call.fn(uploadFile), throwError(error)],
+      ])
+      .put(actions.integrationApp.utility.s3KeyError({integrationId, error: {message: 'Upload Error'}}))
       .run();
   });
 });

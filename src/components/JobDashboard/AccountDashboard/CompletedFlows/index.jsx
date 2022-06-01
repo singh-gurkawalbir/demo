@@ -36,6 +36,9 @@ const useStyles = makeStyles(theme => ({
   completeFlowTable: {
     minHeight: '300px',
   },
+  noResultCompletedFlows: {
+    paddingLeft: 0,
+  },
 }));
 const filterKey = FILTER_KEYS_AD.COMPLETED;
 
@@ -64,7 +67,7 @@ export default function CompletedFlows() {
           </>
         )}
       </div>
-      {showEmptyMessage ? <NoResultTypography>You don&apos;t have any completed flows in the selected date range. </NoResultTypography> : ''}
+      {showEmptyMessage ? <NoResultTypography className={classes.noResultCompletedFlows}>You don&apos;t have any completed flows in the selected date range. </NoResultTypography> : ''}
       <RunHistoryDrawer />
       <ErrorsListDrawer />
     </div>

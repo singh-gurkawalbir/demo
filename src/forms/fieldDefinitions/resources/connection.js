@@ -1,5 +1,5 @@
 import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AWS_REGIONS_LIST} from '../../../utils/constants';
-import { isNewId, getDomainUrl, getAssistantFromResource, rdbmsSubTypeToAppType } from '../../../utils/resource';
+import { isNewId, getDomainUrl, getAssistantFromResource, rdbmsSubTypeToAppType, rdbmsAppTypeToSubType } from '../../../utils/resource';
 import { applicationsList} from '../../../constants/applications';
 import { getConstantContactVersion } from '../../../utils/connections';
 
@@ -16,7 +16,8 @@ export default {
       ];
 
       if (RDBMS_TYPES.includes(rdbmsSubTypeToAppType(r.type))) {
-        expression.push({ 'rdbms.type': r.type });
+        // rdbms subtype is required to filter the connections
+        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(r.type) });
       } else {
         // Should not borrow concurrency for ['ftp', 'as2', 's3']
         const destinationType = ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type;
@@ -1054,13 +1055,13 @@ export default {
   },
   'http.clientCertificates.cert': {
     type: 'uploadfile',
-    placeholder: 'SSL certificate:',
+    placeholder: 'SSL certificate',
     label: 'SSL certificate',
     helpKey: 'connection.http.clientCertificates.cert',
   },
   'http.clientCertificates.key': {
     type: 'uploadfile',
-    placeholder: 'SSL client key:',
+    placeholder: 'SSL client key',
     label: 'SSL client key',
     helpKey: 'connection.http.clientCertificates.key',
   },
@@ -1077,7 +1078,7 @@ export default {
     label: 'Host',
     required: true,
     description:
-      'If the FTP server is behind a firewall please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, and 52.71.48.248.',
+      'If the FTP server is behind a firewall, please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, 52.71.48.248, and 44.204.21.0/24.',
   },
   'ftp.type': {
     isLoggable: true,

@@ -23,7 +23,7 @@ import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
-import mappingUtil from '../../utils/mapping';
+import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
 
 /**
@@ -76,26 +76,48 @@ export function* invokeProcessor({ editorId, processor, body }) {
     }
   } else if (processor === 'mapperProcessor') {
     const flowSampleData = safeParse(data);
+    const importResource = yield select(selectors.resource, 'imports', resourceId);
+    const options = {};
     let _mappings;
 
-    if (editorType === 'mappings') {
-      const mappings = (yield select(selectors.mapping))?.mappings;
-      const lookups = (yield select(selectors.mapping))?.lookups;
-      const generateFields = yield select(selectors.mappingGenerates, resourceId);
-      const importResource = yield select(selectors.resource, 'imports', resourceId);
-      const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
-      const netsuiteRecordType = yield select(selectors.mappingNSRecordType, resourceId);
+    if (editor.mappingPreviewType) {
+      // wait for previewMappings saga to complete the api call if its status is requested
+      const previewStatus = (yield select(selectors.mapping))?.preview?.status;
 
-      _mappings = mappingUtil.generateFieldsAndListMappingForApp({
-        mappings,
-        generateFields,
-        isGroupedSampleData: Array.isArray(flowSampleData),
-        isPreviewSuccess: !!flowSampleData,
-        importResource,
-        netsuiteRecordType,
-        exportResource,
-      });
-      _mappings = {..._mappings, lookups};
+      if (previewStatus === 'requested') {
+        yield take([
+          actionTypes.MAPPING.PREVIEW_RECEIVED,
+          actionTypes.MAPPING.PREVIEW_FAILED,
+        ]);
+      }
+
+      // for salesforce and netsuite we return the previewMappings updated state
+      return (yield select(selectors.mapping))?.preview;
+    }
+    if (editorType === 'mappings') {
+      const lookups = (yield select(selectors.mapping))?.lookups;
+      const v2TreeData = (yield select(selectors.mapping))?.v2TreeData;
+
+      // give preference to v2 mappings always
+      if (hasV2MappingsInTreeData(v2TreeData)) {
+        const connection = yield select(selectors.resource, 'connections', importResource?._connectionId);
+        const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
+
+        _mappings = {mappings: _mappingsV2, lookups};
+        options.connection = connection;
+      } else {
+        const mappings = (yield select(selectors.mapping))?.mappings;
+        const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+
+        _mappings = mappingUtil.generateFieldsAndListMappingForApp({
+          mappings,
+          isGroupedSampleData: Array.isArray(flowSampleData),
+          isPreviewSuccess: !!flowSampleData,
+          importResource,
+          exportResource,
+        });
+        _mappings = {..._mappings, lookups};
+      }
     } else if (editorType === 'responseMappings') {
       const mappings = (yield select(selectors.responseMapping))?.mappings;
 
@@ -107,6 +129,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
         rules: [_mappings],
       },
       data: data ? [flowSampleData] : [],
+      options,
     };
   }
 
@@ -137,8 +160,8 @@ export function* requestPreview({ id }) {
   // since mappings are stored in separate state
   // we validate the same here
   if (editor.editorType === 'mappings') {
-    const {mappings, lookups, isNSAssistantFormLoaded} = yield select(selectors.mapping);
-    const {errMessage} = mappingUtil.validateMappings(mappings, lookups);
+    const {mappings, lookups, v2TreeData} = yield select(selectors.mapping);
+    const {errMessage} = mappingUtil.validateMappings(mappings, lookups, v2TreeData);
 
     if (errMessage) {
       const violations = {
@@ -147,9 +170,8 @@ export function* requestPreview({ id }) {
 
       return yield put(actions.editor.validateFailure(id, violations));
     }
-    if (editor.mappingPreviewType &&
-      (editor.mappingPreviewType !== 'netsuite' || isNSAssistantFormLoaded)) {
-      yield put(actions.mapping.requestPreview());
+    if (editor.mappingPreviewType) {
+      yield put(actions.mapping.requestPreview(id));
     }
   }
 
@@ -576,12 +598,7 @@ export function* requestEditorSampleData({
 
     body.integrationId = flow?._integrationId;
 
-    // TODO: Siddharth, revert this change after completion of https://celigo.atlassian.net/browse/IO-25372
-    if (fieldId === 'webhook.successBody') {
-      body.fieldPath = 'dataURITemplate';
-    } else {
-      body.fieldPath = fieldId || filterPath;
-    }
+    body.fieldPath = fieldId || filterPath;
 
     if (needPreviewStagesData) {
       body.previewData = yield select(selectors.getResourceSampleDataStages, resourceId);
@@ -817,7 +834,7 @@ export function* initEditor({ id, editorType, options }) {
   const stateOptions = {
     editorType,
     ...formattedOptions,
-    fieldId: getUniqueFieldId(fieldId, resource, connection),
+    fieldId: getUniqueFieldId(fieldId, resource, connection, resourceType),
     ...featuresMap(formattedOptions)[editorType],
     originalRule,
     sampleDataStatus: 'requested',

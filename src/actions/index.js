@@ -108,7 +108,7 @@ const auth = {
   clearStore: () => action(actionTypes.AUTH.CLEAR_STORE),
   abortAllSagasAndInitLR: opts => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
-  initSession: () => action(actionTypes.AUTH.INIT_SESSION),
+  initSession: opts => action(actionTypes.AUTH.INIT_SESSION, { opts }),
   changePassword: updatedPassword =>
     action(actionTypes.AUTH.USER.CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
@@ -258,11 +258,15 @@ const resource = {
     action(actionTypes.RESOURCE.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
   clearChildIntegration: () => action(actionTypes.RESOURCE.CLEAR_CHILD_INTEGRATION),
 
-  requestCollection: (resourceType, message, refresh) =>
-    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
-
+  requestCollection: (resourceType, message, refresh, integrationId) =>
+    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh, integrationId }),
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
+  collectionRequestSent: (resourceType, integrationId) =>
+    action(actionTypes.RESOURCE.COLLECTION_REQUEST_SENT, {integrationId, resourceType}),
+  collectionRequestSucceeded: ({ resourceType, integrationId }) => action(actionTypes.RESOURCE.COLLECTION_REQUEST_SUCCEEDED, { resourceType, integrationId }),
+  collectionRequestFailed: ({resourceType, integrationId}) => action(actionTypes.RESOURCE.COLLECTION_REQUEST_FAILED, {resourceType, integrationId}),
+
   updated: (resourceType, resourceId, master, patch, context) =>
     action(actionTypes.RESOURCE.UPDATED, {
       resourceType,
@@ -271,10 +275,11 @@ const resource = {
       patch,
       context,
     }),
-  receivedCollection: (resourceType, collection) =>
+  receivedCollection: (resourceType, collection, integrationId) =>
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
       resourceType,
       collection,
+      integrationId,
     }),
   clearCollection: resourceType =>
     action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
@@ -335,6 +340,27 @@ const resource = {
 
   commitConflict: (id, conflict, scope) =>
     action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id, scope }),
+
+  aliases: {
+    requestAll: (id, resourceType) =>
+      action(actionTypes.RESOURCE.REQUEST_ALL_ALIASES, {id, resourceType}),
+    received: (id, aliases) =>
+      action(actionTypes.RESOURCE.RECEIVED_ALIASES, {id, aliases}),
+    clear: id =>
+      action(actionTypes.RESOURCE.CLEAR_ALIASES, {id}),
+    createOrUpdate: (id, resourceType, aliasId, isEdit, asyncKey) =>
+      action(actionTypes.RESOURCE.CREATE_OR_UPDATE_ALIAS, {
+        id,
+        resourceType,
+        aliasId,
+        isEdit,
+        asyncKey,
+      }),
+    delete: (id, resourceType, aliasId, asyncKey) =>
+      action(actionTypes.RESOURCE.DELETE_ALIAS, {id, resourceType, aliasId, asyncKey}),
+    actionStatus: (id, aliasId, status) =>
+      action(actionTypes.RESOURCE.ALIAS_ACTION_STATUS, {id, aliasId, status}),
+  },
 
   integrations: {
     delete: integrationId =>
@@ -886,6 +912,12 @@ const integrationApp = {
     submitFailed: params =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
+  utility: {
+    requestS3Key: params => action(actionTypes.INTEGRATION_APPS.UTILITY.REQUEST_S3_KEY, params),
+    receivedS3Key: params => action(actionTypes.INTEGRATION_APPS.UTILITY.RECEIVED_S3_RUN_KEY, params),
+    clearRunKey: integrationId => action(actionTypes.INTEGRATION_APPS.UTILITY.CLEAR_RUN_KEY, {integrationId}),
+    s3KeyError: params => action(actionTypes.INTEGRATION_APPS.UTILITY.S3_KEY_FAILED, params),
+  },
   installer: {
     init: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT, {
       id: integrationId,
@@ -1265,6 +1297,7 @@ const user = {
   },
 };
 const license = {
+  refreshCollection: () => action(actionTypes.LICENSE.REFRESH_COLLECTION),
   requestLicenses: message =>
     resource.requestCollection('licenses', undefined, message),
   requestTrialLicense: () => action(actionTypes.LICENSE.TRIAL_REQUEST, {}),
@@ -1380,9 +1413,11 @@ const resourceFormSampleData = {
   setPreviewData: (resourceId, previewData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PREVIEW_DATA, { resourceId, previewData }),
   setCsvFileData: (resourceId, csvData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_CSV_FILE_DATA, { resourceId, csvData }),
   setProcessorData: ({resourceId, processor, processorData}) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PROCESSOR_DATA, { resourceId, processor, processorData }),
+  setMockData: (resourceId, mockData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_MOCK_DATA, { resourceId, mockData }),
   updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
   clear: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR, { resourceId }),
   clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),
+  updateType: (resourceId, sampleDataType) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_DATA_TYPE, { resourceId, sampleDataType }),
 };
 const app = {
   polling: {
@@ -1465,10 +1500,10 @@ const mapping = {
   save: ({ match }) => action(actionTypes.MAPPING.SAVE, { match }),
   saveFailed: () => action(actionTypes.MAPPING.SAVE_FAILED, { }),
   saveComplete: () => action(actionTypes.MAPPING.SAVE_COMPLETE, { }),
-  requestPreview: () => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { }),
+  requestPreview: editorId => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { editorId }),
   previewReceived: value =>
     action(actionTypes.MAPPING.PREVIEW_RECEIVED, { value }),
-  previewFailed: () => action(actionTypes.MAPPING.PREVIEW_FAILED, { }),
+  previewFailed: errors => action(actionTypes.MAPPING.PREVIEW_FAILED, { errors }),
   setNSAssistantFormLoaded: value =>
     action(actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED, { value }),
   refreshGenerates: () => action(actionTypes.MAPPING.REFRESH_GENERATES, { }),
@@ -1481,6 +1516,20 @@ const mapping = {
     request: () => action(actionTypes.MAPPING.AUTO_MAPPER.REQUEST),
     received: value => action(actionTypes.MAPPING.AUTO_MAPPER.RECEIVED, { value }),
     failed: (failSeverity, failMsg) => action(actionTypes.MAPPING.AUTO_MAPPER.FAILED, { failSeverity, failMsg }),
+  },
+  toggleVersion: newVersion => action(actionTypes.MAPPING.TOGGLE_VERSION, { newVersion }),
+  v2: {
+    toggleOutput: outputFormat => action(actionTypes.MAPPING.V2.TOGGLE_OUTPUT, { outputFormat }),
+    toggleRows: expanded => action(actionTypes.MAPPING.V2.TOGGLE_ROWS, { expanded }),
+    updateExpandedKeys: expandedKeys => action(actionTypes.MAPPING.V2.UPDATE_EXPANDED_KEYS, { expandedKeys }),
+    dropRow: dragDropInfo => action(actionTypes.MAPPING.V2.DRAG_DROP, { dragDropInfo }),
+    updateActiveKey: v2Key => action(actionTypes.MAPPING.V2.ACTIVE_KEY, { v2Key }),
+    deleteRow: v2Key => action(actionTypes.MAPPING.V2.DELETE_ROW, { v2Key }),
+    addRow: v2Key => action(actionTypes.MAPPING.V2.ADD_ROW, { v2Key }),
+    updateDataType: (v2Key, newDataType) => action(actionTypes.MAPPING.V2.UPDATE_DATA_TYPE, { v2Key, newDataType }),
+    changeArrayTab: (v2Key, newTabValue, newTabExtractId) => action(actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB, { v2Key, newTabValue, newTabExtractId }),
+    patchField: (field, v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, v2Key, value }),
+    patchSettings: (v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_SETTINGS, { v2Key, value }),
   },
 };
 
@@ -2113,11 +2162,12 @@ const customSettings = {
     }),
 };
 const exportData = {
-  request: (kind, identifier, resource) =>
+  request: ({kind, identifier, resource, resourceContext}) =>
     action(actionTypes.EXPORTDATA.REQUEST, {
       kind,
       identifier,
       resource,
+      resourceContext,
     }),
   receive: (kind, identifier, data) =>
     action(actionTypes.EXPORTDATA.RECEIVED, {
@@ -2250,6 +2300,18 @@ const integrationLCM = {
     installStep: (integrationId, revisionId, stepInfo) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, { revisionId, integrationId, stepInfo }),
     updateStep: (revisionId, status) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.UPDATE, { revisionId, status }),
     completedStepInstall: revisionId => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.DONE, { revisionId }),
+    setOauthConnectionMode: ({ revisionId, connectionId, openOauthConnection }) =>
+      action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.RECEIVED_OAUTH_CONNECTION_STATUS, {
+        revisionId,
+        connectionId,
+        openOauthConnection,
+      }),
+    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId }) =>
+      action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_BUNDLE_INSTALL, {
+        revisionId,
+        connectionId,
+        integrationId,
+      }),
   },
   revisions: {
     request: integrationId => resource.requestCollection(`integrations/${integrationId}/revisions`),

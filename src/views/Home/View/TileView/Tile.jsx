@@ -5,7 +5,6 @@ import { Typography, makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import HomePageCardContainer from '../../../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../../../components/HomePageCard/Header';
-import StatusCircle from '../../../../components/StatusCircle';
 import Content from '../../../../components/HomePageCard/Content';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import AddIcon from '../../../../components/icons/AddIcon';
@@ -18,12 +17,10 @@ import IntegrationTag from '../../../../components/tags/IntegrationTag';
 import Manage from '../../../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../../../components/icons/PermissionsMonitorIcon';
-import ConnectionDownIcon from '../../../../components/icons/unLinkedIcon';
 import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../../../utils/constants';
 import { tileStatus, isTileStatusConnectionDown } from '../../../../utils/home';
 import getRoutePath from '../../../../utils/routePaths';
 import actions from '../../../../actions';
-import { isIntegrationAppVersion2 } from '../../../../utils/integrationApps';
 import TileNotification from '../../../../components/HomePageCard/TileNotification';
 import { useSelectorMemo } from '../../../../hooks';
 import CeligoTruncate from '../../../../components/CeligoTruncate';
@@ -33,6 +30,7 @@ import TileActions from './TileActions';
 import ActionGroup from '../../../../components/ActionGroup';
 import IconButtonWithTooltip from '../../../../components/IconButtonWithTooltip';
 import { getTextAfterCount } from '../../../../utils/string';
+import OfflineConnectionsIcon from '../../../../components/icons/OfflineConnectionsIcon';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -45,31 +43,9 @@ const useStyles = makeStyles(theme => ({
   action: {
     marginLeft: 0,
   },
-  status: {
-    position: 'relative',
-    '& span': {
-      fontSize: '14px',
-      color: theme.palette.primary.main,
-    },
-    '&:hover': {
-      '& * > span.MuiTypography-root': {
-        color: theme.palette.primary.light,
-      },
-    },
-  },
-  connectionDownRedDot: {
-    width: theme.spacing(1),
-    height: theme.spacing(1),
-    position: 'absolute',
-    right: theme.spacing(-0.5),
-    top: 0,
-  },
   tagWithLicenseMessage: {
     bottom: 90,
     position: 'absolute',
-  },
-  noAppImages: {
-    display: 'none',
   },
   headerTileStatus: {
     fontSize: 13,
@@ -125,9 +101,6 @@ function Tile({
   const classes = useStyles();
   const dispatch = useDispatch();
   const numFlowsText = getTextAfterCount('Flow', tile.numFlows);
-  const isIntegrationV2 = useSelector(state =>
-    isIntegrationAppVersion2(selectors.resource(state, 'integrations', tile && tile._integrationId), true)
-  );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -139,7 +112,8 @@ function Tile({
     urlToIntegrationSettings,
     urlToIntegrationUsers,
     urlToIntegrationConnections,
-    urlToIntegrationStatus} = useSelectorMemo(selectors.mkHomeTileRedirectUrl, tile);
+    urlToIntegrationStatus,
+  } = useSelectorMemo(selectors.mkHomeTileRedirectUrl, tile);
 
   const accessLevel = tile.integration?.permissions?.accessLevel;
   const status = tileStatus(tile);
@@ -200,13 +174,7 @@ function Tile({
               onClick={handleConnectionDownStatusClick}
               tooltipProps={{title: 'Connection down', placement: 'bottom'}}
               buttonSize={{size: 'small'}}>
-              <span>
-                <StatusCircle
-                  size="small"
-                  className={classes.connectionDownRedDot}
-                  variant="error" />
-              </span>
-              <ConnectionDownIcon />
+              <OfflineConnectionsIcon />
             </IconButtonWithTooltip>
             )}
             <TileActions tile={tile} />
@@ -262,12 +230,22 @@ function Tile({
         </Footer>{
           tile._connectorId && licenseMessageContent && (
           <TileNotification
-            content={licenseMessageContent} showTrialLicenseMessage={showTrialLicenseMessage} expired={expired} connectorId={tile._connectorId}
+            content={licenseMessageContent}
+            showTrialLicenseMessage={showTrialLicenseMessage}
+            expired={expired}
+            connectorId={tile._connectorId}
             trialExpired={trialExpired}
             licenseId={licenseId}
             tileStatus={tile.status}
-            isIntegrationV2={isIntegrationV2} integrationId={tile._integrationId}
-            resumable={resumable} accessLevel={accessLevel} />
+            isIntegrationV2={tile.iaV2}
+            integrationId={tile._integrationId}
+            mode={tile.mode}
+            name={tile.name}
+            _connectorId={tile._connectorId}
+            supportsMultiStore={tile.supportsMultiStore}
+            resumable={resumable}
+            accessLevel={accessLevel}
+          />
           )
         }
       </HomePageCardContainer>

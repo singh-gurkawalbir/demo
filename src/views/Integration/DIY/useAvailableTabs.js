@@ -9,6 +9,7 @@ import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import OfflineConnectionsIcon from '../../../components/icons/OfflineConnectionsIcon';
 import SingleUserIcon from '../../../components/icons/SingleUserIcon';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
+import InstallationGuideIcon from '../../../components/icons/InstallationGuideIcon';
 import RevisionsIcon from '../../../components/icons/ViewResolvedHistoryIcon';
 import AuditLogPanel from './panels/AuditLog';
 import NotificationsPanel from './panels/Notifications';
@@ -20,6 +21,7 @@ import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
 import AnalyticsPanel from './panels/Analytics';
+import AliasesPanel from '../common/AliasesPanel';
 import { selectors } from '../../../reducers';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import GraphIcon from '../../../components/icons/GraphIcon';
@@ -27,7 +29,7 @@ import { getTopLevelTabs } from '../../../utils/integrationApps';
 import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const getTabs = ({ isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyIntegrationConnectionOffline, isIAFrameWork2 }) => [
+const getTabs = ({ isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyIntegrationConnectionOffline, isIntegrationApp }) => [
   {
     path: 'settings',
     label: 'Settings',
@@ -77,7 +79,13 @@ const getTabs = ({ isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyInteg
     Icon: SingleUserIcon,
     Panel: AdminPanel,
   },
-  ...((!isStandaloneIntegration && !isIAFrameWork2) ? [{
+  ...((!isStandaloneIntegration && !isIntegrationApp) ? [{
+    path: 'aliases',
+    label: 'Aliases',
+    Icon: InstallationGuideIcon,
+    Panel: AliasesPanel,
+  }] : []),
+  ...((!isStandaloneIntegration && !isIntegrationApp) ? [{
     path: 'revisions',
     label: 'Revisions',
     Icon: RevisionsIcon,
@@ -95,9 +103,6 @@ export function useAvailableTabs() {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  // TODO: commenting for now
-  // const isIAFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
-  const isIAFrameWork2 = false;
   const hideSettingsTab = useSelector(state => {
     const canEditSettingsForm =
           selectors.canEditSettingsForm(state, 'integrations', integrationId, (childId || integrationId));
@@ -144,7 +149,7 @@ export function useAvailableTabs() {
       isUserInErrMgtTwoDotZero,
       isStandaloneIntegration,
       isAnyIntegrationConnectionOffline,
-      isIAFrameWork2,
+      isIntegrationApp,
     }),
     isIntegrationApp,
     isParent,
@@ -154,7 +159,7 @@ export function useAvailableTabs() {
     children,
     isMonitorLevelUser,
     hideSettingsTab,
-  }), [isUserInErrMgtTwoDotZero, isStandaloneIntegration, isIAFrameWork2, isAnyIntegrationConnectionOffline, isIntegrationApp, isParent, integrationId, hasAddOns, supportsChild, children, isMonitorLevelUser, hideSettingsTab]);
+  }), [isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyIntegrationConnectionOffline, isIntegrationApp, isParent, integrationId, hasAddOns, supportsChild, children, isMonitorLevelUser, hideSettingsTab]);
 
   return availableTabs;
 }

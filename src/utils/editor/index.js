@@ -1,7 +1,9 @@
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import { AFE_SAVE_STATUS, FORM_SAVE_STATUS } from '../constants';
+import { convertGraphqlFieldIdToHTTPFieldId, isGraphqlField } from '../graphql';
 import { isOldRestAdaptor } from '../resource';
 
+export const getMappingsEditorId = importId => `mappings-${importId}`;
 export const HOOK_STAGES = [
   'postResponseMapHook',
   'preSavePage',
@@ -42,7 +44,7 @@ export function dataAsString(data) {
     : JSON.stringify(data, null, 2);
 }
 
-export const getUniqueFieldId = (fieldId, resource, connection) => {
+export const getUniqueFieldId = (fieldId, resource, connection, resourceType) => {
   if (!fieldId) { return ''; }
   const { ignoreExisting, ignoreMissing } = resource || {};
   const isOldRestResource = isOldRestAdaptor(resource, connection);
@@ -120,7 +122,12 @@ export const getUniqueFieldId = (fieldId, resource, connection) => {
 
     case 'http.auth.oauth.refreshBody':
       return 'http.auth.token.refreshBody';
+    case 'salesforce.soql':
+      return 'salesforce.soql.query';
     default:
+  }
+  if (isGraphqlField(fieldId)) {
+    return convertGraphqlFieldIdToHTTPFieldId(fieldId, resource, resourceType);
   }
 
   // returns same fieldId if it does not match

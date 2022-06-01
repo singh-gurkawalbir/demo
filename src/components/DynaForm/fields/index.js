@@ -144,7 +144,11 @@ import DynaAmazonRestrictedReportType from './DynaAmazonRestrictedReportType';
 import DynaFlowGroupName from './integrations/DynaFlowGroupName';
 import DynaFlowGroupsTiedToIntegrations from './integrations/DynaFlowGroupsTiedToIntegrations';
 import DynaTextUpdateDomain from './text/DynaTextUpdateDomain';
+import DynaManageAliases from './aliases/DynaManageAliases';
+import DynaAliasId from './aliases/DynaAliasId';
+import DynaSelectAliasResource from './aliases/DynaSelectAliasResource';
 import DynaIntegrationCloneSelect from './select/DynaIntegrationCloneSelect';
+import DynaAmazonmwsType from './DynaAmazonmwsType';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -299,6 +303,10 @@ export default {
   sortandgroup: DynaSortAndGroup,
   selectAmazonSellerCentralAPIType: DynaSelectAmazonSellerCentralAPIType,
   amazonRestrictedReportType: DynaAmazonRestrictedReportType,
+  managealiases: DynaManageAliases,
+  aliasid: DynaAliasId,
+  selectaliasresource: DynaSelectAliasResource,
   updatedomain: DynaTextUpdateDomain,
   integrationcloneselect: DynaIntegrationCloneSelect,
+  amazonmwstype: DynaAmazonmwsType,
 };

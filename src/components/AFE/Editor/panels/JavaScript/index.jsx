@@ -141,8 +141,14 @@ export default function JavaScriptPanel({ editorId }) {
     },
   };
 
+  // This is temporary code to demo the panel in storybook.
+  // We really need to refactor this code so these components can render even if
+  // disconnected from thr API. In this case, if it is not possible to load
+  // the user's scripts.
+  const required = editorId !== 'storybook-router';
+
   return (
-    <LoadResources required resources={['scripts']}>
+    <LoadResources required={required} resources={['scripts']}>
       <div className={classes.container}>
         <div className={classes.headerContainer}>
           <FormControl className={classes.jsPanelFormControl}>
@@ -194,7 +200,7 @@ export default function JavaScriptPanel({ editorId }) {
             <CodePanel
               name="code"
               id="code"
-              readOnly={disabled}
+              readOnly={disabled || !scriptId}
               value={code}
               mode="javascript"
               onChange={handleCodeChange}

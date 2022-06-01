@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Card, CardActions, Typography, makeStyles } from '@material-ui/core';
+import clsx from 'clsx';
 import RawHtml from '../../../../../components/RawHtml';
 import PanelHeader from '../../../../../components/PanelHeader';
-import { LICENSE_UPGRADE_REQUEST, LICENSE_UPGRADE_SUCCESS_MESSAGE } from '../../../../../utils/messageStore';
+import messageStore from '../../../../../utils/messageStore';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {isHTML} from '../../../../../utils/string';
@@ -55,6 +56,9 @@ const useStyles = makeStyles(theme => ({
     bottom: 10,
     paddingLeft: 0,
   },
+  addOnContainer: {
+    padding: theme.spacing(0, 2, 2),
+  },
 }));
 
 export default function AddOnsPanel({ integrationId, childId }) {
@@ -99,7 +103,8 @@ export default function AddOnsPanel({ integrationId, childId }) {
           licenseId,
         })
       );
-      enquesnackbar({message: <RawHtml html={LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
+
+      enquesnackbar({message: <RawHtml html={messageStore('LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
     },
 
     [dispatch, enquesnackbar, integrationId, licenseId]
@@ -109,9 +114,9 @@ export default function AddOnsPanel({ integrationId, childId }) {
 
     confirmDialog({
       title: 'Request add-on',
-      message: LICENSE_UPGRADE_REQUEST,
+      message: messageStore('LICENSE_UPGRADE_REQUEST'),
       buttons: [
-        {label: 'Submit Request', onClick: handleContactSales(addonName)},
+        {label: 'Submit request', onClick: handleContactSales(addonName)},
         {label: 'Cancel', variant: 'text'},
       ],
     });
@@ -121,7 +126,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
     <div className={classes.root}>
       <PanelHeader title="Add-ons" />
 
-      <div className={gridViewClasses.container}>
+      <div className={clsx(gridViewClasses.container, classes.addOnContainer)}>
         {addOnMetadata &&
           addOnMetadata.map(data => (
             <Card key={data.id} className={classes.card} elevation={0}>
@@ -136,7 +141,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
                     <FilledButton
                       data-test="contactSales"
                       onClick={onRequestAddonClicked(data)}>
-                      Request Add-on
+                      Request add-on
                     </FilledButton>
                   )}
               </CardActions>

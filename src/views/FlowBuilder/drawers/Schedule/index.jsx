@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
+import { drawerPaths } from '../../../../utils/rightDrawer';
 import RightDrawer from '../../../../components/drawer/Right';
 import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
@@ -42,7 +43,7 @@ function DrawerForm(props) {
   // TODO: Ashok: Connector specific things to be added for schedule drawer
   // incase of !isViewMode && isIntegrationApp
   return (
-    <LoadResources required resources="flows">
+    <LoadResources required integrationId={flow?._integrationId} resources="flows">
       <DrawerContent className={classes.scheduleContainer}>
         <Paper elevation={0} className={classes.paperDefault}>
           <FlowScheduleForm formKey={formKey} flow={flow} />
@@ -64,7 +65,7 @@ export default function ScheduleDrawer({flowId}) {
   const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
 
   return (
-    <RightDrawer path={[':flowId/schedule', 'schedule']}>
+    <RightDrawer path={[drawerPaths.FLOW_BUILDER.FLOW_SCHEDULE, drawerPaths.FLOW_BUILDER.SCHEDULE]}>
       <DrawerHeader title="Flow schedule" disableClose={disabled} handleClose={setCancelTriggered} />
       <DrawerForm flowId={flowId} formKey={formKey} />
     </RightDrawer>

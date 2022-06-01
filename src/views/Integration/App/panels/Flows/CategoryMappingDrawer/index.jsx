@@ -47,6 +47,9 @@ import RightDrawer from '../../../../../../components/drawer/Right';
 import DrawerHeader from '../../../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../../../components/drawer/Right/DrawerFooter';
+import AddCategoryMappingDrawer from './AddCategory';
+import VariationMappingDrawer from './VariationMapping';
+import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
@@ -157,6 +160,7 @@ const useStyles = makeStyles(theme => ({
 function CategoryMappings({
   integrationId,
   flowId,
+  categoryId,
   sectionId,
   isRoot = true,
   depth = 0,
@@ -170,13 +174,24 @@ function CategoryMappings({
   const isCommonCategory =
     sectionId === 'commonAttributes' || isParentCommonCategory;
   const [expanded, setExpanded] = useState(isRoot);
-  const memoizedOptions = useMemo(() => ({ sectionId, depth }), [sectionId, depth]);
+  const categoryMemoizedOptions = useMemo(() => ({ sectionId: categoryId, depth: 0 }), [categoryId]);
+  const memoizedOptions = useMemo(() => ({ sectionId, depth }), [depth, sectionId]);
+  let generateFields;
   const {
-    fields: generateFields,
+    fields: sectionGenerateFields,
     name,
     variation_themes: variationThemes,
     variation_attributes: variationAttributes,
   } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, memoizedOptions) || {};
+  const {
+    fields: categoryGenerateFields,
+  } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, categoryMemoizedOptions) || {};
+
+  if (depth > 0) {
+    generateFields = [...(categoryGenerateFields || []), ...(sectionGenerateFields || [])];
+  } else {
+    generateFields = sectionGenerateFields;
+  }
   const { collapseAction } = useSelectorMemo(selectors.mkCategoryMappingsCollapsedStatus, integrationId, flowId) || {};
   const memoizedCategoryOptions = useMemo(() => ({sectionId, depth}), [sectionId, depth]);
   const { children = [], deleted } = useSelectorMemo(selectors.mkMappingsForCategory, integrationId, flowId, memoizedCategoryOptions) || {};
@@ -258,7 +273,11 @@ function CategoryMappings({
   const handleVariation = useCallback(e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
-    history.push(`${match.url}/depth/${depth}/variations/${sectionId}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.MAPPINGS.CATEGORY_MAPPING.VARIATION_MAPPING.ROOT,
+      baseUrl: match.url,
+      params: { depth, subCategoryId: sectionId },
+    }));
   }, [history, match.url, sectionId, depth]);
 
   if (!generateFields) {
@@ -357,6 +376,7 @@ function CategoryMappings({
             {children.length > 0 &&
               children.map(child => (
                 <CategoryMappings
+                  categoryId={categoryId}
                   integrationId={integrationId}
                   flowId={flowId}
                   key={child.id}
@@ -463,7 +483,7 @@ function CategoryMappingContent({ integrationId }) {
               <ApplicationImg assistant="netsuite" />
             </div>
           </div>
-          <CategoryMappings integrationId={integrationId} flowId={flowId} sectionId={categoryId} />
+          <CategoryMappings integrationId={integrationId} flowId={flowId} sectionId={categoryId} categoryId={categoryId} />
         </div>
       </div>
     </div>
@@ -531,6 +551,12 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
       </DrawerHeader>
       <DrawerContent>
         <CategoryMappingContent integrationId={integrationId} parentUrl={parentUrl} />
+        <AddCategoryMappingDrawer integrationId={integrationId} flowId={flowId} />
+        <VariationMappingDrawer
+          integrationId={integrationId}
+          flowId={flowId}
+          categoryId={categoryId}
+      />
       </DrawerContent>
       <DrawerFooter>
         <CategoryMappingFooter flowId={flowId} integrationId={integrationId} parentUrl={parentUrl} />
@@ -667,18 +693,16 @@ const CategoryMappingFooter = ({flowId, integrationId, parentUrl}) => {
       asyncKey={CATEGORY_MAPPING_ASYNC_KEY} />
   );
 };
-export default function CategoryMappingDrawerRoute(props) {
+export default function CategoryMappingDrawerRoute({ integrationId }) {
   const match = useRouteMatch();
 
   return (
     <RightDrawer
-      path=":flowId/utilitymapping/:categoryId"
-      variant="temporary"
+      path={drawerPaths.MAPPINGS.CATEGORY_MAPPING.ROOT}
       height="tall"
-      width="large"
-      >
-      <LoadResources required resources="exports,imports,connections">
-        <CategoryMappingDrawer {...props} parentUrl={match.url} />
+      width="large" >
+      <LoadResources required integrationId={integrationId} resources="exports,imports,connections">
+        <CategoryMappingDrawer integrationId={integrationId} parentUrl={match.url} />
       </LoadResources>
     </RightDrawer>
   );

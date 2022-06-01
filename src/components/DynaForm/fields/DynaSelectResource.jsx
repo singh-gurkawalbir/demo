@@ -19,6 +19,8 @@ import useIntegration from '../../../hooks/useIntegration';
 import { stringCompare } from '../../../utils/sort';
 import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
 import OnlineStatus from '../../OnlineStatus';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
+import Spinner from '../../Spinner';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -110,7 +112,11 @@ const handleAddNewResource = args => {
     );
   }
 
-  history.push(`${location.pathname}/edit/${resourceType}/${newResourceId}`);
+  history.push(buildDrawerUrl({
+    path: drawerPaths.RESOURCE.EDIT,
+    baseUrl: location.pathname,
+    params: { resourceType, id: newResourceId },
+  }));
 };
 
 const useStyles = makeStyles(theme => ({
@@ -170,7 +176,6 @@ function ConnectionLoadingChip(props) {
     <OnlineStatus offline={isConnectionOffline} />
   );
 }
-
 export default function DynaSelectResource(props) {
   const {
     disabled,
@@ -240,6 +245,7 @@ export default function DynaSelectResource(props) {
   }, [createdId]);
 
   // When adding a new resource and subsequently editing it disable selecting a new connection
+  // TODO @Raghu: Using URLs for condition! Do we need it?
   const isAddingANewResource =
     allowNew &&
     (location.pathname.endsWith(`/add/${resourceType}/${newResourceId}`) ||
@@ -343,7 +349,11 @@ export default function DynaSelectResource(props) {
       dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
     }
 
-    history.push(`${location.pathname}/edit/${resourceType}/${value}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.RESOURCE.EDIT,
+      baseUrl: location.pathname,
+      params: { resourceType, id: value },
+    }));
   }, [isFrameWork2, connectorId, dispatch, expConnId, history, location.pathname, resourceType, statusExport, value]);
   const truncatedItems = items =>
     items.sort(stringCompare('label')).map(i => ({
@@ -362,53 +372,60 @@ export default function DynaSelectResource(props) {
 
   return (
     <div className={classes.root}>
-      <LoadResources required resources={resourceType !== 'connectorLicenses' ? resourceType : []}>
-        {multiselect ? (
-          <DynaMultiSelect
-            {...props}
-            disabled={disableSelect}
-            options={[{ items: resourceItems || [] }]}
-          />
-        ) : (
-          <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
-            <DynaSelect
+      <LoadResources
+        required
+        spinner={<Spinner size="medium" />}
+        resources={resourceType !== 'connectorLicenses' ? resourceType : []}
+      >
+        <>
+          {multiselect ? (
+            <DynaMultiSelect
               {...props}
               disabled={disableSelect}
-              removeHelperText={isAddingANewResource}
-              options={[{ items: truncatedItems(resourceItems || []) }]}
+              options={[{ items: resourceItems || [] }]}
           />
-            {resourceType === 'connections' && !!value && !skipPingConnection && (
-            <ConnectionLoadingChip
-              connectionId={value}
-              flowId={flowId}
-              integrationId={integrationId || integrationIdFromUrl}
-              parentType={resourceContext.resourceType}
-              parentId={resourceContext.resourceId} />
+          ) : (
+            <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
+              <DynaSelect
+                {...props}
+                disabled={disableSelect}
+                removeHelperText={isAddingANewResource}
+                options={[{ items: truncatedItems(resourceItems || []) }]}
+          />
+              {resourceType === 'connections' && !!value && !skipPingConnection && (
+              <ConnectionLoadingChip
+                connectionId={value}
+                flowId={flowId}
+                integrationId={integrationId || integrationIdFromUrl}
+                parentType={resourceContext.resourceType}
+                parentId={resourceContext.resourceId} />
+              )}
+            </div>
+
+          )}
+          <div className={classes.dynaSelectMultiSelectActions}>
+            {allowNew && (
+            <ActionButton
+              data-test="addNewResource"
+              onClick={handleAddNewResourceMemo}>
+              <AddIcon />
+            </ActionButton>
             )}
+
+            {allowEdit && (
+            // Disable adding a new resource when the user has selected an existing resource
+            <ActionButton
+              disabled={!value}
+              data-test="editNewResource"
+              onClick={handleEditResource}>
+              <EditIcon />
+            </ActionButton>
+            )}
+
           </div>
-
-        )}
+        </>
       </LoadResources>
-      <div className={classes.dynaSelectMultiSelectActions}>
-        {allowNew && (
-          <ActionButton
-            data-test="addNewResource"
-            onClick={handleAddNewResourceMemo}>
-            <AddIcon />
-          </ActionButton>
-        )}
 
-        {allowEdit && (
-          // Disable adding a new resource when the user has selected an existing resource
-          <ActionButton
-            disabled={!value}
-            data-test="editNewResource"
-            onClick={handleEditResource}>
-            <EditIcon />
-          </ActionButton>
-        )}
-
-      </div>
     </div>
   );
 }

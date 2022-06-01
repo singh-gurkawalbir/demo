@@ -15,6 +15,7 @@ import {selectors } from '../../../../../reducers';
 import getMetadata from './metadata';
 import RevisionHeader from '../../components/RevisionHeader';
 import useHandleInvalidRevision from '../../hooks/useHandleInvalidRevision';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(() => ({
   drawerHeader: {
@@ -48,7 +49,11 @@ function OpenRevertDrawerContent({ integrationId, parentUrl }) {
     };
 
     dispatch(actions.integrationLCM.revision.openRevert({ integrationId, newRevisionId: tempRevId, revisionInfo }));
-    history.replace(`${parentUrl}/revert/${tempRevId}/review`);
+    history.replace(buildDrawerUrl({
+      path: drawerPaths.LCM.REVIEW_REVERT_CHANGES,
+      baseUrl: parentUrl,
+      params: { revisionId: tempRevId },
+    }));
   };
 
   return (
@@ -68,9 +73,9 @@ function OpenRevertDrawerContent({ integrationId, parentUrl }) {
           Next
         </DynaSubmit>
         <TextButton
-          data-test="cancelCreatePull"
+          data-test="cancelCreateRevert"
           onClick={onClose}>
-          Cancel
+          Close
         </TextButton>
       </DrawerFooter>
     </>
@@ -82,8 +87,7 @@ export default function OpenRevertDrawer({ integrationId }) {
 
   return (
     <RightDrawer
-      path="revert/:tempRevId/open/:revertTo/revision/:revisionId"
-      variant="temporary"
+      path={drawerPaths.LCM.OPEN_REVERT}
       height="tall"
       width="xl">
       <OpenRevertDrawerContent integrationId={integrationId} parentUrl={match.url} />

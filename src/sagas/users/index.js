@@ -163,7 +163,7 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
     yield put(actions.resource.requestCollection('flows'));
     yield put(actions.resource.requestCollection('exports'));
     yield put(actions.resource.requestCollection('imports'));
-    yield put(actions.resource.requestCollection('licenses'));
+    yield put(actions.license.refreshCollection());
   } else {
     yield put(actions.license.licenseUpgradeRequestSubmitted(response));
   }
@@ -583,6 +583,18 @@ export function* deleteSuiteScriptLinkedConnection({ connectionId }) {
   yield put(actions.resource.requestCollection('shared/ashares'));
 }
 
+export function* refreshLicensesCollection() {
+  const defaultAShareId = yield select(selectors.defaultAShareId);
+
+  if (defaultAShareId && defaultAShareId !== 'own') {
+    yield put(actions.resource.requestCollection('shared/ashares'));
+
+    return;
+  }
+
+  yield put(actions.resource.requestCollection('licenses'));
+}
+
 export const userSagas = [
   takeLatest(actionTypes.USER.PROFILE.UNLINK_WITH_GOOGLE, unlinkWithGoogle),
   takeLatest(actionTypes.USER.PROFILE.UPDATE, updateProfile),
@@ -621,4 +633,5 @@ export const userSagas = [
     deleteSuiteScriptLinkedConnection
   ),
   takeLatest(actionTypes.USER.REINVITE, reinviteUser),
+  takeEvery(actionTypes.LICENSE.REFRESH_COLLECTION, refreshLicensesCollection),
 ];

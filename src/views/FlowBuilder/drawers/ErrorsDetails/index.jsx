@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
@@ -12,6 +12,7 @@ import ErrorDrawerAction from './ErrorDrawerAction';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import DrawerHeaderSubTitle from '../../../../components/DrawerHeaderSubTitle';
 import Tabs from './Tabs';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 const emptySet = [];
 
@@ -36,6 +37,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const { pathname } = useLocation();
+  const [changeTab, setChangeTab] = useState(true);
 
   const matchIncompleteErrorDrawerPath = matchPath(pathname, {
     path: `${match.url}/errors/:resourceId`,
@@ -45,15 +47,27 @@ export default function ErrorDetailsDrawer({ flowId }) {
     // when error type is not specified in the url, it adds open and opens Open errors by default
     // Note: The url specified in the emails regarding errors to the users does not specify the error type
     // This helps not to modify any dependent places to update url
-    history.replace(`${matchIncompleteErrorDrawerPath.url}/open`);
+    const openErrorsUrl = buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.ERROR_DETAILS,
+      baseUrl: match.url,
+      params: {...matchIncompleteErrorDrawerPath.params, errorType: 'open'},
+    });
+
+    history.replace(openErrorsUrl);
   }
 
   const matchErrorDrawerPath = matchPath(pathname, {
-    path: `${match.url}/errors/:resourceId/:errorType`,
+    path: buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.ERROR_DETAILS,
+      baseUrl: match.url,
+    }),
   });
 
   const matchErrorDrawerPathWithFilter = matchPath(pathname, {
-    path: `${match.url}/errors/:resourceId/filter/:flowJobId/:errorType`,
+    path: buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.JOB_ERROR_DETAILS,
+      baseUrl: match.url,
+    }),
   });
   const resourceId = matchErrorDrawerPathWithFilter?.params?.resourceId || matchErrorDrawerPath?.params?.resourceId;
   const errorType = matchErrorDrawerPathWithFilter?.params?.errorType || matchErrorDrawerPath?.params?.errorType;
@@ -96,15 +110,31 @@ export default function ErrorDetailsDrawer({ flowId }) {
 
   const handleErrorTypeChange = useCallback(errorType => {
     if (matchErrorDrawerPathWithFilter) {
-      history.replace(`${match.url}/errors/${matchErrorDrawerPathWithFilter.params.resourceId}/filter/${matchErrorDrawerPathWithFilter.params.flowJobId}/${errorType}`);
+      const changedFilteredErrorUrl = buildDrawerUrl({
+        path: drawerPaths.ERROR_MANAGEMENT.V2.JOB_ERROR_DETAILS,
+        baseUrl: match.url,
+        params: { ...matchErrorDrawerPathWithFilter.params, errorType},
+      });
+
+      history.replace(changedFilteredErrorUrl);
     } else {
-      history.replace(`${match.url}/errors/${matchErrorDrawerPath.params.resourceId}/${errorType}`);
+      const changedErrorUrl = buildDrawerUrl({
+        path: drawerPaths.ERROR_MANAGEMENT.V2.ERROR_DETAILS,
+        baseUrl: match.url,
+        params: { ...matchErrorDrawerPath.params, errorType },
+      });
+
+      history.replace(changedErrorUrl);
     }
-  }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath?.params?.resourceId]);
+  }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath]);
 
   useEffect(() => {
-    if (isOpenErrorsLoaded && !allErrors.length && errorType === 'open') {
+    if (isOpenErrorsLoaded && !allErrors.length && errorType === 'open' && changeTab) {
       handleErrorTypeChange('resolved');
+      setChangeTab(false);
+    }
+    if (isOpenErrorsLoaded && allErrors.length) {
+      setChangeTab(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpenErrorsLoaded]);
@@ -125,10 +155,12 @@ export default function ErrorDetailsDrawer({ flowId }) {
 
   return (
     <RightDrawer
-      path={['errors/:resourceId/filter/:flowJobId/:errorType', 'errors/:resourceId/:errorType']}
+      path={[
+        drawerPaths.ERROR_MANAGEMENT.V2.JOB_ERROR_DETAILS,
+        drawerPaths.ERROR_MANAGEMENT.V2.ERROR_DETAILS,
+      ]}
       width="full"
-      onClose={handleClose}
-      variant="temporary">
+      onClose={handleClose}>
       <DrawerHeader className={classes.removeBottomLine} title={<Title />} hideBackButton>
         <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} />
       </DrawerHeader>

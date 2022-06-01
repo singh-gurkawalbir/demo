@@ -360,6 +360,9 @@ export const getFieldConfig = (field = {}, resource = {}, isSuiteScript) => {
   } else if (newField.type === 'file') {
     newField.type = 'uploadfile';
     newField.isIAField = true;
+  } else if (newField.type === 'uploadfile') {
+    newField.type = 'uploadfile';
+    newField.isIAField = true;
   } else if (newField.type === 'matchingCriteria') {
     newField.type = 'matchingcriteria';
   } else if (newField.supportsRefresh && (newField.type === 'select' || newField.type === 'multiselect')) {
@@ -603,7 +606,7 @@ export const integrationSettingsToDynaFormMetadata = (
   ssLinkedConnectionId,
 ) => {
   const finalData = {};
-  const { resource, isFlow = false, isSuiteScriptIntegrator, propsSpreadToFields = {}} = options;
+  const { resource, childId, isFlow = false, isSuiteScriptIntegrator, propsSpreadToFields = {}} = options;
 
   if (!meta || (!meta.fields && !meta.sections)) return null;
   const { fields, sections } = meta;
@@ -614,7 +617,7 @@ export const integrationSettingsToDynaFormMetadata = (
       integrationId,
       resource,
       ssLinkedConnectionId,
-      propsSpreadToFields
+      {...propsSpreadToFields, childId}
     );
 
     finalData.fieldMap = addedFieldIdFields.reduce(
@@ -632,7 +635,7 @@ export const integrationSettingsToDynaFormMetadata = (
         integrationId,
         resource,
         ssLinkedConnectionId,
-        propsSpreadToFields
+        {...propsSpreadToFields, childId}
       ).reduce(convertFieldsToFieldReferenceObj, finalData.fieldMap || {});
     });
 
@@ -650,7 +653,7 @@ export const integrationSettingsToDynaFormMetadata = (
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
       label: section.title,
-      ...translateFieldProps(section.fields, integrationId, resource, ssLinkedConnectionId, propsSpreadToFields).reduce(
+      ...translateFieldProps(section.fields, integrationId, resource, ssLinkedConnectionId, {...propsSpreadToFields, childId}).reduce(
         generateFieldsAndSections,
         {}
       ),

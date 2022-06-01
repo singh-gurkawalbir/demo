@@ -6,7 +6,7 @@ export default {
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://marketplace.walmartapis.com/v3',
-    '/http/ping/relativeURI': '/ca/feeds',
+    '/http/ping/relativeURI': '/ca/items',
     '/http/ping/method': 'GET',
     '/http/headers': [
       {

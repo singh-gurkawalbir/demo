@@ -20,7 +20,7 @@ describe('exportData reducers', () => {
   test('selector should convert key to string', () => {
     const state = reducer(
       undefined,
-      actions.exportData.request('virtual', '42')
+      actions.exportData.request({kind: 'virtual', identifier: '42'})
     );
 
     expect(exportData(state, 42)).toEqual({
@@ -32,7 +32,7 @@ describe('exportData reducers', () => {
   test('selector returns empty object on non-existent key', () => {
     const state = reducer(
       undefined,
-      actions.exportData.request('virtual', '42')
+      actions.exportData.request({kind: 'virtual', identifier: '42'})
     );
 
     expect(exportData(state, 'id')).toEqual({});
@@ -41,7 +41,7 @@ describe('exportData reducers', () => {
   test('should work in life cyle of one id', () => {
     const state = reducer(
       undefined,
-      actions.exportData.request('virtual', '42')
+      actions.exportData.request({kind: 'virtual', identifier: '42'})
     );
 
     expect(exportData(state, 42)).toEqual({
@@ -58,7 +58,7 @@ describe('exportData reducers', () => {
       data: [],
       error: 'oops',
     });
-    const state3 = reducer(state2, actions.exportData.request('virtual', 42));
+    const state3 = reducer(state2, actions.exportData.request({kind: 'virtual', identifier: 42}));
 
     expect(exportData(state3, 42)).toEqual({
       status: 'requested',
@@ -79,7 +79,7 @@ describe('exportData reducers', () => {
     test('should do basic reset', () => {
       const state = reducer(
         undefined,
-        actions.exportData.request('virtual', '123')
+        actions.exportData.request({kind: 'virtual', identifier: '123'})
       );
 
       expect(exportData(state, '123')).toEqual({
@@ -91,7 +91,7 @@ describe('exportData reducers', () => {
     test('should convert id to string', () => {
       const state = reducer(
         undefined,
-        actions.exportData.request('virtual', 123)
+        actions.exportData.request({kind: 'virtual', identifier: 123})
       );
 
       expect(exportData(state, 123)).toEqual({
