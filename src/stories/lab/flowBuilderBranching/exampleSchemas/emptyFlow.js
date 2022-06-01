@@ -5,7 +5,7 @@ export default
       _id: 'emptyFlowId',
       routers: [
         {
-          _id: 'virtualRouter',
+          id: 'virtualRouter',
           branches: [
             {
               name: 'second branch',
@@ -22,7 +22,6 @@ export default
                   id: 'import1',
                 },
               ],
-              _id: 'firstVirtualBranch',
               //  _nextRouterId: 'firstRouter',
             },
           ],

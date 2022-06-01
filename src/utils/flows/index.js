@@ -480,6 +480,18 @@ export function getImportIdsFromFlow(flow) {
   return importIds;
 }
 
+export function isSetupInProgress(flow) {
+  if (!flow) return false;
+  const isPageGeneratorSetupInProgress = (flow.pageGenerators || []).some(pg => pg.setupInProgress);
+  const isPageProcessorSetupInProgress = (flow.pageProcessors || []).some(pp => pp.setupInProgress);
+  const isRouterSetupInProgress = (flow.routers || [])
+    .some(router => (router.branches || [])
+      .some(branch => (branch.pageProcessors || [])
+        .some(pp => pp.setupInProgress)));
+
+  return isPageGeneratorSetupInProgress || isPageProcessorSetupInProgress || isRouterSetupInProgress;
+}
+
 export function isDeltaFlow(flow, exports) {
   if (!flow) return false;
   let isDeltaFlow = false;
@@ -810,6 +822,7 @@ export function getFlowDetails(flow, integration, exports, childId) {
     draft.isRunnable = isRunnable(flow, exports);
     draft.canSchedule = showScheduleIcon(flow, exports);
     draft.isDeltaFlow = isDeltaFlow(flow, exports);
+    draft.isSetupInProgress = isSetupInProgress(flow);
     const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
     draft.showMapping = !!flowSettings.showMapping;

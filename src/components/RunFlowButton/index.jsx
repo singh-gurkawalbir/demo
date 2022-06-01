@@ -102,7 +102,7 @@ export default function RunFlowButton({
   );
 
   const runStatus = useSelector(state =>
-    selectors.flowRunStatus(state, flowId).runStatus
+    selectors.flowRunStatus(state, flowId)
   );
   const isNewFlow = !flowId || flowId.startsWith('new');
   const isDataLoaderFlow = flowDetails.isSimpleImport;
