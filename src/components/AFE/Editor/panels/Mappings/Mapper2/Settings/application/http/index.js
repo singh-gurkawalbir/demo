@@ -69,7 +69,7 @@ export default {
     lookups,
     importResource = {},
   }) => {
-    const {lookupName, dataType: propDataType, copySource } = node;
+    const {key, lookupName, dataType: propDataType, copySource } = node;
 
     const {_connectionId: connectionId, adaptorType, _id: resourceId } = importResource;
 
@@ -319,6 +319,7 @@ export default {
           resourceType: 'imports',
           resourceId,
           flowId,
+          mapper2RowKey: key,
           showLookup: false,
           multiline: true,
           label: 'Handlebars expression',
@@ -413,6 +414,7 @@ export default {
           connectionId,
           resourceId,
           flowId,
+          mapper2RowKey: key,
           resourceType: 'imports',
           label: 'Relative URI',
           placeholder: 'Relative URI',
@@ -455,6 +457,8 @@ export default {
           connectionId: r => r && r._connectionId,
           resourceId,
           flowId,
+          mapper2RowKey: key,
+          stage: 'importMappingExtract',
           resourceType: 'imports',
           helpKey: 'mapping.v2.lookup.body',
           noApi: true,
