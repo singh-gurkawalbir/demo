@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AddNodeMenuPopper({ anchorEl, handleClose }) {
+export default function BranchMenuPopper({ anchorEl, handleClose }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { flow, elements } = useFlowContext();

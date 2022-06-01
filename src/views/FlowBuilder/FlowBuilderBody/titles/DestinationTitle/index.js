@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
 import Title from '../Title';
-import AddNodeMenuPopper from './BranchMenuPopper';
+import BranchMenuPopper from './BranchMenuPopper';
 import { FB_SOURCE_COLUMN_WIDTH } from '../../../../../constants';
 import { useSelectorMemo } from '../../../../../hooks';
 import { selectors } from '../../../../../reducers';
@@ -48,11 +48,12 @@ const DestinationTitle = () => {
       <Title onClick={handleOpenMenu} className={classes.title}>
         DESTINATIONS & LOOKUPS
       </Title>
-      <AddNodeMenuPopper
+      <BranchMenuPopper
         anchorEl={anchorEl}
         handleClose={handleCloseMenu}
       />
     </>
   );
 };
+
 export default React.memo(DestinationTitle);
