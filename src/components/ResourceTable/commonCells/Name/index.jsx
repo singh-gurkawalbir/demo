@@ -44,7 +44,7 @@ export default function NameCell({al, actionProps}) {
       return al._resourceId || '';
     }
 
-    return al.deletedInfo.name;
+    return al.deletedInfo.name || '';
   }
 
   return (

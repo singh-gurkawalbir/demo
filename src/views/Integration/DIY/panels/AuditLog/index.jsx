@@ -5,6 +5,7 @@ import AuditLog from '../../../../../components/AuditLog';
 import PanelHeader from '../../../../../components/PanelHeader';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
+import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,9 +25,10 @@ function useLoadRevisions(integrationId) {
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
 
   useEffect(() => {
-    if (!revisionsFetchStatus && !isIntegrationApp) {
+    if (!revisionsFetchStatus && !isIntegrationApp && integrationId && STANDALONE_INTEGRATION.id !== integrationId) {
       dispatch(actions.integrationLCM.revisions.request(integrationId));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [integrationId, dispatch, revisionsFetchStatus]);
 
   return !revisionsFetchStatus || revisionsFetchStatus === 'requested';
