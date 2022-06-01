@@ -896,7 +896,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.rdbms.password': 'The password for the specified Username.',
   'snowflake.import.rdbms.queryType': "'Use bulk insert SQL query' to quickly insert batches of data efficiently. </br>'Use SQL query once per record' to execute a custom query per record. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
   'bigquery.import.rdbms.queryType': "'Use bulk insert SQL query' to quickly insert batches of data efficiently. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
-  'redshift.import.rdbms.queryType': "'Use bulk insert SQL query' to quickly insert batches of data efficiently. </br>'Use SQL query once per record' to execute a custom query per record. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
+  'redshift.import.rdbms.queryType': "'Use SQL query once per record' to execute a custom query per record. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
   'connection.rdbms.snowflake.warehouse':
 'Warehouse used for executing compute process.',
   'connection.rdbms.snowflake.schema':

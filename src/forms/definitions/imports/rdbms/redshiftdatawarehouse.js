@@ -76,7 +76,6 @@ export default {
       options: [
         {
           items: [
-            { label: 'Use bulk insert SQL query', value: 'BULK INSERT' },
             { label: 'Use SQL query once per record', value: 'INSERT' },
             { label: 'Use SQL query once per page of records', value: 'MERGE' },
             { label: 'Use SQL query on first page only', value: 'COPY' },
