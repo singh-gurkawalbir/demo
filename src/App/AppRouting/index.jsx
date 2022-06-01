@@ -174,7 +174,7 @@ export default function AppRouting() {
           )}
         />
       <Route
-        path={getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)')}
+        path={getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})')}
         exact
         render={({ history, match }) =>
           history.replace(
@@ -192,20 +192,20 @@ export default function AppRouting() {
         />
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/child/:childId/flows/sections/:sectionId/flowBuilder/:flowId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/child/:childId/flowBuilder/:flowId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/flows/sections/:sectionId/flowBuilder/:flowId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/flowBuilder/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/flows/sections/:sectionId/flowBuilder/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/flowBuilder/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/flows/sections/:sectionId/flowBuilder/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/flowBuilder/:flowId'),
           getRoutePath('/integrations/:integrationId([a-f\\d]{24}|none)/flowBuilder/:flowId'),
           getRoutePath('/integrations/:integrationId([a-f\\d]{24}|none)/flows/sections/:sectionId/flowBuilder/:flowId'),
-          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId([a-f\\d]{24}|none)/flowBuilder/:flowId'),
-          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId([a-f\\d]{24}|none)/flows/sections/:sectionId/flowBuilder/:flowId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/child/:childId/flows/sections/:sectionId/dataLoader/:flowId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/child/:childId/dataLoader/:flowId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/flows/sections/:sectionId/dataLoader/:flowId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/dataLoader/:flowId'),
-          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId([a-f\\d]{24}|none)/dataLoader/:flowId'),
-          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId([a-f\\d]{24}|none)/flows/sections/:sectionId/dataLoader/:flowId'),
+          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId([a-f\\d]{24})/flowBuilder/:flowId'),
+          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId([a-f\\d]{24})/flows/sections/:sectionId/flowBuilder/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/flows/sections/:sectionId/dataLoader/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/dataLoader/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/flows/sections/:sectionId/dataLoader/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/dataLoader/:flowId'),
+          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId([a-f\\d]{24})/dataLoader/:flowId'),
+          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId([a-f\\d]{24})/flows/sections/:sectionId/dataLoader/:flowId'),
           getRoutePath('/integrations/:integrationId([a-f\\d]{24}|none)/dataLoader/:flowId'),
           getRoutePath('/integrations/:integrationId([a-f\\d]{24}|none)/flows/sections/:sectionId/dataLoader/:flowId'),
         ]}>
@@ -213,37 +213,37 @@ export default function AppRouting() {
       </Route>
 
       <Route
-        path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/setup')}
+        path={getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/setup')}
         component={IntegrationInstallation}
         />
       <Route
-        path={getRoutePath('/clone/integrationapps/:integrationAppName/:integrationId/setup')}
+        path={getRoutePath('/clone/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/setup')}
         component={IntegrationInstallation}
         />
       <Route
-        path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/install/addNewStore')}
+        path={getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/install/addNewStore')}
         component={IntegrationAppAddNewChild}
         />
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall/child/:childId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/uninstall/child/:childId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/uninstall'),
         ]}
         component={IntegrationAppUninstallation}
         />
 
       <Route
         path={[
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/child/:childId/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/child/:childId/:tab/sections/:sectionId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/child/:childId/dashboard/:dashboardTab(runningFlows|completedFlows)'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/child/:childId/:tab'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/child/:childId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/:tab/sections/:sectionId'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/dashboard/:dashboardTab(runningFlows|completedFlows)'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)/:tab'),
-          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24}|none)'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/:tab/sections/:sectionId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/dashboard/:dashboardTab(runningFlows|completedFlows)'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/:tab'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/:tab/sections/:sectionId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/dashboard/:dashboardTab(runningFlows|completedFlows)'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/:tab'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})'),
           getRoutePath('/integrations/:integrationId([a-f\\d]{24}|none)/dashboard/sections/:sectionId/:dashboardTab(runningFlows|completedFlows)'),
           getRoutePath('/integrations/:integrationId([a-f\\d]{24}|none)/:tab/sections/:sectionId'),
           getRoutePath('/integrations/:integrationId([a-f\\d]{24}|none)/dashboard/:dashboardTab(runningFlows|completedFlows)'),
