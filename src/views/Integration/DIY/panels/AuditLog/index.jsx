@@ -21,9 +21,10 @@ function useLoadRevisions(integrationId) {
   // move this hook to a global folder when there are much more use cases to load revisions
   const dispatch = useDispatch();
   const revisionsFetchStatus = useSelector(state => selectors.revisionsFetchStatus(state, integrationId));
+  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
 
   useEffect(() => {
-    if (!revisionsFetchStatus) {
+    if (!revisionsFetchStatus && !isIntegrationApp) {
       dispatch(actions.integrationLCM.revisions.request(integrationId));
     }
   }, [integrationId, dispatch, revisionsFetchStatus]);

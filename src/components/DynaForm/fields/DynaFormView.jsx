@@ -11,7 +11,7 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
-import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection } from '../../../utils/assistant';
+import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, isEbayFinanceConnection } from '../../../utils/assistant';
 
 const emptyObj = {};
 const isParent = true;
@@ -142,8 +142,9 @@ export default function FormView(props) {
   };
   const isAcumaticaEcommerceImport = (resourceType === 'imports') && isAcumaticaEcommerceConnection(connection);
   const isLoopReturnsv2import = (resourceType === 'imports') && isLoopReturnsv2Connection(connection);
+  const isEbayFinanceImport = (resourceType === 'imports') && isEbayFinanceConnection(connection);
   const isFlowBuilderAssistant = flowId && (isGraphql ||
-    (assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection) && !isMicrosoftBusinessCentralOdataConnection(connection) && !isAcumaticaEcommerceImport && !isLoopReturnsv2import));
+    (assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection) && !isMicrosoftBusinessCentralOdataConnection(connection) && !isAcumaticaEcommerceImport && !isLoopReturnsv2import && !isEbayFinanceImport));
 
   return isFlowBuilderAssistant ? (
     <DynaSelect

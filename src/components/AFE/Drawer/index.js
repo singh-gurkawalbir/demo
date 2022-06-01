@@ -16,6 +16,7 @@ import actions from '../../../actions';
 import ActionsRibbon from './ActionsRibbon';
 import { useDrawerContext } from '../../drawer/Right/DrawerContext';
 import TitleHelp from './TitleHelp';
+import EditorBanner from '../Editor/EditorBanner';
 import { drawerPaths } from '../../../utils/rightDrawer';
 import UserIdleTracker from './UserIdleTracker';
 
@@ -101,6 +102,7 @@ function RouterWrappedContent({ hideSave }) {
       <DrawerContent>
         {/* Although this doesnt render anything, Using it as a component instead of hook to avoid re-renders */}
         <UserIdleTracker />
+        <EditorBanner editorId={editorId} />
         <Editor editorId={editorId} />
       </DrawerContent>
 

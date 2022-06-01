@@ -104,3 +104,5 @@ export const escapeSpecialChars = message => {
 
   return escapedMessage;
 };
+
+export const generateUniqueKey = () => nanoid();

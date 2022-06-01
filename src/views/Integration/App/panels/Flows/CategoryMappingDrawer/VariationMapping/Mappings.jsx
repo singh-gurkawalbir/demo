@@ -98,12 +98,13 @@ export default function ImportMapping(props) {
     depth,
     isVariationAttributes,
     disabled,
+    categoryId,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const { mappings } = useSelectorMemo(selectors.mkCategoryMappingsForSection, integrationId, flowId, editorId);
   const extractFields = useSelectorMemo(selectors.mkCategoryMappingsExtractsMetadata, integrationId, flowId);
-  const { fields: generateFields = emptyList } =
+  const { fields: sectionGenerateFields = emptyList } =
   useSelector(state => {
     const generatesMetadata = selectors.categoryMappingGenerateFields(
       state,
@@ -123,6 +124,23 @@ export default function ImportMapping(props) {
 
     return generatesMetadata;
   }) || {};
+
+  const { fields: categoryGenerateFields = emptyList } =
+  useSelector(state => selectors.categoryMappingGenerateFields(
+    state,
+    integrationId,
+    flowId,
+    {
+      sectionId: categoryId,
+    }
+  )) || {};
+  let generateFields;
+
+  if (sectionId !== categoryId) {
+    generateFields = [...categoryGenerateFields, ...sectionGenerateFields];
+  } else {
+    generateFields = sectionGenerateFields;
+  }
 
   const tableData = useMemo(() => {
     const mappingsTemp = mappings ? [...mappings] : [];
