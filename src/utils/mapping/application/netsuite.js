@@ -1,8 +1,7 @@
 import { uniqBy } from 'lodash';
 import Browser from 'bowser';
-import mappingUtil from '..';
+import mappingUtil, {handlebarRegex} from '..';
 
-const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
 const wrapTextForSpecialCharsNetsuite = (extract, isSS2) => {
   let toReturn = extract;
   const isExtractAlreadyWrappedByUser = /^\[.*\]$/.test(extract) && // If extract is wrapped in square braces i,e starts with [ and ends with ]

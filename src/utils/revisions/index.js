@@ -1,8 +1,5 @@
 import { REVISION_STATUS, REVISION_TYPES } from '../../constants';
-import messageStore from '../messageStore';
 import { comparer, sortJsonByKeys } from '../sort';
-
-export const INTEGRATION_CLONE_ERROR = `${messageStore('REQUIRED_MESSAGE')}.You don't have any data to pull`;
 
 export const DEFAULT_ROWS_PER_PAGE = 50;
 export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
@@ -54,8 +51,6 @@ export const REVISION_STATUS_LABELS = {
   [REVISION_STATUS.FAILED]: 'Failed',
   [REVISION_STATUS.CANCELED]: 'Canceled',
 };
-
-export const REVISION_IN_PROGRESS_ERROR = 'You have a pull, snapshot, or revert in progress.';
 
 export const REVISION_DIFF_ACTIONS = {
   ADD: 'add',

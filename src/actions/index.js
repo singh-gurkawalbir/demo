@@ -108,7 +108,7 @@ const auth = {
   clearStore: () => action(actionTypes.AUTH.CLEAR_STORE),
   abortAllSagasAndInitLR: opts => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
-  initSession: () => action(actionTypes.AUTH.INIT_SESSION),
+  initSession: opts => action(actionTypes.AUTH.INIT_SESSION, { opts }),
   changePassword: updatedPassword =>
     action(actionTypes.AUTH.USER.CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
@@ -1526,6 +1526,20 @@ const mapping = {
     request: () => action(actionTypes.MAPPING.AUTO_MAPPER.REQUEST),
     received: value => action(actionTypes.MAPPING.AUTO_MAPPER.RECEIVED, { value }),
     failed: (failSeverity, failMsg) => action(actionTypes.MAPPING.AUTO_MAPPER.FAILED, { failSeverity, failMsg }),
+  },
+  toggleVersion: newVersion => action(actionTypes.MAPPING.TOGGLE_VERSION, { newVersion }),
+  v2: {
+    toggleOutput: outputFormat => action(actionTypes.MAPPING.V2.TOGGLE_OUTPUT, { outputFormat }),
+    toggleRows: expanded => action(actionTypes.MAPPING.V2.TOGGLE_ROWS, { expanded }),
+    updateExpandedKeys: expandedKeys => action(actionTypes.MAPPING.V2.UPDATE_EXPANDED_KEYS, { expandedKeys }),
+    dropRow: dragDropInfo => action(actionTypes.MAPPING.V2.DRAG_DROP, { dragDropInfo }),
+    updateActiveKey: v2Key => action(actionTypes.MAPPING.V2.ACTIVE_KEY, { v2Key }),
+    deleteRow: v2Key => action(actionTypes.MAPPING.V2.DELETE_ROW, { v2Key }),
+    addRow: v2Key => action(actionTypes.MAPPING.V2.ADD_ROW, { v2Key }),
+    updateDataType: (v2Key, newDataType) => action(actionTypes.MAPPING.V2.UPDATE_DATA_TYPE, { v2Key, newDataType }),
+    changeArrayTab: (v2Key, newTabValue, newTabExtractId) => action(actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB, { v2Key, newTabValue, newTabExtractId }),
+    patchField: (field, v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, v2Key, value }),
+    patchSettings: (v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_SETTINGS, { v2Key, value }),
   },
 };
 

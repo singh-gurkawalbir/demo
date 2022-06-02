@@ -4206,56 +4206,107 @@ describe('resource region selector testcases', () => {
 
       expect(filteredHomeTiles(newState)).toEqual(expected);
     });
-    test('should return tiles filtered by applications for list view', () => {
-      const initialState = reducer(state, actions.patchFilter(FILTER_KEY,
-        {
-          applications: [
-            'http',
-          ],
-        }));
-      const newState = reducer(initialState, actions.user.preferences.update({dashboard: {view: LIST_VIEW}}));
-      const expected = {
-        filteredCount: 1,
-        filteredTiles: [
+    describe('should return tiles filtered by applications for list view ', () => {
+      test('for applications with single version', () => {
+        const initialState = reducer(state, actions.patchFilter(FILTER_KEY,
           {
-            _connectorId: 'connector1',
-            _integrationId: 'connector1',
             applications: [
               'http',
-              'app2',
             ],
-            connector: {
+          }));
+        const newState = reducer(initialState, actions.user.preferences.update({dashboard: {view: LIST_VIEW}}));
+        const expected = {
+          filteredCount: 1,
+          filteredTiles: [
+            {
+              _connectorId: 'connector1',
+              _integrationId: 'connector1',
               applications: [
                 'http',
                 'app2',
               ],
-              owner: 'Company 1',
-            },
-            flowsNameAndDescription: '',
-            integration: {
-              mode: undefined,
-              permissions: {
-                accessLevel: 'owner',
-                connections: {
-                  edit: true,
+              connector: {
+                applications: [
+                  'http',
+                  'app2',
+                ],
+                owner: 'Company 1',
+              },
+              flowsNameAndDescription: '',
+              integration: {
+                mode: undefined,
+                permissions: {
+                  accessLevel: 'owner',
+                  connections: {
+                    edit: true,
+                  },
                 },
               },
+              key: 'connector1',
+              lastErrorAt: 1,
+              name: 'Integration Two',
+              numError: 4,
+              numFlows: 3,
+              pinned: false,
+              sortablePropType: -1,
+              status: 'has_errors',
             },
-            key: 'connector1',
-            lastErrorAt: 1,
-            name: 'Integration Two',
-            numError: 4,
-            numFlows: 3,
-            pinned: false,
-            sortablePropType: -1,
-            status: 'has_errors',
-          },
-        ],
-        perPageCount: 1,
-        totalCount: 4,
-      };
+          ],
+          perPageCount: 1,
+          totalCount: 4,
+        };
 
-      expect(filteredHomeTiles(newState)).toEqual(expected);
+        expect(filteredHomeTiles(newState)).toEqual(expected);
+      });
+      test('for applications with multiple versions', () => {
+        const stateWithNewConnections = reducer(state,
+          actions.resource.receivedCollection('connections', [
+            ...connections,
+            {
+              _id: 'connection5',
+              assistant: 'constantcontactv3',
+            },
+          ]));
+        const stateWithNewApps = reducer(stateWithNewConnections,
+          actions.resource.receivedCollection('tiles', [
+            ...standaloneTiles,
+            ...tiles,
+            {
+              _integrationId: 'integration1',
+              _registeredConnectionIds: ['connection5'],
+            },
+          ]));
+        const initialState = reducer(stateWithNewApps, actions.patchFilter(FILTER_KEY,
+          {
+            applications: [
+              'constantcontact',
+            ],
+          }));
+        const newState = reducer(initialState, actions.user.preferences.update({dashboard: {view: LIST_VIEW}}));
+        const expected = {
+          filteredCount: 1,
+          filteredTiles: [
+            {
+              _integrationId: 'integration1',
+              _registeredConnectionIds: ['connection5'],
+              applications: ['constantcontactv3'],
+              flowsNameAndDescription: '',
+              integration: {
+                permissions:
+                  {
+                    accessLevel: 'owner',
+                    connections: {edit: true}},
+              },
+              key: 'integration1',
+              pinned: false,
+              sortablePropType: 0,
+              status: 'success'}],
+          perPageCount: 1,
+          totalCount: 5,
+        };
+
+        expect(filteredHomeTiles(newState)).toEqual(expected);
+      });
     });
     describe('should return tiles filtered by the search filter applied', () => {
       const newState = reducer(state, actions.patchFilter(FILTER_KEY,
@@ -7613,6 +7664,52 @@ describe('resource region selector testcases', () => {
     });
   });
 
+  describe('selectors.showNotificationForTechAdaptorForm', () => {
+    const state = {
+      data: {
+        resources: {
+          connections: [
+            {
+              _id: 'connection1',
+              type: 'http',
+              http: {mediaType: 'xml'},
+            },
+            {
+              _id: 'connection2',
+              assistant: 'amazonmws',
+              type: 'http',
+              http: {type: 'Amazon-SP-API'},
+            },
+          ],
+        },
+      },
+      session: {
+        stage: {
+          123: {patch: [{op: 'replace', path: '/_connectionId', value: 'connection2'}]},
+          2: {patch: [{op: 'replace', path: '/useTechAdaptorForm', value: false}]},
+          3: {patch: [{op: 'replace', path: '/useTechAdaptorForm', value: true}]},
+        },
+      },
+    };
+
+    test('should not throw exception for invalid arguments', () => {
+      expect(selectors.showNotificationForTechAdaptorForm()).toBeFalsy();
+      expect(selectors.showNotificationForTechAdaptorForm({})).toBeFalsy();
+      expect(selectors.showNotificationForTechAdaptorForm({}, '123')).toBeFalsy();
+    });
+
+    test('should return false if resource uses amazon sp-api connection', () => {
+      expect(selectors.showNotificationForTechAdaptorForm(state, '123')).toBeFalsy();
+    });
+
+    test('should return false if resource uses assistant form', () => {
+      expect(selectors.showNotificationForTechAdaptorForm(state, '2')).toBeFalsy();
+    });
+
+    test('should return true if resource uses tech adaptor form', () => {
+      expect(selectors.showNotificationForTechAdaptorForm(state, '3')).toBeTruthy();
+    });
+  });
   describe('selectors.getResourceType test cases', () => {
     const state = {
       session: {
@@ -7672,6 +7769,11 @@ describe('resource region selector testcases', () => {
               type: 'rdbms',
               rdbms: {type: 'snowflake'},
             },
+            {
+              _id: 'connection4',
+              type: 'rdbms',
+              rdbms: {type: 'mysql'},
+            },
           ],
         },
       },
@@ -7680,8 +7782,11 @@ describe('resource region selector testcases', () => {
     test('should return false if the connection is of bigquery rdbms subtype', () => {
       expect(selectors.mappingHasLookupOption(state, 'connections', 'connection2')).toEqual(false);
     });
-    test('should return true if the connection is not of bigquery rdbms subtype', () => {
-      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection3')).toEqual(true);
+    test('should return false if the connection is of snowflake rdbms subtype', () => {
+      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection3')).toEqual(false);
+    });
+    test('should return true if the connection is not of bigquery or snowflake rdbms subtype', () => {
+      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection4')).toEqual(true);
     });
     test('should return true if the connection is of not rdbms type', () => {
       expect(selectors.mappingHasLookupOption(state, 'connections', 'connection1')).toEqual(true);

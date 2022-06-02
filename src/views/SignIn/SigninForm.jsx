@@ -134,7 +134,7 @@ export default function SignIn({dialogOpen}) {
   }, [dispatch]);
 
   const reInitializeSession = useCallback(() => {
-    dispatch(actions.auth.initSession());
+    dispatch(actions.auth.initSession({reload: true}));
   }, [dispatch]);
 
   const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));

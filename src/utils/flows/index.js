@@ -88,6 +88,12 @@ export const isActionUsed = (resource, resourceType, flowNode, action) => {
     }
 
     case actionsMap.importMapping: {
+      // v2 mappings
+      if (resource.mappings?.length) {
+        return true;
+      }
+
+      // v1 mappings
       const mappings = mappingUtil.getMappingFromResource({
         importResource: resource,
         isFieldMapping: true,
