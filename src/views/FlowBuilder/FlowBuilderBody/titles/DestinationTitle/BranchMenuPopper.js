@@ -1,15 +1,30 @@
 import React from 'react';
-import { List, ListItem, ListItemText } from '@material-ui/core';
+import { MenuItem, Typography, makeStyles, Divider, ClickAwayListener } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import ArrowPopper from '../../../../../components/ArrowPopper';
 import { useFlowContext } from '../../Context';
 import { getAllFlowBranches } from '../../lib';
 import actions from '../../../../../actions';
 
-export default function AddNodeMenuPopper({ anchorEl, handleClose }) {
-  const open = Boolean(anchorEl);
+const useStyles = makeStyles(theme => ({
+  titleBox: {
+    padding: theme.spacing(2, 2, 1, 2),
+  },
+  subTitle: {
+    marginBottom: theme.spacing(1),
+    color: theme.palette.secondary.light,
+    fontStyle: 'italic',
+  },
+  menuItem: {
+    borderBottom: 0,
+  },
+}));
+
+export default function BranchMenuPopper({ anchorEl, handleClose }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const { flow, elements } = useFlowContext();
+  const open = Boolean(anchorEl);
 
   const branches = getAllFlowBranches(flow, elements);
 
@@ -27,17 +42,32 @@ export default function AddNodeMenuPopper({ anchorEl, handleClose }) {
       placement="bottom-end"
       onClose={handleClose}>
 
-      <List dense>
-        {branches.map(({name, id}) => (
-          <ListItem
-            button
-            onClick={handleCallback(id)}
-            key={name}>
-            <ListItemText >{name}</ListItemText>
-          </ListItem>
-        ))}
-      </List>
+      <ClickAwayListener onClickAway={handleClose}>
+        <div>
+          <div className={classes.titleBox}>
+            <Typography gutterBottom variant="h6">
+              Add destination/lookup
+            </Typography>
 
+            <Typography className={classes.subTitle} variant="body2">
+              Add to end of branch
+            </Typography>
+
+            <Divider />
+          </div>
+
+          {branches.map(({name, id}) => (
+            <MenuItem
+              button
+              className={classes.menuItem}
+              onClick={handleCallback(id)}
+              key={name}>
+              {name}
+            </MenuItem>
+          ))}
+        </div>
+
+      </ClickAwayListener>
     </ArrowPopper>
   );
 }

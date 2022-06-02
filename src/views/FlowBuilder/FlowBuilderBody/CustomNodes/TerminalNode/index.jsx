@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Position } from 'react-flow-renderer';
 import { Tooltip } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import DiamondIcon from '../../../../../components/icons/DiamondIcon';
+import DiamondMergeIcon from '../../DiamondMergeIcon';
 import TerminalIcon from '../../../../../components/icons/MergeIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
 import { useFlowContext } from '../../Context';
@@ -45,10 +45,10 @@ export default function TerminalNode({ id }) {
 
   const handleMouseOut = useCallback(() => {
     dispatch(actions.flow.mergeTargetClear(flowId));
-  }, []);
+  }, [dispatch, flowId]);
   const handleMouseOver = useCallback(() => {
     dispatch(actions.flow.mergeTargetSet(flowId, 'node', id));
-  }, []);
+  }, [dispatch, flowId, id]);
 
   return (
     <div className={clsx(classes.container, {[classes.dragging]: isBeingDragged})}>
@@ -56,7 +56,7 @@ export default function TerminalNode({ id }) {
       {
       // eslint-disable-next-line no-nested-ternary
       isDroppable ? (
-        <DiamondIcon
+        <DiamondMergeIcon
           onMouseOver={handleMouseOver}
           onMouseOut={handleMouseOut}
           isDroppable
