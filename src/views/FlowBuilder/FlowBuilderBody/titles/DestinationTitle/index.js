@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClickAwayListener, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
 import Title from '../Title';
