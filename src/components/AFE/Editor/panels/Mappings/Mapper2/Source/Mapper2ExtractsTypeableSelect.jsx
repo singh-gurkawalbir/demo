@@ -198,7 +198,7 @@ export default function Mapper2ExtractsTypeableSelect({
           onFocus={handleFocus}
           disabled={disabled}
           multiline={isFocused}
-          placeholder={!disabled && 'Source record field'}
+          placeholder={disabled ? '' : 'Source record field'}
           InputProps={{
             endAdornment: !hideSourceDropdown &&
               (

@@ -649,7 +649,7 @@ describe('AFE region selectors test cases', () => {
           version: 2,
         },
       };
-      expect(selectors.shouldGetContextFromBE(state, editorId)).toEqual({shouldGetContextFromBE: true});
+      expect(selectors.shouldGetContextFromBE(state, editorId)).toEqual({shouldGetContextFromBE: true, isMapperField: true});
     });
     test('should return shouldGetContextFromBE as false with sample data if resource is native REST adaptor type', () => {
       state.data.resources = {

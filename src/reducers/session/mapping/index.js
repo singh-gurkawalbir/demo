@@ -678,6 +678,8 @@ export default (state = {}, action) => {
           if (field === 'extract') {
             if (value.indexOf('"') === 0) {
               delete node.extract;
+              delete node.combinedExtract;
+              delete node.default;
               node.hardCodedValue = value.replace(/(^")|("$)/g, '');
             } else {
               delete node.hardCodedValue;
@@ -693,6 +695,7 @@ export default (state = {}, action) => {
                     title: '',
                     parentKey: node.key,
                     dataType: MAPPING_DATA_TYPES.STRING,
+                    isEmptyRow: true,
                   }];
                 } else if (value && node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
                   // handle tab view
