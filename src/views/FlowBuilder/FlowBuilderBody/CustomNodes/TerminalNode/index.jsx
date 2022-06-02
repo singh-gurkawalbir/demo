@@ -45,10 +45,10 @@ export default function TerminalNode({ id }) {
 
   const handleMouseOut = useCallback(() => {
     dispatch(actions.flow.mergeTargetClear(flowId));
-  }, []);
+  }, [dispatch, flowId]);
   const handleMouseOver = useCallback(() => {
     dispatch(actions.flow.mergeTargetSet(flowId, 'node', id));
-  }, []);
+  }, [dispatch, flowId, id]);
 
   return (
     <div className={clsx(classes.container, {[classes.dragging]: isBeingDragged})}>
