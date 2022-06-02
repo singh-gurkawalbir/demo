@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, ListItem, ListItemText, Typography, makeStyles } from '@material-ui/core';
+import { MenuItem, Typography, makeStyles, Divider, ClickAwayListener } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import ArrowPopper from '../../../../../components/ArrowPopper';
 import { useFlowContext } from '../../Context';
@@ -8,17 +8,15 @@ import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   titleBox: {
-    padding: theme.spacing(3, 3, 0, 3),
-  },
-  title: {
-    marginBottom: theme.spacing(2),
+    padding: theme.spacing(2, 2, 1, 2),
   },
   subTitle: {
     marginBottom: theme.spacing(1),
     color: theme.palette.secondary.light,
+    fontStyle: 'italic',
   },
-  listItem: {
-    paddingLeft: theme.spacing(5),
+  menuItem: {
+    borderBottom: 0,
   },
 }));
 
@@ -43,28 +41,33 @@ export default function BranchMenuPopper({ anchorEl, handleClose }) {
       anchorEl={anchorEl}
       placement="bottom-end"
       onClose={handleClose}>
-      <div className={classes.titleBox}>
-        <Typography className={classes.title} variant="h6">
-          Add destination/lookup to:
-        </Typography>
 
-        <Typography className={classes.subTitle} variant="subtitle2">
-          End of branch:
-        </Typography>
-      </div>
+      <ClickAwayListener onClickAway={handleClose}>
+        <div>
+          <div className={classes.titleBox}>
+            <Typography gutterBottom variant="h6">
+              Add destination/lookup
+            </Typography>
 
-      <List dense>
-        {branches.map(({name, id}) => (
-          <ListItem
-            button
-            className={classes.listItem}
-            onClick={handleCallback(id)}
-            key={name}>
-            <ListItemText>{name}</ListItemText>
-          </ListItem>
-        ))}
-      </List>
+            <Typography className={classes.subTitle} variant="body2">
+              Add to end of branch
+            </Typography>
 
+            <Divider />
+          </div>
+
+          {branches.map(({name, id}) => (
+            <MenuItem
+              button
+              className={classes.menuItem}
+              onClick={handleCallback(id)}
+              key={name}>
+              {name}
+            </MenuItem>
+          ))}
+        </div>
+
+      </ClickAwayListener>
     </ArrowPopper>
   );
 }

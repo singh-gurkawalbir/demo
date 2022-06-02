@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import { ClickAwayListener, makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
 import Title from '../Title';
@@ -48,6 +48,7 @@ const DestinationTitle = () => {
       <Title onClick={handleOpenMenu} className={classes.title}>
         DESTINATIONS & LOOKUPS
       </Title>
+
       <BranchMenuPopper
         anchorEl={anchorEl}
         handleClose={handleCloseMenu}
