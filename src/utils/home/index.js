@@ -1,5 +1,5 @@
 import sortBy from 'lodash/sortBy';
-import { TILE_STATUS } from '../../constants';
+import { CONNECTORS_TO_IGNORE, TILE_STATUS } from '../../constants';
 import {applicationsList} from '../../constants/applications';
 import { getTextAfterCount } from '../string';
 import { stringCompare } from '../sort';
@@ -9,10 +9,14 @@ export const LIST_VIEW = 'list';
 export const TILE_VIEW = 'tile';
 
 export const getAllApplications = () => {
-  let applications = applicationsList();
+  // some connectors are not shown in the UI because they are temporarily
+  // created in UI session to handle single assistant, multiple metadata use case. ref: IO-16839
+  let applications = applicationsList()
+    .filter(app => !CONNECTORS_TO_IGNORE.includes(app.id));
+
   const defaultFilter = [{ _id: 'all', name: 'All applications'}];
 
-  applications = sortBy(applications, ['name']);
+  applications = sortBy(applications, app => app.name.toLowerCase());
 
   const options = applications.map(a => ({_id: a.id, name: a.name}));
 

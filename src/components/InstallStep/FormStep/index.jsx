@@ -74,6 +74,12 @@ function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler, p
         }
       } else {
         // For IA2.0
+        dispatch(actions.integrationApp.installer.updateStep(
+          integrationId,
+          '',
+          'verify',
+          false
+        ));
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(
             integrationId,

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
@@ -37,6 +37,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const { pathname } = useLocation();
+  const [changeTab, setChangeTab] = useState(true);
 
   const matchIncompleteErrorDrawerPath = matchPath(pathname, {
     path: `${match.url}/errors/:resourceId`,
@@ -128,8 +129,12 @@ export default function ErrorDetailsDrawer({ flowId }) {
   }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath]);
 
   useEffect(() => {
-    if (isOpenErrorsLoaded && !allErrors.length && errorType === 'open') {
+    if (isOpenErrorsLoaded && !allErrors.length && errorType === 'open' && changeTab) {
       handleErrorTypeChange('resolved');
+      setChangeTab(false);
+    }
+    if (isOpenErrorsLoaded && allErrors.length) {
+      setChangeTab(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpenErrorsLoaded]);
