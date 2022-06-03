@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import RefreshIcon from '../../../../icons/RefreshIcon';
+import ActionButton from '../../../../ActionButton';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -84,13 +84,15 @@ export default function MappingAssistantTitle({editorId}) {
         />
       )}
       {showRefreshIconForSalesforce && (
-        <IconButton
+        <ActionButton
           variant="contained"
           color="secondary"
           className={classes.refreshicon}
+          tooltip="Refresh data"
+          placement="bottom"
           onClick={handleRefreshClick}>
           <RefreshIcon />
-        </IconButton>
+        </ActionButton>
       )}
     </div>
   );
