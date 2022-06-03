@@ -11,17 +11,10 @@ const anchorProps = {
   href: 'https://docs.celigo.com/hc/en-us/articles/4536629083035-Mapper-2-0',
 };
 
-export default function Mapper2Guide({ editorId }) {
-  const hideGuide = useSelector(state => {
-    const {resourceId} = selectors.editor(state, editorId);
-    const mappingVersion = selectors.mappingVersion(state);
+export default function Mapper2Guide() {
+  const showGuide = useSelector(state => selectors.isMapper2Supported(state));
 
-    if (mappingVersion !== 2) return true;
-
-    return selectors.resourceHasMappings(state, resourceId);
-  });
-
-  if (hideGuide) return null;
+  if (!showGuide) return null;
 
   return (
     <>
