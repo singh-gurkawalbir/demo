@@ -4426,7 +4426,7 @@ selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceTyp
   // for rest and http
   const appType = adaptorTypeMap[resourceObj?.adaptorType];
 
-  return ['http', 'rest'].includes(appType);
+  return ['http', 'rest', 'graph_ql'].includes(appType);
 };
 
 // #endregion SAMPLE DATA selectors
