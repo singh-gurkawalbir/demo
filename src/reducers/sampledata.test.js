@@ -618,6 +618,12 @@ describe('Sample data region selector testcases', () => {
               adaptorType: 'HTTPExport',
             },
             {
+              _id: '3333',
+              name: 'Graphql export',
+              _connectionId: 'conn-456',
+              adaptorType: 'GraphQLExport',
+            },
+            {
               _id: '1234',
               name: 'Netsuite Export',
               adaptorType: 'NetSuiteExport',
@@ -631,9 +637,10 @@ describe('Sample data region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.isRequestUrlAvailableForPreviewPanel({})).toBeFalsy();
     });
-    test('should return true for the HTTP/REST resources', () => {
+    test('should return true for the HTTP/REST/GraphQL resources', () => {
       expect(selectors.isRequestUrlAvailableForPreviewPanel(sampleState, '1111', 'exports')).toBeTruthy();
       expect(selectors.isRequestUrlAvailableForPreviewPanel(sampleState, '2222', 'exports')).toBeTruthy();
+      expect(selectors.isRequestUrlAvailableForPreviewPanel(sampleState, '3333', 'exports')).toBeTruthy();
     });
     test('should return false for the resources other than HTTP/REST', () => {
       expect(selectors.isRequestUrlAvailableForPreviewPanel(sampleState, '1234', 'exports')).toBeFalsy();
