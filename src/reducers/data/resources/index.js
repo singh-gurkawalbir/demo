@@ -5,7 +5,7 @@ import { adaptorTypeMap } from '../../../utils/resource';
 import actionTypes from '../../../actions/types';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
 import { FILE_PROVIDER_ASSISTANTS } from '../../../constants';
-import { getIAFlowSettings, getScriptsReferencedInFlow, isIntegrationApp } from '../../../utils/flows';
+import { getIAFlowSettings, getScriptsReferencedInFlow, isIntegrationApp, isSetupInProgress } from '../../../utils/flows';
 import mappingUtil from '../../../utils/mapping';
 import getRoutePath from '../../../utils/routePaths';
 import connectionUpdateReducer from './connectionUpdate';
@@ -136,6 +136,8 @@ selectors.resource = (state, resourceType, id) => {
 
   return match;
 };
+
+selectors.isFlowSetupInProgress = (state, flowId) => isSetupInProgress(selectors.resource(state, 'flows', flowId));
 
 /** returns 1st Page generator for a flow */
 selectors.firstFlowPageGenerator = (state, flowId) => {
