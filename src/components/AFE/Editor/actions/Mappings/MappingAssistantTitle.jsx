@@ -36,8 +36,8 @@ export default function MappingAssistantTitle({editorId}) {
     };
   }, shallowEqual);
 
-  const helpKey = `${mappingPreviewType === 'netsuite' ? 'afe.mappings.netsuite.assistant' : 'afe.mappings.salesforce.assistant'}`;
-  const title = `${mappingPreviewType === 'netsuite' ? 'NetSuite' : 'Salesforce'} mapping assistant`;
+  const helpKey = mappingPreviewType === 'netsuite' ? 'afe.mappings.netsuite.assistant' : 'afe.mappings.salesforce.assistant';
+  const title = mappingPreviewType === 'netsuite' ? 'NetSuite mapping assistant' : 'Salesforce mapping assistant';
 
   const {adaptorType, _connectionId: connectionId, salesforce} = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
@@ -62,17 +62,16 @@ export default function MappingAssistantTitle({editorId}) {
   const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${salesforcelayoutId}`;
 
   const showRefreshIconForSalesforce = mappingPreviewType === 'salesforce' && connectionId && sObjectType && salesforcelayoutId;
+
   const handleRefreshClick = useCallback(() => {
-    if (showRefreshIconForSalesforce) {
-      dispatch(
-        actions.metadata.request(
-          connectionId,
-          commMetaPath,
-          {refreshCache: true}
-        )
-      );
-    }
-  }, [commMetaPath, connectionId, dispatch, showRefreshIconForSalesforce]);
+    dispatch(
+      actions.metadata.request(
+        connectionId,
+        commMetaPath,
+        {refreshCache: true}
+      )
+    );
+  }, [commMetaPath, connectionId, dispatch]);
 
   return (
     <div className={classes.wrapper}>
