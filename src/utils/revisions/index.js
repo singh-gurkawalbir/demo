@@ -184,7 +184,7 @@ export const getRevisionResourceLevelChanges = (overallDiff, type, ignoreSort = 
 };
 
 export const shouldShowReferences = (resourceType, action) => {
-  const VALID_RESOURCE_TYPES_WITH_REFERENCES = ['exports', 'imports'];
+  const VALID_RESOURCE_TYPES_WITH_REFERENCES = ['exports', 'imports', 'scripts'];
 
   // We do not show references if the resource is a newly created one or not one of the above resource types
   return VALID_RESOURCE_TYPES_WITH_REFERENCES.includes(resourceType) && action !== REVISION_DIFF_ACTIONS.NEW;
