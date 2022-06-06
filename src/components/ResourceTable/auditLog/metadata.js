@@ -20,6 +20,12 @@ export default {
       width: '10%',
     },
     {
+      key: 'user',
+      heading: 'User',
+      Value: ({rowData: al}) => al.byUser && (al.byUser.name || al.byUser.email),
+      width: '12%',
+    },
+    {
       key: 'source',
       heading: 'Source',
       isLoggable: true,
@@ -27,21 +33,15 @@ export default {
       width: '11%',
     },
     {
-      key: 'user',
-      heading: 'User',
-      Value: ({rowData: al}) => al.byUser && (al.byUser.name || al.byUser.email),
-      width: '12%',
-    },
-    {
       key: 'resource',
-      heading: 'Resource',
+      heading: 'Resource type',
       isLoggable: true,
       Value: ({rowData: al}) => RESOURCE_TYPE_SINGULAR_TO_LABEL[al.resourceType],
       width: '10%',
     },
     {
       key: 'nameId',
-      heading: 'Name/ID',
+      heading: 'Resource name',
       isLoggable: true,
       // this will be a resource name or id which should be loggable
       Value: ({rowData: al}) => {
