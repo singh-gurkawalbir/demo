@@ -1,10 +1,10 @@
 import React from 'react';
 import clsx from 'clsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import Button from '@material-ui/core/Button';
 import {makeStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import StatusCircle from '../../StatusCircle';
+import TextButton from '../TextButton';
 
 const useStyles = makeStyles(theme => ({
   statusTextContainer: {
@@ -13,40 +13,30 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
   },
   statusButtonContainer: {
-    color: theme.palette.primary.main,
-    '&:hover': {
-      color: theme.palette.primary.light,
-      background: 'none',
-    },
+    fontSize: '15px',
+    justifyContent: 'flex-start',
+    padding: theme.spacing(0, 0, 0, 0.5),
     '& > * .MuiButton-startIcon': {
       marginRight: 0,
     },
   },
-  error: {
-    background: theme.palette.error.main,
-    borderColor: theme.palette.error.main,
-    color: theme.palette.common.white,
-    '&:hover': {
-      background: theme.palette.error.dark,
-      borderColor: theme.palette.error.dark,
-    },
-  },
 }));
 
-export default function Status({ children, className, error, size, variant, onClick, dataTest}) {
+export default function Status({ children, className, size, variant, onClick, dataTest, style}) {
   const classes = useStyles();
 
   if (onClick) {
     return (
-      <Button
-        variant="text"
-        className={clsx(classes.statusButtonContainer, {[classes.error]: error}, className)}
+      <TextButton
+        color="primary"
+        className={clsx(classes.statusButtonContainer, className)}
         onClick={onClick}
         data-test={dataTest}
+        style={style}
         startIcon={<StatusCircle variant={variant} size={size} />}
         >
         {children}
-      </Button>
+      </TextButton>
     );
   }
 
