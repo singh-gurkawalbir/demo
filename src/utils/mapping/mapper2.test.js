@@ -470,6 +470,8 @@ describe('v2 mapping utils', () => {
                 parentExtract: '$.siblings[*]',
                 parentKey: 'Ej0Ek_nw6BOxreTjsJHNH',
                 title: '',
+                hidden: true,
+                className: 'hideRow',
               },
             ],
           },
@@ -993,6 +995,64 @@ describe('v2 mapping utils', () => {
               },
             ],
           },
+          {
+            generate: 'test12',
+            dataType: 'objectarray',
+            buildArrayHelper: [
+              {
+                extract: '$.abc',
+                mappings: [
+                  {
+                    extract: '1',
+                    generate: '1',
+                    dataType: 'string',
+                    default: '',
+                  },
+                ],
+              },
+              {
+                extract: '$.test',
+                mappings: [
+                  {
+                    generate: '2',
+                    dataType: 'objectarray',
+                    buildArrayHelper: [
+                      {
+                        extract: '$',
+                        mappings: [
+                          {
+                            extract: 'a',
+                            generate: 'a',
+                            dataType: 'string',
+                          },
+                        ],
+                      },
+                      {
+                        extract: '$',
+                        mappings: [
+                          {
+                            extract: 'b',
+                            generate: 'b',
+                            dataType: 'string',
+                          },
+                        ],
+                      },
+                      {
+                        extract: '$',
+                        mappings: [
+                          {
+                            extract: 'c',
+                            generate: 'c',
+                            dataType: 'string',
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
         ],
       };
 
@@ -1441,6 +1501,177 @@ describe('v2 mapping utils', () => {
           extract: 'c',
         }],
         combinedExtract: '$.children[*],$.mother,$.father',
+      },
+      {
+        key: 'new_key',
+        title: '',
+        disabled: false,
+        generate: 'test12',
+        dataType: 'objectarray',
+        combinedExtract: '$.abc,$.test',
+        buildArrayHelper: [
+          {
+            extract: '$.abc',
+            mappings: [
+              {
+                extract: '1',
+                generate: '1',
+                dataType: 'string',
+                default: '',
+              },
+            ],
+          },
+          {
+            extract: '$.test',
+            mappings: [
+              {
+                generate: '2',
+                dataType: 'objectarray',
+                buildArrayHelper: [
+                  {
+                    extract: '$',
+                    mappings: [
+                      {
+                        extract: 'a',
+                        generate: 'a',
+                        dataType: 'string',
+                      },
+                    ],
+                  },
+                  {
+                    extract: '$',
+                    mappings: [
+                      {
+                        extract: 'b',
+                        generate: 'b',
+                        dataType: 'string',
+                      },
+                    ],
+                  },
+                  {
+                    extract: '$',
+                    mappings: [
+                      {
+                        extract: 'c',
+                        generate: 'c',
+                        dataType: 'string',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        children: [
+          {
+            isTabNode: true,
+            key: 'new_key',
+            parentKey: 'new_key',
+            title: '',
+          },
+          {
+            dataType: 'string',
+            default: '',
+            extract: '1',
+            generate: '1',
+            key: 'new_key',
+            parentExtract: '$.abc',
+            parentKey: 'new_key',
+            title: '',
+            disabled: false,
+          },
+          {
+            className: 'hideRow',
+            combinedExtract: '$,$,$',
+            dataType: 'objectarray',
+            disabled: false,
+            generate: '2',
+            hidden: true,
+            key: 'new_key',
+            parentExtract: '$.test',
+            parentKey: 'new_key',
+            title: '',
+            buildArrayHelper: [
+              {
+                extract: '$',
+                mappings: [
+                  {
+                    extract: 'a',
+                    generate: 'a',
+                    dataType: 'string',
+                  },
+                ],
+              },
+              {
+                extract: '$',
+                mappings: [
+                  {
+                    extract: 'b',
+                    generate: 'b',
+                    dataType: 'string',
+                  },
+                ],
+              },
+              {
+                extract: '$',
+                mappings: [
+                  {
+                    extract: 'c',
+                    generate: 'c',
+                    dataType: 'string',
+                  },
+                ],
+              },
+            ],
+            children: [
+              {
+                className: 'hideRow',
+                hidden: true,
+                isTabNode: true,
+                key: 'new_key',
+                parentKey: 'new_key',
+                title: '',
+              },
+              {
+                className: 'hideRow',
+                dataType: 'string',
+                disabled: false,
+                extract: 'a',
+                generate: 'a',
+                hidden: true,
+                key: 'new_key',
+                parentExtract: '$|0',
+                parentKey: 'new_key',
+                title: '',
+              },
+              {
+                className: 'hideRow',
+                dataType: 'string',
+                disabled: false,
+                extract: 'b',
+                generate: 'b',
+                hidden: true,
+                key: 'new_key',
+                parentExtract: '$|1',
+                parentKey: 'new_key',
+                title: '',
+              },
+              {
+                className: 'hideRow',
+                dataType: 'string',
+                disabled: false,
+                extract: 'c',
+                generate: 'c',
+                hidden: true,
+                key: 'new_key',
+                parentExtract: '$|2',
+                parentKey: 'new_key',
+                title: '',
+              },
+            ],
+          },
+        ],
       },
       ];
 

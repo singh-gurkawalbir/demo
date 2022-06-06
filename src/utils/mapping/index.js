@@ -533,6 +533,26 @@ export const getInputOutputFormat = (isGroupedSampleData, isGroupedOutput) => {
   return RECORD_AS_INPUT_OPTIONS[0].label;
 };
 
+export const getUniqueExtractId = (extract, index) => {
+  if (!extract) { return ''; }
+  // currently only supporting root level duplicate extracts
+  if (extract === '$' || extract === '$[*]') {
+    return `${extract}|${index}`;
+  }
+
+  return extract;
+};
+
+export const getExtractFromUniqueId = extractId => {
+  const pipeIndex = extractId?.indexOf('|');
+
+  if (pipeIndex > 0) {
+    return extractId.substring(0, pipeIndex);
+  }
+
+  return extractId;
+};
+
 // for object array multiple extracts view,
 // mark non active tabs children as hidden
 export const hideOtherTabRows = (node, newTabExtract, hidden) => {
@@ -561,9 +581,14 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
       return hideOtherTabRows(clonedChild, newTabExtract, false);
     }
 
-    if (clonedChild.isTabNode) return clonedChild;
+    if (clonedChild.isTabNode) {
+      delete clonedChild.hidden;
+      delete clonedChild.className;
 
-    // else if hidden is undefined, then check on the tab index
+      return clonedChild;
+    }
+
+    // else if hidden is undefined, then check on the parent extract
     if (clonedChild.parentExtract !== newTabExtract) {
       clonedChild.hidden = true;
       clonedChild.className = 'hideRow';
@@ -574,32 +599,19 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
     delete clonedChild.hidden;
     delete clonedChild.className;
 
+    // for child object-array nodes, only make first tab visible
+    if (clonedChild.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+      const childParentExtract = clonedChild.combinedExtract.split(',') || [];
+
+      // update children and un-hide only first tab
+      return hideOtherTabRows(clonedChild, getUniqueExtractId(childParentExtract[0], 0));
+    }
+
     // update children as well
     return hideOtherTabRows(clonedChild, newTabExtract, false);
   });
 
   return clonedNode;
-};
-
-export const getUniqueExtractId = (extract, index) => {
-  if (!extract) { return ''; }
-  // currently only supporting root level duplicate extracts
-  // todo for future
-  if (extract === '$' || extract === '$[*]') {
-    return `${extract}|${index}`;
-  }
-
-  return extract;
-};
-
-export const getExtractFromUniqueId = extractId => {
-  const pipeIndex = extractId?.indexOf('|');
-
-  if (pipeIndex > 0) {
-    return extractId.substring(0, pipeIndex);
-  }
-
-  return extractId;
 };
 
 // this util is for object array data type nodes when multiple extracts are given,
@@ -766,6 +778,8 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
                 parentKey: currNodeKey,
                 title: '',
                 isTabNode: true,
+                hidden,
+                className: hidden && 'hideRow',
               });
             }
           }
