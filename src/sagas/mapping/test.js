@@ -392,6 +392,7 @@ describe('mappingInit saga', () => {
         isGroupedSampleData: true,
         version: 1,
         v2TreeData: undefined,
+        extractsTree: undefined,
         isMonitorLevelAccess: false,
       }))
       .run();
@@ -431,6 +432,7 @@ describe('mappingInit saga', () => {
         flowId,
         version: 1,
         v2TreeData: undefined,
+        extractsTree: undefined,
         isMonitorLevelAccess: false,
         importId,
         subRecordMappingId: undefined,
@@ -475,6 +477,7 @@ describe('mappingInit saga', () => {
         isGroupedSampleData: true,
         version: 1,
         v2TreeData: undefined,
+        extractsTree: undefined,
         isMonitorLevelAccess: false,
       }))
       .run();
@@ -544,6 +547,14 @@ describe('mappingInit saga', () => {
           disabled: false,
           dataType: MAPPING_DATA_TYPES.STRING,
         }],
+        extractsTree: [
+          {key: 'unique-key',
+            title: '',
+            dataType: '[object]',
+            propName: '$',
+            children: [
+              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: 'string'},
+            ]}],
         isMonitorLevelAccess: false,
       }))
       .run();
@@ -607,6 +618,7 @@ describe('mappingInit saga', () => {
         isGroupedSampleData: true,
         version: 1,
         v2TreeData: undefined,
+        extractsTree: undefined,
         isMonitorLevelAccess: false,
       }))
       .run();
@@ -650,6 +662,7 @@ describe('mappingInit saga', () => {
         isGroupedSampleData: true,
         version: 1,
         v2TreeData: undefined,
+        extractsTree: undefined,
         isMonitorLevelAccess: false,
       }))
       .run();
@@ -700,6 +713,14 @@ describe('mappingInit saga', () => {
           generate: 'id',
           dataType: 'string',
         }],
+        extractsTree: [
+          {key: 'unique-key',
+            title: '',
+            dataType: '[object]',
+            propName: '$',
+            children: [
+              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: 'string'},
+            ]}],
         isMonitorLevelAccess: false,
       }))
       .run();
