@@ -110,7 +110,7 @@ export default function Mapper2Generates(props) {
             onFocus={handleFocus}
             disabled={disabled}
             multiline={isFocused}
-            placeholder={!disabled && 'Destination record field'} />
+            placeholder={disabled ? '' : 'Destination record field'} />
         </Tooltip >
 
         <DestinationDataType

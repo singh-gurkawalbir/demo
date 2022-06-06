@@ -4426,7 +4426,7 @@ selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceTyp
   // for rest and http
   const appType = adaptorTypeMap[resourceObj?.adaptorType];
 
-  return ['http', 'rest'].includes(appType);
+  return ['http', 'rest', 'graph_ql'].includes(appType);
 };
 
 // #endregion SAMPLE DATA selectors
@@ -6542,7 +6542,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
 
   // all afe fields for mapper2 should only support v2 AFE
   if (mappingVersion === 2) {
-    return {shouldGetContextFromBE: true};
+    return {shouldGetContextFromBE: true, isMapperField: true};
   }
 
   // for lookup fields, BE doesn't support v1/v2 yet
