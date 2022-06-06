@@ -19,6 +19,8 @@ export function* getScriptDependencies({scriptId = '',
       resourceType: 'scripts',
       id: scriptId,
     });
+
+    if (!resourceReferences) resourceReferences = {};
   } catch (e) {
     return;
   }
