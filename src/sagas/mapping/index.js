@@ -7,7 +7,7 @@ import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
 import {selectors} from '../../reducers';
 import { commitStagedChanges } from '../resources';
-import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, hasV2MappingsInTreeData} from '../../utils/mapping';
+import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, hasV2MappingsInTreeData, buildExtractsTree} from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
 import { getResourceSubType } from '../../utils/resource';
@@ -261,6 +261,7 @@ export function* mappingInit({
 
   let version = 1;
   let mappingsTreeData;
+  let extractsTree;
 
   // IAs, non http/rest don't support mapper2
   if (!importResource._connectorId &&
@@ -272,6 +273,10 @@ export function* mappingInit({
       options,
       disabled: isMonitorLevelAccess,
     });
+
+    // generate tree structure based on input sample data
+    // for source field
+    extractsTree = buildExtractsTree(flowSampleData);
 
     if (hasV2MappingsInTreeData(mappingsTreeData) || !formattedMappings?.length) {
       version = 2;
@@ -286,6 +291,7 @@ export function* mappingInit({
       })),
       lookups,
       v2TreeData: mappingsTreeData,
+      extractsTree,
       version,
       flowId,
       importId,

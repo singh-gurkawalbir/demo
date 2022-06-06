@@ -814,7 +814,6 @@ export const buildTreeFromV2Mappings = ({
   // creating deep copy of mapping object to avoid alteration to resource mapping object
   const v2MappingsCopy = deepClone(v2Mappings);
 
-  // TODO: handle isRequiredMapping for assistants
   const treeData = [];
   const emptyRowKey = generateUniqueKey();
 
@@ -839,6 +838,9 @@ export const buildTreeFromV2Mappings = ({
 };
 
 export const hasV2MappingsInTreeData = treeData => {
+  // the mappings can be empty in record as well as
+  // rows output format where top parent row is disabled
+  // so adding conditions for both types
   if (!treeData || !treeData.length ||
   (treeData.length === 1 && treeData[0].isEmptyRow) ||
   (treeData.length === 1 && treeData[0].generateDisabled && !treeData[0].combinedExtract && treeData[0].children?.length === 1 && treeData[0].children[0].isEmptyRow)) {
@@ -1061,13 +1063,13 @@ export const findNodeInTree = (data, prop, value) => {
 };
 
 export const TYPEOF_TO_DATA_TYPE = {
-  '[object String]': 'string',
-  '[object Number]': 'number',
-  '[object Boolean]': 'boolean',
-  '[object Null]': 'string',
+  '[object String]': MAPPING_DATA_TYPES.STRING,
+  '[object Number]': MAPPING_DATA_TYPES.NUMBER,
+  '[object Boolean]': MAPPING_DATA_TYPES.BOOLEAN,
+  '[object Null]': MAPPING_DATA_TYPES.STRING,
 };
 
-function recursivelyBuildExtractsTree({dataObj, treeData, parentKey, parentJsonPath = '', selectedValues = [], selectedKeys}) {
+function recursivelyBuildExtractsTree({dataObj, treeData, parentKey, parentJsonPath = ''}) {
   // iterate over all keys and construct the tree
   Object.keys(dataObj).forEach(propName => {
     const v = dataObj[propName];
@@ -1075,12 +1077,6 @@ function recursivelyBuildExtractsTree({dataObj, treeData, parentKey, parentJsonP
     const key = generateUniqueKey();
     const jsonPath = `${parentJsonPath ? `${parentJsonPath}.` : ''}${propName}`;
 
-    // if the value is already selected, then mark the node selected to highlight it
-    const selected = selectedValues.includes(jsonPath);
-
-    if (selected) {
-      selectedKeys.push(key);
-    }
     const nodeToPush = {
       key,
       parentKey,
@@ -1104,7 +1100,7 @@ function recursivelyBuildExtractsTree({dataObj, treeData, parentKey, parentJsonP
       nodeToPush.dataType = MAPPING_DATA_TYPES.OBJECT;
       nodeToPush.children = children;
 
-      recursivelyBuildExtractsTree({dataObj: v, treeData: children, parentKey: key, parentJsonPath: jsonPath, selectedValues, selectedKeys});
+      recursivelyBuildExtractsTree({dataObj: v, treeData: children, parentKey: key, parentJsonPath: jsonPath});
 
       return;
     }
@@ -1125,12 +1121,7 @@ function recursivelyBuildExtractsTree({dataObj, treeData, parentKey, parentJsonP
         nodeToPush.dataType = '[object]';
         nodeToPush.children = children;
 
-        // suffix with [*] for object array fields
-        const selected = selectedValues.includes(`${jsonPath}[*]`);
-
-        if (selected) selectedKeys.push(key);
-
-        recursivelyBuildExtractsTree({dataObj: getUnionObject(v), treeData: children, parentKey: key, parentJsonPath: `${jsonPath}[*]`, selectedValues, selectedKeys});
+        recursivelyBuildExtractsTree({dataObj: getUnionObject(v), treeData: children, parentKey: key, parentJsonPath: `${jsonPath}[*]`});
 
         return;
       }
@@ -1145,7 +1136,7 @@ function recursivelyBuildExtractsTree({dataObj, treeData, parentKey, parentJsonP
 
 // this util generates the tree structure for the sample data fields
 // and also return the selected keys based on extract values
-export const buildExtractsTree = (sampleData, selectedValues) => {
+export const buildExtractsTree = sampleData => {
   const treeData = [];
   const children = [];
 
@@ -1163,58 +1154,35 @@ export const buildExtractsTree = (sampleData, selectedValues) => {
     propName: '$',
     children,
   });
-  const selectedKeys = [];
 
   recursivelyBuildExtractsTree({
     dataObj,
     treeData: children,
     parentKey: key,
-    selectedValues,
-    selectedKeys,
   });
 
-  return {treeData, selectedKeys};
+  return treeData;
 };
 
-// this util takes care of filtering the extracts tree when some input
-// is typed into the search
-export const filterExtractsNode = (node = {}, propValue, inputValue) => {
-  // if node is already selected, do not mark it as filtered
-  if (node.selected) return false;
+export const getSelectedKeys = (extractsTreeNode, selectedValues = [], selectedKeys = []) => {
+  if (isEmpty(extractsTreeNode) || !extractsTreeNode.children?.length) return selectedKeys;
 
-  // if no change has been made in input, then no need to filter
-  // this should work because propValue should get updated once you update the extract field
-  if (propValue === inputValue) return false;
+  extractsTreeNode.children.forEach(node => {
+    const {key, jsonPath} = node;
 
-  const searchKey = node.jsonPath || '';
-  const splitInput = inputValue.split(',');
+    // if jsonPath matches the selected value, then add its key
+    const selected = selectedValues.includes(jsonPath);
 
-  const matchedPaths = splitInput.filter(i => {
-    if (!i) return false;
-    // replace '$.' and '$[*].' as we are not storing these prefixes in each node jsonPath as well
-    // for better searching
-    const inputPath = i.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
-
-    // if inp ends with [*], then look for exact match
-    // so that we only highlight the parent row for such cases
-    if (inputPath.endsWith('[*]')) {
-      if (searchKey.toUpperCase() === inputPath.toUpperCase()) return true;
-
-      return false;
+    if (selected) {
+      selectedKeys.push(key);
     }
 
-    if (inputPath && searchKey && searchKey.toUpperCase().indexOf(inputPath.toUpperCase()) > -1) {
-      return true;
+    if (node.children) {
+      getSelectedKeys(node, selectedValues, selectedKeys);
     }
-
-    return false;
   });
 
-  // for multiple inputs, if no input matches with the give node
-  // then return false, else true
-  if (isEmpty(matchedPaths)) return false;
-
-  return true;
+  return selectedKeys;
 };
 
 // recursively look for all parentExtracts for a given node

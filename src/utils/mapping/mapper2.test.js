@@ -6,8 +6,8 @@ import util, {
   findAllParentExtractsForNode,
   findNearestParentExtractForNode,
   getFinalSelectedExtracts,
-  filterExtractsNode,
   buildExtractsTree,
+  getSelectedKeys,
   findNodeInTree,
   allowDrop,
   buildV2MappingsFromTree,
@@ -2638,7 +2638,7 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(buildExtractsTree(sampleData)).toEqual({treeData, selectedKeys: []});
+      expect(buildExtractsTree(sampleData)).toEqual(treeData);
     });
     test('should correctly return the tree structure based on passed sample data', () => {
       generateUniqueKey.mockReturnValue('new_key');
@@ -2727,36 +2727,66 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      const selectedValues = ['motherFName'];
-
-      expect(buildExtractsTree(sampleData, selectedValues)).toEqual({treeData, selectedKeys: ['new_key']});
+      expect(buildExtractsTree(sampleData)).toEqual(treeData);
     });
   });
-  describe('filterExtractsNode util', () => {
+  describe('getSelectedKeys util', () => {
     test('should not throw exception for invalid args', () => {
-      expect(filterExtractsNode()).toEqual(false);
+      expect(getSelectedKeys()).toEqual([]);
+      expect(getSelectedKeys(null, null, null)).toEqual(null);
     });
-    test('should return false if node is already selected', () => {
-      expect(filterExtractsNode({selected: true, jsonPath: 'lname'}, '', 'lname')).toEqual(false);
-    });
-    test('should return false if extract value and new input value is ame', () => {
-      expect(filterExtractsNode({jsonPath: 'lname'}, 'lname', 'lname')).toEqual(false);
-    });
-    test('should return false if no match is found', () => {
-      expect(filterExtractsNode({jsonPath: 'lname'}, '', '$.firstname')).toEqual(false);
-      expect(filterExtractsNode({jsonPath: 'object.name'}, '', 'firstname')).toEqual(false);
-      expect(filterExtractsNode({jsonPath: 'sports'}, '', 'name,$.lname,$[*].age')).toEqual(false);
-    });
-    test('should return true if any match is found in multiple input values', () => {
-      expect(filterExtractsNode({jsonPath: 'age'}, '', 'name,$.lname,$[*].age')).toEqual(true);
-      expect(filterExtractsNode({jsonPath: 'firstname'}, '', 'name,$.lname,$[*].age')).toEqual(true);
-      expect(filterExtractsNode({jsonPath: 'object.LNAME'}, '', 'name,$.lname,$[*].age')).toEqual(true);
-    });
-    test('should return false for child node if input value ends with [*]', () => {
-      expect(filterExtractsNode({jsonPath: 'siblings[*].lname'}, '', '$.siblings[*]')).toEqual(false);
-    });
-    test('should return true for parent node if input value ends with [*]', () => {
-      expect(filterExtractsNode({jsonPath: 'siblings[*]'}, '', '$.siblings[*]')).toEqual(true);
+    test('should correctly return the selected keys based on selected values', () => {
+      const extractsTreeNode = {
+        dataType: '[object]',
+        key: 'key1',
+        propName: '$',
+        children: [
+          {
+            dataType: 'string',
+            jsonPath: 'fName',
+            key: 'c1',
+            parentKey: 'key1',
+            propName: 'fName',
+          },
+          {
+            dataType: 'string',
+            jsonPath: 'lName',
+            key: 'c2',
+            parentKey: 'key1',
+            propName: 'lName',
+          },
+          {
+            dataType: 'string',
+            jsonPath: 'motherFName',
+            key: 'c3',
+            parentKey: 'key1',
+            propName: 'motherFName',
+          },
+          {
+            dataType: 'string',
+            jsonPath: 'motherLName',
+            key: 'c4',
+            parentKey: 'key1',
+            propName: 'motherLName',
+          },
+          {
+            dataType: 'string',
+            jsonPath: 'childFName',
+            key: 'c5',
+            parentKey: 'key1',
+            propName: 'childFName',
+            children: [{
+              dataType: 'string',
+              jsonPath: 'finalChild',
+              key: 'c5-1',
+              parentKey: 'c5',
+              propName: 'finalChild',
+            }],
+          },
+        ],
+      };
+
+      expect(getSelectedKeys(extractsTreeNode, ['motherFName', 'finalChild'])).toEqual(['c3', 'c5-1']);
     });
   });
   describe('findAllParentExtractsForNode util', () => {
