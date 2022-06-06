@@ -5,7 +5,6 @@ import { Typography } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
-import CeligoSwitch from '../../../components/CeligoSwitch';
 import DynaForm from '../../../components/DynaForm';
 import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
@@ -13,7 +12,6 @@ import { generateNewId, isNewId, getDomainUrl } from '../../../utils/resource';
 import { hashCode } from '../../../utils/string';
 import PanelHeader from '../../../components/PanelHeader';
 import Help from '../../../components/Help';
-import Spinner from '../../../components/Spinner';
 import useSaveStatusIndicator from '../../../hooks/useSaveStatusIndicator';
 
 const useStyles = makeStyles(theme => ({
@@ -109,10 +107,24 @@ export default function Security() {
       setIsSSOEnabled(!oidcClient?.disabled);
     }
   }, [oidcClient]);
-
+  const primaryAccountOptions = useMemo(() => ([{ items: ['user1', 'user2']}]), []);
   const fieldMeta = useMemo(
     () => ({
       fieldMap: {
+        primaryAccount: {
+          id: 'primaryAccount',
+          type: 'select',
+          label: 'Primary account',
+          required: true,
+          options: primaryAccountOptions,
+        },
+        enableSSO: {
+          id: 'enableSSO',
+          type: 'enablesso',
+          handleEnableSSO,
+          isSSOEnabled,
+          resourceId,
+        },
         issuerURL: {
           id: 'issuerURL',
           name: 'issuerURL',
@@ -123,6 +135,7 @@ export default function Security() {
           helpKey: 'sso.issuerURL',
           noApi: true,
           isLoggable: false,
+          visible: isSSOEnabled,
         },
         clientId: {
           id: 'clientId',
@@ -134,6 +147,7 @@ export default function Security() {
           helpKey: 'sso.clientId',
           isLoggable: false,
           noApi: true,
+          visible: isSSOEnabled,
         },
         clientSecret: {
           id: 'clientSecret',
@@ -145,6 +159,7 @@ export default function Security() {
           helpKey: 'sso.clientSecret',
           isLoggable: false,
           noApi: true,
+          visible: isSSOEnabled,
         },
         orgId: {
           id: 'orgId',
@@ -156,10 +171,36 @@ export default function Security() {
           helpKey: 'sso.orgId',
           isLoggable: false,
           noApi: true,
+          visible: isSSOEnabled,
         },
       },
+      layout: {
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: false,
+            label: 'User settings',
+            fields: ['primaryAccount'],
+          },
+          {
+            collapsed: false,
+            label: 'Account settings',
+            containers: [
+              {fields: ['enableSSO'] },
+              {
+                type: 'indent',
+                containers: [
+                  {
+                    fields: ['issuerURL', 'clientId', 'clientSecret', 'orgId'],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     }),
-    [oidcClient]
+    [handleEnableSSO, isSSOEnabled, oidcClient?.oidc?.clientId, oidcClient?.oidc?.issuerURL, oidcClient?.orgId, primaryAccountOptions, resourceId]
   );
 
   const formKey = useFormInitWithPermissions({ fieldMeta, remount: key });
@@ -227,21 +268,10 @@ export default function Security() {
       <LoadResources required resources="ssoclients">
         <div className={classes.root}>
           <PanelHeader title="Single sign-on (SSO)" infoText={infoTextSSO} />
-          <div className={classes.ssoSwitch}>
-            <Typography variant="body2" className={classes.content}> Enable OIDC-based SSO </Typography>
-            <Help title="Enable OIDC-based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
-            <CeligoSwitch
-              onChange={handleEnableSSO}
-              checked={isSSOEnabled} />
-            {isEnableSSOSwitchInProgress && <Spinner size="small" className={classes.spinner} />}
-          </div>
-          {
-          isSSOEnabled && (
-            <>
-              <div className={classes.ssoForm}>
-                <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
-                {
-                !!oidcClient?.orgId && (
+          <div className={classes.ssoForm}>
+            <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
+            {
+                !!oidcClient?.orgId && isSSOEnabled && (
                 <div>
                   <div className={classes.flexContainer}>
                     <Typography className={classes.urlDetails}> Application login URL: { applicationLoginURL }</Typography>
@@ -253,19 +283,16 @@ export default function Security() {
                   </div>
                 </div>
                 )
-              }
-              </div>
-              <div className={classes.footer}>
-                <DynaSubmit
-                  formKey={formKey}
-                  disabled={disableSave}
-                  onClick={submitHandler()}>
-                  {defaultLabels.saveLabel}
-                </DynaSubmit>
-              </div>
-            </>
-          )
-        }
+            }
+          </div>
+          <div className={classes.footer}>
+            <DynaSubmit
+              formKey={formKey}
+              disabled={disableSave}
+              onClick={submitHandler()}>
+              {defaultLabels.saveLabel}
+            </DynaSubmit>
+          </div>
         </div>
       </LoadResources>
     </>
