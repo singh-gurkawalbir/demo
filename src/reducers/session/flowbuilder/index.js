@@ -5,7 +5,7 @@ import actionTypes from '../../../actions/types';
 import { generateReactFlowGraph } from '../../../utils/flows/flowbuilder';
 
 export default function reducer(state = {}, action) {
-  const { type, flow, flowId, stepId, targetId, targetType, status } = action;
+  const { type, flow, flowId, stepId, targetId, targetType, status, isViewMode } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -13,9 +13,10 @@ export default function reducer(state = {}, action) {
         if (!draft[flowId]) {
           draft[flowId] = {};
         }
-        draft[flowId].elements = generateReactFlowGraph(flow);
+        draft[flowId].elements = generateReactFlowGraph(flow, isViewMode);
         draft[flowId].elementsMap = keyBy(draft[flowId].elements || [], 'id');
         draft[flowId].flow = flow;
+        draft[flowId].isViewMode = isViewMode;
 
         break;
       case actionTypes.FLOW.DRAG_START: {

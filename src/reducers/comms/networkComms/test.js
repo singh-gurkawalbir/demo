@@ -393,7 +393,7 @@ describe('comms selectors', () => {
       expect(selectors.commsSummary({}, 'get')).toEqual(defaultValues);
       expect(selectors.commsSummary(undefined, 'get')).toEqual(defaultValues);
     });
-    test('should return correct correct comms summary', () => {
+    test('should return correct comms summary', () => {
       const state = reducer(
         {
           1: { status: COMM_STATES.ERROR, hidden: false, failedAtTimestamp: 123 },

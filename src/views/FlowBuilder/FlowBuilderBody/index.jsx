@@ -106,6 +106,7 @@ export function Canvas({ flowId, fullscreen }) {
   const elements = useSelector(state => selectors.fbGraphElements(state, flowId));
   const dragStepId = useSelector(state => selectors.fbDragStepId(state, flowId));
   const elementsMap = useSelector(state => selectors.fbGraphElementsMap(state, flowId));
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, mergedFlow._integrationId, flowId));
 
   // console.log(flowId, mergedFlow, fullscreen);
 
@@ -114,8 +115,8 @@ export function Canvas({ flowId, fullscreen }) {
   [elements]);
 
   useEffect(() => {
-    dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow));
-  }, [mergedFlow, dispatch, flowId]);
+    dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode));
+  }, [mergedFlow, dispatch, flowId, isViewMode]);
 
   const handleNodeDragStart = (evt, source) => {
     dispatch(actions.flow.dragStart(flowId, source.id));

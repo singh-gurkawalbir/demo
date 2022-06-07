@@ -201,9 +201,9 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}, isR
   return [...edges, ...nodes];
 };
 
-const generateNodesAndEdgesFromNonBranchedFlow = flow => {
+const generateNodesAndEdgesFromNonBranchedFlow = (flow, isViewMode) => {
   const { _exportId, pageGenerators = [], pageProcessors = [], _importId, _connectorId } = flow;
-  const isReadOnly = !!_connectorId;
+  const isReadOnly = !!_connectorId || isViewMode;
   const firstPPId = _importId || pageProcessors[0]?.id;
   const lastPPId = _importId || pageProcessors[pageProcessors.length - 1]?.id;
   const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(_exportId ? [{_exportId, id: _exportId}] : pageGenerators, firstPPId, isReadOnly);
@@ -271,9 +271,9 @@ const populateMergeData = (flow, elements) => {
   });
 };
 
-export const generateNodesAndEdgesFromBranchedFlow = flow => {
+export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
   const {pageGenerators = [], routers = [], _connectorId} = flow;
-  const isReadOnlyMode = !_connectorId;
+  const isReadOnlyMode = !!_connectorId || isViewMode;
   let firstPPId = routers[0].id;
 
   if (isVirtualRouter(routers[0])) {
@@ -349,7 +349,7 @@ export const generateNodesAndEdgesFromBranchedFlow = flow => {
   return elements;
 };
 
-export const generateReactFlowGraph = flow => {
+export const generateReactFlowGraph = (flow, isViewMode) => {
   if (!flow) {
     return;
   }
@@ -357,10 +357,10 @@ export const generateReactFlowGraph = flow => {
   const {routers} = flow;
 
   if (!routers || routers.length === 0) {
-    return generateNodesAndEdgesFromNonBranchedFlow(flow);
+    return generateNodesAndEdgesFromNonBranchedFlow(flow, isViewMode);
   }
 
-  return generateNodesAndEdgesFromBranchedFlow(flow);
+  return generateNodesAndEdgesFromBranchedFlow(flow, isViewMode);
 };
 
 const mergeBetweenPPAndRouter = ({edgeSource, patchSet, sourceElement, edgeTarget}) => {

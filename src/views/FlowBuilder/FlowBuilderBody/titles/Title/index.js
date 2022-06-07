@@ -1,8 +1,10 @@
 import clsx from 'clsx';
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 import TitleTypography from '../../../TitleTypography';
 import AddButton from '../AddButton';
+import { selectors } from '../../../../../reducers';
 import { useFlowContext } from '../../Context';
 
 const useStyles = makeStyles(theme => ({
@@ -19,8 +21,9 @@ const useStyles = makeStyles(theme => ({
 
 export default function Title({onClick, children, className}) {
   const classes = useStyles();
-  const { flow } = useFlowContext();
-  const isReadOnly = !!flow._connectorId;
+  const { flow, flowId } = useFlowContext();
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow._integrationId, flowId));
+  const isReadOnly = !!flow._connectorId || isViewMode;
 
   return (
     <TitleTypography className={clsx(classes.titlePosition, className)}>
