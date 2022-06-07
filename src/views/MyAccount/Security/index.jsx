@@ -9,7 +9,7 @@ import DynaForm from '../../../components/DynaForm';
 import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import { generateNewId, isNewId, getDomainUrl } from '../../../utils/resource';
-import { hashCode } from '../../../utils/string';
+// import { hashCode } from '../../../utils/string';
 import PanelHeader from '../../../components/PanelHeader';
 import Help from '../../../components/Help';
 import useSaveStatusIndicator from '../../../hooks/useSaveStatusIndicator';
@@ -70,8 +70,12 @@ const useStyles = makeStyles(theme => ({
 export default function Security() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const preferences = useSelector(state => selectors.userProfilePreferencesProps(state));
   const oidcClient = useSelector(state => selectors.oidcSSOClient(state));
-  const key = hashCode(oidcClient);
+  const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
+  const isAccountOwner = useSelector(state => selectors.isAccountOwner(state));
+  const ssoPrimaryAccounts = useSelector(state => selectors.ssoPrimaryAccounts(state));
+  const [remountCount, setRemountCount] = useState(0);
   const resourceId = oidcClient?._id || generateNewId();
   const isEnableSSOSwitchInProgress = useSelector(state => selectors.commStatusPerPath(state, `/ssoclients/${resourceId}`, 'PATCH') === 'loading');
   const [isSSOEnabled, setIsSSOEnabled] = useState(!!oidcClient?.disabled);
@@ -107,105 +111,157 @@ export default function Security() {
       setIsSSOEnabled(!oidcClient?.disabled);
     }
   }, [oidcClient]);
-  const primaryAccountOptions = useMemo(() => ([{ items: ['user1', 'user2']}]), []);
+
+  const primaryAccountOptions = useMemo(() => (
+    [{
+      items: ssoPrimaryAccounts.map(
+        acc => ({label: acc.ownerUser?.name, value: acc.ownerUser?._ssoClientId})
+      ),
+    }]
+  ), [ssoPrimaryAccounts]);
+
   const fieldMeta = useMemo(
-    () => ({
-      fieldMap: {
-        primaryAccount: {
-          id: 'primaryAccount',
-          type: 'select',
-          label: 'Primary account',
-          required: true,
-          options: primaryAccountOptions,
-        },
-        enableSSO: {
-          id: 'enableSSO',
-          type: 'enablesso',
-          handleEnableSSO,
-          isSSOEnabled,
-          resourceId,
-        },
-        issuerURL: {
-          id: 'issuerURL',
-          name: 'issuerURL',
-          type: 'text',
-          label: 'Issuer URL',
-          required: true,
-          defaultValue: oidcClient?.oidc?.issuerURL,
-          helpKey: 'sso.issuerURL',
-          noApi: true,
-          isLoggable: false,
-          visible: isSSOEnabled,
-        },
-        clientId: {
-          id: 'clientId',
-          name: 'clientId',
-          type: 'text',
-          label: 'Client ID',
-          required: true,
-          defaultValue: oidcClient?.oidc?.clientId,
-          helpKey: 'sso.clientId',
-          isLoggable: false,
-          noApi: true,
-          visible: isSSOEnabled,
-        },
-        clientSecret: {
-          id: 'clientSecret',
-          name: 'clientSecret',
-          type: 'text',
-          inputType: 'password',
-          label: 'Client secret',
-          required: true,
-          helpKey: 'sso.clientSecret',
-          isLoggable: false,
-          noApi: true,
-          visible: isSSOEnabled,
-        },
-        orgId: {
-          id: 'orgId',
-          name: 'orgId',
-          type: 'ssoorgid',
-          label: 'Organization ID',
-          required: true,
-          defaultValue: oidcClient?.orgId,
-          helpKey: 'sso.orgId',
-          isLoggable: false,
-          noApi: true,
-          visible: isSSOEnabled,
-        },
-      },
-      layout: {
-        type: 'collapse',
-        containers: [
-          {
-            collapsed: false,
-            label: 'User settings',
-            fields: ['primaryAccount'],
+    () => {
+      const _ssoAccountId = {
+        id: '_ssoAccountId',
+        type: 'select',
+        name: '_ssoAccountId',
+        label: 'Primary account',
+        required: true,
+        options: primaryAccountOptions,
+        defaultValue: preferences && preferences._ssoAccountId,
+        visible: !isAccountOwner,
+      };
+
+      if (!isAccountOwnerOrAdmin) {
+        return {
+          fieldMap: {
+            _ssoAccountId,
           },
-          {
-            collapsed: false,
-            label: 'Account settings',
-            containers: [
-              {fields: ['enableSSO'] },
-              {
-                type: 'indent',
-                containers: [
-                  {
-                    fields: ['issuerURL', 'clientId', 'clientSecret', 'orgId'],
-                  },
-                ],
-              },
-            ],
+        };
+      }
+
+      return ({
+        fieldMap: {
+          _ssoAccountId,
+          enableSSO: {
+            id: 'enableSSO',
+            type: 'enablesso',
+            handleEnableSSO,
+            isSSOEnabled,
+            resourceId,
           },
-        ],
-      },
-    }),
-    [handleEnableSSO, isSSOEnabled, oidcClient?.oidc?.clientId, oidcClient?.oidc?.issuerURL, oidcClient?.orgId, primaryAccountOptions, resourceId]
+          issuerURL: {
+            id: 'issuerURL',
+            name: 'issuerURL',
+            type: 'text',
+            label: 'Issuer URL',
+            required: true,
+            defaultValue: oidcClient?.oidc?.issuerURL,
+            helpKey: 'sso.issuerURL',
+            noApi: true,
+            isLoggable: false,
+            visible: isSSOEnabled,
+          },
+          clientId: {
+            id: 'clientId',
+            name: 'clientId',
+            type: 'text',
+            label: 'Client ID',
+            required: true,
+            defaultValue: oidcClient?.oidc?.clientId,
+            helpKey: 'sso.clientId',
+            isLoggable: false,
+            noApi: true,
+            visible: isSSOEnabled,
+          },
+          clientSecret: {
+            id: 'clientSecret',
+            name: 'clientSecret',
+            type: 'text',
+            inputType: 'password',
+            label: 'Client secret',
+            required: true,
+            helpKey: 'sso.clientSecret',
+            isLoggable: false,
+            noApi: true,
+            visible: isSSOEnabled,
+          },
+          orgId: {
+            id: 'orgId',
+            name: 'orgId',
+            type: 'ssoorgid',
+            label: 'Organization ID',
+            required: true,
+            defaultValue: oidcClient?.orgId,
+            helpKey: 'sso.orgId',
+            isLoggable: false,
+            noApi: true,
+            visible: isSSOEnabled,
+          },
+        },
+        layout: {
+          type: 'collapse',
+          containers: [
+            {
+              collapsed: false,
+              label: 'User settings',
+              fields: ['primaryAccount'],
+            },
+            {
+              collapsed: false,
+              label: 'Account settings',
+              containers: [
+                {fields: ['enableSSO'] },
+                {
+                  type: 'indent',
+                  containers: [
+                    {
+                      fields: ['issuerURL', 'clientId', 'clientSecret', 'orgId'],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      });
+    },
+    [
+      handleEnableSSO,
+      isAccountOwner,
+      isAccountOwnerOrAdmin,
+      isSSOEnabled,
+      oidcClient?.oidc?.clientId,
+      oidcClient?.oidc?.issuerURL,
+      oidcClient?.orgId, preferences,
+      primaryAccountOptions,
+      resourceId,
+    ]
   );
 
-  const formKey = useFormInitWithPermissions({ fieldMeta, remount: key });
+  useEffect(() => {
+    setRemountCount(count => count + 1);
+  }, [isSSOEnabled]);
+
+  // remount the form when fieldMeta changes
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+    remount: remountCount,
+    skipMonitorLevelAccessCheck: true,
+  });
 
   const handleSubmit = useCallback(formValues => {
+    const {_ssoAccountId} = formValues;
+
+    if (_ssoAccountId) {
+      const payload = {...preferences, _ssoAccountId};
+
+      dispatch(actions.user.profile.update(payload));
+    }
+
+    if (!isAccountOwnerOrAdmin) return;
+
     const patchSet = [];
     const isNewClient = isNewId(resourceId);
 
@@ -243,7 +299,7 @@ export default function Security() {
     });
 
     dispatch(actions.resource.patchAndCommitStaged('ssoclients', resourceId, patchSet));
-  }, [dispatch, resourceId]);
+  }, [dispatch, isAccountOwnerOrAdmin, preferences, resourceId]);
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
@@ -262,10 +318,11 @@ export default function Security() {
   const applicationLoginURL = `${domainURL}/sso/${oidcClient?.orgId}`;
   const redirectURL = `${domainURL}/sso/${oidcClient?.orgId}/callback`;
   const infoTextSSO = 'Configure single sign-on settings in this section';
+  const resourcesToLoad = isAccountOwnerOrAdmin ? 'ssoclients' : [];
 
   return (
     <>
-      <LoadResources required resources="ssoclients">
+      <LoadResources required resources={resourcesToLoad}>
         <div className={classes.root}>
           <PanelHeader title="Single sign-on (SSO)" infoText={infoTextSSO} />
           <div className={classes.ssoForm}>

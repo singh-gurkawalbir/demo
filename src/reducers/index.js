@@ -206,6 +206,7 @@ selectors.userProfilePreferencesProps = createSelector(
       scheduleShiftForFlowsCreatedAfter,
       // eslint-disable-next-line camelcase
       auth_type_google,
+      _ssoAccountId,
     } = { ...profile, ...preferences };
 
     return {
@@ -222,6 +223,7 @@ selectors.userProfilePreferencesProps = createSelector(
       scheduleShiftForFlowsCreatedAfter,
       auth_type_google,
       showRelativeDateTime,
+      _ssoAccountId,
     };
   });
 
@@ -6771,6 +6773,16 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
   const ssoLinkedAccount = orgAccounts?.find(acc => acc.ownerUser?._ssoClientId === linkedSSOClientId);
 
   return !!ssoLinkedAccount?.accountSSORequired;
+};
+
+selectors.ssoPrimaryAccounts = state => {
+  if (selectors.isAccountOwner(state)) {
+    return [];
+  }
+
+  const orgAccounts = state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+
+  return orgAccounts?.filter(acc => acc.ownerUser?._ssoClientId) || [];
 };
 
 selectors.isUserAllowedOptionalSSOSignIn = state => {

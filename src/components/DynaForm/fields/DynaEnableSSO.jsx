@@ -17,7 +17,6 @@ const useStyles = makeStyles(theme => ({
   ssoSwitch: {
     display: 'flex',
     alignItems: 'center',
-    padding: theme.spacing(0, 2),
     marginBottom: theme.spacing(0.5),
   },
   content: {
