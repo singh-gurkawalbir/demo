@@ -40,6 +40,7 @@ export default function MoreActionsButton({position, pageProcessors = [], allowD
   };
 
   const handleDeleteBranch = useCallback(event => {
+    event.stopPropagation();
     handleCloseMenu(event);
 
     const configuredCount = pageProcessors.filter(pp => !!pp.type).length;
