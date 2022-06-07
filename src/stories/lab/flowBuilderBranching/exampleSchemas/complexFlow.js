@@ -37,7 +37,7 @@ const firstBranch = {
 };
 
 const secondBranch = {
-  name: 'second branch',
+  name: 'Another router, but with a long name to test the menu item rendering',
   description: 'some description',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import4'), getSomePpImport('import5')],
