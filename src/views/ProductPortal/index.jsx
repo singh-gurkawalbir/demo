@@ -11,7 +11,8 @@ const useStyles = makeStyles({
 export default function ProductPortal() {
   const classes = useStyles();
 
-  const contentUrl = process.env.PORTAL_URL;
+  // eslint-disable-next-line no-undef
+  const contentUrl = PORTAL_URL;
 
   return (
     <div className={classes.container}>
