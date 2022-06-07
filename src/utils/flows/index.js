@@ -255,14 +255,17 @@ export const isLookupResource = (flow = {}, resource = {}) => {
 
 export function isSetupInProgress(flow) {
   if (!flow) return false;
-  const isPageGeneratorSetupInProgress = (flow.pageGenerators || []).some(pg => pg.setupInProgress);
+  const isPageGeneratorSetupInProgress = (flow.pageGenerators || []).some(pg => pg.setupInProgress) || !flow.pageGenerators?.length;
+  const arePPsEmpty = !flow.pageProcessors || !flow.pageProcessors.length;
+  const areRoutersEmpty = !flow.routers || !flow.routers.length;
+
   const isPageProcessorSetupInProgress = (flow.pageProcessors || []).some(pp => pp.setupInProgress);
   const isRouterSetupInProgress = (flow.routers || [])
     .some(router => (router.branches || [])
       .some(branch => (branch.pageProcessors || [])
         .some(pp => pp.setupInProgress)));
 
-  return isPageGeneratorSetupInProgress || isPageProcessorSetupInProgress || isRouterSetupInProgress;
+  return isPageGeneratorSetupInProgress || isPageProcessorSetupInProgress || isRouterSetupInProgress || (arePPsEmpty && areRoutersEmpty);
 }
 
 /*

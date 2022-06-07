@@ -153,14 +153,15 @@ export const initializeFlowForReactFlow = flowDoc => {
 
 // Note 'targeId' can be either a page processor Id if the flow schema is linear (old schema)
 // or it can be a router Id if the flow schema represents a branched flow.
-const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId) => {
+const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId, isReadOnlyMode) => {
   if (!pageGenerators || !pageGenerators.length || !targetId) {
     return [];
   }
-  const nodes = pageGenerators.map((pg, index, collection) => ({
+  const hideDelete = (pageGenerators.length === 1 && pageGenerators[0].setupInProgress) || isReadOnlyMode;
+  const nodes = pageGenerators.map((pg, index) => ({
     id: pg.id,
     type: GRAPH_ELEMENTS_TYPE.PG_STEP,
-    data: {...pg, path: `/pageGenerators/${index}`, hideDelete: collection.length === 1 && pg.setupInProgress },
+    data: {...pg, path: `/pageGenerators/${index}`, hideDelete },
   }));
 
   const edges = nodes.map(node => generateDefaultEdge(node.id, targetId));
@@ -168,7 +169,7 @@ const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId) => {
   return [...nodes, ...edges];
 };
 
-const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}) => {
+const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}, isReadOnlyMode) => {
   const edges = [];
   const {branch, branchIndex, routerIndex} = branchData;
   const nodes = pageProcessors.map((pageProcessor, index, collection) => {
@@ -180,7 +181,7 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}) => 
       edges.push(generateDefaultEdge(pageProcessor.id, collection[index + 1].id, {...branchData, processorCount}));
     }
     // hide delete option if only one unconfigured pageProcessor present
-    if (routerIndex === 0 && pageProcessor.setupInProgress && collection.length === 1 && !branch.nextRouterId) {
+    if ((routerIndex === 0 && pageProcessor.setupInProgress && collection.length === 1 && !branch.nextRouterId) || isReadOnlyMode) {
       hideDelete = true;
     }
 
@@ -201,11 +202,12 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}) => 
 };
 
 const generateNodesAndEdgesFromNonBranchedFlow = flow => {
-  const { _exportId, pageGenerators = [], pageProcessors = [], _importId } = flow;
+  const { _exportId, pageGenerators = [], pageProcessors = [], _importId, _connectorId } = flow;
+  const isReadOnly = !!_connectorId;
   const firstPPId = _importId || pageProcessors[0]?.id;
   const lastPPId = _importId || pageProcessors[pageProcessors.length - 1]?.id;
-  const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(_exportId ? [{_exportId, id: _exportId}] : pageGenerators, firstPPId);
-  const pageProcessorNodesAndEdges = generatePageProcessorNodesAndEdges(_importId ? [{_importId, id: _importId}] : pageProcessors);
+  const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(_exportId ? [{_exportId, id: _exportId}] : pageGenerators, firstPPId, isReadOnly);
+  const pageProcessorNodesAndEdges = generatePageProcessorNodesAndEdges(_importId ? [{_importId, id: _importId}] : pageProcessors, {}, isReadOnly);
 
   const terminalNode = generateNewTerminal();
 
@@ -270,7 +272,8 @@ const populateMergeData = (flow, elements) => {
 };
 
 export const generateNodesAndEdgesFromBranchedFlow = flow => {
-  const {pageGenerators = [], routers = []} = flow;
+  const {pageGenerators = [], routers = [], _connectorId} = flow;
+  const isReadOnlyMode = !_connectorId;
   let firstPPId = routers[0].id;
 
   if (isVirtualRouter(routers[0])) {
@@ -280,7 +283,7 @@ export const generateNodesAndEdgesFromBranchedFlow = flow => {
       firstPPId = routers[0].branches[0].nextRouterId;
     }
   }
-  const elements = [...generatePageGeneratorNodesAndEdges(pageGenerators, firstPPId)];
+  const elements = [...generatePageGeneratorNodesAndEdges(pageGenerators, firstPPId, isReadOnlyMode)];
   const routerVisited = {};
   const routersArr = [...routers];
   const populateRouterElements = router => {
@@ -293,7 +296,7 @@ export const generateNodesAndEdgesFromBranchedFlow = flow => {
       router.branches.forEach((branch, branchIndex) => {
         if (branch.pageProcessors.length) {
           // draw an edge from router to first step of branch
-          const pageProcessorNodes = generatePageProcessorNodesAndEdges(branch.pageProcessors, {branch, branchIndex, routerIndex});
+          const pageProcessorNodes = generatePageProcessorNodesAndEdges(branch.pageProcessors, {branch, branchIndex, routerIndex}, isReadOnlyMode);
 
           if (routerIndex !== 0 || !isVirtualRouter(router)) {
             elements.push(generateDefaultEdge(router.id, branch.pageProcessors[0].id, {routerIndex, branchIndex}));
@@ -305,7 +308,7 @@ export const generateNodesAndEdgesFromBranchedFlow = flow => {
               // Safe check, branch should not point to its own router, causes a loop
               populateRouterElements(routers.find(r => r.id === branch.nextRouterId));
             }
-          } else {
+          } else if (!isReadOnlyMode) {
             const terminalNode = generateNewTerminal({branch, branchIndex, routerIndex});
 
             elements.push(terminalNode);
@@ -325,7 +328,7 @@ export const generateNodesAndEdgesFromBranchedFlow = flow => {
             // Safe check, branch should not point to its own router, causes a loop
             populateRouterElements(routers.find(r => r.id === branch.nextRouterId));
           }
-        } else {
+        } else if (!isReadOnlyMode) {
           // generate terminal edge
           const terminalNode = generateNewTerminal({branch, branchIndex, routerIndex});
 
