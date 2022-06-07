@@ -75,7 +75,7 @@ export default function DefaultEdge({
   const isTargetRouter = targetType === GRAPH_ELEMENTS_TYPE.ROUTER || targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
   const showLinkIcon = hasSiblingEdges && !isSourceGenerator;
-  const showAddIcon = !isSourceGenerator || (isSourceGenerator && !isTargetRouter);
+  const showAddIcon = !isSourceGenerator || (isSourceGenerator && !isTargetRouter) || !flow._connectorId;
   const isMergableEdge = mergableTerminals.includes(dragNodeId);
 
   /*

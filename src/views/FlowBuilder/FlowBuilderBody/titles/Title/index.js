@@ -3,6 +3,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import TitleTypography from '../../../TitleTypography';
 import AddButton from '../AddButton';
+import { useFlowContext } from '../../Context';
 
 const useStyles = makeStyles(theme => ({
   titlePosition: {
@@ -18,12 +19,14 @@ const useStyles = makeStyles(theme => ({
 
 export default function Title({onClick, children, className}) {
   const classes = useStyles();
+  const { flow } = useFlowContext();
+  const isReadOnly = !!flow._connectorId;
 
   return (
     <TitleTypography className={clsx(classes.titlePosition, className)}>
       <div className={classes.content}>
         {children}
-        <AddButton onClick={onClick} />
+        {!isReadOnly && <AddButton onClick={onClick} />}
       </div>
     </TitleTypography>
   );
