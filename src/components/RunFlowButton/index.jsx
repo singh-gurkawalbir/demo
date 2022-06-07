@@ -14,6 +14,7 @@ import {
 } from '../../constants';
 import Spinner from '../Spinner';
 import { TextButton } from '../Buttons';
+import messageStore from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -40,7 +41,7 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label, isSet
       return (
         <IconButtonWithTooltip
           data-test="runFlow"
-          tooltipProps={{title: isSetupInProgress ? 'Configure all steps to allow running your flow' : '', placement: 'bottom'}}
+          tooltipProps={{title: isSetupInProgress ? messageStore('INCOMPLETE_FLOW_TOOLTIP') : '', placement: 'bottom'}}
           className={classes.runNowIcon}
           disabled>
           <RunIcon />
