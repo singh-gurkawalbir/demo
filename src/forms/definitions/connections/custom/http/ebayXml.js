@@ -12,19 +12,24 @@ export default {
       (((resp || {}).http || {}).unencrypted || {}).apiCompLevel || '1005',
       10
     ),
-    '/http/ping/successPath': '/GetTokenStatusResponse/TokenStatus/Status',
-    '/http/ping/successValues': '200',
-    '/http/ping/errorPath': '/GetTokenStatusResponse/Errors/ShortMessage',
+    '/http/ping/successPath': '/*[local-name()="GetMyMessagesResponse"]/*[local-name()="Ack"]/text()',
+    '/http/ping/successValues': ['Success'],
+    '/http/ping/errorPath': '',
     '/http/ping/body':
     '<?xml version="1.0" encoding="utf-8"?>\n' +
-    '<GetTokenStatusRequest xmlns="urn:ebay:apis:eBLBaseComponents">\n' +
+    '<GetMyMessagesRequest xmlns="urn:ebay:apis:eBLBaseComponents">\n' +
       '<RequesterCredentials>\n' +
         '<eBayAuthToken>{{{connection.http.auth.token.token}}}</eBayAuthToken>\n' +
       '</RequesterCredentials>\n' +
       '<ErrorLanguage>en_US</ErrorLanguage>\n' +
       '<WarningLevel>High</WarningLevel>\n' +
-    '</GetTokenStatusRequest>',
+      '<DetailLevel>ReturnHeaders</DetailLevel>\n' +
+    '</GetMyMessagesRequest>',
     '/http/ping/method': 'POST',
+    '/http/headers': [
+      { name: 'X-EBAY-API-CALL-NAME', value: 'GetMyMessages' },
+      { name: 'X-EBAY-API-SITEID', value: '{{{connection.http.unencrypted.apiSiteId}}}' },
+      { name: 'X-EBAY-API-COMPATIBILITY-LEVEL', value: '{{{connection.http.unencrypted.apiCompLevel}}}' }],
   }),
   fieldMap: {
     name: { fieldId: 'name' },
