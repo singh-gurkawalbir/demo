@@ -201,14 +201,15 @@ export function* installScriptStep({
     return yield put(actions.resource.request('integrations', id));
   }
 
-  const currentConnectionStep =
+  const filteredSteps =
     stepCompleteResponse &&
     Array.isArray(stepCompleteResponse) &&
-    stepCompleteResponse.find(
-      temp =>
-        temp.completed === false &&
-        temp._connectionId
+    stepCompleteResponse.filter(
+      temp => temp._connectionId
     );
+
+  // we need to find the currentConnectionStep
+  const currentConnectionStep = filteredSteps?.length && filteredSteps[filteredSteps.length - 1];
 
   if (!isEmpty(connectionDoc)) {
     yield put(actions.resource.request('connections', currentConnectionStep?._connectionId));
