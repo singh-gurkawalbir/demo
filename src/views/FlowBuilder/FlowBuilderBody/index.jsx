@@ -153,7 +153,7 @@ export function Canvas({ flowId, fullscreen }) {
               elements={updatedLayout}
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
-        >
+            >
               <SourceTitle onClick={handleAddNewSource} />
               <DestinationTitle />
               <BackgroundPanel />

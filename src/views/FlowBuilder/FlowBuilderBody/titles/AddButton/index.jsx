@@ -19,9 +19,7 @@ export default function AddButton({onClick}) {
   return (
     <IconButton
       className={classes.roundBtn}
-      // No idea why the browser doesnt pass mouse event down to this DOM node.
-      // eslint-disable-next-line no-console
-      onClick={e => { console.log('clicked!'); onClick(e); }}>
+      onClick={onClick}>
       <AddIcon />
     </IconButton>
   );
