@@ -95,6 +95,7 @@ export default function BranchItem({
   onToggleExpand,
   pageProcessors,
   editorId,
+  allowDeleting,
   allowSorting,
 }) {
   const classes = useStyles(allowSorting);
@@ -140,7 +141,7 @@ export default function BranchItem({
                 )}
               </div>
 
-              <MoreActionsButton position={position} pageProcessors={pageProcessors} />
+              <MoreActionsButton position={position} pageProcessors={pageProcessors} allowDeleting={allowDeleting} />
             </div>
           </AccordionSummary>
 
