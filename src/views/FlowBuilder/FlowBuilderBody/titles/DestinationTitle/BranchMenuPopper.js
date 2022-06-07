@@ -10,13 +10,14 @@ const useStyles = makeStyles(theme => ({
   titleBox: {
     padding: theme.spacing(2, 2, 1, 2),
   },
-  subTitle: {
-    marginBottom: theme.spacing(1),
-    color: theme.palette.secondary.light,
-    fontStyle: 'italic',
+  title: {
+    marginBottom: theme.spacing(1.5),
   },
   menuItem: {
     borderBottom: 0,
+  },
+  content: {
+    maxWidth: 350,
   },
 }));
 
@@ -43,14 +44,10 @@ export default function BranchMenuPopper({ anchorEl, handleClose }) {
       onClose={handleClose}>
 
       <ClickAwayListener onClickAway={handleClose}>
-        <div>
+        <div className={classes.content}>
           <div className={classes.titleBox}>
-            <Typography gutterBottom variant="h6">
-              Add destination/lookup
-            </Typography>
-
-            <Typography className={classes.subTitle} variant="body2">
-              Add to end of branch
+            <Typography className={classes.title} variant="h6">
+              Add destination/lookup to end of branch
             </Typography>
 
             <Divider />
