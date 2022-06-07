@@ -5590,7 +5590,7 @@ selectors.job = (state, { type, jobId, parentJobId }) => {
 
   return {
     ...j,
-    name: resourceMap?.flows ? resourceMap?.flows[j._flowId] && resourceMap?.flows[j._flowId].name : {},
+    name: resourceMap?.flows ? resourceMap?.flows[j._flowId] && resourceMap?.flows[j._flowId].name : j._flowd,
   };
 };
 
