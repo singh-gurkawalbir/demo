@@ -7,7 +7,6 @@ import commKeyGenerator from '../../../utils/commKeyGenerator';
 import getRequestOptions from '../../../utils/requestOptions';
 import { isJsonString } from '../../../utils/string';
 import { apiCallWithRetry } from '../../index';
-import {getHTTPConnectorMetadata} from '../../utils';
 
 const parseErrorMessage = error => {
   // Handling error statuses in  between 400 and 500 to show customized error
@@ -192,27 +191,27 @@ export function* requestAssistantMetadata({ adaptorType = 'rest', assistant}) {
   }
   let metadata;
 
-  if (assistant) {
-    const { resources: httpConnectors = [] } = yield select(selectors.resourceList, {
-      type: 'httpconnectors',
-      filter: {
-        $where() {
-          return this.name === assistant && this.published;
-        },
-      },
-    });
+  // if (assistant) {
+  //   const { resources: httpConnectors = [] } = yield select(selectors.resourceList, {
+  //     type: 'httpconnectors',
+  //     filter: {
+  //       $where() {
+  //         return this.name === assistant && this.published;
+  //       },
+  //     },
+  //   });
 
-    if (httpConnectors?.length) {
-      const { resources: httpResources = [] } = yield select(selectors.resourceList, {
-        type: 'httpconnectorresources',
-      });
-      const { resources: httpEndpoints = [] } = yield select(selectors.resourceList, {
-        type: 'httpconnectorendpoints',
-      });
+  //   if (httpConnectors?.length) {
+  //     const { resources: httpResources = [] } = yield select(selectors.resourceList, {
+  //       type: 'httpconnectorresources',
+  //     });
+  //     const { resources: httpEndpoints = [] } = yield select(selectors.resourceList, {
+  //       type: 'httpconnectorendpoints',
+  //     });
 
-      metadata = getHTTPConnectorMetadata(httpConnectors[0], httpResources, httpEndpoints);
-    }
-  }
+  //     metadata = getHTTPConnectorMetadata(httpConnectors[0], httpResources, httpEndpoints);
+  //   }
+  // }
 
   try {
     if (!metadata) { metadata = yield call(apiCallWithRetry, { path, opts }); }

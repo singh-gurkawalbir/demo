@@ -31,17 +31,24 @@ export default function FormView(props) {
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
+  const connection = useSelector(
+    state =>
+      selectors.resource(state, 'connections', staggedResource._connectionId) ||
+      emptyObj
+  );
+  const isNewHTTPConnector = connection?.http?._httpConnectorId;
+  // selectors.connectorMetaData = (state, httpConnectorId, httpVersionId, httpAPIId) => {
+
+  const connectorMetaData = useSelector(state =>
+    selectors.httpConnectorMetaData(state, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId)
+  );
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
       adaptorType: getAssistantConnectorType(staggedResource.assistant),
       assistant: staggedResource.assistant,
     })
   );
-  const connection = useSelector(
-    state =>
-      selectors.resource(state, 'connections', staggedResource._connectionId) ||
-      emptyObj
-  );
+
   const { assistant: assistantName, http } = connection;
   const isGraphql = http?.formType === 'graph_ql';
 
@@ -80,13 +87,14 @@ export default function FormView(props) {
 
       return acc;
     }, {});
+
     // use this function to get the corresponding preSave function for this current form
     const { preSave } = getResourceFormAssets({
       resourceType,
       resource: staggedResource,
       isNew: false,
       connection,
-      assistantData,
+      assistantData: isNewHTTPConnector ? connectorMetaData : assistantData,
     });
     const finalValues = preSave(formContext.value, staggedRes, { connection });
     const newFinalValues = {...finalValues};

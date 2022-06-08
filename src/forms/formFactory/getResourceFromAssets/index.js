@@ -2,9 +2,10 @@ import produce from 'immer';
 
 import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
-import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS, HTTP_FRAMEWORK_SUPPORTED_ASSISTANTS} from '../../../utils/constants';
+import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS} from '../../../utils/constants';
 import { getAssistantFromResource, getResourceSubType, isNewId, rdbmsSubTypeToAppType } from '../../../utils/resource';
 import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection } from '../../../utils/assistant';
+import { getPublishedHttpConnector } from '../../../constants/applications';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -183,16 +184,17 @@ const getSuiteScriptFormMeta = ({resourceType, resource}) => {
 
   return meta;
 };
-const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, httpConnector}) => {
+const getFormMeta = ({resourceType, isNew, resource, connection, assistantData}) => {
   let meta;
 
   const { type } = getResourceSubType(resource);
+  const httpPublishedConnector = resourceType === 'connections' && getPublishedHttpConnector(resource?._httpConnectorId || resource?.http?.__httpConnectorId);
 
   switch (resourceType) {
     case 'connections':
       if (isNew) {
         meta = formMeta.connections.new;
-      } else if (httpConnector && HTTP_FRAMEWORK_SUPPORTED_ASSISTANTS.includes(resource?.assistant)) {
+      } else if (httpPublishedConnector) {
         meta = formMeta.connections.http;
       } else if (resource && resource.assistant === 'financialforce') {
         // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
@@ -239,6 +241,12 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
       if (meta) {
         if (isNew) {
           meta = meta.new;
+        } if (connection?.http?._httpConnectorId) {
+          meta = meta.custom.httpFramework.assistantDefinition(
+            resource._id,
+            resource,
+            assistantData
+          );
         } else if (type === 'netsuite') {
           // get edit form meta branch
           meta = meta.netsuiteDistributed;
@@ -296,6 +304,12 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
       if (meta) {
         if (isNew) {
           meta = meta.new;
+        } else if (connection?.http?._httpConnectorId) {
+          meta = meta.custom.httpFramework.assistantDefinition(
+            resource._id,
+            resource,
+            assistantData
+          );
         } else if (isMicrosoftBusinessCentralOdataConnection(connection)) {
           if (type === 'http') {
             meta = meta[type];
@@ -330,7 +344,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
               ? !resource.useParentForm && resource.assistant
               : resource.assistant) && !resource.useTechAdaptorForm
         ) {
-          meta = meta.custom.http.assistantDefinition(
+          meta = meta.custom.httpFramework.assistantDefinition(
             resource._id,
             resource,
             assistantData
@@ -394,7 +408,6 @@ const getResourceFormAssets = ({
   assistantData,
   connection,
   ssLinkedConnectionId,
-  httpConnector,
 }) => {
   let meta;
 
@@ -405,7 +418,7 @@ const getResourceFormAssets = ({
     if (ssLinkedConnectionId) {
       meta = getSuiteScriptFormMeta({resourceType, resource});
     } else {
-      meta = getFormMeta({resourceType, isNew, resource, connection, assistantData, httpConnector});
+      meta = getFormMeta({resourceType, isNew, resource, connection, assistantData});
     }
   } catch (e) {
     throw new Error(`cannot load metadata assets ${resourceType} ${resource?._id}`);

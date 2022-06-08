@@ -1,13 +1,12 @@
 import { isArray, isEmpty } from 'lodash';
 import uniqBy from 'lodash/uniqBy';
-import { getAssistantConnectorType } from '../../../../../constants/applications';
 import {
   convertFromImport,
   PARAMETER_LOCATION,
 } from '../../../../../utils/assistant';
 
 function hiddenFieldsMeta({ values }) {
-  return ['assistant', 'adaptorType', 'assistantData', 'lookups'].map(fieldId => ({
+  return ['adaptorType', 'assistantData', 'lookups'].map(fieldId => ({
     id: `assistantMetadata.${fieldId}`,
     type: 'text',
     value: values[fieldId],
@@ -15,20 +14,24 @@ function hiddenFieldsMeta({ values }) {
   }));
 }
 
-function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
+function basicFieldsMeta({ assistantConfig, assistantData }) {
   const fieldDefinitions = {
     version: {
       fieldId: 'assistantMetadata.version',
       value: assistantConfig.version,
+      type: 'hfoptions',
       required: true,
     },
     resource: {
       fieldId: 'assistantMetadata.resource',
       value: assistantConfig.resource,
       required: true,
+      type: 'hfoptions',
+
     },
     operation: {
       fieldId: 'assistantMetadata.operation',
+      type: 'hfoptions',
       value: assistantConfig.operation || assistantConfig.operationUrl,
       required: true,
     },
@@ -47,8 +50,6 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
     if (labels[fieldId]) {
       fieldDefinitions[fieldId].label = labels[fieldId];
     }
-
-    fieldDefinitions[fieldId].helpKey = `${assistant}.import.${fieldId}`;
 
     if (helpTexts[fieldId]) {
       fieldDefinitions[fieldId].helpText = helpTexts[fieldId];
@@ -282,23 +283,14 @@ function howToFindIdentifierFieldsMeta({
 }
 
 export function fieldMeta({ resource, assistantData }) {
-  const { assistant, lookups } = resource;
-  let headers;
+  const { lookups } = resource;
 
-  let { adaptorType } = resource;
-
-  if (adaptorType === 'RESTImport') {
-    adaptorType = 'rest';
-    headers = resource.rest?.headers || [];
-  } else {
-    adaptorType = 'http';
-    headers = resource.http?.headers || [];
-  }
+  const adaptorType = 'http';
+  const headers = resource.http?.headers || [];
 
   const hiddenFields = hiddenFieldsMeta({
     values: {
-      assistant,
-      adaptorType: getAssistantConnectorType(assistant),
+      adaptorType: 'http',
       assistantData,
       lookups,
     },
@@ -317,7 +309,6 @@ export function fieldMeta({ resource, assistantData }) {
     });
 
     basicFields = basicFieldsMeta({
-      assistant,
       assistantConfig,
       assistantData: assistantData.import,
     });

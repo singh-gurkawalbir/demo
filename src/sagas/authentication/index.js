@@ -58,20 +58,12 @@ export function* retrievingUserDetails() {
 }
 
 export function* retrievingHttpConnectorDetails() {
-  yield all([
-    call(
-      getResourceCollection,
-      actions.resource.requestCollection('httpconnectors')
-    ),
-    call(
-      getResourceCollection,
-      actions.resource.requestCollection('httpconnectorendpoints')
-    ),
-    call(
-      getResourceCollection,
-      actions.resource.requestCollection('httpconnectorresources')
-    ),
-  ]);
+  const collection = yield call(
+    getResourceCollection,
+    actions.resource.requestCollection('httpconnectors')
+  );
+
+  localStorage.setItem('publishedHttpConnectors', JSON.stringify(collection));
 }
 
 export function* retrievingAssistantDetails() {

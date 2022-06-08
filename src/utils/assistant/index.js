@@ -766,7 +766,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
     bodyParams,
   } = assistantConfig;
 
-  if (!assistant || !resource || !operation || !assistantData) {
+  if (!resource || !operation || !assistantData) {
     return undefined;
   }
 
@@ -1842,7 +1842,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
   } = assistantConfig;
   let { lookupQueryParams = {} } = assistantConfig;
 
-  if (!assistant || !resource || !operation || !assistantData) {
+  if (!resource || !operation || !assistantData) {
     return undefined;
   }
 

@@ -9,6 +9,7 @@ import { selectors } from '../../reducers';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
 import DynaForm from '../DynaForm';
 import Spinner from '../Spinner';
+// import {getPublishedHttpConnector} from '../../constants/applications';
 
 const Form = props => {
   const formKey = useFormInitWithPermissions(props);
@@ -60,9 +61,10 @@ export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, 
 
   return <Form {...props} {...formState} key={count} />;
 };
-const httpConnectorsFilterConfig = {type: 'httpconnectors'};
+// const httpConnectorsFilterConfig = {type: 'httpconnectors'};
 
 const ResourceFormFactory = props => {
+  const dispatch = useDispatch();
   const { resourceType, resourceId, isNew, flowId, integrationId } = props;
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, resourceId)
@@ -75,12 +77,24 @@ const ResourceFormFactory = props => {
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', resource && resource._connectionId)
   );
-  const httpConnectors = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    httpConnectorsFilterConfig
-  ).resources;
-  const httpConnector = httpConnectors?.find(conn => (conn.name === resource.assistant) && conn.published);
-  const dispatch = useDispatch();
+  // const httpConnectors = useSelectorMemo(
+  //   selectors.makeResourceListSelector,
+  //   httpConnectorsFilterConfig
+  // ).resources;
+  // const httpPublishedConnector = resourceType === 'connections' && getPublishedHttpConnector(resource?.assistant);
+
+  // const httpConnectorData = useSelector(state => selectors.connectorData(state, httpPublishedConnector?._id));
+
+  // useEffect(() => {
+  //   if (httpPublishedConnector && !httpConnectorData && !loadOnce) {
+  //     // dispacth
+  //     dispatch(actions.httpConnectors.requestConnector({httpConnectorId: httpPublishedConnector?._id}));
+  //     setLoadOnce(true);
+  //   }
+  // }, [dispatch, httpConnectorData, httpPublishedConnector, loadOnce]);
+
+  // console.log('change 1');
+  // const httpConnector = httpConnectors?.find(conn => (conn.name === resource.assistant) && conn.published);
   const handleInitForm = useCallback(
     () => {
       const skipCommit =
@@ -123,6 +137,8 @@ const ResourceFormFactory = props => {
       let metadataAssets;
 
       try {
+        console.log(112);
+
         // try to load the assets if it can't initForm saga should fail anyway
         metadataAssets = getResourceFormAssets({
           resourceType,
@@ -130,7 +146,6 @@ const ResourceFormFactory = props => {
           isNew,
           connection,
           integrationId,
-          httpConnector,
         });
       } catch (e) {
         metadataAssets = {};
@@ -138,7 +153,7 @@ const ResourceFormFactory = props => {
 
       return metadataAssets;
     },
-    [resourceType, resource, isNew, connection, integrationId, httpConnector]
+    [resourceType, resource, isNew, connection, integrationId]
   );
   const { fieldMeta, skipClose } = formState;
 

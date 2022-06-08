@@ -19,7 +19,7 @@ function AppErroredModal() {
         <span>Application errored</span>
       </>
       <Typography>
-        Oops! Something caused our app to crash. <br />
+        Oops! 11 our app to crash. <br />
         To resume working, please reload.
       </Typography>
       <FilledButton

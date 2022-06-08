@@ -33,7 +33,7 @@ export default class CrashReporter extends React.Component {
             <span>Application errored</span>
           </>
           <Typography>
-            Oops! Something caused our app to crash. <br />
+            Oops! Something12 caused our app to crash. <br />
             To resume working, please reload.
           </Typography>
           <FilledButton

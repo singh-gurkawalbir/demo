@@ -45,7 +45,10 @@ const hasPatch = patches => patches && patches.length;
 const isPathPresentAndValueDiff = patchArr => patch =>
   patchArr.some(p => p.path === patch.path && p.value !== patch.value);
 
-const getExportMetadata = (httpConnector, httpResources, httpEndpoints) => {
+const getExportMetadata = (connectorMetadata, connectionVersion) => {
+  const httpConnector = connectorMetadata;
+  const { httpConnectorResources: httpResources, httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
+
   const exportData = {
     labels: {
       version: 'API Version',
@@ -62,8 +65,11 @@ const getExportMetadata = (httpConnector, httpResources, httpEndpoints) => {
   // eslint-disable-next-line prefer-destructuring
   exportData.paging = pagingValues?.[0];
 
-  const versions = httpConnector.versions.map(v => ({version: v.name, _id: v._id}));
+  let versions = httpConnector.versions.map(v => ({version: v.name, _id: v._id}));
 
+  if (connectionVersion) {
+    versions = versions.filter(v => v.version === connectionVersion);
+  }
   exportData.versions = versions;
   exportData.versions.forEach((v, i) => {
     const filteredHttpResources = httpResources.filter(r => r._versionIds?.includes(v._id));
@@ -118,14 +124,21 @@ const getExportMetadata = (httpConnector, httpResources, httpEndpoints) => {
 
   return exportData;
 };
-const getImportMetadata = (httpConnector, httpResources, httpEndpoints) => {
+const getImportMetadata = (connectorMetadata, connectionVersion) => {
+  const versionLocation = connectorMetadata?.versioning?.location;
+  const httpConnector = connectorMetadata;
+  const { httpConnectorResources: httpResources, httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
   const importData = {
     labels: {
       version: 'API Version',
     },
 
   };
-  const versions = httpConnector.versions.map(v => ({version: v.name, _id: v._id}));
+  let versions = httpConnector.versions.map(v => ({version: v.name, _id: v._id}));
+
+  if (connectionVersion) {
+    versions = versions.filter(v => v.version === connectionVersion);
+  }
 
   importData.versions = versions;
   importData.versions.forEach((v, i) => {
@@ -206,6 +219,10 @@ const getImportMetadata = (httpConnector, httpResources, httpEndpoints) => {
                   id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, requiredMappings, parameters, howToFindIdentifier, supportIgnoreExisting, supportIgnoreMissing, askForHowToGetIdentifier: httpEndpoint.askForHowToGetIdentifier,
                 };
 
+                if (versionLocation === 'uri' && !connectionVersion) {
+                  ep.url = `/${v.version}/${httpEndpoint.relativeURI}`;
+                }
+
                 importData.versions[i].resources[j].operations.push(ep);
               }
             });
@@ -217,9 +234,9 @@ const getImportMetadata = (httpConnector, httpResources, httpEndpoints) => {
 
   return importData;
 };
-export const getHTTPConnectorMetadata = (httpConnector, httpResources, httpEndpoints) => {
-  const exportData = getExportMetadata(httpConnector, httpResources, httpEndpoints);
-  const importData = getImportMetadata(httpConnector, httpResources, httpEndpoints);
+export const getHTTPConnectorMetadata = (connectorMetadata, connectionVersion) => {
+  const exportData = getExportMetadata(connectorMetadata, connectionVersion);
+  const importData = getImportMetadata(connectorMetadata, connectionVersion);
 
   return {export: exportData, import: importData};
 };
@@ -289,7 +306,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
     } else if (key === 'http._iClientId') {
       tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
     } else if (key === 'http.baseURI') {
-      if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.versions?.[0]?.baseURIs?.[0] }; } else if (resource.http.unencrypted.version) {
+      if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.baseURIs?.[0]?.replace('/{{version}}', '') }; } else if (resource.http.unencrypted.version) {
         tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resource.http.unencrypted.version}`, '');
       }
     }
@@ -311,20 +328,13 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
   if (versionOptions?.length) {
     unEncryptedFields.push({
       field: {
-        label: 'API Verison',
+        label: 'API Version',
         name: '/http/unencrypted/version',
         id: 'http.unencrypted.version',
         fieldId: 'http.unencrypted.version',
         type: versions.length > 1 ? 'select' : 'text',
         options: versionOptions,
-        defaultValue: () => {
-          if (isNewId(resource._id)) {
-            return versions?.[0];
-          }
-
-          return resource?.http?.unencrypted?.version;
-        },
-
+        defaultValue: isNewId(resource._id) ? versions?.[0] : resource?.http?.unencrypted?.version,
       },
     });
   }

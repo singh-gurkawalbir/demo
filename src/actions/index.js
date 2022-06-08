@@ -2092,6 +2092,30 @@ const assistantMetadata = {
       metadata,
     }),
 };
+const httpConnectors = {
+  requestMetadata: ({ httpConnectorId, httpVersionId, httpApiId }) =>
+    action(actionTypes.HTTP_CONNECTORS.REQUEST_METADATA, {
+      httpConnectorId,
+      httpVersionId,
+      httpApiId,
+    }),
+  receivedMetadata: (metadata, httpConnectorId, httpVersionId, httpApiId) =>
+    action(actionTypes.HTTP_CONNECTORS.RECEIVED_METADATA, {
+      metadata,
+      httpConnectorId,
+      httpVersionId,
+      httpApiId,
+    }),
+  receivedConnector: ({ httpConnectorId, connector }) =>
+    action(actionTypes.HTTP_CONNECTORS.RECEIVED_CONNECTOR, {
+      httpConnectorId,
+      connector,
+    }),
+  requestConnector: ({ httpConnectorId }) =>
+    action(actionTypes.HTTP_CONNECTORS.REQUEST_CONNECTOR, {
+      httpConnectorId,
+    }),
+};
 const analytics = {
   gainsight: {
     trackEvent: (eventId, details) =>
@@ -2352,4 +2376,5 @@ export default {
   sso,
   bottomDrawer,
   integrationLCM,
+  httpConnectors,
 };

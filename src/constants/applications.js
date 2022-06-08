@@ -336,6 +336,40 @@ const getAssistants = () => {
 
   return localStorageAssistants;
 };
+export const getPublishedHttpConnector = _httpConnectorId => {
+  let localStoragePublishedHttpAssistants;
+
+  try {
+    localStoragePublishedHttpAssistants = JSON.parse(localStorage.getItem('publishedHttpConnectors')) || [];
+  } catch (e) {
+    localStoragePublishedHttpAssistants = [];
+  }
+
+  return localStoragePublishedHttpAssistants?.find(c => c._id === _httpConnectorId);
+};
+export const getPublishedHttpConnectorThroughAssistant = assistant => {
+  let localStoragePublishedHttpAssistants;
+
+  try {
+    localStoragePublishedHttpAssistants = JSON.parse(localStorage.getItem('publishedHttpConnectors')) || [];
+  } catch (e) {
+    localStoragePublishedHttpAssistants = [];
+  }
+
+  return localStoragePublishedHttpAssistants?.find(c => c.name === assistant);
+};
+
+export const getPublishedHttpConnectors = () => {
+  let localStoragePublishedHttpAssistants;
+
+  try {
+    localStoragePublishedHttpAssistants = JSON.parse(localStorage.getItem('publishedHttpConnectors')) || [];
+  } catch (e) {
+    localStoragePublishedHttpAssistants = [];
+  }
+
+  return localStoragePublishedHttpAssistants;
+};
 
 export const groupApplications = (
   resourceType,

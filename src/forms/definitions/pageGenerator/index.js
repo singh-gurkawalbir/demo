@@ -2,6 +2,7 @@ import {applicationsList,
   getWebhookConnectors,
   getWebhookOnlyConnectors,
   applicationsPlaceHolderText,
+  getPublishedHttpConnectorThroughAssistant,
 } from '../../../constants/applications';
 import { appTypeToAdaptorType, rdbmsAppTypeToSubType } from '../../../utils/resource';
 import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
@@ -25,11 +26,17 @@ export default {
       return { '/resourceId': exportId };
     }
     const applications = applicationsList();
+    const connector = getPublishedHttpConnectorThroughAssistant(application);
 
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
     };
+
+    if (connector?._id) {
+      newValues['/assistant'] = undefined;
+      delete newValues['/assistant'];
+    }
 
     if (type === 'webhook' || (application !== 'webhook' && app.webhookOnly)) {
       newValues['/type'] = 'webhook';
@@ -43,14 +50,14 @@ export default {
     } else {
       newValues['/resourceType'] = type;
 
-      newValues['/adaptorType'] = `${appTypeToAdaptorType[app.type]}Export`;
+      newValues['/adaptorType'] = 'HTTPExport';
 
       if (application === 'webhook') {
         newValues['/type'] = 'webhook';
         newValues['/webhook/provider'] = 'custom';
       }
 
-      if (app.assistant) {
+      if (app.assistant && !connector?._id) {
         newValues['/assistant'] = app.assistant;
       }
       // If there is no assistant for the export, we need to show generic adaptor form
@@ -158,6 +165,7 @@ export default {
     const applications = applicationsList();
     const app = applications.find(a => a.id === appField.value) || {};
     const connectionField = fields.find(field => field.id === 'connection');
+    const connector = getPublishedHttpConnectorThroughAssistant(app.id);
 
     if (fieldId === 'type') {
       return { selectedApplication: app };
@@ -168,6 +176,11 @@ export default {
 
       if (RDBMS_TYPES.includes(app.type)) {
         expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(app.type) });
+      } else if (connector?._id) {
+        expression.push({ 'http.formType': { $ne: 'rest' } });
+        expression.push({ type: 'http' });
+
+        expression.push({ 'http._httpConnectorId': connector._id });
       } else if (app.type === 'rest') {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
       } else if (app.type === 'graph_ql') {
@@ -181,7 +194,7 @@ export default {
 
       expression.push({ _connectorId: { $exists: false } });
 
-      if (app.assistant) {
+      if (app.assistant && !connector._id) {
         return {
           filter: getFilterExpressionForAssistant(app.assistant, expression),
           appType: app.assistant,
