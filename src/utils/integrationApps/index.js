@@ -42,7 +42,7 @@ export const getEmptyMessage = (storeLabel = '', action) => {
   }
 };
 
-export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, supportsChild, children, isMonitorLevelUser}) => {
+export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, supportsChild, children, isMonitorLevelUser, isManageLevelUser}) => {
   const tabs = [
     'general',
     'readme',
@@ -63,7 +63,7 @@ export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, su
   } else {
     sectionsToHide.push('readme');
     sectionsToHide.push('general');
-    if (!isParent) {
+    if (isManageLevelUser || !isParent) {
       sectionsToHide.push('apitoken');
     } else if (supportsChild && children && children.length > 1) {
       sectionsToHide.push('uninstall');

@@ -70,6 +70,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -81,6 +82,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -92,6 +94,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -103,6 +106,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -114,6 +118,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: ['dummy', 'dummy'],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -125,6 +130,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -136,6 +142,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -147,6 +154,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -158,6 +166,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -169,6 +178,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: ['dummy', 'dummy'],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -180,6 +190,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -191,6 +202,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -202,6 +214,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -213,6 +226,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -224,6 +238,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -235,6 +250,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -246,6 +262,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -257,6 +274,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -268,6 +286,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -279,6 +298,19 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
+      },
+    ],
+    [
+      ['subscription', 'uninstall'],
+      {
+        integrationId: 'something',
+        isIntegrationApp: true,
+        isParent: true,
+        supportsChild: true,
+        children: [],
+        isMonitorLevelUser: false,
+        isManageLevelUser: true,
       },
     ],
   ];
@@ -294,6 +326,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild,
         children,
         isMonitorLevelUser,
+        isManageLevelUser,
       }
     ) => {
       expect(
@@ -304,6 +337,7 @@ describe('getAdminLevelTabs', () => {
           supportsChild,
           children,
           isMonitorLevelUser,
+          isManageLevelUser,
         })
       ).toEqual(expected);
     }
