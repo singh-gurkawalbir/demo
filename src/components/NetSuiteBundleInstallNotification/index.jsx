@@ -16,7 +16,7 @@ export default function NetSuiteBundleInstallNotification({resourceType, resourc
   const isRealTimeExport = useSelector(state => {
     const { merged: resourceData} = selectors.resourceData(state, resourceType, resourceId);
 
-    return resourceType === 'exports' && (resourceData?.resourceType === 'realtime' || resourceData?.type === 'distributed');
+    return resourceType === 'exports' && (resourceData.resourceType === 'realtime' || resourceData.type === 'distributed');
   });
 
   const handleClose = useCallback(() => {
