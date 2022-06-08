@@ -11,7 +11,7 @@ import messageStore from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(() => ({
   disabled: {
-    opacity: 0.3,
+    opacity: 0.5,
   },
 }));
 
