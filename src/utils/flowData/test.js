@@ -530,7 +530,21 @@ describe('isOneToManyResource util', () => {
 
     expect(isOneToManyResource(restExport)).toBeTruthy();
   });
-  test('should return false for any resource without oneToMany/pathToMany', () => {
+  test('should return true if the resource has oneToMany and no pathToMany', () => {
+    const restExport = {
+      name: 'Test export',
+      _id: '1234',
+      rest: {
+        once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5 }},
+        relativeURI: '/api/v2/users.json',
+      },
+      adaptorType: 'RESTExport',
+      oneToMany: true,
+    };
+
+    expect(isOneToManyResource(restExport)).toBeTruthy();
+  });
+  test('should return false for any resource without oneToMany and pathToMany', () => {
     const restExport = {
       name: 'Test export',
       _id: '1234',

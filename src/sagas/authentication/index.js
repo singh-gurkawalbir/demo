@@ -343,7 +343,7 @@ export function* auth({ email, password }) {
   }
 }
 
-export function* initializeSession() {
+export function* initializeSession({opts} = {}) {
   try {
     const resp = yield call(
       getResource,
@@ -360,7 +360,7 @@ export function* initializeSession() {
 
       // Important: Do not start off any async saga actions(esp those making network calls)
       // before logrocket initialization
-      yield call(initializeApp);
+      yield call(initializeApp, opts);
     // Important: intializeApp should be the last thing to happen in this function
     } else {
       // existing session is invalid

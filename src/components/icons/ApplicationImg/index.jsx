@@ -77,6 +77,9 @@ export default function ApplicationImg({
   className,
 }) {
   const classes = useStyles();
+
+  // eslint-disable-next-line no-param-reassign
+  if (!type) type = '';
   let path;
 
   if (!assistant) {

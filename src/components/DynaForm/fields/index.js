@@ -151,6 +151,7 @@ import DynaIntegrationCloneSelect from './select/DynaIntegrationCloneSelect';
 import DynaHFAssistantOptions from './httpFramework/DynaHFAssistantOptions';
 import DynaHFAssistantSearchParams from './httpFramework/DynaHFAssistantSearchParams';
 import DynaSemiHFAssistantOperationSelect from './httpFramework/DynaSemiHFAssistantOperationSelect';
+import DynaAmazonmwsType from './DynaAmazonmwsType';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -313,4 +314,5 @@ export default {
   hfoptions: DynaHFAssistantOptions,
   hfsearchparams: DynaHFAssistantSearchParams,
   semihfoperationselect: DynaSemiHFAssistantOperationSelect,
+  amazonmwstype: DynaAmazonmwsType,
 };
