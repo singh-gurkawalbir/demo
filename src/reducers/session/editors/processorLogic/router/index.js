@@ -38,6 +38,14 @@ export default {
     };
   },
 
+  processor: editor => {
+    if (editor.rule.activeProcessor === 'filter') {
+      return 'filter';
+    }
+
+    return 'javascript';
+  },
+
   requestBody: editor => {
     if (editor.rule.activeProcessor === 'filter') {
       return filter.requestBody({
