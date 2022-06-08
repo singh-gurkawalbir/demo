@@ -207,6 +207,7 @@ selectors.userProfilePreferencesProps = createSelector(
       // eslint-disable-next-line camelcase
       auth_type_google,
       _ssoAccountId,
+      authTypeSSO,
     } = { ...profile, ...preferences };
 
     return {
@@ -224,6 +225,7 @@ selectors.userProfilePreferencesProps = createSelector(
       auth_type_google,
       showRelativeDateTime,
       _ssoAccountId,
+      authTypeSSO,
     };
   });
 

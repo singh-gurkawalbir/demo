@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { selectors } from '../../../reducers';
@@ -69,11 +69,11 @@ const useStyles = makeStyles(theme => ({
 export default function Security() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const preferences = useSelector(state => selectors.userProfilePreferencesProps(state));
+  const preferences = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
   const oidcClient = useSelector(state => selectors.oidcSSOClient(state));
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
   const isAccountOwner = useSelector(state => selectors.isAccountOwner(state));
-  const ssoPrimaryAccounts = useSelector(state => selectors.ssoPrimaryAccounts(state));
+  const ssoPrimaryAccounts = useSelector(state => selectors.ssoPrimaryAccounts(state), shallowEqual);
   const [remountCount, setRemountCount] = useState(0);
   const resourceId = oidcClient?._id || generateNewId();
   const isEnableSSOSwitchInProgress = useSelector(state => selectors.commStatusPerPath(state, `/ssoclients/${resourceId}`, 'PATCH') === 'loading');
@@ -128,7 +128,8 @@ export default function Security() {
         label: 'Primary account',
         required: true,
         options: primaryAccountOptions,
-        defaultValue: preferences && preferences._ssoAccountId,
+        defaultValue: preferences?._ssoAccountId,
+        defaultDisabled: preferences?.authTypeSSO?.sub,
         visible: !isAccountOwner,
       };
 
