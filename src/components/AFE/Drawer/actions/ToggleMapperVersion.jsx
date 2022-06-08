@@ -12,7 +12,6 @@ const useStyles = makeStyles(theme => ({
   },
   betaLabel: {
     border: '1px solid',
-    borderColor: theme.palette.common.white,
     padding: `0px ${theme.spacing(0.5)}px`,
     fontSize: 11,
     fontWeight: 700,
