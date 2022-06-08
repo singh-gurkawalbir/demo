@@ -80,9 +80,8 @@ export const TooltipTitle = ({
   let title = '';
   let hideDropdownMsgKey = '';
 
-  if (isTruncated) {
-    title = inputValue;
-  }
+  if (!isTruncated && !hideSourceDropdown) return fieldType;
+
   if (hideSourceDropdown) {
     if (isLookup) {
       hideDropdownMsgKey = 'LOOKUP_SOURCE_TOOLTIP';
@@ -92,8 +91,15 @@ export const TooltipTitle = ({
       hideDropdownMsgKey = 'HANDLEBARS_SOURCE_TOOLTIP';
     }
   }
-  // dynamic lookup and hard-coded value will/can have empty input value, so need to show tooltip in that case
-  if (!inputValue && !isLookup && !isHardCodedValue) return fieldType;
+
+  if (isTruncated) {
+    if (hideSourceDropdown) {
+      title = inputValue;
+    } else {
+      title = `${fieldType}: ${inputValue}`;
+    }
+  }
+
   if (!hideSourceDropdown) return title;
 
   return (
@@ -160,9 +166,6 @@ export default function Mapper2ExtractsTypeableSelect({
   }, []);
 
   const hideSourceDropdown = isLookup || isHardCodedValue || isHandlebarExp;
-  // tooltip is only visible when not in focus and for truncated values
-  // and/or source dropdown is hidden
-  const hideTooltip = isFocused || (!inputValue && disabled) || (inputValue && !isTruncated && !hideSourceDropdown);
 
   return (
     <FormControl
@@ -172,7 +175,7 @@ export default function Mapper2ExtractsTypeableSelect({
       <Tooltip
         disableFocusListener
         placement="bottom"
-        title={hideTooltip ? '' : (
+        title={(isFocused || (!inputValue && !isLookup)) ? '' : (
           <TooltipTitle
             isTruncated={isTruncated}
             inputValue={inputValue}
@@ -195,7 +198,7 @@ export default function Mapper2ExtractsTypeableSelect({
           onFocus={handleFocus}
           disabled={disabled}
           multiline={isFocused}
-          placeholder={!disabled && 'Source record field'}
+          placeholder={disabled ? '' : 'Source record field'}
           InputProps={{
             endAdornment: !hideSourceDropdown &&
               (

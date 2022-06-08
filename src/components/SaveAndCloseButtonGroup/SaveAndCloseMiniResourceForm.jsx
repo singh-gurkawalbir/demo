@@ -37,7 +37,7 @@ const MiniResourceForm = ({
 
 export default function SaveAndCloseMiniResourceForm({
   formKey,
-  submitButtonLabel = 'Save & Close',
+  submitButtonLabel = 'Save & close',
   submitTransientLabel = 'Saving...',
   formSaveStatus,
   handleSave,
