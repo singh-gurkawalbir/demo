@@ -9,7 +9,6 @@ import DynaForm from '../../../components/DynaForm';
 import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import { generateNewId, isNewId, getDomainUrl } from '../../../utils/resource';
-// import { hashCode } from '../../../utils/string';
 import PanelHeader from '../../../components/PanelHeader';
 import Help from '../../../components/Help';
 import useSaveStatusIndicator from '../../../hooks/useSaveStatusIndicator';
@@ -206,7 +205,7 @@ export default function Security() {
             {
               collapsed: false,
               label: 'User settings',
-              fields: ['primaryAccount'],
+              fields: ['_ssoAccountId'],
             },
             {
               collapsed: false,
