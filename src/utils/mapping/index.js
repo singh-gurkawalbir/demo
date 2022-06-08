@@ -452,23 +452,23 @@ export const getDefaultExtractPath = isGroupedSampleData => isGroupedSampleData 
 
 export const RECORD_AS_INPUT_OPTIONS = [
   {
-    label: 'Record to record - { } to { }',
-    value: 'recrec',
+    label: 'Create destination record { } from source record { }',
+    value: 'recTorec',
   },
   {
-    label: 'Record to rows - { } to [ ]',
-    value: 'recrow',
+    label: 'Create destination rows [ ] from source record { }',
+    value: 'recTorow',
   },
 ];
 
 export const ROWS_AS_INPUT_OPTIONS = [
   {
-    label: 'Rows to record - [ ] to { }',
-    value: 'rowrec',
+    label: 'Create destination record { } from source rows [ ]',
+    value: 'rowTorec',
   },
   {
-    label: 'Rows to rows - [ ] to [ ]',
-    value: 'rowrow',
+    label: 'Create destination rows [ ] from source rows [ ]',
+    value: 'rowTorow',
   },
 ];
 export const PRIMITIVE_DATA_TYPES = ['string', 'number', 'boolean'];

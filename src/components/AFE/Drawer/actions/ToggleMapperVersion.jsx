@@ -6,15 +6,36 @@ import TextToggle from '../../../TextToggle';
 import { selectors } from '../../../../reducers';
 import Help from '../../../Help';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   helpTextButton: {
     padding: 0,
   },
-});
+  betaLabel: {
+    border: '1px solid',
+    borderColor: theme.palette.common.white,
+    padding: `0px ${theme.spacing(0.5)}px`,
+    fontSize: 11,
+    fontWeight: 700,
+    marginLeft: theme.spacing(1),
+  },
+}));
+
+const BetaLabel = () => {
+  const classes = useStyles();
+
+  return (
+    <>
+      Mapper 2.0
+      <span className={classes.betaLabel}>
+        BETA
+      </span>
+    </>
+  );
+};
 
 const toggleMapperOptions = [
   { label: 'Mapper 1.0', value: 1 },
-  { label: 'Mapper 2.0', value: 2 },
+  { label: <BetaLabel />, value: 2 },
 ];
 
 export default function ToggleMapperVersion({ editorId }) {

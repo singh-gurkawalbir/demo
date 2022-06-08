@@ -243,7 +243,7 @@ const Mapper2Row = React.memo(props => {
         {isHardCodedValue && !isLookup && <RightIcon title="Hard-coded" Icon={HardCodedIcon} />}
         <Tooltip
           placement="bottom"
-          title={(!generate && !generateDisabled) ? 'Enter destination record field to configure settings' : ''}>
+          title={(!generate && !generateDisabled) ? 'Enter destination field to configure settings' : ''}>
           {/* this div needs to be added to render the tooltip correctly when settings is disabled */}
           <div>
             <ActionButton

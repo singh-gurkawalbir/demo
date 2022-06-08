@@ -187,7 +187,7 @@ export default function Mapper2ExtractsTypeableSelect({
             isLookup={isLookup}
             isHardCodedValue={isHardCodedValue}
             isHandlebarExp={isHandlebarExp}
-            fieldType="Source record field"
+            fieldType="Source field"
         />
         )} >
         <TextField
@@ -202,7 +202,7 @@ export default function Mapper2ExtractsTypeableSelect({
           onFocus={handleFocus}
           disabled={disabled}
           multiline={isFocused}
-          placeholder={disabled ? '' : 'Source record field'}
+          placeholder={disabled ? '' : 'Source field'}
           InputProps={{
             endAdornment: !hideSourceDropdown &&
               (
