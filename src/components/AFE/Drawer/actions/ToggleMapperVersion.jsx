@@ -34,7 +34,7 @@ const BetaLabel = () => {
 
 const toggleMapperOptions = [
   { label: 'Mapper 1.0', value: 1 },
-  { label: <BetaLabel />, value: 2 },
+  { label: <BetaLabel />, value: 2, dataTest: 'Mapper 2.0' },
 ];
 
 export default function ToggleMapperVersion({ editorId }) {
