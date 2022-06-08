@@ -4442,7 +4442,7 @@ selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceTyp
   // for rest and http
   const appType = adaptorTypeMap[resourceObj?.adaptorType];
 
-  return ['http', 'rest'].includes(appType);
+  return ['http', 'rest', 'graph_ql'].includes(appType);
 };
 
 // #endregion SAMPLE DATA selectors
@@ -5487,26 +5487,6 @@ selectors.isMapper2Supported = state => {
   return !!((resource.adaptorType === 'HTTPImport' || resource.adaptorType === 'RESTImport') && resource.http?.type !== 'file');
 };
 
-selectors.resourceHasMappings = (state, importId) => {
-  const resource = selectors.resource(state, 'imports', importId);
-
-  if (!resource) return false;
-
-  // v2 mappings
-  if (resource.mappings?.length) {
-    return true;
-  }
-
-  // v1 mappings
-  const mappings = mappingUtil.getMappingFromResource({
-    importResource: resource,
-    isFieldMapping: true,
-  });
-  const { fields = [], lists = [] } = mappings || {};
-
-  return !!(fields.length || lists.length);
-};
-
 selectors.mappingEditorNotification = (state, editorId) => {
   const {editorType, resourceId} = fromSession.editor(state?.session, editorId);
   const isMapper2Supported = selectors.isMapper2Supported(state);
@@ -5765,7 +5745,7 @@ selectors.job = (state, { type, jobId, parentJobId }) => {
 
   return {
     ...j,
-    name: resourceMap?.flows[j._flowId] && resourceMap?.flows[j._flowId].name,
+    name: resourceMap?.flows ? resourceMap?.flows[j._flowId] && resourceMap?.flows[j._flowId].name : j._flowd,
   };
 };
 
@@ -6558,7 +6538,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
 
   // all afe fields for mapper2 should only support v2 AFE
   if (mappingVersion === 2) {
-    return {shouldGetContextFromBE: true};
+    return {shouldGetContextFromBE: true, isMapperField: true};
   }
 
   // for lookup fields, BE doesn't support v1/v2 yet
