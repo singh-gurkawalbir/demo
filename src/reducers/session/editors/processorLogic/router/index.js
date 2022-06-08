@@ -39,7 +39,6 @@ export default {
   },
 
   requestBody: editor => {
-    console.log('request body', editor);
     if (editor.rule.activeProcessor === 'filter') {
       return filter.requestBody({
         data: editor.data,
