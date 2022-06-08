@@ -19,7 +19,6 @@ const useStyles = makeStyles(theme => ({
       '& span': {
         color: theme.palette.secondary.main,
         lineHeight: '0px',
-        borderColor: theme.palette.secondary.main,
       },
     },
     '& button.Mui-selected': {
@@ -27,7 +26,6 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.background.toggle,
       '& span': {
         color: theme.palette.common.white,
-        borderColor: theme.palette.common.white,
       },
     },
     '& button:hover': {

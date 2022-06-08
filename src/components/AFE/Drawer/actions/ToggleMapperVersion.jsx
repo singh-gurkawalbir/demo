@@ -17,6 +17,16 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 700,
     marginLeft: theme.spacing(1),
   },
+  mapperTextToggle: {
+    '&>button': {
+      '&:nth-child(1)': {
+        minWidth: theme.spacing(11),
+      },
+      '&:nth-child(2)': {
+        minWidth: theme.spacing(16),
+      },
+    },
+  },
 }));
 
 const BetaLabel = () => {
@@ -58,6 +68,7 @@ export default function ToggleMapperVersion({ editorId }) {
         onChange={handleVersionToggle}
         exclusive
         options={toggleMapperOptions}
+        className={classes.mapperTextToggle}
       />
       <Help
         title="Mapper"

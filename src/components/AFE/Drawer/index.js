@@ -35,11 +35,8 @@ const useStyles = makeStyles(theme => ({
   drawerHeaderRibbon: {
     '& > * .MuiToggleButtonGroup-root': {
       marginRight: theme.spacing(0.5),
-      '& > button:first-child': {
-        minWidth: theme.spacing(11),
-      },
       '& > button': {
-        minWidth: theme.spacing(16),
+        minWidth: '70px',
       },
     },
   },
