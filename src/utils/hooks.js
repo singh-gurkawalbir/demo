@@ -72,6 +72,7 @@ export const hooksLabelMap = {
   filter: 'Filter',
   formInit: 'Form init',
   handleRequest: 'Handle request',
+  router: 'Router',
 };
 export function getSupportedHooksForResource(resource) {
   let unSupportedHooks = [];
