@@ -240,9 +240,13 @@ export default function Security() {
     ]
   );
 
-  useEffect(() => {
+  const remountAfterSave = useCallback(() => {
     setRemountCount(count => count + 1);
-  }, [isSSOEnabled]);
+  }, []);
+
+  useEffect(() => {
+    remountAfterSave();
+  }, [isSSOEnabled, remountAfterSave]);
 
   // remount the form when fieldMeta changes
   const formKey = useFormInitWithPermissions({
@@ -303,9 +307,10 @@ export default function Security() {
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
-      path: isNewId(resourceId) ? '/ssoclients' : `/ssoclients/${resourceId}`,
-      method: isNewId(resourceId) ? 'post' : 'put',
+      paths: ['/profile', isNewId(resourceId) ? '/ssoclients' : `/ssoclients/${resourceId}`],
+      methods: ['PUT', isNewId(resourceId) ? 'post' : 'put'],
       onSave: handleSubmit,
+      remountAfterSave,
     }
   );
 
@@ -321,13 +326,12 @@ export default function Security() {
   const resourcesToLoad = isAccountOwnerOrAdmin ? 'ssoclients' : [];
 
   return (
-    <>
-      <LoadResources required resources={resourcesToLoad}>
-        <div className={classes.root}>
-          <PanelHeader title="Single sign-on (SSO)" infoText={infoTextSSO} />
-          <div className={classes.ssoForm}>
-            <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
-            {
+    <LoadResources required resources={resourcesToLoad}>
+      <div className={classes.root}>
+        <PanelHeader title="Single sign-on (SSO)" infoText={infoTextSSO} />
+        <div className={classes.ssoForm}>
+          <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
+          {
                 !!oidcClient?.orgId && isSSOEnabled && (
                 <div>
                   <div className={classes.flexContainer}>
@@ -341,18 +345,17 @@ export default function Security() {
                 </div>
                 )
             }
-          </div>
-          <div className={classes.footer}>
-            <DynaSubmit
-              formKey={formKey}
-              disabled={disableSave}
-              onClick={submitHandler()}>
-              {defaultLabels.saveLabel}
-            </DynaSubmit>
-          </div>
         </div>
-      </LoadResources>
-    </>
+        <div className={classes.footer}>
+          <DynaSubmit
+            formKey={formKey}
+            disabled={disableSave}
+            onClick={submitHandler()}>
+            {defaultLabels.saveLabel}
+          </DynaSubmit>
+        </div>
+      </div>
+    </LoadResources>
   );
 }
 
