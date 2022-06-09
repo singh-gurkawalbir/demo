@@ -20,10 +20,10 @@ const useStyles = makeStyles(theme => ({
   mapperTextToggle: {
     '&>button': {
       '&:nth-child(1)': {
-        minWidth: theme.spacing(11),
+        minWidth: `${theme.spacing(11)}px !important`,
       },
       '&:nth-child(2)': {
-        minWidth: theme.spacing(16),
+        minWidth: `${theme.spacing(16)}px !important`,
       },
     },
   },
