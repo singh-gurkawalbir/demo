@@ -6,15 +6,45 @@ import TextToggle from '../../../TextToggle';
 import { selectors } from '../../../../reducers';
 import Help from '../../../Help';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   helpTextButton: {
     padding: 0,
   },
-});
+  betaLabel: {
+    border: '1px solid',
+    padding: `0px ${theme.spacing(0.5)}px`,
+    fontSize: 11,
+    fontWeight: 700,
+    marginLeft: theme.spacing(1),
+  },
+  mapperTextToggle: {
+    '&>button': {
+      '&:nth-child(1)': {
+        minWidth: theme.spacing(11),
+      },
+      '&:nth-child(2)': {
+        minWidth: theme.spacing(16),
+      },
+    },
+  },
+}));
+
+const BetaLabel = () => {
+  const classes = useStyles();
+
+  return (
+    <>
+      Mapper 2.0
+      <span className={classes.betaLabel}>
+        BETA
+      </span>
+    </>
+  );
+};
 
 const toggleMapperOptions = [
   { label: 'Mapper 1.0', value: 1 },
-  { label: 'Mapper 2.0', value: 2 },
+  { label: <BetaLabel />, value: 2, dataTest: 'Mapper 2.0' },
 ];
 
 export default function ToggleMapperVersion({ editorId }) {
@@ -38,6 +68,7 @@ export default function ToggleMapperVersion({ editorId }) {
         onChange={handleVersionToggle}
         exclusive
         options={toggleMapperOptions}
+        className={classes.mapperTextToggle}
       />
       <Help
         title="Mapper"
