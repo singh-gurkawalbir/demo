@@ -12,6 +12,7 @@ import { generateNewId, isNewId, getDomainUrl } from '../../../utils/resource';
 import PanelHeader from '../../../components/PanelHeader';
 import Help from '../../../components/Help';
 import useSaveStatusIndicator from '../../../hooks/useSaveStatusIndicator';
+import getFieldMeta from './securityFormMeta';
 
 const useStyles = makeStyles(theme => ({
   ssoForm: {
@@ -114,130 +115,23 @@ export default function Security() {
   const primaryAccountOptions = useMemo(() => (
     [{
       items: ssoPrimaryAccounts.map(
-        acc => ({label: acc.ownerUser?.name, value: acc.ownerUser?._ssoClientId})
+        acc => ({label: acc.ownerUser?.name, value: acc.ownerUser?._id})
       ),
     }]
   ), [ssoPrimaryAccounts]);
 
   const fieldMeta = useMemo(
-    () => {
-      const _ssoAccountId = {
-        id: '_ssoAccountId',
-        type: 'select',
-        name: '_ssoAccountId',
-        label: 'Primary account',
-        required: true,
-        options: primaryAccountOptions,
-        defaultValue: preferences?._ssoAccountId,
-        defaultDisabled: preferences?.authTypeSSO?.sub,
-        visible: !isAccountOwner,
-      };
-
-      if (!isAccountOwnerOrAdmin) {
-        return {
-          fieldMap: {
-            _ssoAccountId,
-          },
-        };
-      }
-
-      return ({
-        fieldMap: {
-          _ssoAccountId,
-          enableSSO: {
-            id: 'enableSSO',
-            type: 'enablesso',
-            handleEnableSSO,
-            isSSOEnabled,
-            resourceId,
-          },
-          issuerURL: {
-            id: 'issuerURL',
-            name: 'issuerURL',
-            type: 'text',
-            label: 'Issuer URL',
-            required: true,
-            defaultValue: oidcClient?.oidc?.issuerURL,
-            helpKey: 'sso.issuerURL',
-            noApi: true,
-            isLoggable: false,
-            visible: isSSOEnabled,
-          },
-          clientId: {
-            id: 'clientId',
-            name: 'clientId',
-            type: 'text',
-            label: 'Client ID',
-            required: true,
-            defaultValue: oidcClient?.oidc?.clientId,
-            helpKey: 'sso.clientId',
-            isLoggable: false,
-            noApi: true,
-            visible: isSSOEnabled,
-          },
-          clientSecret: {
-            id: 'clientSecret',
-            name: 'clientSecret',
-            type: 'text',
-            inputType: 'password',
-            label: 'Client secret',
-            required: true,
-            helpKey: 'sso.clientSecret',
-            isLoggable: false,
-            noApi: true,
-            visible: isSSOEnabled,
-          },
-          orgId: {
-            id: 'orgId',
-            name: 'orgId',
-            type: 'ssoorgid',
-            label: 'Organization ID',
-            required: true,
-            defaultValue: oidcClient?.orgId,
-            helpKey: 'sso.orgId',
-            isLoggable: false,
-            noApi: true,
-            visible: isSSOEnabled,
-          },
-        },
-        layout: {
-          type: 'collapse',
-          containers: [
-            {
-              collapsed: false,
-              label: 'User settings',
-              fields: ['_ssoAccountId'],
-            },
-            {
-              collapsed: false,
-              label: 'Account settings',
-              containers: [
-                {fields: ['enableSSO'] },
-                {
-                  type: 'indent',
-                  containers: [
-                    {
-                      fields: ['issuerURL', 'clientId', 'clientSecret', 'orgId'],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      });
-    },
-    [
-      handleEnableSSO,
+    () => getFieldMeta({
+      resourceId,
+      isSSOEnabled,
+      primaryAccountOptions,
+      preferences,
       isAccountOwner,
       isAccountOwnerOrAdmin,
-      isSSOEnabled,
-      oidcClient?.oidc?.clientId,
-      oidcClient?.oidc?.issuerURL,
-      oidcClient?.orgId, preferences,
-      primaryAccountOptions,
-      resourceId,
-    ]
+      handleEnableSSO,
+      oidcClient,
+    }),
+    [handleEnableSSO, isAccountOwner, isAccountOwnerOrAdmin, isSSOEnabled, oidcClient, preferences, primaryAccountOptions, resourceId]
   );
 
   const remountAfterSave = useCallback(() => {
@@ -266,8 +160,13 @@ export default function Security() {
 
     if (!isAccountOwnerOrAdmin) return;
 
-    const patchSet = [];
     const isNewClient = isNewId(resourceId);
+
+    // for admin, if he updates the primary account field if SSO is disabled
+    // the post call to ssoclients should not be made
+    if (isNewClient && !isSSOEnabled) return;
+
+    const patchSet = [];
 
     patchSet.push({
       op: isNewClient ? 'add' : 'replace',
@@ -303,7 +202,7 @@ export default function Security() {
     });
 
     dispatch(actions.resource.patchAndCommitStaged('ssoclients', resourceId, patchSet));
-  }, [dispatch, isAccountOwnerOrAdmin, preferences, resourceId]);
+  }, [dispatch, isAccountOwnerOrAdmin, isSSOEnabled, preferences, resourceId]);
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
