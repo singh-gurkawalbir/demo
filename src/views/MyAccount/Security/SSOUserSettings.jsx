@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-export default function Security() {
+export default function SSOUserSettings() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [remountCount, setRemountCount] = useState(0);

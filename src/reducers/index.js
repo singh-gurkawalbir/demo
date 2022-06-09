@@ -58,6 +58,7 @@ import {
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
   AFE_SAVE_STATUS,
   UNASSIGNED_SECTION_NAME,
+  emptyList,
 } from '../utils/constants';
 import messageStore from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -6779,12 +6780,12 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
 
 selectors.ssoPrimaryAccounts = state => {
   if (selectors.isAccountOwner(state)) {
-    return [];
+    return emptyList;
   }
 
   const orgAccounts = state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
 
-  return orgAccounts?.filter(acc => acc.ownerUser?._ssoClientId) || [];
+  return orgAccounts?.filter(acc => acc.ownerUser?._ssoClientId) || emptyList;
 };
 
 selectors.isUserAllowedOptionalSSOSignIn = state => {

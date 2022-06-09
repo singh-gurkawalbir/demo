@@ -78,7 +78,7 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-export default function Security() {
+export default function SSOAccountSettings() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const oidcClient = useSelector(state => selectors.oidcSSOClient(state));
