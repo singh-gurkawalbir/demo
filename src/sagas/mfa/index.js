@@ -1,4 +1,4 @@
-import { call, put, takeLatest, select, race, take, delay } from 'redux-saga/effects';
+import { call, put, takeLatest, delay } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -13,7 +13,7 @@ export function* requestUserSettings() {
     allowTrustedDevices: true,
   };
 
-  // const path = '/api/mfa/setup';
+  // const path = '/mfa/setup';
   // try {
   //   response = yield call(apiCallWithRetry, {
   //     path,
@@ -34,7 +34,7 @@ export function* requestAccountSettings() {
     trustDeviceForPeriod: 200,
   };
 
-  // const path = '/api/trustedDevices/settings';
+  // const path = '/trustedDevices/settings';
   // try {
   //   response = yield call(apiCallWithRetry, {
   //     path,
@@ -57,7 +57,7 @@ export function* setupMFA({ mfaConfig }) {
     _allowResetByUserId: true,
   };
 
-  // const path = '/api/mfa/setup';
+  // const path = '/mfa/setup';
 
   // try {
   //   response = yield call(apiCallWithRetry, {
@@ -80,7 +80,7 @@ export function* setupMFA({ mfaConfig }) {
 export function* updateAccountSettings({ accountSettings }) {
   yield delay(500);
   const response = accountSettings;
-  // const path = '/api/trustedDevices/settings';
+  // const path = '/trustedDevices/settings';
 
   // try {
   //   response = yield call(apiCallWithRetry, {
@@ -98,7 +98,7 @@ export function* updateAccountSettings({ accountSettings }) {
 export function* requestSecretCode({ isQRCode }) {
   yield delay(500);
   const response = { secret: 'secret', keyURI: 'http://keyURI.com' };
-  // const path = '/api/mfa/secret/generate';
+  // const path = '/mfa/secret/generate';
 
   // try {
   //   response = yield call(apiCallWithRetry, {
@@ -120,7 +120,7 @@ export function* requestSecretCode({ isQRCode }) {
 export function* resetMFA({ aShareId }) {
   yield delay(500);
   const response = undefined;
-  // const path = '/api/mfa/reset';
+  // const path = '/mfa/reset';
 
   // try {
   //   response = yield call(apiCallWithRetry, {
@@ -138,7 +138,7 @@ export function* resetMFA({ aShareId }) {
 export function* updateTrustedDevice({ deviceInfo }) {
   yield delay(500);
   const response = {allowTrustedDevices: true, trustDeviceForPeriod: 20};
-  // const path = '/api/trustedDevices/settings';
+  // const path = '/trustedDevices/settings';
 
   // try {
   //   response = yield call(apiCallWithRetry, {
@@ -160,7 +160,7 @@ export function* updateTrustedDevice({ deviceInfo }) {
 export function* deleteTrustedDevice({ deviceName }) {
   yield delay(500);
   const response = undefined;
-  // const path = `/api/trustedDevices/${deviceName}`;
+  // const path = `/trustedDevices/${deviceName}`;
 
   // try {
   //   response = yield call(apiCallWithRetry, {
@@ -179,7 +179,7 @@ export function* deleteTrustedDevice({ deviceName }) {
 export function* verifyMobileCode({ code }) {
   yield delay(500);
   const response = { status: 'success'};
-  // const path = '/api/mfa/test';
+  // const path = '/mfa/test';
 
   // try {
   //   response = yield call(apiCallWithRetry, {
@@ -206,7 +206,7 @@ export function* requestMFASessionInfo() {
     mfaSetupRequired: false,
     mfaVerified: true,
   };
-  // const path = '/api/mfa/sessionInfo';
+  // const path = '/mfa/sessionInfo';
 
   // try {
   //   response = yield call(apiCallWithRetry, {

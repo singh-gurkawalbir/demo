@@ -12,21 +12,17 @@ export default (state = {}, action) => {
       case actionTypes.MFA.SECRET_CODE_ERROR:
         draft.secretCodeError = secretCodeError;
         delete draft.showSecretCode;
-        delete draft.secretCodeShownAt;
         break;
       case actionTypes.MFA.QR_CODE_ERROR:
         draft.qrCodeError = qrCodeError;
         delete draft.showQrCode;
-        delete draft.qrCodeShownAt;
         break;
 
       case actionTypes.MFA.SHOW_QR_CODE:
         draft.showQrCode = true;
-        draft.qrCodeShownAt = new Date().toISOString();
         break;
       case actionTypes.MFA.SHOW_SECRET_CODE:
         draft.showSecretCode = true;
-        draft.secretCodeShownAt = new Date().toISOString();
         break;
       case actionTypes.MFA.MOBILE_CODE.VERIFY:
         draft.mobileCode = { status: 'requested' };
@@ -47,6 +43,12 @@ export default (state = {}, action) => {
         break;
       case actionTypes.MFA.CLEAR:
         draft.mobileCode = {};
+        delete draft.secretCode;
+        delete draft.showSecretCode;
+        delete draft.qrCode;
+        delete draft.showQrCode;
+        delete draft.secretCodeError;
+        delete draft.qrCodeError;
         break;
       default:
     }
@@ -55,9 +57,6 @@ export default (state = {}, action) => {
 
 // #region PUBLIC SELECTORS
 export const selectors = {};
-
-selectors.isQrCodeExpired = state => state?.showQrCode && (new Date() - state?.qrCodeShownAt > 30);
-selectors.isSecretCodeExpired = state => state?.showQrCode && (new Date() - state?.qrCodeShownAt > 30);
 
 selectors.showQrCode = state => state?.showQrCode;
 selectors.showSecretCode = state => state?.showSecretCode;
