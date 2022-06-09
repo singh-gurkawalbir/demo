@@ -84,7 +84,9 @@ export default function MyAccount({ match }) {
   const classes = useStyles();
   const permissions = useSelector(state => selectors.userPermissions(state));
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
-  const tabsForManageOrMonitorUser = tabs.filter(tab => tab.path === 'profile' || tab.path === 'security');
+  const ssoPrimaryAccountsCount = useSelector(state => selectors.ssoPrimaryAccounts(state).length);
+
+  const tabsForManageOrMonitorUser = tabs.filter(tab => tab.path === 'profile' || (ssoPrimaryAccountsCount && tab.path === 'security'));
   const availableTabs = isAccountOwnerOrAdmin ? tabs : tabsForManageOrMonitorUser;
 
   return (

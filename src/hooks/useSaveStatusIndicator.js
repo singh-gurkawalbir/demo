@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect, useMemo } from 'react';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../reducers';
 import commKeyGen from '../utils/commKeyGenerator';
 import actions from '../actions';
@@ -13,9 +13,7 @@ export default function useSaveStatusIndicator(props) {
     onClose,
     onSuccess,
     onFailure,
-    paths,
-    methods,
-    remountAfterSave,
+    remountAfterSaveFn,
   } = props;
   const dispatch = useDispatch();
   // Local states
@@ -23,23 +21,7 @@ export default function useSaveStatusIndicator(props) {
   const [saveInProgress, setSaveInProgress] = useState(false);
   const [closeOnSuccess, setCloseOnSuccess] = useState(false);
   // Selector to watch for Comm status
-  const commStatus = useSelector(state => {
-    if (paths && methods) {
-      let commStatus = [];
-
-      paths.forEach((path, i) => {
-        const commStatusPerPath = selectors.commStatusPerPath(state, path, methods[i]);
-
-        if (commStatusPerPath) {
-          commStatus = [...commStatus, commStatusPerPath];
-        }
-      });
-
-      return commStatus;
-    }
-
-    return [selectors.commStatusPerPath(state, path, method)];
-  }, shallowEqual);
+  const commStatus = useSelector(state => selectors.commStatusPerPath(state, path, method));
 
   const handleSave = useCallback(values => {
     onSave(values);
@@ -66,41 +48,28 @@ export default function useSaveStatusIndicator(props) {
   );
 
   const clearCommState = useCallback(() => {
-    if (paths && methods) {
-      paths.forEach((path, i) => {
-        const key = commKeyGen(path, methods[i]);
-
-        dispatch(actions.api.clearCommByKey(key));
-      });
-
-      return;
-    }
     const key = commKeyGen(path, method);
 
     dispatch(actions.api.clearCommByKey(key));
-  }, [dispatch, method, methods, path, paths]);
+  }, [dispatch, method, path]);
 
   useEffect(() => {
-    // if all apis are successful, comm status should be success
-    const isCommStatusSuccess = commStatus.length ? commStatus.every(commStatus => commStatus === 'success') : false;
-
-    // if any one of the comms results in error, the comm status would be error
-    const isCommStatusError = commStatus.length ? commStatus.some(commStatus => commStatus === 'error') : false;
-
     // watches for commStatus and updates states
-    if (isCommStatusSuccess || isCommStatusError) {
+    if (['success', 'error'].includes(commStatus)) {
       setSaveInProgress(false);
       setDisableSave(false);
-      clearCommState(); // Once API call is done (success/error), clears the comm state
-      remountAfterSave && remountAfterSave(); // remount the form once save completes
+      // Once API call is done (success/error), clear the comm state
+      clearCommState();
+      // remount the form after save
+      remountAfterSaveFn && typeof remountAfterSaveFn === 'function' && remountAfterSaveFn();
     }
-    if (isCommStatusSuccess && onSuccess) {
+    if (commStatus === 'success' && onSuccess) {
       onSuccess();
     }
-    if (isCommStatusError && onFailure) {
+    if (commStatus === 'error' && onFailure) {
       onFailure();
     }
-    if (isCommStatusSuccess && closeOnSuccess && onClose) {
+    if (commStatus === 'success' && closeOnSuccess && onClose) {
       onClose();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
