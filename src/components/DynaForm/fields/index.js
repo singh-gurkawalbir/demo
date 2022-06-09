@@ -149,7 +149,6 @@ import DynaAliasId from './aliases/DynaAliasId';
 import DynaSelectAliasResource from './aliases/DynaSelectAliasResource';
 import DynaIntegrationCloneSelect from './select/DynaIntegrationCloneSelect';
 import DynaAmazonmwsType from './DynaAmazonmwsType';
-import DynaEnableSSO from './DynaEnableSSO';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -310,5 +309,4 @@ export default {
   updatedomain: DynaTextUpdateDomain,
   integrationcloneselect: DynaIntegrationCloneSelect,
   amazonmwstype: DynaAmazonmwsType,
-  enablesso: DynaEnableSSO,
 };
