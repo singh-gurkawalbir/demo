@@ -86,6 +86,7 @@ export default function SSOAccountSettings() {
   const resourceId = oidcClient?._id || generateNewId();
   const isEnableSSOSwitchInProgress = useSelector(state => selectors.commStatusPerPath(state, `/ssoclients/${resourceId}`, 'PATCH') === 'loading');
   const [isSSOEnabled, setIsSSOEnabled] = useState(!!oidcClient?.disabled);
+  const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
   const handleEnableSSO = useCallback(
     () => {
       if (isEnableSSOSwitchInProgress) return;
@@ -230,20 +231,21 @@ export default function SSOAccountSettings() {
   const applicationLoginURL = `${domainURL}/sso/${oidcClient?.orgId}`;
   const redirectURL = `${domainURL}/sso/${oidcClient?.orgId}/callback`;
 
+  if (!isAccountOwnerOrAdmin) return null;
+
   return (
-    <>
-      <LoadResources required resources="ssoclients">
-        <div className={classes.collapseContainer}>
-          <CollapsableContainer title="Account settings" forceExpand>
-            <div className={classes.ssoSwitch}>
-              <Typography variant="body2" className={classes.content}> Enable OIDC-based SSO </Typography>
-              <Help title="Enable OIDC-based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
-              <CeligoSwitch
-                onChange={handleEnableSSO}
-                checked={isSSOEnabled} />
-              {isEnableSSOSwitchInProgress && <Spinner size="small" className={classes.spinner} />}
-            </div>
-            {
+    <LoadResources required resources="ssoclients">
+      <div className={classes.collapseContainer}>
+        <CollapsableContainer title="Account settings" forceExpand>
+          <div className={classes.ssoSwitch}>
+            <Typography variant="body2" className={classes.content}> Enable OIDC-based SSO </Typography>
+            <Help title="Enable OIDC-based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
+            <CeligoSwitch
+              onChange={handleEnableSSO}
+              checked={isSSOEnabled} />
+            {isEnableSSOSwitchInProgress && <Spinner size="small" className={classes.spinner} />}
+          </div>
+          {
           isSSOEnabled && (
             <>
               <div className={classes.ssoForm}>
@@ -274,9 +276,8 @@ export default function SSOAccountSettings() {
             </>
           )
         }
-          </CollapsableContainer>
-        </div>
-      </LoadResources>
-    </>
+        </CollapsableContainer>
+      </div>
+    </LoadResources>
   );
 }
