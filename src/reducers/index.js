@@ -81,7 +81,7 @@ import {
   isPreviewPanelAvailable,
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
-import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
+import { getIntegrationAppUrlName, getTitleFromEdition, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
@@ -99,7 +99,7 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { HOOK_STAGES } from '../utils/editor';
-import { getTextAfterCount, capitalizeFirstLetter } from '../utils/string';
+import { getTextAfterCount } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as FLOWSTEP_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as FLOWSTEP_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/flowStepLogs';
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE, isAmazonSellingPartnerConnection } from '../utils/assistant';
@@ -2806,7 +2806,7 @@ selectors.integrationAppEdition = (state, integrationId) => {
             (editions.find(ed => ed._id === license._editionId) || {})?.displayName;
 
   const plan = `${
-    edition ? capitalizeFirstLetter(edition) : 'Standard'
+    edition ? getTitleFromEdition(edition) : 'Standard'
   } plan`;
 
   return plan;
