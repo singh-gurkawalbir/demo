@@ -375,8 +375,10 @@ export const groupApplications = (
   resourceType,
   { appType, isSimpleImport }
 ) => {
-  const assistantConnectors = connectors.filter(c => !c.assistant);
+  let assistantConnectors = connectors.filter(c => !c.assistant);
   const assistants = getAssistants();
+
+  const publishedConnectors = getPublishedHttpConnectors();
 
   if (assistants) {
     assistants.forEach(asst => {
@@ -396,6 +398,19 @@ export const groupApplications = (
       }
     });
   }
+  assistantConnectors = assistantConnectors.filter(app =>
+    !publishedConnectors?.find(pc => pc.name === app.assistant)
+
+  );
+  publishedConnectors?.forEach(pc => {
+    assistantConnectors.push({
+      id: pc.name,
+      name: pc.name,
+      type: 'http',
+      export: true,
+      import: true,
+    });
+  });
 
   assistantConnectors.sort(stringCompare('name'));
 
@@ -450,11 +465,12 @@ export const groupApplications = (
 */
 export const applicationsList = () => {
   const assistants = getAssistants();
-  const applications = connectors.filter(connector => {
+  let applications = connectors.filter(connector => {
     const assistant = assistants.find(a => a.id === connector.assistant);
 
     return !assistant || !connector.assistant;
   });
+  const publishedConnectors = getPublishedHttpConnectors();
 
   assistants.forEach(asst => {
     let {name} = asst;
@@ -474,6 +490,20 @@ export const applicationsList = () => {
       import: asst.import,
       webhook: asst.webhook,
       helpURL: asst.helpURL,
+    });
+  });
+  applications = applications.filter(app =>
+    !publishedConnectors?.find(pc => pc.name === app.assistant)
+
+  );
+  publishedConnectors?.forEach(pc => {
+    applications.push({
+      id: pc.name,
+      name: pc.name,
+      type: 'http',
+      export: true,
+      import: true,
+      _httpConnectorId: pc._id,
     });
   });
 

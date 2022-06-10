@@ -5,7 +5,6 @@ import { isJsonString } from '../../../utils/string';
 import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS} from '../../../utils/constants';
 import { getAssistantFromResource, getResourceSubType, isNewId, rdbmsSubTypeToAppType } from '../../../utils/resource';
 import { isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, shouldLoadAssistantFormForImports, shouldLoadAssistantFormForExports, isEbayFinanceConnection } from '../../../utils/assistant';
-import { getPublishedHttpConnector } from '../../../constants/applications';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -188,13 +187,12 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
   let meta;
 
   const { type } = getResourceSubType(resource);
-  const httpPublishedConnector = resourceType === 'connections' && getPublishedHttpConnector(resource?._httpConnectorId || resource?.http?.__httpConnectorId);
 
   switch (resourceType) {
     case 'connections':
       if (isNew) {
         meta = formMeta.connections.new;
-      } else if (httpPublishedConnector) {
+      } else if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
         meta = formMeta.connections.http;
       } else if (resource && resource.assistant === 'financialforce') {
         // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.

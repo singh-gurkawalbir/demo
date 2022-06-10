@@ -6,7 +6,7 @@ import {
 } from '../../../../../utils/assistant';
 
 function hiddenFieldsMeta({ values }) {
-  return ['assistant', 'adaptorType', 'assistantData'].map(fieldId => ({
+  return ['adaptorType', 'assistantData'].map(fieldId => ({
     id: `assistantMetadata.${fieldId}`,
     type: 'text',
     value: values[fieldId],

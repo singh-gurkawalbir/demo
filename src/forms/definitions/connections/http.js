@@ -5,7 +5,7 @@ import { updateHTTPFrameworkFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
   init: (fieldMeta, resource, flow, httpConnector) => {
-    if (!httpConnector) {
+    if (!resource?._httpConnectorId && !resource?.http?._httpConnectorId) {
       return fieldMeta;
     }
 
@@ -174,8 +174,8 @@ export default {
     delete newValues['/http/auth/wsse/username'];
     delete newValues['/http/auth/wsse/password'];
     delete newValues['/http/auth/wsse/headerName'];
-    if (options.httpConnector) {
-      newValues = updateHTTPFrameworkFormValues(newValues, resource, options.httpConnector);
+    if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
+      newValues = updateHTTPFrameworkFormValues(newValues, resource, options?.httpConnector);
     }
 
     return newValues;

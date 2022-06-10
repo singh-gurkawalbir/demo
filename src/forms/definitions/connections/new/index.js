@@ -1,20 +1,19 @@
-import {applicationsList, applicationsPlaceHolderText, getPublishedHttpConnectorThroughAssistant} from '../../../../constants/applications';
+import {applicationsList, applicationsPlaceHolderText} from '../../../../constants/applications';
 
 export default {
   preSave: ({ application, ...rest }) => {
     const applications = applicationsList();
 
     const app = applications.find(a => a.id === application) || {};
-    const connector = getPublishedHttpConnectorThroughAssistant(application);
     const newValues = {
       ...rest,
       '/adaptorType': `${app.type.toUpperCase()}Connection`,
-      '/type': connector?._id ? 'http' : app.type,
+      '/type': app.type,
       '/application': app.name,
-      '/_httpConnectorId': connector?._id,
+      '/_httpConnectorId': app._httpConnectorId,
     };
 
-    if (app.assistant && !connector?._id) {
+    if (app.assistant) {
       newValues['/assistant'] = app.assistant;
     }
 

@@ -251,7 +251,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
     if (key === 'http.ping.relativeURI') {
       if (!tempFiledMeta.fieldMap[key].defaultValue) {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]};
-      } else if (resource.http.unencrypted.version) {
+      } else if (resource.http?.unencrypted?.version) {
         tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resource.http.unencrypted.version}`, '');
       } else if (connector.versions?.[0]?.name) {
         tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${connector.versions?.[0]?.name}`, '');
