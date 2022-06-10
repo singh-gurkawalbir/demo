@@ -4,6 +4,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import AddIcon from '../../../components/icons/AddIcon';
+import AddEmptyStep from '../../../components/icons/AddEmptyStep';
 import AutoRetryIcon from '../../../components/icons/AutoRetryIcon';
 import HardCodedIcon from '../../../components/icons/HardCodedIcon';
 import LookupLetterIcon from '../../../components/icons/LookupLetterIcon';
@@ -157,6 +158,7 @@ import WhatsNewIcon from '../../../components/icons/WhatsNewIcon';
 const icons =
     {
       AddIcon,
+      AddEmptyStep,
       AutoRetryIcon,
       HardCodedIcon,
       LookupLetterIcon,
