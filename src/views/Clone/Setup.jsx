@@ -53,11 +53,21 @@ export default function Clone() {
   const history = useHistory();
   const dispatch = useDispatch();
   const templateId = `${resourceType}-${resourceId}`;
+  let resourceExist = true;
   const resourceName = useSelector(state => {
     const resource = selectors.resource(state, resourceType, resourceId);
 
+    if (!resource) { resourceExist = false; }
+
     return resource?.name || MODEL_PLURAL_TO_LABEL[resourceType];
   });
+
+  useEffect(() => {
+    if (!resourceExist) {
+      history.push(`/clone/flows/${resourceId}/preview`);
+    }
+  });
+
   const installSteps = useSelector(state =>
     selectors.cloneInstallSteps(state, resourceType, resourceId)
   );
