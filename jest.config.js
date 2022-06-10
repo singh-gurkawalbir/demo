@@ -20,6 +20,11 @@ module.exports = {
     'src/reducers/**/*.{js,jsx}',
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
+    'src/components/CeligoPageBar/*.{js,jsx}',
+    'src/components/CeligoSelect/*.{js,jsx}',
+    'src/components/CeligoTimeAgo/*.{js,jsx}',
+    'src/components/ConnectionStatusPanel/*.{js,jsx}',
+    'src/components/DateTimeDisplay/*.{js,jsx}',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js'],
   coverageThreshold: {
