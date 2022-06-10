@@ -1210,7 +1210,7 @@ export const findAllParentExtractsForNode = (treeData, output = [], nodeKey) => 
   findAllParentExtractsForNode(treeData, output, node.parentKey);
 
   if (node.parentExtract) {
-    output.push(node.parentExtract);
+    output.push(getExtractFromUniqueId(node.parentExtract));
   }
 
   return output;
