@@ -1,7 +1,7 @@
 import React from 'react';
 import SvgIcon from '@material-ui/core/SvgIcon';
 
-export default function AddEmptyStep(props) {
+export default function AddEmptyStepIcon(props) {
   return (
     <SvgIcon {...props}>
       <path

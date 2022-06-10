@@ -1,8 +1,10 @@
 /* eslint-disable no-param-reassign */
-import { ClickAwayListener, IconButton, List, ListItem, ListItemText, makeStyles } from '@material-ui/core';
+import { ClickAwayListener, IconButton, makeStyles, MenuItem, MenuList } from '@material-ui/core';
 import React from 'react';
 import ArrowPopper from '../../../../../components/ArrowPopper';
 import IconButtonWithTooltip from '../../../../../components/IconButtonWithTooltip';
+import AddEmptyStepIcon from '../../../../../components/icons/AddEmptyStepIcon';
+import BranchIcon from '../../../../../components/icons/BranchIcon';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import { useFlowContext } from '../../Context';
 import { useHandleAddNode, useHandleAddNewRouter } from '../../hooks';
@@ -22,10 +24,13 @@ const useStyles = makeStyles(theme => ({
       height: 20,
     },
   },
+  listItemIcon: {
+    minWidth: 'unset',
+    marginRight: theme.spacing(1),
+  },
 }));
 
 const AddNodeMenuPopper = ({ anchorEl, handleClose, handleAddNode, handleAddRouter}) => {
-  const classes = useStyles();
   const open = Boolean(anchorEl);
 
   return (
@@ -35,20 +40,17 @@ const AddNodeMenuPopper = ({ anchorEl, handleClose, handleAddNode, handleAddRout
       placement="bottom-end"
       onClose={handleClose}
     >
-      <List
-        dense className={classes.listWrapper}>
+      <MenuList>
         {[
-          {label: 'Add empty flow step', onClick: handleAddNode},
-          {label: 'Add branching', onClick: handleAddRouter },
-        ].map(({label, onClick}) => (
-          <ListItem
-            button
-            onClick={onClick}
-            key={label}>
-            <ListItemText >{label}</ListItemText>
-          </ListItem>
+          {Icon: AddEmptyStepIcon, label: 'Add empty flow step', onClick: handleAddNode},
+          {Icon: BranchIcon, label: 'Add branching', onClick: handleAddRouter },
+        ].map(({Icon, label, onClick}) => (
+
+          <MenuItem key={label} onClick={onClick}>
+            <Icon /> {label}
+          </MenuItem>
         ))}
-      </List>
+      </MenuList>
     </ArrowPopper>
   );
 };
