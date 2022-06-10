@@ -5,7 +5,7 @@ import AuditLog from '../../../../../components/AuditLog';
 import PanelHeader from '../../../../../components/PanelHeader';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
-import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
+import { STANDALONE_INTEGRATION } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
