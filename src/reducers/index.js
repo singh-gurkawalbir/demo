@@ -5196,7 +5196,7 @@ selectors.flowMappingsImportsList = () => createSelector(
     if (importId) {
       const subRecordResource = imports.find(i => i._id === importId);
 
-      return [subRecordResource];
+      return (subRecordResource ? [subRecordResource] : []);
     }
 
     const flowImports = getImportsFromFlow(flow, imports);
