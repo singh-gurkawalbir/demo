@@ -230,7 +230,7 @@ const populateMergeData = (flow, elements) => {
   elements.forEach(element => {
     if (element.type === GRAPH_ELEMENTS_TYPE.EDGE) {
       const targetElement = elements.find(el => el.id === element.target);
-      const sourceElement = elements.find(el => el.id === element.target);
+      const sourceElement = elements.find(el => el.id === element.source);
 
       if (sourceElement && targetElement && (
         sourceElement.type === GRAPH_ELEMENTS_TYPE.PG_STEP || // is connected to Page generator => cant merge to page generators
@@ -240,6 +240,7 @@ const populateMergeData = (flow, elements) => {
       )) {
         return;
       }
+
       terminalNodes.forEach(terminalNode => {
         if (BranchPathRegex.test(terminalNode.data.path)) {
           const [, terminalRouterIndex, terminalBranchIndex] = BranchPathRegex.exec(terminalNode.data.path);
@@ -529,6 +530,58 @@ export const mergeDragSourceWithTarget = (flowDoc, elements, dragNodeId, targetI
     });
   } else if (targetElement.type === GRAPH_ELEMENTS_TYPE.EDGE) {
     mergeTerminalToAnEdge({flowDoc, elements, sourceElement, targetElement, patchSet});
+  }
+};
+export const getIncomingRoutersMap = flow => {
+  const map = {};
+
+  if (!flow || !flow.routers || !flow.routers.length) return map;
+  flow.routers.forEach((router, routerIndex) => {
+    (router.branches || []).forEach((branch, branchIndex) => {
+      if (branch.nextRouterId) {
+        if (map[branch.nextRouterId]) {
+          map[branch.nextRouterId].push({routerIndex, branchIndex});
+        } else {
+          map[branch.nextRouterId] = [{routerIndex, branchIndex}];
+        }
+      }
+    });
+  });
+
+  return map;
+};
+
+const unUsedMergeRouterExists = (flow, incomingRoutersMap) => {
+  const unUsedRouterIndex = flow.routers.findIndex(router => isVirtualRouter(router) && incomingRoutersMap[router.id]?.length === 1);
+
+  if (unUsedRouterIndex > -1) {
+    const router = flow.routers[unUsedRouterIndex];
+    const {pageProcessors, nextRouterId} = router.branches[0];
+    const {routerIndex} = incomingRoutersMap[router.id][0];
+    const {branchIndex} = incomingRoutersMap[router.id][0];
+
+    flow.routers[routerIndex].branches[branchIndex].pageProcessors = [...flow.routers[routerIndex].branches[branchIndex].pageProcessors, pageProcessors];
+    flow.routers[routerIndex].branches[branchIndex].nextRouterId = nextRouterId;
+    flow.routers.splice(unUsedRouterIndex, 1);
+
+    return 1;
+  }
+
+  return 0;
+};
+
+export const deleteUnUsedRouters = flow => {
+  if (!flow) return;
+  if (flow.routers && flow.routers.length) {
+    let incomingRoutersMap = getIncomingRoutersMap(flow);
+
+    while (unUsedMergeRouterExists(flow, incomingRoutersMap)) {
+      incomingRoutersMap = getIncomingRoutersMap(flow);
+    }
+  }
+  if (flow.routers?.length === 1 && flow.routers[0].branches?.length === 1) {
+    flow.pageProceesors = flow.routers[0].branches[0].pageProceesors || [];
+    delete flow.routers;
   }
 };
 
