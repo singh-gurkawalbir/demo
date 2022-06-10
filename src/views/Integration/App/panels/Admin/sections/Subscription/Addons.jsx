@@ -157,7 +157,7 @@ export default function AddOns({integrationId, childId}) {
             className={classes.button}
             component={Link}
             disabled={isLicenseExpired}
-            to={match.url.replace('admin/subscription', 'addons')}>
+            to={match.url.replace('/admin', '/addons')}>
             Get add-ons
           </FilledButton>
         </div>

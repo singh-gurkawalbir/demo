@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     fontFamily: props => props.bold ? 'Roboto500' : 'Roboto400',
     '&:focus': {
-      color: props => props.color === 'secondary' ? theme.palette.text.secondary : theme.palette.primary.main,
+      color: props => props.color === 'secondary' ? theme.palette.text.primary : theme.palette.primary.main,
     },
   },
   error: {

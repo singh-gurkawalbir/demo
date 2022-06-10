@@ -50,10 +50,43 @@ function StartFreeTrialConfirmationMessage() {
 
       <ul className={classes.startFreeTrialOptions}>
         <li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
-        <li>Easy installation of Integration Apps and free templates from our vast library</li>
+        <li>Ability to enable unlimited flows in Marketplace templates</li>
         <li>Integrations with multiple imports or exports (orchestration)</li>
         <li>Ad hoc data imports to thousands of applications</li>
-        <li>Ability to daisy-chain flows.</li>
+        <li>Ability to daisy-chain flows</li>
+      </ul>
+
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://docs.celigo.com/hc/en-us/articles/4414582961819-Learn-how-to-make-the-most-of-your-free-trial">
+        Learn how to make the most of your free trial
+      </a>
+
+      <br /><br />
+      After 30 days, your plan will revert to the free subscription plan with 1 enabled integration flow.
+    </div>
+  );
+}
+
+function StartFreeOrRequestUpgradeConfirmMessage() {
+  const classes = useStyles();
+
+  return (
+    <div>
+      <b>You cannot enable more than one flow at a time with your current free subscription plan.</b>
+      <br /><br />
+      Start your free trial or upgrade your plan to unlock your data integration potential with more flows.
+      <br /> <br />
+      <b>FREE UNLIMITED FLOWS TRIAL</b>
+      <br /> <br />
+      Experience optimal process automation for your business with full access to integrator.io. For 30 days, you will get:
+      <ul className={classes.startFreeTrialOptions}>
+        <li>Unlimited integration flows, endpoint apps, trading partners, and on-premise agents</li>
+        <li>Ability to enable unlimited flows in Marketplace templates</li>
+        <li>Integrations with multiple imports or exports (orchestration)</li>
+        <li>Ad hoc data imports to thousands of applications</li>
+        <li>Ability to daisy-chain flows</li>
       </ul>
 
       <a
@@ -91,9 +124,7 @@ function LicenseAction() {
   );
 
   const startFreeTrialDialog = useCallback(() => {
-    const message = `What will you integrate next?
-      <br/><br/><a target="_blank" rel="noopener noreferrer"
-  href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with Integration Apps, Business Process Automation templates, and quickstart templates.`;
+    const message = messageStore('LICENSE_TRIAL_ISSUED');
 
     confirmDialog({
       title: 'Congratulations! Your unlimited flows trial starts now.',
@@ -160,6 +191,33 @@ function LicenseAction() {
       ],
     });
   }, [confirmDialog, dispatch, startFreeTrialDialog]);
+
+  const startFreeOrRequestUpgradeDialog = useCallback(() => {
+    confirmDialog({
+      title: 'Try unlimited flows free for 30 days or upgrade plan',
+      message: <StartFreeOrRequestUpgradeConfirmMessage />,
+      buttons: [
+        { label: 'Start free trial',
+          onClick: () => {
+            dispatch(
+              actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+            );
+            dispatch(actions.license.requestTrialLicense());
+            startFreeTrialDialog();
+          },
+        },
+        { label: 'Request upgrade',
+          onClick: () => {
+            submitUpgradeDialog();
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, dispatch, startFreeTrialDialog, submitUpgradeDialog]);
+
   const handleClick = useCallback(() => {
     if (licenseActionDetails.action === 'startTrial') {
       return startFreeTrialConfirmationDialog();
@@ -228,7 +286,7 @@ function LicenseAction() {
   useEffect(() => {
     if (licenseErrorCode === 'subscription_required') {
       if (licenseActionDetails.action === 'startTrial') {
-        startFreeTrialConfirmationDialog();
+        startFreeOrRequestUpgradeDialog();
       } else {
         requestUpgradeDialog();
       }
@@ -237,7 +295,7 @@ function LicenseAction() {
       entitlementOfEndpointsDialog();
       dispatch(actions.license.clearErrorMessage());
     }
-  }, [dispatch, entitlementOfEndpointsDialog, licenseActionDetails.action, licenseErrorCode, requestUpgradeDialog, startFreeTrialConfirmationDialog]);
+  }, [dispatch, entitlementOfEndpointsDialog, licenseActionDetails.action, licenseErrorCode, requestUpgradeDialog, startFreeOrRequestUpgradeDialog]);
 
   useEffect(() => {
     if (platformLicenseActionMessage) {

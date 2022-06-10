@@ -26,6 +26,7 @@ import HelpIcon from '../../components/icons/HelpIcon';
 import MyApiIcon from '../../components/icons/MyApiIcon';
 import IntegrationAppsIcon from '../../components/icons/IntegrationAppsIcon';
 import getRoutePath from '../../utils/routePaths';
+import PortalIcon from '../../components/icons/PortalIcon';
 
 export default function menuItems(
   userProfile,
@@ -149,7 +150,7 @@ export default function menuItems(
       ],
     },
     {
-      label: 'Celigo University',
+      label: 'Celigo university',
       Icon: UniversityIcon,
       href: getUniversityUrl,
       component: 'a',
@@ -159,6 +160,11 @@ export default function menuItems(
       label: 'Marketplace',
       Icon: MarketplaceIcon,
       path: '/marketplace',
+    },
+    {
+      label: 'Product portal',
+      Icon: PortalIcon,
+      path: '/productPortal',
     },
   ];
 

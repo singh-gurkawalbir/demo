@@ -1,5 +1,5 @@
 export default {
-  integrations: {
+  tiles: {
     title: 'Jumpstart your data integrations',
     subTitle: 'Flows move and transform data between applications. Flows are stored inside the Standalone flows tile, or within integrations, which you can manage on this page.',
     type: 'integrations',

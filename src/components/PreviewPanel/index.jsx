@@ -104,7 +104,10 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
     selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
   shallowEqual
   );
-  const isLookup = useSelector(state => selectors.isLookUpExport(state, { flowId, resourceId, resourceType }));
+  const resource = useSelector(state => selectors.resourceData(state, resourceType, resourceId)?.merged);
+
+  const isBlobImport = resource?.resourceType === 'transferFiles' || resource?.type === 'blob' || resource?.blob;
+  const isSendVisible = resourceType === 'imports' && !isBlobImport;
   const dispatch = useDispatch();
   const toggleValue = useSelector(state =>
     selectors.typeOfSampleData(state, resourceId)
@@ -143,7 +146,7 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
       <div
         className={classes.previewPanelWrapper}>
         <Typography className={classes.previewDataHeading}>
-          {resourceType === 'imports' ? (
+          {isSendVisible ? (
             <div className={classes.labelWrapper}>
               <FormLabel className={classes.label}>Preview &amp; send</FormLabel>
               <FieldHelp
@@ -155,24 +158,24 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
         </Typography>
 
         <div className={classes.container}>
-          {resourceType === 'imports' || isLookup ? (
+          {resourceType === 'imports' ? (
             <div className={classes.actionGroupWrapper}>
               <ActionGroup position="right">
                 <TextButton onClick={onEditorClick} startIcon={<EditIcon />}>
                   Edit mock input
                 </TextButton>
-                {!isLookup && (
-                <>
-                  <CeligoDivider position="right" />
-                  <TextToggle
-                    value={toggleValue}
-                    onChange={onChange}
-                    exclusive
-                    className={classes.errorDrawerActionToggle}
-                    options={IMPORT_PREVIEW_ERROR_TYPES}
+                {isSendVisible ? (
+                  <>
+                    <CeligoDivider position="right" />
+                    <TextToggle
+                      value={toggleValue}
+                      onChange={onChange}
+                      exclusive
+                      className={classes.errorDrawerActionToggle}
+                      options={IMPORT_PREVIEW_ERROR_TYPES}
                 />
-                </>
-                )}
+                  </>
+                ) : ''}
               </ActionGroup>
             </div>
           ) : ''}

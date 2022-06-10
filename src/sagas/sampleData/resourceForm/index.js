@@ -300,7 +300,7 @@ export function* _requestPGExportSampleData({ formKey, refreshCache, executeProc
   yield call(_requestExportPreviewData, { formKey, executeProcessors });
 }
 
-export function* _requestLookupSampleData({ formKey, refreshCache = false, isMockInput, addMockData }) {
+export function* _requestLookupSampleData({ formKey, refreshCache = false }) {
   const { resourceId, resourceObj, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
   const isRestCsvExport = yield select(selectors.isRestCsvMediaTypeExport, resourceId);
 
@@ -337,8 +337,6 @@ export function* _requestLookupSampleData({ formKey, refreshCache = false, isMoc
       throwOnError: true,
       includeStages: true,
       refresh: refreshCache,
-      isMockInput,
-      addMockData,
     });
 
     yield put(
@@ -354,7 +352,7 @@ export function* _requestPageProcessorSampleData({ formKey, refreshCache = false
 
   // exclude sampleData property if exists on pageProcessor Doc
   // as preview call considers sampleData to show instead of fetching
-  const { transform, filter, hooks, sampleData, ...constructedResourceObj } = resourceObj;
+  const { sampleData, ...constructedResourceObj } = resourceObj;
 
   let _pageProcessorDoc = constructedResourceObj;
 
@@ -386,7 +384,7 @@ export function* _requestPageProcessorSampleData({ formKey, refreshCache = false
   }
 }
 
-export function* _requestExportSampleData({ formKey, refreshCache, executeProcessors, isMockInput }) {
+export function* _requestExportSampleData({ formKey, refreshCache, executeProcessors }) {
   const { resourceId, flowId, ssLinkedConnectionId, resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   if (ssLinkedConnectionId) {
@@ -400,7 +398,7 @@ export function* _requestExportSampleData({ formKey, refreshCache, executeProces
 
   if (isLookUpExport) {
     // as part of IO-23131, we support mock input data for lookups
-    yield call(_requestLookupSampleData, { formKey, refreshCache, isMockInput, addMockData: true });
+    yield call(_requestLookupSampleData, { formKey, refreshCache });
   } else {
     yield call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors });
   }
@@ -458,7 +456,7 @@ export function* _requestImportSampleData({ formKey, refreshCache, isMockInput }
   const { resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj)) {
-    yield call(_requestImportFileSampleData, { formKey });
+    return yield call(_requestImportFileSampleData, { formKey });
   }
 
   // as part of IO-23131, we support mock input data for imports
@@ -478,7 +476,7 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
   const { refreshCache, executeProcessors, isMockInput } = options;
 
   if (resourceType === 'exports') {
-    yield call(_requestExportSampleData, { formKey, refreshCache, executeProcessors, isMockInput });
+    yield call(_requestExportSampleData, { formKey, refreshCache, executeProcessors });
   }
   if (resourceType === 'imports') {
     yield call(_requestImportSampleData, { formKey, refreshCache, isMockInput});

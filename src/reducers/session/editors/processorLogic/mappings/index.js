@@ -18,8 +18,8 @@ export default {
 
     const {mappingPreviewType} = editor;
 
-    const hasErrors = !!(result.errors || result.data?.[0]?.errors);
-    let errors = result.data?.[0];
+    let errors = result.data?.[0] || {};
+    const hasErrors = !!(result.errors || errors.message || errors.errors?.length);
     let finalResult = result.data?.[0]?.mappedObject || '';
 
     if (mappingPreviewType) {

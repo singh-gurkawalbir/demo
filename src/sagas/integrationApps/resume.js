@@ -23,7 +23,7 @@ export function* resumeIntegration({ integrationId }) {
   yield put(actions.resource.requestCollection('flows'));
   yield put(actions.resource.requestCollection('exports'));
   yield put(actions.resource.requestCollection('imports'));
-  yield put(actions.resource.requestCollection('licenses'));
+  yield put(actions.license.refreshCollection());
 }
 
 export default [

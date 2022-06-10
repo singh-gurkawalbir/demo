@@ -217,7 +217,7 @@ export default function UserForm({
   }
 
   return (
-    <LoadResources required resources="integrations,ssoclients">
+    <LoadResources required resources="integrations,ssoclients" >
       <DrawerContent>
         <DynaForm
           formKey={formKey} />

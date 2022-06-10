@@ -60,6 +60,11 @@ function imageName(assistant) {
     return 'small-googleads';
   }
 
+  // For both the Google BigQuery and Google BigQuery (REST API) applications, we have the same image
+  if (assistant === 'bigquerydatawarehouse') {
+    return 'bigquery';
+  }
+
   return assistant;
 }
 
@@ -72,6 +77,9 @@ export default function ApplicationImg({
   className,
 }) {
   const classes = useStyles();
+
+  // eslint-disable-next-line no-param-reassign
+  if (!type) type = '';
   let path;
 
   if (!assistant) {
@@ -83,7 +91,7 @@ export default function ApplicationImg({
   } else if (markOnly) {
     path = getImageUrl(`images/react/application-logos/small/${imageName(assistant)}.png`);
   } else {
-    path = getImageUrl(`images/react/application-logos/large/${assistant}.png`);
+    path = getImageUrl(`images/react/application-logos/large/${imageName(assistant)}.png`);
   }
 
   return (

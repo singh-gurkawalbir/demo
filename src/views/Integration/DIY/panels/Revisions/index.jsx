@@ -32,9 +32,10 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
+    paddingBottom: theme.spacing(2),
   },
   noRevisions: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(3),
   },
 }));
 
@@ -71,7 +72,7 @@ const RevisionsList = ({ integrationId }) => {
   const hasNoRevisions = useSelector(state => selectors.integrationHasNoRevisions(state, integrationId));
 
   if (isLoadingRevisions) {
-    return <Spinner centerAll />;
+    return <Spinner loading size="large" />;
   }
 
   const NoRevisionsInfo = () => {
@@ -124,6 +125,12 @@ export default function Revisions({ integrationId }) {
     }
   }, [integrationId, dispatch, isRevisionsCollectionRequested]);
 
+  useEffect(() => {
+    dispatch(actions.integrationLCM.cloneFamily.request(integrationId));
+
+    return () => dispatch(actions.integrationLCM.cloneFamily.clear(integrationId));
+  }, [dispatch, integrationId]);
+
   const handleCreatePull = useOpenRevisionWhenValid({
     integrationId,
     drawerURL: buildDrawerUrl({
@@ -131,6 +138,7 @@ export default function Revisions({ integrationId }) {
       baseUrl: match.url,
       params: { revId: nanoid() },
     }),
+    isCreatePull: true,
   });
   const handleCreateSnapshot = useOpenRevisionWhenValid({
     integrationId,
@@ -165,7 +173,7 @@ export default function Revisions({ integrationId }) {
       </PanelHeader>
       <RevisionFilters />
       <RevisionsList integrationId={integrationId} />
-      <LoadResources resources="flows,integrations">
+      <LoadResources integrationId={integrationId} resources="flows,integrations">
         <DrawerDeclarations
           integrationId={integrationId}
           hasMonitorLevelAccess={hasMonitorLevelAccess}

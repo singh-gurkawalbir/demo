@@ -223,7 +223,7 @@ export default function AddCategoryMappingDrawerRoute({ integrationId, flowId })
 
   return (
     <RightDrawer path={drawerPaths.MAPPINGS.CATEGORY_MAPPING.ADD} width="large" height="tall">
-      <LoadResources required resources="flows,exports,imports,connections">
+      <LoadResources required integrationId={integrationId} resources="flows,exports,imports,connections">
         <AddCategoryMappingDrawer
           integrationId={integrationId}
           flowId={flowId}

@@ -403,7 +403,7 @@ describe('Globalsearch feature tests', () => {
 
     expect(marketplaceTab).toBeInTheDocument();
     expect(resourcesTab).toBeInTheDocument();
-    expect(screen.queryByText('AMZ test- Dinesh')).toBeInTheDocument();
+    // expect(screen.queryByText('AMZ test- Dinesh')).toBeInTheDocument();
     expect(screen.queryByText('Checkout 1 result in Marketplace')).toBeNull();
     userEvent.click(resourcesTab);
     expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria/i)).toBeInTheDocument();

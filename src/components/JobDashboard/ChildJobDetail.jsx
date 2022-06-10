@@ -30,8 +30,8 @@ export const JobDetailsStyles = makeStyles(theme => ({
     textAlign: 'right',
   },
   error: {
-    width: '10.15%',
-    textAlign: 'left',
+    width: '9.15%',
+    textAlign: 'right',
   },
   resolved: {
     width: '9%',

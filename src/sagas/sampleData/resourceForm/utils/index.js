@@ -12,7 +12,7 @@ import { getResource } from '../../../resources';
 export const SUITESCRIPT_FILE_RESOURCE_TYPES = ['fileCabinet', 'ftp'];
 export const FILE_DEFINITION_TYPES = ['filedefinition', 'fixed', 'delimited/edifact'];
 const EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json', 'xml'];
-export const IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json'];
+export const IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json', 'xml'];
 export const VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA = ['exports', 'imports'];
 
 function extractResourcePath(value, initialResourcePath) {
@@ -96,9 +96,10 @@ export function* extractFileSampleDataProps({ formKey }) {
   const fileProps = resourceObj.file[fileType] || {};
   const fileId = `${resourceId}-uploadFile`;
   const uploadedFileObj = yield select(selectors.getUploadedFile, fileId);
+  const oldResourceDoc = yield select(selectors.resource, 'exports', resourceObj._id);
   const { file: uploadedFile } = uploadedFileObj || {};
   const hasSampleData = yield call(_hasSampleDataOnResource, { formKey });
-  const parserOptions = generateFileParserOptionsFromResource(resourceObj);
+  const parserOptions = generateFileParserOptionsFromResource(resourceObj, oldResourceDoc);
 
   if (FILE_DEFINITION_TYPES.includes(fileType)) {
     const fieldState = yield select(selectors.fieldState, formKey, 'file.filedefinition.rules');

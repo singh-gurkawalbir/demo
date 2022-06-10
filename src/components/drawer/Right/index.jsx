@@ -116,7 +116,6 @@ export default function RightDrawerRoute(props) {
 
   const getFullPath = path => {
     // Drawer prefix gets added to all the drawer paths other than Suitescript drawers
-    // TODO @Raghu: Decide on whether to add changes to suitescript or not
     const drawerPath = (isSuitescript || path.startsWith(DRAWER_URL_PREFIX))
       ? path
       : `${DRAWER_URL_PREFIX}/${path}`;

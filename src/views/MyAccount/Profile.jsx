@@ -130,6 +130,17 @@ export default function ProfilePanel() {
     const { timeFormat, dateFormat, showRelativeDateTime } = completePayloadCopy;
     const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime };
 
+    // track event if there is any action for Developer mode
+    if (preferences.developer !== completePayloadCopy.developer) {
+      dispatch(
+        actions.analytics.gainsight.trackEvent('MY_ACCOUNT', {
+          operation: 'Developer mode',
+          timestamp: new Date(),
+          status: completePayloadCopy.developer ? 'Enabled' : 'Disabled',
+          tab: 'Profile',
+        })
+      );
+    }
     dispatch(actions.user.preferences.update(preferencesPayload));
     // deleting preferences from completePayloadCopy
     delete completePayloadCopy.timeFormat;
@@ -137,7 +148,7 @@ export default function ProfilePanel() {
     delete completePayloadCopy.showRelativeDateTime;
 
     dispatch(actions.user.profile.update(completePayloadCopy));
-  }, [dispatch]);
+  }, [dispatch, preferences.developer]);
 
   const handleLinkWithGoogle = useCallback(() => {
     dispatch(actions.auth.linkWithGoogle(getRoutePath('/myAccount/profile')));
