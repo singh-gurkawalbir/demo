@@ -283,7 +283,7 @@ export default {
     if (['jet', 'salesforceCommerce'].indexOf(integrationApp) !== -1) {
       highestEdition = 'enterprise';
     } else if (integrationApp === 'shopify') {
-      highestEdition = 'shopifyMarkets';
+      highestEdition = 'shopifymarkets';
     } else if (
       [
         'bigcommerce',
@@ -310,7 +310,7 @@ export default {
 };
 
 export const getTitleFromEdition = edition => {
-  if (edition === 'shopifyMarkets') {
+  if (edition.toLowerCase() === 'shopifymarkets') {
     return 'Shopify Markets';
   }
 
