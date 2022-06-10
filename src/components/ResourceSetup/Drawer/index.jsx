@@ -99,7 +99,7 @@ function ResourceSetupDrawerContent({
     // Update environment and resourceObject when a resource is cloned
     // and these props are configured in the preview step
     environment = templateInstallSetup?.data?.sandbox ? 'sandbox' : 'production';
-    resourceObj = templateInstallSetup?.connectionMap ? {...(templateInstallSetup?.connectionMap[currentStep?._connectionId] || {})} : {};
+    resourceObj = {...(templateInstallSetup?.connectionMap[currentStep?._connectionId] || {})};
   } else if (canSelectExistingResources && resourceType === 'connections' && isNewId(resourceId)) {
     // resource object construction incase of template : !_connectorId
   // if resourceId is new - construct obj
