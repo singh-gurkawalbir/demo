@@ -235,7 +235,23 @@ describe('deleteUnUsedRouters function', () => {
 
     deleteUnUsedRouters(flow3Clone);
 
-    expect(flow3Clone).toEqual({pageGenerators: [], routers: [{branches: [{name: 'branch1.1', nextRouterId: 'router2', pageProcessors: [{_importId: 'import1', type: 'import'}, {_importId: 'import2', type: 'import'}]}, {name: 'branch1.2', nextRouterId: undefined, pageProcessors: [{_importId: 'import3', type: 'import'}, {_importId: 'import4', type: 'import'}, [{_importId: 'import1', type: 'import'}, {_importId: 'import2', type: 'import'}]]}, {name: 'branch1.3', pageProcessors: [{_importId: 'import5', type: 'import'}, {_importId: 'import6', type: 'import'}]}], id: 'router1'}, {branches: [{name: 'branch2.1', nextRouterId: undefined, pageProcessors: [{_importId: 'import1', type: 'import'}, {_importId: 'import2', type: 'import'}, [{_importId: 'import1', type: 'import'}, {_importId: 'import2', type: 'import'}], [{_importId: 'import1', type: 'import'}, {_importId: 'import2', type: 'import'}]]}, {name: 'branch2.2', pageProcessors: [{_importId: 'import3', type: 'import'}, {_importId: 'import4', type: 'import'}]}], id: 'router2'}]});
+    expect(flow3Clone).toEqual({
+      pageGenerators: [],
+      routers: [
+        {
+          branches: [
+            {name: 'branch1.1', nextRouterId: 'router2', pageProcessors: [{_importId: 'import1', type: 'import'}, {_importId: 'import2', type: 'import'}]},
+            {name: 'branch1.2', nextRouterId: undefined, pageProcessors: [{_importId: 'import3', type: 'import'}, {_importId: 'import4', type: 'import'}, {_importId: 'import1', type: 'import'}, {_importId: 'import2', type: 'import'}]},
+            {name: 'branch1.3', pageProcessors: [{_importId: 'import5', type: 'import'}, {_importId: 'import6', type: 'import'}]}],
+          id: 'router1',
+        },
+        {
+          branches: [
+            {name: 'branch2.1', nextRouterId: undefined, pageProcessors: [{_importId: 'import1', type: 'import'}, {_importId: 'import2', type: 'import'}, {_importId: 'import1', type: 'import'}, {_importId: 'import2', type: 'import'}, {_importId: 'import1', type: 'import'}, {_importId: 'import2', type: 'import'}]},
+            {name: 'branch2.2', pageProcessors: [{_importId: 'import3', type: 'import'}, {_importId: 'import4', type: 'import'}]},
+          ],
+          id: 'router2',
+        }]});
   });
 });
 
