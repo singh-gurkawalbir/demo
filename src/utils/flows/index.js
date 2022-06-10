@@ -253,6 +253,21 @@ export const isLookupResource = (flow = {}, resource = {}) => {
   return !!pageProcessors.find(pp => pp._exportId && pp._exportId === resource._id);
 };
 
+export function isSetupInProgress(flow) {
+  if (!flow) return false;
+  const isPageGeneratorSetupInProgress = (flow.pageGenerators || []).some(pg => pg.setupInProgress) || !flow.pageGenerators?.length;
+  const arePPsEmpty = !flow.pageProcessors || !flow.pageProcessors.length;
+  const areRoutersEmpty = !flow.routers || !flow.routers.length;
+
+  const isPageProcessorSetupInProgress = (flow.pageProcessors || []).some(pp => pp.setupInProgress);
+  const isRouterSetupInProgress = (flow.routers || [])
+    .some(router => (router.branches || [])
+      .some(branch => (branch.pageProcessors || [])
+        .some(pp => pp.setupInProgress)));
+
+  return isPageGeneratorSetupInProgress || isPageProcessorSetupInProgress || isRouterSetupInProgress || (arePPsEmpty && areRoutersEmpty);
+}
+
 /*
  * Returns true/false, whether passed flow follows an old schema
  */
@@ -429,6 +444,7 @@ export function isRunnable(flow, exports) {
   if (!hasBatchExport(flow, exports)) {
     return false;
   }
+  if (isSetupInProgress(flow)) return false;
 
   // finally, we must thus be runnable.
   return true;
@@ -484,18 +500,6 @@ export function getImportIdsFromFlow(flow) {
   }
 
   return importIds;
-}
-
-export function isSetupInProgress(flow) {
-  if (!flow) return false;
-  const isPageGeneratorSetupInProgress = (flow.pageGenerators || []).some(pg => pg.setupInProgress);
-  const isPageProcessorSetupInProgress = (flow.pageProcessors || []).some(pp => pp.setupInProgress);
-  const isRouterSetupInProgress = (flow.routers || [])
-    .some(router => (router.branches || [])
-      .some(branch => (branch.pageProcessors || [])
-        .some(pp => pp.setupInProgress)));
-
-  return isPageGeneratorSetupInProgress || isPageProcessorSetupInProgress || isRouterSetupInProgress;
 }
 
 export function isDeltaFlow(flow, exports) {

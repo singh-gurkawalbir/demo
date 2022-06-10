@@ -256,6 +256,7 @@ export const featuresMap = options => ({
   },
   router: {
     autoEvaluate: false,
+    insertStubKey: 'router',
     // We need to generalize the layout name below. Here we are using
     // the same layout as for settings form. We need to find a generic name
     // for the pair of layouts.

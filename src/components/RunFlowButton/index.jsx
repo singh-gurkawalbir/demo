@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { makeStyles, IconButton } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import shortid from 'shortid';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import RunIcon from '../icons/RunIcon';
@@ -14,6 +14,7 @@ import {
 } from '../../constants';
 import Spinner from '../Spinner';
 import { TextButton } from '../Buttons';
+import messageStore from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -30,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label}) {
+function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label, isSetupInProgress}) {
   const classes = useStyles();
 
   if (isRequested) return <Spinner />;
@@ -38,12 +39,13 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label}) {
   if (variant === 'icon') {
     if (disabled) {
       return (
-        <IconButton
+        <IconButtonWithTooltip
           data-test="runFlow"
+          tooltipProps={{title: isSetupInProgress ? messageStore('INCOMPLETE_FLOW_TOOLTIP') : '', placement: 'bottom'}}
           className={classes.runNowIcon}
           disabled>
           <RunIcon />
-        </IconButton>
+        </IconButtonWithTooltip>
       );
     }
 
@@ -95,6 +97,7 @@ export default function RunFlowButton({
   const [showDeltaStartDateDialog, setShowDeltaStartDateDialog] = useState(
     false
   );
+  const isSetupInProgress = useSelector(state => selectors.isFlowSetupInProgress(state, flowId));
   const [fileId] = useState(`${flowId}-${shortid.generate()}`);
   const flowDetails = useSelector(
     state => selectors.flowDetails(state, flowId),
@@ -259,6 +262,7 @@ export default function RunFlowButton({
             isRequested={isDataLoaderFileProcessRequested}
             onRunClick={handleClick}
             variant={variant}
+            isSetupInProgress={isSetupInProgress}
             disabled={disabled}
             label={label}
       />

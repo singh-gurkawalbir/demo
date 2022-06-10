@@ -157,6 +157,7 @@ export default function RouterPanel({ editorId }) {
             editorId={editorId}
             pageProcessors={b.pageProcessors}
             allowSorting={allowSorting}
+            allowDeleting={branches.length > 1}
             description={b.description}
             onNameChange={handleNameChange} />
         ))}

@@ -53,7 +53,8 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   REVERT_SUCCESS: 'You\'ve successfully reverted your changes.',
   SNAPSHOT_SUCCESS: 'You\'ve successfully created a snapshot.',
   // #endregion
-
+  INCOMPLETE_FLOW_TOOLTIP: 'Configure all steps to allow running your flow',
+  INCOMPLETE_FLOW_SCHEDULE_TOOLTIP: 'Configure all step sto allow scheduling your flow',
 };
 
 export default function messageStore(key, argsObj) {

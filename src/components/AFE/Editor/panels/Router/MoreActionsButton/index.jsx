@@ -15,7 +15,7 @@ import useConfirmDialog from '../../../../../ConfirmDialog';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
 import RawHtml from '../../../../../RawHtml';
 
-export default function MoreActionsButton({position, pageProcessors = []}) {
+export default function MoreActionsButton({position, pageProcessors = [], allowDeleting}) {
   const history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);
   const { confirmDialog } = useConfirmDialog();
@@ -40,6 +40,7 @@ export default function MoreActionsButton({position, pageProcessors = []}) {
   };
 
   const handleDeleteBranch = useCallback(event => {
+    event.stopPropagation();
     handleCloseMenu(event);
 
     const configuredCount = pageProcessors.filter(pp => !!pp.type).length;
@@ -84,7 +85,7 @@ export default function MoreActionsButton({position, pageProcessors = []}) {
           <EditIcon /> Edit branch name/description
         </MenuItem>
 
-        <MenuItem onClick={handleDeleteBranch}>
+        <MenuItem disabled={!allowDeleting} onClick={handleDeleteBranch}>
           <TrashIcon /> Delete branch
         </MenuItem>
       </ArrowPopper>

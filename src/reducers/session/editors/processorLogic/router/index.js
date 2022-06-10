@@ -38,6 +38,14 @@ export default {
     };
   },
 
+  processor: editor => {
+    if (editor.rule.activeProcessor === 'filter') {
+      return 'filter';
+    }
+
+    return 'javascript';
+  },
+
   requestBody: editor => {
     if (editor.rule.activeProcessor === 'filter') {
       return filter.requestBody({
@@ -64,16 +72,6 @@ export default {
     return javascript.validate({
       data: editor.data,
     });
-  },
-  dirty: editor => {
-    if (editor.rule.activeProcessor === 'javascript') {
-      return javascript.dirty({
-        rule: editor.rule,
-        originalRule: editor.originalRule,
-      });
-    }
-
-    return true;
   },
   processResult: (editor, result) => {
     if (editor.rule.activeProcessor === 'filter') {

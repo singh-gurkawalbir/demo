@@ -1,12 +1,13 @@
 import React, {useCallback, useMemo} from 'react';
 import { getSmoothStepPath } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles, GRAPH_ELEMENTS_TYPE } from '../../lib';
 import { useFlowContext } from '../../Context';
 import AddNewButton from '../AddNewButton';
 import UnlinkButton from '../UnlinkButton';
 import ForeignObject from '../ForeignObject';
+import { selectors } from '../../../../../reducers';
 import DiamondMergeIcon from '../../DiamondMergeIcon';
 import actions from '../../../../../actions';
 
@@ -65,8 +66,9 @@ export default function DefaultEdge({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { elements, dragNodeId, flow } = useFlowContext();
+  const { elements, dragNodeId, flow, flowId } = useFlowContext();
   const hasSiblingEdges = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow._integrationId, flowId));
   const { sourceType, targetType, points: edgePoints, processorCount, mergableTerminals = [] } = data;
   const isDragging = !!dragNodeId;
   const isTargetMerge = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
@@ -75,7 +77,7 @@ export default function DefaultEdge({
   const isTargetRouter = targetType === GRAPH_ELEMENTS_TYPE.ROUTER || targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
   const showLinkIcon = hasSiblingEdges && !isSourceGenerator;
-  const showAddIcon = !isSourceGenerator || (isSourceGenerator && !isTargetRouter);
+  const showAddIcon = (!isSourceGenerator || (isSourceGenerator && !isTargetRouter)) && !flow._connectorId && !isViewMode;
   const isMergableEdge = mergableTerminals.includes(dragNodeId);
 
   /*

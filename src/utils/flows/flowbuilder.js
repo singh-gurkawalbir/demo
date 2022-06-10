@@ -153,14 +153,15 @@ export const initializeFlowForReactFlow = flowDoc => {
 
 // Note 'targeId' can be either a page processor Id if the flow schema is linear (old schema)
 // or it can be a router Id if the flow schema represents a branched flow.
-const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId) => {
+const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId, isReadOnlyMode) => {
   if (!pageGenerators || !pageGenerators.length || !targetId) {
     return [];
   }
-  const nodes = pageGenerators.map((pg, index, collection) => ({
+  const hideDelete = (pageGenerators.length === 1 && pageGenerators[0].setupInProgress) || isReadOnlyMode;
+  const nodes = pageGenerators.map((pg, index) => ({
     id: pg.id,
     type: GRAPH_ELEMENTS_TYPE.PG_STEP,
-    data: {...pg, path: `/pageGenerators/${index}`, hideDelete: collection.length === 1 && pg.setupInProgress },
+    data: {...pg, path: `/pageGenerators/${index}`, hideDelete },
   }));
 
   const edges = nodes.map(node => generateDefaultEdge(node.id, targetId));
@@ -168,7 +169,7 @@ const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId) => {
   return [...nodes, ...edges];
 };
 
-const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}) => {
+const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}, isReadOnlyMode) => {
   const edges = [];
   const {branch, branchIndex, routerIndex} = branchData;
   const nodes = pageProcessors.map((pageProcessor, index, collection) => {
@@ -180,7 +181,7 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}) => 
       edges.push(generateDefaultEdge(pageProcessor.id, collection[index + 1].id, {...branchData, processorCount}));
     }
     // hide delete option if only one unconfigured pageProcessor present
-    if (routerIndex === 0 && pageProcessor.setupInProgress && collection.length === 1 && !branch.nextRouterId) {
+    if ((routerIndex === 0 && pageProcessor.setupInProgress && collection.length === 1 && !branch.nextRouterId) || isReadOnlyMode) {
       hideDelete = true;
     }
 
@@ -200,12 +201,13 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}) => 
   return [...edges, ...nodes];
 };
 
-const generateNodesAndEdgesFromNonBranchedFlow = flow => {
-  const { _exportId, pageGenerators = [], pageProcessors = [], _importId } = flow;
+const generateNodesAndEdgesFromNonBranchedFlow = (flow, isViewMode) => {
+  const { _exportId, pageGenerators = [], pageProcessors = [], _importId, _connectorId } = flow;
+  const isReadOnly = !!_connectorId || isViewMode;
   const firstPPId = _importId || pageProcessors[0]?.id;
   const lastPPId = _importId || pageProcessors[pageProcessors.length - 1]?.id;
-  const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(_exportId ? [{_exportId, id: _exportId}] : pageGenerators, firstPPId);
-  const pageProcessorNodesAndEdges = generatePageProcessorNodesAndEdges(_importId ? [{_importId, id: _importId}] : pageProcessors);
+  const pageGeneratorNodesAndEdges = generatePageGeneratorNodesAndEdges(_exportId ? [{_exportId, id: _exportId}] : pageGenerators, firstPPId, isReadOnly);
+  const pageProcessorNodesAndEdges = generatePageProcessorNodesAndEdges(_importId ? [{_importId, id: _importId}] : pageProcessors, {}, isReadOnly);
 
   const terminalNode = generateNewTerminal();
 
@@ -228,7 +230,7 @@ const populateMergeData = (flow, elements) => {
   elements.forEach(element => {
     if (element.type === GRAPH_ELEMENTS_TYPE.EDGE) {
       const targetElement = elements.find(el => el.id === element.target);
-      const sourceElement = elements.find(el => el.id === element.target);
+      const sourceElement = elements.find(el => el.id === element.source);
 
       if (sourceElement && targetElement && (
         sourceElement.type === GRAPH_ELEMENTS_TYPE.PG_STEP || // is connected to Page generator => cant merge to page generators
@@ -238,6 +240,7 @@ const populateMergeData = (flow, elements) => {
       )) {
         return;
       }
+
       terminalNodes.forEach(terminalNode => {
         if (BranchPathRegex.test(terminalNode.data.path)) {
           const [, terminalRouterIndex, terminalBranchIndex] = BranchPathRegex.exec(terminalNode.data.path);
@@ -269,8 +272,9 @@ const populateMergeData = (flow, elements) => {
   });
 };
 
-export const generateNodesAndEdgesFromBranchedFlow = flow => {
-  const {pageGenerators = [], routers = []} = flow;
+export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
+  const {pageGenerators = [], routers = [], _connectorId} = flow;
+  const isReadOnlyMode = !!_connectorId || isViewMode;
   let firstPPId = routers[0].id;
 
   if (isVirtualRouter(routers[0])) {
@@ -280,7 +284,7 @@ export const generateNodesAndEdgesFromBranchedFlow = flow => {
       firstPPId = routers[0].branches[0].nextRouterId;
     }
   }
-  const elements = [...generatePageGeneratorNodesAndEdges(pageGenerators, firstPPId)];
+  const elements = [...generatePageGeneratorNodesAndEdges(pageGenerators, firstPPId, isReadOnlyMode)];
   const routerVisited = {};
   const routersArr = [...routers];
   const populateRouterElements = router => {
@@ -293,7 +297,7 @@ export const generateNodesAndEdgesFromBranchedFlow = flow => {
       router.branches.forEach((branch, branchIndex) => {
         if (branch.pageProcessors.length) {
           // draw an edge from router to first step of branch
-          const pageProcessorNodes = generatePageProcessorNodesAndEdges(branch.pageProcessors, {branch, branchIndex, routerIndex});
+          const pageProcessorNodes = generatePageProcessorNodesAndEdges(branch.pageProcessors, {branch, branchIndex, routerIndex}, isReadOnlyMode);
 
           if (routerIndex !== 0 || !isVirtualRouter(router)) {
             elements.push(generateDefaultEdge(router.id, branch.pageProcessors[0].id, {routerIndex, branchIndex}));
@@ -305,7 +309,7 @@ export const generateNodesAndEdgesFromBranchedFlow = flow => {
               // Safe check, branch should not point to its own router, causes a loop
               populateRouterElements(routers.find(r => r.id === branch.nextRouterId));
             }
-          } else {
+          } else if (!isReadOnlyMode) {
             const terminalNode = generateNewTerminal({branch, branchIndex, routerIndex});
 
             elements.push(terminalNode);
@@ -325,7 +329,7 @@ export const generateNodesAndEdgesFromBranchedFlow = flow => {
             // Safe check, branch should not point to its own router, causes a loop
             populateRouterElements(routers.find(r => r.id === branch.nextRouterId));
           }
-        } else {
+        } else if (!isReadOnlyMode) {
           // generate terminal edge
           const terminalNode = generateNewTerminal({branch, branchIndex, routerIndex});
 
@@ -346,7 +350,7 @@ export const generateNodesAndEdgesFromBranchedFlow = flow => {
   return elements;
 };
 
-export const generateReactFlowGraph = flow => {
+export const generateReactFlowGraph = (flow, isViewMode) => {
   if (!flow) {
     return;
   }
@@ -354,10 +358,10 @@ export const generateReactFlowGraph = flow => {
   const {routers} = flow;
 
   if (!routers || routers.length === 0) {
-    return generateNodesAndEdgesFromNonBranchedFlow(flow);
+    return generateNodesAndEdgesFromNonBranchedFlow(flow, isViewMode);
   }
 
-  return generateNodesAndEdgesFromBranchedFlow(flow);
+  return generateNodesAndEdgesFromBranchedFlow(flow, isViewMode);
 };
 
 const mergeBetweenPPAndRouter = ({edgeSource, patchSet, sourceElement, edgeTarget}) => {
@@ -526,6 +530,58 @@ export const mergeDragSourceWithTarget = (flowDoc, elements, dragNodeId, targetI
     });
   } else if (targetElement.type === GRAPH_ELEMENTS_TYPE.EDGE) {
     mergeTerminalToAnEdge({flowDoc, elements, sourceElement, targetElement, patchSet});
+  }
+};
+export const getIncomingRoutersMap = flow => {
+  const map = {};
+
+  if (!flow || !flow.routers || !flow.routers.length) return map;
+  flow.routers.forEach((router, routerIndex) => {
+    (router.branches || []).forEach((branch, branchIndex) => {
+      if (branch.nextRouterId) {
+        if (map[branch.nextRouterId]) {
+          map[branch.nextRouterId].push({routerIndex, branchIndex});
+        } else {
+          map[branch.nextRouterId] = [{routerIndex, branchIndex}];
+        }
+      }
+    });
+  });
+
+  return map;
+};
+
+const unUsedMergeRouterExists = (flow, incomingRoutersMap) => {
+  const unUsedRouterIndex = flow.routers.findIndex(router => isVirtualRouter(router) && incomingRoutersMap[router.id]?.length === 1);
+
+  if (unUsedRouterIndex > -1) {
+    const router = flow.routers[unUsedRouterIndex];
+    const {pageProcessors, nextRouterId} = router.branches[0];
+    const {routerIndex} = incomingRoutersMap[router.id][0];
+    const {branchIndex} = incomingRoutersMap[router.id][0];
+
+    flow.routers[routerIndex].branches[branchIndex].pageProcessors = [...flow.routers[routerIndex].branches[branchIndex].pageProcessors, pageProcessors];
+    flow.routers[routerIndex].branches[branchIndex].nextRouterId = nextRouterId;
+    flow.routers.splice(unUsedRouterIndex, 1);
+
+    return 1;
+  }
+
+  return 0;
+};
+
+export const deleteUnUsedRouters = flow => {
+  if (!flow) return;
+  if (flow.routers && flow.routers.length) {
+    let incomingRoutersMap = getIncomingRoutersMap(flow);
+
+    while (unUsedMergeRouterExists(flow, incomingRoutersMap)) {
+      incomingRoutersMap = getIncomingRoutersMap(flow);
+    }
+  }
+  if (flow.routers?.length === 1 && flow.routers[0].branches?.length === 1) {
+    flow.pageProceesors = flow.routers[0].branches[0].pageProceesors || [];
+    delete flow.routers;
   }
 };
 

@@ -693,6 +693,14 @@ describe('isSetupInProgress', () => {
       {branches: [{name: 'branch1', pageProcessors: [{type: 'export', _exportId: 'e1'}]}]},
       {branches: [{name: 'branch1', pageProcessors: [{_importId: 'i1'}]}]}],
   };
+  const flow8 = {
+    routers: [
+      {branches: [{name: 'branch1', pageProcessors: [{type: 'export', _exportId: 'e1'}]}]},
+      {branches: [{name: 'branch1', pageProcessors: [{_importId: 'i1'}]}]}],
+  };
+  const flow9 = {
+    pageGenerators: [{_exportId: 'export1'}, {_exportId: 'export2'}],
+  };
 
   test('should return false when flow is empty', () => {
     expect(isSetupInProgress()).toEqual(false);
@@ -700,12 +708,14 @@ describe('isSetupInProgress', () => {
 
   test('should return correct value when flow setup is in progress', () => {
     expect(isSetupInProgress(flow1)).toEqual(true);
-    expect(isSetupInProgress(flow2)).toEqual(false);
+    expect(isSetupInProgress(flow2)).toEqual(true);
     expect(isSetupInProgress(flow3)).toEqual(false);
     expect(isSetupInProgress(flow4)).toEqual(true);
     expect(isSetupInProgress(flow5)).toEqual(true);
     expect(isSetupInProgress(flow6)).toEqual(true);
     expect(isSetupInProgress(flow7)).toEqual(false);
+    expect(isSetupInProgress(flow8)).toEqual(true);
+    expect(isSetupInProgress(flow9)).toEqual(true);
   });
 });
 
@@ -3004,7 +3014,7 @@ describe('getFlowDetails', () => {
       ],
       isRealtime: false,
       isSimpleImport: false,
-      isSetupInProgress: false,
+      isSetupInProgress: true,
       isRunnable: false,
       canSchedule: true,
       disableSlider: false,
@@ -3026,7 +3036,7 @@ describe('getFlowDetails', () => {
       isRealtime: false,
       isSimpleImport: false,
       isRunnable: false,
-      isSetupInProgress: false,
+      isSetupInProgress: true,
       canSchedule: true,
       disableSlider: true,
       isDeltaFlow: false,

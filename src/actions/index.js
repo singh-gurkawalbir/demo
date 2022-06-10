@@ -2090,7 +2090,7 @@ const flow = {
   deleteStep: (flowId, stepId) => action(actionTypes.FLOW.DELETE_STEP, { flowId, stepId }),
   deleteEdge: (flowId, edgeId) => action(actionTypes.FLOW.DELETE_EDGE, { flowId, edgeId }),
   deleteRouter: (flowId, routerId) => action(actionTypes.FLOW.DELETE_ROUTER, { flowId, routerId }),
-  initializeFlowGraph: (flowId, flow) => action(actionTypes.FLOW.INIT_FLOW_GRAPH, { flowId, flow }),
+  initializeFlowGraph: (flowId, flow, isViewMode) => action(actionTypes.FLOW.INIT_FLOW_GRAPH, { flowId, flow, isViewMode }),
   setSaveStatus: (flowId, status) => action(actionTypes.FLOW.SET_SAVE_STATUS, { flowId, status }),
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
