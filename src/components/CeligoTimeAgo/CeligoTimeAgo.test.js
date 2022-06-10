@@ -1,3 +1,4 @@
+/* global describe, test, expect, */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -15,8 +16,6 @@ describe('CeligoTimeAgo component test', () => {
 
     expect(RelativeDateTime).not.toBeInTheDocument();
     expect(LocalDateTime).not.toBeInTheDocument();
-
-    screen.debug();
   });
 
   test('rendereding with relative time date', () => {
@@ -32,8 +31,6 @@ describe('CeligoTimeAgo component test', () => {
     const relativeTime = screen.getByText('05/18/2022 11:46:31 pm');
 
     expect(relativeTime).toBeInTheDocument();
-
-    screen.debug();
   });
 
   test('rendereding with local time date', () => {
@@ -48,8 +45,6 @@ describe('CeligoTimeAgo component test', () => {
     const testforlocalDateTime = screen.getByLabelText('sample');
 
     expect(localDateTime).toHaveTextContent(testforlocalDateTime.textContent);
-
-    screen.debug();
   });
 });
 
@@ -64,6 +59,4 @@ test('rendereding just Now', () => {
   const justNow = screen.queryByText(/Just now/i);
 
   expect(justNow).toBeInTheDocument();
-
-  screen.debug();
 });

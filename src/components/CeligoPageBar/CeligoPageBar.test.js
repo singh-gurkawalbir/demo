@@ -1,3 +1,4 @@
+/* global describe, test, expect ,jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Router } from 'react-router-dom';
@@ -42,8 +43,6 @@ describe('Celigopagebar component', () => {
 
     userEvent.click(parentbutton);
     expect(history.replace).toHaveBeenCalledWith('/');
-
-    screen.debug();
   });
 
   test(' new', () => {
@@ -56,7 +55,5 @@ describe('Celigopagebar component', () => {
 
     userEvent.click(parentbutton);
     expect(history.goBack).toHaveBeenCalledWith();
-
-    screen.debug();
   });
 });

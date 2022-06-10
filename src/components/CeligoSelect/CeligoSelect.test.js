@@ -1,3 +1,4 @@
+/* global describe, test, expect */
 import React, { useState } from 'react';
 import { screen } from '@testing-library/react';
 import { MenuItem } from '@material-ui/core';
@@ -46,46 +47,44 @@ export function MultipleSelect() {
   );
 }
 
-test('CeligoSelect componeeent test', async () => {
-  renderWithProviders(<SingleSelect />);
+describe('CeligoSelect Component Test', () => {
+  test('CeligoSelect componeeent test', async () => {
+    renderWithProviders(<SingleSelect />);
 
-  const button = screen.getByRole('button');
+    const button = screen.getByRole('button');
 
-  userEvent.click(button);
-  const japan = screen.getByText('Japan');
-  const unitedstates = screen.getByText('United States');
+    userEvent.click(button);
+    const japan = screen.getByText('Japan');
+    const unitedstates = screen.getByText('United States');
 
-  userEvent.click(japan);
-  expect(button.textContent).toBe('Japan');
-  const brazil = screen.getByText('Brazil');
+    userEvent.click(japan);
+    expect(button.textContent).toBe('Japan');
+    const brazil = screen.getByText('Brazil');
 
-  expect(brazil).not.toBeVisible();
-  expect(unitedstates).not.toBeVisible();
-  expect(japan).not.toBeVisible();
+    expect(brazil).not.toBeVisible();
+    expect(unitedstates).not.toBeVisible();
+    expect(japan).not.toBeVisible();
+  });
 
-  screen.debug();
-});
+  test('CeligoSelect componeeentooo test', async () => {
+    renderWithProviders(<MultipleSelect />);
 
-test('CeligoSelect componeeentooo test', async () => {
-  renderWithProviders(<MultipleSelect />);
+    const button = screen.getByRole('button');
 
-  const button = screen.getByRole('button');
+    userEvent.click(button);
+    const unitedstates = screen.getByText('United States');
 
-  userEvent.click(button);
-  const unitedstates = screen.getByText('United States');
+    userEvent.click(unitedstates);
+    const donebutton = screen.getByText('Done');
 
-  userEvent.click(unitedstates);
-  const donebutton = screen.getByText('Done');
+    userEvent.click(donebutton);
+    expect(button.textContent).toBe('Brazil, United States');
 
-  userEvent.click(donebutton);
-  expect(button.textContent).toBe('Brazil, United States');
+    const japan = screen.getByText('Japan');
+    const brazil = screen.getByText('Brazil');
 
-  const japan = screen.getByText('Japan');
-  const brazil = screen.getByText('Brazil');
-
-  expect(brazil).not.toBeVisible();
-  expect(unitedstates).not.toBeVisible();
-  expect(japan).not.toBeVisible();
-
-  screen.debug();
+    expect(brazil).not.toBeVisible();
+    expect(unitedstates).not.toBeVisible();
+    expect(japan).not.toBeVisible();
+  });
 });

@@ -1,3 +1,4 @@
+/* global describe, test, expect ,jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Router } from 'react-router-dom';
@@ -39,8 +40,6 @@ describe('ConnectionStatusPanel testing', () => {
     const message = screen.getByText('This connection is currently offline. Re-enter your credentials to bring it back online.');
 
     expect(message).toBeInTheDocument();
-
-    screen.debug();
   });
 
   test('testing message for conection having _connector', async () => {
@@ -52,8 +51,6 @@ describe('ConnectionStatusPanel testing', () => {
     const message = screen.queryByText('This connection is currently offline. Re-enter your credentials to bring it back online.');
 
     expect(message).toBeInTheDocument();
-
-    screen.debug();
   });
 
   test('testing offline message for export', () => {
@@ -73,8 +70,6 @@ describe('ConnectionStatusPanel testing', () => {
 
     userEvent.click(message);
     expect(history.push).toHaveBeenCalledWith('/edit/connections/connection1?fixConnnection=true');
-
-    screen.debug();
   });
 
   test('testing offline message for import', () => {
@@ -93,8 +88,6 @@ describe('ConnectionStatusPanel testing', () => {
 
     userEvent.click(message);
     expect(history.push).toHaveBeenCalledWith('/edit/connections/connection1?fixConnnection=true');
-
-    screen.debug();
   });
 
   test('testing  message for nonexisting import', () => {

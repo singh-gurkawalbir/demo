@@ -1,3 +1,4 @@
+/* global describe, test, expect */
 import React from 'react';
 import {screen} from '@testing-library/react';
 import DateTimeDisplay from '.';
@@ -13,7 +14,6 @@ describe('Date and time component test', () => {
     const dateTime = screen.queryByText('05/18/2022 11:46:31 pm');
 
     expect(dateTime).not.toBeInTheDocument();
-  //  screen.debug();
   });
 
   test('Only Date condition test', () => {
@@ -24,8 +24,6 @@ describe('Date and time component test', () => {
     const date = screen.getByText('05/18/2022');
 
     expect(date).toHaveTextContent('05/18/2022');
-
-    screen.debug();
   });
 
   test('DateTime condition test', () => {
