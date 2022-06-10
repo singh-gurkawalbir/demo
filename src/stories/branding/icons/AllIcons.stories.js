@@ -103,6 +103,7 @@ import PermissionsMonitorIcon from '../../../components/icons/PermissionsMonitor
 import PermissionExplorerIcon from '../../../components/icons/PermissionExplorerIcon';
 import PentagonIcon from '../../../components/icons/PentagonIcon';
 import PinIntegrationIcon from '../../../components/icons/PinIntegrationIcon';
+import PortalIcon from '../../../components/icons/PortalIcon';
 import RadioBtnSelectedIcon from '../../../components/icons/RadioBtnSelectedIcon';
 import RadioBtnUnselectedIcon from '../../../components/icons/RadioBtnUnselectedIcon';
 import ResourcesIcon from '../../../components/icons/ResourcesIcon';
@@ -256,6 +257,7 @@ const icons =
       PermissionExplorerIcon,
       PentagonIcon,
       PinIntegrationIcon,
+      PortalIcon,
       RadioBtnSelectedIcon,
       RadioBtnUnselectedIcon,
       ResourcesIcon,

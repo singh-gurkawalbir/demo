@@ -533,6 +533,26 @@ export const getInputOutputFormat = (isGroupedSampleData, isGroupedOutput) => {
   return RECORD_AS_INPUT_OPTIONS[0].label;
 };
 
+export const getUniqueExtractId = (extract, index) => {
+  if (!extract) { return ''; }
+  // currently only supporting root level duplicate extracts
+  if (extract === '$' || extract === '$[*]') {
+    return `${extract}|${index}`;
+  }
+
+  return extract;
+};
+
+export const getExtractFromUniqueId = extractId => {
+  const pipeIndex = extractId?.indexOf('|');
+
+  if (pipeIndex > 0) {
+    return extractId.substring(0, pipeIndex);
+  }
+
+  return extractId;
+};
+
 // for object array multiple extracts view,
 // mark non active tabs children as hidden
 export const hideOtherTabRows = (node, newTabExtract, hidden) => {
@@ -561,9 +581,14 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
       return hideOtherTabRows(clonedChild, newTabExtract, false);
     }
 
-    if (clonedChild.isTabNode) return clonedChild;
+    if (clonedChild.isTabNode) {
+      delete clonedChild.hidden;
+      delete clonedChild.className;
 
-    // else if hidden is undefined, then check on the tab index
+      return clonedChild;
+    }
+
+    // else if hidden is undefined, then check on the parent extract
     if (clonedChild.parentExtract !== newTabExtract) {
       clonedChild.hidden = true;
       clonedChild.className = 'hideRow';
@@ -574,32 +599,19 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
     delete clonedChild.hidden;
     delete clonedChild.className;
 
+    // for child object-array nodes, only make first tab visible
+    if (clonedChild.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+      const childParentExtract = clonedChild.combinedExtract.split(',') || [];
+
+      // update children and un-hide only first tab
+      return hideOtherTabRows(clonedChild, getUniqueExtractId(childParentExtract[0], 0));
+    }
+
     // update children as well
     return hideOtherTabRows(clonedChild, newTabExtract, false);
   });
 
   return clonedNode;
-};
-
-export const getUniqueExtractId = (extract, index) => {
-  if (!extract) { return ''; }
-  // currently only supporting root level duplicate extracts
-  // todo for future
-  if (extract === '$' || extract === '$[*]') {
-    return `${extract}|${index}`;
-  }
-
-  return extract;
-};
-
-export const getExtractFromUniqueId = extractId => {
-  const pipeIndex = extractId?.indexOf('|');
-
-  if (pipeIndex > 0) {
-    return extractId.substring(0, pipeIndex);
-  }
-
-  return extractId;
 };
 
 // this util is for object array data type nodes when multiple extracts are given,
@@ -766,6 +778,8 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
                 parentKey: currNodeKey,
                 title: '',
                 isTabNode: true,
+                hidden,
+                className: hidden && 'hideRow',
               });
             }
           }
@@ -839,7 +853,9 @@ export const buildTreeFromV2Mappings = ({
 };
 
 export const hasV2MappingsInTreeData = treeData => {
-  if (!treeData || !treeData.length || (treeData.length === 1 && treeData[0].isEmptyRow)) {
+  if (!treeData || !treeData.length ||
+  (treeData.length === 1 && treeData[0].isEmptyRow) ||
+  (treeData.length === 1 && treeData[0].generateDisabled && !treeData[0].combinedExtract && treeData[0].children?.length === 1 && treeData[0].children[0].isEmptyRow)) {
     return false;
   }
 
@@ -1215,15 +1231,32 @@ export const filterExtractsNode = (node = {}, propValue, inputValue) => {
   return true;
 };
 
+// recursively look for all parentExtracts for a given node
+export const findAllParentExtractsForNode = (treeData, output = [], nodeKey) => {
+  const {node} = findNodeInTree(treeData, 'key', nodeKey);
+
+  if (!node || !node.parentKey) return output;
+
+  // get the grand parents first
+  // this sequence is required by BE
+  findAllParentExtractsForNode(treeData, output, node.parentKey);
+
+  if (node.parentExtract) {
+    output.push(node.parentExtract);
+  }
+
+  return output;
+};
+
 // recursively look for nearest parentExtract for a given node
-const findParentExtractForNode = (treeData, nodeKey) => {
+export const findNearestParentExtractForNode = (treeData, nodeKey) => {
   const {node} = findNodeInTree(treeData, 'key', nodeKey);
 
   if (!node || !node.parentKey) return '';
 
   if (node.parentExtract) return node.parentExtract;
 
-  return findParentExtractForNode(treeData, node.parentKey);
+  return findNearestParentExtractForNode(treeData, node.parentKey);
 };
 
 // this util handles the comma separated values use-case
@@ -1235,7 +1268,7 @@ export const getFinalSelectedExtracts = (node, inputValue = '', isArrayType, isG
 
   // for child rows with parent extract
   // the children json path should not include [*] in the parent path
-  const parentExtract = findParentExtractForNode(treeData, nodeKey);
+  const parentExtract = findNearestParentExtractForNode(treeData, nodeKey);
 
   if (parentExtract) {
     const splitParentExtract = parentExtract.split('.') || [];
@@ -1324,7 +1357,8 @@ const recursivelyCompareV2Mappings = (_mappingObj1 = {}, _mappingObj2 = {}) => {
 
   if (!isEqualObj) return false;
 
-  if (!_mappingObj1.children && !_mappingObj2.children) return isEqualObj;
+  if (!_mappingObj1.children && !_mappingObj2.children) return true;
+  if (_mappingObj1.children.length !== _mappingObj2.children.length) return false;
 
   // both have children so need to compare children now
   let isChildrenEqual = true;
