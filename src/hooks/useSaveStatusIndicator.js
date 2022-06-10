@@ -61,7 +61,7 @@ export default function useSaveStatusIndicator(props) {
       // Once API call is done (success/error), clear the comm state
       clearCommState();
       // remount the form after save
-      remountAfterSaveFn && typeof remountAfterSaveFn === 'function' && remountAfterSaveFn();
+      typeof remountAfterSaveFn === 'function' && remountAfterSaveFn();
     }
     if (commStatus === 'success' && onSuccess) {
       onSuccess();

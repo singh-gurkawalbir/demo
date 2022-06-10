@@ -14,7 +14,7 @@ import { hashCode } from '../../../utils/string';
 import Help from '../../../components/Help';
 import Spinner from '../../../components/Spinner';
 import useSaveStatusIndicator from '../../../hooks/useSaveStatusIndicator';
-import CollapsableContainer from '../../../components/ResourceDiffVisualizer/CollapsableContainer';
+import CollapsableContainer from '../../../components/CollapsableContainer';
 
 const useStyles = makeStyles(theme => ({
   ssoForm: {

@@ -7,7 +7,7 @@ import DynaForm from '../../../components/DynaForm';
 import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../../hooks/useSaveStatusIndicator';
-import CollapsableContainer from '../../../components/ResourceDiffVisualizer/CollapsableContainer';
+import CollapsableContainer from '../../../components/CollapsableContainer';
 
 const useStyles = makeStyles(theme => ({
   ssoForm: {
