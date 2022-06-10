@@ -69,7 +69,7 @@ export default {
     lookups,
     importResource = {},
   }) => {
-    const {lookupName, dataType: propDataType, copySource } = node;
+    const {key, lookupName, dataType: propDataType, copySource } = node;
 
     const {_connectionId: connectionId, adaptorType, _id: resourceId } = importResource;
 
@@ -84,6 +84,7 @@ export default {
           id: 'dataType',
           name: 'dataType',
           type: 'select',
+          skipSort: true,
           label: 'Destination data type',
           defaultValue: propDataType,
           helpKey: 'mapping.v2.dataType',
@@ -91,14 +92,14 @@ export default {
           options: [
             {
               items: [
-                { label: 'String', value: 'string' },
-                { label: 'Number', value: 'number' },
-                { label: 'Boolean', value: 'boolean' },
-                { label: 'String array', value: 'stringarray' },
-                { label: 'Number array', value: 'numberarray' },
-                { label: 'Boolean array', value: 'booleanarray' },
-                { label: 'Object', value: 'object' },
-                { label: 'Object array', value: 'objectarray' },
+                { label: 'string', value: 'string' },
+                { label: 'number', value: 'number' },
+                { label: 'boolean', value: 'boolean' },
+                { label: 'object', value: 'object' },
+                { label: '[string]', value: 'stringarray' },
+                { label: '[number]', value: 'numberarray' },
+                { label: '[boolean]', value: 'booleanarray' },
+                { label: '[object]', value: 'objectarray' },
               ],
             },
           ],
@@ -318,7 +319,9 @@ export default {
           resourceType: 'imports',
           resourceId,
           flowId,
+          mapper2RowKey: key,
           showLookup: false,
+          showExtract: false,
           multiline: true,
           label: 'Handlebars expression',
           defaultValue: mappingUtil.getV2DefaultExpression(node),
@@ -409,9 +412,11 @@ export default {
           name: '_relativeURI',
           type: 'relativeuri',
           showLookup: false,
+          showExtract: false,
           connectionId,
           resourceId,
           flowId,
+          mapper2RowKey: key,
           resourceType: 'imports',
           label: 'Relative URI',
           placeholder: 'Relative URI',
@@ -454,6 +459,8 @@ export default {
           connectionId: r => r && r._connectionId,
           resourceId,
           flowId,
+          mapper2RowKey: key,
+          stage: 'importMappingExtract',
           resourceType: 'imports',
           helpKey: 'mapping.v2.lookup.body',
           noApi: true,

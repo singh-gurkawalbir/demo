@@ -375,6 +375,7 @@ export default {
         fontSize: '14px',
         lineHeight: '18px',
         letterSpacing: 'normal',
+        fontWeight: 'normal',
       },
       overline: {
         fontFamily: 'source sans pro',

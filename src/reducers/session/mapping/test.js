@@ -2865,6 +2865,7 @@ describe('mapping reducer', () => {
                 title: '',
                 parentKey: 'key1',
                 dataType: MAPPING_DATA_TYPES.STRING,
+                isEmptyRow: true,
               },
             ],
           }],

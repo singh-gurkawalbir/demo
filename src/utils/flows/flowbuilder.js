@@ -557,11 +557,11 @@ const unUsedMergeRouterExists = (flow, incomingRoutersMap) => {
   if (unUsedRouterIndex > -1) {
     const router = flow.routers[unUsedRouterIndex];
     const {pageProcessors, nextRouterId} = router.branches[0];
-    const {routerIndex} = incomingRoutersMap[router.id][0];
-    const {branchIndex} = incomingRoutersMap[router.id][0];
+    const {routerIndex, branchIndex } = incomingRoutersMap[router.id][0];
+    const branch = flow.routers[routerIndex].branches[branchIndex];
 
-    flow.routers[routerIndex].branches[branchIndex].pageProcessors = [...flow.routers[routerIndex].branches[branchIndex].pageProcessors, pageProcessors];
-    flow.routers[routerIndex].branches[branchIndex].nextRouterId = nextRouterId;
+    branch.pageProcessors = [...branch.pageProcessors, ...pageProcessors];
+    branch.nextRouterId = nextRouterId;
     flow.routers.splice(unUsedRouterIndex, 1);
 
     return 1;

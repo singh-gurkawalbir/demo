@@ -7,6 +7,7 @@ import ToggleMapperVersion from '../Drawer/actions/ToggleMapperVersion';
 import InputOutputTitle from '../Editor/actions/Mappings/InputOutputTitle';
 import MapperPanelTitle from '../Editor/actions/Mappings/MapperPanelTitle';
 import AssistantPanel from '../Editor/panels/Mappings/Assistant/Panel';
+import MappingAssistantTitle from '../Editor/actions/Mappings/MappingAssistantTitle';
 
 export default {
   type: 'mappings',
@@ -25,11 +26,10 @@ export default {
     if (!!mappingPreviewType && ['assistantRight', 'assistantTopRight'].includes(layout)) {
       panels.push(
         {
-          title: `${mappingPreviewType === 'netsuite' ? 'NetSuite' : 'Salesforce'} mapping assistant`,
+          title: ({editorId}) => <MappingAssistantTitle editorId={editorId} />,
           area: 'assistant',
           Panel: AssistantPanel,
-          helpKey: `${mappingPreviewType === 'netsuite' ? 'afe.mappings.netsuite.assistant' : 'afe.mappings.salesforce.assistant'}`,
-        },
+        }
       );
     }
 

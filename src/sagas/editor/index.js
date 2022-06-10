@@ -23,7 +23,7 @@ import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
-import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData } from '../../utils/mapping';
+import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllParentExtractsForNode } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
 
 /**
@@ -474,7 +474,7 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage, ssLinkedConnectionId, parentType, parentId} = editor;
+  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage, ssLinkedConnectionId, parentType, parentId, mapper2RowKey} = editor;
   // for some fields only v2 data is supported (not v1)
   const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
 
@@ -578,7 +578,7 @@ export function* requestEditorSampleData({
   let _sampleData = null;
   let templateVersion;
 
-  const {shouldGetContextFromBE, sampleData: uiSampleData} = yield select(selectors.shouldGetContextFromBE, id, sampleData);
+  const {shouldGetContextFromBE, sampleData: uiSampleData, isMapperField} = yield select(selectors.shouldGetContextFromBE, id, sampleData);
 
   // BE doesn't support /getContext for some use cases
   if (!shouldGetContextFromBE) {
@@ -599,6 +599,22 @@ export function* requestEditorSampleData({
     body.integrationId = flow?._integrationId;
 
     body.fieldPath = fieldId || filterPath;
+
+    if (isMapperField) {
+      body.uiContext = 'mapper2_0';
+      // for v2 mappings, BE needs parent extracts to be passed
+      // for correctly returning the iterating array context
+      if (mapper2RowKey) {
+        const {v2TreeData} = yield select(selectors.mapping);
+        const arrayExtracts = findAllParentExtractsForNode(v2TreeData, [], mapper2RowKey);
+
+        if (arrayExtracts.length) {
+          body.mapper2_0 = {
+            arrayExtracts,
+          };
+        }
+      }
+    }
 
     if (needPreviewStagesData) {
       body.previewData = yield select(selectors.getResourceSampleDataStages, resourceId);

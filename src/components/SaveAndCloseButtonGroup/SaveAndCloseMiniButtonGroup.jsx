@@ -9,7 +9,7 @@ import SaveAndCloseMiniButtons from './SaveAndCloseMiniButtons';
 export default function SaveAndCloseMiniButtonGroup({
   isDirty,
   asyncKey,
-  submitButtonLabel = 'Save & Close',
+  submitButtonLabel = 'Save & close',
   submitTransientLabel = 'Saving...',
   status,
   handleSave,
