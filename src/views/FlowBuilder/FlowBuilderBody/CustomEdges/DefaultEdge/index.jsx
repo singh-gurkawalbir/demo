@@ -69,6 +69,7 @@ export default function DefaultEdge({
   const { elements, dragNodeId, flow, flowId } = useFlowContext();
   const hasSiblingEdges = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow._integrationId, flowId));
+  const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
   const { sourceType, targetType, points: edgePoints, processorCount, mergableTerminals = [] } = data;
   const isDragging = !!dragNodeId;
   const isTargetMerge = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
@@ -77,7 +78,7 @@ export default function DefaultEdge({
   const isTargetRouter = targetType === GRAPH_ELEMENTS_TYPE.ROUTER || targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
   const showLinkIcon = hasSiblingEdges && !isSourceGenerator;
-  const showAddIcon = (!isSourceGenerator || (isSourceGenerator && !isTargetRouter)) && !flow._connectorId && !isViewMode;
+  const showAddIcon = (!isSourceGenerator || (isSourceGenerator && !isTargetRouter)) && !flow._connectorId && !isViewMode && !isFlowSaveInProgress;
   const isMergableEdge = mergableTerminals.includes(dragNodeId);
 
   /*
