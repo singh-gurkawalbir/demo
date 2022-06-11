@@ -456,8 +456,7 @@ const splitPPArray = (ar, index) => {
 
   return [firstHalf, secondHalf];
 };
-const mergeBetweenTwoPPSteps = ({flowDoc, targetElement, sourceElement, staged}) => {
-  const flowId = flowDoc._id;
+const mergeBetweenTwoPPSteps = ({flowDoc, targetElement, sourceElement, patchSet}) => {
   const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
   const [, edgeRouterIndex, edgeBranchIndex] = BranchPathRegex.exec(targetElement.data.path);
   const newVirtualRouter = generateEmptyRouter(true);
@@ -466,7 +465,7 @@ const mergeBetweenTwoPPSteps = ({flowDoc, targetElement, sourceElement, staged})
   const [firstHalf, secondHalf] = splitPPArray(pageProcessors, insertionIndex);
 
   newVirtualRouter.branches = [{pageProcessors: secondHalf, nextRouterId: originalNextRouterId }];
-  staged[flowId].patch.push(...[
+  patchSet.push(...[
     {
       op: 'add',
       path: `/routers/${sourceRouterIndex}/branches/${sourceBranchIndex}/nextRouterId`,
