@@ -5,7 +5,7 @@ import ArrowPopper from '../../../../../components/ArrowPopper';
 import IconButtonWithTooltip from '../../../../../components/IconButtonWithTooltip';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import { useFlowContext } from '../../Context';
-import { useHandleAddNode, useHandleAddNewRouter } from '../../hooks';
+import { useHandleAddNode, useHandleAddNewRouter } from '../../../hooks';
 import { isNodeConnectedToRouter } from '../../lib';
 
 const useStyles = makeStyles(theme => ({

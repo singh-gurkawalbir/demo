@@ -108,8 +108,6 @@ export function Canvas({ flowId, fullscreen }) {
   const elementsMap = useSelector(state => selectors.fbGraphElementsMap(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, mergedFlow._integrationId, flowId));
 
-  // console.log(flowId, mergedFlow, fullscreen);
-
   const updatedLayout = useMemo(() =>
     layoutElements(elements, 'LR'),
   [elements]);
