@@ -456,12 +456,12 @@ const splitPPArray = (ar, index) => {
 
   return [firstHalf, secondHalf];
 };
-const mergeBetweenTwoPPSteps = ({flow, targetElement, sourceElement, staged}) => {
-  const flowId = flow._id;
+const mergeBetweenTwoPPSteps = ({flowDoc, targetElement, sourceElement, staged}) => {
+  const flowId = flowDoc._id;
   const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
   const [, edgeRouterIndex, edgeBranchIndex] = BranchPathRegex.exec(targetElement.data.path);
   const newVirtualRouter = generateEmptyRouter(true);
-  const {pageProcessors = [], nextRouterId: originalNextRouterId} = flow.routers[edgeRouterIndex].branches[edgeBranchIndex];
+  const {pageProcessors = [], nextRouterId: originalNextRouterId} = flowDoc.routers[edgeRouterIndex].branches[edgeBranchIndex];
   const insertionIndex = pageProcessors.findIndex(pp => pp.id === targetElement.target);
   const [firstHalf, secondHalf] = splitPPArray(pageProcessors, insertionIndex);
 
