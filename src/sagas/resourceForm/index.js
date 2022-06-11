@@ -473,8 +473,8 @@ export function* getFlowUpdatePatchesForNewPGorPP(
 
   if (pendingId) {
     pending = true;
-    if (flowDoc?.routers?.length) {
-      stepPath = elementsMap[pendingId]?.data?.path;
+    if (elementsMap?.[pendingId]) {
+      stepPath = elementsMap[pendingId].data?.path;
     }
   }
 
