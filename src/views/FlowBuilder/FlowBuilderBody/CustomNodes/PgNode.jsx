@@ -27,6 +27,8 @@ export default function PageGeneratorNode(props) {
   const flowErrorsMap = useSelector(state => selectors.openErrorsMap(state, flowId));
   const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow?._integrationId, flowId));
+  const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
+  const showDelete = !data.hideDelete && !isFlowSaveInProgress;
 
   const handleDelete = useCallback(id => {
     dispatch(actions.flow.deleteStep(flowId, id));
@@ -38,7 +40,7 @@ export default function PageGeneratorNode(props) {
         <PageGenerator
           className={classes.pageGenerator}
           {...data}
-          onDelete={!data.hideDelete && handleDelete}
+          onDelete={showDelete && handleDelete}
           flowId={flowId}
           integrationId={flow?._integrationId}
           openErrorCount={(flowErrorsMap && flowErrorsMap[data._exportId]) || 0}

@@ -57,7 +57,8 @@ export default function PageProcessorNode({ data = {} }) {
   );
   const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
-
+  const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
+  const showDelete = !hideDelete && !isFlowSaveInProgress;
   const handleDelete = useCallback(id => {
     dispatch(actions.flow.deleteStep(flowId, id));
   }, [dispatch]);
@@ -78,7 +79,7 @@ export default function PageProcessorNode({ data = {} }) {
 
           <PageProcessor
             {...data.resource}
-            onDelete={!hideDelete && handleDelete}
+            onDelete={showDelete && handleDelete}
             flowId={flowId}
             integrationId={integrationId}
             openErrorCount={(flowErrorsMap && flowErrorsMap[data.resource?._importId || data.resource?._exportId]) || 0}
