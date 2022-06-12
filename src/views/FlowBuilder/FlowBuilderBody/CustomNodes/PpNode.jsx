@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function PageProcessorNode({ data = {} }) {
-  const { branch = {}, isFirst, isLast, hideDelete } = data;
+  const { branch = {}, isFirst, isLast, hideDelete, isVirtual } = data;
   const dispatch = useDispatch();
   const classes = useStyles();
 
@@ -69,9 +69,11 @@ export default function PageProcessorNode({ data = {} }) {
       <div className={classes.contentContainer} >
         <div>
           <div className={clsx(classes.branchContainer, {[classes.firstBranchStep]: isFirst})}>
-            <Typography variant="overline" className={classes.branchName}>
-              {branch.name}
-            </Typography>
+            {!isVirtual && (
+              <Typography variant="overline" className={classes.branchName}>
+                {branch.name}
+              </Typography>
+            )}
           </div>
 
           <PageProcessor

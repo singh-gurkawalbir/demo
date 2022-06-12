@@ -169,7 +169,7 @@ const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId, isReadOnly
 
 const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}, isReadOnlyMode) => {
   const edges = [];
-  const {branch, branchIndex, routerIndex} = branchData;
+  const {branch, branchIndex, routerIndex, isVirtual} = branchData;
   const nodes = pageProcessors.map((pageProcessor, index, collection) => {
     let hideDelete = false;
 
@@ -190,6 +190,7 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}, isR
         resource: {...pageProcessor},
         branch,
         hideDelete,
+        isVirtual,
         isFirst: index === 0,
         path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${index}`,
       },
@@ -295,7 +296,11 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
       router.branches.forEach((branch, branchIndex) => {
         if (branch.pageProcessors.length) {
           // draw an edge from router to first step of branch
-          const pageProcessorNodes = generatePageProcessorNodesAndEdges(branch.pageProcessors, {branch, branchIndex, routerIndex}, isReadOnlyMode);
+          const pageProcessorNodes = generatePageProcessorNodesAndEdges(
+            branch.pageProcessors,
+            {branch, branchIndex, routerIndex, isVirtual: isVirtualRouter(router)},
+            isReadOnlyMode
+          );
 
           if (routerIndex !== 0 || !isVirtualRouter(router)) {
             elements.push(generateDefaultEdge(router.id, branch.pageProcessors[0].id, {routerIndex, branchIndex}));
