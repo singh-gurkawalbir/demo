@@ -1,24 +1,23 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
-import { getApp, getAssistantConnectorType } from '../../../constants/applications';
+import { getApp } from '../../../constants/applications';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
-import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions';
 import DynaSelect from './DynaSelect';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../utils/constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
-import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, isEbayFinanceConnection } from '../../../utils/assistant';
 
 const emptyObj = {};
 const isParent = true;
 
 export default function FormView(props) {
-  const { resourceType, flowId, resourceId, value, formKey } = props;
+  const { resourceType, resourceId, value, formKey } = props;
+
   const formContext = useFormContext(formKey);
   const dispatch = useDispatch();
   const { merged } =
@@ -32,38 +31,23 @@ export default function FormView(props) {
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
-  const connection = useSelector(
-    state =>
-      selectors.resource(state, 'connections', staggedResource._connectionId) ||
-      emptyObj
-  );
+
   // selectors.connectorMetaData = (state, httpConnectorId, httpVersionId, httpAPIId) => {
 
-  const connectorMetaData = useSelector(state =>
-    selectors.httpConnectorMetaData(state, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId)
-  );
-  const assistantData = useSelector(state =>
-    selectors.assistantData(state, {
-      adaptorType: getAssistantConnectorType(staggedResource.assistant),
-      assistant: staggedResource.assistant,
-    })
-  );
-
-  const { assistant: assistantName, http, http: {_httpConnectorId}} = connection;
-  const isGraphql = http?.formType === 'graph_ql';
+  const _httpConnectorId = staggedResource?.http?._httpConnectorId || staggedResource?._httpConnectorId;
 
   const options = useMemo(() => {
-    const matchingApplication = getApp(null, isGraphql ? 'graph_ql' : assistantName, _httpConnectorId);
+    const matchingApplication = getApp(null, null, _httpConnectorId);
 
     if (matchingApplication) {
-      const { name, type } = matchingApplication;
+      const { name } = matchingApplication;
 
       // all types are lower case...lets upper case them
       return [
         {
           items: [
             // if type is REST then we should show REST API
-            { label: isGraphql ? 'HTTP' : type && (type.toUpperCase() === 'REST' ? 'REST API' : type.toUpperCase()), value: `${isParent}` },
+            { label: 'HTTP', value: `${isParent}` },
             { label: name, value: `${!isParent}` },
           ],
         },
@@ -73,10 +57,9 @@ export default function FormView(props) {
     // if i cant find a matching application this is not an assistant
 
     return null;
-  }, [_httpConnectorId, assistantName, isGraphql]);
+  }, [_httpConnectorId]);
 
   useHFSetInitializeFormData({...props, isHTTPFramework: _httpConnectorId});
-  useSetInitializeFormData({...props, isHTTPFramework: _httpConnectorId});
 
   const onFieldChangeFn = (id, selectedApplication) => {
     // first get the previously selected application values
@@ -95,37 +78,21 @@ export default function FormView(props) {
       resourceType,
       resource: staggedResource,
       isNew: false,
-      connection,
-      assistantData: _httpConnectorId ? connectorMetaData : assistantData,
     });
-    const finalValues = preSave(formContext.value, staggedRes, { connection });
+    const finalValues = preSave(formContext.value, staggedRes);
     const newFinalValues = {...finalValues};
 
     staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
 
     // if assistant is selected back again assign it to the export to the export obj as well
-    if (
-      selectedApplication !== `${isParent}` &&
-      staggedRes['/assistant'] === undefined &&
-      !isGraphql && !_httpConnectorId
-    ) {
-      staggedRes['/assistant'] = assistantName;
-    } else if (isGraphql && !_httpConnectorId) {
-      if (selectedApplication !== `${isParent}`) {
-        staggedRes['/http/formType'] = 'graph_ql';
-      } else {
-        // set http.formType prop to http to use http form from the export/import as it is now using parent form');
-        staggedRes['/http/formType'] = 'http';
-        newFinalValues['/http/formType'] = 'http';
-      }
-    } else if (_httpConnectorId) {
-      if (selectedApplication !== `${isParent}`) {
-        staggedRes['/http/formType'] = 'assistant';
-      } else {
-        // set http.formType prop to http to use http form from the export/import as it is now using parent form');
-        staggedRes['/http/formType'] = 'http';
-        newFinalValues['/http/formType'] = 'http';
-      }
+
+    if (selectedApplication !== `${isParent}`) {
+      staggedRes['/http/formType'] = 'assistant';
+      newFinalValues['/http/formType'] = 'assistant';
+    } else {
+      // set http.formType prop to http to use http form from the export/import as it is now using parent form');
+      staggedRes['/http/formType'] = 'http';
+      newFinalValues['/http/formType'] = 'http';
     }
     const allPatches = sanitizePatchSet({
       patchSet: defaultPatchSetConverter({ ...staggedRes, ...newFinalValues }),
@@ -153,23 +120,21 @@ export default function FormView(props) {
         resourceId,
         false,
         false,
-        flowId,
         allTouchedFields
       )
     );
   };
-  const isAcumaticaEcommerceImport = (resourceType === 'imports') && isAcumaticaEcommerceConnection(connection);
-  const isLoopReturnsv2import = (resourceType === 'imports') && isLoopReturnsv2Connection(connection);
-  const isEbayFinanceImport = (resourceType === 'imports') && isEbayFinanceConnection(connection);
-  const isFlowBuilderAssistant = flowId && (isGraphql || _httpConnectorId ||
-    (assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection) && !isMicrosoftBusinessCentralOdataConnection(connection) && !isAcumaticaEcommerceImport && !isLoopReturnsv2import && !isEbayFinanceImport));
 
-  return isFlowBuilderAssistant ? (
+  if (!_httpConnectorId) {
+    return null;
+  }
+
+  return (
     <DynaSelect
       {...props}
       onFieldChange={onFieldChangeFn}
       value={value}
       options={options}
     />
-  ) : null;
+  );
 }

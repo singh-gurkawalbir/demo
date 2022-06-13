@@ -519,11 +519,11 @@ export const getWebhookConnectors = () => {
 export const getWebhookOnlyConnectors = () =>
   connectors.filter(c => !!c.webhookOnly);
 
-export const getApp = (type, assistant) => {
+export const getApp = (type, assistant, _httpConnectorId) => {
   const id = assistant || type;
   const applications = applicationsList();
 
-  return applications.find(c => c.id === id) || {};
+  return applications.find(c => c.id === id || c._httpConnectorId === _httpConnectorId) || {};
 };
 
 export function getImportAdaptorType(resource) {

@@ -12,6 +12,7 @@ export const useSetInitializeFormData = ({
   resourceType,
   resourceId,
   onFieldChange,
+  isHTTPFramework,
 }) => {
   const dispatch = useDispatch();
   const [componentMounted, setComponentMounted] = useState(false);
@@ -20,19 +21,21 @@ export const useSetInitializeFormData = ({
   );
 
   useEffect(() => {
-    // resouceForm init causes the form to remount
+    // resourceForm init causes the form to remount
     // when there is any initialization data do we perform at this step
-    if (!componentMounted && formState.initData) {
-      formState.initData.length &&
+    if (!isHTTPFramework) {
+      if (!componentMounted && formState.initData) {
+        formState.initData.length &&
         formState.initData.forEach(field => {
           const { id, value } = field;
 
           onFieldChange(id, value);
         });
-      dispatch(actions.resourceForm.clearInitData(resourceType, resourceId));
-    }
+        dispatch(actions.resourceForm.clearInitData(resourceType, resourceId));
+      }
 
-    setComponentMounted(true);
+      setComponentMounted(true);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     componentMounted,

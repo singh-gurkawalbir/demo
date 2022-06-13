@@ -9,7 +9,7 @@ export default function assistantDefinition(
 ) {
   return {
     ...fieldMeta({ resource, assistantData }),
-    preSave: (formValues, _, {connection} = {}) => {
+    preSave: formValues => {
       const assistantMetadata = {
         pathParams: {},
       };
@@ -26,18 +26,7 @@ export default function assistantDefinition(
       ].forEach(prop => {
         assistantMetadata[prop] = formValues[`/assistantMetadata/${prop}`];
       });
-      if (assistantMetadata.assistant === 'amazonsellingpartner') {
-        assistantMetadata.assistant = 'amazonmws';
-      }
-      if (assistantMetadata.assistant === 'recurlyv3') {
-        assistantMetadata.assistant = 'recurly';
-      }
-      if (assistantMetadata.assistant === 'loopreturnsv2') {
-        assistantMetadata.assistant = 'loopreturns';
-      }
-      if (assistantMetadata.assistant === 'acumaticaecommerce') {
-        assistantMetadata.assistant = 'acumatica';
-      }
+
       const otherFormValues = omitBy(formValues, (v, k) =>
         k.includes('/assistantMetadata/')
       );
@@ -56,9 +45,7 @@ export default function assistantDefinition(
         assistantData: formValues['/assistantMetadata/assistantData'],
       });
 
-      if (connection?.http?.type === 'Amazon-SP-API') {
-        otherFormValues['/unencrypted/apiType'] = 'Amazon-SP-API';
-      }
+      otherFormValues['/http/formType'] = 'assistant';
 
       return { ...otherFormValues, ...exportDoc };
     },

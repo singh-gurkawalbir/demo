@@ -240,7 +240,7 @@ export const getHTTPConnectorMetadata = (connectorMetadata, connectionVersion) =
 
   return {export: exportData, import: importData};
 };
-export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, resource) => {
+export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, resource, isGenericHTTP) => {
   const connectionTemplate = connector.supportedBy.connection;
   const tempFiledMeta = _.cloneDeep(finalFieldMeta);
 
@@ -302,7 +302,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       }
       if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]}; }
     } else if (!tempFiledMeta.fieldMap[key].required && key !== 'settings') {
-      tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
+      tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: isGenericHTTP || false};
     } else if (key === 'http._iClientId') {
       tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
     } else if (key === 'http.baseURI') {

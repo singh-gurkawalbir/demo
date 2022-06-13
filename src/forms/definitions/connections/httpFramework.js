@@ -4,13 +4,7 @@ import {
 import { updateHTTPFrameworkFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
-  init: (fieldMeta, resource, flow, httpConnector) => {
-    if (!resource?._httpConnectorId && !resource?.http?._httpConnectorId) {
-      return fieldMeta;
-    }
-
-    return updateFinalMetadataWithHttpFramework(fieldMeta, httpConnector, resource, true);
-  },
+  init: (fieldMeta, resource, flow, httpConnector) => updateFinalMetadataWithHttpFramework(fieldMeta, httpConnector, resource),
   preSave: (formValues, resource, options) => {
     let newValues = { ...formValues};
 
@@ -79,8 +73,8 @@ export default {
 
     if (
       newValues['/http/auth/type'] !== 'basic' &&
-      newValues['/http/auth/type'] !== 'digest' &&
-      newValues['/http/auth/type'] !== 'wsse'
+        newValues['/http/auth/type'] !== 'digest' &&
+        newValues['/http/auth/type'] !== 'wsse'
     ) {
       delete newValues['/http/auth/basic/username'];
       delete newValues['/http/auth/basic/password'];
@@ -94,7 +88,7 @@ export default {
 
     if (
       newValues['/http/auth/type'] !== 'token' ||
-      !formValues['/configureTokenRefresh']
+        !formValues['/configureTokenRefresh']
     ) {
       newValues['/http/auth/token/refreshMethod'] = undefined;
       newValues['/http/auth/token/refreshTokenPath'] = undefined;
@@ -177,7 +171,7 @@ export default {
     if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
       newValues = updateHTTPFrameworkFormValues(newValues, resource, options?.httpConnector);
     }
-    newValues['/http/formType'] = 'http';
+    newValues['/http/formType'] = 'assistant';
 
     return newValues;
   },
@@ -234,7 +228,7 @@ export default {
       visibleWhen: [{ field: 'http.auth.type', isNot: ['custom'] }],
       defaultValue: r =>
         (r && r.http && r.http.encrypted && JSON.stringify(r.http.encrypted)) ||
-        '{"field": "value"}',
+          '{"field": "value"}',
     },
     'http.disableStrictSSL': { fieldId: 'http.disableStrictSSL' },
     'http.unencrypted': {
@@ -242,10 +236,10 @@ export default {
       visibleWhen: [{ field: 'http.auth.type', isNot: ['custom'] }],
       defaultValue: r =>
         (r &&
-          r.http &&
-          r.http.unencrypted &&
-          JSON.stringify(r.http.unencrypted)) ||
-        '{"field": "value"}',
+            r.http &&
+            r.http.unencrypted &&
+            JSON.stringify(r.http.unencrypted)) ||
+          '{"field": "value"}',
     },
     httpBasic: {
       formId: 'httpBasic',
@@ -336,7 +330,7 @@ export default {
       helpKey: 'connection.http.encrypted',
       defaultValue: r =>
         (r && r.http && r.http.encrypted && JSON.stringify(r.http.encrypted)) ||
-        '{"field": "value"}',
+          '{"field": "value"}',
       visibleWhen: [{ field: 'http.auth.type', is: ['custom'] }],
       description: 'Note: for security reasons this field must always be re-entered.',
     },
@@ -349,10 +343,10 @@ export default {
       visibleWhen: [{ field: 'http.auth.type', is: ['custom'] }],
       defaultValue: r =>
         (r &&
-          r.http &&
-          r.http.unencrypted &&
-          JSON.stringify(r.http.unencrypted)) ||
-        '{"field": "value"}',
+            r.http &&
+            r.http.unencrypted &&
+            JSON.stringify(r.http.unencrypted)) ||
+          '{"field": "value"}',
     },
 
     application: {
@@ -552,3 +546,4 @@ export default {
     },
   ],
 };
+

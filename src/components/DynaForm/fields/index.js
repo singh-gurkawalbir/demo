@@ -152,6 +152,7 @@ import DynaHFAssistantOptions from './httpFramework/DynaHFAssistantOptions';
 import DynaHFAssistantSearchParams from './httpFramework/DynaHFAssistantSearchParams';
 import DynaSemiHFAssistantOperationSelect from './httpFramework/DynaSemiHFAssistantOperationSelect';
 import DynaAmazonmwsType from './DynaAmazonmwsType';
+import DynaConnectionFormView from './DynaConnectionFormView';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -315,4 +316,5 @@ export default {
   hfsearchparams: DynaHFAssistantSearchParams,
   semihfoperationselect: DynaSemiHFAssistantOperationSelect,
   amazonmwstype: DynaAmazonmwsType,
+  connectionFormView: DynaConnectionFormView,
 };

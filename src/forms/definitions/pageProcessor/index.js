@@ -1,4 +1,4 @@
-import {applicationsList, applicationsPlaceHolderText, getPublishedHttpConnectorThroughAssistant} from '../../../constants/applications';
+import {applicationsList, applicationsPlaceHolderText} from '../../../constants/applications';
 import { appTypeToAdaptorType, rdbmsAppTypeToSubType } from '../../../utils/resource';
 import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
 import {getFilterExpressionForAssistant} from '../../../utils/connections';
@@ -23,12 +23,10 @@ export default {
       return { '/resourceId': importId || exportId };
     }
     const applications = applicationsList();
-    const connector = getPublishedHttpConnectorThroughAssistant(application);
-
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
-      '/adaptorType': `HTTP${
+      '/adaptorType': `${appTypeToAdaptorType[app.type]}${
         ['importRecords', 'transferFiles'].indexOf(resourceType) >= 0
           ? 'Import'
           : 'Export'
@@ -41,7 +39,7 @@ export default {
       newValues['/adaptorType'] = 'NetSuiteDistributedImport';
     }
 
-    if (app.assistant && !connector?._id) {
+    if (app.assistant) {
       newValues['/assistant'] = app.assistant;
     }
 
@@ -52,7 +50,7 @@ export default {
 
     // If there is no assistant for the import, we need to show generic adaptor form
     // we are patching useTechAdaptorForm field to not to show default assistant form
-    if (app.assistant && !FILE_PROVIDER_ASSISTANTS.includes(app.assistant)) {
+    if ((app.assistant || app._httpConnectorId) && !FILE_PROVIDER_ASSISTANTS.includes(app.assistant)) {
       if ((newValues['/isLookup'] && !app.export) || (!newValues['/isLookup'] && !app.import)) { newValues['/useTechAdaptorForm'] = true; }
     }
 
@@ -181,20 +179,15 @@ export default {
 
     if (fieldId === 'connection') {
       const expression = [];
-      const connector = getPublishedHttpConnectorThroughAssistant(app.id);
 
-      if (connector?._id) {
-        expression.push({ 'http.formType': { $ne: 'rest' } });
-        expression.push({ type: 'http' });
-
-        expression.push({ 'http._httpConnectorId': connector._id });
-      } else if (RDBMS_TYPES.includes(app.type)) {
+      if (RDBMS_TYPES.includes(app.type)) {
         expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(app.type) });
       } else if (app.type === 'rest') {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
       } else if (app.type === 'graph_ql') {
         expression.push({ 'http.formType': 'graph_ql' });
       } else if (app.type === 'http') {
+        if (app._httpConnectorId) { expression.push({ 'http._httpConnectorId': app._httpConnectorId }); }
         expression.push({ 'http.formType': { $ne: 'rest' } });
         expression.push({ type: app.type });
       } else {
@@ -203,7 +196,7 @@ export default {
 
       expression.push({ _connectorId: { $exists: false } });
 
-      if (app.assistant && !connector?._id) {
+      if (app.assistant) {
         return {
           filter: getFilterExpressionForAssistant(app.assistant, expression),
           appType: app.assistant,

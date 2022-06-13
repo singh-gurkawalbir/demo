@@ -193,7 +193,11 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       if (isNew) {
         meta = formMeta.connections.new;
       } else if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
-        meta = formMeta.connections.http;
+        if (resource?.useParentForm) {
+          meta = formMeta.connections.http;
+        } else {
+          meta = formMeta.connections.httpFramework;
+        }
       } else if (resource && resource.assistant === 'financialforce') {
         // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
 
@@ -239,7 +243,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       if (meta) {
         if (isNew) {
           meta = meta.new;
-        } if (connection?.http?._httpConnectorId) {
+        } else if (connection?.http?._httpConnectorId && !resource?.useParentForm) {
           meta = meta.custom.httpFramework.assistantDefinition(
             resource._id,
             resource,
@@ -299,7 +303,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       if (meta) {
         if (isNew) {
           meta = meta.new;
-        } else if (connection?.http?._httpConnectorId) {
+        } else if (connection?.http?._httpConnectorId && !resource?.useParentForm) {
           meta = meta.custom.httpFramework.assistantDefinition(
             resource._id,
             resource,
