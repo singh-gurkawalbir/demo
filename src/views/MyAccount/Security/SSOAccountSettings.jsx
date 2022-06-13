@@ -86,7 +86,6 @@ export default function SSOAccountSettings() {
   const resourceId = oidcClient?._id || generateNewId();
   const isEnableSSOSwitchInProgress = useSelector(state => selectors.commStatusPerPath(state, `/ssoclients/${resourceId}`, 'PATCH') === 'loading');
   const [isSSOEnabled, setIsSSOEnabled] = useState(!!oidcClient?.disabled);
-  const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
   const handleEnableSSO = useCallback(
     () => {
       if (isEnableSSOSwitchInProgress) return;
@@ -230,8 +229,6 @@ export default function SSOAccountSettings() {
 
   const applicationLoginURL = `${domainURL}/sso/${oidcClient?.orgId}`;
   const redirectURL = `${domainURL}/sso/${oidcClient?.orgId}/callback`;
-
-  if (!isAccountOwnerOrAdmin) return null;
 
   return (
     <LoadResources required resources="ssoclients">
