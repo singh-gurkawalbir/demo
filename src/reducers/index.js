@@ -58,6 +58,7 @@ import {
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
   AFE_SAVE_STATUS,
   UNASSIGNED_SECTION_NAME,
+  emptyList,
 } from '../utils/constants';
 import messageStore from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -206,6 +207,8 @@ selectors.userProfilePreferencesProps = createSelector(
       scheduleShiftForFlowsCreatedAfter,
       // eslint-disable-next-line camelcase
       auth_type_google,
+      _ssoAccountId,
+      authTypeSSO,
     } = { ...profile, ...preferences };
 
     return {
@@ -222,6 +225,8 @@ selectors.userProfilePreferencesProps = createSelector(
       scheduleShiftForFlowsCreatedAfter,
       auth_type_google,
       showRelativeDateTime,
+      _ssoAccountId,
+      authTypeSSO,
     };
   });
 
@@ -6772,6 +6777,18 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
 
   return !!ssoLinkedAccount?.accountSSORequired;
 };
+
+selectors.ssoPrimaryAccounts = createSelector(
+  state => selectors.isAccountOwner(state),
+  state => state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN),
+  (isAccountOwner, orgAccounts) => {
+    if (isAccountOwner) {
+      return emptyList;
+    }
+
+    return orgAccounts?.filter(acc => acc.ownerUser?._ssoClientId) || emptyList;
+  }
+);
 
 selectors.isUserAllowedOptionalSSOSignIn = state => {
   if (selectors.isAccountOwner(state)) {
