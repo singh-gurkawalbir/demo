@@ -80,17 +80,14 @@ export default function SSOUserSettings() {
       const _ssoAccountId = ssoPrimaryAccounts?.[0]?.ownerUser?._id;
 
       if (_ssoAccountId) {
-        const payload = {...preferences, _ssoAccountId};
-
-        dispatch(actions.user.profile.update(payload));
+        dispatch(actions.user.profile.update({_ssoAccountId}));
       }
     }
   }, [dispatch, preferences, ssoPrimaryAccounts]);
 
   const formKey = useFormInitWithPermissions({
     fieldMeta,
-    remount:
-    remountCount,
+    remount: remountCount,
     skipMonitorLevelAccessCheck: true,
   });
 
@@ -98,11 +95,9 @@ export default function SSOUserSettings() {
     const {_ssoAccountId} = formValues;
 
     if (_ssoAccountId) {
-      const payload = {...preferences, _ssoAccountId};
-
-      dispatch(actions.user.profile.update(payload));
+      dispatch(actions.user.profile.update({_ssoAccountId}));
     }
-  }, [dispatch, preferences]);
+  }, [dispatch]);
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
