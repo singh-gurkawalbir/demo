@@ -123,7 +123,7 @@ function FormStepContent({ integrationId, formSubmitHandler, formCloseHandler, p
         <DynaForm formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>
-        <DynaSubmit formKey={formKey} onClick={onSubmit} >
+        <DynaSubmit formKey={formKey} onClick={onSubmit} ignoreFormTouchedCheck >
           Submit
         </DynaSubmit>
       </DrawerFooter>
