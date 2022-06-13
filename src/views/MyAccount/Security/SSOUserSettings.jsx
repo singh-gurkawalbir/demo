@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useEffect} from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
@@ -65,18 +65,35 @@ export default function SSOUserSettings() {
           required: true,
           noApi: true,
           options: primaryAccountOptions,
-          defaultValue: preferences?._ssoAccountId,
+          defaultValue: preferences?._ssoAccountId || (ssoPrimaryAccounts?.length === 1 ? ssoPrimaryAccounts?.[0]?.ownerUser?._id : undefined),
           defaultDisabled: preferences?.authTypeSSO?.sub,
         },
       },
     }),
-    [preferences?._ssoAccountId, preferences?.authTypeSSO?.sub, primaryAccountOptions]
+    [preferences?._ssoAccountId, preferences?.authTypeSSO?.sub, primaryAccountOptions, ssoPrimaryAccounts]
   );
   const remountAfterSaveFn = useCallback(() => {
     setRemountCount(count => count + 1);
   }, []);
 
-  const formKey = useFormInitWithPermissions({ fieldMeta, remount: remountCount });
+  useEffect(() => {
+    if (!preferences?._ssoAccountId && ssoPrimaryAccounts?.length === 1) {
+      const _ssoAccountId = ssoPrimaryAccounts?.[0]?.ownerUser?._id;
+
+      if (_ssoAccountId) {
+        const payload = {...preferences, _ssoAccountId};
+
+        dispatch(actions.user.profile.update(payload));
+      }
+    }
+  }, [dispatch, preferences, ssoPrimaryAccounts]);
+
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+    remount:
+    remountCount,
+    skipMonitorLevelAccessCheck: true,
+  });
 
   const handleSubmit = useCallback(formValues => {
     const {_ssoAccountId} = formValues;
