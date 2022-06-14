@@ -66,7 +66,7 @@ export default function DynaCsvParse_afe(props) {
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
 
-  const show = useSelector(state => selectors.showParser(state, formKey, 'csv'));
+  const isParserSupportedForHTTP = useSelector(state => selectors.isParserSupportedForHTTP(state, formKey, 'csv'));
 
   const getInitOptions = useCallback(
     val => {
@@ -134,7 +134,7 @@ export default function DynaCsvParse_afe(props) {
     }));
   }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
 
-  if (isHttp && !show) return null;
+  if (isHttp && !isParserSupportedForHTTP) return null;
 
   return (
     <>

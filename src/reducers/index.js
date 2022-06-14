@@ -6740,15 +6740,14 @@ selectors.showAmazonRestrictedReportType = (state, formKey) => {
           relativeURI?.startsWith('/reports/2021-06-30/documents/');
 };
 
-selectors.showParser = (state, formKey, parser) => {
+selectors.isParserSupportedForHTTP = (state, formKey, parser) => {
   const overriddenMediaType = selectors.fieldState(state, formKey, 'http.successMediaType')?.value;
 
   if (overriddenMediaType) return overriddenMediaType === parser;
-
   const connectionId = selectors.fieldState(state, formKey, '_connectionId')?.value;
-  const connectionDetails = selectors.resource(state, 'connections', connectionId)?.http;
+  const { mediaType, successMediaType } = selectors.resource(state, 'connections', connectionId)?.http || {};
 
-  return (connectionDetails?.successMediaType === parser) || (!connectionDetails?.successMediaType && connectionDetails?.mediaType === parser);
+  return (successMediaType === parser) || (!successMediaType && mediaType === parser);
 };
 
 const resourceListSelector = selectors.makeResourceListSelector();

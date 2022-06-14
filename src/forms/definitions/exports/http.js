@@ -4,8 +4,6 @@ export default {
   preSave: (formValues, _, { connection } = {}) => {
     const retValues = { ...formValues };
 
-    retValues['/parsers'] = ([...(retValues.ResponseParser || [])]);
-
     if (retValues['/http/successMediaType'] === 'csv') {
       retValues['/file/type'] = 'csv';
     } else if (
@@ -268,6 +266,10 @@ export default {
   },
 
   fieldMap: {
+    parsers: {
+      fieldId: 'parsers',
+      isHttp: true,
+    },
     common: { formId: 'common' },
     outputMode: {
       id: 'outputMode',
@@ -415,21 +417,6 @@ export default {
         },
       ],
     },
-    xmlParserForSuccessResponse: {
-      id: 'xmlParserForSuccessResponse',
-      type: 'xmlparse',
-      name: 'ResponseParser',
-      label: 'XML parser helper',
-      isHttp: true,
-      isSuccess: true,
-      defaultValue: r => Array.isArray(r?.parsers) && r.parsers?.find(parser => parser.name === 'ResponseParser')?.rules,
-      visibleWhen: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
-    },
     exportOneToMany: { formId: 'exportOneToMany' },
     configureAsyncHelper: {
       fieldId: 'configureAsyncHelper',
@@ -542,15 +529,20 @@ export default {
             ],
           },
           {
-            type: 'indentWithHeader',
-            header: 'Parse Success Responses',
-            helpKey: 'http.parseSuccessResponses',
-            isSuccess: true,
+            type: 'indent',
             containers: [
-              {fields: [
-                'file.csv',
-                'xmlParserForSuccessResponse',
-              ]},
+              {
+                fields: [
+                  'parsers',
+                  'file.csv',
+                ],
+                header: 'Parse success responses',
+                helpKey: 'http.parseSuccessResponses',
+                headerDependencies: [
+                  'xmlparse',
+                  'csvparse',
+                ],
+              },
             ],
           },
           {

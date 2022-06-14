@@ -4083,6 +4083,10 @@ Object {
         "type": "mode",
         "visible": false,
       },
+      "parsers": Object {
+        "fieldId": "parsers",
+        "isHttp": true,
+      },
       "semiassistantoperationselect": Object {
         "fieldId": "semiassistantoperationselect",
         "visibleWhenAll": Array [
@@ -4146,23 +4150,6 @@ Object {
       },
       "unencrypted.restrictedReportType": Object {
         "fieldId": "unencrypted.restrictedReportType",
-      },
-      "xmlParserForSuccessResponse": Object {
-        "defaultValue": [Function],
-        "id": "xmlParserForSuccessResponse",
-        "isHttp": true,
-        "isSuccess": true,
-        "label": "XML parser helper",
-        "name": "ResponseParser",
-        "type": "xmlparse",
-        "visibleWhen": Array [
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
       },
     },
     "layout": Object {
@@ -4248,15 +4235,18 @@ Object {
                   "containers": Array [
                     Object {
                       "fields": Array [
+                        "parsers",
                         "file.csv",
-                        "xmlParserForSuccessResponse",
                       ],
+                      "header": "Parse success responses",
+                      "headerDependencies": Array [
+                        "xmlparse",
+                        "csvparse",
+                      ],
+                      "helpKey": "http.parseSuccessResponses",
                     },
                   ],
-                  "header": "Parse Success Responses",
-                  "helpKey": "http.parseSuccessResponses",
-                  "isSuccess": true,
-                  "type": "indentWithHeader",
+                  "type": "indent",
                 },
                 Object {
                   "fields": Array [
