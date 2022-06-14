@@ -263,7 +263,7 @@ export const useHandleAddNode = edgeId => {
     const edge = elementsMap[edgeId];
 
     if (!edge) return;
-    dispatch(actions.flow.addNewPPStep(flowId, edge.data?.path));
+    dispatch(actions.flow.addNewPPStep(flowId, edge.data?.path, edge.data?.processorIndex));
   };
 };
 
