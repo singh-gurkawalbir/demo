@@ -160,7 +160,6 @@ export default {
     const applications = applicationsList();
     const app = applications.find(a => a.id === appField.value) || {};
     const connectionField = fields.find(field => field.id === 'connection');
-    // const connector = getPublishedHttpConnectorThroughAssistant(app.id);
 
     if (fieldId === 'type') {
       return { selectedApplication: app };

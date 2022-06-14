@@ -139,7 +139,6 @@ function DynaAssistantOptions(props) {
 
   useSetInitializeFormData(props);
 
-  // I have to adjust value when there is no option with the matching value
   useEffect(() => {
     if (
       selectOptionsItems &&

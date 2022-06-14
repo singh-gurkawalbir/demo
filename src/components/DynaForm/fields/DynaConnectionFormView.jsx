@@ -32,8 +32,6 @@ export default function FormView(props) {
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
 
-  // selectors.connectorMetaData = (state, httpConnectorId, httpVersionId, httpAPIId) => {
-
   const _httpConnectorId = staggedResource?.http?._httpConnectorId || staggedResource?._httpConnectorId;
 
   const options = useMemo(() => {

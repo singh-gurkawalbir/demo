@@ -27,13 +27,14 @@ function basicFieldsMeta({ assistantConfig, assistantData }) {
       value: assistantConfig.resource,
       required: true,
       type: 'hfoptions',
-
+      label: 'Resources',
     },
     operation: {
       fieldId: 'assistantMetadata.operation',
       type: 'hfoptions',
       value: assistantConfig.operation || assistantConfig.operationUrl,
       required: true,
+      label: 'API Endpoints',
     },
   };
   const { labels = {}, versions = [], helpTexts = {} } = assistantData;

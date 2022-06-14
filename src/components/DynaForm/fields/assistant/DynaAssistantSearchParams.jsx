@@ -171,7 +171,7 @@ export default function DynaAssistantSearchParams(props) {
     label =
       paramMeta.paramLocation === PARAMETER_LOCATION.BODY
         ? 'Configure body parameters'
-        : 'Query parameters';
+        : 'Configure search parameters';
   }
 
   return (
