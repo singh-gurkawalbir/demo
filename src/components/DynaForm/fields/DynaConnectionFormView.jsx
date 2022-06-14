@@ -26,13 +26,13 @@ export default function FormView(props) {
       resourceType,
       resourceId
     ) || {};
-  const staggedResource = merged || emptyObject;
+  const stagedResource = merged || emptyObject;
   const resourceFormState = useSelector(
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
 
-  const _httpConnectorId = staggedResource?.http?._httpConnectorId || staggedResource?._httpConnectorId;
+  const _httpConnectorId = stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId;
 
   const options = useMemo(() => {
     const matchingApplication = getApp(null, null, _httpConnectorId);
@@ -65,8 +65,8 @@ export default function FormView(props) {
 
     // selecting the other option
 
-    const staggedRes = Object.keys(staggedResource).reduce((acc, curr) => {
-      acc[`/${curr}`] = staggedResource[curr];
+    const stagedRes = Object.keys(stagedResource).reduce((acc, curr) => {
+      acc[`/${curr}`] = stagedResource[curr];
 
       return acc;
     }, {});
@@ -74,26 +74,26 @@ export default function FormView(props) {
     // use this function to get the corresponding preSave function for this current form
     const { preSave } = getResourceFormAssets({
       resourceType,
-      resource: staggedResource,
+      resource: stagedResource,
       isNew: false,
     });
-    const finalValues = preSave(formContext.value, staggedRes);
+    const finalValues = preSave(formContext.value, stagedRes);
     const newFinalValues = {...finalValues};
 
-    staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
+    stagedRes['/useParentForm'] = selectedApplication === `${isParent}`;
 
     // if assistant is selected back again assign it to the export to the export obj as well
 
     if (selectedApplication !== `${isParent}`) {
-      staggedRes['/http/formType'] = 'assistant';
+      stagedRes['/http/formType'] = 'assistant';
       newFinalValues['/http/formType'] = 'assistant';
     } else {
       // set http.formType prop to http to use http form from the export/import as it is now using parent form');
-      staggedRes['/http/formType'] = 'http';
+      stagedRes['/http/formType'] = 'http';
       newFinalValues['/http/formType'] = 'http';
     }
     const allPatches = sanitizePatchSet({
-      patchSet: defaultPatchSetConverter({ ...staggedRes, ...newFinalValues }),
+      patchSet: defaultPatchSetConverter({ ...stagedRes, ...newFinalValues }),
       fieldMeta: resourceFormState.fieldMeta,
       resource: {},
     });
