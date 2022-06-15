@@ -17,6 +17,7 @@ export default {
     if (newValues['/outputMode'] === 'blob') {
       if (newValues['/fileMetadata']) {
         newValues['/file/output'] = 'metadata';
+        newValues['/type'] = undefined;
       } else {
         newValues['/file/output'] = 'blobKeys';
         newValues['/type'] = 'blob';
