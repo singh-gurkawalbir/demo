@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { generatePath, useHistory, useLocation, matchPath, useRouteMatch } from 'react-router-dom';
-import { usePatchNewFlow } from '../hooks';
+import { isNewFlowFn, usePatchNewFlow } from '../hooks';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { generateNewId, isNewId } from '../../../utils/resource';
@@ -15,9 +15,9 @@ export default function Redirection({children}) {
   const newFlowId = useSelector(state =>
     selectors.createdResourceId(state, flowId)
   );
-  // const isUserInErrMgtTwoDotZero = useSelector(state =>
-  //   selectors.isOwnerUserInErrMgtTwoDotZero(state)
-  // );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
   const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
@@ -45,16 +45,16 @@ export default function Redirection({children}) {
 
   const patchNewFlow = usePatchNewFlow(integrationId);
 
-  // useEffect(() => {
-  //   if (!isUserInErrMgtTwoDotZero || isNewFlowFn(flowId)) return;
+  useEffect(() => {
+    if (!isUserInErrMgtTwoDotZero || isNewFlowFn(flowId)) return;
 
-  //   dispatch(actions.errorManager.openFlowErrors.requestPoll({ flowId }));
+    dispatch(actions.errorManager.openFlowErrors.requestPoll({ flowId }));
 
-  //   return () => {
-  //     dispatch(actions.errorManager.openFlowErrors.cancelPoll());
-  //     dispatch(actions.errorManager.latestFlowJobs.clear({ flowId }));
-  //   };
-  // }, [dispatch, flowId, isUserInErrMgtTwoDotZero]);
+    return () => {
+      dispatch(actions.errorManager.openFlowErrors.cancelPoll());
+      dispatch(actions.errorManager.latestFlowJobs.clear({ flowId }));
+    };
+  }, [dispatch, flowId, isUserInErrMgtTwoDotZero]);
 
   useEffect(() => {
     // NEW DATA LOADER REDIRECTION
