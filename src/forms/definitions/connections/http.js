@@ -285,10 +285,35 @@ export default {
     'http.ping.failPath': { fieldId: 'http.ping.failPath' },
     'http.ping.failValues': { fieldId: 'http.ping.failValues' },
     httpAdvanced: { formId: 'httpAdvanced' },
-    'http.clientCertificates.cert': { fieldId: 'http.clientCertificates.cert' },
-    'http.clientCertificates.key': { fieldId: 'http.clientCertificates.key' },
+    'http.clientCertificates.cert': {
+      fieldId: 'http.clientCertificates.cert',
+      visibleWhenAll: [
+        {
+          field: 'http.clientCertificates.type',
+          is: ['pem', 'pfx'],
+        },
+      ],
+    },
+    'http.clientCertificates.key': {
+      fieldId: 'http.clientCertificates.key',
+      visibleWhenAll: [
+        {
+          field: 'http.clientCertificates.type',
+          is: ['pem'],
+        },
+      ],
+    },
     'http.clientCertificates.passphrase': {
       fieldId: 'http.clientCertificates.passphrase',
+      visibleWhenAll: [
+        {
+          field: 'http.clientCertificates.type',
+          is: ['pem'],
+        },
+      ],
+    },
+    'http.clientCertificates.type': {
+      fieldId: 'http.clientCertificates.type',
     },
     'http.auth.oauth.applicationType': {
       fieldId: 'http.auth.oauth.applicationType',
@@ -467,14 +492,32 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: [
-          'http.disableStrictSSL',
-          'httpAdvanced',
-          'http.clientCertificates.key',
-          'http.clientCertificates.cert',
-          'http.clientCertificates.passphrase',
-          'http.encrypted',
-          'http.unencrypted',
+        containers: [
+          {
+            fields: [
+              'http.disableStrictSSL',
+              'httpAdvanced',
+              'http.clientCertificates.type',
+            ],
+          },
+          {
+            type: 'indent',
+            containers: [
+              {
+                fields: [
+                  'http.clientCertificates.key',
+                  'http.clientCertificates.cert',
+                  'http.clientCertificates.passphrase',
+                ],
+              },
+            ],
+          },
+          {
+            fields: [
+              'http.encrypted',
+              'http.unencrypted',
+            ],
+          },
         ],
       },
     ],

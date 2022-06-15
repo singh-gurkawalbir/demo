@@ -1020,6 +1020,19 @@ export default {
     label: 'Encrypted',
     description: 'Note: for security reasons this field must always be re-entered.',
   },
+  'http.clientCertificates.type': {
+    type: 'select',
+    label: 'SSL certificate type',
+    helpKey: 'connection.http.clientCertificates.type',
+    options: [
+      {
+        items: [
+          { label: 'PFX', value: 'pfx' },
+          { label: 'PEM', value: 'pem' },
+        ],
+      },
+    ],
+  },
   'http.clientCertificates.cert': {
     type: 'uploadfile',
     placeholder: 'SSL certificate',
