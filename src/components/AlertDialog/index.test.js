@@ -72,10 +72,12 @@ describe('AlertDialog component related sessions', () => {
   test('should pass the render with session expires true', async () => {
     await initActionButton({sessionExpired: true});
 
-    await waitFor(() => expect(screen.queryByText('Your session has expired')).toBeInTheDocument());
-    const buttonRef = screen.getByRole('button', {name: 'Sign in'});
+    await waitFor(() => {
+      expect(screen.queryByText('Your session has expired')).toBeInTheDocument();
+      const buttonRef = screen.getByRole('button', {name: 'Sign in'});
 
-    expect(buttonRef).toBeInTheDocument();
+      expect(buttonRef).toBeInTheDocument();
+    });
   });
 });
 
@@ -143,7 +145,7 @@ describe('AlertDialog component related user account transfer', () => {
     window.location.reload = reload;
   });
   test('should pass the render with account trasfered', async () => {
-    await initActionButton({userAcceptedAccountTransfer: true});
+    await initActionButton({userAcceptedAccountTransfer: true, authenticated: false});
 
     await waitFor(() => expect(screen.queryByText('Success!')).toBeInTheDocument());
     const buttonRef = screen.getByRole('button', {name: 'Reload'});
@@ -172,11 +174,13 @@ describe('AlertDialog component related user login in different tab', () => {
   test('should pass the render with account trasfered', async () => {
     await initActionButton({userLoggedInDifferentTab: true});
 
-    await waitFor(() => expect(screen.queryByText('Please click the following button to resume working')).toBeInTheDocument());
-    const buttonRef = screen.getByRole('button', {name: 'Sign In'});
+    await waitFor(() => {
+      expect(screen.queryByText('Please click the following button to resume working')).toBeInTheDocument();
+      const buttonRef = screen.getByRole('button', {name: 'Sign In'});
 
-    expect(buttonRef).toBeInTheDocument();
-    userEvent.click(buttonRef);
+      expect(buttonRef).toBeInTheDocument();
+      userEvent.click(buttonRef);
+    });
     await waitFor(() => {
       expect(window.location.replace).toHaveBeenCalled();
     });
@@ -187,10 +191,11 @@ describe('AlertDialog component related SSO sign in', () => {
   test('should pass the render with SSO signIn', async () => {
     await initActionButton({defaultAShareId: 'not_own', sessionExpired: true});
 
-    await waitFor(() => expect(screen.queryByText('Sign in with SSO')).toBeInTheDocument());
     await waitFor(() => expect(screen.queryByText('Sign in')).not.toBeInTheDocument());
-    const buttonRef = screen.getByRole('button', {name: 'Sign in with SSO'});
+    await waitFor(() => {
+      const buttonRef = screen.getByRole('button', {name: 'Sign in with SSO'});
 
-    expect(buttonRef).toBeInTheDocument();
+      expect(buttonRef).toBeInTheDocument();
+    });
   });
 });

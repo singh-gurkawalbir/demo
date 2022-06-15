@@ -1,3 +1,3 @@
 import { API } from '../utils';
 
-export default API.get('/api/ssoclients', {});
+export default API.get('/api/ssoclients');
