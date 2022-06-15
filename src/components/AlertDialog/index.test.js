@@ -120,11 +120,14 @@ describe('AlertDialog component related react versions', () => {
   test('should pass the render with different react version', async () => {
     await initActionButton({initVersion: 'release-v8.6.1.0.10-06-13-55'});
 
-    await waitFor(() => expect(screen.queryByText('Reload page')).toBeInTheDocument());
-    const buttonRef = screen.getByRole('button', {name: 'Reload'});
+    await waitFor(() => {
+      expect(screen.queryByText('Reload page')).toBeInTheDocument();
+      const buttonRef = screen.getByRole('button', {name: 'Reload'});
 
-    expect(buttonRef).toBeInTheDocument();
-    userEvent.click(buttonRef);
+      expect(buttonRef).toBeInTheDocument();
+      userEvent.click(buttonRef);
+    });
+
     await waitFor(() => {
       expect(window.location.reload).toHaveBeenCalled();
     });
@@ -147,11 +150,13 @@ describe('AlertDialog component related user account transfer', () => {
   test('should pass the render with account trasfered', async () => {
     await initActionButton({userAcceptedAccountTransfer: true, authenticated: false});
 
-    await waitFor(() => expect(screen.queryByText('Success!')).toBeInTheDocument());
-    const buttonRef = screen.getByRole('button', {name: 'Reload'});
+    await waitFor(() => {
+      expect(screen.queryByText('Success!')).toBeInTheDocument();
+      const buttonRef = screen.getByRole('button', {name: 'Reload'});
 
-    expect(buttonRef).toBeInTheDocument();
-    userEvent.click(buttonRef);
+      expect(buttonRef).toBeInTheDocument();
+      userEvent.click(buttonRef);
+    });
     await waitFor(() => {
       expect(window.location.reload).toHaveBeenCalled();
     });
@@ -191,8 +196,8 @@ describe('AlertDialog component related SSO sign in', () => {
   test('should pass the render with SSO signIn', async () => {
     await initActionButton({defaultAShareId: 'not_own', sessionExpired: true});
 
-    await waitFor(() => expect(screen.queryByText('Sign in')).not.toBeInTheDocument());
     await waitFor(() => {
+      expect(screen.queryByText('Sign in')).not.toBeInTheDocument();
       const buttonRef = screen.getByRole('button', {name: 'Sign in with SSO'});
 
       expect(buttonRef).toBeInTheDocument();
