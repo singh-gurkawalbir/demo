@@ -84,9 +84,6 @@ export default {
     if (editor.rule.activeProcessor === 'filter') {
       let outputMessage = '';
 
-      console.log('editor.rule', editor.rule);
-      console.log('result', result);
-
       if (result?.data) {
         if (result.data[0].length === 1) {
           const branch = editor.rule.branches[result.data[0][0]]?.name;
