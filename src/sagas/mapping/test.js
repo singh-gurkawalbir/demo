@@ -368,6 +368,8 @@ describe('mappingInit saga', () => {
     const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
+    generateUniqueKey.mockReturnValue('unique-key');
+
     const saga1 = await expectSaga(mappingInit, {flowId, importId})
       .provide([
         [call(fetchRequiredMappingData, {flowId, importId}), {}],
@@ -391,8 +393,15 @@ describe('mappingInit saga', () => {
         subRecordMappingId: undefined,
         isGroupedSampleData: true,
         version: 1,
-        v2TreeData: undefined,
-        extractsTree: undefined,
+        v2TreeData: [{key: 'unique-key', isEmptyRow: true, title: '', disabled: false, dataType: 'string'}],
+        extractsTree: [
+          {key: 'unique-key',
+            title: '',
+            dataType: '[object]',
+            propName: '$',
+            children: [
+              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: 'string'},
+            ]}],
         isMonitorLevelAccess: false,
       }))
       .run();
@@ -626,18 +635,18 @@ describe('mappingInit saga', () => {
     expect(saga5).toBeTruthy();
     mock.mockRestore();
   });
-  test('should not save v2 mappings in the state for non http/rest import', async () => {
+  test('should not save v2 mappings in the state for non file and http/rest import', async () => {
     const flowId = 'flow24';
     const importId = 'import24';
     const exportId = 'export24';
     const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
-    const ftpSaga = await expectSaga(mappingInit, {flowId, importId})
+    const dbSaga = await expectSaga(mappingInit, {flowId, importId})
       .provide([
         [call(fetchRequiredMappingData, {flowId, importId}), {}],
         [select(selectors.resource, 'imports', importId), {_id: importId,
-          adaptorType: 'FTPImport',
+          adaptorType: 'RDBMSImport',
           lookups: [],
           mapping: {fields: [{extract: 'e1', generate: 'g1'}], lists: [{generate: 'l1', fields: [{extract: 'x', generate: 'y'}]}]},
           mappings: [{extract: 'id', generate: 'id', dataType: 'string'}],
@@ -667,7 +676,70 @@ describe('mappingInit saga', () => {
       }))
       .run();
 
-    expect(ftpSaga).toBeTruthy();
+    expect(dbSaga).toBeTruthy();
+    mock.mockRestore();
+  });
+  test('should save v2 mappings in the state for file import with csv file type', async () => {
+    const flowId = 'flow24';
+    const importId = 'import24';
+    const exportId = 'export24';
+    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+
+    mock.mockReturnValue('mock_key');
+    generateUniqueKey.mockReturnValue('unique-key');
+
+    const as2Saga = await expectSaga(mappingInit, {flowId, importId})
+      .provide([
+        [call(fetchRequiredMappingData, {flowId, importId}), {}],
+        [select(selectors.resource, 'imports', importId), {_id: importId,
+          adaptorType: 'AS2Import',
+          file: {type: 'csv'},
+          lookups: [],
+          mapping: {fields: [{extract: 'e1', generate: 'g1'}], lists: [{generate: 'l1', fields: [{extract: 'x', generate: 'y'}]}]},
+        }],
+        [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+        [select(selectors.getSampleDataContext, {
+          flowId,
+          resourceId: importId,
+          stage: 'importMappingExtract',
+          resourceType: 'imports',
+        }), {data: [{id: 'a'}]}],
+      ])
+      .put(actions.mapping.initComplete({
+        mappings: [
+          {extract: 'e1', generate: 'g1', key: 'mock_key'},
+          {extract: 'x', generate: 'l1[*].y', useFirstRow: true, key: 'mock_key'},
+        ],
+        lookups: [],
+        flowId,
+        importId,
+        subRecordMappingId: undefined,
+        isGroupedSampleData: true,
+        version: 1,
+        v2TreeData: [
+          {key: 'unique-key',
+            generateDisabled: true,
+            title: '',
+            disabled: false,
+            dataType: 'objectarray',
+            children: [
+              {
+                key: 'unique-key', isEmptyRow: true, title: '', disabled: false, dataType: 'string',
+              },
+            ]}],
+        extractsTree: [
+          {key: 'unique-key',
+            title: '',
+            dataType: '[object]',
+            propName: '$',
+            children: [
+              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: 'string'},
+            ]}],
+        isMonitorLevelAccess: false,
+      }))
+      .run();
+
+    expect(as2Saga).toBeTruthy();
     mock.mockRestore();
   });
   test('should save v2 mappings in the state for http/rest import', () => {

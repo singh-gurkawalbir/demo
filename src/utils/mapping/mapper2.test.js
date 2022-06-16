@@ -15,6 +15,7 @@ import util, {
   hasV2MappingsInTreeData,
   rebuildObjectArrayNode,
   hideOtherTabRows,
+  isCsvOrXlsxResourceForMapper2,
 } from '.';
 import {generateUniqueKey} from '../string';
 
@@ -52,6 +53,22 @@ describe('v2 mapping utils', () => {
     });
   });
 
+  describe('isCsvOrXlsxResourceForMapper2 util', () => {
+    test('should not throw exception for invalid args', () => {
+      expect(isCsvOrXlsxResourceForMapper2()).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2(null)).toEqual(false);
+    });
+    test('should correctly return the expected outcome', () => {
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'RDBMSImport'})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'NetSuiteImport'})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'FTPImport', file: {type: 'xml'}})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'AS2Import', file: {type: 'filedefinition'}})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'FTPImport', file: {type: 'csv'}})).toEqual(true);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'S3Import', file: {type: 'xlsx'}})).toEqual(true);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'AS2Import', file: {type: 'csv'}})).toEqual(true);
+    });
+  });
   describe('hideOtherTabRows util', () => {
     test('should not throw exception for invalid args', () => {
       expect(hideOtherTabRows()).toBeUndefined();
@@ -1763,6 +1780,34 @@ describe('v2 mapping utils', () => {
       }];
 
       expect(buildTreeFromV2Mappings({importResource, isGroupedSampleData: true, disabled: true})).toEqual(v2TreeData);
+    });
+    test('should correctly generate default tree structure for csv/xlsx resource with no existing mappings', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const importResource = {
+        _id: 'id1',
+        adaptorType: 'FTPImport',
+        file: {type: 'csv'},
+      };
+
+      const v2TreeData = [{
+        key: 'new_key',
+        title: '',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        generateDisabled: true,
+        disabled: false,
+        children: [
+          {
+            key: 'new_key',
+            title: '',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            disabled: false,
+            isEmptyRow: true,
+          },
+        ],
+      }];
+
+      expect(buildTreeFromV2Mappings({importResource, isGroupedSampleData: false, disabled: false})).toEqual(v2TreeData);
     });
   });
   describe('hasV2MappingsInTreeData util', () => {

@@ -1,6 +1,6 @@
 import deepClone from 'lodash/cloneDeep';
 import { uniqBy, isEmpty, isEqual, forEach, flattenDeep } from 'lodash';
-import { adaptorTypeMap, isNetSuiteBatchExport, isFileAdaptor} from '../resource';
+import { adaptorTypeMap, isNetSuiteBatchExport, isFileAdaptor, isAS2Resource} from '../resource';
 // eslint-disable-next-line import/no-self-import
 import mappingUtil from '.';
 import netsuiteMappingUtil from './application/netsuite';
@@ -448,6 +448,17 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
 }
 
 // #region Mapper2 utils
+export const isCsvOrXlsxResourceForMapper2 = resource => {
+  if (!resource) return false;
+
+  const { file } = resource;
+  const resourceFileType = file?.type;
+
+  if ((isFileAdaptor(resource) || isAS2Resource(resource)) &&
+  (resourceFileType === 'xlsx' || resourceFileType === 'csv')) { return true; }
+
+  return false;
+};
 export const getDefaultExtractPath = isGroupedSampleData => isGroupedSampleData ? '$[*]' : '$';
 
 export const RECORD_AS_INPUT_OPTIONS = [
@@ -834,13 +845,33 @@ export const buildTreeFromV2Mappings = ({
   // we need empty title to be passed here
   // for each node as the parent Tree is handling the titleRender for all
   // if empty title is not set here, then a dummy '---' title gets shown on each row hover
-  const emptyMappingsTree = [{
+  let emptyMappingsTree = [{
     key: emptyRowKey,
     isEmptyRow: true,
     title: '',
     disabled,
     dataType: MAPPING_DATA_TYPES.STRING,
   }];
+
+  // for csv and xlsx file types, the output is generated in rows format
+  if (isCsvOrXlsxResourceForMapper2(importResource)) {
+    emptyMappingsTree = [{
+      key: emptyRowKey,
+      title: '',
+      dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+      generateDisabled: true,
+      disabled,
+      children: [
+        {
+          key: generateUniqueKey(),
+          title: '',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          disabled,
+          isEmptyRow: true,
+        },
+      ],
+    }];
+  }
 
   if (isEmpty(v2MappingsCopy)) {
     return emptyMappingsTree;

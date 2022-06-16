@@ -584,13 +584,13 @@ export default (state = {}, action) => {
           if (isEmpty(draft.mapping.v2TreeData)) {
             const emptyRowKey = generateUniqueKey();
 
-            draft.mapping.v2TreeData.push({
+            draft.mapping.v2TreeData = [{
               key: emptyRowKey,
               title: '',
               dataType: MAPPING_DATA_TYPES.STRING,
               disabled: draft.mapping.isMonitorLevelAccess,
               isEmptyRow: true,
-            });
+            }];
           }
         }
 
