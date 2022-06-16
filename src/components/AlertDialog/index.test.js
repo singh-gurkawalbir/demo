@@ -5,14 +5,18 @@ import {
   waitFor,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import cloneDeep from 'lodash/cloneDeep';
 import { MemoryRouter } from 'react-router-dom';
+import * as reactRedux from 'react-redux';
 import AlertDialog from '.';
 import { ConfirmDialogProvider } from '../ConfirmDialog';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import actions from '../../actions';
 
 async function initActionButton({
   defaultAShareId = 'own',
+  accountSSORequired = false,
   sessionExpired = false,
   warning = false,
   userLoggedInDifferentTab = false,
@@ -20,9 +24,9 @@ async function initActionButton({
   authTimestamp = Date.now(),
   initVersion = 'release-v8.6.1.0.10-06-13-52',
   authenticated = true,
+  initialStore = reduxStore,
 } = {}) {
-  const initialStore = reduxStore;
-
+  /* eslint no-param-reassign: "error" */
   initialStore.getState().app = {
     initVersion,
     version: 'release-v8.6.1.0.10-06-13-52',
@@ -38,22 +42,28 @@ async function initActionButton({
   };
   initialStore.getState().user = {
     profile: {
+      preferences: {
+        defaultAShareId,
+      },
       authTypeSSO: {
         _ssoClientId: 'sso_client_id',
       },
+    },
+    notifications: {
+
     },
     org: {
       accounts: [{
         _id: 'not_own',
         accessLevel: 'manage',
-        accountSSORequired: true,
+        accountSSORequired,
         ownerUser: {
           _ssoClientId: 'sso_client_id',
         },
+      }, {
+        _id: 'own',
+        accessLevel: 'owner',
       }],
-    },
-    preferences: {
-      defaultAShareId,
     },
   };
   const ui = (
@@ -67,140 +77,182 @@ async function initActionButton({
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('AlertDialog component related sessions', () => {
+describe('AlertDialog component', () => {
   runServer();
-  test('should pass the render with session expires true', async () => {
-    await initActionButton({sessionExpired: true});
+  let initialStore;
+  let mockDispatchFn;
+  let useDispatchSpy;
 
-    await waitFor(() => {
+  beforeEach(() => {
+    initialStore = cloneDeep(reduxStore);
+    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
+    mockDispatchFn = jest.fn(action => {
+      switch (action.type) {
+        case 'RESOURCE_REQUEST_COLLECTION':
+          initialStore.getState().session.loadResources.ssoclients = 'received';
+          initialStore.getState().data.resources.ssoclients = [];
+          initialStore.getState().comms.networkComms['GET:/ssoclients'] = {
+            status: 'success',
+            hidden: false,
+            refresh: false,
+            method: 'GET',
+          };
+          break;
+        default:
+      }
+    });
+    useDispatchSpy.mockReturnValue(mockDispatchFn);
+  });
+
+  afterEach(() => {
+    useDispatchSpy.mockClear();
+  });
+
+  describe('AlertDialog component related sessions', () => {
+    test('should pass the render with session expires true', async () => {
+      await initActionButton({sessionExpired: true, initialStore});
       expect(screen.queryByText('Your session has expired')).toBeInTheDocument();
       const buttonRef = screen.getByRole('button', {name: 'Sign in'});
 
       expect(buttonRef).toBeInTheDocument();
     });
-  });
-});
 
-describe('AlertDialog component related warning sessions', () => {
-  let SignMeIn;
-  let signMeOut;
-
-  beforeEach(async () => {
-    await initActionButton({warning: true, authenticated: false});
-
-    await waitFor(() => expect(screen.queryByText('Session expiring')).toBeInTheDocument());
-    SignMeIn = screen.getByRole('button', {name: 'Yes, keep me signed in'});
-    signMeOut = screen.getByRole('button', {name: 'No, sign me out'});
-  });
-  test('should pass the render with sign me in button', async () => {
-    await waitFor(() => expect(SignMeIn).toBeInTheDocument());
-    // handle onclick
-  });
-
-  test('should pass the render with sign me out button', async () => {
-    await waitFor(() => expect(signMeOut).toBeInTheDocument());
-    // handle onclick
-  });
-});
-
-describe('AlertDialog component related react versions', () => {
-  const { reload } = window.location;
-
-  beforeEach(() => {
-    Object.defineProperty(window, 'location', {
-      writable: true,
-      value: { reload: jest.fn() },
-    });
-  });
-
-  afterEach(() => {
-    window.location.reload = reload;
-  });
-
-  test('should pass the render with different react version', async () => {
-    await initActionButton({initVersion: 'release-v8.6.1.0.10-06-13-55'});
-
-    await waitFor(() => {
-      expect(screen.queryByText('Reload page')).toBeInTheDocument();
-      const buttonRef = screen.getByRole('button', {name: 'Reload'});
+    test('should pass the render with session expires true onclose', async () => {
+      await initActionButton({sessionExpired: true, initialStore});
+      expect(screen.queryByText('Your session has expired')).toBeInTheDocument();
+      const buttonRef = screen.getByRole('button', {name: ''});
 
       expect(buttonRef).toBeInTheDocument();
       userEvent.click(buttonRef);
-    });
-
-    await waitFor(() => {
-      expect(window.location.reload).toHaveBeenCalled();
-    });
-  });
-});
-
-describe('AlertDialog component related user account transfer', () => {
-  const { reload } = window.location;
-
-  beforeEach(() => {
-    Object.defineProperty(window, 'location', {
-      writable: true,
-      value: { reload: jest.fn() },
+      await expect(mockDispatchFn).toBeCalledWith(actions.auth.logout());
     });
   });
 
-  afterEach(() => {
-    window.location.reload = reload;
-  });
-  test('should pass the render with account trasfered', async () => {
-    await initActionButton({userAcceptedAccountTransfer: true, authenticated: false});
+  describe('AlertDialog component related warning sessions', () => {
+    let SignMeIn;
+    let signMeOut;
 
-    await waitFor(() => {
-      expect(screen.queryByText('Success!')).toBeInTheDocument();
-      const buttonRef = screen.getByRole('button', {name: 'Reload'});
+    beforeEach(async () => {
+      await initActionButton({warning: true, authenticated: false, initialStore});
 
-      expect(buttonRef).toBeInTheDocument();
-      userEvent.click(buttonRef);
+      await waitFor(() => expect(screen.queryByText('Session expiring')).toBeInTheDocument());
+      SignMeIn = screen.getByRole('button', {name: 'Yes, keep me signed in'});
+      signMeOut = screen.getByRole('button', {name: 'No, sign me out'});
     });
-    await waitFor(() => {
-      expect(window.location.reload).toHaveBeenCalled();
+    test('should pass the render with sign me in button', async () => {
+      await waitFor(() => expect(SignMeIn).toBeInTheDocument());
+      userEvent.click(SignMeIn);
+      await expect(mockDispatchFn).not.toBeCalledWith(actions.auth.logout());
+      await expect(mockDispatchFn).toBeCalledWith(actions.user.profile.request('Refreshing session'));
     });
-  });
-});
 
-describe('AlertDialog component related user login in different tab', () => {
-  const { replace } = window.location;
-
-  beforeEach(() => {
-    Object.defineProperty(window, 'location', {
-      writable: true,
-      value: { replace: jest.fn() },
+    test('should pass the render with sign me out button', async () => {
+      await waitFor(() => expect(signMeOut).toBeInTheDocument());
+      userEvent.click(signMeOut);
+      await expect(mockDispatchFn).toBeCalledWith(actions.auth.logout());
+      await expect(mockDispatchFn).not.toBeCalledWith(actions.user.profile.request('Refreshing session'));
     });
   });
 
-  afterEach(() => {
-    window.location.replace = replace;
-  });
-  test('should pass the render with account trasfered', async () => {
-    await initActionButton({userLoggedInDifferentTab: true});
+  describe('AlertDialog component related react versions', () => {
+    const { reload } = window.location;
 
-    await waitFor(() => {
-      expect(screen.queryByText('Please click the following button to resume working')).toBeInTheDocument();
-      const buttonRef = screen.getByRole('button', {name: 'Sign In'});
-
-      expect(buttonRef).toBeInTheDocument();
-      userEvent.click(buttonRef);
+    beforeEach(() => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { reload: jest.fn() },
+      });
     });
-    await waitFor(() => {
-      expect(window.location.replace).toHaveBeenCalled();
+
+    afterEach(() => {
+      window.location.reload = reload;
+    });
+
+    test('should pass the render with different react version', async () => {
+      await initActionButton({initVersion: 'release-v8.6.1.0.10-06-13-55', initialStore});
+
+      await waitFor(() => {
+        expect(screen.queryByText('Reload page')).toBeInTheDocument();
+        const buttonRef = screen.getByRole('button', {name: 'Reload'});
+
+        expect(buttonRef).toBeInTheDocument();
+        userEvent.click(buttonRef);
+      });
+
+      await waitFor(() => {
+        expect(window.location.reload).toHaveBeenCalled();
+      });
     });
   });
-});
 
-describe('AlertDialog component related SSO sign in', () => {
-  test('should pass the render with SSO signIn', async () => {
-    await initActionButton({defaultAShareId: 'not_own', sessionExpired: true});
+  describe('AlertDialog component related user account transfer', () => {
+    const { reload } = window.location;
 
-    await waitFor(() => {
-      expect(screen.queryByText('Sign in')).not.toBeInTheDocument();
-      const buttonRef = screen.getByRole('button', {name: 'Sign in with SSO'});
+    beforeEach(() => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { reload: jest.fn() },
+      });
+    });
 
-      expect(buttonRef).toBeInTheDocument();
+    afterEach(() => {
+      window.location.reload = reload;
+    });
+    test('should pass the render with account trasfered', async () => {
+      await initActionButton({userAcceptedAccountTransfer: true, authenticated: false, initialStore});
+
+      await waitFor(() => {
+        expect(screen.queryByText('Success!')).toBeInTheDocument();
+        const buttonRef = screen.getByRole('button', {name: 'Reload'});
+
+        expect(buttonRef).toBeInTheDocument();
+        userEvent.click(buttonRef);
+      });
+      await waitFor(() => {
+        expect(window.location.reload).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('AlertDialog component related user login in different tab', () => {
+    const { replace } = window.location;
+
+    beforeEach(() => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { replace: jest.fn() },
+      });
+    });
+
+    afterEach(() => {
+      window.location.replace = replace;
+    });
+    test('should pass the render with account trasfered', async () => {
+      await initActionButton({userLoggedInDifferentTab: true, initialStore});
+
+      await waitFor(() => {
+        expect(screen.queryByText('Please click the following button to resume working')).toBeInTheDocument();
+        const buttonRef = screen.getByRole('button', {name: 'Sign In'});
+
+        expect(buttonRef).toBeInTheDocument();
+        userEvent.click(buttonRef);
+      });
+      await waitFor(() => {
+        expect(window.location.replace).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('AlertDialog component related SSO sign in', () => {
+    test('should pass the render with SSO signIn', async () => {
+      await initActionButton({defaultAShareId: 'not_own', sessionExpired: true, initialStore, accountSSORequired: true});
+
+      await waitFor(() => {
+        expect(screen.queryByText('Sign in')).not.toBeInTheDocument();
+        const buttonRef = screen.getByRole('button', {name: 'Sign in with SSO'});
+
+        expect(buttonRef).toBeInTheDocument();
+      });
     });
   });
 });
