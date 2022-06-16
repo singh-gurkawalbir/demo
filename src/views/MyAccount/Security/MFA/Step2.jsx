@@ -1,6 +1,6 @@
 import React, {useState, useCallback} from 'react';
 import ReAuthModal from './ReAuthModal';
-import OutlinedButton from '../../../components/Buttons/OutlinedButton';
+import OutlinedButton from '../../../../components/Buttons/OutlinedButton';
 
 function SecretCode() {
   const [showSecretCodeAuthModal, setShowSecretCodeAuthModal] = useState(false);

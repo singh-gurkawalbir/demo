@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import DynaForm from '../../../../components/DynaForm';
-import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
-import OutlinedButton from '../../../../components/Buttons/OutlinedButton';
-import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
+import DynaForm from '../../../../../components/DynaForm';
+import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
+import OutlinedButton from '../../../../../components/Buttons/OutlinedButton';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   container: {

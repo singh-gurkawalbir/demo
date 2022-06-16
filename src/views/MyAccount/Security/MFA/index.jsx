@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import PanelHeader from '../../../components/PanelHeader';
-import { selectors } from '../../../reducers';
+import PanelHeader from '../../../../components/PanelHeader';
+import { selectors } from '../../../../reducers';
 import MFASetup from './Setup';
 import EditMFAConfiguration from './EditConfiguration';
 
@@ -23,8 +23,8 @@ export default function MFA() {
   return (
     <div className={classes.root}>
       <PanelHeader title="MFA" />
-      { userSettings && <MFASetup /> }
-      { !userSettings && <EditMFAConfiguration /> }
+      { !userSettings && <MFASetup /> }
+      { userSettings && <EditMFAConfiguration /> }
     </div>
   );
 }

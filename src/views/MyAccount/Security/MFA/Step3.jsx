@@ -1,7 +1,7 @@
 import React, {useMemo, useCallback} from 'react';
-import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
-import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
-import DynaForm from '../../../components/DynaForm';
+import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
+import DynaForm from '../../../../components/DynaForm';
 
 export default function Step3() {
   const fieldMeta = useMemo(
