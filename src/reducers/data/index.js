@@ -13,6 +13,7 @@ import fileDefinitions, { selectors as fromFileDefinitions } from './fileDefinit
 import { genSelectors } from '../util';
 import runningJobs, { selectors as fromRunningJobs } from './jobs/runningJobs';
 import completedJobs, { selectors as fromCompletedJobs } from './jobs/completedJobs';
+import mfa, { selectors as fromMFA } from './mfa';
 
 export default combineReducers({
   resources,
@@ -26,6 +27,7 @@ export default combineReducers({
   fileDefinitions,
   runningJobs,
   completedJobs,
+  mfa,
 });
 
 export const selectors = {};
@@ -41,6 +43,7 @@ const subSelectors = {
   completedJobs: fromCompletedJobs,
   fileDefinitions: fromFileDefinitions,
   revisions: fromRevisions,
+  mfa: fromMFA,
 };
 
 genSelectors(selectors, subSelectors);
