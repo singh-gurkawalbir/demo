@@ -742,7 +742,7 @@ export function getIAFlowSettings(integration, flowId, childId) {
   return allFlows.find(flow => flow._id === flowId) || emptyObject;
 }
 
-export function getFlowResources(flows=[], exports=[], imports=[], flowId) {
+export function getFlowResources(flows = [], exports = [], imports = [], flowId) {
   const resources = [];
   const flow = (flows || []).find(f => f._id === flowId);
 
