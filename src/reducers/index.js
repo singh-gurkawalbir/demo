@@ -6786,7 +6786,7 @@ selectors.ssoPrimaryAccounts = createSelector(
       return emptyList;
     }
 
-    return orgAccounts?.filter(acc => acc.ownerUser?._ssoClientId) || emptyList;
+    return orgAccounts || emptyList;
   }
 );
 
