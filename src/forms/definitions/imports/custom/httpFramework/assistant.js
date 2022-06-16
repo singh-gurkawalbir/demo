@@ -47,6 +47,8 @@ export default function assistantDefinition(
         assistantData: formValues['/assistantMetadata/assistantData'],
       });
 
+      if (importDoc?.['/http']) { importDoc['/http'].formType = 'assistant'; }
+
       return { ...otherFormValues, ...importDoc };
     },
   };

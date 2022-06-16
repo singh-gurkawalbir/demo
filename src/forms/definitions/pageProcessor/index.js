@@ -53,6 +53,9 @@ export default {
     if ((app.assistant || app._httpConnectorId) && !FILE_PROVIDER_ASSISTANTS.includes(app.assistant)) {
       if ((newValues['/isLookup'] && !app.export) || (!newValues['/isLookup'] && !app.import)) { newValues['/useTechAdaptorForm'] = true; }
     }
+    if (app._httpConnectorId) {
+      newValues['/isHttpConnector'] = true;
+    }
 
     return newValues;
   },

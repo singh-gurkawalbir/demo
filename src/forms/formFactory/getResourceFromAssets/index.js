@@ -193,7 +193,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       if (isNew) {
         meta = formMeta.connections.new;
       } else if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
-        if (resource?.useParentForm) {
+        if (resource?.http?.formType === 'http') {
           meta = formMeta.connections.http;
         } else {
           meta = formMeta.connections.httpFramework;
@@ -243,12 +243,16 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       if (meta) {
         if (isNew) {
           meta = meta.new;
-        } else if (connection?.http?._httpConnectorId && !resource?.useParentForm) {
-          meta = meta.custom.httpFramework.assistantDefinition(
-            resource._id,
-            resource,
-            assistantData
-          );
+        } else if (connection?.http?._httpConnectorId) {
+          if (!resource?.useParentForm && resource?.http?.formType !== 'http') {
+            meta = meta.custom.httpFramework.assistantDefinition(
+              resource._id,
+              resource,
+              assistantData
+            );
+          } else {
+            meta = meta.http;
+          }
         } else if (type === 'netsuite') {
           // get edit form meta branch
           meta = meta.netsuiteDistributed;
@@ -303,12 +307,16 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       if (meta) {
         if (isNew) {
           meta = meta.new;
-        } else if (connection?.http?._httpConnectorId && !resource?.useParentForm) {
-          meta = meta.custom.httpFramework.assistantDefinition(
-            resource._id,
-            resource,
-            assistantData
-          );
+        } else if (connection?.http?._httpConnectorId) {
+          if (!resource?.useParentForm && resource?.http?.formType !== 'http') {
+            meta = meta.custom.httpFramework.assistantDefinition(
+              resource._id,
+              resource,
+              assistantData
+            );
+          } else {
+            meta = meta.http;
+          }
         } else if (isMicrosoftBusinessCentralOdataConnection(connection)) {
           if (type === 'http') {
             meta = meta[type];

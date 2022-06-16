@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
-import { getApp } from '../../../constants/applications';
+import { applicationsList} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
@@ -31,6 +31,12 @@ export default function FormView(props) {
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
+  const getApp = (type, assistant, _httpConnectorId) => {
+    const id = assistant || type;
+    const applications = applicationsList();
+
+    return applications.find(c => c.id === id || c._httpConnectorId === _httpConnectorId) || {};
+  };
 
   const _httpConnectorId = stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId;
 

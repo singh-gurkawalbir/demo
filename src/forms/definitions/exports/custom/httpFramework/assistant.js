@@ -45,7 +45,7 @@ export default function assistantDefinition(
         assistantData: formValues['/assistantMetadata/assistantData'],
       });
 
-      otherFormValues['/http/formType'] = 'assistant';
+      if (exportDoc?.['/http']) { exportDoc['/http'].formType = 'assistant'; }
 
       return { ...otherFormValues, ...exportDoc };
     },

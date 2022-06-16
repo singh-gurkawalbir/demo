@@ -23,7 +23,7 @@ export const useHFSetInitializeFormData = ({
   );
 
   useEffect(() => {
-    // resouceForm init causes the form to remount
+    // resourceForm init causes the form to remount
     // when there is any initialization data do we perform at this step
     if (isHTTPFramework) {
       if (!componentMounted && formState.initData) {
@@ -252,7 +252,6 @@ function DynaAssistantOptions(props) {
           deleteDeltaValues('bodyParams', bodyParams, allTouchedFields);
         }
       }
-      // here i will check
       dispatch(
         actions.resourceForm.init(
           resourceType,

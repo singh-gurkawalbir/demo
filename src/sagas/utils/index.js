@@ -214,7 +214,6 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
                     howToFindIdentifier.lookup = {url: lookupendpoint.relativeURI, id: lookupendpoint._id, extract: lookup?.extract};
                   }
                 }
-
                 const ep = {
                   id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, requiredMappings, parameters, howToFindIdentifier, supportIgnoreExisting, supportIgnoreMissing, askForHowToGetIdentifier: httpEndpoint.askForHowToGetIdentifier,
                 };
@@ -383,6 +382,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           fieldId: `settings.${value.id}`,
           helpText: value.helpText,
           type: value.type || 'text',
+          defaultValue: resource?.settings?.[value.id],
           required: !!value.required,
           options: value.options,
           validWhen: value.validWhen,

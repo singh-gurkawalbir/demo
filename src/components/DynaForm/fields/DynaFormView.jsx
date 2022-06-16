@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
-import { getApp, getAssistantConnectorType } from '../../../constants/applications';
+import { applicationsList, getAssistantConnectorType } from '../../../constants/applications';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
@@ -32,6 +32,12 @@ export default function FormView(props) {
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
+  const getApp = (type, assistant, _httpConnectorId) => {
+    const id = assistant || type;
+    const applications = applicationsList();
+
+    return applications.find(c => c.id === id || c._httpConnectorId === _httpConnectorId) || {};
+  };
   const connection = useSelector(
     state =>
       selectors.resource(state, 'connections', staggedResource._connectionId) ||
@@ -49,7 +55,8 @@ export default function FormView(props) {
     })
   );
 
-  const { assistant: assistantName, http, http: {_httpConnectorId}} = connection;
+  const { assistant: assistantName, http } = connection;
+  const _httpConnectorId = connection?.http?._httpConnectorId;
   const isGraphql = http?.formType === 'graph_ql';
 
   const options = useMemo(() => {
@@ -63,7 +70,7 @@ export default function FormView(props) {
         {
           items: [
             // if type is REST then we should show REST API
-            { label: isGraphql ? 'HTTP' : type && (type.toUpperCase() === 'REST' ? 'REST API' : type.toUpperCase()), value: `${isParent}` },
+            { label: (isGraphql || _httpConnectorId) ? 'HTTP' : type && (type.toUpperCase() === 'REST' ? 'REST API' : type.toUpperCase()), value: `${isParent}` },
             { label: name, value: `${!isParent}` },
           ],
         },
@@ -119,8 +126,11 @@ export default function FormView(props) {
         newFinalValues['/http/formType'] = 'http';
       }
     } else if (_httpConnectorId) {
+      staggedRes['/isHttpConnector'] = true;
+      newFinalValues['/isHttpConnector'] = true;
       if (selectedApplication !== `${isParent}`) {
         staggedRes['/http/formType'] = 'assistant';
+        newFinalValues['/http/formType'] = 'assistant';
       } else {
         // set http.formType prop to http to use http form from the export/import as it is now using parent form');
         staggedRes['/http/formType'] = 'http';
