@@ -7,7 +7,7 @@ import AddEmptyStepIcon from '../../../../../components/icons/AddEmptyStepIcon';
 import BranchIcon from '../../../../../components/icons/BranchIcon';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import { useFlowContext } from '../../Context';
-import { useHandleAddNode, useHandleAddNewRouter } from '../../hooks';
+import { useHandleAddNode, useHandleAddNewRouter } from '../../../hooks';
 import { isNodeConnectedToRouter } from '../../lib';
 
 const useStyles = makeStyles(theme => ({

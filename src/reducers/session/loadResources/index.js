@@ -46,6 +46,14 @@ export default (state = {}, action) => {
 
 export const selectors = {};
 
+selectors.hasResourcesLoaded = (state, resourceType, integrationId) => {
+  if (integrationId) {
+    return state?.[integrationId]?.[resourceType] === 'received';
+  }
+
+  return state?.[resourceType] === 'received';
+};
+
 selectors.mkResourceStatus = () => createSelector(
   (_, resources) => resources,
   (state, resources, integrationId) => resources.reduce((hash, resource, index) => {

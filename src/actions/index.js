@@ -2080,7 +2080,7 @@ const errorManager = {
 };
 const flow = {
   addNewPGStep: flowId => action(actionTypes.FLOW.ADD_NEW_PG_STEP, { flowId }),
-  addNewPPStep: (flowId, path) => action(actionTypes.FLOW.ADD_NEW_PP_STEP, { flowId, path }),
+  addNewPPStep: (flowId, path, processorIndex) => action(actionTypes.FLOW.ADD_NEW_PP_STEP, { flowId, path, processorIndex }),
   addNewRouter: (flowId, router) => action(actionTypes.FLOW.ADD_NEW_ROUTER, { flowId, router }),
   dragStart: (flowId, stepId) => action(actionTypes.FLOW.DRAG_START, { flowId, stepId }),
   dragEnd: flowId => action(actionTypes.FLOW.DRAG_END, { flowId }),

@@ -54,7 +54,7 @@ export default function BranchFilter({editorId, position}) {
 
   const jsonPathsFromData = useMemo(() => {
     const jsonPaths = getJSONPaths(
-      jsonData,
+      jsonData.rows ? jsonData.rows[0] : jsonData.record,
       null,
       {
         wrapSpecialChars: true,

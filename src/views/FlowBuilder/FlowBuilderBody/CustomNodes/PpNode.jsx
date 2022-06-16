@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function PageProcessorNode({ data = {} }) {
-  const { branch = {}, isFirst, isLast, hideDelete } = data;
+  const { branch = {}, isFirst, isLast, hideDelete, isVirtual } = data;
   const dispatch = useDispatch();
   const classes = useStyles();
 
@@ -57,7 +57,8 @@ export default function PageProcessorNode({ data = {} }) {
   );
   const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
-
+  const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
+  const showDelete = !hideDelete && !isFlowSaveInProgress;
   const handleDelete = useCallback(id => {
     dispatch(actions.flow.deleteStep(flowId, id));
   }, [dispatch]);
@@ -69,14 +70,16 @@ export default function PageProcessorNode({ data = {} }) {
       <div className={classes.contentContainer} >
         <div>
           <div className={clsx(classes.branchContainer, {[classes.firstBranchStep]: isFirst})}>
-            <Typography variant="overline" className={classes.branchName}>
-              {branch.name}
-            </Typography>
+            {!isVirtual && (
+              <Typography variant="overline" className={classes.branchName}>
+                {branch.name}
+              </Typography>
+            )}
           </div>
 
           <PageProcessor
             {...data.resource}
-            onDelete={!hideDelete && handleDelete}
+            onDelete={showDelete && handleDelete}
             flowId={flowId}
             integrationId={integrationId}
             openErrorCount={(flowErrorsMap && flowErrorsMap[data.resource?._importId || data.resource?._exportId]) || 0}

@@ -51,7 +51,7 @@ export default function FlowBuilder() {
   // #endregion
 
   return (
-    <LoadResources integrationId={integrationId} required resources="imports,exports,flows,scripts">
+    <LoadResources integrationId={childId || integrationId} required resources="imports,exports,flows,scripts">
       <Redirection>
         <ResourceDrawer flowId={flowId} integrationId={integrationId} />
         <ConfigConnectionDebugger />

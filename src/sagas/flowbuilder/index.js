@@ -117,7 +117,7 @@ export function* deleteStep({flowId, stepId}) {
       });
     }
   } else {
-    const ppIndex = flow.pageGenerators.findIndex(pg => pg._importId === stepId || pg._exportId === stepId);
+    const ppIndex = originalFlow.pageProcessors.findIndex(pg => pg._importId === stepId || pg._exportId === stepId);
 
     patchSet.push({
       op: 'remove',
@@ -128,17 +128,29 @@ export function* deleteStep({flowId, stepId}) {
   yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
 }
 
-export function* createNewPPStep({ flowId, path: branchPath }) {
+export function* createNewPPStep({ flowId, path: branchPath, processorIndex }) {
   yield put(actions.flow.setSaveStatus(flowId, 'saving'));
   let patchSet = [];
+  const insertAtIndex = processorIndex ?? -1;
   const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
 
   if (flow?.routers?.length) {
-    patchSet = [{
-      op: 'add',
-      path: `${branchPath}/pageProcessors/-`,
-      value: {setupInProgress: true},
-    }];
+    if (insertAtIndex === -1) {
+      patchSet = [{
+        op: 'add',
+        path: `${branchPath}/pageProcessors/-`,
+        value: {setupInProgress: true},
+      }];
+    } else {
+      const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
+
+      pageProcessors.splice(insertAtIndex, 0, {setupInProgress: true});
+      patchSet.push({
+        op: 'replace',
+        path: `${branchPath}/pageProcessors`,
+        value: pageProcessors,
+      });
+    }
   } else {
     if (!flow?.pageProcessors) {
       patchSet.push({
@@ -147,11 +159,22 @@ export function* createNewPPStep({ flowId, path: branchPath }) {
         value: [],
       });
     }
-    patchSet.push({
-      op: 'add',
-      path: '/pageProcessors/-',
-      value: {setupInProgress: true},
-    });
+    if (insertAtIndex === -1) {
+      patchSet.push({
+        op: 'add',
+        path: '/pageProcessors/-',
+        value: {setupInProgress: true},
+      });
+    } else {
+      const pageProcessors = jsonPatch.getValueByPointer(flow, '/pageProcessors');
+
+      pageProcessors.splice(insertAtIndex, 0, {setupInProgress: true});
+      patchSet.push({
+        op: 'replace',
+        path: '/pageProcessors',
+        value: pageProcessors,
+      });
+    }
   }
 
   yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));

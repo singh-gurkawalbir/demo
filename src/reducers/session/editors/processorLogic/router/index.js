@@ -40,7 +40,7 @@ export default {
 
   processor: editor => {
     if (editor.rule.activeProcessor === 'filter') {
-      return 'filter';
+      return 'branchFilter';
     }
 
     return 'javascript';
@@ -48,10 +48,17 @@ export default {
 
   requestBody: editor => {
     if (editor.rule.activeProcessor === 'filter') {
-      return filter.requestBody({
+      const {rules, data} = filter.requestBody({
         data: editor.data,
         rule: editor.rule,
       });
+
+      return {
+        data: [{
+          router: rules.rules,
+          record: data[0],
+        }],
+      };
     }
 
     return javascript.requestBody({
@@ -75,7 +82,21 @@ export default {
   },
   processResult: (editor, result) => {
     if (editor.rule.activeProcessor === 'filter') {
-      return filter.processResult(editor, result);
+      let outputMessage = '';
+
+      if (result?.data) {
+        if (result.data[0].length === 1) {
+          const branch = editor.rule.branches[result.data[0][0]]?.name;
+
+          outputMessage = `The record will pass through branch ${result.data[0][0]}: ${branch} `;
+        } else if (!result.data[0].length) {
+          outputMessage = 'The record will not pass through any of the branches.';
+        } else {
+          outputMessage = `The record will pass through branches:\n${result.data[0].map(branchIndex => `branch ${branchIndex}: ${editor.rule.branches[branchIndex]?.name}`).join('\n')}`;
+        }
+      }
+
+      return {data: outputMessage};
     }
 
     return javascript.processResult(editor, result);

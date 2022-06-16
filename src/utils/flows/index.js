@@ -428,8 +428,8 @@ export function isRunnable(flow, exports) {
 
   const flowHasImport =
     !!flow._importId ||
-    (flow.pageProcessors &&
-      flow.pageProcessors.some(pg => pg._exportId || pg._importId));
+    (flow.pageProcessors && flow.pageProcessors.some(pg => pg._exportId || pg._importId)) ||
+    (flow.routers && flow.routers.length);
 
   // flows need at least one import to be runnable
   if (!flowHasImport) return false;

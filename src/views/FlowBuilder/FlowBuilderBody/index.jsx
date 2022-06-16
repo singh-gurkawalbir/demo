@@ -107,16 +107,15 @@ export function Canvas({ flowId, fullscreen }) {
   const dragStepId = useSelector(state => selectors.fbDragStepId(state, flowId));
   const elementsMap = useSelector(state => selectors.fbGraphElementsMap(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, mergedFlow._integrationId, flowId));
-
-  // console.log(flowId, mergedFlow, fullscreen);
+  const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
 
   const updatedLayout = useMemo(() =>
     layoutElements(elements, 'LR'),
   [elements]);
 
   useEffect(() => {
-    dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode));
-  }, [mergedFlow, dispatch, flowId, isViewMode]);
+    dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode || isDataLoaderFlow));
+  }, [mergedFlow, dispatch, flowId, isViewMode, isDataLoaderFlow]);
 
   const handleNodeDragStart = (evt, source) => {
     dispatch(actions.flow.dragStart(flowId, source.id));

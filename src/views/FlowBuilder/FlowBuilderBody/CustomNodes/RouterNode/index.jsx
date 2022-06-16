@@ -4,7 +4,7 @@ import { Position } from 'react-flow-renderer';
 import { Badge, IconButton } from '@material-ui/core';
 import Icon from '../../../../../components/icons/BranchIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
-import { useHandleRouterClick } from '../../hooks';
+import { useHandleRouterClick } from '../../../hooks';
 
 const useStyles = makeStyles(theme => ({
   container: {

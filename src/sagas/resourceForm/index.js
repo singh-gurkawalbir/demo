@@ -21,7 +21,7 @@ import {
 import { _fetchRawDataForFileAdaptors } from '../sampleData/rawDataUpdates/fileAdaptorUpdates';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA } from '../../constants';
+import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA, PageProcessorPathRegex } from '../../constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, flowLastModifiedPatch } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
@@ -460,7 +460,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     createdId
   );
 
-  const addIndexPP = flowDoc?.pageProcessors?.length || 0;
+  let addIndexPP = flowDoc?.pageProcessors?.length || 0;
   const addIndexPG = flowDoc?.pageGenerators?.length || 0;
 
   // Incoming resourceIds that model new PP or PGs (are prefixed with 'new-')  may contain a suffix
@@ -470,11 +470,14 @@ export function* getFlowUpdatePatchesForNewPGorPP(
   const [, pendingId] = tempResourceId?.split('.');
   let pending = false;
   let stepPath;
+  const isPageGenerator = resourceType === 'exports' && !createdResource?.isLookup;
 
   if (pendingId) {
     pending = true;
-    if (flowDoc?.routers?.length) {
-      stepPath = elementsMap[pendingId]?.data?.path;
+    if (flowDoc?.routers?.length || (isPageGenerator && elementsMap?.[pendingId])) {
+      stepPath = elementsMap[pendingId].data?.path;
+    } else if (resourceType === 'imports' && elementsMap?.[pendingId]?.data?.path) {
+      [,,, addIndexPP] = PageProcessorPathRegex.exec(elementsMap?.[pendingId]?.data?.path);
     }
   }
 

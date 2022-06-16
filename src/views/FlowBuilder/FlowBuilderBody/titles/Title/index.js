@@ -23,7 +23,9 @@ export default function Title({onClick, children, className}) {
   const classes = useStyles();
   const { flow, flowId } = useFlowContext();
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow._integrationId, flowId));
-  const isReadOnly = !!flow._connectorId || isViewMode;
+  const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
+
+  const isReadOnly = !!flow._connectorId || isDataLoaderFlow || isViewMode;
 
   return (
     <TitleTypography className={clsx(classes.titlePosition, className)}>
