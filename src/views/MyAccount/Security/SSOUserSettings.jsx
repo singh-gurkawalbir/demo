@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useEffect} from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
@@ -59,31 +59,21 @@ export default function SSOUserSettings() {
           id: '_ssoAccountId',
           type: 'select',
           name: '_ssoAccountId',
-          label: 'Primary account',
+          label: 'Use this account for SSO',
           helpKey: 'sso.primaryAccount',
           required: true,
           noApi: true,
           options: primaryAccountOptions,
-          defaultValue: preferences?._ssoAccountId || (ssoPrimaryAccounts?.length === 1 ? ssoPrimaryAccounts?.[0]?.ownerUser?._id : undefined),
+          defaultValue: preferences?._ssoAccountId,
           defaultDisabled: preferences?.authTypeSSO?.sub,
         },
       },
     }),
-    [preferences?._ssoAccountId, preferences?.authTypeSSO?.sub, primaryAccountOptions, ssoPrimaryAccounts]
+    [preferences?._ssoAccountId, preferences?.authTypeSSO?.sub, primaryAccountOptions]
   );
   const remountAfterSaveFn = useCallback(() => {
     setRemountCount(count => count + 1);
   }, []);
-
-  useEffect(() => {
-    if (!preferences?._ssoAccountId && ssoPrimaryAccounts?.length === 1) {
-      const _ssoAccountId = ssoPrimaryAccounts?.[0]?.ownerUser?._id;
-
-      if (_ssoAccountId) {
-        dispatch(actions.user.profile.update({_ssoAccountId}));
-      }
-    }
-  }, [dispatch, preferences, ssoPrimaryAccounts]);
 
   const formKey = useFormInitWithPermissions({
     fieldMeta,
@@ -110,7 +100,7 @@ export default function SSOUserSettings() {
 
   return (
     <div className={classes.collapseContainer} >
-      <CollapsableContainer title="User settings" forceExpand>
+      <CollapsableContainer title="My user" forceExpand>
         <div className={classes.ssoForm}>
           <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
         </div>

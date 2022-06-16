@@ -21,13 +21,12 @@ export default function Security() {
 
   const infoTextSSO = 'Configure single sign-on settings in this section';
   const isAccountOwner = useSelector(state => selectors.isAccountOwner(state));
-  const hasSSOPrimaryAccountAccess = useSelector(state => selectors.ssoPrimaryAccounts(state).length);
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
 
   return (
     <div className={classes.root}>
       <PanelHeader title="Single sign-on (SSO)" infoText={infoTextSSO} />
-      {!isAccountOwner && hasSSOPrimaryAccountAccess && <SSOUserSettings />}
+      {!isAccountOwner && <SSOUserSettings />}
       {isAccountOwnerOrAdmin && <SSOAccountSettings />}
     </div>
   );
