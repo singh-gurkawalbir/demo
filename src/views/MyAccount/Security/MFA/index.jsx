@@ -5,9 +5,12 @@ import { Typography } from '@material-ui/core';
 import CeligoSwitch from '../../../../components/CeligoSwitch';
 import PanelHeader from '../../../../components/PanelHeader';
 import Help from '../../../../components/Help';
+// TODO: Update once MR branch is merged
+import CollapsableContainer from '../../../../components/ResourceDiffVisualizer/CollapsableContainer';
 import { selectors } from '../../../../reducers';
 import MFASetup from './Setup';
 import EditMFAConfiguration from './EditConfiguration';
+import AccountSettings from './AccountSettings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -16,6 +19,9 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
     minHeight: 124,
+  },
+  configContainer: {
+    margin: theme.spacing(2),
   },
   mfaSwitch: {
     display: 'flex',
@@ -49,7 +55,7 @@ function MFAConfiguration() {
   return <MFASetup />;
 }
 
-export default function MFA() {
+function MyUserSettings() {
   const classes = useStyles();
   const [isMFAEnabled, setIsMFAEnabled] = useState(false);
 
@@ -58,8 +64,7 @@ export default function MFA() {
   }, [isMFAEnabled]);
 
   return (
-    <div className={classes.root}>
-      <PanelHeader title="Multifactor authentication (MFA)" />
+    <>
       <div className={classes.mfaSwitch}>
         <Typography variant="body2" className={classes.content}> Enable MFA </Typography>
         <Help title="Enable OIDC-based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
@@ -73,6 +78,22 @@ export default function MFA() {
           <MFAConfiguration />
         </div>
       ) : null }
+    </>
+  );
+}
+
+export default function MFA() {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.root}>
+      <PanelHeader title="Multifactor authentication (MFA)" />
+      <div className={classes.configContainer}>
+        <CollapsableContainer title="My user" forceExpand>
+          <MyUserSettings />
+        </CollapsableContainer>
+        <AccountSettings />
+      </div>
     </div>
   );
 }
