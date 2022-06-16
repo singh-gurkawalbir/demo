@@ -17,7 +17,7 @@ const getItemSize = (index, itemsData) => {
   let noOfLine = 1;
   const item = itemsData.items[index];
 
-  if (itemsData.items[index].generate || itemsData.items[index].extract) { noOfLine = Math.ceil(Math.max(item?.generate?.length, item?.extract?.length) / 50); }
+  if (itemsData.items[index].generate || itemsData.items[index].extract) { noOfLine = Math.ceil(Math.max((item?.generate) ? item?.generate.length : 0, (item?.extract) ? item?.extract?.length : 0) / 50); }
 
   return 46 + (24 * (noOfLine - 1));
 };
@@ -36,13 +36,15 @@ const Row = ({ index, style, isScrolling, data, setSize }) => {
       disabled={disabled}
       importId={importId}
       flowId={flowId}
+      key={`newMappingRow-${index}`}
       subRecordMappingId={subRecordMappingId}
+      // To get suggestion dropdown by overlaying the mapping dialog.
       menuPortalStyle={{menuPortal: provided => ({...provided, zIndex: '9999999'})}}
       menuPortalTarget={{menuPortalTarget: document.body}}
       />
   ) : (
     <SortableItem
-      key={`item-${items[index].key || index}`}
+      key={`${items[index].key || index}`}
       index={index}
       hideSortableGhost={false}
       value={(
