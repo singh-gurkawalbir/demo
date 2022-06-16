@@ -25,6 +25,7 @@ import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
 import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllParentExtractsForNode } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -648,7 +649,7 @@ export function* requestEditorSampleData({
           },
         };
       }
-      body[resourceType === 'imports' ? 'import' : 'export'] = resource || {};
+      body[RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]] = resource || {};
     }
 
     const opts = {

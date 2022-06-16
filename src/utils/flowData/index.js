@@ -54,6 +54,9 @@ export const sampleDataStage = {
     postSubmit: 'responseTransform',
     responseTransform: 'sampleResponse',
   },
+  flows: {
+    router: 'router',
+  },
   /**
    * flowInput, processedFlowInput, inputFilter
    * flowInput, preMap, importMappingExtract, importMapping, postMap,

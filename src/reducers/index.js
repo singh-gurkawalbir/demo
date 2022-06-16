@@ -6427,7 +6427,7 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
     return true;
   }
 
-  if (['outputFilter', 'exportFilter', 'inputFilter'].includes(editorType)) {
+  if (['outputFilter', 'exportFilter', 'inputFilter', 'router'].includes(editorType)) {
     return true;
   }
 

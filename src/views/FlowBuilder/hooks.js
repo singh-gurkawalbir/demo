@@ -284,8 +284,9 @@ export const useHandleRouterClick = routerId => {
       resourceType: 'flows',
       resourceId: flowId,
       router,
+      fieldId: 'router',
       routerIndex,
-      stage: 'postResponseMapHook',
+      stage: 'router',
       integrationId: flow?._integrationId,
     }));
     history.push(buildDrawerUrl({
@@ -319,8 +320,9 @@ export const useHandleAddNewRouter = edgeId => {
       routerIndex: flow.routers.length,
       integrationId: flow?._integrationId,
       edgeId,
+      fieldId: 'router',
       prePatches: patchSet,
-      stage: 'postResponseMapHook',
+      stage: 'router',
       edge,
     }));
     history.push(buildDrawerUrl({
