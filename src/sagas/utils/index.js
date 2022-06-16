@@ -10,7 +10,7 @@ import { AUTHENTICATION_LABELS} from '../../utils/constants';
 
 const convertResourceFieldstoSampleData = (resourceFields, dataType = 'object') => {
   if (!resourceFields) {
-    return 'null';
+    return '';
   }
   if (dataType === 'object') {
     const output = {};

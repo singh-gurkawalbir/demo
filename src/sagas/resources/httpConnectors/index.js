@@ -18,7 +18,7 @@ export function* getConnector({ httpConnectorId, message, hidden }) {
     return undefined;
   }
 }
-export function* getConnectorMetadata({ connectionId, httpConnectorId, httpVersionId, httpAPIId, message, hidden }) {
+export function* getConnectorMetadata({ connectionId, httpConnectorId, httpVersionId, httpConnectorApiId, message, hidden }) {
   const path = `/httpconnectors/${httpConnectorId}?returnEverything=true`;
   const connection = yield select(selectors.resource, 'connections', connectionId);
 
@@ -29,7 +29,7 @@ export function* getConnectorMetadata({ connectionId, httpConnectorId, httpVersi
 
     const metadata = getHTTPConnectorMetadata(connectorMetadata, connectionVersion);
 
-    yield put(actions.httpConnectors.receivedMetadata(metadata, httpConnectorId, httpVersionId, httpAPIId));
+    yield put(actions.httpConnectors.receivedMetadata({httpConnectorId, httpVersionId, httpConnectorApiId, metadata}));
 
     return metadata;
   } catch (error) {

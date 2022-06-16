@@ -20,8 +20,8 @@ export default (
   return produce(state, draft => {
     switch (type) {
       case actionTypes.HTTP_CONNECTORS.RECEIVED_METADATA: {
-        const { httpVersionId = '', httpConnectorId = '', httpAPIId = '', metadata } = action;
-        const key = `${httpConnectorId}${httpVersionId}${httpAPIId}`;
+        const { httpVersionId = '', httpConnectorId = '', httpConnectorApiId = '', metadata } = action;
+        const key = `${httpConnectorId}${httpVersionId}${httpConnectorApiId}`;
 
         draft.httpConnectorMetadata[key] = metadata;
 
@@ -52,11 +52,11 @@ selectors.connectorData = (state, httpConnectorId) => {
   return state?.httpConnector?.[httpConnectorId];
 };
 
-selectors.httpConnectorMetaData = (state, httpConnectorId = '', httpVersionId = '', httpAPIId = '') => {
+selectors.httpConnectorMetaData = (state, httpConnectorId = '', httpVersionId = '', httpConnectorApiId = '') => {
   if (!httpConnectorId) {
     return null;
   }
-  const key = `${httpConnectorId}${httpVersionId}${httpAPIId}`;
+  const key = `${httpConnectorId}${httpVersionId}${httpConnectorApiId}`;
 
   return state?.httpConnectorMetadata?.[key];
 };

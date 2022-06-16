@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
-import { applicationsList, getAssistantConnectorType } from '../../../constants/applications';
+import { getAssistantConnectorType, getApp } from '../../../constants/applications';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
@@ -32,12 +32,12 @@ export default function FormView(props) {
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
-  const getApp = (type, assistant, _httpConnectorId) => {
-    const id = assistant || type;
-    const applications = applicationsList();
+  // const getApp = (type, assistant, _httpConnectorId) => {
+  //   const id = assistant || type;
+  //   const applications = applicationsList();
 
-    return applications.find(c => c.id === id || c._httpConnectorId === _httpConnectorId) || {};
-  };
+  //   return applications.find(c => c.id === id || c._httpConnectorId === _httpConnectorId) || {};
+  // };
   const connection = useSelector(
     state =>
       selectors.resource(state, 'connections', staggedResource._connectionId) ||
@@ -111,26 +111,26 @@ export default function FormView(props) {
     staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
 
     // if assistant is selected back again assign it to the export to the export obj as well
-    if (
-      selectedApplication !== `${isParent}` &&
-      staggedRes['/assistant'] === undefined &&
-      !isGraphql && !_httpConnectorId
-    ) {
-      staggedRes['/assistant'] = assistantName;
-    } else if (isGraphql && !_httpConnectorId) {
-      if (selectedApplication !== `${isParent}`) {
-        staggedRes['/http/formType'] = 'graph_ql';
-      } else {
-        // set http.formType prop to http to use http form from the export/import as it is now using parent form');
-        staggedRes['/http/formType'] = 'http';
-        newFinalValues['/http/formType'] = 'http';
-      }
-    } else if (_httpConnectorId) {
+    if (_httpConnectorId) {
       staggedRes['/isHttpConnector'] = true;
       newFinalValues['/isHttpConnector'] = true;
       if (selectedApplication !== `${isParent}`) {
         staggedRes['/http/formType'] = 'assistant';
         newFinalValues['/http/formType'] = 'assistant';
+      } else {
+        // set http.formType prop to http to use http form from the export/import as it is now using parent form');
+        staggedRes['/http/formType'] = 'http';
+        newFinalValues['/http/formType'] = 'http';
+      }
+    } else if (
+      selectedApplication !== `${isParent}` &&
+      staggedRes['/assistant'] === undefined &&
+      !isGraphql
+    ) {
+      staggedRes['/assistant'] = assistantName;
+    } else if (isGraphql) {
+      if (selectedApplication !== `${isParent}`) {
+        staggedRes['/http/formType'] = 'graph_ql';
       } else {
         // set http.formType prop to http to use http form from the export/import as it is now using parent form');
         staggedRes['/http/formType'] = 'http';

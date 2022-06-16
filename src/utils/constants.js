@@ -705,7 +705,6 @@ export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
   [LINE_GRAPH_TYPES.IGNORED]: 'i',
   [LINE_GRAPH_TYPES.RESOLVED]: 'r',
 });
-export const HTTP_FRAMEWORK_SUPPORTED_ASSISTANTS = ['shopify'];
 export const AUTHENTICATION_LABELS = Object.freeze({
   basic: 'Basic',
   token: 'Token',

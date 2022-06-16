@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
-import { applicationsList} from '../../../constants/applications';
+import { getApp} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
@@ -13,8 +13,6 @@ import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAss
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
 
 const emptyObj = {};
-const isParent = true;
-
 export default function FormView(props) {
   const { resourceType, resourceId, value, formKey } = props;
 
@@ -31,12 +29,6 @@ export default function FormView(props) {
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
-  const getApp = (type, assistant, _httpConnectorId) => {
-    const id = assistant || type;
-    const applications = applicationsList();
-
-    return applications.find(c => c.id === id || c._httpConnectorId === _httpConnectorId) || {};
-  };
 
   const _httpConnectorId = stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId;
 
@@ -46,26 +38,22 @@ export default function FormView(props) {
     if (matchingApplication) {
       const { name } = matchingApplication;
 
-      // all types are lower case...lets upper case them
       return [
         {
           items: [
-            // if type is REST then we should show REST API
-            { label: 'HTTP', value: `${isParent}` },
-            { label: name, value: `${!isParent}` },
+            { label: 'HTTP', value: 'true' },
+            { label: name, value: 'false' },
           ],
         },
       ];
     }
-
-    // if i cant find a matching application this is not an assistant
 
     return null;
   }, [_httpConnectorId]);
 
   useHFSetInitializeFormData({...props, isHTTPFramework: _httpConnectorId});
 
-  const onFieldChangeFn = (id, selectedApplication) => {
+  const onFieldChangeFn = useCallback((id, selectedApplication) => {
     // first get the previously selected application values
     // stagged state we will break up the scope to selected application and actual value
 
@@ -86,11 +74,9 @@ export default function FormView(props) {
     const finalValues = preSave(formContext.value, stagedRes);
     const newFinalValues = {...finalValues};
 
-    stagedRes['/useParentForm'] = selectedApplication === `${isParent}`;
-
     // if assistant is selected back again assign it to the export to the export obj as well
 
-    if (selectedApplication !== `${isParent}`) {
+    if (selectedApplication !== 'true') {
       stagedRes['/http/formType'] = 'assistant';
       newFinalValues['/http/formType'] = 'assistant';
     } else {
@@ -127,7 +113,7 @@ export default function FormView(props) {
         allTouchedFields
       )
     );
-  };
+  }, [dispatch, formContext?.fields, formContext?.value, resourceFormState?.fieldMeta, resourceId, resourceType, stagedResource]);
 
   if (!_httpConnectorId) {
     return null;

@@ -2113,12 +2113,12 @@ const httpConnectors = {
       httpVersionId,
       httpApiId,
     }),
-  receivedMetadata: (metadata, httpConnectorId, httpVersionId, httpApiId) =>
+  receivedMetadata: ({metadata, httpConnectorId, httpVersionId, httpConnectorApiId}) =>
     action(actionTypes.HTTP_CONNECTORS.RECEIVED_METADATA, {
       metadata,
       httpConnectorId,
       httpVersionId,
-      httpApiId,
+      httpConnectorApiId,
     }),
   receivedConnector: ({ httpConnectorId, connector }) =>
     action(actionTypes.HTTP_CONNECTORS.RECEIVED_CONNECTOR, {

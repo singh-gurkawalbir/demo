@@ -25,19 +25,17 @@ export const useHFSetInitializeFormData = ({
   useEffect(() => {
     // resourceForm init causes the form to remount
     // when there is any initialization data do we perform at this step
-    if (isHTTPFramework) {
-      if (!componentMounted && formState.initData) {
-        formState.initData.length &&
+    if (isHTTPFramework && !componentMounted && formState.initData) {
+      formState.initData.length &&
         formState.initData.forEach(field => {
           const { id, value } = field;
 
           onFieldChange(id, value);
         });
-        dispatch(actions.resourceForm.clearInitData(resourceType, resourceId));
-      }
-
-      setComponentMounted(true);
+      dispatch(actions.resourceForm.clearInitData(resourceType, resourceId));
     }
+
+    setComponentMounted(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     componentMounted,

@@ -409,6 +409,7 @@ export const groupApplications = (
       type: 'http',
       export: true,
       import: true,
+      icon: pc.name,
     });
   });
 
@@ -519,9 +520,13 @@ export const getWebhookConnectors = () => {
 export const getWebhookOnlyConnectors = () =>
   connectors.filter(c => !!c.webhookOnly);
 
-export const getApp = (type, assistant) => {
+export const getApp = (type, assistant, _httpConnectorId) => {
   const id = assistant || type;
   const applications = applicationsList();
+
+  if (_httpConnectorId) {
+    return applications.find(c => c._httpConnectorId === _httpConnectorId) || {};
+  }
 
   return applications.find(c => c.id === id) || {};
 };
