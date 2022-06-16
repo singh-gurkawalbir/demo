@@ -44,7 +44,7 @@ const Row = ({ index, style, isScrolling, data, setSize }) => {
       />
   ) : (
     <SortableItem
-      key={`${items[index].key || index}`}
+      key={items[index].key || index}
       index={index}
       hideSortableGhost={false}
       value={(
