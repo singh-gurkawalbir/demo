@@ -2336,6 +2336,7 @@ const mfa = {
   deleteDevice: deviceName => action(actionTypes.MFA.DELETE_DEVICE, { deviceName }),
   verifyMobileCode: code => action(actionTypes.MFA.MOBILE_CODE.VERIFY, { code }),
   mobileCodeVerified: (status, error) => action(actionTypes.MFA.MOBILE_CODE.STATUS, { status, error }),
+  resetMobileCodeStatus: () => action(actionTypes.MFA.MOBILE_CODE.RESET),
   requestSessionInfo: () => action(actionTypes.MFA.SESSION_INFO.REQUEST),
   receivedSessionInfo: sessionInfo => action(actionTypes.MFA.SESSION_INFO.RECEIVED, { sessionInfo }),
   clear: () => action(actionTypes.MFA.CLEAR),

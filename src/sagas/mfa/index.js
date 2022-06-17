@@ -189,27 +189,29 @@ export function* deleteTrustedDevice({ deviceName }) {
   yield put(actions.mfa.receivedAccountSettings(response));
 }
 export function* verifyMobileCode({ code }) {
-  yield delay(500);
-  const response = { status: 'success'};
-  // const path = '/mfa/test';
+  // yield delay(500);
+  // const response = { status: 'success'};
+  const path = '/mfa/test';
 
-  // try {
-  //   response = yield call(apiCallWithRetry, {
-  //     path,
-  //     opts: {
-  //       body: { code },
-  //       method: 'POST',
-  //     },
-  //     // message: 'Requesting license upgrade.',
-  //   });
-  // } catch (error) {
-  //   return undefined;
-  // }
-  if (response.status === 'success') {
-    return yield put(actions.mfa.mobileCodeVerified('success'));
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        body: { code },
+        method: 'POST',
+      },
+    });
+
+    if (response.status === 'success') {
+      return yield put(actions.mfa.mobileCodeVerified('success'));
+    }
+
+    yield put(actions.mfa.mobileCodeVerified('fail'));
+  } catch (error) {
+    yield put(actions.mfa.mobileCodeVerified('fail'));
+
+    return undefined;
   }
-
-  return yield put(actions.mfa.mobileCodeVerified('fail', 'error'));
 }
 export function* requestMFASessionInfo() {
   yield delay(500);

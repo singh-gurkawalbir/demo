@@ -1,17 +1,36 @@
 import React, {useMemo, useCallback} from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { useDispatch } from 'react-redux';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../../../components/DynaForm';
+import actions from '../../../../actions';
+
+const useStyles = makeStyles(theme => ({
+  verify: {
+    position: 'relative',
+    bottom: theme.spacing(2),
+  },
+}));
 
 export default function Step3() {
+  const dispatch = useDispatch();
+  const classes = useStyles();
   const fieldMeta = useMemo(
     () => ({
       fieldMap: {
-        issuerURL: {
+        mobileCode: {
           id: 'mobileCode',
           name: 'mobileCode',
-          type: 'text',
+          type: 'mfamobilecode',
+          label: 'Verify mobile device',
           required: true,
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[\\d]+$',
+              message: 'Numbers only',
+            },
+          },
           noApi: true,
           isLoggable: false,
         },
@@ -23,14 +42,13 @@ export default function Step3() {
   const formKey = useFormInitWithPermissions({ fieldMeta });
 
   const verifyMobileCode = useCallback(values => {
-    console.log(values);
-  }, []);
+    dispatch(actions.mfa.verifyMobileCode(values.mobileCode));
+  }, [dispatch]);
 
   return (
     <>
-      <div><b> Verify mobile device * </b></div>
       <DynaForm formKey={formKey} />
-      <DynaSubmit variant="outlined" formKey={formKey} onClick={verifyMobileCode}>
+      <DynaSubmit formKey={formKey} onClick={verifyMobileCode} className={classes.verify}>
         Verify
       </DynaSubmit>
     </>

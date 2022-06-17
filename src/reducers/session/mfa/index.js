@@ -31,6 +31,9 @@ export default (state = {}, action) => {
       case actionTypes.MFA.MOBILE_CODE.STATUS:
         draft.mobileCode = { status, error };
         break;
+      case actionTypes.MFA.MOBILE_CODE.RESET:
+        delete draft.mobileCode;
+        break;
       case actionTypes.MFA.SESSION_INFO.REQUEST:
         draft.sessionInfo = {
           status: 'requested',
@@ -43,7 +46,7 @@ export default (state = {}, action) => {
         };
         break;
       case actionTypes.MFA.CLEAR:
-        draft.mobileCode = {};
+        delete draft.mobileCode;
         delete draft.secretCode;
         delete draft.showSecretCode;
         delete draft.qrCode;
