@@ -146,7 +146,7 @@ const SearchParamsModal = props => {
   );
 };
 // no user info mostly metadata releated values...can be loggable
-export default function DynaAssistantSearchParams(props) {
+export default function DynaHFAssistantSearchParams(props) {
   const classes = useStyles();
   let { label } = props;
   const { value, disabled, onFieldChange, id, paramMeta = {}, required, formKey, isValid} = props;

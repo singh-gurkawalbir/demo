@@ -741,6 +741,9 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
   if (resourceType === 'notifications') {
     path = '/notifications?users=all';
   }
+  if (resourceType === 'httpconnectors') {
+    path = '/httpconnectors?publishedOnly=true';
+  }
   if (integrationId) {
     if (INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
       path = `/integrations/${integrationId}/${resourceType}`;
