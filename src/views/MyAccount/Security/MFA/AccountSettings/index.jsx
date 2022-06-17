@@ -7,8 +7,10 @@ import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 
 const useStyles = makeStyles(theme => ({
   footer: {
+    margin: theme.spacing(2, 2, 0, 0),
+  },
+  container: {
     margin: theme.spacing(2),
-    marginLeft: 0,
   },
 }));
 
@@ -46,15 +48,17 @@ export default function AccountSettings() {
 
   return (
     <CollapsableContainer title="Account settings" forceExpand>
-      <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
-      <div className={classes.footer}>
-        <DynaSubmit
-          formKey={formKey}
-          className={classes.saveConfig}
+      <div className={classes.container}>
+        <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
+        <div className={classes.footer}>
+          <DynaSubmit
+            formKey={formKey}
+            className={classes.saveConfig}
         // disabled={disableSave}
-          onClick={updateAccountSettings}>
-          Save
-        </DynaSubmit>
+            onClick={updateAccountSettings}>
+            Save
+          </DynaSubmit>
+        </div>
       </div>
     </CollapsableContainer>
   );

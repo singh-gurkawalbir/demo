@@ -39,9 +39,14 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     marginRight: theme.spacing(2),
   },
-  mfaConfig: {
-    marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(2),
+  userSettings: {
+    margin: theme.spacing(2),
+  },
+  collapseContainer: {
+    margin: theme.spacing(2),
+    '& .MuiAccordionDetails-root': {
+      borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    },
   },
 }));
 
@@ -66,7 +71,7 @@ function MyUserSettings() {
   }, [isMFAEnabled]);
 
   return (
-    <>
+    <div className={classes.userSettings}>
       <div className={classes.mfaSwitch}>
         <Typography variant="body2" className={classes.content}> Enable MFA </Typography>
         <Help title="Enable OIDC-based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
@@ -80,7 +85,7 @@ function MyUserSettings() {
           <MFAConfiguration />
         </div>
       ) : null }
-    </>
+    </div>
   );
 }
 
@@ -98,10 +103,12 @@ export default function MFA() {
   return (
     <div className={classes.root}>
       <PanelHeader title="Multifactor authentication (MFA)" />
-      <div className={classes.configContainer}>
+      <div className={classes.collapseContainer}>
         <CollapsableContainer title="My user" forceExpand>
           <MyUserSettings />
         </CollapsableContainer>
+      </div>
+      <div className={classes.collapseContainer}>
         <AccountSettings />
       </div>
     </div>
