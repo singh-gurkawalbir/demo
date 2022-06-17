@@ -21,8 +21,10 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
+selectors.isMFAEnabled = state => !!state?.userSettings?.enabled;
 selectors.mfaUserSettings = state => state?.userSettings;
 selectors.mfaAccountSettings = state => state?.accountSettings;
+selectors.isSecretCodeGenerated = state => state?.userSettings?.secret;
 selectors.trustedDevices = state => {
   const userSettings = selectors.mfaUserSettings(state);
 

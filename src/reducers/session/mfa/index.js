@@ -6,22 +6,23 @@ export default (state = {}, action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.MFA.RECEIVED_SECRET_CODE:
+      case actionTypes.MFA.SECRET_CODE.RECEIVED:
         draft.secretCode = secretCode;
         break;
-      case actionTypes.MFA.SECRET_CODE_ERROR:
+      case actionTypes.MFA.SECRET_CODE.ERROR:
         draft.secretCodeError = secretCodeError;
         delete draft.showSecretCode;
+        delete draft.secretCode;
         break;
-      case actionTypes.MFA.QR_CODE_ERROR:
+      case actionTypes.MFA.QR_CODE.ERROR:
         draft.qrCodeError = qrCodeError;
         delete draft.showQrCode;
         break;
 
-      case actionTypes.MFA.SHOW_QR_CODE:
+      case actionTypes.MFA.QR_CODE.SHOW:
         draft.showQrCode = true;
         break;
-      case actionTypes.MFA.SHOW_SECRET_CODE:
+      case actionTypes.MFA.SECRET_CODE.SHOW:
         draft.showSecretCode = true;
         break;
       case actionTypes.MFA.MOBILE_CODE.VERIFY:
@@ -60,14 +61,14 @@ export const selectors = {};
 
 selectors.showQrCode = state => state?.showQrCode;
 selectors.showSecretCode = state => state?.showSecretCode;
-selectors.showQrCodeError = state => state?.showQrCodeError;
-selectors.showSecretCodeError = state => state?.showSecretCodeError;
 
 selectors.mobileCodeStatus = state => state?.mobileCode?.status;
 selectors.mobileCodeError = state => state?.mobileCode?.error;
 
 selectors.qrCode = state => state?.secretCode?.keyURI;
 selectors.secretCode = state => state?.secretCode?.secret;
+selectors.secretCodeError = state => state?.secretCodeError;
+selectors.qrCodeError = state => state?.qrCodeError;
 
 selectors.sessionInfoStatus = state => state?.sessionInfo?.status;
 selectors.sessionInfo = state => state?.sessionInfo?.data;

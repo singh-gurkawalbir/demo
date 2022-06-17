@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback, useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import CeligoSwitch from '../../../../components/CeligoSwitch';
@@ -8,6 +8,7 @@ import Help from '../../../../components/Help';
 // TODO: Update once MR branch is merged
 import CollapsableContainer from '../../../../components/ResourceDiffVisualizer/CollapsableContainer';
 import { selectors } from '../../../../reducers';
+import actions from '../../../../actions';
 import MFASetup from './Setup';
 import EditMFAConfiguration from './EditConfiguration';
 import AccountSettings from './AccountSettings';
@@ -46,9 +47,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function MFAConfiguration() {
-  const userSettings = useSelector(state => selectors.mfaUserSettings(state));
+  const isMFAEnabled = useSelector(state => selectors.isMFAEnabled(state));
 
-  if (userSettings) {
+  if (isMFAEnabled) {
     return <EditMFAConfiguration />;
   }
 
@@ -57,7 +58,9 @@ function MFAConfiguration() {
 
 function MyUserSettings() {
   const classes = useStyles();
-  const [isMFAEnabled, setIsMFAEnabled] = useState(false);
+  const mfaEnabled = useSelector(state => selectors.isMFAEnabled(state));
+
+  const [isMFAEnabled, setIsMFAEnabled] = useState(mfaEnabled);
 
   const handleEnableMFA = useCallback(() => {
     setIsMFAEnabled(!isMFAEnabled);
@@ -84,6 +87,14 @@ function MyUserSettings() {
 
 export default function MFA() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const hasMFASettings = useSelector(selectors.mfaUserSettings);
+
+  useEffect(() => {
+    if (!hasMFASettings) {
+      dispatch(actions.mfa.requestUserSettings());
+    }
+  }, [hasMFASettings, dispatch]);
 
   return (
     <div className={classes.root}>

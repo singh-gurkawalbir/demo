@@ -1,31 +1,33 @@
-import { call, put, takeLatest, delay } from 'redux-saga/effects';
+import { call, put, takeLatest, delay, select } from 'redux-saga/effects';
 import actions from '../../actions';
+import { selectors } from '../../reducers';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 
 export function* requestUserSettings() {
   yield delay(500);
-  const response = {
-    enabled: true,
-    secret: undefined,
-    trustedDevices: [{browser: 'browser', os: 'os', _id: '_id'}],
-    _allowResetByUserId: true,
-    allowTrustedDevices: true,
-  };
+  // const response = {
+  //   enabled: true,
+  //   secret: undefined,
+  //   trustedDevices: [{browser: 'browser', os: 'os', _id: '_id'}],
+  //   _allowResetByUserId: true,
+  //   allowTrustedDevices: true,
+  // };
 
-  // const path = '/mfa/setup';
-  // try {
-  //   response = yield call(apiCallWithRetry, {
-  //     path,
-  //     opts: {
-  //       method: 'GET',
-  //     },
-  //   });
-  // } catch (error) {
-  //   return undefined;
-  // }
+  const path = '/mfa/setup';
 
-  yield put(actions.mfa.receivedUserSettings(response));
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'GET',
+      },
+    });
+
+    yield put(actions.mfa.receivedUserSettings(response));
+  } catch (error) {
+    return undefined;
+  }
 }
 export function* requestAccountSettings() {
   yield delay(500);
@@ -95,45 +97,55 @@ export function* updateAccountSettings({ accountSettings }) {
   // }
   yield put(actions.mfa.receivedAccountSettings(response));
 }
-export function* requestSecretCode({ isQRCode }) {
-  yield delay(500);
-  const response = { secret: 'secret', keyURI: 'http://keyURI.com' };
-  // const path = '/mfa/secret/generate';
+export function* requestSecretCode({ password, isQRCode }) {
+  // yield delay(500);
+  // const response = { secret: 'secret', keyURI: 'http://keyURI.com' };
+  const isSecretCodeGenerated = yield select(selectors.isSecretCodeGenerated);
 
-  // try {
-  //   response = yield call(apiCallWithRetry, {
-  //     path,
-  //     opts: {
-  //       body: { password },
-  //       method: 'PUT',
-  //     },
-  //     // message: 'Requesting license upgrade.',
-  //   });
-  // } catch (error) {
-  //   return undefined;
-  // }
-  if (isQRCode) {
-    return yield put(actions.mfa.showQrCode(response.keyURI));
+  const path = `/mfa/secret/${isSecretCodeGenerated ? 'view' : 'generate'}`;
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        body: { password },
+        method: 'POST',
+      },
+      // message: 'Requesting license upgrade.',
+    });
+
+    yield put(actions.mfa.receivedSecretCode(response));
+    if (!isSecretCodeGenerated) {
+      yield put(actions.mfa.requestUserSettings());
+    }
+  } catch (error) {
+    yield put(actions.mfa.secretCodeError(error));
+
+    return undefined;
   }
-  yield put(actions.mfa.showSecretCode(response.secret));
+  if (isQRCode) {
+    return yield put(actions.mfa.showQrCode());
+  }
+  yield put(actions.mfa.showSecretCode());
 }
-export function* resetMFA({ aShareId }) {
-  yield delay(500);
-  const response = undefined;
-  // const path = '/mfa/reset';
+export function* resetMFA({ password, aShareId }) {
+  // yield delay(500);
+  // const response = undefined;
+  const path = '/mfa/reset';
 
-  // try {
-  //   response = yield call(apiCallWithRetry, {
-  //     path,
-  //     opts: {
-  //       body: { password },
-  //       method: 'POST',
-  //     },
-  //   });
-  // } catch (error) {
-  //   return undefined;
-  // }
-  yield put(actions.mfa.receivedUserSettings(response));
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        body: { password },
+        method: 'POST',
+      },
+    });
+
+    yield put(actions.mfa.receivedUserSettings(response));
+  } catch (error) {
+    return undefined;
+  }
 }
 export function* updateTrustedDevice({ deviceInfo }) {
   yield delay(500);
@@ -227,7 +239,7 @@ export default [
   takeLatest(actionTypes.MFA.ACCOUNT_SETTINGS.REQUEST, requestAccountSettings),
   takeLatest(actionTypes.MFA.USER_SETTINGS.SETUP, setupMFA),
   takeLatest(actionTypes.MFA.ACCOUNT_SETTINGS.UPDATE, updateAccountSettings),
-  takeLatest(actionTypes.MFA.REQUEST_SECRET_CODE, requestSecretCode),
+  takeLatest(actionTypes.MFA.SECRET_CODE.REQUEST, requestSecretCode),
   takeLatest(actionTypes.MFA.RESET, resetMFA),
   takeLatest(actionTypes.MFA.UPDATE_DEVICE, updateTrustedDevice),
   takeLatest(actionTypes.MFA.DELETE_DEVICE, deleteTrustedDevice),
