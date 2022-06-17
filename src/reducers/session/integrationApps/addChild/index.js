@@ -83,7 +83,9 @@ export const selectors = {};
 selectors.addNewChildSteps = createSelector(
   (state, integrationId) => state && state[integrationId],
   addNewChildSteps => {
-    const { steps } = addNewChildSteps || {};
+    const { steps, error } = addNewChildSteps || {};
+
+    if (error) return {error};
 
     if (!steps || !Array.isArray(steps)) {
       return emptyObject;

@@ -27,6 +27,7 @@ export function upgradeStatus(license, integration = {}) {
     'premium',
     'enterprise',
     'custom fba',
+    'shopifymarkets',
   ];
   const connectorEdition = editionArray.indexOf(
     license.opts &&
