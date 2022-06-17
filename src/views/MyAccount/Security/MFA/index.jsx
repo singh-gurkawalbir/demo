@@ -5,8 +5,7 @@ import { Typography } from '@material-ui/core';
 import CeligoSwitch from '../../../../components/CeligoSwitch';
 import PanelHeader from '../../../../components/PanelHeader';
 import Help from '../../../../components/Help';
-// TODO: Update once MR branch is merged
-import CollapsableContainer from '../../../../components/ResourceDiffVisualizer/CollapsableContainer';
+import CollapsableContainer from '../../../../components/CollapsableContainer';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import MFASetup from './Setup';

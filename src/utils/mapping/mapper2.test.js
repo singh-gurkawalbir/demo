@@ -3033,6 +3033,23 @@ describe('v2 mapping utils', () => {
           }],
         }],
       },
+      {
+        key: 'k4',
+        combinedExtract: '$[*]',
+        dataType: 'objectarray',
+        children: [{
+          key: 'k4-c1',
+          parentKey: 'k4',
+          parentExtract: '$[*]|0',
+          dataType: 'object',
+          children: [{
+            key: 'k4-c2',
+            extract: '$.qty',
+            parentKey: 'k4-c1',
+            dataType: 'string',
+          }],
+        }],
+      },
     ];
 
     test('should not throw exception for invalid args', () => {
@@ -3043,6 +3060,7 @@ describe('v2 mapping utils', () => {
       expect(findAllParentExtractsForNode(treeData, [], 'k1')).toEqual([]);
       expect(findAllParentExtractsForNode(treeData, [], 'c2')).toEqual(['$.siblings[*]', '$.siblings.children[*]']);
       expect(findAllParentExtractsForNode(treeData, [], 'k3-c2')).toEqual(['$.items[*]']);
+      expect(findAllParentExtractsForNode(treeData, [], 'k4-c2')).toEqual(['$[*]']);
     });
   });
   describe('findNearestParentExtractForNode util', () => {

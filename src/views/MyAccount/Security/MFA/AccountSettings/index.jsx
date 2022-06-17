@@ -1,7 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-// TODO: Update once MR branch is merged
-import CollapsableContainer from '../../../../../components/ResourceDiffVisualizer/CollapsableContainer';
+import CollapsableContainer from '../../../../../components/CollapsableContainer';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';

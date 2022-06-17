@@ -6,7 +6,7 @@ import {
 import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
 import React, { useState, useEffect } from 'react';
-import ExpandMoreIcon from '../../icons/ArrowDownIcon';
+import ExpandMoreIcon from '../icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
   accordionDetails: {

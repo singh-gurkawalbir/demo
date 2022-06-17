@@ -42,15 +42,6 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'Roboto400',
     fontSize: 14,
   },
-  actionsMenuPopper: {
-    maxWidth: 250,
-    top: `${theme.spacing(1)}px !important`,
-    left: `${theme.spacing(1)}px !important`,
-  },
-  actionsMenuPopperArrow: {
-    left: 'auto !important',
-    right: theme.spacing(0.5),
-  },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     maxWidth: 248,
@@ -167,9 +158,8 @@ function OutputFormatsList({disabled}) {
       <ArrowPopper
         id="outputFormats"
         onClose={handleClose}
-        placement="bottom-end"
+        placement="bottom-center"
         restrictToParent={false}
-        classes={{ popper: classes.actionsMenuPopper, arrow: classes.actionsMenuPopperArrow}}
         open={open}
         anchorEl={anchorEl}
         >
@@ -248,18 +238,14 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
 
   return (
     <div className={classes.wrapper}>
-      Destination record structure
+      <OutputFormatsList disabled={disabled} />
       {helpKey && (
         <Help
-          title="Destination record structure"
           className={classes.helpButton}
           helpKey={helpKey}
         />
       )}
       <ActionGroup position="right" className={classes.actions}>
-        <OutputFormatsList disabled={disabled} />
-
-        <CeligoDivider position="right" />
 
         <TextButton
           data-test="refreshExtracts"

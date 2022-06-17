@@ -208,7 +208,7 @@ export default {
           .map(e => _mapList[e].export);
 
         if (duplicateKeys.length) {
-          errorMessage = `You cannot have duplicate source record field values: ${duplicateKeys.join(
+          errorMessage = `You cannot have duplicate source field values: ${duplicateKeys.join(
             ','
           )}`;
         }
