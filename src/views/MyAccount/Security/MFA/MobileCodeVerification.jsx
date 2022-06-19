@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Step3() {
+export default function MobileCodeVerification() {
   const dispatch = useDispatch();
   const classes = useStyles();
   const fieldMeta = useMemo(

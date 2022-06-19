@@ -150,6 +150,7 @@ import DynaSelectAliasResource from './aliases/DynaSelectAliasResource';
 import DynaIntegrationCloneSelect from './select/DynaIntegrationCloneSelect';
 import DynaAmazonmwsType from './DynaAmazonmwsType';
 import DynaMFAMobileCode from './DynaMFAMobileCode';
+import DynaMFASecretKey from './DynaMFASecretKey';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -311,4 +312,5 @@ export default {
   integrationcloneselect: DynaIntegrationCloneSelect,
   amazonmwstype: DynaAmazonmwsType,
   mfamobilecode: DynaMFAMobileCode,
+  mfasecretkey: DynaMFASecretKey,
 };

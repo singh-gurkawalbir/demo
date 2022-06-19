@@ -13,8 +13,6 @@ function ViewSecretCode() {
   const showSecretCode = useSelector(selectors.showSecretCode);
   const secretCode = useSelector(selectors.secretCode);
 
-  console.log(secretCode);
-
   return (
     <>
       <div> Can’t scan your QR code? Enter the following code and URL in your verification app: </div>
@@ -51,7 +49,7 @@ function ViewQRCode() {
     </>
   );
 }
-export default function Step2() {
+export default function MFACodeGeneration() {
   return (
     <>
       <div> Add integrator.io</div>

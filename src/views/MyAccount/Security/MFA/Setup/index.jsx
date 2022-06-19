@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import Stepper from '../Stepper';
-import Step1 from '../Step1';
-import Step2 from '../Step2';
-import Step3 from '../Step3';
+import MFACodeGeneration from '../MFACodeGeneration';
+import MobileCodeVerification from '../MobileCodeVerification';
 import ConnectDevice from '../ConnectDevice';
 import actions from '../../../../../actions';
 
@@ -15,13 +14,14 @@ export default function MFASetup() {
   return (
     <>
       <Stepper index={1}>
-        <Step1 />
+        <span>Get verification app</span>
+        <div>Install any authenticator app that supports TOTP protocol or time-based one time password.</div>
       </Stepper>
       <Stepper index={2}>
-        <Step2 />
+        <MFACodeGeneration />
       </Stepper>
       <Stepper index={3}>
-        <Step3 />
+        <MobileCodeVerification />
       </Stepper>
       <ConnectDevice />
     </>

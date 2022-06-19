@@ -69,11 +69,15 @@ function MyUserSettings() {
   const classes = useStyles();
   const mfaEnabled = useSelector(state => selectors.isMFAEnabled(state));
 
-  const [isMFAEnabled, setIsMFAEnabled] = useState(mfaEnabled);
+  const [isMFAEnabled, setIsMFAEnabled] = useState();
 
   const handleEnableMFA = useCallback(() => {
     setIsMFAEnabled(!isMFAEnabled);
   }, [isMFAEnabled]);
+
+  useEffect(() => {
+    setIsMFAEnabled(mfaEnabled);
+  }, [mfaEnabled]);
 
   return (
     <div className={classes.userSettings}>

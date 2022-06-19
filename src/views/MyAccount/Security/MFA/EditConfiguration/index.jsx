@@ -1,9 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import QRCode from 'react-qr-code';
 import { makeStyles } from '@material-ui/core/styles';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import OutlinedButton from '../../../../../components/Buttons/OutlinedButton';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import ReAuthModal from '../ReAuthModal';
+import ResetAuthorizeModal from './MFAResetAuthorization';
+import { selectors } from '../../../../../reducers';
+import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -18,16 +24,38 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ResetMFA() {
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
   return (
     <div>
-      Reset MFA
+      <div>Reset MFA</div>
+      <OutlinedButton onClick={() => setShowAuthModal(true)}> Reset </OutlinedButton>
+      {showAuthModal && (
+      <ResetAuthorizeModal onClose={() => setShowAuthModal(false)} />
+      )}
     </div>
   );
 }
 
-function QRCode() {
+function ViewQRCode() {
+  const [showQRAuthModal, setShowQRAuthModal] = useState(false);
+  const showQrCode = useSelector(selectors.showQrCode);
+  const qrCode = useSelector(selectors.qrCode);
+
   return (
-    <div> QR code</div>
+    <>
+      <div> QR code</div>
+      { showQrCode
+        ? <QRCode value={qrCode} size={64} />
+        : (<OutlinedButton onClick={() => setShowQRAuthModal(true)}> View code </OutlinedButton>)}
+      {showQRAuthModal && (
+      <ReAuthModal
+        title="Re-authenticate your account"
+        onClose={() => setShowQRAuthModal(false)}
+        isQRCode
+         />
+      )}
+    </>
   );
 }
 
@@ -42,44 +70,65 @@ function TrustedDevices() {
 
 export default function EditMFAConfiguration() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const primaryAccounts = useSelector(selectors.primaryAccounts);
+  const isAccountOwner = useSelector(state => selectors.isAccountOwner(state));
+
+  const primaryAccountOptions = useMemo(() => (
+    [{
+      items: primaryAccounts.map(
+        acc => ({label: acc.ownerUser?.name, value: acc.ownerUser?._id})
+      ),
+    }]
+  ), [primaryAccounts]);
   const fieldMeta = useMemo(
-    () => ({
-      fieldMap: {
-        secretKey: {
-          id: 'secretKey',
-          name: 'secretKey',
-          type: 'text',
+    () => {
+      const metadata = {
+        fieldMap: {
+          secretKey: {
+            id: 'secretKey',
+            name: 'secretKey',
+            type: 'mfasecretkey',
+            noApi: true,
+            isLoggable: false,
+          },
+        },
+      };
+
+      if (!isAccountOwner) {
+        metadata.fieldMap._allowResetByUserId = {
+          id: '_allowResetByUserId',
+          name: '_allowResetByUserId',
+          label: 'Primary account',
+          type: 'select',
           noApi: true,
           isLoggable: false,
-        },
-        primaryAccount: {
-          id: 'primaryAccount',
-          name: 'primaryAccount',
-          type: 'text',
           required: true,
-          noApi: true,
-          isLoggable: false,
-        },
-      },
-    }),
-    []
+          options: primaryAccountOptions,
+        };
+      }
+
+      return metadata;
+    },
+    [isAccountOwner, primaryAccountOptions]
   );
 
   const formKey = useFormInitWithPermissions({ fieldMeta });
   const updateMFA = values => console.log(values);
 
+  useEffect(() => () => dispatch(actions.mfa.clear()), [dispatch]);
+
   return (
     <>
       <div className={classes.container}>
         <ResetMFA />
-        <QRCode />
+        <ViewQRCode />
         <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
         <TrustedDevices />
       </div>
       <DynaSubmit
         formKey={formKey}
         className={classes.saveConfig}
-        // disabled={disableSave}
         onClick={updateMFA}>
         Save
       </DynaSubmit>

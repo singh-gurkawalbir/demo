@@ -1,5 +1,6 @@
 import { call, put, takeLatest, delay, select } from 'redux-saga/effects';
 import actions from '../../actions';
+import { MFA_RESET_ASYNC_KEY } from '../../utils/constants';
 import { selectors } from '../../reducers';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -122,13 +123,14 @@ export function* requestSecretCode({ password, isQRCode }) {
   }
   yield put(actions.mfa.showSecretCode());
 }
-export function* resetMFA({ password, aShareId }) {
+export function* resetMFA({ password }) {
   // yield delay(500);
   // const response = undefined;
   const path = '/mfa/reset';
 
+  yield put(actions.asyncTask.start(MFA_RESET_ASYNC_KEY));
   try {
-    const response = yield call(apiCallWithRetry, {
+    yield call(apiCallWithRetry, {
       path,
       opts: {
         body: { password },
@@ -136,8 +138,11 @@ export function* resetMFA({ password, aShareId }) {
       },
     });
 
-    yield put(actions.mfa.receivedUserSettings(response));
+    yield put(actions.mfa.requestUserSettings());
+    yield put(actions.asyncTask.success(MFA_RESET_ASYNC_KEY));
   } catch (error) {
+    yield put(actions.asyncTask.failed(MFA_RESET_ASYNC_KEY));
+
     return undefined;
   }
 }
