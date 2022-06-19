@@ -1,10 +1,11 @@
-import { put, select, takeEvery } from 'redux-saga/effects';
+import { call, put, select, takeEvery } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
+import { cloneDeep } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../../constants';
 import { selectors } from '../../reducers';
-import { mergeDragSourceWithTarget } from '../../utils/flows/flowbuilder';
+import { getIncomingRoutersMap, mergeDragSourceWithTarget } from '../../utils/flows/flowbuilder';
 
 export function* createNewPGStep({ flowId }) {
   yield put(actions.flow.setSaveStatus(flowId, 'saving'));
@@ -220,12 +221,12 @@ export function* deleteEdge({ flowId, edgeId }) {
   yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
 }
 
-export function* deleteRouter({flowId, routerId}) {
+export function* deleteRouter({flowId, routerId, prePatches}) {
   yield put(actions.flow.setSaveStatus(flowId, 'saving'));
 
   const flow = yield select(selectors.fbFlow, flowId);
   const {routers = []} = flow;
-  const patchSet = [];
+  const patchSet = prePatches || [];
 
   const router = routers.find(r => r.id === routerId);
 
@@ -274,14 +275,11 @@ export function* deleteRouter({flowId, routerId}) {
       }
     } else if (routers[0].id === routerId) {
       if (router.branches.length > 1) {
-        router.branches.forEach((_, branchIndex) => {
-          if (branchIndex !== 0) {
-            patchSet.push({
-              op: 'remove',
-              path: `/routers/0/branches/${branchIndex}`,
-            });
-          }
-        });
+        const observer = jsonPatch.observe(flow);
+
+        router.branches.length = 1;
+
+        patchSet.push(...jsonPatch.generate(observer));
       }
     }
     yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));

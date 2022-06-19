@@ -1,30 +1,33 @@
 /* eslint-disable no-param-reassign */
 import React, { useState, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import {
   ClickAwayListener,
   IconButton,
   MenuItem,
 } from '@material-ui/core';
+import { useDispatch, useSelector } from 'react-redux';
 import ArrowPopper from '../../../../../ArrowPopper';
 import EllipsisHorizontalIcon from '../../../../../icons/EllipsisHorizontalIcon';
 import EditIcon from '../../../../../icons/EditIcon';
 import TrashIcon from '../../../../../icons/TrashIcon';
+import { selectors } from '../../../../../../reducers';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
 import RawHtml from '../../../../../RawHtml';
+import actions from '../../../../../../actions';
 
-export default function MoreActionsButton({position, pageProcessors = [], allowDeleting}) {
+export default function MoreActionsButton({editorId, position, pageProcessors = [], allowDeleting}) {
   const history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const open = Boolean(anchorEl);
-
+  const dispatch = useDispatch();
   const handleCloseMenu = event => {
     event.stopPropagation();
     setAnchorEl(null);
   };
+  const branches = useSelector(state => selectors.editor(state, editorId)?.rule.branches);
   const handleOpenMenu = event => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
@@ -56,14 +59,17 @@ export default function MoreActionsButton({position, pageProcessors = [], allowD
         {
           label: 'Confirm',
           onClick: () => {
-            /* TODO: dispatch action to delete branch */
+            const branchesCopy = [...branches];
+
+            branchesCopy.splice(position, 1);
+            dispatch(actions.editor.patchRule(editorId, branchesCopy, {rulePath: 'branches'}));
           },
         },
         { label: 'Cancel', variant: 'text' },
       ],
     });
   },
-  [confirmDialog, pageProcessors]
+  [branches, confirmDialog, dispatch, editorId, pageProcessors, position]
   );
 
   return (

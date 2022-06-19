@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { makeStyles, Divider, Typography } from '@material-ui/core';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import Help from '../../../../Help';
@@ -11,6 +11,7 @@ import actions from '../../../../../actions';
 import DynaRadioGroup from '../../../../DynaForm/fields/radiogroup/DynaRadioGroup';
 import BranchDrawer from './BranchDrawer';
 import BranchItem from './BranchItem';
+import { shortId } from '../../../../../utils/flows/flowbuilder';
 
 const moveArrayItem = (arr, oldIndex, newIndex) => {
   const newArr = [...arr];
@@ -60,9 +61,10 @@ const SortableContainer = sortableContainer(({children, className}) => (
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList,
+  const __branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList,
     (left, right) => getBranchHash(left) === getBranchHash(right)
   );
+  const branches = useMemo(() => __branches.map(b => ({...b, id: shortId()})), [__branches]);
   const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
   const routerIndex = useSelector(state => selectors.editor(state, editorId)?.routerIndex || 0);
   const allowSorting = routeRecordsTo === 'first_matching_branch';
@@ -150,7 +152,7 @@ export default function RouterPanel({ editorId }) {
             expandable={activeProcessor === 'filter'}
             expanded={b.expanded}
             onToggleExpand={handleToggleExpand}
-            key={b.name}
+            key={b.id}
             index={i} // The HOC does not proxy index to child, so we need `position` as well.
             position={i}
             branchName={b.name}

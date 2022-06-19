@@ -1,3 +1,5 @@
+import { isObject, set } from 'lodash';
+
 export default {
   /*
 
@@ -101,4 +103,19 @@ export default {
 
     return keysList;
   },
+  jsonPathsToObjectNotation: jsonPath => {
+    if (!/^\//.test(jsonPath) || typeof jsonPath !== 'string') return jsonPath;
+
+    return jsonPath.split('/').slice(1).join('.');
+  },
+};
+
+export const setObjectValue = (object, __path, value) => {
+  if (!__path || typeof __path !== 'string' || !isObject(object)) return;
+  let path = __path;
+
+  if (path.startsWith('/')) {
+    path = path.split('/').slice(1).join('.');
+  }
+  set(object, path, value);
 };

@@ -164,7 +164,12 @@ export default function BranchItem({
                 )}
               </div>
 
-              <MoreActionsButton position={position} pageProcessors={pageProcessors} allowDeleting={allowDeleting} />
+              <MoreActionsButton
+                position={position}
+                pageProcessors={pageProcessors}
+                allowDeleting={allowDeleting}
+                editorId={editorId}
+              />
             </div>
           </AccordionSummary>
 
