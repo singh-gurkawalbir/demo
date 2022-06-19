@@ -20,6 +20,11 @@ module.exports = {
     'src/reducers/**/*.{js,jsx}',
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
+    'src/components/CeligoDivider/CeligoDivider.{js,jsx}',
+    'src/components/CeligoPagination/CeligoPagination.{js,jsx}',
+    'src/components/CeligoSwitch/CeligoSwitch.{js,jsx}',
+    'src/components/CheckPermissions/CheckPermissions.{js,jsx}',
+    'src/components/ClipboardCopy/Clipboard.{js,jsx}',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js'],
   coverageThreshold: {
