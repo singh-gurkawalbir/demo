@@ -30,54 +30,48 @@ export function* requestUserSettings() {
   }
 }
 export function* requestAccountSettings() {
-  yield delay(500);
-  const response = {
-    allowTrustedDevices: true,
-    trustDeviceForPeriod: 200,
-  };
+  // yield delay(500);
+  // const response = {
+  //   allowTrustedDevices: true,
+  //   trustDeviceForPeriod: 200,
+  // };
 
-  // const path = '/trustedDevices/settings';
-  // try {
-  //   response = yield call(apiCallWithRetry, {
-  //     path,
-  //     opts: {
-  //       method: 'GET',
-  //     },
-  //   });
-  // } catch (error) {
-  //   return undefined;
-  // }
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path: '/trustedDevices/settings',
+      opts: {
+        method: 'GET',
+      },
+    });
 
-  yield put(actions.mfa.receivedAccountSettings(response));
+    yield put(actions.mfa.receivedAccountSettings(response));
+  } catch (error) {
+    return undefined;
+  }
 }
 export function* setupMFA({ mfaConfig }) {
-  yield delay(500);
-  const response = {
-    enabled: true,
-    secret: undefined,
-    trustedDevices: [{browser: 'browser', os: 'os', _id: '_id'}],
-    _allowResetByUserId: true,
-  };
+  // const response = {
+  //   enabled: true,
+  //   secret: undefined,
+  //   trustedDevices: [{browser: 'browser', os: 'os', _id: '_id'}],
+  //   _allowResetByUserId: true,
+  // };
 
   // const path = '/mfa/setup';
 
-  // try {
-  //   response = yield call(apiCallWithRetry, {
-  //     path,
-  //     opts: {
-  //       body: {
-  //         enabled: true,
-  //         _allowResetByUserId: true,
-  //         trustDevice: true, // if trust device is checked
-  //       },
-  //       method: 'POST',
-  //     },
-  //   });
-  // } catch (error) {
-  //   return undefined;
-  // }
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path: '/mfa/setup',
+      opts: {
+        body: {...mfaConfig, enabled: true},
+        method: 'POST',
+      },
+    });
 
-  yield put(actions.mfa.receivedUserSettings(response));
+    yield put(actions.mfa.receivedUserSettings(response));
+  } catch (error) {
+    return undefined;
+  }
 }
 export function* updateAccountSettings({ accountSettings }) {
   yield delay(500);
@@ -189,8 +183,6 @@ export function* deleteTrustedDevice({ deviceName }) {
   yield put(actions.mfa.receivedAccountSettings(response));
 }
 export function* verifyMobileCode({ code }) {
-  // yield delay(500);
-  // const response = { status: 'success'};
   const path = '/mfa/test';
 
   try {
@@ -202,8 +194,8 @@ export function* verifyMobileCode({ code }) {
       },
     });
 
-    if (response.status === 'success') {
-      return yield put(actions.mfa.mobileCodeVerified('success'));
+    if (response.status === 'pass') {
+      return yield put(actions.mfa.mobileCodeVerified('pass'));
     }
 
     yield put(actions.mfa.mobileCodeVerified('fail'));

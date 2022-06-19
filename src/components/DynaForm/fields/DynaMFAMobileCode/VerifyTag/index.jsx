@@ -36,7 +36,7 @@ export default function VerifyTag({ isValid }) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const verificationSuccess = useSelector(state => selectors.mobileCodeStatus(state) === 'success');
+  const verificationSuccess = useSelector(state => selectors.mobileCodeStatus(state) === 'pass');
   const verificationFailed = useSelector(state => selectors.mobileCodeStatus(state) === 'fail');
 
   if (!isValid) {

@@ -5,6 +5,7 @@ import { Typography } from '@material-ui/core';
 import CeligoSwitch from '../../../../components/CeligoSwitch';
 import PanelHeader from '../../../../components/PanelHeader';
 import Help from '../../../../components/Help';
+import Spinner from '../../../../components/Spinner';
 import CollapsableContainer from '../../../../components/CollapsableContainer';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
@@ -96,24 +97,30 @@ function MyUserSettings() {
 export default function MFA() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const hasMFASettings = useSelector(selectors.mfaUserSettings);
+  const areUserSettingsLoaded = useSelector(selectors.areUserSettingsLoaded);
+  const areAccountSettingsLoaded = useSelector(selectors.areAccountSettingsLoaded);
 
   useEffect(() => {
-    if (!hasMFASettings) {
+    if (!areUserSettingsLoaded) {
       dispatch(actions.mfa.requestUserSettings());
     }
-  }, [hasMFASettings, dispatch]);
+  }, [areUserSettingsLoaded, dispatch]);
+  // useEffect(() => {
+  //   if (!areAccountSettingsLoaded) {
+  //     dispatch(actions.mfa.requestAccountSettings());
+  //   }
+  // }, [areAccountSettingsLoaded, dispatch]);
 
   return (
     <div className={classes.root}>
       <PanelHeader title="Multifactor authentication (MFA)" />
       <div className={classes.collapseContainer}>
         <CollapsableContainer title="My user" forceExpand>
-          <MyUserSettings />
+          { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner /> }
         </CollapsableContainer>
       </div>
       <div className={classes.collapseContainer}>
-        <AccountSettings />
+        { !areAccountSettingsLoaded ? <AccountSettings /> : <Spinner /> }
       </div>
     </div>
   );
