@@ -182,7 +182,6 @@ export function* createNewPPStep({ flowId, path: branchPath, processorIndex }) {
 }
 
 export function* mergeBranch({flowId}) {
-  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
   const flow = yield select(selectors.fbFlow, flowId);
   const elementsMap = yield select(selectors.fbGraphElementsMap, flowId);
   const mergeTargetId = yield select(selectors.fbMergeTargetId, flowId);
@@ -193,10 +192,10 @@ export function* mergeBranch({flowId}) {
   // It's possible that a user releases the mouse while NOT on top of a valid merge target.
   // if this is the case, we still want to reset the drag state, just skip the merge attempt.
   if (mergeTargetId && mergeTargetType) {
+    yield put(actions.flow.setSaveStatus(flowId, 'saving'));
     mergeDragSourceWithTarget(flow, elementsMap, dragStepId, mergeTargetId, patchSet);
+    yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
   }
-
-  yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
 
   // After merge is complete, we need to reset the state to remove all the transient state
   // used while dragging is being performed.
