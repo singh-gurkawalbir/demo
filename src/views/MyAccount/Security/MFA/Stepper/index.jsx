@@ -31,6 +31,8 @@ const useStyles = makeStyles(theme => ({
   childrenContainer: {
     position: 'relative',
     paddingLeft: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    flex: 1,
   },
 }));
 

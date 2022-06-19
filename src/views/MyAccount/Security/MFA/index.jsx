@@ -39,6 +39,10 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     marginRight: theme.spacing(2),
   },
+  mfaConfig: {
+    marginTop: theme.spacing(2),
+    marginLeft: theme.spacing(2),
+  },
   userSettings: {
     margin: theme.spacing(2),
   },

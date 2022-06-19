@@ -43,7 +43,7 @@ export default function SSOUserSettings() {
   const dispatch = useDispatch();
   const [remountCount, setRemountCount] = useState(0);
   const preferences = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
-  const ssoPrimaryAccounts = useSelector(state => selectors.ssoPrimaryAccounts(state), shallowEqual);
+  const ssoPrimaryAccounts = useSelector(state => selectors.primaryAccounts(state), shallowEqual);
   const primaryAccountOptions = useMemo(() => (
     [{
       items: ssoPrimaryAccounts.map(

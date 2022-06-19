@@ -66,6 +66,7 @@ selectors.showQrCode = state => state?.showQrCode;
 selectors.showSecretCode = state => state?.showSecretCode;
 
 selectors.mobileCodeStatus = state => state?.mobileCode?.status;
+selectors.isMobileCodeVerified = state => state?.mobileCode?.status === 'success';
 selectors.mobileCodeError = state => state?.mobileCode?.error;
 
 selectors.qrCode = state => state?.secretCode?.keyURI;
