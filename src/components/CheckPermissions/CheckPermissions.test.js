@@ -33,7 +33,6 @@ describe('plz work', () => {
     const message = screen.getByText('You are allowed to see this content');
 
     expect(message).toBeInTheDocument();
-    screen.debug();
   });
   test('when monitor tries to see the content', async () => {
     const permission = PERMISSIONS &&
@@ -101,7 +100,6 @@ describe('plz work', () => {
     const message = screen.getByText('You are allowed to see this content');
 
     expect(message).toBeInTheDocument();
-    screen.debug();
   });
   test('when manage tries to see the content', async () => {
     mockGetRequestOnce('/api/preferences', {
@@ -163,7 +161,5 @@ describe('plz work', () => {
     const message = screen.getByText('You do not have permissions to access this page.');
 
     expect(message).toBeInTheDocument();
-
-    screen.debug();
   });
 });
