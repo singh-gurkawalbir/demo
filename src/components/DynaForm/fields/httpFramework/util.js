@@ -4,9 +4,9 @@ import { deepClone } from 'fast-json-patch';
 import { stringCompare } from '../../../../utils/sort';
 
 function versionOptions({ assistantData }) {
-  return assistantData?.versions?.map(vesrion => ({
-    label: vesrion.version,
-    value: vesrion.version,
+  return assistantData?.versions?.map(version => ({
+    label: version.version,
+    value: version.version,
   }));
 }
 

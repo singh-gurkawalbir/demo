@@ -55,6 +55,7 @@ const SearchParamsModal = props => {
     resourceContext,
   } = props;
   const dispatch = useDispatch();
+  const classes = useStyles();
 
   const { merged } =
     useSelectorMemo(
@@ -71,7 +72,7 @@ const SearchParamsModal = props => {
     operationChanged: merged.assistantMetadata?.operationChanged,
   });
 
-  function onSaveClick(formValues) {
+  const onSaveClick = formValues => {
     const updatedValues = updateFormValues({
       formValues,
       fieldDetailsMap,
@@ -92,7 +93,7 @@ const SearchParamsModal = props => {
       )
     );
     onClose();
-  }
+  };
 
   const validationHandler = field => {
     if (field?.id && fieldDetailsMap[field.id]) {
@@ -119,7 +120,6 @@ const SearchParamsModal = props => {
     },
     validationHandler,
   });
-  const classes = useStyles();
 
   return (
     <ModalDialog show onClose={onClose} className={classes.searchParamModalContent} minWidth="sm">
