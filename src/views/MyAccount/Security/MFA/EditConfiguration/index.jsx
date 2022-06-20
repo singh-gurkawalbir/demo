@@ -119,6 +119,7 @@ export default function EditMFAConfiguration() {
             id: 'secretKey',
             name: 'secretKey',
             type: 'mfasecretkey',
+            label: 'Secret key',
             noApi: true,
             isLoggable: false,
           },
@@ -167,12 +168,14 @@ export default function EditMFAConfiguration() {
           <TrustedDevices />
         </div>
       </div>
-      <DynaSubmit
-        formKey={formKey}
-        className={classes.saveConfig}
-        onClick={updateMFA}>
-        Save
-      </DynaSubmit>
+      {!isAccountOwner ? (
+        <DynaSubmit
+          formKey={formKey}
+          className={classes.saveConfig}
+          onClick={updateMFA}>
+          Save
+        </DynaSubmit>
+      ) : null }
     </>
   );
 }

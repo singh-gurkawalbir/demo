@@ -92,9 +92,7 @@ function MyUserSettings() {
       <div className={classes.mfaSwitch}>
         <Typography variant="body2" className={classes.content}> Enable MFA </Typography>
         <Help title="Enable OIDC-based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
-        <CeligoSwitch
-          onChange={handleEnableMFA}
-          checked={isMFAEnabled} />
+        <CeligoSwitch onChange={handleEnableMFA} checked={isMFAEnabled} />
         {/* {isEnableSSOSwitchInProgress && <Spinner size="small" className={classes.spinner} />} */}
       </div>
       { isMFAEnabled ? (
@@ -106,34 +104,45 @@ function MyUserSettings() {
   );
 }
 
-export default function MFA() {
+function MFADetails() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const areUserSettingsLoaded = useSelector(selectors.areUserSettingsLoaded);
-  // const areAccountSettingsLoaded = useSelector(selectors.areAccountSettingsLoaded);
+  const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
+
+  const UserSettings = () => {
+    if (isAccountOwnerOrAdmin) {
+      return (
+        <CollapsableContainer title="My user" forceExpand>
+          { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner /> }
+        </CollapsableContainer>
+      );
+    }
+
+    return (areUserSettingsLoaded ? <MyUserSettings /> : <Spinner />);
+  };
 
   useEffect(() => {
     if (!areUserSettingsLoaded) {
       dispatch(actions.mfa.requestUserSettings());
     }
   }, [areUserSettingsLoaded, dispatch]);
-  // useEffect(() => {
-  //   if (!areAccountSettingsLoaded) {
-  //     dispatch(actions.mfa.requestAccountSettings());
-  //   }
-  // }, [areAccountSettingsLoaded, dispatch]);
+
+  // TODO: Account settings will be added in Phase 2
+  return (
+    <div className={classes.collapseContainer}>
+      <UserSettings />
+    </div>
+  );
+}
+
+export default function MFA() {
+  const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <PanelHeader title="Multifactor authentication (MFA)" />
-      <div className={classes.collapseContainer}>
-        <CollapsableContainer title="My user" forceExpand>
-          { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner /> }
-        </CollapsableContainer>
-      </div>
-      {/* <div className={classes.collapseContainer}>
-        { !areAccountSettingsLoaded ? <AccountSettings /> : <Spinner /> }
-      </div> */}
+      <MFADetails />
     </div>
   );
 }
