@@ -32,8 +32,10 @@ export const selectors = {};
 selectors.areUserSettingsLoaded = state => state?.status?.userSettings === 'received';
 selectors.areAccountSettingsLoaded = state => state?.status?.accountSettings === 'received';
 
+selectors.isMFAConfigured = state => [true, false].includes(state?.userSettings?.enabled);
 selectors.isMFAEnabled = state => !!state?.userSettings?.enabled;
 selectors.mfaUserSettings = state => state?.userSettings;
+selectors.selectedPrimaryAccount = state => state?.userSettings?._allowResetByUserId;
 selectors.mfaAccountSettings = state => state?.accountSettings;
 selectors.isSecretCodeGenerated = state => state?.userSettings?.secret;
 selectors.trustedDevices = state => {

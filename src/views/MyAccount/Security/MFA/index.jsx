@@ -11,7 +11,7 @@ import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import MFASetup from './Setup';
 import EditMFAConfiguration from './EditConfiguration';
-import AccountSettings from './AccountSettings';
+// import AccountSettings from './AccountSettings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -67,13 +67,21 @@ function MFAConfiguration() {
 
 function MyUserSettings() {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const mfaEnabled = useSelector(state => selectors.isMFAEnabled(state));
+  const mfaUserSettings = useSelector(state => selectors.mfaUserSettings(state));
+  const isMFAConfigured = useSelector(state => selectors.isMFAConfigured(state));
 
   const [isMFAEnabled, setIsMFAEnabled] = useState();
 
   const handleEnableMFA = useCallback(() => {
+    if (isMFAConfigured) {
+      dispatch(actions.mfa.setUp({ ...mfaUserSettings, enabled: !mfaEnabled}));
+
+      return;
+    }
     setIsMFAEnabled(!isMFAEnabled);
-  }, [isMFAEnabled]);
+  }, [isMFAConfigured, dispatch, mfaEnabled, isMFAEnabled, mfaUserSettings]);
 
   useEffect(() => {
     setIsMFAEnabled(mfaEnabled);
@@ -102,7 +110,7 @@ export default function MFA() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const areUserSettingsLoaded = useSelector(selectors.areUserSettingsLoaded);
-  const areAccountSettingsLoaded = useSelector(selectors.areAccountSettingsLoaded);
+  // const areAccountSettingsLoaded = useSelector(selectors.areAccountSettingsLoaded);
 
   useEffect(() => {
     if (!areUserSettingsLoaded) {
@@ -123,9 +131,9 @@ export default function MFA() {
           { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner /> }
         </CollapsableContainer>
       </div>
-      <div className={classes.collapseContainer}>
+      {/* <div className={classes.collapseContainer}>
         { !areAccountSettingsLoaded ? <AccountSettings /> : <Spinner /> }
-      </div>
+      </div> */}
     </div>
   );
 }

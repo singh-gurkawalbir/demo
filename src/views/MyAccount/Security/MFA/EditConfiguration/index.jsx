@@ -24,6 +24,9 @@ const useStyles = makeStyles(theme => ({
   saveConfig: {
     marginLeft: theme.spacing(2),
   },
+  actions: {
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 function ResetMFA() {
@@ -88,8 +91,12 @@ function TrustedDevices() {
 export default function EditMFAConfiguration() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [remountKey, setRemountKey] = useState(1);
   const primaryAccounts = useSelector(selectors.primaryAccounts);
+  const selectedPrimaryAccount = useSelector(selectors.selectedPrimaryAccount);
+  const mfaUserSettings = useSelector(selectors.mfaUserSettings);
   const isAccountOwner = useSelector(state => selectors.isAccountOwner(state));
+  const areUserSettingsLoaded = useSelector(selectors.areUserSettingsLoaded);
 
   const primaryAccountOptions = useMemo(() => (
     [{
@@ -98,6 +105,12 @@ export default function EditMFAConfiguration() {
       ),
     }]
   ), [primaryAccounts]);
+
+  useEffect(() => {
+    setRemountKey(remountKey => remountKey + 1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [areUserSettingsLoaded]);
+
   const fieldMeta = useMemo(
     () => {
       const metadata = {
@@ -118,6 +131,7 @@ export default function EditMFAConfiguration() {
           name: '_allowResetByUserId',
           label: 'Primary account',
           type: 'select',
+          defaultValue: selectedPrimaryAccount,
           noApi: true,
           isLoggable: false,
           required: true,
@@ -127,21 +141,31 @@ export default function EditMFAConfiguration() {
 
       return metadata;
     },
-    [isAccountOwner, primaryAccountOptions]
+    [isAccountOwner, primaryAccountOptions, selectedPrimaryAccount]
   );
 
-  const formKey = useFormInitWithPermissions({ fieldMeta });
-  const updateMFA = values => console.log(values);
+  const formKey = useFormInitWithPermissions({ fieldMeta, remountKey });
+  const updateMFA = useCallback(values => {
+    const { _allowResetByUserId } = values;
+
+    dispatch(actions.mfa.setUp({ ...mfaUserSettings, _allowResetByUserId}));
+  }, [dispatch, mfaUserSettings]);
 
   useEffect(() => () => dispatch(actions.mfa.clear()), [dispatch]);
 
   return (
     <>
       <div className={classes.container}>
-        <ResetMFA />
-        <ViewQRCode />
+        <div className={classes.actions}>
+          <ResetMFA />
+        </div>
+        <div className={classes.actions}>
+          <ViewQRCode />
+        </div>
         <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
-        <TrustedDevices />
+        <div className={classes.actions}>
+          <TrustedDevices />
+        </div>
       </div>
       <DynaSubmit
         formKey={formKey}

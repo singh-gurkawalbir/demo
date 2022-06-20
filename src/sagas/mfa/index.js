@@ -64,7 +64,7 @@ export function* setupMFA({ mfaConfig }) {
     const response = yield call(apiCallWithRetry, {
       path: '/mfa/setup',
       opts: {
-        body: {...mfaConfig, enabled: true},
+        body: {...mfaConfig},
         method: 'POST',
       },
     });

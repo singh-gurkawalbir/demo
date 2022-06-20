@@ -89,6 +89,7 @@ function ConnectAccountUserDevice() {
     const payload = {
       _allowResetByUserId,
       trustDevice,
+      enabled: true,
     };
 
     dispatch(actions.mfa.setUp(payload));
@@ -118,7 +119,7 @@ function ConnectOwnerDevice() {
   const [trustDevice, setTrustDevice] = useState(false);
   const isMobileCodeVerified = useSelector(selectors.isMobileCodeVerified);
   const connectDevice = useCallback(() => {
-    dispatch(actions.mfa.setUp({ trustDevice }));
+    dispatch(actions.mfa.setUp({ trustDevice, enabled: true }));
   }, [dispatch, trustDevice]);
 
   return (
