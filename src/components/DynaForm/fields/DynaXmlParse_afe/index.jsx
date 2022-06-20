@@ -82,7 +82,6 @@ export default function DynaXmlParse_afe({
   disabled,
   flowId,
   formKey,
-  isHttp,
   label,
   formKey: parentFormKey,
 }) {
@@ -96,14 +95,16 @@ export default function DynaXmlParse_afe({
   const isParserSupportedForHTTP = useSelector(state => selectors.isParserSupportedForHTTP(state, formKey, 'xml'));
 
   const resourcePath = useSelector(state =>
-    isHttp ? selectors.resource(state, resourceType, resourceId)?.http?.response?.resourcePath : selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
+    isParserSupportedForHTTP ? selectors.resource(state, resourceType, resourceId)?.http?.response?.resourcePath : selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
 
+  // console.log("AXB = ", resourcePath);
   const getInitOptions = useCallback(
     val => ({ resourcePath, ...val?.[0]?.rules}),
     [resourcePath],
   );
   const options = useMemo(() => getInitOptions(value), [getInitOptions, value]);
-  const [form, setForm] = useState(getForm(options, resourceId));
+  const [form, setForm] = useState(getForm(options, resourceId, isParserSupportedForHTTP));
+
 
   // below logic would need to move to data-layer as part of tracker IO-17578
   useEffect(() => {
@@ -113,7 +114,7 @@ export default function DynaXmlParse_afe({
         {
           op: 'replace',
           path: '/parsers',
-          value:
+          value: isParserSupportedForHTTP ?
             {
               type: 'xml',
               version: 1,
@@ -122,13 +123,13 @@ export default function DynaXmlParse_afe({
                 stripNewLineChars: false,
                 trimSpaces: false,
               },
-            },
+            } : undefined,
 
         }];
 
       dispatch(actions.resource.patchStaged(resourceId, patch, 'value'));
     }
-  }, [options, dispatch, resourceId]);
+  }, [options, dispatch, resourceId, isParserSupportedForHTTP]);
 
   const handleSave = useCallback((editorValues = {}) => {
     const { rule } = editorValues;
@@ -185,7 +186,16 @@ export default function DynaXmlParse_afe({
     }));
   }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
 
-  if (isHttp && !isParserSupportedForHTTP) return null;
+  // console.log("IO =",isParserSupportedForHTTP);
+  // useEffect(() => {
+  //   if (!isParserSupportedForHTTP) {
+  //     dispatch(actions.form.forceFieldState(formKey)(id, {visible: false}));
+  //   } else {
+  //     dispatch(actions.form.forceFieldState(formKey)(id, {visible: true}));
+  //   }
+  // }, [dispatch, formKey, id, isParserSupportedForHTTP]);
+
+  if (!isParserSupportedForHTTP) return null;
 
   return (
     <>

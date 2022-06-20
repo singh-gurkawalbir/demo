@@ -462,12 +462,12 @@ export default {
 
       return 'export.http.response.resourcePath';
     },
-    requiredWhen: [
-      {
-        field: 'http.successMediaType',
-        is: ['xml'],
-      },
-    ],
+    // requiredWhen: [
+    //   {
+    //     field: 'http.successMediaType',
+    //     is: ['xml'],
+    //   },
+    // ],
     visibleWhen: [
       {
         field: 'http.successMediaType',

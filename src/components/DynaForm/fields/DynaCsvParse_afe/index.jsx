@@ -55,7 +55,6 @@ export default function DynaCsvParse_afe(props) {
     formKey: parentFormKey,
     flowId,
     formKey,
-    isHttp,
     ignoreSortAndGroup = false,
   } = props;
   const classes = useStyles();
@@ -134,7 +133,7 @@ export default function DynaCsvParse_afe(props) {
     }));
   }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
 
-  if (isHttp && !isParserSupportedForHTTP) return null;
+  if (!isParserSupportedForHTTP) return null;
 
   return (
     <>

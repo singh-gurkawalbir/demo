@@ -29,6 +29,8 @@ export default function XmlParseRules({ editorId }) {
   const resourceId = useSelector(state => selectors.editor(state, editorId).resourceId);
   const formContext = useFormContext(formKey);
 
+  console.log("AXC = ", rule);
+
   // Since the form metadata is used only once, we don't need to refresh the
   // metadata cache on rule changes... we just need the original rule to set the
   // starting values.

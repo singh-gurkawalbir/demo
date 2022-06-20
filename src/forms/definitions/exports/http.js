@@ -229,6 +229,14 @@ export default {
       retValues['/unencrypted/apiType'] = 'Amazon-SP-API';
     }
 
+    if (retValues['/parsers']?.resourcePath) {
+      retValues['/http/response/resourcePath'] = retValues['/parsers'].resourcePath;
+      // console.log("ALPHA = ", retValues['/http/response/resourcePath']);
+      // delete retValues['/parsers'].resourcePath;
+    }
+    // console.log("ZXC = ", retValues);
+
+
     return {
       ...retValues,
     };
@@ -269,6 +277,16 @@ export default {
     parsers: {
       fieldId: 'parsers',
       isHttp: true,
+      // visibleWhenAll: [
+      //   {
+      //     field: 'outputMode',
+      //     is: ['records'],
+      //   },
+      //   {
+      //     field: 'http.successMediaType',
+      //     is: ['xml'],
+      //   },
+      // ],
     },
     common: { formId: 'common' },
     outputMode: {
