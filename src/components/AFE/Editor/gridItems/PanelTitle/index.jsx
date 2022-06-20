@@ -33,14 +33,18 @@ export default function PanelTitle({ title, children, className, helpKey, titleC
 
   return (
     <div className={clsx(classes.titleContainer, className)}>
-      {title ? <Typography variant="body1" component="div" className={clsx(classes[titleColor], classes.titleWrapper, className)}>{title}</Typography> : children}
-      {helpKey && (
-        <Help
-          title={title}
-          className={classes.helpButton}
-          helpKey={helpKey}
+      {title ? (
+        <Typography variant="body1" component="div" className={clsx(classes[titleColor], classes.titleWrapper, className)}>
+          {title}
+          {helpKey && (
+          <Help
+            title={title}
+            className={classes.helpButton}
+            helpKey={helpKey}
         />
-      )}
+          )}
+        </Typography>
+      ) : children}
     </div>
   );
 }
