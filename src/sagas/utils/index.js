@@ -47,6 +47,7 @@ const isPathPresentAndValueDiff = patchArr => patch =>
 
 const getExportMetadata = (connectorMetadata, connectionVersion) => {
   const { httpConnectorResources: httpResources, httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
+  const versionLocation = connectorMetadata.versioning?.location;
 
   const exportData = {
     labels: {
@@ -114,6 +115,10 @@ const getExportMetadata = (connectorMetadata, connectionVersion) => {
                 const ep = {
                   id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, resourcePath: epResourcePath || resourcePath, supportedExportTypes, delta, queryParameters, pathParameters, doesNotSupportPaging,
                 };
+
+                if (versionLocation === 'uri' && !connectionVersion) {
+                  ep.url = `/${v.version}${httpEndpoint.relativeURI}`;
+                }
 
                 exportData.versions[i].resources[j].endpoints.push(ep);
               }
