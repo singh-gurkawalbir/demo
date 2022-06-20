@@ -1,11 +1,10 @@
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { put, select, takeEvery } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
-import { cloneDeep } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../../constants';
 import { selectors } from '../../reducers';
-import { getIncomingRoutersMap, mergeDragSourceWithTarget } from '../../utils/flows/flowbuilder';
+import { mergeDragSourceWithTarget } from '../../utils/flows/flowbuilder';
 
 export function* createNewPGStep({ flowId }) {
   yield put(actions.flow.setSaveStatus(flowId, 'saving'));
