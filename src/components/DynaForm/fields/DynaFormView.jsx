@@ -32,18 +32,11 @@ export default function FormView(props) {
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
-  // const getApp = (type, assistant, _httpConnectorId) => {
-  //   const id = assistant || type;
-  //   const applications = applicationsList();
-
-  //   return applications.find(c => c.id === id || c._httpConnectorId === _httpConnectorId) || {};
-  // };
   const connection = useSelector(
     state =>
       selectors.resource(state, 'connections', staggedResource._connectionId) ||
       emptyObj
   );
-  // selectors.connectorMetaData = (state, httpConnectorId, httpVersionId, httpAPIId) => {
 
   const connectorMetaData = useSelector(state =>
     selectors.httpConnectorMetaData(state, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId)
