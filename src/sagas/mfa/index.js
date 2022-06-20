@@ -168,24 +168,19 @@ export function* updateTrustedDevice({ deviceInfo }) {
 
   yield put(actions.mfa.receivedAccountSettings(response));
 }
-export function* deleteTrustedDevice({ deviceName }) {
-  yield delay(500);
-  const response = undefined;
-  // const path = `/trustedDevices/${deviceName}`;
+export function* deleteTrustedDevice({ deviceId }) {
+  try {
+    yield call(apiCallWithRetry, {
+      path: `/trustedDevices/${deviceId}`,
+      opts: {
+        method: 'DELETE',
+      },
+    });
 
-  // try {
-  //   response = yield call(apiCallWithRetry, {
-  //     path,
-  //     opts: {
-  //       method: 'DELETE',
-  //     },
-  //     // message: 'Requesting license upgrade.',
-  //   });
-  // } catch (error) {
-  //   return undefined;
-  // }
-
-  yield put(actions.mfa.receivedAccountSettings(response));
+    yield put(actions.mfa.requestUserSettings());
+  } catch (error) {
+    return undefined;
+  }
 }
 export function* verifyMobileCode({ code }) {
   const path = '/mfa/test';

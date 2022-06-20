@@ -73,13 +73,14 @@ function HiddenSecretKey({ id, isLoggable, setShowSecretKey }) {
 }
 function VisibleSecretKey({ id, isLoggable, setShowSecretKey }) {
   const classes = useStyles();
+  const secretKey = useSelector(selectors.secretCode);
 
   return (
     <div className={classes.fieldWrapper}>
       <TextField
         {...isLoggableAttr(isLoggable)}
         id={id}
-        value="test"
+        value={secretKey}
         disabled
         className={classes.field}
         variant="filled" />

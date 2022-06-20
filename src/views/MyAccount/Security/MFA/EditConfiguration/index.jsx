@@ -1,5 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import QRCode from 'react-qr-code';
 import { makeStyles } from '@material-ui/core/styles';
 import DynaForm from '../../../../../components/DynaForm';
@@ -8,8 +9,10 @@ import OutlinedButton from '../../../../../components/Buttons/OutlinedButton';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import ReAuthModal from '../ReAuthModal';
 import ResetAuthorizeModal from './MFAResetAuthorization';
+import ManageDevicesDrawer from './ManageDevicesDrawer';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
+import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -60,10 +63,24 @@ function ViewQRCode() {
 }
 
 function TrustedDevices() {
+  const match = useRouteMatch();
+  const history = useHistory();
+
+  const handleManageDevices = useCallback(
+    () => {
+      history.push(buildDrawerUrl({
+        path: drawerPaths.MFA.MANAGE_TRUSTED_DEVICES,
+        baseUrl: match.url,
+      }));
+    },
+    [history, match.url],
+  );
+
   return (
     <>
       <div> Trusted Devices </div>
-      <OutlinedButton> Manage devices </OutlinedButton>
+      <OutlinedButton onClick={handleManageDevices}> Manage devices </OutlinedButton>
+      <ManageDevicesDrawer />
     </>
   );
 }
