@@ -16,9 +16,10 @@ export function* requestUpgrade({ integrationId, options }) {
   );
   const { _connectorId, name, _id } = integration;
   const path = `/connectors/${_connectorId}/licenses/${licenseId}/upgradeRequest`;
+  let response;
 
   try {
-    yield call(apiCallWithRetry, {
+    response = yield call(apiCallWithRetry, {
       path,
       opts: {
         body: {
@@ -35,7 +36,7 @@ export function* requestUpgrade({ integrationId, options }) {
   } catch (error) {
     return undefined;
   }
-
+  yield put(actions.license.licenseUpgradeRequestSubmitted(response));
   yield put(actions.integrationApp.settings.requestedUpgrade(licenseId));
 }
 

@@ -84,10 +84,10 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
           Next { isRevisionCreationInProgress ? <Spinner size={12} /> : null }
         </FilledButton>
         <TextButton
-          data-test="cancelCreatePull"
+          data-test="cancelReviewRevert"
           disabled={isRevisionCreationInProgress}
           onClick={onClose}>
-          Cancel
+          Close
         </TextButton>
       </DrawerFooter>
     </>

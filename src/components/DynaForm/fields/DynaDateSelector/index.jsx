@@ -113,6 +113,7 @@ export default function DynaDateSelector(props) {
               fromDate={new Date()}
               Icon={calendarIcon}
               customPresets={rangeFilters}
+              showCustomRangeValue
               clearValue={defaultRange}
               onSave={handleDateRangeChange}
               showDateDisplay={false}

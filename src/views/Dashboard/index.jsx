@@ -64,7 +64,7 @@ export default function Dashboard() {
   }
 
   return (
-    <LoadResources integrationId={integrationId} required resources="flows,integrations">
+    <LoadResources integrationId={integrationId} required resources="flows,integrations,tiles">
       {integrationId ? <PanelHeader title="Dashboard" infoText={infoTextDashboard} /> : <CeligoPageBar title="Dashboard" infoText={infoTextDashboard} />}
       <Tabs />
       <QueuedJobsDrawer integrationId={integrationId} />

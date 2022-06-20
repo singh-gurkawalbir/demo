@@ -39,4 +39,6 @@ export default [
   { name: 'YYYY-MM-DD hh:mm:ss', value: 'YYYY-MM-DD hh:mm:ss' },
   { name: 'MM/DD/YYYY', value: 'MM/DD/YYYY' },
   { name: 'DD/MM/YYYY', value: 'DD/MM/YYYY' },
+  { name: 'X - number of seconds since epoch', value: 'X' },
+  { name: 'x - number of milliseconds since epoch', value: 'x' },
 ];

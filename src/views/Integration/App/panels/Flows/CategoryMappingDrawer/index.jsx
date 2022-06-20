@@ -160,6 +160,7 @@ const useStyles = makeStyles(theme => ({
 function CategoryMappings({
   integrationId,
   flowId,
+  categoryId,
   sectionId,
   isRoot = true,
   depth = 0,
@@ -173,13 +174,24 @@ function CategoryMappings({
   const isCommonCategory =
     sectionId === 'commonAttributes' || isParentCommonCategory;
   const [expanded, setExpanded] = useState(isRoot);
-  const memoizedOptions = useMemo(() => ({ sectionId, depth }), [sectionId, depth]);
+  const categoryMemoizedOptions = useMemo(() => ({ sectionId: categoryId, depth: 0 }), [categoryId]);
+  const memoizedOptions = useMemo(() => ({ sectionId, depth }), [depth, sectionId]);
+  let generateFields;
   const {
-    fields: generateFields,
+    fields: sectionGenerateFields,
     name,
     variation_themes: variationThemes,
     variation_attributes: variationAttributes,
   } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, memoizedOptions) || {};
+  const {
+    fields: categoryGenerateFields,
+  } = useSelectorMemo(selectors.mkCategoryMappingGenerateFields, integrationId, flowId, categoryMemoizedOptions) || {};
+
+  if (depth > 0) {
+    generateFields = [...(categoryGenerateFields || []), ...(sectionGenerateFields || [])];
+  } else {
+    generateFields = sectionGenerateFields;
+  }
   const { collapseAction } = useSelectorMemo(selectors.mkCategoryMappingsCollapsedStatus, integrationId, flowId) || {};
   const memoizedCategoryOptions = useMemo(() => ({sectionId, depth}), [sectionId, depth]);
   const { children = [], deleted } = useSelectorMemo(selectors.mkMappingsForCategory, integrationId, flowId, memoizedCategoryOptions) || {};
@@ -364,6 +376,7 @@ function CategoryMappings({
             {children.length > 0 &&
               children.map(child => (
                 <CategoryMappings
+                  categoryId={categoryId}
                   integrationId={integrationId}
                   flowId={flowId}
                   key={child.id}
@@ -470,7 +483,7 @@ function CategoryMappingContent({ integrationId }) {
               <ApplicationImg assistant="netsuite" />
             </div>
           </div>
-          <CategoryMappings integrationId={integrationId} flowId={flowId} sectionId={categoryId} />
+          <CategoryMappings integrationId={integrationId} flowId={flowId} sectionId={categoryId} categoryId={categoryId} />
         </div>
       </div>
     </div>

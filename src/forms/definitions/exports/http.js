@@ -231,11 +231,11 @@ export default {
 
     if (retValues['/parsers']?.resourcePath) {
       retValues['/http/response/resourcePath'] = retValues['/parsers'].resourcePath;
-      // console.log("ALPHA = ", retValues['/http/response/resourcePath']);
-      // delete retValues['/parsers'].resourcePath;
     }
-    // console.log("ZXC = ", retValues);
-
+    
+    if (!retValues['/configureAsyncHelper']) {
+      retValues['/http/_asyncHelperId'] = undefined;
+    }
 
     return {
       ...retValues,

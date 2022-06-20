@@ -12,7 +12,9 @@ import jsonUtil from '../../../../../utils/json';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import openExternalUrl from '../../../../../utils/window';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { INSTALL_STEP_TYPES, REVISION_TYPES } from '../../../../../utils/constants';
+import messageStore from '../../../../../utils/messageStore';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -33,6 +35,7 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
 
   const installSteps = useSelector(state =>
     selectors.currentRevisionInstallSteps(state, integrationId, revisionId)
@@ -78,6 +81,7 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
 
   useEffect(() => {
     if (areAllRevisionInstallStepsCompleted) {
+      enqueueSnackbar({ message: messageStore(revisionType === REVISION_TYPES.PULL ? 'PULL_MERGE_SUCCESS' : 'REVERT_SUCCESS') });
       onClose();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

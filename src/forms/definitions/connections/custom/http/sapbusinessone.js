@@ -54,6 +54,7 @@ export default {
         'Note: for security reasons this field must always be re-entered.',
       helpKey: 'sapbusinessone.connection.http.encrypted.password',
     },
+    'http.disableStrictSSL': { fieldId: 'http.disableStrictSSL' },
     application: {
       fieldId: 'application',
     },
@@ -63,15 +64,24 @@ export default {
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
-      { collapsed: true,
+      {
+        collapsed: true,
         label: 'Application details',
         fields: [
           'http.unencrypted.serverNameOrIP',
           'http.unencrypted.port',
           'http.unencrypted.companyDatabase',
           'http.unencrypted.userName',
-          'http.encrypted.password'] },
-      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
+          'http.encrypted.password'],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'http.disableStrictSSL',
+          'httpAdvanced',
+        ],
+      },
     ],
   },
 };

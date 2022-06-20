@@ -1,8 +1,7 @@
 import { uniqBy } from 'lodash';
 import Browser from 'bowser';
-import mappingUtil from '..';
+import mappingUtil, {handlebarRegex} from '..';
 
-const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
 const wrapTextForSpecialCharsNetsuite = (extract, isSS2) => {
   let toReturn = extract;
   const isExtractAlreadyWrappedByUser = /^\[.*\]$/.test(extract) && // If extract is wrapped in square braces i,e starts with [ and ends with ]
@@ -421,7 +420,8 @@ export default {
       // formattedMapping;
     });
 
-    if (initializeValues.length > 0) {
+    // adding one more check to know if celigo_inititalizeValues is present or not
+    if (initializeValues.length > 0 && !fields.find(f => f.generate === 'celigo_initializeValues')) {
       fields.push({
         generate: 'celigo_initializeValues',
         hardCodedValue: initializeValues.join(','),

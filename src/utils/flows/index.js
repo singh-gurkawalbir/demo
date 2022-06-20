@@ -9,7 +9,6 @@ import {
   adaptorTypeMap,
   isBlobTypeResource,
   isValidResourceReference,
-  isFileAdaptor,
 } from '../resource';
 import { emptyList, emptyObject, STANDALONE_INTEGRATION, JOB_STATUS, UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../constants';
 import { JOB_UI_STATUS } from '../jobdashboard';
@@ -88,6 +87,12 @@ export const isActionUsed = (resource, resourceType, flowNode, action) => {
     }
 
     case actionsMap.importMapping: {
+      // v2 mappings
+      if (resource.mappings?.length) {
+        return true;
+      }
+
+      // v1 mappings
       const mappings = mappingUtil.getMappingFromResource({
         importResource: resource,
         isFieldMapping: true,
@@ -203,11 +208,9 @@ export const isImportMappingAvailable = importResource => {
   if (isBlobTypeResource(importResource)) {
     return false;
   }
-  const { adaptorType, rdbms = {}, file = {} } = importResource;
+  const { adaptorType, rdbms = {} } = importResource;
   const appType = adaptorTypeMap[adaptorType];
 
-  // For File Adaptor XML Imports, no support for import mapping
-  if (isFileAdaptor(importResource) && file.type === 'xml') return false;
   // if apptype is mongodb then mapping should not be shown
   if (appType === 'mongodb') return false;
   // if apptype is rdbms and querytype is not bulk insert then mapping shouldnot be shown
