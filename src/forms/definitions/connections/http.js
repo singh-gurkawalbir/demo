@@ -308,7 +308,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'http.clientCertificates.type',
-          is: ['pem'],
+          is: ['pem', 'pfx'],
         },
       ],
     },
