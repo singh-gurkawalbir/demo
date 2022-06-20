@@ -42,8 +42,8 @@ export default function AccountSettings() {
 
   const formKey = useFormInitWithPermissions({ fieldMeta });
 
-  const updateAccountSettings = useCallback(values => {
-    console.log(values);
+  const updateAccountSettings = useCallback(() => {
+    // console.log(values);
   }, []);
 
   return (

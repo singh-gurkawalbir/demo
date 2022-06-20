@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import actions from '../../../../../actions';
 import TrashIcon from '../../../../icons/TrashIcon';
 
