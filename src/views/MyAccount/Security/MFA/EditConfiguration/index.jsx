@@ -8,6 +8,7 @@ import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import OutlinedButton from '../../../../../components/Buttons/OutlinedButton';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import ReAuthModal from '../ReAuthModal';
+import HeaderWithHelpText from '../HeaderWithHelpText';
 import ResetAuthorizeModal from './MFAResetAuthorization';
 import ManageDevicesDrawer from './ManageDevicesDrawer';
 import { selectors } from '../../../../../reducers';
@@ -34,7 +35,7 @@ function ResetMFA() {
 
   return (
     <div>
-      <div>Reset MFA</div>
+      <HeaderWithHelpText helpKey="mfa.reset"><span>Reset MFA</span></HeaderWithHelpText>
       <OutlinedButton onClick={() => setShowAuthModal(true)}> Reset </OutlinedButton>
       {showAuthModal && (
       <ResetAuthorizeModal onClose={() => setShowAuthModal(false)} />
@@ -50,16 +51,12 @@ function ViewQRCode() {
 
   return (
     <>
-      <div> QR code</div>
+      <HeaderWithHelpText helpKey="mfa.qrcode"><span>QR code</span></HeaderWithHelpText>
       { showQrCode
         ? <QRCode value={qrCode} size={64} />
         : (<OutlinedButton onClick={() => setShowQRAuthModal(true)}> View code </OutlinedButton>)}
       {showQRAuthModal && (
-      <ReAuthModal
-        title="Re-authenticate your account"
-        onClose={() => setShowQRAuthModal(false)}
-        isQRCode
-         />
+      <ReAuthModal onClose={() => setShowQRAuthModal(false)} isQRCode />
       )}
     </>
   );
@@ -81,7 +78,7 @@ function TrustedDevices() {
 
   return (
     <>
-      <div> Trusted Devices </div>
+      <HeaderWithHelpText helpKey="mfa.trustedDevices"><span>Trusted devices </span></HeaderWithHelpText>
       <OutlinedButton onClick={handleManageDevices}> Manage devices </OutlinedButton>
       <ManageDevicesDrawer />
     </>
@@ -120,6 +117,7 @@ export default function EditMFAConfiguration() {
             name: 'secretKey',
             type: 'mfasecretkey',
             label: 'Secret key',
+            helpKey: 'mfa.viewSecret',
             noApi: true,
             isLoggable: false,
           },

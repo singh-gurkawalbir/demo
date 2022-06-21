@@ -11,7 +11,7 @@ import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import { TextButton } from '../../../../../../components/Buttons';
 import ActionGroup from '../../../../../../components/ActionGroup';
-import { MFA_RESET_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../../utils/constants';
+import { MFA_RESET_ASYNC_KEY, FORM_SAVE_STATUS, MFA_URL } from '../../../../../../utils/constants';
 
 const useStyles = makeStyles({
   container: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles({
   },
 });
 
-const changeEmailFieldMeta = {
+const metadata = {
   fieldMap: {
     password: {
       id: 'password',
@@ -47,7 +47,7 @@ export default function ResetAuthorizationModal({ onClose }) {
   const [isLoading, setIsLoading] = useState(false);
   const [enqueueSnackbar] = useEnqueueSnackbar();
 
-  const handleEmailChangeClick = useCallback(
+  const handleReAuthorization = useCallback(
     formVal => {
       setIsLoading(true);
       dispatch(actions.mfa.resetMFA({ password: formVal.password }));
@@ -70,14 +70,17 @@ export default function ResetAuthorizationModal({ onClose }) {
   useEffect(() => () => dispatch(actions.asyncTask.clear(MFA_RESET_ASYNC_KEY)));
 
   const formKey = useFormInitWithPermissions({
-    fieldMeta: changeEmailFieldMeta,
+    fieldMeta: metadata,
   });
+
+  const learnMoreLink = (<a target="_blank" rel="noreferrer" href={MFA_URL}> Learn more</a>);
 
   return (
     <ModalDialog show onClose={onClose}>
       Re-authenticate your account
       <>
-        Enter your account password to confirm if you want to reset MFA. Learn more.
+        Enter your account password to confirm if you want to reset MFA.
+        <div><b>{learnMoreLink}.</b></div>
         <div className={classes.container}>
           <DynaForm formKey={formKey} />
         </div>
@@ -88,7 +91,7 @@ export default function ResetAuthorizationModal({ onClose }) {
           data-test="changeEmail"
           id="changeEmail"
           disabled={isLoading}
-          onClick={handleEmailChangeClick}>
+          onClick={handleReAuthorization}>
           Reset MFA
         </DynaSubmit>
         <TextButton

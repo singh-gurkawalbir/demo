@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
+import { MFA_URL } from '../../../../../utils/constants';
 import ModalDialog from '../../../../../components/ModalDialog';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
@@ -23,13 +24,15 @@ const useStyles = makeStyles({
   },
 });
 
-const changeEmailFieldMeta = {
+const metadata = {
   fieldMap: {
     password: {
       id: 'password',
       name: 'password',
       type: 'text',
       inputType: 'password',
+      helpKey: 'mfa.reAuthPwd',
+      noApi: true,
       label: 'Password',
       required: true,
       isLoggable: false,
@@ -37,7 +40,7 @@ const changeEmailFieldMeta = {
   },
 };
 
-export default function ReAuthModal({ title, onClose, isQRCode }) {
+export default function ReAuthModal({ onClose, isQRCode }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const error = useSelector(state => selectors.secretCodeError(state));
@@ -46,7 +49,7 @@ export default function ReAuthModal({ title, onClose, isQRCode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [enqueueSnackbar] = useEnqueueSnackbar();
 
-  const handleEmailChangeClick = useCallback(
+  const handleReAuthentication = useCallback(
     formVal => {
       setIsLoading(true);
       dispatch(actions.mfa.requestSecretCode({ password: formVal.password, isQRCode }));
@@ -65,15 +68,21 @@ export default function ReAuthModal({ title, onClose, isQRCode }) {
       onClose();
     }
   }, [success, enqueueSnackbar, onClose]);
-  const formKey = useFormInitWithPermissions({
-    fieldMeta: changeEmailFieldMeta,
-  });
+
+  const formKey = useFormInitWithPermissions({ fieldMeta: metadata });
+
+  const learnMoreLink = (<a target="_blank" rel="noreferrer" href={MFA_URL}> Learn more</a>);
+
+  const title = isQRCode ? 'View QR code' : 'View secret key';
+  const description = isQRCode
+    ? 'Enter your account password to view your QR code.'
+    : 'Enter your account password to view your secret key.';
 
   return (
     <ModalDialog show onClose={onClose}>
       {title}
       <>
-        Enter your account password to view your QR code. Learn more.
+        {description}{learnMoreLink}.
         <div className={classes.container}>
           <DynaForm formKey={formKey} />
         </div>
@@ -81,11 +90,11 @@ export default function ReAuthModal({ title, onClose, isQRCode }) {
       <ActionGroup>
         <DynaSubmit
           formKey={formKey}
-          data-test="changeEmail"
-          id="changeEmail"
+          data-test="reAuth"
+          id="reAuth"
           disabled={isLoading}
-          onClick={handleEmailChangeClick}>
-          Re-authenticate
+          onClick={handleReAuthentication}>
+          {isQRCode ? 'View code' : 'View key'}
         </DynaSubmit>
         <TextButton
           data-test="cancelOperandSettings"

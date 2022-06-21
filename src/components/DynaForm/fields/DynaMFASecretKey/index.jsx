@@ -64,9 +64,7 @@ function HiddenSecretKey({ id, isLoggable, setShowSecretKey }) {
         <ShowContentIcon />
       </ActionButton>
       {showSecretCodeAuthModal && (
-      <ReAuthModal
-        title="Re-authenticate your account"
-        onClose={handleClose} />
+      <ReAuthModal onClose={handleClose} />
       )}
     </div>
   );
