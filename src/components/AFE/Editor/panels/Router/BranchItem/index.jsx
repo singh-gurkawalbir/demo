@@ -88,7 +88,6 @@ const useStyles = makeStyles(theme => ({
   },
   infoMsgContainer: {
     display: 'flex',
-    alignItems: 'center',
     padding: theme.spacing(0, 1, 2, 4),
     backgroundColor: 'rgba(236, 236, 236, 0.5)',
     '& > *': {
@@ -128,7 +127,7 @@ export default function BranchItem({
 
     return editorRule?.routeRecordsTo;
   });
-  let infoMessage = 'empty';
+  let infoMessage;
 
   if (!hasRules) {
     if (

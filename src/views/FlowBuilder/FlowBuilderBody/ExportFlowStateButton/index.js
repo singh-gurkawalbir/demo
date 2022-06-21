@@ -7,7 +7,7 @@ import useShowDebugTools from '../../../../hooks/useShowDebugTools';
 const useStyles = makeStyles(() => ({
   button: {
     position: 'absolute',
-    zIndex: 2000,
+    zIndex: 1300,
     left: 50,
     bottom: 10,
   },
