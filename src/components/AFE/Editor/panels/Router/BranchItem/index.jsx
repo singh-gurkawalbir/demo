@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
-import { makeStyles,
+import {
+  makeStyles,
   Typography,
   Accordion,
   AccordionSummary,
@@ -85,9 +86,23 @@ const useStyles = makeStyles(theme => ({
   focused: {
     backgroundColor: `${theme.palette.common.white} !important`,
   },
+  infoMsgContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 1, 2, 4),
+    backgroundColor: 'rgba(236, 236, 236, 0.5)',
+    '& > *': {
+      color: `${theme.palette.secondary.light} !important`,
+    },
+    '& > svg': {
+      marginRight: theme.spacing(1),
+    },
+  },
 }));
 
-const DragHandle = sortableHandle(() => <GripperIcon style={{cursor: 'grab'}} />);
+const DragHandle = sortableHandle(() => (
+  <GripperIcon style={{ cursor: 'grab' }} />
+));
 
 export default function BranchItem({
   expandable,
@@ -113,10 +128,13 @@ export default function BranchItem({
 
     return editorRule?.routeRecordsTo;
   });
-  let infoMessage;
+  let infoMessage = 'empty';
 
   if (!hasRules) {
-    if (branchType === 'all_matching_branches' || (branchType === 'first_matching_branch' && position === 0)) {
+    if (
+      branchType === 'all_matching_branches' ||
+      (branchType === 'first_matching_branch' && position === 0)
+    ) {
       infoMessage = messageStore('BRANCH_EMPTY_FILTER_RECORD_PASS');
     } else {
       infoMessage = messageStore('BRANCH_EMPTY_FILTER');
@@ -135,20 +153,24 @@ export default function BranchItem({
           onChange={(event, expanded) => onToggleExpand(expanded, position)}
           expanded={!!expanded}
           square
-          classes={{expanded: classes.expanded}}
-          className={classes.accordion}>
+          classes={{ expanded: classes.expanded }}
+          className={classes.accordion}
+        >
           <AccordionSummary
-            classes={{expandIcon: classes.expandIcon, focused: classes.focused}}
+            classes={{
+              expandIcon: classes.expandIcon,
+              focused: classes.focused,
+            }}
             className={classes.accordionSummary}
             expandIcon={expandable && <ArrowDownIcon />}
           >
             <div className={classes.summaryContainer}>
-              {allowSorting && <DragHandle /> }
+              {allowSorting && <DragHandle />}
               <div
-                className={clsx(
-                  classes.branchName,
-                  {[classes.expandable]: expandable}
-                )}>
+                className={clsx(classes.branchName, {
+                  [classes.expandable]: expandable,
+                })}
+              >
                 <EditableText
                   allowOverflow
                   text={branchName}
@@ -159,9 +181,7 @@ export default function BranchItem({
               </div>
 
               <div className={classes.description}>
-                {description && (
-                <InfoIconButton size="xs" info={description} />
-                )}
+                {description && <InfoIconButton size="xs" info={description} />}
               </div>
 
               <MoreActionsButton
@@ -174,17 +194,15 @@ export default function BranchItem({
           </AccordionSummary>
 
           {expandable && (
-          <AccordionDetails className={classes.accordionDetails}>
-            <BranchFilter editorId={editorId} position={position} />
-            {infoMessage && (
-              <>
-                <InfoIcon />
-                <Typography variant="body1">
-                  {infoMessage}
-                </Typography>
-              </>
-            )}
-          </AccordionDetails>
+            <AccordionDetails className={classes.accordionDetails}>
+              <BranchFilter editorId={editorId} position={position} />
+              {infoMessage && (
+                <div className={classes.infoMsgContainer}>
+                  <InfoIcon />
+                  <Typography variant="body2">{infoMessage}</Typography>
+                </div>
+              )}
+            </AccordionDetails>
           )}
         </Accordion>
       </div>
