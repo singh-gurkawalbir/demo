@@ -13,6 +13,7 @@ import { getAssistantConnectorType, getImportAdaptorType } from '../../../consta
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
 import { extractStages } from '../../../reducers/session/sampleData/resourceForm';
 import { getAssistantFromConnection } from '../../../utils/connections';
+import { getConnectorMetadata} from '../../resources/httpConnectors';
 
 function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource) {
   const assistantConfig = deepClone(assistantConfigOrig);
@@ -87,9 +88,23 @@ export function* _fetchAssistantSampleData({ resource }) {
     adaptorType: getAssistantConnectorType(assistant),
     assistant,
   });
+  const connection = yield select(
+    selectors.resource,
+    'connections',
+    resource?._connectionId
+  );
+  let connectorMetaData = yield select(
+    selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
   const adaptorType = getImportAdaptorType(resource);
 
-  if (!assistantMetadata) {
+  if (connection?.http?._httpConnectorId && !connectorMetaData) {
+    connectorMetaData = yield call(getConnectorMetadata, {
+      connectionId: connection._id,
+      httpConnectorId: connection?.http?._httpConnectorId,
+      httpVersionId: connection?.http?._httpConnectorVersionId,
+      _httpConnectorApiId: connection?.http?._httpConnectorApiId,
+    });
+  } else if (!assistantMetadata) {
     assistantMetadata = yield call(requestAssistantMetadata, {
       adaptorType,
       assistant,
@@ -101,7 +116,7 @@ export function* _fetchAssistantSampleData({ resource }) {
   }
   const assistantConfig = convertFromImport({
     importDoc: resource,
-    assistantData: assistantMetadata,
+    assistantData: connectorMetaData || assistantMetadata,
     adaptorType,
   });
 

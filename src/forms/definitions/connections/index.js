@@ -14,6 +14,7 @@ import newImport from './new';
 import subForms from './subForms';
 import dynamodb from './dynamodb';
 import graphql from './graphql';
+import httpFramework from './httpFramework';
 
 export default {
   new: newImport,
@@ -32,4 +33,5 @@ export default {
   subForms,
   dynamodb,
   graphql,
+  httpFramework,
 };

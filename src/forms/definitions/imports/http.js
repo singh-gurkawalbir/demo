@@ -326,6 +326,7 @@ export default {
     if (!retValues['/http/configureAsyncHelper']) {
       retValues['/http/_asyncHelperId'] = undefined;
     }
+    retValues['/adaptorType'] = 'HTTPImport';
 
     return {
       ...retValues,
@@ -581,10 +582,10 @@ export default {
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
           if (r.http.method.length > 1) {
-            return r.http.body[1] || '';
+            return r.http.body?.[1] || '';
           }
 
-          return r.http.body[0] || '';
+          return r.http.body?.[0] || '';
         }
 
         return '';
@@ -1063,7 +1064,7 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return r.http.body[0] || '';
+          return r.http.body?.[0] || '';
         }
 
         return '';

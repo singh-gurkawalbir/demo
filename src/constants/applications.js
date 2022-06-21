@@ -336,13 +336,38 @@ const getAssistants = () => {
 
   return localStorageAssistants;
 };
+export const getPublishedHttpConnector = _httpConnectorId => {
+  let localStoragePublishedHttpAssistants;
+
+  try {
+    localStoragePublishedHttpAssistants = JSON.parse(localStorage.getItem('publishedHttpConnectors')) || [];
+  } catch (e) {
+    localStoragePublishedHttpAssistants = [];
+  }
+
+  return localStoragePublishedHttpAssistants?.find(c => c._id === _httpConnectorId);
+};
+
+export const getPublishedHttpConnectors = () => {
+  let localStoragePublishedHttpAssistants;
+
+  try {
+    localStoragePublishedHttpAssistants = JSON.parse(localStorage.getItem('publishedHttpConnectors')) || [];
+  } catch (e) {
+    localStoragePublishedHttpAssistants = [];
+  }
+
+  return localStoragePublishedHttpAssistants;
+};
 
 export const groupApplications = (
   resourceType,
   { appType, isSimpleImport }
 ) => {
-  const assistantConnectors = connectors.filter(c => !c.assistant);
+  let assistantConnectors = connectors.filter(c => !c.assistant);
   const assistants = getAssistants();
+
+  const publishedConnectors = getPublishedHttpConnectors();
 
   if (assistants) {
     assistants.forEach(asst => {
@@ -362,6 +387,20 @@ export const groupApplications = (
       }
     });
   }
+  assistantConnectors = assistantConnectors.filter(app =>
+    !publishedConnectors?.find(pc => pc.name === app.assistant)
+
+  );
+  publishedConnectors?.forEach(pc => {
+    assistantConnectors.push({
+      id: pc.name,
+      name: pc.name,
+      type: 'http',
+      export: true,
+      import: true,
+      icon: pc.name,
+    });
+  });
 
   assistantConnectors.sort(stringCompare('name'));
 
@@ -416,11 +455,12 @@ export const groupApplications = (
 */
 export const applicationsList = () => {
   const assistants = getAssistants();
-  const applications = connectors.filter(connector => {
+  let applications = connectors.filter(connector => {
     const assistant = assistants.find(a => a.id === connector.assistant);
 
     return !assistant || !connector.assistant;
   });
+  const publishedConnectors = getPublishedHttpConnectors();
 
   assistants.forEach(asst => {
     let {name} = asst;
@@ -442,6 +482,20 @@ export const applicationsList = () => {
       helpURL: asst.helpURL,
     });
   });
+  applications = applications.filter(app =>
+    !publishedConnectors?.find(pc => pc.name === app.assistant)
+
+  );
+  publishedConnectors?.forEach(pc => {
+    applications.push({
+      id: pc.name,
+      name: pc.name,
+      type: 'http',
+      export: true,
+      import: true,
+      _httpConnectorId: pc._id,
+    });
+  });
 
   return applications;
 };
@@ -455,9 +509,13 @@ export const getWebhookConnectors = () => {
 export const getWebhookOnlyConnectors = () =>
   connectors.filter(c => !!c.webhookOnly);
 
-export const getApp = (type, assistant) => {
+export const getApp = (type, assistant, _httpConnectorId) => {
   const id = assistant || type;
   const applications = applicationsList();
+
+  if (_httpConnectorId) {
+    return applications.find(c => c._httpConnectorId === _httpConnectorId) || {};
+  }
 
   return applications.find(c => c.id === id) || {};
 };
