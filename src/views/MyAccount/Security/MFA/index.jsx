@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
 function MFAConfiguration() {
   const canEditMFAConfiguration = useSelector(state => selectors.isMFAEnabled(state) && selectors.isSecretCodeGenerated(state));
 
-  if (!canEditMFAConfiguration) {
+  if (canEditMFAConfiguration) {
     return <EditMFAConfiguration />;
   }
 
