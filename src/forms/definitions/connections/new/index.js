@@ -10,6 +10,7 @@ export default {
       '/adaptorType': `${app.type.toUpperCase()}Connection`,
       '/type': app.type,
       '/application': app.name,
+      '/_httpConnectorId': app._httpConnectorId,
     };
 
     if (app.assistant) {

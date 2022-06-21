@@ -148,7 +148,11 @@ import DynaManageAliases from './aliases/DynaManageAliases';
 import DynaAliasId from './aliases/DynaAliasId';
 import DynaSelectAliasResource from './aliases/DynaSelectAliasResource';
 import DynaIntegrationCloneSelect from './select/DynaIntegrationCloneSelect';
+import DynaHFAssistantOptions from './httpFramework/DynaHFAssistantOptions';
+import DynaHFAssistantSearchParams from './httpFramework/DynaHFAssistantSearchParams';
+import DynaSemiHFAssistantOperationSelect from './httpFramework/DynaSemiHFAssistantOperationSelect';
 import DynaAmazonmwsType from './DynaAmazonmwsType';
+import DynaConnectionFormView from './DynaConnectionFormView';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -308,5 +312,9 @@ export default {
   selectaliasresource: DynaSelectAliasResource,
   updatedomain: DynaTextUpdateDomain,
   integrationcloneselect: DynaIntegrationCloneSelect,
+  hfoptions: DynaHFAssistantOptions,
+  hfsearchparams: DynaHFAssistantSearchParams,
+  semihfoperationselect: DynaSemiHFAssistantOperationSelect,
   amazonmwstype: DynaAmazonmwsType,
+  connectionFormView: DynaConnectionFormView,
 };

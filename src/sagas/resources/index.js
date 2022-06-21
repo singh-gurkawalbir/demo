@@ -17,6 +17,7 @@ import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
 import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
+import httpConnectorSagas from './httpConnectors';
 
 export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -740,6 +741,9 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
   if (resourceType === 'notifications') {
     path = '/notifications?users=all';
   }
+  if (resourceType === 'httpconnectors') {
+    path = '/httpconnectors?publishedOnly=true';
+  }
   if (integrationId) {
     if (INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
       path = `/integrations/${integrationId}/${resourceType}`;
@@ -1187,4 +1191,5 @@ export const resourceSagas = [
   takeLatest(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, downloadAuditlogs),
 
   ...metadataSagas,
+  ...httpConnectorSagas,
 ];

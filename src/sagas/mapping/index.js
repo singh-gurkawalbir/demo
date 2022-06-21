@@ -215,12 +215,14 @@ export function* mappingInit({
         assistant,
       }
     );
+    const connectorMetaData = yield select(
+      selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
 
     const { requiredMappings } = getImportOperationDetails({
       operation,
       resource,
       version,
-      assistantData,
+      assistantData: connection?.http?._httpConnectorId ? connectorMetaData : assistantData,
     });
 
     options.assistant = { requiredMappings };

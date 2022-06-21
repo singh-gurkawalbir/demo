@@ -4,22 +4,23 @@ import { deepClone } from 'fast-json-patch';
 import { stringCompare } from '../../../../utils/sort';
 
 function versionOptions({ assistantData }) {
-  return assistantData.versions.map(vesrion => ({
-    label: vesrion.version,
-    value: vesrion.version,
+  return assistantData?.versions?.map(version => ({
+    label: version.version,
+    value: version.version,
   }));
 }
 
 function resourceOptions({ versionData = { resources: [] } }) {
-  return versionData.resources?.map(resource => ({
-    label: resource.name,
-    value: resource.id,
-  }))
+  return versionData.resources
+    .map(resource => ({
+      label: resource.name,
+      value: resource.id,
+    }))
     .sort(stringCompare('label'));
 }
 
 function exportOperationOptions({ resourceData = { endpoints: [] } }) {
-  return resourceData.endpoints?.map(operation => ({
+  return resourceData.endpoints.map(operation => ({
     label: operation.name,
     value: operation.id || operation.url,
   }));
@@ -38,7 +39,7 @@ function importOperationKey(operation) {
 }
 
 function importOperationOptions({ resourceData = { operations: [] } }) {
-  return resourceData.operations?.map(operation => ({
+  return resourceData.operations.map(operation => ({
     label: operation.name,
     value: importOperationKey(operation),
   }));
@@ -68,7 +69,7 @@ export function selectOptions({
 
   if (assistantFieldType === 'version') {
     return versionOptions({
-      assistantData: assistantData[resourceTypeSingular],
+      assistantData: assistantData?.[resourceTypeSingular],
     });
   }
 
