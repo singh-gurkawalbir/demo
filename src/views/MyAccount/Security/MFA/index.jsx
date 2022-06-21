@@ -27,7 +27,6 @@ const useStyles = makeStyles(theme => ({
   mfaSwitch: {
     display: 'flex',
     alignItems: 'center',
-    padding: theme.spacing(0, 2),
     marginBottom: theme.spacing(0.5),
   },
   content: {
@@ -41,11 +40,10 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2),
   },
   mfaConfig: {
-    marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(2),
+    marginTop: theme.spacing(1),
   },
   userSettings: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 0),
   },
   collapseContainer: {
     margin: theme.spacing(2),
