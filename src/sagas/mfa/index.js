@@ -98,15 +98,15 @@ export function* requestSecretCode({ password, isQRCode }) {
   }
   yield put(actions.mfa.showSecretCode());
 }
-export function* resetMFA({ password }) {
-  const path = '/mfa/reset';
+export function* resetMFA({ password, aShareId }) {
+  const path = aShareId ? `/ashares/${aShareId}/mfa/reset` : '/mfa/reset';
 
   yield put(actions.asyncTask.start(MFA_RESET_ASYNC_KEY));
   try {
     yield call(apiCallWithRetry, {
       path,
       opts: {
-        body: { password },
+        body: !aShareId ? { password } : {},
         method: 'POST',
       },
     });
