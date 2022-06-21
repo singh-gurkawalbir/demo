@@ -11,11 +11,13 @@ const useStyles = makeStyles(theme => ({
     zIndex: 1,
     borderRadius: '50%',
     display: 'inline-block',
-    border: `1px solid ${theme.palette.secondary.lightest}`,
+    border: `2px solid ${theme.palette.secondary.lightest}`,
     width: 22,
-    lineHeight: '22px',
+    lineHeight: '18px',
     textAlign: 'center',
     backgroundColor: theme.palette.background.paper,
+    fontSize: 13,
+    color: theme.palette.secondary.light,
   },
   line: {
     '&:before': {

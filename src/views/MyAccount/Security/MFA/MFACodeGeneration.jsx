@@ -92,7 +92,7 @@ export default function MFACodeGeneration() {
   return (
     <>
       <HeaderWithHelpText title="Step 2" helpKey="step2">
-        <span> Add integrator.io</span>
+        <Typography variant="body2" component="span">Add integrator.io</Typography>
       </HeaderWithHelpText>
       <ViewQRCode />
       <ViewSecretCode />

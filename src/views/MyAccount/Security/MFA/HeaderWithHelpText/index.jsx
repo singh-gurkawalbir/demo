@@ -12,6 +12,8 @@ const useStyles = makeStyles(theme => ({
   },
   header: {
     marginBottom: theme.spacing(0.5),
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 

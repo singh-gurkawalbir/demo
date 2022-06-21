@@ -36,7 +36,7 @@ export default function DynaMFAMobileCode(props) {
         </FormLabel>
         <FieldHelp {...props} />
       </div>
-      <Typography variant="subtitle2" className={classes.desc}>Enter the 6-digit code from your app and click the <b>Verify</b> button below. </Typography>
+      <Typography variant="body2" className={classes.desc}>Enter the 6-digit code from your app and click the <b>Verify</b> button below. </Typography>
       <DynaText {...rest} id={id} />
       <VerifyTag isValid={props.isValid} />
     </FormControl>
