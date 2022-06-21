@@ -60,7 +60,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function MFAConfiguration() {
-  const canEditMFAConfiguration = useSelector(state => selectors.isMFAEnabled(state) && selectors.isSecretCodeGenerated(state));
+  const canEditMFAConfiguration = useSelector(state => selectors.isMFAEnabled(state) && selectors.isMFADeviceConnected(state));
 
   if (canEditMFAConfiguration) {
     return <EditMFAConfiguration />;
@@ -74,20 +74,20 @@ function MyUserSettings() {
   const dispatch = useDispatch();
   const mfaEnabled = useSelector(state => selectors.isMFAEnabled(state));
   const mfaUserSettings = useSelector(state => selectors.mfaUserSettings(state));
-  const isMFAConfigured = useSelector(state => selectors.isMFAConfigured(state));
+  const isMFADeviceConnected = useSelector(state => selectors.isMFADeviceConnected(state));
 
   const [isMFAEnabled, setIsMFAEnabled] = useState();
 
   useNotifySetupSuccess({ mode: 'switch'});
 
   const handleEnableMFA = useCallback(() => {
-    if (isMFAConfigured) {
+    if (isMFADeviceConnected) {
       dispatch(actions.mfa.setUp({ ...mfaUserSettings, enabled: !mfaEnabled}));
 
       return;
     }
     setIsMFAEnabled(!isMFAEnabled);
-  }, [isMFAConfigured, dispatch, mfaEnabled, isMFAEnabled, mfaUserSettings]);
+  }, [isMFADeviceConnected, dispatch, mfaEnabled, isMFAEnabled, mfaUserSettings]);
 
   useEffect(() => {
     setIsMFAEnabled(mfaEnabled);

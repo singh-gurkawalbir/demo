@@ -8,6 +8,10 @@ export default (state = {}, action) => {
     switch (type) {
       case actionTypes.MFA.USER_SETTINGS.RECEIVED:
         draft.userSettings = userSettings;
+        if (userSettings?.secret && userSettings?.enabled) {
+          // TODO: Remove this once BE updates this flag
+          draft.userSettings.deviceConnected = true;
+        }
         if (!draft.status) {
           draft.status = {};
         }
@@ -31,8 +35,7 @@ export const selectors = {};
 
 selectors.areUserSettingsLoaded = state => state?.status?.userSettings === 'received';
 selectors.areAccountSettingsLoaded = state => state?.status?.accountSettings === 'received';
-
-selectors.isMFAConfigured = state => [true, false].includes(state?.userSettings?.enabled) && state?.userSettings?.secret;
+selectors.isMFADeviceConnected = state => state?.userSettings?.deviceConnected;
 selectors.isMFAEnabled = state => !!state?.userSettings?.enabled;
 selectors.mfaUserSettings = state => state?.userSettings;
 selectors.selectedPrimaryAccount = state => state?.userSettings?._allowResetByUserId;
