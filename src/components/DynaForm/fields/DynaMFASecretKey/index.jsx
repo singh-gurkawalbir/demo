@@ -50,16 +50,18 @@ function HiddenSecretKey({ id, isLoggable, setShowSecretKey }) {
       <TextField
         {...isLoggableAttr(isLoggable)}
         id={id}
-        type="password"
-        value="**********"
+        type="text"
+        value="xxxxxxxxx"
         disabled
         className={classes.field}
         variant="filled"
         />
       <ActionButton
-        data-test="editPassword"
+        data-test="showSecretKey"
         color="primary"
         variant="contained"
+        tooltip="View secret key"
+        placement="bottom"
         onClick={handleShowSecretKey}>
         <ShowContentIcon />
       </ActionButton>
@@ -83,9 +85,11 @@ function VisibleSecretKey({ id, isLoggable, setShowSecretKey }) {
         className={classes.field}
         variant="filled" />
       <ActionButton
-        data-test="editPassword"
+        data-test="hideSecretKey"
         color="primary"
         variant="contained"
+        tooltip="Hide secret key"
+        placement="bottom"
         onClick={() => setShowSecretKey(false)}>
         <HideContentIcon />
       </ActionButton>

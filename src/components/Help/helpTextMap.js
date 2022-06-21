@@ -2439,5 +2439,5 @@ use the custom option.`,
   'mfa.viewSecret': 'View secret key',
   'mfa.trustedDevices': 'Trusted devices',
   'mfa.reAuthPwd': 'Reauthenticate with password',
-
+  'mfa.manageDevices': 'Manage devices',
 };
