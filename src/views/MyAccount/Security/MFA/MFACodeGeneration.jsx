@@ -4,6 +4,7 @@ import QRCode from 'react-qr-code';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import ReAuthModal from './ReAuthModal';
+import HeaderWithHelpText from './HeaderWithHelpText';
 import OutlinedButton from '../../../../components/Buttons/OutlinedButton';
 import { selectors } from '../../../../reducers';
 
@@ -36,9 +37,7 @@ function ViewSecretCode() {
           : (<OutlinedButton onClick={() => setShowSecretCodeAuthModal(true)}> View Secret code </OutlinedButton>)}
       </div>
       {showSecretCodeAuthModal && (
-      <ReAuthModal
-        title="Re-authenticate your account"
-        onClose={handleClose} />
+      <ReAuthModal onClose={handleClose} />
       )}
     </>
   );
@@ -49,6 +48,10 @@ function ViewQRCode() {
   const showQrCode = useSelector(selectors.showQrCode);
   const qrCode = useSelector(selectors.qrCode);
   const classes = useStyles();
+
+  const handleClose = useCallback(
+    () => setShowQRAuthModal(false), [],
+  );
 
   return (
     <>
@@ -61,11 +64,7 @@ function ViewQRCode() {
           : (<OutlinedButton onClick={() => setShowQRAuthModal(true)}> View QR code </OutlinedButton>)}
       </div>
       {showQRAuthModal && (
-      <ReAuthModal
-        title="Re-authenticate your account"
-        onClose={() => setShowQRAuthModal(false)}
-        isQRCode
-         />
+      <ReAuthModal onClose={handleClose} isQRCode />
       )}
     </>
   );
@@ -73,7 +72,9 @@ function ViewQRCode() {
 export default function MFACodeGeneration() {
   return (
     <>
-      <div> Add integrator.io</div>
+      <HeaderWithHelpText title="Step 2" helpKey="step2">
+        <span> Add integrator.io</span>
+      </HeaderWithHelpText>
       <ViewQRCode />
       <ViewSecretCode />
     </>

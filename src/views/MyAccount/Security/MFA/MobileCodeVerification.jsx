@@ -31,6 +31,7 @@ export default function MobileCodeVerification() {
               message: 'Numbers only',
             },
           },
+          helpKey: 'mfa.code.verify',
           noApi: true,
           isLoggable: false,
         },

@@ -35,7 +35,7 @@ const importOption = [
  * This function handles what to show as resource type options based on application
  */
 function getAvailableResourceTypeOptions(application, mode, isDataloader) {
-  const { type, assistant, webhook, webhookOnly } =
+  const { type, assistant, webhook, webhookOnly, _httpConnectorId, name } =
     application || {};
 
   // Defensive code to avoid unknown issues
@@ -46,7 +46,7 @@ function getAvailableResourceTypeOptions(application, mode, isDataloader) {
   // Incase of Data loader , mode: destination should show only import as a default option
   if (mode === 'destination' && isDataloader) return importOption;
   // fetches options specific to selected application
-  const possibleOptions = optionsMap[assistant || type];
+  const possibleOptions = optionsMap[(_httpConnectorId ? name : assistant) || type];
 
   if (possibleOptions) return possibleOptions;
   if (mode === 'source' && webhookOnly) {
@@ -54,7 +54,7 @@ function getAvailableResourceTypeOptions(application, mode, isDataloader) {
   }
 
   // Incase of a webhook assistant
-  if (mode === 'source' && assistant && webhook) {
+  if (mode === 'source' && (assistant || _httpConnectorId) && webhook) {
     return webhookAssistantOptions;
   }
 

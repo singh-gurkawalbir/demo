@@ -97,6 +97,12 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   } else if (type === 'graph_ql' || (type === 'http' && connection?.http?.formType === 'graph_ql')) {
     expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
   } else if (type === 'http') {
+    if (connection.http?._httpConnectorId) {
+      expression.push({ 'http._httpConnectorId': connection.http._httpConnectorId });
+    }
+    if (connection.http?._httpConnectorVersionId) {
+      expression.push({ 'http._httpConnectorVersionId': connection.http._httpConnectorVersionId });
+    }
     expression.push({ 'http.formType': { $ne: 'rest' } });
     expression.push({ type });
   } else {
