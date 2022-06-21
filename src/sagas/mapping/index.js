@@ -203,7 +203,7 @@ export function* mappingInit({
       mappingMetadata: mappingMetadata || {},
       connectorExternalId: importResource.externalId,
     };
-  } else if (importResource.assistant) {
+  } else if (importResource.assistant || connection?.http?._httpConnectorId) {
     const { assistant } = getResourceSubType(
       {...importResource, assistant: connectionAssistant}
     );
