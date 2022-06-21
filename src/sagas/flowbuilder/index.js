@@ -181,7 +181,6 @@ export function* createNewPPStep({ flowId, path: branchPath, processorIndex }) {
 }
 
 export function* mergeBranch({flowId}) {
-  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
   const flow = yield select(selectors.fbFlow, flowId);
   const elementsMap = yield select(selectors.fbGraphElementsMap, flowId);
   const mergeTargetId = yield select(selectors.fbMergeTargetId, flowId);
@@ -192,10 +191,10 @@ export function* mergeBranch({flowId}) {
   // It's possible that a user releases the mouse while NOT on top of a valid merge target.
   // if this is the case, we still want to reset the drag state, just skip the merge attempt.
   if (mergeTargetId && mergeTargetType) {
+    yield put(actions.flow.setSaveStatus(flowId, 'saving'));
     mergeDragSourceWithTarget(flow, elementsMap, dragStepId, mergeTargetId, patchSet);
+    yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
   }
-
-  yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
 
   // After merge is complete, we need to reset the state to remove all the transient state
   // used while dragging is being performed.
@@ -220,12 +219,12 @@ export function* deleteEdge({ flowId, edgeId }) {
   yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
 }
 
-export function* deleteRouter({flowId, routerId}) {
+export function* deleteRouter({flowId, routerId, prePatches}) {
   yield put(actions.flow.setSaveStatus(flowId, 'saving'));
 
   const flow = yield select(selectors.fbFlow, flowId);
   const {routers = []} = flow;
-  const patchSet = [];
+  const patchSet = prePatches || [];
 
   const router = routers.find(r => r.id === routerId);
 
@@ -274,14 +273,11 @@ export function* deleteRouter({flowId, routerId}) {
       }
     } else if (routers[0].id === routerId) {
       if (router.branches.length > 1) {
-        router.branches.forEach((_, branchIndex) => {
-          if (branchIndex !== 0) {
-            patchSet.push({
-              op: 'remove',
-              path: `/routers/0/branches/${branchIndex}`,
-            });
-          }
-        });
+        const observer = jsonPatch.observe(flow);
+
+        router.branches.length = 1;
+
+        patchSet.push(...jsonPatch.generate(observer));
       }
     }
     yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));

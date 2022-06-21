@@ -4,6 +4,7 @@ import { cloneDeep, uniq, uniqBy } from 'lodash';
 import jsonPatch from 'fast-json-patch';
 import { BranchPathRegex, GRAPH_ELEMENTS_TYPE } from '../../constants';
 import { generateId } from '../string';
+import { setObjectValue } from '../json';
 
 export const getAllRouterPaths = flow => {
   const { routers = [] } = flow || {};
@@ -117,25 +118,24 @@ export const generateEmptyRouter = isVirtual => ({
 export const initializeFlowForReactFlow = flowDoc => {
   if (!flowDoc) return flowDoc;
   const flow = cloneDeep(flowDoc);
-  const { pageGenerators = [], pageProcessors = [], routers = [] } = flow;
 
-  if (!pageGenerators.length) {
-    pageGenerators.push({setupInProgress: true});
+  if (!flow.pageGenerators?.length) {
+    flow.pageGenerators = [{setupInProgress: true}];
   }
-  if (!pageProcessors.length && !routers.length) {
-    pageProcessors.push({setupInProgress: true});
+  if (!flow.pageProcessors?.length && !flow.routers?.length) {
+    flow.pageProcessors = [{setupInProgress: true}];
   }
-  pageGenerators.forEach(pg => {
+  flow.pageGenerators.forEach(pg => {
     pg.id = pg._exportId || `none-${shortId()}`;
   });
-  if (pageProcessors.length && !routers.length) {
-    routers.push({
+  if (flow.pageProcessors?.length && !flow.routers?.length) {
+    flow.routers = [{
       id: shortId(),
-      branches: [{name: 'Branch 1.0', pageProcessors}],
-    });
+      branches: [{name: 'Branch 1.0', pageProcessors: flow.pageProcessors}],
+    }];
     delete flow.pageProcessors;
   }
-  routers.forEach(({branches = []}) => {
+  flow.routers.forEach(({branches = []}) => {
     branches.forEach(branch => {
       const {pageProcessors = []} = branch;
 
@@ -144,8 +144,6 @@ export const initializeFlowForReactFlow = flowDoc => {
       });
     });
   });
-  flow.pageGenerators = pageGenerators;
-  flow.routers = routers;
 
   return flow;
 };
@@ -554,17 +552,30 @@ export const getIncomingRoutersMap = flow => {
   return map;
 };
 
+const isUnUsedRouter = (flow, router, incomingRoutersMap) => {
+  if (!flow || !flow.routers?.length || !router) return false;
+  const firstRouterId = flow.routers?.[0]?.id;
+
+  if (isVirtualRouter(router) && incomingRoutersMap[router.id]?.length === 1) return true;
+  if (router.id !== firstRouterId && !incomingRoutersMap[router.id]?.length) return true;
+
+  return false;
+};
+
 const unUsedMergeRouterExists = (flow, incomingRoutersMap) => {
-  const unUsedRouterIndex = flow.routers.findIndex(router => isVirtualRouter(router) && incomingRoutersMap[router.id]?.length === 1);
+  const unUsedRouterIndex = flow.routers.findIndex(router => isUnUsedRouter(flow, router, incomingRoutersMap));
 
   if (unUsedRouterIndex > -1) {
     const router = flow.routers[unUsedRouterIndex];
     const {pageProcessors, nextRouterId} = router.branches[0];
-    const {routerIndex, branchIndex } = incomingRoutersMap[router.id][0];
-    const branch = flow.routers[routerIndex].branches[branchIndex];
 
-    branch.pageProcessors = [...branch.pageProcessors, ...pageProcessors];
-    branch.nextRouterId = nextRouterId;
+    if (incomingRoutersMap[router.id]) {
+      const {routerIndex, branchIndex } = incomingRoutersMap[router.id][0];
+      const branch = flow.routers[routerIndex].branches[branchIndex];
+
+      branch.pageProcessors = [...branch.pageProcessors, ...pageProcessors];
+      branch.nextRouterId = nextRouterId;
+    }
     flow.routers.splice(unUsedRouterIndex, 1);
 
     return 1;
@@ -583,18 +594,17 @@ export const deleteUnUsedRouters = flow => {
     }
   }
   if (flow.routers?.length === 1 && flow.routers[0].branches?.length === 1) {
-    flow.pageProceesors = flow.routers[0].branches[0].pageProceesors || [];
+    flow.pageProcessors = flow.routers[0].branches[0].pageProcessors || [];
     delete flow.routers;
   }
 };
 
 export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, originalFlow}) => {
-  const patchSet = [];
   const edge = elementsMap[edgeId];
   const branchPath = edge.data.path;
   const processorArray = cloneDeep(jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`));
   const nextRouterId = jsonPatch.getValueByPointer(flow, `${branchPath}/nextRouterId`);
-
+  const flowClone = cloneDeep(originalFlow);
   const insertionIndex = processorArray.findIndex(pp => pp.id === edge.target);
 
   let firstHalf;
@@ -606,37 +616,28 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
     firstHalf = processorArray;
     secondHalf = [{setupInProgress: true}];
   }
+  const observer = jsonPatch.observe(flowClone);
+  const isVirtual = flow.routers?.length === 1 && isVirtualRouter(flow.routers[0]);
 
-  if (!originalFlow.routers) {
-    patchSet.push({
-      op: 'add',
-      path: '/routers',
-      value: flow.routers,
-    });
-    patchSet.push({
-      op: 'remove',
-      path: '/pageProcessors',
-    });
+  if (!flowClone.routers) {
+    if (!isVirtual) {
+      flowClone.routers = flow.routers;
+    }
+    delete flowClone.pageProcessors;
   }
-  patchSet.push({
-    op: 'replace',
-    path: `${branchPath}/pageProcessors`,
-    value: firstHalf,
-  });
 
   router.branches[0].pageProcessors = secondHalf;
   router.nextRouterId = nextRouterId;
+  if (!isVirtual) {
+    setObjectValue(flowClone, `${branchPath}/pageProcessors`, firstHalf);
+    setObjectValue(flowClone, `${branchPath}/nextRouterId`, router.id);
+  }
+  if (Array.isArray(flowClone.routers)) {
+    flowClone.routers.push(router);
+  } else {
+    flowClone.routers = [router];
+  }
 
-  patchSet.push(...[{
-    op: 'replace',
-    path: `${branchPath}/nextRouterId`,
-    value: router.id,
-  }, {
-    op: 'add',
-    path: '/routers/-',
-    value: router,
-  }]);
-
-  return patchSet;
+  return jsonPatch.generate(observer);
 };
 

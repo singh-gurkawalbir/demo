@@ -7,12 +7,16 @@ import { makeStyles,
   AccordionDetails,
 } from '@material-ui/core';
 import { sortableHandle } from 'react-sortable-hoc';
+import { useSelector } from 'react-redux';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
 import EditableText from '../../../../../EditableText';
 import GripperIcon from '../../../../../icons/GripperIcon';
 import MoreActionsButton from '../MoreActionsButton';
 import BranchFilter from '../BranchFilter';
+import { selectors } from '../../../../../../reducers';
 import InfoIconButton from '../../../../../InfoIconButton';
+import InfoIcon from '../../../../../icons/InfoIcon';
+import messageStore from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   summaryContainer: {
@@ -99,6 +103,25 @@ export default function BranchItem({
   allowSorting,
 }) {
   const classes = useStyles(allowSorting);
+  const hasRules = useSelector(state => {
+    const editorRule = selectors.editorRule(state, editorId);
+
+    return !!editorRule?.branches?.[position]?.inputFilter?.rules?.length;
+  });
+  const branchType = useSelector(state => {
+    const editorRule = selectors.editorRule(state, editorId);
+
+    return editorRule?.routeRecordsTo;
+  });
+  let infoMessage;
+
+  if (!hasRules) {
+    if (branchType === 'all_matching_branches' || (branchType === 'first_matching_branch' && position === 0)) {
+      infoMessage = messageStore('BRANCH_EMPTY_FILTER_RECORD_PASS');
+    } else {
+      infoMessage = messageStore('BRANCH_EMPTY_FILTER');
+    }
+  }
 
   return (
     <li className={classes.listItem}>
@@ -141,13 +164,26 @@ export default function BranchItem({
                 )}
               </div>
 
-              <MoreActionsButton position={position} pageProcessors={pageProcessors} allowDeleting={allowDeleting} />
+              <MoreActionsButton
+                position={position}
+                pageProcessors={pageProcessors}
+                allowDeleting={allowDeleting}
+                editorId={editorId}
+              />
             </div>
           </AccordionSummary>
 
           {expandable && (
           <AccordionDetails className={classes.accordionDetails}>
             <BranchFilter editorId={editorId} position={position} />
+            {infoMessage && (
+              <>
+                <InfoIcon />
+                <Typography variant="body1">
+                  {infoMessage}
+                </Typography>
+              </>
+            )}
           </AccordionDetails>
           )}
         </Accordion>

@@ -113,7 +113,6 @@ export default {
       router,
       routerIndex,
       prePatches,
-      flowId,
     } = editor;
     const {scriptId, code, entryFunction, activeProcessor } = rule || {};
 
@@ -131,9 +130,8 @@ export default {
     };
 
     patches.foregroundPatches = [
-      ...(Array.isArray(prePatches) ? [{resourceType: 'flows', resourceId: flowId, patch: prePatches}] : []),
       {
-        patch: [{ op: 'replace', path, value }],
+        patch: [...(prePatches || []), {op: 'remove', path: '/pageProcessors'}, { op: 'replace', path, value }],
         resourceType,
         resourceId,
       }];

@@ -284,8 +284,9 @@ export const useHandleRouterClick = routerId => {
       resourceType: 'flows',
       resourceId: flowId,
       router,
+      fieldId: 'router',
       routerIndex,
-      stage: 'postResponseMapHook',
+      stage: 'router',
       integrationId: flow?._integrationId,
     }));
     history.push(buildDrawerUrl({
@@ -301,7 +302,7 @@ export const useHandleAddNewRouter = edgeId => {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
-  const originalFlow = useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId);
+  const originalFlow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
 
   const router = generateEmptyRouter();
   const editorId = `router-${router.id}`;
@@ -316,11 +317,12 @@ export const useHandleAddNewRouter = edgeId => {
       resourceType: 'flows',
       resourceId: flowId,
       router,
-      routerIndex: flow.routers.length,
+      routerIndex: originalFlow.routers?.length || 0,
       integrationId: flow?._integrationId,
       edgeId,
+      fieldId: 'router',
       prePatches: patchSet,
-      stage: 'postResponseMapHook',
+      stage: 'router',
       edge,
     }));
     history.push(buildDrawerUrl({
