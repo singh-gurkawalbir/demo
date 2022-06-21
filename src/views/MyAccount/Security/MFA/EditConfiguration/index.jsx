@@ -14,6 +14,7 @@ import ManageDevicesDrawer from './ManageDevicesDrawer';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
+import useConfirmDialog from '../../../../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -28,14 +29,36 @@ const useStyles = makeStyles(theme => ({
 
 function ResetMFA() {
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const { confirmDialog } = useConfirmDialog();
+
+  const handleResetMFA = useCallback(() => {
+    confirmDialog({
+      title: 'Reset MFA?',
+      message: "Are you sure you want to reset MFA? You'll need to re-associate your authenticator app and configure your device in integrator.io.",
+      buttons: [
+        {
+          label: 'Reset',
+          onClick: () => {
+            setShowAuthModal(true);
+          },
+        },
+        {
+          label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog]);
+
+  const handleClose = useCallback(() => {
+    setShowAuthModal(false);
+  }, []);
 
   return (
     <div>
       <HeaderWithHelpText helpKey="mfa.reset"><span>Reset MFA</span></HeaderWithHelpText>
-      <OutlinedButton onClick={() => setShowAuthModal(true)}> Reset </OutlinedButton>
-      {showAuthModal && (
-      <ResetAuthorizeModal onClose={() => setShowAuthModal(false)} />
-      )}
+      <OutlinedButton onClick={handleResetMFA}> Reset </OutlinedButton>
+      {showAuthModal && (<ResetAuthorizeModal onClose={handleClose} />)}
     </div>
   );
 }
