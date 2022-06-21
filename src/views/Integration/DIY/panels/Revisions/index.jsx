@@ -125,6 +125,12 @@ export default function Revisions({ integrationId }) {
     }
   }, [integrationId, dispatch, isRevisionsCollectionRequested]);
 
+  useEffect(() => {
+    dispatch(actions.integrationLCM.cloneFamily.request(integrationId));
+
+    return () => dispatch(actions.integrationLCM.cloneFamily.clear(integrationId));
+  }, [dispatch, integrationId]);
+
   const handleCreatePull = useOpenRevisionWhenValid({
     integrationId,
     drawerURL: buildDrawerUrl({
@@ -132,6 +138,7 @@ export default function Revisions({ integrationId }) {
       baseUrl: match.url,
       params: { revId: nanoid() },
     }),
+    isCreatePull: true,
   });
   const handleCreateSnapshot = useOpenRevisionWhenValid({
     integrationId,

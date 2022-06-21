@@ -38,6 +38,7 @@ const useStyles = makeStyles(theme => ({
   large: {
     width: theme.spacing(6),
     height: theme.spacing(6),
+    margin: theme.spacing(1),
   },
   spinnerWithChildren: {
     alignItems: 'center',

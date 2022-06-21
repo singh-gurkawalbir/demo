@@ -1,8 +1,5 @@
 import { REVISION_STATUS, REVISION_TYPES } from '../constants';
-import messageStore from '../messageStore';
 import { comparer, sortJsonByKeys } from '../sort';
-
-export const INTEGRATION_CLONE_ERROR = `${messageStore('REQUIRED_MESSAGE')}.You don't have any data to pull`;
 
 export const DEFAULT_ROWS_PER_PAGE = 50;
 export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
@@ -54,8 +51,6 @@ export const REVISION_STATUS_LABELS = {
   [REVISION_STATUS.FAILED]: 'Failed',
   [REVISION_STATUS.CANCELED]: 'Canceled',
 };
-
-export const REVISION_IN_PROGRESS_ERROR = 'You have a pull, snapshot, or revert in progress.';
 
 export const REVISION_DIFF_ACTIONS = {
   ADD: 'add',
@@ -189,7 +184,7 @@ export const getRevisionResourceLevelChanges = (overallDiff, type, ignoreSort = 
 };
 
 export const shouldShowReferences = (resourceType, action) => {
-  const VALID_RESOURCE_TYPES_WITH_REFERENCES = ['exports', 'imports'];
+  const VALID_RESOURCE_TYPES_WITH_REFERENCES = ['exports', 'imports', 'scripts'];
 
   // We do not show references if the resource is a newly created one or not one of the above resource types
   return VALID_RESOURCE_TYPES_WITH_REFERENCES.includes(resourceType) && action !== REVISION_DIFF_ACTIONS.NEW;

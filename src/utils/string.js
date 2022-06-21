@@ -1,4 +1,5 @@
 import stableStringify from 'fast-json-stable-stringify';
+import { nanoid } from 'nanoid';
 
 export const safeParse = o => {
   if (typeof o === 'object' || !o) return o;
@@ -98,3 +99,5 @@ export const escapeSpecialChars = message => {
 
   return escapedMessage;
 };
+
+export const generateUniqueKey = () => nanoid();

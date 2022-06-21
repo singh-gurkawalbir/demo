@@ -60,6 +60,11 @@ function imageName(assistant) {
     return 'small-googleads';
   }
 
+  // For both the Google BigQuery and Google BigQuery (REST API) applications, we have the same image
+  if (assistant === 'bigquerydatawarehouse') {
+    return 'bigquery';
+  }
+
   return assistant;
 }
 
@@ -72,6 +77,9 @@ export default function ApplicationImg({
   className,
 }) {
   const classes = useStyles();
+
+  // eslint-disable-next-line no-param-reassign
+  if (!type) type = '';
   let path;
 
   if (!assistant) {

@@ -57,6 +57,22 @@ describe('AFE region selectors test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.editorSupportsOnlyV2Data()).toEqual(false);
     });
+    test('should return true if mappings editor and active version is 2', () => {
+      state.session.editors[editorId] = {
+        id: editorId,
+        resourceType: 'imports',
+        resourceId: '123',
+        editorType: 'mappings',
+        fieldId: '_body',
+      };
+      state.session.mapping = {
+        mapping: {
+          importId: '123',
+          version: 2,
+        },
+      };
+      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
+    });
     test('should return true for filters stage', () => {
       state.session.editors[editorId] = {
         id: editorId,
@@ -618,6 +634,22 @@ describe('AFE region selectors test cases', () => {
       };
 
       expect(selectors.shouldGetContextFromBE(state, editorId, sampleData)).toEqual(expectedOutput);
+    });
+    test('should return shouldGetContextFromBE as true if mappings editor and active version is 2', () => {
+      state.session.editors[editorId] = {
+        id: editorId,
+        resourceType: 'imports',
+        resourceId: '123',
+        editorType: 'mappings',
+        fieldId: '_body',
+      };
+      state.session.mapping = {
+        mapping: {
+          importId: '123',
+          version: 2,
+        },
+      };
+      expect(selectors.shouldGetContextFromBE(state, editorId)).toEqual({shouldGetContextFromBE: true, isMapperField: true});
     });
     test('should return shouldGetContextFromBE as false with sample data if resource is native REST adaptor type', () => {
       state.data.resources = {

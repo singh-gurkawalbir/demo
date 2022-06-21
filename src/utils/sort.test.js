@@ -36,6 +36,69 @@ describe('Sort util function test', () => {
         },
       ]);
     });
+
+    test('should return correct sorted data for array of objects with compare property as array and type number', () => {
+      const users = [
+        { user: 'fred', age: 48 },
+        { user: 'barney', age: 36 },
+        { user: 'fred', age: 40 },
+        { user: 'barney', age: 34 },
+      ];
+
+      users.sort(stringCompare(['user', 'age']));
+      expect(users).toEqual([
+        { user: 'barney', age: 34 },
+        { user: 'barney', age: 36 },
+        { user: 'fred', age: 40 },
+        { user: 'fred', age: 48 },
+      ]);
+    });
+
+    test('should return correct sorted data for array of objects with compare property as array and type number', () => {
+      const users = [
+        { user: 'fred', age: 48 },
+        { user: 'barney', age: 36 },
+        { user: 'fred', age: 40 },
+        { user: 'barney', age: 34 },
+        { user: 'Barney', age: 30 },
+        { user: 'Generic', age: 20 },
+        { user: 'GHR', age: 22 },
+      ];
+
+      users.sort(stringCompare(['user', 'age']));
+      expect(users).toEqual([
+        { user: 'barney', age: 34 },
+        { user: 'barney', age: 36 },
+        { user: 'Barney', age: 30 },
+        { user: 'fred', age: 40 },
+        { user: 'fred', age: 48 },
+        { user: 'Generic', age: 20 },
+        { user: 'GHR', age: 22 },
+      ]);
+    });
+
+    test('should return correct sorted data for array of objects with multiple compare properties', () => {
+      const users = [
+        { user: 'fred', age: 48, experience: 30},
+        { user: 'barney', age: 36, experience: 23 },
+        { user: 'fred', age: 40, experience: 13 },
+        { user: 'barney', age: 34, experience: 3 },
+        { user: 'Barney', age: 30, experience: 3 },
+        { user: 'Generic', age: 20, experience: 4 },
+        { user: 'GHR', age: 22, experience: 15 },
+      ];
+
+      users.sort(stringCompare(['experience', 'age', 'user'], true));
+      expect(users).toEqual([
+        { user: 'fred', age: 48, experience: 30},
+        { user: 'barney', age: 36, experience: 23 },
+        { user: 'GHR', age: 22, experience: 15 },
+        { user: 'fred', age: 40, experience: 13 },
+        { user: 'Generic', age: 20, experience: 4 },
+        { user: 'barney', age: 34, experience: 3 },
+        { user: 'Barney', age: 30, experience: 3 },
+      ]);
+    });
     test('should return correct sorted data for array of strings with all Capitals', () => {
       const sampleArray = ['Canada', 'USA', 'India', 'China', 'Australia', 'Swden', 'Sri Lanka', 'Germany'];
 

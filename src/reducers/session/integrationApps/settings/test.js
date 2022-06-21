@@ -4,6 +4,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import reducer, {selectors} from '.';
 import actions from '../../../../actions';
 import {HOME_PAGE_PATH} from '../../../../utils/constants';
+import errorMessageStore from '../../../../utils/errorStore';
 
 const amazonCategoryMappings = {
   uiAssistant: 'amazon',
@@ -874,7 +875,7 @@ describe('integrationApps reducer test cases', () => {
 
     expect(state).toEqual({ });
   });
-  describe('intetgrationApps settings reducer', () => {
+  describe('integrationApps settings reducer', () => {
     describe('integrationApps settings form init action', () => {
       test('should not affect existing state when initComplete function called and update the correct id', () => {
         const state = reducer({
@@ -2729,7 +2730,7 @@ describe('integrationApps reducer test cases', () => {
                     key: 'key2',
                   },
                 ],
-                validationErrMsg: 'One or more generate fields missing',
+                validationErrMsg: errorMessageStore('MAPPER_MISSING_GENERATE'),
               },
             },
           },
@@ -3098,7 +3099,7 @@ describe('integrationApps reducer test cases', () => {
                   key: 'mock_key',
                   generate: 'value',
                 }],
-                validationErrMsg: 'Extract Fields missing for field(s): value',
+                validationErrMsg: errorMessageStore('MAPPER1_MISSING_EXTRACT', {fields: 'value'}),
               },
             },
           },
@@ -3293,7 +3294,7 @@ describe('integrationApps reducer test cases', () => {
                   generate: undefined,
                   key: 'mock_key',
                 }],
-                validationErrMsg: 'One or more generate fields missing',
+                validationErrMsg: errorMessageStore('MAPPER_MISSING_GENERATE'),
               },
             },
           },
@@ -3339,7 +3340,7 @@ describe('integrationApps reducer test cases', () => {
                   generate: 'value',
                   key: 'key1',
                 }],
-                validationErrMsg: 'Extract Fields missing for field(s): world',
+                validationErrMsg: errorMessageStore('MAPPER1_MISSING_EXTRACT', {fields: 'world'}),
               },
             },
           },
@@ -3544,7 +3545,7 @@ describe('integrationApps reducer test cases', () => {
                   useAsAnInitializeValue: false,
                   key: 'key1',
                 }],
-                validationErrMsg: 'Extract Fields missing for field(s): item_sku',
+                validationErrMsg: errorMessageStore('MAPPER1_MISSING_EXTRACT', {fields: 'item_sku'}),
               },
             },
           },
