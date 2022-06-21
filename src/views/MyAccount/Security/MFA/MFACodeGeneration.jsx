@@ -10,16 +10,22 @@ import { selectors } from '../../../../reducers';
 import { TextButton } from '../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
-  scanQrCodeWrapper: {
+  scanCodeWrapper: {
     marginBottom: theme.spacing(2),
   },
-  qrCodeValue: {
+  secretCodeValue: {
     border: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(2, 3),
     margin: theme.spacing(1, 0),
     borderRadius: theme.spacing(1),
     display: 'inline-flex',
     flexDirection: 'column',
+  },
+  qrCode: {
+    marginTop: theme.spacing(2),
+  },
+  secretCodeMessage: {
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -34,20 +40,20 @@ function ViewSecretCode() {
 
   return (
     <>
-      <div className={classes.scanQrCodeWrapper}>
+      <div >
         {
           showSecretCode ? (
-            <>
+            <div className={classes.scanCodeWrapper}>
               <Typography variant="body2">Can’t scan your QR code? Enter the following Code and Account in your verification app:</Typography>
               <div>
-                <div className={classes.qrCodeValue}>
+                <div className={classes.secretCodeValue}>
                   <Typography variant="body2">Code: {secretCode}</Typography>
                   <Typography variant="body2">Account: Celigo</Typography>
                 </div>
               </div>
-            </>
+            </div>
           ) : (
-            <Typography variant="body2">
+            <Typography variant="body2" className={classes.secretCodeMessage}>
               Can’t scan your QR code? <TextButton color="primary" onClick={() => setShowSecretCodeAuthModal(true)}>Click here </TextButton>
             </Typography>
           )
@@ -70,13 +76,13 @@ function ViewQRCode() {
 
   return (
     <>
-      <div className={classes.scanQrCodeWrapper}>
+      <div className={classes.scanCodeWrapper}>
         <Typography variant="body2">
           Scan the QR code below with your verification app. Once your app reads the QR code, you&apos;ll get a 6-digit code.
         </Typography>
         { showQrCode
-          ? <QRCode value={qrCode} size={64} />
-          : (<OutlinedButton onClick={() => setShowQRAuthModal(true)}> View QR code </OutlinedButton>)}
+          ? <QRCode value={qrCode} size={84} className={classes.qrCode} />
+          : (<OutlinedButton className={classes.qrCode} onClick={() => setShowQRAuthModal(true)}> View QR code </OutlinedButton>)}
       </div>
       {showQRAuthModal && (<ReAuthModal onClose={handleClose} isQRCode />)}
     </>

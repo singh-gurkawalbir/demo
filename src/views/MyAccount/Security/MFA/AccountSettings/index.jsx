@@ -54,7 +54,6 @@ export default function AccountSettings() {
           <DynaSubmit
             formKey={formKey}
             className={classes.saveConfig}
-        // disabled={disableSave}
             onClick={updateAccountSettings}>
             Save
           </DynaSubmit>

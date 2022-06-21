@@ -12,6 +12,8 @@ import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithP
 import { TextButton } from '../../../../../../components/Buttons';
 import ActionGroup from '../../../../../../components/ActionGroup';
 import { MFA_RESET_ASYNC_KEY, FORM_SAVE_STATUS, MFA_URL } from '../../../../../../utils/constants';
+import messageStore from '../../../../../../utils/messageStore';
+import RawHtml from '../../../../../../components/RawHtml';
 
 const useStyles = makeStyles({
   container: {
@@ -65,15 +67,17 @@ export default function ResetAuthorizationModal({ onClose }) {
   [failed, success]);
   useEffect(() => {
     if (success) {
+      enqueueSnackbar({
+        message: <RawHtml html={messageStore('MFA_RESET_SUCCESS')} />,
+        variant: 'success',
+      });
       onClose();
     }
   }, [success, enqueueSnackbar, onClose]);
 
-  useEffect(() => () => dispatch(actions.asyncTask.clear(MFA_RESET_ASYNC_KEY)));
+  useEffect(() => () => dispatch(actions.asyncTask.clear(MFA_RESET_ASYNC_KEY)), [dispatch]);
 
-  const formKey = useFormInitWithPermissions({
-    fieldMeta: metadata,
-  });
+  const formKey = useFormInitWithPermissions({ fieldMeta: metadata });
 
   const learnMoreLink = (<a target="_blank" rel="noreferrer" href={MFA_URL}> Learn more</a>);
 

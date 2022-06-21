@@ -5,6 +5,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Stepper from '../Stepper';
 import HeaderWithHelpText from '../HeaderWithHelpText';
+import useNotifySetupSuccess from '../useNotifySetupSuccess';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
@@ -166,6 +167,8 @@ function ConnectOwnerDevice() {
 
 export default function ConnectDevice() {
   const isAccountOwner = useSelector(state => selectors.isAccountOwner(state));
+
+  useNotifySetupSuccess({ mode: 'connect' });
 
   if (isAccountOwner) {
     return <ConnectOwnerDevice />;

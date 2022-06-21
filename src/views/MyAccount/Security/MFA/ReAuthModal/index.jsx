@@ -8,7 +8,6 @@ import { MFA_URL } from '../../../../../utils/constants';
 import ModalDialog from '../../../../../components/ModalDialog';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
-import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { TextButton } from '../../../../../components/Buttons';
 import ActionGroup from '../../../../../components/ActionGroup';
@@ -49,7 +48,6 @@ export default function ReAuthModal({ onClose, isQRCode }) {
   const success = useSelector(isQRCode ? selectors.showQrCode : selectors.showSecretCode);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [enqueueSnackbar] = useEnqueueSnackbar();
 
   const handleReAuthentication = useCallback(
     formVal => {
@@ -69,7 +67,7 @@ export default function ReAuthModal({ onClose, isQRCode }) {
     if (success) {
       onClose();
     }
-  }, [success, enqueueSnackbar, onClose]);
+  }, [success, onClose]);
 
   const formKey = useFormInitWithPermissions({ fieldMeta: metadata });
 

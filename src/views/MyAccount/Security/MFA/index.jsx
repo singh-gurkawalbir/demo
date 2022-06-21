@@ -10,6 +10,7 @@ import CollapsableContainer from '../../../../components/CollapsableContainer';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import MFASetup from './Setup';
+import useNotifySetupSuccess from './useNotifySetupSuccess';
 import EditMFAConfiguration from './EditConfiguration';
 // import AccountSettings from './AccountSettings';
 
@@ -76,6 +77,8 @@ function MyUserSettings() {
   const isMFAConfigured = useSelector(state => selectors.isMFAConfigured(state));
 
   const [isMFAEnabled, setIsMFAEnabled] = useState();
+
+  useNotifySetupSuccess({ mode: 'switch'});
 
   const handleEnableMFA = useCallback(() => {
     if (isMFAConfigured) {

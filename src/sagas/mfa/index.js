@@ -1,6 +1,6 @@
 import { call, put, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../actions';
-import { MFA_RESET_ASYNC_KEY } from '../../utils/constants';
+import { MFA_RESET_ASYNC_KEY, MFA_SETUP_ASYNC_KEY } from '../../utils/constants';
 import { selectors } from '../../reducers';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -34,17 +34,21 @@ export function* requestUserSettings() {
 //   }
 // }
 export function* setupMFA({ mfaConfig }) {
+  yield put(actions.asyncTask.start(MFA_SETUP_ASYNC_KEY));
   try {
     const response = yield call(apiCallWithRetry, {
       path: '/mfa/setup',
       opts: {
-        body: {...mfaConfig},
+        body: mfaConfig,
         method: 'POST',
       },
     });
 
     yield put(actions.mfa.receivedUserSettings(response));
+    yield put(actions.asyncTask.success(MFA_SETUP_ASYNC_KEY));
   } catch (error) {
+    yield put(actions.asyncTask.failed(MFA_SETUP_ASYNC_KEY));
+
     return undefined;
   }
 }
@@ -67,8 +71,6 @@ export function* setupMFA({ mfaConfig }) {
 //   yield put(actions.mfa.receivedAccountSettings(response));
 // }
 export function* requestSecretCode({ password, isQRCode }) {
-  // yield delay(500);
-  // const response = { secret: 'secret', keyURI: 'http://keyURI.com' };
   const isSecretCodeGenerated = yield select(selectors.isSecretCodeGenerated);
 
   const path = `/mfa/secret/${isSecretCodeGenerated ? 'view' : 'generate'}`;
@@ -80,7 +82,6 @@ export function* requestSecretCode({ password, isQRCode }) {
         body: { password },
         method: 'POST',
       },
-      // message: 'Requesting license upgrade.',
     });
 
     yield put(actions.mfa.receivedSecretCode(response));
@@ -98,8 +99,6 @@ export function* requestSecretCode({ password, isQRCode }) {
   yield put(actions.mfa.showSecretCode());
 }
 export function* resetMFA({ password }) {
-  // yield delay(500);
-  // const response = undefined;
   const path = '/mfa/reset';
 
   yield put(actions.asyncTask.start(MFA_RESET_ASYNC_KEY));

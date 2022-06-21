@@ -1,3 +1,5 @@
+import { MFA_URL } from './constants';
+
 const messages = {
   CONTACT_SALES_MESSAGE: 'We will contact you soon to schedule your demo and discuss your business needs. In the meantime,',
   INTEGRATION_DELETE_VALIDATE: 'All Flows within an integration tile must be removed before the integration tile can be deleted.',
@@ -48,6 +50,13 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   PULL_MERGE_SUCCESS: 'You\'ve successfully merged your pull.',
   REVERT_SUCCESS: 'You\'ve successfully reverted your changes.',
   SNAPSHOT_SUCCESS: 'You\'ve successfully created a snapshot.',
+  // #endregion
+  // #region MFA
+  MFA_SETUP_SUCCESS: 'MFA enabled and device connected successfully.',
+  MFA_ENABLED: 'MFA enabled successfully.',
+  MFA_DISABLED: 'MFA disabled successfully.',
+  MFA_RESET_SUCCESS: `Your MFA has been reset successfully and a new key has been regenerated. <b><a target="_blank" rel="noopener noreferrer"
+  href="${MFA_URL}">Enable MFA</a></b> to use the new key with your account.`,
   // #endregion
 
 };
