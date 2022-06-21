@@ -2068,9 +2068,11 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Save your client ID and client secret in iClient for an added layer of security.',
   'connection.http.clientCertificates.key': 'Select a .KEY private key file.',
   'connection.http.clientCertificates.type':
-'Awaiting Help Text Here.',
+'Select the certificate type.',
   'connection.http.clientCertificates.cert':
 'Select a certificate in PEM format.',
+  'connection.http.clientCertificates.pfx':
+'Select a certificate in PFX format.',
   'connection.http.clientCertificates.passphrase':
 'Enter a passphrase if you need to further protect this certificate file.',
   'connection.marketplaceRegion':

@@ -155,9 +155,7 @@ export default {
     delete newValues['/http/auth/wsse/password'];
     delete newValues['/http/auth/wsse/headerName'];
 
-    if (newValues['/http/clientCertificates/type']) {
-      delete newValues['/http/clientCertificates/type'];
-    }
+    delete newValues['/http/clientCertificates/type'];
 
     return newValues;
   },

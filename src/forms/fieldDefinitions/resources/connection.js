@@ -1037,7 +1037,7 @@ export default {
 
       if (r?.http?.clientCertificates?.pfx) {
         val = 'pfx';
-      } else if (r?.http.clientCertificates?.cert || r?.http.clientCertificates?.key) {
+      } else if (r?.http?.clientCertificates?.cert || r?.http?.clientCertificates?.key) {
         val = 'pem';
       }
 
@@ -1054,7 +1054,7 @@ export default {
     type: 'uploadfile',
     placeholder: 'SSL certificate',
     label: 'SSL certificate',
-    helpKey: 'connection.http.clientCertificates.cert',
+    helpKey: 'connection.http.clientCertificates.pfx',
   },
   'http.clientCertificates.key': {
     type: 'uploadfile',
