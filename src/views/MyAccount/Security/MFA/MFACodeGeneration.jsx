@@ -44,11 +44,11 @@ function ViewSecretCode() {
         {
           showSecretCode ? (
             <div className={classes.scanCodeWrapper}>
-              <Typography variant="body2">Can’t scan your QR code? Enter the following Code and Account in your verification app:</Typography>
+              <Typography variant="body2">Can’t scan your QR code? Enter the following account and code in your verification app:</Typography>
               <div>
                 <div className={classes.secretCodeValue}>
-                  <Typography variant="body2">Code: {secretCode}</Typography>
                   <Typography variant="body2">Account: Celigo</Typography>
+                  <Typography variant="body2">Code: {secretCode}</Typography>
                 </div>
               </div>
             </div>
