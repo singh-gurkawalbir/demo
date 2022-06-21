@@ -16,13 +16,9 @@ import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   container: {
-    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-    marginLeft: theme.spacing(2),
-    marginBottom: theme.spacing(2),
+    borderLeft: `3px solid ${theme.palette.secondary.lightest}`,
+    marginBottom: theme.spacing(4),
     paddingLeft: theme.spacing(2),
-  },
-  saveConfig: {
-    marginLeft: theme.spacing(2),
   },
   actions: {
     marginBottom: theme.spacing(2),
@@ -171,7 +167,6 @@ export default function EditMFAConfiguration() {
       {!isAccountOwner ? (
         <DynaSubmit
           formKey={formKey}
-          className={classes.saveConfig}
           onClick={updateMFA}>
           Save
         </DynaSubmit>

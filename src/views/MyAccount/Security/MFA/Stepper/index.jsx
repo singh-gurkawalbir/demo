@@ -22,10 +22,10 @@ const useStyles = makeStyles(theme => ({
       content: '""',
       height: '100%',
       backgroundColor: theme.palette.secondary.lightest,
-      width: 1,
+      width: 2,
       position: 'absolute',
       top: 0,
-      left: -11,
+      left: -theme.spacing(1.5),
     },
   },
   childrenContainer: {
