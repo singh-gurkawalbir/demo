@@ -15,7 +15,6 @@ import { MFA_RESET_ASYNC_KEY, FORM_SAVE_STATUS, MFA_URL } from '../../../../../.
 
 const useStyles = makeStyles({
   container: {
-    overflowY: 'auto',
     height: '100%',
     width: '100%',
     '& > div:first-child': {

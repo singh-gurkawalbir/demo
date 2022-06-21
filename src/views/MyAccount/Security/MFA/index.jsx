@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: '14px',
   },
   helpTextButton: {
-    marginLeft: theme.spacing(0.5),
+    marginLeft: theme.spacing(1),
     height: theme.spacing(2),
     width: theme.spacing(2),
     padding: 0,
@@ -51,12 +51,17 @@ const useStyles = makeStyles(theme => ({
       borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     },
   },
+  userSettingsContainer: {
+    '& .MuiCollapse-container': {
+      minHeight: '100px !important',
+    },
+  },
 }));
 
 function MFAConfiguration() {
   const canEditMFAConfiguration = useSelector(state => selectors.isMFAEnabled(state) && selectors.isSecretCodeGenerated(state));
 
-  if (canEditMFAConfiguration) {
+  if (!canEditMFAConfiguration) {
     return <EditMFAConfiguration />;
   }
 
@@ -111,13 +116,13 @@ function MFADetails() {
   const UserSettings = () => {
     if (isAccountOwnerOrAdmin) {
       return (
-        <CollapsableContainer title="My user" forceExpand>
-          { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner /> }
+        <CollapsableContainer title="My user" forceExpand className={classes.userSettingsContainer}>
+          { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll /> }
         </CollapsableContainer>
       );
     }
 
-    return (areUserSettingsLoaded ? <MyUserSettings /> : <Spinner />);
+    return (areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll />);
   };
 
   useEffect(() => {

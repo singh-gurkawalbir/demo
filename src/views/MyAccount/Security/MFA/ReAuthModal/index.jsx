@@ -15,7 +15,6 @@ import ActionGroup from '../../../../../components/ActionGroup';
 
 const useStyles = makeStyles({
   container: {
-    overflowY: 'auto',
     height: '100%',
     width: '100%',
     '& > div:first-child': {
