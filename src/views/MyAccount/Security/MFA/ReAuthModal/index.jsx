@@ -21,6 +21,9 @@ const useStyles = makeStyles({
       flexDirection: 'column',
     },
   },
+  authModalContainer: {
+    overflowY: 'visible',
+  },
 });
 
 const metadata = {
@@ -78,7 +81,7 @@ export default function ReAuthModal({ onClose, isQRCode }) {
     : 'Enter your account password to view your secret key.';
 
   return (
-    <ModalDialog show onClose={onClose}>
+    <ModalDialog show onClose={onClose} className={classes.authModalContainer}>
       {title}
       <>
         {description}{learnMoreLink}.

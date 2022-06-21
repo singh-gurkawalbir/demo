@@ -21,6 +21,9 @@ const useStyles = makeStyles({
       flexDirection: 'column',
     },
   },
+  authModalContainer: {
+    overflowY: 'visible',
+  },
 });
 
 const metadata = {
@@ -75,7 +78,7 @@ export default function ResetAuthorizationModal({ onClose }) {
   const learnMoreLink = (<a target="_blank" rel="noreferrer" href={MFA_URL}> Learn more</a>);
 
   return (
-    <ModalDialog show onClose={onClose}>
+    <ModalDialog show onClose={onClose} className={classes.authModalContainer}>
       Re-authenticate your account
       <>
         Enter your account password to confirm if you want to reset MFA.
