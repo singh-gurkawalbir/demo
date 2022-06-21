@@ -155,6 +155,10 @@ export default {
     delete newValues['/http/auth/wsse/password'];
     delete newValues['/http/auth/wsse/headerName'];
 
+    if (newValues['/http/clientCertificates/type']) {
+      delete newValues['/http/clientCertificates/type'];
+    }
+
     return newValues;
   },
   fieldMap: {
@@ -290,7 +294,16 @@ export default {
       visibleWhenAll: [
         {
           field: 'http.clientCertificates.type',
-          is: ['pem', 'pfx'],
+          is: ['pem'],
+        },
+      ],
+    },
+    'http.clientCertificates.pfx': {
+      fieldId: 'http.clientCertificates.pfx',
+      visibleWhenAll: [
+        {
+          field: 'http.clientCertificates.type',
+          is: ['pfx'],
         },
       ],
     },
@@ -507,6 +520,7 @@ export default {
                 fields: [
                   'http.clientCertificates.key',
                   'http.clientCertificates.cert',
+                  'http.clientCertificates.pfx',
                   'http.clientCertificates.passphrase',
                 ],
               },

@@ -82,7 +82,7 @@ export default {
       }
       const applications = applicationsList();
       let application = getAssistantFromResource(r) ||
-      (r.type === 'rdbms' ? rdbmsSubTypeToAppType(r.rdbms.type) : r.type);
+        (r.type === 'rdbms' ? rdbmsSubTypeToAppType(r.rdbms.type) : r.type);
 
       if (r.type === 'http' && r.http?.formType === 'rest') {
         application = 'rest';
@@ -755,16 +755,16 @@ export default {
     label: 'Provider',
     defaultValue: r =>
       r &&
-      r.http &&
-      r.http.auth &&
-      r.http.auth.oauth &&
-      r.http.auth.oauth.grantType
+        r.http &&
+        r.http.auth &&
+        r.http.auth.oauth &&
+        r.http.auth.oauth.grantType
         ? 'custom'
         : r &&
-          r.http &&
-          r.http.auth &&
-          r.http.auth.oauth &&
-          r.http.auth.oauth.applicationType,
+        r.http &&
+        r.http.auth &&
+        r.http.auth.oauth &&
+        r.http.auth.oauth.applicationType,
     options: [
       {
         items: [{ label: 'Custom', value: 'custom' }],
@@ -1032,8 +1032,25 @@ export default {
         ],
       },
     ],
+    defaultValue: r => {
+      let val = '';
+
+      if (r?.http?.clientCertificates?.pfx) {
+        val = 'pfx';
+      } else if (r?.http.clientCertificates?.cert || r?.http.clientCertificates?.key) {
+        val = 'pem';
+      }
+
+      return val;
+    },
   },
   'http.clientCertificates.cert': {
+    type: 'uploadfile',
+    placeholder: 'SSL certificate',
+    label: 'SSL certificate',
+    helpKey: 'connection.http.clientCertificates.cert',
+  },
+  'http.clientCertificates.pfx': {
     type: 'uploadfile',
     placeholder: 'SSL certificate',
     label: 'SSL certificate',
