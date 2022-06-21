@@ -6,6 +6,8 @@ import { selectors } from '../../../../reducers';
 import FormGenerator from '..';
 import Help from '../../../Help';
 
+const emptyObj = {};
+
 const useStyles = makeStyles(theme => ({
   indentFields: {
     borderLeft: `3px solid ${theme.palette.secondary.lightest}`,
@@ -33,8 +35,8 @@ const useStyles = makeStyles(theme => ({
 export default function IndentedComponents(props) {
   const { containers, fieldMap, formKey, resourceType, resourceId} = props;
   const classes = useStyles();
-  const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId)?.merged || {};
-  const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', resource?._connectionId)?.merged || {};
+  const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId)?.merged || emptyObj;
+  const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', resource._connectionId)?.merged || emptyObj;
   const formValues = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
 
   const transformedContainers =

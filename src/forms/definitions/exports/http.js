@@ -1,9 +1,9 @@
 import { isNewId } from '../../../utils/resource';
 
 export default {
-  preSave: (formValues, _, { connection } = {}) => {
+  preSave: (formValues, resource, { connection } = {}) => {
     const retValues = { ...formValues };
-    const overridenSuccessMediaType = _?.http?.successMediaType;
+    const overridenSuccessMediaType = resource?.http?.successMediaType;
     const { successMediaType, mediaType } = connection?.http || {};
 
     if (retValues['/http/successMediaType'] === 'csv') {
@@ -421,7 +421,6 @@ export default {
       label: 'CSV parser helper',
       helpKey: 'file.csvParse',
       ignoreSortAndGroup: true,
-      isHttp: true,
       defaultValue: r => r?.file?.csv || {
         columnDelimiter: ',',
         rowDelimiter: '\n',
@@ -556,7 +555,7 @@ export default {
                   'parsers',
                   'file.csv',
                 ],
-                header: (_, connection, formValues) => {
+                header: (resource, connection, formValues) => {
                   const { mediaType, successMediaType } = connection?.http || {};
                   const isParserVisible = ['csv', 'xml'].some(parser => (formValues?.['/http/successMediaType'] === parser || (!formValues?.['/http/successMediaType'] && (successMediaType === parser || (!successMediaType && mediaType === parser)))));
 

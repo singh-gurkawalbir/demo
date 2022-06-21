@@ -97,7 +97,6 @@ export default function DynaXmlParse_afe({
   const resourcePath = useSelector(state =>
     isParserSupportedForHTTP ? selectors.resource(state, resourceType, resourceId)?.http?.response?.resourcePath : selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
 
-  // console.log("AXB = ", resourcePath);
   const getInitOptions = useCallback(
     val => ({ resourcePath, ...val?.[0]?.rules}),
     [resourcePath],
