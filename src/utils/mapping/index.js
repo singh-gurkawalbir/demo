@@ -882,20 +882,72 @@ export const buildTreeFromV2Mappings = ({
   return mappingsTreeData;
 };
 
-export const hasV2MappingsInTreeData = treeData => {
-  // the mappings can be empty in record as well as
-  // rows output format where top parent row is disabled
-  // so adding conditions for both types
-  if (!treeData || !treeData.length ||
-  (treeData.length === 1 && treeData[0].isEmptyRow) ||
-  (treeData.length === 1 && treeData[0].generateDisabled && !treeData[0].combinedExtract && treeData[0].children?.length === 1 && treeData[0].children[0].isEmptyRow)) {
-    return false;
+const isMappingWithoutExtract = (mapping, lookups) => {
+  const {dataType, copySource, extract, combinedExtract} = mapping;
+
+  let missingExtract;
+
+  if (ARRAY_DATA_TYPES.includes(dataType)) {
+    if (copySource === 'yes' && !combinedExtract) {
+      missingExtract = true;
+    }
+
+    if (!('hardCodedValue' in mapping || combinedExtract)) {
+      missingExtract = true;
+    }
+  } else if (dataType === MAPPING_DATA_TYPES.OBJECT) {
+    // object data type can have empty extract if children are mapped
+    // meaning copySource is no
+    if (copySource === 'yes' && !extract) {
+      missingExtract = true;
+    }
+  } else if (!('hardCodedValue' in mapping || extract)) {
+    missingExtract = true;
   }
 
-  return true;
+  if (missingExtract) {
+    if (mapping.lookupName) {
+      const lookup = lookups?.find(l => l.name === mapping.lookupName);
+
+      // check if mapping has dynamic lookup
+      if (!lookup || lookup.map) {
+        return true;
+      }
+    } else {
+      return true;
+    }
+  }
+
+  return false;
 };
 
-const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave}) => {
+export const hasV2MappingsInTreeData = (treeData = [], lookups) => {
+  let hasMappings = false;
+
+  for (let i = 0; i < treeData.length; i += 1) {
+    const {generate, isRequired} = treeData[i];
+
+    // if source is present
+    if (!isMappingWithoutExtract(treeData[i], lookups)) {
+      hasMappings = true;
+      break;
+    } else if (!isRequired && generate) {
+      // if destination is present for non required fields, then it is an intended mapping.
+      // for required fields, if no source is present, we consider that user has entered no mappings
+      hasMappings = true;
+      break;
+    }
+
+    if (treeData[i].children?.length) {
+      hasMappings = hasV2MappingsInTreeData(treeData[i].children, lookups);
+      if (hasMappings) break;
+    }
+  }
+
+  return hasMappings;
+};
+
+const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookups}) => {
   v2TreeData.forEach(mapping => {
     const {
       description,
@@ -916,6 +968,7 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave}) => {
       isTabNode} = mapping;
 
     if (isTabNode || (!generateDisabled && !generate)) return;
+    if (isMappingWithoutExtract(mapping, lookups)) return;
 
     const newMapping = {
       description,
@@ -944,7 +997,12 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave}) => {
       // else if extract exists, then no sub mappings are needed as we copy from source as is
       if (!extract && children?.length) {
         newMapping.mappings = [];
-        recursivelyBuildV2MappingsFromTree({v2TreeData: children, _mappingsToSave: newMapping.mappings});
+        recursivelyBuildV2MappingsFromTree({v2TreeData: children, _mappingsToSave: newMapping.mappings, lookups});
+
+        // if no valid children mappings are present, then do not save the parent as well
+        if (newMapping.mappings.length === 0) {
+          return;
+        }
       }
       _mappingsToSave.push(newMapping);
 
@@ -995,10 +1053,19 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave}) => {
             mappings: subMappings,
           };
 
-          buildArrayHelper.push(newHelper);
+          recursivelyBuildV2MappingsFromTree({v2TreeData: matchingChildren, _mappingsToSave: subMappings, lookups});
 
-          recursivelyBuildV2MappingsFromTree({v2TreeData: matchingChildren, _mappingsToSave: subMappings});
+          // if no valid children mappings are present, then do not push that source to the parent
+          if (newHelper.mappings.length === 0) {
+            return;
+          }
+          buildArrayHelper.push(newHelper);
         });
+
+        // if no sources children are present, then no need to save the parent mapping as well
+        if (newMapping.buildArrayHelper.length === 0) {
+          return;
+        }
         _mappingsToSave.push(newMapping);
 
         return;
@@ -1028,14 +1095,14 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave}) => {
   });
 };
 
-export const buildV2MappingsFromTree = ({v2TreeData}) => {
+export const buildV2MappingsFromTree = ({v2TreeData, lookups}) => {
   const _mappingsToSave = [];
 
-  if (!hasV2MappingsInTreeData(v2TreeData)) {
+  if (isEmpty(v2TreeData)) {
     return _mappingsToSave;
   }
 
-  recursivelyBuildV2MappingsFromTree({v2TreeData, _mappingsToSave});
+  recursivelyBuildV2MappingsFromTree({v2TreeData, _mappingsToSave, lookups});
 
   return _mappingsToSave;
 };
@@ -1397,17 +1464,15 @@ const recursivelyValidateV2Mappings = ({
 }) => {
   v2TreeData.forEach(mapping => {
     const {
+      isRequired,
       parentKey,
       parentExtract,
       generate,
       generateDisabled,
-      copySource,
-      extract,
-      dataType,
-      combinedExtract,
       isTabNode} = mapping;
 
     if (isTabNode) return;
+    const missingSource = isMappingWithoutExtract(mapping, lookups);
 
     if (generate) {
       const dupKey = parentKey ? `${parentKey}-${parentExtract}-${generate}` : generate;
@@ -1421,47 +1486,17 @@ const recursivelyValidateV2Mappings = ({
       }
       // eslint-disable-next-line no-param-reassign
       dupMap[dupKey] = generate;
-    } else if (!generateDisabled) {
+    } else if (!missingSource && !generateDisabled) {
       mappingsWithoutGenerates.push(mapping);
 
       return;
     }
 
-    let mappingsWithoutExtract;
+    // check for missing extracts only if its a required mapping
+    if (isRequired && missingSource) {
+      missingExtractGenerateNames.push(mapping.generate);
 
-    if (ARRAY_DATA_TYPES.includes(dataType)) {
-      if (copySource === 'yes' && !combinedExtract) {
-        mappingsWithoutExtract = true;
-      }
-
-      if (!('hardCodedValue' in mapping || combinedExtract)) {
-        mappingsWithoutExtract = true;
-      }
-    } else if (dataType === MAPPING_DATA_TYPES.OBJECT) {
-      // object data type can have empty extract if children are mapped
-      // meaning copySource is no
-      if (copySource === 'yes' && !extract) {
-        mappingsWithoutExtract = true;
-      }
-    } else if (!('hardCodedValue' in mapping || extract)) {
-      mappingsWithoutExtract = true;
-    }
-
-    if (mappingsWithoutExtract) {
-      if (mapping.lookupName) {
-        const lookup = lookups.find(l => l.name === mapping.lookupName);
-
-        // check if mapping has dynamic lookup
-        if (!lookup || lookup.map) {
-          missingExtractGenerateNames.push(mapping.generate);
-
-          return;
-        }
-      } else {
-        missingExtractGenerateNames.push(mapping.generate);
-
-        return;
-      }
+      return;
     }
 
     if (mapping.children?.length) {
@@ -1498,7 +1533,7 @@ const validateV2Mappings = (v2TreeData, lookups) => {
   if (mappingsWithoutGenerates.length) {
     return {
       isSuccess: false,
-      errMessage: errorMessageStore('MAPPER_MISSING_GENERATE'),
+      errMessage: errorMessageStore('MAPPER2_MISSING_GENERATE'),
     };
   }
 
@@ -2478,6 +2513,11 @@ export default {
   },
 
   validateMappings: (mappings, lookups, v2TreeData) => {
+    // validate only v2 mappings if exist
+    if (hasV2MappingsInTreeData(v2TreeData, lookups)) {
+      return validateV2Mappings(v2TreeData, lookups);
+    }
+
     const duplicateMappings = mappings
       .filter(e => !!e.generate)
       .map(e => e.generate)
@@ -2501,7 +2541,7 @@ export default {
     if (mappingsWithoutGenerates.length) {
       return {
         isSuccess: false,
-        errMessage: errorMessageStore('MAPPER_MISSING_GENERATE'),
+        errMessage: errorMessageStore('MAPPER1_MISSING_GENERATE'),
       };
     }
     const mappingsWithoutExtract = mappings.filter(mapping => {
@@ -2532,11 +2572,6 @@ export default {
         isSuccess: false,
         errMessage: errorMessageStore('MAPPER1_MISSING_EXTRACT', {fields: missingExtractGenerateNames.join(',')}),
       };
-    }
-
-    // validate v2 mappings as well
-    if (hasV2MappingsInTreeData(v2TreeData)) {
-      return validateV2Mappings(v2TreeData, lookups);
     }
 
     return { isSuccess: true };

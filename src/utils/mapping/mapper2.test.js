@@ -1813,17 +1813,45 @@ describe('v2 mapping utils', () => {
   describe('hasV2MappingsInTreeData util', () => {
     test('should not throw exception for invalid args', () => {
       expect(hasV2MappingsInTreeData()).toEqual(false);
-      expect(hasV2MappingsInTreeData(null)).toEqual(false);
-      expect(hasV2MappingsInTreeData([])).toEqual(false);
+      expect(hasV2MappingsInTreeData([], [])).toEqual(false);
     });
-    test('should return false if only one default row exists', () => {
-      expect(hasV2MappingsInTreeData([{key: 'key1', isEmptyRow: true}])).toEqual(false);
-    });
-    test('should return false if only one default row exists in rows output mode', () => {
-      expect(hasV2MappingsInTreeData([{key: 'key1', generateDisabled: true, children: [{key: 'c1', isEmptyRow: true}]}])).toEqual(false);
-    });
-    test('should return true if tree data exists', () => {
+    test('should return true if no required mappings exist and any extract is present', () => {
+      const mappings1 = [{key: 'key1', extract: '$.test'}];
+      const mappings2 = [{key: 'key1', generateDisabled: true, extract: '$.test', children: [{key: 'c1', isEmptyRow: true}]}];
+
+      expect(hasV2MappingsInTreeData(mappings1)).toEqual(true);
+      expect(hasV2MappingsInTreeData(mappings2)).toEqual(true);
       expect(hasV2MappingsInTreeData([{key: 'key1', extract: 'e1', generate: 'g1', dataType: 'string'}])).toEqual(true);
+    });
+    test('should return true if no required mappings exist and any generate is present', () => {
+      const mappings1 = [{key: 'key1', generate: 'test'}];
+      const mappings2 = [{key: 'key1', children: [{key: 'c1', generate: 'test'}]}];
+
+      expect(hasV2MappingsInTreeData(mappings1)).toEqual(true);
+      expect(hasV2MappingsInTreeData(mappings2)).toEqual(true);
+    });
+    test('should return true if required mappings exist and any extra generate is present', () => {
+      const mappings1 = [{key: 'key1', isRequired: true, generate: 'test'}, {key: 'key2', generate: 'address'}];
+      const mappings2 = [{key: 'key1', isRequired: true, generate: 'test', children: [{key: 'c1', generate: 'address'}]}];
+
+      expect(hasV2MappingsInTreeData(mappings1)).toEqual(true);
+      expect(hasV2MappingsInTreeData(mappings2)).toEqual(true);
+    });
+    test('should return true if required mappings exist and extract is present in those', () => {
+      const mappings = [{key: 'key1', isRequired: true, generate: 'test', extract: '$.abc'}];
+
+      expect(hasV2MappingsInTreeData(mappings)).toEqual(true);
+    });
+    test('should return false if no valid mappings exist', () => {
+      const mappings1 = [{key: 'key1'}];
+      const mappings2 = [{key: 'key1', isRequired: true, generate: 'test'}];
+      const mappings3 = [{key: 'key1', isRequired: true, generate: 'test', children: [{key: 'c1', isEmptyRow: true}]}];
+
+      expect(hasV2MappingsInTreeData(mappings1)).toEqual(false);
+      expect(hasV2MappingsInTreeData(mappings2)).toEqual(false);
+      expect(hasV2MappingsInTreeData(mappings3)).toEqual(false);
+      expect(hasV2MappingsInTreeData([{key: 'key1', isEmptyRow: true}])).toEqual(false);
+      expect(hasV2MappingsInTreeData([{key: 'key1', generateDisabled: true, children: [{key: 'c1', isEmptyRow: true}]}])).toEqual(false);
     });
   });
   describe('buildV2MappingsFromTree util', () => {
@@ -1833,6 +1861,13 @@ describe('v2 mapping utils', () => {
     });
     test('should correctly return the v2 mappings structure based on passed tree data for record based output', () => {
       const v2TreeData = [{
+        key: 'new_key',
+        title: '',
+        disabled: false,
+        generate: 'dummy_generate',
+        dataType: 'string',
+      },
+      {
         key: 'new_key',
         title: '',
         disabled: false,
@@ -2369,7 +2404,7 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(buildV2MappingsFromTree({v2TreeData})).toEqual(mappingsToSave);
+      expect(buildV2MappingsFromTree({v2TreeData, lookups: [{name: 'lookup1'}]})).toEqual(mappingsToSave);
     });
     test('should correctly return the v2 mappings structure based on passed tree data for row based output', () => {
       const v2TreeData = [{

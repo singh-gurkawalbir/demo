@@ -400,7 +400,7 @@ export function* saveMappings() {
 
   // save v2 mappings only when anything changed
   if (isMapper2Supported && isV2MappingsChanged) {
-    const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
+    const _mappingsV2 = buildV2MappingsFromTree({v2TreeData, lookups});
 
     patch.push({
       op: _mappingsV2 ? 'replace' : 'add',
