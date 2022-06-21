@@ -16,7 +16,7 @@ export default {
     const handleClick = useCallback(() => {
       confirmDialog({
         title: 'Delete trusted MFA device?',
-        message: "Are you sure you want to delete your trusted MFA device? You'll need to re-authenticate your account the next time you sign into integrator.io with the device.Are you sure you want to delete your trusted MFA device? You'll need to re-authenticate your account the next time you sign into integrator.io with the device.",
+        message: "Are you sure you want to delete your trusted MFA device? You'll need to re-authenticate your account the next time you sign into integrator.io with the device.",
         buttons: [
           {
             label: 'Delete',

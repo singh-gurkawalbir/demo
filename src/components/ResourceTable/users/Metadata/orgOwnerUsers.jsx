@@ -108,7 +108,6 @@ export default {
     if (integrationId && user._id !== ACCOUNT_IDS.OWN) {
       actions.push(ManagePermissions);
     }
-
     if (!integrationId) {
       actions.push(ManagePermissions);
       if (sharedWithUser?.allowedToResetMFA) {
