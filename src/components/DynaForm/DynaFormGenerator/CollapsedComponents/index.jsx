@@ -49,6 +49,8 @@ export default function CollapsedComponents(props) {
           header={header}
           fieldMap={fieldMap}
           formKey={formKey}
+          resourceType={resourceType}
+          resourceId={resourceId}
         />
       );
     });

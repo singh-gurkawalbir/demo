@@ -105,6 +105,10 @@ export default function DynaXmlParse_afe({
   const options = useMemo(() => getInitOptions(value), [getInitOptions, value]);
   const [form, setForm] = useState(getForm(options, resourceId, isParserSupportedForHTTP));
 
+  useEffect(() => {
+    setForm(getForm(options, resourceId, isParserSupportedForHTTP));
+    setRemountKey(remountKey => remountKey + 1);
+  }, [isParserSupportedForHTTP]);
 
   // below logic would need to move to data-layer as part of tracker IO-17578
   useEffect(() => {
@@ -114,22 +118,21 @@ export default function DynaXmlParse_afe({
         {
           op: 'replace',
           path: '/parsers',
-          value: isParserSupportedForHTTP ?
-            {
-              type: 'xml',
-              version: 1,
-              rules: {
-                V0_json: true,
-                stripNewLineChars: false,
-                trimSpaces: false,
-              },
-            } : undefined,
+          value: {
+            type: 'xml',
+            version: 1,
+            rules: {
+              V0_json: true,
+              stripNewLineChars: false,
+              trimSpaces: false,
+            },
+          },
 
         }];
 
       dispatch(actions.resource.patchStaged(resourceId, patch, 'value'));
     }
-  }, [options, dispatch, resourceId, isParserSupportedForHTTP]);
+  }, [options, dispatch, resourceId]);
 
   const handleSave = useCallback((editorValues = {}) => {
     const { rule } = editorValues;
@@ -185,15 +188,6 @@ export default function DynaXmlParse_afe({
       params: { editorId },
     }));
   }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
-
-  // console.log("IO =",isParserSupportedForHTTP);
-  // useEffect(() => {
-  //   if (!isParserSupportedForHTTP) {
-  //     dispatch(actions.form.forceFieldState(formKey)(id, {visible: false}));
-  //   } else {
-  //     dispatch(actions.form.forceFieldState(formKey)(id, {visible: true}));
-  //   }
-  // }, [dispatch, formKey, id, isParserSupportedForHTTP]);
 
   if (!isParserSupportedForHTTP) return null;
 

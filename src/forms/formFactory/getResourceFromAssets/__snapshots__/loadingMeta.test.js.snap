@@ -4086,6 +4086,14 @@ Object {
       "parsers": Object {
         "fieldId": "parsers",
         "isHttp": true,
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "semiassistantoperationselect": Object {
         "fieldId": "semiassistantoperationselect",
@@ -4238,11 +4246,7 @@ Object {
                         "parsers",
                         "file.csv",
                       ],
-                      "header": "Parse success responses",
-                      "headerDependencies": Array [
-                        "xmlparse",
-                        "csvparse",
-                      ],
+                      "header": [Function],
                       "helpKey": "http.parseSuccessResponses",
                     },
                   ],

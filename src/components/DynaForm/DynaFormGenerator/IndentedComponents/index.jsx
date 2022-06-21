@@ -1,8 +1,8 @@
-import React, { Fragment, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { Fragment } from 'react';
+import { shallowEqual, useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
+import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
-import actions from '../../../../actions';
 import FormGenerator from '..';
 import Help from '../../../Help';
 
@@ -31,33 +31,26 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function IndentedComponents(props) {
-  // const dispatch = useDispatch();
-  const { containers, fieldMap, formKey} = props;
+  const { containers, fieldMap, formKey, resourceType, resourceId} = props;
   const classes = useStyles();
-  let isParserSupportedForHTTP = false;
-
-  isParserSupportedForHTTP = useSelector(state => (selectors.isParserSupportedForHTTP(state, formKey, 'csv') || selectors.isParserSupportedForHTTP(state, formKey, 'xml')));
-
-  // useEffect(() => {
-  //   if (isHttp && !isParserSupportedForHTTP) {
-  //     dispatch(actions.form.forceFieldState(formKey)(id, {visible: false}));
-  //   } else {
-  //     dispatch(actions.form.forceFieldState(formKey)(id, {visible: true}));
-  //   }
-  // }, [dispatch, formKey, id, isHttp, isParserSupportedForHTTP]);
+  const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId)?.merged || {};
+  const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', resource?._connectionId)?.merged || {};
+  const formValues = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
 
   const transformedContainers =
     containers?.map((container, index) => {
-      const {label, header, helpKey, headerDependencies, ...rest } = container;
+      const {label, header, helpKey, ...rest } = container;
+      const heading = typeof header === 'function' ? header(resource, connection, formValues) : header;
 
       return (
         // eslint-disable-next-line react/no-array-index-key
         <Fragment key={index}>
-          {isParserSupportedForHTTP && header && (
+          {heading && (
             <Typography variant="body2" className={classes.indentTitle}>
-              {header}
+              {heading}
               <Help
                 className={classes.helpButton}
+                title={heading}
                 helpKey={helpKey}
               />
             </Typography >

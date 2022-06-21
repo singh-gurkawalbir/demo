@@ -3,6 +3,8 @@ import { isNewId } from '../../../utils/resource';
 export default {
   preSave: (formValues, _, { connection } = {}) => {
     const retValues = { ...formValues };
+    const overridenSuccessMediaType = _?.http?.successMediaType;
+    const { successMediaType, mediaType } = connection?.http || {};
 
     if (retValues['/http/successMediaType'] === 'csv') {
       retValues['/file/type'] = 'csv';
@@ -229,13 +231,14 @@ export default {
       retValues['/unencrypted/apiType'] = 'Amazon-SP-API';
     }
 
-    if (retValues['/parsers']?.resourcePath) {
+    if (retValues['/parsers']?.resourcePath !== '') {
       retValues['/http/response/resourcePath'] = retValues['/parsers'].resourcePath;
-      // console.log("ALPHA = ", retValues['/http/response/resourcePath']);
-      // delete retValues['/parsers'].resourcePath;
     }
-    // console.log("ZXC = ", retValues);
 
+    // eslint-disable-next-line no-mixed-operators
+    if (!(overridenSuccessMediaType === 'xml' || !overridenSuccessMediaType && (successMediaType === 'xml' || !successMediaType && mediaType === 'xml'))) {
+      retValues['/parsers'] = undefined;
+    }
 
     return {
       ...retValues,
@@ -277,16 +280,12 @@ export default {
     parsers: {
       fieldId: 'parsers',
       isHttp: true,
-      // visibleWhenAll: [
-      //   {
-      //     field: 'outputMode',
-      //     is: ['records'],
-      //   },
-      //   {
-      //     field: 'http.successMediaType',
-      //     is: ['xml'],
-      //   },
-      // ],
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
     },
     common: { formId: 'common' },
     outputMode: {
@@ -554,12 +553,14 @@ export default {
                   'parsers',
                   'file.csv',
                 ],
-                header: 'Parse success responses',
+                header: (_, connection, formValues) => {
+                  const { mediaType, successMediaType } = connection?.http || {};
+                  // eslint-disable-next-line no-mixed-operators
+                  const isParserVisible = ['csv', 'xml'].some(parser => (formValues?.['/http/successMediaType'] === parser || !formValues?.['/http/successMediaType'] && (successMediaType === parser || !successMediaType && mediaType === parser)));
+
+                  return isParserVisible && 'Parse success responses';
+                },
                 helpKey: 'http.parseSuccessResponses',
-                headerDependencies: [
-                  'xmlparse',
-                  'csvparse',
-                ],
               },
             ],
           },
