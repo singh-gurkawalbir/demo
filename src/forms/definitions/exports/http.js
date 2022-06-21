@@ -235,8 +235,7 @@ export default {
       retValues['/http/response/resourcePath'] = retValues['/parsers'].resourcePath;
     }
 
-    // eslint-disable-next-line no-mixed-operators
-    if (!(overridenSuccessMediaType === 'xml' || !overridenSuccessMediaType && (successMediaType === 'xml' || !successMediaType && mediaType === 'xml'))) {
+    if (!(overridenSuccessMediaType === 'xml' || (!overridenSuccessMediaType && (successMediaType === 'xml' || (!successMediaType && mediaType === 'xml'))))) {
       retValues['/parsers'] = undefined;
     }
 
@@ -559,8 +558,7 @@ export default {
                 ],
                 header: (_, connection, formValues) => {
                   const { mediaType, successMediaType } = connection?.http || {};
-                  // eslint-disable-next-line no-mixed-operators
-                  const isParserVisible = ['csv', 'xml'].some(parser => (formValues?.['/http/successMediaType'] === parser || !formValues?.['/http/successMediaType'] && (successMediaType === parser || !successMediaType && mediaType === parser)));
+                  const isParserVisible = ['csv', 'xml'].some(parser => (formValues?.['/http/successMediaType'] === parser || (!formValues?.['/http/successMediaType'] && (successMediaType === parser || (!successMediaType && mediaType === parser)))));
 
                   return isParserVisible && 'Parse success responses';
                 },
