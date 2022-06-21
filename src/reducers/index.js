@@ -4252,8 +4252,9 @@ selectors.getImportSampleData = (state, resourceId, options = {}) => {
   const resource = selectors.resourceData(state, 'imports', resourceId)?.merged || emptyObject;
   const { assistant, adaptorType, sampleData, _connectorId } = resource;
   const isIntegrationApp = !!_connectorId;
+  const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
 
-  if (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant))) {
+  if (connection.http?._httpConnectorId || (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant)))) {
     // get assistants sample data
     return selectors.assistantPreviewData(state, resourceId);
   }
