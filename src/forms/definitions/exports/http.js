@@ -240,6 +240,10 @@ export default {
       retValues['/parsers'] = undefined;
     }
 
+    if (!retValues['/configureAsyncHelper']) {
+      retValues['/http/_asyncHelperId'] = undefined;
+    }
+
     return {
       ...retValues,
     };
