@@ -36,6 +36,7 @@ function TrustDeviceStep({ trustDevice, setTrustDevice }) {
 
 function PrimaryAccountSelect() {
   const primaryAccounts = useSelector(selectors.primaryAccounts);
+  const selectedPrimaryAccount = useSelector(selectors.selectedPrimaryAccount);
   const isMobileCodeVerified = useSelector(selectors.isMobileCodeVerified);
   const [remountKey, setRemountKey] = useState(1);
 
@@ -59,7 +60,7 @@ function PrimaryAccountSelect() {
           id: '_allowResetByUserId',
           name: '_allowResetByUserId',
           label: 'Choose primary account to reset MFA ',
-          disabled: isMobileCodeVerified,
+          defaultValue: selectedPrimaryAccount,
           type: 'select',
           noApi: true,
           isLoggable: false,
@@ -68,10 +69,10 @@ function PrimaryAccountSelect() {
         },
       },
     }),
-    [primaryAccountOptions, isMobileCodeVerified]
+    [primaryAccountOptions, selectedPrimaryAccount]
   );
 
-  useFormInitWithPermissions({ fieldMeta, formKey: PRIMARY_ACCOUNT_FORM_KEY, remountKey });
+  useFormInitWithPermissions({ fieldMeta, formKey: PRIMARY_ACCOUNT_FORM_KEY, remountKey, disabled: !isMobileCodeVerified });
 
   return <DynaForm formKey={PRIMARY_ACCOUNT_FORM_KEY} />;
 }

@@ -66,6 +66,9 @@ export default function ResetAuthorizationModal({ onClose }) {
       onClose();
     }
   }, [success, enqueueSnackbar, onClose]);
+
+  useEffect(() => () => dispatch(actions.asyncTask.clear(MFA_RESET_ASYNC_KEY)));
+
   const formKey = useFormInitWithPermissions({
     fieldMeta: changeEmailFieldMeta,
   });
