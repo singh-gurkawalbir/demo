@@ -12,6 +12,14 @@ const useStyles = makeStyles(theme => ({
   scanQrCodeWrapper: {
     marginBottom: theme.spacing(2),
   },
+  qrCodeValue: {
+    border: `1px solid ${theme.palette.secondary.lightest}`,
+    padding: theme.spacing(2, 3),
+    margin: theme.spacing(1, 0),
+    borderRadius: theme.spacing(1),
+    display: 'inline-flex',
+    flexDirection: 'column',
+  },
 }));
 
 function ViewSecretCode() {
@@ -26,11 +34,12 @@ function ViewSecretCode() {
   return (
     <>
       <div className={classes.scanQrCodeWrapper}>
-        <Typography variant="body2">
-          Can’t scan your QR code? Enter the following code and URL in your verification app:
-        </Typography>
-        <div className={classes.qrCodeValue}>
-          test
+        <Typography variant="body2">Can’t scan your QR code? Enter the following code and URL in your verification app:</Typography>
+        <div>
+          <div className={classes.qrCodeValue}>
+            <Typography variant="body2">Code: XXX-XXX-XXX</Typography>
+            <Typography variant="body2">URL: https://integrator.io</Typography>
+          </div>
         </div>
         { showSecretCode
           ? `${JSON.stringify(secretCode)}`

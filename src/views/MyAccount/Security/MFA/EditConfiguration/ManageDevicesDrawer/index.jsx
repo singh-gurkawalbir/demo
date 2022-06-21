@@ -8,9 +8,12 @@ import { drawerPaths } from '../../../../../../utils/rightDrawer';
 import CeligoTable from '../../../../../../components/CeligoTable';
 import metadata from '../../../../../../components/ResourceTable/trustedDevices/metadata';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   errorTable: {
     width: '100%',
+  },
+  noDevice: {
+    padding: theme.spacing(3),
   },
 }));
 
@@ -19,7 +22,7 @@ function ManageDevicesDrawerContent() {
   const trustedDevices = useSelector(selectors.trustedDevices);
 
   if (!trustedDevices?.length) {
-    return <div> No devices </div>;
+    return <div className={classes.noDevice}> No devices </div>;
   }
 
   return (

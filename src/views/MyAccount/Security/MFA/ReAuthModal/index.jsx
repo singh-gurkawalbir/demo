@@ -15,12 +15,14 @@ import ActionGroup from '../../../../../components/ActionGroup';
 
 const useStyles = makeStyles({
   container: {
-    overflowY: 'auto',
     height: '100%',
     width: '100%',
     '& > div:first-child': {
       flexDirection: 'column',
     },
+  },
+  authModalContainer: {
+    overflowY: 'visible',
   },
 });
 
@@ -79,7 +81,7 @@ export default function ReAuthModal({ onClose, isQRCode }) {
     : 'Enter your account password to view your secret key.';
 
   return (
-    <ModalDialog show onClose={onClose}>
+    <ModalDialog show onClose={onClose} className={classes.authModalContainer}>
       {title}
       <>
         {description}{learnMoreLink}.

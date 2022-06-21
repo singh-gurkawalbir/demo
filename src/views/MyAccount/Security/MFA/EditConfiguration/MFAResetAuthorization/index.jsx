@@ -15,12 +15,14 @@ import { MFA_RESET_ASYNC_KEY, FORM_SAVE_STATUS, MFA_URL } from '../../../../../.
 
 const useStyles = makeStyles({
   container: {
-    overflowY: 'auto',
     height: '100%',
     width: '100%',
     '& > div:first-child': {
       flexDirection: 'column',
     },
+  },
+  authModalContainer: {
+    overflowY: 'visible',
   },
 });
 
@@ -76,7 +78,7 @@ export default function ResetAuthorizationModal({ onClose }) {
   const learnMoreLink = (<a target="_blank" rel="noreferrer" href={MFA_URL}> Learn more</a>);
 
   return (
-    <ModalDialog show onClose={onClose}>
+    <ModalDialog show onClose={onClose} className={classes.authModalContainer}>
       Re-authenticate your account
       <>
         Enter your account password to confirm if you want to reset MFA.
