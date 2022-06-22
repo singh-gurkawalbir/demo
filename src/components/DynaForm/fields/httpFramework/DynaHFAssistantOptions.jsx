@@ -7,8 +7,10 @@ import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
 import useFormContext from '../../../Form/FormContext';
 import { emptyObject } from '../../../../utils/constants';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
-export const useSetInitializeFormData = ({
+const emptyObj = {};
+export const useHFSetInitializeFormData = ({
   resourceType,
   resourceId,
   onFieldChange,
@@ -23,7 +25,7 @@ export const useSetInitializeFormData = ({
   useEffect(() => {
     // resourceForm init causes the form to remount
     // when there is any initialization data do we perform at this step
-    if (!isHTTPFramework && !componentMounted && formState.initData) {
+    if (isHTTPFramework && !componentMounted && formState.initData) {
       formState.initData.length &&
         formState.initData.forEach(field => {
           const { id, value } = field;
@@ -79,11 +81,11 @@ function DynaAssistantOptions(props) {
     onFieldChange: onFieldChangeFn,
     flowId,
   } = props;
+
   const fields = Object.values(fieldsById);
   const formContext = useMemo(
     () =>
       [
-        'assistant',
         'adaptorType',
         'version',
         'resource',
@@ -108,13 +110,24 @@ function DynaAssistantOptions(props) {
     value: bodyParams,
     paramMeta: bodyParamsMeta,
   } = useSelector(state => selectors.fieldState(state, props.formKey, 'assistantMetadata.bodyParams'), shallowEqual) || emptyObject;
+  const { merged } =
+    useSelectorMemo(
+      selectors.makeResourceDataSelector,
+      resourceType,
+      resourceId
+    ) || {};
+  const staggedResource = merged || emptyObject;
+
+  const connection = useSelector(
+    state =>
+      selectors.resource(state, 'connections', staggedResource._connectionId) ||
+      emptyObj
+  );
 
   const assistantData = useSelector(state =>
-    selectors.assistantData(state, {
-      adaptorType: formContext.adaptorType,
-      assistant: formContext.assistant,
-    })
+    selectors.httpConnectorMetaData(state, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId)
   );
+
   const dispatch = useDispatch();
   const selectOptionsItems = useMemo(() => {
     if (['version', 'resource', 'operation'].includes(assistantFieldType)) {
@@ -135,8 +148,9 @@ function DynaAssistantOptions(props) {
     resourceContext.resourceType,
   ]);
 
-  useSetInitializeFormData(props);
+  useHFSetInitializeFormData(props);
 
+  // I have to adjust value when there is no option with the matching value
   useEffect(() => {
     if (
       selectOptionsItems &&
@@ -221,7 +235,7 @@ function DynaAssistantOptions(props) {
 
           // only include the assistantoptions fields in the init data they are the ones which trigger form initialization
           // these are the fields that need to be indicated as touched and the remaining metadata field values are set by the patch stage operation
-          return field.type === 'assistantoptions';
+          return field.type === 'hfoptions';
         })
         .map(field => ({ id: field.id, value: field.value }));
 

@@ -203,7 +203,7 @@ export function* mappingInit({
       mappingMetadata: mappingMetadata || {},
       connectorExternalId: importResource.externalId,
     };
-  } else if (importResource.assistant) {
+  } else if (importResource.assistant || connection?.http?._httpConnectorId) {
     const { assistant } = getResourceSubType(
       {...importResource, assistant: connectionAssistant}
     );
@@ -215,12 +215,14 @@ export function* mappingInit({
         assistant,
       }
     );
+    const connectorMetaData = yield select(
+      selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
 
     const { requiredMappings } = getImportOperationDetails({
       operation,
       resource,
       version,
-      assistantData,
+      assistantData: connection?.http?._httpConnectorId ? connectorMetaData : assistantData,
     });
 
     options.assistant = { requiredMappings };

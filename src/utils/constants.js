@@ -420,7 +420,6 @@ export const REST_ASSISTANTS = [
   'sharepoint',
   'retailops',
   'concurall',
-  'skubana',
   'dunandbradstreet',
   'miva',
 ];
@@ -705,7 +704,15 @@ export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
   [LINE_GRAPH_TYPES.IGNORED]: 'i',
   [LINE_GRAPH_TYPES.RESOLVED]: 'r',
 });
-
+export const AUTHENTICATION_LABELS = Object.freeze({
+  basic: 'Basic',
+  token: 'Token',
+  oauth: 'OAuth 2.0',
+  custom: 'Custom',
+  cookie: 'Cookie',
+  digest: 'Digest',
+  wsse: 'WSSE',
+});
 export const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
 
 export const ALIAS_FORM_KEY = Object.freeze({
