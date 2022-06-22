@@ -1,6 +1,6 @@
 import { call, put, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../actions';
-import { MFA_RESET_ASYNC_KEY, MFA_SETUP_ASYNC_KEY } from '../../utils/constants';
+import { MFA_RESET_ASYNC_KEY, MFA_SETUP_ASYNC_KEY, MFA_DELETE_DEVICE_ASYNC_KEY } from '../../utils/constants';
 import { selectors } from '../../reducers';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -143,15 +143,18 @@ export function* resetMFA({ password, aShareId }) {
 // }
 export function* deleteTrustedDevice({ deviceId }) {
   try {
+    yield put(actions.asyncTask.start(MFA_DELETE_DEVICE_ASYNC_KEY));
     yield call(apiCallWithRetry, {
       path: `/trustedDevices/${deviceId}`,
       opts: {
         method: 'DELETE',
       },
     });
-
+    yield put(actions.asyncTask.success(MFA_DELETE_DEVICE_ASYNC_KEY));
     yield put(actions.mfa.requestUserSettings());
   } catch (error) {
+    yield put(actions.asyncTask.failed(MFA_DELETE_DEVICE_ASYNC_KEY));
+
     return undefined;
   }
 }

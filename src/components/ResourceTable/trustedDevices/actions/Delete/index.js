@@ -1,19 +1,23 @@
-import { useDispatch } from 'react-redux';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
+import { selectors } from '../../../../../reducers';
 import messageStore from '../../../../../utils/messageStore';
+import { MFA_DELETE_DEVICE_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../utils/constants';
 import TrashIcon from '../../../../icons/TrashIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
+import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 
 export default {
   key: 'deleteDevice',
   useLabel: () => 'Delete device',
   icon: TrashIcon,
-  useOnClick: rowData => {
+  Component: ({ rowData }) => {
     const { _id: deviceId} = rowData;
     const dispatch = useDispatch();
+    const [enquesnackbar] = useEnqueueSnackbar();
     const { confirmDialog } = useConfirmDialog();
-
+    const deleteDeviceSuccess = useSelector(state => selectors.asyncTaskStatus(state, MFA_DELETE_DEVICE_ASYNC_KEY) === FORM_SAVE_STATUS.COMPLETE);
     const handleClick = useCallback(() => {
       confirmDialog({
         title: 'Delete trusted MFA device?',
@@ -34,6 +38,20 @@ export default {
       });
     }, [confirmDialog, dispatch, deviceId]);
 
-    return handleClick;
+    useEffect(() => {
+      handleClick();
+    }, [handleClick]);
+
+    useEffect(() => {
+      if (deleteDeviceSuccess) {
+        enquesnackbar({
+          message: messageStore('DELETE_DEVICE_SUCCESS'),
+          variant: 'success',
+        });
+        dispatch(actions.asyncTask.clear(MFA_DELETE_DEVICE_ASYNC_KEY));
+      }
+    }, [deleteDeviceSuccess, enquesnackbar, dispatch]);
+
+    return null;
   },
 };

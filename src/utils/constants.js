@@ -750,6 +750,7 @@ export const HOME_PAGE_PATH = '/home';
 export const ERROR_DETAIL_ACTIONS_ASYNC_KEY = 'ERROR_DETAIL_ACTIONS_ASYNC_KEY';
 export const MFA_RESET_ASYNC_KEY = 'MFA_RESET_ASYNC_KEY';
 export const MFA_SETUP_ASYNC_KEY = 'MFA_SETUP_ASYNC_KEY';
+export const MFA_DELETE_DEVICE_ASYNC_KEY = 'MFA_DELETE_DEVICE_ASYNC_KEY';
 export const NO_RESULT_SEARCH_MESSAGE = 'Your search didn’t return any matching results. Try expanding your search criteria.';
 
 export const MAPPING_SAVE_STATUS = {
