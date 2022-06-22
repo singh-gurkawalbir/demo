@@ -168,12 +168,12 @@ export function* verifyMobileCode({ code }) {
     });
 
     if (response.status === 'pass') {
-      return yield put(actions.mfa.mobileCodeVerified('pass'));
+      return yield put(actions.mfa.mobileCodeVerified('success'));
     }
 
-    yield put(actions.mfa.mobileCodeVerified('fail'));
+    yield put(actions.mfa.mobileCodeVerified('error'));
   } catch (error) {
-    yield put(actions.mfa.mobileCodeVerified('fail'));
+    yield put(actions.mfa.mobileCodeVerified('error'));
 
     return undefined;
   }

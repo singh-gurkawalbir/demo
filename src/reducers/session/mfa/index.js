@@ -65,8 +65,8 @@ export const selectors = {};
 selectors.showQrCode = state => !!state?.showQrCode;
 selectors.showSecretCode = state => !!state?.showSecretCode;
 
-selectors.mobileCodeStatus = state => state?.mobileCode?.status;
-selectors.isMobileCodeVerified = state => state?.mobileCode?.status === 'pass';
+selectors.isMobileCodeVerified = state => state?.mobileCode?.status === 'success';
+selectors.isMobileCodeVerificationFailed = state => state?.mobileCode?.status === 'error';
 selectors.mobileCodeError = state => state?.mobileCode?.error;
 
 selectors.qrCode = state => state?.secretCode?.keyURI;
