@@ -655,7 +655,7 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnecto
   } else {
     const versionRelativeURI = httpConnector.versions?.[0]?.name;
 
-    retValues['/http/ping/relativeURI'] = `/${versionRelativeURI}${retValues['/http/ping/relativeURI']}`;
+    retValues['/http/ping/relativeURI'] = `/${versionRelativeURI}/${retValues['/http/ping/relativeURI']}`.replace(/([^:]\/)\/+/g, '$1');
   }
   retValues['/http/_httpConnectorId'] = httpConnector?._id;
   if (retValues['/http/unencrypted/version']) {

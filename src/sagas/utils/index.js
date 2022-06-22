@@ -398,19 +398,19 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           validWhen: value.validWhen,
         },
       });
-
-      if (fields) {
-        const fieldIds = [];
-
-        for (let i = 0; i < fields.length; i += 1) {
-          fields[i] = fields[i].field;
-          tempFiledMeta.fieldMap[fields[i].id] = fields[i];
-          fieldIds.push(fields[i].id);
-          // if (tempFiledMeta?.layout?.containers[1]?.fields) { tempFiledMeta.layout.containers[1].fields.push(fields[i].id); }
-        }
-        tempFiledMeta.layout?.containers?.push({fields: fieldIds, label: 'Custom settings'});
-      }
     });
+
+    if (fields) {
+      const fieldIds = [];
+
+      for (let i = 0; i < fields.length; i += 1) {
+        fields[i] = fields[i].field;
+        tempFiledMeta.fieldMap[fields[i].id] = fields[i];
+        fieldIds.push(fields[i].id);
+        // if (tempFiledMeta?.layout?.containers[1]?.fields) { tempFiledMeta.layout.containers[1].fields.push(fields[i].id); }
+      }
+        tempFiledMeta.layout?.containers?.push({fields: fieldIds, label: 'Custom settings'});
+    }
   }
 
   return tempFiledMeta;
