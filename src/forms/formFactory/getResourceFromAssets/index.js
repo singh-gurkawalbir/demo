@@ -2,7 +2,7 @@ import produce from 'immer';
 
 import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
-import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
+import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS} from '../../../utils/constants';
 import { getAssistantFromResource, getResourceSubType, isNewId, rdbmsSubTypeToAppType } from '../../../utils/resource';
 import { isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, shouldLoadAssistantFormForImports, shouldLoadAssistantFormForExports, isEbayFinanceConnection } from '../../../utils/assistant';
 
@@ -192,6 +192,12 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
     case 'connections':
       if (isNew) {
         meta = formMeta.connections.new;
+      } else if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
+        if (resource?.http?.formType === 'http') {
+          meta = formMeta.connections.http;
+        } else {
+          meta = formMeta.connections.httpFramework;
+        }
       } else if (resource && resource.assistant === 'financialforce') {
         // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
 
@@ -237,6 +243,16 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       if (meta) {
         if (isNew) {
           meta = meta.new;
+        } else if (connection?.http?._httpConnectorId) {
+          if (!resource?.useParentForm && resource?.http?.formType !== 'http') {
+            meta = meta.custom.httpFramework.assistantDefinition(
+              resource._id,
+              resource,
+              assistantData
+            );
+          } else {
+            meta = meta.http;
+          }
         } else if (type === 'netsuite') {
           // get edit form meta branch
           meta = meta.netsuiteDistributed;
@@ -291,6 +307,16 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       if (meta) {
         if (isNew) {
           meta = meta.new;
+        } else if (connection?.http?._httpConnectorId) {
+          if (!resource?.useParentForm && resource?.http?.formType !== 'http') {
+            meta = meta.custom.httpFramework.assistantDefinition(
+              resource._id,
+              resource,
+              assistantData
+            );
+          } else {
+            meta = meta.http;
+          }
         } else if (isMicrosoftBusinessCentralOdataConnection(connection)) {
           if (type === 'http') {
             meta = meta[type];

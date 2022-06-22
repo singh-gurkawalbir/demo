@@ -133,6 +133,8 @@ describe('users region selector testcases', () => {
           name: 'name',
           email: 'email@celigo.com',
           company: 'xyz',
+          _ssoAccountId: '123',
+          authTypeSSO: '123',
         },
         preferences: {
           environment: 'sandbox',
@@ -155,6 +157,8 @@ describe('users region selector testcases', () => {
         company: 'xyz',
         dateFormat: 'DD/MM/YYYY',
         timeFormat: 'HH:mm',
+        _ssoAccountId: '123',
+        authTypeSSO: '123',
       });
     });
   });

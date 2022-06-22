@@ -17,6 +17,8 @@ export default {
     }.skubana.com/oauth/token`,
     '/http/auth/oauth/accessTokenPath': 'access_token',
     '/http/auth/oauth/scopeDelimiter': '+',
+    '/http/rateLimit/limit': 1000,
+    '/http/concurrencyLevel': 1,
   }),
   fieldMap: {
     name: { fieldId: 'name' },

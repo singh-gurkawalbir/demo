@@ -62,6 +62,7 @@ export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, 
 };
 
 const ResourceFormFactory = props => {
+  const dispatch = useDispatch();
   const { resourceType, resourceId, isNew, flowId, integrationId } = props;
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, resourceId)
@@ -74,7 +75,7 @@ const ResourceFormFactory = props => {
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', resource && resource._connectionId)
   );
-  const dispatch = useDispatch();
+
   const handleInitForm = useCallback(
     () => {
       const skipCommit =
@@ -131,7 +132,7 @@ const ResourceFormFactory = props => {
 
       return metadataAssets;
     },
-    [connection, isNew, resource, resourceType, integrationId]
+    [resourceType, resource, isNew, connection, integrationId]
   );
   const { fieldMeta, skipClose } = formState;
 
