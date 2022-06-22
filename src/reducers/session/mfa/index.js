@@ -62,8 +62,8 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.showQrCode = state => state?.showQrCode;
-selectors.showSecretCode = state => state?.showSecretCode;
+selectors.showQrCode = state => !!state?.showQrCode;
+selectors.showSecretCode = state => !!state?.showSecretCode;
 
 selectors.mobileCodeStatus = state => state?.mobileCode?.status;
 selectors.isMobileCodeVerified = state => state?.mobileCode?.status === 'pass';
@@ -72,7 +72,6 @@ selectors.mobileCodeError = state => state?.mobileCode?.error;
 selectors.qrCode = state => state?.secretCode?.keyURI;
 selectors.secretCode = state => state?.secretCode?.secret;
 selectors.secretCodeError = state => state?.secretCodeError;
-selectors.qrCodeError = state => state?.qrCodeError;
 
 selectors.sessionInfoStatus = state => state?.sessionInfo?.status;
 selectors.sessionInfo = state => state?.sessionInfo?.data;

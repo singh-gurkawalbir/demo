@@ -27,7 +27,7 @@ function TrustDeviceStep({ trustDevice, setTrustDevice }) {
   return (
     <>
       <HeaderWithHelpText helpKey="mfa.trustDevice" title="Trust device">
-        <span>Trust this device you’ve used to sign into integrator.io</span>
+        <span>Trust this device you&apos;ve used to sign into integrator.io</span>
       </HeaderWithHelpText>
       <div>
         <FormControlLabel
@@ -108,7 +108,7 @@ function ConnectAccountUserDevice() {
       enabled: true,
     };
 
-    dispatch(actions.mfa.setUp(payload));
+    dispatch(actions.mfa.setup(payload));
   }, [dispatch, formValue, isValid, trustDevice]);
 
   return (
@@ -141,7 +141,7 @@ function ConnectOwnerDevice() {
   const [trustDevice, setTrustDevice] = useState(false);
   const isMobileCodeVerified = useSelector(selectors.isMobileCodeVerified);
   const connectDevice = useCallback(() => {
-    dispatch(actions.mfa.setUp({ trustDevice, enabled: true }));
+    dispatch(actions.mfa.setup({ trustDevice, enabled: true }));
   }, [dispatch, trustDevice]);
 
   return (

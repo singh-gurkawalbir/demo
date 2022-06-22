@@ -82,7 +82,7 @@ function MyUserSettings() {
 
   const handleEnableMFA = useCallback(() => {
     if (isMFADeviceConnected) {
-      dispatch(actions.mfa.setUp({ ...mfaUserSettings, enabled: !mfaEnabled}));
+      dispatch(actions.mfa.setup({ ...mfaUserSettings, enabled: !mfaEnabled}));
 
       return;
     }
@@ -116,7 +116,7 @@ function MFADetails() {
   const areUserSettingsLoaded = useSelector(selectors.areUserSettingsLoaded);
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
 
-  const UserSettings = () => {
+  const UserSettings = React.memo(() => {
     if (isAccountOwnerOrAdmin) {
       return (
         <CollapsableContainer title="My user" forceExpand className={classes.userSettingsContainer}>
@@ -126,7 +126,7 @@ function MFADetails() {
     }
 
     return (areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll />);
-  };
+  }, [areUserSettingsLoaded, classes, isAccountOwnerOrAdmin]);
 
   useEffect(() => {
     if (!areUserSettingsLoaded) {

@@ -44,7 +44,7 @@ function ViewSecretCode() {
         {
           showSecretCode ? (
             <div className={classes.scanCodeWrapper}>
-              <Typography variant="body2">Can’t scan your QR code? Enter the following account and code in your verification app:</Typography>
+              <Typography variant="body2">Can&apos;t scan your QR code? Enter the following account and code in your verification app:</Typography>
               <div>
                 <div className={classes.secretCodeValue}>
                   <Typography variant="body2">Account: Celigo</Typography>
@@ -54,7 +54,7 @@ function ViewSecretCode() {
             </div>
           ) : (
             <Typography variant="body2" className={classes.secretCodeMessage}>
-              Can’t scan your QR code? <TextButton color="primary" onClick={() => setShowSecretCodeAuthModal(true)}>Click here </TextButton>
+              Can&apos;t scan your QR code? <TextButton color="primary" onClick={() => setShowSecretCodeAuthModal(true)}>Click here </TextButton>
             </Typography>
           )
         }

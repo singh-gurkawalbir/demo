@@ -13,6 +13,7 @@ import ResetAuthorizeModal from './MFAResetAuthorization';
 import ManageDevicesDrawer from './ManageDevicesDrawer';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
+import messageStore from '../../../../../utils/messageStore';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 
@@ -34,7 +35,7 @@ function ResetMFA() {
   const handleResetMFA = useCallback(() => {
     confirmDialog({
       title: 'Reset MFA?',
-      message: "Are you sure you want to reset MFA? You'll need to re-associate your authenticator app and configure your device in integrator.io.",
+      message: messageStore('RESET_MFA'),
       buttons: [
         {
           label: 'Reset',
@@ -166,7 +167,7 @@ export default function EditMFAConfiguration() {
   const updateMFA = useCallback(values => {
     const { _allowResetByUserId } = values;
 
-    dispatch(actions.mfa.setUp({ ...mfaUserSettings, _allowResetByUserId}));
+    dispatch(actions.mfa.setup({ ...mfaUserSettings, _allowResetByUserId}));
   }, [dispatch, mfaUserSettings]);
 
   useEffect(() => () => dispatch(actions.mfa.clear()), [dispatch]);
