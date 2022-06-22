@@ -6868,7 +6868,7 @@ selectors.showAmazonRestrictedReportType = (state, formKey) => {
 };
 
 selectors.isParserSupportedForHTTP = (state, formKey, parser) => {
-  const exportId = selectors.formState(state, formKey, '_exportId')?.parentContext?.resourceId;
+  const exportId = selectors.formState(state, formKey)?.parentContext?.resourceId;
   const { adaptorType } = selectors.resource(state, 'exports', exportId) || {};
 
   if (adaptorType !== 'HTTPExport') return true;
