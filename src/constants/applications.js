@@ -360,6 +360,18 @@ export const getPublishedHttpConnectors = () => {
   return localStoragePublishedHttpAssistants;
 };
 
+export const getHttpConnector = httpConnectorId => {
+  let localStoragePublishedHttpAssistants;
+
+  try {
+    localStoragePublishedHttpAssistants = JSON.parse(localStorage.getItem('publishedHttpConnectors')) || [];
+  } catch (e) {
+    localStoragePublishedHttpAssistants = [];
+  }
+
+  return localStoragePublishedHttpAssistants?.find(c => c._id === httpConnectorId);
+};
+
 export const groupApplications = (
   resourceType,
   { appType, isSimpleImport }
