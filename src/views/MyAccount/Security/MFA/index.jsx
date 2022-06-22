@@ -116,18 +116,6 @@ function MFADetails() {
   const areUserSettingsLoaded = useSelector(selectors.areUserSettingsLoaded);
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
 
-  const UserSettings = React.memo(() => {
-    if (isAccountOwnerOrAdmin) {
-      return (
-        <CollapsableContainer title="My user" forceExpand className={classes.userSettingsContainer}>
-          { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll /> }
-        </CollapsableContainer>
-      );
-    }
-
-    return (areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll />);
-  }, [areUserSettingsLoaded, classes, isAccountOwnerOrAdmin]);
-
   useEffect(() => {
     if (!areUserSettingsLoaded) {
       dispatch(actions.mfa.requestUserSettings());
@@ -135,9 +123,20 @@ function MFADetails() {
   }, [areUserSettingsLoaded, dispatch]);
 
   // TODO: Account settings will be added in Phase 2
+
+  if (isAccountOwnerOrAdmin) {
+    return (
+      <div className={classes.collapseContainer}>
+        <CollapsableContainer title="My user" forceExpand className={classes.userSettingsContainer}>
+          { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll /> }
+        </CollapsableContainer>
+      </div>
+    );
+  }
+
   return (
     <div className={classes.collapseContainer}>
-      <UserSettings />
+      {areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll />}
     </div>
   );
 }
