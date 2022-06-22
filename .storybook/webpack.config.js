@@ -16,7 +16,6 @@ module.exports = async ({ config }) => {
       // replaces Globals referenced in the UI code
       'CDN_BASE_URI': JSON.stringify('HTTPS://d142hkd03ds8ug.cloudfront.net/'),
       'IO_LOGIN_PROMOTION_URL': JSON.stringify('https://staging.celigo.com/login/display'),
-      'PORTAL_URL': JSON.stringify('https://portal.productboard.com/wcpkv3awtdpkze4x7wwbpog7'),
       // replaces env vars referenced in the UI code
       'process.env.STORYBOOK_FOO': JSON.stringify('value of process.env.STORYBOOK_FOO'),
     })
