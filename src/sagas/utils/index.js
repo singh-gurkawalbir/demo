@@ -407,7 +407,6 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         fields[i] = fields[i].field;
         tempFiledMeta.fieldMap[fields[i].id] = fields[i];
         fieldIds.push(fields[i].id);
-        // if (tempFiledMeta?.layout?.containers[1]?.fields) { tempFiledMeta.layout.containers[1].fields.push(fields[i].id); }
       }
         tempFiledMeta.layout?.containers?.push({fields: fieldIds, label: 'Custom settings'});
     }
