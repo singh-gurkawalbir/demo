@@ -2083,6 +2083,7 @@ const flow = {
   addNewPPStep: (flowId, path, processorIndex) => action(actionTypes.FLOW.ADD_NEW_PP_STEP, { flowId, path, processorIndex }),
   addNewRouter: (flowId, router) => action(actionTypes.FLOW.ADD_NEW_ROUTER, { flowId, router }),
   dragStart: (flowId, stepId) => action(actionTypes.FLOW.DRAG_START, { flowId, stepId }),
+  setDragInProgress: flowId => action(actionTypes.FLOW.SET_DRAG_IN_PROGRESS, { flowId }),
   dragEnd: flowId => action(actionTypes.FLOW.DRAG_END, { flowId }),
   mergeTargetSet: (flowId, targetType, targetId) => action(actionTypes.FLOW.MERGE_TARGET_SET, { flowId, targetType, targetId }),
   mergeTargetClear: flowId => action(actionTypes.FLOW.MERGE_TARGET_CLEAR, { flowId }),

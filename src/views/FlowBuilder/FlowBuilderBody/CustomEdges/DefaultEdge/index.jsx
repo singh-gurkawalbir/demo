@@ -78,9 +78,10 @@ export default function DefaultEdge({
   const isSourceRouter = sourceType === GRAPH_ELEMENTS_TYPE.ROUTER;
   const isTargetRouter = targetType === GRAPH_ELEMENTS_TYPE.ROUTER || targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
+  const isSourceEmptyNode = sourceType === GRAPH_ELEMENTS_TYPE.EMPTY_STEP;
   const showLinkIcon = hasSiblingEdges && !isSourceGenerator && !isFlowSaveInProgress;
-  const showAddIcon = (!isSourceGenerator || (isSourceGenerator && !isTargetRouter)) && !flow._connectorId && !isViewMode && !isFlowSaveInProgress && !isDataLoaderFlow;
-  const isMergableEdge = mergableTerminals.includes(dragNodeId);
+  const showAddIcon = (!isSourceGenerator || (isSourceGenerator && !isTargetRouter)) && !flow._connectorId && !isViewMode && !isFlowSaveInProgress && !isDataLoaderFlow && !isSourceEmptyNode;
+  const isMergableEdge = mergableTerminals.includes(dragNodeId) && !isFlowSaveInProgress;
 
   /*
   {"points":[{"x":1250,"y":494},{"x":1350,"y":555},{"x":1587.5,"y":555},{"x":1825,"y":555},{"x":1927,"y":421.5}]}

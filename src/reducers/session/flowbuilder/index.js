@@ -17,11 +17,18 @@ export default function reducer(state = {}, action) {
         draft[flowId].elementsMap = keyBy(draft[flowId].elements || [], 'id');
         draft[flowId].flow = flow;
         draft[flowId].isViewMode = isViewMode;
+        delete draft[flowId].dragStepId;
 
         break;
       case actionTypes.FLOW.DRAG_START: {
-        draft[flowId].dragStepId = stepId;
+        draft[flowId].dragStepIdInProgress = stepId;
 
+        break;
+      }
+
+      case actionTypes.FLOW.SET_DRAG_IN_PROGRESS: {
+        draft[flowId].dragStepId = draft[flowId].dragStepIdInProgress;
+        delete draft[flowId].dragStepIdInProgress;
         break;
       }
 
@@ -66,6 +73,7 @@ selectors.fbFlow = (state, flowId) => state && state[flowId]?.flow;
 selectors.fbDragStepId = (state, flowId) => state?.[flowId]?.dragStepId;
 selectors.fbMergeTargetType = (state, flowId) => state?.[flowId]?.mergeTargetType;
 selectors.fbMergeTargetId = (state, flowId) => state?.[flowId]?.mergeTargetId;
+selectors.fbDragStepIdInProgress = (state, flowId) => state?.[flowId]?.dragStepIdInProgress;
 selectors.isFlowSaveInProgress = (state, flowId) => state?.[flowId]?.status === 'saving';
 
 selectors.fbRouterStepsInfo = (state, flowId, routerId) => {
