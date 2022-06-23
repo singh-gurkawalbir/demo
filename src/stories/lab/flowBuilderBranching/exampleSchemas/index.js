@@ -4,6 +4,7 @@ import flowExport from './flowExport';
 import multipleSources from './multipleSources';
 import overlappingEdges from './overlappingEdges';
 import simpleTerminalEdges from './simpleTerminalEdges';
+import emptyNodes from './emptyNodes';
 
 export default {
   emptyFlow,
@@ -12,4 +13,5 @@ export default {
   multipleSources,
   overlappingEdges,
   simpleTerminalEdges,
+  emptyNodes,
 };
