@@ -593,7 +593,7 @@ export const deleteUnUsedRouters = flow => {
       incomingRoutersMap = getIncomingRoutersMap(flow);
     }
   }
-  if (flow.routers?.length === 1 && flow.routers[0].branches?.length === 1) {
+  if (flow.routers?.length === 1 && flow.routers[0].branches?.length === 1 && isVirtualRouter(flow.routers[0])) {
     flow.pageProcessors = flow.routers[0].branches[0].pageProcessors || [];
     delete flow.routers;
   }
