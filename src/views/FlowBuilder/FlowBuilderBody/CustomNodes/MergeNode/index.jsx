@@ -1,10 +1,11 @@
 import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position } from 'react-flow-renderer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DiamondMergeIcon from '../../DiamondMergeIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
 import { useFlowContext } from '../../Context';
+import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 
 const useStyles = makeStyles(() => ({
@@ -21,8 +22,9 @@ export default function MergeNode({id}) {
   const classes = useStyles();
   const { dragNodeId, flow, flowId } = useFlowContext();
   const dispatch = useDispatch();
+  const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
   const firstRouterId = flow?.routers?.[0]?._id;
-  const isDroppable = !!dragNodeId && firstRouterId !== id;
+  const isDroppable = !!dragNodeId && firstRouterId !== id && !isFlowSaveInProgress;
 
   const handleMouseOut = useCallback(() => {
     dispatch(actions.flow.mergeTargetClear(flowId));

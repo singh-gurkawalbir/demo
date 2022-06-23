@@ -203,8 +203,6 @@ export function* mergeBranch({flowId}) {
 }
 
 export function* deleteEdge({ flowId, edgeId }) {
-  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
-
   const elementsMap = yield select(selectors.fbGraphElementsMap, flowId);
 
   const edge = elementsMap[edgeId];
@@ -216,12 +214,11 @@ export function* deleteEdge({ flowId, edgeId }) {
     path: `${edge.data.path}/nextRouterId`,
   }];
 
+  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
   yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
 }
 
 export function* deleteRouter({flowId, routerId, prePatches}) {
-  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
-
   const flow = yield select(selectors.fbFlow, flowId);
   const {routers = []} = flow;
   const patchSet = prePatches || [];
@@ -229,6 +226,7 @@ export function* deleteRouter({flowId, routerId, prePatches}) {
   const router = routers.find(r => r.id === routerId);
 
   if (router) {
+    yield put(actions.flow.setSaveStatus(flowId, 'saving'));
     const preceedingRouter = routers.find(r => r.branches.find(branch => branch.nextRouterId === routerId));
 
     if (preceedingRouter) {

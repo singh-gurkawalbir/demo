@@ -475,7 +475,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
   if (pendingId) {
     pending = true;
     if (flowDoc?.routers?.length || (isPageGenerator && elementsMap?.[pendingId])) {
-      stepPath = elementsMap[pendingId].data?.path;
+      stepPath = elementsMap[pendingId]?.data?.path;
     } else if (resourceType === 'imports' && elementsMap?.[pendingId]?.data?.path) {
       [,,, addIndexPP] = PageProcessorPathRegex.exec(elementsMap?.[pendingId]?.data?.path);
     }
@@ -657,6 +657,8 @@ export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValue
     'flows',
     flowId
   ))?.merged || emptyObject;
+
+  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
 
   if (isIntegrationApp(flow)) {
     // update the last modified time

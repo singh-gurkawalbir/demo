@@ -4,11 +4,12 @@ import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position } from 'react-flow-renderer';
 import { Tooltip } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DiamondMergeIcon from '../../DiamondMergeIcon';
 import TerminalIcon from '../../../../../components/icons/MergeIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
 import { useFlowContext } from '../../Context';
+import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
@@ -40,7 +41,8 @@ export default function TerminalNode({ id }) {
   const classes = useStyles();
   const { dragNodeId, flowId } = useFlowContext();
   const dispatch = useDispatch();
-  const isDroppable = dragNodeId && dragNodeId !== id;
+  const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
+  const isDroppable = !isFlowSaveInProgress && dragNodeId && dragNodeId !== id;
   const isBeingDragged = dragNodeId && dragNodeId === id;
 
   const handleMouseOut = useCallback(() => {
