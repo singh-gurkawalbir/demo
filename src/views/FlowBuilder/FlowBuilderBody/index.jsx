@@ -20,6 +20,7 @@ import DestinationTitle from './titles/DestinationTitle';
 import { useSelectorMemo } from '../../../hooks';
 import useMenuDrawerWidth from '../../../hooks/useMenuDrawerWidth';
 import { ExportFlowStateButton } from './ExportFlowStateButton';
+import EmptyNode from './CustomNodes/EmptyNode';
 
 const useCalcCanvasStyle = fullscreen => {
   const theme = useTheme();
@@ -89,6 +90,7 @@ const nodeTypes = {
   terminal: TerminalNode,
   router: RouterNode,
   merge: MergeNode,
+  empty: EmptyNode,
 };
 
 const edgeTypes = {

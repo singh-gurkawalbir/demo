@@ -91,6 +91,15 @@ export const generateNewTerminal = ({branch = {}, branchIndex, routerIndex} = {}
   },
 });
 
+export const generateNewEmptyNode = ({branch = {}, branchIndex, routerIndex} = {}) => ({
+  id: shortId(),
+  type: GRAPH_ELEMENTS_TYPE.EMPTY,
+  data: {
+    ...branch,
+    path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${branch.pageProcessors?.length || '-'}`,
+  },
+});
+
 export const generateBranch = () => {
   const newId = shortId();
 
@@ -325,7 +334,11 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
         if (branch.nextRouterId) {
           // join the router to the next router
           if (routerIndex !== 0 || !isVirtualRouter(router)) {
-            elements.push(generateDefaultEdge(router.id, branch.nextRouterId, {routerIndex, branchIndex, index: branch.pageProcessors?.length}));
+            const emptyNode = generateNewEmptyNode({branch, branchIndex, routerIndex});
+
+            elements.push(emptyNode);
+            elements.push(generateDefaultEdge(router.id, emptyNode.id, {routerIndex, branchIndex, index: branch.pageProcessors?.length}));
+            elements.push(generateDefaultEdge(emptyNode.id, branch.nextRouterId, {routerIndex, branchIndex, index: branch.pageProcessors?.length}));
           }
           if (branch.nextRouterId !== router.id) {
             // Safe check, branch should not point to its own router, causes a loop

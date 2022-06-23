@@ -9,4 +9,5 @@ export const GRAPH_ELEMENTS_TYPE = {
   TERMINAL: 'terminal',
   PP_STEP: 'pp',
   PG_STEP: 'pg',
+  EMPTY: 'empty',
 };

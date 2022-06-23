@@ -20,6 +20,7 @@ export const GRAPH_ELEMENTS_TYPE = {
   TERMINAL: 'terminal',
   PP_STEP: 'pp',
   PG_STEP: 'pg',
+  EMPTY_STEP: 'empty',
 };
 
 export const nodeSize = {
@@ -36,6 +37,10 @@ export const nodeSize = {
     height: 34,
   },
   terminal: {
+    width: 20,
+    height: 20,
+  },
+  empty: {
     width: 20,
     height: 20,
   },
