@@ -105,6 +105,7 @@ export function Canvas({ flowId, fullscreen }) {
 
   const elements = useSelector(state => selectors.fbGraphElements(state, flowId));
   const dragStepId = useSelector(state => selectors.fbDragStepId(state, flowId));
+  const dragStepIdInProgress = useSelector(state => selectors.fbDragStepIdInProgress(state, flowId));
   const elementsMap = useSelector(state => selectors.fbGraphElementsMap(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, mergedFlow._integrationId, flowId));
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
@@ -123,6 +124,11 @@ export function Canvas({ flowId, fullscreen }) {
 
   const handleNodeDragStop = () => {
     dispatch(actions.flow.mergeBranch(flowId));
+  };
+  const handleNodeDrag = () => {
+    if (dragStepIdInProgress) {
+      dispatch(actions.flow.setDragInProgress(flowId));
+    }
   };
 
   const handleAddNewSource = useCallback(() => {
@@ -149,6 +155,7 @@ export function Canvas({ flowId, fullscreen }) {
             <ReactFlow
               onNodeDragStart={handleNodeDragStart}
               onNodeDragStop={handleNodeDragStop}
+              onNodeDrag={handleNodeDrag}
               nodesDraggable={false}
               elements={updatedLayout}
               nodeTypes={nodeTypes}
