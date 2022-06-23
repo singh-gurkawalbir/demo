@@ -29,6 +29,7 @@ export default function useHandleDelete(_integrationId, ops = emptyObject) {
   );
 
   const cantDelete = resourceReferences?.some(ref => ref.resourceType === 'flows');
+  const hasConnectorDependency = resourceReferences?.some(ref => ref.resourceType === 'connectors');
 
   // For IA
   const handleUninstall = useCallback(() => {
@@ -64,6 +65,14 @@ export default function useHandleDelete(_integrationId, ops = emptyObject) {
   if (showSnackbar && cantDelete) {
     enqueueSnackbar({
       message: messageStore('INTEGRATION_DELETE_VALIDATE'),
+      variant: 'info',
+    });
+    dispatch(actions.resource.clearReferences());
+    setShowSnackbar(false);
+  }
+  if (showSnackbar && !cantDelete && hasConnectorDependency) {
+    enqueueSnackbar({
+      message: messageStore('INTEGRATION_WITH_CONNECTORS_DELETE_VALIDATE'),
       variant: 'info',
     });
     dispatch(actions.resource.clearReferences());
