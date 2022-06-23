@@ -41,8 +41,8 @@ export const nodeSize = {
     height: 20,
   },
   empty: {
-    width: 20,
-    height: 20,
+    width: 4,
+    height: 2,
   },
   merge: {
     width: 34,
@@ -69,11 +69,11 @@ export function generateId() {
 export function generateNewNode() {
   const newId = generateId();
 
-  return ({
+  return {
     id: newId,
     type: GRAPH_ELEMENTS_TYPE.PP_STEP,
-    data: { label: `New node: ${newId}`},
-  });
+    data: { label: `New node: ${newId}` },
+  };
 }
 
 export function layoutElements(elements = []) {
@@ -84,7 +84,7 @@ export function layoutElements(elements = []) {
 
   elements.forEach(el => {
     if (isNode(el)) {
-      graph.setNode(el.id, {...nodeSize[el.type]});
+      graph.setNode(el.id, { ...nodeSize[el.type] });
     } else {
       graph.setEdge(el.source, el.target);
     }
@@ -105,20 +105,24 @@ export function layoutElements(elements = []) {
       // most times a terminal node will only require a short horizontal edge and it looks better
       // if this edge is shorted, which is accomplished by shifting th terminal node left by 1/2 the
       // size of a step. This way, nodes visually line-up when branching.
-      const offsetX = el.type === GRAPH_ELEMENTS_TYPE.TERMINAL
-        ? nodeSize.pp.width / 2 - nodeSize[el.type].width / 2
-        : 0;
+      const offsetX =
+        el.type === GRAPH_ELEMENTS_TYPE.TERMINAL
+          ? nodeSize.pp.width / 2 - nodeSize[el.type].width / 2
+          : 0;
 
       // We are shifting the dagre node position that returns centerpoint (x,y)
       // to the top left so it matches the react-flow node anchor point (top left).
       // This maters when nodes are of various sizes.
-      nodes.push({...el,
+      nodes.push({
+        ...el,
         position: {
           x: node.x - size.width / 2 - offsetX,
           y: node.y - size.height / 2 - offsetY,
-        }});
-    } else { // these are the edges...
-      const { points } = graph.edge({v: el.source, w: el.target});
+        },
+      });
+    } else {
+      // these are the edges...
+      const { points } = graph.edge({ v: el.source, w: el.target });
       const source = elements.find(n => n.id === el.source);
       const target = elements.find(n => n.id === el.target);
       const edge = elements.find(n => n.id === `${el.source}-${el.target}`);
@@ -175,9 +179,13 @@ export function findNodeIndex(id, elements) {
 }
 
 const RANGE = 20;
-const inRange = (coordinate, dropCoordinate) => (dropCoordinate - RANGE) <= coordinate && (dropCoordinate + RANGE) >= coordinate;
+const inRange = (coordinate, dropCoordinate) =>
+  dropCoordinate - RANGE <= coordinate && dropCoordinate + RANGE >= coordinate;
 const isMergableNode = (node = {}) => {
-  if (node.type === GRAPH_ELEMENTS_TYPE.TERMINAL || node.type === GRAPH_ELEMENTS_TYPE.MERGE) {
+  if (
+    node.type === GRAPH_ELEMENTS_TYPE.TERMINAL ||
+    node.type === GRAPH_ELEMENTS_TYPE.MERGE
+  ) {
     return true;
   }
   // Is router node virtual?
@@ -191,18 +199,18 @@ export const terminalNodeInVicinity = (ele, elements) => {
   if (!ele) {
     return false;
   }
-  const {x: xCoord, y: yCoord} = ele.position;
+  const { x: xCoord, y: yCoord } = ele.position;
 
   return elements
     .filter(node => isMergableNode(node))
     .find(dropElement => {
-      const {x, y} = dropElement.position;
+      const { x, y } = dropElement.position;
 
       return inRange(xCoord, x) && inRange(yCoord, y);
     })?.id;
 };
 
-const getModulusVal = val => val > 0 ? val : -val;
+const getModulusVal = val => (val > 0 ? val : -val);
 const getLengthBtwCoordinates = (x1, y1, x2, y2) => {
   if (x1 === x2) {
     return getModulusVal(y2 - y1);
@@ -211,18 +219,24 @@ const getLengthBtwCoordinates = (x1, y1, x2, y2) => {
   return getModulusVal(x2 - x1);
 };
 
-export const getPositionInEdge = (edgeCommands, position = 'center', offset = 0) => {
+export const getPositionInEdge = (
+  edgeCommands,
+  position = 'center',
+  offset = 0
+) => {
   const linePlotsCoordinates = edgeCommands
     .substr(1)
     .split(/[LQ]/)
     .map(cmd => cmd.trim())
     .map(cmd => {
-    // Quadratic command...currently that is supported...if its a cubic command it can have
-    //  3 coordinates to describe the curve,we don't support it... So this function support M,L,C commands.
+      // Quadratic command...currently that is supported...if its a cubic command it can have
+      //  3 coordinates to describe the curve,we don't support it... So this function support M,L,C commands.
       const commandSplit = cmd.split(' ');
 
       if (commandSplit.length >= 3) {
-        throw new Error('Cubic command encountered please change the path generation logic to support quadratic');
+        throw new Error(
+          'Cubic command encountered please change the path generation logic to support quadratic'
+        );
       }
 
       const isQuadratic = !!commandSplit[1];
@@ -240,7 +254,7 @@ export const getPositionInEdge = (edgeCommands, position = 'center', offset = 0)
   }
 
   const lengthOFEdges = linePlotsCoordinates.reduce((acc, curr, i) => {
-    if (i >= (linePlotsCoordinates.length - 1)) {
+    if (i >= linePlotsCoordinates.length - 1) {
       return acc;
     }
     const nextCoord = linePlotsCoordinates[i + 1];
@@ -254,7 +268,8 @@ export const getPositionInEdge = (edgeCommands, position = 'center', offset = 0)
     lengthFromStart = Math.floor(lengthOFEdges / 2 + offset);
   } else if (position === 'left') {
     lengthFromStart = offset;
-  } else { // right
+  } else {
+    // right
     lengthFromStart = lengthOFEdges - offset;
   }
 
@@ -297,7 +312,7 @@ export const areMultipleEdgesConnectedToSameEdgeTarget = (edgeId, elements) => {
   if (!edge) {
     return false;
   }
-  const {target} = edge;
+  const { target } = edge;
 
   return elements.filter(isEdge).filter(e => e.target === target).length > 1;
 };
@@ -312,9 +327,17 @@ export const isDragNodeOnSameBranch = (dragNodeId, edgeId, elements) => {
   if (!edgeElement || edgeElement.type !== 'default') {
     return false;
   }
-  const edgePathElement = elements[edgeElement.source]?.type === GRAPH_ELEMENTS_TYPE.ROUTER ? elements[edgeElement.target] : elements[edgeElement.source];
+  const edgePathElement =
+    elements[edgeElement.source]?.type === GRAPH_ELEMENTS_TYPE.ROUTER
+      ? elements[edgeElement.target]
+      : elements[edgeElement.source];
 
-  if (dragNodeElement && edgePathElement && BranchPathRegex.test(dragNodeElement.data.path) && BranchPathRegex.test(edgePathElement.data.path)) {
+  if (
+    dragNodeElement &&
+    edgePathElement &&
+    BranchPathRegex.test(dragNodeElement.data.path) &&
+    BranchPathRegex.test(edgePathElement.data.path)
+  ) {
     const [dragNodeBranch] = BranchPathRegex.exec(dragNodeElement.data.path);
     const [edgeElementBranch] = BranchPathRegex.exec(edgePathElement.data.path);
 
@@ -333,15 +356,17 @@ export const isNodeConnectedToRouter = (nodeId, elements) => {
   if (!node) {
     return false;
   }
-  const {source, target} = node;
+  const { source, target } = node;
 
-  return elements.filter(e => [source, target].includes(e.id)).some(node => [GRAPH_ELEMENTS_TYPE.ROUTER].includes(node?.type));
+  return elements
+    .filter(e => [source, target].includes(e.id))
+    .some(node => [GRAPH_ELEMENTS_TYPE.ROUTER].includes(node?.type));
 };
 
 export function snapPointsToHandles(source, target, points) {
   const snappedPoints = [...points];
-  const {x: startX, y: startY} = points[0];
-  const {x: endX, y: endY} = points[points.length - 1];
+  const { x: startX, y: startY } = points[0];
+  const { x: endX, y: endY } = points[points.length - 1];
 
   // lets process the start points of the edge first.
   let i = 0;
