@@ -655,6 +655,7 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnecto
   } else {
     const versionRelativeURI = httpConnector.versions?.[0]?.name;
 
+    // Regex is used here to remove continuous multiple slashes if there are any
     retValues['/http/ping/relativeURI'] = `/${versionRelativeURI}/${retValues['/http/ping/relativeURI']}`.replace(/([^:]\/)\/+/g, '$1');
   }
   retValues['/http/_httpConnectorId'] = httpConnector?._id;
