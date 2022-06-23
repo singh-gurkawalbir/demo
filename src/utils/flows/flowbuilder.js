@@ -640,7 +640,7 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
   }
 
   router.branches[0].pageProcessors = secondHalf;
-  router.nextRouterId = nextRouterId;
+  router.branches[0].nextRouterId = nextRouterId;
   if (!isVirtual) {
     setObjectValue(flowClone, `${branchPath}/pageProcessors`, firstHalf);
     setObjectValue(flowClone, `${branchPath}/nextRouterId`, router.id);
