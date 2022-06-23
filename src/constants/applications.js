@@ -148,6 +148,13 @@ const connectors = [
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/360042825892-Set-up-a-connection-to-Google-BigQuery',
   },
   {
+    id: 'redshiftdatawarehouse',
+    name: 'Amazon Redshift',
+    type: 'redshiftdatawarehouse',
+    keywords: 'database,db',
+    group: 'db',
+  },
+  {
     id: 'graph_ql',
     name: 'GraphQL',
     type: 'graph_ql',

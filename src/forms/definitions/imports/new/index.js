@@ -19,6 +19,7 @@ const appTypeToAdaptorType = {
   oracle: 'RDBMS',
   snowflake: 'RDBMS',
   bigquerydatawarehouse: 'RDBMS',
+  redshiftdatawarehouse: 'RDBMS',
   netsuite: 'NetSuiteDistributed',
   ftp: 'FTP',
   http: 'HTTP',
