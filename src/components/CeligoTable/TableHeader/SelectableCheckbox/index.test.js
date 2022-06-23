@@ -52,39 +52,42 @@ describe('SelectableCheckBox component Test cases', () => {
   });
 
   test('should pass the intial render with selectableRows', async () => {
+    const filterKey = 'filter_key';
     const { store } = await initSelectableCheckBox({
       props: {
         selectableRows: true,
-        filterKey: 'filter_key',
+        filterKey,
       },
     });
 
     expect(screen.getByRole('checkbox')).toBeInTheDocument();
-    expect(store.getState()?.session?.filters?.filter_key?.isAllSelected).toBeTruthy();
+    expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeTruthy();
   });
 
   describe('isAllSelectableResourcesSelected test case', () => {
     test('should pass the intial render with isAllSelectableResourcesSelected returns false with empty data', async () => {
+      const filterKey = 'filter_key';
       const isSelectableRow = jest.fn(resource => resource.value);
       const { store } = await initSelectableCheckBox({
         props: {
           isSelectableRow,
           selectableRows: true,
-          filterKey: 'filter_key',
+          filterKey,
         },
       });
 
       expect(screen.getByRole('checkbox')).toBeInTheDocument();
-      await expect(store.getState()?.session?.filters?.filter_key?.isAllSelected).toBeFalsy();
+      await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeFalsy();
     });
 
     test('should pass the intial render with isAllSelectableResourcesSelected returns false', async () => {
+      const filterKey = 'filter_key';
       const isSelectableRow = jest.fn(resource => resource.value);
       const { store } = await initSelectableCheckBox({
         props: {
           isSelectableRow,
           selectableRows: true,
-          filterKey: 'filter_key',
+          filterKey,
         },
         data: [
           {
@@ -103,16 +106,17 @@ describe('SelectableCheckBox component Test cases', () => {
       });
 
       expect(screen.getByRole('checkbox')).toBeInTheDocument();
-      await expect(store.getState()?.session?.filters?.filter_key?.isAllSelected).toBeFalsy();
+      await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeFalsy();
     });
 
     test('should pass the intial render with isAllSelectableResourcesSelected returns true[wrong]', async () => {
+      const filterKey = 'filter_key';
       const isSelectableRow = jest.fn(resource => resource.value);
       const { store } = await initSelectableCheckBox({
         props: {
           isSelectableRow,
           selectableRows: true,
-          filterKey: 'filter_key',
+          filterKey,
         },
         data: [
           {
@@ -131,16 +135,17 @@ describe('SelectableCheckBox component Test cases', () => {
       });
 
       expect(screen.getByRole('checkbox')).toBeInTheDocument();
-      await expect(store.getState()?.session?.filters?.filter_key?.isAllSelected).toBeTruthy(); // This doesn't make sense
+      await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeTruthy(); // This doesn't make sense
     });
 
     test('should pass the intial render with isAllSelectableResourcesSelected returns true', async () => {
+      const filterKey = 'filter_key';
       const isSelectableRow = jest.fn(resource => resource.value);
       const { store } = await initSelectableCheckBox({
         props: {
           isSelectableRow,
           selectableRows: true,
-          filterKey: 'filter_key',
+          filterKey,
         },
         data: [
           {
@@ -155,14 +160,15 @@ describe('SelectableCheckBox component Test cases', () => {
       });
 
       expect(screen.getByRole('checkbox')).toBeInTheDocument();
-      await expect(store.getState()?.session?.filters?.filter_key?.isAllSelected).toBeTruthy();
+      await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeTruthy();
     });
 
     test('should pass the intial render with isAllSelectableResourcesSelected returns true without isSelectableRow', async () => {
+      const filterKey = 'filter_key';
       const { store } = await initSelectableCheckBox({
         props: {
           selectableRows: true,
-          filterKey: 'filter_key',
+          filterKey,
         },
         data: [
           {
@@ -177,14 +183,15 @@ describe('SelectableCheckBox component Test cases', () => {
       });
 
       expect(screen.getByRole('checkbox')).toBeInTheDocument();
-      await expect(store.getState()?.session?.filters?.filter_key?.isAllSelected).toBeTruthy();
+      await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeTruthy();
     });
 
     test('should pass the intial render with isAllSelectableResourcesSelected returns false without isSelectableRow', async () => {
+      const filterKey = 'filter_key';
       const { store } = await initSelectableCheckBox({
         props: {
           selectableRows: true,
-          filterKey: 'filter_key',
+          filterKey,
         },
         data: [
           {
@@ -199,18 +206,19 @@ describe('SelectableCheckBox component Test cases', () => {
       });
 
       expect(screen.getByRole('checkbox')).toBeInTheDocument();
-      await expect(store.getState()?.session?.filters?.filter_key?.isAllSelected).toBeFalsy();
+      await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeFalsy();
     });
   });
 
   describe('handleSelectAllChange test cases', () => {
     test('should pass the intial render with handleSelectAllChange checked', async () => {
       const onSelectChange = jest.fn();
+      const filterKey = 'filter_key';
       const { store } = await initSelectableCheckBox({
         props: {
           selectableRows: true,
           onSelectChange,
-          filterKey: 'filter_key',
+          filterKey,
         },
         data: [
           {
@@ -230,17 +238,18 @@ describe('SelectableCheckBox component Test cases', () => {
 
       userEvent.click(checkBox);
 
-      await expect(store.getState()?.session?.filters?.filter_key?.isAllSelected).toBeFalsy();
+      await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeFalsy();
       expect(onSelectChange).toBeCalledTimes(1);
     });
 
     test('should pass the intial render with handleSelectAllChange unchecked', async () => {
       const onSelectChange = jest.fn();
+      const filterKey = 'filter_key';
       const { store } = await initSelectableCheckBox({
         props: {
           selectableRows: true,
           onSelectChange,
-          filterKey: 'filter_key',
+          filterKey,
         },
         data: [
           {
@@ -263,18 +272,19 @@ describe('SelectableCheckBox component Test cases', () => {
 
       userEvent.click(checkBox);
 
-      await expect(store.getState()?.session?.filters?.filter_key?.isAllSelected).toBeTruthy();
+      await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeTruthy();
       expect(onSelectChange).toBeCalledTimes(1);
     });
 
     test('should pass the intial render with handleSelectAllChange with isSelectableRow', async () => {
       const isSelectableRow = jest.fn(resource => resource.value);
       const onSelectChange = jest.fn();
+      const filterKey = 'filter_key';
       const { store } = await initSelectableCheckBox({
         props: {
           selectableRows: true,
           onSelectChange,
-          filterKey: 'filter_key',
+          filterKey,
           isSelectableRow,
         },
         data: [
@@ -298,7 +308,7 @@ describe('SelectableCheckBox component Test cases', () => {
 
       userEvent.click(checkBox);
 
-      await expect(store.getState()?.session?.filters?.filter_key?.isAllSelected).toBeFalsy();
+      await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeFalsy();
       expect(onSelectChange).toBeCalledTimes(1);
     });
   });

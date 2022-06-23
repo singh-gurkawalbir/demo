@@ -81,9 +81,10 @@ describe('AllTableHeaderCells component Test cases', () => {
     ]);
 
     test('should pass the intial render with useColumns', async () => {
+      const filterKey = 'filter_key';
       const { store } = await initAllTableHeaderCells({
         useColumns,
-        filterKey: 'filter_key',
+        filterKey,
       });
 
       const name = screen.getByRole('cell', {name: 'Name sorted descending'});
@@ -101,10 +102,10 @@ describe('AllTableHeaderCells component Test cases', () => {
       expect(nameButton).toBeInTheDocument();
 
       userEvent.click(nameButton);
-      await expect(store.getState()?.session?.filters?.filter_key?.sort?.order).toBe('asc');
+      await expect(store.getState()?.session?.filters?.[filterKey]?.sort?.order).toBe('asc');
 
       userEvent.click(nameButton);
-      await expect(store.getState()?.session?.filters?.filter_key?.sort?.order).toBe('desc');
+      await expect(store.getState()?.session?.filters?.[filterKey]?.sort?.order).toBe('desc');
     });
 
     test('should pass the render with out filter key', async () => {

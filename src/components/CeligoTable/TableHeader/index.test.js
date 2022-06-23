@@ -59,10 +59,11 @@ describe('TableHeader component Test cases', () => {
   });
 
   test('should pass the intial render with selectableRows', async () => {
+    const filterKey = 'filter_key';
     const { store } = await initTableHeader({
       props: {
         selectableRows: true,
-        filterKey: 'filter_key',
+        filterKey,
       },
       sort: {
         order: 'desc1',
@@ -70,19 +71,20 @@ describe('TableHeader component Test cases', () => {
       },
     });
 
-    expect(store.getState()?.session?.filters?.filter_key?.isAllSelected).toBeTruthy();
+    expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeTruthy();
   });
 
   test('should pass the intial render with filterKey and without sort', async () => {
+    const filterKey = 'filter_key';
     const { store } = await initTableHeader({
       props: {
-        filterKey: 'filter_key',
+        filterKey,
       },
     });
 
-    expect(store.getState()?.session?.filters?.filter_key?.sort).toBeDefined();
-    expect(store.getState()?.session?.filters?.filter_key?.sort?.order).toBe('desc');
-    expect(store.getState()?.session?.filters?.filter_key?.sort?.orderBy).toBe('lastModified');
-    expect(store.getState()?.session?.filters?.filter_key?.isAllSelected).toBeFalsy();
+    expect(store.getState()?.session?.filters?.[filterKey]?.sort).toBeDefined();
+    expect(store.getState()?.session?.filters?.[filterKey]?.sort?.order).toBe('desc');
+    expect(store.getState()?.session?.filters?.[filterKey]?.sort?.orderBy).toBe('lastModified');
+    expect(store.getState()?.session?.filters?.[filterKey].isAllSelected).toBeFalsy();
   });
 });
