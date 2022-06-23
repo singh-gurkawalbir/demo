@@ -139,7 +139,7 @@ export default function InstallBase(props) {
         {list.count === 0 ? (
           <div>
             {list.total === 0
-              ? <NoResultTypography>You don&apos;t have any installbase</NoResultTypography>
+              ? <NoResultTypography>You don&apos;t have any install base</NoResultTypography>
               : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
           </div>
         ) : (
