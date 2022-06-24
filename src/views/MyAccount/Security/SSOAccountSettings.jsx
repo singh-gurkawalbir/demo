@@ -15,6 +15,13 @@ import Help from '../../../components/Help';
 import Spinner from '../../../components/Spinner';
 import useSaveStatusIndicator from '../../../hooks/useSaveStatusIndicator';
 import CollapsableContainer from '../../../components/CollapsableContainer';
+import NotificationToaster from '../../../components/NotificationToaster';
+import RawHtml from '../../../components/RawHtml';
+import messageStore from '../../../utils/messageStore';
+import FilledButton from '../../../components/Buttons/FilledButton';
+import useConfirmDialog from '../../../components/ConfirmDialog';
+import ButtonWithTooltip from '../../../components/Buttons/ButtonWithTooltip';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   ssoForm: {
@@ -75,8 +82,79 @@ const useStyles = makeStyles(theme => ({
       padding: 0,
     },
   },
-
+  licenseUpdgradeNotification: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
+  ssoLicenseUpgradeBtn: {
+    minWidth: '140px',
+    minHeight: theme.spacing(4),
+    alignSelf: 'flex-start',
+  },
+  SSOLicenseUpgradeContainer: {
+    padding: theme.spacing(0, 2, 3, 2),
+  },
 }));
+
+const SSOLicenseUpgradeContainer = () => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
+  const { confirmDialog } = useConfirmDialog();
+  const [upgradeRequested, setUpgradeRequested] = useState(false);
+  const platformLicenseActionMessage = useSelector(state =>
+    selectors.platformLicenseActionMessage(state)
+  );
+
+  useEffect(() => {
+    if (platformLicenseActionMessage) {
+      enquesnackbar({message: <RawHtml html={messageStore('LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
+      dispatch(actions.license.clearActionMessage());
+    }
+  }, [dispatch, enquesnackbar, platformLicenseActionMessage]);
+
+  const onRequestUpgradeClick = useCallback(() => {
+    confirmDialog({
+      title: 'Request upgrade',
+      message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+      buttons: [
+        { label: 'Submit request',
+          onClick: () => {
+            dispatch(
+              actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+            );
+            setUpgradeRequested(true);
+            dispatch(actions.license.requestUpdate('upgrade', {feature: 'SSO'}));
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, dispatch]);
+
+  return (
+    <div className={classes.SSOLicenseUpgradeContainer}>
+      <NotificationToaster variant="info" size="large" className={classes.licenseUpdgradeNotification} >
+        Single sign-on is a premium feature that is not included in your account’s current subscription plan.
+      </NotificationToaster>
+      <RawHtml html={messageStore('SSO_LICENSE_UPGRADE_INFO')} />
+      <ButtonWithTooltip
+        tooltipProps={{
+          title: upgradeRequested ? messageStore('SSO_LICENSE_UPGRADE_REQUESTED_MESSAGE') : '',
+          placement: 'bottom-start'}}>
+        <FilledButton
+          onClick={onRequestUpgradeClick}
+          disabled={upgradeRequested}
+          className={classes.ssoLicenseUpgradeBtn}
+        >
+          {upgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
+        </FilledButton>
+      </ButtonWithTooltip>
+    </div>
+  );
+};
 
 export default function SSOAccountSettings() {
   const classes = useStyles();
@@ -84,6 +162,12 @@ export default function SSOAccountSettings() {
   const oidcClient = useSelector(state => selectors.oidcSSOClient(state));
   const key = hashCode(oidcClient);
   const resourceId = oidcClient?._id || generateNewId();
+  const selectedAccountHasSSO = useSelector(state => {
+    const accounts = selectors.accountSummary(state);
+    const selectedAccount = accounts && accounts.find(a => a.selected);
+
+    return selectedAccount?.hasSSO;
+  });
   const isEnableSSOSwitchInProgress = useSelector(state => selectors.commStatusPerPath(state, `/ssoclients/${resourceId}`, 'PATCH') === 'loading');
   const [isSSOEnabled, setIsSSOEnabled] = useState(!!oidcClient?.disabled);
   const handleEnableSSO = useCallback(
@@ -234,45 +318,48 @@ export default function SSOAccountSettings() {
     <LoadResources required resources="ssoclients">
       <div className={classes.collapseContainer}>
         <CollapsableContainer title="Account settings" forceExpand>
-          <div className={classes.ssoSwitch}>
-            <Typography variant="body2" className={classes.content}> Enable OIDC-based SSO </Typography>
-            <Help title="Enable OIDC-based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
-            <CeligoSwitch
-              onChange={handleEnableSSO}
-              checked={isSSOEnabled} />
-            {isEnableSSOSwitchInProgress && <Spinner size="small" className={classes.spinner} />}
-          </div>
-          {
-          isSSOEnabled && (
-            <>
-              <div className={classes.ssoForm}>
-                <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
-                {
-                !!oidcClient?.orgId && (
-                <div>
-                  <div className={classes.flexContainer}>
-                    <Typography className={classes.urlDetails}> Application login URL: { applicationLoginURL }</Typography>
-                    <Help title="Application login URL" helpKey="sso.loginURL" className={classes.helpTextButton} />
-                  </div>
-                  <div className={classes.flexContainer}>
-                    <Typography className={classes.urlDetails}>Redirect URL: { redirectURL }</Typography>
-                    <Help title="Redirect URL" helpKey="sso.redirectURL" className={classes.helpTextButton} />
-                  </div>
-                </div>
-                )
-              }
+          {selectedAccountHasSSO ? (
+            <div>
+              <div className={classes.ssoSwitch}>
+                <Typography variant="body2" className={classes.content}> Enable OIDC-based SSO </Typography>
+                <Help title="Enable OIDC-based SSO" helpKey="enableSSO" className={classes.helpTextButton} />
+                <CeligoSwitch
+                  onChange={handleEnableSSO}
+                  checked={isSSOEnabled} />
+                {isEnableSSOSwitchInProgress && <Spinner size="small" className={classes.spinner} />}
               </div>
-              <div className={classes.footer}>
-                <DynaSubmit
-                  formKey={formKey}
-                  disabled={disableSave}
-                  onClick={submitHandler()}>
-                  {defaultLabels.saveLabel}
-                </DynaSubmit>
-              </div>
-            </>
+              {isSSOEnabled && (
+                <>
+                  <div className={classes.ssoForm}>
+                    <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
+                    {
+                    !!oidcClient?.orgId && (
+                    <div>
+                      <div className={classes.flexContainer}>
+                        <Typography className={classes.urlDetails}> Application login URL: { applicationLoginURL }</Typography>
+                        <Help title="Application login URL" helpKey="sso.loginURL" className={classes.helpTextButton} />
+                      </div>
+                      <div className={classes.flexContainer}>
+                        <Typography className={classes.urlDetails}>Redirect URL: { redirectURL }</Typography>
+                        <Help title="Redirect URL" helpKey="sso.redirectURL" className={classes.helpTextButton} />
+                      </div>
+                    </div>
+                    )
+                  }
+                  </div>
+                  <div className={classes.footer}>
+                    <DynaSubmit
+                      formKey={formKey}
+                      disabled={disableSave}
+                      onClick={submitHandler()}>
+                      {defaultLabels.saveLabel}
+                    </DynaSubmit>
+                  </div>
+                </>
+              )}
+            </div>
           )
-        }
+            : (<SSOLicenseUpgradeContainer />)}
         </CollapsableContainer>
       </div>
     </LoadResources>

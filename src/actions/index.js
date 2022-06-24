@@ -1305,8 +1305,8 @@ const license = {
     action(actionTypes.LICENSE.TRIAL_ISSUED, message),
   requestLicenseUpgrade: () =>
     action(actionTypes.LICENSE.UPGRADE_REQUEST, {}),
-  requestUpdate: (actionType, connectorId, licenseId) =>
-    action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId }),
+  requestUpdate: (actionType, {connectorId, licenseId, feature}) =>
+    action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId, feature }),
   licenseUpgradeRequestSubmitted: message =>
     action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message }),
   requestLicenseEntitlementUsage: () =>
