@@ -271,6 +271,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
             meta = meta.rdbms.snowflake;
           } else if (rdbmsSubType === 'bigquery') {
             meta = meta.rdbms.bigquerydatawarehouse;
+          } else if (rdbmsSubType === 'redshift') {
+            meta = meta.rdbms.redshiftdatawarehouse;
           } else {
             meta = meta.rdbms.sql;
           }
@@ -333,6 +335,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
             meta = meta.rdbms.snowflake;
           } else if (rdbmsSubType === 'bigquery') {
             meta = meta.rdbms.bigquerydatawarehouse;
+          } else if (rdbmsSubType === 'redshift') {
+            meta = meta.rdbms.redshiftdatawarehouse;
           } else {
             meta = meta.rdbms.sql;
           }

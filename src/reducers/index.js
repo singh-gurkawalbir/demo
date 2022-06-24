@@ -2572,7 +2572,7 @@ selectors.getResourceType = (state, { resourceType, resourceId }) => {
 selectors.mappingHasLookupOption = (state, resourceType, connectionId) => {
   const connection = selectors.resource(state, resourceType, connectionId) || {};
 
-  return !['bigquery', 'snowflake'].includes(connection?.rdbms?.type);
+  return !['bigquery', 'redshift', 'snowflake'].includes(connection?.rdbms?.type);
 };
 
 // this selector updates the field options based on the
@@ -6528,7 +6528,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
     return false;
   }
 
-  if (connection.rdbms?.type === 'bigquery') {
+  if (['bigquery', 'redshift', 'snowflake'].includes(connection?.rdbms?.type)) {
     return false;
   }
 

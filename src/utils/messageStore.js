@@ -3,6 +3,7 @@ import { MFA_URL } from './constants';
 const messages = {
   CONTACT_SALES_MESSAGE: 'We will contact you soon to schedule your demo and discuss your business needs. In the meantime,',
   INTEGRATION_DELETE_VALIDATE: 'All Flows within an integration tile must be removed before the integration tile can be deleted.',
+  INTEGRATION_WITH_CONNECTORS_DELETE_VALIDATE: 'The integration is being actively used by an integration app. Please ensure no integration app resource is using the integration before deleting',
   FLOW_GROUP_DELETE_MESSAGE: 'Only the flow group will be deleted. Its flows will be moved into “Unassigned”.',
   LICENSE_UPGRADE_REQUEST: 'We will contact you to discuss your add-on request.',
   NO_PENDING_QUEUED_JOBS: 'This connection queue does not have any pending jobs. You can use the connection drop-down in the top right to see the status of a different connection queue.',

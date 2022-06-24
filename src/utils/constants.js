@@ -457,7 +457,7 @@ export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articl
 export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
 export const MFA_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
 
-export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle', 'bigquerydatawarehouse'];
+export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle', 'bigquerydatawarehouse', 'redshiftdatawarehouse'];
 
 export const AWS_REGIONS_LIST = [
   {
