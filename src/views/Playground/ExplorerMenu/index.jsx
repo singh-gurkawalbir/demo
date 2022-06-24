@@ -94,7 +94,7 @@ export default function ExplorerMenu({ onEditorChange }) {
     if (id !== integrationId) return null;
 
     if (!flows.length) {
-      return <OverflowTreeItem nodeId={`${id}-empty`} label="No Flows" />;
+      return <OverflowTreeItem nodeId={`${id}-empty`} label="No flows" />;
     }
 
     return flows.map(({id, name}) => (
