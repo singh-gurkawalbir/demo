@@ -103,6 +103,7 @@ const getExportMetadata = (connectorMetadata, connectionVersion) => {
                 const epResourcePath = preConfiguredFields?.find(f => f.path === 'resourcePath')?.values?.[0];
 
                 const delta = httpEndpoint.supportedBy.preConfiguredFields?.find(f => f.path === 'delta')?.values?.[0];
+                const headers = httpEndpoint.supportedBy.preConfiguredFields?.find(f => f.path === 'headers')?.values;
 
                 const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.fieldType || 'textarea' }));
                 const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.name, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.fieldType || 'input' }));
@@ -113,8 +114,12 @@ const getExportMetadata = (connectorMetadata, connectionVersion) => {
                 }
 
                 const ep = {
-                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, resourcePath: epResourcePath || resourcePath, supportedExportTypes, delta, queryParameters, pathParameters, doesNotSupportPaging,
+                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, response: {resourcePath: epResourcePath || resourcePath}, supportedExportTypes, delta, queryParameters, pathParameters, doesNotSupportPaging,
                 };
+
+                if (headers) {
+                  ep.headers = headers;
+                }
 
                 if (versionLocation === 'uri' && !connectionVersion) {
                   ep.url = `/${v.version}${httpEndpoint.relativeURI}`;
@@ -177,6 +182,7 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
                 let supportIgnoreMissing;
                 let askForHowToGetIdentifier;
                 let parameters = [];
+                let body;
                 let howToFindIdentifier;
 
                 httpEndpoint.supportedBy.fieldsUserMustSet?.forEach(f => {
@@ -186,6 +192,8 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
                     supportIgnoreMissing = true;
                   } else if (f.path === 'askForHowToGetIdentifier') {
                     askForHowToGetIdentifier = true;
+                  } else if (f.path === 'askForHowToGetIdentifier') {
+                    body = f.values;
                   } else {
                     requiredMappings.push(f.path?.replace('mapping.fields.generate.', ''));
                   }
@@ -225,7 +233,7 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
                   }
                 }
                 const ep = {
-                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, requiredMappings, parameters, howToFindIdentifier, supportIgnoreExisting, supportIgnoreMissing, askForHowToGetIdentifier,
+                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, requiredMappings, parameters, howToFindIdentifier, supportIgnoreExisting, supportIgnoreMissing, askForHowToGetIdentifier, body,
                 };
 
                 if (versionLocation === 'uri' && !connectionVersion) {
