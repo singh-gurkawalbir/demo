@@ -10,7 +10,7 @@ import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import { TextButton } from '../../../../../../components/Buttons';
 import ActionGroup from '../../../../../../components/ActionGroup';
-import { MFA_RESET_ASYNC_KEY, FORM_SAVE_STATUS, MFA_URL } from '../../../../../../utils/constants';
+import { MFA_RESET_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../../utils/constants';
 import messageStore from '../../../../../../utils/messageStore';
 import RawHtml from '../../../../../../components/RawHtml';
 
@@ -78,14 +78,11 @@ export default function ResetAuthorizationModal({ onClose }) {
 
   const formKey = useFormInitWithPermissions({ fieldMeta: metadata });
 
-  const learnMoreLink = (<a target="_blank" rel="noreferrer" href={MFA_URL}> Learn more</a>);
-
   return (
     <ModalDialog show onClose={onClose} className={classes.authModalContainer}>
       Re-authenticate your account
       <>
         Enter your account password to confirm if you want to reset MFA.
-        <div><b>{learnMoreLink}.</b></div>
         <div className={classes.container}>
           <DynaForm formKey={formKey} />
         </div>

@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
-import { MFA_URL } from '../../../../../utils/constants';
 import ModalDialog from '../../../../../components/ModalDialog';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
@@ -70,8 +69,6 @@ export default function ReAuthModal({ onClose, isQRCode }) {
 
   const formKey = useFormInitWithPermissions({ fieldMeta: metadata });
 
-  const learnMoreLink = (<a target="_blank" rel="noreferrer" href={MFA_URL}> Learn more</a>);
-
   const title = isQRCode ? 'View QR code' : 'View secret key';
   const description = isQRCode
     ? 'Enter your account password to view your QR code.'
@@ -81,7 +78,7 @@ export default function ReAuthModal({ onClose, isQRCode }) {
     <ModalDialog show onClose={onClose} className={classes.authModalContainer}>
       {title}
       <>
-        {description}{learnMoreLink}.
+        {description}
         <div className={classes.container}>
           <DynaForm formKey={formKey} />
         </div>
