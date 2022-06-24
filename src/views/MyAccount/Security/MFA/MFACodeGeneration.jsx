@@ -91,7 +91,7 @@ function ViewQRCode() {
 export default function MFACodeGeneration() {
   return (
     <>
-      <HeaderWithHelpText title="Step 2" helpKey="step2">
+      <HeaderWithHelpText title="Add integrator.io" helpKey="mfa.addIntegrationIO">
         <Typography variant="body2" component="span">Add integrator.io</Typography>
       </HeaderWithHelpText>
       <ViewQRCode />

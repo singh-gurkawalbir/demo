@@ -57,7 +57,7 @@ function ResetMFA() {
 
   return (
     <div>
-      <HeaderWithHelpText helpKey="mfa.reset"><span>Reset MFA</span></HeaderWithHelpText>
+      <HeaderWithHelpText title="Reset MFA" helpKey="mfa.reset"><span>Reset MFA</span></HeaderWithHelpText>
       <OutlinedButton onClick={handleResetMFA}> Reset </OutlinedButton>
       {showAuthModal && (<ResetAuthorizeModal onClose={handleClose} />)}
     </div>
@@ -71,7 +71,7 @@ function ViewQRCode() {
 
   return (
     <>
-      <HeaderWithHelpText helpKey="mfa.qrcode"><span>QR code</span></HeaderWithHelpText>
+      <HeaderWithHelpText title="QR code" helpKey="mfa.qrcode"><span>QR code</span></HeaderWithHelpText>
       { showQrCode
         ? <QRCode value={qrCode} size={64} />
         : (<OutlinedButton onClick={() => setShowQRAuthModal(true)}> View code </OutlinedButton>)}
@@ -98,7 +98,7 @@ function TrustedDevices() {
 
   return (
     <>
-      <HeaderWithHelpText helpKey="mfa.trustedDevices"><span>Trusted devices </span></HeaderWithHelpText>
+      <HeaderWithHelpText title="Trusted devices" helpKey="mfa.trustedDevices"><span>Trusted devices </span></HeaderWithHelpText>
       <OutlinedButton onClick={handleManageDevices}> Manage devices </OutlinedButton>
       <ManageDevicesDrawer />
     </>
@@ -148,7 +148,8 @@ export default function EditMFAConfiguration() {
         metadata.fieldMap._allowResetByUserId = {
           id: '_allowResetByUserId',
           name: '_allowResetByUserId',
-          label: 'Primary account',
+          label: 'Use this account to reset MFA',
+          helpKey: 'mfa.primaryAccount',
           type: 'select',
           defaultValue: selectedPrimaryAccount,
           noApi: true,
@@ -181,7 +182,7 @@ export default function EditMFAConfiguration() {
         <div className={classes.actions}>
           <ViewQRCode />
         </div>
-        <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
+        <DynaForm formKey={formKey} />
         <div className={classes.actions}>
           <TrustedDevices />
         </div>

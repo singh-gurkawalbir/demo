@@ -97,7 +97,7 @@ function MyUserSettings() {
     <div className={classes.userSettings}>
       <div className={classes.mfaSwitch}>
         <Typography variant="body2" className={classes.content}> Enable MFA </Typography>
-        <Help title="Enable MFA" helpKey="enableMFA" className={classes.helpTextButton} />
+        <Help title="Enable MFA" helpKey="mfa.enable" className={classes.helpTextButton} />
         <CeligoSwitch onChange={handleEnableMFA} checked={isMFAEnabled} />
         {/* {isEnableSSOSwitchInProgress && <Spinner size="small" className={classes.spinner} />} */}
       </div>

@@ -120,7 +120,7 @@ function ConnectAccountUserDevice() {
         <TrustDeviceStep trustDevice={trustDevice} setTrustDevice={setTrustDevice} />
       </Stepper>
       <Stepper index={6} isLast>
-        <HeaderWithHelpText helpKey="mfa.connect">
+        <HeaderWithHelpText title="Connect your mobile device" helpKey="mfa.connect">
           <b> Connect your mobile device &nbsp;*</b>
         </HeaderWithHelpText>
         <div className={classes.connect}>
@@ -150,7 +150,7 @@ function ConnectOwnerDevice() {
         <TrustDeviceStep trustDevice={trustDevice} setTrustDevice={setTrustDevice} />
       </Stepper>
       <Stepper index={5} isLast>
-        <HeaderWithHelpText helpKey="mfa.connect">
+        <HeaderWithHelpText title="Connect your mobile device" helpKey="mfa.connect">
           <b> Connect your mobile device &nbsp;*</b>
         </HeaderWithHelpText>
         <div className={classes.connect}>
