@@ -211,7 +211,7 @@ describe('SelectableCheckBox component Test cases', () => {
   });
 
   describe('handleSelectAllChange test cases', () => {
-    test('should pass the intial render with handleSelectAllChange checked', async () => {
+    test('should pass the intial render with handleSelectAllChange checked & unchecked', async () => {
       const onSelectChange = jest.fn();
       const filterKey = 'filter_key';
       const { store } = await initSelectableCheckBox({
@@ -240,40 +240,13 @@ describe('SelectableCheckBox component Test cases', () => {
 
       await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeFalsy();
       expect(onSelectChange).toBeCalledTimes(1);
-    });
+      const checkBox1 = await screen.getByRole('checkbox');
 
-    test('should pass the intial render with handleSelectAllChange unchecked', async () => {
-      const onSelectChange = jest.fn();
-      const filterKey = 'filter_key';
-      const { store } = await initSelectableCheckBox({
-        props: {
-          selectableRows: true,
-          onSelectChange,
-          filterKey,
-        },
-        data: [
-          {
-            _id: 'resource_1',
-            value: true,
-          },
-          {
-            _id: 'resource_2',
-            value: true,
-          },
-          {
-            _id: 'resource_3',
-            value: true,
-          },
-        ],
-      });
-      const checkBox = await screen.getByRole('checkbox');
+      expect(checkBox1).toBeInTheDocument();
 
-      expect(checkBox).toBeInTheDocument();
-
-      userEvent.click(checkBox);
-
+      userEvent.click(checkBox1);
       await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeTruthy();
-      expect(onSelectChange).toBeCalledTimes(1);
+      expect(onSelectChange).toBeCalledTimes(2);
     });
 
     test('should pass the intial render with handleSelectAllChange with isSelectableRow', async () => {
@@ -310,6 +283,15 @@ describe('SelectableCheckBox component Test cases', () => {
 
       await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeFalsy();
       expect(onSelectChange).toBeCalledTimes(1);
+
+      const checkBox1 = await screen.getByRole('checkbox');
+
+      expect(checkBox1).toBeInTheDocument();
+
+      userEvent.click(checkBox1);
+
+      await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeTruthy();
+      expect(onSelectChange).toBeCalledTimes(2);
     });
   });
 });
