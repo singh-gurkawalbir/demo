@@ -1972,6 +1972,8 @@ export default {
             toReturn = 'PostgreSQL';
           } else if (conn.rdbms?.type === 'bigquery') {
             toReturn = 'Google BigQuery';
+          } else if (conn.rdbms?.type === 'redshift') {
+            toReturn = 'Amazon Redshift';
           } else {
             toReturn = 'Snowflake';
           }

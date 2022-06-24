@@ -148,6 +148,13 @@ const connectors = [
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/360042825892-Set-up-a-connection-to-Google-BigQuery',
   },
   {
+    id: 'redshiftdatawarehouse',
+    name: 'Amazon Redshift',
+    type: 'redshiftdatawarehouse',
+    keywords: 'database,db',
+    group: 'db',
+  },
+  {
     id: 'graph_ql',
     name: 'GraphQL',
     type: 'graph_ql',
@@ -358,6 +365,18 @@ export const getPublishedHttpConnectors = () => {
   }
 
   return localStoragePublishedHttpAssistants;
+};
+
+export const getHttpConnector = httpConnectorId => {
+  let localStoragePublishedHttpAssistants;
+
+  try {
+    localStoragePublishedHttpAssistants = JSON.parse(localStorage.getItem('publishedHttpConnectors')) || [];
+  } catch (e) {
+    localStoragePublishedHttpAssistants = [];
+  }
+
+  return localStoragePublishedHttpAssistants?.find(c => c._id === httpConnectorId);
 };
 
 export const groupApplications = (
