@@ -3456,6 +3456,458 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
   });
+  describe('MAPPING.V2.PATCH_EXTRACTS_FILTER', () => {
+    const extractsTree = [
+      {
+        key: 'k1',
+        dataType: 'object',
+        propName: '$',
+        children: [
+          {
+            key: 'c1',
+            parentKey: 'k1',
+            jsonPath: 'entity',
+            propName: 'entity',
+            dataType: 'string',
+          },
+          {
+            key: 'c2',
+            parentKey: 'k1',
+            jsonPath: 'items[*]',
+            propName: 'items',
+            dataType: '[object]',
+            children: [
+              {
+                key: 'c2-1',
+                parentKey: 'c2',
+                jsonPath: 'items[*].celigo_inventorydetail',
+                propName: 'celigo_inventorydetail',
+                dataType: 'object',
+                children: [
+                  {
+                    key: 'c2-1-1',
+                    parentKey: 'c2-1',
+                    jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*]',
+                    propName: 'inventoryassignment',
+                    dataType: '[object]',
+                    children: [
+                      {
+                        key: 'c2-1-1-1',
+                        parentKey: 'c2-1-1',
+                        jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*].quantity',
+                        propName: 'quantity',
+                        dataType: 'number',
+                      },
+                      {
+                        key: 'c2-1-1-2',
+                        parentKey: 'c2-1-1',
+                        jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*].sno',
+                        propName: 'sno',
+                        dataType: 'string',
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                key: 'c2-2',
+                parentKey: 'c2',
+                jsonPath: 'items[*].item',
+                propName: 'item',
+                dataType: 'string',
+              },
+              {
+                key: 'c2-3',
+                parentKey: 'c2',
+                jsonPath: 'items[*].quantity',
+                propName: 'quantity',
+                dataType: 'number',
+              },
+            ],
+          },
+          {
+            key: 'c3',
+            parentKey: 'k1',
+            jsonPath: 'location',
+            propName: 'location',
+            dataType: 'number',
+          },
+        ],
+      },
+    ];
+
+    test('should do nothing if no extracts tree is present in state', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+          extractsTree: [],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchExtractsFilter('$.input', '$.prop'));
+
+      expect(state).toBe(initialState);
+    });
+    test('should un-hide all nodes if input values matches extract value', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+          extractsTree,
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchExtractsFilter('$.entity', '$.entity'));
+
+      expect(state).toEqual(initialState);
+    });
+    test('should correctly update extracts tree with parent hidden if no children are visible', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+          extractsTree,
+        },
+      };
+      const expectedTree = [{
+        key: 'k1',
+        dataType: 'object',
+        propName: '$',
+        children: [
+          {
+            key: 'c1',
+            parentKey: 'k1',
+            jsonPath: 'entity',
+            propName: 'entity',
+            dataType: 'string',
+          },
+          {
+            key: 'c2',
+            parentKey: 'k1',
+            jsonPath: 'items[*]',
+            propName: 'items',
+            dataType: '[object]',
+            children: [
+              {
+                key: 'c2-1',
+                parentKey: 'c2',
+                jsonPath: 'items[*].celigo_inventorydetail',
+                propName: 'celigo_inventorydetail',
+                dataType: 'object',
+                children: [
+                  {
+                    key: 'c2-1-1',
+                    parentKey: 'c2-1',
+                    jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*]',
+                    propName: 'inventoryassignment',
+                    dataType: '[object]',
+                    children: [
+                      {
+                        key: 'c2-1-1-1',
+                        parentKey: 'c2-1-1',
+                        jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*].quantity',
+                        propName: 'quantity',
+                        dataType: 'number',
+                        hidden: true,
+                        className: 'hideRow',
+                      },
+                      {
+                        key: 'c2-1-1-2',
+                        parentKey: 'c2-1-1',
+                        jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*].sno',
+                        propName: 'sno',
+                        dataType: 'string',
+                        hidden: true,
+                        className: 'hideRow',
+                      },
+                    ],
+                    hidden: true,
+                    className: 'hideRow',
+                  },
+                ],
+                hidden: true,
+                className: 'hideRow',
+              },
+              {
+                key: 'c2-2',
+                parentKey: 'c2',
+                jsonPath: 'items[*].item',
+                propName: 'item',
+                dataType: 'string',
+                hidden: true,
+                className: 'hideRow',
+              },
+              {
+                key: 'c2-3',
+                parentKey: 'c2',
+                jsonPath: 'items[*].quantity',
+                propName: 'quantity',
+                dataType: 'number',
+                hidden: true,
+                className: 'hideRow',
+              },
+            ],
+            hidden: true,
+            className: 'hideRow',
+          },
+          {
+            key: 'c3',
+            parentKey: 'k1',
+            jsonPath: 'location',
+            propName: 'location',
+            dataType: 'number',
+            hidden: true,
+            className: 'hideRow',
+          },
+        ],
+        childMatchFound: true,
+      }];
+
+      const state = reducer(initialState, actions.mapping.v2.patchExtractsFilter('$.entity', '$.items'));
+      const nextState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+          extractsTree: expectedTree,
+        },
+      };
+
+      expect(state).toEqual(nextState);
+    });
+    test('should correctly update extracts tree with parent visible and only matching children if parent did not match', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+          extractsTree,
+        },
+      };
+      const expectedTree = [{
+        key: 'k1',
+        dataType: 'object',
+        propName: '$',
+        children: [
+          {
+            key: 'c1',
+            parentKey: 'k1',
+            jsonPath: 'entity',
+            propName: 'entity',
+            dataType: 'string',
+            hidden: true,
+            className: 'hideRow',
+          },
+          {
+            key: 'c2',
+            parentKey: 'k1',
+            jsonPath: 'items[*]',
+            propName: 'items',
+            dataType: '[object]',
+            childMatchFound: true,
+            children: [
+              {
+                key: 'c2-1',
+                parentKey: 'c2',
+                jsonPath: 'items[*].celigo_inventorydetail',
+                propName: 'celigo_inventorydetail',
+                dataType: 'object',
+                childMatchFound: true,
+                children: [
+                  {
+                    key: 'c2-1-1',
+                    parentKey: 'c2-1',
+                    jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*]',
+                    propName: 'inventoryassignment',
+                    dataType: '[object]',
+                    childMatchFound: true,
+                    children: [
+                      {
+                        key: 'c2-1-1-1',
+                        parentKey: 'c2-1-1',
+                        jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*].quantity',
+                        propName: 'quantity',
+                        dataType: 'number',
+                        hidden: true,
+                        className: 'hideRow',
+                      },
+                      {
+                        key: 'c2-1-1-2',
+                        parentKey: 'c2-1-1',
+                        jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*].sno',
+                        propName: 'sno',
+                        dataType: 'string',
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                key: 'c2-2',
+                parentKey: 'c2',
+                jsonPath: 'items[*].item',
+                propName: 'item',
+                dataType: 'string',
+                hidden: true,
+                className: 'hideRow',
+              },
+              {
+                key: 'c2-3',
+                parentKey: 'c2',
+                jsonPath: 'items[*].quantity',
+                propName: 'quantity',
+                dataType: 'number',
+                hidden: true,
+                className: 'hideRow',
+              },
+            ],
+          },
+          {
+            key: 'c3',
+            parentKey: 'k1',
+            jsonPath: 'location',
+            propName: 'location',
+            dataType: 'number',
+            hidden: true,
+            className: 'hideRow',
+          },
+        ],
+        childMatchFound: true,
+      }];
+
+      const state = reducer(initialState, actions.mapping.v2.patchExtractsFilter('$.sno', '$.items'));
+      const nextState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+          extractsTree: expectedTree,
+        },
+      };
+
+      expect(state).toEqual(nextState);
+    });
+    test('should correctly update extracts tree with parent visible and all children if only parent matched', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+          extractsTree,
+        },
+      };
+      const expectedTree = [{
+        key: 'k1',
+        dataType: 'object',
+        propName: '$',
+        children: [
+          {
+            key: 'c1',
+            parentKey: 'k1',
+            jsonPath: 'entity',
+            propName: 'entity',
+            dataType: 'string',
+            hidden: true,
+            className: 'hideRow',
+          },
+          {
+            key: 'c2',
+            parentKey: 'k1',
+            jsonPath: 'items[*]',
+            propName: 'items',
+            dataType: '[object]',
+            childMatchFound: true,
+            children: [
+              {
+                key: 'c2-1',
+                parentKey: 'c2',
+                jsonPath: 'items[*].celigo_inventorydetail',
+                propName: 'celigo_inventorydetail',
+                dataType: 'object',
+                childMatchFound: true,
+                children: [
+                  {
+                    key: 'c2-1-1',
+                    parentKey: 'c2-1',
+                    jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*]',
+                    propName: 'inventoryassignment',
+                    dataType: '[object]',
+                    childMatchFound: true,
+                    children: [
+                      {
+                        key: 'c2-1-1-1',
+                        parentKey: 'c2-1-1',
+                        jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*].quantity',
+                        propName: 'quantity',
+                        dataType: 'number',
+                      },
+                      {
+                        key: 'c2-1-1-2',
+                        parentKey: 'c2-1-1',
+                        jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*].sno',
+                        propName: 'sno',
+                        dataType: 'string',
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                key: 'c2-2',
+                parentKey: 'c2',
+                jsonPath: 'items[*].item',
+                propName: 'item',
+                dataType: 'string',
+                hidden: true,
+                className: 'hideRow',
+              },
+              {
+                key: 'c2-3',
+                parentKey: 'c2',
+                jsonPath: 'items[*].quantity',
+                propName: 'quantity',
+                dataType: 'number',
+                hidden: true,
+                className: 'hideRow',
+              },
+            ],
+          },
+          {
+            key: 'c3',
+            parentKey: 'k1',
+            jsonPath: 'location',
+            propName: 'location',
+            dataType: 'number',
+            hidden: true,
+            className: 'hideRow',
+          },
+        ],
+        childMatchFound: true,
+      }];
+
+      const state = reducer(initialState, actions.mapping.v2.patchExtractsFilter('$.inventoryassignment', '$.items'));
+      const nextState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+          extractsTree: expectedTree,
+        },
+      };
+
+      expect(state).toEqual(nextState);
+    });
+  });
 
   test('should do nothing and not fail for all below actions if state does not exist', () => {
     const afterSave = reducer({}, actions.mapping.save({}));
