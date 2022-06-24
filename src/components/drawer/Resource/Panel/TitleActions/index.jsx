@@ -37,6 +37,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     display: 'flex',
     marginRight: theme.spacing(1),
+    alignItems: 'center',
   },
   divider: {
     height: 24,
