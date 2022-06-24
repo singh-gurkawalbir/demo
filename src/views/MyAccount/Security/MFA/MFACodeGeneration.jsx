@@ -53,9 +53,9 @@ function ViewSecretCode() {
               </div>
             </div>
           ) : (
-            <Typography variant="body2" className={classes.secretCodeMessage}>
+            <div className={classes.secretCodeMessage}>
               Can&apos;t scan your QR code? <TextButton color="primary" onClick={() => setShowSecretCodeAuthModal(true)}>Click here </TextButton>
-            </Typography>
+            </div>
           )
         }
       </div>
@@ -77,9 +77,9 @@ function ViewQRCode() {
   return (
     <>
       <div className={classes.scanCodeWrapper}>
-        <Typography variant="body2">
+        <div>
           Scan the QR code below with your verification app. Once your app reads the QR code, you&apos;ll get a 6-digit code.
-        </Typography>
+        </div>
         { showQrCode
           ? <QRCode value={qrCode} size={84} className={classes.qrCode} />
           : (<OutlinedButton className={classes.qrCode} onClick={() => setShowQRAuthModal(true)}> View QR code </OutlinedButton>)}
@@ -92,7 +92,7 @@ export default function MFACodeGeneration() {
   return (
     <>
       <HeaderWithHelpText title="Add integrator.io" helpKey="mfa.addIntegrationIO">
-        <Typography variant="body2" component="span">Add integrator.io</Typography>
+        <Typography variant="h5" component="span">Add integrator.io</Typography>
       </HeaderWithHelpText>
       <ViewQRCode />
       <ViewSecretCode />

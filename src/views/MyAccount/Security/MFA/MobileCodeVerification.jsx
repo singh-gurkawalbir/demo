@@ -34,7 +34,7 @@ const fieldMeta = {
   },
 };
 
-export default function MobileCodeVerification() {
+export default function MobileCodeVerification({className}) {
   const dispatch = useDispatch();
   const classes = useStyles();
 
@@ -46,7 +46,7 @@ export default function MobileCodeVerification() {
 
   return (
     <>
-      <DynaForm formKey={formKey} />
+      <DynaForm formKey={formKey} className={className} />
       <DynaSubmit formKey={formKey} onClick={verifyMobileCode} className={classes.verify}>
         Verify
       </DynaSubmit>

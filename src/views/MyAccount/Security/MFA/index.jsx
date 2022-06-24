@@ -62,9 +62,9 @@ const useStyles = makeStyles(theme => ({
 function MFAConfiguration() {
   const canEditMFAConfiguration = useSelector(state => selectors.isMFAEnabled(state) && selectors.isMFADeviceConnected(state));
 
-  if (canEditMFAConfiguration) {
-    return <EditMFAConfiguration />;
-  }
+  // if (canEditMFAConfiguration) {
+  //   return <EditMFAConfiguration />;
+  // }
 
   return <MFASetup />;
 }
