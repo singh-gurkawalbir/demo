@@ -19,6 +19,7 @@ const appTypeToAdaptorType = {
   oracle: 'RDBMS',
   snowflake: 'RDBMS',
   bigquerydatawarehouse: 'RDBMS',
+  redshiftdatawarehouse: 'RDBMS',
   netsuite: 'NetSuiteDistributed',
   ftp: 'FTP',
   http: 'HTTP',
@@ -28,6 +29,7 @@ const appTypeToAdaptorType = {
   as2: 'AS2',
   webhook: 'Webhook',
   dynamodb: 'Dynamodb',
+  graph_ql: 'GraphQL',
 };
 
 export default {
@@ -121,6 +123,7 @@ export default {
       } else if (app.type === 'graph_ql') {
         expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
       } else if (app.type === 'http') {
+        if (app._httpConnectorId) { expression.push({ 'http._httpConnectorId': app._httpConnectorId }); }
         expression.push({ 'http.formType': { $ne: 'rest' } });
         expression.push({ type: app.type });
       } else {

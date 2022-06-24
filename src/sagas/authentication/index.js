@@ -35,9 +35,10 @@ export function* retrievingOrgDetails() {
       actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
     ),
   ]);
+  const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
   const defaultAShareId = yield select(selectors.defaultAShareId);
 
-  if (defaultAShareId === 'own') {
+  if (!hasAcceptedAccounts && (!defaultAShareId || defaultAShareId === 'own')) {
     yield call(
       getResourceCollection,
       actions.license.requestLicenses('Retrieving licenses')
@@ -54,6 +55,15 @@ export function* retrievingUserDetails() {
       )
     )
   );
+}
+
+export function* retrievingHttpConnectorDetails() {
+  const collection = yield call(
+    getResourceCollection,
+    actions.resource.requestCollection('httpconnectors')
+  );
+
+  localStorage.setItem('publishedHttpConnectors', JSON.stringify(collection));
 }
 
 export function* retrievingAssistantDetails() {
@@ -165,6 +175,7 @@ export function* retrieveAppInitializationResources() {
   yield all([
     call(retrievingOrgDetails),
     call(retrievingAssistantDetails),
+    call(retrievingHttpConnectorDetails),
   ]);
 
   yield put(actions.app.fetchUiVersion());
@@ -332,7 +343,7 @@ export function* auth({ email, password }) {
   }
 }
 
-export function* initializeSession() {
+export function* initializeSession({opts} = {}) {
   try {
     const resp = yield call(
       getResource,
@@ -349,7 +360,7 @@ export function* initializeSession() {
 
       // Important: Do not start off any async saga actions(esp those making network calls)
       // before logrocket initialization
-      yield call(initializeApp);
+      yield call(initializeApp, opts);
     // Important: intializeApp should be the last thing to happen in this function
     } else {
       // existing session is invalid

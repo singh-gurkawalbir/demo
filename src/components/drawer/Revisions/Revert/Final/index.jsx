@@ -53,9 +53,9 @@ function FinalRevertDrawerContent({ parentUrl, integrationId }) {
       </DrawerContent>
       <DrawerFooter>
         <TextButton
-          data-test="cancelCreatePull"
+          data-test="cancelFinalRevert"
           onClick={onClose}>
-          Cancel
+          Close
         </TextButton>
       </DrawerFooter>
     </>

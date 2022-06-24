@@ -22,7 +22,7 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId,
     disableLoad:
         !resource._connectorId ||
         !(
-          ['shopify', 'squareup', 'hubspot'].includes(resource.assistant) ||
+          ['shopify', 'squareup', 'hubspot', 'microsoftbusinesscentral'].includes(resource.assistant) ||
           (resource.type === 'salesforce' && resource.newIA)
         ),
   });
@@ -33,7 +33,7 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId,
       if (
         resource._connectorId &&
           ((['shopify', 'hubspot'].includes(resource.assistant) &&
-          values['/http/auth/type'] === 'oauth') || resource.assistant === 'squareup')
+          values['/http/auth/type'] === 'oauth') || ['squareup', 'microsoftbusinesscentral'].includes(resource.assistant))
       ) {
         newValues['/http/_iClientId'] =
             iClients && iClients[0] && iClients[0]._id;
@@ -81,7 +81,7 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId,
 
         if (
           resource._connectorId &&
-             ['shopify', 'squareup', 'hubspot'].includes(resource.assistant) &&
+             ['shopify', 'squareup', 'hubspot', 'microsoftbusinesscentral'].includes(resource.assistant) &&
               values['/http/auth/type'] === 'oauth'
         ) {
           showError = false;

@@ -8,16 +8,9 @@ import { generateNewId } from '../../../utils/resource';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import LoadResources from '../../../components/LoadResources';
 
-const tileDependencies = ['integrations', 'tiles'];
-
 export default function ResourceEmptyState({resourceType}) {
   const resource = resourceTypeMetaData[resourceType];
   const location = useLocation();
-  let requiredResources = [resourceType];
-
-  if (resourceType === 'integrations' || resourceType === 'tiles') {
-    requiredResources = tileDependencies;
-  }
 
   const createResourceUrl = buildDrawerUrl({
     path: drawerPaths.RESOURCE.ADD,
@@ -26,7 +19,7 @@ export default function ResourceEmptyState({resourceType}) {
   });
 
   return (
-    <LoadResources required resources={requiredResources}>
+    <LoadResources required resources={resourceType}>
       {resource?.type ? (
         <EmptyState
           title={resource.title}

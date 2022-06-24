@@ -1,4 +1,4 @@
-import { URI_VALIDATION_PATTERN, RDBMS_TYPES} from '../../../utils/constants';
+import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AWS_REGIONS_LIST} from '../../../utils/constants';
 import { isNewId, getDomainUrl, getAssistantFromResource, rdbmsSubTypeToAppType, rdbmsAppTypeToSubType } from '../../../utils/resource';
 import { applicationsList} from '../../../constants/applications';
 import { getConstantContactVersion } from '../../../utils/connections';
@@ -259,6 +259,39 @@ export default {
     fieldId: 'rdbms.bigquery.dataset',
     label: 'Dataset',
     type: 'text',
+    required: true,
+  },
+  'rdbms.redshift.region': {
+    isLoggable: true,
+    type: 'select',
+    label: 'Region',
+    required: true,
+    options: [
+      {
+        items: AWS_REGIONS_LIST,
+      },
+    ],
+  },
+  'rdbms.redshift.aws.accessKeyId': {
+    id: 'rdbms.redshift.aws.accessKeyId',
+    type: 'text',
+    label: 'Access Key Id',
+    required: true,
+  },
+  'rdbms.redshift.aws.secretAccessKey': {
+    id: 'rdbms.redshift.aws.secretAccessKey',
+    type: 'text',
+    label: 'Secret Access Key',
+    defaultValue: '',
+    required: true,
+    inputType: 'password',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+  },
+  'rdbms.redshift.clusterIdentifier': {
+    isLoggable: true,
+    type: 'text',
+    label: 'Cluster name',
     required: true,
   },
   // #endregion rdbms
@@ -1045,7 +1078,7 @@ export default {
     label: 'Host',
     required: true,
     description:
-      'If the FTP server is behind a firewall please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, and 52.71.48.248.',
+      'If the FTP server is behind a firewall, please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, 52.71.48.248, and 44.204.21.0/24.',
   },
   'ftp.type': {
     isLoggable: true,
@@ -2481,5 +2514,22 @@ export default {
         ],
       },
     ],
+  },
+  connectionFormView: {
+    isLoggable: true,
+    id: 'connectionFormView',
+    type: 'connectionFormView',
+    label: 'Form view',
+    required: true,
+    resourceType: 'connections',
+    visible: r => r?._httpConnectorId || r?.http?._httpConnectorId,
+    defaultValue: r => {
+      if (!r) return 'false';
+      if (!r.http) return 'false';
+      if (!r.http.formType) return 'false';
+
+      return r.http?.formType === 'assistant' ? 'false' : 'true';
+    },
+    helpKey: 'formView',
   },
 };

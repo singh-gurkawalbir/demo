@@ -40,6 +40,7 @@ export const appTypeToAdaptorType = {
   oracle: 'RDBMS',
   snowflake: 'RDBMS',
   bigquerydatawarehouse: 'RDBMS',
+  redshiftdatawarehouse: 'RDBMS',
   netsuite: 'NetSuite',
   ftp: 'FTP',
   http: 'HTTP',
@@ -58,12 +59,20 @@ export const rdbmsSubTypeToAppType = rdbmsSubType => {
     return 'bigquerydatawarehouse';
   }
 
+  if (rdbmsSubType === 'redshift') {
+    return 'redshiftdatawarehouse';
+  }
+
   return rdbmsSubType;
 };
 
 export const rdbmsAppTypeToSubType = appType => {
   if (appType === 'bigquerydatawarehouse') {
     return 'bigquery';
+  }
+
+  if (appType === 'redshiftdatawarehouse') {
+    return 'redshift';
   }
 
   return appType;
@@ -858,6 +867,10 @@ export function getConnectionType(resource) {
     ) {
       return `${assistant}-oauth`;
     }
+  }
+  if (['basic', 'token'].includes(resource?.http?.auth?.type)) {
+    // small hack here. adding auth type to assistant, so the assistant wouldnt match in oauth applications list.
+    return `${assistant}=${resource.http.auth.type}`;
   }
 
   if (assistant) return assistant;

@@ -25,7 +25,6 @@ export default {
       return { '/resourceId': exportId };
     }
     const applications = applicationsList();
-
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
@@ -57,6 +56,9 @@ export default {
       // we are patching useTechAdaptorForm field to not to show default assistant form
       if (!app.export && app.assistant && !FILE_PROVIDER_ASSISTANTS.includes(app.assistant)) {
         newValues['/useTechAdaptorForm'] = true;
+      }
+      if (app._httpConnectorId) {
+        newValues['/isHttpConnector'] = true;
       }
     }
 
@@ -173,6 +175,7 @@ export default {
       } else if (app.type === 'graph_ql') {
         expression.push({ 'http.formType': 'graph_ql' });
       } else if (app.type === 'http') {
+        if (app._httpConnectorId) { expression.push({ 'http._httpConnectorId': app._httpConnectorId }); }
         expression.push({ 'http.formType': { $ne: 'rest' } });
         expression.push({ type: app.type });
       } else {
@@ -224,6 +227,10 @@ export default {
               { $and: [{ adaptorType: 'HTTPExport' }, { 'http.formType': 'rest' }] },
             ],
           });
+        } else if (app.type === 'graph_ql') {
+          expression.push(
+            { $and: [{ adaptorType: 'HTTPExport' }, { 'http.formType': 'graph_ql' }] },
+          );
         } else if (app.type === 'http') {
           expression.push({
             adaptorType: `${adaptorTypePrefix}Export`,

@@ -11,12 +11,13 @@ import getRequestOptions, { pingConnectionParentContext } from '../../utils/requ
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
-import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH } from '../../utils/constants';
+import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH, INTEGRATION_DEPENDENT_RESOURCES, STANDALONE_INTEGRATION } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
 import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
+import httpConnectorSagas from './httpConnectors';
 
 export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -171,7 +172,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     // eslint-disable-next-line prefer-destructuring
     merged = resp.merged;
   } else if (
-    ['exports', 'imports', 'connections', 'flows', 'integrations', 'apis', 'eventreports'].includes(
+    ['exports', 'imports', 'connections', 'flows', 'integrations', 'apis', 'eventreports', 'asyncHelpers'].includes(
       resourceType
     ) || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))
   ) {
@@ -717,7 +718,7 @@ export function* deleteIntegration({ integrationId }) {
   yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
 }
 
-export function* getResourceCollection({ resourceType, refresh }) {
+export function* getResourceCollection({ resourceType, refresh, integrationId }) {
   let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
 
@@ -740,8 +741,25 @@ export function* getResourceCollection({ resourceType, refresh }) {
   if (resourceType === 'notifications') {
     path = '/notifications?users=all';
   }
+  if (integrationId) {
+    if (INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
+      path = `/integrations/${integrationId}/${resourceType}`;
+    }
+    const integration = yield select(selectors.resource, 'integrations', integrationId);
+
+    if (!integration && integrationId !== STANDALONE_INTEGRATION.id) {
+      yield call(getResource, {resourceType: 'integrations', id: integrationId});
+    }
+  }
+  let updatedResourceType = resourceType;
 
   try {
+    // TODO: move these resource types to actual routes logic to a common place
+    if (/connectors\/.*\/licenses/.test(resourceType)) {
+      updatedResourceType = 'connectorLicenses';
+    }
+    yield put(actions.resource.collectionRequestSent(updatedResourceType, integrationId));
+
     let collection = yield call(apiCallWithPaging, {
       path,
       hidden: hideNetWorkSnackbar,
@@ -776,13 +794,14 @@ export function* getResourceCollection({ resourceType, refresh }) {
       collection = undefined;
     }
 
-    yield put(actions.resource.receivedCollection(resourceType, collection));
+    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
+    yield put(actions.resource.collectionRequestSucceeded({resourceType: updatedResourceType, integrationId}));
 
     return collection;
   } catch (error) {
     // generic message to the user that the
     // saga failed and services team working on it
-
+    yield put(actions.resource.collectionRequestFailed({resourceType: updatedResourceType, integrationId}));
   }
 }
 
@@ -1169,4 +1188,5 @@ export const resourceSagas = [
   takeLatest(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, downloadAuditlogs),
 
   ...metadataSagas,
+  ...httpConnectorSagas,
 ];

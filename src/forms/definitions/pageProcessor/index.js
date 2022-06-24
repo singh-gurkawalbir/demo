@@ -23,7 +23,6 @@ export default {
       return { '/resourceId': importId || exportId };
     }
     const applications = applicationsList();
-
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
@@ -51,8 +50,11 @@ export default {
 
     // If there is no assistant for the import, we need to show generic adaptor form
     // we are patching useTechAdaptorForm field to not to show default assistant form
-    if (app.assistant && !FILE_PROVIDER_ASSISTANTS.includes(app.assistant)) {
+    if ((app.assistant || app._httpConnectorId) && !FILE_PROVIDER_ASSISTANTS.includes(app.assistant)) {
       if ((newValues['/isLookup'] && !app.export) || (!newValues['/isLookup'] && !app.import)) { newValues['/useTechAdaptorForm'] = true; }
+    }
+    if (app._httpConnectorId) {
+      newValues['/isHttpConnector'] = true;
     }
 
     return newValues;
@@ -188,6 +190,7 @@ export default {
       } else if (app.type === 'graph_ql') {
         expression.push({ 'http.formType': 'graph_ql' });
       } else if (app.type === 'http') {
+        if (app._httpConnectorId) { expression.push({ 'http._httpConnectorId': app._httpConnectorId }); }
         expression.push({ 'http.formType': { $ne: 'rest' } });
         expression.push({ type: app.type });
       } else {
@@ -242,6 +245,10 @@ export default {
             { $and: [{ adaptorType: `HTTP${adaptorTypeSuffix}` }, { 'http.formType': 'rest' }] },
           ],
         });
+      } else if (app.type === 'graph_ql') {
+        expression.push(
+          { $and: [{ adaptorType: `HTTP${adaptorTypeSuffix}` }, { 'http.formType': 'graph_ql' }] },
+        );
       } else if (app.type === 'http') {
         expression.push({
           adaptorType,

@@ -27,7 +27,7 @@ export default function IntegrationApp() {
         <PageBar />
         <IntegrationTabs />
         <ResourceDrawer />
-        <QueuedJobsDrawer />
+        <QueuedJobsDrawer integrationId={integrationId} />
       </TabRedirection>
     </>
   );

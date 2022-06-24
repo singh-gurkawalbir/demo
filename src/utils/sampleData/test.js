@@ -13,7 +13,6 @@ import getFormattedSampleData, {
   generateTransformationRulesOnXMLData,
   isValidPathToMany,
   processOneToManySampleData,
-  extractRawSampleDataFromOneToManySampleData,
   wrapExportFileSampleData,
   wrapSampleDataWithContext,
   unwrapExportFileSampleData,
@@ -773,12 +772,10 @@ describe('processOneToManySampleData util', () => {
 
     expect(processOneToManySampleData(sampleData, resource)).toEqual(expectedData);
   });
-});
-
-describe('extractRawSampleDataFromOneToManySampleData util', () => {
-  test('should return original sample data if sample data or resource or path segments are empty', () => {
+  test('should return original sample data if pathToMany is undefined and sample data is not of array type', () => {
     const sampleData = {
-      key: 'value',
+      a: 5,
+      c: { d: 7 },
     };
     const resource = {
       _id: '999',
@@ -786,107 +783,28 @@ describe('extractRawSampleDataFromOneToManySampleData util', () => {
       adaptorType: 'HTTPImport',
     };
 
-    expect(extractRawSampleDataFromOneToManySampleData(null, resource)).toBeNull();
-    expect(extractRawSampleDataFromOneToManySampleData(sampleData)).toBe(sampleData);
-    expect(extractRawSampleDataFromOneToManySampleData(sampleData, null)).toBe(sampleData);
-    expect(extractRawSampleDataFromOneToManySampleData(sampleData, resource)).toBe(sampleData);
+    expect(processOneToManySampleData(sampleData, resource)).toEqual(sampleData);
   });
-  test('should return the original sample data if the sample data does not contain _PARENT key', () => {
-    const sampleData = {
-      key: 'value',
-    };
-    const resource = {
-      _id: '999',
-      name: 'dummy resource',
-      adaptorType: 'HTTPImport',
-    };
-
-    expect(extractRawSampleDataFromOneToManySampleData(sampleData, resource)).toBe(sampleData);
-  });
-  test('should return the passed parent sample data if the pathToMany provided is not a valid one', () => {
-    const sampleData = {
-      _PARENT: { a: 5, c: { d: 7}, e: { check: {} } },
-    };
-    const resource = {
-      _id: '999',
-      name: 'dummy resource',
-      adaptorType: 'HTTPImport',
-      oneToMany: true,
-      pathToMany: 'check.f',
-    };
-
-    expect(extractRawSampleDataFromOneToManySampleData(sampleData, resource)).toEqual(sampleData._PARENT);
-  });
-  test('should return the actual sample data before oneToMany path is processed when the resource has valid pathToMany', () => {
-    const sampleData1 = {
-      _PARENT: { a: 5, c: { d: 7}, e: { check: {} } },
-      a: 1,
-    };
-    const sampleData2 = {
-      _PARENT: { a: 5, c: { d: 7}, e: { check: {} } },
-    };
-    const sampleData3 = {
-      _PARENT: { a: 5, c: { d: 7}, e: { check: {} } },
+  test('should return first index of original sample data if pathToMany is undefined and sample data is of array type', () => {
+    const sampleData = [{
+      a: 5,
+      c: { d: 7 },
+    },
+    {
       a: 6,
-      b: 6,
-      c: 7,
-      d: 11,
-    };
-    const sampleData4 = {
-      _PARENT: [
-        { a: 5 },
-        { b: 10},
-      ],
-    };
-    const resource1 = {
+      e: 'test',
+    }];
+    const resource = {
       _id: '999',
       name: 'dummy resource',
       adaptorType: 'HTTPImport',
-      oneToMany: true,
-      pathToMany: 'e.check.f',
     };
-    const resource2 = {
-      _id: '999',
-      name: 'dummy resource',
-      adaptorType: 'HTTPImport',
-      oneToMany: true,
-      pathToMany: 'e',
-    };
-    const expectedSampleData1 = {
+    const expectedData = {
       a: 5,
       c: { d: 7 },
-      e: { check: { f: [{ a: 1}]} },
     };
-    const expectedSampleData2 = {
-      a: 5,
-      c: { d: 7 },
-      e: { check: { f: []} },
-    };
-    const expectedSampleData3 = {
-      a: 5,
-      c: { d: 7 },
-      e: {
-        check: {
-          f: [
-            {
-              a: 6,
-              b: 6,
-              c: 7,
-              d: 11,
-            },
-          ],
-        },
-      },
-    };
-    const expectedSampleData4 = [
-      { a: 5 },
-      { b: 10},
-    ];
 
-    expect(extractRawSampleDataFromOneToManySampleData(sampleData1, resource1)).toEqual(expectedSampleData1);
-    expect(extractRawSampleDataFromOneToManySampleData(sampleData2, resource1)).toEqual(expectedSampleData2);
-    expect(extractRawSampleDataFromOneToManySampleData(sampleData3, resource1)).toEqual(expectedSampleData3);
-    expect(extractRawSampleDataFromOneToManySampleData(sampleData4, resource2)).toEqual(expectedSampleData4);
+    expect(processOneToManySampleData(sampleData, resource)).toEqual(expectedData);
   });
 });
 
@@ -1245,6 +1163,54 @@ describe('wrapSampleDataWithContext util', () => {
             fileMeta:
               {
                 fileName: 'sampleFileName',
+              },
+          },
+        ],
+        errors: [],
+        _exportId: 'some resource id',
+        _connectionId: 'some connection id',
+        _flowId: 'some flow id',
+        _integrationId: 'some integration id',
+        pageIndex: 0,
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flowGrouping: {},
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+    };
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+
+    // delta type resource
+    resource.type = 'delta';
+    expectedData.data.lastExportDateTime = expect.any(String);
+    expectedData.data.currentExportDateTime = expect.any(String);
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
+  test('should return correctly wrapped sample data if stage is preSavePage and resource is FTP export', () => {
+    const stage = 'preSavePage';
+
+    resource.adaptorType = 'FTPExport';
+
+    const expectedData = {
+      status: 'received',
+      data: {
+        data: [{
+          id: 333,
+          phone: '1234',
+        }],
+        files: [
+          {
+            fileMeta:
+              {
+                fileName: 'sampleFileName',
+                fileSize: 1234,
               },
           },
         ],

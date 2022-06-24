@@ -80,6 +80,7 @@ export const REVISION_CREATION_STATUS = Object.freeze({
   CREATED: 'created',
 });
 
+export const INTEGRATION_DEPENDENT_RESOURCES = ['exports', 'imports', 'connections', 'flows'];
 export const UI_FIELD_VALUES = Object.freeze(['/formView', '/uploadFile']);
 export const SALESFORCE_DA_PACKAGE_URL =
   'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000000Y9kv';
@@ -419,7 +420,6 @@ export const REST_ASSISTANTS = [
   'sharepoint',
   'retailops',
   'concurall',
-  'skubana',
   'dunandbradstreet',
   'miva',
 ];
@@ -456,7 +456,7 @@ export const FLOW_EVENT_REPORTS_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/arti
 export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
 export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
 
-export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle', 'bigquerydatawarehouse'];
+export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle', 'bigquerydatawarehouse', 'redshiftdatawarehouse'];
 
 export const AWS_REGIONS_LIST = [
   {
@@ -658,7 +658,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];
 export const ALLOWED_HTML_TAGS =
   ['p', 'pre', 's', 'b', 'a', 'small', 'i', 'font', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'br', 'big', 'center', 'del', 'em', 'strong', 'sub', 'sup', 'table', 'td', 'tr', 'th', 'tt', 'title'];
-export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your trial of unlimited flows starts now - what will you integrate next?';
+export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your unlimited flows trial starts now - what will you integrate next?';
 export const LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Your request has been received. We will contact you soon.';
 export const FILE_PROVIDER_ASSISTANTS = ['googledrive', 'azurestorageaccount'];
 export const CONNECTORS_TO_IGNORE = [
@@ -704,7 +704,15 @@ export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
   [LINE_GRAPH_TYPES.IGNORED]: 'i',
   [LINE_GRAPH_TYPES.RESOLVED]: 'r',
 });
-
+export const AUTHENTICATION_LABELS = Object.freeze({
+  basic: 'Basic',
+  token: 'Token',
+  oauth: 'OAuth 2.0',
+  custom: 'Custom',
+  cookie: 'Cookie',
+  digest: 'Digest',
+  wsse: 'WSSE',
+});
 export const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
 
 export const ALIAS_FORM_KEY = Object.freeze({

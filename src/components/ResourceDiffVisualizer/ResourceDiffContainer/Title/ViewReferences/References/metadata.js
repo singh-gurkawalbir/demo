@@ -26,9 +26,17 @@ export const otherIntegrationRefsMetadata = {
       heading: 'Integration name',
       isLoggable: true,
       Value: ({rowData: r}) => {
-        const {onClose} = useGetTableContext();
+        const { onClose, integrationId } = useGetTableContext();
 
-        return <ResourceLink name={r.integrationName} resourceType="integrations" id={r.integrationId} onClick={onClose} />;
+        return (
+          <ResourceLink
+            integrationId={integrationId}
+            name={r.integrationName}
+            resourceType="integrations"
+            id={r.integrationId}
+            onClick={onClose}
+          />
+        );
       },
     },
     {
@@ -36,9 +44,17 @@ export const otherIntegrationRefsMetadata = {
       heading: 'Flow name',
       isLoggable: true,
       Value: ({rowData: r}) => {
-        const {onClose} = useGetTableContext();
+        const { onClose, integrationId } = useGetTableContext();
 
-        return <ResourceLink name={r.flowName} resourceType="flows" id={r.flowId} onClick={onClose} />;
+        return (
+          <ResourceLink
+            integrationId={integrationId}
+            name={r.flowName}
+            resourceType="flows"
+            id={r.flowId}
+            onClick={onClose}
+           />
+        );
       },
     },
   ],

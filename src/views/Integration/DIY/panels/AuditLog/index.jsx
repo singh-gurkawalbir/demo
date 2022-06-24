@@ -5,6 +5,7 @@ import AuditLog from '../../../../../components/AuditLog';
 import PanelHeader from '../../../../../components/PanelHeader';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
+import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -21,11 +22,13 @@ function useLoadRevisions(integrationId) {
   // move this hook to a global folder when there are much more use cases to load revisions
   const dispatch = useDispatch();
   const revisionsFetchStatus = useSelector(state => selectors.revisionsFetchStatus(state, integrationId));
+  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
 
   useEffect(() => {
-    if (!revisionsFetchStatus) {
+    if (!revisionsFetchStatus && !isIntegrationApp && integrationId && STANDALONE_INTEGRATION.id !== integrationId) {
       dispatch(actions.integrationLCM.revisions.request(integrationId));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [integrationId, dispatch, revisionsFetchStatus]);
 
   return !revisionsFetchStatus || revisionsFetchStatus === 'requested';
@@ -42,7 +45,11 @@ export default function AuditLogSection({ integrationId, childId }) {
   return (
     <div className={classes.root}>
       <PanelHeader title="Audit log" infoText={infoTextAuditLog} />
-      <AuditLog resourceType="integrations" resourceId={childId || integrationId} childId={childId} />
+      <AuditLog
+        resourceType="integrations"
+        resourceId={childId || integrationId}
+        integrationId={childId || integrationId}
+        childId={childId} />
     </div>
   );
 }

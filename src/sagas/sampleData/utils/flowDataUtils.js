@@ -143,8 +143,13 @@ export function* fetchFlowResources({
 
         resourceMap[resourceId].options = {};
 
-        if (resourceType === 'exports' || resourceType === 'imports') {
+        if (resourceType === 'exports') {
           // Gets required uiData (for real time exports - FTP, NS, SF, Web hook) and postData to pass for Page processors
+          resourceMap[resourceId].options = yield call(
+            getPreviewOptionsForResource,
+            { resource, flow, refresh, runOffline}
+          );
+        } else if (resourceType === 'imports') {
           resourceMap[resourceId].options = yield call(
             getPreviewOptionsForResource,
             { resource,

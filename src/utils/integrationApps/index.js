@@ -1,4 +1,6 @@
+import isEmpty from 'lodash/isEmpty';
 import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION, FORM_SAVE_STATUS, CATEGORY_MAPPING_SAVE_STATUS } from '../constants';
+import { capitalizeFirstLetter } from '../string';
 
 export const getIntegrationAppUrlName = integrationAppName => {
   if (!integrationAppName || typeof integrationAppName !== 'string') {
@@ -173,7 +175,7 @@ export const getIntegrationApp = ({ _connectorId, name }) => {
     },
     'localhost.io': {
       'Zendesk - NetSuite Connector': 'zendesk',
-      'Shopify - NetSuite Connector': 'shopify',
+      'Shopify - NetSuite': 'shopify',
       'JIRA - NetSuite Connector': 'jira',
       'ADP - NetSuite Connector': 'adp',
       'Magento 2 - NetSuite Connector': 'magento2',
@@ -230,7 +232,9 @@ export default {
       step.type === 'connection' ||
       step.type === 'ssConnection' ||
       step.sourceConnection ||
-      step.type === INSTALL_STEP_TYPES.FORM
+      step.type === INSTALL_STEP_TYPES.FORM ||
+      // IA1.0 doesnt have type on their step scheam, instead check for 'form' property populated
+      !isEmpty(step.form)
     ) {
       if (step.completed) {
         stepText = isUninstall ? 'Uninstalled' : 'Configured';
@@ -278,9 +282,10 @@ export default {
 
     if (['jet', 'salesforceCommerce'].indexOf(integrationApp) !== -1) {
       highestEdition = 'enterprise';
+    } else if (integrationApp === 'shopify') {
+      highestEdition = 'shopifymarkets';
     } else if (
       [
-        'shopify',
         'bigcommerce',
         'magento2',
         'amazon',
@@ -302,6 +307,14 @@ export default {
   },
   isCloningSupported: (_connectorId, name) =>
     CLONING_SUPPORTED_IAS.includes(getIntegrationApp({ _connectorId, name })),
+};
+
+export const getTitleFromEdition = edition => {
+  if (edition.toLowerCase() === 'shopifymarkets') {
+    return 'Shopify Markets';
+  }
+
+  return capitalizeFirstLetter(edition);
 };
 
 export const getTitleIdFromSection = sec => sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '';

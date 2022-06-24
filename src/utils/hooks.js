@@ -45,6 +45,7 @@ export const hooksToFunctionNamesMap = {
   transform: 'transform',
   filter: 'filter',
   handleRequest: 'handleRequest',
+  router: 'router',
 };
 
 export const hooksToHelpKeyMap = {
@@ -84,6 +85,7 @@ export function getSupportedHooksForResource(resource) {
     case 'snowflake':
     case 'mongodb':
     case 'bigquerydatawarehouse':
+    case 'redshiftdatawarehouse':
       unSupportedHooks = [];
       break;
     case 'ftp':

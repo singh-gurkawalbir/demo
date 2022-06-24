@@ -141,6 +141,7 @@ export default {
       } else if (app.type === 'graph_ql') {
         expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
       } else if (app.type === 'http') {
+        if (app._httpConnectorId) { expression.push({ 'http._httpConnectorId': app._httpConnectorId }); }
         expression.push({ 'http.formType': { $ne: 'rest' } });
         expression.push({ type: app.type });
       } else {

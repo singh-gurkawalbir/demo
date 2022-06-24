@@ -161,7 +161,7 @@ export default function ResourceList(props) {
         </ActionGroup>
       </CeligoPageBar>
       <PageContent isPagingBar={isPagingBar}>
-        <LoadResources required resources={resourcesToLoad(resourceType)}>
+        <LoadResources required integrationId="none" resources={resourcesToLoad(resourceType)}>
           {list.count === 0 ? (
             <>
               {list.total === 0

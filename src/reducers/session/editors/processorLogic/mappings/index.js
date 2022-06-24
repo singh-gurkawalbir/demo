@@ -2,7 +2,7 @@ export default {
   processor: 'mapperProcessor',
   init: ({options, resource}) => {
     const importName = resource?.name;
-    const editorTitle = importName ? `Edit Mapping: ${importName}` : 'Edit Mapping';
+    const editorTitle = importName ? `Edit mapping: ${importName}` : 'Edit Mapping';
 
     return {
       ...options,
@@ -18,8 +18,8 @@ export default {
 
     const {mappingPreviewType} = editor;
 
-    const hasErrors = !!(result.errors || result.data?.[0]?.errors);
-    let errors = result.data?.[0];
+    let errors = result.data?.[0] || {};
+    const hasErrors = !!(result.errors || errors.message || errors.errors?.length);
     let finalResult = result.data?.[0]?.mappedObject || '';
 
     if (mappingPreviewType) {
