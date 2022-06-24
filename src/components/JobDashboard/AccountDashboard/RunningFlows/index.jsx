@@ -66,7 +66,7 @@ export default function RunningFlows() {
   return (
     <>
       <div className={classes.root}>
-        {isRunningJobsCollectionLoading ? (<Spinner centerAll />) : (
+        {isRunningJobsCollectionLoading ? (<Spinner loading size="large" />) : (
           <>
             <Filters
               filterKey={filterKey} />

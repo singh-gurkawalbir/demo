@@ -57,6 +57,15 @@ export function* retrievingUserDetails() {
   );
 }
 
+export function* retrievingHttpConnectorDetails() {
+  const collection = yield call(
+    getResourceCollection,
+    actions.resource.requestCollection('httpconnectors')
+  );
+
+  localStorage.setItem('publishedHttpConnectors', JSON.stringify(collection));
+}
+
 export function* retrievingAssistantDetails() {
   const collection = yield call(
     getResourceCollection,
@@ -166,6 +175,7 @@ export function* retrieveAppInitializationResources() {
   yield all([
     call(retrievingOrgDetails),
     call(retrievingAssistantDetails),
+    call(retrievingHttpConnectorDetails),
   ]);
 
   yield put(actions.app.fetchUiVersion());

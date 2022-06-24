@@ -4,6 +4,7 @@ import oracle from './oracle';
 import postgresql from './postgresql';
 import snowflake from './snowflake';
 import bigquerydatawarehouse from './bigquerydatawarehouse';
+import redshiftdatawarehouse from './redshiftdatawarehouse';
 
 export default {
   mysql,
@@ -12,4 +13,5 @@ export default {
   postgresql,
   snowflake,
   bigquerydatawarehouse,
+  redshiftdatawarehouse,
 };

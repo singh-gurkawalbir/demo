@@ -7,10 +7,10 @@ import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
 import {selectors} from '../../reducers';
 import { commitStagedChanges } from '../resources';
-import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, hasV2MappingsInTreeData} from '../../utils/mapping';
+import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, buildExtractsTree} from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
-import { getResourceSubType } from '../../utils/resource';
+import { getResourceSubType, isFileAdaptor, isAS2Resource } from '../../utils/resource';
 import { getImportOperationDetails } from '../../utils/assistant';
 import { requestSampleData as requestFlowSampleData } from '../sampleData/flows';
 import { requestSampleData as requestImportSampleData } from '../sampleData/imports';
@@ -203,7 +203,7 @@ export function* mappingInit({
       mappingMetadata: mappingMetadata || {},
       connectorExternalId: importResource.externalId,
     };
-  } else if (importResource.assistant) {
+  } else if (importResource.assistant || connection?.http?._httpConnectorId) {
     const { assistant } = getResourceSubType(
       {...importResource, assistant: connectionAssistant}
     );
@@ -215,12 +215,14 @@ export function* mappingInit({
         assistant,
       }
     );
+    const connectorMetaData = yield select(
+      selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
 
     const { requiredMappings } = getImportOperationDetails({
       operation,
       resource,
       version,
-      assistantData,
+      assistantData: connection?.http?._httpConnectorId ? connectorMetaData : assistantData,
     });
 
     options.assistant = { requiredMappings };
@@ -261,11 +263,15 @@ export function* mappingInit({
 
   let version = 1;
   let mappingsTreeData;
+  let extractsTree;
 
-  // IAs, non http/rest don't support mapper2
-  if (!importResource._connectorId &&
-    (importResource.adaptorType === 'HTTPImport' || importResource.adaptorType === 'RESTImport') &&
-    importResource.http?.type !== 'file') {
+  // only http and file imports are supported
+  if (!importResource._connectorId && (
+    isFileAdaptor(importResource) ||
+    isAS2Resource(importResource) ||
+    importResource.adaptorType === 'HTTPImport' ||
+    importResource.adaptorType === 'RESTImport')
+  ) {
     mappingsTreeData = buildTreeFromV2Mappings({
       importResource,
       isGroupedSampleData,
@@ -273,7 +279,11 @@ export function* mappingInit({
       disabled: isMonitorLevelAccess,
     });
 
-    if (hasV2MappingsInTreeData(mappingsTreeData) || !formattedMappings?.length) {
+    // generate tree structure based on input sample data
+    // for source field
+    extractsTree = buildExtractsTree(flowSampleData);
+
+    if (importResource.mappings?.length || !formattedMappings?.length) {
       version = 2;
     }
   }
@@ -286,6 +296,7 @@ export function* mappingInit({
       })),
       lookups,
       v2TreeData: mappingsTreeData,
+      extractsTree,
       version,
       flowId,
       importId,
@@ -391,7 +402,7 @@ export function* saveMappings() {
 
   // save v2 mappings only when anything changed
   if (isMapper2Supported && isV2MappingsChanged) {
-    const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
+    const _mappingsV2 = buildV2MappingsFromTree({v2TreeData, lookups});
 
     patch.push({
       op: _mappingsV2 ? 'replace' : 'add',

@@ -19,7 +19,7 @@ const ITEM_SIZE = 48;
 const OPTIONS_VIEW_PORT_HEIGHT = 300;
 
 const getLabel = (items, value) => {
-  const item = items.find(item => item.value === value);
+  const item = items.find(item => item?.value === value);
 
   if (typeof item?.label === 'string') {
     return item.label;

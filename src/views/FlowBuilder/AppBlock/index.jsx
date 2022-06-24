@@ -19,6 +19,7 @@ import CloseIcon from '../../../components/icons/CloseIcon';
 import ErrorStatus from '../ErrorStatus';
 import CeligoTruncate from '../../../components/CeligoTruncate';
 import actions from '../../../actions';
+import {getHttpConnector} from '../../../constants/applications';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -227,6 +228,11 @@ export default function AppBlock({
 
     if (assistant) return assistant;
     if (http?.formType === 'graph_ql') return 'graph_ql';
+    if (http?._httpConnectorId) {
+      const publishedConnector = getHttpConnector(http._httpConnectorId);
+
+      return publishedConnector?.name;
+    }
   });
 
   useEffect(() => {

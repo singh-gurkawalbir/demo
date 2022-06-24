@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@material-ui/core';
 import clsx from 'clsx';
@@ -8,6 +9,8 @@ import ExtractsTree from './ExtractsTree';
 import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import messageStore from '../../../../../../../utils/messageStore';
 import ArrowPopper from '../../../../../../ArrowPopper';
+import useDebouncedValue from '../../../../../../../hooks/useDebouncedInput';
+import actions from '../../../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -117,8 +120,6 @@ export default function Mapper2ExtractsTypeableSelect({
   id,
   disabled,
   value: propValue = '',
-  importId,
-  flowId,
   onBlur,
   isLookup,
   isHardCodedValue,
@@ -127,14 +128,17 @@ export default function Mapper2ExtractsTypeableSelect({
 }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
+  const dispatch = useDispatch();
   const [isFocused, setIsFocused] = useState(false);
-  const [inputValue, setInputValue] = useState(propValue);
+  const [inputValue, setInputValue] = useDebouncedValue(propValue, value => {
+    dispatch(actions.mapping.v2.patchExtractsFilter(value, propValue));
+  });
   const [isTruncated, setIsTruncated] = useState(false);
   const inputFieldRef = useRef();
 
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
-  }, []);
+  }, [setInputValue]);
 
   const handleFocus = useCallback(e => {
     e.stopPropagation();
@@ -183,7 +187,7 @@ export default function Mapper2ExtractsTypeableSelect({
             isLookup={isLookup}
             isHardCodedValue={isHardCodedValue}
             isHandlebarExp={isHandlebarExp}
-            fieldType="Source record field"
+            fieldType="Source field"
         />
         )} >
         <TextField
@@ -198,7 +202,7 @@ export default function Mapper2ExtractsTypeableSelect({
           onFocus={handleFocus}
           disabled={disabled}
           multiline={isFocused}
-          placeholder={disabled ? '' : 'Source record field'}
+          placeholder={disabled ? '' : 'Source field'}
           InputProps={{
             endAdornment: !hideSourceDropdown &&
               (
@@ -244,9 +248,7 @@ export default function Mapper2ExtractsTypeableSelect({
             onBlur={onBlur}
             setInputValue={setInputValue}
             setIsFocused={setIsFocused}
-            flowId={flowId}
-            resourceId={importId}
-        />
+          />
         )}
       </ArrowPopper>
 

@@ -6,13 +6,14 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Help from '../../../../Help';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import RefreshIcon from '../../../../icons/RefreshIcon';
 import TextButton from '../../../../Buttons/TextButton';
 import CeligoDivider from '../../../../CeligoDivider';
 import ExpandRowsIcon from '../../../../icons/ExpandRowsIcon';
 import CollapseRowsIcon from '../../../../icons/CollapseRowsIcon';
 import ArrowDownIcon from '../../../../icons/ArrowDownIcon';
-import { ROWS_AS_INPUT_OPTIONS, RECORD_AS_INPUT_OPTIONS, getInputOutputFormat } from '../../../../../utils/mapping';
+import { isCsvOrXlsxResourceForMapper2, ROWS_AS_INPUT_OPTIONS, RECORD_AS_INPUT_OPTIONS, getInputOutputFormat } from '../../../../../utils/mapping';
 import ActionGroup from '../../../../ActionGroup';
 import Spinner from '../../../../Spinner';
 import ArrowPopper from '../../../../ArrowPopper';
@@ -41,15 +42,6 @@ const useStyles = makeStyles(theme => ({
   currentContainer: {
     fontFamily: 'Roboto400',
     fontSize: 14,
-  },
-  actionsMenuPopper: {
-    maxWidth: 250,
-    top: `${theme.spacing(1)}px !important`,
-    left: `${theme.spacing(1)}px !important`,
-  },
-  actionsMenuPopperArrow: {
-    left: 'auto !important',
-    right: theme.spacing(0.5),
   },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
@@ -126,14 +118,18 @@ function OutputFormatsList({disabled}) {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = !!anchorEl;
-  const {isGroupedSampleData, isGroupedOutput} = useSelector(state => {
+  const {isGroupedSampleData, isGroupedOutput, importId} = useSelector(state => {
     const mapping = selectors.mapping(state);
 
     return {
       isGroupedSampleData: mapping.isGroupedSampleData,
       isGroupedOutput: mapping.isGroupedOutput,
+      importId: mapping.importId,
     };
   }, shallowEqual);
+
+  const importResource = useSelectorMemo(selectors.makeResourceSelector, 'imports', importId);
+  const disableRecordOutput = isCsvOrXlsxResourceForMapper2(importResource);
 
   const handleMenu = useCallback(
     event => {
@@ -167,9 +163,8 @@ function OutputFormatsList({disabled}) {
       <ArrowPopper
         id="outputFormats"
         onClose={handleClose}
-        placement="bottom-end"
+        placement="bottom-center"
         restrictToParent={false}
-        classes={{ popper: classes.actionsMenuPopper, arrow: classes.actionsMenuPopperArrow}}
         open={open}
         anchorEl={anchorEl}
         >
@@ -179,6 +174,7 @@ function OutputFormatsList({disabled}) {
           >
           {(isGroupedSampleData ? ROWS_AS_INPUT_OPTIONS : RECORD_AS_INPUT_OPTIONS).map(({label, value}) => (
             <ListItem
+              disabled={value.endsWith('rec') && disableRecordOutput}
               button
               className={clsx(classes.itemRoot, {
                 [classes.itemSelected]: label === getInputOutputFormat(isGroupedSampleData, isGroupedOutput),
@@ -248,18 +244,14 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
 
   return (
     <div className={classes.wrapper}>
-      Destination record structure
+      <OutputFormatsList disabled={disabled} />
       {helpKey && (
         <Help
-          title="Destination record structure"
           className={classes.helpButton}
           helpKey={helpKey}
         />
       )}
       <ActionGroup position="right" className={classes.actions}>
-        <OutputFormatsList disabled={disabled} />
-
-        <CeligoDivider position="right" />
 
         <TextButton
           data-test="refreshExtracts"
