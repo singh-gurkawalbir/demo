@@ -140,6 +140,69 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   return newNode;
 };
 
+const recursivelySearchExtracts = (currNode, inputValues, skipFilter) => {
+  let anyChildMatchFound = false;
+
+  const clonedNode = {...currNode};
+
+  clonedNode.children = currNode.children.map(childNode => {
+    let clonedChild = {...childNode};
+
+    if (childNode.children) {
+      clonedChild = recursivelySearchExtracts(childNode, inputValues, skipFilter);
+    }
+
+    const {jsonPath = ''} = clonedChild;
+    let matchFound = false;
+
+    // if typed input is empty, or skipFilter is true
+    // then do not hide any node
+    if (!inputValues.length || skipFilter) {
+      delete clonedChild.hidden;
+      delete clonedChild.className;
+
+      return clonedChild;
+    }
+
+    inputValues.forEach(i => {
+      if (i && jsonPath && jsonPath.toUpperCase().indexOf(i) > -1) {
+        matchFound = true;
+      }
+    });
+
+    if (!matchFound) {
+    // if no match found, hide the node only if all its children were also not matched
+    // else do not hide this parent node (if any child match was found)
+      if (!clonedChild.childMatchFound) {
+        clonedChild.hidden = true;
+        clonedChild.className = 'hideRow';
+      } else {
+        // match is found so do not hide
+        anyChildMatchFound = true;
+        delete clonedChild.hidden;
+        delete clonedChild.className;
+      }
+    } else {
+      // match is found so do not hide
+      anyChildMatchFound = true;
+      delete clonedChild.hidden;
+      delete clonedChild.className;
+    }
+
+    return clonedChild;
+  });
+
+  // if any children was matched, then set a flag on parent node to indicate some child was matched
+  if (anyChildMatchFound) {
+    // don't hide parent
+    clonedNode.childMatchFound = true;
+  } else {
+    delete clonedNode.childMatchFound;
+  }
+
+  return clonedNode;
+};
+
 const emptyObj = {};
 const emptyArr = [];
 
@@ -164,6 +227,7 @@ export default (state = {}, action) => {
     outputFormat,
     newVersion,
     v2TreeData,
+    extractsTree,
     v2Key,
     newDataType,
     isMonitorLevelAccess,
@@ -174,6 +238,8 @@ export default (state = {}, action) => {
     errors,
     newTabValue,
     newTabExtractId,
+    inputValue,
+    propValue,
   } = action;
 
   return produce(state, draft => {
@@ -206,6 +272,7 @@ export default (state = {}, action) => {
           isGroupedSampleData,
           isMonitorLevelAccess,
           version,
+          extractsTree,
           isGroupedOutput,
           mappingsCopy: deepClone(mappings),
           lookupsCopy: deepClone(lookups),
@@ -517,13 +584,13 @@ export default (state = {}, action) => {
           if (isEmpty(draft.mapping.v2TreeData)) {
             const emptyRowKey = generateUniqueKey();
 
-            draft.mapping.v2TreeData.push({
+            draft.mapping.v2TreeData = [{
               key: emptyRowKey,
               title: '',
               dataType: MAPPING_DATA_TYPES.STRING,
               disabled: draft.mapping.isMonitorLevelAccess,
               isEmptyRow: true,
-            });
+            }];
           }
         }
 
@@ -805,6 +872,23 @@ export default (state = {}, action) => {
         break;
       }
 
+      case actionTypes.MAPPING.V2.PATCH_EXTRACTS_FILTER: {
+        if (!draft.mapping) break;
+        const {extractsTree} = draft.mapping;
+
+        if (!extractsTree || !extractsTree.length || !extractsTree[0].children) break;
+        let inputValues = inputValue === '' ? [] : inputValue.split(',');
+
+        // replace '$.' and '$[*].' for better searching,
+        // as we are not storing these prefixes in each node jsonPath as well
+        inputValues = inputValues.map(i => i.replace(/(\$\.)|(\$\[\*\]\.)/g, '').toUpperCase());
+
+        // pass the first index of tree as the tree length is always 1 because the parent is either $ or $[*]
+        draft.mapping.extractsTree[0] = recursivelySearchExtracts(extractsTree[0], inputValues, inputValue === propValue);
+
+        break;
+      }
+
       default:
     }
   });
@@ -826,6 +910,14 @@ selectors.v2MappingsTreeData = state => {
   }
 
   return state.mapping.v2TreeData || emptyArr;
+};
+
+selectors.v2MappingsExtractsTree = state => {
+  if (!state || !state.mapping) {
+    return emptyArr;
+  }
+
+  return state.mapping.extractsTree || emptyArr;
 };
 
 selectors.mappingChanged = state => {

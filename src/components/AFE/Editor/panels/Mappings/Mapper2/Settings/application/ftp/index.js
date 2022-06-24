@@ -3,17 +3,6 @@ import mappingUtil, {ARRAY_DATA_TYPES, MAPPING_DATA_TYPES} from '../../../../../
 import dateFormats from '../../../../../../../../../utils/dateFormats';
 import { emptyObject } from '../../../../../../../../../utils/constants';
 
-const conditionalOptions = [
-  {
-    label: 'Creating a record',
-    value: 'record_created',
-  },
-  {
-    label: 'Updating a record',
-    value: 'record_updated',
-  },
-];
-
 const getDefaultActionOptions = (mappingType, dataType) => {
   const defaultOptions = [
     {
@@ -54,14 +43,6 @@ const getDefaultActionOptions = (mappingType, dataType) => {
   return defaultOptions;
 };
 
-const containers = [
-  {
-    collapsed: true,
-    label: 'Advanced',
-    fields: ['conditional.when', 'conditional.lookupName'],
-  },
-];
-
 export default {
   getMetaData: ({
     node,
@@ -71,12 +52,9 @@ export default {
   }) => {
     const {key, lookupName, dataType: propDataType, copySource } = node;
 
-    const {_connectionId: connectionId, adaptorType, _id: resourceId } = importResource;
+    const {_connectionId: connectionId, _id: resourceId } = importResource;
 
-    const isComposite = !!((adaptorType === 'HTTPImport' && importResource?.http?.method && importResource.http.method.length > 1) || (adaptorType === 'RESTImport' && importResource?.rest?.method && importResource.rest.method.length > 1));
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
-
-    const conditionalWhenOptions = (isComposite && conditionalOptions) || [];
 
     const fieldMeta = {
       fieldMap: {
@@ -365,29 +343,6 @@ export default {
           noApi: true,
           defaultValue: node.default,
         },
-        'lookup.mode': {
-          id: 'lookup.mode',
-          name: '_mode',
-          type: 'radiogroup',
-          label: 'Lookup type',
-          required: true,
-          fullWidth: true,
-          defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
-          visibleWhenAll: [
-            { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
-          ],
-          helpKey: 'mapping.v2.lookup.mode',
-          noApi: true,
-          options: [
-            {
-              items: [
-                { label: 'Dynamic', value: 'dynamic' },
-                { label: 'Static', value: 'static' },
-              ],
-            },
-          ],
-        },
         'lookup.mapList': {
           id: 'lookup.mapList',
           name: '_mapList',
@@ -406,90 +361,6 @@ export default {
           map: lookup.map,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'lookup.mode', is: ['static'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
-          ],
-        },
-        'lookup.relativeURI': {
-          id: 'lookup.relativeURI',
-          name: '_relativeURI',
-          type: 'relativeuri',
-          showLookup: false,
-          showExtract: false,
-          connectionId,
-          resourceId,
-          flowId,
-          mapper2RowKey: key,
-          resourceType: 'imports',
-          label: 'Relative URI',
-          placeholder: 'Relative URI',
-          defaultValue: lookup.relativeURI,
-          helpKey: 'mapping.v2.relativeURI',
-          noApi: true,
-          visibleWhenAll: [
-            { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'lookup.mode', is: ['dynamic'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
-          ],
-        },
-        'lookup.method': {
-          id: 'lookup.method',
-          name: '_method',
-          type: 'select',
-          label: 'HTTP method',
-          required: true,
-          defaultValue: lookup.method,
-          options: [
-            {
-              items: [
-                { label: 'GET', value: 'GET' },
-                { label: 'POST', value: 'POST' },
-              ],
-            },
-          ],
-          helpKey: 'mapping.v2.lookup.method',
-          noApi: true,
-          visibleWhenAll: [
-            { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'lookup.mode', is: ['dynamic'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
-          ],
-        },
-        'lookup.body': {
-          id: 'lookup.body',
-          name: '_body',
-          type: 'httprequestbody',
-          connectionId: r => r && r._connectionId,
-          resourceId,
-          flowId,
-          mapper2RowKey: key,
-          stage: 'importMappingExtract',
-          resourceType: 'imports',
-          helpKey: 'mapping.v2.lookup.body',
-          noApi: true,
-          defaultValue: lookup.body || lookup.postBody || '',
-          required: true,
-          label: 'HTTP request body',
-          visibleWhenAll: [
-            { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'lookup.mode', is: ['dynamic'] },
-            { field: 'lookup.method', is: ['POST'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
-          ],
-        },
-        'lookup.extract': {
-          id: 'lookup.extract',
-          name: '_extract',
-          type: 'text',
-          label: 'Resource identifier path',
-          placeholder: 'Resource identifier path',
-          defaultValue: lookup.extract,
-          required: true,
-          helpKey: 'mapping.v2.lookup.extract',
-          noApi: true,
-          visibleWhenAll: [
-            { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'lookup.mode', is: ['dynamic'] },
             { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
         },
@@ -505,7 +376,6 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'lookup.mode', is: ['dynamic', 'static'] },
             { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
           validWhen: {
@@ -522,10 +392,10 @@ export default {
           defaultValue:
             mappingUtil.getV2DefaultLookupActionValue(node, lookup),
           label: 'If lookup fails',
-          refreshOptionsOnChangesTo: ['dataType', 'lookup.mode'],
+          refreshOptionsOnChangesTo: ['dataType'],
+          helpKey: 'mapping.v2.staticLookupAction',
           noApi: true,
           visibleWhenAll: [
-            { field: 'lookup.mode', is: ['dynamic', 'static'] },
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
@@ -545,14 +415,6 @@ export default {
           helpKey: 'mapping.v2.default',
           noApi: true,
           defaultValue: lookup.default,
-        },
-        'conditional.when': {
-          id: 'conditional.when',
-          name: 'conditionalWhen',
-          type: 'select',
-          label: 'Only perform mapping when:',
-          defaultValue: node.conditional && (node.conditional.when === 'record_created' || node.conditional.when === 'record_updated') ? node.conditional.when : '',
-          options: [{ items: conditionalWhenOptions }],
         },
         description: {
           id: 'description',
@@ -590,11 +452,6 @@ export default {
                   'expression',
                   'multifieldAction',
                   'multifieldDefault',
-                  'lookup.mode',
-                  'lookup.relativeURI',
-                  'lookup.method',
-                  'lookup.body',
-                  'lookup.extract',
                   'lookup.mapList',
                   'lookup.name',
                   'lookupAction',
@@ -602,10 +459,6 @@ export default {
                 ],
               },
             ],
-          },
-          {
-            type: 'collapse',
-            containers: (isComposite && containers) || [],
           },
           {
             fields: [
@@ -627,19 +480,6 @@ export default {
           standardActionField.helpKey = dataTypeField?.value === MAPPING_DATA_TYPES.BOOLEAN
             ? 'mapping.v2.boolStandardAction'
             : 'mapping.v2.standardAction';
-        }
-
-        if (fieldId === 'lookupAction') {
-          const lookupActionField = fields.find(
-            field => field.id === 'lookupAction'
-          );
-          const lookupModeField = fields.find(
-            field => field.id === 'lookup.mode'
-          );
-
-          lookupActionField.helpKey = lookupModeField?.value === 'static'
-            ? 'mapping.v2.staticLookupAction'
-            : 'mapping.v2.dynamicLookupAction';
         }
 
         if (fieldId === 'standardAction' ||
@@ -669,7 +509,7 @@ export default {
               items: [
                 { label: 'Standard', value: 'standard' },
                 { label: 'Hard-coded', value: 'hardCoded' },
-                { label: 'Lookup', value: 'lookup' },
+                { label: 'Lookup - static', value: 'lookup' },
                 { label: 'Handlebars expression', value: 'multifield' },
               ],
             },

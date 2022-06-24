@@ -24,7 +24,7 @@ describe('mappings processor logic', () => {
         stage: 'importMappingExtract',
         resourceId: 'res-123',
         resourceType: 'imports',
-        editorTitle: 'Edit Mapping: Import into ftp',
+        editorTitle: 'Edit mapping: Import into ftp',
       };
 
       expect(init({options, resource})).toEqual(expectedOutput);
