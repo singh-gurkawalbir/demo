@@ -1115,7 +1115,7 @@ describe('all modal sagas', () => {
             opts,
           }]})
         .not.put(actions.resource.requestCollection('integrations'))
-        .put(actions.license.licenseUpgradeRequestSubmitted(response))
+        .put(actions.license.licenseUpgradeRequestSubmitted(response, feature))
         .run();
     });
     test('should handle if apiCallWithRetry fails', () => {

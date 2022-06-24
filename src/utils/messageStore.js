@@ -36,7 +36,8 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   <ul><li>Improved security</li>
   <li>Reduced password fatigue</li>
   <li>Streamlined user experience</li></ul>`,
-  SSO_LICENSE_UPGRADE_REQUESTED_MESSAGE: 'We have received your request and will be in touch soon.',
+  SSO_LICENSE_UPGRADE_REQUESTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
+  SSO_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE: 'We have received your request and will be in touch soon.',
   // #region mapper2 messages
   MAPPER2_DELETE_ROW_WARNING: 'Are you sure you want to delete this parent record row? All its child rows will be deleted as well.',
   MAPPER2_DATA_TYPE_WARNING: `Since only an "object" or "[object]" data type can have child rows, 

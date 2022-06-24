@@ -22,6 +22,7 @@ import FilledButton from '../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import ButtonWithTooltip from '../../../components/Buttons/ButtonWithTooltip';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import { SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE } from '../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   ssoForm: {
@@ -101,14 +102,16 @@ const SSOLicenseUpgradeContainer = () => {
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
-  const [upgradeRequested, setUpgradeRequested] = useState(false);
   const platformLicenseActionMessage = useSelector(state =>
     selectors.platformLicenseActionMessage(state)
   );
+  const ssoLicenseUpgradeRequested = useSelector(state =>
+    selectors.ssoLicenseUpgradeRequested(state)
+  );
 
   useEffect(() => {
-    if (platformLicenseActionMessage) {
-      enquesnackbar({message: <RawHtml html={messageStore('LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
+    if (platformLicenseActionMessage === SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE) {
+      enquesnackbar({message: <RawHtml html={messageStore('SSO_LICENSE_UPGRADE_REQUESTED_MESSAGE')} />, variant: 'success'});
       dispatch(actions.license.clearActionMessage());
     }
   }, [dispatch, enquesnackbar, platformLicenseActionMessage]);
@@ -123,8 +126,8 @@ const SSOLicenseUpgradeContainer = () => {
             dispatch(
               actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
             );
-            setUpgradeRequested(true);
             dispatch(actions.license.requestUpdate('upgrade', {feature: 'SSO'}));
+            dispatch(actions.license.ssoLicenseUpgradeRequested());
           },
         },
         { label: 'Cancel',
@@ -142,14 +145,14 @@ const SSOLicenseUpgradeContainer = () => {
       <RawHtml html={messageStore('SSO_LICENSE_UPGRADE_INFO')} />
       <ButtonWithTooltip
         tooltipProps={{
-          title: upgradeRequested ? messageStore('SSO_LICENSE_UPGRADE_REQUESTED_MESSAGE') : '',
+          title: ssoLicenseUpgradeRequested ? messageStore('SSO_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE') : '',
           placement: 'bottom-start'}}>
         <FilledButton
           onClick={onRequestUpgradeClick}
-          disabled={upgradeRequested}
+          disabled={ssoLicenseUpgradeRequested}
           className={classes.ssoLicenseUpgradeBtn}
         >
-          {upgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
+          {ssoLicenseUpgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
         </FilledButton>
       </ButtonWithTooltip>
     </div>
