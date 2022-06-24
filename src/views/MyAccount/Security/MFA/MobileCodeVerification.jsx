@@ -1,4 +1,4 @@
-import React, {useMemo, useCallback} from 'react';
+import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch } from 'react-redux';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
@@ -13,32 +13,30 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const fieldMeta = {
+  fieldMap: {
+    mobileCode: {
+      id: 'mobileCode',
+      name: 'mobileCode',
+      type: 'mfamobilecode',
+      label: 'Verify mobile device',
+      required: true,
+      validWhen: {
+        matchesRegEx: {
+          pattern: '^[\\d]+$',
+          message: 'Numbers only',
+        },
+      },
+      helpKey: 'mfa.code.verify',
+      noApi: true,
+      isLoggable: false,
+    },
+  },
+};
+
 export default function MobileCodeVerification() {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const fieldMeta = useMemo(
-    () => ({
-      fieldMap: {
-        mobileCode: {
-          id: 'mobileCode',
-          name: 'mobileCode',
-          type: 'mfamobilecode',
-          label: 'Verify mobile device',
-          required: true,
-          validWhen: {
-            matchesRegEx: {
-              pattern: '^[\\d]+$',
-              message: 'Numbers only',
-            },
-          },
-          helpKey: 'mfa.code.verify',
-          noApi: true,
-          isLoggable: false,
-        },
-      },
-    }),
-    []
-  );
 
   const formKey = useFormInitWithPermissions({ fieldMeta });
 

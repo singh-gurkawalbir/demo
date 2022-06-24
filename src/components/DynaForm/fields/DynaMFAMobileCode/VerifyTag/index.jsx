@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FormHelperText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -36,15 +36,16 @@ export default function VerifyTag({ isValid }) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const verificationSuccess = useSelector(state => selectors.mobileCodeStatus(state) === 'pass');
-  const verificationFailed = useSelector(state => selectors.mobileCodeStatus(state) === 'fail');
+  const verificationSuccess = useSelector(selectors.isMobileCodeVerified);
+  const verificationFailed = useSelector(selectors.isMobileCodeVerificationFailed);
 
-  if (!isValid) {
-    // Field validations take precedence
-    dispatch(actions.mfa.resetMobileCodeStatus());
+  useEffect(() => {
+    if (!isValid) {
+      // Field validations take precedence when isValid is false for form field
+      dispatch(actions.mfa.resetMobileCodeStatus());
+    }
+  }, [isValid, dispatch]);
 
-    return null;
-  }
   if (verificationFailed) {
     return (
       <FormHelperText error className={classes.message}>

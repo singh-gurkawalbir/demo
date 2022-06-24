@@ -1,6 +1,6 @@
 import { call, put, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../actions';
-import { MFA_RESET_ASYNC_KEY, MFA_SETUP_ASYNC_KEY } from '../../utils/constants';
+import { MFA_RESET_ASYNC_KEY, MFA_SETUP_ASYNC_KEY, MFA_DELETE_DEVICE_ASYNC_KEY } from '../../utils/constants';
 import { selectors } from '../../reducers';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -98,15 +98,15 @@ export function* requestSecretCode({ password, isQRCode }) {
   }
   yield put(actions.mfa.showSecretCode());
 }
-export function* resetMFA({ password }) {
-  const path = '/mfa/reset';
+export function* resetMFA({ password, aShareId }) {
+  const path = aShareId ? `/ashares/${aShareId}/mfa/reset` : '/mfa/reset';
 
   yield put(actions.asyncTask.start(MFA_RESET_ASYNC_KEY));
   try {
     yield call(apiCallWithRetry, {
       path,
       opts: {
-        body: { password },
+        body: !aShareId ? { password } : {},
         method: 'POST',
       },
     });
@@ -143,15 +143,18 @@ export function* resetMFA({ password }) {
 // }
 export function* deleteTrustedDevice({ deviceId }) {
   try {
+    yield put(actions.asyncTask.start(MFA_DELETE_DEVICE_ASYNC_KEY));
     yield call(apiCallWithRetry, {
       path: `/trustedDevices/${deviceId}`,
       opts: {
         method: 'DELETE',
       },
     });
-
+    yield put(actions.asyncTask.success(MFA_DELETE_DEVICE_ASYNC_KEY));
     yield put(actions.mfa.requestUserSettings());
   } catch (error) {
+    yield put(actions.asyncTask.failed(MFA_DELETE_DEVICE_ASYNC_KEY));
+
     return undefined;
   }
 }
@@ -168,12 +171,12 @@ export function* verifyMobileCode({ code }) {
     });
 
     if (response.status === 'pass') {
-      return yield put(actions.mfa.mobileCodeVerified('pass'));
+      return yield put(actions.mfa.mobileCodeVerified('success'));
     }
 
-    yield put(actions.mfa.mobileCodeVerified('fail'));
+    yield put(actions.mfa.mobileCodeVerified('error'));
   } catch (error) {
-    yield put(actions.mfa.mobileCodeVerified('fail'));
+    yield put(actions.mfa.mobileCodeVerified('error'));
 
     return undefined;
   }

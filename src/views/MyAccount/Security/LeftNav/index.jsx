@@ -59,6 +59,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const AVAILABLE_SECURITY_SECTIONS = [
+  { path: 'sso', label: 'Single sign-on (SSO)', id: 'sso'},
+  { path: 'mfa', label: 'Multifactor authentication (MFA)', id: 'mfa'},
+];
+
 export default function LeftNav() {
   const classes = useStyles();
   const match = useRouteMatch();
@@ -68,27 +73,20 @@ export default function LeftNav() {
     path: `${match.url}/:mode`,
   })?.params || {};
 
-  const availableSections = [
-    { path: 'sso', label: 'Single sign-on (SSO)', id: 'sso'},
-    { path: 'mfa', label: 'Multifactor authentication (MFA)', id: 'mfa'},
-  ];
-
   return (
-    <>
-      <List>
-        {availableSections.map(({ path, label, id }) => (
-          <ListItem key={path}>
-            <div className={clsx(classes.rowContainer, { [classes.active]: mode === id })}>
-              <NavLink
-                className={classes.listItem}
-                to={path}
-                data-test={id}>
-                {label}
-              </NavLink>
-            </div>
-          </ListItem>
-        ))}
-      </List>
-    </>
+    <List>
+      {AVAILABLE_SECURITY_SECTIONS.map(({ path, label, id }) => (
+        <ListItem key={path}>
+          <div className={clsx(classes.rowContainer, { [classes.active]: mode === id })}>
+            <NavLink
+              className={classes.listItem}
+              to={path}
+              data-test={id}>
+              {label}
+            </NavLink>
+          </div>
+        </ListItem>
+      ))}
+    </List>
   );
 }

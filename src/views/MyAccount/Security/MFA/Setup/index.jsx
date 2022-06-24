@@ -16,7 +16,7 @@ export default function MFASetup() {
   return (
     <>
       <Stepper index={1}>
-        <HeaderWithHelpText title="Step1" helpKey="step1">
+        <HeaderWithHelpText title="Get verification app" helpKey="mfa.getVerificationApp">
           <Typography variant="body2" component="span">Get verification app</Typography>
         </HeaderWithHelpText>
         <Typography variant="body2">Install any authenticator app that supports TOTP protocol or time-based one time password.</Typography>

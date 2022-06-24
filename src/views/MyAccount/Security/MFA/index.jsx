@@ -60,7 +60,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function MFAConfiguration() {
-  const canEditMFAConfiguration = useSelector(state => selectors.isMFAEnabled(state) && selectors.isSecretCodeGenerated(state));
+  const canEditMFAConfiguration = useSelector(state => selectors.isMFAEnabled(state) && selectors.isMFADeviceConnected(state));
 
   if (canEditMFAConfiguration) {
     return <EditMFAConfiguration />;
@@ -74,20 +74,20 @@ function MyUserSettings() {
   const dispatch = useDispatch();
   const mfaEnabled = useSelector(state => selectors.isMFAEnabled(state));
   const mfaUserSettings = useSelector(state => selectors.mfaUserSettings(state));
-  const isMFAConfigured = useSelector(state => selectors.isMFAConfigured(state));
+  const isMFADeviceConnected = useSelector(state => selectors.isMFADeviceConnected(state));
 
   const [isMFAEnabled, setIsMFAEnabled] = useState();
 
   useNotifySetupSuccess({ mode: 'switch'});
 
   const handleEnableMFA = useCallback(() => {
-    if (isMFAConfigured) {
-      dispatch(actions.mfa.setUp({ ...mfaUserSettings, enabled: !mfaEnabled}));
+    if (isMFADeviceConnected) {
+      dispatch(actions.mfa.setup({ ...mfaUserSettings, enabled: !mfaEnabled}));
 
       return;
     }
     setIsMFAEnabled(!isMFAEnabled);
-  }, [isMFAConfigured, dispatch, mfaEnabled, isMFAEnabled, mfaUserSettings]);
+  }, [isMFADeviceConnected, dispatch, mfaEnabled, isMFAEnabled, mfaUserSettings]);
 
   useEffect(() => {
     setIsMFAEnabled(mfaEnabled);
@@ -97,7 +97,7 @@ function MyUserSettings() {
     <div className={classes.userSettings}>
       <div className={classes.mfaSwitch}>
         <Typography variant="body2" className={classes.content}> Enable MFA </Typography>
-        <Help title="Enable MFA" helpKey="enableMFA" className={classes.helpTextButton} />
+        <Help title="Enable MFA" helpKey="mfa.enable" className={classes.helpTextButton} />
         <CeligoSwitch onChange={handleEnableMFA} checked={isMFAEnabled} />
         {/* {isEnableSSOSwitchInProgress && <Spinner size="small" className={classes.spinner} />} */}
       </div>
@@ -116,18 +116,6 @@ function MFADetails() {
   const areUserSettingsLoaded = useSelector(selectors.areUserSettingsLoaded);
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
 
-  const UserSettings = () => {
-    if (isAccountOwnerOrAdmin) {
-      return (
-        <CollapsableContainer title="My user" forceExpand className={classes.userSettingsContainer}>
-          { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll /> }
-        </CollapsableContainer>
-      );
-    }
-
-    return (areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll />);
-  };
-
   useEffect(() => {
     if (!areUserSettingsLoaded) {
       dispatch(actions.mfa.requestUserSettings());
@@ -135,9 +123,20 @@ function MFADetails() {
   }, [areUserSettingsLoaded, dispatch]);
 
   // TODO: Account settings will be added in Phase 2
+
+  if (isAccountOwnerOrAdmin) {
+    return (
+      <div className={classes.collapseContainer}>
+        <CollapsableContainer title="My user" forceExpand className={classes.userSettingsContainer}>
+          { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll /> }
+        </CollapsableContainer>
+      </div>
+    );
+  }
+
   return (
     <div className={classes.collapseContainer}>
-      <UserSettings />
+      {areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll />}
     </div>
   );
 }

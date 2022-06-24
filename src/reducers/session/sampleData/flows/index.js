@@ -4,7 +4,6 @@ import actionTypes from '../../../../actions/types';
 import { getSampleDataStage } from '../../../../utils/flowData';
 import { isPageGeneratorResource } from '../../../../utils/flows';
 import { clearInvalidPgOrPpStates, clearInvalidStagesForPgOrPp, getFirstOutOfOrderIndex } from './utils';
-import { buildExtractsTree } from '../../../../utils/mapping';
 
 export default function (state = {}, action) {
   const {
@@ -289,19 +288,3 @@ selectors.getSampleDataContext = createSelector(
     return flowStageContext || DEFAULT_VALUE;
   });
 
-// get mapper2 tree structure for extracts
-// from flow sample data
-selectors.mkBuildExtractsTree = () => createSelector(
-  (state, {flowId, resourceId}) => {
-    const flowData = selectors.getSampleDataContext(state, {
-      flowId,
-      resourceId,
-      stage: 'importMappingExtract',
-      resourceType: 'imports',
-    }).data;
-
-    return flowData;
-  },
-  (state, {selectedValues}) => selectedValues,
-  (flowData, selectedValues) => buildExtractsTree(flowData, selectedValues)
-);

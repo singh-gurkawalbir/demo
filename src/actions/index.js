@@ -1530,6 +1530,7 @@ const mapping = {
     changeArrayTab: (v2Key, newTabValue, newTabExtractId) => action(actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB, { v2Key, newTabValue, newTabExtractId }),
     patchField: (field, v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, v2Key, value }),
     patchSettings: (v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_SETTINGS, { v2Key, value }),
+    patchExtractsFilter: (inputValue, propValue) => action(actionTypes.MAPPING.V2.PATCH_EXTRACTS_FILTER, { inputValue, propValue }),
   },
 };
 
@@ -2345,7 +2346,7 @@ const integrationLCM = {
 const mfa = {
   requestUserSettings: () => action(actionTypes.MFA.USER_SETTINGS.REQUEST),
   receivedUserSettings: userSettings => action(actionTypes.MFA.USER_SETTINGS.RECEIVED, { userSettings }),
-  setUp: mfaConfig => action(actionTypes.MFA.USER_SETTINGS.SETUP, { mfaConfig }),
+  setup: mfaConfig => action(actionTypes.MFA.USER_SETTINGS.SETUP, { mfaConfig }),
   requestAccountSettings: () => action(actionTypes.MFA.ACCOUNT_SETTINGS.REQUEST),
   receivedAccountSettings: accountSettings => action(actionTypes.MFA.ACCOUNT_SETTINGS.RECEIVED, { accountSettings }),
   updateAccountSettings: accountSettings => action(actionTypes.MFA.ACCOUNT_SETTINGS.UPDATE, { accountSettings }),
@@ -2354,7 +2355,6 @@ const mfa = {
   showSecretCode: () => action(actionTypes.MFA.SECRET_CODE.SHOW),
   showQrCode: () => action(actionTypes.MFA.QR_CODE.SHOW),
   secretCodeError: secretCodeError => action(actionTypes.MFA.SECRET_CODE.ERROR, { secretCodeError }),
-  qrCodeError: qrCodeError => action(actionTypes.MFA.QR_CODE.ERROR, { qrCodeError }),
   resetMFA: ({ password, aShareId }) => action(actionTypes.MFA.RESET, { aShareId, password }),
   updateDevice: deviceInfo => action(actionTypes.MFA.UPDATE_DEVICE, { deviceInfo }),
   deleteDevice: deviceId => action(actionTypes.MFA.DELETE_DEVICE, { deviceId }),

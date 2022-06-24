@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 export default function DynaMFAMobileCode(props) {
   const { required, label, id, helpKey, ...rest } = props;
   const classes = useStyles();
-  const validationFailed = useSelector(state => selectors.mobileCodeStatus(state) === 'fail');
+  const validationFailed = useSelector(selectors.isMobileCodeVerificationFailed);
 
   return (
     <FormControl className={classes.container}>

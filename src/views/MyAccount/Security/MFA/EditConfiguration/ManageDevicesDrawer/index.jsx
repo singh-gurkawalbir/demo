@@ -36,7 +36,7 @@ export default function ManageDevicesDrawer() {
       path={drawerPaths.MFA.MANAGE_TRUSTED_DEVICES}
       width="small"
       height="tall">
-      <DrawerHeader title="Manage devices" />
+      <DrawerHeader title="Manage devices" helpKey="mfa.manageDevices" />
       <ManageDevicesDrawerContent />
     </RightDrawer>
   );

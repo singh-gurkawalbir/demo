@@ -13,6 +13,7 @@ import { ACCOUNT_IDS, USER_ACCESS_LEVELS, ACCOUNT_SSO_STATUS } from '../../../..
 import ManagePermissions from '../actions/ManagePermissions';
 import MakeAccountOwner from '../actions/MakeAccountOwner';
 import DeleteFromAccount from '../actions/DeleteFromAccount';
+import ResetMFA from '../actions/ResetMFA';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
@@ -97,7 +98,7 @@ export default {
   },
   useRowActions: user => {
     const tableContext = useGetTableContext();
-    const { integrationId, accessLevel } = tableContext;
+    const { integrationId, accessLevel, sharedWithUser } = tableContext;
     const actions = [];
 
     if ([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel) && user._id === ACCOUNT_IDS.OWN) {
@@ -109,6 +110,9 @@ export default {
     }
     if (!integrationId) {
       actions.push(ManagePermissions);
+      if (sharedWithUser?.allowedToResetMFA) {
+        actions.push(ResetMFA);
+      }
       if (user.accepted && accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
         actions.push(MakeAccountOwner);
       }
