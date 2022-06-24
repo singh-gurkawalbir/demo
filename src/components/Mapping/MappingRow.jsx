@@ -105,6 +105,8 @@ export default function MappingRow({
   flowId,
   rowData,
   subRecordMappingId,
+  menuPortalStyle,
+  menuPortalTarget,
   isDragInProgress = false,
   isRowDragged = false,
 }) {
@@ -241,6 +243,8 @@ export default function MappingRow({
               disabled={isSubRecordMapping || isNotEditable || disabled}
               onBlur={handleExtractBlur}
               onTouch={handleFieldTouch}
+              menuPortalStyle={menuPortalStyle}
+              menuPortalTarget={menuPortalTarget}
           />
 
             {(isSubRecordMapping || isNotEditable) && (
@@ -266,6 +270,8 @@ export default function MappingRow({
               disabled={isSubRecordMapping || isRequired || disabled}
               onBlur={handleGenerateBlur}
               onTouch={handleFieldTouch}
+              menuPortalStyle={menuPortalStyle}
+              menuPortalTarget={menuPortalTarget}
           />
             {isLookup && <RightIcon title="Lookup" Icon={LookupIcon} />}
             {isMultiField && !isLookup && <RightIcon title="Multi-field" Icon={MultiFieldIcon} />}
