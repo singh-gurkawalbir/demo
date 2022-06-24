@@ -6,7 +6,7 @@ import { useFlowContext } from '../../Context';
 import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
-  addButton: {
+  unlinkButton: {
     backgroundColor: theme.palette.common.white,
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: 0,
@@ -32,7 +32,7 @@ export default function UnlinkButton({edgeId}) {
 
   return (
     <IconButton
-      className={classes.addButton}
+      className={classes.unlinkButton}
       onClick={handleDeleteEdge}
     >
       <UnLinkIcon />
