@@ -24,10 +24,8 @@ import {
   isRealtimeExport,
   getScriptsReferencedInFlow,
   isFreeFlowResource,
-  isLookupResource,
   isActionUsed,
   isImportMappingAvailable,
-  getPageProcessorImportsFromFlow,
   getFlowReferencesForResource,
   getFlowDetails,
   getUsedActionsMapForResource,
@@ -1837,36 +1835,6 @@ describe('isFreeFlowResource', () => {
   });
 });
 
-describe('isLookupResource', () => {
-  const resourceWithLookup = {
-    isLookup: true,
-  };
-  const resourceWithoutLookup = {
-    isLookup: false,
-    _id: 'e1',
-  };
-  const resourceWithoutLookup2 = {
-    isLookup: false,
-    _id: 'e10',
-  };
-
-  test('should return true for a resoure with isLookup field true', () => {
-    expect(isLookupResource(flowWithOnlyPPs, resourceWithLookup)).toEqual(true);
-  });
-  test('should return true when required resource is present in the flow', () => {
-    expect(isLookupResource(flowWithOnlyPPs, resourceWithoutLookup)).toEqual(true);
-  });
-  test('should return false when required resource is not present in the flow', () => {
-    expect(isLookupResource(flowWithOnlyPPs, resourceWithoutLookup2)).toEqual(false);
-  });
-  test('should return false when resource is undefined', () => {
-    expect(isLookupResource(flowWithOnlyPPs, undefined)).toEqual(false);
-  });
-  test('should return false when flow is undefined', () => {
-    expect(isLookupResource(undefined, resourceWithoutLookup)).toEqual(false);
-  });
-});
-
 describe('isActionUsed', () => {
   const expressionWithRules = {
     type: 'expression',
@@ -2499,33 +2467,6 @@ describe('isImportMappingAvailable', () => {
   });
   test('should return true if the resource', () => {
     expect(isImportMappingAvailable({})).toEqual(true);
-  });
-});
-
-describe('getPageProcessorImportsFromFlow', () => {
-  const pageProcessors = [
-    { _exportId: 'e3', type: 'export' },
-    { _importId: 'i1', type: 'import' },
-    { _exportId: 'e4', type: 'export' },
-    { _importId: 'i2', type: 'import' },
-  ];
-
-  test('should return imports if pageprocessors are undefined', () => {
-    expect(getPageProcessorImportsFromFlow(imports, undefined)).toEqual(imports);
-  });
-  test('', () => {
-    expect(getPageProcessorImportsFromFlow(imports, pageProcessors)).toEqual([
-      {
-        _id: 'i1',
-        name: 'i1',
-        _connectionId: 'c1',
-      }, {
-        _id: 'i2',
-        name: 'i2',
-        _connectionId: 'c4',
-      },
-    ]
-    );
   });
 });
 

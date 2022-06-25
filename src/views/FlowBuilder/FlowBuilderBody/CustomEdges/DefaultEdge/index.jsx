@@ -2,7 +2,7 @@ import React, {useCallback, useMemo} from 'react';
 import { getSmoothStepPath } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles, GRAPH_ELEMENTS_TYPE } from '../../lib';
+import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles } from '../../lib';
 import { useFlowContext } from '../../Context';
 import AddNewButton from '../AddNewButton';
 import UnlinkButton from '../UnlinkButton';
@@ -10,6 +10,7 @@ import ForeignObject from '../ForeignObject';
 import { selectors } from '../../../../../reducers';
 import DiamondMergeIcon from '../../DiamondMergeIcon';
 import actions from '../../../../../actions';
+import { GRAPH_ELEMENTS_TYPE } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   edgePath: {
@@ -78,7 +79,7 @@ export default function DefaultEdge({
   const isSourceRouter = sourceType === GRAPH_ELEMENTS_TYPE.ROUTER;
   const isTargetRouter = targetType === GRAPH_ELEMENTS_TYPE.ROUTER || targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
-  const isSourceEmptyNode = sourceType === GRAPH_ELEMENTS_TYPE.EMPTY_STEP;
+  const isSourceEmptyNode = sourceType === GRAPH_ELEMENTS_TYPE.EMPTY;
   const showLinkIcon = hasSiblingEdges && !isSourceGenerator && !isFlowSaveInProgress;
   const showAddIcon = (!isSourceGenerator || (isSourceGenerator && !isTargetRouter)) && !flow._connectorId && !isViewMode && !isFlowSaveInProgress && !isDataLoaderFlow && !isSourceEmptyNode;
   const isMergableEdge = mergableTerminals.includes(dragNodeId) && !isFlowSaveInProgress;
