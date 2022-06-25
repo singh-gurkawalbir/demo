@@ -1,8 +1,14 @@
 /* eslint-disable no-param-reassign */
-import { ClickAwayListener, IconButton, makeStyles, MenuItem, MenuList } from '@material-ui/core';
+import {
+  ClickAwayListener,
+  IconButton,
+  makeStyles,
+  MenuItem,
+  MenuList,
+  Tooltip,
+} from '@material-ui/core';
 import React from 'react';
 import ArrowPopper from '../../../../../components/ArrowPopper';
-import IconButtonWithTooltip from '../../../../../components/IconButtonWithTooltip';
 import AddEmptyStepIcon from '../../../../../components/icons/AddEmptyStepIcon';
 import BranchIcon from '../../../../../components/icons/BranchIcon';
 import AddIcon from '../../../../../components/icons/AddIcon';
@@ -30,7 +36,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const AddNodeMenuPopper = ({ anchorEl, handleClose, handleAddNode, handleAddRouter}) => {
+const AddNodeMenuPopper = ({
+  anchorEl,
+  handleClose,
+  handleAddNode,
+  handleAddRouter,
+}) => {
   const open = Boolean(anchorEl);
 
   return (
@@ -42,10 +53,17 @@ const AddNodeMenuPopper = ({ anchorEl, handleClose, handleAddNode, handleAddRout
     >
       <MenuList>
         {[
-          {Icon: AddEmptyStepIcon, label: 'Add empty flow step', onClick: handleAddNode},
-          {Icon: BranchIcon, label: 'Add branching', onClick: handleAddRouter },
-        ].map(({Icon, label, onClick}) => (
-
+          {
+            Icon: AddEmptyStepIcon,
+            label: 'Add empty flow step',
+            onClick: handleAddNode,
+          },
+          {
+            Icon: BranchIcon,
+            label: 'Add branching',
+            onClick: handleAddRouter,
+          },
+        ].map(({ Icon, label, onClick }) => (
           <MenuItem key={label} onClick={onClick}>
             <Icon /> {label}
           </MenuItem>
@@ -55,7 +73,7 @@ const AddNodeMenuPopper = ({ anchorEl, handleClose, handleAddNode, handleAddRout
   );
 };
 
-const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId}) => {
+const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId }) => {
   const classes = useStyles();
 
   const { elementsMap } = useFlowContext();
@@ -63,21 +81,19 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId}) => {
 
   if (isConnectedToRouterOrTerminal) {
     return (
-      <IconButtonWithTooltip
-        tooltipProps={{title: isConnectedToRouterOrTerminal ? 'Add empty flow step' : '', placement: 'top'}}
-        onClick={handleAddNode}
-        className={classes.addButton}
-    >
-        <AddIcon />
-      </IconButtonWithTooltip>
+      <Tooltip
+        title={isConnectedToRouterOrTerminal ? 'Add empty flow step' : ''}
+        placement="top"
+      >
+        <IconButton onClick={handleAddNode} className={classes.addButton}>
+          <AddIcon />
+        </IconButton>
+      </Tooltip>
     );
   }
 
   return (
-    <IconButton
-      className={classes.addButton}
-      onClick={handleOpenMenu}
-    >
+    <IconButton className={classes.addButton} onClick={handleOpenMenu}>
       <AddIcon />
     </IconButton>
   );
@@ -103,7 +119,8 @@ export default ({ edgeId }) => {
           <AddNodeToolTip
             handleOpenMenu={handleOpenMenu}
             edgeId={edgeId}
-            handleAddNode={handleAddNode} />
+            handleAddNode={handleAddNode}
+          />
         </span>
       </ClickAwayListener>
 

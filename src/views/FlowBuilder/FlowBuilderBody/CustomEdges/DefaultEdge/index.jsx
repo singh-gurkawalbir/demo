@@ -1,8 +1,13 @@
-import React, {useCallback, useMemo} from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { getSmoothStepPath } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { handleOffset, nodeSize, areMultipleEdgesConnectedToSameEdgeTarget, snapPointsToHandles } from '../../lib';
+import {
+  handleOffset,
+  nodeSize,
+  areMultipleEdgesConnectedToSameEdgeTarget,
+  snapPointsToHandles,
+} from '../../lib';
 import { useFlowContext } from '../../Context';
 import AddNewButton from '../AddNewButton';
 import UnlinkButton from '../UnlinkButton';
@@ -18,24 +23,42 @@ const useStyles = makeStyles(theme => ({
     strokeWidth: 2,
     stroke: theme.palette.secondary.lightest, // celigo neutral 3
     fill: 'transparent',
-    '&:hover': { // temporary rule to help trace overlapping paths.
+    '&:hover': {
+      // temporary rule to help trace overlapping paths.
       stroke: theme.palette.primary.lightest,
     },
   },
 }));
 
-function getPositionAndOffset(targetType, sourceType, showLinkIcon, processorCount) {
+function getPositionAndOffset(
+  targetType,
+  sourceType,
+  showLinkIcon,
+  processorCount
+) {
   let position = 'center';
   let offset = 10;
 
-  if (targetType === GRAPH_ELEMENTS_TYPE.PP_STEP && sourceType !== GRAPH_ELEMENTS_TYPE.PP_STEP) {
+  if (
+    targetType === GRAPH_ELEMENTS_TYPE.PP_STEP &&
+    sourceType !== GRAPH_ELEMENTS_TYPE.PP_STEP
+  ) {
     // we want the add button to be positioned close to the pp,
     // not close to the merge/router nodes.
     position = 'right';
     offset = 30;
-  } else if (sourceType === GRAPH_ELEMENTS_TYPE.PP_STEP && targetType !== GRAPH_ELEMENTS_TYPE.PP_STEP) {
+  } else if (
+    targetType !== GRAPH_ELEMENTS_TYPE.PP_STEP &&
+    sourceType === GRAPH_ELEMENTS_TYPE.PP_STEP
+  ) {
     position = 'left';
     offset = 70;
+  } else if (targetType === GRAPH_ELEMENTS_TYPE.EMPTY_STEP) {
+    position = 'right';
+    offset = 10;
+  } else if (sourceType === GRAPH_ELEMENTS_TYPE.EMPTY_STEP) {
+    position = 'left';
+    offset = -20;
   }
 
   if (processorCount > 0) {
@@ -51,7 +74,7 @@ function getPositionAndOffset(targetType, sourceType, showLinkIcon, processorCou
     }
   }
 
-  return {position, offset};
+  return { position, offset };
 }
 
 export default function DefaultEdge({
@@ -68,21 +91,44 @@ export default function DefaultEdge({
   const classes = useStyles();
   const dispatch = useDispatch();
   const { elements, dragNodeId, flow, flowId } = useFlowContext();
-  const hasSiblingEdges = useMemo(() => areMultipleEdgesConnectedToSameEdgeTarget(id, elements), [id, elements]);
-  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow._integrationId, flowId));
-  const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
-  const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
-  const { sourceType, targetType, points: edgePoints, processorCount, mergableTerminals = [] } = data;
+  const hasSiblingEdges = useMemo(
+    () => areMultipleEdgesConnectedToSameEdgeTarget(id, elements),
+    [id, elements]
+  );
+  const isViewMode = useSelector(state =>
+    selectors.isFlowViewMode(state, flow._integrationId, flowId)
+  );
+  const isFlowSaveInProgress = useSelector(state =>
+    selectors.isFlowSaveInProgress(state, flowId)
+  );
+  const isDataLoaderFlow = useSelector(state =>
+    selectors.isDataLoaderFlow(state, flowId)
+  );
+  const {
+    sourceType,
+    targetType,
+    points: edgePoints,
+    processorCount,
+    mergableTerminals = [],
+  } = data;
   const isDragging = !!dragNodeId;
   const isTargetMerge = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isTargetTerminal = targetType === GRAPH_ELEMENTS_TYPE.TERMINAL;
   const isSourceRouter = sourceType === GRAPH_ELEMENTS_TYPE.ROUTER;
   const isTargetRouter = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
-  const isSourceEmptyNode = sourceType === GRAPH_ELEMENTS_TYPE.EMPTY;
-  const showLinkIcon = hasSiblingEdges && !isSourceGenerator && !isFlowSaveInProgress;
-  const showAddIcon = (!isSourceGenerator || (isSourceGenerator && !isTargetRouter)) && !flow._connectorId && !isViewMode && !isFlowSaveInProgress && !isDataLoaderFlow && !isSourceEmptyNode;
-  const isMergableEdge = mergableTerminals.includes(dragNodeId) && !isFlowSaveInProgress;
+  const isSourceEmptyNode = sourceType === GRAPH_ELEMENTS_TYPE.EMPTY_STEP;
+  const showLinkIcon =
+    hasSiblingEdges && !isSourceGenerator && !isFlowSaveInProgress;
+  const showAddIcon =
+    (!isSourceGenerator || (isSourceGenerator && !isTargetRouter)) &&
+    !flow._connectorId &&
+    !isViewMode &&
+    !isFlowSaveInProgress &&
+    !isDataLoaderFlow &&
+    !isSourceEmptyNode;
+  const isMergableEdge =
+    mergableTerminals.includes(dragNodeId) && !isFlowSaveInProgress;
 
   /*
   {"points":[{"x":1250,"y":494},{"x":1350,"y":555},{"x":1587.5,"y":555},{"x":1825,"y":555},{"x":1927,"y":421.5}]}
@@ -115,13 +161,13 @@ export default function DefaultEdge({
     }
 
     const points = snapPointsToHandles(
-      {x: sourceX, y: sourceY},
+      { x: sourceX, y: sourceY },
       targetHandle,
-      edgePoints,
+      edgePoints
     );
 
     let path;
-    const current = {x: points[0].x, y: points[0].y};
+    const current = { x: points[0].x, y: points[0].y };
 
     const drawLine = (p, axis) => {
       if (p[axis] !== current[axis]) {
@@ -139,13 +185,15 @@ export default function DefaultEdge({
     points.forEach((p, i) => {
       if (i === 0) {
         path = `M${points[0].x},${points[0].y} `;
-      } else if (i === 1 && isSourceRouter) { // first line
+      } else if (i === 1 && isSourceRouter) {
+        // first line
         // When the source is a router, we want to draw the lines vertically first to branch off
         // the edges asap. Not only for better looks, but also this prevents unwanted overlapping
         // edges in some use-cases.
         drawLine(p, 'y');
         drawLine(p, 'x');
-      } else if (i === points.length - 1 && !isTargetMerge) { // last point
+      } else if (i === points.length - 1 && !isTargetMerge) {
+        // last point
         // for the last point (that defines an edge), we want to draw the vertical line first so that
         // a node always connects to a horizontal line since our diagram is L-> R,
         // while all other points should translate to horizontal first (leaving a node)
@@ -168,7 +216,8 @@ export default function DefaultEdge({
     });
 
     return path;
-  }, [edgePoints,
+  }, [
+    edgePoints,
     isSourceRouter,
     isTargetMerge,
     isTargetTerminal,
@@ -177,7 +226,8 @@ export default function DefaultEdge({
     sourceY,
     targetPosition,
     targetX,
-    targetY]);
+    targetY,
+  ]);
 
   const handleMouseOut = useCallback(() => {
     dispatch(actions.flow.mergeTargetClear(flow._id));
@@ -187,17 +237,16 @@ export default function DefaultEdge({
     dispatch(actions.flow.mergeTargetSet(flow._id, 'edge', id));
   }, [dispatch, flow._id, id]);
 
-  const { position, offset } =
-    getPositionAndOffset(targetType, sourceType, showLinkIcon, processorCount);
+  const { position, offset } = getPositionAndOffset(
+    targetType,
+    sourceType,
+    showLinkIcon,
+    processorCount
+  );
 
   return (
     <>
-      <path
-        id={id}
-        style={style}
-        className={classes.edgePath}
-        d={edgePath}
-      />
+      <path id={id} style={style} className={classes.edgePath} d={edgePath} />
 
       {isDragging && isMergableEdge && (
         <ForeignObject
@@ -205,7 +254,8 @@ export default function DefaultEdge({
           onMouseOut={handleMouseOut}
           edgePath={edgePath}
           position="center"
-          size={34}>
+          size={34}
+        >
           <DiamondMergeIcon isDroppable />
         </ForeignObject>
       )}
@@ -217,7 +267,11 @@ export default function DefaultEdge({
       )}
 
       {!isDragging && showLinkIcon && (
-        <ForeignObject edgePath={edgePath} position={position} offset={offset + 40}>
+        <ForeignObject
+          edgePath={edgePath}
+          position={position}
+          offset={offset + 40}
+        >
           <UnlinkButton edgeId={id} />
         </ForeignObject>
       )}
