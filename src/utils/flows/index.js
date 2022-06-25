@@ -1024,6 +1024,7 @@ export function populateRestSchema(exportDoc = {}) {
 
     exportDoc._rest = restSubDoc;
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.warn('exception occured while forming REST document', e);
     // TODO: should we change formType to http when conversion fails, so the export can open in HTTP form?
   }

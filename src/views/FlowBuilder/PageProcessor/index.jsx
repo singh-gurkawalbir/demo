@@ -133,19 +133,7 @@ const PageProcessor = ({
     } else {
       history.replace(to);
     }
-  }, [
-    dispatch,
-    history,
-    match.isExact,
-    match.url,
-    pending,
-    pp._connectionId,
-    rdbmsAppType,
-    resource,
-    resourceId,
-    resourceType,
-    index,
-  ]);
+  }, [pending, match.url, match.isExact, resourceType, resourceId, resource, pp._connectionId, pp.id, rdbmsAppType, dispatch, history]);
   // #region Configure available processor actions
   // Add Help texts for actions common to lookups and imports manually
   const processorActions = useMemo(() => {
