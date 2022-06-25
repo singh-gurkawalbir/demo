@@ -1,128 +1,42 @@
+/* eslint-disable no-param-reassign */
 import { put, select, takeEvery } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import { GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../../constants';
 import { selectors } from '../../reducers';
-import { mergeDragSourceWithTarget } from '../../utils/flows/flowbuilder';
+import {
+  addPageGenerators,
+  addPageProcessor,
+  deletePGOrPPStepForOldSchema,
+  deletePGOrPPStepForRouters,
+  mergeDragSourceWithTarget,
+} from '../../utils/flows/flowbuilder';
+import { getChangesPatchSet } from '../../utils/json';
+import { GRAPH_ELEMENTS_TYPE } from '../../constants';
 
 export function* createNewPGStep({ flowId }) {
   yield put(actions.flow.setSaveStatus(flowId, 'saving'));
-  const originalFlow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
-  const patchSet = [];
+  const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
 
-  if (!originalFlow?.pageGenerators) {
-    patchSet.push({
-      op: 'add',
-      path: '/pageGenerators',
-      value: [],
-    });
-  } else if (!originalFlow.pageGenerators.length) {
-    patchSet.push({
-      op: 'add',
-      path: '/pageGenerators/-',
-      value: {setupInProgress: true},
-    });
-  }
-  patchSet.push({
-    op: 'add',
-    path: '/pageGenerators/-',
-    value: {setupInProgress: true},
-  });
-
-  yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
+  yield put(actions.resource.patchAndCommitStaged('flows', flowId, getChangesPatchSet(addPageGenerators, flow)));
 }
 
 export function* deleteStep({flowId, stepId}) {
-  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
   const elementsMap = yield select(selectors.fbGraphElementsMap, flowId);
   const flow = yield select(selectors.fbFlow, flowId);
   const originalFlow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
-  const patchSet = [];
-
   const step = elementsMap[stepId];
-
+  const {path} = step.data;
   const isPageGenerator = step.type === GRAPH_ELEMENTS_TYPE.PG_STEP;
+  let patchSet;
 
-  if (originalFlow?.routers?.length) {
-    const {path} = step.data;
-
-    if (isPageGenerator) {
-      // remove the node
-      patchSet.push({
-        op: 'remove',
-        path,
-      });
-      // If last PG is deleted, add a new PG step
-      if (flow.pageGenerators.length === 1) {
-        patchSet.push({
-          op: 'add',
-          path,
-          value: {setupInProgress: true},
-        });
-      }
-    } else
-    // Page processors
-    // Typical page processor looks like /routers/:routerIndex/branches/:branchIndex/pageProcessors/:pageProcessorIndex
-    if (PageProcessorPathRegex.test(path)) {
-      const [, routerIndex, branchIndex, pageProcessorIndex] = PageProcessorPathRegex.exec(path);
-
-      const pageProcessors = jsonPatch.getValueByPointer(flow, `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors`);
-
-      if (pageProcessors.length === 1) {
-        const branches = jsonPatch.getValueByPointer(flow, `/routers/${routerIndex}/branches`);
-        const routers = jsonPatch.getValueByPointer(flow, '/routers');
-
-        if (branches.length === 1 && routers.length > 1) {
-          patchSet.push({
-            op: 'remove',
-            path: `/routers/${routerIndex}`,
-          });
-          flow.routers.forEach((router, rIndex) => {
-            router.branches.forEach((branch, bIndex) => {
-              if (branch.nextRouterId === flow.routers[routerIndex].id) {
-                patchSet.push({
-                  op: 'remove',
-                  path: `/routers/${rIndex}/branches/${bIndex}/nextRouterId`,
-                });
-              }
-            });
-          });
-        } else {
-          patchSet.push({
-            op: 'remove',
-            path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${pageProcessorIndex}`,
-          });
-        }
-      } else {
-        patchSet.push({
-          op: 'remove',
-          path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${pageProcessorIndex}`,
-        });
-      }
-    }
-  } else if (isPageGenerator) {
-    const pgIndex = flow.pageGenerators.findIndex(pg => pg._exportId === stepId);
-
-    patchSet.push({
-      op: 'remove',
-      path: `/pageGenerators/${pgIndex}`,
-    });
-    // If last PG is deleted, add a new PG step
-    if (flow.pageGenerators.length === 1) {
-      patchSet.push({
-        op: 'add',
-        path: '/pageGenerators/-',
-        value: {setupInProgress: true},
-      });
-    }
+  if (originalFlow.routers?.length || isPageGenerator) {
+    patchSet = getChangesPatchSet(deletePGOrPPStepForRouters, flow, originalFlow, stepId, elementsMap, path);
   } else {
-    const ppIndex = originalFlow.pageProcessors.findIndex(pg => pg._importId === stepId || pg._exportId === stepId);
-
-    patchSet.push({
-      op: 'remove',
-      path: `/pageProcessors/${ppIndex}`,
-    });
+    patchSet = getChangesPatchSet(deletePGOrPPStepForOldSchema, originalFlow, path);
+  }
+  if (patchSet.length) {
+    yield put(actions.flow.setSaveStatus(flowId, 'saving'));
   }
 
   yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
@@ -130,54 +44,10 @@ export function* deleteStep({flowId, stepId}) {
 
 export function* createNewPPStep({ flowId, path: branchPath, processorIndex }) {
   yield put(actions.flow.setSaveStatus(flowId, 'saving'));
-  let patchSet = [];
   const insertAtIndex = processorIndex ?? -1;
   const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
 
-  if (flow?.routers?.length) {
-    if (insertAtIndex === -1) {
-      patchSet = [{
-        op: 'add',
-        path: `${branchPath}/pageProcessors/-`,
-        value: {setupInProgress: true},
-      }];
-    } else {
-      const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
-
-      pageProcessors.splice(insertAtIndex, 0, {setupInProgress: true});
-      patchSet.push({
-        op: 'replace',
-        path: `${branchPath}/pageProcessors`,
-        value: pageProcessors,
-      });
-    }
-  } else {
-    if (!flow?.pageProcessors) {
-      patchSet.push({
-        op: 'add',
-        path: '/pageProcessors',
-        value: [],
-      });
-    }
-    if (insertAtIndex === -1) {
-      patchSet.push({
-        op: 'add',
-        path: '/pageProcessors/-',
-        value: {setupInProgress: true},
-      });
-    } else {
-      const pageProcessors = jsonPatch.getValueByPointer(flow, '/pageProcessors');
-
-      pageProcessors.splice(insertAtIndex, 0, {setupInProgress: true});
-      patchSet.push({
-        op: 'replace',
-        path: '/pageProcessors',
-        value: pageProcessors,
-      });
-    }
-  }
-
-  yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
+  yield put(actions.resource.patchAndCommitStaged('flows', flowId, getChangesPatchSet(addPageProcessor, flow, insertAtIndex, branchPath)));
 }
 
 export function* mergeBranch({flowId}) {
@@ -270,13 +140,15 @@ export function* deleteRouter({flowId, routerId, prePatches}) {
         orphanRouterIndex = routers.findIndex(orphanRouter);
       }
     } else if (routers[0].id === routerId) {
+      const observer = jsonPatch.observe(flow);
+
       if (router.branches.length > 1) {
-        const observer = jsonPatch.observe(flow);
-
         router.branches.length = 1;
-
-        patchSet.push(...jsonPatch.generate(observer));
+      } else {
+        delete router.routeRecordsTo;
+        delete router.routeRecordsUsing;
       }
+      patchSet.push(...jsonPatch.generate(observer));
     }
     yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
   }

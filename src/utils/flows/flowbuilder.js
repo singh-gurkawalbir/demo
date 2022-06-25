@@ -2,7 +2,7 @@
 
 import { cloneDeep, uniq, uniqBy } from 'lodash';
 import jsonPatch from 'fast-json-patch';
-import { BranchPathRegex, GRAPH_ELEMENTS_TYPE } from '../../constants';
+import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../../constants';
 import { generateId } from '../string';
 import { setObjectValue } from '../json';
 
@@ -27,6 +27,69 @@ export const getAllRouterPaths = flow => {
   pathToTerminal(routers[0].id, paths, []);
 
   return uniqBy(paths, path => path.join(','));
+};
+
+export const addPageGenerators = flow => {
+  if (!flow) return;
+  if (!Array.isArray(flow.pageGenerators) || !flow.pageGenerators.length) {
+    flow.pageGenerators = [{setupInProgress: true}];
+  }
+  flow.pageGenerators.push({setupInProgress: true});
+};
+
+export const addPageProcessor = (flow, insertAtIndex, branchPath) => {
+  if (!flow) return;
+  if (flow.routers?.length) {
+    const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
+
+    if (insertAtIndex === -1) {
+      setObjectValue(flow, `${branchPath}/pageProcessors/`, [...pageProcessors, {setupInProgress: true}]);
+    } else {
+      pageProcessors.splice(insertAtIndex, 0, {setupInProgress: true});
+      setObjectValue(flow, `${branchPath}/pageProcessors/`, pageProcessors);
+    }
+  } else {
+    if (!flow.pageProcessors || !flow.pageProcessors.length) {
+      flow.pageProcessors = [{setupInProgress: true}];
+    }
+    if (insertAtIndex === -1) {
+      flow.pageProcessors.push({setupInProgress: true});
+    } else {
+      const pageProcessors = jsonPatch.getValueByPointer(flow, '/pageProcessors');
+
+      pageProcessors.splice(insertAtIndex, 0, {setupInProgress: true});
+      flow.pageProcessors = pageProcessors;
+    }
+  }
+};
+
+export const deletePGOrPPStepForOldSchema = (flow, path) => {
+  if (PageProcessorPathRegex.test(path)) {
+    const [, , , ppIndex] = PageProcessorPathRegex.exec(path);
+
+    flow.pageProcessors.splice(ppIndex);
+  }
+};
+
+export const deletePGOrPPStepForRouters = (flow, originalFlow, stepId, elementsMap, path) => {
+  const step = elementsMap[stepId];
+  const isPageGenerator = step.type === GRAPH_ELEMENTS_TYPE.PG_STEP;
+
+  if (isPageGenerator) {
+    const pgIndex = flow.pageGenerators.findIndex(pg => pg.id === stepId);
+
+    flow.pageGenerators.splice(pgIndex);
+    if (!flow.pageGenerators.length) {
+      flow.pageGenerators = [{setupInProgress: true}];
+    }
+  } else if (originalFlow?.routers?.length) {
+    // Typical page processor looks like /routers/:routerIndex/branches/:branchIndex/pageProcessors/:pageProcessorIndex
+    if (PageProcessorPathRegex.test(path)) {
+      const [, routerIndex, branchIndex, pageProcessorIndex] = PageProcessorPathRegex.exec(path);
+
+      flow.routers[routerIndex].branches[branchIndex].pageProcessors.splice(pageProcessorIndex);
+    }
+  }
 };
 
 export const getPreceedingRoutersMap = flow => {
@@ -200,6 +263,7 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}, isR
         hideDelete,
         isVirtual,
         isFirst: index === 0,
+        isLast: index === collection.length - 1 && !branch.nextRouterId,
         path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${index}`,
       },
     };
@@ -315,7 +379,10 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
           }
 
           if (branch.nextRouterId) {
-            elements.push(generateDefaultEdge(branch.pageProcessors[branch.pageProcessors.length - 1].id, branch.nextRouterId, {routerIndex, branchIndex, index: branch.pageProcessors.length}));
+            const pageProcessor = branch.pageProcessors[branch.pageProcessors.length - 1];
+            const processorCount = pageProcessor._exportId || pageProcessor._importId ? 3 : 0;
+
+            elements.push(generateDefaultEdge(pageProcessor.id, branch.nextRouterId, {routerIndex, branchIndex, index: branch.pageProcessors.length, processorCount}));
             if (branch.nextRouterId !== router.id) {
               // Safe check, branch should not point to its own router, causes a loop
               populateRouterElements(routers.find(r => r.id === branch.nextRouterId));
@@ -570,6 +637,7 @@ const isUnUsedRouter = (flow, router, incomingRoutersMap) => {
   const firstRouterId = flow.routers?.[0]?.id;
 
   if (isVirtualRouter(router) && incomingRoutersMap[router.id]?.length === 1) return true;
+  if (router.id === firstRouterId && isVirtualRouter(router) && !router.branches[0].pageProcessors?.length) return true;
   if (router.id !== firstRouterId && !incomingRoutersMap[router.id]?.length) return true;
 
   return false;
@@ -614,6 +682,7 @@ export const deleteUnUsedRouters = flow => {
 
 export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, originalFlow}) => {
   const edge = elementsMap[edgeId];
+  const isInsertingFirstRouter = elementsMap[edge.source]?.type === GRAPH_ELEMENTS_TYPE.PG_STEP && elementsMap[edge.target]?.type === GRAPH_ELEMENTS_TYPE.ROUTER;
   const branchPath = edge.data.path;
   const processorArray = cloneDeep(jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`));
   const nextRouterId = jsonPatch.getValueByPointer(flow, `${branchPath}/nextRouterId`);
@@ -640,15 +709,19 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
   }
 
   router.branches[0].pageProcessors = secondHalf;
-  router.branches[0].nextRouterId = nextRouterId;
-  if (!isVirtual) {
-    setObjectValue(flowClone, `${branchPath}/pageProcessors`, firstHalf);
-    setObjectValue(flowClone, `${branchPath}/nextRouterId`, router.id);
-  }
-  if (Array.isArray(flowClone.routers)) {
-    flowClone.routers.push(router);
+  router.branches[0].nextRouterId = isInsertingFirstRouter ? flow.routers[0].id : nextRouterId;
+  if (isInsertingFirstRouter) {
+    flowClone.routers = [router, ...flowClone.routers];
   } else {
-    flowClone.routers = [router];
+    if (!isVirtual) {
+      setObjectValue(flowClone, `${branchPath}/pageProcessors`, firstHalf);
+      setObjectValue(flowClone, `${branchPath}/nextRouterId`, router.id);
+    }
+    if (Array.isArray(flowClone.routers)) {
+      flowClone.routers.push(router);
+    } else {
+      flowClone.routers = [router];
+    }
   }
 
   return jsonPatch.generate(observer);

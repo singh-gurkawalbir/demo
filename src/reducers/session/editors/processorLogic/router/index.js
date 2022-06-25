@@ -108,16 +108,17 @@ export default {
     };
     const {
       rule,
-      resourceId,
+      flowId,
       resourceType,
       router,
       routerIndex,
       prePatches,
+      isInsertingBeforeFirstRouter,
     } = editor;
     const {scriptId, code, entryFunction, activeProcessor } = rule || {};
 
     const type = activeProcessor === 'filter' ? 'input_filters' : 'script';
-    const path = `/routers/${routerIndex}`;
+    const path = `/routers/${isInsertingBeforeFirstRouter ? 0 : routerIndex}`;
     const value = {
       routeRecordsUsing: type,
       id: router.id,
@@ -133,8 +134,9 @@ export default {
       {
         patch: [...(prePatches || []), {op: 'remove', path: '/pageProcessors'}, { op: 'replace', path, value }],
         resourceType,
-        resourceId,
-      }];
+        resourceId: flowId,
+      },
+    ];
 
     if (type === 'script') {
       patches.backgroundPatches.push({

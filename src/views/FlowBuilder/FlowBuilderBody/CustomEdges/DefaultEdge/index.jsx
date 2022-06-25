@@ -77,7 +77,7 @@ export default function DefaultEdge({
   const isTargetMerge = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isTargetTerminal = targetType === GRAPH_ELEMENTS_TYPE.TERMINAL;
   const isSourceRouter = sourceType === GRAPH_ELEMENTS_TYPE.ROUTER;
-  const isTargetRouter = targetType === GRAPH_ELEMENTS_TYPE.ROUTER || targetType === GRAPH_ELEMENTS_TYPE.MERGE;
+  const isTargetRouter = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
   const isSourceEmptyNode = sourceType === GRAPH_ELEMENTS_TYPE.EMPTY;
   const showLinkIcon = hasSiblingEdges && !isSourceGenerator && !isFlowSaveInProgress;
