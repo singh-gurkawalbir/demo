@@ -90,14 +90,14 @@ export default function ResetAuthorizationModal({ onClose }) {
       <ActionGroup>
         <DynaSubmit
           formKey={formKey}
-          data-test="changeEmail"
-          id="changeEmail"
+          data-test="resetMFA"
+          id="resetMFA"
           disabled={isLoading}
           onClick={handleReAuthorization}>
           Reset MFA
         </DynaSubmit>
         <TextButton
-          data-test="cancelOperandSettings"
+          data-test="cancelResetAuth"
           onClick={onClose} >
           Cancel
         </TextButton>

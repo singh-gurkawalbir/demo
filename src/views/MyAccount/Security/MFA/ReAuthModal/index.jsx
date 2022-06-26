@@ -30,8 +30,6 @@ const metadata = {
       name: 'password',
       type: 'text',
       inputType: 'password',
-      helpKey: 'mfa.reAuthPwd',
-      noApi: true,
       label: 'Password',
       required: true,
       isLoggable: false,
@@ -93,7 +91,7 @@ export default function ReAuthModal({ onClose, isQRCode }) {
           {isQRCode ? 'View code' : 'View key'}
         </DynaSubmit>
         <TextButton
-          data-test="cancelOperandSettings"
+          data-test="cancelReAuth"
           onClick={onClose} >
           Cancel
         </TextButton>
