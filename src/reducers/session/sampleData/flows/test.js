@@ -109,6 +109,7 @@ describe('Flow sample data reducer ', () => {
           refresh: undefined,
           pageGeneratorsMap: {},
           pageProcessorsMap: {},
+          routersMap: {},
         },
       });
     });
@@ -126,6 +127,7 @@ describe('Flow sample data reducer ', () => {
           refresh: true,
           pageGeneratorsMap: {},
           pageProcessorsMap: {},
+          routersMap: {},
         },
       });
     });
@@ -164,6 +166,7 @@ describe('Flow sample data reducer ', () => {
           refresh: true,
           pageGeneratorsMap: {},
           pageProcessorsMap: {},
+          routersMap: {},
         },
       });
     });
@@ -177,6 +180,7 @@ describe('Flow sample data reducer ', () => {
     });
     test('should not corrupt existing state if the flowId passed does not exist on the state', () => {
       const prevState = reducer(undefined, actions.flowData.init(dummyFlow));
+
       const currState = reducer(prevState, actions.flowData.requestStage('flow-5678', 'exp-1111', 'raw'));
 
       expect(currState).toEqual(prevState);
@@ -197,6 +201,7 @@ describe('Flow sample data reducer ', () => {
               },
             },
           },
+          routersMap: {},
           pageProcessorsMap: {},
         },
       });
@@ -211,6 +216,7 @@ describe('Flow sample data reducer ', () => {
           pageProcessors: dummyFlow.pageProcessors,
           refresh: false,
           pageGeneratorsMap: {},
+          routersMap: {},
           pageProcessorsMap: {
             222: {
               raw: {
@@ -358,6 +364,7 @@ describe('Flow sample data reducer ', () => {
           pageGenerators: dummyFlow.pageGenerators,
           pageProcessors: dummyFlow.pageProcessors,
           pageGeneratorsMap: {},
+          routersMap: {},
           refresh: false,
           pageProcessorsMap: {
             222: {
@@ -382,6 +389,7 @@ describe('Flow sample data reducer ', () => {
           pageProcessors: dummyFlow.pageProcessors,
           refresh: false,
           pageProcessorsMap: {},
+          routersMap: {},
           pageGeneratorsMap: {
             123: {
               transform: {
@@ -404,6 +412,7 @@ describe('Flow sample data reducer ', () => {
           pageGenerators: dummyFlow.pageGenerators,
           pageProcessors: dummyFlow.pageProcessors,
           pageGeneratorsMap: {},
+          routersMap: {},
           refresh: false,
           pageProcessorsMap: {
             222: {
@@ -427,6 +436,7 @@ describe('Flow sample data reducer ', () => {
           pageGenerators: dummyFlow.pageGenerators,
           pageProcessors: dummyFlow.pageProcessors,
           pageGeneratorsMap: {},
+          routersMap: {},
           refresh: false,
           pageProcessorsMap: {
             222: {
@@ -450,6 +460,7 @@ describe('Flow sample data reducer ', () => {
           pageGenerators: dummyFlow.pageGenerators,
           pageProcessors: dummyFlow.pageProcessors,
           pageGeneratorsMap: {},
+          routersMap: {},
           refresh: false,
           pageProcessorsMap: {
             222: {
@@ -487,6 +498,7 @@ describe('Flow sample data reducer ', () => {
           pageGenerators: dummyFlow.pageGenerators,
           pageProcessors: dummyFlow.pageProcessors,
           pageGeneratorsMap: {},
+          routersMap: {},
           refresh: false,
           pageProcessorsMap: {
             222: {
@@ -519,6 +531,7 @@ describe('Flow sample data reducer ', () => {
           },
           refresh: false,
           pageProcessorsMap: {},
+          routersMap: {},
         },
       });
     });
@@ -542,6 +555,7 @@ describe('Flow sample data reducer ', () => {
           },
           refresh: false,
           pageProcessorsMap: {},
+          routersMap: {},
         },
       });
     });
@@ -582,6 +596,7 @@ describe('Flow sample data reducer ', () => {
             responseMapping: dummyResponseMapping,
           }],
           pageGeneratorsMap: {},
+          routersMap: {},
           refresh: false,
           pageProcessorsMap: {},
         },
@@ -631,6 +646,7 @@ describe('Flow sample data reducer ', () => {
             456: {},
           },
           pageProcessorsMap: {},
+          routersMap: {},
         },
       });
     });
@@ -712,6 +728,7 @@ describe('Flow sample data reducer ', () => {
             456: {},
           },
           pageProcessorsMap: {},
+          routersMap: {},
         },
       });
     });
@@ -747,6 +764,7 @@ describe('Flow sample data reducer ', () => {
             },
           },
           pageProcessorsMap: {},
+          routersMap: {},
         },
       });
     });
@@ -790,6 +808,7 @@ describe('Flow sample data reducer ', () => {
             },
           },
           pageProcessorsMap: {},
+          routersMap: {},
         },
       });
     });
@@ -871,6 +890,7 @@ describe('Flow sample data reducer ', () => {
             456: {},
           },
           pageProcessorsMap: {},
+          routersMap: {},
         },
       });
     });
