@@ -7,7 +7,8 @@ export default {
   init: ({ options }) => {
     const activeProcessor = 'filter';
     const { router = {}, routerIndex, prePatches } = options;
-    const editorTitle = prePatches ? 'Add branching' : 'Edit branching';
+    const isEdit = !prePatches;
+    const editorTitle = isEdit ? 'Edit branching' : 'Add branching';
 
     const { routeRecordsUsing, script = {} } = router;
     const routerObj = cloneDeep(router);
@@ -30,9 +31,15 @@ export default {
       rule.activeProcessor = 'javascript';
     }
     rule.entryFunction = script.function || hooksToFunctionNamesMap.router;
+    let originalRule;
+
+    if (!isEdit) {
+      originalRule = {...rule, branches: []};
+    }
 
     return {
       ...options,
+      originalRule,
       rule,
       editorTitle,
     };
