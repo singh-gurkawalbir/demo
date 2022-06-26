@@ -43,10 +43,10 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath) => {
     const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
 
     if (insertAtIndex === -1) {
-      setObjectValue(flow, `${branchPath}/pageProcessors/`, [...pageProcessors, {setupInProgress: true}]);
+      setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, {setupInProgress: true}]);
     } else {
       pageProcessors.splice(insertAtIndex, 0, {setupInProgress: true});
-      setObjectValue(flow, `${branchPath}/pageProcessors/`, pageProcessors);
+      setObjectValue(flow, `${branchPath}/pageProcessors`, pageProcessors);
     }
   } else {
     if (!flow.pageProcessors || !flow.pageProcessors.length) {
@@ -67,7 +67,7 @@ export const deletePGOrPPStepForOldSchema = (flow, path) => {
   if (PageProcessorPathRegex.test(path)) {
     const [, , , ppIndex] = PageProcessorPathRegex.exec(path);
 
-    flow.pageProcessors.splice(ppIndex);
+    flow.pageProcessors.splice(ppIndex, 1);
   }
 };
 
@@ -78,7 +78,7 @@ export const deletePGOrPPStepForRouters = (flow, originalFlow, stepId, elementsM
   if (isPageGenerator) {
     const pgIndex = flow.pageGenerators.findIndex(pg => pg.id === stepId);
 
-    flow.pageGenerators.splice(pgIndex);
+    flow.pageGenerators.splice(pgIndex, 1);
     if (!flow.pageGenerators.length) {
       flow.pageGenerators = [{setupInProgress: true}];
     }
@@ -87,7 +87,7 @@ export const deletePGOrPPStepForRouters = (flow, originalFlow, stepId, elementsM
     if (PageProcessorPathRegex.test(path)) {
       const [, routerIndex, branchIndex, pageProcessorIndex] = PageProcessorPathRegex.exec(path);
 
-      flow.routers[routerIndex].branches[branchIndex].pageProcessors.splice(pageProcessorIndex);
+      flow.routers[routerIndex].branches[branchIndex].pageProcessors.splice(pageProcessorIndex, 1);
     }
   }
 };

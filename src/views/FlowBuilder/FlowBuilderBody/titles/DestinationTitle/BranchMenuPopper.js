@@ -25,7 +25,7 @@ export default function BranchMenuPopper({ anchorEl, handleClose }) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const { flow, elements } = useFlowContext();
+  const { flow, flowId, elements } = useFlowContext();
   const open = Boolean(anchorEl);
 
   const branches = getAllFlowBranches(flow, elements);
@@ -33,7 +33,7 @@ export default function BranchMenuPopper({ anchorEl, handleClose }) {
   const handleCallback = branchId => () => {
     const branch = branches.find(s => s.id === branchId);
 
-    dispatch(actions.flow.addNewPPStep(flow._id, branch.path));
+    dispatch(actions.flow.addNewPPStep(flowId, branch.path));
     handleClose();
   };
 
