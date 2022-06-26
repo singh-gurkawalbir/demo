@@ -165,10 +165,11 @@ describe('installer saga', () => {
         )
         .put(actions.integrationApp.settings.requestAddOnLicenseMetadata(id))
         .put(actions.resource.request('integrations', id))
-        .put(actions.resource.requestCollection('flows', null, true))
-        .put(actions.resource.requestCollection('exports', null, true))
-        .put(actions.resource.requestCollection('imports', null, true))
-        .put(actions.resource.requestCollection('connections', null, true))
+        .put(actions.resource.requestCollection('flows', null, true, id))
+        .put(actions.resource.requestCollection('exports', null, true, id))
+        .put(actions.resource.requestCollection('imports', null, true, id))
+        .put(actions.resource.requestCollection('connections', null, true, id))
+        .put(actions.resource.requestCollection('asynchelpers', null, true, id))
         .put(actions.integrationApp.isAddonInstallInprogress(false, addOnId))
         .run();
     });
