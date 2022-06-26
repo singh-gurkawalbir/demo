@@ -18,6 +18,7 @@ export default function FlowScheduleButtons({
   onClose,
   pg,
   index,
+  testFlag = false,
 }) {
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -26,7 +27,7 @@ export default function FlowScheduleButtons({
   );
   let resource = pg || flow;
   const schedule = pg?.schedule || flow?.schedule;
-  const scheduleStartMinute = getScheduleStartMinute(exp || flow);
+  const scheduleStartMinute = testFlag ? 0 : getScheduleStartMinute(exp || flow);
 
   const onSave = useCallback(formVal => {
     const scheduleVal = getScheduleVal(formVal, scheduleStartMinute);

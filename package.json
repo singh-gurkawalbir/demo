@@ -48,6 +48,7 @@
     "fast-json-stable-stringify": "^2.1.0",
     "flat": "5.0.2",
     "ga-4-react": "0.1.281",
+    "history": "^5.3.0",
     "hookrouter": "1.2.3",
     "immer": "^3.2.0",
     "jQuery-QueryBuilder": "2.5.2",

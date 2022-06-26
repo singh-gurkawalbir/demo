@@ -16,6 +16,7 @@ export default function FlowScheduleForm({
   disabled,
   pg,
   index,
+  testFlag = false,
 }) {
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
@@ -36,7 +37,7 @@ export default function FlowScheduleForm({
   }, [status]);
   let resource = pg || flow;
   const schedule = pg?.schedule || flow?.schedule;
-  const scheduleStartMinute = getScheduleStartMinute(exp || flow);
+  const scheduleStartMinute = testFlag ? 0 : getScheduleStartMinute(exp || flow);
 
   const resourceIdentifier = pg?._exportId ? 'pagegenerator' : 'flow';
 
