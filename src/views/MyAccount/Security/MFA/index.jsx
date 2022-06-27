@@ -60,7 +60,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function MFAConfiguration() {
-  const canEditMFAConfiguration = useSelector(state => selectors.isMFAEnabled(state) && selectors.isMFADeviceConnected(state));
+  const canEditMFAConfiguration = useSelector(state => selectors.isMFAEnabled(state) && selectors.isMFASetupComplete(state));
 
   if (canEditMFAConfiguration) {
     return <EditMFAConfiguration />;
@@ -74,20 +74,20 @@ function MyUserSettings() {
   const dispatch = useDispatch();
   const mfaEnabled = useSelector(state => selectors.isMFAEnabled(state));
   const mfaUserSettings = useSelector(state => selectors.mfaUserSettings(state));
-  const isMFADeviceConnected = useSelector(state => selectors.isMFADeviceConnected(state));
+  const isMFASetupComplete = useSelector(state => selectors.isMFASetupComplete(state));
 
   const [isMFAEnabled, setIsMFAEnabled] = useState();
 
   useNotifySetupSuccess({ mode: 'switch'});
 
   const handleEnableMFA = useCallback(() => {
-    if (isMFADeviceConnected) {
+    if (isMFASetupComplete) {
       dispatch(actions.mfa.setup({ ...mfaUserSettings, enabled: !mfaEnabled}));
 
       return;
     }
     setIsMFAEnabled(!isMFAEnabled);
-  }, [isMFADeviceConnected, dispatch, mfaEnabled, isMFAEnabled, mfaUserSettings]);
+  }, [isMFASetupComplete, dispatch, mfaEnabled, isMFAEnabled, mfaUserSettings]);
 
   useEffect(() => {
     setIsMFAEnabled(mfaEnabled);
@@ -99,7 +99,6 @@ function MyUserSettings() {
         <Typography variant="body2" className={classes.content}> Enable MFA </Typography>
         <Help title="Enable MFA" helpKey="mfa.enable" className={classes.helpTextButton} />
         <CeligoSwitch onChange={handleEnableMFA} checked={isMFAEnabled} />
-        {/* {isEnableSSOSwitchInProgress && <Spinner size="small" className={classes.spinner} />} */}
       </div>
       { isMFAEnabled ? (
         <div className={classes.mfaConfig}>
