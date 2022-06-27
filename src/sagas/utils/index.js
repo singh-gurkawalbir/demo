@@ -188,19 +188,8 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
             filteredHttpEndpoints.forEach(httpEndpoint => {
               if (httpEndpoint?.supportedBy?.type === 'import') {
                 const requiredMappings = [];
-                let parameters = [];
+                const parameters = [];
                 let howToFindIdentifier;
-
-                if (httpEndpoint.supportedBy.pathParameterToIdentifyExisting) {
-                  parameters = [
-                    {
-                      id: httpEndpoint.supportedBy.pathParameterToIdentifyExisting,
-                      in: 'path',
-                      required: true,
-                      isIdentifier: true,
-                    },
-                  ];
-                }
 
                 if (httpEndpoint.pathParameters) {
                   httpEndpoint.pathParameters?.forEach(pp => {
@@ -209,10 +198,21 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
                       name: pp.name,
                       in: 'path',
                       required: true,
-                      isIdentifier: !httpEndpoint.supportedBy.pathParameterToIdentifyExisting,
                     });
                   });
                 }
+                if (httpEndpoint.supportedBy.pathParameterToIdentifyExisting) {
+                  parameters.push({
+                    id: httpEndpoint.supportedBy.pathParameterToIdentifyExisting,
+                    in: 'path',
+                    required: true,
+                  });
+                }
+                // isIdentifier should be always set on last path parameters
+                if (parameters.length) {
+                  parameters[parameters.length - 1].isIdentifier = true;
+                }
+
                 if (httpEndpoint.supportedBy?.lookupToIdentifyExisting) {
                   const lookup = httpEndpoint.supportedBy.lookupToIdentifyExisting;
                   const endpoint = lookup?._httpConnectorEndpointId;
