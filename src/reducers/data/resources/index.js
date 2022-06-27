@@ -513,11 +513,16 @@ selectors.resourceDetailsMap = createSelector(
             }
 
             if (resourceType === 'flows') {
+              let numImports = 1;
+
+              if (resource.routers?.length) {
+                numImports = resource.routers.reduce((a, c) => a + c.branches.reduce((a1, c1) => a1 + c1.pageProcessors.length, 0), 0);
+              } else if (resource.pageProcessors) {
+                numImports = resource.pageProcessors.length;
+              }
               allResources[resourceType][
                 resource._id
-              ].numImports = resource.pageProcessors
-                ? resource.pageProcessors.length
-                : 1;
+              ].numImports = numImports;
               allResources[resourceType][resource._id].disabled = resource.disabled;
             }
           });

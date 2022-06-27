@@ -1,6 +1,6 @@
 import { deepClone } from 'fast-json-patch';
 import { put, select, call } from 'redux-saga/effects';
-import { isEmpty } from 'lodash';
+import { flattenDeep, isEmpty } from 'lodash';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actions from '../../../actions';
@@ -60,9 +60,9 @@ export function filterPendingResources({ flow }) {
   }
   const { pageGenerators: pgs = [], pageProcessors: pps = [], ...rest } = flow;
   const filteredPageGenerators = pgs.filter(pg => !!pg._exportId);
-  const filteredPageProcessors = pps.filter(
+  const filteredPageProcessors = pps.length ? pps.filter(
     pp => !!pp[pp.type === 'import' ? '_importId' : '_exportId']
-  );
+  ) : undefined;
 
   return {
     ...rest,
@@ -110,7 +110,16 @@ export function* fetchFlowResources({
   addMockData,
 }) {
   const resourceMap = {};
-  const resourceList = flow?.[type];
+  let resourceList = flow?.[type];
+
+  if (flow?.routers?.length && type === 'pageProcessors') {
+    resourceList = flattenDeep(
+      flow.routers
+        .map(router => (router.branches || [])
+          .map(branch => branch.pageProcessors || [])
+        )
+    );
+  }
 
   if (resourceList?.length) {
     for (let index = 0; index < resourceList.length; index += 1) {
@@ -167,6 +176,21 @@ export function* fetchFlowResources({
   }
 
   return resourceMap;
+}
+
+export function* requestSampleDataForRouters({
+  flowId,
+  routerId,
+  editorId,
+  hidden = true,
+}) {
+  yield call(fetchPageProcessorPreview, {
+    flowId,
+    _pageProcessorId: routerId,
+    hidden,
+    editorId,
+    previewType: 'router',
+  });
 }
 
 export function* requestSampleDataForImports({
@@ -362,6 +386,7 @@ export function* getFlowStageData({
   flowId,
   resourceId,
   resourceType,
+  routerId,
   stage,
   isInitialized,
   noWrap,
@@ -384,6 +409,7 @@ export function* getFlowStageData({
     yield call(requestSampleData, {
       flowId,
       resourceId,
+      routerId,
       resourceType,
       stage,
       isInitialized,

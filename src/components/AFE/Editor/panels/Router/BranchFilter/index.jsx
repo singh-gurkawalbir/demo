@@ -148,8 +148,8 @@ export default function BranchFilter({editorId, position}) {
         }
 
         valueField
-          .off('input')
-          .on('input', () => {
+          .off('focusout')
+          .on('focusout', () => {
             if (
               rule.operator &&
                 (rule.operator.type === 'is_empty' ||
@@ -184,8 +184,8 @@ export default function BranchFilter({editorId, position}) {
         }
 
         expressionField
-          .off('input')
-          .on('input', () => handleFilterRulesChange());
+          .off('focusout')
+          .on('focusout', () => handleFilterRulesChange());
       }
     }
 
@@ -238,8 +238,8 @@ export default function BranchFilter({editorId, position}) {
     const valueField = rule.$el.find(`[name=${name}]`);
 
     valueField
-      .off('input')
-      .on('input', () => handleFilterRulesChange());
+      .off('focusout')
+      .on('focusout', () => handleFilterRulesChange());
   };
 
   const updateUIForRHSRule = ({ name, rule = {} }) => {
@@ -298,8 +298,8 @@ export default function BranchFilter({editorId, position}) {
         }
 
         expressionField
-          .off('input')
-          .on('input', () => handleFilterRulesChange());
+          .off('focusout')
+          .on('focusout', () => handleFilterRulesChange());
       }
     }
 

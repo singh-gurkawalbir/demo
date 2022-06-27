@@ -49,7 +49,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const getBranchHash = branches => (branches || []).reduce((hashString, branch) => `${hashString}-${branch.name}|${branch.description}|${branch.expanded}`, '');
 const SortableItem = sortableElement(props => <BranchItem {...props} />);
 
 const SortableContainer = sortableContainer(({children, className}) => (
@@ -61,9 +60,7 @@ const SortableContainer = sortableContainer(({children, className}) => (
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const __branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList,
-    (left, right) => getBranchHash(left) === getBranchHash(right)
-  );
+  const __branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList);
   const branches = useMemo(() => __branches.map(b => ({...b, id: shortId()})), [__branches]);
   const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
   const routerIndex = useSelector(state => selectors.editor(state, editorId)?.routerIndex || 0);
@@ -104,7 +101,12 @@ export default function RouterPanel({ editorId }) {
   };
 
   const handleAddBranch = () => {
-    dispatch(actions.editor.patchRule(editorId, [...branches, {name: `Branch ${routerIndex + 1}.${branches.length}`, pageProcessors: []}], {rulePath: 'branches'}));
+    dispatch(actions.editor.patchRule(editorId, [
+      ...branches, {
+        name: `Branch ${routerIndex + 1}.${branches.length}`,
+        pageProcessors: [{setupInProgress: true}],
+      },
+    ], {rulePath: 'branches'}));
   };
 
   const updatedOnFieldChange = (id, val) => {

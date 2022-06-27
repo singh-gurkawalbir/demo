@@ -76,11 +76,8 @@ const AddNodeMenuPopper = ({
 const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId }) => {
   const classes = useStyles();
 
-  const { elements } = useFlowContext();
-  const isConnectedToRouterOrTerminal = isNodeConnectedToRouter(
-    edgeId,
-    elements
-  );
+  const { elementsMap } = useFlowContext();
+  const isConnectedToRouterOrTerminal = isNodeConnectedToRouter(edgeId, elementsMap);
 
   if (isConnectedToRouterOrTerminal) {
     return (

@@ -23,7 +23,6 @@ import {
   getUsedActionsMapForResource,
   isPageGeneratorResource,
   getImportsFromFlow,
-  getPageProcessorImportsFromFlow,
   getAllConnectionIdsUsedInTheFlow,
   getFlowListWithMetadata,
   getNextDataFlows,
@@ -5235,14 +5234,6 @@ selectors.flowMappingsImportsList = () => createSelector(
   }
 );
 
-// TODO: The selector below should be deprecated and the above selector
-// should be used instead.
-selectors.getAllPageProcessorImports = (state, pageProcessors) => {
-  const imports = selectors.resourceList(state, { type: 'imports' }).resources;
-
-  return getPageProcessorImportsFromFlow(imports, pageProcessors);
-};
-
 selectors.httpAssistantSupportsMappingPreview = (state, importId) => {
   const importResource = selectors.resource(state, 'imports', importId) || emptyObject;
   const { _integrationId, _connectionId, http } = importResource;
@@ -5459,7 +5450,21 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
     'flows',
     flowId
   )?.merged || emptyObject;
-  const pageProcessor = flow?.pageProcessors && flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+
+  if (!flow) return emptyArray;
+  let pageProcessor;
+
+  if (flow.routers?.length) {
+    flow.routers.forEach(router => {
+      router.branches.forEach(branch => {
+        const pp = branch.pageProcessors?.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+
+        if (pp && !pageProcessor) pageProcessor = pp;
+      });
+    });
+  } else if (flow.pageProcessors?.length) {
+    pageProcessor = flow.pageProcessors && flow.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+  }
 
   if (!pageProcessor) {
     return emptyArray;
@@ -6109,7 +6114,8 @@ selectors.isStandaloneExport = (state, flowId, exportId) => {
 
   const { merged: flow = {} } = selectors.resourceData(state, 'flows', flowId, 'value');
 
-  return !flow.pageProcessors?.find(pp => pp._exportId === exportId);
+  return !flow.pageProcessors?.find(pp => pp._exportId === exportId) &&
+  !flow.routers?.some(r => !r.branches?.some(b => b.pageProcessors?.some(pp => pp._exportId === exportId)));
 };
 
 /*
@@ -6308,9 +6314,10 @@ selectors.isLookUpExport = (state, { flowId, resourceId, resourceType }) => {
 
   // If it is an existing export with a flow context, search in pps to match this resource id
   const flow = selectors.resource(state, 'flows', flowId);
-  const { pageProcessors = [] } = flow || {};
+  const { pageProcessors = [], routers = [] } = flow || {};
 
-  return !!pageProcessors.find(pp => pp._exportId === resourceId);
+  return !!pageProcessors.find(pp => pp._exportId === resourceId) ||
+    routers.some(router => router.branches?.some(branch => branch.pageProcessors?.some(pp => pp._exportId === resourceId)));
 };
 
 /*

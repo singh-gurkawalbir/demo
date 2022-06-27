@@ -1,5 +1,6 @@
 import { select, call } from 'redux-saga/effects';
 import deepClone from 'lodash/cloneDeep';
+import jsonPatch from 'fast-json-patch';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import { apiCallWithRetry } from '../../index';
@@ -13,12 +14,14 @@ import { isNewId } from '../../../utils/resource';
 import { EMPTY_RAW_DATA, STANDALONE_INTEGRATION } from '../../../constants';
 import { getConstructedResourceObj } from '../flows/utils';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
+import { generateId } from '../../../utils/string';
 
 export function* pageProcessorPreview({
   flowId,
   _pageProcessorId,
   _pageProcessorDoc,
   previewType,
+  editorId,
   resourceType = 'exports',
   hidden = false,
   throwOnError = false,
@@ -30,13 +33,22 @@ export function* pageProcessorPreview({
 }) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
-  const flow = yield call(filterPendingResources, { flow: deepClone(merged) });
+  const { prePatches } = yield select(selectors.editor, editorId);
+
+  let flowClone = deepClone(merged);
+
+  if (prePatches?.length) {
+    flowClone = jsonPatch.applyPatch(flowClone, jsonPatch.deepClone(prePatches)).newDocument;
+  }
+
+  const flow = yield call(filterPendingResources, { flow: flowClone });
+
   const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, _pageProcessorId, 'imports');
 
   // // Incase of no pgs, preview call is stopped here
   if (!isPreviewPanelAvailable && (!flow.pageGenerators || !flow.pageGenerators.length)) return;
   // Incase of first new pp, pageProcessors does not exist on flow doc. So add default [] for pps
-  flow.pageProcessors = flow.pageProcessors || [];
+  if (!flow.routers && !prePatches) { flow.pageProcessors = flow.pageProcessors || []; }
   const pageGeneratorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageGenerators',
@@ -90,6 +102,38 @@ export function* pageProcessorPreview({
     }
   }
 
+  if (flow.routers && flow.routers.some(r => r.id === _pageProcessorId)) {
+    delete flow.pageProcessors;
+    const router = flow.routers.find(r => r.id === _pageProcessorId);
+    const uniqId = generateId(24);
+
+    if (router?.branches?.length) {
+      delete router.routeRecordsTo;
+      delete router.routeRecordsUsing;
+      router.branches.length = 1;
+      if (router.branches[0].pageProcessors?.length) {
+        // eslint-disable-next-line no-param-reassign
+        _pageProcessorId = uniqId;// router.branches[0].pageProcessors[0].id;
+        router.branches[0].pageProcessors[0].type = 'import';
+        router.branches[0].pageProcessors[0]._importId = uniqId;
+        delete router.branches[0].pageProcessors[0].setupInProgress;
+        delete router.branches[0].inputFilter;
+      } else {
+        router.branches[0].pageProcessors = [{type: 'import', _importId: uniqId }];
+        delete router.branches[0].inputFilter;
+        // eslint-disable-next-line no-param-reassign
+        _pageProcessorId = uniqId;
+      }
+    } else if (!router.branches) {
+      router.branches = [{pageProcessors: [{type: 'import', _importId: uniqId }]}];
+      // eslint-disable-next-line no-param-reassign
+      _pageProcessorId = uniqId;
+    }
+    pageProcessorMap[_pageProcessorId] = {
+      doc: {_id: _pageProcessorId},
+    };
+  }
+
   if (previewType === 'flowInput') {
     // make the _pageProcessor as import so that BE calculates flow data till that processor
     flow.pageProcessors = flow.pageProcessors.map(pageProcessor => {
@@ -135,6 +179,10 @@ export function* pageProcessorPreview({
       message: 'Loading',
       hidden: isRunOfflineConfigured ? true : hidden,
     });
+
+    if (flow.routers?.length && Array.isArray(previewData)) {
+      return previewData[0];
+    }
 
     return previewData;
   } catch (e) {

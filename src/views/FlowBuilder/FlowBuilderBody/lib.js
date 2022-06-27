@@ -3,25 +3,12 @@ import { nanoid } from 'nanoid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 import { isVirtualRouter } from '../../../utils/flows/flowbuilder';
+import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
 
 // react-flow handles by default sit just outside of the node boundary.
 // this offset is the number of pixels the left or right handle is offset from
 // the edge of this node boundary frame.
 export const handleOffset = 4;
-
-export const RouterPathRegex = /\/routers\/(\d)/;
-export const BranchPathRegex = /\/routers\/(\d)\/branches\/(\d)/;
-export const PageProcessorPathRegex = /\/routers\/(\d)\/branches\/(\d)\/pageProcessors\/(\d)/;
-
-export const GRAPH_ELEMENTS_TYPE = {
-  ROUTER: 'router',
-  MERGE: 'merge',
-  EDGE: 'default',
-  TERMINAL: 'terminal',
-  PP_STEP: 'pp',
-  PG_STEP: 'pg',
-  EMPTY_STEP: 'empty',
-};
 
 export const nodeSize = {
   pp: {
@@ -152,12 +139,14 @@ export function getAllFlowBranches(flow) {
 
   if (routers.length) {
     routers.forEach((router = {}, routerIndex) => {
-      router.branches?.forEach((branch = {}, branchIndex) => {
-        branches.push({
-          name: branch.name,
-          path: `/routers/${routerIndex}/branches/${branchIndex}`,
+      if (!isVirtualRouter(router)) {
+        router.branches?.forEach((branch = {}, branchIndex) => {
+          branches.push({
+            name: branch.name,
+            path: `/routers/${routerIndex}/branches/${branchIndex}`,
+          });
         });
-      });
+      }
     });
   }
 
@@ -317,50 +306,17 @@ export const areMultipleEdgesConnectedToSameEdgeTarget = (edgeId, elements) => {
   return elements.filter(isEdge).filter(e => e.target === target).length > 1;
 };
 
-export const isDragNodeOnSameBranch = (dragNodeId, edgeId, elements) => {
-  if (!dragNodeId || !edgeId || !elements) {
+export const isNodeConnectedToRouter = (stepId, elementsMap) => {
+  if (!stepId || !elementsMap || !elementsMap[stepId]) {
     return false;
   }
-  const dragNodeElement = elements[dragNodeId];
-  const edgeElement = elements[edgeId];
+  const step = elementsMap[stepId];
+  const source = elementsMap[step.source];
+  const target = elementsMap[step.target];
 
-  if (!edgeElement || edgeElement.type !== 'default') {
-    return false;
-  }
-  const edgePathElement =
-    elements[edgeElement.source]?.type === GRAPH_ELEMENTS_TYPE.ROUTER
-      ? elements[edgeElement.target]
-      : elements[edgeElement.source];
+  if (source.type === GRAPH_ELEMENTS_TYPE.PG_STEP && target.type === GRAPH_ELEMENTS_TYPE.ROUTER) return false;
 
-  if (
-    dragNodeElement &&
-    edgePathElement &&
-    BranchPathRegex.test(dragNodeElement.data.path) &&
-    BranchPathRegex.test(edgePathElement.data.path)
-  ) {
-    const [dragNodeBranch] = BranchPathRegex.exec(dragNodeElement.data.path);
-    const [edgeElementBranch] = BranchPathRegex.exec(edgePathElement.data.path);
-
-    return dragNodeBranch === edgeElementBranch;
-  }
-
-  return false;
-};
-
-export const isNodeConnectedToRouter = (nodeId, elements) => {
-  if (!nodeId || !elements) {
-    return false;
-  }
-  const node = elements.find(ele => ele.id === nodeId);
-
-  if (!node) {
-    return false;
-  }
-  const { source, target } = node;
-
-  return elements
-    .filter(e => [source, target].includes(e.id))
-    .some(node => [GRAPH_ELEMENTS_TYPE.ROUTER].includes(node?.type));
+  return source?.type === GRAPH_ELEMENTS_TYPE.ROUTER || target?.type === GRAPH_ELEMENTS_TYPE.ROUTER;
 };
 
 export function snapPointsToHandles(source, target, points) {

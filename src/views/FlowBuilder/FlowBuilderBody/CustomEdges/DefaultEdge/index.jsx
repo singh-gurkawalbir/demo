@@ -7,7 +7,6 @@ import {
   nodeSize,
   areMultipleEdgesConnectedToSameEdgeTarget,
   snapPointsToHandles,
-  GRAPH_ELEMENTS_TYPE,
 } from '../../lib';
 import { useFlowContext } from '../../Context';
 import AddNewButton from '../AddNewButton';
@@ -16,6 +15,7 @@ import ForeignObject from '../ForeignObject';
 import { selectors } from '../../../../../reducers';
 import DiamondMergeIcon from '../../DiamondMergeIcon';
 import actions from '../../../../../actions';
+import { GRAPH_ELEMENTS_TYPE } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   edgePath: {
@@ -115,9 +115,7 @@ export default function DefaultEdge({
   const isTargetMerge = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isTargetTerminal = targetType === GRAPH_ELEMENTS_TYPE.TERMINAL;
   const isSourceRouter = sourceType === GRAPH_ELEMENTS_TYPE.ROUTER;
-  const isTargetRouter =
-    targetType === GRAPH_ELEMENTS_TYPE.ROUTER ||
-    targetType === GRAPH_ELEMENTS_TYPE.MERGE;
+  const isTargetRouter = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
   const isSourceEmptyNode = sourceType === GRAPH_ELEMENTS_TYPE.EMPTY_STEP;
   const showLinkIcon =

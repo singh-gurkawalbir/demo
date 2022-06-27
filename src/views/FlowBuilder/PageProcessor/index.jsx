@@ -212,8 +212,7 @@ const PageProcessor = ({
     return processorActions;
   }, [isLast, pending, pp.type, resource, resourceType, showMapping, usedActions]);
   // #endregion
-  // console.log('render: <PageProcessor>');
-  // console.log(pp, usedActions);
+
   const name = pending ? '' : resource.name || resource.id;
 
   return (
@@ -238,6 +237,9 @@ const PageProcessor = ({
           resourceIndex={index}
           resourceType={resourceType}
           actions={processorActions}
+          routerIndex={pp.routerIndex}
+          branchIndex={pp.branchIndex}
+          pageProcessorIndex={pp.pageProcessorIndex}
         />
       </div>
     </>

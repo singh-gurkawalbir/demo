@@ -305,6 +305,9 @@ export default function AppBlock({
           resourceId={resource._id}
           resourceType={resourceType}
           index={index}
+          routerIndex={rest.routerIndex}
+          branchIndex={rest.branchIndex}
+          pageProcessorIndex={rest.pageProcessorIndex}
           onClose={handleActionClose}
           schedule={schedule}
         />

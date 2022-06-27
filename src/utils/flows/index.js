@@ -240,16 +240,6 @@ export const isIntegrationApp = (doc = {}) => !!(doc && doc._connectorId);
  */
 export const isFreeFlowResource = (flow = {}) => !!(flow && flow.free);
 
-/*
- * Returns true/false, whether passed resource is a lookup or not for the passed flow
- */
-export const isLookupResource = (flow = {}, resource = {}) => {
-  if (resource.isLookup) return true;
-  const { pageProcessors = [] } = flow;
-
-  return !!pageProcessors.find(pp => pp._exportId && pp._exportId === resource._id);
-};
-
 export function isSetupInProgress(flow) {
   if (!flow) return false;
   const isPageGeneratorSetupInProgress = (flow.pageGenerators || []).some(pg => pg.setupInProgress) || !flow.pageGenerators?.length;
@@ -539,30 +529,21 @@ export function getImportsFromFlow(flow, imports) {
         importIds.push(p._importId);
       }
     });
+  } else if (flow.routers && flow.routers.length) {
+    flow.routers.forEach(router => {
+      router.branches?.forEach(branch => {
+        branch.pageProcessors?.forEach(pp => {
+          if (pp._importId) {
+            importIds.push(pp._importId);
+          }
+        });
+      });
+    });
   }
 
   if (!importIds.length) return emptyList;
 
   return imports.filter(i => importIds.indexOf(i._id) > -1);
-}
-
-export function getPageProcessorImportsFromFlow(imports, pageProcessors) {
-  let ppImports = [];
-  const pageProcessorIds = [];
-
-  if (!pageProcessors) {
-    return imports;
-  }
-
-  pageProcessors.forEach(pageProcessor => {
-    if (pageProcessor && pageProcessor._importId) {
-      pageProcessorIds.push(pageProcessor._importId);
-    }
-  });
-  ppImports =
-    imports && imports.filter(i => pageProcessorIds.indexOf(i._id) > -1);
-
-  return ppImports;
 }
 
 export function getFlowListWithMetadata(flows = [], exports = []) {

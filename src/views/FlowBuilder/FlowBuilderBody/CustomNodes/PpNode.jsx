@@ -9,6 +9,7 @@ import DefaultHandle from './Handles/DefaultHandle';
 import { useFlowContext } from '../Context';
 import actions from '../../../../actions';
 import PageProcessor from '../../PageProcessor';
+import { PageProcessorPathRegex } from '../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,9 +46,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function PageProcessorNode({ data = {} }) {
-  const { branch = {}, isFirst, isLast, hideDelete, isVirtual } = data;
+  const { branch = {}, isFirst, isLast, hideDelete, isVirtual, path } = data;
   const dispatch = useDispatch();
   const classes = useStyles();
+  const [, routerIndex, branchIndex, pageProcessorIndex] = PageProcessorPathRegex.exec(path);
 
   const { flow, flowId } = useFlowContext();
   const integrationId = flow?._integrationId;
@@ -86,6 +88,9 @@ export default function PageProcessorNode({ data = {} }) {
             isViewMode={isViewMode || isFreeFlow}
             isMonitorLevelAccess={isMonitorLevelAccess}
             isLast={isLast}
+            routerIndex={routerIndex}
+            branchIndex={branchIndex}
+            pageProcessorIndex={pageProcessorIndex}
           />
         </div>
       </div>

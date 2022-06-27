@@ -5,7 +5,7 @@ import actions from '../../actions';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
-import { emptyObject, UNASSIGNED_SECTION_ID } from '../../constants';
+import { emptyObject, GRAPH_ELEMENTS_TYPE, UNASSIGNED_SECTION_ID } from '../../constants';
 import { generateNewId } from '../../utils/resource';
 import itemTypes from './itemTypes';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
@@ -282,7 +282,7 @@ export const useHandleRouterClick = routerId => {
     dispatch(actions.editor.init(editorId, 'router', {
       flowId,
       resourceType: 'flows',
-      resourceId: flowId,
+      resourceId: routerId,
       router,
       fieldId: 'router',
       routerIndex,
@@ -311,11 +311,13 @@ export const useHandleAddNewRouter = edgeId => {
     const patchSet = getNewRouterPatchSet({ elementsMap, flow, router, edgeId, originalFlow });
 
     const edge = elementsMap[edgeId];
+    const isInsertingBeforeFirstRouter = elementsMap[edge.source]?.type === GRAPH_ELEMENTS_TYPE.PG_STEP &&
+    elementsMap[edge.target]?.type === GRAPH_ELEMENTS_TYPE.ROUTER;
 
     dispatch(actions.editor.init(editorId, 'router', {
       flowId,
       resourceType: 'flows',
-      resourceId: flowId,
+      resourceId: router.id,
       router,
       routerIndex: originalFlow.routers?.length || 0,
       integrationId: flow?._integrationId,
@@ -324,6 +326,7 @@ export const useHandleAddNewRouter = edgeId => {
       prePatches: patchSet,
       stage: 'router',
       edge,
+      isInsertingBeforeFirstRouter,
     }));
     history.push(buildDrawerUrl({
       path: drawerPaths.EDITOR,
