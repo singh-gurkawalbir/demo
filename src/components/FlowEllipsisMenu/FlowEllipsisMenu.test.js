@@ -3,6 +3,7 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Router } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { createMemoryHistory } from 'history';
 import * as reactRedux from 'react-redux';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
