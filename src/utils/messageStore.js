@@ -35,7 +35,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   ROUTER_DELETE_CONFIRMATION_MESSAGE: `<p>Are you sure you want to delete this branching?</p>
   <p>In the first branch, all steps/branching routers will persist and become a linear flow.</p>
   <p>All other branches and all steps/branching routers inside 
-  ({{configuredCount}} configured steps, {{unconfiguredCount}} unconfigured steps). will be removed</p>`,
+  ({{configuredCount}} configured steps, {{unconfiguredCount}} unconfigured steps) will be removed</p>`,
   // #region mapper2 messages
   MAPPER2_DELETE_ROW_WARNING: 'Are you sure you want to delete this parent record row? All its child rows will be deleted as well.',
   MAPPER2_DATA_TYPE_WARNING: `Since only an "object" or "[object]" data type can have child rows, 
