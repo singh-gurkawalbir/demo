@@ -104,6 +104,7 @@ export default function DynaXmlParse_afe({
   const options = useMemo(() => getInitOptions(value), [getInitOptions, value]);
   const [form, setForm] = useState(getForm(options, resourceId, isParserSupported));
 
+  //  The below useEffect is to re-initialize the xml parser on changing the final success media type.
   useEffect(() => {
     setForm(getForm(options, resourceId, isParserSupported));
     setRemountKey(remountKey => remountKey + 1);

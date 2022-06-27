@@ -890,37 +890,7 @@ describe('resource region selector testcases', () => {
       expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
     });
 
-    // test('should return true for HTTP export with overridden success media type as parser', () => {
-    //   const parser = 'xml';
-    //   const exp = {
-    //     _id: 'e1',
-    //     type: 'HTTP',
-    //     adaptorType: 'HTTPExport',
-    //     value: {
-    //       '/http/successMediaType': parser,
-    //     },
-    //   };
-    //   const fieldMeta = {
-    //     fieldMap: {
-    //       'http.successMediaType': {
-    //         id: 'http.successMediaType',
-    //         value: parser,
-    //       },
-    //     },
-    //   };
-    //   const formKey = 'exports-e1';
-
-    //   let state = reducer(
-    //     undefined,
-    //     actions.resource.received('exports', exp)
-    //   );
-
-    //   state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
-
-    //   expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
-    // });
-
-    test('should return false for HTTP export with overridden success media type different from parser', () => {
+    test('should return true for HTTP export with overridden success media type as parser', () => {
       const parser = 'xml';
       const exp = {
         _id: 'e1',
@@ -929,10 +899,6 @@ describe('resource region selector testcases', () => {
       };
       const fieldMeta = {
         fieldMap: {
-          'http.successMediaType': {
-            id: 'http.successMediaType',
-            value: 'csv',
-          },
         },
       };
       const formKey = 'exports-e1';
@@ -943,6 +909,31 @@ describe('resource region selector testcases', () => {
       );
 
       state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
+      state.session.form[formKey].value = { '/http/successMediaType': parser };
+
+      expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+    });
+
+    test('should return false for HTTP export with overridden success media type different from parser', () => {
+      const parser = 'xml';
+      const exp = {
+        _id: 'e1',
+        type: 'HTTP',
+        adaptorType: 'HTTPExport',
+      };
+      const fieldMeta = {
+        fieldMap: {
+        },
+      };
+      const formKey = 'exports-e1';
+
+      let state = reducer(
+        undefined,
+        actions.resource.received('exports', exp)
+      );
+
+      state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
+      state.session.form[formKey].value = { '/http/successMediaType': 'csv' };
 
       expect(selectors.isParserSupported(state, formKey, parser)).toEqual(false);
     });
@@ -962,9 +953,6 @@ describe('resource region selector testcases', () => {
       };
       const fieldMeta = {
         fieldMap: {
-          'http.successMediaType': {
-            id: 'http.successMediaType',
-          },
           _connectionId: {
             id: '_connectionId',
             value: 'c1',
@@ -1003,9 +991,6 @@ describe('resource region selector testcases', () => {
       };
       const fieldMeta = {
         fieldMap: {
-          'http.successMediaType': {
-            id: 'http.successMediaType',
-          },
           _connectionId: {
             id: '_connectionId',
             value: 'c1',
@@ -1044,9 +1029,6 @@ describe('resource region selector testcases', () => {
       };
       const fieldMeta = {
         fieldMap: {
-          'http.successMediaType': {
-            id: 'http.successMediaType',
-          },
           _connectionId: {
             id: '_connectionId',
             value: 'c1',
@@ -1085,9 +1067,6 @@ describe('resource region selector testcases', () => {
       };
       const fieldMeta = {
         fieldMap: {
-          'http.successMediaType': {
-            id: 'http.successMediaType',
-          },
           _connectionId: {
             id: '_connectionId',
             value: 'c1',
