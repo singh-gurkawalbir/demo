@@ -18,13 +18,14 @@ function ProgressIndicator(props = {}) {
 }
 
 describe('FetchProgressIndicator UI tests', () => {
-  const mockFunc = jest.fn();
+  const mockPauseFunc = jest.fn();
+  const mockResumeFunc = jest.fn();
 
   test('For input status completed,DOM should be empty', () => {
     ProgressIndicator({
       fetchStatus: 'completed',
-      pauseHandler: mockFunc,
-      resumeHandler: mockFunc,
+      pauseHandler: mockPauseFunc,
+      resumeHandler: mockResumeFunc,
       startTime: 0,
       endTime: 92,
       currTime: 0,
@@ -34,8 +35,8 @@ describe('FetchProgressIndicator UI tests', () => {
   test('For input status completed,DOM should be empty', () => {
     ProgressIndicator({
       fetchStatus: 'inProgress',
-      pauseHandler: mockFunc,
-      resumeHandler: mockFunc,
+      pauseHandler: mockPauseFunc,
+      resumeHandler: mockResumeFunc,
       startTime: 20,
       endTime: 100,
       currTime: 80,
@@ -46,8 +47,8 @@ describe('FetchProgressIndicator UI tests', () => {
   test('For input status completed,DOM should be empty', () => {
     ProgressIndicator({
       fetchStatus: 'paused',
-      pauseHandler: mockFunc,
-      resumeHandler: mockFunc,
+      pauseHandler: mockPauseFunc,
+      resumeHandler: mockResumeFunc,
       startTime: 20,
       endTime: 100,
       currTime: 80,
@@ -55,21 +56,22 @@ describe('FetchProgressIndicator UI tests', () => {
 
     expect(screen.getByText(/Fetching Paused/i, {exact: false})).toBeInTheDocument();
   });
-  test('checking the render of both Pause and resume buttons', () => {
+  test('checking the render of both Pause button', () => {
     ProgressIndicator({
       fetchStatus: 'inProgress',
-      pauseHandler: mockFunc,
-      resumeHandler: mockFunc,
+      pauseHandler: mockPauseFunc,
+      resumeHandler: mockResumeFunc,
       startTime: 20,
       endTime: 100,
       currTime: 80,
     });
-
     expect(screen.getByRole('button', { name: 'Pause' })).toBeInTheDocument();
+  });
+  test('checking the render of resume button', () => {
     ProgressIndicator({
       fetchStatus: 'paused',
-      pauseHandler: mockFunc,
-      resumeHandler: mockFunc,
+      pauseHandler: mockPauseFunc,
+      resumeHandler: mockResumeFunc,
       startTime: 20,
       endTime: 100,
       currTime: 80,
@@ -80,8 +82,8 @@ describe('FetchProgressIndicator UI tests', () => {
   test('checking for negative value of percentage done', () => {
     const { utils } = ProgressIndicator({
       fetchStatus: 'paused',
-      pauseHandler: mockFunc,
-      resumeHandler: mockFunc,
+      pauseHandler: mockPauseFunc,
+      resumeHandler: mockResumeFunc,
       startTime: 20,
       endTime: 100,
       currTime: 180,
