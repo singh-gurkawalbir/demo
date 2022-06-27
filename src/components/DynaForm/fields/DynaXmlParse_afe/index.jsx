@@ -92,22 +92,22 @@ export default function DynaXmlParse_afe({
   const editorId = getValidRelativePath(id);
   const [remountKey, setRemountKey] = useState(1);
 
-  const isParserSupportedForHTTP = useSelector(state => selectors.isParserSupportedForHTTP(state, formKey, 'xml'));
+  const isParserSupported = useSelector(state => selectors.isParserSupported(state, formKey, 'xml'));
 
   const resourcePath = useSelector(state =>
-    isParserSupportedForHTTP ? selectors.resource(state, resourceType, resourceId)?.http?.response?.resourcePath : selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
+    isParserSupported ? selectors.resource(state, resourceType, resourceId)?.http?.response?.resourcePath : selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
 
   const getInitOptions = useCallback(
     val => ({ resourcePath, ...val?.[0]?.rules}),
     [resourcePath],
   );
   const options = useMemo(() => getInitOptions(value), [getInitOptions, value]);
-  const [form, setForm] = useState(getForm(options, resourceId, isParserSupportedForHTTP));
+  const [form, setForm] = useState(getForm(options, resourceId, isParserSupported));
 
   useEffect(() => {
-    setForm(getForm(options, resourceId, isParserSupportedForHTTP));
+    setForm(getForm(options, resourceId, isParserSupported));
     setRemountKey(remountKey => remountKey + 1);
-  }, [isParserSupportedForHTTP]);
+  }, [isParserSupported]);
 
   // below logic would need to move to data-layer as part of tracker IO-17578
   useEffect(() => {
@@ -188,7 +188,7 @@ export default function DynaXmlParse_afe({
     }));
   }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
 
-  if (!isParserSupportedForHTTP) return null;
+  if (!isParserSupported) return null;
 
   return (
     <>

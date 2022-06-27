@@ -3,7 +3,7 @@ import { isNewId } from '../../../../../utils/resource';
 
 const visibleWhenCustom = [{ field: 'V0_json', is: ['false'] }];
 
-export default function getForm(options, resourceId, isParserSupportedForHTTP) {
+export default function getForm(options, resourceId, isParserSupported) {
   let defaultParser = 'false';
 
   // parsers should be set to automatic if the export was created in ampersand
@@ -35,7 +35,7 @@ export default function getForm(options, resourceId, isParserSupportedForHTTP) {
         label: 'Resource path',
         type: 'text',
         defaultValue: options?.resourcePath || '',
-        required: !(isParserSupportedForHTTP === false),
+        required: !(isParserSupported === false),
         validWhen: {
           matchesRegEx: {
             pattern: '^/',

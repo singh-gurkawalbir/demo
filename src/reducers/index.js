@@ -75,6 +75,7 @@ import {
   getUserAccessLevelOnConnection,
   rdbmsSubTypeToAppType,
   getResourceFromAlias,
+  finalSuccessMediaType,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -6867,18 +6868,21 @@ selectors.showAmazonRestrictedReportType = (state, formKey) => {
           relativeURI?.startsWith('/reports/2021-06-30/documents/');
 };
 
-selectors.isParserSupportedForHTTP = (state, formKey, parser) => {
-  const exportId = selectors.formState(state, formKey)?.parentContext?.resourceId;
+selectors.isParserSupported = (state, formKey, parser) => {
+  const formDetails = selectors.formState(state, formKey);
+  const exportId = formDetails?.parentContext?.resourceId;
   const { adaptorType } = selectors.resource(state, 'exports', exportId) || {};
 
+  //  At present, we are checking only for HTTP export.
+  //  For remaining, we are returning true so that it does not affect the existing functionality, as it has been used as a conditional.
+
   if (adaptorType !== 'HTTPExport') return true;
-  const overriddenMediaType = selectors.fieldState(state, formKey, 'http.successMediaType')?.value;
 
-  if (overriddenMediaType) return overriddenMediaType === parser;
+  const formValues = formDetails?.value;
   const connectionId = selectors.fieldState(state, formKey, '_connectionId')?.value;
-  const { mediaType, successMediaType } = selectors.resource(state, 'connections', connectionId)?.http || {};
+  const connection = selectors.resource(state, 'connections', connectionId);
 
-  return (successMediaType === parser) || (!successMediaType && mediaType === parser);
+  return finalSuccessMediaType(formValues, connection) === parser;
 };
 
 const resourceListSelector = selectors.makeResourceListSelector();

@@ -1072,4 +1072,11 @@ export const AUDIT_LOGS_RANGE_FILTERS = [
   {id: 'custom', label: 'Custom'},
 ];
 
-export const finalSuccessMediaType = (mediaType, successMediaType, overridenSuccessMediaType, parser) => (overridenSuccessMediaType === parser || (!overridenSuccessMediaType && (successMediaType === parser || (!successMediaType && mediaType === parser))));
+export const finalSuccessMediaType = (formValues, connection) => {
+  const overridenSuccessMediaType = formValues?.['/http/successMediaType'];
+
+  if (overridenSuccessMediaType) return overridenSuccessMediaType;
+  const { mediaType, successMediaType } = connection?.http || emptyObject;
+
+  return successMediaType || mediaType;
+};

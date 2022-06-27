@@ -1,10 +1,8 @@
 import { isNewId, finalSuccessMediaType } from '../../../utils/resource';
 
 export default {
-  preSave: (formValues, resource, { connection } = {}) => {
+  preSave: (formValues, _, { connection } = {}) => {
     const retValues = { ...formValues };
-    const overridenSuccessMediaType = resource?.http?.successMediaType;
-    const { successMediaType, mediaType } = connection?.http || {};
 
     if (retValues['/http/successMediaType'] === 'csv') {
       retValues['/file/type'] = 'csv';
@@ -235,7 +233,7 @@ export default {
       retValues['/http/response/resourcePath'] = retValues['/parsers'].resourcePath;
     }
 
-    if (!finalSuccessMediaType(mediaType, successMediaType, overridenSuccessMediaType, 'xml')) {
+    if (finalSuccessMediaType(formValues, connection) !== 'xml') {
       retValues['/parsers'] = undefined;
     }
 
@@ -555,10 +553,8 @@ export default {
                   'parsers',
                   'file.csv',
                 ],
-                header: (resource, connection, formValues) => {
-                  const overridenSuccessMediaType = formValues?.['/http/successMediaType'];
-                  const { mediaType, successMediaType } = connection?.http || {};
-                  const isParserVisible = ['csv', 'xml'].some(parser => finalSuccessMediaType(mediaType, successMediaType, overridenSuccessMediaType, parser));
+                header: (_, connection, formValues) => {
+                  const isParserVisible = ['csv', 'xml'].some(parser => finalSuccessMediaType(formValues, connection) === parser);
 
                   return isParserVisible && 'Parse success responses';
                 },
