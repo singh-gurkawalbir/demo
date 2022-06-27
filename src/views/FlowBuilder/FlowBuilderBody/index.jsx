@@ -21,6 +21,7 @@ import { useSelectorMemo } from '../../../hooks';
 import useMenuDrawerWidth from '../../../hooks/useMenuDrawerWidth';
 import { ExportFlowStateButton } from './ExportFlowStateButton';
 import EmptyNode from './CustomNodes/EmptyNode';
+import LoadingNotification from '../../../App/LoadingNotification';
 
 const useCalcCanvasStyle = fullscreen => {
   const theme = useTheme();
@@ -111,6 +112,7 @@ export function Canvas({ flowId, fullscreen }) {
   const elementsMap = useSelector(state => selectors.fbGraphElementsMap(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, mergedFlow._integrationId, flowId));
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
+  const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
 
   const updatedLayout = useMemo(() =>
     layoutElements(elements, 'LR'),
@@ -141,6 +143,7 @@ export function Canvas({ flowId, fullscreen }) {
     <div
       className={classes.canvasContainer}
       style={calcCanvasStyle}>
+      <LoadingNotification message={isFlowSaveInProgress ? 'Saving flow' : ''} />
       <div className={classes.canvas}>
         {/* CANVAS START */}
         <ReactFlowProvider>

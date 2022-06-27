@@ -18,22 +18,27 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function LoadingNotification() {
+export default function LoadingNotification({message}) {
   const classes = useStyles();
   const {isLoading, isRetrying} = useSelector(
     state => selectors.commsSummary(state),
     shallowEqual
   );
 
-  if (!isLoading && !isRetrying) {
+  if (!isLoading && !isRetrying && !message) {
     return null;
+  }
+  let notificationText = message;
+
+  if (!message) {
+    notificationText = isRetrying ? 'Retrying' : 'Loading';
   }
 
   return (
     <Snackbar open classes={{root: classes.snackbar}} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-      <Paper elevation={2} className={classes.paper}>
+      <Paper elevation={5} className={classes.paper}>
         <Typography variant="body2">
-          {isRetrying ? 'Retrying' : 'Loading'}...
+          {notificationText}...
         </Typography>
         <LinearProgress color="primary" className={classes.progressBar} />
       </Paper>
