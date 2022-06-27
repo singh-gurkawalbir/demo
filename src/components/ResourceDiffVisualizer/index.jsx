@@ -1,16 +1,7 @@
 import React from 'react';
 import LoadResources from '../LoadResources';
 import ResourceDiffContainer from './ResourceDiffContainer';
-
-const SUPPORTED_RESOURCE_TYPES = [
-  'export',
-  'import',
-  'flow',
-  'integration',
-  'script',
-  'asynchelper',
-  'filedefinition',
-];
+import { SUPPORTED_RESOURCE_TYPES } from '../../utils/revisions';
 
 const REQUIRED_RESOURCE_TYPES_TO_LOAD = SUPPORTED_RESOURCE_TYPES.map(type => `${type}s`);
 
