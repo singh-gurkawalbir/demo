@@ -85,6 +85,9 @@ export default function MyAccount({ match }) {
   const permissions = useSelector(state => selectors.userPermissions(state));
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
 
+  const tabsForManageOrMonitorUser = tabs.filter(tab => tab.path === 'profile' || tab.path === 'security');
+  const availableTabs = isAccountOwnerOrAdmin ? tabs : tabsForManageOrMonitorUser;
+
   return (
     <>
       <CeligoPageBar
@@ -94,16 +97,8 @@ export default function MyAccount({ match }) {
               : 'My profile'
           }
         />
-      {!isAccountOwnerOrAdmin ? (
-        <div className={classes.wrapperProfile}>
-          <Profile />
-        </div>
-      ) : (
-        <>
-          <ResourceDrawer match={match} />
-          <Tabs tabs={tabs} match={match} className={classes.tabsAccount} />
-        </>
-      )}
+      <ResourceDrawer match={match} />
+      <Tabs tabs={availableTabs} match={match} className={classes.tabsAccount} />
     </>
   );
 }

@@ -1540,6 +1540,7 @@ const mapping = {
     changeArrayTab: (v2Key, newTabValue, newTabExtractId) => action(actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB, { v2Key, newTabValue, newTabExtractId }),
     patchField: (field, v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, v2Key, value }),
     patchSettings: (v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_SETTINGS, { v2Key, value }),
+    patchExtractsFilter: (inputValue, propValue) => action(actionTypes.MAPPING.V2.PATCH_EXTRACTS_FILTER, { inputValue, propValue }),
   },
 };
 
@@ -2130,6 +2131,30 @@ const assistantMetadata = {
       metadata,
     }),
 };
+const httpConnectors = {
+  requestMetadata: ({ httpConnectorId, httpVersionId, httpApiId }) =>
+    action(actionTypes.HTTP_CONNECTORS.REQUEST_METADATA, {
+      httpConnectorId,
+      httpVersionId,
+      httpApiId,
+    }),
+  receivedMetadata: ({metadata, httpConnectorId, httpVersionId, httpConnectorApiId}) =>
+    action(actionTypes.HTTP_CONNECTORS.RECEIVED_METADATA, {
+      metadata,
+      httpConnectorId,
+      httpVersionId,
+      httpConnectorApiId,
+    }),
+  receivedConnector: ({ httpConnectorId, connector }) =>
+    action(actionTypes.HTTP_CONNECTORS.RECEIVED_CONNECTOR, {
+      httpConnectorId,
+      connector,
+    }),
+  requestConnector: ({ httpConnectorId }) =>
+    action(actionTypes.HTTP_CONNECTORS.REQUEST_CONNECTOR, {
+      httpConnectorId,
+    }),
+};
 const analytics = {
   gainsight: {
     trackEvent: (eventId, details) =>
@@ -2390,4 +2415,5 @@ export default {
   sso,
   bottomDrawer,
   integrationLCM,
+  httpConnectors,
 };

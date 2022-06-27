@@ -61,7 +61,7 @@ export default function PageProcessorNode({ data = {} }) {
   const showDelete = !hideDelete && !isFlowSaveInProgress;
   const handleDelete = useCallback(id => {
     dispatch(actions.flow.deleteStep(flowId, id));
-  }, [dispatch]);
+  }, [dispatch, flowId]);
 
   return (
     <div className={classes.root}>

@@ -13,6 +13,7 @@ import MappingRow from '../../../../Mapping/MappingRow';
 import { emptyObject } from '../../../../../constants';
 import Mapper2 from './Mapper2';
 import NoResultTypography from '../../../../NoResultTypography';
+import VirtualizedDragContainer from '../../../../VirtualizedDragContainer';
 
 const useStyles = makeStyles(theme => ({
   mappingDrawerContent: {
@@ -67,16 +68,27 @@ const Mapper1 = ({editorId, flowId, importId, subRecordMappingId}) => {
         <TopPanel flowId={flowId} importId={importId} disabled={disabled} />
 
         <div className={classes.mappingTable}>
-          <DragContainer
-            disabled={disabled}
-            importId={importId}
-            flowId={flowId}
-            items={mappings}
-            SortableItemComponent={SortableItemComponent}
-            LastRowSortableItemComponent={LastRowSortableItemComponent}
-            onSortEnd={onSortEnd}
-            subRecordMappingId={subRecordMappingId}
+          {mappings.length > 99 ? (
+            <VirtualizedDragContainer
+              disabled={disabled}
+              importId={importId}
+              flowId={flowId}
+              items={mappings}
+              onSortEnd={onSortEnd}
+              subRecordMappingId={subRecordMappingId}
               />
+          ) : (
+            <DragContainer
+              disabled={disabled}
+              importId={importId}
+              flowId={flowId}
+              items={mappings}
+              SortableItemComponent={SortableItemComponent}
+              LastRowSortableItemComponent={LastRowSortableItemComponent}
+              onSortEnd={onSortEnd}
+              subRecordMappingId={subRecordMappingId}
+              />
+          )}
           {canAutoMap && (
             <div className={classes.autoMapper}>
               <AutoMapperButton />

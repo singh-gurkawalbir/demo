@@ -93,7 +93,7 @@ export default function Mapper2Generates(props) {
             <TooltipTitle
               isTruncated={isTruncated}
               inputValue={inputValue}
-              fieldType="Destination record field"
+              fieldType="Destination field"
               />
           )} >
           <TextField
@@ -110,7 +110,7 @@ export default function Mapper2Generates(props) {
             onFocus={handleFocus}
             disabled={disabled}
             multiline={isFocused}
-            placeholder={disabled ? '' : 'Destination record field'} />
+            placeholder={disabled ? '' : 'Destination field'} />
         </Tooltip >
 
         <DestinationDataType

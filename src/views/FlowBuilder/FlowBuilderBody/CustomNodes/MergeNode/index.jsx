@@ -28,10 +28,10 @@ export default function MergeNode({id}) {
 
   const handleMouseOut = useCallback(() => {
     dispatch(actions.flow.mergeTargetClear(flowId));
-  }, []);
+  }, [flowId, dispatch]);
   const handleMouseOver = useCallback(() => {
     dispatch(actions.flow.mergeTargetSet(flowId, 'node', id));
-  }, []);
+  }, [dispatch, flowId, id]);
 
   return (
     // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events

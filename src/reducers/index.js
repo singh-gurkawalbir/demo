@@ -58,6 +58,7 @@ import {
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
   AFE_SAVE_STATUS,
   UNASSIGNED_SECTION_NAME,
+  emptyList,
 } from '../constants';
 import messageStore from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -81,7 +82,7 @@ import {
   isPreviewPanelAvailable,
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
-import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
+import { getIntegrationAppUrlName, getTitleFromEdition, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
@@ -99,7 +100,7 @@ import {
 import getJSONPaths from '../utils/jsonPaths';
 import { getApp } from '../constants/applications';
 import { HOOK_STAGES } from '../utils/editor';
-import { getTextAfterCount, capitalizeFirstLetter } from '../utils/string';
+import { getTextAfterCount } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as FLOWSTEP_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as FLOWSTEP_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/flowStepLogs';
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE, isAmazonSellingPartnerConnection } from '../utils/assistant';
@@ -207,6 +208,8 @@ selectors.userProfilePreferencesProps = createSelector(
       scheduleShiftForFlowsCreatedAfter,
       // eslint-disable-next-line camelcase
       auth_type_google,
+      _ssoAccountId,
+      authTypeSSO,
     } = { ...profile, ...preferences };
 
     return {
@@ -223,6 +226,8 @@ selectors.userProfilePreferencesProps = createSelector(
       scheduleShiftForFlowsCreatedAfter,
       auth_type_google,
       showRelativeDateTime,
+      _ssoAccountId,
+      authTypeSSO,
     };
   });
 
@@ -1558,6 +1563,15 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
     ignoreEnvironmentFilter: true,
     filter: {
       $where() {
+        if (connection.http?._httpConnectorId) {
+          return (
+            this.http?._httpConnectorId === connection.http?._httpConnectorId &&
+            this.http?._httpConnectorVersionId === connection.http?._httpConnectorVersionId &&
+            this.http?._httpConnectorApiId === connection.http?._httpConnectorApiId &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
+        }
         if (connection.assistant) {
           return (
             this.assistant === connection.assistant &&
@@ -2573,7 +2587,7 @@ selectors.getResourceType = (state, { resourceType, resourceId }) => {
 selectors.mappingHasLookupOption = (state, resourceType, connectionId) => {
   const connection = selectors.resource(state, resourceType, connectionId) || {};
 
-  return !['bigquery', 'snowflake'].includes(connection?.rdbms?.type);
+  return !['bigquery', 'redshift', 'snowflake'].includes(connection?.rdbms?.type);
 };
 
 // this selector updates the field options based on the
@@ -2837,7 +2851,7 @@ selectors.integrationAppEdition = (state, integrationId) => {
             (editions.find(ed => ed._id === license._editionId) || {})?.displayName;
 
   const plan = `${
-    edition ? capitalizeFirstLetter(edition) : 'Standard'
+    edition ? getTitleFromEdition(edition) : 'Standard'
   } plan`;
 
   return plan;
@@ -4253,8 +4267,9 @@ selectors.getImportSampleData = (state, resourceId, options = {}) => {
   const resource = selectors.resourceData(state, 'imports', resourceId)?.merged || emptyObject;
   const { assistant, adaptorType, sampleData, _connectorId } = resource;
   const isIntegrationApp = !!_connectorId;
+  const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
 
-  if (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant))) {
+  if (connection.http?._httpConnectorId || (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant)))) {
     // get assistants sample data
     return selectors.assistantPreviewData(state, resourceId);
   }
@@ -5499,7 +5514,12 @@ selectors.isMapper2Supported = state => {
   // IAs don't support mapper2
   if (!resource || resource._connectorId) return false;
 
-  return !!((resource.adaptorType === 'HTTPImport' || resource.adaptorType === 'RESTImport') && resource.http?.type !== 'file');
+  return !!(
+    isFileAdaptor(resource) ||
+    isAS2Resource(resource) ||
+    resource.adaptorType === 'HTTPImport' ||
+    resource.adaptorType === 'RESTImport'
+  );
 };
 
 selectors.mappingEditorNotification = (state, editorId) => {
@@ -6528,7 +6548,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
     return false;
   }
 
-  if (connection.rdbms?.type === 'bigquery') {
+  if (['bigquery', 'redshift', 'snowflake'].includes(connection?.rdbms?.type)) {
     return false;
   }
 
@@ -6803,6 +6823,18 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
 
   return !!ssoLinkedAccount?.accountSSORequired;
 };
+
+selectors.ssoPrimaryAccounts = createSelector(
+  state => selectors.isAccountOwner(state),
+  state => state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN),
+  (isAccountOwner, orgAccounts) => {
+    if (isAccountOwner) {
+      return emptyList;
+    }
+
+    return orgAccounts || emptyList;
+  }
+);
 
 selectors.isUserAllowedOptionalSSOSignIn = state => {
   if (selectors.isAccountOwner(state)) {

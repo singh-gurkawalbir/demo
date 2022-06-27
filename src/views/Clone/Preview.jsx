@@ -223,6 +223,7 @@ export default function ClonePreview(props) {
   // fetches the latest preview components on every mount
   useEffect(() => {
     dispatch(actions.clone.requestPreview(resourceType, resourceId));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (createdComponents) {
