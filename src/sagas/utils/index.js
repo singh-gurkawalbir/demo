@@ -206,11 +206,8 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
                     id: httpEndpoint.supportedBy.pathParameterToIdentifyExisting,
                     in: 'path',
                     required: true,
+                    isIdentifier: true,
                   });
-                }
-                // isIdentifier should be always set on last path parameters
-                if (parameters.length) {
-                  parameters[parameters.length - 1].isIdentifier = true;
                 }
 
                 if (httpEndpoint.supportedBy?.lookupToIdentifyExisting) {
@@ -225,9 +222,14 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
                     howToFindIdentifier.lookup = {url: lookupEndpoint.relativeURI, id: lookupEndpoint._id, extract: lookup?.extract};
                   }
                 }
+
                 const ep = {
-                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, parameters, howToFindIdentifier, sampleData: r.sampleData,
+                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, howToFindIdentifier,
                 };
+
+                if (httpEndpoint.resourceFields) {
+                  ep.sampleData = convertResourceFieldstoSampleData(httpEndpoint.resourceFields);
+                }
 
                 r?.resourceFieldsUserMustSet?.forEach(f => {
                   ep[f.path] = f.values?.[0] || true;
@@ -263,12 +265,18 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
                 if (requiredMappings) {
                   ep.requiredMappings = requiredMappings;
                 }
+                // isIdentifier should be always set on last path parameters
+                if (parameters.length && (ep.ignoreExisting || ep.ignoreMissing || ep.askForHowToGetIdentifier)) {
+                  parameters[parameters.length - 1].isIdentifier = true;
+                }
+                if (parameters.length) {
+                  ep.parameters = parameters;
+                }
 
                 importData.versions[i].resources[j].operations.push(ep);
               }
             });
           }
-          delete importData.versions[i].resources[j].sampleData;
           delete importData.versions[i].resources[j].resourcePreConfiguredFields;
           delete importData.versions[i].resources[j].resourceFieldsUserMustSet;
         });
