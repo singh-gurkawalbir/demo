@@ -123,12 +123,11 @@ const Mapper2Row = React.memo(props => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
-  const { flowId, importId, lookup} = useSelector(state => {
+  const { importId, lookup} = useSelector(state => {
     const mapping = selectors.mapping(state);
     const lookup = (lookupName && mapping.lookups?.find(lookup => lookup.name === lookupName)) || {};
 
     return {
-      flowId: mapping.flowId,
       importId: mapping.importId,
       lookup,
     };
@@ -215,6 +214,7 @@ const Mapper2Row = React.memo(props => {
           disabled={generateDisabled || isRequired || disabled}
           dataType={dataType}
           onBlur={handleGenerateBlur}
+          // isRequired={isRequired}
           />
       </div>
 
@@ -227,8 +227,6 @@ const Mapper2Row = React.memo(props => {
             value={extractValue}
             disabled={disabled}
             dataType={dataType}
-            importId={importId}
-            flowId={flowId}
             onBlur={handleExtractBlur}
             isLookup={isLookup}
             isHardCodedValue={isHardCodedValue}
@@ -243,11 +241,6 @@ const Mapper2Row = React.memo(props => {
         {(isLookup && !isStaticLookup) && <RightIcon title="Dynamic lookup" Icon={DynamicLookupIcon} />}
         {isHandlebarExp && !isLookup && <RightIcon title="Handlebars expression" Icon={HandlebarsExpressionIcon} />}
         {isHardCodedValue && !isLookup && <RightIcon title="Hard-coded" Icon={HardCodedIcon} />}
-        {/* {isRequired && (
-        <RightIcon
-          title="This field is required by the application you are importing into"
-          Icon={LockIcon} className={clsx({[classes.lockedIcon]: isLookup || isHandlebarExp || isHardCodedValue})} />
-        )} */}
         <Tooltip
           placement="bottom"
           title={(!generate && !generateDisabled) ? 'Enter destination field to configure settings' : ''}>
@@ -274,6 +267,12 @@ const Mapper2Row = React.memo(props => {
           className={classes.rowActionButton}>
           <AddIcon />
         </ActionButton>
+
+        {/* todo ashu delete button not visible after tooltip */}
+        {/* <Tooltip
+          placement="bottom"
+          title={isRequired ? 'This field is required by the application you are importing into' : ''}>
+          <div > */}
         <ActionButton
           data-test={`fieldMappingRemove-${nodeKey}`}
           aria-label="delete"
@@ -283,6 +282,9 @@ const Mapper2Row = React.memo(props => {
           className={classes.deleteMapping}>
           <TrashIcon />
         </ActionButton>
+        {/* </div>
+        </Tooltip> */}
+
       </div>
     </div>
   );
