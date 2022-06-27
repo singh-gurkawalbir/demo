@@ -78,11 +78,9 @@ function MyUserSettings() {
 
   const [isMFAEnabled, setIsMFAEnabled] = useState();
 
-  useNotifySetupSuccess({ mode: 'switch'});
-
   const handleEnableMFA = useCallback(() => {
     if (isMFASetupComplete) {
-      dispatch(actions.mfa.setup({ ...mfaUserSettings, enabled: !mfaEnabled}));
+      dispatch(actions.mfa.setup({ ...mfaUserSettings, enabled: !mfaEnabled, context: 'switch' }));
 
       return;
     }
@@ -143,6 +141,9 @@ function MFADetails() {
 export default function MFA() {
   const classes = useStyles();
   const infoTextMFA = 'MFA info';
+
+  // Deals with showing notification whenever mfa setup is updated
+  useNotifySetupSuccess();
 
   return (
     <div className={classes.root}>

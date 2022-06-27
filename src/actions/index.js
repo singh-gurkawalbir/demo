@@ -2363,6 +2363,8 @@ const mfa = {
   resetMobileCodeStatus: () => action(actionTypes.MFA.MOBILE_CODE.RESET),
   requestSessionInfo: () => action(actionTypes.MFA.SESSION_INFO.REQUEST),
   receivedSessionInfo: sessionInfo => action(actionTypes.MFA.SESSION_INFO.RECEIVED, { sessionInfo }),
+  addSetupContext: context => action(actionTypes.MFA.ADD_SETUP_CONTEXT, { context }),
+  clearSetupContext: () => action(actionTypes.MFA.CLEAR_SETUP_CONTEXT),
   clear: () => action(actionTypes.MFA.CLEAR),
 };
 

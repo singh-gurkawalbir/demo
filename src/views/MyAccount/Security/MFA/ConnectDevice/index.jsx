@@ -6,7 +6,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { Typography } from '@material-ui/core';
 import Stepper from '../Stepper';
 import HeaderWithHelpText from '../HeaderWithHelpText';
-import useNotifySetupSuccess from '../useNotifySetupSuccess';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
@@ -113,6 +112,7 @@ function ConnectAccountUserDevice() {
       _allowResetByUserId,
       trustDevice,
       enabled: true,
+      context: 'setup',
     };
 
     dispatch(actions.mfa.setup(payload));
@@ -148,7 +148,7 @@ function ConnectOwnerDevice() {
   const [trustDevice, setTrustDevice] = useState(false);
   const isMobileCodeVerified = useSelector(selectors.isMobileCodeVerified);
   const connectDevice = useCallback(() => {
-    dispatch(actions.mfa.setup({ trustDevice, enabled: true }));
+    dispatch(actions.mfa.setup({ trustDevice, enabled: true, context: 'setup'}));
   }, [dispatch, trustDevice]);
 
   return (
@@ -174,8 +174,6 @@ function ConnectOwnerDevice() {
 
 export default function ConnectDevice() {
   const isAccountOwner = useSelector(state => selectors.isAccountOwner(state));
-
-  useNotifySetupSuccess({ mode: 'connect' });
 
   if (isAccountOwner) {
     return <ConnectOwnerDevice />;

@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = { codes: {}, sessionInfo: {} }, action) => {
-  const { type, secretCode, status, error, sessionInfo, secretCodeError } = action;
+  const { type, secretCode, status, error, sessionInfo, secretCodeError, context } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -38,8 +38,15 @@ export default (state = { codes: {}, sessionInfo: {} }, action) => {
           data: sessionInfo,
         };
         break;
+      case actionTypes.MFA.ADD_SETUP_CONTEXT:
+        draft.context = context;
+        break;
+      case actionTypes.MFA.CLEAR_SETUP_CONTEXT:
+        delete draft.context;
+        break;
       case actionTypes.MFA.CLEAR:
         draft.codes = {};
+        delete draft.context;
         break;
       default:
     }
@@ -62,4 +69,6 @@ selectors.secretCodeError = state => state?.codes?.secretCodeError;
 
 selectors.sessionInfoStatus = state => state?.sessionInfo?.status;
 selectors.sessionInfo = state => state?.sessionInfo?.data;
+
+selectors.getSetupContext = state => state?.context;
 // #endregion

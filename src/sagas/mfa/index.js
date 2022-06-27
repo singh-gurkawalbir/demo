@@ -36,15 +36,18 @@ export function* requestUserSettings() {
 export function* setupMFA({ mfaConfig }) {
   yield put(actions.asyncTask.start(MFA_SETUP_ASYNC_KEY));
   try {
+    const { context, ...payload} = mfaConfig;
     const response = yield call(apiCallWithRetry, {
       path: '/mfa/setup',
       opts: {
-        body: mfaConfig,
+        body: payload,
         method: 'POST',
       },
     });
 
-    yield put(actions.mfa.receivedUserSettings(response));
+    // TODO: Remove setupComplete hardcode once BE changes are done
+    yield put(actions.mfa.receivedUserSettings({...response, setupComplete: context === 'setup'}));
+    yield put(actions.mfa.addSetupContext(context));
     yield put(actions.asyncTask.success(MFA_SETUP_ASYNC_KEY));
   } catch (error) {
     yield put(actions.asyncTask.failed(MFA_SETUP_ASYNC_KEY));

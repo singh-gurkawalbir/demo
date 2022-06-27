@@ -114,7 +114,6 @@ export default function EditMFAConfiguration() {
   const mfaUserSettings = useSelector(selectors.mfaUserSettings);
   const isAccountOwner = useSelector(state => selectors.isAccountOwner(state));
   const areUserSettingsLoaded = useSelector(selectors.areUserSettingsLoaded);
-
   const primaryAccountOptions = useMemo(() => (
     [{
       items: primaryAccounts.map(
@@ -168,7 +167,7 @@ export default function EditMFAConfiguration() {
   const updateMFA = useCallback(values => {
     const { _allowResetByUserId } = values;
 
-    dispatch(actions.mfa.setup({ ...mfaUserSettings, _allowResetByUserId}));
+    dispatch(actions.mfa.setup({ ...mfaUserSettings, _allowResetByUserId, context: 'update'}));
   }, [dispatch, mfaUserSettings]);
 
   useEffect(() => () => dispatch(actions.mfa.clear()), [dispatch]);
