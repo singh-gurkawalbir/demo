@@ -6555,7 +6555,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
     return false;
   }
 
-  if (['bigquery', 'redshift', 'snowflake'].includes(connection?.rdbms?.type)) {
+  if (['bigquery', 'redshift'].includes(connection?.rdbms?.type)) {
     return false;
   }
 
