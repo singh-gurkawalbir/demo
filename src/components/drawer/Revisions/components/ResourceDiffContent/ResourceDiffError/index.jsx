@@ -34,6 +34,15 @@ export default function ResourceDiffError({ integrationId, type, parentUrl }) {
       </NotificationToaster>
     );
   }
+  if (type === REVISION_TYPES.REVERT) {
+    return (
+      <NotificationToaster variant="error" size="large">
+        <Typography variant="body2">
+          Your revert is not allowed. Your operation is already on the same revision you&apos;re trying to revert to.
+        </Typography>
+      </NotificationToaster>
+    );
+  }
 
   return <div className={classes.error}> {revisionResourceDiffError} </div>;
 }
