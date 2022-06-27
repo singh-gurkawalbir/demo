@@ -59,11 +59,10 @@ const getExportMetadata = (connectorMetadata, connectionVersion) => {
     return exportData;
   }
   const exportPreConfiguredFields = connectorMetadata.supportedBy?.export?.preConfiguredFields;
-  const pagingField = exportPreConfiguredFields?.find(f => f.path === 'paging');
-  const pagingValues = pagingField?.values || [];
 
-  // eslint-disable-next-line prefer-destructuring
-  exportData.paging = pagingValues?.[0];
+  exportPreConfiguredFields.forEach(field => {
+    exportData[field.path] = field.values?.[0];
+  });
 
   let versions = connectorMetadata.versions?.map(v => ({version: v.name, _id: v._id}));
 
@@ -79,17 +78,15 @@ const getExportMetadata = (connectorMetadata, connectionVersion) => {
         exportData.versions[i].resources = [];
       }
       exportData.versions[i].resources = filteredHttpResources.map(httpResource => {
-        const preConfiguredFields = httpResource.supportedBy?.export?.preConfiguredFields;
-        const resourcePath = preConfiguredFields?.find(f => f.path === 'resourcePath')?.values?.[0];
+        const exportPreConfiguredFields = _.cloneDeep(httpResource.supportedBy?.export?.preConfiguredFields);
 
         return {
-          id: httpResource._id, name: httpResource.name, resourcePath,
+          id: httpResource._id, name: httpResource.name, exportPreConfiguredFields,
         };
       });
       if (exportData.versions[i].resources.length) {
         exportData.versions[i].resources.forEach((r, j) => {
           const filteredHttpEndpoints = httpEndpoints.filter(e => e._httpConnectorResourceIds?.includes(r.id));
-          const {resourcePath} = exportData.versions[i].resources[j];
 
           if (filteredHttpEndpoints.length) {
             if (!exportData.versions[i].resources[j].endpoints) {
@@ -98,12 +95,7 @@ const getExportMetadata = (connectorMetadata, connectionVersion) => {
             filteredHttpEndpoints.forEach(httpEndpoint => {
               if (httpEndpoint.supportedBy?.type === 'export') {
                 const {fieldsUserMustSet} = httpEndpoint.supportedBy;
-                const {preConfiguredFields} = httpEndpoint.supportedBy;
                 const supportedExportTypes = fieldsUserMustSet?.find(f => f.path === 'type')?.values;
-                const epResourcePath = preConfiguredFields?.find(f => f.path === 'resourcePath')?.values?.[0];
-
-                const delta = httpEndpoint.supportedBy.preConfiguredFields?.find(f => f.path === 'delta')?.values?.[0];
-                const headers = httpEndpoint.supportedBy.preConfiguredFields?.find(f => f.path === 'headers')?.values;
 
                 const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.fieldType || 'textarea' }));
                 const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.name, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.fieldType || 'input' }));
@@ -114,12 +106,22 @@ const getExportMetadata = (connectorMetadata, connectionVersion) => {
                 }
 
                 const ep = {
-                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, response: {resourcePath: epResourcePath || resourcePath}, supportedExportTypes, delta, queryParameters, pathParameters, doesNotSupportPaging,
+                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, supportedExportTypes, queryParameters, pathParameters, doesNotSupportPaging,
                 };
 
-                if (headers) {
-                  ep.headers = headers;
-                }
+                r.exportPreConfiguredFields?.forEach(field => {
+                  ep[field.path] = field.values?.[0];
+                });
+
+                httpEndpoint.supportedBy.preConfiguredFields?.forEach(field => {
+                  ep[field.path] = field.values?.[0];
+                });
+                httpEndpoint.supportedBy.fieldsToUnset?.forEach(field => {
+                  if (ep[field.path]) {
+                    ep[field.path] = undefined;
+                    delete ep[field.path];
+                  }
+                });
 
                 if (versionLocation === 'uri' && !connectionVersion) {
                   ep.url = `/${v.version}${httpEndpoint.relativeURI}`;
@@ -129,6 +131,7 @@ const getExportMetadata = (connectorMetadata, connectionVersion) => {
               }
             });
           }
+          delete exportData.versions[i].resources[j].exportPreConfiguredFields;
         });
       }
     }
@@ -145,6 +148,11 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
     },
 
   };
+  const importPreConfiguredFields = connectorMetadata.supportedBy?.import?.preConfiguredFields;
+
+  importPreConfiguredFields.forEach(field => {
+    importData[field.path] = field.values?.[0];
+  });
   let versions = connectorMetadata.versions?.map(v => ({version: v.name, _id: v._id}));
 
   if (connectionVersion) {
@@ -160,11 +168,13 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
         importData.versions[i].resources = [];
       }
       importData.versions[i].resources = filteredHttpResources.map(httpResource => {
-        const resourcePath = httpResource.supportedBy?.import?.preConfiguredFields?.find(f => f.path === 'resourcePath')?.values?.[0];
+        const resourcePreConfiguredFields = _.cloneDeep(httpResource.supportedBy?.import?.preConfiguredFields);
+        const resourceFieldsUserMustSet = _.cloneDeep(httpResource.supportedBy?.import?.fieldsUserMustSet);
+
         const sampleData = httpResource.resourceFields && convertResourceFieldstoSampleData(httpResource.resourceFields);
 
         return {
-          id: httpResource._id, name: httpResource.name, resourcePath, sampleData,
+          id: httpResource._id, name: httpResource.name, resourcePreConfiguredFields, sampleData, resourceFieldsUserMustSet,
         };
       });
       if (importData.versions[i].resources.length) {
@@ -178,26 +188,9 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
             filteredHttpEndpoints.forEach(httpEndpoint => {
               if (httpEndpoint?.supportedBy?.type === 'import') {
                 const requiredMappings = [];
-                let supportIgnoreExisting;
-                let supportIgnoreMissing;
-                let askForHowToGetIdentifier;
                 let parameters = [];
-                let body;
                 let howToFindIdentifier;
 
-                httpEndpoint.supportedBy.fieldsUserMustSet?.forEach(f => {
-                  if (f.path === 'ignoreExisting') {
-                    supportIgnoreExisting = true;
-                  } else if (f.path === 'ignoreMissing') {
-                    supportIgnoreMissing = true;
-                  } else if (f.path === 'askForHowToGetIdentifier') {
-                    askForHowToGetIdentifier = true;
-                  } else if (f.path === 'askForHowToGetIdentifier') {
-                    body = f.values;
-                  } else {
-                    requiredMappings.push(f.path?.replace('mapping.fields.generate.', ''));
-                  }
-                });
                 if (httpEndpoint.supportedBy.pathParameterToIdentifyExisting) {
                   parameters = [
                     {
@@ -233,17 +226,51 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
                   }
                 }
                 const ep = {
-                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, requiredMappings, parameters, howToFindIdentifier, supportIgnoreExisting, supportIgnoreMissing, askForHowToGetIdentifier, body,
+                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, parameters, howToFindIdentifier, sampleData: r.sampleData,
                 };
+
+                r?.resourceFieldsUserMustSet?.forEach(f => {
+                  ep[f.path] = f.values?.[0] || true;
+                });
+                r?.resourcePreConfiguredFields?.forEach(f => {
+                  ep[f.path] = f.values?.[0] || true;
+                });
+
+                httpEndpoint.supportedBy.fieldsUserMustSet?.forEach(f => {
+                  if (f.path.includes('mapping.fields.generate.')) {
+                    requiredMappings.push(f.path?.replace('mapping.fields.generate.', ''));
+                  } else {
+                    ep[f.path] = f.values?.[0] || true;
+                  }
+                });
+                httpEndpoint.supportedBy.preConfiguredFields?.forEach(f => {
+                  ep[f.path] = f.values?.[0];
+                });
+                httpEndpoint.supportedBy.fieldsToUnset?.forEach(f => {
+                  ep[f.path] = undefined;
+                  delete ep[f.path];
+                });
 
                 if (versionLocation === 'uri' && !connectionVersion) {
                   ep.url = `/${v.version}${httpEndpoint.relativeURI}`;
+                }
+                if (ep.ignoreExisting) {
+                  ep.supportIgnoreExisting = true;
+                }
+                if (ep.ignoreMissing) {
+                  ep.supportIgnoreMissing = true;
+                }
+                if (requiredMappings) {
+                  ep.requiredMappings = requiredMappings;
                 }
 
                 importData.versions[i].resources[j].operations.push(ep);
               }
             });
           }
+          delete importData.versions[i].resources[j].sampleData;
+          delete importData.versions[i].resources[j].resourcePreConfiguredFields;
+          delete importData.versions[i].resources[j].resourceFieldsUserMustSet;
         });
       }
     }
