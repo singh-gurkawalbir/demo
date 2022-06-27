@@ -553,6 +553,29 @@ describe('AFE region selectors test cases', () => {
       };
       expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(false);
     });
+    test('should return true if it is a import and its connection is of snowflake rdbms type', () => {
+      state.session.editors[editorId] = {
+        id: editorId,
+        resourceType: 'imports',
+        resourceId: '123',
+        fieldId: 'ftp.body',
+      };
+      state.data.resources = {
+        imports: [{
+          _id: '123',
+          adaptorType: 'RESTImport',
+          _connectionId: 'conn-id',
+        }],
+        connections: [{
+          _id: 'conn-id',
+          type: 'rdbms',
+          rdbms: {
+            type: 'snowflake',
+          },
+        }],
+      };
+      expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(true);
+    });
     test('should return true for http body or sql fields', () => {
       state.session.editors[editorId] = {
         id: editorId,
