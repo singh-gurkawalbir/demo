@@ -47,7 +47,7 @@ export default function SSOUserSettings() {
   const primaryAccountOptions = useMemo(() => (
     [{
       items: ssoPrimaryAccounts.map(
-        acc => ({label: acc.ownerUser?.name, value: acc.ownerUser?._id})
+        acc => ({label: acc.ownerUser?.company, value: acc.ownerUser?._id})
       ),
     }]
   ), [ssoPrimaryAccounts]);
