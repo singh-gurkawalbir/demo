@@ -100,9 +100,9 @@ export function* invokeProcessor({ editorId, processor, body }) {
       const v2TreeData = (yield select(selectors.mapping))?.v2TreeData;
 
       // give preference to v2 mappings always
-      if (hasV2MappingsInTreeData(v2TreeData)) {
+      if (hasV2MappingsInTreeData(v2TreeData, lookups)) {
         const connection = yield select(selectors.resource, 'connections', importResource?._connectionId);
-        const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
+        const _mappingsV2 = buildV2MappingsFromTree({v2TreeData, lookups});
 
         _mappings = {mappings: _mappingsV2, lookups};
         options.connection = connection;

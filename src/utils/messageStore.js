@@ -1,6 +1,7 @@
 const messages = {
   CONTACT_SALES_MESSAGE: 'We will contact you soon to schedule your demo and discuss your business needs. In the meantime,',
   INTEGRATION_DELETE_VALIDATE: 'All Flows within an integration tile must be removed before the integration tile can be deleted.',
+  INTEGRATION_WITH_CONNECTORS_DELETE_VALIDATE: 'The integration is being actively used by an integration app. Please ensure no integration app resource is using the integration before deleting',
   FLOW_GROUP_DELETE_MESSAGE: 'Only the flow group will be deleted. Its flows will be moved into “Unassigned”.',
   LICENSE_UPGRADE_REQUEST: 'We will contact you to discuss your add-on request.',
   NO_PENDING_QUEUED_JOBS: 'This connection queue does not have any pending jobs. You can use the connection drop-down in the top right to see the status of a different connection queue.',
@@ -42,9 +43,9 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   <br><br>Are you sure you want to continue?`,
   MAPPER1_REFERENCE_INFO: 'Your 1.0 mappings are for reference only and will be ignored. Delete all 2.0 mappings to use 1.0 mappings instead.',
   MAPPER2_BANNER_WARNING: 'Any 2.0 mappings that you enter will be applied when you click <b>Save</b>, even if you toggle back to Mapper 1.0. To apply 1.0 mappings instead, delete all mappings from Mapper 2.0 and click <b>Save</b>. <b><a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/4536629083035-Mapper-2-0"> Mapper 2.0 advantages</a></b>',
-  LOOKUP_SOURCE_TOOLTIP: 'Lookups do not provide source record field list',
-  HARD_CODED_SOURCE_TOOLTIP: 'Hard-coded values do not provide source record field list',
-  HANDLEBARS_SOURCE_TOOLTIP: 'Handlebars expression do not provide source record field list',
+  LOOKUP_SOURCE_TOOLTIP: 'Lookups do not provide source field list',
+  HARD_CODED_SOURCE_TOOLTIP: 'Hard-coded values do not provide source field list',
+  HANDLEBARS_SOURCE_TOOLTIP: 'Handlebars expression do not provide source field list',
   // #endregion
   // #region LCM
   REVISION_IN_PROGRESS_ERROR: 'You have a pull, snapshot, or revert in progress.',

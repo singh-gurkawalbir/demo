@@ -232,6 +232,7 @@ export default {
     if (!retValues['/configureAsyncHelper']) {
       retValues['/http/_asyncHelperId'] = undefined;
     }
+    retValues['/adaptorType'] = 'HTTPExport';
 
     return {
       ...retValues,

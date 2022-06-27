@@ -739,7 +739,7 @@ export function getIAFlowSettings(integration, flowId, childId) {
   return allFlows.find(flow => flow._id === flowId) || emptyObject;
 }
 
-export function getFlowResources(flows, exports, imports, flowId) {
+export function getFlowResources(flows = [], exports = [], imports = [], flowId) {
   const resources = [];
   const flow = (flows || []).find(f => f._id === flowId);
 
@@ -1005,6 +1005,7 @@ export function populateRestSchema(exportDoc = {}) {
 
     exportDoc._rest = restSubDoc;
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.warn('exception occured while forming REST document', e);
     // TODO: should we change formType to http when conversion fails, so the export can open in HTTP form?
   }

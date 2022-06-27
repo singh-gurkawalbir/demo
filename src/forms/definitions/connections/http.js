@@ -1,6 +1,18 @@
+import {
+  updateFinalMetadataWithHttpFramework,
+} from '../../../sagas/utils';
+import { updateHTTPFrameworkFormValues } from '../../metaDataUtils/fileUtil';
+
 export default {
-  preSave: formValues => {
-    const newValues = { ...formValues};
+  init: (fieldMeta, resource, flow, httpConnector) => {
+    if (!resource?._httpConnectorId && !resource?.http?._httpConnectorId) {
+      return fieldMeta;
+    }
+
+    return updateFinalMetadataWithHttpFramework(fieldMeta, httpConnector, resource, true);
+  },
+  preSave: (formValues, resource, options) => {
+    let newValues = { ...formValues};
 
     if (newValues['/mode'] === 'cloud') {
       newValues['/_agentId'] = undefined;
@@ -103,6 +115,14 @@ export default {
       newValues['/http/auth/oauth'] = undefined;
       delete newValues['/http/auth/oauth/callbackURL'];
       delete newValues['/http/auth/oauth/clientCredentialsLocation'];
+      delete newValues['/http/auth/oauth/accessTokenBody'];
+      delete newValues['/http/auth/oauth/authURI'];
+      delete newValues['/http/auth/oauth/grantType'];
+      delete newValues['/http/auth/oauth/tokenURI'];
+      delete newValues['/http/auth/oauth/refreshBody'];
+
+      delete newValues['/http/auth/oauth/scope'];
+      delete newValues['/http/auth/oauth/scopeDelimiter'];
 
       newValues['/http/auth/token'] = undefined;
       delete newValues['/http/auth/token/token'];
@@ -154,11 +174,18 @@ export default {
     delete newValues['/http/auth/wsse/username'];
     delete newValues['/http/auth/wsse/password'];
     delete newValues['/http/auth/wsse/headerName'];
+    if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
+      newValues = updateHTTPFrameworkFormValues(newValues, resource, options?.httpConnector);
+    }
+    newValues['/http/formType'] = 'http';
 
     return newValues;
   },
   fieldMap: {
     name: { fieldId: 'name' },
+    connectionFormView: {
+      fieldId: 'connectionFormView',
+    },
     mode: {
       id: 'mode',
       type: 'radiogroup',
@@ -340,6 +367,7 @@ export default {
         label: 'General',
         fields: [
           'name',
+          'connectionFormView',
           'application',
           'mode',
           '_agentId',

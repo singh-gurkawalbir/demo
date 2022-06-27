@@ -1,4 +1,4 @@
-import { URI_VALIDATION_PATTERN, RDBMS_TYPES} from '../../../constants';
+import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AWS_REGIONS_LIST} from '../../../constants';
 import { isNewId, getDomainUrl, getAssistantFromResource, rdbmsSubTypeToAppType, rdbmsAppTypeToSubType } from '../../../utils/resource';
 import { applicationsList} from '../../../constants/applications';
 import { getConstantContactVersion } from '../../../utils/connections';
@@ -259,6 +259,39 @@ export default {
     fieldId: 'rdbms.bigquery.dataset',
     label: 'Dataset',
     type: 'text',
+    required: true,
+  },
+  'rdbms.redshift.region': {
+    isLoggable: true,
+    type: 'select',
+    label: 'Region',
+    required: true,
+    options: [
+      {
+        items: AWS_REGIONS_LIST,
+      },
+    ],
+  },
+  'rdbms.redshift.aws.accessKeyId': {
+    id: 'rdbms.redshift.aws.accessKeyId',
+    type: 'text',
+    label: 'Access Key Id',
+    required: true,
+  },
+  'rdbms.redshift.aws.secretAccessKey': {
+    id: 'rdbms.redshift.aws.secretAccessKey',
+    type: 'text',
+    label: 'Secret Access Key',
+    defaultValue: '',
+    required: true,
+    inputType: 'password',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+  },
+  'rdbms.redshift.clusterIdentifier': {
+    isLoggable: true,
+    type: 'text',
+    label: 'Cluster name',
     required: true,
   },
   // #endregion rdbms
@@ -2481,5 +2514,22 @@ export default {
         ],
       },
     ],
+  },
+  connectionFormView: {
+    isLoggable: true,
+    id: 'connectionFormView',
+    type: 'connectionFormView',
+    label: 'Form view',
+    required: true,
+    resourceType: 'connections',
+    visible: r => r?._httpConnectorId || r?.http?._httpConnectorId,
+    defaultValue: r => {
+      if (!r) return 'false';
+      if (!r.http) return 'false';
+      if (!r.http.formType) return 'false';
+
+      return r.http?.formType === 'assistant' ? 'false' : 'true';
+    },
+    helpKey: 'formView',
   },
 };

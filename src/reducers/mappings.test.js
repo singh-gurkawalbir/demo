@@ -843,7 +843,28 @@ describe('Mappings region selector testcases', () => {
 
       expect(selectors.isMapper2Supported(state)).toEqual(false);
     });
-    test('should return false for non-http/rest imports', () => {
+    test('should return false for db imports', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              adaptorType: 'RDBMSImport',
+            }],
+          },
+        },
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+            },
+          },
+        },
+      };
+
+      expect(selectors.isMapper2Supported(state)).toEqual(false);
+    });
+    test('should return true for file imports', () => {
       const state = {
         data: {
           resources: {
@@ -862,7 +883,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.isMapper2Supported(state)).toEqual(false);
+      expect(selectors.isMapper2Supported(state)).toEqual(true);
     });
     test('should return true for http/rest import', () => {
       const state = {

@@ -158,7 +158,7 @@ export default function JobTable({
     <>
       {isFlowJobsCollectionLoading ? (
 
-        <Spinner centerAll />
+        <Spinner loading size="large" />
 
       ) : (
         <div className={classes.tableContainer}>

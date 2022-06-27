@@ -647,3 +647,31 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
 
   return null;
 };
+export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnector) => {
+  const retValues = { ...formValues };
+
+  if (retValues['/http/unencrypted/version']) {
+    retValues['/http/baseURI'] += `/${retValues['/http/unencrypted/version']}`;
+  } else {
+    const versionRelativeURI = httpConnector.versions?.[0]?.name;
+
+    // Regex is used here to remove continuous multiple slashes if there are any
+    retValues['/http/ping/relativeURI'] = `/${versionRelativeURI}/${retValues['/http/ping/relativeURI']}`.replace(/([^:]\/)\/+/g, '$1');
+  }
+  retValues['/http/_httpConnectorId'] = httpConnector?._id;
+  if (retValues['/http/unencrypted/version']) {
+    const version = httpConnector.versions?.find(ver => ver.name === retValues['/http/unencrypted/version']);
+
+    retValues['/http/_httpConnectorVersionId'] = version?._id;
+  } else {
+    retValues['/http/_httpConnectorVersionId'] = undefined;
+  }
+  if (!resource?._id || isNewId(resource?._id)) {
+    const settingFields = httpConnector?.supportedBy?.connection?.preConfiguredFields?.find(field => field.path === 'settingsForm');
+    const fieldMap = settingFields?.values?.[0];
+
+    if (fieldMap) { retValues['/settingsForm'] = {form: fieldMap}; }
+  }
+
+  return retValues;
+};

@@ -31,8 +31,8 @@ export default function InputOutputTitle({title, helpKey}) {
   const message = useSelector(state => {
     const {isGroupedSampleData, isGroupedOutput} = selectors.mapping(state) || {};
 
-    const inputTitle = isGroupedSampleData ? 'Row-based data' : 'Record-based data';
-    const outputTitle = isGroupedOutput ? 'Row-based data' : 'Record-based data';
+    const inputTitle = isGroupedSampleData ? 'Source rows [ ]' : 'Source record { }';
+    const outputTitle = isGroupedOutput ? 'Destination rows [ ]' : 'Destination record { }';
 
     return title === 'Input' ? inputTitle : outputTitle;
   });
