@@ -7,7 +7,6 @@ import ReAuthModal from './ReAuthModal';
 import HeaderWithHelpText from './HeaderWithHelpText';
 import OutlinedButton from '../../../../components/Buttons/OutlinedButton';
 import { selectors } from '../../../../reducers';
-import { TextButton } from '../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({
   scanCodeWrapper: {
@@ -22,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
   },
   qrCode: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
   },
   secretCodeMessage: {
     marginTop: theme.spacing(2),
@@ -41,23 +40,21 @@ function ViewSecretCode() {
   return (
     <>
       <div >
-        {
-          showSecretCode ? (
-            <div className={classes.scanCodeWrapper}>
-              <Typography variant="body2">Can&apos;t scan your QR code? Enter the following account and code in your verification app:</Typography>
+        Can&apos;t scan your QR code? Authenticate with your account and secret key.
+        <div>
+          {
+            showSecretCode ? (
               <div>
                 <div className={classes.secretCodeValue}>
                   <Typography variant="body2">Account: Celigo</Typography>
-                  <Typography variant="body2">Code: {secretCode}</Typography>
+                  <Typography variant="body2">Secret key: {secretCode}</Typography>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className={classes.secretCodeMessage}>
-              Can&apos;t scan your QR code? <TextButton color="primary" onClick={() => setShowSecretCodeAuthModal(true)}>Click here </TextButton>
-            </div>
-          )
-        }
+            ) : (
+              <OutlinedButton className={classes.qrCode} onClick={() => setShowSecretCodeAuthModal(true)}> View account &amp; secret key </OutlinedButton>
+            )
+          }
+        </div>
       </div>
       {showSecretCodeAuthModal && (<ReAuthModal onClose={handleClose} />)}
     </>
