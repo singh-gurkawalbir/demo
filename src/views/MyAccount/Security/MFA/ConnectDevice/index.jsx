@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { Typography } from '@material-ui/core';
 import Stepper from '../Stepper';
 import HeaderWithHelpText from '../HeaderWithHelpText';
 import useNotifySetupSuccess from '../useNotifySetupSuccess';
@@ -19,6 +20,12 @@ const useStyles = makeStyles(theme => ({
   connect: {
     marginTop: theme.spacing(1),
   },
+  verificationLabel: {
+    '& .MuiFormLabel-root': {
+      fontSize: 17,
+      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    },
+  },
 }));
 
 function TrustDeviceStep({ trustDevice, setTrustDevice }) {
@@ -27,7 +34,7 @@ function TrustDeviceStep({ trustDevice, setTrustDevice }) {
   return (
     <>
       <HeaderWithHelpText helpKey="mfa.trustDevice" title="Trust device">
-        <span>Trust this device you&apos;ve used to sign into integrator.io</span>
+        <Typography variant="h5">Trust this device you&apos;ve used to sign into integrator.io</Typography>
       </HeaderWithHelpText>
       <div>
         <FormControlLabel
@@ -47,7 +54,7 @@ function TrustDeviceStep({ trustDevice, setTrustDevice }) {
   );
 }
 
-function PrimaryAccountSelect() {
+function PrimaryAccountSelect({className}) {
   const primaryAccounts = useSelector(selectors.primaryAccounts);
   const selectedPrimaryAccount = useSelector(selectors.selectedPrimaryAccount);
   const isMobileCodeVerified = useSelector(selectors.isMobileCodeVerified);
@@ -88,7 +95,7 @@ function PrimaryAccountSelect() {
 
   useFormInitWithPermissions({ fieldMeta, formKey: PRIMARY_ACCOUNT_FORM_KEY, remountKey, disabled: !isMobileCodeVerified });
 
-  return <DynaForm formKey={PRIMARY_ACCOUNT_FORM_KEY} />;
+  return <DynaForm formKey={PRIMARY_ACCOUNT_FORM_KEY} className={className} />;
 }
 
 function ConnectAccountUserDevice() {
@@ -114,14 +121,14 @@ function ConnectAccountUserDevice() {
   return (
     <>
       <Stepper index={4}>
-        <PrimaryAccountSelect />
+        <PrimaryAccountSelect className={classes.verificationLabel} />
       </Stepper>
       <Stepper index={5}>
         <TrustDeviceStep trustDevice={trustDevice} setTrustDevice={setTrustDevice} />
       </Stepper>
       <Stepper index={6} isLast>
         <HeaderWithHelpText title="Connect your mobile device" helpKey="mfa.connect">
-          <b> Connect your mobile device &nbsp;*</b>
+          <Typography variant="h5"> Connect your mobile device &nbsp;*</Typography>
         </HeaderWithHelpText>
         <div className={classes.connect}>
           <OutlinedButton

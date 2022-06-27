@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { FormControl, FormLabel, Typography } from '@material-ui/core';
+import { FormControl, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../reducers';
 import DynaText from '../DynaText';
@@ -36,7 +36,7 @@ export default function DynaMFAMobileCode(props) {
         </FormLabel>
         <FieldHelp {...props} />
       </div>
-      <Typography variant="body2" className={classes.desc}>Enter the 6-digit code from your app and click the <b>Verify</b> button below. </Typography>
+      <div className={classes.desc}>Enter the 6-digit code from your app and click the <b>Verify</b> button below. </div>
       <DynaText {...rest} id={id} />
       <VerifyTag isValid={props.isValid} />
     </FormControl>
