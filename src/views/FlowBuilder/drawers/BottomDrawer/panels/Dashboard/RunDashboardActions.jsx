@@ -86,7 +86,7 @@ export default function RunDashboardActions({ flowId }) {
 
   const handleCancel = useCallback(() => {
     confirmDialog({
-      title: 'Confirm cancel run?',
+      title: 'Confirm cancel run',
       message:
           'You have unsaved changes that will be lost if you continue. Canceling this job will delete all associated data currently queued for processing.',
       buttons: [
