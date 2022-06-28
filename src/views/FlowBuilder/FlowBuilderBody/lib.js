@@ -2,6 +2,7 @@
 import { nanoid } from 'nanoid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
+import shortid from 'shortid';
 import { isVirtualRouter } from '../../../utils/flows/flowbuilder';
 import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
 
@@ -142,6 +143,7 @@ export function getAllFlowBranches(flow) {
       if (!isVirtualRouter(router)) {
         router.branches?.forEach((branch = {}, branchIndex) => {
           branches.push({
+            id: shortid(),
             name: branch.name,
             path: `/routers/${routerIndex}/branches/${branchIndex}`,
           });

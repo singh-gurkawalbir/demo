@@ -6,6 +6,21 @@ import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '..
 import { generateId } from '../string';
 import { setObjectValue } from '../json';
 
+export const shortId = () => generateId(6);
+export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
+export const generateEmptyRouter = isVirtual => ({
+  id: shortId(),
+  ...(!isVirtual && { routeRecordsTo: 'first_matching_branch'}),
+  ...(!isVirtual && { routeRecordsUsing: 'input_filters'}),
+  branches: [{
+    pageProcessors: [{setupInProgress: true}],
+  }],
+  ...(!isVirtual && { script: {
+    _scriptId: undefined,
+    function: undefined,
+  } }),
+});
+
 export const getAllRouterPaths = flow => {
   const { routers = [] } = flow || {};
   const paths = [];
@@ -40,13 +55,28 @@ export const addPageGenerators = flow => {
 export const addPageProcessor = (flow, insertAtIndex, branchPath) => {
   if (!flow) return;
   if (flow.routers?.length) {
-    const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
+    const [, routerIndex, branchIndex] = BranchPathRegex.exec(branchPath);
 
-    if (insertAtIndex === -1) {
-      setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, {setupInProgress: true}]);
+    if (+routerIndex === -1 && +branchIndex === -1) {
+      const firstRouter = flow.routers[0];
+
+      if (isVirtualRouter(firstRouter) && !firstRouter.branches[0].pageProcessors?.length) {
+        flow.routers[0].branches[0].pageProcessors = [{setupInProgress: true}];
+      } else {
+        const newRouter = generateEmptyRouter(true);
+
+        newRouter.branches[0].nextRouterId = flow.routers[0].id;
+        flow.routers = [newRouter, ...flow.routers];
+      }
     } else {
-      pageProcessors.splice(insertAtIndex, 0, {setupInProgress: true});
-      setObjectValue(flow, `${branchPath}/pageProcessors`, pageProcessors);
+      const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
+
+      if (insertAtIndex === -1) {
+        setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, {setupInProgress: true}]);
+      } else {
+        pageProcessors.splice(insertAtIndex, 0, {setupInProgress: true});
+        setObjectValue(flow, `${branchPath}/pageProcessors`, pageProcessors);
+      }
     }
   } else {
     if (!flow.pageProcessors || !flow.pageProcessors.length) {
@@ -127,13 +157,10 @@ export function generateDefaultEdge(source, target, {routerIndex = 0, branchInde
     type: 'default',
   };
 }
-export const shortId = () => generateId(6);
 
 export const getSomePg = _exportId => ({_exportId, skipRetries: true, id: _exportId});
 export const getSomePpImport = _importId =>
   ({responseMapping: {fields: [], lists: []}, type: 'import', _importId});
-
-export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
 
 export const generateRouterNode = (router, routerIndex) => ({
   id: router?.id || shortId(),
@@ -174,19 +201,6 @@ export const generateBranch = () => {
   };
 };
 
-export const generateEmptyRouter = isVirtual => ({
-  id: shortId(),
-  ...(!isVirtual && { routeRecordsTo: 'first_matching_branch'}),
-  ...(!isVirtual && { routeRecordsUsing: 'input_filters'}),
-  branches: [{
-    pageProcessors: [{setupInProgress: true}],
-  }],
-  ...(!isVirtual && { script: {
-    _scriptId: undefined,
-    function: undefined,
-  } }),
-});
-
 export const initializeFlowForReactFlow = flowDoc => {
   if (!flowDoc) return flowDoc;
   const flow = cloneDeep(flowDoc);
@@ -222,7 +236,7 @@ export const initializeFlowForReactFlow = flowDoc => {
 
 // Note 'targeId' can be either a page processor Id if the flow schema is linear (old schema)
 // or it can be a router Id if the flow schema represents a branched flow.
-const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId, isReadOnlyMode) => {
+const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId, isReadOnlyMode, isFirstRouterVirtual) => {
   if (!pageGenerators || !pageGenerators.length || !targetId) {
     return [];
   }
@@ -232,8 +246,14 @@ const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId, isReadOnly
     type: GRAPH_ELEMENTS_TYPE.PG_STEP,
     data: {...pg, path: `/pageGenerators/${index}`, hideDelete },
   }));
+  let routerIndex = -1;
+  let branchIndex = -1;
 
-  const edges = nodes.map(node => generateDefaultEdge(node.id, targetId));
+  if (isFirstRouterVirtual) {
+    routerIndex = 0;
+    branchIndex = 0;
+  }
+  const edges = nodes.map(node => generateDefaultEdge(node.id, targetId, {routerIndex, branchIndex}));
 
   return [...nodes, ...edges];
 };
@@ -367,15 +387,17 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
   const {pageGenerators = [], routers = [], _connectorId} = flow;
   const isReadOnlyMode = !!_connectorId || isViewMode;
   let firstPPId = routers[0].id;
+  let isFirstRouterVirtual = false;
 
   if (isVirtualRouter(routers[0])) {
+    isFirstRouterVirtual = true;
     if (routers[0].branches[0].pageProcessors.length) {
       firstPPId = routers[0].branches[0].pageProcessors[0].id;
     } else if (routers[0].branches[0].nextRouterId) {
       firstPPId = routers[0].branches[0].nextRouterId;
     }
   }
-  const elements = [...generatePageGeneratorNodesAndEdges(pageGenerators, firstPPId, isReadOnlyMode)];
+  const elements = [...generatePageGeneratorNodesAndEdges(pageGenerators, firstPPId, isReadOnlyMode, isFirstRouterVirtual)];
   const routerVisited = {};
   const routersArr = [...routers];
   const populateRouterElements = router => {
@@ -704,8 +726,16 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
   const edge = elementsMap[edgeId];
   const isInsertingFirstRouter = elementsMap[edge.source]?.type === GRAPH_ELEMENTS_TYPE.PG_STEP && elementsMap[edge.target]?.type === GRAPH_ELEMENTS_TYPE.ROUTER;
   const branchPath = edge.data.path;
-  const processorArray = cloneDeep(jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`));
-  const nextRouterId = jsonPatch.getValueByPointer(flow, `${branchPath}/nextRouterId`);
+  let processorArray;
+  let nextRouterId;
+
+  if (isInsertingFirstRouter) {
+    processorArray = [];
+    nextRouterId = flow.routers[0].id;
+  } else {
+    processorArray = cloneDeep(jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`));
+    nextRouterId = jsonPatch.getValueByPointer(flow, `${branchPath}/nextRouterId`);
+  }
 
   const flowClone = cloneDeep(originalFlow) || {};
   const insertionIndex = processorArray.findIndex(pp => pp.id === edge.target);
@@ -730,7 +760,7 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
   }
 
   router.branches[0].pageProcessors = secondHalf;
-  router.branches[0].nextRouterId = isInsertingFirstRouter ? flow.routers[0].id : nextRouterId;
+  router.branches[0].nextRouterId = nextRouterId;
   if (isInsertingFirstRouter) {
     flowClone.routers = [router, ...flowClone.routers];
   } else {
