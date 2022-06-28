@@ -1080,3 +1080,12 @@ export const AUDIT_LOGS_RANGE_FILTERS = [
   {id: 'last30days', label: 'Last 30 Days'},
   {id: 'custom', label: 'Custom'},
 ];
+
+export const finalSuccessMediaType = (formValues, connection) => {
+  const overridenSuccessMediaType = formValues?.['/http/successMediaType'];
+
+  if (overridenSuccessMediaType) return overridenSuccessMediaType;
+  const { mediaType, successMediaType } = connection?.http || emptyObject;
+
+  return successMediaType || mediaType;
+};
