@@ -84,6 +84,16 @@ const useStyles = makeStyles(theme => ({
     height: theme.spacing(3),
     padding: 0,
   },
+  drawerToggleSandbox: {
+    '& svg': {
+      fill: theme.palette.background.paper,
+    },
+    '&:hover': {
+      '& svg': {
+        fill: theme.palette.background.drawer,
+      },
+    },
+  },
   logoContainer: {
     alignItems: 'center',
     display: 'inline-flex',
@@ -95,8 +105,13 @@ const useStyles = makeStyles(theme => ({
     },
   },
   logoContainerSandbox: {
-    fill: theme.palette.common.white,
-    color: theme.palette.common.white,
+    '& > .MuiIconButton-root': {
+      '&:hover': {
+        '& svg': {
+          fill: theme.palette.primary.dark,
+        },
+      },
+    },
     '& svg': {
       fill: theme.palette.common.white,
     },
@@ -156,7 +171,7 @@ function CeligoDrawer({drawerOpened, isSandbox}) {
               [classes.logoContainerSandbox]: isSandbox,
             })}>
             {drawerOpened ? (
-              <ButtonBase className={classes.logo} onClick={handleDrawerToggle}>
+              <ButtonBase className={clsx(classes.logo, {[classes.logoSandbox]: isSandbox})} onClick={handleDrawerToggle}>
                 <CeligoLogo aria-label="open drawer" />
               </ButtonBase>
             ) : (
@@ -186,7 +201,7 @@ function CeligoDrawer({drawerOpened, isSandbox}) {
               aria-label="toggle drawer"
               color="inherit"
               onClick={handleDrawerToggle}
-              className={classes.drawerToggle}>
+              className={clsx(classes.drawerToggle, {[classes.drawerToggleSandbox]: isSandbox})}>
               {drawerOpened ? <ArrowLeftIcon /> : <ArrowRightIcon />}
             </IconButton>
           </div>
