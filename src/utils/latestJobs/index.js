@@ -64,9 +64,7 @@ export const getRunConsoleJobSteps = (parentJob = {}, childJobs = [], resourceMa
     const additionalChildProps = {
       uiStatus: cJob.status,
       duration: getJobDuration(cJob),
-      name: cJob._exportId
-        ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-        : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+      name: resourceMap[cJob.type === 'export' ? 'exports' : 'imports']?.[cJob._expOrImpId]?.name,
     };
 
     // If parent job is cancelled, show child in progress jobs as cancelling

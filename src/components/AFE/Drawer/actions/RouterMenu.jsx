@@ -48,7 +48,8 @@ export default function RouterMenu({ editorId }) {
       message: <RawHtml html={message} />,
       buttons: [
         {
-          label: 'Confirm',
+          label: 'Delete',
+          error: true,
           onClick: () => {
             dispatch(actions.flow.deleteRouter(flowId, routerId));
             history.goBack();

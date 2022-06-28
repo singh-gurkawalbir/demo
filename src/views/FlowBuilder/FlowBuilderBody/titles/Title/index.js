@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Title({onClick, children, className}) {
+export default function Title({onClick, children, className, type}) {
   const classes = useStyles();
   const { flow, flowId } = useFlowContext();
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow._integrationId, flowId));
@@ -31,7 +31,7 @@ export default function Title({onClick, children, className}) {
     <TitleTypography className={clsx(classes.titlePosition, className)}>
       <div className={classes.content}>
         {children}
-        {!isReadOnly && <AddButton onClick={onClick} />}
+        {!isReadOnly && <AddButton onClick={onClick} type={type} />}
       </div>
     </TitleTypography>
   );

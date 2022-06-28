@@ -20,7 +20,7 @@ export default function FlowStepStatus({ job }) {
   const classes = useStyles();
 
   // A specific case to show In progress parent job when there are no children created yet
-  if (job.status === JOB_STATUS.RUNNING && job._exportId && !job._flowJobId) {
+  if (job.status === JOB_STATUS.RUNNING && job._expOrImpId && !job._flowJobId) {
     return (
       <div className={classes.flexContainer}>
         <div className={classes.spinnerWrapper}>

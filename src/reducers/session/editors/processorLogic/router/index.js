@@ -45,34 +45,20 @@ export default {
     };
   },
 
-  processor: editor => {
-    if (editor.rule.activeProcessor === 'filter') {
-      return 'branchFilter';
-    }
-
-    return 'javascript';
-  },
+  processor: () => 'branchFilter',
 
   requestBody: editor => {
-    if (editor.rule.activeProcessor === 'filter') {
-      const {rules, data} = filter.requestBody({
-        data: editor.data,
-        rule: editor.rule,
-      });
-
-      return {
-        data: [{
-          router: rules.rules,
-          record: data[0],
-        }],
-      };
-    }
-
-    return javascript.requestBody({
+    const {rules, data} = filter.requestBody({
       data: editor.data,
       rule: editor.rule,
-      context: editor.context,
     });
+
+    return {
+      data: [{
+        router: rules.rules,
+        record: data[0],
+      }],
+    };
   },
   // No point performing parsing or validation when it is an object
   validate: editor => {
@@ -88,25 +74,21 @@ export default {
     });
   },
   processResult: (editor, result) => {
-    if (editor.rule.activeProcessor === 'filter') {
-      let outputMessage = '';
+    let outputMessage = '';
 
-      if (result?.data) {
-        if (result.data[0].length === 1) {
-          const branch = editor.rule.branches[result.data[0][0]]?.name;
+    if (result?.data) {
+      if (result.data[0].length === 1) {
+        const branch = editor.rule.branches[result.data[0][0]]?.name;
 
-          outputMessage = `The record will pass through branch ${result.data[0][0]}: ${branch} `;
-        } else if (!result.data[0].length) {
-          outputMessage = 'The record will not pass through any of the branches.';
-        } else {
-          outputMessage = `The record will pass through branches:\n${result.data[0].map(branchIndex => `branch ${branchIndex}: ${editor.rule.branches[branchIndex]?.name}`).join('\n')}`;
-        }
+        outputMessage = `The record will pass through branch ${result.data[0][0]}: ${branch} `;
+      } else if (!result.data[0].length) {
+        outputMessage = 'The record will not pass through any of the branches.';
+      } else {
+        outputMessage = `The record will pass through branches:\n${result.data[0].map(branchIndex => `branch ${branchIndex}: ${editor.rule.branches[branchIndex]?.name}`).join('\n')}`;
       }
-
-      return {data: outputMessage};
     }
 
-    return javascript.processResult(editor, result);
+    return {data: outputMessage};
   },
   patchSet: editor => {
     const patches = {

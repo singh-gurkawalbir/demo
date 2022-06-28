@@ -1250,3 +1250,22 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects = [], obj
 
   return finalFlowObjects;
 };
+
+export const getPageProcessorFromFlow = (flow, pageProcessorId) => {
+  let pageProcessor;
+
+  if (!flow) return;
+  if (flow.routers?.length) {
+    flow.routers.forEach(router => {
+      router.branches.forEach(branch => {
+        const pp = branch.pageProcessors?.find(({_importId, _exportId}) => _exportId === pageProcessorId || _importId === pageProcessorId);
+
+        if (pp && !pageProcessor) pageProcessor = pp;
+      });
+    });
+  } else if (flow.pageProcessors?.length) {
+    pageProcessor = flow.pageProcessors && flow.pageProcessors.find(({_importId, _exportId}) => _exportId === pageProcessorId || _importId === pageProcessorId);
+  }
+
+  return pageProcessor;
+};

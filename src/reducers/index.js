@@ -40,6 +40,7 @@ import {
   isRealtimeExport,
   addLastExecutedAtSortableProp,
   shouldHaveUnassignedSection,
+  getPageProcessorFromFlow,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -5452,19 +5453,7 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
   )?.merged || emptyObject;
 
   if (!flow) return emptyArray;
-  let pageProcessor;
-
-  if (flow.routers?.length) {
-    flow.routers.forEach(router => {
-      router.branches.forEach(branch => {
-        const pp = branch.pageProcessors?.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
-
-        if (pp && !pageProcessor) pageProcessor = pp;
-      });
-    });
-  } else if (flow.pageProcessors?.length) {
-    pageProcessor = flow.pageProcessors && flow.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
-  }
+  const pageProcessor = getPageProcessorFromFlow(flow, resourceId);
 
   if (!pageProcessor) {
     return emptyArray;
@@ -5650,9 +5639,7 @@ selectors.flowJobs = (state, options = {}) => {
       // eslint-disable-next-line no-param-reassign
       job.children = job.children.map(cJob => {
         const additionalChildProps = {
-          name: cJob._exportId
-            ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-            : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+          name: resourceMap[cJob.type === 'export' ? 'exports' : 'imports']?.[cJob._expOrImpId]?.name,
           flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
         };
 
@@ -5724,9 +5711,7 @@ selectors.accountDashboardRunningJobs = createSelector(
         // eslint-disable-next-line no-param-reassign
         job.children = job.children.map(cJob => {
           const additionalChildProps = {
-            name: cJob._exportId
-              ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-              : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+            name: resourceMap[cJob.type === 'export' ? 'exports' : 'imports']?.[cJob._expOrImpId]?.name,
             flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
           };
 
@@ -6555,7 +6540,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
     return false;
   }
 
-  if (['bigquery', 'redshift', 'snowflake'].includes(connection?.rdbms?.type)) {
+  if (['bigquery', 'redshift'].includes(connection?.rdbms?.type)) {
     return false;
   }
 

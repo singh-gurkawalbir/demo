@@ -9,6 +9,7 @@ import { requestSampleData } from '../sampleData/flows';
 import responseMappingUtil from '../../utils/responseMapping';
 import { emptyObject } from '../../constants';
 import { autoEvaluateProcessorWithCancel } from '../editor';
+import { getPageProcessorFromFlow } from '../../utils/flows';
 
 export function* responseMappingInit({ flowId, resourceId, resourceType }) {
   const flow = (yield select(
@@ -16,7 +17,7 @@ export function* responseMappingInit({ flowId, resourceId, resourceType }) {
     'flows',
     flowId
   ))?.merged || emptyObject;
-  const pageProcessor = flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+  const pageProcessor = getPageProcessorFromFlow(flow, resourceId);
 
   if (!pageProcessor) {
     return yield put(actions.responseMapping.initFailed());

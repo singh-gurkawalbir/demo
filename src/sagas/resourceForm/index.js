@@ -920,7 +920,7 @@ export function* initFormValues({
         httpVersionId: connection?.http?._httpConnectorVersionId,
         httpConnectorApiId: connection?.http?._httpConnectorApiId,
       });
-    } else if (!assistantData) {
+    } else if (!connection?.http?._httpConnectorId && !assistantData) {
       assistantData = yield call(requestAssistantMetadata, {
         adaptorType,
         assistant: connectionAssistant,
