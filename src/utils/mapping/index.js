@@ -1072,7 +1072,7 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
       }
 
       // primitive array types
-      if (hardCodedValue) {
+      if (hardCodedValue !== undefined) {
         // no buildArrayHelper in this case
         _mappingsToSave.push(newMapping);
 
