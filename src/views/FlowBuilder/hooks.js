@@ -319,7 +319,7 @@ export const useHandleAddNewRouter = edgeId => {
       resourceType: 'flows',
       resourceId: router.id,
       router,
-      routerIndex: originalFlow.routers?.length || 0,
+      routerIndex: originalFlow?.routers?.length || 0,
       integrationId: flow?._integrationId,
       edgeId,
       fieldId: 'router',

@@ -706,7 +706,8 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
   const branchPath = edge.data.path;
   const processorArray = cloneDeep(jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`));
   const nextRouterId = jsonPatch.getValueByPointer(flow, `${branchPath}/nextRouterId`);
-  const flowClone = cloneDeep(originalFlow);
+
+  const flowClone = cloneDeep(originalFlow) || {};
   const insertionIndex = processorArray.findIndex(pp => pp.id === edge.target);
 
   let firstHalf;
