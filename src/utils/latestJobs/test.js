@@ -139,8 +139,8 @@ describe('latestJobs utils test cases', () => {
     test('should return job steps with required props when childJobs are passed', () => {
       const parentJob = { _id: 'job1', type: 'flow', status: JOB_STATUS.RUNNING};
       const childJobs = [
-        { _id: 'cj1', _exportId: 'id1', status: JOB_STATUS.COMPLETED, type: 'export' },
-        { _id: 'cj2', _exportId: 'id2', status: JOB_STATUS.RUNNING, type: 'export' },
+        { _id: 'cj1', _expOrImpId: 'id1', status: JOB_STATUS.COMPLETED, type: 'export' },
+        { _id: 'cj2', _expOrImpId: 'id2', status: JOB_STATUS.RUNNING, type: 'export' },
       ];
       const expectedJobSteps = [
         {...childJobs[0], uiStatus: JOB_STATUS.COMPLETED, duration: undefined, name: 'Export1' },
@@ -152,8 +152,8 @@ describe('latestJobs utils test cases', () => {
     test('should return jobs steps with percentComplete property for import childJobs', () => {
       const parentJob = { _id: 'job1', type: 'flow', status: JOB_STATUS.RUNNING, numPagesGenerated: 100, doneExporting: true};
       const childJobs = [
-        { _id: 'cj1', _exportId: 'id1', status: JOB_STATUS.COMPLETED, type: 'export' },
-        { _id: 'cj2', _importId: 'id4', status: JOB_STATUS.RUNNING, numPagesProcessed: 10, type: 'import' },
+        { _id: 'cj1', _expOrImpId: 'id1', status: JOB_STATUS.COMPLETED, type: 'export' },
+        { _id: 'cj2', _expOrImpId: 'id4', status: JOB_STATUS.RUNNING, numPagesProcessed: 10, type: 'import' },
       ];
       const expectedJobSteps = [
         {...childJobs[0], uiStatus: JOB_STATUS.COMPLETED, duration: undefined, name: 'Export1' },
@@ -165,8 +165,8 @@ describe('latestJobs utils test cases', () => {
     test('should return job steps  with cancelling status if the parent job is cancelled and child job is still in progress', () => {
       const parentJob = { _id: 'job1', type: 'flow', status: JOB_STATUS.CANCELED};
       const childJobs = [
-        { _id: 'cj1', _exportId: 'id1', status: JOB_STATUS.COMPLETED, type: 'export' },
-        { _id: 'cj2', _exportId: 'id2', status: JOB_STATUS.RUNNING, type: 'export' },
+        { _id: 'cj1', _expOrImpId: 'id1', status: JOB_STATUS.COMPLETED, type: 'export' },
+        { _id: 'cj2', _expOrImpId: 'id2', status: JOB_STATUS.RUNNING, type: 'export' },
       ];
       const expectedJobSteps = [
         {...childJobs[0], uiStatus: JOB_STATUS.COMPLETED, duration: undefined, name: 'Export1' },
