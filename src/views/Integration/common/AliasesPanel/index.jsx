@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
-    minHeight: 'calc(100vh - 300px)',
+
   },
   aliasesHeader: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
