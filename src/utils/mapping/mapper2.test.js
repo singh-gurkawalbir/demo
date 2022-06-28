@@ -1871,6 +1871,14 @@ describe('v2 mapping utils', () => {
         key: 'new_key',
         title: '',
         disabled: false,
+        generate: 'arraynames',
+        dataType: 'stringarray',
+        hardCodedValue: null,
+      },
+      {
+        key: 'new_key',
+        title: '',
+        disabled: false,
         generate: 'my_first_name',
         dataType: 'string',
         hardCodedValue: 'hard coded value',
@@ -2224,6 +2232,12 @@ describe('v2 mapping utils', () => {
       }];
 
       const mappingsToSave = [
+        {
+          conditional: {when: undefined},
+          generate: 'arraynames',
+          dataType: 'stringarray',
+          hardCodedValue: null,
+        },
         {
           conditional: {when: undefined},
           generate: 'my_first_name',
