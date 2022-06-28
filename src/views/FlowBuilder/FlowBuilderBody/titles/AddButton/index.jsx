@@ -13,11 +13,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AddButton({onClick}) {
+export default function AddButton({onClick, type}) {
   const classes = useStyles();
 
   return (
     <IconButton
+      data-test={type === 'generator' ? 'addGenerator' : 'addProcessor'}
       className={classes.roundBtn}
       onClick={onClick}>
       <AddIcon />
