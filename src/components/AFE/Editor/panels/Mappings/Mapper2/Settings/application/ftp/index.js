@@ -313,7 +313,7 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['multifield'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         multifieldAction: {
@@ -328,7 +328,7 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['multifield'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         multifieldDefault: {
@@ -341,7 +341,7 @@ export default {
           visibleWhenAll: [
             { field: 'multifieldAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['multifield'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
           helpKey: 'mapping.v2.default',
           noApi: true,
@@ -365,7 +365,7 @@ export default {
           map: lookup.map,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         'lookup.name': {
@@ -380,7 +380,7 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
           validWhen: {
             matchesRegEx: {
@@ -402,7 +402,7 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         lookupDefault: {
@@ -415,7 +415,7 @@ export default {
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
           helpKey: 'mapping.v2.default',
           noApi: true,
