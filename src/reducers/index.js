@@ -40,6 +40,7 @@ import {
   isRealtimeExport,
   addLastExecutedAtSortableProp,
   shouldHaveUnassignedSection,
+  getPageProcessorFromFlow,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -5452,19 +5453,7 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
   )?.merged || emptyObject;
 
   if (!flow) return emptyArray;
-  let pageProcessor;
-
-  if (flow.routers?.length) {
-    flow.routers.forEach(router => {
-      router.branches.forEach(branch => {
-        const pp = branch.pageProcessors?.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
-
-        if (pp && !pageProcessor) pageProcessor = pp;
-      });
-    });
-  } else if (flow.pageProcessors?.length) {
-    pageProcessor = flow.pageProcessors && flow.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
-  }
+  const pageProcessor = getPageProcessorFromFlow(flow, resourceId);
 
   if (!pageProcessor) {
     return emptyArray;
