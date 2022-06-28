@@ -3799,10 +3799,10 @@ selectors.resourcePermissionsForTile = (
       );
     }
     if (resourceId) {
-      let value = permissions[resourceType][resourceId];
+      let value = permissions.integrations[resourceId] || permissions.integrations.all;
 
-      if (!value && resourceType === 'integrations') {
-        value = permissions[resourceType].all;
+      if (!value) {
+        return emptyObject;
       }
 
       // remove tile level permissions added to connector while are not valid.
@@ -3896,10 +3896,10 @@ selectors.resourcePermissions = (
       );
     }
     if (resourceId) {
-      let value = permissions[resourceType][resourceId];
+      let value = permissions.integrations[resourceId] || permissions.integrations.all;
 
-      if (!value && resourceType === 'integrations') {
-        value = permissions[resourceType].all;
+      if (!value) {
+        return emptyObject;
       }
 
       // remove tile level permissions added to connector while are not valid.
