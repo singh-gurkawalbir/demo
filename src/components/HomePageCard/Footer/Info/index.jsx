@@ -13,7 +13,6 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.divider,
     paddingTop: 10,
     width: '100%',
-    textTransform: 'capitalize',
   },
 }));
 
