@@ -960,7 +960,7 @@ describe('Sort util function test', () => {
 
       expect(sortJsonByKeys(sample)).toEqual(expected);
     });
-    test('should also sort the nested arrays/objects and return the sorted result', () => {
+    test('should also sort the objects inside nested arrays with their keys', () => {
       const sample = {
         b: 50,
         c: 10,
@@ -991,6 +991,30 @@ describe('Sort util function test', () => {
       const expectedNestedObj = expected.f[0].nestedArray;
 
       expect(Object.keys(resultNestedObj)).toEqual(Object.keys(expectedNestedObj));
+    });
+    test('should sort the nested objects with their keys', () => {
+      const sample = {
+        b: 50,
+        c: 10,
+        a: { r: 12, p: 10, s: 23, q: 11 },
+        d: 4,
+        f: {
+          g: { y: 1, x: 2, z: 3 },
+          e: { m: 1, n: 2, l: 3},
+        },
+      };
+      const expected = {
+        a: { p: 10, q: 11, r: 12, s: 23 },
+        b: 50,
+        c: 10,
+        d: 4,
+        f: {
+          e: { l: 3, m: 1, n: 2},
+          g: { x: 2, y: 1, z: 3 },
+        },
+      };
+
+      expect(sortJsonByKeys(sample)).toEqual(expected);
     });
   });
 });
