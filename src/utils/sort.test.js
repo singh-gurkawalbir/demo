@@ -986,7 +986,11 @@ describe('Sort util function test', () => {
         ],
       };
 
-      expect(sortJsonByKeys(sample)).toEqual(expected);
+      const result = sortJsonByKeys(sample);
+      const resultNestedObj = result.f[0].nestedArray;
+      const expectedNestedObj = expected.f[0].nestedArray;
+
+      expect(Object.keys(resultNestedObj)).toEqual(Object.keys(expectedNestedObj));
     });
   });
 });
