@@ -1057,12 +1057,13 @@ export function convertOldFlowSchemaToNewOne(flow) {
   return updatedFlow;
 }
 
-export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => !!(flow && (
-  (flow.pageGenerators &&
-     flow.pageGenerators.some(({_exportId}) => _exportId === resourceId)) ||
-    (
-      flow.pageProcessors &&
-    flow.pageProcessors.some(({_exportId, _importId}) => _exportId === resourceId || _importId === resourceId))));
+export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => {
+  if (!flow) return false;
+
+  return !!(flow.pageGenerators?.some(pg => pg._exportId === resourceId) ||
+  flow.pageProcessors?.some(pp => pp._exportId === resourceId || pp._importId === resourceId) ||
+  flow.routers?.some(router => router.branches.some(branch => branch.pageProcessors?.some(pp => pp._exportId === resourceId || pp._importId === resourceId))));
+};
 
 export function getScriptsReferencedInFlow(
   {

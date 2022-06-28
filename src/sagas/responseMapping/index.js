@@ -79,9 +79,27 @@ export function* responseMappingSave() {
     'flows',
     flowId
   ))?.merged || emptyObject;
-  const pageProcessorIndex = flow?.pageProcessors.findIndex(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+  let routerIndex = -1;
+  let branchIndex = -1;
+  let pageProcessorIndex = -1;
 
-  if (!flow?.pageProcessors || pageProcessorIndex === -1) {
+  if (flow?.routers?.length) {
+    flow.routers.forEach((router, rIndex) => {
+      router.branches.forEach((branch, bIndex) => {
+        branch.pageProcessors.forEach((pp, ppIndex) => {
+          if (pp.id === resourceId) {
+            routerIndex = rIndex;
+            branchIndex = bIndex;
+            pageProcessorIndex = ppIndex;
+          }
+        });
+      });
+    });
+  } else if (flow?.pageProcessors?.length) {
+    pageProcessorIndex = flow.pageProcessors.findIndex(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+  }
+
+  if ((!flow?.pageProcessors && !flow?.routers) || pageProcessorIndex === -1) {
     return yield put(actions.responseMapping.saveFailed());
   }
   const patchSet = [];
@@ -91,7 +109,8 @@ export function* responseMappingSave() {
 
   patchSet.push({
     op: 'replace',
-    path: `/pageProcessors/${pageProcessorIndex}/responseMapping`,
+    path: flow?.routers?.length ? `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${pageProcessorIndex}/responseMapping`
+      : `/pageProcessors/${pageProcessorIndex}/responseMapping`,
     value: mappingsWithListsAndFields,
   });
 
