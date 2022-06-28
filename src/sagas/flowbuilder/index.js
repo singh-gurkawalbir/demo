@@ -152,10 +152,10 @@ export function* deleteRouter({flowId, routerId, prePatches}) {
 
       if (router.branches.length > 1) {
         router.branches.length = 1;
-      } else {
-        delete router.routeRecordsTo;
-        delete router.routeRecordsUsing;
       }
+      delete router.routeRecordsTo;
+      delete router.routeRecordsUsing;
+
       patchSet.push(...jsonPatch.generate(observer));
     }
     yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
