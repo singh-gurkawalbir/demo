@@ -35,7 +35,7 @@ const SourceTitle = ({onClick}) => {
   const classes = useStyles({xOffset, titleWidth});
 
   return (
-    <Title className={classes.sourceTitle} onClick={onClick} type="pg">
+    <Title className={classes.sourceTitle} onClick={onClick} type="generator">
       SOURCES
     </Title>
   );
