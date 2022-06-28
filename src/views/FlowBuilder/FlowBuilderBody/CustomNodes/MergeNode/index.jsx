@@ -18,13 +18,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function MergeNode({id}) {
+export default function MergeNode({id, data}) {
   const classes = useStyles();
-  const { dragNodeId, flow, flowId } = useFlowContext();
+  const { dragNodeId, flowId } = useFlowContext();
   const dispatch = useDispatch();
   const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
-  const firstRouterId = flow?.routers?.[0]?._id;
-  const isDroppable = !!dragNodeId && firstRouterId !== id && !isFlowSaveInProgress;
+  const isDroppable = !!dragNodeId && !isFlowSaveInProgress && data?.mergableTerminals.includes(dragNodeId);
 
   const handleMouseOut = useCallback(() => {
     dispatch(actions.flow.mergeTargetClear(flowId));

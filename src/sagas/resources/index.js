@@ -291,6 +291,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
       yield put(actions.resource.undoStaged(id));
       yield put(actions.flow.isOnOffActionInprogress(false, id));
     }
+    if (resourceType === 'flows') {
+      yield put(actions.flow.setSaveStatus(id));
+    }
 
     return { error };
   }

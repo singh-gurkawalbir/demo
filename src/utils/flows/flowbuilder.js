@@ -339,6 +339,26 @@ const populateMergeData = (flow, elements) => {
           }
         }
       });
+    } else if (element.type === GRAPH_ELEMENTS_TYPE.MERGE) {
+      terminalNodes.forEach(terminalNode => {
+        if (BranchPathRegex.test(terminalNode.data.path)) {
+          const [, terminalRouterIndex] = BranchPathRegex.exec(terminalNode.data.path);
+          const terminalRouterId = routers[terminalRouterIndex]?.id;
+
+          const edgeRouterId = element.id;
+
+          if (edgeRouterId !== terminalRouterId) {
+            const preceedingRouters = preceedingRoutersMap[terminalRouterId];
+
+            if (!preceedingRouters.includes(edgeRouterId)) {
+              if (!element.data.mergableTerminals) {
+                element.data.mergableTerminals = [];
+              }
+              element.data.mergableTerminals.push(terminalNode.id);
+            }
+          }
+        }
+      });
     }
   });
 };
