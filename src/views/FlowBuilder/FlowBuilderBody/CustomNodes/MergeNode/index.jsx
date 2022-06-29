@@ -23,7 +23,7 @@ export default function MergeNode({id, data}) {
   const { dragNodeId, flowId } = useFlowContext();
   const dispatch = useDispatch();
   const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
-  const isDroppable = !!dragNodeId && !isFlowSaveInProgress && data?.mergableTerminals.includes(dragNodeId);
+  const isDroppable = !!dragNodeId && !isFlowSaveInProgress && data?.mergableTerminals?.includes(dragNodeId);
 
   const handleMouseOut = useCallback(() => {
     dispatch(actions.flow.mergeTargetClear(flowId));

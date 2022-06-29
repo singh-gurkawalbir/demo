@@ -17,8 +17,13 @@ import { GRAPH_ELEMENTS_TYPE } from '../../constants';
 export function* createNewPGStep({ flowId }) {
   yield put(actions.flow.setSaveStatus(flowId, 'saving'));
   const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
+  const patchSet = getChangesPatchSet(addPageGenerators, flow);
 
-  yield put(actions.resource.patchAndCommitStaged('flows', flowId, getChangesPatchSet(addPageGenerators, flow)));
+  if (!patchSet?.length) {
+    yield put(actions.flow.setSaveStatus(flowId));
+  } else {
+    yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
+  }
 }
 
 export function* deleteStep({flowId, stepId}) {
@@ -43,11 +48,14 @@ export function* deleteStep({flowId, stepId}) {
 }
 
 export function* createNewPPStep({ flowId, path: branchPath, processorIndex }) {
-  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
   const insertAtIndex = processorIndex ?? -1;
   const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
+  const patchSet = getChangesPatchSet(addPageProcessor, flow, insertAtIndex, branchPath);
 
-  yield put(actions.resource.patchAndCommitStaged('flows', flowId, getChangesPatchSet(addPageProcessor, flow, insertAtIndex, branchPath)));
+  if (patchSet.length) {
+    yield put(actions.flow.setSaveStatus(flowId, 'saving'));
+  }
+  yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
 }
 
 export function* mergeBranch({flowId}) {
@@ -144,10 +152,10 @@ export function* deleteRouter({flowId, routerId, prePatches}) {
 
       if (router.branches.length > 1) {
         router.branches.length = 1;
-      } else {
-        delete router.routeRecordsTo;
-        delete router.routeRecordsUsing;
       }
+      delete router.routeRecordsTo;
+      delete router.routeRecordsUsing;
+
       patchSet.push(...jsonPatch.generate(observer));
     }
     yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));

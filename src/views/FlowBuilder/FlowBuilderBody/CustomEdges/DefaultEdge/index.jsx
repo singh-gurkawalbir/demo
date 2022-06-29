@@ -48,15 +48,21 @@ function getPositionAndOffset(
     position = 'right';
     offset = 30;
   } else if (
+    targetType === GRAPH_ELEMENTS_TYPE.ROUTER &&
+    sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP
+  ) {
+    position = 'right';
+    offset = 50;
+  } else if (
     targetType !== GRAPH_ELEMENTS_TYPE.PP_STEP &&
     sourceType === GRAPH_ELEMENTS_TYPE.PP_STEP
   ) {
     position = 'left';
     offset = 70;
-  } else if (targetType === GRAPH_ELEMENTS_TYPE.EMPTY_STEP) {
+  } else if (targetType === GRAPH_ELEMENTS_TYPE.EMPTY) {
     position = 'right';
     offset = 10;
-  } else if (sourceType === GRAPH_ELEMENTS_TYPE.EMPTY_STEP) {
+  } else if (sourceType === GRAPH_ELEMENTS_TYPE.EMPTY) {
     position = 'left';
     offset = -20;
   }
@@ -117,7 +123,7 @@ export default function DefaultEdge({
   const isSourceRouter = sourceType === GRAPH_ELEMENTS_TYPE.ROUTER;
   const isTargetRouter = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
-  const isSourceEmptyNode = sourceType === GRAPH_ELEMENTS_TYPE.EMPTY_STEP;
+  const isSourceEmptyNode = sourceType === GRAPH_ELEMENTS_TYPE.EMPTY;
   const showLinkIcon =
     hasSiblingEdges && !isSourceGenerator && !isFlowSaveInProgress;
   const showAddIcon =
