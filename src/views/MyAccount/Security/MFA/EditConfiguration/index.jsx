@@ -86,6 +86,8 @@ function TrustedDevices() {
   const match = useRouteMatch();
   const history = useHistory();
 
+  const trustedDevices = useSelector(selectors.trustedDevices);
+
   const handleManageDevices = useCallback(
     () => {
       history.push(buildDrawerUrl({
@@ -96,11 +98,14 @@ function TrustedDevices() {
     [history, match.url],
   );
 
+  if (!trustedDevices?.length) {
+    return null;
+  }
+
   return (
     <>
       <HeaderWithHelpText title="Trusted devices" helpKey="mfa.trustedDevices"><span>Trusted devices </span></HeaderWithHelpText>
       <OutlinedButton onClick={handleManageDevices}> Manage devices </OutlinedButton>
-      <ManageDevicesDrawer />
     </>
   );
 }
@@ -184,6 +189,7 @@ export default function EditMFAConfiguration() {
         <DynaForm formKey={formKey} />
         <div className={classes.actions}>
           <TrustedDevices />
+          <ManageDevicesDrawer />
         </div>
       </div>
       {!isAccountOwner ? (
