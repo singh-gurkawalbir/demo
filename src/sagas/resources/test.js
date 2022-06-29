@@ -483,6 +483,7 @@ describe('commitStagedChanges saga', () => {
       expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('connections', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('exports', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('imports', null, true)));
+      expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('asynchelpers', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.clearStaged(id)));
       const putEffect = saga.next(updated).value;
 

@@ -302,6 +302,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     yield put(actions.resource.requestCollection('connections', null, true));
     yield put(actions.resource.requestCollection('exports', null, true));
     yield put(actions.resource.requestCollection('imports', null, true));
+    yield put(actions.resource.requestCollection('asynchelpers', null, true));
   }
 
   // HACK! when updating scripts, since content is stored in s3, it

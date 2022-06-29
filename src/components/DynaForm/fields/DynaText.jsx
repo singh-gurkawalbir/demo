@@ -7,11 +7,11 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import { isNaN } from 'lodash';
 import CopyIcon from '../../icons/CopyIcon';
-import ActionButton from '../../ActionButton';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
+import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
@@ -30,14 +30,11 @@ const useStyles = makeStyles(theme => ({
   },
   dynaFieldCopyClipboard: {
     display: 'flex',
-    width: '100%',
-    flexDirection: 'row !important',
-    '& > div:first-child': {
-      flex: 1,
-    },
+    alignItems: 'flex-end',
   },
-  copybtn: {
-    marginLeft: 6,
+  copyButton: {
+    marginLeft: theme.spacing(1),
+    marginBottom: theme.spacing(0.5),
   },
   textFieldWithClipBoard: {
     width: '100%',
@@ -203,12 +200,13 @@ export default function TextFieldWithClipboardSupport(props) {
       <div className={classes.dynaFieldCopyClipboard}>
         <DynaText {...props} />
         <CopyToClipboard text={value} onCopy={handleCopy}>
-          <ActionButton
+          <IconButtonWithTooltip
             data-test="copyToClipboard"
-            title="Copy to clipboard"
-            className={classes.copybtn}>
+            tooltipProps={{title: 'Copy to clipboard'}}
+            buttonSize={{size: 'small'}}
+            className={classes.copyButton}>
             <CopyIcon />
-          </ActionButton>
+          </IconButtonWithTooltip>
         </CopyToClipboard>
       </div>
     );

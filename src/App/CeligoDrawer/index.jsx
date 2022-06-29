@@ -84,6 +84,16 @@ const useStyles = makeStyles(theme => ({
     height: theme.spacing(3),
     padding: 0,
   },
+  drawerToggleSandbox: {
+    '& svg': {
+      fill: theme.palette.background.paper,
+    },
+    '&:hover': {
+      '& svg': {
+        fill: theme.palette.background.drawer,
+      },
+    },
+  },
   logoContainer: {
     alignItems: 'center',
     display: 'inline-flex',
@@ -95,8 +105,13 @@ const useStyles = makeStyles(theme => ({
     },
   },
   logoContainerSandbox: {
-    fill: theme.palette.common.white,
-    color: theme.palette.common.white,
+    '& > .MuiIconButton-root': {
+      '&:hover': {
+        '& svg': {
+          fill: theme.palette.primary.dark,
+        },
+      },
+    },
     '& svg': {
       fill: theme.palette.common.white,
     },
@@ -112,6 +127,11 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1.5),
     '& span': {
       padding: [[0, 5]],
+    },
+  },
+  iconHoverSandbox: {
+    '&:hover svg': {
+      fill: theme.palette.primary.dark,
     },
   },
 }));
@@ -156,14 +176,15 @@ function CeligoDrawer({drawerOpened, isSandbox}) {
               [classes.logoContainerSandbox]: isSandbox,
             })}>
             {drawerOpened ? (
-              <ButtonBase className={classes.logo} onClick={handleDrawerToggle}>
+              <ButtonBase className={clsx(classes.logo, {[classes.logoSandbox]: isSandbox})} onClick={handleDrawerToggle}>
                 <CeligoLogo aria-label="open drawer" />
               </ButtonBase>
             ) : (
               <IconButton
                 color="inherit"
                 aria-label="close drawer"
-                onClick={handleDrawerToggle}>
+                onClick={handleDrawerToggle}
+                className={clsx({[classes.iconHoverSandbox]: isSandbox })}>
                 <CeligoMarkIcon color="inherit" />
               </IconButton>
             )}
@@ -186,7 +207,7 @@ function CeligoDrawer({drawerOpened, isSandbox}) {
               aria-label="toggle drawer"
               color="inherit"
               onClick={handleDrawerToggle}
-              className={classes.drawerToggle}>
+              className={clsx(classes.drawerToggle, {[classes.drawerToggleSandbox]: isSandbox})}>
               {drawerOpened ? <ArrowLeftIcon /> : <ArrowRightIcon />}
             </IconButton>
           </div>

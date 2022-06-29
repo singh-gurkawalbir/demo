@@ -29,9 +29,6 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center',
       },
     },
-    '& table': {
-      border: `1px solid ${theme.palette.secondary.lightest}`,
-    },
 
   },
 }));

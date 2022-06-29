@@ -9,19 +9,23 @@ const useStyles = makeStyles(theme => ({
     maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.spacing(2)}px + ${theme.pageBarHeight}px))`,
     overflowY: 'auto',
   },
-  pagingBar: {
+  pagingBarShow: {
     maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px +  ${theme.showMoreHeight}px))`,
+  },
+  pagingBarHide: {
+    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
   },
 
 }));
-export default function PageContent({children, isPagingBar = false, className}) {
+export default function PageContent({children, showPagingBar = false, hidePagingBar = false, className}) {
   const classes = useStyles();
 
   return (
     <div
       className={clsx(
         classes.pageWrapper,
-        {[classes.pagingBar]: isPagingBar},
+        {[classes.pagingBarShow]: showPagingBar},
+        {[classes.pagingBarHide]: hidePagingBar},
         className)}>{children}
     </div>
   );
@@ -29,10 +33,13 @@ export default function PageContent({children, isPagingBar = false, className}) 
 
 PageContent.propTypes = {
   children: PropTypes.element.isRequired,
-  isPagingBar: PropTypes.bool,
+  showPagingBar: PropTypes.bool,
+  hidePagingBar: PropTypes.bool,
   className: PropTypes.string,
 };
 
 PageContent.defaultProps = {
-  isPagingBar: false,
+  showPagingBar: false,
+  hidePagingBar: false,
+
 };

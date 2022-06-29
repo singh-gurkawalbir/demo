@@ -19,7 +19,7 @@ export default function Audit() {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Audit Log" />
+      <PanelHeader title="Audit log" />
       <AuditLog />
     </div>
   );

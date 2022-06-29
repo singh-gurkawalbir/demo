@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import isEmpty from 'lodash/isEmpty';
 import { Paper } from '@material-ui/core';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
@@ -39,6 +38,7 @@ function RouterWrappedContent(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [error, setError] = useState();
+  const [mockDataRequested, setMockDataRequested] = useState(false);
   const resourceSampleDataStatus = useSelector(state =>
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'preview').status,
   );
@@ -54,10 +54,11 @@ function RouterWrappedContent(props) {
   }, [resourceDefaultMockData, resourceMockData, resourceSampleDataStatus]);
 
   useEffect(() => {
-    if (isEmpty(resourceMockData) && !resourceSampleDataStatus) {
+    if (value === '' && !mockDataRequested) {
+      setMockDataRequested(true);
       dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true, isMockInput: true }));
     }
-  }, [dispatch, formKey, resourceMockData, resourceSampleDataStatus]);
+  }, [dispatch, formKey, mockDataRequested, resourceMockData, resourceSampleDataStatus, value]);
 
   const handleChange = newValue => {
     setValue(newValue);

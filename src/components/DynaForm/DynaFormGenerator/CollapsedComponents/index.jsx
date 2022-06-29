@@ -24,6 +24,9 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     borderRadius: theme.spacing(0.5),
+    '&:last-child': {
+      marginBottom: 0,
+    },
   },
 }));
 
@@ -49,6 +52,8 @@ export default function CollapsedComponents(props) {
           header={header}
           fieldMap={fieldMap}
           formKey={formKey}
+          resourceType={resourceType}
+          resourceId={resourceId}
         />
       );
     });

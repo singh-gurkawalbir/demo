@@ -75,6 +75,7 @@ import {
   getUserAccessLevelOnConnection,
   rdbmsSubTypeToAppType,
   getResourceFromAlias,
+  finalSuccessMediaType,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -3813,10 +3814,10 @@ selectors.resourcePermissionsForTile = (
       );
     }
     if (resourceId) {
-      let value = permissions[resourceType][resourceId];
+      let value = permissions.integrations[resourceId] || permissions.integrations.all;
 
-      if (!value && resourceType === 'integrations') {
-        value = permissions[resourceType].all;
+      if (!value) {
+        return emptyObject;
       }
 
       // remove tile level permissions added to connector while are not valid.
@@ -3910,10 +3911,10 @@ selectors.resourcePermissions = (
       );
     }
     if (resourceId) {
-      let value = permissions[resourceType][resourceId];
+      let value = permissions.integrations[resourceId] || permissions.integrations.all;
 
-      if (!value && resourceType === 'integrations') {
-        value = permissions[resourceType].all;
+      if (!value) {
+        return emptyObject;
       }
 
       // remove tile level permissions added to connector while are not valid.
@@ -6887,6 +6888,23 @@ selectors.showAmazonRestrictedReportType = (state, formKey) => {
   return ((connectionType === 'Amazon-Hybrid' && apiType === 'Amazon-SP-API') ||
           connectionType === 'Amazon-SP-API') &&
           relativeURI?.startsWith('/reports/2021-06-30/documents/');
+};
+
+selectors.isParserSupported = (state, formKey, parser) => {
+  const formDetails = selectors.formState(state, formKey);
+  const exportId = formDetails?.parentContext?.resourceId;
+  const { adaptorType } = selectors.resource(state, 'exports', exportId) || {};
+
+  //  At present, we are checking only for HTTP export.
+  //  For remaining, we are returning true so that it does not affect the existing functionality, as it has been used as a conditional.
+
+  if (adaptorType !== 'HTTPExport') return true;
+
+  const formValues = formDetails?.value;
+  const connectionId = selectors.fieldState(state, formKey, '_connectionId')?.value;
+  const connection = selectors.resource(state, 'connections', connectionId);
+
+  return finalSuccessMediaType(formValues, connection) === parser;
 };
 
 const resourceListSelector = selectors.makeResourceListSelector();
