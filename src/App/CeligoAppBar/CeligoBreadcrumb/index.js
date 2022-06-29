@@ -63,7 +63,7 @@ const useStyles = makeStyles(theme => ({
 const flowBuilderRoutes = [
   {
     path: '/flowBuilder/:flowId',
-    breadcrumb: 'Flow Builder',
+    breadcrumb: 'Flow builder',
     childRoutes: [
       { path: buildDrawerUrl({path: drawerPaths.FLOW_BUILDER.SCHEDULE}), breadcrumb: 'Schedule' },
       { path: buildDrawerUrl({path: drawerPaths.FLOW_BUILDER.SETTINGS}), breadcrumb: 'Settings' },
@@ -71,7 +71,7 @@ const flowBuilderRoutes = [
   },
   {
     path: '/dataLoader/:flowId',
-    breadcrumb: 'Data Loader',
+    breadcrumb: 'Data loader',
     childRoutes: [{ path: buildDrawerUrl({path: drawerPaths.FLOW_BUILDER.SETTINGS}), breadcrumb: 'Settings' }],
   },
 ];

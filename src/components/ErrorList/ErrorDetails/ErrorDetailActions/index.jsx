@@ -105,7 +105,7 @@ export default function Actions({
     return (
       <div className={classes.action}>
         <FilledButton disabled={!isRetryDataChanged} onClick={handleSaveAndRetry}>
-          Save &amp; Retry
+          Save &amp; retry
         </FilledButton>
         <SaveAndCloseMiniButtonGroup
           isDirty={isRetryDataChanged}

@@ -223,7 +223,8 @@ export default {
           id: 'standardAction',
           name: 'standardAction',
           type: 'select',
-          defaultValue: mappingUtil.getV2DefaultActionValue(node),
+          skipDefault: true,
+          defaultValue: mappingUtil.getV2DefaultActionValue(node) || 'discardIfEmpty',
           refreshOptionsOnChangesTo: ['dataType'],
           label: 'Action to take if source field has no value',
           noApi: true,
@@ -252,7 +253,8 @@ export default {
           id: 'objectAction',
           name: 'objectAction',
           type: 'select',
-          defaultValue: mappingUtil.getV2DefaultActionValue(node) || '',
+          skipDefault: true,
+          defaultValue: mappingUtil.getV2DefaultActionValue(node) || 'discardIfEmpty',
           refreshOptionsOnChangesTo: ['dataType'],
           label: 'Action to take if source field has no value',
           helpKey: 'mapping.v2.objectAction',
@@ -266,6 +268,7 @@ export default {
           id: 'hardcodedAction',
           name: 'hardcodedAction',
           type: 'select',
+          skipDefault: true,
           defaultValue: mappingUtil.getHardCodedActionValue(node) || 'default',
           refreshOptionsOnChangesTo: ['dataType'],
           label: 'How would you like to hard-code the value?',
@@ -310,21 +313,22 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['multifield'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         multifieldAction: {
           id: 'multifieldAction',
           name: 'multifieldAction',
           type: 'select',
-          defaultValue: mappingUtil.getV2DefaultActionValue(node),
+          skipDefault: true,
+          defaultValue: mappingUtil.getV2DefaultActionValue(node) || 'discardIfEmpty',
           label: 'Action to take if handlebars expression returns an empty value',
           refreshOptionsOnChangesTo: ['dataType'],
           helpKey: 'mapping.v2.multifieldAction',
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['multifield'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         multifieldDefault: {
@@ -337,7 +341,7 @@ export default {
           visibleWhenAll: [
             { field: 'multifieldAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['multifield'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
           helpKey: 'mapping.v2.default',
           noApi: true,
@@ -361,7 +365,7 @@ export default {
           map: lookup.map,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         'lookup.name': {
@@ -376,7 +380,7 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
           validWhen: {
             matchesRegEx: {
@@ -389,15 +393,16 @@ export default {
           id: 'lookupAction',
           name: 'lookupAction',
           type: 'select',
+          skipDefault: true,
           defaultValue:
-            mappingUtil.getV2DefaultLookupActionValue(node, lookup),
+            mappingUtil.getV2DefaultLookupActionValue(node, lookup) || 'discardIfEmpty',
           label: 'If lookup fails',
           refreshOptionsOnChangesTo: ['dataType'],
           helpKey: 'mapping.v2.staticLookupAction',
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         lookupDefault: {
@@ -410,7 +415,7 @@ export default {
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
           helpKey: 'mapping.v2.default',
           noApi: true,
