@@ -20,6 +20,12 @@ module.exports = {
     'src/reducers/**/*.{js,jsx}',
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
+    'src/components/RegisterConnections/**/*.{js,jsx}',
+    'src/components/PingMessageSnackbar/**/*.{js,jsx}',
+    'src/components/StartDebug/**/*.{js,jsx}',
+    'src/components/StartDebugEnhanced/**/*.{js,jsx}',
+    'src/components/RawHtml/**/*.{js,jsx}',
+    'src/components/PanelHeader/**/*.{js,jsx}',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js'],
   coverageThreshold: {
