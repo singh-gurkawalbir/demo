@@ -308,7 +308,7 @@ export const useHandleAddNewRouter = edgeId => {
   const editorId = `router-${router.id}`;
 
   return () => {
-    const patchSet = getNewRouterPatchSet({ elementsMap, flow, router, edgeId, originalFlow });
+    const {patchSet, routerIndex} = getNewRouterPatchSet({ elementsMap, flow, router, edgeId, originalFlow });
 
     const edge = elementsMap[edgeId];
     const isInsertingBeforeFirstRouter = elementsMap[edge.source]?.type === GRAPH_ELEMENTS_TYPE.PG_STEP &&
@@ -319,7 +319,7 @@ export const useHandleAddNewRouter = edgeId => {
       resourceType: 'flows',
       resourceId: router.id,
       router,
-      routerIndex: originalFlow?.routers?.length || 0,
+      routerIndex,
       integrationId: flow?._integrationId,
       edgeId,
       fieldId: 'router',

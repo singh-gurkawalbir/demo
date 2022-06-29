@@ -260,7 +260,7 @@ const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId, isReadOnly
 
 const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}, isReadOnlyMode) => {
   const edges = [];
-  const {branch, branchIndex, routerIndex, isVirtual} = branchData;
+  const {branch, branchIndex, routerIndex, isVirtual, branchCount} = branchData;
   const nodes = pageProcessors.map((pageProcessor, index, collection) => {
     let hideDelete = false;
 
@@ -270,7 +270,7 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}, isR
       edges.push(generateDefaultEdge(pageProcessor.id, collection[index + 1].id, {...branchData, processorCount, index: index + 1 }));
     }
     // hide delete option if only one unconfigured pageProcessor present
-    if ((routerIndex === 0 && pageProcessor.setupInProgress && collection.length === 1 && !branch.nextRouterId) || isReadOnlyMode) {
+    if ((routerIndex === 0 && branchCount === 1 && pageProcessor.setupInProgress && collection.length === 1 && !branch.nextRouterId) || isReadOnlyMode) {
       hideDelete = true;
     }
 
@@ -407,12 +407,12 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
       if (routerIndex !== 0 || !isVirtualRouter(router)) {
         elements.push(generateRouterNode(router, routerIndex));
       }
-      router.branches.forEach((branch, branchIndex) => {
+      router.branches.forEach((branch, branchIndex, branchCount) => {
         if (branch.pageProcessors.length) {
           // draw an edge from router to first step of branch
           const pageProcessorNodes = generatePageProcessorNodesAndEdges(
             branch.pageProcessors,
-            {branch, branchIndex, routerIndex, isVirtual: isVirtualRouter(router)},
+            { branch, branchIndex, routerIndex, isVirtual: isVirtualRouter(router), branchCount},
             isReadOnlyMode
           );
 
@@ -739,7 +739,7 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
 
   const flowClone = cloneDeep(originalFlow) || {};
   const insertionIndex = processorArray.findIndex(pp => pp.id === edge.target);
-
+  let routerIndex = originalFlow?.routers?.length || 0;
   let firstHalf;
   let secondHalf;
 
@@ -753,7 +753,7 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
   const isVirtual = flow.routers?.length === 1 && isVirtualRouter(flow.routers[0]);
 
   if (!flowClone.routers) {
-    if (!isVirtual) {
+    if (!isVirtual || (isVirtual && insertionIndex === -1)) {
       flowClone.routers = flow.routers;
     }
     delete flowClone.pageProcessors;
@@ -764,7 +764,7 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
   if (isInsertingFirstRouter) {
     flowClone.routers = [router, ...flowClone.routers];
   } else {
-    if (!isVirtual) {
+    if (!isVirtual || (isVirtual && insertionIndex === -1)) {
       setObjectValue(flowClone, `${branchPath}/pageProcessors`, firstHalf);
       setObjectValue(flowClone, `${branchPath}/nextRouterId`, router.id);
     }
@@ -774,7 +774,12 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
       flowClone.routers = [router];
     }
   }
+  if (isVirtual && insertionIndex === -1) {
+    routerIndex = 1;
+  } else if (isInsertingFirstRouter) {
+    routerIndex = 0;
+  }
 
-  return jsonPatch.generate(observer);
+  return {patchSet: jsonPatch.generate(observer), routerIndex};
 };
 

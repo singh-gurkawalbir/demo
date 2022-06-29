@@ -9,6 +9,7 @@ import {
   addPageProcessor,
   deletePGOrPPStepForOldSchema,
   deletePGOrPPStepForRouters,
+  deleteUnUsedRouters,
   mergeDragSourceWithTarget,
 } from '../../utils/flows/flowbuilder';
 import { getChangesPatchSet } from '../../utils/json';
@@ -157,7 +158,7 @@ export function* deleteRouter({flowId, routerId, prePatches}) {
       }
       delete router.routeRecordsTo;
       delete router.routeRecordsUsing;
-
+      deleteUnUsedRouters(flow);
       patchSet.push(...jsonPatch.generate(observer));
     }
     yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
