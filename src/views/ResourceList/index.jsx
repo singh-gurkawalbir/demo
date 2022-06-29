@@ -123,7 +123,8 @@ export default function ResourceList(props) {
   }, [dispatch, resourceType]);
 
   const actionProps = useMemo(() => ({ showTradingPartner }), [showTradingPartner]);
-  const isPagingBar = list.count >= 100;
+  const showPagingBar = list.count >= 100;
+  const hidePagingBar = list.count === list.filtered;
 
   return (
     <CheckPermissions
@@ -160,7 +161,7 @@ export default function ResourceList(props) {
           </TextButton>
         </ActionGroup>
       </CeligoPageBar>
-      <PageContent isPagingBar={isPagingBar}>
+      <PageContent showPagingBar={showPagingBar} hidePagingBar={hidePagingBar}>
         <LoadResources required integrationId="none" resources={resourcesToLoad(resourceType)}>
           {list.count === 0 ? (
             <>
