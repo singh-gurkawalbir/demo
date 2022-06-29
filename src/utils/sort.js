@@ -67,9 +67,14 @@ export const comparer = ({ order, orderBy }) =>
   order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
 
 export const sortJsonByKeys = obj => {
-  const isObject = typeof obj === 'object' && !Array.isArray(obj);
+  const isArray = Array.isArray(obj);
+  const isObject = typeof obj === 'object' && !isArray;
 
-  if (!obj || !isObject) return obj;
+  if (!obj || (!isArray && !isObject)) return obj;
+
+  if (isArray) {
+    return obj.map(item => sortJsonByKeys(item));
+  }
   const keys = Object.keys(obj);
 
   const sortedKeys = [...keys].sort((a, b) => a.localeCompare(b));

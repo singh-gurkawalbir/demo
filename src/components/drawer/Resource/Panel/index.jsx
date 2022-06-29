@@ -34,10 +34,9 @@ const useStyles = makeStyles(theme => ({
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
-      return props.match.isExact ? 824 : 0;
+      return props.match.isExact ? 822 : 0;
     },
     overflowX: 'hidden',
-    overflowY: 'hidden',
   },
   baseFormWithPreview: {
     display: 'grid',
@@ -186,7 +185,7 @@ export default function Panel(props) {
               variant={variant}
               isNew={isNew}
               resourceType={resourceType}
-              className={classes.resourceFormWrapper}
+              className={clsx({[classes.resourceFormWrapper]: showPreviewPanel })}
               resourceId={id}
               flowId={flowId}
               // All users have access to reports
