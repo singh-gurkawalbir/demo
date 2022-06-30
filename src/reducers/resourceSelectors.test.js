@@ -6,8 +6,6 @@ import {
   INTEGRATION_ACCESS_LEVELS,
 } from '../utils/constants';
 
-import { DRAWER_URL_PREFIX } from '../utils/rightDrawer';
-
 describe('tests for reducer selectors', () => {
   describe('resourceList', () => {
     const emptyResult = {
@@ -124,7 +122,7 @@ describe('tests for reducer selectors', () => {
       );
 
       expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toEqual(
-        `/${resourceType}/${DRAWER_URL_PREFIX}/edit/${resourceType}/${resourceId}`
+        `/${resourceType}/edit/${resourceType}/${resourceId}`
       );
     });
 
@@ -138,7 +136,7 @@ describe('tests for reducer selectors', () => {
       );
 
       expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toEqual(
-        `/${resourceType}/${DRAWER_URL_PREFIX}/edit/${resourceType}/${resourceId}`
+        `/${resourceType}/edit/${resourceType}/${resourceId}`
       );
     });
 
