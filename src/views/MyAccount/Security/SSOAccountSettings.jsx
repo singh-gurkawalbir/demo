@@ -123,9 +123,6 @@ const SSOLicenseUpgradeContainer = () => {
       buttons: [
         { label: 'Submit request',
           onClick: () => {
-            dispatch(
-              actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
-            );
             dispatch(actions.license.requestUpdate('upgrade', {feature: 'SSO'}));
             dispatch(actions.license.ssoLicenseUpgradeRequested());
           },
@@ -167,9 +164,8 @@ export default function SSOAccountSettings() {
   const resourceId = oidcClient?._id || generateNewId();
   const selectedAccountHasSSO = useSelector(state => {
     const accounts = selectors.accountSummary(state);
-    const selectedAccount = accounts && accounts.find(a => a.selected);
 
-    return selectedAccount?.hasSSO;
+    return accounts?.find(a => a.selected)?.hasSSO;
   });
   const isEnableSSOSwitchInProgress = useSelector(state => selectors.commStatusPerPath(state, `/ssoclients/${resourceId}`, 'PATCH') === 'loading');
   const [isSSOEnabled, setIsSSOEnabled] = useState(!!oidcClient?.disabled);
