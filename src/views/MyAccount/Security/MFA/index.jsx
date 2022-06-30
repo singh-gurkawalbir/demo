@@ -10,7 +10,6 @@ import CollapsableContainer from '../../../../components/CollapsableContainer';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import MFASetup from './Setup';
-// import RouterPrompt from './RouterPrompt';
 import useNotifySetupSuccess from './useNotifySetupSuccess';
 import EditMFAConfiguration from './EditConfiguration';
 // import AccountSettings from './AccountSettings';
@@ -146,16 +145,8 @@ export default function MFA() {
   // Deals with showing notification whenever mfa setup is updated
   useNotifySetupSuccess();
 
-  // const onOK = useCallback(() => true, []);
-  // const onCancel = useCallback(() => false, []);
-
   return (
     <div className={classes.root}>
-      {/* <RouterPrompt
-        when
-        onOK={onOK}
-        onCancel={onCancel}
-       /> */}
       <PanelHeader title="Multifactor authentication (MFA)" infoText={infoTextMFA} />
       <MFADetails />
     </div>
