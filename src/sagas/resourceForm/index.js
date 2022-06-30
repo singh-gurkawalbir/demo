@@ -489,7 +489,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     pending = true;
     if (flowDoc?.routers?.length || (isPageGenerator && elementsMap?.[pendingId])) {
       stepPath = elementsMap[pendingId]?.data?.path;
-    } else if (resourceType === 'imports' && elementsMap?.[pendingId]?.data?.path) {
+    } else if (!isPageGenerator && elementsMap?.[pendingId]?.data?.path) {
       [,,, addIndexPP] = PageProcessorPathRegex.exec(elementsMap?.[pendingId]?.data?.path);
     }
   }
