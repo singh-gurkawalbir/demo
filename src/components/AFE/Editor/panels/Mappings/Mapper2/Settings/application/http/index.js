@@ -88,6 +88,7 @@ export default {
           label: 'Destination data type',
           defaultValue: propDataType,
           defaultDisabled: isRequired,
+          description: isRequired ? 'Data type of a required field cannot be edited.' : '',
           helpKey: 'mapping.v2.dataType',
           noApi: true,
           options: [
