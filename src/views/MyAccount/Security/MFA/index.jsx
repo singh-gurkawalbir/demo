@@ -76,7 +76,7 @@ function MyUserSettings() {
   const mfaUserSettings = useSelector(state => selectors.mfaUserSettings(state));
   const isMFASetupComplete = useSelector(state => selectors.isMFASetupComplete(state));
 
-  const [isMFAEnabled, setIsMFAEnabled] = useState();
+  const [isMFAEnabled, setIsMFAEnabled] = useState(false);
 
   const handleEnableMFA = useCallback(() => {
     if (isMFASetupComplete) {

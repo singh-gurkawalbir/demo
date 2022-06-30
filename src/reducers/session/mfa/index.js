@@ -46,7 +46,6 @@ export default (state = { codes: {}, sessionInfo: {} }, action) => {
         break;
       case actionTypes.MFA.CLEAR:
         draft.codes = {};
-        delete draft.context;
         break;
       default:
     }

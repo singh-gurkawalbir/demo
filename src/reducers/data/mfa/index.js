@@ -8,10 +8,7 @@ export default (state = {}, action) => {
     switch (type) {
       case actionTypes.MFA.USER_SETTINGS.RECEIVED:
         draft.userSettings = userSettings;
-        if (userSettings?.secret && userSettings?.enabled) {
-          // TODO: Remove this once BE updates this flag
-          draft.userSettings.deviceConnected = true;
-        }
+
         if (!draft.status) {
           draft.status = {};
         }

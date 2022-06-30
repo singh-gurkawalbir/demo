@@ -45,8 +45,7 @@ export function* setupMFA({ mfaConfig }) {
       },
     });
 
-    // TODO: Remove setupComplete hardcode once BE changes are done
-    yield put(actions.mfa.receivedUserSettings({...response, setupComplete: context === 'setup'}));
+    yield put(actions.mfa.receivedUserSettings(response));
     yield put(actions.mfa.addSetupContext(context));
     yield put(actions.asyncTask.success(MFA_SETUP_ASYNC_KEY));
   } catch (error) {
