@@ -32,6 +32,7 @@ export function* pageProcessorPreview({
   addMockData,
 }) {
   if (!flowId || !_pageProcessorId) return;
+
   const { merged } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
   const { prePatches } = yield select(selectors.editor, editorId);
 
@@ -136,7 +137,7 @@ export function* pageProcessorPreview({
 
   if (previewType === 'flowInput') {
     // make the _pageProcessor as import so that BE calculates flow data till that processor
-    flow.pageProcessors = flow.pageProcessors.map(pageProcessor => {
+    const updatePageProcessorToImport = pageProcessor => {
       if (pageProcessor._exportId === _pageProcessorId) {
         pageProcessorMap[_pageProcessorId].options = {};
 
@@ -148,7 +149,18 @@ export function* pageProcessorPreview({
       }
 
       return pageProcessor;
-    });
+    };
+
+    if (flow.pageProcessors) {
+      flow.pageProcessors = flow.pageProcessors.map(updatePageProcessorToImport);
+    } else if (flow.routers) {
+      flow.routers.forEach(router => {
+        router.branches?.forEach(branch => {
+          // eslint-disable-next-line no-param-reassign
+          branch.pageProcessors = branch.pageProcessors?.map(updatePageProcessorToImport) || [];
+        });
+      });
+    }
   } else if (resourceType === 'exports' && pageProcessorMap[_pageProcessorId]?.doc) {
     // remove tx,filters,hooks from PP Doc to get preview data for _pageProcessorId
     const { transform, filter, hooks, ...lookupDocWithoutProcessors } = pageProcessorMap[_pageProcessorId].doc;

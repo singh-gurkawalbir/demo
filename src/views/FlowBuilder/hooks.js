@@ -10,7 +10,7 @@ import { generateNewId } from '../../utils/resource';
 import itemTypes from './itemTypes';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 import { useFlowContext } from './FlowBuilderBody/Context';
-import { generateEmptyRouter, getNewRouterPatchSet } from '../../utils/flows/flowbuilder';
+import { generateEmptyRouter, getNewRouterPatchSet, isVirtualRouter } from '../../utils/flows/flowbuilder';
 
 export const isNewFlowFn = flowId => !flowId || flowId?.startsWith('new');
 export const usePatchFlow = flowId => {
@@ -277,6 +277,7 @@ export const useHandleRouterClick = routerId => {
   return () => {
     const router = flow.routers.find(r => r.id === routerId);
     const routerIndex = flow.routers.findIndex(r => r.id === routerId);
+    const userDefinedRoutersCount = flow.routers.filter(r => !isVirtualRouter(r)).length + 1;
 
     if (!router) return;
     dispatch(actions.editor.init(editorId, 'router', {
@@ -286,6 +287,7 @@ export const useHandleRouterClick = routerId => {
       router,
       fieldId: 'router',
       routerIndex,
+      branchNamingIndex: userDefinedRoutersCount,
       stage: 'router',
       integrationId: flow?._integrationId,
     }));
@@ -308,20 +310,21 @@ export const useHandleAddNewRouter = edgeId => {
   const editorId = `router-${router.id}`;
 
   return () => {
-    const patchSet = getNewRouterPatchSet({ elementsMap, flow, router, edgeId, originalFlow });
+    const {patchSet, routerIndex} = getNewRouterPatchSet({ elementsMap, flow, router, edgeId, originalFlow });
 
     const edge = elementsMap[edgeId];
     const isInsertingBeforeFirstRouter = elementsMap[edge.source]?.type === GRAPH_ELEMENTS_TYPE.PG_STEP &&
     elementsMap[edge.target]?.type === GRAPH_ELEMENTS_TYPE.ROUTER;
+    const userDefinedRoutersCount = flow.routers.filter(r => !isVirtualRouter(r)).length + 1;
 
     dispatch(actions.editor.init(editorId, 'router', {
       flowId,
       resourceType: 'flows',
       resourceId: router.id,
       router,
-      routerIndex: originalFlow?.routers?.length || 0,
+      routerIndex,
       integrationId: flow?._integrationId,
-      edgeId,
+      branchNamingIndex: userDefinedRoutersCount,
       fieldId: 'router',
       prePatches: patchSet,
       stage: 'router',

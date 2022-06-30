@@ -9,6 +9,7 @@ import {
   addPageProcessor,
   deletePGOrPPStepForOldSchema,
   deletePGOrPPStepForRouters,
+  deleteUnUsedRouters,
   mergeDragSourceWithTarget,
 } from '../../utils/flows/flowbuilder';
 import { getChangesPatchSet } from '../../utils/json';
@@ -65,10 +66,12 @@ export function* mergeBranch({flowId}) {
   const mergeTargetType = yield select(selectors.fbMergeTargetType, flowId);
   const dragStepId = yield select(selectors.fbDragStepId, flowId);
   const patchSet = [];
+  const mergeTarget = elementsMap[mergeTargetId];
+  const isMergable = mergeTarget?.type !== GRAPH_ELEMENTS_TYPE.MERGE || mergeTarget?.data?.mergableTerminals?.includes(dragStepId);
 
   // It's possible that a user releases the mouse while NOT on top of a valid merge target.
   // if this is the case, we still want to reset the drag state, just skip the merge attempt.
-  if (mergeTargetId && mergeTargetType) {
+  if (mergeTargetId && mergeTargetType && isMergable) {
     yield put(actions.flow.setSaveStatus(flowId, 'saving'));
     mergeDragSourceWithTarget(flow, elementsMap, dragStepId, mergeTargetId, patchSet);
     yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
@@ -155,7 +158,7 @@ export function* deleteRouter({flowId, routerId, prePatches}) {
       }
       delete router.routeRecordsTo;
       delete router.routeRecordsUsing;
-
+      deleteUnUsedRouters(flow);
       patchSet.push(...jsonPatch.generate(observer));
     }
     yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
