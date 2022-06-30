@@ -612,7 +612,7 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
 
     // for child object-array nodes, only make first tab visible
     if (clonedChild.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-      const childParentExtract = clonedChild.combinedExtract.split(',') || [];
+      const childParentExtract = clonedChild.combinedExtract?.split(',') || [];
 
       // update children and un-hide only first tab
       return hideOtherTabRows(clonedChild, getUniqueExtractId(childParentExtract[0], 0));
@@ -635,8 +635,25 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
 
   if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) return node;
 
+  let clonedNode = {...node};
+
+  // if the children was not linked before, then link it to first source
+  clonedNode.children = clonedNode.children.map(child => {
+    const clonedChild = {...child};
+    const {parentExtract} = clonedChild;
+
+    if (clonedChild.isTabNode) {
+      return child;
+    }
+    if (!parentExtract) {
+      clonedChild.parentExtract = getUniqueExtractId(splitExtracts[0], 0);
+    }
+
+    return clonedChild;
+  });
+
   // update hidden prop and only show first extract children
-  const clonedNode = hideOtherTabRows(node, getUniqueExtractId(splitExtracts[0], 0));
+  clonedNode = hideOtherTabRows(clonedNode, getUniqueExtractId(splitExtracts[0], 0));
 
   // set active tab to 0th
   clonedNode.activeTab = 0;
@@ -1181,6 +1198,154 @@ export const TYPEOF_TO_DATA_TYPE = {
   '[object Null]': MAPPING_DATA_TYPES.STRING,
 };
 
+function recursivelyCreateDestinationStructure({dataObj, treeData, parentJsonPath = '', parentKey, parentExtract, isGroupedSampleData, requiredMappings}) {
+  // iterate over all keys and construct the tree
+  Object.keys(dataObj).forEach(propName => {
+    const v = dataObj[propName];
+    const type = Object.prototype.toString.apply(v);
+
+    const jsonPath = `${parentJsonPath ? `${parentJsonPath}.` : ''}${propName}`;
+
+    const key = generateUniqueKey();
+
+    const isRequired = requiredMappings.includes(jsonPath);
+
+    const nodeToPush = {
+      key,
+      generate: propName,
+      jsonPath,
+      parentKey,
+      parentExtract,
+      title: '',
+      dataType: TYPEOF_TO_DATA_TYPE[type],
+      isRequired,
+    };
+
+    treeData.push(nodeToPush);
+
+    // primitive type
+    if (type !== '[object Array]' && type !== '[object Object]') {
+    // nothing to do
+      return;
+    }
+
+    if (type === '[object Object]') {
+      // suffix with . for object fields
+      const isRequired = requiredMappings.some(r => r.startsWith(`${jsonPath}.`));
+
+      const children = [];
+
+      nodeToPush.isRequired = isRequired;
+      nodeToPush.dataType = MAPPING_DATA_TYPES.OBJECT;
+      nodeToPush.children = children;
+
+      recursivelyCreateDestinationStructure({dataObj: v, treeData: children, parentJsonPath: jsonPath, parentKey: key, isGroupedSampleData, requiredMappings});
+      // push empty row
+      if (isEmpty(nodeToPush.children)) {
+        nodeToPush.children.push({
+          key: generateUniqueKey(),
+          title: '',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          isEmptyRow: true,
+          parentKey: nodeToPush.key,
+        });
+      }
+
+      return;
+    }
+
+    if (type === '[object Array]') {
+      // suffix with [*] for object array fields
+      const isRequired = requiredMappings.some(r => r.startsWith(`${jsonPath}[*]`));
+
+      // if empty array, consider it as object array
+      if (isEmpty(v)) {
+        nodeToPush.isRequired = isRequired;
+        nodeToPush.jsonPath = `${jsonPath}[*]`;
+        nodeToPush.dataType = MAPPING_DATA_TYPES.OBJECTARRAY;
+        nodeToPush.children = [{
+          key: generateUniqueKey(),
+          title: '',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          isEmptyRow: true,
+          parentKey: nodeToPush.key,
+        }];
+
+        return;
+      }
+
+      if (Object.prototype.toString.apply(v[0]) === '[object Object]' && !isEmpty(v[0])) {
+        const children = [];
+
+        nodeToPush.isRequired = isRequired;
+        nodeToPush.jsonPath = `${jsonPath}[*]`;
+        nodeToPush.dataType = MAPPING_DATA_TYPES.OBJECTARRAY;
+        nodeToPush.children = children;
+
+        recursivelyCreateDestinationStructure({dataObj: getUnionObject(v), treeData: children, parentJsonPath: `${jsonPath}[*]`, parentKey: key, isGroupedSampleData, requiredMappings});
+
+        // push empty row
+        if (isEmpty(nodeToPush.children)) {
+          nodeToPush.children.push({
+            key: generateUniqueKey(),
+            title: '',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            isEmptyRow: true,
+            parentKey: nodeToPush.key,
+          });
+        }
+
+        return;
+      }
+
+      // primitive array
+      const valueType = Object.prototype.toString.apply(v[0]);
+
+      nodeToPush.dataType = `${TYPEOF_TO_DATA_TYPE[valueType]}array`;
+    }
+  });
+}
+
+export const autoCreateDestinationStructure = (importSampleData, isGroupedSampleData, requiredMappings, isCSVOrXLSX) => {
+  let treeData = [];
+
+  if (!importSampleData) return treeData;
+
+  if (isCSVOrXLSX) {
+    treeData = [{
+      key: generateUniqueKey(),
+      title: '',
+      dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+      generateDisabled: true,
+      children: [],
+    }];
+  }
+
+  const dataObj = pickFirstObject(importSampleData);
+
+  recursivelyCreateDestinationStructure({
+    dataObj,
+    treeData: isCSVOrXLSX ? treeData[0].children : treeData,
+    isGroupedSampleData,
+    requiredMappings,
+  });
+
+  return treeData;
+};
+
+export const deleteNonRequiredMappings = (treeData = []) => treeData.reduce((acc, m) => {
+  const clonedMapping = {...m};
+
+  if (clonedMapping.children?.length) {
+    clonedMapping.children = deleteNonRequiredMappings(clonedMapping.children);
+  }
+  if (clonedMapping.isRequired || clonedMapping.children?.length) {
+    acc.push(clonedMapping);
+  }
+
+  return acc;
+}, []);
+
 function recursivelyBuildExtractsTree({dataObj, treeData, parentKey, parentJsonPath = ''}) {
   // iterate over all keys and construct the tree
   Object.keys(dataObj).forEach(propName => {
@@ -1247,7 +1412,6 @@ function recursivelyBuildExtractsTree({dataObj, treeData, parentKey, parentJsonP
 }
 
 // this util generates the tree structure for the sample data fields
-// and also return the selected keys based on extract values
 export const buildExtractsTree = sampleData => {
   const treeData = [];
   const children = [];

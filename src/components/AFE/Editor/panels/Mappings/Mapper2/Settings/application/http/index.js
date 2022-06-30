@@ -69,7 +69,7 @@ export default {
     lookups,
     importResource = {},
   }) => {
-    const {key, lookupName, dataType: propDataType, copySource } = node;
+    const {key, lookupName, dataType: propDataType, copySource, isRequired } = node;
 
     const {_connectionId: connectionId, adaptorType, _id: resourceId } = importResource;
 
@@ -87,6 +87,7 @@ export default {
           skipSort: true,
           label: 'Destination data type',
           defaultValue: propDataType,
+          defaultDisabled: isRequired,
           helpKey: 'mapping.v2.dataType',
           noApi: true,
           options: [

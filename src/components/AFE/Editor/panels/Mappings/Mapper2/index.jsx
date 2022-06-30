@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import Tree from 'rc-tree';
 import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
@@ -10,6 +10,7 @@ import {allowDrop} from '../../../../../../utils/mapping';
 import {selectors} from '../../../../../../reducers';
 import Mapper2Row from './Mapper2Row';
 import actions from '../../../../../../actions';
+import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   treeRoot: {
@@ -140,11 +141,22 @@ const dragConfig = {
 
 export default function Mapper2({editorId}) {
   const classes = useStyles();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const treeData = useSelector(state => selectors.v2MappingsTreeData(state));
+  const isAutoCreateSuccess = useSelector(state => selectors.mapping(state).autoCreated);
   const expandedKeys = useSelector(state => selectors.v2MappingExpandedKeys(state));
   const activeKey = useSelector(state => selectors.v2ActiveKey(state));
+
+  useEffect(() => {
+    if (isAutoCreateSuccess) {
+      enqueueSnackbar({
+        message: 'Destination fields successfully auto-populated.',
+        variant: 'success',
+      });
+    }
+  }, [enqueueSnackbar, isAutoCreateSuccess]);
 
   const onDropHandler = useCallback(info => {
     dispatch(actions.mapping.v2.dropRow(info));

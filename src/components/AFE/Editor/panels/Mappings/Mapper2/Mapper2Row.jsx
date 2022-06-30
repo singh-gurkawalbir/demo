@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     margin: theme.spacing(1, 0),
     '&:hover': {
-      '&>div:last-child': {
+      '&>div>div:last-child': {
         '&>button:last-child': {
           visibility: 'visible',
         },
@@ -214,7 +214,7 @@ const Mapper2Row = React.memo(props => {
           disabled={generateDisabled || isRequired || disabled}
           dataType={dataType}
           onBlur={handleGenerateBlur}
-          // isRequired={isRequired}
+          isRequired={isRequired}
           />
       </div>
 
@@ -268,22 +268,22 @@ const Mapper2Row = React.memo(props => {
           <AddIcon />
         </ActionButton>
 
-        {/* todo ashu delete button not visible after tooltip */}
-        {/* <Tooltip
+        <Tooltip
           placement="bottom"
           title={isRequired ? 'This field is required by the application you are importing into' : ''}>
-          <div > */}
-        <ActionButton
-          data-test={`fieldMappingRemove-${nodeKey}`}
-          aria-label="delete"
-          disabled={isEmptyRow || generateDisabled || isRequired || disabled}
-          onClick={handleDeleteClick}
-          key="delete_button"
-          className={classes.deleteMapping}>
-          <TrashIcon />
-        </ActionButton>
-        {/* </div>
-        </Tooltip> */}
+          {/* this div needs to be added to render the tooltip correctly when delete is disabled */}
+          <div>
+            <ActionButton
+              data-test={`fieldMappingRemove-${nodeKey}`}
+              aria-label="delete"
+              disabled={isEmptyRow || generateDisabled || isRequired || disabled}
+              onClick={handleDeleteClick}
+              key="delete_button"
+              className={classes.deleteMapping}>
+              <TrashIcon />
+            </ActionButton>
+          </div>
+        </Tooltip>
 
       </div>
     </div>

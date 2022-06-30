@@ -6,6 +6,7 @@ import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut'
 import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import { TooltipTitle } from '../Source/Mapper2ExtractsTypeableSelect';
 import DestinationDataType from './DestinationDataType';
+import LockIcon from '../../../../../../icons/LockIcon';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -35,6 +36,13 @@ const useStyles = makeStyles(theme => ({
       border: `1px solid ${theme.palette.primary.main}`,
     },
   },
+  lockIcon: {
+    position: 'absolute',
+    right: 10,
+    top: '50%',
+    transform: 'translateY(-50%)',
+    color: theme.palette.text.hint,
+  },
 }));
 
 export default function Mapper2Generates(props) {
@@ -45,6 +53,7 @@ export default function Mapper2Generates(props) {
     value: propValue = '',
     onBlur,
     nodeKey,
+    isRequired,
   } = props;
   const classes = useStyles();
   const [isFocused, setIsFocused] = useState(false);
@@ -118,6 +127,16 @@ export default function Mapper2Generates(props) {
           disabled={disabled}
           nodeKey={nodeKey}
         />
+
+        {isRequired && (
+          <Tooltip
+            title="This field is required by the application you are importing into"
+            placement="bottom">
+            <span className={classes.lockIcon}>
+              <LockIcon />
+            </span>
+          </Tooltip>
+        )}
 
       </div>
     </FormControl>
