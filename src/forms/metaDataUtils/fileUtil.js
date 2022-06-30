@@ -648,6 +648,9 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
   return null;
 };
 export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnector) => {
+  if (!httpConnector) {
+    return formValues;
+  }
   const retValues = { ...formValues };
 
   if (retValues['/http/unencrypted/version']) {

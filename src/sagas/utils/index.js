@@ -293,6 +293,9 @@ export const getHTTPConnectorMetadata = (connectorMetadata, connectionVersion) =
   return {export: exportData, import: importData};
 };
 export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, resource, isGenericHTTP) => {
+  if (!connector || !connector.supportedBy) {
+    return finalFieldMeta;
+  }
   const connectionTemplate = connector.supportedBy.connection;
   const tempFiledMeta = _.cloneDeep(finalFieldMeta);
 
