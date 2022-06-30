@@ -6,7 +6,7 @@ import javascript from '../javascript';
 export default {
   init: ({ options }) => {
     const activeProcessor = 'filter';
-    const { router = {}, routerIndex, prePatches } = options;
+    const { router = {}, prePatches, branchNamingIndex } = options;
     const isEdit = !prePatches;
     const editorTitle = isEdit ? 'Edit branching' : 'Add branching';
 
@@ -16,7 +16,7 @@ export default {
     (routerObj.branches || []).forEach((branch, index) => {
       if (!branch.name) {
         // eslint-disable-next-line no-param-reassign
-        branch.name = `Branch ${routerIndex + 1}.${index}`;
+        branch.name = `Branch ${branchNamingIndex}.${index}`;
       }
     });
     const rule = {

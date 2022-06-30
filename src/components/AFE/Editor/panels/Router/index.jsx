@@ -63,7 +63,7 @@ export default function RouterPanel({ editorId }) {
   const __branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList);
   const branches = useMemo(() => __branches.map(b => ({...b, id: shortId()})), [__branches]);
   const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
-  const routerIndex = useSelector(state => selectors.editor(state, editorId)?.routerIndex || 0);
+  const branchNamingIndex = useSelector(state => selectors.editor(state, editorId)?.branchNamingIndex || 0);
   const allowSorting = routeRecordsTo === 'first_matching_branch';
 
   const activeProcessor = useSelector(state => selectors.editorActiveProcessor(state, editorId));
@@ -103,7 +103,7 @@ export default function RouterPanel({ editorId }) {
   const handleAddBranch = () => {
     dispatch(actions.editor.patchRule(editorId, [
       ...branches, {
-        name: `Branch ${routerIndex + 1}.${branches.length}`,
+        name: `Branch ${branchNamingIndex}.${branches.length}`,
         pageProcessors: [{setupInProgress: true}],
       },
     ], {rulePath: 'branches'}));
