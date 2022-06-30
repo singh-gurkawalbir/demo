@@ -98,7 +98,8 @@ export default {
   },
   useRowActions: user => {
     const tableContext = useGetTableContext();
-    const { integrationId, accessLevel, sharedWithUser } = tableContext;
+    const { integrationId, accessLevel } = tableContext;
+    const { sharedWithUser } = user;
     const actions = [];
 
     if ([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel) && user._id === ACCOUNT_IDS.OWN) {
