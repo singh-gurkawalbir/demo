@@ -21,6 +21,10 @@ export const generateEmptyRouter = isVirtual => ({
   } }),
 });
 
+/*
+Util which returns all router node to terminal paths possible.
+returns Array of Arrays, each array containing array of router ids.
+*/
 export const getAllRouterPaths = flow => {
   const { routers = [] } = flow || {};
   const paths = [];
@@ -44,6 +48,7 @@ export const getAllRouterPaths = flow => {
   return uniqBy(paths, path => path.join(','));
 };
 
+/* Adds a new pageGenerator to the flow */
 export const addPageGenerators = flow => {
   if (!flow) return;
   if (!Array.isArray(flow.pageGenerators) || !flow.pageGenerators.length) {
@@ -57,7 +62,9 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath) => {
   if (flow.routers?.length) {
     const [, routerIndex, branchIndex] = BranchPathRegex.exec(branchPath);
 
+    // If user tries to add pageProcessor between PG and first router.
     if (+routerIndex === -1 && +branchIndex === -1) {
+      // routerIndex and branchIndex will be -1 for an edge between PGs and First router.
       const firstRouter = flow.routers[0];
 
       if (isVirtualRouter(firstRouter) && !firstRouter.branches[0].pageProcessors?.length) {
@@ -79,6 +86,7 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath) => {
       }
     }
   } else {
+    // If flow is in orchestration structure
     if (!flow.pageProcessors || !flow.pageProcessors.length) {
       flow.pageProcessors = [{setupInProgress: true}];
     }
@@ -93,6 +101,7 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath) => {
   }
 };
 
+// Deleting PG or PP for Linear structured flow
 export const deletePGOrPPStepForOldSchema = (flow, path) => {
   if (PageProcessorPathRegex.test(path)) {
     const [, , , ppIndex] = PageProcessorPathRegex.exec(path);
@@ -122,6 +131,7 @@ export const deletePGOrPPStepForRouters = (flow, originalFlow, stepId, elementsM
   }
 };
 
+// Given any flow, this util returns a map containing router id as key and array of all routers that comes before the current router.
 export const getPreceedingRoutersMap = flow => {
   const { routers = [] } = flow || {};
   const routerPaths = getAllRouterPaths(flow);
@@ -189,17 +199,6 @@ export const generateNewEmptyNode = ({branch = {}, branchIndex, routerIndex} = {
     path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${branch.pageProcessors?.length || '-'}`,
   },
 });
-
-export const generateBranch = () => {
-  const newId = shortId();
-
-  return {
-    name: newId,
-    description: 'some description',
-    inputFilter: {},
-    pageProcessors: [],
-  };
-};
 
 export const initializeFlowForReactFlow = flowDoc => {
   if (!flowDoc) return flowDoc;
@@ -655,6 +654,8 @@ export const mergeDragSourceWithTarget = (flowDoc, elements, dragNodeId, targetI
     mergeTerminalToAnEdge({flowDoc, elements, sourceElement, targetElement, patchSet});
   }
 };
+
+// Given any flow, this util returns a map containing routerId as key and array of all routerids pointing the current router as value
 export const getIncomingRoutersMap = flow => {
   const map = {};
 
@@ -674,6 +675,7 @@ export const getIncomingRoutersMap = flow => {
   return map;
 };
 
+// Checks if a router is an orphan router with no step pointing to it.
 const isUnUsedRouter = (flow, router, incomingRoutersMap) => {
   if (!flow || !flow.routers?.length || !router) return false;
   const firstRouterId = flow.routers?.[0]?.id;
