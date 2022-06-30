@@ -13,6 +13,7 @@ export default {
       newValues['/file/json'] = undefined;
       delete newValues['/file/json/resourcePath'];
     }
+    newValues['/type'] = undefined;
 
     if (newValues['/outputMode'] === 'blob') {
       if (newValues['/fileMetadata']) {

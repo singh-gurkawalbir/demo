@@ -126,7 +126,6 @@ export default function SearchCriteriaDialog(props) {
     <Dialog
       fullScreen={fullScreen}
       open
-      onClose={onClose}
       scroll="paper"
       maxWidth={false}>
       <div className={classes.toolbarContainer}>
