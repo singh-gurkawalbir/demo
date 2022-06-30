@@ -620,7 +620,7 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
     const fileType = fields.find(field => field.id === 'file.type');
     const skipAggregationField = fields.find(field => field.id === fieldId);
 
-    skipAggregationField.value = ['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value);
+    skipAggregationField.value = ['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value) || skipAggregationField.defaultValue;
   } else if (fieldId === 'file.encoding') {
     const fileType = fields.find(field => field.id === 'file.type');
 
