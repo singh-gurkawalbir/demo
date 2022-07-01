@@ -935,7 +935,7 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE:
         if (!draft.mapping) break;
         draft.mapping.v2TreeData = [];
-        draft.mapping.v2TreeData = autoCreateDestinationStructure(uploadedData, draft.mapping.isGroupedSampleData, draft.mapping.requiredMappings, isCSVOrXLSX);
+        draft.mapping.v2TreeData = autoCreateDestinationStructure(uploadedData, draft.mapping.requiredMappings, isCSVOrXLSX);
 
         if (draft.mapping.v2TreeData.length === 1 &&
           draft.mapping.v2TreeData[0].dataType === MAPPING_DATA_TYPES.OBJECTARRAY &&

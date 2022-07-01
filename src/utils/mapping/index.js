@@ -638,7 +638,7 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
   let clonedNode = {...node};
 
   // if the children was not linked before, then link it to first source
-  clonedNode.children = clonedNode.children.map(child => {
+  clonedNode.children = clonedNode.children?.map(child => {
     const clonedChild = {...child};
     const {parentExtract} = clonedChild;
 
@@ -1198,7 +1198,7 @@ export const TYPEOF_TO_DATA_TYPE = {
   '[object Null]': MAPPING_DATA_TYPES.STRING,
 };
 
-function recursivelyCreateDestinationStructure({dataObj, treeData, parentJsonPath = '', parentKey, parentExtract, isGroupedSampleData, requiredMappings}) {
+function recursivelyCreateDestinationStructure({dataObj, treeData, parentJsonPath = '', parentKey, parentExtract, requiredMappings}) {
   // iterate over all keys and construct the tree
   Object.keys(dataObj).forEach(propName => {
     const v = dataObj[propName];
@@ -1239,7 +1239,7 @@ function recursivelyCreateDestinationStructure({dataObj, treeData, parentJsonPat
       nodeToPush.dataType = MAPPING_DATA_TYPES.OBJECT;
       nodeToPush.children = children;
 
-      recursivelyCreateDestinationStructure({dataObj: v, treeData: children, parentJsonPath: jsonPath, parentKey: key, isGroupedSampleData, requiredMappings});
+      recursivelyCreateDestinationStructure({dataObj: v, treeData: children, parentJsonPath: jsonPath, parentKey: key, requiredMappings});
       // push empty row
       if (isEmpty(nodeToPush.children)) {
         nodeToPush.children.push({
@@ -1282,7 +1282,7 @@ function recursivelyCreateDestinationStructure({dataObj, treeData, parentJsonPat
         nodeToPush.dataType = MAPPING_DATA_TYPES.OBJECTARRAY;
         nodeToPush.children = children;
 
-        recursivelyCreateDestinationStructure({dataObj: getUnionObject(v), treeData: children, parentJsonPath: `${jsonPath}[*]`, parentKey: key, isGroupedSampleData, requiredMappings});
+        recursivelyCreateDestinationStructure({dataObj: getUnionObject(v), treeData: children, parentJsonPath: `${jsonPath}[*]`, parentKey: key, requiredMappings});
 
         // push empty row
         if (isEmpty(nodeToPush.children)) {
@@ -1306,7 +1306,7 @@ function recursivelyCreateDestinationStructure({dataObj, treeData, parentJsonPat
   });
 }
 
-export const autoCreateDestinationStructure = (importSampleData, isGroupedSampleData, requiredMappings, isCSVOrXLSX) => {
+export const autoCreateDestinationStructure = (importSampleData, requiredMappings = [], isCSVOrXLSX) => {
   let treeData = [];
 
   if (!importSampleData) return treeData;
@@ -1326,7 +1326,6 @@ export const autoCreateDestinationStructure = (importSampleData, isGroupedSample
   recursivelyCreateDestinationStructure({
     dataObj,
     treeData: isCSVOrXLSX ? treeData[0].children : treeData,
-    isGroupedSampleData,
     requiredMappings,
   });
 
