@@ -915,6 +915,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.rdbms.redshift.region': "Name of the amazon redshift region to the location where the request is being made. If not set, by default 'us-east-1' is selected",
   'connection.rdbms.redshift.aws.accessKeyId': "Many of Amazon's APIs require an access key, and this field stores the 'id' for the access key that you want this connection to use.  Please check the AWS guides if you need more info about access keys and how to generate and/or find them in your AWS account.",
   'connection.rdbms.redshift.aws.secretAccessKey': 'When you create a new access key in your Amazon Redshift account, AWS will display both the access key id and the secret access key.  The secret access key will only be available once, and you should store it immediately in integrator.io (i.e. in this field).  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your secret access key safe.',
+  'connection.rdbms.redshift.user': 'IAM Database user. Learn more on how to create database user <a href="https://docs.aws.amazon.com/redshift/latest/mgmt/configuring-connections.html" target="_blank">here</a>.',
   'connection.rdbms.redshift.database': 'redshift database that you want to connect.',
   'connection.rdbms.redshift.clusterIdentifier': 'The name of the Redshift Cluster. <a href="https://docs.aws.amazon.com/redshift/latest/mgmt/configuring-connections.html" target="_blank">Learn more</a>.',
   'connection.rdbms.options':
@@ -2435,4 +2436,27 @@ use the custom option.`,
   'snapshot.create': 'A snapshot is a saved capture of your integration that you can use to revert your integration at any point.',
   'snapshot.description': 'Describe your snapshot so you can quickly identify the revision and any important details.',
   'http.parseSuccessResponses': 'The integrator.io works on JSON internally. If your API returns success data in a different format than JSON, parse HTTP response data using available parsers for CSV and XML.',
+  'mfa.enable':
+    'Switch the toggle ON to initiate the process to enable MFA for your profile. You must also complete the following six steps; otherwise, MFA will remain disabled. When you disable MFA,  device settings will also be disabled so that you can enable MFA at any point in future',
+  'mfa.getVerificationApp':
+    'You can configure MFA to use any authenticator app that supports time-based one-time-password protocol (TOTP). Supported authenticator apps include, but not limited to, Google, LastPass, and Microsoft.',
+  'mfa.addIntegrationIO':
+    'To add integrator.io to your MFA authenticator app, you can either scan the QR code or enter the secret key manually. You must enter the password to view the secret key or QR code for your profile. Do not save these details anywhere else. You can find the secret key and QR code in your profile at any time in the future if necessary.',
+  'mfa.code.verify':
+    'Enter the code from your authenticator app for the Celigo configuration you just completed to verify that the configuration is successful',
+  'mfa.primaryAccount':
+    'If you lose the mobile device that has the authenticator app installed, the account owner or admin of the primary account can reset MFA credentials for your profile. Choose the account that you want to perform MFA resets.',
+  'mfa.trustDevice':
+    'If you choose to trust the device you are using to sign in to integrator.io, you will only be required to enter MFA credentials after 90 days. Your account owner can modify the number of days a trusted device will not require credentials.',
+  'mfa.connect': 'This completes the MFA enablement process for your profile.',
+  'mfa.reset':
+    'If you have lost access to your MFA device or you believe your secret key has been compromised, click Reset to initiate the MFA reset process.',
+  'mfa.qrcode':
+    'View the QR code that was used to enable MFA for your profile.',
+  'mfa.viewSecret':
+    'View the secret key that was used to enable MFA for your profile.',
+  'mfa.trustedDevices':
+    'Click <b>Manage devices</b> to see a list of all trusted devices for your profile.',
+  'mfa.reAuthPwd': 'Reauthenticate with password',
+  'mfa.manageDevices': 'Manage devices',
 };

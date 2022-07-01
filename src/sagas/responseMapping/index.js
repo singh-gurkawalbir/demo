@@ -87,7 +87,7 @@ export function* responseMappingSave() {
     flow.routers.forEach((router, rIndex) => {
       router.branches.forEach((branch, bIndex) => {
         branch.pageProcessors.forEach((pp, ppIndex) => {
-          if (pp.id === resourceId) {
+          if (pp._importId === resourceId || pp._exportId === resourceId) {
             routerIndex = rIndex;
             branchIndex = bIndex;
             pageProcessorIndex = ppIndex;

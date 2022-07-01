@@ -328,6 +328,10 @@ export default function Endpoint() {
                       {licenseActionDetails?.endpoint?.apiManagement && (<CheckMarkIcon className={classes.enableIcon} />)}
                       <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.endpoint?.apiManagement)})}>API Management</Typography>
                     </li>
+                    <li>
+                      {licenseActionDetails?.sso && (<CheckMarkIcon className={classes.enableIcon} />)}
+                      <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.sso)})}>Single sign-on (SSO)</Typography>
+                    </li>
                   </ul>
                 </div>
               </div>

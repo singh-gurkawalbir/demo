@@ -46,14 +46,7 @@ function RouterWrappedContent({editorId}) {
   const handleClose = history.goBack;
 
   const handleSave = closeAfterSave => {
-    // TODO: connect with data-layer...
-    // Lots of patters around disabling close on pending API completion, etc
-    // Not sure what the correct pattern is to follow... seems like a lot of
-    // boilerplate code in every drawer I reviewed. I kept this implementation light
-    // for now.
-
     dispatch(actions.editor.patchRule(editorId, {...branch, ...values}, {rulePath: `branches[${position}]`}));
-    // dispatch(actions.editor.patchRule({editorId,...}));
 
     if (closeAfterSave) handleClose();
   };

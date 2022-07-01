@@ -40,7 +40,6 @@ export const getCreatedStore = () => {
       diff: true,
       duration: true,
       collapsed: (getState, action, logEntry) => !logEntry.error,
-      predicate: (getState, action) => !['APP_POLLING_STOP', 'APP_POLLING_RESUME'].includes(action.type),
     };
 
     middleware.push(createLogger(logOptions));

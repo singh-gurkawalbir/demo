@@ -1,13 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { selectors } from '../../../reducers';
-import actions from '../../../actions';
-import DynaForm from '../../../components/DynaForm';
-import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
-import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
-import useSaveStatusIndicator from '../../../hooks/useSaveStatusIndicator';
-import CollapsableContainer from '../../../components/CollapsableContainer';
+import { selectors } from '../../../../reducers';
+import actions from '../../../../actions';
+import DynaForm from '../../../../components/DynaForm';
+import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
+import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
+import CollapsableContainer from '../../../../components/CollapsableContainer';
 
 const useStyles = makeStyles(theme => ({
   ssoForm: {
@@ -43,7 +43,7 @@ export default function SSOUserSettings() {
   const dispatch = useDispatch();
   const [remountCount, setRemountCount] = useState(0);
   const preferences = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
-  const ssoPrimaryAccounts = useSelector(state => selectors.ssoPrimaryAccounts(state), shallowEqual);
+  const ssoPrimaryAccounts = useSelector(state => selectors.primaryAccounts(state), shallowEqual);
   const primaryAccountOptions = useMemo(() => (
     [{
       items: ssoPrimaryAccounts.map(

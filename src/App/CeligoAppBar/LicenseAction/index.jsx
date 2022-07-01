@@ -11,6 +11,7 @@ import {PillButton, TextButton} from '../../../components/Buttons';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import RawHtml from '../../../components/RawHtml';
 import messageStore from '../../../utils/messageStore';
+import { LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
   inTrial: {
@@ -298,7 +299,7 @@ function LicenseAction() {
   }, [dispatch, entitlementOfEndpointsDialog, licenseActionDetails.action, licenseErrorCode, requestUpgradeDialog, startFreeOrRequestUpgradeDialog]);
 
   useEffect(() => {
-    if (platformLicenseActionMessage) {
+    if (platformLicenseActionMessage === LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE) {
       enquesnackbar({message: <RawHtml html={messageStore('LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
       dispatch(actions.license.clearActionMessage());
     }
