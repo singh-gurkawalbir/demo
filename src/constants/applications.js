@@ -153,6 +153,7 @@ const connectors = [
     type: 'redshiftdatawarehouse',
     keywords: 'database,db',
     group: 'db',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360042875872-Set-up-a-connection-to-Amazon-Redshift',
   },
   {
     id: 'graph_ql',

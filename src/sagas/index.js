@@ -57,6 +57,7 @@ import exportDataSagas from './exportData';
 import {logsSagas} from './logs';
 import ssoSagas from './sso';
 import flowbuildersagas from './flowbuilder';
+import mfaSagas from './mfa';
 import { APIException } from './api/requestInterceptors/utils';
 import { bottomDrawerSagas } from './bottomDrawer';
 import { AUTH_FAILURE_MESSAGE } from '../constants';
@@ -222,6 +223,7 @@ export function* allSagas() {
     ...exportDataSagas,
     ...logsSagas,
     ...ssoSagas,
+    ...mfaSagas,
     ...bottomDrawerSagas,
     ...flowGroupSagas,
     ...aliasSagas,

@@ -38,4 +38,7 @@ export const POLLING_STATUS = Object.freeze({
   RESUME: 'resume polling',
   STOP: 'stop polling',
 });
+export const MFA_RESET_ASYNC_KEY = 'MFA_RESET_ASYNC_KEY';
+export const MFA_SETUP_ASYNC_KEY = 'MFA_SETUP_ASYNC_KEY';
+export const MFA_DELETE_DEVICE_ASYNC_KEY = 'MFA_DELETE_DEVICE_ASYNC_KEY';
 

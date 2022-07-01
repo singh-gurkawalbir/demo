@@ -128,9 +128,9 @@ export function* requestLicenseUpgrade() {
   yield put(actions.license.licenseUpgradeRequestSubmitted(response));
 }
 
-export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
+export function* requestLicenseUpdate({ actionType, connectorId, licenseId, feature }) {
   const { path, opts } = getRequestOptions(actionTypes.LICENSE.UPDATE_REQUEST, {
-    actionType, connectorId, licenseId,
+    actionType, connectorId, licenseId, feature,
   });
   let response;
 
@@ -165,7 +165,7 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
     yield put(actions.resource.requestCollection('imports'));
     yield put(actions.license.refreshCollection());
   } else {
-    yield put(actions.license.licenseUpgradeRequestSubmitted(response));
+    yield put(actions.license.licenseUpgradeRequestSubmitted(response, feature));
   }
 }
 

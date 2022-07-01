@@ -6817,7 +6817,7 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
   return !!ssoLinkedAccount?.accountSSORequired;
 };
 
-selectors.ssoPrimaryAccounts = createSelector(
+selectors.primaryAccounts = createSelector(
   state => selectors.isAccountOwner(state),
   state => state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN),
   (isAccountOwner, orgAccounts) => {
@@ -6893,7 +6893,9 @@ selectors.showAmazonRestrictedReportType = (state, formKey) => {
 selectors.isParserSupported = (state, formKey, parser) => {
   const formDetails = selectors.formState(state, formKey);
   const exportId = formDetails?.parentContext?.resourceId;
-  const { adaptorType } = selectors.resource(state, 'exports', exportId) || {};
+
+  // selectors.resource won't work in case of new exports, so using selectors.resourceData here.
+  const { adaptorType } = selectors.resourceData(state, 'exports', exportId)?.merged || {};
 
   //  At present, we are checking only for HTTP export.
   //  For remaining, we are returning true so that it does not affect the existing functionality, as it has been used as a conditional.

@@ -316,10 +316,10 @@ describe('selectors.isUserAllowedOnlySSOSignIn test cases', () => {
   });
 });
 
-describe('selectors.ssoPrimaryAccounts test cases', () => {
+describe('selectors.primaryAccounts test cases', () => {
   test('should not throw exception for invalid arguments', () => {
-    expect(selectors.ssoPrimaryAccounts()).toEqual(emptyList);
-    expect(selectors.ssoPrimaryAccounts({})).toEqual(emptyList);
+    expect(selectors.primaryAccounts()).toEqual(emptyList);
+    expect(selectors.primaryAccounts({})).toEqual(emptyList);
   });
   test('should return empty list if the user is an owner', () => {
     const sampleState = {
@@ -339,7 +339,7 @@ describe('selectors.ssoPrimaryAccounts test cases', () => {
       },
     };
 
-    expect(selectors.ssoPrimaryAccounts(sampleState)).toEqual(emptyList);
+    expect(selectors.primaryAccounts(sampleState)).toEqual(emptyList);
   });
   test('should return emptyList if user has no org accounts', () => {
     const sampleState = {
@@ -361,7 +361,7 @@ describe('selectors.ssoPrimaryAccounts test cases', () => {
       },
     };
 
-    expect(selectors.ssoPrimaryAccounts(sampleState)).toEqual(emptyList);
+    expect(selectors.primaryAccounts(sampleState)).toEqual(emptyList);
   });
   test('should return all org users with _ssoClientId', () => {
     const sampleState = {
@@ -405,7 +405,7 @@ describe('selectors.ssoPrimaryAccounts test cases', () => {
       },
     };
 
-    expect(selectors.ssoPrimaryAccounts(sampleState)).toEqual(
+    expect(selectors.primaryAccounts(sampleState)).toEqual(
       [
         {
           _id: 'ashareId123',
