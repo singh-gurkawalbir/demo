@@ -184,7 +184,7 @@ export const generateRouterNode = (router, routerIndex) => ({
 export const generateNewTerminal = ({branch = {}, branchIndex, routerIndex} = {}) => ({
   id: shortId(),
   type: GRAPH_ELEMENTS_TYPE.TERMINAL,
-  draggable: true,
+  draggable: false,
   data: {
     ...branch,
     path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${branch.pageProcessors?.length || '-'}`,
@@ -345,6 +345,7 @@ const populateMergeData = (flow, elements) => {
                 element.data.mergableTerminals = [];
               }
               element.data.mergableTerminals.push(terminalNode.id);
+              terminalNode.draggable = true;
             }
           } else {
             const preceedingRouters = preceedingRoutersMap[terminalRouterId];
@@ -354,6 +355,7 @@ const populateMergeData = (flow, elements) => {
                 element.data.mergableTerminals = [];
               }
               element.data.mergableTerminals.push(terminalNode.id);
+              terminalNode.draggable = true;
             }
           }
         }
@@ -374,6 +376,7 @@ const populateMergeData = (flow, elements) => {
                 element.data.mergableTerminals = [];
               }
               element.data.mergableTerminals.push(terminalNode.id);
+              terminalNode.draggable = true;
             }
           }
         }
