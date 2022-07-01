@@ -6810,7 +6810,7 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
   return !!ssoLinkedAccount?.accountSSORequired;
 };
 
-selectors.ssoPrimaryAccounts = createSelector(
+selectors.primaryAccounts = createSelector(
   state => selectors.isAccountOwner(state),
   state => state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN),
   (isAccountOwner, orgAccounts) => {

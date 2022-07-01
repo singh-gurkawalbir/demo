@@ -455,6 +455,7 @@ export const COMMUNITY_URL = 'https://docs.celigo.com/hc/en-us/community/topics'
 export const FLOW_EVENT_REPORTS_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4402565285389`;
 export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
 export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
+export const MFA_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
 
 export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle', 'bigquerydatawarehouse', 'redshiftdatawarehouse'];
 
@@ -747,6 +748,9 @@ export const SUITESCRIPT_MAPPINGS_FORM_KEY = 'suitescriptmappingsformkey';
 export const CATEGORY_MAPPING_ASYNC_KEY = 'categorymappingdrawer';
 export const HOME_PAGE_PATH = '/home';
 export const ERROR_DETAIL_ACTIONS_ASYNC_KEY = 'ERROR_DETAIL_ACTIONS_ASYNC_KEY';
+export const MFA_RESET_ASYNC_KEY = 'MFA_RESET_ASYNC_KEY';
+export const MFA_SETUP_ASYNC_KEY = 'MFA_SETUP_ASYNC_KEY';
+export const MFA_DELETE_DEVICE_ASYNC_KEY = 'MFA_DELETE_DEVICE_ASYNC_KEY';
 export const NO_RESULT_SEARCH_MESSAGE = 'Your search didn’t return any matching results. Try expanding your search criteria.';
 
 export const MAPPING_SAVE_STATUS = {

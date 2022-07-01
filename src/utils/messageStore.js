@@ -1,3 +1,5 @@
+import { MFA_URL } from './constants';
+
 const messages = {
   CONTACT_SALES_MESSAGE: 'We will contact you soon to schedule your demo and discuss your business needs. In the meantime,',
   INTEGRATION_DELETE_VALIDATE: 'All Flows within an integration tile must be removed before the integration tile can be deleted.',
@@ -49,6 +51,18 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   PULL_MERGE_SUCCESS: 'You\'ve successfully merged your pull.',
   REVERT_SUCCESS: 'You\'ve successfully reverted your changes.',
   SNAPSHOT_SUCCESS: 'You\'ve successfully created a snapshot.',
+  // #endregion
+  // #region MFA
+  MFA_SETUP_SUCCESS: 'MFA enabled and device connected successfully.',
+  MFA_ENABLED: 'MFA enabled successfully.',
+  MFA_DISABLED: 'MFA disabled successfully.',
+  // TODO: Update once the message to show is confirmed
+  MFA_PRIMARY_ACCOUNT_UPDATED: 'Primary account to reset updated successfully',
+  MFA_RESET_SUCCESS: `Your MFA has been reset successfully and a new key has been regenerated. <b><a target="_blank" rel="noopener noreferrer"
+  href="${MFA_URL}">Enable MFA</a></b> to use the new key with your account.`,
+  DELETE_TRUSTED_DEVICE: "Are you sure you want to delete your trusted MFA device? You'll need to re-authenticate your account the next time you sign into integrator.io with the device.",
+  RESET_MFA: "Are you sure you want to reset MFA? You'll need to re-associate your authenticator app and configure your device in integrator.io.",
+  DELETE_DEVICE_SUCCESS: 'Device deleted successfully.',
   // #endregion
 
 };
