@@ -34,6 +34,12 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   DIY_INSTALL_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the resources in this integration, but  updates to the original integration will not affect this new copy. This integration has not been reviewed by Celigo. Make sure you trust the author before installing, and carefully review all components in the integration before proceeding.',
   CELIGO_AUTHORED_TEMPLATE_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account.',
   THIRD_PARTY_TEMPLATE_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account. This template has not been reviewed by Celigo. Make sure you trust the publisher before installing, and carefully review all components in the integration before proceeding.',
+  SSO_LICENSE_UPGRADE_INFO: `<b>Upgrade your account to make signing in easier and more secure.</b> Advantages of SSO authentication include: <br>
+  <ul><li>Improved security</li>
+  <li>Reduced password fatigue</li>
+  <li>Streamlined user experience</li></ul>`,
+  SSO_LICENSE_UPGRADE_REQUESTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
+  SSO_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE: 'We have received your request and will be in touch soon.',
   // #region mapper2 messages
   MAPPER2_DELETE_ROW_WARNING: 'Are you sure you want to delete this parent record row? All its child rows will be deleted as well.',
   MAPPER2_DATA_TYPE_WARNING: `Since only an "object" or "[object]" data type can have child rows, 

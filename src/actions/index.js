@@ -1305,10 +1305,12 @@ const license = {
     action(actionTypes.LICENSE.TRIAL_ISSUED, message),
   requestLicenseUpgrade: () =>
     action(actionTypes.LICENSE.UPGRADE_REQUEST, {}),
-  requestUpdate: (actionType, connectorId, licenseId) =>
-    action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId }),
-  licenseUpgradeRequestSubmitted: message =>
-    action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message }),
+  requestUpdate: (actionType, {connectorId, licenseId, feature}) =>
+    action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId, feature }),
+  licenseUpgradeRequestSubmitted: (message, feature) =>
+    action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message, feature }),
+  ssoLicenseUpgradeRequested: () =>
+    action(actionTypes.LICENSE.SSO.UPGRADE_REQUESTED),
   requestLicenseEntitlementUsage: () =>
     action(actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST),
   requestNumEnabledFlows: () =>
