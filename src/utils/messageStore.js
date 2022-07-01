@@ -38,6 +38,12 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   <p>In the first branch, all steps/branching routers will persist and become a linear flow.</p>
   <p>All other branches and all steps/branching routers inside 
   ({{configuredCount}} configured steps, {{unconfiguredCount}} unconfigured steps) will be removed</p>`,
+  SSO_LICENSE_UPGRADE_INFO: `<b>Upgrade your account to make signing in easier and more secure.</b> Advantages of SSO authentication include: <br>
+  <ul><li>Improved security</li>
+  <li>Reduced password fatigue</li>
+  <li>Streamlined user experience</li></ul>`,
+  SSO_LICENSE_UPGRADE_REQUESTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
+  SSO_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE: 'We have received your request and will be in touch soon.',
   // #region mapper2 messages
   MAPPER2_DELETE_ROW_WARNING: 'Are you sure you want to delete this parent record row? All its child rows will be deleted as well.',
   MAPPER2_DATA_TYPE_WARNING: `Since only an "object" or "[object]" data type can have child rows, 
@@ -71,6 +77,8 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   DELETE_TRUSTED_DEVICE: "Are you sure you want to delete your trusted MFA device? You'll need to re-authenticate your account the next time you sign into integrator.io with the device.",
   RESET_MFA: "Are you sure you want to reset MFA? You'll need to re-associate your authenticator app and configure your device in integrator.io.",
   DELETE_DEVICE_SUCCESS: 'Device deleted successfully.',
+  SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
+
   // #endregion
 
 };

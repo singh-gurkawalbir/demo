@@ -229,6 +229,23 @@ describe('session.resource reducers', () => {
       expect(selectors.platformLicenseActionMessage(state)).toEqual(expected.platformLicenseActionMessage);
     });
   });
+  describe('ssoLicenseUpgradeRequested', () => {
+    test('should return undefined when no match found.', () => {
+      expect(selectors.ssoLicenseUpgradeRequested(undefined)).toEqual(
+        undefined
+      );
+      expect(selectors.ssoLicenseUpgradeRequested({})).toEqual(undefined);
+    });
+    test('should return true when sso license is upgrade requested', () => {
+      const state = reducer(
+        undefined,
+        actions.license.ssoLicenseUpgradeRequested()
+      );
+      const expected = {ssoLicenseUpgradeRequested: true};
+
+      expect(selectors.ssoLicenseUpgradeRequested(state)).toEqual(expected.ssoLicenseUpgradeRequested);
+    });
+  });
   describe('getChildIntegrationId', () => {
     test('should return undefined when no match found.', () => {
       expect(selectors.getChildIntegrationId(undefined)).toEqual(
