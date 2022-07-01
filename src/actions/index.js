@@ -2367,6 +2367,31 @@ const integrationLCM = {
   },
 };
 
+const mfa = {
+  requestUserSettings: () => action(actionTypes.MFA.USER_SETTINGS.REQUEST),
+  receivedUserSettings: userSettings => action(actionTypes.MFA.USER_SETTINGS.RECEIVED, { userSettings }),
+  setup: mfaConfig => action(actionTypes.MFA.USER_SETTINGS.SETUP, { mfaConfig }),
+  requestAccountSettings: () => action(actionTypes.MFA.ACCOUNT_SETTINGS.REQUEST),
+  receivedAccountSettings: accountSettings => action(actionTypes.MFA.ACCOUNT_SETTINGS.RECEIVED, { accountSettings }),
+  updateAccountSettings: accountSettings => action(actionTypes.MFA.ACCOUNT_SETTINGS.UPDATE, { accountSettings }),
+  requestSecretCode: ({ password, isQRCode }) => action(actionTypes.MFA.SECRET_CODE.REQUEST, { password, isQRCode }),
+  receivedSecretCode: secretCode => action(actionTypes.MFA.SECRET_CODE.RECEIVED, { secretCode }),
+  showSecretCode: () => action(actionTypes.MFA.SECRET_CODE.SHOW),
+  showQrCode: () => action(actionTypes.MFA.QR_CODE.SHOW),
+  secretCodeError: secretCodeError => action(actionTypes.MFA.SECRET_CODE.ERROR, { secretCodeError }),
+  resetMFA: ({ password, aShareId }) => action(actionTypes.MFA.RESET, { aShareId, password }),
+  updateDevice: deviceInfo => action(actionTypes.MFA.UPDATE_DEVICE, { deviceInfo }),
+  deleteDevice: deviceId => action(actionTypes.MFA.DELETE_DEVICE, { deviceId }),
+  verifyMobileCode: code => action(actionTypes.MFA.MOBILE_CODE.VERIFY, { code }),
+  mobileCodeVerified: (status, error) => action(actionTypes.MFA.MOBILE_CODE.STATUS, { status, error }),
+  resetMobileCodeStatus: () => action(actionTypes.MFA.MOBILE_CODE.RESET),
+  requestSessionInfo: () => action(actionTypes.MFA.SESSION_INFO.REQUEST),
+  receivedSessionInfo: sessionInfo => action(actionTypes.MFA.SESSION_INFO.RECEIVED, { sessionInfo }),
+  addSetupContext: context => action(actionTypes.MFA.ADD_SETUP_CONTEXT, { context }),
+  clearSetupContext: () => action(actionTypes.MFA.CLEAR_SETUP_CONTEXT),
+  clear: () => action(actionTypes.MFA.CLEAR),
+};
+
 export default {
   asyncTask,
   form,
@@ -2413,6 +2438,7 @@ export default {
   hooks,
   logs,
   sso,
+  mfa,
   bottomDrawer,
   integrationLCM,
   httpConnectors,
