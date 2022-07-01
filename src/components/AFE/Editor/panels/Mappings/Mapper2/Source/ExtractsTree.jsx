@@ -6,8 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Divider, Typography } from '@material-ui/core';
 import {SwitcherIcon} from '../index';
 import {selectors} from '../../../../../../../reducers';
-import {filterExtractsNode, getFinalSelectedExtracts} from '../../../../../../../utils/mapping';
-import { useSelectorMemo } from '../../../../../../../hooks';
+import {getFinalSelectedExtracts, getSelectedKeys} from '../../../../../../../utils/mapping';
 
 const useStyles = makeStyles(theme => ({
   dropdown: {
@@ -45,6 +44,9 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(1, 0, 1, 2),
       alignItems: 'center',
       borderLeft: '3px solid transparent',
+      '&.hideRow': {
+        display: 'none',
+      },
     },
     '& .childTree-switcher': {
       width: theme.spacing(1),
@@ -55,14 +57,6 @@ const useStyles = makeStyles(theme => ({
     '& .childTree-treenode-selected,& .childTree-treenode:hover': {
       backgroundColor: theme.palette.background.paper2,
       borderColor: theme.palette.primary.main,
-    },
-    '& .filter-node': {
-      '& .childTree-title': {
-        '& span': {
-          backgroundColor: theme.palette.secondary.contrastText,
-          lineHeight: 1,
-        },
-      },
     },
     '& .childTree-node-content-wrapper': {
       width: '100%',
@@ -108,7 +102,13 @@ const TitleExtracts = ({propName, dataType}) => {
 };
 
 // this is the component rendered for each row inside extracts tree
-const TreeTitle = props => <TitleExtracts {...props} key={`title-${props.key}`} />;
+const TreeTitle = props => {
+  if (props.hidden) return null;
+
+  return (
+    <TitleExtracts {...props} key={`title-${props.key}`} />
+  );
+};
 
 // this component renders the whole source fields tree
 // based on the sample data
@@ -121,23 +121,22 @@ const ExtractsTree = React.memo((
     setInputValue,
     setIsFocused,
     onBlur,
-    flowId,
-    resourceId,
   }) => {
   const classes = useStyles();
+  const isArrayType = destDataType.includes('array');
   const isGroupedSampleData = useSelector(state => selectors.mapping(state).isGroupedSampleData);
   const mappingsTreeData = useSelector(state => selectors.v2MappingsTreeData(state));
+  const extractsTreeData = useSelector(state => selectors.v2MappingsExtractsTree(state));
 
-  // replace '$.' and '$[*].' as we are not storing these prefixes in each node jsonPath as well
-  // for better searching
-  // note: if we move this below split logic in the selector directly,
-  // then we need to ensure that this returns a cached array else mkBuildExtractsTree will always run
-  const selectedValues = useMemo(() => propValue.replace(/(\$\.)|(\$\[\*\]\.)/g, '').split(','), [propValue]);
+  // highlight selected keys, based on the saved extract values
+  const selectedKeys = useMemo(() => {
+    // replace '$.' and '$[*].' as we are not storing these prefixes in each node jsonPath as well
+    // for better searching
+    const selectedValues = propValue.replace(/(\$\.)|(\$\[\*\]\.)/g, '').split(',');
 
-  // build the tree and highlight selected keys, based on the saved extract values
-  const {treeData, selectedKeys} = useSelectorMemo(selectors.mkBuildExtractsTree, {flowId, resourceId, selectedValues});
-
-  const isArrayType = destDataType.includes('array');
+    // pass the first index of tree as the tree length is always 1 because the parent is either $ or $[*]
+    return getSelectedKeys(extractsTreeData[0], selectedValues);
+  }, [extractsTreeData, propValue]);
 
   const onSelect = useCallback((keys, e) => {
     const newValue = getFinalSelectedExtracts(e.node, inputValue, isArrayType, isGroupedSampleData, nodeKey, mappingsTreeData);
@@ -147,13 +146,7 @@ const ExtractsTree = React.memo((
     if (propValue !== newValue) { onBlur(newValue); }
   }, [inputValue, isArrayType, isGroupedSampleData, onBlur, propValue, setInputValue, setIsFocused, nodeKey, mappingsTreeData]);
 
-  // this function runs for every node
-  // and returns true if input value matches current node in the dropdown
-  const filterTreeNode = useCallback(node =>
-    filterExtractsNode(node, propValue, inputValue),
-  [inputValue, propValue]);
-
-  if (isEmpty(treeData)) return null;
+  if (isEmpty(extractsTreeData)) return null;
 
   return (
     <div className={classes.dropdown}>
@@ -169,12 +162,11 @@ const ExtractsTree = React.memo((
         titleRender={TreeTitle}
         multiple
         defaultSelectedKeys={selectedKeys}
-        treeData={treeData}
+        treeData={extractsTreeData}
         showLine={false}
         switcherIcon={SwitcherIcon}
         defaultExpandAll
         onSelect={onSelect}
-        filterTreeNode={filterTreeNode}
          />
     </div>
   );

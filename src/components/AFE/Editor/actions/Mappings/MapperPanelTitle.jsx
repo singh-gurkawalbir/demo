@@ -6,13 +6,14 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Help from '../../../../Help';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import RefreshIcon from '../../../../icons/RefreshIcon';
 import TextButton from '../../../../Buttons/TextButton';
 import CeligoDivider from '../../../../CeligoDivider';
 import ExpandRowsIcon from '../../../../icons/ExpandRowsIcon';
 import CollapseRowsIcon from '../../../../icons/CollapseRowsIcon';
 import ArrowDownIcon from '../../../../icons/ArrowDownIcon';
-import { ROWS_AS_INPUT_OPTIONS, RECORD_AS_INPUT_OPTIONS, getInputOutputFormat } from '../../../../../utils/mapping';
+import { isCsvOrXlsxResourceForMapper2, ROWS_AS_INPUT_OPTIONS, RECORD_AS_INPUT_OPTIONS, getInputOutputFormat } from '../../../../../utils/mapping';
 import ActionGroup from '../../../../ActionGroup';
 import Spinner from '../../../../Spinner';
 import ArrowPopper from '../../../../ArrowPopper';
@@ -117,14 +118,18 @@ function OutputFormatsList({disabled}) {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = !!anchorEl;
-  const {isGroupedSampleData, isGroupedOutput} = useSelector(state => {
+  const {isGroupedSampleData, isGroupedOutput, importId} = useSelector(state => {
     const mapping = selectors.mapping(state);
 
     return {
       isGroupedSampleData: mapping.isGroupedSampleData,
       isGroupedOutput: mapping.isGroupedOutput,
+      importId: mapping.importId,
     };
   }, shallowEqual);
+
+  const importResource = useSelectorMemo(selectors.makeResourceSelector, 'imports', importId);
+  const disableRecordOutput = isCsvOrXlsxResourceForMapper2(importResource);
 
   const handleMenu = useCallback(
     event => {
@@ -169,6 +174,7 @@ function OutputFormatsList({disabled}) {
           >
           {(isGroupedSampleData ? ROWS_AS_INPUT_OPTIONS : RECORD_AS_INPUT_OPTIONS).map(({label, value}) => (
             <ListItem
+              disabled={value.endsWith('rec') && disableRecordOutput}
               button
               className={clsx(classes.itemRoot, {
                 [classes.itemSelected]: label === getInputOutputFormat(isGroupedSampleData, isGroupedOutput),

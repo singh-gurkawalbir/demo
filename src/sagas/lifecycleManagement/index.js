@@ -97,6 +97,7 @@ function* compareRevertRequest({ integrationId, revisionId }) {
       opts: {
         method: 'POST',
       },
+      hidden: true,
     });
 
     yield put(actions.integrationLCM.compare.receivedDiff(integrationId, resourceDiff));

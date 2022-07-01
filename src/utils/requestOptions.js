@@ -347,16 +347,16 @@ export default function getRequestOptions(
         path += `?${toKey}=${toDate}`;
       }
       if (byUser !== 'all') {
-        path += `&user=${byUser}`;
+        resourceType ? body.user = byUser : path += `&user=${byUser}`;
       }
       if (filterResourceType !== 'all') {
-        path += `&resourceType=${filterResourceType}`;
+        resourceType ? body.resourceType = filterResourceType : path += `&resourceType=${filterResourceType}`;
       }
       if (source !== 'all') {
-        path += `&source=${source}`;
+        resourceType ? body.source = source : path += `&source=${source}`;
       }
       if (event !== 'all') {
-        path += `&action=${event}`;
+        resourceType ? body.action = event : path += `&action=${event}`;
       }
       const opts = { method, body };
 

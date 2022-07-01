@@ -75,10 +75,11 @@ export function* installStep({ id, installerFunction, childId, addOnId, formVal 
         actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
       );
       yield put(actions.resource.request('integrations', id));
-      yield put(actions.resource.requestCollection('flows', null, true));
-      yield put(actions.resource.requestCollection('exports', null, true));
-      yield put(actions.resource.requestCollection('imports', null, true));
-      yield put(actions.resource.requestCollection('connections', null, true));
+      yield put(actions.resource.requestCollection('flows', null, true, id));
+      yield put(actions.resource.requestCollection('exports', null, true, id));
+      yield put(actions.resource.requestCollection('imports', null, true, id));
+      yield put(actions.resource.requestCollection('connections', null, true, id));
+      yield put(actions.resource.requestCollection('asynchelpers', null, true, id));
       yield put(
         actions.integrationApp.isAddonInstallInprogress(false, addOnId)
       );
