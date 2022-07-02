@@ -15,6 +15,7 @@ import AddIcon from '../../../../../components/icons/AddIcon';
 import { useFlowContext } from '../../Context';
 import { useHandleAddNode, useHandleAddNewRouter } from '../../../hooks';
 import { isNodeConnectedToRouter } from '../../lib';
+import messageStore from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   addButton: {
@@ -41,6 +42,7 @@ const AddNodeMenuPopper = ({
   handleClose,
   handleAddNode,
   handleAddRouter,
+  disabled,
 }) => {
   const open = Boolean(anchorEl);
 
@@ -60,13 +62,19 @@ const AddNodeMenuPopper = ({
           },
           {
             Icon: BranchIcon,
+            disabled,
             label: 'Add branching',
             onClick: handleAddRouter,
           },
-        ].map(({ Icon, label, onClick }) => (
-          <MenuItem key={label} onClick={onClick}>
-            <Icon /> {label}
-          </MenuItem>
+        ].map(({ Icon, label, onClick, disabled }) => (
+          <Tooltip key="key" title={disabled ? messageStore('MAX_ROUTERS_LIMIT_REACHED') : ''} placement="bottom">
+            <span>
+              <MenuItem key={label} onClick={onClick} disabled={disabled}>
+                <Icon /> {label}
+              </MenuItem>
+            </span>
+          </Tooltip>
+
         ))}
       </MenuList>
     </ArrowPopper>
@@ -98,7 +106,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId }) => {
     </IconButton>
   );
 };
-export default ({ edgeId }) => {
+export default ({ edgeId, disabled }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleCloseMenu = () => {
@@ -126,6 +134,7 @@ export default ({ edgeId }) => {
 
       <AddNodeMenuPopper
         anchorEl={anchorEl}
+        disabled={disabled}
         handleClose={handleCloseMenu}
         handleAddNode={handleAddNode}
         handleAddRouter={handleAddRouter}

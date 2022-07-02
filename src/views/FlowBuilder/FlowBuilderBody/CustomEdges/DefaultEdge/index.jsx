@@ -16,6 +16,7 @@ import { selectors } from '../../../../../reducers';
 import DiamondMergeIcon from '../../DiamondMergeIcon';
 import actions from '../../../../../actions';
 import { GRAPH_ELEMENTS_TYPE } from '../../../../../constants';
+import { isVirtualRouter } from '../../../../../utils/flows/flowbuilder';
 
 const useStyles = makeStyles(theme => ({
   edgePath: {
@@ -135,6 +136,7 @@ export default function DefaultEdge({
     !isSourceEmptyNode;
   const isMergableEdge =
     mergableTerminals.includes(dragNodeId) && !isFlowSaveInProgress;
+  const maxRoutersLimitReached = flow.routers.filter(r => !isVirtualRouter(r)).length >= 2;
 
   /*
   {"points":[{"x":1250,"y":494},{"x":1350,"y":555},{"x":1587.5,"y":555},{"x":1825,"y":555},{"x":1927,"y":421.5}]}
@@ -268,7 +270,7 @@ export default function DefaultEdge({
 
       {!isDragging && showAddIcon && (
         <ForeignObject edgePath={edgePath} position={position} offset={offset}>
-          <AddNewButton edgeId={id} />
+          <AddNewButton edgeId={id} disabled={maxRoutersLimitReached} />
         </ForeignObject>
       )}
 
