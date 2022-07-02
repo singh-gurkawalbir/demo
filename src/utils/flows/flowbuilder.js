@@ -409,12 +409,12 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
       if (routerIndex !== 0 || !isVirtualRouter(router)) {
         elements.push(generateRouterNode(router, routerIndex));
       }
-      router.branches.forEach((branch, branchIndex, branchCount) => {
+      router.branches.forEach((branch, branchIndex, branches) => {
         if (branch.pageProcessors.length) {
           // draw an edge from router to first step of branch
           const pageProcessorNodes = generatePageProcessorNodesAndEdges(
             branch.pageProcessors,
-            { branch, branchIndex, routerIndex, isVirtual: isVirtualRouter(router), branchCount},
+            { branch, branchIndex, routerIndex, isVirtual: isVirtualRouter(router), branchCount: branches.length},
             isReadOnlyMode
           );
 
