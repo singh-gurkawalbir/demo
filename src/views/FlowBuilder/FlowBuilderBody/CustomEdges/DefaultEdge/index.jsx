@@ -136,7 +136,7 @@ export default function DefaultEdge({
     !isSourceEmptyNode;
   const isMergableEdge =
     mergableTerminals.includes(dragNodeId) && !isFlowSaveInProgress;
-  const maxRoutersLimitReached = flow.routers.filter(r => !isVirtualRouter(r)).length >= 2;
+  const maxRoutersLimitReached = flow.routers.filter(r => !isVirtualRouter(r)).length >= 25;
 
   /*
   {"points":[{"x":1250,"y":494},{"x":1350,"y":555},{"x":1587.5,"y":555},{"x":1825,"y":555},{"x":1927,"y":421.5}]}
