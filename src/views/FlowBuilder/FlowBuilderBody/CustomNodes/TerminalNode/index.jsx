@@ -53,7 +53,7 @@ export default function TerminalNode({ id, draggable }) {
   }, [dispatch, flowId, id]);
 
   return (
-    <div className={clsx(classes.container, {[classes.dragging]: isBeingDragged})}>
+    <div data-test={`terminal-${id}`} className={clsx(classes.container, {[classes.dragging]: isBeingDragged})}>
       <DefaultHandle type="target" position={Position.Left} />
       {
       // eslint-disable-next-line no-nested-ternary

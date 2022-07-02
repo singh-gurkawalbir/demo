@@ -38,7 +38,11 @@ export default function RouterNode({data = {}}) {
     <div className={classes.container} onClick={handleRouterClick}>
       <DefaultHandle type="target" position={Position.Left} />
 
-      <IconButton size="small" className={classes.button}>
+      <IconButton
+        size="small"
+        data-test={`router-${routerId}`}
+        className={classes.button}
+        >
         <Badge
           badgeContent={badgeContent}
           // overlap="circle"
