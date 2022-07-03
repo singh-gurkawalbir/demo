@@ -261,7 +261,8 @@ export const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId, isR
   return [...nodes, ...edges];
 };
 
-const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}, isReadOnlyMode) => {
+export const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}, isReadOnlyMode) => {
+  if (!Array.isArray(pageProcessors)) return [];
   const edges = [];
   const {branch, branchIndex, routerIndex, isVirtual, branchCount} = branchData;
   const nodes = pageProcessors.map((pageProcessor, index, collection) => {

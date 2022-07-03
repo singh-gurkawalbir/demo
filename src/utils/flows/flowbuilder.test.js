@@ -20,6 +20,7 @@ import {
   generateNewEmptyNode,
   initializeFlowForReactFlow,
   generatePageGeneratorNodesAndEdges,
+  generatePageProcessorNodesAndEdges,
 } from './flowbuilder';
 
 const anyShortId = expect.stringMatching(/^[a-zA-z0-9-_]{6}$/);
@@ -919,6 +920,67 @@ describe('generatePageGeneratorNodesAndEdges util function', () => {
         {data: {path: '/routers/0/branches/0', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: '2-1234', source: '2', target: '1234', type: 'default'},
         {data: {path: '/routers/0/branches/0', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: '3-1234', source: '3', target: '1234', type: 'default'}]
     );
+  });
+});
+
+describe('generatePageProcessorNodesAndEdges util function', () => {
+  test('should return empty array when no pageProcessors are sent', () => {
+    const elements = generatePageProcessorNodesAndEdges();
+
+    expect(elements).toEqual([]);
+  });
+  test('should return correct array of nodes and edges for valid flow', () => {
+    const pageProcessors = [
+      {id: '1', _importId: '1', type: 'import'},
+      {id: '2', type: 'export', _exportId: '2'},
+      {id: '3', setupInProgress: true},
+    ];
+    const branchData = {
+      branch: {
+        pageProcessors: [{setupInProgress: true}],
+        name: 'branch1',
+        nextRouterId: 'router2',
+      },
+      branchIndex: 1,
+      routerIndex: 1,
+      isVirtual: true,
+      branchCount: 1,
+    };
+
+    expect(generatePageProcessorNodesAndEdges(pageProcessors, branchData)).toEqual([
+      {data: {path: '/routers/1/branches/1', processorCount: 3, processorIndex: 1}, hidden: undefined, id: '1-2', source: '1', target: '2', type: 'default'},
+      {data: {path: '/routers/1/branches/1', processorCount: 3, processorIndex: 2}, hidden: undefined, id: '2-3', source: '2', target: '3', type: 'default'},
+      {data: {branch: {name: 'branch1', nextRouterId: 'router2', pageProcessors: [{setupInProgress: true}]}, hideDelete: false, isFirst: true, isLast: false, isVirtual: true, path: '/routers/1/branches/1/pageProcessors/0', resource: {_importId: '1', id: '1', type: 'import'}}, id: '1', type: 'pp'},
+      {data: {branch: {name: 'branch1', nextRouterId: 'router2', pageProcessors: [{setupInProgress: true}]}, hideDelete: false, isFirst: false, isLast: false, isVirtual: true, path: '/routers/1/branches/1/pageProcessors/1', resource: {_exportId: '2', id: '2', type: 'export'}}, id: '2', type: 'pp'},
+      {data: {branch: {name: 'branch1', nextRouterId: 'router2', pageProcessors: [{setupInProgress: true}]}, hideDelete: false, isFirst: false, isLast: false, isVirtual: true, path: '/routers/1/branches/1/pageProcessors/2', resource: {id: '3', setupInProgress: true}}, id: '3', type: 'pp'},
+    ]);
+  });
+
+  test('should return correct array of nodes and edges for valid flow in readonly mode', () => {
+    const pageProcessors = [
+      {id: '1', _importId: '1', type: 'import'},
+      {id: '2', type: 'export', _exportId: '2'},
+      {id: '3', setupInProgress: true},
+    ];
+    const branchData = {
+      branch: {
+        pageProcessors: [{setupInProgress: true}],
+        name: 'branch1',
+        nextRouterId: 'router2',
+      },
+      branchIndex: 1,
+      routerIndex: 1,
+      isVirtual: true,
+      branchCount: 1,
+    };
+
+    expect(generatePageProcessorNodesAndEdges(pageProcessors, branchData, true)).toEqual([
+      {data: {path: '/routers/1/branches/1', processorCount: 3, processorIndex: 1}, hidden: undefined, id: '1-2', source: '1', target: '2', type: 'default'},
+      {data: {path: '/routers/1/branches/1', processorCount: 3, processorIndex: 2}, hidden: undefined, id: '2-3', source: '2', target: '3', type: 'default'},
+      {data: {branch: {name: 'branch1', nextRouterId: 'router2', pageProcessors: [{setupInProgress: true}]}, hideDelete: true, isFirst: true, isLast: false, isVirtual: true, path: '/routers/1/branches/1/pageProcessors/0', resource: {_importId: '1', id: '1', type: 'import'}}, id: '1', type: 'pp'},
+      {data: {branch: {name: 'branch1', nextRouterId: 'router2', pageProcessors: [{setupInProgress: true}]}, hideDelete: true, isFirst: false, isLast: false, isVirtual: true, path: '/routers/1/branches/1/pageProcessors/1', resource: {_exportId: '2', id: '2', type: 'export'}}, id: '2', type: 'pp'},
+      {data: {branch: {name: 'branch1', nextRouterId: 'router2', pageProcessors: [{setupInProgress: true}]}, hideDelete: true, isFirst: false, isLast: false, isVirtual: true, path: '/routers/1/branches/1/pageProcessors/2', resource: {id: '3', setupInProgress: true}}, id: '3', type: 'pp'},
+    ]);
   });
 });
 describe('deleteUnUsedRouters function', () => {
