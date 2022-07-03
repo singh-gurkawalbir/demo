@@ -102,16 +102,20 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath) => {
 };
 
 // Deleting PG or PP for Linear structured flow
-export const deletePGOrPPStepForOldSchema = (flow, path) => {
-  if (PageProcessorPathRegex.test(path)) {
+export const deletePPStepForOldSchema = (flow, path) => {
+  if (!flow) return;
+  if (PageProcessorPathRegex.test(path) && flow.pageProcessors) {
     const [, , , ppIndex] = PageProcessorPathRegex.exec(path);
 
     flow.pageProcessors.splice(ppIndex, 1);
   }
 };
 
-export const deletePGOrPPStepForRouters = (flow, originalFlow, stepId, elementsMap, path) => {
+export const deletePGOrPPStepForRouters = (flow, originalFlow, stepId, elementsMap) => {
   const step = elementsMap[stepId];
+
+  if (!step) return;
+  const {path} = step.data;
   const isPageGenerator = step.type === GRAPH_ELEMENTS_TYPE.PG_STEP;
 
   if (isPageGenerator) {
