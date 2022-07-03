@@ -314,8 +314,6 @@ const generateNodesAndEdgesFromNonBranchedFlow = (flow, isViewMode) => {
   ];
 };
 
-export const getRouter = (routerId, flow = {}) => flow.routers?.find(r => r.id === routerId);
-
 const populateMergeData = (flow, elements) => {
   const terminalNodes = elements.filter(el => el.type === GRAPH_ELEMENTS_TYPE.TERMINAL);
   const { routers = [] } = flow;
