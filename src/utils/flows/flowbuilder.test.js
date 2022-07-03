@@ -19,6 +19,7 @@ import {
   generateNewTerminal,
   generateNewEmptyNode,
   initializeFlowForReactFlow,
+  generatePageGeneratorNodesAndEdges,
 } from './flowbuilder';
 
 const anyShortId = expect.stringMatching(/^[a-zA-z0-9-_]{6}$/);
@@ -870,6 +871,53 @@ describe('initializeFlowForReactFlowGraph util function', () => {
         },
       ],
     }
+    );
+  });
+});
+
+describe('generatePageGeneratorNodesAndEdges util function', () => {
+  test('should return empty array when pageGenerators doesnt exist', () => {
+    expect(generatePageGeneratorNodesAndEdges()).toEqual([]);
+    expect(generatePageGeneratorNodesAndEdges([])).toEqual([]);
+    expect(generatePageGeneratorNodesAndEdges([{setupInProgress: true}])).toEqual([]);
+  });
+  test('should return array of nodes and edges when pageGenerators exist', () => {
+    expect(generatePageGeneratorNodesAndEdges([{id: '12234', setupInProgress: true}], '1234')).toEqual([
+      {data: {hideDelete: true, id: '12234', path: '/pageGenerators/0', setupInProgress: true}, id: '12234', type: 'pg'},
+      {data: {path: '/routers/-1/branches/-1', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: '12234-1234', source: '12234', target: '1234', type: 'default'},
+    ]);
+  });
+  test('should return array of nodes and edges when pageGenerators exist', () => {
+    expect(generatePageGeneratorNodesAndEdges([{id: '1', setupInProgress: true}, {id: '2', setupInProgress: true}, {id: '3', setupInProgress: true}], '1234')).toEqual(
+      [
+        {data: {hideDelete: undefined, id: '1', path: '/pageGenerators/0', setupInProgress: true}, id: '1', type: 'pg'},
+        {data: {hideDelete: undefined, id: '2', path: '/pageGenerators/1', setupInProgress: true}, id: '2', type: 'pg'},
+        {data: {hideDelete: undefined, id: '3', path: '/pageGenerators/2', setupInProgress: true}, id: '3', type: 'pg'},
+        {data: {path: '/routers/-1/branches/-1', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: '1-1234', source: '1', target: '1234', type: 'default'},
+        {data: {path: '/routers/-1/branches/-1', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: '2-1234', source: '2', target: '1234', type: 'default'},
+        {data: {path: '/routers/-1/branches/-1', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: '3-1234', source: '3', target: '1234', type: 'default'}]
+    );
+  });
+  test('should return array of nodes and edges when pageGenerators exist and hideDelete should be true when flow is in viewmode', () => {
+    expect(generatePageGeneratorNodesAndEdges([{id: '1', setupInProgress: true}, {id: '2', setupInProgress: true}, {id: '3', setupInProgress: true}], '1234', true)).toEqual(
+      [
+        {data: {hideDelete: true, id: '1', path: '/pageGenerators/0', setupInProgress: true}, id: '1', type: 'pg'},
+        {data: {hideDelete: true, id: '2', path: '/pageGenerators/1', setupInProgress: true}, id: '2', type: 'pg'},
+        {data: {hideDelete: true, id: '3', path: '/pageGenerators/2', setupInProgress: true}, id: '3', type: 'pg'},
+        {data: {path: '/routers/-1/branches/-1', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: '1-1234', source: '1', target: '1234', type: 'default'},
+        {data: {path: '/routers/-1/branches/-1', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: '2-1234', source: '2', target: '1234', type: 'default'},
+        {data: {path: '/routers/-1/branches/-1', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: '3-1234', source: '3', target: '1234', type: 'default'}]
+    );
+  });
+  test('should return array of nodes and edges when pageGenerators exist and routerId should be zero when first router is not virtual', () => {
+    expect(generatePageGeneratorNodesAndEdges([{id: '1', setupInProgress: true}, {id: '2', setupInProgress: true}, {id: '3', setupInProgress: true}], '1234', true, true)).toEqual(
+      [
+        {data: {hideDelete: true, id: '1', path: '/pageGenerators/0', setupInProgress: true}, id: '1', type: 'pg'},
+        {data: {hideDelete: true, id: '2', path: '/pageGenerators/1', setupInProgress: true}, id: '2', type: 'pg'},
+        {data: {hideDelete: true, id: '3', path: '/pageGenerators/2', setupInProgress: true}, id: '3', type: 'pg'},
+        {data: {path: '/routers/0/branches/0', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: '1-1234', source: '1', target: '1234', type: 'default'},
+        {data: {path: '/routers/0/branches/0', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: '2-1234', source: '2', target: '1234', type: 'default'},
+        {data: {path: '/routers/0/branches/0', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: '3-1234', source: '3', target: '1234', type: 'default'}]
     );
   });
 });

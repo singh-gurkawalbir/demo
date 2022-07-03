@@ -239,7 +239,7 @@ export const initializeFlowForReactFlow = flowDoc => {
 
 // Note 'targeId' can be either a page processor Id if the flow schema is linear (old schema)
 // or it can be a router Id if the flow schema represents a branched flow.
-const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId, isReadOnlyMode, isFirstRouterVirtual) => {
+export const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId, isReadOnlyMode, isFirstRouterVirtual) => {
   if (!pageGenerators || !pageGenerators.length || !targetId) {
     return [];
   }
