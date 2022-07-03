@@ -118,12 +118,12 @@ export function layoutElements(elements = []) {
       edges.push({
         ...el,
         data: {
+          ...edge.data,
           sourceType: source.type,
           targetType: target.type,
           sourceId: source.id,
           targetId: target.id,
           points,
-          ...edge.data,
         },
       });
     }
@@ -316,13 +316,22 @@ export const isNodeConnectedToRouter = (stepId, elementsMap) => {
   const source = elementsMap[step.source];
   const target = elementsMap[step.target];
 
-  if (source.type === GRAPH_ELEMENTS_TYPE.PG_STEP && target.type === GRAPH_ELEMENTS_TYPE.ROUTER) return false;
+  if (
+    source.type === GRAPH_ELEMENTS_TYPE.PG_STEP &&
+    target.type === GRAPH_ELEMENTS_TYPE.ROUTER
+  ) {
+    return false;
+  }
 
-  return source?.type === GRAPH_ELEMENTS_TYPE.ROUTER || target?.type === GRAPH_ELEMENTS_TYPE.ROUTER;
+  return (
+    source?.type === GRAPH_ELEMENTS_TYPE.ROUTER ||
+    target?.type === GRAPH_ELEMENTS_TYPE.ROUTER
+  );
 };
 
 export function snapPointsToHandles(source, target, points) {
-  const snappedPoints = [...points];
+  // clone points
+  const snappedPoints = points.map(p => ({ ...p }));
   const { x: startX, y: startY } = points[0];
   const { x: endX, y: endY } = points[points.length - 1];
 
@@ -333,14 +342,17 @@ export function snapPointsToHandles(source, target, points) {
   for (; i < points.length - 1; i += 1) {
     const { x, y } = points[i];
 
+    // console.log(`inspect point ${i}`);
     if (!complete.y && y === startY && y !== source.y) {
       snappedPoints[i].y = source.y;
+      // console.log(i, 'snapped start y');
     } else {
       complete.y = true;
     }
 
     if (!complete.x && x === startX && x !== source.x) {
       snappedPoints[i].x = source.x;
+      // console.log(i, 'snapped start x');
     } else {
       complete.x = true;
     }
@@ -355,17 +367,21 @@ export function snapPointsToHandles(source, target, points) {
   complete.x = false;
   complete.y = false;
 
-  for (let j = points.length - 1; j > i; j -= 1) {
+  for (let j = points.length - 1; j >= i; j -= 1) {
     const { x, y } = points[j];
+
+    // console.log(`inspect point ${j} of ${points.length - 1}`);
 
     if (!complete.y && y === endY && y !== target.y) {
       snappedPoints[j].y = target.y;
+      // console.log(j, 'snapped end y');
     } else {
       complete.y = true;
     }
 
     if (!complete.x && x === endX && x !== target.x) {
       snappedPoints[j].x = target.x;
+      // console.log(j, 'snapped end x');
     } else {
       complete.x = true;
     }
