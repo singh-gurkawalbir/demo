@@ -653,14 +653,17 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnecto
   }
   const retValues = { ...formValues };
 
-  if (retValues['/http/unencrypted/version']) {
-    retValues['/http/baseURI'] += `/${retValues['/http/unencrypted/version']}`;
-  } else {
-    const versionRelativeURI = httpConnector.versions?.[0]?.name;
+  if (httpConnector.versioning?.location === 'uri') {
+    if (retValues['/http/unencrypted/version']) {
+      retValues['/http/baseURI'] += `/${retValues['/http/unencrypted/version']}`;
+    } else {
+      const versionRelativeURI = httpConnector.versions?.[0]?.name;
 
-    // Regex is used here to remove continuous multiple slashes if there are any
-    retValues['/http/ping/relativeURI'] = `/${versionRelativeURI}/${retValues['/http/ping/relativeURI']}`.replace(/([^:]\/)\/+/g, '$1');
+      // Regex is used here to remove continuous multiple slashes if there are any
+      retValues['/http/ping/relativeURI'] = `/${versionRelativeURI}/${retValues['/http/ping/relativeURI']}`.replace(/([^:]\/)\/+/g, '$1');
+    }
   }
+
   retValues['/http/_httpConnectorId'] = httpConnector?._id;
   if (retValues['/http/unencrypted/version']) {
     const version = httpConnector.versions?.find(ver => ver.name === retValues['/http/unencrypted/version']);
