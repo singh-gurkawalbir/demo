@@ -304,6 +304,7 @@ export default {
     isLoggable: true,
     type: 'checkbox',
     label: 'Skip aggregation',
+    defaultValue: r => !!(r && r.file && r.file.skipAggregation),
     refreshOptionsOnChangesTo: 'file.type',
     visibleWhenAll: [
       {
