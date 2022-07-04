@@ -18,6 +18,10 @@ export default {
     'rdbms.redshift.aws.secretAccessKey': {
       fieldId: 'rdbms.redshift.aws.secretAccessKey',
     },
+    'rdbms.user': {
+      fieldId: 'rdbms.user',
+      helpKey: 'connection.rdbms.redshift.user',
+    },
     'rdbms.database': {
       fieldId: 'rdbms.database',
       helpKey: 'connection.rdbms.redshift.database',
@@ -40,6 +44,7 @@ export default {
           'rdbms.redshift.region',
           'rdbms.redshift.aws.accessKeyId',
           'rdbms.redshift.aws.secretAccessKey',
+          'rdbms.user',
           'rdbms.database',
           'rdbms.redshift.clusterIdentifier',
         ] },

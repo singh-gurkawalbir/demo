@@ -385,7 +385,6 @@ export default function ClonePreview(props) {
       name: 'tag',
       type: 'text',
       label: 'Tag',
-      defaultValue: `Clone - ${resource ? resource.name : ''}`,
     };
     fieldMeta.layout.fields = [
       'name',

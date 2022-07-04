@@ -6,6 +6,7 @@ import { getSelectedRange } from './flowMetrics';
 import { isNewId } from './resource';
 
 let path;
+let body;
 
 export default function getRequestOptions(
   action,
@@ -25,6 +26,7 @@ export default function getRequestOptions(
     loadMore,
     childId,
     flowIds,
+    feature,
   } = {}
 ) {
   switch (action) {
@@ -78,6 +80,10 @@ export default function getRequestOptions(
         path = '/licenses/retrialRequest';
       } else if (actionType === 'upgrade') {
         path = '/licenses/upgradeRequest';
+
+        if (feature) {
+          body = {feature};
+        }
       } else if (actionType === 'connectorRenewal') {
         path = `/connectors/${connectorId}/licenses/${licenseId}/renewRequest`;
       } else if (actionType === 'ioRenewal') {
@@ -88,7 +94,7 @@ export default function getRequestOptions(
 
       return {
         path,
-        opts: { method: 'POST' },
+        opts: { method: 'POST', body },
       };
     case actionTypes.ACCESSTOKEN.DISPLAY:
       return {
@@ -341,16 +347,16 @@ export default function getRequestOptions(
         path += `?${toKey}=${toDate}`;
       }
       if (byUser !== 'all') {
-        path += `&user=${byUser}`;
+        resourceType ? body.user = byUser : path += `&user=${byUser}`;
       }
       if (filterResourceType !== 'all') {
-        path += `&resourceType=${filterResourceType}`;
+        resourceType ? body.resourceType = filterResourceType : path += `&resourceType=${filterResourceType}`;
       }
       if (source !== 'all') {
-        path += `&source=${source}`;
+        resourceType ? body.source = source : path += `&source=${source}`;
       }
       if (event !== 'all') {
-        path += `&action=${event}`;
+        resourceType ? body.action = event : path += `&action=${event}`;
       }
       const opts = { method, body };
 
