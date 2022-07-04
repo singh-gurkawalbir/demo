@@ -282,7 +282,7 @@ export default function ProfilePanel() {
         type: 'checkbox',
         helpKey: 'myaccount.developer',
         noApi: true,
-        label: 'Developer Mode',
+        label: 'Developer mode',
         defaultValue: preferences && preferences.developer,
         // is this loggable
         isLoggable: true,
