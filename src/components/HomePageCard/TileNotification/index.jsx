@@ -97,7 +97,7 @@ export default function TileNotification({
           label: 'Submit request',
           onClick: () => {
             setUpgradeRequested(true);
-            dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
+            dispatch(actions.license.requestUpdate('connectorRenewal', {connectorId, licenseId}));
           },
         },
         {
@@ -141,7 +141,7 @@ export default function TileNotification({
           {
             label: 'Submit request',
             onClick: () => {
-              dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
+              dispatch(actions.license.requestUpdate('connectorRenewal', {connectorId, licenseId}));
             },
           },
           {
