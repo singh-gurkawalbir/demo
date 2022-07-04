@@ -1500,6 +1500,145 @@ describe('Accounts region selector testcases', () => {
       expect(selectors.isFormAMonitorLevelAccess(state, 'i2')).toEqual(true);
     });
   });
+  describe('selectors.isFormAManageLevelAccess test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.isFormAManageLevelAccess()).toEqual(false);
+    });
+
+    test('should return true if user has manage level access across all forms', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'aShare1' },
+            org: {
+              users: [],
+              accounts: [
+                {
+                  _id: 'aShare1',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+                },
+                {
+                  _id: 'aShare2',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                },
+                {
+                  _id: 'aShare3',
+                  accessLevel: USER_ACCESS_LEVELS.TILE,
+                  integrationAccessLevel: [
+                    {
+                      _integrationId: 'i1',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+                    },
+                    {
+                      _integrationId: 'i2',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+                    },
+                  ],
+                },
+                {
+                  _id: 'aShare4',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+                },
+              ],
+            },
+          },
+        },
+        'some-action'
+      );
+
+      expect(selectors.isFormAManageLevelAccess(state)).toEqual(true);
+    });
+    test('should return false if user does not have manage level access across all forms', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'aShare2' },
+            org: {
+              users: [],
+              accounts: [
+                {
+                  _id: 'aShare1',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+                },
+                {
+                  _id: 'aShare2',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                },
+                {
+                  _id: 'aShare3',
+                  accessLevel: USER_ACCESS_LEVELS.TILE,
+                  integrationAccessLevel: [
+                    {
+                      _integrationId: 'i1',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+                    },
+                    {
+                      _integrationId: 'i2',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+                    },
+                  ],
+                },
+                {
+                  _id: 'aShare4',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+                },
+              ],
+            },
+          },
+        },
+        'some-action'
+      );
+
+      expect(selectors.isFormAManageLevelAccess(state)).toEqual(false);
+    });
+    test('should return correct validation based on the user level access for each integration', () => {
+      const state = reducer(
+        {
+          user: {
+            profile: {},
+            preferences: { defaultAShareId: 'aShare3' },
+            org: {
+              users: [],
+              accounts: [
+                {
+                  _id: 'aShare1',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+                },
+                {
+                  _id: 'aShare2',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+                },
+                {
+                  _id: 'aShare3',
+                  accessLevel: USER_ACCESS_LEVELS.TILE,
+                  integrationAccessLevel: [
+                    {
+                      _integrationId: 'i1',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+                    },
+                    {
+                      _integrationId: 'i2',
+                      accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+                    },
+                  ],
+                },
+                {
+                  _id: 'aShare4',
+                  accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+                },
+              ],
+            },
+          },
+        },
+        'some-action'
+      );
+
+      expect(selectors.isFormAManageLevelAccess(state, 'i1')).toEqual(true);
+      expect(selectors.isFormAManageLevelAccess(state, 'i2')).toEqual(false);
+    });
+  });
 
   describe('selectors.formAccessLevel test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
