@@ -18,6 +18,7 @@ import { safeParse } from '../../../utils/string';
 import FieldMessage from '../../DynaForm/fields/FieldMessage';
 import PanelTitle from '../../AFE/Editor/gridItems/PanelTitle';
 import { drawerPaths } from '../../../utils/rightDrawer';
+import { sampleDataStage } from '../../../utils/flowData';
 
 const useStyles = makeStyles(theme => ({
   editMockContentWrapper: {
@@ -34,31 +35,28 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function RouterWrappedContent(props) {
-  const { handleClose, formKey, resourceId } = props;
+  const { handleClose, resourceId, flowId } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [error, setError] = useState();
-  const [mockDataRequested, setMockDataRequested] = useState(false);
   const resourceSampleDataStatus = useSelector(state =>
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'preview').status,
   );
-  const resourceDefaultMockData = useSelector(state => selectors.getResourceDefaultMockData(state, resourceId));
   const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
+  const {status: sampleDataStatus, data: sampleData} = useSelector(state => selectors.getSampleDataContext(state, {
+    flowId,
+    resourceId,
+    resourceType: 'imports',
+    stage: sampleDataStage.imports.processedFlowInput,
+  }));
 
   const [value, setValue] = useState(resourceMockData ? wrapExportFileSampleData(resourceMockData) : '');
 
   useEffect(() => {
-    if (resourceSampleDataStatus === 'received' && !resourceMockData) {
-      setValue(wrapExportFileSampleData(resourceDefaultMockData));
+    if (sampleDataStatus === 'received' && !resourceMockData) {
+      setValue(wrapExportFileSampleData(sampleData));
     }
-  }, [resourceDefaultMockData, resourceMockData, resourceSampleDataStatus]);
-
-  useEffect(() => {
-    if (value === '' && !mockDataRequested) {
-      setMockDataRequested(true);
-      dispatch(actions.resourceFormSampleData.request(formKey, { refreshCache: true, isMockInput: true }));
-    }
-  }, [dispatch, formKey, mockDataRequested, resourceMockData, resourceSampleDataStatus, value]);
+  }, [resourceMockData, resourceSampleDataStatus, sampleData, sampleDataStatus]);
 
   const handleChange = newValue => {
     setValue(newValue);
@@ -90,7 +88,7 @@ function RouterWrappedContent(props) {
     <>
       <DrawerHeader title="Edit mock input" helpKey="import.editMockInput" hideBackButton />
       <DrawerContent className={classes.editMockContentWrapper} >
-        {resourceSampleDataStatus === 'requested' && (
+        {sampleDataStatus === 'requested' && (
         <Spinner centerAll />
         )}
         { resourceSampleDataStatus !== 'requested' && (
