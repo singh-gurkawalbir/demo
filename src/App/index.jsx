@@ -156,7 +156,7 @@ export default function App() {
                 }}>
                 <FontStager />
                 <CssBaseline />
-                <BrowserRouter>
+                <BrowserRouter getUserConfirmation={() => {}}>
                   <div className={classes.root}>
                     <LoadingNotification />
                     <ErrorNotifications />
