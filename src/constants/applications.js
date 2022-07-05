@@ -344,17 +344,6 @@ const getAssistants = () => {
 
   return localStorageAssistants;
 };
-export const getPublishedHttpConnector = _httpConnectorId => {
-  let localStoragePublishedHttpAssistants;
-
-  try {
-    localStoragePublishedHttpAssistants = JSON.parse(localStorage.getItem('publishedHttpConnectors')) || [];
-  } catch (e) {
-    localStoragePublishedHttpAssistants = [];
-  }
-
-  return localStoragePublishedHttpAssistants?.find(c => c._id === _httpConnectorId);
-};
 
 export const getPublishedHttpConnectors = () => {
   let localStoragePublishedHttpAssistants;
@@ -533,7 +522,7 @@ export const getApp = (type, assistant, _httpConnectorId) => {
   const id = assistant || type;
   const applications = applicationsList();
 
-  if (_httpConnectorId) {
+  if (!assistant && _httpConnectorId) {
     return applications.find(c => c._httpConnectorId === _httpConnectorId) || {};
   }
 
