@@ -146,16 +146,9 @@ export default function MFA() {
   // Deals with showing notification whenever mfa setup is updated
   useNotifySetupSuccess();
 
-  const onOK = useCallback(() => true, []);
-  const onCancel = useCallback(() => false, []);
-
   return (
     <div className={classes.root}>
-      <RouterPrompt
-        when
-        onOK={onOK}
-        onCancel={onCancel}
-       />
+      <RouterPrompt when />
       <PanelHeader title="Multifactor authentication (MFA)" infoText={infoTextMFA} />
       <MFADetails />
     </div>

@@ -2,35 +2,23 @@ import { useCallback, useEffect, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 
-export default function RouterPrompt({ when, onOK, onCancel}) {
+export default function RouterPrompt({ when }) {
   const { confirmDialog } = useConfirmDialog();
   const match = useRouteMatch();
   const history = useHistory();
   const [showPrompt, setShowPrompt] = useState(false);
   const [currentPath, setCurrentPath] = useState('');
 
-  const handleOK = useCallback(async () => {
-    if (onOK) {
-      const canRoute = await Promise.resolve(onOK());
+  const handleLeave = useCallback(() => {
+    history.block(() => {});
+    history.push(currentPath);
+  }, [currentPath, history]);
 
-      if (canRoute) {
-        history.block(() => {});
-        history.push(currentPath);
-      }
-    }
-  }, [currentPath, history, onOK]);
-
-  const handleCancel = useCallback(async () => {
-    if (onCancel) {
-      const canRoute = await Promise.resolve(onCancel());
-
-      if (canRoute) {
-        history.block(() => {});
-        history.push(currentPath);
-      }
-    }
+  const handleStay = useCallback(() => {
+    history.block(() => {});
+    history.push(currentPath);
     setShowPrompt(false);
-  }, [currentPath, history, onCancel]);
+  }, [currentPath, history]);
 
   useEffect(() => {
     if (when) {
@@ -60,18 +48,18 @@ export default function RouterPrompt({ when, onOK, onCancel}) {
           {
             label: 'Cancel',
             variant: 'filled',
-            onClick: handleOK,
+            onClick: handleLeave,
 
           },
           {
             label: 'Continue setup',
             variant: 'outlined',
-            onClick: handleCancel,
+            onClick: handleStay,
           },
         ],
       });
     }
-  }, [showPrompt, confirmDialog, handleCancel, handleOK]);
+  }, [showPrompt, confirmDialog, handleLeave, handleStay]);
 
   return null;
 }
