@@ -3955,6 +3955,24 @@ selectors.isFormAMonitorLevelAccess = (state, integrationId) => {
   return false;
 };
 
+selectors.isFormAManageLevelAccess = (state, integrationId) => {
+  const { accessLevel } = selectors.resourcePermissions(state);
+
+  // if all forms is manage level
+  if (accessLevel === 'manage') return true;
+
+  // check integration level is monitor level
+  const { accessLevel: accessLevelIntegration } = selectors.resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
+
+  if (accessLevelIntegration === 'manage') return true;
+
+  return false;
+};
+
 selectors.formAccessLevel = (state, integrationId, resource, disabled) => {
   // if all forms is monitor level
 
