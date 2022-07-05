@@ -1,3 +1,5 @@
+import { MFA_URL, REVISIONS_GUIDE_URL } from './constants';
+
 const messages = {
   CONTACT_SALES_MESSAGE: 'We will contact you soon to schedule your demo and discuss your business needs. In the meantime,',
   INTEGRATION_DELETE_VALIDATE: 'All Flows within an integration tile must be removed before the integration tile can be deleted.',
@@ -32,6 +34,12 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   DIY_INSTALL_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the resources in this integration, but  updates to the original integration will not affect this new copy. This integration has not been reviewed by Celigo. Make sure you trust the author before installing, and carefully review all components in the integration before proceeding.',
   CELIGO_AUTHORED_TEMPLATE_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account.',
   THIRD_PARTY_TEMPLATE_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account. This template has not been reviewed by Celigo. Make sure you trust the publisher before installing, and carefully review all components in the integration before proceeding.',
+  SSO_LICENSE_UPGRADE_INFO: `<b>Upgrade your account to make signing in easier and more secure.</b> Advantages of SSO authentication include: <br>
+  <ul><li>Improved security</li>
+  <li>Reduced password fatigue</li>
+  <li>Streamlined user experience</li></ul>`,
+  SSO_LICENSE_UPGRADE_REQUESTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
+  SSO_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE: 'We have received your request and will be in touch soon.',
   // #region mapper2 messages
   MAPPER2_DELETE_ROW_WARNING: 'Are you sure you want to delete this parent record row? All its child rows will be deleted as well.',
   MAPPER2_DATA_TYPE_WARNING: `Since only an "object" or "[object]" data type can have child rows, 
@@ -45,10 +53,22 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   // #endregion
   // #region LCM
   REVISION_IN_PROGRESS_ERROR: 'You have a pull, snapshot, or revert in progress.',
-  NO_CLONE_FAMILY_TO_PULL_FROM_ERROR: "You don't have any data to pull. Learn more about <a target='_blank' href='https://docs.celigo.com/hc/en-us/articles/4844290103707'> cloning and pulling your integrations</>.",
+  NO_CLONE_FAMILY_TO_PULL_FROM_ERROR: `You don't have any data to pull. Learn more about <a target='_blank' href=${REVISIONS_GUIDE_URL}> cloning and pulling your integrations</>.`,
   PULL_MERGE_SUCCESS: 'You\'ve successfully merged your pull.',
   REVERT_SUCCESS: 'You\'ve successfully reverted your changes.',
   SNAPSHOT_SUCCESS: 'You\'ve successfully created a snapshot.',
+  // #endregion
+  // #region MFA
+  MFA_SETUP_SUCCESS: 'MFA enabled and device connected successfully.',
+  MFA_ENABLED: 'MFA enabled successfully.',
+  MFA_DISABLED: 'MFA disabled successfully.',
+  // TODO: Update once the message to show is confirmed
+  MFA_PRIMARY_ACCOUNT_UPDATED: 'Primary account to reset updated successfully',
+  MFA_RESET_SUCCESS: `Your MFA has been reset successfully and a new key has been regenerated. <b><a target="_blank" rel="noopener noreferrer"
+  href="${MFA_URL}">Enable MFA</a></b> to use the new key with your account.`,
+  DELETE_TRUSTED_DEVICE: "Are you sure you want to delete your trusted MFA device? You'll need to re-authenticate your account the next time you sign into integrator.io with the device.",
+  RESET_MFA: "Are you sure you want to reset MFA? You'll need to re-associate your authenticator app and configure your device in integrator.io.",
+  DELETE_DEVICE_SUCCESS: 'Device deleted successfully.',
   // #endregion
 
 };

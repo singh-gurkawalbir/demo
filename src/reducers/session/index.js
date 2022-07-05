@@ -34,6 +34,7 @@ import customSettings, { selectors as fromCustomSettings } from './customSetting
 import recycleBin, { selectors as fromRecycleBin } from './recycleBin';
 import logs, {selectors as fromLogs} from './logs';
 import sso, {selectors as fromSSO} from './sso';
+import mfa, {selectors as fromMFA} from './mfa';
 import bottomDrawer, {selectors as fromBottomDrawer} from './bottomDrawer';
 import integrations, {selectors as fromIntegrations} from './integrations';
 import asyncTask, {selectors as fromAsyncTask} from './asyncTask';
@@ -79,6 +80,7 @@ export default combineReducers({
   exportData: exportDataReducer,
   logs,
   sso,
+  mfa,
   bottomDrawer,
   resourceFormSampleData,
   lifeCycleManagement,
@@ -125,6 +127,7 @@ const subSelectors = {
   recycleBin: fromRecycleBin,
   logs: fromLogs,
   sso: fromSSO,
+  mfa: fromMFA,
   bottomDrawer: fromBottomDrawer,
   resourceFormSampleData: fromResourceFormSampleData,
   lifeCycleManagement: fromLifeCycleManagement,

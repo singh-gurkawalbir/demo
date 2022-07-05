@@ -189,6 +189,7 @@ selectors.platformLicense = (state, accountId) => {
       ioLicense.currentUsage.milliseconds / 1000 / 60 / 60
     );
   } else {
+    ioLicense.hasSSO = ioLicense.sso;
     ioLicense.hasSandbox =
     ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0;
 
@@ -274,6 +275,7 @@ selectors.sharedAccounts = createSelector(
         hasSandbox:
           ioLicense &&
           (ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0),
+        hasSSO: ioLicense?.sso,
         hasConnectorSandbox:
           a.ownerUser.licenses.filter(l => l.type === 'connector' && l.sandbox)
             .length > 0,
@@ -302,6 +304,7 @@ selectors.accountSummary = createSelector(
           id: ACCOUNT_IDS.OWN,
           hasSandbox: !!ownLicense.hasSandbox,
           hasConnectorSandbox: !!ownLicense.hasConnectorSandbox,
+          hasSSO: !!ownLicense.hasSSO,
         });
       }
 
@@ -314,6 +317,7 @@ selectors.accountSummary = createSelector(
         company: a.company,
         canLeave: shared.length > 1,
         hasSandbox: !!a.hasSandbox,
+        hasSSO: !!a.hasSSO,
         hasConnectorSandbox: !!a.hasConnectorSandbox,
       });
     });

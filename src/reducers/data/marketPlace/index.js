@@ -78,6 +78,13 @@ selectors.connectors = (state, application, sandbox, licenses, isAccountOwnerOrA
 
     if (unusedPaidLicenseExists) {
       canInstall = true;
+      // a parentChild connector can be installed only if it has a child license
+      if (c.twoDotZero?.isParentChild) {
+        canInstall = licenses.some(
+          license => connectorLicenses.some(connectorLicense => license._parentId === connectorLicense._id)
+        );
+        canRequestDemo = !canInstall;
+      }
     } else if (!usedPaidLicenseExists && conn.trialEnabled && isAccountOwnerOrAdmin) {
       canStartTrial = true;
     } else {

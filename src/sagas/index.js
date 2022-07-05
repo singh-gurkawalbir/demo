@@ -56,6 +56,7 @@ import lifecycleManagementSagas from './lifecycleManagement';
 import exportDataSagas from './exportData';
 import {logsSagas} from './logs';
 import ssoSagas from './sso';
+import mfaSagas from './mfa';
 import { APIException } from './api/requestInterceptors/utils';
 import { bottomDrawerSagas } from './bottomDrawer';
 import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
@@ -221,6 +222,7 @@ export function* allSagas() {
     ...exportDataSagas,
     ...logsSagas,
     ...ssoSagas,
+    ...mfaSagas,
     ...bottomDrawerSagas,
     ...flowGroupSagas,
     ...aliasSagas,

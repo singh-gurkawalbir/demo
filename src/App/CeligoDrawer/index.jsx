@@ -129,6 +129,11 @@ const useStyles = makeStyles(theme => ({
       padding: [[0, 5]],
     },
   },
+  iconHoverSandbox: {
+    '&:hover svg': {
+      fill: theme.palette.primary.dark,
+    },
+  },
 }));
 
 function CeligoDrawer({drawerOpened, isSandbox}) {
@@ -178,7 +183,8 @@ function CeligoDrawer({drawerOpened, isSandbox}) {
               <IconButton
                 color="inherit"
                 aria-label="close drawer"
-                onClick={handleDrawerToggle}>
+                onClick={handleDrawerToggle}
+                className={clsx({[classes.iconHoverSandbox]: isSandbox })}>
                 <CeligoMarkIcon color="inherit" />
               </IconButton>
             )}
