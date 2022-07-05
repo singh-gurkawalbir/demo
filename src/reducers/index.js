@@ -5640,7 +5640,7 @@ selectors.flowJobs = (state, options = {}) => {
       // eslint-disable-next-line no-param-reassign
       job.children = job.children.map(cJob => {
         const additionalChildProps = {
-          name: resourceMap[cJob.type === 'export' ? 'exports' : 'imports']?.[cJob._expOrImpId]?.name,
+          name: resourceMap[cJob.type === 'export' ? 'exports' : 'imports']?.[cJob._expOrImpId || cJob._exportId || cJob._importId]?.name,
           flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
         };
 
@@ -5712,7 +5712,7 @@ selectors.accountDashboardRunningJobs = createSelector(
         // eslint-disable-next-line no-param-reassign
         job.children = job.children.map(cJob => {
           const additionalChildProps = {
-            name: resourceMap[cJob.type === 'export' ? 'exports' : 'imports']?.[cJob._expOrImpId]?.name,
+            name: resourceMap[cJob.type === 'export' ? 'exports' : 'imports']?.[cJob._expOrImpId || cJob._exportId || cJob._importId]?.name,
             flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
           };
 

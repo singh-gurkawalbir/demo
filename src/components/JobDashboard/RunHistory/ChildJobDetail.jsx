@@ -36,7 +36,7 @@ export default function ChildJobDetail({
 }) {
   const classes = JobDetailsStyles();
   const jobDetailsClasses = useStyles();
-  const resource = useSelector(state => selectors.resource(state, RESOURCE_TYPE_SINGULAR_TO_PLURAL[job.type], job._expOrImpId));
+  const resource = useSelector(state => selectors.resource(state, RESOURCE_TYPE_SINGULAR_TO_PLURAL[job.type], job._expOrImpId || job._importId || job._exportId));
 
   const jobType = job.type === 'export' ? 'Export' : 'Import';
 

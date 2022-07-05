@@ -287,7 +287,7 @@ export const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = 
         hideDelete,
         isVirtual,
         isFirst: index === 0,
-        isLast: index === collection.length - 1 && !branch.nextRouterId,
+        isLast: index === collection.length - 1 && !branch?.nextRouterId,
         path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${index}`,
       },
     };
@@ -296,8 +296,8 @@ export const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = 
   return [...edges, ...nodes];
 };
 
-const generateNodesAndEdgesFromNonBranchedFlow = (flow, isViewMode) => {
-  const { _exportId, pageGenerators = [], pageProcessors = [], _importId, _connectorId } = flow;
+export const generateNodesAndEdgesFromNonBranchedFlow = (flow, isViewMode) => {
+  const { _exportId, pageGenerators = [], pageProcessors = [], _importId, _connectorId } = flow || {};
   const isReadOnly = !!_connectorId || isViewMode;
   const firstPPId = _importId || pageProcessors[0]?.id;
   const lastPPId = _importId || pageProcessors[pageProcessors.length - 1]?.id;
