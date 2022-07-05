@@ -21,6 +21,7 @@ import {
   initializeFlowForReactFlow,
   generatePageGeneratorNodesAndEdges,
   generatePageProcessorNodesAndEdges,
+  generateNodesAndEdgesFromNonBranchedFlow,
 } from './flowbuilder';
 
 const anyShortId = expect.stringMatching(/^[a-zA-z0-9-_]{6}$/);
@@ -982,6 +983,191 @@ describe('generatePageProcessorNodesAndEdges util function', () => {
       {data: {branch: {name: 'branch1', nextRouterId: 'router2', pageProcessors: [{setupInProgress: true}]}, hideDelete: true, isFirst: false, isLast: false, isVirtual: true, path: '/routers/1/branches/1/pageProcessors/2', resource: {id: '3', setupInProgress: true}}, id: '3', type: 'pp'},
     ]);
   });
+});
+
+describe('generateNodesAndEdgesFromNonBranchedFlow util function test', () => {
+  test('should return correct array for empty flow', () => {
+    expect(generateNodesAndEdgesFromNonBranchedFlow()).toEqual([
+      {data: {path: '/routers/0/branches/0', processorIndex: 0}, id: expect.any(String), target: anyShortId, type: 'default'},
+      {data: {path: '/routers/undefined/branches/undefined/pageProcessors/-'}, draggable: false, id: anyShortId, type: 'terminal'}]);
+  });
+  test('should return correct array for old flow', () => {
+    expect(generateNodesAndEdgesFromNonBranchedFlow({_exportId: '1234', _importId: '2345'})).toEqual([
+      {data: {_exportId: '1234', hideDelete: undefined, id: '1234', path: '/pageGenerators/0'}, id: '1234', type: 'pg'},
+      {data: {path: '/routers/-1/branches/-1', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: '1234-2345', source: '1234', target: '2345', type: 'default'},
+      {data: {branch: undefined, hideDelete: false, isFirst: true, isLast: true, isVirtual: undefined, path: '/routers/undefined/branches/undefined/pageProcessors/0', resource: {_importId: '2345', id: '2345'}}, id: '2345', type: 'pp'},
+      {data: {path: '/routers/0/branches/0', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: expect.any(String), source: '2345', target: anyShortId, type: 'default'}, {data: {path: '/routers/undefined/branches/undefined/pageProcessors/-'}, draggable: false, id: anyShortId, type: 'terminal'},
+    ]);
+  });
+
+  test('should return correct array for linear flow', () => {
+    expect(generateNodesAndEdgesFromNonBranchedFlow({
+      name: 'flow1',
+      pageGenerators: [{id: '1234', _exportId: '1234'}],
+      pageProcessors: [
+        {type: 'export', _exportId: '5678', id: '5678'},
+        {id: '9012', type: 'import', _importId: '9012'},
+      ],
+    })).toEqual([{
+      data: {
+        _exportId: '1234',
+        id: '1234',
+        path: '/pageGenerators/0',
+      },
+      id: '1234',
+      type: 'pg',
+    }, {
+      data: {
+        path: '/routers/-1/branches/-1',
+        processorIndex: 0,
+      },
+      id: '1234-5678',
+      source: '1234',
+      target: '5678',
+      type: 'default',
+    }, {
+      data: {
+        path: '/routers/0/branches/0',
+        processorCount: 3,
+        processorIndex: 1,
+      },
+      id: '5678-9012',
+      source: '5678',
+      target: '9012',
+      type: 'default',
+    }, {
+      data: {
+        hideDelete: false,
+        isFirst: true,
+        isLast: false,
+        path: '/routers/undefined/branches/undefined/pageProcessors/0',
+        resource: {
+          _exportId: '5678',
+          id: '5678',
+          type: 'export',
+        },
+      },
+      id: '5678',
+      type: 'pp',
+    }, {
+      data: {
+        hideDelete: false,
+        isFirst: false,
+        isLast: true,
+        path: '/routers/undefined/branches/undefined/pageProcessors/1',
+        resource: {
+          _importId: '9012',
+          id: '9012',
+          type: 'import',
+        },
+      },
+      id: '9012',
+      type: 'pp',
+    }, {
+      data: {
+        path: '/routers/0/branches/0',
+        processorIndex: 2,
+      },
+      id: expect.any(String),
+      source: '9012',
+      target: anyShortId,
+      type: 'default',
+    }, {
+      data: {
+        path: '/routers/undefined/branches/undefined/pageProcessors/-',
+      },
+      draggable: false,
+      id: anyShortId,
+      type: 'terminal',
+    }]);
+  });
+
+  test('should return correct array for linear flow in view mode', () => {
+    expect(generateNodesAndEdgesFromNonBranchedFlow({
+      name: 'flow1',
+      pageGenerators: [{id: '1234', _exportId: '1234'}],
+      pageProcessors: [
+        {type: 'export', _exportId: '5678', id: '5678'},
+        {id: '9012', type: 'import', _importId: '9012'},
+      ],
+    }, true)).toEqual([{
+      data: {
+        _exportId: '1234',
+        hideDelete: true,
+        id: '1234',
+        path: '/pageGenerators/0',
+      },
+      id: '1234',
+      type: 'pg',
+    }, {
+      data: {
+        path: '/routers/-1/branches/-1',
+        processorIndex: 0,
+      },
+      id: '1234-5678',
+      source: '1234',
+      target: '5678',
+      type: 'default',
+    }, {
+      data: {
+        path: '/routers/0/branches/0',
+        processorCount: 3,
+        processorIndex: 1,
+      },
+      id: '5678-9012',
+      source: '5678',
+      target: '9012',
+      type: 'default',
+    }, {
+      data: {
+        hideDelete: true,
+        isFirst: true,
+        isLast: false,
+        path: '/routers/undefined/branches/undefined/pageProcessors/0',
+        resource: {
+          _exportId: '5678',
+          id: '5678',
+          type: 'export',
+        },
+      },
+      id: '5678',
+      type: 'pp',
+    }, {
+      data: {
+        hideDelete: true,
+        isFirst: false,
+        isLast: true,
+        path: '/routers/undefined/branches/undefined/pageProcessors/1',
+        resource: {
+          _importId: '9012',
+          id: '9012',
+          type: 'import',
+        },
+      },
+      id: '9012',
+      type: 'pp',
+    }, {
+      data: {
+        path: '/routers/0/branches/0',
+        processorIndex: 2,
+      },
+      id: expect.any(String),
+      source: '9012',
+      target: anyShortId,
+      type: 'default',
+    }, {
+      data: {
+        path: '/routers/undefined/branches/undefined/pageProcessors/-',
+      },
+      draggable: false,
+      id: anyShortId,
+      type: 'terminal',
+    }]);
+  });
+});
+
+describe('populateMergeData util function test', () => {
+
 });
 describe('deleteUnUsedRouters function', () => {
   test('deleteUnUsedRouters function test', () => {
