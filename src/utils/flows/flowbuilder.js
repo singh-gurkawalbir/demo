@@ -348,6 +348,7 @@ const populateMergeData = (flow, elements) => {
                 element.data.mergableTerminals = [];
               }
               element.data.mergableTerminals.push(terminalNode.id);
+              terminalNode.data.draggable = true;
               terminalNode.draggable = true;
             }
           } else {
@@ -359,6 +360,7 @@ const populateMergeData = (flow, elements) => {
               }
               element.data.mergableTerminals.push(terminalNode.id);
               terminalNode.draggable = true;
+              terminalNode.data.draggable = true;
             }
           }
         }
@@ -380,6 +382,7 @@ const populateMergeData = (flow, elements) => {
               }
               element.data.mergableTerminals.push(terminalNode.id);
               terminalNode.draggable = true;
+              terminalNode.data.draggable = true;
             }
           }
         }

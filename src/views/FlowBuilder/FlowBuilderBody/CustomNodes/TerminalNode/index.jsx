@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TerminalNode({ id, draggable }) {
+export default function TerminalNode({id, data = {}}) {
   const classes = useStyles();
   const { dragNodeId, flowId } = useFlowContext();
   const dispatch = useDispatch();
@@ -68,7 +68,7 @@ export default function TerminalNode({ id, draggable }) {
         isBeingDragged ? (
           <TerminalIcon className={classes.dragging} />
         ) : (
-          <Tooltip title={draggable ? 'Drag to merge with other branch' : 'Not draggable'} position="top">
+          <Tooltip title={data.draggable ? 'Drag to merge with other branch' : ''} position="top">
             <span>
               <TerminalIcon className={classes.terminal} />
             </span>
