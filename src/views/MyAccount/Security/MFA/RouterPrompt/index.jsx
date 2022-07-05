@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 
+// Ref: https://medium.com/nerd-for-tech/custom-react-router-prompt-d325538b4d2b
 export default function RouterPrompt({ when }) {
   const { confirmDialog } = useConfirmDialog();
   const match = useRouteMatch();
