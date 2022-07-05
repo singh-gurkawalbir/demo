@@ -139,8 +139,8 @@ export default function DynaTimestampFileName(props) {
       const startIndexOfBraces = inpValue.lastIndexOf('{{');
       const inpValue2 = inpValue.substring(startIndexOfBraces + 2);
       const formattedTimeStamps = timeStamps.map(timeStamp => ({
-        label: `timestamp "${timeStamp.name}" ${userTimezone ? `"${userTimezone}"` : ''}`,
-        value: `timestamp "${timeStamp._id}" ${userTimezone ? `"${userTimezone}"` : ''}`,
+        label: `timestamp "${timeStamp.name}"${userTimezone ? ` "${userTimezone}"` : ''}`,
+        value: `timestamp "${timeStamp._id}"${userTimezone ? ` "${userTimezone}"` : ''}`,
       }));
 
       // Suggests list includes both sample data fields and timeStamp fields
