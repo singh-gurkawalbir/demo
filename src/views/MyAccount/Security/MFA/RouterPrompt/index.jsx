@@ -16,10 +16,8 @@ export default function RouterPrompt({ when }) {
   }, [currentPath, history]);
 
   const handleStay = useCallback(() => {
-    history.block(() => {});
-    history.push(currentPath);
     setShowPrompt(false);
-  }, [currentPath, history]);
+  }, []);
 
   useEffect(() => {
     if (when) {
