@@ -32,7 +32,7 @@ export default function FormView(props) {
 
   let _httpConnectorId = stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId;
 
-  _httpConnectorId = getHttpConnector(_httpConnectorId) && _httpConnectorId;
+  _httpConnectorId = getHttpConnector(_httpConnectorId)?._id;
 
   const options = useMemo(() => {
     const matchingApplication = getApp(null, null, _httpConnectorId);

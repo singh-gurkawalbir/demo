@@ -51,7 +51,7 @@ export default function FormView(props) {
   const { assistant: assistantName, http } = connection;
   let _httpConnectorId = connection?.http?._httpConnectorId;
 
-  _httpConnectorId = getHttpConnector(_httpConnectorId) && _httpConnectorId;
+  _httpConnectorId = getHttpConnector(_httpConnectorId)?._id;
 
   const isGraphql = http?.formType === 'graph_ql';
 
