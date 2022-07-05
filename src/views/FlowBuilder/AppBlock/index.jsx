@@ -228,7 +228,8 @@ export default function AppBlock({
 
     if (assistant) return assistant;
     if (http?.formType === 'graph_ql') return 'graph_ql';
-    if (http?._httpConnectorId) {
+
+    if (getHttpConnector(http?._httpConnectorId)) {
       const publishedConnector = getHttpConnector(http._httpConnectorId);
 
       return publishedConnector?.name;

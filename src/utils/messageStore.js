@@ -1,4 +1,4 @@
-import { MFA_URL } from '../constants';
+import { MFA_URL, REVISIONS_GUIDE_URL } from '../constants';
 
 const messages = {
   CONTACT_SALES_MESSAGE: 'We will contact you soon to schedule your demo and discuss your business needs. In the meantime,',
@@ -57,7 +57,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   // #endregion
   // #region LCM
   REVISION_IN_PROGRESS_ERROR: 'You have a pull, snapshot, or revert in progress.',
-  NO_CLONE_FAMILY_TO_PULL_FROM_ERROR: "You don't have any data to pull. Learn more about <a target='_blank' href='https://docs.celigo.com/hc/en-us/articles/4844290103707'> cloning and pulling your integrations</>.",
+  NO_CLONE_FAMILY_TO_PULL_FROM_ERROR: `You don't have any data to pull. Learn more about <a target='_blank' href=${REVISIONS_GUIDE_URL}> cloning and pulling your integrations</>.`,
   PULL_MERGE_SUCCESS: 'You\'ve successfully merged your pull.',
   REVERT_SUCCESS: 'You\'ve successfully reverted your changes.',
   SNAPSHOT_SUCCESS: 'You\'ve successfully created a snapshot.',

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
-import { getAssistantConnectorType, getApp } from '../../../constants/applications';
+import { getAssistantConnectorType, getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
@@ -49,7 +49,10 @@ export default function FormView(props) {
   );
 
   const { assistant: assistantName, http } = connection;
-  const _httpConnectorId = connection?.http?._httpConnectorId;
+  let _httpConnectorId = connection?.http?._httpConnectorId;
+
+  _httpConnectorId = getHttpConnector(_httpConnectorId)?._id;
+
   const isGraphql = http?.formType === 'graph_ql';
 
   const options = useMemo(() => {

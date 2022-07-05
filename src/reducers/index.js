@@ -99,7 +99,7 @@ import {
   getParentJobSteps,
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
-import { getApp } from '../constants/applications';
+import { getApp, getHttpConnector } from '../constants/applications';
 import { HOOK_STAGES } from '../utils/editor';
 import { getTextAfterCount } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
@@ -1564,7 +1564,7 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
     ignoreEnvironmentFilter: true,
     filter: {
       $where() {
-        if (connection.http?._httpConnectorId) {
+        if (getHttpConnector(connection.http?._httpConnectorId)) {
           return (
             this.http?._httpConnectorId === connection.http?._httpConnectorId &&
             this.http?._httpConnectorVersionId === connection.http?._httpConnectorVersionId &&
@@ -3970,6 +3970,24 @@ selectors.isFormAMonitorLevelAccess = (state, integrationId) => {
   return false;
 };
 
+selectors.isFormAManageLevelAccess = (state, integrationId) => {
+  const { accessLevel } = selectors.resourcePermissions(state);
+
+  // if all forms is manage level
+  if (accessLevel === 'manage') return true;
+
+  // check integration level is monitor level
+  const { accessLevel: accessLevelIntegration } = selectors.resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
+
+  if (accessLevelIntegration === 'manage') return true;
+
+  return false;
+};
+
 selectors.formAccessLevel = (state, integrationId, resource, disabled) => {
   // if all forms is monitor level
 
@@ -4270,7 +4288,7 @@ selectors.getImportSampleData = (state, resourceId, options = {}) => {
   const isIntegrationApp = !!_connectorId;
   const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
 
-  if (connection.http?._httpConnectorId || (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant)))) {
+  if (getHttpConnector(connection.http?._httpConnectorId) || (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant)))) {
     // get assistants sample data
     return selectors.assistantPreviewData(state, resourceId);
   }

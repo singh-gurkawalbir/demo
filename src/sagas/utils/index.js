@@ -6,7 +6,7 @@ import { isNewId } from '../../utils/resource';
 import { selectors } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { createFormValuesPatchSet as createSuiteScriptFormValuesPatchSet } from '../suiteScript/resourceForm';
-import { AUTHENTICATION_LABELS } from '../../constants';
+import { AUTHENTICATION_LABELS, emptyObject } from '../../constants';
 
 const convertResourceFieldstoSampleData = (resourceFields, dataType = 'object') => {
   if (!resourceFields) {
@@ -293,6 +293,9 @@ export const getHTTPConnectorMetadata = (connectorMetadata, connectionVersion) =
   return {export: exportData, import: importData};
 };
 export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, resource, isGenericHTTP) => {
+  if (!connector || !connector.supportedBy) {
+    return finalFieldMeta;
+  }
   const connectionTemplate = connector.supportedBy.connection;
   const tempFiledMeta = _.cloneDeep(finalFieldMeta);
 
@@ -300,23 +303,39 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
     const preConfiguredField = connectionTemplate.preConfiguredFields.find(field => key === field.path);
     const fieldUserMustSet = connectionTemplate.fieldsUserMustSet.find(field => key === field.path);
 
+    if (isNewId(resource?._id) && preConfiguredField) {
+      tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values?.[0];
+    }
+
     if (key === 'http.ping.relativeURI') {
       if (!tempFiledMeta.fieldMap[key].defaultValue) {
-        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]};
+        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField?.values?.[0]};
       } else if (resource.http?.unencrypted?.version) {
         tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resource.http.unencrypted.version}`, '');
       } else if (connector.versions?.[0]?.name) {
         tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${connector.versions?.[0]?.name}`, '');
       }
+      if (preConfiguredField?.values?.length > 1) {
+        const options = [
+          {
+            items: preConfiguredField.values.map(opt => ({
+              label: AUTHENTICATION_LABELS[opt] || opt,
+              value: opt,
+            })),
+          },
+        ];
+
+        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], type: 'select', options};
+      }
     } else if (key === 'http.auth.oauth.scope') {
       const field = preConfiguredField || fieldUserMustSet;
-      const scopes = field.values?.map(f => {
+      const scopes = field?.values?.map(f => {
         if (f.name) {
           return {subHeader: f.name, scopes: f.scopes};
         }
 
         return f;
-      });
+      }) || emptyObject;
 
       if (scopes) {
         tempFiledMeta.fieldMap[key].type = 'selectscopes';
@@ -325,7 +344,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], scopes};
     } else if (fieldUserMustSet) {
       tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: true};
-      if (fieldUserMustSet.values.length > 1) {
+      if (fieldUserMustSet.values?.length > 1) {
         const options = [
           {
             items: fieldUserMustSet.values.map(opt => ({
@@ -340,7 +359,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options};
       }
     } else if (preConfiguredField) {
-      if (preConfiguredField.values.length > 1) {
+      if (preConfiguredField.values?.length > 1) {
         const options = [
           {
             items: preConfiguredField.values.map(opt => ({
@@ -351,6 +370,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         ];
 
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options};
+      } else {
+        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], type: 'text'};
       }
       if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]}; }
     } else if (!tempFiledMeta.fieldMap[key].required && key !== 'settings') {
@@ -384,7 +405,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         name: '/http/unencrypted/version',
         id: 'http.unencrypted.version',
         fieldId: 'http.unencrypted.version',
-        type: versions.length > 1 ? 'select' : 'text',
+        type: 'select',
         options: versionOptions,
         defaultValue: isNewId(resource._id) ? versions?.[0] : resource?.http?.unencrypted?.version,
       },
@@ -422,36 +443,39 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
     }
   }
   if (isNewId(resource._id)) {
-    const settingFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'settingsForm');
-    const fieldMap = settingFields?.values?.[0].fieldMap;
-    const fields = [];
+    const settingFields = connectionTemplate.preConfiguredFields?.find(field => field.path === 'settingsForm');
 
-    Object.entries(fieldMap).forEach(([, value]) => {
-      fields.push({
-        field: {
-          label: value.label,
-          name: `/settings/${value.id}`,
-          id: `settings.${value.id}`,
-          fieldId: `settings.${value.id}`,
-          helpText: value.helpText,
-          type: value.type || 'text',
-          defaultValue: resource?.settings?.[value.id],
-          required: !!value.required,
-          options: value.options,
-          validWhen: value.validWhen,
-        },
+    if (settingFields) {
+      const fieldMap = settingFields.values?.[0].fieldMap;
+      const fields = [];
+
+      Object.entries(fieldMap).forEach(([, value]) => {
+        fields.push({
+          field: {
+            label: value.label,
+            name: `/settings/${value.id}`,
+            id: `settings.${value.id}`,
+            fieldId: `settings.${value.id}`,
+            helpText: value.helpText,
+            type: value.type || 'text',
+            defaultValue: resource?.settings?.[value.id],
+            required: !!value.required,
+            options: value.options,
+            validWhen: value.validWhen,
+          },
+        });
       });
-    });
 
-    if (fields) {
-      const fieldIds = [];
+      if (fields) {
+        const fieldIds = [];
 
-      for (let i = 0; i < fields.length; i += 1) {
-        fields[i] = fields[i].field;
-        tempFiledMeta.fieldMap[fields[i].id] = fields[i];
-        fieldIds.push(fields[i].id);
-      }
+        for (let i = 0; i < fields.length; i += 1) {
+          fields[i] = fields[i].field;
+          tempFiledMeta.fieldMap[fields[i].id] = fields[i];
+          fieldIds.push(fields[i].id);
+        }
         tempFiledMeta.layout?.containers?.push({fields: fieldIds, label: 'Custom settings'});
+      }
     }
   }
 
