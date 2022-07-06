@@ -102,16 +102,20 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath) => {
 };
 
 // Deleting PG or PP for Linear structured flow
-export const deletePGOrPPStepForOldSchema = (flow, path) => {
-  if (PageProcessorPathRegex.test(path)) {
+export const deletePPStepForOldSchema = (flow, path) => {
+  if (!flow) return;
+  if (PageProcessorPathRegex.test(path) && flow.pageProcessors) {
     const [, , , ppIndex] = PageProcessorPathRegex.exec(path);
 
     flow.pageProcessors.splice(ppIndex, 1);
   }
 };
 
-export const deletePGOrPPStepForRouters = (flow, originalFlow, stepId, elementsMap, path) => {
+export const deletePGOrPPStepForRouters = (flow, originalFlow, stepId, elementsMap) => {
   const step = elementsMap[stepId];
+
+  if (!step) return;
+  const {path} = step.data;
   const isPageGenerator = step.type === GRAPH_ELEMENTS_TYPE.PG_STEP;
 
   if (isPageGenerator) {
@@ -235,7 +239,7 @@ export const initializeFlowForReactFlow = flowDoc => {
 
 // Note 'targeId' can be either a page processor Id if the flow schema is linear (old schema)
 // or it can be a router Id if the flow schema represents a branched flow.
-const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId, isReadOnlyMode, isFirstRouterVirtual) => {
+export const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId, isReadOnlyMode, isFirstRouterVirtual) => {
   if (!pageGenerators || !pageGenerators.length || !targetId) {
     return [];
   }
@@ -257,7 +261,8 @@ const generatePageGeneratorNodesAndEdges = (pageGenerators, targetId, isReadOnly
   return [...nodes, ...edges];
 };
 
-const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}, isReadOnlyMode) => {
+export const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}, isReadOnlyMode) => {
+  if (!Array.isArray(pageProcessors)) return [];
   const edges = [];
   const {branch, branchIndex, routerIndex, isVirtual, branchCount} = branchData;
   const nodes = pageProcessors.map((pageProcessor, index, collection) => {
@@ -282,7 +287,7 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}, isR
         hideDelete,
         isVirtual,
         isFirst: index === 0,
-        isLast: index === collection.length - 1 && !branch.nextRouterId,
+        isLast: index === collection.length - 1 && !branch?.nextRouterId,
         path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${index}`,
       },
     };
@@ -291,8 +296,8 @@ const generatePageProcessorNodesAndEdges = (pageProcessors, branchData = {}, isR
   return [...edges, ...nodes];
 };
 
-const generateNodesAndEdgesFromNonBranchedFlow = (flow, isViewMode) => {
-  const { _exportId, pageGenerators = [], pageProcessors = [], _importId, _connectorId } = flow;
+export const generateNodesAndEdgesFromNonBranchedFlow = (flow, isViewMode) => {
+  const { _exportId, pageGenerators = [], pageProcessors = [], _importId, _connectorId } = flow || {};
   const isReadOnly = !!_connectorId || isViewMode;
   const firstPPId = _importId || pageProcessors[0]?.id;
   const lastPPId = _importId || pageProcessors[pageProcessors.length - 1]?.id;
@@ -308,8 +313,6 @@ const generateNodesAndEdgesFromNonBranchedFlow = (flow, isViewMode) => {
     terminalNode,
   ];
 };
-
-export const getRouter = (routerId, flow = {}) => flow.routers?.find(r => r.id === routerId);
 
 const populateMergeData = (flow, elements) => {
   const terminalNodes = elements.filter(el => el.type === GRAPH_ELEMENTS_TYPE.TERMINAL);
@@ -345,6 +348,7 @@ const populateMergeData = (flow, elements) => {
                 element.data.mergableTerminals = [];
               }
               element.data.mergableTerminals.push(terminalNode.id);
+              terminalNode.data.draggable = true;
               terminalNode.draggable = true;
             }
           } else {
@@ -356,6 +360,7 @@ const populateMergeData = (flow, elements) => {
               }
               element.data.mergableTerminals.push(terminalNode.id);
               terminalNode.draggable = true;
+              terminalNode.data.draggable = true;
             }
           }
         }
@@ -377,6 +382,7 @@ const populateMergeData = (flow, elements) => {
               }
               element.data.mergableTerminals.push(terminalNode.id);
               terminalNode.draggable = true;
+              terminalNode.data.draggable = true;
             }
           }
         }
@@ -409,12 +415,12 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
       if (routerIndex !== 0 || !isVirtualRouter(router)) {
         elements.push(generateRouterNode(router, routerIndex));
       }
-      router.branches.forEach((branch, branchIndex, branchCount) => {
+      router.branches.forEach((branch, branchIndex, branches) => {
         if (branch.pageProcessors.length) {
           // draw an edge from router to first step of branch
           const pageProcessorNodes = generatePageProcessorNodesAndEdges(
             branch.pageProcessors,
-            { branch, branchIndex, routerIndex, isVirtual: isVirtualRouter(router), branchCount},
+            { branch, branchIndex, routerIndex, isVirtual: isVirtualRouter(router), branchCount: branches.length},
             isReadOnlyMode
           );
 

@@ -16,7 +16,7 @@ import { requestSampleData as requestFlowSampleData } from '../sampleData/flows'
 import { requestSampleData as requestImportSampleData } from '../sampleData/imports';
 import { requestAssistantMetadata } from '../resources/meta';
 import { getMappingMetadata as getIAMappingMetadata } from '../integrationApps/settings';
-import { getAssistantConnectorType } from '../../constants/applications';
+import { getAssistantConnectorType, getHttpConnector} from '../../constants/applications';
 import { autoEvaluateProcessorWithCancel } from '../editor';
 import { getAssistantFromConnection } from '../../utils/connections';
 import { safeParse } from '../../utils/string';
@@ -203,7 +203,7 @@ export function* mappingInit({
       mappingMetadata: mappingMetadata || {},
       connectorExternalId: importResource.externalId,
     };
-  } else if (importResource.assistant || connection?.http?._httpConnectorId) {
+  } else if (importResource.assistant || getHttpConnector(connection?.http?._httpConnectorId)) {
     const { assistant } = getResourceSubType(
       {...importResource, assistant: connectionAssistant}
     );
@@ -222,7 +222,7 @@ export function* mappingInit({
       operation,
       resource,
       version,
-      assistantData: connection?.http?._httpConnectorId ? connectorMetaData : assistantData,
+      assistantData: getHttpConnector(connection?.http?._httpConnectorId) ? connectorMetaData : assistantData,
     });
 
     options.assistant = { requiredMappings };

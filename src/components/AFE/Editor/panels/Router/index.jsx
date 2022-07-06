@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useMemo } from 'react';
-import { makeStyles, Divider, Typography } from '@material-ui/core';
+import { makeStyles, Divider, Typography, Tooltip } from '@material-ui/core';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';
@@ -12,6 +12,7 @@ import DynaRadioGroup from '../../../../DynaForm/fields/radiogroup/DynaRadioGrou
 import BranchDrawer from './BranchDrawer';
 import BranchItem from './BranchItem';
 import { shortId } from '../../../../../utils/flows/flowbuilder';
+import messageStore from '../../../../../utils/messageStore';
 
 const moveArrayItem = (arr, oldIndex, newIndex) => {
   const newArr = [...arr];
@@ -62,6 +63,7 @@ export default function RouterPanel({ editorId }) {
   const dispatch = useDispatch();
   const __branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList);
   const branches = useMemo(() => __branches.map(b => ({...b, id: shortId()})), [__branches]);
+  const maxBranchesLimitReached = branches.length >= 25;
   const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
   const branchNamingIndex = useSelector(state => selectors.editor(state, editorId)?.branchNamingIndex || 0);
   const allowSorting = routeRecordsTo === 'first_matching_branch';
@@ -166,8 +168,13 @@ export default function RouterPanel({ editorId }) {
             onNameChange={handleNameChange} />
         ))}
       </SortableContainer>
-
-      <TextButton onClick={handleAddBranch}><AddIcon />Add branch</TextButton>
+      <Tooltip key="key" title={maxBranchesLimitReached ? messageStore('MAX_BRANCHES_LIMIT_REACHED') : ''} placement="bottom">
+        <span>
+          <TextButton disabled={maxBranchesLimitReached} onClick={handleAddBranch}>
+            <AddIcon />Add branch
+          </TextButton>
+        </span>
+      </Tooltip>
     </div>
   );
 }

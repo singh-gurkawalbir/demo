@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
-import { getApp} from '../../../constants/applications';
+import { getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
@@ -30,7 +30,9 @@ export default function FormView(props) {
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
 
-  const _httpConnectorId = stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId;
+  let _httpConnectorId = stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId;
+
+  _httpConnectorId = getHttpConnector(_httpConnectorId)?._id;
 
   const options = useMemo(() => {
     const matchingApplication = getApp(null, null, _httpConnectorId);

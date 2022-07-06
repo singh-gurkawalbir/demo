@@ -32,6 +32,7 @@ export default function UnlinkButton({edgeId}) {
 
   return (
     <IconButton
+      data-test={`unlink-${edgeId}`}
       className={classes.unlinkButton}
       onClick={handleDeleteEdge}
     >

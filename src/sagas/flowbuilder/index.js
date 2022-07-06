@@ -7,7 +7,7 @@ import { selectors } from '../../reducers';
 import {
   addPageGenerators,
   addPageProcessor,
-  deletePGOrPPStepForOldSchema,
+  deletePPStepForOldSchema,
   deletePGOrPPStepForRouters,
   deleteUnUsedRouters,
   mergeDragSourceWithTarget,
@@ -37,9 +37,9 @@ export function* deleteStep({flowId, stepId}) {
   let patchSet;
 
   if (originalFlow.routers?.length || isPageGenerator) {
-    patchSet = getChangesPatchSet(deletePGOrPPStepForRouters, flow, originalFlow, stepId, elementsMap, path);
+    patchSet = getChangesPatchSet(deletePGOrPPStepForRouters, flow, originalFlow, stepId, elementsMap);
   } else {
-    patchSet = getChangesPatchSet(deletePGOrPPStepForOldSchema, originalFlow, path);
+    patchSet = getChangesPatchSet(deletePPStepForOldSchema, originalFlow, path);
   }
   if (patchSet.length) {
     yield put(actions.flow.setSaveStatus(flowId, 'saving'));
