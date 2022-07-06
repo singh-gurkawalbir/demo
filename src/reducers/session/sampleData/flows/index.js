@@ -39,7 +39,7 @@ export default function (state = {}, action) {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.FLOW_DATA.INIT: {
-        const { pageGenerators = [], pageProcessors = [], _id, refresh, formKey } = flow;
+        const { pageGenerators = [], pageProcessors = [], routers = [], _id, refresh, formKey } = flow;
 
         if (!_id) {
           break;
@@ -48,7 +48,7 @@ export default function (state = {}, action) {
           draft[_id] = { pageGeneratorsMap: {}, pageProcessorsMap: {}, routersMap: {} };
         }
 
-        draft[_id] = { ...draft[_id], pageGenerators, pageProcessors, refresh, formKey };
+        draft[_id] = { ...draft[_id], pageGenerators, pageProcessors, routers, refresh, formKey };
 
         break;
       }

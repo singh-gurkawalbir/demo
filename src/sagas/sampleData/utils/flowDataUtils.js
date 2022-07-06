@@ -15,7 +15,7 @@ import {
   generateDefaultExtractsObject,
   getFormattedResourceForPreview,
 } from '../../../utils/flowData';
-import { isIntegrationApp } from '../../../utils/flows';
+import { getAllPageProcessors, isIntegrationApp } from '../../../utils/flows';
 import { isJsonString } from '../../../utils/string';
 import { emptyObject } from '../../../constants';
 import { isFileAdaptor } from '../../../utils/resource';
@@ -40,8 +40,8 @@ export function* getFlowResourceNode({ flowId, resourceId, resourceType }) {
     resourceId,
     resourceType
   );
-  const flowResourceList =
-    flow[isPageGeneratorExport ? 'pageGenerators' : 'pageProcessors'] || [];
+
+  const flowResourceList = isPageGeneratorExport ? flow.pageGenerators : getAllPageProcessors(flow);
 
   // returns specific resource based on resource id match
   return flowResourceList.find(

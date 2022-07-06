@@ -18,6 +18,7 @@ import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource } from './utils';
 import saveTransformationRulesForNewXMLExport from '../utils/xmlTransformationRulesGenerator';
 import { emptyObject, FILE_PROVIDER_ASSISTANTS } from '../../../constants';
+import { getAllPageProcessors } from '../../../utils/flows';
 
 export function* _fetchAndSaveRawDataForResource({ type, resourceId, flowId }) {
   const resourceObj = yield select(
@@ -147,7 +148,7 @@ export function* onResourceUpdate({
     // Double check for lookup or export , as old lookups does not have isLookup property
     if (flowId && !isLookup) {
       const flow = yield select(selectors.resource, 'flows', flowId);
-      const { pageProcessors = [] } = flow || {};
+      const pageProcessors = getAllPageProcessors(flow);
 
       isLookup = !!pageProcessors.find(pp => pp._exportId === resourceId);
     }

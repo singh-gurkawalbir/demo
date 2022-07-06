@@ -1,7 +1,7 @@
 import { values, keyBy, cloneDeep } from 'lodash';
 import shortid from 'shortid';
 import parseLinkHeader from 'parse-link-header';
-import { isPageGeneratorResource } from './flows';
+import { getAllPageProcessors, isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from '../constants';
 import { stringCompare } from './sort';
 import messageStore from './messageStore';
@@ -489,7 +489,7 @@ export const isRestCsvMediaTypeExport = (resource, connection) => {
 };
 
 export const isFlowResource = (flow, resourceId, resourceType) => {
-  const { pageProcessors = [] } = flow || {};
+  const pageProcessors = getAllPageProcessors(flow);
 
   // If resource type is imports search in pps
   if (resourceType === 'imports') {

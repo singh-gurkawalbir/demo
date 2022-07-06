@@ -52,6 +52,23 @@ const importActions = [
 ];
 export const defaultIA2Flow = {showMapping: true, showStartDateDialog: true, showSchedule: true};
 
+export const getAllPageProcessors = flow => {
+  const pageProcessors = [];
+
+  if (!flow) return [];
+  if (flow.routers?.length) {
+    flow.routers.forEach(router => {
+      router.branches.forEach(branch => {
+        branch.pageProcessors?.forEach(pp => pageProcessors.push(pp));
+      });
+    });
+  } else if (flow.pageProcessors?.length) {
+    flow.pageProcessors.forEach(pp => pageProcessors.push(pp));
+  }
+
+  return pageProcessors;
+};
+
 export const isActionUsed = (resource, resourceType, flowNode, action) => {
   const {
     inputFilter = {},
@@ -456,8 +473,10 @@ export function getExportIdsFromFlow(flow) {
     });
   }
 
-  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
-    flow.pageProcessors.forEach(pp => {
+  const pageProcessors = getAllPageProcessors(flow);
+
+  if (pageProcessors.length > 0) {
+    pageProcessors.forEach(pp => {
       if (pp._exportId) {
         exportIds.push(pp._exportId);
       }
@@ -478,8 +497,10 @@ export function getImportIdsFromFlow(flow) {
     importIds.push(flow._importId);
   }
 
-  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
-    flow.pageProcessors.forEach(pp => {
+  const pageProcessors = getAllPageProcessors(flow);
+
+  if (pageProcessors.length > 0) {
+    pageProcessors.forEach(pp => {
       if (pp._importId) {
         importIds.push(pp._importId);
       }
@@ -774,9 +795,10 @@ export function getFlowResources(flows = [], exports = [], imports = [], flowId)
       }
     });
   }
+  const pageProcessors = getAllPageProcessors(flow);
 
-  if (flow.pageProcessors && flow.pageProcessors.length) {
-    flow.pageProcessors.forEach(pp => {
+  if (pageProcessors.length) {
+    pageProcessors.forEach(pp => {
       if (pp.type === 'import' && pp._importId) {
         const importDoc = imports.find(e => e._id === pp._importId);
 
@@ -839,7 +861,8 @@ export function getFlowReferencesForResource(
   const flowRefs = [];
 
   existingFlows.forEach(flowId => {
-    const { pageGenerators = [], pageProcessors = [] } = flows[flowId];
+    const { pageGenerators = [] } = flows[flowId];
+    const pageProcessors = getAllPageProcessors(flows[flowId]);
     let [pgIndex, ppIndex] = [0, 0];
 
     while (pgIndex < pageGenerators.length) {
@@ -1253,20 +1276,7 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects = [], obj
 };
 
 export const getPageProcessorFromFlow = (flow, pageProcessorId) => {
-  let pageProcessor;
+  const pageProcessors = getAllPageProcessors(flow);
 
-  if (!flow) return;
-  if (flow.routers?.length) {
-    flow.routers.forEach(router => {
-      router.branches.forEach(branch => {
-        const pp = branch.pageProcessors?.find(({_importId, _exportId}) => _exportId === pageProcessorId || _importId === pageProcessorId);
-
-        if (pp && !pageProcessor) pageProcessor = pp;
-      });
-    });
-  } else if (flow.pageProcessors?.length) {
-    pageProcessor = flow.pageProcessors && flow.pageProcessors.find(({_importId, _exportId}) => _exportId === pageProcessorId || _importId === pageProcessorId);
-  }
-
-  return pageProcessor;
+  return pageProcessors.find(({_importId, _exportId}) => _exportId === pageProcessorId || _importId === pageProcessorId);
 };
