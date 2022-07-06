@@ -12,6 +12,6 @@ export default {
 
     return canUninstall;
   },
-  useOnClick: ({_integrationId}) => useHandleDelete(_integrationId),
+  useOnClick: ({_integrationId, _connectorId, supportsMultiStore, name, mode}) => useHandleDelete(_integrationId, {_connectorId, supportsMultiStore, name, mode}),
 
 };

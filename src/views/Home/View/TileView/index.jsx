@@ -11,7 +11,7 @@ export default function TileView() {
 
   if (!filteredTiles?.length && totalCount === 0) {
     return (
-      <ResourceEmptyState resourceType="integrations" />
+      <ResourceEmptyState resourceType="tiles" />
     );
   }
   if (!filteredTiles?.length && totalCount) {

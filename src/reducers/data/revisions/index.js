@@ -60,7 +60,7 @@ export default (state = defaultState, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.revisions = (state = defaultState, integrationId) => state[integrationId]?.data;
+selectors.revisions = (state = defaultState, integrationId) => state?.[integrationId]?.data;
 selectors.revision = (state = defaultState, integrationId, revisionId) => {
   const revisions = selectors.revisions(state, integrationId);
 
@@ -68,13 +68,13 @@ selectors.revision = (state = defaultState, integrationId, revisionId) => {
 };
 selectors.uniqueUserIdsFromRevisions = createSelector(
   selectors.revisions,
-  revisionsList => revisionsList.reduce((userIds, revision) => {
+  revisionsList => Array.from((revisionsList || []).reduce((userIds, revision) => {
     if (revision._createdByUserId) {
       userIds.add(revision._createdByUserId);
     }
 
     return userIds;
-  }, new Set())
+  }, new Set()))
 );
 selectors.revisionsFetchStatus = (state = defaultState, integrationId) => state[integrationId]?.status;
 
@@ -114,10 +114,10 @@ selectors.integrationHasNoRevisions = (state, integrationId) => {
   return status === 'received' && !revisions?.length;
 };
 
-selectors.getInProgressRevisionId = (state, integrationId) => {
+selectors.getInProgressRevision = (state, integrationId) => {
   const revisions = selectors.revisions(state, integrationId);
 
   return revisions?.find(revision => revision.status === REVISION_STATUS.IN_PROGRESS);
 };
-selectors.isAnyRevisionInProgress = (state, integrationId) => !!selectors.getInProgressRevisionId(state, integrationId);
+selectors.isAnyRevisionInProgress = (state, integrationId) => !!selectors.getInProgressRevision(state, integrationId);
 // #endregion

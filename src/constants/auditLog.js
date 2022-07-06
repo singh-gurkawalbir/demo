@@ -4,10 +4,13 @@ export const AUDIT_LOG_SOURCE_LABELS = {
   connector: 'Integration app',
   stack: 'Stack',
   system: 'System',
+  sso: 'SSO',
 };
 export const AUDIT_LOG_EVENT_LABELS = {
   create: 'Create',
-  delete: 'Delete',
   update: 'Update',
+  delete: 'Delete',
+  signin: 'Sign in',
+  signout: 'Sign out',
   view: 'View',
 };

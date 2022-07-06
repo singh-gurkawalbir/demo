@@ -63,6 +63,34 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
   if (isIntegrationApp(flow) && sampleData && !refresh) return sampleData;
 }
 
+export function* _getMockDataOptionsForResource({
+  addMockData,
+  _pageProcessorId,
+  isMockInput,
+  resourceId,
+}) {
+  const options = {};
+
+  if (!addMockData) return options;
+
+  const mockInput = yield select(selectors.getResourceMockData, resourceId);
+  const typeOfPreview = yield select(selectors.typeOfSampleData, resourceId);
+
+  const shouldAddMockData = addMockData && ((_pageProcessorId !== resourceId) || !isMockInput);
+
+  if (shouldAddMockData) {
+    options.inputData = !isEmpty(mockInput) ? mockInput : undefined;
+
+    if (typeOfPreview === 'send') {
+      options.sendAndPreview = true;
+    } else {
+      options.preview = true;
+    }
+  }
+
+  return options;
+}
+
 export default function* getPreviewOptionsForResource({
   resource,
   flow,
@@ -78,33 +106,13 @@ export default function* getPreviewOptionsForResource({
     resource?._connectionId
   );
   const {_id: resourceId} = resource || {};
-
-  if (addMockData) {
-    const options = {};
-    const mockInput = yield select(selectors.getResourceMockData, resourceId);
-    const typeOfPreview = yield select(selectors.typeOfSampleData, resourceId);
-
-    const shouldAddMockData = addMockData && ((_pageProcessorId !== resourceId) || !isMockInput);
-
-    if (shouldAddMockData) {
-      options.inputData = !isEmpty(mockInput) ? mockInput : undefined;
-
-      if (typeOfPreview === 'send') {
-        options.sendAndPreview = true;
-      } else {
-        options.preview = true;
-      }
-    }
-
-    return options;
-  }
-
+  const mockDataOptions = yield call(_getMockDataOptionsForResource, {addMockData, _pageProcessorId, isMockInput, resourceId});
   const uiData = isUIDataExpectedForResource(resource, connection)
     ? yield call(_getUIDataForResource, { resource, connection, flow, refresh })
     : undefined;
   const postData = getPostDataForDeltaExport(resource);
   const files = isFileMetaExpectedForResource(resource)
-    ? getSampleFileMeta()
+    ? getSampleFileMeta(resource)
     : undefined;
   const { type, rawData } = resource || {};
 
@@ -116,8 +124,8 @@ export default function* getPreviewOptionsForResource({
       runOfflineSource: 'db',
     };
 
-    return type === 'delta' ? { runOfflineOptions, postData } : { runOfflineOptions };
+    return type === 'delta' ? { ...mockDataOptions, runOfflineOptions, postData } : { ...mockDataOptions, runOfflineOptions };
   }
 
-  return type === 'delta' ? { uiData, postData } : { uiData, files };
+  return type === 'delta' ? { ...mockDataOptions, uiData, postData } : { ...mockDataOptions, uiData, files };
 }

@@ -17,6 +17,9 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     margin: 2,
   },
+  titleWrapper: {
+    width: '100%',
+  },
   error: {
     color: theme.palette.error.main,
   },
@@ -30,7 +33,7 @@ export default function PanelTitle({ title, children, className, helpKey, titleC
 
   return (
     <div className={clsx(classes.titleContainer, className)}>
-      {title ? <Typography variant="body1" component="div" className={clsx(classes[titleColor], className)}>{title}</Typography> : children}
+      {title ? <Typography variant="body1" component="div" className={clsx(classes[titleColor], classes.titleWrapper, className)}>{title}</Typography> : children}
       {helpKey && (
         <Help
           title={title}

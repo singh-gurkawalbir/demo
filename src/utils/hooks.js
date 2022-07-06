@@ -45,6 +45,7 @@ export const hooksToFunctionNamesMap = {
   transform: 'transform',
   filter: 'filter',
   handleRequest: 'handleRequest',
+  router: 'router',
 };
 
 export const hooksToHelpKeyMap = {

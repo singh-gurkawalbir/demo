@@ -61,6 +61,16 @@ export default {
               pattern: '{{timestamp "(?=.*x).*"}}|{{timestamp "(?=.*X).*"}}|{{timestamp "(?=.*mm)(?=.*ss).*"}}',
             },
           },
+          {
+            matchesRegEx: {
+              pattern: '{{uuid}}',
+            },
+          },
+          {
+            matchesRegEx: {
+              pattern: '{{random\\s+"(uuid|UUID)"\\s*\\d*}}',
+            },
+          },
         ],
       },
     },
@@ -149,7 +159,11 @@ export default {
     visibleWhenAll: [
       {
         field: 'file.type',
-        is: ['csv', 'json', 'xlsx'],
+        is: ['csv', 'json', 'xlsx', 'xml'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },
@@ -172,6 +186,10 @@ export default {
         field: 'file.type',
         is: ['csv'],
       },
+      {
+        field: 'inputMode',
+        is: ['records'],
+      },
     ],
   },
   'file.xlsx.includeHeader': {
@@ -182,6 +200,10 @@ export default {
       {
         field: 'file.type',
         is: ['xlsx'],
+      },
+      {
+        field: 'inputMode',
+        is: ['records'],
       },
     ],
   },

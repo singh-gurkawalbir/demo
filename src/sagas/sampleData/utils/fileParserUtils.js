@@ -1,7 +1,8 @@
-import { call } from 'redux-saga/effects';
+import { select, call } from 'redux-saga/effects';
 import { evaluateExternalProcessor } from '../../editor';
 import { apiCallWithRetry } from '../../index';
 import { processJsonSampleData, processJsonPreviewData } from '../../../utils/sampleData';
+import { selectors } from '../../../reducers';
 
 /*
  * Below sagas are Parser sagas for resource sample data
@@ -14,15 +15,37 @@ const PARSERS = {
   json: 'jsonParser',
 };
 
+/*
+ * NOTE: We have two different mechanisms present to group records based on fields in BE
+ * For old export docs which have groupByFields and no groupEmptyValues set or is false, we use previous mechanism
+ * For all other cases with, we use new mechanism
+ */
+
+export const shouldGroupEmptyValues = (newGroupByFields, oldResourceDoc, fileType, newKeyColumns = []) => {
+  const {groupByFields = [], groupEmptyValues} = oldResourceDoc?.file || {};
+  const keyColumns = oldResourceDoc?.file?.[fileType]?.keyColumns || [];
+
+  if (!newGroupByFields.length && ['csv', 'xlsx'].includes(fileType) && newKeyColumns.length) {
+    newGroupByFields.push(...newKeyColumns);
+  }
+
+  if (!newGroupByFields.length) return undefined;
+
+  if (!groupByFields.length && !(['csv', 'xlsx'].includes(fileType) && keyColumns.length)) return true;
+
+  return !!groupEmptyValues;
+};
+
 /**
  * NOTE: All the fields used to extract options for a file type are based on
  * metadata field Ids for that resource
  * as we infer props on resource form while editing
  */
-export const generateFileParserOptionsFromResource = (resource = {}) => {
+export const generateFileParserOptionsFromResource = (resource = {}, oldResourceDoc) => {
   const fileType = resource?.file?.type;
   const fields = resource?.file?.[fileType] || {};
   const {sortByFields = [], groupByFields = []} = resource?.file || {};
+  const groupEmptyValues = shouldGroupEmptyValues(groupByFields, oldResourceDoc, fileType, fields.keyColumns);
 
   if (!fileType) {
     return;
@@ -55,6 +78,7 @@ export const generateFileParserOptionsFromResource = (resource = {}) => {
       rowDelimiter: fields.rowDelimiter,
       sortByFields,
       groupByFields: groupByFields.length ? groupByFields : fields.keyColumns || [],
+      groupEmptyValues,
     };
   }
 
@@ -70,6 +94,7 @@ export const generateFileParserOptionsFromResource = (resource = {}) => {
       excludeNodes,
       sortByFields,
       groupByFields,
+      groupEmptyValues,
     };
   }
 
@@ -78,6 +103,7 @@ export const generateFileParserOptionsFromResource = (resource = {}) => {
       resourcePath: fields.resourcePath,
       sortByFields,
       groupByFields,
+      groupEmptyValues,
     };
   }
   // If not the above ones, it is of type file definition
@@ -87,10 +113,13 @@ export const generateFileParserOptionsFromResource = (resource = {}) => {
     rule: fileDefinitionRules,
     sortByFields,
     groupByFields,
+    groupEmptyValues,
   };
 };
 
 export function* parseFileData({ sampleData, resource }) {
+  const oldResourceDoc = yield select(selectors.resource, 'exports', resource?._id);
+
   if (!resource?.file?.type) {
     return;
   }
@@ -100,7 +129,7 @@ export function* parseFileData({ sampleData, resource }) {
     // not supported for parsing
     return;
   }
-  const options = generateFileParserOptionsFromResource(resource);
+  const options = generateFileParserOptionsFromResource(resource, oldResourceDoc);
   const processorData = {
     data: sampleData,
     editorType: PARSERS[fileType],

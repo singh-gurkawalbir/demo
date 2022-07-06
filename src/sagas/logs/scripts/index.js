@@ -48,7 +48,7 @@ export function* getScriptDependencies({scriptId = '',
         });
       }
     });
-  } else {
+  } else if (resourceReferences) {
     Object.keys(resourceReferences).forEach(resourceType => {
       resourceReferences[resourceType].forEach(res => {
         // res.access => do we need it?

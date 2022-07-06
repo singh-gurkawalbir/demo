@@ -13,7 +13,7 @@ import ResourceDrawer from '../../drawer/Resource';
 import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from '../../drawer/Resource/Panel/ResourceFormActionsPanel';
 import { isNewId, getConnectionType } from '../../../utils/resource';
-import { drawerPaths } from '../../../utils/rightDrawer';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import resourceConstants from '../../../forms/constants/connection';
 import EditorDrawer from '../../AFE/Drawer';
 
@@ -116,7 +116,13 @@ function ResourceSetupDrawerContent({
   const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
 
   const goBackToParentUrl = useCallback(() => history.replace(parentUrl), [history, parentUrl]);
-
+  const reLaunchDrawerWithCreatedConnectionId = useCallback(connectionId => {
+    history.replace(buildDrawerUrl({
+      path: drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP,
+      baseUrl: parentUrl,
+      params: { resourceType: 'connections', resourceId: connectionId },
+    }));
+  }, [history, parentUrl]);
   const handleSubmitComplete = useCallback((...args) => {
     const onSubmitCb = resourceType === 'connections' ? onSubmitComplete : handleStackSetupDone;
 
@@ -127,6 +133,13 @@ function ResourceSetupDrawerContent({
         if (connectionDoc && oAuthApplications.includes(getConnectionType(connectionDoc)) && !isAuthorized) {
           // Step should not be marked as completed until Oauth application authorization is completed on other window.
           // So does not proceed further to call onSubmit fb and do post submit action dispatches
+          // TODO @Raghu: Revisit this code
+          // Currently, only incase of clone , this part of code gets executed as connectionDoc remains null for other use cases
+          // But ideally, all oAuth related use cases should fall under this if condition and should be handled
+          if (mode === 'clone' && createdConnectionId) {
+            reLaunchDrawerWithCreatedConnectionId(createdConnectionId);
+          }
+
           return;
         }
       }
@@ -135,7 +148,7 @@ function ResourceSetupDrawerContent({
     if (onSubmitCb && typeof onSubmitCb === 'function') {
       onSubmitCb(...args);
     }
-  }, [resourceType, onSubmitComplete, handleStackSetupDone, goBackToParentUrl, mode, connectionDoc, isAuthorized]);
+  }, [resourceType, onSubmitComplete, handleStackSetupDone, goBackToParentUrl, mode, connectionDoc, isAuthorized, createdConnectionId, reLaunchDrawerWithCreatedConnectionId]);
 
   const handleClose = useCallback((...args) => {
     const onCloseCb = resourceType === 'connections' ? onClose : handleStackClose;
@@ -191,6 +204,7 @@ function ResourceSetupDrawerContent({
             cancelButtonLabel="Cancel"
             submitButtonLabel="Save & close"
             onCancel={handleClose}
+            integrationId={integrationId}
               />
         </>
       )}

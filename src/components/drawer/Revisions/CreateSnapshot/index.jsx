@@ -8,6 +8,7 @@ import DrawerContent from '../../Right/DrawerContent';
 import DrawerFooter from '../../Right/DrawerFooter';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+import messageStore from '../../../../utils/messageStore';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
@@ -15,6 +16,7 @@ import { TextButton } from '../../../Buttons';
 import Spinner from '../../../Spinner';
 import RevisionHeader from '../components/RevisionHeader';
 import { drawerPaths } from '../../../../utils/rightDrawer';
+import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
@@ -47,6 +49,7 @@ function CreateSnapshotDrawerContent({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const history = useHistory();
   const dispatch = useDispatch();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const formKey = useFormInitWithPermissions({ fieldMeta: metadata });
 
   const { revId } = match.params;
@@ -60,6 +63,7 @@ function CreateSnapshotDrawerContent({ integrationId, parentUrl }) {
 
   useEffect(() => {
     if (createdSnapshotId) {
+      enqueueSnackbar({ message: messageStore('SNAPSHOT_SUCCESS') });
       onClose();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,7 +110,7 @@ export default function CreateSnapshotDrawer({ integrationId }) {
     <RightDrawer
       path={drawerPaths.LCM.CREATE_SNAPSHOT}
       height="tall"
-      width="xl">
+      width="medium">
       <CreateSnapshotDrawerContent integrationId={integrationId} parentUrl={match.url} />
     </RightDrawer>
   );

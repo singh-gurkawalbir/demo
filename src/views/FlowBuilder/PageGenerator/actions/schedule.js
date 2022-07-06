@@ -33,7 +33,10 @@ function ScheduleDialog({
       <div>Flow schedule override</div>
       <div>
         <FlowSchedule
-          formKey={formKey} flow={flow} onClose={onClose} pg={pg}
+          formKey={formKey}
+          flow={flow}
+          onClose={onClose}
+          pg={pg}
           disabled={isViewMode}
           index={index} />
       </div>

@@ -1,7 +1,7 @@
 import { isNewId } from '../../../utils/resource';
 
 export default {
-  preSave: formValues => {
+  preSave: (formValues, _, { connection } = {}) => {
     const retValues = { ...formValues };
 
     if (retValues['/http/successMediaType'] === 'csv') {
@@ -225,6 +225,14 @@ export default {
     delete retValues['/http/paging/urlPath'];
     delete retValues['/http/paging/tokenPath'];
 
+    if (connection?.http?.type === 'Amazon-SP-API') {
+      retValues['/unencrypted/apiType'] = 'Amazon-SP-API';
+    }
+
+    if (!retValues['/configureAsyncHelper']) {
+      retValues['/http/_asyncHelperId'] = undefined;
+    }
+
     return {
       ...retValues,
     };
@@ -431,9 +439,18 @@ export default {
     'http._asyncHelperId': {
       fieldId: 'http._asyncHelperId',
     },
-    formView: { fieldId: 'formView' },
-    semiassistantoperationselect: {fieldId: 'semiassistantoperationselect', visibleWhenAll: [{field: 'formView', isNot: ['true']}]},
-    'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
+    formView: {
+      fieldId: 'formView',
+    },
+    semiassistantoperationselect: {
+      fieldId: 'semiassistantoperationselect',
+      visibleWhenAll: [{
+        field: 'formView', isNot: ['true'],
+      }],
+    },
+    'unencrypted.apiType': {
+      fieldId: 'unencrypted.apiType',
+    },
   },
 
   layout: {

@@ -6,7 +6,7 @@ import { drawerPaths } from '../../../../utils/rightDrawer';
 
 export default function InviteUserDrawer() {
   return (
-    <RightDrawer path={drawerPaths.ACCOUNT.INVITE_USER} width="medium">
+    <RightDrawer path={drawerPaths.ACCOUNT.INVITE_USER} width="medium" height="tall">
       <DrawerHeader title="Invite user" />
       <UserFormWrapper />
     </RightDrawer>

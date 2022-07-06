@@ -100,7 +100,7 @@ export default function getSettingsMetadata(props) {
               label: 'General',
               fields: ['name', 'description', ...(isUserInErrMgtTwoDotZero ? ['notifyOnFlowError', 'autoResolveMatchingTraceKeys'] : []), '_runNextFlowIds'],
             },
-            (flow?._integrationId ? {
+            ((flow._integrationId && !flow._connectorId) ? {
               collapsed: false,
               label: 'Advanced settings',
               fields: ['manageAliases'],

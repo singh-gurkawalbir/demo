@@ -530,7 +530,21 @@ describe('isOneToManyResource util', () => {
 
     expect(isOneToManyResource(restExport)).toBeTruthy();
   });
-  test('should return false for any resource without oneToMany/pathToMany', () => {
+  test('should return true if the resource has oneToMany and no pathToMany', () => {
+    const restExport = {
+      name: 'Test export',
+      _id: '1234',
+      rest: {
+        once: { relativeURI: '/api/v2/users.json', method: 'PUT', body: { test: 5 }},
+        relativeURI: '/api/v2/users.json',
+      },
+      adaptorType: 'RESTExport',
+      oneToMany: true,
+    };
+
+    expect(isOneToManyResource(restExport)).toBeTruthy();
+  });
+  test('should return false for any resource without oneToMany and pathToMany', () => {
     const restExport = {
       name: 'Test export',
       _id: '1234',
@@ -801,6 +815,7 @@ describe('getFormattedResourceForPreview util', () => {
       _id: 'asdf2345',
       name: 'FTP Import',
       sampleResponseData: {
+        name: '',
         _json: '',
         dataURI: '',
         errors: '',
@@ -854,11 +869,36 @@ describe('getResourceStageUpdatedFromPatch util', () => {
   });
 });
 describe('getSampleFileMeta util', () => {
-  test('should return correct fileMeta', () => {
+  test('should return correct fileMeta for non FTP file exports', () => {
+    const resource = {
+      adaptorType: 'S3Export',
+    };
+
+    expect(getSampleFileMeta(resource)).toEqual([
+      {
+        fileMeta: {
+          fileName: 'sampleFileName',
+        },
+      },
+    ]);
     expect(getSampleFileMeta()).toEqual([
       {
         fileMeta: {
           fileName: 'sampleFileName',
+        },
+      },
+    ]);
+  });
+  test('should return correct fileMeta for FTP file exports', () => {
+    const resource = {
+      adaptorType: 'FTPExport',
+    };
+
+    expect(getSampleFileMeta(resource)).toEqual([
+      {
+        fileMeta: {
+          fileName: 'sampleFileName',
+          fileSize: 1234,
         },
       },
     ]);

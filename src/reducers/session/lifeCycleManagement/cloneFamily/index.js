@@ -47,7 +47,7 @@ selectors.cloneFamily = (state, integrationId) => {
 };
 
 selectors.isLoadingCloneFamily = (state, integrationId) => {
-  if (!state || !integrationId || !state[integrationId]) return;
+  if (!state || !integrationId || !state[integrationId]) return false;
 
   return state[integrationId].status === 'requested';
 };
@@ -56,5 +56,12 @@ selectors.cloneFamilyFetchError = (state, integrationId) => {
   if (!state || !integrationId || !state[integrationId]) return;
 
   return state[integrationId].error;
+};
+
+selectors.hasNoCloneFamily = (state, integrationId) => {
+  const isLoadingCloneFamily = selectors.isLoadingCloneFamily(state, integrationId);
+  const cloneList = selectors.cloneFamily(state, integrationId);
+
+  return !isLoadingCloneFamily && !cloneList?.length;
 };
 

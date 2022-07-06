@@ -130,15 +130,7 @@ export default function Panel(props) {
   // peeking into the patch set from the first step in PP/PG creation.
   // The patch set should have a value for /adaptorType which
   // contains [*Import|*Export].
-  const isTechAdaptorForm = useSelector(state => {
-    const staggedPatches = selectors.stagedResource(state, id)?.patch;
-
-    return !!staggedPatches?.find(
-      p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
-    )?.value;
-  }
-
-  );
+  const showNotificationForTechAdaptorForm = useSelector(state => selectors.showNotificationForTechAdaptorForm(state, id));
 
   // Incase of a multi step resource, with isNew flag indicates first step and shows Next button
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
@@ -160,7 +152,7 @@ export default function Panel(props) {
   // using isNew as dependency and this will be false for export/import form
   useEffect(() => {
     if (!isNew) {
-      setShowNotificationToaster(isTechAdaptorForm);
+      setShowNotificationToaster(showNotificationForTechAdaptorForm);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNew]);
@@ -181,7 +173,7 @@ export default function Panel(props) {
     <>
       <TitleBar formKey={formKey} flowId={flowId} onClose={onClose} />
       <DrawerContent className={classes.root}>
-        <LoadResources required resources={requiredResources}>
+        <LoadResources required integrationId={integrationId} resources={requiredResources}>
           <div
             className={clsx({
               [classes.baseForm]: resourceType === 'exports',

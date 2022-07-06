@@ -105,7 +105,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function QueuedJobs({ connectionId}) {
+function QueuedJobs({ connectionId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const connectionJobs = useSelector(state =>
@@ -168,7 +168,7 @@ const queuedJobsDrawerPaths = [
   drawerPaths.ERROR_MANAGEMENT.V1.FLOW_LEVEL_QUEUED_JOBS,
 ];
 
-export default function QueuedJobsDrawer() {
+export default function QueuedJobsDrawer({integrationId}) {
   const classes = useStyles();
   const location = useLocation();
   const match = useRouteMatch();
@@ -212,7 +212,7 @@ export default function QueuedJobsDrawer() {
   }, [history]);
 
   return (
-    <LoadResources required resources="flows,connections">
+    <LoadResources required integrationId={integrationId} resources="flows,connections">
       <RightDrawer
         height="tall"
         width="full"

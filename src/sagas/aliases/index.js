@@ -39,9 +39,11 @@ export function* createOrUpdateAlias({ id, resourceType, aliasId, isEdit, asyncK
   const newAliasId = formVal.aliasId.toLowerCase();            // alias name will always be in lower case characters
   const newAlias = {
     alias: newAliasId,
-    description: formVal.description,
   };
 
+  if (formVal.description) {
+    newAlias.description = formVal.description;
+  }
   if (formVal.aliasResourceType === 'connections') {
     newAlias._connectionId = formVal.aliasResourceName;
   } else if (formVal.aliasResourceType === 'exports') {
@@ -71,11 +73,12 @@ export function* createOrUpdateAlias({ id, resourceType, aliasId, isEdit, asyncK
       value: newResourceAliases,
     },
   ];
+  const options = {doNotRefetch: true};
   let response;
 
   yield put(actions.asyncTask.start(asyncKey));
   try {
-    response = yield call(patchResource, { id, resourceType, patchSet });
+    response = yield call(patchResource, { id, resourceType, patchSet, options });
   } catch (e) {
     yield put(actions.asyncTask.failed(asyncKey));
 
@@ -88,7 +91,7 @@ export function* createOrUpdateAlias({ id, resourceType, aliasId, isEdit, asyncK
     return;
   }
 
-  yield put(actions.resource.aliases.actionStatus(id, newAliasId, 'save'));
+  yield put(actions.resource.aliases.actionStatus(id, newAliasId, isEdit ? 'edit' : 'save'));
   yield put(actions.asyncTask.success(asyncKey));
 }
 
@@ -101,10 +104,11 @@ export function* deleteAlias({ id, resourceType, aliasId, asyncKey }) {
       value: resourceAliases.filter(aliasData => aliasData.alias !== aliasId),
     },
   ];
+  const options = {doNotRefetch: true};
   let response;
 
   try {
-    response = yield call(patchResource, { id, resourceType, patchSet, asyncKey });
+    response = yield call(patchResource, { id, resourceType, patchSet, options, asyncKey });
   } catch (e) {
     return;
   }
