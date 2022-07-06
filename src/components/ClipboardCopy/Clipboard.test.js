@@ -5,8 +5,8 @@ import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../test/test-utils';
 import Clipboard from '.';
 
-describe('clipborad test', () => {
-  test('rendering', () => {
+describe('clipborad UI test', () => {
+  test('should test the condition when token value is not sent as props', () => {
     const onShowToken = jest.fn();
 
     renderWithProviders(<Clipboard onShowToken={onShowToken} />);
@@ -18,7 +18,7 @@ describe('clipborad test', () => {
     expect(onShowToken).toHaveBeenCalled();
   });
 
-  test('rendering', () => {
+  test('should test the condition when token value is not sent as props', () => {
     const onShowToken = jest.fn();
 
     renderWithProviders(<Clipboard token="******" onShowToken={onShowToken} />);

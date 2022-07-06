@@ -6,7 +6,7 @@ import {renderWithProviders} from '../../test/test-utils';
 import CeligoSwitch from '.';
 
 describe('CeligoSwitch test', () => {
-  test('single clicking', () => {
+  test('should do click on checkbox', () => {
     const onChange = jest.fn();
 
     renderWithProviders(<CeligoSwitch onChange={onChange} />);
@@ -16,18 +16,7 @@ describe('CeligoSwitch test', () => {
     expect(onChange).toHaveBeenCalled();
   });
 
-  test('dbouble clicking', () => {
-    const onChange = jest.fn();
-
-    renderWithProviders(<CeligoSwitch onChange={onChange} />);
-    const checkbox = screen.getByRole('checkbox');
-
-    userEvent.click(checkbox);
-    userEvent.click(checkbox);
-    expect(onChange).toHaveBeenCalledTimes(2);
-  });
-
-  test('passing with disable', () => {
+  test('should do the test for disable button', () => {
     const onChange = jest.fn();
 
     renderWithProviders(<CeligoSwitch checked onChange={onChange} disabled />);
@@ -35,19 +24,10 @@ describe('CeligoSwitch test', () => {
 
     expect(checkbox).toBeDisabled();
   });
-  test('single clicking intial checked', () => {
+  test('should do test when button is initially checked', () => {
     const onChange = jest.fn();
 
     renderWithProviders(<CeligoSwitch checked onChange={onChange} />);
-    const checkbox = screen.getByRole('checkbox');
-
-    userEvent.click(checkbox);
-    expect(onChange).toHaveBeenCalled();
-  });
-  test('single clicking intial checked', () => {
-    const onChange = jest.fn();
-
-    renderWithProviders(<CeligoSwitch onChange={onChange} />);
     const checkbox = screen.getByRole('checkbox');
 
     userEvent.click(checkbox);
