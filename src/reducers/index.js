@@ -6906,12 +6906,12 @@ selectors.isParserSupported = (state, formKey, parser) => {
   const exportId = formDetails?.parentContext?.resourceId;
 
   // selectors.resource won't work in case of new exports, so using selectors.resourceData here.
-  const { adaptorType } = selectors.resourceData(state, 'exports', exportId)?.merged || {};
+  const { adaptorType, assistant } = selectors.resourceData(state, 'exports', exportId)?.merged || {};
 
-  //  At present, we are checking only for HTTP export.
+  //  At present, we are checking only for HTTP export. Using the assistant property to exclude gdrive connector also.
   //  For remaining, we are returning true so that it does not affect the existing functionality, as it has been used as a conditional.
 
-  if (adaptorType !== 'HTTPExport') return true;
+  if (adaptorType !== 'HTTPExport' || assistant) return true;
 
   const formValues = formDetails?.value;
   const connectionId = selectors.fieldState(state, formKey, '_connectionId')?.value;
