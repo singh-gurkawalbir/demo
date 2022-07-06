@@ -24,7 +24,7 @@ export default function DragContainer({
         updateBeforeSortStart={handleSortStart}
         axis="y"
         useDragHandle>
-        {items.map((item, index) => (
+        {emptyRowIndex > 0 && items.map((item, index) => (
           <SortableItem
             key={item.key || item.sectionId}
             index={index}

@@ -148,8 +148,7 @@ export default {
                 (extractfieldsOpts?.map(field => ({
                   label: field.name,
                   value: field.id,
-                }))) ||
-                [],
+                }))),
             },
           ],
           helpKey: 'mapping.extract',
@@ -442,7 +441,7 @@ export default {
 
           if (expressionField.value) expressionValue = expressionField.value;
 
-          if (extractField.value) {
+          if (extractField && extractField.value) {
             const isGroupedField = extractField.value.indexOf('*.') === 0;
             const extractFieldValue = isGroupedField ? extractField.value.substring(2) : extractField.value;
 

@@ -363,8 +363,7 @@ export default {
                 (extractfieldsOpts?.map(field => ({
                   label: field.name,
                   value: field.id,
-                }))) ||
-                [],
+                }))),
             },
           ],
           helpKey: 'mapping.extract',
@@ -575,7 +574,7 @@ export default {
           );
           let expressionValue = '';
 
-          if (expressionField.value) expressionValue = expressionField.value;
+          if (expressionField && expressionField.value) expressionValue = expressionField.value;
 
           if (extractField.value) {
             const isGroupedField = extractField.value.indexOf('*.') === 0;
@@ -695,7 +694,7 @@ export default {
       fields = fields.filter(el => el !== 'useFirstRow');
     }
 
-    if (generate.indexOf('[*].') === -1) {
+    if (generate && generate.indexOf('[*].') === -1) {
       delete fieldMeta.fieldMap.isKey;
       fields = fields.filter(el => el !== 'isKey');
     } else {

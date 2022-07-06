@@ -1,0 +1,342 @@
+/* global describe, test, expect, jest, afterEach */
+import React from 'react';
+import { cloneDeep } from 'lodash';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter, Route } from 'react-router-dom';
+import SettingsDrawer from '.';
+import { runServer } from '../../../test/api/server';
+import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+
+async function initSettingsDrawer({
+  props = {
+    integrationId: 'integration_id',
+    flowId: 'flow_id',
+    importId: 'import_id',
+  },
+  url,
+  adaptorType = 'HTTPImport',
+  params,
+  key = 'mapping_key',
+  value = {
+    fieldMappingType: 'lookup',
+    _mode: 'static',
+    _mapList: [],
+  },
+  lookupName = 'lookup_name_1',
+} = {}) {
+  const initialStore = cloneDeep(reduxStore);
+
+  initialStore.getState().session.integrationApps.settings = {
+    'flow_id-integration_id': {
+      status: 'mappingStatus',
+      mappings: {
+        editor_id: {
+          mappings: [{
+            key,
+            generate: 'generate_2',
+            lookupName,
+          }],
+          lookups: [
+            {
+              name: 'lookup_name_1',
+              allowFailures: true,
+              useDefaultOnMultipleMatches: true,
+              map: [],
+            },
+            {
+              name: 'lookup_name_2',
+              allowFailures: true,
+              useDefaultOnMultipleMatches: true,
+              map: [{}],
+            },
+          ],
+        },
+      },
+      subRecordMappingId: props.subRecordMappingId,
+    },
+  };
+  initialStore.getState().session.form = {
+    mappingSettings: {
+      isValid: true,
+      value,
+    },
+  };
+  initialStore.getState().session.mapping = {
+    mapping: {
+      importId: props.importId,
+      flowId: props.flowId,
+      mappings: [{
+        generate: 'generate',
+        key,
+        lookupName,
+      }],
+      lookups: [
+        {
+          name: 'lookup_name_1',
+          map: { 0: {} },
+          allowFailures: true,
+          useDefaultOnMultipleMatches: true,
+          default: undefined,
+        },
+        {
+          name: 'lookup_name_2',
+          map: [{}],
+          allowFailures: true,
+          useDefaultOnMultipleMatches: true,
+        },
+      ],
+    },
+  };
+  initialStore.getState().data.resources = {
+    imports: [{
+      _id: props.importId,
+      _connectionId: 'connection_id_1',
+      adaptorType,
+      mappings: {
+        fields: [{
+          generate: 'generate_1',
+        }, {
+          generate: 'generate_2',
+          lookupName: 'lookup_name',
+        }],
+        lists: [{
+          generate: 'item',
+          fields: [],
+        }],
+      },
+      http: {
+        requestMediaType: 'xml',
+      },
+    }],
+  };
+  // ui-drawer/settings/category/:editorId/sections/:sectionId/:depth/:mappingKey
+  // ui-drawer/settings/v2/:nodeKey/:generate
+  // ui-drawer/settings/:mappingKey
+  const ui = (
+    <MemoryRouter
+      initialEntries={[{pathname: `/integrations/integration_id/flowBuilder/flow_id/ui-drawer/mappings/${url}`}]}
+    >
+      <Route
+        path="/integrations/integration_id/flowBuilder/flow_id/ui-drawer/mappings"
+        params={params}
+        >
+        <SettingsDrawer {...props} />
+      </Route>
+    </MemoryRouter>
+  );
+
+  return renderWithProviders(ui, { initialStore });
+}
+
+const mockCloseAfterSave = jest.fn().mockReturnValue({
+  closeAfterSave: true,
+});
+
+jest.mock('../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm'),
+  default: props => {
+    const handleSave = () => {
+      const { closeAfterSave } = mockCloseAfterSave();
+
+      props.onSave(closeAfterSave);
+    };
+
+    return (
+      <>
+        <button type="button" onClick={handleSave}>
+          Save
+        </button>
+        <button type="button" onClick={props.onClose}>
+          Mock Close
+        </button>
+      </>
+
+    );
+  },
+
+}));
+
+const mockHistorygoBack = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-router-dom'),
+  Redirect: jest.fn(({ to }) => <>Redirected to {to}</>),
+  useHistory: () => ({
+    goBack: mockHistorygoBack,
+  }),
+}));
+
+jest.mock('../../AFE/Editor/panels/Mappings/Mapper2/Settings', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../AFE/Editor/panels/Mappings/Mapper2/Settings'),
+  default: () => (
+    <>
+      V2 SETTINGS render
+    </>
+  ),
+}));
+
+describe('SettingsDrawer test cases', () => {
+  runServer();
+
+  afterEach(() => {
+    mockHistorygoBack.mockClear();
+  });
+
+  describe('SettingsDrawer component CATEGORY MAPPING SETTINGS Test cases', () => {
+    const url = 'ui-drawer/settings/category/editor_id/sections/section_id/depth/mapping_key';
+
+    const params = {
+      editorId: 'editor_id',
+      sectionId: 'section_id',
+      depth: 'depth',
+      mappingKey: 'mapping_key',
+    };
+
+    test('should pass the intial render to redirect', async () => {
+      await initSettingsDrawer({
+        url: 'ui-drawer/settings/category/editor_id/sections/section_id/depth/mapping_key',
+        params,
+        key: 'mapping_key1',
+      });
+
+      expect(screen.queryByText('Redirected to /integrations/integration_id/flowBuilder/flow_id/ui-drawer/mappings/ui-drawer')).toBeInTheDocument();
+      expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
+    });
+
+    test('should pass the intial render with empty map static lookup', async () => {
+      await initSettingsDrawer({
+        url,
+        params,
+      });
+
+      expect(screen.queryByText(/Settings/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Save/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Close/i)).toBeInTheDocument();
+      userEvent.click(screen.getByRole('button', {name: /Save/i}));
+
+      expect(await screen.queryByText(/You need to map at least one value./i)).toBeInTheDocument();
+      expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
+    });
+
+    test('should pass the intial render with static lookup map', async () => {
+      await initSettingsDrawer({
+        url,
+        params,
+        lookupName: 'lookup_name_2',
+      });
+
+      expect(screen.queryByText(/Settings/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Save/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Close/i)).toBeInTheDocument();
+      userEvent.click(screen.getByRole('button', {name: /Save/i}));
+
+      expect(await screen.queryByText(/You need to map at least one value./i)).not.toBeInTheDocument();
+      expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
+    });
+
+    test('should pass the intial render with static lookup map with closeAfterSave false', async () => {
+      mockCloseAfterSave.mockReturnValue({
+        closeAfterSave: false,
+      });
+      await initSettingsDrawer({
+        url,
+        params,
+        lookupName: 'lookup_name_2',
+      });
+
+      expect(screen.queryByText(/Settings/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Save/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Close/i)).toBeInTheDocument();
+      userEvent.click(screen.getByRole('button', {name: /Save/i}));
+
+      expect(await screen.queryByText(/You need to map at least one value./i)).not.toBeInTheDocument();
+      expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('SettingsDrawer component V2 SETTINGS Test cases', () => {
+    const url = 'ui-drawer/settings/v2/node_key/generate';
+
+    const params = {
+      nodeKey: 'node_key',
+      generate: 'generate',
+    };
+
+    test('should pass the intial render with default values', async () => {
+      await initSettingsDrawer({
+        url,
+        params,
+      });
+
+      expect(screen.queryByText('V2 SETTINGS render')).toBeInTheDocument();
+    });
+  });
+
+  describe('SettingsDrawer component SETTINGS Test cases', () => {
+    const url = 'ui-drawer/settings/mapping_key';
+
+    const params = {
+      mappingKey: 'mapping_key',
+    };
+
+    test('should pass the intial render with default values', async () => {
+      await initSettingsDrawer({
+        url,
+        params,
+        key: 'mapping_key1',
+      });
+
+      expect(screen.queryByText('Settings')).toBeInTheDocument();
+      expect(screen.queryByText('Redirected to /integrations/integration_id/flowBuilder/flow_id/ui-drawer/mappings/ui-drawer')).toBeInTheDocument();
+      expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
+    });
+
+    test('should pass the intial render for save/close button without change', async () => {
+      await initSettingsDrawer({
+        url,
+        params,
+      });
+
+      expect(screen.queryByText(/Settings/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Save/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Mock Close/i)).toBeInTheDocument();
+      expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
+      userEvent.click(screen.getByRole('button', {name: /Mock Close/i}));
+      userEvent.click(screen.getByRole('button', {name: /Save/i}));
+
+      expect(await mockHistorygoBack).toBeCalledTimes(1);
+    });
+
+    test('should pass the intial render for save/close button without change different key', async () => {
+      await initSettingsDrawer({
+        url,
+        params,
+        key: 'mapping_key_1',
+      });
+
+      expect(screen.queryByText(/Settings/i)).toBeInTheDocument();
+    });
+
+    test('should pass the intial render for save/close button with change', async () => {
+      await initSettingsDrawer({
+        url,
+        params,
+        lookupName: 'lookup_name_2',
+      });
+
+      expect(screen.queryByText(/Settings/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Save/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Mock Close/i)).toBeInTheDocument();
+      expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
+      userEvent.click(screen.getByRole('button', {name: /Mock Close/i}));
+      userEvent.click(screen.getByRole('button', {name: /Save/i}));
+
+      expect(await mockHistorygoBack).toBeCalledTimes(1);
+    });
+  });
+});
+
