@@ -60,6 +60,9 @@ export const JobDetailsStyles = makeStyles(theme => ({
   errorCount: {
     color: theme.palette.error.dark,
   },
+  resolvedCount: {
+    color: theme.palette.primary.main,
+  },
 }));
 
 export default function ChildJobDetail({
@@ -146,7 +149,9 @@ export default function ChildJobDetail({
         count={job.numResolved}
         isJobInProgress={isJobInProgress}
         onClick={() => handleViewErrorsClick(true)}
-        className={classes.resolved}
+        className={clsx(classes.resolved, {
+          [classes.resolvedCount]: job.numResolved > 0,
+        })}
       />
       <TableCell className={classes.pages}>
         {getPages(job, parentJob)}

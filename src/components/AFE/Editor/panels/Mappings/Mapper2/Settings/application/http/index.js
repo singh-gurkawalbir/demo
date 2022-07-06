@@ -14,7 +14,7 @@ const conditionalOptions = [
   },
 ];
 
-const getDefaultActionOptions = (mappingType, dataType) => {
+export const getDefaultActionOptions = (mappingType, dataType) => {
   const defaultOptions = [
     {
       items: [
@@ -39,9 +39,13 @@ const getDefaultActionOptions = (mappingType, dataType) => {
       },
     ];
   }
-  if (dataType === MAPPING_DATA_TYPES.BOOLEAN) {
+
+  if (dataType === MAPPING_DATA_TYPES.BOOLEAN || dataType === MAPPING_DATA_TYPES.NUMBER) {
     defaultOptions[0].items.pop();
+  } else if (ARRAY_DATA_TYPES.includes(dataType)) {
+    defaultOptions[0].items[3].label = 'Use empty array as default value';
   }
+
   if (mappingType === 'hardcodedAction') {
     defaultOptions[0].items.shift();
   } else if (mappingType === 'lookupAction') {
