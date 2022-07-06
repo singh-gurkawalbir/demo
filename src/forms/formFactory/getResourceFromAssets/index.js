@@ -5,6 +5,7 @@ import { isJsonString } from '../../../utils/string';
 import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS} from '../../../utils/constants';
 import { getAssistantFromResource, getResourceSubType, isNewId, rdbmsSubTypeToAppType } from '../../../utils/resource';
 import { isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, shouldLoadAssistantFormForImports, shouldLoadAssistantFormForExports, isEbayFinanceConnection } from '../../../utils/assistant';
+import {getHttpConnector} from '../../../constants/applications';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -187,12 +188,19 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
   let meta;
 
   const { type } = getResourceSubType(resource);
+  let isNewHTTPFramework = false;
+
+  if (['exports', 'imports'].includes(resourceType)) {
+    isNewHTTPFramework = !!getHttpConnector(connection?.http?._httpConnectorId);
+  } else if (resourceType === 'connections') {
+    isNewHTTPFramework = !!getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
+  }
 
   switch (resourceType) {
     case 'connections':
       if (isNew) {
         meta = formMeta.connections.new;
-      } else if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
+      } else if (isNewHTTPFramework) {
         if (resource?.http?.formType === 'http') {
           meta = formMeta.connections.http;
         } else {
@@ -243,7 +251,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       if (meta) {
         if (isNew) {
           meta = meta.new;
-        } else if (connection?.http?._httpConnectorId) {
+        } else if (isNewHTTPFramework) {
           if (!resource?.useParentForm && resource?.http?.formType !== 'http') {
             meta = meta.custom.httpFramework.assistantDefinition(
               resource._id,
@@ -309,7 +317,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       if (meta) {
         if (isNew) {
           meta = meta.new;
-        } else if (connection?.http?._httpConnectorId) {
+        } else if (isNewHTTPFramework) {
           if (!resource?.useParentForm && resource?.http?.formType !== 'http') {
             meta = meta.custom.httpFramework.assistantDefinition(
               resource._id,

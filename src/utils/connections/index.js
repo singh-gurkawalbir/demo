@@ -3,6 +3,7 @@ import { PING_STATES } from '../../reducers/comms/ping';
 import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, GOOGLE_CONTACTS_API, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../constants';
 import { rdbmsSubTypeToAppType } from '../resource';
 import { DRAWER_URL_PREFIX } from '../rightDrawer';
+import {getHttpConnector} from '../../constants/applications';
 
 export const getStatusVariantAndMessage = ({
   resourceType,
@@ -97,11 +98,13 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   } else if (type === 'graph_ql' || (type === 'http' && connection?.http?.formType === 'graph_ql')) {
     expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
   } else if (type === 'http') {
-    if (connection.http?._httpConnectorId) {
-      expression.push({ 'http._httpConnectorId': connection.http._httpConnectorId });
-    }
-    if (connection.http?._httpConnectorVersionId) {
-      expression.push({ 'http._httpConnectorVersionId': connection.http._httpConnectorVersionId });
+    if (getHttpConnector(connection.http?._httpConnectorId)) {
+      if (connection.http?._httpConnectorId) {
+        expression.push({ 'http._httpConnectorId': connection.http._httpConnectorId });
+      }
+      if (connection.http?._httpConnectorVersionId) {
+        expression.push({ 'http._httpConnectorVersionId': connection.http._httpConnectorVersionId });
+      }
     }
     expression.push({ 'http.formType': { $ne: 'rest' } });
     expression.push({ type });

@@ -27,7 +27,7 @@ import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 import { getAssistantFromConnection } from '../../utils/connections';
-import { getAssistantConnectorType, getPublishedHttpConnector } from '../../constants/applications';
+import { getAssistantConnectorType, getHttpConnector } from '../../constants/applications';
 import { constructResourceFromFormValues } from '../utils';
 import {getConnector, getConnectorMetadata} from '../resources/httpConnectors';
 
@@ -83,7 +83,7 @@ export function* createFormValuesPatchSet({
       type: 'iClients',
     });
     let httpConnectorData;
-    const httpPublishedConnector = getPublishedHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
+    const httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
 
     if (resourceType === 'connections' && httpPublishedConnector) {
       httpConnectorData = yield select(selectors.connectorData, httpPublishedConnector?._id);
@@ -906,14 +906,14 @@ export function* initFormValues({
     });
     connectorMetaData = yield select(
       selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
-    if (connection?.http?._httpConnectorId && !connectorMetaData) {
+    if (getHttpConnector(connection?.http?._httpConnectorId) && !connectorMetaData) {
       connectorMetaData = yield call(getConnectorMetadata, {
         connectionId: connection._id,
         httpConnectorId: connection?.http?._httpConnectorId,
         httpVersionId: connection?.http?._httpConnectorVersionId,
         httpConnectorApiId: connection?.http?._httpConnectorApiId,
       });
-    } else if (!connection?.http?._httpConnectorId && !assistantData) {
+    } else if (!getHttpConnector(connection?.http?._httpConnectorId) && !assistantData) {
       assistantData = yield call(requestAssistantMetadata, {
         adaptorType,
         assistant: connectionAssistant,
@@ -924,14 +924,14 @@ export function* initFormValues({
   //   type: 'httpconnectors',
   // });
   // const httpConnector = httpConnectors?.find(conn => (conn.name === resource.assistant) && conn.published);
-  const httpPublishedConnector = resourceType === 'connections' && getPublishedHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
+  const httpPublishedConnector = resourceType === 'connections' && getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
 
   try {
     const defaultFormAssets = getResourceFormAssets({
       resourceType,
       resource: newResource,
       isNew,
-      assistantData: connection?.http?._httpConnectorId ? connectorMetaData : assistantData,
+      assistantData: getHttpConnector(connection?.http?._httpConnectorId) ? connectorMetaData : assistantData,
       connection,
     });
 
