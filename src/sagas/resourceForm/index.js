@@ -62,6 +62,7 @@ export function* createFormValuesPatchSet({
   let finalValues = values;
 
   let connection;
+  let assistantData;
 
   if (resource?._connectionId) {
     connection = yield select(
@@ -70,12 +71,21 @@ export function* createFormValuesPatchSet({
       resource._connectionId
     );
   }
+  const connectorMetaData = yield select(
+    selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
+
+  const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
+
+  if (_httpConnectorId) {
+    assistantData = connectorMetaData;
+  }
 
   const { preSave } = getResourceFormAssets({
     resourceType,
     resource,
     connection,
     isNew: formState.isNew,
+    assistantData,
   });
 
   if (typeof preSave === 'function') {
