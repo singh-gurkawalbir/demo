@@ -37,11 +37,9 @@ describe('SelectResource UI Tests', () => {
 
     expect(onSave).toHaveBeenCalledWith(['s1', 's2', 's4']);
     expect(button.textContent).toBe('3 flows selected');
-
-    screen.debug(undefined, 300000);
   });
 
-  test('clicking on the checked flow twice', () => {
+  test('should click on the checked flow twice', () => {
     const onSave = jest.fn();
 
     render(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
@@ -69,11 +67,9 @@ describe('SelectResource UI Tests', () => {
     userEvent.click(alppyButton);
 
     expect(onSave).toHaveBeenCalledWith(['s2']);
-
-    screen.debug(undefined, 300000);
   });
 
-  test('clicking the cancel button after selceting', () => {
+  test('should click the cancel button after selceting', () => {
     const onSave = jest.fn();
 
     render(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
@@ -113,7 +109,7 @@ describe('SelectResource UI Tests', () => {
     expect(checkboxes[6]).not.toBeChecked();
     expect(checkboxes[7]).not.toBeChecked();
   });
-  test('just one selected item in start', () => {
+  test('should select one item in start', () => {
     const onSave = jest.fn();
 
     render(<SelectResource flowResources={flowResources} selectedResources={['s1']} onSave={onSave} />);
@@ -132,11 +128,9 @@ describe('SelectResource UI Tests', () => {
     userEvent.click(alppyButton);
 
     expect(button.textContent).toBe('2 flows selected');
-
-    screen.debug(undefined, 300000);
   });
 
-  test('just one selected item in st', () => {
+  test('should select all 8 flows', () => {
     const onSave = jest.fn();
 
     render(<SelectResource flowResources={flowResources} selectedResources={['s1']} onSave={onSave} />);
@@ -156,18 +150,13 @@ describe('SelectResource UI Tests', () => {
     userEvent.click(checkboxes[7]);
     userEvent.click(checkboxes[8]);
 
-    const alppyButton = screen.getByText('Apply');
-
-    expect(alppyButton).toBeInTheDocument();
-
-    screen.debug(undefined, 300000);
+    expect(screen.getByText('8 flows selected')).toBeInTheDocument();
   });
 
   test('nothing', () => {
     const onSave = jest.fn();
 
     render(<SelectResource onSave={onSave} />);
-
-    screen.debug(undefined, 300000);
+    expect(screen.getByText('No flows selected')).toBeInTheDocument();
   });
 });
