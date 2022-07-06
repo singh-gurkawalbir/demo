@@ -2,46 +2,7 @@ import dateTimezones from '../../../../../../../../../utils/dateTimezones';
 import mappingUtil, {ARRAY_DATA_TYPES, MAPPING_DATA_TYPES} from '../../../../../../../../../utils/mapping';
 import dateFormats from '../../../../../../../../../utils/dateFormats';
 import { emptyObject } from '../../../../../../../../../utils/constants';
-
-const getDefaultActionOptions = (mappingType, dataType) => {
-  const defaultOptions = [
-    {
-      items: [
-        { label: 'Do nothing', value: 'discardIfEmpty' },
-        { label: 'Use null as default value', value: 'useNull' },
-        { label: 'Use custom default value', value: 'default' },
-        {
-          label: 'Use empty string as default value',
-          value: 'useEmptyString',
-        },
-      ],
-    },
-  ];
-
-  if (dataType === MAPPING_DATA_TYPES.OBJECT || dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-    return [
-      {
-        items: [
-          { label: 'Do nothing', value: 'discardIfEmpty' },
-          { label: 'Use null as default value', value: 'useNull' },
-        ],
-      },
-    ];
-  }
-  if (dataType === MAPPING_DATA_TYPES.BOOLEAN) {
-    defaultOptions[0].items.pop();
-  }
-  if (mappingType === 'hardcodedAction') {
-    defaultOptions[0].items.shift();
-  } else if (mappingType === 'lookupAction') {
-    defaultOptions[0].items.push({
-      label: 'Fail record',
-      value: 'disallowFailure',
-    });
-  }
-
-  return defaultOptions;
-};
+import { getDefaultActionOptions } from '../http';
 
 export default {
   getMetaData: ({
