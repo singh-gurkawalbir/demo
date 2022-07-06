@@ -156,6 +156,10 @@ export default function App() {
                 }}>
                 <FontStager />
                 <CssBaseline />
+                {/* Define empty call back for getUserConfirmation to not let Prompt
+                * get triggered when history.block is defined in any specific component
+                * Ref: https://github.com/remix-run/history/blob/main/docs/blocking-transitions.md
+                */}
                 <BrowserRouter getUserConfirmation={() => {}}>
                   <div className={classes.root}>
                     <LoadingNotification />

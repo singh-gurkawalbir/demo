@@ -8,6 +8,7 @@ import MobileCodeVerification from '../MobileCodeVerification';
 import ConnectDevice from '../ConnectDevice';
 import HeaderWithHelpText from '../HeaderWithHelpText';
 import actions from '../../../../../actions';
+import RouterPrompt from '../RouterPrompt';
 
 const useStyles = makeStyles(() => ({
   verificationLabel: {
@@ -26,6 +27,7 @@ export default function MFASetup() {
 
   return (
     <>
+      <RouterPrompt show />
       <Stepper index={1}>
         <HeaderWithHelpText title="Get verification app" helpKey="mfa.getVerificationApp">
           <Typography variant="h5" component="span">Get verification app</Typography>

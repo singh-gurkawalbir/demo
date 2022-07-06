@@ -10,7 +10,6 @@ import CollapsableContainer from '../../../../components/CollapsableContainer';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import MFASetup from './Setup';
-import RouterPrompt from './RouterPrompt';
 import useNotifySetupSuccess from './useNotifySetupSuccess';
 import EditMFAConfiguration from './EditConfiguration';
 // import AccountSettings from './AccountSettings';
@@ -148,7 +147,6 @@ export default function MFA() {
 
   return (
     <div className={classes.root}>
-      <RouterPrompt when />
       <PanelHeader title="Multifactor authentication (MFA)" infoText={infoTextMFA} />
       <MFADetails />
     </div>
