@@ -1,5 +1,6 @@
 import { JOB_STATUS } from '../../constants';
 import { getJobDuration } from '../../reducers/data/jobs/util';
+import { getAllPageProcessors } from '../flows';
 
 export const FLOW_STEP_STATUS = {
   WAITING: 'WAITING',
@@ -7,7 +8,7 @@ export const FLOW_STEP_STATUS = {
 };
 
 export const getFlowStepsYetToBeCreated = (flow, createdSteps = []) => {
-  const { pageProcessors: pps = []} = flow || {};
+  const pps = getAllPageProcessors(flow);
 
   return pps.filter(pp => {
     if (!createdSteps.length) return true;

@@ -23,7 +23,7 @@ export default function Mapper2Guide() {
         data-test="mapper2Guide"
         color="primary"
         startIcon={<InfoIcon />}>
-        Mapper 2.0 advantages
+        Learn about Mapper 2.0
       </TextButton>
       <CeligoDivider position="right" />
     </>
