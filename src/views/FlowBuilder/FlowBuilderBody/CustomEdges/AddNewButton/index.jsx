@@ -19,6 +19,7 @@ import messageStore from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   addButton: {
+    position: 'fixed',
     backgroundColor: theme.palette.common.white,
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: 0,
@@ -67,14 +68,17 @@ const AddNodeMenuPopper = ({
             onClick: handleAddRouter,
           },
         ].map(({ Icon, label, onClick, disabled }) => (
-          <Tooltip key="key" title={disabled ? messageStore('MAX_ROUTERS_LIMIT_REACHED') : ''} placement="bottom">
+          <Tooltip
+            key={label}
+            title={disabled ? messageStore('MAX_ROUTERS_LIMIT_REACHED') : ''}
+            placement="bottom"
+          >
             <span>
               <MenuItem key={label} onClick={onClick} disabled={disabled}>
                 <Icon /> {label}
               </MenuItem>
             </span>
           </Tooltip>
-
         ))}
       </MenuList>
     </ArrowPopper>
@@ -85,7 +89,10 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId }) => {
   const classes = useStyles();
 
   const { elementsMap } = useFlowContext();
-  const isConnectedToRouterOrTerminal = isNodeConnectedToRouter(edgeId, elementsMap);
+  const isConnectedToRouterOrTerminal = isNodeConnectedToRouter(
+    edgeId,
+    elementsMap
+  );
 
   if (isConnectedToRouterOrTerminal) {
     return (
@@ -106,6 +113,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId }) => {
     </IconButton>
   );
 };
+
 export default ({ edgeId, disabled }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
