@@ -82,7 +82,7 @@ export function* getNetsuiteOrSalesforceMeta({
       path,
       opts: {},
       message: 'Loading',
-      ...(addInfo.hidden ? { hidden: true } : {}),
+      hidden: !!addInfo?.hidden,
     });
 
     // Handle Errors sent as part of response object  with status 200

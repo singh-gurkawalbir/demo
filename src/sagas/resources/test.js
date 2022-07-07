@@ -2707,42 +2707,44 @@ describe('tests for metadata sagas', () => {
       })
       .run());
 
-    // test('should call action received Collection if metadata call is successful', () => {
-    //   const metadata = [{
-    //     id: 'salesorder',
-    //     doesNotSupportCreate: false,
-    //   }, {
-    //     id: 'customer',
-    //     doesNotSupportCreate: false,
-    //   }];
+    test('should call action received Collection if metadata call is successful', () => {
+      const metadata = [{
+        id: 'salesorder',
+        doesNotSupportCreate: false,
+      }, {
+        id: 'customer',
+        doesNotSupportCreate: false,
+      }];
 
-    //   return expectSaga(getNetsuiteOrSalesforceMeta, {
-    //     connectionId: connId,
-    //     commMetaPath: metaPath,
-    //   })
-    //     .provide([
-    //       [select(selectors.metadataOptionsAndResources, {connectionId: '123',
-    //         commMetaPath: metaPath}), {
-    //         status: 'requested',
-    //       }],
-    //       [call(apiCallWithRetry, {
-    //         path: `/${metaPath}`,
-    //         opts: {},
-    //         message: 'Loading',
-    //       }), metadata],
-    //     ])
-    //     .call(apiCallWithRetry, {
-    //       path: `/${metaPath}`,
-    //       opts: {},
-    //       message: 'Loading',
-    //     })
-    //     .put(actions.metadata.receivedCollection(
-    //       metadata,
-    //       connId,
-    //       metaPath
-    //     ))
-    //     .run();
-    // });
+      return expectSaga(getNetsuiteOrSalesforceMeta, {
+        connectionId: connId,
+        commMetaPath: metaPath,
+      })
+        .provide([
+          [select(selectors.metadataOptionsAndResources, {connectionId: '123',
+            commMetaPath: metaPath}), {
+            status: 'requested',
+          }],
+          [call(apiCallWithRetry, {
+            path: `/${metaPath}`,
+            opts: {},
+            message: 'Loading',
+            hidden: false,
+          }), metadata],
+        ])
+        .call(apiCallWithRetry, {
+          path: `/${metaPath}`,
+          opts: {},
+          message: 'Loading',
+          hidden: false,
+        })
+        .put(actions.metadata.receivedCollection(
+          metadata,
+          connId,
+          metaPath
+        ))
+        .run();
+    });
 
     test('should form the path correctly and make api call if provided additional params', () => {
       const metadata = [{
@@ -2762,6 +2764,7 @@ describe('tests for metadata sagas', () => {
         addInfo: {
           refreshCache: true,
           query,
+          hidden: true,
         },
       })
         .provide([
@@ -2773,12 +2776,14 @@ describe('tests for metadata sagas', () => {
             path: newpath,
             opts: {},
             message: 'Loading',
+            hidden: true,
           }), metadata],
         ])
         .call(apiCallWithRetry, {
           path: newpath,
           opts: {},
           message: 'Loading',
+          hidden: true,
         })
         .put(actions.metadata.receivedCollection(
           metadata,
@@ -2788,69 +2793,73 @@ describe('tests for metadata sagas', () => {
         .run();
     });
 
-    // test('should call action receivedError if metadata contains error', () => {
-    //   const metadata = {
-    //     errors: [
-    //       {
-    //         message: 'Request limits exceeded',
-    //       },
-    //     ],
-    //   };
+    test('should call action receivedError if metadata contains error', () => {
+      const metadata = {
+        errors: [
+          {
+            message: 'Request limits exceeded',
+          },
+        ],
+      };
 
-    //   return expectSaga(getNetsuiteOrSalesforceMeta, {
-    //     connectionId: connId,
-    //     commMetaPath: metaPath,
-    //   })
-    //     .provide([
-    //       [select(selectors.metadataOptionsAndResources, {connectionId: '123',
-    //         commMetaPath: metaPath}), {
-    //         status: 'requested',
-    //       }],
-    //       [call(apiCallWithRetry, {
-    //         path: `/${metaPath}`,
-    //         opts: {},
-    //         message: 'Loading',
-    //       }), metadata],
-    //     ])
-    //     .call(apiCallWithRetry, {
-    //       path: `/${metaPath}`,
-    //       opts: {},
-    //       message: 'Loading',
-    //     })
-    //     .put(actions.metadata.receivedError(
-    //       metadata.errors[0].message,
-    //       connId,
-    //       metaPath
-    //     ))
-    //     .run();
-    // });
+      return expectSaga(getNetsuiteOrSalesforceMeta, {
+        connectionId: connId,
+        commMetaPath: metaPath,
+      })
+        .provide([
+          [select(selectors.metadataOptionsAndResources, {connectionId: '123',
+            commMetaPath: metaPath}), {
+            status: 'requested',
+          }],
+          [call(apiCallWithRetry, {
+            path: `/${metaPath}`,
+            opts: {},
+            message: 'Loading',
+            hidden: false,
+          }), metadata],
+        ])
+        .call(apiCallWithRetry, {
+          path: `/${metaPath}`,
+          opts: {},
+          message: 'Loading',
+          hidden: false,
+        })
+        .put(actions.metadata.receivedError(
+          metadata.errors[0].message,
+          connId,
+          metaPath
+        ))
+        .run();
+    });
 
-    // test('should call action receivedError if exception is thrown', () => expectSaga(getNetsuiteOrSalesforceMeta, {
-    //   connectionId: connId,
-    //   commMetaPath: metaPath,
-    // })
-    //   .provide([
-    //     [select(selectors.metadataOptionsAndResources, {connectionId: '123',
-    //       commMetaPath: metaPath}), {
-    //       status: 'requested',
-    //     }],
-    //     [call(apiCallWithRetry, {
-    //       path: `/${metaPath}`,
-    //       opts: {},
-    //       message: 'Loading',
-    //     }), throwError({status: 404, message: '[{"message":"error msg"}]'})],
-    //   ])
-    //   .call(apiCallWithRetry, {
-    //     path: `/${metaPath}`,
-    //     opts: {},
-    //     message: 'Loading',
-    //   })
-    //   .put(actions.metadata.receivedError(
-    //     'error msg',
-    //     connId,
-    //     metaPath
-    //   ))
-    //   .run());
+    test('should call action receivedError if exception is thrown', () => expectSaga(getNetsuiteOrSalesforceMeta, {
+      connectionId: connId,
+      commMetaPath: metaPath,
+    })
+      .provide([
+        [select(selectors.metadataOptionsAndResources, {connectionId: '123',
+          commMetaPath: metaPath}), {
+          status: 'requested',
+        }],
+        [call(apiCallWithRetry, {
+          path: `/${metaPath}`,
+          opts: {},
+          message: 'Loading',
+          hidden: false,
+        }), throwError({status: 404, message: '[{"message":"error msg"}]'})],
+      ])
+      .call(apiCallWithRetry, {
+        path: `/${metaPath}`,
+        opts: {},
+        message: 'Loading',
+        hidden: false,
+      })
+      .put(actions.metadata.receivedError(
+        'error msg',
+        connId,
+        metaPath
+      ))
+      .run());
   });
 
   describe('getNetsuiteOrSalesforceBundleInstallStatus saga tests', () => {
