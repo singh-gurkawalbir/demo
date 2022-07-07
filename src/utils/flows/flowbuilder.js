@@ -790,6 +790,9 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
   } else if (isInsertingFirstRouter) {
     routerIndex = 0;
   }
+  if (!flowClone._exportId && !flowClone.pageGenerators) {
+    flowClone.pageGenerators = [{setupInProgress: true}];
+  }
 
   return {patchSet: jsonPatch.generate(observer), routerIndex};
 };
