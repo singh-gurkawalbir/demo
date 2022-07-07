@@ -11,9 +11,10 @@ import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import Status from '../../Buttons/Status';
 
 export default function ErrorCell({ job }) {
-  const { _integrationId, _flowId, _childId, _flowJobId, _exportId, numOpenError, _importId } = job;
+  const { _integrationId, _flowId, _childId, _flowJobId, _parentJobId, _exportId, numOpenError, _importId, _expOrImpId } = job;
+  const flowJobId = _flowJobId || _parentJobId;
   const dispatch = useDispatch();
-  const id = _exportId || _importId;
+  const id = _expOrImpId || _exportId || _importId;
   const history = useHistory();
   const isDataLoader = useSelector(state =>
     selectors.isDataLoader(state, _flowId)
@@ -32,13 +33,13 @@ export default function ErrorCell({ job }) {
   });
 
   const handleErrorClick = useCallback(() => {
-    dispatch(actions.patchFilter(`${_flowId}-${_flowJobId}-${id}`, {...job}));
+    dispatch(actions.patchFilter(`${_flowId}-${flowJobId}-${id}`, {...job}));
     history.push(buildDrawerUrl({
       path: drawerPaths.ERROR_MANAGEMENT.V2.JOB_ERROR_DETAILS,
       baseUrl: flowBuilderTo,
-      params: { resourceId: id, flowJobId: _flowJobId, errorType: 'open'},
+      params: { resourceId: id, flowJobId, errorType: 'open'},
     }));
-  }, [_flowId, _flowJobId, dispatch, flowBuilderTo, history, id, job]);
+  }, [_flowId, flowJobId, dispatch, flowBuilderTo, history, id, job]);
 
   if (!numOpenError) {
     return (
