@@ -127,11 +127,11 @@ export function* installInitChild({ id }) {
 
 function* refreshIntegrationConnectionsMetadata({ integrationId }) {
   const installSteps = yield select(selectors.integrationInstallSteps, integrationId);
-  const connectionIdMap = installSteps
+  const connections = installSteps
     .filter(step => step.type === 'connection' && ['netsuite', 'salesforce'].includes(step.sourceConnection?.type) && step._connectionId)
-    .map(step => ({ type: step.sourceConnection?.type, connectionId: step._connectionId }));
+    .map(step => ({ type: step.sourceConnection?.type, _id: step._connectionId }));
 
-  yield call(refreshConnectionMetadata, { connectionIdMap });
+  yield call(refreshConnectionMetadata, { connections });
 }
 
 export function* installScriptStep({

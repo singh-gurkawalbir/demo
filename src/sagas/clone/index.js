@@ -102,13 +102,14 @@ export function* createComponents({ resourceType, resourceId }) {
   );
 
   if (resourceType === 'flows') {
+    // Incase of flow cloning - refresh NS/SF connection's metadata @Enhancement IO-12915
     const connectionIds = Object.values(connectionMap);
     const connectionObjs = yield all(connectionIds.map(id => select(selectors.resource, 'connections', id)));
-    const connectionIdMap = connectionObjs
+    const connections = connectionObjs
       .filter(c => ['netsuite', 'salesforce'].includes(c.type))
-      .map(c => ({ type: c.type, connectionId: c._id }));
+      .map(c => ({ type: c.type, _id: c._id }));
 
-    yield call(refreshConnectionMetadata, { connectionIdMap });
+    yield call(refreshConnectionMetadata, { connections });
   }
 }
 

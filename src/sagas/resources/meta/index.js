@@ -231,11 +231,15 @@ export function* requestAssistantMetadata({ adaptorType = 'rest', assistant}) {
   return metadata;
 }
 
-export function* refreshConnectionMetadata({ connectionIdMap }) {
-  yield all(connectionIdMap.map(step => {
-    const resourceId = step.connectionId;
+/**
+ * @param connections - [ { _id: '1234', type: 'netsuite' / 'salesforce' }]
+ * type of a connection should be either netsuite/salesforce
+ */
+export function* refreshConnectionMetadata({ connections = [] }) {
+  yield all(connections.map(conn => {
+    const resourceId = conn._id;
 
-    if (step.type === 'netsuite') {
+    if (conn.type === 'netsuite') {
       const path = `netsuite/metadata/suitescript/connections/${resourceId}/recordTypes`;
 
       return put(actions.metadata.request(resourceId, path, { refreshCache: true, hidden: true }));
