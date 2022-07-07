@@ -19,7 +19,7 @@ import messageStore from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   addButton: {
-    position: 'fixed',
+    position: 'static',
     backgroundColor: theme.palette.common.white,
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: 0,
