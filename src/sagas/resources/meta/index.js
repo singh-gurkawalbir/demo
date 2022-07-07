@@ -232,6 +232,7 @@ export function* requestAssistantMetadata({ adaptorType = 'rest', assistant}) {
 }
 
 /**
+ * This saga is used to refresh NS/SF metadata while cloning or installing an Integration/ flow
  * @param connections - [ { _id: '1234', type: 'netsuite' / 'salesforce' }]
  * type of a connection should be either netsuite/salesforce
  */
