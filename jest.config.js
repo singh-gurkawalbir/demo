@@ -20,6 +20,11 @@ module.exports = {
     'src/reducers/**/*.{js,jsx}',
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
+    'src/components/SelectDependentResource/**/*.{js,jsx}',
+    'src/components/tags/**/*.{js,jsx}',
+    'src/components/TextFieldList/**/*.{js,jsx}',
+    'src/components/StackSystemToken/**/*.{js,jsx}',
+    'src/components/TransferList/**/*.{js,jsx}',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js'],
   coverageThreshold: {
