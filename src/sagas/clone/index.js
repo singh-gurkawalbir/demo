@@ -5,6 +5,7 @@ import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
 import templateUtil from '../../utils/template';
 import { getResource } from '../resources';
+import { refreshConnectionMetadata } from '../resources/meta';
 
 export function* requestPreview({ resourceType, resourceId }) {
   const path = `/${resourceType}/${resourceId}/clone/preview`;
@@ -99,6 +100,16 @@ export function* createComponents({ resourceType, resourceId }) {
       `${resourceType}-${resourceId}`
     )
   );
+
+  if (resourceType === 'flows') {
+    const connectionIds = Object.values(connectionMap);
+    const connectionObjs = yield all(connectionIds.map(id => select(selectors.resource, 'connections', id)));
+    const connectionIdMap = connectionObjs
+      .filter(c => ['netsuite', 'salesforce'].includes(c.type))
+      .map(c => ({ type: c.type, connectionId: c._id }));
+
+    yield call(refreshConnectionMetadata, { connectionIdMap });
+  }
 }
 
 export const cloneSagas = [

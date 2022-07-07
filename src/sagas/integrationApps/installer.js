@@ -8,6 +8,7 @@ import { isOauth } from '../../utils/resource';
 import { isJsonString } from '../../utils/string';
 import { selectors } from '../../reducers';
 import { getResource } from '../resources';
+import { refreshConnectionMetadata } from '../resources/meta';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
 import openExternalUrl from '../../utils/window';
 
@@ -124,6 +125,15 @@ export function* installInitChild({ id }) {
   }
 }
 
+function* refreshIntegrationConnectionsMetadata({ integrationId }) {
+  const installSteps = yield select(selectors.integrationInstallSteps, integrationId);
+  const connectionIdMap = installSteps
+    .filter(step => step.type === 'connection' && ['netsuite', 'salesforce'].includes(step.sourceConnection?.type) && step._connectionId)
+    .map(step => ({ type: step.sourceConnection?.type, connectionId: step._connectionId }));
+
+  yield call(refreshConnectionMetadata, { connectionIdMap });
+}
+
 export function* installScriptStep({
   id,
   connectionId,
@@ -190,7 +200,8 @@ export function* installScriptStep({
     ) {
       yield call(installInitChild, { id });
     }
-
+    // refresh NS/SF connection's metadata once the integration install steps are completed
+    yield call(refreshIntegrationConnectionsMetadata, { integrationId: id });
     // to clear session state
     yield put(
       actions.integrationApp.installer.completedStepInstall(
