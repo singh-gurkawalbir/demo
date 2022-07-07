@@ -8,18 +8,16 @@ const minTitleWidth = 140;
 
 const useStyles = makeStyles(theme => ({
   sourceTitle: {
-    width: ({titleWidth}) => titleWidth,
-    left: ({xOffset}) => xOffset,
-    // backgroundColor: theme.palette.background.default,
-    background: `linear-gradient(${theme.palette.background.default}, 95%, transparent)`,
-    // background: `radial-gradient(circle at center, ${theme.palette.background.default}, 80%, transparent)`,
+    width: ({ titleWidth }) => titleWidth,
+    left: ({ xOffset }) => xOffset,
+    background: `linear-gradient(${theme.palette.background.default}, 95%, #FFF0)`,
   },
 }));
 
-const SourceTitle = ({onClick}) => {
-  // we dont care about the y axis since we always want 100% y axis coverage,
+const SourceTitle = ({ onClick }) => {
+  // we don't care about the y axis since we always want 100% y axis coverage,
   // regardless of pan or zoom settings.
-  const [x,, scale] = useStoreState(s => s.transform);
+  const [x, , scale] = useStoreState(s => s.transform);
   const columnWidth = Math.max(0, FB_SOURCE_COLUMN_WIDTH * scale + x);
   const titleWidth = Math.max(columnWidth, minTitleWidth);
   let xOffset = (columnWidth - titleWidth) / 2; // + menuWidth;
@@ -32,7 +30,7 @@ const SourceTitle = ({onClick}) => {
     xOffset = columnWidth - titleWidth;
   }
 
-  const classes = useStyles({xOffset, titleWidth});
+  const classes = useStyles({ xOffset, titleWidth });
 
   return (
     <Title className={classes.sourceTitle} onClick={onClick} type="generator">
