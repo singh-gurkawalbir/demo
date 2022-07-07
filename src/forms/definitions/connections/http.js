@@ -155,6 +155,10 @@ export default {
     delete newValues['/http/auth/wsse/password'];
     delete newValues['/http/auth/wsse/headerName'];
 
+    if (newValues['/http/clientCertificates/type'] === 'pfx') {
+      delete newValues['/http/clientCertificates/cert'];
+    }
+
     delete newValues['/http/clientCertificates/type'];
 
     return newValues;
