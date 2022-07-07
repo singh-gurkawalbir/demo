@@ -12,25 +12,29 @@ import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   title: {
-    left: ({xOffset}) => xOffset,
-    width: ({columnWidth}) => `calc(100% - ${columnWidth}px)`,
-    background: `linear-gradient(${theme.palette.background.paper}, 95%, transparent)`,
+    left: ({ xOffset }) => xOffset,
+    width: ({ columnWidth }) => `calc(100% - ${columnWidth}px)`,
+    background: `linear-gradient(${theme.palette.background.paper}, 95%, #FFF0)`,
   },
 }));
 
 const DestinationTitle = () => {
   const { flow, flowId } = useFlowContext();
-  const flowOriginal = useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)?.merged || {};
+  const flowOriginal =
+    useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)
+      ?.merged || {};
 
   // we dont care about the y axis since we always want 100% y axis coverage,
   // regardless of pan or zoom settings.
   const dispatch = useDispatch();
-  const [x,, scale] = useStoreState(s => s.transform);
+  const [x, , scale] = useStoreState(s => s.transform);
   const columnWidth = Math.max(0, FB_SOURCE_COLUMN_WIDTH * scale + x);
   const xOffset = columnWidth;
-  const classes = useStyles({xOffset, columnWidth});
+  const classes = useStyles({ xOffset, columnWidth });
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const isLinearFlow = flowOriginal.pageProcessors?.length || (!flowOriginal.pageProcessors && !flowOriginal.routers);
+  const isLinearFlow =
+    flowOriginal.pageProcessors?.length ||
+    (!flowOriginal.pageProcessors && !flowOriginal.routers);
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
@@ -49,10 +53,7 @@ const DestinationTitle = () => {
         DESTINATIONS & LOOKUPS
       </Title>
 
-      <BranchMenuPopper
-        anchorEl={anchorEl}
-        handleClose={handleCloseMenu}
-      />
+      <BranchMenuPopper anchorEl={anchorEl} handleClose={handleCloseMenu} />
     </>
   );
 };
