@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, Tooltip } from '@material-ui/core';
+import clsx from 'clsx';
 import useOnClickOutside from '../../../../../../../hooks/useClickOutSide';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
@@ -38,10 +39,19 @@ const useStyles = makeStyles(theme => ({
   },
   lockIcon: {
     position: 'absolute',
-    right: 10,
+    right: theme.spacing(1),
     top: '50%',
     transform: 'translateY(-50%)',
     color: theme.palette.text.hint,
+    height: theme.spacing(3),
+  },
+  fieldDataTypeLocked: {
+    '& .MuiButtonBase-root': {
+      width: theme.spacing(12),
+      justifyContent: 'end',
+      paddingRight: theme.spacing(4.5),
+      color: theme.palette.text.hint,
+    },
   },
 }));
 
@@ -126,6 +136,7 @@ export default function Mapper2Generates(props) {
           dataType={dataType}
           disabled={disabled}
           nodeKey={nodeKey}
+          className={clsx({[classes.fieldDataTypeLocked]: isRequired})}
         />
 
         {isRequired && (
