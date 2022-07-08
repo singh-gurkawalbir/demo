@@ -51,7 +51,9 @@ describe('Editors test cases', () => {
     const simpleCSVParser = screen.queryByText('Simple CSV');
 
     expect(simpleCSVParser).toBeInTheDocument();
+    expect(screen.queryByText(/CSV parser options/i)).not.toBeInTheDocument();
     userEvent.click(simpleCSVParser);
+    expect(screen.queryByText(/CSV parser options/i)).toBeInTheDocument();
 
     const fullScreenButton = screen.getAllByRole('button').find(eachButton => eachButton.getAttribute('title') === 'Fullscreen mode');
 
@@ -62,11 +64,15 @@ describe('Editors test cases', () => {
 
     expect(closeButton).toBeInTheDocument();
     userEvent.click(closeButton);
+    expect(screen.queryByText(/CSV parser options/i)).not.toBeInTheDocument();
 
     userEvent.click(simpleCSVParser);
+    expect(screen.queryByText(/CSV parser options/i)).toBeInTheDocument();
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
 
     expect(cancelButton).toBeInTheDocument();
     userEvent.click(cancelButton);
+
+    expect(screen.queryByText(/CSV parser options/i)).not.toBeInTheDocument();
   });
 });
