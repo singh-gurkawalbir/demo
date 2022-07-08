@@ -37,11 +37,8 @@ describe('Editors test cases', () => {
     mockGetRequestOnce('/api/exports', []);
     mockGetRequestOnce('/api/processors', {});
 
-    await waitFor(() => initTransferList({}), {
-      timeout: 200,
-    }); // setting it as 200 as retry default is set to 200
-
-    expect(await screen.getByRole('heading', {name: 'Developer playground'})).toBeInTheDocument();
+    await initTransferList({});
+    await waitFor(() => expect(screen.getByRole('heading', {name: 'Developer playground'})).toBeInTheDocument());
     expect(screen.getByRole('heading', {name: 'Editor examples'})).toBeInTheDocument();
     const csvParser = screen.queryByText('CSV parser helper');
 
