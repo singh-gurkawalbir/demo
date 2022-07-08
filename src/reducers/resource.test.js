@@ -8029,7 +8029,7 @@ describe('selectors.isParserSupported test cases', () => {
     const resource = selectors.resourceData(state, 'exports', formKey);
 
     resource.merged.adaptorType = 'HTTPExport';
-    resource.merged.assistant = 'googleDrive';
+    resource.merged.assistant = 'googledrive';
 
     expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
   });
