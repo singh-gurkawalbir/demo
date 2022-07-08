@@ -301,8 +301,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
 
   if (!isGenericHTTP) {
     Object.keys(tempFiledMeta.fieldMap).map(key => {
-      const preConfiguredField = connectionTemplate.preConfiguredFields.find(field => key === field.path);
-      const fieldUserMustSet = connectionTemplate.fieldsUserMustSet.find(field => key === field.path);
+      const preConfiguredField = connectionTemplate.preConfiguredFields?.find(field => key === field.path);
+      const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
 
       if (isNewId(resource?._id) && preConfiguredField) {
         tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values?.[0];
