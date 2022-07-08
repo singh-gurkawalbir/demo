@@ -1,4 +1,4 @@
-import { call, put, race, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
+import { all, call, put, race, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
@@ -82,6 +82,7 @@ export function* getNetsuiteOrSalesforceMeta({
       path,
       opts: {},
       message: 'Loading',
+      hidden: !!addInfo?.hidden,
     });
 
     // Handle Errors sent as part of response object  with status 200
@@ -228,6 +229,26 @@ export function* requestAssistantMetadata({ adaptorType = 'rest', assistant}) {
   );
 
   return metadata;
+}
+
+/**
+ * This saga is used to refresh NS/SF metadata while cloning or installing an Integration/ flow
+ * @param connections - [ { _id: '1234', type: 'netsuite' / 'salesforce' }]
+ * type of a connection should be either netsuite/salesforce
+ */
+export function* refreshConnectionMetadata({ connections = [] }) {
+  yield all(connections.map(conn => {
+    const resourceId = conn._id;
+
+    if (conn.type === 'netsuite') {
+      const path = `netsuite/metadata/suitescript/connections/${resourceId}/recordTypes`;
+
+      return put(actions.metadata.request(resourceId, path, { refreshCache: true, hidden: true }));
+    }
+    const path = `salesforce/metadata/connections/${resourceId}/sObjectTypes`;
+
+    return put(actions.metadata.request(resourceId, path, { refreshCache: true, hidden: true }));
+  }));
 }
 
 export default [
