@@ -124,7 +124,7 @@ export default function ErrorDrawer({
           )}
           {job && (
             <>
-              <RetryDrawer jobId={job._id} flowJobId={job._flowJobId} height={height} />
+              <RetryDrawer jobId={job._id} flowJobId={job._parentJobId || job._flowJobId} height={height} />
               <JobErrorTable
                 jobErrors={jobErrors}
                 errorCount={errorCount}

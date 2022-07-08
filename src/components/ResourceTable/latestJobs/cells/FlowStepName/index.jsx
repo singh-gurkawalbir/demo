@@ -64,8 +64,8 @@ function FlowName({ job }) {
   // In cases when parent job is cancelled while it is in queue, children are not yet created
   // In that case, we show that parent job with PG's name similar to Queued job
   // flowJobId exists on job if it is a child job
-  const isCancelledParentJob = job.status === JOB_STATUS.CANCELED && (job._expOrImpId || job._exportId) && !job._flowJobId;
-  const isInProgressParentJob = job.status === JOB_STATUS.RUNNING && (job._expOrImpId || job._exportId) && !job._flowJobId;
+  const isCancelledParentJob = job.status === JOB_STATUS.CANCELED && (job._expOrImpId || job._exportId) && !job._flowJobId && !job._parentJobId;
+  const isInProgressParentJob = job.status === JOB_STATUS.RUNNING && (job._expOrImpId || job._exportId) && !job._flowJobId && !job._parentJobId;
 
   if (job.type === 'export' && (job.status === JOB_STATUS.QUEUED || isCancelledParentJob || isInProgressParentJob)) {
     return exportName;

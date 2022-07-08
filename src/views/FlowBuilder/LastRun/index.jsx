@@ -48,14 +48,14 @@ export default function LastRun({ flowId }) {
   const lastExecutedJob = useSelector(state => {
     const jobs = selectors.latestFlowJobsList(state, flowId)?.data || [];
 
-    return jobs.find(job => !!job.lastExecutedAt);
+    return jobs.find(job => !!(job.lastExecutedAt || job.endedAt));
   }, shallowEqual);
 
   useEffect(() => {
     if (flowJobStatus) {
       setLastRunStatus(flowJobStatus);
     } else if (lastExecutedJob?.lastExecutedAt && lastExecutedJob.lastExecutedAt !== lastRunStatus) {
-      setLastRunStatus(lastExecutedJob.lastExecutedAt);
+      setLastRunStatus(lastExecutedJob.lastExecutedAt || lastExecutedJob.endedAt);
     }
   }, [flowJobStatus, lastExecutedJob, lastRunStatus]);
 

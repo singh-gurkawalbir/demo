@@ -260,7 +260,7 @@ export default function JobActionsMenu({
       closeSnackbar();
       dispatch(
         actions.job.resolveSelected({
-          jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+          jobs: [{ _id: job._id, _flowJobId: job._parentJobId || job._flowJobId }],
           match,
         })
       );
@@ -272,15 +272,15 @@ export default function JobActionsMenu({
           if (reason === 'undo') {
             return dispatch(
               actions.job.resolveUndo({
-                childJobId: job._flowJobId ? job._id : null,
-                parentJobId: job._flowJobId || job._id,
+                childJobId: (job._parentJobId || job._flowJobId) ? job._id : null,
+                parentJobId: job._parentJobId || job._flowJobId || job._id,
               })
             );
           }
 
           dispatch(
             actions.job.resolveCommit({
-              jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+              jobs: [{ _id: job._id, _flowJobId: job._parentJobId || job._flowJobId }],
             })
           );
         },
@@ -298,7 +298,7 @@ export default function JobActionsMenu({
       } else {
         dispatch(
           actions.job.retrySelected({
-            jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+            jobs: [{ _id: job._id, _flowJobId: job._parentJobId || job._flowJobId }],
             match,
           })
         );
@@ -315,8 +315,8 @@ export default function JobActionsMenu({
           if (reason === 'undo') {
             return dispatch(
               actions.job.retryUndo({
-                parentJobId: job._flowJobId || job._id,
-                childJobId: job._flowJobId ? job._id : null,
+                parentJobId: job._parentJobId || job._flowJobId || job._id,
+                childJobId: (job._parentJobId || job._flowJobId) ? job._id : null,
               })
             );
           }
@@ -330,7 +330,7 @@ export default function JobActionsMenu({
           } else {
             dispatch(
               actions.job.retryCommit({
-                jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+                jobs: [{ _id: job._id, _flowJobId: job._parentJobId || job._flowJobId }],
               })
             );
           }
