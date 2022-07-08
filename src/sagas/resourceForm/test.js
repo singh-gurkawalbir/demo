@@ -472,7 +472,7 @@ describe('resourceForm sagas', () => {
     test('should call commitStagedChanges with correct resource type if given type is connectorLicenses', () => {
       const response = { patchSet: [], finalValues: {'/name': 'some name'} };
 
-      return expectSaga(submitFormValues, { resourceType: 'connectorLicenses', resourceId, match: {url: '/connectors/ui-drawer/edit/connectors/999/'}})
+      return expectSaga(submitFormValues, { resourceType: 'connectorLicenses', resourceId, match: {url: '/connectors/edit/connectors/999/'}})
         .provide([
           [call(newIAFrameWorkPayload, {
             resourceId,

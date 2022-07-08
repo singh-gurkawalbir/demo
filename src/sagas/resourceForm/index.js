@@ -393,7 +393,7 @@ export function* submitFormValues({
 
   if (resourceType === 'connectorLicenses') {
     // construct url for licenses
-    const connectorUrlStr = match.url.indexOf('/connectors/ui-drawer/edit/connectors/') >= 0 ? '/connectors/ui-drawer/edit/connectors/' : '/connectors/';
+    const connectorUrlStr = match.url.indexOf('/connectors/edit/connectors/') >= 0 ? '/connectors/edit/connectors/' : '/connectors/';
     const startIndex = match.url.indexOf(connectorUrlStr) + connectorUrlStr.length;
 
     if (startIndex !== -1) {
