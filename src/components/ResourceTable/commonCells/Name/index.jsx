@@ -17,6 +17,12 @@ export default function NameCell({al, actionProps}) {
 
       return selectors.revision(state, integrationId, al._resourceId)?.description;
     }
+    if (resourceType === 'users') {
+      const { integrationId } = actionProps;
+      const user = selectors.availableUsersList(state, integrationId)?.find(user => user.sharedWithUser?._id === al._resourceId);
+
+      return user?.sharedWithUser?.name || user?.sharedWithUser?.email;
+    }
 
     return selectors.resource(state, resourceType, al._resourceId)?.name;
   });
@@ -45,6 +51,10 @@ export default function NameCell({al, actionProps}) {
     }
 
     return al.deletedInfo.name || '';
+  }
+
+  if (resourceType === 'users') {
+    return resourceName || al._resourceId;
   }
 
   return (
