@@ -281,7 +281,7 @@ export default {
   fieldMap: {
     parsers: {
       fieldId: 'parsers',
-      isHttp: true,
+      required: false,
       visibleWhenAll: [
         {
           field: 'outputMode',

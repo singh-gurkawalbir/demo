@@ -4084,7 +4084,7 @@ Object {
       },
       "parsers": Object {
         "fieldId": "parsers",
-        "isHttp": true,
+        "required": false,
         "visibleWhenAll": Array [
           Object {
             "field": "outputMode",
