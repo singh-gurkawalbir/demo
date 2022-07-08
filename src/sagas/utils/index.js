@@ -134,6 +134,7 @@ const getExportMetadata = (connectorMetadata, connectionVersion) => {
           delete exportData.versions[i].resources[j].exportPreConfiguredFields;
         });
       }
+      exportData.versions[i].resources = deepClone(exportData.versions[i].resources.filter(r => r.endpoints?.length));
     }
   });
 
@@ -281,6 +282,7 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
           delete importData.versions[i].resources[j].resourceFieldsUserMustSet;
         });
       }
+      importData.versions[i].resources = deepClone(importData.versions[i].resources.filter(r => r.operations?.length));
     }
   });
 
