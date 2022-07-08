@@ -39,7 +39,8 @@ export function normalizeUrlAndOptions(path, opts) {
       /^\/connections.*distributed$/.test(path) ||
       path.includes('/mappingPreview') ||
       path.includes('/unlink/google') ||
-      path.includes('/reSigninWithSSO')
+      path.includes('/reSigninWithSSO') ||
+      path.includes('/mfa/verify')
     ) {
       url = path;
     } else {
