@@ -126,7 +126,7 @@ export default function DefaultEdge({
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
   const isSourceEmptyNode = sourceType === GRAPH_ELEMENTS_TYPE.EMPTY;
   const showLinkIcon =
-    hasSiblingEdges && !isSourceGenerator && !isFlowSaveInProgress;
+    hasSiblingEdges && !isSourceGenerator && !isFlowSaveInProgress && !isViewMode;
   const showAddIcon =
     (!isSourceGenerator || (isSourceGenerator && !isTargetRouter)) &&
     !flow._connectorId &&

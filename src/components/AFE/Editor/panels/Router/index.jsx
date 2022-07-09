@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import React, { useMemo } from 'react';
 import { makeStyles, Divider, Typography, Tooltip } from '@material-ui/core';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
@@ -65,8 +65,11 @@ export default function RouterPanel({ editorId }) {
   const branches = useMemo(() => __branches.map(b => ({...b, id: shortId()})), [__branches]);
   const maxBranchesLimitReached = branches.length >= 25;
   const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
-  const branchNamingIndex = useSelector(state => selectors.editor(state, editorId)?.branchNamingIndex || 0);
-  const allowSorting = routeRecordsTo === 'first_matching_branch';
+  const {branchNamingIndex = 0, flowId } = useSelector(state => selectors.editor(state, editorId), shallowEqual);
+  const flow = useSelector(state => selectors.fbFlow(state, flowId));
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow?._integrationId, flowId));
+
+  const allowSorting = routeRecordsTo === 'first_matching_branch' && !isViewMode;
 
   const activeProcessor = useSelector(state => selectors.editorActiveProcessor(state, editorId));
 
@@ -127,6 +130,7 @@ export default function RouterPanel({ editorId }) {
           name="branchType"
           isValid // there are no validations on this field, hence always valid
           type="radiogroup"
+          disabled={isViewMode}
           label="Records will flow through:"
           options={[
             {
@@ -160,6 +164,7 @@ export default function RouterPanel({ editorId }) {
             index={i} // The HOC does not proxy index to child, so we need `position` as well.
             position={i}
             branchName={b.name}
+            isViewMode={isViewMode}
             editorId={editorId}
             pageProcessors={b.pageProcessors}
             allowSorting={allowSorting}
@@ -168,6 +173,7 @@ export default function RouterPanel({ editorId }) {
             onNameChange={handleNameChange} />
         ))}
       </SortableContainer>
+      {!isViewMode && (
       <Tooltip key="key" title={maxBranchesLimitReached ? messageStore('MAX_BRANCHES_LIMIT_REACHED') : ''} placement="bottom">
         <span>
           <TextButton disabled={maxBranchesLimitReached} onClick={handleAddBranch}>
@@ -175,6 +181,7 @@ export default function RouterPanel({ editorId }) {
           </TextButton>
         </span>
       </Tooltip>
+      )}
     </div>
   );
 }

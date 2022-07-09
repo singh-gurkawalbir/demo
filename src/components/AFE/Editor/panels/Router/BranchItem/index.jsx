@@ -109,6 +109,7 @@ export default function BranchItem({
   position,
   branchName,
   description,
+  isViewMode,
   onNameChange,
   onToggleExpand,
   pageProcessors,
@@ -172,6 +173,7 @@ export default function BranchItem({
               >
                 <EditableText
                   allowOverflow
+                  disabled={isViewMode}
                   text={branchName}
                   defaultText="Unnamed branch: Click to add name"
                   onChange={title => onNameChange(title, position)}
@@ -183,12 +185,14 @@ export default function BranchItem({
                 {description && <InfoIconButton size="xs" info={description} />}
               </div>
 
+              {!isViewMode && (
               <MoreActionsButton
                 position={position}
                 pageProcessors={pageProcessors}
                 allowDeleting={allowDeleting}
                 editorId={editorId}
               />
+              )}
             </div>
           </AccordionSummary>
 
