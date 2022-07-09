@@ -735,7 +735,11 @@ export const deleteUnUsedRouters = flow => {
 
 export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, originalFlow}) => {
   const edge = elementsMap[edgeId];
-  const isInsertingFirstRouter = elementsMap[edge.source]?.type === GRAPH_ELEMENTS_TYPE.PG_STEP && elementsMap[edge.target]?.type === GRAPH_ELEMENTS_TYPE.ROUTER;
+  const sourceType = elementsMap[edge.source]?.type;
+  const targetType = elementsMap[edge.target]?.type;
+  const isInsertingFirstRouter = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP && targetType === GRAPH_ELEMENTS_TYPE.ROUTER;
+  const shouldReplaceFirstRouter = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP && targetType === GRAPH_ELEMENTS_TYPE.PP_STEP;
+
   const branchPath = edge.data.path;
   let processorArray;
   let nextRouterId;
@@ -750,6 +754,7 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
 
   const flowClone = cloneDeep(originalFlow) || {};
   const insertionIndex = processorArray.findIndex(pp => pp.id === edge.target);
+
   let routerIndex = originalFlow?.routers?.length || 0;
   let firstHalf;
   let secondHalf;
@@ -774,6 +779,12 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
   router.branches[0].nextRouterId = nextRouterId;
   if (isInsertingFirstRouter) {
     flowClone.routers = [router, ...flowClone.routers];
+  } else if (shouldReplaceFirstRouter) {
+    if (flowClone.routers?.length) {
+      flowClone.routers[0] = router;
+    } else {
+      flowClone.routers = [router];
+    }
   } else {
     if (!isVirtual || (isVirtual && insertionIndex === -1)) {
       setObjectValue(flowClone, `${branchPath}/pageProcessors`, firstHalf);
@@ -787,7 +798,7 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
   }
   if (isVirtual && insertionIndex === -1) {
     routerIndex = 1;
-  } else if (isInsertingFirstRouter) {
+  } else if (isInsertingFirstRouter || shouldReplaceFirstRouter) {
     routerIndex = 0;
   }
   if (!flowClone._exportId && !flowClone.pageGenerators) {
