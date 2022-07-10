@@ -768,8 +768,8 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
   const isVirtual = flow.routers?.length === 1 && isVirtualRouter(flow.routers[0]);
 
   if (!flowClone.routers) {
-    if (!isVirtual || (isVirtual && insertionIndex === -1)) {
-      flowClone.routers = flow.routers;
+    if (!isVirtual || (isVirtual && insertionIndex !== 0)) {
+      flowClone.routers = [...flow.routers];
     }
     delete flowClone.pageProcessors;
   }
