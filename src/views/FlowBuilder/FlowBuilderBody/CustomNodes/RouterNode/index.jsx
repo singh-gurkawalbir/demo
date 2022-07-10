@@ -40,7 +40,6 @@ export default function RouterNode({data = {}}) {
       <Tooltip title="Edit branching" placement="bottom" aria-label="Edit branching">
         <IconButton
           size="small"
-          tooltipProps={{title: 'Edit branching'}}
           data-test={`router-${routerId}`}
           className={classes.button}
         >
