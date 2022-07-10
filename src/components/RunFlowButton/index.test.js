@@ -1,4 +1,4 @@
-/* global describe, test, expect  */
+/* global describe, test, expect,jest  */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,7 +7,7 @@ import {renderWithProviders, mockGetRequestOnce} from '../../test/test-utils';
 import { runServer } from '../../test/api/server';
 import actions from '../../actions';
 
-describe('RunflowComponent testing', () => {
+describe('RunflowComponent UI testing', () => {
   runServer();
 
   async function renderWithProps(props) {
@@ -21,7 +21,7 @@ describe('RunflowComponent testing', () => {
     return {store};
   }
 
-  test('clicking run flow button for delta export ', async () => {
+  test('should test run flow button for delta export ', async () => {
     const props = {
       flowId: '5f1535beef4fb87bc5e5fb3e',
       runOnMount: false,
@@ -42,7 +42,7 @@ describe('RunflowComponent testing', () => {
 
     expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
   });
-  test('canceling run flow button for delta export ', async () => {
+  test('should test the cancel run flow button for delta export ', async () => {
     const props = {
       flowId: '5f1535beef4fb87bc5e5fb3e',
       runOnMount: false,
@@ -63,10 +63,8 @@ describe('RunflowComponent testing', () => {
     userEvent.click(cancelrunflow);
 
     expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
-
-    screen.debug();
   });
-  test('error api call ', async () => {
+  test('should test for error api call ', async () => {
     const props = {
       flowId: '5f1535beef4fb87bc5e5fb3e',
       runOnMount: false,
@@ -80,10 +78,8 @@ describe('RunflowComponent testing', () => {
     store.dispatch(actions.api.failure('/flows/5f1535beef4fb87bc5e5fb3e/lastExportDateTime', 'GET', 'error', false));
     store.dispatch(actions.flow.receivedLastExportDateTime('5f1535beef4fb87bc5e5fb3e'));
     expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
-
-    screen.debug();
   });
-  test('simple import clicking run flow button here', async () => {
+  test('should test for simple import clicking run flow button here', async () => {
     const props = {
       flowId: '5ec6439006c2504f58943ec3',
       runOnMount: false,
@@ -96,6 +92,8 @@ describe('RunflowComponent testing', () => {
 
     const input = screen.getByDisplayValue('');
 
+    input.click = jest.fn();
+
     userEvent.upload(input, files);
     await waitFor(() => expect(input.files).toHaveLength(1));
 
@@ -106,8 +104,9 @@ describe('RunflowComponent testing', () => {
     const button = screen.getByRole('button');
 
     userEvent.click(button);
+    expect(input.click).toHaveBeenCalled();
   });
-  test('simple import clicking run now button here', async () => {
+  test('should test simple import clicking run now button here', async () => {
     const props = {
       flowId: '5ec6439006c2504f58943ec3',
       runOnMount: false,
@@ -121,6 +120,8 @@ describe('RunflowComponent testing', () => {
 
     const input = screen.getByDisplayValue('');
 
+    input.click = jest.fn();
+
     userEvent.upload(input, files);
     await waitFor(() => expect(input.files).toHaveLength(1));
 
@@ -132,8 +133,9 @@ describe('RunflowComponent testing', () => {
     userEvent.click(button);
 
     await waitFor(() => store?.getState()?.session?.flows.runStatus === 'started');
+    expect(input.click).toHaveBeenCalledTimes(1);
   });
-  test('simple import clicking Run flow button and different variant', async () => {
+  test('should test simple import clicking Run flow button and different variant', async () => {
     const props = {
       flowId: '5ec6439006c2504f58943ec3',
       runOnMount: false,
@@ -147,6 +149,8 @@ describe('RunflowComponent testing', () => {
 
     const input = screen.getByDisplayValue('');
 
+    input.click = jest.fn();
+
     userEvent.upload(input, files);
     await waitFor(() => expect(input.files).toHaveLength(1));
 
@@ -156,29 +160,9 @@ describe('RunflowComponent testing', () => {
     const button = screen.getByText('Run flow');
 
     userEvent.click(button);
+    expect(input.click).toHaveBeenCalledTimes(1);
   });
-  test('testing purpose', async () => {
-    const props = {
-      flowId: '5ec6439006c2504f58943ec3',
-      runOnMount: true,
-    };
-    const files = [
-      new File(['hello'], 'hello.png', {type: 'image/png'}),
-    ];
-
-    const {store} = await renderWithProps(props);
-    const input = screen.getByDisplayValue('');
-
-    userEvent.upload(input, files);
-    await waitFor(() => expect(input.files).toHaveLength(1));
-
-    const m = Object.keys(store?.getState()?.session?.fileUpload);
-
-    await waitFor(() => store?.getState()?.session?.fileUpload[m].status === 'received');
-    screen.debug();
-  });
-
-  test('simple export with pagegenerstor length =0 ', async () => {
+  test('should do test for simple export with pagegenerstor length =0 ', async () => {
     const props = {
       flowId: '5f0802e086bd7d4f42eadd0b',
       runOnMount: false,
