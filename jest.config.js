@@ -20,6 +20,7 @@ module.exports = {
     'src/reducers/**/*.{js,jsx}',
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
+    'src/views/NotFound/**/*.{js,jsx}',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js'],
   coverageThreshold: {
