@@ -8,6 +8,7 @@ import {
   Tooltip,
 } from '@material-ui/core';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import ArrowPopper from '../../../../../components/ArrowPopper';
 import AddEmptyStepIcon from '../../../../../components/icons/AddEmptyStepIcon';
 import BranchIcon from '../../../../../components/icons/BranchIcon';
@@ -16,6 +17,7 @@ import { useFlowContext } from '../../Context';
 import { useHandleAddNode, useHandleAddNewRouter } from '../../../hooks';
 import { isNodeConnectedToRouter } from '../../lib';
 import messageStore from '../../../../../utils/messageStore';
+import { selectors } from '../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   addButton: {
@@ -93,8 +95,9 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId }) => {
     edgeId,
     elementsMap
   );
+  const isFlowBranchingEnabled = useSelector(state => selectors.isFlowBranchingEnabled(state));
 
-  if (isConnectedToRouterOrTerminal) {
+  if (isConnectedToRouterOrTerminal || !isFlowBranchingEnabled) {
     return (
       <Tooltip
         title={isConnectedToRouterOrTerminal ? 'Add empty flow step' : ''}
