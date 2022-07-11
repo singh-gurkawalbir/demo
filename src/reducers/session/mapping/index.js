@@ -947,6 +947,11 @@ export default (state = {}, action) => {
         draft.mapping.autoCreated = true;
         break;
 
+      case actionTypes.MAPPING.V2.RESET_AUTO_CREATE_FLAG:
+        if (!draft.mapping) break;
+        draft.mapping.autoCreated = !draft.mapping.autoCreated;
+        break;
+
       default:
     }
   });

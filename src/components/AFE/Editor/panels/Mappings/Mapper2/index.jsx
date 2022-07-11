@@ -155,8 +155,9 @@ export default function Mapper2({editorId}) {
         message: 'Destination fields successfully auto-populated.',
         variant: 'success',
       });
+      dispatch(actions.mapping.v2.resetAutoCreateFlag());
     }
-  }, [enqueueSnackbar, isAutoCreateSuccess]);
+  }, [dispatch, enqueueSnackbar, isAutoCreateSuccess]);
 
   const onDropHandler = useCallback(info => {
     dispatch(actions.mapping.v2.dropRow(info));
