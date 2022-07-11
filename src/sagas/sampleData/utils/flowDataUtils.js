@@ -105,8 +105,6 @@ export function* fetchFlowResources({
   type,
   refresh,
   runOffline,
-  _pageProcessorId,
-  isMockInput,
   addMockData,
 }) {
   const resourceMap = {};
@@ -147,7 +145,13 @@ export function* fetchFlowResources({
           // Gets required uiData (for real time exports - FTP, NS, SF, Web hook) and postData to pass for Page processors
           resourceMap[resourceId].options = yield call(
             getPreviewOptionsForResource,
-            { resource, flow, refresh, runOffline}
+            { resource,
+              flow,
+              refresh,
+              runOffline,
+              addMockData,
+              resourceType,
+            }
           );
         } else if (resourceType === 'imports') {
           resourceMap[resourceId].options = yield call(
@@ -156,9 +160,7 @@ export function* fetchFlowResources({
               flow,
               refresh,
               runOffline,
-              isMockInput,
               addMockData,
-              _pageProcessorId,
             }
           );
         }

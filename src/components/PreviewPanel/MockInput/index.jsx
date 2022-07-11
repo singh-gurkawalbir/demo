@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function RouterWrappedContent(props) {
-  const { handleClose, resourceId, flowId } = props;
+  const { handleClose, resourceId, flowId, resourceType} = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [error, setError] = useState();
@@ -46,7 +46,7 @@ function RouterWrappedContent(props) {
   const {status: sampleDataStatus, data: sampleData} = useSelector(state => selectors.getSampleDataContext(state, {
     flowId,
     resourceId,
-    resourceType: 'imports',
+    resourceType,
     stage: sampleDataStage.imports.processedFlowInput,
   }));
 
