@@ -133,8 +133,7 @@ export default function JobTable({
     if (history.location.pathname.includes('/viewErrors') && !(_JobId || showErrorDialogFor?.jobId)) {
       const urlExtractFields = history.location.pathname.split('/');
       // TODO: @RAGHU, Do we need this logic?
-      // considers drawer prefix before view errors, so + 1
-      const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf('viewErrors') + 1;
+      const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf('viewErrors');
       const strippedRoute = urlExtractFields.slice(0, -indexToBeStripped).join('/');
 
       history.replace(strippedRoute);

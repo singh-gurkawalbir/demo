@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
-import { getAssistantConnectorType, getApp } from '../../../constants/applications';
+import { getAssistantConnectorType, getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
@@ -49,7 +49,12 @@ export default function FormView(props) {
   );
 
   const { assistant: assistantName, http } = connection;
-  const _httpConnectorId = connection?.http?._httpConnectorId;
+
+  const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
+  const showHTTPFrameworkImport = resourceType === 'imports' && connectorMetaData?.import?.versions?.[0]?.resources?.length;
+  const showHTTPFrameworkExport = resourceType === 'exports' && connectorMetaData?.export?.versions?.[0]?.resources?.length;
+  const isHttpFramework = _httpConnectorId && (showHTTPFrameworkImport || showHTTPFrameworkExport);
+
   const isGraphql = http?.formType === 'graph_ql';
 
   const options = useMemo(() => {
@@ -164,7 +169,7 @@ export default function FormView(props) {
   const isAcumaticaEcommerceImport = (resourceType === 'imports') && isAcumaticaEcommerceConnection(connection);
   const isLoopReturnsv2import = (resourceType === 'imports') && isLoopReturnsv2Connection(connection);
   const isEbayFinanceImport = (resourceType === 'imports') && isEbayFinanceConnection(connection);
-  const isFlowBuilderAssistant = flowId && (isGraphql || _httpConnectorId ||
+  const isFlowBuilderAssistant = flowId && (isGraphql || isHttpFramework ||
     (assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection) && !isMicrosoftBusinessCentralOdataConnection(connection) && !isAcumaticaEcommerceImport && !isLoopReturnsv2import && !isEbayFinanceImport));
 
   return isFlowBuilderAssistant ? (

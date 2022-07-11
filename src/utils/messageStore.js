@@ -1,4 +1,4 @@
-import { MFA_URL } from './constants';
+import { MFA_URL, REVISIONS_GUIDE_URL } from './constants';
 
 const messages = {
   CONTACT_SALES_MESSAGE: 'We will contact you soon to schedule your demo and discuss your business needs. In the meantime,',
@@ -46,15 +46,15 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   all of this parent record row's child rows will be deleted when your selected data type is applied. 
   <br><br>Are you sure you want to continue?`,
   MAPPER1_REFERENCE_INFO: 'Your 1.0 mappings are for reference only and will be ignored. Delete all 2.0 mappings to use 1.0 mappings instead.',
-  MAPPER2_BANNER_WARNING: 'Any 2.0 mappings that you enter will be applied when you click <b>Save</b>, even if you toggle back to Mapper 1.0. To apply 1.0 mappings instead, delete all mappings from Mapper 2.0 and click <b>Save</b>. <b><a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/4536629083035-Mapper-2-0"> Mapper 2.0 advantages</a></b>',
-  LOOKUP_SOURCE_TOOLTIP: 'Lookups do not provide source field list',
+  MAPPER2_BANNER_WARNING: 'Any 2.0 mappings that you enter will be applied when you click <b>Save</b>, even if you toggle back to Mapper 1.0. To apply 1.0 mappings instead, delete all mappings from Mapper 2.0 and click <b>Save</b>. <b><a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/4536629083035-Mapper-2-0"> Learn about Mapper 2.0</a></b>',
+  DYNAMIC_LOOKUP_SOURCE_TOOLTIP: 'Dynamic lookups do not provide source field list',
   HARD_CODED_SOURCE_TOOLTIP: 'Hard-coded values do not provide source field list',
   HANDLEBARS_SOURCE_TOOLTIP: 'Handlebars expression do not provide source field list',
   MAPPER2_AUTO_CREATE_STRUCTURE: 'Are you sure you want to auto-populate your destination fields?<br><b>This will replace all of your current destination fields and source fields.</b>',
   // #endregion
   // #region LCM
   REVISION_IN_PROGRESS_ERROR: 'You have a pull, snapshot, or revert in progress.',
-  NO_CLONE_FAMILY_TO_PULL_FROM_ERROR: "You don't have any data to pull. Learn more about <a target='_blank' href='https://docs.celigo.com/hc/en-us/articles/4844290103707'> cloning and pulling your integrations</>.",
+  NO_CLONE_FAMILY_TO_PULL_FROM_ERROR: `You don't have any data to pull. Learn more about <a target='_blank' href=${REVISIONS_GUIDE_URL}> cloning and pulling your integrations</>.`,
   PULL_MERGE_SUCCESS: 'You\'ve successfully merged your pull.',
   REVERT_SUCCESS: 'You\'ve successfully reverted your changes.',
   SNAPSHOT_SUCCESS: 'You\'ve successfully created a snapshot.',

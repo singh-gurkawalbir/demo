@@ -8003,6 +8003,60 @@ describe('selectors.isParserSupported test cases', () => {
     expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
   });
 
+  test("should return true if it's a new export with adaptorType as 'HTTPExport' but not an HTTP Export", () => {
+    const parser = 'xml';
+    const conn = {
+      _id: 'c1',
+      type: 'HTTP',
+    };
+    const fieldMeta = {
+      fieldMap: {
+        _connectionId: {
+          id: '_connectionId',
+          value: 'c1',
+        },
+      },
+    };
+
+    const formKey = 'new-hadh';
+
+    let state = reducer(
+      undefined,
+      actions.resource.received('connections', conn)
+    );
+
+    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'c1'} }));
+    const resource = selectors.resourceData(state, 'exports', formKey);
+
+    resource.merged.adaptorType = 'HTTPExport';
+    resource.merged.assistant = 'googledrive';
+
+    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+  });
+
+  test('should return true if not an HTTP export but adaptorType as "HTTPExport"', () => {
+    const parser = 'xml';
+    const exp = {
+      _id: 'e1',
+      type: 'HTTP',
+      adaptorType: 'HTTPExport',
+      assistant: 'googledrive',
+    };
+    const fieldMeta = {
+      fieldMap: {},
+    };
+    const formKey = 'exports-e1';
+
+    let state = reducer(
+      undefined,
+      actions.resource.received('exports', exp)
+    );
+
+    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
+
+    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+  });
+
   test('should return true if not an HTTP export', () => {
     const parser = 'xml';
     const exp = {

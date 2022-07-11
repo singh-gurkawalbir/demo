@@ -112,6 +112,7 @@ export default function UserFormWrapper({ userId }) {
       id={userId}
       onSaveClick={handleSaveClick}
       onCancelClick={handleClose}
+      disableSave={disableSave}
     />
   );
 }

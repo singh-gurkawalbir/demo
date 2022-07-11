@@ -228,7 +228,7 @@ const Mapper2Row = React.memo(props => {
             disabled={disabled}
             dataType={dataType}
             onBlur={handleExtractBlur}
-            isLookup={isLookup}
+            isDynamicLookup={isLookup && !isStaticLookup}
             isHardCodedValue={isHardCodedValue}
             isHandlebarExp={isHandlebarExp}
             editorLayout={editorLayout}
