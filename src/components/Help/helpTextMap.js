@@ -646,7 +646,7 @@ export default {
   'gorgias.connection.http.auth.basic.username':
 'Please enter the Username of your Gorgias account',
   'gorgias.connection.http.auth.basic.password':
-'Please enter the Password of your Gorgias account <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+'Please enter the API key of your Gorgias account. <br><b>Steps to retrieve the API key:<br></b>1. Sign in to your Gorgias account. <br>2. Navigate to <b>Settings > REST API</b>. <br>3. Copy your <b>API key</b>. (To create a new API key, click on <b>generate button</b>).<br> Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'walmart.connection.environment':
 'Please select the environment of your Walmart account here.',
   'walmart.connection.http.unencrypted.clientId':
