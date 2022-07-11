@@ -58,6 +58,7 @@ export default {
     router.routeRecordsUsing = router.activeProcessor === 'javascript' ? 'script' : 'input_filters';
     router.script._scriptId = router.scriptId;
     router.script.function = router.entryFunction;
+    router.script.code = router.code;
 
     return {
       data: [{

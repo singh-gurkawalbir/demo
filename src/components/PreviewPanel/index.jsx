@@ -188,6 +188,7 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
             showPreviewData={showPreviewData}
             resourceType={resourceType}
             toggleValue={toggleValue}
+            flowId={flowId}
           />
 
           <Panels.PreviewBody
