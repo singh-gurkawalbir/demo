@@ -154,20 +154,6 @@ export function getAllFlowBranches(flow) {
 
   return branches;
 }
-export function getConnectedEdges(id, direction = 'left', elements) {
-  const handle = direction === 'left' ? 'target' : 'source';
-  const edges = elements.filter(e => isEdge(e));
-
-  return edges.filter(edge => edge[handle] === id);
-}
-
-export function findNodeIndex(id, elements) {
-  for (let i = 0; i < elements.length; i += 1) {
-    if (elements[i].id === id) {
-      return i;
-    }
-  }
-}
 
 const RANGE = 20;
 const inRange = (coordinate, dropCoordinate) =>
