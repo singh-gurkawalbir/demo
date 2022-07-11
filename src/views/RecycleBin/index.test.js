@@ -25,11 +25,7 @@ async function initRecycleBin(
   initialStore.getState().user.org = {
     accounts: [{
       _id: defaultAShareId,
-      accessLevel: 'owner',
-    }],
-    users: [{
-      _id: 'id_1',
-      accepted: true,
+      accessLevel: defaultAShareId === 'own' ? 'owner' : null,
     }],
   };
   initialStore.getState().session.recycleBin = {
@@ -151,5 +147,13 @@ describe('RecycleBin test cases', () => {
 
     expect(await screen.queryByText(/Recycle bin/i)).toBeInTheDocument();
     await waitFor(() => expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria./i)).toBeInTheDocument());
+  });
+
+  test('should pass the initial render with user login', async () => {
+    await initRecycleBin({
+      defaultAShareId: 'id_1',
+    });
+
+    expect(screen.queryByText(/You do not have permissions to access this page/i)).toBeInTheDocument();
   });
 });
