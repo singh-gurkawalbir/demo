@@ -2,13 +2,10 @@ import clsx from 'clsx';
 import React, {useState, useCallback} from 'react';
 import { makeStyles, TableCell } from '@material-ui/core';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   link: {
     cursor: 'pointer',
     fontWeight: 'bold',
-  },
-  resolved: {
-    color: theme.palette.primary.main,
   },
 }));
 
@@ -27,7 +24,6 @@ export default function ErrorCountCell({count, isError, onClick, isJobInProgress
       data-test={`view-job-${isError ? 'error' : 'resolved'}`}
       onClick={showLink ? onClick : undefined}
       className={clsx(className, {
-        [classes.resolved]: !isError,
         [classes.link]: showLink,
       })}>
       {showLink ? 'View' : count}

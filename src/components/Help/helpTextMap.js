@@ -646,7 +646,7 @@ export default {
   'gorgias.connection.http.auth.basic.username':
 'Please enter the Username of your Gorgias account',
   'gorgias.connection.http.auth.basic.password':
-'Please enter the Password of your Gorgias account <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+'Please enter the API key of your Gorgias account. <br><b>Steps to retrieve the API key:<br></b>1. Sign in to your Gorgias account. <br>2. Navigate to <b>Settings > REST API</b>. <br>3. Copy your <b>API key</b>. (To create a new API key, click on <b>generate button</b>).<br> Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'walmart.connection.environment':
 'Please select the environment of your Walmart account here.',
   'walmart.connection.http.unencrypted.clientId':
@@ -912,7 +912,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.rdbms.bigquery.clientEmail': 'The email address for the Google Cloud service account used for authentication.',
   'connection.rdbms.bigquery.privateKey': 'First, copy the private key from the Google portal for the service account that you want to use to authenticate the connection. Before you add it to integrator.io you must replace all newline characters (\\n) throughout the private key:<br>1. Paste the private key into a text editor.<br>2. Find \\n.<br>3. With your cursor in that location, delete the \\n characters and press Enter or Return.<br>4. Repeat this for each instance of \\n.<br>5. Ensure -----BEGIN PRIVATE KEY----- appears before the key, and -----END PRIVATE KEY----- appears after the key.<br>6. Copy and paste the reformatted private key (including the begin and end declarations) into integrator.io.',
   'connection.rdbms.bigquery.dataset': 'The name of the dataset containing the tables and views being accessed.',
-  'connection.rdbms.redshift.region': "Name of the amazon redshift region to the location where the request is being made. If not set, by default 'us-east-1' is selected",
+  'connection.rdbms.redshift.region': 'The default Amazon Redshift region is [us-east-1]. To change the region, select the region for this Redshift account',
   'connection.rdbms.redshift.aws.accessKeyId': "Many of Amazon's APIs require an access key, and this field stores the 'id' for the access key that you want this connection to use.  Please check the AWS guides if you need more info about access keys and how to generate and/or find them in your AWS account.",
   'connection.rdbms.redshift.aws.secretAccessKey': 'When you create a new access key in your Amazon Redshift account, AWS will display both the access key id and the secret access key.  The secret access key will only be available once, and you should store it immediately in integrator.io (i.e. in this field).  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your secret access key safe.',
   'connection.rdbms.redshift.user': 'IAM Database user. Learn more on how to create database user <a href="https://docs.aws.amazon.com/redshift/latest/mgmt/configuring-connections.html" target="_blank">here</a>.',
@@ -1402,7 +1402,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'export.unencrypted.apiType': '<b>Selling Partner API (SP-API)</b>: The Selling Partner API is a REST-based API and is an evolution of the legacy Amazon Marketplace Web Service (MWS) APIs. It’s recommended you integrate using SP-APIs.<br><b>Marketplace Web Service API (MWS)</b>: Amazon Marketplace Web Service (Amazon MWS) is the legacy web service API.',
   'import.unencrypted.feedType': 'The type of the feed.',
   'export.s3.region':
-  "Name of the amazon s3 region to the location where the request is being made. If not set, by default 'us-east-1' is selected",
+  'The default Amazon S3 region is [us-east-1]. To change the region, select the region for this S3 account',
   'export.webhook.provider':
 "Many popular webhooks have been exposed here for your convenience.  If you don't see the application that you need please log a support ticket so we can prioritize accordingly.  If you are creating your own webhook please choose 'Custom'.",
   'export.webhook.verify':
@@ -1707,7 +1707,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'import.azure.backupPath':
 'Specify the directory path of the Azure blob storage container where files will be backed up after the successful transfer.',
   'import.s3.region':
-'Name of the nearest amazon s3 region to the location from where the request is being made. If not set, by default "us-east-1" is selected',
+'The default Amazon S3 region is [us-east-1]. To change the region, select the region for this S3 account',
   'import.s3.bucket':
 'Name of the bucket in S3, where you want file to be saved',
   'import.s3.backupBucket': 'Specify the bucket name where files will be backed up after successful transfer.',
@@ -2074,8 +2074,12 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.http._iClientId':
 'Save your client ID and client secret in iClient for an added layer of security.',
   'connection.http.clientCertificates.key': 'Select a .KEY private key file.',
+  'connection.http.clientCertificates.type':
+'Select the certificate type.',
   'connection.http.clientCertificates.cert':
 'Select a certificate in PEM format.',
+  'connection.http.clientCertificates.pfx':
+'Select a certificate in PFX format.',
   'connection.http.clientCertificates.passphrase':
 'Enter a passphrase if you need to further protect this certificate file.',
   'connection.marketplaceRegion':

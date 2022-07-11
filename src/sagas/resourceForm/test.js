@@ -193,6 +193,40 @@ describe('resourceForm sagas', () => {
         })
         .run();
     });
+    test('should remove keyColums if groupByFields are defined', () => {
+      const values = {
+        '/file/csv': {keyColumns: ['name']},
+        '/description': 'desc',
+        '/formView': 'rest',
+        '/file/groupByFields': 'name',
+      };
+
+      return expectSaga(deleteUISpecificValues, { values, resourceId: '123' })
+        .put.actionType('RESOURCE_STAGE_REMOVE')
+        .returns({
+          '/file/csv': {keyColumns: undefined},
+          '/description': 'desc',
+          '/file/groupByFields': 'name',
+        })
+        .run();
+    });
+    test('should not remove keyColums if groupByFields is not defined', () => {
+      const values = {
+        '/file/csv': {keyColumns: ['name']},
+        '/name': 'test',
+        '/description': 'desc',
+        '/formView': 'rest',
+      };
+
+      return expectSaga(deleteUISpecificValues, { values, resourceId: '123' })
+        .put.actionType('RESOURCE_STAGE_REMOVE')
+        .returns({
+          '/file/csv': {keyColumns: ['name']},
+          '/name': 'test',
+          '/description': 'desc',
+        })
+        .run();
+    });
   });
 
   describe('deleteFormViewAssistantValue saga', () => {
@@ -438,7 +472,7 @@ describe('resourceForm sagas', () => {
     test('should call commitStagedChanges with correct resource type if given type is connectorLicenses', () => {
       const response = { patchSet: [], finalValues: {'/name': 'some name'} };
 
-      return expectSaga(submitFormValues, { resourceType: 'connectorLicenses', resourceId, match: {url: '/connectors/ui-drawer/edit/connectors/999/'}})
+      return expectSaga(submitFormValues, { resourceType: 'connectorLicenses', resourceId, match: {url: '/connectors/edit/connectors/999/'}})
         .provide([
           [call(newIAFrameWorkPayload, {
             resourceId,
