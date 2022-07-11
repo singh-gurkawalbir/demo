@@ -61,7 +61,7 @@ export default function RouterMenu({ editorId }) {
     });
   },
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  [confirmDialog]
+  [confirmDialog, routerId, configuredCount, unconfiguredCount]
   );
 
   return (
