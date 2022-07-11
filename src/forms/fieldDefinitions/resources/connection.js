@@ -266,7 +266,7 @@ export default {
     type: 'select',
     label: 'Region',
     required: true,
-    defaultValue: r => r?.rdbms?.redshift?.region || 'us-east-1',
+    defaultValue: r => r.rdbms?.redshift?.region || 'us-east-1',
     options: [
       {
         items: AWS_REGIONS_LIST,
