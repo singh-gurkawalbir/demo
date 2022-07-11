@@ -399,7 +399,7 @@ export function getVersionDetails({ version, assistantData }) {
   }
 
   if (version) {
-    versionDetails = assistantData.versions.find(v => v.version === version);
+    versionDetails = assistantData.versions.find(v => (v.version === version || v._id === version));
   } else if (assistantData.versions.length === 1) {
     [versionDetails] = assistantData.versions;
   }
@@ -605,6 +605,12 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
   const exportDoc = cloneDeep(exportDocOrig);
   const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
+
+  if (exportDoc?.http) {
+    operation = exportDoc.http._httpConnectorEndpointId || operation;
+    resource = exportDoc.http._httpConnectorResourceId || resource;
+    version = exportDoc.http._httpConnectorVersionId || version;
+  }
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
     pathParams: {},

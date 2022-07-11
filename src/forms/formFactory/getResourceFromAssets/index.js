@@ -252,7 +252,9 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         if (isNew) {
           meta = meta.new;
         } else if (isNewHTTPFramework) {
-          if (!resource?.useParentForm && resource?.http?.formType !== 'http') {
+          const showAssistantView = assistantData?.import?.versions?.[0]?.resources?.length;
+
+          if (!resource?.useParentForm && resource?.http?.formType !== 'http' && showAssistantView) {
             meta = meta.custom.httpFramework.assistantDefinition(
               resource._id,
               resource,
@@ -318,7 +320,9 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         if (isNew) {
           meta = meta.new;
         } else if (isNewHTTPFramework) {
-          if (!resource?.useParentForm && resource?.http?.formType !== 'http') {
+          const showAssistantView = assistantData?.export?.versions?.[0]?.resources?.length;
+
+          if (!resource?.useParentForm && resource?.http?.formType !== 'http' && showAssistantView) {
             meta = meta.custom.httpFramework.assistantDefinition(
               resource._id,
               resource,
