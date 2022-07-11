@@ -73,8 +73,6 @@ function RouterWrappedContent({editorId}) {
 }
 
 export default function BranchDrawer({ editorId }) {
-  /* TODO: We can set the drawer path to anything if the below
-     has match-path conflicts, or not providing the proper datum. */
   return (
     <RightDrawer height="tall" width="small" path={drawerPaths.FLOW_BUILDER.BRANCH_EDIT}>
       <RouterWrappedContent editorId={editorId} />
