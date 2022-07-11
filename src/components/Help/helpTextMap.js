@@ -646,7 +646,7 @@ export default {
   'gorgias.connection.http.auth.basic.username':
 'Please enter the Username of your Gorgias account',
   'gorgias.connection.http.auth.basic.password':
-'Please enter the Password of your Gorgias account <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+'Please enter the API key of your Gorgias account. <br><b>Steps to retrieve the API key:<br></b>1. Sign in to your Gorgias account. <br>2. Navigate to <b>Settings > REST API</b>. <br>3. Copy your <b>API key</b>. (To create a new API key, click on <b>generate button</b>).<br> Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'walmart.connection.environment':
 'Please select the environment of your Walmart account here.',
   'walmart.connection.http.unencrypted.clientId':
@@ -2074,8 +2074,12 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.http._iClientId':
 'Save your client ID and client secret in iClient for an added layer of security.',
   'connection.http.clientCertificates.key': 'Select a .KEY private key file.',
+  'connection.http.clientCertificates.type':
+'Select the certificate type.',
   'connection.http.clientCertificates.cert':
 'Select a certificate in PEM format.',
+  'connection.http.clientCertificates.pfx':
+'Select a certificate in PFX format.',
   'connection.http.clientCertificates.passphrase':
 'Enter a passphrase if you need to further protect this certificate file.',
   'connection.marketplaceRegion':

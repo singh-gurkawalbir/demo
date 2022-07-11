@@ -6,19 +6,6 @@ import { DEFAULT_RECORD_SIZE } from '../../../../utils/exportPanel';
 const DEFAULT_VALUE = undefined;
 const emptyObj = {};
 
-export function extractMockData(sampleData) {
-  if (!sampleData) return DEFAULT_VALUE;
-
-  const stagesInSampleData = sampleData.stages;
-  const messageInSampleData = sampleData.message;
-
-  if (stagesInSampleData || messageInSampleData) {
-    return sampleData.data;
-  }
-
-  return sampleData;
-}
-
 export function extractStages(sampleData) {
   const stagesInSampleData = sampleData?.stages;
   const stageMap = {};
@@ -90,8 +77,6 @@ export default function (state = {}, action) {
         draft[resourceId][activeSendOrPreviewTab].status = 'received';
         draft[resourceId][activeSendOrPreviewTab].data = extractStages(previewStagesData);
         draft[resourceId][activeSendOrPreviewTab].message = previewStagesData?.message;
-        if (!draft[resourceId].data) draft[resourceId].data = {};
-        draft[resourceId].data.defaultMockData = extractMockData(previewStagesData);
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_ERROR:
         draft[resourceId][activeSendOrPreviewTab].status = 'error';
@@ -242,5 +227,3 @@ selectors.getAllParsableErrors = (state, resourceId) => {
 };
 
 selectors.getResourceMockData = (state, resourceId) => state?.[resourceId]?.data?.mockData;
-
-selectors.getResourceDefaultMockData = (state, resourceId) => state?.[resourceId]?.data?.defaultMockData;
