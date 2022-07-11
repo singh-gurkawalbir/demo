@@ -29,7 +29,7 @@ export default function MoreActionsButton({editorId, position, pageProcessors = 
     event.stopPropagation();
     setAnchorEl(null);
   };
-  const branches = useSelector(state => selectors.editor(state, editorId)?.rule.branches);
+  const branches = useSelector(state => selectors.editor(state, editorId).rule.branches);
   const handleOpenMenu = event => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);

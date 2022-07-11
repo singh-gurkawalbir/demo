@@ -21,7 +21,7 @@ export default function RouterMenu({ editorId }) {
   const { confirmDialog } = useConfirmDialog();
   const open = Boolean(anchorEl);
   const dispatch = useDispatch();
-  const flowId = useSelector(state => selectors.editor(state, editorId)?.flowId);
+  const flowId = useSelector(state => selectors.editor(state, editorId).flowId);
   const flow = useSelector(state => selectors.fbFlow(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow?._integrationId, flowId));
   const routerId = useSelector(state => selectors.editorRule(state, editorId)?.id);
