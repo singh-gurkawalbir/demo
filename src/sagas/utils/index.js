@@ -69,6 +69,13 @@ const getExportMetadata = (connectorMetadata, connectionVersion) => {
   if (connectionVersion) {
     versions = versions.filter(v => v.version === connectionVersion);
   }
+  if (!versions || !versions.length) {
+    versions = [
+      {
+        version: 'v2',
+        _id: '_v2id',
+      }];
+  }
   exportData.versions = versions;
   exportData.versions.forEach((v, i) => {
     const filteredHttpResources = httpResources.filter(r => r._versionIds?.includes(v._id));
@@ -158,6 +165,13 @@ const getImportMetadata = (connectorMetadata, connectionVersion) => {
 
   if (connectionVersion) {
     versions = versions.filter(v => v.version === connectionVersion);
+  }
+  if (!versions || !versions.length) {
+    versions = [
+      {
+        version: 'v2',
+        _id: '_v2id',
+      }];
   }
 
   importData.versions = versions;
