@@ -38,6 +38,10 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   <p>In the first branch, all steps/branching routers will persist and become a linear flow.</p>
   <p>All other branches and all steps/branching routers inside 
   ({{configuredCount}} configured steps, {{unconfiguredCount}} unconfigured steps) will be removed</p>`,
+  BRANCH_DELETE_CONFIRMATION_MESSAGE: `<p>Are you sure you want to delete this branch?</p>
+  <p>This will also remove all steps/branchings inside this branch 
+  ({{configuredCount}} configured steps, {{unconfiguredCount}} unconfigured steps).</p>`,
+  DELETE_LAST_BRANCH_MESSAGE: 'Branch cannot be deleted. Branching must have atleast one branch.',
   SSO_LICENSE_UPGRADE_INFO: `<b>Upgrade your account to make signing in easier and more secure.</b> Advantages of SSO authentication include: <br>
   <ul><li>Improved security</li>
   <li>Reduced password fatigue</li>

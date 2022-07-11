@@ -23,6 +23,8 @@ export default function RouterMenu({ editorId }) {
   const open = Boolean(anchorEl);
   const dispatch = useDispatch();
   const flowId = useSelector(state => selectors.editor(state, editorId)?.flowId);
+  const flow = useSelector(state => selectors.fbFlow(state, flowId));
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow?._integrationId, flowId));
   const routerId = useSelector(state => selectors.editorRule(state, editorId)?.id);
   const {
     configuredCount,
@@ -78,7 +80,7 @@ export default function RouterMenu({ editorId }) {
         placement="bottom-end"
         onClose={handleCloseMenu}
       >
-        <MenuItem onClick={handleDelete}>
+        <MenuItem disabled={isViewMode} onClick={handleDelete}>
           <TrashIcon /> Delete branching
         </MenuItem>
       </ArrowPopper>

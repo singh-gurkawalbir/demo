@@ -2,7 +2,6 @@ import { matchPath } from 'react-router-dom';
 import { PING_STATES } from '../../reducers/comms/ping';
 import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, GOOGLE_CONTACTS_API, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../../constants';
 import { rdbmsSubTypeToAppType } from '../resource';
-import { DRAWER_URL_PREFIX } from '../rightDrawer';
 import {getHttpConnector} from '../../constants/applications';
 
 export const getStatusVariantAndMessage = ({
@@ -307,6 +306,6 @@ export const getParentResourceContext = url => {
   const CONN_DRAWER_PATH = '/:operation(add|edit)/connections/:connId';
 
   return matchPath(url, {
-    path: `/**${RESOURCE_DRAWER_PATH}/${DRAWER_URL_PREFIX}${CONN_DRAWER_PATH}`,
+    path: `/**${RESOURCE_DRAWER_PATH}${CONN_DRAWER_PATH}`,
     exact: true})?.params || {};
 };

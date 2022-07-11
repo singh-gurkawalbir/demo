@@ -87,9 +87,19 @@ export const clearInvalidPgOrPpStates = (flow, index, isPageGenerator, {routerIn
   }
 };
 
-export const clearInvalidStagesForPgOrPp = (flow, index, stages = [], statusToUpdate, isPageGenerator) => {
+export const clearInvalidStagesForPgOrPp = (flow, index, stages = [], statusToUpdate, isPageGenerator, options = {}) => {
   if (!flow) return;
-  const resource = isPageGenerator ? flow.pageGenerators[index] : flow.pageProcessors[index];
+  const isLinearFlow = !flow.routers?.length;
+  let resource;
+
+  if (isPageGenerator) {
+    resource = flow.pageGenerators[index];
+  } else if (isLinearFlow) {
+    resource = flow.pageProcessors[index];
+  } else {
+    resource = flow.routers[options.routerIndex].branches[options.branchIndex].pageProcessors[index];
+  }
+  if (!resource) return;
   const resourceId = resource._exportId || resource._importId;
   const resourceMap = isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap';
   const resourceIds = keys(flow[resourceMap]);

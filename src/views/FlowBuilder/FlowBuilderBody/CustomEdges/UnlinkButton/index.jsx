@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconButton, makeStyles } from '@material-ui/core';
+import { IconButton, makeStyles, Tooltip } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import UnLinkIcon from '../../../../../components/icons/unLinkedIcon';
 import { useFlowContext } from '../../Context';
@@ -31,12 +31,14 @@ export default function UnlinkButton({edgeId}) {
   };
 
   return (
-    <IconButton
-      data-test={`unlink-${edgeId}`}
-      className={classes.unlinkButton}
-      onClick={handleDeleteEdge}
+    <Tooltip title="Unmerge branch">
+      <IconButton
+        data-test={`unlink-${edgeId}`}
+        className={classes.unlinkButton}
+        onClick={handleDeleteEdge}
     >
-      <UnLinkIcon />
-    </IconButton>
+        <UnLinkIcon />
+      </IconButton>
+    </Tooltip>
   );
 }

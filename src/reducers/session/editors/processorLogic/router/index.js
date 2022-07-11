@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, pick } from 'lodash';
 import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
 import filter from '../filter';
 import javascript from '../javascript';
@@ -48,15 +48,22 @@ export default {
   processor: () => 'branchFilter',
 
   requestBody: editor => {
-    const {rules, data} = filter.requestBody({
+    const {rules, data, options} = filter.requestBody({
       data: editor.data,
       rule: editor.rule,
     });
 
+    const router = { ...rules.rules };
+
+    router.routeRecordsUsing = router.activeProcessor === 'javascript' ? 'script' : 'input_filters';
+    router.script._scriptId = router.scriptId;
+    router.script.function = router.entryFunction;
+
     return {
       data: [{
-        router: rules.rules,
+        router: pick(router, ['id', 'branches', 'routeRecordsTo', 'routeRecordsUsing', 'script']),
         record: data[0],
+        options,
       }],
     };
   },

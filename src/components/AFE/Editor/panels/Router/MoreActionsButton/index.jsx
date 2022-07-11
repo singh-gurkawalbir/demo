@@ -5,6 +5,7 @@ import {
   ClickAwayListener,
   IconButton,
   MenuItem,
+  Tooltip,
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import ArrowPopper from '../../../../../ArrowPopper';
@@ -16,6 +17,7 @@ import useConfirmDialog from '../../../../../ConfirmDialog';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
 import RawHtml from '../../../../../RawHtml';
 import actions from '../../../../../../actions';
+import messageStore from '../../../../../../utils/messageStore';
 
 export default function MoreActionsButton({editorId, position, pageProcessors = [], allowDeleting}) {
   const history = useHistory();
@@ -48,16 +50,15 @@ export default function MoreActionsButton({editorId, position, pageProcessors = 
 
     const configuredCount = pageProcessors.filter(pp => !!pp.type).length;
     const unconfiguredCount = pageProcessors.filter(pp => !pp.type).length;
-    const message = `<p>Are you sure you want to delete this branch?</p>
-      <p>This will also remove all steps/branchings inside this branch 
-      (${configuredCount} configured steps, ${unconfiguredCount} unconfigured steps).</p>`;
+    const message = messageStore('BRANCH_DELETE_CONFIRMATION_MESSAGE', {configuredCount, unconfiguredCount});
 
     confirmDialog({
       title: 'Confirm delete',
       message: <RawHtml html={message} />,
       buttons: [
         {
-          label: 'Confirm',
+          label: 'Delete',
+          error: true,
           onClick: () => {
             const branchesCopy = [...branches];
 
@@ -71,6 +72,9 @@ export default function MoreActionsButton({editorId, position, pageProcessors = 
   },
   [branches, confirmDialog, dispatch, editorId, pageProcessors, position]
   );
+  const handleArrowPopperClick = e => {
+    e.stopPropagation();
+  };
 
   return (
     <>
@@ -86,14 +90,20 @@ export default function MoreActionsButton({editorId, position, pageProcessors = 
         anchorEl={anchorEl}
         placement="bottom-end"
         onClose={handleCloseMenu}
+        onClick={handleArrowPopperClick}
       >
         <MenuItem onClick={handleEdit}>
           <EditIcon /> Edit branch name/description
         </MenuItem>
 
-        <MenuItem disabled={!allowDeleting} onClick={handleDeleteBranch}>
-          <TrashIcon /> Delete branch
-        </MenuItem>
+        <Tooltip title={allowDeleting ? '' : messageStore('DELETE_LAST_BRANCH_MESSAGE')} placement="bottom" aria-label="no notifications">
+          <span>
+            <MenuItem disabled={!allowDeleting} onClick={handleDeleteBranch}>
+              <TrashIcon /> Delete branch
+            </MenuItem>
+          </span>
+        </Tooltip>
+
       </ArrowPopper>
     </>
   );

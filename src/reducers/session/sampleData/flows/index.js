@@ -23,6 +23,8 @@ export default function (state = {}, action) {
     flowId,
     resourceId,
     resourceIndex,
+    routerIndex,
+    branchIndex,
     flow = {},
     updatedFlow = {},
     responseMapping,
@@ -142,8 +144,13 @@ export default function (state = {}, action) {
 
       case actionTypes.FLOW_DATA.FLOW_RESPONSE_MAPPING_UPDATE: {
         const flow = draft[flowId];
-        const resource = flow && flow.pageProcessors[resourceIndex];
+        let resource;
 
+        if (flow?.pageProcessors?.length) {
+          resource = flow && flow.pageProcessors[resourceIndex];
+        } else {
+          resource = flow?.routers?.[routerIndex]?.branches?.[branchIndex]?.pageProcessors?.[resourceIndex];
+        }
         if (resource) {
           resource.responseMapping = responseMapping;
         }

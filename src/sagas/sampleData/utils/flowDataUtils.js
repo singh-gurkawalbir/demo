@@ -58,16 +58,24 @@ export function filterPendingResources({ flow }) {
   if (!flow) {
     return;
   }
-  const { pageGenerators: pgs = [], pageProcessors: pps = [], ...rest } = flow;
+  const { pageGenerators: pgs = [], pageProcessors: pps = [], routers, ...rest } = flow;
   const filteredPageGenerators = pgs.filter(pg => !!pg._exportId);
   const filteredPageProcessors = pps.length ? pps.filter(
     pp => !!pp[pp.type === 'import' ? '_importId' : '_exportId']
   ) : undefined;
 
+  (routers || []).forEach(router => {
+    router.branches.forEach(branch => {
+      // eslint-disable-next-line no-param-reassign
+      branch.pageProcessors = branch.pageProcessors?.filter(pp => !!pp[pp.type === 'import' ? '_importId' : '_exportId']);
+    });
+  });
+
   return {
     ...rest,
     pageGenerators: filteredPageGenerators,
     pageProcessors: filteredPageProcessors,
+    ...(routers ? {routers} : {}),
   };
 }
 

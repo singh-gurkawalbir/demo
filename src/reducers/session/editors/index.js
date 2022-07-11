@@ -193,6 +193,8 @@ export default function reducer(state = {}, action) {
             delete draft[id].activeProcessor;
             draft[id].rule.activeProcessor = mode;
             draft[id].layout = `${mode === 'filter' ? 'json' : 'script'}FormBuilder`;
+            // clear the output panel
+            delete draft[id].result;
           }
         }
 

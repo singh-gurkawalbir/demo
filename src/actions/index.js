@@ -1407,10 +1407,12 @@ const flowData = {
       stagesToReset,
     }),
   updateFlow: flowId => action(actionTypes.FLOW_DATA.FLOW_UPDATE, { flowId }),
-  updateResponseMapping: (flowId, resourceIndex, responseMapping) =>
+  updateResponseMapping: (flowId, resourceIndex, responseMapping, {routerIndex, branchIndex} = {}) =>
     action(actionTypes.FLOW_DATA.FLOW_RESPONSE_MAPPING_UPDATE, {
       flowId,
       resourceIndex,
+      routerIndex,
+      branchIndex,
       responseMapping,
     }),
 };

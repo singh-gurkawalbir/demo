@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position } from 'react-flow-renderer';
-import { Badge, IconButton } from '@material-ui/core';
+import { Badge, IconButton, Tooltip } from '@material-ui/core';
 import Icon from '../../../../../components/icons/BranchIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
 import { useHandleRouterClick } from '../../../hooks';
@@ -37,28 +37,28 @@ export default function RouterNode({data = {}}) {
   return (
     <div className={classes.container} onClick={handleRouterClick}>
       <DefaultHandle type="target" position={Position.Left} />
-
-      <IconButton
-        size="small"
-        data-test={`router-${routerId}`}
-        className={classes.button}
+      <Tooltip title="Edit branching" placement="bottom" aria-label="Edit branching">
+        <IconButton
+          size="small"
+          data-test={`router-${routerId}`}
+          className={classes.button}
         >
-        <Badge
-          badgeContent={badgeContent}
+          <Badge
+            badgeContent={badgeContent}
           // overlap="circle"
-          color="secondary"
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          classes={{
-            colorSecondary: classes.badgeColor,
-            anchorOriginBottomLeftRectangle: classes.badgeTextOverride,
-          }}>
-          <Icon className={classes.icon} />
-        </Badge>
-      </IconButton>
-
+            color="secondary"
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            classes={{
+              colorSecondary: classes.badgeColor,
+              anchorOriginBottomLeftRectangle: classes.badgeTextOverride,
+            }}>
+            <Icon className={classes.icon} />
+          </Badge>
+        </IconButton>
+      </Tooltip>
       <DefaultHandle type="source" position={Position.Right} />
     </div>
   );
