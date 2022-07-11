@@ -79,9 +79,10 @@ export function* _requestRealTimeSampleData({ formKey, refreshCache = false }) {
 
 export function* _requestExportPreviewData({ formKey, executeProcessors = false }) {
   const { resourceObj, resourceId, flowId, integrationId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+  const connection = yield select(selectors.resource, 'connections', resourceObj?._connectionId);
 
   // 'getFormattedResourceForPreview' util removes unnecessary props of resource that should not be sent in preview calls
-  const body = getFormattedResourceForPreview(resourceObj);
+  const body = getFormattedResourceForPreview(resourceObj, undefined, undefined, connection);
 
   if (!executeProcessors) {
     delete body.transform;
