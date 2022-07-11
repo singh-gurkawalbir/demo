@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import React, { useState, useCallback } from 'react';
 import {
   ClickAwayListener,

@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { nanoid } from 'nanoid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
