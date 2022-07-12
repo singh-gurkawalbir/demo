@@ -181,6 +181,7 @@ export default {
 
     if (newValues['/http/clientCertificates/type'] === 'pfx') {
       delete newValues['/http/clientCertificates/cert'];
+      newValues['/http/clientCertificates/pfx'] = window.btoa(unescape(encodeURIComponent(newValues['/http/clientCertificates/pfx'])));
     }
 
     delete newValues['/http/clientCertificates/type'];
