@@ -185,7 +185,11 @@ jest.mock('./HomeCard', () => ({
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   default: () => (
+=======
+  default: props => (
+>>>>>>> Stashed changes
 =======
   default: props => (
 >>>>>>> Stashed changes
@@ -206,7 +210,11 @@ jest.mock('../../../ResourceList/ResourceEmptyState', () => ({
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   default: () => (
+=======
+  default: props => (
+>>>>>>> Stashed changes
 =======
   default: props => (
 >>>>>>> Stashed changes
