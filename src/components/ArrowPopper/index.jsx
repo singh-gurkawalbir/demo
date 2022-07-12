@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   popper: {
-    zIndex: theme.zIndex.modal + 1,
+    zIndex: theme.zIndex.modal,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     borderRadius: '4px',

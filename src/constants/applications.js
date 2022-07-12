@@ -24,7 +24,7 @@ const connectors = [
   },
   {
     id: 'rest',
-    name: 'REST API',
+    name: 'REST API (HTTP)',
     type: 'rest',
     keywords: 'technology,protocol',
     group: 'tech',

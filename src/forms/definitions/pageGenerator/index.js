@@ -26,6 +26,7 @@ export default {
     }
     const applications = applicationsList();
     const app = applications.find(a => a.id === application) || {};
+    const appType = app.type === 'rest' ? 'http' : app.type;
     const newValues = {
       ...rest,
     };
@@ -42,7 +43,7 @@ export default {
     } else {
       newValues['/resourceType'] = type;
 
-      newValues['/adaptorType'] = `${appTypeToAdaptorType[app.type]}Export`;
+      newValues['/adaptorType'] = `${appTypeToAdaptorType[appType]}Export`;
 
       if (application === 'webhook') {
         newValues['/type'] = 'webhook';
@@ -160,6 +161,7 @@ export default {
     const applications = applicationsList();
     const app = applications.find(a => a.id === appField.value) || {};
     const connectionField = fields.find(field => field.id === 'connection');
+    const appType = app.type === 'rest' ? 'http' : app.type;
 
     if (fieldId === 'type') {
       return { selectedApplication: app };
@@ -168,18 +170,18 @@ export default {
     if (fieldId === 'connection') {
       const expression = [];
 
-      if (RDBMS_TYPES.includes(app.type)) {
-        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(app.type) });
-      } else if (app.type === 'rest') {
+      if (RDBMS_TYPES.includes(appType)) {
+        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(appType) });
+      } else if (appType === 'rest') {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
-      } else if (app.type === 'graph_ql') {
+      } else if (appType === 'graph_ql') {
         expression.push({ 'http.formType': 'graph_ql' });
-      } else if (app.type === 'http') {
+      } else if (appType === 'http') {
         if (app._httpConnectorId) { expression.push({ 'http._httpConnectorId': app._httpConnectorId }); }
         expression.push({ 'http.formType': { $ne: 'rest' } });
-        expression.push({ type: app.type });
+        expression.push({ type: appType });
       } else {
-        expression.push({ type: app.type });
+        expression.push({ type: appType });
       }
 
       expression.push({ _connectorId: { $exists: false } });
@@ -193,7 +195,7 @@ export default {
 
       const andingExpressions = { $and: expression };
 
-      return { filter: andingExpressions, appType: app.type };
+      return { filter: andingExpressions, appType };
     }
 
     if (fieldId === 'exportId') {
@@ -207,7 +209,7 @@ export default {
           getWebhookConnectors()
             .map(connector => connector.id)
             .includes(appField.value));
-      const adaptorTypePrefix = appTypeToAdaptorType[app.type];
+      const adaptorTypePrefix = appTypeToAdaptorType[appType];
 
       // Lookups are not shown in PG suggestions
       const expression = [{ isLookup: { $exists: false } }];
@@ -220,18 +222,18 @@ export default {
             appField.value === 'webhook' ? 'custom' : appField.value,
         });
       } else {
-        if (app.type === 'rest') {
+        if (appType === 'rest') {
           expression.push({
             $or: [
               { adaptorType: 'RESTExport' },
               { $and: [{ adaptorType: 'HTTPExport' }, { 'http.formType': 'rest' }] },
             ],
           });
-        } else if (app.type === 'graph_ql') {
+        } else if (appType === 'graph_ql') {
           expression.push(
             { $and: [{ adaptorType: 'HTTPExport' }, { 'http.formType': 'graph_ql' }] },
           );
-        } else if (app.type === 'http') {
+        } else if (appType === 'http') {
           expression.push({
             adaptorType: `${adaptorTypePrefix}Export`,
           });
@@ -257,7 +259,7 @@ export default {
 
       expression.push({ _connectorId: { $exists: false } });
 
-      if (['netsuite', 'salesforce'].indexOf(app.type) >= 0) {
+      if (['netsuite', 'salesforce'].indexOf(appType) >= 0) {
         if (type === 'realtime') {
           expression.push({ type: 'distributed' });
         } else {
@@ -278,7 +280,7 @@ export default {
 
       return {
         filter,
-        appType: app.type,
+        appType,
         visible,
         label,
       };

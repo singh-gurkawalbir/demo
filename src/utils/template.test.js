@@ -63,7 +63,7 @@ describe('template util function test', () => {
     });
 
     test('should return correct application details when rest connection is passed', () => {
-      expect(getApplication({type: 'http', http: {formType: 'rest'}})).toEqual({id: 'rest', name: 'REST API'});
+      expect(getApplication({type: 'http', http: {formType: 'rest'}})).toEqual({id: 'rest', name: 'REST API (HTTP)'});
     });
 
     test('should return correct application details when graph_ql connection is passed', () => {
