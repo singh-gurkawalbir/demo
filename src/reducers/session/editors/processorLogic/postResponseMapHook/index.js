@@ -7,10 +7,10 @@ export default {
     let pageProcessorsObject = {};
     const { routerIndex, branchIndex, pageProcessorIndex} = options;
 
-    if (flow.pageProcessors?.length) {
-      pageProcessorsObject = flow?.pageProcessors?.[pageProcessorIndex] || {};
-    } else if (flow.routers?.lenth) {
-      pageProcessorsObject = flow?.routers[routerIndex].branches[branchIndex].pageProcessors?.[pageProcessorIndex] || {};
+    if (flow?.pageProcessors?.length) {
+      pageProcessorsObject = flow.pageProcessors[pageProcessorIndex] || {};
+    } else if (flow?.routers?.lenth) {
+      pageProcessorsObject = flow.routers[routerIndex].branches[branchIndex].pageProcessors?.[pageProcessorIndex] || {};
     }
     const postResponseMapHook = pageProcessorsObject?.hooks?.postResponseMap || {};
 
