@@ -320,6 +320,14 @@ const populateMergeData = (flow, elements) => {
 
   const preceedingRoutersMap = getPreceedingRoutersMap(flow);
 
+  if (terminalNodes.length > 1) {
+    // Any two terminal nodes can be merged
+    terminalNodes.forEach(node => {
+      node.draggable = true;
+      node.data.draggable = true;
+      node.type = GRAPH_ELEMENTS_TYPE.TERMINAL;
+    });
+  }
   elements.forEach(element => {
     if (element.type === GRAPH_ELEMENTS_TYPE.EDGE) {
       const targetElement = elements.find(el => el.id === element.target);
