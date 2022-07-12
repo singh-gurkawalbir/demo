@@ -20,7 +20,19 @@ module.exports = {
     'src/reducers/**/*.{js,jsx}',
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
+<<<<<<< Updated upstream
     'src/components/AuditLog/**/*.{js,jsx}',
+=======
+<<<<<<< Updated upstream
+    'src/components/RegisterConnections/**/*.{js,jsx}',
+    'src/components/PingMessageSnackbar/**/*.{js,jsx}',
+    'src/components/StartDebug/**/*.{js,jsx}',
+    'src/components/StartDebugEnhanced/**/*.{js,jsx}',
+    'src/components/RawHtml/**/*.{js,jsx}',
+    'src/components/PanelHeader/**/*.{js,jsx}',
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
   ],
   setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js'],
   coverageThreshold: {

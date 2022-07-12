@@ -118,8 +118,11 @@ describe('UI test cases for Audit Log Filter ', () => {
     expect(sourceType).toBeInTheDocument();
     userEvent.click(sourceType);
 
+<<<<<<< Updated upstream
     // const defaultType = screen.getByRole('list'); this line of code will give me accessible elements
 
+=======
+>>>>>>> Stashed changes
     const allSourceOptions = screen.getAllByRole('option');
 
     expect(allSourceOptions).toHaveLength(6);

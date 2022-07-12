@@ -49,7 +49,11 @@ initialStore.getState().data.audit.flows = {
   ],
 };
 describe('test cases for audit log table', () => {
+<<<<<<< Updated upstream
   test('Audit log table is visible', () => {
+=======
+  test('should display the header values of audit log table', () => {
+>>>>>>> Stashed changes
     renderWithProviders(<MemoryRouter><AuditLogTable resourceId={resourceId} resourceType={resourceType} /></MemoryRouter>, {initialStore});
     expect(screen.getByText('Time')).toBeInTheDocument();
     expect(screen.getByText('Source')).toBeInTheDocument();
@@ -62,7 +66,11 @@ describe('test cases for audit log table', () => {
     expect(screen.getByText('New value')).toBeInTheDocument();
   });
 
+<<<<<<< Updated upstream
   test("You don't have any audit logs message to be visible when no logs are found", () => {
+=======
+  test('should display the dialog message when no logs are found', () => {
+>>>>>>> Stashed changes
     renderWithProviders(<MemoryRouter><AuditLogTable resourceId="integration_id" resourceType="integrations" /></MemoryRouter>);
     expect(screen.getByText("You don't have any audit logs.")).toBeInTheDocument();
   });
