@@ -243,7 +243,7 @@ describe('generateEmptyRouter function tests', () => {
     const router2 = generateEmptyRouter(true);
 
     expect(router1).toEqual({
-      branches: [{pageProcessors: [{setupInProgress: true}]}],
+      branches: [{pageProcessors: [{setupInProgress: true}]}, {pageProcessors: [{setupInProgress: true}]}],
       id: expect.any(String),
       routeRecordsTo: 'first_matching_branch',
       routeRecordsUsing: 'input_filters',

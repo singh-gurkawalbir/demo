@@ -8,18 +8,26 @@ import { setObjectValue } from '../json';
 
 export const shortId = () => generateId(6);
 export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
-export const generateEmptyRouter = isVirtual => ({
+
+export const generateEmptyRouter = isVirtual => isVirtual ? {
   id: shortId(),
-  ...(!isVirtual && { routeRecordsTo: 'first_matching_branch'}),
-  ...(!isVirtual && { routeRecordsUsing: 'input_filters'}),
   branches: [{
     pageProcessors: [{setupInProgress: true}],
   }],
-  ...(!isVirtual && { script: {
+} : {
+  id: shortId(),
+  routeRecordsTo: 'first_matching_branch',
+  routeRecordsUsing: 'input_filters',
+  branches: [{
+    pageProcessors: [{setupInProgress: true}],
+  }, {
+    pageProcessors: [{setupInProgress: true}],
+  }],
+  script: {
     _scriptId: undefined,
     function: undefined,
-  } }),
-});
+  },
+};
 
 /*
 Util which returns all router node to terminal paths possible.

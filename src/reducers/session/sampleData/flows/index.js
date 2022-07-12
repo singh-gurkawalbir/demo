@@ -232,6 +232,7 @@ export default function (state = {}, action) {
         const {
           pageGenerators: updatedPageGenerators = [],
           pageProcessors: updatedPageProcessors = [],
+          routers: updatedRouters = [],
         } = updatedFlow;
         // get first change in sequence of pgs
         const updatedPgIndex = getFirstOutOfOrderIndex(pageGenerators, updatedPageGenerators);
@@ -240,7 +241,8 @@ export default function (state = {}, action) {
 
         // update sequence
         currentFlow.pageGenerators = updatedPageGenerators;
-        currentFlow.pageProcessors = updatedPageProcessors;
+        if (updatedPageProcessors.length) { currentFlow.pageProcessors = updatedPageProcessors; }
+        if (updatedRouters.length) { currentFlow.routers = updatedRouters; }
 
         // reset all pg data stages starting from index
         if (updatedPgIndex > -1) {
