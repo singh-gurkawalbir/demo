@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { put, select, takeEvery } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
 import actions from '../../actions';

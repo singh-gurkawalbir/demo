@@ -13,10 +13,10 @@ export const getFlowStepsYetToBeCreated = (flow, createdSteps = []) => {
   return pps.filter(pp => {
     if (!createdSteps.length) return true;
     if (pp.type === 'export') {
-      return !createdSteps.some(c => c._exportId === pp._exportId);
+      return !createdSteps.some(c => c._exportId === pp._exportId || c._expOrImpId === pp._exportId);
     }
     if (pp.type === 'import') {
-      return !createdSteps.some(c => c._importId === pp._importId);
+      return !createdSteps.some(c => c._importId === pp._importId || c._expOrImpId === pp._importId);
     }
 
     return false;

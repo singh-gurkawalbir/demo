@@ -67,7 +67,7 @@ function FlowName({ job }) {
   const isCancelledParentJob = job.status === JOB_STATUS.CANCELED && (job._expOrImpId || job._exportId) && !job._flowJobId && !job._parentJobId;
   const isInProgressParentJob = job.status === JOB_STATUS.RUNNING && (job._expOrImpId || job._exportId) && !job._flowJobId && !job._parentJobId;
 
-  if (job.type === 'export' && (job.status === JOB_STATUS.QUEUED || isCancelledParentJob || isInProgressParentJob)) {
+  if (job.status === JOB_STATUS.QUEUED || isCancelledParentJob || isInProgressParentJob) {
     return exportName;
   }
 

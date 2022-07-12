@@ -769,7 +769,7 @@ export const getNewRouterPatchSet = ({elementsMap, flow, router, edgeId, origina
 
   if (!flowClone.routers) {
     if (!isVirtual || (isVirtual && insertionIndex !== 0)) {
-      flowClone.routers = [...flow.routers];
+      flowClone.routers = cloneDeep(flow.routers);
     }
     delete flowClone.pageProcessors;
   }
