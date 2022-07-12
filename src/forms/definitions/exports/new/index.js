@@ -11,7 +11,7 @@ export default {
   preSave: ({ type, application, executionType, apiType, ...rest }) => {
     const applications = applicationsList();
     const app = applications.find(a => a.id === application) || {};
-    const appType = app.type === 'rest' ? 'http' : app.type;
+    const appType = (app.type === 'rest' && !app.assistant) ? 'http' : app.type;
 
     const newValues = {
       ...rest,
@@ -132,7 +132,7 @@ export default {
     const appField = fields.find(field => field.id === 'application');
     const applications = applicationsList();
     const app = applications.find(a => a.id === appField.value) || {};
-    const appType = app.type === 'rest' ? 'http' : app.type;
+    const appType = (app.type === 'rest' && !app.assistant) ? 'http' : app.type;
 
     if (fieldId === 'connection') {
       const expression = [];
