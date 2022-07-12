@@ -50,7 +50,11 @@ initialStore.getState().data.audit.flows = {
 };
 describe('test cases for audit log table', () => {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   test('Audit log table is visible', () => {
+=======
+  test('should display the header values of audit log table', () => {
+>>>>>>> Stashed changes
 =======
   test('should display the header values of audit log table', () => {
 >>>>>>> Stashed changes
@@ -67,7 +71,11 @@ describe('test cases for audit log table', () => {
   });
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   test("You don't have any audit logs message to be visible when no logs are found", () => {
+=======
+  test('should display the dialog message when no logs are found', () => {
+>>>>>>> Stashed changes
 =======
   test('should display the dialog message when no logs are found', () => {
 >>>>>>> Stashed changes

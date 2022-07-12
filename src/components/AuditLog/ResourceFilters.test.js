@@ -64,7 +64,11 @@ const affectedResources = {
 
 describe('UI test cases for resource type filters', () => {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   test('Resource filter to return null when resource type can be any of acccestokens, connections, stacks, scripts, apis', () => {
+=======
+  test('should render empty DOM,when resource type is one of acccestokens, connections, stacks, scripts, apis', () => {
+>>>>>>> Stashed changes
 =======
   test('should render empty DOM,when resource type is one of acccestokens, connections, stacks, scripts, apis', () => {
 >>>>>>> Stashed changes
@@ -73,7 +77,11 @@ describe('UI test cases for resource type filters', () => {
     expect(container.childElementCount).toBe(0);
   });
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   test('Resource filter options when resource type is not provided', () => {
+=======
+  test('should display all the resource options when clicked on Select resource type', () => {
+>>>>>>> Stashed changes
 =======
   test('should display all the resource options when clicked on Select resource type', () => {
 >>>>>>> Stashed changes
@@ -88,7 +96,11 @@ describe('UI test cases for resource type filters', () => {
   });
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   test('Resource filter options with resource type as integrations and _connectorId present', () => {
+=======
+  test('should display 6 options,when resource type is integrations and _connectorId is present', () => {
+>>>>>>> Stashed changes
 =======
   test('should display 6 options,when resource type is integrations and _connectorId is present', () => {
 >>>>>>> Stashed changes
@@ -106,7 +118,11 @@ describe('UI test cases for resource type filters', () => {
   });
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   test('Resource filter options with resource type as integrations and _connectorId not present', () => {
+=======
+  test('should display all the options,when resource type is integrations and _connectorId is not present', () => {
+>>>>>>> Stashed changes
 =======
   test('should display all the options,when resource type is integrations and _connectorId is not present', () => {
 >>>>>>> Stashed changes
@@ -123,7 +139,11 @@ describe('UI test cases for resource type filters', () => {
 
 describe('UI test cases for resource Id filters', () => {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   test('Resource Id filter should return null', () => {
+=======
+  test('should render empty DOM', () => {
+>>>>>>> Stashed changes
 =======
   test('should render empty DOM', () => {
 >>>>>>> Stashed changes
@@ -135,7 +155,11 @@ describe('UI test cases for resource Id filters', () => {
     expect(container.childElementCount).toEqual(0);
   });
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   test("Resource Id filter with option 'All' is visible with no menuoptions when filters.resourcetype is not present in affectedResources", () => {
+=======
+  test("should display the option 'All' with no menuoptions when filters.resourcetype is not present in affectedResources", () => {
+>>>>>>> Stashed changes
 =======
   test("should display the option 'All' with no menuoptions when filters.resourcetype is not present in affectedResources", () => {
 >>>>>>> Stashed changes
@@ -152,7 +176,11 @@ describe('UI test cases for resource Id filters', () => {
     expect(screen.getByText('All')).toBeInTheDocument();
   });
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   test("Resource Id filter with option 'All' is visible with other menuoptions when filters.resourcetype is present in affectedResources but not resourceDetails", () => {
+=======
+  test("should display the option 'All' with other menuoptions when filters.resourcetype is present in affectedResources but not resourceDetails", () => {
+>>>>>>> Stashed changes
 =======
   test("should display the option 'All' with other menuoptions when filters.resourcetype is present in affectedResources but not resourceDetails", () => {
 >>>>>>> Stashed changes
@@ -169,7 +197,11 @@ describe('UI test cases for resource Id filters', () => {
     expect(screen.getByText('All')).toBeInTheDocument();
   });
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   test("Resource Id filter with option 'All' is visible with other menuoptions when filters.resourcetype is present in affectedResources and resourceDetails", () => {
+=======
+  test("should display the option 'All' with other menuoptions when filters.resourcetype is present in affectedResources and resourceDetails", () => {
+>>>>>>> Stashed changes
 =======
   test("should display the option 'All' with other menuoptions when filters.resourcetype is present in affectedResources and resourceDetails", () => {
 >>>>>>> Stashed changes

@@ -119,8 +119,11 @@ describe('UI test cases for Audit Log Filter ', () => {
     userEvent.click(sourceType);
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     // const defaultType = screen.getByRole('list'); this line of code will give me accessible elements
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     const allSourceOptions = screen.getAllByRole('option');

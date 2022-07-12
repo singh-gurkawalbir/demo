@@ -34,17 +34,23 @@ describe('UI test cases for audit log dialog box', () => {
   });
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   test('Audit log text is visible', () => {
     renderWithProviders(<MemoryRouter><AuditLogDialog resourceId={resourceId} resourceType={resourceType} /></MemoryRouter>, {initialStore});
     expect(screen.getByText(/Audit log: resource_name/i)).toBeInTheDocument();
   });
   test("Only 'Audit log' is visible", () => {
 =======
+=======
+>>>>>>> Stashed changes
   test('should display the audit log text', () => {
     renderWithProviders(<MemoryRouter><AuditLogDialog resourceId={resourceId} resourceType={resourceType} /></MemoryRouter>, {initialStore});
     expect(screen.getByText(/Audit log: resource_name/i)).toBeInTheDocument();
   });
   test('should display the audit log header', () => {
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     renderWithProviders(<MemoryRouter><AuditLogDialog resourceId={resourceId} resourceType={resourceType} /></MemoryRouter>);
     expect(screen.getByText(/Audit log/i)).toBeInTheDocument();
