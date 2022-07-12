@@ -139,7 +139,7 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId, feat
       path,
       timeout: 5 * 60 * 1000,
       opts,
-      hidden: actionType === 'upgrade',
+      hidden: ['upgrade', 'ioRenewal'].includes(actionType),
     });
   } catch (error) {
     let errorCode;
@@ -152,7 +152,7 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId, feat
     // eslint-disable-next-line no-empty
     } catch (e) {
     }
-    if (actionType === 'upgrade' && errorCode.includes('ratelimit_exceeded')) {
+    if (errorCode?.includes('ratelimit_exceeded')) {
       return yield put(actions.api.failure(path, 'POST', 'You have already submitted an upgrade request. We will be in touch soon.', false));
     }
 
