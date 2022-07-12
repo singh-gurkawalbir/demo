@@ -47,6 +47,7 @@ function getResourceIds(flow) {
   return {exportIds, importIds};
 }
 
+// Logs all resources related to current flow in a redux state slice format so a story can be easily created in storybook to debug issues.
 export function ExportFlowStateButton({flowId}) {
   const classes = useStyles();
   const store = useStore();

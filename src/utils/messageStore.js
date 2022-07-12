@@ -67,7 +67,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   SNAPSHOT_SUCCESS: 'You\'ve successfully created a snapshot.',
   // #endregion
   INCOMPLETE_FLOW_TOOLTIP: 'Configure all steps to allow running your flow',
-  INCOMPLETE_FLOW_SCHEDULE_TOOLTIP: 'Configure all step sto allow scheduling your flow',
+  INCOMPLETE_FLOW_SCHEDULE_TOOLTIP: 'Configure all steps to allow scheduling your flow',
   BRANCH_EMPTY_FILTER_RECORD_PASS: 'No conditions defined. All records will flow through this branch.',
   BRANCH_EMPTY_FILTER: 'No conditions defined.',
   // #region MFA

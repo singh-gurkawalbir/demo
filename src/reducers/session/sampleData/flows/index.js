@@ -185,7 +185,7 @@ export default function (state = {}, action) {
         let routerIndex;
         let branchIndex;
 
-        if (flow?.routers?.length) {
+        if (flow.routers?.length) {
           flow.routers.forEach((router, rIndex) => {
             (router.branches || []).forEach((branch, bIndex) => {
               const ppIndex = branch.pageProcessors.findIndex(

@@ -45,7 +45,7 @@ export default {
     };
   },
 
-  processor: () => 'branchFilter',
+  processor: 'branchFilter',
 
   requestBody: editor => {
     const {rules, data, options} = filter.requestBody({
