@@ -146,7 +146,7 @@ export default function SelectApplication(props) {
   const handleChange = useCallback(e => {
     let newValue = isMulti ? [...value, e.value] : e?.value;
 
-    if (e === null) {
+    if (e === null || e === undefined) {
       newValue = '';
     }
     ref?.current?.select?.blur();
