@@ -322,7 +322,7 @@ export const generateNodesAndEdgesFromNonBranchedFlow = (flow, isViewMode) => {
   ];
 };
 
-const populateMergeData = (flow, elements) => {
+export const populateMergeData = (flow, elements) => {
   const terminalNodes = elements.filter(el => el.type === GRAPH_ELEMENTS_TYPE.TERMINAL);
   const { routers = [] } = flow;
 
@@ -363,7 +363,9 @@ const populateMergeData = (flow, elements) => {
               if (!element.data.mergableTerminals) {
                 element.data.mergableTerminals = [];
               }
-              element.data.mergableTerminals.push(terminalNode.id);
+              if (!element.data.mergableTerminals.includes(terminalNode.id)) {
+                element.data.mergableTerminals.push(terminalNode.id);
+              }
               terminalNode.data.draggable = true;
               terminalNode.draggable = true;
             }
@@ -374,7 +376,9 @@ const populateMergeData = (flow, elements) => {
               if (!element.data.mergableTerminals) {
                 element.data.mergableTerminals = [];
               }
-              element.data.mergableTerminals.push(terminalNode.id);
+              if (!element.data.mergableTerminals.includes(terminalNode.id)) {
+                element.data.mergableTerminals.push(terminalNode.id);
+              }
               terminalNode.draggable = true;
               terminalNode.data.draggable = true;
             }
@@ -396,7 +400,9 @@ const populateMergeData = (flow, elements) => {
               if (!element.data.mergableTerminals) {
                 element.data.mergableTerminals = [];
               }
-              element.data.mergableTerminals.push(terminalNode.id);
+              if (!element.data.mergableTerminals.includes(terminalNode.id)) {
+                element.data.mergableTerminals.push(terminalNode.id);
+              }
               terminalNode.draggable = true;
               terminalNode.data.draggable = true;
             }
