@@ -31,15 +31,11 @@ export default {
       rule.activeProcessor = 'javascript';
     }
     rule.entryFunction = script.function || hooksToFunctionNamesMap.router;
-    let originalRule;
-
-    if (!isEdit) {
-      originalRule = {...rule, branches: []};
-    }
+    const originalRule = {...rule, branches: []};
 
     return {
       ...options,
-      originalRule,
+      ...(!isEdit ? {originalRule} : {}),
       rule,
       editorTitle,
     };

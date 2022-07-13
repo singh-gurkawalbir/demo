@@ -277,7 +277,8 @@ export const useHandleRouterClick = routerId => {
   return () => {
     const router = flow.routers.find(r => r.id === routerId);
     const routerIndex = flow.routers.findIndex(r => r.id === routerId);
-    const userDefinedRoutersCount = flow.routers.filter(r => !isVirtualRouter(r)).length + 1;
+    const userDefinedRouters = flow.routers.filter(r => !isVirtualRouter(r));
+    const userDefinedRoutersCount = userDefinedRouters.findIndex(r => r.id === routerId) + 1;
 
     if (!router) return;
     dispatch(actions.editor.init(editorId, 'router', {
