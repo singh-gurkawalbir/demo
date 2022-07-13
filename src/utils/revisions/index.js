@@ -70,6 +70,16 @@ export const REVISION_DIFF_ACTION_LABELS = {
   [REVISION_DIFF_ACTIONS.CONFLICT]: 'Conflict',
 };
 
+export const SUPPORTED_RESOURCE_TYPES = [
+  'export',
+  'import',
+  'flow',
+  'integration',
+  'script',
+  'asynchelper',
+  'filedefinition',
+];
+
 export const getRevisionFilterKey = integrationId => `${integrationId}-revisions`;
 
 export const DEFAULT_OPTION = 'all';
@@ -188,4 +198,15 @@ export const shouldShowReferences = (resourceType, action) => {
 
   // We do not show references if the resource is a newly created one or not one of the above resource types
   return VALID_RESOURCE_TYPES_WITH_REFERENCES.includes(resourceType) && action !== REVISION_DIFF_ACTIONS.NEW;
+};
+
+export const hasInvalidRevertResourceDiff = resourceDiff => {
+  const { reverted, current } = resourceDiff || {};
+  const revertedResourceTypes = Object.keys(reverted || {});
+  const currentResourceTypes = Object.keys(current || {});
+
+  const hasValidResourceTypes = currentResourceTypes.some(type => SUPPORTED_RESOURCE_TYPES.includes(type)) &&
+  revertedResourceTypes.some(type => SUPPORTED_RESOURCE_TYPES.includes(type));
+
+  return !hasValidResourceTypes;
 };

@@ -7,6 +7,7 @@ import actions from '../../../actions';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
 import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
+import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions';
 import { MULTIPLE_AUTH_TYPE_ASSISTANTS } from '../../../utils/constants';
 
 const emptyObj = {};
@@ -55,6 +56,13 @@ export default function DynaReplaceConnection(props) {
     resourceType: parentResourceType,
     resourceId,
     onFieldChange,
+    isHTTPFramework: connection?.http?._httpConnectorId,
+  });
+  useHFSetInitializeFormData({
+    resourceType: parentResourceType,
+    resourceId,
+    onFieldChange,
+    isHTTPFramework: connection?.http?._httpConnectorId,
   });
 
   const onFieldChangeHandler = useCallback((id, newConnectionId) => {

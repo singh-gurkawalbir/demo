@@ -229,7 +229,9 @@ export default function JobDetail({
           count={job.numResolved}
           isJobInProgress={isJobInProgress}
           onClick={() => handleViewErrorsClick(true)}
-          className={classes.resolved}
+          className={clsx(classes.resolved, {
+            [classes.resolvedCount]: job.numResolved > 0,
+          })}
            />
         <TableCell className={classes.pages}>{getPages(job)}</TableCell>
         <TableCell className={classes.duration}>{job.duration}</TableCell>

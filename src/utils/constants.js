@@ -420,7 +420,6 @@ export const REST_ASSISTANTS = [
   'sharepoint',
   'retailops',
   'concurall',
-  'skubana',
   'dunandbradstreet',
   'miva',
 ];
@@ -456,8 +455,10 @@ export const COMMUNITY_URL = 'https://docs.celigo.com/hc/en-us/community/topics'
 export const FLOW_EVENT_REPORTS_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4402565285389`;
 export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
 export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
+export const MFA_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
+export const REVISIONS_GUIDE_URL = 'https://docs.celigo.com/hc/en-us/sections/5918596617883-Manage-integration-revisions';
 
-export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle', 'bigquerydatawarehouse'];
+export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle', 'bigquerydatawarehouse', 'redshiftdatawarehouse'];
 
 export const AWS_REGIONS_LIST = [
   {
@@ -661,6 +662,7 @@ export const ALLOWED_HTML_TAGS =
   ['p', 'pre', 's', 'b', 'a', 'small', 'i', 'font', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'br', 'big', 'center', 'del', 'em', 'strong', 'sub', 'sup', 'table', 'td', 'tr', 'th', 'tt', 'title'];
 export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your unlimited flows trial starts now - what will you integrate next?';
 export const LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Your request has been received. We will contact you soon.';
+export const SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Thanks for your request! We will be in touch soon.';
 export const FILE_PROVIDER_ASSISTANTS = ['googledrive', 'azurestorageaccount'];
 export const CONNECTORS_TO_IGNORE = [
   'yammer',
@@ -705,7 +707,15 @@ export const LINE_GRAPH_TYPE_SHORTID = Object.freeze({
   [LINE_GRAPH_TYPES.IGNORED]: 'i',
   [LINE_GRAPH_TYPES.RESOLVED]: 'r',
 });
-
+export const AUTHENTICATION_LABELS = Object.freeze({
+  basic: 'Basic',
+  token: 'Token',
+  oauth: 'OAuth 2.0',
+  custom: 'Custom',
+  cookie: 'Cookie',
+  digest: 'Digest',
+  wsse: 'WSSE',
+});
 export const FLOW_GROUP_FORM_KEY = 'flow-flowgroup';
 
 export const ALIAS_FORM_KEY = Object.freeze({
@@ -740,6 +750,9 @@ export const SUITESCRIPT_MAPPINGS_FORM_KEY = 'suitescriptmappingsformkey';
 export const CATEGORY_MAPPING_ASYNC_KEY = 'categorymappingdrawer';
 export const HOME_PAGE_PATH = '/home';
 export const ERROR_DETAIL_ACTIONS_ASYNC_KEY = 'ERROR_DETAIL_ACTIONS_ASYNC_KEY';
+export const MFA_RESET_ASYNC_KEY = 'MFA_RESET_ASYNC_KEY';
+export const MFA_SETUP_ASYNC_KEY = 'MFA_SETUP_ASYNC_KEY';
+export const MFA_DELETE_DEVICE_ASYNC_KEY = 'MFA_DELETE_DEVICE_ASYNC_KEY';
 export const NO_RESULT_SEARCH_MESSAGE = 'Your search didn’t return any matching results. Try expanding your search criteria.';
 
 export const MAPPING_SAVE_STATUS = {

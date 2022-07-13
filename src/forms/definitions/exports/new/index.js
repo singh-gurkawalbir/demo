@@ -11,6 +11,8 @@ export default {
   preSave: ({ type, application, executionType, apiType, ...rest }) => {
     const applications = applicationsList();
     const app = applications.find(a => a.id === application) || {};
+    const appType = (app.type === 'rest' && !app.assistant) ? 'http' : app.type;
+
     const newValues = {
       ...rest,
     };
@@ -21,7 +23,7 @@ export default {
       newValues['/webhook/provider'] = application;
       delete newValues['/_connectionId'];
     } else {
-      newValues['/adaptorType'] = `${appTypeToAdaptorType[app.type]}Export`;
+      newValues['/adaptorType'] = `${appTypeToAdaptorType[appType]}Export`;
 
       if (application === 'webhook') {
         newValues['/type'] = 'webhook';
@@ -130,21 +132,23 @@ export default {
     const appField = fields.find(field => field.id === 'application');
     const applications = applicationsList();
     const app = applications.find(a => a.id === appField.value) || {};
+    const appType = (app.type === 'rest' && !app.assistant) ? 'http' : app.type;
 
     if (fieldId === 'connection') {
       const expression = [];
 
-      if (RDBMS_TYPES.includes(app.type)) {
-        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(app.type) });
-      } else if (app.type === 'rest') {
+      if (RDBMS_TYPES.includes(appType)) {
+        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(appType) });
+      } else if (appType === 'rest') {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
-      } else if (app.type === 'graph_ql') {
+      } else if (appType === 'graph_ql') {
         expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
-      } else if (app.type === 'http') {
+      } else if (appType === 'http') {
+        if (app._httpConnectorId) { expression.push({ 'http._httpConnectorId': app._httpConnectorId }); }
         expression.push({ 'http.formType': { $ne: 'rest' } });
-        expression.push({ type: app.type });
+        expression.push({ type: appType });
       } else {
-        expression.push({ type: app.type });
+        expression.push({ type: appType });
       }
 
       expression.push({ _connectorId: { $exists: false } });
@@ -158,7 +162,7 @@ export default {
 
       const andingExpressions = { $and: expression };
 
-      return { filter: andingExpressions, appType: app.type };
+      return { filter: andingExpressions, appType };
     }
 
     return null;

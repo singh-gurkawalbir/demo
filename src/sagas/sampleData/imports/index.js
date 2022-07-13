@@ -9,10 +9,11 @@ import { requestAssistantMetadata, getNetsuiteOrSalesforceMeta} from '../../reso
 import { apiCallWithRetry } from '../..';
 import actions from '../../../actions';
 import { isIntegrationApp } from '../../../utils/flows';
-import { getAssistantConnectorType, getImportAdaptorType } from '../../../constants/applications';
+import { getAssistantConnectorType, getImportAdaptorType, getHttpConnector} from '../../../constants/applications';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
 import { extractStages } from '../../../reducers/session/sampleData/resourceForm';
 import { getAssistantFromConnection } from '../../../utils/connections';
+import { getConnectorMetadata} from '../../resources/httpConnectors';
 
 function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource) {
   const assistantConfig = deepClone(assistantConfigOrig);
@@ -87,21 +88,38 @@ export function* _fetchAssistantSampleData({ resource }) {
     adaptorType: getAssistantConnectorType(assistant),
     assistant,
   });
+  const connection = yield select(
+    selectors.resource,
+    'connections',
+    resource?._connectionId
+  );
+  let connectorMetaData = yield select(
+    selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
   const adaptorType = getImportAdaptorType(resource);
 
-  if (!assistantMetadata) {
-    assistantMetadata = yield call(requestAssistantMetadata, {
-      adaptorType,
-      assistant,
+  if (getHttpConnector(connection?.http?._httpConnectorId) && !connectorMetaData) {
+    connectorMetaData = yield call(getConnectorMetadata, {
+      connectionId: connection._id,
+      httpConnectorId: connection?.http?._httpConnectorId,
+      httpVersionId: connection?.http?._httpConnectorVersionId,
+      _httpConnectorApiId: connection?.http?._httpConnectorApiId,
     });
   }
+  if (!getHttpConnector(connection?.http?._httpConnectorId)) {
+    if (!assistantMetadata) {
+      assistantMetadata = yield call(requestAssistantMetadata, {
+        adaptorType,
+        assistant,
+      });
+    }
 
-  if (!assistantMetadata?.import) {
-    return yield put(actions.metadata.failedAssistantImportPreview(_id));
+    if (!assistantMetadata?.import) {
+      return yield put(actions.metadata.failedAssistantImportPreview(_id));
+    }
   }
   const assistantConfig = convertFromImport({
     importDoc: resource,
-    assistantData: assistantMetadata,
+    assistantData: connectorMetaData || assistantMetadata,
     adaptorType,
   });
 
@@ -226,7 +244,7 @@ export function* requestSampleData({ resourceId, options = {}, refreshCache }) {
   const connection = yield select(selectors.resource, 'connections', _connectionId);
   const connectionAssistant = getAssistantFromConnection(resourceAssistant, connection);
 
-  if (connectionAssistant) {
+  if (connectionAssistant || getHttpConnector(connection?.http?._httpConnectorId)) {
     return yield call(_fetchAssistantSampleData, { resource: {...resource, assistant: connectionAssistant} });
   }
 

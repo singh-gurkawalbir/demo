@@ -98,10 +98,10 @@ describe('connections utils test cases', () => {
       expect(getParentResourceContext(null)).toEqual({});
     });
     test('should not return parent params if url does not match the provided path', () => {
-      const url1 = '/connections/ui-drawer/edit/connections/999';
-      const url2 = 'integrations/123/connections/ui-drawer/edit/connections/999';
-      const url3 = '/integrations/123/connections/sections/1/ui-drawer/edit/connections/999';
-      const url4 = '/integrations/123/flowBuilder/456/ui-drawer/edit/connections/999';
+      const url1 = '/connections/edit/connections/999';
+      const url2 = 'integrations/123/connections/edit/connections/999';
+      const url3 = '/integrations/123/connections/sections/1/edit/connections/999';
+      const url4 = '/integrations/123/flowBuilder/456/edit/connections/999';
 
       expect(getParentResourceContext(url1)).toEqual({});
       expect(getParentResourceContext(url2)).toEqual({});
@@ -109,7 +109,7 @@ describe('connections utils test cases', () => {
       expect(getParentResourceContext(url4)).toEqual({});
     });
     test('should correctly return the parent params if passed url contains parent context', () => {
-      const url = '/integrations/123/flowBuilder/456/edit/imports/789/ui-drawer/edit/connections/999';
+      const url = '/integrations/123/flowBuilder/456/edit/imports/789/edit/connections/999';
       const returnValue = {
         0: 'integrations/123/flowBuilder/456',
         1: '',

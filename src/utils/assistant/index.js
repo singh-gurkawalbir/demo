@@ -399,7 +399,7 @@ export function getVersionDetails({ version, assistantData }) {
   }
 
   if (version) {
-    versionDetails = assistantData.versions.find(v => v.version === version);
+    versionDetails = assistantData.versions.find(v => (v.version === version || v._id === version));
   } else if (assistantData.versions.length === 1) {
     [versionDetails] = assistantData.versions;
   }
@@ -605,6 +605,12 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
   const exportDoc = cloneDeep(exportDocOrig);
   const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
+
+  if (exportDoc?.http) {
+    operation = exportDoc.http._httpConnectorEndpointId || operation;
+    resource = exportDoc.http._httpConnectorResourceId || resource;
+    version = exportDoc.http._httpConnectorVersionId || version;
+  }
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
     pathParams: {},
@@ -770,7 +776,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
     bodyParams,
   } = assistantConfig;
 
-  if (!assistant || !resource || !operation || !assistantData) {
+  if (!resource || !operation || !assistantData) {
     return undefined;
   }
 
@@ -820,7 +826,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
 
   let pagingRelativeURI = operationDetails.paging?.nextPageRelativeURI || operationDetails.paging?.relativeURI;
 
-  operationDetails.pathParameters.forEach(pathParam => {
+  operationDetails.pathParameters?.forEach(pathParam => {
     if (pathParams) {
       let pathParamValue = pathParams[pathParam.id];
 
@@ -850,7 +856,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
   let exportType;
   const allQueryParams = {};
 
-  operationDetails.queryParameters.forEach(queryParam => {
+  operationDetails.queryParameters?.forEach(queryParam => {
     allQueryParams[queryParam.id] = queryParam.defaultValue;
 
     if (!queryParam.readOnly) {
@@ -1846,7 +1852,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
   } = assistantConfig;
   let { lookupQueryParams = {} } = assistantConfig;
 
-  if (!assistant || !resource || !operation || !assistantData) {
+  if (!resource || !operation || !assistantData) {
     return undefined;
   }
 

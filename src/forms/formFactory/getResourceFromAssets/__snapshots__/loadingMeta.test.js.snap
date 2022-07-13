@@ -3936,12 +3936,6 @@ Object {
               "records",
             ],
           },
-          Object {
-            "field": "http.successMediaType",
-            "is": Array [
-              "csv",
-            ],
-          },
         ],
       },
       "formView": Object {
@@ -4087,6 +4081,18 @@ Object {
         "required": true,
         "type": "mode",
         "visible": false,
+      },
+      "parsers": Object {
+        "fieldId": "parsers",
+        "required": false,
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "semiassistantoperationselect": Object {
         "fieldId": "semiassistantoperationselect",
@@ -4236,8 +4242,11 @@ Object {
                   "containers": Array [
                     Object {
                       "fields": Array [
+                        "parsers",
                         "file.csv",
                       ],
+                      "header": [Function],
+                      "helpKey": "http.parseSuccessResponses",
                     },
                   ],
                   "type": "indent",

@@ -58,9 +58,17 @@ export default function Clone() {
 
     return resource?.name || MODEL_PLURAL_TO_LABEL[resourceType];
   });
+
   const installSteps = useSelector(state =>
     selectors.cloneInstallSteps(state, resourceType, resourceId)
   );
+
+  useEffect(() => {
+    if (!installSteps.length) {
+      history.push(`/clone/flows/${resourceId}/preview`);
+    }
+  });
+
   const handleSetupComplete = useCallback(
     (redirectTo, isInstallFailed, environment) => {
       // Incase clone is failed, then redirect to the dashboard
@@ -217,22 +225,23 @@ export default function Clone() {
   };
 
   const handleSubmitComplete = connectionId => {
-    dispatch(
-      actions.template.updateStep(
-        {
-          _connectionId: connection.doc._id,
-          newConnectionId: connectionId,
-          status: 'completed',
-          verifyBundleStep: ['netsuite', 'salesforce'].includes(
-            connection.doc.type
-          )
-            ? connection.doc.type
-            : false,
-        },
-        templateId
-      )
-    );
-
+    if (connection?.doc) {
+      dispatch(
+        actions.template.updateStep(
+          {
+            _connectionId: connection.doc._id,
+            newConnectionId: connectionId,
+            status: 'completed',
+            verifyBundleStep: ['netsuite', 'salesforce'].includes(
+              connection.doc.type
+            )
+              ? connection.doc.type
+              : false,
+          },
+          templateId
+        )
+      );
+    }
     setSelectedConnectionId(false);
   };
 

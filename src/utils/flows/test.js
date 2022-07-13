@@ -2433,8 +2433,8 @@ describe('isImportMappingAvailable', () => {
   test('should return false if the resource is of type blob', () => {
     expect(isImportMappingAvailable(blobTypeResource)).toEqual(false);
   });
-  test('should return false if the resource is a file Adaptor of type xml', () => {
-    expect(isImportMappingAvailable(fileAdaptorResource)).toEqual(false);
+  test('should return true if the resource is a file Adaptor of type xml', () => {
+    expect(isImportMappingAvailable(fileAdaptorResource)).toEqual(true);
   });
   test('should return false if the resource is mongodb adaptor', () => {
     expect(isImportMappingAvailable(mongodbResource)).toEqual(false);

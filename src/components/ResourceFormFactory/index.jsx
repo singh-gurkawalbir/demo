@@ -9,6 +9,7 @@ import { selectors } from '../../reducers';
 import { FORM_SAVE_STATUS } from '../../utils/constants';
 import DynaForm from '../DynaForm';
 import Spinner from '../Spinner';
+import { getHttpConnector} from '../../constants/applications';
 
 const Form = props => {
   const formKey = useFormInitWithPermissions(props);
@@ -62,6 +63,7 @@ export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, 
 };
 
 const ResourceFormFactory = props => {
+  const dispatch = useDispatch();
   const { resourceType, resourceId, isNew, flowId, integrationId } = props;
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, resourceId)
@@ -71,10 +73,20 @@ const ResourceFormFactory = props => {
     resourceType,
     resourceId
   ).merged;
+  let assistantData;
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', resource && resource._connectionId)
   );
-  const dispatch = useDispatch();
+  const connectorMetaData = useSelector(state =>
+    selectors.httpConnectorMetaData(state, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId)
+  );
+
+  const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
+
+  if (_httpConnectorId) {
+    assistantData = connectorMetaData;
+  }
+
   const handleInitForm = useCallback(
     () => {
       const skipCommit =
@@ -124,6 +136,7 @@ const ResourceFormFactory = props => {
           isNew,
           connection,
           integrationId,
+          assistantData,
         });
       } catch (e) {
         metadataAssets = {};
@@ -131,7 +144,7 @@ const ResourceFormFactory = props => {
 
       return metadataAssets;
     },
-    [connection, isNew, resource, resourceType, integrationId]
+    [resourceType, resource, isNew, connection, integrationId, assistantData]
   );
   const { fieldMeta, skipClose } = formState;
 
