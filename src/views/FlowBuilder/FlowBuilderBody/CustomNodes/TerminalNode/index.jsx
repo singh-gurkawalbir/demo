@@ -34,6 +34,13 @@ const useStyles = makeStyles(theme => ({
     marginLeft: -7,
     marginTop: -7,
   },
+  notDraggableSpan: {
+    cursor: 'default',
+  },
+  notDraggable: {
+    opacity: 0.5,
+    pointerEvents: 'none',
+  },
 }));
 
 export default function TerminalNode({id, data = {}}) {
@@ -52,7 +59,11 @@ export default function TerminalNode({id, data = {}}) {
   }, [dispatch, flowId, id]);
 
   return (
-    <div data-test={`terminal-${id}`} className={clsx(classes.container, {[classes.dragging]: isBeingDragged})}>
+    <div
+      data-test={`terminal-${id}`} className={clsx(classes.container, {
+        [classes.dragging]: isBeingDragged,
+        [classes.notDraggableSpan]: !data.draggable,
+      })}>
       <DefaultHandle type="target" position={Position.Left} />
       {
       // eslint-disable-next-line no-nested-ternary
@@ -69,7 +80,11 @@ export default function TerminalNode({id, data = {}}) {
         ) : (
           <Tooltip title={data.draggable ? 'Drag to merge with other branch' : ''} position="top">
             <span>
-              <TerminalIcon className={classes.terminal} />
+              <TerminalIcon
+                disabled
+                className={clsx(classes.terminal, {
+                  [classes.notDraggable]: !data.draggable,
+                })} />
             </span>
           </Tooltip>
         )

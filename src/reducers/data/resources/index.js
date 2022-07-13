@@ -516,7 +516,7 @@ selectors.resourceDetailsMap = createSelector(
               let numImports = 1;
 
               if (resource.routers?.length) {
-                numImports = resource.routers.reduce((a, c) => a + c.branches.reduce((a1, c1) => a1 + c1.pageProcessors.length, 0), 0);
+                numImports = resource.routers.reduce((routerCount, router) => routerCount + router.branches.reduce((branchCount, branch) => branchCount + branch.pageProcessors.length, 0), 0);
               } else if (resource.pageProcessors) {
                 numImports = resource.pageProcessors.length;
               }
