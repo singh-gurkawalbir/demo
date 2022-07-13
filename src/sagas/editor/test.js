@@ -1766,6 +1766,61 @@ describe('editor sagas', () => {
               uiContext: 'mapper2_0',
               mapper2_0: {
                 arrayExtracts: ['$.siblings[*]', '$.siblings.children[*]'],
+                outputFormat: 'RECORD',
+              },
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .returns({ data: { record: {id: 999}}, templateVersion: 2 })
+        .run();
+    });
+    test('should add mapper2_0 in the request body when the field type is from mappings and output format is rows', () => {
+      const editor = {
+        id: 'expression',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'imports',
+        resourceId,
+        stage: 'importMappingExtract',
+        fieldId: 'expression',
+        mapper2RowKey: 'k1',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'expression' })
+        .provide([
+          [select(selectors.editor, 'expression'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}, status: 'received'}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, isMapperField: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {id: 999}}, templateVersion: 2}],
+          [select(selectors.resource, 'flows', flowId), {_integrationId: 'Integration-1234'}],
+          [select(selectors.mapping), {
+            isGroupedOutput: true,
+            v2TreeData: [
+              {
+                key: 'k1',
+                extract: '$.siblings',
+                generate: 'siblings',
+                dataType: 'string',
+              },
+            ]}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              sampleData: {id: 999},
+              templateVersion: undefined,
+              flowId,
+              integrationId: 'Integration-1234',
+              import: { oneToMany: false },
+              fieldPath: 'expression',
+              uiContext: 'mapper2_0',
+              mapper2_0: {
+                outputFormat: 'ROWS',
               },
             },
           },

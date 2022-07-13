@@ -605,13 +605,15 @@ export function* requestEditorSampleData({
       // for v2 mappings, BE needs parent extracts to be passed
       // for correctly returning the iterating array context
       if (mapper2RowKey) {
-        const {v2TreeData} = yield select(selectors.mapping);
+        const {v2TreeData, isGroupedOutput} = yield select(selectors.mapping);
         const arrayExtracts = findAllParentExtractsForNode(v2TreeData, [], mapper2RowKey);
 
+        body.mapper2_0 = {
+          outputFormat: isGroupedOutput ? 'ROWS' : 'RECORD',
+        };
+
         if (arrayExtracts.length) {
-          body.mapper2_0 = {
-            arrayExtracts,
-          };
+          body.mapper2_0.arrayExtracts = arrayExtracts;
         }
       }
     }
