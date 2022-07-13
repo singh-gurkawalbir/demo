@@ -22,6 +22,7 @@ import useMenuDrawerWidth from '../../../hooks/useMenuDrawerWidth';
 import { ExportFlowStateButton } from './ExportFlowStateButton';
 import EmptyNode from './CustomNodes/EmptyNode';
 import LoadingNotification from '../../../App/LoadingNotification';
+import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
 
 const useCalcCanvasStyle = fullscreen => {
   const theme = useTheme();
@@ -52,12 +53,15 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     overflow: 'auto',
     background: theme.palette.background.paper,
-    '& .react-flow__minimap-node': {
-      fill: theme.palette.secondary.lightest,
-      stroke: theme.palette.secondary.lightest,
-      width: 300,
-      height: 220,
-    },
+  },
+  minimap: {
+    display: 'none',
+  },
+  terminal: {
+    fill: theme.palette.secondary.lightest,
+    stroke: theme.palette.secondary.lightest,
+    width: 275,
+    height: 170,
   },
   title: {
     display: 'flex',
@@ -179,6 +183,19 @@ export function Canvas({ flowId, fullscreen }) {
               <DestinationTitle />
               <BackgroundPanel />
               <MiniMap
+                nodeClassName={node => {
+                  switch (node.type) {
+                    case GRAPH_ELEMENTS_TYPE.TERMINAL:
+                    case GRAPH_ELEMENTS_TYPE.ROUTER:
+                    case GRAPH_ELEMENTS_TYPE.MERGE:
+                    case GRAPH_ELEMENTS_TYPE.EMPTY:
+
+                      return classes.minimap;
+
+                    default:
+                      return classes.terminal;
+                  }
+                }}
                 nodeBorderRadius={75}
               />
               <ExportFlowStateButton flowId={flowId} />
