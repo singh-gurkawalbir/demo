@@ -85,11 +85,11 @@ export default function RouterPanel({ editorId }) {
   );
 
   const handleNameChange = (title, position) => {
-    dispatch(actions.editor.patchRule(editorId, title, {rulePath: `branches[${position}].name`}));
+    dispatch(actions.editor.patchRule(editorId, title, {rulePath: branches[position].name}));
   };
 
   const handleToggleExpand = (expanded, position) => {
-    dispatch(actions.editor.patchRule(editorId, expanded, {rulePath: `branches[${position}].expanded`}));
+    dispatch(actions.editor.patchRule(editorId, expanded, {rulePath: branches[position].expanded}));
   };
 
   const handleSortStart = (_, event) => {
