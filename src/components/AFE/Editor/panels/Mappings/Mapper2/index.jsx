@@ -155,7 +155,7 @@ export default function Mapper2({editorId}) {
         message: 'Destination fields successfully auto-populated.',
         variant: 'success',
       });
-      dispatch(actions.mapping.v2.resetAutoCreateFlag());
+      dispatch(actions.mapping.v2.toggleAutoCreateFlag());
     }
   }, [dispatch, enqueueSnackbar, isAutoCreateSuccess]);
 
