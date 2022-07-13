@@ -17,6 +17,7 @@ import { isIntegrationApp } from '../../utils/flows';
 import { updateFlowDoc } from '../resourceForm';
 import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
+import httpConnectorSagas from './httpConnectors';
 
 export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -296,6 +297,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     yield put(actions.resource.requestCollection('connections', null, true));
     yield put(actions.resource.requestCollection('exports', null, true));
     yield put(actions.resource.requestCollection('imports', null, true));
+    yield put(actions.resource.requestCollection('asynchelpers', null, true));
   }
 
   // HACK! when updating scripts, since content is stored in s3, it
@@ -1187,4 +1189,5 @@ export const resourceSagas = [
   takeLatest(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, downloadAuditlogs),
 
   ...metadataSagas,
+  ...httpConnectorSagas,
 ];

@@ -14,7 +14,7 @@ const conditionalOptions = [
   },
 ];
 
-const getDefaultActionOptions = (mappingType, dataType) => {
+export const getDefaultActionOptions = (mappingType, dataType) => {
   const defaultOptions = [
     {
       items: [
@@ -39,9 +39,13 @@ const getDefaultActionOptions = (mappingType, dataType) => {
       },
     ];
   }
-  if (dataType === MAPPING_DATA_TYPES.BOOLEAN) {
+
+  if (dataType === MAPPING_DATA_TYPES.BOOLEAN || dataType === MAPPING_DATA_TYPES.NUMBER) {
     defaultOptions[0].items.pop();
+  } else if (ARRAY_DATA_TYPES.includes(dataType)) {
+    defaultOptions[0].items[3].label = 'Use empty array as default value';
   }
+
   if (mappingType === 'hardcodedAction') {
     defaultOptions[0].items.shift();
   } else if (mappingType === 'lookupAction') {
@@ -110,8 +114,11 @@ export default {
           type: 'radiogroup',
           refreshOptionsOnChangesTo: ['dataType'],
           label: propDataType === MAPPING_DATA_TYPES.OBJECT
-            ? 'Copy an object from the source record as-is?'
-            : 'Copy an object array from the source record as-is?',
+            ? 'Copy an object from the source as-is?'
+            : 'Copy an object array from the source as-is?',
+          helpKey: propDataType === MAPPING_DATA_TYPES.OBJECT
+            ? 'mapping.v2.copyObject'
+            : 'mapping.v2.copyObjectArray',
           fullWidth: true,
           defaultValue: copySource || 'no',
           visibleWhenAll: [{ field: 'dataType', is: ['object', 'objectarray'] }],
@@ -146,7 +153,7 @@ export default {
           defaultValue: !!(node.extractDateFormat || node.extractDateTimezone || node.generateDateFormat || node.generateDateFormat),
           helpKey: 'mapping.v2.useDate',
           noApi: true,
-          label: 'Destination record field is date field',
+          label: 'Destination field is date field',
           visibleWhenAll: [
             { field: 'dataType', is: ['string', 'number'] },
             { field: 'fieldMappingType', is: ['standard'] },
@@ -156,7 +163,7 @@ export default {
           id: 'extractDateFormat',
           name: 'extractDateFormat',
           type: 'autosuggest',
-          label: 'Source record field date format',
+          label: 'Source field date format',
           placeholder: '',
           options: {
             suggestions: dateFormats,
@@ -177,7 +184,7 @@ export default {
           name: 'extractDateTimezone',
           type: 'select',
           defaultValue: node.extractDateTimezone,
-          label: 'Source record field date time zone',
+          label: 'Source field date time zone',
           options: [
             {
               items:
@@ -200,7 +207,7 @@ export default {
           name: 'generateDateFormat',
           type: 'autosuggest',
           defaultValue: node.generateDateFormat,
-          label: 'Destination record field date format',
+          label: 'Destination field date format',
           placeholder: '',
           options: {
             suggestions: dateFormats,
@@ -220,7 +227,7 @@ export default {
           name: 'generateDateTimezone',
           type: 'select',
           defaultValue: node.generateDateTimezone,
-          label: 'Destination record field date time zone',
+          label: 'Destination field date time zone',
           options: [
             {
               items:
@@ -242,9 +249,10 @@ export default {
           id: 'standardAction',
           name: 'standardAction',
           type: 'select',
-          defaultValue: mappingUtil.getV2DefaultActionValue(node),
+          skipDefault: true,
+          defaultValue: mappingUtil.getV2DefaultActionValue(node) || 'discardIfEmpty',
           refreshOptionsOnChangesTo: ['dataType'],
-          label: 'Action to take if source record field has no value',
+          label: 'Action to take if source field has no value',
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['standard'] },
@@ -271,9 +279,10 @@ export default {
           id: 'objectAction',
           name: 'objectAction',
           type: 'select',
-          defaultValue: mappingUtil.getV2DefaultActionValue(node) || '',
+          skipDefault: true,
+          defaultValue: mappingUtil.getV2DefaultActionValue(node) || 'discardIfEmpty',
           refreshOptionsOnChangesTo: ['dataType'],
-          label: 'Action to take if source record field has no value',
+          label: 'Action to take if source field has no value',
           helpKey: 'mapping.v2.objectAction',
           noApi: true,
           visibleWhenAll: [
@@ -287,6 +296,7 @@ export default {
           type: 'select',
           defaultValue: mappingUtil.getHardCodedActionValue(node) || 'default',
           refreshOptionsOnChangesTo: ['dataType'],
+          skipDefault: true,
           label: 'How would you like to hard-code the value?',
           helpKey: 'mapping.v2.hardcodedAction',
           noApi: true,
@@ -329,21 +339,22 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['multifield'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         multifieldAction: {
           id: 'multifieldAction',
           name: 'multifieldAction',
           type: 'select',
-          defaultValue: mappingUtil.getV2DefaultActionValue(node),
+          skipDefault: true,
+          defaultValue: mappingUtil.getV2DefaultActionValue(node) || 'discardIfEmpty',
           label: 'Action to take if handlebars expression returns an empty value',
           refreshOptionsOnChangesTo: ['dataType'],
           helpKey: 'mapping.v2.multifieldAction',
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['multifield'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         multifieldDefault: {
@@ -356,7 +367,7 @@ export default {
           visibleWhenAll: [
             { field: 'multifieldAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['multifield'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
           helpKey: 'mapping.v2.default',
           noApi: true,
@@ -372,7 +383,7 @@ export default {
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
           helpKey: 'mapping.v2.lookup.mode',
           noApi: true,
@@ -391,9 +402,9 @@ export default {
           type: 'staticMap',
           label: '',
           keyName: 'export',
-          keyLabel: 'Source record field value',
+          keyLabel: 'Source field value',
           valueName: 'import',
-          valueLabel: 'Destination record field value',
+          valueLabel: 'Destination field value',
           defaultValue:
               lookup.map &&
               Object.keys(lookup.map).map(key => ({
@@ -404,7 +415,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['static'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         'lookup.relativeURI': {
@@ -426,7 +437,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         'lookup.method': {
@@ -449,7 +460,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         'lookup.body': {
@@ -471,7 +482,7 @@ export default {
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
             { field: 'lookup.method', is: ['POST'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         'lookup.extract': {
@@ -487,7 +498,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         'lookup.name': {
@@ -503,7 +514,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic', 'static'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
           validWhen: {
             matchesRegEx: {
@@ -516,16 +527,16 @@ export default {
           id: 'lookupAction',
           name: 'lookupAction',
           type: 'select',
+          skipDefault: true,
           defaultValue:
-            mappingUtil.getV2DefaultLookupActionValue(node, lookup),
+            mappingUtil.getV2DefaultLookupActionValue(node, lookup) || 'discardIfEmpty',
           label: 'If lookup fails',
-          refreshOptionsOnChangesTo: ['dataType'],
-          helpKey: 'mapping.v2.lookupAction',
+          refreshOptionsOnChangesTo: ['dataType', 'lookup.mode'],
           noApi: true,
           visibleWhenAll: [
             { field: 'lookup.mode', is: ['dynamic', 'static'] },
             { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
         },
         lookupDefault: {
@@ -538,7 +549,7 @@ export default {
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['string', 'number', 'boolean'] },
           ],
           helpKey: 'mapping.v2.default',
           noApi: true,
@@ -627,6 +638,19 @@ export default {
             : 'mapping.v2.standardAction';
         }
 
+        if (fieldId === 'lookupAction') {
+          const lookupActionField = fields.find(
+            field => field.id === 'lookupAction'
+          );
+          const lookupModeField = fields.find(
+            field => field.id === 'lookup.mode'
+          );
+
+          lookupActionField.helpKey = lookupModeField?.value === 'static'
+            ? 'mapping.v2.staticLookupAction'
+            : 'mapping.v2.dynamicLookupAction';
+        }
+
         if (fieldId === 'standardAction' ||
         fieldId === 'objectAction' ||
         fieldId === 'hardcodedAction' ||
@@ -667,8 +691,8 @@ export default {
           );
 
           copySourceField.label = dataTypeField?.value === MAPPING_DATA_TYPES.OBJECT
-            ? 'Copy an object from the source record as-is?'
-            : 'Copy an object array from the source record as-is?';
+            ? 'Copy an object from the source as-is?'
+            : 'Copy an object array from the source as-is?';
           copySourceField.helpKey = dataTypeField?.value === MAPPING_DATA_TYPES.OBJECT
             ? 'mapping.v2.copyObject'
             : 'mapping.v2.copyObjectArray';

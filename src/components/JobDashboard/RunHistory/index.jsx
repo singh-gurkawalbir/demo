@@ -220,7 +220,7 @@ export default function RunHistory({ flowId, className }) {
           </ActionGroup>
         </>
       </div>
-      {isLoadingHistory ? <Spinner centerAll />
+      {isLoadingHistory ? <Spinner loading size="large" />
         : (
           <JobTable
             classes={classes.jobTable}

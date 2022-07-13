@@ -420,7 +420,8 @@ export default {
       // formattedMapping;
     });
 
-    if (initializeValues.length > 0) {
+    // adding one more check to know if celigo_inititalizeValues is present or not
+    if (initializeValues.length > 0 && !fields.find(f => f.generate === 'celigo_initializeValues')) {
       fields.push({
         generate: 'celigo_initializeValues',
         hardCodedValue: initializeValues.join(','),

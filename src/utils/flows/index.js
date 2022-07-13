@@ -9,7 +9,6 @@ import {
   adaptorTypeMap,
   isBlobTypeResource,
   isValidResourceReference,
-  isFileAdaptor,
 } from '../resource';
 import { emptyList, emptyObject, STANDALONE_INTEGRATION, JOB_STATUS, UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../constants';
 import { JOB_UI_STATUS } from '../jobdashboard';
@@ -209,11 +208,9 @@ export const isImportMappingAvailable = importResource => {
   if (isBlobTypeResource(importResource)) {
     return false;
   }
-  const { adaptorType, rdbms = {}, file = {} } = importResource;
+  const { adaptorType, rdbms = {} } = importResource;
   const appType = adaptorTypeMap[adaptorType];
 
-  // For File Adaptor XML Imports, no support for import mapping
-  if (isFileAdaptor(importResource) && file.type === 'xml') return false;
   // if apptype is mongodb then mapping should not be shown
   if (appType === 'mongodb') return false;
   // if apptype is rdbms and querytype is not bulk insert then mapping shouldnot be shown
@@ -745,7 +742,7 @@ export function getIAFlowSettings(integration, flowId, childId) {
   return allFlows.find(flow => flow._id === flowId) || emptyObject;
 }
 
-export function getFlowResources(flows, exports, imports, flowId) {
+export function getFlowResources(flows = [], exports = [], imports = [], flowId) {
   const resources = [];
   const flow = (flows || []).find(f => f._id === flowId);
 

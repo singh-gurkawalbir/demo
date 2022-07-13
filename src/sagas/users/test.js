@@ -1095,6 +1095,29 @@ describe('all modal sagas', () => {
         .put(actions.license.licenseUpgradeRequestSubmitted(response))
         .run();
     });
+    test('should handle if it is actionType of upgrade and feature is sso', () => {
+      const actionType = 'upgrade';
+      const feature = 'SSO';
+      const response = {
+        key: 'something',
+      };
+      const { path, opts } = getRequestOptions(actionTypes.LICENSE.UPDATE_REQUEST, {
+        actionType, feature,
+      });
+
+      return expectSaga(requestLicenseUpdate, { actionType, feature })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), response],
+        ])
+        .call.like({fn: apiCallWithRetry,
+          args: [{
+            path,
+            opts,
+          }]})
+        .not.put(actions.resource.requestCollection('integrations'))
+        .put(actions.license.licenseUpgradeRequestSubmitted(response, feature))
+        .run();
+    });
     test('should handle if apiCallWithRetry fails', () => {
       const actionType = 'trial';
       const { path, opts } = getRequestOptions(actionTypes.LICENSE.UPDATE_REQUEST, {

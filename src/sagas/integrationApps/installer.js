@@ -8,6 +8,7 @@ import { isOauth } from '../../utils/resource';
 import { isJsonString } from '../../utils/string';
 import { selectors } from '../../reducers';
 import { getResource } from '../resources';
+import { refreshConnectionMetadata } from '../resources/meta';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
 import openExternalUrl from '../../utils/window';
 
@@ -75,10 +76,11 @@ export function* installStep({ id, installerFunction, childId, addOnId, formVal 
         actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
       );
       yield put(actions.resource.request('integrations', id));
-      yield put(actions.resource.requestCollection('flows', null, true));
-      yield put(actions.resource.requestCollection('exports', null, true));
-      yield put(actions.resource.requestCollection('imports', null, true));
-      yield put(actions.resource.requestCollection('connections', null, true));
+      yield put(actions.resource.requestCollection('flows', null, true, id));
+      yield put(actions.resource.requestCollection('exports', null, true, id));
+      yield put(actions.resource.requestCollection('imports', null, true, id));
+      yield put(actions.resource.requestCollection('connections', null, true, id));
+      yield put(actions.resource.requestCollection('asynchelpers', null, true, id));
       yield put(
         actions.integrationApp.isAddonInstallInprogress(false, addOnId)
       );
@@ -121,6 +123,15 @@ export function* installInitChild({ id }) {
   } catch (error) {
     yield put(actions.api.failure(path, 'PUT', error.message, false));
   }
+}
+
+function* refreshIntegrationConnectionsMetadata({ integrationId }) {
+  const installSteps = yield select(selectors.integrationInstallSteps, integrationId);
+  const connections = installSteps
+    .filter(step => step.type === 'connection' && ['netsuite', 'salesforce'].includes(step.sourceConnection?.type) && step._connectionId)
+    .map(step => ({ type: step.sourceConnection?.type, _id: step._connectionId }));
+
+  yield call(refreshConnectionMetadata, { connections });
 }
 
 export function* installScriptStep({
@@ -189,7 +200,8 @@ export function* installScriptStep({
     ) {
       yield call(installInitChild, { id });
     }
-
+    // refresh NS/SF connection's metadata once the integration install steps are completed
+    yield call(refreshIntegrationConnectionsMetadata, { integrationId: id });
     // to clear session state
     yield put(
       actions.integrationApp.installer.completedStepInstall(
@@ -201,16 +213,17 @@ export function* installScriptStep({
     return yield put(actions.resource.request('integrations', id));
   }
 
-  const currentConnectionStep =
+  const filteredConnectionSteps =
     stepCompleteResponse &&
     Array.isArray(stepCompleteResponse) &&
-    stepCompleteResponse.find(
-      temp =>
-        temp.completed === false &&
-        temp._connectionId
+    stepCompleteResponse.filter(
+      temp => temp._connectionId
     );
 
-  if (!isEmpty(connectionDoc)) {
+  // we need to find the currentConnectionStep
+  const currentConnectionStep = filteredConnectionSteps?.length && filteredConnectionSteps[filteredConnectionSteps.length - 1];
+
+  if (!isEmpty(connectionDoc) && currentConnectionStep?._connectionId) {
     yield put(actions.resource.request('connections', currentConnectionStep?._connectionId));
   }
 

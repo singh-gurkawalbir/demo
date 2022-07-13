@@ -483,6 +483,7 @@ describe('commitStagedChanges saga', () => {
       expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('connections', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('exports', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('imports', null, true)));
+      expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('asynchelpers', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.clearStaged(id)));
       const putEffect = saga.next(updated).value;
 
@@ -2728,12 +2729,14 @@ describe('tests for metadata sagas', () => {
             path: `/${metaPath}`,
             opts: {},
             message: 'Loading',
+            hidden: false,
           }), metadata],
         ])
         .call(apiCallWithRetry, {
           path: `/${metaPath}`,
           opts: {},
           message: 'Loading',
+          hidden: false,
         })
         .put(actions.metadata.receivedCollection(
           metadata,
@@ -2761,6 +2764,7 @@ describe('tests for metadata sagas', () => {
         addInfo: {
           refreshCache: true,
           query,
+          hidden: true,
         },
       })
         .provide([
@@ -2772,12 +2776,14 @@ describe('tests for metadata sagas', () => {
             path: newpath,
             opts: {},
             message: 'Loading',
+            hidden: true,
           }), metadata],
         ])
         .call(apiCallWithRetry, {
           path: newpath,
           opts: {},
           message: 'Loading',
+          hidden: true,
         })
         .put(actions.metadata.receivedCollection(
           metadata,
@@ -2809,12 +2815,14 @@ describe('tests for metadata sagas', () => {
             path: `/${metaPath}`,
             opts: {},
             message: 'Loading',
+            hidden: false,
           }), metadata],
         ])
         .call(apiCallWithRetry, {
           path: `/${metaPath}`,
           opts: {},
           message: 'Loading',
+          hidden: false,
         })
         .put(actions.metadata.receivedError(
           metadata.errors[0].message,
@@ -2837,12 +2845,14 @@ describe('tests for metadata sagas', () => {
           path: `/${metaPath}`,
           opts: {},
           message: 'Loading',
+          hidden: false,
         }), throwError({status: 404, message: '[{"message":"error msg"}]'})],
       ])
       .call(apiCallWithRetry, {
         path: `/${metaPath}`,
         opts: {},
         message: 'Loading',
+        hidden: false,
       })
       .put(actions.metadata.receivedError(
         'error msg',

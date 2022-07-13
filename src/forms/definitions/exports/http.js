@@ -1,4 +1,4 @@
-import { isNewId } from '../../../utils/resource';
+import { isNewId, finalSuccessMediaType } from '../../../utils/resource';
 
 export default {
   preSave: (formValues, _, { connection } = {}) => {
@@ -229,9 +229,18 @@ export default {
       retValues['/unencrypted/apiType'] = 'Amazon-SP-API';
     }
 
+    if (retValues['/parsers']?.resourcePath !== '') {
+      retValues['/http/response/resourcePath'] = retValues['/parsers'].resourcePath;
+    }
+
+    if (finalSuccessMediaType(formValues, connection) !== 'xml') {
+      retValues['/parsers'] = undefined;
+    }
+
     if (!retValues['/configureAsyncHelper']) {
       retValues['/http/_asyncHelperId'] = undefined;
     }
+    retValues['/adaptorType'] = 'HTTPExport';
 
     return {
       ...retValues,
@@ -270,6 +279,16 @@ export default {
   },
 
   fieldMap: {
+    parsers: {
+      fieldId: 'parsers',
+      required: false,
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+    },
     common: { formId: 'common' },
     outputMode: {
       id: 'outputMode',
@@ -414,10 +433,6 @@ export default {
           field: 'outputMode',
           is: ['records'],
         },
-        {
-          field: 'http.successMediaType',
-          is: ['csv'],
-        },
       ],
     },
     exportOneToMany: { formId: 'exportOneToMany' },
@@ -534,9 +549,18 @@ export default {
           {
             type: 'indent',
             containers: [
-              {fields: [
-                'file.csv',
-              ]},
+              {
+                fields: [
+                  'parsers',
+                  'file.csv',
+                ],
+                header: (_, connection, formValues) => {
+                  const isParserVisible = ['csv', 'xml'].some(parser => finalSuccessMediaType(formValues, connection) === parser);
+
+                  return isParserVisible && 'Parse success responses';
+                },
+                helpKey: 'http.parseSuccessResponses',
+              },
             ],
           },
           {

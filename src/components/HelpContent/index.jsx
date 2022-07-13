@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'left',
   },
   title: {
-    color: theme.palette.text.title,
+    wordBreak: 'break-word',
   },
   content: {
     padding: theme.spacing(1, 0),
