@@ -13,7 +13,7 @@ import { apiCallWithRetry } from '..';
 import { getResourceSubType, isFileAdaptor, isAS2Resource } from '../../utils/resource';
 import { getImportOperationDetails } from '../../utils/assistant';
 import { requestSampleData as requestFlowSampleData } from '../sampleData/flows';
-import { requestSampleData as requestImportSampleData } from '../sampleData/imports';
+import { requestSampleData as requestImportSampleData, getImportSampleData } from '../sampleData/imports';
 import { requestAssistantMetadata } from '../resources/meta';
 import { getMappingMetadata as getIAMappingMetadata } from '../integrationApps/settings';
 import { getAssistantConnectorType, getHttpConnector} from '../../constants/applications';
@@ -264,6 +264,7 @@ export function* mappingInit({
   let version = 1;
   let mappingsTreeData;
   let extractsTree;
+  let importSampleData;
 
   // only http and file imports are supported
   if (!importResource._connectorId && (
@@ -283,6 +284,9 @@ export function* mappingInit({
     // for source field
     extractsTree = buildExtractsTree(flowSampleData);
 
+    // save import sample data in state for auto creation of mappings
+    importSampleData = yield call(getImportSampleData, {importId});
+
     if (importResource.mappings?.length || !formattedMappings?.length) {
       version = 2;
     }
@@ -296,6 +300,8 @@ export function* mappingInit({
       })),
       lookups,
       v2TreeData: mappingsTreeData,
+      requiredMappings: options.assistant?.requiredMappings || [],
+      importSampleData,
       extractsTree,
       version,
       flowId,
@@ -765,6 +771,7 @@ export const mappingSagas = [
     actionTypes.MAPPING.V2.PATCH_SETTINGS,
     actionTypes.MAPPING.V2.TOGGLE_OUTPUT,
     actionTypes.MAPPING.V2.UPDATE_DATA_TYPE,
+    actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE,
   ], validateMappings),
   takeLatest(actionTypes.MAPPING.AUTO_MAPPER.REQUEST, getAutoMapperSuggestion),
 ];

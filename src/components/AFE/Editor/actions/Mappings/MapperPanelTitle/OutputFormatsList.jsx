@@ -1,44 +1,17 @@
 import React, { useCallback, useState } from 'react';
 import clsx from 'clsx';
-import { IconButton, Tooltip, List, ListItem, ListItemText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { List, ListItem, ListItemText } from '@material-ui/core';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import Help from '../../../../Help';
-import actions from '../../../../../actions';
-import { selectors } from '../../../../../reducers';
-import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import RefreshIcon from '../../../../icons/RefreshIcon';
-import TextButton from '../../../../Buttons/TextButton';
-import CeligoDivider from '../../../../CeligoDivider';
-import ExpandRowsIcon from '../../../../icons/ExpandRowsIcon';
-import CollapseRowsIcon from '../../../../icons/CollapseRowsIcon';
-import ArrowDownIcon from '../../../../icons/ArrowDownIcon';
-import { isCsvOrXlsxResourceForMapper2, ROWS_AS_INPUT_OPTIONS, RECORD_AS_INPUT_OPTIONS, getInputOutputFormat } from '../../../../../utils/mapping';
-import ActionGroup from '../../../../ActionGroup';
-import Spinner from '../../../../Spinner';
-import ArrowPopper from '../../../../ArrowPopper';
+import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
+import actions from '../../../../../../actions';
+import { selectors } from '../../../../../../reducers';
+import TextButton from '../../../../../Buttons/TextButton';
+import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
+import { isCsvOrXlsxResourceForMapper2, ROWS_AS_INPUT_OPTIONS, RECORD_AS_INPUT_OPTIONS, getInputOutputFormat } from '../../../../../../utils/mapping';
+import ArrowPopper from '../../../../../ArrowPopper';
 
 const useStyles = makeStyles(theme => ({
-  wrapper: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  helpButton: {
-    padding: 0,
-    margin: 2,
-  },
-  actions: {
-    '& > .MuiButtonBase-root': {
-      padding: 0,
-    },
-    '& > :not(:last-child)': {
-      marginRight: theme.spacing(1),
-    },
-  },
-  refresh: {
-    fontFamily: 'Roboto400',
-    fontSize: 14,
-  },
   currentContainer: {
     fontFamily: 'Roboto400',
     fontSize: 14,
@@ -113,7 +86,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function OutputFormatsList({disabled}) {
+export default function OutputFormatsList({disabled}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -156,7 +129,7 @@ function OutputFormatsList({disabled}) {
         className={classes.currentContainer}
         aria-owns={open ? 'outputFormats' : null}
         aria-haspopup="true"
-        >
+          >
         {getInputOutputFormat(isGroupedSampleData, isGroupedOutput)}
       </TextButton>
 
@@ -167,11 +140,11 @@ function OutputFormatsList({disabled}) {
         restrictToParent={false}
         open={open}
         anchorEl={anchorEl}
-        >
+          >
         <List
           dense
           className={classes.listWrapper}
-          >
+            >
           {(isGroupedSampleData ? ROWS_AS_INPUT_OPTIONS : RECORD_AS_INPUT_OPTIONS).map(({label, value}) => (
             <ListItem
               disabled={value.endsWith('rec') && disableRecordOutput}
@@ -191,100 +164,5 @@ function OutputFormatsList({disabled}) {
         </List>
       </ArrowPopper>
     </>
-  );
-}
-
-export default function MapperPanelTitle({editorId, title, helpKey}) {
-  const classes = useStyles();
-  const dispatch = useDispatch();
-  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const {mappingVersion, flowId, importId} = useSelector(state => {
-    const mapping = selectors.mapping(state);
-
-    return {
-      mappingVersion: mapping.version,
-      flowId: mapping.flowId,
-      importId: mapping.importId,
-    };
-  }, shallowEqual);
-
-  const isExtractsLoading = useSelector(state => {
-    const extractStatus = selectors.getSampleDataContext(state, {
-      flowId,
-      resourceId: importId,
-      stage: 'importMappingExtract',
-      resourceType: 'imports',
-    }).status;
-
-    return extractStatus === 'requested';
-  });
-
-  const handleRefreshFlowDataClick = useCallback(() => {
-    const refreshCache = true;
-
-    dispatch(
-      actions.flowData.requestSampleData(
-        flowId,
-        importId,
-        'imports',
-        'importMappingExtract',
-        refreshCache
-      )
-    );
-  }, [dispatch, flowId, importId]);
-
-  const handleToggleRows = useCallback(shouldExpand => {
-    dispatch(actions.mapping.v2.toggleRows(shouldExpand));
-  }, [dispatch]);
-
-  // return the old title if its not mapper2 view
-  if (mappingVersion !== 2) {
-    return title;
-  }
-
-  return (
-    <div className={classes.wrapper}>
-      <OutputFormatsList disabled={disabled} />
-      {helpKey && (
-        <Help
-          className={classes.helpButton}
-          helpKey={helpKey}
-        />
-      )}
-      <ActionGroup position="right" className={classes.actions}>
-
-        <TextButton
-          data-test="refreshExtracts"
-          startIcon={isExtractsLoading ? (
-            <Spinner size="small" />
-          ) : <RefreshIcon />}
-          disabled={disabled}
-          onClick={handleRefreshFlowDataClick}
-          className={classes.refresh}
-          size="small"
-          >
-          Refresh fields
-        </TextButton>
-        <CeligoDivider position="right" />
-
-        <Tooltip title="Expand all rows" placement="bottom">
-          <IconButton
-            size="small"
-            date-test="expandAll"
-            onClick={() => handleToggleRows(true)}>
-            <ExpandRowsIcon />
-          </IconButton>
-        </Tooltip >
-
-        <Tooltip title="Collapse all rows" placement="bottom">
-          <IconButton
-            size="small"
-            date-test="collapseAll"
-            onClick={() => handleToggleRows(false)} >
-            <CollapseRowsIcon />
-          </IconButton>
-        </Tooltip>
-      </ActionGroup>
-    </div>
   );
 }

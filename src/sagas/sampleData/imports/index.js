@@ -14,6 +14,10 @@ import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formF
 import { extractStages } from '../../../reducers/session/sampleData/resourceForm';
 import { getAssistantFromConnection } from '../../../utils/connections';
 import { getConnectorMetadata} from '../../resources/httpConnectors';
+import { isFileAdaptor } from '../../../utils/resource';
+import { parseFileData } from '../utils/fileParserUtils';
+import { FILE_DEFINITION_TYPES } from '../resourceForm/utils';
+import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
 
 function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource) {
   const assistantConfig = deepClone(assistantConfigOrig);
@@ -297,6 +301,45 @@ export function* requestSampleData({ resourceId, options = {}, refreshCache }) {
       sampleData,
     });
   }
+}
+
+export function* getImportSampleData({ importId }) {
+  const resource = yield select(selectors.resource, 'imports', importId);
+
+  if (!resource) return;
+
+  const { assistant, file, sampleData, _connectorId } = resource;
+  const { type } = file || {};
+
+  if (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant))) {
+    // get assistants sample data
+    const assistantSampleData = yield select(selectors.assistantPreviewData, importId);
+
+    return assistantSampleData?.data;
+  }
+  const isIntegrationApp = !!_connectorId;
+
+  if (isIntegrationApp) {
+    // handles incase of IAs
+    const IASampleData = yield select(selectors.integrationAppImportMetadata, importId);
+
+    return IASampleData?.data;
+  }
+
+  if (!isFileAdaptor(resource) || !type || FILE_DEFINITION_TYPES.includes(type)) return sampleData;
+
+  // parse the uploaded sample data file into JSON
+  if (['csv', 'xlsx', 'xml', 'json'].includes(type)) {
+    const parsedData = yield call(parseFileData, {
+      sampleData,
+      resource,
+    });
+    const fileSampleData = parsedData?.data;
+
+    return Array.isArray(fileSampleData) ? fileSampleData[0] : fileSampleData;
+  }
+
+  return sampleData;
 }
 
 export default [
