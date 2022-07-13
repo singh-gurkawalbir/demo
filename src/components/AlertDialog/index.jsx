@@ -158,6 +158,7 @@ export default function AlertDialog() {
         ],
       });
     } else {
+      // close the confirm dialog or it will remain even after user signs in
       confirmDialog(null);
     }
   }, [confirmDialog, dispatch, showSessionStatus]);
