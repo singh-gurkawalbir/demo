@@ -24,7 +24,7 @@ export default {
     }
     const applications = applicationsList();
     const app = applications.find(a => a.id === application) || {};
-    const appType = app.type === 'rest' ? 'http' : app.type;
+    const appType = (app.type === 'rest' && !app.assistant) ? 'http' : app.type;
 
     const newValues = {
       ...rest,
@@ -176,7 +176,7 @@ export default {
     const app = appField
       ? applications.find(a => a.id === appField.value) || {}
       : {};
-    const appType = app.type === 'rest' ? 'http' : app.type;
+    const appType = (app.type === 'rest' && !app.assistant) ? 'http' : app.type;
 
     const resourceTypeField = fields.find(field => field.id === 'resourceType');
 

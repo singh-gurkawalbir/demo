@@ -2441,13 +2441,13 @@ use the custom option.`,
   'snapshot.description': 'Describe your snapshot so you can quickly identify the revision and any important details.',
   'http.parseSuccessResponses': 'The integrator.io works on JSON internally. If your API returns success data in a different format than JSON, parse HTTP response data using available parsers for CSV and XML.',
   'mfa.enable':
-    'Switch the toggle ON to initiate the process to enable MFA for your profile. You must also complete the following six steps; otherwise, MFA will remain disabled. When you disable MFA,  device settings will also be disabled so that you can enable MFA at any point in future',
+    'Switch the toggle ON to initiate the process to enable MFA for your profile. You must also complete the following steps; otherwise, MFA will remain disabled. When you disable MFA,  device settings will also be disabled so that you can enable MFA at any point in future.',
   'mfa.getVerificationApp':
     'You can configure MFA to use any authenticator app that supports time-based one-time-password protocol (TOTP). Supported authenticator apps include, but not limited to, Google, LastPass, and Microsoft.',
   'mfa.addIntegrationIO':
     'To add integrator.io to your MFA authenticator app, you can either scan the QR code or enter the secret key manually. You must enter the password to view the secret key or QR code for your profile. Do not save these details anywhere else. You can find the secret key and QR code in your profile at any time in the future if necessary.',
   'mfa.code.verify':
-    'Enter the code from your authenticator app for the Celigo configuration you just completed to verify that the configuration is successful',
+    'Enter the code from your authenticator app for the Celigo configuration you just completed to verify that the configuration is successful.',
   'mfa.primaryAccount':
     'If you lose the mobile device that has the authenticator app installed, the account owner or admin of the primary account can reset MFA credentials for your profile. Choose the account that you want to perform MFA resets.',
   'mfa.trustDevice':
@@ -2461,6 +2461,4 @@ use the custom option.`,
     'View the secret key that was used to enable MFA for your profile.',
   'mfa.trustedDevices':
     'Click <b>Manage devices</b> to see a list of all trusted devices for your profile.',
-  'mfa.reAuthPwd': 'Reauthenticate with password',
-  'mfa.manageDevices': 'Manage devices',
 };

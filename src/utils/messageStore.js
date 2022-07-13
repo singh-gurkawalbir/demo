@@ -82,10 +82,11 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   RESET_MFA: "Are you sure you want to reset MFA? You'll need to re-associate your authenticator app and configure your device in integrator.io.",
   DELETE_DEVICE_SUCCESS: 'Device deleted successfully.',
   SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
+  CONFIRM_LEAVE_MFA: 'Are you sure you want to leave? Your MFA settings will be disabled unless you connect your device successfully.',
+  // #endregion
+
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',
-
-  // #endregion
 
 };
 
