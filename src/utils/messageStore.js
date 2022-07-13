@@ -58,6 +58,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   DYNAMIC_LOOKUP_SOURCE_TOOLTIP: 'Dynamic lookups do not provide source field list',
   HARD_CODED_SOURCE_TOOLTIP: 'Hard-coded values do not provide source field list',
   HANDLEBARS_SOURCE_TOOLTIP: 'Handlebars expression do not provide source field list',
+  MAPPER2_AUTO_CREATE_STRUCTURE: 'Are you sure you want to auto-populate your destination fields?<br><b>This will replace all of your current destination fields and source fields.</b>',
   // #endregion
   // #region LCM
   REVISION_IN_PROGRESS_ERROR: 'You have a pull, snapshot, or revert in progress.',

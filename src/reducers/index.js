@@ -114,6 +114,7 @@ import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions, REVI
 import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
 import { initializeFlowForReactFlow } from '../utils/flows/flowbuilder';
+import { HTTP_BASED_ADAPTORS } from '../utils/http';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -4491,7 +4492,7 @@ selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceTyp
   // for rest and http
   const appType = adaptorTypeMap[resourceObj?.adaptorType];
 
-  return ['http', 'rest', 'graph_ql'].includes(appType);
+  return HTTP_BASED_ADAPTORS.includes(appType);
 };
 
 // #endregion SAMPLE DATA selectors

@@ -28,7 +28,6 @@ export function* pageProcessorPreview({
   refresh = false,
   includeStages = false,
   runOffline = false,
-  isMockInput,
   addMockData,
 }) {
   if (!flowId || !_pageProcessorId) return;
@@ -59,8 +58,6 @@ export function* pageProcessorPreview({
   const pageProcessorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageProcessors',
-    _pageProcessorId,
-    isMockInput,
     addMockData,
     // runOffline, Run offline is currently not supported for PPs
   });
@@ -97,7 +94,6 @@ export function* pageProcessorPreview({
       pageProcessorMap[_pageProcessorId].options = yield call(getPreviewOptionsForResource, {
         resource: {_id: _pageProcessorId},
         _pageProcessorId,
-        isMockInput,
         addMockData,
       });
     }

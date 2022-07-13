@@ -65,9 +65,8 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
 
 export function* _getMockDataOptionsForResource({
   addMockData,
-  _pageProcessorId,
-  isMockInput,
   resourceId,
+  resourceType,
 }) {
   const options = {};
 
@@ -76,10 +75,11 @@ export function* _getMockDataOptionsForResource({
   const mockInput = yield select(selectors.getResourceMockData, resourceId);
   const typeOfPreview = yield select(selectors.typeOfSampleData, resourceId);
 
-  const shouldAddMockData = addMockData && ((_pageProcessorId !== resourceId) || !isMockInput);
-
-  if (shouldAddMockData) {
+  if (addMockData) {
     options.inputData = !isEmpty(mockInput) ? mockInput : undefined;
+
+    // for lookups we don't send preview or sendAndPreview options
+    if (resourceType === 'exports') return options;
 
     if (typeOfPreview === 'send') {
       options.sendAndPreview = true;
@@ -96,9 +96,8 @@ export default function* getPreviewOptionsForResource({
   flow,
   refresh,
   runOffline,
-  _pageProcessorId,
-  isMockInput,
   addMockData,
+  resourceType,
 }) {
   const connection = yield select(
     selectors.resource,
@@ -106,7 +105,7 @@ export default function* getPreviewOptionsForResource({
     resource?._connectionId
   );
   const {_id: resourceId} = resource || {};
-  const mockDataOptions = yield call(_getMockDataOptionsForResource, {addMockData, _pageProcessorId, isMockInput, resourceId});
+  const mockDataOptions = yield call(_getMockDataOptionsForResource, {addMockData, resourceId, resourceType});
   const uiData = isUIDataExpectedForResource(resource, connection)
     ? yield call(_getUIDataForResource, { resource, connection, flow, refresh })
     : undefined;
