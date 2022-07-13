@@ -61,6 +61,7 @@ function PreviewInfo({
   setShowPreviewData,
   resourceType,
   toggleValue,
+  flowId,
 }) {
   const dispatch = useDispatch();
 
@@ -94,6 +95,7 @@ function PreviewInfo({
       resourceId={resourceId}
       showPreviewData={showPreviewData[toggleValue]}
       resourceType={resourceType}
+      flowId={flowId}
   />
   );
 }
