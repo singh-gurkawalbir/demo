@@ -87,6 +87,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
 
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',
+  BRANCHES_SECTION_INFO: 'Add branches and define branching conditions. You can also change the order of a branch by dragging it up or down.',
 
 };
 

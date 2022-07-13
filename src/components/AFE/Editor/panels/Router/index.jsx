@@ -155,6 +155,7 @@ export default function RouterPanel({ editorId }) {
           isValid // there are no validations on this field, hence always valid
           type="radiogroup"
           disabled={isViewMode}
+          helpKey="flow.router.branchType"
           label="Records will flow through:"
           options={[
             {
@@ -169,7 +170,7 @@ export default function RouterPanel({ editorId }) {
       />
       </div>
 
-      <BranchHeading helpText="Missing branches help text">Branches</BranchHeading>
+      <BranchHeading helpText={messageStore('BRANCHES_SECTION_INFO')}>Branches</BranchHeading>
 
       <Divider orientation="horizontal" className={classes.divider} />
 
