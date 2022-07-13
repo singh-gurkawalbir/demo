@@ -1,6 +1,5 @@
 import React from 'react';
 import { useRouteMatch } from 'react-router-dom';
-// import { useSelector } from 'react-redux';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ResourceDrawer from '../../components/drawer/Resource';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
@@ -17,22 +16,16 @@ import EditorDrawer from '../../components/AFE/Drawer';
 import loadable from '../../utils/loadable';
 import retry from '../../utils/retry';
 import IsLoggableContextProvider from '../../components/IsLoggableContextProvider';
-// import { selectors } from '../../reducers';
 
 const FlowBuilderBody = loadable(() =>
   retry(() => import(/* webpackChunkName: 'FlowBuilderBody' */ './FlowBuilderBody'))
 );
-// const FlowBuilderBody2 = loadable(() =>
-//   retry(() => import(/* webpackChunkName: 'FlowBuilderBody2' */ './FlowBuilderBody/linear'))
-// );
+
 const Redirection = loadable(() =>
   retry(() => import(/* webpackChunkName: 'FlowBuilderRedirection' */ './Redirection'))
 );
 
 function FBComponent({flowId, integrationId, childId}) {
-  // const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
-  // const FBBody = flow?.routers?.length ? FlowBuilderBody : FlowBuilderBody;
-
   return (
     <>
       <FlowBuilderBody
