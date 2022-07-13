@@ -162,9 +162,12 @@ export function Canvas({ flowId, fullscreen }) {
               onNodeDragStop={handleNodeDragStop}
               onNodeDrag={handleNodeDrag}
               nodesDraggable={false}
+              minZoom={0.4}
+              panOnScroll
               elements={updatedLayout}
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
+              preventScrolling={false}
             >
               <SourceTitle onClick={handleAddNewSource} />
               <DestinationTitle />
