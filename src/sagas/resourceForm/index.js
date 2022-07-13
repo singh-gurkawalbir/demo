@@ -21,7 +21,7 @@ import {
 import { _fetchRawDataForFileAdaptors } from '../sampleData/rawDataUpdates/fileAdaptorUpdates';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA, PageProcessorPathRegex } from '../../constants';
+import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA, PageProcessorPathRegex, FLOW_SAVING_STATUS } from '../../constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, flowLastModifiedPatch } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
@@ -682,7 +682,7 @@ export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValue
     flowId
   ))?.merged || emptyObject;
 
-  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
+  yield put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS));
 
   if (isIntegrationApp(flow)) {
     // update the last modified time

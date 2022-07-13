@@ -12,10 +12,10 @@ import {
   mergeDragSourceWithTarget,
 } from '../../utils/flows/flowbuilder';
 import { getChangesPatchSet } from '../../utils/json';
-import { GRAPH_ELEMENTS_TYPE } from '../../constants';
+import { FLOW_SAVING_STATUS, GRAPH_ELEMENTS_TYPE } from '../../constants';
 
 export function* createNewPGStep({ flowId }) {
-  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
+  yield put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS));
   const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
   const patchSet = getChangesPatchSet(addPageGenerators, flow);
 
@@ -41,7 +41,7 @@ export function* deleteStep({flowId, stepId}) {
     patchSet = getChangesPatchSet(deletePPStepForOldSchema, originalFlow, path);
   }
   if (patchSet.length) {
-    yield put(actions.flow.setSaveStatus(flowId, 'saving'));
+    yield put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS));
   }
 
   yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
@@ -53,7 +53,7 @@ export function* createNewPPStep({ flowId, path: branchPath, processorIndex }) {
   const patchSet = getChangesPatchSet(addPageProcessor, flow, insertAtIndex, branchPath);
 
   if (patchSet.length) {
-    yield put(actions.flow.setSaveStatus(flowId, 'saving'));
+    yield put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS));
   }
   yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, {options: {revertChangesOnFailure: true}}));
 }
@@ -71,7 +71,7 @@ export function* mergeBranch({flowId}) {
   // It's possible that a user releases the mouse while NOT on top of a valid merge target.
   // if this is the case, we still want to reset the drag state, just skip the merge attempt.
   if (mergeTargetId && mergeTargetType && isMergable) {
-    yield put(actions.flow.setSaveStatus(flowId, 'saving'));
+    yield put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS));
     mergeDragSourceWithTarget(flow, elementsMap, dragStepId, mergeTargetId, patchSet);
     yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
   }
@@ -94,7 +94,7 @@ export function* deleteEdge({ flowId, edgeId }) {
     path: `${edge.data.path}/nextRouterId`,
   }];
 
-  yield put(actions.flow.setSaveStatus(flowId, 'saving'));
+  yield put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS));
   yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
 }
 
@@ -106,7 +106,7 @@ export function* deleteRouter({flowId, routerId, prePatches}) {
   const router = routers.find(r => r.id === routerId);
 
   if (router) {
-    yield put(actions.flow.setSaveStatus(flowId, 'saving'));
+    yield put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS));
     const preceedingRouter = routers.find(r => r.branches.find(branch => branch.nextRouterId === routerId));
 
     if (preceedingRouter) {
@@ -150,6 +150,7 @@ export function* deleteRouter({flowId, routerId, prePatches}) {
         orphanRouterIndex = routers.findIndex(orphanRouter);
       }
     } else if (routers[0].id === routerId) {
+      // Observe all the changes that are being done to flow here on.
       const observer = jsonPatch.observe(flow);
 
       if (router.branches.length > 1) {
@@ -158,6 +159,7 @@ export function* deleteRouter({flowId, routerId, prePatches}) {
       delete router.routeRecordsTo;
       delete router.routeRecordsUsing;
       deleteUnUsedRouters(flow);
+      // generate a patch set of all the changes done to the flow
       patchSet.push(...jsonPatch.generate(observer));
     }
     yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
