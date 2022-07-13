@@ -57,6 +57,28 @@ const SortableContainer = sortableContainer(({children, className}) => (
     {children}
   </ul>
 ));
+const BranchNameRegex = /Branch \d+\.(\d+)/;
+
+function getBranchNameIndex(branches, routerNameIndex) {
+  let highestIndex = 0;
+  const branchNames = branches.map(branch => branch.name);
+
+  branches.forEach(branch => {
+    if (BranchNameRegex.test(branch.name)) {
+      const [, index] = branch.name.match(BranchNameRegex);
+
+      if (+index > highestIndex) {
+        highestIndex = +index;
+      }
+    }
+  });
+
+  while (branchNames.includes(`Branch ${routerNameIndex}.${highestIndex + 1}`)) {
+    highestIndex += 1;
+  }
+
+  return highestIndex + 1;
+}
 
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
@@ -65,7 +87,7 @@ export default function RouterPanel({ editorId }) {
   const branches = useMemo(() => __branches.map(b => ({...b, id: shortId()})), [__branches]);
   const maxBranchesLimitReached = branches.length >= 25;
   const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
-  const {branchNamingIndex = 0, flowId } = useSelector(state => selectors.editor(state, editorId), shallowEqual);
+  const { branchNamingIndex = 0, flowId } = useSelector(state => selectors.editor(state, editorId), shallowEqual);
   const flow = useSelector(state => selectors.fbFlow(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow?._integrationId, flowId));
 
@@ -85,11 +107,11 @@ export default function RouterPanel({ editorId }) {
   );
 
   const handleNameChange = (title, position) => {
-    dispatch(actions.editor.patchRule(editorId, title, {rulePath: branches[position].name}));
+    dispatch(actions.editor.patchRule(editorId, title, {rulePath: `branches[${position}].name`}));
   };
 
   const handleToggleExpand = (expanded, position) => {
-    dispatch(actions.editor.patchRule(editorId, expanded, {rulePath: branches[position].expanded}));
+    dispatch(actions.editor.patchRule(editorId, expanded, {rulePath: `branches[${position}].expanded`}));
   };
 
   const handleSortStart = (_, event) => {
@@ -106,9 +128,11 @@ export default function RouterPanel({ editorId }) {
   };
 
   const handleAddBranch = () => {
+    const branchNameIndex = getBranchNameIndex(branches, branchNamingIndex);
+
     dispatch(actions.editor.patchRule(editorId, [
       ...branches, {
-        name: `Branch ${branchNamingIndex}.${branches.length}`,
+        name: `Branch ${branchNamingIndex}.${branchNameIndex}`,
         pageProcessors: [{setupInProgress: true}],
       },
     ], {rulePath: 'branches'}));
