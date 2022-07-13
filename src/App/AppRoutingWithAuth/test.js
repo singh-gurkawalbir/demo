@@ -7,8 +7,6 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { MuiThemeProvider } from '@material-ui/core';
-// add history in package.json as actual dependency breaks test, may be version related
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { createMemoryHistory } from 'history';
 import { render, cleanup } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
