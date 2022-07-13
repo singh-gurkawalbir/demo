@@ -258,7 +258,7 @@ describe('ResourceDrawer UI test', () => {
     renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource1} /> </MemoryRouter>);
     const link = screen.getByText('3D Cart Staging delete');
 
-    expect(link).toHaveAttribute('href', '//ui-drawer/edit/connections/5e7068331c056a75e6df19b2');
+    expect(link).toHaveAttribute('href', '//edit/connections/5e7068331c056a75e6df19b2');
     const button = screen.getByRole('button');
 
     userEvent.click(button);
@@ -268,7 +268,7 @@ describe('ResourceDrawer UI test', () => {
     renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource3} /> </MemoryRouter>);
     const link = screen.getByText('unknown');
 
-    expect(link).toHaveAttribute('href', '//ui-drawer/edit/connections/undefined');
+    expect(link).toHaveAttribute('href', '//edit/connections/undefined');
     const button = screen.getByRole('button');
 
     userEvent.click(button);
@@ -279,7 +279,7 @@ describe('ResourceDrawer UI test', () => {
     renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource2} /> </MemoryRouter>);
     const link = screen.getByText('5e7068331c056a75e6df19b1');
 
-    expect(link).toHaveAttribute('href', '//ui-drawer/edit/connections/5e7068331c056a75e6df19b1');
+    expect(link).toHaveAttribute('href', '//edit/connections/5e7068331c056a75e6df19b1');
     const button = screen.getByRole('button');
 
     userEvent.click(button);
@@ -293,11 +293,11 @@ describe('ResourceDrawer UI test', () => {
     renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connectorLicenses" resource={connectorLicenses} /> </MemoryRouter>);
     const link = screen.getByText('abc@abc.com');
 
-    expect(link).toHaveAttribute('href', '//ui-drawer/edit/connectorLicenses/id');
+    expect(link).toHaveAttribute('href', '//edit/connectorLicenses/id');
   });
 
   runServer();
-  test('should test connectionr esource link ', async () => {
+  test('should test connection resource link ', async () => {
     mockGetRequestOnce('/api/shared/ashares', [
       {
         _id: '618cc96475f94b333a55bbd3',
@@ -347,7 +347,6 @@ describe('ResourceDrawer UI test', () => {
 
     await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
     await waitFor(() => expect(store?.getState()?.user?.org?.accounts?.length).toBeGreaterThan(0));
-
-    screen.debug();
+    expect(screen.getByText('3D Cart Staging delete')).toBeInTheDocument();
   });
 });
