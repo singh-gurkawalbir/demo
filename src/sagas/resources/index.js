@@ -293,6 +293,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     }
     if (resourceType === 'flows') {
       yield put(actions.flow.setSaveStatus(id));
+      if (options?.revertChangesOnFailure) {
+        yield put(actions.resource.clearStaged(id, scope));
+      }
     }
 
     return { error };

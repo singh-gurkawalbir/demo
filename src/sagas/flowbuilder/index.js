@@ -22,7 +22,7 @@ export function* createNewPGStep({ flowId }) {
   if (!patchSet?.length) {
     yield put(actions.flow.setSaveStatus(flowId));
   } else {
-    yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
+    yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, {options: {revertChangesOnFailure: true}}));
   }
 }
 
@@ -55,7 +55,7 @@ export function* createNewPPStep({ flowId, path: branchPath, processorIndex }) {
   if (patchSet.length) {
     yield put(actions.flow.setSaveStatus(flowId, 'saving'));
   }
-  yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet));
+  yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, {options: {revertChangesOnFailure: true}}));
 }
 
 export function* mergeBranch({flowId}) {

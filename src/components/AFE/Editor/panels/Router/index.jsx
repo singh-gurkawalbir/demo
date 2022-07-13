@@ -110,8 +110,8 @@ export default function RouterPanel({ editorId }) {
     dispatch(actions.editor.patchRule(editorId, title, {rulePath: `branches[${position}].name`}));
   };
 
-  const handleToggleExpand = (expanded, position) => {
-    dispatch(actions.editor.patchRule(editorId, expanded, {rulePath: `branches[${position}].expanded`}));
+  const handleToggleExpand = (collapsed, position) => {
+    dispatch(actions.editor.patchRule(editorId, collapsed, {rulePath: `branches[${position}].collapsed`}));
   };
 
   const handleSortStart = (_, event) => {
@@ -182,7 +182,7 @@ export default function RouterPanel({ editorId }) {
         {branches.map((b, i) => (
           <SortableItem
             expandable={activeProcessor === 'filter'}
-            expanded={b.expanded}
+            collapsed={b.collapsed}
             onToggleExpand={handleToggleExpand}
             key={b.id}
             index={i} // The HOC does not proxy index to child, so we need `position` as well.

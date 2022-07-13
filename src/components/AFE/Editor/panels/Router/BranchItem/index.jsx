@@ -105,7 +105,7 @@ const DragHandle = sortableHandle(() => (
 
 export default function BranchItem({
   expandable,
-  expanded,
+  collapsed,
   position,
   branchName,
   description,
@@ -150,8 +150,8 @@ export default function BranchItem({
       <div className={classes.accordionContainer}>
         <Accordion
           elevation={0}
-          onChange={(event, expanded) => onToggleExpand(expanded, position)}
-          expanded={!!expanded}
+          onChange={(event, expanded) => onToggleExpand(!expanded, position)}
+          expanded={!collapsed}
           square
           classes={{ expanded: classes.expanded }}
           className={classes.accordion}
