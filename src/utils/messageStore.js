@@ -69,6 +69,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   DELETE_TRUSTED_DEVICE: "Are you sure you want to delete your trusted MFA device? You'll need to re-authenticate your account the next time you sign into integrator.io with the device.",
   RESET_MFA: "Are you sure you want to reset MFA? You'll need to re-associate your authenticator app and configure your device in integrator.io.",
   DELETE_DEVICE_SUCCESS: 'Device deleted successfully.',
+  CONFIRM_LEAVE_MFA: 'Are you sure you want to leave? Your MFA settings will be disabled unless you connect your device successfully.',
   // #endregion
 
 };
