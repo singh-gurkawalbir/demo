@@ -174,6 +174,8 @@ export function Canvas({ flowId, fullscreen }) {
               <BackgroundPanel />
               <MiniMap
                 nodeBorderRadius={75}
+                nodeStrokeColor="#D6E4ED"
+                nodeColor="#D6E4ED"
               />
               <ExportFlowStateButton flowId={flowId} />
               <Controls showInteractive={false} />
