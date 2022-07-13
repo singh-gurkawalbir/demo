@@ -99,6 +99,8 @@ export function* pageProcessorPreview({
     }
   }
 
+  let updatedPageProcessorId = _pageProcessorId;
+
   if (flow.routers && flow.routers.some(r => r.id === _pageProcessorId)) {
     delete flow.pageProcessors;
     const router = flow.routers.find(r => r.id === _pageProcessorId);
@@ -109,8 +111,7 @@ export function* pageProcessorPreview({
       delete router.routeRecordsUsing;
       router.branches.length = 1;
       if (router.branches[0].pageProcessors?.length) {
-        // eslint-disable-next-line no-param-reassign
-        _pageProcessorId = uniqId;// router.branches[0].pageProcessors[0].id;
+        updatedPageProcessorId = uniqId;// router.branches[0].pageProcessors[0].id;
         router.branches[0].pageProcessors[0].type = 'import';
         router.branches[0].pageProcessors[0]._importId = uniqId;
         delete router.branches[0].pageProcessors[0].setupInProgress;
@@ -118,16 +119,15 @@ export function* pageProcessorPreview({
       } else {
         router.branches[0].pageProcessors = [{type: 'import', _importId: uniqId }];
         delete router.branches[0].inputFilter;
-        // eslint-disable-next-line no-param-reassign
-        _pageProcessorId = uniqId;
+        updatedPageProcessorId = uniqId;
       }
     } else if (!router.branches) {
       router.branches = [{pageProcessors: [{type: 'import', _importId: uniqId }]}];
       // eslint-disable-next-line no-param-reassign
-      _pageProcessorId = uniqId;
+      updatedPageProcessorId = uniqId;
     }
-    pageProcessorMap[_pageProcessorId] = {
-      doc: {_id: _pageProcessorId},
+    pageProcessorMap[updatedPageProcessorId] = {
+      doc: {_id: updatedPageProcessorId},
     };
   }
 
@@ -135,7 +135,7 @@ export function* pageProcessorPreview({
     // make the _pageProcessor as import so that BE calculates flow data till that processor
     const updatePageProcessorToImport = pageProcessor => {
       if (pageProcessor._exportId === _pageProcessorId) {
-        pageProcessorMap[_pageProcessorId].options = {};
+        pageProcessorMap[updatedPageProcessorId].options = {};
 
         return {
           ...pageProcessor,
@@ -157,23 +157,23 @@ export function* pageProcessorPreview({
         });
       });
     }
-  } else if (resourceType === 'exports' && pageProcessorMap[_pageProcessorId]?.doc) {
+  } else if (resourceType === 'exports' && pageProcessorMap[updatedPageProcessorId]?.doc) {
     // remove tx,filters,hooks from PP Doc to get preview data for _pageProcessorId
-    const { transform, filter, hooks, ...lookupDocWithoutProcessors } = pageProcessorMap[_pageProcessorId].doc;
+    const { transform, filter, hooks, ...lookupDocWithoutProcessors } = pageProcessorMap[updatedPageProcessorId].doc;
 
-    pageProcessorMap[_pageProcessorId].doc = lookupDocWithoutProcessors;
+    pageProcessorMap[updatedPageProcessorId].doc = lookupDocWithoutProcessors;
     // update options for the lookups if incase they were not added before ( incase of custom pp doc or new pp doc )
     if (
       isPostDataNeededInResource(lookupDocWithoutProcessors) &&
-      !pageProcessorMap[_pageProcessorId].options
+      !pageProcessorMap[updatedPageProcessorId].options
     ) {
-      pageProcessorMap[_pageProcessorId].options = {
+      pageProcessorMap[updatedPageProcessorId].options = {
         postData: getPostDataForDeltaExport(lookupDocWithoutProcessors),
       };
     }
   }
 
-  const body = { flow, _pageProcessorId, pageGeneratorMap, pageProcessorMap, includeStages };
+  const body = { flow, _pageProcessorId: updatedPageProcessorId, pageGeneratorMap, pageProcessorMap, includeStages };
 
   const isRunOfflineConfigured = runOffline && Object.values(pageGeneratorMap)
     .some(
@@ -201,6 +201,7 @@ export function* pageProcessorPreview({
         _pageProcessorId,
         _pageProcessorDoc,
         previewType,
+        editorId,
         resourceType,
         hidden,
         throwOnError,
