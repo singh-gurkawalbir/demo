@@ -253,62 +253,51 @@ const connectorLicenses = {
 
 };
 
-test('nothing rendering', () => {
-  renderWithProviders(<MemoryRouter><ResourceDrawerLink /> </MemoryRouter>);
-});
-test('simple rendering connection with linkLabel as name ', () => {
-  renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource1} /> </MemoryRouter>);
-  const link = screen.getByText('3D Cart Staging delete');
+describe('ResourceDrawer UI test', () => {
+  test('should test connection with linkLabel as name ', () => {
+    renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource1} /> </MemoryRouter>);
+    const link = screen.getByText('3D Cart Staging delete');
 
-  expect(link).toHaveAttribute('href', '//ui-drawer/edit/connections/5e7068331c056a75e6df19b2');
-  const button = screen.getByRole('button');
+    expect(link).toHaveAttribute('href', '//ui-drawer/edit/connections/5e7068331c056a75e6df19b2');
+    const button = screen.getByRole('button');
 
-  userEvent.click(button);
-  expect(screen.getByText('abcdefgh')).toBeInTheDocument();
+    userEvent.click(button);
+    expect(screen.getByText('abcdefgh')).toBeInTheDocument();
+  });
+  test('should test connection with linkLabel as unknown ', () => {
+    renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource3} /> </MemoryRouter>);
+    const link = screen.getByText('unknown');
 
-  screen.debug();
-});
-test('simple rendering connection with linkLabel as unknown ', () => {
-  renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource3} /> </MemoryRouter>);
-  const link = screen.getByText('unknown');
+    expect(link).toHaveAttribute('href', '//ui-drawer/edit/connections/undefined');
+    const button = screen.getByRole('button');
 
-  expect(link).toHaveAttribute('href', '//ui-drawer/edit/connections/undefined');
-  const button = screen.getByRole('button');
+    userEvent.click(button);
+    expect(screen.getByText('abcdefgh')).toBeInTheDocument();
+  });
 
-  userEvent.click(button);
-  expect(screen.getByText('abcdefgh')).toBeInTheDocument();
+  test('should test connection with linkLabel as ID ', () => {
+    renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource2} /> </MemoryRouter>);
+    const link = screen.getByText('5e7068331c056a75e6df19b1');
 
-  screen.debug();
-});
+    expect(link).toHaveAttribute('href', '//ui-drawer/edit/connections/5e7068331c056a75e6df19b1');
+    const button = screen.getByRole('button');
 
-test('simple rendering connection with linkLabel as ID ', () => {
-  renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource2} /> </MemoryRouter>);
-  const link = screen.getByText('5e7068331c056a75e6df19b1');
+    userEvent.click(button);
+    expect(screen.getByText('abcdefgh')).toBeInTheDocument();
+  });
+  test('should test connection with disable as true ', () => {
+    renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource2} disabled /> </MemoryRouter>);
+    expect(screen.getByText('5e7068331c056a75e6df19b1')).toBeInTheDocument();
+  });
+  test('should test connectorLicenses ', () => {
+    renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connectorLicenses" resource={connectorLicenses} /> </MemoryRouter>);
+    const link = screen.getByText('abc@abc.com');
 
-  expect(link).toHaveAttribute('href', '//ui-drawer/edit/connections/5e7068331c056a75e6df19b1');
-  const button = screen.getByRole('button');
+    expect(link).toHaveAttribute('href', '//ui-drawer/edit/connectorLicenses/id');
+  });
 
-  userEvent.click(button);
-  expect(screen.getByText('abcdefgh')).toBeInTheDocument();
-
-  screen.debug();
-});
-test('simple rendering connection with disable as true ', () => {
-  renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource2} disabled /> </MemoryRouter>);
-  expect(screen.getByText('5e7068331c056a75e6df19b1')).toBeInTheDocument();
-  screen.debug();
-});
-test('connectorLicenses rendering', () => {
-  renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connectorLicenses" resource={connectorLicenses} /> </MemoryRouter>);
-  const link = screen.getByText('abc@abc.com');
-
-  expect(link).toHaveAttribute('href', '//ui-drawer/edit/connectorLicenses/id');
-
-  screen.debug();
-});
-describe('jjj', () => {
   runServer();
-  test('connectionresource liink ', async () => {
+  test('should test connectionr esource link ', async () => {
     mockGetRequestOnce('/api/shared/ashares', [
       {
         _id: '618cc96475f94b333a55bbd3',

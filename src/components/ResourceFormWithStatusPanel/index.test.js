@@ -65,7 +65,7 @@ describe('test', () => {
 
     expect(message).toBeInTheDocument();
   });
-  test('testing for online connection', async () => {
+  test('should test for online connection', async () => {
     const {store} = await readyStore();
     const props = {
       className: 'makeStyles-resourceFormWrapper-250',
@@ -83,7 +83,7 @@ describe('test', () => {
 
     expect(message).not.toBeInTheDocument();
   });
-  test('testing for depricated export', async () => {
+  test('should test for depricated export', async () => {
     const {store} = await readyStore();
     const props = {
       className: 'makeStyles-resourceFormWrapper-250',
@@ -102,7 +102,7 @@ describe('test', () => {
     expect(message).toBeInTheDocument();
     expect(message).toHaveAttribute('href', SORT_GROUP_CONTENT_URL);
   });
-  test('testing for bundle install notification', async () => {
+  test('should test for bundle install notification', async () => {
     const {store} = await readyStore();
     const props = {
       className: 'makeStyles-resourceFormWrapper-250',
@@ -122,7 +122,7 @@ describe('test', () => {
 
     expect(link).toHaveAttribute('href', '/');
   });
-  test('testing for notification toaster', async () => {
+  test('should test for notification toaster', async () => {
     const {store} = await readyStore();
     const props = {
       className: 'makeStyles-resourceFormWrapper-250',
