@@ -52,6 +52,12 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     overflow: 'auto',
     background: theme.palette.background.paper,
+    '& .react-flow__minimap-node': {
+      fill: theme.palette.secondary.lightest,
+      stroke: theme.palette.secondary.lightest,
+      width: 300,
+      height: 220,
+    },
   },
   title: {
     display: 'flex',
@@ -174,8 +180,6 @@ export function Canvas({ flowId, fullscreen }) {
               <BackgroundPanel />
               <MiniMap
                 nodeBorderRadius={75}
-                nodeStrokeColor="#D6E4ED"
-                nodeColor="#D6E4ED"
               />
               <ExportFlowStateButton flowId={flowId} />
               <Controls showInteractive={false} />
