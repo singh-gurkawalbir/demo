@@ -172,7 +172,9 @@ export function Canvas({ flowId, fullscreen }) {
               <SourceTitle onClick={handleAddNewSource} />
               <DestinationTitle />
               <BackgroundPanel />
-              <MiniMap />
+              <MiniMap
+                nodeBorderRadius={75}
+              />
               <ExportFlowStateButton flowId={flowId} />
               <Controls showInteractive={false} />
             </ReactFlow>
