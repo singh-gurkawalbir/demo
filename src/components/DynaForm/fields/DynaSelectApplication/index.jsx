@@ -144,12 +144,8 @@ export default function SelectApplication(props) {
 
   const dispatch = useDispatch();
   const handleChange = useCallback(e => {
-    let newValue = isMulti ? [...value, e.value] : e?.value;
-
-    if (e === null || e === undefined) {
-      newValue = '';
-    }
     ref?.current?.select?.blur();
+    const newValue = isMulti ? [...value, e.value] : e.value;
 
     setInputValue(value.label);
     setMenuIsOpen(false);
@@ -241,7 +237,6 @@ export default function SelectApplication(props) {
         {...isLoggableAttr(isLoggable)}
         ref={ref}
         name={name}
-        isClearable
         inputValue={inputValue}
         placeholder={placeholder}
         closeMenuOnSelect
