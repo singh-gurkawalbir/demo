@@ -95,13 +95,13 @@ export default function RouterPanel({ editorId }) {
 
   const activeProcessor = useSelector(state => selectors.editorActiveProcessor(state, editorId));
 
-  const BranchHeading = ({helpText, children}) => (
+  const BranchHeading = ({ helpKey, children }) => (
     <div className={classes.heading}>
       <Typography variant="h5">{children}</Typography>
       <Help
         title={children}
         className={classes.helpButton}
-        helpText={helpText}
+        helpKey={helpKey}
     />
     </div>
   );
@@ -146,7 +146,7 @@ export default function RouterPanel({ editorId }) {
     <div className={classes.panelContent}>
       <BranchDrawer editorId={editorId} />
 
-      <BranchHeading helpText="Missing branch type help!">Branching type</BranchHeading>
+      <BranchHeading helpKey="flow.router.branchType">Branching type</BranchHeading>
 
       <div className={classes.branchingType}>
         <DynaRadioGroup
@@ -155,7 +155,6 @@ export default function RouterPanel({ editorId }) {
           isValid // there are no validations on this field, hence always valid
           type="radiogroup"
           disabled={isViewMode}
-          helpKey="flow.router.branchType"
           label="Records will flow through:"
           options={[
             {
@@ -170,7 +169,7 @@ export default function RouterPanel({ editorId }) {
       />
       </div>
 
-      <BranchHeading helpText={messageStore('BRANCHES_SECTION_INFO')}>Branches</BranchHeading>
+      <BranchHeading helpKey="flow.routers.branches">Branches</BranchHeading>
 
       <Divider orientation="horizontal" className={classes.divider} />
 

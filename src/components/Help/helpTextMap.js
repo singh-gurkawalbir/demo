@@ -1471,6 +1471,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'flow.router.branchType': `Select the <u>type of branching</u> based on how you want records to flow through the branches:
   <ul><li>If you select First matching branch, the branching conditions will be applied to a record sequentially based on the order of the branches. The record will only go through the first branch where the conditions are met.</li>
   <li>If you select All matching branches, the branching conditions will be applied to a record for all branches. The record will go through all the branches where the conditions are met.</li></ul>`,
+  'flow.routers.branches': 'Add branches and define branching conditions. You can also change the order of a branch by dragging it up or down.',
   'alias.aliasId': 'Enter a descriptive, unique name to use as the Alias ID. This is what you will use in scripts to refer to the resource. Use only letters, numbers, hyphens(-) and/or underscores(_). For example, shopify_flow_neworders or netsuite-connection2_prod',
   'alias.description': 'Enter a description that provides more context on how the resource is used in your integration.',
   'alias.resourceType': 'Select the type of resource this alias will reference (such as a flow or import). Once you select the type, you can choose from a list of resources matching this type.',

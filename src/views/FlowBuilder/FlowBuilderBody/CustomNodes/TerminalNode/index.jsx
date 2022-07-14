@@ -10,6 +10,7 @@ import DefaultHandle from '../Handles/DefaultHandle';
 import { useFlowContext } from '../../Context';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
+import messageStore from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -78,7 +79,7 @@ export default function TerminalNode({id, data = {}}) {
         isBeingDragged ? (
           <TerminalIcon className={classes.dragging} />
         ) : (
-          <Tooltip title={data.draggable ? 'Drag to merge with other branch' : ''} position="top">
+          <Tooltip title={messageStore(data.draggable ? 'TERMINAL_NODE_TOOLTIP' : 'TERMINAL_NODE_FROZEN_TOOLTIP')} position="top">
             <span>
               <TerminalIcon
                 disabled

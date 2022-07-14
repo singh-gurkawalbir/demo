@@ -88,8 +88,8 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
 
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',
-  BRANCHES_SECTION_INFO: 'Add branches and define branching conditions. You can also change the order of a branch by dragging it up or down.',
-
+  TERMINAL_NODE_TOOLTIP: 'Drag to merge with other branch',
+  TERMINAL_NODE_FROZEN_TOOLTIP: 'You can merge branches only when a flow already contains more than one branch. Select “Add branching” inside the “Plus” (+) button next to each step to add branches that can be merged.',
 };
 
 export default function messageStore(key, argsObj) {
