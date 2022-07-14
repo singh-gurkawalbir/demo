@@ -10,7 +10,6 @@ import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 import TileActions from './TileActions';
-import { deleteIntegration } from '../../../../sagas/resources';
 
 const history = createMemoryHistory();
 
@@ -136,7 +135,7 @@ jest.mock('../../../../components/EllipsisActionMenu', () => ({
   default: props => (
 
     // eslint-disable-next-line react/button-has-type
-    (<div><button onClick={props.onAction('generateTemplateZip')}>Download</button><button>CloneApp</button><button onClick={props.onAction('uninstallConnector')}>Delete</button><button onClick={props.onAction('deleteIntegration')}>DeleteDIY</button></div>)
+    (props.actionsMenu.length < 2 ? <div>LESSOPTIONS</div> : <div><button onClick={props.onAction('generateTemplateZip')}>Download</button><button>CloneApp</button><button onClick={props.onAction('uninstallConnector')}>Delete</button><button onClick={props.onAction('deleteIntegration')}>DeleteDIY</button></div>)
   ),
 }));
 describe('TileActions UI tests', () => {
@@ -218,5 +217,21 @@ describe('TileActions UI tests', () => {
     const {utils} = renderWithProviders(<Router history={history}><TileActions /></Router>);
 
     expect(utils.container).toBeEmptyDOMElement();
+  });
+  test('should not display the clone integration option for IA ', () => {
+    props.tile.isStandlone = true;
+    props.tile._connectorId = '5b61ae4aeb538642c26bdbe6';
+    // props.tile.name = 'Salesforce - NetSuite Connector';
+    initTileActions(props);
+    expect(screen.queryByText('CloneApp')).toBeNull;
+    expect(screen.getByText(/LESSOPTIONS/i)).toBeInTheDocument;
+  });
+  test('should not display the clone integration option IA ', () => {
+    props.tile.isStandlone = true;
+    props.tile._connectorId = '5b61ae4aeb538642c26bdbe6';
+    props.tile.name = 'Salesforce - NetSuite Connector';
+    initTileActions(props);
+    expect(screen.getByText('CloneApp')).toBeInTheDocument;
+    expect(screen.queryByText(/LESSOPTIONS/i)).toBeNull;
   });
 });

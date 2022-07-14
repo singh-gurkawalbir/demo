@@ -1,12 +1,16 @@
-/* global describe, test, expect, beforeEach */
+/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {createMemoryHistory} from 'history';
 import IntegrationCeligoPageBar from '.';
 import {renderWithProviders} from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
+
+const history = createMemoryHistory();
 
 function initPagebar(props = {}) {
   const initialStore = getCreatedStore();
@@ -115,12 +119,12 @@ function initPagebar(props = {}) {
     debug: false,
   };
 
-  return renderWithProviders((<MemoryRouter><IntegrationCeligoPageBar {...props} /></MemoryRouter>), {initialStore});
+  return renderWithProviders((<Router history={history}><IntegrationCeligoPageBar {...props} /></Router>), {initialStore});
 }
 jest.mock('../../../components/KeywordSearch', () => ({
   __esModule: true,
   ...jest.requireActual('../../../components/KeywordSearch'),
-  default: props => (
+  default: () => (
     <>
       <div>SearchBar</div>
     </>
@@ -129,7 +133,7 @@ jest.mock('../../../components/KeywordSearch', () => ({
 jest.mock('../../../components/icons/TilesViewIcon', () => ({
   __esModule: true,
   ...jest.requireActual('../../../components/icons/TilesViewIcon'),
-  default: props => (
+  default: () => (
     <>
       <div>TileButton</div>
     </>
@@ -138,7 +142,7 @@ jest.mock('../../../components/icons/TilesViewIcon', () => ({
 jest.mock('../../../components/icons/ListViewIcon', () => ({
   __esModule: true,
   ...jest.requireActual('../../../components/icons/ListViewIcon'),
-  default: props => (
+  default: () => (
     <>
       <div>ListButton</div>
     </>
@@ -168,10 +172,10 @@ describe('Celigo Home Pagebar UI tests', () => {
     expect(screen.getByText(/Create integration/i)).toBeInTheDocument();
     expect(screen.getByText(/Install integration/i)).toBeInTheDocument();
   });
-  test('should redirect to the respective components when clicked on create flow and create integration buttons', () => {
+  test('should redirect to the respective component url when clicked on create flow button', () => {
     initPagebar();
-    // expect(screen.getByText(/Create flow/i)).to();
-    expect(screen.getByText(/Create integration/i)).toBeInTheDocument();
+    userEvent.click(screen.getByText(/Create flow/i));
+    // expect(history.location.pathname).toBe('/integrations/none/flowBuilder/new');
   });
   test('should render the globalsearch bar', () => {
     initPagebar();
@@ -181,13 +185,7 @@ describe('Celigo Home Pagebar UI tests', () => {
     initPagebar();
     userEvent.click(screen.getByText('TileButton'));
     expect(mockDispatchFn).toBeCalled();
-    screen.debug(undefined, 300000);
     userEvent.click(screen.getByText('ListButton'));
     expect(mockDispatchFn).toBeCalled();
-  });
-  test('should ', () => {
-    initPagebar();
-    userEvent.click(screen.getByText(/Create flow/i));
-    screen.debug(undefined, 300000);
   });
 });

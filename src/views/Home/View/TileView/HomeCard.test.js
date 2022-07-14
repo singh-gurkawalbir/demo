@@ -1,6 +1,6 @@
 /* global describe, test, expect, */
 import React from 'react';
-import {screen} from '@testing-library/react';
+import {screen, waitFor} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import {renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
@@ -20,6 +20,7 @@ const cprops = {sortedTiles: [
     mode: 'install',
     supportsChild: false,
     iaV2: false,
+    ssLinkedConnectionId: '62bd43c87b94d20de64e9ab3',
     _registeredConnectionIds: [
       '62bd43c87b94d20de64e9ab3',
     ],
@@ -135,10 +136,10 @@ const cprops = {sortedTiles: [
   },
 ]};
 
-function initHomeCard(props = []) {
+function initHomeCard(props = {}) {
   const initialStore = getCreatedStore();
 
-  //   initialStore.getState().data.resources
+  initialStore.getState().data.resources.tiles = cprops.sortedTiles;
   initialStore.getState().user = {
     preferences: {
       environment: 'production',
@@ -150,9 +151,15 @@ function initHomeCard(props = []) {
       showReactSneakPeekFromDate: '2019-11-05',
       showReactBetaFromDate: '2019-12-26',
       defaultAShareId: 'own',
-    //   dashboard: {
-    //     view: 'list',
-    //   },
+      dashboard: {
+        view: 'tile',
+        tilesOrder: [
+          '62bedcdca0f5f21448171ea2',
+          '62be9cf14a6daf23ece8ed33',
+          '62beb29aa0f5f2144816f80c',
+          '6253af74cddb8a1ba550a010',
+        ],
+      },
     },
     profile: {
       _id: '62386a5fed961b5e22e992c7',
@@ -171,82 +178,13 @@ function initHomeCard(props = []) {
       authTypeSSO: null,
       emailHash: '087e41a1843139c27bce730b99664a84',
     },
-    notifications: {
-      accounts: [],
-      stacks: [],
-      transfers: [],
-    },
-    org: {
-      users: [],
-      accounts: [
-        {
-          _id: 'own',
-          accessLevel: 'owner',
-          ownerUser: {
-            licenses: [
-              {
-                _id: '62386a5fed961b5e22e992c8',
-                created: '2022-03-21T12:06:55.696Z',
-                lastModified: '2022-03-21T12:06:55.707Z',
-                type: 'endpoint',
-                tier: 'free',
-                supportTier: 'essential',
-                sandbox: false,
-                endpoint: {
-                  production: {
-                    numEndpoints: 2,
-                    numAddOnEndpoints: 0,
-                    numFlows: 1,
-                    numAddOnFlows: 0,
-                    numTradingPartners: 0,
-                    numAddOnTradingPartners: 0,
-                    numAgents: 0,
-                    numAddOnAgents: 0,
-                  },
-                  sandbox: {
-                    numEndpoints: 0,
-                    numAddOnEndpoints: 0,
-                    numFlows: 0,
-                    numAddOnFlows: 0,
-                    numTradingPartners: 0,
-                    numAddOnTradingPartners: 0,
-                    numAgents: 0,
-                    numAddOnAgents: 0,
-                  },
-                  apiManagement: false,
-                },
-                resumable: false,
-              },
-              {
-                _id: '6254397e22a35c0de1fc245e',
-                created: '2022-04-11T14:21:50.104Z',
-                lastModified: '2022-04-11T14:21:50.111Z',
-                expires: '2022-05-11T14:21:50.103Z',
-                type: 'integrationApp',
-                _connectorId: '6253b0cbcddb8a1ba550a048',
-                sandbox: false,
-              },
-              {
-                _id: '625e3e1b26f1473265febe40',
-                created: '2022-04-19T04:44:11.022Z',
-                lastModified: '2022-04-19T04:44:11.030Z',
-                expires: '2022-05-19T04:44:11.022Z',
-                type: 'integrationApp',
-                _connectorId: '6253b0cbcddb8a1ba550a048',
-                sandbox: false,
-              },
-            ],
-          },
-        },
-      ],
-    },
     debug: false,
   };
 
-  return (renderWithProviders(<MemoryRouter><HomeCard {...props} /></MemoryRouter>), {initialStore});
+  return renderWithProviders(<MemoryRouter><HomeCard {...props} /></MemoryRouter>, {initialStore});
 }
 describe('HomeCard UI tests', () => {
-  test('should display the contents of the tiles passed as props', () => {
+  test('should display the contents of the tiles passed as props', async () => {
     initHomeCard(cprops);
     expect(screen.getByText('demoint')).toBeInTheDocument();
     expect(screen.getByText(/Data Warehouse/i, {exact: false})).toBeInTheDocument();
@@ -255,12 +193,11 @@ describe('HomeCard UI tests', () => {
     const statusMssg = screen.getAllByText(/Continue setup >/i);
 
     expect(statusMssg).toHaveLength(3);
-    screen.debug(null, Infinity);
   });
-  test('should render empty DOM when no props are passed', () => {
+  test('should render empty DOM when no props are passed', async () => {
     const props = {sortedTiles: []};
     const {utils} = renderWithProviders(<MemoryRouter><HomeCard {...props} /></MemoryRouter>);
 
-    expect(utils.container).toContainHTML('<div><div class="makeStyles-pageWrapper-52"><ul class="makeStyles-listContainer-55 makeStyles-container-51" /></div></div>'); // blank html tags//
+    await waitFor(() => expect(utils.container).toContainHTML('<div><div class="makeStyles-pageWrapper-56"><ul class="makeStyles-listContainer-59 makeStyles-container-55" /></div></div>')); // blank html tags//
   });
 });
