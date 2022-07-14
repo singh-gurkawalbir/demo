@@ -22,7 +22,7 @@ import {
   isFileAdaptor } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import { isIntegrationApp } from '../../../../utils/flows';
-import { EMPTY_RAW_DATA } from '../../../../utils/constants';
+import { EMPTY_RAW_DATA } from '../../../../constants';
 
 export function* _getUIDataForResource({ resource, connection, flow, refresh }) {
   const { adaptorType, type, sampleData } = resource || {};

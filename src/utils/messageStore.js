@@ -1,4 +1,4 @@
-import { MFA_URL, REVISIONS_GUIDE_URL } from './constants';
+import { MFA_URL, REVISIONS_GUIDE_URL } from '../constants';
 
 const messages = {
   CONTACT_SALES_MESSAGE: 'We will contact you soon to schedule your demo and discuss your business needs. In the meantime,',
@@ -34,6 +34,14 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   DIY_INSTALL_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the resources in this integration, but  updates to the original integration will not affect this new copy. This integration has not been reviewed by Celigo. Make sure you trust the author before installing, and carefully review all components in the integration before proceeding.',
   CELIGO_AUTHORED_TEMPLATE_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account.',
   THIRD_PARTY_TEMPLATE_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account. This template has not been reviewed by Celigo. Make sure you trust the publisher before installing, and carefully review all components in the integration before proceeding.',
+  ROUTER_DELETE_CONFIRMATION_MESSAGE: `<p>Are you sure you want to delete this branching?</p>
+  <p>In the first branch, all steps/branching routers will persist and become a linear flow.</p>
+  <p>All other branches and all steps/branching routers inside 
+  ({{configuredCount}} configured steps, {{unconfiguredCount}} unconfigured steps) will be removed.</p>`,
+  BRANCH_DELETE_CONFIRMATION_MESSAGE: `<p>Are you sure you want to delete this branch?</p>
+  <p>This will also remove all steps/branchings inside this branch 
+  ({{configuredCount}} configured steps, {{unconfiguredCount}} unconfigured steps).</p>`,
+  DELETE_LAST_BRANCH_MESSAGE: 'Branch cannot be deleted. Branching must have at least one branch.',
   SSO_LICENSE_UPGRADE_INFO: `<b>Upgrade your account to make signing in easier and more secure.</b> Advantages of SSO authentication include: <br>
   <ul><li>Improved security</li>
   <li>Reduced password fatigue</li>
@@ -59,6 +67,10 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   REVERT_SUCCESS: 'You\'ve successfully reverted your changes.',
   SNAPSHOT_SUCCESS: 'You\'ve successfully created a snapshot.',
   // #endregion
+  INCOMPLETE_FLOW_TOOLTIP: 'Configure all steps to allow running your flow',
+  INCOMPLETE_FLOW_SCHEDULE_TOOLTIP: 'Configure all steps to allow scheduling your flow',
+  BRANCH_EMPTY_FILTER_RECORD_PASS: 'No conditions defined. All records will flow through this branch.',
+  BRANCH_EMPTY_FILTER: 'No conditions defined.',
   // #region MFA
   MFA_SETUP_SUCCESS: 'MFA enabled and device connected successfully.',
   MFA_ENABLED: 'MFA enabled successfully.',
@@ -70,9 +82,14 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   DELETE_TRUSTED_DEVICE: "Are you sure you want to delete your trusted MFA device? You'll need to re-authenticate your account the next time you sign into integrator.io with the device.",
   RESET_MFA: "Are you sure you want to reset MFA? You'll need to re-associate your authenticator app and configure your device in integrator.io.",
   DELETE_DEVICE_SUCCESS: 'Device deleted successfully.',
+  SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
   CONFIRM_LEAVE_MFA: 'Are you sure you want to leave? Your MFA settings will be disabled unless you connect your device successfully.',
   // #endregion
 
+  MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
+  MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',
+  TERMINAL_NODE_TOOLTIP: 'Drag to merge with other branch',
+  TERMINAL_NODE_FROZEN_TOOLTIP: 'You can merge branches only when a flow already contains more than one branch. Select “Add branching” inside the “Plus” (+) button next to each step to add branches that can be merged.',
 };
 
 export default function messageStore(key, argsObj) {
@@ -81,8 +98,8 @@ export default function messageStore(key, argsObj) {
   if (!str) return '';
   if (!argsObj || typeof argsObj !== 'object') return str;
 
-  Object.keys(argsObj).forEach(key => {
-    str = str.replace(`{{{${key}}}}`, argsObj[key]);
+  Object.keys(argsObj).forEach(arg => {
+    str = str.replace(`{{${arg}}}`, argsObj[arg]);
   });
 
   return str;

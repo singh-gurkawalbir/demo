@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import RenewIcon from '../../../../../icons/RenewIcon';
 import { selectors } from '../../../../../../reducers';
 import { isIntegrationAppVersion2 } from '../../../../../../utils/integrationApps';
-import { TILE_STATUS } from '../../../../../../utils/constants';
+import { TILE_STATUS } from '../../../../../../constants';
 import actions from '../../../../../../actions';
 import FieldMessage from '../../../../../DynaForm/fields/FieldMessage';
 

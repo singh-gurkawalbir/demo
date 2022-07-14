@@ -1,6 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../actions/types';
-import { POLLING_STATUS } from '../../utils/constants';
+import { POLLING_STATUS } from '../../constants';
 
 export const defaultState = {
   appErrored: false,

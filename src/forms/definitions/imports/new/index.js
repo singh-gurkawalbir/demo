@@ -1,6 +1,6 @@
 import {applicationsList, applicationsPlaceHolderText} from '../../../../constants/applications';
 import { getFilterExpressionForAssistant } from '../../../../utils/connections';
-import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../../utils/constants';
+import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../../constants';
 import { rdbmsAppTypeToSubType } from '../../../../utils/resource';
 
 const visibleWhen = [

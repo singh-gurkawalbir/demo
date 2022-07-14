@@ -21,7 +21,7 @@ import { selectors } from '../../../reducers/index';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';
 import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
-import { emptyObject, REST_ASSISTANTS } from '../../../utils/constants';
+import { emptyObject, REST_ASSISTANTS } from '../../../constants';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 import { pingConnectionParentContext } from '../../../utils/requestOptions';

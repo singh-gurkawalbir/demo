@@ -1,6 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
-import { emptyList } from '../../../utils/constants';
+import { emptyList } from '../../../constants';
 import { stringCompare } from '../../../utils/sort';
 
 const emptyObj = {};

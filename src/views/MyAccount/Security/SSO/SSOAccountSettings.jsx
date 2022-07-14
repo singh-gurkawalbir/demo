@@ -22,7 +22,6 @@ import FilledButton from '../../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import ButtonWithTooltip from '../../../../components/Buttons/ButtonWithTooltip';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
-import { SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   ssoForm: {
@@ -110,7 +109,7 @@ const SSOLicenseUpgradeContainer = () => {
   );
 
   useEffect(() => {
-    if (platformLicenseActionMessage === SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE) {
+    if (platformLicenseActionMessage === messageStore('SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE')) {
       enquesnackbar({message: <RawHtml html={messageStore('SSO_LICENSE_UPGRADE_REQUESTED_MESSAGE')} />, variant: 'success'});
       dispatch(actions.license.clearActionMessage());
     }

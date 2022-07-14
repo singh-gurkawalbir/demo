@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import { emptyList } from '../../../../utils/constants';
+import { emptyList } from '../../../../constants';
 import errorMessageStore from '../../../../utils/errorStore';
 import messageStore from '../../../../utils/messageStore';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
