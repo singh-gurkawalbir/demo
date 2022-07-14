@@ -315,10 +315,11 @@ export default function ProfilePanel() {
     remount: count,
     skipMonitorLevelAccessCheck: true,
   });
+  const infoTextProfile = 'Set your preferences or change your password as needed.';
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Profile" className={classes.profilePanelHeader} />
+      <PanelHeader title="Profile" className={classes.profilePanelHeader} infoText={infoTextProfile} />
       <LoadResources required resources={isAccountOwnerOrAdmin ? 'ssoclients' : ''}>
         <DynaForm formKey={formKey} className={classes.formContainer} />
         <DynaSubmit

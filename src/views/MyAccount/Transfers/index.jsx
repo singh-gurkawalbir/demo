@@ -39,6 +39,7 @@ export default function Transfers() {
   const handleNewTransferClick = () => {
     setShowInviteView(true);
   };
+  const infoTextTransfers = 'Transfer individual integrations between integrator.io accounts. Send integrations by specifying the email of the owner of the integrator.io account you want to send the integration to. The receiving account owner needs to accept the transfer. Once accepted, the integration will be removed from your account and instead reside in the receiver’s account. Note: the receiver needs to be an account owner and cannot be part of the same organization as the sender.';
 
   return (
     <>
@@ -46,7 +47,7 @@ export default function Transfers() {
         {!showInviteView && (
           <>
             <div className={classes.root}>
-              <PanelHeader title="Transfers" >
+              <PanelHeader title="Transfers" infoText={infoTextTransfers}>
                 <TextButton
                   data-test="newTransfer"
                   startIcon={<AddIcon />}

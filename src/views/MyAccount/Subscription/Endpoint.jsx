@@ -246,6 +246,7 @@ export default function Endpoint() {
       <Spinner centerAll />
     );
   }
+  const infoTextSubscription = 'See details of your product subscription and request an upgrade when needed. An endpoint refers to each application or technology service that you create a connection to in integrator.io. Unlimited connections to each application are allowed and only count as one endpoint.';
 
   return (
     <>
@@ -293,7 +294,7 @@ export default function Endpoint() {
       </div>
       )}
       <div className={classes.root}>
-        <PanelHeader title="Subscription" className={classes.heading} />
+        <PanelHeader title="Subscription" className={classes.heading} infoText={infoTextSubscription} />
         <div className={classes.subscriptionBox}>
           <div className={classes.subscriptionBoxInner}>
             <div className={classes.subscriptionBoxInnerLeft}>
