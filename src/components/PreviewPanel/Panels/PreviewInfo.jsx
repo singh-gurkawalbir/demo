@@ -105,7 +105,7 @@ export default function PreviewInfo(props) {
   const {data: resourceDefaultMockData} = useSelector(state => selectors.getSampleDataContext(state, {
     flowId,
     resourceId,
-    resourceType: 'imports',
+    resourceType,
     stage: sampleDataStage.imports.processedFlowInput,
   }));
   const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
