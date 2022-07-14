@@ -10,13 +10,13 @@ const isDrag = true;
 const isTileNotDragged = true;
 
 describe('Testing HomePageCardContainer Component', () => {
-  test('should render the same text passed into props when tile is not dragged', async () => {
+  test('should render the same text passed into props when tile is not in drag in progress and not dragged', async () => {
     const {container} = render(<HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged} >{values}</HomePageCardContainer>);
     const value = screen.getByText(values);
 
     expect(value).toBeInTheDocument();
     fireEvent.mouseEnter(value);
-    const svgEl = container.querySelector("[class='MuiSvgIcon-root']");
+    const svgEl = container.querySelector("[viewBox='0 0 24 24']");
 
     expect(svgEl).toBeInTheDocument();
     fireEvent.mouseLeave(value);
@@ -29,11 +29,11 @@ describe('Testing HomePageCardContainer Component', () => {
 
     expect(value).toBeInTheDocument();
     fireEvent.drag(value);
-    const svgEl = container.querySelector("[class='MuiSvgIcon-root']");
+    const svgEl = container.querySelector("[viewBox='0 0 24 24']");
 
     expect(svgEl).toBeInTheDocument();
   });
-  test('should render the same text passed into props when tile is not dragged', async () => {
+  test('should render the same text passed into props when tile is drag in progress and not completely dragged', async () => {
     const {container} = render(<HomePageCardContainer isDragInProgress={isDrag} isTileDragged={isTileDragged}> {values} </HomePageCardContainer>);
     const value = screen.getByText(values);
 

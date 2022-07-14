@@ -11,7 +11,6 @@ test('should render the same text passed into props', async () => {
   renderWithProviders(<Info label={values} variant={values1} />);
   const value = screen.getByText(values);
 
-  screen.debug();
   expect(value).toBeInTheDocument();
 });
 

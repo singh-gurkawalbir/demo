@@ -26,90 +26,6 @@ const props = {
   accessLevel: 'manage',
 };
 
-const props1 = {
-  content: 'Your subscription has been renewed. Click Reactivate to continue.',
-  showTrialLicenseMessage: false,
-  expired: false,
-  connectorId: '57c8199e8489cc1a298cc6ea',
-  trialExpired: false,
-  licenseId: '5bceb6b51de6a24df7642d46',
-  tileStatus: 'success',
-  isIntegrationV2: false,
-  integrationId: '5e982de03a5827019768ac89',
-  mode: 'settings',
-  name: 'Cash Application Manager for NetSuite',
-  _connectorId: '57c8199e8489cc1a298cc6ea',
-  resumable: true,
-  accessLevel: 'manage',
-};
-const props3 = {
-  content: 'Buy the Integration',
-  showTrialLicenseMessage: true,
-  expired: false,
-  connectorId: '57c8199e8489cc1a298cc6ea',
-  trialExpired: false,
-  licenseId: '5f5f3541c819d4674ae24404',
-  tileStatus: 'is_pending_setup',
-  isIntegrationV2: true,
-  integrationId: '5f5f35863a46da41054e8d55',
-  mode: 'settings',
-  name: 'Cash Application Manager for NetSuite',
-  _connectorId: '57c8199e8489cc1a298cc6ea',
-  resumable: true,
-  accessLevel: 'manage',
-};
-
-const props4 = {
-  content: 'Request to buy the Integration or cancel',
-  showTrialLicenseMessage: true,
-  expired: false,
-  connectorId: '57c8199e8489cc1a298cc6ea',
-  trialExpired: true,
-  licenseId: '5f5f3541c819d4674ae24404',
-  tileStatus: 'success',
-  isIntegrationV2: false,
-  integrationId: '5f5f35863a46da41054e8d55',
-  mode: 'settings',
-  name: 'Cash Application Manager for NetSuite',
-  _connectorId: '57c8199e8489cc1a298cc6ea',
-  resumable: true,
-  accessLevel: 'administrator',
-};
-
-const props5 = {
-  content: 'Request to renew Integration',
-  showTrialLicenseMessage: false,
-  expired: false,
-  connectorId: '57c8199e8489cc1a298cc6ea',
-  trialExpired: false,
-  licenseId: '5f5f3541c819d4674ae24404',
-  tileStatus: 'is_pending_setup',
-  isIntegrationV2: false,
-  integrationId: '5f5f35863a46da41054e8d55',
-  mode: 'settings',
-  name: 'Cash Application Manager for NetSuite',
-  _connectorId: '57c8199e8489cc1a298cc6ea',
-  resumable: false,
-  accessLevel: 'manage',
-};
-
-const props6 = {
-  content: 'Buy the Integration and will send the request',
-  showTrialLicenseMessage: true,
-  expired: false,
-  connectorId: '57c8199e8489cc1a298cc6ea',
-  trialExpired: true,
-  licenseId: '5f5f3541c819d4674ae24404',
-  tileStatus: 'success',
-  isIntegrationV2: false,
-  integrationId: '5f5f35863a46da41054e8d55',
-  mode: 'settings',
-  name: 'Cash Application Manager for NetSuite',
-  _connectorId: '57c8199e8489cc1a298cc6ea',
-  resumable: false,
-  accessLevel: 'manage',
-};
-
 describe('Testing Tile Notification Component', () => {
   runServer();
   let mockDispatchFn;
@@ -120,26 +36,9 @@ describe('Testing Tile Notification Component', () => {
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
         case 'LICENSE_UPDATE_REQUEST':
-        //   initialStore.getState().session.loadResources.ssoclients = 'received';
-        //   initialStore.getState().data.resources.ssoclients = [];
-        //   initialStore.getState().comms.networkComms['GET:/ssoclients'] = {
-        //     status: 'success',
-        //     hidden: false,
-        //     refresh: false,
-        //     method: 'GET',
-        //   };
           break;
         case 'INTEGRATION_APPS_LICENSE_RESUME':
-        //   initialStore.getState().session.loadResources.ssoclients = 'received';
-        //   initialStore.getState().data.resources.ssoclients = [];
-        //   initialStore.getState().comms.networkComms['GET:/ssoclients'] = {
-        //     status: 'success',
-        //     hidden: false,
-        //     refresh: false,
-        //     method: 'GET',
-        //   };
           break;
-
         default:
       }
     });
@@ -149,8 +48,14 @@ describe('Testing Tile Notification Component', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('Should render the data provided', async () => {
-    renderWithProviders(<ConfirmDialogProvider><MemoryRouter> <TileNotification {...props} /></MemoryRouter></ConfirmDialogProvider>);
+  test('Should able to request to renew with multiple buttons', async () => {
+    renderWithProviders(
+      <ConfirmDialogProvider>
+        <MemoryRouter>
+          <TileNotification {...props} />
+        </MemoryRouter>
+      </ConfirmDialogProvider>
+    );
     const subscription = screen.getByText('Your subscription expired on 03/31/2022. Contact sales to renew your subscription.');
 
     expect(subscription).toBeInTheDocument();
@@ -169,8 +74,24 @@ describe('Testing Tile Notification Component', () => {
     expect(submit).not.toBeInTheDocument();
   });
 
-  test('test1', async () => {
-    renderWithProviders(<ConfirmDialogProvider><MemoryRouter> <TileNotification {...props1} /></MemoryRouter></ConfirmDialogProvider>);
+  test('Should able to request to reactivate', async () => {
+    renderWithProviders(
+      <ConfirmDialogProvider>
+        <MemoryRouter>
+          <TileNotification
+            {...{...props,
+              content: 'Your subscription has been renewed. Click Reactivate to continue.',
+              expired: false,
+              resumable: true,
+              mode: 'setting',
+              licenseId: '5bceb6b51de6a24df7642d46',
+              integrationId: '5e982de03a5827019768ac89',
+              _connectorId: '57c8199e8489cc1a298cc6ea',
+              name: 'Cash Application Manager for NetSuite'}}
+          />
+        </MemoryRouter>
+      </ConfirmDialogProvider>
+    );
 
     const content = screen.getByText('Your subscription has been renewed. Click Reactivate to continue.');
 
@@ -185,8 +106,30 @@ describe('Testing Tile Notification Component', () => {
     expect(message).toBeInTheDocument();
   });
 
-  test('Request to Buy single button', async () => {
-    renderWithProviders(<ConfirmDialogProvider><MemoryRouter> <TileNotification {...props3} /></MemoryRouter></ConfirmDialogProvider>);
+  test('Should able to request to Buy single button', async () => {
+    const licenseId = '5f5f3541c819d4674ae24404';
+
+    renderWithProviders(
+      <ConfirmDialogProvider>
+        <MemoryRouter>
+          <TileNotification
+            {...{...props,
+              content: 'Buy the Integration',
+              showTrialLicenseMessage: true,
+              expired: false,
+              licenseId,
+              tileStatus: 'is_pending_setup',
+              isIntegrationV2: true,
+              integrationId: '5f5f35863a46da41054e8d55',
+              mode: 'settings',
+              name: 'Cash Application Manager for NetSuite',
+              _connectorId: '57c8199e8489cc1a298cc6ea',
+              resumable: true,
+            }}
+          />
+        </MemoryRouter>
+      </ConfirmDialogProvider>
+    );
 
     const content = screen.getByText('Buy the Integration');
 
@@ -213,12 +156,34 @@ describe('Testing Tile Notification Component', () => {
     expect(submitMessage).toBeInTheDocument();
     userEvent.click(submitMessage);
 
-    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', props3.connectorId, props3.licenseId));
+    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', props.connectorId, licenseId));
     expect(submitMessage).not.toBeInTheDocument();
   });
 
-  test('Request to Buy with multiple buttons', async () => {
-    renderWithProviders(<ConfirmDialogProvider><MemoryRouter> <TileNotification {...props4} /></MemoryRouter></ConfirmDialogProvider>);
+  test('Should able to request to Buy with multiple buttons', async () => {
+    const integrationId = '5f5f35863a46da41054e8d55';
+
+    renderWithProviders(
+      <ConfirmDialogProvider>
+        <MemoryRouter>
+          <TileNotification
+            {...{...props,
+              content: 'Request to buy the Integration or cancel',
+              showTrialLicenseMessage: true,
+              expired: false,
+              trialExpired: true,
+              licenseId: '5f5f3541c819d4674ae24404',
+              integrationId: '5f5f35863a46da41054e8d55',
+              mode: 'settings',
+              name: 'Cash Application Manager for NetSuite',
+              _connectorId: '57c8199e8489cc1a298cc6ea',
+              resumable: true,
+              accessLevel: 'administrator',
+            }}
+          />
+        </MemoryRouter>
+      </ConfirmDialogProvider>
+    );
 
     const content = screen.getByText('Request to buy the Integration or cancel');
 
@@ -240,12 +205,31 @@ describe('Testing Tile Notification Component', () => {
 
     expect(dialogCancelButton).toBeInTheDocument();
     userEvent.click(dialogSubmitButton);
-    await expect(mockDispatchFn).toBeCalledWith(actions.integrationApp.license.resume(props4.integrationId));
+    await expect(mockDispatchFn).toBeCalledWith(actions.integrationApp.license.resume(integrationId));
     expect(dialogMessage).not.toBeInTheDocument();
   });
 
-  test('Request to Renew single button', async () => {
-    renderWithProviders(<ConfirmDialogProvider><MemoryRouter> <TileNotification {...props5} /></MemoryRouter></ConfirmDialogProvider>);
+  test('Should able to request to Renew single button', async () => {
+    const licenseId = '5cdd11eec6cf5f2ec5ca74b4';
+
+    renderWithProviders(
+      <ConfirmDialogProvider>
+        <MemoryRouter>
+          <TileNotification
+            {...{...props,
+              content: 'Request to renew Integration',
+              expired: false,
+              licenseId,
+              tileStatus: 'is_pending_setup',
+              integrationId: '5f5f35863a46da41054e8d55',
+              mode: 'settings',
+              name: 'Cash Application Manager for NetSuite',
+              _connectorId: '57c8199e8489cc1a298cc6ea',
+            }}
+          />
+        </MemoryRouter>
+      </ConfirmDialogProvider>
+    );
 
     const content = screen.getByText('Request to renew Integration');
 
@@ -264,12 +248,32 @@ describe('Testing Tile Notification Component', () => {
 
     expect(cancelButton).toBeInTheDocument();
     userEvent.click(submitButton);
-    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', props5.connectorId, props5.licenseId));
+    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', props.connectorId, licenseId));
     expect(submitButton).not.toBeInTheDocument();
   });
 
-  test('Request to buy with multiple buttons and it should send a request to buy the subscription', async () => {
-    renderWithProviders(<ConfirmDialogProvider><MemoryRouter> <TileNotification {...props6} /></MemoryRouter></ConfirmDialogProvider>);
+  test('Should able to request to buy with multiple buttons and it should send a request to buy the subscription', async () => {
+    const licenseId = '5f5f3541c819d4674ae24404';
+
+    renderWithProviders(
+      <ConfirmDialogProvider>
+        <MemoryRouter>
+          <TileNotification
+            {...{...props,
+              content: 'Buy the Integration and will send the request',
+              showTrialLicenseMessage: true,
+              expired: false,
+              trialExpired: true,
+              licenseId,
+              integrationId: '5f5f35863a46da41054e8d55',
+              mode: 'settings',
+              name: 'Cash Application Manager for NetSuite',
+              _connectorId: '57c8199e8489cc1a298cc6ea',
+            }}
+        />
+        </MemoryRouter>
+      </ConfirmDialogProvider>
+    );
 
     const content = screen.getByText('Buy the Integration and will send the request');
 
@@ -292,7 +296,7 @@ describe('Testing Tile Notification Component', () => {
 
     expect(cancelButton).toBeInTheDocument();
     userEvent.click(submitButton);
-    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', props6.connectorId, props6.licenseId));
+    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', props.connectorId, licenseId));
     expect(submitButton).not.toBeInTheDocument();
     userEvent.click(errorMessage);
     const uninstallMessage = screen.getByText('Contact your account owner to uninstall this integration app.');
