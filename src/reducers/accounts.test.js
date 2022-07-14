@@ -4,7 +4,7 @@ import { deepClone } from 'fast-json-patch';
 import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
-import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../utils/constants';
+import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../constants';
 import { stringCompare } from '../utils/sort';
 import messageStore from '../utils/messageStore';
 

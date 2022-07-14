@@ -10,7 +10,7 @@ import SettingsDrawer from '../../../../Mapping/Settings';
 import AutoMapperButton from '../../../../Mapping/AutoMapperButton';
 import { dataAsString, getMappingsEditorId } from '../../../../../utils/editor';
 import MappingRow from '../../../../Mapping/MappingRow';
-import { emptyObject } from '../../../../../utils/constants';
+import { emptyObject } from '../../../../../constants';
 import Mapper2 from './Mapper2';
 import NoResultTypography from '../../../../NoResultTypography';
 import VirtualizedDragContainer from '../../../../VirtualizedDragContainer';

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import { MFA_RESET_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../utils/constants';
+import { MFA_RESET_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../constants';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../../../reducers';
 

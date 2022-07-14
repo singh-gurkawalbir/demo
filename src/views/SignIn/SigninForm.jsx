@@ -9,7 +9,7 @@ import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
 import SecurityIcon from '../../components/icons/SecurityIcon';
 import { getDomain } from '../../utils/resource';
-import { AUTH_FAILURE_MESSAGE } from '../../utils/constants';
+import { AUTH_FAILURE_MESSAGE } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
 import { FilledButton, OutlinedButton } from '../../components/Buttons';

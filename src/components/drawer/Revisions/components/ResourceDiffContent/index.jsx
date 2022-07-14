@@ -5,7 +5,7 @@ import Spinner from '../../../../Spinner';
 import ResourceDiffVisualizer from '../../../../ResourceDiffVisualizer';
 import ResourceDiffError from './ResourceDiffError';
 import { selectors } from '../../../../../reducers';
-import { REVISION_TYPES } from '../../../../../utils/constants';
+import { REVISION_TYPES } from '../../../../../constants';
 import { getRevisionResourceLevelChanges, hasInvalidRevertResourceDiff } from '../../../../../utils/revisions';
 import NotificationToaster from '../../../../NotificationToaster';
 

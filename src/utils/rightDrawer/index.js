@@ -61,6 +61,7 @@ export const drawerPaths = {
     FLOW_SCHEDULE: ':flowId/schedule',
     SETTINGS: 'settings',
     IA_SETTINGS: ':flowId/settings',
+    BRANCH_EDIT: 'branch/:position',
   },
   ERROR_MANAGEMENT: {
     V1: {

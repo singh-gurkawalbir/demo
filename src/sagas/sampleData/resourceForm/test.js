@@ -26,7 +26,7 @@ import { _fetchResourceInfoFromFormKey, extractFileSampleDataProps, executeTrans
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import { getCsvFromXlsx } from '../../../utils/file';
-import { STANDALONE_INTEGRATION } from '../../../utils/constants';
+import { STANDALONE_INTEGRATION } from '../../../constants';
 import {
   constructResourceFromFormValues,
   constructSuiteScriptResourceFromFormValues,
@@ -365,7 +365,7 @@ describe('resourceFormSampleData sagas', () => {
         .delay(500)
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
         .not.call.fn(_requestExportSampleData)
-        .call(_requestImportSampleData, { formKey, refreshCache: undefined, isMockInput: undefined })
+        .call(_requestImportSampleData, { formKey, refreshCache: undefined })
         .run(500);
     });
     test('should dispatch requested status and call _requestImportSampleData incase of exports resourceType ', () => {
@@ -985,6 +985,7 @@ describe('resourceFormSampleData sagas', () => {
             throwOnError: true,
             includeStages: true,
             refresh: false,
+            addMockData: true,
           }), previewData],
         ])
         .not.call.fn(_requestFileSampleData)
@@ -997,6 +998,7 @@ describe('resourceFormSampleData sagas', () => {
           throwOnError: true,
           includeStages: true,
           refresh: false,
+          addMockData: true,
         })
         .put(actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData))
         .run();

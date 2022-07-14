@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import { parseTiles, parseJobs, getJobDuration } from './util';
 import { generateUniqueFlowId } from '../../../utils/suiteScript';
 

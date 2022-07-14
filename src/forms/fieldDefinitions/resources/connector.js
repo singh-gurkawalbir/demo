@@ -1,6 +1,6 @@
 import { connectorsList } from '../../../constants/applications';
 import { isNewId } from '../../../utils/resource';
-import { MULTIPLE_EMAILS, ABS_URL_VALIDATION_PATTERN } from '../../../utils/constants';
+import { MULTIPLE_EMAILS, ABS_URL_VALIDATION_PATTERN } from '../../../constants';
 
 export default {
   name: {

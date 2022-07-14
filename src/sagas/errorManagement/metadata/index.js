@@ -7,7 +7,7 @@ import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
 import { safeParse } from '../../../utils/string';
 import { pollApiRequests } from '../../app';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 
 export function* downloadRetryData({flowId, resourceId, retryDataKey}) {
   let response;

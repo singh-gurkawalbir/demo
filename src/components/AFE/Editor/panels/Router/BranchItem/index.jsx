@@ -1,18 +1,23 @@
 import clsx from 'clsx';
 import React from 'react';
-import { makeStyles,
+import {
+  makeStyles,
   Typography,
   Accordion,
   AccordionSummary,
   AccordionDetails,
 } from '@material-ui/core';
 import { sortableHandle } from 'react-sortable-hoc';
+import { useSelector } from 'react-redux';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
 import EditableText from '../../../../../EditableText';
 import GripperIcon from '../../../../../icons/GripperIcon';
 import MoreActionsButton from '../MoreActionsButton';
 import BranchFilter from '../BranchFilter';
+import { selectors } from '../../../../../../reducers';
 import InfoIconButton from '../../../../../InfoIconButton';
+import InfoIcon from '../../../../../icons/InfoIcon';
+import messageStore from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   summaryContainer: {
@@ -41,20 +46,25 @@ const useStyles = makeStyles(theme => ({
   },
   branchName: {
     marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: '100%',
   },
   description: {
     flexGrow: 1,
-    marginTop: 2,
+    marginTop: 3,
   },
   expandable: {
     marginLeft: theme.spacing(4),
   },
   expandIcon: {
     position: 'absolute',
-    left: theme.spacing(5),
+    left: allowSorting => theme.spacing(allowSorting ? 5 : 2),
   },
   listItem: {
     display: 'flex',
+    // must be higher than the drawer z-index, otherwise when dragging
+    // the list item "disappears" under the drawer.
+    zIndex: 1301,
   },
   index: {
     flex: 'none',
@@ -72,16 +82,64 @@ const useStyles = makeStyles(theme => ({
   },
   expanded: {
     marginBottom: '16px !important',
-    // backgroundColor: 'red',
+  },
+  focused: {
+    backgroundColor: `${theme.palette.common.white} !important`,
+  },
+  infoMsgContainer: {
+    display: 'flex',
+    padding: theme.spacing(0, 1, 2, 4),
+    backgroundColor: 'rgba(236, 236, 236, 0.5)',
+    '& > *': {
+      color: `${theme.palette.secondary.light} !important`,
+    },
+    '& > svg': {
+      marginRight: theme.spacing(1),
+    },
   },
 }));
 
-const DragHandle = sortableHandle(() => <GripperIcon style={{cursor: 'grab'}} />);
+const DragHandle = sortableHandle(() => (
+  <GripperIcon style={{ cursor: 'grab' }} />
+));
 
-export default function RouterPanel({
-  expandable, expanded, position, branchName, description, onNameChange, onToggleExpand}
-) {
-  const classes = useStyles();
+export default function BranchItem({
+  expandable,
+  collapsed,
+  position,
+  branchName,
+  description,
+  isViewMode,
+  onNameChange,
+  onToggleExpand,
+  pageProcessors,
+  editorId,
+  allowDeleting,
+  allowSorting,
+}) {
+  const classes = useStyles(allowSorting);
+  const hasRules = useSelector(state => {
+    const editorRule = selectors.editorRule(state, editorId);
+
+    return !!editorRule?.branches?.[position]?.inputFilter?.rules?.length;
+  });
+  const branchType = useSelector(state => {
+    const editorRule = selectors.editorRule(state, editorId);
+
+    return editorRule?.routeRecordsTo;
+  });
+  let infoMessage;
+
+  if (!hasRules) {
+    if (
+      branchType === 'all_matching_branches' ||
+      (branchType === 'first_matching_branch' && position === 0)
+    ) {
+      infoMessage = messageStore('BRANCH_EMPTY_FILTER_RECORD_PASS');
+    } else {
+      infoMessage = messageStore('BRANCH_EMPTY_FILTER');
+    }
+  }
 
   return (
     <li className={classes.listItem}>
@@ -92,25 +150,30 @@ export default function RouterPanel({
       <div className={classes.accordionContainer}>
         <Accordion
           elevation={0}
-          onChange={(event, expanded) => onToggleExpand(expanded, position)}
-          expanded={!!expanded}
+          onChange={(event, expanded) => onToggleExpand(!expanded, position)}
+          expanded={!collapsed}
           square
-          classes={{expanded: classes.expanded}}
-          className={classes.accordion}>
+          classes={{ expanded: classes.expanded }}
+          className={classes.accordion}
+        >
           <AccordionSummary
-            classes={{expandIcon: classes.expandIcon}}
+            classes={{
+              expandIcon: classes.expandIcon,
+              focused: classes.focused,
+            }}
             className={classes.accordionSummary}
             expandIcon={expandable && <ArrowDownIcon />}
           >
             <div className={classes.summaryContainer}>
-              <DragHandle />
+              {allowSorting && <DragHandle />}
               <div
-                className={clsx(
-                  classes.branchName,
-                  {[classes.expandable]: expandable}
-                )}>
+                className={clsx(classes.branchName, {
+                  [classes.expandable]: expandable,
+                })}
+              >
                 <EditableText
                   allowOverflow
+                  disabled={isViewMode}
                   text={branchName}
                   defaultText="Unnamed branch: Click to add name"
                   onChange={title => onNameChange(title, position)}
@@ -119,19 +182,30 @@ export default function RouterPanel({
               </div>
 
               <div className={classes.description}>
-                {description && (
-                <InfoIconButton size="xs" info={description} />
-                )}
+                {description && <InfoIconButton size="xs" info={description} />}
               </div>
 
-              <MoreActionsButton />
+              {!isViewMode && (
+              <MoreActionsButton
+                position={position}
+                pageProcessors={pageProcessors}
+                allowDeleting={allowDeleting}
+                editorId={editorId}
+              />
+              )}
             </div>
           </AccordionSummary>
 
           {expandable && (
-          <AccordionDetails className={classes.accordionDetails}>
-            <BranchFilter />
-          </AccordionDetails>
+            <AccordionDetails className={classes.accordionDetails}>
+              <BranchFilter editorId={editorId} position={position} />
+              {infoMessage && (
+                <div className={classes.infoMsgContainer}>
+                  <InfoIcon />
+                  <Typography variant="body2">{infoMessage}</Typography>
+                </div>
+              )}
+            </AccordionDetails>
           )}
         </Accordion>
       </div>

@@ -151,12 +151,13 @@ export default function Editor({ editorId }) {
     // for now, adding fields as they are used so we understand what part of the
     // editor state is needed to render the editor wire-frame.
     const e = selectors.editor(state, editorId);
+    const activeProcessor = selectors.editorActiveProcessor(state, editorId);
 
     return {
       editorId,
       editorType: e.editorType,
       layout: e.layout,
-      activeProcessor: e.activeProcessor,
+      activeProcessor,
       autoEvaluate: e.autoEvaluate,
       resultMode: e.resultMode,
       fieldId: e.fieldId,

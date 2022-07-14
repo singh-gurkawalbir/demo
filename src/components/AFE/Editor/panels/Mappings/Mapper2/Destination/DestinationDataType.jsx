@@ -106,7 +106,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DestinationDataType({dataType, disabled, nodeKey}) {
+export default function DestinationDataType({dataType, disabled, nodeKey, className}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
@@ -152,7 +152,7 @@ export default function DestinationDataType({dataType, disabled, nodeKey}) {
   }, [confirmDialog, dataType, dispatch, nodeKey, handleClose]);
 
   return (
-    <>
+    <div className={className}>
       <Tooltip
         title={disabled || open ? '' : `Data type: ${selectedDataTypeLabel} - Click to change`}
         placement="bottom" >
@@ -199,7 +199,7 @@ export default function DestinationDataType({dataType, disabled, nodeKey}) {
         </List>
 
       </ArrowPopper>
-    </>
+    </div>
   );
 }
 

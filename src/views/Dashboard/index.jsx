@@ -8,7 +8,7 @@ import LoadResources from '../../components/LoadResources';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import PanelHeader from '../../components/PanelHeader';
 import getRoutePath from '../../utils/routePaths';
-import {HOME_PAGE_PATH} from '../../utils/constants';
+import {HOME_PAGE_PATH} from '../../constants';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import {FILTER_KEYS_AD, DEFAULT_RANGE, getDashboardIntegrationId} from '../../utils/accountDashboard';
 import { hashCode } from '../../utils/string';

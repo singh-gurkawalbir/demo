@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles, useTheme, useMediaQuery, IconButton, Tooltip } from '@material-ui/core';
 import Icon from '../../../../icons/InstallationGuideIcon';
 import { TextButton } from '../../../../Buttons';
-import { REVISIONS_GUIDE_URL } from '../../../../../utils/constants';
+import { REVISIONS_GUIDE_URL } from '../../../../../constants';
 
 const useStyles = makeStyles({
   button: {

@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { SUITESCRIPT_CONNECTORS, TILE_STATUS, INTEGRATION_MODES } from '../../../utils/constants';
+import { SUITESCRIPT_CONNECTORS, TILE_STATUS, INTEGRATION_MODES } from '../../../constants';
 
 function tileDisplayName(tile) {
   let name;
