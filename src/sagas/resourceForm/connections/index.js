@@ -25,6 +25,7 @@ import { emptyObject, REST_ASSISTANTS } from '../../../utils/constants';
 import inferErrorMessages from '../../../utils/inferErrorMessages';
 import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
 import { pingConnectionParentContext } from '../../../utils/requestOptions';
+import { getHttpConnector} from '../../../constants/applications';
 
 export function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
@@ -56,7 +57,7 @@ export function* createPayload({ values, resourceId }) {
   // and React we are forced to convert HTTP to REST doc for existing REST assistants since we dont want to build
   // 150 odd connection assistants again. Once React becomes the only app and when assistants are migrated we would
   // remove this code and let all docs be built on HTTP adaptor.
-  if (
+  if (!getHttpConnector(returnData?._httpConnectorId || returnData?.http?._httpConnectorId) &&
     returnData.assistant &&
     REST_ASSISTANTS.indexOf(returnData.assistant) > -1
   ) {

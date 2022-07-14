@@ -397,60 +397,63 @@ export const groupApplications = (
     });
   }
   assistantConnectors = assistantConnectors.filter(app =>
-    !publishedConnectors?.find(pc => pc.name === app.assistant)
+    !publishedConnectors?.find(pc => pc.legacyId === app.assistant)
 
   );
-  publishedConnectors?.forEach(pc => {
-    assistantConnectors.push({
-      id: pc.name,
-      name: pc.name,
-      type: 'http',
-      export: true,
-      import: true,
-      icon: pc.name,
+    publishedConnectors?.forEach(pc => {
+      assistantConnectors.push({
+        id: pc.name,
+        name: pc.name,
+        type: 'http',
+        export: true,
+        import: true,
+        icon: pc.legacyId || pc.name,
+        assistant: pc.legacyId,
+        _httpConnectorId: pc._id,
+        helpURL: pc.helpURL,
+      });
     });
-  });
 
-  assistantConnectors.sort(stringCompare('name'));
+    assistantConnectors.sort(stringCompare('name'));
 
-  const filteredConnectors = assistantConnectors.filter(connector => {
-    if (
-      connector.assistant &&
+    const filteredConnectors = assistantConnectors.filter(connector => {
+      if (
+        connector.assistant &&
       assistants &&
       resourceType !== 'connections' &&
       appType
-    ) {
-      return true;
-    }
+      ) {
+        return true;
+      }
 
-    // Do not show FTP/S3 import for DataLoader flows
-    if (resourceType === 'pageProcessor' && isSimpleImport) {
-      return !['ftp', 's3'].includes(connector.id) && !connector.webhookOnly;
-    }
+      // Do not show FTP/S3 import for DataLoader flows
+      if (resourceType === 'pageProcessor' && isSimpleImport) {
+        return !['ftp', 's3'].includes(connector.id) && !connector.webhookOnly;
+      }
 
-    // Webhooks are shown only for exports and for page generators in flow context
-    if (resourceType && !['exports', 'pageGenerator'].includes(resourceType)) {
+      // Webhooks are shown only for exports and for page generators in flow context
+      if (resourceType && !['exports', 'pageGenerator'].includes(resourceType)) {
       // all other resource types handled here
-      return !connector.webhookOnly;
-    }
+        return !connector.webhookOnly;
+      }
 
-    return true;
-  });
+      return true;
+    });
 
-  return [
-    {
-      label: 'Databases',
-      connectors: filteredConnectors.filter(c => c.group === 'db'),
-    },
-    {
-      label: 'Universal connectors',
-      connectors: filteredConnectors.filter(c => c.group === 'tech'),
-    },
-    {
-      label: 'Connectors',
-      connectors: filteredConnectors.filter(c => !c.group),
-    },
-  ];
+    return [
+      {
+        label: 'Databases',
+        connectors: filteredConnectors.filter(c => c.group === 'db'),
+      },
+      {
+        label: 'Universal connectors',
+        connectors: filteredConnectors.filter(c => c.group === 'tech'),
+      },
+      {
+        label: 'Connectors',
+        connectors: filteredConnectors.filter(c => !c.group),
+      },
+    ];
 };
 /* MISSING WEBHOOK PROVIDERS
   'travis-org',
@@ -502,7 +505,9 @@ export const applicationsList = () => {
       type: 'http',
       export: true,
       import: true,
+      assistant: pc.legacyId,
       _httpConnectorId: pc._id,
+      helpURL: pc.helpURL,
     });
   });
 

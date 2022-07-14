@@ -153,7 +153,7 @@ export default {
 
       expression.push({ _connectorId: { $exists: false } });
 
-      if (app.assistant) {
+      if (app.assistant && !app._httpConnectorId) {
         return {
           filter: getFilterExpressionForAssistant(app.assistant, expression),
           appType: app.assistant,

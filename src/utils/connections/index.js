@@ -122,7 +122,7 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
     expression.push({ _connectorId: { $exists: false } });
   }
 
-  if (assistant) {
+  if (assistant && !getHttpConnector(connection.http?._httpConnectorId)) {
     const filterExpression = getFilterExpressionForAssistant(assistant, expression);
 
     options = { filter: filterExpression, appType: assistant };
