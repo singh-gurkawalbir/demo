@@ -3,7 +3,7 @@ import shortid from 'shortid';
 import cloneDeep from 'lodash/cloneDeep';
 import reducer, {selectors} from '.';
 import actions from '../../../../actions';
-import {HOME_PAGE_PATH} from '../../../../utils/constants';
+import {HOME_PAGE_PATH} from '../../../../constants';
 import errorMessageStore from '../../../../utils/errorStore';
 
 const amazonCategoryMappings = {

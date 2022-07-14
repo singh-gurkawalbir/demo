@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import { CDN_BASE_URL } from '../constants';
+import { CDN_BASE_URL } from '../../constants';
 import getImageUrl from './index';
 
 describe('image utils test cases', () => {

@@ -8,7 +8,7 @@ import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
 import getRoutePath from '../../utils/routePaths';
 import LoadResources from '../LoadResources';
-import { emptyList, HOME_PAGE_PATH} from '../../utils/constants';
+import { emptyList, HOME_PAGE_PATH} from '../../constants';
 import useConfirmDialog from '../ConfirmDialog';
 import { FilledButton } from '../Buttons';
 
@@ -157,6 +157,9 @@ export default function AlertDialog() {
           },
         ],
       });
+    } else {
+      // close the confirm dialog or it will remain even after user signs in
+      confirmDialog(null);
     }
   }, [confirmDialog, dispatch, showSessionStatus]);
 

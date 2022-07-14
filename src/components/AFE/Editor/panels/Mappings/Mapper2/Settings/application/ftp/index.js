@@ -1,7 +1,7 @@
 import dateTimezones from '../../../../../../../../../utils/dateTimezones';
 import mappingUtil, {ARRAY_DATA_TYPES, MAPPING_DATA_TYPES} from '../../../../../../../../../utils/mapping';
 import dateFormats from '../../../../../../../../../utils/dateFormats';
-import { emptyObject } from '../../../../../../../../../utils/constants';
+import { emptyObject } from '../../../../../../../../../constants';
 import { getDefaultActionOptions } from '../http';
 
 export default {

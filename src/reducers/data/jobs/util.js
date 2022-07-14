@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { JOB_TYPES, JOB_STATUS } from '../../../utils/constants';
+import { JOB_TYPES, JOB_STATUS } from '../../../constants';
 
 export const DEFAULT_STATE = Object.freeze({
   flowJobs: [],

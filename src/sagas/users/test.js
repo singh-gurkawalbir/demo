@@ -39,7 +39,7 @@ import {
   deleteSuiteScriptLinkedConnection,
   refreshLicensesCollection,
 } from '.';
-import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../utils/constants';
+import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../constants';
 import getRequestOptions from '../../utils/requestOptions';
 import { APIException } from '../api/requestInterceptors/utils';
 import { getResourceCollection } from '../resources';

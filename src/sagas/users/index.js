@@ -10,7 +10,7 @@ import {
 } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
-import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../constants';
 import { getResourceCollection } from '../resources';
 
 export function* changePassword({ updatedPassword }) {

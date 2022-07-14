@@ -17,7 +17,7 @@ import { getConnectorMetadata} from '../../resources/httpConnectors';
 import { isFileAdaptor } from '../../../utils/resource';
 import { parseFileData } from '../utils/fileParserUtils';
 import { FILE_DEFINITION_TYPES } from '../resourceForm/utils';
-import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
+import { FILE_PROVIDER_ASSISTANTS } from '../../../constants';
 
 function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource) {
   const assistantConfig = deepClone(assistantConfigOrig);

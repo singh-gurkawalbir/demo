@@ -1,6 +1,6 @@
 import {applicationsList, applicationsPlaceHolderText} from '../../../constants/applications';
 import { appTypeToAdaptorType, rdbmsAppTypeToSubType } from '../../../utils/resource';
-import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
+import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../constants';
 import {getFilterExpressionForAssistant} from '../../../utils/connections';
 
 export default {

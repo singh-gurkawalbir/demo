@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { difference } from 'lodash';
 import actions from '../../actions';
 import ChildJobDetail, { JobDetailsStyles } from './ChildJobDetail';
-import { JOB_STATUS } from '../../utils/constants';
+import { JOB_STATUS } from '../../constants';
 import JobStatus from './JobStatus';
 import { getPages, getSuccess } from '../../utils/jobdashboard';
 import JobActionsMenu from './JobActionsMenu';

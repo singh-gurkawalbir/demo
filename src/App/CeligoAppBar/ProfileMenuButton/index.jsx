@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import { USER_ACCESS_LEVELS } from '../../../utils/constants';
+import { USER_ACCESS_LEVELS } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
 import {OutlinedButton, TextButton } from '../../../components/Buttons/index';
 

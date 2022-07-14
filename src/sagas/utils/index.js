@@ -6,7 +6,7 @@ import { isNewId } from '../../utils/resource';
 import { selectors } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { createFormValuesPatchSet as createSuiteScriptFormValuesPatchSet } from '../suiteScript/resourceForm';
-import { AUTHENTICATION_LABELS, emptyObject} from '../../utils/constants';
+import { AUTHENTICATION_LABELS, emptyObject } from '../../constants';
 
 const convertResourceFieldstoSampleData = (resourceFields, dataType = 'object') => {
   if (!resourceFields) {
@@ -561,6 +561,7 @@ export function resourceConflictResolution({ merged, master, origin }) {
     updatedMerged = applyPatch(origin, masterVsMerged, false, false)
       .newDocument;
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.warn('cannot apply resolution patches doc = ', origin, 'patches = ', masterVsMerged);
 
     return { conflict: masterVsMerged, merged: null };

@@ -5,7 +5,7 @@ import { useRouteMatch } from 'react-router-dom';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import { MAPPINGS_FORM_KEY } from '../../utils/constants';
+import { MAPPINGS_FORM_KEY } from '../../constants';
 import SaveAndCloseButtonGroupAuto from '../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import mappingUtil from '../../utils/mapping';
 import ActionGroup from '../ActionGroup';

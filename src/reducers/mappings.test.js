@@ -241,21 +241,6 @@ describe('Mappings region selector testcases', () => {
     });
   });
 
-  describe('selectors.getAllPageProcessorImports test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.getAllPageProcessorImports()).toEqual([]);
-    });
-    test('should return all pageprocessor imports used in a flow', () => {
-      expect(selectors.getAllPageProcessorImports(state, flows[2].pageProcessors)).toEqual([
-        { _id: 10 },
-        { _id: 11, adaptorType: 'MongodbExport' },
-      ]);
-    });
-    test('should return empty array if pageprocessor imports are not in state', () => {
-      expect(selectors.getAllPageProcessorImports(state, flows[1].pageProcessors)).toEqual([]);
-    });
-  });
-
   describe('selectors.httpAssistantSupportsMappingPreview test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.httpAssistantSupportsMappingPreview(undefined, {})).toBeFalsy();

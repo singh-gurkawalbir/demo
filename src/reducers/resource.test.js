@@ -3,7 +3,7 @@ import each from 'jest-each';
 import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
-import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, UNASSIGNED_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS } from '../utils/constants';
+import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, UNASSIGNED_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS } from '../constants';
 import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../utils/home';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
@@ -612,6 +612,7 @@ describe('resource region selector testcases', () => {
         disableRunFlow: true,
         disableSlider: true,
         hasSettings: false,
+        isSetupInProgress: false,
         isDeltaFlow: true,
         isRealtime: false,
         isRunnable: true,
@@ -758,6 +759,7 @@ describe('resource region selector testcases', () => {
         isDeltaFlow: true,
         isRealtime: false,
         isRunnable: true,
+        isSetupInProgress: false,
         isSimpleImport: false,
         pageGenerators: [
           {

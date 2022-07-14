@@ -25,6 +25,7 @@ import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
 import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllParentExtractsForNode } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -439,7 +440,7 @@ export function* refreshHelperFunctions() {
   yield put(actions.editor.updateHelperFunctions(helperFunctions));
 }
 
-export function* getFlowSampleData({ flowId, resourceId, resourceType, stage, formKey }) {
+export function* getFlowSampleData({ flowId, resourceId, resourceType, stage, formKey, routerId, editorId }) {
   let flowSampleData = yield select(selectors.getSampleDataContext, {
     flowId,
     resourceId,
@@ -450,9 +451,11 @@ export function* getFlowSampleData({ flowId, resourceId, resourceType, stage, fo
   if (flowSampleData.status !== 'received') {
     yield call(requestSampleData, {
       flowId,
+      routerId,
       resourceId,
       resourceType,
       stage,
+      editorId,
       formKey,
     });
   }
@@ -474,7 +477,20 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage, ssLinkedConnectionId, parentType, parentId, mapper2RowKey} = editor;
+  const {
+    editorType,
+    flowId,
+    resourceId,
+    resourceType,
+    fieldId,
+    formKey,
+    stage,
+    ssLinkedConnectionId,
+    parentType,
+    parentId,
+    mapper2RowKey,
+    router,
+  } = editor;
   // for some fields only v2 data is supported (not v1)
   const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
 
@@ -572,7 +588,7 @@ export function* requestEditorSampleData({
     }
   } else if (stage) {
     // Handles sample data for all editors outside form context ( FB actions )
-    sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage });
+    sampleData = yield call(getFlowSampleData, { flowId, routerId: router?.id, resourceId, resourceType, stage, editorId: id });
   }
 
   let _sampleData = null;
@@ -650,13 +666,14 @@ export function* requestEditorSampleData({
           },
         };
       }
-      body[resourceType === 'imports' ? 'import' : 'export'] = resource || {};
+      body[RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]] = resource || {};
     }
 
     const opts = {
       method: 'POST',
       body,
     };
+
     const path = '/processors/handleBar/getContext';
 
     try {
@@ -844,10 +861,10 @@ export function* initEditor({ id, editorType, options }) {
     }
   }
 
-  let originalRule = formattedOptions.rule;
+  let originalRule = formattedOptions.originalRule || formattedOptions.rule;
 
   if (typeof originalRule === 'object' && !Array.isArray(originalRule)) {
-    originalRule = {...formattedOptions.rule};
+    originalRule = {...(formattedOptions.originalRule || formattedOptions.rule)};
   }
   const stateOptions = {
     editorType,

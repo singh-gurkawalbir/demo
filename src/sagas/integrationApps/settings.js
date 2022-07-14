@@ -3,7 +3,7 @@ import shortid from 'shortid';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
-import { emptyList, emptyObject } from '../../utils/constants';
+import { emptyList, emptyObject } from '../../constants';
 import { apiCallWithRetry } from '../index';
 import { getResourceCollection, getResource } from '../resources';
 

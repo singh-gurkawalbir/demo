@@ -2,7 +2,7 @@ import React from 'react';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
-} from '../../../../../utils/constants';
+} from '../../../../../constants';
 
 export default function AccessLevel({ user, integrationId }) {
   let userAccessLevel = user.accessLevel;
