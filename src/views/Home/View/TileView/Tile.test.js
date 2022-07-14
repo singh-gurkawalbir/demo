@@ -151,7 +151,7 @@ describe('Tile UI tests', () => {
     expect(screen.getAllByRole('button')).toHaveLength(4);
     screen.debug();
   });
-  test('should make the respective redirection when clicked on setup status on the tile', () => {
+  test('should make the respective redirection when clicked on setup status on the tile', async () => {
     history.push = jest.fn();
     const props = {tile: cprops,
       isDragInProgress: false,
@@ -161,9 +161,9 @@ describe('Tile UI tests', () => {
 
     initTile(props);
     userEvent.click(screen.getByText('Continue setup', {exact: false}));
-    waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/setup'));
+    await waitFor(() => expect(history.push).toBeCalledWith('/integrationapps/Clonedemoint/62bedcdca0f5f21448171ea2/setup'));
   });
-  test('should make the respective dispatch call and redirection when setup status is other than pending', () => {
+  test('should make the respective dispatch call and redirection when setup status is other than pending', async () => {
     cprops.status = 'success';
     history.push = jest.fn();
     const props = {tile: cprops,
@@ -174,8 +174,8 @@ describe('Tile UI tests', () => {
 
     initTile(props);
     userEvent.click(screen.getByText(/success/i, {exact: false}));
-    waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.patchFilter('jobs', { status: 'all'})));
-    waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/dashboard'));
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.patchFilter('jobs', { status: 'all'})));
+    await waitFor(() => expect(history.push).toBeCalledWith('/integrationapps/Clonedemoint/62bedcdca0f5f21448171ea2/dashboard'));
   });
   test('should redirect to the correct url when clicked on permissions icon on the tile', () => {
     history.push = jest.fn();
