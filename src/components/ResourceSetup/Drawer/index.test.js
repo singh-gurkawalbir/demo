@@ -1,0 +1,422 @@
+/* global describe, test, expect, beforeEach, jest, afterEach */
+import React from 'react';
+import { MemoryRouter, Route } from 'react-router-dom';
+import * as reactRedux from 'react-redux';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import ResourceSetupDrawer from '.';
+import { runServer } from '../../../test/api/server';
+import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+
+async function initResourceSetupDrawer({
+  props = {
+    mode: 'install',
+    integrationId: 'integration_id',
+    templateId: 'template_id',
+  },
+  initialStore = reduxStore,
+  rerender,
+  resourceType = 'connections',
+  resourceId = 'resource_id',
+} = {}) {
+  // eslint-disable-next-line no-param-reassign
+  initialStore.getState().session.resource = {
+    connection_id_2: 'connection_id_3',
+  }; // createdConnectionId
+  // eslint-disable-next-line no-param-reassign
+  initialStore.getState().session.oAuthAuthorize = {
+    connection_id_4: {
+      authorized: true,
+    },
+  }; // isAuthorized
+  // eslint-disable-next-line no-param-reassign
+  initialStore.getState().session.templates = {
+    template_id: {},
+  }; // isAuthorized
+
+  // eslint-disable-next-line no-param-reassign
+  initialStore.getState().data.resources = {
+    connections: [{
+      _id: 'id_1',
+      name: 'Name 1',
+      offline: true,
+      netsuite: {},
+    }, {
+      _id: 'connection_id_3',
+      assistant: 'shopify',
+      type: 'http',
+      http: {
+        auth: {
+          type: 'oauth',
+        },
+      },
+    }], // connectionDoc
+    integrations: [{
+      _id: 'integration_id',
+      mode: 'install',
+      _templateId: 'template_id',
+      installSteps: [{
+        name: 'NetSuite Connection',
+        completed: false,
+        type: 'connection',
+        _connectionId: 'id_1',
+        sourceConnection: {
+          _id: 'id_1',
+          type: 'netsuite',
+          name: 'NetSuite Connection',
+        },
+      }],
+    }, {
+      _id: 'integration_id_1',
+      mode: 'install',
+      _connectorId: 'connector_id_1',
+      installSteps: [{
+        name: 'HTTP Connection',
+        completed: false,
+        type: 'connection',
+        _connectionId: 'id_1',
+        sourceConnection: {
+          _id: 'id_1',
+          type: 'http',
+          name: 'HTTP Connection',
+          formType: {
+            type: 'http',
+          },
+        },
+      }],
+    }, {
+      _id: 'integration_id_3',
+      mode: 'install',
+      installSteps: [{
+        name: 'HTTP Connection',
+        completed: false,
+        type: 'connection',
+        _connectionId: 'id_1',
+        sourceConnection: {
+          _id: 'id_1',
+          type: 'http',
+          name: 'HTTP Connection',
+          formType: {
+            type: 'http',
+          },
+        },
+      }],
+    }], // canSelectExistingResources
+  };
+
+  const ui = (
+    <MemoryRouter
+      initialEntries={[{pathname: `/integrations/integration_id/setup/configure/${resourceType}/${resourceId}`}]}
+    >
+      <Route
+        path="/integrations/:integrationId/setup"
+        params={{
+          integrationId: 'integration_id',
+        }}
+        >
+        <ResourceSetupDrawer {...props} />
+      </Route>
+    </MemoryRouter>
+  );
+  const { store, utils } = await renderWithProviders(ui, { initialStore }, rerender);
+
+  return {
+    store,
+    utils,
+  };
+}
+
+const mockOnSubmitComplete = jest.fn().mockReturnValue({
+  connId: '',
+  isAuthorized: '',
+});
+
+const mockOnClose = jest.fn().mockReturnValue({
+  connId: '',
+});
+
+jest.mock('../AddOrSelect', () => ({
+  __esModule: true,
+  ...jest.requireActual('../AddOrSelect'),
+  default: props => {
+    const handleOnSubmitComplete = () => {
+      const { connId, isAuthorized } = mockOnSubmitComplete();
+
+      props.onSubmitComplete(connId, isAuthorized);
+    };
+    const handleOnClose = () => {
+      const { connId } = mockOnClose();
+
+      props.onClose(connId);
+    };
+
+    return (
+      <>
+        <button type="button" onClick={handleOnSubmitComplete}>
+          Mock onSubmitComplete
+        </button>
+        <button type="button" onClick={handleOnClose}>
+          Mock onClose
+        </button>
+      </>
+    );
+  },
+}));
+
+jest.mock('../../ResourceFormWithStatusPanel', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../ResourceFormWithStatusPanel'),
+  default: props => {
+    const handleOnSubmitComplete = () => {
+      const { connId, isAuthorized } = mockOnSubmitComplete();
+
+      props.onSubmitComplete(connId, isAuthorized);
+    };
+
+    return (
+      <>
+        <button type="button" onClick={handleOnSubmitComplete}>
+          Mock onSubmitComplete
+        </button>
+      </>
+    );
+  },
+}));
+
+jest.mock('../../drawer/Resource/Panel/ResourceFormActionsPanel', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../drawer/Resource/Panel/ResourceFormActionsPanel'),
+  default: props => {
+    const handleOnClose = () => {
+      const { connId } = mockOnClose();
+
+      props.onCancel(connId);
+    };
+
+    return (
+      <>
+        <button type="button" onClick={handleOnClose}>
+          Mock onCancel
+        </button>
+      </>
+    );
+  },
+}));
+
+const mockHistoryReplace = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    replace: mockHistoryReplace,
+  }),
+}));
+
+describe('ResourceSetupDrawer test cases', () => {
+  runServer();
+  let mockDispatchFn;
+  let useDispatchSpy;
+  let initialStore;
+
+  beforeEach(() => {
+    initialStore = reduxStore;
+    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
+    mockDispatchFn = jest.fn(action => {
+      switch (action.type) {
+        default: initialStore.dispatch(action);
+      }
+    });
+    useDispatchSpy.mockReturnValue(mockDispatchFn);
+  });
+
+  afterEach(() => {
+    useDispatchSpy.mockClear();
+    mockOnSubmitComplete.mockClear();
+    mockOnClose.mockClear();
+    mockHistoryReplace.mockClear();
+  });
+
+  test('should pass the initial render with default value/ with templateId', async () => {
+    await initResourceSetupDrawer({
+      initialStore,
+    });
+
+    expect(screen.queryByText(/Set up connection/i)).toBeInTheDocument();
+    const onSubmitCompleteButton = screen.getByRole('button', {name: 'Mock onSubmitComplete'});
+    const onCloseButton = screen.getByRole('button', {name: 'Mock onClose'});
+
+    expect(onSubmitCompleteButton).toBeInTheDocument();
+    expect(onCloseButton).toBeInTheDocument();
+
+    userEvent.click(onSubmitCompleteButton);
+    expect(mockOnSubmitComplete).toBeCalledTimes(1);
+    expect(mockHistoryReplace).toBeCalledTimes(1);
+    expect(mockHistoryReplace).toBeCalledWith('/integrations/integration_id/setup');
+
+    userEvent.click(onCloseButton);
+    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockHistoryReplace).toBeCalledTimes(2);
+    expect(mockHistoryReplace).toBeCalledWith('/integrations/integration_id/setup');
+
+    screen.debug();
+  });
+
+  test('should pass the initial render with mode ss-install', async () => {
+    const onSubmitComplete = jest.fn();
+    const onClose = jest.fn();
+
+    await initResourceSetupDrawer({
+      props: {
+        mode: 'ss-install',
+        integrationId: 'integration_id',
+        onSubmitComplete,
+        onClose,
+      },
+      initialStore,
+    });
+
+    expect(screen.queryByText(/Set up connection/i)).toBeInTheDocument();
+    const onSubmitCompleteButton = screen.getByRole('button', {name: 'Mock onSubmitComplete'});
+    const onCloseButton = screen.getByRole('button', {name: 'Mock onClose'});
+
+    expect(onSubmitCompleteButton).toBeInTheDocument();
+    expect(onCloseButton).toBeInTheDocument();
+
+    userEvent.click(onSubmitCompleteButton);
+    expect(mockOnSubmitComplete).toBeCalledTimes(1);
+    expect(onSubmitComplete).toBeCalledTimes(1);
+    expect(mockHistoryReplace).toBeCalledTimes(0);
+
+    userEvent.click(onCloseButton);
+    expect(mockOnClose).toBeCalledTimes(1);
+    expect(onClose).toBeCalledTimes(1);
+  });
+
+  test('should pass the initial render with different resourceType', async () => {
+    const handleStackSetupDone = jest.fn();
+    const handleStackClose = jest.fn();
+
+    await initResourceSetupDrawer({
+      props: {
+        handleStackSetupDone,
+        handleStackClose,
+      },
+      initialStore,
+      resourceType: 'exports',
+    });
+
+    expect(screen.queryByText(/Set up export/i)).toBeInTheDocument();
+    const onSubmitCompleteButton = screen.getByRole('button', {name: 'Mock onSubmitComplete'});
+    const onCloseButton = screen.getByRole('button', {name: 'Mock onClose'});
+
+    expect(onSubmitCompleteButton).toBeInTheDocument();
+    expect(onCloseButton).toBeInTheDocument();
+
+    userEvent.click(onSubmitCompleteButton);
+    expect(mockOnSubmitComplete).toBeCalledTimes(1);
+    expect(handleStackSetupDone).toBeCalledTimes(1);
+
+    userEvent.click(onCloseButton);
+    expect(handleStackClose).toBeCalledTimes(1);
+  });
+
+  test('should pass the initial render with new connection Id', async () => {
+    await initResourceSetupDrawer({
+      props: {
+        mode: 'install',
+        integrationId: 'integration_id',
+      },
+      initialStore,
+      resourceId: 'new-id_1',
+    });
+
+    expect(screen.queryByText(/Set up connection/i)).toBeInTheDocument();
+    const onSubmitCompleteButton = screen.getByRole('button', {name: 'Mock onSubmitComplete'});
+    const onCloseButton = screen.getByRole('button', {name: 'Mock onClose'});
+
+    expect(onSubmitCompleteButton).toBeInTheDocument();
+    expect(onCloseButton).toBeInTheDocument();
+  });
+
+  test('should pass the initial render with new connection Id type http', async () => {
+    await initResourceSetupDrawer({
+      props: {
+        mode: 'install',
+        integrationId: 'integration_id_3',
+      },
+      initialStore,
+      resourceId: 'new-id_1',
+    });
+
+    expect(screen.queryByText(/Set up connection/i)).toBeInTheDocument();
+    const onSubmitCompleteButton = screen.getByRole('button', {name: 'Mock onSubmitComplete'});
+    const onCloseButton = screen.getByRole('button', {name: 'Mock onClose'});
+
+    expect(onSubmitCompleteButton).toBeInTheDocument();
+    expect(onCloseButton).toBeInTheDocument();
+  });
+
+  test('should pass the initial render with connector Id', async () => {
+    await initResourceSetupDrawer({
+      props: {
+        mode: 'install',
+        integrationId: 'integration_id_1',
+      },
+      initialStore,
+    });
+
+    expect(screen.queryByText(/Set up connection/i)).toBeInTheDocument();
+    const onSubmitCompleteButton = screen.getByRole('button', {name: 'Mock onSubmitComplete'});
+    const onCloseButton = screen.getByRole('button', {name: 'Mock onCancel'});
+
+    expect(onSubmitCompleteButton).toBeInTheDocument();
+    expect(onCloseButton).toBeInTheDocument();
+  });
+
+  test('should pass the initial render with mode clone', async () => {
+    await initResourceSetupDrawer({
+      props: {
+        mode: 'clone',
+        integrationId: 'integration_id_1',
+      },
+      initialStore,
+      resourceId: 'connection_id_2',
+    });
+
+    expect(screen.queryByText(/Set up connection/i)).toBeInTheDocument();
+    const onSubmitCompleteButton = screen.getByRole('button', {name: 'Mock onSubmitComplete'});
+    const onCloseButton = screen.getByRole('button', {name: 'Mock onCancel'});
+
+    expect(onSubmitCompleteButton).toBeInTheDocument();
+    expect(onCloseButton).toBeInTheDocument();
+    userEvent.click(onSubmitCompleteButton);
+    expect(mockOnSubmitComplete).toBeCalledTimes(1);
+    expect(mockHistoryReplace).toBeCalledTimes(1);
+    expect(mockHistoryReplace).toBeCalledWith('/integrations/integration_id/setup/configure/connections/connection_id_3');
+  });
+
+  test('should pass the initial render with isauth true', async () => {
+    await initResourceSetupDrawer({
+      props: {
+        mode: 'clone',
+        integrationId: 'integration_id_1',
+      },
+      initialStore,
+      resourceId: 'connection_id_4',
+    });
+
+    expect(screen.queryByText(/Set up connection/i)).toBeInTheDocument();
+    const onSubmitCompleteButton = screen.getByRole('button', {name: 'Mock onSubmitComplete'});
+    const onCloseButton = screen.getByRole('button', {name: 'Mock onCancel'});
+
+    expect(onSubmitCompleteButton).toBeInTheDocument();
+    expect(onCloseButton).toBeInTheDocument();
+    userEvent.click(onSubmitCompleteButton);
+    expect(mockOnSubmitComplete).toBeCalledTimes(1);
+    expect(mockHistoryReplace).toBeCalledTimes(2);
+    expect(mockHistoryReplace).toBeCalledWith('/integrations/integration_id/setup');
+
+    userEvent.click(onCloseButton);
+  });
+});
+
