@@ -236,7 +236,7 @@ function LicenseAction() {
             label: 'Submit request',
             onClick: () => {
               setUpgradeRequested(true);
-              dispatch(actions.license.requestUpdate('ioResume'));
+              dispatch(actions.license.requestUpdate('ioResume', {}));
             },
           },
           {

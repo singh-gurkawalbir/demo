@@ -171,7 +171,7 @@ export default function Endpoint() {
       ],
     });
 
-    return dispatch(actions.license.requestUpdate('upgrade'));
+    return dispatch(actions.license.requestUpdate('upgrade', {}));
   }, [dispatch, confirmDialog]);
 
   const onRequestUpgradeClick = useCallback(() => {
@@ -185,7 +185,7 @@ export default function Endpoint() {
               actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
             );
             setUpgradeRequested(true);
-            dispatch(actions.license.requestUpdate('upgrade'));
+            dispatch(actions.license.requestUpdate('upgrade', {}));
           },
         },
         { label: 'Cancel',
@@ -205,7 +205,7 @@ export default function Endpoint() {
               actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
             );
             setUpgradeRequested(true);
-            dispatch(actions.license.requestUpdate('upgrade'));
+            dispatch(actions.license.requestUpdate('upgrade', {}));
           },
         },
         { label: 'Cancel',
