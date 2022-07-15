@@ -237,6 +237,11 @@ export default {
       retValues['/parsers'] = undefined;
     }
 
+    if (finalSuccessMediaType(formValues, connection) === 'csv') {
+      delete retValues['/http/response/resourcePath'];
+      retValues['/http/response'] = undefined;
+    }
+
     if (!retValues['/configureAsyncHelper']) {
       retValues['/http/_asyncHelperId'] = undefined;
     }
