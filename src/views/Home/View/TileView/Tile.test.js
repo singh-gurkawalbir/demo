@@ -27,7 +27,7 @@ const cprops = {
   supportsChild: false,
   iaV2: false,
   trialEndDate: '2018-07-25T11:15:51.209Z',
-  _connectorId: '5829bce6069ccb4460cdb34e',
+  // _connectorId: '5829bce6069ccb4460cdb34e',
   _registeredConnectionIds: [
     '62bd43c87b94d20de64e9ab3',
     '5e3152806287420d5ce56573',
@@ -148,8 +148,7 @@ describe('Tile UI tests', () => {
     initTile(props);
     expect(screen.getByText('Clone - demoint')).toBeInTheDocument();
     expect(screen.getByText('Continue setup', {exact: false})).toBeInTheDocument();
-    expect(screen.getAllByRole('button')).toHaveLength(4);
-    screen.debug();
+    expect(screen.getAllByRole('button')).toHaveLength(3);
   });
   test('should make the respective redirection when clicked on setup status on the tile', async () => {
     history.push = jest.fn();
@@ -161,7 +160,7 @@ describe('Tile UI tests', () => {
 
     initTile(props);
     userEvent.click(screen.getByText('Continue setup', {exact: false}));
-    await waitFor(() => expect(history.push).toBeCalledWith('/integrationapps/Clonedemoint/62bedcdca0f5f21448171ea2/setup'));
+    await waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/setup'));
   });
   test('should make the respective dispatch call and redirection when setup status is other than pending', async () => {
     cprops.status = 'success';
@@ -175,7 +174,7 @@ describe('Tile UI tests', () => {
     initTile(props);
     userEvent.click(screen.getByText(/success/i, {exact: false}));
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.patchFilter('jobs', { status: 'all'})));
-    await waitFor(() => expect(history.push).toBeCalledWith('/integrationapps/Clonedemoint/62bedcdca0f5f21448171ea2/dashboard'));
+    await waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/dashboard'));
   });
   test('should redirect to the correct url when clicked on permissions icon on the tile', () => {
     history.push = jest.fn();
@@ -205,14 +204,14 @@ describe('Tile UI tests', () => {
     initTile(props);
     const buttonList = screen.getAllByRole('button');
 
-    screen.debug();
     userEvent.hover(buttonList[1]);
     waitFor(() => expect(screen.getByText(/Connection down/i)).toBeInTheDocument());
     waitFor(() => expect(screen.getByText(/Success/i)).toBeInTheDocument());
     userEvent.click(buttonList[1]);
-    expect(history.push).toBeCalledWith('/integrationapps/Clonedemoint/62bedcdca0f5f21448171ea2/connections');
+    expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/connections');
   });
   test('should display the license expiry message on the tile', () => {
+    cprops._connectorId = '5829bce6069ccb4460cdb34e';
     const props = {tile: cprops,
       isDragInProgress: false,
       isTileDragged: false,
@@ -223,7 +222,7 @@ describe('Tile UI tests', () => {
     expect(screen.getByText('Your subscription expired on 05/05/2022. Contact sales to renew your subscription.')).toBeInTheDocument();
     expect(screen.getByText('Request to renew')).toBeInTheDocument();
   });
-  test('should redirect to the integration contents when clikced on the tilee title', () => {
+  test('should redirect to the integration contents when clikced on the tile title', () => {
     history.push = jest.fn();
     const props = {tile: cprops,
       isDragInProgress: false,
@@ -234,6 +233,5 @@ describe('Tile UI tests', () => {
     initTile(props);
     userEvent.click(screen.getByText('Clone - demoint'));
     waitFor(() => expect(history.push).toBeCalledWith('/integrationapps/Clonedemoint/62bedcdca0f5f21448171ea2/setup'));
-    screen.debug();
   });
 });
