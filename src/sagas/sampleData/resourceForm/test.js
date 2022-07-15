@@ -193,6 +193,7 @@ describe('resourceFormSampleData sagas', () => {
           [call(executeTransformationRules, {
             transform: resourceObj?.transform,
             sampleData: parsedData,
+            isIntegrationApp: false,
           }), { data: transformedData }],
           [select(
             selectors.getResourceSampleDataWithStatus,
@@ -228,6 +229,7 @@ describe('resourceFormSampleData sagas', () => {
           [call(executeTransformationRules, {
             transform: resourceObj?.transform,
             sampleData: parsedData,
+            isIntegrationApp: false,
           }), { data: transformedData}],
           [select(
             selectors.getResourceSampleDataWithStatus,
@@ -237,6 +239,7 @@ describe('resourceFormSampleData sagas', () => {
           [call(executeJavascriptHook, {
             hook: resourceObj?.hooks?.preSavePage,
             sampleData: transformedData,
+            isIntegrationApp: false,
           }), { data: preSavePageHookData }],
         ])
         .put(actions.resourceFormSampleData.setProcessorData({

@@ -79,6 +79,7 @@ export default function ConnectorInstallation() {
   const [connection, setConnection] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
+  const [isResourceStaged, setIsResourceStaged] = useState(false);
   const dispatch = useDispatch();
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
@@ -394,6 +395,7 @@ export default function ConnectorInstallation() {
             SCOPES.VALUE
           )
         );
+        setIsResourceStaged(true);
       }
       setConnection({
         newId,
@@ -605,6 +607,8 @@ export default function ConnectorInstallation() {
         onSubmitComplete={handleSubmitComplete}
         handleStackSetupDone={handleStackSetupDone}
         handleStackClose={handleStackClose}
+        isResourceStaged={isResourceStaged}
+        setIsResourceStaged={setIsResourceStaged}
         mode="install"
       />
     </LoadResources>

@@ -79,10 +79,9 @@ export function* _requestRealTimeSampleData({ formKey, refreshCache = false }) {
 
 export function* _requestExportPreviewData({ formKey, executeProcessors = false }) {
   const { resourceObj, resourceId, flowId, integrationId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
-  const connection = yield select(selectors.resource, 'connections', resourceObj?._connectionId);
 
   // 'getFormattedResourceForPreview' util removes unnecessary props of resource that should not be sent in preview calls
-  const body = getFormattedResourceForPreview(resourceObj, undefined, undefined, connection);
+  const body = getFormattedResourceForPreview(resourceObj);
 
   if (!executeProcessors) {
     delete body.transform;
@@ -252,6 +251,7 @@ export function* _fetchFBActionsSampleData({ formKey }) {
   const {data: transformedOutput, hasNoRulesToProcess} = yield call(executeTransformationRules, {
     transform: resourceObj?.transform,
     sampleData: parsedData,
+    isIntegrationApp: !!resourceObj?._connectorId,
   });
 
   yield put(actions.resourceFormSampleData.setProcessorData({
@@ -269,6 +269,7 @@ export function* _fetchFBActionsSampleData({ formKey }) {
   const {data: preSavePageHookOutput, hasNoRulesToProcess: hasNoHook} = yield call(executeJavascriptHook, {
     hook: resourceObj?.hooks?.preSavePage,
     sampleData: transformedData,
+    isIntegrationApp: !!resourceObj?._connectorId,
   });
 
   yield put(actions.resourceFormSampleData.setProcessorData({
