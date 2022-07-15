@@ -433,6 +433,10 @@ export default {
           field: 'outputMode',
           is: ['records'],
         },
+        {
+          field: 'http.successMediaType',
+          is: ['csv'],
+        },
       ],
     },
     exportOneToMany: { formId: 'exportOneToMany' },

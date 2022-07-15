@@ -8129,7 +8129,7 @@ describe('selectors.isParserSupported test cases', () => {
     expect(selectors.isParserSupported(state, formKey, parser)).toEqual(false);
   });
 
-  test('should return true for HTTP export with connection success media type as parser', () => {
+  test('should not rely on success media type of connection', () => {
     const parser = 'xml';
     const exp = {
       _id: 'e1',
@@ -8141,44 +8141,6 @@ describe('selectors.isParserSupported test cases', () => {
       _id: 'c1',
       type: 'HTTP',
       http: { successMediaType: parser },
-    };
-    const fieldMeta = {
-      fieldMap: {
-        _connectionId: {
-          id: '_connectionId',
-          value: 'c1',
-        },
-      },
-    };
-    const formKey = 'exports-e1';
-
-    let state = reducer(
-      undefined,
-      actions.resource.received('exports', exp)
-    );
-
-    state = reducer(
-      state,
-      actions.resource.received('connections', conn)
-    );
-
-    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
-
-    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
-  });
-
-  test('should return false for HTTP export with connection success media type different from parser', () => {
-    const parser = 'xml';
-    const exp = {
-      _id: 'e1',
-      type: 'HTTP',
-      adaptorType: 'HTTPExport',
-      _connectionId: 'c1',
-    };
-    const conn = {
-      _id: 'c1',
-      type: 'HTTP',
-      http: { successMediaType: 'csv' },
     };
     const fieldMeta = {
       fieldMap: {
