@@ -1,9 +1,8 @@
-/* eslint-disable no-param-reassign */
-/* global describe, test, expect, jest, beforeEach, afterEach */
+/* global describe, test, expect, jest, beforeEach,afterEach */
+/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Router} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {createMemoryHistory} from 'history';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
@@ -12,8 +11,10 @@ import FormBuilderButton from '.';
 
 const history = createMemoryHistory();
 
-// eslint-disable-next-line no-unused-vars
-async function BuilderButton(customState = {}, props = {}) {
+async function BuilderButton(props = {resourceId: null,
+  resourceType: '',
+  integrationId: null,
+  sectionId: null}) {
   const initialStore = reduxStore;
 
   initialStore.getState().data.resources.integrations = [{
@@ -83,9 +84,6 @@ async function BuilderButton(customState = {}, props = {}) {
     authTypeSSO: null,
     emailHash: '087e41a1843139c27bce730b99664a84',
   };
-  props.resourceType = 'integrations';
-  props.resourceId = '626a1dd0d0d946269d48d379';
-  props.integrationId = '626a1dd0d0d946269d48d379';
 
   const ui = (
     <Router history={history}>
@@ -95,7 +93,7 @@ async function BuilderButton(customState = {}, props = {}) {
 
   return renderWithProviders(ui, { initialStore });
 }
-describe('formbuilder button ui tests', () => {
+describe('formbuilder button UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -113,11 +111,13 @@ describe('formbuilder button ui tests', () => {
     useDispatchSpy.mockClear();
   });
   history.push = jest.fn();
-  test('checking render', async () => {
-    await BuilderButton({}, {resourceId: null,
-      resourceType: '',
-      integrationId: null,
-      sectionId: null});
+  test('should display the button and make a dispatch call when clicked on it', async () => {
+    const props = {resourceId: '626a1dd0d0d946269d48d379',
+      resourceType: 'integrations',
+      integrationId: '626a1dd0d0d946269d48d379',
+      sectionId: null};
+
+    await BuilderButton(props);
     const button = screen.getByText('Launch form builder');
 
     expect(button).toBeInTheDocument();
@@ -126,9 +126,10 @@ describe('formbuilder button ui tests', () => {
     expect(history.push).toHaveBeenCalledTimes(1);
     screen.debug();
   });
-  test('duplicate inputs test', () => {
+  test('should render empty DOM when no props are passed', () => {
     const {utils} = renderWithProviders(<MemoryRouter><FormBuilderButton /></MemoryRouter>);
 
     expect(utils.container).toBeEmptyDOMElement();
   });
 });
+

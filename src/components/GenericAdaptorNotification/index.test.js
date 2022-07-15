@@ -1,19 +1,16 @@
 /* global describe, test, expect, jest */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../test/test-utils';
 import GenericAdaptorNotification from '.';
 
 describe('GenericAdaptorNotification ui tests', () => {
-  test('notification render testing', () => {
+  test('should display the predefined notification content', () => {
     const mockFunc = jest.fn();
 
     renderWithProviders(
-      <MemoryRouter>
-        <GenericAdaptorNotification onClose={mockFunc} />
-      </MemoryRouter>
+      <GenericAdaptorNotification onClose={mockFunc} />
     );
     const message = screen.getByText(
       'We haven’t created a simplified form for this application yet. ',
@@ -28,25 +25,22 @@ describe('GenericAdaptorNotification ui tests', () => {
     screen.debug();
   });
 
-  test('checking the invoke of onClose Function', () => {
+  test('should invoke the onClose function on closing the notification', () => {
     const mockFunc = jest.fn();
 
     renderWithProviders(
-      <MemoryRouter>
-        <GenericAdaptorNotification onClose={mockFunc} />
-      </MemoryRouter>
+      <GenericAdaptorNotification onClose={mockFunc} />
     );
     const button = screen.getByRole('button');
 
     userEvent.click(button);
     waitFor(() => expect(mockFunc).toHaveBeenCalledTimes(1));
   });
-  test('checking the invoke of onClose Function', () => {
+  test('should not render the close icon when onClose function is not passed', () => {
     renderWithProviders(
-      <MemoryRouter>
-        <GenericAdaptorNotification />
-      </MemoryRouter>
+      <GenericAdaptorNotification />
     );
     expect(screen.queryByRole('button')).toBeNull();
   });
 });
+

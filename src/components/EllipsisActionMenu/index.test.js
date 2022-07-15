@@ -1,10 +1,6 @@
-/* eslint-disable no-undef */
+/* global describe, test, expect, jest */
 import React from 'react';
-import {
-  screen,
-  waitFor,
-} from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../test/test-utils';
 import EllipsisActionMenu from '.';
@@ -26,21 +22,20 @@ const actionsMenu = [
 ];
 
 describe('ellipsis menu ui tests', () => {
-  test('presence of ellipsis menu button', () => {
+  test('should display the ellipsis menu icon', () => {
     renderWithProviders(<EllipsisActionMenu />);
     const actionButton = screen.getAllByRole('button');
 
     expect(actionButton).toHaveLength(1);
   });
-  test('correct number of menu list items have to be rendered', () => {
+  test('should display the same number of options passed in props on clicking the ellipsis icon', () => {
     renderWithProviders(
-      <MemoryRouter>
-        <EllipsisActionMenu
-          actionsMenu={actionsMenu}
-          onAction={mockOnClick}
-          alignment="vertical"
+
+      <EllipsisActionMenu
+        actionsMenu={actionsMenu}
+        onAction={mockOnClick}
+        alignment="vertical"
         />
-      </MemoryRouter>
     );
     const actionButton = screen.getByRole('button');
 
@@ -51,17 +46,15 @@ describe('ellipsis menu ui tests', () => {
     expect(numberOfActions).toHaveLength(3);
     screen.debug();
   });
-  test('checking the functioning of menu item', async () => {
+  test('should call the onClick function with the respective input when clicked on a menuItem', async () => {
     const mockOnClick = jest.fn();
 
     renderWithProviders(
-      <MemoryRouter>
-        <EllipsisActionMenu
-          actionsMenu={actionsMenu}
-          onAction={mockOnClick}
-          alignment="vertical"
+      <EllipsisActionMenu
+        actionsMenu={actionsMenu}
+        onAction={mockOnClick}
+        alignment="vertical"
         />
-      </MemoryRouter>
     );
     const actionButton = screen.getByRole('button');
 
@@ -74,20 +67,20 @@ describe('ellipsis menu ui tests', () => {
       expect(mockOnClick).toHaveBeenCalledWith('cloneIntegration')
     );
   });
-  test('checking the functionality of the button', async () => {
+  test('should render the text button when label is passed as "Text Button"', async () => {
     const mockOnClick = jest.fn();
 
     renderWithProviders(
-      <MemoryRouter>
-        <EllipsisActionMenu
-          actionsMenu={actionsMenu}
-          onAction={mockOnClick}
-          label="Text Button"
+
+      <EllipsisActionMenu
+        actionsMenu={actionsMenu}
+        onAction={mockOnClick}
+        label="Text Button"
         />
-      </MemoryRouter>
     );
     const button = screen.getByText('Text Button');
 
     expect(button).toBeInTheDocument();
   });
 });
+

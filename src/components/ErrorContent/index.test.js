@@ -1,14 +1,10 @@
-/* global describe, test, expect, jest, */
+/* global describe, test, expect, jest */
 import React from 'react';
 import {screen} from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import {renderWithProviders} from '../../test/test-utils';
 import ErrorContent from '.';
 
-const sampleJson = '{"name":"John", "age":30, "city":"New York"}';
-const sampleHTML = '<a>this is a string</a>';
-const sampleError = 'Your account has been temporarily blocked';
-
+// mocking of child components
 jest.mock('../JsonContent', () => () => {
   const MockJson = () => <div>Json error displayed</div>;
 
@@ -19,17 +15,23 @@ jest.mock('../RawHtml', () => () => {
 
   return <MockHtml />;
 });
+
+const sampleJson = '{"name":"John", "age":30, "city":"New York"}';
+const sampleHTML = '<a>this is a string</a>';
+const sampleError = 'Your account has been temporarily blocked';
+
 describe('error content ui tests', () => {
-  test('testing the render of json error', () => {
-    renderWithProviders(<MemoryRouter><ErrorContent error={sampleJson} /></MemoryRouter>);
+  test('should render the JsonContent component when error type is json', () => {
+    renderWithProviders(<ErrorContent error={sampleJson} />);
     expect(screen.getByText('error', {exact: false})).toBeInTheDocument();
   });
-  test('testing the render of HTML error', () => {
-    renderWithProviders(<MemoryRouter><ErrorContent error={sampleHTML} /></MemoryRouter>);
+  test('should render the RawHtml component when error type is html', () => {
+    renderWithProviders(<ErrorContent error={sampleHTML} />);
     expect(screen.getByText('Html error', {exact: false})).toBeInTheDocument();
   });
-  test('testing the render of other error', () => {
-    renderWithProviders(<MemoryRouter><ErrorContent error={sampleError} /></MemoryRouter>);
+  test('should render the error message when error type is general', () => {
+    renderWithProviders(<ErrorContent error={sampleError} />);
     expect(screen.getByText('Your account', {exact: false})).toBeInTheDocument();
   });
 });
+
