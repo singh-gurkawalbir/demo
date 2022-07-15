@@ -17,6 +17,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { TextButton } from '../../../../../components/Buttons';
 import ActionGroup from '../../../../../components/ActionGroup';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
+import infoText from '../infoText';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -96,8 +97,6 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       dispatch(actions.app.polling.stopSpecificPollProcess(actions.resource.connections.refreshStatus(_integrationId)));
     };
   }, [dispatch, _integrationId]);
-  const infoTextConnections =
-  'In order to import or export data from a source app or a destination app, you must create a connection to that system. A connection stores the login credentials and other information needed to retrieve or send data through the application\'s API. If a connection is offline, all flows using that connection are paused until connectivity is restored.';
 
   const handleClick = useCallback(e => {
     e.preventDefault();
@@ -156,7 +155,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
         />
       )}
 
-      <PanelHeader title="Connections" infoText={infoTextConnections}>
+      <PanelHeader title="Connections" infoText={infoText.Connections}>
         <ActionGroup>
           {permission.create && (
           <TextButton

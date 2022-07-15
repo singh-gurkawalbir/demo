@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AuditLog from '../../components/AuditLog';
 import PanelHeader from '../../components/PanelHeader';
+import infoText from './infoText';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -14,14 +15,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const infoTextAuditLog =
-'Audit logs maintain a record of certain activities in your flows, including the fields that were changed, the type of change, and who’s responsible for the change. <a href="https://docs.celigo.com/hc/en-us/articles/6514515710107-Manage-your-audit-logs">Learn more about audit logs</a>.';
 export default function Audit() {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Audit log" infoText={infoTextAuditLog} />
+      <PanelHeader title="Audit log" infoText={infoText.AuditLog} />
       <AuditLog />
     </div>
   );

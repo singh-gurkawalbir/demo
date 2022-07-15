@@ -12,6 +12,7 @@ import actions from '../../../../actions';
 import MFASetup from './Setup';
 import useNotifySetupSuccess from './useNotifySetupSuccess';
 import EditMFAConfiguration from './EditConfiguration';
+import infoText from '../../infoText';
 // import AccountSettings from './AccountSettings';
 
 const useStyles = makeStyles(theme => ({
@@ -140,14 +141,13 @@ function MFADetails() {
 
 export default function MFA() {
   const classes = useStyles();
-  const infoTextMFA = 'MFA info';
 
   // Deals with showing notification whenever mfa setup is updated
   useNotifySetupSuccess();
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Multifactor authentication (MFA)" infoText={infoTextMFA} />
+      <PanelHeader title="Multifactor authentication (MFA)" infoText={infoText.MFA} />
       <MFADetails />
     </div>
   );

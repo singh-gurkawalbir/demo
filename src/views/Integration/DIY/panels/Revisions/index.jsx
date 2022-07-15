@@ -25,6 +25,7 @@ import FinalRevertDrawer from '../../../../../components/drawer/Revisions/Revert
 import CreateSnapshotDrawer from '../../../../../components/drawer/Revisions/CreateSnapshot';
 import LoadResources from '../../../../../components/LoadResources';
 import useOpenRevisionWhenValid from '../../../../../components/drawer/Revisions/hooks/useOpenRevisionWhenValid';
+import infoText from '../infoText';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -148,12 +149,10 @@ export default function Revisions({ integrationId }) {
       params: { revId: nanoid() },
     }),
   });
-  const infoTextRevisions =
-  'You can monitor and manage changes that anyone in your team makes to an integration over time (based on the access and permissions in an account or integration). The list displays every revision made to the integration as the result of a snapshot, pull, or revert. You can view details and perform actions on a revision based on the options available when you click the Actions overflow (...) menu for a revision. <a href="https://docs.celigo.com/hc/en-us/articles/5349100943003-Integration-Lifecycle-Management-ILM-overview">Learn more about Integration Lifecycle Management (ILM)</a>.';
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Revisions" className={classes.flowPanelTitle} infoText={infoTextRevisions}>
+      <PanelHeader title="Revisions" className={classes.flowPanelTitle} infoText={infoText.Revisions}>
         { !hasMonitorLevelAccess && (
         <ActionGroup>
           <TextButton

@@ -15,6 +15,7 @@ import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 import LoadResources from '../../components/LoadResources';
 import { OutlinedButton } from '../../components/Buttons';
+import infoText from './infoText';
 
 const useStyles = makeStyles(theme => ({
   googleBtn: {
@@ -315,11 +316,10 @@ export default function ProfilePanel() {
     remount: count,
     skipMonitorLevelAccessCheck: true,
   });
-  const infoTextProfile = 'Set your preferences or change your password as needed.';
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Profile" className={classes.profilePanelHeader} infoText={infoTextProfile} />
+      <PanelHeader title="Profile" className={classes.profilePanelHeader} infoText={infoText.Profile} />
       <LoadResources required resources={isAccountOwnerOrAdmin ? 'ssoclients' : ''}>
         <DynaForm formKey={formKey} className={classes.formContainer} />
         <DynaSubmit
