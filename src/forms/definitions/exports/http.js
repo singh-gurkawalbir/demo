@@ -229,7 +229,7 @@ export default {
       retValues['/unencrypted/apiType'] = 'Amazon-SP-API';
     }
 
-    if (retValues['/parsers']?.resourcePath !== '') {
+    if (finalSuccessMediaType(formValues, connection) === 'xml' && retValues['/parsers']?.resourcePath !== '') {
       retValues['/http/response/resourcePath'] = retValues['/parsers'].resourcePath;
     }
 
