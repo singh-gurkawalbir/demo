@@ -852,12 +852,10 @@ export function* initEditor({ id, editorType, options }) {
       });
 
       formattedOptions = init({options: formattedOptions, resource, fieldState, fileDefinitionData});
-    } else if (editorType === 'javascript') {
+    } else {
       const scriptContext = yield select(selectors.getScriptContext, {flowId, contextType: 'hook'});
 
       formattedOptions = init({options: formattedOptions, resource, fieldState, flow, scriptContext});
-    } else {
-      formattedOptions = init({options: formattedOptions, resource, fieldState, flow});
     }
   }
 
