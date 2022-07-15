@@ -252,6 +252,7 @@ export function* _fetchFBActionsSampleData({ formKey }) {
   const {data: transformedOutput, hasNoRulesToProcess} = yield call(executeTransformationRules, {
     transform: resourceObj?.transform,
     sampleData: parsedData,
+    isIntegrationApp: !!resourceObj?._connectorId,
   });
 
   yield put(actions.resourceFormSampleData.setProcessorData({
@@ -269,6 +270,7 @@ export function* _fetchFBActionsSampleData({ formKey }) {
   const {data: preSavePageHookOutput, hasNoRulesToProcess: hasNoHook} = yield call(executeJavascriptHook, {
     hook: resourceObj?.hooks?.preSavePage,
     sampleData: transformedData,
+    isIntegrationApp: !!resourceObj?._connectorId,
   });
 
   yield put(actions.resourceFormSampleData.setProcessorData({
