@@ -1,14 +1,40 @@
-/* eslint-disable react/button-has-type */
-/* eslint-disable no-undef */
-/* global describe, test, expect, beforeEach */
+/* global describe, test, expect, beforeEach, jest, afterEach */
 import React from 'react';
-import {screen} from '@testing-library/react';
+import {screen, waitFor} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
+import * as reactRedux from 'react-redux';
 import Filters from './Filters';
-import {renderWithProviders} from '../../test/test-utils';
+import {renderWithProviders, reduxStore} from '../../test/test-utils';
 
-const helpText = 'Download up to 1,000 records from the last year. Note that filters are not applied to a download.';
+const initialStore = reduxStore;
+
+initialStore.getState().data.audit = {
+  integrations: {
+    '6253af74cddb8a1ba550a010': [
+      {
+        _id: '62c6f1aea2f4a703c3dee3fd',
+        resourceType: 'flow',
+        _resourceId: '62c6f122a2f4a703c3dee3d0',
+        source: 'ui',
+        fieldChanges: [
+          {
+            oldValue: true,
+            newValue: false,
+            fieldPath: 'disabled',
+          },
+        ],
+        event: 'update',
+        time: '2022-07-07T14:46:06.187Z',
+        byUser: {
+          _id: '62386a5fed961b5e22e992c7',
+          email: 'testUser@celigo.com',
+          name: 'test user',
+        },
+      },
+    ],
+  },
+};
 const propsObj = {
   resourceDetails: {
     ssoclients: {},
@@ -71,84 +97,77 @@ const propsObj = {
     },
     filedefinitions: {},
   },
-  resourceType: 'flows',
-  resourceId: 'flow_id_1',
+  resourceType: 'integrations',
+  resourceId: '6253af74cddb8a1ba550a010',
 };
 
 jest.mock('../DateRangeSelector', () => ({
   __esModule: true,
   ...jest.requireActual('../DateRangeSelector'),
   default: props => (
+
+    // eslint-disable-next-line react/button-has-type
     <div><button onClick={props.onSave}>Download</button></div>
   ),
 }));
 describe('UI test cases for Audit Log Filter ', () => {
-  beforeEach(() => renderWithProviders(<MemoryRouter><Filters {... propsObj} /></MemoryRouter>));
+  let mockDispatchFn;
+  let useDispatchSpy;
 
-  test('Download option should be displayed', () => {
+  beforeEach(() => {
+    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
+    mockDispatchFn = jest.fn(action => {
+      switch (action.type) {
+        default:
+      }
+    });
+    useDispatchSpy.mockReturnValue(mockDispatchFn);
+
+    renderWithProviders(<MemoryRouter><Filters {... propsObj} /></MemoryRouter>, {initialStore});
+  });
+  afterEach(() => {
+    useDispatchSpy.mockClear();
+  });
+
+  test('should display the download button in the DOM', () => {
     expect(screen.getByRole('button', {name: /download/i})).toBeInTheDocument();
   });
 
-  test('help text for download should be shown upon clicking ? icon ', () => {
-    const helpTextButton = screen.getAllByRole('button').lastItem;
-
-    expect(helpTextButton).toBeInTheDocument();
-    userEvent.click(helpTextButton);
-
-    expect(screen.getByRole('heading', {name: /download/i})).toBeInTheDocument();
-    expect(screen.getByText(helpText)).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-
-    const yesBtn = screen.getByRole('button', {name: /yes/i});
-
-    userEvent.click(yesBtn);
-    expect(yesBtn).not.toBeInTheDocument();
-
-    userEvent.click(helpTextButton);
-    userEvent.click(screen.getByRole('button', {name: /no/i}));
-
-    const feedbackText = screen.getByRole('textbox', {placeholder: 'Please let us know how we can improve the text area.' });
-
-    expect(feedbackText).toBeInTheDocument();
-  });
-
-  test('Select source filter test cases', async () => {
+  test('should display 7 options on clicking the select source dropdown', async () => {
     const sourceType = screen.getByText(/Select source/i);
 
     expect(sourceType).toBeInTheDocument();
     userEvent.click(sourceType);
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    // const defaultType = screen.getByRole('list'); this line of code will give me accessible elements
-
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     const allSourceOptions = screen.getAllByRole('option');
 
-    expect(allSourceOptions).toHaveLength(6);
+    expect(allSourceOptions).toHaveLength(7);
     const defaultType = await screen.findByRole('option', {name: /Select source/i});
 
     expect(defaultType).toBeInTheDocument();
+    expect(screen.getByText('UI')).toBeInTheDocument();
+    expect(screen.getByText('API')).toBeInTheDocument();
+    expect(screen.getByText('Stack')).toBeInTheDocument();
+    expect(screen.getByText('System')).toBeInTheDocument();
+    expect(screen.getByText('SSO')).toBeInTheDocument();
+    expect(screen.getByText('Integration app')).toBeInTheDocument();
   });
 
-  test('Select user filter test cases', () => {
+  test('should display the available users on clicking the Select user dropdown', () => {
     const selectUser = screen.getByText(/Select user/i);
 
     expect(selectUser).toBeInTheDocument();
     userEvent.click(selectUser);
-
     const users = screen.getAllByRole('option');
 
-    expect(users.length).toBeGreaterThan(0);
+    expect(users).toHaveLength(2);
+    expect(screen.getByText('test user')).toBeInTheDocument();
     const defaultType = screen.getByRole('option', {name: /Select user/i});
 
     expect(defaultType).toBeInTheDocument();
   });
 
-  test('Select resource filter test cases', () => {
+  test('should display 17 options on clicking the "Select resources type" drop down', () => {
     const resourceType = screen.getByText('Select resource type');
 
     expect(resourceType).toBeInTheDocument();
@@ -157,78 +176,46 @@ describe('UI test cases for Audit Log Filter ', () => {
 
     const resourceOptions = screen.getAllByRole('option');
 
-    expect(resourceOptions).toHaveLength(8);
+    expect(resourceOptions).toHaveLength(17);
     const defaultType = screen.getByRole('option', {name: /Select resource type/i});
 
     expect(defaultType).toBeInTheDocument();
   });
-  test('download button', () => {
+  test('should run the onSave function on clicking the mocked download button', () => {
     userEvent.click(screen.getByText('Download'));
+    expect(mockDispatchFn).toBeCalled();
   });
 });
+test('should display the user emailId under select users tab when name is not present', () => {
+  const tempStore = reduxStore;
 
-test('r', async () => {
-  const mockFun = jest.fn();
-  const props = {...propsObj, onFiltersChange: mockFun};
-
-  renderWithProviders(<MemoryRouter><Filters {...props} /></MemoryRouter>);
-  const button = screen.getByRole('button', {name: 'Select resource type'});
-
-  userEvent.click(button);
-  expect(screen.getByText('Flow')).toBeInTheDocument();
-  expect(screen.getByText('Export')).toBeInTheDocument();
-  expect(screen.getByText('Import')).toBeInTheDocument();
-  const ind = screen.getByText('Connection');
-
-  userEvent.click(ind);
-  screen.debug(undefined, 300000);
-});
-
-describe('covering other use cases when resourceType is sent as null', async () => {
-  test('1', () => {
-    const mockFun = jest.fn();
-    const props = {...propsObj, onFiltersChange: mockFun};
-
-    props.resourceType = null;
-    renderWithProviders(<MemoryRouter><Filters {...props} /></MemoryRouter>);
-    screen.debug(undefined, 300000);
-  });
-  test('2', () => {
-    const mockFun = jest.fn();
-    const props = {...propsObj, onFiltersChange: mockFun};
-
-    props.resourceType = 'flows';
-    props.resourceDetails = {
-      _id: '62677c19737f015ed4aff4fd',
-      lastModified: '2022-05-28T05:45:51.473Z',
-      name: 'New flow',
-      disabled: true,
-      _integrationId: '62662cc4e06ff462c3db470e',
-      _connectorId: '62677c19737f015ed4aff4fd',
-      skipRetries: false,
-      pageProcessors: [
+  tempStore.getState().data.audit = {
+    integrations: {
+      '6253af74cddb8a1ba550a010': [
         {
-          responseMapping: {
-            fields: [],
-            lists: [],
+          _id: '62c6f1aea2f4a703c3dee3fd',
+          resourceType: 'flow',
+          _resourceId: '62c6f122a2f4a703c3dee3d0',
+          source: 'ui',
+          fieldChanges: [
+            {
+              oldValue: true,
+              newValue: false,
+              fieldPath: 'disabled',
+            },
+          ],
+          event: 'update',
+          time: '2022-07-07T14:46:06.187Z',
+          byUser: {
+            _id: '62386a5fed961b5e22e992c7',
+            email: 'testUser@celigo.com',
           },
-          _importId: '62677c50563089236fed72a1',
-          type: 'import',
         },
       ],
-      pageGenerators: [
-        {
-          _exportId: '62677c18563089236fed7295',
-          skipRetries: false,
-        },
-      ],
-      createdAt: '2022-04-26T04:59:05.445Z',
-      lastExecutedAt: '2022-04-26T05:03:02.115Z',
-      autoResolveMatchingTraceKeys: true,
-    };
-    props.resourceId = '62677c19737f015ed4aff4fd';
-    renderWithProviders(<MemoryRouter><Filters {...props} /></MemoryRouter>);
-    screen.debug(undefined, 300000);
-  });
+    },
+  };
+  renderWithProviders(<MemoryRouter><Filters {...propsObj} /></MemoryRouter>, {tempStore});
+  userEvent.click(screen.getByText(/Select user/i));
+  waitFor(() => expect(screen.getByText(/testUser@celigo.com/i)).toBeInTheDocument());
 });
 

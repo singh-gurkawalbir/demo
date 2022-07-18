@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-closing-tag-location */
 /* global describe,expect, test */
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import {screen} from '@testing-library/react';
 import {ResourceTypeFilter, ResourceIdFilter} from './ResourceFilters';
@@ -63,29 +62,13 @@ const affectedResources = {
 };
 
 describe('UI test cases for resource type filters', () => {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  test('Resource filter to return null when resource type can be any of acccestokens, connections, stacks, scripts, apis', () => {
-=======
-  test('should render empty DOM,when resource type is one of acccestokens, connections, stacks, scripts, apis', () => {
->>>>>>> Stashed changes
-=======
-  test('should render empty DOM,when resource type is one of acccestokens, connections, stacks, scripts, apis', () => {
->>>>>>> Stashed changes
-    const {utils: {container}} = renderWithProviders(<MemoryRouter><ResourceTypeFilter resourceType="connections" resourceDetails={resourceDetails} /> </MemoryRouter>);
+  test('should render empty DOM when resource type is one of accestokens, connections, stacks, scripts, apis', () => {
+    const {utils} = renderWithProviders(<ResourceTypeFilter resourceType="connections" resourceDetails={resourceDetails} />);
 
-    expect(container.childElementCount).toBe(0);
+    expect(utils.container).toBeEmptyDOMElement();
   });
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  test('Resource filter options when resource type is not provided', () => {
-=======
-  test('should display all the resource options when clicked on Select resource type', () => {
->>>>>>> Stashed changes
-=======
-  test('should display all the resource options when clicked on Select resource type', () => {
->>>>>>> Stashed changes
-    renderWithProviders(<MemoryRouter><ResourceTypeFilter filters={filters} resourceDetails={resourceDetails} /> </MemoryRouter>);
+  test('Should display the "Select Resource Type" dropdown when no resourceType is passed and should display all the 17 options on clicking it', () => {
+    renderWithProviders(<ResourceTypeFilter filters={filters} resourceDetails={resourceDetails} />);
     const resourceType = screen.getByText('Select resource type');
 
     expect(resourceType).toBeInTheDocument();
@@ -95,16 +78,8 @@ describe('UI test cases for resource type filters', () => {
     expect(resourceOptions).toHaveLength(17);
   });
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  test('Resource filter options with resource type as integrations and _connectorId present', () => {
-=======
-  test('should display 6 options,when resource type is integrations and _connectorId is present', () => {
->>>>>>> Stashed changes
-=======
-  test('should display 6 options,when resource type is integrations and _connectorId is present', () => {
->>>>>>> Stashed changes
-    renderWithProviders(<MemoryRouter><ResourceTypeFilter resourceType="integrations" resourceId="integration_id_2" filters={filters} resourceDetails={resourceDetails} /> </MemoryRouter>);
+  test('should display the applicable filter options when resource type is integrations and _connectorId present', () => {
+    renderWithProviders(<ResourceTypeFilter resourceType="integrations" resourceId="integration_id_2" filters={filters} resourceDetails={resourceDetails} />);
     const resourceType = screen.getByText('Select resource type');
 
     expect(resourceType).toBeInTheDocument();
@@ -117,16 +92,8 @@ describe('UI test cases for resource type filters', () => {
     expect(defaultType).toBeInTheDocument();
   });
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  test('Resource filter options with resource type as integrations and _connectorId not present', () => {
-=======
-  test('should display all the options,when resource type is integrations and _connectorId is not present', () => {
->>>>>>> Stashed changes
-=======
-  test('should display all the options,when resource type is integrations and _connectorId is not present', () => {
->>>>>>> Stashed changes
-    renderWithProviders(<MemoryRouter><ResourceTypeFilter resourceType="integrations" resourceId="integration_id_1" filters={filters} resourceDetails={resourceDetails} /> </MemoryRouter>);
+  test('should display all the available ooptions when resource type is integrations and _connectorId is not present', () => {
+    renderWithProviders(<ResourceTypeFilter resourceType="integrations" resourceId="integration_id_1" filters={filters} resourceDetails={resourceDetails} />);
     const resourceType = screen.getByText('Select resource type');
 
     expect(resourceType).toBeInTheDocument();
@@ -138,32 +105,31 @@ describe('UI test cases for resource type filters', () => {
 });
 
 describe('UI test cases for resource Id filters', () => {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  test('Resource Id filter should return null', () => {
-=======
-  test('should render empty DOM', () => {
->>>>>>> Stashed changes
-=======
-  test('should render empty DOM', () => {
->>>>>>> Stashed changes
-    const {utils: {container}} = renderWithProviders(<MemoryRouter><ResourceIdFilter
+  test('should render empty DOM when filters.resourceType is "all"', () => {
+    const {utils} = renderWithProviders(<ResourceIdFilter
       resourceType="integrations" resourceId="integration_id_1" resourceDetails={resourceDetails} affectedResources={affectedResources}
       filters={filters} />
-    </MemoryRouter>);
+    );
 
-    expect(container.childElementCount).toEqual(0);
+    expect(utils.container).toBeEmptyDOMElement();
   });
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  test("Resource Id filter with option 'All' is visible with no menuoptions when filters.resourcetype is not present in affectedResources", () => {
-=======
-  test("should display the option 'All' with no menuoptions when filters.resourcetype is not present in affectedResources", () => {
->>>>>>> Stashed changes
-=======
-  test("should display the option 'All' with no menuoptions when filters.resourcetype is not present in affectedResources", () => {
->>>>>>> Stashed changes
-    renderWithProviders(<MemoryRouter><ResourceIdFilter
+  test('should display ResourceId filter with option "All" with no menuoptions when filters.resourcetype is not present in affectedResources', () => {
+    renderWithProviders(<ResourceIdFilter
+      resourceType="integrations" resourceId="integration_id_1" resourceDetails={resourceDetails} affectedResources={affectedResources}
+      filters={{
+        resourceType: 'connections',
+        _resourceId: 'all',
+        byUser: 'all',
+        source: 'all',
+      }} classes={{formControl: 'makeStyles-formControl'}} />
+    );
+
+    expect(screen.getByText('All')).toBeInTheDocument();
+    userEvent.click(screen.getByText('All'));
+    expect(screen.getAllByRole('option')).toHaveLength(2);
+  });
+  test(' should display ResourceId filter with option "All" without menuoptions when filters.resourcetype is present in affectedResources but not resourceDetails', () => {
+    renderWithProviders(<ResourceIdFilter
       resourceType="integrations" resourceId="integration_id_1" resourceDetails={resourceDetails} affectedResources={affectedResources}
       filters={{
         resourceType: 'connection',
@@ -171,41 +137,14 @@ describe('UI test cases for resource Id filters', () => {
         byUser: 'all',
         source: 'all',
       }} classes={{formControl: 'makeStyles-formControl'}} />
-    </MemoryRouter>);
+    );
 
     expect(screen.getByText('All')).toBeInTheDocument();
+    userEvent.click(screen.getByText('All'));
+    expect(screen.getAllByRole('option')).toHaveLength(2);
   });
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  test("Resource Id filter with option 'All' is visible with other menuoptions when filters.resourcetype is present in affectedResources but not resourceDetails", () => {
-=======
-  test("should display the option 'All' with other menuoptions when filters.resourcetype is present in affectedResources but not resourceDetails", () => {
->>>>>>> Stashed changes
-=======
-  test("should display the option 'All' with other menuoptions when filters.resourcetype is present in affectedResources but not resourceDetails", () => {
->>>>>>> Stashed changes
-    renderWithProviders(<MemoryRouter><ResourceIdFilter
-      resourceType="integrations" resourceId="integration_id_1" resourceDetails={resourceDetails} affectedResources={affectedResources}
-      filters={{
-        resourceType: 'connection',
-        _resourceId: 'all',
-        byUser: 'all',
-        source: 'all',
-      }} classes={{formControl: 'makeStyles-formControl'}} />
-    </MemoryRouter>);
-
-    expect(screen.getByText('All')).toBeInTheDocument();
-  });
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  test("Resource Id filter with option 'All' is visible with other menuoptions when filters.resourcetype is present in affectedResources and resourceDetails", () => {
-=======
-  test("should display the option 'All' with other menuoptions when filters.resourcetype is present in affectedResources and resourceDetails", () => {
->>>>>>> Stashed changes
-=======
-  test("should display the option 'All' with other menuoptions when filters.resourcetype is present in affectedResources and resourceDetails", () => {
->>>>>>> Stashed changes
-    renderWithProviders(<MemoryRouter><ResourceIdFilter
+  test('should ResourceId filter with option "All" is visible with other menuoptions when filters.resourcetype is present in affectedResources and resourceDetails', () => {
+    renderWithProviders(<ResourceIdFilter
       resourceType="integrations" resourceId="integration_id_1" resourceDetails={resourceDetails} affectedResources={affectedResources}
       filters={{
         resourceType: 'flow',
@@ -213,8 +152,10 @@ describe('UI test cases for resource Id filters', () => {
         byUser: 'all',
         source: 'all',
       }} classes={{formControl: 'makeStyles-formControl'}} />
-    </MemoryRouter>);
+    );
 
     expect(screen.getByText('All')).toBeInTheDocument();
+    userEvent.click(screen.getByText('All'));
+    expect(screen.getAllByRole('option')).toHaveLength(3);
   });
 });

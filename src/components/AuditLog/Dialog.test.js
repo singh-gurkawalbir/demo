@@ -2,8 +2,6 @@
 /* global describe, test, expect, afterAll */
 import React from 'react';
 import {screen} from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-// import userEvent from '@testing-library/user-event';
 import {renderWithProviders, reduxStore} from '../../test/test-utils';
 import AuditLogDialog from './AuditLogDialog';
 
@@ -14,7 +12,7 @@ const initialStore = reduxStore;
 initialStore.getState().data.resources.flows = [
   {
     _id: 'flow_id',
-    name: 'resource_name',
+    name: 'demo flow',
     disabled: false,
     _integrationId: 'integration_id',
     pageProcessors: [{
@@ -33,26 +31,12 @@ describe('UI test cases for audit log dialog box', () => {
     });
   });
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  test('Audit log text is visible', () => {
-    renderWithProviders(<MemoryRouter><AuditLogDialog resourceId={resourceId} resourceType={resourceType} /></MemoryRouter>, {initialStore});
-    expect(screen.getByText(/Audit log: resource_name/i)).toBeInTheDocument();
+  test('Should display the auditlog header along with the resource name', () => {
+    renderWithProviders(<AuditLogDialog resourceId={resourceId} resourceType={resourceType} />, {initialStore});
+    expect(screen.getByText(/Audit log: demo flow/i)).toBeInTheDocument();
   });
-  test("Only 'Audit log' is visible", () => {
-=======
-=======
->>>>>>> Stashed changes
-  test('should display the audit log text', () => {
-    renderWithProviders(<MemoryRouter><AuditLogDialog resourceId={resourceId} resourceType={resourceType} /></MemoryRouter>, {initialStore});
-    expect(screen.getByText(/Audit log: resource_name/i)).toBeInTheDocument();
-  });
-  test('should display the audit log header', () => {
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-    renderWithProviders(<MemoryRouter><AuditLogDialog resourceId={resourceId} resourceType={resourceType} /></MemoryRouter>);
+  test('should only diplay the auditlog header when no resource is passed', () => {
+    renderWithProviders(<AuditLogDialog resourceId={resourceId} resourceType={resourceType} />);
     expect(screen.getByText(/Audit log/i)).toBeInTheDocument();
   });
 });
