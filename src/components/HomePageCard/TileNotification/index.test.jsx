@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import actions from '../../../actions';
 import { renderWithProviders } from '../../../test/test-utils';
@@ -70,7 +70,7 @@ describe('Testing Tile Notification Component', () => {
 
     expect(submit).toBeInTheDocument();
     userEvent.click(submit);
-    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', props.connectorId, props.licenseId));
+    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId: props.licenseId}));
     expect(submit).not.toBeInTheDocument();
   });
 
@@ -156,7 +156,7 @@ describe('Testing Tile Notification Component', () => {
     expect(submitMessage).toBeInTheDocument();
     userEvent.click(submitMessage);
 
-    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', props.connectorId, licenseId));
+    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId}));
     expect(submitMessage).not.toBeInTheDocument();
   });
 
@@ -248,7 +248,7 @@ describe('Testing Tile Notification Component', () => {
 
     expect(cancelButton).toBeInTheDocument();
     userEvent.click(submitButton);
-    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', props.connectorId, licenseId));
+    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId}));
     expect(submitButton).not.toBeInTheDocument();
   });
 
@@ -296,7 +296,7 @@ describe('Testing Tile Notification Component', () => {
 
     expect(cancelButton).toBeInTheDocument();
     userEvent.click(submitButton);
-    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', props.connectorId, licenseId));
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId})));
     expect(submitButton).not.toBeInTheDocument();
     userEvent.click(errorMessage);
     const uninstallMessage = screen.getByText('Contact your account owner to uninstall this integration app.');
