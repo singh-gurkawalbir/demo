@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors} from '.';
 import actions from '../../../../actions';
-import { JOB_TYPES, JOB_STATUS } from '../../../../utils/constants';
+import { JOB_TYPES, JOB_STATUS } from '../../../../constants';
 
 const DEFAULT_STATE = {};
 const _integrationId = 'i1';

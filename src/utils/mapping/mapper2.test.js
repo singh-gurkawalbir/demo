@@ -6,8 +6,10 @@ import util, {
   findAllParentExtractsForNode,
   findNearestParentExtractForNode,
   getFinalSelectedExtracts,
-  filterExtractsNode,
+  autoCreateDestinationStructure,
+  deleteNonRequiredMappings,
   buildExtractsTree,
+  getSelectedKeys,
   findNodeInTree,
   allowDrop,
   buildV2MappingsFromTree,
@@ -15,6 +17,7 @@ import util, {
   hasV2MappingsInTreeData,
   rebuildObjectArrayNode,
   hideOtherTabRows,
+  isCsvOrXlsxResourceForMapper2,
 } from '.';
 import {generateUniqueKey} from '../string';
 
@@ -52,6 +55,22 @@ describe('v2 mapping utils', () => {
     });
   });
 
+  describe('isCsvOrXlsxResourceForMapper2 util', () => {
+    test('should not throw exception for invalid args', () => {
+      expect(isCsvOrXlsxResourceForMapper2()).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2(null)).toEqual(false);
+    });
+    test('should correctly return the expected outcome', () => {
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'RDBMSImport'})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'NetSuiteImport'})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'FTPImport', file: {type: 'xml'}})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'AS2Import', file: {type: 'filedefinition'}})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'FTPImport', file: {type: 'csv'}})).toEqual(true);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'S3Import', file: {type: 'xlsx'}})).toEqual(true);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'AS2Import', file: {type: 'csv'}})).toEqual(true);
+    });
+  });
   describe('hideOtherTabRows util', () => {
     test('should not throw exception for invalid args', () => {
       expect(hideOtherTabRows()).toBeUndefined();
@@ -755,10 +774,8 @@ describe('v2 mapping utils', () => {
             title: '',
           },
           {
-            className: false,
             dataType: 'string',
-            hidden: false,
-            key: 'new_key',
+            key: '4UB7OJokF5bGpvc8osHYT',
             parentExtract: '$|0',
             parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
             title: '',
@@ -771,6 +788,50 @@ describe('v2 mapping utils', () => {
             parentExtract: '$|1',
             parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
             title: '',
+          },
+        ],
+      };
+
+      expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
+    });
+    test('should correctly update the node children and link to first source if they were not linked already', () => {
+      const node = {
+        combinedExtract: '',
+        dataType: 'objectarray',
+        disabled: false,
+        generate: 'family_tree',
+        key: 'vlVDP3cjaN2cGmcSW1RCq',
+        title: '',
+        children: [
+          {
+            dataType: 'string',
+            key: '4UB7OJokF5bGpvc8osHYT',
+            parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
+            title: '',
+            generate: 'id',
+            extract: '$.id',
+          },
+        ],
+      };
+
+      const extract = '$';
+      const newNode = {
+        combinedExtract: '$',
+        dataType: 'objectarray',
+        disabled: false,
+        generate: 'family_tree',
+        key: 'vlVDP3cjaN2cGmcSW1RCq',
+        title: '',
+        activeTab: 0,
+        children: [
+          {
+            dataType: 'string',
+            key: '4UB7OJokF5bGpvc8osHYT',
+            parentExtract: '$|0',
+            parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
+            title: '',
+            generate: 'id',
+            extract: '$.id',
           },
         ],
       };
@@ -1764,21 +1825,77 @@ describe('v2 mapping utils', () => {
 
       expect(buildTreeFromV2Mappings({importResource, isGroupedSampleData: true, disabled: true})).toEqual(v2TreeData);
     });
+    test('should correctly generate default tree structure for csv/xlsx resource with no existing mappings', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const importResource = {
+        _id: 'id1',
+        adaptorType: 'FTPImport',
+        file: {type: 'csv'},
+      };
+
+      const v2TreeData = [{
+        key: 'new_key',
+        title: '',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        generateDisabled: true,
+        disabled: false,
+        children: [
+          {
+            key: 'new_key',
+            title: '',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            disabled: false,
+            isEmptyRow: true,
+          },
+        ],
+      }];
+
+      expect(buildTreeFromV2Mappings({importResource, isGroupedSampleData: false, disabled: false})).toEqual(v2TreeData);
+    });
   });
   describe('hasV2MappingsInTreeData util', () => {
     test('should not throw exception for invalid args', () => {
       expect(hasV2MappingsInTreeData()).toEqual(false);
-      expect(hasV2MappingsInTreeData(null)).toEqual(false);
-      expect(hasV2MappingsInTreeData([])).toEqual(false);
+      expect(hasV2MappingsInTreeData([], [])).toEqual(false);
     });
-    test('should return false if only one default row exists', () => {
-      expect(hasV2MappingsInTreeData([{key: 'key1', isEmptyRow: true}])).toEqual(false);
-    });
-    test('should return false if only one default row exists in rows output mode', () => {
-      expect(hasV2MappingsInTreeData([{key: 'key1', generateDisabled: true, children: [{key: 'c1', isEmptyRow: true}]}])).toEqual(false);
-    });
-    test('should return true if tree data exists', () => {
+    test('should return true if no required mappings exist and any extract is present', () => {
+      const mappings1 = [{key: 'key1', extract: '$.test'}];
+      const mappings2 = [{key: 'key1', generateDisabled: true, extract: '$.test', children: [{key: 'c1', isEmptyRow: true}]}];
+
+      expect(hasV2MappingsInTreeData(mappings1)).toEqual(true);
+      expect(hasV2MappingsInTreeData(mappings2)).toEqual(true);
       expect(hasV2MappingsInTreeData([{key: 'key1', extract: 'e1', generate: 'g1', dataType: 'string'}])).toEqual(true);
+    });
+    test('should return true if no required mappings exist and any generate is present', () => {
+      const mappings1 = [{key: 'key1', generate: 'test'}];
+      const mappings2 = [{key: 'key1', children: [{key: 'c1', generate: 'test'}]}];
+
+      expect(hasV2MappingsInTreeData(mappings1)).toEqual(true);
+      expect(hasV2MappingsInTreeData(mappings2)).toEqual(true);
+    });
+    test('should return true if required mappings exist and any extra generate is present', () => {
+      const mappings1 = [{key: 'key1', isRequired: true, generate: 'test'}, {key: 'key2', generate: 'address'}];
+      const mappings2 = [{key: 'key1', isRequired: true, generate: 'test', children: [{key: 'c1', generate: 'address'}]}];
+
+      expect(hasV2MappingsInTreeData(mappings1)).toEqual(true);
+      expect(hasV2MappingsInTreeData(mappings2)).toEqual(true);
+    });
+    test('should return true if required mappings exist and extract is present in those', () => {
+      const mappings = [{key: 'key1', isRequired: true, generate: 'test', extract: '$.abc'}];
+
+      expect(hasV2MappingsInTreeData(mappings)).toEqual(true);
+    });
+    test('should return false if no valid mappings exist', () => {
+      const mappings1 = [{key: 'key1'}];
+      const mappings2 = [{key: 'key1', isRequired: true, generate: 'test'}];
+      const mappings3 = [{key: 'key1', isRequired: true, generate: 'test', children: [{key: 'c1', isEmptyRow: true}]}];
+
+      expect(hasV2MappingsInTreeData(mappings1)).toEqual(false);
+      expect(hasV2MappingsInTreeData(mappings2)).toEqual(false);
+      expect(hasV2MappingsInTreeData(mappings3)).toEqual(false);
+      expect(hasV2MappingsInTreeData([{key: 'key1', isEmptyRow: true}])).toEqual(false);
+      expect(hasV2MappingsInTreeData([{key: 'key1', generateDisabled: true, children: [{key: 'c1', isEmptyRow: true}]}])).toEqual(false);
     });
   });
   describe('buildV2MappingsFromTree util', () => {
@@ -1788,6 +1905,21 @@ describe('v2 mapping utils', () => {
     });
     test('should correctly return the v2 mappings structure based on passed tree data for record based output', () => {
       const v2TreeData = [{
+        key: 'new_key',
+        title: '',
+        disabled: false,
+        generate: 'dummy_generate',
+        dataType: 'string',
+      },
+      {
+        key: 'new_key',
+        title: '',
+        disabled: false,
+        generate: 'arraynames',
+        dataType: 'stringarray',
+        hardCodedValue: null,
+      },
+      {
         key: 'new_key',
         title: '',
         disabled: false,
@@ -2146,6 +2278,12 @@ describe('v2 mapping utils', () => {
       const mappingsToSave = [
         {
           conditional: {when: undefined},
+          generate: 'arraynames',
+          dataType: 'stringarray',
+          hardCodedValue: null,
+        },
+        {
+          conditional: {when: undefined},
           generate: 'my_first_name',
           dataType: 'string',
           hardCodedValue: 'hard coded value',
@@ -2324,7 +2462,7 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(buildV2MappingsFromTree({v2TreeData})).toEqual(mappingsToSave);
+      expect(buildV2MappingsFromTree({v2TreeData, lookups: [{name: 'lookup1'}]})).toEqual(mappingsToSave);
     });
     test('should correctly return the v2 mappings structure based on passed tree data for row based output', () => {
       const v2TreeData = [{
@@ -2644,6 +2782,392 @@ describe('v2 mapping utils', () => {
       expect(findNodeInTree(treeData, 'key', 'dummy')).toEqual({});
     });
   });
+  describe('autoCreateDestinationStructure util', () => {
+    test('should correctly return tree data for non csv/xlsx resource with required mappings', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+      const importSampleData = {
+        id: '123',
+        rowNumber: 3,
+        files: [],
+        custom: {},
+        customerId: {value: 'abcd'},
+        details: [{description: 'desc', orderType: {value: 'SO'}}],
+      };
+      const requiredMappings = ['id', 'details[*].orderType.value', 'customerId.value'];
+
+      const treeData = [
+        {
+          dataType: 'string',
+          generate: 'id',
+          isRequired: true,
+          jsonPath: 'id',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          dataType: 'number',
+          generate: 'rowNumber',
+          isRequired: false,
+          jsonPath: 'rowNumber',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'files',
+          isRequired: false,
+          jsonPath: 'files[*]',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'custom',
+          isRequired: false,
+          jsonPath: 'custom',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'value',
+              isRequired: true,
+              jsonPath: 'customerId.value',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'customerId',
+          isRequired: true,
+          jsonPath: 'customerId',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'description',
+              isRequired: false,
+              jsonPath: 'details[*].description',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+            {
+              children: [
+                {
+                  dataType: 'string',
+                  generate: 'value',
+                  isRequired: true,
+                  jsonPath: 'details[*].orderType.value',
+                  key: 'new_key',
+                  parentKey: 'new_key',
+                  title: '',
+                },
+              ],
+              dataType: 'object',
+              generate: 'orderType',
+              isRequired: true,
+              jsonPath: 'details[*].orderType',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'details',
+          isRequired: true,
+          jsonPath: 'details[*]',
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      expect(autoCreateDestinationStructure(importSampleData, requiredMappings)).toEqual(treeData);
+    });
+    test('should correctly return tree data for csv/xlsx resource', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+      const importSampleData = {
+        id: '123',
+        rowNumber: 3,
+        code: null};
+
+      const treeData = [
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'id',
+              isRequired: false,
+              jsonPath: 'id',
+              key: 'new_key',
+              title: '',
+            },
+            {
+              dataType: 'number',
+              generate: 'rowNumber',
+              isRequired: false,
+              jsonPath: 'rowNumber',
+              key: 'new_key',
+              title: '',
+            },
+            {
+              dataType: 'string',
+              generate: 'code',
+              isRequired: false,
+              jsonPath: 'code',
+              key: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generateDisabled: true,
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      expect(autoCreateDestinationStructure(importSampleData, [], true)).toEqual(treeData);
+    });
+  });
+  describe('deleteNonRequiredMappings util', () => {
+    test('should correctly delete all mappings if no required mappings exist', () => {
+      const treeData = [
+        {
+          dataType: 'string',
+          generate: 'id',
+          isRequired: false,
+          jsonPath: 'id',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          dataType: 'number',
+          generate: 'rowNumber',
+          isRequired: false,
+          jsonPath: 'rowNumber',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'files',
+          isRequired: false,
+          jsonPath: 'files[*]',
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      expect(deleteNonRequiredMappings(treeData)).toEqual([]);
+    });
+    test('should correctly delete only non-required mappings if required mappings also exist', () => {
+      const treeData = [
+        {
+          dataType: 'string',
+          generate: 'id',
+          isRequired: true,
+          jsonPath: 'id',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          dataType: 'number',
+          generate: 'rowNumber',
+          isRequired: false,
+          jsonPath: 'rowNumber',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'files',
+          isRequired: false,
+          jsonPath: 'files[*]',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'custom',
+          isRequired: false,
+          jsonPath: 'custom',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'value',
+              isRequired: true,
+              jsonPath: 'customerId.value',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'customerId',
+          isRequired: true,
+          jsonPath: 'customerId',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'description',
+              isRequired: false,
+              jsonPath: 'details[*].description',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+            {
+              children: [
+                {
+                  dataType: 'string',
+                  generate: 'value',
+                  isRequired: true,
+                  jsonPath: 'details[*].orderType.value',
+                  key: 'new_key',
+                  parentKey: 'new_key',
+                  title: '',
+                },
+              ],
+              dataType: 'object',
+              generate: 'orderType',
+              isRequired: true,
+              jsonPath: 'details[*].orderType',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'details',
+          isRequired: true,
+          jsonPath: 'details[*]',
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      const newTreeData = [
+        {
+          dataType: 'string',
+          generate: 'id',
+          isRequired: true,
+          jsonPath: 'id',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'value',
+              isRequired: true,
+              jsonPath: 'customerId.value',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'customerId',
+          isRequired: true,
+          jsonPath: 'customerId',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              children: [
+                {
+                  dataType: 'string',
+                  generate: 'value',
+                  isRequired: true,
+                  jsonPath: 'details[*].orderType.value',
+                  key: 'new_key',
+                  parentKey: 'new_key',
+                  title: '',
+                },
+              ],
+              dataType: 'object',
+              generate: 'orderType',
+              isRequired: true,
+              jsonPath: 'details[*].orderType',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'details',
+          isRequired: true,
+          jsonPath: 'details[*]',
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      expect(deleteNonRequiredMappings(treeData)).toEqual(newTreeData);
+    });
+  });
   describe('buildExtractsTree util', () => {
     test('should not throw exception for invalid args', () => {
       expect(buildExtractsTree()).toEqual([]);
@@ -2869,7 +3393,7 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(buildExtractsTree(sampleData)).toEqual({treeData, selectedKeys: []});
+      expect(buildExtractsTree(sampleData)).toEqual(treeData);
     });
     test('should correctly return the tree structure based on passed sample data', () => {
       generateUniqueKey.mockReturnValue('new_key');
@@ -2958,36 +3482,66 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      const selectedValues = ['motherFName'];
-
-      expect(buildExtractsTree(sampleData, selectedValues)).toEqual({treeData, selectedKeys: ['new_key']});
+      expect(buildExtractsTree(sampleData)).toEqual(treeData);
     });
   });
-  describe('filterExtractsNode util', () => {
+  describe('getSelectedKeys util', () => {
     test('should not throw exception for invalid args', () => {
-      expect(filterExtractsNode()).toEqual(false);
+      expect(getSelectedKeys()).toEqual([]);
+      expect(getSelectedKeys(null, null, null)).toEqual(null);
     });
-    test('should return false if node is already selected', () => {
-      expect(filterExtractsNode({selected: true, jsonPath: 'lname'}, '', 'lname')).toEqual(false);
-    });
-    test('should return false if extract value and new input value is ame', () => {
-      expect(filterExtractsNode({jsonPath: 'lname'}, 'lname', 'lname')).toEqual(false);
-    });
-    test('should return false if no match is found', () => {
-      expect(filterExtractsNode({jsonPath: 'lname'}, '', '$.firstname')).toEqual(false);
-      expect(filterExtractsNode({jsonPath: 'object.name'}, '', 'firstname')).toEqual(false);
-      expect(filterExtractsNode({jsonPath: 'sports'}, '', 'name,$.lname,$[*].age')).toEqual(false);
-    });
-    test('should return true if any match is found in multiple input values', () => {
-      expect(filterExtractsNode({jsonPath: 'age'}, '', 'name,$.lname,$[*].age')).toEqual(true);
-      expect(filterExtractsNode({jsonPath: 'firstname'}, '', 'name,$.lname,$[*].age')).toEqual(true);
-      expect(filterExtractsNode({jsonPath: 'object.LNAME'}, '', 'name,$.lname,$[*].age')).toEqual(true);
-    });
-    test('should return false for child node if input value ends with [*]', () => {
-      expect(filterExtractsNode({jsonPath: 'siblings[*].lname'}, '', '$.siblings[*]')).toEqual(false);
-    });
-    test('should return true for parent node if input value ends with [*]', () => {
-      expect(filterExtractsNode({jsonPath: 'siblings[*]'}, '', '$.siblings[*]')).toEqual(true);
+    test('should correctly return the selected keys based on selected values', () => {
+      const extractsTreeNode = {
+        dataType: '[object]',
+        key: 'key1',
+        propName: '$',
+        children: [
+          {
+            dataType: 'string',
+            jsonPath: 'fName',
+            key: 'c1',
+            parentKey: 'key1',
+            propName: 'fName',
+          },
+          {
+            dataType: 'string',
+            jsonPath: 'lName',
+            key: 'c2',
+            parentKey: 'key1',
+            propName: 'lName',
+          },
+          {
+            dataType: 'string',
+            jsonPath: 'motherFName',
+            key: 'c3',
+            parentKey: 'key1',
+            propName: 'motherFName',
+          },
+          {
+            dataType: 'string',
+            jsonPath: 'motherLName',
+            key: 'c4',
+            parentKey: 'key1',
+            propName: 'motherLName',
+          },
+          {
+            dataType: 'string',
+            jsonPath: 'childFName',
+            key: 'c5',
+            parentKey: 'key1',
+            propName: 'childFName',
+            children: [{
+              dataType: 'string',
+              jsonPath: 'finalChild',
+              key: 'c5-1',
+              parentKey: 'c5',
+              propName: 'finalChild',
+            }],
+          },
+        ],
+      };
+
+      expect(getSelectedKeys(extractsTreeNode, ['motherFName', 'finalChild'])).toEqual(['c3', 'c5-1']);
     });
   });
   describe('findAllParentExtractsForNode util', () => {

@@ -25,6 +25,7 @@ import {
   getFlowResourceNode,
   getPreProcessedResponseMappingData,
   getFlowStageData,
+  requestSampleDataForRouters,
 } from '../utils/flowDataUtils';
 import {
   updateFlowsDataForResource,
@@ -55,10 +56,10 @@ import {
   isRestCsvMediaTypeExport,
 } from '../../../utils/resource';
 import { isIntegrationApp } from '../../../utils/flows';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import { getConstructedResourceObj } from './utils';
 
-const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['exports', 'imports', 'connections'];
+const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['flows', 'exports', 'imports', 'connections'];
 
 export function* _initFlowData({ flowId, resourceId, resourceType, refresh, formKey }) {
   const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
@@ -103,8 +104,10 @@ export function* requestSampleData({
   resourceId,
   resourceType,
   stage,
+  editorId,
   refresh = false,
   formKey,
+  routerId,
   isInitialized,
   onSagaEnd,
 }) {
@@ -143,7 +146,15 @@ export function* requestSampleData({
   yield put(actions.flowData.requestStage(flowId, resourceId, sampleDataStage));
 
   try {
-    if (resourceType === 'imports') {
+    if (resourceType === 'flows') {
+      yield call(requestSampleDataForRouters, {
+        flowId,
+        routerId,
+        editorId,
+        hidden: true,
+        sampleDataStage,
+      });
+    } else if (resourceType === 'imports') {
       yield call(requestSampleDataForImports, {
         flowId,
         resourceId,
@@ -181,6 +192,7 @@ export function* fetchPageProcessorPreview({
   flowId,
   _pageProcessorId,
   previewType,
+  editorId,
   hidden,
   refresh,
   resourceType = 'exports',
@@ -201,6 +213,7 @@ export function* fetchPageProcessorPreview({
     previewType,
     resourceType,
     hidden,
+    editorId,
     throwOnError: true,
     refresh: refresh || flowDataRefresh,
     runOffline: true,
@@ -350,6 +363,7 @@ export function* _processMappingData({
 export function* requestProcessorData({
   flowId,
   resourceId,
+  routerId,
   resourceType,
   processor,
   processorStage,
@@ -369,6 +383,7 @@ export function* requestProcessorData({
   const preProcessedData = yield call(getFlowStageData, {
     flowId,
     resourceId,
+    routerId,
     resourceType,
     stage,
     isInitialized: true,
@@ -401,16 +416,17 @@ export function* requestProcessorData({
       const { _scriptId, function: entryFunction } = transform.script || {};
 
       if (_scriptId) {
-        const script = yield call(getResource, {
+        const script = !resource._connectorId ? (yield call(getResource, {
           resourceType: 'scripts',
           id: _scriptId,
-        });
+        })) : {};
 
         processorData = {
           data: preProcessedData,
           rule: {
             code: script?.content,
             entryFunction,
+            scriptId: _scriptId,
           },
           editorType: 'javascript',
           wrapInArrayProcessedData: true,
@@ -436,10 +452,11 @@ export function* requestProcessorData({
 
     if (hook._scriptId) {
       const scriptId = hook._scriptId;
-      const script = yield call(getResource, {
+      // IAs don't give access to script content
+      const script = !resource._connectorId ? (yield call(getResource, {
         resourceType: 'scripts',
         id: scriptId,
-      });
+      })) : {};
       const context = yield select(selectors.getScriptContext, {
         flowId,
         contextType: 'hook',
@@ -451,6 +468,7 @@ export function* requestProcessorData({
         rule: {
           code,
           entryFunction: hook.function,
+          scriptId,
         },
         context,
         removeDataPropFromProcessedData: stage === 'preMap',

@@ -3,7 +3,7 @@ import each from 'jest-each';
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import suitescriptActions from '../../../actions/suiteScript';
-import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
+import { SUITESCRIPT_CONNECTORS } from '../../../constants';
 
 const defaultState = {
   paging: {

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import UserName from '../commonCells/IntegrationUserName';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import { REVISION_STATUS_LABELS, REVISION_TYPE_LABELS } from '../../../utils/revisions';
-import { REVISION_STATUS, REVISION_TYPES } from '../../../utils/constants';
+import { REVISION_STATUS, REVISION_TYPES } from '../../../constants';
 import CreatePull from './actions/CreatePull';
 import CancelRevision from './actions/CancelRevision';
 import ViewDetails from './actions/ViewDetails';

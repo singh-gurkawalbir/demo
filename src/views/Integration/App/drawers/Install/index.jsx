@@ -28,7 +28,7 @@ import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
 import { INSTALL_STEP_TYPES, emptyObject,
-} from '../../../../../utils/constants';
+} from '../../../../../constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
 import RawHtml from '../../../../../components/RawHtml';
@@ -79,6 +79,7 @@ export default function ConnectorInstallation() {
   const [connection, setConnection] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
+  const [isResourceStaged, setIsResourceStaged] = useState(false);
   const dispatch = useDispatch();
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
@@ -394,6 +395,7 @@ export default function ConnectorInstallation() {
             SCOPES.VALUE
           )
         );
+        setIsResourceStaged(true);
       }
       setConnection({
         newId,
@@ -605,6 +607,8 @@ export default function ConnectorInstallation() {
         onSubmitComplete={handleSubmitComplete}
         handleStackSetupDone={handleStackSetupDone}
         handleStackClose={handleStackClose}
+        isResourceStaged={isResourceStaged}
+        setIsResourceStaged={setIsResourceStaged}
         mode="install"
       />
     </LoadResources>

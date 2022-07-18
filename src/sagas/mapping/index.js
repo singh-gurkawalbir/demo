@@ -7,16 +7,16 @@ import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
 import {selectors} from '../../reducers';
 import { commitStagedChanges } from '../resources';
-import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, hasV2MappingsInTreeData} from '../../utils/mapping';
+import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, buildExtractsTree} from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
-import { getResourceSubType } from '../../utils/resource';
+import { getResourceSubType, isFileAdaptor, isAS2Resource } from '../../utils/resource';
 import { getImportOperationDetails } from '../../utils/assistant';
 import { requestSampleData as requestFlowSampleData } from '../sampleData/flows';
-import { requestSampleData as requestImportSampleData } from '../sampleData/imports';
+import { requestSampleData as requestImportSampleData, getImportSampleData } from '../sampleData/imports';
 import { requestAssistantMetadata } from '../resources/meta';
 import { getMappingMetadata as getIAMappingMetadata } from '../integrationApps/settings';
-import { getAssistantConnectorType } from '../../constants/applications';
+import { getAssistantConnectorType, getHttpConnector} from '../../constants/applications';
 import { autoEvaluateProcessorWithCancel } from '../editor';
 import { getAssistantFromConnection } from '../../utils/connections';
 import { safeParse } from '../../utils/string';
@@ -203,7 +203,7 @@ export function* mappingInit({
       mappingMetadata: mappingMetadata || {},
       connectorExternalId: importResource.externalId,
     };
-  } else if (importResource.assistant || connection?.http?._httpConnectorId) {
+  } else if (importResource.assistant || getHttpConnector(connection?.http?._httpConnectorId)) {
     const { assistant } = getResourceSubType(
       {...importResource, assistant: connectionAssistant}
     );
@@ -222,7 +222,7 @@ export function* mappingInit({
       operation,
       resource,
       version,
-      assistantData: connection?.http?._httpConnectorId ? connectorMetaData : assistantData,
+      assistantData: getHttpConnector(connection?.http?._httpConnectorId) ? connectorMetaData : assistantData,
     });
 
     options.assistant = { requiredMappings };
@@ -263,11 +263,16 @@ export function* mappingInit({
 
   let version = 1;
   let mappingsTreeData;
+  let extractsTree;
+  let importSampleData;
 
-  // IAs, non http/rest don't support mapper2
-  if (!importResource._connectorId &&
-    (importResource.adaptorType === 'HTTPImport' || importResource.adaptorType === 'RESTImport') &&
-    importResource.http?.type !== 'file') {
+  // only http and file imports are supported
+  if (!importResource._connectorId && (
+    isFileAdaptor(importResource) ||
+    isAS2Resource(importResource) ||
+    importResource.adaptorType === 'HTTPImport' ||
+    importResource.adaptorType === 'RESTImport')
+  ) {
     mappingsTreeData = buildTreeFromV2Mappings({
       importResource,
       isGroupedSampleData,
@@ -275,7 +280,14 @@ export function* mappingInit({
       disabled: isMonitorLevelAccess,
     });
 
-    if (hasV2MappingsInTreeData(mappingsTreeData) || !formattedMappings?.length) {
+    // generate tree structure based on input sample data
+    // for source field
+    extractsTree = buildExtractsTree(flowSampleData);
+
+    // save import sample data in state for auto creation of mappings
+    importSampleData = yield call(getImportSampleData, {importId});
+
+    if (importResource.mappings?.length || !formattedMappings?.length) {
       version = 2;
     }
   }
@@ -288,6 +300,9 @@ export function* mappingInit({
       })),
       lookups,
       v2TreeData: mappingsTreeData,
+      requiredMappings: options.assistant?.requiredMappings || [],
+      importSampleData,
+      extractsTree,
       version,
       flowId,
       importId,
@@ -393,7 +408,7 @@ export function* saveMappings() {
 
   // save v2 mappings only when anything changed
   if (isMapper2Supported && isV2MappingsChanged) {
-    const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
+    const _mappingsV2 = buildV2MappingsFromTree({v2TreeData, lookups});
 
     patch.push({
       op: _mappingsV2 ? 'replace' : 'add',
@@ -756,6 +771,7 @@ export const mappingSagas = [
     actionTypes.MAPPING.V2.PATCH_SETTINGS,
     actionTypes.MAPPING.V2.TOGGLE_OUTPUT,
     actionTypes.MAPPING.V2.UPDATE_DATA_TYPE,
+    actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE,
   ], validateMappings),
   takeLatest(actionTypes.MAPPING.AUTO_MAPPER.REQUEST, getAutoMapperSuggestion),
 ];

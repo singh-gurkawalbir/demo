@@ -1,5 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
-import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION, FORM_SAVE_STATUS, CATEGORY_MAPPING_SAVE_STATUS } from '../constants';
+import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION, FORM_SAVE_STATUS, CATEGORY_MAPPING_SAVE_STATUS } from '../../constants';
 import { capitalizeFirstLetter } from '../string';
 
 export const getIntegrationAppUrlName = integrationAppName => {
@@ -43,7 +43,7 @@ export const getEmptyMessage = (storeLabel = '', action) => {
   }
 };
 
-export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, supportsChild, children, isMonitorLevelUser}) => {
+export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, supportsChild, children, isMonitorLevelUser, isManageLevelUser}) => {
   const tabs = [
     'general',
     'readme',
@@ -64,7 +64,7 @@ export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, su
   } else {
     sectionsToHide.push('readme');
     sectionsToHide.push('general');
-    if (!isParent) {
+    if (isManageLevelUser || !isParent) {
       sectionsToHide.push('apitoken');
     } else if (supportsChild && children && children.length > 1) {
       sectionsToHide.push('uninstall');

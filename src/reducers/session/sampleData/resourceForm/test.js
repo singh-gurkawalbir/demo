@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer, { selectors, extractStages, getResourceSampleData, extractMockData } from '.';
+import reducer, { selectors, extractStages, getResourceSampleData } from '.';
 import actions from '../../../../actions';
 
 describe('resourceFormSampleData reducer', () => {
@@ -151,7 +151,7 @@ describe('resourceFormSampleData reducer', () => {
       const expectedState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
-        [resourceId]: { data: {}, preview: {status: 'received', data: expectedPreviewStagesData }},
+        [resourceId]: { preview: {status: 'received', data: expectedPreviewStagesData }},
       };
       const newState = reducer(
         initialState,
@@ -187,7 +187,7 @@ describe('resourceFormSampleData reducer', () => {
       const expectedState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
-        [resourceId]: { data: {}, preview: {status: 'received', data: expectedPreviewStagesData} },
+        [resourceId]: { preview: {status: 'received', data: expectedPreviewStagesData} },
       };
       const newState = reducer(
         initialFilledState,
@@ -205,7 +205,7 @@ describe('resourceFormSampleData reducer', () => {
       const expectedState = {
         456: { status: 'received', data: {} },
         789: { status: 'received', data: {} },
-        [resourceId]: { data: {}, send: {status: 'received', data: expectedPreviewStagesData}, typeOfSampleData: 'send', preview: {status: 'received', data: {}} },
+        [resourceId]: { send: {status: 'received', data: expectedPreviewStagesData}, typeOfSampleData: 'send', preview: {status: 'received', data: {}} },
       };
       const newState = reducer(
         initialFilledState,
@@ -1590,36 +1590,5 @@ describe('sampleData getResourceSampleData util function', () => {
     expect(getResourceSampleData(resourceIdSampleData, 'parse')).toEqual(expectedOutput);
     expect(getResourceSampleData(resourceIdSampleData, 'preview')).toEqual(expectedOutput);
     expect(getResourceSampleData(resourceIdSampleData, 'request')).toEqual(expectedOutputForRequest);
-  });
-});
-
-describe('sampleData extractMockData util function', () => {
-  test('should return undefined if sample data is empty', () => {
-    expect(extractMockData()).toBeUndefined();
-  });
-
-  test('should return sampleData if no stage and no message is present in sample data', () => {
-    const sampleData = {
-      sku: 'abc',
-      price: 23,
-    };
-
-    expect(extractMockData(sampleData)).toEqual(sampleData);
-  });
-  test('should return sampleData.data if stages is present in sample data', () => {
-    const sampleData = {
-      stages: 'somevalue',
-      data: {id: '1'},
-    };
-
-    expect(extractMockData(sampleData)).toEqual(sampleData.data);
-  });
-  test('should return sampleData.data if message is present in sample data', () => {
-    const sampleData = {
-      message: 'success',
-      data: {id: '1'},
-    };
-
-    expect(extractMockData(sampleData)).toEqual(sampleData.data);
   });
 });

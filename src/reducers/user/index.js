@@ -7,7 +7,7 @@ import preferences, { selectors as fromPreferences } from './preferences';
 import notifications, { selectors as fromNotifications } from './notifications';
 import profile, { selectors as fromProfile } from './profile';
 import debug, { selectors as fromDebug } from './debug';
-import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../constants';
 import { genSelectors } from '../util';
 
 export const DEFAULT_EDITOR_THEME = 'tomorrow';

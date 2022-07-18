@@ -3,7 +3,7 @@ import shortid from 'shortid';
 import { shallowEqual, useSelector } from 'react-redux';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
-import { emptyObject, FORM_SAVE_STATUS } from '../../../../utils/constants';
+import { emptyObject, FORM_SAVE_STATUS } from '../../../../constants';
 import SaveAndCloseResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 
 export default function SaveButtonGroup({ value = {}, formKey, onCancel, resourceType, resourceId, parentOnSave }) {

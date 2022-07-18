@@ -11,9 +11,10 @@ import getRequestOptions, { pingConnectionParentContext } from '../../utils/requ
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
-import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH, INTEGRATION_DEPENDENT_RESOURCES, STANDALONE_INTEGRATION } from '../../utils/constants';
+import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH, INTEGRATION_DEPENDENT_RESOURCES, STANDALONE_INTEGRATION } from '../../constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
+import { deleteUnUsedRouters } from '../../utils/flows/flowbuilder';
 import { updateFlowDoc } from '../resourceForm';
 import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
@@ -243,6 +244,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   let resourceIsDataLoaderFlow = false;
 
   if (resourceType === 'flows') {
+    deleteUnUsedRouters(merged);
     resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
     // this value 'flowConvertedToNewSchema' has been set at the time of caching a flow collection.... we convert it to the new schema
     // and set this flag 'flowConvertedToNewSchema' to true if we find it to be in the old schema...now when we are actually commiting the resource
@@ -289,6 +291,12 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
       yield put(actions.resource.undoStaged(id));
       yield put(actions.flow.isOnOffActionInprogress(false, id));
     }
+    if (resourceType === 'flows') {
+      yield put(actions.flow.setSaveStatus(id));
+      if (options?.revertChangesOnFailure) {
+        yield put(actions.resource.clearStaged(id, scope));
+      }
+    }
 
     return { error };
   }
@@ -297,6 +305,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     yield put(actions.resource.requestCollection('connections', null, true));
     yield put(actions.resource.requestCollection('exports', null, true));
     yield put(actions.resource.requestCollection('imports', null, true));
+    yield put(actions.resource.requestCollection('asynchelpers', null, true));
   }
 
   // HACK! when updating scripts, since content is stored in s3, it
@@ -405,6 +414,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
       { connectionId: merged._id,
         link: merged.netsuite.linkSuiteScriptIntegrator }
     );
+  }
+  if (resourceType === 'flows') {
+    yield put(actions.flow.setSaveStatus(id));
   }
 }
 
@@ -740,9 +752,6 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
   }
   if (resourceType === 'notifications') {
     path = '/notifications?users=all';
-  }
-  if (resourceType === 'httpconnectors') {
-    path = '/httpconnectors?publishedOnly=true';
   }
   if (integrationId) {
     if (INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {

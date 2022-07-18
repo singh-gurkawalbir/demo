@@ -2,7 +2,7 @@
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import { FILTER_KEYS } from '../utils/errorManagement';
-import { JOB_STATUS, JOB_TYPES, UNASSIGNED_SECTION_ID } from '../utils/constants';
+import { JOB_STATUS, JOB_TYPES, UNASSIGNED_SECTION_ID } from '../constants';
 
 const flowId = 'flowId-1234';
 const resourceId = 'export-1234';

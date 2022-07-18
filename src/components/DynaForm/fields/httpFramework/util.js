@@ -6,21 +6,20 @@ import { stringCompare } from '../../../../utils/sort';
 function versionOptions({ assistantData }) {
   return assistantData?.versions?.map(version => ({
     label: version.version,
-    value: version.version,
+    value: version._id || version.version,
   }));
 }
 
 function resourceOptions({ versionData = { resources: [] } }) {
-  return versionData.resources
-    .map(resource => ({
-      label: resource.name,
-      value: resource.id,
-    }))
+  return versionData.resources?.map(resource => ({
+    label: resource.name,
+    value: resource.id,
+  }))
     .sort(stringCompare('label'));
 }
 
 function exportOperationOptions({ resourceData = { endpoints: [] } }) {
-  return resourceData.endpoints.map(operation => ({
+  return resourceData.endpoints?.map(operation => ({
     label: operation.name,
     value: operation.id || operation.url,
   }));
@@ -46,7 +45,7 @@ function importOperationOptions({ resourceData = { operations: [] } }) {
 }
 
 function versionData({ versions = [], versionId }) {
-  let version = versions.find(v => v.version === versionId);
+  let version = versions.find(v => v._id === versionId);
 
   if (!version && versions.length === 1) {
     [version] = versions;

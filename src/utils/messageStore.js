@@ -1,6 +1,9 @@
+import { MFA_URL, REVISIONS_GUIDE_URL } from '../constants';
+
 const messages = {
   CONTACT_SALES_MESSAGE: 'We will contact you soon to schedule your demo and discuss your business needs. In the meantime,',
   INTEGRATION_DELETE_VALIDATE: 'All Flows within an integration tile must be removed before the integration tile can be deleted.',
+  INTEGRATION_WITH_CONNECTORS_DELETE_VALIDATE: 'The integration is being actively used by an integration app. Please ensure no integration app resource is using the integration before deleting',
   FLOW_GROUP_DELETE_MESSAGE: 'Only the flow group will be deleted. Its flows will be moved into “Unassigned”.',
   LICENSE_UPGRADE_REQUEST: 'We will contact you to discuss your add-on request.',
   NO_PENDING_QUEUED_JOBS: 'This connection queue does not have any pending jobs. You can use the connection drop-down in the top right to see the status of a different connection queue.',
@@ -31,25 +34,62 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   DIY_INSTALL_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the resources in this integration, but  updates to the original integration will not affect this new copy. This integration has not been reviewed by Celigo. Make sure you trust the author before installing, and carefully review all components in the integration before proceeding.',
   CELIGO_AUTHORED_TEMPLATE_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account.',
   THIRD_PARTY_TEMPLATE_DISCLAIMER: 'By default, all integration flows will be disabled when first installed; you must enable each flow that you want to run. You can modify, delete, or extend any of the components in this template, but unlike Integration apps, updates to the master integration template will not be propagated to your account. This template has not been reviewed by Celigo. Make sure you trust the publisher before installing, and carefully review all components in the integration before proceeding.',
+  ROUTER_DELETE_CONFIRMATION_MESSAGE: `<p>Are you sure you want to delete this branching?</p>
+  <p>In the first branch, all steps/branching routers will persist and become a linear flow.</p>
+  <p>All other branches and all steps/branching routers inside 
+  ({{configuredCount}} configured steps, {{unconfiguredCount}} unconfigured steps) will be removed.</p>`,
+  BRANCH_DELETE_CONFIRMATION_MESSAGE: `<p>Are you sure you want to delete this branch?</p>
+  <p>This will also remove all steps/branchings inside this branch 
+  ({{configuredCount}} configured steps, {{unconfiguredCount}} unconfigured steps).</p>`,
+  DELETE_LAST_BRANCH_MESSAGE: 'Branch cannot be deleted. Branching must have at least one branch.',
+  SSO_LICENSE_UPGRADE_INFO: `<b>Upgrade your account to make signing in easier and more secure.</b> Advantages of SSO authentication include: <br>
+  <ul><li>Improved security</li>
+  <li>Reduced password fatigue</li>
+  <li>Streamlined user experience</li></ul>`,
+  SSO_LICENSE_UPGRADE_REQUESTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
+  SSO_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE: 'We have received your request and will be in touch soon.',
   // #region mapper2 messages
   MAPPER2_DELETE_ROW_WARNING: 'Are you sure you want to delete this parent record row? All its child rows will be deleted as well.',
   MAPPER2_DATA_TYPE_WARNING: `Since only an "object" or "[object]" data type can have child rows, 
   all of this parent record row's child rows will be deleted when your selected data type is applied. 
   <br><br>Are you sure you want to continue?`,
   MAPPER1_REFERENCE_INFO: 'Your 1.0 mappings are for reference only and will be ignored. Delete all 2.0 mappings to use 1.0 mappings instead.',
-  MAPPER2_BANNER_WARNING: 'Any 2.0 mappings that you enter will be applied when you click <b>Save</b>, even if you toggle back to Mapper 1.0. To apply 1.0 mappings instead, delete all mappings from Mapper 2.0 and click <b>Save</b>. <b><a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/4536629083035-Mapper-2-0"> Mapper 2.0 advantages</a></b>',
-  LOOKUP_SOURCE_TOOLTIP: 'Lookups do not provide source field list',
+  MAPPER2_BANNER_WARNING: 'Any 2.0 mappings that you enter will be applied when you click <b>Save</b>, even if you toggle back to Mapper 1.0. To apply 1.0 mappings instead, delete all mappings from Mapper 2.0 and click <b>Save</b>. <b><a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/4536629083035-Mapper-2-0"> Learn about Mapper 2.0</a></b>',
+  DYNAMIC_LOOKUP_SOURCE_TOOLTIP: 'Dynamic lookups do not provide source field list',
   HARD_CODED_SOURCE_TOOLTIP: 'Hard-coded values do not provide source field list',
   HANDLEBARS_SOURCE_TOOLTIP: 'Handlebars expression do not provide source field list',
+  MAPPER2_AUTO_CREATE_STRUCTURE: 'Are you sure you want to auto-populate your destination fields?<br><b>This will replace all of your current destination fields and source fields.</b>',
   // #endregion
   // #region LCM
   REVISION_IN_PROGRESS_ERROR: 'You have a pull, snapshot, or revert in progress.',
-  NO_CLONE_FAMILY_TO_PULL_FROM_ERROR: "You don't have any data to pull. Learn more about <a target='_blank' href='https://docs.celigo.com/hc/en-us/articles/4844290103707'> cloning and pulling your integrations</>.",
+  NO_CLONE_FAMILY_TO_PULL_FROM_ERROR: `You don't have any data to pull. Learn more about <a target='_blank' href=${REVISIONS_GUIDE_URL}> cloning and pulling your integrations</>.`,
   PULL_MERGE_SUCCESS: 'You\'ve successfully merged your pull.',
   REVERT_SUCCESS: 'You\'ve successfully reverted your changes.',
   SNAPSHOT_SUCCESS: 'You\'ve successfully created a snapshot.',
   // #endregion
+  INCOMPLETE_FLOW_TOOLTIP: 'Configure all steps to allow running your flow',
+  INCOMPLETE_FLOW_SCHEDULE_TOOLTIP: 'Configure all steps to allow scheduling your flow',
+  BRANCH_EMPTY_FILTER_RECORD_PASS: 'No conditions defined. All records will flow through this branch.',
+  BRANCH_EMPTY_FILTER: 'No conditions defined.',
+  // #region MFA
+  MFA_SETUP_SUCCESS: 'MFA enabled and device connected successfully.',
+  MFA_ENABLED: 'MFA enabled successfully.',
+  MFA_DISABLED: 'MFA disabled successfully.',
+  // TODO: Update once the message to show is confirmed
+  MFA_PRIMARY_ACCOUNT_UPDATED: 'Primary account to reset updated successfully',
+  MFA_RESET_SUCCESS: `Your MFA has been reset successfully and a new key has been regenerated. <b><a target="_blank" rel="noopener noreferrer"
+  href="${MFA_URL}">Enable MFA</a></b> to use the new key with your account.`,
+  DELETE_TRUSTED_DEVICE: "Are you sure you want to delete your trusted MFA device? You'll need to re-authenticate your account the next time you sign into integrator.io with the device.",
+  RESET_MFA: "Are you sure you want to reset MFA? You'll need to re-associate your authenticator app and configure your device in integrator.io.",
+  DELETE_DEVICE_SUCCESS: 'Device deleted successfully.',
+  SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
+  CONFIRM_LEAVE_MFA: 'Are you sure you want to leave? Your MFA settings will be disabled unless you connect your device successfully.',
+  // #endregion
 
+  MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
+  MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',
+  TERMINAL_NODE_TOOLTIP: 'Drag to merge with other branch',
+  TERMINAL_NODE_FROZEN_TOOLTIP: 'You can merge branches only when a flow already contains more than one branch. Select “Add branching” inside the “Plus” (+) button next to each step to add branches that can be merged.',
 };
 
 export default function messageStore(key, argsObj) {
@@ -58,8 +98,8 @@ export default function messageStore(key, argsObj) {
   if (!str) return '';
   if (!argsObj || typeof argsObj !== 'object') return str;
 
-  Object.keys(argsObj).forEach(key => {
-    str = str.replace(`{{{${key}}}}`, argsObj[key]);
+  Object.keys(argsObj).forEach(arg => {
+    str = str.replace(`{{${arg}}}`, argsObj[arg]);
   });
 
   return str;

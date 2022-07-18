@@ -5,7 +5,7 @@ import actions from '../../actions';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 import { getResourceCollection } from '../resources';
 import { selectors } from '../../reducers';
-import { USER_ACCESS_LEVELS } from '../../utils/constants';
+import { USER_ACCESS_LEVELS } from '../../constants';
 
 export function* getRestoredResourceDependencies({ restoredResourceType }) {
   const { accessLevel } = (yield select(selectors.resourcePermissions)) || {};
