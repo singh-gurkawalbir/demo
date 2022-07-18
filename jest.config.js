@@ -20,6 +20,11 @@ module.exports = {
     'src/reducers/**/*.{js,jsx}',
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
+    'src/components/NetSuiteBundleInstallNotification/**/*.{js,jsx}',
+    'src/components/OnlineStatus/**/*.{js,jsx}',
+    'src/components/TextToggle/**/*.{js,jsx}',
+    'src/components/TextOverflowCell/**/*.{js,jsx}',
+    'src/components/StatusCircle/**/*.{js,jsx}',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js'],
   coverageThreshold: {
