@@ -19,6 +19,7 @@ export default {
     rules: {
       function: rule.entryFunction,
       code: rule.code,
+      _scriptId: rule.scriptId,
     },
     options: context,
     data: typeof data === 'string' ? JSON.parse(data) : data,

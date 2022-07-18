@@ -107,6 +107,35 @@ describe('exportFilter processor logic', () => {
 
       expect(init({resource, options})).toEqual(expectedOutput);
     });
+    test('should correctly set the script context', () => {
+      const options = {
+        stage: 'exportFilter',
+        resourceId: '99999',
+        resourceType: 'exports',
+      };
+      const scriptContext = {
+        container: 'integration',
+        type: 'hook',
+        _flowId: 'abc',
+        _integrationId: 'def',
+      };
+      const expectedOutput = {
+        stage: 'exportFilter',
+        resourceId: '99999',
+        resourceType: 'exports',
+        rule: {
+          filter: ['equals', ['string', ['extract', 'id']], '456'],
+          javascript: {
+            fetchScriptContent: true,
+            entryFunction: 'filter',
+          },
+        },
+        activeProcessor: 'filter',
+        context: scriptContext,
+      };
+
+      expect(init({resource, options, scriptContext})).toEqual(expectedOutput);
+    });
   });
   describe('buildData util', () => {
     test('should update rows to record for javascript data if sample data contains rows', () => {

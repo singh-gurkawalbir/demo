@@ -10,7 +10,6 @@ import {
   isBlobTypeResource,
   isRestCsvMediaTypeExport,
   adaptorTypeMap,
-  finalSuccessMediaType,
 } from '../resource';
 import responseMappingUtil from '../responseMapping';
 import arrayUtils from '../array';
@@ -347,8 +346,7 @@ export const generatePostResponseMapData = (flowData, rawData = {}) => {
 export const getFormattedResourceForPreview = (
   resourceObj,
   resourceType,
-  flowType,
-  connection
+  flowType
 ) => {
   const resource = deepClone(resourceObj || {});
 
@@ -385,10 +383,6 @@ export const getFormattedResourceForPreview = (
       // If there is no sampleResponseData, add default fields for lookups/imports
       resource.sampleResponseData = generateDefaultExtractsObject(resourceType, resource?.adaptorType);
     }
-  }
-
-  if (resource.adaptorType === 'HTTPExport' && resource.http && !resource.http?.successMediaType) {
-    resource.http.successMediaType = finalSuccessMediaType(undefined, connection);
   }
 
   return resource;

@@ -900,6 +900,7 @@ describe('flow sample data sagas', () => {
         rule: {
           code: script.content,
           entryFunction: 'transform',
+          scriptId: 'script-123',
         },
         wrapInArrayProcessedData: true,
       };
@@ -930,8 +931,77 @@ describe('flow sample data sagas', () => {
             resourceType: 'scripts',
             id: 'script-123',
           }), script],
+          [matchers.call.fn(_processData), {}],
         ])
         .call(_processData, {
+          flowId,
+          resourceId,
+          processorData,
+          stage,
+        })
+        .run();
+    });
+    test('should call _processData and not call getScripts for javascript processor when stage is related to hooks or transform with type script for IAs', () => {
+      const restExport = {
+        _id: 'export-123',
+        name: 'NS export',
+        adaptorType: 'RESTExport',
+        transform: {
+          type: 'script',
+          script: {
+            _scriptId: 'script-123',
+            function: 'transform',
+          },
+        },
+        _connectorId: 'abc',
+      };
+      const preProcessedSampleData = { count: 5 };
+      const preProcessedData = {
+        records: {
+          count: 5,
+        },
+        setting: {},
+      };
+      const stage = 'transform';
+      const processorData = {
+        data: preProcessedData,
+        rule: {
+          entryFunction: 'transform',
+          scriptId: 'script-123',
+        },
+        editorType: 'javascript',
+        wrapInArrayProcessedData: true,
+      };
+
+      return expectSaga(requestProcessorData, {
+        flowId,
+        resourceId,
+        resourceType,
+        processor: stage,
+      })
+        .provide([
+          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [call(getFlowStageData, {
+            flowId,
+            resourceId,
+            routerId: undefined,
+            resourceType,
+            stage,
+            isInitialized: true,
+          }), preProcessedData],
+          [select(selectors.getSampleDataContext, {
+            flowId,
+            resourceId,
+            resourceType,
+            stage,
+          }), {data: preProcessedSampleData}],
+          [matchers.call.fn(_processData), {}],
+        ])
+        .not.call(getResource, {
+          resourceType: 'scripts',
+          id: 'script-123',
+        })
+        .call.fn(_processData, {
           flowId,
           resourceId,
           processorData,
