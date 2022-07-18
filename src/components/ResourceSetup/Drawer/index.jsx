@@ -128,7 +128,9 @@ function ResourceSetupDrawerContent({
           SCOPES.VALUE
         )
       );
-      setIsResourceStaged(true);
+      if (setIsResourceStaged && typeof setIsResourceStaged === 'function') {
+        setIsResourceStaged(true);
+      }
     }
   }
 

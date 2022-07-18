@@ -15,10 +15,11 @@ async function initResourceSetupDrawer({
     templateId: 'template_id',
   },
   initialStore = reduxStore,
-  rerender,
   resourceType = 'connections',
   resourceId = 'resource_id',
 } = {}) {
+  const setIsResourceStaged = jest.fn();
+
   // eslint-disable-next-line no-param-reassign
   initialStore.getState().session.resource = {
     connection_id_2: 'connection_id_3',
@@ -114,11 +115,15 @@ async function initResourceSetupDrawer({
           integrationId: 'integration_id',
         }}
         >
-        <ResourceSetupDrawer {...props} />
+        <ResourceSetupDrawer
+          {...props}
+          setIsResourceStaged={setIsResourceStaged}
+          isResourceStaged
+        />
       </Route>
     </MemoryRouter>
   );
-  const { store, utils } = await renderWithProviders(ui, { initialStore }, rerender);
+  const { store, utils } = await renderWithProviders(ui, { initialStore });
 
   return {
     store,
@@ -257,8 +262,6 @@ describe('ResourceSetupDrawer test cases', () => {
     expect(mockOnClose).toBeCalledTimes(1);
     expect(mockHistoryReplace).toBeCalledTimes(2);
     expect(mockHistoryReplace).toBeCalledWith('/integrations/integration_id/setup');
-
-    screen.debug();
   });
 
   test('should pass the initial render with mode ss-install', async () => {
