@@ -1,4 +1,4 @@
-import { URI_VALIDATION_PATTERN } from '../../../utils/constants';
+import { URI_VALIDATION_PATTERN } from '../../../constants';
 
 export default {
   name: {

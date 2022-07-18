@@ -24,10 +24,8 @@ import {
   isRealtimeExport,
   getScriptsReferencedInFlow,
   isFreeFlowResource,
-  isLookupResource,
   isActionUsed,
   isImportMappingAvailable,
-  getPageProcessorImportsFromFlow,
   getFlowReferencesForResource,
   getFlowDetails,
   getUsedActionsMapForResource,
@@ -44,8 +42,9 @@ import {
   shouldHaveUnassignedSection,
   getFlowGroup,
   mappingFlowsToFlowGroupings,
+  isSetupInProgress,
 } from '.';
-import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../constants';
+import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../../constants';
 import getRoutePath from '../routePaths';
 
 const integration = {
@@ -663,6 +662,60 @@ const multiStoreApp = {
     ],
   },
 };
+
+describe('isSetupInProgress', () => {
+  const flow1 = {pageGenerators: [{_exportId: 'export1'}, {setupInProgress: true}]};
+  const flow2 = {pageGenerators: [{_exportId: 'export1'}, {_exportId: 'export2'}]};
+  const flow3 = {
+    pageGenerators: [{_exportId: 'export1'}, {_exportId: 'export2'}],
+    pageProcessors: [{type: 'export', _exportId: 'export1'}, {type: 'import', _importId: 'export2'}],
+  };
+  const flow4 = {
+    pageGenerators: [{_exportId: 'export1'}, {_exportId: 'export2'}],
+    pageProcessors: [{type: 'export', _exportId: 'export1'}, {setupInProgress: true}],
+  };
+  const flow5 = {
+    pageGenerators: [{_exportId: 'export1'}, {setupInProgress: true}],
+    pageProcessors: [{setupInProgress: true}, {setupInProgress: true}],
+  };
+  const flow6 = {
+    pageGenerators: [{_exportId: 'export1'}, {_exportId: 'export2'}],
+    routers: [
+      {branches: [{name: 'branch1', pageProcessors: []}]},
+      {branches: [{name: 'branch1', pageProcessors: [{setupInProgress: true}]}]},
+    ],
+  };
+  const flow7 = {
+    pageGenerators: [{_exportId: 'export1'}, {_exportId: 'export2'}],
+    routers: [
+      {branches: [{name: 'branch1', pageProcessors: [{type: 'export', _exportId: 'e1'}]}]},
+      {branches: [{name: 'branch1', pageProcessors: [{_importId: 'i1'}]}]}],
+  };
+  const flow8 = {
+    routers: [
+      {branches: [{name: 'branch1', pageProcessors: [{type: 'export', _exportId: 'e1'}]}]},
+      {branches: [{name: 'branch1', pageProcessors: [{_importId: 'i1'}]}]}],
+  };
+  const flow9 = {
+    pageGenerators: [{_exportId: 'export1'}, {_exportId: 'export2'}],
+  };
+
+  test('should return false when flow is empty', () => {
+    expect(isSetupInProgress()).toEqual(false);
+  });
+
+  test('should return correct value when flow setup is in progress', () => {
+    expect(isSetupInProgress(flow1)).toEqual(true);
+    expect(isSetupInProgress(flow2)).toEqual(true);
+    expect(isSetupInProgress(flow3)).toEqual(false);
+    expect(isSetupInProgress(flow4)).toEqual(true);
+    expect(isSetupInProgress(flow5)).toEqual(true);
+    expect(isSetupInProgress(flow6)).toEqual(true);
+    expect(isSetupInProgress(flow7)).toEqual(false);
+    expect(isSetupInProgress(flow8)).toEqual(true);
+    expect(isSetupInProgress(flow9)).toEqual(true);
+  });
+});
 
 describe('isDeltaFlow', () => {
   const exportsWithDeltaType = [
@@ -1782,36 +1835,6 @@ describe('isFreeFlowResource', () => {
   });
 });
 
-describe('isLookupResource', () => {
-  const resourceWithLookup = {
-    isLookup: true,
-  };
-  const resourceWithoutLookup = {
-    isLookup: false,
-    _id: 'e1',
-  };
-  const resourceWithoutLookup2 = {
-    isLookup: false,
-    _id: 'e10',
-  };
-
-  test('should return true for a resoure with isLookup field true', () => {
-    expect(isLookupResource(flowWithOnlyPPs, resourceWithLookup)).toEqual(true);
-  });
-  test('should return true when required resource is present in the flow', () => {
-    expect(isLookupResource(flowWithOnlyPPs, resourceWithoutLookup)).toEqual(true);
-  });
-  test('should return false when required resource is not present in the flow', () => {
-    expect(isLookupResource(flowWithOnlyPPs, resourceWithoutLookup2)).toEqual(false);
-  });
-  test('should return false when resource is undefined', () => {
-    expect(isLookupResource(flowWithOnlyPPs, undefined)).toEqual(false);
-  });
-  test('should return false when flow is undefined', () => {
-    expect(isLookupResource(undefined, resourceWithoutLookup)).toEqual(false);
-  });
-});
-
 describe('isActionUsed', () => {
   const expressionWithRules = {
     type: 'expression',
@@ -2447,33 +2470,6 @@ describe('isImportMappingAvailable', () => {
   });
 });
 
-describe('getPageProcessorImportsFromFlow', () => {
-  const pageProcessors = [
-    { _exportId: 'e3', type: 'export' },
-    { _importId: 'i1', type: 'import' },
-    { _exportId: 'e4', type: 'export' },
-    { _importId: 'i2', type: 'import' },
-  ];
-
-  test('should return imports if pageprocessors are undefined', () => {
-    expect(getPageProcessorImportsFromFlow(imports, undefined)).toEqual(imports);
-  });
-  test('', () => {
-    expect(getPageProcessorImportsFromFlow(imports, pageProcessors)).toEqual([
-      {
-        _id: 'i1',
-        name: 'i1',
-        _connectionId: 'c1',
-      }, {
-        _id: 'i2',
-        name: 'i2',
-        _connectionId: 'c4',
-      },
-    ]
-    );
-  });
-});
-
 describe('getNextDataFlows', () => {
   const flow = {
     _id: 'f1',
@@ -2914,6 +2910,7 @@ describe('getFlowDetails', () => {
       isRealtime: true,
       isSimpleImport: false,
       isRunnable: false,
+      isSetupInProgress: false,
       canSchedule: false,
       disableSlider: false,
       isDeltaFlow: false,
@@ -2936,6 +2933,7 @@ describe('getFlowDetails', () => {
       isRealtime: false,
       isSimpleImport: true,
       isRunnable: true,
+      isSetupInProgress: false,
       canSchedule: false,
       disableSlider: false,
       isDeltaFlow: false,
@@ -2957,6 +2955,7 @@ describe('getFlowDetails', () => {
       ],
       isRealtime: false,
       isSimpleImport: false,
+      isSetupInProgress: true,
       isRunnable: false,
       canSchedule: true,
       disableSlider: false,
@@ -2978,6 +2977,7 @@ describe('getFlowDetails', () => {
       isRealtime: false,
       isSimpleImport: false,
       isRunnable: false,
+      isSetupInProgress: true,
       canSchedule: true,
       disableSlider: true,
       isDeltaFlow: false,

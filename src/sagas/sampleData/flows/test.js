@@ -480,6 +480,7 @@ describe('flow sample data sagas', () => {
           resourceType: 'exports',
           throwOnError: true,
           refresh: undefined,
+          editorId: undefined,
           hidden: true,
           runOffline: true,
         })
@@ -516,6 +517,7 @@ describe('flow sample data sagas', () => {
           throwOnError: true,
           refresh: undefined,
           hidden: true,
+          editorId: undefined,
           runOffline: true,
         })
         .run();
@@ -552,6 +554,7 @@ describe('flow sample data sagas', () => {
           throwOnError: true,
           refresh: true,
           hidden: true,
+          editorId: undefined,
           runOffline: true,
         })
         .run();
@@ -763,7 +766,7 @@ describe('flow sample data sagas', () => {
         .run();
     });
   });
-  describe('requestProcessorData saga', () => {
+  describe('requestProcessorData saga ----', () => {
     const flowId = 'flow-123';
     const resourceId = 'export-1234';
     const resourceType = 'exports';
@@ -897,6 +900,7 @@ describe('flow sample data sagas', () => {
         rule: {
           code: script.content,
           entryFunction: 'transform',
+          scriptId: 'script-123',
         },
         wrapInArrayProcessedData: true,
       };
@@ -912,6 +916,7 @@ describe('flow sample data sagas', () => {
           [call(getFlowStageData, {
             flowId,
             resourceId,
+            routerId: undefined,
             resourceType,
             stage,
             isInitialized: true,
@@ -926,8 +931,77 @@ describe('flow sample data sagas', () => {
             resourceType: 'scripts',
             id: 'script-123',
           }), script],
+          [matchers.call.fn(_processData), {}],
         ])
         .call(_processData, {
+          flowId,
+          resourceId,
+          processorData,
+          stage,
+        })
+        .run();
+    });
+    test('should call _processData and not call getScripts for javascript processor when stage is related to hooks or transform with type script for IAs', () => {
+      const restExport = {
+        _id: 'export-123',
+        name: 'NS export',
+        adaptorType: 'RESTExport',
+        transform: {
+          type: 'script',
+          script: {
+            _scriptId: 'script-123',
+            function: 'transform',
+          },
+        },
+        _connectorId: 'abc',
+      };
+      const preProcessedSampleData = { count: 5 };
+      const preProcessedData = {
+        records: {
+          count: 5,
+        },
+        setting: {},
+      };
+      const stage = 'transform';
+      const processorData = {
+        data: preProcessedData,
+        rule: {
+          entryFunction: 'transform',
+          scriptId: 'script-123',
+        },
+        editorType: 'javascript',
+        wrapInArrayProcessedData: true,
+      };
+
+      return expectSaga(requestProcessorData, {
+        flowId,
+        resourceId,
+        resourceType,
+        processor: stage,
+      })
+        .provide([
+          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [call(getFlowStageData, {
+            flowId,
+            resourceId,
+            routerId: undefined,
+            resourceType,
+            stage,
+            isInitialized: true,
+          }), preProcessedData],
+          [select(selectors.getSampleDataContext, {
+            flowId,
+            resourceId,
+            resourceType,
+            stage,
+          }), {data: preProcessedSampleData}],
+          [matchers.call.fn(_processData), {}],
+        ])
+        .not.call(getResource, {
+          resourceType: 'scripts',
+          id: 'script-123',
+        })
+        .call.fn(_processData, {
           flowId,
           resourceId,
           processorData,
@@ -977,6 +1051,7 @@ describe('flow sample data sagas', () => {
             flowId,
             resourceId,
             resourceType,
+            routerId: undefined,
             stage,
             isInitialized: true,
           }), preProcessedData],
@@ -993,6 +1068,7 @@ describe('flow sample data sagas', () => {
           resourceId,
           resourceType,
           stage,
+          routerId: undefined,
           isInitialized: true,
         })
         .call.fn(_processMappingData)
@@ -1035,6 +1111,7 @@ describe('flow sample data sagas', () => {
             flowId,
             resourceId,
             resourceType,
+            routerId: undefined,
             stage,
             isInitialized: true,
           }), preProcessedData],
@@ -1051,6 +1128,7 @@ describe('flow sample data sagas', () => {
           resourceId,
           resourceType,
           stage,
+          routerId: undefined,
           isInitialized: true,
         })
         .call(_processMappingData, {
@@ -1103,6 +1181,7 @@ describe('flow sample data sagas', () => {
             resourceId,
             resourceType,
             stage,
+            routerId: undefined,
             isInitialized: true,
           }), preProcessedData],
           [select(selectors.getSampleDataContext, {
@@ -1238,6 +1317,7 @@ describe('flow sample data sagas', () => {
             resourceId,
             resourceType,
             stage,
+            routerId: undefined,
             isInitialized: true,
           }), preProcessedData],
           [select(selectors.getSampleDataContext, {
@@ -1281,6 +1361,7 @@ describe('flow sample data sagas', () => {
             resourceId,
             resourceType,
             stage,
+            routerId: undefined,
             isInitialized: true,
           }), {}],
         ])

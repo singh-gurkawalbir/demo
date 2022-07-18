@@ -26,7 +26,7 @@ import {
 } from '.';
 import { createPayload, pingConnectionWithId } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
-import { FORM_SAVE_STATUS } from '../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../constants';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '..';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
@@ -188,6 +188,40 @@ describe('resourceForm sagas', () => {
       return expectSaga(deleteUISpecificValues, { values, resourceId: '123' })
         .put.actionType('RESOURCE_STAGE_REMOVE')
         .returns({
+          '/name': 'test',
+          '/description': 'desc',
+        })
+        .run();
+    });
+    test('should remove keyColums if groupByFields are defined', () => {
+      const values = {
+        '/file/csv': {keyColumns: ['name']},
+        '/description': 'desc',
+        '/formView': 'rest',
+        '/file/groupByFields': 'name',
+      };
+
+      return expectSaga(deleteUISpecificValues, { values, resourceId: '123' })
+        .put.actionType('RESOURCE_STAGE_REMOVE')
+        .returns({
+          '/file/csv': {keyColumns: undefined},
+          '/description': 'desc',
+          '/file/groupByFields': 'name',
+        })
+        .run();
+    });
+    test('should not remove keyColums if groupByFields is not defined', () => {
+      const values = {
+        '/file/csv': {keyColumns: ['name']},
+        '/name': 'test',
+        '/description': 'desc',
+        '/formView': 'rest',
+      };
+
+      return expectSaga(deleteUISpecificValues, { values, resourceId: '123' })
+        .put.actionType('RESOURCE_STAGE_REMOVE')
+        .returns({
+          '/file/csv': {keyColumns: ['name']},
           '/name': 'test',
           '/description': 'desc',
         })
@@ -438,7 +472,7 @@ describe('resourceForm sagas', () => {
     test('should call commitStagedChanges with correct resource type if given type is connectorLicenses', () => {
       const response = { patchSet: [], finalValues: {'/name': 'some name'} };
 
-      return expectSaga(submitFormValues, { resourceType: 'connectorLicenses', resourceId, match: {url: '/connectors/ui-drawer/edit/connectors/999/'}})
+      return expectSaga(submitFormValues, { resourceType: 'connectorLicenses', resourceId, match: {url: '/connectors/edit/connectors/999/'}})
         .provide([
           [call(newIAFrameWorkPayload, {
             resourceId,
@@ -572,17 +606,17 @@ describe('resourceForm sagas', () => {
       };
       const patches = [{ op: 'add', path: '/pageGenerators', value: [] },
         { op: 'replace',
-          path: '/pageGenerators/1',
+          path: '/pageGenerators/0',
           value: { _exportId: 'res-123' } }];
 
-      return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'new-123.1', 'flow-123')
+      return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'new-123.0', 'flow-123')
         .provide([
           [select(
             selectors.resourceData,
             'flows',
             'flow-123'
           ), data],
-          [select(selectors.createdResourceId, 'new-123.1'), 'res-123'],
+          [select(selectors.createdResourceId, 'new-123.0'), 'res-123'],
         ])
         .returns(patches)
         .run();

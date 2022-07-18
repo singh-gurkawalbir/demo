@@ -47,6 +47,7 @@ export default {
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
+      label: 'API key',
       helpKey: 'gorgias.connection.http.auth.basic.password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

@@ -152,6 +152,8 @@ import DynaHFAssistantOptions from './httpFramework/DynaHFAssistantOptions';
 import DynaHFAssistantSearchParams from './httpFramework/DynaHFAssistantSearchParams';
 import DynaSemiHFAssistantOperationSelect from './httpFramework/DynaSemiHFAssistantOperationSelect';
 import DynaAmazonmwsType from './DynaAmazonmwsType';
+import DynaMFAMobileCode from './DynaMFAMobileCode';
+import DynaMFASecretKey from './DynaMFASecretKey';
 import DynaConnectionFormView from './DynaConnectionFormView';
 
 export default {
@@ -316,5 +318,7 @@ export default {
   hfsearchparams: DynaHFAssistantSearchParams,
   semihfoperationselect: DynaSemiHFAssistantOperationSelect,
   amazonmwstype: DynaAmazonmwsType,
+  mfamobilecode: DynaMFAMobileCode,
+  mfasecretkey: DynaMFASecretKey,
   connectionFormView: DynaConnectionFormView,
 };

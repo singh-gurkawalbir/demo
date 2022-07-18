@@ -4,7 +4,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useState } from 'react';
-import { JOB_STATUS } from '../../../utils/constants';
+import { JOB_STATUS } from '../../../constants';
 import JobStatus from './JobStatus';
 import { getSuccess } from './util';
 import JobActionsMenu from './JobActionsMenu';

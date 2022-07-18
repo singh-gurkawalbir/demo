@@ -1,4 +1,4 @@
-import { REVISION_STATUS, REVISION_TYPES } from '../constants';
+import { REVISION_STATUS, REVISION_TYPES } from '../../constants';
 import { comparer, sortJsonByKeys } from '../sort';
 
 export const DEFAULT_ROWS_PER_PAGE = 50;

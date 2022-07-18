@@ -1,4 +1,4 @@
-import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AWS_REGIONS_LIST} from '../../../utils/constants';
+import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AWS_REGIONS_LIST} from '../../../constants';
 import { isNewId, getDomainUrl, getAssistantFromResource, rdbmsSubTypeToAppType, rdbmsAppTypeToSubType } from '../../../utils/resource';
 import { applicationsList} from '../../../constants/applications';
 import { getConstantContactVersion } from '../../../utils/connections';
@@ -266,6 +266,7 @@ export default {
     type: 'select',
     label: 'Region',
     required: true,
+    defaultValue: r => r.rdbms?.redshift?.region || 'us-east-1',
     options: [
       {
         items: AWS_REGIONS_LIST,
@@ -1053,11 +1054,41 @@ export default {
     label: 'Encrypted',
     description: 'Note: for security reasons this field must always be re-entered.',
   },
+  'http.clientCertificates.type': {
+    type: 'select',
+    label: 'SSL certificate type',
+    helpKey: 'connection.http.clientCertificates.type',
+    options: [
+      {
+        items: [
+          { label: 'PFX', value: 'pfx' },
+          { label: 'PEM', value: 'pem' },
+        ],
+      },
+    ],
+    defaultValue: r => {
+      let val = '';
+
+      if (r?.http?.clientCertificates?.pfx) {
+        val = 'pfx';
+      } else if (r?.http?.clientCertificates?.cert || r?.http?.clientCertificates?.key) {
+        val = 'pem';
+      }
+
+      return val;
+    },
+  },
   'http.clientCertificates.cert': {
     type: 'uploadfile',
     placeholder: 'SSL certificate',
     label: 'SSL certificate',
     helpKey: 'connection.http.clientCertificates.cert',
+  },
+  'http.clientCertificates.pfx': {
+    type: 'uploadfile',
+    placeholder: 'SSL certificate',
+    label: 'SSL certificate',
+    helpKey: 'connection.http.clientCertificates.pfx',
   },
   'http.clientCertificates.key': {
     type: 'uploadfile',

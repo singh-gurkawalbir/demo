@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import SortableHandle from '../../../../../../components/Sortable/SortableHandle';
 import { selectors } from '../../../../../../reducers';
-import { UNASSIGNED_SECTION_ID } from '../../../../../../utils/constants';
+import { UNASSIGNED_SECTION_ID } from '../../../../../../constants';
 import FlowSectionTitle from '../../../../common/FlowSectionTitle';
 
 const useStyles = makeStyles(theme => ({

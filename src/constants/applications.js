@@ -1,5 +1,5 @@
 import { stringCompare } from '../utils/sort';
-import {CONNECTORS_TO_IGNORE, REST_ASSISTANTS, WEBHOOK_ONLY_APPLICATIONS} from '../utils/constants';
+import {CONNECTORS_TO_IGNORE, REST_ASSISTANTS, WEBHOOK_ONLY_APPLICATIONS} from '.';
 
 // Schema details:
 // ---------------
@@ -24,7 +24,7 @@ const connectors = [
   },
   {
     id: 'rest',
-    name: 'REST API',
+    name: 'REST API (HTTP)',
     type: 'rest',
     keywords: 'technology,protocol',
     group: 'tech',
@@ -153,6 +153,7 @@ const connectors = [
     type: 'redshiftdatawarehouse',
     keywords: 'database,db',
     group: 'db',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360042875872-Set-up-a-connection-to-Amazon-Redshift',
   },
   {
     id: 'graph_ql',
@@ -343,17 +344,6 @@ const getAssistants = () => {
 
   return localStorageAssistants;
 };
-export const getPublishedHttpConnector = _httpConnectorId => {
-  let localStoragePublishedHttpAssistants;
-
-  try {
-    localStoragePublishedHttpAssistants = JSON.parse(localStorage.getItem('publishedHttpConnectors')) || [];
-  } catch (e) {
-    localStoragePublishedHttpAssistants = [];
-  }
-
-  return localStoragePublishedHttpAssistants?.find(c => c._id === _httpConnectorId);
-};
 
 export const getPublishedHttpConnectors = () => {
   let localStoragePublishedHttpAssistants;
@@ -532,7 +522,7 @@ export const getApp = (type, assistant, _httpConnectorId) => {
   const id = assistant || type;
   const applications = applicationsList();
 
-  if (_httpConnectorId) {
+  if (!assistant && _httpConnectorId) {
     return applications.find(c => c._httpConnectorId === _httpConnectorId) || {};
   }
 

@@ -1,8 +1,6 @@
-import { getSomePg, getSomePpImport } from '../Prototype/nodeGeneration';
+import { getSomePg, getSomePpImport } from '../../../../utils/flows/flowbuilder';
 
-const export1 = {_id: 'export1', name: 'The only export', connectorType: 'netsuite' };
-
-const import1 = {_id: 'import1', name: 'import1 with long name', connectorType: 'ftp' };
+const import1 = {_id: 'import1', name: 'complex flow import', connectorType: 'ftp' };
 const import2 = {_id: 'import2', name: 'Import Two', connectorType: 'http' };
 const import3 = {_id: 'import3', name: 'import3', isLookup: true, connectorType: 'http'};
 const import4 = {_id: 'import4', name: 'import4', isLookup: true, connectorType: 'ftp'};
@@ -25,7 +23,7 @@ const imports = [
 ];
 
 const exports = [
-  export1,
+  {_id: 'cfExport1', name: 'The only complex flow export', connectorType: 'netsuite' },
 ];
 
 const firstBranch = {
@@ -35,16 +33,14 @@ const firstBranch = {
   inputFilter: {},
   pageProcessors: [getSomePpImport('import2'), getSomePpImport('import3')],
   // what if we want to have a merge
-  _nextRouterId: 'secondRouter',
-  _id: 'branch-1',
+  nextRouterId: 'secondRouter',
 };
 
 const secondBranch = {
-  name: 'second branch',
+  name: 'Another router, but with a long name to test the menu item rendering',
   description: 'some description',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import4'), getSomePpImport('import5')],
-  _id: 'branch-2',
 };
 
 const branchOne = {
@@ -55,7 +51,6 @@ const branchOne = {
   pageProcessors: [getSomePpImport('import6'), getSomePpImport('import7')],
   // what if we want to have a merge
   //   _nextRouterId: { type: Schema.Types.ObjectId },
-  _id: 'branch-1',
 };
 
 const branchTwo = {
@@ -63,19 +58,12 @@ const branchTwo = {
   description: 'some description',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import8'), getSomePpImport('import9')],
-  _id: 'branch-2',
 };
 
 const firstRouter = {
-  _id: 'firstRouter',
-  routeRecordsTo: {
-    type: 'first_matching_branch',
-    default: undefined,
-  },
-  routeRecordsUsing: {
-    type: 'input_filters',
-    default: undefined,
-  },
+  id: 'firstRouter',
+  routeRecordsTo: 'first_matching_branch',
+  routeRecordsUsing: 'input_filters',
   branches: [firstBranch, secondBranch],
   script: {
     _scriptId: { type: 'something', ref: 'Script' },
@@ -84,15 +72,9 @@ const firstRouter = {
 };
 
 const secondRouter = {
-  _id: 'secondRouter',
-  routeRecordsTo: {
-    type: 'first_matching_branch',
-    default: undefined,
-  },
-  routeRecordsUsing: {
-    type: 'input_filters',
-    default: undefined,
-  },
+  id: 'secondRouter',
+  routeRecordsTo: 'first_matching_branch',
+  routeRecordsUsing: 'input_filters',
   branches: [branchOne, branchTwo],
   script: {
     _scriptId: { type: 'something', ref: 'Script' },
@@ -105,19 +87,18 @@ const virtualBranch = {
   description: 'some description',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import1')],
-  _id: 'firstVirtualBranch',
-  _nextRouterId: 'firstRouter',
+  nextRouterId: 'firstRouter',
 };
 
 const virtualRouterForFirstPP = {
-  _id: 'virtualRouter',
+  id: 'virtualRouter',
   branches: [virtualBranch],
 };
 
 const flowSchema = {
-  _id: 'flow1',
+  _id: 'complexFlow',
   routers: [virtualRouterForFirstPP, firstRouter, secondRouter],
-  pageGenerators: [getSomePg('export1')],
+  pageGenerators: [getSomePg('cfExport1')],
 };
 
 export default {

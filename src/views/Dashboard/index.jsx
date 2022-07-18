@@ -8,10 +8,13 @@ import LoadResources from '../../components/LoadResources';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import PanelHeader from '../../components/PanelHeader';
 import getRoutePath from '../../utils/routePaths';
-import {HOME_PAGE_PATH} from '../../utils/constants';
+import {HOME_PAGE_PATH} from '../../constants';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import {FILTER_KEYS_AD, DEFAULT_RANGE, getDashboardIntegrationId} from '../../utils/accountDashboard';
 import { hashCode } from '../../utils/string';
+import infoText from '../Integration/DIY/panels/infoText';
+
+infoText;
 
 export default function Dashboard() {
   const history = useHistory();
@@ -31,8 +34,7 @@ export default function Dashboard() {
 
   const { paging, sort, ...nonPagingFilters } = filters || {};
   const filterHash = hashCode(nonPagingFilters);
-  const infoTextDashboard = integrationId ? 'This dashboard offers a comprehensive view of all running and completed flows in each integration.'
-    : 'This dashboard offers a comprehensive view of all running and completed flows in your account.';
+  const infoTextDashboard = integrationId ? infoText.integrationDashboard : infoText.accountDashboard;
 
   useEffect(() => {
     dispatch(
