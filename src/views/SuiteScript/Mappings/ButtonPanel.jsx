@@ -4,7 +4,7 @@ import { selectors } from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import SaveAndCloseButtonGroupAuto from '../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
-import { SUITESCRIPT_MAPPINGS_FORM_KEY } from '../../../utils/constants';
+import { SUITESCRIPT_MAPPINGS_FORM_KEY } from '../../../constants';
 import mappingUtil from '../../../utils/mapping';
 
 export default function ButtonPanel({disabled, onClose}) {

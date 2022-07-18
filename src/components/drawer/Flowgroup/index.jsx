@@ -14,7 +14,7 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import { useFormOnCancel } from '../../FormOnCancelContext';
 import { useSelectorMemo } from '../../../hooks';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import { emptyList, emptyObject, FORM_SAVE_STATUS, FLOW_GROUP_FORM_KEY } from '../../../utils/constants';
+import { emptyList, emptyObject, FORM_SAVE_STATUS, FLOW_GROUP_FORM_KEY } from '../../../constants';
 import { getFlowGroup } from '../../../utils/flows';
 import getRoutePath from '../../../utils/routePaths';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';

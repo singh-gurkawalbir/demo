@@ -10,7 +10,6 @@ import {
   isBlobTypeResource,
   isRestCsvMediaTypeExport,
   adaptorTypeMap,
-  finalSuccessMediaType,
 } from '../resource';
 import responseMappingUtil from '../responseMapping';
 import arrayUtils from '../array';
@@ -54,6 +53,9 @@ export const sampleDataStage = {
     postMapOutput: 'postMap',
     postSubmit: 'responseTransform',
     responseTransform: 'sampleResponse',
+  },
+  flows: {
+    router: 'router',
   },
   /**
    * flowInput, processedFlowInput, inputFilter
@@ -141,7 +143,7 @@ export const getCurrentSampleDataStageStatus = (
 // when added a lookup to the flow path: '/pageProcessors/${resourceIndex}
 const pathRegex = {
   sequence: /^(\/pageProcessors|\/pageGenerators)$/,
-  responseMapping: /\/pageProcessors\/[0-9]+\/responseMapping/,
+  responseMapping: /(\/routers\/(\d+)\/branches\/(\d+))?\/pageProcessors\/(\d+)\/responseMapping/,
   lookupAddition: /\/pageProcessors\/[0-9]+$/,
 };
 
@@ -230,11 +232,13 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
 
     if (pathRegex.responseMapping.test(path) && !updates.responseMapping) {
       // Extract resourceIndex from the path
-      const [resourceIndex] = path.match(/[0-9]+/);
+      const [,, routerIndex, branchIndex, resourceIndex] = pathRegex.responseMapping.exec(path);
 
       if (resourceIndex) {
         updates.responseMapping = {
-          resourceIndex: parseInt(resourceIndex, 10),
+          resourceIndex: +resourceIndex,
+          ...(branchIndex !== undefined ? {branchIndex: +branchIndex} : {}),
+          ...(routerIndex !== undefined ? {routerIndex: +routerIndex} : {}),
         };
       }
     }
@@ -342,8 +346,7 @@ export const generatePostResponseMapData = (flowData, rawData = {}) => {
 export const getFormattedResourceForPreview = (
   resourceObj,
   resourceType,
-  flowType,
-  connection
+  flowType
 ) => {
   const resource = deepClone(resourceObj || {});
 
@@ -380,10 +383,6 @@ export const getFormattedResourceForPreview = (
       // If there is no sampleResponseData, add default fields for lookups/imports
       resource.sampleResponseData = generateDefaultExtractsObject(resourceType, resource?.adaptorType);
     }
-  }
-
-  if (resource.adaptorType === 'HTTPExport' && resource.http && !resource.http?.successMediaType) {
-    resource.http.successMediaType = finalSuccessMediaType(undefined, connection);
   }
 
   return resource;

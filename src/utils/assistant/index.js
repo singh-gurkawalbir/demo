@@ -2029,8 +2029,13 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
           ...(lookupOperationDetails.resource ? {resource: lookupOperationDetails.resource} : {}),
         };
       }
-
-      importDoc.ignoreLookupName = luConfig.name;
+      if (ignoreExisting || ignoreMissing) {
+        importDoc.ignoreLookupName = luConfig.name;
+        importDoc.existingLookupName = undefined;
+      } else {
+        importDoc.existingLookupName = luConfig.name;
+        importDoc.ignoreLookupName = undefined;
+      }
     }
   }
   if (operationDetails.howToIdentifyExistingRecords) {
@@ -2052,7 +2057,13 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
   ) {
     if (identifiers && identifiers.length > 0) {
       if (lookupType === 'source') {
-        importDoc.ignoreExtract = pathParams[identifiers[0].id];
+        if (ignoreMissing) {
+          importDoc.ignoreExtract = pathParams[identifiers[0].id];
+          importDoc.existingExtract = undefined;
+        } else {
+          importDoc.existingExtract = pathParams[identifiers[0].id];
+          importDoc.ignoreExtract = undefined;
+        }
       } else if (lookupType === 'lookup') {
         if (operationDetails.howToIdentifyExistingRecords) {
           importDoc.existingLookupName = identifiers[0].id;
@@ -2074,7 +2085,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
         if (adaptorType === 'rest') {
           paramValue = `{{{${paramValue}}}}`;
         } else if (adaptorType === 'http') {
-          if (importDoc.ignoreLookupName) {
+          if (importDoc.ignoreLookupName || importDoc.existingLookupName) {
             paramValue = `{{{lookup.${paramValue}}}}`;
           } else {
             paramValue = `{{{data.0.${paramValue}}}}`;

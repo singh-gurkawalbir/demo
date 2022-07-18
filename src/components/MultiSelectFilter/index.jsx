@@ -198,7 +198,7 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
-        placement="bottom-middle"
+        placement="bottom"
         restrictToParent={false}
         classes={{
           popper: classes.multiSelectFilterPopper,

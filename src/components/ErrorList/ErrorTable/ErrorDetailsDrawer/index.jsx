@@ -11,7 +11,7 @@ import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import ErrorDetails from '../../ErrorDetails';
 import { selectors } from '../../../../reducers';
 import useFormOnCancelContext from '../../../FormOnCancelContext';
-import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../utils/constants';
+import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 const emptySet = [];

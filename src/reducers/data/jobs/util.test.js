@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import each from 'jest-each';
 import moment from 'moment';
-import { JOB_TYPES, JOB_STATUS } from '../../../utils/constants';
+import { JOB_TYPES, JOB_STATUS } from '../../../constants';
 import {
   getJobDuration,
   getFlowJobIdsThatArePartOfABulkRetryJob,

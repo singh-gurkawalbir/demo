@@ -3908,6 +3908,260 @@ describe('mapping reducer', () => {
       expect(state).toEqual(nextState);
     });
   });
+  describe('MAPPING.V2.DELETE_ALL', () => {
+    test('should keep v2 data empty if no v2TreeData is present in state', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'new_key',
+              dataType: 'string',
+              isEmptyRow: true,
+              title: '',
+            },
+          ],
+          extractsTree: [],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.deleteAll());
+
+      expect(state).toEqual(initialState);
+    });
+    test('should empty v2TreeData and make it as grouped output if its a csv or xlsx resource', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              dataType: 'string',
+              generate: 'id',
+              extract: '$.id',
+              children: [{
+                dataType: 'string',
+                generate: 'id',
+                extract: '$.id',
+              }],
+            },
+          ],
+          extractsTree: [],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.deleteAll(true));
+      const newState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'new_key',
+            title: '',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generateDisabled: true,
+            children: [
+              {
+                key: 'new_key',
+                title: '',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                isEmptyRow: true,
+              },
+            ],
+          }],
+          extractsTree: [],
+        },
+      };
+
+      expect(state).toEqual(newState);
+    });
+  });
+  describe('MAPPING.V2.AUTO_CREATE_STRUCTURE', () => {
+    test('should correctly update treeData based on sample data for non csv/xlsx with required mappings', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const importSampleData = {
+        id: 12,
+        name: 'test',
+        allNames: ['a', 'b', 'c'],
+        address: {},
+        siblings: [{
+          fname: 'Bob',
+        }],
+      };
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          v2TreeData: [
+            {
+              dataType: 'string',
+              generate: 'id',
+              extract: '$.id',
+              children: [{
+                dataType: 'string',
+                generate: 'id',
+                extract: '$.id',
+              }],
+            },
+          ],
+          extractsTree: [],
+        },
+      };
+
+      const state = reducer(initialState, actions.mapping.v2.autoCreateStructure(importSampleData, false));
+      const newState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: ['id', 'siblings[*].fname'],
+          autoCreated: true,
+          v2TreeData: [
+            {
+              dataType: 'number',
+              generate: 'id',
+              isRequired: true,
+              jsonPath: 'id',
+              key: 'new_key',
+              title: '',
+            },
+            {
+              dataType: 'string',
+              generate: 'name',
+              isRequired: false,
+              jsonPath: 'name',
+              key: 'new_key',
+              title: '',
+            },
+            {
+              dataType: 'stringarray',
+              generate: 'allNames',
+              isRequired: false,
+              jsonPath: 'allNames',
+              key: 'new_key',
+              title: '',
+            },
+            {
+              children: [
+                {
+                  dataType: 'string',
+                  isEmptyRow: true,
+                  key: 'new_key',
+                  title: '',
+                  parentKey: 'new_key',
+                },
+              ],
+              dataType: 'object',
+              generate: 'address',
+              isRequired: false,
+              jsonPath: 'address',
+              key: 'new_key',
+              title: '',
+            },
+            {
+              children: [
+                {
+                  dataType: 'string',
+                  generate: 'fname',
+                  isRequired: true,
+                  jsonPath: 'siblings[*].fname',
+                  key: 'new_key',
+                  parentKey: 'new_key',
+                  title: '',
+                },
+              ],
+              dataType: 'objectarray',
+              generate: 'siblings',
+              isRequired: true,
+              jsonPath: 'siblings[*]',
+              key: 'new_key',
+              title: '',
+            },
+          ],
+          extractsTree: [],
+        },
+      };
+
+      expect(state).toEqual(newState);
+    });
+    test('should correctly update treeData based on sample data for csv/xlsx', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const importSampleData = {
+        id: 12,
+        name: 'test',
+      };
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: [],
+          v2TreeData: [
+            {
+              dataType: 'string',
+              generate: 'id',
+              extract: '$.id',
+              children: [{
+                dataType: 'string',
+                generate: 'id',
+                extract: '$.id',
+              }],
+            },
+          ],
+          extractsTree: [],
+        },
+      };
+
+      const state = reducer(initialState, actions.mapping.v2.autoCreateStructure(importSampleData, true));
+      const newState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          requiredMappings: [],
+          isGroupedOutput: true,
+          autoCreated: true,
+          v2TreeData: [{
+            children: [
+              {
+                dataType: 'number',
+                generate: 'id',
+                isRequired: false,
+                jsonPath: 'id',
+                key: 'new_key',
+                title: '',
+              },
+              {
+                dataType: 'string',
+                generate: 'name',
+                isRequired: false,
+                jsonPath: 'name',
+                key: 'new_key',
+                title: '',
+              },
+            ],
+            dataType: 'objectarray',
+            generateDisabled: true,
+            key: 'new_key',
+            title: '',
+          }],
+          extractsTree: [],
+        },
+      };
+
+      expect(state).toEqual(newState);
+    });
+  });
 
   test('should do nothing and not fail for all below actions if state does not exist', () => {
     const afterSave = reducer({}, actions.mapping.save({}));
@@ -3933,8 +4187,10 @@ describe('mapping reducer', () => {
     const afterPatchSettings = reducer(afterPatchField, actions.mapping.v2.patchSettings('some_key', {}));
     const afterUpdateActiveKey = reducer(afterPatchSettings, actions.mapping.v2.updateActiveKey('some_key'));
     const afterChangeTab = reducer(afterUpdateActiveKey, actions.mapping.v2.changeArrayTab('some_key', 1, '$'));
+    const afterAutoCreate = reducer(afterChangeTab, actions.mapping.v2.autoCreateStructure({}, true));
+    const afterDeleteAll = reducer(afterAutoCreate, actions.mapping.v2.deleteAll(true));
 
-    expect(afterChangeTab).toEqual({});
+    expect(afterDeleteAll).toEqual({});
   });
 });
 

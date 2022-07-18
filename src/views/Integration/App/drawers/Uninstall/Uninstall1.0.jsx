@@ -18,7 +18,7 @@ import getRoutePath from '../../../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import Loader from '../../../../../components/Loader';
 import Spinner from '../../../../../components/Spinner';
-import {HOME_PAGE_PATH} from '../../../../../utils/constants';
+import {HOME_PAGE_PATH} from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import messageStore from '../../../../../utils/messageStore';
-import { MFA_DELETE_DEVICE_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../utils/constants';
+import { MFA_DELETE_DEVICE_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../constants';
 import TrashIcon from '../../../../icons/TrashIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';

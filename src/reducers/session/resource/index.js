@@ -1,7 +1,8 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
-import { LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE, SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../utils/constants';
+import { LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE } from '../../../constants';
+import messageStore from '../../../utils/messageStore';
 
 const defaultObject = { numEnabledPaidFlows: 0, numEnabledSandboxFlows: 0 };
 
@@ -36,7 +37,7 @@ export default function reducer(state = {}, action) {
         draft.ssoLicenseUpgradeRequested = true;
         break;
       case actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED:
-        draft.platformLicenseActionMessage = feature === 'SSO' ? SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE : LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE;
+        draft.platformLicenseActionMessage = feature === 'SSO' ? messageStore('SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE') : LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE;
         break;
       case actionTypes.LICENSE.CLEAR_ACTION_MESSAGE:
         draft.platformLicenseActionMessage = undefined;

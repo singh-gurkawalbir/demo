@@ -1,4 +1,4 @@
-import { HELP_CENTER_BASE_URL } from '../../utils/constants';
+import { HELP_CENTER_BASE_URL } from '../../constants';
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
 export default {
   formView: 'The application specific form is customized to help configure your resource for this particular application. However, if you would like more flexibility, choose the universal connector form (e.g. REST or HTTP) instead, which is a generic form.',
@@ -1099,13 +1099,17 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connector.legacyId': '.',
   'connector.published': '.',
   'connector.description': 'Brief description on the connector.',
+  'connector.applications':
+  'Choose an application to which you wish to connect. You can integrate with an application, database, or an universal connector.',
+  'connector.contactEmail': 'Enter the email address of the integration admin.',
   'connector.imageURL': '.',
   'connector._integrationId':
 'If this flow is part of an integration, this value will hold the id of that integration. ',
-  'connector.websiteURL': '.',
+  'connector.websiteURL': 'Enter the website URL of the application to which you wish to connect. Example: <a href="https://www.google.com/" target="_blank">https://www.google.com/</a>',
   'connector.oauth2ResultsURL': '.',
   'connector.managed': '.',
-  'connector._stackId': '.',
+  'connector._stackId':
+  'You can use stacks to host code for hooks, wrappers, connector installers and settings pages. <a href="https://docs.celigo.com/hc/en-us/articles/227055868" target="_blank">Stacks</a> are simple server environments which can be implemented in any coding language and are always invoked via HTTP. Every stack is assigned a system token that should be used to authenticate HTTP requests. You own the IP for all of your stacks, and can optionally choose to share a stack with other integrator.io users.',
   'connector.installerFunction': '.',
   'connector.updateFunction': '.',
   'connector.uninstallerFunction': '.',
@@ -1468,6 +1472,10 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Select one or more flows that you would like to run automatically whenever this flow completes. The next flow must be enabled, and it cannot be a realtime flow. (Note that the current flow may run again even though the next flow is in progress.) ',
   'flow.autoResolveMatchingTraceKeys': 'Enable <b>Auto-resolve errors with matching trace key</b> to resolve other open errors with the same <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> (unique field identifier).',
   'flow.manageAliases': 'Use this page to see all of your aliases for this flow, as well as any integration-level aliases (inherited aliases). You can create a new alias for this flow (top right), or use the Actions menu to edit, copy, delete, or view details for a flow-level alias.  Inherited aliases are passed down to the flow from the integration. However, keep in mind that if you reference both a flow-level alias and an integration-level alias for a resource in a script, the flow-level alias will take precedence. Use the Actions menu for Inherited aliases to copy an alias or view its details. To create, edit, or delete one of these aliases, navigate to the integration instead and use the Alias tab. <a href="https://docs.celigo.com/hc/en-us/articles/4454740861979" target="_blank">Learn more about aliases</a>.',
+  'flow.router.branchType': `Select the <u>type of branching</u> based on how you want records to flow through the branches:
+  <ul><li>If you select First matching branch, the branching conditions will be applied to a record sequentially based on the order of the branches. The record will only go through the first branch where the conditions are met.</li>
+  <li>If you select All matching branches, the branching conditions will be applied to a record for all branches. The record will go through all the branches where the conditions are met.</li></ul>`,
+  'flow.routers.branches': 'Add branches and define branching conditions. You can also change the order of a branch by dragging it up or down.',
   'alias.aliasId': 'Enter a descriptive, unique name to use as the Alias ID. This is what you will use in scripts to refer to the resource. Use only letters, numbers, hyphens(-) and/or underscores(_). For example, shopify_flow_neworders or netsuite-connection2_prod',
   'alias.description': 'Enter a description that provides more context on how the resource is used in your integration.',
   'alias.resourceType': 'Select the type of resource this alias will reference (such as a flow or import). Once you select the type, you can choose from a list of resources matching this type.',
@@ -2441,13 +2449,13 @@ use the custom option.`,
   'snapshot.description': 'Describe your snapshot so you can quickly identify the revision and any important details.',
   'http.parseSuccessResponses': 'The integrator.io works on JSON internally. If your API returns success data in a different format than JSON, parse HTTP response data using available parsers for CSV and XML.',
   'mfa.enable':
-    'Switch the toggle ON to initiate the process to enable MFA for your profile. You must also complete the following six steps; otherwise, MFA will remain disabled. When you disable MFA,  device settings will also be disabled so that you can enable MFA at any point in future',
+    'Switch the toggle ON to initiate the process to enable MFA for your profile. You must also complete the following steps; otherwise, MFA will remain disabled. When you disable MFA,  device settings will also be disabled so that you can enable MFA at any point in future.',
   'mfa.getVerificationApp':
     'You can configure MFA to use any authenticator app that supports time-based one-time-password protocol (TOTP). Supported authenticator apps include, but not limited to, Google, LastPass, and Microsoft.',
   'mfa.addIntegrationIO':
     'To add integrator.io to your MFA authenticator app, you can either scan the QR code or enter the secret key manually. You must enter the password to view the secret key or QR code for your profile. Do not save these details anywhere else. You can find the secret key and QR code in your profile at any time in the future if necessary.',
   'mfa.code.verify':
-    'Enter the code from your authenticator app for the Celigo configuration you just completed to verify that the configuration is successful',
+    'Enter the code from your authenticator app for the Celigo configuration you just completed to verify that the configuration is successful.',
   'mfa.primaryAccount':
     'If you lose the mobile device that has the authenticator app installed, the account owner or admin of the primary account can reset MFA credentials for your profile. Choose the account that you want to perform MFA resets.',
   'mfa.trustDevice':
@@ -2461,6 +2469,4 @@ use the custom option.`,
     'View the secret key that was used to enable MFA for your profile.',
   'mfa.trustedDevices':
     'Click <b>Manage devices</b> to see a list of all trusted devices for your profile.',
-  'mfa.reAuthPwd': 'Reauthenticate with password',
-  'mfa.manageDevices': 'Manage devices',
 };

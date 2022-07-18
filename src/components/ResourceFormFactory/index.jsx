@@ -6,7 +6,7 @@ import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../reducers';
-import { FORM_SAVE_STATUS } from '../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../constants';
 import DynaForm from '../DynaForm';
 import Spinner from '../Spinner';
 import { getHttpConnector} from '../../constants/applications';
