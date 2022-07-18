@@ -110,15 +110,15 @@ async function initSettingsDrawer({
       },
     }],
   };
-  // ui-drawer/settings/category/:editorId/sections/:sectionId/:depth/:mappingKey
-  // ui-drawer/settings/v2/:nodeKey/:generate
-  // ui-drawer/settings/:mappingKey
+  // settings/category/:editorId/sections/:sectionId/:depth/:mappingKey
+  // settings/v2/:nodeKey/:generate
+  // settings/:mappingKey
   const ui = (
     <MemoryRouter
-      initialEntries={[{pathname: `/integrations/integration_id/flowBuilder/flow_id/ui-drawer/mappings/${url}`}]}
+      initialEntries={[{pathname: `/integrations/integration_id/flowBuilder/flow_id/mappings/${url}`}]}
     >
       <Route
-        path="/integrations/integration_id/flowBuilder/flow_id/ui-drawer/mappings"
+        path="/integrations/integration_id/flowBuilder/flow_id/mappings"
         params={params}
         >
         <SettingsDrawer {...props} />
@@ -187,7 +187,7 @@ describe('SettingsDrawer test cases', () => {
   });
 
   describe('SettingsDrawer component CATEGORY MAPPING SETTINGS Test cases', () => {
-    const url = 'ui-drawer/settings/category/editor_id/sections/section_id/depth/mapping_key';
+    const url = 'settings/category/editor_id/sections/section_id/depth/mapping_key';
 
     const params = {
       editorId: 'editor_id',
@@ -198,12 +198,12 @@ describe('SettingsDrawer test cases', () => {
 
     test('should pass the intial render to redirect', async () => {
       await initSettingsDrawer({
-        url: 'ui-drawer/settings/category/editor_id/sections/section_id/depth/mapping_key',
+        url: 'settings/category/editor_id/sections/section_id/depth/mapping_key',
         params,
         key: 'mapping_key1',
       });
 
-      expect(screen.queryByText('Redirected to /integrations/integration_id/flowBuilder/flow_id/ui-drawer/mappings/ui-drawer')).toBeInTheDocument();
+      expect(screen.queryByText('Redirected to /integrations/integration_id/flowBuilder/flow_id/mappings')).toBeInTheDocument();
       expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
     });
 
@@ -259,7 +259,7 @@ describe('SettingsDrawer test cases', () => {
   });
 
   describe('SettingsDrawer component V2 SETTINGS Test cases', () => {
-    const url = 'ui-drawer/settings/v2/node_key/generate';
+    const url = 'settings/v2/node_key/generate';
 
     const params = {
       nodeKey: 'node_key',
@@ -277,7 +277,7 @@ describe('SettingsDrawer test cases', () => {
   });
 
   describe('SettingsDrawer component SETTINGS Test cases', () => {
-    const url = 'ui-drawer/settings/mapping_key';
+    const url = 'settings/mapping_key';
 
     const params = {
       mappingKey: 'mapping_key',
@@ -291,7 +291,7 @@ describe('SettingsDrawer test cases', () => {
       });
 
       expect(screen.queryByText('Settings')).toBeInTheDocument();
-      expect(screen.queryByText('Redirected to /integrations/integration_id/flowBuilder/flow_id/ui-drawer/mappings/ui-drawer')).toBeInTheDocument();
+      expect(screen.queryByText('Redirected to /integrations/integration_id/flowBuilder/flow_id/mappings')).toBeInTheDocument();
       expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
     });
 

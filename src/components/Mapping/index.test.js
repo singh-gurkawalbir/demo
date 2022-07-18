@@ -69,7 +69,7 @@ describe('TableBodyContent component Test cases', () => {
     });
     await initTableBodyContent();
 
-    expect(screen.queryByText('Redirected to //ui-drawer/editor/mappings-undefined')).toBeInTheDocument();
+    expect(screen.queryByText('Redirected to //editor/mappings-undefined')).toBeInTheDocument();
   });
 
   test('should pass the intial render with mappingStatus received', async () => {
@@ -86,7 +86,7 @@ describe('TableBodyContent component Test cases', () => {
       },
     });
 
-    expect(screen.queryByText('Redirected to //ui-drawer/editor/mappings-undefined')).not.toBeInTheDocument();
+    expect(screen.queryByText('Redirected to //editor/mappings-undefined')).not.toBeInTheDocument();
     expect(utils.container).not.toBeEmptyDOMElement();
   });
 });
