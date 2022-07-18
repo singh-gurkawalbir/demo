@@ -3098,6 +3098,34 @@ describe('downloadAuditlogs saga', () => {
       .call(openExternalUrl, { url: response.signedURL })
       .run();
   });
+  test('should invoke audit logs api with date and user selected filters', () => {
+    const filters = {
+      fromDate: yesterdayDate.toISOString(),
+      toDate: new Date().toISOString(),
+      byUser: 'user',
+      resourceType: 'integrations',
+      source: 'ui',
+      event: 'create',
+      _resourceId: 'i1',
+    };
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters }
+    );
+
+    const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
+
+    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .call(openExternalUrl, { url: response.signedURL })
+      .run();
+  });
   test('should invoke audit logs api with date filters and childId', () => {
     const filters = {
       fromDate: yesterdayDate.toISOString(),
