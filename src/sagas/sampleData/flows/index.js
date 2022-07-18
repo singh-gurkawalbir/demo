@@ -416,16 +416,17 @@ export function* requestProcessorData({
       const { _scriptId, function: entryFunction } = transform.script || {};
 
       if (_scriptId) {
-        const script = yield call(getResource, {
+        const script = !resource._connectorId ? (yield call(getResource, {
           resourceType: 'scripts',
           id: _scriptId,
-        });
+        })) : {};
 
         processorData = {
           data: preProcessedData,
           rule: {
             code: script?.content,
             entryFunction,
+            scriptId: _scriptId,
           },
           editorType: 'javascript',
           wrapInArrayProcessedData: true,
@@ -451,10 +452,11 @@ export function* requestProcessorData({
 
     if (hook._scriptId) {
       const scriptId = hook._scriptId;
-      const script = yield call(getResource, {
+      // IAs don't give access to script content
+      const script = !resource._connectorId ? (yield call(getResource, {
         resourceType: 'scripts',
         id: scriptId,
-      });
+      })) : {};
       const context = yield select(selectors.getScriptContext, {
         flowId,
         contextType: 'hook',
@@ -466,6 +468,7 @@ export function* requestProcessorData({
         rule: {
           code,
           entryFunction: hook.function,
+          scriptId,
         },
         context,
         removeDataPropFromProcessedData: stage === 'preMap',

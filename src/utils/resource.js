@@ -1086,7 +1086,7 @@ export const finalSuccessMediaType = (formValues, connection) => {
   const overridenSuccessMediaType = formValues?.['/http/successMediaType'];
 
   if (overridenSuccessMediaType) return overridenSuccessMediaType;
-  const { mediaType, successMediaType } = connection?.http || emptyObject;
+  const { mediaType } = connection?.http || emptyObject;
 
-  return successMediaType || mediaType;
+  return mediaType;
 };
