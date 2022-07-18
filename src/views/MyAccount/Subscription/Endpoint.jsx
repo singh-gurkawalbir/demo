@@ -19,6 +19,7 @@ import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import { TextButton, FilledButton } from '../../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
+import infoText from '../infoText';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -293,7 +294,7 @@ export default function Endpoint() {
       </div>
       )}
       <div className={classes.root}>
-        <PanelHeader title="Subscription" className={classes.heading} />
+        <PanelHeader title="Subscription" className={classes.heading} infoText={infoText.Subscription} />
         <div className={classes.subscriptionBox}>
           <div className={classes.subscriptionBoxInner}>
             <div className={classes.subscriptionBoxInnerLeft}>

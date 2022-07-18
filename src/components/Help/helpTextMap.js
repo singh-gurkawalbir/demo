@@ -1099,13 +1099,17 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connector.legacyId': '.',
   'connector.published': '.',
   'connector.description': 'Brief description on the connector.',
+  'connector.applications':
+  'Choose an application to which you wish to connect. You can integrate with an application, database, or an universal connector.',
+  'connector.contactEmail': 'Enter the email address of the integration admin.',
   'connector.imageURL': '.',
   'connector._integrationId':
 'If this flow is part of an integration, this value will hold the id of that integration. ',
-  'connector.websiteURL': '.',
+  'connector.websiteURL': 'Enter the website URL of the application to which you wish to connect. Example: <a href="https://www.google.com/" target="_blank">https://www.google.com/</a>',
   'connector.oauth2ResultsURL': '.',
   'connector.managed': '.',
-  'connector._stackId': '.',
+  'connector._stackId':
+  'You can use stacks to host code for hooks, wrappers, connector installers and settings pages. <a href="https://docs.celigo.com/hc/en-us/articles/227055868" target="_blank">Stacks</a> are simple server environments which can be implemented in any coding language and are always invoked via HTTP. Every stack is assigned a system token that should be used to authenticate HTTP requests. You own the IP for all of your stacks, and can optionally choose to share a stack with other integrator.io users.',
   'connector.installerFunction': '.',
   'connector.updateFunction': '.',
   'connector.uninstallerFunction': '.',
