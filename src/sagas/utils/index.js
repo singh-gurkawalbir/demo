@@ -8,7 +8,7 @@ import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { createFormValuesPatchSet as createSuiteScriptFormValuesPatchSet } from '../suiteScript/resourceForm';
 import { AUTHENTICATION_LABELS, emptyObject } from '../../constants';
 
-const convertResourceFieldstoSampleData = (resourceFields, dataType = 'object') => {
+export const convertResourceFieldstoSampleData = (resourceFields, dataType = 'object') => {
   if (!resourceFields) {
     return '';
   }
@@ -25,7 +25,6 @@ const convertResourceFieldstoSampleData = (resourceFields, dataType = 'object') 
   }
   if (dataType === 'objectarray') {
     const tempOutput = {};
-    const output = [];
 
     resourceFields.forEach(rf => {
       if (rf.resourceFields) {
@@ -33,10 +32,10 @@ const convertResourceFieldstoSampleData = (resourceFields, dataType = 'object') 
       } else { tempOutput[rf.id] = rf.id; }
     });
 
-    return output;
+    return [tempOutput];
   }
 };
-const generateReplaceAndRemoveLastModified = patches =>
+export const generateReplaceAndRemoveLastModified = patches =>
   (patches &&
     patches.length &&
     util.removeItem(patches, p => p.path === '/lastModified')) ||
@@ -45,7 +44,7 @@ const hasPatch = patches => patches && patches.length;
 const isPathPresentAndValueDiff = patchArr => patch =>
   patchArr.some(p => p.path === patch.path && p.value !== patch.value);
 
-const getExportMetadata = (connectorMetadata, connectionVersion) => {
+export const getExportMetadata = (connectorMetadata, connectionVersion) => {
   const { httpConnectorResources: httpResources, httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
   const versionLocation = connectorMetadata.versioning?.location;
 
@@ -147,7 +146,7 @@ const getExportMetadata = (connectorMetadata, connectionVersion) => {
 
   return exportData;
 };
-const getImportMetadata = (connectorMetadata, connectionVersion) => {
+export const getImportMetadata = (connectorMetadata, connectionVersion) => {
   const versionLocation = connectorMetadata.versioning?.location;
   const { httpConnectorResources: httpResources, httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
   const importData = {
