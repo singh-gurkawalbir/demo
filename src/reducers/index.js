@@ -23,7 +23,6 @@ import {
   getUsedActionsMapForResource,
   isPageGeneratorResource,
   getImportsFromFlow,
-  getPageProcessorImportsFromFlow,
   getAllConnectionIdsUsedInTheFlow,
   getFlowListWithMetadata,
   getNextDataFlows,
@@ -41,6 +40,7 @@ import {
   isRealtimeExport,
   addLastExecutedAtSortableProp,
   shouldHaveUnassignedSection,
+  getPageProcessorFromFlow,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -59,7 +59,7 @@ import {
   AFE_SAVE_STATUS,
   UNASSIGNED_SECTION_NAME,
   emptyList,
-} from '../utils/constants';
+} from '../constants';
 import messageStore from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -99,7 +99,7 @@ import {
   getParentJobSteps,
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
-import { getApp } from '../constants/applications';
+import { getApp, getHttpConnector } from '../constants/applications';
 import { HOOK_STAGES } from '../utils/editor';
 import { getTextAfterCount } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
@@ -113,6 +113,8 @@ import { filterMap } from '../components/GlobalSearch/filterMeta';
 import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions, REVISION_DIFF_ACTIONS } from '../utils/revisions';
 import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
+import { initializeFlowForReactFlow } from '../utils/flows/flowbuilder';
+import { HTTP_BASED_ADAPTORS } from '../utils/http';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -1563,7 +1565,7 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
     ignoreEnvironmentFilter: true,
     filter: {
       $where() {
-        if (connection.http?._httpConnectorId) {
+        if (getHttpConnector(connection.http?._httpConnectorId)) {
           return (
             this.http?._httpConnectorId === connection.http?._httpConnectorId &&
             this.http?._httpConnectorVersionId === connection.http?._httpConnectorVersionId &&
@@ -2165,6 +2167,20 @@ selectors.makeResourceDataSelector = () => {
     (resourceIdState, stagedIdState, resourceType, id) => selectors.resourceDataModified(resourceIdState, stagedIdState, resourceType, id)
   );
 };
+
+selectors.makeFlowDataForFlowBuilder = () => {
+  const cachedResourceSelector = selectors.makeResourceDataSelector();
+
+  return createSelector(
+    (state, flowId) => cachedResourceSelector(
+      state,
+      'flows',
+      flowId
+    )?.merged,
+    flow => initializeFlowForReactFlow(flow)
+  );
+};
+selectors.flowDataForFlowBuilder = selectors.makeFlowDataForFlowBuilder();
 // Please use makeResourceDataSelector in JSX as it is cached selector.
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
@@ -3955,6 +3971,24 @@ selectors.isFormAMonitorLevelAccess = (state, integrationId) => {
   return false;
 };
 
+selectors.isFormAManageLevelAccess = (state, integrationId) => {
+  const { accessLevel } = selectors.resourcePermissions(state);
+
+  // if all forms is manage level
+  if (accessLevel === 'manage') return true;
+
+  // check integration level is monitor level
+  const { accessLevel: accessLevelIntegration } = selectors.resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
+
+  if (accessLevelIntegration === 'manage') return true;
+
+  return false;
+};
+
 selectors.formAccessLevel = (state, integrationId, resource, disabled) => {
   // if all forms is monitor level
 
@@ -4255,7 +4289,7 @@ selectors.getImportSampleData = (state, resourceId, options = {}) => {
   const isIntegrationApp = !!_connectorId;
   const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
 
-  if (connection.http?._httpConnectorId || (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant)))) {
+  if (getHttpConnector(connection.http?._httpConnectorId) || (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant)))) {
     // get assistants sample data
     return selectors.assistantPreviewData(state, resourceId);
   }
@@ -4458,7 +4492,7 @@ selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceTyp
   // for rest and http
   const appType = adaptorTypeMap[resourceObj?.adaptorType];
 
-  return ['http', 'rest', 'graph_ql'].includes(appType);
+  return HTTP_BASED_ADAPTORS.includes(appType);
 };
 
 // #endregion SAMPLE DATA selectors
@@ -5221,14 +5255,6 @@ selectors.flowMappingsImportsList = () => createSelector(
   }
 );
 
-// TODO: The selector below should be deprecated and the above selector
-// should be used instead.
-selectors.getAllPageProcessorImports = (state, pageProcessors) => {
-  const imports = selectors.resourceList(state, { type: 'imports' }).resources;
-
-  return getPageProcessorImportsFromFlow(imports, pageProcessors);
-};
-
 selectors.httpAssistantSupportsMappingPreview = (state, importId) => {
   const importResource = selectors.resource(state, 'imports', importId) || emptyObject;
   const { _integrationId, _connectionId, http } = importResource;
@@ -5445,7 +5471,9 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
     'flows',
     flowId
   )?.merged || emptyObject;
-  const pageProcessor = flow?.pageProcessors && flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+
+  if (!flow) return emptyArray;
+  const pageProcessor = getPageProcessorFromFlow(flow, resourceId);
 
   if (!pageProcessor) {
     return emptyArray;
@@ -5631,9 +5659,7 @@ selectors.flowJobs = (state, options = {}) => {
       // eslint-disable-next-line no-param-reassign
       job.children = job.children.map(cJob => {
         const additionalChildProps = {
-          name: cJob._exportId
-            ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-            : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+          name: resourceMap[cJob.type === 'export' ? 'exports' : 'imports']?.[cJob._expOrImpId || cJob._exportId || cJob._importId]?.name,
           flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
         };
 
@@ -5705,9 +5731,7 @@ selectors.accountDashboardRunningJobs = createSelector(
         // eslint-disable-next-line no-param-reassign
         job.children = job.children.map(cJob => {
           const additionalChildProps = {
-            name: cJob._exportId
-              ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-              : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+            name: resourceMap[cJob.type === 'export' ? 'exports' : 'imports']?.[cJob._expOrImpId || cJob._exportId || cJob._importId]?.name,
             flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
           };
 
@@ -6095,7 +6119,8 @@ selectors.isStandaloneExport = (state, flowId, exportId) => {
 
   const { merged: flow = {} } = selectors.resourceData(state, 'flows', flowId, 'value');
 
-  return !flow.pageProcessors?.find(pp => pp._exportId === exportId);
+  return !flow.pageProcessors?.find(pp => pp._exportId === exportId) &&
+  !flow.routers?.some(r => !r.branches?.some(b => b.pageProcessors?.some(pp => pp._exportId === exportId)));
 };
 
 /*
@@ -6294,9 +6319,10 @@ selectors.isLookUpExport = (state, { flowId, resourceId, resourceType }) => {
 
   // If it is an existing export with a flow context, search in pps to match this resource id
   const flow = selectors.resource(state, 'flows', flowId);
-  const { pageProcessors = [] } = flow || {};
+  const { pageProcessors = [], routers = [] } = flow || {};
 
-  return !!pageProcessors.find(pp => pp._exportId === resourceId);
+  return !!pageProcessors.find(pp => pp._exportId === resourceId) ||
+    routers.some(router => router.branches?.some(branch => branch.pageProcessors?.some(pp => pp._exportId === resourceId)));
 };
 
 /*
@@ -6433,7 +6459,7 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
     return true;
   }
 
-  if (['outputFilter', 'exportFilter', 'inputFilter'].includes(editorType)) {
+  if (['outputFilter', 'exportFilter', 'inputFilter', 'router'].includes(editorType)) {
     return true;
   }
 
@@ -6810,7 +6836,7 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
   return !!ssoLinkedAccount?.accountSSORequired;
 };
 
-selectors.ssoPrimaryAccounts = createSelector(
+selectors.primaryAccounts = createSelector(
   state => selectors.isAccountOwner(state),
   state => state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN),
   (isAccountOwner, orgAccounts) => {
@@ -6886,12 +6912,14 @@ selectors.showAmazonRestrictedReportType = (state, formKey) => {
 selectors.isParserSupported = (state, formKey, parser) => {
   const formDetails = selectors.formState(state, formKey);
   const exportId = formDetails?.parentContext?.resourceId;
-  const { adaptorType } = selectors.resource(state, 'exports', exportId) || {};
 
-  //  At present, we are checking only for HTTP export.
+  // selectors.resource won't work in case of new exports, so using selectors.resourceData here.
+  const { adaptorType, assistant } = selectors.resourceData(state, 'exports', exportId)?.merged || {};
+
+  //  At present, we are checking only for HTTP export. Using the assistant property to exclude other exports with adaptorType as "HTTPExport".
   //  For remaining, we are returning true so that it does not affect the existing functionality, as it has been used as a conditional.
 
-  if (adaptorType !== 'HTTPExport') return true;
+  if (adaptorType !== 'HTTPExport' || FILE_PROVIDER_ASSISTANTS.includes(assistant)) return true;
 
   const formValues = formDetails?.value;
   const connectionId = selectors.fieldState(state, formKey, '_connectionId')?.value;

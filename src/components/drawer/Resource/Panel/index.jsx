@@ -18,11 +18,11 @@ import { getParentResourceContext } from '../../../../utils/connections';
 import FlowStepRequestLogsDrawer from '../../FlowStepDebugLogs';
 import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
-import { DRAWER_URL_PREFIX, drawerPaths } from '../../../../utils/rightDrawer';
+import { drawerPaths } from '../../../../utils/rightDrawer';
 import TitleBar from './TitleBar';
 import DrawerContent from '../../Right/DrawerContent';
 
-const DRAWER_PATH = `/${DRAWER_URL_PREFIX}/${drawerPaths.RESOURCE.ROOT}`;
+const DRAWER_PATH = `/${drawerPaths.RESOURCE.ROOT}`;
 export const isNestedDrawer = url => !!matchPath(url, {
   path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
   exact: true,
@@ -34,10 +34,9 @@ const useStyles = makeStyles(theme => ({
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
-      return props.match.isExact ? 824 : 0;
+      return props.match.isExact ? 822 : 0;
     },
     overflowX: 'hidden',
-    overflowY: 'hidden',
   },
   baseFormWithPreview: {
     display: 'grid',
@@ -76,7 +75,7 @@ const useDetermineRequiredResources = type => useMemo(() => {
 }, [type]);
 
 export const redirectURlToParentListing = url => url.split('/')
-  .slice(0, -4)
+  .slice(0, -3)
   .join('/');
 export const useRedirectToParentRoute = initFailed => {
   const history = useHistory();
@@ -84,8 +83,8 @@ export const useRedirectToParentRoute = initFailed => {
 
   useEffect(() => {
     if (initFailed) {
-      // remove the last 4 segments from the route ...
-      // /ui-drawer/:operation(add|edit)/:resourceType/:id
+      // remove the last 3 segments from the route ...
+      // /:operation(add|edit)/:resourceType/:id
       // TODO: @Raghu: Can't we replace url with parentUrl - if we could pass till here?
       const stripedRoute = redirectURlToParentListing(match.url);
 
@@ -186,7 +185,7 @@ export default function Panel(props) {
               variant={variant}
               isNew={isNew}
               resourceType={resourceType}
-              className={classes.resourceFormWrapper}
+              className={clsx({[classes.resourceFormWrapper]: showPreviewPanel })}
               resourceId={id}
               flowId={flowId}
               // All users have access to reports

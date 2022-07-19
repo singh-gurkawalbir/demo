@@ -1,3 +1,8 @@
+import isObject from 'lodash/isObject';
+import set from 'lodash/set';
+import cloneDeep from 'lodash/cloneDeep';
+import jsonPatch from 'fast-json-patch';
+
 export default {
   /*
 
@@ -101,4 +106,34 @@ export default {
 
     return keysList;
   },
+  jsonPathsToObjectNotation: jsonPath => {
+    if (!/^\//.test(jsonPath) || typeof jsonPath !== 'string') return jsonPath;
+
+    return jsonPath.split('/').slice(1).join('.');
+  },
 };
+
+export const setObjectValue = (object, __path, value) => {
+  if (!__path || typeof __path !== 'string' || !isObject(object)) return;
+  let path = __path;
+
+  if (path.startsWith('/')) {
+    path = path.split('/').slice(1).join('.');
+  }
+  set(object, path, value);
+};
+
+export function getChangesPatchSet(updateFn, ...args) {
+  if (!args.length) return [];
+  try {
+    const [object, ...remainingArgs] = args;
+    const clonedObject = cloneDeep(object);
+    const observer = jsonPatch.observe(clonedObject);
+
+    updateFn.apply(null, [clonedObject, ...remainingArgs]);
+
+    return jsonPatch.generate(observer);
+  } catch (e) {
+    return [];
+  }
+}

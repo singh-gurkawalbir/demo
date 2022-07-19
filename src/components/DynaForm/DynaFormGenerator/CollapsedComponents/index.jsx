@@ -9,7 +9,7 @@ import FormGenerator from '..';
 import { selectors } from '../../../../reducers';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,6 +24,9 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     borderRadius: theme.spacing(0.5),
+    '&:last-child': {
+      marginBottom: 0,
+    },
   },
 }));
 

@@ -6,7 +6,7 @@
 import reducer, { COMM_STATES, COMM_STATES as STATES, selectors } from './index';
 import actions from '../../../actions';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import { changeEmailParams, changePasswordParams } from '../../../sagas/api/apiPaths';
 
 // Reference: JEST "matcher" doc: https://jestjs.io/docs/en/using-matchers
@@ -393,7 +393,7 @@ describe('comms selectors', () => {
       expect(selectors.commsSummary({}, 'get')).toEqual(defaultValues);
       expect(selectors.commsSummary(undefined, 'get')).toEqual(defaultValues);
     });
-    test('should return correct correct comms summary', () => {
+    test('should return correct comms summary', () => {
       const state = reducer(
         {
           1: { status: COMM_STATES.ERROR, hidden: false, failedAtTimestamp: 123 },

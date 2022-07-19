@@ -6,7 +6,7 @@ import ConnectedRow from './types/Connected';
 import RecycleBinRow from './types/RecycleBin';
 import MarketplaceRow from './types/Marketplace';
 import NoResultTypography from '../../NoResultTypography';
-import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
+import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
 
 // TODO: We need to create custom row types for several of
 // the resource types. Only common resource types can use the

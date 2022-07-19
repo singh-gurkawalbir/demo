@@ -8,6 +8,7 @@ import AgentToken from '../../AgentToken';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import OnlineStatus from '../../OnlineStatus';
+import AuditLogs from '../commonActions/AuditLogs';
 
 const getAgentDownloadInstaller = agent => (
   <AgentDownloadInstaller agentId={agent._id} />
@@ -56,5 +57,5 @@ export default {
       Value: ({rowData: r}) => <AgentToken agentId={r._id} />,
     },
   ],
-  useRowActions: () => [Edit, References, GenerateToken, Delete],
+  useRowActions: () => [Edit, AuditLogs, References, GenerateToken, Delete],
 };

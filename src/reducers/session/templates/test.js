@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
-import { INSTALL_STEP_TYPES } from '../../../utils/constants';
+import { INSTALL_STEP_TYPES } from '../../../constants';
 import { COMM_STATES as PUBLISH_STATES } from '../../comms/networkComms';
 
 describe('template test cases', () => {

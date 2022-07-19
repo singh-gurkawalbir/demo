@@ -7,7 +7,7 @@ import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   emptyList,
-} from '../../../../utils/constants';
+} from '../../../../constants';
 
 // this could be moved into some common place... just testing this now.
 expect.extend({
@@ -328,6 +328,7 @@ describe('account (ashares) reducers', () => {
         _id: 'license1',
         type: 'integrator',
         sandbox: true,
+        sso: true,
       },
     ];
 
@@ -401,6 +402,8 @@ describe('account (ashares) reducers', () => {
           type: 'integrator',
           sandbox: true,
           hasSandbox: true,
+          sso: true,
+          hasSSO: true,
           hasConnectorSandbox: false,
         });
 
@@ -617,6 +620,7 @@ describe('account (ashares) reducers', () => {
             company: 'Celigo Inc',
             canLeave: true,
             hasSandbox: false,
+            hasSSO: false,
             hasConnectorSandbox: false,
           },
           {
@@ -624,6 +628,7 @@ describe('account (ashares) reducers', () => {
             company: 'Celigo Playground',
             canLeave: true,
             hasSandbox: true,
+            hasSSO: false,
             hasConnectorSandbox: false,
           },
           {
@@ -631,6 +636,7 @@ describe('account (ashares) reducers', () => {
             company: 'ghi 789 company',
             canLeave: true,
             hasSandbox: true,
+            hasSSO: false,
             hasConnectorSandbox: false,
           },
         ];
@@ -654,6 +660,7 @@ describe('account (ashares) reducers', () => {
           {
             id: ACCOUNT_IDS.OWN,
             hasSandbox: true,
+            hasSSO: true,
             hasConnectorSandbox: false,
           },
         ];

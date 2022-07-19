@@ -3936,6 +3936,12 @@ Object {
               "records",
             ],
           },
+          Object {
+            "field": "http.successMediaType",
+            "is": Array [
+              "csv",
+            ],
+          },
         ],
       },
       "formView": Object {
@@ -4084,7 +4090,7 @@ Object {
       },
       "parsers": Object {
         "fieldId": "parsers",
-        "isHttp": true,
+        "required": false,
         "visibleWhenAll": Array [
           Object {
             "field": "outputMode",

@@ -1,8 +1,8 @@
 import { values, keyBy, cloneDeep } from 'lodash';
 import shortid from 'shortid';
 import parseLinkHeader from 'parse-link-header';
-import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from './constants';
+import { getAllPageProcessors, isPageGeneratorResource } from './flows';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from '../constants';
 import { stringCompare } from './sort';
 import messageStore from './messageStore';
 import errorMessageStore from './errorStore';
@@ -29,6 +29,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   pageProcessor: 'Destination / lookup',
   apis: 'My API',
   eventreports: 'Event Report',
+  users: 'User',
 });
 
 export const appTypeToAdaptorType = {
@@ -489,7 +490,7 @@ export const isRestCsvMediaTypeExport = (resource, connection) => {
 };
 
 export const isFlowResource = (flow, resourceId, resourceType) => {
-  const { pageProcessors = [] } = flow || {};
+  const pageProcessors = getAllPageProcessors(flow);
 
   // If resource type is imports search in pps
   if (resourceType === 'imports') {
@@ -1075,9 +1076,9 @@ export const AUDIT_LOGS_RANGE_FILTERS = [
   {id: 'last1hour', label: 'Last hour'},
   {id: 'today', label: 'Today'},
   {id: 'last36hours', label: 'Last 36 hours'},
-  {id: 'last7days', label: 'Last 7 Days'},
-  {id: 'last15days', label: 'Last 15 Days'},
-  {id: 'last30days', label: 'Last 30 Days'},
+  {id: 'last7days', label: 'Last 7 days'},
+  {id: 'last15days', label: 'Last 15 days'},
+  {id: 'last30days', label: 'Last 30 days'},
   {id: 'custom', label: 'Custom'},
 ];
 
@@ -1085,7 +1086,7 @@ export const finalSuccessMediaType = (formValues, connection) => {
   const overridenSuccessMediaType = formValues?.['/http/successMediaType'];
 
   if (overridenSuccessMediaType) return overridenSuccessMediaType;
-  const { mediaType, successMediaType } = connection?.http || emptyObject;
+  const { mediaType } = connection?.http || emptyObject;
 
-  return successMediaType || mediaType;
+  return mediaType;
 };

@@ -179,6 +179,20 @@ export default {
     }
     newValues['/http/formType'] = 'http';
 
+    if (newValues['/http/clientCertificates/type'] === 'pem') {
+      delete newValues['/http/clientCertificates/pfx'];
+    }
+
+    if (newValues['/http/clientCertificates/type'] === 'pfx') {
+      delete newValues['/http/clientCertificates/cert'];
+      delete newValues['/http/clientCertificates/key'];
+      if (newValues['/http/clientCertificates/pfx'].includes('data:application/x-pkcs12;base64,')) {
+        newValues['/http/clientCertificates/pfx'] = newValues['/http/clientCertificates/pfx'].slice(33);
+      }
+    }
+
+    delete newValues['/http/clientCertificates/type'];
+
     return newValues;
   },
   fieldMap: {
@@ -312,10 +326,44 @@ export default {
     'http.ping.failPath': { fieldId: 'http.ping.failPath' },
     'http.ping.failValues': { fieldId: 'http.ping.failValues' },
     httpAdvanced: { formId: 'httpAdvanced' },
-    'http.clientCertificates.cert': { fieldId: 'http.clientCertificates.cert' },
-    'http.clientCertificates.key': { fieldId: 'http.clientCertificates.key' },
+    'http.clientCertificates.cert': {
+      fieldId: 'http.clientCertificates.cert',
+      visibleWhenAll: [
+        {
+          field: 'http.clientCertificates.type',
+          is: ['pem'],
+        },
+      ],
+    },
+    'http.clientCertificates.pfx': {
+      fieldId: 'http.clientCertificates.pfx',
+      visibleWhenAll: [
+        {
+          field: 'http.clientCertificates.type',
+          is: ['pfx'],
+        },
+      ],
+    },
+    'http.clientCertificates.key': {
+      fieldId: 'http.clientCertificates.key',
+      visibleWhenAll: [
+        {
+          field: 'http.clientCertificates.type',
+          is: ['pem'],
+        },
+      ],
+    },
     'http.clientCertificates.passphrase': {
       fieldId: 'http.clientCertificates.passphrase',
+      visibleWhenAll: [
+        {
+          field: 'http.clientCertificates.type',
+          is: ['pem', 'pfx'],
+        },
+      ],
+    },
+    'http.clientCertificates.type': {
+      fieldId: 'http.clientCertificates.type',
     },
     'http.auth.oauth.applicationType': {
       fieldId: 'http.auth.oauth.applicationType',
@@ -495,14 +543,33 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: [
-          'http.disableStrictSSL',
-          'httpAdvanced',
-          'http.clientCertificates.key',
-          'http.clientCertificates.cert',
-          'http.clientCertificates.passphrase',
-          'http.encrypted',
-          'http.unencrypted',
+        containers: [
+          {
+            fields: [
+              'http.disableStrictSSL',
+              'httpAdvanced',
+              'http.clientCertificates.type',
+            ],
+          },
+          {
+            type: 'indent',
+            containers: [
+              {
+                fields: [
+                  'http.clientCertificates.key',
+                  'http.clientCertificates.cert',
+                  'http.clientCertificates.pfx',
+                  'http.clientCertificates.passphrase',
+                ],
+              },
+            ],
+          },
+          {
+            fields: [
+              'http.encrypted',
+              'http.unencrypted',
+            ],
+          },
         ],
       },
     ],

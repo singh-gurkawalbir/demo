@@ -18,7 +18,7 @@ import SaveButtonGroup from './Manage/SaveButtonGroup';
 import LookupListRow from '../../Lookup/LookupListRow';
 import AddIcon from '../../icons/AddIcon';
 import { OutlinedButton, TextButton } from '../../Buttons';
-import { LOOKUP_DRAWER_FORM_KEY } from '../../../utils/constants';
+import { LOOKUP_DRAWER_FORM_KEY } from '../../../constants';
 import { hashCode } from '../../../utils/string';
 import useFormOnCancelContext from '../../FormOnCancelContext';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
