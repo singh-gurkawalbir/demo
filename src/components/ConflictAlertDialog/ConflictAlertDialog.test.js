@@ -17,28 +17,32 @@ describe('ConflictAlertDialog testing', () => {
   afterAll(() => {
     window.location = location;
   });
-  test('rendering nothingh', () => {
-    renderWithProviders(<ConflictAlertDialog />);
-    screen.debug();
+  test('should test when store is not having any vale', () => {
+    const {utils} = renderWithProviders(<ConflictAlertDialog />);
+
+    expect(utils.container).toBeEmptyDOMElement();
   });
-  test('rendering', () => {
+  test('should test when some value is present in the store commmit conflict', () => {
     const {store} = renderWithProviders(<ConflictAlertDialog />);
 
     store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: '12'}], 'scope'));
 
-    console.log(store?.getState()?.session.stage);
-    screen.debug();
+    expect(screen.getByText('Resource conflict for resourceId: 1')).toBeInTheDocument();
+    expect(screen.getByText('//')).toBeInTheDocument();
+    expect(screen.getByText('12')).toBeInTheDocument();
   });
 
-  test('rendering with non string value', () => {
+  test('should for non string value', () => {
     const {store} = renderWithProviders(<ConflictAlertDialog />);
 
     store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: 12}], 'scope'));
 
-    screen.debug();
+    expect(screen.getByText('Resource conflict for resourceId: 1')).toBeInTheDocument();
+    expect(screen.getByText('//')).toBeInTheDocument();
+    expect(screen.getByText('12')).toBeInTheDocument();
   });
 
-  test('onclicking refresh button', () => {
+  test('should click on refresh button', () => {
     const {store} = renderWithProviders(<ConflictAlertDialog />);
 
     store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: '12'}], 'scope'));
@@ -47,6 +51,5 @@ describe('ConflictAlertDialog testing', () => {
 
     userEvent.click(refresh);
     expect(window.location.reload).toHaveBeenCalled();
-    screen.debug();
   });
 });

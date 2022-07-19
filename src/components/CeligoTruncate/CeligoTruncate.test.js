@@ -37,7 +37,7 @@ jest.mock('@material-ui/core', () => ({
   ),
 }));
 describe('Celigo truncate test', () => {
-  test('when truncate happens', async () => {
+  test('should test when truncate happens', async () => {
     render(
       <CeligoTruncate
         isLoggable lines={1} placement="left" ellipsis="..."
@@ -53,7 +53,7 @@ describe('Celigo truncate test', () => {
 
     expect(hover).toBeInTheDocument();
   });
-  test('when truncate doesn happens', async () => {
+  test('should test when truncate doesn happens', async () => {
     render(
       <CeligoTruncate
         isLoggable lines={3} placement="left" ellipsis="..."

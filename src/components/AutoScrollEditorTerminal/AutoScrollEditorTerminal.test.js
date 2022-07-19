@@ -25,8 +25,8 @@ jest.mock('react', () => {
     useRef: mUseRef,
   };
 });
-describe('Autoscrooleditor test', () => {
-  test('complete positve testing of component', async () => {
+describe('Autoscrooleditor UI tests', () => {
+  test('should complete positve testing of component', async () => {
     const mRef = { current: { } };
 
     useRef.mockReturnValueOnce(mRef);
@@ -41,7 +41,7 @@ describe('Autoscrooleditor test', () => {
     await waitFor(() => expect(mRef.current.gotoLine).not.toHaveBeenCalledWith(5, -1, true));
     fireEvent.mouseLeave(container.firstChild);
   });
-  test('without  mouse enter', async () => {
+  test('should test without  mouse enter', async () => {
     const mRef = { current: { } };
 
     useRef.mockReturnValueOnce(mRef);

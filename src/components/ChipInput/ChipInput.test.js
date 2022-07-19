@@ -6,7 +6,7 @@ import {renderWithProviders} from '../../test/test-utils';
 import ChipInput from '.';
 
 describe('ChipInput testing', () => {
-  test('rendering to store some value', () => {
+  test('should test to store some value', () => {
     const onchange = jest.fn();
 
     renderWithProviders(<ChipInput onChange={onchange} />);
@@ -20,7 +20,7 @@ describe('ChipInput testing', () => {
     textbox.blur();
     expect(onchange).toHaveBeenCalled();
   });
-  test('rendering while disable', () => {
+  test('should test while disable', () => {
     const onchange = jest.fn();
 
     renderWithProviders(<ChipInput onChange={onchange} disabled />);
@@ -32,7 +32,7 @@ describe('ChipInput testing', () => {
 
     expect(textbox).not.toBeInTheDocument();
   });
-  test('rendering again with same value', () => {
+  test('should test again with same value', () => {
     const onchange = jest.fn();
 
     renderWithProviders(<ChipInput onChange={onchange} />);
@@ -57,7 +57,7 @@ describe('ChipInput testing', () => {
     expect(onchange).not.toHaveBeenCalledTimes(2);
     expect(onchange).toHaveBeenCalledTimes(1);
   });
-  test('rendering while sending null', () => {
+  test('should test while sending null', () => {
     const onchange = jest.fn();
 
     renderWithProviders(<ChipInput onChange={onchange} value={null} />);

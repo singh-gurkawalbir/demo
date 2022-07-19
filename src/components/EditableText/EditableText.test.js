@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import EditableText from '.';
 
 describe('EditableText testing', () => {
-  test('rendering', () => {
+  test('should enter some value in input', () => {
     const onchange = jest.fn();
 
     render(<EditableText text="button" disable={false} onChange={onchange} />);
@@ -21,9 +21,8 @@ describe('EditableText testing', () => {
     const button2 = screen.getByText('button');
 
     userEvent.click(button2);
-    screen.debug();
   });
-  test('testing with some default text', () => {
+  test('should test with some default text', () => {
     const onchange = jest.fn();
 
     render(<EditableText defaultText="button" disable={false} onChange={onchange} />);
@@ -39,9 +38,8 @@ describe('EditableText testing', () => {
     const button2 = screen.getByText('button');
 
     userEvent.click(button2);
-    screen.debug();
   });
-  test('when the disable is set to true', () => {
+  test('should test when the disable is set to true', () => {
     const onchange = jest.fn();
 
     render(<EditableText text="button" disabled onChange={onchange} />);
@@ -53,9 +51,8 @@ describe('EditableText testing', () => {
     const input = screen.queryByRole('textbox');
 
     expect(input).not.toBeInTheDocument();
-    screen.debug();
   });
-  test('key down escape', () => {
+  test('should test key down escape', () => {
     const onchange = jest.fn();
 
     render(<EditableText text="button" disable={false} onChange={onchange} />);
@@ -88,11 +85,9 @@ describe('EditableText testing', () => {
     const input3 = screen.getByRole('textbox');
 
     expect(input3).toHaveAttribute('value', 'button');
-
-    screen.debug();
   });
 
-  test('key down enter', () => {
+  test('should test key down enter', () => {
     const onchange = jest.fn();
 
     render(<EditableText text="button" disable={false} onChange={onchange} />);
@@ -114,6 +109,5 @@ describe('EditableText testing', () => {
     fireEvent.keyDown(input2, {key: 'Enter', code: 'Enter', charCode: 13});
     input2.blur();
     expect(onchange).toHaveBeenCalledTimes(2);
-    screen.debug();
   });
 });
