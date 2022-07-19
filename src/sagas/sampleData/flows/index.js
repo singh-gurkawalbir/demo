@@ -325,12 +325,14 @@ export function* _processMappingData({
   mappings,
   stage,
   preProcessedData,
+  options,
 }) {
   const body = {
     rules: {
       rules: [mappings],
     },
     data: preProcessedData ? [preProcessedData] : [],
+    options,
   };
   // call processor data specific to mapper as it is not part of editors saga
   const path = '/processors/mapperProcessor';
@@ -416,16 +418,17 @@ export function* requestProcessorData({
       const { _scriptId, function: entryFunction } = transform.script || {};
 
       if (_scriptId) {
-        const script = yield call(getResource, {
+        const script = !resource._connectorId ? (yield call(getResource, {
           resourceType: 'scripts',
           id: _scriptId,
-        });
+        })) : {};
 
         processorData = {
           data: preProcessedData,
           rule: {
             code: script?.content,
             entryFunction,
+            scriptId: _scriptId,
           },
           editorType: 'javascript',
           wrapInArrayProcessedData: true,
@@ -451,10 +454,11 @@ export function* requestProcessorData({
 
     if (hook._scriptId) {
       const scriptId = hook._scriptId;
-      const script = yield call(getResource, {
+      // IAs don't give access to script content
+      const script = !resource._connectorId ? (yield call(getResource, {
         resourceType: 'scripts',
         id: scriptId,
-      });
+      })) : {};
       const context = yield select(selectors.getScriptContext, {
         flowId,
         contextType: 'hook',
@@ -466,6 +470,7 @@ export function* requestProcessorData({
         rule: {
           code,
           entryFunction: hook.function,
+          scriptId,
         },
         context,
         removeDataPropFromProcessedData: stage === 'preMap',
@@ -481,9 +486,14 @@ export function* requestProcessorData({
   } else if (stage === 'importMapping') {
     // mapping fields are processed here against raw data
     let resourceMappings;
+    const options = {};
 
     if (resource?.mappings?.length) { // v2 mappings, if present, are applied during import
-      resourceMappings = cloneDeep(resource.mappings);
+      resourceMappings = {mappings: cloneDeep(resource.mappings)};
+
+      const connection = yield select(selectors.resource, 'connections', resource?._connectionId);
+
+      options.connection = connection;
     } else {
       resourceMappings = mappingUtil.getMappingFromResource({
         importResource: resource,
@@ -502,6 +512,7 @@ export function* requestProcessorData({
         mappings: resourceMappings,
         stage,
         preProcessedData,
+        options,
       });
     }
     hasNoRulesToProcess = true;

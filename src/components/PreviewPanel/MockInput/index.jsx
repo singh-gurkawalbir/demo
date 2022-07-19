@@ -54,7 +54,7 @@ function RouterWrappedContent(props) {
 
   useEffect(() => {
     if (sampleDataStatus === 'received' && !resourceMockData) {
-      setValue(wrapExportFileSampleData(sampleData));
+      setValue(wrapExportFileSampleData(Array.isArray(sampleData) ? [sampleData] : sampleData));
     }
   }, [resourceMockData, resourceSampleDataStatus, sampleData, sampleDataStatus]);
 

@@ -3,7 +3,7 @@ import javascript from '../javascript';
 
 export default {
   processor: 'javascript',
-  init: ({flow, options}) => {
+  init: ({flow, options, scriptContext}) => {
     let pageProcessorsObject = {};
     const { routerIndex, branchIndex, pageProcessorIndex} = options;
 
@@ -28,6 +28,7 @@ export default {
       hasRouters: flow.routers?.length,
       pageProcessorsObject,
       rule,
+      context: scriptContext,
     };
   },
   requestBody: javascript.requestBody,
