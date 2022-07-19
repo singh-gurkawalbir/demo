@@ -1,4 +1,4 @@
-import { CDN_BASE_URL } from '../constants';
+import { CDN_BASE_URL } from '../../constants';
 
 export default function getImageUrl(url) {
   if (!url || typeof url !== 'string') {

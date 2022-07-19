@@ -19,7 +19,7 @@ import {
 } from '../../utils/session';
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
-import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE } from '../../utils/constants';
+import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 import { getDomain } from '../../utils/resource';
 import inferErrorMessages from '../../utils/inferErrorMessages';
@@ -55,6 +55,15 @@ export function* retrievingUserDetails() {
       )
     )
   );
+}
+
+export function* retrievingHttpConnectorDetails() {
+  const collection = yield call(
+    getResourceCollection,
+    actions.resource.requestCollection('httpconnectors')
+  );
+
+  localStorage.setItem('publishedHttpConnectors', JSON.stringify(collection));
 }
 
 export function* retrievingAssistantDetails() {
@@ -166,6 +175,7 @@ export function* retrieveAppInitializationResources() {
   yield all([
     call(retrievingOrgDetails),
     call(retrievingAssistantDetails),
+    call(retrievingHttpConnectorDetails),
   ]);
 
   yield put(actions.app.fetchUiVersion());
@@ -311,6 +321,15 @@ export function* auth({ email, password }) {
       message: 'Authenticating User',
       hidden: true,
     });
+
+    if (apiAuthentications?.succes && apiAuthentications.mfaRequired) {
+      // Once login is success, incase of mfaRequired, user has to enter OTP to successfully authenticate
+      // So , we redirect him to OTP (/mfa/verify) page
+      return yield call(apiCallWithRetry, {
+        path: '/mfa/verify',
+        hidden: true,
+      });
+    }
     const isExpired = yield select(selectors.isSessionExpired);
 
     yield call(setCSRFToken, apiAuthentications._csrf);

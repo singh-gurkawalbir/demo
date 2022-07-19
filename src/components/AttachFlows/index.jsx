@@ -8,7 +8,7 @@ import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import {FilledButton, TextButton} from '../Buttons';
-import { UNASSIGNED_SECTION_ID } from '../../utils/constants';
+import { UNASSIGNED_SECTION_ID } from '../../constants';
 import ActionGroup from '../ActionGroup';
 
 const flowsFilterConfig = { type: 'flows' };

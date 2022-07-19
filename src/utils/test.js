@@ -9,7 +9,7 @@ import retry from './retry';
 import adjustTimezone from './adjustTimezone';
 import inferErrorMessages from './inferErrorMessages';
 import flowgroupingsRedirectTo, { redirectToFirstFlowGrouping } from './flowgroupingsRedirectTo';
-import { UNASSIGNED_SECTION_ID } from './constants';
+import { UNASSIGNED_SECTION_ID } from '../constants';
 import { getAsyncKey } from './saveAndCloseButtons';
 
 const uiRoutePathPrefix = '';

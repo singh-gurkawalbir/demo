@@ -3,7 +3,7 @@ import actionTypes from '../../../actions/types';
 import {
   ACCOUNT_IDS,
   PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER,
-} from '../../../utils/constants';
+} from '../../../constants';
 
 const emptyObj = {};
 

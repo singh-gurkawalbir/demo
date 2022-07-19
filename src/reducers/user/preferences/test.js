@@ -5,7 +5,7 @@ import actions from '../../../actions';
 import {
   ACCOUNT_IDS,
   PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER,
-} from '../../../utils/constants';
+} from '../../../constants';
 
 describe('user reducers', () => {
   const defaultDateFormat = 'MM/DD/YYYY';

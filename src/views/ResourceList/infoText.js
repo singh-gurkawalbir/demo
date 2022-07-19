@@ -1,4 +1,4 @@
-import { FLOW_EVENT_REPORTS_DOC_URL, HELP_CENTER_BASE_URL } from '../../utils/constants';
+import { FLOW_EVENT_REPORTS_DOC_URL, HELP_CENTER_BASE_URL } from '../../constants';
 // make sure the dictionary key matches the "model plural" name.
 export default {
   exports: `Exports are used to extract data from an application. 

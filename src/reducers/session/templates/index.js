@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
-import { INSTALL_STEP_TYPES } from '../../../utils/constants';
+import { INSTALL_STEP_TYPES } from '../../../constants';
 import { COMM_STATES as PUBLISH_STATES } from '../../comms/networkComms';
 
 const defaultSteps = [];

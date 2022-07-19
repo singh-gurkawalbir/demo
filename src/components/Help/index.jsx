@@ -74,7 +74,7 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
           {/<\/?[a-z][\s\S]*>/i.test(helpTextValue) ? (
             <RawHtml
               html={helpTextValue}
-              options={{allowedTags: ['a', 'p', 'table', 'thead', 'th', 'tr', 'td', 'b', 'i', 'br'], escapeUnsecuredDomains}} />
+              options={{allowedTags: ['a', 'p', 'table', 'thead', 'th', 'tr', 'td', 'b', 'i', 'br', 'u', 'ul', 'li'], escapeUnsecuredDomains}} />
           ) : (
             helpTextValue
           )}

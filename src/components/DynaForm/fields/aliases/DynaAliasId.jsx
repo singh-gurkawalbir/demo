@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import { FORM_SAVE_STATUS } from '../../../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../../../constants';
 import { validateAliasId } from '../../../../utils/resource';
 import DynaText from '../DynaText';
 

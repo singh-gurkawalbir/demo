@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
   },
   withPadding: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(3, 3, 0),
   },
 }));
 
