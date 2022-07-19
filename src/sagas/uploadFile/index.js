@@ -97,6 +97,7 @@ export function configureFileReader(file, fileType) {
       // Incase of xlsx file
       reader.readAsArrayBuffer(file);
     } else if (file.type === 'application/x-pkcs12') {
+      // @TODO look for a better file reader API
       reader.readAsDataURL(file);
     } else {
       reader.readAsText(file);
