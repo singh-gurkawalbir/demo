@@ -179,9 +179,16 @@ export default {
     }
     newValues['/http/formType'] = 'http';
 
+    if (newValues['/http/clientCertificates/type'] === 'pem') {
+      delete newValues['/http/clientCertificates/pfx'];
+    }
+
     if (newValues['/http/clientCertificates/type'] === 'pfx') {
       delete newValues['/http/clientCertificates/cert'];
-      newValues['/http/clientCertificates/pfx'] = window.btoa(unescape(encodeURIComponent(newValues['/http/clientCertificates/pfx'])));
+      delete newValues['/http/clientCertificates/key'];
+      if (newValues['/http/clientCertificates/pfx'].includes('data:application/x-pkcs12;base64,')) {
+        newValues['/http/clientCertificates/pfx'] = newValues['/http/clientCertificates/pfx'].slice(33);
+      }
     }
 
     delete newValues['/http/clientCertificates/type'];

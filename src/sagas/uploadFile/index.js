@@ -96,6 +96,8 @@ export function configureFileReader(file, fileType) {
     if (fileReaderOptions.readAsArrayBuffer) {
       // Incase of xlsx file
       reader.readAsArrayBuffer(file);
+    } else if (file.type === 'application/x-pkcs12') {
+      reader.readAsDataURL(file);
     } else {
       reader.readAsText(file);
     }
