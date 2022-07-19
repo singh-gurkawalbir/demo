@@ -1,6 +1,6 @@
 import { useSelectorMemo } from '.';
 import { selectors } from '../reducers';
-import { STANDALONE_INTEGRATION } from '../utils/constants';
+import { STANDALONE_INTEGRATION } from '../constants';
 import { getFlowGroup } from '../utils/flows';
 
 export default function useGetNotificationOptions({ integrationId, flows = [], connections = [], childId}) {

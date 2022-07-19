@@ -7,7 +7,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { getPages, getSuccess } from '../../utils/jobdashboard';
 import JobStatus from './JobStatus';
 import JobActionsMenu from './JobActionsMenu';
-import { JOB_STATUS } from '../../utils/constants';
+import { JOB_STATUS } from '../../constants';
 import DateTimeDisplay from '../DateTimeDisplay';
 import ErrorCountCell from './ErrorCountCell';
 
@@ -30,8 +30,8 @@ export const JobDetailsStyles = makeStyles(theme => ({
     textAlign: 'right',
   },
   error: {
-    width: '10.15%',
-    textAlign: 'left',
+    width: '9.15%',
+    textAlign: 'right',
   },
   resolved: {
     width: '9%',
@@ -59,6 +59,9 @@ export const JobDetailsStyles = makeStyles(theme => ({
   },
   errorCount: {
     color: theme.palette.error.dark,
+  },
+  resolvedCount: {
+    color: theme.palette.primary.main,
   },
 }));
 
@@ -146,7 +149,9 @@ export default function ChildJobDetail({
         count={job.numResolved}
         isJobInProgress={isJobInProgress}
         onClick={() => handleViewErrorsClick(true)}
-        className={classes.resolved}
+        className={clsx(classes.resolved, {
+          [classes.resolvedCount]: job.numResolved > 0,
+        })}
       />
       <TableCell className={classes.pages}>
         {getPages(job, parentJob)}

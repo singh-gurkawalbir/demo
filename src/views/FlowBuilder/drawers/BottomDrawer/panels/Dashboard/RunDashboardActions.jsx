@@ -8,7 +8,7 @@ import RunFlowButton from '../../../../../../components/RunFlowButton';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
-import { JOB_STATUS } from '../../../../../../utils/constants';
+import { JOB_STATUS } from '../../../../../../constants';
 import EllipsisActionMenu from '../../../../../../components/EllipsisActionMenu';
 import JobFilesDownloadDialog from '../../../../../../components/JobDashboard/JobFilesDownloadDialog';
 import { DRAGGABLE_SECTION_DIV_ID } from '../..';
@@ -86,7 +86,7 @@ export default function RunDashboardActions({ flowId }) {
 
   const handleCancel = useCallback(() => {
     confirmDialog({
-      title: 'Confirm cancel run?',
+      title: 'Confirm cancel run',
       message:
           'You have unsaved changes that will be lost if you continue. Canceling this job will delete all associated data currently queued for processing.',
       buttons: [

@@ -15,7 +15,7 @@ import InstallTemplateDrawer from '../../components/drawer/Install/Template';
 import LoadResources from '../../components/LoadResources';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import { SUITESCRIPT_CONNECTOR_IDS, HOME_PAGE_PATH } from '../../utils/constants';
+import { SUITESCRIPT_CONNECTOR_IDS, HOME_PAGE_PATH } from '../../constants';
 import { capitalizeFirstLetter } from '../../utils/string';
 import FilledButton from '../../components/Buttons/FilledButton';
 import getImageUrl from '../../utils/image';
@@ -93,6 +93,11 @@ const useStyles = makeStyles(theme => ({
   },
   rightSubtitle: {
     paddingTop: theme.spacing(1),
+  },
+  container: {
+    '& > div': {
+      width: '100%',
+    },
   },
 }));
 
@@ -226,7 +231,7 @@ export default function MarketplaceList() {
       </PageContent>
       )}
       <PageContent>
-        <div className={gridViewClasses.container}>
+        <div className={clsx(gridViewClasses.container, classes.container)}>
           {connectors.map(connector => (
             <Card
               key={connector._id}

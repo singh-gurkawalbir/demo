@@ -45,6 +45,7 @@ export default function FormBuilderButton({resourceId, resourceType, integration
         params: { editorId: customSettingsEditorId },
       }));
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch, customSettingsEditorId, history, match.url, resourceId, resourceType, sectionId, integrationId]
   );
 

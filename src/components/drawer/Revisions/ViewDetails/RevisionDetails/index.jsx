@@ -11,7 +11,7 @@ import ExpandMoreIcon from '../../../../icons/ArrowDownIcon';
 import DateTimeDisplay from '../../../../DateTimeDisplay';
 import { selectors } from '../../../../../reducers';
 import { REVISION_STATUS_LABELS, REVISION_TYPE_LABELS } from '../../../../../utils/revisions';
-import { REVISION_STATUS, REVISION_TYPES } from '../../../../../utils/constants';
+import { REVISION_STATUS, REVISION_TYPES } from '../../../../../constants';
 import RevisionErrorDetails from './RevisionErrorDetails';
 import ResourceLnk from '../../../../ResourceLink';
 
@@ -58,7 +58,7 @@ const RevisionInfoRow = ({ children }) => {
 const RevisionCreatedBy = ({ integrationId, revisionId }) => {
   const revision = useSelector(state => selectors.revision(state, integrationId, revisionId));
   const userName = useSelector(state => {
-    const users = selectors.availableUsersList(state, integrationId);
+    const users = selectors.allUsersList(state, integrationId);
 
     const user = users.find(user => revision?._createdByUserId === user.sharedWithUser._id);
 

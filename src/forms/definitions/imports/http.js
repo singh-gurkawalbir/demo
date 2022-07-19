@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 export default {
-  preSave: formValues => {
+  preSave: (formValues, _, { connection } = {}) => {
     const retValues = { ...formValues };
 
     if (retValues['/http/response/successValues']) {
@@ -319,6 +319,15 @@ export default {
       retValues['/pathToMany'] = undefined;
     }
 
+    if (connection?.http?.type === 'Amazon-SP-API') {
+      retValues['/unencrypted/apiType'] = 'Amazon-SP-API';
+    }
+
+    if (!retValues['/http/configureAsyncHelper']) {
+      retValues['/http/_asyncHelperId'] = undefined;
+    }
+    retValues['/adaptorType'] = 'HTTPImport';
+
     return {
       ...retValues,
     };
@@ -573,10 +582,10 @@ export default {
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
           if (r.http.method.length > 1) {
-            return r.http.body[1] || '';
+            return r.http.body?.[1] || '';
           }
 
-          return r.http.body[0] || '';
+          return r.http.body?.[0] || '';
         }
 
         return '';
@@ -1055,7 +1064,7 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return r.http.body[0] || '';
+          return r.http.body?.[0] || '';
         }
 
         return '';
@@ -1291,6 +1300,7 @@ export default {
       ],
     },
     'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
+    'unencrypted.feedType': {fieldId: 'unencrypted.feedType'},
   },
   layout: {
     type: 'collapse',
@@ -1319,6 +1329,7 @@ export default {
           'http.requestMediaType',
           'http.lookups',
           'http.batchSize',
+          'unencrypted.feedType',
           'http.body',
           'uploadFile',
         ],

@@ -30,6 +30,7 @@ import { requestSampleData } from '../sampleData/flows';
 import { apiCallWithRetry } from '../index';
 import { APIException } from '../api/requestInterceptors/utils';
 import processorLogic from '../../reducers/session/editors/processorLogic';
+import errorMessageStore from '../../utils/errorStore';
 
 const editorId = 'httpbody';
 
@@ -195,6 +196,7 @@ describe('editor sagas', () => {
           }],
         },
         data: [[{id: '123'}]],
+        options: {},
       };
 
       return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
@@ -368,6 +370,7 @@ describe('editor sagas', () => {
           }],
         },
         data: [[{id: '123'}]],
+        options: {},
       };
 
       return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
@@ -409,6 +412,7 @@ describe('editor sagas', () => {
           }],
         },
         data: [[{id: '123'}]],
+        options: {},
       };
 
       return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
@@ -426,7 +430,77 @@ describe('editor sagas', () => {
           hidden: true })
         .run();
     });
+    test('should set correct request body and make api call if processor is mapperProcessor for mappings editor type and v2 mappings exist', () => {
+      const editorState = {
+        resourceId: 'res-123',
+        flowId: 'flow-123',
+        resourceType: 'imports',
+        data: '[{"id": "123"}]',
+        editorType: 'mappings',
+      };
+      const importRes = {
+        _id: 'res-123',
+        adaptorType: 'HTTPImport',
+        _connectionId: 'conn-123',
+      };
+      const connRes = {
+        _id: 'conn-123',
+        type: 'http',
+      };
+      const mappings = [{
+        extract: 'id',
+        generate: 'id',
+        key: '17RxsaFmJW',
+      }];
+      const v2TreeData = [{
+        generate: 'new-obj',
+        dataType: 'object',
+        extract: 'parents',
+      }];
 
+      const expectedBody = {
+        rules: {
+          rules: [{
+            mappings: [{
+              generate: 'new-obj',
+              dataType: 'object',
+              extract: 'parents',
+              description: undefined,
+              extractDateFormat: undefined,
+              extractDateTimezone: undefined,
+              generateDateFormat: undefined,
+              generateDateTimezone: undefined,
+              hardCodedValue: undefined,
+              lookupName: undefined,
+              default: undefined,
+              conditional: {when: undefined},
+            }],
+            lookups: [],
+          }],
+        },
+        data: [[{id: '123'}]],
+        options: {
+          connection: connRes,
+        },
+      };
+
+      return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), undefined],
+          [select(selectors.mapping), {v2TreeData, mappings, lookups: []}],
+          [select(selectors.editor, editorId), editorState],
+          [select(selectors.resource, 'imports', 'res-123'), importRes],
+          [select(selectors.resource, 'connections', 'conn-123'), connRes],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/mapperProcessor',
+          opts: {
+            method: 'POST',
+            body: expectedBody,
+          },
+          hidden: true })
+        .run();
+    });
     test('should make api call with passed arguments', () => {
       const body = 'somebody';
 
@@ -581,7 +655,7 @@ describe('editor sagas', () => {
             processor: 'mapperProcessor',
             body: {} }), {data: [{mappedObject: 'test'}]}],
         ])
-        .put(actions.mapping.requestPreview())
+        .put(actions.mapping.requestPreview(editorId))
         .not.put(actions.editor.previewFailed(editorId))
         .put(actions.editor.previewResponse(editorId, { data: [{mappedObject: 'test'}] }))
         .run();
@@ -606,7 +680,7 @@ describe('editor sagas', () => {
             processor: 'mapperProcessor',
             body: {} }), {errors: [{errors: 'test'}]}],
         ])
-        .put(actions.mapping.requestPreview())
+        .put(actions.mapping.requestPreview(editorId))
         .put(actions.editor.previewFailed(editorId, { errorMessage: 'Message: [{"errors":"test"}]' }))
         .run();
     });
@@ -666,7 +740,7 @@ describe('editor sagas', () => {
             processor: 'mapperProcessor',
             body: {} }), result],
         ])
-        .put(actions.mapping.requestPreview())
+        .put(actions.mapping.requestPreview(editorId))
         .not.put(actions.editor.previewFailed(editorId))
         .put(actions.editor.previewResponse(editorId, expectedOutput))
         .run();
@@ -686,7 +760,7 @@ describe('editor sagas', () => {
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings}],
         ])
-        .put(actions.editor.validateFailure(editorId, {ruleError: 'Extract Fields missing for field(s): g1'}))
+        .put(actions.editor.validateFailure(editorId, {ruleError: errorMessageStore('MAPPER1_MISSING_EXTRACT', {fields: 'g1'})}))
         .run();
     });
   });
@@ -1333,8 +1407,7 @@ describe('editor sagas', () => {
           [matchers.call.fn(getFlowSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), {}],
         ])
-        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'imports', stage: 'transform'})
-        .returns({data: undefined, templateVersion: undefined})
+        .call(getFlowSampleData, {flowId, routerId: undefined, resourceId, resourceType: 'imports', stage: 'transform', editorId: 'tx-123'})
         .run();
     });
     test('should not make apiCallWithRetry if BE does not support the editor', () => {
@@ -1354,7 +1427,7 @@ describe('editor sagas', () => {
           [matchers.call.fn(requestSampleData), {}],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: false}],
         ])
-        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'imports', stage: 'transform'})
+        .call(getFlowSampleData, {flowId, routerId: undefined, resourceId, resourceType: 'imports', stage: 'transform', editorId: 'tx-123'})
         .not.call.fn(apiCallWithRetry)
         .run();
     });
@@ -1379,7 +1452,7 @@ describe('editor sagas', () => {
           }))],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, sampleData: {name: 'Bob'}}],
         ])
-        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'exports', stage: 'exportFilter'})
+        .call(getFlowSampleData, {flowId, routerId: undefined, resourceId, resourceType: 'exports', stage: 'exportFilter', editorId: 'eFilter'})
         .call.fn(apiCallWithRetry)
         .put(actions.editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
         .run();
@@ -1402,7 +1475,7 @@ describe('editor sagas', () => {
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, sampleData: {name: 'Bob'}}],
           [matchers.call.fn(apiCallWithRetry), {context: {record: {name: 'Bob'}}, templateVersion: 2}],
         ])
-        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'exports', stage: 'exportFilter'})
+        .call(getFlowSampleData, {flowId, routerId: undefined, resourceId, resourceType: 'exports', stage: 'exportFilter', editorId: 'eFilter'})
         .call.fn(apiCallWithRetry)
         .not.put(actions.editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
         .returns({ data: { record: { name: 'Bob' } }, templateVersion: 2 })
@@ -1593,6 +1666,167 @@ describe('editor sagas', () => {
           hidden: false,
         })
         .returns({ data: {connection: {name: 'HTTP connection'}}, templateVersion: undefined })
+        .run();
+    });
+    test('should add uiContext in the request body when the field type is from mappings', () => {
+      const editor = {
+        id: 'expression',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'imports',
+        resourceId,
+        stage: 'importMappingExtract',
+        fieldId: 'expression',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'expression' })
+        .provide([
+          [select(selectors.editor, 'expression'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}, status: 'received'}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, isMapperField: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {id: 999}}, templateVersion: 2}],
+          [select(selectors.resource, 'flows', flowId), {_integrationId: 'Integration-1234'}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              sampleData: {id: 999},
+              templateVersion: undefined,
+              flowId,
+              integrationId: 'Integration-1234',
+              import: { oneToMany: false },
+              fieldPath: 'expression',
+              uiContext: 'mapper2_0',
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .returns({ data: { record: {id: 999}}, templateVersion: 2 })
+        .run();
+    });
+    test('should add mapper2_0 in the request body when the field type is from mappings and row has parent extracts', () => {
+      const editor = {
+        id: 'expression',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'imports',
+        resourceId,
+        stage: 'importMappingExtract',
+        fieldId: 'expression',
+        mapper2RowKey: 'c2',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'expression' })
+        .provide([
+          [select(selectors.editor, 'expression'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}, status: 'received'}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, isMapperField: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {id: 999}}, templateVersion: 2}],
+          [select(selectors.resource, 'flows', flowId), {_integrationId: 'Integration-1234'}],
+          [select(selectors.mapping), {
+            v2TreeData: [
+              {
+                key: 'k1',
+                combinedExtract: '$.siblings[*]',
+                dataType: 'objectarray',
+                children: [{
+                  key: 'c1',
+                  combinedExtract: '$.siblings.children[*]',
+                  parentKey: 'k1',
+                  parentExtract: '$.siblings[*]',
+                  dataType: 'objectarray',
+                  children: [{
+                    key: 'c2',
+                    extract: '$.siblings.children.qty',
+                    parentExtract: '$.siblings.children[*]',
+                    parentKey: 'c1',
+                    dataType: 'string',
+                  }],
+                }],
+              },
+            ]}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              sampleData: {id: 999},
+              templateVersion: undefined,
+              flowId,
+              integrationId: 'Integration-1234',
+              import: { oneToMany: false },
+              fieldPath: 'expression',
+              uiContext: 'mapper2_0',
+              mapper2_0: {
+                arrayExtracts: ['$.siblings[*]', '$.siblings.children[*]'],
+                outputFormat: 'RECORD',
+              },
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .returns({ data: { record: {id: 999}}, templateVersion: 2 })
+        .run();
+    });
+    test('should add mapper2_0 in the request body when the field type is from mappings and output format is rows', () => {
+      const editor = {
+        id: 'expression',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'imports',
+        resourceId,
+        stage: 'importMappingExtract',
+        fieldId: 'expression',
+        mapper2RowKey: 'k1',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'expression' })
+        .provide([
+          [select(selectors.editor, 'expression'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}, status: 'received'}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, isMapperField: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {id: 999}}, templateVersion: 2}],
+          [select(selectors.resource, 'flows', flowId), {_integrationId: 'Integration-1234'}],
+          [select(selectors.mapping), {
+            isGroupedOutput: true,
+            v2TreeData: [
+              {
+                key: 'k1',
+                extract: '$.siblings',
+                generate: 'siblings',
+                dataType: 'string',
+              },
+            ]}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              sampleData: {id: 999},
+              templateVersion: undefined,
+              flowId,
+              integrationId: 'Integration-1234',
+              import: { oneToMany: false },
+              fieldPath: 'expression',
+              uiContext: 'mapper2_0',
+              mapper2_0: {
+                outputFormat: 'ROWS',
+              },
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .returns({ data: { record: {id: 999}}, templateVersion: 2 })
         .run();
     });
   });

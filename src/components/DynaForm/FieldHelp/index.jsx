@@ -9,7 +9,6 @@ const useStyles = makeStyles(theme => ({
   iconButton: {
     marginLeft: theme.spacing(0.5),
     padding: 0,
-    marginTop: -1,
     color: theme.palette.text.hint,
     '&:hover': {
       background: 'none',

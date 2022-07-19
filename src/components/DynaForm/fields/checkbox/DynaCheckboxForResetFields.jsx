@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 import WarningIcon from '../../../icons/WarningIcon';
 import DynaCheckbox from './DynaCheckbox';
-import { SORT_GROUP_CONTENT_URL } from '../../../../utils/constants';
+import { SORT_GROUP_CONTENT_URL } from '../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   warning: {

@@ -4,8 +4,8 @@ import { createSelector } from 'reselect';
 import { adaptorTypeMap } from '../../../utils/resource';
 import actionTypes from '../../../actions/types';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
-import { FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
-import { getIAFlowSettings, getScriptsReferencedInFlow, isIntegrationApp } from '../../../utils/flows';
+import { FILE_PROVIDER_ASSISTANTS } from '../../../constants';
+import { getIAFlowSettings, getScriptsReferencedInFlow, isIntegrationApp, isSetupInProgress } from '../../../utils/flows';
 import mappingUtil from '../../../utils/mapping';
 import getRoutePath from '../../../utils/routePaths';
 import connectionUpdateReducer from './connectionUpdate';
@@ -130,28 +130,14 @@ selectors.resourceIdState = (state, resourceType, id) => {
 // #region PUBLIC SELECTORS
 // TODO:Deprecate this selector and use makeResourceSelector
 selectors.resource = (state, resourceType, id) => {
-  // console.log('fetch', resourceType, id);
-
   const match = selectors.resourceIdState(state, resourceType, id);
 
   if (!match) return null;
 
-  // TODO: Santosh. This is an example of a bad practice where the selector, which should
-  // only return some part of the state, is actually mutating the state prior to returning
-  // the value.  Instead, the reducer should do the work of normalizing the data if needed.
-  // I don't know why this code is here. Either the RECEIVE_RESOURCE_* should do this, or
-  // the components) using this property should be smart enough to work with an undefined prop.
-  // Could you find the best solution for this? I favour the latter if that approach is easy.
-  // if (['exports', 'imports'].includes(resourceType)) {
-  //   if (match.assistant && !match.assistantMetadata) {
-  //     // TODO:mutating a reference of the redux state..we have to fix this
-  //     // if this reducer was implemented in immer ...it would have pointed this error
-  //     match.assistantMetadata = {};
-  //   }
-  // }
-
   return match;
 };
+
+selectors.isFlowSetupInProgress = (state, flowId) => isSetupInProgress(selectors.resource(state, 'flows', flowId));
 
 /** returns 1st Page generator for a flow */
 selectors.firstFlowPageGenerator = (state, flowId) => {
@@ -527,11 +513,16 @@ selectors.resourceDetailsMap = createSelector(
             }
 
             if (resourceType === 'flows') {
+              let numImports = 1;
+
+              if (resource.routers?.length) {
+                numImports = resource.routers.reduce((routerCount, router) => routerCount + router.branches.reduce((branchCount, branch) => branchCount + branch.pageProcessors.length, 0), 0);
+              } else if (resource.pageProcessors) {
+                numImports = resource.pageProcessors.length;
+              }
               allResources[resourceType][
                 resource._id
-              ].numImports = resource.pageProcessors
-                ? resource.pageProcessors.length
-                : 1;
+              ].numImports = numImports;
               allResources[resourceType][resource._id].disabled = resource.disabled;
             }
           });

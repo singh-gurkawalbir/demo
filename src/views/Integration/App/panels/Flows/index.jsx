@@ -26,7 +26,7 @@ import KeywordSearch from '../../../../../components/KeywordSearch';
 import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
 import { getMetadatasForIndividualTabs } from '../../../../../forms/formFactory/utils';
 import useFormOnCancelContext from '../../../../../components/FormOnCancelContext';
-import { FORM_SAVE_STATUS, NO_RESULT_SEARCH_MESSAGE } from '../../../../../utils/constants';
+import { FORM_SAVE_STATUS, NO_RESULT_SEARCH_MESSAGE } from '../../../../../constants';
 import DrawerTitleBar from '../../../../../components/drawer/TitleBar';
 import ActionGroup from '../../../../../components/ActionGroup';
 import NoResultTypography from '../../../../../components/NoResultTypography';
@@ -371,7 +371,7 @@ const FlowsTable = ({integrationId, childId}) => {
   }), [childId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, sectionId]);
 
   return (
-    <LoadResources required resources="flows,exports">
+    <LoadResources required integrationId={integrationId} resources="flows,exports">
       <CeligoTable
         data={flows}
         filterKey={filterKey}
@@ -409,7 +409,7 @@ function FlowList({ integrationId, childId }) {
   return (
     <>
       <ScheduleDrawer />
-      <QueuedJobsDrawer />
+      <QueuedJobsDrawer integrationId={integrationId} />
       <SettingsDrawer integrationId={integrationId} childId={childId} />
       <MappingDrawer integrationId={integrationId} />
       {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}

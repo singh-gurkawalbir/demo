@@ -2,7 +2,7 @@
 import sortBy from 'lodash/sortBy';
 import { getAllApplications, getTileId, sortTiles, tileCompare, tileStatus } from '.';
 import { applicationsList } from '../../constants/applications';
-import {TILE_STATUS} from '../constants';
+import {CONNECTORS_TO_IGNORE, TILE_STATUS} from '../../constants';
 
 const tiles = [
   {
@@ -69,7 +69,9 @@ const tiles = [
 ];
 
 describe('getAllApplications util', () => {
-  const applications = sortBy(applicationsList(), ['name']);
+  const applications = sortBy(
+    applicationsList().filter(app => !CONNECTORS_TO_IGNORE.includes(app.id)),
+    app => app.name.toLowerCase());
   const defaultFilter = [{ _id: 'all', name: 'All applications'}];
   const options = applications.map(a => ({_id: a.id, name: a.name}));
   const expected = [...defaultFilter, ...options];

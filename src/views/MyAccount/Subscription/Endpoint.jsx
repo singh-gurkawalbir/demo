@@ -19,6 +19,7 @@ import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import { TextButton, FilledButton } from '../../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
+import infoText from '../infoText';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -171,7 +172,7 @@ export default function Endpoint() {
       ],
     });
 
-    return dispatch(actions.license.requestUpdate('upgrade'));
+    return dispatch(actions.license.requestUpdate('upgrade', {}));
   }, [dispatch, confirmDialog]);
 
   const onRequestUpgradeClick = useCallback(() => {
@@ -185,7 +186,27 @@ export default function Endpoint() {
               actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
             );
             setUpgradeRequested(true);
-            dispatch(actions.license.requestUpdate('upgrade'));
+            dispatch(actions.license.requestUpdate('upgrade', {}));
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, dispatch]);
+  const onRequestFlowsUpgradeClick = useCallback(() => {
+    confirmDialog({
+      title: 'Request more flows',
+      message: 'We will contact you to discuss your business needs and recommend an upgrade to your subscription.',
+      buttons: [
+        { label: 'Submit request',
+          onClick: () => {
+            dispatch(
+              actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+            );
+            setUpgradeRequested(true);
+            dispatch(actions.license.requestUpdate('upgrade', {}));
           },
         },
         { label: 'Cancel',
@@ -273,7 +294,7 @@ export default function Endpoint() {
       </div>
       )}
       <div className={classes.root}>
-        <PanelHeader title="Subscription" className={classes.heading} />
+        <PanelHeader title="Subscription" className={classes.heading} infoText={infoText.Subscription} />
         <div className={classes.subscriptionBox}>
           <div className={classes.subscriptionBoxInner}>
             <div className={classes.subscriptionBoxInnerLeft}>
@@ -308,6 +329,10 @@ export default function Endpoint() {
                       {licenseActionDetails?.endpoint?.apiManagement && (<CheckMarkIcon className={classes.enableIcon} />)}
                       <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.endpoint?.apiManagement)})}>API Management</Typography>
                     </li>
+                    <li>
+                      {licenseActionDetails?.sso && (<CheckMarkIcon className={classes.enableIcon} />)}
+                      <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.sso)})}>Single sign-on (SSO)</Typography>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -340,11 +365,11 @@ export default function Endpoint() {
                 'add-more-flows'
               ) > -1 && (
               <FilledButton
-                onClick={onRequestUpgradeClick}
+                onClick={onRequestFlowsUpgradeClick}
                 disabled={upgradeRequested}
                 className={classes.subscriptionUpgradeBtn}
              >
-                Add more flows
+                Request more flows
               </FilledButton>
               )}
             </div>

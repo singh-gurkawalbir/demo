@@ -27,12 +27,12 @@ const useStyles = makeStyles(theme => ({
     },
   },
   popper: {
-    zIndex: theme.zIndex.modal + 1,
+    zIndex: theme.zIndex.modal,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     borderRadius: '4px',
     // adding this below to avoid jerking
-    top: `${theme.spacing(1)}px !important`,
+    marginLeft: theme.spacing(0.5),
     '&[x-placement*="bottom"] $arrow': {
       top: 0,
       left: 0,
@@ -118,7 +118,9 @@ export default function ArrowPopper({
   classes: overrideClasses,
   onClose = () => {}, // default to noop.
   className,
+  offsetPopper,
   restrictToParent = true,
+  preventOverflow = true,
   ...rest
 }) {
   const [arrowEl, setArrowEl] = useState(null);
@@ -134,15 +136,21 @@ export default function ArrowPopper({
       },
     };
 
+    if (offsetPopper) {
+      _modifiers.offset = {
+        offset: offsetPopper,
+      };
+    }
+
     if (restrictToParent) {
       _modifiers.preventOverflow = {
-        enabled: true,
+        enabled: preventOverflow,
         boundariesElement: 'scrollParent',
       };
     }
 
     return _modifiers;
-  }, [arrowEl, restrictToParent]);
+  }, [arrowEl, restrictToParent, preventOverflow, offsetPopper]);
 
   return (
     <Popper

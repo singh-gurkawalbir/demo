@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles, useTheme, useMediaQuery, IconButton, Tooltip } from '@material-ui/core';
 import Icon from '../../../../icons/InstallationGuideIcon';
 import { TextButton } from '../../../../Buttons';
+import { REVISIONS_GUIDE_URL } from '../../../../../constants';
 
 const useStyles = makeStyles({
   button: {
@@ -12,7 +13,7 @@ const useStyles = makeStyles({
 const anchorProps = {
   component: 'a',
   target: '_blank',
-  href: 'https://docs.celigo.com/hc/en-us/articles/4844290103707',
+  href: REVISIONS_GUIDE_URL,
 };
 
 export default function RevisionsGuide() {

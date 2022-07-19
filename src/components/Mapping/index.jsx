@@ -6,12 +6,13 @@ import actions from '../../actions';
 import MappingWrapper from './MappingWrapper';
 import Spinner from '../Spinner';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
+import { getMappingsEditorId } from '../../utils/editor';
 
 export default function Mapping(props) {
   const {flowId, importId, subRecordMappingId } = props;
   const dispatch = useDispatch();
   const match = useRouteMatch();
-  const editorId = `mappings-${importId}`;
+  const editorId = getMappingsEditorId(importId);
   const mappingStatus = useSelector(state => selectors.mapping(state).status);
   const isEditorActive = useSelector(state => selectors.editor(state, editorId).editorType);
   const mappingPreviewType = useSelector(state => selectors.mappingPreviewType(state, importId));

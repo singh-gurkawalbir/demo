@@ -3,7 +3,7 @@ import { useIdleTimer } from 'react-idle-timer';
 import { useDispatch, useSelector} from 'react-redux';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
-import { POLLING_STATUS } from '../../utils/constants';
+import { POLLING_STATUS } from '../../constants';
 
 /*
   The way this component works is it tracks the user activity and as soon it notices that the user is idle for about the complete inactive period it stops all polling process.

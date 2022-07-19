@@ -6,12 +6,13 @@ import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
 import useFormContext from '../../../Form/FormContext';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 
 export const useSetInitializeFormData = ({
   resourceType,
   resourceId,
   onFieldChange,
+  isHTTPFramework,
 }) => {
   const dispatch = useDispatch();
   const [componentMounted, setComponentMounted] = useState(false);
@@ -20,9 +21,9 @@ export const useSetInitializeFormData = ({
   );
 
   useEffect(() => {
-    // resouceForm init causes the form to remount
+    // resourceForm init causes the form to remount
     // when there is any initialization data do we perform at this step
-    if (!componentMounted && formState.initData) {
+    if (!isHTTPFramework && !componentMounted && formState.initData) {
       formState.initData.length &&
         formState.initData.forEach(field => {
           const { id, value } = field;
@@ -136,7 +137,6 @@ function DynaAssistantOptions(props) {
 
   useSetInitializeFormData(props);
 
-  // I have to adjust value when there is no option with the matching value
   useEffect(() => {
     if (
       selectOptionsItems &&

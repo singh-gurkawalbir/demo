@@ -83,14 +83,14 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
         />
       </DrawerHeader>
       <DrawerContent>
-        <ResourceDiffDrawerContent integrationId={integrationId} type="pull" />
+        <ResourceDiffDrawerContent integrationId={integrationId} type="pull" parentUrl={parentUrl} />
       </DrawerContent>
       <DrawerFooter>
         <FilledButton disabled={isRevisionCreationInProgress || !hasReceivedResourceDiff} onClick={handleCreateRevision} >
           { isRevisionCreationInProgress ? <Spinner size="small" className={classes.inProgressSpinner} /> : null } Next
         </FilledButton>
         <TextButton
-          data-test="cancelCreatePull"
+          data-test="cancelReviewPulll"
           disabled={isRevisionCreationInProgress}
           onClick={onClose}>
           Close
