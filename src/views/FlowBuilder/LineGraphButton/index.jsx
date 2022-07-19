@@ -5,7 +5,7 @@ import GraphIcon from '../../../components/icons/GraphIcon';
 import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import { drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({

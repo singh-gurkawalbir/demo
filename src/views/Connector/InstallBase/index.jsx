@@ -12,7 +12,7 @@ import actions from '../../../actions';
 import metadata from './metadata';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { TextButton } from '../../../components/Buttons';
-import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
+import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
 import NoResultTypography from '../../../components/NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
@@ -139,7 +139,7 @@ export default function InstallBase(props) {
         {list.count === 0 ? (
           <div>
             {list.total === 0
-              ? <NoResultTypography>You don&apos;t have any installbase</NoResultTypography>
+              ? <NoResultTypography>You don&apos;t have any install base</NoResultTypography>
               : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
           </div>
         ) : (

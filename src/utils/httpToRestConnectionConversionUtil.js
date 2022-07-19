@@ -43,6 +43,8 @@ function generateConnectionRestSubDocFromHttpSubDoc(httpDoc, assistantName) {
     encryptedFields: 'encryptedFields',
     unencrypted: 'unencrypted',
     _iClientId: '_iClientId',
+    _httpConnectorId: '_httpConnectorId',
+    _httpConnectorVersionId: '_httpConnectorVersionId',
     concurrencyLevel: 'concurrencyLevel',
     'ping.relativeURI': 'pingRelativeURI',
     'ping.method': 'pingMethod',
@@ -90,6 +92,7 @@ function generateConnectionRestSubDocFromHttpSubDoc(httpDoc, assistantName) {
     'auth.cookie.method': 'cookieAuth.method',
     'auth.cookie.successStatusCode': 'cookieAuth.successStatusCode',
   };
+
   let restDoc = {};
 
   _.forEach(connPropMap, (value, key) => {
@@ -231,6 +234,12 @@ function replaceHTTPrefWithCorrespondingREST(str) {
     return str.replace(
       'connection.http.auth.oauth.scope',
       'connection.rest.scope'
+    );
+  }
+  if (str.indexOf('connection.http.unencrypted.version') !== -1) {
+    return str.replace(
+      'connection.http.unencrypted.version',
+      'connection.rest.unencrypted.version'
     );
   }
 

@@ -3,24 +3,25 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import {makeStyles} from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
-import { TILE_STATUS } from '../../../../../utils/constants';
+import { TILE_STATUS } from '../../../../../constants';
 import { tileStatus, isTileStatusConnectionDown } from '../../../../../utils/home';
 import actions from '../../../../../actions';
 import { useSelectorMemo } from '../../../../../hooks';
 import Status from '../../../../Buttons/Status';
 import { getTextAfterCount } from '../../../../../utils/string';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   statusWrapper: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
     '& > *': {
       textAlign: 'left',
+      marginBottom: theme.spacing(0.5),
       alignItems: 'flex-start',
     },
   },
-});
+}));
 
 export default function StatusCell({ tile }) {
   const classes = useStyles();

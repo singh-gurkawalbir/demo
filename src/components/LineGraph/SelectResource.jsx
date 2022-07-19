@@ -1,6 +1,7 @@
 import { FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useState, useMemo } from 'react';
+import { emptyList } from '../../constants';
 import ActionGroup from '../ActionGroup';
 import ArrowPopper from '../ArrowPopper';
 import { OutlinedButton, TextButton, FilledButton } from '../Buttons';
@@ -94,34 +95,35 @@ export default function SelectResource(props) {
     setAnchorEl(null);
   }, [initalValue]);
 
-  const buttonName = useMemo(() => {
-    const filterChecked = Array.isArray(checked) ? checked.filter(item => flowResources.find(r => r._id === item)) : [];
+  const validResources = useMemo(() => Array.isArray(checked) ? checked.filter(item => flowResources.find(r => r._id === item)) : emptyList,
+    [checked, flowResources]);
 
-    if (!checked || !filterChecked.length) {
+  const buttonName = useMemo(() => {
+    if (!checked || !validResources.length) {
       return 'No flows selected';
     }
-    if (filterChecked.length === 1) {
-      return flowResources.find(r => r._id === filterChecked[0])?.name;
+    if (validResources.length === 1) {
+      return flowResources.find(r => r._id === validResources[0])?.name;
     }
 
-    return `${filterChecked.length} ${isFlow ? 'resources' : 'flows'} selected`;
-  }, [checked, isFlow, flowResources]);
+    return `${validResources.length} ${isFlow ? 'resources' : 'flows'} selected`;
+  }, [checked, isFlow, flowResources, validResources]);
 
   const getTooltip = useCallback(id => {
-    if (checked.includes(id) || isFlow || checked.length < 8) {
+    if (checked.includes(id) || isFlow || validResources.length < 8) {
       return '';
     }
 
     return 'Only 8 flows can be selected at the same time';
-  }, [checked, isFlow]);
+  }, [checked, isFlow, validResources]);
   const handleFlowSelect = id => event => {
     event.stopPropagation();
     setChecked(checked => {
       if (checked.includes(id)) {
-        return checked.filter(i => i !== id);
+        return validResources.filter(i => i !== id);
       }
-      if (checked.length < 8 || isFlow) {
-        return [...checked, id];
+      if (validResources.length < 8 || isFlow) {
+        return [...validResources, id];
       }
 
       return checked;

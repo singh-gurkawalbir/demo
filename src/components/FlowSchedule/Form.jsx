@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../reducers';
-import { FORM_SAVE_STATUS } from '../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../constants';
 import DynaForm from '../DynaForm';
 import {
   getMetadata,

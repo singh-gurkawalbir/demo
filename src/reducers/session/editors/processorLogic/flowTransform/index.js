@@ -5,7 +5,7 @@ import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
 
 export default {
   processor: ({activeProcessor}) => activeProcessor,
-  init: ({resource, options}) => {
+  init: ({resource, options, scriptContext}) => {
     let activeProcessor = 'transform';
 
     const transformObj = resource?.transform || {};
@@ -30,6 +30,7 @@ export default {
       ...options,
       rule,
       activeProcessor,
+      context: scriptContext,
     };
   },
   buildData: (_, sampleData) => ({

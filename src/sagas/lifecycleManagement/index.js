@@ -2,7 +2,7 @@ import { put, select, call, takeLatest } from 'redux-saga/effects';
 import { isEmpty } from 'lodash';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import { REVISION_TYPES } from '../../utils/constants';
+import { REVISION_TYPES } from '../../constants';
 import { VALID_REVERT_TO_QUERIES, VALID_REVISION_TYPES_FOR_CREATION } from '../../utils/revisions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -97,6 +97,7 @@ function* compareRevertRequest({ integrationId, revisionId }) {
       opts: {
         method: 'POST',
       },
+      hidden: true,
     });
 
     yield put(actions.integrationLCM.compare.receivedDiff(integrationId, resourceDiff));

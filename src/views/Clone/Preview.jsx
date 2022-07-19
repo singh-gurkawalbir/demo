@@ -22,7 +22,7 @@ import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import { hashCode } from '../../utils/string';
-import { emptyObject, HOME_PAGE_PATH, UNASSIGNED_SECTION_ID } from '../../utils/constants';
+import { emptyObject, HOME_PAGE_PATH, UNASSIGNED_SECTION_ID } from '../../constants';
 import messageStore from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
@@ -223,6 +223,7 @@ export default function ClonePreview(props) {
   // fetches the latest preview components on every mount
   useEffect(() => {
     dispatch(actions.clone.requestPreview(resourceType, resourceId));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (createdComponents) {
@@ -385,7 +386,6 @@ export default function ClonePreview(props) {
       name: 'tag',
       type: 'text',
       label: 'Tag',
-      defaultValue: `Clone - ${resource ? resource.name : ''}`,
     };
     fieldMeta.layout.fields = [
       'name',

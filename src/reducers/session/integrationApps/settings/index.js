@@ -4,7 +4,7 @@ import { deepClone } from 'fast-json-patch/lib/core';
 import shortid from 'shortid';
 import actionTypes from '../../../../actions/types';
 import mappingUtil from '../../../../utils/mapping';
-import { FORM_SAVE_STATUS } from '../../../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../../../constants';
 
 const emptyObj = {};
 const emptySet = [];

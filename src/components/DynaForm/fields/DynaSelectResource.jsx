@@ -140,7 +140,6 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   dynaSelectWithStatusWrapper: {
-    maxWidth: '90%',
     position: 'relative',
     '& > div:last-child': {
       position: 'absolute',
@@ -213,6 +212,7 @@ export default function DynaSelectResource(props) {
     [ignoreEnvironmentFilter, resourceType]
   );
 
+  const hasResourceTypeLoaded = useSelector(state => selectors.hasResourcesLoaded(state, resourceType));
   const { resources = emptyArray } = useSelectorMemo(
     selectors.makeResourceListSelector,
     filterConfig
@@ -366,7 +366,7 @@ export default function DynaSelectResource(props) {
       value: i.value,
     }));
 
-  if (!resourceItems.length && hideOnEmptyList) {
+  if (!resourceItems.length && hideOnEmptyList && hasResourceTypeLoaded) {
     return null;
   }
 
