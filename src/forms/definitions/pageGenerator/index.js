@@ -4,7 +4,7 @@ import {applicationsList,
   applicationsPlaceHolderText,
 } from '../../../constants/applications';
 import { appTypeToAdaptorType, rdbmsAppTypeToSubType } from '../../../utils/resource';
-import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../utils/constants';
+import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../constants';
 import {getFilterExpressionForAssistant} from '../../../utils/connections';
 
 export default {
@@ -26,7 +26,7 @@ export default {
     }
     const applications = applicationsList();
     const app = applications.find(a => a.id === application) || {};
-    const appType = app.type === 'rest' ? 'http' : app.type;
+    const appType = (app.type === 'rest' && !app.assistant) ? 'http' : app.type;
     const newValues = {
       ...rest,
     };
@@ -161,7 +161,7 @@ export default {
     const applications = applicationsList();
     const app = applications.find(a => a.id === appField.value) || {};
     const connectionField = fields.find(field => field.id === 'connection');
-    const appType = app.type === 'rest' ? 'http' : app.type;
+    const appType = (app.type === 'rest' && !app.assistant) ? 'http' : app.type;
 
     if (fieldId === 'type') {
       return { selectedApplication: app };

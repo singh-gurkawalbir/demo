@@ -1,0 +1,21 @@
+import clsx from 'clsx';
+import React from 'react';
+import { Handle } from 'react-flow-renderer';
+import { makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles(() => ({
+  defaultHandle: {
+    border: 0,
+    width: '1px !important',
+    height: '1px !important',
+    backgroundColor: 'transparent',
+  },
+}));
+
+export default function DefaultHandle({className, ...props}) {
+  const classes = useStyles();
+
+  return (
+    <Handle className={clsx(classes.defaultHandle, className)} {...props} />
+  );
+}

@@ -17,7 +17,7 @@ import IntegrationTag from '../../../../components/tags/IntegrationTag';
 import Manage from '../../../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../../../components/icons/PermissionsMonitorIcon';
-import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../../../utils/constants';
+import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../../../constants';
 import { tileStatus, isTileStatusConnectionDown } from '../../../../utils/home';
 import getRoutePath from '../../../../utils/routePaths';
 import actions from '../../../../actions';

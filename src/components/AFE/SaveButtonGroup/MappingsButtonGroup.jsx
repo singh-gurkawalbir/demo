@@ -7,7 +7,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import SaveAndCloseButtonGroupAuto from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import mappingUtil from '../../../utils/mapping';
 import ActionGroup from '../../ActionGroup';
-import { FORM_SAVE_STATUS } from '../../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../../constants';
 
 function ResponseMappingsButtonGroup({ editorId, onClose }) {
   const match = useRouteMatch();

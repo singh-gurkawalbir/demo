@@ -14,7 +14,9 @@ import {
   hideOtherTabRows,
   MAPPING_DATA_TYPES,
   getDefaultExtractPath,
-  getUniqueExtractId} from '../../../utils/mapping';
+  getUniqueExtractId,
+  autoCreateDestinationStructure,
+  deleteNonRequiredMappings} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
 export const expandRow = (draft, key) => {
@@ -227,6 +229,7 @@ export default (state = {}, action) => {
     outputFormat,
     newVersion,
     v2TreeData,
+    requiredMappings,
     extractsTree,
     v2Key,
     newDataType,
@@ -238,6 +241,9 @@ export default (state = {}, action) => {
     errors,
     newTabValue,
     newTabExtractId,
+    importSampleData,
+    uploadedData,
+    isCSVOrXLSX,
     inputValue,
     propValue,
   } = action;
@@ -272,7 +278,9 @@ export default (state = {}, action) => {
           isGroupedSampleData,
           isMonitorLevelAccess,
           version,
+          requiredMappings,
           extractsTree,
+          importSampleData,
           isGroupedOutput,
           mappingsCopy: deepClone(mappings),
           lookupsCopy: deepClone(lookups),
@@ -563,7 +571,7 @@ export default (state = {}, action) => {
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generateDisabled: true,
             disabled: draft.mapping.isMonitorLevelAccess,
-            combinedExtract: defaultExtract,
+            combinedExtract: defaultExtract, // todo ashu check with Aman, we can remove this and then add our own as per my new changes
           };
 
           node.children = updateChildrenProps(draft.mapping.v2TreeData, node, MAPPING_DATA_TYPES.OBJECTARRAY);
@@ -889,6 +897,61 @@ export default (state = {}, action) => {
         break;
       }
 
+      case actionTypes.MAPPING.V2.DELETE_ALL:
+        if (!draft.mapping) break;
+
+        draft.mapping.v2TreeData = deleteNonRequiredMappings(draft.mapping.v2TreeData);
+        if (isEmpty(draft.mapping.v2TreeData)) {
+          if (isCSVOrXLSX) {
+            draft.mapping.v2TreeData = [{
+              key: generateUniqueKey(),
+              title: '',
+              dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+              generateDisabled: true,
+              disabled: draft.mapping.isMonitorLevelAccess,
+              children: [
+                {
+                  key: generateUniqueKey(),
+                  title: '',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  disabled: draft.mapping.isMonitorLevelAccess,
+                  isEmptyRow: true,
+                },
+              ],
+            }];
+          } else {
+            draft.mapping.v2TreeData = [{
+              key: generateUniqueKey(),
+              title: '',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              disabled: draft.mapping.isMonitorLevelAccess,
+              isEmptyRow: true,
+            }];
+          }
+        }
+
+        break;
+
+      case actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE:
+        if (!draft.mapping) break;
+        draft.mapping.v2TreeData = [];
+        draft.mapping.v2TreeData = autoCreateDestinationStructure(uploadedData, draft.mapping.requiredMappings, isCSVOrXLSX);
+
+        if (draft.mapping.v2TreeData.length === 1 &&
+          draft.mapping.v2TreeData[0].dataType === MAPPING_DATA_TYPES.OBJECTARRAY &&
+          !draft.mapping.v2TreeData[0].generate &&
+          draft.mapping.v2TreeData[0].generateDisabled) {
+          draft.mapping.isGroupedOutput = true;
+        }
+
+        draft.mapping.autoCreated = true;
+        break;
+
+      case actionTypes.MAPPING.V2.TOGGLE_AUTO_CREATE_FLAG:
+        if (!draft.mapping) break;
+        draft.mapping.autoCreated = !draft.mapping.autoCreated;
+        break;
+
       default:
     }
   });
@@ -1000,4 +1063,12 @@ selectors.v2ActiveKey = state => {
   }
 
   return state.mapping.v2ActiveKey;
+};
+
+selectors.mappingImportSampleData = state => {
+  if (!state || !state.mapping) {
+    return;
+  }
+
+  return state.mapping.importSampleData;
 };

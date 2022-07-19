@@ -9,7 +9,7 @@ import { isJsonString } from '../../utils/string';
 import { selectors } from '../../reducers';
 import { getResource } from '../resources';
 import { refreshConnectionMetadata } from '../resources/meta';
-import { INSTALL_STEP_TYPES } from '../../utils/constants';
+import { INSTALL_STEP_TYPES } from '../../constants';
 import openExternalUrl from '../../utils/window';
 
 export function* initInstall({ id }) {

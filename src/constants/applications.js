@@ -1,5 +1,5 @@
 import { stringCompare } from '../utils/sort';
-import {CONNECTORS_TO_IGNORE, REST_ASSISTANTS, WEBHOOK_ONLY_APPLICATIONS} from '../utils/constants';
+import {CONNECTORS_TO_IGNORE, REST_ASSISTANTS, WEBHOOK_ONLY_APPLICATIONS} from '.';
 
 // Schema details:
 // ---------------

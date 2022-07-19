@@ -2,7 +2,7 @@
 import each from 'jest-each';
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
-import { JOB_TYPES, JOB_STATUS } from '../../../utils/constants';
+import { JOB_TYPES, JOB_STATUS } from '../../../constants';
 import {
   DEFAULT_STATE,
   parseJobs,

@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions, { availableResources } from '../../../actions';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
 import mappingUtil from '../../../utils/mapping';
 import { getIAFlowSettings } from '../../../utils/flows';
@@ -1759,6 +1759,64 @@ describe('resourceDetailsMap selector', () => {
           },
         ],
       },
+      {
+        _id: 'flow7',
+        name: 'flow_Seven',
+        _connectorId: 'connector4',
+        routers: [
+          {
+            id: 'router1',
+            branches: [
+              {
+                pageProcessors: [
+                  {
+                    _importId: 'i1',
+                  },
+                  {
+                    _importId: 'i2',
+                  },
+                ],
+                nextRouterId: 'router2',
+              },
+              {
+                pageProcessors: [
+                  {
+                    _importId: 'i1',
+                  },
+                  {
+                    _importId: 'i2',
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: 'router2',
+            branches: [
+              {
+                pageProcessors: [
+                  {
+                    _importId: 'i1',
+                  },
+                  {
+                    _exportId: 'i2',
+                  },
+                ],
+              },
+              {
+                pageProcessors: [
+                  {
+                    _importId: 'i1',
+                  },
+                  {
+                    _exportId: 'i2',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     ];
     const published = [
       { _id: 'pub1', name: 'pub 1' },
@@ -1790,6 +1848,8 @@ describe('resourceDetailsMap selector', () => {
         flow4: { name: 'flow_Four', _connectorId: 'connector4', numImports: 1 },
         flow5: { name: 'flow_Five', numImports: 1 },
         flow6: { name: 'flow_Six', _connectorId: 'connector4', numImports: 2 },
+        flow7: { name: 'flow_Seven', _connectorId: 'connector4', numImports: 8 },
+
       },
     });
   });

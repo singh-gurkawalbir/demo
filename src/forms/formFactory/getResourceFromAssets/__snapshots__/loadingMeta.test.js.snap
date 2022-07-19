@@ -3936,6 +3936,12 @@ Object {
               "records",
             ],
           },
+          Object {
+            "field": "http.successMediaType",
+            "is": Array [
+              "csv",
+            ],
+          },
         ],
       },
       "formView": Object {

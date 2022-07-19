@@ -1,6 +1,6 @@
 /* global describe, expect, test */
 import { selectors } from '.';
-import { USER_ACCESS_LEVELS, ACCOUNT_IDS, emptyList } from '../utils/constants';
+import { USER_ACCESS_LEVELS, ACCOUNT_IDS, emptyList } from '../constants';
 
 const sampleOIDCClient = {
   _id: '6097fdaf86c0c5190bb3bab3',

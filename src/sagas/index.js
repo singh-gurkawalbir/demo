@@ -56,10 +56,11 @@ import lifecycleManagementSagas from './lifecycleManagement';
 import exportDataSagas from './exportData';
 import {logsSagas} from './logs';
 import ssoSagas from './sso';
+import flowbuildersagas from './flowbuilder';
 import mfaSagas from './mfa';
 import { APIException } from './api/requestInterceptors/utils';
 import { bottomDrawerSagas } from './bottomDrawer';
-import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
+import { AUTH_FAILURE_MESSAGE } from '../constants';
 import { getNextLinkRelativeUrl } from '../utils/resource';
 import flowGroupSagas from './flowGroups';
 import aliasSagas from './aliases';
@@ -227,6 +228,7 @@ export function* allSagas() {
     ...flowGroupSagas,
     ...aliasSagas,
     ...lifecycleManagementSagas,
+    ...flowbuildersagas,
   ]);
 }
 

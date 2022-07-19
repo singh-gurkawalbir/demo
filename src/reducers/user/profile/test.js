@@ -2,7 +2,7 @@
 import reducer, { selectors } from '.';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
-import { CDN_BASE_URL } from '../../../utils/constants';
+import { CDN_BASE_URL } from '../../../constants';
 
 describe('user reducers', () => {
   describe('profile reducers', () => {

@@ -5,7 +5,7 @@ import RightDrawer from '../../../../drawer/Right';
 import DrawerHeader from '../../../../drawer/Right/DrawerHeader';
 import { drawerPaths } from '../../../../../utils/rightDrawer';
 import useFormOnCancelContext from '../../../../FormOnCancelContext';
-import { LOOKUP_FORM_KEY } from '../../../../../utils/constants';
+import { LOOKUP_FORM_KEY } from '../../../../../constants';
 
 export default function LookupDrawer(props) {
   const history = useHistory();
