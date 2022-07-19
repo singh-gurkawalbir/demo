@@ -14,7 +14,7 @@ export default function ConnectorName({ resource }) {
   );
 
   const out = useMemo(() => {
-    if (type === 'simple') return 'Data Loader';
+    if (type === 'simple') return 'Data loader';
 
     if (type !== 'rdbms') {
       const appType = getApp(type, assistant).name || null;
