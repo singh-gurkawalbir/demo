@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import WarningIcon from '../../icons/WarningIcon';
 import ExpiredIcon from '../../icons/ErrorIcon';
 import actions from '../../../actions';
-import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS, TILE_STATUS } from '../../../utils/constants';
+import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS, TILE_STATUS } from '../../../constants';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import ActionGroup from '../../ActionGroup';
 import { FilledButton, TextButton} from '../../Buttons';
@@ -97,7 +97,7 @@ export default function TileNotification({
           label: 'Submit request',
           onClick: () => {
             setUpgradeRequested(true);
-            dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
+            dispatch(actions.license.requestUpdate('connectorRenewal', {connectorId, licenseId}));
           },
         },
         {
@@ -141,7 +141,7 @@ export default function TileNotification({
           {
             label: 'Submit request',
             onClick: () => {
-              dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
+              dispatch(actions.license.requestUpdate('connectorRenewal', {connectorId, licenseId}));
             },
           },
           {

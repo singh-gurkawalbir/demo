@@ -53,7 +53,7 @@ export default function CompletedFlows() {
   return (
     <div className={!showEmptyMessage && classes.completeFlowTable}>
       <div className={classes.root}>
-        {isCompletedJobsCollectionLoading ? (<Spinner centerAll />) : (
+        {isCompletedJobsCollectionLoading ? (<Spinner loading size="large" />) : (
           <>
             <Filters
               filterKey={filterKey}

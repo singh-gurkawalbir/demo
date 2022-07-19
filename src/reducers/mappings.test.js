@@ -241,21 +241,6 @@ describe('Mappings region selector testcases', () => {
     });
   });
 
-  describe('selectors.getAllPageProcessorImports test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.getAllPageProcessorImports()).toEqual([]);
-    });
-    test('should return all pageprocessor imports used in a flow', () => {
-      expect(selectors.getAllPageProcessorImports(state, flows[2].pageProcessors)).toEqual([
-        { _id: 10 },
-        { _id: 11, adaptorType: 'MongodbExport' },
-      ]);
-    });
-    test('should return empty array if pageprocessor imports are not in state', () => {
-      expect(selectors.getAllPageProcessorImports(state, flows[1].pageProcessors)).toEqual([]);
-    });
-  });
-
   describe('selectors.httpAssistantSupportsMappingPreview test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.httpAssistantSupportsMappingPreview(undefined, {})).toBeFalsy();
@@ -858,7 +843,28 @@ describe('Mappings region selector testcases', () => {
 
       expect(selectors.isMapper2Supported(state)).toEqual(false);
     });
-    test('should return false for non-http/rest imports', () => {
+    test('should return false for db imports', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              adaptorType: 'RDBMSImport',
+            }],
+          },
+        },
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+            },
+          },
+        },
+      };
+
+      expect(selectors.isMapper2Supported(state)).toEqual(false);
+    });
+    test('should return true for file imports', () => {
       const state = {
         data: {
           resources: {
@@ -877,7 +883,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.isMapper2Supported(state)).toEqual(false);
+      expect(selectors.isMapper2Supported(state)).toEqual(true);
     });
     test('should return true for http/rest import', () => {
       const state = {

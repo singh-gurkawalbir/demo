@@ -1,5 +1,5 @@
 import { generatePath } from 'react-router-dom';
-import { UNASSIGNED_SECTION_ID } from './constants';
+import { UNASSIGNED_SECTION_ID } from '../constants';
 
 export default function flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId) {
   // this component can only enter either with baseroute/sections/:sectionId or just baseroute

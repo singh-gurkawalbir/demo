@@ -85,7 +85,6 @@ export default function FormPreviewPanel({ editorId }) {
           <DynaSubmit
             formKey={editorId}
             onClick={handleFormPreviewChange}
-            ignoreFormTouchedCheck
             showCustomFormValidations={showCustomFormValidations}>
             Test form
           </DynaSubmit>

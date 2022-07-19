@@ -2,7 +2,7 @@ import { wrapExportFileSampleData } from '../../../../../utils/sampleData';
 
 const init = ({resource, fieldState, options}) => {
   const { value } = fieldState || {};
-  const resourcePath = resource?.file?.xml?.resourcePath;
+  const resourcePath = resource?.file?.xml?.resourcePath || resource?.http?.response?.resourcePath;
   const rule = {
     resourcePath,
     ...value?.[0]?.rules,

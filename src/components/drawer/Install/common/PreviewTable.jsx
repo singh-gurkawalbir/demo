@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { selectors } from '../../../../reducers';
 import DynaPreviewComponentsTable from '../../../DynaForm/fields/DynaPreviewComponentsTable';
 import Spinner from '../../../Spinner';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   spinnerPreview: {

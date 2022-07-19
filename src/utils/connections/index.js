@@ -1,8 +1,8 @@
 import { matchPath } from 'react-router-dom';
 import { PING_STATES } from '../../reducers/comms/ping';
-import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, GOOGLE_CONTACTS_API, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../constants';
+import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, GOOGLE_CONTACTS_API, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../../constants';
 import { rdbmsSubTypeToAppType } from '../resource';
-import { DRAWER_URL_PREFIX } from '../rightDrawer';
+import {getHttpConnector} from '../../constants/applications';
 
 export const getStatusVariantAndMessage = ({
   resourceType,
@@ -97,6 +97,14 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   } else if (type === 'graph_ql' || (type === 'http' && connection?.http?.formType === 'graph_ql')) {
     expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
   } else if (type === 'http') {
+    if (getHttpConnector(connection.http?._httpConnectorId)) {
+      if (connection.http?._httpConnectorId) {
+        expression.push({ 'http._httpConnectorId': connection.http._httpConnectorId });
+      }
+      if (connection.http?._httpConnectorVersionId) {
+        expression.push({ 'http._httpConnectorVersionId': connection.http._httpConnectorVersionId });
+      }
+    }
     expression.push({ 'http.formType': { $ne: 'rest' } });
     expression.push({ type });
   } else {
@@ -298,6 +306,6 @@ export const getParentResourceContext = url => {
   const CONN_DRAWER_PATH = '/:operation(add|edit)/connections/:connId';
 
   return matchPath(url, {
-    path: `/**${RESOURCE_DRAWER_PATH}/${DRAWER_URL_PREFIX}${CONN_DRAWER_PATH}`,
+    path: `/**${RESOURCE_DRAWER_PATH}${CONN_DRAWER_PATH}`,
     exact: true})?.params || {};
 };

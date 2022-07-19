@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
-import {FORM_SAVE_STATUS} from '../../../utils/constants';
+import {FORM_SAVE_STATUS} from '../../../constants';
 
 describe('session.resourceForm form reducers', () => {
   const resourceType = 'connections';

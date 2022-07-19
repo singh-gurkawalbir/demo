@@ -126,7 +126,7 @@ export default function DynaReferencedFields(props) {
         options={null}
         className={classes.refrencedFieldDynaText}
       />
-      {status === 'refreshed' ? (
+      {(status === 'refreshed' || status === 'requested') ? (
         <Spinner />
       ) : (
         <ActionButton
