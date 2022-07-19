@@ -325,12 +325,14 @@ export function* _processMappingData({
   mappings,
   stage,
   preProcessedData,
+  options,
 }) {
   const body = {
     rules: {
       rules: [mappings],
     },
     data: preProcessedData ? [preProcessedData] : [],
+    options,
   };
   // call processor data specific to mapper as it is not part of editors saga
   const path = '/processors/mapperProcessor';
@@ -484,9 +486,14 @@ export function* requestProcessorData({
   } else if (stage === 'importMapping') {
     // mapping fields are processed here against raw data
     let resourceMappings;
+    const options = {};
 
     if (resource?.mappings?.length) { // v2 mappings, if present, are applied during import
-      resourceMappings = cloneDeep(resource.mappings);
+      resourceMappings = {mappings: cloneDeep(resource.mappings)};
+
+      const connection = yield select(selectors.resource, 'connections', resource?._connectionId);
+
+      options.connection = connection;
     } else {
       resourceMappings = mappingUtil.getMappingFromResource({
         importResource: resource,
@@ -505,6 +512,7 @@ export function* requestProcessorData({
         mappings: resourceMappings,
         stage,
         preProcessedData,
+        options,
       });
     }
     hasNoRulesToProcess = true;
