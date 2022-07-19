@@ -142,21 +142,19 @@ describe('unit tests for FlowToggle button', () => {
     expect(toggleButton).toBeInTheDocument();
   });
   test('Checking the functioning of toggle switch in the ui', async () => {
-    await flowTog({}, {});
+    await flowTog({}, {}, true);
     const toggleButton = screen.getByRole('checkbox');
 
     userEvent.click(toggleButton);
     waitFor(() => expect(toggleButton).toBeChecked());
   });
-  test('Checking for dialogue box when the flow is disabled and its functionality', async () => {
-    await flowTog({}, {});
+  test('Checking for dialogue box when the flow is enabled and its functionality', async () => {
+    await flowTog({}, {}, false);
     const toggleButton = screen.getByRole('checkbox');
 
-    expect(toggleButton).toBeChecked();
-    expect(toggleButton).toBeInTheDocument();
     userEvent.click(toggleButton);
     waitFor(() =>
-      expect(screen.queryByText('/Confirm disable/i')).toBeInTheDocument()
+      expect(screen.queryByText(/Confirm disable/i)).toBeInTheDocument()
     );
     const enButton = screen.getByText('Disable');
 
@@ -175,23 +173,22 @@ describe('unit tests for FlowToggle button', () => {
       },
     ];
 
-    await flowTog({}, {});
+    await flowTog({}, {}, false);
     const toggleButton = screen.getByRole('checkbox');
 
     userEvent.click(toggleButton);
     waitFor(() =>
-      expect(screen.queryByText('/Confirm disable/i')).toBeInTheDocument()
+      expect(screen.getByText('/Confirm disable/i')).toBeInTheDocument()
     );
-    screen.debug();
     const disButton = screen.getByText('Disable');
 
     userEvent.click(disButton);
-    await waitFor(() =>
+    waitFor(() =>
       expect(mockDispatchFn).toBeCalledWith(
         actions.flow.isOnOffActionInprogress(true, '626bdab2987bb423914b487d')
       )
     );
-    await waitFor(() =>
+    waitFor(() =>
       expect(mockDispatchFn).toBeCalledWith(
         actions.resource.patchAndCommitStaged(
           'flows',
@@ -214,12 +211,12 @@ describe('unit tests for FlowToggle button', () => {
     const disButton = screen.getByText('Disable');
 
     userEvent.click(disButton);
-    await waitFor(() =>
+    waitFor(() =>
       expect(mockDispatchFn).toBeCalledWith(
         actions.flow.isOnOffActionInprogress(true, '626bdab2987bb423914b487d')
       )
     );
-    await waitFor(() =>
+    waitFor(() =>
       expect(mockDispatchFn).toBeCalledWith(
         actions.integrationApp.settings.update(
           '626bda66987bb423914b486f',
@@ -256,6 +253,5 @@ describe('unit tests for FlowToggle button', () => {
     waitFor(() =>
       expect(toggleButton).toBeChecked()
     );
-    screen.debug();
   });
 });
