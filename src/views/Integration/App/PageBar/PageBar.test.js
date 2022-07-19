@@ -1,0 +1,366 @@
+/* global describe, test, expect, jest, beforeEach */
+import React from 'react';
+import { screen, waitFor } from '@testing-library/react';
+import { MemoryRouter, Route } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
+import {renderWithProviders, mockGetRequestOnce} from '../../../../test/test-utils';
+import actions from '../../../../actions';
+import { runServer } from '../../../../test/api/server';
+import integrationAppUtil from '../../../../utils/integrationApps';
+import {getCreatedStore} from '../../../../store';
+import PageBar from '.';
+
+const mockHistoryPush = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    push: mockHistoryPush,
+  }),
+}));
+
+describe('PageBar UI testing', () => {
+  runServer();
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
+  async function initPagebar(errorCount) {
+    mockGetRequestOnce('/api/integrations', [{
+      _id: '5ff579d745ceef7dcd797c15',
+      lastModified: '2021-01-19T06:34:17.222Z',
+      _connectorId: 'connectorId',
+      name: " AFE 2.0 refactoring for DB's",
+      install: [],
+      sandbox: false,
+      _registeredConnectionIds: [
+        '5cd51efd3607fe7d8eda9c97',
+        '5ff57a8345ceef7dcd797c21',
+      ],
+      installSteps: [],
+      uninstallSteps: [],
+      flowGroupings: [],
+      createdAt: '2021-01-06T08:50:31.935Z',
+      settings: {supportsMultiStore: true,
+        sections: [{id: 1111111, label: '11', title: 'title1', sections: [{id: '123', label: '1234', title: 'childtitile', flows: [{_id: '1111111'}, '2']}]},
+          {id: 2, label: '22', title: 'title2'}]},
+    }]);
+    mockGetRequestOnce('/api/profile', {
+      _id: '5ca5c855ec5c172792285f53',
+      name: 'Celigo 123',
+      email: 'Celigo@celigo.com',
+      role: 'io-qa intern',
+      company: 'Amazon Central',
+      phone: '',
+      auth_type_google: {},
+      timezone: 'Asia/Calcutta',
+      developer: true,
+      allowedToPublish: true,
+      agreeTOSAndPP: true,
+      createdAt: '2019-04-04T09:03:18.208Z',
+      useErrMgtTwoDotZero: true,
+      authTypeSSO: null,
+      emailHash: '1c8eb6f416e72a5499283b56f2663fe1',
+    });
+
+    const initialStore = getCreatedStore();
+
+    initialStore.dispatch(actions.user.preferences.request());
+    initialStore.dispatch(actions.resource.requestCollection('integrations'));
+    initialStore.dispatch(actions.user.profile.request());
+
+    await waitFor(() => expect(initialStore?.getState()?.user.profile.useErrMgtTwoDotZero).toBeDefined());
+    await waitFor(() => expect(initialStore?.getState()?.data?.resources?.integrations).toBeDefined());
+    await waitFor(() => expect(initialStore?.getState()?.user?.preferences?.dateFormat).toBeDefined());
+
+    initialStore.getState().session.errorManagement.openErrors = {'5ff579d745ceef7dcd797c15': {status: 'received',
+      data: {1111111: {numError: errorCount,
+        _flowId: '1111111'},
+      2: {numError: 0, _flowId: '1111111'},
+      }}};
+
+    return renderWithProviders(
+      <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>
+        <Route path="/:integrationId/"><PageBar /></Route>
+      </MemoryRouter>, {initialStore});
+  }
+
+  async function prepareStore(store) {
+    mockGetRequestOnce('/api/integrations', [{
+      _id: '5ff579d745ceef7dcd797c15',
+      lastModified: '2021-01-19T06:34:17.222Z',
+      _connectorId: 'connectorId',
+      name: " AFE 2.0 refactoring for DB's",
+      install: [],
+      sandbox: false,
+      _registeredConnectionIds: [
+        '5cd51efd3607fe7d8eda9c97',
+        '5ff57a8345ceef7dcd797c21',
+      ],
+      installSteps: [],
+      uninstallSteps: [],
+      flowGroupings: [],
+      createdAt: '2021-01-06T08:50:31.935Z',
+      settings: {supportsMultiStore: true, sections: [{id: '1111111', label: '11', title: 'title1'}, {id: '2', label: '22', title: 'title2'}]},
+    }]);
+    store.dispatch(actions.user.preferences.request());
+    store.dispatch(actions.resource.requestCollection('integrations'));
+    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
+    await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
+  }
+  test('should test when no integration Id is provided', () => {
+    renderWithProviders(<MemoryRouter><PageBar /></MemoryRouter>);
+    expect(screen.getByText('tag')).toBeInTheDocument();
+  });
+  test('should test clone integration', async () => {
+    jest.spyOn(integrationAppUtil, 'isCloningSupported').mockReturnValue(true);
+    mockGetRequestOnce('/api/integrations', [{
+      _id: '5ff579d745ceef7dcd797c15',
+      lastModified: '2021-01-19T06:34:17.222Z',
+      _connectorId: 'connectorId',
+      name: " AFE 2.0 refactoring for DB's",
+      install: [],
+      sandbox: false,
+      _registeredConnectionIds: [
+        '5cd51efd3607fe7d8eda9c97',
+        '5ff57a8345ceef7dcd797c21',
+      ],
+      installSteps: [],
+      uninstallSteps: [],
+      flowGroupings: [],
+      createdAt: '2021-01-06T08:50:31.935Z',
+    }]);
+    const {store} = renderWithProviders(
+      <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>
+        <Route path="/:integrationId"><PageBar /></Route>
+      </MemoryRouter>);
+
+    store.dispatch(actions.user.preferences.request());
+    store.dispatch(actions.resource.requestCollection('integrations'));
+    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
+    await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
+    const clonebutton = screen.getAllByRole('button')[1];
+
+    expect(clonebutton).toHaveAttribute('href', '/clone/integrations/5ff579d745ceef7dcd797c15/preview');
+  });
+  test('should test support milut', async () => {
+    const {store} = renderWithProviders(
+      <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/2/tab']}>
+        <Route path="/:integrationId/:childId/:tab"><PageBar /></Route>
+      </MemoryRouter>);
+
+    await prepareStore(store);
+
+    const select = screen.getByText('title2');
+
+    userEvent.click(select);
+
+    const option = screen.getAllByRole('option');
+
+    userEvent.click(option[1]);
+    await waitFor(() => expect(option[1]).not.toBeVisible());
+
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/tab');
+  });
+  test('should test when unknnow child param is given support milut', async () => {
+    const {store} = renderWithProviders(
+      <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/title3/tab']}>
+        <Route path="/:integrationId/:childId/:tab"><PageBar /></Route>
+      </MemoryRouter>);
+
+    await prepareStore(store);
+
+    const select = screen.getByText('title3');
+
+    userEvent.click(select);
+
+    const option = screen.getAllByRole('option');
+
+    userEvent.click(option[1]);
+    await waitFor(() => expect(option[1]).not.toBeVisible());
+
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/tab');
+  });
+  test('should test seleting same option again', async () => {
+    const {store} = renderWithProviders(
+      <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/2/tab']}>
+        <Route path="/:integrationId/:childId/:tab"><PageBar /></Route>
+      </MemoryRouter>);
+
+    await prepareStore(store);
+
+    const select = screen.getByText('title2');
+
+    userEvent.click(select);
+
+    const option = screen.getAllByRole('option');
+
+    userEvent.click(option[0]);
+    await waitFor(() => expect(option[2]).not.toBeVisible());
+
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/tab');
+  });
+  test('should test intial no child support milut', async () => {
+    const {store} = renderWithProviders(
+      <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/tab']}>
+        <Route path="/:integrationId/:tab"><PageBar /></Route>
+      </MemoryRouter>);
+
+    await prepareStore(store);
+
+    const select = screen.getByText('All undefineds');
+
+    userEvent.click(select);
+
+    const option = screen.getAllByRole('option');
+
+    userEvent.click(option[1]);
+    await waitFor(() => expect(option[1]).not.toBeVisible());
+
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/tab');
+  });
+  test('should test child with com initial error greater than 9999', async () => {
+    await initPagebar(10000);
+
+    const select = screen.getByText('All undefineds');
+
+    userEvent.click(select);
+
+    const option = screen.getAllByRole('option');
+
+    expect(option[1].textContent).toBe(' title19999+');
+  });
+  test('should test child with com initial error between 9999 and 0', async () => {
+    await initPagebar(234);
+
+    const select = screen.getByText('All undefineds');
+
+    userEvent.click(select);
+
+    const option = screen.getAllByRole('option');
+
+    expect(option[1].textContent).toBe(' title1234');
+  });
+  test('should test add', async () => {
+    mockGetRequestOnce('/api/integrations', [{
+      _id: '5ff579d745ceef7dcd797c15',
+      lastModified: '2021-01-19T06:34:17.222Z',
+      name: " AFE 2.0 refactoring for DB's",
+      install: [],
+      sandbox: false,
+      _registeredConnectionIds: [
+        '5cd51efd3607fe7d8eda9c97',
+        '5ff57a8345ceef7dcd797c21',
+      ],
+      installSteps: [],
+      uninstallSteps: [],
+      flowGroupings: [],
+      createdAt: '2021-01-06T08:50:31.935Z',
+      settings: {supportsMultiStore: true},
+    }]);
+    mockGetRequestOnce('/api/preferences', {
+      environment: 'production',
+      dateFormat: 'MM/DD/YYYY',
+      timeFormat: 'h:mm:ss a',
+      scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
+      defaultAShareId: '618cc96475f94b333a55bbd3',
+    });
+    mockGetRequestOnce('/api/shared/ashares', [{
+      _id: '618cc96475f94b333a55bbd3',
+      dismissed: true,
+      accessLevel: 'administrator',
+      integrationAccessLevel: [],
+      ownerUser: {
+        _id: '5feda6fdae2e896a3f3c5cbf',
+        licenses: [{expires: '2040-12-31T00:00:00.000Z',
+          _integrationId: '5ff579d745ceef7dcd797c15',
+        }],
+        email: 'dhilip.s@celigo.com',
+        name: 'Dhilip S',
+        company: 'Dhilip',
+        preferences: {
+          environment: 'production',
+          dateFormat: 'MM/DD/YYYY',
+          timeFormat: 'h:mm:ss a',
+          drawerOpened: true,
+          defaultAShareId: 'own',
+          scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
+          showReactSneakPeekFromDate: '2019-11-05',
+          showReactBetaFromDate: '2019-12-26',
+          dashboard: {
+            view: 'list',
+            pinnedIntegrations: [
+              '619f77445324e30fbb2a541c',
+              '61f3e489aae2457e6ea838b6',
+              '61f8ed0929a80b4b8134eb25',
+              '61fa1ab7a6e61314fcdf8d86',
+              '6203f8193ac01960c714e5ab',
+              '60ee8aa598d5d30b37795033',
+              '60f548a995933011558120f5',
+              '61bb11b9c9995f173361c4e2',
+            ],
+          },
+          expand: 'Resources',
+          fbBottomDrawerHeight: 522,
+        },
+        allowedToPublish: true,
+        timezone: 'Asia/Calcutta',
+        useErrMgtTwoDotZero: true,
+      },
+    }]);
+
+    const {store} = renderWithProviders(
+      <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>
+        <Route path="/:integrationId"><PageBar /></Route>
+      </MemoryRouter>);
+
+    store.dispatch(actions.user.preferences.request());
+    store.dispatch(actions.resource.requestCollection('integrations'));
+    store.dispatch(actions.user.org.accounts.requestCollection());
+    await waitFor(() => expect(store?.getState()?.user?.org?.accounts[0]).toBeDefined());
+    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
+    await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
+    const add = screen.getByText('Add');
+
+    userEvent.click(add);
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/install/addNewStore');
+  });
+
+  test('should test tag change', async () => {
+    const {store} = renderWithProviders(
+      <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>
+        <Route path="/:integrationId"><PageBar /></Route>
+      </MemoryRouter>);
+
+    await prepareStore(store);
+    const tag = screen.getByText('tag');
+
+    userEvent.click(tag);
+    const input = screen.getByRole('textbox');
+
+    userEvent.type(input, 'changed');
+    input.blur();
+
+    expect(screen.getByText('tagchanged')).toBeInTheDocument();
+  });
+  test('should test dashborad tab', async () => {
+    const {store} = renderWithProviders(
+      <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/dashborad']}>
+        <Route path="/:integrationId/:dashboardTab"><PageBar /></Route>
+      </MemoryRouter>);
+
+    await prepareStore(store);
+
+    const select = screen.getByText('All undefineds');
+
+    userEvent.click(select);
+
+    const option = screen.getAllByRole('option');
+
+    userEvent.click(option[1]);
+    await waitFor(() => expect(option[1]).not.toBeVisible());
+
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/dashboard');
+  });
+});
+
