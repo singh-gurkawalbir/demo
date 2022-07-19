@@ -9,7 +9,7 @@ import server from './api/server';
 import { API } from './api/utils';
 
 const theme = themeProvider();
-export const renderWithProviders = (ui, {initialStore} = {}) => {
+export const renderWithProviders = (ui, { initialStore } = {}) => {
   const reduxStore = initialStore || getCreatedStore();
   const utils = render(
     <Provider store={reduxStore}>
@@ -26,6 +26,8 @@ export const renderWithProviders = (ui, {initialStore} = {}) => {
     store: reduxStore,
   };
 };
+
+export const reduxStore = getCreatedStore();
 
 export const mockGetRequestOnce = (url, resolver) => {
   server.use(API.getOnce(url, resolver));
