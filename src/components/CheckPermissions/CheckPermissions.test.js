@@ -5,7 +5,7 @@ import {renderWithProviders, mockGetRequestOnce} from '../../test/test-utils';
 import CheckPermissions from '.';
 import { runServer } from '../../test/api/server';
 import actions from '../../actions';
-import {PERMISSIONS} from '../../utils/constants';
+import {PERMISSIONS} from '../../constants';
 
 describe('CheckPermissions UI tests', () => {
   runServer();
