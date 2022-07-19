@@ -49,14 +49,14 @@ describe('HelpContent UI tests', () => {
     renderWithProviders(<HelpContent {...props} />);
     userEvent.click((screen.getByText(/No/)));
     expect(screen.getByText(/Submit/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Please let us know how we can improve the text area.')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('How can we make this information more helpful?')).toBeInTheDocument();
   });
   test('should make a dispatch call with the user input when clicked on "submit"', () => {
     const props = { children: 'This is the sample text', title: 'Sample title', caption: 'Sample caption' };
 
     renderWithProviders(<HelpContent {...props} />);
     userEvent.click((screen.getByText(/No/)));
-    const input = screen.getByPlaceholderText('Please let us know how we can improve the text area.');
+    const input = screen.getByPlaceholderText('How can we make this information more helpful?');
 
     userEvent.type(input, 'sample userInput');
     userEvent.click(screen.getByText(/Submit/i));

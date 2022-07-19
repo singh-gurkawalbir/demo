@@ -48,7 +48,7 @@ describe('Help UI tests', () => {
     expect(screen.getByText(/Sample help text/i)).toBeInTheDocument();
     userEvent.click(screen.getByText(/No/i));
     expect(screen.getByText(/Submit/i)).toBeInTheDocument();
-    const field = screen.getByPlaceholderText('Please let us know how we can improve the text area.');
+    const field = screen.getByPlaceholderText('How can we make this information more helpful?');
 
     userEvent.click(field);
     expect(screen.getByText(/Submit/i)).toBeInTheDocument();
