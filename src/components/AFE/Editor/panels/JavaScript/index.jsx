@@ -160,11 +160,11 @@ export default function JavaScriptPanel({ editorId }) {
               MenuProps={{
                 anchorOrigin: {
                   vertical: 'bottom',
-                  horizontal: 'left',
+                  horizontal: 'center',
                 },
                 transformOrigin: {
                   vertical: 'top',
-                  horizontal: 'left',
+                  horizontal: 'center',
                 },
                 getContentAnchorEl: null,
                 classes: { paper: classes.selectMenu },
