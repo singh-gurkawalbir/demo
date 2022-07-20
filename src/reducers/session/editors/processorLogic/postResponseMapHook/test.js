@@ -29,13 +29,13 @@ describe('postResponseMapHook processor logic', () => {
         stage: 'postResponseMapHook',
         resourceId: '363833992',
         resourceType: 'imports',
-        resourceIndex: 0,
+        pageProcessorIndex: 0,
       };
       const expectedOutput = {
         stage: 'postResponseMapHook',
         resourceId: '363833992',
         resourceType: 'imports',
-        resourceIndex: 0,
+        pageProcessorIndex: 0,
         rule: {
           entryFunction: 'postResponseMap',
           fetchScriptContent: true,
@@ -78,13 +78,13 @@ describe('postResponseMapHook processor logic', () => {
         stage: 'postResponseMapHook',
         resourceId: 'exp-123',
         resourceType: 'exports',
-        resourceIndex: 0,
+        pageProcessorIndex: 0,
       };
       const expectedOutput = {
         stage: 'postResponseMapHook',
         resourceId: 'exp-123',
         resourceType: 'exports',
-        resourceIndex: 0,
+        pageProcessorIndex: 0,
         rule: {
           entryFunction: 'dummyFunction',
           fetchScriptContent: true,
@@ -116,7 +116,7 @@ describe('postResponseMapHook processor logic', () => {
         resourceId: '363833992',
         resourceType: 'imports',
         flowId: 'flow-123',
-        resourceIndex: 0,
+        pageProcessorIndex: 0,
         rule: {
           entryFunction: 'postResponseMap',
           fetchScriptContent: true,
@@ -168,7 +168,7 @@ describe('postResponseMapHook processor logic', () => {
         resourceId: '363833992',
         resourceType: 'imports',
         flowId: 'flow-123',
-        resourceIndex: 0,
+        pageProcessorIndex: 0,
         rule: {
           entryFunction: 'postResponseMap',
           fetchScriptContent: true,
@@ -221,7 +221,7 @@ describe('postResponseMapHook processor logic', () => {
         resourceId: 'exp-123',
         resourceType: 'exports',
         flowId: 'flow-123',
-        resourceIndex: 0,
+        pageProcessorIndex: 0,
         rule: {
           entryFunction: 'dummyFunction',
           fetchScriptContent: true,

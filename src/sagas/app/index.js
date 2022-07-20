@@ -2,7 +2,7 @@ import { put, select, delay, call, race, takeEvery, take } from 'redux-saga/effe
 import {isEqual} from 'lodash';
 import { selectors } from '../../reducers';
 import actionTypes from '../../actions/types';
-import { POLLING_STATUS } from '../../utils/constants';
+import { POLLING_STATUS } from '../../constants';
 
 export const POLL_SAMPLE_INTERVAL = 1000;
 

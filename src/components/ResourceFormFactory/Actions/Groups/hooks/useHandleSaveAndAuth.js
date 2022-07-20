@@ -6,7 +6,7 @@ import actions from '../../../../../actions';
 import { useSelectorMemo } from '../../../../../hooks';
 import { selectors } from '../../../../../reducers';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
-import { emptyObject } from '../../../../../utils/constants';
+import { emptyObject } from '../../../../../constants';
 import { useLoadIClientOnce } from '../../../../DynaForm/fields/DynaIclient';
 
 export default function useHandleSaveAndAuth({formKey, resourceType, resourceId, parentContext}) {

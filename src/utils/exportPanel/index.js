@@ -1,8 +1,9 @@
 /*
  * All utility functions related to Exports Preview Panel
  */
-import { FILE_PROVIDER_ASSISTANTS } from '../constants';
+import { FILE_PROVIDER_ASSISTANTS } from '../../constants';
 import { adaptorTypeMap } from '../resource';
+import {HTTP_BASED_ADAPTORS} from '../http';
 
 export const DEFAULT_RECORD_SIZE = 10;
 
@@ -84,9 +85,7 @@ export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
     if (noImportPreviewAssistants.includes(resource.assistant)) return false;
 
     return resource.adaptorType === 'HTTPImport' ||
-    (connection && connection.isHTTP && connection.type === 'rest') ||
-    (connection && connection.http?.formType === 'rest') ||
-    (connection && connection.http?.formType === 'graph_ql');
+    (connection && HTTP_BASED_ADAPTORS.includes(connection.type || connection.http?.formType));
   }
 
   if (resourceType !== 'exports') return false;

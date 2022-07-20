@@ -1,10 +1,10 @@
 import React from 'react';
-import SvgIcon from '@material-ui/core/SvgIcon';
+import { SvgIcon } from '@material-ui/core/';
 
 export default function DiamondIcon(props) {
   return (
-    <SvgIcon {...props} width="46" height="46" viewBox="0 0 46 46">
-      <path d="M3.68903 22.9214L22.6475 0.273839L41.6061 22.9214L22.6475 45.5689L3.68903 22.9214Z" />
+    <SvgIcon {...props}>
+      <path d="m0,12l12,-12l12,12l-12,12l-12,-12z" />
     </SvgIcon>
   );
 }

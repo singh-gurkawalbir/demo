@@ -8,7 +8,7 @@ import DrawerHeader from '../../Right/DrawerHeader';
 import DrawerFooter from '../../Right/DrawerFooter';
 import RightDrawer from '../../Right';
 import { selectors } from '../../../../reducers';
-import { REVISION_STATUS, REVISION_TYPES } from '../../../../utils/constants';
+import { REVISION_STATUS, REVISION_TYPES } from '../../../../constants';
 import ViewResourceChanged from './ResourcesChanged';
 import ViewDetails from './RevisionDetails';
 import ExpandAllResourceDiff from '../components/ExpandAllResourceDiff';

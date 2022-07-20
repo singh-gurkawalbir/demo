@@ -17,7 +17,7 @@ import notificationsMetadata from './metadata';
 import SaveAndCloseButtonGroupForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 import commKeyGen from '../../../../utils/commKeyGenerator';
 import { useFormOnCancel } from '../../../FormOnCancelContext/index';
-import { MANAGE_NOTIFICATIONS_FORM_KEY } from '../../../../utils/constants';
+import { MANAGE_NOTIFICATIONS_FORM_KEY } from '../../../../constants';
 import { drawerPaths } from '../../../../utils/rightDrawer';
 
 function ManageNotifications({ integrationId, childId, onClose }) {

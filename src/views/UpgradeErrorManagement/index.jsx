@@ -8,7 +8,7 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import useConfirmDialog from '../../components/ConfirmDialog';
-import { ERROR_MANAGEMENT_DOC_URL } from '../../utils/constants';
+import { ERROR_MANAGEMENT_DOC_URL } from '../../constants';
 import LoadResources from '../../components/LoadResources';
 import ActionGroup from '../../components/ActionGroup';
 import TextButton from '../../components/Buttons/TextButton';

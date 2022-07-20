@@ -9,7 +9,7 @@ import rdbmsMetadata from '../../../Lookup/Manage/metadata/rdbms';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import EditorDrawer from '../../../AFE/Drawer';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 
 export default function ManageLookup({
   onSave,

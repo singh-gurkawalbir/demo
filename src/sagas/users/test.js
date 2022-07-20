@@ -39,7 +39,7 @@ import {
   deleteSuiteScriptLinkedConnection,
   refreshLicensesCollection,
 } from '.';
-import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../utils/constants';
+import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../constants';
 import getRequestOptions from '../../utils/requestOptions';
 import { APIException } from '../api/requestInterceptors/utils';
 import { getResourceCollection } from '../resources';
@@ -1093,6 +1093,29 @@ describe('all modal sagas', () => {
           }]})
         .not.put(actions.resource.requestCollection('integrations'))
         .put(actions.license.licenseUpgradeRequestSubmitted(response))
+        .run();
+    });
+    test('should handle if it is actionType of upgrade and feature is sso', () => {
+      const actionType = 'upgrade';
+      const feature = 'SSO';
+      const response = {
+        key: 'something',
+      };
+      const { path, opts } = getRequestOptions(actionTypes.LICENSE.UPDATE_REQUEST, {
+        actionType, feature,
+      });
+
+      return expectSaga(requestLicenseUpdate, { actionType, feature })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), response],
+        ])
+        .call.like({fn: apiCallWithRetry,
+          args: [{
+            path,
+            opts,
+          }]})
+        .not.put(actions.resource.requestCollection('integrations'))
+        .put(actions.license.licenseUpgradeRequestSubmitted(response, feature))
         .run();
     });
     test('should handle if apiCallWithRetry fails', () => {

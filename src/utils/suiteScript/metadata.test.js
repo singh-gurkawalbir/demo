@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 
 import { filterSubListProperties, getFormattedNSCustomerSampleData, getFormattedNSSalesOrderMetadataData } from './metadata';
-import {emptyList} from '../constants';
+import {emptyList} from '../../constants';
 
 describe('utils/suiteScript/metadata test cases', () => {
   describe('filterSubListProperties util', () => {

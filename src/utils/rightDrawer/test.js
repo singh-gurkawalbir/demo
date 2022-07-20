@@ -1,6 +1,6 @@
 /* global expect, describe, test */
 
-import { DRAWER_URL_PREFIX, buildDrawerUrl, drawerPaths } from '.';
+import { buildDrawerUrl, drawerPaths } from '.';
 
 describe('buildDrawerUrl testcases', () => {
   const baseUrl = 'http://localhost.io:4000/integrations';
@@ -12,7 +12,7 @@ describe('buildDrawerUrl testcases', () => {
       flowJobId: 'f1',
       errorType: 'open',
     };
-    const expectedUrl = `${baseUrl}/${DRAWER_URL_PREFIX}/errors/e1/filter/f1/open`;
+    const expectedUrl = `${baseUrl}/errors/e1/filter/f1/open`;
 
     expect(buildDrawerUrl({
       path: drawerPath,

@@ -5,7 +5,7 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../../constants/resource
 import { selectors } from '../../../../reducers';
 import {
   STANDALONE_INTEGRATION,
-} from '../../../../utils/constants';
+} from '../../../../constants';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import getRoutePath from '../../../../utils/routePaths';
 
@@ -16,6 +16,12 @@ export default function NameCell({al, actionProps}) {
       const { integrationId } = actionProps;
 
       return selectors.revision(state, integrationId, al._resourceId)?.description;
+    }
+    if (resourceType === 'users') {
+      const { integrationId } = actionProps;
+      const user = selectors.availableUsersList(state, integrationId)?.find(user => user.sharedWithUser?._id === al._resourceId);
+
+      return user?.sharedWithUser?.name || user?.sharedWithUser?.email;
     }
 
     return selectors.resource(state, resourceType, al._resourceId)?.name;
@@ -45,6 +51,10 @@ export default function NameCell({al, actionProps}) {
     }
 
     return al.deletedInfo.name || '';
+  }
+
+  if (resourceType === 'users') {
+    return resourceName || al._resourceId;
   }
 
   return (
