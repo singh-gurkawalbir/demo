@@ -24,7 +24,23 @@ describe('PageBar2 UI tests', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  async function renderWithIntegrations(mode, store) {
+  function renderFunction() {
+    const {store} = renderWithProviders(
+      <ConfirmDialogProvider>
+        <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>
+          <Route path="/:integrationId"><PageBar /></Route>
+        </MemoryRouter>
+      </ConfirmDialogProvider>);
+
+    return store;
+  }
+  async function prefAndIntegInStore(store) {
+    store.dispatch(actions.user.preferences.request());
+    store.dispatch(actions.resource.requestCollection('integrations'));
+    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
+    await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
+  }
+  async function renderWithIntegrationsMode(mode) {
     mockGetRequestOnce('/api/integrations', [
       {
         _id: '5ff579d745ceef7dcd797c15',
@@ -86,6 +102,13 @@ describe('PageBar2 UI tests', () => {
         _parentId: '5ff579d745ceef7dcd797c15',
       },
     ]);
+    const {store} = renderWithProviders(
+      <ConfirmDialogProvider>
+        <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/5ff579d745ceef7dcd797c16']}>
+          <Route path="/:integrationId/:childId"><PageBar /></Route>
+        </MemoryRouter>
+      </ConfirmDialogProvider>);
+
     store.dispatch(actions.user.preferences.request());
     store.dispatch(actions.resource.requestCollection('integrations'));
     await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
@@ -94,22 +117,14 @@ describe('PageBar2 UI tests', () => {
   test('should test title as standalone', () => {
     renderWithProviders(<MemoryRouter><PageBar /></MemoryRouter>);
     expect(screen.getByText('Standalone flows')).toBeInTheDocument();
-    screen.debug();
   });
-  test('should test title with some integrations Id', async () => {
+  test('should test title with some integrationId', async () => {
     const mockdispatch = jest.fn();
 
     jest.spyOn(reactRedux, 'useDispatch').mockReturnValue(mockdispatch);
-    const {store} = renderWithProviders(
-      <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>
-        <Route path="/:integrationId"><PageBar /></Route>
-      </MemoryRouter>);
+    const store = renderFunction();
 
-    expect(screen.getByText('Standalone flows')).toBeInTheDocument();
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.resource.requestCollection('integrations'));
-    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
+    await prefAndIntegInStore(store);
     const name = screen.getByText('AFE 2.0 refactoring for DB\'s');
 
     userEvent.click(name);
@@ -128,41 +143,24 @@ describe('PageBar2 UI tests', () => {
       type: 'RESOURCE_STAGE_PATCH_AND_COMMIT'});
   });
   test('should test clonebutton', async () => {
-    const {store} = renderWithProviders(
-      <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>
-        <Route path="/:integrationId"><PageBar /></Route>
-      </MemoryRouter>);
+    const store = renderFunction();
 
-    expect(screen.getByText('Standalone flows')).toBeInTheDocument();
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.resource.requestCollection('integrations'));
-    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
+    await prefAndIntegInStore(store);
 
     const clonebutton = screen.getByRole('button', {name: 'Clone integration'});
 
     expect(clonebutton).toHaveAttribute('href', '/clone/integrations/5ff579d745ceef7dcd797c15/preview');
   });
   test('should test delete button', async () => {
-    const {store} = renderWithProviders(
-      <ConfirmDialogProvider>
-        <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>
-          <Route path="/:integrationId"><PageBar /></Route>
-        </MemoryRouter>
-      </ConfirmDialogProvider>);
+    const store = renderFunction();
 
-    expect(screen.getByText('Standalone flows')).toBeInTheDocument();
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.resource.requestCollection('integrations'));
-    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
-
+    await prefAndIntegInStore(store);
     const deletebutton = screen.getByRole('button', {name: 'Delete integration'});
 
     userEvent.click(deletebutton);
     await waitFor(() => expect(screen.getByText('Confirm delete')).toBeInTheDocument());
   });
-  test('should test add child ', async () => {
+  test('should test add child option', async () => {
     const mockdispatch = jest.fn();
 
     jest.spyOn(reactRedux, 'useDispatch').mockReturnValue(mockdispatch);
@@ -186,32 +184,16 @@ describe('PageBar2 UI tests', () => {
       createdAt: '2021-01-06T08:50:31.935Z',
     }]);
 
-    const {store} = renderWithProviders(
-      <ConfirmDialogProvider>
-        <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>
-          <Route path="/:integrationId"><PageBar /></Route>
-        </MemoryRouter>
-      </ConfirmDialogProvider>);
+    const store = renderFunction();
 
-    expect(screen.getByText('Standalone flows')).toBeInTheDocument();
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.resource.requestCollection('integrations'));
-    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
+    await prefAndIntegInStore(store);
     const add = screen.getByText('Add new child');
 
     userEvent.click(add);
     expect(mockdispatch).toHaveBeenCalledWith({id: '5ff579d745ceef7dcd797c15', type: 'NTEGRATION_APPS_INSTALLER_INIT_CHILD'});
   });
-  test('should test chnage child mode none ', async () => {
-    const {store} = renderWithProviders(
-      <ConfirmDialogProvider>
-        <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/5ff579d745ceef7dcd797c16']}>
-          <Route path="/:integrationId/:childId"><PageBar /></Route>
-        </MemoryRouter>
-      </ConfirmDialogProvider>);
-
-    await renderWithIntegrations(null, store);
+  test('should test change child where mode is none ', async () => {
+    await renderWithIntegrationsMode(null);
 
     const select = screen.getByText('AFE 2.0 2');
 
@@ -223,15 +205,8 @@ describe('PageBar2 UI tests', () => {
     await waitFor(() => expect(screen.queryByText('Select child')).not.toBeInTheDocument());
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/5ff579d745ceef7dcd797c15/flows');
   });
-  test('should test chnage child mode install ', async () => {
-    const {store} = renderWithProviders(
-      <ConfirmDialogProvider>
-        <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/5ff579d745ceef7dcd797c16']}>
-          <Route path="/:integrationId/:childId"><PageBar /></Route>
-        </MemoryRouter>
-      </ConfirmDialogProvider>);
-
-    await renderWithIntegrations('install', store);
+  test('should test change child mode install ', async () => {
+    await renderWithIntegrationsMode('install');
 
     const select = screen.getByText('AFE 2.0 2');
 
@@ -243,15 +218,8 @@ describe('PageBar2 UI tests', () => {
     await waitFor(() => expect(screen.queryByText('Select child')).not.toBeInTheDocument());
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE203/5ff579d745ceef7dcd797c17/setup');
   });
-  test('should test chnage child mode uninstall ', async () => {
-    const {store} = renderWithProviders(
-      <ConfirmDialogProvider>
-        <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/5ff579d745ceef7dcd797c16']}>
-          <Route path="/:integrationId/:childId"><PageBar /></Route>
-        </MemoryRouter>
-      </ConfirmDialogProvider>);
-
-    await renderWithIntegrations('uninstall', store);
+  test('should test change child mode uninstall ', async () => {
+    await renderWithIntegrationsMode('uninstall');
 
     const select = screen.getByText('AFE 2.0 2');
 
