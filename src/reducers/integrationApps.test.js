@@ -6945,4 +6945,3 @@ describe('integrationApps selector testcases', () => {
     });
   });
 });
-
