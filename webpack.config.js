@@ -110,6 +110,7 @@ const config = {
       GA_KEY_2_EU: JSON.stringify(process.env.GA_KEY_2_EU),
       IO_LOGIN_PROMOTION_URL: JSON.stringify(process.env.IO_LOGIN_PROMOTION_URL),
       IO_LOGIN_PROMOTION_URL_EU: JSON.stringify(process.env.IO_LOGIN_PROMOTION_URL_EU),
+      PORTAL_URL: JSON.stringify(process.env.PORTAL_URL),
     }),
   ],
   output: {
@@ -239,6 +240,7 @@ module.exports = (env, argv) => {
         '/litmos/sso': proxyOpts,
         '/auth/google': proxyOpts,
         '/reSigninWithGoogle': proxyOpts,
+        '/mfa/verify': proxyOpts,
         '/reSigninWithSSO/*': proxyOpts,
         '/sso/*': proxyOpts,
         '/link/google': proxyOpts,

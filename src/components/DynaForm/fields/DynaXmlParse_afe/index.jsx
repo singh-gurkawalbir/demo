@@ -16,6 +16,7 @@ import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDataChange from '../DynaCsvParse_afe/FileDataChange';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import { emptyObject } from '../../../../constants';
 
 const getParserValue = ({
   resourcePath,
@@ -81,6 +82,7 @@ export default function DynaXmlParse_afe({
   resourceType,
   disabled,
   flowId,
+  formKey,
   label,
   formKey: parentFormKey,
 }) {
@@ -91,14 +93,26 @@ export default function DynaXmlParse_afe({
   const editorId = getValidRelativePath(id);
   const [remountKey, setRemountKey] = useState(1);
 
-  const resourcePath = useSelector(state =>
-    selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
+  const isParserSupported = useSelector(state => selectors.isParserSupported(state, formKey, 'xml'));
+
+  const resourcePath = useSelector(state => {
+    const resource = selectors.resource(state, resourceType, resourceId) || emptyObject;
+
+    return resource.file?.xml?.resourcePath || resource.http?.response?.resourcePath;
+  });
+
   const getInitOptions = useCallback(
     val => ({ resourcePath, ...val?.[0]?.rules}),
     [resourcePath],
   );
   const options = useMemo(() => getInitOptions(value), [getInitOptions, value]);
-  const [form, setForm] = useState(getForm(options, resourceId));
+  const [form, setForm] = useState(getForm(options, resourceId, isParserSupported));
+
+  //  The below useEffect is to re-initialize the xml parser on changing the final success media type.
+  useEffect(() => {
+    setForm(getForm(options, resourceId, isParserSupported));
+    setRemountKey(remountKey => remountKey + 1);
+  }, [isParserSupported]);
 
   // below logic would need to move to data-layer as part of tracker IO-17578
   useEffect(() => {
@@ -108,16 +122,15 @@ export default function DynaXmlParse_afe({
         {
           op: 'replace',
           path: '/parsers',
-          value:
-            {
-              type: 'xml',
-              version: 1,
-              rules: {
-                V0_json: true,
-                stripNewLineChars: false,
-                trimSpaces: false,
-              },
+          value: {
+            type: 'xml',
+            version: 1,
+            rules: {
+              V0_json: true,
+              stripNewLineChars: false,
+              trimSpaces: false,
             },
+          },
 
         }];
 
@@ -179,6 +192,8 @@ export default function DynaXmlParse_afe({
       params: { editorId },
     }));
   }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
+
+  if (!isParserSupported) return null;
 
   return (
     <>

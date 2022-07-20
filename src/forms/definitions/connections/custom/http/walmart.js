@@ -11,7 +11,7 @@ export default {
     '/http/baseURI': `https://${
       formValues['/environment'] === 'sandbox' ? 'sandbox' : 'marketplace'
     }.walmartapis.com/v3`,
-    '/http/ping/relativeURI': '/feeds',
+    '/http/ping/relativeURI': '/items',
     '/http/ping/method': 'GET',
     '/http/headers': [
       {

@@ -8,6 +8,7 @@ import {
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
 } from '../../constants/resource';
 import CeligoSelect from '../CeligoSelect';
+import { AUDIT_LOG_EVENT_LABELS } from '../../constants/auditLog';
 
 const OPTION_ALL = { id: 'all', label: 'All' };
 
@@ -28,6 +29,11 @@ const resourceTypeInput = {
   id: 'resourceType',
 };
 
+const eventInput = {
+  name: 'event',
+  id: 'event',
+};
+
 export function ResourceTypeFilter(props) {
   const classes = useStyles();
   const {
@@ -43,6 +49,7 @@ export function ResourceTypeFilter(props) {
     'stacks',
     'scripts',
     'apis',
+    'agents',
   ];
   const resource =
     resourceType &&
@@ -78,6 +85,13 @@ export function ResourceTypeFilter(props) {
           'asynchelper',
           'filedefinition',
           'revision',
+          'script',
+          'api',
+          'accesstoken',
+          'ssoclient',
+          'agent',
+          'user',
+          'notification',
         ],
   };
 
@@ -171,6 +185,34 @@ export function ResourceIdFilter(props) {
           {OPTION_ALL.label}
         </MenuItem>
         {menuOptions}
+      </CeligoSelect>
+    </FormControl>
+  );
+}
+
+export function AuditLogActionFilter({
+  classes,
+  filters,
+  onChange,
+}) {
+  return (
+    <FormControl className={classes.formControl}>
+      <CeligoSelect
+        isLoggable
+        inputProps={eventInput}
+        onChange={onChange}
+        value={filters.event}>
+        <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
+          Select action
+        </MenuItem>
+        {[
+          ...Object.keys(AUDIT_LOG_EVENT_LABELS)
+            .map(k => [k, AUDIT_LOG_EVENT_LABELS[k]]),
+        ].map(opt => (
+          <MenuItem key={opt[0]} value={opt[0]}>
+            {opt[1]}
+          </MenuItem>
+        ))}
       </CeligoSelect>
     </FormControl>
   );

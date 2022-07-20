@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, {selectors} from '.';
 import actions from '../../../actions';
-import {HOME_PAGE_PATH} from '../../../utils/constants';
+import {HOME_PAGE_PATH} from '../../../constants';
 
 describe('integration redirectTo action', () => {
   test('should set redirectTo prop on to the state and should not clear other data', () => {

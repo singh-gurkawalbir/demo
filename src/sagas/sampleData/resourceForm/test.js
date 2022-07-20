@@ -26,7 +26,7 @@ import { _fetchResourceInfoFromFormKey, extractFileSampleDataProps, executeTrans
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import { pageProcessorPreview } from '../utils/previewCalls';
 import { getCsvFromXlsx } from '../../../utils/file';
-import { STANDALONE_INTEGRATION } from '../../../utils/constants';
+import { STANDALONE_INTEGRATION } from '../../../constants';
 import {
   constructResourceFromFormValues,
   constructSuiteScriptResourceFromFormValues,
@@ -193,6 +193,7 @@ describe('resourceFormSampleData sagas', () => {
           [call(executeTransformationRules, {
             transform: resourceObj?.transform,
             sampleData: parsedData,
+            isIntegrationApp: false,
           }), { data: transformedData }],
           [select(
             selectors.getResourceSampleDataWithStatus,
@@ -228,6 +229,7 @@ describe('resourceFormSampleData sagas', () => {
           [call(executeTransformationRules, {
             transform: resourceObj?.transform,
             sampleData: parsedData,
+            isIntegrationApp: false,
           }), { data: transformedData}],
           [select(
             selectors.getResourceSampleDataWithStatus,
@@ -237,6 +239,7 @@ describe('resourceFormSampleData sagas', () => {
           [call(executeJavascriptHook, {
             hook: resourceObj?.hooks?.preSavePage,
             sampleData: transformedData,
+            isIntegrationApp: false,
           }), { data: preSavePageHookData }],
         ])
         .put(actions.resourceFormSampleData.setProcessorData({
@@ -365,7 +368,7 @@ describe('resourceFormSampleData sagas', () => {
         .delay(500)
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
         .not.call.fn(_requestExportSampleData)
-        .call(_requestImportSampleData, { formKey, refreshCache: undefined, isMockInput: undefined })
+        .call(_requestImportSampleData, { formKey, refreshCache: undefined })
         .run(500);
     });
     test('should dispatch requested status and call _requestImportSampleData incase of exports resourceType ', () => {
@@ -378,7 +381,7 @@ describe('resourceFormSampleData sagas', () => {
         ])
         .delay(500)
         .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
-        .call(_requestExportSampleData, { formKey, refreshCache, executeProcessors: undefined, isMockInput: undefined})
+        .call(_requestExportSampleData, { formKey, refreshCache, executeProcessors: undefined})
         .not.call.fn(_requestImportSampleData)
         .run(500);
     });
@@ -421,9 +424,9 @@ describe('resourceFormSampleData sagas', () => {
       .provide([
         [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId, resourceObj: {} }],
         [select(selectors.isLookUpExport, {flowId, resourceId, resourceType: 'exports'}), true],
-        [call(_requestLookupSampleData, { formKey, refreshCache, isMockInput: undefined, addMockData: true }), {}],
+        [call(_requestLookupSampleData, { formKey, refreshCache }), {}],
       ])
-      .call(_requestLookupSampleData, { formKey, refreshCache, isMockInput: undefined, addMockData: true })
+      .call(_requestLookupSampleData, { formKey, refreshCache })
       .not.call.fn(_requestPGExportSampleData)
       .run());
     test('should call _requestFileSampleData incase of suitescript file resource', () => {
@@ -985,8 +988,7 @@ describe('resourceFormSampleData sagas', () => {
             throwOnError: true,
             includeStages: true,
             refresh: false,
-            isMockInput: undefined,
-            addMockData: undefined,
+            addMockData: true,
           }), previewData],
         ])
         .not.call.fn(_requestFileSampleData)
@@ -999,8 +1001,7 @@ describe('resourceFormSampleData sagas', () => {
           throwOnError: true,
           includeStages: true,
           refresh: false,
-          isMockInput: undefined,
-          addMockData: undefined,
+          addMockData: true,
         })
         .put(actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData))
         .run();

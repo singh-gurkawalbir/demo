@@ -1,6 +1,6 @@
 import React from 'react';
 import { isNewId } from '../../../utils/resource';
-import { HELP_CENTER_BASE_URL } from '../../../utils/constants';
+import { HELP_CENTER_BASE_URL } from '../../../constants';
 
 export default {
   preSave: formValues => {

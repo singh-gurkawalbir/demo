@@ -12,7 +12,7 @@ import { getResource } from '../../../resources';
 export const SUITESCRIPT_FILE_RESOURCE_TYPES = ['fileCabinet', 'ftp'];
 export const FILE_DEFINITION_TYPES = ['filedefinition', 'fixed', 'delimited/edifact'];
 const EXPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json', 'xml'];
-export const IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json'];
+export const IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES = ['csv', 'xlsx', 'json', 'xml'];
 export const VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA = ['exports', 'imports'];
 
 function extractResourcePath(value, initialResourcePath) {
@@ -96,9 +96,10 @@ export function* extractFileSampleDataProps({ formKey }) {
   const fileProps = resourceObj.file[fileType] || {};
   const fileId = `${resourceId}-uploadFile`;
   const uploadedFileObj = yield select(selectors.getUploadedFile, fileId);
+  const oldResourceDoc = yield select(selectors.resource, 'exports', resourceObj._id);
   const { file: uploadedFile } = uploadedFileObj || {};
   const hasSampleData = yield call(_hasSampleDataOnResource, { formKey });
-  const parserOptions = generateFileParserOptionsFromResource(resourceObj);
+  const parserOptions = generateFileParserOptionsFromResource(resourceObj, oldResourceDoc);
 
   if (FILE_DEFINITION_TYPES.includes(fileType)) {
     const fieldState = yield select(selectors.fieldState, formKey, 'file.filedefinition.rules');
@@ -128,7 +129,7 @@ export function* extractFileSampleDataProps({ formKey }) {
   return {};
 }
 
-export function* executeTransformationRules({ transform = {}, sampleData }) {
+export function* executeTransformationRules({ transform = {}, sampleData, isIntegrationApp }) {
   let hasNoRulesToProcess = false;
   let processorData;
 
@@ -148,16 +149,17 @@ export function* executeTransformationRules({ transform = {}, sampleData }) {
     const { _scriptId, function: entryFunction } = transform.script || {};
 
     if (_scriptId) {
-      const script = yield call(getResource, {
+      const script = !isIntegrationApp ? (yield call(getResource, {
         resourceType: 'scripts',
         id: _scriptId,
-      });
+      })) : {};
 
       processorData = {
         data: { record: sampleData },
         rule: {
           code: script?.content,
           entryFunction,
+          script: _scriptId,
         },
         editorType: 'javascript',
       };
@@ -186,16 +188,16 @@ export function* executeTransformationRules({ transform = {}, sampleData }) {
   return { data: processedData?.data?.[0] };
 }
 
-export function* executeJavascriptHook({ hook = {}, sampleData }) {
+export function* executeJavascriptHook({ hook = {}, sampleData, isIntegrationApp }) {
   let processorData;
   let hasNoRulesToProcess = false;
 
   if (hook._scriptId) {
     const scriptId = hook._scriptId;
-    const script = yield call(getResource, {
+    const script = !isIntegrationApp ? (yield call(getResource, {
       resourceType: 'scripts',
       id: scriptId,
-    });
+    })) : {};
     const { content: code } = script;
 
     processorData = {
@@ -203,6 +205,7 @@ export function* executeJavascriptHook({ hook = {}, sampleData }) {
       rule: {
         code,
         entryFunction: hook.function,
+        scriptId,
       },
       editorType: 'javascript',
     };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
+import { Tooltip } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import ShowContentIcon from '../../../../icons/ShowContentIcon';
 import EditIcon from '../../../../icons/EditIcon';
@@ -28,35 +29,41 @@ export default function Notifications({ user, integrationId, childId }) {
 
   if (!canManageNotifications) {
     return (
-      <Link
-        to={buildDrawerUrl({
-          path: drawerPaths.ACCOUNT.VIEW_NOTIFICATIONS_SETUP,
-          baseUrl: match.url,
-          params: { userEmail },
-        })}><ShowContentIcon />
-      </Link>
+      <Tooltip title="View notifications" placement="bottom">
+        <Link
+          to={buildDrawerUrl({
+            path: drawerPaths.ACCOUNT.VIEW_NOTIFICATIONS_SETUP,
+            baseUrl: match.url,
+            params: { userEmail },
+          })}><ShowContentIcon />
+        </Link>
+      </Tooltip>
     );
   }
 
   if (hasNotifications) {
     return (
+      <Tooltip title="Edit notifications" placement="bottom">
+        <Link
+          to={buildDrawerUrl({
+            path: drawerPaths.ACCOUNT.MANAGE_NOTIFICATIONS_SETUP,
+            baseUrl: match.url,
+            params: { userEmail },
+          })}><EditIcon />
+        </Link>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <Tooltip title="Add notifications" placement="bottom">
       <Link
         to={buildDrawerUrl({
           path: drawerPaths.ACCOUNT.MANAGE_NOTIFICATIONS_SETUP,
           baseUrl: match.url,
           params: { userEmail },
-        })}><EditIcon />
+        })}><AddIcon />
       </Link>
-    );
-  }
-
-  return (
-    <Link
-      to={buildDrawerUrl({
-        path: drawerPaths.ACCOUNT.MANAGE_NOTIFICATIONS_SETUP,
-        baseUrl: match.url,
-        params: { userEmail },
-      })}><AddIcon />
-    </Link>
+    </Tooltip>
   );
 }

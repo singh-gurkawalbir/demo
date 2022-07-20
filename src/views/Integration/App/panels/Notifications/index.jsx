@@ -11,7 +11,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useGetNotificationOptions from '../../../../../hooks/useGetNotificationOptions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import { UNASSIGNED_SECTION_NAME } from '../../../../../utils/constants';
+import { UNASSIGNED_SECTION_NAME } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -133,7 +133,7 @@ export default function NotificationsSection({ integrationId, childId }) {
     <div className={classes.root}>
       <PanelHeader title="Notifications" infoText={infoTextNotifications} />
 
-      <LoadResources required resources="notifications,flows,connections,exports,imports">
+      <LoadResources required integrationId={integrationId} resources="notifications,flows,connections,exports,imports">
         <div className={classes.form}>
           <DynaForm formKey={formKey} />
           <DynaSubmit formKey={formKey} onClick={handleSubmit}>

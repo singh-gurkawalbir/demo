@@ -45,7 +45,7 @@ function ErrorInfoDrawerContent({ integrationId, revisionId, parentUrl }) {
       </DrawerContent>
       <DrawerFooter>
         <FilledButton
-          data-test="cancelCreatePull"
+          data-test="cancelRevisonErrorInfo"
           onClick={onClose}>
           Close
         </FilledButton>

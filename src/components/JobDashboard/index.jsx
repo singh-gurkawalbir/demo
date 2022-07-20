@@ -233,8 +233,8 @@ export default function JobDashboard({
           jobsToResolve.forEach(job =>
             dispatch(
               actions.job.resolveUndo({
-                parentJobId: job._flowJobId || job._id,
-                childJobId: job._flowJobId ? job._id : null,
+                parentJobId: job._parentJobId || job._flowJobId || job._id,
+                childJobId: (job._parentJobId || job._flowJobId) ? job._id : null,
               })
             )
           );
@@ -341,8 +341,8 @@ export default function JobDashboard({
           jobsToRetry.forEach(job =>
             dispatch(
               actions.job.retryUndo({
-                parentJobId: job._flowJobId || job._id,
-                childJobId: job._flowJobId ? job._id : null,
+                parentJobId: job._parentJobId || job._flowJobId || job._id,
+                childJobId: (job._parentJobId || job._flowJobId) ? job._id : null,
               })
             )
           );
@@ -399,7 +399,7 @@ export default function JobDashboard({
   });
 
   return (
-    <LoadResources required resources="integrations,flows,exports,imports">
+    <LoadResources required integrationId={integrationId} resources="integrations,flows,exports,imports">
       <Filters
         filterKey={filterKey}
         integrationId={integrationId}

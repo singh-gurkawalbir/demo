@@ -17,7 +17,7 @@ const useIntegration = (resourceType, resourceId) => {
   const isIAResource = isIntegrationApp(resource);
 
   if (isIAResource || resourceType === 'flows') {
-    return resource._integrationId;
+    return resource?._integrationId;
   }
 
   const url = history.location.pathname;

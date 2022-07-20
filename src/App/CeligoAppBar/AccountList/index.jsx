@@ -15,6 +15,7 @@ import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import getRoutePath from '../../../utils/routePaths';
 import TrashIcon from '../../../components/icons/TrashIcon';
 import { TextButton } from '../../../components/Buttons';
+import { stringCompare } from '../../../utils/sort';
 
 const useStyles = makeStyles(theme => ({
   currentAccount: {
@@ -209,7 +210,7 @@ function AccountList() {
         onClose={handleClose}>
         <List
           dense className={classes.listWrapper}>
-          {accounts.map(a => (
+          {accounts.sort(stringCompare('company')).map(a => (
             <ListItem
               button
               onClick={() => {

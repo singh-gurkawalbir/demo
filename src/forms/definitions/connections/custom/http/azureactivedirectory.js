@@ -6,6 +6,8 @@ export default {
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://graph.microsoft.com',
+    '/http/ping/relativeURI': '/v1.0/users',
+    '/http/ping/method': 'GET',
     '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
     '/http/auth/oauth/tokenURI':
@@ -13,7 +15,6 @@ export default {
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/oauth/scope': [
-      ...['offline_access'],
       ...formValues['/http/auth/oauth/scope'],
     ],
     '/http/auth/token/refreshMediaType': 'urlencoded',
@@ -23,6 +24,7 @@ export default {
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
+        'Directory.AccessAsUser.All',
         'offline_access',
         'User.Export.All',
         'User.Invite.All',
@@ -34,6 +36,7 @@ export default {
         'UserActivity.ReadWrite.CreatedByApp',
         'UserTimelineActivity.Write.CreatedByApp',
       ],
+      defaultValue: r => (r?.http?.auth?.oauth.scope) || ['offline_access'],
     },
     application: {
       fieldId: 'application',

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import DynaSelect from './DynaSelect';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -11,8 +11,8 @@ export default function DynaFileDefinitionSelect(props) {
   // Get File definitions based on the file type format
   // Formats: edix12, fixed or edifact
   const { data: fileDefinitions = [], status } = useSelector(state =>
-    selectors.preBuiltFileDefinitions(state, format)
-  );
+    selectors.preBuiltFileDefinitions(state, format),
+  shallowEqual);
 
   /*
    * Definition template is saved under template inside a definition

@@ -1,7 +1,13 @@
+import React from 'react';
 import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
 import MappingsPanel from '../Editor/panels/Mappings';
+import Mapper2Guide from '../Drawer/actions/Mapper2Guide';
+import ToggleMapperVersion from '../Drawer/actions/ToggleMapperVersion';
+import InputOutputTitle from '../Editor/actions/Mappings/InputOutputTitle';
+import MapperPanelTitle from '../Editor/actions/Mappings/MapperPanelTitle';
 import AssistantPanel from '../Editor/panels/Mappings/Assistant/Panel';
+import MappingAssistantTitle from '../Editor/actions/Mappings/MappingAssistantTitle';
 
 export default {
   type: 'mappings',
@@ -10,7 +16,7 @@ export default {
   panels: ({layout, mappingPreviewType}) => {
     const panels = [
       {
-        title: 'Rules',
+        title: ({editorId}) => <MapperPanelTitle editorId={editorId} title="Rules" helpKey="afe.mappings.v2.rule" />,
         area: 'rule',
         isLoggable: true,
         Panel: MappingsPanel,
@@ -20,30 +26,27 @@ export default {
     if (!!mappingPreviewType && ['assistantRight', 'assistantTopRight'].includes(layout)) {
       panels.push(
         {
-          title: `${mappingPreviewType === 'netsuite' ? 'NetSuite' : 'Salesforce'} mapping assistant`,
+          title: ({editorId}) => <MappingAssistantTitle editorId={editorId} />,
           area: 'assistant',
           Panel: AssistantPanel,
-          helpKey: `${mappingPreviewType === 'netsuite' ? 'afe.mappings.netsuite.assistant' : 'afe.mappings.salesforce.assistant'}`,
-        },
+        }
       );
     }
 
     if (!mappingPreviewType || layout !== 'assistantRight') {
       panels.push(
         {
-          title: 'Input',
+          title: ({editorId}) => <InputOutputTitle editorId={editorId} title="Input" helpKey="afe.mappings.input" />,
           area: 'data',
           Panel: DataPanel,
-          helpKey: 'afe.mappings.input',
           props: {
             mode: 'json',
           },
         },
         {
-          title: 'Output',
+          title: ({editorId}) => <InputOutputTitle editorId={editorId} title="Output" helpKey="afe.mappings.output" />,
           area: 'result',
           Panel: ResultPanel,
-          helpKey: 'afe.mappings.output',
           props: {
             mode: 'json',
           },
@@ -55,5 +58,11 @@ export default {
   },
   drawer: {
     showLayoutToggle: true,
+    actions: [
+      { component: ToggleMapperVersion,
+        position: 'left',
+      },
+      { component: Mapper2Guide, position: 'right' },
+    ],
   },
 };

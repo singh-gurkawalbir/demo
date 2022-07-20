@@ -5,7 +5,7 @@ import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
 import useHandleSaveAndAuth from './hooks/useHandleSaveAndAuth';
 import TestButton from './TestAndSave/TestButton';
-import { FORM_SAVE_STATUS } from '../../../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../../../constants';
 import { PING_STATES } from '../../../../reducers/comms/ping/index';
 
 export default function OAuthAndTest({
@@ -42,7 +42,7 @@ export default function OAuthAndTest({
         formKey={formKey}
         disabled={pingLoading}
         submitTransientLabel="Authorizing..."
-        submitButtonLabel="Save & Authorize"
+        submitButtonLabel="Save & authorize"
         formSaveStatus={formSaveStatus}
         handleSave={handleSave}
         handleCancel={onCancel}

@@ -17,6 +17,7 @@ import {
   retrievingOrgDetails,
   retrievingUserDetails,
   retrievingAssistantDetails,
+  retrievingHttpConnectorDetails,
   validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
   getCSRFTokenBackend,
   setLastLoggedInLocalStorage,
@@ -29,7 +30,7 @@ import {
   fetchUIVersion,
 } from '.';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
-import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, POLLING_STATUS } from '../../utils/constants';
+import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, POLLING_STATUS } from '../../constants';
 import { pollApiRequests, POLL_SAMPLE_INTERVAL } from '../app';
 
 describe('pollApiRequests', () => {
@@ -219,6 +220,13 @@ describe('initialize all app relevant resources sagas', () => {
       expect(saga.next().value).toEqual(
         all([getOrgUsersEffect, getOrgAccountsEffect])
       );
+      const hasAcceptedAccountsEffects = select(
+        selectors.hasAcceptedAccounts
+      );
+
+      expect(saga.next().value).toEqual(
+        hasAcceptedAccountsEffects
+      );
       const defaultAShareIdEffects = select(
         selectors.defaultAShareId
       );
@@ -288,6 +296,7 @@ describe('initialize all app relevant resources sagas', () => {
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
+    const retrievingHttpConnectorDetailsEffect = call(retrievingHttpConnectorDetails);
 
     expect(saga.next().value).toEqual(
       retrievingUserDetailsEffect,
@@ -296,6 +305,7 @@ describe('initialize all app relevant resources sagas', () => {
       all([
         retrievingOrgDetailsEffect,
         retrievingAssistantDetailsEffect,
+        retrievingHttpConnectorDetailsEffect,
       ])
     );
     expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
@@ -321,6 +331,7 @@ describe('initialize all app relevant resources sagas', () => {
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
+    const retrievingHttpConnectorDetailsEffect = call(retrievingHttpConnectorDetails);
 
     expect(saga.next().value).toEqual(
       retrievingUserDetailsEffect,
@@ -329,6 +340,7 @@ describe('initialize all app relevant resources sagas', () => {
       all([
         retrievingOrgDetailsEffect,
         retrievingAssistantDetailsEffect,
+        retrievingHttpConnectorDetailsEffect,
       ])
     );
     expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
@@ -363,6 +375,7 @@ describe('initialize all app relevant resources sagas', () => {
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
+    const retrievingHttpConnectorDetailsEffect = call(retrievingHttpConnectorDetails);
 
     expect(saga.next().value).toEqual(
       retrievingUserDetailsEffect,
@@ -371,6 +384,7 @@ describe('initialize all app relevant resources sagas', () => {
       all([
         retrievingOrgDetailsEffect,
         retrievingAssistantDetailsEffect,
+        retrievingHttpConnectorDetailsEffect,
       ])
     );
     expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));

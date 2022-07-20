@@ -1,6 +1,6 @@
 /* global describe, expect, test */
 import { selectors } from '.';
-import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../utils/constants';
+import { USER_ACCESS_LEVELS, ACCOUNT_IDS, emptyList } from '../constants';
 
 const sampleOIDCClient = {
   _id: '6097fdaf86c0c5190bb3bab3',
@@ -315,6 +315,121 @@ describe('selectors.isUserAllowedOnlySSOSignIn test cases', () => {
     expect(selectors.isUserAllowedOnlySSOSignIn(sampleState)).toBeTruthy();
   });
 });
+
+describe('selectors.primaryAccounts test cases', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(selectors.primaryAccounts()).toEqual(emptyList);
+    expect(selectors.primaryAccounts({})).toEqual(emptyList);
+  });
+  test('should return empty list if the user is an owner', () => {
+    const sampleState = {
+      user: {
+        preferences: {
+          defaultAShareId: ACCOUNT_IDS.OWN,
+        },
+        org: {
+          accounts: [
+            {
+              _id: ACCOUNT_IDS.OWN,
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+            },
+          ],
+          users: [],
+        },
+      },
+    };
+
+    expect(selectors.primaryAccounts(sampleState)).toEqual(emptyList);
+  });
+  test('should return emptyList if user has no org accounts', () => {
+    const sampleState = {
+      data: {
+        resources: {
+          ssoclients: [],
+        },
+      },
+      user: {
+        profile: {
+          authTypeSSO: null,
+        },
+        preferences: {
+          defaultAShareId: 'ashareId123',
+        },
+        org: {
+          users: [],
+        },
+      },
+    };
+
+    expect(selectors.primaryAccounts(sampleState)).toEqual(emptyList);
+  });
+  test('should return all org users with _ssoClientId', () => {
+    const sampleState = {
+      data: {
+        resources: {
+          ssoclients: [],
+        },
+      },
+      user: {
+        profile: {
+          authTypeSSO: {
+            _ssoClientId: 'client123',
+          },
+        },
+        preferences: {
+          defaultAShareId: 'ashareId123',
+        },
+        org: {
+          accounts: [
+            {
+              _id: 'ashareId123',
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
+              accountSSORequired: false,
+              ownerUser: {
+                _id: 'ownerId',
+                _ssoClientId: 'client123',
+              },
+            },
+            {
+              _id: 'ashareId1234',
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+              accountSSORequired: false,
+              ownerUser: {
+                _id: 'ownerId',
+                _ssoClientId: 'client1234',
+              },
+            },
+          ],
+          users: [],
+        },
+      },
+    };
+
+    expect(selectors.primaryAccounts(sampleState)).toEqual(
+      [
+        {
+          _id: 'ashareId123',
+          accessLevel: 'administrator',
+          accountSSORequired: false,
+          ownerUser: {
+            _id: 'ownerId',
+            _ssoClientId: 'client123',
+          },
+        },
+        {
+          _id: 'ashareId1234',
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+          accountSSORequired: false,
+          ownerUser: {
+            _id: 'ownerId',
+            _ssoClientId: 'client1234',
+          },
+        },
+      ]
+    );
+  });
+});
+
 describe('selectors.isUserAllowedOptionalSSOSignIn test cases', () => {
   test('should return false for the owner if the sso client is not enabled for his account', () => {
     const sampleState = {

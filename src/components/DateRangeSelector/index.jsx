@@ -257,6 +257,7 @@ export default function DateRangeSelector({
     setSelectedRangeWithConstraint(() => {
       const clearRangeValue = clearValue || {startDate: null, endDate: null, preset: null};
 
+      setInitialValue(clearRangeValue);
       onSave && onSave(clearRangeValue);
 
       return clearRangeValue;

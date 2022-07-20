@@ -92,9 +92,9 @@ SingleButton.args = {
   primaryButtonText: 'Create Flow',
 };
 
-export const WithOutButton = Template.bind({});
+export const WithoutButton = Template.bind({});
 
-WithOutButton.args = {
+WithoutButton.args = {
   title: 'Welcome',
   subTitle: 'Welcome to the new connections experience',
   type: 'imports',

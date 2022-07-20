@@ -14,7 +14,7 @@ import SearchCriteriaEditor from '.';
 import FullScreenOpenIcon from '../../../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../../../icons/FullScreenCloseIcon';
 import SaveAndCloseButtonGroupAuto from '../../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
-import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -126,7 +126,6 @@ export default function SearchCriteriaDialog(props) {
     <Dialog
       fullScreen={fullScreen}
       open
-      onClose={onClose}
       scroll="paper"
       maxWidth={false}>
       <div className={classes.toolbarContainer}>

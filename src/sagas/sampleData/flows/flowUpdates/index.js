@@ -8,17 +8,22 @@ import {
   getSubsequentStages,
   isRawDataPatchSet,
 } from '../../../../utils/flowData';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 
-export function* _updateResponseMapping({ flowId, resourceIndex }) {
+export function* _updateResponseMapping({ flowId, resourceIndex, routerIndex, branchIndex }) {
   const flow = (yield select(
     selectors.resourceData,
     'flows',
     flowId,
     SCOPES.VALUE
   ))?.merged || emptyObject;
-  const { pageProcessors = [] } = flow;
-  const updatedResource = pageProcessors[resourceIndex];
+  const { pageProcessors = [], routers = [] } = flow;
+  let updatedResource;
+
+  if (routers.length) {
+    updatedResource = routers[routerIndex]?.branches?.[branchIndex]?.pageProcessors?.[resourceIndex];
+  }
+  updatedResource = pageProcessors[resourceIndex];
 
   if (resourceIndex < 0 || !updatedResource) {
     return;
@@ -27,13 +32,14 @@ export function* _updateResponseMapping({ flowId, resourceIndex }) {
     actions.flowData.updateResponseMapping(
       flowId,
       resourceIndex,
-      updatedResource.responseMapping
+      updatedResource.responseMapping,
+      {routerIndex, branchIndex}
     )
   );
   // Previously this used to be pageProcessors[resourceIndex+1] as we need all subsequent resources to be reset , assuming this is the last action on this resource
   // But, as we got postResponseMapHook action after responseMapping , we need to reset from current resourceIndex
   // @TODO: Raghu Add a new action that resets specific stage on a resource for a flowId, then we can just reset responseMapping state instead of resetting entire resource state
-  const resourceToReset = pageProcessors[resourceIndex];
+  const resourceToReset = updatedResource;
   const resourceType = resourceToReset.type === 'export' ? 'exports' : 'imports';
   const stagesToReset = ['responseMapping', ...getSubsequentStages('responseMapping', resourceType)];
 
@@ -64,9 +70,9 @@ export function* updateFlowOnResourceUpdate({
 
     // Handles Response Mappings update
     if (flowUpdates.responseMapping) {
-      const { resourceIndex } = flowUpdates.responseMapping;
+      const { resourceIndex, routerIndex, branchIndex } = flowUpdates.responseMapping;
 
-      yield call(_updateResponseMapping, { flowId: resourceId, resourceIndex });
+      yield call(_updateResponseMapping, { flowId: resourceId, resourceIndex, routerIndex, branchIndex });
     }
   }
 

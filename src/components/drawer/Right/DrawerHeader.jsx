@@ -69,8 +69,6 @@ export default function DrawerHeader({
   const location = useLocation();
   const match = useRouteMatch();
   const { onClose } = useDrawerContext();
-  // const showBackButton = !isExact && !hideBackButton;
-  // TODO @RAGHU: Handle showing back button on url redirection
   const hasBackButton = showBackButton ||
   (location.pathname === match.url && hasMultipleDrawers(match.url));
 

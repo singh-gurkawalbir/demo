@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../reducers';
-import { FORM_SAVE_STATUS } from '../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../constants';
 import ActionGroup from '../ActionGroup';
 import useHandleClickWhenValid from '../ResourceFormFactory/Actions/Groups/hooks/useHandleClickWhenValid';
 import useClearAsyncStateOnUnmount from './hooks/useClearAsyncStateOnUnmount';
@@ -37,7 +37,7 @@ const MiniResourceForm = ({
 
 export default function SaveAndCloseMiniResourceForm({
   formKey,
-  submitButtonLabel = 'Save & Close',
+  submitButtonLabel = 'Save & close',
   submitTransientLabel = 'Saving...',
   formSaveStatus,
   handleSave,

@@ -35,7 +35,7 @@ export default {
       id: 'http.platformversion',
       type: 'select',
       label: 'Platform version',
-      // helpKey: 'ware2go.connection.http.accountType',
+      helpKey: 'ware2go.connection.http.platformversion',
       options: [
         {
           items: [

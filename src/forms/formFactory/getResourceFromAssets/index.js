@@ -2,9 +2,10 @@ import produce from 'immer';
 
 import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
-import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS } from '../../../utils/constants';
+import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS} from '../../../constants';
 import { getAssistantFromResource, getResourceSubType, isNewId, rdbmsSubTypeToAppType } from '../../../utils/resource';
-import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection } from '../../../utils/assistant';
+import { isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, shouldLoadAssistantFormForImports, shouldLoadAssistantFormForExports, isEbayFinanceConnection } from '../../../utils/assistant';
+import {getHttpConnector} from '../../../constants/applications';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -187,11 +188,24 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
   let meta;
 
   const { type } = getResourceSubType(resource);
+  let isNewHTTPFramework = false;
+
+  if (['exports', 'imports'].includes(resourceType)) {
+    isNewHTTPFramework = !!getHttpConnector(connection?.http?._httpConnectorId);
+  } else if (resourceType === 'connections') {
+    isNewHTTPFramework = !!getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
+  }
 
   switch (resourceType) {
     case 'connections':
       if (isNew) {
         meta = formMeta.connections.new;
+      } else if (isNewHTTPFramework) {
+        if (resource?.http?.formType === 'http') {
+          meta = formMeta.connections.http;
+        } else {
+          meta = formMeta.connections.httpFramework;
+        }
       } else if (resource && resource.assistant === 'financialforce') {
         // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
 
@@ -237,6 +251,18 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       if (meta) {
         if (isNew) {
           meta = meta.new;
+        } else if (isNewHTTPFramework) {
+          const showAssistantView = assistantData?.import?.versions?.[0]?.resources?.length;
+
+          if (!resource?.useParentForm && resource?.http?.formType !== 'http' && showAssistantView) {
+            meta = meta.custom.httpFramework.assistantDefinition(
+              resource._id,
+              resource,
+              assistantData
+            );
+          } else {
+            meta = meta.http;
+          }
         } else if (type === 'netsuite') {
           // get edit form meta branch
           meta = meta.netsuiteDistributed;
@@ -255,6 +281,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
             meta = meta.rdbms.snowflake;
           } else if (rdbmsSubType === 'bigquery') {
             meta = meta.rdbms.bigquerydatawarehouse;
+          } else if (rdbmsSubType === 'redshift') {
+            meta = meta.rdbms.redshiftdatawarehouse;
           } else {
             meta = meta.rdbms.sql;
           }
@@ -265,12 +293,11 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
           meta = meta[type];
         } else if (isAcumaticaEcommerceConnection(connection)) {
           meta = meta[type];
-        } else if (
-          resource && !isAmazonHybridConnection(connection) &&
-            (resource.useParentForm !== undefined
-              ? !resource.useParentForm && resource.assistant
-              : resource.assistant) && !resource.useTechAdaptorForm
-        ) {
+        } else if (isEbayFinanceConnection(connection)) {
+          meta = meta[type];
+        } else if (isMicrosoftBusinessCentralOdataConnection(connection)) {
+          meta = meta[type];
+        } else if (shouldLoadAssistantFormForImports(resource, connection)) {
           meta = meta.custom.http.assistantDefinition(
             resource._id,
             resource,
@@ -292,6 +319,24 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       if (meta) {
         if (isNew) {
           meta = meta.new;
+        } else if (isNewHTTPFramework) {
+          const showAssistantView = assistantData?.export?.versions?.[0]?.resources?.length;
+
+          if (!resource?.useParentForm && resource?.http?.formType !== 'http' && showAssistantView) {
+            meta = meta.custom.httpFramework.assistantDefinition(
+              resource._id,
+              resource,
+              assistantData
+            );
+          } else {
+            meta = meta.http;
+          }
+        } else if (isMicrosoftBusinessCentralOdataConnection(connection)) {
+          if (type === 'http') {
+            meta = meta[type];
+          } else {
+            meta = meta[type].json;
+          }
         } else if (type === 'rdbms') {
           const rdbmsSubType =
               connection && connection.rdbms && connection.rdbms.type;
@@ -302,6 +347,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
             meta = meta.rdbms.snowflake;
           } else if (rdbmsSubType === 'bigquery') {
             meta = meta.rdbms.bigquerydatawarehouse;
+          } else if (rdbmsSubType === 'redshift') {
+            meta = meta.rdbms.redshiftdatawarehouse;
           } else {
             meta = meta.rdbms.sql;
           }
@@ -314,12 +361,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         } else if (FILE_PROVIDER_ASSISTANTS.includes(resource.assistant)) {
           // Common metadata for both the file providers googledrive and azurestorageaccount
           meta = meta.commonfileprovider;
-        } else if (
-          resource && resource.assistant !== 'openair' && !isAmazonHybridConnection(connection) &&
-            (resource.useParentForm !== undefined
-              ? !resource.useParentForm && resource.assistant
-              : resource.assistant) && !resource.useTechAdaptorForm
-        ) {
+        } else if (shouldLoadAssistantFormForExports(resource, connection)) {
           meta = meta.custom.http.assistantDefinition(
             resource._id,
             resource,

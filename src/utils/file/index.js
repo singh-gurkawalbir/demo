@@ -1,5 +1,5 @@
 import { each } from 'lodash';
-import { MAX_FILE_SIZE } from '../constants';
+import { MAX_FILE_SIZE } from '../../constants';
 import { isJsonString } from '../string';
 import retry from '../retry';
 import errorMessageStore from '../errorStore';

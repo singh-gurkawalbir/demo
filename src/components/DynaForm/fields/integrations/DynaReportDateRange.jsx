@@ -165,6 +165,7 @@ export default function DynaReportDateRange(props) {
           fullWidthBtn
           classProps={classes}
           customPresets={ranges}
+          showCustomRangeValue
           editableDateInputs={false}
           defaultPreset={value}
           selectedRangeConstraint={selectedRangeConstraint}

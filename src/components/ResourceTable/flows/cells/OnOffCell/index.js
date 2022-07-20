@@ -39,7 +39,7 @@ export default function OnOffCell({
   const flowName = name || `Unnamed (id: ${flowId})`;
   const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
   const onOffInProgress = useSelector(
-    state => selectors.isOnOffInProgress(state, flowId).onOffInProgress
+    state => selectors.isOnOffInProgress(state, flowId)
   );
   const istwoDotZeroFrameWork = actionProps.integration?.installSteps?.length;
   const isDataLoader = !!actionProps.flowAttributes[flowId]?.isDataLoader;

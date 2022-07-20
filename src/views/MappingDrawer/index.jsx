@@ -12,7 +12,7 @@ import DatabaseMapping from './DatabaseMapping_afe';
 import SelectQueryType from './DatabaseMapping_afe/SelectQueryType';
 import EditorDrawer from '../../components/AFE/Drawer';
 import useFormOnCancelContext from '../../components/FormOnCancelContext';
-import { MAPPINGS_FORM_KEY } from '../../utils/constants';
+import { MAPPINGS_FORM_KEY } from '../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 
 const MappingWrapper = ({integrationId}) => {
@@ -53,14 +53,15 @@ export default function MappingDrawerRoute(props) {
   });
 
   const importName = useSelector(state => selectors.resourceData(state, 'imports', importId).merged?.name);
-  const title = importName ? `Edit Mapping: ${importName}` : 'Edit Mapping';
+  const title = importName ? `Edit mapping: ${importName}` : 'Edit mapping';
 
   return (
     // TODO (Aditya/Raghu): Break it into 2 side drawer after changes to RightDrawer is done on exact property.
     // Also check for dummy route implementation on Right Drawer
     <LoadResources
       required="true"
-      resources="imports, exports, connections">
+      integrationId={integrationId}
+      resources="imports,exports,connections">
       <RightDrawer
         path={[
           drawerPaths.MAPPINGS.SUB_RECORD,
