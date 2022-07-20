@@ -325,10 +325,8 @@ export function* auth({ email, password }) {
     if (apiAuthentications?.succes && apiAuthentications.mfaRequired) {
       // Once login is success, incase of mfaRequired, user has to enter OTP to successfully authenticate
       // So , we redirect him to OTP (/mfa/verify) page
-      return yield call(apiCallWithRetry, {
-        path: '/mfa/verify',
-        hidden: true,
-      });
+
+      return yield put(actions.auth.mfaRequired());
     }
     const isExpired = yield select(selectors.isSessionExpired);
 
@@ -465,6 +463,23 @@ export function* linkWithGoogle({ returnTo }) {
   document.body.removeChild(form);
 }
 
+function* mfaVerify({ payload }) {
+  const { code, trustDevice } = payload || {};
+  const _csrf = yield call(getCSRFTokenBackend);
+
+  const status = yield call(apiCallWithRetry, {
+    path: '/mfa/verify?no_redirect=true',
+    opts: {
+      method: 'POST',
+      body: {code, trustDevice, _csrf},
+    },
+    hidden: true,
+  });
+
+  if (status?.success) {
+    return yield call(initializeSession);
+  }
+}
 export const authenticationSagas = [
   takeEvery(actionTypes.AUTH.INIT_SESSION, initializeSession),
   takeEvery(actionTypes.AUTH.REQUEST, auth),
@@ -473,4 +488,5 @@ export const authenticationSagas = [
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_SSO, reSignInWithSSO),
   takeEvery(actionTypes.AUTH.LINK_WITH_GOOGLE, linkWithGoogle),
+  takeEvery(actionTypes.AUTH.MFA_AUTH_VERIFY, mfaVerify),
 ];

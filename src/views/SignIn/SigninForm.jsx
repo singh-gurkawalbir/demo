@@ -14,6 +14,7 @@ import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
 import { FilledButton, OutlinedButton } from '../../components/Buttons';
 import getImageUrl from '../../utils/image';
+import OneTimePassCodeForm from './OneTimePassCodeForm';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -138,6 +139,7 @@ export default function SignIn({dialogOpen}) {
   }, [dispatch]);
 
   const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
+  const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
 
   const error = useSelector(state => {
     const errorMessage = selectors.authenticationErrored(state);
@@ -192,6 +194,9 @@ export default function SignIn({dialogOpen}) {
     reInitializeSession();
   };
 
+  if (isMFAAuthRequired) {
+    return <OneTimePassCodeForm />;
+  }
   const attemptedRoute =
       location && location.state && location.state.attemptedRoute;
 
@@ -199,7 +204,6 @@ export default function SignIn({dialogOpen}) {
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
     <div className={classes.editableFields}>
       <form onSubmit={handleOnSubmit}>
-
         <TextField
           data-private
           data-test="email"

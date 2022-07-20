@@ -1,8 +1,10 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles, Typography, Link } from '@material-ui/core';
 import SigninForm from './SigninForm';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
+import { selectors } from '../../reducers';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 
 const useStyles = makeStyles(theme => ({
@@ -69,6 +71,8 @@ export default function Signin(props) {
   const classes = useStyles();
   // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
+
+  const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
 
   return (
     <div className={classes.wrapper}>

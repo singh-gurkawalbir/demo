@@ -47,6 +47,15 @@ export default function (state = defaultState, action) {
         delete draft.failure;
         break;
 
+      case actionTypes.AUTH.MFA_REQUIRED:
+        draft.mfaRequired = true;
+        delete draft.authTimestamp;
+        delete draft.warning;
+        draft.commStatus = COMM_STATES.SUCCESS;
+        draft.initialized = true;
+        draft.authenticated = false;
+        break;
+
       case actionTypes.AUTH.FAILURE:
         draft.failure = action.message;
         draft.commStatus = COMM_STATES.ERROR;
@@ -106,4 +115,6 @@ selectors.showSessionStatus = state => {
     return 'expired';
   }
 };
+
+selectors.isMFAAuthRequired = state => !!state?.mfaRequired;
 // #endregion Selectors
