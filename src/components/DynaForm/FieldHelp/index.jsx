@@ -33,7 +33,7 @@ export default function FieldHelp({
     <Help
       key={`help-${id}`}
       data-test={`help-${id}`}
-      title={label || 'Field Help'}
+      title={label || 'Field help'}
       className={classes.iconButton}
       caption={developer && !noApi && helpKey}
       helpKey={helpKey}
