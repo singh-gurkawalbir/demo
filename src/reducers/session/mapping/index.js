@@ -13,7 +13,6 @@ import {
   rebuildObjectArrayNode,
   hideOtherTabRows,
   MAPPING_DATA_TYPES,
-  getDefaultExtractPath,
   getUniqueExtractId,
   autoCreateDestinationStructure,
   deleteNonRequiredMappings} from '../../../utils/mapping';
@@ -86,7 +85,7 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
     expandRow(draft, newNode.key);
 
-    newNode.combinedExtract = newNode.combinedExtract || newNode.extract || getDefaultExtractPath(draft.mapping.isGroupedSampleData);
+    newNode.combinedExtract = newNode.combinedExtract || newNode.extract;
 
     delete newNode.hardCodedValue;
     delete newNode.lookupName;
@@ -561,8 +560,6 @@ export default (state = {}, action) => {
           // top disabled row already exists
           if (draft.mapping.v2TreeData[0]?.generateDisabled) break;
 
-          const defaultExtract = getDefaultExtractPath(draft.mapping.isGroupedSampleData);
-
           const newRowKey = generateUniqueKey();
 
           const node = {
@@ -571,7 +568,6 @@ export default (state = {}, action) => {
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generateDisabled: true,
             disabled: draft.mapping.isMonitorLevelAccess,
-            combinedExtract: defaultExtract, // todo ashu check with Aman, we can remove this and then add our own as per my new changes
           };
 
           node.children = updateChildrenProps(draft.mapping.v2TreeData, node, MAPPING_DATA_TYPES.OBJECTARRAY);
