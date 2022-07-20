@@ -47,8 +47,8 @@ export function MultipleSelect() {
   );
 }
 
-describe('CeligoSelect Component Test', () => {
-  test('CeligoSelect componeeent test', async () => {
+describe('CeligoSelect UI Test', () => {
+  test('should test for single select option', async () => {
     renderWithProviders(<SingleSelect />);
 
     const button = screen.getByRole('button');
@@ -66,7 +66,7 @@ describe('CeligoSelect Component Test', () => {
     expect(japan).not.toBeVisible();
   });
 
-  test('CeligoSelect componeeentooo test', async () => {
+  test('should test for multiple select option', async () => {
     renderWithProviders(<MultipleSelect />);
 
     const button = screen.getByRole('button');

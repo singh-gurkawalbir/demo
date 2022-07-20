@@ -6,11 +6,8 @@ import userEvent from '@testing-library/user-event';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {createMemoryHistory} from 'history';
 import ConnectionStatusPanel from '.';
-import { runServer } from '../../test/api/server';
 import actions from '../../actions';
 import { renderWithProviders } from '../../test/test-utils';
-
-/// ///(actions.resource.receivedCollection( important search
 
 const resourceType = ['connections', 'exports', 'imports'];
 const collection = [
@@ -19,12 +16,15 @@ const collection = [
   [{_id: 'import1', _connectionId: 'connection1'}],
 ];
 
-describe('ConnectionStatusPanel testing', () => {
-  test('testing online message for connection', async () => {
-    runServer();
-    const {store} = renderWithProviders(<MemoryRouter ><ConnectionStatusPanel resourceId="connection2" resourceType="connections" /></MemoryRouter>);
+describe('ConnectionStatusPanel UI tests', () => {
+  function renderWithStore(resourceType, resourceId, dataCollection) {
+    const {store} = renderWithProviders(<MemoryRouter ><ConnectionStatusPanel resourceId={resourceId} resourceType={resourceType} /></MemoryRouter>);
 
-    store.dispatch(actions.resource.receivedCollection(resourceType[0], [{_id: '2', offline: false}]));
+    store.dispatch(actions.resource.receivedCollection(resourceType, dataCollection));
+  }
+
+  test('should test the online message for connection', async () => {
+    renderWithStore('connections', 'connection2', [{_id: '2', offline: false}]);
 
     const message = screen.queryByText('This connection is currently offline. Re-enter your credentials to bring it back online.');
 
@@ -33,27 +33,22 @@ describe('ConnectionStatusPanel testing', () => {
     screen.debug();
   });
 
-  test('testing offline message for connection', () => {
-    const {store} = renderWithProviders(<MemoryRouter><ConnectionStatusPanel resourceId="connection1" resourceType="connections" /></MemoryRouter>);
-
-    store.dispatch(actions.resource.receivedCollection(resourceType[0], collection[0]));
+  test('should test the offline message for connection', () => {
+    renderWithStore('connections', 'connection1', collection[0]);
     const message = screen.getByText('This connection is currently offline. Re-enter your credentials to bring it back online.');
 
     expect(message).toBeInTheDocument();
   });
 
-  test('testing message for conection having _connector', async () => {
-    runServer();
-    const {store} = renderWithProviders(<MemoryRouter ><ConnectionStatusPanel resourceId="connection3" resourceType="connections" /></MemoryRouter>);
-
-    store.dispatch(actions.resource.receivedCollection(resourceType[0], collection[0]));
+  test('should test the message for connection having _connectorId', async () => {
+    renderWithStore('connections', 'connection3', collection[0]);
 
     const message = screen.queryByText('This connection is currently offline. Re-enter your credentials to bring it back online.');
 
     expect(message).toBeInTheDocument();
   });
 
-  test('testing offline message for export', () => {
+  test('should test offline message for export', () => {
     const history = createMemoryHistory();
 
     history.push = jest.fn();
@@ -72,7 +67,7 @@ describe('ConnectionStatusPanel testing', () => {
     expect(history.push).toHaveBeenCalledWith('/edit/connections/connection1?fixConnnection=true');
   });
 
-  test('testing offline message for import', () => {
+  test('should test offline message for import', () => {
     const history = createMemoryHistory();
 
     history.push = jest.fn();
@@ -90,7 +85,7 @@ describe('ConnectionStatusPanel testing', () => {
     expect(history.push).toHaveBeenCalledWith('/edit/connections/connection1?fixConnnection=true');
   });
 
-  test('testing  message for nonexisting import', () => {
+  test('should test message for nonexisting import', () => {
     renderWithProviders(<MemoryRouter><ConnectionStatusPanel resourceId="5ac5e74506bd2615df9fba91" resourceType="imports" /></MemoryRouter>);
 
     const message = screen.queryByRole('button', {name: /Fix your connection/i});

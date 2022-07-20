@@ -8,9 +8,15 @@ import {createMemoryHistory} from 'history';
 import CeligoPageBar from '.';
 import {renderWithProviders} from '../../test/test-utils';
 
-describe('Celigopagebar component', () => {
-  test('check for the presense of title and subtitle', () => {
-    renderWithProviders(<MemoryRouter><CeligoPageBar title="title" infoText="infotext" subtitle="subtitle" titleTag="titleTag" /></MemoryRouter>);
+describe('Celigopagebar UI tests', () => {
+  function renderFunction() {
+    renderWithProviders(
+      <MemoryRouter>
+        <CeligoPageBar title="title" infoText="infotext" subtitle="subtitle" titleTag="titleTag" />
+      </MemoryRouter>);
+  }
+  test('should check for the presense of title and subtitle', () => {
+    renderFunction();
 
     const title = screen.getByText('title');
     const subtitle = screen.getByText('subtitle');
@@ -19,12 +25,11 @@ describe('Celigopagebar component', () => {
     expect(subtitle).toBeInTheDocument();
   });
 
-  test('Working of info icon buttton', () => {
-    renderWithProviders(<MemoryRouter><CeligoPageBar title="title" infoText="infotext" subtitle="subtitle" /></MemoryRouter>);
+  test('should test working of info icon buttton', () => {
+    renderFunction();
 
     const infobutton = screen.getByRole('button', { haspopup: true});
 
-    screen.debug();
     let infotext = screen.queryByText('infotext');
 
     expect(infotext).not.toBeInTheDocument();
@@ -34,7 +39,7 @@ describe('Celigopagebar component', () => {
     expect(infotext).toBeInTheDocument();
   });
 
-  test(' erfrf', () => {
+  test('should test the go back to parent button', () => {
     const history = createMemoryHistory();
 
     history.replace = jest.fn();
@@ -45,7 +50,7 @@ describe('Celigopagebar component', () => {
     expect(history.replace).toHaveBeenCalledWith('/');
   });
 
-  test(' new', () => {
+  test('should test the back button when history.length > 2', () => {
     const history = createMemoryHistory();
 
     history.goBack = jest.fn();

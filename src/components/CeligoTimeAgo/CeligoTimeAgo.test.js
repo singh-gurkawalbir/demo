@@ -1,15 +1,22 @@
 /* global describe, test, expect, */
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
 import CeligoTimeAgo from '.';
 import {renderWithProviders} from '../../test/test-utils';
 import actions from '../../actions';
 
-describe('CeligoTimeAgo component test', () => {
-  test('rendereding nothing', () => {
-    renderWithProviders(<MemoryRouter><CeligoTimeAgo date="" /></MemoryRouter>);
+describe('CeligoTimeAgo UI tests', () => {
+  function renderFunction(date) {
+    const {store} = renderWithProviders(<CeligoTimeAgo date={date} />);
+    const profile = {timezone: 'Asia/Kolkata'};
+
+    store.dispatch(actions.user.profile.update(profile));
+
+    return store;
+  }
+  test('should run when date is not provided', () => {
+    renderFunction(null);
 
     const RelativeDateTime = screen.queryByLabelText('relative date time');
     const LocalDateTime = screen.queryByLabelText('local date time');
@@ -18,13 +25,9 @@ describe('CeligoTimeAgo component test', () => {
     expect(LocalDateTime).not.toBeInTheDocument();
   });
 
-  test('rendereding with relative time date', () => {
-    const {store} = renderWithProviders(<MemoryRouter><CeligoTimeAgo date="2022-05-18T18:16:31.989Z" /></MemoryRouter>);
+  test('should test the relative time date', () => {
+    renderFunction('2022-05-18T18:16:31.989Z');
     const RelativeDateTime = screen.getByLabelText('relative date time');
-    const profile = {timezone: 'Asia/Kolkata'};
-
-    // actionTypes.USER.PROFILE.UPDATE
-    store.dispatch(actions.user.profile.update(profile));
 
     expect(RelativeDateTime).toBeInTheDocument();
 
@@ -33,8 +36,8 @@ describe('CeligoTimeAgo component test', () => {
     expect(relativeTime).toBeInTheDocument();
   });
 
-  test('rendereding with local time date', () => {
-    const {store} = renderWithProviders(<MemoryRouter><CeligoTimeAgo date="2022-05-18T18:16:31.989Z" /></MemoryRouter>);
+  test('should test the local time date', () => {
+    const store = renderFunction('2022-05-18T18:16:31.989Z');
     const preferencesPayload = {showRelativeDateTime: true};
 
     store.dispatch(actions.user.preferences.update(preferencesPayload));
@@ -46,17 +49,17 @@ describe('CeligoTimeAgo component test', () => {
 
     expect(localDateTime).toHaveTextContent(testforlocalDateTime.textContent);
   });
+  test('should test the condition for just Now', () => {
+    const today = new Date();
+
+    const {store} = renderWithProviders(<CeligoTimeAgo date={today} />);
+    const preferencesPayload = {showRelativeDateTime: true};
+
+    store.dispatch(actions.user.preferences.update(preferencesPayload));
+
+    const justNow = screen.queryByText(/Just now/i);
+
+    expect(justNow).toBeInTheDocument();
+  });
 });
 
-test('rendereding just Now', () => {
-  const today = new Date();
-
-  const {store} = renderWithProviders(<MemoryRouter><CeligoTimeAgo date={today} /></MemoryRouter>);
-  const preferencesPayload = {showRelativeDateTime: true};
-
-  store.dispatch(actions.user.preferences.update(preferencesPayload));
-
-  const justNow = screen.queryByText(/Just now/i);
-
-  expect(justNow).toBeInTheDocument();
-});
