@@ -5,7 +5,7 @@ import exportFilter from '../exportFilter';
 
 export default {
   processor: ({activeProcessor}) => activeProcessor,
-  init: ({resource, options}) => {
+  init: ({resource, options, scriptContext}) => {
     let activeProcessor = 'filter';
 
     const filterObj = options.resourceType === 'imports' ? resource?.filter : resource?.inputFilter;
@@ -28,6 +28,7 @@ export default {
       ...options,
       rule,
       activeProcessor,
+      context: scriptContext,
     };
   },
   buildData: exportFilter.buildData,

@@ -1,5 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
-import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION, FORM_SAVE_STATUS, CATEGORY_MAPPING_SAVE_STATUS } from '../constants';
+import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION, FORM_SAVE_STATUS, CATEGORY_MAPPING_SAVE_STATUS } from '../../constants';
 import { capitalizeFirstLetter } from '../string';
 
 export const getIntegrationAppUrlName = integrationAppName => {

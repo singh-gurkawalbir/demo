@@ -61,6 +61,7 @@ export const drawerPaths = {
     FLOW_SCHEDULE: ':flowId/schedule',
     SETTINGS: 'settings',
     IA_SETTINGS: ':flowId/settings',
+    BRANCH_EDIT: 'branch/:position',
   },
   ERROR_MANAGEMENT: {
     V1: {
@@ -143,5 +144,5 @@ export const buildDrawerUrl = ({ path, baseUrl = '', params = {} }) => {
     (url, param) => url.replace(`:${param}`, params[param]),
     path);
 
-  return `${baseUrl}/${DRAWER_URL_PREFIX}/${drawerPath}`;
+  return `${baseUrl}/${drawerPath}`;
 };

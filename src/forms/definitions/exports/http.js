@@ -229,12 +229,17 @@ export default {
       retValues['/unencrypted/apiType'] = 'Amazon-SP-API';
     }
 
-    if (retValues['/parsers']?.resourcePath !== '') {
+    if (finalSuccessMediaType(formValues, connection) === 'xml' && retValues['/parsers']?.resourcePath !== '') {
       retValues['/http/response/resourcePath'] = retValues['/parsers'].resourcePath;
     }
 
     if (finalSuccessMediaType(formValues, connection) !== 'xml') {
       retValues['/parsers'] = undefined;
+    }
+
+    if (finalSuccessMediaType(formValues, connection) === 'csv') {
+      delete retValues['/http/response/resourcePath'];
+      retValues['/http/response'] = undefined;
     }
 
     if (!retValues['/configureAsyncHelper']) {
@@ -281,7 +286,7 @@ export default {
   fieldMap: {
     parsers: {
       fieldId: 'parsers',
-      isHttp: true,
+      required: false,
       visibleWhenAll: [
         {
           field: 'outputMode',
@@ -432,6 +437,10 @@ export default {
         {
           field: 'outputMode',
           is: ['records'],
+        },
+        {
+          field: 'http.successMediaType',
+          is: ['csv'],
         },
       ],
     },

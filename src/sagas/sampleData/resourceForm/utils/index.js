@@ -129,7 +129,7 @@ export function* extractFileSampleDataProps({ formKey }) {
   return {};
 }
 
-export function* executeTransformationRules({ transform = {}, sampleData }) {
+export function* executeTransformationRules({ transform = {}, sampleData, isIntegrationApp }) {
   let hasNoRulesToProcess = false;
   let processorData;
 
@@ -149,16 +149,17 @@ export function* executeTransformationRules({ transform = {}, sampleData }) {
     const { _scriptId, function: entryFunction } = transform.script || {};
 
     if (_scriptId) {
-      const script = yield call(getResource, {
+      const script = !isIntegrationApp ? (yield call(getResource, {
         resourceType: 'scripts',
         id: _scriptId,
-      });
+      })) : {};
 
       processorData = {
         data: { record: sampleData },
         rule: {
           code: script?.content,
           entryFunction,
+          script: _scriptId,
         },
         editorType: 'javascript',
       };
@@ -187,16 +188,16 @@ export function* executeTransformationRules({ transform = {}, sampleData }) {
   return { data: processedData?.data?.[0] };
 }
 
-export function* executeJavascriptHook({ hook = {}, sampleData }) {
+export function* executeJavascriptHook({ hook = {}, sampleData, isIntegrationApp }) {
   let processorData;
   let hasNoRulesToProcess = false;
 
   if (hook._scriptId) {
     const scriptId = hook._scriptId;
-    const script = yield call(getResource, {
+    const script = !isIntegrationApp ? (yield call(getResource, {
       resourceType: 'scripts',
       id: scriptId,
-    });
+    })) : {};
     const { content: code } = script;
 
     processorData = {
@@ -204,6 +205,7 @@ export function* executeJavascriptHook({ hook = {}, sampleData }) {
       rule: {
         code,
         entryFunction: hook.function,
+        scriptId,
       },
       editorType: 'javascript',
     };

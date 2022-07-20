@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
   },
   customWrapper: {
+    marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
     boxShadow: 'none',
     border: '1px solid',

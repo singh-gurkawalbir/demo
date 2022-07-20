@@ -8,7 +8,7 @@ import useFormContext from '../../Form/FormContext';
 import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions';
 import DynaSelect from './DynaSelect';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
 
@@ -112,6 +112,7 @@ export default function FormView(props) {
         resourceId,
         false,
         false,
+        '',
         allTouchedFields
       )
     );

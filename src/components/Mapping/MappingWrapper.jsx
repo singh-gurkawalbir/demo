@@ -13,7 +13,7 @@ import DrawerContent from '../drawer/Right/DrawerContent';
 import DrawerFooter from '../drawer/Right/DrawerFooter';
 import AutoMapperButton from './AutoMapperButton';
 import MappingRow from './MappingRow';
-import { emptyObject } from '../../utils/constants';
+import { emptyObject } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
   mappingDrawerContent: {

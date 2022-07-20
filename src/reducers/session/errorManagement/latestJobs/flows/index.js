@@ -1,7 +1,7 @@
 import produce from 'immer';
 import actionTypes from '../../../../../actions/types';
 import { parseJobFamily } from '../../../../data/jobs/util';
-import { JOB_STATUS } from '../../../../../utils/constants';
+import { JOB_STATUS } from '../../../../../constants';
 
 const defaultObject = {};
 

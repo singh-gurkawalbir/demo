@@ -6,7 +6,7 @@ import { stringCompare } from '../../../../utils/sort';
 function versionOptions({ assistantData }) {
   return assistantData?.versions?.map(version => ({
     label: version.version,
-    value: version.version,
+    value: version._id || version.version,
   }));
 }
 
@@ -45,7 +45,7 @@ function importOperationOptions({ resourceData = { operations: [] } }) {
 }
 
 function versionData({ versions = [], versionId }) {
-  let version = versions.find(v => v.version === versionId);
+  let version = versions.find(v => v._id === versionId);
 
   if (!version && versions.length === 1) {
     [version] = versions;

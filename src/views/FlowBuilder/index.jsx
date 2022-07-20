@@ -20,6 +20,7 @@ import IsLoggableContextProvider from '../../components/IsLoggableContextProvide
 const FlowBuilderBody = loadable(() =>
   retry(() => import(/* webpackChunkName: 'FlowBuilderBody' */ './FlowBuilderBody'))
 );
+
 const Redirection = loadable(() =>
   retry(() => import(/* webpackChunkName: 'FlowBuilderRedirection' */ './Redirection'))
 );
@@ -51,7 +52,7 @@ export default function FlowBuilder() {
   // #endregion
 
   return (
-    <LoadResources integrationId={integrationId} required resources="imports,exports,flows,scripts">
+    <LoadResources integrationId={childId || integrationId} required resources="imports,exports,flows,scripts">
       <Redirection>
         <ResourceDrawer flowId={flowId} integrationId={integrationId} />
         <ConfigConnectionDebugger />

@@ -42,3 +42,5 @@ export const getErrorReqResFields = (httpPayload, variant = 'basic', isResourceN
 
   return isRequest ? httpPayload : httpPayload.body;
 };
+
+export const HTTP_BASED_ADAPTORS = ['http', 'rest', 'graph_ql'];

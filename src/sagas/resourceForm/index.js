@@ -21,7 +21,7 @@ import {
 import { _fetchRawDataForFileAdaptors } from '../sampleData/rawDataUpdates/fileAdaptorUpdates';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA } from '../../utils/constants';
+import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA, PageProcessorPathRegex, FLOW_SAVING_STATUS } from '../../constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, flowLastModifiedPatch } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
@@ -62,6 +62,7 @@ export function* createFormValuesPatchSet({
   let finalValues = values;
 
   let connection;
+  let assistantData;
 
   if (resource?._connectionId) {
     connection = yield select(
@@ -70,12 +71,21 @@ export function* createFormValuesPatchSet({
       resource._connectionId
     );
   }
+  const connectorMetaData = yield select(
+    selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
+
+  const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
+
+  if (_httpConnectorId) {
+    assistantData = connectorMetaData;
+  }
 
   const { preSave } = getResourceFormAssets({
     resourceType,
     resource,
     connection,
     isNew: formState.isNew,
+    assistantData,
   });
 
   if (typeof preSave === 'function') {
@@ -393,7 +403,7 @@ export function* submitFormValues({
 
   if (resourceType === 'connectorLicenses') {
     // construct url for licenses
-    const connectorUrlStr = match.url.indexOf('/connectors/ui-drawer/edit/connectors/') >= 0 ? '/connectors/ui-drawer/edit/connectors/' : '/connectors/';
+    const connectorUrlStr = match.url.indexOf('/connectors/edit/connectors/') >= 0 ? '/connectors/edit/connectors/' : '/connectors/';
     const startIndex = match.url.indexOf(connectorUrlStr) + connectorUrlStr.length;
 
     if (startIndex !== -1) {
@@ -457,6 +467,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     'flows',
     flowId
   )) || emptyObject;
+  const elementsMap = yield select(selectors.fbGraphElementsMap, flowId);
 
   // if its an existing resource and original flow document does not have any references to newly created PG or PP
   // then we can go ahead and update it...if it has existing references no point creating additional create patches
@@ -474,19 +485,24 @@ export function* getFlowUpdatePatchesForNewPGorPP(
   );
 
   let addIndexPP = flowDoc?.pageProcessors?.length || 0;
-  let addIndexPG = flowDoc?.pageGenerators?.length || 0;
+  const addIndexPG = flowDoc?.pageGenerators?.length || 0;
 
   // Incoming resourceIds that model new PP or PGs (are prefixed with 'new-')  may contain a suffix
   // identifying if the resource should replace an existing pending resource, or if absent, add a new
   // resource. If this index suffix exists, we replace the pending PP/PG at that location, otherwise we
   // add a new one.
-  const [, pendingIndex] = tempResourceId?.split('.');
+  const [, pendingId] = tempResourceId?.split('.');
   let pending = false;
+  let stepPath;
+  const isPageGenerator = resourceType === 'exports' && !createdResource?.isLookup;
 
-  if (pendingIndex) {
+  if (pendingId) {
     pending = true;
-    addIndexPP = pendingIndex;
-    addIndexPG = pendingIndex;
+    if (flowDoc?.routers?.length || (isPageGenerator && elementsMap?.[pendingId])) {
+      stepPath = elementsMap[pendingId]?.data?.path;
+    } else if (!isPageGenerator && elementsMap?.[pendingId]?.data?.path) {
+      [,,, addIndexPP] = PageProcessorPathRegex.exec(elementsMap?.[pendingId]?.data?.path);
+    }
   }
 
   let flowPatches = [];
@@ -496,7 +512,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
       flowPatches = [
         {
           op: pending ? 'replace' : 'add',
-          path: `/pageProcessors/${addIndexPP}`,
+          path: stepPath || `/pageProcessors/${addIndexPP}`,
           value: { type: 'export', _exportId: createdId },
         },
       ];
@@ -519,7 +535,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
         flowPatches = [
           {
             op: pending ? 'replace' : 'add',
-            path: `/pageGenerators/${addIndexPG}`,
+            path: stepPath || `/pageGenerators/${addIndexPG}`,
             value: { _exportId: createdId },
           },
         ];
@@ -530,7 +546,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     flowPatches = [
       {
         op: pending ? 'replace' : 'add',
-        path: `/pageProcessors/${addIndexPP}`,
+        path: stepPath || `/pageProcessors/${addIndexPP}`,
         value: { type: 'import', _importId: createdId },
       },
     ];
@@ -665,6 +681,8 @@ export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValue
     'flows',
     flowId
   ))?.merged || emptyObject;
+
+  yield put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS));
 
   if (isIntegrationApp(flow)) {
     // update the last modified time

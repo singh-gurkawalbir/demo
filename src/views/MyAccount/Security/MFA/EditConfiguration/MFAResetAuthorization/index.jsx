@@ -10,7 +10,7 @@ import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import { TextButton } from '../../../../../../components/Buttons';
 import ActionGroup from '../../../../../../components/ActionGroup';
-import { MFA_RESET_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../../utils/constants';
+import { MFA_RESET_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../../constants';
 import messageStore from '../../../../../../utils/messageStore';
 import RawHtml from '../../../../../../components/RawHtml';
 

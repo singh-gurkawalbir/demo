@@ -5,7 +5,7 @@ import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   emptyList,
-} from '../../../../utils/constants';
+} from '../../../../constants';
 import { COMM_STATES as REINVITE_STATES } from '../../../comms/networkComms';
 
 export default (state = [], action) => {

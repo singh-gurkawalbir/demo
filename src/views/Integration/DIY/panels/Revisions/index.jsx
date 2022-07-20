@@ -25,6 +25,7 @@ import FinalRevertDrawer from '../../../../../components/drawer/Revisions/Revert
 import CreateSnapshotDrawer from '../../../../../components/drawer/Revisions/CreateSnapshot';
 import LoadResources from '../../../../../components/LoadResources';
 import useOpenRevisionWhenValid from '../../../../../components/drawer/Revisions/hooks/useOpenRevisionWhenValid';
+import infoText from '../infoText';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -151,7 +152,7 @@ export default function Revisions({ integrationId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Revisions" className={classes.flowPanelTitle}>
+      <PanelHeader title="Revisions" className={classes.flowPanelTitle} infoText={infoText.Revisions}>
         { !hasMonitorLevelAccess && (
         <ActionGroup>
           <TextButton

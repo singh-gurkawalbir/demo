@@ -11,7 +11,7 @@ import actions from '../../actions';
 import { selectors } from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
-import { HOME_PAGE_PATH, emptyObject, INSTALL_STEP_TYPES } from '../../utils/constants';
+import { HOME_PAGE_PATH, emptyObject, INSTALL_STEP_TYPES } from '../../constants';
 import ArrowBackIcon from '../../components/icons/ArrowLeftIcon';
 import openExternalUrl from '../../utils/window';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';

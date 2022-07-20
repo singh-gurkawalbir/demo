@@ -4,7 +4,7 @@ import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
 import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
 import { difference } from 'lodash';
 import clsx from 'clsx';
-import { JOB_STATUS } from '../../utils/constants';
+import { JOB_STATUS } from '../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 import JobDetail from './JobDetail';
 import ErrorDrawer from './ErrorDrawer';
@@ -133,8 +133,7 @@ export default function JobTable({
     if (history.location.pathname.includes('/viewErrors') && !(_JobId || showErrorDialogFor?.jobId)) {
       const urlExtractFields = history.location.pathname.split('/');
       // TODO: @RAGHU, Do we need this logic?
-      // considers drawer prefix before view errors, so + 1
-      const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf('viewErrors') + 1;
+      const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf('viewErrors');
       const strippedRoute = urlExtractFields.slice(0, -indexToBeStripped).join('/');
 
       history.replace(strippedRoute);

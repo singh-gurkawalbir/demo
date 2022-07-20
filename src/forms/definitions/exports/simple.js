@@ -1,4 +1,4 @@
-import { MAX_DATA_LOADER_FILE_SIZE } from '../../../utils/constants';
+import { MAX_DATA_LOADER_FILE_SIZE } from '../../../constants';
 
 export default {
   preSave: formValues => {
