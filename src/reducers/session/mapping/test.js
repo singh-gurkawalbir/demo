@@ -1410,7 +1410,6 @@ describe('mapping reducer', () => {
             key: 'new-key',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generateDisabled: true,
-            combinedExtract: '$',
             title: '',
             children: [{
               key: 'key1',
@@ -1418,7 +1417,7 @@ describe('mapping reducer', () => {
               extract: '$.fname',
               generate: 'fname',
               isEmptyRow: false,
-              parentExtract: '$|0',
+              parentExtract: '',
               parentKey: 'new-key',
             },
             {
@@ -1427,7 +1426,7 @@ describe('mapping reducer', () => {
               extract: '$.lname',
               generate: 'lname',
               isEmptyRow: false,
-              parentExtract: '$|0',
+              parentExtract: '',
               parentKey: 'new-key',
             }],
           }],
