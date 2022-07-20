@@ -664,6 +664,7 @@ export default {
 'Please select the environment of your LogiSense account.',
   'logisense.connection.storeURL':
 'Please enter the Store URL of your LogiSense account, provided by LogiSense team.',
+  'logisense.connection.http.unencrypted.version': 'Please enter your current LogiSense version.',
   'logisense.connection.http.unencrypted.username':
 'Please enter the Username of your LogiSense account.',
   'logisense.connection.http.encrypted.password':
