@@ -54,6 +54,9 @@ export const sampleDataStage = {
     postSubmit: 'responseTransform',
     responseTransform: 'sampleResponse',
   },
+  flows: {
+    router: 'router',
+  },
   /**
    * flowInput, processedFlowInput, inputFilter
    * flowInput, preMap, importMappingExtract, importMapping, postMap,
@@ -140,7 +143,7 @@ export const getCurrentSampleDataStageStatus = (
 // when added a lookup to the flow path: '/pageProcessors/${resourceIndex}
 const pathRegex = {
   sequence: /^(\/pageProcessors|\/pageGenerators)$/,
-  responseMapping: /\/pageProcessors\/[0-9]+\/responseMapping/,
+  responseMapping: /(\/routers\/(\d+)\/branches\/(\d+))?\/pageProcessors\/(\d+)\/responseMapping/,
   lookupAddition: /\/pageProcessors\/[0-9]+$/,
 };
 
@@ -229,11 +232,13 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
 
     if (pathRegex.responseMapping.test(path) && !updates.responseMapping) {
       // Extract resourceIndex from the path
-      const [resourceIndex] = path.match(/[0-9]+/);
+      const [,, routerIndex, branchIndex, resourceIndex] = pathRegex.responseMapping.exec(path);
 
       if (resourceIndex) {
         updates.responseMapping = {
-          resourceIndex: parseInt(resourceIndex, 10),
+          resourceIndex: +resourceIndex,
+          ...(branchIndex !== undefined ? {branchIndex: +branchIndex} : {}),
+          ...(routerIndex !== undefined ? {routerIndex: +routerIndex} : {}),
         };
       }
     }
@@ -259,13 +264,26 @@ export const isUIDataExpectedForResource = (resource, connection) =>
 
 export const isFileMetaExpectedForResource = resource => isFileAdaptor(resource);
 // Gives sample file data
-export const getSampleFileMeta = () => [
-  {
-    fileMeta: {
-      fileName: 'sampleFileName',
+export const getSampleFileMeta = resource => {
+  if (resource?.adaptorType === 'FTPExport') {
+    return [
+      {
+        fileMeta: {
+          fileName: 'sampleFileName',
+          fileSize: 1234,
+        },
+      },
+    ];
+  }
+
+  return [
+    {
+      fileMeta: {
+        fileName: 'sampleFileName',
+      },
     },
-  },
-];
+  ];
+};
 
 /*
  * Gives a sample data for Blob resource
@@ -275,7 +293,7 @@ export const getBlobResourceSampleData = () => ({
 });
 
 export const isOneToManyResource = resource =>
-  !!(resource && resource.oneToMany && resource.pathToMany);
+  !!(resource && resource.oneToMany);
 
 /*
  * Cases where postData needs to be passed in resource while previewing

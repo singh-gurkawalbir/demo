@@ -43,6 +43,9 @@ const useStyles = makeStyles(() => ({
     width: '7.5%',
     textAlign: 'center',
   },
+  errorWrapper: {
+    textAlign: 'left',
+  },
 }));
 
 export default function JobDetail({
@@ -95,7 +98,7 @@ export default function JobDetail({
         <TableCell className={classes.success}>{job.numSuccess}</TableCell>
 
         <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
-        <TableCell className={classes.error}>{getTextAfterCount('error', job.numError)}</TableCell>
+        <TableCell className={clsx(jobDetailsClasses.error, classes.errorWrapper)}>{getTextAfterCount('error', job.numError)}</TableCell>
         <TableCell className={classes.pages}>{job.numPagesGenerated}</TableCell>
         <TableCell className={clsx(classes.actions, jobDetailsClasses.actions)}>
           <JobActionsMenu

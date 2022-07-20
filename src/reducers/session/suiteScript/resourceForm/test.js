@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
-import {FORM_SAVE_STATUS} from '../../../../utils/constants';
+import {FORM_SAVE_STATUS} from '../../../../constants';
 import { suiteScriptResourceKey } from '../../../../utils/suiteScript';
 
 describe('session.suiteScript.resourceForm form reducers', () => {

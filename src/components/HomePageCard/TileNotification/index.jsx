@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import WarningIcon from '../../icons/WarningIcon';
 import ExpiredIcon from '../../icons/ErrorIcon';
 import actions from '../../../actions';
-import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS, TILE_STATUS } from '../../../utils/constants';
+import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS, TILE_STATUS } from '../../../constants';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import ActionGroup from '../../ActionGroup';
 import { FilledButton, TextButton} from '../../Buttons';
@@ -60,7 +60,23 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TileNotification({ content, expired, connectorId, licenseId, integrationId, isIntegrationV2, resumable, accessLevel, showTrialLicenseMessage, tileStatus, trialExpired}) {
+export default function TileNotification({
+  content,
+  expired,
+  connectorId,
+  licenseId,
+  integrationId,
+  isIntegrationV2,
+  mode,
+  name,
+  _connectorId,
+  supportsMultiStore,
+  resumable,
+  accessLevel,
+  showTrialLicenseMessage,
+  tileStatus,
+  trialExpired,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const {confirmDialog} = useConfirmDialog();
@@ -81,7 +97,7 @@ export default function TileNotification({ content, expired, connectorId, licens
           label: 'Submit request',
           onClick: () => {
             setUpgradeRequested(true);
-            dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
+            dispatch(actions.license.requestUpdate('connectorRenewal', {connectorId, licenseId}));
           },
         },
         {
@@ -125,7 +141,7 @@ export default function TileNotification({ content, expired, connectorId, licens
           {
             label: 'Submit request',
             onClick: () => {
-              dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
+              dispatch(actions.license.requestUpdate('connectorRenewal', {connectorId, licenseId}));
             },
           },
           {
@@ -137,7 +153,7 @@ export default function TileNotification({ content, expired, connectorId, licens
     }
   }, [accessLevel, confirmDialog, connectorId, dispatch, enquesnackbar, integrationId, licenseId, onClickBuyButton, resumable, showTrialLicenseMessage]);
 
-  const handleUninstall = useHandleDelete(integrationId);
+  const handleUninstall = useHandleDelete(integrationId, {mode, supportsMultiStore, name, _connectorId});
 
   return (
     <div className={classes.trialExpireWrapper}>
@@ -188,6 +204,5 @@ export default function TileNotification({ content, expired, connectorId, licens
       </div>
       <div />
     </div>
-
   );
 }

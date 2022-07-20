@@ -190,6 +190,9 @@ describe('resource util tests', () => {
     test('should return correct appType for bigquery subtype', () => {
       expect(rdbmsSubTypeToAppType('bigquery')).toEqual('bigquerydatawarehouse');
     });
+    test('should return correct appType for redshift subtype', () => {
+      expect(rdbmsSubTypeToAppType('redshift')).toEqual('redshiftdatawarehouse');
+    });
     test('should return correct appType for snowflake subtype', () => {
       expect(rdbmsSubTypeToAppType('snowflake')).toEqual('snowflake');
     });
@@ -198,6 +201,9 @@ describe('resource util tests', () => {
   describe('tests for util rdbmsAppTypeToSubType', () => {
     test('should return correct subtype for bigquerydatawarehouse apptype', () => {
       expect(rdbmsAppTypeToSubType('bigquerydatawarehouse')).toEqual('bigquery');
+    });
+    test('should return correct subtype for redshiftdatawarehouse apptype', () => {
+      expect(rdbmsAppTypeToSubType('redshiftdatawarehouse')).toEqual('redshift');
     });
     test('should return correct appType for snowflake subtype', () => {
       expect(rdbmsAppTypeToSubType('snowflake')).toEqual('snowflake');

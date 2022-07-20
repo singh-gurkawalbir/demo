@@ -165,10 +165,11 @@ describe('installer saga', () => {
         )
         .put(actions.integrationApp.settings.requestAddOnLicenseMetadata(id))
         .put(actions.resource.request('integrations', id))
-        .put(actions.resource.requestCollection('flows', null, true))
-        .put(actions.resource.requestCollection('exports', null, true))
-        .put(actions.resource.requestCollection('imports', null, true))
-        .put(actions.resource.requestCollection('connections', null, true))
+        .put(actions.resource.requestCollection('flows', null, true, id))
+        .put(actions.resource.requestCollection('exports', null, true, id))
+        .put(actions.resource.requestCollection('imports', null, true, id))
+        .put(actions.resource.requestCollection('connections', null, true, id))
+        .put(actions.resource.requestCollection('asynchelpers', null, true, id))
         .put(actions.integrationApp.isAddonInstallInprogress(false, addOnId))
         .run();
     });
@@ -1769,7 +1770,7 @@ describe('uninstaller saga', () => {
       ])
       .put(actions.resource.requestCollection('integrations'))
       .put(actions.resource.requestCollection('tiles'))
-      .put(actions.resource.requestCollection('licenses'))
+      .put(actions.license.refreshCollection())
       .run());
     test('should not put any collection requests if resource call fails', () => {
       const error = { code: 'dummy', message: 'dummy' };
@@ -1785,7 +1786,7 @@ describe('uninstaller saga', () => {
         ])
         .not.put(actions.resource.requestCollection('integrations'))
         .not.put(actions.resource.requestCollection('tiles'))
-        .not.put(actions.resource.requestCollection('licenses'))
+        .not.put(actions.license.refreshCollection())
         .run();
     });
   });

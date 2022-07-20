@@ -3,7 +3,7 @@ import sortBy from 'lodash/sortBy';
 import { createSelector } from 'reselect';
 import {COMM_STATES } from '../../comms/networkComms';
 import actionTypes from '../../../actions/types';
-import { emptyList, emptyObject, LINE_GRAPH_TYPES, LINE_GRAPH_TYPE_SHORTID, RESOLVED_GRAPH_DATAPOINTS, AUTO_PILOT_DATA_POINT } from '../../../utils/constants';
+import { emptyList, emptyObject, LINE_GRAPH_TYPES, LINE_GRAPH_TYPE_SHORTID, RESOLVED_GRAPH_DATAPOINTS, AUTO_PILOT_DATA_POINT } from '../../../constants';
 
 function updateStatus(draft, flowId, status) {
   if (!draft[flowId]) {

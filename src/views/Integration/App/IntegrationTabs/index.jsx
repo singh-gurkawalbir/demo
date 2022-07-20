@@ -19,14 +19,12 @@ import DashboardPanel from '../panels/Dashboard';
 import AddOnsPanel from '../panels/AddOns';
 import AnalyticsPanel from '../panels/Analytics';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
-import AliasesPanel from '../../common/AliasesPanel';
 import AddIcon from '../../../../components/icons/AddIcon';
 import FlowsIcon from '../../../../components/icons/FlowsIcon';
 import GroupOfUsersIcon from '../../../../components/icons/GroupOfUsersIcon';
 import SingleUserIcon from '../../../../components/icons/SingleUserIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getAdminLevelTabs } from '../../../../utils/integrationApps';
-import InstallationGuideIcon from '../../../../components/icons/InstallationGuideIcon';
 import TabContent from '../../../../components/TabContent';
 
 const getAllTabs = isUserInErrMgtTwoDotZero => [
@@ -75,7 +73,6 @@ const getAllTabs = isUserInErrMgtTwoDotZero => [
     Panel: AdminPanel,
   },
   { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
-  { path: 'aliases', label: 'Aliases', Icon: InstallationGuideIcon, Panel: AliasesPanel},
 ];
 
 export default function IntegrationTabsComponent() {

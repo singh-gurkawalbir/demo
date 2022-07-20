@@ -16,6 +16,8 @@ import CeligoDivider from '../CeligoDivider';
 import FieldHelp from '../DynaForm/FieldHelp';
 import MockInput from './MockInput';
 import {drawerPaths, buildDrawerUrl} from '../../utils/rightDrawer';
+import { adaptorTypeMap } from '../../utils/resource';
+import { HTTP_BASED_ADAPTORS } from '../../utils/http';
 
 const useStyles = makeStyles(theme => ({
   previewPanelWrapper: {
@@ -59,6 +61,7 @@ function PreviewInfo({
   setShowPreviewData,
   resourceType,
   toggleValue,
+  flowId,
 }) {
   const dispatch = useDispatch();
 
@@ -92,6 +95,7 @@ function PreviewInfo({
       resourceId={resourceId}
       showPreviewData={showPreviewData[toggleValue]}
       resourceType={resourceType}
+      flowId={flowId}
   />
   );
 }
@@ -104,7 +108,11 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
     selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
   shallowEqual
   );
-  const isLookup = useSelector(state => selectors.isLookUpExport(state, { flowId, resourceId, resourceType }));
+  const resource = useSelector(state => selectors.resourceData(state, resourceType, resourceId)?.merged);
+  const {adaptorType, isLookup} = resource || {};
+  const appType = adaptorTypeMap[adaptorType];
+  const isBlobImport = resource?.resourceType === 'transferFiles' || resource?.type === 'blob' || resource?.blob;
+  const isSendVisible = resourceType === 'imports' && !isBlobImport;
   const dispatch = useDispatch();
   const toggleValue = useSelector(state =>
     selectors.typeOfSampleData(state, resourceId)
@@ -132,6 +140,8 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
     history.push(buildDrawerUrl({path: drawerPaths.PREVIEW_PANEL_MOCK_INPUT, baseUrl: match.url}));
   }, [match.url, history]);
 
+  const isEditMockInputAvailable = resourceType === 'imports' || (isLookup && HTTP_BASED_ADAPTORS.includes(appType));
+
   return (
     <div>
       <MockInput
@@ -143,7 +153,7 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
       <div
         className={classes.previewPanelWrapper}>
         <Typography className={classes.previewDataHeading}>
-          {resourceType === 'imports' ? (
+          {isSendVisible ? (
             <div className={classes.labelWrapper}>
               <FormLabel className={classes.label}>Preview &amp; send</FormLabel>
               <FieldHelp
@@ -155,24 +165,24 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
         </Typography>
 
         <div className={classes.container}>
-          {resourceType === 'imports' || isLookup ? (
+          {isEditMockInputAvailable ? (
             <div className={classes.actionGroupWrapper}>
               <ActionGroup position="right">
                 <TextButton onClick={onEditorClick} startIcon={<EditIcon />}>
                   Edit mock input
                 </TextButton>
-                {!isLookup && (
-                <>
-                  <CeligoDivider position="right" />
-                  <TextToggle
-                    value={toggleValue}
-                    onChange={onChange}
-                    exclusive
-                    className={classes.errorDrawerActionToggle}
-                    options={IMPORT_PREVIEW_ERROR_TYPES}
+                {isSendVisible ? (
+                  <>
+                    <CeligoDivider position="right" />
+                    <TextToggle
+                      value={toggleValue}
+                      onChange={onChange}
+                      exclusive
+                      className={classes.errorDrawerActionToggle}
+                      options={IMPORT_PREVIEW_ERROR_TYPES}
                 />
-                </>
-                )}
+                  </>
+                ) : ''}
               </ActionGroup>
             </div>
           ) : ''}
@@ -185,6 +195,7 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
             showPreviewData={showPreviewData}
             resourceType={resourceType}
             toggleValue={toggleValue}
+            flowId={flowId}
           />
 
           <Panels.PreviewBody

@@ -27,7 +27,7 @@ export const gridViewStyles = makeStyles(theme => ({
       gridTemplateColumns: 'repeat(1, minmax(100%, 1fr));',
     },
     [theme.breakpoints.up('xs')]: {
-      gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr));',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(292px, 1fr));',
     },
   },
 }));

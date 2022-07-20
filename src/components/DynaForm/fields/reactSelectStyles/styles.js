@@ -50,7 +50,7 @@ export const ReactSelectUseStyles = makeStyles(theme => ({
   wrapper: {
     minHeight: 38,
     height: 'auto',
-    '& >.MuiSelect-selectMenu': {
+    '& >.MuiSelect-selectMenu,&>div': {
       height: 'auto',
     },
   },
@@ -115,7 +115,7 @@ export function CustomReactSelectStyles() {
     input: () => ({
       color: theme.palette.secondary.main,
       width: '100%',
-      padding: '0 7px',
+      padding: '0',
       '& > div': {
         width: '100%',
       },

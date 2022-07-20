@@ -21,14 +21,15 @@ import {
 import { _fetchRawDataForFileAdaptors } from '../sampleData/rawDataUpdates/fileAdaptorUpdates';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA } from '../../utils/constants';
+import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA, PageProcessorPathRegex, FLOW_SAVING_STATUS } from '../../constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, flowLastModifiedPatch } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 import { getAssistantFromConnection } from '../../utils/connections';
-import { getAssistantConnectorType } from '../../constants/applications';
+import { getAssistantConnectorType, getHttpConnector } from '../../constants/applications';
 import { constructResourceFromFormValues } from '../utils';
+import {getConnector, getConnectorMetadata} from '../resources/httpConnectors';
 
 export const SCOPES = {
   META: 'meta',
@@ -61,6 +62,7 @@ export function* createFormValuesPatchSet({
   let finalValues = values;
 
   let connection;
+  let assistantData;
 
   if (resource?._connectionId) {
     connection = yield select(
@@ -69,21 +71,42 @@ export function* createFormValuesPatchSet({
       resource._connectionId
     );
   }
+  const connectorMetaData = yield select(
+    selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
+
+  const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
+
+  if (_httpConnectorId) {
+    assistantData = connectorMetaData;
+  }
 
   const { preSave } = getResourceFormAssets({
     resourceType,
     resource,
     connection,
     isNew: formState.isNew,
+    assistantData,
   });
 
   if (typeof preSave === 'function') {
     const iClients = yield select(selectors.resourceList, {
       type: 'iClients',
     });
+    let httpConnectorData;
+    const httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
+
+    if (resourceType === 'connections' && httpPublishedConnector) {
+      httpConnectorData = yield select(selectors.connectorData, httpPublishedConnector?._id);
+
+      if (!httpConnectorData && httpPublishedConnector?._id) {
+        httpConnectorData = yield call(getConnector, {
+          httpConnectorId: httpPublishedConnector._id,
+        });
+      }
+    }
 
     // stock preSave handler present...
-    finalValues = preSave(values, resource, {iClients, connection});
+    finalValues = preSave(values, resource, {iClients, connection, httpConnector: httpConnectorData});
   }
 
   const patchSet = sanitizePatchSet({
@@ -190,7 +213,8 @@ export function* deleteUISpecificValues({ values, resourceId }) {
   const groupByFields = valuesCopy['/file/groupByFields'];
   let canDeprecateOldFields = !!valuesCopy['/file/sortByFields'];
 
-  if ((csvKeyColumns && !isEqual(csvKeyColumns, groupByFields)) || (xlsxKeyColumns && !isEqual(xlsxKeyColumns, groupByFields))) {
+  if ((csvKeyColumns && groupByFields && !isEqual(csvKeyColumns, groupByFields)) ||
+      (xlsxKeyColumns && groupByFields && !isEqual(xlsxKeyColumns, groupByFields))) {
     canDeprecateOldFields = true;
   }
   // Existing keycolumns should be removed if any changes are done in group by fields or sort by fields.
@@ -443,6 +467,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     'flows',
     flowId
   )) || emptyObject;
+  const elementsMap = yield select(selectors.fbGraphElementsMap, flowId);
 
   // if its an existing resource and original flow document does not have any references to newly created PG or PP
   // then we can go ahead and update it...if it has existing references no point creating additional create patches
@@ -460,19 +485,24 @@ export function* getFlowUpdatePatchesForNewPGorPP(
   );
 
   let addIndexPP = flowDoc?.pageProcessors?.length || 0;
-  let addIndexPG = flowDoc?.pageGenerators?.length || 0;
+  const addIndexPG = flowDoc?.pageGenerators?.length || 0;
 
   // Incoming resourceIds that model new PP or PGs (are prefixed with 'new-')  may contain a suffix
   // identifying if the resource should replace an existing pending resource, or if absent, add a new
   // resource. If this index suffix exists, we replace the pending PP/PG at that location, otherwise we
   // add a new one.
-  const [, pendingIndex] = tempResourceId?.split('.');
+  const [, pendingId] = tempResourceId?.split('.');
   let pending = false;
+  let stepPath;
+  const isPageGenerator = resourceType === 'exports' && !createdResource?.isLookup;
 
-  if (pendingIndex) {
+  if (pendingId) {
     pending = true;
-    addIndexPP = pendingIndex;
-    addIndexPG = pendingIndex;
+    if (flowDoc?.routers?.length || (isPageGenerator && elementsMap?.[pendingId])) {
+      stepPath = elementsMap[pendingId]?.data?.path;
+    } else if (!isPageGenerator && elementsMap?.[pendingId]?.data?.path) {
+      [,,, addIndexPP] = PageProcessorPathRegex.exec(elementsMap?.[pendingId]?.data?.path);
+    }
   }
 
   let flowPatches = [];
@@ -482,7 +512,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
       flowPatches = [
         {
           op: pending ? 'replace' : 'add',
-          path: `/pageProcessors/${addIndexPP}`,
+          path: stepPath || `/pageProcessors/${addIndexPP}`,
           value: { type: 'export', _exportId: createdId },
         },
       ];
@@ -505,7 +535,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
         flowPatches = [
           {
             op: pending ? 'replace' : 'add',
-            path: `/pageGenerators/${addIndexPG}`,
+            path: stepPath || `/pageGenerators/${addIndexPG}`,
             value: { _exportId: createdId },
           },
         ];
@@ -516,7 +546,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     flowPatches = [
       {
         op: pending ? 'replace' : 'add',
-        path: `/pageProcessors/${addIndexPP}`,
+        path: stepPath || `/pageProcessors/${addIndexPP}`,
         value: { type: 'import', _importId: createdId },
       },
     ];
@@ -651,6 +681,8 @@ export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValue
     'flows',
     flowId
   ))?.merged || emptyObject;
+
+  yield put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS));
 
   if (isIntegrationApp(flow)) {
     // update the last modified time
@@ -844,6 +876,7 @@ export function* initFormValues({
     resourceId,
     SCOPES.VALUE
   ))?.merged || emptyObject;
+
   const flow = (yield select(
     selectors.resourceData,
     'flows',
@@ -853,7 +886,6 @@ export function* initFormValues({
   if (isNewId(resourceId)) {
     resource._id = resourceId;
   }
-
   // if resource is empty.... it could be a resource looked up with invalid Id
   if (!resource || isEmpty(resource)) {
     yield put(actions.resourceForm.initFailed(resourceType, resourceId));
@@ -871,8 +903,10 @@ export function* initFormValues({
   const adaptorType = getAssistantConnectorType(connectionAssistant);
 
   let assistantData;
+  let connectorMetaData;
+  // http connector check
 
-  if (['exports', 'imports'].includes(resourceType) && connectionAssistant && !isNew) {
+  if (['exports', 'imports'].includes(resourceType) && !isNew) {
     if (!assistantMetadata) {
       yield put(
         actions.resource.patchStaged(
@@ -882,25 +916,40 @@ export function* initFormValues({
         )
       );
     }
+    // Needs to get connection list
 
     assistantData = yield select(selectors.assistantData, {
       adaptorType,
       assistant: connectionAssistant,
     });
-
-    if (!assistantData) {
+    connectorMetaData = yield select(
+      selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
+    if (getHttpConnector(connection?.http?._httpConnectorId) && !connectorMetaData) {
+      connectorMetaData = yield call(getConnectorMetadata, {
+        connectionId: connection._id,
+        httpConnectorId: connection?.http?._httpConnectorId,
+        httpVersionId: connection?.http?._httpConnectorVersionId,
+        httpConnectorApiId: connection?.http?._httpConnectorApiId,
+      });
+    } else if (!getHttpConnector(connection?.http?._httpConnectorId) && !assistantData) {
       assistantData = yield call(requestAssistantMetadata, {
         adaptorType,
         assistant: connectionAssistant,
       });
     }
   }
+  // const {resources: httpConnectors} = yield select(selectors.resourceList, {
+  //   type: 'httpconnectors',
+  // });
+  // const httpConnector = httpConnectors?.find(conn => (conn.name === resource.assistant) && conn.published);
+  const httpPublishedConnector = resourceType === 'connections' && getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
+
   try {
     const defaultFormAssets = getResourceFormAssets({
       resourceType,
       resource: newResource,
       isNew,
-      assistantData,
+      assistantData: getHttpConnector(connection?.http?._httpConnectorId) ? connectorMetaData : assistantData,
       connection,
     });
 
@@ -915,9 +964,19 @@ export function* initFormValues({
     let finalFieldMeta = fieldMeta;
 
     if (typeof defaultFormAssets.init === 'function') {
-      // standard form init fn...
+      let httpConnectorData;
 
-      finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow);
+      if (httpPublishedConnector?._id) {
+        httpConnectorData = yield select(selectors.connectorData, httpPublishedConnector?._id);
+      }
+
+      if (!httpConnectorData && httpPublishedConnector?._id) {
+        httpConnectorData = yield call(getConnector, {
+          httpConnectorId: httpPublishedConnector._id,
+        });
+      }
+      // standard form init fn...
+      finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow, httpConnectorData);
     }
 
     // console.log('finalFieldMeta', finalFieldMeta);

@@ -10,7 +10,7 @@ import {
 } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
-import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../constants';
 import { getResourceCollection } from '../resources';
 
 export function* changePassword({ updatedPassword }) {
@@ -128,9 +128,9 @@ export function* requestLicenseUpgrade() {
   yield put(actions.license.licenseUpgradeRequestSubmitted(response));
 }
 
-export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
+export function* requestLicenseUpdate({ actionType, connectorId, licenseId, feature }) {
   const { path, opts } = getRequestOptions(actionTypes.LICENSE.UPDATE_REQUEST, {
-    actionType, connectorId, licenseId,
+    actionType, connectorId, licenseId, feature,
   });
   let response;
 
@@ -139,7 +139,7 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
       path,
       timeout: 5 * 60 * 1000,
       opts,
-      hidden: actionType === 'upgrade',
+      hidden: ['upgrade', 'ioRenewal'].includes(actionType),
     });
   } catch (error) {
     let errorCode;
@@ -152,7 +152,7 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
     // eslint-disable-next-line no-empty
     } catch (e) {
     }
-    if (actionType === 'upgrade' && errorCode.includes('ratelimit_exceeded')) {
+    if (errorCode?.includes('ratelimit_exceeded')) {
       return yield put(actions.api.failure(path, 'POST', 'You have already submitted an upgrade request. We will be in touch soon.', false));
     }
 
@@ -163,9 +163,9 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
     yield put(actions.resource.requestCollection('flows'));
     yield put(actions.resource.requestCollection('exports'));
     yield put(actions.resource.requestCollection('imports'));
-    yield put(actions.resource.requestCollection('licenses'));
+    yield put(actions.license.refreshCollection());
   } else {
-    yield put(actions.license.licenseUpgradeRequestSubmitted(response));
+    yield put(actions.license.licenseUpgradeRequestSubmitted(response, feature));
   }
 }
 
@@ -583,6 +583,18 @@ export function* deleteSuiteScriptLinkedConnection({ connectionId }) {
   yield put(actions.resource.requestCollection('shared/ashares'));
 }
 
+export function* refreshLicensesCollection() {
+  const defaultAShareId = yield select(selectors.defaultAShareId);
+
+  if (defaultAShareId && defaultAShareId !== 'own') {
+    yield put(actions.resource.requestCollection('shared/ashares'));
+
+    return;
+  }
+
+  yield put(actions.resource.requestCollection('licenses'));
+}
+
 export const userSagas = [
   takeLatest(actionTypes.USER.PROFILE.UNLINK_WITH_GOOGLE, unlinkWithGoogle),
   takeLatest(actionTypes.USER.PROFILE.UPDATE, updateProfile),
@@ -621,4 +633,5 @@ export const userSagas = [
     deleteSuiteScriptLinkedConnection
   ),
   takeLatest(actionTypes.USER.REINVITE, reinviteUser),
+  takeEvery(actionTypes.LICENSE.REFRESH_COLLECTION, refreshLicensesCollection),
 ];

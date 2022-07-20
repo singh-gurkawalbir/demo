@@ -8,7 +8,6 @@ export default {
 
     retValues['/http/formType'] = 'graph_ql';
     retValues['/adaptorType'] = 'HTTPExport';
-    retValues['/http/relativeURI'] = '/';
     retValues['/http/mediaType'] = 'json';
 
     retValues['/http/body'] = convertGraphQLQueryToHTTPBody({
@@ -83,7 +82,7 @@ export default {
           is: ['xml'],
         },
       ],
-      defaultValue: r => r?.resourceType === 'lookupFiles' || r?.type === 'blob' ? '' : 'data',
+      defaultValue: r => (r?.http?.response?.resourcePath) || (r?.resourceType === 'lookupFiles' || r?.type === 'blob' ? '' : 'data'),
     },
     type: {
       id: 'type',
@@ -183,7 +182,7 @@ export default {
     'http.paging.pathAfterFirstRequest': {
       fieldId: 'http.paging.pathAfterFirstRequest',
     },
-    'http.paging.resourcePath': { fieldId: 'http.paging.resourcePath', defaultValue: 'data' },
+    'http.paging.resourcePath': { fieldId: 'http.paging.resourcePath' },
     'http.paging.maxPagePath': { fieldId: 'http.paging.maxPagePath' },
     'http.paging.maxCountPath': { fieldId: 'http.paging.maxCountPath' },
     'http.paging.lastPageStatusCode': {
