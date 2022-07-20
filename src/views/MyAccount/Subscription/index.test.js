@@ -1,12 +1,11 @@
 /* global describe, test, expect */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { screen } from '@testing-library/react';
 import Subscription from '.';
 import { runServer } from '../../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 
-async function initSubscription() {
+async function initSubscription({ type }) {
   const initialStore = reduxStore;
 
   initialStore.getState().user.preferences = {
@@ -19,7 +18,7 @@ async function initSubscription() {
       accessLevel: 'owner',
       ownerUser: {
         licenses: [{
-          type: 'diy',
+          type,
           usageTierName: 'free',
         }],
       },
@@ -41,13 +40,11 @@ async function initSubscription() {
 describe('Subscription test cases', () => {
   runServer();
 
-  test('should pass the initial render with default value', async () => {
-    await initSubscription();
+  test('should pass the initial render with dummy type', async () => {
+    const { utils } = await initSubscription({
+      type: 'dummy',
+    });
 
-    expect(screen.queryByText(/Details:/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Edition:/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Expiration date:/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Current usage:/i)).toBeInTheDocument();
-    expect(screen.queryByText(/0 Hours/i)).toBeInTheDocument();
+    expect(utils.container).toBeEmptyDOMElement();
   });
 });

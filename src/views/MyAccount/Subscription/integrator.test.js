@@ -34,13 +34,13 @@ async function initSubscription(
       accessLevel: 'owner',
       ownerUser: {
         licenses: [{
-          type: 'endpoint',
-          tier: 'free',
+          type: 'integrator',
+          tier: 'standard',
           sandbox: true,
           expires,
           trialEndDate: '2019-03-09T06:02:00.255Z',
           ...rest,
-          endpoint: {
+          integrator: {
             apiManagement: true,
             production: {
               numAddOnAgents: 0,
@@ -55,7 +55,7 @@ async function initSubscription(
             sandbox: {
               numAddOnAgents: 0,
               numAddOnSubscriptions: 0,
-              numAddOnFlows: 0,
+              numAddOnFlows: 50,
               numAddOnTradingPartners: 0,
               numAgents: 3,
               numSubscriptions: 20,
@@ -82,7 +82,7 @@ async function initSubscription(
   };
 }
 
-describe('Subscription test cases', () => {
+describe('integrator test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -107,7 +107,7 @@ describe('Subscription test cases', () => {
     await initSubscription({
       resource: {},
     });
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(screen.getAllByRole('progressbar')[0]).toBeInTheDocument();
   });
 
   test('should pass the initial render with expired date', async () => {
@@ -117,8 +117,7 @@ describe('Subscription test cases', () => {
     await initSubscription({
       expires: expires.toISOString(),
     });
-    expect(screen.queryByText(/Subscription/i)).toBeInTheDocument();
+    expect(screen.queryByText('Subscription')).toBeInTheDocument();
     expect(screen.queryByText(/Expired/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Production entitlements/i)).toBeInTheDocument();
   });
 });
