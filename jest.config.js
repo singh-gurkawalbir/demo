@@ -20,9 +20,6 @@ module.exports = {
     'src/reducers/**/*.{js,jsx}',
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
-    'src/components/LineGraph/*.{js,jsx}',
-    'src/components/LineGraph/Dashboard/*.{js,jsx}',
-    'src/components/LineGraph/Flow/*.{js,jsx}',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js'],
   coverageThreshold: {
