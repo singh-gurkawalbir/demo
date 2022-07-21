@@ -901,7 +901,8 @@ export default [
   takeLatest(
     [actionTypes.EDITOR.PATCH.DATA,
       actionTypes.EDITOR.PATCH.RULE,
-      actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW],
+      actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW,
+      actionTypes.EDITOR.PATCH.FEATURES],
     autoEvaluateProcessorWithCancel
   ),
   // added a separate effect for DynaFileKeyColumn as
