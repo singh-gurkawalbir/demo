@@ -1103,8 +1103,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connector.applications': 'Displays the source and destination applications to which this integration can be connected. You can integrate with an application, database, or  universal connector.',
   'connector.contactEmail': 'Enter one or many email addresses for the integration admin. The integration admin is notified when the user requests a demo, integration upgrade, add-on installation, or a subscription extension. ',
   'connector.imageURL': '.',
-  'connector._integrationId':
-'If this flow is part of an integration, this value will hold the id of that integration. ',
+  'connector._integrationId': 'Select the source integration ID. The selected integration is used as a source copy to create integrations to user accounts.',
   'connector.websiteURL': 'Enter the website URL of the integration.',
   'connector.oauth2ResultsURL': '.',
   'connector.managed': '.',
