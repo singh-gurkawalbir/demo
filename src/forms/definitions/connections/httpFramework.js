@@ -2,6 +2,7 @@ import {
   updateFinalMetadataWithHttpFramework,
 } from '../../../sagas/utils';
 import { updateHTTPFrameworkFormValues } from '../../metaDataUtils/fileUtil';
+import {PASSWORD_MASK} from '../../../constants';
 
 export default {
   init: (fieldMeta, resource, flow, httpConnector) => updateFinalMetadataWithHttpFramework(fieldMeta, httpConnector, resource),
@@ -39,6 +40,7 @@ export default {
       } catch (ex) {
         newValues['/http/encrypted'] = undefined;
       }
+      if (newValues['/http/encrypted'] === PASSWORD_MASK) { newValues['/http/encrypted'] = undefined; }
     }
 
     if (newValues['/http/custom/encrypted']) {

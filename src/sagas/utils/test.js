@@ -1293,6 +1293,7 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
 
         ],
         type: 'select',
+        visible: false,
 
       },
       'http.ping.relativeURI': {

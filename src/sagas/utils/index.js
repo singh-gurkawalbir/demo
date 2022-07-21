@@ -388,6 +388,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           ];
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options};
+        } else {
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
         }
         if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]}; }
       } else if (!tempFiledMeta.fieldMap[key].required && key !== 'settings') {
@@ -442,27 +444,49 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       },
     });
   }
-  // const preConfiguredUnencryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'unEncryptedFields');
+  const preConfiguredUnencryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'http.unencryptedFields');
 
-  // if (preConfiguredUnencryptedFields?.values?.length > 0) {
-  //   preConfiguredUnencryptedFields.values.forEach(fld => {
-  //     unEncryptedFields.push({
-  //       position: fld.position,
-  //       field: {
-  //         label: fld.label,
-  //         name: `/http/unencrypted/${fld.id}`,
-  //         id: `http.unencrypted.${fld.id}`,
-  //         fieldId: `http.unencrypted.${fld.id}`,
-  //         helpText: fld.helpText,
-  //         type: fld.type || 'text',
-  //         required: !!fld.required,
-  //         options: fld.options,
-  //         validWhen: fld.validWhen,
-  //         defaultValue: resource?.http?.unencrypted?.[fld.id],
-  //       },
-  //     });
-  //   });
-  // }
+  if (preConfiguredUnencryptedFields?.values?.length > 0) {
+    preConfiguredUnencryptedFields.values.forEach(fld => {
+      unEncryptedFields.push({
+        position: 1,
+        field: {
+          label: fld.label,
+          name: `/http/unencrypted/${fld.id}`,
+          id: `http.unencrypted.${fld.id}`,
+          fieldId: `http.unencrypted.${fld.id}`,
+          helpText: fld.helpText,
+          type: fld.type || 'text',
+          required: !!fld.required,
+          options: fld.options,
+          validWhen: fld.validWhen,
+          defaultValue: resource?.http?.unencrypted?.[fld.id],
+        },
+      });
+    });
+  }
+  const preConfiguredencryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'http.encryptedFields');
+
+  if (preConfiguredencryptedFields?.values?.length > 0) {
+    preConfiguredencryptedFields.values.forEach(fld => {
+      unEncryptedFields.push({
+        position: 2,
+        field: {
+          label: fld.label,
+          name: `/http/encrypted/${fld.id}`,
+          id: `http.encrypted.${fld.id}`,
+          fieldId: `http.encrypted.${fld.id}`,
+          helpText: fld.helpText,
+          inputType: 'password',
+          type: fld.type || 'text',
+          required: !!fld.required,
+          options: fld.options,
+          validWhen: fld.validWhen,
+          defaultValue: resource?.http?.encrypted?.[fld.id],
+        },
+      });
+    });
+  }
 
   if (unEncryptedFields) {
     for (let i = 0; i < unEncryptedFields.length; i += 1) {

@@ -397,8 +397,7 @@ export const groupApplications = (
     });
   }
   assistantConnectors = assistantConnectors.filter(app =>
-    !publishedConnectors?.find(pc => pc.legacyId === app.assistant)
-
+    !publishedConnectors?.find(pc => pc.name === app.name)
   );
     publishedConnectors?.forEach(pc => {
       assistantConnectors.push({
@@ -495,7 +494,7 @@ export const applicationsList = () => {
     });
   });
   applications = applications.filter(app =>
-    !publishedConnectors?.find(pc => pc.name === app.assistant)
+    !publishedConnectors?.find(pc => pc.name === app.name)
 
   );
   publishedConnectors?.forEach(pc => {
