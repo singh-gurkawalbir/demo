@@ -344,6 +344,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           ];
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], type: 'select', options};
+        } else {
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
         }
       } else if (key === 'http.auth.oauth.scope') {
         const field = preConfiguredField || fieldUserMustSet;
@@ -513,7 +515,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
             fieldId: `settings.${value.id}`,
             helpText: value.helpText,
             type: value.type || 'text',
-            defaultValue: resource?.settings?.[value.id],
+            defaultValue: resource?.settings?.[value.id] || value.defaultValue,
             required: !!value.required,
             options: value.options,
             validWhen: value.validWhen,

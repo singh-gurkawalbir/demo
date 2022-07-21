@@ -146,6 +146,7 @@ export default {
     if (newValues['/http/auth/type'] === 'custom') {
       newValues['/http/encrypted'] = newValues['/http/custom/encrypted'];
       newValues['/http/unencrypted'] = newValues['/http/custom/unencrypted'];
+      if (newValues['/http/encrypted'] === PASSWORD_MASK) { newValues['/http/encrypted'] = undefined; }
     }
     if (newValues['/http/auth/type'] === 'oauth') {
       newValues['/http/auth/oauth/applicationType'] = 'custom';
