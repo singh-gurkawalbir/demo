@@ -108,6 +108,9 @@ export function* _fetchAssistantSampleData({ resource }) {
       httpVersionId: connection?.http?._httpConnectorVersionId,
       _httpConnectorApiId: connection?.http?._httpConnectorApiId,
     });
+    if (!connectorMetaData) {
+      return false;
+    }
   }
   if (!getHttpConnector(connection?.http?._httpConnectorId)) {
     if (!assistantMetadata) {
