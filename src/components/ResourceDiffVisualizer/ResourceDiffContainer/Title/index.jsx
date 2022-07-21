@@ -21,14 +21,18 @@ const useStyles = makeStyles(theme => ({
 export default function DiffContainerTitle({ resourceDiff, resourceType, integrationId, titles }) {
   const { resourceId, action = REVISION_DIFF_ACTIONS.UPDATE } = resourceDiff;
   const classes = useStyles();
-  const resourceName = useSelector(state => selectors.resourceName(state, resourceId, resourceType));
+  const resourceName = useSelector(state => selectors.diffResourceName(state, {
+    resourceId,
+    resourceType,
+    resourceDiff,
+  }));
   const showReferences = shouldShowReferences(resourceType, action);
   const numConflicts = resourceDiff?.conflicts?.length;
 
   return (
     <>
       <ActionGroup>
-        <Typography variant="body2"> {resourceName || resourceId} </Typography>
+        <Typography variant="body2"> {resourceName} </Typography>
         <CeligoDivider />
         <Typography variant="body2"> Action: {REVISION_DIFF_ACTION_LABELS[action]} </Typography>
         { numConflicts && <ConflictStatus count={numConflicts} />}

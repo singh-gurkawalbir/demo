@@ -106,7 +106,7 @@ export function* uninstallIntegration({ integrationId }) {
 
   yield put(actions.resource.requestCollection('integrations'));
   yield put(actions.resource.requestCollection('tiles'));
-  yield put(actions.resource.requestCollection('licenses'));
+  yield put(actions.license.refreshCollection());
 }
 
 export default [

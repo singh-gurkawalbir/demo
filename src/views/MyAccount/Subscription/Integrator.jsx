@@ -153,7 +153,7 @@ export default function Subscription() {
     );
     setUpgradeRequested(true);
 
-    return dispatch(actions.license.requestUpdate('upgrade'));
+    return dispatch(actions.license.requestUpdate('upgrade', {}));
   }, [dispatch]);
   const onRequestUpgradeClick = useCallback(() => {
     confirmDialog({
@@ -167,7 +167,7 @@ export default function Subscription() {
             );
             setUpgradeRequested(true);
 
-            dispatch(actions.license.requestUpdate('upgrade'));
+            dispatch(actions.license.requestUpdate('upgrade', {}));
           },
         },
         { label: 'Cancel',
@@ -185,7 +185,7 @@ export default function Subscription() {
         {licenseActionDetails && licenseActionDetails.isNone && (
         <div className={classes.block}>
           <Typography
-            varaint="h2"
+            variant="h2"
             color="primary"
             className={classes.headingMaster}>
             You currently dont have any subscription.
@@ -194,7 +194,7 @@ export default function Subscription() {
             <FilledButton onClick={onStartFreeTrialClick}>
               Get unlimited flows
             </FilledButton>
-            <Typography varaint="body2" className={classes.description}>
+            <Typography variant="body2" className={classes.description}>
               Start a 30 day free trial to explore the full capabilities of
               integrator.io. At the end of the trial, you get to keep one
               active flow forever.

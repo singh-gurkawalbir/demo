@@ -32,6 +32,10 @@ const useStyles = makeStyles(theme => ({
   textField: {
     marginTop: '0px !important',
   },
+  selectMenu: {
+    wordBreak: 'break-word',
+    maxWidth: '320px',
+  },
   headerContainer: {
     display: 'flex',
     alignItems: 'flex-start',
@@ -47,6 +51,7 @@ const useStyles = makeStyles(theme => ({
   },
   btnAction: {
     marginTop: theme.spacing(3),
+    minHeight: 38,
   },
 }));
 const scriptFilterConfig = { type: 'scripts' };
@@ -131,18 +136,15 @@ export default function JavaScriptPanel({ editorId }) {
   const handleAceEditorLoad = useCallback(e => {
     aceEditor.current = e;
   }, []);
-  const menuProps = {
-    PaperProps: {
-      style: {
-        maxWidth: 320,
-        wordBreak: 'break-word',
-      },
 
-    },
-  };
+  // This is temporary code to demo the panel in storybook.
+  // We really need to refactor this code so these components can render even if
+  // disconnected from thr API. In this case, if it is not possible to load
+  // the user's scripts.
+  const required = editorId !== 'storybook-router';
 
   return (
-    <LoadResources required resources={['scripts']}>
+    <LoadResources required={required} resources={['scripts']}>
       <div className={classes.container}>
         <div className={classes.headerContainer}>
           <FormControl className={classes.jsPanelFormControl}>
@@ -155,9 +157,21 @@ export default function JavaScriptPanel({ editorId }) {
               margin="dense"
               value={scriptId}
               className={classes.textField}
+              MenuProps={{
+                anchorOrigin: {
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                },
+                transformOrigin: {
+                  vertical: 'top',
+                  horizontal: 'center',
+                },
+                getContentAnchorEl: null,
+                classes: { paper: classes.selectMenu },
+
+              }}
               displayEmpty
               disabled={disabled}
-              MenuProps={menuProps}
               onChange={handleScriptChange}>
               {[defaultItem, ...scriptOptions]}
             </CeligoSelect>

@@ -4,7 +4,7 @@ import actionTypes from '../../../../actions/types';
 import { apiCallWithRetry } from '../../../index';
 import getRequestOptions from '../../../../utils/requestOptions';
 import { selectors } from '../../../../reducers';
-import { JOB_STATUS } from '../../../../utils/constants';
+import { JOB_STATUS } from '../../../../constants';
 import { pollApiRequests } from '../../../app';
 
 const FINISHED_JOB_STATUSES = [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED];
@@ -40,7 +40,6 @@ export function* getJobFamily({ flowId, jobId }) {
     yield call(refreshForMultipleFlowJobs, {flowId, job, latestJobs: latestJobsState.data || []});
   } catch (error) {
     //  handle errors
-    // TODO @Raghu: Check how to handle errors if exist
   }
 }
 
@@ -99,7 +98,6 @@ export function* requestLatestJobs({ flowId }) {
     yield put(actions.errorManager.latestFlowJobs.requestInProgressJobsPoll({ flowId }));
   } catch (error) {
     // handle errors
-    // TODO @Raghu: Check how to handle errors if exist
   }
 }
 
@@ -112,7 +110,7 @@ export function* cancelJob({ jobId }) {
   try {
     yield call(apiCallWithRetry, { path, opts });
   } catch (error) {
-    // TODO @Raghu: Check how to handle errors if exist
+    // Errors
   }
 }
 

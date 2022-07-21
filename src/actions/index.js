@@ -108,7 +108,7 @@ const auth = {
   clearStore: () => action(actionTypes.AUTH.CLEAR_STORE),
   abortAllSagasAndInitLR: opts => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
-  initSession: () => action(actionTypes.AUTH.INIT_SESSION),
+  initSession: opts => action(actionTypes.AUTH.INIT_SESSION, { opts }),
   changePassword: updatedPassword =>
     action(actionTypes.AUTH.USER.CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
@@ -258,11 +258,15 @@ const resource = {
     action(actionTypes.RESOURCE.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
   clearChildIntegration: () => action(actionTypes.RESOURCE.CLEAR_CHILD_INTEGRATION),
 
-  requestCollection: (resourceType, message, refresh) =>
-    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh }),
-
+  requestCollection: (resourceType, message, refresh, integrationId) =>
+    action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh, integrationId }),
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
+  collectionRequestSent: (resourceType, integrationId) =>
+    action(actionTypes.RESOURCE.COLLECTION_REQUEST_SENT, {integrationId, resourceType}),
+  collectionRequestSucceeded: ({ resourceType, integrationId }) => action(actionTypes.RESOURCE.COLLECTION_REQUEST_SUCCEEDED, { resourceType, integrationId }),
+  collectionRequestFailed: ({resourceType, integrationId}) => action(actionTypes.RESOURCE.COLLECTION_REQUEST_FAILED, {resourceType, integrationId}),
+
   updated: (resourceType, resourceId, master, patch, context) =>
     action(actionTypes.RESOURCE.UPDATED, {
       resourceType,
@@ -271,10 +275,11 @@ const resource = {
       patch,
       context,
     }),
-  receivedCollection: (resourceType, collection) =>
+  receivedCollection: (resourceType, collection, integrationId) =>
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
       resourceType,
       collection,
+      integrationId,
     }),
   clearCollection: resourceType =>
     action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
@@ -309,7 +314,17 @@ const resource = {
   undoStaged: (id, scope) =>
     action(actionTypes.RESOURCE.STAGE_UNDO, { id, scope }),
 
-  patchAndCommitStaged: (resourceType, resourceId, patch, { scope, context, asyncKey, parentContext, options } = {}) => action(actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT, {
+  patchAndCommitStaged: (
+    resourceType,
+    resourceId,
+    patch,
+    {
+      scope,
+      context,
+      asyncKey,
+      parentContext,
+      options,
+    } = {}) => action(actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT, {
     resourceType,
     id: resourceId,
     patch,
@@ -1292,6 +1307,7 @@ const user = {
   },
 };
 const license = {
+  refreshCollection: () => action(actionTypes.LICENSE.REFRESH_COLLECTION),
   requestLicenses: message =>
     resource.requestCollection('licenses', undefined, message),
   requestTrialLicense: () => action(actionTypes.LICENSE.TRIAL_REQUEST, {}),
@@ -1299,10 +1315,12 @@ const license = {
     action(actionTypes.LICENSE.TRIAL_ISSUED, message),
   requestLicenseUpgrade: () =>
     action(actionTypes.LICENSE.UPGRADE_REQUEST, {}),
-  requestUpdate: (actionType, connectorId, licenseId) =>
-    action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId }),
-  licenseUpgradeRequestSubmitted: message =>
-    action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message }),
+  requestUpdate: (actionType, {connectorId, licenseId, feature}) =>
+    action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId, feature }),
+  licenseUpgradeRequestSubmitted: (message, feature) =>
+    action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message, feature }),
+  ssoLicenseUpgradeRequested: () =>
+    action(actionTypes.LICENSE.SSO.UPGRADE_REQUESTED),
   requestLicenseEntitlementUsage: () =>
     action(actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST),
   requestNumEnabledFlows: () =>
@@ -1389,10 +1407,12 @@ const flowData = {
       stagesToReset,
     }),
   updateFlow: flowId => action(actionTypes.FLOW_DATA.FLOW_UPDATE, { flowId }),
-  updateResponseMapping: (flowId, resourceIndex, responseMapping) =>
+  updateResponseMapping: (flowId, resourceIndex, responseMapping, {routerIndex, branchIndex} = {}) =>
     action(actionTypes.FLOW_DATA.FLOW_RESPONSE_MAPPING_UPDATE, {
       flowId,
       resourceIndex,
+      routerIndex,
+      branchIndex,
       responseMapping,
     }),
 };
@@ -1448,7 +1468,7 @@ const editor = {
   initComplete: (id, options) => action(actionTypes.EDITOR.INIT_COMPLETE, { id, options }),
   changeLayout: (id, newLayout) => action(actionTypes.EDITOR.CHANGE_LAYOUT, { id, newLayout }),
   patchFeatures: (id, featuresPatch) => action(actionTypes.EDITOR.PATCH.FEATURES, { id, featuresPatch }),
-  patchRule: (id, rulePatch) => action(actionTypes.EDITOR.PATCH.RULE, { id, rulePatch }),
+  patchRule: (id, rulePatch, options) => action(actionTypes.EDITOR.PATCH.RULE, { id, rulePatch, ...options }),
   patchData: (id, dataPatch) => action(actionTypes.EDITOR.PATCH.DATA, { id, dataPatch }),
   patchFileKeyColumn: (id, fileKeyPatchType, fileKeyPatch) => action(actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN, { id, fileKeyPatchType, fileKeyPatch }),
   clear: id => action(actionTypes.EDITOR.CLEAR, { id }),
@@ -1494,7 +1514,7 @@ const mapping = {
   save: ({ match }) => action(actionTypes.MAPPING.SAVE, { match }),
   saveFailed: () => action(actionTypes.MAPPING.SAVE_FAILED, { }),
   saveComplete: () => action(actionTypes.MAPPING.SAVE_COMPLETE, { }),
-  requestPreview: () => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { }),
+  requestPreview: editorId => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { editorId }),
   previewReceived: value =>
     action(actionTypes.MAPPING.PREVIEW_RECEIVED, { value }),
   previewFailed: errors => action(actionTypes.MAPPING.PREVIEW_FAILED, { errors }),
@@ -1510,6 +1530,24 @@ const mapping = {
     request: () => action(actionTypes.MAPPING.AUTO_MAPPER.REQUEST),
     received: value => action(actionTypes.MAPPING.AUTO_MAPPER.RECEIVED, { value }),
     failed: (failSeverity, failMsg) => action(actionTypes.MAPPING.AUTO_MAPPER.FAILED, { failSeverity, failMsg }),
+  },
+  toggleVersion: newVersion => action(actionTypes.MAPPING.TOGGLE_VERSION, { newVersion }),
+  v2: {
+    toggleOutput: outputFormat => action(actionTypes.MAPPING.V2.TOGGLE_OUTPUT, { outputFormat }),
+    toggleRows: expanded => action(actionTypes.MAPPING.V2.TOGGLE_ROWS, { expanded }),
+    updateExpandedKeys: expandedKeys => action(actionTypes.MAPPING.V2.UPDATE_EXPANDED_KEYS, { expandedKeys }),
+    dropRow: dragDropInfo => action(actionTypes.MAPPING.V2.DRAG_DROP, { dragDropInfo }),
+    updateActiveKey: v2Key => action(actionTypes.MAPPING.V2.ACTIVE_KEY, { v2Key }),
+    deleteRow: v2Key => action(actionTypes.MAPPING.V2.DELETE_ROW, { v2Key }),
+    addRow: v2Key => action(actionTypes.MAPPING.V2.ADD_ROW, { v2Key }),
+    updateDataType: (v2Key, newDataType) => action(actionTypes.MAPPING.V2.UPDATE_DATA_TYPE, { v2Key, newDataType }),
+    changeArrayTab: (v2Key, newTabValue, newTabExtractId) => action(actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB, { v2Key, newTabValue, newTabExtractId }),
+    patchField: (field, v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, v2Key, value }),
+    patchSettings: (v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_SETTINGS, { v2Key, value }),
+    patchExtractsFilter: (inputValue, propValue) => action(actionTypes.MAPPING.V2.PATCH_EXTRACTS_FILTER, { inputValue, propValue }),
+    deleteAll: isCSVOrXLSX => action(actionTypes.MAPPING.V2.DELETE_ALL, { isCSVOrXLSX }),
+    autoCreateStructure: (uploadedData, isCSVOrXLSX) => action(actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE, { uploadedData, isCSVOrXLSX }),
+    toggleAutoCreateFlag: () => action(actionTypes.MAPPING.V2.TOGGLE_AUTO_CREATE_FLAG, {}),
   },
 };
 
@@ -2049,6 +2087,20 @@ const errorManager = {
   },
 };
 const flow = {
+  addNewPGStep: flowId => action(actionTypes.FLOW.ADD_NEW_PG_STEP, { flowId }),
+  addNewPPStep: (flowId, path, processorIndex) => action(actionTypes.FLOW.ADD_NEW_PP_STEP, { flowId, path, processorIndex }),
+  addNewRouter: (flowId, router) => action(actionTypes.FLOW.ADD_NEW_ROUTER, { flowId, router }),
+  dragStart: (flowId, stepId) => action(actionTypes.FLOW.DRAG_START, { flowId, stepId }),
+  setDragInProgress: flowId => action(actionTypes.FLOW.SET_DRAG_IN_PROGRESS, { flowId }),
+  dragEnd: flowId => action(actionTypes.FLOW.DRAG_END, { flowId }),
+  mergeTargetSet: (flowId, targetType, targetId) => action(actionTypes.FLOW.MERGE_TARGET_SET, { flowId, targetType, targetId }),
+  mergeTargetClear: flowId => action(actionTypes.FLOW.MERGE_TARGET_CLEAR, { flowId }),
+  mergeBranch: flowId => action(actionTypes.FLOW.MERGE_BRANCH, { flowId }),
+  deleteStep: (flowId, stepId) => action(actionTypes.FLOW.DELETE_STEP, { flowId, stepId }),
+  deleteEdge: (flowId, edgeId) => action(actionTypes.FLOW.DELETE_EDGE, { flowId, edgeId }),
+  deleteRouter: (flowId, routerId) => action(actionTypes.FLOW.DELETE_ROUTER, { flowId, routerId }),
+  initializeFlowGraph: (flowId, flow, isViewMode) => action(actionTypes.FLOW.INIT_FLOW_GRAPH, { flowId, flow, isViewMode }),
+  setSaveStatus: (flowId, status) => action(actionTypes.FLOW.SET_SAVE_STATUS, { flowId, status }),
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
   runDataLoader: ({ flowId, customStartDate, fileContent, fileType, fileName }) =>
@@ -2084,6 +2136,30 @@ const assistantMetadata = {
       adaptorType,
       assistant,
       metadata,
+    }),
+};
+const httpConnectors = {
+  requestMetadata: ({ httpConnectorId, httpVersionId, httpApiId }) =>
+    action(actionTypes.HTTP_CONNECTORS.REQUEST_METADATA, {
+      httpConnectorId,
+      httpVersionId,
+      httpApiId,
+    }),
+  receivedMetadata: ({metadata, httpConnectorId, httpVersionId, httpConnectorApiId}) =>
+    action(actionTypes.HTTP_CONNECTORS.RECEIVED_METADATA, {
+      metadata,
+      httpConnectorId,
+      httpVersionId,
+      httpConnectorApiId,
+    }),
+  receivedConnector: ({ httpConnectorId, connector }) =>
+    action(actionTypes.HTTP_CONNECTORS.RECEIVED_CONNECTOR, {
+      httpConnectorId,
+      connector,
+    }),
+  requestConnector: ({ httpConnectorId }) =>
+    action(actionTypes.HTTP_CONNECTORS.REQUEST_CONNECTOR, {
+      httpConnectorId,
     }),
 };
 const analytics = {
@@ -2142,11 +2218,12 @@ const customSettings = {
     }),
 };
 const exportData = {
-  request: (kind, identifier, resource) =>
+  request: ({kind, identifier, resource, resourceContext}) =>
     action(actionTypes.EXPORTDATA.REQUEST, {
       kind,
       identifier,
       resource,
+      resourceContext,
     }),
   receive: (kind, identifier, data) =>
     action(actionTypes.EXPORTDATA.RECEIVED, {
@@ -2279,10 +2356,47 @@ const integrationLCM = {
     installStep: (integrationId, revisionId, stepInfo) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, { revisionId, integrationId, stepInfo }),
     updateStep: (revisionId, status) => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.UPDATE, { revisionId, status }),
     completedStepInstall: revisionId => action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.DONE, { revisionId }),
+    setOauthConnectionMode: ({ revisionId, connectionId, openOauthConnection }) =>
+      action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.RECEIVED_OAUTH_CONNECTION_STATUS, {
+        revisionId,
+        connectionId,
+        openOauthConnection,
+      }),
+    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId }) =>
+      action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_BUNDLE_INSTALL, {
+        revisionId,
+        connectionId,
+        integrationId,
+      }),
   },
   revisions: {
     request: integrationId => resource.requestCollection(`integrations/${integrationId}/revisions`),
   },
+};
+
+const mfa = {
+  requestUserSettings: () => action(actionTypes.MFA.USER_SETTINGS.REQUEST),
+  receivedUserSettings: userSettings => action(actionTypes.MFA.USER_SETTINGS.RECEIVED, { userSettings }),
+  setup: mfaConfig => action(actionTypes.MFA.USER_SETTINGS.SETUP, { mfaConfig }),
+  requestAccountSettings: () => action(actionTypes.MFA.ACCOUNT_SETTINGS.REQUEST),
+  receivedAccountSettings: accountSettings => action(actionTypes.MFA.ACCOUNT_SETTINGS.RECEIVED, { accountSettings }),
+  updateAccountSettings: accountSettings => action(actionTypes.MFA.ACCOUNT_SETTINGS.UPDATE, { accountSettings }),
+  requestSecretCode: ({ password, isQRCode }) => action(actionTypes.MFA.SECRET_CODE.REQUEST, { password, isQRCode }),
+  receivedSecretCode: secretCode => action(actionTypes.MFA.SECRET_CODE.RECEIVED, { secretCode }),
+  showSecretCode: () => action(actionTypes.MFA.SECRET_CODE.SHOW),
+  showQrCode: () => action(actionTypes.MFA.QR_CODE.SHOW),
+  secretCodeError: secretCodeError => action(actionTypes.MFA.SECRET_CODE.ERROR, { secretCodeError }),
+  resetMFA: ({ password, aShareId }) => action(actionTypes.MFA.RESET, { aShareId, password }),
+  updateDevice: deviceInfo => action(actionTypes.MFA.UPDATE_DEVICE, { deviceInfo }),
+  deleteDevice: deviceId => action(actionTypes.MFA.DELETE_DEVICE, { deviceId }),
+  verifyMobileCode: code => action(actionTypes.MFA.MOBILE_CODE.VERIFY, { code }),
+  mobileCodeVerified: (status, error) => action(actionTypes.MFA.MOBILE_CODE.STATUS, { status, error }),
+  resetMobileCodeStatus: () => action(actionTypes.MFA.MOBILE_CODE.RESET),
+  requestSessionInfo: () => action(actionTypes.MFA.SESSION_INFO.REQUEST),
+  receivedSessionInfo: sessionInfo => action(actionTypes.MFA.SESSION_INFO.RECEIVED, { sessionInfo }),
+  addSetupContext: context => action(actionTypes.MFA.ADD_SETUP_CONTEXT, { context }),
+  clearSetupContext: () => action(actionTypes.MFA.CLEAR_SETUP_CONTEXT),
+  clear: () => action(actionTypes.MFA.CLEAR),
 };
 
 export default {
@@ -2331,6 +2445,8 @@ export default {
   hooks,
   logs,
   sso,
+  mfa,
   bottomDrawer,
   integrationLCM,
+  httpConnectors,
 };

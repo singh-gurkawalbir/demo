@@ -52,7 +52,7 @@ import {
 import actionTypes from '../../actions/types';
 import commKeyGenerator from '../../utils/commKeyGenerator';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-import {HOME_PAGE_PATH} from '../../utils/constants';
+import {HOME_PAGE_PATH} from '../../constants';
 import { APIException } from '../api/requestInterceptors/utils';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
@@ -483,6 +483,7 @@ describe('commitStagedChanges saga', () => {
       expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('connections', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('exports', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('imports', null, true)));
+      expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('asynchelpers', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.clearStaged(id)));
       const putEffect = saga.next(updated).value;
 
@@ -1387,8 +1388,12 @@ availableResources.forEach(type => {
       let mockCollection = [{ id: 1 }, { id: 2 }];
       let mockSharedStacks = [{ id: 3 }, { id: 4 }];
       let effect;
+
       // next() of generator functions always return:
       // { done: [true|false], value: {[right side of yield]} }
+      expect(saga.next().value).toEqual(
+        put(actions.resource.collectionRequestSent(type))
+      );
       const callEffect = saga.next().value;
 
       expect(callEffect).toEqual(call(apiCallWithPaging, { path }));
@@ -1410,7 +1415,7 @@ availableResources.forEach(type => {
       expect(effect).toEqual(
         put(actions.resource.receivedCollection(type, mockCollection))
       );
-
+      expect(saga.next().value).toEqual(put(actions.resource.collectionRequestSucceeded({resourceType: type})));
       const final = saga.next();
 
       expect(final.done).toBe(true);
@@ -1422,14 +1427,20 @@ availableResources.forEach(type => {
         actions.resource.requestCollection(type)
       );
       const path = `/${type}`;
+      const effect = saga.next().value;
+
+      expect(effect).toEqual(
+        put(actions.resource.collectionRequestSent(type))
+      );
       const callEffect = saga.next().value;
 
       expect(callEffect).toEqual(call(apiCallWithPaging, { path }));
 
       const final = saga.throw();
 
-      expect(final.done).toBe(true);
-      expect(final.value).toBeUndefined();
+      expect(final.value).toEqual(put(actions.resource.collectionRequestFailed({resourceType: type})));
+
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -1585,6 +1596,16 @@ availableResources.forEach(type => {
       expect(final.done).toBe(true);
     });
   });
+});
+
+describe('getResourceCollection saga for connectorLicenses', () => {
+  test('should dispatch collection request and succeeded call with connectorLicenses resource type for licenses route', () => expectSaga(getResourceCollection, {resourceType: 'connectors/60936ec22b22fe4803a3a22c/licenses'})
+    .provide([
+      [matchers.call.fn(apiCallWithPaging), []],
+    ])
+    .put(actions.resource.collectionRequestSent('connectorLicenses'))
+    .put(actions.resource.collectionRequestSucceeded({resourceType: 'connectorLicenses'}))
+    .run());
 });
 
 describe('getResourceCollection saga', () => {
@@ -2708,12 +2729,14 @@ describe('tests for metadata sagas', () => {
             path: `/${metaPath}`,
             opts: {},
             message: 'Loading',
+            hidden: false,
           }), metadata],
         ])
         .call(apiCallWithRetry, {
           path: `/${metaPath}`,
           opts: {},
           message: 'Loading',
+          hidden: false,
         })
         .put(actions.metadata.receivedCollection(
           metadata,
@@ -2741,6 +2764,7 @@ describe('tests for metadata sagas', () => {
         addInfo: {
           refreshCache: true,
           query,
+          hidden: true,
         },
       })
         .provide([
@@ -2752,12 +2776,14 @@ describe('tests for metadata sagas', () => {
             path: newpath,
             opts: {},
             message: 'Loading',
+            hidden: true,
           }), metadata],
         ])
         .call(apiCallWithRetry, {
           path: newpath,
           opts: {},
           message: 'Loading',
+          hidden: true,
         })
         .put(actions.metadata.receivedCollection(
           metadata,
@@ -2789,12 +2815,14 @@ describe('tests for metadata sagas', () => {
             path: `/${metaPath}`,
             opts: {},
             message: 'Loading',
+            hidden: false,
           }), metadata],
         ])
         .call(apiCallWithRetry, {
           path: `/${metaPath}`,
           opts: {},
           message: 'Loading',
+          hidden: false,
         })
         .put(actions.metadata.receivedError(
           metadata.errors[0].message,
@@ -2817,12 +2845,14 @@ describe('tests for metadata sagas', () => {
           path: `/${metaPath}`,
           opts: {},
           message: 'Loading',
+          hidden: false,
         }), throwError({status: 404, message: '[{"message":"error msg"}]'})],
       ])
       .call(apiCallWithRetry, {
         path: `/${metaPath}`,
         opts: {},
         message: 'Loading',
+        hidden: false,
       })
       .put(actions.metadata.receivedError(
         'error msg',

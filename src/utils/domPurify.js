@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
 import { getDomainUrl } from './resource';
-import { URI_VALIDATION_PATTERN } from './constants';
+import { URI_VALIDATION_PATTERN } from '../constants';
 
 const SECURE_DOMAINS = ['docs.celigo.com', 'developer.paypal.com', 'help.shopify.com', 'celigosuccess.zendesk.com'];
 export default function getDomPurify(options = {}) {

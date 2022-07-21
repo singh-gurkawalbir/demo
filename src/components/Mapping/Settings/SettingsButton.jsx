@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import SettingsIcon from '../../icons/SettingsIcon';
 import ActionButton from '../../ActionButton';
 import {selectors} from '../../../reducers';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 /**

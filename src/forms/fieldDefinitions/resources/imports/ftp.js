@@ -62,6 +62,16 @@ export default {
               pattern: '{{timestamp "(?=.*x).*"}}|{{timestamp "(?=.*X).*"}}|{{timestamp "(?=.*mm)(?=.*ss).*"}}',
             },
           },
+          {
+            matchesRegEx: {
+              pattern: '{{uuid}}',
+            },
+          },
+          {
+            matchesRegEx: {
+              pattern: '{{random\\s+"(uuid|UUID)"\\s*\\d*}}',
+            },
+          },
         ],
       },
     },

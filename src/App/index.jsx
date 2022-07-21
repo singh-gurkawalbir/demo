@@ -138,7 +138,7 @@ export default function App() {
      * backend for other domains as per the gainsight support's suggestion
      * for their "Product Mapper" to work properly.
      */
-    if (domain === 'localhost.io') {
+    if (domain === 'localhost.io' && !process.env.DISABLE_TRACKING_IN_LOCAL) {
       gainsight.initialize({ tagKey: 'AP-CAGNPCDUT5BV-2' });
       pendo.init({apiKey: '78f58e2a-2645-49fb-70cf-0fc21baff71f'});
     }
@@ -156,7 +156,11 @@ export default function App() {
                 }}>
                 <FontStager />
                 <CssBaseline />
-                <BrowserRouter>
+                {/* Define empty call back for getUserConfirmation to not let Prompt
+                * get triggered when history.block is defined in any specific component
+                * Ref: https://github.com/remix-run/history/blob/main/docs/blocking-transitions.md
+                */}
+                <BrowserRouter getUserConfirmation={() => {}}>
                   <div className={classes.root}>
                     <LoadingNotification />
                     <ErrorNotifications />

@@ -17,6 +17,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { TextButton } from '../../../../../components/Buttons';
 import ActionGroup from '../../../../../components/ActionGroup';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
+import infoText from '../infoText';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -96,6 +97,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       dispatch(actions.app.polling.stopSpecificPollProcess(actions.resource.connections.refreshStatus(_integrationId)));
     };
   }, [dispatch, _integrationId]);
+
   const handleClick = useCallback(e => {
     e.preventDefault();
 
@@ -153,7 +155,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
         />
       )}
 
-      <PanelHeader title="Connections">
+      <PanelHeader title="Connections" infoText={infoText.Connections}>
         <ActionGroup>
           {permission.create && (
           <TextButton
@@ -172,7 +174,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
         </ActionGroup>
       </PanelHeader>
 
-      <LoadResources required resources="connections">
+      <LoadResources required integrationId={integrationId} resources="connections">
         <CeligoTable
           data={connections}
           filterKey={filterKey}

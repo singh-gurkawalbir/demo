@@ -13,7 +13,7 @@ import KeywordSearch from '../../components/KeywordSearch';
 import AddIcon from '../../components/icons/AddIcon';
 import InfoText from '../ResourceList/infoText';
 import CheckPermissions from '../../components/CheckPermissions';
-import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
+import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../constants';
 import { generateNewId } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import actions from '../../actions';

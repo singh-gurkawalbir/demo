@@ -944,7 +944,7 @@ describe('integrationApps addChild selectors test cases', () => {
     });
 
     test('should return correct state data when a match is found.', () => {
-      const expectedData = { steps: [{type: 'form'}, {type: 'url'}] };
+      const expectedData = { steps: [{type: 'form', isCurrentStep: true}, {type: 'url'}] };
       const newState = reducer(
         undefined,
         actions.integrationApp.child.receivedNewChildSteps(

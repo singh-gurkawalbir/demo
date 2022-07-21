@@ -399,7 +399,7 @@ export function getVersionDetails({ version, assistantData }) {
   }
 
   if (version) {
-    versionDetails = assistantData.versions.find(v => v.version === version);
+    versionDetails = assistantData.versions.find(v => (v.version === version || v._id === version));
   } else if (assistantData.versions.length === 1) {
     [versionDetails] = assistantData.versions;
   }
@@ -605,6 +605,12 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
   const exportDoc = cloneDeep(exportDocOrig);
   const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
+
+  if (exportDoc?.http) {
+    operation = exportDoc.http._httpConnectorEndpointId || operation;
+    resource = exportDoc.http._httpConnectorResourceId || resource;
+    version = exportDoc.http._httpConnectorVersionId || version;
+  }
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
     pathParams: {},
@@ -691,26 +697,30 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
     exportAdaptorSubSchema.relativeURI &&
     exportAdaptorSubSchema.relativeURI.indexOf('?') > 0
   ) {
+    let toParseQueryString = exportAdaptorSubSchema.relativeURI.split('?')[1];
+
     if (urlMatch.urlParts && urlMatch.urlParts[urlMatch.urlParts.length - 1]) {
-      queryParams = qs.parse(urlMatch.urlParts[urlMatch.urlParts.length - 1], {
-        delimiter: /[?&]/,
-        depth: 0,
-        decoder(str, defaultDecoder) {
-          if (exportDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
-
-          // a unique case where query name contains '=' operator
-          // IO-1683
-          if (str === 'filter[]') {
-            return 'filter[]=name';
-          }
-          if (str.startsWith('name=')) {
-            return defaultDecoder(str.substring(5));
-          }
-
-          return defaultDecoder(str);
-        },
-      }); /* depth should be 0 to handle IO-1683 */
+      toParseQueryString = urlMatch.urlParts[urlMatch.urlParts.length - 1];
     }
+
+    queryParams = qs.parse(toParseQueryString, {
+      delimiter: /[?&]/,
+      depth: 0,
+      decoder(str, defaultDecoder) {
+        if (exportDoc.assistant !== 'liquidplanner') return defaultDecoder(str);
+
+        // a unique case where query name contains '=' operator
+        // IO-1683
+        if (str === 'filter[]') {
+          return 'filter[]=name';
+        }
+        if (str.startsWith('name=')) {
+          return defaultDecoder(str.substring(5));
+        }
+
+        return defaultDecoder(str);
+      },
+    }); /* depth should be 0 to handle IO-1683 */
   }
 
   if (exportAdaptorSubSchema.postBody) {
@@ -766,7 +776,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
     bodyParams,
   } = assistantConfig;
 
-  if (!assistant || !resource || !operation || !assistantData) {
+  if (!resource || !operation || !assistantData) {
     return undefined;
   }
 
@@ -816,7 +826,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
 
   let pagingRelativeURI = operationDetails.paging?.nextPageRelativeURI || operationDetails.paging?.relativeURI;
 
-  operationDetails.pathParameters.forEach(pathParam => {
+  operationDetails.pathParameters?.forEach(pathParam => {
     if (pathParams) {
       let pathParamValue = pathParams[pathParam.id];
 
@@ -846,7 +856,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
   let exportType;
   const allQueryParams = {};
 
-  operationDetails.queryParameters.forEach(queryParam => {
+  operationDetails.queryParameters?.forEach(queryParam => {
     allQueryParams[queryParam.id] = queryParam.defaultValue;
 
     if (!queryParam.readOnly) {
@@ -1842,7 +1852,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
   } = assistantConfig;
   let { lookupQueryParams = {} } = assistantConfig;
 
-  if (!assistant || !resource || !operation || !assistantData) {
+  if (!resource || !operation || !assistantData) {
     return undefined;
   }
 
@@ -2019,8 +2029,13 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
           ...(lookupOperationDetails.resource ? {resource: lookupOperationDetails.resource} : {}),
         };
       }
-
-      importDoc.ignoreLookupName = luConfig.name;
+      if (ignoreExisting || ignoreMissing) {
+        importDoc.ignoreLookupName = luConfig.name;
+        importDoc.existingLookupName = undefined;
+      } else {
+        importDoc.existingLookupName = luConfig.name;
+        importDoc.ignoreLookupName = undefined;
+      }
     }
   }
   if (operationDetails.howToIdentifyExistingRecords) {
@@ -2042,7 +2057,13 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
   ) {
     if (identifiers && identifiers.length > 0) {
       if (lookupType === 'source') {
-        importDoc.ignoreExtract = pathParams[identifiers[0].id];
+        if (ignoreMissing) {
+          importDoc.ignoreExtract = pathParams[identifiers[0].id];
+          importDoc.existingExtract = undefined;
+        } else {
+          importDoc.existingExtract = pathParams[identifiers[0].id];
+          importDoc.ignoreExtract = undefined;
+        }
       } else if (lookupType === 'lookup') {
         if (operationDetails.howToIdentifyExistingRecords) {
           importDoc.existingLookupName = identifiers[0].id;
@@ -2064,7 +2085,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
         if (adaptorType === 'rest') {
           paramValue = `{{{${paramValue}}}}`;
         } else if (adaptorType === 'http') {
-          if (importDoc.ignoreLookupName) {
+          if (importDoc.ignoreLookupName || importDoc.existingLookupName) {
             paramValue = `{{{lookup.${paramValue}}}}`;
           } else {
             paramValue = `{{{data.0.${paramValue}}}}`;
@@ -2213,9 +2234,37 @@ export function isAmazonHybridConnection(connection) {
   return connection?.assistant === 'amazonmws' && connection?.http?.type === 'Amazon-Hybrid';
 }
 
+export function isAmazonSellingPartnerConnection(connection) {
+  return connection?.assistant === 'amazonmws' && connection?.http?.type === 'Amazon-SP-API';
+}
+
 export function isLoopReturnsv2Connection(connection) {
   return connection?.assistant === 'loopreturns' && connection?.http?.unencrypted?.version === 'v2';
 }
 export function isAcumaticaEcommerceConnection(connection) {
   return connection?.assistant === 'acumatica' && connection?.http?.unencrypted?.endpointName === 'ecommerce';
+}
+export function isMicrosoftBusinessCentralOdataConnection(connection) {
+  return connection?.assistant === 'microsoftbusinesscentral' && connection?.http?.unencrypted?.apiType === 'odata';
+}
+
+export function shouldLoadAssistantFormForImports(resource, connection) {
+  return resource &&
+          !isAmazonHybridConnection(connection) &&
+          (resource.useParentForm !== undefined
+            ? !resource.useParentForm && resource.assistant
+            : resource.assistant) && (!resource.useTechAdaptorForm || isAmazonSellingPartnerConnection(connection));
+}
+
+export function shouldLoadAssistantFormForExports(resource, connection) {
+  return resource &&
+          resource.assistant !== 'openair' &&
+          !isAmazonHybridConnection(connection) &&
+          (resource.useParentForm !== undefined
+            ? !resource.useParentForm && resource.assistant
+            : resource.assistant) && !resource.useTechAdaptorForm;
+}
+
+export function isEbayFinanceConnection(connection) {
+  return connection?.assistant === 'ebayfinance';
 }

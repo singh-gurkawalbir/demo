@@ -1,5 +1,5 @@
 import { addDays, startOfDay } from 'date-fns';
-import { JOB_STATUS } from '../constants';
+import { JOB_STATUS } from '../../constants';
 
 export const FILTER_KEYS_AD = {
   RUNNING: 'runningFlows',
@@ -35,9 +35,9 @@ export const ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS = [
   {id: 'today', label: 'Today'},
   {id: 'last24hours', label: 'Last 24 hours'},
   {id: 'last36hours', label: 'Last 36 hours'},
-  {id: 'last7days', label: 'Last 7 Days'},
-  {id: 'last15days', label: 'Last 15 Days'},
-  {id: 'last30days', label: 'Last 30 Days'},
+  {id: 'last7days', label: 'Last 7 days'},
+  {id: 'last15days', label: 'Last 15 days'},
+  {id: 'last30days', label: 'Last 30 days'},
   {id: 'custom', label: 'Custom'},
 ];
 

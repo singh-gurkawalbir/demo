@@ -1,8 +1,9 @@
 /*
  * All utility functions related to Exports Preview Panel
  */
-import { FILE_PROVIDER_ASSISTANTS } from '../constants';
+import { FILE_PROVIDER_ASSISTANTS } from '../../constants';
 import { adaptorTypeMap } from '../resource';
+import {HTTP_BASED_ADAPTORS} from '../http';
 
 export const DEFAULT_RECORD_SIZE = 10;
 
@@ -22,6 +23,12 @@ const applicationsWithPreviewPanel = [
   'simple',
   'as2',
 ];
+
+const noImportPreviewAssistants = [
+  'googledrive',
+  'azurestorageaccount',
+];
+
 const emptyList = [];
 
 export const HTTP_STAGES = [
@@ -55,6 +62,8 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
       return PREVIEW_STAGE;
     case 'rest':
       return HTTP_STAGES;
+    case 'graph_ql':
+      return HTTP_STAGES;
     case 'mongodb':
     case 'dynamodb':
     case 'rdbms':
@@ -73,7 +82,10 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
 export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
   if (!resource) return false;
   if (resourceType === 'imports') {
-    return resource.adaptorType === 'HTTPImport' || (connection && connection.isHTTP && connection.type === 'rest');
+    if (noImportPreviewAssistants.includes(resource.assistant)) return false;
+
+    return resource.adaptorType === 'HTTPImport' ||
+    (connection && HTTP_BASED_ADAPTORS.includes(connection.type || connection.http?.formType));
   }
 
   if (resourceType !== 'exports') return false;
@@ -92,7 +104,8 @@ export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
   return applicationsWithPreviewPanel.includes(appType);
 };
 
-export const getPreviewDataPageSizeInfo = previewData => {
+export const getPreviewDataPageSizeInfo = (previewData, resourceType) => {
+  if (resourceType === 'imports') return '1 Page, 1 Records';
   if (!previewData || !previewData.data) return '1 Page, 0 Records';
   const records = previewData.data;
   const pageSize = Array.isArray(records) ? records.length : 1;

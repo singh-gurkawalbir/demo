@@ -5,7 +5,7 @@ import RightDrawer from '../../../Right';
 import DrawerHeader from '../../../Right/DrawerHeader';
 import DrawerContent from '../../../Right/DrawerContent';
 import DrawerFooter from '../../../Right/DrawerFooter';
-import { TextButton } from '../../../../Buttons';
+import { FilledButton } from '../../../../Buttons';
 import InstallSteps from '../../components/InstallSteps';
 import RevisionHeader from '../../components/RevisionHeader';
 import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
@@ -52,11 +52,11 @@ function FinalRevertDrawerContent({ parentUrl, integrationId }) {
           revisionId={revisionId} />
       </DrawerContent>
       <DrawerFooter>
-        <TextButton
-          data-test="cancelCreatePull"
+        <FilledButton
+          data-test="cancelFinalRevert"
           onClick={onClose}>
-          Cancel
-        </TextButton>
+          Close
+        </FilledButton>
       </DrawerFooter>
     </>
   );

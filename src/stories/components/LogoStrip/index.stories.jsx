@@ -6,7 +6,7 @@ import { jsxDecorator } from 'storybook-addon-jsx';
 import LogoStrip from '../../../components/LogoStrip';
 
 export default {
-  title: 'Lab / LogoStrip',
+  title: 'Components / LogoStrip',
   component: LogoStrip,
   decorators: [withDesign, jsxDecorator],
   parameters: {

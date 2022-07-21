@@ -5,12 +5,12 @@ module.exports = {
     '<rootDir>/src',
   ],
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
+    '^.+\\.(js|jsx|mjs|cjs|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
     '^.+\\.css$': '<rootDir>/jest/cssTransform.js',
-    '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '<rootDir>/jest/fileTransform.js',
+    '^(?!.*\\.(js|jsx|ts|tsx|mjs|cjs|css|json)$)': '<rootDir>/jest/fileTransform.js',
   },
   transformIgnorePatterns: [
-    '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$',
+    '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx|mjs|cjs)$',
     '^.+\\.module\\.(css|sass|scss)$',
   ],
   collectCoverageFrom: [
@@ -43,5 +43,6 @@ module.exports = {
     LOGROCKET_IDENTIFIER_EU: 'some logrocket identifier europe',
     CDN_BASE_URI: 'CDN_BASE_URI',
     IO_LOGIN_PROMOTION_URL: 'https://staging.celigo.com/login/display',
+    PORTAL_URL: 'https://portal.productboard.com/wcpkv3awtdpkze4x7wwbpog7',
   },
 };

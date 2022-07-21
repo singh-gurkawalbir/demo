@@ -62,6 +62,8 @@ export default function DynaTypeableSelect(props) {
       DropdownIndicator: () => null,
       IndicatorSeparator: () => null,
     },
+    menuPortalStyle,
+    menuPortalTarget,
     showAllSuggestions = false,
   } = props;
   const classes = useStyles();
@@ -159,7 +161,28 @@ export default function DynaTypeableSelect(props) {
   const selectedValue = !isTyping && suggestions.find(suggestionItem => suggestionItem.value === value);
   // Dont resolve to value while user is typing
   const inputVal = (!isTyping && selectedValue?.label) || value;
-  const customStyles = CustomReactSelectStyles();
+  const customReactSelectStyles = CustomReactSelectStyles();
+  const menuPortalStyles = menuPortalStyle ? {...menuPortalStyle} : {};
+  const menuPortalTargetProp = menuPortalTarget ? {...menuPortalTarget} : {};
+  const mergedStyles = () => ({
+    ...customReactSelectStyles,
+    ...menuPortalStyles,
+    input: () => ({
+      width: '100%',
+      padding: '0 7px',
+      '& > div': {
+        width: '100%',
+      },
+      '& * > input': {
+        width: '100% !important',
+        fontFamily: 'source sans pro',
+        fontSize: '15px !important',
+        letterSpacing: 'inherit',
+      },
+    }),
+  });
+  const customStyles = mergedStyles();
+
   const filterOption = (options, rawInput) => {
     if (showAllSuggestions) return true;
     if (!options.label || !options.value) return false;
@@ -206,6 +229,7 @@ export default function DynaTypeableSelect(props) {
         filterOption={filterOption}
         menuIsOpen
         className={classes.dynaTypeableSelect}
+        {...menuPortalTargetProp}
         />
       )}
       {!isFocused &&

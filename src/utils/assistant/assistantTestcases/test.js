@@ -26,6 +26,9 @@ import {
   isMetaRequiredValuesMet,
   isAppConstantContact,
   isAmazonHybridConnection,
+  isAmazonSellingPartnerConnection,
+  shouldLoadAssistantFormForImports,
+  shouldLoadAssistantFormForExports,
 } from '..';
 import { getPathParams } from '../pathParamUtils';
 
@@ -2794,6 +2797,149 @@ describe('convertFromExport', () => {
       assistantData,
       'rest',
     ],
+    [ // special use case for microsoft power automate export
+      {
+        bodyParams: {},
+        exportType: undefined,
+        operation: 'get_all_users_with_whom_a_cloud_flow_is_shared',
+        operationDetails: {
+          doesNotSupportPaging: true,
+          errorMediaType: 'json',
+          headers: {},
+          headersMetadata: [],
+          id: 'get_all_users_with_whom_a_cloud_flow_is_shared',
+          name: 'Get all users with whom a cloud flow is shared',
+          pathParameters: [],
+          queryParameters: [{id: '@tid', name: 'Target', required: true}],
+          requestMediaType: 'json',
+          response: {resourcePath: 'PrincipalAccesses'},
+          successMediaType: 'json',
+          supportedExportTypes: ['test'],
+          url: '/RetrieveSharedPrincipalsAndAccess(Target=@tid)'},
+        pathParams: {},
+        queryParams: {'@tid': "{'@odata.id':'workflows(00000000-0000-0000-0000-000000000002)'}"},
+        resource: 'flows',
+        version: 'v9.1'},
+      {
+        _id: '627b6c627ca3007138a67d67',
+        name: 'Get PowerAutmate all users with whom a cloud flow is shared',
+        _connectionId: '623b19d570398d37e82dfdb0',
+        apiIdentifier: 'ea5117b5d1',
+        asynchronous: true,
+        assistant: 'microsoftpowerautomate',
+        oneToMany: false,
+        sandbox: false,
+        assistantMetadata: {
+          resource: 'flows',
+          version: 'v9.1',
+          operation: 'get_all_users_with_whom_a_cloud_flow_is_shared',
+        },
+        parsers: [],
+        http: {
+          relativeURI: "/RetrieveSharedPrincipalsAndAccess(Target=@tid)?@tid={'@odata.id':'workflows(00000000-0000-0000-0000-000000000002)'}",
+          method: 'GET',
+          headers: [],
+          requestMediaType: 'json',
+          successMediaType: 'json',
+          errorMediaType: 'json',
+          formType: 'assistant',
+          response: {
+            resourcePath: 'PrincipalAccesses',
+            successValues: [],
+          },
+        },
+        adaptorType: 'HTTPExport',
+      },
+      {
+        export: {
+          labels: {
+            version: 'API Version',
+            resource: 'Resource',
+            endpoint: 'Operation',
+          },
+          successMediaType: 'json',
+          errorMediaType: 'json',
+          requestMediaType: 'json',
+          paging: {
+            method: 'url',
+            path: '@odata.nextLink',
+          },
+          versions: [
+            {
+              version: 'v9.1',
+              resources: [
+                {
+                  id: 'flows',
+                  name: 'Flows',
+                  endpoints: [
+                    {
+                      id: 'list_flows',
+                      url: '/workflows',
+                      name: 'List flows',
+                      response: {
+                        resourcePath: 'value',
+                      },
+                      headers: [
+                        {
+                          name: 'prefer',
+                          value: 'odata.maxpagesize=100',
+                        },
+                      ],
+                      supportedExportTypes: [
+                        'delta',
+                        'test',
+                      ],
+                      queryParameters: [
+                        {
+                          id: '$filter',
+                          name: 'Filter',
+                          fieldType: 'input',
+                        },
+                        {
+                          id: '$select',
+                          name: 'Select',
+                          fieldType: 'input',
+                        },
+                        {
+                          id: '$top',
+                          name: 'Top',
+                          fieldType: 'input',
+                        },
+                        {
+                          id: '$orderby',
+                          name: 'Orderby',
+                          fieldType: 'input',
+                        },
+                      ],
+                    },
+                    {
+                      id: 'get_all_users_with_whom_a_cloud_flow_is_shared',
+                      url: '/RetrieveSharedPrincipalsAndAccess(Target=@tid)',
+                      name: 'Get all users with whom a cloud flow is shared',
+                      doesNotSupportPaging: true,
+                      response: {
+                        resourcePath: 'PrincipalAccesses',
+                      },
+                      supportedExportTypes: [
+                        'test',
+                      ],
+                      queryParameters: [
+                        {
+                          id: '@tid',
+                          name: 'Target',
+                          required: true,
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      'http',
+    ],
   ];
 
   each(testCases).test(
@@ -3540,7 +3686,8 @@ describe('convertToImport', () => {
         ],
         headers: [],
         ignoreExisting: false,
-        ignoreExtract: 'id',
+        existingExtract: 'id',
+        ignoreExtract: undefined,
         ignoreLookupName: undefined,
         ignoreMissing: false,
         lookups: [],
@@ -3679,8 +3826,9 @@ describe('convertToImport', () => {
         resource: 'accounts',
         version: 'v2.13',
       },
-
+      '/file': undefined,
       '/http': {
+        batchSize: undefined,
         body: ['<?xml version="1.0" encoding="UTF-8"?>\n<account>\n{{#each data}}\n\t<account_code>{{account_code}}</account_code>\n\t<email>{{email}}</email>\n\t<first_name>{{first_name}}</first_name>\n\t<last_name>{{last_name}}</last_name>\n\t<username>{{username}}</username>\n\t<cc_emails>{{cc_emails}}</cc_emails>\n\t<company_name>{{company_name}}</company_name>\n\t<vat_number>{{vat_number}}</vat_number>\n\t<tax_exempt>{{tax_exempt}}</tax_exempt>\n\t<entity_use_code>{{entity_use_code}}</entity_use_code>\n\t<accept_language>{{accept_language}}</accept_language>\n\t<preferred_locale>{{preferred_locale}}</preferred_locale>\n\t<address>\n\t\t<address1>{{address.address1}}</address1>\n\t\t<address2>{{address.address2}}</address2>\n\t\t<city>{{address.city}}</city>\n\t\t<state>{{address.province}}</state>\n\t\t<zip>{{address.zip}}</zip>\n\t\t<country>{{address.country}}</country>\n\t\t<phone>{{address.phone}}</phone>\n\t</address>\n\t<account_acquisition>\n\t\t<cost_in_cents>{{account_acquisition.cost_in_cents}}</cost_in_cents>\n\t\t<currency>{{account_acquisition.currency}}</currency>\n\t\t<channel>{{account_acquisition.channel}}</channel>\n\t\t<subchannel>{{account_acquisition.subchannel}}</subchannel>\n\t\t<campaign>{{account_acquisition.campaign}}</campaign>\n\t</account_acquisition>\n\t<shipping_addresses>\n      {{#each shipping_address}}\n\t\t<shipping_address>\n\t\t\t<nickname>{{nickname}}</nickname>\n\t\t\t<first_name>{{first_name}}</first_name>\n\t\t\t<last_name>{{last_name}}</last_name>\n\t\t\t<company>{{company}}</company>\n\t\t\t<phone>{{phone}}</phone>\n\t\t\t<email>{{email}}</email>\n\t\t\t<address1>{{address1}}</address1>\n\t\t\t<address2>{{address2}}</address2>\n\t\t\t<city>{{city}}</city>\n\t\t\t<state>{{state}}</state>\n\t\t\t<zip>{{zip}}</zip>\n\t\t\t<country>{{country}}</country>\n\t\t</shipping_address>\n      {{/each}}\n\t</shipping_addresses>\n\t<billing_info>\n\t\t<first_name>{{billing_info.first_name}}</first_name>\n\t\t<last_name>{{billing_info.last_name}}</last_name>\n\t\t<company>{{billing_info.company}}</company>\n\t\t<address1>{{billing_info.address1}}</address1>\n\t\t<address2>{{billing_info.address2}}</address2>\n\t\t<city>{{billing_info.city}}</city>\n\t\t<state>{{billing_info.state}}</state>\n\t\t<zip>{{billing_info.zip}}</zip>\n\t\t<country>{{billing_info.country}}</country>\n\t\t<phone>{{billing_info.phone}}</phone>\n\t\t<vat_number>{{billing_info.vat_number}}</vat_number>\n\t\t<year type="integer">{{billing_info.year}}</year>\n\t\t<month type="integer">{{billing_info.month}}</month>\n\t</billing_info>\n{{/each}}\n</account>\n\n'],
         errorMediaType: 'xml',
         headers: [
@@ -3690,7 +3838,10 @@ describe('convertToImport', () => {
           },
         ],
         ignoreExisting: false,
-        ignoreExtract: 'idd',
+        existingExtract: 'idd',
+        ignoreEmptyNodes: undefined,
+        ignoreExtract: undefined,
+        ignoreLookupName: undefined,
         ignoreMissing: false,
         lookups: [
 
@@ -3846,8 +3997,9 @@ describe('convertToImport', () => {
         resource: 'accounts',
         version: 'v2.13',
       },
-
+      '/file': undefined,
       '/http': {
+        batchSize: undefined,
         body: ['<?xml version="1.0" encoding="UTF-8"?>\n<account>\n{{#each data}}\n\t<account_code>{{account_code}}</account_code>\n\t<email>{{email}}</email>\n\t<first_name>{{first_name}}</first_name>\n\t<last_name>{{last_name}}</last_name>\n\t<username>{{username}}</username>\n\t<cc_emails>{{cc_emails}}</cc_emails>\n\t<company_name>{{company_name}}</company_name>\n\t<vat_number>{{vat_number}}</vat_number>\n\t<tax_exempt>{{tax_exempt}}</tax_exempt>\n\t<entity_use_code>{{entity_use_code}}</entity_use_code>\n\t<accept_language>{{accept_language}}</accept_language>\n\t<preferred_locale>{{preferred_locale}}</preferred_locale>\n\t<address>\n\t\t<address1>{{address.address1}}</address1>\n\t\t<address2>{{address.address2}}</address2>\n\t\t<city>{{address.city}}</city>\n\t\t<state>{{address.province}}</state>\n\t\t<zip>{{address.zip}}</zip>\n\t\t<country>{{address.country}}</country>\n\t\t<phone>{{address.phone}}</phone>\n\t</address>\n\t<account_acquisition>\n\t\t<cost_in_cents>{{account_acquisition.cost_in_cents}}</cost_in_cents>\n\t\t<currency>{{account_acquisition.currency}}</currency>\n\t\t<channel>{{account_acquisition.channel}}</channel>\n\t\t<subchannel>{{account_acquisition.subchannel}}</subchannel>\n\t\t<campaign>{{account_acquisition.campaign}}</campaign>\n\t</account_acquisition>\n\t<shipping_addresses>\n      {{#each shipping_address}}\n\t\t<shipping_address>\n\t\t\t<nickname>{{nickname}}</nickname>\n\t\t\t<first_name>{{first_name}}</first_name>\n\t\t\t<last_name>{{last_name}}</last_name>\n\t\t\t<company>{{company}}</company>\n\t\t\t<phone>{{phone}}</phone>\n\t\t\t<email>{{email}}</email>\n\t\t\t<address1>{{address1}}</address1>\n\t\t\t<address2>{{address2}}</address2>\n\t\t\t<city>{{city}}</city>\n\t\t\t<state>{{state}}</state>\n\t\t\t<zip>{{zip}}</zip>\n\t\t\t<country>{{country}}</country>\n\t\t</shipping_address>\n      {{/each}}\n\t</shipping_addresses>\n\t<billing_info>\n\t\t<first_name>{{billing_info.first_name}}</first_name>\n\t\t<last_name>{{billing_info.last_name}}</last_name>\n\t\t<company>{{billing_info.company}}</company>\n\t\t<address1>{{billing_info.address1}}</address1>\n\t\t<address2>{{billing_info.address2}}</address2>\n\t\t<city>{{billing_info.city}}</city>\n\t\t<state>{{billing_info.state}}</state>\n\t\t<zip>{{billing_info.zip}}</zip>\n\t\t<country>{{billing_info.country}}</country>\n\t\t<phone>{{billing_info.phone}}</phone>\n\t\t<vat_number>{{billing_info.vat_number}}</vat_number>\n\t\t<year type="integer">{{billing_info.year}}</year>\n\t\t<month type="integer">{{billing_info.month}}</month>\n\t</billing_info>\n{{/each}}\n</account>\n\n'],
         errorMediaType: 'xml',
         headers: [
@@ -3857,8 +4009,11 @@ describe('convertToImport', () => {
           },
         ],
         ignoreExisting: false,
-        ignoreExtract: 'idd',
+        existingExtract: 'idd',
         ignoreMissing: false,
+        ignoreEmptyNodes: undefined,
+        ignoreExtract: undefined,
+        ignoreLookupName: undefined,
         lookups: [
 
         ],
@@ -4182,5 +4337,96 @@ describe('isAmazonHybridConnection util test cases', () => {
   });
   test('should return false if connection assistant is amazonmws and http type is Amazon-SP-API', () => {
     expect(isAmazonHybridConnection({assistant: 'amazonsellercentral', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
+  });
+});
+
+describe('isAmazonSellingPartnerConnection util test cases', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(isAmazonSellingPartnerConnection()).toBeFalsy();
+  });
+  test('should return true if connection assistant is amazonmws and http type is Amazon-SP-API', () => {
+    expect(isAmazonSellingPartnerConnection({assistant: 'amazonmws', http: {type: 'Amazon-SP-API'}})).toBeTruthy();
+  });
+  test('should return false if connection assistant is not amazonmws and http type is Amazon-SP-API', () => {
+    expect(isAmazonSellingPartnerConnection({assistant: 'amazonsellercentral', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
+  });
+  test('should return false if connection assistant is amazonmws and http type is Amazon-Hybrid', () => {
+    expect(isAmazonSellingPartnerConnection({assistant: 'amazonmws', http: {type: 'Amazon-Hybrid'}})).toBeFalsy();
+  });
+});
+
+describe('shouldLoadAssistantFormForImports util', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(shouldLoadAssistantFormForImports()).toBeFalsy();
+    expect(shouldLoadAssistantFormForImports('', '')).toBeFalsy();
+    expect(shouldLoadAssistantFormForImports({id: 1})).toBeFalsy();
+    expect(shouldLoadAssistantFormForImports(undefined, {id: 1})).toBeFalsy();
+  });
+
+  test('should return false if connection is of Amazon hybrid', () => {
+    expect(shouldLoadAssistantFormForImports({}, {assistant: 'amazonmws', http: {type: 'Amazon-Hybrid'}})).toBeFalsy();
+  });
+
+  test('should return false if useParentForm is true for the resource', () => {
+    expect(shouldLoadAssistantFormForImports({useParentForm: true})).toBeFalsy();
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazon', useParentForm: true})).toBeFalsy();
+  });
+
+  test('should return false if resource is not an assistant', () => {
+    expect(shouldLoadAssistantFormForImports({adaptorType: 'HTTPImport'})).toBeFalsy();
+  });
+
+  test('should return true if resource is an assistant', () => {
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazon', adaptorType: 'HTTPImport'})).toBeTruthy();
+  });
+
+  test('should return false if useTechAdaptorForm is true for the resource', () => {
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazon', useTechAdaptorForm: true})).toBeFalsy();
+  });
+
+  test('should return true if useTechAdaptorForm is false for the resource', () => {
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazon', useTechAdaptorForm: false})).toBeTruthy();
+  });
+
+  test('should return true if resource is an assistant and connection is of Amazon selling partner', () => {
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazonmws', useTechAdaptorForm: true}, {assistant: 'amazonmws', http: {type: 'Amazon-SP-API'}})).toBeTruthy();
+  });
+});
+
+describe('shouldLoadAssistantFormForExports util', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(shouldLoadAssistantFormForExports()).toBeFalsy();
+    expect(shouldLoadAssistantFormForExports('', '')).toBeFalsy();
+    expect(shouldLoadAssistantFormForExports({id: 1})).toBeFalsy();
+    expect(shouldLoadAssistantFormForExports(undefined, {id: 1})).toBeFalsy();
+  });
+
+  test('should return false if connection is of Amazon hybrid', () => {
+    expect(shouldLoadAssistantFormForExports({}, {assistant: 'amazonmws', http: {type: 'Amazon-Hybrid'}})).toBeFalsy();
+  });
+
+  test('should return false if useParentForm is true for the resource', () => {
+    expect(shouldLoadAssistantFormForExports({useParentForm: true})).toBeFalsy();
+    expect(shouldLoadAssistantFormForExports({assistant: 'amazon', useParentForm: true})).toBeFalsy();
+  });
+
+  test('should return false if resource is not an assistant', () => {
+    expect(shouldLoadAssistantFormForExports({adaptorType: 'HTTPImport'})).toBeFalsy();
+  });
+
+  test('should return true if resource is an assistant', () => {
+    expect(shouldLoadAssistantFormForExports({assistant: 'amazon', adaptorType: 'HTTPImport'})).toBeTruthy();
+  });
+
+  test('should return false if useTechAdaptorForm is true for the resource', () => {
+    expect(shouldLoadAssistantFormForExports({assistant: 'amazon', useTechAdaptorForm: true})).toBeFalsy();
+  });
+
+  test('should return true if useTechAdaptorForm is false for the resource', () => {
+    expect(shouldLoadAssistantFormForExports({assistant: 'amazon', useTechAdaptorForm: false})).toBeTruthy();
+  });
+
+  test('should return false if resource is openair assistant', () => {
+    expect(shouldLoadAssistantFormForExports({assistant: 'openair', useTechAdaptorForm: true}, {assistant: 'amazonmws', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
   });
 });
