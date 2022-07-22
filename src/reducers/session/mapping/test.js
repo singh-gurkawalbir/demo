@@ -4024,6 +4024,7 @@ describe('mapping reducer', () => {
           version: 2,
           requiredMappings: ['id', 'siblings[*].fname'],
           autoCreated: true,
+          isGroupedOutput: false,
           v2TreeData: [
             {
               dataType: 'number',

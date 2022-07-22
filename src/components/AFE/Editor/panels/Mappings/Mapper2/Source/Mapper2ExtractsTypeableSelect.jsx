@@ -131,6 +131,9 @@ export default function Mapper2ExtractsTypeableSelect({
   const dispatch = useDispatch();
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useDebouncedValue(propValue, value => {
+    // do not dispatch action if the field is empty as there can be
+    // multiple rows and it will unnecessarily dispatch actions slowing down the UI
+    if (value === '' && value === propValue) return;
     dispatch(actions.mapping.v2.patchExtractsFilter(value, propValue));
   });
   const [isTruncated, setIsTruncated] = useState(false);
