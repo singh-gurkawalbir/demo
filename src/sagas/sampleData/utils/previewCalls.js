@@ -114,6 +114,9 @@ export function* pageProcessorPreview({
         updatedPageProcessorId = uniqId;// router.branches[0].pageProcessors[0].id;
         router.branches[0].pageProcessors[0].type = 'import';
         router.branches[0].pageProcessors[0]._importId = uniqId;
+        // Delete existing _exportId which gets added when the PP is a lookup and we mock it as import to get flowInputData
+        // Ref bug : IO-27378
+        delete router.branches[0].pageProcessors[0]._exportId;
         delete router.branches[0].pageProcessors[0].setupInProgress;
         delete router.branches[0].inputFilter;
       } else {

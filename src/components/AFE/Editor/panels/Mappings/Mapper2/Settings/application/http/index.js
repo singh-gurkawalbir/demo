@@ -87,7 +87,8 @@ export default {
         dataType: {
           id: 'dataType',
           name: 'dataType',
-          type: 'select',
+          type: 'selectforsetfields',
+          setFieldIds: ['fieldMappingType'],
           skipSort: true,
           label: 'Destination data type',
           defaultValue: propDataType,
