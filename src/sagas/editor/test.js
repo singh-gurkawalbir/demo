@@ -2086,8 +2086,6 @@ describe('editor sagas', () => {
         },
         settingsFormPatchPath: '/settingsForm',
         resourceDocs: {
-          license: undefined,
-          parentLicense: undefined,
           parentResource: {},
           resource: null,
         },
@@ -2139,12 +2137,10 @@ describe('editor sagas', () => {
         layout: 'jsonFormBuilder',
         integrationId: 'intId',
         sectionId: 'Cus-1234567',
-        settings: undefined,
         autoEvaluate: true,
         sampleDataStatus: 'requested',
         insertStubKey: 'formInit',
         activeProcessor: 'json',
-        context: undefined,
         data: {
           fieldMap: {},
           layout: {
@@ -2171,8 +2167,6 @@ describe('editor sagas', () => {
         },
         settingsFormPatchPath: '/flowGroupings/0/settingsForm',
         resourceDocs: {
-          license: undefined,
-          parentLicense: undefined,
           parentResource: {},
           resource: null,
         },
@@ -2254,7 +2248,6 @@ describe('editor sagas', () => {
         layout: 'scriptFormBuilder',
         integrationId: 'intId',
         sectionId: 'Cus-1234567',
-        settings: undefined,
         autoEvaluate: true,
         sampleDataStatus: 'requested',
         insertStubKey: 'formInit',
@@ -2281,7 +2274,6 @@ describe('editor sagas', () => {
             _integrationId: 'intId',
             name: 'license',
           },
-          parentLicense: undefined,
           parentResource: {
             name: 'Parent Resource name',
           },
