@@ -938,6 +938,8 @@ export default (state = {}, action) => {
           !draft.mapping.v2TreeData[0].generate &&
           draft.mapping.v2TreeData[0].generateDisabled) {
           draft.mapping.isGroupedOutput = true;
+        } else {
+          draft.mapping.isGroupedOutput = false;
         }
 
         draft.mapping.autoCreated = true;

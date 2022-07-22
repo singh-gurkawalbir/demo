@@ -93,6 +93,9 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath) => {
         setObjectValue(flow, `${branchPath}/pageProcessors`, pageProcessors);
       }
     }
+    // pageProcessors still exist on flow doc, delete them; Tracker: IO-27433
+    // Ideally both can't co exist in our code but somewhere this is getting happened
+    if (flow.pageProcessors) flow.pageProcessors = undefined;
   } else {
     // If flow is in orchestration structure
     if (!flow.pageProcessors || !flow.pageProcessors.length) {
