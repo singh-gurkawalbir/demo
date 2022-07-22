@@ -176,7 +176,6 @@ export const featuresMap = options => ({
   settingsForm: {
     layout: `${options?.activeProcessor || 'json'}FormBuilder`,
     autoEvaluate: true,
-    previewOnSave: true,
   },
   sql: {
     layout: 'compact',
