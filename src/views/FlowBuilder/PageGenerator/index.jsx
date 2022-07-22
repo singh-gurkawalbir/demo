@@ -105,7 +105,7 @@ const PageGenerator = ({
 
       if (isDataLoader) {
         patchSet.push({ op: 'add', path: '/type', value: 'simple' });
-        patchSet.push({ op: 'add', path: '/name', value: 'Data Loader' });
+        patchSet.push({ op: 'add', path: '/name', value: 'Data loader' });
       } else {
         patchSet.push({
           op: 'add',

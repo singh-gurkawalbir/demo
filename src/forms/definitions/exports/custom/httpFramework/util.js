@@ -6,7 +6,7 @@ import {
 } from '../../../../../utils/assistant';
 
 function hiddenFieldsMeta({ values }) {
-  return ['adaptorType', 'assistantData'].map(fieldId => ({
+  return ['assistant', 'adaptorType', 'assistantData'].map(fieldId => ({
     id: `assistantMetadata.${fieldId}`,
     type: 'text',
     value: values[fieldId],
@@ -14,7 +14,7 @@ function hiddenFieldsMeta({ values }) {
   }));
 }
 
-function basicFieldsMeta({ assistantConfig, assistantData }) {
+function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
   const fieldDefinitions = {
     version: {
       fieldId: 'assistantMetadata.version',
@@ -37,7 +37,7 @@ function basicFieldsMeta({ assistantConfig, assistantData }) {
       label: 'API Endpoints',
     },
   };
-  const { labels = {}, versions = [] } = assistantData;
+  const { labels = {}, versions = [], helpTexts = {} } = assistantData;
 
   return Object.keys(fieldDefinitions).map(fieldId => {
     if (fieldId === 'version') {
@@ -50,6 +50,10 @@ function basicFieldsMeta({ assistantConfig, assistantData }) {
 
     if (labels[fieldId]) {
       fieldDefinitions[fieldId].label = labels[fieldId];
+    }
+    fieldDefinitions[fieldId].helpKey = `${assistant}.export.${fieldId}`;
+    if (helpTexts[fieldId]) {
+      fieldDefinitions[fieldId].helpText = helpTexts[fieldId];
     }
 
     return fieldDefinitions[fieldId];
@@ -258,6 +262,7 @@ export function fieldMeta({ resource, assistantData }) {
     });
 
     basicFields = basicFieldsMeta({
+      assistant,
       assistantConfig,
       assistantData: assistantData.export,
     });
