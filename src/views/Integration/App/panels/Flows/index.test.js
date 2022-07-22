@@ -408,10 +408,6 @@ describe('Flows index file UI tests', () => {
       expect(screen.getByText('title1')).toBeInTheDocument();
       expect(screen.getByText('title2')).toBeInTheDocument();
       expect(history.replace).toHaveBeenCalledWith('//sections/title1');
-      expect(mockDispatch).toHaveBeenCalledWith(
-        {filter: {searchBy: ['name'], sort: {order: 'asc', orderBy: 'name'}, take: 100},
-          name: '5ff579d745ceef7dcd797c15-flows',
-          type: 'PATCH_FILTER'});
       expect(mockDispatch).toHaveBeenCalledWith({
         type: 'INTEGRATION_LATEST_JOBS_REQUEST_FOR_POLL',
         integrationId: '5ff579d745ceef7dcd797c15',
