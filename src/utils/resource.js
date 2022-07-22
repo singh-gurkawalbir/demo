@@ -79,6 +79,19 @@ export const rdbmsAppTypeToSubType = appType => {
   return appType;
 };
 
+// should return correct resourceType for given notification audit log
+export const getNotificationResourceType = auditLog => {
+  if (auditLog.fieldChange?.fieldPath === '_connectionId') {
+    return 'connections';
+  }
+
+  if (auditLog.fieldChange?.fieldPath === '_flowId') {
+    return 'flows';
+  }
+
+  return 'integrations';
+};
+
 export const adaptorTypeMap = {
   NetSuiteExport: 'netsuite',
   NetSuiteImport: 'netsuite',
