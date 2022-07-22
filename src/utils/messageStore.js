@@ -90,6 +90,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',
   TERMINAL_NODE_TOOLTIP: 'Drag to merge with other branch',
   TERMINAL_NODE_FROZEN_TOOLTIP: 'You can merge branches only when a flow already contains more than one branch. Select “Add branching” inside the “Plus” (+) button next to each step to add branches that can be merged.',
+  MERGE_NODE_TOOLTIP: 'Merge point (records from branches are merged here)',
 };
 
 export default function messageStore(key, argsObj) {
