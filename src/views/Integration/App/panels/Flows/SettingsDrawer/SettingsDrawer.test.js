@@ -79,7 +79,5 @@ describe('SettingsDrawer UI tests', () => {
     await prepareStore(store);
 
     expect(screen.getByText('IAFormStateManager')).toBeInTheDocument();
-
-    screen.debug();
   });
 });
