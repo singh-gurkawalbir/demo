@@ -189,7 +189,7 @@ selectors.platformLicense = (state, accountId) => {
       ioLicense.currentUsage.milliseconds / 1000 / 60 / 60
     );
   } else {
-    ioLicense.hasSSO = ioLicense.sso;
+    ioLicense.hasSSO = ioLicense.tier === 'free' ? true : ioLicense.sso;
     ioLicense.hasSandbox =
     ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0;
 
