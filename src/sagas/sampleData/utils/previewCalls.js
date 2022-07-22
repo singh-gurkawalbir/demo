@@ -107,9 +107,9 @@ export function* pageProcessorPreview({
     const uniqId = generateId(24);
 
     if (router?.branches?.length) {
-      delete router.routeRecordsTo;
-      delete router.routeRecordsUsing;
-      router.branches.length = 1;
+      // delete router.routeRecordsTo;
+      // delete router.routeRecordsUsing;
+      // router.branches.length = 1;
       if (router.branches[0].pageProcessors?.length) {
         updatedPageProcessorId = uniqId;// router.branches[0].pageProcessors[0].id;
         router.branches[0].pageProcessors[0].type = 'import';
