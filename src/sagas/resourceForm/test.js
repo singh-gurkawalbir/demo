@@ -110,7 +110,7 @@ describe('resourceForm sagas', () => {
     const resourceId = 'res-123';
     const values = {
       '/file/type': 'json',
-      '/name': 'Data Loader',
+      '/name': 'Data loader',
       '/outputMode': 'records',
     };
 

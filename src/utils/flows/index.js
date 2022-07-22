@@ -389,7 +389,7 @@ export function flowAllowsScheduling(flow, integration, allExports, isAppVersion
 export function getFlowType(flow, exports, flowExports) {
   if (!flow) return '';
   if (!exports && !flowExports) return '';
-  if (isSimpleImportFlow(flow, exports, flowExports)) return 'Data Loader';
+  if (isSimpleImportFlow(flow, exports, flowExports)) return 'Data loader';
   if (isRealtimeFlow(flow, exports, flowExports)) return 'Realtime';
 
   // TODO: further refine this logic to differentiate between 'Scheduled'
