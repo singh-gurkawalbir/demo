@@ -1,16 +1,18 @@
-import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback, useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { makeStyles } from '@material-ui/core/styles';
 import { FilledButton } from '../../components/Buttons';
 import Spinner from '../../components/Spinner';
 import actions from '../../actions';
+import { selectors } from '../../reducers';
+import ErrorIcon from '../../components/icons/ErrorIcon';
+import { NUMBER_REGEX } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
-  snackbar: {
-    margin: theme.spacing(1),
-  },
   submit: {
     width: '100%',
     borderRadius: 4,
@@ -27,88 +29,102 @@ const useStyles = makeStyles(theme => ({
       maxWidth: '100%',
     },
   },
-  relatedContent: {
-    textDecoration: 'none',
+  message: {
+    position: 'relative',
+    top: theme.spacing(-1),
+    display: 'flex',
+    alignItems: 'center',
+    lineHeight: `${theme.spacing(2)}px`,
+    color: theme.palette.secondary.light,
+    marginBottom: theme.spacing(1),
   },
   textField: {
     width: '100%',
     background: theme.palette.background.paper,
     marginBottom: 10,
   },
-  alertMsg: {
-    fontSize: 12,
-    textAlign: 'left',
-    marginLeft: 0,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'flex-start',
-    marginTop: theme.spacing(-2),
-    marginBottom: 0,
-    lineHeight: `${theme.spacing(2)}px`,
-    '& > svg': {
-      fill: theme.palette.error.main,
-      fontSize: theme.spacing(2),
-      marginRight: 5,
-    },
-  },
-  link: {
-    paddingLeft: 4,
-    color: theme.palette.primary.dark,
-  },
-  forgotPass: {
-    color: theme.palette.primary.dark,
-    textAlign: 'right',
-    marginBottom: theme.spacing(3),
-  },
-  hidden: {
-    display: 'none',
-  },
   wrapper: {
     textAlign: 'left',
     marginBottom: theme.spacing(2),
   },
-  label: {
+  flexWrapper: {
     display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: theme.spacing(1),
+  },
+  errorIcon: {
+    marginRight: theme.spacing(0.5),
+    fontSize: theme.spacing(2),
   },
 }));
 
 export default function OneTimePassCodeForm() {
   const classes = useStyles();
-  const isAuthenticating = false;
   const dispatch = useDispatch();
+  const isMFAAuthRequestInProgress = useSelector(selectors.isMFAAuthRequested);
+  const isMFAAuthVerified = useSelector(selectors.isMFAAuthVerified);
+  const mfaError = useSelector(selectors.mfaError);
+  const [error, setError] = useState();
+  const [trustDevice, setTrustDevice] = useState(false);
   const handleOnSubmit = useCallback(e => {
     e.preventDefault();
-    const code = e.target.email.value;
+    const code = e.target.code.value.trim();
+
+    if (!code.length) {
+      setError('One time passcode is required');
+
+      return;
+    }
+    if (!NUMBER_REGEX.test(code)) {
+      setError('Invalid one time passcode');
+
+      return;
+    }
     const trustDevice = e.target.trustDevice.checked;
 
-    console.log(code, trustDevice);
-    dispatch(actions.auth.mfaVerify({ code, trustDevice }));
+    dispatch(actions.auth.mfaVerify.request({ code, trustDevice }));
   }, [dispatch]);
+
+  useEffect(() => {
+    setError(mfaError);
+  }, [mfaError]);
 
   return (
     <div className={classes.editableFields}>
       <form onSubmit={handleOnSubmit}>
         <TextField
           data-private
-          data-test="email"
-          id="email"
+          data-test="code"
+          id="code"
           type="text"
           inputProps={{ maxLength: 6 }}
           variant="filled"
-          placeholder="Email"
-        //   value={dialogOpen ? userEmail : email}
-        //   onChange={handleOnChangeEmail}
-          className={classes.textField}
-        //   disabled={dialogOpen}
-          />
-        <Checkbox
-        //   checked
-          id="trustDevice"
-          color="primary"
-          className={classes.optionCheckbox}
-      />
-        Trust this device
-        { isAuthenticating ? <Spinner />
+          placeholder="One-time passcode*"
+          className={classes.textField} />
+        {
+            error && (
+              <FormHelperText error className={classes.message}>
+                <ErrorIcon className={classes.errorIcon} data-private /> {error}
+              </FormHelperText>
+            )
+          }
+        <div className={classes.flexWrapper}>
+          <FormControlLabel
+            control={(
+              <Checkbox
+                id="trustDevice"
+                color="primary"
+                checked={trustDevice}
+                data-test="trustDevice"
+                onChange={() => setTrustDevice(t => !t)}
+            />
+          )}
+            label="Trust this device"
+        />
+          <div> Need help? </div>
+        </div>
+
+        { (isMFAAuthRequestInProgress || isMFAAuthVerified) ? <Spinner />
           : (
             <FilledButton
               data-test="submit"

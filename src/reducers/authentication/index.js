@@ -17,12 +17,11 @@ export default function (state = defaultState, action) {
     };
   }
 
-  const {type, showAuthError} = action;
+  const {type, showAuthError, mfaError} = action;
 
   return produce(state, draft => {
     switch (type) {
       case actionTypes.AUTH.INIT_SESSION:
-
         delete draft.showAuthError;
         draft.authenticated = false;
         draft.commStatus = COMM_STATES.LOADING;
@@ -89,6 +88,21 @@ export default function (state = defaultState, action) {
 
         break;
 
+      case actionTypes.AUTH.MFA_AUTH.VERIFY:
+        draft.mfaAuth = {};
+        draft.mfaAuth.status = 'requested';
+        break;
+
+      case actionTypes.AUTH.MFA_AUTH.VERIFICATION_ERROR:
+        if (!draft.mfaAuth) break;
+        draft.mfaAuth.status = 'failed';
+        draft.mfaAuth.error = mfaError;
+        break;
+
+      case actionTypes.AUTH.MFA_AUTH.VERIFIED:
+        if (!draft.mfaAuth) break;
+        draft.mfaAuth = { status: 'success' };
+        break;
       default:
     }
   });
@@ -117,4 +131,20 @@ selectors.showSessionStatus = state => {
 };
 
 selectors.isMFAAuthRequired = state => !!state?.mfaRequired;
+selectors.isMFAAuthRequested = state => {
+  if (!state?.mfaAuth) return false;
+
+  return state.mfaAuth.status === 'requested';
+};
+selectors.isMFAAuthFailed = state => {
+  if (!state?.mfaAuth) return false;
+
+  return state.mfaAuth.status === 'failed';
+};
+selectors.mfaError = state => state?.mfaAuth?.error;
+selectors.isMFAAuthVerified = state => {
+  if (!state?.mfaAuth) return false;
+
+  return state.mfaAuth.status === 'success';
+};
 // #endregion Selectors

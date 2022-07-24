@@ -56,6 +56,13 @@ const useStyles = makeStyles(theme => ({
     fontSize: 30,
     lineHeight: '40px',
   },
+  mfaTitle: {
+    marginBottom: theme.spacing(2),
+    fontSize: 30,
+    lineHeight: '40px',
+    width: 290,
+    textAlign: 'center',
+  },
   signupLink: {
     position: 'absolute',
     bottom: theme.spacing(8),
@@ -66,6 +73,24 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
+const Title = ({ isMFAAuthRequired }) => {
+  const classes = useStyles();
+
+  if (!isMFAAuthRequired) {
+    return (
+      <Typography variant="h3" className={classes.title}>
+        Sign in
+      </Typography>
+    );
+  }
+
+  return (
+    <Typography variant="h3" className={classes.mfaTitle}>
+      Authenticate with one-time passcode
+    </Typography>
+  );
+};
 
 export default function Signin(props) {
   const classes = useStyles();
@@ -81,9 +106,8 @@ export default function Signin(props) {
           <div className={classes.logo}>
             <CeligoLogo />
           </div>
-          <Typography variant="h3" className={classes.title}>
-            Sign in
-          </Typography>
+          <Title isMFAAuthRequired={isMFAAuthRequired} />
+
           <SigninForm
             {...props}
             dialogOpen={false}

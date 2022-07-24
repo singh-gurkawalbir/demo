@@ -467,17 +467,26 @@ function* mfaVerify({ payload }) {
   const { code, trustDevice } = payload || {};
   const _csrf = yield call(getCSRFTokenBackend);
 
-  const status = yield call(apiCallWithRetry, {
-    path: '/mfa/verify?no_redirect=true',
-    opts: {
-      method: 'POST',
-      body: {code, trustDevice, _csrf},
-    },
-    hidden: true,
-  });
+  try {
+    const status = yield call(apiCallWithRetry, {
+      path: '/mfa/verify?no_redirect=true',
+      opts: {
+        method: 'POST',
+        body: {code, trustDevice, _csrf},
+      },
+      hidden: true,
+    });
 
-  if (status?.success) {
-    return yield call(initializeSession);
+    if (status?.success) {
+      yield put(actions.auth.mfaVerify.verified());
+
+      return yield call(initializeSession);
+    }
+    yield put(actions.auth.mfaVerify.verificationFailed('Verification failed. Please try again'));
+  } catch (e) {
+    const message = inferErrorMessages(e)?.[0];
+
+    yield put(actions.auth.mfaVerify.verificationFailed(message));
   }
 }
 export const authenticationSagas = [
@@ -488,5 +497,5 @@ export const authenticationSagas = [
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_SSO, reSignInWithSSO),
   takeEvery(actionTypes.AUTH.LINK_WITH_GOOGLE, linkWithGoogle),
-  takeEvery(actionTypes.AUTH.MFA_AUTH_VERIFY, mfaVerify),
+  takeEvery(actionTypes.AUTH.MFA_AUTH.VERIFY, mfaVerify),
 ];
