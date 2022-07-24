@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
   mfaTitle: {
     marginBottom: theme.spacing(2),
     fontSize: 30,
-    lineHeight: '40px',
+    lineHeight: '28px',
     width: 290,
     textAlign: 'center',
   },
