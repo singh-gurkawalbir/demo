@@ -103,7 +103,6 @@ export const REST_ASSISTANTS = [
   'sharepoint',
   'retailops',
   'concurall',
-  'skubana',
   'dunandbradstreet',
   'miva',
 ];

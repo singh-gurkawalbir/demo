@@ -1521,7 +1521,7 @@ describe('flowbuilderUrl', () => {
 
 describe('getFlowType', () => {
   test('should return correct flow type for data loader flow', () => {
-    expect(getFlowType(dataLoaderFlow, exports)).toEqual('Data Loader');
+    expect(getFlowType(dataLoaderFlow, exports)).toEqual('Data loader');
   });
   test('should return correct flow type for normal flow', () => {
     expect(getFlowType(flowWithPGsandPPs, exports)).toEqual('Scheduled');
