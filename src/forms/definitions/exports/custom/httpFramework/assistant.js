@@ -46,6 +46,10 @@ export default function assistantDefinition(
       });
 
       if (exportDoc?.['/http']) { exportDoc['/http'].formType = 'assistant'; }
+      if (!exportDoc?.['/assistant']) {
+        exportDoc['/assistant'] = undefined;
+        delete exportDoc['/assistant'];
+      }
 
       return { ...otherFormValues, ...exportDoc };
     },

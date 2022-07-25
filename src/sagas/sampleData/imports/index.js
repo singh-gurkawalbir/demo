@@ -108,6 +108,9 @@ export function* _fetchAssistantSampleData({ resource }) {
       httpVersionId: connection?.http?._httpConnectorVersionId,
       _httpConnectorApiId: connection?.http?._httpConnectorApiId,
     });
+    if (!connectorMetaData) {
+      return false;
+    }
   }
   if (!getHttpConnector(connection?.http?._httpConnectorId)) {
     if (!assistantMetadata) {
@@ -333,6 +336,7 @@ export function* getImportSampleData({ importId }) {
     const parsedData = yield call(parseFileData, {
       sampleData,
       resource,
+      resourceType: 'imports',
     });
     const fileSampleData = parsedData?.data;
 

@@ -97,7 +97,7 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   } else if (type === 'graph_ql' || (type === 'http' && connection?.http?.formType === 'graph_ql')) {
     expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
   } else if (type === 'http') {
-    if (getHttpConnector(connection.http?._httpConnectorId)) {
+    if (getHttpConnector(connection?.http?._httpConnectorId)) {
       if (connection.http?._httpConnectorId) {
         expression.push({ 'http._httpConnectorId': connection.http._httpConnectorId });
       }
@@ -121,14 +121,21 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   } else {
     expression.push({ _connectorId: { $exists: false } });
   }
+  const andingExpressions = { $and: expression };
+  const connector = getHttpConnector(connection?.http?._httpConnectorId);
+
+  if (connector) {
+    return {
+      filter: andingExpressions,
+      appType: connector.name,
+    };
+  }
 
   if (assistant) {
     const filterExpression = getFilterExpressionForAssistant(assistant, expression);
 
     options = { filter: filterExpression, appType: assistant };
   } else {
-    const andingExpressions = { $and: expression };
-
     options = {
       filter: andingExpressions,
       appType: type === 'rdbms' ? rdbmsSubTypeToAppType(connection?.rdbms?.type) : type,

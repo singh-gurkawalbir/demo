@@ -994,7 +994,7 @@ describe('resource region selector testcases', () => {
             disableRunFlow: true,
             isFlowEnableLocked: false,
             allowSchedule: false,
-            type: 'Data Loader',
+            type: 'Data loader',
             supportsSettings: false,
           },
           f2: {
@@ -1141,7 +1141,7 @@ describe('resource region selector testcases', () => {
             disableRunFlow: false,
             isFlowEnableLocked: true,
             allowSchedule: false,
-            type: 'Data Loader',
+            type: 'Data loader',
             supportsSettings: false,
           },
           f2: {
@@ -1241,7 +1241,7 @@ describe('resource region selector testcases', () => {
         actions.resource.received('exports', exp)
       );
 
-      expect(selectors.flowType(state, 'f1')).toEqual('Data Loader');
+      expect(selectors.flowType(state, 'f1')).toEqual('Data loader');
     });
 
     test('should return Scheduled for normal flow', () => {
