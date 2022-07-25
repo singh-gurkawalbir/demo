@@ -6,6 +6,7 @@ import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
 import { selectors } from '../../reducers';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
+import InfoIcon from '../../components/icons/InfoIcon';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -72,6 +73,13 @@ const useStyles = makeStyles(theme => ({
       maxWidth: '100%',
     },
   },
+  mfaInfo: {
+    display: 'flex',
+    marginBottom: theme.spacing(1),
+  },
+  infoText: {
+    marginLeft: theme.spacing(1),
+  },
 }));
 
 const Title = ({ isMFAAuthRequired }) => {
@@ -86,9 +94,16 @@ const Title = ({ isMFAAuthRequired }) => {
   }
 
   return (
-    <Typography variant="h3" className={classes.mfaTitle}>
-      Authenticate with one-time passcode
-    </Typography>
+    <>
+      <Typography variant="h3" className={classes.mfaTitle}>
+        Authenticate with one-time passcode
+      </Typography>
+      <div className={classes.mfaInfo}>
+        <InfoIcon color="primary" width="16.5" height="16.5" />
+        <span className={classes.infoText}>You are signing in from a new device. Enter your passcode to verify your account.</span>
+      </div>
+    </>
+
   );
 };
 
