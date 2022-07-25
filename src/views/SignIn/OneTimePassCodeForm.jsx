@@ -4,6 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import { FilledButton } from '../../components/Buttons';
 import Spinner from '../../components/Spinner';
@@ -58,7 +59,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function OneTimePassCodeForm() {
+export default function OneTimePassCodeForm({ dialogOpen }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const isMFAAuthRequestInProgress = useSelector(selectors.isMFAAuthRequested);
@@ -75,7 +76,7 @@ export default function OneTimePassCodeForm() {
 
       return;
     }
-    if (!NUMBER_REGEX.test(code)) {
+    if (!NUMBER_REGEX.test(code) || code.length !== 6) {
       setError('Invalid one time passcode');
 
       return;
@@ -119,9 +120,12 @@ export default function OneTimePassCodeForm() {
                 onChange={() => setTrustDevice(t => !t)}
             />
           )}
-            label="Trust this device"
-        />
-          <div> Need help? </div>
+            label="Trust this device" />
+          {!dialogOpen && (
+          <Link href="/mfa/help" className={classes.forgotPass} variant="body2">
+            Need help?
+          </Link>
+          )}
         </div>
 
         { (isMFAAuthRequestInProgress || isMFAAuthVerified) ? <Spinner />

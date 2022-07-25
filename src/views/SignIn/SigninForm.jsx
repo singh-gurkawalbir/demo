@@ -195,7 +195,7 @@ export default function SignIn({dialogOpen}) {
   };
 
   if (isMFAAuthRequired) {
-    return <OneTimePassCodeForm />;
+    return <OneTimePassCodeForm dialogOpen={dialogOpen} />;
   }
   const attemptedRoute =
       location && location.state && location.state.attemptedRoute;
