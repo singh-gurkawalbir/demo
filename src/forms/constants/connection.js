@@ -140,6 +140,7 @@ export default {
     'redshiftdatawarehouse',
     'happyreturns',
     'brex',
+    'bundleb2b',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
