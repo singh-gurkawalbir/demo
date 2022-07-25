@@ -41,7 +41,7 @@ export default function UploadFileDialog(props) {
   return (
     <ModalDialog show onClose={onClose} aria-labelledby="upload-file-dialog">
       <div>
-        Upload {MODEL_PLURAL_TO_LABEL[resourceType]} {type} File
+        Upload {MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()} {type.toLowerCase()} file
       </div>
 
       <div>
@@ -52,7 +52,7 @@ export default function UploadFileDialog(props) {
             color="secondary"
             component="span"
             className={classes.uploadButton}>
-            Select {MODEL_PLURAL_TO_LABEL[resourceType]} {type} File
+            Select {MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()} {type.toLowerCase()} file
           </Button>
           <input
             data-test="uploadFile"
