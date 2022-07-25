@@ -478,9 +478,9 @@ function* mfaVerify({ payload }) {
     });
 
     if (status?.success) {
-      yield put(actions.auth.mfaVerify.verified());
+      yield call(initializeSession);
 
-      return yield call(initializeSession);
+      return yield put(actions.auth.mfaVerify.verified());
     }
     yield put(actions.auth.mfaVerify.verificationFailed('Verification failed. Please try again'));
   } catch (e) {

@@ -101,6 +101,7 @@ export default function (state = defaultState, action) {
 
       case actionTypes.AUTH.MFA_AUTH.VERIFIED:
         if (!draft.mfaAuth) break;
+        delete draft.mfaRequired;
         draft.mfaAuth = { status: 'success' };
         break;
       default:

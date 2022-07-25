@@ -63,7 +63,6 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const isMFAAuthRequestInProgress = useSelector(selectors.isMFAAuthRequested);
-  const isMFAAuthVerified = useSelector(selectors.isMFAAuthVerified);
   const mfaError = useSelector(selectors.mfaError);
   const [error, setError] = useState();
   const [trustDevice, setTrustDevice] = useState(false);
@@ -128,7 +127,7 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
           )}
         </div>
 
-        { (isMFAAuthRequestInProgress || isMFAAuthVerified) ? <Spinner />
+        { isMFAAuthRequestInProgress ? <Spinner />
           : (
             <FilledButton
               data-test="submit"
