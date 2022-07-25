@@ -336,6 +336,7 @@ export function* getImportSampleData({ importId }) {
     const parsedData = yield call(parseFileData, {
       sampleData,
       resource,
+      resourceType: 'imports',
     });
     const fileSampleData = parsedData?.data;
 
