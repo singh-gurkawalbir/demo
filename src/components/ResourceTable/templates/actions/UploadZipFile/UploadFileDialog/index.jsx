@@ -2,13 +2,12 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import {
   makeStyles,
-  Button,
-
 } from '@material-ui/core';
 
 import { MODEL_PLURAL_TO_LABEL } from '../../../../../../utils/resource';
 import actions from '../../../../../../actions';
 import ModalDialog from '../../../../../ModalDialog';
+import FilledButton from '../../../../../Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -46,14 +45,11 @@ export default function UploadFileDialog(props) {
 
       <div>
         <label htmlFor="fileUpload">
-          <Button
+          <FilledButton
             data-test="selectFile"
-            variant="outlined"
-            color="secondary"
-            component="span"
-            className={classes.uploadButton}>
+            component="span">
             Select {MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()} {type.toLowerCase()} file
-          </Button>
+          </FilledButton>
           <input
             data-test="uploadFile"
             id="fileUpload"
