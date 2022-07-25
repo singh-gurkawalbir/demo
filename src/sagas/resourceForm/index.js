@@ -564,6 +564,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
       },
     ];
   } else if (
+    !flowPatches[0].path.includes('routers') &&
     flowPatches[0].path.includes('pageProcessors') &&
     !flowDoc.pageProcessors
   ) {
