@@ -13,7 +13,6 @@ import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 import resourceMeta from '../../../forms/definitions';
 import { generateNewId } from '../../../utils/resource';
-import ActionButton from '../../ActionButton';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import useIntegration from '../../../hooks/useIntegration';
 import { stringCompare } from '../../../utils/sort';
@@ -21,6 +20,7 @@ import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/for
 import OnlineStatus from '../../OnlineStatus';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import Spinner from '../../Spinner';
+import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -129,7 +129,10 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row !important',
     display: 'flex',
     alignItems: 'flex-start',
-    marginTop: theme.spacing(4),
+    marginTop: theme.spacing(2),
+    '& >* button': {
+      padding: 0,
+    },
   },
   menuItem: {
     maxWidth: '95%',
@@ -405,21 +408,23 @@ export default function DynaSelectResource(props) {
           )}
           <div className={classes.dynaSelectMultiSelectActions}>
             {allowNew && (
-            <ActionButton
+            <IconButtonWithTooltip
+              tooltipProps={{title: 'Create Connection'}}
               data-test="addNewResource"
               onClick={handleAddNewResourceMemo}>
               <AddIcon />
-            </ActionButton>
+            </IconButtonWithTooltip>
             )}
 
             {allowEdit && (
             // Disable adding a new resource when the user has selected an existing resource
-            <ActionButton
+            <IconButtonWithTooltip
+              tooltipProps={{title: 'Edit Connection'}}
               disabled={!value}
               data-test="editNewResource"
               onClick={handleEditResource}>
               <EditIcon />
-            </ActionButton>
+            </IconButtonWithTooltip>
             )}
 
           </div>
