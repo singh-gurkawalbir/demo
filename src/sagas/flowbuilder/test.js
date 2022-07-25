@@ -4,9 +4,9 @@ import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 // import { throwError } from 'redux-saga-test-plan/providers';
-import { createNewPGStep, createNewPPStep, deleteEdge, deleteStep } from '.';
+import { createNewPGStep, createNewPPStep, deleteEdge, deleteRouter, deleteStep, mergeBranch } from '.';
 import actions from '../../actions';
-import { FLOW_SAVING_STATUS } from '../../constants';
+import { FLOW_SAVING_STATUS, GRAPH_ELEMENTS_TYPE } from '../../constants';
 import { selectors } from '../../reducers';
 import { getChangesPatchSet } from '../../utils/json';
 
@@ -669,6 +669,71 @@ describe('flowbuilder sagas', () => {
         .put(actions.resource.patchAndCommitStaged('flows', flowId, [], {options: {revertChangesOnFailure: true}}))
         .run());
   });
+  describe('mergeBranch saga', () => {
+    const flowId = '123';
+
+    test('should not dispatch setSaveStatus and patchAndCommitStaged actions if mergeTargetId does not exist', () =>
+      expectSaga(mergeBranch, {flowId})
+        .provide([
+          [select(selectors.fbMergeTargetId, flowId), undefined],
+        ])
+        .not.put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
+        .not.put(actions.resource.patchAndCommitStaged('flows', flowId, []))
+        .put(actions.flow.dragEnd(flowId))
+        .put(actions.flow.mergeTargetClear(flowId))
+        .run());
+    test('should not dispatch setSaveStatus and patchAndCommitStaged actions if mergeTargetType does not exist', () =>
+      expectSaga(mergeBranch, {flowId})
+        .provide([
+          [select(selectors.fbMergeTargetId, flowId), '43'],
+        ])
+        .not.put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
+        .not.put(actions.resource.patchAndCommitStaged('flows', flowId, []))
+        .put(actions.flow.dragEnd(flowId))
+        .put(actions.flow.mergeTargetClear(flowId))
+        .run());
+    test('should not dispatch setSaveStatus and patchAndCommitStaged actions if branch is not mergable', () =>
+      expectSaga(mergeBranch, {flowId})
+        .provide([
+          [select(selectors.fbMergeTargetId, flowId), '43'],
+          [select(selectors.fbGraphElementsMap, flowId), {43: {type: 'merge'}}],
+          [select(selectors.fbMergeTargetType, flowId), 'pp'],
+        ])
+        .not.put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
+        .not.put(actions.resource.patchAndCommitStaged('flows', flowId, []))
+        .put(actions.flow.dragEnd(flowId))
+        .put(actions.flow.mergeTargetClear(flowId))
+        .run());
+    describe('should dispatch setSaveStatus and patchAndCommitStaged actions if branch is mergable', () => {
+      test('if mergeTarget type is not merge', () =>
+        expectSaga(mergeBranch, {flowId})
+          .provide([
+            [select(selectors.fbGraphElementsMap, flowId), {43: {type: 'router'}}],
+            [select(selectors.fbMergeTargetId, flowId), '43'],
+            [select(selectors.fbMergeTargetType, flowId), 'merge'],
+          ])
+          .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
+          .put(actions.resource.patchAndCommitStaged('flows', flowId, []))
+          .put(actions.flow.dragEnd(flowId))
+          .put(actions.flow.mergeTargetClear(flowId))
+          .run()
+      );
+      test('if mergeTarget is a mergableTerminal', () =>
+        expectSaga(mergeBranch, {flowId})
+          .provide([
+            [select(selectors.fbDragStepId, flowId), 'dragId'],
+            [select(selectors.fbGraphElementsMap, flowId), {43: {type: GRAPH_ELEMENTS_TYPE.MERGE, data: {mergableTerminals: ['dragId']}}}],
+            [select(selectors.fbMergeTargetId, flowId), '43'],
+            [select(selectors.fbMergeTargetType, flowId), 'merge'],
+          ])
+          .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
+          .put(actions.resource.patchAndCommitStaged('flows', flowId, []))
+          .put(actions.flow.dragEnd(flowId))
+          .put(actions.flow.mergeTargetClear(flowId))
+          .run()
+      );
+    });
+  });
   describe('deleteEdge saga', () => {
     const flowId = '123';
     const edgeId = '1';
@@ -698,5 +763,537 @@ describe('flowbuilder sagas', () => {
           }]
         ))
         .run());
+  });
+  describe('deleteRouter saga', () => {
+    test('should dispatch patchAndCommitStaged action with correct patch set if preceeding router exists', () => {
+      const flowId = '62de216043d10d1a0dbea17d';
+      const prePatches = undefined;
+      const routerId = 'PkKnM8';
+      const flow = {
+        _id: '62de216043d10d1a0dbea17d',
+        lastModified: '2022-07-25T11:44:27.598Z',
+        name: 'Siddharth',
+        disabled: true,
+        _integrationId: '62725cd17a13ea404992c628',
+        skipRetries: false,
+        pageGenerators: [
+          {
+            _exportId: '6274f00fae5a74711e604dcc',
+            id: '6274f00fae5a74711e604dcc',
+          },
+        ],
+        createdAt: '2022-07-25T04:51:44.262Z',
+        autoResolveMatchingTraceKeys: true,
+        routers: [
+          {
+            routeRecordsUsing: 'input_filters',
+            id: 'fOUq6p',
+            routeRecordsTo: 'first_matching_branch',
+            branches: [
+              {
+                name: 'Branch 1.0',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    type: 'import',
+                    _importId: '62583031cc5d605c05cb89d9',
+                    id: '62583031cc5d605c05cb89d9',
+                  },
+                ],
+              },
+              {
+                name: 'Branch 1.1',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    type: 'import',
+                    _importId: '624dd26ee52fea5f97ff4679',
+                    id: '624dd26ee52fea5f97ff4679',
+                  },
+                ],
+                nextRouterId: 'PkKnM8',
+              },
+            ],
+            script: {
+              function: 'branchRouter',
+            },
+          },
+          {
+            routeRecordsUsing: 'input_filters',
+            id: 'PkKnM8',
+            routeRecordsTo: 'first_matching_branch',
+            branches: [
+              {
+                name: 'Branch 2.0',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                    id: 'none-0qNjQD',
+                  },
+                ],
+              },
+              {
+                name: 'Branch 2.1',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                    id: 'none-MSHIuK',
+                  },
+                ],
+              },
+            ],
+            script: {
+              function: 'branchRouter',
+            },
+          },
+        ],
+      };
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/routers/0/branches/1/pageProcessors',
+          value: [
+            {
+              responseMapping: {
+                fields: [],
+                lists: [],
+              },
+              type: 'import',
+              _importId: '624dd26ee52fea5f97ff4679',
+              id: '624dd26ee52fea5f97ff4679',
+            },
+            {
+              responseMapping: {
+                fields: [],
+                lists: [],
+              },
+              setupInProgress: true,
+              id: 'none-0qNjQD',
+            },
+          ],
+        },
+        {
+          op: 'replace',
+          path: '/routers/0/branches/1/nextRouterId',
+          value: undefined,
+        },
+        {
+          op: 'remove',
+          path: '/routers/1',
+        },
+      ];
+
+      return expectSaga(deleteRouter, {flowId, routerId, prePatches})
+        .provide([
+          [select(selectors.fbFlow, flowId), flow],
+        ])
+        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet))
+        .run();
+    });
+    test('should dispatch patchAndCommitStaged action with correct patch set if preceeding router exists and deleting current router results in orphan routers', () => {
+      const flowId = '62de216043d10d1a0dbea17d';
+      const prePatches = undefined;
+      const routerId = 'xgYGp_';
+      const flow = {
+        _id: '62de216043d10d1a0dbea17d',
+        lastModified: '2022-07-25T11:55:59.080Z',
+        name: 'Siddharth',
+        disabled: true,
+        _integrationId: '62725cd17a13ea404992c628',
+        skipRetries: false,
+        pageGenerators: [
+          {
+            _exportId: '6274f00fae5a74711e604dcc',
+            id: '6274f00fae5a74711e604dcc',
+          },
+        ],
+        createdAt: '2022-07-25T04:51:44.262Z',
+        autoResolveMatchingTraceKeys: true,
+        routers: [
+          {
+            routeRecordsUsing: 'input_filters',
+            id: 'fOUq6p',
+            routeRecordsTo: 'first_matching_branch',
+            branches: [
+              {
+                name: 'Branch 1.0',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    type: 'import',
+                    _importId: '62583031cc5d605c05cb89d9',
+                    id: '62583031cc5d605c05cb89d9',
+                  },
+                ],
+              },
+              {
+                name: 'Branch 1.1',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    type: 'import',
+                    _importId: '624dd26ee52fea5f97ff4679',
+                    id: '624dd26ee52fea5f97ff4679',
+                  },
+                ],
+                nextRouterId: 'xgYGp_',
+              },
+            ],
+            script: {
+              function: 'branchRouter',
+            },
+          },
+          {
+            routeRecordsUsing: 'input_filters',
+            id: 'xgYGp_',
+            routeRecordsTo: 'first_matching_branch',
+            branches: [
+              {
+                name: 'Branch 2.0',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    type: 'import',
+                    _importId: '62c580083511941752998459',
+                    id: '62c580083511941752998459',
+                  },
+                ],
+                nextRouterId: 'Yxx8Bs',
+              },
+              {
+                name: 'Branch 2.1',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                    id: 'none-SK-zLd',
+                  },
+                ],
+              },
+            ],
+            script: {
+              function: 'branchRouter',
+            },
+          },
+          {
+            routeRecordsUsing: 'input_filters',
+            id: 'Yxx8Bs',
+            routeRecordsTo: 'first_matching_branch',
+            branches: [
+              {
+                name: 'Branch 3.0',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    type: 'import',
+                    _importId: '62bb0b63d0314c189e4ee0bd',
+                    id: '62bb0b63d0314c189e4ee0bd',
+                  },
+                ],
+              },
+              {
+                name: 'Branch 3.1',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                    id: 'none-7TXXL8',
+                  },
+                ],
+              },
+            ],
+            script: {
+              function: 'branchRouter',
+            },
+          },
+        ],
+      };
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/routers/0/branches/1/pageProcessors',
+          value: [
+            {
+              responseMapping: {
+                fields: [],
+                lists: [],
+              },
+              type: 'import',
+              _importId: '624dd26ee52fea5f97ff4679',
+              id: '624dd26ee52fea5f97ff4679',
+            },
+            {
+              responseMapping: {
+                fields: [],
+                lists: [],
+              },
+              type: 'import',
+              _importId: '62c580083511941752998459',
+              id: '62c580083511941752998459',
+            },
+          ],
+        },
+        {
+          op: 'replace',
+          path: '/routers/0/branches/1/nextRouterId',
+          value: 'Yxx8Bs',
+        },
+        {
+          op: 'remove',
+          path: '/routers/1',
+        },
+      ];
+
+      return expectSaga(deleteRouter, {flowId, routerId, prePatches})
+        .provide([
+          [select(selectors.fbFlow, flowId), flow],
+        ])
+        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet))
+        .run();
+    });
+    test('should dispatch patchAndCommitStaged action with correct patch set if it is first router', () => {
+      const flowId = '62de216043d10d1a0dbea17d';
+      const prePatches = undefined;
+      const routerId = 'fOUq6p';
+      const flow = {
+        _id: '62de216043d10d1a0dbea17d',
+        lastModified: '2022-07-25T12:01:08.133Z',
+        name: 'Siddharth',
+        disabled: true,
+        _integrationId: '62725cd17a13ea404992c628',
+        skipRetries: false,
+        pageGenerators: [
+          {
+            _exportId: '6274f00fae5a74711e604dcc',
+            id: '6274f00fae5a74711e604dcc',
+          },
+        ],
+        createdAt: '2022-07-25T04:51:44.262Z',
+        autoResolveMatchingTraceKeys: true,
+        routers: [
+          {
+            routeRecordsUsing: 'input_filters',
+            id: 'fOUq6p',
+            routeRecordsTo: 'first_matching_branch',
+            branches: [
+              {
+                name: 'Branch 1.0',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    type: 'import',
+                    _importId: '62583031cc5d605c05cb89d9',
+                    id: '62583031cc5d605c05cb89d9',
+                  },
+                ],
+              },
+              {
+                name: 'Branch 1.1',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    type: 'import',
+                    _importId: '624dd26ee52fea5f97ff4679',
+                    id: '624dd26ee52fea5f97ff4679',
+                  },
+                ],
+              },
+            ],
+            script: {
+              function: 'branchRouter',
+            },
+          },
+        ],
+      };
+      const patchSet = [
+        {
+          op: 'remove',
+          path: '/routers',
+        },
+        {
+          op: 'add',
+          path: '/pageProcessors',
+          value: [
+            {
+              responseMapping: {
+                fields: [],
+                lists: [],
+              },
+              type: 'import',
+              _importId: '62583031cc5d605c05cb89d9',
+              id: '62583031cc5d605c05cb89d9',
+            },
+          ],
+        },
+      ];
+
+      return expectSaga(deleteRouter, {flowId, routerId, prePatches})
+        .provide([
+          [select(selectors.fbFlow, flowId), flow],
+        ])
+        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet))
+        .run();
+    });
+    test('should dispatch patchAndCommitStaged action with correct patch set if it is first router and its deletion may lead to orphan routers', () => {
+      const flowId = '62de216043d10d1a0dbea17d';
+      const prePatches = undefined;
+      const routerId = 'v8pyFv';
+      const flow = {
+        _id: '62de216043d10d1a0dbea17d',
+        lastModified: '2022-07-25T12:05:21.065Z',
+        name: 'Siddharth',
+        disabled: true,
+        _integrationId: '62725cd17a13ea404992c628',
+        skipRetries: false,
+        pageGenerators: [
+          {
+            _exportId: '6274f00fae5a74711e604dcc',
+            id: '6274f00fae5a74711e604dcc',
+          },
+        ],
+        createdAt: '2022-07-25T04:51:44.262Z',
+        autoResolveMatchingTraceKeys: true,
+        routers: [
+          {
+            routeRecordsUsing: 'input_filters',
+            id: 'v8pyFv',
+            routeRecordsTo: 'first_matching_branch',
+            branches: [
+              {
+                name: 'Branch 1.0',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    type: 'import',
+                    _importId: '62583031cc5d605c05cb89d9',
+                    id: '62583031cc5d605c05cb89d9',
+                  },
+                ],
+                nextRouterId: 'oqKWgQ',
+              },
+              {
+                name: 'Branch 1.1',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                    id: 'none-LUnRv_',
+                  },
+                ],
+              },
+            ],
+            script: {
+              function: 'branchRouter',
+            },
+          },
+          {
+            routeRecordsUsing: 'input_filters',
+            id: 'oqKWgQ',
+            routeRecordsTo: 'first_matching_branch',
+            branches: [
+              {
+                name: 'Branch 2.0',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    type: 'import',
+                    _importId: '62c580083511941752998459',
+                    id: '62c580083511941752998459',
+                  },
+                ],
+              },
+              {
+                name: 'Branch 2.1',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                    id: 'none-b1muo7',
+                  },
+                ],
+              },
+            ],
+            script: {
+              function: 'branchRouter',
+            },
+          },
+        ],
+      };
+      const patchSet = [
+        {
+          op: 'remove',
+          path: '/routers/0/branches/1',
+        },
+        {
+          op: 'remove',
+          path: '/routers/0/routeRecordsTo',
+        },
+        {
+          op: 'remove',
+          path: '/routers/0/routeRecordsUsing',
+        },
+      ];
+
+      return expectSaga(deleteRouter, {flowId, routerId, prePatches})
+        .provide([
+          [select(selectors.fbFlow, flowId), flow],
+        ])
+        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet))
+        .run();
+    });
   });
 });
