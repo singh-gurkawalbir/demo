@@ -9,22 +9,11 @@ import actions from '../../../../../../actions';
 import ModalDialog from '../../../../../ModalDialog';
 import FilledButton from '../../../../../Buttons/FilledButton';
 
-const useStyles = makeStyles(theme => ({
-  title: {
-    marginLeft: theme.spacing(4),
-    padding: theme.spacing(2),
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-  },
-  uploadButton: {
-    margin: theme.spacing(1),
-  },
+const useStyles = makeStyles({
   fileInput: {
     display: 'none',
   },
-}));
+});
 
 export default function UploadFileDialog(props) {
   const { resourceType, fileType, onClose, type, resourceId } = props;
