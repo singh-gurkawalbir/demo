@@ -1,9 +1,9 @@
 /* global describe, test, expect */
-import defaulty from '.';
+import salesforceSettings from '.';
 
 describe('getLookupMetadata component Test cases', () => {
-  test('should pass the intial render with default values', async () => {
-    const response = defaulty.getMetaData({
+  test('should pass the initial render with default values', async () => {
+    const response = salesforceSettings.getMetaData({
       value: {},
       importResource: {},
     });
@@ -146,8 +146,8 @@ describe('getLookupMetadata component Test cases', () => {
   const types = ['boolean', 'picklist', 'textarea', 'datetime'];
 
   types.forEach(eachType =>
-    test(`should pass the intial render with custom values ${eachType}`, async () => {
-      const response = defaulty.getMetaData({
+    test(`should pass the initial render with custom values ${eachType}`, async () => {
+      const response = salesforceSettings.getMetaData({
         value: {
           lookupName: 'name',
           generate: 'generate_id',

@@ -82,7 +82,7 @@ describe('ButtonPanel component Test cases', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('should pass the intial render with default values', async () => {
+  test('should pass the initial render with default values', async () => {
     await initButtonPanel();
     const saveButton = screen.getByRole('button', {name: 'Save'});
     const previewButton = screen.getByRole('button', {name: 'Preview'});
@@ -106,7 +106,7 @@ describe('ButtonPanel component Test cases', () => {
     expect(mockDispatchFn).toBeCalledWith(actions.mapping.requestPreview());
   });
 
-  test('should pass the intial render with error message', async () => {
+  test('should pass the initial render with error message', async () => {
     await initButtonPanel({
       validationErrMsg: 'just some random error',
     });
@@ -124,7 +124,7 @@ describe('ButtonPanel component Test cases', () => {
     expect(await screen.queryByText('just some random error')).toBeInTheDocument();
   });
 
-  test('should pass the intial render with custom values', async () => {
+  test('should pass the initial render with custom values', async () => {
     await initButtonPanel({
       adaptorType: 'HTTPImport',
     });

@@ -1,9 +1,9 @@
 /* global describe, test, expect */
-import defaulty from '.';
+import restSettings from '.';
 
 describe('getLookupMetadata component Test cases', () => {
-  test('should pass the intial render with default values', async () => {
-    const response = defaulty.getMetaData({ });
+  test('should pass the initial render with default values', async () => {
+    const response = restSettings.getMetaData({ });
 
     expect(response.layout.fields).toContain('dataType');
     expect(response.layout.fields).not.toContain('useFirstRow');
@@ -69,8 +69,8 @@ describe('getLookupMetadata component Test cases', () => {
     expect(lookuprelativeURIRes).toEqual({});
   });
 
-  test('should pass the intial render with HTTPImport adaptor', async () => {
-    const response = defaulty.getMetaData({
+  test('should pass the initial render with HTTPImport adaptor', async () => {
+    const response = restSettings.getMetaData({
       value: {
         generate: '[*].',
         lookupName: 'name',
@@ -101,8 +101,8 @@ describe('getLookupMetadata component Test cases', () => {
     expect(response.layout.type).toBe('collapse');
   });
 
-  test('should pass the intial render with RESTImport adaptor', async () => {
-    const response = defaulty.getMetaData({
+  test('should pass the initial render with RESTImport adaptor', async () => {
+    const response = restSettings.getMetaData({
       value: {
         generate: '[*].',
         lookupName: 'name',

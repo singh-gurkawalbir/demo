@@ -112,7 +112,7 @@ describe('MappingSettingsButton test cases', () => {
     mockHistoryPush.mockClear();
   });
 
-  test('should pass the intial render with default value', async () => {
+  test('should pass the initial render with default value', async () => {
     await initMappingSettingsButton();
 
     const buttonRef = screen.getByRole('button');
@@ -123,7 +123,7 @@ describe('MappingSettingsButton test cases', () => {
     await expect(mockHistoryPush).toBeCalledTimes(0);
   });
 
-  test('should pass the intial render to disable true', async () => {
+  test('should pass the initial render to disable true', async () => {
     await initMappingSettingsButton({
       props: {
         isCategoryMapping: true,
@@ -139,7 +139,7 @@ describe('MappingSettingsButton test cases', () => {
     await expect(mockHistoryPush).toBeCalledTimes(0);
   });
 
-  test('should pass the intial render to disable false', async () => {
+  test('should pass the initial render to disable false', async () => {
     await initMappingSettingsButton({
       props: {
         isCategoryMapping: true,
@@ -158,7 +158,7 @@ describe('MappingSettingsButton test cases', () => {
     await expect(mockHistoryPush).toBeCalledTimes(1);
   });
 
-  test('should pass the intial render to isCategoryMapping false', async () => {
+  test('should pass the initial render to isCategoryMapping false', async () => {
     await initMappingSettingsButton({
       props: {
         mappingKey: 'mapping_key',

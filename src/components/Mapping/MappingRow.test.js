@@ -159,7 +159,7 @@ describe('MappingRow component Test cases', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('should pass the intial render with default values', async () => {
+  test('should pass the initial render with default values', async () => {
     await initMappingRow();
 
     expect(screen.queryByText('generate_1')).toBeInTheDocument();
@@ -191,7 +191,7 @@ describe('MappingRow component Test cases', () => {
     expect(mockDispatchFn).toBeCalledWith(actions.mapping.patchField('extract', 'key_1', 'value'));
   });
 
-  test('should pass the intial render with custom values', async () => {
+  test('should pass the initial render with custom values', async () => {
     mockHandleBlur.mockReturnValue({
       _id: '_id',
       value: '',
@@ -225,7 +225,7 @@ describe('MappingRow component Test cases', () => {
     expect(mockDispatchFn).toBeCalledWith(actions.mapping.updateLastFieldTouched('key_2'));
   });
 
-  test('should pass the intial render with hardcoded values', async () => {
+  test('should pass the initial render with hardcoded values', async () => {
     mockHandleBlur.mockReturnValue({
       _id: '_id',
       value: '',
@@ -247,7 +247,7 @@ describe('MappingRow component Test cases', () => {
     expect(screen.queryByText('generate_4')).toBeInTheDocument();
   });
 
-  test('should pass the intial render with lookup values', async () => {
+  test('should pass the initial render with lookup values', async () => {
     mockHandleBlur.mockReturnValue({
       _id: '_id',
       value: '',
@@ -268,7 +268,7 @@ describe('MappingRow component Test cases', () => {
     expect(screen.queryByText('generate_5')).toBeInTheDocument();
   });
 
-  test('should pass the intial render with multifield values', async () => {
+  test('should pass the initial render with multifield values', async () => {
     mockHandleBlur.mockReturnValue({
       _id: '_id',
       value: '',
@@ -288,7 +288,7 @@ describe('MappingRow component Test cases', () => {
     expect(screen.queryByText('generate_6')).toBeInTheDocument();
   });
 
-  test('should pass the intial render with invalid key', async () => {
+  test('should pass the initial render with invalid key', async () => {
     mockHandleBlur.mockReturnValue({
       _id: '_id',
       value: '',
@@ -311,7 +311,7 @@ describe('MappingRow component Test cases', () => {
     expect(mockDispatchFn).toBeCalledWith(actions.mapping.delete('key_90'));
   });
 
-  test('should pass the intial render with isNotEditable mapping', async () => {
+  test('should pass the initial render with isNotEditable mapping', async () => {
     await initMappingRow({
       props: {
         disabled: false,

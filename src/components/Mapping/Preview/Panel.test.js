@@ -159,10 +159,11 @@ describe('Panel component test cases', () => {
   });
 
   afterEach(() => {
+    mockDispatchFn.mockClear();
     useDispatchSpy.mockClear();
   });
 
-  test('Panel component for Salesforce import', async () => {
+  test('should pass the Panel component for Salesforce import', async () => {
     await initPanel({
       props: {
         importId: 'import_id',
@@ -176,7 +177,7 @@ describe('Panel component test cases', () => {
     expect(mockDispatchFn).toBeCalledWith(actions.mapping.patchGenerateThroughAssistant('id'));
   });
 
-  test('Panel component for Salesforce import searchLayoutable false', async () => {
+  test('should pass the Panel component for Salesforce import searchLayoutable false', async () => {
     await initPanel({
       props: {
         importId: 'import_id',
@@ -188,7 +189,7 @@ describe('Panel component test cases', () => {
     expect(screen.queryByText(/sObjectType is a non-layoutable entity./i)).not.toBeInTheDocument();
   });
 
-  test('Panel component for Salesforce import with disable true', async () => {
+  test('should pass the Panel component for Salesforce import with disable true', async () => {
     await initPanel({
       props: {
         importId: 'import_id',
@@ -202,7 +203,7 @@ describe('Panel component test cases', () => {
     expect(mockDispatchFn).toBeCalledTimes(0);
   });
 
-  test('Panel component for NetSuite import', async () => {
+  test('should pass the Panel component for NetSuite import', async () => {
     mockGetRequestOnce('api/netsuite/metadata/suitescript/connections/connection_id_1/recordTypes', {
       data: [],
     });
@@ -220,7 +221,7 @@ describe('Panel component test cases', () => {
     expect(mockDispatchFn).toBeCalledWith(actions.mapping.patchGenerateThroughAssistant('sublistName[*].id'));
   });
 
-  test('Panel component for NetSuite import without sublist', async () => {
+  test('should pass the Panel component for NetSuite import without sublist', async () => {
     mockHandleSFNSAssistantFieldClick.mockReturnValue({
       meta: {
         id: 'id',
@@ -243,7 +244,7 @@ describe('Panel component test cases', () => {
     expect(mockDispatchFn).toBeCalledWith(actions.mapping.patchGenerateThroughAssistant('id'));
   });
 
-  test('Panel component for HTTP import', async () => {
+  test('should pass the Panel component for HTTP import', async () => {
     mockGetRequestOnce('api/processors', {
       data: [],
     });
@@ -259,7 +260,7 @@ describe('Panel component test cases', () => {
     expect(screen.queryByText(/HttpMappingAssistant_afe component/i)).toBeInTheDocument();
   });
 
-  test('Panel component for RDBMSImport', async () => {
+  test('should pass the Panel component for RDBMSImport', async () => {
     await initPanel({
       props: {
         importId: 'import_id',

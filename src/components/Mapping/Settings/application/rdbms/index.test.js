@@ -1,9 +1,9 @@
 /* global describe, test, expect */
-import defaulty from '.';
+import rdbmsSettings from '.';
 
 describe('getLookupMetadata component Test cases', () => {
-  test('should pass the intial render with default values', async () => {
-    const response = defaulty.getMetaData({});
+  test('should pass the initial render with default values', async () => {
+    const response = rdbmsSettings.getMetaData({});
 
     expect(response.layout.fields).toContain('dataType');
     expect(response.layout.fields).not.toContain('useFirstRow');
@@ -59,8 +59,8 @@ describe('getLookupMetadata component Test cases', () => {
     expect(expression4Res).toBe('{{*.extractValue}}');
   });
 
-  test('should pass the intial render with custom values', async () => {
-    const response = defaulty.getMetaData({
+  test('should pass the initial render with custom values', async () => {
+    const response = rdbmsSettings.getMetaData({
       value: {
         generate: '[*].',
       },
@@ -78,8 +78,8 @@ describe('getLookupMetadata component Test cases', () => {
     expect(response.layout.type).toBe('collapse');
   });
 
-  test('should pass the intial render with out isGroupedSampleData', async () => {
-    const response = defaulty.getMetaData({
+  test('should pass the initial render with out isGroupedSampleData', async () => {
+    const response = rdbmsSettings.getMetaData({
       value: {
         generate: '[*].',
       },

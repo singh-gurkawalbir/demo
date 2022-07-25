@@ -196,7 +196,7 @@ describe('SettingsDrawer test cases', () => {
       mappingKey: 'mapping_key',
     };
 
-    test('should pass the intial render to redirect', async () => {
+    test('should pass the initial render to redirect', async () => {
       await initSettingsDrawer({
         url: 'settings/category/editor_id/sections/section_id/depth/mapping_key',
         params,
@@ -207,7 +207,7 @@ describe('SettingsDrawer test cases', () => {
       expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
     });
 
-    test('should pass the intial render with empty map static lookup', async () => {
+    test('should pass the initial render with empty map static lookup', async () => {
       await initSettingsDrawer({
         url,
         params,
@@ -222,7 +222,7 @@ describe('SettingsDrawer test cases', () => {
       expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
     });
 
-    test('should pass the intial render with static lookup map', async () => {
+    test('should pass the initial render with static lookup map', async () => {
       await initSettingsDrawer({
         url,
         params,
@@ -238,7 +238,7 @@ describe('SettingsDrawer test cases', () => {
       expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
     });
 
-    test('should pass the intial render with static lookup map with closeAfterSave false', async () => {
+    test('should pass the initial render with static lookup map with closeAfterSave false', async () => {
       mockCloseAfterSave.mockReturnValue({
         closeAfterSave: false,
       });
@@ -266,7 +266,7 @@ describe('SettingsDrawer test cases', () => {
       generate: 'generate',
     };
 
-    test('should pass the intial render with default values', async () => {
+    test('should pass the initial render with default values', async () => {
       await initSettingsDrawer({
         url,
         params,
@@ -283,7 +283,7 @@ describe('SettingsDrawer test cases', () => {
       mappingKey: 'mapping_key',
     };
 
-    test('should pass the intial render with default values', async () => {
+    test('should pass the initial render with default values', async () => {
       await initSettingsDrawer({
         url,
         params,
@@ -295,7 +295,7 @@ describe('SettingsDrawer test cases', () => {
       expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
     });
 
-    test('should pass the intial render for save/close button without change', async () => {
+    test('should pass the initial render for save/close button without change', async () => {
       await initSettingsDrawer({
         url,
         params,
@@ -311,7 +311,7 @@ describe('SettingsDrawer test cases', () => {
       expect(await mockHistorygoBack).toBeCalledTimes(1);
     });
 
-    test('should pass the intial render for save/close button without change different key', async () => {
+    test('should pass the initial render for save/close button without change different key', async () => {
       await initSettingsDrawer({
         url,
         params,
@@ -321,7 +321,7 @@ describe('SettingsDrawer test cases', () => {
       expect(screen.queryByText(/Settings/i)).toBeInTheDocument();
     });
 
-    test('should pass the intial render for save/close button with change', async () => {
+    test('should pass the initial render for save/close button with change', async () => {
       await initSettingsDrawer({
         url,
         params,

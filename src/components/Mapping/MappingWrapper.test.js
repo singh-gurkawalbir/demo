@@ -156,7 +156,7 @@ describe('MappingWrapper component Test cases', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('should pass the intial render with default values', async () => {
+  test('should pass the initial render with default values', async () => {
     await initMappingWrapper({
       adaptorType: 'HTTPImport',
     });
@@ -168,7 +168,7 @@ describe('MappingWrapper component Test cases', () => {
     expect(mockDispatchFn).toBeCalledWith(actions.mapping.shiftOrder('key_2', 2));
   });
 
-  test('should pass the intial render with default values', async () => {
+  test('should pass the initial render with default values', async () => {
     await initMappingWrapper({
       props: {
         importId: 'import_id',
@@ -181,14 +181,14 @@ describe('MappingWrapper component Test cases', () => {
     expect(onSortEnd).toBeInTheDocument();
   });
 
-  test('should pass the intial render with error status', async () => {
+  test('should pass the initial render with error status', async () => {
     await initMappingWrapper({
       status: 'error',
     });
     expect(screen.queryByText('Failed to load mapping.')).toBeInTheDocument();
   });
 
-  test('should pass the intial render with request status', async () => {
+  test('should pass the initial render with request status', async () => {
     await initMappingWrapper({
       status: 'request',
     });

@@ -108,13 +108,13 @@ describe('TopPanel component Test cases', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('should pass the intial render with default values', async () => {
+  test('should pass the initial render with default values', async () => {
     await initTopPanel();
     expect(screen.queryByText(/Source record field/i)).toBeInTheDocument();
     expect(screen.queryByText(/Destination record field ()/i)).toBeInTheDocument();
   });
 
-  test('should pass the intial render with custom props', async () => {
+  test('should pass the initial render with custom props', async () => {
     await initTopPanel({
       props: {
         flowId: 'flow_id',
@@ -147,7 +147,7 @@ describe('TopPanel component Test cases', () => {
     expect(mockDispatchFn).toBeCalledWith(actions.mapping.refreshGenerates());
   });
 
-  test('should pass the intial render with custom props', async () => {
+  test('should pass the initial render with custom props', async () => {
     await initTopPanel({
       props: {
         flowId: 'flow_id',

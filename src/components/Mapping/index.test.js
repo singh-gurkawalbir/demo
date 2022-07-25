@@ -63,7 +63,7 @@ jest.mock('react-router-dom', () => ({
 
 describe('TableBodyContent component Test cases', () => {
   runServer();
-  test('should pass the intial render with default values', async () => {
+  test('should pass the initial render with default values', async () => {
     mockGetRequestOnce('/api/processors', {
       handlebars: {},
     });
@@ -72,7 +72,7 @@ describe('TableBodyContent component Test cases', () => {
     expect(screen.queryByText('Redirected to //editor/mappings-undefined')).toBeInTheDocument();
   });
 
-  test('should pass the intial render with mappingStatus received', async () => {
+  test('should pass the initial render with mappingStatus received', async () => {
     mockGetRequestOnce('/api/processors', {
       handlebars: {},
     });

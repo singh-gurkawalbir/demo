@@ -1,9 +1,9 @@
 /* global describe, test, expect */
-import defaulty from '.';
+import ftpSettings from '.';
 
 describe('getLookupMetadata component Test cases', () => {
-  test('should pass the intial render with default values', async () => {
-    const response = defaulty.getMetaData({
+  test('should pass the initial render with default values', async () => {
+    const response = ftpSettings.getMetaData({
       value: {},
     });
 
@@ -36,8 +36,8 @@ describe('getLookupMetadata component Test cases', () => {
     expect(expressionRes).toBe('expressionValuefunctionsValue');
   });
 
-  test('should pass the intial render with extract values for optionsHandler', async () => {
-    const response = defaulty.getMetaData({
+  test('should pass the initial render with extract values for optionsHandler', async () => {
+    const response = ftpSettings.getMetaData({
       value: {
         lookupName: 'Test_name_1',
         conditional: {
@@ -73,8 +73,8 @@ describe('getLookupMetadata component Test cases', () => {
     expect(extractRes).toBe('expressionValue{{*.extractValue}}');
   });
 
-  test('should pass the intial render with FTPImport importResource', async () => {
-    const response = defaulty.getMetaData({
+  test('should pass the initial render with FTPImport importResource', async () => {
+    const response = ftpSettings.getMetaData({
       value: {
         lookupName: 'Test_name_1',
         generate: 'test_generate',
@@ -100,8 +100,8 @@ describe('getLookupMetadata component Test cases', () => {
     expect(response.layout.fields).toContain('discardIfEmpty');
   });
 
-  test('should pass the intial render with NetSuiteImport importResource', async () => {
-    const response = defaulty.getMetaData({
+  test('should pass the initial render with NetSuiteImport importResource', async () => {
+    const response = ftpSettings.getMetaData({
       value: {
         lookupName: 'Test_name_1',
         generate: 'test_generate',

@@ -1,9 +1,9 @@
 /* global describe, test, expect */
-import defaulty from '.';
+import netsuiteSettings from '.';
 
 describe('getLookupMetadata component Test cases', () => {
-  test('should pass the intial render with default values', async () => {
-    const response = defaulty.getMetaData({
+  test('should pass the initial render with default values', async () => {
+    const response = netsuiteSettings.getMetaData({
       value: {},
       importResource: {},
     });
@@ -153,8 +153,8 @@ describe('getLookupMetadata component Test cases', () => {
   const types = ['select', 'multiselect', 'checkbox', 'radio', 'date', 'datetimetz'];
 
   types.forEach(eachType => {
-    test(`should pass the intial render with mapping type ${eachType}`, async () => {
-      const response = defaulty.getMetaData({
+    test(`should pass the initial render with mapping type ${eachType}`, async () => {
+      const response = netsuiteSettings.getMetaData({
         value: {
           generate: 'item[*].item.internalid',
         },
@@ -176,8 +176,8 @@ describe('getLookupMetadata component Test cases', () => {
     });
   });
 
-  test('should pass the intial render with generate celigo_nlobjAttachedType', async () => {
-    const response = defaulty.getMetaData({
+  test('should pass the initial render with generate celigo_nlobjAttachedType', async () => {
+    const response = netsuiteSettings.getMetaData({
       value: {
         generate: 'celigo_nlobjAttachedType',
       },
@@ -199,8 +199,8 @@ describe('getLookupMetadata component Test cases', () => {
     expect(response.layout.fields).toContain('discardIfEmpty');
   });
 
-  test('should pass the intial render with recordType', async () => {
-    const response = defaulty.getMetaData({
+  test('should pass the initial render with recordType & hardcode value', async () => {
+    const response = netsuiteSettings.getMetaData({
       value: {
         generate: 'item.internalid',
         lookupName: 'name',
@@ -227,8 +227,8 @@ describe('getLookupMetadata component Test cases', () => {
     expect(response.layout.fields).toContain('discardIfEmpty');
   });
 
-  test('should pass the intial render with recordType', async () => {
-    const response = defaulty.getMetaData({
+  test('should pass the initial render with recordType & lookup value', async () => {
+    const response = netsuiteSettings.getMetaData({
       value: {
         generate: 'item.internalid',
         lookupName: 'name',

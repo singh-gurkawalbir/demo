@@ -16,7 +16,7 @@ async function initAutoMapperButton({
   },
   exportId = 'export_id',
   failMsg = 'just failed for no reason',
-  status = 'recevied',
+  status = 'received',
 } = {}) {
   const initialStore = cloneDeep(reduxStore);
 
@@ -73,7 +73,7 @@ describe('AutoMapperButton component Test cases', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('should pass the intial render with default values', async () => {
+  test('should pass the initial render with default values', async () => {
     await initAutoMapperButton();
     const autoMapButton = screen.getByRole('button', {name: /Auto-map fields/i});
 
@@ -85,7 +85,7 @@ describe('AutoMapperButton component Test cases', () => {
     expect(mockDispatchFn).toBeCalledWith(actions.analytics.gainsight.trackEvent('AUTO_MAP_BUTTON_CLICKED'));
   });
 
-  test('should pass the intial render where button is disabled', async () => {
+  test('should pass the initial render where button is disabled', async () => {
     await initAutoMapperButton({
       status: 'requested',
     });
@@ -97,7 +97,7 @@ describe('AutoMapperButton component Test cases', () => {
     expect(mockDispatchFn).toBeCalledTimes(0);
   });
 
-  test('should pass the intial render with custom values', async () => {
+  test('should pass the initial render with custom values', async () => {
     await initAutoMapperButton({
       exportId: 'export_id_1',
       failMsg: null,

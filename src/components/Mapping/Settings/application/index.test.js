@@ -1,9 +1,9 @@
 /* global describe, test, expect */
-import defaulty from '.';
+import resourceSettings from '.';
 
 describe('getMetaData function Test cases', () => {
-  test('should pass the intial render with default values', async () => {
-    const response = defaulty.getMetaData({
+  test('should pass the initial render with default values', async () => {
+    const response = resourceSettings.getMetaData({
       value: {},
       importResource: {},
     });
@@ -14,8 +14,8 @@ describe('getMetaData function Test cases', () => {
   const adaptorTypes = ['HTTPImport', 'RESTImport', 'NetSuiteDistributedImport', 'SalesforceImport', 'RDBMSImport', 'AS2Import', 'S3Import'];
 
   adaptorTypes.forEach(element => {
-    test(`should pass the intial render with ${element} adaptorType`, async () => {
-      const response = defaulty.getMetaData({
+    test(`should pass the initial render with ${element} adaptorType`, async () => {
+      const response = resourceSettings.getMetaData({
         value: {
           isNotEditable: true,
         },
@@ -33,8 +33,8 @@ describe('getMetaData function Test cases', () => {
   });
 });
 
-test('should pass the intial render without useAsAnInitializeValue', async () => {
-  const response = defaulty.getMetaData({
+test('should pass the initial render without useAsAnInitializeValue', async () => {
+  const response = resourceSettings.getMetaData({
     value: {
       isNotEditable: true,
       generate: 'generate',
@@ -52,8 +52,8 @@ describe('getFormattedValue test cases', () => {
   const actions = ['useEmptyString', 'useNull', 'default', 'dummyValues'];
 
   actions.forEach(eachAction => {
-    test(`should pass the intial render with hardCoded action ${eachAction}`, async () => {
-      const response = defaulty.getFormattedValue({
+    test(`should pass the initial render with hardCoded action ${eachAction}`, async () => {
+      const response = resourceSettings.getFormattedValue({
         generate: 'generate',
         extract: '{{extract}}',
         lookup: 'lookup',
@@ -73,8 +73,8 @@ describe('getFormattedValue test cases', () => {
       expect(response).not.toEqual({});
     });
 
-    test(`should pass the intial render with standard with action ${eachAction}`, async () => {
-      const response = defaulty.getFormattedValue({
+    test(`should pass the initial render with standard with action ${eachAction}`, async () => {
+      const response = resourceSettings.getFormattedValue({
         generate: 'generate',
         extract: '{{extract}}',
         lookup: 'lookup',
@@ -97,8 +97,8 @@ describe('getFormattedValue test cases', () => {
     });
   });
 
-  test('should pass the intial render with standard with date format', async () => {
-    const response = defaulty.getFormattedValue({
+  test('should pass the initial render with standard with date format', async () => {
+    const response = resourceSettings.getFormattedValue({
       generate: 'generate',
       extract: '{{extract}}',
       lookup: 'lookup',
@@ -116,8 +116,8 @@ describe('getFormattedValue test cases', () => {
     expect(response).not.toEqual({});
   });
 
-  test('should pass the intial render with hardCoded action hardcodedDefault with hardcodedAction', async () => {
-    const response = defaulty.getFormattedValue({
+  test('should pass the initial render with hardCoded action hardcodedDefault with hardcodedAction', async () => {
+    const response = resourceSettings.getFormattedValue({
       generate: 'generate',
       extract: 'extract',
       lookup: 'lookup',
@@ -136,8 +136,8 @@ describe('getFormattedValue test cases', () => {
     expect(response).not.toEqual({});
   });
 
-  test('should pass the intial render with hardCoded action hardcodedDefault', async () => {
-    const response = defaulty.getFormattedValue({
+  test('should pass the initial render with hardCoded action hardcodedDefault', async () => {
+    const response = resourceSettings.getFormattedValue({
       generate: 'generate',
       extract: 'extract',
       lookup: 'lookup',
@@ -151,8 +151,8 @@ describe('getFormattedValue test cases', () => {
     expect(response).not.toEqual({});
   });
 
-  test('should pass the intial render with hardCoded action hardcodedDefault with invalid hardcodedDefault', async () => {
-    const response = defaulty.getFormattedValue({
+  test('should pass the initial render with hardCoded action hardcodedDefault with invalid hardcodedDefault', async () => {
+    const response = resourceSettings.getFormattedValue({
       generate: 'generate',
       extract: 'extract',
       lookup: 'lookup',
@@ -167,8 +167,8 @@ describe('getFormattedValue test cases', () => {
     expect(response).not.toEqual({});
   });
 
-  test('should pass the intial render with hardCoded action hardcodedDefault without hardcodedDefault and hardcodedAction', async () => {
-    const response = defaulty.getFormattedValue({
+  test('should pass the initial render with hardCoded action hardcodedDefault without hardcodedDefault and hardcodedAction', async () => {
+    const response = resourceSettings.getFormattedValue({
       generate: 'generate',
       extract: 'extract',
       lookup: 'lookup',
@@ -185,8 +185,8 @@ describe('getFormattedValue test cases', () => {
     expect(response).not.toEqual({});
   });
 
-  test('should pass the intial render with multifield', async () => {
-    const response = defaulty.getFormattedValue({
+  test('should pass the initial render with multifield', async () => {
+    const response = resourceSettings.getFormattedValue({
       generate: 'generate',
       extract: '{{extract}}',
       lookup: 'lookup',
@@ -203,8 +203,8 @@ describe('getFormattedValue test cases', () => {
     expect(response).not.toEqual({});
   });
 
-  test('should pass the intial render with static lookup', async () => {
-    const response = defaulty.getFormattedValue({
+  test('should pass the initial render with static lookup', async () => {
+    const response = resourceSettings.getFormattedValue({
       generate: 'generate',
       extract: '{{extract}}',
       lookup: [{
@@ -228,8 +228,8 @@ describe('getFormattedValue test cases', () => {
     expect(response).not.toEqual({});
   });
 
-  test('should pass the intial render with static lookup without _mapList', async () => {
-    const response = defaulty.getFormattedValue({
+  test('should pass the initial render with static lookup without _mapList', async () => {
+    const response = resourceSettings.getFormattedValue({
       generate: 'generate',
       extract: '{{extract}}',
       lookup: [{
@@ -248,8 +248,8 @@ describe('getFormattedValue test cases', () => {
     expect(response).not.toEqual({});
   });
 
-  test('should pass the intial render with static lookup error usecase', async () => {
-    const response = defaulty.getFormattedValue({
+  test('should pass the initial render with static lookup error usecase', async () => {
+    const response = resourceSettings.getFormattedValue({
       generate: 'generate',
       extract: '{{extract}}',
       lookup: [{
@@ -273,8 +273,8 @@ describe('getFormattedValue test cases', () => {
   const lookupActions = ['disallowFailure', 'useEmptyString', 'useNull', 'useDefaultOnMultipleMatches', 'default'];
 
   lookupActions.forEach(eachAction => {
-    test(`should pass the intial render with dynamic lookup action ${eachAction}`, async () => {
-      const response = defaulty.getFormattedValue({
+    test(`should pass the initial render with dynamic lookup action ${eachAction}`, async () => {
+      const response = resourceSettings.getFormattedValue({
         generate: 'generate',
         extract: '{{extract}}',
         lookup: [{
