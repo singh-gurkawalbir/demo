@@ -58,6 +58,7 @@ const useStyles = makeStyles(theme => ({
   },
   reportsHeading: {
     display: 'flex',
+    alignItems: 'center',
   },
 }));
 const defaultFilter = {

@@ -107,11 +107,11 @@ export function* pageProcessorPreview({
     const uniqId = generateId(24);
 
     if (router?.branches?.length) {
-      delete router.routeRecordsTo;
-      delete router.routeRecordsUsing;
-      router.branches.length = 1;
+      // make record pass through the router's first branch by removing all filters
+      router.routeRecordsTo = 'all_matching_branches';
+      router.routeRecordsUsing = 'input_filters';
       if (router.branches[0].pageProcessors?.length) {
-        updatedPageProcessorId = uniqId;// router.branches[0].pageProcessors[0].id;
+        updatedPageProcessorId = uniqId;
         router.branches[0].pageProcessors[0].type = 'import';
         router.branches[0].pageProcessors[0]._importId = uniqId;
         // Delete existing _exportId which gets added when the PP is a lookup and we mock it as import to get flowInputData
@@ -126,7 +126,6 @@ export function* pageProcessorPreview({
       }
     } else if (!router.branches) {
       router.branches = [{pageProcessors: [{type: 'import', _importId: uniqId }]}];
-      // eslint-disable-next-line no-param-reassign
       updatedPageProcessorId = uniqId;
     }
     pageProcessorMap[updatedPageProcessorId] = {
