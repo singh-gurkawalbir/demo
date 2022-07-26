@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   },
   customWrapper: {
     marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
+    marginBottom: `-${theme.spacing(2)}px !important`,
     boxShadow: 'none',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
