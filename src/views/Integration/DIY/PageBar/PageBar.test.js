@@ -109,10 +109,7 @@ describe('PageBar2 UI tests', () => {
         </MemoryRouter>
       </ConfirmDialogProvider>);
 
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.resource.requestCollection('integrations'));
-    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
+    await prefAndIntegInStore(store);
   }
   test('should test title as standalone', () => {
     renderWithProviders(<MemoryRouter><PageBar /></MemoryRouter>);
@@ -205,7 +202,7 @@ describe('PageBar2 UI tests', () => {
     await waitFor(() => expect(screen.queryByText('Select child')).not.toBeInTheDocument());
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/5ff579d745ceef7dcd797c15/flows');
   });
-  test('should test change child mode install ', async () => {
+  test('should test change child (mode install) ', async () => {
     await renderWithIntegrationsMode('install');
 
     const select = screen.getByText('AFE 2.0 2');
@@ -218,7 +215,7 @@ describe('PageBar2 UI tests', () => {
     await waitFor(() => expect(screen.queryByText('Select child')).not.toBeInTheDocument());
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE203/5ff579d745ceef7dcd797c17/setup');
   });
-  test('should test change child mode uninstall ', async () => {
+  test('should test change child (mode uninstall) ', async () => {
     await renderWithIntegrationsMode('uninstall');
 
     const select = screen.getByText('AFE 2.0 2');

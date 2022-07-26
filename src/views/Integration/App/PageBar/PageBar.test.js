@@ -42,7 +42,16 @@ describe('PageBar UI testing', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-
+  async function prepareStore(store) {
+    store.dispatch(actions.user.preferences.request());
+    store.dispatch(actions.resource.requestCollection('integrations'));
+    store.dispatch(actions.user.profile.request());
+    store.dispatch(actions.user.org.accounts.requestCollection());
+    await waitFor(() => expect(store?.getState()?.user?.org?.accounts[0]).toBeDefined());
+    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
+    await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
+    await waitFor(() => expect(store?.getState()?.user.profile.useErrMgtTwoDotZero).toBeDefined());
+  }
   async function initPagebar(errorCount) {
     mockGetRequestOnce('/api/integrations', [{
       _id: '5ff579d745ceef7dcd797c15',
@@ -83,13 +92,7 @@ describe('PageBar UI testing', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.dispatch(actions.user.preferences.request());
-    initialStore.dispatch(actions.resource.requestCollection('integrations'));
-    initialStore.dispatch(actions.user.profile.request());
-
-    await waitFor(() => expect(initialStore?.getState()?.user.profile.useErrMgtTwoDotZero).toBeDefined());
-    await waitFor(() => expect(initialStore?.getState()?.data?.resources?.integrations).toBeDefined());
-    await waitFor(() => expect(initialStore?.getState()?.user?.preferences?.dateFormat).toBeDefined());
+    await prepareStore(initialStore);
 
     initialStore.getState().session.errorManagement.openErrors = {'5ff579d745ceef7dcd797c15': {status: 'received',
       data: {1111111: {numError: errorCount,
@@ -103,17 +106,11 @@ describe('PageBar UI testing', () => {
       </MemoryRouter>, {initialStore});
   }
 
-  async function prepareStore(store) {
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.resource.requestCollection('integrations'));
-    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
-  }
   test('should test when no integration Id is provided', () => {
     renderWithProviders(<MemoryRouter><PageBar /></MemoryRouter>);
     expect(screen.getByText('tag')).toBeInTheDocument();
   });
-  test('should test clone integration', async () => {
+  test('should test clone integration button', async () => {
     jest.spyOn(integrationAppUtil, 'isCloningSupported').mockReturnValue(true);
     mockGetRequestOnce('/api/integrations', [{
       _id: '5ff579d745ceef7dcd797c15',
@@ -142,7 +139,7 @@ describe('PageBar UI testing', () => {
 
     expect(clonebutton).toHaveAttribute('href', '/clone/integrations/5ff579d745ceef7dcd797c15/preview');
   });
-  test('should test support milut true', async () => {
+  test('should test the child change condition', async () => {
     mockGetRequestOnce('/api/integrations', commonIntegration);
     const {store} = renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/2/tab']}>
@@ -162,7 +159,7 @@ describe('PageBar UI testing', () => {
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/tab');
   });
-  test('should test when unknown child param is given support milut', async () => {
+  test('should test when unknown child param is given', async () => {
     mockGetRequestOnce('/api/integrations', commonIntegration);
     const {store} = renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/title3/tab']}>
@@ -202,7 +199,7 @@ describe('PageBar UI testing', () => {
 
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/tab');
   });
-  test('should test initial no child support', async () => {
+  test('should test initial no child from params', async () => {
     mockGetRequestOnce('/api/integrations', commonIntegration);
     const {store} = renderWithProviders(
       <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15/tab']}>
@@ -244,7 +241,7 @@ describe('PageBar UI testing', () => {
 
     expect(option[1].textContent).toBe(' title1234');
   });
-  test('should test add button which redirect to new location', async () => {
+  test('should test add new child button', async () => {
     mockGetRequestOnce('/api/integrations', [{
       _id: '5ff579d745ceef7dcd797c15',
       lastModified: '2021-01-19T06:34:17.222Z',
@@ -319,8 +316,6 @@ describe('PageBar UI testing', () => {
 
     await prepareStore(store);
 
-    store.dispatch(actions.user.org.accounts.requestCollection());
-    await waitFor(() => expect(store?.getState()?.user?.org?.accounts[0]).toBeDefined());
     const add = screen.getByText('Add');
 
     userEvent.click(add);
@@ -366,4 +361,3 @@ describe('PageBar UI testing', () => {
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/1111111/dashboard');
   });
 });
-
