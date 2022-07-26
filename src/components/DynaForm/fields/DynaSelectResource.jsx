@@ -408,7 +408,7 @@ export default function DynaSelectResource(props) {
           <div className={classes.dynaSelectMultiSelectActions}>
             {allowNew && (
             <IconButtonWithTooltip
-              tooltipProps={{title: 'Create Connection'}}
+              tooltipProps={{title: 'Create connection'}}
               data-test="addNewResource"
               onClick={handleAddNewResourceMemo}
               buttonSize="small">
@@ -419,7 +419,7 @@ export default function DynaSelectResource(props) {
             {allowEdit && (
             // Disable adding a new resource when the user has selected an existing resource
             <IconButtonWithTooltip
-              tooltipProps={{title: 'Edit Connection'}}
+              tooltipProps={{title: 'Edit connection'}}
               disabled={!value}
               data-test="editNewResource"
               onClick={handleEditResource}
