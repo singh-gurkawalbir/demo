@@ -75,7 +75,7 @@ jest.mock('../../../components/AFE/Drawer', () => ({
   ),
 }));
 
-describe('IntegrationDIY UI testing', () => {
+describe('IntegrationDIY UI tests', () => {
   runServer();
   test('should test the case when no Id is provided', () => {
     renderWithProviders(<MemoryRouter><IntegrationDIY /></MemoryRouter>);

@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import {mockGetRequestOnce, renderWithProviders} from '../../../test/test-utils';
+import { renderWithProviders} from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
 import actions from '../../../actions/index';
 import IntegrationApp from '.';
@@ -59,9 +59,17 @@ jest.mock('../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer', () => 
   ),
 }));
 
-describe('ItegraionApp UI testing', () => {
+describe('IntegrationApp UI testing', () => {
   runServer();
-  test('should test when no intgeration id is provided', () => {
+
+  async function renderWithStore(integrationId) {
+    const {store} = renderWithProviders(<MemoryRouter><IntegrationApp integrationId={integrationId} /></MemoryRouter>);
+
+    store.dispatch(actions.resource.requestCollection('integrations'));
+    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
+  }
+
+  test('should test when no integration id is provided', () => {
     const {utils} = renderWithProviders(<MemoryRouter><IntegrationApp /></MemoryRouter>);
 
     expect(utils.container).toBeEmptyDOMElement();
@@ -71,30 +79,11 @@ describe('ItegraionApp UI testing', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should test the component', async () => {
-    mockGetRequestOnce('/api/integrations', [{
-      _id: '5ff579d745ceef7dcd797c15',
-      lastModified: '2021-01-19T06:34:17.222Z',
-      name: " AFE 2.0 refactoring for DB's",
-      install: [],
-      _connectorId: 'someconnectorid',
-      sandbox: false,
-      _registeredConnectionIds: [
-        '5cd51efd3607fe7d8eda9c97',
-        '5ff57a8345ceef7dcd797c21',
-      ],
-      flowGroupings: [],
-      createdAt: '2021-01-06T08:50:31.935Z',
-    }]);
-    const {store} = renderWithProviders(<MemoryRouter><IntegrationApp integrationId="5ff579d745ceef7dcd797c15" /></MemoryRouter>);
-
-    store.dispatch(actions.resource.requestCollection('integrations'));
-    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
+  test('should test the components which are rendered', async () => {
+    await renderWithStore('5ff579d745ceef7dcd797c15');
     expect(screen.getByText('PageBar')).toBeInTheDocument();
     expect(screen.getByText('IntegrationTabs')).toBeInTheDocument();
     expect(screen.getByText('Resource')).toBeInTheDocument();
     expect(screen.getByText('QueuedJobsDrawer')).toBeInTheDocument();
-
-    screen.debug();
   });
 });

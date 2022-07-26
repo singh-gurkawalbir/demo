@@ -1,4 +1,4 @@
-/* global describe, test, expect ,jest */
+/* global describe, test, expect ,jest, beforeEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -9,19 +9,14 @@ import FlowsPanel from '../panels/Flows';
 import FlowsIcon from '../../../../components/icons/FlowsIcon';
 
 describe('IntegrationTabsComponent UI tests', () => {
-  test('should test for manual putting the tab', () => {
-    jest.spyOn(hooks, 'useAvailableTabs').mockReturnValueOnce([{ path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel }]);
-    renderWithProviders(<MemoryRouter><IntegrationTabsComponent /></MemoryRouter>);
-    expect(screen.getByText('Flows')).toBeInTheDocument();
+  beforeEach(() => {
+    jest.resetAllMocks();
   });
-  test('should test for no tab provided', () => {
-    jest.spyOn(hooks, 'useAvailableTabs').mockReturnValueOnce([]);
-    const {utils} = renderWithProviders(<MemoryRouter><IntegrationTabsComponent /></MemoryRouter>);
-
-    expect(utils.container.textContent).toBe('');
-  });
+  function renderFunction() {
+    return renderWithProviders(<MemoryRouter><IntegrationTabsComponent /></MemoryRouter>);
+  }
   test('should test for all default tabs', () => {
-    renderWithProviders(<MemoryRouter><IntegrationTabsComponent /></MemoryRouter>);
+    renderFunction();
 
     expect(screen.getByText('Flows')).toBeInTheDocument();
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
@@ -30,5 +25,16 @@ describe('IntegrationTabsComponent UI tests', () => {
     expect(screen.getByText('Admin')).toBeInTheDocument();
     expect(screen.getByText('Aliases')).toBeInTheDocument();
     expect(screen.getByText('Revisions')).toBeInTheDocument();
+  });
+  test('should test when manually putting the tab', () => {
+    jest.spyOn(hooks, 'useAvailableTabs').mockReturnValueOnce([{ path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel }]);
+    renderFunction();
+    expect(screen.getByText('Flows')).toBeInTheDocument();
+  });
+  test('should test for no tab provided', () => {
+    jest.spyOn(hooks, 'useAvailableTabs').mockReturnValueOnce([]);
+    const {utils} = renderFunction();
+
+    expect(utils.container.textContent).toBe('');
   });
 });

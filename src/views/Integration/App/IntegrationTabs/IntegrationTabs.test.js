@@ -7,16 +7,26 @@ import { runServer } from '../../../../test/api/server';
 import actions from '../../../../actions/index';
 import IntegrationTabsComponent from '.';
 
-describe('erver', () => {
+describe('IntegrationTabs UI tests', () => {
   runServer();
-  test('should test various tabs', async () => {
-    const {store} = renderWithProviders(<MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}> <Route path="/:integrationId"><IntegrationTabsComponent /></Route></MemoryRouter>);
+
+  async function renderWithStore() {
+    const {store} = renderWithProviders(
+      <MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}>
+        <Route path="/:integrationId"><IntegrationTabsComponent /></Route>
+      </MemoryRouter>);
 
     store.dispatch(actions.resource.requestCollection('integrations'));
     store.dispatch(actions.user.preferences.request());
+    store.dispatch(actions.user.profile.request());
+    store.dispatch(actions.user.org.accounts.requestCollection());
+    await waitFor(() => expect(store?.getState()?.user?.org?.accounts.length).toBeGreaterThan[1]);
     await waitFor(() => expect(store?.getState()?.user?.preferences?.defaultAShareId).toBeDefined());
+    await waitFor(() => expect(store?.getState()?.user?.profile?.name).toBeDefined());
     await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
-    screen.debug(null, Infinity);
+  }
+  test('should test various tabs', async () => {
+    await renderWithStore();
     expect(screen.getByText('Flows')).toBeInTheDocument();
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
     expect(screen.getByText('Connections')).toBeInTheDocument();
@@ -44,16 +54,7 @@ describe('erver', () => {
       authTypeSSO: null,
       emailHash: '1c8eb6f416e72a5499283b56f2663fe1'});
 
-    const {store} = renderWithProviders(<MemoryRouter initialEntries={['/5ff579d745ceef7dcd797c15']}> <Route path="/:integrationId"><IntegrationTabsComponent /></Route></MemoryRouter>);
-
-    store.dispatch(actions.resource.requestCollection('integrations'));
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.user.profile.request());
-    store.dispatch(actions.user.org.accounts.requestCollection());
-    await waitFor(() => expect(store?.getState()?.user?.org?.accounts.length).toBeGreaterThan[1]);
-    await waitFor(() => expect(store?.getState()?.user?.preferences?.defaultAShareId).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.user?.profile?.name).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
+    await renderWithStore();
     expect(screen.getByText('Analytics')).toBeInTheDocument();
   });
 });
