@@ -9,11 +9,15 @@ import CeligoPageBar from '.';
 import {renderWithProviders} from '../../test/test-utils';
 
 describe('Celigopagebar UI tests', () => {
-  function renderFunction() {
-    renderWithProviders(
-      <MemoryRouter>
-        <CeligoPageBar title="title" infoText="infotext" subtitle="subtitle" titleTag="titleTag" />
-      </MemoryRouter>);
+  function renderFunction(history) {
+    if (!history) {
+      renderWithProviders(
+        <MemoryRouter>
+          <CeligoPageBar title="title" infoText="infotext" subtitle="subtitle" titleTag="titleTag" />
+        </MemoryRouter>);
+    } else {
+      renderWithProviders(<Router history={history}><CeligoPageBar title="title" subtitle="subtitle" parentUrl="/" /></Router>);
+    }
   }
   test('should check for the presense of title and subtitle', () => {
     renderFunction();
@@ -28,7 +32,7 @@ describe('Celigopagebar UI tests', () => {
   test('should test working of info icon buttton', () => {
     renderFunction();
 
-    const infobutton = screen.getByRole('button', { haspopup: true});
+    const infobutton = screen.getByRole('button');
 
     let infotext = screen.queryByText('infotext');
 
@@ -43,8 +47,8 @@ describe('Celigopagebar UI tests', () => {
     const history = createMemoryHistory();
 
     history.replace = jest.fn();
-    renderWithProviders(<Router history={history}><CeligoPageBar title="title" subtitle="subtitle" parentUrl="/" /></Router>);
-    const parentbutton = screen.getByRole('button', { hidden: true});
+    renderFunction(history);
+    const parentbutton = screen.getByRole('button');
 
     userEvent.click(parentbutton);
     expect(history.replace).toHaveBeenCalledWith('/');
@@ -55,8 +59,8 @@ describe('Celigopagebar UI tests', () => {
 
     history.goBack = jest.fn();
     history.length = 3;
-    renderWithProviders(<Router history={history}><CeligoPageBar title="title" subtitle="subtitle" parentUrl="/" /></Router>);
-    const parentbutton = screen.getByRole('button', { hidden: true});
+    renderFunction(history);
+    const parentbutton = screen.getByRole('button');
 
     userEvent.click(parentbutton);
     expect(history.goBack).toHaveBeenCalledWith();

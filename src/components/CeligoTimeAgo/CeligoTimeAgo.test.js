@@ -7,11 +7,16 @@ import {renderWithProviders} from '../../test/test-utils';
 import actions from '../../actions';
 
 describe('CeligoTimeAgo UI tests', () => {
-  function renderFunction(date) {
+  function renderFunction(date, showRelativeDateTime) {
     const {store} = renderWithProviders(<CeligoTimeAgo date={date} />);
     const profile = {timezone: 'Asia/Kolkata'};
 
     store.dispatch(actions.user.profile.update(profile));
+    if (showRelativeDateTime) {
+      const preferencesPayload = {showRelativeDateTime: true};
+
+      store.dispatch(actions.user.preferences.update(preferencesPayload));
+    }
 
     return store;
   }
@@ -37,10 +42,7 @@ describe('CeligoTimeAgo UI tests', () => {
   });
 
   test('should test the local time date', () => {
-    const store = renderFunction('2022-05-18T18:16:31.989Z');
-    const preferencesPayload = {showRelativeDateTime: true};
-
-    store.dispatch(actions.user.preferences.update(preferencesPayload));
+    renderFunction('2022-05-18T18:16:31.989Z', true);
 
     const localDateTime = screen.getByLabelText('local date time');
 
@@ -52,10 +54,7 @@ describe('CeligoTimeAgo UI tests', () => {
   test('should test the condition for just Now', () => {
     const today = new Date();
 
-    const {store} = renderWithProviders(<CeligoTimeAgo date={today} />);
-    const preferencesPayload = {showRelativeDateTime: true};
-
-    store.dispatch(actions.user.preferences.update(preferencesPayload));
+    renderFunction(today, true);
 
     const justNow = screen.queryByText(/Just now/i);
 
