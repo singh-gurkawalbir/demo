@@ -48,7 +48,7 @@ export default function BranchMenuPopper({ anchorEl, handleClose }) {
         <div className={classes.content}>
           <div className={classes.titleBox}>
             <Typography className={classes.title} variant="h6">
-              Add destination/lookup to end of branch
+              Add empty flow step to end of branch
             </Typography>
 
             <Divider />
