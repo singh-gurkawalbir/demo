@@ -328,10 +328,12 @@ export const generateDefaultExtractsObject = (resourceType, adaptorType) => {
 };
 
 /*
- * @Inputs: flowInputData and rawData for the pp
- * This util merges both to generate actual format of Flow Record being passed at runtime
- * If flowData is Array , then merge rawData to each object in that array
- * If flowData is an Object, then merge rawData and return the merged object
+ * @Inputs: flowInputData, rawData and editorData for the pp
+ * If editorData is passed, it is merged with rawData to generate temporary postResponseMapData
+ * else postResponseMapData is rawData
+ * This util merges flowInputData and postResponseMapData to generate actual format of Flow Record being passed at runtime
+ * If flowData is Array , then merge postResponseMapData to each object in that array
+ * If flowData is an Object, then merge postResponseMapData and return the merged object
  */
 export const generatePostResponseMapData = (flowData, rawData = {}, editorData) => {
   let postResponseMapData = rawData;
