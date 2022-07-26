@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+/* global describe, test, expect, jest, beforeEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { Route, Router } from 'react-router-dom';
@@ -36,6 +36,10 @@ jest.mock('react-redux', () => ({
 }));
 
 describe('TabRedirectiion(App) UI tests', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
   function initStore(children, mode) {
     const initialStore = getCreatedStore();
 
