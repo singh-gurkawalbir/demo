@@ -1,7 +1,7 @@
 import { isNewId, finalSuccessMediaType } from '../../../utils/resource';
 
 export default {
-  preSave: (formValues, _, { connection } = {}) => {
+  preSave: (formValues, resrc, { connection } = {}) => {
     const retValues = { ...formValues };
 
     if (retValues['/http/successMediaType'] === 'csv') {
@@ -246,6 +246,12 @@ export default {
       retValues['/http/_asyncHelperId'] = undefined;
     }
     retValues['/adaptorType'] = 'HTTPExport';
+
+    const parseStrategy = retValues['/parsers']?.[0]?.rules?.['V0_json'];
+
+    if (parseStrategy) {
+      retValues['/parsers'] = undefined;
+    }
 
     return {
       ...retValues,
