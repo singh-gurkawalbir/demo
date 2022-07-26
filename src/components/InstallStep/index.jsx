@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import integrationAppsUtil from '../../utils/integrationApps';
 import SuccessIcon from '../icons/SuccessIcon';
-import { INSTALL_STEP_TYPES } from '../../utils/constants';
+import { INSTALL_STEP_TYPES } from '../../constants';
 import ApplicationImg from '../icons/ApplicationImg';
 import { selectors } from '../../reducers';
 import actions from '../../actions';

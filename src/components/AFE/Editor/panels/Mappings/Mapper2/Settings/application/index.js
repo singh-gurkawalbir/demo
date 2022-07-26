@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
-import { adaptorTypeMap } from '../../../../../../../../utils/resource';
+import { adaptorTypeMap, isFileAdaptor, isAS2Resource } from '../../../../../../../../utils/resource';
 import httpMappingSettings from './http';
+import ftpMappingSettings from './ftp';
 import { MAPPING_DATA_TYPES } from '../../../../../../../../utils/mapping';
 import { generateUniqueKey } from '../../../../../../../../utils/string';
 
@@ -70,10 +71,15 @@ export default {
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.HTTPImport:
         if (importResource?.http?.type === 'file') {
-          break;
+          fieldMeta = ftpMappingSettings.getMetaData(params);
         } else {
           fieldMeta = httpMappingSettings.getMetaData(params);
         }
+        break;
+      case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.S3Import:
+      case adaptorTypeMap.FTPImport:
+        fieldMeta = ftpMappingSettings.getMetaData(params);
         break;
 
       default:
@@ -81,7 +87,7 @@ export default {
 
     return fieldMeta;
   },
-  getFormattedValue: (node, formVal) => {
+  getFormattedValue: (node, formVal, importResource) => {
     const { generate, extract, lookup } = node;
     const settings = {};
     let updatedLookup;
@@ -185,7 +191,7 @@ export default {
         default:
       }
     } else if (formVal.fieldMappingType === 'lookup') {
-      if (formVal._mode === 'static') {
+      if (formVal._mode === 'static' || isFileAdaptor(importResource) || isAS2Resource(importResource)) {
         const {_mapList = []} = formVal;
         let atleastOneValMapped = false;
         let errorMessage;
@@ -208,7 +214,7 @@ export default {
           .map(e => _mapList[e].export);
 
         if (duplicateKeys.length) {
-          errorMessage = `You cannot have duplicate source record field values: ${duplicateKeys.join(
+          errorMessage = `You cannot have duplicate source field values: ${duplicateKeys.join(
             ','
           )}`;
         }

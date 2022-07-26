@@ -7,7 +7,7 @@ import { selectors } from '../../../../reducers';
 import AppBlock from '../../AppBlock';
 import itemTypes from '../../itemTypes';
 import PageGenerator from '../../PageGenerator';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 import SortableList from '../../../../components/Sortable/SortableList';
 import SortableItem from '../../../../components/Sortable/SortableItem';
 import useSortableList from '../../../../hooks/useSortableList';

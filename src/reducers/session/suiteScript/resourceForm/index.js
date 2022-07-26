@@ -1,7 +1,7 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 import { suiteScriptResourceKey } from '../../../../utils/suiteScript';
-import {FORM_SAVE_STATUS} from '../../../../utils/constants';
+import {FORM_SAVE_STATUS} from '../../../../constants';
 import { fieldsTouchedForMeta } from '../../../../forms/formFactory/utils';
 
 export default (state = {}, action) => {

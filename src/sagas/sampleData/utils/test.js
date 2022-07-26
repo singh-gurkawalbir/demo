@@ -604,6 +604,7 @@ describe('Flow sample data utility sagas', () => {
           data: sampleData,
           editorType: 'csvParser',
           rule: generateFileParserOptionsFromResource(ftpCsvResource),
+          resourceType: 'exports',
         };
 
         return expectSaga(parseFileData, {sampleData, resource: ftpCsvResource })
@@ -645,6 +646,7 @@ describe('Flow sample data utility sagas', () => {
           data: sampleData,
           editorType: 'csvParser',
           rule: generateFileParserOptionsFromResource(ftpCsvResource),
+          resourceType: 'exports',
         };
         const error = JSON.stringify({
           errors: [{status: 404, message: '{"code":"Not a valid data to process"}'}],
@@ -1167,14 +1169,20 @@ describe('Flow sample data utility sagas', () => {
               { resource: pg1,
                 flow,
                 refresh: undefined,
-                runOffline: undefined }
+                runOffline: undefined,
+                addMockData: undefined,
+                resourceType: 'exports',
+              }
             ), {}],
             [call(
               getPreviewOptionsForResource,
               { resource: pg2,
                 flow,
                 refresh: undefined,
-                runOffline: undefined}
+                runOffline: undefined,
+                addMockData: undefined,
+                resourceType: 'exports',
+              }
             ), {}],
           ])
           .returns(flowResourcesMap)
@@ -1244,6 +1252,8 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
+                addMockData: undefined,
+                resourceType: 'exports',
               }
             ), {}],
             [call(
@@ -1252,6 +1262,8 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
+                addMockData: undefined,
+                resourceType: 'exports',
               }
             ), {}],
             [call(
@@ -1260,7 +1272,6 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                isMockInput: undefined,
                 addMockData: undefined,
                 _pageProcessorId: pp3._id,
               }
@@ -1316,6 +1327,8 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
+                addMockData: undefined,
+                resourceType: 'exports',
               }
             ), pg1Options],
             [call(
@@ -1324,12 +1337,68 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
+                addMockData: undefined,
+                resourceType: 'exports',
               }
             ), pg2Options],
           ])
           .run();
 
         expect(returnValue).toEqual(flowResourcesMap);
+      });
+      test('should return map of pgs with inputData in the options when type is pageGenerators for lookup export', () => {
+        const flow = {
+          _id: 'flow-123',
+          name: 'test flow',
+          pageGenerators: [{ _exportId: 'export-123'}, { _exportId: 'export-456'}],
+          pageProcessors: [{ type: 'import', _importId: 'import-123'}],
+        };
+        const pg1 = { _id: 'export-123', name: 'pg1', adaptorType: 'RESTExport'};
+        const pg2 = { _id: 'export-456', name: 'pg2', adaptorType: 'HTTPExport'};
+        const resourceType = 'exports';
+        const inputData = {id: '123', demo: 'demo'};
+        const flowResourcesMap = {
+          'export-123': {doc: pg1, options: {}},
+          'export-456': {doc: pg2, options: {inputData}},
+        };
+
+        return expectSaga(fetchFlowResources, { flow, type: 'pageGenerators', addMockData: true })
+          .provide([
+            [select(
+              selectors.resourceData,
+              resourceType,
+              'export-123',
+              SCOPES.VALUE
+            ), { merged: pg1}],
+            [select(
+              selectors.resourceData,
+              resourceType,
+              'export-456',
+              SCOPES.VALUE
+            ), { merged: pg2}],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pg1,
+                flow,
+                refresh: undefined,
+                runOffline: undefined,
+                addMockData: true,
+                resourceType: 'exports',
+              }
+            ), {}],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pg2,
+                flow,
+                refresh: undefined,
+                runOffline: undefined,
+                addMockData: true,
+                resourceType: 'exports',
+              }
+            ), {inputData}],
+          ])
+          .returns(flowResourcesMap)
+          .run();
       });
       test('should return runOfflineOptions for PGs incase runOffline is true and PG has rawData, should also pass refresh prop to getPreviewOptionsForResource saga if passed true ', async () => {
         const flow = {
@@ -1395,6 +1464,8 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh,
                 runOffline,
+                addMockData: undefined,
+                resourceType: 'exports',
               }
             ), pg1Options],
             [call(
@@ -1403,6 +1474,8 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh,
                 runOffline,
+                addMockData: undefined,
+                resourceType: 'exports',
               }
             ), pg2OptionsWithRunOffline],
           ])
@@ -1486,6 +1559,8 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
+                addMockData: undefined,
+                resourceType: 'exports',
               }
             ), { uiData: pg1.sampleData }],
             [call(
@@ -1494,6 +1569,8 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
+                addMockData: undefined,
+                resourceType: 'exports',
               }
             ), { uiData: undefined }],
           ])
@@ -2230,8 +2307,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMap],
             [call(fetchResourceDataForNewFlowResource, {
@@ -2322,8 +2397,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), previousPageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -2392,8 +2465,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -2501,8 +2572,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -2623,8 +2692,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMapWithoutPageProcessorDoc],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -2702,8 +2769,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -2777,8 +2842,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -2852,8 +2915,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), throwError(error)],
@@ -2935,8 +2996,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), throwError(error)],
@@ -2945,6 +3004,7 @@ describe('Flow sample data utility sagas', () => {
               _pageProcessorId,
               _pageProcessorDoc: undefined,
               previewType,
+              editorId: undefined,
               resourceType: 'imports',
               hidden: false,
               throwOnError,
@@ -2958,6 +3018,7 @@ describe('Flow sample data utility sagas', () => {
             _pageProcessorId,
             _pageProcessorDoc: undefined,
             previewType,
+            editorId: undefined,
             resourceType: 'imports',
             hidden: false,
             throwOnError,

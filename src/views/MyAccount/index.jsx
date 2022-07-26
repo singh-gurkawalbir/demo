@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/';
 import { useSelector } from 'react-redux';
 import loadable from '../../utils/loadable';
 import { selectors } from '../../reducers';
-import { USER_ACCESS_LEVELS } from '../../utils/constants';
+import { USER_ACCESS_LEVELS } from '../../constants';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import TransfersIcon from '../../components/icons/TransfersIcon';
 import SecurityIcon from '../../components/icons/SecurityIcon';
@@ -85,6 +85,9 @@ export default function MyAccount({ match }) {
   const permissions = useSelector(state => selectors.userPermissions(state));
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
 
+  const tabsForManageOrMonitorUser = tabs.filter(tab => tab.path === 'profile' || tab.path === 'security');
+  const availableTabs = isAccountOwnerOrAdmin ? tabs : tabsForManageOrMonitorUser;
+
   return (
     <>
       <CeligoPageBar
@@ -94,16 +97,8 @@ export default function MyAccount({ match }) {
               : 'My profile'
           }
         />
-      {!isAccountOwnerOrAdmin ? (
-        <div className={classes.wrapperProfile}>
-          <Profile />
-        </div>
-      ) : (
-        <>
-          <ResourceDrawer match={match} />
-          <Tabs tabs={tabs} match={match} className={classes.tabsAccount} />
-        </>
-      )}
+      <ResourceDrawer match={match} />
+      <Tabs tabs={availableTabs} match={match} className={classes.tabsAccount} />
     </>
   );
 }

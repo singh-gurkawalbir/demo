@@ -9,7 +9,7 @@ import {
   INTEGRATION_ACCESS_LEVELS,
   SUITESCRIPT_CONNECTORS,
   TILE_STATUS,
-} from '../utils/constants';
+} from '../constants';
 
 /**
  * TODO: Ignoring SS tests for sometime and Shiva needs to fix these.

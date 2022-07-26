@@ -7,7 +7,7 @@ import { apiCallWithRetry } from '../../..';
 import actions from '../../../../actions';
 import actionTypes from '../../../../actions/types';
 import { selectors } from '../../../../reducers';
-import { JOB_STATUS, JOB_TYPES } from '../../../../utils/constants';
+import { JOB_STATUS, JOB_TYPES } from '../../../../constants';
 import getRequestOptions from '../../../../utils/requestOptions';
 import {
   refreshForMultipleFlowJobs,

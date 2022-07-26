@@ -8,7 +8,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
 import { selectors } from '../../reducers/index';
-import { JOB_TYPES, JOB_STATUS, EMPTY_RAW_DATA } from '../../utils/constants';
+import { JOB_TYPES, JOB_STATUS, EMPTY_RAW_DATA } from '../../constants';
 import { run, runDataLoader, getLastExportDateTime } from '.';
 import { uploadRawData } from '../uploadFile';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';

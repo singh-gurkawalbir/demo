@@ -9,7 +9,6 @@ const useStyles = makeStyles(theme => ({
   iconButton: {
     marginLeft: theme.spacing(0.5),
     padding: 0,
-    marginTop: -1,
     color: theme.palette.text.hint,
     '&:hover': {
       background: 'none',
@@ -34,7 +33,7 @@ export default function FieldHelp({
     <Help
       key={`help-${id}`}
       data-test={`help-${id}`}
-      title={label || 'Field Help'}
+      title={label || 'Field help'}
       className={classes.iconButton}
       caption={developer && !noApi && helpKey}
       helpKey={helpKey}

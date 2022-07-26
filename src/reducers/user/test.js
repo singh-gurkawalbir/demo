@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 import actions from '../../actions';
-import { ACCOUNT_IDS } from '../../utils/constants';
+import { ACCOUNT_IDS } from '../../constants';
 import reducer, { selectors, DEFAULT_EDITOR_THEME } from '.';
 
 describe('user selectors', () => {
@@ -133,7 +133,7 @@ describe('user selectors', () => {
       expect(selectors.accountSummary(state)).toEqual([]);
     });
     describe('should return correct account summary for owner', () => {
-      test('should return correct summary when the license has sandbox subscription', () => {
+      test('should return correct summary when the license has sandbox subscription and sso subscription', () => {
         const state = reducer(
           {
             preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
@@ -143,7 +143,7 @@ describe('user selectors', () => {
                   _id: ACCOUNT_IDS.OWN,
                   ownerUser: {
                     licenses: [
-                      { _id: 'license1', type: 'integrator', sandbox: true },
+                      { _id: 'license1', type: 'integrator', sandbox: true, sso: true },
                     ],
                   },
                 },
@@ -159,10 +159,11 @@ describe('user selectors', () => {
             hasSandbox: true,
             selected: true,
             hasConnectorSandbox: false,
+            hasSSO: true,
           },
         ]);
       });
-      test('should return correct summary when the license has sandbox subscription and environment is sandbox', () => {
+      test('should return correct summary when the license has sandbox subscription and environment is sandbox and no sso subscription', () => {
         const state = reducer(
           {
             preferences: {
@@ -191,10 +192,11 @@ describe('user selectors', () => {
             hasSandbox: true,
             selected: true,
             hasConnectorSandbox: false,
+            hasSSO: false,
           },
         ]);
       });
-      test('should return correct summary when the license has no sandbox subscription', () => {
+      test('should return correct summary when the license has no sandbox subscription and no sso subscription', () => {
         const state = reducer(
           {
             preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
@@ -218,6 +220,7 @@ describe('user selectors', () => {
             hasSandbox: false,
             selected: true,
             hasConnectorSandbox: false,
+            hasSSO: false,
           },
         ]);
       });
@@ -235,7 +238,7 @@ describe('user selectors', () => {
                   ownerUser: {
                     company: 'Company One',
                     licenses: [
-                      { _id: 'license1', type: 'integrator', sandbox: true },
+                      { _id: 'license1', type: 'integrator', sandbox: true, sso: true },
                     ],
                   },
                 },
@@ -261,12 +264,14 @@ describe('user selectors', () => {
             canLeave: true,
             selected: true,
             hasConnectorSandbox: false,
+            hasSSO: true,
           },
           {
             id: 'ashare2',
             hasSandbox: false,
             canLeave: true,
             hasConnectorSandbox: false,
+            hasSSO: false,
           },
         ]);
       });
@@ -282,7 +287,7 @@ describe('user selectors', () => {
                   ownerUser: {
                     company: 'Company One',
                     licenses: [
-                      { _id: 'license1', type: 'integrator', sandbox: true },
+                      { _id: 'license1', type: 'integrator', sandbox: true, sso: true },
                     ],
                   },
                 },
@@ -307,6 +312,7 @@ describe('user selectors', () => {
             company: 'Company One',
             canLeave: true,
             hasConnectorSandbox: false,
+            hasSSO: true,
           },
           {
             id: 'ashare2',
@@ -314,6 +320,7 @@ describe('user selectors', () => {
             selected: true,
             canLeave: true,
             hasConnectorSandbox: false,
+            hasSSO: false,
           },
         ]);
       });

@@ -8,7 +8,7 @@ import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import RunHistory from '../RunHistory';
 import {FILTER_KEYS_AD, getDashboardIntegrationId} from '../../../utils/accountDashboard';
 import {FILTER_KEYS} from '../../../utils/errorManagement';
@@ -28,9 +28,6 @@ const useStyles = makeStyles(theme => ({
         margin: 0,
         alignItems: 'center',
       },
-    },
-    '& table': {
-      border: `1px solid ${theme.palette.secondary.lightest}`,
     },
 
   },

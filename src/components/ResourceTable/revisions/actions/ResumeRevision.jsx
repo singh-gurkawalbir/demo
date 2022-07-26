@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import ResumeIcon from '../../../icons/RunIcon';
-import { REVISION_TYPES } from '../../../../utils/constants';
+import { REVISION_TYPES } from '../../../../constants';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 export default {

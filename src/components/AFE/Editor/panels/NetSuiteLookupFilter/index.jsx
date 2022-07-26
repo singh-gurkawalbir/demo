@@ -24,6 +24,7 @@ import {
 } from './util';
 import { selectors } from '../../../../../reducers';
 import OperandSettingsDialog from './OperandSettingsDialog';
+import { fieldTypeMap } from './operators';
 import actions from '../../../../../actions';
 import { useIsLoggable } from '../../../../IsLoggableContextProvider';
 
@@ -296,7 +297,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
       filters.push({
         id: v.id,
         label: v.name,
-        type: 'string',
+        type: fieldTypeMap[v.type],
         input(rule, name) {
           const ruleId = getFilterRuleId(rule);
 
@@ -475,7 +476,6 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
           rule.filter.valueGetter(rule);
         }
       });
-
       qbContainer.queryBuilder({
         ...config,
         filters: filtersConfig,

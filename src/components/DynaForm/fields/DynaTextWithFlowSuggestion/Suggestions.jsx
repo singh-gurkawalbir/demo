@@ -9,7 +9,7 @@ import lookupUtil from '../../../../utils/lookup';
 import LookupActionItem from './LookupActionItem';
 import getValueAfterInsert from './util';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 import { OutlinedButton } from '../../../Buttons';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';

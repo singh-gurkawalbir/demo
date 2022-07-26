@@ -12,6 +12,7 @@ import ResourceDrawer from '../../components/drawer/Resource';
 import ActionsRibbon from '../../components/AFE/Drawer/ActionsRibbon';
 import { TextButton } from '../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
+import infoText from '../ResourceList/infoText';
 
 const ExampleMenu = loadable(() =>
   retry(() => import(/* webpackChunkName: 'ExampleMenu' */ './ExampleMenu'))
@@ -78,7 +79,7 @@ export default function Editors() {
 
   return (
     <>
-      <CeligoPageBar title="Developer playground">
+      <CeligoPageBar title="Developer playground" infoText={infoText.developerPlayground}>
         <ExportExampleButton editorId={editorId} />
         {editorId && (
           <Tooltip title="Fullscreen mode" placement="right">
@@ -92,11 +93,11 @@ export default function Editors() {
       <div className={clsx(classes.root, {[classes.rootExpanded]: !editorId})}>
         <div className={classes.leftNav}>
           <div className={classes.menuSection}>
-            <Typography variant="h4">Editor Examples</Typography>
+            <Typography variant="h4">Editor examples</Typography>
             <ExampleMenu onEditorChange={handleEditorChange} />
           </div>
           <div className={classes.menuSection}>
-            <Typography variant="h4">Integration Explorer</Typography>
+            <Typography variant="h4">Integration explorer</Typography>
             <ExplorerMenu onEditorChange={handleEditorChange} />
           </div>
         </div>
@@ -113,7 +114,7 @@ export default function Editors() {
           ) : (
             <Typography variant="h4">
               <p>Get started by selecting an editor example on the left.</p>
-              <p>Alternatively, use the Integration Explorer to drill into your flows to find and manage your resources.</p>
+              <p>Alternatively, use the Integration explorer to drill into your flows to find and manage your resources.</p>
             </Typography>
           )}
 

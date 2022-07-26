@@ -17,7 +17,7 @@ import flowTableMeta from '../../../../../components/ResourceTable/flows/metadat
 import Spinner from '../../../../../components/Spinner';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../../reducers';
-import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME, FLOW_GROUP_FORM_KEY, NO_RESULT_SEARCH_MESSAGE } from '../../../../../utils/constants';
+import { UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME, FLOW_GROUP_FORM_KEY, NO_RESULT_SEARCH_MESSAGE } from '../../../../../constants';
 import { redirectToFirstFlowGrouping } from '../../../../../utils/flowgroupingsRedirectTo';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
@@ -32,6 +32,7 @@ import FlowGroupRow from './FlowGroupRow';
 import { shouldHaveUnassignedSection } from '../../../../../utils/flows';
 import NoResultTypography from '../../../../../components/NoResultTypography';
 import InfoIcon from '../../../../../components/icons/InfoIcon';
+import infoText from '../infoText';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -414,8 +415,6 @@ export default function FlowsPanel({ integrationId, childId }) {
       <Spinner centerAll />
     );
   }
-  const infoTextFlow =
-    'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
 
   const infoSearchFilter =
     'Showing all flow groups that contain search matches.';
@@ -432,7 +431,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         <QueuedJobsDrawer integrationId={integrationId} />
         <FlowgroupDrawer integrationId={integrationId} />
 
-        <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoTextFlow} className={classes.flowPanelTitle}>
+        <PanelHeader title={<Title flows={flows} integrationId={currentIntegrationId} />} infoText={infoText.Flow} className={classes.flowPanelTitle}>
           <ActionGroup>
             <KeywordSearch
               filterKey={searchFilterKey}

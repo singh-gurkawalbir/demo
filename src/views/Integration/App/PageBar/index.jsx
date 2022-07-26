@@ -14,7 +14,7 @@ import { selectors } from '../../../../reducers';
 import integrationAppUtil, { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import StatusCircle from '../../../../components/StatusCircle';
-import { USER_ACCESS_LEVELS } from '../../../../utils/constants';
+import { USER_ACCESS_LEVELS } from '../../../../constants';
 import { TextButton } from '../../../../components/Buttons';
 
 const useStyles = makeStyles(theme => ({

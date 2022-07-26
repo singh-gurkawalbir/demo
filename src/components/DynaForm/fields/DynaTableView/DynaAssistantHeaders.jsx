@@ -8,7 +8,6 @@ export default function DynaAssistantHeaders(props) {
   const {
     value,
     id,
-    disabled,
     formKey,
     isValid,
     headersMetadata = [],
@@ -38,7 +37,7 @@ export default function DynaAssistantHeaders(props) {
       type: 'input',
       supportsRefresh: false,
     },
-  ], [disabled]);
+  ], []);
 
   useEffect(() => {
     if (value.find(header => (header.name && isRequired(header.name) && !header.value))) {
@@ -46,6 +45,7 @@ export default function DynaAssistantHeaders(props) {
     } else {
       dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   useEffect(() => () => {

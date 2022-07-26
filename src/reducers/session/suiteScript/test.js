@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
-import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
+import { SUITESCRIPT_CONNECTORS } from '../../../constants';
 
 describe('suiteScript reducers test cases', () => {
   test('should return initial state when action is not matched', () => {
