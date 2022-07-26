@@ -706,6 +706,121 @@ describe('generatePostResponseMapData util', () => {
       },
     ]);
   });
+  test('should return rawData merged with editorData when flowData is empty', () => {
+    const rawData = {
+      _id: {
+        next: {
+          prev: '2',
+        },
+      },
+    };
+    const editorData = {
+      _id: {
+        id: '1',
+        name: 'something',
+        next: {
+          _id: '123',
+          prev: '1',
+        },
+      },
+    };
+
+    expect(generatePostResponseMapData(undefined, rawData, editorData)).toEqual({
+      _id: {
+        id: '1',
+        name: 'something',
+        next: {
+          _id: '123',
+          prev: '2',
+        },
+      },
+    });
+  });
+  test('should return single record object of flowData merged with postResponseMapData (rawData merged with editorData) when flowData is an object', () => {
+    const rawData = {
+      _id: {
+        next: {
+          prev: '2',
+        },
+      },
+    };
+    const editorData = {
+      _id: {
+        id: '1',
+        name: 'something',
+        next: {
+          _id: '123',
+          prev: '1',
+        },
+      },
+    };
+    const flowData = {
+      users: [{ _id: 'userId1', name: 'userName1'}, { _id: 'userId2', name: 'userName2'}],
+      tickets: [{ _id: 'ticketId1', name: 'ticket1'}, { _id: 'ticketId2', name: 'ticket2'}],
+    };
+
+    expect(generatePostResponseMapData(flowData, rawData, editorData)).toEqual({
+      _id: {
+        id: '1',
+        name: 'something',
+        next: {
+          _id: '123',
+          prev: '2',
+        },
+      },
+      tickets: [
+        {_id: 'ticketId1', name: 'ticket1'},
+        {_id: 'ticketId2', name: 'ticket2'},
+      ],
+      users: [
+        {_id: 'userId1', name: 'userName1'},
+        {_id: 'userId2', name: 'userName2'},
+      ],
+    });
+  });
+  test('should return list of records of flowData merged with postResponseMapData (rawData merged with editorData) on each record when flowData is an array', () => {
+    const rawData = {
+      _id: {
+        next: {
+          prev: '2',
+        },
+      },
+    };
+    const editorData = {
+      _id: {
+        id: '1',
+        name: 'something',
+        next: {
+          _id: '123',
+          prev: '1',
+        },
+      },
+    };
+    const flowData = [{ id: 'userId1', name: 'userName1'}, { id: 'userId2', name: 'userName2'}];
+
+    expect(generatePostResponseMapData(flowData, rawData, editorData)).toEqual(
+      [
+        {
+          _id: {
+            id: '1',
+            name: 'something',
+            next: {_id: '123', prev: '2'},
+          },
+          id: 'userId1',
+          name: 'userName1',
+        },
+        {
+          _id: {
+            id: '1',
+            name: 'something',
+            next: {_id: '123', prev: '2'},
+          },
+          id: 'userId2',
+          name: 'userName2',
+        },
+      ]
+    );
+  });
   // test('should return list of records of flowData merged with rawData on each record when flowData is an array and rawData is an array', () => {
   //   // const rawData = [{
   //   //   recordId: '123',
