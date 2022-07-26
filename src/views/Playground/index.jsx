@@ -12,6 +12,7 @@ import ResourceDrawer from '../../components/drawer/Resource';
 import ActionsRibbon from '../../components/AFE/Drawer/ActionsRibbon';
 import { TextButton } from '../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
+import infoText from '../ResourceList/infoText';
 
 const ExampleMenu = loadable(() =>
   retry(() => import(/* webpackChunkName: 'ExampleMenu' */ './ExampleMenu'))
@@ -78,7 +79,7 @@ export default function Editors() {
 
   return (
     <>
-      <CeligoPageBar title="Developer playground">
+      <CeligoPageBar title="Developer playground" infoText={infoText.developerPlayground}>
         <ExportExampleButton editorId={editorId} />
         {editorId && (
           <Tooltip title="Fullscreen mode" placement="right">
