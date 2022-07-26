@@ -20,6 +20,7 @@ import {
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE } from '../../constants';
+import messageStore from '../../utils/messageStore';
 import getRoutePath from '../../utils/routePaths';
 import { getDomain } from '../../utils/resource';
 import inferErrorMessages from '../../utils/inferErrorMessages';
@@ -466,6 +467,7 @@ export function* linkWithGoogle({ returnTo }) {
 function* mfaVerify({ payload }) {
   const { code, trustDevice } = payload || {};
   const _csrf = yield call(getCSRFTokenBackend);
+  const authFailedMsg = messageStore('MFA_AUTH_FAILED');
 
   try {
     const status = yield call(apiCallWithRetry, {
@@ -480,13 +482,13 @@ function* mfaVerify({ payload }) {
     if (status?.success) {
       yield call(initializeSession);
 
-      return yield put(actions.auth.mfaVerify.verified());
+      return yield put(actions.auth.mfaVerify.success());
     }
-    yield put(actions.auth.mfaVerify.verificationFailed('Verification failed. Please try again'));
+    yield put(actions.auth.mfaVerify.failed(authFailedMsg));
   } catch (e) {
-    const message = inferErrorMessages(e)?.[0];
+    const message = inferErrorMessages(e?.message)?.[0];
 
-    yield put(actions.auth.mfaVerify.verificationFailed(message));
+    yield put(actions.auth.mfaVerify.failed(message || authFailedMsg));
   }
 }
 export const authenticationSagas = [

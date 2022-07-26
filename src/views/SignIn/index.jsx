@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '40px',
   },
   mfaTitle: {
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(3),
     fontSize: 30,
     lineHeight: '28px',
     width: 290,
@@ -75,7 +75,7 @@ const useStyles = makeStyles(theme => ({
   },
   mfaInfo: {
     display: 'flex',
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(1.5),
   },
   infoText: {
     marginLeft: theme.spacing(1),
