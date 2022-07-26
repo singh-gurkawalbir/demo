@@ -1,7 +1,7 @@
 import { isNewId, finalSuccessMediaType } from '../../../utils/resource';
 
 export default {
-  preSave: (formValues, resrc, { connection } = {}) => {
+  preSave: (formValues, _, { connection } = {}) => {
     const retValues = { ...formValues };
 
     if (retValues['/http/successMediaType'] === 'csv') {
