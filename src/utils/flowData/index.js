@@ -4,6 +4,7 @@
  */
 import moment from 'moment';
 import { deepClone } from 'fast-json-patch';
+import merge from 'lodash/merge';
 import {
   isRealTimeOrDistributedResource,
   isFileAdaptor,
@@ -332,14 +333,20 @@ export const generateDefaultExtractsObject = (resourceType, adaptorType) => {
  * If flowData is Array , then merge rawData to each object in that array
  * If flowData is an Object, then merge rawData and return the merged object
  */
-export const generatePostResponseMapData = (flowData, rawData = {}) => {
+export const generatePostResponseMapData = (flowData, rawData = {}, editorData) => {
+  let postResponseMapData = rawData;
+
+  if (editorData) {
+    postResponseMapData = merge(editorData, rawData);
+  }
+
   if (Array.isArray(flowData)) {
-    return flowData.map(fd => ({ ...fd, ...rawData }));
+    return flowData.map(fd => ({ ...fd, ...postResponseMapData }));
   }
 
   return {
     ...(flowData || {}),
-    ...rawData,
+    ...postResponseMapData,
   };
 };
 
