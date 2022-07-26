@@ -148,7 +148,8 @@ export default {
                 (extractfieldsOpts?.map(field => ({
                   label: field.name,
                   value: field.id,
-                }))),
+                }))) ||
+                [],
             },
           ],
           helpKey: 'mapping.extract',
