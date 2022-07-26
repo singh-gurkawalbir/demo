@@ -39,7 +39,7 @@ export const resourceButtonStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ResourceButton({ onClick, variant }) {
+export default function ResourceButton({ onClick, variant, disabled}) {
   const classes = resourceButtonStyles();
   const block = blockMap[variant];
 
@@ -49,6 +49,7 @@ export default function ResourceButton({ onClick, variant }) {
       onClick={onClick}
       className={classes.resourceButton}
       vertical
+      disabled={disabled}
       startIcon={<block.Icon />}>
       {block.label}
     </TextButton>

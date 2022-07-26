@@ -27,9 +27,15 @@ const useStyles = makeStyles(theme => ({
     height: 20,
   },
   dragging: {
-    display: 'none',
-    width: 0,
-    height: 0,
+    '& svg': {
+      backgroundColor: theme.palette.common.white,
+      border: `solid 1px ${theme.palette.secondary.lightest}`,
+      color: theme.palette.secondary.light,
+      borderRadius: '50%',
+      padding: 2,
+      width: 20,
+      height: 20,
+    },
   },
   dropOffset: {
     marginLeft: -7,
