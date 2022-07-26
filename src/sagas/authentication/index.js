@@ -499,5 +499,5 @@ export const authenticationSagas = [
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_SSO, reSignInWithSSO),
   takeEvery(actionTypes.AUTH.LINK_WITH_GOOGLE, linkWithGoogle),
-  takeEvery(actionTypes.AUTH.MFA_AUTH.VERIFY, mfaVerify),
+  takeEvery(actionTypes.AUTH.MFA_VERIFY.REQUEST, mfaVerify),
 ];

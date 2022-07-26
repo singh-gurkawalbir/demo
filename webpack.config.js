@@ -240,7 +240,7 @@ module.exports = (env, argv) => {
         '/litmos/sso': proxyOpts,
         '/auth/google': proxyOpts,
         '/reSigninWithGoogle': proxyOpts,
-        '/mfa/verify*': proxyOpts,
+        '/mfa/verify': proxyOpts,
         '/reSigninWithSSO/*': proxyOpts,
         '/sso/*': proxyOpts,
         '/link/google': proxyOpts,

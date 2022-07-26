@@ -88,18 +88,18 @@ export default function (state = defaultState, action) {
 
         break;
 
-      case actionTypes.AUTH.MFA_AUTH.VERIFY:
+      case actionTypes.AUTH.MFA_VERIFY.REQUEST:
         draft.mfaAuth = {};
         draft.mfaAuth.status = 'requested';
         break;
 
-      case actionTypes.AUTH.MFA_AUTH.VERIFICATION_ERROR:
+      case actionTypes.AUTH.MFA_VERIFY.FAILED:
         if (!draft.mfaAuth) break;
         draft.mfaAuth.status = 'failed';
         draft.mfaAuth.error = mfaError;
         break;
 
-      case actionTypes.AUTH.MFA_AUTH.VERIFIED:
+      case actionTypes.AUTH.MFA_VERIFY.SUCCESS:
         if (!draft.mfaAuth) break;
         delete draft.mfaRequired;
         draft.mfaAuth = { status: 'success' };
