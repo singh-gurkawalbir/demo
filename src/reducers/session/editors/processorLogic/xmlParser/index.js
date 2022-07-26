@@ -27,7 +27,7 @@ const init = ({resource, fieldState, options}) => {
   };
 };
 
-const requestBody = ({ data, rule = {} }) => {
+const requestBody = ({ resourceType, data, rule = {} }) => {
   let options;
 
   if (rule.V0_json === false) {
@@ -42,7 +42,7 @@ const requestBody = ({ data, rule = {} }) => {
     if (rule.listNodes) options.listNodes = rule.listNodes;
     if (rule.includeNodes) options.includeNodes = rule.includeNodes;
     if (rule.excludeNodes) options.excludeNodes = rule.excludeNodes;
-  } else {
+  } else if (resourceType !== 'imports') {
     // exports created in ampersand will have empty parsers object
     // which should be considered as automatic strategy
     options = { V0_json: true };

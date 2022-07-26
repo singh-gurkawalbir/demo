@@ -3119,6 +3119,10 @@ describe('integrationApps selector testcases', () => {
     });
 
     test('should retun license details for the integration app for owner user for non-expired', () => {
+      const expires = new Date();
+
+      expires.setMonth(expires.getMonth() + 3);
+      const dtExpires = moment(expires);
       const state = reducer(
         {
           user: {
@@ -3131,7 +3135,7 @@ describe('integrationApps selector testcases', () => {
                       {
                         _id: 'l1',
                         _integrationId: 'i1',
-                        expires: '2022-08-18T06:00:43.721Z',
+                        expires,
                         created: '2018-07-10T10:03:02.169Z',
                       },
                     ],
@@ -3152,8 +3156,8 @@ describe('integrationApps selector testcases', () => {
         _integrationId: 'i1',
         created: '2018-07-10T10:03:02.169Z',
         createdText: 'Started on Jul 10th, 2018',
-        expires: '2022-08-18T06:00:43.721Z',
-        expiresText: 'Expires on Aug 18th, 2022 (24 Days)',
+        expires,
+        expiresText: `Expires on ${dtExpires.format('MMM Do, YYYY')}`,
         showLicenseExpiringWarning: false,
         upgradeRequested: false,
         upgradeText: '',
@@ -3248,6 +3252,10 @@ describe('integrationApps selector testcases', () => {
     });
 
     test('should retun license details for the integration app for non owner user for non-expired', () => {
+      const expires = new Date();
+
+      expires.setMonth(expires.getMonth() + 3);
+      const dtExpires = moment(expires);
       const state = reducer(
         {
           user: {
@@ -3260,7 +3268,7 @@ describe('integrationApps selector testcases', () => {
                       {
                         _id: 'l1',
                         _integrationId: 'i1',
-                        expires: '2022-08-18T06:00:43.721Z',
+                        expires,
                         created: '2018-07-10T10:03:02.169Z',
                       },
                     ],
@@ -3281,8 +3289,8 @@ describe('integrationApps selector testcases', () => {
         _integrationId: 'i1',
         created: '2018-07-10T10:03:02.169Z',
         createdText: 'Started on Jul 10th, 2018',
-        expires: '2022-08-18T06:00:43.721Z',
-        expiresText: 'Expires on Aug 18th, 2022 (24 Days)',
+        expires,
+        expiresText: `Expires on ${dtExpires.format('MMM Do, YYYY')}`,
         showLicenseExpiringWarning: false,
         upgradeRequested: false,
         upgradeText: '',
@@ -6937,4 +6945,3 @@ describe('integrationApps selector testcases', () => {
     });
   });
 });
-
