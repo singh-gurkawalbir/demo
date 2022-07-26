@@ -67,7 +67,7 @@ describe('UI test cases for resource type filters', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('Should display the "Select Resource Type" dropdown when no resourceType is passed and should display all the 17 options on clicking it', () => {
+  test('should display the "Select Resource Type" dropdown when no resourceType is passed and should display all the 17 options on clicking it', () => {
     renderWithProviders(<ResourceTypeFilter filters={filters} resourceDetails={resourceDetails} />);
     const resourceType = screen.getByText('Select resource type');
 
@@ -78,7 +78,7 @@ describe('UI test cases for resource type filters', () => {
     expect(resourceOptions).toHaveLength(17);
   });
 
-  test('should display the applicable filter options when resource type is integrations and _connectorId present', () => {
+  test('should display the applicable filter options when resource type is integrations and _connectorId is present', () => {
     renderWithProviders(<ResourceTypeFilter resourceType="integrations" resourceId="integration_id_2" filters={filters} resourceDetails={resourceDetails} />);
     const resourceType = screen.getByText('Select resource type');
 
@@ -92,7 +92,7 @@ describe('UI test cases for resource type filters', () => {
     expect(defaultType).toBeInTheDocument();
   });
 
-  test('should display all the available ooptions when resource type is integrations and _connectorId is not present', () => {
+  test('should display all the available options when resource type is integrations and _connectorId is not present', () => {
     renderWithProviders(<ResourceTypeFilter resourceType="integrations" resourceId="integration_id_1" filters={filters} resourceDetails={resourceDetails} />);
     const resourceType = screen.getByText('Select resource type');
 
@@ -128,7 +128,7 @@ describe('UI test cases for resource Id filters', () => {
     userEvent.click(screen.getByText('All'));
     expect(screen.getAllByRole('option')).toHaveLength(2);
   });
-  test(' should display ResourceId filter with option "All" without menuoptions when filters.resourcetype is present in affectedResources but not resourceDetails', () => {
+  test(' should display ResourceId filter with option "All" without menuoptions when filters.resourcetype is present in affectedResources but not in resourceDetails', () => {
     renderWithProviders(<ResourceIdFilter
       resourceType="integrations" resourceId="integration_id_1" resourceDetails={resourceDetails} affectedResources={affectedResources}
       filters={{
@@ -143,7 +143,7 @@ describe('UI test cases for resource Id filters', () => {
     userEvent.click(screen.getByText('All'));
     expect(screen.getAllByRole('option')).toHaveLength(2);
   });
-  test('should ResourceId filter with option "All" is visible with other menuoptions when filters.resourcetype is present in affectedResources and resourceDetails', () => {
+  test('should display ResourceId filter with option "All" is visible with other menuoptions when filters.resourcetype is present in affectedResources and in resourceDetails', () => {
     renderWithProviders(<ResourceIdFilter
       resourceType="integrations" resourceId="integration_id_1" resourceDetails={resourceDetails} affectedResources={affectedResources}
       filters={{

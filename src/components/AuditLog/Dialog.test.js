@@ -31,11 +31,11 @@ describe('UI test cases for audit log dialog box', () => {
     });
   });
 
-  test('Should display the auditlog header along with the resource name', () => {
+  test('should display the auditlog header along with the resource name', () => {
     renderWithProviders(<AuditLogDialog resourceId={resourceId} resourceType={resourceType} />, {initialStore});
     expect(screen.getByText(/Audit log: demo flow/i)).toBeInTheDocument();
   });
-  test('should only diplay the auditlog header when no resource is passed', () => {
+  test('should only display the auditlog header when no resource is passed', () => {
     renderWithProviders(<AuditLogDialog resourceId={resourceId} resourceType={resourceType} />);
     expect(screen.getByText(/Audit log/i)).toBeInTheDocument();
   });
