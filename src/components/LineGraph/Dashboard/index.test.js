@@ -36,7 +36,7 @@ describe('Linegraph UI Tests', () => {
 
     const {store} = renderWithProviders(<LineGraphDrawer integrationId="629f0dcfccb94d35de6f436b" />);
 
-    store.dispatch(actions.user.preferences.request('..'));
+    store.dispatch(actions.user.preferences.request());
     store.dispatch(actions.resource.requestCollection('integrations'));
     await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
     await waitFor(() => expect(store?.getState()?.user?.preferences?.environment).toBeDefined());
@@ -58,11 +58,6 @@ describe('Linegraph UI Tests', () => {
   test('should select a flow group', async () => {
     const store = await renderWithStore();
 
-    store.dispatch(actions.user.preferences.request('..'));
-    store.dispatch(actions.resource.requestCollection('integrations'));
-    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.user?.preferences?.environment).toBeDefined());
-
     const dateRangebutton = screen.getByText('Last 30 days');
 
     userEvent.click(dateRangebutton);
@@ -79,12 +74,7 @@ describe('Linegraph UI Tests', () => {
     expect(somegroup2).toHaveAttribute('aria-selected', 'true');
   });
   test('should change the flow Checkbox', async () => {
-    const store = await renderWithStore();
-
-    store.dispatch(actions.user.preferences.request('..'));
-    store.dispatch(actions.resource.requestCollection('integrations'));
-    await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.user?.preferences?.environment).toBeDefined());
+    await renderWithStore();
 
     userEvent.click(screen.getByText('Integration-level'));
     const checkbox = screen.getByRole('checkbox');

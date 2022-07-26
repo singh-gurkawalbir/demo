@@ -86,17 +86,31 @@ const response =
     },
   ];
 
+async function flowRequest(store) {
+  store.dispatch(actions.resource.requestCollection('flows'));
+  await waitFor(() => expect(store?.getState()?.data?.resources?.flows).toBeDefined());
+}
+
+const props = { integrationId: '629f0dcfccb94d35de6f436b',
+  selectedResources: ['629f0dcfccb94d35de6f436b'],
+  range: {
+    startDate: '2022-06-04T18:30:00.000Z',
+    endDate: '2022-07-04T12:16:31.435Z',
+    preset: 'last30days' }};
+
 describe('FlowChart(dashborad) UI tests', () => {
   runServer();
+
+  async function renderFunction(props) {
+    const {store} = renderWithProviders(<FlowCharts {...props} />);
+
+    store.dispatch(actions.user.profile.request());
+    await waitFor(() => expect(store?.getState()?.user?.profile?.timezone).toBeDefined());
+
+    return {store};
+  }
   test('should test opacity', async () => {
-    const {store} = renderWithProviders(<FlowCharts
-      integrationId="629f0dcfccb94d35de6f436b"
-      selectedResources={['629f0dcfccb94d35de6f436b']}
-      range={{
-        startDate: '2022-06-04T18:30:00.000Z',
-        endDate: '2022-07-04T12:16:31.435Z',
-        preset: 'last30days',
-      }} />);
+    const {store} = await renderFunction(props);
 
     store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', response));
     const value = screen.getAllByText('123');
@@ -107,29 +121,16 @@ describe('FlowChart(dashborad) UI tests', () => {
     fireEvent.mouseLeave(screen.getAllByText('123')[lastindex]);
     expect(screen.queryByText('Opacity : 0.2')).not.toBeInTheDocument();
     expect(screen.getByText('Opacity : 1')).toBeInTheDocument();
-    screen.debug(undefined, 300000);
   });
   test('should test Custom tooltip', async () => {
-    const {store} = renderWithProviders(<FlowCharts
-      integrationId="629f0dcfccb94d35de6f436b"
-      selectedResources={['629f0dcfccb94d35de6f436b']}
-      range={{
-        startDate: '2022-06-04T18:30:00.000Z',
-        endDate: '2022-07-04T12:16:31.435Z',
-        preset: 'last30days',
-      }} />);
-
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.user.profile.request());
-    await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.user?.profile?.timezone).toBeDefined());
+    await renderFunction(props);
 
     expect(screen.getAllByText('Tooltip')[0]).toBeInTheDocument();
     expect(screen.getAllByText('06/05/2022')[0]).toBeInTheDocument();
     expect(screen.getAllByText('name: nametext')[0]).toBeInTheDocument();
   });
   test('should run with an error', async () => {
-    const {store} = renderWithProviders(<FlowCharts integrationId="629f0dcfccb94d35de6f436b" />);
+    const {store} = await renderFunction({integrationId: '629f0dcfccb94d35de6f436b'});
 
     store.dispatch(actions.flowMetrics.failed('629f0dcfccb94d35de6f436b'));
 
@@ -164,10 +165,9 @@ describe('FlowChart(dashborad) UI tests', () => {
     },
     ]);
 
-    const {store} = renderWithProviders(<FlowCharts integrationId="5cc9bd00581ace2bec7754eb" />);
+    const {store} = await renderFunction({ integrationId: '5cc9bd00581ace2bec7754eb' });
 
-    store.dispatch(actions.resource.requestCollection('flows'));
-    await waitFor(() => expect(store?.getState()?.data?.resources?.flows).toBeDefined());
+    await flowRequest(store);
     store.dispatch(actions.flowMetrics.request('integrations', '5cc9bd00581ace2bec7754eb', {}));
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });

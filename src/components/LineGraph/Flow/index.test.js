@@ -83,6 +83,7 @@ jest.mock('recharts', () => ({
     );
   },
 }));
+
 const props = {
   flowId: '629f0dcfccb94d35de6f436b',
   selectedResources: ['629f0dcfccb94d35de6f436b'],
@@ -96,26 +97,21 @@ const props = {
 describe('FlowChart UI Tests', () => {
   runServer();
 
-  function renderWithProps(props) {
+  async function renderWithProps(props) {
     const {store} = renderWithProviders(<FlowCharts
       {...props} />);
+
+    store.dispatch(actions.user.profile.request());
+    await waitFor(() => expect(store?.getState()?.user?.profile?.timezone).toBeDefined());
 
     return store;
   }
   test('should do the testing when flow is loading', () => {
-    renderWithProviders(<FlowCharts
-      range={{
-        startDate: '2022-06-04T18:30:00.000Z',
-        endDate: '2022-07-04T12:16:31.435Z',
-        preset: 'last30days',
-      }}
-      flowId="1234"
-      selectedResources={['1234']}
-      />);
+    renderWithProps(props);
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
   test('should test opacity', async () => {
-    const store = renderWithProps(props);
+    const store = await renderWithProps(props);
 
     store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', []));
     const value = screen.getAllByText('123');
@@ -128,20 +124,16 @@ describe('FlowChart UI Tests', () => {
     expect(screen.getByText('Opacity : 1')).toBeInTheDocument();
   });
 
-  test('should test Custom tooltip failed', async () => {
-    const store = renderWithProps(props);
+  test('should test Custom tooltip ', async () => {
+    const store = await renderWithProps(props);
 
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.user.profile.request());
-    await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.user?.profile?.timezone).toBeDefined());
     store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', []));
     expect(screen.getAllByText('Tooltip')[0]).toBeInTheDocument();
     expect(screen.getAllByText('06/05/2022')[0]).toBeInTheDocument();
     expect(screen.getAllByText('name: nametext')[0]).toBeInTheDocument();
   });
   test('should run with an error', async () => {
-    const store = renderWithProps(props);
+    const store = await renderWithProps(props);
 
     store.dispatch(actions.flowMetrics.failed('629f0dcfccb94d35de6f436b'));
 
@@ -157,12 +149,8 @@ describe('FlowChart UI Tests', () => {
         preset: 'lastrun',
       },
     };
-    const store = renderWithProps(props);
+    const store = await renderWithProps(props);
 
-    store.dispatch(actions.user.preferences.request());
-    store.dispatch(actions.user.profile.request());
-    await waitFor(() => expect(store?.getState()?.user?.preferences?.dateFormat).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.user?.profile?.timezone).toBeDefined());
     store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', {
       lastRun: {
         startDate: '2022-010-10T18:30:00.000Z',

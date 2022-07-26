@@ -30,10 +30,10 @@ describe('SelectResource UI Tests', () => {
 
     userEvent.click(checkboxes[3]);
     expect(checkboxes[3]).toBeChecked();
-    const alppyButton = screen.getByText('Apply');
+    const applyButton = screen.getByText('Apply');
 
-    expect(alppyButton).toBeInTheDocument();
-    userEvent.click(alppyButton);
+    expect(applyButton).toBeInTheDocument();
+    userEvent.click(applyButton);
 
     expect(onSave).toHaveBeenCalledWith(['s1', 's2', 's4']);
     expect(button.textContent).toBe('3 flows selected');
@@ -61,15 +61,15 @@ describe('SelectResource UI Tests', () => {
 
     userEvent.click(checkboxes[0]);
     expect(checkboxes[0]).not.toBeChecked();
-    const alppyButton = screen.getByText('Apply');
+    const applyButton = screen.getByText('Apply');
 
-    expect(alppyButton).toBeInTheDocument();
-    userEvent.click(alppyButton);
+    expect(applyButton).toBeInTheDocument();
+    userEvent.click(applyButton);
 
     expect(onSave).toHaveBeenCalledWith(['s2']);
   });
 
-  test('should click the cancel button after selceting', () => {
+  test('should click the cancel button after selecting', () => {
     const onSave = jest.fn();
 
     render(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
@@ -122,10 +122,10 @@ describe('SelectResource UI Tests', () => {
 
     userEvent.click(checkboxes[1]);
 
-    const alppyButton = screen.getByText('Apply');
+    const applyButton = screen.getByText('Apply');
 
-    expect(alppyButton).toBeInTheDocument();
-    userEvent.click(alppyButton);
+    expect(applyButton).toBeInTheDocument();
+    userEvent.click(applyButton);
 
     expect(button.textContent).toBe('2 flows selected');
   });
@@ -153,7 +153,7 @@ describe('SelectResource UI Tests', () => {
     expect(screen.getByText('8 flows selected')).toBeInTheDocument();
   });
 
-  test('nothing', () => {
+  test('should test when no flow is selected', () => {
     const onSave = jest.fn();
 
     render(<SelectResource onSave={onSave} />);
