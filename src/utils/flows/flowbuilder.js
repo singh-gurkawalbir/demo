@@ -518,7 +518,7 @@ export const generateReactFlowGraph = (flow, isViewMode) => {
   return generateNodesAndEdgesFromBranchedFlow(flow, isViewMode);
 };
 
-const mergeBetweenPPAndRouter = ({edgeSource, patchSet, sourceElement, edgeTarget}) => {
+export const mergeBetweenPPAndRouter = ({edgeSource, patchSet, sourceElement, edgeTarget}) => {
   const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
   const [, edgeSourceRouterIndex, edgeSourceBranchIndex] = BranchPathRegex.exec(edgeSource.data.path);
 
@@ -545,7 +545,7 @@ const mergeBetweenPPAndRouter = ({edgeSource, patchSet, sourceElement, edgeTarge
   ]);
 };
 
-const mergeTerminalNodes = ({ patchSet, sourceElement, targetElement }) => {
+export const mergeTerminalNodes = ({ patchSet, sourceElement, targetElement }) => {
   const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
   // merging two terminal nodes
   const [, targetRouterIndex, targetBranchIndex] = BranchPathRegex.exec(targetElement.data.path);
@@ -569,7 +569,7 @@ const mergeTerminalNodes = ({ patchSet, sourceElement, targetElement }) => {
     }]);
 };
 
-const mergeBetweenRouterAndPP = ({flowDoc, edgeTarget, patchSet, sourceElement}) => {
+export const mergeBetweenRouterAndPP = ({flowDoc, edgeTarget, patchSet, sourceElement}) => {
   const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
 
   const [, targetRouterIndex, targetBranchIndex] = BranchPathRegex.exec(edgeTarget.data.path);
@@ -604,7 +604,7 @@ const mergeBetweenRouterAndPP = ({flowDoc, edgeTarget, patchSet, sourceElement})
     },
   ]);
 };
-const splitPPArray = (ar, index) => {
+export const splitPPArray = (ar, index) => {
   const firstHalf = ar.slice(0, index);
   const secondHalf = ar.slice(index, ar.length);
 
