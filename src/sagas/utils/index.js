@@ -344,8 +344,6 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           ];
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], type: 'select', options};
-        } else {
-          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
         }
       } else if (key === 'http.auth.oauth.scope') {
         const field = preConfiguredField || fieldUserMustSet;
