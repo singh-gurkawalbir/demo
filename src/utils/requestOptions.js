@@ -328,7 +328,7 @@ export default function getRequestOptions(
       let path = resourceType ? `/${childId ? 'flows' : resourceType}/audit/signedURL` : '/audit/signedURL';
 
       const body = resourceType && {_resourceIds: flowIds || [resourceId]};
-      const { fromDate, toDate, byUser, resourceType: filterResourceType, source, event } = filters || {};
+      const { fromDate, toDate, byUser, resourceType: filterResourceType, source, event, _resourceId } = filters || {};
       const fromKey = 'from';
       const toKey = 'to';
 
@@ -347,10 +347,13 @@ export default function getRequestOptions(
         path += `?${toKey}=${toDate}`;
       }
       if (byUser !== 'all') {
-        resourceType ? body.user = byUser : path += `&user=${byUser}`;
+        resourceType ? body._byUserId = byUser : path += `&_byUserId=${byUser}`;
       }
       if (filterResourceType !== 'all') {
         resourceType ? body.resourceType = filterResourceType : path += `&resourceType=${filterResourceType}`;
+      }
+      if (_resourceId !== 'all') {
+        resourceType ? body._resourceId = _resourceId : path += `&_resourceId=${_resourceId}`;
       }
       if (source !== 'all') {
         resourceType ? body.source = source : path += `&source=${source}`;

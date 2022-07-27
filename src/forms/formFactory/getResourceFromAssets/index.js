@@ -190,9 +190,9 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
   const { type } = getResourceSubType(resource);
   let isNewHTTPFramework = false;
 
-  if (['exports', 'imports'].includes(resourceType)) {
+  if (['exports', 'imports'].includes(resourceType) && connection?.http?.formType !== 'graph_ql') {
     isNewHTTPFramework = !!getHttpConnector(connection?.http?._httpConnectorId);
-  } else if (resourceType === 'connections') {
+  } else if (resourceType === 'connections' && resource?.http?.formType !== 'graph_ql') {
     isNewHTTPFramework = !!getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
   }
 

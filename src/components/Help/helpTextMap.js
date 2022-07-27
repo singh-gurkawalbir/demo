@@ -9,7 +9,8 @@ export default {
 'Open <a href="https://docs.celigo.com/hc/en-us/articles/360058595552-Create-forms" target="_blank">Form builder</a> to create or edit user-friendly fields that prompt for text entry or selections that will be returned as settings applied to this resource. Your forms can include any <a href="https://docs.celigo.com/hc/en-us/articles/360059205112-Common-form-fields" target="_blank">field types</a> that you see elsewhere in integrator.io. Forms fields make it much easier for less technical users to work with your settings.',
   settings:
 'This same JSON settings field is exposed on many of the core resource types: integration, flow, export, import, connection, etc... Generally speaking, this settings field can be used to parameterize the logic within your resource. Hooks, filters, handlebars, etc... are all given access to the settings fields when they run, and can incorporate the settings values into their logic. It is worth highlighting that the settings fields stored on linked/related resources are also accessible at runtime. For example, the settings field defined at the integration tile level will be accessible to all flows running within the same integration tile. \n\nIt is recommended that you create a custom form to expose and manage your settings fields, so that less technical users do not need to work with raw JSON. Be sure to check out the "Launch form builder" button!.',
-  'license._trialLicenseId': 'Create or select a license record that would serve as the default license configuration for any trial licenses.',
+  'license._trialLicenseId': 'Enter a license value that will be the default license configuration for any trial licenses.',
+  'license.trialPeriod': 'Choose a trial period for this integration: 14 days, 30 days, or 60 days.',
   'license.trialEnabled': 'You must create the integration app listing before you can enable the trials.',
   // fieldDefinitions
   'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
@@ -531,6 +532,10 @@ export default {
   'breezyhr.connection.http.auth.token.token': 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by Breezy HR. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
   'mercadolibre.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><br><b>Steps to get the client ID and client secret:<br></b>1. Sign in to your MercadoLibre developer account.<br>2. Navigate to <b>Profile → My Apps</b>.<br>3. Click on <b>Edit</b> after selecting the app to copy <b>Client ID</b> and <b>Client Select</b>.(If none exists yet,click to <b>Create new app</b> option to create a new pair.)',
   'mercadolibre.connection.http.unencrypted.region': 'Select the region of your MercadoLibre account.',
+  'bundleb2b.connection.http.unencrypted.storeHash': 'Enter the unique Store hash of your BigCommerce store. For example, if your BigCommerce store URL is https://store-a123456bc.mybigcommerce.com/, then provide <i>a123456bc</i> for the Store hash.',
+  'bundleb2b.connection.http.unencrypted.email': 'Enter the email of your BundleB2B app.',
+  'bundleb2b.connection.http.encrypted.password': 'Enter the password of your BundleB2B app. <br> Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'bundleb2b.connection.http.auth.token.token': 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by BundleB2B. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
   'constantcontact.connection.http._iClientId': 'Save your client ID and client secret in this field for an extra layer of security.<br><br><b>Steps to get the client ID and secret:<br></b>1. Open the V3 API Developer Portal and click the <b>My Applications</b> tab.<br>2. Enter your <b>username</b> and <b>password</b> and click <b>Login</b>.<br>3. Select the app you’re using to copy the client ID and secret. If none exist, click <b>New Application</b> to create a new client ID and secret.',
   'connection.http.marketoSubdomain':
 "Please enter your Marketo subdomain. For example, in https://591-vse-736.mktohttp.com/http/v1/activities/types.json '591-vse-736.mktohttp.com' is the subdomain.",
@@ -1099,21 +1104,18 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connector.handle': '.',
   'connector.legacyId': '.',
   'connector.published': '.',
-  'connector.description': 'Brief description on the connector.',
-  'connector.applications':
-  'Choose an application to which you wish to connect. You can integrate with an application, database, or an universal connector.',
-  'connector.contactEmail': 'Enter the email address of the integration admin.',
+  'connector.description': 'The description of the integration app.',
+  'connector.applications': 'Displays the source and destination applications to which this integration can be connected. You can integrate with an application, database, or  universal connector.',
+  'connector.contactEmail': 'Enter one or many email addresses for the integration admin. The integration admin is notified when the user requests a demo, integration upgrade, add-on installation, or a subscription extension. ',
   'connector.imageURL': '.',
-  'connector._integrationId':
-'If this flow is part of an integration, this value will hold the id of that integration. ',
-  'connector.websiteURL': 'Enter the website URL of the application to which you wish to connect. Example: <a href="https://www.google.com/" target="_blank">https://www.google.com/</a>',
+  'connector._integrationId': 'Select the source integration ID. The selected integration is used as a source copy to create integrations to user accounts.',
+  'connector.websiteURL': 'Enter the website URL of the integration.',
   'connector.oauth2ResultsURL': '.',
   'connector.managed': '.',
-  'connector._stackId':
-  'You can use stacks to host code for hooks, wrappers, connector installers and settings pages. <a href="https://docs.celigo.com/hc/en-us/articles/227055868" target="_blank">Stacks</a> are simple server environments which can be implemented in any coding language and are always invoked via HTTP. Every stack is assigned a system token that should be used to authenticate HTTP requests. You own the IP for all of your stacks, and can optionally choose to share a stack with other integrator.io users.',
-  'connector.installerFunction': '.',
-  'connector.updateFunction': '.',
-  'connector.uninstallerFunction': '.',
+  'connector._stackId': 'You can use stacks to host code for hooks, wrappers, connector installers, and settings pages. <a href="https://docs.celigo.com/hc/en-us/articles/227055868" target="_blank">Stacks</a> are simple server environments that can be implemented in any coding language and are always invoked via HTTP. Every stack is assigned a system token that should be used to authenticate HTTP requests. You own the IP for all of your stacks and can optionally choose to share a stack with other integrator.io users.',
+  'connector.installerFunction': 'This function creates an integration when a license is provided and passes control to the installer function with the required information. The relevant resources required by the integration are created and the install steps can be updated on the integration document. In this field, enter the function name as <b>installerFunction</b>.',
+  'connector.updateFunction': 'This function is used to do an update for the integrations belonging to a connector. Whenever new versions of the integration app need to be released or new features added to an integration app, use the update function to make the required changes for integrations installed in user accounts. This function can be invoked only by the owner of the connector. In this field, enter the function name as <b>updateFunction</b>.',
+  'connector.uninstallerFunction': 'This function removes all of the documents that are not removed while uninstalling the integration, or it completes any uninstallation steps. On completion, the integration is deleted from integrator.io and the license is dissociated for future use. In this field, enter the function name as <b>uninstallerFunction</b>.',
   'connector.sharedImportIds': '.',
   'connector.sharedExportIds': '.',
   'connector.oAuthServerFlow._iClientId': '.',
