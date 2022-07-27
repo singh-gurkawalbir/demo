@@ -98,6 +98,12 @@ const auth = {
   linkWithGoogle: returnTo =>
     action(actionTypes.AUTH.LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH.SUCCESSFUL),
+  mfaRequired: () => action(actionTypes.AUTH.MFA_REQUIRED),
+  mfaVerify: {
+    request: payload => action(actionTypes.AUTH.MFA_VERIFY.REQUEST, { payload }),
+    failed: mfaError => action(actionTypes.AUTH.MFA_VERIFY.FAILED, { mfaError }),
+    success: () => action(actionTypes.AUTH.MFA_VERIFY.SUCCESS),
+  },
   failure: message => action(actionTypes.AUTH.FAILURE, { message }),
   warning: () => action(actionTypes.AUTH.WARNING),
   logout: isExistingSessionInvalid =>
