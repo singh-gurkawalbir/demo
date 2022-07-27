@@ -75,7 +75,6 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   MFA_SETUP_SUCCESS: 'MFA enabled and device connected successfully.',
   MFA_ENABLED: 'MFA enabled successfully.',
   MFA_DISABLED: 'MFA disabled successfully.',
-  // TODO: Update once the message to show is confirmed
   MFA_PRIMARY_ACCOUNT_UPDATED: 'Primary account to reset updated successfully',
   MFA_RESET_SUCCESS: `Your MFA has been reset successfully and a new key has been regenerated. <b><a target="_blank" rel="noopener noreferrer"
   href="${MFA_URL}">Enable MFA</a></b> to use the new key with your account.`,
@@ -84,6 +83,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   DELETE_DEVICE_SUCCESS: 'Device deleted successfully.',
   SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
   CONFIRM_LEAVE_MFA: 'Are you sure you want to leave? Your MFA settings will be disabled unless you connect your device successfully.',
+  MFA_AUTH_FAILED: 'Verification failed. Please try again',
   // #endregion
 
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',

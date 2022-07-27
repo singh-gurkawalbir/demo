@@ -126,12 +126,11 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
   },
   dynaSelectMultiSelectActions: {
-    flexDirection: 'row !important',
     display: 'flex',
-    alignItems: 'flex-start',
-    marginTop: theme.spacing(2),
+    marginTop: 26,
+    marginLeft: theme.spacing(0.5),
     '& >* button': {
-      padding: 0,
+      padding: theme.spacing(0.5),
     },
   },
   menuItem: {
@@ -409,9 +408,10 @@ export default function DynaSelectResource(props) {
           <div className={classes.dynaSelectMultiSelectActions}>
             {allowNew && (
             <IconButtonWithTooltip
-              tooltipProps={{title: 'Create Connection'}}
+              tooltipProps={{title: 'Create connection'}}
               data-test="addNewResource"
-              onClick={handleAddNewResourceMemo}>
+              onClick={handleAddNewResourceMemo}
+              buttonSize="small">
               <AddIcon />
             </IconButtonWithTooltip>
             )}
@@ -419,10 +419,11 @@ export default function DynaSelectResource(props) {
             {allowEdit && (
             // Disable adding a new resource when the user has selected an existing resource
             <IconButtonWithTooltip
-              tooltipProps={{title: 'Edit Connection'}}
+              tooltipProps={{title: 'Edit connection'}}
               disabled={!value}
               data-test="editNewResource"
-              onClick={handleEditResource}>
+              onClick={handleEditResource}
+              buttonSize="small">
               <EditIcon />
             </IconButtonWithTooltip>
             )}
