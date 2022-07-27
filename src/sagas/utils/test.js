@@ -1328,7 +1328,7 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
 
         ],
         type: 'select',
-        required: false,
+        required: true,
       },
       settings: {
         defaultValue: {
