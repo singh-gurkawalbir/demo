@@ -177,7 +177,10 @@ export default {
     if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
       newValues = updateHTTPFrameworkFormValues(newValues, resource, options?.httpConnector);
     }
-    newValues['/http/formType'] = 'http';
+
+    if (newValues['/http/formType'] !== 'graph_ql') {
+      newValues['/http/formType'] = 'http';
+    }
 
     if (newValues['/http/clientCertificates/type'] === 'pem') {
       delete newValues['/http/clientCertificates/pfx'];

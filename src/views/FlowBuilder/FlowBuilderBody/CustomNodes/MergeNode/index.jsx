@@ -7,6 +7,7 @@ import DefaultHandle from '../Handles/DefaultHandle';
 import { useFlowContext } from '../../Context';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
+import messageStore from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -41,7 +42,7 @@ export default function MergeNode({id, data}) {
       >
       <DefaultHandle type="target" position={Position.Left} />
 
-      <DiamondMergeIcon isDroppable={isDroppable} />
+      <DiamondMergeIcon isDroppable={isDroppable} tooltip={messageStore('MERGE_NODE_TOOLTIP')} />
 
       <DefaultHandle type="source" position={Position.Right} />
     </div>
