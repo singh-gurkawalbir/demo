@@ -42,6 +42,7 @@ const useStyles = makeStyles(theme => ({
   branchName: {
     display: 'none',
     textTransform: 'none',
+    color: theme.palette.text.secondary,
   },
 }));
 

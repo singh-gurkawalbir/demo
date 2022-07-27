@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { Tooltip } from '@material-ui/core';
@@ -106,22 +106,29 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DestinationDataType({dataType, disabled, nodeKey, className}) {
+export default function DestinationDataType({
+  dataType,
+  disabled,
+  nodeKey,
+  className,
+  anchorEl,
+  setAnchorEl,
+  handleBlur,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
-  const [anchorEl, setAnchorEl] = useState(null);
 
   const open = !!anchorEl;
   const handleMenu = useCallback(
     event => {
       setAnchorEl(anchorEl ? null : event.currentTarget);
     },
-    [anchorEl]
+    [anchorEl, setAnchorEl]
   );
   const handleClose = useCallback(() => {
     setAnchorEl(null);
-  }, []);
+  }, [setAnchorEl]);
 
   const selectedDataTypeLabel = DATA_TYPES_DROPDOWN_OPTIONS.find(opt => opt.id === dataType)?.label;
 
@@ -149,7 +156,8 @@ export default function DestinationDataType({dataType, disabled, nodeKey, classN
     } else {
       dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType));
     }
-  }, [confirmDialog, dataType, dispatch, nodeKey, handleClose]);
+    handleBlur();
+  }, [handleClose, dataType, handleBlur, confirmDialog, dispatch, nodeKey]);
 
   return (
     <div className={className}>
