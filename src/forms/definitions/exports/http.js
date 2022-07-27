@@ -232,11 +232,11 @@ export default {
     if (finalSuccessMediaType(formValues, connection) === 'xml' && retValues['/parsers']?.resourcePath !== '') {
       retValues['/http/response/resourcePath'] = retValues['/parsers'].resourcePath;
     }
+    const parseStrategy = retValues['/parsers']?.[0]?.rules?.['V0_json'];
 
-    if (finalSuccessMediaType(formValues, connection) !== 'xml') {
+    if (finalSuccessMediaType(formValues, connection) !== 'xml' || parseStrategy) {
       retValues['/parsers'] = undefined;
     }
-
     if (finalSuccessMediaType(formValues, connection) === 'csv') {
       delete retValues['/http/response/resourcePath'];
       retValues['/http/response'] = undefined;

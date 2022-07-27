@@ -1092,6 +1092,7 @@ describe('flow sample data sagas', () => {
         name: 'rest import',
         adaptorType: 'RESTImport',
         _connectionId: 'conn-123',
+        lookups: [{name: 'some-lookup'}],
         mappings,
       };
       const preProcessedSampleData = { count: 5 };
@@ -1139,7 +1140,7 @@ describe('flow sample data sagas', () => {
         .call(_processMappingData, {
           flowId,
           resourceId,
-          mappings: {mappings},
+          mappings: {mappings, lookups: [{name: 'some-lookup'}]},
           stage,
           preProcessedData,
           options: {connection: {_id: 'conn-123'}},

@@ -1,6 +1,7 @@
 /*
  * All utility functions related to Exports Preview Panel
  */
+import isEmpty from 'lodash/isEmpty';
 import { FILE_PROVIDER_ASSISTANTS } from '../../constants';
 import { adaptorTypeMap } from '../resource';
 import {HTTP_BASED_ADAPTORS} from '../http';
@@ -106,7 +107,7 @@ export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
 
 export const getPreviewDataPageSizeInfo = (previewData, resourceType) => {
   if (resourceType === 'imports') return '1 Page, 1 Records';
-  if (!previewData || !previewData.data) return '1 Page, 0 Records';
+  if (!previewData || isEmpty(previewData.data)) return '1 Page, 0 Records';
   const records = previewData.data;
   const pageSize = Array.isArray(records) ? records.length : 1;
 
