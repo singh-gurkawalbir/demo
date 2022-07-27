@@ -58,6 +58,7 @@ const useStyles = makeStyles(theme => ({
   },
   reportsHeading: {
     display: 'flex',
+    alignItems: 'center',
   },
 }));
 const defaultFilter = {
@@ -225,7 +226,7 @@ export default function Reports() {
       <ResourceDrawer />
       <ViewReportDetails />
       <CeligoPageBar
-        title="Reports">
+        title="Reports" infoText={infoText.reports}>
         <div>
           <CeligoSelect
             className={classes.reportTypes}

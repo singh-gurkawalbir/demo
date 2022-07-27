@@ -16,6 +16,8 @@ import CeligoDivider from '../CeligoDivider';
 import FieldHelp from '../DynaForm/FieldHelp';
 import MockInput from './MockInput';
 import {drawerPaths, buildDrawerUrl} from '../../utils/rightDrawer';
+import { adaptorTypeMap } from '../../utils/resource';
+import { HTTP_BASED_ADAPTORS } from '../../utils/http';
 
 const useStyles = makeStyles(theme => ({
   previewPanelWrapper: {
@@ -59,6 +61,7 @@ function PreviewInfo({
   setShowPreviewData,
   resourceType,
   toggleValue,
+  flowId,
 }) {
   const dispatch = useDispatch();
 
@@ -92,6 +95,7 @@ function PreviewInfo({
       resourceId={resourceId}
       showPreviewData={showPreviewData[toggleValue]}
       resourceType={resourceType}
+      flowId={flowId}
   />
   );
 }
@@ -105,7 +109,8 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
   shallowEqual
   );
   const resource = useSelector(state => selectors.resourceData(state, resourceType, resourceId)?.merged);
-
+  const {adaptorType, isLookup} = resource || {};
+  const appType = adaptorTypeMap[adaptorType];
   const isBlobImport = resource?.resourceType === 'transferFiles' || resource?.type === 'blob' || resource?.blob;
   const isSendVisible = resourceType === 'imports' && !isBlobImport;
   const dispatch = useDispatch();
@@ -135,6 +140,8 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
     history.push(buildDrawerUrl({path: drawerPaths.PREVIEW_PANEL_MOCK_INPUT, baseUrl: match.url}));
   }, [match.url, history]);
 
+  const isEditMockInputAvailable = resourceType === 'imports' || (isLookup && HTTP_BASED_ADAPTORS.includes(appType));
+
   return (
     <div>
       <MockInput
@@ -158,7 +165,7 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
         </Typography>
 
         <div className={classes.container}>
-          {resourceType === 'imports' ? (
+          {isEditMockInputAvailable ? (
             <div className={classes.actionGroupWrapper}>
               <ActionGroup position="right">
                 <TextButton onClick={onEditorClick} startIcon={<EditIcon />}>

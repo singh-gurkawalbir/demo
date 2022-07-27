@@ -1,7 +1,7 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 import { stringCompare } from '../../../utils/sort';
-import { SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../utils/constants';
+import { SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../constants';
 import { isEuRegion } from '../../../forms/formFactory/utils';
 import { isAppConstantContact } from '../../../utils/assistant';
 

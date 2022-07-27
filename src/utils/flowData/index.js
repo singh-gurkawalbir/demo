@@ -4,13 +4,13 @@
  */
 import moment from 'moment';
 import { deepClone } from 'fast-json-patch';
+import merge from 'lodash/merge';
 import {
   isRealTimeOrDistributedResource,
   isFileAdaptor,
   isBlobTypeResource,
   isRestCsvMediaTypeExport,
   adaptorTypeMap,
-  finalSuccessMediaType,
 } from '../resource';
 import responseMappingUtil from '../responseMapping';
 import arrayUtils from '../array';
@@ -54,6 +54,9 @@ export const sampleDataStage = {
     postMapOutput: 'postMap',
     postSubmit: 'responseTransform',
     responseTransform: 'sampleResponse',
+  },
+  flows: {
+    router: 'router',
   },
   /**
    * flowInput, processedFlowInput, inputFilter
@@ -141,7 +144,7 @@ export const getCurrentSampleDataStageStatus = (
 // when added a lookup to the flow path: '/pageProcessors/${resourceIndex}
 const pathRegex = {
   sequence: /^(\/pageProcessors|\/pageGenerators)$/,
-  responseMapping: /\/pageProcessors\/[0-9]+\/responseMapping/,
+  responseMapping: /(\/routers\/(\d+)\/branches\/(\d+))?\/pageProcessors\/(\d+)\/responseMapping/,
   lookupAddition: /\/pageProcessors\/[0-9]+$/,
 };
 
@@ -230,11 +233,13 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
 
     if (pathRegex.responseMapping.test(path) && !updates.responseMapping) {
       // Extract resourceIndex from the path
-      const [resourceIndex] = path.match(/[0-9]+/);
+      const [,, routerIndex, branchIndex, resourceIndex] = pathRegex.responseMapping.exec(path);
 
       if (resourceIndex) {
         updates.responseMapping = {
-          resourceIndex: parseInt(resourceIndex, 10),
+          resourceIndex: +resourceIndex,
+          ...(branchIndex !== undefined ? {branchIndex: +branchIndex} : {}),
+          ...(routerIndex !== undefined ? {routerIndex: +routerIndex} : {}),
         };
       }
     }
@@ -323,27 +328,34 @@ export const generateDefaultExtractsObject = (resourceType, adaptorType) => {
 };
 
 /*
- * @Inputs: flowInputData and rawData for the pp
- * This util merges both to generate actual format of Flow Record being passed at runtime
- * If flowData is Array , then merge rawData to each object in that array
- * If flowData is an Object, then merge rawData and return the merged object
+ * @Inputs: flowInputData, rawData and editorData for the pp
+ * If editorData is passed, it is merged with rawData to generate temporary postResponseMapData
+ * else postResponseMapData is rawData
+ * This util merges flowInputData and postResponseMapData to generate actual format of Flow Record being passed at runtime
+ * If flowData is Array , then merge postResponseMapData to each object in that array
+ * If flowData is an Object, then merge postResponseMapData and return the merged object
  */
-export const generatePostResponseMapData = (flowData, rawData = {}) => {
+export const generatePostResponseMapData = (flowData, rawData = {}, editorData) => {
+  let postResponseMapData = rawData;
+
+  if (editorData) {
+    postResponseMapData = merge(editorData, rawData);
+  }
+
   if (Array.isArray(flowData)) {
-    return flowData.map(fd => ({ ...fd, ...rawData }));
+    return flowData.map(fd => ({ ...fd, ...postResponseMapData }));
   }
 
   return {
     ...(flowData || {}),
-    ...rawData,
+    ...postResponseMapData,
   };
 };
 
 export const getFormattedResourceForPreview = (
   resourceObj,
   resourceType,
-  flowType,
-  connection
+  flowType
 ) => {
   const resource = deepClone(resourceObj || {});
 
@@ -380,10 +392,6 @@ export const getFormattedResourceForPreview = (
       // If there is no sampleResponseData, add default fields for lookups/imports
       resource.sampleResponseData = generateDefaultExtractsObject(resourceType, resource?.adaptorType);
     }
-  }
-
-  if (resource.adaptorType === 'HTTPExport' && resource.http && !resource.http?.successMediaType) {
-    resource.http.successMediaType = finalSuccessMediaType(undefined, connection);
   }
 
   return resource;

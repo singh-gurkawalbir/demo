@@ -117,8 +117,8 @@ export const generateFileParserOptionsFromResource = (resource = {}, oldResource
   };
 };
 
-export function* parseFileData({ sampleData, resource }) {
-  const oldResourceDoc = yield select(selectors.resource, 'exports', resource?._id);
+export function* parseFileData({ sampleData, resource, resourceType = 'exports' }) {
+  const oldResourceDoc = yield select(selectors.resource, resourceType, resource?._id);
 
   if (!resource?.file?.type) {
     return;
@@ -134,6 +134,7 @@ export function* parseFileData({ sampleData, resource }) {
     data: sampleData,
     editorType: PARSERS[fileType],
     rule: options,
+    resourceType,
   };
 
   // console.log('parseFileData', processorData);

@@ -9,7 +9,6 @@ export default (
     httpConnector: {},
     assistants: { rest: {}, http: {} },
     httpConnectorMetadata: {},
-
   },
   action
 ) => {
@@ -30,9 +29,6 @@ export default (
       case actionTypes.HTTP_CONNECTORS.RECEIVED_CONNECTOR: {
         const { httpConnectorId, connector } = action;
 
-        if (!draft.httpConnector) {
-          draft.httpConnector = {};
-        }
         draft.httpConnector[httpConnectorId] = connector;
         break;
       }

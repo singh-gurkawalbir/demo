@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 import { Link } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
 import { selectors } from '../../../../../../reducers';
-import { REVISION_TYPES } from '../../../../../../utils/constants';
+import { REVISION_TYPES } from '../../../../../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../../../../../utils/rightDrawer';
 import NotificationToaster from '../../../../../NotificationToaster';
 

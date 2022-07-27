@@ -10,6 +10,16 @@ export const safeParse = o => {
     return undefined;
   }
 };
+export function generateId(num) {
+  const length = +num;
+
+  if (num === 24) {
+    // If length is 24, probably needed a mongodb ObjectId, generate one randomly
+    return `${Math.floor(new Date().getTime() / 1000).toString(16)}0000000000000000`;
+  }
+
+  return !Number.isNaN(length) && length < 24 && length > 0 ? nanoid(length) : nanoid();
+}
 
 export const camelCase = (str = '') => {
   if (typeof str === 'string' && str.length) {

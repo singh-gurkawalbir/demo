@@ -3,7 +3,7 @@ import { selectors } from '../../../../reducers';
 import DynaSelect from '../DynaSelect';
 import { useSelectorMemo } from '../../../../hooks';
 import useFormContext from '../../../Form/FormContext';
-import { emptyObject, UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../../../../utils/constants';
+import { emptyObject, UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../../../../constants';
 
 export default function DynaFlowGroupsTiedToIntegrations(props) {
   const { formKey } = props;

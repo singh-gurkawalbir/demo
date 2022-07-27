@@ -12,7 +12,7 @@ import KeywordSearch from '../../components/KeywordSearch';
 import LoadResources from '../../components/LoadResources';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
-import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
+import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../constants';
 import infoText from '../ResourceList/infoText';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';

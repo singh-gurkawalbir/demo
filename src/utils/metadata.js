@@ -2,7 +2,7 @@
  * Utility functions for NS and SF Metadata
  */
 import { each, filter, reject } from 'lodash';
-import { emptyList } from './constants';
+import { emptyList } from '../constants';
 
 export const isTransactionWSRecordType = recordId => {
   if (!recordId) return false;

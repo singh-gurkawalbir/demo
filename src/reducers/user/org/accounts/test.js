@@ -7,7 +7,7 @@ import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   emptyList,
-} from '../../../../utils/constants';
+} from '../../../../constants';
 
 // this could be moved into some common place... just testing this now.
 expect.extend({
@@ -282,7 +282,7 @@ describe('account (ashares) reducers', () => {
           name: 'Celigo Test',
           licenses: [
             { type: 'connector' },
-            { type: 'integrator', sandbox: false },
+            { type: 'integrator', sandbox: false, sso: false },
           ],
           ssConnectionIds: ['9'],
         },
@@ -295,7 +295,7 @@ describe('account (ashares) reducers', () => {
           email: 'playground@celigo.com',
           name: 'Playground Management',
           company: 'Celigo Playground',
-          licenses: [{ type: 'integrator', sandbox: true }],
+          licenses: [{ type: 'integrator', sandbox: true, sso: true }],
         },
       },
       {
@@ -307,7 +307,7 @@ describe('account (ashares) reducers', () => {
           name: 'ghi 789',
           company: 'ghi 789 company',
           licenses: [
-            { type: 'integrator', sandbox: false, numSandboxAddOnFlows: 2 },
+            { type: 'integrator', sandbox: false, numSandboxAddOnFlows: 2, sso: false },
           ],
         },
       },
@@ -319,7 +319,7 @@ describe('account (ashares) reducers', () => {
           email: 'ignoreme@celigo.com',
           name: 'Ignore Management',
           company: 'skip',
-          licenses: [{ type: 'integrator', sandbox: true }],
+          licenses: [{ type: 'integrator', sandbox: true, sso: false }],
         },
       },
     ];
@@ -349,6 +349,7 @@ describe('account (ashares) reducers', () => {
             company: 'Celigo Inc',
             email: 'name@gmail.com',
             id: 'abc',
+            hasSSO: false,
             hasSandbox: false,
             hasConnectorSandbox: false,
           },
@@ -356,6 +357,7 @@ describe('account (ashares) reducers', () => {
             company: 'Celigo Playground',
             email: 'playground@celigo.com',
             id: 'def',
+            hasSSO: true,
             hasSandbox: true,
             hasConnectorSandbox: false,
           },
@@ -363,6 +365,7 @@ describe('account (ashares) reducers', () => {
             company: 'ghi 789 company',
             email: 'ghi789@celigo.com',
             id: 'ghi',
+            hasSSO: false,
             hasSandbox: true,
             hasConnectorSandbox: false,
           },
@@ -414,6 +417,8 @@ describe('account (ashares) reducers', () => {
 
         expect(selectors.platformLicense(state2, 'abc')).toEqual({
           type: 'integrator',
+          sso: false,
+          hasSSO: false,
           sandbox: false,
           hasSandbox: false,
           hasConnectorSandbox: false,
@@ -422,12 +427,16 @@ describe('account (ashares) reducers', () => {
         expect(selectors.platformLicense(state2, 'def')).toEqual({
           type: 'integrator',
           sandbox: true,
+          hasSSO: true,
+          sso: true,
           hasSandbox: true,
           hasConnectorSandbox: false,
         });
         expect(selectors.platformLicense(state2, 'ghi')).toEqual({
           type: 'integrator',
           sandbox: false,
+          sso: false,
+          hasSSO: false,
           numSandboxAddOnFlows: 2,
           hasSandbox: true,
           hasConnectorSandbox: false,
@@ -445,6 +454,7 @@ describe('account (ashares) reducers', () => {
           _id: 'license1',
           type: 'integrator',
           tier: 'none',
+          hasSSO: false,
           hasSandbox: false,
           hasConnectorSandbox: false,
         });
@@ -456,6 +466,7 @@ describe('account (ashares) reducers', () => {
               _id: 'license1',
               type: 'integrator',
               tier: 'free',
+              sso: false,
               trialEndDate: moment()
                 .add(10, 'days')
                 .toISOString(),
@@ -468,6 +479,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'free',
+            hasSSO: true,
             hasSandbox: false,
             trialEndDate: expect.any(String),
             status: 'IN_TRIAL',
@@ -482,6 +494,7 @@ describe('account (ashares) reducers', () => {
               _id: 'license1',
               type: 'integrator',
               tier: 'free',
+              sso: false,
               trialEndDate: moment()
                 .subtract(2, 'days')
                 .toISOString(),
@@ -494,6 +507,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'free',
+            hasSSO: true,
             hasSandbox: false,
             trialEndDate: expect.any(String),
             status: 'TRIAL_EXPIRED',
@@ -507,6 +521,7 @@ describe('account (ashares) reducers', () => {
               _id: 'license1',
               type: 'integrator',
               tier: 'free',
+              sso: false,
               trialEndDate: moment()
                 .subtract(1, 'hours')
                 .toISOString(),
@@ -519,6 +534,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'free',
+            hasSSO: true,
             hasSandbox: false,
             trialEndDate: expect.any(String),
             status: 'TRIAL_EXPIRED',
@@ -532,6 +548,7 @@ describe('account (ashares) reducers', () => {
               _id: 'license1',
               type: 'integrator',
               tier: 'standard',
+              sso: false,
               expires: moment()
                 .add(60, 'days')
                 .toISOString(),
@@ -545,6 +562,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'standard',
+            hasSSO: false,
             hasSandbox: false,
             expires: expect.any(String),
             status: 'ACTIVE',
@@ -563,6 +581,7 @@ describe('account (ashares) reducers', () => {
               _id: 'license1',
               type: 'integrator',
               tier: 'standard',
+              sso: false,
               expires: moment()
                 .add(1, 'days')
                 .toISOString(),
@@ -575,6 +594,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'standard',
+            hasSSO: false,
             hasSandbox: false,
             expires: expect.any(String),
             status: 'ACTIVE',
@@ -589,6 +609,7 @@ describe('account (ashares) reducers', () => {
               _id: 'license1',
               type: 'integrator',
               tier: 'standard',
+              sso: false,
               expires: moment()
                 .subtract(1, 'days')
                 .toISOString(),
@@ -601,6 +622,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'standard',
+            hasSSO: false,
             hasSandbox: false,
             expires: expect.any(String),
             status: 'EXPIRED',
@@ -628,7 +650,7 @@ describe('account (ashares) reducers', () => {
             company: 'Celigo Playground',
             canLeave: true,
             hasSandbox: true,
-            hasSSO: false,
+            hasSSO: true,
             hasConnectorSandbox: false,
           },
           {

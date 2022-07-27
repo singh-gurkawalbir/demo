@@ -1,12 +1,11 @@
 import React, { useMemo, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import { getResourceSubType, generateNewId, isFileAdaptor} from '../../../utils/resource';
+import { getResourceSubType, generateNewId, resourceCategory} from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
 import inputFilterAction from './actions/inputFilter_afe';
 import pageProcessorHooksAction from './actions/pageProcessorHooks';
@@ -24,16 +23,6 @@ const useStyles = makeStyles({
   ppContainer: {
     display: 'flex',
     alignItems: 'center',
-  },
-  lineRight: {
-    minWidth: 150,
-  },
-  lineLeft: {
-    minWidth: 50,
-  },
-  dottedLine: {
-    alignSelf: 'start',
-    marginTop: 85,
   },
   pending: {
     minWidth: 50,
@@ -53,7 +42,7 @@ const PageProcessor = ({
   openErrorCount,
   ...pp
 }) => {
-  const pending = !!pp._connectionId;
+  const pending = pp.setupInProgress || (!pp._exportId && !pp._importId);
   const resourceId = pp._connectionId || pp._exportId || pp._importId;
   const resourceType = pp.type === 'export' ? 'exports' : 'imports';
   const classes = useStyles();
@@ -70,26 +59,8 @@ const PageProcessor = ({
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
   );
-  // TODO: move this logic to util function and use "resourceCategory" function
-  let blockType = pp.type === 'export' ? 'lookup' : 'import';
 
-  if (
-    (['RESTExport', 'HTTPExport', 'NetSuiteExport', 'SalesforceExport'].indexOf(
-      resource.adaptorType
-    ) >= 0 &&
-      resource.type === 'blob') ||
-      (isFileAdaptor(resource) && resource.adaptorType.includes('Export'))
-  ) {
-    blockType = 'exportTransfer';
-  } else if (
-    (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
-      resource.adaptorType
-    ) >= 0 &&
-      resource.blob) ||
-      (isFileAdaptor(resource) && resource.adaptorType.includes('Import'))
-  ) {
-    blockType = 'importTransfer';
-  }
+  const blockType = pending ? 'newPP' : resourceCategory(resource, !!pp._exportId, !!pp._importId);
 
   const showMapping = flowDetails._connectorId ? flowDetails.showMapping : true;
 
@@ -141,7 +112,7 @@ const PageProcessor = ({
 
       // for pending resource, passing the PP index in newId
       // which will be used in saga to add or replace the pending resource
-      newId = `${newId}.${index}`;
+      newId = `${newId}.${pp.id}`;
       dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
     }
 
@@ -162,19 +133,7 @@ const PageProcessor = ({
     } else {
       history.replace(to);
     }
-  }, [
-    dispatch,
-    history,
-    match.isExact,
-    match.url,
-    pending,
-    pp._connectionId,
-    rdbmsAppType,
-    resource,
-    resourceId,
-    resourceType,
-    index,
-  ]);
+  }, [pending, match.url, match.isExact, resourceType, resourceId, resource, pp._connectionId, pp.id, rdbmsAppType, dispatch, history]);
   // #region Configure available processor actions
   // Add Help texts for actions common to lookups and imports manually
   const processorActions = useMemo(() => {
@@ -253,21 +212,16 @@ const PageProcessor = ({
     return processorActions;
   }, [isLast, pending, pp.type, resource, resourceType, showMapping, usedActions]);
   // #endregion
-  // console.log('render: <PageProcessor>');
-  // console.log(pp, usedActions);
-  const name = pending ? 'Pending configuration' : resource.name || resource.id;
+
+  const name = pending ? '' : resource.name || resource.id;
 
   return (
     <>
       <div className={classes.ppContainer}>
-        {index === 0 && (
-          /* Initial left line connecting Source Apps */
-          <div className={clsx(classes.dottedLine, classes.lineLeft)} />
-        )}
         <AppBlock
           integrationId={integrationId}
           name={name}
-          onDelete={onDelete(name)}
+          onDelete={onDelete}
           openErrorCount={openErrorCount}
           isViewMode={isViewMode}
           isMonitorLevelAccess={isMonitorLevelAccess}
@@ -277,23 +231,16 @@ const PageProcessor = ({
           blockType={blockType}
           flowId={flowId}
           index={index}
+          id={pp.id}
           resource={resource}
           resourceId={resourceId}
           resourceIndex={index}
           resourceType={resourceType}
           actions={processorActions}
+          routerIndex={pp.routerIndex}
+          branchIndex={pp.branchIndex}
+          pageProcessorIndex={pp.pageProcessorIndex}
         />
-        {!isLast && (
-          /* Right connecting line between Page Processors is not needed
-             for the last App (nothing to connect) */
-          <div
-            className={clsx({
-              [classes.dottedLine]: !pending,
-              [classes.lineRight]: !pending,
-              [classes.pending]: pending,
-            })}
-          />
-        )}
       </div>
     </>
   );

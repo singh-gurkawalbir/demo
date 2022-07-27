@@ -9,7 +9,7 @@ import {
   INTEGRATION_ACCESS_LEVELS,
   USAGE_TIER_NAMES,
   USAGE_TIER_HOURS,
-} from '../../../../utils/constants';
+} from '../../../../constants';
 
 const emptyList = [];
 
@@ -189,7 +189,7 @@ selectors.platformLicense = (state, accountId) => {
       ioLicense.currentUsage.milliseconds / 1000 / 60 / 60
     );
   } else {
-    ioLicense.hasSSO = ioLicense.sso;
+    ioLicense.hasSSO = ioLicense.tier === 'free' ? true : !!ioLicense.sso;
     ioLicense.hasSandbox =
     ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0;
 
