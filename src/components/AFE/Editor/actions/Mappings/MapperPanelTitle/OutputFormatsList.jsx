@@ -103,6 +103,7 @@ export default function OutputFormatsList({disabled}) {
 
   const importResource = useSelectorMemo(selectors.makeResourceSelector, 'imports', importId);
   const disableRecordOutput = isCsvOrXlsxResourceForMapper2(importResource);
+  const disableRowsOutput = ['filedefinition', 'fixed', 'delimited/edifact'].includes(importResource?.file?.type);
 
   const handleMenu = useCallback(
     event => {
@@ -147,7 +148,7 @@ export default function OutputFormatsList({disabled}) {
             >
           {(isGroupedSampleData ? ROWS_AS_INPUT_OPTIONS : RECORD_AS_INPUT_OPTIONS).map(({label, value}) => (
             <ListItem
-              disabled={value.endsWith('rec') && disableRecordOutput}
+              disabled={(value.endsWith('rec') && disableRecordOutput) || (value.endsWith('row') && disableRowsOutput)}
               button
               className={clsx(classes.itemRoot, {
                 [classes.itemSelected]: label === getInputOutputFormat(isGroupedSampleData, isGroupedOutput),
