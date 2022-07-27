@@ -99,7 +99,7 @@ import {
   getParentJobSteps,
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
-import { getApp, getHttpConnector } from '../constants/applications';
+import { getApp, getHttpConnector, applicationsList} from '../constants/applications';
 import { HOOK_STAGES } from '../utils/editor';
 import { getTextAfterCount } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
@@ -5384,6 +5384,20 @@ selectors.applicationType = (state, resourceType, id) => {
     );
 
     return connection && connection.rdbms && rdbmsSubTypeToAppType(connection.rdbms.type);
+  }
+  if (adaptorType?.toUpperCase().startsWith('HTTP') && !assistant) {
+    const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
+      state,
+      'connections',
+      getStagedValue('/_connectionId') || (resourceObj?._connectionId)
+    );
+    const httpConnectorId = getStagedValue('/_httpConnectorId') || connection?._httpConnectorId || connection?.http?._httpConnectorId;
+    const applications = applicationsList();
+    const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId) || {};
+
+    if (httpConnectorId && httpApp) {
+      return httpApp._legacyId || httpApp.name;
+    }
   }
 
   if (adaptorType?.toUpperCase().startsWith('HTTP') && resourceObj?.http?.formType === 'rest' && !assistant) {
