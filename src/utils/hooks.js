@@ -22,6 +22,7 @@ export const hooksList = [
   ...importHooksList,
   'contentBasedFlowRouter' /* Used in AS2 Connection */,
   ...externalScripts /* Used in transformation and filters Scripts */,
+  'router',
 ];
 
 export const getImportSuiteScriptHooksList = isNSApiVersion2Selected => {

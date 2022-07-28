@@ -13,6 +13,7 @@ import BranchDrawer from './BranchDrawer';
 import BranchItem from './BranchItem';
 import { shortId } from '../../../../../utils/flows/flowbuilder';
 import messageStore from '../../../../../utils/messageStore';
+import Spinner from '../../../../Spinner';
 
 const moveArrayItem = (arr, oldIndex, newIndex) => {
   const newArr = [...arr];
@@ -84,6 +85,7 @@ export default function RouterPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const __branches = useSelector(state => selectors.editorRule(state, editorId)?.branches || emptyList);
+  const sampleDataStatus = useSelector(state => selectors.editor(state, editorId).sampleDataStatus);
   const branches = useMemo(() => __branches.map(b => ({...b, id: shortId()})), [__branches]);
   const maxBranchesLimitReached = branches.length >= 25;
   const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
@@ -173,30 +175,34 @@ export default function RouterPanel({ editorId }) {
 
       <Divider orientation="horizontal" className={classes.divider} />
 
-      <SortableContainer
-        className={classes.branchList}
-        lockAxis="y"
-        onSortStart={handleSortStart}
-        onSortEnd={handleSortEnd}
-        useDragHandle>
-        {branches.map((b, i) => (
-          <SortableItem
-            expandable={activeProcessor === 'filter'}
-            collapsed={b.collapsed}
-            onToggleExpand={handleToggleExpand}
-            key={b.id}
-            index={i} // The HOC does not proxy index to child, so we need `position` as well.
-            position={i}
-            branchName={b.name}
-            isViewMode={isViewMode}
-            editorId={editorId}
-            pageProcessors={b.pageProcessors}
-            allowSorting={allowSorting}
-            allowDeleting={branches.length > 1}
-            description={b.description}
-            onNameChange={handleNameChange} />
-        ))}
-      </SortableContainer>
+      {sampleDataStatus === 'requested' ? (
+        <Spinner centerAll />
+      ) : (
+        <SortableContainer
+          className={classes.branchList}
+          lockAxis="y"
+          onSortStart={handleSortStart}
+          onSortEnd={handleSortEnd}
+          useDragHandle>
+          {branches.map((b, i) => (
+            <SortableItem
+              expandable={activeProcessor === 'filter'}
+              collapsed={b.collapsed}
+              onToggleExpand={handleToggleExpand}
+              key={b.id}
+              index={i} // The HOC does not proxy index to child, so we need `position` as well.
+              position={i}
+              branchName={b.name}
+              isViewMode={isViewMode}
+              editorId={editorId}
+              pageProcessors={b.pageProcessors}
+              allowSorting={allowSorting}
+              allowDeleting={branches.length > 1}
+              description={b.description}
+              onNameChange={handleNameChange} />
+          ))}
+        </SortableContainer>
+      )}
       {!isViewMode && (
       <Tooltip key="key" title={maxBranchesLimitReached ? messageStore('MAX_BRANCHES_LIMIT_REACHED') : ''} placement="bottom">
         <span>
