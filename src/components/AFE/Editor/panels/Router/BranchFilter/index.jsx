@@ -741,6 +741,11 @@ export default function BranchFilter({editorId, position}) {
 
       qbContainer.queryBuilder({
         ...config,
+        lang: {
+          ...config.lang,
+          add_rule: 'Add condition',
+          add_group: 'Add conditions group',
+        },
         filters: filtersConfig,
         rules,
       });
