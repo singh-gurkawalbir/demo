@@ -33,6 +33,7 @@ export default function FileDefinitionChange({editorId, formKey, fieldId, resour
   useEffect(() => {
     // patch only if sampleData/rule is changed and editor state is active
     if (sampleData) {
+      // patch the predefined sample data only if there are no mappings
       if (isEditorActive && !importHasMappings) {
         dispatch(actions.editor.patchData(editorId, sampleData));
       }

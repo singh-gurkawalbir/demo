@@ -78,6 +78,9 @@ export default function reducer(state = {}, action) {
           }
         } else {
           draft[id].data = sampleData;
+          // for file definition generator where post map data needs to be shown
+          // this action gets called so we add the originalData here
+          // ref IO-27516
           if (draft[id].editorType === 'structuredFileGenerator' && draft[id].stage) {
             draft[id].originalData = sampleData;
           }
