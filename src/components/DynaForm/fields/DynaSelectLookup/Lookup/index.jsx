@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import ManageLookup from '../../../../drawer/Lookup/Manage';
 import EditorDrawer from '../../../../AFE/Drawer';
-import { LOOKUP_FORM_KEY } from '../../../../../utils/constants';
+import { LOOKUP_FORM_KEY } from '../../../../../constants';
 import DrawerContent from '../../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../drawer/Right/DrawerFooter';
 import SaveButtonGroup from '../../../../drawer/Lookup/Manage/SaveButtonGroup';

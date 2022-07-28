@@ -22,7 +22,7 @@ describe('flow builder bottom drawer sagas', () => {
         [
           {label: 'Dashboard', tabType: 'dashboard'},
           {label: 'Connections', tabType: 'connections'},
-          {label: 'Audit Log', tabType: 'auditLogs'},
+          {label: 'Audit log', tabType: 'auditLogs'},
         ]
       ))
       .run());
@@ -37,7 +37,7 @@ describe('flow builder bottom drawer sagas', () => {
           {label: 'Run console', tabType: 'dashboard'},
           {label: 'Run history', tabType: 'runHistory'},
           {label: 'Connections', tabType: 'connections'},
-          {label: 'Audit Log', tabType: 'auditLogs'},
+          {label: 'Audit log', tabType: 'auditLogs'},
         ]
       ))
       .run());
@@ -53,7 +53,7 @@ describe('flow builder bottom drawer sagas', () => {
           {label: 'Run history', tabType: 'runHistory'},
           {label: 'Connections', tabType: 'connections'},
           {label: 'Scripts', tabType: 'scripts'},
-          {label: 'Audit Log', tabType: 'auditLogs'},
+          {label: 'Audit log', tabType: 'auditLogs'},
         ]
       ))
       .run());
@@ -114,7 +114,7 @@ describe('flow builder bottom drawer sagas', () => {
             tabs: [
               {label: 'Dashboard', tabType: 'dashboard'},
               {label: 'Connections', tabType: 'connections'},
-              {label: 'Audit Log', tabType: 'auditLogs'},
+              {label: 'Audit log', tabType: 'auditLogs'},
             ],
             activeTabIndex: 0,
           }],
@@ -133,7 +133,7 @@ describe('flow builder bottom drawer sagas', () => {
             tabs: [
               {label: 'Dashboard', tabType: 'dashboard'},
               {label: 'Connections', tabType: 'connections'},
-              {label: 'Audit Log', tabType: 'auditLogs'},
+              {label: 'Audit log', tabType: 'auditLogs'},
               {label: undefined, tabType: 'connectionLogs', resourceId: '1234'},
               {label: undefined, tabType: 'connectionLogs', resourceId: '9999'},
             ],
@@ -154,7 +154,7 @@ describe('flow builder bottom drawer sagas', () => {
             tabs: [
               {label: 'Dashboard', tabType: 'dashboard'},
               {label: 'Connections', tabType: 'connections'},
-              {label: 'Audit Log', tabType: 'auditLogs'},
+              {label: 'Audit log', tabType: 'auditLogs'},
               {label: undefined, tabType: 'connectionLogs', resourceId: '1234'},
               {label: undefined, tabType: 'connectionLogs', resourceId: '9999'},
             ],
@@ -176,7 +176,7 @@ describe('flow builder bottom drawer sagas', () => {
             tabs: [
               {label: 'Dashboard', tabType: 'dashboard'},
               {label: 'Connections', tabType: 'connections'},
-              {label: 'Audit Log', tabType: 'auditLogs'},
+              {label: 'Audit log', tabType: 'auditLogs'},
             ],
             activeTabIndex: 2,
           }],
@@ -197,7 +197,7 @@ describe('flow builder bottom drawer sagas', () => {
             tabs: [
               {label: 'Dashboard', tabType: 'dashboard'},
               {label: 'Connections', tabType: 'connections'},
-              {label: 'Audit Log', tabType: 'auditLogs'},
+              {label: 'Audit log', tabType: 'auditLogs'},
               {label: 'X', tabType: 'connectionLogs', resourceId},
             ],
             activeTabIndex: 3,
@@ -220,7 +220,7 @@ describe('flow builder bottom drawer sagas', () => {
             tabs: [
               {label: 'Dashboard', tabType: 'dashboard'},
               {label: 'Connections', tabType: 'connections'},
-              {label: 'Audit Log', tabType: 'auditLogs'},
+              {label: 'Audit log', tabType: 'auditLogs'},
               {label: 'X', tabType: 'connectionLogs', resourceId},
             ],
             activeTabIndex: 1,
@@ -249,7 +249,7 @@ describe('flow builder bottom drawer sagas', () => {
             tabs: [
               {label: 'Dashboard', tabType: 'dashboard'},
               {label: 'Connections', tabType: 'connections'},
-              {label: 'Audit Log', tabType: 'auditLogs'},
+              {label: 'Audit log', tabType: 'auditLogs'},
               {label: 'X', tabType: 'connectionLogs', resourceId},
             ],
             activeTabIndex: 1,
@@ -280,7 +280,7 @@ describe('flow builder bottom drawer sagas', () => {
             tabs: [
               {label: 'Dashboard', tabType: 'dashboard'},
               {label: 'Connections', tabType: 'connections'},
-              {label: 'Audit Log', tabType: 'auditLogs'},
+              {label: 'Audit log', tabType: 'auditLogs'},
               {label: 'X', tabType: 'connectionLogs', resourceId},
             ],
             activeTabIndex: 1,

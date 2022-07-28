@@ -41,6 +41,7 @@ export default function JobStatus({ job }) {
     }));
   }, [history, job._flowId, match.url]);
 
+  if (!jobStatusDetails) return '';
   if (jobStatusDetails.showStatusTag) {
     return (
       <DashboardTag

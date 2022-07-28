@@ -4,9 +4,7 @@ import actions from '../actions';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
-} from '../utils/constants';
-
-import { DRAWER_URL_PREFIX } from '../utils/rightDrawer';
+} from '../constants';
 
 describe('tests for reducer selectors', () => {
   describe('resourceList', () => {
@@ -124,7 +122,7 @@ describe('tests for reducer selectors', () => {
       );
 
       expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toEqual(
-        `/${resourceType}/${DRAWER_URL_PREFIX}/edit/${resourceType}/${resourceId}`
+        `/${resourceType}/edit/${resourceType}/${resourceId}`
       );
     });
 
@@ -138,7 +136,7 @@ describe('tests for reducer selectors', () => {
       );
 
       expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toEqual(
-        `/${resourceType}/${DRAWER_URL_PREFIX}/edit/${resourceType}/${resourceId}`
+        `/${resourceType}/edit/${resourceType}/${resourceId}`
       );
     });
 
@@ -2228,7 +2226,6 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('RANDEOM')
       );
 
-      console.log('state', state.user.preferences.ssConnectionIds);
       expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toEqual(true);
     });
 

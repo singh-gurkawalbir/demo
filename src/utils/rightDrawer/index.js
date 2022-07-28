@@ -61,6 +61,7 @@ export const drawerPaths = {
     FLOW_SCHEDULE: ':flowId/schedule',
     SETTINGS: 'settings',
     IA_SETTINGS: ':flowId/settings',
+    BRANCH_EDIT: 'branch/:position',
   },
   ERROR_MANAGEMENT: {
     V1: {
@@ -117,6 +118,9 @@ export const drawerPaths = {
     MANAGE: 'aliases/manage',
     VIEW: 'aliases/view',
   },
+  MFA: {
+    MANAGE_TRUSTED_DEVICES: 'trustedDevices/manage',
+  },
   SHARE_STACKS: 'share/stacks/:stackId',
   EDITOR: 'editor/:editorId',
   DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId',
@@ -140,5 +144,5 @@ export const buildDrawerUrl = ({ path, baseUrl = '', params = {} }) => {
     (url, param) => url.replace(`:${param}`, params[param]),
     path);
 
-  return `${baseUrl}/${DRAWER_URL_PREFIX}/${drawerPath}`;
+  return `${baseUrl}/${drawerPath}`;
 };

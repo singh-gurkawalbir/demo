@@ -5,10 +5,12 @@ import actions from '../../actions';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
-import { emptyObject, UNASSIGNED_SECTION_ID } from '../../utils/constants';
+import { emptyObject, GRAPH_ELEMENTS_TYPE, UNASSIGNED_SECTION_ID } from '../../constants';
 import { generateNewId } from '../../utils/resource';
 import itemTypes from './itemTypes';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
+import { useFlowContext } from './FlowBuilderBody/Context';
+import { generateEmptyRouter, getNewRouterPatchSet, isVirtualRouter } from '../../utils/flows/flowbuilder';
 
 export const isNewFlowFn = flowId => !flowId || flowId?.startsWith('new');
 export const usePatchFlow = flowId => {
@@ -252,3 +254,89 @@ export function useHandleAddProcessor() {
 
   return handleAddProcessor;
 }
+
+export const useHandleAddNode = edgeId => {
+  const { elementsMap, flowId } = useFlowContext();
+  const dispatch = useDispatch();
+
+  return () => {
+    const edge = elementsMap[edgeId];
+
+    if (!edge) return;
+    dispatch(actions.flow.addNewPPStep(flowId, edge.data?.path, edge.data?.processorIndex));
+  };
+};
+
+export const useHandleRouterClick = routerId => {
+  const { flow, flowId } = useFlowContext();
+  const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const history = useHistory();
+  const editorId = `router-${routerId}`;
+
+  return () => {
+    const router = flow.routers.find(r => r.id === routerId);
+    const routerIndex = flow.routers.findIndex(r => r.id === routerId);
+    const userDefinedRouters = flow.routers.filter(r => !isVirtualRouter(r));
+    const userDefinedRoutersCount = userDefinedRouters.findIndex(r => r.id === routerId) + 1;
+
+    if (!router) return;
+    dispatch(actions.editor.init(editorId, 'router', {
+      flowId,
+      resourceType: 'flows',
+      resourceId: routerId,
+      router,
+      fieldId: 'router',
+      routerIndex,
+      branchNamingIndex: userDefinedRoutersCount,
+      stage: 'router',
+      integrationId: flow?._integrationId,
+    }));
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
+  };
+};
+
+export const useHandleAddNewRouter = edgeId => {
+  const { flow, elementsMap, flowId } = useFlowContext();
+  const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const history = useHistory();
+  const originalFlow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
+
+  const router = generateEmptyRouter();
+  const editorId = `router-${router.id}`;
+
+  return () => {
+    const {patchSet, routerIndex} = getNewRouterPatchSet({ elementsMap, flow, router, edgeId, originalFlow });
+
+    const edge = elementsMap[edgeId];
+    const isInsertingBeforeFirstRouter = elementsMap[edge.source]?.type === GRAPH_ELEMENTS_TYPE.PG_STEP &&
+    elementsMap[edge.target]?.type === GRAPH_ELEMENTS_TYPE.ROUTER;
+    const userDefinedRoutersCount = flow.routers.filter(r => !isVirtualRouter(r)).length + 1;
+
+    dispatch(actions.editor.init(editorId, 'router', {
+      flowId,
+      resourceType: 'flows',
+      resourceId: router.id,
+      router,
+      routerIndex,
+      integrationId: flow?._integrationId,
+      branchNamingIndex: userDefinedRoutersCount,
+      fieldId: 'router',
+      prePatches: patchSet,
+      stage: 'router',
+      edge,
+      isInsertingBeforeFirstRouter,
+    }));
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
+  };
+};
+

@@ -6,7 +6,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import DynaTableView from './DynaTable';
 import { makeExportResource } from '../../../../utils/exportData';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import useIntegration from '../../../../hooks/useIntegration';
 import useResourceSettingsContext from '../../../../hooks/useResourceSettingsContext';

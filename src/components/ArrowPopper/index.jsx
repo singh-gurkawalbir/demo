@@ -27,12 +27,12 @@ const useStyles = makeStyles(theme => ({
     },
   },
   popper: {
-    zIndex: theme.zIndex.modal + 1,
+    zIndex: theme.zIndex.appBar - 2,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     borderRadius: '4px',
     // adding this below to avoid jerking
-    top: `${theme.spacing(1)}px !important`,
+    marginLeft: theme.spacing(0.5),
     '&[x-placement*="bottom"] $arrow': {
       top: 0,
       left: 0,

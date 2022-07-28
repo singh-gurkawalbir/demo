@@ -2,6 +2,7 @@ import React, { useMemo, useCallback, useState } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useRouteMatch, useHistory, Redirect} from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 import useEnqueueSnackbar from '../../../../../../../hooks/enqueueSnackbar';
 import {selectors} from '../../../../../../../reducers';
 import useFormInitWithPermissions from '../../../../../../../hooks/useFormInitWithPermissions';
@@ -9,7 +10,7 @@ import DrawerContent from '../../../../../../drawer/Right/DrawerContent';
 import DynaForm from '../../../../../../DynaForm';
 import DrawerFooter from '../../../../../../drawer/Right/DrawerFooter';
 import SaveAndCloseResourceForm from '../../../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
-import { FORM_SAVE_STATUS } from '../../../../../../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../../../../../../constants';
 import actions from '../../../../../../../actions';
 import { findNodeInTree } from '../../../../../../../utils/mapping';
 import ApplicationMappingSettings from './application';
@@ -36,9 +37,7 @@ function MappingSettingsV2({
     return {node, lookups};
   }, shallowEqual);
 
-  const importResource = useSelector(state =>
-    selectors.resource(state, 'imports', importId)
-  );
+  const importResource = useSelectorMemo(selectors.makeResourceSelector, 'imports', importId);
 
   const { generate, extract, lookupName } = node;
   const fieldMeta = useMemo(
@@ -89,7 +88,8 @@ function MappingSettingsV2({
         errorMessage,
       } = ApplicationMappingSettings.getFormattedValue(
         { generate, extract, lookup: oldLookupValue },
-        formVal
+        formVal,
+        importResource
       );
 
       if (errorMessage) {
@@ -107,7 +107,7 @@ function MappingSettingsV2({
       }
       setCount(count => count + 1);
     },
-    [enqueueSnackbar, extract, formVal, handleLookupUpdate, generate, lookupName, lookups, patchSettings]
+    [enqueueSnackbar, extract, formVal, handleLookupUpdate, generate, lookupName, lookups, patchSettings, importResource]
   );
 
   useFormInitWithPermissions({

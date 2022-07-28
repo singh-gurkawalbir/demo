@@ -8,7 +8,6 @@ export default {
 
     retValues['/http/formType'] = 'graph_ql';
     retValues['/adaptorType'] = 'HTTPExport';
-    retValues['/http/relativeURI'] = '/';
     retValues['/http/mediaType'] = 'json';
 
     retValues['/http/body'] = convertGraphQLQueryToHTTPBody({

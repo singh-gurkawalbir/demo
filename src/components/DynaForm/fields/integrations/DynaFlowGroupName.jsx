@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import actions from '../../../../actions';
 import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
-import { FORM_SAVE_STATUS, UNASSIGNED_SECTION_NAME } from '../../../../utils/constants';
+import { FORM_SAVE_STATUS, UNASSIGNED_SECTION_NAME } from '../../../../constants';
 import messageStore from '../../../../utils/messageStore';
 import { TextButton } from '../../../Buttons';
 import ButtonWithTooltip from '../../../Buttons/ButtonWithTooltip';

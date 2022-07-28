@@ -1,6 +1,7 @@
 /* global describe, test, expect */
 import each from 'jest-each';
 import moment from 'moment-timezone';
+import { addDays } from 'date-fns';
 import actionTypes from '../actions/types';
 import getJsonPaths from './jsonPaths';
 import getRequestOptions from './requestOptions';
@@ -9,7 +10,7 @@ import retry from './retry';
 import adjustTimezone from './adjustTimezone';
 import inferErrorMessages from './inferErrorMessages';
 import flowgroupingsRedirectTo, { redirectToFirstFlowGrouping } from './flowgroupingsRedirectTo';
-import { UNASSIGNED_SECTION_ID } from './constants';
+import { UNASSIGNED_SECTION_ID } from '../constants';
 import { getAsyncKey } from './saveAndCloseButtons';
 
 const uiRoutePathPrefix = '';
@@ -83,6 +84,9 @@ describe('Route paths util method', () => {
 });
 
 describe('getRequestOptions util method', () => {
+  const yesterdayDate = addDays(new Date(), -29);
+  const todayDate = new Date();
+
   const testCases = [
     [
       { path: '/invite', opts: { method: 'POST' } },
@@ -131,6 +135,59 @@ describe('getRequestOptions util method', () => {
       actionTypes.ACCESSTOKEN.GENERATE,
       {
         resourceId: 'someId',
+      },
+    ],
+    [
+      {
+        path: `/audit/signedURL?from=${yesterdayDate.toISOString()}&to=${todayDate.toISOString()}&_byUserId=user&resourceType=integrations&_resourceId=i1&source=ui&action=create`,
+        opts: {
+          method: 'GET',
+          body: undefined,
+        },
+      },
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      {
+        filters: {
+          fromDate: yesterdayDate.toISOString(),
+          toDate: todayDate.toISOString(),
+          byUser: 'user',
+          resourceType: 'integrations',
+          source: 'ui',
+          event: 'create',
+          _resourceId: 'i1',
+        },
+      },
+    ],
+    [
+      {
+        path: '/integrations/audit/signedURL',
+        opts: {
+          method: 'POST',
+          body: {
+            _byUserId: 'user',
+            _resourceId: 'i1',
+            _resourceIds: ['i1'],
+            from: yesterdayDate.toISOString(),
+            to: todayDate.toISOString(),
+            resourceType: 'integrations',
+            source: 'ui',
+            action: 'create',
+          },
+        },
+      },
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      {
+        resourceType: 'integrations',
+        resourceId: 'i1',
+        filters: {
+          fromDate: yesterdayDate.toISOString(),
+          toDate: todayDate.toISOString(),
+          byUser: 'user',
+          resourceType: 'integrations',
+          source: 'ui',
+          event: 'create',
+          _resourceId: 'i1',
+        },
       },
     ],
   ];

@@ -1,6 +1,18 @@
+import {
+  updateFinalMetadataWithHttpFramework,
+} from '../../../sagas/utils';
+import { updateHTTPFrameworkFormValues } from '../../metaDataUtils/fileUtil';
+
 export default {
-  preSave: formValues => {
-    const newValues = { ...formValues};
+  init: (fieldMeta, resource, flow, httpConnector) => {
+    if (!resource?._httpConnectorId && !resource?.http?._httpConnectorId) {
+      return fieldMeta;
+    }
+
+    return updateFinalMetadataWithHttpFramework(fieldMeta, httpConnector, resource, true);
+  },
+  preSave: (formValues, resource, options) => {
+    let newValues = { ...formValues};
 
     if (newValues['/mode'] === 'cloud') {
       newValues['/_agentId'] = undefined;
@@ -103,6 +115,14 @@ export default {
       newValues['/http/auth/oauth'] = undefined;
       delete newValues['/http/auth/oauth/callbackURL'];
       delete newValues['/http/auth/oauth/clientCredentialsLocation'];
+      delete newValues['/http/auth/oauth/accessTokenBody'];
+      delete newValues['/http/auth/oauth/authURI'];
+      delete newValues['/http/auth/oauth/grantType'];
+      delete newValues['/http/auth/oauth/tokenURI'];
+      delete newValues['/http/auth/oauth/refreshBody'];
+
+      delete newValues['/http/auth/oauth/scope'];
+      delete newValues['/http/auth/oauth/scopeDelimiter'];
 
       newValues['/http/auth/token'] = undefined;
       delete newValues['/http/auth/token/token'];
@@ -154,11 +174,35 @@ export default {
     delete newValues['/http/auth/wsse/username'];
     delete newValues['/http/auth/wsse/password'];
     delete newValues['/http/auth/wsse/headerName'];
+    if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
+      newValues = updateHTTPFrameworkFormValues(newValues, resource, options?.httpConnector);
+    }
+
+    if (newValues['/http/formType'] !== 'graph_ql') {
+      newValues['/http/formType'] = 'http';
+    }
+
+    if (newValues['/http/clientCertificates/type'] === 'pem') {
+      delete newValues['/http/clientCertificates/pfx'];
+    }
+
+    if (newValues['/http/clientCertificates/type'] === 'pfx') {
+      delete newValues['/http/clientCertificates/cert'];
+      delete newValues['/http/clientCertificates/key'];
+      if (newValues['/http/clientCertificates/pfx'].includes('data:application/x-pkcs12;base64,')) {
+        newValues['/http/clientCertificates/pfx'] = newValues['/http/clientCertificates/pfx'].slice(33);
+      }
+    }
+
+    delete newValues['/http/clientCertificates/type'];
 
     return newValues;
   },
   fieldMap: {
     name: { fieldId: 'name' },
+    connectionFormView: {
+      fieldId: 'connectionFormView',
+    },
     mode: {
       id: 'mode',
       type: 'radiogroup',
@@ -285,10 +329,44 @@ export default {
     'http.ping.failPath': { fieldId: 'http.ping.failPath' },
     'http.ping.failValues': { fieldId: 'http.ping.failValues' },
     httpAdvanced: { formId: 'httpAdvanced' },
-    'http.clientCertificates.cert': { fieldId: 'http.clientCertificates.cert' },
-    'http.clientCertificates.key': { fieldId: 'http.clientCertificates.key' },
+    'http.clientCertificates.cert': {
+      fieldId: 'http.clientCertificates.cert',
+      visibleWhenAll: [
+        {
+          field: 'http.clientCertificates.type',
+          is: ['pem'],
+        },
+      ],
+    },
+    'http.clientCertificates.pfx': {
+      fieldId: 'http.clientCertificates.pfx',
+      visibleWhenAll: [
+        {
+          field: 'http.clientCertificates.type',
+          is: ['pfx'],
+        },
+      ],
+    },
+    'http.clientCertificates.key': {
+      fieldId: 'http.clientCertificates.key',
+      visibleWhenAll: [
+        {
+          field: 'http.clientCertificates.type',
+          is: ['pem'],
+        },
+      ],
+    },
     'http.clientCertificates.passphrase': {
       fieldId: 'http.clientCertificates.passphrase',
+      visibleWhenAll: [
+        {
+          field: 'http.clientCertificates.type',
+          is: ['pem', 'pfx'],
+        },
+      ],
+    },
+    'http.clientCertificates.type': {
+      fieldId: 'http.clientCertificates.type',
     },
     'http.auth.oauth.applicationType': {
       fieldId: 'http.auth.oauth.applicationType',
@@ -340,6 +418,7 @@ export default {
         label: 'General',
         fields: [
           'name',
+          'connectionFormView',
           'application',
           'mode',
           '_agentId',
@@ -467,14 +546,33 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: [
-          'http.disableStrictSSL',
-          'httpAdvanced',
-          'http.clientCertificates.key',
-          'http.clientCertificates.cert',
-          'http.clientCertificates.passphrase',
-          'http.encrypted',
-          'http.unencrypted',
+        containers: [
+          {
+            fields: [
+              'http.disableStrictSSL',
+              'httpAdvanced',
+              'http.clientCertificates.type',
+            ],
+          },
+          {
+            type: 'indent',
+            containers: [
+              {
+                fields: [
+                  'http.clientCertificates.key',
+                  'http.clientCertificates.cert',
+                  'http.clientCertificates.pfx',
+                  'http.clientCertificates.passphrase',
+                ],
+              },
+            ],
+          },
+          {
+            fields: [
+              'http.encrypted',
+              'http.unencrypted',
+            ],
+          },
         ],
       },
     ],

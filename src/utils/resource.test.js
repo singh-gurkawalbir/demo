@@ -35,6 +35,7 @@ import {
   getNextLinkRelativeUrl,
   rdbmsSubTypeToAppType,
   rdbmsAppTypeToSubType,
+  getNotificationResourceType,
 } from './resource';
 
 describe('resource util tests', () => {
@@ -190,6 +191,9 @@ describe('resource util tests', () => {
     test('should return correct appType for bigquery subtype', () => {
       expect(rdbmsSubTypeToAppType('bigquery')).toEqual('bigquerydatawarehouse');
     });
+    test('should return correct appType for redshift subtype', () => {
+      expect(rdbmsSubTypeToAppType('redshift')).toEqual('redshiftdatawarehouse');
+    });
     test('should return correct appType for snowflake subtype', () => {
       expect(rdbmsSubTypeToAppType('snowflake')).toEqual('snowflake');
     });
@@ -199,8 +203,35 @@ describe('resource util tests', () => {
     test('should return correct subtype for bigquerydatawarehouse apptype', () => {
       expect(rdbmsAppTypeToSubType('bigquerydatawarehouse')).toEqual('bigquery');
     });
+    test('should return correct subtype for redshiftdatawarehouse apptype', () => {
+      expect(rdbmsAppTypeToSubType('redshiftdatawarehouse')).toEqual('redshift');
+    });
     test('should return correct appType for snowflake subtype', () => {
       expect(rdbmsAppTypeToSubType('snowflake')).toEqual('snowflake');
+    });
+  });
+
+  describe('tests for util getNotificationResourceType', () => {
+    test('should return connections for a given connection notification audit log', () => {
+      expect(getNotificationResourceType({
+        fieldChange: {
+          fieldPath: '_connectionId',
+        },
+      })).toEqual('connections');
+    });
+    test('should return flows for a given flow notification audit log', () => {
+      expect(getNotificationResourceType({
+        fieldChange: {
+          fieldPath: '_flowId',
+        },
+      })).toEqual('flows');
+    });
+    test('should return integrations for a given intgeration notification audit log', () => {
+      expect(getNotificationResourceType({
+        fieldChange: {
+          fieldPath: '_integrationId',
+        },
+      })).toEqual('integrations');
     });
   });
 

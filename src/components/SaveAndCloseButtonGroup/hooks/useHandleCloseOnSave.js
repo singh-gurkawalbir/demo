@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { FORM_SAVE_STATUS } from '../../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../../constants';
 
 export default function useHandleCloseOnSave({onSave, status, onClose}) {
   const [closeTriggered, setCloseTriggered] = useState(false);

@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { difference } from 'lodash';
 import actions from '../../actions';
 import ChildJobDetail, { JobDetailsStyles } from './ChildJobDetail';
-import { JOB_STATUS } from '../../utils/constants';
+import { JOB_STATUS } from '../../constants';
 import JobStatus from './JobStatus';
 import { getPages, getSuccess } from '../../utils/jobdashboard';
 import JobActionsMenu from './JobActionsMenu';
@@ -229,7 +229,9 @@ export default function JobDetail({
           count={job.numResolved}
           isJobInProgress={isJobInProgress}
           onClick={() => handleViewErrorsClick(true)}
-          className={classes.resolved}
+          className={clsx(classes.resolved, {
+            [classes.resolvedCount]: job.numResolved > 0,
+          })}
            />
         <TableCell className={classes.pages}>{getPages(job)}</TableCell>
         <TableCell className={classes.duration}>{job.duration}</TableCell>

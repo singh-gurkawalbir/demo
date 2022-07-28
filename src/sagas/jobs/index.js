@@ -17,7 +17,7 @@ import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
-import { JOB_TYPES, STANDALONE_INTEGRATION } from '../../utils/constants';
+import { JOB_TYPES, STANDALONE_INTEGRATION } from '../../constants';
 import {FILTER_KEYS_AD} from '../../utils/accountDashboard';
 import { pollApiRequests } from '../app';
 
@@ -378,8 +378,8 @@ export function* cancelJob({ jobId }) {
   } catch (error) {
     return true;
   }
-  if (job._flowJobId) {
-    yield call(getJobFamily, { jobId: job._flowJobId });
+  if (job._flowJobId || job._parentJobId) {
+    yield call(getJobFamily, { jobId: job._parentJobId || job._flowJobId });
   } else {
     yield put(actions.job.receivedFamily({ job }));
   }
@@ -413,7 +413,7 @@ export function* resolveCommit({ jobs = [] }) {
   const uniqueParentJobIds = [];
 
   jobs.forEach(job => {
-    const parentJobId = job._flowJobId || job._id;
+    const parentJobId = job._parentJobId || job._flowJobId || job._id;
 
     if (!uniqueParentJobIds.includes(parentJobId)) {
       uniqueParentJobIds.push(parentJobId);
@@ -471,8 +471,8 @@ export function* resolveSelected({ jobs }) {
     jobs.map(job =>
       put(
         actions.job.resolveInit({
-          parentJobId: job._flowJobId || job._id,
-          childJobId: job._flowJobId ? job._id : null,
+          parentJobId: job._parentJobId || job._flowJobId || job._id,
+          childJobId: job._parentJobId || job._flowJobId ? job._id : null,
         })
       )
     )
@@ -528,7 +528,7 @@ export function* retryCommit({ jobs = [] }) {
   const uniqueParentJobIds = [];
 
   jobs.forEach(job => {
-    const pJobId = job._flowJobId || job._id;
+    const pJobId = job._parentJobId || job._flowJobId || job._id;
 
     if (!uniqueParentJobIds.includes(pJobId)) {
       uniqueParentJobIds.push(pJobId);
@@ -546,8 +546,8 @@ export function* retrySelected({ jobs }) {
     jobs.map(job =>
       put(
         actions.job.retryInit({
-          parentJobId: job._flowJobId || job._id,
-          childJobId: job._flowJobId ? job._id : null,
+          parentJobId: job._parentJobId || job._flowJobId || job._id,
+          childJobId: job._parentJobId || job._flowJobId ? job._id : null,
         })
       )
     )

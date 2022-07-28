@@ -9,6 +9,7 @@ import IntegrationApp, {
   getIntegrationApp,
   getTitleIdFromSection,
   getFormStatusFromCategoryMappingStatus,
+  getTitleFromEdition,
 } from '.';
 
 describe('getIntegrationAppUrlName', () => {
@@ -70,6 +71,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -81,6 +83,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -92,6 +95,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -103,6 +107,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -114,6 +119,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: ['dummy', 'dummy'],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -125,6 +131,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -136,6 +143,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -147,6 +155,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -158,6 +167,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -169,6 +179,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: ['dummy', 'dummy'],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -180,6 +191,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -191,6 +203,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -202,6 +215,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -213,6 +227,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -224,6 +239,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: [],
         isMonitorLevelUser: true,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -235,6 +251,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -246,6 +263,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -257,6 +275,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: false,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -268,6 +287,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
       },
     ],
     [
@@ -279,6 +299,19 @@ describe('getAdminLevelTabs', () => {
         supportsChild: true,
         children: [],
         isMonitorLevelUser: false,
+        isManageLevelUser: false,
+      },
+    ],
+    [
+      ['subscription', 'uninstall'],
+      {
+        integrationId: 'something',
+        isIntegrationApp: true,
+        isParent: true,
+        supportsChild: true,
+        children: [],
+        isMonitorLevelUser: false,
+        isManageLevelUser: true,
       },
     ],
   ];
@@ -294,6 +327,7 @@ describe('getAdminLevelTabs', () => {
         supportsChild,
         children,
         isMonitorLevelUser,
+        isManageLevelUser,
       }
     ) => {
       expect(
@@ -304,6 +338,7 @@ describe('getAdminLevelTabs', () => {
           supportsChild,
           children,
           isMonitorLevelUser,
+          isManageLevelUser,
         })
       ).toEqual(expected);
     }
@@ -463,7 +498,7 @@ describe('getIntegrationApp', () => {
       'shopify',
       {
         _connectorId: '5656f5e3bebf89c03f5dd77e',
-        name: 'Shopify - NetSuite Connector',
+        name: 'Shopify - NetSuite',
       },
     ],
     [
@@ -486,7 +521,7 @@ describe('getIntegrationApp', () => {
       'shopify',
       {
         _connectorId: '54fa0b38a7044f9252000036',
-        name: 'Shopify - NetSuite Connector',
+        name: 'Shopify - NetSuite',
       },
     ],
     [
@@ -509,7 +544,7 @@ describe('getIntegrationApp', () => {
       'shopify',
       {
         _connectorId: '5e8d6ca02387e356b6769bb8',
-        name: 'Shopify - NetSuite Connector',
+        name: 'Shopify - NetSuite',
       },
     ],
     [
@@ -823,20 +858,20 @@ describe('getHighestEditionForIntegrationApp', () => {
     ['starter', { _connectorId: '', name: 'dummy' }],
     ['starter', { _connectorId: 'something', name: 'something' }],
     ['enterprise', { _connectorId: '57e10364a0047c23baeffa09', name: 'Jet - NetSuite Connector' }],
-    ['premium', { _connectorId: '5656f5e3bebf89c03f5dd77e', name: 'Shopify - NetSuite Connector'}],
+    ['shopifymarkets', { _connectorId: '5656f5e3bebf89c03f5dd77e', name: 'Shopify - NetSuite'}],
     ['standard', { _connectorId: '5666865f67c1650309224904', name: 'Zendesk - NetSuite Connector' }],
   ];
   const testCases2 = [
     ['starter', { _connectorId: '', name: 'dummy' }],
     ['starter', { _connectorId: 'something', name: 'something' }],
     ['enterprise', { _connectorId: '581cebf290a63a26daea6081', name: 'Jet - NetSuite Connector' }],
-    ['premium', { _connectorId: '54fa0b38a7044f9252000036', name: 'Shopify - NetSuite Connector'}],
+    ['shopifymarkets', { _connectorId: '54fa0b38a7044f9252000036', name: 'Shopify - NetSuite'}],
     ['standard', { _connectorId: '55022fc3285348c76a000005', name: 'Zendesk - NetSuite Connector' }],
   ];
   const testCases3 = [
     ['starter', { _connectorId: '', name: 'dummy' }],
     ['starter', { _connectorId: 'something', name: 'something' }],
-    ['premium', { _connectorId: '5e8d6ca02387e356b6769bb8', name: 'Shopify - NetSuite Connector'}],
+    ['shopifymarkets', { _connectorId: '5e8d6ca02387e356b6769bb8', name: 'Shopify - NetSuite'}],
     ['standard', { _connectorId: '5f1ad76d288b074c1a73fadd', name: 'Zendesk - NetSuite Connector' }],
   ];
 
@@ -1009,6 +1044,30 @@ describe('isCloningSupported', () => {
       }));
 
       return expect(IntegrationApp.isCloningSupported(_connectorId, name)).toEqual(expected);
+    }
+  );
+});
+
+describe('getTitleFromEdition', () => {
+  const testCases = [
+    [
+      '',
+      '',
+    ],
+    [
+      'Standard',
+      'standard',
+    ],
+    [
+      'Shopify Markets',
+      'shopifymarkets',
+    ],
+  ];
+
+  each(testCases).test(
+    'should return %s when edition = %o',
+    (expected, edition) => {
+      expect(getTitleFromEdition(edition)).toEqual(expected);
     }
   );
 });

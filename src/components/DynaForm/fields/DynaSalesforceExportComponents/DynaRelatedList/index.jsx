@@ -385,7 +385,7 @@ export default function DynaRelatedList(props) {
           />
           </div>
           <div>
-            {status === 'refreshed' ? (
+            {(status === 'refreshed' || status === 'requested') ? (
               <Spinner />
             ) : (
               <>

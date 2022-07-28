@@ -5,11 +5,13 @@ export default {
     const applications = applicationsList();
 
     const app = applications.find(a => a.id === application) || {};
+    const appType = (app.type === 'rest' && !app.assistant) ? 'http' : app.type;
     const newValues = {
       ...rest,
-      '/adaptorType': `${app.type.toUpperCase()}Connection`,
-      '/type': app.type,
+      '/adaptorType': `${appType.toUpperCase()}Connection`,
+      '/type': appType,
       '/application': app.name,
+      '/_httpConnectorId': app._httpConnectorId,
     };
 
     if (app.assistant) {
