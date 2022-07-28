@@ -5393,7 +5393,7 @@ selectors.applicationType = (state, resourceType, id) => {
     );
     const httpConnectorId = getStagedValue('/_httpConnectorId') || connection?._httpConnectorId || connection?.http?._httpConnectorId;
     const applications = applicationsList();
-    const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId) || {};
+    const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId);
 
     if (httpConnectorId && httpApp) {
       return httpApp._legacyId || httpApp.name;

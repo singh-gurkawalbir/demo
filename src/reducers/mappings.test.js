@@ -175,6 +175,7 @@ describe('Mappings region selector testcases', () => {
     {_id: 6, rdbms: {type: 'rdbmsconnection'}},
     {_id: 7, type: 'http'},
     {_id: 8, type: 'rdbms', rdbms: {type: 'rdbmsconnection'}},
+    {_id: 9, type: 'http', http: {_httpConnectorId: 'id2'}},
   ];
   let state = reducer(
     undefined,
@@ -449,6 +450,9 @@ describe('Mappings region selector testcases', () => {
       });
       test('should return connection rdbms type if connection is of type rdbms', () => {
         expect(selectors.applicationType(newState, 'connections', 8)).toEqual('rdbmsconnection');
+      });
+      test('should return connection http type if connection is of type http and http connectorId exists', () => {
+        expect(selectors.applicationType(newState, 'connections', 9)).toEqual('http');
       });
     });
 

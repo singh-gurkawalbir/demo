@@ -3298,6 +3298,7 @@ describe('mapping utils', () => {
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'oracle'}}, appName: 'Oracle DB (SQL)'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'postgresql'}}, appName: 'PostgreSQL'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {}, appName: 'Snowflake'},
+      {resource: {adaptorType: 'HTTPImport'}, connection: {http: {_httpConnecorId: '123'}}, appName: 'HTTP'},
 
     ];
 
