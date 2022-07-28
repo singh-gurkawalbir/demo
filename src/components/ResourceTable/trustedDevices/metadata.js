@@ -5,7 +5,7 @@ export default {
     const columns = [{
       key: 'name',
       heading: 'Name',
-      Value: ({rowData: r}) => r.browser,
+      Value: ({rowData: r}) => `${r.browser} ${r.os}`,
     }];
 
     return columns;
