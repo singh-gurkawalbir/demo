@@ -10,6 +10,7 @@ import Spinner from '../Spinner';
 import AuditLogTable from './AuditLogTable';
 import Filters from './Filters';
 import { isNewId } from '../../utils/resource';
+import { USER_ACCESS_LEVELS } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,6 +46,10 @@ export default function AuditLog({
     dispatch(actions.auditLogs.request(resourceType, resourceId));
   };
 
+  const accessLevel = useSelector(
+    state => selectors.resourcePermissions(state, resourceType === 'integrations' ? 'integrations' : '', resourceId).accessLevel
+  );
+
   useEffect(() => {
     if (!isNewId(resourceId)) { requestAuditLogs(resourceType, resourceId); }
 
@@ -61,7 +66,10 @@ export default function AuditLog({
     <LoadResources
       required
       integrationId={integrationId}
-      resources="integrations,flows,exports,imports,connections,scripts,apis,accesstokens,agents,stacks">
+      resources={[
+        'integrations', 'flows', 'exports', 'imports', 'connections', 'scripts', 'agents', 'stacks', ...(
+          [USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel) ? ['apis', 'accesstokens'] : []
+        )].join(',')}>
       <>
         {isLoadingAuditLog
           ? <Spinner loading size="large" className={classes.spinnerContainer} /> : (
