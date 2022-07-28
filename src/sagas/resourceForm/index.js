@@ -31,6 +31,7 @@ import { getAssistantConnectorType, getHttpConnector } from '../../constants/app
 import { constructResourceFromFormValues } from '../utils';
 import {getConnector, getConnectorMetadata} from '../resources/httpConnectors';
 import { setObjectValue } from '../../utils/json';
+import { addPageProcessor } from '../../utils/flows/flowbuilder';
 
 export const SCOPES = {
   META: 'meta',
@@ -467,6 +468,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     flowId
   )) || emptyObject;
   const elementsMap = yield select(selectors.fbGraphElementsMap, flowId);
+  const info = yield select(selectors.fbInfo, flowId);
 
   // if its an existing resource and original flow document does not have any references to newly created PG or PP
   // then we can go ahead and update it...if it has existing references no point creating additional create patches
@@ -501,13 +503,12 @@ export function* getFlowUpdatePatchesForNewPGorPP(
   } else {
     // pageProcessors
     const isLookup = resourceType === 'exports';
+    const pageProcessor = {
+      type: isLookup ? 'export' : 'import',
+      [isLookup ? '_exportId' : '_importId']: createdId,
+    };
 
     if (step) {
-      const pageProcessor = {
-        type: isLookup ? 'export' : 'import',
-        [isLookup ? '_exportId' : '_importId']: createdId,
-      };
-
       const {path} = step.data;
 
       if (isLinearFlow) {
@@ -519,139 +520,15 @@ export function* getFlowUpdatePatchesForNewPGorPP(
         setObjectValue(flowDocClone, path, pageProcessor);
       }
     } else {
-      if (isLinearFlow) {
-        if (!flowDocClone.pageProcessors || !flowDocClone.pageProcessors.length) {
-          flowDocClone.pageProcessors = [{setupInProgress: true}];
-        }
+      const { processorIndex, branchPath } = info;
+      const insertAtIndex = processorIndex ?? -1;
 
-        flowDocClone.pageProcessors.push({
-          type: isLookup ? 'export' : 'import',
-          [isLookup ? '_exportId' : '_importId']: createdId,
-        });
-      }
-      console.log('add scenario');
+      addPageProcessor(flowDocClone, insertAtIndex, branchPath, pageProcessor);
+      yield put(actions.flow.clearPPStepInfo(flowId));
     }
   }
 
-  // let addIndexPP = flowDoc?.pageProcessors?.length || 0;
-  // const addIndexPG = flowDoc?.pageGenerators?.length || 0;
-
-  // Incoming resourceIds that model new PP or PGs (are prefixed with 'new-')  may contain a suffix
-  // identifying if the resource should replace an existing pending resource, or if absent, add a new
-  // resource. If this index suffix exists, we replace the pending PP/PG at that location, otherwise we
-  // add a new one.
-  // const [, pendingId] = tempResourceId?.split('.');
-  // let pending = false;
-  // let stepPath;
-  // const isPageGenerator = resourceType === 'exports' && !createdResource?.isLookup;
-
-  // if (pendingId) {
-  //   pending = true;
-  //   if (flowDoc?.routers?.length || (isPageGenerator && elementsMap?.[pendingId])) {
-  //     stepPath = elementsMap[pendingId]?.data?.path;
-  //   } else if (!isPageGenerator && elementsMap?.[pendingId]?.data?.path) {
-  //     [,,, addIndexPP] = PageProcessorPathRegex.exec(elementsMap?.[pendingId]?.data?.path);
-  //   }
-  // } else if (isPageGenerator) {
-  //   // User clicked on '+' plus beside Sources
-  //   if (!flowDoc.pageGenerators || !flowDoc.pageGenerators.length) {
-  //     stepPath = '/pageGenerators/1';
-  //   }
-  // } else {
-  //   // User clicked on '+' icon beside Destinations & Lookups
-  //   // routerId and branchId are appended to tempId when branch selected, check if they are present
-  //   if (/new-\w+_\d+_\d+/.test(tempResourceId)) {
-  //     console.log('tempResourceId', tempResourceId);
-  //   }
-  //   console.log('in the else block');
-  // }
-
-  // let flowPatches = [];
-
-  // if (resourceType === 'exports') {
-  //   if (createdResource?.isLookup) {
-  //     flowPatches = [
-  //       {
-  //         op: pending ? 'replace' : 'add',
-  //         path: stepPath || `/pageProcessors/${addIndexPP}`,
-  //         value: { type: 'export', _exportId: createdId },
-  //       },
-  //     ];
-  //   } else {
-  //     // only page generators
-  //     // temp patch of application with value 'dataLoader' maybe present if its data loader...
-  //     // perform replace in that case
-  //     // eslint-disable-next-line no-lonely-if
-  //     if (
-  //       flowDoc?.pageGenerators?.[0]?.application === 'dataLoader'
-  //     ) {
-  //       flowPatches = [
-  //         {
-  //           op: 'replace',
-  //           path: '/pageGenerators/0',
-  //           value: { _exportId: createdId },
-  //         },
-  //       ];
-  //     } else {
-  //       flowPatches = [
-  //         {
-  //           op: pending ? 'replace' : 'add',
-  //           path: stepPath || `/pageGenerators/${addIndexPG}`,
-  //           value: { _exportId: createdId },
-  //         },
-  //       ];
-  //     }
-  //   }
-  // } else {
-  //   // imports resource type
-  //   flowPatches = [
-  //     {
-  //       op: pending ? 'replace' : 'add',
-  //       path: stepPath || `/pageProcessors/${addIndexPP}`,
-  //       value: { type: 'import', _importId: createdId },
-  //     },
-  //   ];
-  // }
-
-  // // only one flow patch so
-  // let missingPatches = [];
-
-  // if (flowPatches[0].path.includes('pageGenerators') && !flowDoc.pageGenerators) {
-  //   missingPatches = [
-  //     {
-  //       op: 'add',
-  //       path: '/pageGenerators',
-  //       value: [],
-  //     },
-  //   ];
-  // } else if (flowPatches[0].path.includes('pageGenerators/1') && !flowDoc.pageGenerators.length) {
-  //   missingPatches.push(
-  //     {
-  //       op: 'add',
-  //       path: '/pageGenerators/0',
-  //       value: {setupInProgress: true},
-  //     },
-  //   );
-  // } else if (
-  //   !flowPatches[0].path.includes('routers') &&
-  //   flowPatches[0].path.includes('pageProcessors') &&
-  //   !flowDoc.pageProcessors
-  // ) {
-  //   missingPatches = [
-  //     {
-  //       op: 'add',
-  //       path: '/pageProcessors',
-  //       value: [],
-  //     },
-  //   ];
-  // }
-
-  // return [...missingPatches, ...flowPatches];
-  const patchSet = jsonPatch.generate(observer);
-
-  console.log('patchSet', patchSet);
-
-  return patchSet;
+  return jsonPatch.generate(observer);
 }
 
 export function* skipRetriesPatches(

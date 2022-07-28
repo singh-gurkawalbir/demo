@@ -64,8 +64,12 @@ export const addPageGenerators = flow => {
   flow.pageGenerators.push({setupInProgress: true});
 };
 
-export const addPageProcessor = (flow, insertAtIndex, branchPath) => {
+export const addPageProcessor = (flow, insertAtIndex, branchPath, ppData) => {
   if (!flow) return;
+  const pageProcessor = ppData || {setupInProgress: true};
+
+  console.log('insertAtIndex', insertAtIndex);
+  console.log('branchPath', branchPath);
   if (flow.routers?.length) {
     const [, routerIndex, branchIndex] = BranchPathRegex.exec(branchPath);
 
@@ -75,20 +79,21 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath) => {
       const firstRouter = flow.routers[0];
 
       if (isVirtualRouter(firstRouter) && !firstRouter.branches[0].pageProcessors?.length) {
-        flow.routers[0].branches[0].pageProcessors = [{setupInProgress: true}];
+        flow.routers[0].branches[0].pageProcessors = [pageProcessor];
       } else {
         const newRouter = generateEmptyRouter(true);
 
         newRouter.branches[0].nextRouterId = flow.routers[0].id;
+        newRouter.branches[0].pageProcessors = [pageProcessor];
         flow.routers = [newRouter, ...flow.routers];
       }
     } else {
       const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
 
       if (insertAtIndex === -1) {
-        setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, {setupInProgress: true}]);
+        setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, pageProcessor]);
       } else {
-        pageProcessors.splice(insertAtIndex, 0, {setupInProgress: true});
+        pageProcessors.splice(insertAtIndex, 0, pageProcessor);
         setObjectValue(flow, `${branchPath}/pageProcessors`, pageProcessors);
       }
     }
@@ -98,11 +103,11 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath) => {
       flow.pageProcessors = [{setupInProgress: true}];
     }
     if (insertAtIndex === -1) {
-      flow.pageProcessors.push({setupInProgress: true});
+      flow.pageProcessors.push(pageProcessor);
     } else {
       const pageProcessors = jsonPatch.getValueByPointer(flow, '/pageProcessors');
 
-      pageProcessors.splice(insertAtIndex, 0, {setupInProgress: true});
+      pageProcessors.splice(insertAtIndex, 0, pageProcessor);
       flow.pageProcessors = pageProcessors;
     }
   }

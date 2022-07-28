@@ -1,12 +1,13 @@
 import React from 'react';
 import { MenuItem, Typography, makeStyles, Divider, ClickAwayListener } from '@material-ui/core';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import ArrowPopper from '../../../../../components/ArrowPopper';
 import { useFlowContext } from '../../Context';
 import { getAllFlowBranches } from '../../lib';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
-import { BranchPathRegex } from '../../../../../constants';
-import { shortId } from '../../../../../utils/string';
+import actions from '../../../../../actions';
+import { generateNewId } from '../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   titleBox: {
@@ -27,20 +28,21 @@ export default function BranchMenuPopper({ anchorEl, handleClose }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
-  const { flow, elements } = useFlowContext();
+  const dispatch = useDispatch();
+  const { flowId, flow, elements } = useFlowContext();
   const open = Boolean(anchorEl);
 
   const branches = getAllFlowBranches(flow, elements);
 
   const handleCallback = branchId => () => {
     const branch = branches.find(s => s.id === branchId);
-    const [, routerIndex, branchIndex] = BranchPathRegex.exec(branch.path);
 
-    const newTempProcessorId = `new-${shortId()}_${routerIndex}_${branchIndex}`;
+    dispatch(actions.flow.addNewPPStepInfo(flowId, { branchPath: branch.path }));
+    const newTempProcessorId = generateNewId();
     const addPPUrl = buildDrawerUrl({
       path: drawerPaths.RESOURCE.ADD,
       baseUrl: match.url,
-      params: { resourceType: 'pageProcessor', id: newTempProcessorId, path: branch.path },
+      params: { resourceType: 'pageProcessor', id: newTempProcessorId },
     });
 
     history.push(addPPUrl);

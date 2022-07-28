@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import Title from '../Title';
 import BranchMenuPopper from './BranchMenuPopper';
 import { FB_SOURCE_COLUMN_WIDTH } from '../../../../../constants';
@@ -11,6 +12,7 @@ import { useFlowContext } from '../../Context';
 import { getAllFlowBranches } from '../../lib';
 import { generateNewId } from '../../../../../utils/resource';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
+import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -24,6 +26,7 @@ const DestinationTitle = () => {
   const { flowId, flow, elements } = useFlowContext();
   const match = useRouteMatch();
   const history = useHistory();
+  const dispatch = useDispatch();
   const flowOriginal =
     useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)
       ?.merged || {};
@@ -36,13 +39,16 @@ const DestinationTitle = () => {
   const classes = useStyles({ xOffset, columnWidth });
   const [anchorEl, setAnchorEl] = React.useState(null);
   const branches = getAllFlowBranches(flow, elements);
-  const isLinearFlow = !flowOriginal.routers?.length || branches.length === 1;
+  const isLinearFlow = !flowOriginal.routers?.length;
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
 
   const handleOpenMenu = event => {
-    if (isLinearFlow) {
+    if (isLinearFlow || branches.length === 1) {
+      if (!isLinearFlow) {
+        dispatch(actions.flow.addNewPPStepInfo(flowId, {branchPath: branches[0].path}));
+      }
       const newTempProcessorId = generateNewId();
       const addPPUrl = buildDrawerUrl({
         path: drawerPaths.RESOURCE.ADD,
