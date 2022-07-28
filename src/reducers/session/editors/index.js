@@ -78,6 +78,9 @@ export default function reducer(state = {}, action) {
           }
         } else {
           draft[id].data = sampleData;
+          if (draft[id].editorType === 'structuredFileGenerator' && draft[id].stage) {
+            draft[id].originalData = sampleData;
+          }
         }
         draft[id].dataVersion = templateVersion;
         draft[id].sampleDataStatus = 'received';

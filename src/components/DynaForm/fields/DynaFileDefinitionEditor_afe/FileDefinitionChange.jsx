@@ -14,7 +14,7 @@ function extractResourcePath(value, initialResourcePath) {
   return initialResourcePath;
 }
 
-export default function FileDefinitionChange({editorId, formKey, fieldId, resourceType}) {
+export default function FileDefinitionChange({editorId, formKey, fieldId, resourceType, importHasMappings}) {
   const dispatch = useDispatch();
   const isEditorActive = useSelector(state => selectors.editor(state, editorId).id);
 
@@ -33,7 +33,7 @@ export default function FileDefinitionChange({editorId, formKey, fieldId, resour
   useEffect(() => {
     // patch only if sampleData/rule is changed and editor state is active
     if (sampleData) {
-      if (isEditorActive) {
+      if (isEditorActive && !importHasMappings) {
         dispatch(actions.editor.patchData(editorId, sampleData));
       }
       dispatch(actions.resourceFormSampleData.request(formKey));
@@ -48,7 +48,7 @@ export default function FileDefinitionChange({editorId, formKey, fieldId, resour
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sampleData, rule]);
+  }, [sampleData, rule, importHasMappings]);
 
   return null;
 }
