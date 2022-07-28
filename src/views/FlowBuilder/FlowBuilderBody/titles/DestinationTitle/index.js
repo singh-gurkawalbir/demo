@@ -1,14 +1,16 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
-import { useDispatch } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import Title from '../Title';
 import BranchMenuPopper from './BranchMenuPopper';
 import { FB_SOURCE_COLUMN_WIDTH } from '../../../../../constants';
 import { useSelectorMemo } from '../../../../../hooks';
 import { selectors } from '../../../../../reducers';
 import { useFlowContext } from '../../Context';
-import actions from '../../../../../actions';
+import { getAllFlowBranches } from '../../lib';
+import { generateNewId } from '../../../../../utils/resource';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -19,27 +21,36 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const DestinationTitle = () => {
-  const { flowId } = useFlowContext();
+  const { flowId, flow, elements } = useFlowContext();
+  const match = useRouteMatch();
+  const history = useHistory();
   const flowOriginal =
     useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)
       ?.merged || {};
 
   // we dont care about the y axis since we always want 100% y axis coverage,
   // regardless of pan or zoom settings.
-  const dispatch = useDispatch();
   const [x, , scale] = useStoreState(s => s.transform);
   const columnWidth = Math.max(0, FB_SOURCE_COLUMN_WIDTH * scale + x);
   const xOffset = columnWidth;
   const classes = useStyles({ xOffset, columnWidth });
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const isLinearFlow = !flowOriginal.routers?.length;
+  const branches = getAllFlowBranches(flow, elements);
+  const isLinearFlow = !flowOriginal.routers?.length || branches.length === 1;
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
 
   const handleOpenMenu = event => {
     if (isLinearFlow) {
-      dispatch(actions.flow.addNewPPStep(flowId));
+      const newTempProcessorId = generateNewId();
+      const addPPUrl = buildDrawerUrl({
+        path: drawerPaths.RESOURCE.ADD,
+        baseUrl: match.url,
+        params: { resourceType: 'pageProcessor', id: newTempProcessorId },
+      });
+
+      history.push(addPPUrl);
     } else {
       event && setAnchorEl(event.currentTarget);
     }

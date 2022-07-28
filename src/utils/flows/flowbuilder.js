@@ -3,10 +3,9 @@
 import { cloneDeep, uniq, uniqBy } from 'lodash';
 import jsonPatch from 'fast-json-patch';
 import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../../constants';
-import { generateId } from '../string';
+import { shortId } from '../string';
 import { setObjectValue } from '../json';
 
-export const shortId = () => generateId(6);
 export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
 
 export const generateEmptyRouter = isVirtual => isVirtual ? {
@@ -223,7 +222,7 @@ export const initializeFlowForReactFlow = flowDoc => {
     flow.pageProcessors = [{setupInProgress: true}];
   }
   flow.pageGenerators.forEach(pg => {
-    pg.id = pg._exportId || `none-${shortId()}`;
+    pg.id = pg._exportId || `new-${shortId()}`;
   });
   if (flow.pageProcessors?.length && !flow.routers?.length) {
     flow.routers = [{
@@ -237,7 +236,7 @@ export const initializeFlowForReactFlow = flowDoc => {
       const {pageProcessors = []} = branch;
 
       pageProcessors.forEach(pp => {
-        pp.id = pp._importId || pp._exportId || `none-${shortId()}`;
+        pp.id = pp._importId || pp._exportId || `new-${shortId()}`;
       });
     });
   });

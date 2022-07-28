@@ -568,7 +568,7 @@ describe('resourceForm sagas', () => {
     });
   });
 
-  describe('getFlowUpdatePatchesForNewPGorPP saga', () => {
+  describe.skip('getFlowUpdatePatchesForNewPGorPP saga', () => {
     test('should return empty array if resource type is not exports or imports or flow Id is empty', async () => {
       const invalidType = await expectSaga(getFlowUpdatePatchesForNewPGorPP, 'pageGenerators', '1', '2')
         .returns([])

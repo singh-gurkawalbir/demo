@@ -14,7 +14,8 @@ export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articl
 export const SORT_GROUP_CONTENT_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
 export const MFA_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers`;
 export const REVISIONS_GUIDE_URL = 'https://docs.celigo.com/hc/en-us/sections/5918596617883-Manage-integration-revisions';
-
+// Intentaionally skipping _ and - characters as we use them as delmiters in some urls. Do not add those characters
+export const URL_SAFE_CHARACTERS = '0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
 export const AMPERSAND_ROUTES = [
   '/flows/create',
   '/orchestrations/create',
