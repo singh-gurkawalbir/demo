@@ -10,6 +10,7 @@ import { useFlowContext } from '../../Context';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import messageStore from '../../../../../utils/messageStore';
+import { GRAPH_ELEMENTS_TYPE } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -52,34 +53,16 @@ const useStyles = makeStyles(theme => ({
 
 export default function TerminalNode({ id, data = {} }) {
   const classes = useStyles();
-  const { dragNodeId, flowId } = useFlowContext();
+  const { dragNodeId, flowId, elements, elementsMap } = useFlowContext();
   const dispatch = useDispatch();
   const isFlowSaveInProgress = useSelector(state =>
     selectors.isFlowSaveInProgress(state, flowId)
   );
   const isDroppable = !isFlowSaveInProgress && dragNodeId && dragNodeId !== id;
   const isBeingDragged = dragNodeId && dragNodeId === id;
-
-  // TODO: @Sravan, set this variable to falsey if you do not want the branch name to show up...
-  // which, i think, is any time the branch has at least one PP. so only if it is empty...
-  // Note that since this branch name text is not known to dagre, it will not path find around it.
-  // The implication is that possibly some graph edges or nodes could overlap... we could overcome
-  // this by making the branch name appear on hover and position overtop (high z-index) the other
-  // elements, but I suspect in most cases it will be fine, and we want the branch name to be visible
-  // always...  If you fin d scenarios where there is an overlap, and these scenarios are very likely,
-  // i'll have to refactor the node itself to be large enough to hold this new branch name text prior to
-  // sending the node sizes to dagre... but this would be a much more challenging task, and could have
-  // other layout implications!
-  // FYI, the CSS trick here is the 'fixed' position which ignores its DOM node's size when rendering the
-  // existing icon. Then a bottom offset of 25px, and a width of 200px to set the position/bounds of the
-  // text relative to the icon. since the offset is from the bottom, single line or double line names are
-  // offset correctly from the top of the icon.
-  // Also note that the storybook branching stories are broken again. I fixed them locally by adding some
-  // optional chaining, but i did not include this in the PR to keep it clean... please periodically check
-  // the stories, as any UX developer will likely work in storybook (like me). It is WAY faster for me to
-  // develop there...
-  const branchName =
-    data.branchName || 'This is a sample branch name that is long and wraps';
+  const edge = elements.find(el => el.target === id);
+  const isEmptyBranch = edge && elementsMap[edge.source]?.type === GRAPH_ELEMENTS_TYPE.ROUTER;
+  const branchName = data.name || '';
   const handleMouseOut = useCallback(() => {
     dispatch(actions.flow.mergeTargetClear(flowId));
   }, [dispatch, flowId]);
@@ -107,7 +90,7 @@ export default function TerminalNode({ id, data = {} }) {
           />
         ) : (
           <>
-            {branchName && (
+            {isEmptyBranch && branchName && (
               <Typography variant="overline" className={classes.branchName}>
                 {branchName}
               </Typography>
