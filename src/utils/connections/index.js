@@ -228,6 +228,7 @@ export const KBDocumentation = {
   as2: 'https://docs.celigo.com/hc/en-us/articles/360029551372-Set-up-an-AS2-connection',
   mongodb: 'https://docs.celigo.com/hc/en-us/articles/360039632032-Set-up-a-connection-to-MongoDB',
   mysql: 'https://docs.celigo.com/hc/en-us/articles/360038611852-Set-up-a-connection-to-MySQL',
+  mssql: 'https://docs.celigo.com/hc/en-us/articles/360039003951-Set-up-a-connection-to-Microsoft-SQL',
   oracle: 'https://docs.celigo.com/hc/en-us/articles/360050360312-Set-up-a-connection-to-Oracle-DB-SQL-',
   postgresql: 'https://docs.celigo.com/hc/en-us/articles/360038997991-Set-up-a-connection-to-PostgreSQL',
   snowflake: 'https://docs.celigo.com/hc/en-us/articles/360048048792-Set-up-a-connection-to-Snowflake',
