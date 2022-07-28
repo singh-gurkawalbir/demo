@@ -86,6 +86,11 @@ const useStyles = makeStyles(theme => ({
   focused: {
     backgroundColor: `${theme.palette.common.white} !important`,
   },
+  headerContainer: {
+    display: 'flex',
+    backgroundColor: 'rgba(236, 236, 236, 0.5)',
+    padding: theme.spacing(1, 0, 0, 2),
+  },
   infoMsgContainer: {
     display: 'flex',
     padding: theme.spacing(0, 1, 2, 4),
@@ -198,6 +203,9 @@ export default function BranchItem({
 
           {expandable && (
             <AccordionDetails className={classes.accordionDetails}>
+              <div className={classes.headerContainer}>
+                <Typography variant="subtitle2">Record flow conditions:</Typography>
+              </div>
               <BranchFilter editorId={editorId} position={position} />
               {infoMessage && (
                 <div className={classes.infoMsgContainer}>
