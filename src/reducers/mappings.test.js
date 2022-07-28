@@ -912,6 +912,96 @@ describe('Mappings region selector testcases', () => {
     });
   });
 
+  describe('selectors.resourceHasMappings test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.resourceHasMappings()).toEqual(false);
+      expect(selectors.resourceHasMappings(null, null)).toEqual(false);
+    });
+    test('should return false if neither v1 nor v2 mappings exist', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              name: 'Test import',
+              mapping: {},
+              mappings: [],
+            }],
+          },
+        },
+      };
+
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(false);
+    });
+    test('should return true if both v1 and v2 mappings exist', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              name: 'Test import',
+              mapping: {
+                fields: [{
+                  generate: 'a',
+                  extract: 'a',
+                }],
+              },
+              mappings: [{
+                generate: 'a',
+                extract: 'a',
+                dataType: 'string',
+              }],
+            }],
+          },
+        },
+      };
+
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(true);
+    });
+    test('should return true if only v1 mappings exist', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              name: 'Test import',
+              mapping: {
+                fields: [{
+                  generate: 'a',
+                  extract: 'a',
+                }],
+              },
+            }],
+          },
+        },
+      };
+
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(true);
+    });
+    test('should return true if only v2 mappings exist', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              name: 'Test import',
+              mapping: {
+                fields: [],
+              },
+              mappings: [{
+                generate: 'a',
+                extract: 'a',
+                dataType: 'string',
+              }],
+            }],
+          },
+        },
+      };
+
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(true);
+    });
+  });
+
   describe('selectors.mappingEditorNotification test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.mappingEditorNotification()).toEqual({});
