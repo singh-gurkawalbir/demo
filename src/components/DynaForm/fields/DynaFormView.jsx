@@ -50,12 +50,11 @@ export default function FormView(props) {
 
   const { assistant: assistantName, http } = connection;
 
+  const isGraphql = http?.formType === 'graph_ql';
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
   const showHTTPFrameworkImport = resourceType === 'imports' && connectorMetaData?.import?.versions?.[0]?.resources?.length;
   const showHTTPFrameworkExport = resourceType === 'exports' && connectorMetaData?.export?.versions?.[0]?.resources?.length;
-  const isHttpFramework = showHTTPFrameworkImport || showHTTPFrameworkExport;
-
-  const isGraphql = http?.formType === 'graph_ql';
+  const isHttpFramework = isGraphql ? true : showHTTPFrameworkImport || showHTTPFrameworkExport;
 
   const options = useMemo(() => {
     const matchingApplication = getApp(null, isGraphql ? 'graph_ql' : assistantName, _httpConnectorId);
@@ -109,7 +108,7 @@ export default function FormView(props) {
     staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
 
     // if assistant is selected back again assign it to the export to the export obj as well
-    if (_httpConnectorId) {
+    if (_httpConnectorId && !isGraphql) {
       staggedRes['/isHttpConnector'] = true;
       newFinalValues['/isHttpConnector'] = true;
       if (selectedApplication !== `${isParent}`) {
