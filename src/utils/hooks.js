@@ -21,8 +21,7 @@ export const hooksList = [
   'preSavePage' /* Used for Exports */,
   ...importHooksList,
   'contentBasedFlowRouter' /* Used in AS2 Connection */,
-  ...externalScripts /* Used in transformation and filters Scripts */,
-  'router',
+  ...externalScripts, /* Used in transformation and filters Scripts */
 ];
 
 export const getImportSuiteScriptHooksList = isNSApiVersion2Selected => {
