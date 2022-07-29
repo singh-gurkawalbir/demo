@@ -263,7 +263,12 @@ export default function BranchFilter({editorId, position}) {
         );
 
         if (rulesState[ruleId].data && rulesState[ruleId].data.rhs) {
-          field.val(rulesState[ruleId].data.rhs.field).trigger('change');
+          field.val(rulesState[ruleId].data.rhs.field);
+          setTimeout(() => {
+            rule.$el
+              .find('.rule-value-container  select[name=field]')
+              .trigger('change');
+          });
         }
 
         field.off('change').on('change', () => handleFilterRulesChange());
@@ -765,7 +770,6 @@ export default function BranchFilter({editorId, position}) {
       for (const ruleId in rulesState) {
         if (Object.hasOwnProperty.call(rulesState, ruleId) && rulesState[ruleId]?.rule) {
           updateUIForLHSRule({rule: rulesState[ruleId].rule, name: `${rulesState[ruleId].rule.id}_value_0`});
-          updateUIForRHSRule({rule: rulesState[ruleId].rule, name: `${rulesState[ruleId].rule.id}_value_0`});
         }
       }
 

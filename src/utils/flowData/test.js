@@ -318,21 +318,52 @@ describe('getFlowUpdatesFromPatch util', () => {
 
     expect(getFlowUpdatesFromPatch(flowPatchSet)).toEqual({});
   });
-  test('should return sequence as true if the patchSet has /pageGenerators or /pageProcessors as the path', () => {
-    const flowPatchSet = [{
+  test('should return sequence as true if the patchSet is related to modification of PG/PP of new flow format', () => {
+    const addPG = [{
       op: 'replace',
-      path: '/pageProcessors',
-      value: [{
-        type: 'import',
-        _importId: 'import123',
-      },
-      {
-        type: 'export',
-        _exportId: 'export456',
-      }],
+      path: '/pageGenerators/0',
+      scope: 'value',
+      value: { _exportId: '1234'},
+    }];
+    const deletePG = [{
+      op: 'remove',
+      path: '/pageGenerators/0/id',
+      scope: 'value',
+    }, {
+      op: 'remove',
+      path: '/pageGenerators/0/_exportId',
+      scope: 'value',
+    }, {
+      op: 'add',
+      path: '/pageGenerators/0/setupInProgress',
+      scope: 'value',
+      value: true,
+    }];
+    const addPP = [{
+      op: 'replace',
+      path: '/routers/0/branches/0/pageProcessors/0',
+      scope: 'value',
+      value: {type: 'import', _importId: '5de8a7a6bc312979ba242e47'},
+    }];
+    const deletePP = [{
+      op: 'remove',
+      path: '/routers/0/branches/0/pageProcessors/0',
+      scope: 'value',
     }];
 
-    expect(getFlowUpdatesFromPatch(flowPatchSet)).toEqual({
+    expect(getFlowUpdatesFromPatch(addPG)).toEqual({
+      responseMapping: false,
+      sequence: true,
+    });
+    expect(getFlowUpdatesFromPatch(deletePG)).toEqual({
+      responseMapping: false,
+      sequence: true,
+    });
+    expect(getFlowUpdatesFromPatch(addPP)).toEqual({
+      responseMapping: false,
+      sequence: true,
+    });
+    expect(getFlowUpdatesFromPatch(deletePP)).toEqual({
       responseMapping: false,
       sequence: true,
     });
@@ -352,6 +383,27 @@ describe('getFlowUpdatesFromPatch util', () => {
     expect(getFlowUpdatesFromPatch(flowPatchSet)).toEqual({
       responseMapping: {
         resourceIndex: 2,
+      },
+      sequence: false,
+    });
+  });
+  test('should return responseMapping with resourceIndex if the patchSet has responseMapping for new flow format', () => {
+    const flowPatchSet = [
+      {
+        op: 'replace',
+        path: '/routers/0/branches/1/pageProcessors/2/responseMapping',
+        value: {
+          fields: [{ extract: 'id', generate: 'userID'}],
+          lists: [],
+        },
+      },
+    ];
+
+    expect(getFlowUpdatesFromPatch(flowPatchSet)).toEqual({
+      responseMapping: {
+        resourceIndex: 2,
+        branchIndex: 1,
+        routerIndex: 0,
       },
       sequence: false,
     });

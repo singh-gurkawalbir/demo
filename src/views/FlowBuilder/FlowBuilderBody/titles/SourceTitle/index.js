@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
 import Title from '../Title';
 import { FB_SOURCE_COLUMN_WIDTH } from '../../../../../constants';
+import { useHandleAddGenerator } from '../../../hooks';
 
 const minTitleWidth = 140;
 
@@ -14,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SourceTitle = ({ onClick }) => {
+const SourceTitle = () => {
   // we don't care about the y axis since we always want 100% y axis coverage,
   // regardless of pan or zoom settings.
   const [x, , scale] = useStoreState(s => s.transform);
@@ -31,9 +32,10 @@ const SourceTitle = ({ onClick }) => {
   }
 
   const classes = useStyles({ xOffset, titleWidth });
+  const handleAddGenerator = useHandleAddGenerator();
 
   return (
-    <Title className={classes.sourceTitle} onClick={onClick} type="generator">
+    <Title className={classes.sourceTitle} onClick={handleAddGenerator} type="generator">
       SOURCES
     </Title>
   );
