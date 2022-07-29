@@ -795,17 +795,17 @@ describe('addPageProcessors util function', () => {
       addPageProcessor(flow);
       expect(flow).toEqual();
     });
-    test('should add two pageProcessors when flow is empty', () => {
+    test('should add one pageProcessor when flow is empty', () => {
       const flow = {};
 
       addPageProcessor(flow);
-      expect(flow).toEqual({pageProcessors: [{setupInProgress: true}, {setupInProgress: true}]});
+      expect(flow).toEqual({pageProcessors: [{setupInProgress: true}]});
     });
-    test('should add two pageProcessors when pageProcessors are empty', () => {
+    test('should add one pageProcessor when pageProcessors are empty', () => {
       const flow = {pageProcessors: []};
 
       addPageProcessor(flow);
-      expect(flow).toEqual({pageProcessors: [{setupInProgress: true}, {setupInProgress: true}]});
+      expect(flow).toEqual({pageProcessors: [{setupInProgress: true}]});
     });
     test('should add one pageProcessor when already a PP present', () => {
       const flow = {pageProcessors: [{setupInProgress: true}]};

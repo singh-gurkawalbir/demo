@@ -606,7 +606,7 @@ describe('resourceForm sagas', () => {
       };
       const patches = [{ op: 'add',
         path: '/pageGenerators',
-        value: [{ setupInProgress: true }, { _exportId: 'res-123' }] }];
+        value: [{ _exportId: 'res-123' }] }];
 
       return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'new-123.0', 'flow-123')
         .provide([
@@ -676,8 +676,7 @@ describe('resourceForm sagas', () => {
       const patches = [{ op: 'add',
         path: '/pageProcessors',
         value:
-       [{ setupInProgress: true },
-         { type: 'import', _importId: 'res-123' }] }];
+       [{ type: 'import', _importId: 'res-123' }] }];
 
       return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'imports', 'res-123', 'flow-123')
         .provide([

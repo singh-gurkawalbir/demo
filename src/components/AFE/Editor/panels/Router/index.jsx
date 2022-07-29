@@ -54,7 +54,7 @@ export default function RouterPanel({ editorId }) {
   const dispatch = useDispatch();
   const branchesLength = useSelector(state => selectors.editorRule(state, editorId).branches?.length);
   const branches = useMemo(() => Array(branchesLength).fill().map(() => ({id: shortId()})), [branchesLength]);
-  const sampleDataStatus = useSelector(state => selectors.editor(state, editorId).sampleDataStatus);
+  const isLoading = useSelector(state => selectors.editor(state, editorId).sampleDataStatus === 'requested');
   const maxBranchesLimitReached = branches.length >= 25;
   const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
   const { flowId } = useSelector(state => selectors.editor(state, editorId), shallowEqual);
@@ -126,7 +126,7 @@ export default function RouterPanel({ editorId }) {
 
       <Divider orientation="horizontal" className={classes.divider} />
 
-      {sampleDataStatus === 'requested' ? (
+      {isLoading ? (
         <Spinner centerAll />
       ) : (
         <SortableContainer
@@ -148,7 +148,7 @@ export default function RouterPanel({ editorId }) {
           ))}
         </SortableContainer>
       )}
-      {!isViewMode && (
+      {!isViewMode && !isLoading && (
       <Tooltip key="key" title={maxBranchesLimitReached ? messageStore('MAX_BRANCHES_LIMIT_REACHED') : ''} placement="bottom">
         <span>
           <TextButton disabled={maxBranchesLimitReached} onClick={handleAddBranch}>

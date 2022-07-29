@@ -2313,9 +2313,8 @@ describe('Flow sample data utility sagas', () => {
               resourceId: _pageProcessorId,
               resourceType: 'imports',
             }), newPpDoc],
-            [call(apiCallWithRetry, apiOptions), previewData],
+            [matchers.call.fn(apiCallWithRetry, apiOptions), previewData],
           ])
-          .call(apiCallWithRetry, apiOptions)
           .returns(previewData)
           .run();
       });
