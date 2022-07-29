@@ -103,7 +103,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
                 const {fieldsUserMustSet} = httpEndpoint.supportedBy;
                 const supportedExportTypes = fieldsUserMustSet?.find(f => f.path === 'type')?.values;
 
-                const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.fieldType || 'textarea' }));
+                const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.fieldType || 'textarea', defaultValue: qp.defaultValue, readOnly: qp.readOnly }));
                 const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.name, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.fieldType || 'input' }));
                 let doesNotSupportPaging = false;
 
@@ -344,8 +344,6 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           ];
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], type: 'select', options};
-        } else {
-          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
         }
       } else if (key === 'http.auth.oauth.scope') {
         const field = preConfiguredField || fieldUserMustSet;
@@ -440,7 +438,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         id: 'http.unencrypted.version',
         fieldId: 'http.unencrypted.version',
         type: 'select',
-        required: !(versions && versions.length <= 1),
+        required: (versions && versions.length <= 1),
         options: versionOptions,
         defaultValue: isNewId(resource._id) ? versions?.[0] : resource?.http?.unencrypted?.version,
       },
