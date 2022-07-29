@@ -54,7 +54,7 @@ export default function FormView(props) {
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
   const showHTTPFrameworkImport = resourceType === 'imports' && connectorMetaData?.import?.versions?.[0]?.resources?.length;
   const showHTTPFrameworkExport = resourceType === 'exports' && connectorMetaData?.export?.versions?.[0]?.resources?.length;
-  const isHttpFramework = isGraphql ? true : showHTTPFrameworkImport || showHTTPFrameworkExport;
+  const isHttpFramework = showHTTPFrameworkImport || showHTTPFrameworkExport;
 
   const options = useMemo(() => {
     const matchingApplication = getApp(null, isGraphql ? 'graph_ql' : assistantName, _httpConnectorId);
@@ -171,7 +171,7 @@ export default function FormView(props) {
   const isFlowBuilderAssistant = flowId && (isGraphql ||
     (assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection) && !isMicrosoftBusinessCentralOdataConnection(connection) && !isAcumaticaEcommerceImport && !isLoopReturnsv2import && !isEbayFinanceImport));
 
-  if (_httpConnectorId && !isHttpFramework) {
+  if (_httpConnectorId && !isHttpFramework && !isGraphql) {
     return null;
   }
 
