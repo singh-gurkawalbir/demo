@@ -68,8 +68,6 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath, ppData) => {
   if (!flow) return;
   const pageProcessor = ppData || {setupInProgress: true};
 
-  console.log('insertAtIndex', insertAtIndex);
-  console.log('branchPath', branchPath);
   if (flow.routers?.length) {
     const [, routerIndex, branchIndex] = BranchPathRegex.exec(branchPath);
 
