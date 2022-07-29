@@ -189,7 +189,6 @@ selectors.platformLicense = (state, accountId) => {
       ioLicense.currentUsage.milliseconds / 1000 / 60 / 60
     );
   } else {
-    ioLicense.hasSSO = ioLicense.tier === 'free' ? true : !!ioLicense.sso;
     ioLicense.hasSandbox =
     ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0;
 
@@ -208,15 +207,18 @@ selectors.platformLicense = (state, accountId) => {
 
     if (
       ioLicense.trialEndDate &&
-    (!ioLicense.expires || moment(ioLicense.trialEndDate) > moment())
+      (!ioLicense.expires || moment(ioLicense.trialEndDate) > moment())
     ) {
       ioLicense.status =
-      moment(ioLicense.trialEndDate) > moment() ? 'IN_TRIAL' : 'TRIAL_EXPIRED';
+        moment(ioLicense.trialEndDate) > moment() ? 'IN_TRIAL' : 'TRIAL_EXPIRED';
 
       if (ioLicense.status === 'IN_TRIAL') {
         ioLicense.expiresInDays = remainingDays(ioLicense.trialEndDate);
       }
     }
+    ioLicense.hasSSO = ioLicense.tier === 'free'
+      ? !!(ioLicense.status === 'IN_TRIAL')
+      : !!(ioLicense.status === 'ACTIVE' && ioLicense.sso);
     if (ioLicense.type === 'endpoint') {
       ioLicense.totalNumberofProductionEndpoints = ioLicense?.endpoint?.production?.numEndpoints + ioLicense?.endpoint?.production?.numAddOnEndpoints;
       ioLicense.totalNumberofProductionFlows = ioLicense?.endpoint?.production?.numFlows + ioLicense?.endpoint?.production?.numAddOnFlows;
@@ -268,6 +270,12 @@ selectors.sharedAccounts = createSelector(
 
       const ioLicense = a.ownerUser.licenses.find(l => (l.type === 'integrator' || l.type === 'endpoint'));
 
+      if (!ioLicense) return;
+
+      const licenseHasSSO = ioLicense.tier === 'free'
+        ? (moment(ioLicense.trialEndDate) > moment())
+        : ((moment(ioLicense.expires) > moment()) && ioLicense.sso);
+
       shared.push({
         id: a._id,
         company: a.ownerUser.company,
@@ -275,7 +283,7 @@ selectors.sharedAccounts = createSelector(
         hasSandbox:
           ioLicense &&
           (ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0),
-        hasSSO: ioLicense?.sso,
+        hasSSO: !!licenseHasSSO,
         hasConnectorSandbox:
           a.ownerUser.licenses.filter(l => l.type === 'connector' && l.sandbox)
             .length > 0,

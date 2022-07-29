@@ -8,7 +8,7 @@ import {
   AccordionDetails,
 } from '@material-ui/core';
 import { sortableHandle } from 'react-sortable-hoc';
-import { useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
 import EditableText from '../../../../../EditableText';
 import GripperIcon from '../../../../../icons/GripperIcon';
@@ -18,6 +18,7 @@ import { selectors } from '../../../../../../reducers';
 import InfoIconButton from '../../../../../InfoIconButton';
 import InfoIcon from '../../../../../icons/InfoIcon';
 import messageStore from '../../../../../../utils/messageStore';
+import actions from '../../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   summaryContainer: {
@@ -86,6 +87,11 @@ const useStyles = makeStyles(theme => ({
   focused: {
     backgroundColor: `${theme.palette.common.white} !important`,
   },
+  headerContainer: {
+    display: 'flex',
+    backgroundColor: 'rgba(236, 236, 236, 0.5)',
+    padding: theme.spacing(1, 0, 0, 2),
+  },
   infoMsgContainer: {
     display: 'flex',
     padding: theme.spacing(0, 1, 2, 4),
@@ -105,19 +111,14 @@ const DragHandle = sortableHandle(() => (
 
 export default function BranchItem({
   expandable,
-  collapsed,
   position,
-  branchName,
-  description,
   isViewMode,
-  onNameChange,
-  onToggleExpand,
-  pageProcessors,
   editorId,
   allowDeleting,
   allowSorting,
 }) {
   const classes = useStyles(allowSorting);
+  const dispatch = useDispatch();
   const hasRules = useSelector(state => {
     const editorRule = selectors.editorRule(state, editorId);
 
@@ -128,6 +129,11 @@ export default function BranchItem({
 
     return editorRule?.routeRecordsTo;
   });
+  const {name: branchName, description, collapsed, pageProcessors} = useSelector(state => {
+    const editorRule = selectors.editorRule(state, editorId);
+
+    return editorRule.branches[position];
+  }, shallowEqual);
   let infoMessage;
 
   if (!hasRules) {
@@ -141,6 +147,14 @@ export default function BranchItem({
     }
   }
 
+  const handleNameChange = (title, position) => {
+    dispatch(actions.editor.patchRule(editorId, title, {rulePath: `branches[${position}].name`}));
+  };
+
+  const handleToggleExpand = (collapsed, position) => {
+    dispatch(actions.editor.patchRule(editorId, collapsed, {rulePath: `branches[${position}].collapsed`}));
+  };
+
   return (
     <li className={classes.listItem}>
       <Typography component="div" variant="overline" className={classes.index}>
@@ -150,7 +164,7 @@ export default function BranchItem({
       <div className={classes.accordionContainer}>
         <Accordion
           elevation={0}
-          onChange={(event, expanded) => onToggleExpand(!expanded, position)}
+          onChange={(event, expanded) => handleToggleExpand(!expanded, position)}
           expanded={!collapsed}
           square
           classes={{ expanded: classes.expanded }}
@@ -176,7 +190,7 @@ export default function BranchItem({
                   disabled={isViewMode}
                   text={branchName}
                   defaultText="Unnamed branch: Click to add name"
-                  onChange={title => onNameChange(title, position)}
+                  onChange={title => handleNameChange(title, position)}
                   inputClassName={classes.editableTextInput}
                 />
               </div>
@@ -198,6 +212,9 @@ export default function BranchItem({
 
           {expandable && (
             <AccordionDetails className={classes.accordionDetails}>
+              <div className={classes.headerContainer}>
+                <Typography variant="subtitle2">Record flow conditions:</Typography>
+              </div>
               <BranchFilter editorId={editorId} position={position} />
               {infoMessage && (
                 <div className={classes.infoMsgContainer}>

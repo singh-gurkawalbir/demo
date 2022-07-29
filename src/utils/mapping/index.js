@@ -2087,10 +2087,10 @@ export default {
   },
   getApplicationName: (resource, conn) => {
     if (!resource) { return ''; }
-    if (resource.assistant || conn?.assistant) {
+    if (resource.assistant || conn?.assistant || conn?.http?._httpConnectorId) {
       const connectors = applicationsList();
       const assistant = connectors.find(
-        connector => (connector.id === resource.assistant || connector.id === conn?.assistant)
+        connector => (connector.id === resource.assistant || connector.id === conn?.assistant || (connector?._httpConnectorId && (connector._httpConnectorId === conn?.http?._httpConnectorId)))
       );
 
       if (assistant) return assistant.name;

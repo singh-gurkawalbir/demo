@@ -122,7 +122,8 @@ export default function VirtualizedDragContainer({
       <VariableSizeList
         ref={listRef}
         itemSize={getSize}
-        height={500}
+        // innerHeight - parentContainerHeight = 262
+        height={window.innerHeight - 262}
         itemCount={itemsData.items.length}
         itemData={itemsData}
         overscanCount={3}

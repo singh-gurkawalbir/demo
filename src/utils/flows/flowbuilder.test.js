@@ -1,11 +1,11 @@
 /* global describe, test, expect */
 import { cloneDeep, keyBy } from 'lodash';
 import { GRAPH_ELEMENTS_TYPE } from '../../constants';
+import { shortId } from '../string';
 import {
   getAllRouterPaths,
   getPreceedingRoutersMap,
   deleteUnUsedRouters,
-  shortId,
   isVirtualRouter,
   generateEmptyRouter,
   addPageGenerators,
@@ -32,7 +32,7 @@ import {
 } from './flowbuilder';
 
 const anyShortId = expect.stringMatching(/^[a-zA-Z0-9-_]{6}$/);
-const anyPPId = expect.stringMatching(/^none-[a-zA-Z0-9-_]{6}$/);
+const anyPPId = expect.stringMatching(/^new-[a-zA-Z0-9-_]{6}$/);
 
 const flow1 = {
   routers: [{
@@ -296,7 +296,7 @@ const flow4 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'none-f5FFcQ',
+              id: 'new-f5FFcQ',
             },
           ],
           nextRouterId: 'HaQWro',
@@ -310,7 +310,7 @@ const flow4 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'none-LH2VLY',
+              id: 'new-LH2VLY',
             },
           ],
           nextRouterId: 'HaQWro',
@@ -332,7 +332,7 @@ const flow4 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'none-gJ6rD9',
+              id: 'new-gJ6rD9',
             },
           ],
         },
@@ -429,7 +429,7 @@ const flow5 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'none-CAqa9G',
+              id: 'new-CAqa9G',
             },
           ],
         },
@@ -452,7 +452,7 @@ const flow5 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'none-3b3Wzm',
+              id: 'new-3b3Wzm',
             },
             {
               responseMapping: {
@@ -460,7 +460,7 @@ const flow5 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'none-vRnIwF',
+              id: 'new-vRnIwF',
             },
           ],
         },
@@ -473,7 +473,7 @@ const flow5 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'none-TUvieF',
+              id: 'new-TUvieF',
             },
           ],
         },
@@ -522,7 +522,7 @@ const flow6 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'none-mlNjkm',
+              id: 'new-mlNjkm',
             },
           ],
           nextRouterId: 'Ko7qmy',
@@ -592,7 +592,7 @@ const flow6 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'none-z0jzjM',
+              id: 'new-z0jzjM',
             },
           ],
         },
@@ -613,7 +613,7 @@ const flow6 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'none-3LxDQf',
+              id: 'new-3LxDQf',
             },
           ],
         },
@@ -626,7 +626,7 @@ const flow6 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'none-vYHBhY',
+              id: 'new-vYHBhY',
             },
           ],
         },
@@ -1704,7 +1704,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         },
       },
       {
-        id: '62cd472e8a7b1e641f295c4a-none-mlNjkm',
+        id: '62cd472e8a7b1e641f295c4a-new-mlNjkm',
         source: '62cd472e8a7b1e641f295c4a',
         target: anyPPId,
         data: {
@@ -1987,7 +1987,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
       },
       {
         id: expect.any(String),
-        source: 'none-3LxDQf',
+        source: 'new-3LxDQf',
         target: anyShortId,
         data: {
           path: '/routers/2/branches/0',
@@ -1996,7 +1996,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         type: 'default',
       },
       {
-        id: 'none-3LxDQf',
+        id: 'new-3LxDQf',
         type: 'pp',
         data: {
           resource: {
@@ -2009,7 +2009,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'none-3LxDQf',
+            id: 'new-3LxDQf',
           },
           branch: {
             name: 'Branch 2.0',
@@ -2024,7 +2024,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'none-3LxDQf',
+                id: 'new-3LxDQf',
               },
             ],
           },
@@ -2036,9 +2036,9 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         },
       },
       {
-        id: 'xwELf2-none-vYHBhY',
+        id: 'xwELf2-new-vYHBhY',
         source: 'xwELf2',
-        target: 'none-vYHBhY',
+        target: 'new-vYHBhY',
         data: {
           path: '/routers/2/branches/1',
           processorIndex: 0,
@@ -2066,7 +2066,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
                 ],
               },
               setupInProgress: true,
-              id: 'none-vYHBhY',
+              id: 'new-vYHBhY',
             },
           ],
           path: '/routers/2/branches/1/pageProcessors/1',
@@ -2075,7 +2075,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
       },
       {
         id: expect.any(String),
-        source: 'none-vYHBhY',
+        source: 'new-vYHBhY',
         target: anyShortId,
         data: {
           path: '/routers/2/branches/1',
@@ -2084,7 +2084,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         type: 'default',
       },
       {
-        id: 'none-vYHBhY',
+        id: 'new-vYHBhY',
         type: 'pp',
         data: {
           resource: {
@@ -2097,7 +2097,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'none-vYHBhY',
+            id: 'new-vYHBhY',
           },
           branch: {
             name: 'Branch 2.1',
@@ -2112,7 +2112,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'none-vYHBhY',
+                id: 'new-vYHBhY',
               },
             ],
           },
@@ -2335,7 +2335,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         },
       },
       {
-        id: 'Ko7qmy-none-z0jzjM',
+        id: 'Ko7qmy-new-z0jzjM',
         source: 'Ko7qmy',
         target: anyPPId,
         data: {
@@ -2379,7 +2379,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         type: 'default',
       },
       {
-        id: 'none-z0jzjM',
+        id: 'new-z0jzjM',
         type: 'pp',
         data: {
           resource: {
@@ -2392,7 +2392,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'none-z0jzjM',
+            id: 'new-z0jzjM',
           },
           branch: {
             name: 'Branch 3.2',
@@ -2407,7 +2407,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'none-z0jzjM',
+                id: 'new-z0jzjM',
               },
             ],
           },
@@ -2419,7 +2419,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         },
       },
       {
-        id: 'none-mlNjkm',
+        id: 'new-mlNjkm',
         type: 'pp',
         data: {
           resource: {
@@ -2432,7 +2432,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'none-mlNjkm',
+            id: 'new-mlNjkm',
           },
           branch: {
             name: '',
@@ -2447,7 +2447,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'none-mlNjkm',
+                id: 'new-mlNjkm',
               },
             ],
             nextRouterId: 'Ko7qmy',

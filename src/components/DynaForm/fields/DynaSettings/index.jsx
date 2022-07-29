@@ -19,9 +19,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: '20px',
     marginBottom: '10px',
   },
-  summaryContainer: {
-    width: '100%',
-  },
   summaryLabel: {
     flexGrow: 1,
     alignSelf: 'center',
@@ -34,6 +31,10 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     borderRadius: theme.spacing(0.5),
+  },
+  accordianSummaryWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
   },
 }));
 
@@ -131,16 +132,17 @@ export default function DynaSettings(props) {
   return (
     <div className={classes.customWrapper}>
       <Accordion expanded={!isCollapsed} elevation={0}>
-        <AccordionSummary
-          data-test={label}
-          className={classes.summaryContainer}
-          onClick={handleExpandClick}
-          expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.summaryLabel}>{label}</Typography>
+        <div className={classes.accordianSummaryWrapper}>
+          <AccordionSummary
+            data-test={label}
+            onClick={handleExpandClick}
+            expandIcon={<ExpandMoreIcon />}>
+            <Typography className={classes.summaryLabel}>{label}</Typography>
+          </AccordionSummary>
           {!isCollapsed && (
           <FormBuilderButton resourceType={resourceType} resourceId={resourceId} integrationId={integrationId} />
           )}
-        </AccordionSummary>
+        </div>
         <AccordionDetails >
           {renderSettings()}
         </AccordionDetails>
