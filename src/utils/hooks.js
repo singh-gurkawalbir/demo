@@ -13,7 +13,7 @@ export const importHooksList = [
   'postAggregate',
 ];
 
-const externalScripts = ['transform', 'filter', 'handleRequest'];
+const externalScripts = ['transform', 'filter', 'handleRequest', 'router'];
 /*
  * Used for showing suggestions to select hook type in the application
  */
