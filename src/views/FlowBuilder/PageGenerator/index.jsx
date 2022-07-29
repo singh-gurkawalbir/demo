@@ -8,9 +8,9 @@ import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import {applicationsList} from '../../../constants/applications';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import {isFileAdaptor,
+import {
+  isFileAdaptor,
   getResourceSubType,
-  generateNewId,
   isRealTimeOrDistributedResource,
 } from '../../../utils/resource';
 import exportHooksAction from './actions/exportHooks';
@@ -95,8 +95,6 @@ const PageGenerator = ({
     ) || {};
 
   const handleBlockClick = useCallback(() => {
-    let newId = generateNewId();
-
     if (pending) {
       // generate newId
       const { type, assistant } = getResourceSubType(resource);
@@ -137,15 +135,14 @@ const PageGenerator = ({
 
       // for pending resource, passing the PG index in newId
       // which will be used in saga to add or replace the pending resource
-      newId = `${newId}.${pg.id}`;
-      dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
+      dispatch(actions.resource.patchStaged(pg.id, patchSet, 'value'));
     }
 
     let to = pending
       ? buildDrawerUrl({
         path: drawerPaths.RESOURCE.ADD,
         baseUrl: match.url,
-        params: { resourceType: 'pageGenerator', id: newId },
+        params: { resourceType: 'pageGenerator', id: pg.id },
       })
       : buildDrawerUrl({
         path: drawerPaths.RESOURCE.EDIT,
@@ -157,7 +154,7 @@ const PageGenerator = ({
       to = buildDrawerUrl({
         path: drawerPaths.RESOURCE.EDIT,
         baseUrl: match.url,
-        params: { resourceType: 'exports', id: newId },
+        params: { resourceType: 'exports', id: pg.id },
       });
     }
 

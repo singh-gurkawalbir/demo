@@ -604,10 +604,9 @@ describe('resourceForm sagas', () => {
         merged: {},
         master: {},
       };
-      const patches = [{ op: 'add', path: '/pageGenerators', value: [] },
-        { op: 'replace',
-          path: '/pageGenerators/0',
-          value: { _exportId: 'res-123' } }];
+      const patches = [{ op: 'add',
+        path: '/pageGenerators',
+        value: [{ setupInProgress: true }, { _exportId: 'res-123' }] }];
 
       return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'new-123.0', 'flow-123')
         .provide([
@@ -649,9 +648,10 @@ describe('resourceForm sagas', () => {
       const data = {
         merged: {pageGenerators: [{application: 'dataLoader'}]},
       };
-      const patches = [{ op: 'replace',
-        path: '/pageGenerators/0',
-        value: { _exportId: 'res-123' } }];
+      const patches = [{ op: 'remove', path: '/pageGenerators/0/application' },
+        { op: 'add',
+          path: '/pageGenerators/0/_exportId',
+          value: 'res-123' }];
 
       return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'res-123', 'flow-123')
         .provide([
@@ -673,10 +673,11 @@ describe('resourceForm sagas', () => {
       const data = {
         merged: {},
       };
-      const patches = [{ op: 'add', path: '/pageProcessors', value: [] },
-        { op: 'add',
-          path: '/pageProcessors/0',
-          value: { type: 'import', _importId: 'res-123' } }];
+      const patches = [{ op: 'add',
+        path: '/pageProcessors',
+        value:
+       [{ setupInProgress: true },
+         { type: 'import', _importId: 'res-123' }] }];
 
       return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'imports', 'res-123', 'flow-123')
         .provide([
