@@ -21,6 +21,7 @@ describe('EditableText testing', () => {
     const button2 = screen.getByText('button');
 
     userEvent.click(button2);
+    expect(screen.getByRole('textbox')).toHaveAttribute('value', 'buttonHello, World!');
   });
   test('should test with some default text', () => {
     const onchange = jest.fn();
@@ -38,6 +39,7 @@ describe('EditableText testing', () => {
     const button2 = screen.getByText('button');
 
     userEvent.click(button2);
+    expect(screen.getByRole('textbox')).toHaveAttribute('value', 'Hello, World!');
   });
   test('should test when the disable is set to true', () => {
     const onchange = jest.fn();

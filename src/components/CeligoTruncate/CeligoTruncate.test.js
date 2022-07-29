@@ -53,7 +53,7 @@ describe('Celigo truncate test', () => {
 
     expect(hover).toBeInTheDocument();
   });
-  test('should test when truncate doesn happens', async () => {
+  test('should test when truncate does not happens', async () => {
     render(
       <CeligoTruncate
         isLoggable lines={3} placement="left" ellipsis="..."

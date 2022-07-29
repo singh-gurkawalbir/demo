@@ -17,7 +17,7 @@ describe('ConflictAlertDialog testing', () => {
   afterAll(() => {
     window.location = location;
   });
-  test('should test when store is not having any vale', () => {
+  test('should test when store is not having any value', () => {
     const {utils} = renderWithProviders(<ConflictAlertDialog />);
 
     expect(utils.container).toBeEmptyDOMElement();
@@ -32,7 +32,7 @@ describe('ConflictAlertDialog testing', () => {
     expect(screen.getByText('12')).toBeInTheDocument();
   });
 
-  test('should for non string value', () => {
+  test('should test for non string value', () => {
     const {store} = renderWithProviders(<ConflictAlertDialog />);
 
     store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: 12}], 'scope'));

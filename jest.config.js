@@ -20,11 +20,6 @@ module.exports = {
     'src/reducers/**/*.{js,jsx}',
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
-    'src/components/CeligoTruncate/*.{js,jsx}',
-    'src/components/AutoScrollEditorTerminal/*.{js,jsx}',
-    'src/components/ChipInput/*.{js,jsx}',
-    'src/components/EditableText/*.{js,jsx}',
-    'src/components/AutoScrollEditorTerminal/*.{js,jsx}',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js'],
   coverageThreshold: {
