@@ -659,7 +659,7 @@ describe('flowbuilder sagas', () => {
           [select(selectors.resourceData, 'flows', flowId), {merged: {}}],
         ])
         .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-        .put(actions.resource.patchAndCommitStaged('flows', flowId, [{ op: 'add', path: '/pageProcessors', value: [{ setupInProgress: true }, { setupInProgress: true }] }], {options: {revertChangesOnFailure: true}}))
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, [{ op: 'add', path: '/pageProcessors', value: [{ setupInProgress: true }] }], {options: {revertChangesOnFailure: true}}))
         .run());
     test('should dispatch patchAndCommitStaged action if there are no changes to flow doc', () =>
       expectSaga(createNewPPStep, {flowId, path: undefined, processorIndex: undefined})
