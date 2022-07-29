@@ -176,7 +176,7 @@ export default function FormView(props) {
     return null;
   }
 
-  return isFlowBuilderAssistant ? (
+  return (isFlowBuilderAssistant || isHttpFramework) ? (
     <DynaSelect
       {...props}
       onFieldChange={onFieldChangeFn}
