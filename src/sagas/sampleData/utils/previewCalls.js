@@ -2,7 +2,7 @@ import { select, call } from 'redux-saga/effects';
 import deepClone from 'lodash/cloneDeep';
 import jsonPatch from 'fast-json-patch';
 import { selectors } from '../../../reducers';
-import { SCOPES } from '../../resourceForm';
+import { getFlowUpdatePatchesForNewPGorPP, SCOPES } from '../../resourceForm';
 import { apiCallWithRetry } from '../../index';
 import {
   fetchFlowResources,
@@ -41,7 +41,7 @@ export function* pageProcessorPreview({
     flowClone = jsonPatch.applyPatch(flowClone, jsonPatch.deepClone(prePatches)).newDocument;
   }
 
-  const flow = yield call(filterPendingResources, { flow: flowClone });
+  let flow = yield call(filterPendingResources, { flow: flowClone });
 
   const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, _pageProcessorId, 'imports');
 
@@ -70,14 +70,23 @@ export function* pageProcessorPreview({
     };
   }
 
+  let updatedPageProcessorId = _pageProcessorId;
+  const uniqId = generateId(24);
+
   // Incase of a new Lookup / Import add that doc to flow explicitly as it is not yet saved
   if (isNewId(_pageProcessorId)) {
-    const newResourceDoc =
-      resourceType === 'imports'
-        ? { type: 'import', _importId: _pageProcessorId }
-        : { type: 'export', _exportId: _pageProcessorId };
+    updatedPageProcessorId = uniqId;
+    const newPatches = yield call(getFlowUpdatePatchesForNewPGorPP,
+      resourceType,
+      updatedPageProcessorId,
+      flowId,
+      true,
+      resourceType === 'exports'
+    );
 
-    flow.pageProcessors.push(newResourceDoc);
+    if (newPatches?.length) {
+      flow = jsonPatch.applyPatch(flowClone, jsonPatch.deepClone(newPatches)).newDocument;
+    }
 
     // If page processor Doc is supplied , no need of fetching it from the state
     if (!_pageProcessorDoc) {
@@ -89,7 +98,7 @@ export function* pageProcessorPreview({
       };
     }
 
-    // in case of new imports, add mock input
+    // in case of new imports/lookups, add mock input
     if (addMockData) {
       pageProcessorMap[_pageProcessorId].options = yield call(getPreviewOptionsForResource, {
         resource: {_id: _pageProcessorId},
@@ -97,14 +106,13 @@ export function* pageProcessorPreview({
         addMockData,
       });
     }
+    pageProcessorMap[updatedPageProcessorId] = pageProcessorMap[_pageProcessorId];
+    delete pageProcessorMap[_pageProcessorId];
   }
-
-  let updatedPageProcessorId = _pageProcessorId;
 
   if (flow.routers && flow.routers.some(r => r.id === _pageProcessorId)) {
     delete flow.pageProcessors;
     const router = flow.routers.find(r => r.id === _pageProcessorId);
-    const uniqId = generateId(24);
 
     if (router?.branches?.length) {
       // make record pass through the router's first branch by removing all filters
@@ -136,7 +144,7 @@ export function* pageProcessorPreview({
   if (previewType === 'flowInput') {
     // make the _pageProcessor as import so that BE calculates flow data till that processor
     const updatePageProcessorToImport = pageProcessor => {
-      if (pageProcessor._exportId === _pageProcessorId) {
+      if (pageProcessor._exportId === updatedPageProcessorId) {
         pageProcessorMap[updatedPageProcessorId].options = {};
 
         return {
