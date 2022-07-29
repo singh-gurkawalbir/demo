@@ -486,10 +486,11 @@ export function* requestProcessorData({
   } else if (stage === 'importMapping') {
     // mapping fields are processed here against raw data
     let resourceMappings;
+    const lookups = resource?.lookups || [];
     const options = {};
 
     if (resource?.mappings?.length) { // v2 mappings, if present, are applied during import
-      resourceMappings = {mappings: cloneDeep(resource.mappings)};
+      resourceMappings = {mappings: cloneDeep(resource.mappings), lookups};
 
       const connection = yield select(selectors.resource, 'connections', resource?._connectionId);
 
@@ -499,6 +500,7 @@ export function* requestProcessorData({
         importResource: resource,
         isFieldMapping: true,
       });
+      resourceMappings = {...resourceMappings, lookups};
       // Incase of no fields/lists inside mappings , no need to make a processor call
       if (!resourceMappings.fields.length && !resourceMappings.lists.length) {
         hasNoRulesToProcess = true;

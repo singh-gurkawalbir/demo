@@ -2,30 +2,18 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import {
   makeStyles,
-  Button,
-
 } from '@material-ui/core';
 
 import { MODEL_PLURAL_TO_LABEL } from '../../../../../../utils/resource';
 import actions from '../../../../../../actions';
 import ModalDialog from '../../../../../ModalDialog';
+import FilledButton from '../../../../../Buttons/FilledButton';
 
-const useStyles = makeStyles(theme => ({
-  title: {
-    marginLeft: theme.spacing(4),
-    padding: theme.spacing(2),
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-  },
-  uploadButton: {
-    margin: theme.spacing(1),
-  },
+const useStyles = makeStyles({
   fileInput: {
     display: 'none',
   },
-}));
+});
 
 export default function UploadFileDialog(props) {
   const { resourceType, fileType, onClose, type, resourceId } = props;
@@ -41,19 +29,16 @@ export default function UploadFileDialog(props) {
   return (
     <ModalDialog show onClose={onClose} aria-labelledby="upload-file-dialog">
       <div>
-        Upload {MODEL_PLURAL_TO_LABEL[resourceType]} {type} File
+        Upload {MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()} {type.toLowerCase()} file
       </div>
 
       <div>
         <label htmlFor="fileUpload">
-          <Button
+          <FilledButton
             data-test="selectFile"
-            variant="outlined"
-            color="secondary"
-            component="span"
-            className={classes.uploadButton}>
-            Select {MODEL_PLURAL_TO_LABEL[resourceType]} {type} File
-          </Button>
+            component="span">
+            Select {MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()} {type.toLowerCase()} file
+          </FilledButton>
           <input
             data-test="uploadFile"
             id="fileUpload"

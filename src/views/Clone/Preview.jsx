@@ -2,8 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty } from 'lodash';
-import { Grid, Typography } from '@material-ui/core';
-import clsx from 'clsx';
+import { Typography } from '@material-ui/core'; import clsx from 'clsx';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import DynaForm from '../../components/DynaForm';
@@ -24,50 +23,11 @@ import useConfirmDialog from '../../components/ConfirmDialog';
 import { hashCode } from '../../utils/string';
 import { emptyObject, HOME_PAGE_PATH, UNASSIGNED_SECTION_ID } from '../../constants';
 import messageStore from '../../utils/messageStore';
+import PageContent from '../../components/PageContent';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    marginLeft: theme.spacing(1),
-  },
-  templateBody: {
-    padding: '15px',
-  },
-  appDetails: {
-    paddingTop: '25px',
-  },
-  marketplaceContainer: {
-    maxWidth: '90vw',
-    padding: '0 15px',
-  },
-  appDetailsHeader: {
-    borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
-    marginBottom: '5px',
-  },
-  container: {
-    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
-  },
-  paper: {
-    padding: theme.spacing(1, 2),
-    background: theme.palette.background.default,
-  },
-  templateBoxHead: {
-    padding: '10px 0',
-    borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
-  },
-  installButton: {
-    paddingTop: '20px',
-  },
-  description: {
-    paddingBottom: '20px',
-  },
-  nameField: {
-    marginBottom: '10px',
-  },
   componentPadding: {
-    padding: theme.spacing(3, 3, 12, 3),
-  },
-  componentsTable: {
-    paddingTop: '20px',
+    padding: theme.spacing(1, 1, 8, 1),
   },
   flowGroupDescription: {
     marginTop: theme.spacing(2),
@@ -505,22 +465,20 @@ export default function ClonePreview(props) {
   return (
     <LoadResources resources="flows,exports,imports,integrations" required>
       <CeligoPageBar title={`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`} infoText={messageStore('CLONE_DESCRIPTION')} />
-      <>
-        <Grid container>
-          <Grid className={classes.componentPadding} item xs={12}>
-            <DynaForm
-              formKey={formKey} />
-            <DynaSubmit
-              formKey={formKey}
-              ignoreFormTouchedCheck
-              disabled={cloneRequested}
-              data-test="clone"
-              onClick={clone}>
-              {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`}
-            </DynaSubmit>
-          </Grid>
-        </Grid>
-      </>
+      <PageContent>
+        <div className={classes.componentPadding}>
+          <DynaForm
+            formKey={formKey} />
+          <DynaSubmit
+            formKey={formKey}
+            ignoreFormTouchedCheck
+            disabled={cloneRequested}
+            data-test="clone"
+            onClick={clone}>
+            {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`}
+          </DynaSubmit>
+        </div>
+      </PageContent>
     </LoadResources>
   );
 }
