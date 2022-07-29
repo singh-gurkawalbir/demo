@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+/* global describe, test, expect */
 import reducer, {selectors} from '.';
 import actions from '../../../actions';
 
@@ -57,11 +57,6 @@ const state1 = {
   },
 };
 
-jest.mock('../../../utils/string', () => ({
-  ...jest.requireActual('../../../utils/string'),
-  generateId: () => 'random-123',
-}));
-
 describe('Reducers test cases', () => {
   describe('INIT_FLOW_GRAPH action', () => {
     test('should return correct state if flow is absent', () => {
@@ -72,267 +67,6 @@ describe('Reducers test cases', () => {
           elements: undefined,
           elementsMap: {},
           flow: undefined,
-          isViewMode: undefined,
-        },
-      });
-    });
-    test('should return correct state if flow is present', () => {
-      const flow = {
-        _id: '6109534ef467ec6f4701befb',
-        lastModified: '2022-03-15T12:56:32.108Z',
-        name: 'New flow',
-        disabled: true,
-        skipRetries: false,
-        pageGenerators: [
-          {
-            _exportId: '60e449019e60c7045008ce53',
-            id: '60e449019e60c7045008ce53',
-          },
-        ],
-        createdAt: '2021-08-03T14:31:42.389Z',
-        autoResolveMatchingTraceKeys: true,
-        routers: [
-          {
-            id: '8CtoMr',
-            branches: [
-              {
-                name: 'Branch 1.0',
-                pageProcessors: [
-                  {
-                    responseMapping: {
-                      fields: [],
-                      lists: [],
-                    },
-                    type: 'import',
-                    _importId: '61263a5c39645f253c09a32d',
-                    id: '61263a5c39645f253c09a32d',
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      };
-      const state = reducer({}, actions.flow.initializeFlowGraph('6109534ef467ec6f4701befb', flow));
-
-      return expect(state).toEqual({
-        '6109534ef467ec6f4701befb': {
-          elements: [
-            {
-              id: '60e449019e60c7045008ce53',
-              type: 'pg',
-              data: {
-                _exportId: '60e449019e60c7045008ce53',
-                id: '60e449019e60c7045008ce53',
-                path: '/pageGenerators/0',
-                hideDelete: undefined,
-              },
-            },
-            {
-              id: '60e449019e60c7045008ce53-61263a5c39645f253c09a32d',
-              source: '60e449019e60c7045008ce53',
-              target: '61263a5c39645f253c09a32d',
-              data: {
-                path: '/routers/0/branches/0',
-                processorCount: undefined,
-                processorIndex: 0,
-              },
-              hidden: undefined,
-              type: 'default',
-            },
-            {
-              id: 'random-123',
-              type: 'terminal',
-              draggable: false,
-              data: {
-                name: 'Branch 1.0',
-                pageProcessors: [
-                  {
-                    responseMapping: {
-                      fields: [],
-                      lists: [],
-                    },
-                    type: 'import',
-                    _importId: '61263a5c39645f253c09a32d',
-                    id: '61263a5c39645f253c09a32d',
-                  },
-                ],
-                path: '/routers/0/branches/0/pageProcessors/1',
-              },
-            },
-            {
-              id: '61263a5c39645f253c09a32d-random-123',
-              source: '61263a5c39645f253c09a32d',
-              target: 'random-123',
-              data: {
-                path: '/routers/0/branches/0',
-                processorCount: undefined,
-                processorIndex: 1,
-              },
-              hidden: undefined,
-              type: 'default',
-            },
-            {
-              id: '61263a5c39645f253c09a32d',
-              type: 'pp',
-              data: {
-                resource: {
-                  responseMapping: {
-                    fields: [],
-                    lists: [],
-                  },
-                  type: 'import',
-                  _importId: '61263a5c39645f253c09a32d',
-                  id: '61263a5c39645f253c09a32d',
-                },
-                branch: {
-                  name: 'Branch 1.0',
-                  pageProcessors: [
-                    {
-                      responseMapping: {
-                        fields: [],
-                        lists: [],
-                      },
-                      type: 'import',
-                      _importId: '61263a5c39645f253c09a32d',
-                      id: '61263a5c39645f253c09a32d',
-                    },
-                  ],
-                },
-                hideDelete: false,
-                isVirtual: true,
-                isFirst: true,
-                isLast: true,
-                path: '/routers/0/branches/0/pageProcessors/0',
-              },
-            },
-          ],
-          elementsMap: {
-            '60e449019e60c7045008ce53': {
-              id: '60e449019e60c7045008ce53',
-              type: 'pg',
-              data: {
-                _exportId: '60e449019e60c7045008ce53',
-                id: '60e449019e60c7045008ce53',
-                path: '/pageGenerators/0',
-                hideDelete: undefined,
-              },
-            },
-            '60e449019e60c7045008ce53-61263a5c39645f253c09a32d': {
-              id: '60e449019e60c7045008ce53-61263a5c39645f253c09a32d',
-              source: '60e449019e60c7045008ce53',
-              target: '61263a5c39645f253c09a32d',
-              data: {
-                path: '/routers/0/branches/0',
-                processorCount: undefined,
-                processorIndex: 0,
-              },
-              hidden: undefined,
-              type: 'default',
-            },
-            'random-123': {
-              id: 'random-123',
-              type: 'terminal',
-              draggable: false,
-              data: {
-                name: 'Branch 1.0',
-                pageProcessors: [
-                  {
-                    responseMapping: {
-                      fields: [],
-                      lists: [],
-                    },
-                    type: 'import',
-                    _importId: '61263a5c39645f253c09a32d',
-                    id: '61263a5c39645f253c09a32d',
-                  },
-                ],
-                path: '/routers/0/branches/0/pageProcessors/1',
-              },
-            },
-            '61263a5c39645f253c09a32d-random-123': {
-              id: '61263a5c39645f253c09a32d-random-123',
-              source: '61263a5c39645f253c09a32d',
-              target: 'random-123',
-              data: {
-                path: '/routers/0/branches/0',
-                processorCount: undefined,
-                processorIndex: 1,
-              },
-              hidden: undefined,
-              type: 'default',
-            },
-            '61263a5c39645f253c09a32d': {
-              id: '61263a5c39645f253c09a32d',
-              type: 'pp',
-              data: {
-                resource: {
-                  responseMapping: {
-                    fields: [],
-                    lists: [],
-                  },
-                  type: 'import',
-                  _importId: '61263a5c39645f253c09a32d',
-                  id: '61263a5c39645f253c09a32d',
-                },
-                branch: {
-                  name: 'Branch 1.0',
-                  pageProcessors: [
-                    {
-                      responseMapping: {
-                        fields: [],
-                        lists: [],
-                      },
-                      type: 'import',
-                      _importId: '61263a5c39645f253c09a32d',
-                      id: '61263a5c39645f253c09a32d',
-                    },
-                  ],
-                },
-                hideDelete: false,
-                isVirtual: true,
-                isFirst: true,
-                isLast: true,
-                path: '/routers/0/branches/0/pageProcessors/0',
-              },
-            },
-          },
-          flow: {
-            _id: '6109534ef467ec6f4701befb',
-            lastModified: '2022-03-15T12:56:32.108Z',
-            name: 'New flow',
-            disabled: true,
-            skipRetries: false,
-            pageGenerators: [
-              {
-                _exportId: '60e449019e60c7045008ce53',
-                id: '60e449019e60c7045008ce53',
-              },
-            ],
-            createdAt: '2021-08-03T14:31:42.389Z',
-            autoResolveMatchingTraceKeys: true,
-            routers: [
-              {
-                id: '8CtoMr',
-                branches: [
-                  {
-                    name: 'Branch 1.0',
-                    pageProcessors: [
-                      {
-                        responseMapping: {
-                          fields: [],
-                          lists: [],
-                        },
-                        type: 'import',
-                        _importId: '61263a5c39645f253c09a32d',
-                        id: '61263a5c39645f253c09a32d',
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
           isViewMode: undefined,
         },
       });
@@ -428,6 +162,46 @@ describe('Reducers test cases', () => {
     test('should delete mergeTarget values from the flow state', () => {
       const state1 = reducer(initializedState, actions.flow.mergeTargetSet('123', 'branch', '123'));
       const state = reducer(state1, actions.flow.mergeTargetClear('123'));
+
+      return expect(state).toEqual({
+        123: {
+          elements: undefined,
+          elementsMap: {},
+          flow: undefined,
+          isViewMode: undefined,
+        },
+      });
+    });
+  });
+  describe('ADD_NEW_PP_STEP_INFO action', () => {
+    test('should add info to the flow state', () => {
+      const state1 = reducer(initializedState, actions.flow.addNewPPStepInfo('123', {branch: 'branch'}));
+
+      return expect(state1).toEqual({
+        123: {
+          elements: undefined,
+          elementsMap: {},
+          flow: undefined,
+          isViewMode: undefined,
+          info: {branch: 'branch'},
+        },
+      });
+    });
+  });
+  describe('CLEAR_PP_STEP_INFO action', () => {
+    test('should delete info from the flow state', () => {
+      const state1 = reducer(initializedState, actions.flow.addNewPPStepInfo('123', {branch: 'branch'}));
+
+      expect(state1).toEqual({
+        123: {
+          elements: undefined,
+          elementsMap: {},
+          flow: undefined,
+          isViewMode: undefined,
+          info: {branch: 'branch'},
+        },
+      });
+      const state = reducer(state1, actions.flow.clearPPStepInfo('123'));
 
       return expect(state).toEqual({
         123: {

@@ -645,7 +645,7 @@ const mergeBetweenTwoPPSteps = ({flowDoc, targetElement, sourceElement, patchSet
   ]);
 };
 
-const mergeTerminalToAnEdge = ({ flowDoc, elements, patchSet, sourceElement, targetElement }) => {
+export const mergeTerminalToAnEdge = ({ flowDoc, elements, patchSet, sourceElement, targetElement }) => {
   // Merging terminal node to an edge
 
   const edgeSource = elements[targetElement.source];

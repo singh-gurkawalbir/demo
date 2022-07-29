@@ -29,6 +29,9 @@ import {
   mergeTerminalNodes,
   mergeBetweenRouterAndPP,
   splitPPArray,
+  getNewRouterPatchSet,
+  mergeDragSourceWithTarget,
+  mergeTerminalToAnEdge,
 } from './flowbuilder';
 
 const anyShortId = expect.stringMatching(/^[a-zA-Z0-9-_]{6}$/);
@@ -2548,7 +2551,7 @@ describe('generateReactFlowGraph util function test', () => {
     }]);
   });
   test('should call generateNodesAndEdgesFromBranchedFlow if flow has routers', () => {
-    const res = generateNodesAndEdgesFromBranchedFlow(flow6);
+    const res = generateReactFlowGraph(flow6);
 
     expect(res).toEqual([
       {
@@ -2561,7 +2564,7 @@ describe('generateReactFlowGraph util function test', () => {
         },
       },
       {
-        id: '62cd472e8a7b1e641f295c4a-none-mlNjkm',
+        id: '62cd472e8a7b1e641f295c4a-new-mlNjkm',
         source: '62cd472e8a7b1e641f295c4a',
         target: anyPPId,
         data: {
@@ -2844,7 +2847,7 @@ describe('generateReactFlowGraph util function test', () => {
       },
       {
         id: expect.any(String),
-        source: 'none-3LxDQf',
+        source: 'new-3LxDQf',
         target: anyShortId,
         data: {
           path: '/routers/2/branches/0',
@@ -2853,7 +2856,7 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'default',
       },
       {
-        id: 'none-3LxDQf',
+        id: 'new-3LxDQf',
         type: 'pp',
         data: {
           resource: {
@@ -2866,7 +2869,7 @@ describe('generateReactFlowGraph util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'none-3LxDQf',
+            id: 'new-3LxDQf',
           },
           branch: {
             name: 'Branch 2.0',
@@ -2881,7 +2884,7 @@ describe('generateReactFlowGraph util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'none-3LxDQf',
+                id: 'new-3LxDQf',
               },
             ],
           },
@@ -2893,9 +2896,9 @@ describe('generateReactFlowGraph util function test', () => {
         },
       },
       {
-        id: 'xwELf2-none-vYHBhY',
+        id: 'xwELf2-new-vYHBhY',
         source: 'xwELf2',
-        target: 'none-vYHBhY',
+        target: 'new-vYHBhY',
         data: {
           path: '/routers/2/branches/1',
           processorIndex: 0,
@@ -2923,7 +2926,7 @@ describe('generateReactFlowGraph util function test', () => {
                 ],
               },
               setupInProgress: true,
-              id: 'none-vYHBhY',
+              id: 'new-vYHBhY',
             },
           ],
           path: '/routers/2/branches/1/pageProcessors/1',
@@ -2932,7 +2935,7 @@ describe('generateReactFlowGraph util function test', () => {
       },
       {
         id: expect.any(String),
-        source: 'none-vYHBhY',
+        source: 'new-vYHBhY',
         target: anyShortId,
         data: {
           path: '/routers/2/branches/1',
@@ -2941,7 +2944,7 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'default',
       },
       {
-        id: 'none-vYHBhY',
+        id: 'new-vYHBhY',
         type: 'pp',
         data: {
           resource: {
@@ -2954,7 +2957,7 @@ describe('generateReactFlowGraph util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'none-vYHBhY',
+            id: 'new-vYHBhY',
           },
           branch: {
             name: 'Branch 2.1',
@@ -2969,7 +2972,7 @@ describe('generateReactFlowGraph util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'none-vYHBhY',
+                id: 'new-vYHBhY',
               },
             ],
           },
@@ -3192,7 +3195,7 @@ describe('generateReactFlowGraph util function test', () => {
         },
       },
       {
-        id: 'Ko7qmy-none-z0jzjM',
+        id: 'Ko7qmy-new-z0jzjM',
         source: 'Ko7qmy',
         target: anyPPId,
         data: {
@@ -3236,7 +3239,7 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'default',
       },
       {
-        id: 'none-z0jzjM',
+        id: 'new-z0jzjM',
         type: 'pp',
         data: {
           resource: {
@@ -3249,7 +3252,7 @@ describe('generateReactFlowGraph util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'none-z0jzjM',
+            id: 'new-z0jzjM',
           },
           branch: {
             name: 'Branch 3.2',
@@ -3264,7 +3267,7 @@ describe('generateReactFlowGraph util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'none-z0jzjM',
+                id: 'new-z0jzjM',
               },
             ],
           },
@@ -3276,7 +3279,7 @@ describe('generateReactFlowGraph util function test', () => {
         },
       },
       {
-        id: 'none-mlNjkm',
+        id: 'new-mlNjkm',
         type: 'pp',
         data: {
           resource: {
@@ -3289,7 +3292,7 @@ describe('generateReactFlowGraph util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'none-mlNjkm',
+            id: 'new-mlNjkm',
           },
           branch: {
             name: '',
@@ -3304,7 +3307,7 @@ describe('generateReactFlowGraph util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'none-mlNjkm',
+                id: 'new-mlNjkm',
               },
             ],
             nextRouterId: 'Ko7qmy',
@@ -3408,6 +3411,2294 @@ describe('deleteUnUsedRouters function', () => {
           ],
           id: 'router2',
         }]});
+  });
+});
+describe('mergeTerminalToAnEdge util function test', () => {
+  test('should correctly update the patchSet for merging router and a pp', () => {
+    const flowDoc = {
+      _id: '62d561f648a4303c75f7dca2',
+      lastModified: '2022-07-29T13:24:52.482Z',
+      name: 'Test cases',
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      skipRetries: false,
+      pageGenerators: [
+        {
+          setupInProgress: true,
+          id: 'new-JXOwJl',
+        },
+      ],
+      createdAt: '2022-07-18T13:36:54.709Z',
+      autoResolveMatchingTraceKeys: true,
+      routers: [
+        {
+          routeRecordsUsing: 'input_filters',
+          id: '8KgdZQ',
+          routeRecordsTo: 'first_matching_branch',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-A0JQqR',
+                },
+              ],
+              nextRouterId: 'atLkWY',
+            },
+            {
+              name: 'Branch 1.1',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-ixXs8k',
+                },
+              ],
+            },
+          ],
+          script: {
+            function: 'branchRouter',
+          },
+        },
+        {
+          routeRecordsUsing: 'input_filters',
+          id: 'atLkWY',
+          routeRecordsTo: 'first_matching_branch',
+          branches: [
+            {
+              name: 'Branch 2.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-MDN2aw',
+                },
+              ],
+            },
+            {
+              name: 'Branch 2.1',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-OKMTLa',
+                },
+              ],
+            },
+          ],
+          script: {
+            function: 'branchRouter',
+          },
+        },
+      ],
+    };
+    const elements = {
+      atLkWY: {
+        id: 'atLkWY',
+        type: 'router',
+        data: {
+          path: '/routers/1',
+          router: {
+            routeRecordsUsing: 'input_filters',
+            id: 'atLkWY',
+            routeRecordsTo: 'first_matching_branch',
+            branches: [
+              {
+                name: 'Branch 2.0',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                    id: 'new-MDN2aw',
+                  },
+                ],
+              },
+              {
+                name: 'Branch 2.1',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                    id: 'new-OKMTLa',
+                  },
+                ],
+              },
+            ],
+            script: {
+              function: 'branchRouter',
+            },
+          },
+        },
+      },
+      'new-OKMTLa': {
+        id: 'new-OKMTLa',
+        type: 'pp',
+        data: {
+          resource: {
+            responseMapping: {
+              fields: [],
+              lists: [],
+            },
+            setupInProgress: true,
+            id: 'new-OKMTLa',
+          },
+          branch: {
+            name: 'Branch 2.1',
+            pageProcessors: [
+              {
+                responseMapping: {
+                  fields: [],
+                  lists: [],
+                },
+                setupInProgress: true,
+                id: 'new-OKMTLa',
+              },
+            ],
+          },
+          hideDelete: false,
+          isVirtual: false,
+          isFirst: true,
+          isLast: true,
+          path: '/routers/1/branches/1/pageProcessors/0',
+        },
+      },
+    };
+    const sourceElement = {
+      id: 'xwxO3x',
+      type: 'terminal',
+      draggable: true,
+      data: {
+        name: 'Branch 1.1',
+        pageProcessors: [
+          {
+            responseMapping: {
+              fields: [],
+              lists: [],
+            },
+            setupInProgress: true,
+            id: 'new-ixXs8k',
+          },
+        ],
+        path: '/routers/0/branches/1/pageProcessors/1',
+        draggable: true,
+      },
+    };
+    const targetElement = {
+      id: 'atLkWY-new-OKMTLa',
+      source: 'atLkWY',
+      target: 'new-OKMTLa',
+      data: {
+        path: '/routers/1/branches/1',
+        processorIndex: 0,
+        mergableTerminals: [
+          'nzICGo',
+          'xwxO3x',
+        ],
+      },
+      type: 'default',
+    };
+    const patchSet = [];
+
+    mergeTerminalToAnEdge({ flowDoc, elements, patchSet, sourceElement, targetElement });
+
+    return expect(patchSet).toEqual(
+      [{op: 'add', path: '/routers/-', value: {branches: [{nextRouterId: undefined, pageProcessors: [{id: 'new-OKMTLa', responseMapping: {fields: [], lists: []}, setupInProgress: true}]}], id: anyShortId}},
+        {op: 'replace', path: '/routers/0/branches/1/nextRouterId', value: anyShortId},
+        {op: 'replace', path: '/routers/1/branches/1/pageProcessors', value: []},
+        {op: 'replace', path: '/routers/1/branches/1/nextRouterId', value: anyShortId}]
+    );
+  });
+  test('should correctly update the patchSet for merging pp to a router', () => {
+    const flowDoc = {
+      _id: '62d561f648a4303c75f7dca2',
+      lastModified: '2022-07-29T13:28:43.280Z',
+      name: 'Test cases',
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      skipRetries: false,
+      pageGenerators: [
+        {
+          setupInProgress: true,
+          id: 'new-rMWPGe',
+        },
+      ],
+      createdAt: '2022-07-18T13:36:54.709Z',
+      autoResolveMatchingTraceKeys: true,
+      routers: [
+        {
+          routeRecordsUsing: 'input_filters',
+          id: '8KgdZQ',
+          routeRecordsTo: 'first_matching_branch',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-h2HmoD',
+                },
+              ],
+              nextRouterId: 'atLkWY',
+            },
+            {
+              name: 'Branch 1.1',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-v9O25C',
+                },
+              ],
+            },
+          ],
+          script: {
+            function: 'branchRouter',
+          },
+        },
+        {
+          routeRecordsUsing: 'input_filters',
+          id: 'atLkWY',
+          routeRecordsTo: 'first_matching_branch',
+          branches: [
+            {
+              name: 'Branch 2.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-m1zh1c',
+                },
+              ],
+            },
+            {
+              name: 'Branch 2.1',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-O872CG',
+                },
+              ],
+            },
+          ],
+          script: {
+            function: 'branchRouter',
+          },
+        },
+      ],
+    };
+    const elements = {
+      atLkWY: {
+        id: 'atLkWY',
+        type: 'router',
+        data: {
+          path: '/routers/1',
+          router: {
+            routeRecordsUsing: 'input_filters',
+            id: 'atLkWY',
+            routeRecordsTo: 'first_matching_branch',
+            branches: [
+              {
+                name: 'Branch 2.0',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                    id: 'new-m1zh1c',
+                  },
+                ],
+              },
+              {
+                name: 'Branch 2.1',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                    id: 'new-O872CG',
+                  },
+                ],
+              },
+            ],
+            script: {
+              function: 'branchRouter',
+            },
+          },
+        },
+      },
+      'new-h2HmoD': {
+        id: 'new-h2HmoD',
+        type: 'pp',
+        data: {
+          resource: {
+            responseMapping: {
+              fields: [],
+              lists: [],
+            },
+            setupInProgress: true,
+            id: 'new-h2HmoD',
+          },
+          branch: {
+            name: 'Branch 1.0',
+            pageProcessors: [
+              {
+                responseMapping: {
+                  fields: [],
+                  lists: [],
+                },
+                setupInProgress: true,
+                id: 'new-h2HmoD',
+              },
+            ],
+            nextRouterId: 'atLkWY',
+          },
+          hideDelete: false,
+          isVirtual: false,
+          isFirst: true,
+          isLast: false,
+          path: '/routers/0/branches/0/pageProcessors/0',
+        },
+      },
+    };
+    const sourceElement = {
+      id: '4KwSiv',
+      type: 'terminal',
+      draggable: true,
+      data: {
+        name: 'Branch 1.1',
+        pageProcessors: [
+          {
+            responseMapping: {
+              fields: [],
+              lists: [],
+            },
+            setupInProgress: true,
+            id: 'new-v9O25C',
+          },
+        ],
+        path: '/routers/0/branches/1/pageProcessors/1',
+        draggable: true,
+      },
+    };
+    const targetElement = {
+      id: 'new-h2HmoD-atLkWY',
+      source: 'new-h2HmoD',
+      target: 'atLkWY',
+      data: {
+        path: '/routers/0/branches/0',
+        processorCount: 0,
+        processorIndex: 1,
+        mergableTerminals: [
+          '4KwSiv',
+        ],
+      },
+      type: 'default',
+    };
+    const patchSet = [];
+
+    mergeTerminalToAnEdge({ flowDoc, elements, patchSet, sourceElement, targetElement });
+
+    return expect(patchSet).toEqual(
+      [
+        {
+          op: 'add',
+          path: '/routers/-',
+          value: {
+            id: anyShortId,
+            branches: [
+              {
+                pageProcessors: [],
+                nextRouterId: 'atLkWY',
+              },
+            ],
+          },
+        },
+        {
+          op: 'replace',
+          path: '/routers/0/branches/0/nextRouterId',
+          value: anyShortId,
+        },
+        {
+          op: 'replace',
+          path: '/routers/0/branches/1/nextRouterId',
+          value: anyShortId,
+        },
+      ]
+    );
+  });
+  test('should correctly update the patchSet for merging two pp steps', () => {
+    const flowDoc = {
+      _id: '62d561f648a4303c75f7dca2',
+      lastModified: '2022-07-29T13:32:01.746Z',
+      name: 'Test cases',
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      skipRetries: false,
+      pageGenerators: [
+        {
+          setupInProgress: true,
+          id: 'new-PdXUp9',
+        },
+      ],
+      createdAt: '2022-07-18T13:36:54.709Z',
+      autoResolveMatchingTraceKeys: true,
+      routers: [
+        {
+          routeRecordsUsing: 'input_filters',
+          id: '8KgdZQ',
+          routeRecordsTo: 'first_matching_branch',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-7nKBWx',
+                },
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-kNSxUQ',
+                },
+              ],
+            },
+            {
+              name: 'Branch 1.1',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-QIKOtT',
+                },
+              ],
+            },
+          ],
+          script: {
+            function: 'branchRouter',
+          },
+        },
+      ],
+    };
+    const elements = {
+      'new-7nKBWx': {
+        id: 'new-7nKBWx',
+        type: 'pp',
+        data: {
+          resource: {
+            responseMapping: {
+              fields: [],
+              lists: [],
+            },
+            setupInProgress: true,
+            id: 'new-7nKBWx',
+          },
+          branch: {
+            name: 'Branch 1.0',
+            pageProcessors: [
+              {
+                responseMapping: {
+                  fields: [],
+                  lists: [],
+                },
+                setupInProgress: true,
+                id: 'new-7nKBWx',
+              },
+              {
+                responseMapping: {
+                  fields: [],
+                  lists: [],
+                },
+                setupInProgress: true,
+                id: 'new-kNSxUQ',
+              },
+            ],
+          },
+          hideDelete: false,
+          isVirtual: false,
+          isFirst: true,
+          isLast: false,
+          path: '/routers/0/branches/0/pageProcessors/0',
+        },
+      },
+      'new-kNSxUQ': {
+        id: 'new-kNSxUQ',
+        type: 'pp',
+        data: {
+          resource: {
+            responseMapping: {
+              fields: [],
+              lists: [],
+            },
+            setupInProgress: true,
+            id: 'new-kNSxUQ',
+          },
+          branch: {
+            name: 'Branch 1.0',
+            pageProcessors: [
+              {
+                responseMapping: {
+                  fields: [],
+                  lists: [],
+                },
+                setupInProgress: true,
+                id: 'new-7nKBWx',
+              },
+              {
+                responseMapping: {
+                  fields: [],
+                  lists: [],
+                },
+                setupInProgress: true,
+                id: 'new-kNSxUQ',
+              },
+            ],
+          },
+          hideDelete: false,
+          isVirtual: false,
+          isFirst: false,
+          isLast: true,
+          path: '/routers/0/branches/0/pageProcessors/1',
+        },
+      },
+    };
+    const sourceElement = {
+      id: 'nXOdSo',
+      type: 'terminal',
+      draggable: true,
+      data: {
+        name: 'Branch 1.1',
+        pageProcessors: [
+          {
+            responseMapping: {
+              fields: [],
+              lists: [],
+            },
+            setupInProgress: true,
+            id: 'new-QIKOtT',
+          },
+        ],
+        path: '/routers/0/branches/1/pageProcessors/1',
+        draggable: true,
+      },
+    };
+    const targetElement = {
+      id: 'new-7nKBWx-new-kNSxUQ',
+      source: 'new-7nKBWx',
+      target: 'new-kNSxUQ',
+      data: {
+        path: '/routers/0/branches/0',
+        processorCount: 0,
+        processorIndex: 1,
+        mergableTerminals: [
+          'nXOdSo',
+        ],
+      },
+      type: 'default',
+    };
+    const patchSet = [];
+
+    mergeTerminalToAnEdge({ flowDoc, elements, patchSet, sourceElement, targetElement });
+
+    return expect(patchSet).toEqual(
+      [
+        {
+          op: 'add',
+          path: '/routers/0/branches/1/nextRouterId',
+          value: anyShortId,
+        },
+        {
+          op: 'add',
+          path: '/routers/0/branches/0/nextRouterId',
+          value: anyShortId,
+        },
+        {
+          op: 'add',
+          path: '/routers/0/branches/0/pageProcessors',
+          value: [
+            {
+              responseMapping: {
+                fields: [],
+                lists: [],
+              },
+              setupInProgress: true,
+              id: 'new-7nKBWx',
+            },
+          ],
+        },
+        {
+          op: 'add',
+          path: '/routers/-',
+          value: {
+            id: anyShortId,
+            branches: [
+              {
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                    id: 'new-kNSxUQ',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ]
+    );
+  });
+});
+describe('mergeDragSourceWithTarget util function test', () => {
+  test('should correctly update the patchSet for merging terminal nodes', () => {
+    const flowDoc = {
+      _id: '62d561f648a4303c75f7dca2',
+      lastModified: '2022-07-29T12:41:48.251Z',
+      name: 'Test cases',
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      skipRetries: false,
+      pageGenerators: [
+        {
+          _exportId: '6239e87a8e0b8b736e05bbba',
+          id: '6239e87a8e0b8b736e05bbba',
+        },
+      ],
+      createdAt: '2022-07-18T13:36:54.709Z',
+      autoResolveMatchingTraceKeys: true,
+      routers: [
+        {
+          id: 'ooeMkN',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-tBPjZV',
+                },
+              ],
+              nextRouterId: 'TXIrJG',
+            },
+          ],
+        },
+        {
+          routeRecordsUsing: 'input_filters',
+          id: 'TXIrJG',
+          routeRecordsTo: 'first_matching_branch',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-mXhYFZ',
+                },
+              ],
+            },
+            {
+              name: 'Branch 1.1',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-RcJOSM',
+                },
+              ],
+            },
+          ],
+          script: {
+            function: 'branchRouter',
+          },
+        },
+      ],
+    };
+    const elements = {
+      LrOa4J: {
+        id: 'LrOa4J',
+        type: 'terminal',
+        draggable: true,
+        data: {
+          name: 'Branch 1.0',
+          pageProcessors: [
+            {
+              responseMapping: {
+                fields: [],
+                lists: [],
+              },
+              setupInProgress: true,
+              id: 'new-mXhYFZ',
+            },
+          ],
+          path: '/routers/1/branches/0/pageProcessors/1',
+          draggable: true,
+        },
+      },
+      ZTCILp: {
+        id: 'ZTCILp',
+        type: 'terminal',
+        draggable: true,
+        data: {
+          name: 'Branch 1.1',
+          pageProcessors: [
+            {
+              responseMapping: {
+                fields: [],
+                lists: [],
+              },
+              setupInProgress: true,
+              id: 'new-RcJOSM',
+            },
+          ],
+          path: '/routers/1/branches/1/pageProcessors/1',
+          draggable: true,
+        },
+      },
+    };
+    const dragNodeId = 'ZTCILp';
+    const targetId = 'LrOa4J';
+    const patchSet = [];
+
+    mergeDragSourceWithTarget(flowDoc, elements, dragNodeId, targetId, patchSet);
+
+    expect(patchSet).toEqual(
+      [{op: 'add', path: '/routers/1/branches/1/nextRouterId', value: anyShortId},
+        {op: 'add', path: '/routers/1/branches/0/nextRouterId', value: anyShortId},
+        {op: 'add', path: '/routers/-', value: {branches: [{pageProcessors: [{setupInProgress: true}]}], id: anyShortId}}]
+    );
+  });
+  test('should correctly update the patchSet for merging a node with merged node', () => {
+    const flowDoc = {
+      _id: '62d561f648a4303c75f7dca2',
+      lastModified: '2022-07-29T12:58:17.512Z',
+      name: 'Test cases',
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      skipRetries: false,
+      pageGenerators: [
+        {
+          setupInProgress: true,
+          id: 'new-MFuyeh',
+        },
+      ],
+      createdAt: '2022-07-18T13:36:54.709Z',
+      autoResolveMatchingTraceKeys: true,
+      routers: [
+        {
+          id: 'ooeMkN',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-9sQ64n',
+                },
+              ],
+              nextRouterId: 'TXIrJG',
+            },
+          ],
+        },
+        {
+          routeRecordsUsing: 'input_filters',
+          id: 'TXIrJG',
+          routeRecordsTo: 'first_matching_branch',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-W70MSj',
+                },
+              ],
+              nextRouterId: '7JB8As',
+            },
+            {
+              name: 'Branch 1.1',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-Pq5m42',
+                },
+              ],
+              nextRouterId: '7JB8As',
+            },
+            {
+              name: 'Branch 1.2',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-KF65K9',
+                },
+              ],
+            },
+          ],
+          script: {
+            function: 'branchRouter',
+          },
+        },
+        {
+          id: '7JB8As',
+          branches: [
+            {
+              name: '',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-mcZNm6',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+    const elements = {
+      '7JB8As': {
+        id: '7JB8As',
+        type: 'merge',
+        data: {
+          path: '/routers/2',
+          router: {
+            id: '7JB8As',
+            branches: [
+              {
+                name: '',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                    id: 'new-mcZNm6',
+                  },
+                ],
+              },
+            ],
+          },
+          mergableTerminals: [
+            'Cxo5R8',
+          ],
+        },
+      },
+      Cxo5R8: {
+        id: 'Cxo5R8',
+        type: 'terminal',
+        draggable: true,
+        data: {
+          name: 'Branch 1.2',
+          pageProcessors: [
+            {
+              responseMapping: {
+                fields: [],
+                lists: [],
+              },
+              setupInProgress: true,
+              id: 'new-KF65K9',
+            },
+          ],
+          path: '/routers/1/branches/2/pageProcessors/1',
+          draggable: true,
+        },
+      },
+    };
+    const dragNodeId = 'Cxo5R8';
+    const targetId = '7JB8As';
+    const patchSet = [];
+
+    mergeDragSourceWithTarget(flowDoc, elements, dragNodeId, targetId, patchSet);
+
+    expect(patchSet).toEqual(
+      [
+        {
+          op: 'add',
+          path: '/routers/1/branches/2/nextRouterId',
+          value: '7JB8As',
+        },
+      ]
+    );
+  });
+  test('should correctly update the patchSet for merging a node with an edge', () => {
+    const flowDoc = {
+      _id: '62d561f648a4303c75f7dca2',
+      lastModified: '2022-07-29T13:01:29.295Z',
+      name: 'Test cases',
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      skipRetries: false,
+      pageGenerators: [
+        {
+          setupInProgress: true,
+          id: 'new-fPotR8',
+        },
+      ],
+      createdAt: '2022-07-18T13:36:54.709Z',
+      autoResolveMatchingTraceKeys: true,
+      routers: [
+        {
+          routeRecordsUsing: 'input_filters',
+          id: 'FGpMx6',
+          routeRecordsTo: 'first_matching_branch',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-fPmGVT',
+                },
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  type: 'import',
+                  _importId: '6294a58b2174cb02411247e5',
+                  id: '6294a58b2174cb02411247e5',
+                },
+              ],
+            },
+            {
+              name: 'Branch 1.1',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-2UJmSw',
+                },
+              ],
+            },
+          ],
+          script: {
+            function: 'branchRouter',
+          },
+        },
+      ],
+    };
+    const elements = {
+      'new-fPmGVT-6294a58b2174cb02411247e5': {
+        id: 'new-fPmGVT-6294a58b2174cb02411247e5',
+        source: 'new-fPmGVT',
+        target: '6294a58b2174cb02411247e5',
+        data: {
+          path: '/routers/0/branches/0',
+          processorCount: 0,
+          processorIndex: 1,
+          mergableTerminals: [
+            'GAb9dN',
+          ],
+        },
+        type: 'default',
+      },
+      'new-fPmGVT': {
+        id: 'new-fPmGVT',
+        type: 'pp',
+        data: {
+          resource: {
+            responseMapping: {
+              fields: [],
+              lists: [],
+            },
+            setupInProgress: true,
+            id: 'new-fPmGVT',
+          },
+          branch: {
+            name: 'Branch 1.0',
+            pageProcessors: [
+              {
+                responseMapping: {
+                  fields: [],
+                  lists: [],
+                },
+                setupInProgress: true,
+                id: 'new-fPmGVT',
+              },
+              {
+                responseMapping: {
+                  fields: [],
+                  lists: [],
+                },
+                type: 'import',
+                _importId: '6294a58b2174cb02411247e5',
+                id: '6294a58b2174cb02411247e5',
+              },
+            ],
+          },
+          hideDelete: false,
+          isVirtual: false,
+          isFirst: true,
+          isLast: false,
+          path: '/routers/0/branches/0/pageProcessors/0',
+        },
+      },
+      '6294a58b2174cb02411247e5': {
+        id: '6294a58b2174cb02411247e5',
+        type: 'pp',
+        data: {
+          resource: {
+            responseMapping: {
+              fields: [],
+              lists: [],
+            },
+            type: 'import',
+            _importId: '6294a58b2174cb02411247e5',
+            id: '6294a58b2174cb02411247e5',
+          },
+          branch: {
+            name: 'Branch 1.0',
+            pageProcessors: [
+              {
+                responseMapping: {
+                  fields: [],
+                  lists: [],
+                },
+                setupInProgress: true,
+                id: 'new-fPmGVT',
+              },
+              {
+                responseMapping: {
+                  fields: [],
+                  lists: [],
+                },
+                type: 'import',
+                _importId: '6294a58b2174cb02411247e5',
+                id: '6294a58b2174cb02411247e5',
+              },
+            ],
+          },
+          hideDelete: false,
+          isVirtual: false,
+          isFirst: false,
+          isLast: true,
+          path: '/routers/0/branches/0/pageProcessors/1',
+        },
+      },
+      GAb9dN: {
+        id: 'GAb9dN',
+        type: 'terminal',
+        draggable: true,
+        data: {
+          name: 'Branch 1.1',
+          pageProcessors: [
+            {
+              responseMapping: {
+                fields: [],
+                lists: [],
+              },
+              setupInProgress: true,
+              id: 'new-2UJmSw',
+            },
+          ],
+          path: '/routers/0/branches/1/pageProcessors/1',
+          draggable: true,
+        },
+      },
+    };
+    const dragNodeId = 'GAb9dN';
+    const targetId = 'new-fPmGVT-6294a58b2174cb02411247e5';
+    const patchSet = [];
+
+    mergeDragSourceWithTarget(flowDoc, elements, dragNodeId, targetId, patchSet);
+
+    expect(patchSet).toEqual(
+      [
+        {
+          op: 'add',
+          path: '/routers/0/branches/1/nextRouterId',
+          value: anyShortId,
+        },
+        {
+          op: 'add',
+          path: '/routers/0/branches/0/nextRouterId',
+          value: anyShortId,
+        },
+        {
+          op: 'add',
+          path: '/routers/0/branches/0/pageProcessors',
+          value: [
+            {
+              responseMapping: {
+                fields: [],
+                lists: [],
+              },
+              setupInProgress: true,
+              id: 'new-fPmGVT',
+            },
+          ],
+        },
+        {
+          op: 'add',
+          path: '/routers/-',
+          value: {
+            id: anyShortId,
+            branches: [
+              {
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    type: 'import',
+                    _importId: '6294a58b2174cb02411247e5',
+                    id: '6294a58b2174cb02411247e5',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ]
+    );
+  });
+});
+describe('getNewRouterPatchSet util function test', () => {
+  test('should return correct patchSet and routerindex if not a first router', () => {
+    const flow = {
+      _id: '62d561f648a4303c75f7dca2',
+      lastModified: '2022-07-27T08:31:31.963Z',
+      name: 'Test cases',
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      skipRetries: false,
+      pageGenerators: [
+        {
+          _exportId: '6239e87a8e0b8b736e05bbba',
+          id: '6239e87a8e0b8b736e05bbba',
+        },
+      ],
+      createdAt: '2022-07-18T13:36:54.709Z',
+      autoResolveMatchingTraceKeys: true,
+      routers: [
+        {
+          id: 'Sc3B5P',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  type: 'import',
+                  _importId: '6294a58b2174cb02411247e5',
+                  id: '6294a58b2174cb02411247e5',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+    const elementsMap = {
+      vFAMLP: {
+        id: 'vFAMLP',
+        type: 'terminal',
+        draggable: false,
+        data: {
+          name: 'Branch 1.0',
+          pageProcessors: [
+            {
+              responseMapping: {
+                fields: [],
+                lists: [],
+              },
+              type: 'import',
+              _importId: '6294a58b2174cb02411247e5',
+              id: '6294a58b2174cb02411247e5',
+            },
+          ],
+          path: '/routers/0/branches/0/pageProcessors/1',
+        },
+      },
+      '6294a58b2174cb02411247e5-vFAMLP': {
+        id: '6294a58b2174cb02411247e5-vFAMLP',
+        source: '6294a58b2174cb02411247e5',
+        target: 'vFAMLP',
+        data: {
+          path: '/routers/0/branches/0',
+          processorIndex: 1,
+        },
+        type: 'default',
+      },
+      '6294a58b2174cb02411247e5': {
+        id: '6294a58b2174cb02411247e5',
+        type: 'pp',
+        data: {
+          resource: {
+            responseMapping: {
+              fields: [],
+              lists: [],
+            },
+            type: 'import',
+            _importId: '6294a58b2174cb02411247e5',
+            id: '6294a58b2174cb02411247e5',
+          },
+          branch: {
+            name: 'Branch 1.0',
+            pageProcessors: [
+              {
+                responseMapping: {
+                  fields: [],
+                  lists: [],
+                },
+                type: 'import',
+                _importId: '6294a58b2174cb02411247e5',
+                id: '6294a58b2174cb02411247e5',
+              },
+            ],
+          },
+          hideDelete: false,
+          isVirtual: true,
+          isFirst: true,
+          isLast: true,
+          path: '/routers/0/branches/0/pageProcessors/0',
+        },
+      },
+    };
+    const router = {
+      id: 'uA4irC',
+      routeRecordsTo: 'first_matching_branch',
+      routeRecordsUsing: 'input_filters',
+      branches: [
+        {
+          pageProcessors: [
+            {
+              setupInProgress: true,
+            },
+          ],
+        },
+        {
+          pageProcessors: [
+            {
+              setupInProgress: true,
+            },
+          ],
+        },
+      ],
+      script: {},
+    };
+    const edgeId = '6294a58b2174cb02411247e5-vFAMLP';
+    const originalFlow = {
+      _id: '62d561f648a4303c75f7dca2',
+      lastModified: '2022-07-27T08:31:31.963Z',
+      name: 'Test cases',
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      skipRetries: false,
+      pageProcessors: [
+        {
+          responseMapping: {
+            fields: [],
+            lists: [],
+          },
+          type: 'import',
+          _importId: '6294a58b2174cb02411247e5',
+        },
+      ],
+      pageGenerators: [
+        {
+          _exportId: '6239e87a8e0b8b736e05bbba',
+        },
+      ],
+      createdAt: '2022-07-18T13:36:54.709Z',
+      autoResolveMatchingTraceKeys: true,
+    };
+    const expected = {
+      patchSet: [
+        {
+          op: 'remove',
+          path: '/pageProcessors',
+        },
+        {
+          op: 'add',
+          path: '/routers',
+          value: [
+            {
+              id: 'Sc3B5P',
+              branches: [
+                {
+                  name: 'Branch 1.0',
+                  pageProcessors: [
+                    {
+                      responseMapping: {
+                        fields: [],
+                        lists: [],
+                      },
+                      type: 'import',
+                      _importId: '6294a58b2174cb02411247e5',
+                      id: '6294a58b2174cb02411247e5',
+                    },
+                  ],
+                  nextRouterId: 'uA4irC',
+                },
+              ],
+            },
+            {
+              id: 'uA4irC',
+              routeRecordsTo: 'first_matching_branch',
+              routeRecordsUsing: 'input_filters',
+              branches: [
+                {
+                  pageProcessors: [
+                    {
+                      setupInProgress: true,
+                    },
+                  ],
+                },
+                {
+                  pageProcessors: [
+                    {
+                      setupInProgress: true,
+                    },
+                  ],
+                },
+              ],
+              script: {},
+            },
+          ],
+        },
+      ],
+      routerIndex: 1,
+    };
+
+    return expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
+  });
+  test('should return correct patchSet and routerindex if replacing first router', () => {
+    const flow = {
+      _id: '62d561f648a4303c75f7dca2',
+      lastModified: '2022-07-29T12:25:53.185Z',
+      name: 'Test cases',
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      skipRetries: false,
+      pageGenerators: [
+        {
+          _exportId: '6239e87a8e0b8b736e05bbba',
+          id: '6239e87a8e0b8b736e05bbba',
+        },
+      ],
+      createdAt: '2022-07-18T13:36:54.709Z',
+      autoResolveMatchingTraceKeys: true,
+      routers: [
+        {
+          id: 'dxDf2j',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  setupInProgress: true,
+                  id: 'new-Ta03jV',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+    const elementsMap = {
+      '6239e87a8e0b8b736e05bbba': {
+        id: '6239e87a8e0b8b736e05bbba',
+        type: 'pg',
+        data: {
+          _exportId: '6239e87a8e0b8b736e05bbba',
+          id: '6239e87a8e0b8b736e05bbba',
+          path: '/pageGenerators/0',
+          hideDelete: false,
+        },
+      },
+      '6239e87a8e0b8b736e05bbba-new-Ta03jV': {
+        id: '6239e87a8e0b8b736e05bbba-new-Ta03jV',
+        source: '6239e87a8e0b8b736e05bbba',
+        target: 'new-Ta03jV',
+        data: {
+          path: '/routers/0/branches/0',
+          processorIndex: 0,
+        },
+        type: 'default',
+      },
+      'new-Ta03jV': {
+        id: 'new-Ta03jV',
+        type: 'pp',
+        data: {
+          resource: {
+            setupInProgress: true,
+            id: 'new-Ta03jV',
+          },
+          branch: {
+            name: 'Branch 1.0',
+            pageProcessors: [
+              {
+                setupInProgress: true,
+                id: 'new-Ta03jV',
+              },
+            ],
+          },
+          hideDelete: true,
+          isVirtual: true,
+          isFirst: true,
+          isLast: true,
+          path: '/routers/0/branches/0/pageProcessors/0',
+        },
+      },
+    };
+    const router = {
+      id: 'm9BKZL',
+      routeRecordsTo: 'first_matching_branch',
+      routeRecordsUsing: 'input_filters',
+      branches: [
+        {
+          pageProcessors: [
+            {
+              setupInProgress: true,
+              id: 'new-Ta03jV',
+            },
+          ],
+        },
+        {
+          pageProcessors: [
+            {
+              setupInProgress: true,
+            },
+          ],
+        },
+      ],
+      script: {},
+    };
+    const edgeId = '6239e87a8e0b8b736e05bbba-new-Ta03jV';
+    const originalFlow = {
+      _id: '62d561f648a4303c75f7dca2',
+      lastModified: '2022-07-29T12:25:53.185Z',
+      name: 'Test cases',
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      skipRetries: false,
+      pageGenerators: [
+        {
+          _exportId: '6239e87a8e0b8b736e05bbba',
+        },
+      ],
+      createdAt: '2022-07-18T13:36:54.709Z',
+      autoResolveMatchingTraceKeys: true,
+    };
+    const expected = {
+      patchSet: [
+        {
+          op: 'add',
+          path: '/routers',
+          value: [
+            {
+              id: 'm9BKZL',
+              routeRecordsTo: 'first_matching_branch',
+              routeRecordsUsing: 'input_filters',
+              branches: [
+                {
+                  pageProcessors: [
+                    {
+                      setupInProgress: true,
+                      id: 'new-Ta03jV',
+                    },
+                  ],
+                },
+                {
+                  pageProcessors: [
+                    {
+                      setupInProgress: true,
+                    },
+                  ],
+                },
+              ],
+              script: {},
+            },
+          ],
+        },
+      ],
+      routerIndex: 0,
+    };
+
+    return expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
+  });
+  test('should add pageGenerators if none exist on the flowdoc', () => {
+    const flow = {
+      name: 'New flow',
+      pageGenerators: [
+        {
+          setupInProgress: true,
+          id: 'new-TOpPGy',
+        },
+      ],
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      routers: [
+        {
+          id: 'K7Q87q',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  setupInProgress: true,
+                  id: 'new-hZTaxg',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+    const elementsMap = {
+      'new-TOpPGy': {
+        id: 'new-TOpPGy',
+        type: 'pg',
+        data: {
+          setupInProgress: true,
+          id: 'new-TOpPGy',
+          path: '/pageGenerators/0',
+          hideDelete: true,
+        },
+      },
+      'new-TOpPGy-new-hZTaxg': {
+        id: 'new-TOpPGy-new-hZTaxg',
+        source: 'new-TOpPGy',
+        target: 'new-hZTaxg',
+        data: {
+          path: '/routers/0/branches/0',
+          processorIndex: 0,
+        },
+        type: 'default',
+      },
+      'new-hZTaxg': {
+        id: 'new-hZTaxg',
+        type: 'pp',
+        data: {
+          resource: {
+            setupInProgress: true,
+            id: 'new-hZTaxg',
+          },
+          branch: {
+            name: 'Branch 1.0',
+            pageProcessors: [
+              {
+                setupInProgress: true,
+                id: 'new-hZTaxg',
+              },
+            ],
+          },
+          hideDelete: true,
+          isVirtual: true,
+          isFirst: true,
+          isLast: true,
+          path: '/routers/0/branches/0/pageProcessors/0',
+        },
+      },
+    };
+    const router = {
+      id: 'lDva4L',
+      routeRecordsTo: 'first_matching_branch',
+      routeRecordsUsing: 'input_filters',
+      branches: [
+        {
+          pageProcessors: [
+            {
+              setupInProgress: true,
+              id: 'new-hZTaxg',
+            },
+          ],
+        },
+        {
+          pageProcessors: [
+            {
+              setupInProgress: true,
+            },
+          ],
+        },
+      ],
+      script: {},
+    };
+    const edgeId = 'new-TOpPGy-new-hZTaxg';
+    const originalFlow = null;
+    const expected = {
+      patchSet: [
+        {
+          op: 'add',
+          path: '/routers',
+          value: [
+            {
+              id: 'lDva4L',
+              routeRecordsTo: 'first_matching_branch',
+              routeRecordsUsing: 'input_filters',
+              branches: [
+                {
+                  pageProcessors: [
+                    {
+                      setupInProgress: true,
+                      id: 'new-hZTaxg',
+                    },
+                  ],
+                },
+                {
+                  pageProcessors: [
+                    {
+                      setupInProgress: true,
+                    },
+                  ],
+                },
+              ],
+              script: {},
+            },
+          ],
+        },
+        {
+          op: 'add',
+          path: '/pageGenerators',
+          value: [
+            {
+              setupInProgress: true,
+            },
+          ],
+        },
+      ],
+      routerIndex: 0,
+    };
+
+    return expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
+  });
+  test('should return correct patchSet and routerIndex if inserting first router', () => {
+    const flow = {
+      _id: '62d561f648a4303c75f7dca2',
+      lastModified: '2022-07-29T12:35:27.012Z',
+      name: 'Test cases',
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      skipRetries: false,
+      pageGenerators: [
+        {
+          _exportId: '6239e87a8e0b8b736e05bbba',
+          id: '6239e87a8e0b8b736e05bbba',
+        },
+      ],
+      createdAt: '2022-07-18T13:36:54.709Z',
+      autoResolveMatchingTraceKeys: true,
+      routers: [
+        {
+          routeRecordsUsing: 'input_filters',
+          id: 'OKKXKM',
+          routeRecordsTo: 'first_matching_branch',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-mOWBVd',
+                },
+              ],
+            },
+            {
+              name: 'Branch 1.1',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-1dTGRd',
+                },
+              ],
+            },
+          ],
+          script: {
+            function: 'branchRouter',
+          },
+        },
+      ],
+    };
+    const elementsMap = {
+      '6239e87a8e0b8b736e05bbba': {
+        id: '6239e87a8e0b8b736e05bbba',
+        type: 'pg',
+        data: {
+          _exportId: '6239e87a8e0b8b736e05bbba',
+          id: '6239e87a8e0b8b736e05bbba',
+          path: '/pageGenerators/0',
+          hideDelete: false,
+        },
+      },
+      '6239e87a8e0b8b736e05bbba-OKKXKM': {
+        id: '6239e87a8e0b8b736e05bbba-OKKXKM',
+        source: '6239e87a8e0b8b736e05bbba',
+        target: 'OKKXKM',
+        data: {
+          path: '/routers/-1/branches/-1',
+          processorIndex: 0,
+        },
+        type: 'default',
+      },
+      OKKXKM: {
+        id: 'OKKXKM',
+        type: 'router',
+        data: {
+          path: '/routers/0',
+          router: {
+            routeRecordsUsing: 'input_filters',
+            id: 'OKKXKM',
+            routeRecordsTo: 'first_matching_branch',
+            branches: [
+              {
+                name: 'Branch 1.0',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                    id: 'new-mOWBVd',
+                  },
+                ],
+              },
+              {
+                name: 'Branch 1.1',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                    id: 'new-1dTGRd',
+                  },
+                ],
+              },
+            ],
+            script: {
+              function: 'branchRouter',
+            },
+          },
+        },
+      },
+    };
+    const router = {
+      id: 'winev3',
+      routeRecordsTo: 'first_matching_branch',
+      routeRecordsUsing: 'input_filters',
+      branches: [
+        {
+          pageProcessors: [
+            {
+              setupInProgress: true,
+            },
+          ],
+          nextRouterId: 'OKKXKM',
+        },
+        {
+          pageProcessors: [
+            {
+              setupInProgress: true,
+            },
+          ],
+        },
+      ],
+      script: {},
+    };
+    const edgeId = '6239e87a8e0b8b736e05bbba-OKKXKM';
+    const originalFlow = {
+      _id: '62d561f648a4303c75f7dca2',
+      lastModified: '2022-07-29T12:35:27.012Z',
+      name: 'Test cases',
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      skipRetries: false,
+      pageGenerators: [
+        {
+          _exportId: '6239e87a8e0b8b736e05bbba',
+        },
+      ],
+      createdAt: '2022-07-18T13:36:54.709Z',
+      autoResolveMatchingTraceKeys: true,
+      routers: [
+        {
+          routeRecordsUsing: 'input_filters',
+          id: 'OKKXKM',
+          routeRecordsTo: 'first_matching_branch',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                },
+              ],
+            },
+            {
+              name: 'Branch 1.1',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                },
+              ],
+            },
+          ],
+          script: {
+            function: 'branchRouter',
+          },
+        },
+      ],
+    };
+    const expected = {
+      patchSet: [
+        {
+          op: 'remove',
+          path: '/routers/0/script/function',
+        },
+        {
+          op: 'remove',
+          path: '/routers/0/branches/1/pageProcessors/0/responseMapping',
+        },
+        {
+          op: 'remove',
+          path: '/routers/0/branches/1/name',
+        },
+        {
+          op: 'remove',
+          path: '/routers/0/branches/0/pageProcessors/0/responseMapping',
+        },
+        {
+          op: 'remove',
+          path: '/routers/0/branches/0/name',
+        },
+        {
+          op: 'add',
+          path: '/routers/0/branches/0/nextRouterId',
+          value: 'OKKXKM',
+        },
+        {
+          op: 'replace',
+          path: '/routers/0/id',
+          value: 'winev3',
+        },
+        {
+          op: 'add',
+          path: '/routers/1',
+          value: {
+            routeRecordsUsing: 'input_filters',
+            id: 'OKKXKM',
+            routeRecordsTo: 'first_matching_branch',
+            branches: [
+              {
+                name: 'Branch 1.0',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                  },
+                ],
+              },
+              {
+                name: 'Branch 1.1',
+                pageProcessors: [
+                  {
+                    responseMapping: {
+                      fields: [],
+                      lists: [],
+                    },
+                    setupInProgress: true,
+                  },
+                ],
+              },
+            ],
+            script: {
+              function: 'branchRouter',
+            },
+          },
+        },
+      ],
+      routerIndex: 0,
+    };
+
+    return expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
+  });
+  test('should return correct patchSet and routerIndex for replacing first router if 1 or more routers already exists', () => {
+    const flow = {
+      _id: '62d561f648a4303c75f7dca2',
+      lastModified: '2022-07-29T12:41:48.251Z',
+      name: 'Test cases',
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      skipRetries: false,
+      pageGenerators: [
+        {
+          _exportId: '6239e87a8e0b8b736e05bbba',
+          id: '6239e87a8e0b8b736e05bbba',
+        },
+      ],
+      createdAt: '2022-07-18T13:36:54.709Z',
+      autoResolveMatchingTraceKeys: true,
+      routers: [
+        {
+          id: 'ooeMkN',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-oDq1LZ',
+                },
+              ],
+              nextRouterId: 'TXIrJG',
+            },
+          ],
+        },
+        {
+          routeRecordsUsing: 'input_filters',
+          id: 'TXIrJG',
+          routeRecordsTo: 'first_matching_branch',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-YG8osX',
+                },
+              ],
+            },
+            {
+              name: 'Branch 1.1',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                  id: 'new-3Sp2uu',
+                },
+              ],
+            },
+          ],
+          script: {
+            function: 'branchRouter',
+          },
+        },
+      ],
+    };
+    const elementsMap = {
+      '6239e87a8e0b8b736e05bbba': {
+        id: '6239e87a8e0b8b736e05bbba',
+        type: 'pg',
+        data: {
+          _exportId: '6239e87a8e0b8b736e05bbba',
+          id: '6239e87a8e0b8b736e05bbba',
+          path: '/pageGenerators/0',
+          hideDelete: false,
+        },
+      },
+      '6239e87a8e0b8b736e05bbba-new-oDq1LZ': {
+        id: '6239e87a8e0b8b736e05bbba-new-oDq1LZ',
+        source: '6239e87a8e0b8b736e05bbba',
+        target: 'new-oDq1LZ',
+        data: {
+          path: '/routers/0/branches/0',
+          processorIndex: 0,
+        },
+        type: 'default',
+      },
+      'new-oDq1LZ': {
+        id: 'new-oDq1LZ',
+        type: 'pp',
+        data: {
+          resource: {
+            responseMapping: {
+              fields: [],
+              lists: [],
+            },
+            setupInProgress: true,
+            id: 'new-oDq1LZ',
+          },
+          branch: {
+            name: 'Branch 1.0',
+            pageProcessors: [
+              {
+                responseMapping: {
+                  fields: [],
+                  lists: [],
+                },
+                setupInProgress: true,
+                id: 'new-oDq1LZ',
+              },
+            ],
+            nextRouterId: 'TXIrJG',
+          },
+          hideDelete: false,
+          isVirtual: true,
+          isFirst: true,
+          isLast: false,
+          path: '/routers/0/branches/0/pageProcessors/0',
+        },
+      },
+    };
+    const router = {
+      id: 'kirKrg',
+      routeRecordsTo: 'first_matching_branch',
+      routeRecordsUsing: 'input_filters',
+      branches: [
+        {
+          pageProcessors: [
+            {
+              responseMapping: {
+                fields: [],
+                lists: [],
+              },
+              setupInProgress: true,
+              id: 'new-oDq1LZ',
+            },
+          ],
+          nextRouterId: 'TXIrJG',
+        },
+        {
+          pageProcessors: [
+            {
+              setupInProgress: true,
+            },
+          ],
+        },
+      ],
+      script: {},
+    };
+    const edgeId = '6239e87a8e0b8b736e05bbba-new-oDq1LZ';
+    const originalFlow = {
+      _id: '62d561f648a4303c75f7dca2',
+      lastModified: '2022-07-29T12:41:48.251Z',
+      name: 'Test cases',
+      disabled: true,
+      _integrationId: '62d535b83efe3d37ca446f52',
+      skipRetries: false,
+      pageGenerators: [
+        {
+          _exportId: '6239e87a8e0b8b736e05bbba',
+        },
+      ],
+      createdAt: '2022-07-18T13:36:54.709Z',
+      autoResolveMatchingTraceKeys: true,
+      routers: [
+        {
+          id: 'ooeMkN',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                },
+              ],
+              nextRouterId: 'TXIrJG',
+            },
+          ],
+        },
+        {
+          routeRecordsUsing: 'input_filters',
+          id: 'TXIrJG',
+          routeRecordsTo: 'first_matching_branch',
+          branches: [
+            {
+              name: 'Branch 1.0',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                },
+              ],
+            },
+            {
+              name: 'Branch 1.1',
+              pageProcessors: [
+                {
+                  responseMapping: {
+                    fields: [],
+                    lists: [],
+                  },
+                  setupInProgress: true,
+                },
+              ],
+            },
+          ],
+          script: {
+            function: 'branchRouter',
+          },
+        },
+      ],
+    };
+    const expected = {
+      patchSet: [
+        {
+          op: 'add',
+          path: '/routers/0/branches/0/pageProcessors/0/id',
+          value: 'new-oDq1LZ',
+        },
+        {
+          op: 'remove',
+          path: '/routers/0/branches/0/name',
+        },
+        {
+          op: 'add',
+          path: '/routers/0/branches/1',
+          value: {
+            pageProcessors: [
+              {
+                setupInProgress: true,
+              },
+            ],
+          },
+        },
+        {
+          op: 'replace',
+          path: '/routers/0/id',
+          value: 'kirKrg',
+        },
+        {
+          op: 'add',
+          path: '/routers/0/routeRecordsTo',
+          value: 'first_matching_branch',
+        },
+        {
+          op: 'add',
+          path: '/routers/0/routeRecordsUsing',
+          value: 'input_filters',
+        },
+        {
+          op: 'add',
+          path: '/routers/0/script',
+          value: {},
+        },
+      ],
+      routerIndex: 0,
+    };
+
+    return expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
   });
 });
 
