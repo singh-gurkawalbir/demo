@@ -97,8 +97,8 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath, ppData) => {
     }
   } else {
     // If flow is in orchestration structure
-    if (!flow.pageProcessors || !flow.pageProcessors.length) {
-      flow.pageProcessors = [{setupInProgress: true}];
+    if (!flow.pageProcessors) {
+      flow.pageProcessors = [];
     }
     if (insertAtIndex === -1) {
       flow.pageProcessors.push(pageProcessor);
