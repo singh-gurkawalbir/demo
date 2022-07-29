@@ -495,8 +495,8 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     } else if (step) {
       setObjectValue(flowDocClone, step.data.path, {_exportId: createdId});
     } else {
-      if (!flowDocClone.pageGenerators || !flowDocClone.pageGenerators.length) {
-        flowDocClone.pageGenerators = [{ setupInProgress: true }];
+      if (!flowDocClone.pageGenerators) {
+        flowDocClone.pageGenerators = [];
       }
       flowDocClone.pageGenerators.push({ _exportId: createdId });
     }
