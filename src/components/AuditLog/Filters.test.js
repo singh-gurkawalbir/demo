@@ -167,7 +167,7 @@ describe('UI test cases for Audit Log Filter ', () => {
     expect(defaultType).toBeInTheDocument();
   });
 
-  test('should display 17 options on clicking the "Select resources type" drop down', () => {
+  test('should display 17 options on clicking the "Select resources type" drop down ', () => {
     const resourceType = screen.getByText('Select resource type');
 
     expect(resourceType).toBeInTheDocument();
