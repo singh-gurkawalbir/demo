@@ -20,6 +20,9 @@ module.exports = {
     'src/reducers/**/*.{js,jsx}',
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
+    'src/components/FormOnCancelContext/*.{js,jsx}',
+    'src/components/SaveAndCloseButtonGroup/**/*.{js,jsx}',
+    'src/components/ResourceFormFactory/**/*.{js,jsx}',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js'],
   coverageThreshold: {

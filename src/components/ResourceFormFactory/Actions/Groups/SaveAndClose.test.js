@@ -1,0 +1,145 @@
+/* global describe, expect, jest, test, beforeEach, afterEach */
+import React from 'react';
+import * as reactRedux from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { renderWithProviders } from '../../../../test/test-utils';
+import { getCreatedStore } from '../../../../store';
+import actions from '../../../../actions';
+import { ConfirmDialogProvider } from '../../../ConfirmDialog';
+import SaveAndClose from './SaveAndClose';
+
+const mockHandleSubmit = jest.fn();
+
+jest.mock('./hooks/useHandleSubmit', () => ({
+  __esModule: true,
+  ...jest.requireActual('./hooks/useHandleSubmit'),
+  default: () => mockHandleSubmit,
+}));
+
+jest.mock();
+
+async function initSaveAndClose(props = {}, initialStore) {
+  const ui = (
+    <ConfirmDialogProvider>
+      <MemoryRouter>
+        <SaveAndClose {...props} />
+      </MemoryRouter>
+    </ConfirmDialogProvider>
+  );
+
+  return renderWithProviders(ui, {initialStore});
+}
+
+describe('test suite for SaveAndClose', () => {
+  let useDispatchSpy;
+  let mockDispatchFn;
+
+  beforeEach(() => {
+    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
+    mockDispatchFn = jest.fn(action => {
+      switch (action.type) {
+        default:
+      }
+    });
+    useDispatchSpy.mockReturnValue(mockDispatchFn);
+  });
+
+  afterEach(() => {
+    useDispatchSpy.mockClear();
+    mockDispatchFn.mockClear();
+  });
+
+  test('should pass initial rendering', async () => {
+    await initSaveAndClose();
+    const saveButton = screen.getByRole('button', {name: 'Save'});
+    const closeButton = screen.getByRole('button', {name: 'Close'});
+
+    expect(saveButton).toBeDisabled();
+    expect(closeButton).toBeEnabled();
+  });
+
+  test('should be able to close successfully', async () => {
+    const onCancel = jest.fn();
+
+    await initSaveAndClose({onCancel, disabled: true});
+    const closeButton = screen.getByRole('button', {name: 'Close'});
+
+    userEvent.click(closeButton);
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  test('should be able to save successfully', async () => {
+    const resourceType = 'exports';
+    const resourceId = 'new-287dgf';
+    const formKey = 'form-123';
+    const initialStore = getCreatedStore();
+
+    initialStore.getState().session.form[formKey] = {
+      isValid: true,
+      fields: {
+        tempField: { touched: true },
+      },
+    };
+    await initSaveAndClose({formKey, resourceType, resourceId}, initialStore);
+    const saveButton = screen.getByRole('button', {name: 'Save'});
+
+    expect(saveButton).toBeEnabled();
+    userEvent.click(saveButton);
+    expect(mockHandleSubmit).toBeCalled();
+  });
+
+  test('should display a dialog box on replacing connection for existing imports / exports', async () => {
+    const onCancel = jest.fn();
+    const formKey = 'form-123';
+    const resourceType = 'imports';
+    const resourceId = '287dgf';
+    const flowId = '345dns';
+    const integrationId = '872vss';
+    const connectionId = 'zkdzj33';
+    const initialStore = getCreatedStore();
+
+    initialStore.getState().session.form[formKey] = {
+      isValid: true,
+      fields: {
+        tempField: { touched: true },
+      },
+      value: {
+        '/_connectionId': connectionId,
+      },
+    };
+
+    initialStore.getState().data.resources = {
+      flows: [{
+        _id: flowId,
+        _integrationId: integrationId,
+      }],
+      integrations: [{
+        _id: integrationId,
+        _registeredConnectionIds: [],
+      }],
+    };
+
+    await initSaveAndClose({formKey, resourceType, resourceId, onCancel, flowId}, initialStore);
+    const saveButton = screen.getByRole('button', {name: 'Save'});
+
+    userEvent.click(saveButton);
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByText('Confirm replace')).toBeInTheDocument();
+    expect(screen.getByText('Are you sure you want to replace the connection for this flow step? Replacing a connection will cancel all jobs currently running for this flow.')).toBeInTheDocument();
+    const cancelButton = screen.getByRole('button', {name: 'Cancel'});
+
+    userEvent.click(cancelButton);
+    expect(onCancel).toHaveBeenCalledTimes(1);
+
+    userEvent.click(saveButton);
+    const confirmButton = screen.getByRole('button', {name: 'Replace'});
+
+    userEvent.click(confirmButton);
+    expect(mockDispatchFn).toBeCalledWith(actions.connection.completeRegister(
+      [connectionId], integrationId
+    ));
+    expect(mockHandleSubmit).toBeCalled();
+  });
+});
