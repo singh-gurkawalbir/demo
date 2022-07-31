@@ -276,7 +276,7 @@ describe('InstallationStep UI tests', () => {
       3
     ));
   });
-  test('Should render empty DOM when impropper props are provided', () => {
+  test('Should render empty DOM when improper props are provided', () => {
     const props = {
       index: 1,
       integrationId: '62bd4ab37b94d20de64e9eaa',
