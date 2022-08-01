@@ -23,15 +23,17 @@ export default function Title({onClick, children, className, type}) {
   const classes = useStyles();
   const { flow, flowId } = useFlowContext();
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow._integrationId, flowId));
+  const showAddPageProcessor = useSelector(state => selectors.shouldShowAddPageProcessor(state, flowId));
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
+  const isReadOnly = !!flow._connectorId || isViewMode;
 
-  const isReadOnly = !!flow._connectorId || isDataLoaderFlow || isViewMode;
+  const showAddIcon = type === 'generator' ? (!isReadOnly && !isDataLoaderFlow) : (!isReadOnly && showAddPageProcessor);
 
   return (
     <TitleTypography className={clsx(classes.titlePosition, className)}>
       <div className={classes.content}>
         {children}
-        {!isReadOnly && <AddButton onClick={onClick} type={type} />}
+        {showAddIcon && <AddButton onClick={onClick} type={type} />}
       </div>
     </TitleTypography>
   );

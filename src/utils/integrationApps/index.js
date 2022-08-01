@@ -194,6 +194,8 @@ export const getIntegrationApp = ({ _connectorId, name }) => {
   };
 
   integrationAppId['qa.staging.integrator.io'] = integrationAppId['staging.integrator.io'];
+  integrationAppId['iaqa.staging.integrator.io'] = integrationAppId['staging.integrator.io'];
+
   let integrationApp;
 
   if (domain.indexOf('localhost') > -1) {
