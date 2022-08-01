@@ -145,15 +145,9 @@ describe('flow updates sagas', () => {
     test('should dispatch updateFlow when pp/pg sequence is changed on a flow ', () => {
       const flowPatchSet = [{
         op: 'replace',
-        path: '/pageProcessors',
-        value: [{
-          type: 'import',
-          _importId: 'import123',
-        },
-        {
-          type: 'export',
-          _exportId: 'export456',
-        }],
+        path: '/routers/0/branches/0/pageProcessors/0',
+        scope: 'value',
+        value: {type: 'import', _importId: '5de8a7a6bc312979ba242e47'},
       }];
 
       return expectSaga(updateFlowOnResourceUpdate, {

@@ -142,7 +142,7 @@ export default function DynaCsvGenerate_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'inputFilter',
+      stage: resourceType === 'exports' ? 'inputFilter' : 'postMapOutput',
       onSave: handleSave,
     }));
 

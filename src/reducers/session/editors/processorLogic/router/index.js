@@ -3,6 +3,38 @@ import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
 import filter from '../filter';
 import javascript from '../javascript';
 
+const moveArrayItem = (arr, oldIndex, newIndex) => {
+  const newArr = [...arr];
+  const element = newArr.splice(oldIndex, 1)[0];
+
+  newArr.splice(newIndex, 0, element);
+
+  return newArr;
+};
+
+const BranchNameRegex = /Branch \d+\.(\d+)/;
+
+function getBranchNameIndex(branches, routerNameIndex) {
+  let highestIndex = 0;
+  const branchNames = branches.map(branch => branch.name);
+
+  branches.forEach(branch => {
+    if (BranchNameRegex.test(branch.name)) {
+      const [, index] = branch.name.match(BranchNameRegex);
+
+      if (+index > highestIndex) {
+        highestIndex = +index;
+      }
+    }
+  });
+
+  while (branchNames.includes(`Branch ${routerNameIndex}.${highestIndex + 1}`)) {
+    highestIndex += 1;
+  }
+
+  return highestIndex + 1;
+}
+
 export default {
   init: ({ options }) => {
     const activeProcessor = 'filter';
@@ -146,5 +178,23 @@ export default {
     }
 
     return patches;
+  },
+  updateRule: (draft, action, shouldReplace) => {
+    const { actionType, oldIndex, newIndex, rulePatch } = action;
+
+    if (actionType === 'reorder') {
+      draft.rule.branches = moveArrayItem(draft.rule.branches, oldIndex, newIndex);
+    } else if (actionType === 'addBranch') {
+      const branchNameIndex = getBranchNameIndex(draft.rule.branches, draft.branchNamingIndex);
+
+      draft.rule.branches = [...draft.rule.branches, {
+        name: `Branch ${draft.branchNamingIndex}.${branchNameIndex}`,
+        pageProcessors: [{setupInProgress: true}],
+      }];
+    } else if (!shouldReplace) {
+      Object.assign(draft.rule, cloneDeep(rulePatch));
+    } else {
+      draft.rule = rulePatch;
+    }
   },
 };

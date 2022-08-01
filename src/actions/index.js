@@ -98,6 +98,12 @@ const auth = {
   linkWithGoogle: returnTo =>
     action(actionTypes.AUTH.LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH.SUCCESSFUL),
+  mfaRequired: () => action(actionTypes.AUTH.MFA_REQUIRED),
+  mfaVerify: {
+    request: payload => action(actionTypes.AUTH.MFA_VERIFY.REQUEST, { payload }),
+    failed: mfaError => action(actionTypes.AUTH.MFA_VERIFY.FAILED, { mfaError }),
+    success: () => action(actionTypes.AUTH.MFA_VERIFY.SUCCESS),
+  },
   failure: message => action(actionTypes.AUTH.FAILURE, { message }),
   warning: () => action(actionTypes.AUTH.WARNING),
   logout: isExistingSessionInvalid =>
@@ -2089,6 +2095,8 @@ const errorManager = {
 const flow = {
   addNewPGStep: flowId => action(actionTypes.FLOW.ADD_NEW_PG_STEP, { flowId }),
   addNewPPStep: (flowId, path, processorIndex) => action(actionTypes.FLOW.ADD_NEW_PP_STEP, { flowId, path, processorIndex }),
+  addNewPPStepInfo: (flowId, info) => action(actionTypes.FLOW.ADD_NEW_PP_STEP_INFO, { flowId, info }),
+  clearPPStepInfo: flowId => action(actionTypes.FLOW.CLEAR_PP_STEP_INFO, { flowId }),
   addNewRouter: (flowId, router) => action(actionTypes.FLOW.ADD_NEW_ROUTER, { flowId, router }),
   dragStart: (flowId, stepId) => action(actionTypes.FLOW.DRAG_START, { flowId, stepId }),
   setDragInProgress: flowId => action(actionTypes.FLOW.SET_DRAG_IN_PROGRESS, { flowId }),

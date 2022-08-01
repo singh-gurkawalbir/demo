@@ -133,6 +133,18 @@ const init = editorType => {
   return logic.init;
 };
 
+const updateRule = editor => {
+  if (!editor) return;
+  let logic;
+
+  try {
+    logic = getLogic(editor);
+  // eslint-disable-next-line no-empty
+  } catch (e) { }
+
+  return logic?.updateRule;
+};
+
 const buildData = editorType => {
   if (!editorType) return;
   const logic = getLogic({ editorType });
@@ -176,7 +188,6 @@ export const featuresMap = options => ({
   settingsForm: {
     layout: `${options?.activeProcessor || 'json'}FormBuilder`,
     autoEvaluate: true,
-    previewOnSave: true,
   },
   sql: {
     layout: 'compact',
@@ -274,4 +285,5 @@ export default {
   getPatchSet,
   buildData,
   preSaveValidate,
+  updateRule,
 };

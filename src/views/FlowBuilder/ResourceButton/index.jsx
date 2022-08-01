@@ -17,7 +17,7 @@ const blockMap = {
   import: { label: 'Import', Icon: ImportIcon },
   lookup: { label: 'Lookup', Icon: LookupIcon },
   listener: { label: 'Listener', Icon: ListenerIcon },
-  dataLoader: { label: 'Data Loader', Icon: DataLoaderIcon },
+  dataLoader: { label: 'Data loader', Icon: DataLoaderIcon },
   exportTransfer: { label: 'Transfer', Icon: TransferDownIcon },
   importTransfer: { label: 'Transfer', Icon: TransferUpIcon },
 };
@@ -39,7 +39,7 @@ export const resourceButtonStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ResourceButton({ onClick, variant }) {
+export default function ResourceButton({ onClick, variant, disabled}) {
   const classes = resourceButtonStyles();
   const block = blockMap[variant];
 
@@ -49,6 +49,7 @@ export default function ResourceButton({ onClick, variant }) {
       onClick={onClick}
       className={classes.resourceButton}
       vertical
+      disabled={disabled}
       startIcon={<block.Icon />}>
       {block.label}
     </TextButton>

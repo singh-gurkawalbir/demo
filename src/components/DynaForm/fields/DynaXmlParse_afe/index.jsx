@@ -151,6 +151,8 @@ export default function DynaXmlParse_afe({
 
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
+      if (!isParserSupported) return null;
+
       const parsersValue = getParserValue(newOptions);
 
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
@@ -161,7 +163,7 @@ export default function DynaXmlParse_afe({
         onFieldChange(id, parsersValue, touched);
       }
     },
-    [id, onFieldChange]
+    [id, isParserSupported, onFieldChange]
   );
 
   const parseFormKey = 'xmlParserFields';
