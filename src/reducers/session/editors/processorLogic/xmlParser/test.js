@@ -159,7 +159,7 @@ describe('xmlParser processor logic', () => {
         options: { isSimplePath: true },
       };
 
-      expect(requestBody({rule, data})).toEqual(expectedBody);
+      expect(requestBody({rule, data, resourceType: 'exports'})).toEqual(expectedBody);
     });
   });
 

@@ -4,7 +4,18 @@ import actionTypes from '../../../../actions/types';
 import { getSampleDataStage } from '../../../../utils/flowData';
 import { isPageGeneratorResource } from '../../../../utils/flows';
 import { clearInvalidPgOrPpStates, clearInvalidStagesForPgOrPp, getFirstOutOfOrderIndex } from './utils';
-import { buildExtractsTree } from '../../../../utils/mapping';
+
+const getResource = (flow, resourceId, previewType) => {
+  let resource = 'pageProcessorsMap';
+
+  if (isPageGeneratorResource(flow, resourceId)) {
+    resource = 'pageGeneratorsMap';
+  } else if (previewType === 'router') {
+    resource = 'routersMap';
+  }
+
+  return resource;
+};
 
 export default function (state = {}, action) {
   const {
@@ -12,6 +23,8 @@ export default function (state = {}, action) {
     flowId,
     resourceId,
     resourceIndex,
+    routerIndex,
+    branchIndex,
     flow = {},
     updatedFlow = {},
     responseMapping,
@@ -28,30 +41,23 @@ export default function (state = {}, action) {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.FLOW_DATA.INIT: {
-        const { pageGenerators = [], pageProcessors = [], _id, refresh, formKey } = flow;
+        const { pageGenerators = [], pageProcessors = [], routers = [], _id, refresh, formKey } = flow;
 
         if (!_id) {
           break;
         }
         if (!draft[_id]) {
-          draft[_id] = { pageGeneratorsMap: {}, pageProcessorsMap: {} };
+          draft[_id] = { pageGeneratorsMap: {}, pageProcessorsMap: {}, routersMap: {} };
         }
 
-        draft[_id] = { ...draft[_id], pageGenerators, pageProcessors, refresh, formKey };
+        draft[_id] = { ...draft[_id], pageGenerators, pageProcessors, routers, refresh, formKey };
 
         break;
       }
 
       case actionTypes.FLOW_DATA.STAGE_REQUEST: {
         if (!resourceId || !flowId || !stage) return;
-        const resourceMap =
-          (draft[flowId] &&
-            draft[flowId][
-              isPageGeneratorResource(draft[flowId], resourceId)
-                ? 'pageGeneratorsMap'
-                : 'pageProcessorsMap'
-            ]) ||
-          {};
+        const resourceMap = draft[flowId]?.[getResource(draft[flowId], resourceId, stage)] || {};
 
         resourceMap[resourceId] = {
           ...resourceMap[resourceId],
@@ -64,15 +70,7 @@ export default function (state = {}, action) {
       }
       case actionTypes.FLOW_DATA.SET_STATUS_RECEIVED: {
         if (!flowId || !resourceId || !previewType) return;
-        const resourceMap =
-          (draft[flowId] &&
-            draft[flowId][
-              isPageGeneratorResource(draft[flowId], resourceId)
-                ? 'pageGeneratorsMap'
-                : 'pageProcessorsMap'
-            ]) ||
-          {};
-
+        const resourceMap = draft[flowId]?.[getResource(draft[flowId], resourceId, previewType)] || {};
         const stage = previewType;
 
         if (resourceMap?.[resourceId]?.[stage]) {
@@ -82,16 +80,7 @@ export default function (state = {}, action) {
       }
       case actionTypes.FLOW_DATA.PREVIEW_DATA_RECEIVED: {
         if (!flowId || !resourceId || !previewType) return;
-
-        const resourceMap =
-          (draft[flowId] &&
-            draft[flowId][
-              isPageGeneratorResource(draft[flowId], resourceId)
-                ? 'pageGeneratorsMap'
-                : 'pageProcessorsMap'
-            ]) ||
-          {};
-
+        const resourceMap = draft[flowId]?.[getResource(draft[flowId], resourceId, previewType)] || {};
         const stage = previewType;
 
         resourceMap[resourceId] = {
@@ -140,14 +129,7 @@ export default function (state = {}, action) {
 
       case actionTypes.FLOW_DATA.RECEIVED_ERROR: {
         if (!flowId || !resourceId || !stage) break;
-        const resourceMap =
-          (draft[flowId] &&
-            draft[flowId][
-              isPageGeneratorResource(draft[flowId], resourceId)
-                ? 'pageGeneratorsMap'
-                : 'pageProcessorsMap'
-            ]) ||
-          {};
+        const resourceMap = draft[flowId]?.[getResource(draft[flowId], resourceId, stage)] || {};
 
         if (!resourceMap[resourceId]) {
           resourceMap[resourceId] = {};
@@ -162,8 +144,13 @@ export default function (state = {}, action) {
 
       case actionTypes.FLOW_DATA.FLOW_RESPONSE_MAPPING_UPDATE: {
         const flow = draft[flowId];
-        const resource = flow && flow.pageProcessors[resourceIndex];
+        let resource;
 
+        if (flow?.pageProcessors?.length) {
+          resource = flow && flow.pageProcessors[resourceIndex];
+        } else {
+          resource = flow?.routers?.[routerIndex]?.branches?.[branchIndex]?.pageProcessors?.[resourceIndex];
+        }
         if (resource) {
           resource.responseMapping = responseMapping;
         }
@@ -194,19 +181,43 @@ export default function (state = {}, action) {
           break;
         }
 
-        const pageProcessorIndexToReset = flow.pageProcessors.findIndex(
-          pp => pp._exportId === resourceId || pp._importId === resourceId
-        );
+        let pageProcessorIndexToReset;
+        let routerIndex;
+        let branchIndex;
+
+        if (flow.routers?.length) {
+          flow.routers.forEach((router, rIndex) => {
+            (router.branches || []).forEach((branch, bIndex) => {
+              const ppIndex = branch.pageProcessors.findIndex(
+                pp => pp._exportId === resourceId || pp._importId === resourceId
+              );
+
+              if (ppIndex > -1) {
+                pageProcessorIndexToReset = ppIndex;
+                routerIndex = rIndex;
+                branchIndex = bIndex;
+              }
+            });
+          });
+        } else {
+          pageProcessorIndexToReset = flow.pageProcessors.findIndex(
+            pp => pp._exportId === resourceId || pp._importId === resourceId
+          );
+        }
 
         if (pageProcessorIndexToReset > -1) {
           if (!stages.length) {
-            clearInvalidPgOrPpStates(flow, pageProcessorIndexToReset);
+            clearInvalidPgOrPpStates(flow, pageProcessorIndexToReset, false, {routerIndex, branchIndex});
           } else {
             // at this index, reset resource for all the passed stages
-            clearInvalidStagesForPgOrPp(flow, pageProcessorIndexToReset, stages, statusToUpdate);
+            clearInvalidStagesForPgOrPp(flow, pageProcessorIndexToReset, stages, statusToUpdate, false, {routerIndex, branchIndex});
             // then pass index+1 to reset everything for other resources
-            clearInvalidPgOrPpStates(flow, pageProcessorIndexToReset + 1);
+            clearInvalidPgOrPpStates(flow, pageProcessorIndexToReset + 1, false, {routerIndex, branchIndex});
           }
+        }
+
+        if (flow.routers?.length && flow.routers.find(r => r.id === resourceId)) {
+          clearInvalidPgOrPpStates(flow, 0, false, {routerIndex: flow.routers.findIndex(r => r.id === resourceId), branchIndex: 0});
         }
 
         break;
@@ -221,6 +232,7 @@ export default function (state = {}, action) {
         const {
           pageGenerators: updatedPageGenerators = [],
           pageProcessors: updatedPageProcessors = [],
+          routers: updatedRouters = [],
         } = updatedFlow;
         // get first change in sequence of pgs
         const updatedPgIndex = getFirstOutOfOrderIndex(pageGenerators, updatedPageGenerators);
@@ -229,7 +241,8 @@ export default function (state = {}, action) {
 
         // update sequence
         currentFlow.pageGenerators = updatedPageGenerators;
-        currentFlow.pageProcessors = updatedPageProcessors;
+        if (updatedPageProcessors.length) { currentFlow.pageProcessors = updatedPageProcessors; }
+        if (updatedRouters.length) { currentFlow.routers = updatedRouters; }
 
         // reset all pg data stages starting from index
         if (updatedPgIndex > -1) {
@@ -254,16 +267,15 @@ const DEFAULT_VALUE = {};
 
 export const selectors = {};
 
-selectors.getFlowDataState = (state, flowId, resourceId) => {
+selectors.getFlowDataState = (state, flowId, resourceId, stage) => {
   if (!state || !flowId) return;
   const flow = state[flowId];
 
   // Returns flow state
   if (!resourceId) return flow;
   // Returns PP/PG's state
-  const resourceMap = isPageGeneratorResource(flow, resourceId)
-    ? flow.pageGeneratorsMap
-    : flow.pageProcessorsMap;
+
+  const resourceMap = flow[getResource(flow, resourceId, stage)] || {};
 
   return resourceMap[resourceId] || DEFAULT_VALUE;
 };
@@ -278,30 +290,9 @@ selectors.getSampleDataContext = createSelector(
     const sampleDataStage = getSampleDataStage(stage, resourceType);
 
     if (!flow || !sampleDataStage || !resourceId) return DEFAULT_VALUE;
-    const resourceMap = isPageGeneratorResource(flow, resourceId)
-      ? flow.pageGeneratorsMap
-      : flow.pageProcessorsMap;
-    const flowStageContext =
-  resourceMap &&
-  resourceMap[resourceId] &&
-  resourceMap[resourceId][sampleDataStage];
+    const resourceMap = flow[getResource(flow, resourceId, stage)] || {};
+    const flowStageContext = resourceMap?.[resourceId]?.[sampleDataStage];
 
     return flowStageContext || DEFAULT_VALUE;
   });
 
-// get mapper2 tree structure for extracts
-// from flow sample data
-selectors.mkBuildExtractsTree = () => createSelector(
-  (state, {flowId, resourceId}) => {
-    const flowData = selectors.getSampleDataContext(state, {
-      flowId,
-      resourceId,
-      stage: 'importMappingExtract',
-      resourceType: 'imports',
-    }).data;
-
-    return flowData;
-  },
-  (state, {selectedValues}) => selectedValues,
-  (flowData, selectedValues) => buildExtractsTree(flowData, selectedValues)
-);

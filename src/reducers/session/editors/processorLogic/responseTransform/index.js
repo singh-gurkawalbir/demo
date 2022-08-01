@@ -3,7 +3,7 @@ import flowTransform from '../flowTransform';
 
 export default {
   processor: ({activeProcessor}) => activeProcessor,
-  init: ({resource, options}) => {
+  init: ({resource, options, scriptContext}) => {
     let activeProcessor = 'transform';
     const transformObj = resource?.responseTransform;
     const { script = {}, expression = {} } = transformObj || {};
@@ -27,6 +27,7 @@ export default {
       ...options,
       rule,
       activeProcessor,
+      context: scriptContext,
     };
   },
   buildData: flowTransform.buildData,

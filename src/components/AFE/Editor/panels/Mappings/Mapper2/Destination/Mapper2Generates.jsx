@@ -1,11 +1,13 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, Tooltip } from '@material-ui/core';
+import clsx from 'clsx';
 import useOnClickOutside from '../../../../../../../hooks/useClickOutSide';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import { TooltipTitle } from '../Source/Mapper2ExtractsTypeableSelect';
 import DestinationDataType from './DestinationDataType';
+import LockIcon from '../../../../../../icons/LockIcon';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -35,6 +37,22 @@ const useStyles = makeStyles(theme => ({
       border: `1px solid ${theme.palette.primary.main}`,
     },
   },
+  lockIcon: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: '50%',
+    transform: 'translateY(-50%)',
+    color: theme.palette.text.hint,
+    height: theme.spacing(3),
+  },
+  fieldDataTypeLocked: {
+    '& .MuiButtonBase-root': {
+      width: theme.spacing(12),
+      justifyContent: 'end',
+      paddingRight: theme.spacing(4.5),
+      color: theme.palette.text.hint,
+    },
+  },
 }));
 
 export default function Mapper2Generates(props) {
@@ -45,11 +63,13 @@ export default function Mapper2Generates(props) {
     value: propValue = '',
     onBlur,
     nodeKey,
+    isRequired,
   } = props;
   const classes = useStyles();
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState(propValue);
   const [isTruncated, setIsTruncated] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const containerRef = useRef();
   const inputFieldRef = useRef();
 
@@ -76,7 +96,10 @@ export default function Mapper2Generates(props) {
     setIsTruncated(inputFieldRef.current.offsetWidth < inputFieldRef.current.scrollWidth);
   }, []);
 
-  useOnClickOutside(containerRef, isFocused && handleBlur);
+  // adding the anchorEl dependency becuase if data type is clicked,
+  // we want to handle the blur function after the data type has been updated
+  // Ref: IO-26909
+  useOnClickOutside(containerRef, !anchorEl && isFocused && handleBlur);
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
 
   return (
@@ -93,7 +116,7 @@ export default function Mapper2Generates(props) {
             <TooltipTitle
               isTruncated={isTruncated}
               inputValue={inputValue}
-              fieldType="Destination record field"
+              fieldType="Destination field"
               />
           )} >
           <TextField
@@ -110,14 +133,28 @@ export default function Mapper2Generates(props) {
             onFocus={handleFocus}
             disabled={disabled}
             multiline={isFocused}
-            placeholder={disabled ? '' : 'Destination record field'} />
+            placeholder={disabled ? '' : 'Destination field'} />
         </Tooltip >
 
         <DestinationDataType
+          anchorEl={anchorEl}
+          setAnchorEl={setAnchorEl}
+          handleBlur={handleBlur}
           dataType={dataType}
           disabled={disabled}
           nodeKey={nodeKey}
+          className={clsx({[classes.fieldDataTypeLocked]: isRequired})}
         />
+
+        {isRequired && (
+          <Tooltip
+            title="This field is required by the application you are importing into"
+            placement="bottom">
+            <span className={classes.lockIcon}>
+              <LockIcon />
+            </span>
+          </Tooltip>
+        )}
 
       </div>
     </FormControl>

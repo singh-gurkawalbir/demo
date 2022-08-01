@@ -1,4 +1,4 @@
-import { HELP_CENTER_BASE_URL } from '../../utils/constants';
+import { HELP_CENTER_BASE_URL } from '../../constants';
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
 export default {
   formView: 'The application specific form is customized to help configure your resource for this particular application. However, if you would like more flexibility, choose the universal connector form (e.g. REST or HTTP) instead, which is a generic form.',
@@ -9,7 +9,8 @@ export default {
 'Open <a href="https://docs.celigo.com/hc/en-us/articles/360058595552-Create-forms" target="_blank">Form builder</a> to create or edit user-friendly fields that prompt for text entry or selections that will be returned as settings applied to this resource. Your forms can include any <a href="https://docs.celigo.com/hc/en-us/articles/360059205112-Common-form-fields" target="_blank">field types</a> that you see elsewhere in integrator.io. Forms fields make it much easier for less technical users to work with your settings.',
   settings:
 'This same JSON settings field is exposed on many of the core resource types: integration, flow, export, import, connection, etc... Generally speaking, this settings field can be used to parameterize the logic within your resource. Hooks, filters, handlebars, etc... are all given access to the settings fields when they run, and can incorporate the settings values into their logic. It is worth highlighting that the settings fields stored on linked/related resources are also accessible at runtime. For example, the settings field defined at the integration tile level will be accessible to all flows running within the same integration tile. \n\nIt is recommended that you create a custom form to expose and manage your settings fields, so that less technical users do not need to work with raw JSON. Be sure to check out the "Launch form builder" button!.',
-  'license._trialLicenseId': 'Create or select a license record that would serve as the default license configuration for any trial licenses.',
+  'license._trialLicenseId': 'Enter a license value that will be the default license configuration for any trial licenses.',
+  'license.trialPeriod': 'Choose a trial period for this integration: 14 days, 30 days, or 60 days.',
   'license.trialEnabled': 'You must create the integration app listing before you can enable the trials.',
   // fieldDefinitions
   'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
@@ -531,6 +532,10 @@ export default {
   'breezyhr.connection.http.auth.token.token': 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by Breezy HR. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
   'mercadolibre.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><br><b>Steps to get the client ID and client secret:<br></b>1. Sign in to your MercadoLibre developer account.<br>2. Navigate to <b>Profile → My Apps</b>.<br>3. Click on <b>Edit</b> after selecting the app to copy <b>Client ID</b> and <b>Client Select</b>.(If none exists yet,click to <b>Create new app</b> option to create a new pair.)',
   'mercadolibre.connection.http.unencrypted.region': 'Select the region of your MercadoLibre account.',
+  'bundleb2b.connection.http.unencrypted.storeHash': 'Enter the unique Store hash of your BigCommerce store. For example, if your BigCommerce store URL is https://store-a123456bc.mybigcommerce.com/, then provide <i>a123456bc</i> for the Store hash.',
+  'bundleb2b.connection.http.unencrypted.email': 'Enter the email of your BundleB2B app.',
+  'bundleb2b.connection.http.encrypted.password': 'Enter the password of your BundleB2B app. <br> Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'bundleb2b.connection.http.auth.token.token': 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by BundleB2B. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
   'constantcontact.connection.http._iClientId': 'Save your client ID and client secret in this field for an extra layer of security.<br><br><b>Steps to get the client ID and secret:<br></b>1. Open the V3 API Developer Portal and click the <b>My Applications</b> tab.<br>2. Enter your <b>username</b> and <b>password</b> and click <b>Login</b>.<br>3. Select the app you’re using to copy the client ID and secret. If none exist, click <b>New Application</b> to create a new client ID and secret.',
   'connection.http.marketoSubdomain':
 "Please enter your Marketo subdomain. For example, in https://591-vse-736.mktohttp.com/http/v1/activities/types.json '591-vse-736.mktohttp.com' is the subdomain.",
@@ -646,7 +651,7 @@ export default {
   'gorgias.connection.http.auth.basic.username':
 'Please enter the Username of your Gorgias account',
   'gorgias.connection.http.auth.basic.password':
-'Please enter the Password of your Gorgias account <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+'Please enter the API key of your Gorgias account. <br><b>Steps to retrieve the API key:<br></b>1. Sign in to your Gorgias account. <br>2. Navigate to <b>Settings > REST API</b>. <br>3. Copy your <b>API key</b>. (To create a new API key, click on <b>generate button</b>).<br> Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'walmart.connection.environment':
 'Please select the environment of your Walmart account here.',
   'walmart.connection.http.unencrypted.clientId':
@@ -664,6 +669,7 @@ export default {
 'Please select the environment of your LogiSense account.',
   'logisense.connection.storeURL':
 'Please enter the Store URL of your LogiSense account, provided by LogiSense team.',
+  'logisense.connection.http.unencrypted.version': 'Please enter your current LogiSense version.',
   'logisense.connection.http.unencrypted.username':
 'Please enter the Username of your LogiSense account.',
   'logisense.connection.http.encrypted.password':
@@ -896,6 +902,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.rdbms.password': 'The password for the specified Username.',
   'snowflake.import.rdbms.queryType': "'Use bulk insert SQL query' to quickly insert batches of data efficiently. </br>'Use SQL query once per record' to execute a custom query per record. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
   'bigquery.import.rdbms.queryType': "'Use bulk insert SQL query' to quickly insert batches of data efficiently. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
+  'redshift.import.rdbms.queryType': "'Use SQL query once per record' to execute a custom query per record. </br>'Use SQL query once per page of records' to execute a custom query per page of records.</br>'Use SQL query on first page only' to execute a custom query that runs only once in a flow on the first page of records.",
   'connection.rdbms.snowflake.warehouse':
 'Warehouse used for executing compute process.',
   'connection.rdbms.snowflake.schema':
@@ -911,6 +918,12 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.rdbms.bigquery.clientEmail': 'The email address for the Google Cloud service account used for authentication.',
   'connection.rdbms.bigquery.privateKey': 'First, copy the private key from the Google portal for the service account that you want to use to authenticate the connection. Before you add it to integrator.io you must replace all newline characters (\\n) throughout the private key:<br>1. Paste the private key into a text editor.<br>2. Find \\n.<br>3. With your cursor in that location, delete the \\n characters and press Enter or Return.<br>4. Repeat this for each instance of \\n.<br>5. Ensure -----BEGIN PRIVATE KEY----- appears before the key, and -----END PRIVATE KEY----- appears after the key.<br>6. Copy and paste the reformatted private key (including the begin and end declarations) into integrator.io.',
   'connection.rdbms.bigquery.dataset': 'The name of the dataset containing the tables and views being accessed.',
+  'connection.rdbms.redshift.region': 'The default Amazon Redshift region is [us-east-1]. To change the region, select the region for this Redshift account',
+  'connection.rdbms.redshift.aws.accessKeyId': "Many of Amazon's APIs require an access key, and this field stores the 'id' for the access key that you want this connection to use.  Please check the AWS guides if you need more info about access keys and how to generate and/or find them in your AWS account.",
+  'connection.rdbms.redshift.aws.secretAccessKey': 'When you create a new access key in your Amazon Redshift account, AWS will display both the access key id and the secret access key.  The secret access key will only be available once, and you should store it immediately in integrator.io (i.e. in this field).  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your secret access key safe.',
+  'connection.rdbms.redshift.user': 'IAM Database user. Learn more on how to create database user <a href="https://docs.aws.amazon.com/redshift/latest/mgmt/configuring-connections.html" target="_blank">here</a>.',
+  'connection.rdbms.redshift.database': 'redshift database that you want to connect.',
+  'connection.rdbms.redshift.clusterIdentifier': 'The name of the Redshift Cluster. <a href="https://docs.aws.amazon.com/redshift/latest/mgmt/configuring-connections.html" target="_blank">Learn more</a>.',
   'connection.rdbms.options':
 'Define additional configurations for the database connection that is available according to the database documentation. For example, you can configure the connection timeout if the SQL server you are trying to connect to is slow (default connection timeout for MS SQL server is 15000ms).',
   'connection.rdbms.concurrencyLevel':
@@ -1091,17 +1104,18 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connector.handle': '.',
   'connector.legacyId': '.',
   'connector.published': '.',
-  'connector.description': 'Brief description on the connector.',
+  'connector.description': 'The description of the integration app.',
+  'connector.applications': 'Displays the source and destination applications to which this integration can be connected. You can integrate with an application, database, or  universal connector.',
+  'connector.contactEmail': 'Enter one or many email addresses for the integration admin. The integration admin is notified when the user requests a demo, integration upgrade, add-on installation, or a subscription extension. ',
   'connector.imageURL': '.',
-  'connector._integrationId':
-'If this flow is part of an integration, this value will hold the id of that integration. ',
-  'connector.websiteURL': '.',
+  'connector._integrationId': 'Select the source integration ID. The selected integration is used as a source copy to create integrations to user accounts.',
+  'connector.websiteURL': 'Enter the website URL of the integration.',
   'connector.oauth2ResultsURL': '.',
   'connector.managed': '.',
-  'connector._stackId': '.',
-  'connector.installerFunction': '.',
-  'connector.updateFunction': '.',
-  'connector.uninstallerFunction': '.',
+  'connector._stackId': 'You can use stacks to host code for hooks, wrappers, connector installers, and settings pages. <a href="https://docs.celigo.com/hc/en-us/articles/227055868" target="_blank">Stacks</a> are simple server environments that can be implemented in any coding language and are always invoked via HTTP. Every stack is assigned a system token that should be used to authenticate HTTP requests. You own the IP for all of your stacks and can optionally choose to share a stack with other integrator.io users.',
+  'connector.installerFunction': 'This function creates an integration when a license is provided and passes control to the installer function with the required information. The relevant resources required by the integration are created and the install steps can be updated on the integration document. In this field, enter the function name as <b>installerFunction</b>.',
+  'connector.updateFunction': 'This function is used to do an update for the integrations belonging to a connector. Whenever new versions of the integration app need to be released or new features added to an integration app, use the update function to make the required changes for integrations installed in user accounts. This function can be invoked only by the owner of the connector. In this field, enter the function name as <b>updateFunction</b>.',
+  'connector.uninstallerFunction': 'This function removes all of the documents that are not removed while uninstalling the integration, or it completes any uninstallation steps. On completion, the integration is deleted from integrator.io and the license is dissociated for future use. In this field, enter the function name as <b>uninstallerFunction</b>.',
   'connector.sharedImportIds': '.',
   'connector.sharedExportIds': '.',
   'connector.oAuthServerFlow._iClientId': '.',
@@ -1395,7 +1409,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'export.unencrypted.apiType': '<b>Selling Partner API (SP-API)</b>: The Selling Partner API is a REST-based API and is an evolution of the legacy Amazon Marketplace Web Service (MWS) APIs. It’s recommended you integrate using SP-APIs.<br><b>Marketplace Web Service API (MWS)</b>: Amazon Marketplace Web Service (Amazon MWS) is the legacy web service API.',
   'import.unencrypted.feedType': 'The type of the feed.',
   'export.s3.region':
-  "Name of the amazon s3 region to the location where the request is being made. If not set, by default 'us-east-1' is selected",
+  'The default Amazon S3 region is [us-east-1]. To change the region, select the region for this S3 account',
   'export.webhook.provider':
 "Many popular webhooks have been exposed here for your convenience.  If you don't see the application that you need please log a support ticket so we can prioritize accordingly.  If you are creating your own webhook please choose 'Custom'.",
   'export.webhook.verify':
@@ -1461,6 +1475,10 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Select one or more flows that you would like to run automatically whenever this flow completes. The next flow must be enabled, and it cannot be a realtime flow. (Note that the current flow may run again even though the next flow is in progress.) ',
   'flow.autoResolveMatchingTraceKeys': 'Enable <b>Auto-resolve errors with matching trace key</b> to resolve other open errors with the same <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> (unique field identifier).',
   'flow.manageAliases': 'Use this page to see all of your aliases for this flow, as well as any integration-level aliases (inherited aliases). You can create a new alias for this flow (top right), or use the Actions menu to edit, copy, delete, or view details for a flow-level alias.  Inherited aliases are passed down to the flow from the integration. However, keep in mind that if you reference both a flow-level alias and an integration-level alias for a resource in a script, the flow-level alias will take precedence. Use the Actions menu for Inherited aliases to copy an alias or view its details. To create, edit, or delete one of these aliases, navigate to the integration instead and use the Alias tab. <a href="https://docs.celigo.com/hc/en-us/articles/4454740861979" target="_blank">Learn more about aliases</a>.',
+  'flow.router.branchType': `Select the <a href="https://docs.celigo.com/hc/en-us/articles/7287177264795-Branch-flows-Add-flow-branching-" target="_blank">type of branching</a> based on how you want records to flow through the branches:
+  <ul><li>If you select <b>First matching branch</b>, the branching conditions will be applied to a record sequentially based on the order of the branches. The record will only go through the first branch where the conditions are met.</li>
+  <li>If you select <b>All matching branches</b>, the branching conditions will be applied to a record for all branches. The record will go through all the branches where the conditions are met.</li></ul>`,
+  'flow.routers.branches': 'Add branches and define branching conditions. You can change the order of a branch by dragging it up or down, except when <b>All matching branches</b> is selected.',
   'alias.aliasId': 'Enter a descriptive, unique name to use as the Alias ID. This is what you will use in scripts to refer to the resource. Use only letters, numbers, hyphens(-) and/or underscores(_). For example, shopify_flow_neworders or netsuite-connection2_prod',
   'alias.description': 'Enter a description that provides more context on how the resource is used in your integration.',
   'alias.resourceType': 'Select the type of resource this alias will reference (such as a flow or import). Once you select the type, you can choose from a list of resources matching this type.',
@@ -1700,7 +1718,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'import.azure.backupPath':
 'Specify the directory path of the Azure blob storage container where files will be backed up after the successful transfer.',
   'import.s3.region':
-'Name of the nearest amazon s3 region to the location from where the request is being made. If not set, by default "us-east-1" is selected',
+'The default Amazon S3 region is [us-east-1]. To change the region, select the region for this S3 account',
   'import.s3.bucket':
 'Name of the bucket in S3, where you want file to be saved',
   'import.s3.backupBucket': 'Specify the bucket name where files will be backed up after successful transfer.',
@@ -2067,8 +2085,12 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.http._iClientId':
 'Save your client ID and client secret in iClient for an added layer of security.',
   'connection.http.clientCertificates.key': 'Select a .KEY private key file.',
+  'connection.http.clientCertificates.type':
+'Select the certificate type.',
   'connection.http.clientCertificates.cert':
 'Select a certificate in PEM format.',
+  'connection.http.clientCertificates.pfx':
+'Select a certificate in PFX format.',
   'connection.http.clientCertificates.passphrase':
 'Enter a passphrase if you need to further protect this certificate file.',
   'connection.marketplaceRegion':
@@ -2194,29 +2216,30 @@ if you're using a production account, you'll find your API keys under the 'API M
 'If the import fails for a specific record then what should happen to that record?  Should the failed record pause here until someone can analyze and fix the error (i.e. the default behavior), or should the failed record proceed to the next application in the flow regardless?',
   'fb.pp.imports.inputFilter':
 'Define an ‘input filter’ here to specify which source records should get processed by the import. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
-  'mapping.v2.dataType': 'Select the data type of the destination record field.',
-  'mapping.v2.fieldMappingType': 'Select the type of mapping you want to apply to the destination record field:<br><b>• Standard</b>: Send the value of the source field as the value in the destination field.<br><b>• Hard-coded</b>: Set the source field to a defined value for the destination field.<br><b>• Handlebars expression</b>: Build a handlebars expression for the value in the source field to send to the destination field.<br><b>• Lookup</b>: Define a static value-to-value mapping or use the results of a dynamic search to populate the destination field value.<br>See <a href="https://docs.celigo.com/hc/en-us/articles/360019506771-Map-source-record-fields-to-destination">Map source record fields to destination</a>.',
+  'mapping.v2.dataType': 'Select the data type of the destination field.',
+  'mapping.v2.fieldMappingType': 'Select the type of mapping you want to apply to the destination field:<br><b>• Standard</b>: Send the value of the source field as the value in the destination field.<br><b>• Hard-coded</b>: Set the source field to a defined value for the destination field.<br><b>• Handlebars expression</b>: Build a handlebars expression for the value in the source field to send to the destination field.<br><b>• Lookup</b>: Define a static value-to-value mapping or use the results of a dynamic search to populate the destination field value.<br>See <a href="https://docs.celigo.com/hc/en-us/articles/360019506771-Map-source-record-fields-to-destination">Map source fields to destination</a>.',
   'mapping.v2.useDate': 'Check this box if the destination field is a date type field. Additional options display if this box is checked.',
   'mapping.v2.extractDateFormat': 'Select the date format for the source field',
   'mapping.v2.extractDateTimezone': 'Select the time zone for the source field',
   'mapping.v2.generateDateFormat': 'Select the date format for the destination field',
   'mapping.v2.generateDateTimezone': 'Select the timezone for the destination field',
   'mapping.v2.default': 'Enter a custom value to set as the default value.',
-  'mapping.v2.expression': 'Use the advanced field editor (AFE) to build a handlebars expression. The result of the handlebars expression will populate the destination record field.',
-  'mapping.v2.lookup.mode': '<b>• Static or value-to-value lookup</b>: Use a static lookup if you already know all possible source and destination field values and how the lookup data should be mapped. For example, if you are mapping shipping methods between two applications, use a static lookup to define the source and destination record mappings. You can use handlebars expressions if necessary.<br><b>• Dynamic lookup</b>: Use a dynamic lookup to search for record data by sending an HTTP call to the import application\'s API. For example, if you have an email address in your source record, you can use the email address to search for additional data from the associated records in the import application.',
+  'mapping.v2.expression': 'Use the advanced field editor (AFE) to build a handlebars expression. The result of the handlebars expression will populate the destination field.',
+  'mapping.v2.lookup.mode': '<b>• Static or value-to-value lookup</b>: Use a static lookup if you already know all possible source and destination field values and how the lookup data should be mapped. For example, if you are mapping shipping methods between two applications, use a static lookup to define the source and destination mappings. You can use handlebars expressions if necessary.<br><b>• Dynamic lookup</b>: Use a dynamic lookup to search for record data by sending an HTTP call to the import application\'s API. For example, if you have an email address in your source, you can use the email address to search for additional data from the associated records in the import application.',
   'import.v2.lookup.name': 'Enter a descriptive and unique name to identify this lookup for future use.',
   'mapping.v2.relativeURI': 'Enter the resource path portion of the API endpoint. For example: \'/product\' or \'/bulkUpdate/orders\'. The relative URI value is appended to the base URI defined in the connection resource associated with this import. The base URI and relative URI together complete a fully qualified URL that defines the API endpoint. You can sometimes use query string parameters to pass extended information to an API endpoint. See the lookup application\'s API documentation for available endpoints and query string parameters.',
   'mapping.v2.lookup.method': 'Provide the HTTP method required by your lookup application to retrieve the lookup data (options include GET, or POST). Consult your destination application\'s API documentation to determine which method is best to use for your lookup.',
   'mapping.v2.lookup.extract': 'Enter the JSON path to the lookup field in the response body returned by the lookup application. For example: "products[0].name".',
   'mapping.v2.lookup.body': 'Define the exact HTTP request body that integrator.io will send to the destination application endpoint. Any mapping configurations you have configured with the user interface will be ignored, and only the HTTP request body text entered in this field will be sent in the request.',
-  'mapping.v2.copyObject': 'Select <b>Yes</b> if there is an object in the source record that you want to send to the target application without modification. integrator.io will send exactly the same child fields and their values to the target application. Otherwise, select <b>No</b> to define the mappings for each child field of the object. You don\'t need to add any mappings for the object type of the destination record field.',
-  'mapping.v2.copyObjectArray': 'Select <b>Yes</b> if there is an object in the source record that you want to send to the target application without modification. integrator.io will send exactly the same child fields and their values to the target application. Otherwise, select <b>No</b> to define the mappings for each child field of the object.',
+  'mapping.v2.copyObject': 'Select <b>Yes</b> if there is an object in the source that you want to send to the target application without modification. integrator.io will send exactly the same child fields and their values to the target application. Otherwise, select <b>No</b> to define the mappings for each child field of the object. You don\'t need to add any mappings for the object type of the destination field.',
+  'mapping.v2.copyObjectArray': 'Select <b>Yes</b> if there is an object in the source that you want to send to the target application without modification. integrator.io will send exactly the same child fields and their values to the target application. Otherwise, select <b>No</b> to define the mappings for each child field of the object.',
   'mapping.v2.objectAction': 'Action to take if the mapping returns an empty value:<br><b>• Use null as default value</b>: The value will be set to "null".<br><b>• Do nothing</b>: The record will be skipped.',
   'mapping.v2.multifieldAction': 'Select one of the following options when the mappings return an empty value:<br><b>• Use empty string as default value</b>: The value will be set to an empty string (\'\').<br><b>• Use null as default value</b>: The value will be set to "null".<br><b>• Use custom default value</b>: The value will be set to the custom value you define. Only use TRUE or FALSE as the custom value as the destination field is a boolean data type.<br><b>• Do nothing</b>: The record will be skipped.',
-  'mapping.v2.hardcodedAction': 'Select one of the following options to hard-code the value for the destination record field:<br><b>• Use empty string as default value</b>: The value will be set to an empty string (\'\').<br><b>• Use null as default value</b>: The value will be set to "null".<br><b>• Use custom default value</b>: The value will be set to the custom value you define.',
+  'mapping.v2.hardcodedAction': 'Select one of the following options to hard-code the value for the destination field:<br><b>• Use empty string as default value</b>: The value will be set to an empty string (\'\').<br><b>• Use null as default value</b>: The value will be set to "null".<br><b>• Use custom default value</b>: The value will be set to the custom value you define.',
   'mapping.v2.boolStandardAction': 'Select one of the following options when the mappings return an empty value:<br><b>• Use null as default value</b>: The value will be set to "null".<br><b>• Use custom default value</b>: The value will be set to the custom value you define. Only use TRUE or FALSE as the custom value as the destination field is a boolean data type.<br><b>• Do nothing</b>: The record will be skipped.',
   'mapping.v2.standardAction': 'Select one of the following options when the mappings return an empty value:<br><b>• Use empty string as default value</b>: The value will be set to an empty string (\'\').<br><b>• Use null as default value</b>: The value will be set to "null".<br><b>• Use custom default value</b>: The value will be set to the custom value you define. Only use TRUE or FALSE as the custom value as the destination field is a boolean data type.<br><b>• Do nothing</b>: The record will be skipped.',
-  'mapping.v2.lookupAction': 'Action to take if lookup fails<br><b>• Fail record</b>: Records without any match will fail without generating errors.<br><b>• Use empty string as default value</b>: The value will be set to an empty string (\'\').<br><b>• Use null as default value</b>: The value will be set to "null".<br><b>• Use custom default value</b>: The value will be set to the custom value you define. Only use TRUE or FALSE as the custom value as the destination field is a boolean data type.<br><b>• Do nothing</b>: The record will be skipped.',
+  'mapping.v2.staticLookupAction': 'Action to take if the source field value does not match any field values in the lookup record<br><b>• Fail record</b>: Records without any match will fail without generating errors.<br><b>• Use empty string as default value</b>: The value will be set to an empty string (\'\').<br><b>• Use null as default value</b>: The value will be set to "null".<br><b>• Use custom default value</b>: The value will be set to the custom value you define. Only use TRUE or FALSE as the custom value as the destination field is a boolean data type.<br><b>• Do nothing</b>: The record will be skipped.',
+  'mapping.v2.dynamicLookupAction': 'Action to take if the dynamic lookup fails to return a record<br><b>• Fail record</b>: Records without any match will fail without generating errors.<br><b>• Use empty string as default value</b>: The value will be set to an empty string (\'\').<br><b>• Use null as default value</b>: The value will be set to "null".<br><b>• Use custom default value</b>: The value will be set to the custom value you define. Only use TRUE or FALSE as the custom value as the destination field is a boolean data type.<br><b>• Do nothing</b>: The record will be skipped.',
   'mapping.dataType':
 'Select the data type of the import field, such as Boolean, string, or number array.',
   'mapping.discardIfEmpty':
@@ -2363,7 +2386,7 @@ When you select <b>Apply only the first row’s value and map the Visits</b>, th
   orderBy: 'Use this field to specify how you would like to order the related list records. Ex: Use `CreatedDate` to order the records by date created. The default order is `Ascending order`. To change it to use descending order using the order by field as `CreatedDate DESC`.',
   'afe.sampleDataSwitch': "Advanced Field Editor (AFE) 2.0 exposes an improved set of context variables, thus making it much easier to build dynamic values and/or complex structures. More specifically, the generic 'data' variable has been replaced by a set of more specific variable names to better represent the structure of data your template must work with. For example: 'record', 'rows[]', 'batch_of_records[]', etc…",
   'afe.mappings.toggle': 'Mapper 2.0 provides an improved record representation that allows users to better visualize the record structure integrator.io sends to the target application. These improvements include the ability to create nested arrays and write handlebars expression using advanced field editors (AFEs).<br>Note: Additional mapping functionality in future releases will only be added to Mapper 2.0.',
-  'afe.mappings.settings': 'Define mappings for the destination record field',
+  'afe.mappings.settings': 'Define mappings for the destination field',
   'afe.mappings.v2.rule': 'Define the JSON structure for the data to send to the target application. Get more details <a href="https://docs.celigo.com/hc/en-us/articles/4536629083035-Mapper-2-0">here</a>',
   'afe.mappings.v2.input': 'This is an example of the source application\'s input data received by the mapping for this flow step. You can also view the data classification (<a href="https://docs.celigo.com/hc/en-us/articles/4409527888923-Work-with-JSON-data-in-integrator-io#JSON-record-or-row">record or row</a>) in this panel.',
   'afe.mappings.v2.output': 'This is an example of the output data generated by your current mapping configuration. You can also view the data classification (<a href="https://docs.celigo.com/hc/en-us/articles/4409527888923-Work-with-JSON-data-in-integrator-io#JSON-record-or-row">record or row</a>) in this panel.',
@@ -2402,6 +2425,7 @@ use the custom option.`,
   'sso.orgId': 'Enter a unique organization ID that integrator.io will use to generate a unique SSO URL for your account. This field only accepts alphanumeric characters and must be 3-20 characters in length.',
   'sso.loginURL': 'Use this unique URL to sign in to your account with SSO. Use this URL  when configuring the integrator.io app in your SSO provider.',
   'sso.redirectURL': 'Your SSO provider will send the authorization code tokens to this unique URL. Use this URL when configuring the integrator.io app in your SSO provider.',
+  'sso.primaryAccount': 'Choose the account that you would like to use for SSO. Every time you sign in via SSO, integrator.io will verify that the SSO provider is linked to this specific account.',
   classification: 'Errors are automatically categorized according to their properties, such as the code, message, and source fields. For more information, see <a href="https://docs.celigo.com/hc/en-us/articles/4403697564429" target="_blank">Error classifications</a>',
   'import.lookup': 'Choose an existing lookup from the list or click <b>+</b> to define a new lookup. Lookups provide a way to dynamically search the destination application on the fly to find existing records.',
   'import.lookupType': 'Choose the method that should be used to identify if a source record already exists in the destination application: <br><b>• Records have a specific field populated – </b> <br>This method checks if a specific field in the source record already has a value, and then if so, the source record will be considered an existing record.<br>  <b>• Run a dynamic lookup – </b>This method will run a search in the destination application to find a record on the fly, and then if a record is found, the source record will be considered an existing record.',
@@ -2413,7 +2437,7 @@ use the custom option.`,
   'import.netsuite.file.fileType': 'Each file in NetSuite has a fileType. This is an optional field that defines the file format (e.g. _PDF, _PLAINTEXT, etc.). If you have already provided file names with file extensions (e.g. temp.txt), then there’s no need to explicitly define the file type. If you haven’t, specify the file type (e.g. _PDF) for the files that you want to import. If the file type should be dynamic based on the data you are integrating, you can specify the JSON path to the field in your data containing the file type values instead. For example, <code>{{{myFileField.fileName}}}</code>. See all supported file types.',
   'import.netsuite.file.folder': 'Specify the internal ID for the Netsuite File Cabinet folder where you want to import  your files. If the folder internal ID should be dynamic based on the data you are integrating, you can specify the JSON path to the field in your data containing the folder internal id values instead. For example, {{{myFileField.fileName}}}.',
   'import.netsuite.file.internalId': 'Enter a reference ID or expression to identify reference IDs of files to replace in the NetSuite File Cabinet.',
-  'auditlogs.download': 'Download up to 1,000 records from the last year. Note that filters are not applied to a download.',
+  'auditlogs.download': 'Download up to 1000 records from the last year.',
   'revisions.pull': 'Pulling changes from one linked integration to another lets you see conflicts, review changes, and merge them from one integration to another. You can only pull data from a direct clone or source integration.. For example, clone Integration A as Integration B, then B to C, and B to D. You can create a pull between integrations A and B, B and C, B and D; but not between A and C, or C and D',
   'pull.integration': 'Select the remote production or sandbox integration from which you pull changes. All linked integrations are displayed, which includes clones of this integration and the integration from which it was cloned.',
   'pull.reviewChanges': 'Review the changes between the current and remote integration. You can see all your integration resource changes, except for sensitive resources like API tokens and connections. You must resolve conflicts before you can continue to merge your changes. You’ll configure any new connections in the Merge changes step.',
@@ -2426,4 +2450,26 @@ use the custom option.`,
   'revert.finalRevertChanges': ' You can make changes to a source or cloned integration, then revert them. You must reconfigure your connections to revert your changes and there may be additional revert steps depending on necessary packages',
   'snapshot.create': 'A snapshot is a saved capture of your integration that you can use to revert your integration at any point.',
   'snapshot.description': 'Describe your snapshot so you can quickly identify the revision and any important details.',
+  'http.parseSuccessResponses': 'The integrator.io works on JSON internally. If your API returns success data in a different format than JSON, parse HTTP response data using available parsers for CSV and XML.',
+  'mfa.enable':
+    'Switch the toggle ON to initiate the process to enable MFA for your profile. You must also complete the following steps; otherwise, MFA will remain disabled. When you disable MFA,  device settings will also be disabled so that you can enable MFA at any point in future.',
+  'mfa.getVerificationApp':
+    'You can configure MFA to use any authenticator app that supports time-based one-time-password protocol (TOTP). Supported authenticator apps include, but not limited to, Google, LastPass, and Microsoft.',
+  'mfa.addIntegrationIO':
+    'To add integrator.io to your MFA authenticator app, you can either scan the QR code or enter the secret key manually. You must enter the password to view the secret key or QR code for your profile. Do not save these details anywhere else. You can find the secret key and QR code in your profile at any time in the future if necessary.',
+  'mfa.code.verify':
+    'Enter the code from your authenticator app for the Celigo configuration you just completed to verify that the configuration is successful.',
+  'mfa.primaryAccount':
+    'If you lose the mobile device that has the authenticator app installed, the account owner or admin of the primary account can reset MFA credentials for your profile. Choose the account that you want to perform MFA resets.',
+  'mfa.trustDevice':
+    'If you choose to trust the device you are using to sign in to integrator.io, you will only be required to enter MFA credentials after 90 days. Your account owner can modify the number of days a trusted device will not require credentials.',
+  'mfa.connect': 'This completes the MFA enablement process for your profile.',
+  'mfa.reset':
+    'If you have lost access to your MFA device or you believe your secret key has been compromised, click Reset to initiate the MFA reset process.',
+  'mfa.qrcode':
+    'View the QR code that was used to enable MFA for your profile.',
+  'mfa.viewSecret':
+    'View the secret key that was used to enable MFA for your profile.',
+  'mfa.trustedDevices':
+    'Click <b>Manage devices</b> to see a list of all trusted devices for your profile.',
 };

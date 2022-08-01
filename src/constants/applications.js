@@ -1,5 +1,5 @@
 import { stringCompare } from '../utils/sort';
-import {CONNECTORS_TO_IGNORE, REST_ASSISTANTS, WEBHOOK_ONLY_APPLICATIONS} from '../utils/constants';
+import {CONNECTORS_TO_IGNORE, REST_ASSISTANTS, WEBHOOK_ONLY_APPLICATIONS} from '.';
 
 // Schema details:
 // ---------------
@@ -24,7 +24,7 @@ const connectors = [
   },
   {
     id: 'rest',
-    name: 'REST API',
+    name: 'REST API (HTTP)',
     type: 'rest',
     keywords: 'technology,protocol',
     group: 'tech',
@@ -146,6 +146,14 @@ const connectors = [
     keywords: 'database,db',
     group: 'db',
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/360042825892-Set-up-a-connection-to-Google-BigQuery',
+  },
+  {
+    id: 'redshiftdatawarehouse',
+    name: 'Amazon Redshift',
+    type: 'redshiftdatawarehouse',
+    keywords: 'database,db',
+    group: 'db',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360042875872-Set-up-a-connection-to-Amazon-Redshift',
   },
   {
     id: 'graph_ql',
@@ -337,12 +345,38 @@ const getAssistants = () => {
   return localStorageAssistants;
 };
 
+export const getPublishedHttpConnectors = () => {
+  let localStoragePublishedHttpAssistants;
+
+  try {
+    localStoragePublishedHttpAssistants = JSON.parse(localStorage.getItem('publishedHttpConnectors')) || [];
+  } catch (e) {
+    localStoragePublishedHttpAssistants = [];
+  }
+
+  return localStoragePublishedHttpAssistants;
+};
+
+export const getHttpConnector = httpConnectorId => {
+  let localStoragePublishedHttpAssistants;
+
+  try {
+    localStoragePublishedHttpAssistants = JSON.parse(localStorage.getItem('publishedHttpConnectors')) || [];
+  } catch (e) {
+    localStoragePublishedHttpAssistants = [];
+  }
+
+  return localStoragePublishedHttpAssistants?.find(c => c._id === httpConnectorId);
+};
+
 export const groupApplications = (
   resourceType,
   { appType, isSimpleImport }
 ) => {
-  const assistantConnectors = connectors.filter(c => !c.assistant);
+  let assistantConnectors = connectors.filter(c => !c.assistant);
   const assistants = getAssistants();
+
+  const publishedConnectors = getPublishedHttpConnectors();
 
   if (assistants) {
     assistants.forEach(asst => {
@@ -362,47 +396,63 @@ export const groupApplications = (
       }
     });
   }
+  assistantConnectors = assistantConnectors.filter(app =>
+    !publishedConnectors?.find(pc => pc.name === app.name)
+  );
+    publishedConnectors?.forEach(pc => {
+      assistantConnectors.push({
+        id: pc.name,
+        name: pc.name,
+        type: 'http',
+        export: true,
+        import: true,
+        icon: pc.legacyId || pc.name,
+        assistant: pc.legacyId,
+        _httpConnectorId: pc._id,
+        helpURL: pc.helpURL,
+      });
+    });
 
-  assistantConnectors.sort(stringCompare('name'));
+    assistantConnectors.sort(stringCompare('name'));
 
-  const filteredConnectors = assistantConnectors.filter(connector => {
-    if (
-      connector.assistant &&
+    const filteredConnectors = assistantConnectors.filter(connector => {
+      if (
+        connector.assistant &&
       assistants &&
       resourceType !== 'connections' &&
       appType
-    ) {
-      return true;
-    }
+      ) {
+        return true;
+      }
 
-    // Do not show FTP/S3 import for DataLoader flows
-    if (resourceType === 'pageProcessor' && isSimpleImport) {
-      return !['ftp', 's3'].includes(connector.id) && !connector.webhookOnly;
-    }
+      // Do not show FTP/S3 import for DataLoader flows
+      if (resourceType === 'pageProcessor' && isSimpleImport) {
+        return !['ftp', 's3'].includes(connector.id) && !connector.webhookOnly;
+      }
 
-    // Webhooks are shown only for exports and for page generators in flow context
-    if (resourceType && !['exports', 'pageGenerator'].includes(resourceType)) {
+      // Webhooks are shown only for exports and for page generators in flow context
+      if (resourceType && !['exports', 'pageGenerator'].includes(resourceType)) {
       // all other resource types handled here
-      return !connector.webhookOnly;
-    }
+        return !connector.webhookOnly;
+      }
 
-    return true;
-  });
+      return true;
+    });
 
-  return [
-    {
-      label: 'Databases',
-      connectors: filteredConnectors.filter(c => c.group === 'db'),
-    },
-    {
-      label: 'Universal connectors',
-      connectors: filteredConnectors.filter(c => c.group === 'tech'),
-    },
-    {
-      label: 'Connectors',
-      connectors: filteredConnectors.filter(c => !c.group),
-    },
-  ];
+    return [
+      {
+        label: 'Databases',
+        connectors: filteredConnectors.filter(c => c.group === 'db'),
+      },
+      {
+        label: 'Universal connectors',
+        connectors: filteredConnectors.filter(c => c.group === 'tech'),
+      },
+      {
+        label: 'Connectors',
+        connectors: filteredConnectors.filter(c => !c.group),
+      },
+    ];
 };
 /* MISSING WEBHOOK PROVIDERS
   'travis-org',
@@ -416,11 +466,12 @@ export const groupApplications = (
 */
 export const applicationsList = () => {
   const assistants = getAssistants();
-  const applications = connectors.filter(connector => {
+  let applications = connectors.filter(connector => {
     const assistant = assistants.find(a => a.id === connector.assistant);
 
     return !assistant || !connector.assistant;
   });
+  const publishedConnectors = getPublishedHttpConnectors();
 
   assistants.forEach(asst => {
     let {name} = asst;
@@ -442,6 +493,22 @@ export const applicationsList = () => {
       helpURL: asst.helpURL,
     });
   });
+  applications = applications.filter(app =>
+    !publishedConnectors?.find(pc => pc.name === app.name)
+
+  );
+  publishedConnectors?.forEach(pc => {
+    applications.push({
+      id: pc.name,
+      name: pc.name,
+      type: 'http',
+      export: true,
+      import: true,
+      assistant: pc.legacyId,
+      _httpConnectorId: pc._id,
+      helpURL: pc.helpURL,
+    });
+  });
 
   return applications;
 };
@@ -455,9 +522,13 @@ export const getWebhookConnectors = () => {
 export const getWebhookOnlyConnectors = () =>
   connectors.filter(c => !!c.webhookOnly);
 
-export const getApp = (type, assistant) => {
+export const getApp = (type, assistant, _httpConnectorId) => {
   const id = assistant || type;
   const applications = applicationsList();
+
+  if (!assistant && _httpConnectorId) {
+    return applications.find(c => c._httpConnectorId === _httpConnectorId) || {};
+  }
 
   return applications.find(c => c.id === id) || {};
 };

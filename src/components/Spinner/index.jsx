@@ -9,7 +9,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    top: 0,
+    top: withDrawerHeader => withDrawerHeader ? 63 : 0,
     right: 0,
     bottom: 0,
     left: 0,
@@ -38,6 +38,7 @@ const useStyles = makeStyles(theme => ({
   large: {
     width: theme.spacing(6),
     height: theme.spacing(6),
+    margin: theme.spacing(1),
   },
   spinnerWithChildren: {
     alignItems: 'center',
@@ -68,8 +69,8 @@ const useStyles = makeStyles(theme => ({
 /**
  * Render an indeterminate spinning indicator.
  */
-export default function Spinner({loading, isOverlay = false, color = 'primary', children, centerAll, size = 'medium', className}) {
-  const classes = useStyles();
+export default function Spinner({loading, withDrawerHeader, isOverlay = false, color = 'primary', children, centerAll, size = 'medium', className}) {
+  const classes = useStyles(withDrawerHeader);
 
   const progress = (
     <CircularProgress
@@ -83,6 +84,7 @@ export default function Spinner({loading, isOverlay = false, color = 'primary', 
     <div
       className={clsx(
         {[classes.spinnerWrapper]: centerAll},
+        {[classes.withDrawerHeader]: withDrawerHeader},
         {[classes.spinnerCenterSmall]: centerAll && size === 'small'},
         {[classes.spinnerWithChildren]: children},
         {[classes.loadingWithChildren]: loading},

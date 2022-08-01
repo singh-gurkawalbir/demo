@@ -7,7 +7,7 @@ import { safeParse } from '../../../../../utils/string';
 
 export default {
   processor: ({activeProcessor}) => activeProcessor,
-  init: ({resource, options}) => {
+  init: ({resource, options, scriptContext}) => {
     let activeProcessor = 'filter';
 
     const filterObj = resource?.filter || {};
@@ -30,6 +30,7 @@ export default {
       ...options,
       rule,
       activeProcessor,
+      context: scriptContext,
     };
   },
   buildData: (_, sampleData) => {

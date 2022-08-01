@@ -7,7 +7,7 @@ import { parseFileData } from './fileParserUtils';
 import { pageProcessorPreview, exportPreview } from './previewCalls';
 import { getPreviewStageData } from '../../../utils/flowData';
 import { SCOPES } from '../../resourceForm';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import { commitStagedChanges } from '../../resources';
 
 /*

@@ -1,6 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
-import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
+import { SUITESCRIPT_CONNECTORS } from '../../../constants';
 
 const emptyObj = {};
 

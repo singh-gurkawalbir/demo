@@ -20,7 +20,9 @@ function ProceedOnFailureDialog(props) {
     open,
     onClose,
     flowId,
-    resourceIndex,
+    routerIndex,
+    branchIndex,
+    pageProcessorIndex,
     isViewMode,
     resourceType,
   } = props;
@@ -30,11 +32,14 @@ function ProceedOnFailureDialog(props) {
     flowId
   )?.merged || emptyObject;
 
-  const { pageProcessors = [] } = flow;
-  const defaultValue = !!(
-    pageProcessors[resourceIndex] &&
-    pageProcessors[resourceIndex].proceedOnFailure
-  );
+  let pageProcessor;
+
+  if (flow.routers?.length) {
+    pageProcessor = flow.routers[routerIndex]?.branches[branchIndex]?.pageProcessors[pageProcessorIndex];
+  } else {
+    pageProcessor = flow.pageProcessors?.[pageProcessorIndex];
+  }
+  const defaultValue = !!(pageProcessor.proceedOnFailure);
   const title = `What should happen to a record if the ${
     resourceType === 'exports' ? 'lookup' : 'import'
   } fails?`;
@@ -74,7 +79,8 @@ function ProceedOnFailureDialog(props) {
     const patchSet = [
       {
         op: 'replace',
-        path: `/pageProcessors/${resourceIndex}/proceedOnFailure`,
+        path: flow.routers?.length ? `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${pageProcessorIndex}/proceedOnFailure`
+          : `/pageProcessors/${pageProcessorIndex}/proceedOnFailure`,
         value: proceedOnFailure === 'true',
       },
     ];
@@ -82,7 +88,8 @@ function ProceedOnFailureDialog(props) {
     dispatch(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, {
       asyncKey: formKey,
     }));
-  }, [dispatch, flowId, formValues, resourceIndex]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, flowId, formValues, pageProcessorIndex, routerIndex, branchIndex]);
 
   const [count, setCount] = useState(0);
 

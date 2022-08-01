@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@material-ui/core';
 import clsx from 'clsx';
@@ -8,6 +9,8 @@ import ExtractsTree from './ExtractsTree';
 import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import messageStore from '../../../../../../../utils/messageStore';
 import ArrowPopper from '../../../../../../ArrowPopper';
+import useDebouncedValue from '../../../../../../../hooks/useDebouncedInput';
+import actions from '../../../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -71,7 +74,7 @@ export const TooltipTitle = ({
   isTruncated,
   inputValue,
   hideSourceDropdown,
-  isLookup,
+  isDynamicLookup,
   isHardCodedValue,
   isHandlebarExp,
   fieldType,
@@ -83,8 +86,8 @@ export const TooltipTitle = ({
   if (!isTruncated && !hideSourceDropdown) return fieldType;
 
   if (hideSourceDropdown) {
-    if (isLookup) {
-      hideDropdownMsgKey = 'LOOKUP_SOURCE_TOOLTIP';
+    if (isDynamicLookup) {
+      hideDropdownMsgKey = 'DYNAMIC_LOOKUP_SOURCE_TOOLTIP';
     } else if (isHardCodedValue) {
       hideDropdownMsgKey = 'HARD_CODED_SOURCE_TOOLTIP';
     } else if (isHandlebarExp) {
@@ -117,24 +120,28 @@ export default function Mapper2ExtractsTypeableSelect({
   id,
   disabled,
   value: propValue = '',
-  importId,
-  flowId,
   onBlur,
-  isLookup,
+  isDynamicLookup,
   isHardCodedValue,
   isHandlebarExp,
   editorLayout,
 }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
+  const dispatch = useDispatch();
   const [isFocused, setIsFocused] = useState(false);
-  const [inputValue, setInputValue] = useState(propValue);
+  const [inputValue, setInputValue] = useDebouncedValue(propValue, value => {
+    // do not dispatch action if the field is empty as there can be
+    // multiple rows and it will unnecessarily dispatch actions slowing down the UI
+    if (value === '' && value === propValue) return;
+    dispatch(actions.mapping.v2.patchExtractsFilter(value, propValue));
+  });
   const [isTruncated, setIsTruncated] = useState(false);
   const inputFieldRef = useRef();
 
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
-  }, []);
+  }, [setInputValue]);
 
   const handleFocus = useCallback(e => {
     e.stopPropagation();
@@ -165,7 +172,7 @@ export default function Mapper2ExtractsTypeableSelect({
     setIsTruncated(inputFieldRef.current.offsetWidth < inputFieldRef.current.scrollWidth);
   }, []);
 
-  const hideSourceDropdown = isLookup || isHardCodedValue || isHandlebarExp;
+  const hideSourceDropdown = isDynamicLookup || isHardCodedValue || isHandlebarExp;
 
   return (
     <FormControl
@@ -175,15 +182,15 @@ export default function Mapper2ExtractsTypeableSelect({
       <Tooltip
         disableFocusListener
         placement="bottom"
-        title={(isFocused || (!inputValue && !isLookup)) ? '' : (
+        title={(isFocused || (!inputValue && !isDynamicLookup)) ? '' : (
           <TooltipTitle
             isTruncated={isTruncated}
             inputValue={inputValue}
             hideSourceDropdown={hideSourceDropdown}
-            isLookup={isLookup}
+            isDynamicLookup={isDynamicLookup}
             isHardCodedValue={isHardCodedValue}
             isHandlebarExp={isHandlebarExp}
-            fieldType="Source record field"
+            fieldType="Source field"
         />
         )} >
         <TextField
@@ -198,7 +205,7 @@ export default function Mapper2ExtractsTypeableSelect({
           onFocus={handleFocus}
           disabled={disabled}
           multiline={isFocused}
-          placeholder={disabled ? '' : 'Source record field'}
+          placeholder={disabled ? '' : 'Source field'}
           InputProps={{
             endAdornment: !hideSourceDropdown &&
               (
@@ -244,9 +251,7 @@ export default function Mapper2ExtractsTypeableSelect({
             onBlur={onBlur}
             setInputValue={setInputValue}
             setIsFocused={setIsFocused}
-            flowId={flowId}
-            resourceId={importId}
-        />
+          />
         )}
       </ArrowPopper>
 

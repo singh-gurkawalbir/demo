@@ -1,7 +1,8 @@
 import { select, call } from 'redux-saga/effects';
 import deepClone from 'lodash/cloneDeep';
+import jsonPatch from 'fast-json-patch';
 import { selectors } from '../../../reducers';
-import { SCOPES } from '../../resourceForm';
+import { getFlowUpdatePatchesForNewPGorPP, SCOPES } from '../../resourceForm';
 import { apiCallWithRetry } from '../../index';
 import {
   fetchFlowResources,
@@ -10,33 +11,44 @@ import {
 } from './flowDataUtils';
 import { getFormattedResourceForPreview, getPostDataForDeltaExport, isPostDataNeededInResource } from '../../../utils/flowData';
 import { isNewId } from '../../../utils/resource';
-import { EMPTY_RAW_DATA, STANDALONE_INTEGRATION } from '../../../utils/constants';
+import { EMPTY_RAW_DATA, STANDALONE_INTEGRATION } from '../../../constants';
 import { getConstructedResourceObj } from '../flows/utils';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
+import { generateId } from '../../../utils/string';
 
 export function* pageProcessorPreview({
   flowId,
   _pageProcessorId,
   _pageProcessorDoc,
   previewType,
+  editorId,
   resourceType = 'exports',
   hidden = false,
   throwOnError = false,
   refresh = false,
   includeStages = false,
   runOffline = false,
-  isMockInput,
   addMockData,
 }) {
   if (!flowId || !_pageProcessorId) return;
+
   const { merged } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
-  const flow = yield call(filterPendingResources, { flow: deepClone(merged) });
+  const { prePatches } = yield select(selectors.editor, editorId);
+
+  let flowClone = deepClone(merged);
+
+  if (prePatches?.length) {
+    flowClone = jsonPatch.applyPatch(flowClone, jsonPatch.deepClone(prePatches)).newDocument;
+  }
+
+  let flow = yield call(filterPendingResources, { flow: flowClone });
+
   const isPreviewPanelAvailable = yield select(selectors.isPreviewPanelAvailableForResource, _pageProcessorId, 'imports');
 
   // // Incase of no pgs, preview call is stopped here
   if (!isPreviewPanelAvailable && (!flow.pageGenerators || !flow.pageGenerators.length)) return;
   // Incase of first new pp, pageProcessors does not exist on flow doc. So add default [] for pps
-  flow.pageProcessors = flow.pageProcessors || [];
+  if (!flow.routers && !prePatches) { flow.pageProcessors = flow.pageProcessors || []; }
   const pageGeneratorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageGenerators',
@@ -46,8 +58,6 @@ export function* pageProcessorPreview({
   const pageProcessorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageProcessors',
-    _pageProcessorId,
-    isMockInput,
     addMockData,
     // runOffline, Run offline is currently not supported for PPs
   });
@@ -60,14 +70,23 @@ export function* pageProcessorPreview({
     };
   }
 
+  let updatedPageProcessorId = _pageProcessorId;
+  const uniqId = generateId(24);
+
   // Incase of a new Lookup / Import add that doc to flow explicitly as it is not yet saved
   if (isNewId(_pageProcessorId)) {
-    const newResourceDoc =
-      resourceType === 'imports'
-        ? { type: 'import', _importId: _pageProcessorId }
-        : { type: 'export', _exportId: _pageProcessorId };
+    updatedPageProcessorId = uniqId;
+    const newPatches = yield call(getFlowUpdatePatchesForNewPGorPP,
+      resourceType,
+      updatedPageProcessorId,
+      flowId,
+      true,
+      resourceType === 'exports'
+    );
 
-    flow.pageProcessors.push(newResourceDoc);
+    if (newPatches?.length) {
+      flow = jsonPatch.applyPatch(flowClone, jsonPatch.deepClone(newPatches)).newDocument;
+    }
 
     // If page processor Doc is supplied , no need of fetching it from the state
     if (!_pageProcessorDoc) {
@@ -79,22 +98,54 @@ export function* pageProcessorPreview({
       };
     }
 
-    // in case of new imports, add mock input
+    // in case of new imports/lookups, add mock input
     if (addMockData) {
       pageProcessorMap[_pageProcessorId].options = yield call(getPreviewOptionsForResource, {
         resource: {_id: _pageProcessorId},
         _pageProcessorId,
-        isMockInput,
         addMockData,
       });
     }
+    pageProcessorMap[updatedPageProcessorId] = pageProcessorMap[_pageProcessorId];
+    delete pageProcessorMap[_pageProcessorId];
+  }
+
+  if (flow.routers && flow.routers.some(r => r.id === _pageProcessorId)) {
+    delete flow.pageProcessors;
+    const router = flow.routers.find(r => r.id === _pageProcessorId);
+
+    if (router?.branches?.length) {
+      // make record pass through the router's first branch by removing all filters
+      router.routeRecordsTo = 'all_matching_branches';
+      router.routeRecordsUsing = 'input_filters';
+      if (router.branches[0].pageProcessors?.length) {
+        updatedPageProcessorId = uniqId;
+        router.branches[0].pageProcessors[0].type = 'import';
+        router.branches[0].pageProcessors[0]._importId = uniqId;
+        // Delete existing _exportId which gets added when the PP is a lookup and we mock it as import to get flowInputData
+        // Ref bug : IO-27378
+        delete router.branches[0].pageProcessors[0]._exportId;
+        delete router.branches[0].pageProcessors[0].setupInProgress;
+        delete router.branches[0].inputFilter;
+      } else {
+        router.branches[0].pageProcessors = [{type: 'import', _importId: uniqId }];
+        delete router.branches[0].inputFilter;
+        updatedPageProcessorId = uniqId;
+      }
+    } else if (!router.branches) {
+      router.branches = [{pageProcessors: [{type: 'import', _importId: uniqId }]}];
+      updatedPageProcessorId = uniqId;
+    }
+    pageProcessorMap[updatedPageProcessorId] = {
+      doc: {_id: updatedPageProcessorId},
+    };
   }
 
   if (previewType === 'flowInput') {
     // make the _pageProcessor as import so that BE calculates flow data till that processor
-    flow.pageProcessors = flow.pageProcessors.map(pageProcessor => {
-      if (pageProcessor._exportId === _pageProcessorId) {
-        pageProcessorMap[_pageProcessorId].options = {};
+    const updatePageProcessorToImport = pageProcessor => {
+      if (pageProcessor._exportId === updatedPageProcessorId) {
+        pageProcessorMap[updatedPageProcessorId].options = {};
 
         return {
           ...pageProcessor,
@@ -104,24 +155,35 @@ export function* pageProcessorPreview({
       }
 
       return pageProcessor;
-    });
-  } else if (resourceType === 'exports' && pageProcessorMap[_pageProcessorId]?.doc) {
-    // remove tx,filters,hooks from PP Doc to get preview data for _pageProcessorId
-    const { transform, filter, hooks, ...lookupDocWithoutProcessors } = pageProcessorMap[_pageProcessorId].doc;
+    };
 
-    pageProcessorMap[_pageProcessorId].doc = lookupDocWithoutProcessors;
+    if (flow.pageProcessors) {
+      flow.pageProcessors = flow.pageProcessors.map(updatePageProcessorToImport);
+    } else if (flow.routers) {
+      flow.routers.forEach(router => {
+        router.branches?.forEach(branch => {
+          // eslint-disable-next-line no-param-reassign
+          branch.pageProcessors = branch.pageProcessors?.map(updatePageProcessorToImport) || [];
+        });
+      });
+    }
+  } else if (resourceType === 'exports' && pageProcessorMap[updatedPageProcessorId]?.doc) {
+    // remove tx,filters,hooks from PP Doc to get preview data for _pageProcessorId
+    const { transform, filter, hooks, ...lookupDocWithoutProcessors } = pageProcessorMap[updatedPageProcessorId].doc;
+
+    pageProcessorMap[updatedPageProcessorId].doc = lookupDocWithoutProcessors;
     // update options for the lookups if incase they were not added before ( incase of custom pp doc or new pp doc )
     if (
       isPostDataNeededInResource(lookupDocWithoutProcessors) &&
-      !pageProcessorMap[_pageProcessorId].options
+      !pageProcessorMap[updatedPageProcessorId].options
     ) {
-      pageProcessorMap[_pageProcessorId].options = {
+      pageProcessorMap[updatedPageProcessorId].options = {
         postData: getPostDataForDeltaExport(lookupDocWithoutProcessors),
       };
     }
   }
 
-  const body = { flow, _pageProcessorId, pageGeneratorMap, pageProcessorMap, includeStages };
+  const body = { flow, _pageProcessorId: updatedPageProcessorId, pageGeneratorMap, pageProcessorMap, includeStages };
 
   const isRunOfflineConfigured = runOffline && Object.values(pageGeneratorMap)
     .some(
@@ -136,6 +198,10 @@ export function* pageProcessorPreview({
       hidden: isRunOfflineConfigured ? true : hidden,
     });
 
+    if (flow.routers?.length && Array.isArray(previewData)) {
+      return previewData[0];
+    }
+
     return previewData;
   } catch (e) {
     // When runOffline mode fails make preview call without offlineMode and move further
@@ -145,6 +211,7 @@ export function* pageProcessorPreview({
         _pageProcessorId,
         _pageProcessorDoc,
         previewType,
+        editorId,
         resourceType,
         hidden,
         throwOnError,

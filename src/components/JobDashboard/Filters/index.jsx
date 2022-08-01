@@ -82,9 +82,9 @@ const useStyles = makeStyles(theme => ({
 const rangeFilters = [
   {id: 'today', label: 'Today'},
   {id: 'yesterday', label: 'Yesterday'},
-  {id: 'last7days', label: 'Last 7 Days'},
-  {id: 'last15days', label: 'Last 15 Days'},
-  {id: 'last30days', label: 'Last 30 Days'},
+  {id: 'last7days', label: 'Last 7 days'},
+  {id: 'last15days', label: 'Last 15 days'},
+  {id: 'last30days', label: 'Last 30 days'},
   {id: 'custom', label: 'Custom'},
 ];
 const defaultRange = {
