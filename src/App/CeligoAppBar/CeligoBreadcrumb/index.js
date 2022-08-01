@@ -17,7 +17,7 @@ import AddResourceTypeCrumb from './crumbs/AddResourceType';
 import suiteScriptRoutes from './suiteScript';
 import getRoutePath from '../../../utils/routePaths';
 import ConnectorCrumb from './crumbs/Connector';
-import {HOME_PAGE_PATH} from '../../../utils/constants';
+import {HOME_PAGE_PATH} from '../../../constants';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import FlowStepDebugLogs from './crumbs/FlowStepDebugLogs';
 import FlowGroupCrumb from './crumbs/FlowGroup';
@@ -63,7 +63,7 @@ const useStyles = makeStyles(theme => ({
 const flowBuilderRoutes = [
   {
     path: '/flowBuilder/:flowId',
-    breadcrumb: 'Flow Builder',
+    breadcrumb: 'Flow builder',
     childRoutes: [
       { path: buildDrawerUrl({path: drawerPaths.FLOW_BUILDER.SCHEDULE}), breadcrumb: 'Schedule' },
       { path: buildDrawerUrl({path: drawerPaths.FLOW_BUILDER.SETTINGS}), breadcrumb: 'Settings' },
@@ -71,7 +71,7 @@ const flowBuilderRoutes = [
   },
   {
     path: '/dataLoader/:flowId',
-    breadcrumb: 'Data Loader',
+    breadcrumb: 'Data loader',
     childRoutes: [{ path: buildDrawerUrl({path: drawerPaths.FLOW_BUILDER.SETTINGS}), breadcrumb: 'Settings' }],
   },
 ];

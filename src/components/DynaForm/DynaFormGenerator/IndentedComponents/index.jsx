@@ -1,6 +1,12 @@
 import React, { Fragment } from 'react';
+import { shallowEqual, useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
+import { useSelectorMemo } from '../../../../hooks';
+import { selectors } from '../../../../reducers';
 import FormGenerator from '..';
+import Help from '../../../Help';
+
+const emptyObj = {};
 
 const useStyles = makeStyles(theme => ({
   indentFields: {
@@ -13,18 +19,44 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  indentTitle: {
+    marginBottom: theme.spacing(2),
+    fontSize: '15px',
+  },
+  helpButton: {
+    padding: 0,
+    margin: 2,
+    '&:hover': {
+      background: 'none',
+    },
+  },
 }));
 
 export default function IndentedComponents(props) {
-  const { containers, fieldMap} = props;
+  const { containers, fieldMap, formKey, resourceType, resourceId} = props;
   const classes = useStyles();
+  const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId)?.merged || emptyObj;
+  const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', resource._connectionId)?.merged || emptyObj;
+  const formValues = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+
   const transformedContainers =
     containers?.map((container, index) => {
-      const {label, ...rest } = container;
+      const {label, header, helpKey, ...rest } = container;
+      const heading = typeof header === 'function' ? header(resource, connection, formValues) : header;
 
       return (
         // eslint-disable-next-line react/no-array-index-key
         <Fragment key={index}>
+          {heading && (
+            <Typography variant="body2" className={classes.indentTitle}>
+              {heading}
+              <Help
+                className={classes.helpButton}
+                title={heading}
+                helpKey={helpKey}
+              />
+            </Typography >
+          )}
           <div className={classes.indentFields}>
             {label && <Typography>{label}</Typography>}
 

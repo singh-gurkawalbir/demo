@@ -1,5 +1,6 @@
-import { JOB_STATUS } from '../constants';
+import { JOB_STATUS } from '../../constants';
 import { getJobDuration } from '../../reducers/data/jobs/util';
+import { getAllPageProcessors } from '../flows';
 
 export const FLOW_STEP_STATUS = {
   WAITING: 'WAITING',
@@ -7,15 +8,15 @@ export const FLOW_STEP_STATUS = {
 };
 
 export const getFlowStepsYetToBeCreated = (flow, createdSteps = []) => {
-  const { pageProcessors: pps = []} = flow || {};
+  const pps = getAllPageProcessors(flow);
 
   return pps.filter(pp => {
     if (!createdSteps.length) return true;
     if (pp.type === 'export') {
-      return !createdSteps.some(c => c._exportId === pp._exportId);
+      return !createdSteps.some(c => c._exportId === pp._exportId || c._expOrImpId === pp._exportId);
     }
     if (pp.type === 'import') {
-      return !createdSteps.some(c => c._importId === pp._importId);
+      return !createdSteps.some(c => c._importId === pp._importId || c._expOrImpId === pp._importId);
     }
 
     return false;
@@ -64,9 +65,7 @@ export const getRunConsoleJobSteps = (parentJob = {}, childJobs = [], resourceMa
     const additionalChildProps = {
       uiStatus: cJob.status,
       duration: getJobDuration(cJob),
-      name: cJob._exportId
-        ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-        : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+      name: resourceMap[cJob.type === 'export' ? 'exports' : 'imports']?.[cJob._expOrImpId || cJob._exportId || cJob._importId]?.name,
     };
 
     // If parent job is cancelled, show child in progress jobs as cancelling

@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import ReactivateIcon from '../../../../../icons/ReactivateIcon';
 import { selectors } from '../../../../../../reducers';
 import { isIntegrationAppVersion2 } from '../../../../../../utils/integrationApps';
-import { TILE_STATUS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../../../../../utils/constants';
+import { TILE_STATUS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../../../../../constants';
 import actions from '../../../../../../actions';
 import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 import FieldMessage from '../../../../../DynaForm/fields/FieldMessage';

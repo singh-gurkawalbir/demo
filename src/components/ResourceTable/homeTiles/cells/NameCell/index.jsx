@@ -7,7 +7,7 @@ import InfoIconButton from '../../../../InfoIconButton';
 import { selectors } from '../../../../../reducers';
 import IntegrationTag from '../../../../tags/IntegrationTag';
 import Tag from '../../../../tags/Tag';
-import { INTEGRATION_ACCESS_LEVELS } from '../../../../../utils/constants';
+import { INTEGRATION_ACCESS_LEVELS } from '../../../../../constants';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import IntegrationPinnedIcon from '../../../../icons/IntegrationPinnedIcon';
 

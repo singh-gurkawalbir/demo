@@ -95,7 +95,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
           <TextField
             data-private
             name="feedbackText"
-            placeholder="Please let us know how we can improve the text area."
+            placeholder="How can we make this information more helpful?"
             multiline
             onChange={onChange}
             variant="outlined"

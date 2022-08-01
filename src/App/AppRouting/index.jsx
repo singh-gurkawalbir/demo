@@ -5,7 +5,7 @@ import ClonePreview from '../../views/Clone/Preview';
 import CloneSetup from '../../views/Clone/Setup';
 import getRoutePath from '../../utils/routePaths';
 import AmpersandRoutesHandler from './AmpersandRoutesHandler';
-import { AMPERSAND_ROUTES, HOME_PAGE_PATH } from '../../utils/constants';
+import { AMPERSAND_ROUTES, HOME_PAGE_PATH } from '../../constants';
 import retry from '../../utils/retry';
 import ResourceListInfo from '../../views/ResourceList/infoText';
 
