@@ -55,11 +55,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function HelpContent({ children, title, caption, fieldId, resourceType }) {
+export default function HelpContent({ children, title, caption, fieldId, feedbackTextMsgHandler, resourceType }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [feedbackText, setFeedbackText] = useState(false);
   const [feedbackTextValue, setFeedbackTextValue] = useState('');
+
+  if (feedbackText) {
+    feedbackTextMsgHandler('feedbackFormVisible');
+  }
   const handleUpdateFeedBack = useCallback(
     helpful => () => {
       if (helpful) {

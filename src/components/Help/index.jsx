@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { makeStyles } from '@material-ui/core/styles';
@@ -28,6 +28,14 @@ const useStyles = makeStyles(theme => ({
 export default function Help({ className, helpKey, helpText, escapeUnsecuredDomains, ...rest }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [text, setText] = useState('');
+  const feedbackTextMsgHandler = msg => {
+    setText(msg);
+  };
+
+  useEffect(() => {
+    feedbackTextMsgHandler();
+  }, [text]);
 
   const handleMenu = useCallback(
     event => {
@@ -70,7 +78,7 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
         open={open}
         disablePortal
         anchorEl={anchorEl}>
-        <HelpContent {...rest}>
+        <HelpContent feedbackTextMsgHandler={feedbackTextMsgHandler} {...rest}>
           {/<\/?[a-z][\s\S]*>/i.test(helpTextValue) ? (
             <RawHtml
               html={helpTextValue}
