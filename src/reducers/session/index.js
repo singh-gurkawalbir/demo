@@ -41,6 +41,7 @@ import asyncTask, {selectors as fromAsyncTask} from './asyncTask';
 import lifeCycleManagement, {selectors as fromLifeCycleManagement} from './lifeCycleManagement';
 import loadResources, { selectors as fromLoadResources } from './loadResources';
 import aliases, {selectors as fromAliases} from './aliases';
+import flowbuilder, { selectors as fromFlowbuilder } from './flowbuilder';
 import { genSelectors } from '../util';
 
 export default combineReducers({
@@ -86,6 +87,7 @@ export default combineReducers({
   lifeCycleManagement,
   loadResources,
   aliases,
+  flowbuilder,
 });
 
 // #region PUBLIC SELECTORS
@@ -133,6 +135,7 @@ const subSelectors = {
   lifeCycleManagement: fromLifeCycleManagement,
   loadResources: fromLoadResources,
   aliases: fromAliases,
+  flowbuilder: fromFlowbuilder,
 };
 
 genSelectors(selectors, subSelectors);

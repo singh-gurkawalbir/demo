@@ -1,6 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
-import { FORM_SAVE_STATUS } from '../../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../../constants';
 
 export default (state = {}, action) => {
   const { type, key } = action;

@@ -16,6 +16,7 @@ import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDataChange from '../DynaCsvParse_afe/FileDataChange';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import { emptyObject } from '../../../../constants';
 
 const getParserValue = ({
   resourcePath,
@@ -94,8 +95,11 @@ export default function DynaXmlParse_afe({
 
   const isParserSupported = useSelector(state => selectors.isParserSupported(state, formKey, 'xml'));
 
-  const resourcePath = useSelector(state =>
-    isParserSupported ? selectors.resource(state, resourceType, resourceId)?.http?.response?.resourcePath : selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
+  const resourcePath = useSelector(state => {
+    const resource = selectors.resource(state, resourceType, resourceId) || emptyObject;
+
+    return resource.file?.xml?.resourcePath || resource.http?.response?.resourcePath;
+  });
 
   const getInitOptions = useCallback(
     val => ({ resourcePath, ...val?.[0]?.rules}),
@@ -147,6 +151,8 @@ export default function DynaXmlParse_afe({
 
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
+      if (!isParserSupported) return null;
+
       const parsersValue = getParserValue(newOptions);
 
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
@@ -157,7 +163,7 @@ export default function DynaXmlParse_afe({
         onFieldChange(id, parsersValue, touched);
       }
     },
-    [id, onFieldChange]
+    [id, isParserSupported, onFieldChange]
   );
 
   const parseFormKey = 'xmlParserFields';

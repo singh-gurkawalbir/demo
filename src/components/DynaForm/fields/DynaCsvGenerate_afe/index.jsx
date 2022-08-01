@@ -13,7 +13,7 @@ import useFormContext from '../../../Form/FormContext';
 import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowValidations';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
@@ -142,7 +142,7 @@ export default function DynaCsvGenerate_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'inputFilter',
+      stage: resourceType === 'exports' ? 'inputFilter' : 'postMapOutput',
       onSave: handleSave,
     }));
 

@@ -74,7 +74,7 @@ export const TooltipTitle = ({
   isTruncated,
   inputValue,
   hideSourceDropdown,
-  isLookup,
+  isDynamicLookup,
   isHardCodedValue,
   isHandlebarExp,
   fieldType,
@@ -86,8 +86,8 @@ export const TooltipTitle = ({
   if (!isTruncated && !hideSourceDropdown) return fieldType;
 
   if (hideSourceDropdown) {
-    if (isLookup) {
-      hideDropdownMsgKey = 'LOOKUP_SOURCE_TOOLTIP';
+    if (isDynamicLookup) {
+      hideDropdownMsgKey = 'DYNAMIC_LOOKUP_SOURCE_TOOLTIP';
     } else if (isHardCodedValue) {
       hideDropdownMsgKey = 'HARD_CODED_SOURCE_TOOLTIP';
     } else if (isHandlebarExp) {
@@ -121,7 +121,7 @@ export default function Mapper2ExtractsTypeableSelect({
   disabled,
   value: propValue = '',
   onBlur,
-  isLookup,
+  isDynamicLookup,
   isHardCodedValue,
   isHandlebarExp,
   editorLayout,
@@ -131,6 +131,9 @@ export default function Mapper2ExtractsTypeableSelect({
   const dispatch = useDispatch();
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useDebouncedValue(propValue, value => {
+    // do not dispatch action if the field is empty as there can be
+    // multiple rows and it will unnecessarily dispatch actions slowing down the UI
+    if (value === '' && value === propValue) return;
     dispatch(actions.mapping.v2.patchExtractsFilter(value, propValue));
   });
   const [isTruncated, setIsTruncated] = useState(false);
@@ -169,7 +172,7 @@ export default function Mapper2ExtractsTypeableSelect({
     setIsTruncated(inputFieldRef.current.offsetWidth < inputFieldRef.current.scrollWidth);
   }, []);
 
-  const hideSourceDropdown = isLookup || isHardCodedValue || isHandlebarExp;
+  const hideSourceDropdown = isDynamicLookup || isHardCodedValue || isHandlebarExp;
 
   return (
     <FormControl
@@ -179,12 +182,12 @@ export default function Mapper2ExtractsTypeableSelect({
       <Tooltip
         disableFocusListener
         placement="bottom"
-        title={(isFocused || (!inputValue && !isLookup)) ? '' : (
+        title={(isFocused || (!inputValue && !isDynamicLookup)) ? '' : (
           <TooltipTitle
             isTruncated={isTruncated}
             inputValue={inputValue}
             hideSourceDropdown={hideSourceDropdown}
-            isLookup={isLookup}
+            isDynamicLookup={isDynamicLookup}
             isHardCodedValue={isHardCodedValue}
             isHandlebarExp={isHandlebarExp}
             fieldType="Source field"

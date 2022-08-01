@@ -2,7 +2,7 @@
 import { nanoid } from 'nanoid';
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
-import { REVISION_TYPES, REVISION_CREATION_STATUS } from '../../../../utils/constants';
+import { REVISION_TYPES, REVISION_CREATION_STATUS } from '../../../../constants';
 
 export default (state = {}, action) => {
   const { integrationId, type, revisionInfo, newRevisionId, revisionId, errors = [], creationError } = action;

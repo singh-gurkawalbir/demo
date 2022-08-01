@@ -6,7 +6,7 @@ import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   INVITE_USER_DRAWER_FORM_KEY,
-} from '../../../utils/constants';
+} from '../../../constants';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
@@ -112,6 +112,7 @@ export default function UserFormWrapper({ userId }) {
       id={userId}
       onSaveClick={handleSaveClick}
       onCancelClick={handleClose}
+      disableSave={disableSave}
     />
   );
 }

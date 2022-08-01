@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/';
 import { useSelector } from 'react-redux';
 import loadable from '../../utils/loadable';
 import { selectors } from '../../reducers';
-import { USER_ACCESS_LEVELS } from '../../utils/constants';
+import { USER_ACCESS_LEVELS } from '../../constants';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import TransfersIcon from '../../components/icons/TransfersIcon';
 import SecurityIcon from '../../components/icons/SecurityIcon';

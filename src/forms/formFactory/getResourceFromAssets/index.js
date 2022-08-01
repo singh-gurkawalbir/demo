@@ -2,7 +2,7 @@ import produce from 'immer';
 
 import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
-import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS} from '../../../utils/constants';
+import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS} from '../../../constants';
 import { getAssistantFromResource, getResourceSubType, isNewId, rdbmsSubTypeToAppType } from '../../../utils/resource';
 import { isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, shouldLoadAssistantFormForImports, shouldLoadAssistantFormForExports, isEbayFinanceConnection } from '../../../utils/assistant';
 import {getHttpConnector} from '../../../constants/applications';
@@ -190,9 +190,9 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
   const { type } = getResourceSubType(resource);
   let isNewHTTPFramework = false;
 
-  if (['exports', 'imports'].includes(resourceType)) {
+  if (['exports', 'imports'].includes(resourceType) && connection?.http?.formType !== 'graph_ql') {
     isNewHTTPFramework = !!getHttpConnector(connection?.http?._httpConnectorId);
-  } else if (resourceType === 'connections') {
+  } else if (resourceType === 'connections' && resource?.http?.formType !== 'graph_ql') {
     isNewHTTPFramework = !!getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
   }
 
@@ -252,7 +252,9 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         if (isNew) {
           meta = meta.new;
         } else if (isNewHTTPFramework) {
-          if (!resource?.useParentForm && resource?.http?.formType !== 'http') {
+          const showAssistantView = assistantData?.import?.versions?.[0]?.resources?.length;
+
+          if (!resource?.useParentForm && resource?.http?.formType !== 'http' && showAssistantView) {
             meta = meta.custom.httpFramework.assistantDefinition(
               resource._id,
               resource,
@@ -318,7 +320,9 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         if (isNew) {
           meta = meta.new;
         } else if (isNewHTTPFramework) {
-          if (!resource?.useParentForm && resource?.http?.formType !== 'http') {
+          const showAssistantView = assistantData?.export?.versions?.[0]?.resources?.length;
+
+          if (!resource?.useParentForm && resource?.http?.formType !== 'http' && showAssistantView) {
             meta = meta.custom.httpFramework.assistantDefinition(
               resource._id,
               resource,

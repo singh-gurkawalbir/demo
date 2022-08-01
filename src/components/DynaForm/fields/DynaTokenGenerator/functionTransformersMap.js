@@ -343,6 +343,15 @@ export default {
       },
     }),
   },
+  bundleb2b: {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.data.token,
+    }),
+    payloadTransformer: form => ({
+      baseURI: 'https://api.bundleb2b.net/api/io/auth/backend',
+      body: `{"storeHash":"${form['/http/unencrypted/storeHash']}","email":"${form['/http/unencrypted/email']}","password":"${form['/http/encrypted/password']}","channelId":"1","name":"token","beginAt":"1657885403","endAt":"2147483647"}`,
+    }),
+  },
   bartender: {
     responseParser: resp => ({
       'http.auth.token.token': resp && resp.access_token,

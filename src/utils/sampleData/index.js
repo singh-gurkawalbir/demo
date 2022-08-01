@@ -518,7 +518,7 @@ export const unwrapExportFileSampleData = sampleData => {
 
     if (record) {
       records.push(record);
-    } else if (rows) {
+    } else if (Array.isArray(rows)) {
       rows.forEach(row => {
         rowRecords.push(row);
       });

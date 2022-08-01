@@ -3,7 +3,7 @@ import each from 'jest-each';
 import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
-import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, UNASSIGNED_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS } from '../utils/constants';
+import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, UNASSIGNED_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS } from '../constants';
 import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../utils/home';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
@@ -612,6 +612,7 @@ describe('resource region selector testcases', () => {
         disableRunFlow: true,
         disableSlider: true,
         hasSettings: false,
+        isSetupInProgress: false,
         isDeltaFlow: true,
         isRealtime: false,
         isRunnable: true,
@@ -758,6 +759,7 @@ describe('resource region selector testcases', () => {
         isDeltaFlow: true,
         isRealtime: false,
         isRunnable: true,
+        isSetupInProgress: false,
         isSimpleImport: false,
         pageGenerators: [
           {
@@ -992,7 +994,7 @@ describe('resource region selector testcases', () => {
             disableRunFlow: true,
             isFlowEnableLocked: false,
             allowSchedule: false,
-            type: 'Data Loader',
+            type: 'Data loader',
             supportsSettings: false,
           },
           f2: {
@@ -1139,7 +1141,7 @@ describe('resource region selector testcases', () => {
             disableRunFlow: false,
             isFlowEnableLocked: true,
             allowSchedule: false,
-            type: 'Data Loader',
+            type: 'Data loader',
             supportsSettings: false,
           },
           f2: {
@@ -1239,7 +1241,7 @@ describe('resource region selector testcases', () => {
         actions.resource.received('exports', exp)
       );
 
-      expect(selectors.flowType(state, 'f1')).toEqual('Data Loader');
+      expect(selectors.flowType(state, 'f1')).toEqual('Data loader');
     });
 
     test('should return Scheduled for normal flow', () => {
@@ -8003,6 +8005,60 @@ describe('selectors.isParserSupported test cases', () => {
     expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
   });
 
+  test("should return true if it's a new export with adaptorType as 'HTTPExport' but not an HTTP Export", () => {
+    const parser = 'xml';
+    const conn = {
+      _id: 'c1',
+      type: 'HTTP',
+    };
+    const fieldMeta = {
+      fieldMap: {
+        _connectionId: {
+          id: '_connectionId',
+          value: 'c1',
+        },
+      },
+    };
+
+    const formKey = 'new-hadh';
+
+    let state = reducer(
+      undefined,
+      actions.resource.received('connections', conn)
+    );
+
+    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'c1'} }));
+    const resource = selectors.resourceData(state, 'exports', formKey);
+
+    resource.merged.adaptorType = 'HTTPExport';
+    resource.merged.assistant = 'googledrive';
+
+    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+  });
+
+  test('should return true if not an HTTP export but adaptorType as "HTTPExport"', () => {
+    const parser = 'xml';
+    const exp = {
+      _id: 'e1',
+      type: 'HTTP',
+      adaptorType: 'HTTPExport',
+      assistant: 'googledrive',
+    };
+    const fieldMeta = {
+      fieldMap: {},
+    };
+    const formKey = 'exports-e1';
+
+    let state = reducer(
+      undefined,
+      actions.resource.received('exports', exp)
+    );
+
+    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
+
+    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+  });
+
   test('should return true if not an HTTP export', () => {
     const parser = 'xml';
     const exp = {
@@ -8073,7 +8129,7 @@ describe('selectors.isParserSupported test cases', () => {
     expect(selectors.isParserSupported(state, formKey, parser)).toEqual(false);
   });
 
-  test('should return true for HTTP export with connection success media type as parser', () => {
+  test('should not rely on success media type of connection', () => {
     const parser = 'xml';
     const exp = {
       _id: 'e1',
@@ -8085,44 +8141,6 @@ describe('selectors.isParserSupported test cases', () => {
       _id: 'c1',
       type: 'HTTP',
       http: { successMediaType: parser },
-    };
-    const fieldMeta = {
-      fieldMap: {
-        _connectionId: {
-          id: '_connectionId',
-          value: 'c1',
-        },
-      },
-    };
-    const formKey = 'exports-e1';
-
-    let state = reducer(
-      undefined,
-      actions.resource.received('exports', exp)
-    );
-
-    state = reducer(
-      state,
-      actions.resource.received('connections', conn)
-    );
-
-    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
-
-    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
-  });
-
-  test('should return false for HTTP export with connection success media type different from parser', () => {
-    const parser = 'xml';
-    const exp = {
-      _id: 'e1',
-      type: 'HTTP',
-      adaptorType: 'HTTPExport',
-      _connectionId: 'c1',
-    };
-    const conn = {
-      _id: 'c1',
-      type: 'HTTP',
-      http: { successMediaType: 'csv' },
     };
     const fieldMeta = {
       fieldMap: {

@@ -1,47 +1,8 @@
 import dateTimezones from '../../../../../../../../../utils/dateTimezones';
 import mappingUtil, {ARRAY_DATA_TYPES, MAPPING_DATA_TYPES} from '../../../../../../../../../utils/mapping';
 import dateFormats from '../../../../../../../../../utils/dateFormats';
-import { emptyObject } from '../../../../../../../../../utils/constants';
-
-const getDefaultActionOptions = (mappingType, dataType) => {
-  const defaultOptions = [
-    {
-      items: [
-        { label: 'Do nothing', value: 'discardIfEmpty' },
-        { label: 'Use null as default value', value: 'useNull' },
-        { label: 'Use custom default value', value: 'default' },
-        {
-          label: 'Use empty string as default value',
-          value: 'useEmptyString',
-        },
-      ],
-    },
-  ];
-
-  if (dataType === MAPPING_DATA_TYPES.OBJECT || dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-    return [
-      {
-        items: [
-          { label: 'Do nothing', value: 'discardIfEmpty' },
-          { label: 'Use null as default value', value: 'useNull' },
-        ],
-      },
-    ];
-  }
-  if (dataType === MAPPING_DATA_TYPES.BOOLEAN) {
-    defaultOptions[0].items.pop();
-  }
-  if (mappingType === 'hardcodedAction') {
-    defaultOptions[0].items.shift();
-  } else if (mappingType === 'lookupAction') {
-    defaultOptions[0].items.push({
-      label: 'Fail record',
-      value: 'disallowFailure',
-    });
-  }
-
-  return defaultOptions;
-};
+import { emptyObject } from '../../../../../../../../../constants';
+import { getDefaultActionOptions } from '../http';
 
 export default {
   getMetaData: ({
@@ -50,7 +11,7 @@ export default {
     lookups,
     importResource = {},
   }) => {
-    const {key, lookupName, dataType: propDataType, copySource } = node;
+    const {key, lookupName, dataType: propDataType, copySource, isRequired } = node;
 
     const {_connectionId: connectionId, _id: resourceId } = importResource;
 
@@ -61,10 +22,13 @@ export default {
         dataType: {
           id: 'dataType',
           name: 'dataType',
-          type: 'select',
+          type: 'selectforsetfields',
+          setFieldIds: ['fieldMappingType'],
           skipSort: true,
           label: 'Destination data type',
           defaultValue: propDataType,
+          defaultDisabled: isRequired,
+          description: isRequired ? 'Data type of a required field cannot be edited.' : '',
           helpKey: 'mapping.v2.dataType',
           noApi: true,
           options: [
