@@ -604,6 +604,7 @@ describe('Flow sample data utility sagas', () => {
           data: sampleData,
           editorType: 'csvParser',
           rule: generateFileParserOptionsFromResource(ftpCsvResource),
+          resourceType: 'exports',
         };
 
         return expectSaga(parseFileData, {sampleData, resource: ftpCsvResource })
@@ -645,6 +646,7 @@ describe('Flow sample data utility sagas', () => {
           data: sampleData,
           editorType: 'csvParser',
           rule: generateFileParserOptionsFromResource(ftpCsvResource),
+          resourceType: 'exports',
         };
         const error = JSON.stringify({
           errors: [{status: 404, message: '{"code":"Not a valid data to process"}'}],
@@ -2311,9 +2313,8 @@ describe('Flow sample data utility sagas', () => {
               resourceId: _pageProcessorId,
               resourceType: 'imports',
             }), newPpDoc],
-            [call(apiCallWithRetry, apiOptions), previewData],
+            [matchers.call.fn(apiCallWithRetry, apiOptions), previewData],
           ])
-          .call(apiCallWithRetry, apiOptions)
           .returns(previewData)
           .run();
       });

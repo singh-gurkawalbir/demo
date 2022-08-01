@@ -19,6 +19,7 @@ import ScriptView from './ScriptView';
 const useStyles = makeStyles(theme => ({
   wrapper: {
     display: 'flex',
+    alignItems: 'flex-start',
   },
   field: {
     width: '50%',

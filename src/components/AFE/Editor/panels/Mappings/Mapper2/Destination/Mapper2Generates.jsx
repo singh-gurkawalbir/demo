@@ -69,6 +69,7 @@ export default function Mapper2Generates(props) {
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState(propValue);
   const [isTruncated, setIsTruncated] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const containerRef = useRef();
   const inputFieldRef = useRef();
 
@@ -95,7 +96,10 @@ export default function Mapper2Generates(props) {
     setIsTruncated(inputFieldRef.current.offsetWidth < inputFieldRef.current.scrollWidth);
   }, []);
 
-  useOnClickOutside(containerRef, isFocused && handleBlur);
+  // adding the anchorEl dependency becuase if data type is clicked,
+  // we want to handle the blur function after the data type has been updated
+  // Ref: IO-26909
+  useOnClickOutside(containerRef, !anchorEl && isFocused && handleBlur);
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
 
   return (
@@ -133,6 +137,9 @@ export default function Mapper2Generates(props) {
         </Tooltip >
 
         <DestinationDataType
+          anchorEl={anchorEl}
+          setAnchorEl={setAnchorEl}
+          handleBlur={handleBlur}
           dataType={dataType}
           disabled={disabled}
           nodeKey={nodeKey}

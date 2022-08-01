@@ -663,6 +663,23 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnecto
       retValues['/http/ping/relativeURI'] = `/${versionRelativeURI}/${retValues['/http/ping/relativeURI']}`.replace(/([^:]\/)\/+/g, '$1');
     }
   }
+  if (httpConnector.versioning?.location === 'header') {
+    const {headerName} = httpConnector.versioning;
+    let httpHeaders = retValues['/http/headers'];
+
+    if (!httpHeaders) {
+      httpHeaders = [];
+    }
+
+    if (httpHeaders?.find(header => header.name === headerName)) {
+      const index = httpHeaders?.findIndex(header => header.name === headerName);
+
+      httpHeaders[index].value = retValues['/http/unencrypted/version'];
+    } else {
+      httpHeaders.push({name: headerName, value: retValues['/http/unencrypted/version']});
+    }
+    retValues['/http/headers'] = httpHeaders;
+  }
 
   retValues['/http/_httpConnectorId'] = httpConnector?._id;
   if (retValues['/http/unencrypted/version']) {

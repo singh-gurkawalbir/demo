@@ -6,7 +6,7 @@ import {
 } from '../../../../../utils/assistant';
 
 function hiddenFieldsMeta({ values }) {
-  return ['adaptorType', 'assistantData', 'lookups'].map(fieldId => ({
+  return ['assistant', 'adaptorType', 'assistantData', 'lookups'].map(fieldId => ({
     id: `assistantMetadata.${fieldId}`,
     type: 'text',
     value: values[fieldId],
@@ -14,7 +14,7 @@ function hiddenFieldsMeta({ values }) {
   }));
 }
 
-function basicFieldsMeta({ assistantConfig, assistantData }) {
+function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
   const fieldDefinitions = {
     version: {
       fieldId: 'assistantMetadata.version',
@@ -51,6 +51,7 @@ function basicFieldsMeta({ assistantConfig, assistantData }) {
     if (labels[fieldId]) {
       fieldDefinitions[fieldId].label = labels[fieldId];
     }
+    fieldDefinitions[fieldId].helpKey = `${assistant}.import.${fieldId}`;
 
     if (helpTexts[fieldId]) {
       fieldDefinitions[fieldId].helpText = helpTexts[fieldId];
@@ -283,13 +284,14 @@ function howToFindIdentifierFieldsMeta({
 }
 
 export function fieldMeta({ resource, assistantData }) {
-  const { lookups } = resource;
+  const { assistant, lookups } = resource;
 
   const adaptorType = 'http';
   const headers = resource.http?.headers || [];
 
   const hiddenFields = hiddenFieldsMeta({
     values: {
+      assistant,
       adaptorType: 'http',
       assistantData,
       lookups,
@@ -309,6 +311,7 @@ export function fieldMeta({ resource, assistantData }) {
     });
 
     basicFields = basicFieldsMeta({
+      assistant,
       assistantConfig,
       assistantData: assistantData.import,
     });

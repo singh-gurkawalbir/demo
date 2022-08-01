@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React from 'react';
-import { makeStyles } from '@material-ui/core/';
+import { makeStyles, Tooltip } from '@material-ui/core/';
 import DiamondIcon from '../../../../components/icons/DiamondIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -29,15 +29,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DiamondMergeIcon({isDroppable, className, ...rest}) {
+export default function DiamondMergeIcon({isDroppable, className, tooltip, ...rest}) {
   const classes = useStyles();
+  const diamondIconClassName = clsx(classes.icon, {[classes.droppable]: isDroppable}, className);
 
   return (
-    <DiamondIcon
-      className={clsx(
-        classes.icon,
-        {[classes.droppable]: isDroppable},
-        className)}
-      {...rest} />
+    tooltip ? (
+      <Tooltip title={tooltip} placement="bottom">
+        <div>
+          <DiamondIcon className={diamondIconClassName} {...rest} />
+        </div>
+      </Tooltip>
+    ) : <DiamondIcon className={diamondIconClassName} {...rest} />
   );
 }

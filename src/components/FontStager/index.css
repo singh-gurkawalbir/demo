@@ -119,6 +119,9 @@ a:hover{
 .ace-tomorrow .ace_heading, .ace-tomorrow .ace_markup.ace_heading, .ace-tomorrow .ace_string{
   color: #30731C !important;
 }
+.ace_editor.ace_autocomplete{
+  z-index: 1300 !important;
+}
 @supports (-moz-appearance:none) {
   .MuiTable-root {
     border-spacing: unset !important;

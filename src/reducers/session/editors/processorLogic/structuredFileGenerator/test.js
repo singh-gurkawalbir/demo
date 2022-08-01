@@ -11,11 +11,10 @@ const {
 
 describe('structuredFileGenerator processor logic', () => {
   describe('init util', () => {
-    test('should correctly return rule and sample data from file definition data', () => {
+    test('should correctly return rule and sample data from file definition data if stage is not present', () => {
       const options = {
         fieldId: 'file.filedefinition.rules',
         formKey: 'new-123',
-        stage: 'flowInput',
       };
 
       const fileDefinitionData = {
@@ -26,10 +25,32 @@ describe('structuredFileGenerator processor logic', () => {
       const expectedOutput = {
         fieldId: 'file.filedefinition.rules',
         formKey: 'new-123',
-        stage: 'flowInput',
         rule: '{"name": "DAF EDIFACT DESADV","description": "Despatch advice message"}',
         data: '{"SYNTAX IDENTIFIER": {"Syntax identifier": "UNOC_ashu123_gupta","Syntax version number": "3"}}',
         originalData: '{"SYNTAX IDENTIFIER": {"Syntax identifier": "UNOC_ashu123_gupta","Syntax version number": "3"}}',
+      };
+
+      expect(init({options, fileDefinitionData})).toEqual(expectedOutput);
+    });
+    test('should correctly return rule and sample data from file definition data if stage is present', () => {
+      const options = {
+        fieldId: 'file.filedefinition.rules',
+        formKey: 'new-123',
+        stage: 'postMapOutput',
+      };
+
+      const fileDefinitionData = {
+        sampleData: '{"SYNTAX IDENTIFIER": {"Syntax identifier": "UNOC_ashu123_gupta","Syntax version number": "3"}}',
+        rule: '{"name": "DAF EDIFACT DESADV","description": "Despatch advice message"}',
+      };
+
+      const expectedOutput = {
+        fieldId: 'file.filedefinition.rules',
+        formKey: 'new-123',
+        stage: 'postMapOutput',
+        rule: '{"name": "DAF EDIFACT DESADV","description": "Despatch advice message"}',
+        data: '',
+        originalData: '',
       };
 
       expect(init({options, fileDefinitionData})).toEqual(expectedOutput);
