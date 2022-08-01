@@ -1306,7 +1306,6 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
         showExtract: false,
         showLookup: false,
         type: 'relativeuri',
-        visible: false,
       },
       'http.unencrypted.version': {
         defaultValue: undefined,
@@ -1329,7 +1328,7 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
 
         ],
         type: 'select',
-        required: false,
+        required: true,
       },
       settings: {
         defaultValue: {

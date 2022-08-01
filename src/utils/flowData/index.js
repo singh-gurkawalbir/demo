@@ -143,8 +143,11 @@ export const getCurrentSampleDataStageStatus = (
 // sample responseMapping path: '/pageProcessors/${resourceIndex}/responseMapping
 // when added a lookup to the flow path: '/pageProcessors/${resourceIndex}
 const pathRegex = {
-  sequence: /^(\/pageProcessors|\/pageGenerators)$/,
+  newPPSequence: /(\/routers\/(\d+)\/branches\/(\d+))?\/pageProcessors\/(\d+)$/,
+  pgSequence: /(\/pageGenerators\/(\d+))/,
+  oldPPSequence: /(\/pageProcessors\/(\d+))$/,
   responseMapping: /(\/routers\/(\d+)\/branches\/(\d+))?\/pageProcessors\/(\d+)\/responseMapping/,
+  oldResponseMapping: /\/pageProcessors\/(\d+)\/responseMapping/,
   lookupAddition: /\/pageProcessors\/[0-9]+$/,
 };
 
@@ -229,9 +232,19 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
   };
 
   updatedPathsFromPatchSet.forEach(path => {
-    if (pathRegex.sequence.test(path) && !updates.sequence) updates.sequence = true;
+    //  If the patch matches changes for either PP/PG (Old & New formats),
+    // then there is a change in Flow sequence ( Add/Delete )
+    if (!updates.sequence && (
+      pathRegex.pgSequence.test(path) ||
+      pathRegex.oldPPSequence.test(path) ||
+      pathRegex.newPPSequence.test(path)
+    )) {
+      updates.sequence = true;
+    }
 
-    if (pathRegex.responseMapping.test(path) && !updates.responseMapping) {
+    // If the patch matches changes in response mapping (New formats),
+    // then there is a change in pp's response mapping
+    if (!updates.responseMapping && pathRegex.responseMapping.test(path)) {
       // Extract resourceIndex from the path
       const [,, routerIndex, branchIndex, resourceIndex] = pathRegex.responseMapping.exec(path);
 
@@ -240,6 +253,19 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
           resourceIndex: +resourceIndex,
           ...(branchIndex !== undefined ? {branchIndex: +branchIndex} : {}),
           ...(routerIndex !== undefined ? {routerIndex: +routerIndex} : {}),
+        };
+      }
+    }
+
+    // If the patch matches changes in response mapping (Old format),
+    // then there is a change in pp's response mapping
+    if (!updates.responseMapping && pathRegex.oldResponseMapping.test(path)) {
+      // Extract resourceIndex from the path
+      const [resourceIndex] = path.match(/[0-9]+/);
+
+      if (resourceIndex) {
+        updates.responseMapping = {
+          resourceIndex: parseInt(resourceIndex, 10),
         };
       }
     }
