@@ -12,7 +12,8 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useGetNotificationOptions from '../../../../../hooks/useGetNotificationOptions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import { UNASSIGNED_SECTION_NAME } from '../../../../../utils/constants';
+import { UNASSIGNED_SECTION_NAME } from '../../../../../constants';
+import infoText from '../infoText';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -125,8 +126,6 @@ export default function NotificationsSection({ integrationId, childId }) {
     setCount(count => count + 1);
   }, [_integrationId, dispatch]);
 
-  const infoTextNotifications =
-'Get notified via email if your flow encounters an error, or if a connection goes offline. These notifications will only be sent to you. If any other users in your account wish to receive the same notifications, then they will need to subscribe from their account.';
   const formKey = useFormInitWithPermissions({
     fieldMeta,
     remount: count,
@@ -135,7 +134,7 @@ export default function NotificationsSection({ integrationId, childId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Notifications" infoText={infoTextNotifications} />
+      <PanelHeader title="Notifications" infoText={infoText.Notifications} />
 
       <LoadResources required integrationId={integrationId} resources="notifications,flows,connections">
         <div className={classes.form}>

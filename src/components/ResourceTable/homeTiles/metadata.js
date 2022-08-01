@@ -8,7 +8,7 @@ import TypeCell from './cells/TypeCell';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import MultiSelectColumnFilter from '../commonCells/MultiSelectColumnFilter';
 import {FILTER_KEY, getAllApplications} from '../../../utils/home';
-import { STANDALONE_INTEGRATION, TILE_STATUS } from '../../../utils/constants';
+import { STANDALONE_INTEGRATION, TILE_STATUS } from '../../../constants';
 import DIYClone from './actions/diy/Clone';
 import DIYDelete from './actions/diy/Delete';
 import DIYDownload from './actions/diy/Download';

@@ -4,7 +4,7 @@ import actionTypes from '../../../../actions/types';
 import { apiCallWithRetry } from '../../../index';
 import getRequestOptions from '../../../../utils/requestOptions';
 import { selectors } from '../../../../reducers';
-import { JOB_STATUS } from '../../../../utils/constants';
+import { JOB_STATUS } from '../../../../constants';
 import { pollApiRequests } from '../../../app';
 
 const FINISHED_JOB_STATUSES = [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED];

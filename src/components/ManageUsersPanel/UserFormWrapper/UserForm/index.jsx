@@ -6,7 +6,7 @@ import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   EMAIL_REGEX,
-} from '../../../../utils/constants';
+} from '../../../../constants';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import LoadResources from '../../../LoadResources';

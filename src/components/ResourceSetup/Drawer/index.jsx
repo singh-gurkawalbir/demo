@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useHistory, useRouteMatch } from 'react-router-dom';
+import actions from '../../../actions';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
@@ -16,6 +17,8 @@ import { isNewId, getConnectionType } from '../../../utils/resource';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import resourceConstants from '../../../forms/constants/connection';
 import EditorDrawer from '../../AFE/Drawer';
+import jsonUtil from '../../../utils/json';
+import { SCOPES } from '../../../sagas/resourceForm';
 
 const oAuthApplications = [
   ...resourceConstants.OAUTH_APPLICATIONS,
@@ -38,9 +41,12 @@ function ResourceSetupDrawerContent({
   cloneResourceId,
   revisionId,
   parentUrl,
+  isResourceStaged,
+  setIsResourceStaged,
 }) {
   const { resourceId, resourceType } = useParams();
   const history = useHistory();
+  const dispatch = useDispatch();
   let resourceObj;
   let connectionType;
   let environment;
@@ -108,6 +114,22 @@ function ResourceSetupDrawerContent({
     connectionType = resourceObj.type === 'http'
       ? (resourceObj.http?.formType === 'rest' ? 'rest' : 'http')
       : resourceObj.type;
+
+    if (!isResourceStaged && setIsResourceStaged) {
+      dispatch(
+        actions.resource.patchStaged(
+          resourceId,
+          jsonUtil.objectToPatchSet({
+            ...currentStep?.sourceConnection,
+            _id: resourceId,
+            _integrationId: integrationId,
+            installStepConnection: true,
+          }),
+          SCOPES.VALUE
+        )
+      );
+      setIsResourceStaged(true);
+    }
   }
 
   const title = `Set up ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`;

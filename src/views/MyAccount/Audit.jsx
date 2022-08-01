@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AuditLog from '../../components/AuditLog';
 import PanelHeader from '../../components/PanelHeader';
+import infoText from './infoText';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -19,7 +20,7 @@ export default function Audit() {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Audit log" />
+      <PanelHeader title="Audit log" infoText={infoText.AuditLog} />
       <AuditLog />
     </div>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from '@material-ui/core/Link';
+import { makeStyles } from '@material-ui/core/styles';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import Delete from '../commonActions/Delete';
 import Edit from '../commonActions/Edit';
@@ -10,6 +11,12 @@ import OnOffCell from './cells/OnOffCell';
 import TextOverflowCell from '../../TextOverflowCell';
 import LogoStrip from '../../LogoStrip';
 
+const useStyles = makeStyles({
+  descriptionInfotext: {
+    maxHeight: 'none',
+    overflowY: 'visible',
+  },
+});
 export default {
   useColumns: () => [
     {
@@ -23,7 +30,13 @@ export default {
       heading: 'Name',
       width: '25%',
       isLoggable: true,
-      Value: ({rowData: r}) => <TextOverflowCell message={<ResourceDrawerLink resourceType="connectors" resource={r} />} />,
+      Value: ({rowData: r}) => {
+        const classes = useStyles();
+
+        return (
+          <TextOverflowCell className={classes.descriptionInfotext} message={<ResourceDrawerLink resourceType="connectors" resource={r} />} />
+        );
+      },
       orderBy: 'name',
     },
     {

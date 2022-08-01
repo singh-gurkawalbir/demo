@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 
 export default (state = {}, action) => {
   const { id, type, update, steps, installerFunction, message, showForm } = action;

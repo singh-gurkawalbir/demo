@@ -19,7 +19,8 @@ import {
 } from '../../utils/session';
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
-import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE } from '../../utils/constants';
+import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE } from '../../constants';
+import messageStore from '../../utils/messageStore';
 import getRoutePath from '../../utils/routePaths';
 import { getDomain } from '../../utils/resource';
 import inferErrorMessages from '../../utils/inferErrorMessages';
@@ -325,10 +326,8 @@ export function* auth({ email, password }) {
     if (apiAuthentications?.succes && apiAuthentications.mfaRequired) {
       // Once login is success, incase of mfaRequired, user has to enter OTP to successfully authenticate
       // So , we redirect him to OTP (/mfa/verify) page
-      return yield call(apiCallWithRetry, {
-        path: '/mfa/verify',
-        hidden: true,
-      });
+
+      return yield put(actions.auth.mfaRequired());
     }
     const isExpired = yield select(selectors.isSessionExpired);
 
@@ -465,6 +464,33 @@ export function* linkWithGoogle({ returnTo }) {
   document.body.removeChild(form);
 }
 
+function* mfaVerify({ payload }) {
+  const { code, trustDevice } = payload || {};
+  const _csrf = yield call(getCSRFTokenBackend);
+  const authFailedMsg = messageStore('MFA_AUTH_FAILED');
+
+  try {
+    const status = yield call(apiCallWithRetry, {
+      path: '/mfa/verify?no_redirect=true',
+      opts: {
+        method: 'POST',
+        body: {code, trustDevice, _csrf},
+      },
+      hidden: true,
+    });
+
+    if (status?.success) {
+      yield call(initializeSession);
+
+      return yield put(actions.auth.mfaVerify.success());
+    }
+    yield put(actions.auth.mfaVerify.failed(authFailedMsg));
+  } catch (e) {
+    const message = inferErrorMessages(e?.message)?.[0];
+
+    yield put(actions.auth.mfaVerify.failed(message || authFailedMsg));
+  }
+}
 export const authenticationSagas = [
   takeEvery(actionTypes.AUTH.INIT_SESSION, initializeSession),
   takeEvery(actionTypes.AUTH.REQUEST, auth),
@@ -473,4 +499,5 @@ export const authenticationSagas = [
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_SSO, reSignInWithSSO),
   takeEvery(actionTypes.AUTH.LINK_WITH_GOOGLE, linkWithGoogle),
+  takeEvery(actionTypes.AUTH.MFA_VERIFY.REQUEST, mfaVerify),
 ];

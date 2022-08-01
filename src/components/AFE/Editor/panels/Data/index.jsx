@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import CodePanel from '../Code';
@@ -10,7 +10,7 @@ export default function DataPanel({ editorId, mode }) {
   const sampleDataStatus = useSelector(state => selectors.editor(state, editorId).sampleDataStatus);
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const data = useSelector(state => selectors.editorData(state, editorId));
-  const violations = useSelector(state => selectors.editorViolations(state, editorId));
+  const {errorLine, dataError} = (useSelector(state => selectors.editorViolations(state, editorId), shallowEqual) || {});
 
   const handleChange = newData => {
     dispatch(actions.editor.patchData(editorId, newData));
@@ -27,8 +27,8 @@ export default function DataPanel({ editorId, mode }) {
           mode={mode}
           readOnly={disabled}
           onChange={handleChange}
-          errorLine={!!violations?.errorLine}
-          hasError={!!violations?.dataError}
+          errorLine={!!errorLine}
+          hasError={!!dataError}
     />
       )}
     </>

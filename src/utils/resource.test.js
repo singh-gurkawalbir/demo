@@ -35,6 +35,7 @@ import {
   getNextLinkRelativeUrl,
   rdbmsSubTypeToAppType,
   rdbmsAppTypeToSubType,
+  getNotificationResourceType,
 } from './resource';
 
 describe('resource util tests', () => {
@@ -207,6 +208,30 @@ describe('resource util tests', () => {
     });
     test('should return correct appType for snowflake subtype', () => {
       expect(rdbmsAppTypeToSubType('snowflake')).toEqual('snowflake');
+    });
+  });
+
+  describe('tests for util getNotificationResourceType', () => {
+    test('should return connections for a given connection notification audit log', () => {
+      expect(getNotificationResourceType({
+        fieldChange: {
+          fieldPath: '_connectionId',
+        },
+      })).toEqual('connections');
+    });
+    test('should return flows for a given flow notification audit log', () => {
+      expect(getNotificationResourceType({
+        fieldChange: {
+          fieldPath: '_flowId',
+        },
+      })).toEqual('flows');
+    });
+    test('should return integrations for a given intgeration notification audit log', () => {
+      expect(getNotificationResourceType({
+        fieldChange: {
+          fieldPath: '_integrationId',
+        },
+      })).toEqual('integrations');
     });
   });
 

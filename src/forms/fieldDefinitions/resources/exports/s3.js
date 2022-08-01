@@ -1,4 +1,4 @@
-import { AWS_REGIONS_LIST } from '../../../../utils/constants';
+import { AWS_REGIONS_LIST } from '../../../../constants';
 
 export default {
   's3.region': {

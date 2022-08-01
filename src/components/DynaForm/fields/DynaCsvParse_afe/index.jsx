@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormLabel } from '@material-ui/core';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
 import FieldHelp from '../../FieldHelp';
@@ -16,7 +16,6 @@ import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDataChange from './FileDataChange';
 import { OutlinedButton } from '../../../Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
-import { selectors } from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -64,8 +63,6 @@ export default function DynaCsvParse_afe(props) {
   const history = useHistory();
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
-
-  const isParserSupported = useSelector(state => selectors.isParserSupported(state, formKey, 'csv'));
 
   const getInitOptions = useCallback(
     val => {
@@ -132,8 +129,6 @@ export default function DynaCsvParse_afe(props) {
       params: { editorId },
     }));
   }, [dispatch, id, parentFormKey, flowId, resourceId, resourceType, handleSave, history, match.url, editorId]);
-
-  if (!isParserSupported) return null;
 
   return (
     <>

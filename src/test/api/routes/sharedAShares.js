@@ -74,4 +74,37 @@ export default API.get('/api/shared/ashares', [
       timezone: 'Asia/Calcutta',
     },
   },
+  {
+    _id: '61dc35f368a1f148356e9b5f',
+    dismissed: true,
+    integrationAccessLevel: [
+      {
+        _integrationId: '5ff579d745ceef7dcd797c15',
+        accessLevel: 'monitor',
+      },
+    ],
+    ownerUser: {
+      _id: '60dad90c6ea2a002756f6a86',
+      email: 'srilekha.tirumala@celigo.com',
+      name: 'Srilekha Tirumala',
+      company: 'Celigo',
+      useErrMgtTwoDotZero: true,
+      preferences: {
+        environment: 'production',
+        dateFormat: 'MM/DD/YYYY',
+        timeFormat: 'h:mm:ss a',
+        scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
+        showReactSneakPeekFromDate: '2019-11-05',
+        showReactBetaFromDate: '2019-12-26',
+        defaultAShareId: 'own',
+        expand: 'Resources',
+        fbBottomDrawerHeight: 421,
+        drawerOpened: true,
+        dashboard: {
+          view: 'tile',
+        },
+      },
+      timezone: 'Asia/Calcutta',
+    },
+  },
 ]);

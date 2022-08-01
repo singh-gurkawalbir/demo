@@ -8,6 +8,7 @@ import { apiCallWithRetry } from '../..';
 import { selectors } from '../../../reducers';
 import {RESOURCE_TYPE_PLURAL_TO_SINGULAR} from '../../../constants/resource';
 import getFetchLogsPath from './utils';
+import { getAllPageProcessors } from '../../../utils/flows';
 
 export function* getScriptDependencies({scriptId = '',
   flowId = '',
@@ -34,8 +35,9 @@ export function* getScriptDependencies({scriptId = '',
         references.push({type: 'export', id: resource.id, name: resource.name});
       }
     });
+    const pageProcessors = getAllPageProcessors(flowResource);
 
-    flowResource?.pageProcessors?.forEach(({type: ppType, _importId, _exportId}) => {
+    pageProcessors?.forEach(({type: ppType, _importId, _exportId}) => {
       const resource = (ppType === 'export')
         ? resourceReferences?.exports?.find(({id}) => id === _exportId)
         : resourceReferences?.imports?.find(({id}) => id === _importId);

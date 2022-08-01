@@ -58,7 +58,7 @@ import {
   downloadRetryData,
 } from '.';
 import { selectors } from '../../reducers';
-import { JOB_TYPES, JOB_STATUS, STANDALONE_INTEGRATION } from '../../utils/constants';
+import { JOB_TYPES, JOB_STATUS, STANDALONE_INTEGRATION } from '../../constants';
 import openExternalUrl from '../../utils/window';
 import {FILTER_KEYS_AD} from '../../utils/accountDashboard';
 import { pollApiRequests } from '../app';
