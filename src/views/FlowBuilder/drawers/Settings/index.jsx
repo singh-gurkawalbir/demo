@@ -11,7 +11,7 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import { selectors } from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
 import { drawerPaths } from '../../../../utils/rightDrawer';
-import { emptyObject, STANDALONE_INTEGRATION, USER_ACCESS_LEVELS } from '../../../../utils/constants';
+import { emptyObject, STANDALONE_INTEGRATION, USER_ACCESS_LEVELS } from '../../../../constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import LoadResources from '../../../../components/LoadResources';
 import getSettingsMetadata from './metadata';

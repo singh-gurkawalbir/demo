@@ -9,7 +9,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { difference } from 'lodash';
 import clsx from 'clsx';
 import JobDetail from './JobDetail';
-import { JOB_STATUS } from '../../../utils/constants';
+import { JOB_STATUS } from '../../../constants';
 import JobErrorDialog from './JobErrorDialog';
 import { JobDetailsStyles } from '../../JobDashboard/ChildJobDetail';
 

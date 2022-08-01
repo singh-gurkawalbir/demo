@@ -13,6 +13,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import {OutlinedButton} from '../../Buttons';
 import { capitalizeFirstLetter } from '../../../utils/string';
 import { MOCK_INPUT_RECORD_ABSENT } from '../../../utils/errorStore';
+import { sampleDataStage } from '../../../utils/flowData';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {
@@ -88,6 +89,7 @@ export default function PreviewInfo(props) {
     showPreviewData,
     formKey,
     resourceType,
+    flowId,
   } = props;
   const classes = useStyles(props);
   const [isValidRecordSize, setIsValidRecordSize] = useState(true);
@@ -100,7 +102,12 @@ export default function PreviewInfo(props) {
   );
   const isPreviewDisabled = useSelector(state =>
     selectors.isExportPreviewDisabled(state, formKey));
-  const resourceDefaultMockData = useSelector(state => selectors.getResourceDefaultMockData(state, resourceId));
+  const {data: resourceDefaultMockData} = useSelector(state => selectors.getSampleDataContext(state, {
+    flowId,
+    resourceId,
+    resourceType,
+    stage: sampleDataStage.imports.processedFlowInput,
+  }));
   const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
   const isMockInputDataAbsent = resourceType === 'imports' &&
                               isEmpty(resourceMockData) &&

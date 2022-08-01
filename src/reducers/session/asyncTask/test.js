@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
-import { FORM_SAVE_STATUS } from '../../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../../constants';
 
 describe('asyncTask reducers', () => {
   test('should return initial state when action is not matched and key does not exist', () => {

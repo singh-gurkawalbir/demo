@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { JOB_STATUS } from '../../../../../utils/constants';
+import { JOB_STATUS } from '../../../../../constants';
 import Spinner from '../../../../Spinner';
 import JobStatus from '../../../../JobDashboard/JobStatus';
 import { JOB_UI_STATUS } from '../../../../../utils/jobdashboard';
@@ -20,7 +20,7 @@ export default function FlowStepStatus({ job }) {
   const classes = useStyles();
 
   // A specific case to show In progress parent job when there are no children created yet
-  if (job.status === JOB_STATUS.RUNNING && job._exportId && !job._flowJobId) {
+  if (job.status === JOB_STATUS.RUNNING && (job._expOrImpId || job._exportId) && !job._flowJobId && !job._parentJobId) {
     return (
       <div className={classes.flexContainer}>
         <div className={classes.spinnerWrapper}>

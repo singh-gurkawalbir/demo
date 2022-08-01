@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 
-import { emptyList } from './constants';
+import { emptyList } from '../constants';
 import { filterSubListProperties, getFormattedNetsuiteMetadataData, getFormattedSalesForceMetadata, getReferenceFieldsMap, getWSRecordId, isTransactionWSRecordType } from './metadata';
 
 describe('isTransactionWSRecordType util', () => {

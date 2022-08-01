@@ -620,7 +620,7 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
     const fileType = fields.find(field => field.id === 'file.type');
     const skipAggregationField = fields.find(field => field.id === fieldId);
 
-    skipAggregationField.value = ['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value);
+    skipAggregationField.value = ['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value) || skipAggregationField.defaultValue;
   } else if (fieldId === 'file.encoding') {
     const fileType = fields.find(field => field.id === 'file.type');
 
@@ -648,16 +648,39 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
   return null;
 };
 export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnector) => {
+  if (!httpConnector) {
+    return formValues;
+  }
   const retValues = { ...formValues };
 
-  if (retValues['/http/unencrypted/version']) {
-    retValues['/http/baseURI'] += `/${retValues['/http/unencrypted/version']}`;
-  } else {
-    const versionRelativeURI = httpConnector.versions?.[0]?.name;
+  if (httpConnector.versioning?.location === 'uri') {
+    if (retValues['/http/unencrypted/version']) {
+      retValues['/http/baseURI'] += `/${retValues['/http/unencrypted/version']}`;
+    } else {
+      const versionRelativeURI = httpConnector.versions?.[0]?.name;
 
-    // Regex is used here to remove continuous multiple slashes if there are any
-    retValues['/http/ping/relativeURI'] = `/${versionRelativeURI}/${retValues['/http/ping/relativeURI']}`.replace(/([^:]\/)\/+/g, '$1');
+      // Regex is used here to remove continuous multiple slashes if there are any
+      retValues['/http/ping/relativeURI'] = `/${versionRelativeURI}/${retValues['/http/ping/relativeURI']}`.replace(/([^:]\/)\/+/g, '$1');
+    }
   }
+  if (httpConnector.versioning?.location === 'header') {
+    const {headerName} = httpConnector.versioning;
+    let httpHeaders = retValues['/http/headers'];
+
+    if (!httpHeaders) {
+      httpHeaders = [];
+    }
+
+    if (httpHeaders?.find(header => header.name === headerName)) {
+      const index = httpHeaders?.findIndex(header => header.name === headerName);
+
+      httpHeaders[index].value = retValues['/http/unencrypted/version'];
+    } else {
+      httpHeaders.push({name: headerName, value: retValues['/http/unencrypted/version']});
+    }
+    retValues['/http/headers'] = httpHeaders;
+  }
+
   retValues['/http/_httpConnectorId'] = httpConnector?._id;
   if (retValues['/http/unencrypted/version']) {
     const version = httpConnector.versions?.find(ver => ver.name === retValues['/http/unencrypted/version']);

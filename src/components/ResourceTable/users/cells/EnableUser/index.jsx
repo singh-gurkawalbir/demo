@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import CeligoSwitch from '../../../../CeligoSwitch';
-import { ACCOUNT_IDS } from '../../../../../utils/constants';
+import { ACCOUNT_IDS } from '../../../../../constants';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import actions from '../../../../../actions';
 import actionTypes from '../../../../../actions/types';

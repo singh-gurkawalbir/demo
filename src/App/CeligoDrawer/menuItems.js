@@ -18,7 +18,7 @@ import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
 import WhatsNewIcon from '../../components/icons/KnowledgeBaseIcon';
 import { getHelpUrl, getUniversityUrl } from '../../utils/resource';
-import { SUBMIT_TICKET_URL, USER_ACCESS_LEVELS, WHATS_NEW_URL, HOME_PAGE_PATH, COMMUNITY_URL} from '../../utils/constants';
+import { SUBMIT_TICKET_URL, USER_ACCESS_LEVELS, WHATS_NEW_URL, HOME_PAGE_PATH, COMMUNITY_URL} from '../../constants';
 import UniversityIcon from '../../components/icons/UniversityIcon';
 import HelpCenterIcon from '../../components/icons/HelpCenterIcon';
 import CommunityIcon from '../../components/icons/CommunityIcon';
@@ -63,13 +63,13 @@ export default function menuItems(
       Icon: ToolsIcon,
       children: [
         {
-          label: 'Flow Builder',
+          label: 'Flow builder',
           Icon: FlowBuilderIcon,
           path: '/integrations/none/flowBuilder/new',
           routeProps: getRoutePath('/integrations/:integrationId/flowBuilder'),
         },
         {
-          label: 'Data Loader',
+          label: 'Data loader',
           Icon: DataLoaderIcon,
           path: '/integrations/none/dataLoader/new',
           routeProps: getRoutePath('/integrations/:integrationId/dataloader'),
