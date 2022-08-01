@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 
 export default (state = {}, action) => {
   const { id, type, update, steps, installerFunction, message, showForm } = action;
@@ -83,7 +83,9 @@ export const selectors = {};
 selectors.addNewChildSteps = createSelector(
   (state, integrationId) => state && state[integrationId],
   addNewChildSteps => {
-    const { steps } = addNewChildSteps || {};
+    const { steps, error } = addNewChildSteps || {};
+
+    if (error) return {error};
 
     if (!steps || !Array.isArray(steps)) {
       return emptyObject;

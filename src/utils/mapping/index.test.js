@@ -3298,6 +3298,7 @@ describe('mapping utils', () => {
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'oracle'}}, appName: 'Oracle DB (SQL)'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'postgresql'}}, appName: 'PostgreSQL'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {}, appName: 'Snowflake'},
+      {resource: {adaptorType: 'HTTPImport'}, connection: {http: {_httpConnecorId: '123'}}, appName: 'HTTP'},
 
     ];
 
@@ -3366,7 +3367,7 @@ describe('mapping utils', () => {
         lookups: [],
         result: {
           isSuccess: false,
-          errMessage: errorMessageStore('MAPPER_MISSING_GENERATE'),
+          errMessage: errorMessageStore('MAPPER1_MISSING_GENERATE'),
         },
       },
       {
@@ -3405,6 +3406,22 @@ describe('mapping utils', () => {
         mappings: [
           {extract: 'a', generate: 'a'},
           {extract: 'a', generate: 'b'},
+        ],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+        ],
+        result: {isSuccess: true},
+      },
+      {
+        mappings: [
+          {extract: 'a', generate: 'a'},
+          {extract: 'a', generate: 'a'},
         ],
         lookups: [],
         v2TreeData: [
@@ -3476,7 +3493,7 @@ describe('mapping utils', () => {
         ],
         result: {
           isSuccess: false,
-          errMessage: errorMessageStore('MAPPER_MISSING_GENERATE'),
+          errMessage: errorMessageStore('MAPPER2_MISSING_GENERATE'),
         },
       },
       {
@@ -3515,7 +3532,7 @@ describe('mapping utils', () => {
         ],
         result: {
           isSuccess: false,
-          errMessage: errorMessageStore('MAPPER_MISSING_GENERATE'),
+          errMessage: errorMessageStore('MAPPER2_MISSING_GENERATE'),
         },
       },
       {
@@ -3533,6 +3550,7 @@ describe('mapping utils', () => {
             generate: 'lname',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             copySource: 'yes',
+            isRequired: true,
           },
         ],
         result: {
@@ -3576,10 +3594,7 @@ describe('mapping utils', () => {
             dataType: MAPPING_DATA_TYPES.NUMBERARRAY,
           },
         ],
-        result: {
-          isSuccess: false,
-          errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: 'lname'}),
-        },
+        result: {isSuccess: true},
       },
       {
         mappings: [],
@@ -3611,10 +3626,7 @@ describe('mapping utils', () => {
             copySource: 'yes',
           },
         ],
-        result: {
-          isSuccess: false,
-          errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: 'lname'}),
-        },
+        result: {isSuccess: true},
       },
       {
         mappings: [],
@@ -3663,10 +3675,7 @@ describe('mapping utils', () => {
             }],
           },
         ],
-        result: {
-          isSuccess: false,
-          errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: 'child1'}),
-        },
+        result: {isSuccess: true},
       },
     ];
 

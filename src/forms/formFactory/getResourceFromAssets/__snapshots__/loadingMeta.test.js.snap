@@ -4088,6 +4088,18 @@ Object {
         "type": "mode",
         "visible": false,
       },
+      "parsers": Object {
+        "fieldId": "parsers",
+        "required": false,
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "semiassistantoperationselect": Object {
         "fieldId": "semiassistantoperationselect",
         "visibleWhenAll": Array [
@@ -4236,8 +4248,11 @@ Object {
                   "containers": Array [
                     Object {
                       "fields": Array [
+                        "parsers",
                         "file.csv",
                       ],
+                      "header": [Function],
+                      "helpKey": "http.parseSuccessResponses",
                     },
                   ],
                   "type": "indent",

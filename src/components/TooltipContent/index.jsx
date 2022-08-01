@@ -7,7 +7,7 @@ import RawHtml from '../RawHtml';
 const useStyles = makeStyles({
   root: {
     padding: '3px 10px',
-    width: 350,
+    maxWidth: 350,
     maxHeight: 600,
     overflowY: 'auto',
     wordBreak: 'break-word',

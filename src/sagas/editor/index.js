@@ -25,6 +25,7 @@ import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
 import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllParentExtractsForNode } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -99,9 +100,9 @@ export function* invokeProcessor({ editorId, processor, body }) {
       const v2TreeData = (yield select(selectors.mapping))?.v2TreeData;
 
       // give preference to v2 mappings always
-      if (hasV2MappingsInTreeData(v2TreeData)) {
+      if (hasV2MappingsInTreeData(v2TreeData, lookups)) {
         const connection = yield select(selectors.resource, 'connections', importResource?._connectionId);
-        const _mappingsV2 = buildV2MappingsFromTree({v2TreeData});
+        const _mappingsV2 = buildV2MappingsFromTree({v2TreeData, lookups});
 
         _mappings = {mappings: _mappingsV2, lookups};
         options.connection = connection;
@@ -439,7 +440,7 @@ export function* refreshHelperFunctions() {
   yield put(actions.editor.updateHelperFunctions(helperFunctions));
 }
 
-export function* getFlowSampleData({ flowId, resourceId, resourceType, stage, formKey }) {
+export function* getFlowSampleData({ flowId, resourceId, resourceType, stage, formKey, routerId, editorId }) {
   let flowSampleData = yield select(selectors.getSampleDataContext, {
     flowId,
     resourceId,
@@ -450,9 +451,11 @@ export function* getFlowSampleData({ flowId, resourceId, resourceType, stage, fo
   if (flowSampleData.status !== 'received') {
     yield call(requestSampleData, {
       flowId,
+      routerId,
       resourceId,
       resourceType,
       stage,
+      editorId,
       formKey,
     });
   }
@@ -474,7 +477,20 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage, ssLinkedConnectionId, parentType, parentId, mapper2RowKey} = editor;
+  const {
+    editorType,
+    flowId,
+    resourceId,
+    resourceType,
+    fieldId,
+    formKey,
+    stage,
+    ssLinkedConnectionId,
+    parentType,
+    parentId,
+    mapper2RowKey,
+    router,
+  } = editor;
   // for some fields only v2 data is supported (not v1)
   const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
 
@@ -531,9 +547,9 @@ export function* requestEditorSampleData({
     return { data: fileData};
   }
 
-  // for file definition editors, sample data is read from network call
+  // for file definition editors, sample data is read from network call if stage (postMapOutput) is not defined
   // adding this check here, in case network call is delayed
-  if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') { return {}; }
+  if ((editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') && !stage) { return {}; }
 
   // for exports resource with 'once' type fields, exported preview data is shown and not the flow input data
   const showPreviewStageData = resourceType === 'exports' && fieldId?.includes('once');
@@ -572,7 +588,7 @@ export function* requestEditorSampleData({
     }
   } else if (stage) {
     // Handles sample data for all editors outside form context ( FB actions )
-    sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage });
+    sampleData = yield call(getFlowSampleData, { flowId, routerId: router?.id, resourceId, resourceType, stage, editorId: id });
   }
 
   let _sampleData = null;
@@ -605,13 +621,15 @@ export function* requestEditorSampleData({
       // for v2 mappings, BE needs parent extracts to be passed
       // for correctly returning the iterating array context
       if (mapper2RowKey) {
-        const {v2TreeData} = yield select(selectors.mapping);
+        const {v2TreeData, isGroupedOutput} = yield select(selectors.mapping);
         const arrayExtracts = findAllParentExtractsForNode(v2TreeData, [], mapper2RowKey);
 
+        body.mapper2_0 = {
+          outputFormat: isGroupedOutput ? 'ROWS' : 'RECORD',
+        };
+
         if (arrayExtracts.length) {
-          body.mapper2_0 = {
-            arrayExtracts,
-          };
+          body.mapper2_0.arrayExtracts = arrayExtracts;
         }
       }
     }
@@ -648,13 +666,14 @@ export function* requestEditorSampleData({
           },
         };
       }
-      body[resourceType === 'imports' ? 'import' : 'export'] = resource || {};
+      body[RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]] = resource || {};
     }
 
     const opts = {
       method: 'POST',
       body,
     };
+
     const path = '/processors/handleBar/getContext';
 
     try {
@@ -688,7 +707,7 @@ export function* requestEditorSampleData({
   }
 
   // don't wrap with context for below editors
-  const EDITORS_WITHOUT_CONTEXT_WRAP = ['csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter'];
+  const EDITORS_WITHOUT_CONTEXT_WRAP = ['structuredFileGenerator', 'csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter'];
 
   if (!EDITORS_WITHOUT_CONTEXT_WRAP.includes(editorType)) {
     const { data } = yield select(selectors.sampleDataWrapper, {
@@ -833,19 +852,17 @@ export function* initEditor({ id, editorType, options }) {
       });
 
       formattedOptions = init({options: formattedOptions, resource, fieldState, fileDefinitionData});
-    } else if (editorType === 'javascript') {
+    } else {
       const scriptContext = yield select(selectors.getScriptContext, {flowId, contextType: 'hook'});
 
       formattedOptions = init({options: formattedOptions, resource, fieldState, flow, scriptContext});
-    } else {
-      formattedOptions = init({options: formattedOptions, resource, fieldState, flow});
     }
   }
 
-  let originalRule = formattedOptions.rule;
+  let originalRule = formattedOptions.originalRule || formattedOptions.rule;
 
   if (typeof originalRule === 'object' && !Array.isArray(originalRule)) {
-    originalRule = {...formattedOptions.rule};
+    originalRule = {...(formattedOptions.originalRule || formattedOptions.rule)};
   }
   const stateOptions = {
     editorType,
@@ -884,7 +901,8 @@ export default [
   takeLatest(
     [actionTypes.EDITOR.PATCH.DATA,
       actionTypes.EDITOR.PATCH.RULE,
-      actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW],
+      actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW,
+      actionTypes.EDITOR.PATCH.FEATURES],
     autoEvaluateProcessorWithCancel
   ),
   // added a separate effect for DynaFileKeyColumn as

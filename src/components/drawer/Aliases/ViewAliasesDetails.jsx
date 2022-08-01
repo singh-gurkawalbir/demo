@@ -11,7 +11,7 @@ import RightDrawer from '../Right';
 import DrawerContent from '../Right/DrawerContent';
 import DrawerFooter from '../Right/DrawerFooter';
 import DrawerHeader from '../Right/DrawerHeader';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
   aliasDetailContent: {

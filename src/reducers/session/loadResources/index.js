@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
-import { emptyList, INTEGRATION_DEPENDENT_RESOURCES } from '../../../utils/constants';
+import { emptyList, INTEGRATION_DEPENDENT_RESOURCES } from '../../../constants';
 
 export default (state = {}, action) => {
   const { type, integrationId, resourceType } = action;
@@ -45,6 +45,14 @@ export default (state = {}, action) => {
 };
 
 export const selectors = {};
+
+selectors.hasResourcesLoaded = (state, resourceType, integrationId) => {
+  if (integrationId) {
+    return state?.[integrationId]?.[resourceType] === 'received';
+  }
+
+  return state?.[resourceType] === 'received';
+};
 
 selectors.mkResourceStatus = () => createSelector(
   (_, resources) => resources,

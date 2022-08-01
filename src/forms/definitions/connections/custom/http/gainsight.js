@@ -13,6 +13,8 @@ export default {
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Accesskey',
     '/http/auth/token/scheme': ' ',
+    '/http/ping/successPath': 'result',
+    '/http/ping/successValues': ['true'],
   }),
   fieldMap: {
     name: { fieldId: 'name' },

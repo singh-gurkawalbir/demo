@@ -1,12 +1,21 @@
 language: node_js
 node_js:
   - '14'
-cache:
-  yarn: true
-script:
-  - yarn test
-  - yarn run lint 
-  - yarn build-storybook 
+git:
+  depth: 1
+  submodules: false
+cache: false
+jobs:
+  fast_finish: true
+  include:
+    - stage: ui/ux test cases
+      script: yarn test --runInBand
+    - # stage name not required, will continue to use `ui/ux test cases`
+      script: yarn run lint
+    - stage: build storybook
+      if: branch = storybook
+      script:
+        - yarn build-storybook
 
 # Deployment information
 deploy:

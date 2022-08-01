@@ -62,6 +62,8 @@ export default function DynaTypeableSelect(props) {
       DropdownIndicator: () => null,
       IndicatorSeparator: () => null,
     },
+    menuPortalStyle,
+    menuPortalTarget,
     showAllSuggestions = false,
   } = props;
   const classes = useStyles();
@@ -160,9 +162,11 @@ export default function DynaTypeableSelect(props) {
   // Dont resolve to value while user is typing
   const inputVal = (!isTyping && selectedValue?.label) || value;
   const customReactSelectStyles = CustomReactSelectStyles();
-
+  const menuPortalStyles = menuPortalStyle ? {...menuPortalStyle} : {};
+  const menuPortalTargetProp = menuPortalTarget ? {...menuPortalTarget} : {};
   const mergedStyles = () => ({
     ...customReactSelectStyles,
+    ...menuPortalStyles,
     input: () => ({
       width: '100%',
       padding: '0 7px',
@@ -225,6 +229,7 @@ export default function DynaTypeableSelect(props) {
         filterOption={filterOption}
         menuIsOpen
         className={classes.dynaTypeableSelect}
+        {...menuPortalTargetProp}
         />
       )}
       {!isFocused &&

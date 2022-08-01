@@ -21,7 +21,7 @@ import {
   IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES,
   VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA,
 } from './utils';
-import { STANDALONE_INTEGRATION } from '../../../utils/constants';
+import { STANDALONE_INTEGRATION } from '../../../constants';
 import { previewFileData } from '../../../utils/exportPanel';
 import { processJsonSampleData } from '../../../utils/sampleData';
 import { evaluateExternalProcessor } from '../../editor';
@@ -123,7 +123,7 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
   }
 }
 
-export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {
+export function* _parseFileData({ resourceType, resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
 
   if (isNewSampleData) {
@@ -137,6 +137,7 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
         rule: parserOptions,
         data: fileContent,
         editorType: PARSERS[fileType],
+        resourceType,
       };
       const processorOutput = yield call(_getProcessorOutput, { processorData });
 
@@ -211,7 +212,7 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
 }
 
 export function* _requestFileSampleData({ formKey }) {
-  const { resourceObj: resourceInfo, resourceId, ssLinkedConnectionId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+  const { resourceObj: resourceInfo, resourceId, ssLinkedConnectionId, resourceType } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   const resourceObj = { ...resourceInfo };
 
@@ -233,6 +234,7 @@ export function* _requestFileSampleData({ formKey }) {
       fileProps,
       parserOptions,
       isNewSampleData,
+      resourceType,
     });
   }
   // no sample data - so clear sample data from state
@@ -251,6 +253,7 @@ export function* _fetchFBActionsSampleData({ formKey }) {
   const {data: transformedOutput, hasNoRulesToProcess} = yield call(executeTransformationRules, {
     transform: resourceObj?.transform,
     sampleData: parsedData,
+    isIntegrationApp: !!resourceObj?._connectorId,
   });
 
   yield put(actions.resourceFormSampleData.setProcessorData({
@@ -268,6 +271,7 @@ export function* _fetchFBActionsSampleData({ formKey }) {
   const {data: preSavePageHookOutput, hasNoRulesToProcess: hasNoHook} = yield call(executeJavascriptHook, {
     hook: resourceObj?.hooks?.preSavePage,
     sampleData: transformedData,
+    isIntegrationApp: !!resourceObj?._connectorId,
   });
 
   yield put(actions.resourceFormSampleData.setProcessorData({
@@ -337,6 +341,7 @@ export function* _requestLookupSampleData({ formKey, refreshCache = false }) {
       throwOnError: true,
       includeStages: true,
       refresh: refreshCache,
+      addMockData: true,
     });
 
     yield put(
@@ -347,7 +352,7 @@ export function* _requestLookupSampleData({ formKey, refreshCache = false }) {
   }
 }
 
-export function* _requestPageProcessorSampleData({ formKey, refreshCache = false, isMockInput, addMockData }) {
+export function* _requestPageProcessorSampleData({ formKey, refreshCache = false, addMockData }) {
   const { resourceId, resourceObj, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   // exclude sampleData property if exists on pageProcessor Doc
@@ -372,7 +377,6 @@ export function* _requestPageProcessorSampleData({ formKey, refreshCache = false
       throwOnError: true,
       includeStages: true,
       refresh: refreshCache,
-      isMockInput,
       addMockData,
     });
 
@@ -450,7 +454,7 @@ export function* _requestImportFileSampleData({ formKey }) {
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
-export function* _requestImportSampleData({ formKey, refreshCache, isMockInput }) {
+export function* _requestImportSampleData({ formKey, refreshCache }) {
   // handle file related sample data for imports
   // make file adaptor sample data calls
   const { resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
@@ -460,7 +464,7 @@ export function* _requestImportSampleData({ formKey, refreshCache, isMockInput }
   }
 
   // as part of IO-23131, we support mock input data for imports
-  yield call(_requestPageProcessorSampleData, { formKey, refreshCache, isMockInput, addMockData: true });
+  yield call(_requestPageProcessorSampleData, { formKey, refreshCache, addMockData: true });
 }
 
 export function* requestResourceFormSampleData({ formKey, options = {} }) {
@@ -473,13 +477,13 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
   yield delay(500);
 
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
-  const { refreshCache, executeProcessors, isMockInput } = options;
+  const { refreshCache, executeProcessors } = options;
 
   if (resourceType === 'exports') {
     yield call(_requestExportSampleData, { formKey, refreshCache, executeProcessors });
   }
   if (resourceType === 'imports') {
-    yield call(_requestImportSampleData, { formKey, refreshCache, isMockInput});
+    yield call(_requestImportSampleData, { formKey, refreshCache });
   }
 }
 

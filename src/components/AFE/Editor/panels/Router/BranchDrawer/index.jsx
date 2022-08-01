@@ -1,57 +1,81 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
-import { useRouteMatch } from 'react-router-dom';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
+import { selectors } from '../../../../../../reducers';
 import RightDrawer from '../../../../../drawer/Right';
-import LoadResources from '../../../../../LoadResources';
 import DrawerContent from '../../../../../drawer/Right/DrawerContent';
 import DrawerHeader from '../../../../../drawer/Right/DrawerHeader';
 import DrawerFooter from '../../../../../drawer/Right/DrawerFooter';
 import DynaForm from '../../../../../DynaForm';
 import SaveAndCloseButtonGroupForm from '../../../../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
-import { useFormOnCancel } from '../../../../../FormOnCancelContext';
+import { drawerPaths } from '../../../../../../utils/rightDrawer';
+import actions from '../../../../../../actions';
 
-const fieldMeta = {
+const getFieldMeta = branch => ({
   fieldMap: {
     name: {
+      name: 'name',
       id: 'name',
       type: 'text',
       label: 'Name',
       required: true,
+      defaultValue: branch.name,
     },
     description: {
+      name: 'description',
       id: 'description',
       type: 'text',
       label: 'Description',
+      defaultValue: branch.description,
     },
   },
-};
+});
 
-const formKey = 'branchDrawer';
+function RouterWrappedContent({editorId}) {
+  const { position } = useParams();
+  const history = useHistory();
+  const branch = useSelector(state => selectors.editorRule(state, editorId)?.branches?.[position]);
+  const fieldMeta = getFieldMeta(branch);
+  const formKey = useFormInitWithPermissions({ fieldMeta });
+  const dispatch = useDispatch();
+  // This is strange to query the form values like this.
+  // Why doesn't the <SaveAndCloseButtonGroupForm> onSave event pass the form values?
+  const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
 
-export default function BranchDrawer({ flowId }) {
-  const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
-  const match = useRouteMatch();
-  const groupId = match?.params?.sectionId || '';
+  const handleClose = history.goBack;
 
-  useFormInitWithPermissions({ formKey, fieldMeta });
+  const handleSave = closeAfterSave => {
+    dispatch(actions.editor.patchRule(editorId, {...branch, ...values}, {rulePath: `branches[${position}]`}));
 
-  /* TODO: We can set the drawer path to anything fi the below has match-path conflicts. */
+    if (closeAfterSave) handleClose();
+  };
+
   return (
-    <RightDrawer height="tall" width="small" path="branch/edit/:position">
+    <>
       <DrawerHeader
         title="Edit branch name/description"
-        disableClose={disabled}
-        handleClose={setCancelTriggered} />
-      <LoadResources required resources="flows">
-        <DrawerContent>
-          <DynaForm formKey={formKey} />
-        </DrawerContent>
+        handleClose={handleClose} />
 
-        <DrawerFooter>
-          <SaveAndCloseButtonGroupForm formKey={formKey} />
-        </DrawerFooter>
-      </LoadResources>
+      <DrawerContent>
+        <DynaForm formKey={formKey} />
+      </DrawerContent>
+
+      <DrawerFooter>
+        <SaveAndCloseButtonGroupForm
+          onClose={handleClose}
+          onSave={handleSave}
+          formKey={formKey}
+        />
+      </DrawerFooter>
+    </>
+  );
+}
+
+export default function BranchDrawer({ editorId }) {
+  return (
+    <RightDrawer height="tall" width="small" path={drawerPaths.FLOW_BUILDER.BRANCH_EDIT}>
+      <RouterWrappedContent editorId={editorId} />
     </RightDrawer>
   );
 }

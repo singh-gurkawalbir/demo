@@ -153,7 +153,7 @@ export default function Subscription() {
     );
     setUpgradeRequested(true);
 
-    return dispatch(actions.license.requestUpdate('upgrade'));
+    return dispatch(actions.license.requestUpdate('upgrade', {}));
   }, [dispatch]);
   const onRequestUpgradeClick = useCallback(() => {
     confirmDialog({
@@ -167,7 +167,7 @@ export default function Subscription() {
             );
             setUpgradeRequested(true);
 
-            dispatch(actions.license.requestUpdate('upgrade'));
+            dispatch(actions.license.requestUpdate('upgrade', {}));
           },
         },
         { label: 'Cancel',

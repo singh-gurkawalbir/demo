@@ -512,6 +512,14 @@ describe('installer,uninstaller, clone and template region selector testcases', 
       expect(selectors.addNewChildSteps(state, 'i1')).toEqual({
         steps: []});
     });
+    test('should return errors when add new child returns errors', () => {
+      const state = reducer(
+        undefined,
+        actions.integrationApp.child.failedNewChildSteps('i1', 'Provide a license')
+      );
+
+      expect(selectors.addNewChildSteps(state, 'i1')).toEqual({error: 'Provide a license'});
+    });
   });
 
   describe('selectors.isIAV2UninstallComplete test cases', () => {

@@ -1,0 +1,128 @@
+import produce from 'immer';
+import { keyBy } from 'lodash';
+import { emptyList, emptyObject } from '../../../constants';
+import actionTypes from '../../../actions/types';
+import { generateReactFlowGraph } from '../../../utils/flows/flowbuilder';
+
+export default function reducer(state = {}, action) {
+  const { type, flow, flowId, stepId, targetId, targetType, status, isViewMode, info } = action;
+
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.FLOW.INIT_FLOW_GRAPH:
+        if (!draft[flowId]) {
+          draft[flowId] = {};
+        }
+        draft[flowId].elements = generateReactFlowGraph(flow, isViewMode);
+        draft[flowId].elementsMap = keyBy(draft[flowId].elements || [], 'id');
+        draft[flowId].flow = flow;
+        draft[flowId].isViewMode = isViewMode;
+        delete draft[flowId].dragStepId;
+
+        break;
+      case actionTypes.FLOW.DRAG_START: {
+        draft[flowId].dragStepIdInProgress = stepId;
+
+        break;
+      }
+
+      case actionTypes.FLOW.SET_DRAG_IN_PROGRESS: {
+        draft[flowId].dragStepId = draft[flowId].dragStepIdInProgress;
+        delete draft[flowId].dragStepIdInProgress;
+        break;
+      }
+
+      case actionTypes.FLOW.SET_SAVE_STATUS: {
+        if (!draft[flowId]) {
+          draft[flowId] = {};
+        }
+        draft[flowId].status = status;
+        break;
+      }
+
+      case actionTypes.FLOW.DRAG_END: {
+        delete draft[flowId].dragStepId;
+
+        break;
+      }
+
+      case actionTypes.FLOW.MERGE_TARGET_SET: {
+        draft[flowId].mergeTargetId = targetId;
+        draft[flowId].mergeTargetType = targetType;
+
+        break;
+      }
+
+      case actionTypes.FLOW.ADD_NEW_PP_STEP_INFO: {
+        draft[flowId].info = info;
+        break;
+      }
+
+      case actionTypes.FLOW.CLEAR_PP_STEP_INFO: {
+        delete draft[flowId].info;
+        break;
+      }
+
+      case actionTypes.FLOW.MERGE_TARGET_CLEAR: {
+        delete draft[flowId].mergeTargetId;
+        delete draft[flowId].mergeTargetType;
+        break;
+      }
+      default:
+        break;
+    }
+  });
+}
+
+// #region PUBLIC SELECTORS
+export const selectors = {};
+
+selectors.fbGraphElements = (state, flowId) => (state && state[flowId] && state[flowId].elements) || emptyList;
+selectors.fbGraphElementsMap = (state, flowId) => (state && state[flowId]?.elementsMap) || emptyObject;
+selectors.fbFlow = (state, flowId) => state && state[flowId]?.flow;
+selectors.fbDragStepId = (state, flowId) => state?.[flowId]?.dragStepId;
+selectors.fbInfo = (state, flowId) => state?.[flowId]?.info || emptyObject;
+selectors.fbMergeTargetType = (state, flowId) => state?.[flowId]?.mergeTargetType;
+selectors.fbMergeTargetId = (state, flowId) => state?.[flowId]?.mergeTargetId;
+selectors.fbDragStepIdInProgress = (state, flowId) => state?.[flowId]?.dragStepIdInProgress;
+selectors.isFlowSaveInProgress = (state, flowId) => state?.[flowId]?.status === 'saving';
+
+selectors.fbRouterStepsInfo = (state, flowId, routerId) => {
+  let configuredCount = 0;
+  let unconfiguredCount = 0;
+  const visitedRouters = {};
+  const flow = state && state[flowId]?.flow;
+
+  if (flow && flow.routers && flow.routers.length) {
+    const routerStepsCount = (routerId, ignoreFirstBranch, ignoreAll) => {
+      const router = flow.routers.find(r => r.id === routerId);
+
+      if (router && !visitedRouters[routerId]) {
+        visitedRouters[routerId] = true;
+
+        (router.branches || []).forEach((branch, index) => {
+          const isSurvivingBranch = (ignoreFirstBranch && index === 0) || ignoreAll;
+
+          (branch.pageProcessors || []).forEach(pp => {
+            if (!isSurvivingBranch) {
+              if (pp.setupInProgress || (!pp._exportId && !pp._importId)) {
+                unconfiguredCount += 1;
+              } else {
+                configuredCount += 1;
+              }
+            }
+          });
+          if (branch.nextRouterId) {
+            routerStepsCount(branch.nextRouterId, false, isSurvivingBranch);
+          }
+        });
+      }
+    };
+
+    routerStepsCount(routerId, true, false);
+  }
+
+  return {configuredCount, unconfiguredCount};
+};
+
+// #endregion
