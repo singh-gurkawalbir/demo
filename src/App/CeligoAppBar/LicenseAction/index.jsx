@@ -228,23 +228,9 @@ function LicenseAction() {
       return submitUpgradeDialog();
     }
     if (licenseActionDetails.action === 'resume') {
-      return confirmDialog({
-        title: 'Request to reactivate subscription',
-        message: 'We will contact you to reactivate your subscription.',
-        buttons: [
-          {
-            label: 'Submit request',
-            onClick: () => {
-              setUpgradeRequested(true);
-              dispatch(actions.license.requestUpdate('ioResume', {}));
-            },
-          },
-          {
-            label: 'Cancel',
-            variant: 'text',
-          },
-        ],
-      });
+      setUpgradeRequested(true);
+
+      return dispatch(actions.license.requestUpdate('ioResume', {}));
     }
     if (licenseActionDetails.action === 'expired') {
       confirmDialog({
@@ -328,7 +314,7 @@ function LicenseAction() {
             data-test="renewOrResumeNow"
             color="primary"
             onClick={handleClick}>
-            {licenseActionDetails.action === 'expired' ? 'Request to renew now.' : 'Request to reactivate.'}
+            {licenseActionDetails.action === 'expired' ? 'Request to renew now.' : 'Reactivate.'}
           </TextButton>
 
         </NotificationToaster>
