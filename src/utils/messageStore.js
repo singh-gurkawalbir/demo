@@ -86,6 +86,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   MFA_AUTH_FAILED: 'Verification failed. Please try again',
   // #endregion
 
+  DATALOADER_PP_MESSAGE: 'You can add a destination application once you complete the configuration of your data loader.',
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',
   TERMINAL_NODE_TOOLTIP: 'Drag to merge with other branch',

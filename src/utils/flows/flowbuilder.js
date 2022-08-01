@@ -5,6 +5,7 @@ import jsonPatch from 'fast-json-patch';
 import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../../constants';
 import { shortId } from '../string';
 import { setObjectValue } from '../json';
+import messageStore from '../messageStore';
 
 export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
 
@@ -432,7 +433,7 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode, isDataLo
     }
   }
   if (isNewDataLoaderFlow) {
-    const emptyNode = generateNewEmptyNode({branch: {infoText: 'You can add a destination application once you complete the configuration of your data loader.'}});
+    const emptyNode = generateNewEmptyNode({branch: {infoText: messageStore('DATALOADER_PP_MESSAGE')}});
 
     return [
       {
