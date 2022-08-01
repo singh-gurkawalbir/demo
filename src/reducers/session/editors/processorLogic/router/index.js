@@ -179,8 +179,8 @@ export default {
 
     return patches;
   },
-  updateRule: (draft, action) => {
-    const { actionType, oldIndex, newIndex } = action;
+  updateRule: (draft, action, shouldReplace) => {
+    const { actionType, oldIndex, newIndex, rulePatch } = action;
 
     if (actionType === 'reorder') {
       draft.rule.branches = moveArrayItem(draft.rule.branches, oldIndex, newIndex);
@@ -191,6 +191,10 @@ export default {
         name: `Branch ${draft.branchNamingIndex}.${branchNameIndex}`,
         pageProcessors: [{setupInProgress: true}],
       }];
+    } else if (!shouldReplace) {
+      Object.assign(draft.rule, cloneDeep(rulePatch));
+    } else {
+      draft.rule = rulePatch;
     }
   },
 };

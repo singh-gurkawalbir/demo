@@ -5,6 +5,7 @@ import jsonPatch from 'fast-json-patch';
 import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../../constants';
 import { shortId } from '../string';
 import { setObjectValue } from '../json';
+import messageStore from '../messageStore';
 
 export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
 
@@ -97,8 +98,8 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath, ppData) => {
     }
   } else {
     // If flow is in orchestration structure
-    if (!flow.pageProcessors || !flow.pageProcessors.length) {
-      flow.pageProcessors = [{setupInProgress: true}];
+    if (!flow.pageProcessors) {
+      flow.pageProcessors = [];
     }
     if (insertAtIndex === -1) {
       flow.pageProcessors.push(pageProcessor);
@@ -415,11 +416,13 @@ export const populateMergeData = (flow, elements) => {
   });
 };
 
-export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
+export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode, isDataLoader) => {
   const {pageGenerators = [], routers = [], _connectorId} = flow;
-  const isReadOnlyMode = !!_connectorId || isViewMode;
+  const isReadOnlyMode = !!_connectorId || isViewMode || isDataLoader;
   let firstPPId = routers[0].id;
   let isFirstRouterVirtual = false;
+
+  const isNewDataLoaderFlow = pageGenerators[0].application === 'dataLoader' && !pageGenerators[0]._exportId;
 
   if (isVirtualRouter(routers[0])) {
     isFirstRouterVirtual = true;
@@ -428,6 +431,19 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
     } else if (routers[0].branches[0].nextRouterId) {
       firstPPId = routers[0].branches[0].nextRouterId;
     }
+  }
+  if (isNewDataLoaderFlow) {
+    const emptyNode = generateNewEmptyNode({branch: {infoText: messageStore('DATALOADER_PP_MESSAGE')}});
+
+    return [
+      {
+        id: pageGenerators[0].id,
+        type: GRAPH_ELEMENTS_TYPE.PG_STEP,
+        data: {...pageGenerators[0], path: '/pageGenerators/0', hideDelete: true },
+      },
+      generateDefaultEdge(pageGenerators[0].id, emptyNode.id),
+      emptyNode,
+    ];
   }
   const elements = [...generatePageGeneratorNodesAndEdges(pageGenerators, firstPPId, isReadOnlyMode, isFirstRouterVirtual)];
   const routerVisited = {};
@@ -445,7 +461,7 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
           const pageProcessorNodes = generatePageProcessorNodesAndEdges(
             branch.pageProcessors,
             { branch, branchIndex, routerIndex, isVirtual: isVirtualRouter(router), branchCount: branches.length},
-            isReadOnlyMode
+            !!_connectorId || isViewMode
           );
 
           if (routerIndex !== 0 || !isVirtualRouter(router)) {
@@ -506,7 +522,7 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
   return elements;
 };
 
-export const generateReactFlowGraph = (flow, isViewMode) => {
+export const generateReactFlowGraph = (flow, isViewMode, isDataLoader) => {
   if (!flow) {
     return;
   }
@@ -514,10 +530,10 @@ export const generateReactFlowGraph = (flow, isViewMode) => {
   const {routers} = flow;
 
   if (!routers || routers.length === 0) {
-    return generateNodesAndEdgesFromNonBranchedFlow(flow, isViewMode);
+    return generateNodesAndEdgesFromNonBranchedFlow(flow, isViewMode, isDataLoader);
   }
 
-  return generateNodesAndEdgesFromBranchedFlow(flow, isViewMode);
+  return generateNodesAndEdgesFromBranchedFlow(flow, isViewMode, isDataLoader);
 };
 
 const mergeBetweenPPAndRouter = ({edgeSource, patchSet, sourceElement, edgeTarget}) => {

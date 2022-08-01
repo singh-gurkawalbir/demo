@@ -457,7 +457,9 @@ export function* submitFormValues({
 export function* getFlowUpdatePatchesForNewPGorPP(
   resourceType,
   tempResourceId,
-  flowId
+  flowId,
+  isPreview,
+  isLookup,
 ) {
   if (!['exports', 'imports'].includes(resourceType) || !flowId) return [];
 
@@ -480,9 +482,9 @@ export function* getFlowUpdatePatchesForNewPGorPP(
 
   const observer = jsonPatch.observe(flowDocClone);
 
-  const createdId = isNewId(tempResourceId) ? yield select(selectors.createdResourceId, tempResourceId) : tempResourceId;
+  const createdId = isNewId(tempResourceId) && !isPreview ? yield select(selectors.createdResourceId, tempResourceId) : tempResourceId;
   const createdResource = yield select(selectors.resource, resourceType, createdId);
-  const isPageGenerator = resourceType === 'exports' && !createdResource?.isLookup;
+  const isPageGenerator = resourceType === 'exports' && !createdResource?.isLookup && !isLookup;
   const step = elementsMap[tempResourceId];
   const isLinearFlow = !flowDocClone.routers?.length;
 
@@ -495,8 +497,8 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     } else if (step) {
       setObjectValue(flowDocClone, step.data.path, {_exportId: createdId});
     } else {
-      if (!flowDocClone.pageGenerators || !flowDocClone.pageGenerators.length) {
-        flowDocClone.pageGenerators = [{ setupInProgress: true }];
+      if (!flowDocClone.pageGenerators) {
+        flowDocClone.pageGenerators = [];
       }
       flowDocClone.pageGenerators.push({ _exportId: createdId });
     }
@@ -524,7 +526,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
       const insertAtIndex = processorIndex ?? -1;
 
       addPageProcessor(flowDocClone, insertAtIndex, branchPath, pageProcessor);
-      yield put(actions.flow.clearPPStepInfo(flowId));
+      !isPreview && (yield put(actions.flow.clearPPStepInfo(flowId)));
     }
   }
 

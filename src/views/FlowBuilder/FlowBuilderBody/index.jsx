@@ -129,7 +129,7 @@ export function Canvas({ flowId, fullscreen }) {
   [elements]);
 
   useEffect(() => {
-    dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode || isDataLoaderFlow));
+    dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode, isDataLoaderFlow));
   }, [mergedFlow, dispatch, flowId, isViewMode, isDataLoaderFlow]);
 
   const handleNodeDragStart = (evt, source) => {
