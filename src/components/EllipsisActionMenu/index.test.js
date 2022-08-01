@@ -28,7 +28,7 @@ describe('ellipsis menu ui tests', () => {
 
     expect(actionButton).toHaveLength(1);
   });
-  test('should display the same number of options passed in props on clicking the ellipsis icon', () => {
+  test('should display the same number of options that are passed in props on clicking the ellipsis icon', () => {
     renderWithProviders(
 
       <EllipsisActionMenu
