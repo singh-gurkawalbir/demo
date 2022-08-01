@@ -13,8 +13,8 @@ export default {
       '/assistant': 'logisense',
       '/http/auth/type': 'token',
       '/http/mediaType': 'urlencoded',
-      '/http/baseURI': `https://${formValues['/storeURL']}`,
-      '/http/ping/relativeURI': '/ResourceServer/api/v1/Account',
+      '/http/baseURI': `https://${formValues['/storeURL']}/ResourceServer/api/${formValues['/http/unencrypted/version']}`,
+      '/http/ping/relativeURI': '/Account',
       '/http/ping/method': 'GET',
       '/http/disableStrictSSL': `${formValues['/environment']}` === 'sandbox',
       '/http/auth/token/location': 'header',
@@ -60,6 +60,7 @@ export default {
     storeURL: {
       id: 'storeURL',
       startAdornment: 'https://',
+      endAdornment: '/ResourceServer/api',
       type: 'text',
       label: 'Store URL',
       required: true,
@@ -73,10 +74,21 @@ export default {
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
-          baseUri && baseUri.substring(baseUri.indexOf('https://') + 8);
+          baseUri && baseUri.substring(baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('/ResourceServer/api'));
 
         return subdomain;
       },
+    },
+    'http.unencrypted.version': {
+      id: 'http.unencrypted.version',
+      type: 'text',
+      label: 'Version',
+      required: true,
+      helpKey: 'logisense.connection.http.unencrypted.version',
+      defaultValue: r =>
+        (r?.http?.unencrypted?.endpointVersion) ||
+        'v1',
     },
     'http.unencrypted.username': {
       id: 'http.unencrypted.username',
@@ -136,6 +148,7 @@ export default {
         label: 'Application details',
         fields: ['environment',
           'storeURL',
+          'http.unencrypted.version',
           'http.unencrypted.username',
           'http.encrypted.password',
           'http.encrypted.clientId',

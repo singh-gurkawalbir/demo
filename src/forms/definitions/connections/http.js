@@ -177,10 +177,21 @@ export default {
     if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
       newValues = updateHTTPFrameworkFormValues(newValues, resource, options?.httpConnector);
     }
-    newValues['/http/formType'] = 'http';
+
+    if (newValues['/http/formType'] !== 'graph_ql') {
+      newValues['/http/formType'] = 'http';
+    }
+
+    if (newValues['/http/clientCertificates/type'] === 'pem') {
+      delete newValues['/http/clientCertificates/pfx'];
+    }
 
     if (newValues['/http/clientCertificates/type'] === 'pfx') {
       delete newValues['/http/clientCertificates/cert'];
+      delete newValues['/http/clientCertificates/key'];
+      if (newValues['/http/clientCertificates/pfx'].includes('data:application/x-pkcs12;base64,')) {
+        newValues['/http/clientCertificates/pfx'] = newValues['/http/clientCertificates/pfx'].slice(33);
+      }
     }
 
     delete newValues['/http/clientCertificates/type'];

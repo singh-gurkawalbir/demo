@@ -10,7 +10,7 @@ import { selectors } from '../../../../reducers';
 import integrationAppUtil from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import useHandleDelete from '../../../Integration/hooks/useHandleDelete';
-import { STANDALONE_INTEGRATION, TILE_STATUS } from '../../../../utils/constants';
+import { STANDALONE_INTEGRATION, TILE_STATUS } from '../../../../constants';
 
 export default function TileActions({tile}) {
   const history = useHistory();

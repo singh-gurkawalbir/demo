@@ -1,7 +1,7 @@
 /* global describe, expect, test */
 import produce from 'immer';
 import { selectors } from '.';
-import { STANDALONE_INTEGRATION } from '../utils/constants';
+import { STANDALONE_INTEGRATION } from '../constants';
 
 const state = {
   data: {

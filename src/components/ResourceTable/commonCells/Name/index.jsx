@@ -5,12 +5,15 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../../constants/resource
 import { selectors } from '../../../../reducers';
 import {
   STANDALONE_INTEGRATION,
-} from '../../../../utils/constants';
+} from '../../../../constants';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import getRoutePath from '../../../../utils/routePaths';
+import { getNotificationResourceType } from '../../../../utils/resource';
 
 export default function NameCell({al, actionProps}) {
   const resourceType = RESOURCE_TYPE_SINGULAR_TO_PLURAL[al.resourceType];
+  const notificationResourceType = resourceType === 'notifications' ? getNotificationResourceType(al) : '';
+
   let resourceName = useSelector(state => {
     if (resourceType === 'revisions') {
       const { integrationId } = actionProps;
@@ -24,7 +27,7 @@ export default function NameCell({al, actionProps}) {
       return user?.sharedWithUser?.name || user?.sharedWithUser?.email;
     }
 
-    return selectors.resource(state, resourceType, al._resourceId)?.name;
+    return selectors.resource(state, resourceType === 'notifications' ? notificationResourceType : resourceType, al._resourceId)?.name;
   });
   const routePath = useSelector(state => {
     if (resourceType === 'revisions') {
@@ -38,7 +41,7 @@ export default function NameCell({al, actionProps}) {
       return viewRevisionDetailsDrawerUrl;
     }
 
-    return selectors.getResourceEditUrl(state, resourceType, al._resourceId, actionProps?.childId, al.sectionId);
+    return selectors.getResourceEditUrl(state, resourceType === 'notifications' ? notificationResourceType : resourceType, al._resourceId, actionProps?.childId, al.sectionId);
   });
 
   if (resourceType === 'integrations' && al?._resourceId === 'none') {

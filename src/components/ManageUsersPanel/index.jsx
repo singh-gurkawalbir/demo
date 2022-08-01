@@ -8,6 +8,7 @@ import AddIcon from '../icons/AddIcon';
 import PanelHeader from '../PanelHeader';
 import UsersList from './UsersList';
 import { TextButton } from '../Buttons';
+import infoText from '../../views/MyAccount/infoText';
 
 const useStyles = makeStyles(theme => ({
   userListWrapper: {
@@ -20,21 +21,6 @@ const useStyles = makeStyles(theme => ({
     minHeight: 124,
   },
 }));
-
-const infoTextUsers =
-  `Invite users to either Administer your account, 
-  or Manage or Monitor your integrations. A user who 
-  has been invited to Administer an account will have 
-  all the same permissions as the account Owner, 
-  including inviting users and changing their access 
-  rights. A user who has been invited to Manage an 
-  integration will have permissions to edit existing 
-  flows or create flows within an integration tile. A 
-  user who has Monitor permissions will only be allowed 
-  to view the integration, they do not have permissions 
-  to make any changes. They are however allowed to run 
-  the flows within the integration. The user will see 
-  only those integrations that you have invited them to.`;
 
 export default function ManageUsersPanel({ integrationId, childId }) {
   const classes = useStyles();
@@ -49,7 +35,7 @@ export default function ManageUsersPanel({ integrationId, childId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Users" infoText={infoTextUsers}>
+      <PanelHeader title="Users" infoText={infoText.Users}>
         {isAccountOwner && (
           <TextButton onClick={handleInvite} startIcon={<AddIcon />}>
             Invite user

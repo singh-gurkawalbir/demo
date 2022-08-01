@@ -2,7 +2,7 @@ import produce from 'immer';
 import cloneDeep from 'lodash/cloneDeep';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
-import { REVISION_STATUS } from '../../../utils/constants';
+import { REVISION_STATUS } from '../../../constants';
 
 const defaultState = {};
 

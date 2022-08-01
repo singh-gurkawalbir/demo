@@ -7,7 +7,7 @@ const DEFAULT_VALUE = undefined;
 const emptyObj = {};
 
 export function extractStages(sampleData) {
-  const stagesInSampleData = sampleData?.stages;
+  const stagesInSampleData = sampleData?.stages?.stages || sampleData?.stages;
   const stageMap = {};
 
   if (!stagesInSampleData) {

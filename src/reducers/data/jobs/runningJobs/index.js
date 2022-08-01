@@ -3,7 +3,7 @@ import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 import {
   JOB_STATUS,
-} from '../../../../utils/constants';
+} from '../../../../constants';
 import {
   getJobDuration,
 } from '../util';

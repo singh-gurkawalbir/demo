@@ -17,7 +17,7 @@ import AddResourceTypeCrumb from './crumbs/AddResourceType';
 import suiteScriptRoutes from './suiteScript';
 import getRoutePath from '../../../utils/routePaths';
 import ConnectorCrumb from './crumbs/Connector';
-import {HOME_PAGE_PATH} from '../../../utils/constants';
+import {HOME_PAGE_PATH} from '../../../constants';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import FlowStepDebugLogs from './crumbs/FlowStepDebugLogs';
 import FlowGroupCrumb from './crumbs/FlowGroup';

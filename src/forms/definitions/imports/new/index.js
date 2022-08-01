@@ -1,6 +1,6 @@
 import {applicationsList, applicationsPlaceHolderText} from '../../../../constants/applications';
 import { getFilterExpressionForAssistant } from '../../../../utils/connections';
-import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../../utils/constants';
+import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../../constants';
 import { rdbmsAppTypeToSubType } from '../../../../utils/resource';
 
 const visibleWhen = [
@@ -134,6 +134,11 @@ export default {
       }
 
       expression.push({ _connectorId: { $exists: false } });
+      const andingExpressions = { $and: expression };
+
+      if (app._httpConnectorId) {
+        return { filter: andingExpressions, appType: app.name };
+      }
 
       if (app.assistant) {
         return {
@@ -141,8 +146,6 @@ export default {
           appType: app.assistant,
         };
       }
-
-      const andingExpressions = { $and: expression };
 
       return { filter: andingExpressions, appType };
     }

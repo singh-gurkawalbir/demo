@@ -4,7 +4,7 @@ import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { selectors } from '../../../reducers';
 import { getFlowIdAndTypeFromUniqueId } from '../../../utils/suiteScript';
-import { SUITESCRIPT_CONNECTOR_IDS, SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
+import { SUITESCRIPT_CONNECTOR_IDS, SUITESCRIPT_CONNECTORS } from '../../../constants';
 
 export function* commitStagedChanges({
   resourceType,

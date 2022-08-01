@@ -7,8 +7,9 @@ import { selectors } from '../../reducers';
 import { commitStagedChanges } from '../resources';
 import { requestSampleData } from '../sampleData/flows';
 import responseMappingUtil from '../../utils/responseMapping';
-import { emptyObject } from '../../utils/constants';
+import { emptyObject } from '../../constants';
 import { autoEvaluateProcessorWithCancel } from '../editor';
+import { getPageProcessorFromFlow } from '../../utils/flows';
 
 export function* responseMappingInit({ flowId, resourceId, resourceType }) {
   const flow = (yield select(
@@ -16,7 +17,7 @@ export function* responseMappingInit({ flowId, resourceId, resourceType }) {
     'flows',
     flowId
   ))?.merged || emptyObject;
-  const pageProcessor = flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+  const pageProcessor = getPageProcessorFromFlow(flow, resourceId);
 
   if (!pageProcessor) {
     return yield put(actions.responseMapping.initFailed());
@@ -78,9 +79,27 @@ export function* responseMappingSave() {
     'flows',
     flowId
   ))?.merged || emptyObject;
-  const pageProcessorIndex = flow?.pageProcessors.findIndex(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+  let routerIndex = -1;
+  let branchIndex = -1;
+  let pageProcessorIndex = -1;
 
-  if (!flow?.pageProcessors || pageProcessorIndex === -1) {
+  if (flow?.routers?.length) {
+    flow.routers.forEach((router, rIndex) => {
+      router.branches.forEach((branch, bIndex) => {
+        branch.pageProcessors.forEach((pp, ppIndex) => {
+          if (pp._importId === resourceId || pp._exportId === resourceId) {
+            routerIndex = rIndex;
+            branchIndex = bIndex;
+            pageProcessorIndex = ppIndex;
+          }
+        });
+      });
+    });
+  } else if (flow?.pageProcessors?.length) {
+    pageProcessorIndex = flow.pageProcessors.findIndex(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+  }
+
+  if ((!flow?.pageProcessors && !flow?.routers) || pageProcessorIndex === -1) {
     return yield put(actions.responseMapping.saveFailed());
   }
   const patchSet = [];
@@ -90,7 +109,8 @@ export function* responseMappingSave() {
 
   patchSet.push({
     op: 'replace',
-    path: `/pageProcessors/${pageProcessorIndex}/responseMapping`,
+    path: flow?.routers?.length ? `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${pageProcessorIndex}/responseMapping`
+      : `/pageProcessors/${pageProcessorIndex}/responseMapping`,
     value: mappingsWithListsAndFields,
   });
 

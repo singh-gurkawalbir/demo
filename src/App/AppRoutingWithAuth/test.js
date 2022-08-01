@@ -15,7 +15,7 @@ import reducer from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
 import themeProvider from '../../theme/themeProvider';
 import { PageContentComponents as AppRouting } from '..';
-import {HOME_PAGE_PATH} from '../../utils/constants';
+import {HOME_PAGE_PATH} from '../../constants';
 
 // fireEvent
 // Ok, so here's what your tests might look like

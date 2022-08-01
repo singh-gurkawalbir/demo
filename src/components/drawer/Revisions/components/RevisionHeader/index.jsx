@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import RefreshIcon from '../../../../icons/RefreshIcon';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
-import { REVISION_TYPES } from '../../../../../utils/constants';
+import { REVISION_TYPES } from '../../../../../constants';
 import ActionGroup from '../../../../ActionGroup';
 import CeligoDivider from '../../../../CeligoDivider';
 import RevisionsGuide from '../RevisionsGuide';

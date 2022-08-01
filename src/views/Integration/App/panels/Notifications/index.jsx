@@ -11,7 +11,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useGetNotificationOptions from '../../../../../hooks/useGetNotificationOptions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import { UNASSIGNED_SECTION_NAME } from '../../../../../utils/constants';
+import { UNASSIGNED_SECTION_NAME } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   form: {

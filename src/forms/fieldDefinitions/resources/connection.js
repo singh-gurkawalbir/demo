@@ -1,4 +1,4 @@
-import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AWS_REGIONS_LIST} from '../../../utils/constants';
+import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AWS_REGIONS_LIST} from '../../../constants';
 import { isNewId, getDomainUrl, getAssistantFromResource, rdbmsSubTypeToAppType, rdbmsAppTypeToSubType } from '../../../utils/resource';
 import { applicationsList} from '../../../constants/applications';
 import { getConstantContactVersion } from '../../../utils/connections';
