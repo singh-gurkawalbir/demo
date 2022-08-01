@@ -17,9 +17,4 @@ describe('TooltipContent UI tests', () => {
     renderWithProviders(<ToolTipContent {...props} />);
     expect(screen.getByText(/Connector solutions articles/i)).toHaveAttribute('href', 'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/360002670492');
   });
-  test('should render empty DOM when children are not passed', () => {
-    const {utils} = renderWithProviders(<ToolTipContent />);
-
-    expect(utils.container).toContainHTML('<div class="MuiTypography-root makeStyles-root-3 MuiTypography-body2"></div>');
-  });
 });
