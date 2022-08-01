@@ -17,7 +17,7 @@ jest.mock('@material-ui/core/Slider', () => props => {
   );
 });
 
-describe('CronBuilder testing', () => {
+describe('CronBuilder UI tests', () => {
   test('rendering', () => {
     const onchange = jest.fn();
 
@@ -28,7 +28,7 @@ describe('CronBuilder testing', () => {
     expect(screen.getByText('Every * week')).toBeInTheDocument();
   });
 
-  test('clicking the same date twice', () => {
+  test('should click the same date twice', () => {
     const onchange = jest.fn();
 
     render(<CronBuilder value="1 0,a,c,b 3 4 5 6 7" onChange={onchange} />);
@@ -47,7 +47,7 @@ describe('CronBuilder testing', () => {
     expect(onchange).toHaveBeenCalledWith('? 0,a,c,b 3 4,24 5 6');
   });
 
-  test('getting one hour only', () => {
+  test('should test when one hour only is choosen', () => {
     const onchange = jest.fn();
 
     render(<CronBuilder value="1 0,a,c,b 3 4 5 6 7" onChange={onchange} />);
@@ -61,7 +61,7 @@ describe('CronBuilder testing', () => {
     expect(onchange).toHaveBeenCalledWith('? 0,a,c,b 3,23 4 5 6');
   });
 
-  test('final array empty case', () => {
+  test('should test when final array is empty', () => {
     const onchange = jest.fn();
 
     render(<CronBuilder value="1 * * 5 6 7 " onChange={onchange} />);
@@ -76,14 +76,14 @@ describe('CronBuilder testing', () => {
 
     userEvent.click(firstclick);
 
-    const secclick = screen.getByText('04');
+    const secClick = screen.getByText('04');
 
-    userEvent.click(secclick);
+    userEvent.click(secClick);
 
     expect(onchange).toHaveBeenCalledWith('? * * 5 6 7');
   });
 
-  test('rendering with null value', () => {
+  test('should do test when initial value is given as empty string', () => {
     const onchange = jest.fn();
 
     render(<CronBuilder value="         " onChange={onchange} />);
@@ -104,7 +104,7 @@ describe('CronBuilder testing', () => {
     expect(onchange).toHaveBeenCalledWith('? * * * * *');
   });
 
-  test('rendering with slider > 10', () => {
+  test('should test when slider > 10', () => {
     const onchange = jest.fn();
 
     render(<CronBuilder value=" */20 1 3 4 5/10 6 7" onChange={onchange} />);
@@ -117,7 +117,7 @@ describe('CronBuilder testing', () => {
     fireEvent.change(screen.getByTestId('testid'), { target: { value: 25 } });
     expect(onchange).toHaveBeenCalledWith('? 10-59/25 1 3 4 5/10');
   });
-  test('rendering with slider < 10', () => {
+  test('should test when slider < 10', () => {
     const onchange = jest.fn();
 
     render(<CronBuilder value=" */20 1 3 4 5/10 6 7" onChange={onchange} />);
