@@ -5,18 +5,22 @@ export default {
     const retValues = { ...formValues };
 
     if (retValues['/http/auth/type'] === 'token') {
-      retValues['/http/auth/token/location'] = 'url';
-      retValues['/http/auth/token/paramName'] = 'token';
+      retValues['/http/auth/token/location'] = 'header';
+      retValues['/http/auth/token/scheme'] = 'Bearer';
+      retValues['/http/auth/token/headerName'] = 'Authorization';
       retValues['/http/auth/oauth/authURI'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] = undefined;
     } else {
+      retValues['/http/auth/token/location'] = 'header';
+      retValues['/http/auth/token/scheme'] = 'Bearer';
+      retValues['/http/auth/token/headerName'] = 'Authorization';
       retValues['/http/auth/oauth/authURI'] =
-        'https://slack.com/oauth/authorize';
+        `https://slack.com/oauth/v2/authorize?user_scope=${formValues['/http/unencrypted/userScopes']}`;
       retValues['/http/auth/token/refreshMethod'] = 'POST';
       retValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
       retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] =
-        'https://slack.com/api/oauth.access';
+        'https://slack.com/api/oauth.v2.access';
       retValues['/http/auth/oauth/scopeDelimiter'] = ',';
     }
 
@@ -36,7 +40,7 @@ export default {
       ...retValues,
       '/type': 'http',
       '/assistant': 'slack',
-      '/http/mediaType': 'urlencoded',
+      '/http/mediaType': 'json',
       '/http/baseURI': 'https://slack.com/api',
       '/http/ping/relativeURI': 'api.test',
       '/http/ping/method': 'GET',
@@ -64,25 +68,21 @@ export default {
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
-        'admin',
         'calls:read',
         'calls:write',
         'channels:history',
         'channels:read',
-        'channels:write',
-        'chat:write:user',
+        'chat:write',
         'commands',
         'dnd:read',
-        'dnd:write',
         'emoji:read',
         'files:read',
-        'files:write:user',
+        'files:write',
         'groups:history',
         'groups:read',
         'groups:write',
         'im:history',
         'im:write',
-        'identify',
         'im:read',
         'incoming-webhook',
         'links:read',
@@ -98,21 +98,38 @@ export default {
         'reminders:write',
         'remote_files:read',
         'remote_files:share',
-        'search:read',
-        'stars:read',
-        'stars:write',
         'team.billing:read',
         'team.preferences:read',
         'team:read',
         'usergroups:read',
         'usergroups:write',
         'users.profile:read',
-        'users.profile:write',
         'users:read',
         'users:read.email',
         'users:write',
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
+    'http.unencrypted.userScopes': {
+      fieldId: 'http.unencrypted.userScopes',
+      label: 'user_scope',
+      type: 'multiselect',
+      helpKey: 'connection.http.auth.oauth.scope',
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      options: [
+        {
+          items: [
+            { label: 'admin', value: 'admin' },
+            { label: 'identify', value: 'identify' },
+            { label: 'dnd:write', value: 'dnd:write' },
+            { label: 'search:read', value: 'search:read' },
+            { label: 'stars:read', value: 'stars:read' },
+            { label: 'stars:write', value: 'stars:write' },
+            { label: 'users.profile:write', value: 'users.profile:write' },
+            { label: 'channels:write', value: 'channels:write' },
+          ],
+        },
+      ],
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -134,6 +151,7 @@ export default {
         label: 'Application details',
         fields: ['http.auth.type',
           'http.auth.oauth.scope',
+          'http.unencrypted.userScopes',
           'http.auth.token.token'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],

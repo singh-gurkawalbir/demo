@@ -13,7 +13,7 @@ import { SCOPES } from '../../../../../sagas/resourceForm';
 import openExternalUrl from '../../../../../utils/window';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
-import { INSTALL_STEP_TYPES, REVISION_TYPES } from '../../../../../utils/constants';
+import { INSTALL_STEP_TYPES, REVISION_TYPES } from '../../../../../constants';
 import messageStore from '../../../../../utils/messageStore';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 

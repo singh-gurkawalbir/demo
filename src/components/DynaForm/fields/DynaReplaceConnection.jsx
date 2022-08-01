@@ -8,7 +8,7 @@ import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
 import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions';
-import { MULTIPLE_AUTH_TYPE_ASSISTANTS } from '../../../utils/constants';
+import { MULTIPLE_AUTH_TYPE_ASSISTANTS } from '../../../constants';
 
 const emptyObj = {};
 export default function DynaReplaceConnection(props) {

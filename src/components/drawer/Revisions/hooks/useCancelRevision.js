@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../../actions';
-import { REVISION_TYPES } from '../../../../utils/constants';
+import { REVISION_TYPES } from '../../../../constants';
 import { selectors } from '../../../../reducers';
 import useConfirmDialog from '../../../ConfirmDialog';
 

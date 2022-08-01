@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import { ALIAS_FORM_KEY } from '../../../../../utils/constants';
+import { ALIAS_FORM_KEY } from '../../../../../constants';
 import messageStore from '../../../../../utils/messageStore';
 import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 import useConfirmDialog from '../../../../ConfirmDialog';

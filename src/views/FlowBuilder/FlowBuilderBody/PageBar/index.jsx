@@ -17,12 +17,13 @@ import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import RunFlowButton from '../../../../components/RunFlowButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import useBottomDrawer from '../../drawers/BottomDrawer/useBottomDrawer';
 import { isNewFlowFn, useHandleExitClick, usePatchFlow, usePushOrReplaceHistory } from '../../hooks';
 import LastRun from '../../LastRun';
 import LineGraphButton from '../../LineGraphButton';
+import messageStore from '../../../../utils/messageStore';
 
 const calcPageBarTitleStyles = makeStyles(theme => ({
   editableTextInput: {
@@ -105,6 +106,10 @@ const tooltipSchedule = {
   title: 'Schedule',
   placement: 'bottom',
 };
+const tooltipScheduleFlowIncomplete = {
+  title: messageStore('INCOMPLETE_FLOW_SCHEDULE_TOOLTIP'),
+  placement: 'bottom',
+};
 const tooltipSettings = {
   title: 'Settings',
   placement: 'bottom',
@@ -183,7 +188,7 @@ const PageBarChildren = ({integrationId, flowId}) => {
   );
 
   const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId, match.params?.childId);
-
+  const isSetupInProgress = useSelector(state => selectors.isFlowSetupInProgress(state, flowId));
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
@@ -202,7 +207,7 @@ const PageBarChildren = ({integrationId, flowId}) => {
         <div className={clsx(classes.flowToggle)}>
           <FlowToggle
             integrationId={integrationId}
-            resource={flowDetails}
+            flowId={flowId}
             childId={match.params?.childId}
             disabled={isNewFlow || isMonitorLevelAccess}
             isConnector={isIAType}
@@ -214,8 +219,8 @@ const PageBarChildren = ({integrationId, flowId}) => {
       <RunFlowButtonWrapper flowId={flowId} />
       {allowSchedule && (
         <IconButtonWithTooltip
-          tooltipProps={tooltipSchedule}
-          disabled={isNewFlow}
+          tooltipProps={isSetupInProgress ? tooltipScheduleFlowIncomplete : tooltipSchedule}
+          disabled={isNewFlow || isSetupInProgress}
           data-test="scheduleFlow"
           onClick={handleDrawerClick(drawerPaths.FLOW_BUILDER.SCHEDULE)}>
           <CalendarIcon />

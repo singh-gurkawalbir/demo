@@ -15,7 +15,7 @@ import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import EditorDrawer from '../../AFE/Drawer';
 import SaveAndCloseResourceForm from '../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
-import { FORM_SAVE_STATUS } from '../../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../../constants';
 import useFormOnCancelContext from '../../FormOnCancelContext';
 import MappingsSettingsV2Wrapper from '../../AFE/Editor/panels/Mappings/Mapper2/Settings';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';

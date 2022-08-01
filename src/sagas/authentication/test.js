@@ -30,7 +30,7 @@ import {
   fetchUIVersion,
 } from '.';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
-import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, POLLING_STATUS } from '../../utils/constants';
+import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, POLLING_STATUS } from '../../constants';
 import { pollApiRequests, POLL_SAMPLE_INTERVAL } from '../app';
 
 describe('pollApiRequests', () => {

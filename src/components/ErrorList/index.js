@@ -27,6 +27,7 @@ export default function ErrorList({ flowId }) {
     if (!isErrorFilterMetadataRequested) {
       dispatch(actions.errorManager.filterMetadata.request());
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, errorType]);
 
   useEffect(() => {

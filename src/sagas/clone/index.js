@@ -5,6 +5,7 @@ import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
 import templateUtil from '../../utils/template';
 import { getResource } from '../resources';
+import { refreshConnectionMetadata } from '../resources/meta';
 
 export function* requestPreview({ resourceType, resourceId }) {
   const path = `/${resourceType}/${resourceId}/clone/preview`;
@@ -99,6 +100,17 @@ export function* createComponents({ resourceType, resourceId }) {
       `${resourceType}-${resourceId}`
     )
   );
+
+  if (resourceType === 'flows') {
+    // Incase of flow cloning - refresh NS/SF connection's metadata @Enhancement IO-12915
+    const connectionIds = Object.values(connectionMap);
+    const connectionObjs = yield all(connectionIds.map(id => select(selectors.resource, 'connections', id)));
+    const connections = connectionObjs
+      .filter(c => ['netsuite', 'salesforce'].includes(c.type))
+      .map(c => ({ type: c.type, _id: c._id }));
+
+    yield call(refreshConnectionMetadata, { connections });
+  }
 }
 
 export const cloneSagas = [

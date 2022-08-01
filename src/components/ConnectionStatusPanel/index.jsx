@@ -9,7 +9,7 @@ import actions from '../../actions';
 import NotificationToaster from '../NotificationToaster';
 import { isNewId } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import { emptyObject } from '../../utils/constants';
+import { emptyObject } from '../../constants';
 import { getStatusVariantAndMessage } from '../../utils/connections';
 import { TextButton } from '../Buttons';
 
