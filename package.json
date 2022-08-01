@@ -161,7 +161,6 @@
     "lint-staged": "^10.2.11",
     "logrocket-cli": "^0.12.0",
     "msw": "^0.36.8",
-    "react-qr-code": "^2.0.7",
     "react-refresh": "^0.8.3",
     "redux-saga-test-plan": "^4.0.0-rc.3",
     "regenerator-runtime": "0.13.9",
