@@ -2,10 +2,10 @@ export default
 {
   flows: [
     {
-      _id: 'flow1',
+      _id: 'emptyFlowId',
       routers: [
         {
-          _id: 'virtualRouter',
+          id: 'virtualRouter',
           branches: [
             {
               name: 'second branch',
@@ -22,7 +22,6 @@ export default
                   id: 'import1',
                 },
               ],
-              _id: 'firstVirtualBranch',
               //  _nextRouterId: 'firstRouter',
             },
           ],
@@ -42,11 +41,6 @@ export default
       _id: 'export1',
       name: 'The only export',
       connectorType: 'netsuite',
-    },
-    {
-      _id: 'new-_KwofQ',
-      connectorType: 'ftp',
-      label: 'new-_KwofQ',
     },
   ],
   imports: [

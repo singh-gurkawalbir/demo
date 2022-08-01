@@ -67,6 +67,11 @@ function imageName(assistant) {
     return 'bigquery';
   }
 
+  // Similarly for both Amazon Redshift and Amazon Redshift (REST API) applications, we have same image
+  if (assistant === 'redshiftdatawarehouse') {
+    return 'redshift';
+  }
+
   return assistant;
 }
 

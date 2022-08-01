@@ -10,7 +10,7 @@ import salesforceMetadata from './metadata/salesforce';
 import rdbmsMetadata from './metadata/rdbms';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import { TextButton } from '../../Buttons';
 
 export default function ManageLookup({

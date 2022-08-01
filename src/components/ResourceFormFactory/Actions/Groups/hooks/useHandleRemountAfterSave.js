@@ -1,7 +1,7 @@
 import { useCallback, useState, useEffect} from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
-import { FORM_SAVE_STATUS } from '../../../../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../../../../constants';
 import useHandleClickWhenValid from './useHandleClickWhenValid';
 
 export default function useHandleRemountAfterSave(formKey, onSave, remountAfterSaveFn) {

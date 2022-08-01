@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
-import { REVISION_TYPES, REVISION_CREATION_STATUS } from '../../../../utils/constants';
+import { REVISION_CREATION_STATUS, REVISION_TYPES } from '../../../../constants';
 
 const integrationId = 'i-lcm-123';
 const revisionId = 'lcm-revision-123';

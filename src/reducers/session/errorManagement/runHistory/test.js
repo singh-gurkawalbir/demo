@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actionTypes from '../../../../actions/types';
-import { JOB_STATUS, JOB_TYPES } from '../../../../utils/constants';
+import { JOB_STATUS, JOB_TYPES } from '../../../../constants';
 
 const defaultState = {};
 

@@ -1,4 +1,4 @@
-import { getSomePg, getSomePpImport } from '../Prototype/nodeGeneration';
+import { getSomePg, getSomePpImport } from '../../../../utils/flows/flowbuilder';
 
 const export1 = {_id: 'export1', name: 'The only export', connectorType: 'netsuite' };
 
@@ -33,8 +33,7 @@ const branchFive = {
   description: 'some description 5',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import5')],
-  _nextRouterId: 'fourthRouter',
-  _id: 'branch-5',
+  nextRouterId: 'fourthRouter',
 };
 
 const branchSix = {
@@ -42,7 +41,7 @@ const branchSix = {
   description: 'some description 6',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import6')],
-  _id: 'branch-6',
+  id: 'branch-6',
 };
 
 const branchSeven = {
@@ -50,8 +49,8 @@ const branchSeven = {
   description: 'some description 7',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import7')],
-  _nextRouterId: 'fourthRouter',
-  _id: 'branch-7',
+  nextRouterId: 'fourthRouter',
+  id: 'branch-7',
 };
 
 const branchFour = {
@@ -59,8 +58,8 @@ const branchFour = {
   description: 'some description 4',
   inputFilter: {},
   pageProcessors: [],
-  _nextRouterId: 'thirdRouter',
-  _id: 'branch-1',
+  nextRouterId: 'thirdRouter',
+  id: 'branch-1',
 };
 
 const branchThree = {
@@ -68,8 +67,8 @@ const branchThree = {
   description: 'some description 3',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import3')],
-  _nextRouterId: 'fourthRouter',
-  _id: 'branch-2',
+  nextRouterId: 'fourthRouter',
+  id: 'branch-2',
 };
 
 const branchOne = {
@@ -79,8 +78,8 @@ const branchOne = {
   inputFilter: {},
   pageProcessors: [getSomePpImport('import1')],
   // what if we want to have a merge
-  _nextRouterId: 'secondRouter',
-  _id: 'branch-1',
+  nextRouterId: 'secondRouter',
+  id: 'branch-1',
 };
 
 const branchTwo = {
@@ -88,20 +87,14 @@ const branchTwo = {
   description: 'some description',
   inputFilter: {},
   pageProcessors: [getSomePpImport('import2')],
-  _nextRouterId: 'thirdRouter',
-  _id: 'branch-2',
+  nextRouterId: 'thirdRouter',
+  id: 'branch-2',
 };
 
 const firstRouter = {
-  _id: 'firstRouter',
-  routeRecordsTo: {
-    type: 'first_matching_branch',
-    default: undefined,
-  },
-  routeRecordsUsing: {
-    type: 'input_filters',
-    default: undefined,
-  },
+  id: 'firstRouter',
+  routeRecordsTo: 'first_matching_branch',
+  routeRecordsUsing: 'input_filters',
   branches: [branchOne, branchTwo],
   script: {
     _scriptId: { type: 'something', ref: 'Script' },
@@ -110,15 +103,9 @@ const firstRouter = {
 };
 
 const secondRouter = {
-  _id: 'secondRouter',
-  routeRecordsTo: {
-    type: 'first_matching_branch',
-    default: undefined,
-  },
-  routeRecordsUsing: {
-    type: 'input_filters',
-    default: undefined,
-  },
+  id: 'secondRouter',
+  routeRecordsTo: 'first_matching_branch',
+  routeRecordsUsing: 'input_filters',
   branches: [branchThree, branchFour, branchFive],
   script: {
     _scriptId: { type: 'something', ref: 'Script' },
@@ -127,12 +114,12 @@ const secondRouter = {
 };
 
 const thirdRouter = {
-  _id: 'thirdRouter',
+  id: 'thirdRouter',
   branches: [branchSeven],
 };
 
 const fourthRouter = {
-  _id: 'fourthRouter',
+  id: 'fourthRouter',
   branches: [branchSix],
 };
 

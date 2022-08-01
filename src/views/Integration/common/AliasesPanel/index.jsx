@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
-    minHeight: 'calc(100vh - 300px)',
+
   },
   aliasesHeader: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
@@ -89,7 +89,7 @@ export default function Aliases({ integrationId, childId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Aliases" infoText={messageStore('ALIAS_PANEL_HELPINFO')} className={classes.aliasesHeader} >
+      <PanelHeader title="Aliases" infoText={messageStore('ALIAS_PANEL_HELPINFO')} placement="right-end" className={classes.aliasesHeader} >
         <ActionGroup>
           {hasManageAccess && (
           <TextButton

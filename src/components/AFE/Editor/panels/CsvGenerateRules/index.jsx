@@ -12,7 +12,7 @@ import CeligoSelect from '../../../../CeligoSelect';
 import options from '../CsvParseRules/options';
 import DynaSelectWithInput from '../../../../DynaForm/fields/DynaSelectWithInput';
 import DynaText from '../../../../DynaForm/fields/DynaText';
-import { emptyObject } from '../../../../../utils/constants';
+import { emptyObject } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   container: {

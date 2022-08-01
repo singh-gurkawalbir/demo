@@ -1,5 +1,5 @@
 import { templatesList } from '../../../constants/applications';
-import { ABS_URL_VALIDATION_PATTERN } from '../../../utils/constants';
+import { ABS_URL_VALIDATION_PATTERN } from '../../../constants';
 
 export default {
   name: {

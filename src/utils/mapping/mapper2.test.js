@@ -6,6 +6,8 @@ import util, {
   findAllParentExtractsForNode,
   findNearestParentExtractForNode,
   getFinalSelectedExtracts,
+  autoCreateDestinationStructure,
+  deleteNonRequiredMappings,
   buildExtractsTree,
   getSelectedKeys,
   findNodeInTree,
@@ -772,10 +774,8 @@ describe('v2 mapping utils', () => {
             title: '',
           },
           {
-            className: false,
             dataType: 'string',
-            hidden: false,
-            key: 'new_key',
+            key: '4UB7OJokF5bGpvc8osHYT',
             parentExtract: '$|0',
             parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
             title: '',
@@ -788,6 +788,50 @@ describe('v2 mapping utils', () => {
             parentExtract: '$|1',
             parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
             title: '',
+          },
+        ],
+      };
+
+      expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
+    });
+    test('should correctly update the node children and link to first source if they were not linked already', () => {
+      const node = {
+        combinedExtract: '',
+        dataType: 'objectarray',
+        disabled: false,
+        generate: 'family_tree',
+        key: 'vlVDP3cjaN2cGmcSW1RCq',
+        title: '',
+        children: [
+          {
+            dataType: 'string',
+            key: '4UB7OJokF5bGpvc8osHYT',
+            parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
+            title: '',
+            generate: 'id',
+            extract: '$.id',
+          },
+        ],
+      };
+
+      const extract = '$';
+      const newNode = {
+        combinedExtract: '$',
+        dataType: 'objectarray',
+        disabled: false,
+        generate: 'family_tree',
+        key: 'vlVDP3cjaN2cGmcSW1RCq',
+        title: '',
+        activeTab: 0,
+        children: [
+          {
+            dataType: 'string',
+            key: '4UB7OJokF5bGpvc8osHYT',
+            parentExtract: '$|0',
+            parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
+            title: '',
+            generate: 'id',
+            extract: '$.id',
           },
         ],
       };
@@ -1871,6 +1915,14 @@ describe('v2 mapping utils', () => {
         key: 'new_key',
         title: '',
         disabled: false,
+        generate: 'arraynames',
+        dataType: 'stringarray',
+        hardCodedValue: null,
+      },
+      {
+        key: 'new_key',
+        title: '',
+        disabled: false,
         generate: 'my_first_name',
         dataType: 'string',
         hardCodedValue: 'hard coded value',
@@ -2224,6 +2276,12 @@ describe('v2 mapping utils', () => {
       }];
 
       const mappingsToSave = [
+        {
+          conditional: {when: undefined},
+          generate: 'arraynames',
+          dataType: 'stringarray',
+          hardCodedValue: null,
+        },
         {
           conditional: {when: undefined},
           generate: 'my_first_name',
@@ -2722,6 +2780,392 @@ describe('v2 mapping utils', () => {
         nodeIndexInSubArray: 2,
       });
       expect(findNodeInTree(treeData, 'key', 'dummy')).toEqual({});
+    });
+  });
+  describe('autoCreateDestinationStructure util', () => {
+    test('should correctly return tree data for non csv/xlsx resource with required mappings', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+      const importSampleData = {
+        id: '123',
+        rowNumber: 3,
+        files: [],
+        custom: {},
+        customerId: {value: 'abcd'},
+        details: [{description: 'desc', orderType: {value: 'SO'}}],
+      };
+      const requiredMappings = ['id', 'details[*].orderType.value', 'customerId.value'];
+
+      const treeData = [
+        {
+          dataType: 'string',
+          generate: 'id',
+          isRequired: true,
+          jsonPath: 'id',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          dataType: 'number',
+          generate: 'rowNumber',
+          isRequired: false,
+          jsonPath: 'rowNumber',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'files',
+          isRequired: false,
+          jsonPath: 'files[*]',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'custom',
+          isRequired: false,
+          jsonPath: 'custom',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'value',
+              isRequired: true,
+              jsonPath: 'customerId.value',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'customerId',
+          isRequired: true,
+          jsonPath: 'customerId',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'description',
+              isRequired: false,
+              jsonPath: 'details[*].description',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+            {
+              children: [
+                {
+                  dataType: 'string',
+                  generate: 'value',
+                  isRequired: true,
+                  jsonPath: 'details[*].orderType.value',
+                  key: 'new_key',
+                  parentKey: 'new_key',
+                  title: '',
+                },
+              ],
+              dataType: 'object',
+              generate: 'orderType',
+              isRequired: true,
+              jsonPath: 'details[*].orderType',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'details',
+          isRequired: true,
+          jsonPath: 'details[*]',
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      expect(autoCreateDestinationStructure(importSampleData, requiredMappings)).toEqual(treeData);
+    });
+    test('should correctly return tree data for csv/xlsx resource', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+      const importSampleData = {
+        id: '123',
+        rowNumber: 3,
+        code: null};
+
+      const treeData = [
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'id',
+              isRequired: false,
+              jsonPath: 'id',
+              key: 'new_key',
+              title: '',
+            },
+            {
+              dataType: 'number',
+              generate: 'rowNumber',
+              isRequired: false,
+              jsonPath: 'rowNumber',
+              key: 'new_key',
+              title: '',
+            },
+            {
+              dataType: 'string',
+              generate: 'code',
+              isRequired: false,
+              jsonPath: 'code',
+              key: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generateDisabled: true,
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      expect(autoCreateDestinationStructure(importSampleData, [], true)).toEqual(treeData);
+    });
+  });
+  describe('deleteNonRequiredMappings util', () => {
+    test('should correctly delete all mappings if no required mappings exist', () => {
+      const treeData = [
+        {
+          dataType: 'string',
+          generate: 'id',
+          isRequired: false,
+          jsonPath: 'id',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          dataType: 'number',
+          generate: 'rowNumber',
+          isRequired: false,
+          jsonPath: 'rowNumber',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'files',
+          isRequired: false,
+          jsonPath: 'files[*]',
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      expect(deleteNonRequiredMappings(treeData)).toEqual([]);
+    });
+    test('should correctly delete only non-required mappings if required mappings also exist', () => {
+      const treeData = [
+        {
+          dataType: 'string',
+          generate: 'id',
+          isRequired: true,
+          jsonPath: 'id',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          dataType: 'number',
+          generate: 'rowNumber',
+          isRequired: false,
+          jsonPath: 'rowNumber',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'files',
+          isRequired: false,
+          jsonPath: 'files[*]',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'custom',
+          isRequired: false,
+          jsonPath: 'custom',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'value',
+              isRequired: true,
+              jsonPath: 'customerId.value',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'customerId',
+          isRequired: true,
+          jsonPath: 'customerId',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'description',
+              isRequired: false,
+              jsonPath: 'details[*].description',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+            {
+              children: [
+                {
+                  dataType: 'string',
+                  generate: 'value',
+                  isRequired: true,
+                  jsonPath: 'details[*].orderType.value',
+                  key: 'new_key',
+                  parentKey: 'new_key',
+                  title: '',
+                },
+              ],
+              dataType: 'object',
+              generate: 'orderType',
+              isRequired: true,
+              jsonPath: 'details[*].orderType',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'details',
+          isRequired: true,
+          jsonPath: 'details[*]',
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      const newTreeData = [
+        {
+          dataType: 'string',
+          generate: 'id',
+          isRequired: true,
+          jsonPath: 'id',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'value',
+              isRequired: true,
+              jsonPath: 'customerId.value',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'customerId',
+          isRequired: true,
+          jsonPath: 'customerId',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              children: [
+                {
+                  dataType: 'string',
+                  generate: 'value',
+                  isRequired: true,
+                  jsonPath: 'details[*].orderType.value',
+                  key: 'new_key',
+                  parentKey: 'new_key',
+                  title: '',
+                },
+              ],
+              dataType: 'object',
+              generate: 'orderType',
+              isRequired: true,
+              jsonPath: 'details[*].orderType',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'details',
+          isRequired: true,
+          jsonPath: 'details[*]',
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      expect(deleteNonRequiredMappings(treeData)).toEqual(newTreeData);
     });
   });
   describe('buildExtractsTree util', () => {

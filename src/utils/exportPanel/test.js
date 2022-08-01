@@ -113,6 +113,11 @@ describe('getPreviewDataPageSizeInfo util', () => {
 
     expect(getPreviewDataPageSizeInfo(previewData)).toBe('1 Page, 1 Record');
   });
+  test('should return 1 Page and 0 record for empty preview data', () => {
+    expect(getPreviewDataPageSizeInfo({data: {}})).toBe('1 Page, 0 Records');
+    expect(getPreviewDataPageSizeInfo({data: undefined})).toBe('1 Page, 0 Records');
+  });
+
   test('should return valid page and records info for valid preview data', () => {
     const previewData = {
       data: [
