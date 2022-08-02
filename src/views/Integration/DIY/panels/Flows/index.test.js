@@ -11,23 +11,7 @@ const initialStore = reduxStore;
 function initFlowsPanel(props = {}) {
   initialStore.getState().user.preferences = {
     environment: 'production',
-    dateFormat: 'MM/DD/YYYY',
-    timeFormat: 'h:mm:ss a',
-    drawerOpened: true,
-    expand: 'Tools',
-    scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
-    showReactSneakPeekFromDate: '2019-11-05',
-    showReactBetaFromDate: '2019-12-26',
     defaultAShareId: 'own',
-    dashboard: {
-      view: 'tile',
-      tilesOrder: [
-        '62be9cf14a6daf23ece8ed33',
-        '62bedcdca0f5f21448171ea2',
-        '6253af74cddb8a1ba550a010',
-        '62beb29aa0f5f2144816f80c',
-      ],
-    },
   };
   initialStore.getState().user.org = {
     users: [],
@@ -51,36 +35,6 @@ function initFlowsPanel(props = {}) {
     _connectorId: '62712c1edd4afe56b5a10c3c',
     apiIdentifier: 'ec7c805b8b',
     asynchronous: true,
-    http: {
-      relativeURI: '/V1/products/attribute-sets/sets/list?searchCriteria[filter_groups][1][filters][0][field]=entity_type_code&searchCriteria[filter_groups][1][filters][0][value]=catalog_product&searchCriteria[filter_groups][1][filters][0][conditionType]=eq',
-      method: 'GET',
-      headers: [],
-      successMediaType: 'json',
-      errorMediaType: 'json',
-      formType: 'http',
-      response: {
-        resourcePath: 'items',
-      },
-    },
-    sampleData: {
-      entity_type_id: 4,
-      sort_order: 1,
-      attribute_set_name: 'Default',
-      attribute_set_id: 4,
-    },
-    rest: {
-      relativeURI: '/V1/products/attribute-sets/sets/list?searchCriteria[filter_groups][1][filters][0][field]=entity_type_code&searchCriteria[filter_groups][1][filters][0][value]=catalog_product&searchCriteria[filter_groups][1][filters][0][conditionType]=eq',
-      method: 'GET',
-      headers: [],
-      resourcePath: 'items',
-    },
-    adaptorType: 'RESTExport',
-    _rest: {
-      relativeURI: '/V1/products/attribute-sets/sets/list?searchCriteria[filter_groups][1][filters][0][field]=entity_type_code&searchCriteria[filter_groups][1][filters][0][value]=catalog_product&searchCriteria[filter_groups][1][filters][0][conditionType]=eq',
-      method: 'GET',
-      headers: [],
-      resourcePath: 'items',
-    },
   }];
   initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
   initialStore.getState().session.errorManagement.latestIntegrationJobDetails = {
@@ -187,58 +141,17 @@ function initFlowsPanel(props = {}) {
         function: 'getShopifyGeneralSettings',
       },
     },
-    preSave: {
-      function: 'processShopifySettingSave',
-      _scriptId: '62712819db631b0ec2e385b9',
-    },
-    update: {
-      _scriptId: '62712819db631b0ec2e385b9',
-      function: 'updateIntegrationApp',
-    },
     installSteps: [
       {
         name: 'Configure Microsoft Dynamics 365 Business Central connection',
-        description: "Click <b>Configure</b> to <a href='https://docs.celigo.com/hc/en-us/articles/360038524992-Set-up-a-connection-to-Microsoft-Dynamics-365-Business-Central' target='_blank'>set up a connection to Microsoft Dynamics 365 Business Central.</a>",
-        completed: true,
-        type: 'connection',
-        sourceConnection: {
-          type: 'http',
-          name: 'Microsoft Dynamics 365 Business Central connection',
-          externalId: 'msbc_connection',
-          assistant: 'microsoftbusinesscentral',
-          http: {
-            _iClientId: '627119f0db631b0ec2e37d83',
-            unencrypted: {
-              apiType: 'odata',
-            },
-          },
-        },
       },
       {
         name: 'Configure the default company',
-        description: 'Select a Microsoft Dynamics 365 Business Central company to be applied when syncing all your records.',
-        completed: true,
-        type: 'form',
-        form: {
-          layout: {
-            fields: [],
-          },
-        },
-        function: 'processCompanyInput',
-        initFormFunction: 'getTenantIdAndListOfCompanies',
-        _scriptId: '62712819db631b0ec2e385b9',
       },
       {
         name: 'Install and verify Microsoft Dynamics 365 Business Central extension',
-        description: 'Before you install the integration app, you must install the extension in the Microsoft Dynamics 365 Business Central account. Click <b>Install</b> to be redirected to the Microsoft Dynamics 365 Business Central Marketplace extension app page.',
-        completed: true,
-        type: 'url',
-        url: 'https://docs.celigo.com/hc/en-us/articles/4428222496923-Install-and-configure-extension-fields-and-custom-OData-services',
-        function: 'verifyBusinessCentralExtension',
-        _scriptId: '62712819db631b0ec2e385b9',
       },
     ],
-    uninstallSteps: [],
     flowGroupings: props.fg,
     childDisplayName: 'Shopify-Store',
     initChild: {
@@ -318,7 +231,6 @@ const flowgroups = [
   },
 ];
 
-// '6257b33a722b313acd1df1bf'
 describe('Flows Panel UI tests', () => {
   test('should render the title along with the error count and searchbar', () => {
     const props = {integrationId: '62d826bf5645756e8300beac', fg: flowgroups, sectionId: '6257b33a722b313acd1df1bf'};
@@ -407,7 +319,6 @@ describe('Flows Panel UI tests', () => {
     userEvent.click(element);
     userEvent.type(element, 'senorita');
     await waitFor(() => expect(screen.getByText('Your search didn’t return any matching results. Try expanding your search criteria.')).toBeInTheDocument());
-    screen.debug(undefined, Infinity);
   });
   test('should display the flows that match the keywords in the searchbar', async () => {
     const props = {integrationId: '62d826bf5645756e8300beac', fg: flowgroups, sectionId: '6257b33a722b313acd1df1bf'};
@@ -420,11 +331,5 @@ describe('Flows Panel UI tests', () => {
     userEvent.type(element, 'flow');
     await waitFor(() => expect(screen.getByText('Showing all flow groups that contain search matches.')).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('flow1')).toBeInTheDocument());
-  });
-  test('bhardo jholi', () => {
-    const props = {integrationId: '62d826bf5645756e8300bead', sectionId: undefined};
-
-    initFlowsPanel(props);
-    screen.debug(undefined, Infinity);
   });
 });
