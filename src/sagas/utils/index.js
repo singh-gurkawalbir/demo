@@ -344,6 +344,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           ];
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], type: 'select', options};
+        } else {
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
         }
       } else if (key === 'http.auth.oauth.scope') {
         const field = preConfiguredField || fieldUserMustSet;
@@ -438,7 +440,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         id: 'http.unencrypted.version',
         fieldId: 'http.unencrypted.version',
         type: 'select',
-        required: (versions && versions.length <= 1),
+        visible: !(versions && versions.length <= 1),
         options: versionOptions,
         defaultValue: isNewId(resource._id) ? versions?.[0] : resource?.http?.unencrypted?.version,
       },
