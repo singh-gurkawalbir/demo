@@ -20,11 +20,6 @@ module.exports = {
     'src/reducers/**/*.{js,jsx}',
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
-    'src/components/KeywordSearch/*.{js,jsx}',
-    'src/components/SearchInput/*.{js,jsx}',
-    'src/components/Loader/*.{js,jsx}',
-    'src/components/ModalDialog/*.{js,jsx}',
-    'src/components/NotificationToaster/*.{js,jsx}',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js'],
   coverageThreshold: {
