@@ -5,7 +5,7 @@ export default API.get('/api/flows', [
     _id: '5ea16c600e2fab71928a6152',
     lastModified: '2021-08-13T08:02:49.712Z',
     name: ' Bulk insert with harcode and mulfield mapping settings',
-    disabled: false,
+    disabled: true,
     _integrationId: '5e9bf6c9edd8fa3230149fbd',
     skipRetries: false,
     pageProcessors: [
@@ -26,14 +26,13 @@ export default API.get('/api/flows', [
     createdAt: '2020-04-23T10:22:24.290Z',
     lastExecutedAt: '2020-04-23T11:08:41.093Z',
     autoResolveMatchingTraceKeys: true,
-
   },
   {
     _id: '5f0802e086bd7d4f42eadd0b',
     lastModified: '2021-08-13T08:02:49.712Z',
     name: "'Permission Denied Error for QuickBooks Export 'JournalReport'",
-    disabled: false,
-    _integrationId: '5ff579d745ceef7dcd797c15',
+    disabled: true,
+    _integrationId: '5cc9bd00581ace2bec7754eb',
     skipRetries: false,
     pageProcessors: [
       {
@@ -47,7 +46,7 @@ export default API.get('/api/flows', [
     ],
     pageGenerators: [
       {
-        _exportId: '62a196ce1bf5be58603a5416',
+        _exportId: '5d77c582c7a0a1744b85cc78',
         skipRetries: false,
       },
     ],
@@ -59,7 +58,7 @@ export default API.get('/api/flows', [
     _id: '606ec9a3ddb7577eb1af3cb4',
     lastModified: '2021-08-13T08:02:49.712Z',
     name: "'Permission Denied Error for QuickBooks Export 'JournalReport' from postman",
-    disabled: false,
+    disabled: true,
     _integrationId: '5cc9bd00581ace2bec7754eb',
     skipRetries: false,
     pageProcessors: [
@@ -82,14 +81,27 @@ export default API.get('/api/flows', [
     autoResolveMatchingTraceKeys: true,
   },
   {
-    _id: '5f1535beef4fb87bc5e5fb3e', // delta flow
+    _id: '5f1535beef4fb87bc5e5fb3e',
     lastModified: '2021-04-16T07:29:37.830Z',
     name: '91. Orders - Magento to Stage - Single Order',
-    disabled: false,
+    disabled: true,
     _integrationId: '5cc9bd00581ace2bec7754eb',
     skipRetries: false,
-    _exportId: '5c9b5d5646fc7429c2a405fa',
-    _importId: '5c9b5d5646fc7429c2a40234',
+    pageProcessors: [
+      {
+        responseMapping: {
+          fields: [],
+          lists: [],
+        },
+        type: 'import',
+        _importId: '5f15b534ecb15d2dd404ee13',
+      },
+    ],
+    pageGenerators: [
+      {
+        _exportId: '5f15591a660f8810239c52d2',
+      },
+    ],
     createdAt: '2020-07-20T06:12:14.256Z',
     lastExecutedAt: '2020-07-30T13:06:07.325Z',
   },
@@ -97,7 +109,7 @@ export default API.get('/api/flows', [
     _id: '5ec6439006c2504f58943ec3',
     lastModified: '2021-08-13T08:02:49.712Z',
     name: '943 Return Authorization Flow - RHF0000790',
-    disabled: false,
+    disabled: true,
     _integrationId: '5cc9bd00581ace2bec7754eb',
     skipRetries: false,
     pageProcessors: [
@@ -112,7 +124,7 @@ export default API.get('/api/flows', [
     ],
     pageGenerators: [
       {
-        _exportId: '629f0db3ccb94d35de6f4367',
+        _exportId: '5ec645904d44a2511a204a9e',
       },
     ],
     createdAt: '2020-05-21T09:02:08.944Z',
