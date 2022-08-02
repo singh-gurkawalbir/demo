@@ -275,7 +275,7 @@ const flow4 = {
         },
       ],
       script: {
-        function: 'branchRouter',
+        function: 'branching',
       },
     },
     {
@@ -313,7 +313,7 @@ const flow4 = {
         },
       ],
       script: {
-        function: 'branchRouter',
+        function: 'branching',
       },
     },
     {
@@ -431,7 +431,7 @@ const flow5 = {
         },
       ],
       script: {
-        function: 'branchRouter',
+        function: 'branching',
       },
     },
     {
@@ -475,7 +475,7 @@ const flow5 = {
         },
       ],
       script: {
-        function: 'branchRouter',
+        function: 'branching',
       },
     },
     {
@@ -594,7 +594,7 @@ const flow6 = {
         },
       ],
       script: {
-        function: 'branchRouter',
+        function: 'branching',
       },
     },
     {
@@ -630,7 +630,7 @@ const flow6 = {
       routeRecordsUsing: 'input_filters',
       routeRecordsTo: 'first_matching_branch',
       script: {
-        function: 'branchRouter',
+        function: 'branching',
       },
     },
     {
@@ -1772,7 +1772,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
               },
             ],
             script: {
-              function: 'branchRouter',
+              function: 'branching',
             },
           },
         },
@@ -1904,7 +1904,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
             routeRecordsUsing: 'input_filters',
             routeRecordsTo: 'first_matching_branch',
             script: {
-              function: 'branchRouter',
+              function: 'branching',
             },
           },
         },
