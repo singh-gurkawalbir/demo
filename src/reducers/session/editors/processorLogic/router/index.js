@@ -80,6 +80,7 @@ export default {
       data: editor.data,
       rule: editor.rule,
     });
+    const { rows, record } = javascript.requestBody(editor).data;
 
     const router = { ...rules.rules };
 
@@ -91,7 +92,7 @@ export default {
     return {
       data: [{
         router: pick(router, ['id', 'branches', 'routeRecordsTo', 'routeRecordsUsing', 'script']),
-        record: data[0],
+        record: router.activeProcessor === 'javascript' ? (rows || record) : data[0],
         options,
       }],
     };
