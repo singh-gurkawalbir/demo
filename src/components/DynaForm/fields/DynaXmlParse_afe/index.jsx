@@ -151,13 +151,11 @@ export default function DynaXmlParse_afe({
 
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
-      if (!isParserSupported) return null;
-
       const parsersValue = getParserValue(newOptions);
 
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
-      if (!isValid) {
+      if (!isValid && isParserSupported) {
         onFieldChange(id, { ...parsersValue, __invalid: true }, touched);
       } else {
         onFieldChange(id, parsersValue, touched);
