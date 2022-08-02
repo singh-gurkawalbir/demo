@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import ModalDialog from '.';
 
 describe('ModalDialog testing', () => {
-  test('empty dom testing', () => {
+  test('should test when show is false', () => {
     const {container} = render(
       <ModalDialog show={false}>
         <div>child-1</div>
@@ -16,7 +16,7 @@ describe('ModalDialog testing', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  test('all the three children should appear', () => {
+  test('should test when show porp is true', () => {
     render(
       <ModalDialog show>
         <div>child-1</div>

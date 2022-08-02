@@ -5,13 +5,13 @@ import {renderWithProviders} from '../../test/test-utils';
 import Loader from '.';
 
 describe('Loader testing', () => {
-  test('message visible', async () => {
+  test('should test when message is visible', async () => {
     renderWithProviders(<Loader hideBackDrop open><div>message</div></Loader>);
     const messsage = screen.getByText('message');
 
     expect(messsage).toBeVisible();
   });
-  test('message not visible', async () => {
+  test('should test when message is not visible', async () => {
     renderWithProviders(<Loader hideBackDrop ><div>message</div></Loader>);
     const messsage = screen.queryByText('message');
 
