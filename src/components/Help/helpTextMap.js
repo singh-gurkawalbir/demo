@@ -2485,5 +2485,5 @@ use the custom option.`,
   'template.websiteURL': 'Provide the website for your organization.',
   'flowGroup.name': 'Provide a logical name for the new flow group and select the flows to include in this group. Keep in mind that flow groups are simply a tool to categorize flows within an integration.',
   'flowGroup.flows': 'Assigning a flow to a group does not impact scheduling or other flow configuration settings that determine when a flow runs. <a href="https://docs.celigo.com/hc/en-us/articles/4416660353819-Organize-flows-into-groups" target="_blank">Learn more</a>.',
-  'dynaFormField.subrecord': 'Subrecords hold information about a parent record and are meaningful only within that context. Based on the type of parent record you previously selected, configure the necessary subrecord field(s) to include in the import. <a href="https://docs.celigo.com/hc/en-us/articles/360016510891-Configure-and-map-NetSuite-subrecords" target="_blank">Learn more</a>.',
+  'dynaFormField.subrecord': 'Within the parent record shown, select a subrecord to map the source field to in the import. (Subrecords hold information about a parent record and are meaningful only within that context.) <a href="https://docs.celigo.com/hc/en-us/articles/360016510891-Configure-and-map-NetSuite-subrecords" target="_blank">Learn more</a>.',
 };
