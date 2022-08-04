@@ -25,12 +25,8 @@ jest.mock('../../utils/mapping/application/netsuite', () => ({
 }));
 
 async function initNetSuiteMappingAssistant(props = {}, initialStore) {
-  const dispatch = reactRedux.useDispatch();
   const ui = (
     <MemoryRouter>
-      <button className="hello" type="button" onClick={() => { dispatch(actions.mapping.setNSAssistantFormLoaded(true)); }}>
-        BTNN
-      </button>
       <NetSuiteMappingAssistant {...props} />
     </MemoryRouter>
   );
