@@ -7,6 +7,7 @@ import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
+import infoText from '../../../../../MyAccount/infoText';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -94,7 +95,7 @@ export default function GeneralSection({ integrationId }) {
 
   return (
     <>
-      <PanelHeader title="General" />
+      <PanelHeader title="General" infoText={infoText.General} />
 
       <div className={classes.form}>
         <DynaForm formKey={formKey} />

@@ -91,6 +91,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   TERMINAL_NODE_TOOLTIP: 'Drag to merge with other branch',
   MERGE_NODE_TOOLTIP: 'Merge point (records from branches are merged here)',
   TERMINAL_NODE_FROZEN_TOOLTIP: 'Merging to another branch is not possible here because your flow does not contain any branches or because there are no merge targets available. Add branching to your flow or modify your current flow layout to allow merging.',
+  CLONE_DESCRIPTION: 'Cloning an integration enables you to keep an original integration unchanged while modifying the configuration settings for a duplicate version of it. <a href="https://docs.celigo.com/hc/en-us/articles/115000757512-Clone-integrations-and-flows" target="_blank">Learn more</a>',
 };
 
 export default function messageStore(key, argsObj) {

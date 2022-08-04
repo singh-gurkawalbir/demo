@@ -738,6 +738,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Provide an optional description, or any information you like that will help you keep track of this agent. This information is displayed when viewing/editing an agent or in the Agent List page.',
   'api.name': 'Name your API so that you can easily reference it from other parts of the application.',
   'api.description': 'Describe your API in more detail here so that other users can understand the problem you are solving, and also how your API works. Be sure to highlight any nuances that a user making changes in the future might want to know.',
+  'api.function': 'Enter the name of the function that will get called when a request is sent to this <a href="https://docs.celigo.com/hc/en-us/articles/360047267771-What-is-My-API-" target="_blank">My API</a>. Although your script may contain additional functions, only the single entry point specified here is initially called and receives any data passed in the HTTP header and body.<br /> The name of the function in the default <b>Handle request</b> stub is <tt>handleRequest</tt>. If you used a different name, you can click the <b>Edit script</b> button to open it and copy the exact name (without parentheses).',
+  'api.scripts': 'Select a <a href="https://docs.celigo.com/hc/en-us/articles/360047267771-What-is-My-API-" target="_blank">My API</a> script from the list that you’ve already written, or click <b>+</b> to start writing your own code. The easiest way to start from scratch is to select the <b>Handle request</b> function stub, which fully documents the options passed to the function and the expected response object.',
   'api.shipworks.username': 'Enter the username that was entered during the ShipWorks store setup.',
   'api.shipworks.password': 'Enter the password that was entered during the ShipWorks store setup.',
   'asynchelper._id': 'System generated unique identifier for this asynchelper.',
@@ -1645,6 +1647,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Boolean value, when set all the values in the file are wrapped with quotes (Default is false)',
   'import.file.csv.replaceTabWithSpace':
 'Boolean value, when set tabs in the content of the data (except columnDelimiters) are replaced with a space (Default is false)',
+  'import.file.csv.truncateLastRowDelimiter':
+'Select this option to prevent errors that may occur if a string value in the CSV file exceeds the maximum allowed length.',
   'import.file.csv.replaceNewlineWithSpace':
 'Boolean value, when set new lines in the content of the data (except rowDelimiters) are replaced with a space (Default is false)',
   'import.as2.fileNameTemplate':
@@ -1805,6 +1809,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Please name your script record so that you can easily reference it from other parts of the application.',
   'script.description':
 'Please describe your script so that other integrator.io users can quickly understand what it does and how it works.',
+  'stack.name':
+'Enter a distinguishable name for the stack you are creating.',
   'stack.type':
 'The environment in which your integrator-extension code is hosted. Currently, you can run your code in two different ways i.e. on your own server environment or as a micro-service on AWS Lambda. The server environment could be a single server or a set of servers behind a load balancer.',
   'stack.server.hostURI':
@@ -2472,4 +2478,12 @@ use the custom option.`,
     'View the secret key that was used to enable MFA for your profile.',
   'mfa.trustedDevices':
     'Click <b>Manage devices</b> to see a list of all trusted devices for your profile.',
+  'template.name': 'Enter a logical name for this template so that potential users can identify it in the Marketplace.',
+  'template.description': 'Provide additional information about the purpose of this template.',
+  'template.applications': 'Search for the name of each third-party application you are integrating using this template, and select it to add it to the applications list. This helps potential users find your template when they search the Marketplace.',
+  'template.contactEmail': 'Enter one or more email addresses, separated by commas, to make available for potential users to contact you with any questions.',
+  'template.websiteURL': 'Provide the website for your organization.',
+  'flowGroup.name': 'Provide a logical name for the new flow group and select the flows to include in this group. Keep in mind that flow groups are simply a tool to categorize flows within an integration.',
+  'flowGroup.flows': 'Assigning a flow to a group does not impact scheduling or other flow configuration settings that determine when a flow runs. <a href="https://docs.celigo.com/hc/en-us/articles/4416660353819-Organize-flows-into-groups" target="_blank">Learn more</a>.',
+  'dynaFormField.subrecord': 'Subrecords hold information about a parent record and are meaningful only within that context. Based on the type of parent record you previously selected, configure the necessary subrecord field(s) to include in the import. <a href="https://docs.celigo.com/hc/en-us/articles/360016510891-Configure-and-map-NetSuite-subrecords" target="_blank">Learn more</a>.',
 };
