@@ -14,7 +14,7 @@ import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPerm
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import redirectToCorrectGroupingRoute from '../../../../../utils/flowgroupingsRedirectTo';
 import CeligoTruncate from '../../../../../components/CeligoTruncate';
-import infoText from '../../../../MyAccount/infoText';
+import infoText from '../../../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   form: {

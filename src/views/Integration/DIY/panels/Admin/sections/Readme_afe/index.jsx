@@ -9,7 +9,7 @@ import actions from '../../../../../../../actions';
 import EditorDrawer from '../../../../../../../components/AFE/Drawer';
 import { TextButton } from '../../../../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
-import infoText from '../../../../../../MyAccount/infoText';
+import infoText from '../../../../../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   root: {

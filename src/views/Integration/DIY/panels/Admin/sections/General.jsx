@@ -7,7 +7,7 @@ import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
-import infoText from '../../../../../MyAccount/infoText';
+import infoText from '../../../../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   form: {
