@@ -5,7 +5,7 @@ import { selectors } from '../../../../reducers';
 import PanelHeader from '../../../../components/PanelHeader';
 import SSOUserSettings from './SSOUserSettings';
 import SSOAccountSettings from './SSOAccountSettings';
-import infoText from '../../infoText';
+import infoText from '../../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   root: {
