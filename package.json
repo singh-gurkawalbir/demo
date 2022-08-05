@@ -152,7 +152,6 @@
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.0.8",
     "file-loader": "^6.0.0",
-    "history": "4.9.0",
     "html-webpack-inject-attributes-plugin": "^1.0.5",
     "html-webpack-plugin": "^4.3.0",
     "husky": "^4.2.5",
