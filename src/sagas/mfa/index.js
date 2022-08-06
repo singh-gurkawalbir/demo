@@ -1,4 +1,4 @@
-import { call, put, takeLatest, select } from 'redux-saga/effects';
+import { call, put, takeLatest, select, delay } from 'redux-saga/effects';
 import actions from '../../actions';
 import { MFA_RESET_ASYNC_KEY, MFA_SETUP_ASYNC_KEY, MFA_DELETE_DEVICE_ASYNC_KEY } from '../../constants';
 import { selectors } from '../../reducers';
@@ -183,28 +183,28 @@ export function* verifyMobileCode({ code }) {
     return undefined;
   }
 }
-// export function* requestMFASessionInfo() {
-//   yield delay(500);
-//   const response = {
-//     mfaRequired: true,
-//     mfaSetupRequired: false,
-//     mfaVerified: true,
-//   };
-//   // const path = '/mfa/sessionInfo';
+export function* requestMFASessionInfo() {
+  yield delay(5000);
+  const response = {
+    mfaRequired: true,
+    mfaSetupRequired: true,
+    mfaVerified: false,
+  };
+  // const path = '/mfa/sessionInfo';
 
-//   // try {
-//   //   response = yield call(apiCallWithRetry, {
-//   //     path,
-//   //     opts: {
-//   //       method: 'GET',
-//   //     },
-//   //   });
-//   // } catch (error) {
-//   //   return undefined;
-//   // }
+  // try {
+  //   response = yield call(apiCallWithRetry, {
+  //     path,
+  //     opts: {
+  //       method: 'GET',
+  //     },
+  //   });
+  // } catch (error) {
+  //   return undefined;
+  // }
 
-//   yield put(actions.mfa.receivedSessionInfo(response));
-// }
+  yield put(actions.mfa.receivedSessionInfo(response));
+}
 
 export default [
   takeLatest(actionTypes.MFA.USER_SETTINGS.REQUEST, requestUserSettings),
@@ -216,5 +216,5 @@ export default [
   // takeLatest(actionTypes.MFA.UPDATE_DEVICE, updateTrustedDevice),
   takeLatest(actionTypes.MFA.DELETE_DEVICE, deleteTrustedDevice),
   takeLatest(actionTypes.MFA.MOBILE_CODE.VERIFY, verifyMobileCode),
-  // takeLatest(actionTypes.MFA.SESSION_INFO.REQUEST, requestMFASessionInfo),
+  takeLatest(actionTypes.MFA.SESSION_INFO.REQUEST, requestMFASessionInfo),
 ];

@@ -44,6 +44,9 @@ export default (state = { codes: {}, sessionInfo: {} }, action) => {
       case actionTypes.MFA.CLEAR_SETUP_CONTEXT:
         delete draft.context;
         break;
+      case actionTypes.MFA.SESSION_INFO.CLEAR:
+        delete draft.sessionInfo;
+        break;
       case actionTypes.MFA.CLEAR:
         draft.codes = {};
         break;
@@ -68,6 +71,13 @@ selectors.secretCodeError = state => state?.codes?.secretCodeError;
 
 selectors.sessionInfoStatus = state => state?.sessionInfo?.status;
 selectors.sessionInfo = state => state?.sessionInfo?.data;
+selectors.isMFASetupIncomplete = state => {
+  if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;
+  const { mfaVerified, mfaSetupRequired } = state.sessionInfo.data;
+
+  // when setup is required and it is not verified, then mfa setup is incomplete
+  return mfaSetupRequired && !mfaVerified;
+};
 
 selectors.getSetupContext = state => state?.context;
 // #endregion
