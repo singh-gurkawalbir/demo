@@ -60,8 +60,8 @@ export const UseDynaNetsuiteSubRecordsStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2),
   },
   actionIcons: {
-    '& > button': {
-      marginRight: 0,
+    '& >* .MuiIconButton-root': {
+      padding: 0,
     },
 
   },
