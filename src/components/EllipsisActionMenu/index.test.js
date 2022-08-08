@@ -44,7 +44,6 @@ describe('ellipsis menu ui tests', () => {
     const numberOfActions = screen.getAllByRole('menuitem');
 
     expect(numberOfActions).toHaveLength(3);
-    screen.debug();
   });
   test('should call the onClick function with the respective input when clicked on a menuItem', async () => {
     const mockOnClick = jest.fn();
