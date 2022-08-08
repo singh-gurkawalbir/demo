@@ -3469,6 +3469,44 @@ describe('mapping utils', () => {
           {
             key: 'key2',
             generate: 'lname',
+            jsonPath: 'lname',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            children: [{
+              key: 'c1',
+              extract: 'child1',
+              generate: 'fname',
+              jsonPath: 'lname.fname',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            },
+            {
+              key: 'c2',
+              extract: 'child2',
+              generate: 'fname',
+              jsonPath: 'lname.fname',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            }],
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: errorMessageStore('MAPPER2_DUP_GENERATE', {fields: 'lname.fname'}),
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+          {
+            key: 'key2',
+            generate: 'lname',
             dataType: MAPPING_DATA_TYPES.OBJECT,
             children: [{
               key: 'c1',

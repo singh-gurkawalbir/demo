@@ -729,11 +729,12 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
   return clonedNode;
 };
 
-function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, parentExtract, disabled, hidden, isGroupedSampleData}) {
+function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, parentExtract, disabled, hidden, isGroupedSampleData, parentJsonPath = ''}) {
   mappings.forEach(m => {
-    const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract} = m;
+    const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract, generate} = m;
     const children = [];
     const currNodeKey = generateUniqueKey();
+    const jsonPath = `${parentJsonPath ? `${parentJsonPath}.` : ''}${generate || ''}`;
 
     const nodeToPush = {
       key: currNodeKey,
@@ -743,6 +744,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
       disabled,
       hidden,
       className: hidden && 'hideRow',
+      jsonPath,
       ...m,
     };
 
@@ -761,9 +763,9 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
           mappings: objMappings,
           treeData: children,
           parentKey: currNodeKey,
-          // parentExtract: currNodeExtract,
           disabled,
-          isGroupedSampleData});
+          isGroupedSampleData,
+          parentJsonPath: jsonPath});
       } else if (currNodeExtract) { // if object mapping has extract, then it is copied from source as is with no children
         nodeToPush.copySource = 'yes';
       }
@@ -819,7 +821,8 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
             parentExtract: newExtract,
             disabled,
             hidden: isHidden,
-            isGroupedSampleData}
+            isGroupedSampleData,
+            parentJsonPath: jsonPath ? `${jsonPath}[*]` : ''}
           );
 
           nodeToPush.children = children;
@@ -1261,7 +1264,6 @@ function recursivelyCreateDestinationStructure({dataObj, treeData, parentJsonPat
       // if empty array, consider it as object array
       if (isEmpty(v)) {
         nodeToPush.isRequired = isRequired;
-        nodeToPush.jsonPath = `${jsonPath}[*]`;
         nodeToPush.dataType = MAPPING_DATA_TYPES.OBJECTARRAY;
         nodeToPush.children = [{
           key: generateUniqueKey(),
@@ -1278,11 +1280,10 @@ function recursivelyCreateDestinationStructure({dataObj, treeData, parentJsonPat
         const children = [];
 
         nodeToPush.isRequired = isRequired;
-        nodeToPush.jsonPath = `${jsonPath}[*]`;
         nodeToPush.dataType = MAPPING_DATA_TYPES.OBJECTARRAY;
         nodeToPush.children = children;
 
-        recursivelyCreateDestinationStructure({dataObj: getUnionObject(v), treeData: children, parentJsonPath: `${jsonPath}[*]`, parentKey: key, requiredMappings});
+        recursivelyCreateDestinationStructure({dataObj: getUnionObject(v), treeData: children, parentJsonPath: jsonPath ? `${jsonPath}[*]` : '', parentKey: key, requiredMappings});
 
         // push empty row
         if (isEmpty(nodeToPush.children)) {
@@ -1632,6 +1633,7 @@ const recursivelyValidateV2Mappings = ({
       parentExtract,
       generate,
       generateDisabled,
+      jsonPath,
       isTabNode} = mapping;
 
     if (isTabNode) return;
@@ -1643,12 +1645,12 @@ const recursivelyValidateV2Mappings = ({
       // dupMap stores a list of mappings with generate
       // if it already has an entry for same generate, then its a duplicate mapping
       if (dupMap[dupKey]) {
-        duplicateMappings.push(generate);
+        duplicateMappings.push(jsonPath || generate);
 
         return;
       }
       // eslint-disable-next-line no-param-reassign
-      dupMap[dupKey] = generate;
+      dupMap[dupKey] = jsonPath || generate;
     } else if (!missingSource && !generateDisabled) {
       mappingsWithoutGenerates.push(mapping);
 
@@ -1657,7 +1659,7 @@ const recursivelyValidateV2Mappings = ({
 
     // check for missing extracts only if its a required mapping
     if (isRequired && missingSource) {
-      missingExtractGenerateNames.push(mapping.generate);
+      missingExtractGenerateNames.push(mapping.jsonPath || mapping.generate);
 
       return;
     }
