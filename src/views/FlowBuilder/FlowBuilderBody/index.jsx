@@ -178,6 +178,7 @@ export function Canvas({ flowId, fullscreen }) {
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
               preventScrolling={false}
+              onlyRenderVisibleElements
             >
               <SourceTitle onClick={handleAddNewSource} />
               <DestinationTitle />

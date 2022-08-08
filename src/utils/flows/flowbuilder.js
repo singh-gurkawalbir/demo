@@ -192,7 +192,7 @@ export const generateRouterNode = (router, routerIndex) => ({
   type: isVirtualRouter(router) ? GRAPH_ELEMENTS_TYPE.MERGE : GRAPH_ELEMENTS_TYPE.ROUTER,
   data: {
     path: `/routers/${routerIndex}`,
-    router,
+    routeRecordsTo: router.routeRecordsTo,
   },
 });
 
@@ -201,7 +201,7 @@ export const generateNewTerminal = ({branch = {}, branchIndex, routerIndex} = {}
   type: GRAPH_ELEMENTS_TYPE.TERMINAL,
   draggable: false,
   data: {
-    ...branch,
+    name: branch.name,
     path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${branch.pageProcessors?.length || '-'}`,
   },
 });
@@ -210,7 +210,8 @@ export const generateNewEmptyNode = ({branch = {}, branchIndex, routerIndex} = {
   id: shortId(),
   type: GRAPH_ELEMENTS_TYPE.EMPTY,
   data: {
-    ...branch,
+    name: branch.name,
+    infoText: branch.infoText,
     path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${branch.pageProcessors?.length || '-'}`,
   },
 });
