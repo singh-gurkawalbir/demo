@@ -19,7 +19,7 @@ import AddIcon from '../../../icons/AddIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import ActionGroup from '../../../ActionGroup';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
-import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
+import ActionButton from '../../../ActionButton';
 
 export const UseDynaNetsuiteSubRecordsStyles = makeStyles(theme => ({
   subrecords: {
@@ -58,12 +58,6 @@ export const UseDynaNetsuiteSubRecordsStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: theme.spacing(2),
-  },
-  actionIcons: {
-    '& >* .MuiIconButton-root': {
-      padding: 0,
-    },
-
   },
 }));
 
@@ -232,9 +226,9 @@ export default function DynaNetSuiteSubRecords(props) {
               <Typography component="span">
                 {getNetSuiteSubrecordLabel(sr.fieldId, sr.recordType)}
               </Typography>
-              <ActionGroup className={classes.actionIcons}>
-                <IconButtonWithTooltip
-                  tooltipProps={{title: 'Edit subrecord'}}
+              <ActionGroup>
+                <ActionButton
+                  tooltip="Edit subrecord"
                   data-test="edit-subrecord"
                   component={Link}
                   to={buildDrawerUrl({
@@ -243,13 +237,13 @@ export default function DynaNetSuiteSubRecords(props) {
                     params: { fieldId: sr.fieldId },
                   })}>
                   <EditIcon />
-                </IconButtonWithTooltip>
-                <IconButtonWithTooltip
-                  tooltipProps={{title: 'Delete subrecord'}}
+                </ActionButton>
+                <ActionButton
+                  tooltip="Delete subrecord"
                   data-test="delete-subrecord"
                   onClick={() => handleDeleteClick(sr.fieldId)}>
                   <DeleteIcon />
-                </IconButtonWithTooltip>
+                </ActionButton>
               </ActionGroup>
             </div>
           ))}

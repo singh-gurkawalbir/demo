@@ -141,6 +141,7 @@ export default function RefreshGenericResource(props) {
         {!isLoading && !removeRefresh && (
           <ActionButton
             onClick={onRefresh}
+            tooltip="Refresh"
             className={classes.refreshGenericResourceActionBtn}
             data-test="refreshResource">
             <RefreshIcon />
