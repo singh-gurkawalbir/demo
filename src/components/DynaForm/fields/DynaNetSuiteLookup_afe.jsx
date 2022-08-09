@@ -119,6 +119,7 @@ export default function DynaNetSuiteLookup_afe(props) {
             disabled={options?.disableFetch}
             data-test={id}
             onClick={handleEditorClick}
+            tooltip="Define lookup criteria"
             className={classes.dynaNetsuiteLookupActionBtn}>
             <FilterIcon />
           </ActionButton>
