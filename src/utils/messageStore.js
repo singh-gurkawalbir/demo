@@ -91,6 +91,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   TERMINAL_NODE_TOOLTIP: 'Drag to merge with other branch',
   MERGE_NODE_TOOLTIP: 'Merge point (records from branches are merged here)',
   TERMINAL_NODE_FROZEN_TOOLTIP: 'Merging to another branch is not possible here because your flow does not contain any branches or because there are no merge targets available. Add branching to your flow or modify your current flow layout to allow merging.',
+  CREATE_SNAPSHOT_FORM_HELPINFO: 'A snapshot is a saved capture of your integration that you can use to revert your integration at any point.',
 };
 
 export default function messageStore(key, argsObj) {
