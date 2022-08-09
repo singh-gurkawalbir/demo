@@ -332,7 +332,7 @@ selectors.editorData = (state, id) => {
   const editor = state[id];
 
   if (!editor) return;
-  const mode = editor.activeProcessor;
+  const mode = editor.activeProcessor || editor.rule?.activeProcessor;
 
   if (mode) {
     return editor.data?.[mode];

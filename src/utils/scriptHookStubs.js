@@ -327,9 +327,6 @@ const branchingFunctionStub = `/*
 *
 * The function will be passed one 'options' argument that has the following fields:
 *   'record' - object {} or array [] depending on the data source.
-*   'lastExportDateTime' - delta exports only.
-*   'currentExportDateTime' - delta exports only.
-*   'settings' - all custom settings in scope for the router currently running.
 * The function needs to return an array of integers representing the branch indices that should process the record.
 * Throwing an exception will return an error for the record.
 */
