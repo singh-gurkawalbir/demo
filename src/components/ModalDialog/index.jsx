@@ -92,7 +92,7 @@ export default function ModalDialog({
               className={classes.closeButton}
               disabled={disableClose}
               autoFocus>
-              <CloseIcon />
+              <CloseIcon data-testid="closeModalDialog" />
             </IconButton>
           )}
           {!onClose && actionHandler && (
