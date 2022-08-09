@@ -1646,22 +1646,17 @@ const recursivelyValidateV2Mappings = ({
       // if it already has an entry for same generate, then its a duplicate mapping
       if (dupMap[dupKey]) {
         duplicateMappings.push(jsonPath || generate);
-
-        return;
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        dupMap[dupKey] = jsonPath || generate;
       }
-      // eslint-disable-next-line no-param-reassign
-      dupMap[dupKey] = jsonPath || generate;
     } else if (!missingSource && !generateDisabled) {
       mappingsWithoutGenerates.push(mapping);
-
-      return;
     }
 
     // check for missing extracts only if its a required mapping
     if (isRequired && missingSource) {
       missingExtractGenerateNames.push(mapping.jsonPath || mapping.generate);
-
-      return;
     }
 
     if (mapping.children?.length) {

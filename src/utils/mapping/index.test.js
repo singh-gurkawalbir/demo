@@ -3587,13 +3587,22 @@ describe('mapping utils', () => {
             key: 'key2',
             generate: 'lname',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
-            copySource: 'yes',
             isRequired: true,
+            children: [
+              {
+                key: 'c1',
+                generate: 'fname',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                parentKey: 'key2',
+                isRequired: true,
+                jsonPath: 'lname[*].fname',
+              },
+            ],
           },
         ],
         result: {
           isSuccess: false,
-          errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: 'lname'}),
+          errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: 'lname,lname[*].fname'}),
         },
       },
       {
