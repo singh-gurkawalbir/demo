@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
-import { LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../constants';
+import { LICENSE_REACTIVATED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../constants';
 
 describe('session.resource reducers', () => {
   test('reducer should return previous state if action is not handled.', () => {
@@ -87,6 +87,17 @@ describe('session.resource reducers', () => {
         actions.license.licenseUpgradeRequestSubmitted()
       );
       const expected = {platformLicenseActionMessage: LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE};
+
+      expect(state).toEqual(expected);
+    });
+  });
+  describe('actionTypes.LICENSE.REACTIVATED action', () => {
+    test('should store the license reactivated message', () => {
+      const state = reducer(
+        undefined,
+        actions.license.licenseReactivated()
+      );
+      const expected = {platformLicenseActionMessage: LICENSE_REACTIVATED_MESSAGE};
 
       expect(state).toEqual(expected);
     });
