@@ -22,6 +22,7 @@ export default function FormView({
   sectionId,
   disabled,
   isLoggable,
+  className,
 }) {
   const settingsFormKey = `settingsForm-${resourceId}`;
   const classes = useStyles();
@@ -76,9 +77,7 @@ export default function FormView({
 
   if (settingsFormState && settingsFormState.error) {
     return (
-      <div>
-        <Typography>{settingsFormState.error}</Typography>
-      </div>
+      <Typography className={className}>{settingsFormState.error}</Typography>
     );
   }
 
