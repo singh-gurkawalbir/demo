@@ -77,7 +77,7 @@ function CreateSnapshotDrawerContent({ integrationId, parentUrl }) {
     <>
       <DrawerHeader
         className={classes.drawerHeader}
-        helpKey="snapshot.create"
+        infoText={messageStore('CREATE_SNAPSHOT_FORM_HELPINFO')}
         title="Create snapshot"
         handleClose={onClose}>
         <RevisionHeader />
