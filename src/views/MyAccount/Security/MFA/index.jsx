@@ -13,6 +13,8 @@ import MFASetup from './Setup';
 import useNotifySetupSuccess from './useNotifySetupSuccess';
 import EditMFAConfiguration from './EditConfiguration';
 import infoText from '../../infoText';
+import NotificationToaster from '../../../../components/NotificationToaster';
+import { MFA_URL } from '../../../../constants';
 // import AccountSettings from './AccountSettings';
 
 const useStyles = makeStyles(theme => ({
@@ -57,6 +59,9 @@ const useStyles = makeStyles(theme => ({
     '& .MuiCollapse-container': {
       minHeight: '100px !important',
     },
+  },
+  mfaIncompleteWarning: {
+    margin: theme.spacing(2),
   },
 }));
 
@@ -140,6 +145,22 @@ function MFADetails() {
   );
 }
 
+const EnableMFANotification = () => {
+  const classes = useStyles();
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
+
+  if (!isMFASetupIncomplete) return null;
+
+  return (
+    <NotificationToaster variant="warning" size="large" className={classes.mfaIncompleteWarning}>
+      <span className={classes.content}>
+        You are required to enable MFA before you can continue in this account.
+        <a target="_blank" rel="noreferrer" href={MFA_URL}> Learn more</a>.
+      </span>
+    </NotificationToaster>
+  );
+};
+
 export default function MFA() {
   const classes = useStyles();
 
@@ -149,6 +170,7 @@ export default function MFA() {
   return (
     <div className={classes.root}>
       <PanelHeader title="Multifactor authentication (MFA)" infoText={infoText.MFA} />
+      <EnableMFANotification />
       <MFADetails />
     </div>
   );
