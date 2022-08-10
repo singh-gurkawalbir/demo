@@ -698,7 +698,7 @@ export const mergeDragSourceWithTarget = (flowDoc, elements, dragNodeId, targetI
     patchSet.push({
       op: 'add',
       path: `/routers/${sourceRouterIndex}/branches/${sourceBranchIndex}/nextRouterId`,
-      value: targetElement.data.router.id,
+      value: targetElement.id,
     });
   } else if (targetElement.type === GRAPH_ELEMENTS_TYPE.EDGE) {
     mergeTerminalToAnEdge({flowDoc, elements, sourceElement, targetElement, patchSet});
