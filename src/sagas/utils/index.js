@@ -397,7 +397,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       } else if (!tempFiledMeta.fieldMap[key].required && key !== 'settings') {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: isGenericHTTP || false};
       } else if (key === 'http._iClientId') {
-        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
+        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: false};
       } else if (key === 'http.baseURI') {
         if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.baseURIs?.[0]?.replace('/:_version', '') }; } else if (resource.http?.unencrypted?.version) {
           tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resource.http?.unencrypted?.version}`, '');

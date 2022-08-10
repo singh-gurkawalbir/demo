@@ -27,9 +27,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function RouterNode({data = {}}) {
-  const { router = {} } = data;
-  const { routeRecordsTo, id: routerId } = router;
+export default function RouterNode({id: routerId, data = {}}) {
+  const { routeRecordsTo } = data;
   const badgeContent = routeRecordsTo === 'all_matching_branches' ? 'ALL' : '1ST';
   const classes = useStyles();
   const handleRouterClick = useHandleRouterClick(routerId);
@@ -45,7 +44,6 @@ export default function RouterNode({data = {}}) {
         >
           <Badge
             badgeContent={badgeContent}
-          // overlap="circle"
             color="secondary"
             anchorOrigin={{
               vertical: 'bottom',
