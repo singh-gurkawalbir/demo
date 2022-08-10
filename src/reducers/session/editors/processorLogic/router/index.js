@@ -1,5 +1,6 @@
 import { cloneDeep, pick } from 'lodash';
 import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
+import { safeParse } from '../../../../../utils/string';
 import filter from '../filter';
 import javascript from '../javascript';
 
@@ -76,12 +77,13 @@ export default {
   processor: 'branchFilter',
 
   requestBody: editor => {
-    const {rules, data, options} = filter.requestBody({
-      data: editor.data,
+    const { activeProcessor } = editor.rule;
+    const editorData = editor.data[activeProcessor];
+    const { rules, data, options } = filter.requestBody({
+      data: editorData,
       rule: editor.rule,
     });
-    const { rows, record } = javascript.requestBody(editor).data;
-
+    const javascriptData = safeParse(editorData) || {};
     const router = { ...rules.rules };
 
     router.routeRecordsUsing = router.activeProcessor === 'javascript' ? 'script' : 'input_filters';
@@ -92,7 +94,7 @@ export default {
     return {
       data: [{
         router: pick(router, ['id', 'branches', 'routeRecordsTo', 'routeRecordsUsing', 'script']),
-        record: router.activeProcessor === 'javascript' ? (rows || record) : data[0],
+        record: router.activeProcessor === 'javascript' ? javascriptData.record : data[0],
         options,
       }],
     };
@@ -101,13 +103,13 @@ export default {
   validate: editor => {
     if (editor.rule.activeProcessor === 'filter') {
       return filter.validate({
-        data: editor.data,
+        data: editor.data?.filter,
         rule: editor.rule,
       });
     }
 
     return javascript.validate({
-      data: editor.data,
+      data: editor.data?.javascript,
     });
   },
   processResult: (editor, result) => {
@@ -198,4 +200,20 @@ export default {
       draft.rule = rulePatch;
     }
   },
+  buildData: (_, sampleData) => {
+    const data = {};
+    const parsedData = safeParse(sampleData);
+
+    delete parsedData.settings;
+    data.filter = JSON.stringify(parsedData, null, 2);
+    // for JS panel, 'rows' is also represented as 'record'
+    if (parsedData?.rows) {
+      parsedData.record = parsedData.rows;
+      delete parsedData.rows;
+    }
+    data.javascript = JSON.stringify(parsedData, null, 2);
+
+    return data;
+  },
+
 };
