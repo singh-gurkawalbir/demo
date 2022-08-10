@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import SwitchOffIcon from '../icons/Switch/Off';
 import SwitchOnIcon from '../icons/Switch/On';
+import IconButtonWithTooltip from '../IconButtonWithTooltip';
 
 const useStyles = makeStyles(theme => ({
   customSwitch: {
@@ -69,9 +70,28 @@ export default function CeligoSwitch({
   disabled,
   onChange,
   className,
+  tooltip,
   ...props
 }) {
   const classes = useStyles();
+
+  if (tooltip) {
+    return (
+      <IconButtonWithTooltip tooltipProps={{title: tooltip, placement: 'bottom'}}>
+        <Toggle
+          {...props}
+          className={clsx(classes.customSwitch, {[classes.customSwitchChecked]: checked}, className)}
+          disabled={disabled}
+          onChange={onChange}
+          checked={checked}
+          icons={{
+            checked: <SwitchOnIcon />,
+            unchecked: <SwitchOffIcon />,
+          }}
+    />
+      </IconButtonWithTooltip>
+    );
+  }
 
   return (
     <Toggle
@@ -92,6 +112,7 @@ CeligoSwitch.propTypes = {
   disabled: PropTypes.bool,
   checked: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
+  tooltip: PropTypes.string,
 };
 
 CeligoSwitch.defaultProps = {

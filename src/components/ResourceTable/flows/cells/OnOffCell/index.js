@@ -10,11 +10,9 @@ import CeligoSwitch from '../../../../CeligoSwitch';
 import RemoveMargin from '../RemoveMargin';
 
 const useStyles = makeStyles(theme => ({
-  celigoSwitchOnOff: {
-    marginTop: theme.spacing(2),
-  },
+
   spinnerOnOff: {
-    marginLeft: 12,
+    marginLeft: theme.spacing(0.5),
   },
 }));
 
@@ -142,7 +140,7 @@ export default function OnOffCell({
     return (
       <RemoveMargin>
         <CeligoSwitch
-          className={classes.celigoSwitchOnOff}
+          tooltip="Disable/Enable"
           data-test={`toggleOnAndOffFlow${flowName}`}
           disabled={accessLevel === 'monitor'}
           checked={!disabled}
