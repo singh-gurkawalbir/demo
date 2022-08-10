@@ -156,6 +156,7 @@
     "html-webpack-plugin": "^4.3.0",
     "husky": "^4.2.5",
     "jest": "^26.1.0",
+    "jest-canvas-mock": "^2.4.0",
     "jest-date-mock": "1.0.8",
     "jest-each": "24.8.0",
     "lint-staged": "^10.2.11",
