@@ -184,26 +184,25 @@ export function* verifyMobileCode({ code }) {
   }
 }
 export function* requestMFASessionInfo() {
-  yield delay(5000);
-  const response = {
+  yield delay(1000);
+  const mockResponse = {
     mfaRequired: true,
     mfaSetupRequired: true,
     mfaVerified: false,
   };
-  // const path = '/mfa/sessionInfo';
 
-  // try {
-  //   response = yield call(apiCallWithRetry, {
-  //     path,
-  //     opts: {
-  //       method: 'GET',
-  //     },
-  //   });
-  // } catch (error) {
-  //   return undefined;
-  // }
+  try {
+    // const response = yield call(apiCallWithRetry, {
+    //   path: '/mfa/sessionInfo',
+    //   opts: {
+    //     method: 'GET',
+    //   },
+    // });
 
-  yield put(actions.mfa.receivedSessionInfo(response));
+    yield put(actions.mfa.receivedSessionInfo(mockResponse));
+  } catch (error) {
+    return undefined;
+  }
 }
 
 export default [

@@ -73,10 +73,10 @@ selectors.sessionInfoStatus = state => state?.sessionInfo?.status;
 selectors.sessionInfo = state => state?.sessionInfo?.data;
 selectors.isMFASetupIncomplete = state => {
   if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;
-  const { mfaVerified, mfaSetupRequired } = state.sessionInfo.data;
+  const { mfaVerified, mfaRequired, mfaSetupRequired } = state.sessionInfo.data;
 
   // when setup is required and it is not verified, then mfa setup is incomplete
-  return mfaSetupRequired && !mfaVerified;
+  return mfaSetupRequired && mfaRequired && !mfaVerified;
 };
 
 selectors.getSetupContext = state => state?.context;

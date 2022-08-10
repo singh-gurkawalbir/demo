@@ -113,6 +113,7 @@ function MFADetails() {
   const dispatch = useDispatch();
   const areUserSettingsLoaded = useSelector(selectors.areUserSettingsLoaded);
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
 
   useEffect(() => {
     if (!areUserSettingsLoaded) {
@@ -122,7 +123,7 @@ function MFADetails() {
 
   // TODO: Account settings will be added in Phase 2
 
-  if (isAccountOwnerOrAdmin) {
+  if (isAccountOwnerOrAdmin && !isMFASetupIncomplete) {
     return (
       <div className={classes.collapseContainer}>
         <CollapsableContainer title="My user" forceExpand className={classes.userSettingsContainer}>
