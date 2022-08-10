@@ -81,7 +81,7 @@ function MyUserSettings() {
   const mfaEnabled = useSelector(state => selectors.isMFAEnabled(state));
   const mfaUserSettings = useSelector(state => selectors.mfaUserSettings(state));
   const isMFASetupComplete = useSelector(state => selectors.isMFASetupComplete(state));
-
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
   const [isMFAEnabled, setIsMFAEnabled] = useState(false);
 
   const handleEnableMFA = useCallback(() => {
@@ -102,9 +102,9 @@ function MyUserSettings() {
       <div className={classes.mfaSwitch}>
         <Typography variant="body2" className={classes.content}> Enable MFA </Typography>
         <Help title="Enable MFA" helpKey="mfa.enable" className={classes.helpTextButton} />
-        <CeligoSwitch onChange={handleEnableMFA} checked={isMFAEnabled} />
+        <CeligoSwitch onChange={handleEnableMFA} checked={isMFASetupIncomplete || isMFAEnabled} disabled={isMFASetupIncomplete} />
       </div>
-      { isMFAEnabled ? (
+      { isMFAEnabled || isMFASetupIncomplete ? (
         <div className={classes.mfaConfig}>
           <MFAConfiguration />
         </div>
@@ -155,7 +155,7 @@ const EnableMFANotification = () => {
     <NotificationToaster variant="warning" size="large" className={classes.mfaIncompleteWarning}>
       <span className={classes.content}>
         You are required to enable MFA before you can continue in this account.
-        <a target="_blank" rel="noreferrer" href={MFA_URL}> Learn more</a>.
+        <b><a target="_blank" rel="noreferrer" href={MFA_URL}> Learn more</a>.</b>
       </span>
     </NotificationToaster>
   );
