@@ -25,8 +25,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
   },
   customWrapper: {
-    marginTop: theme.spacing(2),
-    marginBottom: `-${theme.spacing(2)}px !important`,
     boxShadow: 'none',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
@@ -35,6 +33,9 @@ const useStyles = makeStyles(theme => ({
   accordianSummaryWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
+  },
+  renderErrorSettings: {
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -119,6 +120,7 @@ export default function DynaSettings(props) {
           resourceType={resourceType}
           sectionId={sectionId}
           disabled={disabled}
+          className={classes.renderErrorSettings}
       />
       );
     }
