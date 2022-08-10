@@ -530,7 +530,7 @@ export const getApp = (type, assistant, _httpConnectorId) => {
     return applications.find(c => c._httpConnectorId === _httpConnectorId) || {};
   }
 
-  return applications.find(c => c.id === id) || {};
+  return applications.find(c => [c.id, c.assistant].includes(id)) || {};
 };
 
 export function getImportAdaptorType(resource) {
