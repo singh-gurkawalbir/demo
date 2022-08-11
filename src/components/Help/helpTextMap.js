@@ -282,7 +282,7 @@ export default {
   'liquidplanner.connection.http.auth.token.token':
 'The API token of your LiquidPlanner account when using the Token authentication.',
   'magento.connection.http.baseURI':
-'Enter the Base URI for Magento 2. You can find this URL in the address bar where you log in to your account. For example, <b> http://123.12.12.1/community231/rest</b>',
+'Enter the Base URI for Magento 2. You can find this URL in the address bar when you sign in to your account. For example, if the URL is <b> http://123.12.12.1/xyz/admin</b>, then enter <b> http://123.12.12.1/xyz/rest</b> <br> Note: In the URL, you have to replace admin with rest while providing the Base URI.',
   'magento.connection.http.auth.token.token':
 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by Magento 2. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.mailchimpDataCenter':
