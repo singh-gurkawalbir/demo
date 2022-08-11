@@ -282,7 +282,7 @@ export default {
   'liquidplanner.connection.http.auth.token.token':
 'The API token of your LiquidPlanner account when using the Token authentication.',
   'magento.connection.http.baseURI':
-'Enter the Base URI for Magento 2. You can find this URL in the address bar where you log in to your account. For example, <b> http://123.12.12.1/community231/rest</b>',
+'Enter the Base URI for Magento 2. You can find this URL in the address bar when you sign in to your account. For example, if the URL is <b> http://123.12.12.1/xyz/admin</b>, then enter <b> http://123.12.12.1/xyz/rest</b> <br> Note: In the URL, you have to replace admin with rest while providing the Base URI.',
   'magento.connection.http.auth.token.token':
 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by Magento 2. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.mailchimpDataCenter':
@@ -2438,7 +2438,6 @@ use the custom option.`,
   'import.netsuite.file.folder': 'Specify the internal ID for the Netsuite File Cabinet folder where you want to import  your files. If the folder internal ID should be dynamic based on the data you are integrating, you can specify the JSON path to the field in your data containing the folder internal id values instead. For example, {{{myFileField.fileName}}}.',
   'import.netsuite.file.internalId': 'Enter a reference ID or expression to identify reference IDs of files to replace in the NetSuite File Cabinet.',
   'auditlogs.download': 'Download up to 1000 records from the last year.',
-  'revisions.pull': 'Pulling changes from one linked integration to another lets you see conflicts, review changes, and merge them from one integration to another. You can only pull data from a direct clone or source integration.. For example, clone Integration A as Integration B, then B to C, and B to D. You can create a pull between integrations A and B, B and C, B and D; but not between A and C, or C and D',
   'pull.integration': 'Select the remote production or sandbox integration from which you pull changes. All linked integrations are displayed, which includes clones of this integration and the integration from which it was cloned.',
   'pull.reviewChanges': 'Review the changes between the current and remote integration. You can see all your integration resource changes, except for sensitive resources like API tokens and connections. You must resolve conflicts before you can continue to merge your changes. You’ll configure any new connections in the Merge changes step.',
   'pull.mergeChanges': 'You must first configure any new connections that are coming from the remote integration. There may be additional installations steps depending on the type of connection, including installing remote packages. You can cancel your merge at any time, or close the window and resume your merge later.',
@@ -2448,7 +2447,6 @@ use the custom option.`,
   'revert.revisionId': 'The revision you are reverting to.',
   'revert.reviewChanges': 'Review the changes between your current revision and the revision that you are reverting to. This is a list of every change you’ve made to your exports, imports, flows, and scripts.',
   'revert.finalRevertChanges': ' You can make changes to a source or cloned integration, then revert them. You must reconfigure your connections to revert your changes and there may be additional revert steps depending on necessary packages',
-  'snapshot.create': 'A snapshot is a saved capture of your integration that you can use to revert your integration at any point.',
   'snapshot.description': 'Describe your snapshot so you can quickly identify the revision and any important details.',
   'http.parseSuccessResponses': 'The integrator.io works on JSON internally. If your API returns success data in a different format than JSON, parse HTTP response data using available parsers for CSV and XML.',
   'mfa.enable':
