@@ -69,14 +69,6 @@ jest.mock('../../components/LoadResources', () => ({
   default: ({children}) => <div>{children}</div>,
 }
 ));
-// jest.mock('../../components/drawer/Right', () => ({
-//   __esModule: true,
-//   ...jest.requireActual('../../components/drawer/Right'),
-//   default: props => (
-//     <div>{props.children}</div>
-//   ),
-// }
-// ));
 describe('Template List', () => {
   runServer();
   let mockDispatchFn;
@@ -234,7 +226,7 @@ describe('Template List', () => {
     expect(deleteTemplateButtonNode).not.toBeInTheDocument();
   });
 
-  test('Should able to test the Template List download template zip action button by having temlates', async () => {
+  test('Should able to test the Template List download template zip action button by having templates', async () => {
     const templates = [
       {
         _id: '6013fcd90f0ac62d08bb6dae',
