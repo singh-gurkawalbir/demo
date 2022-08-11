@@ -191,6 +191,7 @@ describe('clearInvalidFlowState util', () => {
           456: {},
         },
         pageProcessorsMap: {},
+        routersMap: {},
       },
     });
   });

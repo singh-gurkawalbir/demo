@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 import { Link } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
 import { selectors } from '../../../../../../reducers';
-import { REVISION_TYPES } from '../../../../../../utils/constants';
+import { REVISION_TYPES } from '../../../../../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../../../../../utils/rightDrawer';
 import NotificationToaster from '../../../../../NotificationToaster';
 
@@ -30,6 +30,15 @@ export default function ResourceDiffError({ integrationId, type, parentUrl }) {
         <Typography variant="body2">
           There are no changes between this clone and your source integration.
           <Link to={openPullDrawerUrl} > Create a new pull </Link> and select a different integration.
+        </Typography>
+      </NotificationToaster>
+    );
+  }
+  if (type === REVISION_TYPES.REVERT) {
+    return (
+      <NotificationToaster variant="error" size="large">
+        <Typography variant="body2">
+          Your revert is not allowed. Your operation is already on the same revision you&apos;re trying to revert to.
         </Typography>
       </NotificationToaster>
     );

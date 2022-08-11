@@ -2,7 +2,7 @@ export default {
   processor: 'mapperProcessor',
   init: ({options, resource}) => {
     const importName = resource?.name;
-    const editorTitle = importName ? `Edit Mapping: ${importName}` : 'Edit Mapping';
+    const editorTitle = importName ? `Edit mapping: ${importName}` : 'Edit Mapping';
 
     return {
       ...options,

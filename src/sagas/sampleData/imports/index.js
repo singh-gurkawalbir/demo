@@ -9,11 +9,15 @@ import { requestAssistantMetadata, getNetsuiteOrSalesforceMeta} from '../../reso
 import { apiCallWithRetry } from '../..';
 import actions from '../../../actions';
 import { isIntegrationApp } from '../../../utils/flows';
-import { getAssistantConnectorType, getImportAdaptorType } from '../../../constants/applications';
+import { getAssistantConnectorType, getImportAdaptorType, getHttpConnector} from '../../../constants/applications';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
 import { extractStages } from '../../../reducers/session/sampleData/resourceForm';
 import { getAssistantFromConnection } from '../../../utils/connections';
 import { getConnectorMetadata} from '../../resources/httpConnectors';
+import { isFileAdaptor } from '../../../utils/resource';
+import { parseFileData } from '../utils/fileParserUtils';
+import { FILE_DEFINITION_TYPES } from '../resourceForm/utils';
+import { FILE_PROVIDER_ASSISTANTS } from '../../../constants';
 
 function convertToVirtualExport(assistantConfigOrig, assistantMetadata, resource) {
   const assistantConfig = deepClone(assistantConfigOrig);
@@ -97,15 +101,18 @@ export function* _fetchAssistantSampleData({ resource }) {
     selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
   const adaptorType = getImportAdaptorType(resource);
 
-  if (connection?.http?._httpConnectorId && !connectorMetaData) {
+  if (getHttpConnector(connection?.http?._httpConnectorId) && !connectorMetaData) {
     connectorMetaData = yield call(getConnectorMetadata, {
       connectionId: connection._id,
       httpConnectorId: connection?.http?._httpConnectorId,
       httpVersionId: connection?.http?._httpConnectorVersionId,
       _httpConnectorApiId: connection?.http?._httpConnectorApiId,
     });
+    if (!connectorMetaData) {
+      return false;
+    }
   }
-  if (!connection?.http?._httpConnectorId) {
+  if (!getHttpConnector(connection?.http?._httpConnectorId)) {
     if (!assistantMetadata) {
       assistantMetadata = yield call(requestAssistantMetadata, {
         adaptorType,
@@ -244,7 +251,7 @@ export function* requestSampleData({ resourceId, options = {}, refreshCache }) {
   const connection = yield select(selectors.resource, 'connections', _connectionId);
   const connectionAssistant = getAssistantFromConnection(resourceAssistant, connection);
 
-  if (connectionAssistant || connection?.http?._httpConnectorId) {
+  if (connectionAssistant || getHttpConnector(connection?.http?._httpConnectorId)) {
     return yield call(_fetchAssistantSampleData, { resource: {...resource, assistant: connectionAssistant} });
   }
 
@@ -297,6 +304,46 @@ export function* requestSampleData({ resourceId, options = {}, refreshCache }) {
       sampleData,
     });
   }
+}
+
+export function* getImportSampleData({ importId }) {
+  const resource = yield select(selectors.resource, 'imports', importId);
+
+  if (!resource) return;
+
+  const { assistant, file, sampleData, _connectorId } = resource;
+  const { type } = file || {};
+
+  if (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant))) {
+    // get assistants sample data
+    const assistantSampleData = yield select(selectors.assistantPreviewData, importId);
+
+    return assistantSampleData?.data;
+  }
+  const isIntegrationApp = !!_connectorId;
+
+  if (isIntegrationApp) {
+    // handles incase of IAs
+    const IASampleData = yield select(selectors.integrationAppImportMetadata, importId);
+
+    return IASampleData?.data;
+  }
+
+  if (!isFileAdaptor(resource) || !type || FILE_DEFINITION_TYPES.includes(type)) return sampleData;
+
+  // parse the uploaded sample data file into JSON
+  if (['csv', 'xlsx', 'xml', 'json'].includes(type)) {
+    const parsedData = yield call(parseFileData, {
+      sampleData,
+      resource,
+      resourceType: 'imports',
+    });
+    const fileSampleData = parsedData?.data;
+
+    return Array.isArray(fileSampleData) ? fileSampleData[0] : fileSampleData;
+  }
+
+  return sampleData;
 }
 
 export default [

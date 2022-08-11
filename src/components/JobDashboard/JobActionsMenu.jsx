@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
+import { JOB_STATUS, JOB_TYPES } from '../../constants';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import useConfirmDialog from '../ConfirmDialog';
@@ -260,7 +260,7 @@ export default function JobActionsMenu({
       closeSnackbar();
       dispatch(
         actions.job.resolveSelected({
-          jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+          jobs: [{ _id: job._id, _flowJobId: job._parentJobId || job._flowJobId }],
           match,
         })
       );
@@ -272,15 +272,15 @@ export default function JobActionsMenu({
           if (reason === 'undo') {
             return dispatch(
               actions.job.resolveUndo({
-                childJobId: job._flowJobId ? job._id : null,
-                parentJobId: job._flowJobId || job._id,
+                childJobId: (job._parentJobId || job._flowJobId) ? job._id : null,
+                parentJobId: job._parentJobId || job._flowJobId || job._id,
               })
             );
           }
 
           dispatch(
             actions.job.resolveCommit({
-              jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+              jobs: [{ _id: job._id, _flowJobId: job._parentJobId || job._flowJobId }],
             })
           );
         },
@@ -298,7 +298,7 @@ export default function JobActionsMenu({
       } else {
         dispatch(
           actions.job.retrySelected({
-            jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+            jobs: [{ _id: job._id, _flowJobId: job._parentJobId || job._flowJobId }],
             match,
           })
         );
@@ -315,8 +315,8 @@ export default function JobActionsMenu({
           if (reason === 'undo') {
             return dispatch(
               actions.job.retryUndo({
-                parentJobId: job._flowJobId || job._id,
-                childJobId: job._flowJobId ? job._id : null,
+                parentJobId: job._parentJobId || job._flowJobId || job._id,
+                childJobId: (job._parentJobId || job._flowJobId) ? job._id : null,
               })
             );
           }
@@ -330,7 +330,7 @@ export default function JobActionsMenu({
           } else {
             dispatch(
               actions.job.retryCommit({
-                jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+                jobs: [{ _id: job._id, _flowJobId: job._parentJobId || job._flowJobId }],
               })
             );
           }

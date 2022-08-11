@@ -133,6 +133,18 @@ const init = editorType => {
   return logic.init;
 };
 
+const updateRule = editor => {
+  if (!editor) return;
+  let logic;
+
+  try {
+    logic = getLogic(editor);
+  // eslint-disable-next-line no-empty
+  } catch (e) { }
+
+  return logic?.updateRule;
+};
+
 const buildData = editorType => {
   if (!editorType) return;
   const logic = getLogic({ editorType });
@@ -176,7 +188,6 @@ export const featuresMap = options => ({
   settingsForm: {
     layout: `${options?.activeProcessor || 'json'}FormBuilder`,
     autoEvaluate: true,
-    previewOnSave: true,
   },
   sql: {
     layout: 'compact',
@@ -256,11 +267,12 @@ export const featuresMap = options => ({
   },
   router: {
     autoEvaluate: false,
+    insertStubKey: 'router',
     // We need to generalize the layout name below. Here we are using
     // the same layout as for settings form. We need to find a generic name
     // for the pair of layouts.
     // also the css grid template needs to rename "hook" to "script".
-    layout: `${options?.activeProcessor === 'filter' ? 'json' : 'script'}FormBuilder`,
+    layout: `${options?.rule?.activeProcessor === 'filter' ? 'json' : 'script'}FormBuilder`,
   },
 });
 
@@ -273,4 +285,5 @@ export default {
   getPatchSet,
   buildData,
   preSaveValidate,
+  updateRule,
 };

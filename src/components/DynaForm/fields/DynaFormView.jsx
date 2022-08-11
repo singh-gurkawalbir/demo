@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
-import { getAssistantConnectorType, getApp } from '../../../constants/applications';
+import { getAssistantConnectorType, getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
@@ -9,7 +9,7 @@ import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions';
 import DynaSelect from './DynaSelect';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
 import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, isEbayFinanceConnection } from '../../../utils/assistant';
@@ -49,8 +49,12 @@ export default function FormView(props) {
   );
 
   const { assistant: assistantName, http } = connection;
-  const _httpConnectorId = connection?.http?._httpConnectorId;
+
   const isGraphql = http?.formType === 'graph_ql';
+  const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
+  const showHTTPFrameworkImport = resourceType === 'imports' && connectorMetaData?.import?.versions?.[0]?.resources?.length;
+  const showHTTPFrameworkExport = resourceType === 'exports' && connectorMetaData?.export?.versions?.[0]?.resources?.length;
+  const isHttpFramework = showHTTPFrameworkImport || showHTTPFrameworkExport;
 
   const options = useMemo(() => {
     const matchingApplication = getApp(null, isGraphql ? 'graph_ql' : assistantName, _httpConnectorId);
@@ -104,7 +108,7 @@ export default function FormView(props) {
     staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
 
     // if assistant is selected back again assign it to the export to the export obj as well
-    if (_httpConnectorId) {
+    if (_httpConnectorId && !isGraphql) {
       staggedRes['/isHttpConnector'] = true;
       newFinalValues['/isHttpConnector'] = true;
       if (selectedApplication !== `${isParent}`) {
@@ -164,8 +168,12 @@ export default function FormView(props) {
   const isAcumaticaEcommerceImport = (resourceType === 'imports') && isAcumaticaEcommerceConnection(connection);
   const isLoopReturnsv2import = (resourceType === 'imports') && isLoopReturnsv2Connection(connection);
   const isEbayFinanceImport = (resourceType === 'imports') && isEbayFinanceConnection(connection);
-  const isFlowBuilderAssistant = flowId && (isGraphql || _httpConnectorId ||
+  const isFlowBuilderAssistant = flowId && (isGraphql ||
     (assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection) && !isMicrosoftBusinessCentralOdataConnection(connection) && !isAcumaticaEcommerceImport && !isLoopReturnsv2import && !isEbayFinanceImport));
+
+  if (_httpConnectorId && !isHttpFramework && !isGraphql) {
+    return null;
+  }
 
   return isFlowBuilderAssistant ? (
     <DynaSelect

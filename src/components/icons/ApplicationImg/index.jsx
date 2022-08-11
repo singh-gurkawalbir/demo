@@ -44,6 +44,8 @@ function iconMap(type = '') {
 
   if (type.toLowerCase().includes('bigquery')) return 'bigquery';
 
+  if (type.toLowerCase().includes('redshift')) return 'redshift';
+
   if (['restexport', 'restimport'].includes(type.toLocaleLowerCase())) return 'rest';
   // 's3' are too few words that it could be contained in lot more words. In current list of applications, it matches with 'msdynamics360'.
   // Hence expilicity check for S3Export and S3Import for S3 type.
@@ -51,7 +53,7 @@ function iconMap(type = '') {
   if (['ftpexport', 'ftpimport'].includes(type.toLowerCase())) return 'ftp';
 
   // remove all whitespaces and dots
-  return type.replace(/\.|\s/g, '');
+  return type.replace(/\.|\s/g, '') && type.toLowerCase();
 }
 
 function imageName(assistant) {
@@ -65,7 +67,12 @@ function imageName(assistant) {
     return 'bigquery';
   }
 
-  return assistant;
+  // Similarly for both Amazon Redshift and Amazon Redshift (REST API) applications, we have same image
+  if (assistant === 'redshiftdatawarehouse') {
+    return 'redshift';
+  }
+
+  return assistant.toLowerCase();
 }
 
 export default function ApplicationImg({

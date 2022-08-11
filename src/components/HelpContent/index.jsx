@@ -24,6 +24,9 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '22px',
     whiteSpace: 'normal',
     wordBreak: 'break-word',
+    '&>div': {
+      maxHeight: 300,
+    },
     '& > div > pre': {
       background: theme.palette.background.paper2,
       border: '1px solid',
@@ -95,7 +98,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
           <TextField
             data-private
             name="feedbackText"
-            placeholder="Please let us know how we can improve the text area."
+            placeholder="How can we make this information more helpful?"
             multiline
             onChange={onChange}
             variant="outlined"
