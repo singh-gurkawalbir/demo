@@ -459,30 +459,6 @@ describe('PageGenerator UI tests', () => {
     expect(screen.getByText('actionsname : exportFilter')).toBeInTheDocument();
     expect(screen.getByText('actionsname : exportHooks')).toBeInTheDocument();
   });
-  // test('pending is false multipleAs2ExportsOfSameConnectionId true', () => {
-  //   const pg = {
-  //     id: 'somePGId',
-  //     _exportId: '5e7068331c056a75e6df19b2',
-  //   };
-
-  //   const initialStore = getCreatedStore();
-
-  //   initialStore.getState().data.resources.exports = as2exports;
-  //   initialStore.getState().data.resources.connections = as2connections;
-
-  //   renderFunction(pg, history, initialStore);
-
-  //   userEvent.click(screen.getByText('mock onBlockClick'));
-
-  //   expect(mockDispatch).not.toHaveBeenCalled();
-
-  //   expect(history.replace).toHaveBeenCalledWith('someinitiaUrL/edit/exports/5e7068331c056a75e6df19b2');
-
-  //   expect(screen.getByText('actionsname : as2Routing')).toBeInTheDocument();
-  //   expect(screen.getByText('actionsname : exportTransformation')).toBeInTheDocument();
-  //   expect(screen.getByText('actionsname : exportFilter')).toBeInTheDocument();
-  //   expect(screen.getByText('actionsname : exportHooks')).toBeInTheDocument();
-  // });
   test('should test case when webhook export is given', () => {
     const pg = {
       id: 'somePGId',
@@ -553,5 +529,23 @@ describe('PageGenerator UI tests', () => {
     expect(mockDispatch).not.toHaveBeenCalled();
 
     expect(history.push).toHaveBeenCalledWith('someinitiaUrL/edit/exports/5e7068331c056a75e6df19b2');
+  });
+  test('should test delete option', () => {
+    const onDelete = jest.fn();
+    const pg = {
+      id: 'somePGId',
+      _connectionId: '5e7068331c056a75e6df19b2',
+    };
+
+    const initialStore = getCreatedStore();
+
+    initialStore.getState().data.resources.connections = connections;
+
+    renderWithProviders(
+      <PageGenerator.WrappedComponent history={history} match={{url: 'someinitiaUrL'}} {...pg} onDelete={onDelete} />,
+      {initialStore});
+
+    userEvent.click(screen.getByText('mock onDelete'));
+    expect(onDelete).toHaveBeenCalled();
   });
 });
