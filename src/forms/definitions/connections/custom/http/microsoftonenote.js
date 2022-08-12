@@ -6,12 +6,14 @@ export default {
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://graph.microsoft.com/v1.0',
+    '/http/ping/relativeURI': '/me/onenote/notebooks',
+    '/http/ping/method': 'GET',
     '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
     '/http/auth/oauth/tokenURI':
       'https://login.microsoftonline.com/common/oauth2/v2.0/token',
     '/http/auth/oauth/scope': [
-      ...['openid', 'offline_access'],
+      ...['openid', 'offline_access', 'Notes.Read'],
       ...formValues['/http/auth/oauth/scope'],
     ],
     '/http/auth/oauth/scopeDelimiter': ' ',
