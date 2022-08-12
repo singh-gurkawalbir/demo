@@ -263,6 +263,7 @@ describe('ResourceDrawer UI test', () => {
 
     userEvent.click(button);
     expect(screen.getByText('abcdefgh')).toBeInTheDocument();
+    expect(screen.getByText('Shared')).toBeInTheDocument();
   });
   test('should test connection with linkLabel as unknown ', () => {
     renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource3} /> </MemoryRouter>);
