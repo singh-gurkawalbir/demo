@@ -43,7 +43,7 @@ export default {
       helpKey: 'googleads.connection.http.unencrypted.version',
       defaultValue: r =>
         (r?.http?.unencrypted?.endpointVersion) ||
-        'v7',
+        'v11',
     },
     'http.encrypted.developerToken': {
       id: 'http.encrypted.developerToken',
