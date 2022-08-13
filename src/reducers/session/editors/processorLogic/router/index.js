@@ -1,4 +1,4 @@
-import { cloneDeep, pick } from 'lodash';
+import { cloneDeep, isEqual, pick } from 'lodash';
 import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
 import { safeParse } from '../../../../../utils/string';
 import filter from '../filter';
@@ -111,6 +111,15 @@ export default {
     return javascript.validate({
       data: editor.data?.javascript,
     });
+  },
+  dirty: editor => {
+    const { activeProcessor } = editor.rule;
+
+    if (activeProcessor === 'javascript') {
+      return javascript.dirty(editor);
+    }
+
+    return !isEqual(editor.originalRule, editor.rule);
   },
   processResult: (editor, result) => {
     let outputMessage = '';
