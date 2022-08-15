@@ -1,5 +1,11 @@
 /* eslint-disable no-param-reassign */
-import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
 import { isEmpty } from 'lodash';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
@@ -24,10 +30,14 @@ import { safeParse } from '../../../../../../utils/string';
 
 const defaultData = {};
 
-export default function BranchFilter({editorId, position}) {
+export default function BranchFilter({ editorId, position }) {
   const qbuilder = useRef(null);
-  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const data = useSelector(state => selectors.editorData(state, editorId) || defaultData);
+  const disabled = useSelector(state =>
+    selectors.isEditorDisabled(state, editorId)
+  );
+  const data = useSelector(
+    state => selectors.editorData(state, editorId) || defaultData
+  );
   const rule = useSelector(state => {
     const editorRule = selectors.editorRule(state, editorId);
 
@@ -41,13 +51,20 @@ export default function BranchFilter({editorId, position}) {
   const dispatch = useDispatch();
   const patchEditor = useCallback(
     value => {
-      dispatch(actions.editor.patchRule(editorId, value, {rulePath: `branches[${position}].inputFilter.rules`}));
+      dispatch(
+        actions.editor.patchRule(editorId, value, {
+          rulePath: `branches[${position}].inputFilter.rules`,
+        })
+      );
     },
     [dispatch, position, editorId]
   );
-  const patchEditorValidation = useCallback(isInvalid => {
-    dispatch(actions.editor.patchFeatures(editorId, { isInvalid }));
-  }, [dispatch, editorId]);
+  const patchEditorValidation = useCallback(
+    isInvalid => {
+      dispatch(actions.editor.patchFeatures(editorId, { isInvalid }));
+    },
+    [dispatch, editorId]
+  );
 
   const jsonData = useMemo(() => safeParse(data) || {}, [data]);
   const context = jsonData.rows ? 'rows[0]' : 'record';
@@ -87,7 +104,7 @@ export default function BranchFilter({editorId, position}) {
 
     setRules(rules);
     setRulesState(generateRulesState(rules));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -99,9 +116,8 @@ export default function BranchFilter({editorId, position}) {
   const isValid = () => {
     try {
       return jQuery(qbuilder.current).queryBuilder('validate');
-    // eslint-disable-next-line no-empty
-    } catch (e) {
-    }
+      // eslint-disable-next-line no-empty
+    } catch (e) {}
 
     return false;
   };
@@ -147,18 +163,16 @@ export default function BranchFilter({editorId, position}) {
           valueField.val(rulesState[ruleId].data.lhs.value).trigger('input');
         }
 
-        valueField
-          .off('focusout')
-          .on('focusout', () => {
-            if (
-              rule.operator &&
-                (rule.operator.type === 'is_empty' ||
-                  rule.operator.type === 'is_not_empty')
-            ) {
-              rule.filter.valueGetter(rule);
-            }
-            handleFilterRulesChange();
-          });
+        valueField.off('focusout').on('focusout', () => {
+          if (
+            rule.operator &&
+            (rule.operator.type === 'is_empty' ||
+              rule.operator.type === 'is_not_empty')
+          ) {
+            rule.filter.valueGetter(rule);
+          }
+          handleFilterRulesChange();
+        });
       }
     }
 
@@ -237,9 +251,7 @@ export default function BranchFilter({editorId, position}) {
 
     const valueField = rule.$el.find(`[name=${name}]`);
 
-    valueField
-      .off('focusout')
-      .on('focusout', () => handleFilterRulesChange());
+    valueField.off('focusout').on('focusout', () => handleFilterRulesChange());
   };
 
   const updateUIForRHSRule = ({ name, rule = {} }) => {
@@ -533,7 +545,10 @@ export default function BranchFilter({editorId, position}) {
               updateUIForRHSRule({ rule, name });
             });
           }
-          const rhsValue = rulesState[ruleId].data.rhs.value === undefined ? '' : rulesState[ruleId].data.rhs.value;
+          const rhsValue =
+            rulesState[ruleId].data.rhs.value === undefined
+              ? ''
+              : rulesState[ruleId].data.rhs.value;
 
           return `<input class="form-control" name="${name}" value="${rhsValue}"><img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">`;
         },
@@ -565,12 +580,14 @@ export default function BranchFilter({editorId, position}) {
           if (r.lhs.type === 'field') {
             if (
               lhsValue &&
-                (lhsValue === 'lastExportDateTime' ||
-                  lhsValue === 'currentExportDateTime')
+              (lhsValue === 'lastExportDateTime' ||
+                lhsValue === 'currentExportDateTime')
             ) {
               r.lhs.dataType = 'epochtime';
             } else if (lhsValue?.endsWith('.length')) {
-              const fieldType = filtersMetadata.find(metadata => metadata.id === lhsValue).type;
+              const fieldType = filtersMetadata.find(
+                metadata => metadata.id === lhsValue
+              ).type;
 
               if (fieldType === 'number') {
                 r.lhs.dataType = 'number';
@@ -600,12 +617,14 @@ export default function BranchFilter({editorId, position}) {
           if (r.rhs.type === 'field') {
             if (
               rhsValue &&
-                (rhsValue === 'lastExportDateTime' ||
-                  rhsValue === 'currentExportDateTime')
+              (rhsValue === 'lastExportDateTime' ||
+                rhsValue === 'currentExportDateTime')
             ) {
               r.rhs.dataType = 'epochtime';
             } else if (rhsValue?.endsWith('.length')) {
-              const fieldType = filtersMetadata.find(metadata => metadata.id === rhsValue).type;
+              const fieldType = filtersMetadata.find(
+                metadata => metadata.id === rhsValue
+              ).type;
 
               if (fieldType === 'number') {
                 r.lhs.dataType = 'number';
@@ -649,12 +668,14 @@ export default function BranchFilter({editorId, position}) {
             if (r.lhs.type === 'field') {
               if (
                 lhsValue &&
-                  (lhsValue === 'lastExportDateTime' ||
-                    lhsValue === 'currentExportDateTime')
+                (lhsValue === 'lastExportDateTime' ||
+                  lhsValue === 'currentExportDateTime')
               ) {
                 r.lhs.dataType = 'epochtime';
               } else if (lhsValue?.endsWith('.length')) {
-                const fieldType = filtersMetadata.find(metadata => metadata.id === lhsValue).type;
+                const fieldType = filtersMetadata.find(
+                  metadata => metadata.id === lhsValue
+                ).type;
 
                 if (fieldType === 'number') {
                   r.lhs.dataType = 'number';
@@ -680,12 +701,14 @@ export default function BranchFilter({editorId, position}) {
             if (r.rhs.type === 'field') {
               if (
                 rhsValue &&
-                  (rhsValue === 'lastExportDateTime' ||
-                    rhsValue === 'currentExportDateTime')
+                (rhsValue === 'lastExportDateTime' ||
+                  rhsValue === 'currentExportDateTime')
               ) {
                 r.rhs.dataType = 'epochtime';
               } else if (rhsValue?.endsWith('.length')) {
-                const fieldType = filtersMetadata.find(metadata => metadata.id === rhsValue).type;
+                const fieldType = filtersMetadata.find(
+                  metadata => metadata.id === rhsValue
+                ).type;
 
                 if (fieldType === 'number') {
                   r.lhs.dataType = 'number';
@@ -732,8 +755,8 @@ export default function BranchFilter({editorId, position}) {
       qbContainer.on('afterUpdateRuleOperator.queryBuilder', (e, rule) => {
         if (
           rule.operator &&
-            (rule.operator.type === 'is_empty' ||
-              rule.operator.type === 'is_not_empty')
+          (rule.operator.type === 'is_empty' ||
+            rule.operator.type === 'is_not_empty')
         ) {
           rule.filter.valueGetter(rule);
         }
@@ -763,9 +786,18 @@ export default function BranchFilter({editorId, position}) {
 
       // eslint-disable-next-line no-restricted-syntax
       for (const ruleId in rulesState) {
-        if (Object.hasOwnProperty.call(rulesState, ruleId) && rulesState[ruleId]?.rule) {
-          updateUIForLHSRule({rule: rulesState[ruleId].rule, name: `${rulesState[ruleId].rule.id}_value_0`});
-          updateUIForRHSRule({rule: rulesState[ruleId].rule, name: `${rulesState[ruleId].rule.id}_value_0`});
+        if (
+          Object.hasOwnProperty.call(rulesState, ruleId) &&
+          rulesState[ruleId]?.rule
+        ) {
+          updateUIForLHSRule({
+            rule: rulesState[ruleId].rule,
+            name: `${rulesState[ruleId].rule.id}_value_0`,
+          });
+          updateUIForRHSRule({
+            rule: rulesState[ruleId].rule,
+            name: `${rulesState[ruleId].rule.id}_value_0`,
+          });
         }
       }
 
@@ -786,15 +818,45 @@ export default function BranchFilter({editorId, position}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersMetadata]);
 
+  // TODO: 1. only run this code on component mount. we do not want re-order or other actions to remove incomplete rules
+  // 2. only need to check if rule length=1.
+  // Check with David on dragdrop issue with all but one minimized and many rules in item being dragged...
+  useEffect(() => {
+    // iterate over rulesState and find empty rules
+    if (!rulesState) return;
+
+    console.log('rulesState', rulesState);
+    const $qb = jQuery(qbuilder.current);
+
+    Object.keys(rulesState).forEach(ruleId => {
+      const state = rulesState[ruleId];
+
+      if (
+        typeof state.data.lhs === 'object' &&
+        typeof state.data.rhs === 'object'
+      ) {
+        console.log('both lhs and rhs have data');
+        if (state.data.rhs.value) return;
+
+        const $emptyRule = state.rule;
+
+        console.log('delete', $emptyRule);
+        $qb.queryBuilder('deleteRule', $emptyRule);
+      }
+    });
+    // triggering off of filtersMetadata change is key, as it seems to be the last useeffect that runs
+    // and thus this effect needs to run AFTER the filtersMetadata changes to persist the removal of empty rules
+  }, [rulesState, filtersMetadata]);
+
   const handleCloseOperandSettings = () => {
     setShowOperandSettingsFor();
   };
 
   const handleSubmitOperandSettings = operandSettings => {
     const ruleData =
-        rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
-          showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
-        ];
+      rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
+        showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
+      ];
 
     rulesState[getFilterRuleId(showOperandSettingsFor.rule)].data[
       showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
@@ -820,18 +882,17 @@ export default function BranchFilter({editorId, position}) {
     <>
       <div ref={qbuilder} />
       {showOperandSettingsFor && (
-      <OperandSettingsDialog
-        ruleData={
-              rulesState[getFilterRuleId(showOperandSettingsFor.rule)]?.data[
-                showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
-              ]
-            }
-        disabled={disabled}
-        onClose={handleCloseOperandSettings}
-        onSubmit={handleSubmitOperandSettings}
-          />
+        <OperandSettingsDialog
+          ruleData={
+            rulesState[getFilterRuleId(showOperandSettingsFor.rule)]?.data[
+              showOperandSettingsFor.rhs ? 'rhs' : 'lhs'
+            ]
+          }
+          disabled={disabled}
+          onClose={handleCloseOperandSettings}
+          onSubmit={handleSubmitOperandSettings}
+        />
       )}
     </>
-
   );
 }
