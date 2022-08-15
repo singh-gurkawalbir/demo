@@ -1,7 +1,7 @@
 /* global describe, expect, jest, test */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
@@ -146,9 +146,14 @@ describe('test suite for UpgradeErrorManagement', () => {
   });
 
   test('dialog should disappear on clicking "Yes, upgrade" option', async () => {
+    const userId = '626qwerty';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.org.accounts.push({ accessLevel: 'owner' });
+    initialStore.getState().user.preferences.defaultAShareId = userId;
+    initialStore.getState().user.org.accounts.push({
+      _id: userId,
+      accessLevel: 'owner',
+    });
     await initUpgradeErrorManagement(initialStore);
     const upgradeButton = document.querySelector('[data-test="em2.0_upgrade"]');
 
@@ -162,5 +167,6 @@ describe('test suite for UpgradeErrorManagement', () => {
     userEvent.click(confirmButton);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(upgradeButton).toHaveTextContent('Upgrading...');
+    await waitFor(() => expect(upgradeButton).toHaveTextContent('Upgrade'));
   });
 });
