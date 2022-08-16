@@ -1625,9 +1625,15 @@ const recursivelyValidateV2Mappings = ({
   duplicateMappings = [],
   mappingsWithoutGenerates = [],
   missingExtractGenerateNames = [],
+  expressionNotSupported = [],
+  onlyJsonPathSupported = [],
 }) => {
   v2TreeData.forEach(mapping => {
     const {
+      dataType,
+      extract,
+      combinedExtract,
+      hardCodedValue,
       isRequired,
       parentKey,
       parentExtract,
@@ -1659,6 +1665,29 @@ const recursivelyValidateV2Mappings = ({
       missingExtractGenerateNames.push(mapping.jsonPath || mapping.generate);
     }
 
+    if (hardCodedValue && (dataType === MAPPING_DATA_TYPES.OBJECT || dataType === MAPPING_DATA_TYPES.OBJECTARRAY)) {
+      // hard-coded not supported
+      onlyJsonPathSupported.push(mapping.jsonPath || mapping.generate);
+    }
+
+    if (ARRAY_DATA_TYPES.includes(dataType) || dataType === MAPPING_DATA_TYPES.OBJECT) {
+      // handlebars not supported
+      const splitExtracts = (extract || combinedExtract)?.split(',') || [];
+      const invalidSource = splitExtracts.filter(e => {
+        if (handlebarRegex.test(e)) return true;
+
+        return false;
+      });
+
+      if (invalidSource.length) {
+        if (dataType === MAPPING_DATA_TYPES.OBJECT || dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+          onlyJsonPathSupported.push(mapping.jsonPath || mapping.generate);
+        } else {
+          expressionNotSupported.push(mapping.jsonPath || mapping.generate);
+        }
+      }
+    }
+
     if (mapping.children?.length) {
       recursivelyValidateV2Mappings({
         v2TreeData: mapping.children,
@@ -1666,7 +1695,9 @@ const recursivelyValidateV2Mappings = ({
         dupMap,
         duplicateMappings,
         mappingsWithoutGenerates,
-        missingExtractGenerateNames});
+        missingExtractGenerateNames,
+        expressionNotSupported,
+        onlyJsonPathSupported});
     }
   });
 };
@@ -1675,13 +1706,17 @@ const validateV2Mappings = (v2TreeData, lookups) => {
   const duplicateMappings = [];
   const mappingsWithoutGenerates = [];
   const missingExtractGenerateNames = [];
+  const expressionNotSupported = [];
+  const onlyJsonPathSupported = [];
 
   recursivelyValidateV2Mappings({
     v2TreeData,
     lookups,
     duplicateMappings,
     mappingsWithoutGenerates,
-    missingExtractGenerateNames});
+    missingExtractGenerateNames,
+    expressionNotSupported,
+    onlyJsonPathSupported});
 
   if (duplicateMappings.length) {
     return {
@@ -1701,6 +1736,20 @@ const validateV2Mappings = (v2TreeData, lookups) => {
     return {
       isSuccess: false,
       errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: missingExtractGenerateNames.join(',')}),
+    };
+  }
+
+  if (expressionNotSupported.length) {
+    return {
+      isSuccess: false,
+      errMessage: errorMessageStore('MAPPER2_EXPRESSION_NOT_SUPPORTED', {fields: expressionNotSupported.join(',')}),
+    };
+  }
+
+  if (onlyJsonPathSupported.length) {
+    return {
+      isSuccess: false,
+      errMessage: errorMessageStore('MAPPER2_ONLY_JSON_PATH_SUPPORT', {fields: onlyJsonPathSupported.join(',')}),
     };
   }
 

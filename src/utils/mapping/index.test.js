@@ -3611,6 +3611,38 @@ describe('mapping utils', () => {
         v2TreeData: [
           {
             key: 'key1',
+            hardCodedValue: 'test',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: errorMessageStore('MAPPER2_ONLY_JSON_PATH_SUPPORT', {fields: 'fname'}),
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '{{record.test}}',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRINGARRAY,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: errorMessageStore('MAPPER2_EXPRESSION_NOT_SUPPORTED', {fields: 'fname'}),
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
             extract: '$.fname',
             generate: 'fname',
             dataType: MAPPING_DATA_TYPES.STRING,

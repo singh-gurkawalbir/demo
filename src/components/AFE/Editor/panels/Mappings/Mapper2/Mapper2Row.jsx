@@ -188,7 +188,7 @@ const Mapper2Row = React.memo(props => {
   const isLookup = !!lookupName;
   const isStaticLookup = !!(lookup.name && lookup.map);
   const isHardCodedValue = hardCodedValue !== undefined;
-  const isHandlebarExp = handlebarRegex.test(extractValue);
+  const isHandlebarExp = handlebarRegex.test(extractValue) || (extractValue && !isHardCodedValue && !extractValue?.startsWith('$'));
   const hideExtractField = dataType === MAPPING_DATA_TYPES.OBJECT && !extractValue && copySource === 'no';
 
   // this prop is used for object array tab view
