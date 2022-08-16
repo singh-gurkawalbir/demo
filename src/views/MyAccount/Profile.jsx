@@ -15,7 +15,7 @@ import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 import LoadResources from '../../components/LoadResources';
 import { OutlinedButton } from '../../components/Buttons';
-import infoText from './infoText';
+import infoText from '../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   googleBtn: {
