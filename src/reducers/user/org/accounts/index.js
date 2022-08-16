@@ -270,6 +270,8 @@ selectors.sharedAccounts = createSelector(
 
       const ioLicense = a.ownerUser.licenses.find(l => (l.type === 'integrator' || l.type === 'endpoint'));
 
+      if (!ioLicense) return;
+
       const licenseHasSSO = ioLicense.tier === 'free'
         ? (moment(ioLicense.trialEndDate) > moment())
         : ((moment(ioLicense.expires) > moment()) && ioLicense.sso);

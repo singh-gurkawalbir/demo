@@ -44,6 +44,14 @@ export default function BranchFilter({ editorId, position }) {
     return editorRule?.branches?.[position]?.inputFilter?.rules;
   });
 
+  // const skipEmptyRuleCleanup = useSelector(state => {
+  //   const editorRule = selectors.editorRule(state, editorId);
+  //
+  //   return !!editorRule?.branches?.[position]?.skipEmptyRuleCleanup;
+  // });
+
+  // console.log('skipEmptyRuleCleanup: ', position, skipEmptyRuleCleanup);
+
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
   const [rules, setRules] = useState();
   const [filtersMetadata, setFiltersMetadata] = useState();
@@ -59,6 +67,14 @@ export default function BranchFilter({ editorId, position }) {
     },
     [dispatch, position, editorId]
   );
+  // const setSkipEmptyRuleCleanup = useCallback(() => {
+  //   console.log('setSkipEmptyRuleCleanup: ', position);
+  //   dispatch(
+  //     actions.editor.patchRule(editorId, true, {
+  //       rulePath: `branches[${position}].skipEmptyRuleCleanup`,
+  //     })
+  //   );
+  // }, [dispatch, position, editorId]);
   const patchEditorValidation = useCallback(
     isInvalid => {
       dispatch(actions.editor.patchFeatures(editorId, { isInvalid }));
@@ -275,7 +291,12 @@ export default function BranchFilter({ editorId, position }) {
         );
 
         if (rulesState[ruleId].data && rulesState[ruleId].data.rhs) {
-          field.val(rulesState[ruleId].data.rhs.field).trigger('change');
+          field.val(rulesState[ruleId].data.rhs.field);
+          setTimeout(() => {
+            rule.$el
+              .find('.rule-value-container  select[name=field]')
+              .trigger('change');
+          });
         }
 
         field.off('change').on('change', () => handleFilterRulesChange());
@@ -782,6 +803,8 @@ export default function BranchFilter({ editorId, position }) {
       // don't change the sequence of these events
       qbContainer.on('afterCreateRuleInput.queryBuilder', (e, rule) => {
         rule.filter.valueGetter(rule, true);
+
+        // setSkipEmptyRuleCleanup();
       });
 
       // eslint-disable-next-line no-restricted-syntax
@@ -791,10 +814,6 @@ export default function BranchFilter({ editorId, position }) {
           rulesState[ruleId]?.rule
         ) {
           updateUIForLHSRule({
-            rule: rulesState[ruleId].rule,
-            name: `${rulesState[ruleId].rule.id}_value_0`,
-          });
-          updateUIForRHSRule({
             rule: rulesState[ruleId].rule,
             name: `${rulesState[ruleId].rule.id}_value_0`,
           });
@@ -821,7 +840,7 @@ export default function BranchFilter({ editorId, position }) {
   // TODO: 1. only run this code on component mount. we do not want re-order or other actions to remove incomplete rules
   // 2. only need to check if rule length=1.
   // Check with David on dragdrop issue with all but one minimized and many rules in item being dragged...
-  useEffect(() => {
+  /*   useEffect(() => {
     // iterate over rulesState and find empty rules
     if (!rulesState) return;
 
@@ -844,10 +863,11 @@ export default function BranchFilter({ editorId, position }) {
         $qb.queryBuilder('deleteRule', $emptyRule);
       }
     });
-    // triggering off of filtersMetadata change is key, as it seems to be the last useeffect that runs
-    // and thus this effect needs to run AFTER the filtersMetadata changes to persist the removal of empty rules
-  }, [rulesState, filtersMetadata]);
 
+    // triggering off of filtersMetadata change is key, as it seems to be the last useEffect that runs
+    // and thus this effect needs to run AFTER the filtersMetadata changes to persist the removal of empty rules
+  }, [filtersMetadata]);
+ */
   const handleCloseOperandSettings = () => {
     setShowOperandSettingsFor();
   };

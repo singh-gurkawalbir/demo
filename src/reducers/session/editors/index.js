@@ -135,6 +135,8 @@ export default function reducer(state = {}, action) {
 
         if (rulePath) {
           set(draftRule, rulePath, rulePatch);
+        } else if (processorLogic.updateRule(draft[id])) {
+          processorLogic.updateRule(draft[id])(draft[id], action, shouldReplace);
         } else if (!shouldReplace) {
           Object.assign(draftRule, deepClone(rulePatch));
         } else if (ap) {

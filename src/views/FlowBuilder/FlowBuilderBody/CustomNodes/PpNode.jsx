@@ -10,6 +10,7 @@ import { useFlowContext } from '../Context';
 import actions from '../../../../actions';
 import PageProcessor from '../../PageProcessor';
 import { PageProcessorPathRegex } from '../../../../constants';
+import useConfirmDialog from '../../../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -47,7 +48,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function PageProcessorNode({ data = {} }) {
-  const { branch = {}, isFirst, isLast, hideDelete, isVirtual, path } = data;
+  const { branch = {}, isFirst, isLast, hideDelete, isVirtual, path, resource = {} } = data;
   const dispatch = useDispatch();
   const classes = useStyles();
   const [, routerIndex, branchIndex, pageProcessorIndex] = PageProcessorPathRegex.exec(path);
@@ -58,12 +59,34 @@ export default function PageProcessorNode({ data = {} }) {
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
+  const {confirmDialog} = useConfirmDialog();
   const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
   const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
   const showDelete = !hideDelete && !isFlowSaveInProgress;
   const handleDelete = useCallback(id => {
-    dispatch(actions.flow.deleteStep(flowId, id));
+    if (resource.setupInProgress) {
+      dispatch(actions.flow.deleteStep(flowId, id));
+    } else {
+      confirmDialog({
+        title: 'Confirm remove',
+        message: 'Are you sure you want to remove this resource?',
+        buttons: [
+          {
+            label: 'Remove',
+            onClick: () => {
+              dispatch(actions.flow.deleteStep(flowId, id));
+            },
+          },
+          {
+            label: 'Cancel',
+            variant: 'text',
+          },
+        ],
+      });
+    }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, flowId]);
 
   return (

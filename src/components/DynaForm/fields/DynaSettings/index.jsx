@@ -19,17 +19,12 @@ const useStyles = makeStyles(theme => ({
     marginTop: '20px',
     marginBottom: '10px',
   },
-  summaryContainer: {
-    width: '100%',
-  },
   summaryLabel: {
     flexGrow: 1,
     alignSelf: 'center',
     color: theme.palette.secondary.main,
   },
   customWrapper: {
-    marginTop: theme.spacing(2),
-    marginBottom: `-${theme.spacing(2)}px !important`,
     boxShadow: 'none',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
@@ -37,6 +32,10 @@ const useStyles = makeStyles(theme => ({
   },
   accordianSummaryWrapper: {
     display: 'flex',
+    justifyContent: 'space-between',
+  },
+  renderErrorSettings: {
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -121,6 +120,7 @@ export default function DynaSettings(props) {
           resourceType={resourceType}
           sectionId={sectionId}
           disabled={disabled}
+          className={classes.renderErrorSettings}
       />
       );
     }
@@ -137,7 +137,6 @@ export default function DynaSettings(props) {
         <div className={classes.accordianSummaryWrapper}>
           <AccordionSummary
             data-test={label}
-            className={classes.summaryContainer}
             onClick={handleExpandClick}
             expandIcon={<ExpandMoreIcon />}>
             <Typography className={classes.summaryLabel}>{label}</Typography>
