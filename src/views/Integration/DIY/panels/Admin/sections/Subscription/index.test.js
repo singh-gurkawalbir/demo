@@ -97,7 +97,7 @@ describe('SubscriptionSection UI tests', () => {
     useDispatchSpy.mockClear();
   });
   test('should pass the initial render', async () => {
-    const props = {integrationId: '61604a5a8364267b8a378084', edition: 'starter', childSupport: false};
+    const props = {integrationId: '61604a5a8364267b8a378084', edition: 'starter', childSupport: false, version: '1.27.3'};
 
     await initSubscriptionSection(props);
     expect(screen.getByText('Subscription details')).toBeInTheDocument();
@@ -113,7 +113,7 @@ describe('SubscriptionSection UI tests', () => {
     expect(screen.getByText('Action')).toBeInTheDocument();
   });
   test('should display the confirm dialogue when clicked on request upgrade button', async () => {
-    const props = {integrationId: '61604a5a8364267b8a378084', edition: 'starter', childId: '61604a5a8364267b8a378143', childSupport: true, version: '1.27.3'};
+    const props = {integrationId: '61604a5a8364267b8a378084', edition: 'starter', childId: '61604a5a8364267b8a378143', childSupport: true};
 
     await initSubscriptionSection(props);
     userEvent.click(screen.getByText('Request upgrade'));
