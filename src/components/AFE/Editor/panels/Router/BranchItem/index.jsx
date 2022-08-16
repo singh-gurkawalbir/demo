@@ -134,7 +134,6 @@ export default function BranchItem({
 
     return editorRule.branches[position];
   }, shallowEqual);
-
   let infoMessage;
 
   if (!hasRules) {
@@ -187,8 +186,6 @@ export default function BranchItem({
                 })}
               >
                 <EditableText
-                  // force remount when branch name changes as it maintains internal state
-                  key={branchName}
                   allowOverflow
                   disabled={isViewMode}
                   text={branchName}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { fade } from '@material-ui/core/styles';
 import { makeStyles, Input } from '@material-ui/core';
@@ -52,6 +52,10 @@ export default function EditableText({
   const classes = useStyles();
   const [isEdit, setIsEdit] = useState(false);
   const [value, setValue] = useState(text);
+
+  useEffect(() => {
+    setValue(text);
+  }, [text]);
 
   function handleCancel() {
     setIsEdit(false);
