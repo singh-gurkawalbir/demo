@@ -54,6 +54,7 @@ export default function EditableText({
   const [value, setValue] = useState(text);
 
   useEffect(() => {
+    // update internal state value when text is updated from outside the component.
     setValue(text);
   }, [text]);
 
