@@ -7,11 +7,11 @@ import actionTypes from '../../../../../actions/types';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
-import { ACCOUNT_IDS, ACCOUNT_SSO_STATUS, USER_ACCESS_LEVELS } from '../../../../../constants';
+import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../../../../constants';
 import messageStore from '../../../../../utils/messageStore';
 
-export default function RequireAccountSSO({ user }) {
-  const { accountSSORequired, _id: userId, sharedWithUser = {}, accountMFARequired } = user;
+export default function RequireAccountMFA({ user }) {
+  const { accountMFARequired, _id: userId, sharedWithUser = {}, accountSSORequired } = user;
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [switchInProgress, setSwitchInProgress] = useState(false);
@@ -19,7 +19,7 @@ export default function RequireAccountSSO({ user }) {
   const handleSwitch = () => {
     const updatedAshareDoc = {
       ...user,
-      accountSSORequired: !accountSSORequired,
+      accountMFARequired: !accountMFARequired,
       accessLevel: user.accessLevel === USER_ACCESS_LEVELS.TILE ? undefined : user.accessLevel,
     };
 
@@ -35,7 +35,7 @@ export default function RequireAccountSSO({ user }) {
       if (status === COMM_STATES.SUCCESS) {
         const { name, email } = sharedWithUser || {};
         const userName = name || email;
-        const statusMessage = `User ${userName} ${!accountSSORequired ? 'requires' : 'does not require'} SSO to sign in`;
+        const statusMessage = `User ${userName} ${!accountMFARequired ? 'requires' : 'does not require'} MFA to sign in`;
 
         enquesnackbar({
           message: statusMessage,
@@ -46,7 +46,7 @@ export default function RequireAccountSSO({ user }) {
         setSwitchInProgress(false);
       }
     },
-    [enquesnackbar, switchInProgress, accountSSORequired, sharedWithUser]
+    [enquesnackbar, switchInProgress, accountMFARequired, sharedWithUser]
   );
 
   const actionsToMonitor = useMemo(() => ({update: { action: actionTypes.USER.UPDATE, resourceId: userId }}), [userId]);
@@ -57,22 +57,18 @@ export default function RequireAccountSSO({ user }) {
     commStatusHandler,
   });
 
-  const disableSwitch = sharedWithUser.accountSSOLinked === ACCOUNT_SSO_STATUS.LINKED_TO_OTHER_ACCOUNT && !accountSSORequired;
-
   if (userId === ACCOUNT_IDS.OWN) {
     return null;
   }
 
-  if (disableSwitch || accountMFARequired) {
-    const tooltip = disableSwitch ? 'This user is already linked to another account’s SSO' : messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP');
-
+  if (accountSSORequired) {
     return (
-      <Tooltip placement="bottom" title={tooltip}>
+      <Tooltip placement="bottom" title={messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP')}>
         <div>
           <CeligoSwitch
             data-test="ssoRequired"
             disabled
-            checked={accountSSORequired}
+            checked={accountMFARequired}
             onChange={handleSwitch} />
         </div>
       </Tooltip>
@@ -81,8 +77,8 @@ export default function RequireAccountSSO({ user }) {
 
   return (
     <CeligoSwitch
-      data-test="ssoRequired"
-      checked={accountSSORequired}
+      data-test="mfaRequired"
+      checked={accountMFARequired}
       onChange={handleSwitch}
       disabled={switchInProgress}
       />

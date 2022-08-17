@@ -7,6 +7,7 @@ import {
   INTEGRATION_ACCESS_LEVELS,
   EMAIL_REGEX,
 } from '../../../../constants';
+import messageStore from '../../../../utils/messageStore';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import LoadResources from '../../../LoadResources';
@@ -187,14 +188,28 @@ export default function UserForm({
       },
       accountSSORequired: {
         isLoggable: true,
-        type: 'checkbox',
+        type: 'switch',
         id: 'accountSSORequired',
         name: 'accountSSORequired',
-        label: 'Require account Single sign-on(SSO)?',
-        defaultValue: isEditMode && isValidUser ? !!data.accountSSORequired : true,
+        label: 'Require SSO?',
+        tooltip: messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP'),
+        defaultValue: isEditMode && isValidUser ? !!data.accountSSORequired : false,
         visible: !isEditMode && isAccountOwnerOrAdmin && isSSOEnabled,
         // Incase of invite, this field should not be passed if the owner has not enabled SSO
         omitWhenHidden: !isEditMode,
+        disabledWhen: [{ field: 'accountMFARequired', is: [true] }],
+        helpText: 'Check this box to require single sign-on (SSO) authentication for this user.',
+      },
+      accountMFARequired: {
+        isLoggable: true,
+        type: 'switch',
+        id: 'accountMFARequired',
+        name: 'accountMFARequired',
+        label: 'Require MFA?',
+        defaultValue: isEditMode && isValidUser ? !!data.accountSSORequired : false,
+        visible: !isEditMode && isAccountOwnerOrAdmin,
+        disabledWhen: [{ field: 'accountSSORequired', is: [true] }],
+        tooltip: messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP'),
         helpText: 'Check this box to require single sign-on (SSO) authentication for this user.',
       },
     },
@@ -205,6 +220,7 @@ export default function UserForm({
         'integrationsToManage',
         'integrationsToMonitor',
         'accountSSORequired',
+        'accountMFARequired',
       ],
     },
   };

@@ -1,4 +1,4 @@
-import { call, put, takeLatest, select, delay } from 'redux-saga/effects';
+import { call, put, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import { MFA_RESET_ASYNC_KEY, MFA_SETUP_ASYNC_KEY, MFA_DELETE_DEVICE_ASYNC_KEY } from '../../constants';
 import { selectors } from '../../reducers';
@@ -184,22 +184,22 @@ export function* verifyMobileCode({ code }) {
   }
 }
 export function* requestMFASessionInfo() {
-  yield delay(1000);
-  const mockResponse = {
-    mfaRequired: true,
-    mfaSetupRequired: true,
-    mfaVerified: false,
-  };
+  // yield delay(1000);
+  // const mockResponse = {
+  //   mfaRequired: true,
+  //   mfaSetupRequired: true,
+  //   mfaVerified: false,
+  // };
 
   try {
-    // const response = yield call(apiCallWithRetry, {
-    //   path: '/mfa/sessionInfo',
-    //   opts: {
-    //     method: 'GET',
-    //   },
-    // });
+    const response = yield call(apiCallWithRetry, {
+      path: '/mfa/sessionInfo',
+      opts: {
+        method: 'GET',
+      },
+    });
 
-    yield put(actions.mfa.receivedSessionInfo(mockResponse));
+    yield put(actions.mfa.receivedSessionInfo(response));
   } catch (error) {
     return undefined;
   }

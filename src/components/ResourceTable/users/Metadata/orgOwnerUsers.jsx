@@ -2,6 +2,7 @@ import React from 'react';
 import AccessLevel from '../cells/AccessLevel';
 import EnableUser from '../cells/EnableUser';
 import RequireAccountSSO from '../cells/RequireAccountSSO';
+import RequireMFA from '../cells/RequireMFA';
 import ReinviteUser from '../cells/ReinviteUser';
 import UserStatus from '../cells/UserStatus';
 import Notifications from '../cells/Notifications';
@@ -56,7 +57,10 @@ export default {
           return <ReinviteUser user={r} />;
         },
       },
-      ...((integrationId && isUserInErrMgtTwoDotZero) ? [{
+    ];
+
+    if (integrationId && isUserInErrMgtTwoDotZero) {
+      columns.push({
         key: 'notifications',
         heading: 'Notifications',
         align: 'center',
@@ -67,9 +71,12 @@ export default {
           return <Notifications user={r} integrationId={integrationId} />;
         },
 
-      }] : []),
-      ...((!integrationId && isSSOEnabled) ? [
-        {
+      });
+    }
+
+    if (!integrationId) {
+      if (!isSSOEnabled) {
+        columns.push({
           key: 'accountSSOLinked',
           isLoggable: true,
           HeaderValue: () => <HeaderWithHelpText title="Account SSO linked?" helpKey="users.accountSSOLinked" />,
@@ -83,16 +90,22 @@ export default {
             if (!sharedWithUser.accountSSOLinked || sharedWithUser.accountSSOLinked === ACCOUNT_SSO_STATUS.NOT_LINKED) return 'No';
 
             return 'Yes';
-          }},
-        {
+          },
+        }, {
           key: 'requireAccountSSO',
           HeaderValue: () => <HeaderWithHelpText title="Require account SSO?" helpKey="users.requireAccountSSO" />,
           // will this redact enqueue snackbar notification
           Value: ({rowData: r}) => <RequireAccountSSO user={r} />,
           align: 'center',
-        },
-      ] : []),
-    ];
+        });
+      }
+      columns.push({
+        key: 'requireMFA',
+        HeaderValue: () => <HeaderWithHelpText title="Require MFA?" helpKey="users.requireAccountMFA" />,
+        Value: ({rowData: r}) => <RequireMFA user={r} />,
+        align: 'center',
+      });
+    }
 
     return columns;
   },

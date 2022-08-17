@@ -155,6 +155,7 @@ import DynaAmazonmwsType from './DynaAmazonmwsType';
 import DynaMFAMobileCode from './DynaMFAMobileCode';
 import DynaMFASecretKey from './DynaMFASecretKey';
 import DynaConnectionFormView from './DynaConnectionFormView';
+import DynaSwitch from './DynaSwitch';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -321,4 +322,5 @@ export default {
   mfamobilecode: DynaMFAMobileCode,
   mfasecretkey: DynaMFASecretKey,
   connectionFormView: DynaConnectionFormView,
+  switch: DynaSwitch,
 };
