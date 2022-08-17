@@ -206,7 +206,7 @@ export default function UserForm({
         id: 'accountMFARequired',
         name: 'accountMFARequired',
         label: 'Require MFA?',
-        defaultValue: isEditMode && isValidUser ? !!data.accountSSORequired : false,
+        defaultValue: isEditMode && isValidUser ? !!data.accountMFARequired : false,
         visible: !isEditMode && isAccountOwnerOrAdmin,
         disabledWhen: [{ field: 'accountSSORequired', is: [true] }],
         tooltip: messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP'),

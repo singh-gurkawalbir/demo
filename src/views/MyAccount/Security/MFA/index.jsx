@@ -15,7 +15,7 @@ import EditMFAConfiguration from './EditConfiguration';
 import NotificationToaster from '../../../../components/NotificationToaster';
 import { MFA_URL } from '../../../../constants';
 import infoText from '../../../../components/Help/infoText';
-// import AccountSettings from './AccountSettings';
+import AccountSettings from './AccountSettings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -126,15 +126,18 @@ function MFADetails() {
     }
   }, [areUserSettingsLoaded, dispatch]);
 
-  // TODO: Account settings will be added in Phase 2
-
   if (isAccountOwnerOrAdmin && !isMFASetupIncomplete) {
     return (
-      <div className={classes.collapseContainer}>
-        <CollapsableContainer title="My user" forceExpand className={classes.userSettingsContainer}>
-          { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll /> }
-        </CollapsableContainer>
-      </div>
+      <>
+        <div className={classes.collapseContainer}>
+          <CollapsableContainer title="My user" forceExpand className={classes.userSettingsContainer}>
+            { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll /> }
+          </CollapsableContainer>
+        </div>
+        <div className={classes.collapseContainer}>
+          <AccountSettings />
+        </div>
+      </>
     );
   }
 
