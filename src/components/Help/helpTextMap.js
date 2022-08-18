@@ -921,8 +921,8 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.rdbms.redshift.region': 'The default Amazon Redshift region is [us-east-1]. To change the region, select the region for this Redshift account',
   'connection.rdbms.redshift.aws.accessKeyId': "Many of Amazon's APIs require an access key, and this field stores the 'id' for the access key that you want this connection to use.  Please check the AWS guides if you need more info about access keys and how to generate and/or find them in your AWS account.",
   'connection.rdbms.redshift.aws.secretAccessKey': 'When you create a new access key in your Amazon Redshift account, AWS will display both the access key id and the secret access key.  The secret access key will only be available once, and you should store it immediately in integrator.io (i.e. in this field).  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your secret access key safe.',
-  'connection.rdbms.redshift.user': 'IAM Database user. Learn more on how to create database user <a href="https://docs.aws.amazon.com/redshift/latest/mgmt/configuring-connections.html" target="_blank">here</a>.',
-  'connection.rdbms.redshift.database': 'redshift database that you want to connect.',
+  'connection.rdbms.redshift.user': 'IAM Database user. Learn more on how to create database user <a href="https://docs.aws.amazon.com/redshift/latest/mgmt/generating-iam-credentials-user-and-groups.html" target="_blank">here</a>.',
+  'connection.rdbms.redshift.database': 'Redshift database that you want to connect.',
   'connection.rdbms.redshift.clusterIdentifier': 'The name of the Redshift Cluster. <a href="https://docs.aws.amazon.com/redshift/latest/mgmt/configuring-connections.html" target="_blank">Learn more</a>.',
   'connection.rdbms.options':
 'Define additional configurations for the database connection that is available according to the database documentation. For example, you can configure the connection timeout if the SQL server you are trying to connect to is slow (default connection timeout for MS SQL server is 15000ms).',
