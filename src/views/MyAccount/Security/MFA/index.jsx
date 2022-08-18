@@ -12,7 +12,7 @@ import actions from '../../../../actions';
 import MFASetup from './Setup';
 import useNotifySetupSuccess from './useNotifySetupSuccess';
 import EditMFAConfiguration from './EditConfiguration';
-import infoText from '../../infoText';
+import infoText from '../../../../components/Help/infoText';
 // import AccountSettings from './AccountSettings';
 
 const useStyles = makeStyles(theme => ({
