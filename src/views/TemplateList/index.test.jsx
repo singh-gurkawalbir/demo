@@ -191,7 +191,7 @@ describe('Template List', () => {
     userEvent.click(publishButtonNode);
     await waitFor(() => expect(confirmPublishNode).not.toBeInTheDocument());
   }, 30000);
-  test('Should able to test the Template List delete action button by having temlates', async () => {
+  test('Should able to test the Template List delete action button by having templates', async () => {
     const templates = [
       {
         _id: '6013fcd90f0ac62d08bb6dae',
@@ -257,7 +257,7 @@ describe('Template List', () => {
     userEvent.click(downloadTemplateZipMenuItemNode);
     expect(mockDispatchFn).toHaveBeenCalledTimes(4);
   });
-  test('Should able to test the Template List upload template zip action button by having temlates', async () => {
+  test('Should able to test the Template List upload template zip action button by having templates', async () => {
     const templates = [
       {
         _id: '6013fcd90f0ac62d08bb6dae',
@@ -294,7 +294,7 @@ describe('Template List', () => {
     expect(selectTemplateZipButtonNode).toBeInTheDocument();
     userEvent.click(selectTemplateZipButtonNode);
   });
-  test('Should able to test the Template List edit template action button by having temlates and save', async () => {
+  test('Should able to test the Template List edit template action button by having templates and save', async () => {
     const templates = [
       {
         _id: '6013fcd90f0ac62d08bb6dae',
@@ -339,7 +339,7 @@ describe('Template List', () => {
 
     expect(savingTextNode).toBeInTheDocument();
   }, 30000);
-  test('Should able to test the Template List edit template action button by having temlates and save and close', async () => {
+  test('Should able to test the Template List edit template action button by having templates and save and close', async () => {
     const templates = [
       {
         _id: '6013fcd90f0ac62d08bb6dae',
