@@ -381,4 +381,37 @@ describe('Template List', () => {
     expect(mockDispatchFn).toHaveBeenCalledTimes(21);
     expect(editTemplateMenuItemNode).not.toBeInTheDocument();
   });
+  test('Should able to test the Template List search by giving wrong template name input', async () => {
+    const templates = [
+      {
+        _id: '6013fcd90f0ac62d08bb6dae',
+        name: 'concur',
+        lastModified: '2021-01-29T12:17:29.248Z',
+        applications: [
+          'concurexpense',
+        ],
+        free: false,
+      },
+    ];
+    const props = {
+      location: {
+        pathname: '/templates',
+      },
+    };
+
+    jest.spyOn(utils, 'generateNewId').mockReturnValue('somegeneratedID');
+    store(templates);
+    await initTemplateList(props);
+    const tableNode = screen.getByRole('table');
+
+    expect(tableNode).toBeInTheDocument();
+    const searchNode = screen.getByRole('textbox', {name: 'search'});
+
+    expect(searchNode).toBeInTheDocument();
+    userEvent.type(searchNode, 'test');
+    await waitFor(() => expect(tableNode).not.toBeInTheDocument());
+    const paragraphNode = screen.getByText('Your search didn’t return any matching results. Try expanding your search criteria.');
+
+    expect(paragraphNode).toBeInTheDocument();
+  });
 });
