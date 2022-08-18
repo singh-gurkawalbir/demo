@@ -474,7 +474,7 @@ describe('FlowBuilder hooks UI tests', () => {
   });
   describe('useHandleRouterClick hook test', () => {
     test('should dispatch call and history push in the hook', () => {
-      const routers = [{id: 'routerId', data: 'someData'}];
+      const routers = [{id: 'routerId', data: 'someData', routeRecordsTo: '/someLocation'}];
 
       jest.spyOn(flowcontext, 'useFlowContext').mockReturnValue({flow: {_integrationId: 'integrationId', routers}, flowId: 'someFlowId'});
       const history = createMemoryHistory({ initialEntries: ['/someinitialURL']});
@@ -496,10 +496,14 @@ describe('FlowBuilder hooks UI tests', () => {
             flowId: 'someFlowId',
             resourceType: 'flows',
             resourceId: 'routerId',
-            router: { id: 'routerId', data: 'someData' },
+            router: {
+              id: 'routerId',
+              data: 'someData',
+              routeRecordsTo: '/someLocation',
+            },
             fieldId: 'router',
             routerIndex: 0,
-            branchNamingIndex: 0,
+            branchNamingIndex: 1,
             stage: 'router',
             integrationId: 'integrationId',
           },

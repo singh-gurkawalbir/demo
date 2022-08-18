@@ -191,7 +191,6 @@ describe('FlowBuilder UI tests', () => {
         </Route>
       </MemoryRouter>, {initialStore});
 
-    expect(screen.getByText('Loadresource integrationId: childID')).toBeInTheDocument();
     await waitFor(() => expect(screen.queryByText('Redirection')).toBeInTheDocument());
     await waitFor(() => expect(screen.queryByText('FlowBuilderBody')).toBeInTheDocument());
     expect(screen.getByText('ResourceDrawer flowId: flowId integrationId: 5ff579d745ceef7dcd797c16')).toBeInTheDocument();
@@ -216,7 +215,6 @@ describe('FlowBuilder UI tests', () => {
         </Route>
       </MemoryRouter>, {initialStore});
 
-    expect(screen.getByText('Loadresource integrationId: 5ff579d745ceef7dcd797c16')).toBeInTheDocument();
     await waitFor(() => expect(screen.queryByText('Redirection')).toBeInTheDocument());
     await waitFor(() => expect(screen.queryByText('FlowBuilderBody')).toBeInTheDocument());
     expect(screen.getByText('ResourceDrawer flowId: flowId integrationId: 5ff579d745ceef7dcd797c16')).toBeInTheDocument();
