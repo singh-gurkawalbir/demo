@@ -23,6 +23,7 @@ export default function CeligoTable({
   className,
   size,
   actionProps = emptyObj,
+  additionalOptions,
 }) {
   // if no useColumns hook no means to generate table
   if (!useColumns) { return null; }
@@ -51,6 +52,7 @@ export default function CeligoTable({
             useRowActions={useRowActions}
             filterKey={filterKey}
             onSelectChange={onSelectChange}
+            additionalOptions={additionalOptions}
           />
         </Table>
       </TableContextWrapper>

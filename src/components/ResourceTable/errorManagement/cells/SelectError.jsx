@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import Checkbox from '@material-ui/core/Checkbox';
+import { Checkbox, Tooltip } from '@material-ui/core';
 import CheckboxUnselectedIcon from '../../../icons/CheckboxUnselectedIcon';
 import CheckboxSelectedIcon from '../../../icons/CheckboxSelectedIcon';
 import actions from '../../../../actions';
@@ -34,22 +34,24 @@ export default function SelectError({
 
   return (
     useMemo(() => (
-      <Checkbox
-        icon={(
-          <span>
-            <CheckboxUnselectedIcon />
-          </span>
-      )}
-        checkedIcon={(
-          <span>
-            <CheckboxSelectedIcon />
-          </span>
-      )}
-        onChange={handleChange}
-        checked={error.selected || false}
-        disabled={isDisabled}
-        color="primary"
-    />
+      <Tooltip title="Selected errors are added to a batch, on which you can perform bulk retry and resolve actions">
+        <Checkbox
+          icon={(
+            <span>
+              <CheckboxUnselectedIcon />
+            </span>
+          )}
+          checkedIcon={(
+            <span>
+              <CheckboxSelectedIcon />
+            </span>
+          )}
+          onChange={handleChange}
+          checked={error.selected || false}
+          disabled={isDisabled}
+          color="primary"
+        />
+      </Tooltip>
     ), [error.selected, handleChange, isDisabled])
   );
 }

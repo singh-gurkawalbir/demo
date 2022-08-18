@@ -85,6 +85,7 @@ export default function TableBodyContent({
   useRowActions,
   filterKey,
   onSelectChange,
+  additionalOptions,
 }
 ) {
   const classes = useStyles();
@@ -120,6 +121,7 @@ export default function TableBodyContent({
               rowData={rowData}
               filterKey={filterKey}
               onSelectChange={onSelectChange}
+              tooltip={additionalOptions?.selectFieldTooltip}
             />
 
             <AllContentCells
@@ -132,6 +134,7 @@ export default function TableBodyContent({
                 setSelectedComponent={setSelectedComponent}
                 useRowActions={useRowActions}
                 rowData={rowData}
+                tooltip={additionalOptions?.actionMenuTooltip}
               />
             </TableCell>
             )}
