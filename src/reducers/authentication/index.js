@@ -17,7 +17,7 @@ export default function (state = defaultState, action) {
     };
   }
 
-  const {type, showAuthError, mfaError} = action;
+  const {type, showAuthError, mfaError, mfaAuthInfo} = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -48,6 +48,7 @@ export default function (state = defaultState, action) {
 
       case actionTypes.AUTH.MFA_REQUIRED:
         draft.mfaRequired = true;
+        draft.mfaAuthInfo = mfaAuthInfo;
         delete draft.authTimestamp;
         delete draft.warning;
         draft.commStatus = COMM_STATES.SUCCESS;
@@ -102,6 +103,7 @@ export default function (state = defaultState, action) {
       case actionTypes.AUTH.MFA_VERIFY.SUCCESS:
         if (!draft.mfaAuth) break;
         delete draft.mfaRequired;
+        delete draft.mfaAuthInfo;
         draft.mfaAuth = { status: 'success' };
         break;
       default:
@@ -132,6 +134,7 @@ selectors.showSessionStatus = state => {
 };
 
 selectors.isMFAAuthRequired = state => !!state?.mfaRequired;
+selectors.mfaAuthInfo = state => state?.mfaAuthInfo || {};
 selectors.isMFAAuthRequested = state => {
   if (!state?.mfaAuth) return false;
 

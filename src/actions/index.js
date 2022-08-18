@@ -98,7 +98,7 @@ const auth = {
   linkWithGoogle: returnTo =>
     action(actionTypes.AUTH.LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH.SUCCESSFUL),
-  mfaRequired: () => action(actionTypes.AUTH.MFA_REQUIRED),
+  mfaRequired: mfaAuthInfo => action(actionTypes.AUTH.MFA_REQUIRED, { mfaAuthInfo }),
   mfaVerify: {
     request: payload => action(actionTypes.AUTH.MFA_VERIFY.REQUEST, { payload }),
     failed: mfaError => action(actionTypes.AUTH.MFA_VERIFY.FAILED, { mfaError }),
