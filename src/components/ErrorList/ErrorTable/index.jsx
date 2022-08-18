@@ -1,5 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import { dispatch } from 'd3';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
@@ -7,6 +8,7 @@ import { selectors } from '../../../reducers';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
 import ResourceTable from '../../ResourceTable';
 import Spinner from '../../Spinner';
+import ErrorDetailsPanel from './ErrorDetailsPanel';
 import ErrorTableFilters from './ErrorTableFilters';
 import FetchErrorsHook from './FetchErrorsHook';
 
@@ -19,12 +21,33 @@ const useStyles = makeStyles({
     '& th': {
       wordBreak: 'normal',
     },
+    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'row',
   },
   errorTableWrapper: {
     position: 'relative',
     height: '100%',
   },
-
+  errorList: {
+    display: 'flex',
+    flexDirection: 'row',
+    // alignItems: 'center',
+  },
+  errorTable: {
+    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'row',
+    // flexShrink: 0,
+    // flexBasis: 50,
+  },
+  errorDetailsPanel: {
+    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'row',
+    // flexShrink: 0,
+    // flexBasis: 50,
+  },
 });
 
 export const useIsFreshLoadData = errorConfig => {
@@ -87,12 +110,20 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
             isResolved={isResolved}
             filterKey={filterKey}
           />
-          <ResourceTable
-            resources={errorsInCurrPage}
-            className={classes.errorDetailsTable}
-            resourceType={filterKey}
-            actionProps={actionProps}
+          <div className={classes.errorList}>
+            <ResourceTable
+              resources={errorsInCurrPage}
+              className={classes.errorDetailsTable}
+              resourceType={filterKey}
+              actionProps={actionProps}
           />
+            <ErrorDetailsPanel
+              flowId={flowId}
+              resourceId={resourceId}
+              isResolved={isResolved}
+              className={classes.errorDetailsPanel}
+          />
+          </div>
         </>
       )}
     </div>
