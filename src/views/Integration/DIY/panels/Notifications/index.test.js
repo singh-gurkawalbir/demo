@@ -13,7 +13,6 @@ jest.mock('../../../../../components/LoadResources', () => ({
   ...jest.requireActual('../../../../../components/LoadResources'),
   default: props => <div>{props.children}</div>,
 }));
-const infoText = 'Get notified via email if your flow encounters an error, or if a connection goes offline. These notifications will only be sent to you. If any other users in your account wish to receive the same notifications, then they will need to subscribe from their account.';
 
 const flows = [
   {
@@ -216,7 +215,7 @@ describe('NotificationsSection UI tests', () => {
 
     return mockDispatch;
   }
-  test('should test when store does not has intgeration', () => {
+  test('should test when store does not has integration', () => {
     renderWithProviders(<MemoryRouter><NotificationsSection integrationId="5ff579d745ceef7dcd797c15" /> </MemoryRouter>);
     expect(screen.getByText('Notify me on job error')).toBeInTheDocument();
     expect(screen.getByText('Notify me when connection goes offline')).toBeInTheDocument();
@@ -270,7 +269,7 @@ describe('NotificationsSection UI tests', () => {
     );
     screen.debug(null, Infinity);
   });
-  test('should test for collections notfication options', () => {
+  test('should test for collections notification options', () => {
     const mockDispatch = initStoreAndRender(true);
 
     userEvent.click(screen.getByText('Please select'));
@@ -290,10 +289,5 @@ describe('NotificationsSection UI tests', () => {
         integrationId: '5ff579d745ceef7dcd797c15',
       }
     );
-  });
-  test('should test info text', () => {
-    initStoreAndRender(true);
-    userEvent.click(screen.getAllByRole('button')[0]);
-    expect(screen.getByText(infoText)).toBeInTheDocument();
   });
 });

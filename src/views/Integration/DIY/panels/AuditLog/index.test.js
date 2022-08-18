@@ -2,7 +2,6 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import userEvent from '@testing-library/user-event';
 import { renderWithProviders} from '../../../../../test/test-utils';
 import AuditLogSection from '.';
 
@@ -26,8 +25,6 @@ jest.mock('../../../../../components/AuditLog', () => ({
   ),
 }));
 
-const infoText = 'Keep track of changes to your integration, enabling you to track down problems based on changes to your integration or its flows. Know exactly who made the change, what the change was, and when it happened.';
-
 describe('AuditLogSection UI tests', () => {
   beforeEach(() => {
     jest.resetAllMocks();
@@ -50,13 +47,6 @@ describe('AuditLogSection UI tests', () => {
     expect(screen.getByText('Audit log')).toBeInTheDocument();
     expect(utils.container.textContent).toBe('Audit logAuditLog called with resourceId : somechildIdintegrationId : somechildIdchildId : somechildId');
   });
-  test('should click on info text buton', () => {
-    renderWithProviders(<MemoryRouter><AuditLogSection integrationId="someintegrationId" childId="somechildId" /></MemoryRouter>);
-
-    expect(screen.getByText('Audit log')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
-    expect(screen.getByText(infoText)).toBeInTheDocument();
-  });
   test('should test use effect dispatch call', () => {
     renderWithProviders(<MemoryRouter><AuditLogSection integrationId="someintegrationId" childId="somechildId" /></MemoryRouter>);
     expect(mockDispatch).toHaveBeenCalledWith(
@@ -68,7 +58,7 @@ describe('AuditLogSection UI tests', () => {
         integrationId: undefined,
       });
   });
-  test('should test dispatch call when STANDALONE intgerations is passes', () => {
+  test('should test dispatch call when STANDALONE integration is provided', () => {
     renderWithProviders(<MemoryRouter><AuditLogSection integrationId="none" /></MemoryRouter>);
     expect(mockDispatch).not.toHaveBeenCalled();
   });
