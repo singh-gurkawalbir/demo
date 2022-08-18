@@ -47,6 +47,12 @@ export function* setupMFA({ mfaConfig }) {
 
     yield put(actions.mfa.receivedUserSettings(response));
     yield put(actions.mfa.addSetupContext(context));
+    const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
+
+    if (isMFASetupIncomplete) {
+      // If mfa setup is incomplete, fetch latest session info once mfa setup is successful to update UI layout for the user
+      yield put(actions.mfa.requestSessionInfo());
+    }
     yield put(actions.asyncTask.success(MFA_SETUP_ASYNC_KEY));
   } catch (error) {
     yield put(actions.asyncTask.failed(MFA_SETUP_ASYNC_KEY));
@@ -161,13 +167,6 @@ export function* verifyMobileCode({ code }) {
   }
 }
 export function* requestMFASessionInfo() {
-  // yield delay(1000);
-  // const mockResponse = {
-  //   mfaRequired: true,
-  //   mfaSetupRequired: true,
-  //   mfaVerified: false,
-  // };
-
   try {
     const response = yield call(apiCallWithRetry, {
       path: '/mfa/sessionInfo',
@@ -189,7 +188,6 @@ export default [
   takeLatest(actionTypes.MFA.ACCOUNT_SETTINGS.UPDATE, updateAccountSettings),
   takeLatest(actionTypes.MFA.SECRET_CODE.REQUEST, requestSecretCode),
   takeLatest(actionTypes.MFA.RESET, resetMFA),
-  // takeLatest(actionTypes.MFA.UPDATE_DEVICE, updateTrustedDevice),
   takeLatest(actionTypes.MFA.DELETE_DEVICE, deleteTrustedDevice),
   takeLatest(actionTypes.MFA.MOBILE_CODE.VERIFY, verifyMobileCode),
   takeLatest(actionTypes.MFA.SESSION_INFO.REQUEST, requestMFASessionInfo),
