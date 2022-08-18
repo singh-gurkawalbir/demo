@@ -139,6 +139,7 @@ export default function Pagination(props) {
           onClick={handlePrevPage}
           className={classes.arrowBtn}
           disabled={page === 0}
+          data-testid="prevPage"
           startIcon={<ArrowLeftIcon />} />
         <span className={classes.label}>{label}</span>
         {loading ? (
@@ -152,6 +153,7 @@ export default function Pagination(props) {
           <TextButton
             onClick={handleNextPage}
             className={clsx(classes.arrowBtn, classes.arrowBtnRight)}
+            data-testid="nextPage"
             disabled={disableNextPage}
             startIcon={<ArrowRightIcon />} />
         )}
