@@ -103,7 +103,7 @@ const integration = [
 ];
 
 describe('GeneralPanel UI tests', () => {
-  test('should the form generated', () => {
+  test('should test the form generated', () => {
     const initialStore = getCreatedStore();
 
     initialStore.getState().data.resources.integrations = integration;
@@ -120,7 +120,7 @@ describe('GeneralPanel UI tests', () => {
     userEvent.click(option1);
     expect(screen.getByText('Option2')).toBeInTheDocument();
   });
-  test('should when form sattus is loading', () => {
+  test('should test when form status is loading', () => {
     const initialStore = getCreatedStore();
     const mockDispatch = jest.fn();
 

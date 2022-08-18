@@ -84,7 +84,7 @@ describe('ConfigureSettings UI tests', () => {
     expect(screen.getByText('SomeOption2')).toBeInTheDocument();
     expect(screen.getByText('Save')).toBeInTheDocument();
   });
-  test('should test when thqewdee form status is loading ', () => {
+  test('should test when the form status is loading ', () => {
     const initialStore = getCreatedStore();
     const mockDispatch = jest.fn();
 

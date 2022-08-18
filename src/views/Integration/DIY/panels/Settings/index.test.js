@@ -176,7 +176,7 @@ describe('SettingsForm UI tests', () => {
     return {utils, mockDispatch};
   }
 
-  test('should test when no paramter is provided', () => {
+  test('should test when no parameter is provided', () => {
     const {utils} = renderWithProviders(
       <MemoryRouter>
         <Route>
@@ -300,7 +300,7 @@ describe('SettingsForm UI tests', () => {
 
     expect(message).toBe('Sub-form invalid.');
   });
-  test('should test when non json value is passes in validationHandler function', () => {
+  test('should test when non json value is passed in validationHandler function', () => {
     jest.spyOn(utils, 'generateNewId').mockReturnValue('someId');
 
     const initialStore = getCreatedStore();
