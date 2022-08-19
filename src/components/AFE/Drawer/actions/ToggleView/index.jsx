@@ -3,8 +3,8 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles, MenuItem, Select } from '@material-ui/core';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
-import ViewRowIcon from '../../../../icons/VerticalLayoutIcon';
-import ViewAssistantRightIcon from '../../../../icons/LayoutAssistantRightIcon';
+import ViewWithRowsIcon from '../../../../icons/ViewWithRows';
+import ViewWithRowsPanelIcon from '../../../../icons/ViewWithRowsPanel';
 
 const useStyles = makeStyles(theme => ({
   toggleViewSelect: {
@@ -24,8 +24,8 @@ const useStyles = makeStyles(theme => ({
 
 const toggleOptions = {
   openErrorViews: [
-    { value: 'split', Icon: <ViewAssistantRightIcon /> },
-    { value: 'drawer', Icon: <ViewRowIcon /> },
+    { value: 'split', Icon: <ViewWithRowsPanelIcon /> },
+    { value: 'drawer', Icon: <ViewWithRowsIcon /> },
   ]};
 
 export default function ToggleViewSelect({ variant, filterKey, defaultView = '' }) {
@@ -41,6 +41,9 @@ export default function ToggleViewSelect({ variant, filterKey, defaultView = '' 
     dispatch(actions.patchFilter(filterKey, {
       view: event.target.value,
     }));
+    dispatch(
+      actions.analytics.gainsight.trackEvent('ERROR_MANAGEMENT_VIEW_CHANGED')
+    );
   };
 
   return (

@@ -79,13 +79,14 @@ export default function TableBodyContent({
   data,
   onRowOver,
   onRowOut,
+  onRowClick,
   selectableRows,
   isSelectableRow,
   useColumns,
   useRowActions,
   filterKey,
   onSelectChange,
-  additionalOptions,
+  additionalConfigs,
 }
 ) {
   const classes = useStyles();
@@ -113,7 +114,9 @@ export default function TableBodyContent({
             rowData={rowData}
             onRowOver={onRowOver}
             onRowOut={onRowOut}
+            onRowClick={onRowClick}
             className={classes.row}
+            additionalConfigs={additionalConfigs}
         >
             <SelectableCheckBoxCell
               selectableRows={selectableRows}
@@ -121,7 +124,7 @@ export default function TableBodyContent({
               rowData={rowData}
               filterKey={filterKey}
               onSelectChange={onSelectChange}
-              tooltip={additionalOptions?.selectFieldTooltip}
+              tooltip={additionalConfigs?.selectFieldTooltip}
             />
 
             <AllContentCells
@@ -134,7 +137,7 @@ export default function TableBodyContent({
                 setSelectedComponent={setSelectedComponent}
                 useRowActions={useRowActions}
                 rowData={rowData}
-                tooltip={additionalOptions?.actionMenuTooltip}
+                tooltip={additionalConfigs?.actionMenuTooltip}
               />
             </TableCell>
             )}
