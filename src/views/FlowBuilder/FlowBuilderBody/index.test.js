@@ -152,12 +152,6 @@ describe('FlowBuilderBody UI tests', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('iyvwewv2', () => {
-    const props = {flowId: '62c6f122a2f4a703c3dee3d0' };
-
-    initFlowBuilderBody(props);
-    screen.debug();
-  });
   test('should pass the initial render with all the available operations', () => {
     const props = {flowId: '62c6f122a2f4a703c3dee3d0' };
 
