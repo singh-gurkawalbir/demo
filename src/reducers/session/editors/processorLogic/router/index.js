@@ -162,7 +162,7 @@ export default {
       routeRecordsTo: rule.routeRecordsTo,
       branches: rule.branches,
       script: {
-        _scriptId: scriptId,
+        _scriptId: scriptId || undefined,
         function: entryFunction,
       },
     };
