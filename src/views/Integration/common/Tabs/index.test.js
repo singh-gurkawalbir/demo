@@ -6,16 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../../test/test-utils';
 import IntegrationTabs from '.';
 import { getCreatedStore } from '../../../../store';
-
-const defaultMatch = {
-  isExact: true,
-  url: '/integrations/none/flows',
-  path: '/integrations/:integrationId([a-f\\d]{24}|none)/:tab',
-  params: {
-    integrationId: 'none',
-    tab: 'flows',
-  },
-};
+import { runServer } from '../../../../test/api/server';
 
 let mockMatch;
 
@@ -65,8 +56,18 @@ async function initIntegrationTabs(props = {}, {initialStore, renderFun} = {}) {
 }
 
 describe('test suite for IntegrationTabs', () => {
+  runServer();
+
   beforeEach(() => {
-    mockMatch = JSON.parse(JSON.stringify(defaultMatch));
+    mockMatch = {
+      isExact: true,
+      url: '/integrations/none/flows',
+      path: '/integrations/:integrationId([a-f\\d]{24}|none)/:tab',
+      params: {
+        integrationId: 'none',
+        tab: 'flows',
+      },
+    };
   });
 
   test('should be able to render the list of available tabs and default panel', async () => {
