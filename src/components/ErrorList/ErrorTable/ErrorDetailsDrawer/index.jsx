@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   useRouteMatch,
   useHistory,
   matchPath,
   useLocation,
 } from 'react-router-dom';
+import actions from '../../../../actions';
 import RightDrawer from '../../../drawer/Right';
 import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import ErrorDetails from '../../ErrorDetails';
@@ -13,6 +14,7 @@ import { selectors } from '../../../../reducers';
 import useFormOnCancelContext from '../../../FormOnCancelContext';
 import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const emptySet = [];
 
@@ -20,6 +22,8 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   const match = useRouteMatch();
   const { pathname } = useLocation();
   const history = useHistory();
+  const dispatch = useDispatch();
+  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
   const { mode } = matchPath(pathname, {
     path: buildDrawerUrl({
@@ -61,8 +65,11 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
     }
   }, [allErrors.length, history, match.isExact, match.url, showDrawer]);
   const handleClose = useCallback(() => {
+    dispatch(actions.patchFilter(filterKey, {
+      activeErrorId: '',
+    }));
     history.goBack();
-  }, [history]);
+  }, [dispatch, filterKey, history]);
 
   const handleTabChange = useCallback((errorId, newValue) => {
     history.replace(buildDrawerUrl({

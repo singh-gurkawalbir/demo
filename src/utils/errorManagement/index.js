@@ -5,6 +5,7 @@ export const MAX_ERRORS_TO_RETRY_OR_RESOLVE = 1000;
 
 export const FILTER_KEYS = {
   OPEN: 'openErrors',
+  SPLIT_VIEW_OPEN: 'splitViewOpenErrors',
   RESOLVED: 'resolvedErrors',
   RUN_HISTORY: 'runHistory',
 };
