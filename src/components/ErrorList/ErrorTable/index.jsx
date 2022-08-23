@@ -70,11 +70,17 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
   const errorFilter = useSelector(
     state => selectors.filter(state, FILTER_KEYS.OPEN), shallowEqual
   );
+  const hasErrors = useSelector(
+    state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
+  );
   const keydownListener = useCallback(event => {
+    event?.stopPropagation();
     if (errorFilter.view === 'drawer' && filterKey !== FILTER_KEYS.OPEN) {
       return;
     }
-    if (!errorFilter.currentNavItem) {
+    const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.currentNavItem);
+
+    if (!errorFilter.currentNavItem && currIndex < 0) {
       dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
         currentNavItem: errorsInCurrPage[0].errorId,
       }));
@@ -123,6 +129,17 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
     return () => window.removeEventListener('keydown', keydownListener, true);
   }, [keydownListener, errorFilter.view, filterKey]);
 
+  useEffect(() => {
+    const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.activeErrorId);
+
+    if (currIndex < 0 && !errorFilter.view && errorFilter.view === 'split') {
+      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+        activeErrorId: errorsInCurrPage[0]?.errorId,
+        currentNavItem: errorsInCurrPage[0]?.errorId,
+      }));
+    }
+  }, [errorsInCurrPage, errorFilter.activeErrorId, dispatch, errorFilter.view]);
+
   // TODO @Raghu: Refactor the pagination related code
   return (
     <div className={clsx(classes.errorTableWrapper)}>
@@ -146,7 +163,7 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
             filterKey={filterKey}
           />
           {
-            errorsInCurrPage.length > 0 ? (
+            hasErrors ? (
               <ResourceTable
                 resources={errorsInCurrPage}
                 className={classes.errorDetailsTable}

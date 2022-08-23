@@ -24,6 +24,7 @@ async function initDataRow({ props, children = (<th>Item1</th>) } = {}) {
 }
 
 describe('DataRow component Test cases', () => {
+  window.HTMLElement.prototype.scrollIntoView = jest.fn();
   runServer();
   test('should pass the intial render with default values', async () => {
     const { utils } = await initDataRow();
