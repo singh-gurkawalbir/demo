@@ -566,7 +566,12 @@ export const applicationsPlaceHolderText = () => {
 
 export const connectorsList = () => {
   const connectors = [];
-  const applications = applicationsList();
+  let applications = applicationsList();
+  const publishedConnectors = getPublishedHttpConnectors();
+
+  applications = applications.filter(app =>
+    !publishedConnectors?.find(pc => pc.name === app.name)
+  );
 
   applications.forEach(asst => {
     if (
@@ -581,6 +586,16 @@ export const connectorsList = () => {
       });
     }
   });
+
+  publishedConnectors?.forEach(pc => {
+    connectors.push({
+      value: pc.legacyId || pc.name,
+      label: pc.name,
+      icon: pc.legacyId || pc.name,
+      type: 'http',
+    });
+  });
+
   connectors.sort(stringCompare('label'));
 
   return connectors;
