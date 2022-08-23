@@ -47,14 +47,16 @@ describe('DataRow component Test cases', () => {
     expect(onRowOver).toBeCalledTimes(1);
   });
 
-  test('should pass the intial render with onRowOut', async () => {
+  test('should pass the intial render with onRowOut, onRowOver, onRowClick', async () => {
     const onRowOut = jest.fn();
     const onRowOver = jest.fn();
+    const onRowClick = jest.fn();
 
     await initDataRow({
       props: {
         onRowOut,
         onRowOver,
+        onRowClick,
       },
     });
     const rowItem1 = screen.getByRole('columnheader', {name: 'Item1'});
@@ -68,6 +70,25 @@ describe('DataRow component Test cases', () => {
     userEvent.unhover(rowItem1);
     expect(onRowOut).toBeCalledTimes(1);
     expect(onRowOver).toBeCalledTimes(1);
+
+    userEvent.click(rowItem1);
+    expect(onRowClick).toBeCalledTimes(1);
+  });
+
+  test('should pass the intial render without onRowClick and additionalConfigs', async () => {
+    await initDataRow({
+      props: {
+        additionalConfigs: {
+          IsActiveRow: () => true,
+          IsThisCurrentNavItem: () => true,
+        },
+      },
+    });
+    const rowItem1 = screen.getByRole('columnheader', {name: 'Item1'});
+
+    expect(rowItem1).toBeInTheDocument();
+    userEvent.click(rowItem1);
+    expect(rowItem1).toBeInTheDocument();
   });
 
   test('should pass the intial render with custom classname', async () => {

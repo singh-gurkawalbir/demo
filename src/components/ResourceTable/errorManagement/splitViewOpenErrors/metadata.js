@@ -25,10 +25,18 @@ export default {
 
       return errorFilter?.activeErrorId === rowData.errorId;
     },
+    IsThisCurrentNavItem: ({ rowData }) => {
+      const errorFilter = useSelector(
+        state => selectors.filter(state, FILTER_KEYS.OPEN), shallowEqual
+      );
+
+      return errorFilter?.currentNavItem === rowData.errorId;
+    },
   },
   onRowClick: ({ rowData, dispatch }) => {
     dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
       activeErrorId: rowData.errorId,
+      currentNavItem: rowData.errorId,
     }));
   },
   useColumns: () => [

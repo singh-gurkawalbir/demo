@@ -8,6 +8,8 @@ import splitViewOpenErrors from './metadata';
 import { runServer } from '../../../../test/api/server';
 import { renderWithProviders } from '../../../../test/test-utils';
 import { TableContextWrapper } from '../../../CeligoTable/TableContext';
+import actions from '../../../../actions';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const dispatch = jest.fn();
 
@@ -51,8 +53,12 @@ async function initDownloadErrors() {
       },
     });
     const isActive = actions.additionalConfigs.IsActiveRow({ rowData: {}});
+    const isNavItem = actions.additionalConfigs.IsThisCurrentNavItem({ rowData: {}});
     const handleButton = () => {
-      actions.onRowClick({dispatch, rowData: {}});
+      actions.onRowClick({dispatch,
+        rowData: {
+          errorId: 'error_id',
+        }});
     };
 
     return (
@@ -89,6 +95,7 @@ async function initDownloadErrors() {
         </div>
         <button type="button" onClick={handleButton}>mock onRowClick</button>
         <span>isActive: {isActive}</span>
+        <span>isNavItem: {isNavItem}</span>
       </>
     );
   };
@@ -111,6 +118,9 @@ describe('ActionMenu component Test cases', () => {
 
     expect(buttonRef).toBeInTheDocument();
     userEvent.click(buttonRef);
-    expect(dispatch).toBeCalled();
+    expect(dispatch).toBeCalledWith(actions.patchFilter(FILTER_KEYS.OPEN, {
+      activeErrorId: 'error_id',
+      currentNavItem: 'error_id',
+    }));
   });
 });

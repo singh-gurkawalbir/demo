@@ -12,9 +12,18 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  rowClicked: {
-    borderLeft: `6px solid ${theme.palette.primary.main}`,
-    backgroundColor: '#b3e9ff',
+  rowSelected: {
+    '&$selected': {
+      borderLeft: `6px solid ${theme.palette.primary.main}`,
+      backgroundColor: '#A9D1F5',
+      '&:hover': {
+        backgroundColor: '#A9D1F5',
+      },
+    },
+  },
+  selected: {},
+  currentNavItem: {
+    backgroundColor: '#F0F5F9',
   },
 }));
 
@@ -22,6 +31,7 @@ export default function DataRow({ children, rowData, onRowOver, onRowOut, classN
   const classes = useStyles();
   const dispatch = useDispatch();
   const isActiveRow = additionalConfigs?.IsActiveRow && additionalConfigs.IsActiveRow({ rowData });
+  const isCurrentNavItem = additionalConfigs?.IsThisCurrentNavItem && additionalConfigs?.IsThisCurrentNavItem({ rowData });
 
   const handleMouseOver = useCallback(() => {
     onRowOver(rowData, dispatch);
@@ -37,15 +47,21 @@ export default function DataRow({ children, rowData, onRowOver, onRowOut, classN
 
   return (
     <TableRow
-      hover
+      hover={!isActiveRow}
       className={clsx(classes.tableRow, className, {
-        [classes.rowClicked]: isActiveRow,
+        [classes.currentNavItem]: isCurrentNavItem,
       })}
+      classes={{
+        root: classes.rowSelected,
+        selected: classes.selected,
+      }}
       onMouseOver={onRowOver && handleMouseOver}
       onFocus={onRowOver && handleMouseOver}
       onMouseOut={onRowOut && handleMouseOut}
+      onBlur={onRowOut && handleMouseOut}
       onClick={onRowClick && handleClick}
-      onBlur={onRowOut && handleMouseOut}>
+      selected={isActiveRow}
+    >
       {children}
     </TableRow>
   );
