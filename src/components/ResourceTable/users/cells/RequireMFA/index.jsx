@@ -16,7 +16,7 @@ export default function RequireAccountMFA({ user }) {
   const [enquesnackbar] = useEnqueueSnackbar();
   const [switchInProgress, setSwitchInProgress] = useState(false);
 
-  const handleSwitch = () => {
+  const handleSwitch = useCallback(() => {
     const updatedAshareDoc = {
       ...user,
       accountMFARequired: !accountMFARequired,
@@ -25,7 +25,7 @@ export default function RequireAccountMFA({ user }) {
 
     setSwitchInProgress(true);
     dispatch(actions.user.org.users.update(user._id, updatedAshareDoc));
-  };
+  }, [accountMFARequired, dispatch, user]);
 
   const commStatusHandler = useCallback(
     objStatus => {
@@ -35,7 +35,7 @@ export default function RequireAccountMFA({ user }) {
       if (status === COMM_STATES.SUCCESS) {
         const { name, email } = sharedWithUser || {};
         const userName = name || email;
-        const statusMessage = `User ${userName} ${!accountMFARequired ? 'requires' : 'does not require'} MFA to sign in`;
+        const statusMessage = `MFA is ${!accountMFARequired ? 'now' : 'no longer'} required for ${userName}.`;
 
         enquesnackbar({
           message: statusMessage,

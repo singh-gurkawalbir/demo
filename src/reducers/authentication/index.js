@@ -1,5 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../actions/types';
+import { emptyObject } from '../../constants';
 import { COMM_STATES } from '../comms/networkComms/index';
 
 const defaultState = { initialized: false, commStatus: COMM_STATES.LOADING };
@@ -134,7 +135,7 @@ selectors.showSessionStatus = state => {
 };
 
 selectors.isMFAAuthRequired = state => !!state?.mfaRequired;
-selectors.mfaAuthInfo = state => state?.mfaAuthInfo || {};
+selectors.mfaAuthInfo = state => state?.mfaAuthInfo || emptyObject;
 selectors.isMFAAuthRequested = state => {
   if (!state?.mfaAuth) return false;
 

@@ -64,7 +64,7 @@ export default function RequireAccountSSO({ user }) {
   }
 
   if (disableSwitch || accountMFARequired) {
-    const tooltip = disableSwitch ? 'This user is already linked to another account’s SSO' : messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP');
+    const tooltip = disableSwitch ? messageStore('SSO_LINKED_TO_ANOTHER_ACCOUNT_TOOLTIP') : messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP');
 
     return (
       <Tooltip placement="bottom" title={tooltip}>

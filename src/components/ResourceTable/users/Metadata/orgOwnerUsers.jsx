@@ -75,7 +75,7 @@ export default {
     }
 
     if (!integrationId) {
-      if (!isSSOEnabled) {
+      if (isSSOEnabled) {
         columns.push({
           key: 'accountSSOLinked',
           isLoggable: true,
