@@ -216,7 +216,10 @@ export default function BranchItem({
               <div className={classes.headerContainer}>
                 <Typography variant="subtitle2">Record flow conditions:</Typography>
               </div>
-              <BranchFilter editorId={editorId} position={position} key={rules} />
+              <BranchFilter
+                editorId={editorId} position={position}
+                key={rules} // to force remount when rules change as querybuilder is not being updated in render phase
+               />
               {infoMessage && (
                 <div className={classes.infoMsgContainer}>
                   <InfoIcon />
