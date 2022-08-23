@@ -523,6 +523,22 @@ export default {
       fieldId: 'netsuite.blob.purgeFileAfterExport',
       visibleWhenAll: [{ field: 'outputMode', is: ['blob'] }],
     },
+    'netsuite.restlet.markExportedBatchSize': {
+      id: 'netsuite.restlet.markExportedBatchSize',
+      label: 'Mark exported batch size',
+      type: 'text',
+      defaultValue: r => r?.netsuite?.restlet?.markExportedBatchSize || '100',
+      visibleWhen: [
+        { field: 'type', is: ['once'] },
+        { field: 'restlet.type', is: ['once'] },
+      ],
+      validWhen: {
+        matchesRegEx: {
+          pattern: '^([1-9][0-9]?|100)$',
+          message: 'Please enter a value between 1 and 100.',
+        },
+      },
+    },
   },
   layout: {
     type: 'collapse',
@@ -603,6 +619,7 @@ export default {
               'netsuite.distributed.forceReload',
               'netsuite.restlet.batchSize',
               'advancedSettings',
+              'netsuite.restlet.markExportedBatchSize',
             ],
           },
         ],
