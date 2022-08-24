@@ -68,7 +68,7 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
   const [trustDevice, setTrustDevice] = useState(false);
   const handleOnSubmit = useCallback(e => {
     e.preventDefault();
-    const code = e.target.code.value.trim();
+    const code = e?.target?.code?.value?.trim() || e?.target?.elements?.code?.value?.trim();
 
     if (!code.length) {
       setError('One time passcode is required');
@@ -80,7 +80,7 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
 
       return;
     }
-    const trustDevice = e.target.trustDevice.checked;
+    const trustDevice = e?.target?.trustDevice?.checked || e?.target?.elements?.trustDevice?.checked;
 
     dispatch(actions.auth.mfaVerify.request({ code, trustDevice }));
   }, [dispatch]);
