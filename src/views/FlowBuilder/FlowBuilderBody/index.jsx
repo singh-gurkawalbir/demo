@@ -19,7 +19,7 @@ import SourceTitle from './titles/SourceTitle';
 import DestinationTitle from './titles/DestinationTitle';
 import { useSelectorMemo } from '../../../hooks';
 import useMenuDrawerWidth from '../../../hooks/useMenuDrawerWidth';
-import { ExportFlowStateButton } from './ExportFlowStateButton';
+// import { ExportFlowStateButton } from './ExportFlowStateButton';
 import EmptyNode from './CustomNodes/EmptyNode';
 import LoadingNotification from '../../../App/LoadingNotification';
 import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
@@ -226,8 +226,9 @@ export function Canvas({ flowId, fullscreen }) {
                   nodeBorderRadius={75}
                 />
               )}
-              <ExportFlowStateButton flowId={flowId} />
+              {/* <ExportFlowStateButton flowId={flowId} /> */}
               <CanvasControls
+                showMiniMap={showMiniMap}
                 toggleMiniMap={() => setShowMiniMap(oldState => !oldState)}
               />
             </ReactFlow>

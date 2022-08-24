@@ -15,7 +15,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function CanvasControls({ toggleMiniMap }) {
+export default function CanvasControls({ showMiniMap, toggleMiniMap }) {
   // eslint-disable-next-line no-unused-vars
   const classes = useStyles();
   const { zoomIn, zoomOut, fitView } = useZoomPanHelper();
@@ -39,7 +39,7 @@ export default function CanvasControls({ toggleMiniMap }) {
       </ControlButton>
 
       <ControlButton onClick={() => fitView({ padding: 0.1 })}>
-        <Tooltip title="Fit to view">
+        <Tooltip title="Zoom to fit">
           <span>
             <FullScreenOpenIcon className={classes.icon} />
           </span>
@@ -47,7 +47,7 @@ export default function CanvasControls({ toggleMiniMap }) {
       </ControlButton>
 
       <ControlButton onClick={() => toggleMiniMap()}>
-        <Tooltip title="Toggle mini map">
+        <Tooltip title={showMiniMap ? 'Hide map' : 'Show map'}>
           <span>
             <ExitIcon className={classes.icon} />
           </span>
