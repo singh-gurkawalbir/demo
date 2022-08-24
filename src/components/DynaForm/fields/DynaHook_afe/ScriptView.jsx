@@ -20,7 +20,6 @@ const useStyles = makeStyles(theme => ({
   field: {
     width: '50%',
     paddingRight: theme.spacing(1),
-    overflow: 'hidden',
     '& >.MuiFormControl-root': {
       width: '100%',
     },
@@ -117,7 +116,8 @@ export default function ScriptView({
             required={required}
             isValid={isValidHookField('_scriptId')}
             onFieldChange={handleFieldChange('_scriptId')}
-            options={options} />
+            options={options}
+            helpKey="api.scripts" />
         </FormControl>
       </div>
       <IconButtonWithTooltip

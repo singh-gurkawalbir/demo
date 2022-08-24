@@ -207,11 +207,36 @@ export default {
           visibleWhenAll: [
             { field: 'standardAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['standard'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', isNot: ['boolean', 'object', 'objectarray'] },
           ],
           helpKey: 'mapping.v2.default',
           noApi: true,
           defaultValue: node.default,
+        },
+        boolDefault: {
+          id: 'boolDefault',
+          name: 'boolDefault',
+          type: 'select',
+          label: 'Custom value',
+          skipDefault: true,
+          skipSort: true,
+          required: true,
+          visibleWhenAll: [
+            { field: 'standardAction', is: ['default'] },
+            { field: 'fieldMappingType', is: ['standard'] },
+            { field: 'dataType', is: ['boolean'] },
+          ],
+          helpKey: 'mapping.v2.default',
+          noApi: true,
+          defaultValue: node.default || 'true',
+          options: [
+            {
+              items: [
+                { label: 'True', value: 'true' },
+                { label: 'False', value: 'false' },
+              ],
+            },
+          ],
         },
         objectAction: {
           id: 'objectAction',
@@ -253,11 +278,36 @@ export default {
           visibleWhenAll: [
             { field: 'hardcodedAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['hardCoded'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', isNot: ['boolean', 'object', 'objectarray'] },
           ],
           helpKey: 'mapping.v2.default',
           noApi: true,
           defaultValue: node.hardCodedValue,
+        },
+        boolHardcodedDefault: {
+          id: 'boolHardcodedDefault',
+          name: 'boolHardcodedDefault',
+          type: 'select',
+          label: 'Custom value',
+          skipDefault: true,
+          skipSort: true,
+          required: true,
+          visibleWhenAll: [
+            { field: 'hardcodedAction', is: ['default'] },
+            { field: 'fieldMappingType', is: ['hardCoded'] },
+            { field: 'dataType', is: ['boolean'] },
+          ],
+          helpKey: 'mapping.v2.default',
+          noApi: true,
+          defaultValue: node.hardCodedValue || 'true',
+          options: [
+            {
+              items: [
+                { label: 'True', value: 'true' },
+                { label: 'False', value: 'false' },
+              ],
+            },
+          ],
         },
         expression: {
           id: 'expression',
@@ -305,11 +355,36 @@ export default {
           visibleWhenAll: [
             { field: 'multifieldAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['multifield'] },
-            { field: 'dataType', is: ['string', 'number', 'boolean'] },
+            { field: 'dataType', is: ['string', 'number'] },
           ],
           helpKey: 'mapping.v2.default',
           noApi: true,
           defaultValue: node.default,
+        },
+        boolMultifieldDefault: {
+          id: 'boolMultifieldDefault',
+          name: 'boolMultifieldDefault',
+          type: 'select',
+          label: 'Custom value',
+          skipDefault: true,
+          skipSort: true,
+          required: true,
+          visibleWhenAll: [
+            { field: 'multifieldAction', is: ['default'] },
+            { field: 'fieldMappingType', is: ['multifield'] },
+            { field: 'dataType', is: ['boolean'] },
+          ],
+          helpKey: 'mapping.v2.default',
+          noApi: true,
+          defaultValue: node.default || 'true',
+          options: [
+            {
+              items: [
+                { label: 'True', value: 'true' },
+                { label: 'False', value: 'false' },
+              ],
+            },
+          ],
         },
         'lookup.mapList': {
           id: 'lookup.mapList',
@@ -416,11 +491,14 @@ export default {
                   'objectAction',
                   'standardAction',
                   'default',
+                  'boolDefault',
                   'hardcodedAction',
                   'hardcodedDefault',
+                  'boolHardcodedDefault',
                   'expression',
                   'multifieldAction',
                   'multifieldDefault',
+                  'boolMultifieldDefault',
                   'lookup.mapList',
                   'lookup.name',
                   'lookupAction',

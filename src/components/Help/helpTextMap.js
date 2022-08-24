@@ -738,6 +738,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Provide an optional description, or any information you like that will help you keep track of this agent. This information is displayed when viewing/editing an agent or in the Agent List page.',
   'api.name': 'Name your API so that you can easily reference it from other parts of the application.',
   'api.description': 'Describe your API in more detail here so that other users can understand the problem you are solving, and also how your API works. Be sure to highlight any nuances that a user making changes in the future might want to know.',
+  'api.function': 'Enter the name of the function that will get called when a request is sent to this <a href="https://docs.celigo.com/hc/en-us/articles/360047267771-What-is-My-API-" target="_blank">My API</a>. Although your script may contain additional functions, only the single entry point specified here is initially called and receives any data passed in the HTTP header and body.<br /> The name of the function in the default <b>Handle request</b> stub is <tt>handleRequest</tt>. If you used a different name, you can click the <b>Edit script</b> button to open it and copy the exact name (without parentheses).',
+  'api.scripts': 'Select a <a href="https://docs.celigo.com/hc/en-us/articles/360047267771-What-is-My-API-" target="_blank">My API</a> script from the list that you’ve already written, or click <b>+</b> to start writing your own code. The easiest way to start from scratch is to select the <b>Handle request</b> function stub, which fully documents the options passed to the function and the expected response object.',
   'api.shipworks.username': 'Enter the username that was entered during the ShipWorks store setup.',
   'api.shipworks.password': 'Enter the password that was entered during the ShipWorks store setup.',
   'asynchelper._id': 'System generated unique identifier for this asynchelper.',
@@ -1645,6 +1647,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Boolean value, when set all the values in the file are wrapped with quotes (Default is false)',
   'import.file.csv.replaceTabWithSpace':
 'Boolean value, when set tabs in the content of the data (except columnDelimiters) are replaced with a space (Default is false)',
+  'import.file.csv.truncateLastRowDelimiter':
+'Select this option to prevent errors that may occur if a string value in the CSV file exceeds the maximum allowed length.',
   'import.file.csv.replaceNewlineWithSpace':
 'Boolean value, when set new lines in the content of the data (except rowDelimiters) are replaced with a space (Default is false)',
   'import.as2.fileNameTemplate':
@@ -1805,6 +1809,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Please name your script record so that you can easily reference it from other parts of the application.',
   'script.description':
 'Please describe your script so that other integrator.io users can quickly understand what it does and how it works.',
+  'stack.name':
+'Enter a distinguishable name for the stack you are creating.',
   'stack.type':
 'The environment in which your integrator-extension code is hosted. Currently, you can run your code in two different ways i.e. on your own server environment or as a micro-service on AWS Lambda. The server environment could be a single server or a set of servers behind a load balancer.',
   'stack.server.hostURI':
@@ -1883,6 +1889,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'export.salesforce.sObjectType': 'Use this field to specify which Salesforce sObject type you would like to export.  You can choose any standard sObject type (i.e. account, opportunity, contact) or any custom sObject type as long as the sObject type supports Salesforce triggers. Please note that this list of sObject types is also dependent on the permissions associated with the Salesforce connection being used. Also, if you add any new custom sObject types to your Salesforce account, or if there are any changes to the permissions associated with the connection being used, you can use the refresh icon to regenerate the list.',
   'export.webhook.url': 'If a URL has not been generated yet, please use the \'Generate URL\' link to generate a public URL for this webhook listener, and then you will need to share this URL with the webhook provider (i.e. through that provider\'s UI or API).  Saying this another way, each webhook provider like GitHub, Shopify, etc... will support a mechanism to configure a URL where you want webhook data sent, and please provide them with this generated URL here.',
   'export.webhook.sampledata': 'Use this field to provide sample data so that integrator.io can help you map your webhook data later. For brand new webhook exports, if you can trigger the webhook to send test data right now (against the URL above) then you can use the \'Click To Show\' link below to see the live data that actually got sent. If this is not a brand new export (in which case it is not possible anymore for integrator.io to intercept test data), or if the webhook provider does not support a test send, then you will need to manually copy and paste the expected webhook data into this field.',
+  'webhook.sampleData': 'Use the Click to show button to populate the sample data field with the webhook data most recently received by the public URL endpoint. If the public URL endpoint has not yet received any data, you can manually enter sample JSON data in the field provided. NOTE: XML is supported for webhooks, but the sample data in the webhook allows only JSON. You can convert XML to JSON in the Dev playground with the XML parser helper. <a href="https://docs.celigo.com/hc/en-us/articles/360043040652-Advanced-field-editors-AFEs-and-the-Dev-playground" target="_blank">Learn more</a>',
   'export.hookType':
 "Please select 'Script' if you want to use the native integrator.io JavaScript runtime engine (where all your code is managed and executed by integrator.io), or choose 'Stack' if you prefer to host your code outside integrator.io (either on your own servers, or on AWS Lambda).",
   'export.skipRetries': 'Check this box if you do NOT want <a href="http://integrator.io" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://integrator.io&amp;source=gmail&amp;ust=1590556088890000&amp;usg=AFQjCNFM_k8PAvITBLyHS0Wg3n3N_M_dNw">integrator.io</a> to store retry data for records that fail in your flow. Storing retry data can slow down your flow\'s overall performance if you are processing very large numbers of records that are failing. Storing retry data also means that anyone with access to your flow\'s dashboard can see the retry data in clear text.',
@@ -2439,6 +2446,7 @@ use the custom option.`,
   'import.netsuite.file.internalId': 'Enter a reference ID or expression to identify reference IDs of files to replace in the NetSuite File Cabinet.',
   'auditlogs.download': 'Download up to 1000 records from the last year.',
   'pull.integration': 'Select the remote production or sandbox integration from which you pull changes. All linked integrations are displayed, which includes clones of this integration and the integration from which it was cloned.',
+  'pull.description': 'Enter text describing the changes you are pulling into your integration.',
   'pull.reviewChanges': 'Review the changes between the current and remote integration. You can see all your integration resource changes, except for sensitive resources like API tokens and connections. You must resolve conflicts before you can continue to merge your changes. You’ll configure any new connections in the Merge changes step.',
   'pull.mergeChanges': 'You must first configure any new connections that are coming from the remote integration. There may be additional installations steps depending on the type of connection, including installing remote packages. You can cancel your merge at any time, or close the window and resume your merge later.',
   'revert.create': 'When creating a revert, you are restoring to a revision of an integration. The revert action will also generate a revision',
@@ -2470,4 +2478,12 @@ use the custom option.`,
     'View the secret key that was used to enable MFA for your profile.',
   'mfa.trustedDevices':
     'Click <b>Manage devices</b> to see a list of all trusted devices for your profile.',
+  'template.name': 'Enter a logical name for this template so that potential users can identify it in the Marketplace.',
+  'template.description': 'Provide additional information about the purpose of this template.',
+  'template.applications': 'Search for the name of each third-party application you are integrating using this template, and select it to add it to the applications list. This helps potential users find your template when they search the Marketplace.',
+  'template.contactEmail': 'Enter one or more email addresses, separated by commas, to make available for potential users to contact you with any questions.',
+  'template.websiteURL': 'Provide the website for your organization.',
+  'flowGroup.name': 'Provide a logical name for the new flow group and select the flows to include in this group. Keep in mind that flow groups are simply a tool to categorize flows within an integration.',
+  'flowGroup.flows': 'Assigning a flow to a group does not impact scheduling or other flow configuration settings that determine when a flow runs. <a href="https://docs.celigo.com/hc/en-us/articles/4416660353819-Organize-flows-into-groups" target="_blank">Learn more</a>.',
+  'dynaFormField.subrecord': 'Within the parent record shown, select a subrecord to map the source field to in the import. (Subrecords hold information about a parent record and are meaningful only within that context.) <a href="https://docs.celigo.com/hc/en-us/articles/360016510891-Configure-and-map-NetSuite-subrecords" target="_blank">Learn more</a>.',
 };

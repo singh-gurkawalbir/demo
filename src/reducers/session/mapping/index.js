@@ -787,6 +787,13 @@ export default (state = {}, action) => {
             // do nothing as no changes can be made to 'generate' of a required mapping
           } else {
             node[field] = value;
+            node.jsonPath = value;
+
+            const {node: parentNode} = findNodeInTree(draft.mapping.v2TreeData, 'key', node.parentKey);
+
+            if (parentNode && parentNode.jsonPath) {
+              node.jsonPath = parentNode.dataType === MAPPING_DATA_TYPES.OBJECTARRAY ? `${parentNode.jsonPath}[*].${value}` : `${parentNode.jsonPath}.${value}`;
+            }
           }
 
           delete node.isEmptyRow;
