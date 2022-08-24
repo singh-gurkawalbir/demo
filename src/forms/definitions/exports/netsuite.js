@@ -533,9 +533,14 @@ export default {
         { field: 'restlet.type', is: ['once'] },
       ],
       validWhen: {
+        fallsWithinNumericalRange: {
+          min: 1,
+          max: 100,
+          message: 'The value must be more than 1 and less than 100',
+        },
         matchesRegEx: {
-          pattern: '^([1-9][0-9]?|100)$',
-          message: 'Please enter a value between 1 and 100.',
+          pattern: '^[\\d]+$',
+          message: 'Only numbers allowed',
         },
       },
     },
