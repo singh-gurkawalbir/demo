@@ -1,7 +1,7 @@
 import { Tooltip, makeStyles } from '@material-ui/core';
 import React from 'react';
 import { Controls, ControlButton, useZoomPanHelper } from 'react-flow-renderer';
-import ExitIcon from '../../../../components/icons/ExitIcon';
+import ToggleMapIcon from '../../../../components/icons/ToggleMapIcon';
 import AddIcon from '../../../../components/icons/AddIcon';
 import SubtractIcon from '../../../../components/icons/SubtractIcon';
 import FullScreenOpenIcon from '../../../../components/icons/FullScreenOpenIcon';
@@ -49,7 +49,7 @@ export default function CanvasControls({ showMiniMap, toggleMiniMap }) {
       <ControlButton onClick={() => toggleMiniMap()}>
         <Tooltip title={showMiniMap ? 'Hide map' : 'Show map'}>
           <span>
-            <ExitIcon className={classes.icon} />
+            <ToggleMapIcon className={classes.icon} />
           </span>
         </Tooltip>
       </ControlButton>
