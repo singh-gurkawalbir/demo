@@ -124,7 +124,6 @@ export default function TableBodyContent({
               rowData={rowData}
               filterKey={filterKey}
               onSelectChange={onSelectChange}
-              tooltip={additionalConfigs?.selectFieldTooltip}
             />
 
             <AllContentCells

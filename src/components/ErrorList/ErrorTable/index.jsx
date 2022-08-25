@@ -1,8 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { dispatch } from 'd3';
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useMemo, useCallback, useEffect } from 'react';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
@@ -11,6 +10,8 @@ import Spinner from '../../Spinner';
 import ErrorDetailsPanel from './ErrorDetailsPanel';
 import ErrorTableFilters from './ErrorTableFilters';
 import FetchErrorsHook from './FetchErrorsHook';
+import actions from '../../../actions';
+import NoResultTypography from '../../NoResultTypography';
 
 const useStyles = makeStyles({
   hide: {
@@ -87,6 +88,79 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
     }),
     [flowId, isAnyActionInProgress, resourceId, isResolved, isFlowDisabled]
   );
+  const dispatch = useDispatch();
+  const errorFilter = useSelector(
+    state => selectors.filter(state, FILTER_KEYS.OPEN), shallowEqual
+  );
+  const hasErrors = useSelector(
+    state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
+  );
+  const keydownListener = useCallback(event => {
+    event?.stopPropagation();
+    if (errorFilter.view === 'drawer' && filterKey !== FILTER_KEYS.OPEN) {
+      return;
+    }
+    const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.currentNavItem);
+
+    if (!errorFilter.currentNavItem && currIndex < 0) {
+      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+        currentNavItem: errorsInCurrPage[0].errorId,
+      }));
+
+      return;
+    }
+    // enter key
+    if (event.keyCode === 13) {
+      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+        activeErrorId: errorFilter.currentNavItem,
+      }));
+
+      return;
+    }
+    // up arrow key
+    if (event.keyCode === 38) {
+      const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.currentNavItem);
+
+      if (currIndex === 0) {
+        return;
+      }
+      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+        currentNavItem: errorsInCurrPage[currIndex - 1]?.errorId,
+      }));
+
+      return;
+    }
+    // down arrow key
+    if (event.keyCode === 40) {
+      const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.currentNavItem);
+
+      if (currIndex === errorsInCurrPage.length - 1) {
+        return;
+      }
+      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+        currentNavItem: errorsInCurrPage[currIndex + 1]?.errorId,
+      }));
+    }
+  }, [errorFilter.currentNavItem, dispatch, errorsInCurrPage, errorFilter.view, filterKey]);
+
+  useEffect(() => {
+    if (errorFilter.view !== 'drawer' && filterKey === FILTER_KEYS.OPEN) {
+      window.addEventListener('keydown', keydownListener, true);
+    }
+
+    return () => window.removeEventListener('keydown', keydownListener, true);
+  }, [keydownListener, errorFilter.view, filterKey]);
+
+  useEffect(() => {
+    const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.activeErrorId);
+
+    if (currIndex < 0 && !errorFilter.view && errorFilter.view === 'split') {
+      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+        activeErrorId: errorsInCurrPage[0]?.errorId,
+        currentNavItem: errorsInCurrPage[0]?.errorId,
+      }));
+    }
+  }, [errorsInCurrPage, errorFilter.activeErrorId, dispatch, errorFilter.view]);
 
   // TODO @Raghu: Refactor the pagination related code
   return (
@@ -110,20 +184,25 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
             isResolved={isResolved}
             filterKey={filterKey}
           />
-          <div className={classes.errorList}>
-            <ResourceTable
-              resources={errorsInCurrPage}
-              className={classes.errorDetailsTable}
-              resourceType={filterKey}
-              actionProps={actionProps}
-          />
-            <ErrorDetailsPanel
-              flowId={flowId}
-              resourceId={resourceId}
-              isResolved={isResolved}
-              className={classes.errorDetailsPanel}
-          />
-          </div>
+          {
+            hasErrors ? (
+              <ResourceTable
+                resources={errorsInCurrPage}
+                className={classes.errorDetailsTable}
+                resourceType={filterKey}
+                actionProps={actionProps}
+            />
+            ) : (
+              <>
+                <NoResultTypography>There don’t seem to be any more errors. You may have already retried or resolved them.
+                  <br />
+                  <br />
+                  If “Refresh errors” is enabled, you can click it to retrieve additional errors.
+                </NoResultTypography>
+              </>
+            )
+          }
+
         </>
       )}
     </div>
