@@ -59,11 +59,14 @@ describe('Profile', () => {
 
   beforeEach(() => {
     initialStore = getCreatedStore();
+    jest.useFakeTimers();
+    jest.setTimeout(100000);
     jest.clearAllMocks();
   });
 
   afterEach(() => {
-    jest.clearAllTimers();
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
     cleanup();
   });
   test('Should able to load the profile pane and able to update the password', async done => {
@@ -117,7 +120,7 @@ describe('Profile', () => {
     userEvent.click(passwordCloseButton);
     await waitForElementToBeRemoved(passwordCloseButton);
     done();
-  }, 30000);
+  });
   test('Should able to load the profile pane and able to enter the value for name, company, role, phone and click on save button', async done => {
     const mockResolverFunction2 = jest.fn();
 
@@ -229,7 +232,7 @@ describe('Profile', () => {
 
     expect(savingNode).toBeInTheDocument();
     done();
-  }, 30000);
+  });
   test('Should able to load the profile pane and able to read the value email and update the email', async done => {
     const mockResolverFunction = jest.fn();
 
@@ -275,5 +278,5 @@ describe('Profile', () => {
     userEvent.click(closeSnackbar[19]);
     await waitForElementToBeRemoved(closeSnackbar[19]);
     done();
-  }, 30000);
+  });
 });
