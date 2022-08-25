@@ -33,11 +33,13 @@ export default {
       return errorFilter?.currentNavItem === rowData.errorId;
     },
   },
-  onRowClick: ({ rowData, dispatch }) => {
-    dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
-      activeErrorId: rowData.errorId,
-      currentNavItem: rowData.errorId,
-    }));
+  onRowClick: ({ rowData, dispatch, event }) => {
+    if (event?.target?.type !== 'checkbox') {
+      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+        activeErrorId: rowData.errorId,
+        currentNavItem: rowData.errorId,
+      }));
+    }
   },
   useColumns: () => [
     {
@@ -49,7 +51,7 @@ export default {
       },
       heading: 'Select All',
       isLoggable: true,
-      Value: ({rowData: error}) => {
+      Value: ({ rowData: error }) => {
         const tableContext = useGetTableContext();
 
         return <SelectError error={error} {...tableContext} />;

@@ -7,7 +7,6 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ToggleViewSelect from '.';
-import actions from '../../../../../actions';
 import { runServer } from '../../../../../test/api/server';
 import { renderWithProviders} from '../../../../../test/test-utils';
 
@@ -49,11 +48,14 @@ describe('ToggleViewSelect component Test cases', () => {
   });
 
   test('should pass the intial render with openErrorView props', async () => {
+    const handleToggleChange = jest.fn();
+
     await initToggleViewSelect({
       props: {
         variant: 'openErrorViews',
         filterKey: 'openErrors',
         defaultView: 'split',
+        handleToggleChange,
       },
     });
     const buttonRef = screen.getByRole('button');
@@ -64,8 +66,6 @@ describe('ToggleViewSelect component Test cases', () => {
 
     expect(drawerOption).toBeInTheDocument();
     userEvent.click(drawerOption);
-    expect(mockDispatchFn).toBeCalledWith(actions.patchFilter('openErrors', {
-      view: 'drawer',
-    }));
+    expect(handleToggleChange).toBeCalledTimes(1);
   });
 });

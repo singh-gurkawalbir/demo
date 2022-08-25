@@ -1,7 +1,6 @@
 import React from 'react';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles, MenuItem, Select } from '@material-ui/core';
-import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import ViewWithRowsIcon from '../../../../icons/ViewWithRows';
 import ViewWithRowsPanelIcon from '../../../../icons/ViewWithRowsPanel';
@@ -28,8 +27,7 @@ const toggleOptions = {
     { value: 'drawer', Icon: <ViewWithRowsIcon /> },
   ]};
 
-export default function ToggleViewSelect({ variant, filterKey, defaultView = '' }) {
-  const dispatch = useDispatch();
+export default function ToggleViewSelect({ variant, filterKey, defaultView = '', handleToggleChange }) {
   const classes = useStyles();
   const view = useSelector(state => {
     const e = selectors.filter(state, filterKey);
@@ -38,12 +36,9 @@ export default function ToggleViewSelect({ variant, filterKey, defaultView = '' 
   }, shallowEqual);
 
   const handleToggle = event => {
-    dispatch(actions.patchFilter(filterKey, {
-      view: event.target.value,
-    }));
-    dispatch(
-      actions.analytics.gainsight.trackEvent('ERROR_MANAGEMENT_VIEW_CHANGED')
-    );
+    if (handleToggleChange) {
+      handleToggleChange(event);
+    }
   };
 
   return (

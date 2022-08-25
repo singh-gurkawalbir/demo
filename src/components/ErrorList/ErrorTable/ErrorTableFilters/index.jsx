@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligPagination from '../../../CeligoPagination';
 import KeywordSearch from '../../../KeywordSearch';
@@ -9,6 +10,7 @@ import DownloadAction from '../../../ResourceTable/errorManagement/actions/Downl
 import CeligoDivider from '../../../CeligoDivider';
 import ToggleViewSelect from '../../../AFE/Drawer/actions/ToggleView';
 import { useHandleNextAndPreviousErrorPage } from '../hooks/useHandleNextAndPreviousErrorPage';
+import actions from '../../../../actions';
 
 const rowsPerPageOptions = [10, 25, 50];
 
@@ -70,6 +72,7 @@ const useStyles = makeStyles(theme => ({
 export default function ErrorTableFilters({flowId, resourceId, isResolved, filterKey}) {
   const classes = useStyles();
   const [selectedComponent, setSelectedComponent] = useState(null);
+  const dispatch = useDispatch();
 
   const {
     hasErrors,
@@ -84,6 +87,16 @@ export default function ErrorTableFilters({flowId, resourceId, isResolved, filte
   } = useHandleNextAndPreviousErrorPage({flowId, resourceId, isResolved, filterKey});
 
   const useRowActions = () => [DownloadAction];
+
+  const handleToggleChange = event => {
+    dispatch(actions.patchFilter(filterKey, {
+      view: event.target.value,
+      activeErrorId: '',
+    }));
+    dispatch(
+      actions.analytics.gainsight.trackEvent('ERROR_MANAGEMENT_VIEW_CHANGED')
+    );
+  };
 
   return (
 
@@ -113,6 +126,7 @@ export default function ErrorTableFilters({flowId, resourceId, isResolved, filte
             variant="openErrorViews"
             filterKey={filterKey}
             defaultView="split"
+            handleToggleChange={handleToggleChange}
           />
           <CeligoDivider position="left" />
         </>

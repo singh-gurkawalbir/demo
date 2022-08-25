@@ -50,7 +50,10 @@ export const useHandleNextAndPreviousError = ({
       }
       const newErrorId = errorsInPage?.[newIndex]?.errorId;
 
-      dispatch(actions.patchFilter('openErrors', {activeErrorId: newErrorId}));
+      dispatch(actions.patchFilter('openErrors', {
+        activeErrorId: newErrorId,
+        currentNavItem: newErrorId,
+      }));
       typeof handlePrev === 'function' && handlePrev(newErrorId);
     };
 
@@ -71,7 +74,10 @@ export const useHandleNextAndPreviousError = ({
       }
       const newErrorId = errorsInPage?.[newIndex]?.errorId;
 
-      dispatch(actions.patchFilter('openErrors', {activeErrorId: newErrorId}));
+      dispatch(actions.patchFilter('openErrors', {
+        activeErrorId: newErrorId,
+        currentNavItem: newErrorId,
+      }));
       typeof handleNext === 'function' && handleNext(newErrorId);
     };
 

@@ -95,12 +95,13 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
   const errorFilter = useSelector(
     state => selectors.filter(state, FILTER_KEYS.OPEN), shallowEqual
   );
+  const isSplitView = (filterKey === FILTER_KEYS.OPEN && errorFilter.view !== 'drawer');
   const hasErrors = useSelector(
     state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
   );
   const keydownListener = useCallback(event => {
     event?.stopPropagation();
-    if (errorFilter.view === 'drawer' && filterKey !== FILTER_KEYS.OPEN) {
+    if (!isSplitView) {
       return;
     }
     const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.currentNavItem);
@@ -144,33 +145,26 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
         currentNavItem: errorsInCurrPage[currIndex + 1]?.errorId,
       }));
     }
-  }, [errorFilter.currentNavItem, dispatch, errorsInCurrPage, errorFilter.view, filterKey]);
+  }, [errorFilter.currentNavItem, dispatch, errorsInCurrPage, isSplitView]);
 
   useEffect(() => {
-    if (errorFilter.view !== 'drawer' && filterKey === FILTER_KEYS.OPEN) {
+    if (isSplitView) {
       window.addEventListener('keydown', keydownListener, true);
     }
 
     return () => window.removeEventListener('keydown', keydownListener, true);
-  }, [keydownListener, errorFilter.view, filterKey]);
+  }, [isSplitView, keydownListener]);
 
   useEffect(() => {
     const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.activeErrorId);
 
-    if (currIndex < 0 && !errorFilter.view && errorFilter.view === 'split') {
+    if (currIndex < 0 && isSplitView) {
       dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
         activeErrorId: errorsInCurrPage[0]?.errorId,
         currentNavItem: errorsInCurrPage[0]?.errorId,
       }));
     }
-  }, [errorsInCurrPage, errorFilter.activeErrorId, dispatch, errorFilter.view]);
-  const isSplitView = useSelector(state => {
-    const {view} = selectors.filter(state, 'openErrors') || {};
-
-    if (!view) return true;
-
-    return view === 'split';
-  });
+  }, [errorsInCurrPage, errorFilter.activeErrorId, dispatch, isSplitView]);
 
   // TODO @Raghu: Refactor the pagination related code
   return (
@@ -183,9 +177,7 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
         filterKey={filterKey}
       />
       {isFreshDataLoad ? (
-
         <Spinner centerAll />
-
       ) : (
         <>
           <ErrorTableFilters
@@ -206,15 +198,13 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
               flowId={flowId}
               isResolved={isResolved}
             />
-          )
-
-            : (
-              <NoResultTypography>There don’t seem to be any more errors. You may have already retried or resolved them.
-                <br />
-                <br />
-                If “Refresh errors” is enabled, you can click it to retrieve additional errors.
-              </NoResultTypography>
-            )}
+          ) : (
+            <NoResultTypography>There don’t seem to be any more errors. You may have already retried or resolved them.
+              <br />
+              <br />
+              If “Refresh errors” is enabled, you can click it to retrieve additional errors.
+            </NoResultTypography>
+          )}
         </>
       )}
     </div>
@@ -230,28 +220,26 @@ const ErrorTableTable = ({
   isResolved,
   flowId,
   classes,
-}) => isSplitView
-  ? (
-    <div className={classes.errorList}>
-      <ResourceTable
-        resources={errorsInCurrPage}
-        className={classes.errorDetailsTable}
-        resourceType="splitViewOpenErrors"
-        actionProps={actionProps}
-            />
-      <ErrorDetailsPanel
-        flowId={flowId}
-        resourceId={resourceId}
-        isResolved={isResolved}
-        className={classes.errorDetailsPanel}
-          />
-    </div>
-  )
-  : (
+}) => isSplitView ? (
+  <div className={classes.errorList}>
     <ResourceTable
       resources={errorsInCurrPage}
       className={classes.errorDetailsTable}
-      resourceType={filterKey}
+      resourceType="splitViewOpenErrors"
       actionProps={actionProps}
-          />
-  );
+    />
+    <ErrorDetailsPanel
+      flowId={flowId}
+      resourceId={resourceId}
+      isResolved={isResolved}
+      className={classes.errorDetailsPanel}
+    />
+  </div>
+) : (
+  <ResourceTable
+    resources={errorsInCurrPage}
+    className={classes.errorDetailsTable}
+    resourceType={filterKey}
+    actionProps={actionProps}
+  />
+);

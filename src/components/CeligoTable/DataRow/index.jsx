@@ -46,8 +46,8 @@ export default function DataRow({ children, rowData, onRowOver, onRowOut, classN
     onRowOut(rowData, dispatch);
   }, [dispatch, onRowOut, rowData]);
 
-  const handleClick = useCallback(() => {
-    onRowClick({ rowData, dispatch });
+  const handleClick = useCallback(event => {
+    onRowClick({ rowData, dispatch, event });
   }, [dispatch, rowData, onRowClick]);
 
   return (
