@@ -67,6 +67,7 @@ describe('Profile', () => {
   afterEach(() => {
     jest.runOnlyPendingTimers();
     jest.useRealTimers();
+    jest.clearAllTimers();
     cleanup();
   });
   test('Should able to load the profile pane and able to update the password', async done => {
