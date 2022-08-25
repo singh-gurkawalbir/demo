@@ -44,11 +44,11 @@ export default function BranchFilter({ editorId, position }) {
     return editorRule?.branches?.[position]?.inputFilter?.rules;
   });
 
-  // const skipEmptyRuleCleanup = useSelector(state => {
-  //   const editorRule = selectors.editorRule(state, editorId);
-  //
-  //   return !!editorRule?.branches?.[position]?.skipEmptyRuleCleanup;
-  // });
+  const skipEmptyRuleCleanup = useSelector(state => {
+    const editorRule = selectors.editorRule(state, editorId);
+
+    return !!editorRule?.branches?.[position]?.skipEmptyRuleCleanup;
+  });
 
   // console.log('skipEmptyRuleCleanup: ', position, skipEmptyRuleCleanup);
 
@@ -67,14 +67,16 @@ export default function BranchFilter({ editorId, position }) {
     },
     [dispatch, position, editorId]
   );
-  // const setSkipEmptyRuleCleanup = useCallback(() => {
-  //   console.log('setSkipEmptyRuleCleanup: ', position);
-  //   dispatch(
-  //     actions.editor.patchRule(editorId, true, {
-  //       rulePath: `branches[${position}].skipEmptyRuleCleanup`,
-  //     })
-  //   );
-  // }, [dispatch, position, editorId]);
+
+  const setSkipEmptyRuleCleanup = useCallback(() => {
+    // console.log('setSkipEmptyRuleCleanup: ', position);
+    dispatch(
+      actions.editor.patchRule(editorId, true, {
+        rulePath: `branches[${position}].skipEmptyRuleCleanup`,
+      })
+    );
+  }, [dispatch, position, editorId]);
+
   const patchEditorValidation = useCallback(
     isInvalid => {
       dispatch(actions.editor.patchFeatures(editorId, { isInvalid }));
@@ -804,7 +806,7 @@ export default function BranchFilter({ editorId, position }) {
       qbContainer.on('afterCreateRuleInput.queryBuilder', (e, rule) => {
         rule.filter.valueGetter(rule, true);
 
-        // setSkipEmptyRuleCleanup();
+        setSkipEmptyRuleCleanup();
       });
 
       // eslint-disable-next-line no-restricted-syntax
@@ -840,11 +842,11 @@ export default function BranchFilter({ editorId, position }) {
   // TODO: 1. only run this code on component mount. we do not want re-order or other actions to remove incomplete rules
   // 2. only need to check if rule length=1.
   // Check with David on dragdrop issue with all but one minimized and many rules in item being dragged...
-  /*   useEffect(() => {
+  useEffect(() => {
     // iterate over rulesState and find empty rules
-    if (!rulesState) return;
+    if (!rulesState || skipEmptyRuleCleanup) return;
 
-    console.log('rulesState', rulesState);
+    // console.log('rulesState', rulesState);
     const $qb = jQuery(qbuilder.current);
 
     Object.keys(rulesState).forEach(ruleId => {
@@ -854,20 +856,21 @@ export default function BranchFilter({ editorId, position }) {
         typeof state.data.lhs === 'object' &&
         typeof state.data.rhs === 'object'
       ) {
-        console.log('both lhs and rhs have data');
+        // console.log('both lhs and rhs have data');
         if (state.data.rhs.value) return;
 
         const $emptyRule = state.rule;
 
-        console.log('delete', $emptyRule);
+        // console.log('delete', $emptyRule);
         $qb.queryBuilder('deleteRule', $emptyRule);
       }
     });
 
     // triggering off of filtersMetadata change is key, as it seems to be the last useEffect that runs
     // and thus this effect needs to run AFTER the filtersMetadata changes to persist the removal of empty rules
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersMetadata]);
- */
+
   const handleCloseOperandSettings = () => {
     setShowOperandSettingsFor();
   };
