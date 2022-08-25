@@ -2,12 +2,12 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { isEqual } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import useHandleCancelBasic from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancelBasic';
-import SaveAndCloseMiniButtonGroup from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniButtonGroup';
-import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../constants';
 import { TextButton, FilledButton, OutlinedButton } from '../../../Buttons';
+import SelectError from '../../../ResourceTable/errorManagement/cells/SelectError';
+import { useHandleNextAndPreviousError } from '../../ErrorTable/hooks/useHandleNextAndPreviousError';
 
 const useStyles = makeStyles(theme => ({
   action: {
@@ -16,6 +16,21 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+const AddToBatch = ({
+  error,
+  flowId,
+  resourceId,
+  isResolved,
+  classes,
+}) => (
+  <div className={classes.addToBatch}>
+    <Typography variant="h4">
+      <SelectError error={error} flowId={flowId} resourceId={resourceId} isResolved={isResolved} />
+      Add to batch
+    </Typography>
+  </div>
+);
+
 export default function Actions({
   errorId,
   updatedRetryData,
@@ -24,6 +39,8 @@ export default function Actions({
   onClose,
   mode = 'view',
   isResolved = false,
+  errorsInPage,
+  activeErrorId,
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -32,7 +49,7 @@ export default function Actions({
     !!(selectors.resource(state, 'flows', flowId)?.disabled)
   );
 
-  const {retryDataKey: retryId, reqAndResKey} = useSelector(state =>
+  const error = useSelector(state =>
     selectors.resourceError(state, {
       flowId,
       resourceId,
@@ -41,7 +58,20 @@ export default function Actions({
     }),
   shallowEqual
   );
-
+  const {retryDataKey: retryId, reqAndResKey} = error || {};
+  const {
+    handleNextError,
+    // handlePreviousError,
+    // disabledPrevious,
+    // disableNext,
+  } = useHandleNextAndPreviousError({
+    errorsInPage,
+    activeErrorId,
+    flowId,
+    isResolved,
+    resourceId,
+    retryId,
+  });
   const s3BlobKey = useSelector(state => {
     if (!['request', 'response'].includes(mode)) {
       return;
@@ -62,9 +92,9 @@ export default function Actions({
         retryData: updatedRetryData,
       })
     );
-
+    handleNextError();
     if (onClose) onClose();
-  }, [dispatch, flowId, onClose, resourceId, updatedRetryData, retryId]);
+  }, [dispatch, flowId, resourceId, retryId, updatedRetryData, handleNextError, onClose]);
 
   const resolve = useCallback(() => {
     dispatch(
@@ -74,9 +104,9 @@ export default function Actions({
         errorIds: [errorId],
       })
     );
-
+    handleNextError();
     if (onClose) onClose();
-  }, [dispatch, errorId, flowId, onClose, resourceId]);
+  }, [dispatch, errorId, flowId, handleNextError, onClose, resourceId]);
 
   const handleSaveAndRetry = useCallback(() => {
     dispatch(
@@ -87,9 +117,9 @@ export default function Actions({
         retryData: updatedRetryData,
       })
     );
-
+    handleNextError();
     if (onClose) onClose();
-  }, [dispatch, flowId, onClose, resourceId, retryId, updatedRetryData]);
+  }, [dispatch, flowId, handleNextError, onClose, resourceId, retryId, updatedRetryData]);
 
   const handleDownloadBlob = useCallback(
     () => {
@@ -99,50 +129,70 @@ export default function Actions({
   );
 
   const isRetryDataChanged = updatedRetryData && !isEqual(retryData, updatedRetryData);
-  const handleCancel = useHandleCancelBasic({isDirty: isRetryDataChanged, onClose, handleSave: updateRetry});
+
+  console.log({isRetryDataChanged, retryData, updatedRetryData});
 
   if (mode === 'editRetry' && !isFlowDisabled) {
     return (
-      <div className={classes.action}>
-        <FilledButton disabled={!isRetryDataChanged} onClick={handleSaveAndRetry}>
-          Save &amp; retry
-        </FilledButton>
-        <SaveAndCloseMiniButtonGroup
-          isDirty={isRetryDataChanged}
-          handleSave={updateRetry}
-          handleClose={onClose}
-          shouldNotShowCancelButton
-          asyncKey={ERROR_DETAIL_ACTIONS_ASYNC_KEY}
+      <>
+        <AddToBatch
+          error={error}
+          flowId={flowId}
+          resourceId={resourceId}
+          isResolved={isResolved}
+          classes={classes}
         />
-        { !isResolved && (
+
+        <div className={classes.action}>
+          <FilledButton onClick={handleSaveAndRetry}>
+            {isRetryDataChanged ? 'Save, retry & next' : 'Retry & next'}
+          </FilledButton>
+          <FilledButton disabled={!isRetryDataChanged} onClick={updateRetry}>
+            Save &amp; next
+          </FilledButton>
+          { !isResolved && (
           <OutlinedButton onClick={resolve}>
-            Resolve
+            Resolve &amp; next
           </OutlinedButton>
-        )}
-        <TextButton onClick={handleCancel}>
-          Close
-        </TextButton>
-      </div>
+          )}
+          {!!onClose && (
+          <TextButton onClick={onClose}>
+            Close
+          </TextButton>
+          )}
+        </div>
+      </>
     );
   }
 
   return (
-    <div className={classes.action}>
-      {!isResolved && (
+    <>
+      <AddToBatch
+        error={error}
+        flowId={flowId}
+        resourceId={resourceId}
+        isResolved={isResolved}
+        classes={classes}
+        />
+      <div className={classes.action}>
+        {!isResolved && (
         <OutlinedButton onClick={resolve}>
-          Resolve
+          Resolve &amp; next
         </OutlinedButton>
-      )}
-      {
+        )}
+        {
         !!s3BlobKey && (
         <OutlinedButton color="secondary" onClick={handleDownloadBlob}>
           Download file
         </OutlinedButton>
         )
       }
-      <TextButton onClick={onClose}>
-        Close
-      </TextButton>
-    </div>
+        {!!onClose && (
+        <TextButton onClick={onClose}>
+          Close
+        </TextButton>
+        )}
+      </div>
+    </>
   );
 }

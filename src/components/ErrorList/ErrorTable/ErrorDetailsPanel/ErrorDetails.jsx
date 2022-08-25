@@ -10,7 +10,7 @@ import { selectors } from '../../../../reducers';
 import { safeParse } from '../../../../utils/string';
 import DrawerContent from '../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../drawer/Right/DrawerFooter';
-import ErrorDetailsPanelActions from './ErrorDetailsPanelActions';
+import ErrorDetailActions from '../../ErrorDetails/ErrorDetailActions';
 import ErrorDetailsHeader from './ErrorDetailsHeader';
 import actions from '../../../../actions';
 import { useSelectorMemo } from '../../../../hooks';
@@ -124,7 +124,7 @@ export default function ErrorDetails({
       dispatch(actions.patchFilter('openErrors', {activeErrorId: errorsInPage?.[0]?.errorId}));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errorFilter?.keyword, errorFilter?.paging.currPage]);
+  }, [errorFilter?.keyword, errorFilter?.paging?.currPage]);
 
   const isFlowDisabled = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?.disabled
@@ -236,13 +236,15 @@ export default function ErrorDetails({
       </DrawerContent>
 
       <DrawerFooter>
-        <ErrorDetailsPanelActions
+        <ErrorDetailActions
+          errorsInPage={errorsInPage}
           updatedRetryData={userRetryData}
           flowId={flowId}
           resourceId={resourceId}
           errorId={activeErrorId}
           mode={mode}
           isResolved={isResolved}
+          activeErrorId={activeErrorId}
         />
       </DrawerFooter>
     </div>

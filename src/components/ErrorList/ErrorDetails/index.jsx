@@ -63,10 +63,10 @@ function TabPanel({ children, value, type }) {
   );
 }
 
-export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, onTabChange, mode, errorId}) {
+export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, onTabChange}) {
   const match = useRouteMatch();
   const classes = useStyles();
-  // const { mode, errorId } = match.params;
+  const { mode, errorId } = match.params;
   const [retryData, setRetryData] = useState();
   const isFlowDisabled = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?.disabled
@@ -172,7 +172,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
         </div>
       </DrawerContent>
 
-      {/* <DrawerFooter>
+      <DrawerFooter>
         <ErrorDetailActions
           updatedRetryData={retryData}
           flowId={flowId}
@@ -182,7 +182,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
           mode={mode}
           isResolved={isResolved}
         />
-      </DrawerFooter> */}
+      </DrawerFooter>
     </>
   );
 }

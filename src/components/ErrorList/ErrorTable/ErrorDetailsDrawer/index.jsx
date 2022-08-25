@@ -15,6 +15,8 @@ import useFormOnCancelContext from '../../../FormOnCancelContext';
 import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
+import ErrorDetailsHeader from '../ErrorDetailsPanel/ErrorDetailsHeader';
+import { useSelectorMemo } from '../../../../hooks';
 
 const emptySet = [];
 
@@ -81,6 +83,34 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
 
   const {setCancelTriggered} = useFormOnCancelContext(ERROR_DETAIL_ACTIONS_ASYNC_KEY);
   const onClose = mode === 'editRetry' ? setCancelTriggered : handleClose;
+  const errorConfig = useMemo(() => ({
+    flowId,
+    resourceId,
+    isResolved,
+  }), [isResolved, flowId, resourceId]);
+
+  const errorsInPage = useSelectorMemo(selectors.mkResourceFilteredErrorsInCurrPageSelector, errorConfig);
+
+  const activeErrorId = useSelector(state => {
+    const defaultError = errorsInPage?.[0]?.errorId;
+    const e = selectors.filter(state, 'openErrors');
+
+    return e.activeErrorId || defaultError;
+  });
+
+  const handleNextOrPrev = useCallback(newErrorId => {
+    if (!newErrorId) return;
+    history.replace(buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.VIEW_ERROR_DETAILS,
+      baseUrl: match.url,
+      params: { errorId: newErrorId, mode },
+    }));
+  }, [history, match.url, mode]);
+
+  const errorDoc = useSelector(state =>
+    selectors.resourceError(state, { flowId, resourceId, errorId: activeErrorId, isResolved })
+  ) || {};
+  const { retryDataKey: retryId} = errorDoc || {};
 
   if (!showDrawer) {
     return null;
@@ -88,7 +118,18 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
 
   return (
     <RightDrawer path={drawerPaths.ERROR_MANAGEMENT.V2.VIEW_ERROR_DETAILS} width="large" >
-      <DrawerHeader title="View error details" handleClose={onClose} />
+      <DrawerHeader title="View error details" handleClose={onClose}>
+        <ErrorDetailsHeader
+          retryId={retryId}
+          flowId={flowId}
+          resourceId={resourceId}
+          errorsInPage={errorsInPage}
+          activeErrorId={activeErrorId}
+          handlePrev={handleNextOrPrev}
+          handleNext={handleNextOrPrev}
+          isDrawer
+        />
+      </DrawerHeader>
       <ErrorDetails
         flowId={flowId}
         resourceId={resourceId}
