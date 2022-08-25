@@ -9,6 +9,7 @@ import Spinner from '../../../Spinner';
 const useStyles = makeStyles(() => ({
   container: {
     flexGrow: 1,
+    position: 'relative',
   },
 }));
 
@@ -40,19 +41,24 @@ export default function EditRetryData({
     }
   }, [dispatch, flowId, resourceId, retryId, retryStatus]);
 
-  if (retryStatus === 'requested') {
-    return <Spinner centerAll />;
-  }
+  // if (retryStatus === 'requested') {
+  //   return <Spinner centerAll />;
+  // }
 
   return (
     <div className={classes.container} data-private>
-      <CodeEditor
-        name={`${retryId}-edit`}
-        value={retryData}
-        mode="json"
-        onChange={onChange}
-        readOnly={isFlowDisabled}
+      {
+        retryStatus === 'requested' ? (<Spinner centerAll size="large" />)
+          : (
+            <CodeEditor
+              name={`${retryId}-edit`}
+              value={retryData}
+              mode="json"
+              onChange={onChange}
+              readOnly={isFlowDisabled}
     />
+          )
+      }
     </div>
   );
 }

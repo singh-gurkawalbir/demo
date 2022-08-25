@@ -1,9 +1,10 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import EditRetryData from './EditRetryData';
 import ViewErrorDetails from './ViewErrorDetails';
 import ViewErrorRequestResponse from './ViewErrorRequestResponse';
@@ -12,6 +13,8 @@ import { safeParse } from '../../../utils/string';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import ErrorDetailActions from './ErrorDetailActions';
+import SelectError from '../../ResourceTable/errorManagement/cells/SelectError';
+import actions from '../../../actions';
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
@@ -63,11 +66,27 @@ function TabPanel({ children, value, type }) {
   );
 }
 
+const AddToBatch = ({
+  error,
+  flowId,
+  resourceId,
+  isResolved,
+}) => (
+  <div>
+    <Typography variant="h4">
+      <SelectError error={error} flowId={flowId} resourceId={resourceId} isResolved={isResolved} />
+      Add to batch
+    </Typography>
+  </div>
+);
+
 export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, onTabChange}) {
   const match = useRouteMatch();
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const { mode, errorId } = match.params;
-  const [retryData, setRetryData] = useState();
+
   const isFlowDisabled = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?.disabled
   );
@@ -77,13 +96,14 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
 
   const { retryDataKey: retryId, reqAndResKey} = errorDoc || {};
 
+  const retryData = useSelector(state => selectors.userRetryData(state, retryId));
+
   const onRetryDataChange = useCallback(
     data =>
       // Editor onChange returns string format, so parse it to get updated retryData
-      setRetryData(safeParse(data)),
-    []
+      dispatch(actions.errorManager.retryData.updateUserRetryData({retryId, retryData: safeParse(data)})),
+    [dispatch, retryId]
   );
-
   const isResourceNetsuite = useSelector(state => selectors.isResourceNetsuite(state, resourceId));
 
   const availableTabs = useMemo(() => {
@@ -170,6 +190,11 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
             />
           </TabPanel>
         </div>
+        <AddToBatch
+          error={errorDoc}
+          flowId={flowId}
+          resourceI={resourceId}
+          isResolved={isResolved} />
       </DrawerContent>
 
       <DrawerFooter>
@@ -180,8 +205,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
           errorId={errorId}
           onClose={onClose}
           mode={mode}
-          isResolved={isResolved}
-        />
+          isResolved={isResolved} />
       </DrawerFooter>
     </>
   );

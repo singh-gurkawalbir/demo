@@ -2,12 +2,13 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { isEqual } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { TextButton, FilledButton, OutlinedButton } from '../../../Buttons';
-import SelectError from '../../../ResourceTable/errorManagement/cells/SelectError';
+import SaveAndCloseMiniButtonGroup from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniButtonGroup';
 import { useHandleNextAndPreviousError } from '../../ErrorTable/hooks/useHandleNextAndPreviousError';
+import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../constants';
+import useHandleCancelBasic from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancelBasic';
 
 const useStyles = makeStyles(theme => ({
   action: {
@@ -16,20 +17,6 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-const AddToBatch = ({
-  error,
-  flowId,
-  resourceId,
-  isResolved,
-  classes,
-}) => (
-  <div className={classes.addToBatch}>
-    <Typography variant="h4">
-      <SelectError error={error} flowId={flowId} resourceId={resourceId} isResolved={isResolved} />
-      Add to batch
-    </Typography>
-  </div>
-);
 
 export default function Actions({
   errorId,
@@ -129,34 +116,31 @@ export default function Actions({
   );
 
   const isRetryDataChanged = updatedRetryData && !isEqual(retryData, updatedRetryData);
+  const handleCancel = useHandleCancelBasic({isDirty: isRetryDataChanged, onClose, handleSave: updateRetry});
 
   console.log({isRetryDataChanged, retryData, updatedRetryData});
 
   if (mode === 'editRetry' && !isFlowDisabled) {
     return (
       <>
-        <AddToBatch
-          error={error}
-          flowId={flowId}
-          resourceId={resourceId}
-          isResolved={isResolved}
-          classes={classes}
-        />
-
         <div className={classes.action}>
           <FilledButton onClick={handleSaveAndRetry}>
             {isRetryDataChanged ? 'Save, retry & next' : 'Retry & next'}
           </FilledButton>
-          <FilledButton disabled={!isRetryDataChanged} onClick={updateRetry}>
-            Save &amp; next
-          </FilledButton>
+          <SaveAndCloseMiniButtonGroup
+            isDirty={isRetryDataChanged}
+            handleSave={updateRetry}
+            handleClose={onClose}
+            submitButtonLabel="Save & next"
+            shouldNotShowCancelButton
+            asyncKey={ERROR_DETAIL_ACTIONS_ASYNC_KEY} />
           { !isResolved && (
           <OutlinedButton onClick={resolve}>
             Resolve &amp; next
           </OutlinedButton>
           )}
           {!!onClose && (
-          <TextButton onClick={onClose}>
+          <TextButton onClick={handleCancel}>
             Close
           </TextButton>
           )}
@@ -167,13 +151,6 @@ export default function Actions({
 
   return (
     <>
-      <AddToBatch
-        error={error}
-        flowId={flowId}
-        resourceId={resourceId}
-        isResolved={isResolved}
-        classes={classes}
-        />
       <div className={classes.action}>
         {!isResolved && (
         <OutlinedButton onClick={resolve}>

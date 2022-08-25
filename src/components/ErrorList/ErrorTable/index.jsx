@@ -14,7 +14,7 @@ import ErrorTableFilters from './ErrorTableFilters';
 // import FetchErrorsHook from './FetchErrorsHook';
 import FetchErrorsHook from './hooks/useFetchErrors';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   hide: {
     display: 'none',
   },
@@ -52,7 +52,33 @@ const useStyles = makeStyles({
     // flexShrink: 0,
     // flexBasis: 50,
   },
-});
+  // root: {
+  //   height: '100vh',
+  //   width: props => {
+  //     if (props.occupyFullWidth) return '100%';
+
+  //     return props.match.isExact ? 822 : 0;
+  //   },
+  //   overflowX: 'hidden',
+  // },
+  baseFormWithPreview: {
+    display: 'grid',
+    gridTemplateColumns: '60% 38%',
+    gridColumnGap: theme.spacing(1),
+    // '& > div:first-child': {
+    //   padding: 0,
+    //   paddingRight: theme.spacing(2),
+    // },
+  },
+  resourceFormWrapper: {
+    width: '100%',
+    overflow: 'auto',
+  },
+  panelWrapper: {
+    width: '100%',
+    overflow: 'auto',
+  },
+}));
 
 export const useIsFreshLoadData = errorConfig => {
   const errorObj = useSelectorMemo(selectors.mkResourceFilteredErrorDetailsSelector, errorConfig);
@@ -60,6 +86,40 @@ export const useIsFreshLoadData = errorConfig => {
   return !!((!errorObj.status || errorObj.status === 'requested') && !errorObj.nextPageURL);
 };
 
+const ErrorTableWithPanel = ({
+  errorsInCurrPage,
+  filterKey,
+  actionProps,
+  isSplitView,
+  resourceId,
+  isResolved,
+  flowId,
+}) => {
+  const classes = useStyles();
+
+  return isSplitView && !isResolved
+    ? (
+      <div className={classes.baseFormWithPreview}>
+        <ResourceTable
+          resources={errorsInCurrPage}
+          className={classes.resourceFormWrapper}
+          resourceType="splitViewOpenErrors"
+          actionProps={actionProps} />
+
+        <ErrorDetailsPanel
+          flowId={flowId}
+          resourceId={resourceId}
+          className={classes.panelWrapper}
+          isResolved={isResolved} />
+      </div>
+    )
+    : (
+      <ResourceTable
+        resources={errorsInCurrPage}
+        resourceType={filterKey}
+        actionProps={actionProps} />
+    );
+};
 export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }) {
   const classes = useStyles();
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
@@ -188,9 +248,8 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
           />
 
           {hasErrors ? (
-            <ErrorTableTable
+            <ErrorTableWithPanel
               errorsInCurrPage={errorsInCurrPage}
-              classes={classes}
               filterKey={filterKey}
               actionProps={actionProps}
               resourceId={resourceId}
@@ -211,35 +270,3 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
   );
 }
 
-const ErrorTableTable = ({
-  errorsInCurrPage,
-  filterKey,
-  actionProps,
-  isSplitView,
-  resourceId,
-  isResolved,
-  flowId,
-  classes,
-}) => isSplitView ? (
-  <div className={classes.errorList}>
-    <ResourceTable
-      resources={errorsInCurrPage}
-      className={classes.errorDetailsTable}
-      resourceType="splitViewOpenErrors"
-      actionProps={actionProps}
-    />
-    <ErrorDetailsPanel
-      flowId={flowId}
-      resourceId={resourceId}
-      isResolved={isResolved}
-      className={classes.errorDetailsPanel}
-    />
-  </div>
-) : (
-  <ResourceTable
-    resources={errorsInCurrPage}
-    className={classes.errorDetailsTable}
-    resourceType={filterKey}
-    actionProps={actionProps}
-  />
-);

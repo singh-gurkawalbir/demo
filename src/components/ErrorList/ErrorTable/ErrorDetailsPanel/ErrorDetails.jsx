@@ -9,7 +9,7 @@ import ViewErrorRequestResponse from '../../ErrorDetails/ViewErrorRequestRespons
 import { selectors } from '../../../../reducers';
 import { safeParse } from '../../../../utils/string';
 import DrawerContent from '../../../drawer/Right/DrawerContent';
-import DrawerFooter from '../../../drawer/Right/DrawerFooter';
+// import DrawerFooter from '../../../drawer/Right/DrawerFooter';
 import ErrorDetailActions from '../../ErrorDetails/ErrorDetailActions';
 import ErrorDetailsHeader from './ErrorDetailsHeader';
 import actions from '../../../../actions';
@@ -233,9 +233,6 @@ export default function ErrorDetails({
             />
           </TabPanel>
         </div>
-      </DrawerContent>
-
-      <DrawerFooter>
         <ErrorDetailActions
           errorsInPage={errorsInPage}
           updatedRetryData={userRetryData}
@@ -246,7 +243,7 @@ export default function ErrorDetails({
           isResolved={isResolved}
           activeErrorId={activeErrorId}
         />
-      </DrawerFooter>
+      </DrawerContent>
     </div>
   );
 }
