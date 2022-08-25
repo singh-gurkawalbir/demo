@@ -97,6 +97,12 @@ const useStyles = makeStyles(theme => ({
   sourceTitle: {
     marginLeft: -100,
   },
+  canPan: {
+    cursor: 'grab',
+  },
+  isPanning: {
+    cursor: 'grabbing',
+  },
 }));
 
 const nodeTypes = {
@@ -118,6 +124,7 @@ export function Canvas({ flowId, fullscreen }) {
   const drawerWidth = fullscreen ? 0 : menuDrawerWidth;
   const classes = useStyles(drawerWidth);
   const [showMiniMap, setShowMiniMap] = useState(true);
+  const [isPanning, setIsPanning] = useState(false);
   const calcCanvasStyle = useCalcCanvasStyle(fullscreen);
   const mergedFlow = useSelectorMemo(
     selectors.makeFlowDataForFlowBuilder,
@@ -167,6 +174,7 @@ export function Canvas({ flowId, fullscreen }) {
   const handleNodeDragStop = () => {
     dispatch(actions.flow.mergeBranch(flowId));
   };
+
   const handleNodeDrag = () => {
     if (dragStepIdInProgress) {
       dispatch(actions.flow.setDragInProgress(flowId));
@@ -176,6 +184,13 @@ export function Canvas({ flowId, fullscreen }) {
   const handleAddNewSource = useCallback(() => {
     dispatch(actions.flow.addNewPGStep(flowId));
   }, [dispatch, flowId]);
+
+  const handleMoveEnd = () => setIsPanning(false);
+  const handleMove = () => {
+    if (!isPanning) {
+      setIsPanning(true);
+    }
+  };
 
   return (
     <div className={classes.canvasContainer} style={calcCanvasStyle}>
@@ -195,9 +210,12 @@ export function Canvas({ flowId, fullscreen }) {
             dragNodeId={dragStepId}
           >
             <ReactFlow
+              className={isPanning ? classes.isPanning : classes.canPan}
               onNodeDragStart={handleNodeDragStart}
               onNodeDragStop={handleNodeDragStop}
               onNodeDrag={handleNodeDrag}
+              onMoveEnd={handleMoveEnd}
+              onMove={handleMove}
               nodesDraggable={false}
               minZoom={0.4}
               panOnScroll
