@@ -118,8 +118,6 @@ export default function Actions({
   const isRetryDataChanged = updatedRetryData && !isEqual(retryData, updatedRetryData);
   const handleCancel = useHandleCancelBasic({isDirty: isRetryDataChanged, onClose, handleSave: updateRetry});
 
-  console.log({isRetryDataChanged, retryData, updatedRetryData});
-
   if (mode === 'editRetry' && !isFlowDisabled) {
     return (
       <>
@@ -130,7 +128,7 @@ export default function Actions({
           <SaveAndCloseMiniButtonGroup
             isDirty={isRetryDataChanged}
             handleSave={updateRetry}
-            handleClose={onClose}
+            handleClose={handleCancel}
             submitButtonLabel="Save & next"
             shouldNotShowCancelButton
             asyncKey={ERROR_DETAIL_ACTIONS_ASYNC_KEY} />

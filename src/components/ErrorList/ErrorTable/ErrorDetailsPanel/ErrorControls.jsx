@@ -7,7 +7,7 @@ import ArrowLeftIcon from '../../../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../../../icons/ArrowRightIcon';
 import { useHandleNextAndPreviousError } from '../hooks/useHandleNextAndPreviousError';
 
-export default function ErrorDetailsHeader({
+export default function ErrorControls({
   errorsInPage,
   activeErrorId,
   flowId,
@@ -15,7 +15,6 @@ export default function ErrorDetailsHeader({
   resourceId,
   filterKey = 'openErrors',
   retryId,
-  isDrawer,
   handlePrev,
   handleNext,
 }) {
@@ -39,21 +38,18 @@ export default function ErrorDetailsHeader({
 
   return (
     <Typography variant="h4" className={classes.title}>
-      {!isDrawer ? <span className={classes.label}>Error details</span> : null}
       <TextButton
         onClick={handlePreviousError}
         className={classes.arrowBtn}
         disabled={disabledPrevious}
-        startIcon={<ArrowLeftIcon />}
-        >
+        startIcon={<ArrowLeftIcon />} >
         <span className={classes.label}>Previous</span>
       </TextButton>
       <TextButton
         onClick={handleNextError}
         className={clsx(classes.arrowBtn, classes.arrowBtnRight)}
         disabled={disableNext}
-        endIcon={<ArrowRightIcon />}
-        >
+        endIcon={<ArrowRightIcon />} >
         <span className={classes.label}>Next</span>
       </TextButton>
     </Typography>

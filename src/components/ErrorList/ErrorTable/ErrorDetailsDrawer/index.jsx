@@ -15,7 +15,7 @@ import useFormOnCancelContext from '../../../FormOnCancelContext';
 import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
-import ErrorDetailsHeader from '../ErrorDetailsPanel/ErrorDetailsHeader';
+import ErrorControls from '../ErrorDetailsPanel/ErrorControls';
 import { useSelectorMemo } from '../../../../hooks';
 
 const emptySet = [];
@@ -119,7 +119,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   return (
     <RightDrawer path={drawerPaths.ERROR_MANAGEMENT.V2.VIEW_ERROR_DETAILS} width="large" >
       <DrawerHeader title="View error details" handleClose={onClose}>
-        <ErrorDetailsHeader
+        <ErrorControls
           retryId={retryId}
           flowId={flowId}
           resourceId={resourceId}

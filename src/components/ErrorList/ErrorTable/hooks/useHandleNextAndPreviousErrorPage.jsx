@@ -28,7 +28,6 @@ export const useHandleNextAndPreviousErrorPage = ({
 
   const errorObj = useSelectorMemo(selectors.mkResourceFilteredErrorDetailsSelector, errorConfig);
 
-  console.log({errorObj, flowId, resourceId, isResolved, filterKey});
   const isFreshDataLoad = useIsFreshLoadData(errorConfig);
 
   if (!errorObj.errors) {
@@ -78,6 +77,7 @@ export const useHandleNextAndPreviousErrorPage = ({
   return {
     hasErrors,
     errorObj,
+    count: errorObj?.errors?.length,
     fetchErrors,
     isFreshDataLoad,
     paginationOptions,

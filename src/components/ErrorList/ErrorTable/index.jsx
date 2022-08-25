@@ -11,7 +11,6 @@ import ResourceTable from '../../ResourceTable';
 import Spinner from '../../Spinner';
 import ErrorDetailsPanel from './ErrorDetailsPanel';
 import ErrorTableFilters from './ErrorTableFilters';
-// import FetchErrorsHook from './FetchErrorsHook';
 import FetchErrorsHook from './hooks/useFetchErrors';
 
 const useStyles = makeStyles(theme => ({
@@ -35,40 +34,22 @@ const useStyles = makeStyles(theme => ({
   errorList: {
     display: 'flex',
     flexDirection: 'row',
-    // alignItems: 'center',
     flexBasis: '40%',
   },
   errorTable: {
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'row',
-    // flexShrink: 0,
-    // flexBasis: 50,
   },
   errorDetailsPanel: {
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'row',
-    // flexShrink: 0,
-    // flexBasis: 50,
   },
-  // root: {
-  //   height: '100vh',
-  //   width: props => {
-  //     if (props.occupyFullWidth) return '100%';
-
-  //     return props.match.isExact ? 822 : 0;
-  //   },
-  //   overflowX: 'hidden',
-  // },
   baseFormWithPreview: {
     display: 'grid',
     gridTemplateColumns: '60% 38%',
     gridColumnGap: theme.spacing(1),
-    // '& > div:first-child': {
-    //   padding: 0,
-    //   paddingRight: theme.spacing(2),
-    // },
   },
   resourceFormWrapper: {
     width: '100%',
