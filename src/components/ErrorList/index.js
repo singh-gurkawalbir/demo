@@ -1,41 +1,16 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import { Grow, makeStyles } from '@material-ui/core';
 import actions from '../../actions';
 import ErrorTable from './ErrorTable';
 import DownloadErrorsDrawer from './DownloadErrorsDrawer';
 import ErrorDetailsDrawer from './ErrorTable/ErrorDetailsDrawer';
-import ErrorDetailsPanel from './ErrorTable/ErrorDetailsPanel';
 import { FILTER_KEYS } from '../../utils/errorManagement';
 import { selectors } from '../../reducers';
-
-const useStyles = makeStyles(theme => ({
-  errorList: {
-    display: 'flex',
-    flexDirection: 'row',
-    // alignItems: 'center',
-  },
-  errorTable: {
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'row',
-    // flexShrink: 0,
-    // flexBasis: 50,
-  },
-  errorDetailsPanel: {
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'row',
-    // flexShrink: 0,
-    // flexBasis: 50,
-  },
-}));
 
 export default function ErrorList({ flowId }) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const classes = useStyles();
   const { resourceId, errorType, flowJobId } = match.params;
 
   const integrationId = useSelector(state =>
@@ -77,23 +52,15 @@ export default function ErrorList({ flowId }) {
   }, [requestIntegrationUsers]);
 
   return (
-    <div className={classes.errorList}>
+    <>
       <ErrorTable
         flowId={flowId}
         flowJobId={flowJobId}
         resourceId={resourceId}
         isResolved={errorType === 'resolved'}
-        className={classes.errorTable}
       />
       <DownloadErrorsDrawer flowId={flowId} resourceId={resourceId} />
       <ErrorDetailsDrawer flowId={flowId} resourceId={resourceId} isResolved={errorType === 'resolved'} />
-
-      {/* <ErrorDetailsPanel
-        flowId={flowId}
-        resourceId={resourceId}
-        isResolved={errorType === 'resolved'}
-        className={classes.errorDetailsPanel}
-      /> */}
-    </div>
+    </>
   );
 }

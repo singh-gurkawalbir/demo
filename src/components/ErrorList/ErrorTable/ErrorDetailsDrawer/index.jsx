@@ -66,7 +66,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   }, [allErrors.length, history, match.isExact, match.url, showDrawer]);
   const handleClose = useCallback(() => {
     dispatch(actions.patchFilter(filterKey, {
-      activeErrorId: '',
+      activeErrorId: undefined,
     }));
     history.goBack();
   }, [dispatch, filterKey, history]);

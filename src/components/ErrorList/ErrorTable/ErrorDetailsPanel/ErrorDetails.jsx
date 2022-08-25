@@ -1,10 +1,8 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { useRouteMatch } from 'react-router-dom';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
-import { FormControlLabel, Typography } from '@material-ui/core';
 import EditRetryData from '../../ErrorDetails/EditRetryData';
 import ViewErrorDetails from '../../ErrorDetails/ViewErrorDetails';
 import ViewErrorRequestResponse from '../../ErrorDetails/ViewErrorRequestResponse';
@@ -12,9 +10,10 @@ import { selectors } from '../../../../reducers';
 import { safeParse } from '../../../../utils/string';
 import DrawerContent from '../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../drawer/Right/DrawerFooter';
-import ErrorDetailActions from '../../ErrorDetails/ErrorDetailActions';
-import DrawerHeader from '../../../drawer/Right/DrawerHeader';
-import SelectError from '../../../ResourceTable/errorManagement/cells/SelectError';
+import ErrorDetailsPanelActions from './ErrorDetailsPanelActions';
+import ErrorDetailsHeader from './ErrorDetailsHeader';
+import actions from '../../../../actions';
+import { useSelectorMemo } from '../../../../hooks';
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
@@ -92,25 +91,56 @@ function TabPanel({ children, value, type }) {
   );
 }
 
-export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, onTabChange, mode, errorId}) {
-  const match = useRouteMatch();
+export default function ErrorDetails({
+  flowId,
+  resourceId,
+  isResolved,
+}) {
   const classes = useStyles();
-  // const { mode, errorId } = match.params;
-  const [retryData, setRetryData] = useState();
+  const [mode, setMode] = useState('editRetry');
+  const dispatch = useDispatch();
+
+  const errorFilter = useSelector(
+    state => selectors.filter(state, 'openErrors'), shallowEqual
+  );
+
+  const errorConfig = useMemo(() => ({
+    flowId,
+    resourceId,
+    isResolved,
+  }), [isResolved, flowId, resourceId]);
+
+  const errorsInPage = useSelectorMemo(selectors.mkResourceFilteredErrorsInCurrPageSelector, errorConfig);
+
+  const activeErrorId = useSelector(state => {
+    const defaultError = errorsInPage?.[0]?.errorId;
+    const e = selectors.filter(state, 'openErrors');
+
+    return e.activeErrorId || defaultError;
+  });
+
+  useEffect(() => {
+    if (errorsInPage?.length) {
+      dispatch(actions.patchFilter('openErrors', {activeErrorId: errorsInPage?.[0]?.errorId}));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errorFilter?.keyword, errorFilter?.paging.currPage]);
+
   const isFlowDisabled = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?.disabled
   );
   const errorDoc = useSelector(state =>
-    selectors.resourceError(state, { flowId, resourceId, errorId, isResolved })
-  );
+    selectors.resourceError(state, { flowId, resourceId, errorId: activeErrorId, isResolved })
+  ) || {};
 
   const { retryDataKey: retryId, reqAndResKey} = errorDoc || {};
+  const userRetryData = useSelector(state => selectors.userRetryData(state, retryId));
 
   const onRetryDataChange = useCallback(
     data =>
       // Editor onChange returns string format, so parse it to get updated retryData
-      setRetryData(safeParse(data)),
-    []
+      dispatch(actions.errorManager.retryData.updateUserRetryData({retryId, retryData: safeParse(data)})),
+    [dispatch, retryId]
   );
 
   const isResourceNetsuite = useSelector(state => selectors.isResourceNetsuite(state, resourceId));
@@ -138,18 +168,18 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
     return tabs;
   }, [retryId, reqAndResKey, isResourceNetsuite, isFlowDisabled]);
 
-  if (!mode || !availableTabs.map(tab => tab.type).includes(mode)) {
-    // Incase of invalid url , redirects user to View Error fields tab
-    onTabChange(errorId, 'view');
-  }
-
-  const handleModeChange = (evt, newValue) => onTabChange(errorId, newValue);
+  const handleModeChange = useCallback((evt, newValue) => {
+    setMode(newValue);
+  }, []);
 
   return (
     <div className={classes.wrapper}>
-      <Typography variant="h4" className={classes.title}>
-        Error details
-      </Typography>
+      <ErrorDetailsHeader
+        retryId={retryId}
+        flowId={flowId}
+        resourceId={resourceId}
+        errorsInPage={errorsInPage}
+        activeErrorId={activeErrorId} />
       <DrawerContent>
         <div className={classes.detailsContainer}>
           <Tabs
@@ -173,21 +203,13 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
           </Tabs>
           <TabPanel value={mode} type="view">
             <ViewErrorDetails
-              errorId={errorId}
+              errorId={activeErrorId}
               flowId={flowId}
               resourceId={resourceId}
               isResolved={isResolved}
             />
           </TabPanel>
           <TabPanel value={mode} type="editRetry">
-            <EditRetryData
-              retryId={retryId}
-              onChange={onRetryDataChange}
-              flowId={flowId}
-              resourceId={resourceId}
-            />
-          </TabPanel>
-          <TabPanel value={mode} type="viewRetry">
             <EditRetryData
               retryId={retryId}
               onChange={onRetryDataChange}
@@ -213,23 +235,16 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
         </div>
       </DrawerContent>
 
-      <div className={classes.addToBatch}>
-        <Typography variant="h4">
-          <SelectError error={errorDoc} flowId={flowId} resourceId={resourceId} isResolved={isResolved} />
-          Add to batch
-        </Typography>
-      </div>
-      {/* <DrawerFooter>
-        <ErrorDetailActions
-          updatedRetryData={retryData}
+      <DrawerFooter>
+        <ErrorDetailsPanelActions
+          updatedRetryData={userRetryData}
           flowId={flowId}
           resourceId={resourceId}
-          errorId={errorId}
-          onClose={onClose}
+          errorId={activeErrorId}
           mode={mode}
           isResolved={isResolved}
         />
-      </DrawerFooter> */}
+      </DrawerFooter>
     </div>
   );
 }

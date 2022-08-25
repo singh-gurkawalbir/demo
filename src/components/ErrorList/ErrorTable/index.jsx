@@ -2,16 +2,17 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useMemo, useCallback, useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import actions from '../../../actions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
+import NoResultTypography from '../../NoResultTypography';
 import ResourceTable from '../../ResourceTable';
 import Spinner from '../../Spinner';
 import ErrorDetailsPanel from './ErrorDetailsPanel';
 import ErrorTableFilters from './ErrorTableFilters';
-import FetchErrorsHook from './FetchErrorsHook';
-import actions from '../../../actions';
-import NoResultTypography from '../../NoResultTypography';
+// import FetchErrorsHook from './FetchErrorsHook';
+import FetchErrorsHook from './hooks/useFetchErrors';
 
 const useStyles = makeStyles({
   hide: {
@@ -25,6 +26,7 @@ const useStyles = makeStyles({
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'row',
+    flexBasis: '60%',
   },
   errorTableWrapper: {
     position: 'relative',
@@ -34,6 +36,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     // alignItems: 'center',
+    flexBasis: '40%',
   },
   errorTable: {
     flexGrow: 1,
@@ -161,6 +164,13 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
       }));
     }
   }, [errorsInCurrPage, errorFilter.activeErrorId, dispatch, errorFilter.view]);
+  const isSplitView = useSelector(state => {
+    const {view} = selectors.filter(state, 'openErrors') || {};
+
+    if (!view) return true;
+
+    return view === 'split';
+  });
 
   // TODO @Raghu: Refactor the pagination related code
   return (
@@ -184,27 +194,64 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
             isResolved={isResolved}
             filterKey={filterKey}
           />
-          {
-            hasErrors ? (
-              <ResourceTable
-                resources={errorsInCurrPage}
-                className={classes.errorDetailsTable}
-                resourceType={filterKey}
-                actionProps={actionProps}
-            />
-            ) : (
-              <>
-                <NoResultTypography>There don’t seem to be any more errors. You may have already retried or resolved them.
-                  <br />
-                  <br />
-                  If “Refresh errors” is enabled, you can click it to retrieve additional errors.
-                </NoResultTypography>
-              </>
-            )
-          }
 
+          {hasErrors ? (
+            <ErrorTableTable
+              errorsInCurrPage={errorsInCurrPage}
+              classes={classes}
+              filterKey={filterKey}
+              actionProps={actionProps}
+              resourceId={resourceId}
+              isSplitView={isSplitView}
+              flowId={flowId}
+              isResolved={isResolved}
+            />
+          )
+
+            : (
+              <NoResultTypography>There don’t seem to be any more errors. You may have already retried or resolved them.
+                <br />
+                <br />
+                If “Refresh errors” is enabled, you can click it to retrieve additional errors.
+              </NoResultTypography>
+            )}
         </>
       )}
     </div>
   );
 }
+
+const ErrorTableTable = ({
+  errorsInCurrPage,
+  filterKey,
+  actionProps,
+  isSplitView,
+  resourceId,
+  isResolved,
+  flowId,
+  classes,
+}) => isSplitView
+  ? (
+    <div className={classes.errorList}>
+      <ResourceTable
+        resources={errorsInCurrPage}
+        className={classes.errorDetailsTable}
+        resourceType="splitViewOpenErrors"
+        actionProps={actionProps}
+            />
+      <ErrorDetailsPanel
+        flowId={flowId}
+        resourceId={resourceId}
+        isResolved={isResolved}
+        className={classes.errorDetailsPanel}
+          />
+    </div>
+  )
+  : (
+    <ResourceTable
+      resources={errorsInCurrPage}
+      className={classes.errorDetailsTable}
+      resourceType={filterKey}
+      actionProps={actionProps}
+          />
+  );

@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core';
 import CodeEditor from '../../../CodeEditor';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+import Spinner from '../../../Spinner';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -38,6 +39,10 @@ export default function EditRetryData({
       );
     }
   }, [dispatch, flowId, resourceId, retryId, retryStatus]);
+
+  if (retryStatus === 'requested') {
+    return <Spinner centerAll />;
+  }
 
   return (
     <div className={classes.container} data-private>

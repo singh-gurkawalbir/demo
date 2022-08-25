@@ -26,9 +26,6 @@ export default function SelectError({
         checked,
       })
     );
-    dispatch(
-      actions.patchFilter('openErrors', {selectedError: error.errorId})
-    );
   }, [dispatch, error, flowId, isResolved, resourceId]);
 
   const isDisabled = !!actionInProgress;
