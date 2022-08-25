@@ -111,13 +111,11 @@ describe('Profile', () => {
     const passwordChangedText = screen.getByText('Password changed.');
 
     expect(passwordChangedText).toBeInTheDocument();
-    // screen.getByRole('');
-    // screen.debug(null, Infinity);
-    // const passwordCloseButton = screen.getAllByRole('button', {name: 'Close'});
+    const passwordCloseButton = screen.getByRole('button', {name: 'Close'});
 
-    // expect(passwordCloseButton).toBeInTheDocument();
-    // userEvent.click(passwordCloseButton);
-    // await waitForElementToBeRemoved(passwordCloseButton);
+    expect(passwordCloseButton).toBeInTheDocument();
+    userEvent.click(passwordCloseButton);
+    await waitForElementToBeRemoved(passwordCloseButton);
     done();
   }, 30000);
   test('Should able to load the profile pane and able to enter the value for name, company, role, phone and click on save button', async done => {
@@ -227,7 +225,7 @@ describe('Profile', () => {
     expect(saveButtonNode).toBeEnabled();
     await userEvent.click(saveButtonNode);
     await waitFor(() => expect(mockResolverFunction2).toHaveBeenCalledTimes(2));
-    const savingNode = screen.getByText('Saving');
+    const savingNode = await waitFor(() => screen.getByText('Saving'));
 
     expect(savingNode).toBeInTheDocument();
     done();

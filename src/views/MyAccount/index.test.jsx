@@ -11,94 +11,8 @@ import { getCreatedStore } from '../../store';
 
 let initialStore;
 
-function store() {
-  initialStore.getState().user.org.accounts = [
-    {
-      _id: 'own',
-      accessLevel: 'owner',
-      ownerUser: {
-        licenses: [
-          {
-            _id: '5d4010e24cd24a7c773122f2',
-            created: '2019-07-30T09:41:54.439Z',
-            lastModified: '2019-08-14T11:22:55.872Z',
-            expires: '2022-09-13T11:22:55.872Z',
-            type: 'integrator',
-            tier: 'standard',
-            numAddOnFlows: 100,
-            trialEndDate: '2019-09-13T11:22:55.872Z',
-            supportTier: 'essential',
-            numSandboxAddOnFlows: 0,
-            resumable: false,
-          },
-          {
-            _id: '6290a220ccb94d35de66eebd',
-            created: '2022-05-27T10:04:16.990Z',
-            lastModified: '2022-05-27T10:04:16.995Z',
-            expires: '2022-11-27T18:29:59.999Z',
-            type: 'connector',
-            _connectorId: '5656f5e3bebf89c03f5dd77e',
-            opts: {
-              connectorEdition: 'premium',
-              addonLicenses: [
-                {
-                  type: 'store',
-                  licenses: [
-                    {
-                      addOnEdition: 'premium',
-                    },
-                    {
-                      addOnEdition: 'premium',
-                    },
-                  ],
-                },
-                {
-                  licenses: [
-                    {
-                      addOnId: 'payout',
-                    },
-                  ],
-                  type: 'addon',
-                },
-              ],
-            },
-            sandbox: false,
-            resumable: false,
-          },
-          {
-            _id: '629d8a97ccb94d35de6f049a',
-            created: '2022-06-06T05:03:19.396Z',
-            lastModified: '2022-06-06T05:06:31.261Z',
-            expires: '2023-06-06T18:29:59.999Z',
-            type: 'connector',
-            _connectorId: '56d3e8d3e24d0cf5090e5a18',
-            opts: {
-              addonLicenses: [
-                {
-                  licenses: [
-                    {
-                      addOnEdition: 'premium',
-                    },
-                    {
-                      addOnEdition: 'premium',
-                    },
-                    {
-                      addOnEdition: 'premium',
-                    },
-                  ],
-                  type: 'store',
-                },
-              ],
-              connectorEdition: 'premium',
-            },
-            _integrationId: '629d8b57d5391a2e79b9615b',
-            sandbox: false,
-            resumable: false,
-          },
-        ],
-      },
-    },
-  ];
+function store(accounts) {
+  initialStore.getState().user.org.accounts = accounts;
   initialStore.getState().user.profile = {
     _id: '5d4010e14cd24a7c773122ef',
     name: 'Chaitanya Reddy Mula',
@@ -124,7 +38,7 @@ function store() {
     scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z',
     showReactSneakPeekFromDate: '2019-11-05',
     showReactBetaFromDate: '2019-12-26',
-    defaultAShareId: 'own',
+    defaultAShareId: accounts[0].defaultAShareId,
     fbBottomDrawerHeight: 114,
     lastLoginAt: '2022-01-25T07:36:20.829Z',
     dashboard: {
@@ -1510,7 +1424,15 @@ describe('MyAccount', () => {
     cleanup();
   });
   test('Should able to acess the profile tab with owner access', async () => {
-    store();
+    const accounts = [
+      {
+        _id: 'own',
+        accessLevel: 'owner',
+        defaultAShareId: 'own',
+      },
+    ];
+
+    store(accounts);
     const match = {
       path: '/myAccount/:tab',
       url: '/myAccount/profile',
@@ -1550,7 +1472,6 @@ describe('MyAccount', () => {
 
     expect(securityText).toBeInTheDocument();
     userEvent.click(securityText);
-    screen.debug(null, Infinity);
   });
   test('Should able to acess the subscription tab', async () => {
     const match = {
@@ -1562,13 +1483,50 @@ describe('MyAccount', () => {
       },
     };
 
-    store();
+    const accounts = [
+      {
+        _id: 'own',
+        accessLevel: 'owner',
+        defaultAShareId: 'own',
+      },
+    ];
+
+    store(accounts);
     await initMyAccount(match, match.params.tab);
 
     const subscriptionText = screen.getByRole('tab', {name: 'Subscription'});
 
     expect(subscriptionText).toBeInTheDocument();
     userEvent.click(subscriptionText);
-    screen.debug(null, Infinity);
+  });
+  test('Should able to access the Myaccount tab with the account which has manage access', async () => {
+    const accounts = [
+      {
+        _id: '12345',
+        accessLevel: 'manage',
+        defaultAShareId: '6040b99a7671bb3ddf6a3abc',
+      },
+    ];
+
+    store(accounts);
+    const match = {
+      path: '/myAccount/:tab',
+      url: '/myAccount/profile',
+      isExact: true,
+      params: {
+        tab: 'profile',
+      },
+    };
+
+    await initMyAccount(match, match.params.tab);
+    const profileTabNode = screen.getByRole('tab', {name: 'Profile'});
+
+    expect(profileTabNode).toBeInTheDocument();
+    const securityTabNode = screen.getByRole('tab', {name: 'Security'});
+
+    expect(securityTabNode).toBeInTheDocument();
+    const tabCount = screen.getAllByRole('tab');
+
+    expect(tabCount).toHaveLength(2);
   });
 });
