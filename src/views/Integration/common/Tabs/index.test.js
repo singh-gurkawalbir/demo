@@ -1,7 +1,7 @@
 /* global describe, expect, jest, test, beforeEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../../test/test-utils';
 import IntegrationTabs from '.';
@@ -88,7 +88,7 @@ describe('test suite for IntegrationTabs', () => {
     userEvent.click(connectionTab);
     expect(mockHistoryPush).toHaveBeenLastCalledWith('/integrations/none/connections');
     await initIntegrationTabs({tabs}, {renderFun: utils.rerender});
-    expect(screen.queryByText('Flows Panel')).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText('Flows Panel')).not.toBeInTheDocument());
     expect(screen.getByText('Connections Panel')).toBeInTheDocument();
   });
 
@@ -111,7 +111,7 @@ describe('test suite for IntegrationTabs', () => {
 
     userEvent.click(connectionTab);
     await initIntegrationTabs({tabs}, {initialStore, renderFun: utils.rerender});
-    expect(screen.getByRole('tabpanel', {name: /Connections/})).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('tabpanel', {name: /Connections/})).toBeInTheDocument());
   });
 
   test('completed flows panel should not be accessible external to dashboard panel for users in EM2.0', async () => {
@@ -125,6 +125,6 @@ describe('test suite for IntegrationTabs', () => {
 
     userEvent.click(connectionTab);
     await initIntegrationTabs({tabs}, {initialStore, renderFun: utils.rerender});
-    expect(screen.getByRole('tabpanel', {name: /Connections/})).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('tabpanel', {name: /Connections/})).toBeInTheDocument());
   });
 });
