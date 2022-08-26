@@ -2,8 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty } from 'lodash';
-import { Grid, Typography } from '@material-ui/core';
-import clsx from 'clsx';
+import { Typography } from '@material-ui/core'; import clsx from 'clsx';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import DynaForm from '../../components/DynaForm';
@@ -22,56 +21,13 @@ import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import { hashCode } from '../../utils/string';
-import { emptyObject, HOME_PAGE_PATH, UNASSIGNED_SECTION_ID } from '../../utils/constants';
-import { CLONE_DESCRIPTION } from '../../utils/messageStore';
+import { emptyObject, HOME_PAGE_PATH, UNASSIGNED_SECTION_ID } from '../../constants';
+import messageStore from '../../utils/messageStore';
+import PageContent from '../../components/PageContent';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    marginLeft: theme.spacing(1),
-  },
-  templateBody: {
-    padding: '15px',
-  },
-  appDetails: {
-    paddingTop: '25px',
-  },
-  marketplaceContainer: {
-    maxWidth: '90vw',
-    padding: '0 15px',
-  },
-  appDetailsHeader: {
-    borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
-    marginBottom: '5px',
-  },
-  container: {
-    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
-  },
-  paper: {
-    padding: theme.spacing(1, 2),
-    background: theme.palette.background.default,
-  },
-  templateBoxHead: {
-    padding: '10px 0',
-    borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
-  },
-  installButton: {
-    paddingTop: '20px',
-  },
-  description: {
-    paddingBottom: '20px',
-  },
-  nameField: {
-    marginBottom: '10px',
-  },
   componentPadding: {
-    padding: theme.spacing(3, 3, 12, 3),
-  },
-  componentsTable: {
-    paddingTop: '20px',
-  },
-  flowGroupTitle: {
-    textTransform: 'uppercase',
-    paddingTop: theme.spacing(1),
+    padding: theme.spacing(1, 1, 8, 1),
   },
   flowGroupDescription: {
     marginTop: theme.spacing(2),
@@ -81,6 +37,10 @@ const useStyles = makeStyles(theme => ({
   },
   flowInFlowGroupNameHover: {
     backgroundColor: theme.palette.background.paper,
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  flowGroupTitle: {
+    paddingTop: theme.spacing(1),
   },
 }));
 const integrationsFilterConfig = {
@@ -98,17 +58,13 @@ const useColumns = () => [
     useGetCellStyling: ({rowData: r}) => {
       const classes = useStyles();
       const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
-      const classFlowInFlowGroupName = groupName || isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
-      const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
 
-      return clsx(classFlowInFlowGroupName, classFlowInFlowGroupNameHover);
+      return clsx({[classes.flowInFlowGroupName]: !isLastFlowInFlowGroup, [classes.flowInFlowGroupNameHover]: groupName});
     },
     Value: ({rowData: r}) => {
       const classes = useStyles();
 
-      if (r?.groupName) {
-        return <Typography variant="overline" component="div" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>;
-      }
+      if (r.groupName || r.emptyMessage) return <Typography variant={r?.groupName ? 'overline' : 'body2'} component="div" color="textSecondary" className={clsx({[classes.flowGroupTitle]: r?.groupName, [classes.emptyMessageContent]: r?.emptyMessage})}>{r?.groupName || r?.emptyMessage}</Typography>;
 
       return r?.doc?.name || r?.doc?._id;
     },
@@ -120,10 +76,8 @@ const useColumns = () => [
     useGetCellStyling: ({rowData: r}) => {
       const classes = useStyles();
       const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
-      const classLastFlowInGroup = groupName || isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
-      const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
 
-      return clsx(classLastFlowInGroup, classFlowInFlowGroupNameHover);
+      return clsx({[classes.flowInFlowGroupName]: !isLastFlowInFlowGroup, [classes.flowInFlowGroupNameHover]: groupName});
     },
     Value: ({rowData: r}) => r?.doc?.description,
   },
@@ -131,7 +85,6 @@ const useColumns = () => [
 export default function ClonePreview(props) {
   const classes = useStyles(props);
   const { resourceType, resourceId } = props.match.params;
-  const [requested, setRequested] = useState(false);
   const [cloneRequested, setCloneRequested] = useState(false);
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
@@ -227,12 +180,11 @@ export default function ClonePreview(props) {
     resourceType,
   ]);
 
+  // fetches the latest preview components on every mount
   useEffect(() => {
-    if (!components || (isEmpty(components) && !requested)) {
-      dispatch(actions.clone.requestPreview(resourceType, resourceId));
-      setRequested(true);
-    }
-  }, [components, dispatch, requested, resourceId, resourceType]);
+    dispatch(actions.clone.requestPreview(resourceType, resourceId));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     if (createdComponents) {
       dispatch(actions.template.clearTemplate(`${resourceType}-${resourceId}`));
@@ -394,7 +346,6 @@ export default function ClonePreview(props) {
       name: 'tag',
       type: 'text',
       label: 'Tag',
-      defaultValue: `Clone - ${resource ? resource.name : ''}`,
     };
     fieldMeta.layout.fields = [
       'name',
@@ -513,23 +464,22 @@ export default function ClonePreview(props) {
 
   return (
     <LoadResources resources="flows,exports,imports,integrations" required>
-      <CeligoPageBar title={`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`} infoText={CLONE_DESCRIPTION} />
-      <>
-        <Grid container>
-          <Grid className={classes.componentPadding} item xs={12}>
-            <DynaForm
-              formKey={formKey} />
-            <DynaSubmit
-              formKey={formKey}
-              ignoreFormTouchedCheck
-              disabled={cloneRequested}
-              data-test="clone"
-              onClick={clone}>
-              {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`}
-            </DynaSubmit>
-          </Grid>
-        </Grid>
-      </>
+      <CeligoPageBar title={`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`} infoText={messageStore('CLONE_DESCRIPTION')} />
+      <PageContent>
+        <div className={classes.componentPadding}>
+          <DynaForm
+            formKey={formKey} />
+          <DynaSubmit
+            formKey={formKey}
+            ignoreFormTouchedCheck
+            disabled={cloneRequested}
+            data-test="clone"
+            onClick={clone}>
+            {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`}
+          </DynaSubmit>
+        </div>
+      </PageContent>
     </LoadResources>
   );
 }
+

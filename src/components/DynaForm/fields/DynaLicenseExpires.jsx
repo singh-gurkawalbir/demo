@@ -8,6 +8,7 @@ import { isNewId } from '../../../utils/resource';
 export default function DynaLicenseExpires(props) {
   const location = useLocation();
   const { connectorId, id, resourceId } = props;
+  // TODO @Raghu: Why are we looking for URL? remove this
   const trialLicenseTemplate = location.pathname.includes(`connectors/${connectorId}/edit/connectorLicenses/`) ||
     location.pathname.includes(`connectors/${connectorId}/add/connectorLicenses/`);
 

@@ -4,7 +4,8 @@ import actionTypes from '../../../../actions/types';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
-} from '../../../../utils/constants';
+  emptyList,
+} from '../../../../constants';
 import { COMM_STATES as REINVITE_STATES } from '../../../comms/networkComms';
 
 export default (state = [], action) => {
@@ -95,7 +96,7 @@ selectors.usersList = createSelector(
   state => state,
   state => {
     if (!state || !state.length) {
-      return [];
+      return emptyList;
     }
 
     const aShares = state.map(share => ({
@@ -106,51 +107,53 @@ selectors.usersList = createSelector(
     return aShares;
   });
 
-selectors.integrationUsersForOwner = (state, integrationId) => {
-  if (!state || !state.length) {
-    return [];
-  }
+selectors.integrationUsersForOwner = createSelector(
+  (_, integrationId) => integrationId,
+  selectors.usersList,
+  (integrationId, aShares) => {
+    if (!aShares || !aShares.length) {
+      return emptyList;
+    }
 
-  const aShares = selectors.usersList(state);
-  const integrationUsers = [];
-  let integrationAccessLevel;
+    const integrationUsers = [];
+    let integrationAccessLevel;
 
-  aShares.forEach(u => {
-    if (u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) {
-      integrationUsers.push({
-        ...u,
-        accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
-        integrationAccessLevel: undefined,
-      });
-    } else if (u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MANAGE) {
-      integrationUsers.push({
-        ...u,
-        accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
-        integrationAccessLevel: undefined,
-      });
-    } else if ([USER_ACCESS_LEVELS.ACCOUNT_MONITOR, USER_ACCESS_LEVELS.TILE].includes(u.accessLevel)) {
-      integrationAccessLevel = u.integrationAccessLevel && u.integrationAccessLevel.find(
-        ial => ial._integrationId === integrationId
-      );
-      if (integrationAccessLevel) {
-        integrationAccessLevel = integrationAccessLevel.accessLevel;
-      }
-      if (!integrationAccessLevel && u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
-        integrationAccessLevel = INTEGRATION_ACCESS_LEVELS.MONITOR;
-      }
-
-      if (integrationAccessLevel) {
+    aShares.forEach(u => {
+      if (u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_ADMIN) {
         integrationUsers.push({
           ...u,
-          accessLevel: integrationAccessLevel,
+          accessLevel: USER_ACCESS_LEVELS.ACCOUNT_ADMIN,
           integrationAccessLevel: undefined,
         });
-      }
-    }
-  });
+      } else if (u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MANAGE) {
+        integrationUsers.push({
+          ...u,
+          accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+          integrationAccessLevel: undefined,
+        });
+      } else if ([USER_ACCESS_LEVELS.ACCOUNT_MONITOR, USER_ACCESS_LEVELS.TILE].includes(u.accessLevel)) {
+        integrationAccessLevel = u.integrationAccessLevel && u.integrationAccessLevel.find(
+          ial => ial._integrationId === integrationId
+        );
+        if (integrationAccessLevel) {
+          integrationAccessLevel = integrationAccessLevel.accessLevel;
+        }
+        if (!integrationAccessLevel && u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
+          integrationAccessLevel = INTEGRATION_ACCESS_LEVELS.MONITOR;
+        }
 
-  return integrationUsers;
-};
+        if (integrationAccessLevel) {
+          integrationUsers.push({
+            ...u,
+            accessLevel: integrationAccessLevel,
+            integrationAccessLevel: undefined,
+          });
+        }
+      }
+    });
+
+    return integrationUsers;
+  });
 selectors.userReinviteStatus = (state, _id) => {
   if (!state || !state.length) {
     return null;

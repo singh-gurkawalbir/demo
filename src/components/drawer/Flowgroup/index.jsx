@@ -14,11 +14,10 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import { useFormOnCancel } from '../../FormOnCancelContext';
 import { useSelectorMemo } from '../../../hooks';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import { emptyList, emptyObject, FORM_SAVE_STATUS, FLOW_GROUP_FORM_KEY } from '../../../utils/constants';
+import { emptyList, emptyObject, FORM_SAVE_STATUS, FLOW_GROUP_FORM_KEY } from '../../../constants';
 import { getFlowGroup } from '../../../utils/flows';
 import getRoutePath from '../../../utils/routePaths';
-
-const paths = ['flowgroups/add', 'flowgroups/edit'];
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit, flowGroupId) => ({
   fieldMap: {
@@ -32,6 +31,7 @@ const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit, flowGr
       isEdit,
       required: true,
       flowGroupId,
+      helpKey: 'flowGroup.name',
     },
     _flowIds: {
       id: '_flowIds',
@@ -42,6 +42,7 @@ const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit, flowGr
       unSearchable: true,
       isFlowGroupForm: true,
       integrationId,
+      helpKey: 'flowGroup.flows',
     },
   },
   layout: {
@@ -92,9 +93,12 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
     // if the create flow group form is saved
     // we will open the edit flow group form of the newly created flow group
     if (!isEdit) {
-      history.replace(
-        getRoutePath(`/integrations/${integrationId}/flows/sections/${newGroupId}/flowgroups/edit`)
-      );
+      const newPathWithCreatedFlowGroup = getRoutePath(`integrations/${integrationId}/flows/sections/${newGroupId}`);
+
+      history.replace(buildDrawerUrl({
+        path: drawerPaths.FLOW_GROUP.EDIT,
+        baseUrl: newPathWithCreatedFlowGroup,
+      }));
     }
   }, [history, isFormSaveTriggered, asyncTaskStatus, integrationId, newGroupId, isEdit]);
 
@@ -111,7 +115,7 @@ function FlowgroupForm({ integrationId, groupId, isEdit }) {
   }, []);
 
   return (
-    <LoadResources required resources="flows">
+    <LoadResources required integrationId={integrationId} resources="flows">
       <DrawerContent>
         <DynaForm formKey={FLOW_GROUP_FORM_KEY} />
       </DrawerContent>
@@ -138,7 +142,7 @@ export default function FlowgroupDrawer({ integrationId }) {
     <RightDrawer
       height="tall"
       width="medium"
-      path={paths}
+      path={[drawerPaths.FLOW_GROUP.ADD, drawerPaths.FLOW_GROUP.EDIT]}
     >
       <DrawerHeader
         title={`${isEdit ? 'Edit' : 'Create'} flow group`}

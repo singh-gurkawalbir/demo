@@ -1,3 +1,4 @@
+import { HTTP_BASED_ADAPTORS } from '../../../../utils/http';
 import { getResourceSubType } from '../../../../utils/resource';
 
 export default {
@@ -13,7 +14,7 @@ export default {
             { field: 'outputMode', is: ['records'] },
           ];
         }
-        if (exportType === 'http' || exportType === 'rest') {
+        if (HTTP_BASED_ADAPTORS.includes(exportType)) {
           return [
             {
               field: 'outputMode',
@@ -36,7 +37,7 @@ export default {
             { field: 'netsuite.api.type', isNot: [''] },
           ];
         }
-        if (exportType === 'http' || exportType === 'rest') {
+        if (HTTP_BASED_ADAPTORS.includes(exportType)) {
           return [
             {
               field: 'outputMode',
@@ -52,7 +53,7 @@ export default {
       visibleWhenAll: r => {
         const exportType = getResourceSubType(r).type;
 
-        if (exportType === 'http' || exportType === 'rest') {
+        if (HTTP_BASED_ADAPTORS.includes(exportType)) {
           return [
             {
               field: 'outputMode',
@@ -64,9 +65,39 @@ export default {
         return [];
       },
     },
-    apiIdentifier: { fieldId: 'apiIdentifier',
+    apiIdentifier: {
+      fieldId: 'apiIdentifier',
+      visibleWhenAll: r => {
+        const exportType = getResourceSubType(r).type;
+
+        if (exportType === 'graph_ql' || r?.http?.formType === 'graph_ql') {
+          return [
+            {
+              field: 'outputMode',
+              is: ['records'],
+            },
+          ];
+        }
+
+        return [];
+      },
     },
-    traceKeyTemplate: { fieldId: 'traceKeyTemplate' },
+    traceKeyTemplate: {
+      fieldId: 'traceKeyTemplate',
+      visibleWhenAll: r => {
+        const exportType = getResourceSubType(r).type;
+
+        if (exportType === 'graph_ql' || r?.http?.formType === 'graph_ql') {
+          return [
+            {
+              field: 'outputMode',
+              is: ['records'],
+            },
+          ];
+        }
+
+        return [];
+      } },
   },
   layout: {
     fields: ['pageSize', 'dataURITemplate', 'skipRetries', 'traceKeyTemplate', 'apiIdentifier'],

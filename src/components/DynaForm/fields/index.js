@@ -144,6 +144,17 @@ import DynaAmazonRestrictedReportType from './DynaAmazonRestrictedReportType';
 import DynaFlowGroupName from './integrations/DynaFlowGroupName';
 import DynaFlowGroupsTiedToIntegrations from './integrations/DynaFlowGroupsTiedToIntegrations';
 import DynaTextUpdateDomain from './text/DynaTextUpdateDomain';
+import DynaManageAliases from './aliases/DynaManageAliases';
+import DynaAliasId from './aliases/DynaAliasId';
+import DynaSelectAliasResource from './aliases/DynaSelectAliasResource';
+import DynaIntegrationCloneSelect from './select/DynaIntegrationCloneSelect';
+import DynaHFAssistantOptions from './httpFramework/DynaHFAssistantOptions';
+import DynaHFAssistantSearchParams from './httpFramework/DynaHFAssistantSearchParams';
+import DynaSemiHFAssistantOperationSelect from './httpFramework/DynaSemiHFAssistantOperationSelect';
+import DynaAmazonmwsType from './DynaAmazonmwsType';
+import DynaMFAMobileCode from './DynaMFAMobileCode';
+import DynaMFASecretKey from './DynaMFASecretKey';
+import DynaConnectionFormView from './DynaConnectionFormView';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -298,5 +309,16 @@ export default {
   sortandgroup: DynaSortAndGroup,
   selectAmazonSellerCentralAPIType: DynaSelectAmazonSellerCentralAPIType,
   amazonRestrictedReportType: DynaAmazonRestrictedReportType,
+  managealiases: DynaManageAliases,
+  aliasid: DynaAliasId,
+  selectaliasresource: DynaSelectAliasResource,
   updatedomain: DynaTextUpdateDomain,
+  integrationcloneselect: DynaIntegrationCloneSelect,
+  hfoptions: DynaHFAssistantOptions,
+  hfsearchparams: DynaHFAssistantSearchParams,
+  semihfoperationselect: DynaSemiHFAssistantOperationSelect,
+  amazonmwstype: DynaAmazonmwsType,
+  mfamobilecode: DynaMFAMobileCode,
+  mfasecretkey: DynaMFASecretKey,
+  connectionFormView: DynaConnectionFormView,
 };

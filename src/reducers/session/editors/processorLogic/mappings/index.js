@@ -1,9 +1,8 @@
 export default {
   processor: 'mapperProcessor',
-  skipPreview: ({layout}) => layout === 'assistantRight',
   init: ({options, resource}) => {
     const importName = resource?.name;
-    const editorTitle = importName ? `Edit Mapping: ${importName}` : 'Edit Mapping';
+    const editorTitle = importName ? `Edit mapping: ${importName}` : 'Edit Mapping';
 
     return {
       ...options,
@@ -15,18 +14,30 @@ export default {
   }),
   validate: editor => editor.violations || {},
   processResult: (editor, result) => {
-    const errors = result?.data?.[0]?.errors;
+    if (!result) return;
 
-    if (errors) {
-      const errJSON = result.data[0];
-      const errorMessage = [`Message: ${errJSON.message || errJSON.errors?.[0]?.message || JSON.stringify(errJSON)}`];
+    const {mappingPreviewType} = editor;
+
+    let errors = result.data?.[0] || {};
+    const hasErrors = !!(result.errors || errors.message || errors.errors?.length);
+    let finalResult = result.data?.[0]?.mappedObject || '';
+
+    if (mappingPreviewType) {
+      finalResult = result.data;
+      errors = result.errors;
+    }
+
+    if (mappingPreviewType === 'netsuite') {
+      finalResult = result.data?.data?.returnedObjects?.jsObjects?.data?.[0]?.data;
+    }
+
+    if (hasErrors) {
+      const errorMessage = [`Message: ${errors.message || errors.errors?.[0]?.message || JSON.stringify(errors)}`];
 
       throw new Error(errorMessage);
     }
 
-    return {
-      data: result?.data?.[0]?.mappedObject || '',
-    };
+    return { data: finalResult || '' };
   },
 };
 

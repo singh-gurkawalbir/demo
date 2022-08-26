@@ -1,11 +1,12 @@
 import moment from 'moment';
 import actionTypes from '../actions/types';
-import { JOB_TYPES, JOB_STATUS, STANDALONE_INTEGRATION } from './constants';
+import { JOB_TYPES, JOB_STATUS, STANDALONE_INTEGRATION } from '../constants';
 import { getStaticCodesList } from './flowStepLogs';
 import { getSelectedRange } from './flowMetrics';
 import { isNewId } from './resource';
 
 let path;
+let body;
 
 export default function getRequestOptions(
   action,
@@ -25,6 +26,7 @@ export default function getRequestOptions(
     loadMore,
     childId,
     flowIds,
+    feature,
   } = {}
 ) {
   switch (action) {
@@ -78,6 +80,10 @@ export default function getRequestOptions(
         path = '/licenses/retrialRequest';
       } else if (actionType === 'upgrade') {
         path = '/licenses/upgradeRequest';
+
+        if (feature) {
+          body = {feature};
+        }
       } else if (actionType === 'connectorRenewal') {
         path = `/connectors/${connectorId}/licenses/${licenseId}/renewRequest`;
       } else if (actionType === 'ioRenewal') {
@@ -88,7 +94,7 @@ export default function getRequestOptions(
 
       return {
         path,
-        opts: { method: 'POST' },
+        opts: { method: 'POST', body },
       };
     case actionTypes.ACCESSTOKEN.DISPLAY:
       return {
@@ -263,7 +269,7 @@ export default function getRequestOptions(
       };
     case actionTypes.LICENSE.NUM_ENABLED_FLOWS_REQUEST:
       return {
-        path: '/numEnabledFlows',
+        path: '/licenseEntitlementUsage',
         opts: { method: 'GET' },
       };
     case actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST:
@@ -322,7 +328,7 @@ export default function getRequestOptions(
       let path = resourceType ? `/${childId ? 'flows' : resourceType}/audit/signedURL` : '/audit/signedURL';
 
       const body = resourceType && {_resourceIds: flowIds || [resourceId]};
-      const { fromDate, toDate } = filters || {};
+      const { fromDate, toDate, byUser, resourceType: filterResourceType, source, event, _resourceId } = filters || {};
       const fromKey = 'from';
       const toKey = 'to';
 
@@ -339,6 +345,21 @@ export default function getRequestOptions(
         path += `?${fromKey}=${fromDate}`;
       } else if (toDate) {
         path += `?${toKey}=${toDate}`;
+      }
+      if (byUser !== 'all') {
+        resourceType ? body._byUserId = byUser : path += `&_byUserId=${byUser}`;
+      }
+      if (filterResourceType !== 'all') {
+        resourceType ? body.resourceType = filterResourceType : path += `&resourceType=${filterResourceType}`;
+      }
+      if (_resourceId !== 'all') {
+        resourceType ? body._resourceId = _resourceId : path += `&_resourceId=${_resourceId}`;
+      }
+      if (source !== 'all') {
+        resourceType ? body.source = source : path += `&source=${source}`;
+      }
+      if (event !== 'all') {
+        resourceType ? body.action = event : path += `&action=${event}`;
       }
       const opts = { method, body };
 

@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import InstallationStep from '../../../../../components/InstallStep';
-import {SUITESCRIPT_CONNECTORS } from '../../../../../utils/constants';
+import {SUITESCRIPT_CONNECTORS } from '../../../../../constants';
 import openExternalUrl from '../../../../../utils/window';
 import RightDrawer from '../../../../../components/drawer/Right';
 import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
@@ -354,6 +354,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
             handleSubmitComplete={handleSubmitComplete} />
           {ssConnection && (
           <RightDrawer
+            isSuitescript
             path="editConnection"
             height="tall"
             width="medium">

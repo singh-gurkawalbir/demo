@@ -10,7 +10,6 @@ import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import EditIcon from '../../../icons/EditIcon';
 import DeleteIcon from '../../../icons/TrashIcon';
-import ActionButton from '../../../ActionButton';
 import useConfirmDialog from '../../../ConfirmDialog';
 import {
   getNetSuiteSubrecordLabel,
@@ -19,6 +18,8 @@ import {
 import AddIcon from '../../../icons/AddIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import ActionGroup from '../../../ActionGroup';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
+import ActionButton from '../../../ActionButton';
 
 export const UseDynaNetsuiteSubRecordsStyles = makeStyles(theme => ({
   subrecords: {
@@ -211,7 +212,9 @@ export default function DynaNetSuiteSubRecords(props) {
       <div className={classes.subrecords}>
         <div className={classes.header}>
           <Typography variant="body2">Subrecord imports</Typography>
-          <Link to={`${match.url}/subrecords`} className={classes.link}>
+          <Link
+            to={buildDrawerUrl({ path: drawerPaths.NS_SUB_RECORD.ADD, baseUrl: match.url })}
+            className={classes.link}>
             <AddIcon />
             Add subrecord
           </Link>
@@ -225,14 +228,18 @@ export default function DynaNetSuiteSubRecords(props) {
               </Typography>
               <ActionGroup>
                 <ActionButton
-                  fontSize="small"
+                  tooltip="Edit subrecord"
                   data-test="edit-subrecord"
                   component={Link}
-                  to={`${match.url}/subrecords/${sr.fieldId}`}>
+                  to={buildDrawerUrl({
+                    path: drawerPaths.NS_SUB_RECORD.EDIT,
+                    baseUrl: match.url,
+                    params: { fieldId: sr.fieldId },
+                  })}>
                   <EditIcon />
                 </ActionButton>
                 <ActionButton
-                  fontSize="small"
+                  tooltip="Delete subrecord"
                   data-test="delete-subrecord"
                   onClick={() => handleDeleteClick(sr.fieldId)}>
                   <DeleteIcon />

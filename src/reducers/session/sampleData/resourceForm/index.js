@@ -7,7 +7,7 @@ const DEFAULT_VALUE = undefined;
 const emptyObj = {};
 
 export function extractStages(sampleData) {
-  const stagesInSampleData = sampleData?.stages;
+  const stagesInSampleData = sampleData?.stages?.stages || sampleData?.stages;
   const stageMap = {};
 
   if (!stagesInSampleData) {
@@ -30,33 +30,66 @@ export function extractStages(sampleData) {
 }
 
 export default function (state = {}, action) {
-  const { type, resourceId, status = 'requested', previewData, previewStagesData, previewError, parseData, rawData, csvData, recordSize, processor, processorData, processorError } = action;
+  const {
+    type,
+    sampleDataType,
+    resourceId,
+    status = 'requested',
+    previewData,
+    previewStagesData,
+    previewError,
+    parseData,
+    rawData,
+    csvData,
+    recordSize,
+    processor,
+    processorData,
+    processorError,
+    mockData,
+  } = action;
 
   return produce(state, draft => {
+    const activeSendOrPreviewTab = draft[resourceId]?.typeOfSampleData || 'preview';
+
+    if (!resourceId) return;
+
+    if (!draft[resourceId] || !draft[resourceId][activeSendOrPreviewTab]) {
+      if (!draft[resourceId]) {
+        draft[resourceId] = {};
+      }
+      if (!draft[resourceId][activeSendOrPreviewTab]) {
+        draft[resourceId][activeSendOrPreviewTab] = {};
+      }
+    }
+
     switch (type) {
+      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_DATA_TYPE:
+        draft[resourceId].typeOfSampleData = sampleDataType;
+        break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_STATUS:
-        draft[resourceId] = draft[resourceId] || {};
-        draft[resourceId].status = status;
+        draft[resourceId][activeSendOrPreviewTab].status = status;
+        // when new sample data is requested, clear the defaultMockData if it exists
+        if (status === 'requested' && draft[resourceId].data && draft[resourceId].data.defaultMockData) {
+          draft[resourceId].data.defaultMockData = undefined;
+        }
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_STAGES:
-        draft[resourceId] = draft[resourceId] || {};
-        draft[resourceId].status = 'received';
-        draft[resourceId].data = extractStages(previewStagesData);
+        draft[resourceId][activeSendOrPreviewTab].status = 'received';
+        draft[resourceId][activeSendOrPreviewTab].data = extractStages(previewStagesData);
+        draft[resourceId][activeSendOrPreviewTab].message = previewStagesData?.message;
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_ERROR:
-        draft[resourceId] = draft[resourceId] || {};
-        draft[resourceId].status = 'error';
-        draft[resourceId].error = previewError?.errors;
-        draft[resourceId].data = extractStages(previewError);
+        draft[resourceId][activeSendOrPreviewTab].status = 'error';
+        draft[resourceId][activeSendOrPreviewTab].error = previewError?.errors;
+        draft[resourceId][activeSendOrPreviewTab].data = extractStages(previewError);
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PROCESSOR_ERROR: {
-        draft[resourceId] = draft[resourceId] || {};
-        draft[resourceId].status = 'error';
+        draft[resourceId][activeSendOrPreviewTab].status = 'error';
         const errors = Array.isArray(processorError) ? processorError : [processorError];
 
-        draft[resourceId].error = errors;
-        draft[resourceId].data = {
-          ...draft[resourceId].data,
+        draft[resourceId][activeSendOrPreviewTab].error = errors;
+        draft[resourceId][activeSendOrPreviewTab].data = {
+          ...draft[resourceId][activeSendOrPreviewTab].data,
           // processor dependent stages need to be reset if processor throws error
           parse: { errors },
           preview: undefined,
@@ -64,49 +97,50 @@ export default function (state = {}, action) {
         break;
       }
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PARSE_DATA:
-        draft[resourceId] = draft[resourceId] || {};
-        if (!draft[resourceId].data) {
-          draft[resourceId].data = {};
+        if (!draft[resourceId][activeSendOrPreviewTab].data) {
+          draft[resourceId][activeSendOrPreviewTab].data = {};
         }
-        draft[resourceId].data.parse = parseData ? [parseData] : DEFAULT_VALUE;
+        draft[resourceId][activeSendOrPreviewTab].data.parse = parseData ? [parseData] : DEFAULT_VALUE;
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_RAW_FILE_DATA:
-        draft[resourceId] = draft[resourceId] || {};
-        if (!draft[resourceId].data) {
-          draft[resourceId].data = {};
+        if (!draft[resourceId][activeSendOrPreviewTab].data) {
+          draft[resourceId][activeSendOrPreviewTab].data = {};
         }
-        draft[resourceId].data.raw = rawData;
+        draft[resourceId][activeSendOrPreviewTab].data.raw = rawData;
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PREVIEW_DATA:
-        draft[resourceId] = draft[resourceId] || {};
-        if (!draft[resourceId].data) {
-          draft[resourceId].data = {};
+        if (!draft[resourceId][activeSendOrPreviewTab].data) {
+          draft[resourceId][activeSendOrPreviewTab].data = {};
         }
-        draft[resourceId].data.preview = previewData;
+        draft[resourceId][activeSendOrPreviewTab].data.preview = previewData;
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_CSV_FILE_DATA:
-        draft[resourceId] = draft[resourceId] || {};
-        if (!draft[resourceId].data) {
-          draft[resourceId].data = {};
+        if (!draft[resourceId][activeSendOrPreviewTab].data) {
+          draft[resourceId][activeSendOrPreviewTab].data = {};
         }
-        draft[resourceId].data.csv = csvData;
+        draft[resourceId][activeSendOrPreviewTab].data.csv = csvData;
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PROCESSOR_DATA:
         if (!processor) break;
-        draft[resourceId] = draft[resourceId] || {};
+        draft[resourceId][activeSendOrPreviewTab] = draft[resourceId][activeSendOrPreviewTab] || {};
+        if (!draft[resourceId][activeSendOrPreviewTab].data) {
+          draft[resourceId][activeSendOrPreviewTab].data = {};
+        }
+        draft[resourceId][activeSendOrPreviewTab].data[processor] = processorData;
+        break;
+      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_MOCK_DATA:
         if (!draft[resourceId].data) {
           draft[resourceId].data = {};
         }
-        draft[resourceId].data[processor] = processorData;
+        draft[resourceId].data.mockData = mockData || DEFAULT_VALUE;
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE:
-        draft[resourceId] = draft[resourceId] || {};
-        draft[resourceId].recordSize = recordSize;
+        draft[resourceId][activeSendOrPreviewTab].recordSize = recordSize;
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES:
-        if (draft[resourceId]) {
-          draft[resourceId].status = 'received';
-          draft[resourceId].data = {};
+        if (draft[resourceId][activeSendOrPreviewTab]) {
+          draft[resourceId][activeSendOrPreviewTab].status = 'received';
+          draft[resourceId][activeSendOrPreviewTab].data = {};
         }
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR:
@@ -119,7 +153,13 @@ export default function (state = {}, action) {
 
 export const selectors = {};
 
-selectors.sampleDataRecordSize = (state, resourceId) => state?.[resourceId]?.recordSize || DEFAULT_RECORD_SIZE;
+selectors.typeOfSampleData = (state, resourceId) => state?.[resourceId]?.typeOfSampleData || 'preview';
+
+selectors.sampleDataRecordSize = (state, resourceId) => {
+  const activeSendOrPreviewTab = selectors.typeOfSampleData(state, resourceId);
+
+  return state?.[resourceId]?.[activeSendOrPreviewTab]?.recordSize || DEFAULT_RECORD_SIZE;
+};
 
 export const getResourceSampleData = (resourceIdSampleData, stage) => {
   const resourceData = resourceIdSampleData?.data;
@@ -142,12 +182,17 @@ const getResourceSampleDataWithStatus = (resourceIdSampleData, stage) => ({
   data: getResourceSampleData(resourceIdSampleData, stage),
   status: resourceIdSampleData?.status,
   error: resourceIdSampleData?.error,
+  message: resourceIdSampleData?.message,
 });
 
-selectors.getResourceSampleDataWithStatus = (state, resourceId, stage) => getResourceSampleDataWithStatus(state?.[resourceId], stage);
+selectors.getResourceSampleDataWithStatus = (state, resourceId, stage) => {
+  const activeSendOrPreviewTab = selectors.typeOfSampleData(state, resourceId);
+
+  return getResourceSampleDataWithStatus(state?.[resourceId]?.[activeSendOrPreviewTab], stage);
+};
 
 selectors.mkPreviewStageDataList = () => createSelector(
-  (state, resourceId) => state?.[resourceId],
+  (state, resourceId) => state?.[resourceId]?.[state?.[resourceId]?.typeOfSampleData || 'preview'],
   (_1, _2, stages) => stages,
   (resourceIdSampleData, stages) => {
     if (!stages) return emptyObj;
@@ -161,7 +206,8 @@ selectors.mkPreviewStageDataList = () => createSelector(
 );
 
 selectors.getResourceSampleDataStages = (state, resourceId) => {
-  const sampleData = state?.[resourceId]?.data || {};
+  const activeSendOrPreviewTab = selectors.typeOfSampleData(state, resourceId);
+  const sampleData = state?.[resourceId]?.[activeSendOrPreviewTab]?.data || {};
 
   return Object.keys(sampleData).map(stage => ({
     name: stage,
@@ -179,3 +225,5 @@ selectors.getAllParsableErrors = (state, resourceId) => {
   // if there are no stages return all errors and the complete error list would be visible in the preview editor
   return errors;
 };
+
+selectors.getResourceMockData = (state, resourceId) => state?.[resourceId]?.data?.mockData;

@@ -3,24 +3,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
 import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
 import { difference } from 'lodash';
-import { JOB_STATUS } from '../../utils/constants';
+import clsx from 'clsx';
+import { JOB_STATUS } from '../../constants';
+import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 import JobDetail from './JobDetail';
 import ErrorDrawer from './ErrorDrawer';
 import actions from '../../actions';
 import Spinner from '../Spinner';
 import { selectors } from '../../reducers';
+import { JobDetailsStyles } from './ChildJobDetail';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    width: '98%',
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
-    overflowX: 'auto',
-  },
-  title: {
-    marginBottom: theme.spacing(2),
-    float: 'left',
-  },
   table: {
     minWidth: 700,
     position: 'relative',
@@ -29,46 +22,13 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: 40,
   },
   name: {
-    width: '18.15%',
     wordBreak: 'break-word',
     [theme.breakpoints.down('md')]: {
       wordBreak: 'normal',
     },
   },
-  status: {
-    width: '10.15%',
-  },
-  success: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  ignore: {
-    width: '7.5%',
-    textAlign: 'right',
-  },
   error: {
-    width: '10.15%',
     textAlign: 'right',
-  },
-  resolved: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  pages: {
-    width: '7.5%',
-    textAlign: 'right',
-  },
-  duration: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  completed: {
-    width: '11.5%',
-    whiteSpace: 'no-wrap',
-  },
-  actions: {
-    width: '7.5%',
-    textAlign: 'center',
   },
   tableContainer: {
     overflowX: 'auto',
@@ -84,7 +44,8 @@ export default function JobTable({
   integrationName,
   isFlowBuilderView,
 }) {
-  const classes = useStyles();
+  const classes = JobDetailsStyles();
+  const jobDetailsClasses = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const [openedJobErrors, setOpenedJobErrors] = useState(false);
@@ -154,7 +115,10 @@ export default function JobTable({
       numResolved,
     });
 
-    history.push(`${match.url}/viewErrors`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V1.VIEW_JOB_ERRORS,
+      baseUrl: match.url,
+    }));
   }, [history, match.url]);
 
   useEffect(() => {
@@ -168,6 +132,7 @@ export default function JobTable({
     // For reload case as there is no track of jobID, redirecting to the job table dashboard
     if (history.location.pathname.includes('/viewErrors') && !(_JobId || showErrorDialogFor?.jobId)) {
       const urlExtractFields = history.location.pathname.split('/');
+      // TODO: @RAGHU, Do we need this logic?
       const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf('viewErrors');
       const strippedRoute = urlExtractFields.slice(0, -indexToBeStripped).join('/');
 
@@ -192,14 +157,14 @@ export default function JobTable({
     <>
       {isFlowJobsCollectionLoading ? (
 
-        <Spinner centerAll />
+        <Spinner loading size="large" />
 
       ) : (
         <div className={classes.tableContainer}>
-          <Table className={classes.table}>
+          <Table className={clsx(classes.table, jobDetailsClasses.table)}>
             <TableHead>
               <TableRow>
-                <TableCell className={classes.checkFlow}>
+                <TableCell className={clsx(classes.checkFlow, jobDetailsClasses.checkFlow)}>
                   <Checkbox
                     disabled={jobsInCurrentPage.length === 0}
                     checked={isSelectAllChecked}
@@ -208,11 +173,11 @@ export default function JobTable({
                     inputProps={{ 'aria-label': 'Select all jobs' }}
               />
                 </TableCell>
-                <TableCell className={classes.name}>Flow</TableCell>
+                <TableCell className={clsx(classes.name, jobDetailsClasses.name)}>Flow</TableCell>
                 <TableCell className={classes.status}>Status</TableCell>
                 <TableCell className={classes.success}>Success</TableCell>
                 <TableCell className={classes.ignore}>Ignored</TableCell>
-                <TableCell className={classes.error}>Errors</TableCell>
+                <TableCell className={clsx(classes.error, jobDetailsClasses.error)}>Errors</TableCell>
                 <TableCell className={classes.resolved}>Resolved</TableCell>
                 <TableCell className={classes.pages}>Pages</TableCell>
                 <TableCell className={classes.duration}>Duration</TableCell>

@@ -6,6 +6,7 @@ import { makeStyles, Button, Typography } from '@material-ui/core';
 import isEqual from 'lodash/isEqual';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
+import { drawerPaths } from '../../../utils/rightDrawer';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
@@ -141,10 +142,9 @@ export default function RetryDrawer({height, jobId, flowJobId}) {
 
   return (
     <RightDrawer
-      path="editRetry/:retryId"
+      path={drawerPaths.ERROR_MANAGEMENT.V1.JOB_EDIT_RETRY}
       height={height}
-      width="large"
-      variant="permanent">
+      width="large" >
       <DrawerHeader handleClose={setCancelTriggered} disableClose={disabled} title="Edit retry data" />
       <RetryForm asyncKey={asyncKey} jobId={jobId} flowJobId={flowJobId} />
     </RightDrawer>

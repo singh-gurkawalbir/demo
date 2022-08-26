@@ -20,6 +20,7 @@ import CalendarIcon from '../icons/CalendarIcon';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import { getTemplateUrlName } from '../../utils/template';
 import getRoutePath from '../../utils/routePaths';
+import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -136,18 +137,22 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
           break;
 
         case 'schedule':
+          // TODO @Raghu: How to reproduce these URL redirections?
           if (flowDetails._connectorId) {
-            history.push(
-              getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/schedule`)
-            );
+            history.push(buildDrawerUrl({
+              path: drawerPaths.FLOW_BUILDER.SCHEDULE,
+              baseUrl: getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}`),
+            }));
           } else if (templateName) {
-            history.push(
-              getRoutePath(`/templates/${templateName}/${integrationId}/flowBuilder/${flowId}/schedule`)
-            );
+            history.push(buildDrawerUrl({
+              path: drawerPaths.FLOW_BUILDER.SCHEDULE,
+              baseUrl: getRoutePath(`/templates/${templateName}/${integrationId}/flowBuilder/${flowId}`),
+            }));
           } else {
-            history.push(
-              getRoutePath(`/integrations/${integrationId}/flowBuilder/${flowId}/schedule`)
-            );
+            history.push(buildDrawerUrl({
+              path: drawerPaths.FLOW_BUILDER.SCHEDULE,
+              baseUrl: getRoutePath(`/integrations/${integrationId}/flowBuilder/${flowId}`),
+            }));
           }
 
           break;
@@ -163,6 +168,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
             buttons: [
               {
                 label: 'Delete',
+                error: true,
                 onClick: deleteFlow,
               },
               {
@@ -175,10 +181,18 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
 
         case 'mapping':
           if (flowDetails.showUtilityMapping) {
-            history.push(
-              `${history.location.pathname}/${flowId}/utilitymapping/commonAttributes`
-            );
-          } else history.push(`${history.location.pathname}/mapping/${flowId}`);
+            history.push(buildDrawerUrl({
+              path: drawerPaths.MAPPINGS.CATEGORY_MAPPING.ROOT,
+              baseUrl: history.location.pathname,
+              params: { flowId, categoryId: 'commonAttributes' },
+            }));
+          } else {
+            history.push(buildDrawerUrl({
+              path: drawerPaths.MAPPINGS.IMPORT.LIST_ALL,
+              baseUrl: history.location.pathname,
+              params: { flowId },
+            }));
+          }
 
           break;
 

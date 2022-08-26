@@ -1,4 +1,6 @@
-import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION, FORM_SAVE_STATUS, CATEGORY_MAPPING_SAVE_STATUS } from '../constants';
+import isEmpty from 'lodash/isEmpty';
+import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION, FORM_SAVE_STATUS, CATEGORY_MAPPING_SAVE_STATUS } from '../../constants';
+import { capitalizeFirstLetter } from '../string';
 
 export const getIntegrationAppUrlName = integrationAppName => {
   if (!integrationAppName || typeof integrationAppName !== 'string') {
@@ -41,7 +43,7 @@ export const getEmptyMessage = (storeLabel = '', action) => {
   }
 };
 
-export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, supportsChild, children, isMonitorLevelUser}) => {
+export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, supportsChild, children, isMonitorLevelUser, isManageLevelUser}) => {
   const tabs = [
     'general',
     'readme',
@@ -62,7 +64,7 @@ export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, su
   } else {
     sectionsToHide.push('readme');
     sectionsToHide.push('general');
-    if (!isParent) {
+    if (isManageLevelUser || !isParent) {
       sectionsToHide.push('apitoken');
     } else if (supportsChild && children && children.length > 1) {
       sectionsToHide.push('uninstall');
@@ -173,7 +175,7 @@ export const getIntegrationApp = ({ _connectorId, name }) => {
     },
     'localhost.io': {
       'Zendesk - NetSuite Connector': 'zendesk',
-      'Shopify - NetSuite Connector': 'shopify',
+      'Shopify - NetSuite': 'shopify',
       'JIRA - NetSuite Connector': 'jira',
       'ADP - NetSuite Connector': 'adp',
       'Magento 2 - NetSuite Connector': 'magento2',
@@ -205,17 +207,34 @@ export const getIntegrationApp = ({ _connectorId, name }) => {
 
 export default {
   getStepText: (step = {}, mode) => {
+    // TODO: move this to a generic util file as Install steps are not just used in IAs
     let stepText = '';
     let showSpinner = false;
     const isUninstall = mode === 'uninstall';
 
-    if (
+    if (step.type === INSTALL_STEP_TYPES.MERGE) {
+      if (step.isTriggered) {
+        stepText = 'Merging';
+        showSpinner = true;
+      } else {
+        stepText = 'Merge';
+      }
+    } else if (step.type === INSTALL_STEP_TYPES.REVERT) {
+      if (step.isTriggered) {
+        stepText = 'Reverting';
+        showSpinner = true;
+      } else {
+        stepText = 'Revert';
+      }
+    } else if (
       step._connectionId ||
       step.type === INSTALL_STEP_TYPES.STACK ||
       step.type === 'connection' ||
       step.type === 'ssConnection' ||
       step.sourceConnection ||
-      step.type === INSTALL_STEP_TYPES.FORM
+      step.type === INSTALL_STEP_TYPES.FORM ||
+      // IA1.0 doesnt have type on their step scheam, instead check for 'form' property populated
+      !isEmpty(step.form)
     ) {
       if (step.completed) {
         stepText = isUninstall ? 'Uninstalled' : 'Configured';
@@ -263,9 +282,10 @@ export default {
 
     if (['jet', 'salesforceCommerce'].indexOf(integrationApp) !== -1) {
       highestEdition = 'enterprise';
+    } else if (integrationApp === 'shopify') {
+      highestEdition = 'shopifymarkets';
     } else if (
       [
-        'shopify',
         'bigcommerce',
         'magento2',
         'amazon',
@@ -287,6 +307,14 @@ export default {
   },
   isCloningSupported: (_connectorId, name) =>
     CLONING_SUPPORTED_IAS.includes(getIntegrationApp({ _connectorId, name })),
+};
+
+export const getTitleFromEdition = edition => {
+  if (edition.toLowerCase() === 'shopifymarkets') {
+    return 'Shopify Markets';
+  }
+
+  return capitalizeFirstLetter(edition);
 };
 
 export const getTitleIdFromSection = sec => sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '';

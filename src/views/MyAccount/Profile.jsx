@@ -15,6 +15,7 @@ import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 import LoadResources from '../../components/LoadResources';
 import { OutlinedButton } from '../../components/Buttons';
+import infoText from '../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   googleBtn: {
@@ -130,6 +131,17 @@ export default function ProfilePanel() {
     const { timeFormat, dateFormat, showRelativeDateTime } = completePayloadCopy;
     const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime };
 
+    // track event if there is any action for Developer mode
+    if (preferences.developer !== completePayloadCopy.developer) {
+      dispatch(
+        actions.analytics.gainsight.trackEvent('MY_ACCOUNT', {
+          operation: 'Developer mode',
+          timestamp: new Date(),
+          status: completePayloadCopy.developer ? 'Enabled' : 'Disabled',
+          tab: 'Profile',
+        })
+      );
+    }
     dispatch(actions.user.preferences.update(preferencesPayload));
     // deleting preferences from completePayloadCopy
     delete completePayloadCopy.timeFormat;
@@ -137,7 +149,7 @@ export default function ProfilePanel() {
     delete completePayloadCopy.showRelativeDateTime;
 
     dispatch(actions.user.profile.update(completePayloadCopy));
-  }, [dispatch]);
+  }, [dispatch, preferences.developer]);
 
   const handleLinkWithGoogle = useCallback(() => {
     dispatch(actions.auth.linkWithGoogle(getRoutePath('/myAccount/profile')));
@@ -271,7 +283,7 @@ export default function ProfilePanel() {
         type: 'checkbox',
         helpKey: 'myaccount.developer',
         noApi: true,
-        label: 'Developer Mode',
+        label: 'Developer mode',
         defaultValue: preferences && preferences.developer,
         // is this loggable
         isLoggable: true,
@@ -307,7 +319,7 @@ export default function ProfilePanel() {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Profile" className={classes.profilePanelHeader} />
+      <PanelHeader title="Profile" className={classes.profilePanelHeader} infoText={infoText.Profile} />
       <LoadResources required resources={isAccountOwnerOrAdmin ? 'ssoclients' : ''}>
         <DynaForm formKey={formKey} className={classes.formContainer} />
         <DynaSubmit

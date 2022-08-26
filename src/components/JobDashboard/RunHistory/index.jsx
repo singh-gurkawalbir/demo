@@ -13,7 +13,7 @@ import { getSelectedRange } from '../../../utils/flowMetrics';
 import DateRangeSelector from '../../DateRangeSelector';
 import { FILTER_KEYS, ERROR_MANAGEMENT_RANGE_FILTERS } from '../../../utils/errorManagement';
 import Spinner from '../../Spinner';
-import NoResultMessageWrapper from '../../NoResultMessageWrapper';
+import NoResultTypography from '../../NoResultTypography';
 import { hashCode } from '../../../utils/string';
 import { TextButton } from '../../Buttons';
 import ActionGroup from '../../ActionGroup';
@@ -172,6 +172,7 @@ export default function RunHistory({ flowId, className }) {
               placement="right"
               clearValue={defaultRange}
               onSave={handleDateFilter}
+              showCustomRangeValue
               value={selectedDate}
               customPresets={ERROR_MANAGEMENT_RANGE_FILTERS}
               fromDate={startOfDay(addDays(new Date(), -29))}
@@ -219,7 +220,7 @@ export default function RunHistory({ flowId, className }) {
           </ActionGroup>
         </>
       </div>
-      {isLoadingHistory ? <Spinner centerAll />
+      {isLoadingHistory ? <Spinner loading size="large" />
         : (
           <JobTable
             classes={classes.jobTable}
@@ -228,9 +229,9 @@ export default function RunHistory({ flowId, className }) {
 
       {!hasFlowRunHistory &&
         (
-        <NoResultMessageWrapper isBackground className={clsx({[classes.hideWrapper]: isLoadingHistory})}>
+        <NoResultTypography isBackground className={clsx({[classes.hideWrapper]: isLoadingHistory})}>
           You don&apos;t have any run history.
-        </NoResultMessageWrapper>
+        </NoResultTypography>
         )}
     </div>
   );

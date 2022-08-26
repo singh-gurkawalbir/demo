@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 import { isIntegrationApp } from '../../../../utils/flows';
-import { isNewId } from '../../../../utils/resource';
+import { adaptorTypeMap, isNewId } from '../../../../utils/resource';
 
 export default {
   name: {
@@ -22,7 +22,23 @@ export default {
     type: 'formview',
     label: 'Form view',
     visible: r => !r?.useTechAdaptorForm || !isEmpty(r?.assistantMetadata),
-    defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
+    defaultValue: r => {
+      if (!r) return 'false';
+      if (adaptorTypeMap[r.adaptorType] === 'graph_ql') {
+        if (!r.http) return 'false';
+        if (!r.http.formType) return 'false';
+
+        return r.http.formType === 'graph_ql' ? 'false' : 'true';
+      }
+      if (r.isHttpConnector || r.http?._httpConnectorResourceId || !(r.assistant || (r.http && r.http.formType === 'graph_ql'))) {
+        if (!r.http) return 'false';
+        if (!r.http.formType) return 'false';
+
+        return r.http.formType === 'assistant' ? 'false' : 'true';
+      }
+
+      return `${r.assistant || (r.http && r.http.formType === 'graph_ql') ? 'false' : 'true'}`;
+    },
     helpKey: 'formView',
   },
   _connectionId: {
@@ -31,6 +47,7 @@ export default {
     resourceType: 'connections',
     parentResourceType: 'imports',
     label: 'Connection',
+    skipDefault: true,
     appTypeIsStatic: true,
     allowEdit: true,
     connectionId: r => r?._connectionId,

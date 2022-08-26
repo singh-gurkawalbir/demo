@@ -10,7 +10,8 @@ import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
-import { emptyObject, STANDALONE_INTEGRATION, USER_ACCESS_LEVELS } from '../../../../utils/constants';
+import { drawerPaths } from '../../../../utils/rightDrawer';
+import { emptyObject, STANDALONE_INTEGRATION, USER_ACCESS_LEVELS } from '../../../../constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import LoadResources from '../../../../components/LoadResources';
 import getSettingsMetadata from './metadata';
@@ -216,9 +217,7 @@ export default function SettingsDrawer(props) {
   const {disabled, setCancelTriggered} = useFormOnCancel(formKey);
 
   return (
-    <RightDrawer
-      path="settings"
-      width="medium">
+    <RightDrawer path={drawerPaths.FLOW_BUILDER.SETTINGS} width="medium">
       <DrawerHeader
         title="Settings" disableClose={disabled}
         handleClose={setCancelTriggered}

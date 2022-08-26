@@ -1,11 +1,10 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Card, CardActions, Typography } from '@material-ui/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { Card, CardActions, Typography, makeStyles } from '@material-ui/core';
+import clsx from 'clsx';
 import RawHtml from '../../../../../components/RawHtml';
 import PanelHeader from '../../../../../components/PanelHeader';
-import { LICENSE_UPGRADE_REQUEST, LICENSE_UPGRADE_REQUEST_RECEIVED } from '../../../../../utils/messageStore';
+import messageStore from '../../../../../utils/messageStore';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {isHTML} from '../../../../../utils/string';
@@ -14,6 +13,7 @@ import AddonInstallerButton from '../Admin/sections/Subscription/AddonInstallerB
 import FilledButton from '../../../../../components/Buttons/FilledButton';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
+import {gridViewStyles} from '../../../../Home/View/TileView/HomeCard';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -21,23 +21,6 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-  },
-  addOnContainer: {
-    // backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr));',
-    gridGap: theme.spacing(2),
-    '& > div': {
-      maxWidth: '100%',
-      minWidth: '100%',
-    },
-    [theme.breakpoints.down('xs')]: {
-      gridTemplateColumns: 'repeat(1, minmax(100%, 1fr));',
-    },
-    [theme.breakpoints.up('xs')]: {
-      gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr));',
-    },
   },
   card: {
     height: '318px',
@@ -73,10 +56,14 @@ const useStyles = makeStyles(theme => ({
     bottom: 10,
     paddingLeft: 0,
   },
+  addOnContainer: {
+    padding: theme.spacing(0, 2, 2),
+  },
 }));
 
 export default function AddOnsPanel({ integrationId, childId }) {
   const classes = useStyles();
+  const gridViewClasses = gridViewStyles();
   const dispatch = useDispatch();
   // TODO: This integrationAppAddOnState selector doesn't actually return
   // addon state. It returns all IA settings state. This should be refactored
@@ -116,12 +103,8 @@ export default function AddOnsPanel({ integrationId, childId }) {
           licenseId,
         })
       );
-      const message = `${LICENSE_UPGRADE_REQUEST_RECEIVED}
-      
-      <a target="_blank" rel="noopener noreferrer"
-        href="/marketplace"><u>Checkout our Marketplace</u></a>  Integration Apps, templates for business process automation, and quickstart integration templates.`;
 
-      enquesnackbar({message: <RawHtml html={message} />, variant: 'success'});
+      enquesnackbar({message: <RawHtml html={messageStore('LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
     },
 
     [dispatch, enquesnackbar, integrationId, licenseId]
@@ -131,9 +114,9 @@ export default function AddOnsPanel({ integrationId, childId }) {
 
     confirmDialog({
       title: 'Request add-on',
-      message: LICENSE_UPGRADE_REQUEST,
+      message: messageStore('LICENSE_UPGRADE_REQUEST'),
       buttons: [
-        {label: 'Submit Request', onClick: handleContactSales(addonName)},
+        {label: 'Submit request', onClick: handleContactSales(addonName)},
         {label: 'Cancel', variant: 'text'},
       ],
     });
@@ -143,7 +126,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
     <div className={classes.root}>
       <PanelHeader title="Add-ons" />
 
-      <div className={classes.addOnContainer}>
+      <div className={clsx(gridViewClasses.container, classes.addOnContainer)}>
         {addOnMetadata &&
           addOnMetadata.map(data => (
             <Card key={data.id} className={classes.card} elevation={0}>
@@ -158,7 +141,7 @@ export default function AddOnsPanel({ integrationId, childId }) {
                     <FilledButton
                       data-test="contactSales"
                       onClick={onRequestAddonClicked(data)}>
-                      Request Add-on
+                      Request add-on
                     </FilledButton>
                   )}
               </CardActions>

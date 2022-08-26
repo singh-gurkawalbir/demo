@@ -8,6 +8,8 @@ import RawHtml from '../../../../../../../components/RawHtml';
 import actions from '../../../../../../../actions';
 import EditorDrawer from '../../../../../../../components/AFE/Drawer';
 import { TextButton } from '../../../../../../../components/Buttons';
+import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
+import infoText from '../../../../../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -52,12 +54,16 @@ export default function ReadmeSection({ integrationId }) {
       data: 'dummy data',
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
   }, [dispatch, history, integrationId, match.url]);
 
   return (
     <>
-      <PanelHeader title="Readme" className={classes.panelHeaderReadme}>
+      <PanelHeader title="Readme" infoText={infoText.Readme} className={classes.panelHeaderReadme}>
         <TextButton
           className={classes.editReadmebutton}
           data-test="form-editor-action"

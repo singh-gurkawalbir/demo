@@ -16,6 +16,7 @@ export function* uploadFile({
   file,
   fileName,
   uploadPath,
+  opts,
 }) {
   const path =
     uploadPath ||
@@ -24,6 +25,7 @@ export function* uploadFile({
   try {
     const response = yield call(apiCallWithRetry, {
       path,
+      ...(opts && {opts}),
       message: 'Getting signed URL for file upload',
     });
     const headers = {
@@ -32,7 +34,7 @@ export function* uploadFile({
     };
 
     if (fileName) {
-      headers['Content-Disposition'] = `attachment;filename=${fileName}`;
+      headers['Content-Disposition'] = `attachment;filename=${encodeURIComponent(fileName)}`;
     }
 
     yield fetch(response.signedURL, {
@@ -43,7 +45,7 @@ export function* uploadFile({
 
     return response.runKey;
   } catch (e) {
-    return true;
+    return undefined;
   }
 }
 
@@ -94,6 +96,9 @@ export function configureFileReader(file, fileType) {
     if (fileReaderOptions.readAsArrayBuffer) {
       // Incase of xlsx file
       reader.readAsArrayBuffer(file);
+    } else if (file.type === 'application/x-pkcs12') {
+      // @TODO look for a better file reader API
+      reader.readAsDataURL(file);
     } else {
       reader.readAsText(file);
     }

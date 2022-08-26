@@ -5,16 +5,12 @@ import clsx from 'clsx';
 import { selectors } from '../../../../reducers';
 import DynaPreviewComponentsTable from '../../../DynaForm/fields/DynaPreviewComponentsTable';
 import Spinner from '../../../Spinner';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   spinnerPreview: {
     position: 'relative',
     height: '100%',
-  },
-  flowGroupTitle: {
-    textTransform: 'uppercase',
-    paddingTop: theme.spacing(1),
   },
   firstFlowName: {
     marginTop: theme.spacing(1),
@@ -27,6 +23,13 @@ const useStyles = makeStyles(theme => ({
   },
   flowInFlowGroupNameHover: {
     backgroundColor: theme.palette.background.paper,
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  flowGroupTitle: {
+    paddingTop: theme.spacing(1),
+  },
+  emptyMessageContent: {
+    whiteSpace: 'nowrap',
   },
 }));
 const useColumns = () => [
@@ -38,16 +41,24 @@ const useColumns = () => [
     useGetCellStyling: ({rowData: r}) => {
       const classes = useStyles();
       const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
-      const classFlowInFlowGroupName = !isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
-      const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
 
-      return clsx(classFlowInFlowGroupName, classFlowInFlowGroupNameHover);
+      return clsx({[classes.flowInFlowGroupName]: !isLastFlowInFlowGroup, [classes.flowInFlowGroupNameHover]: groupName});
     },
     Value: ({rowData: r}) => {
       const classes = useStyles();
 
-      if (r?.groupName) {
-        return <Typography variant="overline" component="div" color="textSecondary" className={classes.flowGroupTitle}>{r?.groupName}</Typography>;
+      if (r.groupName || r.emptyMessage) {
+        return (
+          <Typography
+            variant={r?.groupName ? 'overline' : 'body2'}
+            component="div"
+            color="textSecondary"
+            className={clsx({
+              [classes.flowGroupTitle]: r?.groupName,
+              [classes.emptyMessageContent]: r?.emptyMessage})}>
+            {r?.groupName || r?.emptyMessage}
+          </Typography>
+        );
       }
 
       return r?.doc?.name || r?.doc?._id;
@@ -61,10 +72,8 @@ const useColumns = () => [
     useGetCellStyling: ({rowData: r}) => {
       const classes = useStyles();
       const { groupName, isLastFlowInFlowGroup } = r || emptyObject;
-      const classFlowInFlowGroupName = !isLastFlowInFlowGroup ? classes.flowInFlowGroupName : '';
-      const classFlowInFlowGroupNameHover = groupName ? classes.flowInFlowGroupNameHover : '';
 
-      return clsx(classFlowInFlowGroupName, classFlowInFlowGroupNameHover);
+      return clsx({[classes.flowInFlowGroupName]: !isLastFlowInFlowGroup, [classes.flowInFlowGroupNameHover]: groupName});
     },
     Value: ({rowData: r}) => r?.doc?.description,
   },
@@ -99,3 +108,4 @@ export default function PreviewTable({ templateId }) {
 
   return <DynaPreviewComponentsTable data={data} useColumns={useColumns} />;
 }
+

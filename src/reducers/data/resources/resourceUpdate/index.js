@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { isEqual } from 'lodash';
+import { isEqual, uniqBy } from 'lodash';
 import actionTypes from '../../../../actions/types';
 import { convertOldFlowSchemaToNewOne, populateRestSchema } from '../../../../utils/flows';
 
@@ -38,7 +38,6 @@ function replaceOrInsertResource(draft, resourceType, resourceValue) {
 
   if (type === 'flows') resource = convertOldFlowSchemaToNewOne(resource);
   if (type === 'exports') resource = populateRestSchema(resource);
-
   if (!draft[type]) {
     draft[type] = [resource];
 
@@ -132,6 +131,17 @@ const addResourceCollection = (draft, resourceType, collection) => {
   updateStateWhenValueDiff(draft, resourceType, collection || []);
 };
 
+const mergeResourceCollection = (draft, resourceType, response) => {
+  let newCollection;
+
+  if (draft[resourceType]) {
+    newCollection = uniqBy([...(response || []), ...draft[resourceType]], '_id');
+  } else {
+    newCollection = response;
+  }
+  addResourceCollection(draft, resourceType, newCollection);
+};
+
 export default (state = {}, action) => {
   const {
     id,
@@ -139,6 +149,7 @@ export default (state = {}, action) => {
     resource,
     collection,
     resourceType,
+    integrationId,
 
   } = action;
 
@@ -153,7 +164,7 @@ export default (state = {}, action) => {
   if (
     resourceType &&
       resourceType.startsWith('integrations/') &&
-      (resourceType.endsWith('/ashares') || resourceType.endsWith('/audit'))
+      (resourceType.endsWith('/ashares') || resourceType.endsWith('/audit') || resourceType.endsWith('/revisions'))
   ) {
     return state;
   }
@@ -166,6 +177,12 @@ export default (state = {}, action) => {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.RESOURCE.RECEIVED_COLLECTION:
+        if (integrationId) {
+          mergeResourceCollection(draft, resourceType, collection);
+
+          return;
+        }
+
         return addResourceCollection(draft, resourceType, collection);
       case actionTypes.RESOURCE.RECEIVED:
         return replaceOrInsertResource(draft, resourceType, resource);

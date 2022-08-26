@@ -1,5 +1,5 @@
-import { URI_VALIDATION_PATTERN, RDBMS_TYPES} from '../../../utils/constants';
-import { isNewId, getDomainUrl, getAssistantFromResource } from '../../../utils/resource';
+import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AWS_REGIONS_LIST} from '../../../constants';
+import { isNewId, getDomainUrl, getAssistantFromResource, rdbmsSubTypeToAppType, rdbmsAppTypeToSubType } from '../../../utils/resource';
 import { applicationsList} from '../../../constants/applications';
 import { getConstantContactVersion } from '../../../utils/connections';
 
@@ -15,8 +15,9 @@ export default {
         { _id: { $ne: r._id } },
       ];
 
-      if (RDBMS_TYPES.includes(r.type)) {
-        expression.push({ 'rdbms.type': r.type });
+      if (RDBMS_TYPES.includes(rdbmsSubTypeToAppType(r.type))) {
+        // rdbms subtype is required to filter the connections
+        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(r.type) });
       } else {
         // Should not borrow concurrency for ['ftp', 'as2', 's3']
         const destinationType = ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type;
@@ -81,10 +82,13 @@ export default {
       }
       const applications = applicationsList();
       let application = getAssistantFromResource(r) ||
-      (r.type === 'rdbms' ? r.rdbms.type : r.type);
+      (r.type === 'rdbms' ? rdbmsSubTypeToAppType(r.rdbms.type) : r.type);
 
       if (r.type === 'http' && r.http?.formType === 'rest') {
         application = 'rest';
+      }
+      if (r.type === 'http' && r.http?.formType === 'graph_ql') {
+        application = 'graph_ql';
       }
       const app = applications.find(a => a.id === application) || {};
 
@@ -227,6 +231,69 @@ export default {
         is: [''],
       },
     ],
+  },
+  'rdbms.bigquery.projectId': {
+    fieldId: 'rdbms.bigquery.projectId',
+    label: 'Project',
+    type: 'text',
+    required: true,
+  },
+  'rdbms.bigquery.clientEmail': {
+    fieldId: 'rdbms.bigquery.clientEmail',
+    label: 'Client email',
+    type: 'text',
+    required: true,
+  },
+  'rdbms.bigquery.privateKey': {
+    fieldId: 'rdbms.bigquery.privateKey',
+    label: 'Private key',
+    multiline: true,
+    type: 'text',
+    required: true,
+    inputType: 'password',
+    defaultValue: '',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+  },
+  'rdbms.bigquery.dataset': {
+    fieldId: 'rdbms.bigquery.dataset',
+    label: 'Dataset',
+    type: 'text',
+    required: true,
+  },
+  'rdbms.redshift.region': {
+    isLoggable: true,
+    type: 'select',
+    label: 'Region',
+    required: true,
+    defaultValue: r => r.rdbms?.redshift?.region || 'us-east-1',
+    options: [
+      {
+        items: AWS_REGIONS_LIST,
+      },
+    ],
+  },
+  'rdbms.redshift.aws.accessKeyId': {
+    id: 'rdbms.redshift.aws.accessKeyId',
+    type: 'text',
+    label: 'Access Key Id',
+    required: true,
+  },
+  'rdbms.redshift.aws.secretAccessKey': {
+    id: 'rdbms.redshift.aws.secretAccessKey',
+    type: 'text',
+    label: 'Secret Access Key',
+    defaultValue: '',
+    required: true,
+    inputType: 'password',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+  },
+  'rdbms.redshift.clusterIdentifier': {
+    isLoggable: true,
+    type: 'text',
+    label: 'Cluster name',
+    required: true,
   },
   // #endregion rdbms
   // #region rest
@@ -987,15 +1054,45 @@ export default {
     label: 'Encrypted',
     description: 'Note: for security reasons this field must always be re-entered.',
   },
+  'http.clientCertificates.type': {
+    type: 'select',
+    label: 'SSL certificate type',
+    helpKey: 'connection.http.clientCertificates.type',
+    options: [
+      {
+        items: [
+          { label: 'PFX', value: 'pfx' },
+          { label: 'PEM', value: 'pem' },
+        ],
+      },
+    ],
+    defaultValue: r => {
+      let val = '';
+
+      if (r?.http?.clientCertificates?.pfx) {
+        val = 'pfx';
+      } else if (r?.http?.clientCertificates?.cert || r?.http?.clientCertificates?.key) {
+        val = 'pem';
+      }
+
+      return val;
+    },
+  },
   'http.clientCertificates.cert': {
     type: 'uploadfile',
-    placeholder: 'SSL certificate:',
+    placeholder: 'SSL certificate',
     label: 'SSL certificate',
     helpKey: 'connection.http.clientCertificates.cert',
   },
+  'http.clientCertificates.pfx': {
+    type: 'uploadfile',
+    placeholder: 'SSL certificate',
+    label: 'SSL certificate',
+    helpKey: 'connection.http.clientCertificates.pfx',
+  },
   'http.clientCertificates.key': {
     type: 'uploadfile',
-    placeholder: 'SSL client key:',
+    placeholder: 'SSL client key',
     label: 'SSL client key',
     helpKey: 'connection.http.clientCertificates.key',
   },
@@ -1012,7 +1109,7 @@ export default {
     label: 'Host',
     required: true,
     description:
-      'If the FTP server is behind a firewall please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, and 52.71.48.248.',
+      'If the FTP server is behind a firewall, please whitelist the following IP addresses: 52.2.63.213, 52.7.99.234, 52.71.48.248, and 44.204.21.0/24.',
   },
   'ftp.type': {
     isLoggable: true,
@@ -2448,5 +2545,22 @@ export default {
         ],
       },
     ],
+  },
+  connectionFormView: {
+    isLoggable: true,
+    id: 'connectionFormView',
+    type: 'connectionFormView',
+    label: 'Form view',
+    required: true,
+    resourceType: 'connections',
+    visible: r => r?._httpConnectorId || r?.http?._httpConnectorId,
+    defaultValue: r => {
+      if (!r) return 'false';
+      if (!r.http) return 'false';
+      if (!r.http.formType) return 'false';
+
+      return r.http?.formType === 'assistant' ? 'false' : 'true';
+    },
+    helpKey: 'formView',
   },
 };

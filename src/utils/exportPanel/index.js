@@ -1,8 +1,10 @@
 /*
  * All utility functions related to Exports Preview Panel
  */
-import { FILE_PROVIDER_ASSISTANTS } from '../constants';
+import isEmpty from 'lodash/isEmpty';
+import { FILE_PROVIDER_ASSISTANTS } from '../../constants';
 import { adaptorTypeMap } from '../resource';
+import {HTTP_BASED_ADAPTORS} from '../http';
 
 export const DEFAULT_RECORD_SIZE = 10;
 
@@ -10,6 +12,7 @@ export const DEFAULT_RECORD_SIZE = 10;
 
 const applicationsWithPreviewPanel = [
   'http',
+  'graph_ql',
   'rest',
   'mongodb',
   'rdbms',
@@ -21,6 +24,12 @@ const applicationsWithPreviewPanel = [
   'simple',
   'as2',
 ];
+
+const noImportPreviewAssistants = [
+  'googledrive',
+  'azurestorageaccount',
+];
+
 const emptyList = [];
 
 export const HTTP_STAGES = [
@@ -54,6 +63,8 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
       return PREVIEW_STAGE;
     case 'rest':
       return HTTP_STAGES;
+    case 'graph_ql':
+      return HTTP_STAGES;
     case 'mongodb':
     case 'dynamodb':
     case 'rdbms':
@@ -69,7 +80,15 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
  * Currently we support only Exports as it is an Incremental release
  * @params - resource , resourceType and connection obj
  */
-export const isPreviewPanelAvailable = (resource, resourceType) => {
+export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
+  if (!resource) return false;
+  if (resourceType === 'imports') {
+    if (noImportPreviewAssistants.includes(resource.assistant)) return false;
+
+    return resource.adaptorType === 'HTTPImport' ||
+    (connection && HTTP_BASED_ADAPTORS.includes(connection.type || connection.http?.formType));
+  }
+
   if (resourceType !== 'exports') return false;
 
   // for blob exports, preview panel is not applicable
@@ -86,8 +105,9 @@ export const isPreviewPanelAvailable = (resource, resourceType) => {
   return applicationsWithPreviewPanel.includes(appType);
 };
 
-export const getPreviewDataPageSizeInfo = previewData => {
-  if (!previewData || !previewData.data) return '1 Page, 0 Records';
+export const getPreviewDataPageSizeInfo = (previewData, resourceType) => {
+  if (resourceType === 'imports') return '1 Page, 1 Records';
+  if (!previewData || isEmpty(previewData.data)) return '1 Page, 0 Records';
   const records = previewData.data;
   const pageSize = Array.isArray(records) ? records.length : 1;
 
@@ -118,3 +138,8 @@ export const getLatestReqResData = (previewData, stage) => {
 };
 
 export const getRequestURL = previewData => getLatestReqResData(previewData, 'request')?.url;
+
+export const IMPORT_PREVIEW_ERROR_TYPES = [
+  { label: 'Preview', value: 'preview' },
+  { label: 'Send', value: 'send' },
+];

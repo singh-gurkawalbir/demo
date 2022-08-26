@@ -15,8 +15,10 @@ import CloseIconButton from './CloseIconButton';
 import actions from '../../../actions';
 import ActionsRibbon from './ActionsRibbon';
 import { useDrawerContext } from '../../drawer/Right/DrawerContext';
-import useKeepUserSessionAlive from '../../../hooks/useKeepUserSessionAlive';
 import TitleHelp from './TitleHelp';
+import EditorBanner from '../Editor/EditorBanner';
+import { drawerPaths } from '../../../utils/rightDrawer';
+import UserIdleTracker from './UserIdleTracker';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
@@ -78,7 +80,6 @@ function RouterWrappedContent({ hideSave }) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useKeepUserSessionAlive();
 
   if (!editorType) {
     return null;
@@ -99,6 +100,9 @@ function RouterWrappedContent({ hideSave }) {
       </DrawerHeader>
 
       <DrawerContent>
+        {/* Although this doesnt render anything, Using it as a component instead of hook to avoid re-renders */}
+        <UserIdleTracker />
+        <EditorBanner editorId={editorId} />
         <Editor editorId={editorId} />
       </DrawerContent>
 
@@ -114,8 +118,7 @@ function RouterWrappedContent({ hideSave }) {
 export default function EditorDrawer({ hideSave, hidePreview, width = 'full' }) {
   return (
     <RightDrawer
-      path="editor/:editorId"
-      variant="temporary"
+      path={drawerPaths.EDITOR}
       height="tall"
       width={width}>
       <RouterWrappedContent hideSave={hideSave} hidePreview={hidePreview} />

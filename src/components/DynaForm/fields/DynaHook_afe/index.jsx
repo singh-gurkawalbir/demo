@@ -10,18 +10,20 @@ import FieldHelp from '../../FieldHelp';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
-import { REQUIRED_MESSAGE } from '../../../../utils/messageStore';
+import messageStore from '../../../../utils/messageStore';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
+
 import StackView from './StackView';
 import ScriptView from './ScriptView';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
     display: 'flex',
+    alignItems: 'flex-start',
   },
   field: {
     width: '50%',
     paddingRight: theme.spacing(1),
-    overflow: 'hidden',
     '& >.MuiFormControl-root': {
       width: '100%',
     },
@@ -96,7 +98,7 @@ export default function DynaHook_afe({
       if (isValid) {
         dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
       } else {
-        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: REQUIRED_MESSAGE}));
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: messageStore('REQUIRED_MESSAGE')}));
       }
     }
   }, [id, dispatch, formKey, value, resourceType]);
@@ -127,7 +129,11 @@ export default function DynaHook_afe({
     setNewScriptId(() => {
       const _newScriptId = generateNewId();
 
-      history.push(`${match.url}/add/scripts/${_newScriptId}`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.RESOURCE.ADD,
+        baseUrl: match.url,
+        params: { resourceType: 'scripts', id: _newScriptId },
+      }));
 
       return _newScriptId;
     });
@@ -156,6 +162,7 @@ export default function DynaHook_afe({
               isValid={isValidHookField('function')}
               value={value.function}
               onFieldChange={handleFieldChange('function')}
+              helpKey="api.function"
             />
           </div>
           {hookType === 'stack' && (

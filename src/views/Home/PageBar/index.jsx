@@ -17,6 +17,7 @@ import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 import KeywordSearch from '../../../components/KeywordSearch';
 import actions from '../../../actions';
 import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../../../utils/home';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   viewIcon: {
@@ -68,22 +69,37 @@ export default function IntegrationCeligoPageBar() {
 
       <ActionGroup>
         {permission.create && (
-        <TextButton
-          data-test="newIntegration"
-          component={Link}
-          startIcon={<AddIcon />}
-          to={`${location.pathname}/add/integrations/${generateNewId()}`}
-          >
-          Create integration
-        </TextButton>
+          <>
+            <TextButton
+              data-test="createFlow"
+              component={Link}
+              startIcon={<AddIcon />}
+              to="/integrations/none/flowBuilder/new"
+              >
+              Create flow
+            </TextButton>
+            <TextButton
+              data-test="newIntegration"
+              component={Link}
+              startIcon={<AddIcon />}
+              to={buildDrawerUrl({
+                path: drawerPaths.RESOURCE.ADD,
+                baseUrl: location.pathname,
+                params: { resourceType: 'integrations', id: generateNewId() },
+              })} >
+              Create integration
+            </TextButton>
+          </>
         )}
         {permission.install && (
         <TextButton
           data-test="installZip"
           component={Link}
           startIcon={<ZipUpIcon />}
-          to={`${location.pathname}/installIntegration`}
-          >
+          to={buildDrawerUrl({
+            path: drawerPaths.INSTALL.INTEGRATION,
+            baseUrl: location.pathname,
+          })} >
           Install integration
         </TextButton>
         )}

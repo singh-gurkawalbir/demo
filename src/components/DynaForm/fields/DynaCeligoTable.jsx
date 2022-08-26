@@ -8,6 +8,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import ExpandMoreIcon from '../../icons/ArrowDownIcon';
 import CeligoTable from '../../CeligoTable';
+import NoResultTypography from '../../NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   accordianDetails: {
@@ -18,11 +19,13 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     marginBottom: theme.spacing(2),
   },
-
+  noDataMessage: {
+    padding: theme.spacing(1),
+  },
 }));
 export default function DynaCeligoTable(props) {
   const classes = useStyles();
-  const { title, collapsable = false, defaultExpand = false } = props;
+  const { title, collapsable = false, defaultExpand = false, data, noDataMessage, isTitleBold } = props;
   const [shouldExpand, setShouldExpand] = useState(defaultExpand);
 
   return collapsable ? (
@@ -36,10 +39,10 @@ export default function DynaCeligoTable(props) {
         data-test={title}
         onClick={() => setShouldExpand(expand => !expand)}
         expandIcon={<ExpandMoreIcon />}>
-        <Typography>{title}</Typography>
+        <Typography variant={isTitleBold ? 'h6' : ''}>{title}</Typography>
       </AccordionSummary>
       <AccordionDetails className={classes.accordianDetails}>
-        <CeligoTable {...props} />
+        {(!data?.length && noDataMessage) ? <NoResultTypography>{noDataMessage}</NoResultTypography> : <CeligoTable {...props} />}
       </AccordionDetails>
     </Accordion>
   ) : (

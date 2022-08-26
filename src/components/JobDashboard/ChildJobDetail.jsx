@@ -7,11 +7,11 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { getPages, getSuccess } from '../../utils/jobdashboard';
 import JobStatus from './JobStatus';
 import JobActionsMenu from './JobActionsMenu';
-import { JOB_STATUS } from '../../utils/constants';
+import { JOB_STATUS } from '../../constants';
 import DateTimeDisplay from '../DateTimeDisplay';
 import ErrorCountCell from './ErrorCountCell';
 
-const useStyles = makeStyles(theme => ({
+export const JobDetailsStyles = makeStyles(theme => ({
   checkAction: {
     paddingLeft: 58,
   },
@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     width: '18.15%',
   },
   status: {
-    width: '10.15',
+    width: '10.15%',
   },
   success: {
     width: '9%',
@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'right',
   },
   error: {
-    width: '10.15%',
+    width: '9.15%',
     textAlign: 'right',
   },
   resolved: {
@@ -60,6 +60,9 @@ const useStyles = makeStyles(theme => ({
   errorCount: {
     color: theme.palette.error.dark,
   },
+  resolvedCount: {
+    color: theme.palette.primary.main,
+  },
 }));
 
 export default function ChildJobDetail({
@@ -77,7 +80,7 @@ export default function ChildJobDetail({
     JOB_STATUS.RUNNING,
     JOB_STATUS.RETRYING,
   ].includes(job.uiStatus);
-  const classes = useStyles();
+  const classes = JobDetailsStyles();
   const isSelectable = !!(job.retriable || job.numError);
   const parentSelectionInfo = selectedJobs[parentJob._id] || {
     selected: false,
@@ -146,7 +149,9 @@ export default function ChildJobDetail({
         count={job.numResolved}
         isJobInProgress={isJobInProgress}
         onClick={() => handleViewErrorsClick(true)}
-        className={classes.resolved}
+        className={clsx(classes.resolved, {
+          [classes.resolvedCount]: job.numResolved > 0,
+        })}
       />
       <TableCell className={classes.pages}>
         {getPages(job, parentJob)}

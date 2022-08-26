@@ -9,9 +9,8 @@ import {
   adaptorTypeMap,
   isBlobTypeResource,
   isValidResourceReference,
-  isFileAdaptor,
 } from '../resource';
-import { emptyList, emptyObject, STANDALONE_INTEGRATION, JOB_STATUS, UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../constants';
+import { emptyList, emptyObject, STANDALONE_INTEGRATION, JOB_STATUS, UNASSIGNED_SECTION_ID, UNASSIGNED_SECTION_NAME } from '../../constants';
 import { JOB_UI_STATUS } from '../jobdashboard';
 import getRoutePath from '../routePaths';
 import {HOOKS_IN_IMPORT_EXPORT_RESOURCE} from '../scriptHookStubs';
@@ -53,6 +52,23 @@ const importActions = [
 ];
 export const defaultIA2Flow = {showMapping: true, showStartDateDialog: true, showSchedule: true};
 
+export const getAllPageProcessors = flow => {
+  const pageProcessors = [];
+
+  if (!flow) return [];
+  if (flow.routers?.length) {
+    flow.routers.forEach(router => {
+      router.branches.forEach(branch => {
+        branch.pageProcessors?.forEach(pp => pageProcessors.push(pp));
+      });
+    });
+  } else if (flow.pageProcessors?.length) {
+    flow.pageProcessors.forEach(pp => pageProcessors.push(pp));
+  }
+
+  return pageProcessors;
+};
+
 export const isActionUsed = (resource, resourceType, flowNode, action) => {
   const {
     inputFilter = {},
@@ -88,6 +104,12 @@ export const isActionUsed = (resource, resourceType, flowNode, action) => {
     }
 
     case actionsMap.importMapping: {
+      // v2 mappings
+      if (resource.mappings?.length) {
+        return true;
+      }
+
+      // v1 mappings
       const mappings = mappingUtil.getMappingFromResource({
         importResource: resource,
         isFieldMapping: true,
@@ -203,11 +225,9 @@ export const isImportMappingAvailable = importResource => {
   if (isBlobTypeResource(importResource)) {
     return false;
   }
-  const { adaptorType, rdbms = {}, file = {} } = importResource;
+  const { adaptorType, rdbms = {} } = importResource;
   const appType = adaptorTypeMap[adaptorType];
 
-  // For File Adaptor XML Imports, no support for import mapping
-  if (isFileAdaptor(importResource) && file.type === 'xml') return false;
   // if apptype is mongodb then mapping should not be shown
   if (appType === 'mongodb') return false;
   // if apptype is rdbms and querytype is not bulk insert then mapping shouldnot be shown
@@ -237,15 +257,20 @@ export const isIntegrationApp = (doc = {}) => !!(doc && doc._connectorId);
  */
 export const isFreeFlowResource = (flow = {}) => !!(flow && flow.free);
 
-/*
- * Returns true/false, whether passed resource is a lookup or not for the passed flow
- */
-export const isLookupResource = (flow = {}, resource = {}) => {
-  if (resource.isLookup) return true;
-  const { pageProcessors = [] } = flow;
+export function isSetupInProgress(flow) {
+  if (!flow) return false;
+  const isPageGeneratorSetupInProgress = (flow.pageGenerators || []).some(pg => pg.setupInProgress) || !flow.pageGenerators?.length;
+  const arePPsEmpty = !flow.pageProcessors || !flow.pageProcessors.length;
+  const areRoutersEmpty = !flow.routers || !flow.routers.length;
 
-  return !!pageProcessors.find(pp => pp._exportId && pp._exportId === resource._id);
-};
+  const isPageProcessorSetupInProgress = (flow.pageProcessors || []).some(pp => pp.setupInProgress);
+  const isRouterSetupInProgress = (flow.routers || [])
+    .some(router => (router.branches || [])
+      .some(branch => (branch.pageProcessors || [])
+        .some(pp => pp.setupInProgress)));
+
+  return isPageGeneratorSetupInProgress || isPageProcessorSetupInProgress || isRouterSetupInProgress || (arePPsEmpty && areRoutersEmpty);
+}
 
 /*
  * Returns true/false, whether passed flow follows an old schema
@@ -364,7 +389,7 @@ export function flowAllowsScheduling(flow, integration, allExports, isAppVersion
 export function getFlowType(flow, exports, flowExports) {
   if (!flow) return '';
   if (!exports && !flowExports) return '';
-  if (isSimpleImportFlow(flow, exports, flowExports)) return 'Data Loader';
+  if (isSimpleImportFlow(flow, exports, flowExports)) return 'Data loader';
   if (isRealtimeFlow(flow, exports, flowExports)) return 'Realtime';
 
   // TODO: further refine this logic to differentiate between 'Scheduled'
@@ -410,8 +435,8 @@ export function isRunnable(flow, exports) {
 
   const flowHasImport =
     !!flow._importId ||
-    (flow.pageProcessors &&
-      flow.pageProcessors.some(pg => pg._exportId || pg._importId));
+    (flow.pageProcessors && flow.pageProcessors.some(pg => pg._exportId || pg._importId)) ||
+    (flow.routers && flow.routers.length);
 
   // flows need at least one import to be runnable
   if (!flowHasImport) return false;
@@ -423,6 +448,7 @@ export function isRunnable(flow, exports) {
   if (!hasBatchExport(flow, exports)) {
     return false;
   }
+  if (isSetupInProgress(flow)) return false;
 
   // finally, we must thus be runnable.
   return true;
@@ -447,8 +473,10 @@ export function getExportIdsFromFlow(flow) {
     });
   }
 
-  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
-    flow.pageProcessors.forEach(pp => {
+  const pageProcessors = getAllPageProcessors(flow);
+
+  if (pageProcessors.length > 0) {
+    pageProcessors.forEach(pp => {
       if (pp._exportId) {
         exportIds.push(pp._exportId);
       }
@@ -469,8 +497,10 @@ export function getImportIdsFromFlow(flow) {
     importIds.push(flow._importId);
   }
 
-  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
-    flow.pageProcessors.forEach(pp => {
+  const pageProcessors = getAllPageProcessors(flow);
+
+  if (pageProcessors.length > 0) {
+    pageProcessors.forEach(pp => {
       if (pp._importId) {
         importIds.push(pp._importId);
       }
@@ -520,30 +550,21 @@ export function getImportsFromFlow(flow, imports) {
         importIds.push(p._importId);
       }
     });
+  } else if (flow.routers && flow.routers.length) {
+    flow.routers.forEach(router => {
+      router.branches?.forEach(branch => {
+        branch.pageProcessors?.forEach(pp => {
+          if (pp._importId) {
+            importIds.push(pp._importId);
+          }
+        });
+      });
+    });
   }
 
   if (!importIds.length) return emptyList;
 
   return imports.filter(i => importIds.indexOf(i._id) > -1);
-}
-
-export function getPageProcessorImportsFromFlow(imports, pageProcessors) {
-  let ppImports = [];
-  const pageProcessorIds = [];
-
-  if (!pageProcessors) {
-    return imports;
-  }
-
-  pageProcessors.forEach(pageProcessor => {
-    if (pageProcessor && pageProcessor._importId) {
-      pageProcessorIds.push(pageProcessor._importId);
-    }
-  });
-  ppImports =
-    imports && imports.filter(i => pageProcessorIds.indexOf(i._id) > -1);
-
-  return ppImports;
 }
 
 export function getFlowListWithMetadata(flows = [], exports = []) {
@@ -739,7 +760,7 @@ export function getIAFlowSettings(integration, flowId, childId) {
   return allFlows.find(flow => flow._id === flowId) || emptyObject;
 }
 
-export function getFlowResources(flows, exports, imports, flowId) {
+export function getFlowResources(flows = [], exports = [], imports = [], flowId) {
   const resources = [];
   const flow = (flows || []).find(f => f._id === flowId);
 
@@ -774,9 +795,10 @@ export function getFlowResources(flows, exports, imports, flowId) {
       }
     });
   }
+  const pageProcessors = getAllPageProcessors(flow);
 
-  if (flow.pageProcessors && flow.pageProcessors.length) {
-    flow.pageProcessors.forEach(pp => {
+  if (pageProcessors.length) {
+    pageProcessors.forEach(pp => {
       if (pp.type === 'import' && pp._importId) {
         const importDoc = imports.find(e => e._id === pp._importId);
 
@@ -810,6 +832,7 @@ export function getFlowDetails(flow, integration, exports, childId) {
     draft.isRunnable = isRunnable(flow, exports);
     draft.canSchedule = showScheduleIcon(flow, exports);
     draft.isDeltaFlow = isDeltaFlow(flow, exports);
+    draft.isSetupInProgress = isSetupInProgress(flow);
     const flowSettings = getIAFlowSettings(integration, flow._id, childId);
 
     draft.showMapping = !!flowSettings.showMapping;
@@ -838,7 +861,8 @@ export function getFlowReferencesForResource(
   const flowRefs = [];
 
   existingFlows.forEach(flowId => {
-    const { pageGenerators = [], pageProcessors = [] } = flows[flowId];
+    const { pageGenerators = [] } = flows[flowId];
+    const pageProcessors = getAllPageProcessors(flows[flowId]);
     let [pgIndex, ppIndex] = [0, 0];
 
     while (pgIndex < pageGenerators.length) {
@@ -1004,6 +1028,7 @@ export function populateRestSchema(exportDoc = {}) {
 
     exportDoc._rest = restSubDoc;
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.warn('exception occured while forming REST document', e);
     // TODO: should we change formType to http when conversion fails, so the export can open in HTTP form?
   }
@@ -1055,12 +1080,13 @@ export function convertOldFlowSchemaToNewOne(flow) {
   return updatedFlow;
 }
 
-export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => !!(flow && (
-  (flow.pageGenerators &&
-     flow.pageGenerators.some(({_exportId}) => _exportId === resourceId)) ||
-    (
-      flow.pageProcessors &&
-    flow.pageProcessors.some(({_exportId, _importId}) => _exportId === resourceId || _importId === resourceId))));
+export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => {
+  if (!flow) return false;
+
+  return !!(flow.pageGenerators?.some(pg => pg._exportId === resourceId) ||
+  flow.pageProcessors?.some(pp => pp._exportId === resourceId || pp._importId === resourceId) ||
+  flow.routers?.some(router => router.branches.some(branch => branch.pageProcessors?.some(pp => pp._exportId === resourceId || pp._importId === resourceId))));
+};
 
 export function getScriptsReferencedInFlow(
   {
@@ -1238,7 +1264,7 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects = [], obj
       (name === UNASSIGNED_SECTION_NAME && !flowObject.doc?._flowGroupingId) || flowObject.doc?._flowGroupingId === groupId);
 
     if (!flowObjetsOfAFlowGroup.length) {
-      return [flowGroupObject];
+      return [flowGroupObject, { emptyMessage: 'No flows have been added to this group.' }];
     }
 
     flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1] = { ...flowObjetsOfAFlowGroup[flowObjetsOfAFlowGroup.length - 1], isLastFlowInFlowGroup: true};
@@ -1247,4 +1273,10 @@ export const mappingFlowsToFlowGroupings = (flowGroupings, flowObjects = [], obj
   }).flat();
 
   return finalFlowObjects;
+};
+
+export const getPageProcessorFromFlow = (flow, pageProcessorId) => {
+  const pageProcessors = getAllPageProcessors(flow);
+
+  return pageProcessors.find(({_importId, _exportId}) => _exportId === pageProcessorId || _importId === pageProcessorId);
 };

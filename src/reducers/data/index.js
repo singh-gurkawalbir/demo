@@ -4,6 +4,7 @@ import resources, { selectors as fromResources } from './resources';
 import integrationAShares, { selectors as fromIntegrationAShares } from './integrationAShares';
 import integrationApps, { selectors as fromIntegrationApps } from './integrationApps';
 import audit, { selectors as fromAudit } from './audit';
+import revisions, { selectors as fromRevisions } from './revisions';
 import jobs, { selectors as fromJobs } from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, { selectors as fromSuiteScript } from './suiteScript';
@@ -12,6 +13,8 @@ import fileDefinitions, { selectors as fromFileDefinitions } from './fileDefinit
 import { genSelectors } from '../util';
 import runningJobs, { selectors as fromRunningJobs } from './jobs/runningJobs';
 import completedJobs, { selectors as fromCompletedJobs } from './jobs/completedJobs';
+import mfa, { selectors as fromMFA } from './mfa';
+import httpConnectors, { selectors as fromHttpConnectors } from './resources/httpConnectors';
 
 export default combineReducers({
   resources,
@@ -19,11 +22,14 @@ export default combineReducers({
   integrationApps,
   audit,
   jobs,
+  revisions,
   suiteScript,
   marketplace,
   fileDefinitions,
   runningJobs,
   completedJobs,
+  mfa,
+  httpConnectors,
 });
 
 export const selectors = {};
@@ -38,6 +44,9 @@ const subSelectors = {
   runningJobs: fromRunningJobs,
   completedJobs: fromCompletedJobs,
   fileDefinitions: fromFileDefinitions,
+  revisions: fromRevisions,
+  mfa: fromMFA,
+  httpConnectors: fromHttpConnectors,
 };
 
 genSelectors(selectors, subSelectors);

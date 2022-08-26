@@ -77,8 +77,14 @@ const useStyles = makeStyles(theme => ({
   container: {
     padding: '0 0 30px 30px',
   },
+  // TODO (Azhar) : Check the type and apply the css in the respective component
   button: {
     margin: theme.spacing(1),
+    '&.Mui-disabled': {
+      color: theme.palette.secondary.contrastText,
+      background: theme.palette.background.paper2,
+      borderColor: theme.palette.background.paper2,
+    },
   },
   item: {
     float: 'left',
@@ -151,8 +157,8 @@ export default function AddOns({integrationId, childId}) {
             className={classes.button}
             component={Link}
             disabled={isLicenseExpired}
-            to={match.url.replace('admin/subscription', 'addons')}>
-            GET ADD-ONS
+            to={match.url.replace('/admin', '/addons')}>
+            Get add-ons
           </FilledButton>
         </div>
       </div>

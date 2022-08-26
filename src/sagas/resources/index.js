@@ -11,12 +11,15 @@ import getRequestOptions, { pingConnectionParentContext } from '../../utils/requ
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
-import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH } from '../../utils/constants';
+import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH, INTEGRATION_DEPENDENT_RESOURCES, STANDALONE_INTEGRATION } from '../../constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
+import { deleteUnUsedRouters } from '../../utils/flows/flowbuilder';
 import { updateFlowDoc } from '../resourceForm';
 import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
+import httpConnectorSagas from './httpConnectors';
+import { getHttpConnector} from '../../constants/applications';
 
 export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -171,7 +174,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     // eslint-disable-next-line prefer-destructuring
     merged = resp.merged;
   } else if (
-    ['exports', 'imports', 'connections', 'flows', 'integrations', 'apis', 'eventreports'].includes(
+    ['exports', 'imports', 'connections', 'flows', 'integrations', 'apis', 'eventreports', 'asyncHelpers'].includes(
       resourceType
     ) || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))
   ) {
@@ -206,7 +209,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   if (
     // if it matches integrations/<id>/connections when creating a connection
     (resourceType === 'connections' || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))) &&
-    merged.assistant &&
+    merged.assistant && !getHttpConnector(merged?.http?._httpConnectorId) &&
     REST_ASSISTANTS.indexOf(merged.assistant) > -1
   ) {
     merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
@@ -221,6 +224,10 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   }
   if (resourceType === 'exports' && merged._rest) {
     delete merged._rest;
+  }
+  if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2')) {
+    // AS2 is special case where backend cannot identify adaptorType on its own
+    delete merged.adaptorType;
   }
 
   // When integrationId is set on connection model, integrations/:_integrationId/connections route will be used
@@ -238,6 +245,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   let resourceIsDataLoaderFlow = false;
 
   if (resourceType === 'flows') {
+    deleteUnUsedRouters(merged);
     resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
     // this value 'flowConvertedToNewSchema' has been set at the time of caching a flow collection.... we convert it to the new schema
     // and set this flag 'flowConvertedToNewSchema' to true if we find it to be in the old schema...now when we are actually commiting the resource
@@ -284,6 +292,12 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
       yield put(actions.resource.undoStaged(id));
       yield put(actions.flow.isOnOffActionInprogress(false, id));
     }
+    if (resourceType === 'flows') {
+      yield put(actions.flow.setSaveStatus(id));
+      if (options?.revertChangesOnFailure) {
+        yield put(actions.resource.clearStaged(id, scope));
+      }
+    }
 
     return { error };
   }
@@ -292,6 +306,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     yield put(actions.resource.requestCollection('connections', null, true));
     yield put(actions.resource.requestCollection('exports', null, true));
     yield put(actions.resource.requestCollection('imports', null, true));
+    yield put(actions.resource.requestCollection('asynchelpers', null, true));
   }
 
   // HACK! when updating scripts, since content is stored in s3, it
@@ -400,6 +415,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
       { connectionId: merged._id,
         link: merged.netsuite.linkSuiteScriptIntegrator }
     );
+  }
+  if (resourceType === 'flows') {
+    yield put(actions.flow.setSaveStatus(id));
   }
 }
 
@@ -713,7 +731,7 @@ export function* deleteIntegration({ integrationId }) {
   yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
 }
 
-export function* getResourceCollection({ resourceType, refresh }) {
+export function* getResourceCollection({ resourceType, refresh, integrationId }) {
   let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
 
@@ -736,8 +754,25 @@ export function* getResourceCollection({ resourceType, refresh }) {
   if (resourceType === 'notifications') {
     path = '/notifications?users=all';
   }
+  if (integrationId) {
+    if (INTEGRATION_DEPENDENT_RESOURCES.includes(resourceType)) {
+      path = `/integrations/${integrationId}/${resourceType}`;
+    }
+    const integration = yield select(selectors.resource, 'integrations', integrationId);
+
+    if (!integration && integrationId !== STANDALONE_INTEGRATION.id) {
+      yield call(getResource, {resourceType: 'integrations', id: integrationId});
+    }
+  }
+  let updatedResourceType = resourceType;
 
   try {
+    // TODO: move these resource types to actual routes logic to a common place
+    if (/connectors\/.*\/licenses/.test(resourceType)) {
+      updatedResourceType = 'connectorLicenses';
+    }
+    yield put(actions.resource.collectionRequestSent(updatedResourceType, integrationId));
+
     let collection = yield call(apiCallWithPaging, {
       path,
       hidden: hideNetWorkSnackbar,
@@ -772,13 +807,14 @@ export function* getResourceCollection({ resourceType, refresh }) {
       collection = undefined;
     }
 
-    yield put(actions.resource.receivedCollection(resourceType, collection));
+    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
+    yield put(actions.resource.collectionRequestSucceeded({resourceType: updatedResourceType, integrationId}));
 
     return collection;
   } catch (error) {
     // generic message to the user that the
     // saga failed and services team working on it
-
+    yield put(actions.resource.collectionRequestFailed({resourceType: updatedResourceType, integrationId}));
   }
 }
 
@@ -1165,4 +1201,5 @@ export const resourceSagas = [
   takeLatest(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, downloadAuditlogs),
 
   ...metadataSagas,
+  ...httpConnectorSagas,
 ];

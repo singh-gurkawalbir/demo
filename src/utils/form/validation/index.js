@@ -2,7 +2,7 @@
 
 import { allAreTrue, someAreTrue, noneAreTrue } from './validator';
 import { isValueForceComputed } from '..';
-import { REQUIRED_MESSAGE } from '../../messageStore';
+import messageStore from '../../messageStore';
 
 /* eslint-disable no-restricted-globals */
 const compareSize = (value, comparedTo, type) => {
@@ -250,7 +250,7 @@ export const validateField = (
     if (required) {
       if (!valueProvided) {
         isValid = valueProvided;
-        const { missingValueMessage = REQUIRED_MESSAGE } = field;
+        const { missingValueMessage = messageStore('REQUIRED_MESSAGE') } = field;
 
         errorMessages.push(missingValueMessage);
       }

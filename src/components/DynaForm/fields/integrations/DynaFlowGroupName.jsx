@@ -5,8 +5,8 @@ import { useHistory } from 'react-router-dom';
 import actions from '../../../../actions';
 import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
-import { FORM_SAVE_STATUS, UNASSIGNED_SECTION_NAME } from '../../../../utils/constants';
-import { FLOW_GROUP_DELETE_MESSAGE } from '../../../../utils/messageStore';
+import { FORM_SAVE_STATUS, UNASSIGNED_SECTION_NAME } from '../../../../constants';
+import messageStore from '../../../../utils/messageStore';
 import { TextButton } from '../../../Buttons';
 import ButtonWithTooltip from '../../../Buttons/ButtonWithTooltip';
 import useConfirmDialog from '../../../ConfirmDialog';
@@ -49,6 +49,7 @@ export default function DynaFlowGroupName(props) {
         buttons: [
           {
             label: 'Delete',
+            error: true,
             onClick: () => {
               dispatch(actions.resource.integrations.flowGroups.delete(integrationId, flowGroupId, flowIds));
               history.goBack();
@@ -61,7 +62,7 @@ export default function DynaFlowGroupName(props) {
         ],
       });
     },
-    [confirmDialog, dispatch, flowIds, history, integrationId, flowGroupId, value]
+    [confirmDialog, dispatch, flowIds, history, integrationId, flowGroupId]
   );
 
   useEffect(() => {
@@ -85,7 +86,7 @@ export default function DynaFlowGroupName(props) {
       isValid: false,
       errorMessages,
     }));
-  }, [dispatch, formKey, id, isEdit, isValidName, required, value]);
+  }, [dispatch, formKey, id, isEdit, isValidName, required, status, value]);
 
   // suspend force field state computation once the component turns invisible
   useEffect(() => () => {
@@ -96,7 +97,7 @@ export default function DynaFlowGroupName(props) {
     <div className={classes.textFieldWithDeleteSupport}>
       <DynaText {...props} className={classes.dynaTextField} />
       <ButtonWithTooltip
-        tooltipProps={{title: FLOW_GROUP_DELETE_MESSAGE}}>
+        tooltipProps={{title: messageStore('FLOW_GROUP_DELETE_MESSAGE')}}>
         <TextButton
           onClick={handleDeleteFlowGroupClick}
           startIcon={<TrashIcon />}

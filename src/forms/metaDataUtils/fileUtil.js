@@ -221,6 +221,7 @@ fileAdvanced: { formId: 'fileAdvanced' },
   label: 'XML document',
   refreshOptionsOnChangesTo: ['file.type'],
   required: true,
+  helpKey: 'import.ftp.XMLDocument',
   visibleWhenAll: [
     {
       field: 'file.type',
@@ -439,7 +440,9 @@ export const updateFileProviderFormValues = formValues => {
     newValues['/file/xlsx'] = undefined;
     newValues['/file/xml'] = undefined;
     newValues['/file/csv'] = undefined;
-    newValues['/file/skipAggregation'] = true;
+    if (newValues['/file/type']) {
+      newValues['/file/skipAggregation'] = true;
+    }
     // TODO: Ashok needs to revisit on delete form values.
     delete newValues['/file/csv/rowsToSkip'];
     delete newValues['/file/csv/trimSpaces'];
@@ -507,6 +510,29 @@ export const getFileProviderExportsOptionsHandler = (fieldId, fields) => {
       definitionId: definition && definition.value,
       resourcePath: resourcePath && resourcePath.value,
     };
+  }
+  if (fieldId === 'file.encoding') {
+    const fileType = fields.find(field => field.id === 'file.type');
+
+    if (fileType.value === 'xlsx') {
+      return [
+        {
+          items: [
+            { label: 'UTF-8', value: 'utf8' },
+          ],
+        },
+      ];
+    }
+
+    return [
+      {
+        items: [
+          { label: 'UTF-8', value: 'utf8' },
+          { label: 'Windows-1252', value: 'win1252' },
+          { label: 'UTF-16LE', value: 'utf-16le' },
+        ],
+      },
+    ];
   }
 };
 
@@ -594,10 +620,81 @@ export const getfileProviderImportsOptionsHandler = (fieldId, fields) => {
     const fileType = fields.find(field => field.id === 'file.type');
     const skipAggregationField = fields.find(field => field.id === fieldId);
 
-    if (['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value)) {
-      skipAggregationField.value = true;
+    skipAggregationField.value = ['filedefinition', 'fixed', 'delimited/edifact'].includes(fileType.value) || skipAggregationField.defaultValue;
+  } else if (fieldId === 'file.encoding') {
+    const fileType = fields.find(field => field.id === 'file.type');
+
+    if (fileType.value === 'xlsx') {
+      return [
+        {
+          items: [
+            { label: 'UTF-8', value: 'utf8' },
+          ],
+        },
+      ];
     }
+
+    return [
+      {
+        items: [
+          { label: 'UTF-8', value: 'utf8' },
+          { label: 'Windows-1252', value: 'win1252' },
+          { label: 'UTF-16LE', value: 'utf-16le' },
+        ],
+      },
+    ];
   }
 
   return null;
+};
+export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnector) => {
+  if (!httpConnector) {
+    return formValues;
+  }
+  const retValues = { ...formValues };
+
+  if (httpConnector.versioning?.location === 'uri') {
+    if (retValues['/http/unencrypted/version']) {
+      retValues['/http/baseURI'] += `/${retValues['/http/unencrypted/version']}`;
+    } else {
+      const versionRelativeURI = httpConnector.versions?.[0]?.name;
+
+      // Regex is used here to remove continuous multiple slashes if there are any
+      retValues['/http/ping/relativeURI'] = `/${versionRelativeURI}/${retValues['/http/ping/relativeURI']}`.replace(/([^:]\/)\/+/g, '$1');
+    }
+  }
+  if (httpConnector.versioning?.location === 'header') {
+    const {headerName} = httpConnector.versioning;
+    let httpHeaders = retValues['/http/headers'];
+
+    if (!httpHeaders) {
+      httpHeaders = [];
+    }
+
+    if (httpHeaders?.find(header => header.name === headerName)) {
+      const index = httpHeaders?.findIndex(header => header.name === headerName);
+
+      httpHeaders[index].value = retValues['/http/unencrypted/version'];
+    } else {
+      httpHeaders.push({name: headerName, value: retValues['/http/unencrypted/version']});
+    }
+    retValues['/http/headers'] = httpHeaders;
+  }
+
+  retValues['/http/_httpConnectorId'] = httpConnector?._id;
+  if (retValues['/http/unencrypted/version']) {
+    const version = httpConnector.versions?.find(ver => ver.name === retValues['/http/unencrypted/version']);
+
+    retValues['/http/_httpConnectorVersionId'] = version?._id;
+  } else {
+    retValues['/http/_httpConnectorVersionId'] = undefined;
+  }
+  if (!resource?._id || isNewId(resource?._id)) {
+    const settingFields = httpConnector?.supportedBy?.connection?.preConfiguredFields?.find(field => field.path === 'settingsForm');
+    const fieldMap = settingFields?.values?.[0];
+
+    if (fieldMap) { retValues['/settingsForm'] = {form: fieldMap}; }
+  }
+
+  return retValues;
 };

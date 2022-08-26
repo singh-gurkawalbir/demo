@@ -1,4 +1,5 @@
 import { hasLongLength } from '../utils';
+import { escapeSpecialChars } from '../../../../utils/string';
 
 export default function NewValue({ oldValue = '', newValue = '' }) {
   if (hasLongLength(oldValue, newValue)) {
@@ -7,8 +8,6 @@ export default function NewValue({ oldValue = '', newValue = '' }) {
     return null;
   }
 
-  return typeof newValue === 'string'
-    ? newValue
-    : JSON.stringify(newValue);
+  return escapeSpecialChars(newValue);
 }
 

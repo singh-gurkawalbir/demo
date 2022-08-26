@@ -5,7 +5,7 @@ import {makeStyles, TablePagination, IconButton, Tooltip, Divider, Typography} f
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import { JOB_STATUS } from '../../utils/constants';
+import { JOB_STATUS } from '../../constants';
 import { generateNewId } from '../../utils/resource';
 import EditIcon from '../icons/EditIcon';
 import ChevronRight from '../icons/ArrowRightIcon';
@@ -21,6 +21,7 @@ import DownloadIcon from '../icons/DownloadIcon';
 import ActionGroup from '../ActionGroup';
 import OutlinedButton from '../Buttons/OutlinedButton';
 import { getTextAfterCount } from '../../utils/string';
+import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
@@ -124,7 +125,7 @@ export default function JobErrorTable({
   // Extract errorFile Id from the target Job i.e., one of the children of parent job ( job._flowJobId )
   const existingErrorFileId = useSelector(state => {
     const { children = [] } =
-      selectors.flowJob(state, { jobId: job._flowJobId }) || {};
+      selectors.flowJob(state, { jobId: job._parentJobId || job._flowJobId }) || {};
     const childJob = children.find(cJob => cJob._id === job._id) || {};
 
     return childJob.errorFile && childJob.errorFile.id;
@@ -196,7 +197,7 @@ export default function JobErrorTable({
 
   function handleRetryClick() {
     if (selectedErrorIds.length === 0) {
-      const jobsToRetry = [{ _flowJobId: job._flowJobId, _id: job._id }];
+      const jobsToRetry = [{ _flowJobId: job._parentJobId || job._flowJobId, _id: job._id }];
 
       dispatch(
         actions.job.retrySelected({
@@ -215,8 +216,8 @@ export default function JobErrorTable({
             jobsToRetry.forEach(job =>
               dispatch(
                 actions.job.retryUndo({
-                  parentJobId: job._flowJobId || job._id,
-                  childJobId: job._flowJobId ? job._id : null,
+                  parentJobId: job._parentJobId || job._flowJobId || job._id,
+                  childJobId: (job._parentJobId || job._flowJobId) ? job._id : null,
                 })
               )
             );
@@ -246,7 +247,7 @@ export default function JobErrorTable({
       dispatch(
         actions.job.retrySelectedRetries({
           jobId: job._id,
-          flowJobId: job._flowJobId,
+          flowJobId: job._parentJobId || job._flowJobId,
           selectedRetryIds,
           match,
         })
@@ -257,7 +258,7 @@ export default function JobErrorTable({
 
   function handleResolveClick() {
     if (selectedErrorIds.length === 0) {
-      const jobsToResolve = [{ _flowJobId: job._flowJobId, _id: job._id }];
+      const jobsToResolve = [{ _flowJobId: job._parentJobId || job._flowJobId, _id: job._id }];
 
       dispatch(
         actions.job.resolveSelected({
@@ -274,8 +275,8 @@ export default function JobErrorTable({
             jobsToResolve.forEach(job =>
               dispatch(
                 actions.job.resolveUndo({
-                  parentJobId: job._flowJobId || job._id,
-                  childJobId: job._flowJobId ? job._id : null,
+                  parentJobId: job._parentJobId || job._flowJobId || job._id,
+                  childJobId: job._parentJobId || job._flowJobId ? job._id : null,
                 })
               )
             );
@@ -295,7 +296,7 @@ export default function JobErrorTable({
       dispatch(
         actions.job.resolveSelectedErrors({
           jobId: job._id,
-          flowJobId: job._flowJobId,
+          flowJobId: job._parentJobId || job._flowJobId,
           selectedErrorIds,
           match,
         })
@@ -352,7 +353,7 @@ export default function JobErrorTable({
               dispatch(
                 actions.job.retryForProcessedErrors({
                   jobId: job._id,
-                  flowJobId: job._flowJobId,
+                  flowJobId: job._parentJobId || job._flowJobId,
                   errorFileId,
                 })
               );
@@ -369,14 +370,7 @@ export default function JobErrorTable({
       // Once the dialog is open, clear the preview result as it is no longer needed
       dispatch(actions.job.processedErrors.clearPreview(job._id));
     }
-  }, [
-    confirmDialog,
-    dispatch,
-    job._flowJobId,
-    job._id,
-    jobErrorsPreview,
-    onCloseClick,
-  ]);
+  }, [confirmDialog, dispatch, job._flowJobId, job._id, job._parentJobId, jobErrorsPreview, onCloseClick]);
 
   const handleExpandCollapseClick = errorId => {
     setExpanded({ ...expanded, [errorId]: !expanded[errorId] });
@@ -414,7 +408,11 @@ export default function JobErrorTable({
           component={Link}
           size="small"
           data-test="edit-retry"
-          to={`${match.url}/editRetry/${retryId}`}>
+          to={buildDrawerUrl({
+            path: drawerPaths.ERROR_MANAGEMENT.V1.JOB_EDIT_RETRY,
+            baseUrl: match.url,
+            params: { retryId },
+          })}>
           <EditIcon />
         </IconButton>
       </Tooltip>

@@ -1,6 +1,6 @@
 /* global describe, expect, beforeEach, test */
 import { selectors } from '.';
-import { USER_ACCESS_LEVELS } from '../utils/constants';
+import { USER_ACCESS_LEVELS } from '../constants';
 
 describe('AFE region selectors test cases', () => {
   const editorId = 'abc';
@@ -57,6 +57,22 @@ describe('AFE region selectors test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.editorSupportsOnlyV2Data()).toEqual(false);
     });
+    test('should return true if mappings editor and active version is 2', () => {
+      state.session.editors[editorId] = {
+        id: editorId,
+        resourceType: 'imports',
+        resourceId: '123',
+        editorType: 'mappings',
+        fieldId: '_body',
+      };
+      state.session.mapping = {
+        mapping: {
+          importId: '123',
+          version: 2,
+        },
+      };
+      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
+    });
     test('should return true for filters stage', () => {
       state.session.editors[editorId] = {
         id: editorId,
@@ -66,6 +82,36 @@ describe('AFE region selectors test cases', () => {
       };
 
       expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
+    });
+    test('should return true for graphql resource and graphql http field', () => {
+      state.data.resources.exports = [{
+        _id: '123',
+        type: 'graph_ql',
+      }];
+      state.session.editors[editorId] = {
+        id: editorId,
+        resourceType: 'exports',
+        resourceId: '123',
+        fieldId: 'http.body',
+        stage: 'flowInput',
+      };
+
+      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
+    });
+    test('should return false for graphql resource when fieldId is not a graphql http field', () => {
+      state.data.resources.exports = [{
+        _id: '123',
+        type: 'graph_ql',
+      }];
+      state.session.editors[editorId] = {
+        id: editorId,
+        resourceType: 'exports',
+        resourceId: '123',
+        fieldId: 'abc',
+        stage: 'flowInput',
+      };
+
+      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(false);
     });
     test('should return false if resource is a page generator', () => {
       state.data.resources.exports = [{
@@ -484,6 +530,52 @@ describe('AFE region selectors test cases', () => {
       };
       expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(false);
     });
+    test('should return false if it is a import and its connection is of bigquery rdbms type', () => {
+      state.session.editors[editorId] = {
+        id: editorId,
+        resourceType: 'imports',
+        resourceId: '123',
+        fieldId: 'ftp.body',
+      };
+      state.data.resources = {
+        imports: [{
+          _id: '123',
+          adaptorType: 'RESTImport',
+          _connectionId: 'conn-id',
+        }],
+        connections: [{
+          _id: 'conn-id',
+          type: 'rdbms',
+          rdbms: {
+            type: 'bigquery',
+          },
+        }],
+      };
+      expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(false);
+    });
+    test('should return true if it is a import and its connection is of snowflake rdbms type', () => {
+      state.session.editors[editorId] = {
+        id: editorId,
+        resourceType: 'imports',
+        resourceId: '123',
+        fieldId: 'ftp.body',
+      };
+      state.data.resources = {
+        imports: [{
+          _id: '123',
+          adaptorType: 'RESTImport',
+          _connectionId: 'conn-id',
+        }],
+        connections: [{
+          _id: 'conn-id',
+          type: 'rdbms',
+          rdbms: {
+            type: 'snowflake',
+          },
+        }],
+      };
+      expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(true);
+    });
     test('should return true for http body or sql fields', () => {
       state.session.editors[editorId] = {
         id: editorId,
@@ -565,6 +657,22 @@ describe('AFE region selectors test cases', () => {
       };
 
       expect(selectors.shouldGetContextFromBE(state, editorId, sampleData)).toEqual(expectedOutput);
+    });
+    test('should return shouldGetContextFromBE as true if mappings editor and active version is 2', () => {
+      state.session.editors[editorId] = {
+        id: editorId,
+        resourceType: 'imports',
+        resourceId: '123',
+        editorType: 'mappings',
+        fieldId: '_body',
+      };
+      state.session.mapping = {
+        mapping: {
+          importId: '123',
+          version: 2,
+        },
+      };
+      expect(selectors.shouldGetContextFromBE(state, editorId)).toEqual({shouldGetContextFromBE: true, isMapperField: true});
     });
     test('should return shouldGetContextFromBE as false with sample data if resource is native REST adaptor type', () => {
       state.data.resources = {

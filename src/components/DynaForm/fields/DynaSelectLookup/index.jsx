@@ -12,6 +12,7 @@ import lookupUtil from '../../../../utils/lookup';
 import useFormContext from '../../../Form/FormContext';
 import EllipsisActionMenu from '../../../EllipsisActionMenu';
 import ActionGroup from '../../../ActionGroup';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,13 +45,17 @@ export default function DynaSelectLookup(props) {
 
   const handleAddLookupClick = useCallback(
     () => {
-      history.push(`${match.url}/lookups/add`);
+      history.push(buildDrawerUrl({ path: drawerPaths.LOOKUPS.ADD, baseUrl: match.url }));
     },
     [history, match.url],
   );
   const handleEditLookupClick = useCallback(
     () => {
-      history.push(`${match.url}/lookups/edit/${value}`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.LOOKUPS.EDIT,
+        baseUrl: match.url,
+        params: { lookupName: value },
+      }));
     },
     [history, match.url, value],
   );
@@ -79,7 +84,11 @@ export default function DynaSelectLookup(props) {
         onFieldChange(lookupFieldId, modifiedLookup);
       }
       onFieldChange(id, newValue.name);
-      history.replace(`${match.url}/lookups/edit/${newValue.name}`);
+      history.replace(buildDrawerUrl({
+        path: drawerPaths.LOOKUPS.EDIT,
+        baseUrl: match.url,
+        params: { lookupName: newValue.name },
+      }));
     },
     [adaptorType, history, id, lookups, match.url, onFieldChange, value],
   );
@@ -92,7 +101,7 @@ export default function DynaSelectLookup(props) {
     [adaptorType, onFieldChange],
   );
   const handleManageLookupsClick = useCallback(() => {
-    history.push(`${match.url}/lookup`);
+    history.push(buildDrawerUrl({ path: drawerPaths.LOOKUP.ROOT, baseUrl: match.url }));
   }, [history, match.url]);
 
   return (

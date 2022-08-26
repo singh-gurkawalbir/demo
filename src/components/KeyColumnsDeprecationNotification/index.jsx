@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import NotificationToaster from '../NotificationToaster';
-import { SORT_GROUP_CONTENT_URL } from '../../utils/constants';
+import { SORT_GROUP_CONTENT_URL } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
   titleStatusPanel: {

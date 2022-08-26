@@ -61,7 +61,7 @@ export function* installConnector({ connectorId, sandbox, tag }) {
   yield put(actions.resource.requestCollection('integrations'));
   yield put(actions.resource.requestCollection('tiles'));
   yield put(actions.resource.requestCollection('connections'));
-  yield put(actions.resource.requestCollection('licenses'));
+  yield put(actions.license.refreshCollection());
 }
 
 export function* contactSales({ connectorName, _connectorId }) {

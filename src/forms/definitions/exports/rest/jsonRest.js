@@ -211,6 +211,8 @@ export default {
       retValues['/test'] = undefined;
       retValues['/http/once/method'] = retValues['/rest/once/method'];
       retValues['/http/once/body'] = retValues['/rest/once/postBody'];
+      delete retValues['/rest/once/method'];
+      delete retValues['/rest/once/postBody'];
       delete retValues['/test/limit'];
       delete retValues['/delta/dateFormat'];
       delete retValues['/delta/lagOffset'];

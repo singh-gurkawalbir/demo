@@ -7,20 +7,18 @@ import { Card, Typography } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
-import {CONNECTORS_TO_IGNORE, NO_RESULT_SEARCH_MESSAGE, WEBHOOK_ONLY_APPLICATIONS} from '../../utils/constants';
+import {CONNECTORS_TO_IGNORE, NO_RESULT_SEARCH_MESSAGE, WEBHOOK_ONLY_APPLICATIONS} from '../../constants';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import {applicationsList} from '../../constants/applications';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../components/NoResultTypography';
+import PageContent from '../../components/PageContent';
 
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'grid',
-    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
-    overflowY: 'auto',
     gridTemplateColumns: 'repeat(auto-fill, minmax(204px, 1fr));',
     gridRowGap: theme.spacing(3),
-    padding: '24px 10px',
     [theme.breakpoints.up('xl')]: {
       gridTemplateColumns: 'repeat(7, 1fr);',
     },
@@ -111,23 +109,25 @@ export default function ApplicationsList({ filter }) {
   return (
     <>
       {applications.length > 0 ? (
-        <div className={classes.root}>
-          {applications.map(id => (
-            <NavLink
-              className={classes.tile}
-              key={id}
-              to={getRoutePath(`/marketplace/${id}`)}>
-              <Card className={classes.card} elevation={0}>
-                <ApplicationImg assistant={id} size="large" />
-              </Card>
-              <Typography variant="body2" className={classes.label}>
-                {(connectorsMetadata.find(a => a.id === id) || {}).name || id}
-              </Typography>
-            </NavLink>
-          ))}
-        </div>
+        <PageContent>
+          <div className={classes.root}>
+            {applications.map(id => (
+              <NavLink
+                className={classes.tile}
+                key={id}
+                to={getRoutePath(`/marketplace/${id}`)}>
+                <Card className={classes.card} elevation={0}>
+                  <ApplicationImg assistant={id} size="large" />
+                </Card>
+                <Typography variant="body2" className={classes.label}>
+                  {(connectorsMetadata.find(a => a.id === id) || {}).name || id}
+                </Typography>
+              </NavLink>
+            ))}
+          </div>
+        </PageContent>
       ) : (
-        <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
+        <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>
       )}
     </>
   );

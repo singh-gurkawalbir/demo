@@ -12,10 +12,28 @@ export default function DynaSelectFlowResource(props) {
   const { filter, visible = true, label, ...otherOptions } = options;
   const resourceIdsToFilter = useSelector(state => {
     const flow = selectors.resource(state, 'flows', flowId);
-    const { pageProcessors = [], pageGenerators = [] } = flow || {};
+    const { pageProcessors = [], pageGenerators = [], routers = [] } = flow || {};
+    const exportIds = [];
+    const importIds = [];
+
+    if (routers.length) {
+      routers.forEach(router => {
+        (router.branches || []).forEach(branch => {
+          (branch.pageProcessors || []).forEach(pp => {
+            if (pp._importId) {
+              importIds.push(pp._importId);
+            } else if (pp._exportId) {
+              exportIds.push(pp._exportId);
+            }
+          });
+        });
+      });
+    }
 
     // For imports go through pps and extract list of import ids
     if (props.resourceType === 'imports') {
+      if (routers.length) return importIds;
+
       return pageProcessors
         .filter(pp => !!pp._importId)
         .map(pp => pp._importId);
@@ -28,7 +46,7 @@ export default function DynaSelectFlowResource(props) {
         .map(pg => pg._exportId);
     }
 
-    return pageProcessors.filter(pp => !!pp._exportId).map(pp => pp._exportId);
+    return routers.length ? exportIds : pageProcessors.filter(pp => !!pp._exportId).map(pp => pp._exportId);
   });
   const updatedFilter = {
     ...filter,

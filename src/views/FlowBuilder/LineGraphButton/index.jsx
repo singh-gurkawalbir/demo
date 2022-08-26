@@ -5,7 +5,8 @@ import GraphIcon from '../../../components/icons/GraphIcon';
 import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
+import { drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   chartsIcon: {
@@ -44,7 +45,7 @@ export default function LineGraphButton({flowId, onClickHandler}) {
       className={classes.chartsIcon}
       data-test="charts"
       tooltipProps={{title: 'View analytics'}}
-      onClick={onClickHandler('charts')}>
+      onClick={onClickHandler(drawerPaths.FLOW_BUILDER.ANALYTICS)}>
       <GraphIcon className={classes.iconGraph} />
     </IconButtonWithTooltip>
   );

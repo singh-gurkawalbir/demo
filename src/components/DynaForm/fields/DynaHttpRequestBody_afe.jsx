@@ -6,6 +6,7 @@ import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import { getParentResourceContext } from '../../../utils/connections';
 import DynaHandlebarPreview from './DynaHandlebarPreview';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 export default function DynaHttpRequestBody_afe(props) {
   const {
@@ -18,6 +19,7 @@ export default function DynaHttpRequestBody_afe(props) {
     arrayIndex,
     formKey,
     stage,
+    mapper2RowKey,
   } = props;
   const dispatch = useDispatch();
   const history = useHistory();
@@ -55,10 +57,15 @@ export default function DynaHttpRequestBody_afe(props) {
       onSave: handleSave,
       parentType,
       parentId,
+      mapper2RowKey,
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url]);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
+  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url, mapper2RowKey]);
 
   return (
     <DynaHandlebarPreview {...props} onEditorClick={handleEditorClick} />

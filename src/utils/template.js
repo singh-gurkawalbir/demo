@@ -5,7 +5,8 @@ import {
   NETSUITE_BUNDLE_URL,
   SALESFORCE_DA_PACKAGE_URL,
   INSTALL_STEP_TYPES,
-} from './constants';
+} from '../constants';
+import { rdbmsSubTypeToAppType } from './resource';
 import { capitalizeFirstLetter } from './string';
 
 export const getTemplateUrlName = applications => {
@@ -32,11 +33,11 @@ export const getApplication = conn => {
     }
 
     if (conn.type === 'rdbms' && conn.rdbms) {
-      return a.id === conn.rdbms.type;
+      return a.id === rdbmsSubTypeToAppType(conn.rdbms.type);
     }
 
-    if (conn.type === 'http' && conn.http?.formType === 'rest') {
-      return a.id === 'rest';
+    if (conn.type === 'http' && conn.http?.formType) {
+      return a.id === conn.http.formType;
     }
 
     return a.id === conn.type;

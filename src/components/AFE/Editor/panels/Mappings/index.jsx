@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import {useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {selectors} from '../../../../../reducers';
 import Spinner from '../../../../Spinner';
@@ -8,9 +8,12 @@ import TopPanel from '../../../../Mapping/TopPanel';
 import DragContainer from '../../../../DragContainer';
 import SettingsDrawer from '../../../../Mapping/Settings';
 import AutoMapperButton from '../../../../Mapping/AutoMapperButton';
-import { dataAsString } from '../../../../../utils/editor';
+import { dataAsString, getMappingsEditorId } from '../../../../../utils/editor';
 import MappingRow from '../../../../Mapping/MappingRow';
-import { emptyObject } from '../../../../../utils/constants';
+import { emptyObject } from '../../../../../constants';
+import Mapper2 from './Mapper2';
+import NoResultTypography from '../../../../NoResultTypography';
+import VirtualizedDragContainer from '../../../../VirtualizedDragContainer';
 
 const useStyles = makeStyles(theme => ({
   mappingDrawerContent: {
@@ -40,7 +43,7 @@ const SortableItemComponent = props => (
 const LastRowSortableItemComponent = props => (
   <MappingRow rowData={emptyObject} {...props} />
 );
-const Mapping = ({editorId, flowId, importId, subRecordMappingId}) => {
+const Mapper1 = ({editorId, flowId, importId, subRecordMappingId}) => {
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
 
   const canAutoMap = useSelector(state => {
@@ -60,13 +63,21 @@ const Mapping = ({editorId, flowId, importId, subRecordMappingId}) => {
   }, [dispatch, mappings]);
 
   return (
-    <>
-      <SettingsDrawer disabled={disabled} />
-      <div className={classes.mappingDrawerContent}>
-        <div className={classes.mappingColumn}>
-          <TopPanel flowId={flowId} importId={importId} disabled={disabled} />
+    <div className={classes.mappingDrawerContent}>
+      <div className={classes.mappingColumn}>
+        <TopPanel flowId={flowId} importId={importId} disabled={disabled} />
 
-          <div className={classes.mappingTable}>
+        <div className={classes.mappingTable}>
+          {mappings.length > 99 ? (
+            <VirtualizedDragContainer
+              disabled={disabled}
+              importId={importId}
+              flowId={flowId}
+              items={mappings}
+              onSortEnd={onSortEnd}
+              subRecordMappingId={subRecordMappingId}
+              />
+          ) : (
             <DragContainer
               disabled={disabled}
               importId={importId}
@@ -77,15 +88,15 @@ const Mapping = ({editorId, flowId, importId, subRecordMappingId}) => {
               onSortEnd={onSortEnd}
               subRecordMappingId={subRecordMappingId}
               />
-            {canAutoMap && (
+          )}
+          {canAutoMap && (
             <div className={classes.autoMapper}>
               <AutoMapperButton />
             </div>
-            )}
-          </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
@@ -102,6 +113,7 @@ export default function MappingWrapper({ editorId }) {
       subRecordMappingId: e.subRecordMappingId,
     };
   }, shallowEqual);
+  const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const mappingStatus = useSelector(state => selectors.mapping(state, flowId, importId, subRecordMappingId).status);
   const sampleInput = useSelector(state => {
     const {data} = selectors.getSampleDataContext(state, {
@@ -113,16 +125,17 @@ export default function MappingWrapper({ editorId }) {
 
     return dataAsString(data);
   });
+  const mappingVersion = useSelector(state => selectors.mappingVersion(state));
 
   useEffect(() => {
     if (mappingStatus === 'received') {
-      dispatch(actions.editor.sampleDataReceived(`mappings-${importId}`, sampleInput));
+      dispatch(actions.editor.sampleDataReceived(getMappingsEditorId(importId), sampleInput));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mappingStatus]);
 
   if (mappingStatus === 'error') {
-    return (<Typography>Failed to load mapping.</Typography>);
+    return (<NoResultTypography size="small" >Failed to load mapping.</NoResultTypography>);
   }
   if (mappingStatus !== 'received') {
     return (
@@ -131,11 +144,24 @@ export default function MappingWrapper({ editorId }) {
   }
 
   return (
-    <Mapping
-      editorId={editorId}
-      flowId={flowId}
-      importId={importId}
-      subRecordMappingId={subRecordMappingId}
+    <>
+      <SettingsDrawer disabled={disabled} />
+      {mappingVersion === 2 ? (
+        <Mapper2
+          editorId={editorId}
+          flowId={flowId}
+          importId={importId}
+          subRecordMappingId={subRecordMappingId}
      />
+      )
+        : (
+          <Mapper1
+            editorId={editorId}
+            flowId={flowId}
+            importId={importId}
+            subRecordMappingId={subRecordMappingId}
+     />
+        )}
+    </>
   );
 }

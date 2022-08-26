@@ -3,8 +3,9 @@ import { useDispatch } from 'react-redux';
 import { useRouteMatch, Redirect } from 'react-router-dom';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/HookIcon';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
-function PostResponseMapHook({ flowId, resourceType, resourceId, onClose, open, resourceIndex }) {
+function PostResponseMapHook({ flowId, resourceType, resourceId, onClose, open, resourceIndex, routerIndex, branchIndex, pageProcessorIndex }) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const editorId = `postResponseMapHook-${resourceId}`;
@@ -21,12 +22,22 @@ function PostResponseMapHook({ flowId, resourceType, resourceId, onClose, open, 
       resourceType,
       stage: 'postResponseMapHook',
       resourceIndex,
+      routerIndex,
+      branchIndex,
+      pageProcessorIndex,
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   return open
-    ? <Redirect push to={`${match.url}/editor/${editorId}`} />
+    ? (
+      <Redirect
+        push to={buildDrawerUrl({
+          path: drawerPaths.EDITOR,
+          baseUrl: match.url,
+          params: { editorId },
+        })} />
+    )
     : null;
 }
 

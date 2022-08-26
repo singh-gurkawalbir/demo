@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import integrationAppsUtil from '../../utils/integrationApps';
 import SuccessIcon from '../icons/SuccessIcon';
-import { INSTALL_STEP_TYPES } from '../../utils/constants';
+import { INSTALL_STEP_TYPES } from '../../constants';
 import ApplicationImg from '../icons/ApplicationImg';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -70,6 +70,7 @@ const useStyles = makeStyles(theme => ({
   imgBlock: {
     display: 'flex',
     maxWidth: 136,
+    alignItems: 'center',
     '& > img': {
       maxWidth: '100%',
       maxHeight: theme.spacing(3),
@@ -145,9 +146,15 @@ const useStyles = makeStyles(theme => ({
 
 export default function InstallationStep(props) {
   const classes = useStyles(props.step || {});
-  const { step, index, handleStepClick, mode = 'install', templateId, integrationId, isTemplate, isFrameWork2 } = props;
+  const { step, index, handleStepClick, mode = 'install', templateId, integrationId, revisionId, isFrameWork2 } = props;
   const dispatch = useDispatch();
   const [verified, setVerified] = useState(false);
+  const isIntegrationApp = useSelector(state => {
+    const integrationSettings = selectors.integrationAppSettings(state, integrationId);
+
+    return !!integrationSettings?._connectorId;
+  });
+
   const connection = useSelector(state => {
     if (step && step.type === INSTALL_STEP_TYPES.INSTALL_PACKAGE) {
       return selectors.resource(
@@ -162,7 +169,15 @@ export default function InstallationStep(props) {
 
   useEffect(() => {
     if (step && !step.completed && !verified) {
-      if (
+      if (revisionId && step.isCurrentStep && step.url && step.connectionId) {
+        dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'verify'));
+        dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
+          integrationId,
+          connectionId: step.connectionId,
+          revisionId,
+        }));
+        setVerified(true);
+      } else if (
         connection &&
         step.type === INSTALL_STEP_TYPES.INSTALL_PACKAGE
       ) {
@@ -183,8 +198,8 @@ export default function InstallationStep(props) {
       } else if (
         step.isCurrentStep &&
         (step.installURL || step.url) &&
-        isTemplate &&
-        step.connectionId
+        !isIntegrationApp &&
+        step._connId
       ) {
         dispatch(
           actions.integrationApp.installer.updateStep(
@@ -196,7 +211,7 @@ export default function InstallationStep(props) {
         dispatch(
           actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
             integrationId,
-            step.connectionId,
+            step._connId,
             step.installerFunction,
             isFrameWork2
           )
@@ -204,7 +219,7 @@ export default function InstallationStep(props) {
         setVerified(true);
       }
     }
-  }, [connection, dispatch, integrationId, isFrameWork2, isTemplate, step, templateId, verified]);
+  }, [connection, dispatch, integrationId, revisionId, isFrameWork2, isIntegrationApp, step, templateId, verified]);
 
   if (!step) {
     return null;

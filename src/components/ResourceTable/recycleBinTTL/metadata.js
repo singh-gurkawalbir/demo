@@ -2,6 +2,7 @@ import React from 'react';
 import Restore from './actions/Restore';
 import Purge from './actions/Purge';
 import DateTimeDisplay from '../../DateTimeDisplay';
+import { getTextAfterCount } from '../../../utils/string';
 
 export default {
   useColumns: () => [
@@ -31,13 +32,29 @@ export default {
       heading: 'Auto purge',
       isLoggable: true,
       Value: ({rowData: r}) => {
-        const restoreWithin = Math.ceil(
+        let restoreWithin = Math.ceil(
           (30 * 24 * 60 * 60 * 1000 -
             (Date.now() - new Date(r.doc && r.doc.lastModified))) /
-            (24 * 60 * 60 * 1000)
+            1000
         );
 
-        return `${restoreWithin} ${restoreWithin === 1 ? 'day' : 'days'}`;
+        if (restoreWithin < 60) {
+          return getTextAfterCount('second', restoreWithin);
+        }
+
+        restoreWithin = Math.ceil(restoreWithin / 60);
+        if (restoreWithin < 60) {
+          return getTextAfterCount('minute', restoreWithin);
+        }
+
+        restoreWithin = Math.ceil(restoreWithin / 60);
+        if (restoreWithin < 24) {
+          return getTextAfterCount('hour', restoreWithin);
+        }
+
+        restoreWithin = Math.ceil(restoreWithin / 24);
+
+        return getTextAfterCount('day', restoreWithin);
       },
     },
   ],

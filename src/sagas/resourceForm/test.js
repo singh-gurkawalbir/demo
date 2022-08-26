@@ -26,7 +26,7 @@ import {
 } from '.';
 import { createPayload, pingConnectionWithId } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
-import { FORM_SAVE_STATUS } from '../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../constants';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '..';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
@@ -110,7 +110,7 @@ describe('resourceForm sagas', () => {
     const resourceId = 'res-123';
     const values = {
       '/file/type': 'json',
-      '/name': 'Data Loader',
+      '/name': 'Data loader',
       '/outputMode': 'records',
     };
 
@@ -188,6 +188,40 @@ describe('resourceForm sagas', () => {
       return expectSaga(deleteUISpecificValues, { values, resourceId: '123' })
         .put.actionType('RESOURCE_STAGE_REMOVE')
         .returns({
+          '/name': 'test',
+          '/description': 'desc',
+        })
+        .run();
+    });
+    test('should remove keyColums if groupByFields are defined', () => {
+      const values = {
+        '/file/csv': {keyColumns: ['name']},
+        '/description': 'desc',
+        '/formView': 'rest',
+        '/file/groupByFields': 'name',
+      };
+
+      return expectSaga(deleteUISpecificValues, { values, resourceId: '123' })
+        .put.actionType('RESOURCE_STAGE_REMOVE')
+        .returns({
+          '/file/csv': {keyColumns: undefined},
+          '/description': 'desc',
+          '/file/groupByFields': 'name',
+        })
+        .run();
+    });
+    test('should not remove keyColums if groupByFields is not defined', () => {
+      const values = {
+        '/file/csv': {keyColumns: ['name']},
+        '/name': 'test',
+        '/description': 'desc',
+        '/formView': 'rest',
+      };
+
+      return expectSaga(deleteUISpecificValues, { values, resourceId: '123' })
+        .put.actionType('RESOURCE_STAGE_REMOVE')
+        .returns({
+          '/file/csv': {keyColumns: ['name']},
           '/name': 'test',
           '/description': 'desc',
         })
@@ -570,19 +604,18 @@ describe('resourceForm sagas', () => {
         merged: {},
         master: {},
       };
-      const patches = [{ op: 'add', path: '/pageGenerators', value: [] },
-        { op: 'replace',
-          path: '/pageGenerators/1',
-          value: { _exportId: 'res-123' } }];
+      const patches = [{ op: 'add',
+        path: '/pageGenerators',
+        value: [{ _exportId: 'res-123' }] }];
 
-      return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'new-123.1', 'flow-123')
+      return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'new-123.0', 'flow-123')
         .provide([
           [select(
             selectors.resourceData,
             'flows',
             'flow-123'
           ), data],
-          [select(selectors.createdResourceId, 'new-123.1'), 'res-123'],
+          [select(selectors.createdResourceId, 'new-123.0'), 'res-123'],
         ])
         .returns(patches)
         .run();
@@ -615,9 +648,10 @@ describe('resourceForm sagas', () => {
       const data = {
         merged: {pageGenerators: [{application: 'dataLoader'}]},
       };
-      const patches = [{ op: 'replace',
-        path: '/pageGenerators/0',
-        value: { _exportId: 'res-123' } }];
+      const patches = [{ op: 'remove', path: '/pageGenerators/0/application' },
+        { op: 'add',
+          path: '/pageGenerators/0/_exportId',
+          value: 'res-123' }];
 
       return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'res-123', 'flow-123')
         .provide([
@@ -639,10 +673,10 @@ describe('resourceForm sagas', () => {
       const data = {
         merged: {},
       };
-      const patches = [{ op: 'add', path: '/pageProcessors', value: [] },
-        { op: 'add',
-          path: '/pageProcessors/0',
-          value: { type: 'import', _importId: 'res-123' } }];
+      const patches = [{ op: 'add',
+        path: '/pageProcessors',
+        value:
+       [{ type: 'import', _importId: 'res-123' }] }];
 
       return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'imports', 'res-123', 'flow-123')
         .provide([

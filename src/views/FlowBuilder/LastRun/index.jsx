@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
-import { JOB_STATUS } from '../../../utils/constants';
+import { JOB_STATUS } from '../../../constants';
 import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
 import RefreshIcon from '../../../components/icons/RefreshIcon';
 import Spinner from '../../../components/Spinner';
@@ -48,14 +48,14 @@ export default function LastRun({ flowId }) {
   const lastExecutedJob = useSelector(state => {
     const jobs = selectors.latestFlowJobsList(state, flowId)?.data || [];
 
-    return jobs.find(job => !!job.lastExecutedAt);
+    return jobs.find(job => !!(job.lastExecutedAt || job.endedAt));
   }, shallowEqual);
 
   useEffect(() => {
     if (flowJobStatus) {
       setLastRunStatus(flowJobStatus);
     } else if (lastExecutedJob?.lastExecutedAt && lastExecutedJob.lastExecutedAt !== lastRunStatus) {
-      setLastRunStatus(lastExecutedJob.lastExecutedAt);
+      setLastRunStatus(lastExecutedJob.lastExecutedAt || lastExecutedJob.endedAt);
     }
   }, [flowJobStatus, lastExecutedJob, lastRunStatus]);
 

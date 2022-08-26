@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import EditIcon from '../../../../icons/EditIcon';
-import getRoutePath from '../../../../../utils/routePaths';
-import { UNASSIGNED_SECTION_ID } from '../../../../../utils/constants';
+import { UNASSIGNED_SECTION_ID } from '../../../../../constants';
+import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 
 export default {
   key: 'editFlowGroup',
@@ -17,7 +17,7 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const openEditFlowGroup = useCallback(() => {
-      history.push(getRoutePath(`${match.url}/flowgroups/edit`));
+      history.push(buildDrawerUrl({ path: drawerPaths.FLOW_GROUP.EDIT, baseUrl: match.url }));
     }, [history, match.url]);
 
     return openEditFlowGroup;

@@ -1,17 +1,18 @@
 import React from 'react';
 import clsx from 'clsx';
 import { makeStyles, IconButton, Typography } from '@material-ui/core';
-import {matchPath, useHistory, useLocation} from 'react-router-dom';
+import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import CloseIcon from '../../icons/CloseIcon';
 import BackArrowIcon from '../../icons/BackArrowIcon';
 import InfoIconButton from '../../InfoIconButton';
 import Help from '../../Help';
+import { hasMultipleDrawers } from '../../../utils/rightDrawer';
 import { useDrawerContext } from './DrawerContext';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {
     display: 'flex',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(2, 3),
     '& > :not(:last-child)': {
@@ -55,7 +56,8 @@ export default function DrawerHeader({
   children,
   helpTitle,
   helpKey,
-  hideBackButton = false,
+  showBackButton = false,
+  handleBack,
   CloseButton,
   disableClose,
   className,
@@ -65,19 +67,20 @@ export default function DrawerHeader({
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
-  const { fullPath, onClose } = useDrawerContext();
-  const { isExact } = matchPath(location.pathname, fullPath) || {};
-  const showBackButton = !isExact && !hideBackButton;
+  const match = useRouteMatch();
+  const { onClose } = useDrawerContext();
+  const hasBackButton = showBackButton ||
+  (location.pathname === match.url && hasMultipleDrawers(match.url));
 
   return (
     <div className={clsx(classes.drawerHeader, className)}>
-      {showBackButton && (
+      {hasBackButton && (
         <IconButton
           size="small"
           data-test="backRightDrawer"
           aria-label="Close"
         // eslint-disable-next-line react/jsx-handler-names
-          onClick={history.goBack}>
+          onClick={handleBack || history.goBack}>
           <BackArrowIcon />
         </IconButton>
       )}

@@ -12,8 +12,8 @@ import actions from '../../../actions';
 import metadata from './metadata';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { TextButton } from '../../../components/Buttons';
-import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
-import NoResultMessageWrapper from '../../../components/NoResultMessageWrapper';
+import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
+import NoResultTypography from '../../../components/NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -139,8 +139,8 @@ export default function InstallBase(props) {
         {list.count === 0 ? (
           <div>
             {list.total === 0
-              ? <NoResultMessageWrapper>You don&apos;t have any installbase</NoResultMessageWrapper>
-              : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+              ? <NoResultTypography>You don&apos;t have any install base</NoResultTypography>
+              : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
           </div>
         ) : (
           <CeligoTable

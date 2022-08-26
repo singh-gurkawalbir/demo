@@ -7,6 +7,7 @@ import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
 import { safeParse } from '../../../utils/string';
 import { pollApiRequests } from '../../app';
+import { emptyObject } from '../../../constants';
 
 export function* downloadRetryData({flowId, resourceId, retryDataKey}) {
   let response;
@@ -62,7 +63,7 @@ export function* requestRetryData({ flowId, resourceId, retryId }) {
 
 export function* updateRetryData({ flowId, resourceId, retryId, retryData }) {
   const { data: retryDataInfo } = yield select(selectors.retryDataContext, retryId);
-  const updatedRetryDataInfo = deepClone(retryDataInfo);
+  const updatedRetryDataInfo = retryDataInfo ? deepClone(retryDataInfo) : emptyObject;
 
   updatedRetryDataInfo.data = retryData;
   try {

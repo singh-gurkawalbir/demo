@@ -4,36 +4,15 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useState } from 'react';
-import { JOB_STATUS } from '../../../utils/constants';
+import { JOB_STATUS } from '../../../constants';
 import JobStatus from './JobStatus';
 import { getSuccess } from './util';
 import JobActionsMenu from './JobActionsMenu';
 import DateTimeDisplay from '../../DateTimeDisplay';
 import { TextButton } from '../../Buttons';
+import { JobDetailsStyles } from '../../JobDashboard/ChildJobDetail';
 
-const useStyles = makeStyles(theme => ({
-  icon: {
-    margin: theme.spacing.double,
-  },
-  spinner: {
-    left: '0px',
-    right: '0px',
-    background: 'rgba(106, 123, 137, 0.7)',
-    width: '100%',
-    position: 'absolute',
-    color: theme.palette.background.paper,
-    textAlign: 'center',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 'inherit',
-    zIndex: 1,
-    padding: 14,
-    '& span': {
-      marginLeft: '10px',
-      color: theme.palette.background.paper,
-    },
-  },
+const useStyles = makeStyles(() => ({
   checkAction: {
     listStyle: 'none',
     padding: 0,
@@ -41,52 +20,11 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'flex-start',
   },
-  moreIcon: {
-    padding: 0,
-  },
   checkIcon: {
     padding: 0,
   },
-  name: {
-    width: '18.15%',
-  },
-  status: {
-    width: '10.15%',
-  },
-  success: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  ignore: {
-    width: '7.5%',
-    textAlign: 'right',
-  },
   error: {
-    width: '10.15%',
     textAlign: 'right',
-  },
-  errorCount: {
-    color: theme.palette.error.main,
-  },
-  resolved: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  pages: {
-    width: '7.5%',
-    textAlign: 'right',
-  },
-  duration: {
-    width: '9%',
-    textAlign: 'right',
-  },
-  completed: {
-    width: '11.5%',
-    whiteSpace: 'nowrap',
-  },
-  actions: {
-    width: '7.5%',
-    textAlign: 'center',
   },
   stateBtn: {
     float: 'right',
@@ -95,7 +33,6 @@ const useStyles = makeStyles(theme => ({
   },
   checkActionBorder: {
     paddingLeft: '13px',
-    borderLeft: `5px solid ${theme.palette.primary.main}`,
   },
 }));
 
@@ -110,7 +47,8 @@ export default function JobDetail({
   ssLinkedConnectionId,
   integrationId,
 }) {
-  const classes = useStyles();
+  const classes = JobDetailsStyles();
+  const jobDetailsClasses = useStyles();
   const [showViewErrorsLink, setShowViewErrorsLink] = useState(false);
   const isSelected = !!(
     selectedJobs[`${job.type}-${job._id}`] &&
@@ -146,15 +84,16 @@ export default function JobDetail({
           className={clsx(
             {
               [classes.checkActionBorder]: isSelected,
+              [jobDetailsClasses.checkActionBorder]: isSelected,
             },
             classes.checkFlow
           )}>
-          <ul className={classes.checkAction}>
+          <ul className={clsx(classes.checkAction, jobDetailsClasses.checkAction)}>
             <li>
               <Checkbox
                 disabled={!job.numError}
                 checked={isSelected}
-                className={classes.checkIcon}
+                className={clsx(classes.checkIcon, jobDetailsClasses.checkIcon)}
                 color="primary"
                 onChange={event => handleSelectChange(event)}
               />
@@ -176,7 +115,7 @@ export default function JobDetail({
           onMouseLeave={() => {
             setShowViewErrorsLink(false);
           }}
-          className={clsx(classes.error, {
+          className={clsx(classes.error, jobDetailsClasses.error, {
             [classes.errorCount]: job.numError > 0,
           })}>
           {showViewErrorsLink && !isJobInProgress && job.numError > 0 ? (
@@ -184,7 +123,7 @@ export default function JobDetail({
               error
               data-test="viewJobErrors"
               bold
-              className={classes.stateBtn}
+              className={clsx(classes.stateBtn, jobDetailsClasses.stateBtn)}
               onClick={() => {
                 handleViewErrorsClick(false);
               }}>

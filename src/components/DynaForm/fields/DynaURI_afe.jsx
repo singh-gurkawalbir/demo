@@ -9,6 +9,7 @@ import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import { getParentResourceContext } from '../../../utils/connections';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   dynaURIActionButton: {
@@ -35,6 +36,7 @@ export default function DynaURI_afe(props) {
     description,
     formKey,
     stage,
+    mapper2RowKey,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -60,10 +62,15 @@ export default function DynaURI_afe(props) {
       onSave: handleSave,
       parentType,
       parentId,
+      mapper2RowKey,
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url]);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
+  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url, mapper2RowKey]);
 
   return (
     <>

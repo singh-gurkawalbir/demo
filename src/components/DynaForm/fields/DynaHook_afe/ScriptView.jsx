@@ -10,16 +10,16 @@ import DynaSelect from '../DynaSelect';
 import { selectors } from '../../../../reducers';
 import EditIcon from '../../../icons/EditIcon';
 import AddIcon from '../../../icons/AddIcon';
-import ActionButton from '../../../ActionButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import actions from '../../../../actions';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 const useStyles = makeStyles(theme => ({
   field: {
     width: '50%',
     paddingRight: theme.spacing(1),
-    overflow: 'hidden',
     '& >.MuiFormControl-root': {
       width: '100%',
     },
@@ -30,6 +30,7 @@ const useStyles = makeStyles(theme => ({
   hookActionBtnAdd: {
     marginLeft: 0,
     alignSelf: 'flex-start',
+    padding: 0,
     marginTop: theme.spacing(4),
   },
   hookActionBtnEdit: {
@@ -88,7 +89,11 @@ export default function ScriptView({
       onSave: handleSave,
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
   }, [dispatch, editorId, flowId, resourceId, resourceType, hookStage, history, match.url, value, handleSave, formKey]);
 
   const options = useMemo(() => [{ items: allScripts.map(script => ({
@@ -112,18 +117,20 @@ export default function ScriptView({
             isValid={isValidHookField('_scriptId')}
             onFieldChange={handleFieldChange('_scriptId')}
             options={options}
-                  />
+            helpKey="api.scripts" />
         </FormControl>
       </div>
-      <ActionButton
+      <IconButtonWithTooltip
         onClick={handleCreateScriptClick}
+        tooltipProps={{title: 'Create script'}}
         disabled={disabled}
         className={classes.hookActionBtnAdd}
         data-test={id}>
         <AddIcon />
-      </ActionButton>
-      <ActionButton
+      </IconButtonWithTooltip>
+      <IconButtonWithTooltip
         onClick={handleEditorClick}
+        tooltipProps={{title: 'Edit script'}}
         disabled={disabled || !value._scriptId}
         className={clsx(
           classes.hookActionBtnAdd,
@@ -131,7 +138,7 @@ export default function ScriptView({
         )}
         data-test={id}>
         <EditIcon />
-      </ActionButton>
+      </IconButtonWithTooltip>
     </>
   );
 }

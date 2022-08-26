@@ -1,5 +1,5 @@
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import React, { useEffect, useState, useCallback, useMemo, Fragment } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   NavLink,
   useRouteMatch,
@@ -13,8 +13,6 @@ import CeligoTable from '../../../../../components/CeligoTable';
 import flowTableMeta from '../../../../../components/ResourceTable/flows/metadata';
 import SettingsDrawer from './SettingsDrawer';
 import CategoryMappingDrawer from './CategoryMappingDrawer';
-import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCategory';
-import VariationMappingDrawer from './CategoryMappingDrawer/VariationMapping';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
@@ -28,10 +26,10 @@ import KeywordSearch from '../../../../../components/KeywordSearch';
 import flowgroupingsRedirectTo from '../../../../../utils/flowgroupingsRedirectTo';
 import { getMetadatasForIndividualTabs } from '../../../../../forms/formFactory/utils';
 import useFormOnCancelContext from '../../../../../components/FormOnCancelContext';
-import { FORM_SAVE_STATUS, NO_RESULT_SEARCH_MESSAGE } from '../../../../../utils/constants';
+import { FORM_SAVE_STATUS, NO_RESULT_SEARCH_MESSAGE } from '../../../../../constants';
 import DrawerTitleBar from '../../../../../components/drawer/TitleBar';
 import ActionGroup from '../../../../../components/ActionGroup';
-import NoResultMessageWrapper from '../../../../../components/NoResultMessageWrapper';
+import NoResultTypography from '../../../../../components/NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -91,7 +89,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.paper,
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     marginBottom: theme.spacing(1),
-
+    width: '100%',
   },
   flowTitle: {
     position: 'relative',
@@ -113,7 +111,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   actions: {
-    padding: theme.spacing(2, 3),
+    padding: theme.spacing(2, 0),
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     display: 'flex',
     justifyContent: 'space-between',
@@ -373,7 +371,7 @@ const FlowsTable = ({integrationId, childId}) => {
   }), [childId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, sectionId]);
 
   return (
-    <LoadResources required resources="flows,exports">
+    <LoadResources required integrationId={integrationId} resources="flows,exports">
       <CeligoTable
         data={flows}
         filterKey={filterKey}
@@ -386,8 +384,6 @@ const FlowsTable = ({integrationId, childId}) => {
 
 function FlowList({ integrationId, childId }) {
   const filterKey = `${integrationId}-flows`;
-  const match = useRouteMatch();
-  const { sectionId } = match.params;
   const dispatch = useDispatch();
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
@@ -413,31 +409,11 @@ function FlowList({ integrationId, childId }) {
   return (
     <>
       <ScheduleDrawer />
-      <QueuedJobsDrawer />
-      <SettingsDrawer
-        integrationId={integrationId}
-        childId={childId}
-        sectionId={sectionId}
-      />
-      <MappingDrawer
-        integrationId={integrationId}
-      />
+      <QueuedJobsDrawer integrationId={integrationId} />
+      <SettingsDrawer integrationId={integrationId} childId={childId} />
+      <MappingDrawer integrationId={integrationId} />
       {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}
-      <CategoryMappingDrawer
-        integrationId={integrationId}
-        childId={childId}
-        sectionId={sectionId}
-      />
-      <AddCategoryMappingDrawer
-        integrationId={integrationId}
-        childId={childId}
-        sectionId={sectionId}
-      />
-      <VariationMappingDrawer
-        integrationId={integrationId}
-        childId={childId}
-        sectionId={sectionId}
-      />
+      <CategoryMappingDrawer integrationId={integrationId} />
       <Header integrationId={integrationId} childId={childId} />
       <FlowsTable integrationId={integrationId} childId={childId} />
     </>
@@ -517,7 +493,7 @@ export default function FlowsPanel({ childId, integrationId }) {
       </div>
       <div className={classes.noSearchResults}>
         {(flowFilter.keyword && !flowSections.length) ? (
-          <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>
+          <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>
         ) : ''}
       </div>
     </>

@@ -7,18 +7,20 @@ import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
 import {selectors} from '../../reducers';
 import { commitStagedChanges } from '../resources';
-import mappingUtil from '../../utils/mapping';
+import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, buildExtractsTree} from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
-import { getResourceSubType } from '../../utils/resource';
+import { getResourceSubType, isFileAdaptor, isAS2Resource } from '../../utils/resource';
 import { getImportOperationDetails } from '../../utils/assistant';
 import { requestSampleData as requestFlowSampleData } from '../sampleData/flows';
-import { requestSampleData as requestImportSampleData } from '../sampleData/imports';
+import { requestSampleData as requestImportSampleData, getImportSampleData } from '../sampleData/imports';
 import { requestAssistantMetadata } from '../resources/meta';
 import { getMappingMetadata as getIAMappingMetadata } from '../integrationApps/settings';
-import { getAssistantConnectorType } from '../../constants/applications';
+import { getAssistantConnectorType, getHttpConnector} from '../../constants/applications';
 import { autoEvaluateProcessorWithCancel } from '../editor';
 import { getAssistantFromConnection } from '../../utils/connections';
+import { safeParse } from '../../utils/string';
+import { getMappingsEditorId } from '../../utils/editor';
 
 export function* fetchRequiredMappingData({
   flowId,
@@ -166,6 +168,8 @@ export function* mappingInit({
   if (!importResource) {
     return yield put(actions.mapping.initFailed());
   }
+  const flowResource = yield select(selectors.resource, 'flows', flowId);
+
   const {assistant: resourceAssistant, _connectionId} = importResource;
   const connection = yield select(selectors.resource, 'connections', _connectionId);
   const connectionAssistant = getAssistantFromConnection(resourceAssistant, connection);
@@ -177,7 +181,7 @@ export function* mappingInit({
     resourceType: 'imports',
   });
   const isGroupedSampleData = Array.isArray(flowSampleData);
-  const isPreviewSucess = !!flowSampleData;
+  const isPreviewSuccess = !!flowSampleData;
   let formattedMappings = [];
   let lookups = [];
   const options = {};
@@ -199,7 +203,7 @@ export function* mappingInit({
       mappingMetadata: mappingMetadata || {},
       connectorExternalId: importResource.externalId,
     };
-  } else if (importResource.assistant) {
+  } else if (importResource.assistant || getHttpConnector(connection?.http?._httpConnectorId)) {
     const { assistant } = getResourceSubType(
       {...importResource, assistant: connectionAssistant}
     );
@@ -211,12 +215,14 @@ export function* mappingInit({
         assistant,
       }
     );
+    const connectorMetaData = yield select(
+      selectors.httpConnectorMetaData, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId);
 
     const { requiredMappings } = getImportOperationDetails({
       operation,
       resource,
       version,
-      assistantData,
+      assistantData: getHttpConnector(connection?.http?._httpConnectorId) ? connectorMetaData : assistantData,
     });
 
     options.assistant = { requiredMappings };
@@ -239,7 +245,7 @@ export function* mappingInit({
       importResource,
       isFieldMapping: false,
       isGroupedSampleData,
-      isPreviewSucess,
+      isPreviewSuccess,
       netsuiteRecordType: options.recordType,
       options,
       exportResource,
@@ -252,6 +258,40 @@ export function* mappingInit({
 
     return {...lookup, isConditionalLookup: !!isConditionalLookup};
   });
+
+  const isMonitorLevelAccess = yield select(selectors.isFormAMonitorLevelAccess, flowResource?._integrationId);
+
+  let version = 1;
+  let mappingsTreeData;
+  let extractsTree;
+  let importSampleData;
+
+  // only http and file imports are supported
+  if (!importResource._connectorId && (
+    isFileAdaptor(importResource) ||
+    isAS2Resource(importResource) ||
+    importResource.adaptorType === 'HTTPImport' ||
+    importResource.adaptorType === 'RESTImport')
+  ) {
+    mappingsTreeData = buildTreeFromV2Mappings({
+      importResource,
+      isGroupedSampleData,
+      options,
+      disabled: isMonitorLevelAccess,
+    });
+
+    // generate tree structure based on input sample data
+    // for source field
+    extractsTree = buildExtractsTree(flowSampleData);
+
+    // save import sample data in state for auto creation of mappings
+    importSampleData = yield call(getImportSampleData, {importId});
+
+    if (importResource.mappings?.length || !formattedMappings?.length) {
+      version = 2;
+    }
+  }
+
   yield put(
     actions.mapping.initComplete({
       mappings: (formattedMappings || []).map(m => ({
@@ -259,10 +299,16 @@ export function* mappingInit({
         key: shortid.generate(),
       })),
       lookups,
+      v2TreeData: mappingsTreeData,
+      requiredMappings: options.assistant?.requiredMappings || [],
+      importSampleData,
+      extractsTree,
+      version,
       flowId,
       importId,
       subRecordMappingId,
       isGroupedSampleData,
+      isMonitorLevelAccess,
     })
   );
   yield call(refreshGenerates, {isInit: true});
@@ -276,6 +322,7 @@ export function* saveMappings() {
     importId,
     flowId,
     subRecordMappingId,
+    v2TreeData,
   } = yield select(selectors.mapping);
   const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
   const importResource = yield select(selectors.resource, 'imports', importId);
@@ -356,6 +403,20 @@ export function* saveMappings() {
     }
   }
 
+  const isMapper2Supported = yield select(selectors.isMapper2Supported);
+  const isV2MappingsChanged = yield select(selectors.v2MappingChanged);
+
+  // save v2 mappings only when anything changed
+  if (isMapper2Supported && isV2MappingsChanged) {
+    const _mappingsV2 = buildV2MappingsFromTree({v2TreeData, lookups});
+
+    patch.push({
+      op: _mappingsV2 ? 'replace' : 'add',
+      path: '/mappings', // v2 mappings path
+      value: _mappingsV2,
+    });
+  }
+
   yield put(actions.resource.patchStaged(importId, patch, SCOPES.VALUE));
 
   const { cancelSave, resp } = yield race({
@@ -375,7 +436,7 @@ export function* saveMappings() {
   yield put(actions.mapping.saveComplete());
 }
 
-export function* previewMappings() {
+export function* previewMappings({editorId}) {
   const {
     mappings,
     lookups,
@@ -396,14 +457,18 @@ export function* previewMappings() {
     netsuiteRecordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
   }
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+
+  const editorSampleData = (yield select(selectors.editor, editorId)).data;
+
   const {data: flowSampleData} = yield select(selectors.getSampleDataContext, {
     flowId,
     resourceId: importId,
     stage: 'importMappingExtract',
     resourceType: 'imports',
   });
-  const isGroupedSampleData = Array.isArray(flowSampleData);
-  const isPreviewSuccess = !!flowSampleData;
+  const sampleData = editorId ? safeParse(editorSampleData) : flowSampleData;
+  const isGroupedSampleData = Array.isArray(sampleData);
+  const isPreviewSuccess = !!sampleData;
   let _mappings = mappings.map(
     ({ index, hardCodedValueTmp, key, ...others }) => others
   );
@@ -420,7 +485,7 @@ export function* previewMappings() {
   const { _connectionId } = importResource;
   let path = `/connections/${_connectionId}/mappingPreview`;
   const requestBody = {
-    data: flowSampleData,
+    data: sampleData,
   };
   const filteredLookups = lookups.filter(({name, isConditionalLookup}) => {
     if (isConditionalLookup) {
@@ -486,29 +551,29 @@ export function* previewMappings() {
 
     if (cancelPreview) return;
 
-    if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
-      if (
-        preview?.data?.returnedObjects?.mappingErrors[0]?.error
-      ) {
-        return yield put(actions.mapping.previewFailed());
-      }
+    const error = preview?.data?.returnedObjects?.mappingErrors[0]?.error || preview?.[0]?.errors?.[0];
+
+    if (error) {
+      return yield put(actions.mapping.previewFailed(error));
     }
+
     yield put(actions.mapping.previewReceived(preview));
   } catch (e) {
-    yield put(actions.mapping.previewFailed());
+    yield put(actions.mapping.previewFailed(e));
   }
 }
 
 export function* validateMappings() {
   const {
     mappings,
+    v2TreeData,
     lookups,
     validationErrMsg,
   } = yield select(selectors.mapping);
   const {
     isSuccess,
     errMessage,
-  } = mappingUtil.validateMappings(mappings, lookups);
+  } = mappingUtil.validateMappings(mappings, lookups, v2TreeData);
   const newValidationErrMsg = isSuccess ? undefined : errMessage;
 
   if (newValidationErrMsg !== validationErrMsg) {
@@ -516,7 +581,7 @@ export function* validateMappings() {
   }
   const {importId} = yield select(selectors.mapping);
 
-  yield call(autoEvaluateProcessorWithCancel, { id: `mappings-${importId}` });
+  yield call(autoEvaluateProcessorWithCancel, { id: getMappingsEditorId(importId) });
 }
 
 export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
@@ -700,6 +765,13 @@ export const mappingSagas = [
     actionTypes.MAPPING.DELETE,
     actionTypes.MAPPING.UPDATE_LOOKUP,
     actionTypes.MAPPING.PATCH_SETTINGS,
+    actionTypes.MAPPING.V2.DELETE_ROW,
+    actionTypes.MAPPING.V2.ADD_ROW,
+    actionTypes.MAPPING.V2.PATCH_FIELD,
+    actionTypes.MAPPING.V2.PATCH_SETTINGS,
+    actionTypes.MAPPING.V2.TOGGLE_OUTPUT,
+    actionTypes.MAPPING.V2.UPDATE_DATA_TYPE,
+    actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE,
   ], validateMappings),
   takeLatest(actionTypes.MAPPING.AUTO_MAPPER.REQUEST, getAutoMapperSuggestion),
 ];

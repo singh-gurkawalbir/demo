@@ -2,8 +2,10 @@ import { takeEvery, select, call } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import { selectors } from '../../../reducers';
 import * as gainsight from '../../../utils/analytics/gainsight';
+import * as pendo from '../../../utils/analytics/pendo';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants/resource';
 import { getResourceSubType, resourceCategory } from '../../../utils/resource';
+import { getAllPageProcessors } from '../../../utils/flows';
 
 export function* identifyUser() {
   const profile = yield select(
@@ -26,6 +28,7 @@ export function* identifyUser() {
   };
 
   gainsight.identify(userInfo, accountInfo);
+  pendo.identify(userInfo, accountInfo);
 }
 
 export function trackEvent({ eventId, details }) {
@@ -84,7 +87,8 @@ function* getFlowStepInfo(flowId, resourceType, resourceId) {
   const res = (yield select(selectors.resourceData, resourceType, resourceId))?.merged;
 
   if (!res) return out;
-  const p = (flow.pageProcessors || []).find(pp => pp._exportId === resourceId);
+  const pageProcessors = getAllPageProcessors(flow);
+  const p = (pageProcessors || []).find(pp => pp._exportId === resourceId);
   const isLookup = !!p;
   const isImport = resourceType === 'imports';
 

@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: 'transparent',
       minWidth: 100,
       '& span': {
-        color: theme.palette.secondary.light,
+        color: theme.palette.secondary.main,
         lineHeight: '0px',
       },
     },
@@ -85,7 +85,7 @@ export default function TextToggle({
       {options.map(item => (
         <ToggleButton
           disabled={disabled}
-          data-test={item.label}
+          data-test={item.dataTest || item.label}
           key={item.value}
           value={item.value}
           disableRipple>

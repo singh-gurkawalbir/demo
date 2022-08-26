@@ -4088,6 +4088,18 @@ Object {
         "type": "mode",
         "visible": false,
       },
+      "parsers": Object {
+        "fieldId": "parsers",
+        "required": false,
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "semiassistantoperationselect": Object {
         "fieldId": "semiassistantoperationselect",
         "visibleWhenAll": Array [
@@ -4236,8 +4248,11 @@ Object {
                   "containers": Array [
                     Object {
                       "fields": Array [
+                        "parsers",
                         "file.csv",
                       ],
+                      "header": [Function],
+                      "helpKey": "http.parseSuccessResponses",
                     },
                   ],
                   "type": "indent",
@@ -6189,6 +6204,15 @@ Object {
       "webhook.slackKey": Object {
         "fieldId": "webhook.slackKey",
       },
+      "webhook.successBody": Object {
+        "fieldId": "webhook.successBody",
+      },
+      "webhook.successMediaType": Object {
+        "fieldId": "webhook.successMediaType",
+      },
+      "webhook.successStatusCode": Object {
+        "fieldId": "webhook.successStatusCode",
+      },
       "webhook.token": Object {
         "fieldId": "webhook.token",
         "refreshOptionsOnChangesTo": Array [
@@ -6248,6 +6272,9 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "webhook.successStatusCode",
+                "webhook.successMediaType",
+                "webhook.successBody",
                 "pageSize",
                 "dataURITemplate",
                 "skipRetries",
@@ -8380,6 +8407,7 @@ Object {
       },
       "file.xml.body": Object {
         "connectionId": [Function],
+        "helpKey": "import.ftp.XMLDocument",
         "id": "file.xml.body",
         "label": "XML document",
         "refreshOptionsOnChangesTo": Array [
@@ -9312,6 +9340,9 @@ Object {
       "unencrypted.apiType": Object {
         "fieldId": "unencrypted.apiType",
       },
+      "unencrypted.feedType": Object {
+        "fieldId": "unencrypted.feedType",
+      },
       "uploadFile": Object {
         "fieldId": "uploadFile",
         "helpKey": "import.uploadFile",
@@ -9424,6 +9455,7 @@ Object {
                 "http.requestMediaType",
                 "http.lookups",
                 "http.batchSize",
+                "unencrypted.feedType",
                 "http.body",
                 "uploadFile",
               ],
@@ -10384,6 +10416,7 @@ Object {
       },
       "file.xml.body": Object {
         "connectionId": [Function],
+        "helpKey": "import.ftp.XMLDocument",
         "id": "file.xml.body",
         "label": "XML document",
         "refreshOptionsOnChangesTo": Array [

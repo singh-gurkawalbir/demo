@@ -1,9 +1,11 @@
 import { values, keyBy, cloneDeep } from 'lodash';
 import shortid from 'shortid';
 import parseLinkHeader from 'parse-link-header';
-import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from './constants';
+import { getAllPageProcessors, isPageGeneratorResource } from './flows';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from '../constants';
 import { stringCompare } from './sort';
+import messageStore from './messageStore';
+import errorMessageStore from './errorStore';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -27,6 +29,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   pageProcessor: 'Destination / lookup',
   apis: 'My API',
   eventreports: 'Event Report',
+  users: 'User',
 });
 
 export const appTypeToAdaptorType = {
@@ -37,6 +40,8 @@ export const appTypeToAdaptorType = {
   mssql: 'RDBMS',
   oracle: 'RDBMS',
   snowflake: 'RDBMS',
+  bigquerydatawarehouse: 'RDBMS',
+  redshiftdatawarehouse: 'RDBMS',
   netsuite: 'NetSuite',
   ftp: 'FTP',
   http: 'HTTP',
@@ -46,6 +51,45 @@ export const appTypeToAdaptorType = {
   as2: 'AS2',
   webhook: 'Webhook',
   dynamodb: 'Dynamodb',
+  graph_ql: 'GraphQL',
+};
+
+// the methods rdbmsSubTypeToAppType and rdbmsAppTypeToSubType are used to find rdbms subtype from the app.type of the application or vice-versa
+export const rdbmsSubTypeToAppType = rdbmsSubType => {
+  if (rdbmsSubType === 'bigquery') {
+    return 'bigquerydatawarehouse';
+  }
+
+  if (rdbmsSubType === 'redshift') {
+    return 'redshiftdatawarehouse';
+  }
+
+  return rdbmsSubType;
+};
+
+export const rdbmsAppTypeToSubType = appType => {
+  if (appType === 'bigquerydatawarehouse') {
+    return 'bigquery';
+  }
+
+  if (appType === 'redshiftdatawarehouse') {
+    return 'redshift';
+  }
+
+  return appType;
+};
+
+// should return correct resourceType for given notification audit log
+export const getNotificationResourceType = auditLog => {
+  if (auditLog.fieldChange?.fieldPath === '_connectionId') {
+    return 'connections';
+  }
+
+  if (auditLog.fieldChange?.fieldPath === '_flowId') {
+    return 'flows';
+  }
+
+  return 'integrations';
 };
 
 export const adaptorTypeMap = {
@@ -60,6 +104,8 @@ export const adaptorTypeMap = {
   HTTPImport: 'http',
   RESTImport: 'rest',
   RESTExport: 'rest',
+  GraphQLExport: 'graph_ql',
+  GraphQLImport: 'graph_ql',
   S3Export: 's3',
   RDBMSExport: 'rdbms',
   MongodbExport: 'mongodb',
@@ -457,7 +503,7 @@ export const isRestCsvMediaTypeExport = (resource, connection) => {
 };
 
 export const isFlowResource = (flow, resourceId, resourceType) => {
-  const { pageProcessors = [] } = flow || {};
+  const pageProcessors = getAllPageProcessors(flow);
 
   // If resource type is imports search in pps
   if (resourceType === 'imports') {
@@ -836,6 +882,10 @@ export function getConnectionType(resource) {
       return `${assistant}-oauth`;
     }
   }
+  if (['basic', 'token'].includes(resource?.http?.auth?.type)) {
+    // small hack here. adding auth type to assistant, so the assistant wouldnt match in oauth applications list.
+    return `${assistant}=${resource.http.auth.type}`;
+  }
 
   if (assistant) return assistant;
 
@@ -849,6 +899,10 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
   const isSandbox = environment === 'sandbox';
   let enabled = false;
 
+  if (!licenseActionDetails) {
+    return enabled;
+  }
+
   if (
     [
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,
@@ -856,15 +910,20 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
     ].includes(accessLevel)
   ) {
+    if (licenseActionDetails.type === 'integrator') {
+      return true;
+    }
+
     if (isSandbox) {
-      enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofSandboxTradingPartners > 0;
+      enabled = licenseActionDetails.type === 'endpoint' && licenseActionDetails.totalNumberofSandboxTradingPartners > 0;
     } else {
-      enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofProductionTradingPartners > 0;
+      enabled = licenseActionDetails.type === 'endpoint' && licenseActionDetails.totalNumberofProductionTradingPartners > 0;
     }
   }
 
   return enabled;
 }
+
 export function isNetSuiteBatchExport(exportRes) {
   return exportRes?.netsuite?.type === 'search' || exportRes?.netsuite?.restlet?.searchId !== undefined;
 }
@@ -930,6 +989,10 @@ export const getAssistantFromResource = resource => {
     return 'ebay';
   }
 
+  if (assistant === 'googlecontacts' || assistant === 'googlecontactspeople') {
+    return 'googlecontacts';
+  }
+
   return assistant;
 };
 
@@ -964,12 +1027,79 @@ export const getNextLinkRelativeUrl = link => {
 
   return '';
 };
+
+export const validateAliasId = (aliasId, previousAliasId, aliases) => {
+  if (!aliasId) {
+    return {
+      isValid: false,
+      message: messageStore('REQUIRED_MESSAGE'),
+    };
+  }
+
+  if (aliasId !== previousAliasId && aliases.some(ra => ra.alias === aliasId)) {
+    return {
+      isValid: false,
+      message: errorMessageStore('DUPLICATE_ALIAS_ERROR_MESSAGE'),
+    };
+  }
+
+  if (!/^[a-zA-Z0-9-_]+$/.test(aliasId)) {
+    return {
+      isValid: false,
+      message: errorMessageStore('ALIAS_VALIDATION_ERROR_MESSAGE'),
+    };
+  }
+
+  return {
+    isValid: true,
+  };
+};
+
+export const getResourceFromAlias = alias => {
+  if (!alias) return {};
+
+  if (alias._connectionId) {
+    return {
+      id: alias._connectionId,
+      resourceType: 'connections',
+    };
+  }
+
+  if (alias._flowId) {
+    return {
+      id: alias._flowId,
+      resourceType: 'flows',
+    };
+  }
+
+  if (alias._exportId) {
+    return {
+      id: alias._exportId,
+      resourceType: 'exports',
+    };
+  }
+
+  return {
+    id: alias._importId,
+    resourceType: 'imports',
+  };
+};
+
 export const AUDIT_LOGS_RANGE_FILTERS = [
   {id: 'last1hour', label: 'Last hour'},
   {id: 'today', label: 'Today'},
   {id: 'last36hours', label: 'Last 36 hours'},
-  {id: 'last7days', label: 'Last 7 Days'},
-  {id: 'last15days', label: 'Last 15 Days'},
-  {id: 'last30days', label: 'Last 30 Days'},
+  {id: 'last7days', label: 'Last 7 days'},
+  {id: 'last15days', label: 'Last 15 days'},
+  {id: 'last30days', label: 'Last 30 days'},
   {id: 'custom', label: 'Custom'},
 ];
+
+export const finalSuccessMediaType = (formValues, connection) => {
+  const overridenSuccessMediaType = formValues?.['/http/successMediaType'];
+
+  if (overridenSuccessMediaType) return overridenSuccessMediaType;
+  const { mediaType } = connection?.http || emptyObject;
+
+  return mediaType;
+};

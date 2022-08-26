@@ -18,6 +18,8 @@ import LoadResources from '../../../components/LoadResources';
 import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import { TextButton, FilledButton } from '../../../components/Buttons';
+import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
+import infoText from '../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -149,10 +151,10 @@ export default function Endpoint() {
   );
   const showMessage = (licenseActionDetails?.tier === 'free' && licenseActionDetails?.expiresInDays < 10) || false;
   const [showExpireMessage, setShowExpireMessage] = useState(showMessage);
-  const [needMoreNotification, setNeedMoreNotification] = useState(licenseActionDetails?.tier === 'free' && !showExpireMessage);
+  const [trialExpired, setTrialExpired] = useState(false);
 
   const onStartFreeTrialClick = useCallback(() => {
-    history.push(`${match.url}/upgrade`);
+    history.push(buildDrawerUrl({ path: drawerPaths.ACCOUNT.UPGRADE, baseUrl: match.url}));
   }, [history, match.url]);
 
   const onTrialUpgradeClick = useCallback(() => {
@@ -170,26 +172,49 @@ export default function Endpoint() {
       ],
     });
 
-    return dispatch(actions.license.requestUpdate('upgrade'));
+    return dispatch(actions.license.requestUpdate('upgrade', {}));
   }, [dispatch, confirmDialog]);
 
   const onRequestUpgradeClick = useCallback(() => {
-    dispatch(
-      actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
-    );
-    setUpgradeRequested(true);
     confirmDialog({
-      title: 'I need more flows!',
-      message: 'You are an integration master!. We`ll be in touch shortly to get you upgraded!.',
+      title: 'Request upgrade',
+      message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
       buttons: [
-        {
-          label: 'Close',
+        { label: 'Submit request',
+          onClick: () => {
+            dispatch(
+              actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+            );
+            setUpgradeRequested(true);
+            dispatch(actions.license.requestUpdate('upgrade', {}));
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
         },
       ],
     });
-
-    return dispatch(actions.license.requestUpdate('upgrade'));
-  }, [dispatch, confirmDialog]);
+  }, [confirmDialog, dispatch]);
+  const onRequestFlowsUpgradeClick = useCallback(() => {
+    confirmDialog({
+      title: 'Request more flows',
+      message: 'We will contact you to discuss your business needs and recommend an upgrade to your subscription.',
+      buttons: [
+        { label: 'Submit request',
+          onClick: () => {
+            dispatch(
+              actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
+            );
+            setUpgradeRequested(true);
+            dispatch(actions.license.requestUpdate('upgrade', {}));
+          },
+        },
+        { label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, dispatch]);
   const licenseEntitlementUsage = useSelector(state => selectors.getLicenseEntitlementUsage(state));
   const numberofUsedEndpoints = licenseEntitlementUsage?.production?.endpointUsage?.numConsumed;
   const numberofUsedFlows = licenseEntitlementUsage?.production?.flowUsage?.numEnabled;
@@ -200,8 +225,8 @@ export default function Endpoint() {
   const numberofUsedSandboxTradingPartners = licenseEntitlementUsage?.sandbox?.tradingPartnerUsage?.numConsumed;
   const numberofUsedSandboxAgents = licenseEntitlementUsage?.sandbox?.agentUsage?.numActive;
   const onCloseNotification = useCallback(() => {
-    setNeedMoreNotification(false);
-  }, [setNeedMoreNotification]);
+    setTrialExpired(false);
+  }, [setTrialExpired]);
   const requestLicenseEntitlementUsage = useCallback(() => {
     dispatch(actions.license.requestLicenseEntitlementUsage());
   }, [dispatch]);
@@ -227,7 +252,7 @@ export default function Endpoint() {
     <>
       <UpgradeDrawer />
       <RightDrawer
-        path=":env/:type"
+        path={drawerPaths.ACCOUNT.SUBSCRIPTION}
         height="tall"
         onClose={handleClose}>
         <DrawerHeader title={titleMap[title]} />
@@ -236,7 +261,7 @@ export default function Endpoint() {
         </DrawerContent>
       </RightDrawer>
 
-      {!showExpireMessage && needMoreNotification && (
+      {trialExpired && (
       <div className={classes.subscriptionNotificationToaster}>
         <NotificationToaster variant="info" size="large" onClose={onCloseNotification}>
           <Typography component="div" variant="h5" className={classes.subscriptionMessage}>
@@ -246,13 +271,13 @@ export default function Endpoint() {
               onClick={onRequestUpgradeClick}
               className={classes.subscriptionUpgradeLink}
               >
-              Upgrade today!
+              Request upgrade today!
             </TextButton>
           </Typography>
         </NotificationToaster>
       </div>
       )}
-      {showExpireMessage && (
+      {!upgradeRequested && showExpireMessage && (
       <div className={classes.subscriptionNotificationToaster}>
         <NotificationToaster variant="warning" size="large" onClose={onCloseExpireMessage}>
           <Typography component="div" variant="h5" className={classes.subscriptionMessage}>
@@ -269,7 +294,7 @@ export default function Endpoint() {
       </div>
       )}
       <div className={classes.root}>
-        <PanelHeader title="Subscription" className={classes.heading} />
+        <PanelHeader title="Subscription" className={classes.heading} infoText={infoText.Subscription} />
         <div className={classes.subscriptionBox}>
           <div className={classes.subscriptionBoxInner}>
             <div className={classes.subscriptionBoxInnerLeft}>
@@ -304,6 +329,10 @@ export default function Endpoint() {
                       {licenseActionDetails?.endpoint?.apiManagement && (<CheckMarkIcon className={classes.enableIcon} />)}
                       <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.endpoint?.apiManagement)})}>API Management</Typography>
                     </li>
+                    <li>
+                      {licenseActionDetails?.sso && (<CheckMarkIcon className={classes.enableIcon} />)}
+                      <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.sso)})}>Single sign-on (SSO)</Typography>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -323,24 +352,24 @@ export default function Endpoint() {
                 'request-upgrade'
               ) > -1 || licenseActionDetails.subscriptionActions.actions.indexOf(
                 'request-subscription'
-              ) > -1) && !licenseActionDetails.upgradeRequested && (
+              ) > -1) && (
               <FilledButton
                 onClick={onRequestUpgradeClick}
                 disabled={upgradeRequested}
                 className={classes.subscriptionUpgradeBtn}
              >
-                Upgrade now
+                {upgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
               </FilledButton>
               )}
               {licenseActionDetails.subscriptionActions.actions.indexOf(
                 'add-more-flows'
               ) > -1 && (
               <FilledButton
-                onClick={onRequestUpgradeClick}
+                onClick={onRequestFlowsUpgradeClick}
                 disabled={upgradeRequested}
                 className={classes.subscriptionUpgradeBtn}
              >
-                Add more flows
+                Request more flows
               </FilledButton>
               )}
             </div>

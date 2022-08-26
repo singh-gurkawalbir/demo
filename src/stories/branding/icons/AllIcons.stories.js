@@ -4,6 +4,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import AddIcon from '../../../components/icons/AddIcon';
+import AddEmptyStep from '../../../components/icons/AddEmptyStepIcon';
 import AutoRetryIcon from '../../../components/icons/AutoRetryIcon';
 import HardCodedIcon from '../../../components/icons/HardCodedIcon';
 import LookupLetterIcon from '../../../components/icons/LookupLetterIcon';
@@ -103,6 +104,7 @@ import PermissionsMonitorIcon from '../../../components/icons/PermissionsMonitor
 import PermissionExplorerIcon from '../../../components/icons/PermissionExplorerIcon';
 import PentagonIcon from '../../../components/icons/PentagonIcon';
 import PinIntegrationIcon from '../../../components/icons/PinIntegrationIcon';
+import PortalIcon from '../../../components/icons/PortalIcon';
 import RadioBtnSelectedIcon from '../../../components/icons/RadioBtnSelectedIcon';
 import RadioBtnUnselectedIcon from '../../../components/icons/RadioBtnUnselectedIcon';
 import ResourcesIcon from '../../../components/icons/ResourcesIcon';
@@ -157,6 +159,7 @@ import WhatsNewIcon from '../../../components/icons/WhatsNewIcon';
 const icons =
     {
       AddIcon,
+      AddEmptyStep,
       AutoRetryIcon,
       HardCodedIcon,
       LookupLetterIcon,
@@ -256,6 +259,7 @@ const icons =
       PermissionExplorerIcon,
       PentagonIcon,
       PinIntegrationIcon,
+      PortalIcon,
       RadioBtnSelectedIcon,
       RadioBtnUnselectedIcon,
       ResourcesIcon,

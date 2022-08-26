@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useCallback, useState } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Grid, List, ListItem, makeStyles } from '@material-ui/core';
 import { NavLink, useHistory, useRouteMatch } from 'react-router-dom';
@@ -13,6 +13,8 @@ import useSaveStatusIndicator from '../../../../../hooks/useSaveStatusIndicator'
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import redirectToCorrectGroupingRoute from '../../../../../utils/flowgroupingsRedirectTo';
+import CeligoTruncate from '../../../../../components/CeligoTruncate';
+import infoText from '../../../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -34,6 +36,7 @@ const useStyles = makeStyles(theme => ({
   listItem: {
     color: theme.palette.secondary.main,
     width: '100%',
+    wordBreak: 'break-word',
   },
   activeListItem: {
     color: theme.palette.primary.main,
@@ -48,31 +51,8 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
   },
   flowTitle: {
-    display: 'flex',
+    // TODO: Karthik use flowSectionTitle component
     minHeight: 42,
-    alignItems: 'center',
-    position: 'relative',
-    '&>div': {
-      paddingTop: 0,
-      minWidth: theme.spacing(3),
-    },
-    '&>a': {
-      padding: theme.spacing(0),
-    },
-    '&:before': {
-      content: '""',
-      width: '3px',
-      top: 0,
-      height: '100%',
-      position: 'absolute',
-      background: 'transparent',
-      left: '0px',
-    },
-    '&:hover': {
-      '&:before': {
-        background: theme.palette.primary.main,
-      },
-    },
   },
 }));
 
@@ -92,7 +72,6 @@ const emptyObj = {};
 function CustomSettings({ integrationId, sectionId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const [remountCount, setRemountCount] = useState(0);
   const {settings} = useSelectorMemo(selectors.mkGetCustomFormPerSectionId, 'integrations', integrationId, sectionId || 'general') || emptyObj;
 
   const hasPreSaveHook = useSelector(state => {
@@ -126,9 +105,6 @@ function CustomSettings({ integrationId, sectionId }) {
     }),
     [sectionId, settings]
   );
-  const remountForm = useCallback(() => {
-    setRemountCount(remountCount => remountCount + 1);
-  }, []);
 
   const validationHandler = useCallback(field => {
     // Incase of invalid json throws error to be shown on the field
@@ -187,7 +163,6 @@ function CustomSettings({ integrationId, sectionId }) {
       path: `/integrations/${integrationId}`,
       method: isFrameWork2 ? 'put' : 'PATCH',
       onSave: handleSubmit,
-      onSuccess: remountForm,
     }
   );
 
@@ -197,16 +172,12 @@ function CustomSettings({ integrationId, sectionId }) {
     resourceType: 'integrations',
     resourceId: integrationId,
     validationHandler,
-    remount: remountCount,
+    remount: fieldMeta,
   });
 
-  useEffect(() => {
-    setRemountCount(remountCount => remountCount + 1);
-  }, [sectionId, settings]);
-
   return (
-    <div className={classes.root}>
-      <PanelHeader title="Settings" >
+    <>
+      <PanelHeader title="Settings" infoText={infoText.Settings}>
         <FormBuilderButton
           resourceType="integrations" resourceId={integrationId}
           integrationId={integrationId} sectionId={sectionId} />
@@ -224,7 +195,7 @@ function CustomSettings({ integrationId, sectionId }) {
           {defaultLabels.saveLabel}
         </DynaSubmit>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -249,10 +220,11 @@ export default function SettingsForm({integrationId: parentIntegrationId, childI
   // for integrations without any flowgroupings
   if (!hasFlowGroupings) {
     return (
-      <CustomSettings
-        integrationId={integrationId}
-        sectionId="general"
-      />
+      <div className={classes.root}>
+        <CustomSettings
+          integrationId={integrationId}
+          sectionId="general" />
+      </div>
     );
   }
 
@@ -267,19 +239,16 @@ export default function SettingsForm({integrationId: parentIntegrationId, childI
                 activeClassName={classes.activeListItem}
                 to={sectionId}
                 data-test={sectionId}>
-                {title}
+                <CeligoTruncate lines={3}>{title}</CeligoTruncate>
               </NavLink>
             </ListItem>
           ))}
         </List>
       </Grid>
       <Grid item className={classes.content}>
-
         <CustomSettings
           integrationId={integrationId}
-          sectionId={sectionId}
-          />
-
+          sectionId={sectionId} />
       </Grid>
     </Grid>
   );

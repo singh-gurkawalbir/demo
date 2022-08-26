@@ -1,6 +1,7 @@
 import {applicationsList, applicationsPlaceHolderText} from '../../../../constants/applications';
 import { getFilterExpressionForAssistant } from '../../../../utils/connections';
-import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../../utils/constants';
+import { RDBMS_TYPES, FILE_PROVIDER_ASSISTANTS } from '../../../../constants';
+import { rdbmsAppTypeToSubType } from '../../../../utils/resource';
 
 const visibleWhen = [
   {
@@ -17,6 +18,8 @@ const appTypeToAdaptorType = {
   mssql: 'RDBMS',
   oracle: 'RDBMS',
   snowflake: 'RDBMS',
+  bigquerydatawarehouse: 'RDBMS',
+  redshiftdatawarehouse: 'RDBMS',
   netsuite: 'NetSuiteDistributed',
   ftp: 'FTP',
   http: 'HTTP',
@@ -26,6 +29,7 @@ const appTypeToAdaptorType = {
   as2: 'AS2',
   webhook: 'Webhook',
   dynamodb: 'Dynamodb',
+  graph_ql: 'GraphQL',
 };
 
 export default {
@@ -33,9 +37,11 @@ export default {
     const applications = applicationsList();
 
     const app = applications.find(a => a.id === application) || {};
+    const appType = (app.type === 'rest' && !app.assistant) ? 'http' : app.type;
+
     const newValues = {
       ...rest,
-      '/adaptorType': `${appTypeToAdaptorType[app.type]}Import`,
+      '/adaptorType': `${appTypeToAdaptorType[appType]}Import`,
     };
 
     if (app.assistant) {
@@ -108,22 +114,31 @@ export default {
     const appField = fields.find(field => field.id === 'application');
     const applications = applicationsList();
     const app = applications.find(a => a.id === appField.value) || {};
+    const appType = (app.type === 'rest' && !app.assistant) ? 'http' : app.type;
 
     if (fieldId === 'connection') {
       const expression = [];
 
-      if (RDBMS_TYPES.includes(app.type)) {
-        expression.push({ 'rdbms.type': app.type });
-      } else if (app.type === 'rest') {
+      if (RDBMS_TYPES.includes(appType)) {
+        expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(app.type) });
+      } else if (appType === 'rest') {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
-      } else if (app.type === 'http') {
+      } else if (appType === 'graph_ql') {
+        expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
+      } else if (appType === 'http') {
+        if (app._httpConnectorId) { expression.push({ 'http._httpConnectorId': app._httpConnectorId }); }
         expression.push({ 'http.formType': { $ne: 'rest' } });
-        expression.push({ type: app.type });
+        expression.push({ type: appType });
       } else {
-        expression.push({ type: app.type });
+        expression.push({ type: appType });
       }
 
       expression.push({ _connectorId: { $exists: false } });
+      const andingExpressions = { $and: expression };
+
+      if (app._httpConnectorId) {
+        return { filter: andingExpressions, appType: app.name };
+      }
 
       if (app.assistant) {
         return {
@@ -132,9 +147,7 @@ export default {
         };
       }
 
-      const andingExpressions = { $and: expression };
-
-      return { filter: andingExpressions, appType: app.type };
+      return { filter: andingExpressions, appType };
     }
 
     return null;

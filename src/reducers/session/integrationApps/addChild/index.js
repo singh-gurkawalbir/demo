@@ -1,7 +1,7 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
-
-const emptyObj = {};
+import { emptyObject } from '../../../../constants';
 
 export default (state = {}, action) => {
   const { id, type, update, steps, installerFunction, message, showForm } = action;
@@ -80,11 +80,21 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.addNewChildSteps = (state, id) => {
-  if (!state || !state[id]) {
-    return emptyObj;
-  }
+selectors.addNewChildSteps = createSelector(
+  (state, integrationId) => state && state[integrationId],
+  addNewChildSteps => {
+    const { steps, error } = addNewChildSteps || {};
 
-  return state[id];
-};
+    if (error) return {error};
+
+    if (!steps || !Array.isArray(steps)) {
+      return emptyObject;
+    }
+
+    return { steps: produce(steps, draft => {
+      if (draft.find(step => !step.completed)) {
+        draft.find(step => !step.completed).isCurrentStep = true;
+      }
+    })};
+  });
 // #endregion

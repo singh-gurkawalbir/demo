@@ -8,7 +8,7 @@ import { selectors } from '../../../../reducers';
 import { isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
 import EditorDrawer from '../../../AFE/Drawer';
 import ExpandModeEditorDrawer from '../../../DynaForm/fields/DynaEditor/ExpandModeEditor/Drawer';
-import ExportsPreviewPanel from '../../../ExportsPreviewPanel';
+import PreviewPanel from '../../../PreviewPanel';
 import LoadResources from '../../../LoadResources';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
@@ -18,10 +18,11 @@ import { getParentResourceContext } from '../../../../utils/connections';
 import FlowStepRequestLogsDrawer from '../../FlowStepDebugLogs';
 import { VALID_REPORT_TYPES } from '../../../../views/Reports';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
+import { drawerPaths } from '../../../../utils/rightDrawer';
 import TitleBar from './TitleBar';
 import DrawerContent from '../../Right/DrawerContent';
 
-const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
+const DRAWER_PATH = `/${drawerPaths.RESOURCE.ROOT}`;
 export const isNestedDrawer = url => !!matchPath(url, {
   path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
   exact: true,
@@ -33,10 +34,9 @@ const useStyles = makeStyles(theme => ({
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
-      return props.match.isExact ? 824 : 0;
+      return props.match.isExact ? 822 : 0;
     },
     overflowX: 'hidden',
-    overflowY: 'hidden',
   },
   baseFormWithPreview: {
     display: 'grid',
@@ -85,6 +85,7 @@ export const useRedirectToParentRoute = initFailed => {
     if (initFailed) {
       // remove the last 3 segments from the route ...
       // /:operation(add|edit)/:resourceType/:id
+      // TODO: @Raghu: Can't we replace url with parentUrl - if we could pass till here?
       const stripedRoute = redirectURlToParentListing(match.url);
 
       history.replace(stripedRoute);
@@ -121,21 +122,14 @@ export default function Panel(props) {
     dispatch(actions.resourceForm.submitAborted(resourceType, id));
     onClose();
     dispatch(actions.resource.clearStaged(id));
+    dispatch(actions.resourceFormSampleData.updateType(id, 'preview'));
   }, [dispatch, id, onClose, resourceType]);
   // if this form is for a page processor, we don't know if
   // the new resource is an export or import. We determine this by
   // peeking into the patch set from the first step in PP/PG creation.
   // The patch set should have a value for /adaptorType which
   // contains [*Import|*Export].
-  const isTechAdaptorForm = useSelector(state => {
-    const staggedPatches = selectors.stagedResource(state, id)?.patch;
-
-    return !!staggedPatches?.find(
-      p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
-    )?.value;
-  }
-
-  );
+  const showNotificationForTechAdaptorForm = useSelector(state => selectors.showNotificationForTechAdaptorForm(state, id));
 
   // Incase of a multi step resource, with isNew flag indicates first step and shows Next button
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
@@ -157,7 +151,7 @@ export default function Panel(props) {
   // using isNew as dependency and this will be false for export/import form
   useEffect(() => {
     if (!isNew) {
-      setShowNotificationToaster(isTechAdaptorForm);
+      setShowNotificationToaster(showNotificationForTechAdaptorForm);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNew]);
@@ -178,7 +172,7 @@ export default function Panel(props) {
     <>
       <TitleBar formKey={formKey} flowId={flowId} onClose={onClose} />
       <DrawerContent className={classes.root}>
-        <LoadResources required resources={requiredResources}>
+        <LoadResources required integrationId={integrationId} resources={requiredResources}>
           <div
             className={clsx({
               [classes.baseForm]: resourceType === 'exports',
@@ -191,7 +185,7 @@ export default function Panel(props) {
               variant={variant}
               isNew={isNew}
               resourceType={resourceType}
-              className={classes.resourceFormWrapper}
+              className={clsx({[classes.resourceFormWrapper]: showPreviewPanel })}
               resourceId={id}
               flowId={flowId}
               // All users have access to reports
@@ -203,7 +197,7 @@ export default function Panel(props) {
               onCloseNotificationToaster={onCloseNotificationToaster}
           />
             {showPreviewPanel && (
-              <ExportsPreviewPanel
+              <PreviewPanel
                 resourceId={id}
                 formKey={formKey}
                 resourceType={resourceType}

@@ -27,6 +27,7 @@ export function upgradeStatus(license, integration = {}) {
     'premium',
     'enterprise',
     'custom fba',
+    'shopifymarkets',
   ];
   const connectorEdition = editionArray.indexOf(
     license.opts &&
@@ -58,16 +59,16 @@ export function upgradeStatus(license, integration = {}) {
 
 export function upgradeButtonText(license, integration = {}, upgradeRequested) {
   if (upgradeRequested) {
-    return 'UPGRADE REQUESTED';
+    return 'Upgrade requested';
   }
 
   const value = upgradeStatus(license, integration);
 
   if (value === 'upgrade') {
-    return 'UPGRADE';
+    return 'Upgrade';
   }
   if (value === 'requestUpgrade') {
-    return 'CONTACT US TO UPGRADE';
+    return 'Request upgrade';
   }
 
   return '';
@@ -135,18 +136,18 @@ export function platformLicenseActionDetails(license) {
     if (license.status === 'TRIAL_EXPIRED') {
       licenseActionDetails = {
         action: 'upgrade',
-        label: 'UPGRADE NOW',
+        label: 'Request upgrade now',
       };
     } else if (license.status === 'IN_TRIAL') {
       if (license.expiresInDays < 1) {
         licenseActionDetails = {
           action: 'upgrade',
-          label: 'UPGRADE NOW',
+          label: 'Request upgrade now',
         };
       } else {
         licenseActionDetails = {
           action: 'upgrade',
-          label: 'Upgrade now -',
+          label: 'Request upgrade now -',
           daysLeft: `${license.expiresInDays} days left`,
         };
         licenseActionDetails.expiresSoon = license.expiresInDays < 10;

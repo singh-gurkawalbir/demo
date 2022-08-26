@@ -11,12 +11,13 @@ import { MuiThemeProvider } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { createMemoryHistory } from 'history';
 import { render, cleanup } from '@testing-library/react';
+import { SnackbarProvider } from 'notistack';
 import { AppRoutingWithAuth } from './index';
 import reducer from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
 import themeProvider from '../../theme/themeProvider';
 import { PageContentComponents as AppRouting } from '..';
-import {HOME_PAGE_PATH} from '../../utils/constants';
+import {HOME_PAGE_PATH} from '../../constants';
 
 // fireEvent
 // Ok, so here's what your tests might look like
@@ -77,9 +78,11 @@ describe('AppRoutingWith authentication redirection behavior', () => {
   };
   const someRoute = '/some-route';
   const WithAuth = props => (
-    <AppRoutingWithAuth {...props}>
-      <AppRouting />
-    </AppRoutingWithAuth>
+    <SnackbarProvider>
+      <AppRoutingWithAuth {...props}>
+        <AppRouting />
+      </AppRoutingWithAuth>
+    </SnackbarProvider>
   );
   const wrappedHistory = withRouter(WithAuth);
   // We have to default the state to satisfy the state dependencies of the

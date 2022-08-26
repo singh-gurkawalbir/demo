@@ -31,6 +31,7 @@ function RoutingWrapper(props) {
 export default function ScheduleDrawer(props) {
   return (
     <RightDrawer
+      isSuitescript
       path={[':flowId/schedule', 'schedule']}
       width="medium"
     >

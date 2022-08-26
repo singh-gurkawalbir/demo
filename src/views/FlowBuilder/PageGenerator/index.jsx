@@ -8,9 +8,9 @@ import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import {applicationsList} from '../../../constants/applications';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import {isFileAdaptor,
+import {
+  isFileAdaptor,
   getResourceSubType,
-  generateNewId,
   isRealTimeOrDistributedResource,
 } from '../../../utils/resource';
 import exportHooksAction from './actions/exportHooks';
@@ -19,6 +19,7 @@ import transformationAction from './actions/transformation_afe';
 import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter_afe';
 import { actionsMap } from '../../../utils/flows';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const emptyObj = {};
 const useStyles = makeStyles({
@@ -94,8 +95,6 @@ const PageGenerator = ({
     ) || {};
 
   const handleBlockClick = useCallback(() => {
-    let newId = generateNewId();
-
     if (pending) {
       // generate newId
       const { type, assistant } = getResourceSubType(resource);
@@ -104,7 +103,7 @@ const PageGenerator = ({
 
       if (isDataLoader) {
         patchSet.push({ op: 'add', path: '/type', value: 'simple' });
-        patchSet.push({ op: 'add', path: '/name', value: 'Data Loader' });
+        patchSet.push({ op: 'add', path: '/name', value: 'Data loader' });
       } else {
         patchSet.push({
           op: 'add',
@@ -136,36 +135,35 @@ const PageGenerator = ({
 
       // for pending resource, passing the PG index in newId
       // which will be used in saga to add or replace the pending resource
-      newId = `${newId}.${index}`;
-      dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
+      dispatch(actions.resource.patchStaged(pg.id, patchSet, 'value'));
     }
 
     let to = pending
-      ? `${match.url}/add/pageGenerator/${newId}`
-      : `${match.url}/edit/exports/${pg._exportId}`;
+      ? buildDrawerUrl({
+        path: drawerPaths.RESOURCE.ADD,
+        baseUrl: match.url,
+        params: { resourceType: 'pageGenerator', id: pg.id },
+      })
+      : buildDrawerUrl({
+        path: drawerPaths.RESOURCE.EDIT,
+        baseUrl: match.url,
+        params: { resourceType: 'exports', id: pg._exportId },
+      });
 
-    if (pending && isDataLoader) to = `${match.url}/edit/exports/${newId}`;
+    if (pending && isDataLoader) {
+      to = buildDrawerUrl({
+        path: drawerPaths.RESOURCE.EDIT,
+        baseUrl: match.url,
+        params: { resourceType: 'exports', id: pg.id },
+      });
+    }
 
     if (match.isExact) {
       history.push(to);
     } else {
       history.replace(to);
     }
-  }, [
-    dispatch,
-    history,
-    isDataLoader,
-    match.isExact,
-    match.url,
-    pending,
-    pg._connectionId,
-    pg._exportId,
-    pg.application,
-    pg.webhookOnly,
-    rdbmsAppType,
-    resource,
-    index,
-  ]);
+  }, [pending, match.url, match.isExact, pg._exportId, pg.application, pg.id, pg.webhookOnly, pg._connectionId, isDataLoader, resource, dispatch, rdbmsAppType, history]);
   const getApplication = useCallback(() => {
     if (isDataLoader) {
       return {
@@ -210,13 +208,18 @@ const PageGenerator = ({
 
     const app = applications.find(a => a.id === pg.application) || {};
 
+    if (pending) {
+      blockType = 'newPG';
+    } else {
+      blockType = pg.webhookOnly || isRealTimeOrDistributedResource(resource)
+        ? 'listener'
+        : 'export';
+    }
+
     return {
       connectorType: app.type,
       assistant: app.assistant,
-      blockType:
-        pg.webhookOnly || isRealTimeOrDistributedResource(resource)
-          ? 'listener'
-          : 'export',
+      blockType,
     };
   }, [
     isDataLoader,
@@ -227,7 +230,7 @@ const PageGenerator = ({
     resourceId,
   ]);
   const blockName = pending
-    ? 'Pending configuration'
+    ? ''
     : resource.name || resource.id;
   const { connectorType, assistant, blockType } = getApplication();
 
@@ -286,7 +289,7 @@ const PageGenerator = ({
       <AppBlock
         integrationId={integrationId}
         name={blockName}
-        onDelete={!isDataLoader && onDelete(blockName)}
+        onDelete={!isDataLoader && onDelete}
         isViewMode={isViewMode}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}
@@ -298,6 +301,7 @@ const PageGenerator = ({
         resourceId={resourceId}
         resourceType="exports"
         index={index}
+        id={pg.id}
         schedule={schedule}
         openErrorCount={openErrorCount}
         isPageGenerator

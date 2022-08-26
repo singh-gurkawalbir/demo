@@ -1,43 +1,52 @@
-import { IconButton, makeStyles, Typography, useTheme } from '@material-ui/core';
-import clsx from 'clsx';
-import React, { useEffect, useMemo } from 'react';
+import { makeStyles, useTheme } from '@material-ui/core';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import ReactFlow, { MiniMap, Controls, ReactFlowProvider} from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
-import AddIcon from '../../../components/icons/AddIcon';
 import { selectors } from '../../../reducers';
 import useBottomDrawer from '../drawers/BottomDrawer/useBottomDrawer';
-import {
-  useHandleAddGenerator, useHandleAddProcessor,
-} from '../hooks';
 import PageBar from './PageBar';
-import PageGenerators from './PageGenerators';
-import PageProcessors from './PageProcessors';
+import DefaultEdge from './CustomEdges/DefaultEdge';
+import { layoutElements } from './lib';
+import { FlowProvider } from './Context';
+import PgNode from './CustomNodes/PgNode';
+import PpNode from './CustomNodes/PpNode';
+import TerminalNode from './CustomNodes/TerminalNode';
+import RouterNode from './CustomNodes/RouterNode';
+import MergeNode from './CustomNodes/MergeNode';
+import BackgroundPanel from './Background';
+import SourceTitle from './titles/SourceTitle';
+import DestinationTitle from './titles/DestinationTitle';
+import { useSelectorMemo } from '../../../hooks';
+import useMenuDrawerWidth from '../../../hooks/useMenuDrawerWidth';
+import { ExportFlowStateButton } from './ExportFlowStateButton';
+import EmptyNode from './CustomNodes/EmptyNode';
+import LoadingNotification from '../../../App/LoadingNotification';
+import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
 
-const useCalcCanvasStyle = () => {
+const useCalcCanvasStyle = fullscreen => {
   const theme = useTheme();
   const [bottomDrawerHeight] = useBottomDrawer();
-
+  const height = fullscreen
+    ? 0
+    : bottomDrawerHeight + theme.appBarHeight + theme.pageBarHeight;
   const calcCanvasStyle = useMemo(() => ({
-    height: `calc(100vh - ${bottomDrawerHeight + theme.appBarHeight + theme.pageBarHeight}px)`,
-  }), [bottomDrawerHeight, theme.appBarHeight, theme.pageBarHeight]);
+    height: `calc(100vh - ${height}px)`,
+  }), [height]);
 
   return calcCanvasStyle;
 };
 
 // TODO: (AZHAR) suitescript and normal styles are repeating
 const useStyles = makeStyles(theme => ({
-  canvasContainer: {
-    // border: 'solid 1px black',
+  canvasContainer: drawerWidth => ({
     overflow: 'hidden',
-    width: `calc(100vw - ${theme.drawerWidthMinimized}px)`,
+    width: `calc(100vw - ${drawerWidth}px)`,
     transition: theme.transitions.create(['width', 'height'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-  },
-  canvasShift: {
-    width: `calc(100vw - ${theme.drawerWidth}px)`,
-  },
+  }),
   canvas: {
     width: '100%',
     height: '100%',
@@ -45,15 +54,21 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
     background: theme.palette.background.paper,
   },
-
+  minimap: {
+    display: 'none',
+  },
+  terminal: {
+    fill: theme.palette.secondary.lightest,
+    stroke: theme.palette.secondary.lightest,
+    width: 275,
+    height: 170,
+  },
   title: {
     display: 'flex',
-    fontSize: 14,
     padding: theme.spacing(4, 0, 6, 0),
-    alignItems: 'center',
     marginBottom: theme.spacing(0.5),
     justifyContent: 'center',
-    color: theme.palette.secondary.main,
+    color: theme.palette.secondary.light,
     fontFamily: 'Roboto400',
   },
   destinationTitle: {
@@ -80,106 +95,121 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function AddGenerator({integrationId, flowId}) {
-  const classes = useStyles();
+const nodeTypes = {
+  pg: PgNode,
+  pp: PpNode,
+  terminal: TerminalNode,
+  router: RouterNode,
+  merge: MergeNode,
+  empty: EmptyNode,
+};
 
-  const handleAddGenerator = useHandleAddGenerator();
-  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
+const edgeTypes = {
+  default: DefaultEdge,
+};
 
-  return (
+export function Canvas({ flowId, fullscreen }) {
+  const dispatch = useDispatch();
+  const menuDrawerWidth = useMenuDrawerWidth();
+  const drawerWidth = fullscreen ? 0 : menuDrawerWidth;
+  const classes = useStyles(drawerWidth);
+  const calcCanvasStyle = useCalcCanvasStyle(fullscreen);
+  const mergedFlow = useSelectorMemo(selectors.makeFlowDataForFlowBuilder, flowId);
 
-    <IconButton
-      data-test="addGenerator"
-      disabled={isViewMode}
-      className={classes.roundBtn}
-      onClick={handleAddGenerator}>
-      <AddIcon />
-    </IconButton>
-  );
-}
-function AddProcessor({ integrationId, flowId}) {
-  const classes = useStyles();
-
-  const handleAddProcessor = useHandleAddProcessor();
-  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
-
-  return (
-    <IconButton
-      disabled={isViewMode}
-      data-test="addProcessor"
-      className={classes.roundBtn}
-      onClick={handleAddProcessor}>
-      <AddIcon />
-    </IconButton>
-  );
-}
-function Canvas({flowId, integrationId}) {
-  const classes = useStyles();
-
+  const elements = useSelector(state => selectors.fbGraphElements(state, flowId));
+  const dragStepId = useSelector(state => selectors.fbDragStepId(state, flowId));
+  const dragStepIdInProgress = useSelector(state => selectors.fbDragStepIdInProgress(state, flowId));
+  const elementsMap = useSelector(state => selectors.fbGraphElementsMap(state, flowId));
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, mergedFlow._integrationId, flowId));
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
+  const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
 
-  const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
+  const updatedLayout = useMemo(() =>
+    layoutElements(elements, 'LR'),
+  [elements]);
 
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  useEffect(() => {
+    dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode || isDataLoaderFlow));
+  }, [mergedFlow, dispatch, flowId, isViewMode, isDataLoaderFlow]);
 
-  const showAddPageProcessor = useSelector(state => selectors.shouldShowAddPageProcessor(state, flowId));
+  const handleNodeDragStart = (evt, source) => {
+    dispatch(actions.flow.dragStart(flowId, source.id));
+  };
 
-  const calcCanvasStyle = useCalcCanvasStyle();
+  const handleNodeDragStop = () => {
+    dispatch(actions.flow.mergeBranch(flowId));
+  };
+  const handleNodeDrag = () => {
+    if (dragStepIdInProgress) {
+      dispatch(actions.flow.setDragInProgress(flowId));
+    }
+  };
+
+  const handleAddNewSource = useCallback(() => {
+    dispatch(actions.flow.addNewPGStep(flowId));
+  }, [dispatch, flowId]);
 
   return (
-
     <div
-      className={clsx(classes.canvasContainer, {
-        [classes.canvasShift]: drawerOpened,
-      })}
+      className={classes.canvasContainer}
       style={calcCanvasStyle}>
+      <LoadingNotification message={isFlowSaveInProgress ? 'Saving flow' : ''} />
       <div className={classes.canvas}>
         {/* CANVAS START */}
-        <div
-          className={classes.generatorRoot}
-        >
-          <Typography
-            component="div"
-            className={clsx(classes.title, classes.sourceTitle)}
-            variant="overline">
-            {isDataLoaderFlow ? 'SOURCE' : 'SOURCES'}
-            {!isDataLoaderFlow && !isFreeFlow && (
-              <AddGenerator integrationId={integrationId} flowId={flowId} />
-            )}
-          </Typography>
-          <PageGenerators
-            integrationId={integrationId}
+        <ReactFlowProvider>
+          {/* add flow to the context so it is accessible to flowGraph beneath
+          //...this will be replaced by the resourceDataSelector */}
+          <FlowProvider
+            elements={elements}
+            elementsMap={elementsMap}
+            flow={mergedFlow}
             flowId={flowId}
-          />
-        </div>
-        <div className={classes.processorRoot}>
-          <Typography
-            component="div"
-            className={clsx(classes.title, classes.destinationTitle)}
-            variant="overline">
-            {isDataLoaderFlow
-              ? 'DESTINATION APPLICATION'
-              : 'DESTINATIONS & LOOKUPS '}
+            dragNodeId={dragStepId}
+          >
 
-            {showAddPageProcessor && !isFreeFlow && (
-            <AddProcessor integrationId={integrationId} flowId={flowId} />
-            )}
-          </Typography>
-          <PageProcessors
-            integrationId={integrationId}
-            flowId={flowId}
-          />
-        </div>
+            <ReactFlow
+              onNodeDragStart={handleNodeDragStart}
+              onNodeDragStop={handleNodeDragStop}
+              onNodeDrag={handleNodeDrag}
+              nodesDraggable={false}
+              minZoom={0.4}
+              panOnScroll
+              elements={updatedLayout}
+              nodeTypes={nodeTypes}
+              edgeTypes={edgeTypes}
+              preventScrolling={false}
+            >
+              <SourceTitle onClick={handleAddNewSource} />
+              <DestinationTitle />
+              <BackgroundPanel />
+              <MiniMap
+                nodeClassName={node => {
+                  switch (node.type) {
+                    case GRAPH_ELEMENTS_TYPE.TERMINAL:
+                    case GRAPH_ELEMENTS_TYPE.ROUTER:
+                    case GRAPH_ELEMENTS_TYPE.MERGE:
+                    case GRAPH_ELEMENTS_TYPE.EMPTY:
+
+                      return classes.minimap;
+
+                    default:
+                      return classes.terminal;
+                  }
+                }}
+                nodeBorderRadius={75}
+              />
+              <ExportFlowStateButton flowId={flowId} />
+              <Controls showInteractive={false} />
+            </ReactFlow>
+          </FlowProvider>
+        </ReactFlowProvider>
+        {/* CANVAS END */}
       </div>
-      {/* CANVAS END */}
     </div>
   );
 }
-export default function FlowBuilderBody(
-  {
-    flowId, integrationId,
-  }
-) {
+
+export default function FlowBuilderBody({ flowId, integrationId }) {
   const dispatch = useDispatch();
 
   useEffect(() => (() => {
@@ -187,15 +217,9 @@ export default function FlowBuilderBody(
   }), [dispatch]);
 
   return (
-
     <>
-      <PageBar
-        flowId={flowId} integrationId={integrationId}
-      />
-      <Canvas
-        flowId={flowId} integrationId={integrationId}
-      />
-
+      <PageBar flowId={flowId} integrationId={integrationId} />
+      <Canvas flowId={flowId} integrationId={integrationId} />
     </>
   );
 }

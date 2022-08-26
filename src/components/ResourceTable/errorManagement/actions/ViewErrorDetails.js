@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import ViewDetailsIcon from '../../../icons/ViewDetailsIcon';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 export default {
   key: 'viewErrorDetails',
@@ -11,7 +12,11 @@ export default {
     const history = useHistory();
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
-      history.push(`${match.url}/details/${errorId}/view`);
+      history.push(buildDrawerUrl({
+        path: drawerPaths.ERROR_MANAGEMENT.V2.VIEW_ERROR_DETAILS,
+        baseUrl: match.url,
+        params: { errorId, mode: 'view' },
+      }));
     }, [errorId, history, match.url]);
 
     return handleClick;

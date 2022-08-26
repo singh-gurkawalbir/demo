@@ -21,7 +21,7 @@ import {
   IMPORT_FILE_UPLOAD_SUPPORTED_FILE_TYPES,
   VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA,
 } from './utils';
-import { STANDALONE_INTEGRATION } from '../../../utils/constants';
+import { STANDALONE_INTEGRATION } from '../../../constants';
 import { previewFileData } from '../../../utils/exportPanel';
 import { processJsonSampleData } from '../../../utils/sampleData';
 import { evaluateExternalProcessor } from '../../editor';
@@ -93,8 +93,15 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
 
   // while working with newly created flows, flowId could be temporary UI generated. Rely on flow._id as flowId while making page processor preview call.
   // refer IO-21519
-  body._flowId = flow?._id;
-  body._integrationId = integrationId !== STANDALONE_INTEGRATION.id ? integrationId : undefined;
+  let path;
+
+  if (integrationId && integrationId !== STANDALONE_INTEGRATION.id && flow?._id) {
+    path = `/integrations/${integrationId}/flows/${flow?._id}/exports/preview`;
+  } else if (integrationId && integrationId !== STANDALONE_INTEGRATION.id && !flow?._id) {
+    path = `/integrations/${integrationId}/exports/preview`;
+  } else {
+    path = '/exports/preview';
+  }
 
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
 
@@ -104,7 +111,7 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
 
   try {
     const previewData = yield call(apiCallWithRetry, {
-      path: '/exports/preview',
+      path,
       opts: { method: 'POST', body },
       hidden: true,
     });
@@ -116,7 +123,7 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
   }
 }
 
-export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {
+export function* _parseFileData({ resourceType, resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
 
   if (isNewSampleData) {
@@ -130,6 +137,7 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
         rule: parserOptions,
         data: fileContent,
         editorType: PARSERS[fileType],
+        resourceType,
       };
       const processorOutput = yield call(_getProcessorOutput, { processorData });
 
@@ -167,7 +175,7 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
           actions.resourceFormSampleData.receivedProcessorError(resourceId, processorOutput.error)
         );
       }
-      const previewData = processorOutput.data;
+      const previewData = processorOutput?.data;
 
       yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
       yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
@@ -192,7 +200,7 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
           actions.resourceFormSampleData.receivedProcessorError(resourceId, processorOutput.error)
         );
       }
-      const previewData = processorOutput.data;
+      const previewData = processorOutput?.data;
 
       yield put(actions.resourceFormSampleData.setParseData(resourceId, processJsonSampleData(previewData)));
       yield put(actions.resourceFormSampleData.setPreviewData(resourceId, previewFileData(previewData, recordSize)));
@@ -204,7 +212,7 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
 }
 
 export function* _requestFileSampleData({ formKey }) {
-  const { resourceObj: resourceInfo, resourceId, ssLinkedConnectionId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+  const { resourceObj: resourceInfo, resourceId, ssLinkedConnectionId, resourceType } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   const resourceObj = { ...resourceInfo };
 
@@ -226,6 +234,7 @@ export function* _requestFileSampleData({ formKey }) {
       fileProps,
       parserOptions,
       isNewSampleData,
+      resourceType,
     });
   }
   // no sample data - so clear sample data from state
@@ -244,6 +253,7 @@ export function* _fetchFBActionsSampleData({ formKey }) {
   const {data: transformedOutput, hasNoRulesToProcess} = yield call(executeTransformationRules, {
     transform: resourceObj?.transform,
     sampleData: parsedData,
+    isIntegrationApp: !!resourceObj?._connectorId,
   });
 
   yield put(actions.resourceFormSampleData.setProcessorData({
@@ -261,6 +271,7 @@ export function* _fetchFBActionsSampleData({ formKey }) {
   const {data: preSavePageHookOutput, hasNoRulesToProcess: hasNoHook} = yield call(executeJavascriptHook, {
     hook: resourceObj?.hooks?.preSavePage,
     sampleData: transformedData,
+    isIntegrationApp: !!resourceObj?._connectorId,
   });
 
   yield put(actions.resourceFormSampleData.setProcessorData({
@@ -330,6 +341,43 @@ export function* _requestLookupSampleData({ formKey, refreshCache = false }) {
       throwOnError: true,
       includeStages: true,
       refresh: refreshCache,
+      addMockData: true,
+    });
+
+    yield put(
+      actions.resourceFormSampleData.receivedPreviewStages(resourceId, pageProcessorPreviewData)
+    );
+  } catch (e) {
+    yield call(_handlePreviewError, { e, resourceId });
+  }
+}
+
+export function* _requestPageProcessorSampleData({ formKey, refreshCache = false, addMockData }) {
+  const { resourceId, resourceObj, flowId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+
+  // exclude sampleData property if exists on pageProcessor Doc
+  // as preview call considers sampleData to show instead of fetching
+  const { sampleData, ...constructedResourceObj } = resourceObj;
+
+  let _pageProcessorDoc = constructedResourceObj;
+
+  if (_pageProcessorDoc.oneToMany) {
+    const oneToMany = _pageProcessorDoc.oneToMany === 'true';
+
+    _pageProcessorDoc = { ..._pageProcessorDoc, oneToMany };
+  }
+
+  try {
+    const pageProcessorPreviewData = yield call(pageProcessorPreview, {
+      flowId,
+      _pageProcessorId: resourceId,
+      resourceType: 'imports',
+      hidden: true,
+      _pageProcessorDoc,
+      throwOnError: true,
+      includeStages: true,
+      refresh: refreshCache,
+      addMockData,
     });
 
     yield put(
@@ -353,6 +401,7 @@ export function* _requestExportSampleData({ formKey, refreshCache, executeProces
   const isLookUpExport = yield select(selectors.isLookUpExport, { flowId, resourceId, resourceType: 'exports' });
 
   if (isLookUpExport) {
+    // as part of IO-23131, we support mock input data for lookups
     yield call(_requestLookupSampleData, { formKey, refreshCache });
   } else {
     yield call(_requestPGExportSampleData, { formKey, refreshCache, executeProcessors });
@@ -405,14 +454,17 @@ export function* _requestImportFileSampleData({ formKey }) {
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'received'));
 }
 
-export function* _requestImportSampleData({ formKey }) {
+export function* _requestImportSampleData({ formKey, refreshCache }) {
   // handle file related sample data for imports
   // make file adaptor sample data calls
   const { resourceObj } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   if (isFileAdaptor(resourceObj) || isAS2Resource(resourceObj)) {
-    yield call(_requestImportFileSampleData, { formKey });
+    return yield call(_requestImportFileSampleData, { formKey });
   }
+
+  // as part of IO-23131, we support mock input data for imports
+  yield call(_requestPageProcessorSampleData, { formKey, refreshCache, addMockData: true });
 }
 
 export function* requestResourceFormSampleData({ formKey, options = {} }) {
@@ -425,13 +477,13 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
   yield delay(500);
 
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
-  if (resourceType === 'exports') {
-    const { refreshCache, executeProcessors } = options;
+  const { refreshCache, executeProcessors } = options;
 
+  if (resourceType === 'exports') {
     yield call(_requestExportSampleData, { formKey, refreshCache, executeProcessors });
   }
   if (resourceType === 'imports') {
-    yield call(_requestImportSampleData, { formKey });
+    yield call(_requestImportSampleData, { formKey, refreshCache });
   }
 }
 

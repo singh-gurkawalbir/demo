@@ -15,6 +15,7 @@ import ActionButton from '../ActionButton';
 import TrashIcon from '../icons/TrashIcon';
 import MappingSettingsButton from './Settings/SettingsButton';
 import SortableHandle from '../Sortable/SortableHandle';
+import {handlebarRegex} from '../../utils/mapping';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
@@ -61,7 +62,6 @@ const useStyles = makeStyles(theme => ({
   },
   deleteBtn: {
     border: 'none',
-    width: 0,
   },
   mappingIcon: {
     background: theme.palette.secondary.lightest,
@@ -105,6 +105,8 @@ export default function MappingRow({
   flowId,
   rowData,
   subRecordMappingId,
+  menuPortalStyle,
+  menuPortalTarget,
   isDragInProgress = false,
   isRowDragged = false,
 }) {
@@ -203,7 +205,6 @@ export default function MappingRow({
     }
   }, [isRowDragged]);
 
-  const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
   const isLookup = !!lookupName;
   const isMultiField = handlebarRegex.test(extract);
   const isHardCodedValue = !!hardCodedValue;
@@ -242,6 +243,8 @@ export default function MappingRow({
               disabled={isSubRecordMapping || isNotEditable || disabled}
               onBlur={handleExtractBlur}
               onTouch={handleFieldTouch}
+              menuPortalStyle={menuPortalStyle}
+              menuPortalTarget={menuPortalTarget}
           />
 
             {(isSubRecordMapping || isNotEditable) && (
@@ -267,6 +270,8 @@ export default function MappingRow({
               disabled={isSubRecordMapping || isRequired || disabled}
               onBlur={handleGenerateBlur}
               onTouch={handleFieldTouch}
+              menuPortalStyle={menuPortalStyle}
+              menuPortalTarget={menuPortalTarget}
           />
             {isLookup && <RightIcon title="Lookup" Icon={LookupIcon} />}
             {isMultiField && !isLookup && <RightIcon title="Multi-field" Icon={MultiFieldIcon} />}

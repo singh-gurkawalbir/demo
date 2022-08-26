@@ -16,13 +16,14 @@ import IntegrationTag from '../../../../components/tags/IntegrationTag';
 import Manage from '../../../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../../../components/icons/PermissionsMonitorIcon';
-import { INTEGRATION_ACCESS_LEVELS, SUITESCRIPT_CONNECTORS } from '../../../../utils/constants';
+import { INTEGRATION_ACCESS_LEVELS, SUITESCRIPT_CONNECTORS } from '../../../../constants';
 import { tileStatus } from '../../../../utils/home';
 import getRoutePath from '../../../../utils/routePaths';
 import { selectors } from '../../../../reducers';
 import CeligoTruncate from '../../../../components/CeligoTruncate';
 import Status from '../../../../components/Buttons/Status';
 import { useSelectorMemo } from '../../../../hooks';
+import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -80,7 +81,11 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
     event => {
       event.stopPropagation();
       if (isOffline) {
-        history.push(getRoutePath(`${match.url}/edit/connections/${tile.ssLinkedConnectionId}`));
+        history.push(getRoutePath(buildDrawerUrl({
+          path: drawerPaths.RESOURCE.EDIT,
+          baseUrl: match.url,
+          params: { resourceType: 'connections', id: tile.ssLinkedConnectionId },
+        })));
 
         return;
       }
@@ -93,7 +98,11 @@ function SuiteScriptTile({ tile, history, isDragInProgress, isTileDragged }) {
     event => {
       event.stopPropagation();
       if (isOffline) {
-        history.push(getRoutePath(`${match.url}/edit/connections/${tile.ssLinkedConnectionId}`));
+        history.push(getRoutePath(buildDrawerUrl({
+          path: drawerPaths.RESOURCE.EDIT,
+          baseUrl: match.url,
+          params: { resourceType: 'connections', id: tile.ssLinkedConnectionId },
+        })));
 
         return;
       }

@@ -7,6 +7,7 @@ import { generateLayoutColumns } from './util';
 import Section from './Section';
 import { getDomainUrl } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import Spinner from '../Spinner';
 
 export default function SalesforceMappingAssistant({
   connectionId,
@@ -19,7 +20,7 @@ export default function SalesforceMappingAssistant({
   const dispatch = useDispatch();
 
   const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${layoutId}`;
-  const layout = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, 'salesforce-sObject-layout')?.data;
+  const {data: layout, status} = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, 'salesforce-sObject-layout') || {};
 
   useEffect(() => {
     if (connectionId && sObjectType && layoutId) {
@@ -38,7 +39,7 @@ export default function SalesforceMappingAssistant({
     return (
       <div id="salesforceMappingFormMainDiv" className="salesforce-form">
         <h2 className="pageDescription">
-          {sObjectType || sObjectType} is a non-layoutable entity.
+          {sObjectLabel || sObjectType} is a non-layoutable entity.
         </h2>
       </div>
     );
@@ -48,6 +49,12 @@ export default function SalesforceMappingAssistant({
 
   if (domainURL.includes('localhost')) {
     domainURL = 'https://staging.integrator.io';
+  }
+
+  if (status === 'requested') {
+    return (
+      <Spinner centerAll />
+    );
   }
 
   return (

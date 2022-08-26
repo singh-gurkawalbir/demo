@@ -6,6 +6,7 @@ import InstallationGuideIcon from '../../../../icons/InstallationGuideIcon';
 import { KBDocumentation } from '../../../../../utils/connections';
 import DebugIcon from '../../../../icons/DebugIcon';
 import { selectors } from '../../../../../reducers';
+import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 import {applicationsList} from '../../../../../constants/applications';
 import ApplicationImg from '../../../../icons/ApplicationImg';
 import { TextButton } from '../../../../Buttons';
@@ -36,6 +37,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     display: 'flex',
     marginRight: theme.spacing(1),
+    alignItems: 'center',
   },
   divider: {
     height: 24,
@@ -57,7 +59,7 @@ export default function TitleActions({ flowId }) {
     !!applicationType;
   const app = applications.find(a => a.id === applicationType) || {};
   const flowStepDrawerHandler = useCallback(() => {
-    history.push(`${match.url}/logs`);
+    history.push(buildDrawerUrl({ path: drawerPaths.LOGS.FLOW_STEP_DEBUG, baseUrl: match.url }));
   }, [match.url, history]);
 
   return (

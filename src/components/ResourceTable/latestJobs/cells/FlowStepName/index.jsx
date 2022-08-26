@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import { JOB_STATUS } from '../../../../../utils/constants';
+import { JOB_STATUS } from '../../../../../constants';
 import { selectors } from '../../../../../reducers';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
@@ -20,8 +20,8 @@ const useStyles = makeStyles(theme => ({
     },
   },
   offlineIcon: {
-    margin: theme.spacing(1),
-    color: theme.palette.background.paper,
+    color: theme.palette.secondary.main,
+    width: 18,
   },
 }));
 
@@ -56,7 +56,7 @@ function OfflineConnectionsIndicator({resourceType, resourceId}) {
 
 function FlowName({ job }) {
   const exportName = useSelector(state => {
-    const exportObj = selectors.resource(state, 'exports', job._exportId);
+    const exportObj = selectors.resource(state, 'exports', job._expOrImpId || job._exportId);
 
     return exportObj?.name || 'Export';
   });
@@ -64,8 +64,8 @@ function FlowName({ job }) {
   // In cases when parent job is cancelled while it is in queue, children are not yet created
   // In that case, we show that parent job with PG's name similar to Queued job
   // flowJobId exists on job if it is a child job
-  const isCancelledParentJob = job.status === JOB_STATUS.CANCELED && job._exportId && !job._flowJobId;
-  const isInProgressParentJob = job.status === JOB_STATUS.RUNNING && job._exportId && !job._flowJobId;
+  const isCancelledParentJob = job.status === JOB_STATUS.CANCELED && (job._expOrImpId || job._exportId) && !job._flowJobId && !job._parentJobId;
+  const isInProgressParentJob = job.status === JOB_STATUS.RUNNING && (job._expOrImpId || job._exportId) && !job._flowJobId && !job._parentJobId;
 
   if (job.status === JOB_STATUS.QUEUED || isCancelledParentJob || isInProgressParentJob) {
     return exportName;
@@ -73,13 +73,13 @@ function FlowName({ job }) {
 
   // Incase of Old flows , we show Export/Import instead of names as they don't exist for old resources
   // Referred to EM 1.0 Jobs for this behaviour
-  return job.name || (job._exportId ? 'Export' : 'Import');
+  return job.name || (job.type === 'export' ? 'Export' : 'Import');
 }
 
 export default function FlowStepName({ job }) {
   const classes = useStyles();
-  const resourceType = job?._exportId ? 'exports' : 'imports';
-  const resourceId = job?._exportId || job?._importId;
+  const resourceType = job?.type === 'export' ? 'exports' : 'imports';
+  const resourceId = job?._expOrImpId || job?._exportId || job?._importId;
 
   return (
     <div className={classes.root}>

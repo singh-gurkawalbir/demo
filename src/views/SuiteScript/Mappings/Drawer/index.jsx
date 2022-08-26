@@ -6,7 +6,7 @@ import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
 import { selectors } from '../../../../reducers';
 import MappingWrapper from './MappingWrapper';
 import useFormOnCancelContext from '../../../../components/FormOnCancelContext';
-import { SUITESCRIPT_MAPPINGS_FORM_KEY, MAPPING_SAVE_STATUS } from '../../../../utils/constants';
+import { SUITESCRIPT_MAPPINGS_FORM_KEY, MAPPING_SAVE_STATUS } from '../../../../constants';
 
 export default function SuiteScriptMappingDrawer(props) {
   const {ssLinkedConnectionId, integrationId} = props;
@@ -28,6 +28,7 @@ export default function SuiteScriptMappingDrawer(props) {
 
   return (
     <RightDrawer
+      isSuitescript
       path={['mapping', ':flowId/mapping']}
       height="tall"
       width={showFullWidth ? 'full' : 'large'}

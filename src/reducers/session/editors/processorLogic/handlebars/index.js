@@ -1,6 +1,7 @@
 import util from '../../../../../utils/json';
 import { isOldRestAdaptor, inferResourceType } from '../../../../../utils/resource';
 import { PAGING_FIELD_IDS } from '../../../../../utils/editor';
+import { GRAPHQL_JSON_FIELDS } from '../../../../../utils/graphql';
 
 /* this util is used to read field label and generate editor title from it
 * eg, label = 'Build HTTP request body', editor title would be same i.e. 'Build HTTP request body'
@@ -139,7 +140,7 @@ export default {
     const contentType = fieldState?.options?.contentType || fieldState?.contentType || connectionMediaType;
     let resultMode;
 
-    if (fieldState?.type !== 'httprequestbody') {
+    if (fieldState?.type !== 'httprequestbody' && fieldState?.id !== 'webhook.successBody') {
       resultMode = 'text';
     } else if (fieldId === 'file.xml.body') {
       resultMode = 'xml';
@@ -148,6 +149,7 @@ export default {
     } else {
       resultMode = contentType;
     }
+    if (GRAPHQL_JSON_FIELDS.includes(fieldId)) resultMode = 'json';
 
     return {
       ...options,

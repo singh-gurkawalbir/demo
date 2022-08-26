@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import clsx from 'clsx';
 import { Link, useLocation, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { MODEL_PLURAL_TO_LABEL, generateNewId,
@@ -16,7 +14,7 @@ import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
 import CheckPermissions from '../../components/CheckPermissions';
-import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
+import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../constants';
 import { connectorFilter } from './util';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
@@ -24,28 +22,12 @@ import StackShareDrawer from '../../components/StackShare/Drawer';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
 import { TextButton } from '../../components/Buttons';
-import NoResultMessageWrapper from '../../components/NoResultMessageWrapper';
-import EmptyState from '../../components/EmptyState';
-import emptyStatesMetaData from '../../components/EmptyState/metadata';
-import FilledButton from '../../components/Buttons/FilledButton';
+import NoResultTypography from '../../components/NoResultTypography';
+import ResourceEmptyState from './ResourceEmptyState';
+import ActionGroup from '../../components/ActionGroup';
+import PageContent from '../../components/PageContent';
+import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 
-const emptyStateResource = emptyStatesMetaData;
-const useStyles = makeStyles(theme => ({
-  actions: {
-    display: 'flex',
-  },
-  resultContainer: {
-    padding: theme.spacing(3, 3, 14, 3),
-    maxHeight: `calc(100vh - (${theme.appBarHeight}px + ${theme.pageBarHeight}px))`,
-    overflowY: 'auto',
-  },
-  noShowMoreContainer: {
-    paddingBottom: theme.spacing(3),
-  },
-  noResultWrapper: {
-    padding: theme.spacing(1),
-  },
-}));
 const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
 const resourcesToLoad = resourceType => {
   if (resourceType === 'exports' || resourceType === 'imports') {
@@ -77,7 +59,6 @@ export default function ResourceList(props) {
   const match = useRouteMatch();
   const { resourceType } = match.params;
   const dispatch = useDispatch();
-  const classes = useStyles();
   const filter =
     useSelector(state => selectors.filter(state, resourceType));
   const filterConfig = useMemo(
@@ -92,6 +73,7 @@ export default function ResourceList(props) {
     selectors.makeResourceListSelector,
     filterConfig
   );
+
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
   );
@@ -141,7 +123,8 @@ export default function ResourceList(props) {
   }, [dispatch, resourceType]);
 
   const actionProps = useMemo(() => ({ showTradingPartner }), [showTradingPartner]);
-  const resource = emptyStateResource[resourceType];
+  const showPagingBar = list.count >= 100;
+  const hidePagingBar = list.count === list.filtered;
 
   return (
     <CheckPermissions
@@ -161,45 +144,32 @@ export default function ResourceList(props) {
       <CeligoPageBar
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>
-        <div className={classes.actions}>
+        <ActionGroup>
           <KeywordSearch
             filterKey={resourceType}
           />
           <TextButton
             data-test="addNewResource"
             component={Link}
-            to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
+            to={buildDrawerUrl({
+              path: drawerPaths.RESOURCE.ADD,
+              baseUrl: location.pathname,
+              params: { resourceType, id: generateNewId() },
+            })}
             startIcon={<AddIcon />}>
             Create {createResourceLabel}
           </TextButton>
-        </div>
+        </ActionGroup>
       </CeligoPageBar>
-      <div className={clsx(classes.resultContainer, {[classes.noShowMoreContainer]: list.filtered === list.count }, {[classes.noResultWrapper]: list.count === 0})}>
-        <LoadResources required resources={resourcesToLoad(resourceType)}>
+      <PageContent showPagingBar={showPagingBar} hidePagingBar={hidePagingBar}>
+        <LoadResources required integrationId="none" resources={resourcesToLoad(resourceType)}>
           {list.count === 0 ? (
             <>
               {list.total === 0
                 ? (
-                  <EmptyState
-                    title={resource.title}
-                    subTitle={resource.subTitle}
-                    type={resource.type}
-                  >
-                    <FilledButton
-                      data-test="addNewResource"
-                      href={`${location.pathname}/add/${resourceType}/${generateNewId()}`}>
-                      {resource.buttonLabel}
-                    </FilledButton>
-                    <TextButton
-                      data-test="openResourceDocLink"
-                      underline
-                      href={resource.link}
-                      target="_blank">
-                      {resource.linkLabel}
-                    </TextButton>
-                  </EmptyState>
+                  <ResourceEmptyState resourceType={resourceType} />
                 )
-                : <NoResultMessageWrapper>{NO_RESULT_SEARCH_MESSAGE}</NoResultMessageWrapper>}
+                : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
             </>
           ) : (
             <ResourceTable
@@ -209,7 +179,7 @@ export default function ResourceList(props) {
             />
           )}
         </LoadResources>
-      </div>
+      </PageContent>
       <ShowMoreDrawer
         filterKey={resourceType}
         count={list.count}

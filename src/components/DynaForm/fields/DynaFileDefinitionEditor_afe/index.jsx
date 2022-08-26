@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,6 +11,8 @@ import { getValidRelativePath } from '../../../../utils/routePaths';
 import FileDefinitionChange from './FileDefinitionChange';
 import { OutlinedButton } from '../../../Buttons';
 import { safeParse } from '../../../../utils/string';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import { selectors } from '../../../../reducers';
 
 /*
  * This editor is shown in case of :
@@ -46,6 +48,7 @@ export default function DynaFileDefinitionEditor_afe(props) {
   const editorId = getValidRelativePath(id);
 
   const editorType = resourceType === 'imports' ? 'structuredFileGenerator' : 'structuredFileParser';
+  const importHasMappings = useSelector(state => selectors.resourceHasMappings(state, resourceId));
 
   const handleSave = useCallback(editorValues => {
     const { rule, lastValidData } = editorValues;
@@ -79,10 +82,15 @@ export default function DynaFileDefinitionEditor_afe(props) {
       resourceType,
       fieldId: id,
       onSave: handleSave,
+      stage: importHasMappings ? 'postMapOutput' : '',
     }));
 
-    history.push(`${match.url}/editor/${editorId}`);
-  }, [dispatch, editorId, flowId, formKey, handleSave, history, id, match.url, editorType, resourceId, resourceType]);
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
+  }, [dispatch, editorId, flowId, formKey, handleSave, history, id, match.url, editorType, resourceId, resourceType, importHasMappings]);
 
   return (
     <>
@@ -94,7 +102,8 @@ export default function DynaFileDefinitionEditor_afe(props) {
           <FileDefinitionChange
             editorId={editorId} formKey={formKey} fieldId={id}
             resourceId={resourceId}
-            resourceType={resourceType} />
+            resourceType={resourceType}
+            importHasMappings={importHasMappings} />
           <div>
             <div>
               <FormLabel>

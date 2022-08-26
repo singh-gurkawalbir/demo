@@ -52,14 +52,18 @@ import latestFlowJobsSagas from './errorManagement/latestJobs/flows';
 import errorMetadataSagas from './errorManagement/metadata';
 import runHistorySagas from './errorManagement/runHistory';
 import { customSettingsSagas } from './customSettings';
+import lifecycleManagementSagas from './lifecycleManagement';
 import exportDataSagas from './exportData';
 import {logsSagas} from './logs';
 import ssoSagas from './sso';
+import flowbuildersagas from './flowbuilder';
+import mfaSagas from './mfa';
 import { APIException } from './api/requestInterceptors/utils';
 import { bottomDrawerSagas } from './bottomDrawer';
-import { AUTH_FAILURE_MESSAGE } from '../utils/constants';
+import { AUTH_FAILURE_MESSAGE } from '../constants';
 import { getNextLinkRelativeUrl } from '../utils/resource';
 import flowGroupSagas from './flowGroups';
+import aliasSagas from './aliases';
 import { appSagas } from './app';
 import { sendRequest } from './api';
 
@@ -219,8 +223,12 @@ export function* allSagas() {
     ...exportDataSagas,
     ...logsSagas,
     ...ssoSagas,
+    ...mfaSagas,
     ...bottomDrawerSagas,
     ...flowGroupSagas,
+    ...aliasSagas,
+    ...lifecycleManagementSagas,
+    ...flowbuildersagas,
   ]);
 }
 

@@ -13,6 +13,7 @@ export default function useSaveStatusIndicator(props) {
     onClose,
     onSuccess,
     onFailure,
+    remountAfterSaveFn,
   } = props;
   const dispatch = useDispatch();
   // Local states
@@ -57,7 +58,10 @@ export default function useSaveStatusIndicator(props) {
     if (['success', 'error'].includes(commStatus)) {
       setSaveInProgress(false);
       setDisableSave(false);
-      clearCommState(); // Once API call is done (success/error), clears the comm state
+      // Once API call is done (success/error), clear the comm state
+      clearCommState();
+      // remount the form after save
+      typeof remountAfterSaveFn === 'function' && remountAfterSaveFn();
     }
     if (commStatus === 'success' && onSuccess) {
       onSuccess();

@@ -5,6 +5,7 @@
  * 3. FTP, NS, SF, AS2, Web hook
  */
 import { call, select } from 'redux-saga/effects';
+import isEmpty from 'lodash/isEmpty';
 import {
   getPostDataForDeltaExport,
   isUIDataExpectedForResource,
@@ -21,7 +22,7 @@ import {
   isFileAdaptor } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import { isIntegrationApp } from '../../../../utils/flows';
-import { EMPTY_RAW_DATA } from '../../../../utils/constants';
+import { EMPTY_RAW_DATA } from '../../../../constants';
 
 export function* _getUIDataForResource({ resource, connection, flow, refresh }) {
   const { adaptorType, type, sampleData } = resource || {};
@@ -62,19 +63,55 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
   if (isIntegrationApp(flow) && sampleData && !refresh) return sampleData;
 }
 
-export default function* getPreviewOptionsForResource({ resource, flow, refresh, runOffline }) {
+export function* _getMockDataOptionsForResource({
+  addMockData,
+  resourceId,
+  resourceType,
+}) {
+  const options = {};
+
+  if (!addMockData) return options;
+
+  const mockInput = yield select(selectors.getResourceMockData, resourceId);
+  const typeOfPreview = yield select(selectors.typeOfSampleData, resourceId);
+
+  if (addMockData) {
+    options.inputData = !isEmpty(mockInput) ? mockInput : undefined;
+
+    // for lookups we don't send preview or sendAndPreview options
+    if (resourceType === 'exports') return options;
+
+    if (typeOfPreview === 'send') {
+      options.sendAndPreview = true;
+    } else {
+      options.preview = true;
+    }
+  }
+
+  return options;
+}
+
+export default function* getPreviewOptionsForResource({
+  resource,
+  flow,
+  refresh,
+  runOffline,
+  addMockData,
+  resourceType,
+}) {
   const connection = yield select(
     selectors.resource,
     'connections',
     resource?._connectionId
   );
-
+  const {_id: resourceId} = resource || {};
+  const mockDataOptions = yield call(_getMockDataOptionsForResource, {addMockData, resourceId, resourceType});
   const uiData = isUIDataExpectedForResource(resource, connection)
     ? yield call(_getUIDataForResource, { resource, connection, flow, refresh })
     : undefined;
   const postData = getPostDataForDeltaExport(resource);
   const files = isFileMetaExpectedForResource(resource)
-    ? getSampleFileMeta()
+    ? getSampleFileMeta(resource)
     : undefined;
   const { type, rawData } = resource || {};
 
@@ -86,8 +123,8 @@ export default function* getPreviewOptionsForResource({ resource, flow, refresh,
       runOfflineSource: 'db',
     };
 
-    return type === 'delta' ? { runOfflineOptions, postData } : { runOfflineOptions };
+    return type === 'delta' ? { ...mockDataOptions, runOfflineOptions, postData } : { ...mockDataOptions, runOfflineOptions };
   }
 
-  return type === 'delta' ? { uiData, postData } : { uiData, files };
+  return type === 'delta' ? { ...mockDataOptions, uiData, postData } : { ...mockDataOptions, uiData, files };
 }

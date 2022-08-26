@@ -26,12 +26,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function AuditLog({
   className,
-  affectedResources,
   users,
   resourceType,
   resourceId,
   onClick,
   isFixed,
+  integrationId,
   childId,
 }) {
   const classes = useStyles();
@@ -60,13 +60,16 @@ export default function AuditLog({
   return (
     <LoadResources
       required
-      resources="integrations, flows, exports, imports, connections">
+      integrationId={integrationId}
+      resources={[
+        'integrations', 'flows', 'exports', 'imports', 'connections', 'scripts', 'agents', 'stacks', ...(
+          !resourceId ? ['apis', 'accesstokens'] : []
+        )].join(',')}>
       <>
         {isLoadingAuditLog
           ? <Spinner loading size="large" className={classes.spinnerContainer} /> : (
             <div className={clsx(classes.root, className)}>
               <Filters
-                affectedResources={affectedResources}
                 resourceDetails={resourceDetails}
                 users={users}
                 childId={childId}

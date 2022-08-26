@@ -16,9 +16,10 @@ import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { resourceCategory } from '../../../../utils/resource';
 import TextOverflowCell from '../../../../components/TextOverflowCell';
 import ResourceButton from '../../../FlowBuilder/ResourceButton';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import { getTextAfterCount } from '../../../../utils/string';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import Status from '../../../../components/Buttons/Status';
 
 const metadata = {
@@ -101,12 +102,16 @@ const metadata = {
         });
 
         const handleErrorClick = useCallback(() => {
-          history.push(`${flowBuilderTo}/errors/${id}`);
+          history.push(buildDrawerUrl({
+            path: drawerPaths.ERROR_MANAGEMENT.V2.ERROR_DETAILS,
+            baseUrl: flowBuilderTo,
+            params: { resourceId: id, errorType: 'open'},
+          }));
         }, [flowBuilderTo, history, id]);
 
         if (!count) {
           return (
-            <Status variant="success" size="mini" onClick={handleErrorClick}>success</Status >
+            <Status variant="success" size="mini" onClick={handleErrorClick}>Success</Status >
           );
         }
 
@@ -162,7 +167,7 @@ const ErrorsList = ({integrationId, childId}) => {
     return <Typography>No flow exists with id: {flowId}</Typography>;
   }
   if (status !== 'received') {
-    return <Spinner centerAll />;
+    return <Spinner centerAll withDrawerHeader />;
   }
 
   return (
@@ -174,7 +179,12 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   const match = useRouteMatch();
   const history = useHistory();
   const location = useLocation();
-  const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/:flowId/errorsList`}) || {};
+  const { params: { flowId } = {} } = matchPath(location.pathname, {
+    path: buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.FLOW_ERROR_LIST,
+      baseUrl: match.path,
+    }),
+  }) || {};
   const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
@@ -185,17 +195,12 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   }, [match.url, history]);
 
   return (
-    <LoadResources
-      required="true"
-      resources="imports, exports, connections">
+    <LoadResources required="true" integrationId={integrationId} resources="imports,exports,connections">
       <RightDrawer
-        path=":flowId/errorsList"
+        path={drawerPaths.ERROR_MANAGEMENT.V2.FLOW_ERROR_LIST}
         height="tall"
-        onClose={handleClose}
-        variant="temporary">
-
+        onClose={handleClose}>
         <DrawerHeader title={`Flow: ${flow.name || flowId}`} />
-
         <DrawerContent>
           <ErrorsList integrationId={integrationId || flow._integrationId} childId={childId} />
         </DrawerContent>

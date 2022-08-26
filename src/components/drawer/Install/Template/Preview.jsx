@@ -9,7 +9,7 @@ import useConfirmDialog from '../../../ConfirmDialog';
 import PreviewTable from '../common/PreviewTable';
 import AddIcon from '../../../icons/AddIcon';
 import getRoutePath from '../../../../utils/routePaths';
-import messageStore from '../../../../constants/messages';
+import messageStore from '../../../../utils/messageStore';
 import { OutlinedButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({

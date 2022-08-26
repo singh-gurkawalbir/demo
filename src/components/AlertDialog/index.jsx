@@ -8,21 +8,28 @@ import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
 import getRoutePath from '../../utils/routePaths';
 import LoadResources from '../LoadResources';
-import { emptyList, HOME_PAGE_PATH} from '../../utils/constants';
-import { OutlinedButton} from '../Buttons';
+import { emptyList, HOME_PAGE_PATH} from '../../constants';
 import useConfirmDialog from '../ConfirmDialog';
+import { FilledButton } from '../Buttons';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   contentWrapper: {
     minWidth: 432,
     marginBottom: -104,
-    paddingTop: 24,
   },
-});
+  sessionExpiredInfo: {
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    paddingBottom: theme.spacing(2),
+    marginBottom: theme.spacing(3),
+  },
+  sessionExpiredModal: {
+    maxWidth: 470,
+  },
+}));
 
 const LoggedInWithADifferentAccount = () => (
   <ModalDialog show>
-    <Typography variant="h3">Sign In</Typography>
+    <div>Sign In</div>
     <>
       <Typography>
         Please click the following button to resume working
@@ -30,63 +37,67 @@ const LoggedInWithADifferentAccount = () => (
       <br />
       This may have happened automatically because another user signed in from the same browser. To continue using this account, you will need to sign in again. This is done to protect your account and to ensure the privacy of your information.
     </>
-    <OutlinedButton
+    <FilledButton
       data-test="ok"
       onClick={() => {
         window.location.replace(getRoutePath(HOME_PAGE_PATH));
       }}
      >
       Sign In
-    </OutlinedButton>
+    </FilledButton>
   </ModalDialog>
 );
 
 const StaleUIVersion = () => (
   <ModalDialog show>
-    <Typography variant="h3">Reload page</Typography>
+    <div>Reload page</div>
     <Typography>
       It looks like your browser has cached an older version of our app.
       Click &apos;Reload&apos; to refresh the page.
     </Typography>
-    <OutlinedButton
+    <FilledButton
       data-test="ok"
       onClick={() => {
         window.location.reload();
       }}
       >
       Reload
-    </OutlinedButton>
+    </FilledButton>
   </ModalDialog>
 );
 const UserAcceptedAccountTransfer = () => (
   <ModalDialog show>
-    <Typography variant="h3">Success!</Typography>
+    <div>Success!</div>
     <Typography>
       You are now the owner of this account. Go to <em>My account &gt; Users</em> to invite and manage permissions for other users in this account.
     </Typography>
-    <OutlinedButton
+    <FilledButton
       data-test="ok"
       onClick={() => {
         window.location.reload();
       }}
      >
       Reload
-    </OutlinedButton>
+    </FilledButton>
   </ModalDialog>
 );
 
 const ExpiredSessionContent = () => {
+  const dispatch = useDispatch();
   const showSSOSignIn = useSelector(state => selectors.isUserAllowedOnlySSOSignIn(state));
   const classes = useStyles();
 
+  const handleUserLogout = () => {
+    dispatch(actions.auth.logout());
+  };
+
   return (
-    <ModalDialog show disableEnforceFocus>
+    <ModalDialog show disableEnforceFocus onClose={handleUserLogout} className={classes.sessionExpiredModal}>
       <div>
-        <Typography>Your session has expired</Typography>
-        <br />
-        <Typography>Please sign in again</Typography>
+        Your session has expired
       </div>
       <div className={classes.contentWrapper}>
+        <Typography component="div" variant="body2" className={classes.sessionExpiredInfo}>For your security, we automatically sign you out after more than an hour of inactivity. Sign in again to resume your session.</Typography>
         {showSSOSignIn ? <SignInSSOForm /> : <SignInForm dialogOpen />}
       </div>
     </ModalDialog>
@@ -146,6 +157,9 @@ export default function AlertDialog() {
           },
         ],
       });
+    } else {
+      // close the confirm dialog or it will remain even after user signs in
+      confirmDialog(null);
     }
   }, [confirmDialog, dispatch, showSessionStatus]);
 

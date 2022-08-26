@@ -37,8 +37,9 @@ import {
   requestLicenseEntitlementUsage,
   addSuiteScriptLinkedConnection,
   deleteSuiteScriptLinkedConnection,
+  refreshLicensesCollection,
 } from '.';
-import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../utils/constants';
+import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../constants';
 import getRequestOptions from '../../utils/requestOptions';
 import { APIException } from '../api/requestInterceptors/utils';
 import { getResourceCollection } from '../resources';
@@ -637,6 +638,7 @@ describe('all modal sagas', () => {
           call(apiCallWithRetry, {
             path,
             opts,
+            hidden: true,
             message: 'Requesting trial license',
           }),
         );
@@ -667,6 +669,7 @@ describe('all modal sagas', () => {
           call(apiCallWithRetry, {
             path,
             opts,
+            hidden: true,
             message: 'Requesting trial license',
           }),
         );
@@ -1055,22 +1058,18 @@ describe('all modal sagas', () => {
 
       return expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
         .provide([
-          [call(apiCallWithRetry, {
-            path,
-            timeout: 5 * 60 * 1000,
-            opts,
-          })],
+          [matchers.call.fn(apiCallWithRetry)],
         ])
-        .call(apiCallWithRetry, {
-          path,
-          timeout: 5 * 60 * 1000,
-          opts,
-        })
+        .call.like({fn: apiCallWithRetry,
+          args: [{
+            path,
+            opts,
+          }]})
         .put(actions.resource.requestCollection('integrations'))
         .put(actions.resource.requestCollection('flows'))
         .put(actions.resource.requestCollection('exports'))
         .put(actions.resource.requestCollection('imports'))
-        .put(actions.resource.requestCollection('licenses'))
+        .put(actions.license.refreshCollection())
         .not.put(actions.license.licenseUpgradeRequestSubmitted({}))
         .run();
     });
@@ -1085,19 +1084,38 @@ describe('all modal sagas', () => {
 
       return expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
         .provide([
-          [call(apiCallWithRetry, {
-            path,
-            timeout: 5 * 60 * 1000,
-            opts,
-          }), response],
+          [matchers.call.fn(apiCallWithRetry), response],
         ])
-        .call(apiCallWithRetry, {
-          path,
-          timeout: 5 * 60 * 1000,
-          opts,
-        })
+        .call.like({fn: apiCallWithRetry,
+          args: [{
+            path,
+            opts,
+          }]})
         .not.put(actions.resource.requestCollection('integrations'))
         .put(actions.license.licenseUpgradeRequestSubmitted(response))
+        .run();
+    });
+    test('should handle if it is actionType of upgrade and feature is sso', () => {
+      const actionType = 'upgrade';
+      const feature = 'SSO';
+      const response = {
+        key: 'something',
+      };
+      const { path, opts } = getRequestOptions(actionTypes.LICENSE.UPDATE_REQUEST, {
+        actionType, feature,
+      });
+
+      return expectSaga(requestLicenseUpdate, { actionType, feature })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), response],
+        ])
+        .call.like({fn: apiCallWithRetry,
+          args: [{
+            path,
+            opts,
+          }]})
+        .not.put(actions.resource.requestCollection('integrations'))
+        .put(actions.license.licenseUpgradeRequestSubmitted(response, feature))
         .run();
     });
     test('should handle if apiCallWithRetry fails', () => {
@@ -1111,17 +1129,13 @@ describe('all modal sagas', () => {
 
       return expectSaga(requestLicenseUpdate, { actionType, connectorId, licenseId})
         .provide([
-          [call(apiCallWithRetry, {
-            path,
-            timeout: 5 * 60 * 1000,
-            opts,
-          }), throwError(error)],
+          [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
-        .call(apiCallWithRetry, {
-          path,
-          timeout: 5 * 60 * 1000,
-          opts,
-        })
+        .call.like({fn: apiCallWithRetry,
+          args: [{
+            path,
+            opts,
+          }]})
         .put(actions.api.failure(path, 'POST', error, false))
         .not.put(actions.resource.requestCollection('integrations'))
         .not.put(actions.license.licenseUpgradeRequestSubmitted({}))
@@ -1257,6 +1271,32 @@ describe('all modal sagas', () => {
           'Could not unlink suitescript integrator'
         )
       )
+      .run()
+    );
+  });
+  describe('refreshLicensesCollection saga', () => {
+    test('should dispatch request collection of ashares if it is a shared account', () => expectSaga(refreshLicensesCollection)
+      .provide([
+        [select(selectors.defaultAShareId), 'someAshareId'],
+      ])
+      .put(actions.resource.requestCollection('shared/ashares'))
+      .not.put(actions.resource.requestCollection('licenses'))
+      .run()
+    );
+    test('should dispatch request collection of licenses if there is no ashareId', () => expectSaga(refreshLicensesCollection)
+      .provide([
+        [select(selectors.defaultAShareId)],
+      ])
+      .not.put(actions.resource.requestCollection('shared/ashares'))
+      .put(actions.resource.requestCollection('licenses'))
+      .run()
+    );
+    test('should dispatch request collection of licenses if the ashareId is own', () => expectSaga(refreshLicensesCollection)
+      .provide([
+        [select(selectors.defaultAShareId), 'own'],
+      ])
+      .not.put(actions.resource.requestCollection('shared/ashares'))
+      .put(actions.resource.requestCollection('licenses'))
       .run()
     );
   });

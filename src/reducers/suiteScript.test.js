@@ -9,7 +9,7 @@ import {
   INTEGRATION_ACCESS_LEVELS,
   SUITESCRIPT_CONNECTORS,
   TILE_STATUS,
-} from '../utils/constants';
+} from '../constants';
 
 /**
  * TODO: Ignoring SS tests for sometime and Shiva needs to fix these.
@@ -2106,8 +2106,10 @@ describe('suiteScriptFileExportSampleData selector', () => {
     };
     state.session.resourceFormSampleData = {
       [resourceId]: {
-        data: {
-          raw: 'CUSTOMER|ID|TYPE\nDummy|123|Retail',
+        preview: {
+          data: {
+            raw: 'CUSTOMER|ID|TYPE\nDummy|123|Retail',
+          },
         },
       },
     };

@@ -27,7 +27,8 @@ export default function ErrorList({ flowId }) {
     if (!isErrorFilterMetadataRequested) {
       dispatch(actions.errorManager.filterMetadata.request());
     }
-  }, [dispatch, isErrorFilterMetadataRequested]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, errorType]);
 
   useEffect(() => {
     dispatch(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId}));

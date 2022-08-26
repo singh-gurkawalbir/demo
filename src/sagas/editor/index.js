@@ -23,8 +23,9 @@ import { safeParse } from '../../utils/string';
 import { getUniqueFieldId, dataAsString, previewDataDependentFieldIds } from '../../utils/editor';
 import { isNewId, isOldRestAdaptor } from '../../utils/resource';
 import { restToHttpPagingMethodMap } from '../../utils/http';
-import mappingUtil from '../../utils/mapping';
+import mappingUtil, { buildV2MappingsFromTree, hasV2MappingsInTreeData, findAllParentExtractsForNode } from '../../utils/mapping';
 import responseMappingUtil from '../../utils/responseMapping';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants';
 
 /**
  * a util function to get resourcePath based on value / defaultPath
@@ -65,7 +66,8 @@ export function* invokeProcessor({ editorId, processor, body }) {
       options: {
         connection,
         [resourceType === 'imports' ? 'import' : 'export']: resource,
-        fieldPath: fieldId,
+        // TODO: Siddharth, revert this change after completion of https://celigo.atlassian.net/browse/IO-25372
+        fieldPath: fieldId === 'webhook.successBody' ? 'dataURITemplate' : fieldId,
         timezone,
       },
     };
@@ -75,26 +77,48 @@ export function* invokeProcessor({ editorId, processor, body }) {
     }
   } else if (processor === 'mapperProcessor') {
     const flowSampleData = safeParse(data);
+    const importResource = yield select(selectors.resource, 'imports', resourceId);
+    const options = {};
     let _mappings;
 
-    if (editorType === 'mappings') {
-      const mappings = (yield select(selectors.mapping))?.mappings;
-      const lookups = (yield select(selectors.mapping))?.lookups;
-      const generateFields = yield select(selectors.mappingGenerates, resourceId);
-      const importResource = yield select(selectors.resource, 'imports', resourceId);
-      const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
-      const netsuiteRecordType = yield select(selectors.mappingNSRecordType, resourceId);
+    if (editor.mappingPreviewType) {
+      // wait for previewMappings saga to complete the api call if its status is requested
+      const previewStatus = (yield select(selectors.mapping))?.preview?.status;
 
-      _mappings = mappingUtil.generateFieldsAndListMappingForApp({
-        mappings,
-        generateFields,
-        isGroupedSampleData: Array.isArray(flowSampleData),
-        isPreviewSuccess: !!flowSampleData,
-        importResource,
-        netsuiteRecordType,
-        exportResource,
-      });
-      _mappings = {..._mappings, lookups};
+      if (previewStatus === 'requested') {
+        yield take([
+          actionTypes.MAPPING.PREVIEW_RECEIVED,
+          actionTypes.MAPPING.PREVIEW_FAILED,
+        ]);
+      }
+
+      // for salesforce and netsuite we return the previewMappings updated state
+      return (yield select(selectors.mapping))?.preview;
+    }
+    if (editorType === 'mappings') {
+      const lookups = (yield select(selectors.mapping))?.lookups;
+      const v2TreeData = (yield select(selectors.mapping))?.v2TreeData;
+
+      // give preference to v2 mappings always
+      if (hasV2MappingsInTreeData(v2TreeData, lookups)) {
+        const connection = yield select(selectors.resource, 'connections', importResource?._connectionId);
+        const _mappingsV2 = buildV2MappingsFromTree({v2TreeData, lookups});
+
+        _mappings = {mappings: _mappingsV2, lookups};
+        options.connection = connection;
+      } else {
+        const mappings = (yield select(selectors.mapping))?.mappings;
+        const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
+
+        _mappings = mappingUtil.generateFieldsAndListMappingForApp({
+          mappings,
+          isGroupedSampleData: Array.isArray(flowSampleData),
+          isPreviewSuccess: !!flowSampleData,
+          importResource,
+          exportResource,
+        });
+        _mappings = {..._mappings, lookups};
+      }
     } else if (editorType === 'responseMappings') {
       const mappings = (yield select(selectors.responseMapping))?.mappings;
 
@@ -106,6 +130,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
         rules: [_mappings],
       },
       data: data ? [flowSampleData] : [],
+      options,
     };
   }
 
@@ -136,8 +161,8 @@ export function* requestPreview({ id }) {
   // since mappings are stored in separate state
   // we validate the same here
   if (editor.editorType === 'mappings') {
-    const {mappings, lookups, isNSAssistantFormLoaded} = yield select(selectors.mapping);
-    const {errMessage} = mappingUtil.validateMappings(mappings, lookups);
+    const {mappings, lookups, v2TreeData} = yield select(selectors.mapping);
+    const {errMessage} = mappingUtil.validateMappings(mappings, lookups, v2TreeData);
 
     if (errMessage) {
       const violations = {
@@ -146,9 +171,8 @@ export function* requestPreview({ id }) {
 
       return yield put(actions.editor.validateFailure(id, violations));
     }
-    if (editor.mappingPreviewType &&
-      (editor.mappingPreviewType !== 'netsuite' || isNSAssistantFormLoaded)) {
-      yield put(actions.mapping.requestPreview());
+    if (editor.mappingPreviewType) {
+      yield put(actions.mapping.requestPreview(id));
     }
   }
 
@@ -416,7 +440,7 @@ export function* refreshHelperFunctions() {
   yield put(actions.editor.updateHelperFunctions(helperFunctions));
 }
 
-export function* getFlowSampleData({ flowId, resourceId, resourceType, stage, formKey }) {
+export function* getFlowSampleData({ flowId, resourceId, resourceType, stage, formKey, routerId, editorId }) {
   let flowSampleData = yield select(selectors.getSampleDataContext, {
     flowId,
     resourceId,
@@ -427,9 +451,11 @@ export function* getFlowSampleData({ flowId, resourceId, resourceType, stage, fo
   if (flowSampleData.status !== 'received') {
     yield call(requestSampleData, {
       flowId,
+      routerId,
       resourceId,
       resourceType,
       stage,
+      editorId,
       formKey,
     });
   }
@@ -451,7 +477,20 @@ export function* requestEditorSampleData({
 
   if (!editor) return;
 
-  const {editorType, flowId, resourceId, resourceType, fieldId, formKey, stage, ssLinkedConnectionId, parentType, parentId} = editor;
+  const {
+    editorType,
+    flowId,
+    resourceId,
+    resourceType,
+    fieldId,
+    formKey,
+    stage,
+    ssLinkedConnectionId,
+    parentType,
+    parentId,
+    mapper2RowKey,
+    router,
+  } = editor;
   // for some fields only v2 data is supported (not v1)
   const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
 
@@ -508,16 +547,16 @@ export function* requestEditorSampleData({
     return { data: fileData};
   }
 
-  // for file definition editors, sample data is read from network call
+  // for file definition editors, sample data is read from network call if stage (postMapOutput) is not defined
   // adding this check here, in case network call is delayed
-  if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') { return {}; }
+  if ((editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') && !stage) { return {}; }
 
   // for exports resource with 'once' type fields, exported preview data is shown and not the flow input data
   const showPreviewStageData = resourceType === 'exports' && fieldId?.includes('once');
   // for exports with paging method configured, preview stages data needs to be passed for getContext to get proper editor sample data
   const isPagingMethodConfigured = !!(isOldRestResource ? resource?.rest?.pagingMethod : resource?.http?.paging?.method);
   const needPreviewStagesData = resourceType === 'exports' && isPagingMethodConfigured && previewDataDependentFieldIds.includes(fieldId);
-  const isExportAdvancedField = resourceType === 'exports' && ['dataURITemplate', 'traceKeyTemplate'].includes(fieldId);
+  const isExportAdvancedField = resourceType === 'exports' && ['dataURITemplate', 'traceKeyTemplate', 'webhook.successBody'].includes(fieldId);
   const isStandaloneExportAdvancedField = !flowId && isExportAdvancedField;
 
   if (showPreviewStageData || needPreviewStagesData || isStandaloneExportAdvancedField) {
@@ -544,18 +583,18 @@ export function* requestEditorSampleData({
 
       sampleData = parsedData?.data;
     } else if (stage && (isExportAdvancedField || (flowId && !isPageGenerator))) {
-      // Handles all PPs and PG with advanced field ID  ( dataURI and traceKey )
+      // Handles all PPs and PG with advanced field ID  ( dataURI and traceKey and webhook.successBody )
       sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage, formKey });
     }
   } else if (stage) {
     // Handles sample data for all editors outside form context ( FB actions )
-    sampleData = yield call(getFlowSampleData, { flowId, resourceId, resourceType, stage });
+    sampleData = yield call(getFlowSampleData, { flowId, routerId: router?.id, resourceId, resourceType, stage, editorId: id });
   }
 
   let _sampleData = null;
   let templateVersion;
 
-  const {shouldGetContextFromBE, sampleData: uiSampleData} = yield select(selectors.shouldGetContextFromBE, id, sampleData);
+  const {shouldGetContextFromBE, sampleData: uiSampleData, isMapperField} = yield select(selectors.shouldGetContextFromBE, id, sampleData);
 
   // BE doesn't support /getContext for some use cases
   if (!shouldGetContextFromBE) {
@@ -574,7 +613,26 @@ export function* requestEditorSampleData({
     const flow = yield select(selectors.resource, 'flows', flowId);
 
     body.integrationId = flow?._integrationId;
+
     body.fieldPath = fieldId || filterPath;
+
+    if (isMapperField) {
+      body.uiContext = 'mapper2_0';
+      // for v2 mappings, BE needs parent extracts to be passed
+      // for correctly returning the iterating array context
+      if (mapper2RowKey) {
+        const {v2TreeData, isGroupedOutput} = yield select(selectors.mapping);
+        const arrayExtracts = findAllParentExtractsForNode(v2TreeData, [], mapper2RowKey);
+
+        body.mapper2_0 = {
+          outputFormat: isGroupedOutput ? 'ROWS' : 'RECORD',
+        };
+
+        if (arrayExtracts.length) {
+          body.mapper2_0.arrayExtracts = arrayExtracts;
+        }
+      }
+    }
 
     if (needPreviewStagesData) {
       body.previewData = yield select(selectors.getResourceSampleDataStages, resourceId);
@@ -608,13 +666,14 @@ export function* requestEditorSampleData({
           },
         };
       }
-      body[resourceType === 'imports' ? 'import' : 'export'] = resource || {};
+      body[RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]] = resource || {};
     }
 
     const opts = {
       method: 'POST',
       body,
     };
+
     const path = '/processors/handleBar/getContext';
 
     try {
@@ -648,7 +707,7 @@ export function* requestEditorSampleData({
   }
 
   // don't wrap with context for below editors
-  const EDITORS_WITHOUT_CONTEXT_WRAP = ['csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter'];
+  const EDITORS_WITHOUT_CONTEXT_WRAP = ['structuredFileGenerator', 'csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter'];
 
   if (!EDITORS_WITHOUT_CONTEXT_WRAP.includes(editorType)) {
     const { data } = yield select(selectors.sampleDataWrapper, {
@@ -793,24 +852,22 @@ export function* initEditor({ id, editorType, options }) {
       });
 
       formattedOptions = init({options: formattedOptions, resource, fieldState, fileDefinitionData});
-    } else if (editorType === 'javascript') {
+    } else {
       const scriptContext = yield select(selectors.getScriptContext, {flowId, contextType: 'hook'});
 
       formattedOptions = init({options: formattedOptions, resource, fieldState, flow, scriptContext});
-    } else {
-      formattedOptions = init({options: formattedOptions, resource, fieldState, flow});
     }
   }
 
-  let originalRule = formattedOptions.rule;
+  let originalRule = formattedOptions.originalRule || formattedOptions.rule;
 
   if (typeof originalRule === 'object' && !Array.isArray(originalRule)) {
-    originalRule = {...formattedOptions.rule};
+    originalRule = {...(formattedOptions.originalRule || formattedOptions.rule)};
   }
   const stateOptions = {
     editorType,
     ...formattedOptions,
-    fieldId: getUniqueFieldId(fieldId, resource, connection),
+    fieldId: getUniqueFieldId(fieldId, resource, connection, resourceType),
     ...featuresMap(formattedOptions)[editorType],
     originalRule,
     sampleDataStatus: 'requested',
@@ -844,7 +901,8 @@ export default [
   takeLatest(
     [actionTypes.EDITOR.PATCH.DATA,
       actionTypes.EDITOR.PATCH.RULE,
-      actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW],
+      actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW,
+      actionTypes.EDITOR.PATCH.FEATURES],
     autoEvaluateProcessorWithCancel
   ),
   // added a separate effect for DynaFileKeyColumn as
