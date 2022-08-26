@@ -1,6 +1,5 @@
 /* global describe, test, expect, jest */
 import React from 'react';
-import { screen } from '@testing-library/react';
 import { MemoryRouter, Router, Route } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { createMemoryHistory } from 'history';
@@ -22,8 +21,6 @@ describe('ExportHooks UI tests', () => {
     const {utils} = renderWithProviders(<MemoryRouter><Component /></MemoryRouter>);
 
     expect(utils.container).toBeEmptyDOMElement();
-
-    screen.debug();
   });
   test('should test ExportFilterLauncher component when open props is sent', () => {
     const {Component} = exportFilter;
@@ -38,7 +35,5 @@ describe('ExportHooks UI tests', () => {
       </Router>);
     expect(history.location.pathname).toBe('/someInitialURL/editor/eFilter-resourceId');
     expect(onClose).toHaveBeenCalled();
-
-    screen.debug();
   });
 });
