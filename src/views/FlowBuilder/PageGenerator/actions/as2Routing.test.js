@@ -1,9 +1,11 @@
 /* global describe, test, expect, jest, beforeEach */
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
+import actions from '../../../../actions';
+import { runServer } from '../../../../test/api/server';
 import as2Routing from './as2Routing';
 
 const mockDispatch = jest.fn();
@@ -52,75 +54,16 @@ jest.mock('../../../../components/DynaForm', () => ({
 
 const as2resource = {
   _id: '62f366470260bf5b28b555ea',
-  createdAt: '2022-08-10T08:03:19.917Z',
-  lastModified: '2022-08-10T08:03:20.057Z',
   name: 'second',
   _connectionId: '62f24d45f8b63672312cd561',
-  apiIdentifier: 'ef31ec02af',
-  asynchronous: true,
   type: 'webhook',
-  oneToMany: false,
-  sandbox: false,
-  parsers: [],
-  file: {
-    type: 'filedefinition',
-    fileDefinition: {
-      _fileDefinitionId: '62f36646726a104cda6a6a89',
-    },
-  },
   adaptorType: 'AS2Export',
 };
 
 const resource = {_connectionId: '5e7068331c056a75e6df19b2'};
 
-const as2connections = [
-  {
-    _id: '62f24d45f8b63672312cd561',
-    createdAt: '2022-08-09T12:04:21.456Z',
-    lastModified: '2022-08-09T12:04:21.551Z',
-    type: 'as2',
-    name: 'weev',
-    sandbox: false,
-    as2: {
-      as2Id: 'awrvrv',
-      contentBasedFlowRouter: {_scriptId: 'some_scriptId'},
-      partnerId: 'wqefwef',
-      unencrypted: {
-        partnerCertificate: 'qd3d',
-        userPublicKey: 'q3FDWF',
-      },
-      preventCanonicalization: false,
-      partnerStationInfo: {
-        as2URI: 'https://www.qwrvre.com',
-        mdn: {
-          mdnSigning: 'NONE',
-        },
-        signing: 'MD5',
-        encryptionType: 'AES128',
-        encoding: 'base64',
-        signatureEncoding: 'base64',
-        auth: {
-          type: 'basic',
-          basic: {
-            username: 'qed3w',
-            password: '******',
-          },
-        },
-      },
-      userStationInfo: {
-        mdn: {
-          mdnSigning: 'MD5',
-          mdnEncoding: 'base64',
-        },
-        signing: 'MD5',
-        encryptionType: '3DES',
-        encoding: 'base64',
-      },
-    },
-  },
-];
-
 describe('ExportHooks UI tests', () => {
+  runServer();
   beforeEach(() => {
     jest.resetAllMocks();
   });
@@ -186,13 +129,15 @@ describe('ExportHooks UI tests', () => {
       }
     );
   });
-  test('should text onRemount button', () => {
+  test('should text onRemount button', async () => {
     const {Component} = as2Routing;
     const onClose = jest.fn();
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = as2connections;
+    // initialStore.getState().data.resources.connections = as2connections;
+    initialStore.dispatch(actions.resource.requestCollection('connections'));
+    await waitFor(() => expect(initialStore?.getState()?.data?.resources?.connections).toBeDefined());
 
     renderWithProviders(
       <Component

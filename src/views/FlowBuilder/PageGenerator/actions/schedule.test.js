@@ -29,47 +29,23 @@ jest.mock('../../../../components/FlowSchedule', () => ({
   },
 }));
 
-const flows = [{
-  _id: '5ea16c600e2fab71928a6152',
-  lastModified: '2021-08-13T08:02:49.712Z',
-  name: 'Name of the flow',
-  disabled: true,
-  _integrationId: '5ff579d745ceef7dcd797c15',
-  skipRetries: false,
-  pageProcessors: [
-    {
-      responseMapping: {
-        fields: [],
-        lists: [],
-      },
-      type: 'import',
-      _importId: '5ac5e4d706bd2615df9fba44',
-    },
-  ],
-  pageGenerators: [
-    {
-      _exportId: '5d00b9f0bcd64414811b2396',
-    },
-  ],
-  createdAt: '2020-04-23T10:22:24.290Z',
-  lastExecutedAt: '2020-04-23T11:08:41.093Z',
-  autoResolveMatchingTraceKeys: true,
-}];
-
 const resource = {_id: 'resourceId'};
 
 describe('scheduleAction UI tests', () => {
-  function initStoreAndRender() {
+  async function initStoreAndRender() {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.flows = flows;
+    initialStore.getState().data.resources.flows = [{
+      _id: '5ea16c600e2fab71928a6155',
+      name: 'Name of the flow',
+    }];
 
     const {Component} = scheduleAction;
 
     renderWithProviders(
       <Component
         open
-        flowId="5ea16c600e2fab71928a6152"
+        flowId="5ea16c600e2fab71928a6155"
         isViewMode
         resource={resource}
         index={1}
@@ -82,8 +58,8 @@ describe('scheduleAction UI tests', () => {
     expect(position).toBe('middle');
     expect(helpKey).toBe('fb.pg.exports.schedule');
   });
-  test('should test the schedule dialog component', () => {
-    initStoreAndRender();
+  test('should test the schedule dialog component', async () => {
+    await initStoreAndRender();
 
     expect(screen.getByText('Flow schedule override')).toBeInTheDocument();
     expect(screen.getByText('FlowSchedule')).toBeInTheDocument();
@@ -93,11 +69,11 @@ describe('scheduleAction UI tests', () => {
     expect(screen.getByText('index: 1')).toBeInTheDocument();
     expect(screen.getByText('Name of the flow')).toBeInTheDocument();
   });
-  test('should test the onclose modal component function', () => {
+  test('should test the onclose modal component function', async () => {
     const mockSetCancelTriggered = jest.fn();
 
     jest.spyOn(cancelContext, 'default').mockReturnValue({disabled: false, setCancelTriggered: mockSetCancelTriggered});
-    initStoreAndRender();
+    await initStoreAndRender();
     userEvent.click(screen.getByRole('button'));
 
     expect(mockSetCancelTriggered).toHaveBeenCalled();

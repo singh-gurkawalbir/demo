@@ -1,9 +1,11 @@
 /* global describe, test, expect, jest, beforeEach */
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders} from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
+import actions from '../../../actions';
+import { runServer } from '../../../test/api/server';
 import PageGenerator from './index';
 
 const mockDispatch = jest.fn();
@@ -43,173 +45,10 @@ jest.mock('../AppBlock', () => ({
   },
 }));
 
-const connections = [
-  {
-    _id: '5e7068331c056a75e6df19b2',
-    createdAt: '2020-03-17T06:03:31.798Z',
-    lastModified: '2020-03-19T23:47:55.181Z',
-    type: 'rest',
-    name: '3D Cart Staging delete',
-    assistant: '3dcart',
-    offline: true,
-    sandbox: false,
-    isHTTP: true,
-    http: {
-      formType: 'assistant',
-      mediaType: 'json',
-      baseURI: 'https://apirest.3dcart.com',
-      concurrencyLevel: 11,
-      ping: {
-        relativeURI: '/3dCartWebAPI/v1/Customers',
-        method: 'GET',
-      },
-      headers: [
-        {
-          name: 'SecureUrl',
-          value: 'https://celigoc1.com',
-        },
-        {
-          name: 'PrivateKey',
-          value: '{{{connection.http.encrypted.PrivateKey}}}',
-        },
-        {
-          name: 'content-type',
-          value: 'application/json',
-        },
-      ],
-      encrypted: '******',
-      encryptedFields: [],
-      auth: {
-        type: 'token',
-        oauth: {
-          scope: [],
-        },
-        token: {
-          token: '******',
-          location: 'header',
-          headerName: 'Token',
-          scheme: ' ',
-          refreshMethod: 'POST',
-          refreshMediaType: 'urlencoded',
-        },
-      },
-    },
-    rest: {
-      baseURI: 'https://apirest.3dcart.com',
-      bearerToken: '******',
-      tokenLocation: 'header',
-      mediaType: 'json',
-      authType: 'token',
-      authHeader: 'Token',
-      authScheme: ' ',
-      headers: [
-        {
-          name: 'SecureUrl',
-          value: 'https://celigoc1.com',
-        },
-        {
-          name: 'PrivateKey',
-          value: '{{{connection.rest.encrypted.PrivateKey}}}',
-        },
-      ],
-      encrypted: '******',
-      encryptedFields: [],
-      unencryptedFields: [],
-      scope: [],
-      pingRelativeURI: '/3dCartWebAPI/v1/Customers',
-      concurrencyLevel: 11,
-      refreshTokenHeaders: [],
-    },
-  },
-];
-const connections3 = [
-  {
-    _id: '5e7068331c056a75e6df19b2',
-    createdAt: '2020-03-17T06:03:31.798Z',
-    lastModified: '2020-03-19T23:47:55.181Z',
-    adaptorType: 'HTTPExport',
-    http: {type: 'file'},
-    name: '3D Cart Staging delete',
-    assistant: '3dcart',
-    offline: true,
-    sandbox: false,
-  },
-];
-const as2connections = [
-  {
-    _id: '62f24d45f8b63672312cd561',
-    createdAt: '2022-08-09T12:04:21.456Z',
-    lastModified: '2022-08-09T12:04:21.551Z',
-    type: 'as2',
-    name: 'weev',
-    sandbox: false,
-    as2: {
-      as2Id: 'awrvrv',
-      contentBasedFlowRouter: {_scriptId: 'some_scriptId'},
-      partnerId: 'wqefwef',
-      unencrypted: {
-        partnerCertificate: 'qd3d',
-        userPublicKey: 'q3FDWF',
-      },
-      preventCanonicalization: false,
-      partnerStationInfo: {
-        as2URI: 'https://www.qwrvre.com',
-        mdn: {
-          mdnSigning: 'NONE',
-        },
-        signing: 'MD5',
-        encryptionType: 'AES128',
-        encoding: 'base64',
-        signatureEncoding: 'base64',
-        auth: {
-          type: 'basic',
-          basic: {
-            username: 'qed3w',
-            password: '******',
-          },
-        },
-      },
-      userStationInfo: {
-        mdn: {
-          mdnSigning: 'MD5',
-          mdnEncoding: 'base64',
-        },
-        signing: 'MD5',
-        encryptionType: '3DES',
-        encoding: 'base64',
-      },
-    },
-  },
-];
 const exports = [
   {
     _id: '5e7068331c056a75e6df19b2',
     name: 'Export Name',
-  },
-];
-const as2exports = [
-  {
-    _id: '5e7068331c056a75e6df19b2',
-    name: 'Export Name',
-    _connectionId: '62f24d45f8b63672312cd561',
-  },
-];
-
-const webhookexport = [
-  {
-    _id: '5e7068331c056a75e6df19b2',
-    name: 'Export Name',
-    type: 'WebhookExport',
-    webhook: { provider: 'someprovider'},
-  },
-];
-
-const distributedexports = [
-  {
-    _id: '5e7068331c056a75e6df19b2',
-    name: 'Export Name',
-    type: 'distributed',
-    webhook: { provider: 'someprovider'},
   },
 ];
 
@@ -241,16 +80,24 @@ const flows = [{
 }];
 
 describe('PageGenerator UI tests', () => {
+  runServer();
   beforeEach(() => {
     jest.resetAllMocks();
   });
+
+  async function initStore(initialStore) {
+    initialStore.dispatch(actions.resource.requestCollection('connections'));
+    await waitFor(() => expect(initialStore?.getState()?.data?.resources?.connections).toBeDefined());
+    initialStore.dispatch(actions.resource.requestCollection('exports'));
+    await waitFor(() => expect(initialStore?.getState()?.data?.resources?.exports).toBeDefined());
+  }
 
   function renderFunction(pg, history, initialStore) {
     renderWithProviders(
       <PageGenerator.WrappedComponent history={history} match={{url: 'someinitiaUrL'}} {...pg} />,
       {initialStore});
   }
-  test('should test the case when connection is provided and no export', () => {
+  test('should test the case when connection is provided and no export', async () => {
     const pg = {
       id: 'somePGId',
       _connectionId: '5e7068331c056a75e6df19b2',
@@ -258,7 +105,7 @@ describe('PageGenerator UI tests', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = connections;
+    await initStore(initialStore);
 
     renderFunction(pg, history, initialStore);
 
@@ -284,7 +131,7 @@ describe('PageGenerator UI tests', () => {
 
     expect(screen.getByText('Connector Type: rest')).toBeInTheDocument();
   });
-  test('should test when webhookonly = true application type !== webhook', () => {
+  test('should test when webhookonly = true application type !== webhook', async () => {
     const pg = {
       id: 'somePGId',
       webhookOnly: true,
@@ -293,7 +140,7 @@ describe('PageGenerator UI tests', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = connections;
+    await initStore(initialStore);
 
     renderFunction(pg, history, initialStore);
 
@@ -319,16 +166,16 @@ describe('PageGenerator UI tests', () => {
     expect(history.replace).toHaveBeenCalledWith('someinitiaUrL/add/pageGenerator/somePGId');
     expect(screen.getByText('Connector Type: rest')).toBeInTheDocument();
   });
-  test('should test the case when resource is FileAdaptor ', () => {
+  test('should test the case when resource is FileAdaptor ', async () => {
     const pg = {
       id: 'somePGId',
       webhookOnly: true,
-      _connectionId: '5e7068331c056a75e6df19b2',
+      _connectionId: '5e3338331c056a75e6df19b2',
     };
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = connections3;
+    await initStore(initialStore);
 
     renderFunction(pg, history, initialStore);
 
@@ -348,7 +195,7 @@ describe('PageGenerator UI tests', () => {
     expect(screen.getByText('blockType: newPG')).toBeInTheDocument();
     expect(screen.getByText('Connector Type: http')).toBeInTheDocument();
   });
-  test('should test the case when resource is data loader', () => {
+  test('should test the case when resource is data loader', async () => {
     const pg = {
       id: 'somePGId',
       _connectionId: '5e7068331c056a75e6df19b2',
@@ -357,7 +204,7 @@ describe('PageGenerator UI tests', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = connections;
+    await initStore(initialStore);
 
     renderFunction(pg, history, initialStore);
 
@@ -407,15 +254,15 @@ describe('PageGenerator UI tests', () => {
     expect(screen.getByText('actionsname : exportFilter')).toBeInTheDocument();
     expect(screen.getByText('actionsname : exportHooks')).toBeInTheDocument();
   });
-  test('should test the case when block type is listener', () => {
+  test('should test the case when block type is listener', async () => {
     const pg = {
       id: 'somePGId',
-      _exportId: '5e7068331c056a75e6df19b2',
+      _exportId: '5eddd8331c056a75e6df19b2',
     };
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.exports = distributedexports;
+    await initStore(initialStore);
 
     renderFunction(pg, history, initialStore);
 
@@ -423,7 +270,7 @@ describe('PageGenerator UI tests', () => {
 
     expect(mockDispatch).not.toHaveBeenCalled();
 
-    expect(history.replace).toHaveBeenCalledWith('someinitiaUrL/edit/exports/5e7068331c056a75e6df19b2');
+    expect(history.replace).toHaveBeenCalledWith('someinitiaUrL/edit/exports/5eddd8331c056a75e6df19b2');
 
     expect(screen.getByText('blockType: listener')).toBeInTheDocument();
 
@@ -434,16 +281,15 @@ describe('PageGenerator UI tests', () => {
     expect(screen.getByText('Connector Type: distributed')).toBeInTheDocument();
   });
 
-  test('should test the case when resource is of AS2', () => {
+  test('should test the case when resource is of AS2', async () => {
     const pg = {
       id: 'somePGId',
-      _exportId: '5e7068331c056a75e6df19b2',
+      _exportId: '5e5558331c056a75e6df19b2',
     };
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.exports = as2exports;
-    initialStore.getState().data.resources.connections = as2connections;
+    await initStore(initialStore);
 
     renderFunction(pg, history, initialStore);
 
@@ -451,7 +297,7 @@ describe('PageGenerator UI tests', () => {
 
     expect(mockDispatch).not.toHaveBeenCalled();
 
-    expect(history.replace).toHaveBeenCalledWith('someinitiaUrL/edit/exports/5e7068331c056a75e6df19b2');
+    expect(history.replace).toHaveBeenCalledWith('someinitiaUrL/edit/exports/5e5558331c056a75e6df19b2');
     expect(screen.getByText('blockType: export')).toBeInTheDocument();
 
     expect(screen.getByText('actionsname : as2Routing')).toBeInTheDocument();
@@ -459,15 +305,15 @@ describe('PageGenerator UI tests', () => {
     expect(screen.getByText('actionsname : exportFilter')).toBeInTheDocument();
     expect(screen.getByText('actionsname : exportHooks')).toBeInTheDocument();
   });
-  test('should test case when webhook export is given', () => {
+  test('should test case when webhook export is given', async () => {
     const pg = {
       id: 'somePGId',
-      _exportId: '5e7068331c056a75e6df19b2',
+      _exportId: '5ebbb8331c056a75e6df19b2',
     };
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.exports = webhookexport;
+    await initStore(initialStore);
 
     renderFunction(pg, history, initialStore);
 
@@ -475,7 +321,7 @@ describe('PageGenerator UI tests', () => {
 
     expect(mockDispatch).not.toHaveBeenCalled();
 
-    expect(history.replace).toHaveBeenCalledWith('someinitiaUrL/edit/exports/5e7068331c056a75e6df19b2');
+    expect(history.replace).toHaveBeenCalledWith('someinitiaUrL/edit/exports/5ebbb8331c056a75e6df19b2');
     expect(screen.getByText('actionsname : exportTransformation')).toBeInTheDocument();
     expect(screen.getByText('actionsname : exportFilter')).toBeInTheDocument();
     expect(screen.getByText('actionsname : exportHooks')).toBeInTheDocument();
@@ -530,7 +376,7 @@ describe('PageGenerator UI tests', () => {
 
     expect(history.push).toHaveBeenCalledWith('someinitiaUrL/edit/exports/5e7068331c056a75e6df19b2');
   });
-  test('should test delete option', () => {
+  test('should test delete option', async () => {
     const onDelete = jest.fn();
     const pg = {
       id: 'somePGId',
@@ -539,7 +385,7 @@ describe('PageGenerator UI tests', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = connections;
+    await initStore(initialStore);
 
     renderWithProviders(
       <PageGenerator.WrappedComponent history={history} match={{url: 'someinitiaUrL'}} {...pg} onDelete={onDelete} />,
