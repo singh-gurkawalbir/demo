@@ -1,5 +1,3 @@
-import { getGoogleContactsAPI } from '../../../../../utils/connections';
-
 export default {
   preSave: formValues => {
     const apiType = formValues['/http/unencrypted/apiType'];
@@ -21,20 +19,6 @@ export default {
         '/http/auth/oauth/scope': peoplescope,
       };
     }
-
-    return {
-      ...formValues,
-      '/type': 'http',
-      '/assistant': 'googlecontacts',
-      '/http/auth/type': 'oauth',
-      '/http/mediaType': 'json',
-      '/http/baseURI': 'https://www.google.com/m8/feeds/',
-      '/http/ping/relativeURI': 'contacts/default/full',
-      '/http/ping/method': 'GET',
-      '/http/auth/oauth/authURI': 'https://accounts.google.com/o/oauth2/auth',
-      '/http/auth/oauth/tokenURI': 'https://accounts.google.com/o/oauth2/token',
-      '/http/auth/oauth/scopeDelimiter': ' ',
-    };
   },
   fieldMap: {
     name: { fieldId: 'name' },
@@ -44,12 +28,10 @@ export default {
       label: 'API type',
       helpKey: 'googlecontacts.connection.http.unencrypted.apiType',
       required: true,
-      defaultValue: r => getGoogleContactsAPI(r) || 'googlecontactspeople',
       options: [
         {
           items: [
             { label: 'People API', value: 'googlecontactspeople' },
-            { label: 'Contacts API [Deprecated]', value: 'googlecontacts' },
           ],
         },
       ],
@@ -67,14 +49,6 @@ export default {
       ignoreEnvironmentFilter: true,
       visibleWhen: [{ field: 'http.unencrypted.apiType', is: ['googlecontactspeople'] },
       ],
-    },
-    'http.auth.oauth.scope': {
-      fieldId: 'http.auth.oauth.scope',
-      scopes: [
-        'https://www.google.com/m8/feeds/',
-        'https://www.googleapis.com/auth/contacts.readonly',
-      ],
-      visibleWhen: [{ field: 'http.unencrypted.apiType', is: ['googlecontacts'] }],
     },
     'http.scopePeople': {
       id: 'http.scopePeople',
@@ -103,7 +77,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.unencrypted.apiType', 'http._iClientId', 'http.auth.oauth.callbackURL', 'http.auth.oauth.scope', 'http.scopePeople'] },
+        fields: ['http.unencrypted.apiType', 'http._iClientId', 'http.auth.oauth.callbackURL', 'http.scopePeople'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
