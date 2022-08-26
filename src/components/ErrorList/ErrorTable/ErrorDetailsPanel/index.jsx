@@ -9,6 +9,8 @@ import ViewErrorRequestResponse from '../../ErrorDetails/ViewErrorRequestRespons
 import { selectors } from '../../../../reducers';
 import { safeParse } from '../../../../utils/string';
 import DrawerContent from '../../../drawer/Right/DrawerContent';
+import DrawerHeader from '../../../drawer/Right/DrawerHeader';
+import DrawerFooter from '../../../drawer/Right/DrawerFooter';
 import ErrorDetailActions from '../../ErrorDetails/ErrorDetailActions';
 import ErrorControls from './ErrorControls';
 import actions from '../../../../actions';
@@ -18,7 +20,7 @@ import AddToBatch from '../../ErrorDetails/ErrorDetailActions/AddToBatch';
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
     height: '100%',
-    padding: theme.spacing(0, 3),
+    // padding: theme.spacing(0, 3),
     display: 'flex',
     flexDirection: 'column',
   },
@@ -55,6 +57,16 @@ const useStyles = makeStyles(theme => ({
     minWidth: 'auto',
     color: theme.palette.secondary.main,
     fontSize: 14,
+  },
+  draweHeader: {
+    borderBottom: 'none',
+    padding: theme.spacing(0, 0),
+  },
+  drawerFooter: {
+    flexDirection: 'column',
+    background: 'inherit',
+    borderTop: 'none',
+    padding: 'none',
   },
 }));
 
@@ -168,16 +180,20 @@ export default function ErrorDetails({
     setMode(newValue);
   }, []);
 
+  // className={classes.wrapper}
   return (
-    <div className={classes.wrapper}>
-      <span className={classes.label}>Error details</span>
-      <ErrorControls
-        retryId={retryId}
-        flowId={flowId}
-        resourceId={resourceId}
-        errorsInPage={errorsInPage}
-        activeErrorId={activeErrorId} />
-      <DrawerContent>
+    <div>
+      <DrawerHeader title="Error details" showCloseButton={false} className={classes.draweHeader}>
+        <ErrorControls
+          retryId={retryId}
+          flowId={flowId}
+          resourceId={resourceId}
+          errorsInPage={errorsInPage}
+          activeErrorId={activeErrorId}
+        />
+      </DrawerHeader>
+
+      <DrawerContent noPadding>
         <div className={classes.detailsContainer}>
           <Tabs
             value={mode}
@@ -222,11 +238,15 @@ export default function ErrorDetails({
               resourceId={resourceId} />
           </TabPanel>
         </div>
+      </DrawerContent>
+
+      <DrawerFooter className={classes.drawerFooter}>
         <AddToBatch
           error={errorDoc}
           flowId={flowId}
           resourceId={resourceId}
-          isResolved={isResolved} />
+          isResolved={isResolved}
+        />
         <ErrorDetailActions
           errorsInPage={errorsInPage}
           updatedRetryData={userRetryData}
@@ -235,8 +255,9 @@ export default function ErrorDetails({
           errorId={activeErrorId}
           mode={mode}
           isResolved={isResolved}
-          activeErrorId={activeErrorId} />
-      </DrawerContent>
+          activeErrorId={activeErrorId}
+        />
+      </DrawerFooter>
     </div>
   );
 }

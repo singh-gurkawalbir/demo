@@ -41,14 +41,11 @@ export default function EditRetryData({
     }
   }, [dispatch, flowId, resourceId, retryId, retryStatus]);
 
-  // if (retryStatus === 'requested') {
-  //   return <Spinner centerAll />;
-  // }
-
   return (
     <div className={classes.container} data-private>
       {
-        retryStatus === 'requested' ? (<Spinner centerAll size="large" />)
+        retryStatus === 'requested'
+          ? (<Spinner centerAll size="large" />)
           : (
             <CodeEditor
               name={`${retryId}-edit`}
@@ -56,7 +53,7 @@ export default function EditRetryData({
               mode="json"
               onChange={onChange}
               readOnly={isFlowDisabled}
-    />
+            />
           )
       }
     </div>
