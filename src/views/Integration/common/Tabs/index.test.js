@@ -11,8 +11,10 @@ import { runServer } from '../../../../test/api/server';
 let mockMatch;
 
 const mockHistoryPush = jest.fn(path => {
+  const pathArray = path.split('/');
+
   mockMatch.url = path;
-  mockMatch.params.tab = path.split('/').at(-1);
+  mockMatch.params.tab = pathArray[pathArray.length - 1];
 });
 
 const tabs = [
