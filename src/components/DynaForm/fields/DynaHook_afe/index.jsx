@@ -24,7 +24,6 @@ const useStyles = makeStyles(theme => ({
   field: {
     width: '50%',
     paddingRight: theme.spacing(1),
-    overflow: 'hidden',
     '& >.MuiFormControl-root': {
       width: '100%',
     },
@@ -163,6 +162,7 @@ export default function DynaHook_afe({
               isValid={isValidHookField('function')}
               value={value.function}
               onFieldChange={handleFieldChange('function')}
+              helpKey="api.function"
             />
           </div>
           {hookType === 'stack' && (

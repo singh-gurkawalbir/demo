@@ -8,7 +8,7 @@ import Invite from './Invite';
 import AddIcon from '../../../components/icons/AddIcon';
 import PanelHeader from '../../../components/PanelHeader';
 import { TextButton } from '../../../components/Buttons';
-import infoText from '../infoText';
+import infoText from '../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   root: {
