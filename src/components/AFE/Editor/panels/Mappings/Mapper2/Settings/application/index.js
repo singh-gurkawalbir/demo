@@ -146,7 +146,7 @@ export default {
           settings.default = null;
           break;
         case 'default':
-          settings.default = formVal.default;
+          settings.default = settings.dataType === MAPPING_DATA_TYPES.BOOLEAN ? formVal.boolDefault : formVal.default;
           break;
         case 'discardIfEmpty':
           settings.conditional = {};
@@ -163,9 +163,14 @@ export default {
           settings.hardCodedValue = null;
           break;
         case 'default':
-          settings.hardCodedValue = Array.isArray(formVal.hardcodedDefault)
-            ? formVal.hardcodedDefault.join(',')
-            : formVal.hardcodedDefault;
+          if (settings.dataType === MAPPING_DATA_TYPES.BOOLEAN) {
+            settings.hardCodedValue = formVal.boolHardcodedDefault;
+          } else {
+            settings.hardCodedValue = Array.isArray(formVal.hardcodedDefault)
+              ? formVal.hardcodedDefault.join(',')
+              : formVal.hardcodedDefault;
+          }
+
           break;
         case 'discardIfEmpty':
           settings.conditional = {};
@@ -182,7 +187,7 @@ export default {
           settings.default = null;
           break;
         case 'default':
-          settings.default = formVal.multifieldDefault;
+          settings.default = settings.dataType === MAPPING_DATA_TYPES.BOOLEAN ? formVal.boolMultifieldDefault : formVal.multifieldDefault;
           break;
         case 'discardIfEmpty':
           settings.conditional = {};

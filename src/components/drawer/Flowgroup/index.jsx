@@ -31,6 +31,7 @@ const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit, flowGr
       isEdit,
       required: true,
       flowGroupId,
+      helpKey: 'flowGroup.name',
     },
     _flowIds: {
       id: '_flowIds',
@@ -41,6 +42,7 @@ const getFieldMeta = (integrationId, groupName, flowsWithGroupId, isEdit, flowGr
       unSearchable: true,
       isFlowGroupForm: true,
       integrationId,
+      helpKey: 'flowGroup.flows',
     },
   },
   layout: {
