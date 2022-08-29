@@ -1,23 +1,18 @@
-import React, { useMemo, useCallback } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { useRouteMatch, useHistory } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import { DEFAULT_ROWS_PER_PAGE } from '../../../../utils/errorManagement';
 import CeligPagination from '../../../CeligoPagination';
 import KeywordSearch from '../../../KeywordSearch';
 import RefreshCard from '../RefreshCard';
 import ErrorActions from '../ErrorActions';
-import { selectors } from '../../../../reducers';
-import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
+import ActionMenu from '../../../CeligoTable/ActionMenu';
+import DownloadAction from '../../../ResourceTable/errorManagement/actions/DownloadErrors';
+import CeligoDivider from '../../../CeligoDivider';
+import ToggleViewSelect from '../../../AFE/Drawer/actions/ToggleView';
+import { useHandleNextAndPreviousErrorPage } from '../hooks/useHandleNextAndPreviousErrorPage';
 import actions from '../../../../actions';
-import { useIsFreshLoadData } from '..';
-import { useFetchErrors } from '../FetchErrorsHook';
-import { OutlinedButton } from '../../../Buttons';
 
 const rowsPerPageOptions = [10, 25, 50];
-const emptySet = [];
-const emptyObj = {};
 
 const useStyles = makeStyles(theme => ({
   errorsKeywordSearch: {
@@ -76,75 +71,32 @@ const useStyles = makeStyles(theme => ({
 
 export default function ErrorTableFilters({flowId, resourceId, isResolved, filterKey}) {
   const classes = useStyles();
-
-  const match = useRouteMatch();
-  const history = useHistory();
+  const [selectedComponent, setSelectedComponent] = useState(null);
   const dispatch = useDispatch();
-  const fetchErrors = useFetchErrors({
-    filterKey,
-    flowId,
-    resourceId,
-    isResolved,
-  });
-  const errorConfig = useMemo(() => ({
-    flowId,
-    resourceId,
-    isResolved,
-  }), [isResolved, flowId, resourceId]);
 
-  const errorObj = useSelectorMemo(selectors.mkResourceFilteredErrorDetailsSelector, errorConfig);
-  const isFreshDataLoad = useIsFreshLoadData(errorConfig);
+  const {
+    hasErrors,
+    errorObj,
+    fetchErrors,
+    isFreshDataLoad,
+    paginationOptions,
+    currPage,
+    rowsPerPage,
+    handleChangePage,
+    handleChangeRowsPerPage,
+  } = useHandleNextAndPreviousErrorPage({flowId, resourceId, isResolved, filterKey});
 
-  if (!errorObj.errors) {
-    errorObj.errors = emptySet;
-  }
-  const errorType = isResolved ? 'resolved' : 'open';
-  const errorFilter = useSelector(
-    state => selectors.filter(state, filterKey), shallowEqual
-  );
-  const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = errorFilter.paging || emptyObj;
+  const useRowActions = () => [DownloadAction];
 
-  const hasErrors = useSelector(
-    state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
-  );
-  const handleChangeRowsPerPage = useCallback(e => {
-    dispatch(
-      actions.patchFilter(filterKey, {
-        paging: {
-          ...errorFilter.paging,
-          rowsPerPage: parseInt(e.target.value, 10),
-        },
-      })
-    );
-  }, [dispatch, filterKey, errorFilter.paging]);
-  const handleChangePage = useCallback(
-    (e, newPage) => dispatch(
-      actions.patchFilter(filterKey, {
-        paging: {
-          ...errorFilter.paging,
-          currPage: newPage,
-        },
-      })
-    ),
-    [dispatch, filterKey, errorFilter.paging]
-  );
-  const handleDownload = useCallback(() => {
-    history.push(buildDrawerUrl({
-      path: drawerPaths.ERROR_MANAGEMENT.V2.DOWNLOAD_ERRORS,
-      baseUrl: match.url,
-      params: { type: errorType },
+  const handleToggleChange = event => {
+    dispatch(actions.patchFilter(filterKey, {
+      view: event.target.value,
+      activeErrorId: '',
     }));
-  }, [match.url, history, errorType]);
-
-  const paginationOptions = useMemo(
-    () => ({
-      // fetch more errors
-      loadMoreHandler: () => fetchErrors(true),
-      hasMore: !!errorObj.nextPageURL,
-      loading: errorObj.status === 'requested',
-    }),
-    [fetchErrors, errorObj.nextPageURL, errorObj.status]
-  );
+    dispatch(
+      actions.analytics.gainsight.trackEvent('ERROR_MANAGEMENT_VIEW_CHANGED')
+    );
+  };
 
   return (
 
@@ -168,28 +120,45 @@ export default function ErrorTableFilters({flowId, resourceId, isResolved, filte
         </div>
       </div>
       <div className={classes.paginationWrapper}>
-        {!!errorObj.errors.length && (
-        <CeligPagination
-          {...paginationOptions}
-          rowsPerPageOptions={rowsPerPageOptions}
-          className={classes.tablePaginationRoot}
-          count={errorObj.errors.length}
-          page={currPage}
-          rowsPerPage={rowsPerPage}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-      />
+        {hasErrors && !isResolved && (
+        <>
+          <ToggleViewSelect
+            variant="openErrorViews"
+            filterKey={filterKey}
+            defaultView="split"
+            handleToggleChange={handleToggleChange}
+          />
+          <CeligoDivider position="left" />
+        </>
         )}
+        {!!errorObj.errors.length && (
+          <>
+            <CeligPagination
+              {...paginationOptions}
+              rowsPerPageOptions={rowsPerPageOptions}
+              className={classes.tablePaginationRoot}
+              count={errorObj.errors.length}
+              page={currPage}
+              rowsPerPage={rowsPerPage}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+              resultPerPageLabel="Per page:"
+            />
+            <CeligoDivider position="right" />
+          </>
+        )}
+        {selectedComponent}
         {
-            hasErrors && (
-            <OutlinedButton
-              color="secondary"
-              onClick={handleDownload}>
-              Download
-            </OutlinedButton>
-            )
-          }
-
+          hasErrors && (
+            <ActionMenu
+              setSelectedComponent={setSelectedComponent}
+              useRowActions={useRowActions}
+              rowData={{
+                isResolved,
+              }}
+            />
+          )
+        }
       </div>
     </div>
   );

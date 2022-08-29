@@ -22,6 +22,9 @@ import ViewNetsuiteResponse from '../actions/ViewNetsuiteResponse';
 const options = {allowedTags: ['a']};
 export default {
   rowKey: 'errorId',
+  additionalConfigs: {
+    actionMenuTooltip: 'View actions for this error',
+  },
   useColumns: () => [
     {
       key: 'selectAll',
