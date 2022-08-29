@@ -98,7 +98,7 @@ export function CustomReactSelectStyles() {
       backgroundColor: state.isDisabled ? theme.palette.background.paper2 : theme.palette.background.paper,
       boxShadow: 'none',
       borderRadius: 2,
-      // height: theme.spacing(3),
+      minHeight: theme.spacing(3),
       '&:hover': {
         borderColor: theme.palette.primary.main,
       },
