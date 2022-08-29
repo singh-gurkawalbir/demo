@@ -1,24 +1,21 @@
 export default {
   preSave: formValues => {
-    const apiType = formValues['/http/unencrypted/apiType'];
     const peoplescope = formValues['/http/scopePeople'];
 
-    if (apiType === 'googlecontactspeople') {
-      return {
-        ...formValues,
-        '/type': 'http',
-        '/assistant': 'googlecontactspeople',
-        '/http/auth/type': 'oauth',
-        '/http/mediaType': 'json',
-        '/http/baseURI': 'https://people.googleapis.com/v1',
-        '/http/ping/relativeURI': '/contactGroups',
-        '/http/ping/method': 'GET',
-        '/http/auth/oauth/authURI': 'https://accounts.google.com/o/oauth2/auth',
-        '/http/auth/oauth/tokenURI': 'https://accounts.google.com/o/oauth2/token',
-        '/http/auth/oauth/scopeDelimiter': ' ',
-        '/http/auth/oauth/scope': peoplescope,
-      };
-    }
+    return {
+      ...formValues,
+      '/type': 'http',
+      '/assistant': 'googlecontactspeople',
+      '/http/auth/type': 'oauth',
+      '/http/mediaType': 'json',
+      '/http/baseURI': 'https://people.googleapis.com/v1',
+      '/http/ping/relativeURI': '/contactGroups',
+      '/http/ping/method': 'GET',
+      '/http/auth/oauth/authURI': 'https://accounts.google.com/o/oauth2/auth',
+      '/http/auth/oauth/tokenURI': 'https://accounts.google.com/o/oauth2/token',
+      '/http/auth/oauth/scopeDelimiter': ' ',
+      '/http/auth/oauth/scope': peoplescope,
+    };
   },
   fieldMap: {
     name: { fieldId: 'name' },
