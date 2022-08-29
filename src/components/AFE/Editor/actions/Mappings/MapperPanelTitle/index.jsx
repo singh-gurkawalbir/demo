@@ -14,6 +14,7 @@ import ActionGroup from '../../../../../ActionGroup';
 import Spinner from '../../../../../Spinner';
 import OutputFormatsList from './OutputFormatsList';
 import MoreActions from './MoreActions';
+import SearchIcon from '../../../../../icons/SearchIcon';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -81,6 +82,10 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
     dispatch(actions.mapping.v2.toggleRows(shouldExpand));
   }, [dispatch]);
 
+  const handleToggleSearch = useCallback(() => {
+    dispatch(actions.mapping.v2.toggleSearch());
+  }, [dispatch]);
+
   // return the old title if its not mapper2 view
   if (mappingVersion !== 2) {
     return title;
@@ -128,6 +133,15 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
             <CollapseRowsIcon />
           </IconButton>
         </Tooltip>
+
+        <CeligoDivider position="right" />
+        <IconButton
+          size="small"
+          date-test="showSearch"
+          onClick={handleToggleSearch} >
+          <SearchIcon />
+        </IconButton>
+        <CeligoDivider position="right" />
 
         <MoreActions importId={importId} disabled={disabled} />
 

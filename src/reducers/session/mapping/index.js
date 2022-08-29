@@ -15,7 +15,10 @@ import {
   MAPPING_DATA_TYPES,
   getUniqueExtractId,
   autoCreateDestinationStructure,
-  deleteNonRequiredMappings} from '../../../utils/mapping';
+  deleteNonRequiredMappings,
+  searchTree,
+  filterKey,
+  filterNode} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
 export const expandRow = (draft, key) => {
@@ -212,6 +215,9 @@ export default (state = {}, action) => {
     type,
     key,
     field,
+    index,
+    searchKey,
+    showKey,
     shiftIndex,
     value,
     mappings,
@@ -956,6 +962,54 @@ export default (state = {}, action) => {
         draft.mapping.autoCreated = !draft.mapping.autoCreated;
         break;
 
+      case actionTypes.MAPPING.V2.SEARCH_TREE: {
+        if (!draft.mapping) break;
+        let items;
+        const mapping = draft.mapping.v2TreeData;
+
+        if (!mapping) break;
+
+        if (!showKey && searchKey) {
+          items = searchTree(draft.mapping.v2TreeData, searchKey, filterNode);
+          draft.mapping.expandedKeys = items.expandedKeys;
+          draft.mapping.selectedFields = items.selectedFields;
+          items.selectedFields ? draft.mapping.highlightedIndex = 0 : draft.mapping.highlightedIndex = -1;
+          items.tabChange.forEach(item => {
+            const {key, tabValue, parentExtract} = item;
+            const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(mapping, 'key', key);
+
+            if (isEmpty(node)) return;
+            nodeSubArray[nodeIndexInSubArray] = hideOtherTabRows(original(node), parentExtract);
+            nodeSubArray[nodeIndexInSubArray].activeTab = tabValue;
+          });
+        } else if (showKey && searchKey) {
+          items = searchTree(draft.mapping.v2TreeData, searchKey, filterKey);
+          draft.mapping.expandedKeys = items.expandedKeys;
+          items.tabChange.forEach(item => {
+            const {key, tabValue, parentExtract} = item;
+            const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(mapping, 'key', key);
+
+            if (isEmpty(node)) return;
+            nodeSubArray[nodeIndexInSubArray] = hideOtherTabRows(original(node), parentExtract);
+            nodeSubArray[nodeIndexInSubArray].activeTab = tabValue;
+          });
+        }
+        break;
+      }
+
+      case actionTypes.MAPPING.V2.UPDATE_HIGHLIGHTED_INDEX: {
+        if (!draft.mapping) break;
+
+        draft.mapping.highlightedIndex = index;
+        break;
+      }
+
+      case actionTypes.MAPPING.V2.TOGGLE_SEARCH: {
+        if (!draft.mapping) break;
+
+        draft.mapping.isSearchVisible = !draft.mapping.isSearchVisible;
+        break;
+      }
       default:
     }
   });
@@ -986,6 +1040,34 @@ selectors.v2MappingsExtractsTree = state => {
 
   return state.mapping.extractsTree || emptyArr;
 };
+
+selectors.highlightedKey = state => {
+  if (!state || !state.mapping) {
+    return '';
+  }
+  const {highlightedIndex, selectedFields} = state.mapping;
+
+  return selectedFields?.[highlightedIndex] || '';
+};
+
+selectors.highlightedIndex = state => {
+  if (!state || !state.mapping) {
+    return -1;
+  }
+  if (state.mapping.highlightedIndex === undefined) return -1;
+
+  return state.mapping.highlightedIndex;
+};
+
+selectors.selectedFields = state => {
+  if (!state || !state.mapping) {
+    return emptyArr;
+  }
+
+  return state.mapping.selectedFields || emptyArr;
+};
+
+selectors.isSearchVisible = state => state?.mapping?.isSearchVisible;
 
 selectors.mappingChanged = state => {
   if (!state || !state.mapping) {

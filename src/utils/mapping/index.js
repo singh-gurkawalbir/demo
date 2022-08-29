@@ -1194,6 +1194,157 @@ export const findNodeInTree = (data, prop, value) => {
   return {node, nodeSubArray, nodeIndexInSubArray};
 };
 
+export const filterNode = (node, searchKey) => {
+  if (!searchKey) return false;
+  if (node?.generate?.toUpperCase().indexOf(searchKey.toUpperCase()) > -1) {
+    return true;
+  }
+
+  return false;
+};
+
+export const filterKey = (node, searchKey) => {
+  if (!searchKey) return false;
+  if (node?.key === searchKey) {
+    return true;
+  }
+
+  return false;
+};
+
+// export const getExtractTabValue = extractId => {
+//   const pipeIndex = extractId?.indexOf('|');
+
+//   if (pipeIndex > 0) {
+//     return parseInt(extractId.substring(pipeIndex + 1), 10);
+//   }
+// };
+
+export const getExtractTabValue = (extractId, combinedExtract) => {
+  const pipeIndex = extractId?.indexOf('|');
+  let knownExtract = extractId;
+  let knownIndex = 0;
+
+  if (pipeIndex > 0) {
+    knownExtract = extractId.substring(0, pipeIndex);
+    knownIndex = parseInt(extractId.substring(pipeIndex + 1), 10);
+  }
+  if (knownIndex) {
+    return knownIndex;
+  }
+  let i = 0;
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key of combinedExtract.split(',')) {
+    if (key === knownExtract) {
+      return i;
+    }
+    i += 1;
+  }
+};
+
+const objectSearch = (node, key, filterFunc) => {
+  const items = {
+    firstIndex: -1,
+    expandedKeys: [],
+    selectedFields: [],
+    tabChange: [],
+  };
+  // eslint-disable-next-line no-use-before-define
+  const newItems = searchTree(node.mappings, key, filterFunc);
+
+  items.firstIndex = newItems.firstIndex;
+  items.expandedKeys = [...newItems.expandedKeys];
+  items.selectedFields = [...newItems.selectedFields];
+  items.tabChange = [...newItems.tabChange];
+
+  if (items.firstIndex !== -1) {
+    items.expandedKeys = [node.key, ...newItems.expandedKeys];
+  }
+  // console.log('Object search', items);
+
+  return items;
+};
+
+const objectArraySearch = (node, key, filterFunc) => {
+  const items = {
+    firstIndex: -1,
+    expandedKeys: [],
+    selectedFields: [],
+    tabChange: [],
+  };
+  // eslint-disable-next-line no-use-before-define
+  const newItems = searchTree(node.children, key, filterFunc);
+  const extractList = node.combinedExtract.split(',');
+
+  items.firstIndex = newItems.firstIndex;
+  items.expandedKeys = [...newItems.expandedKeys];
+  items.selectedFields = [...newItems.selectedFields];
+  items.tabChange = [...newItems.tabChange];
+
+  // console.log('objectArray newItems', newItems);
+  if (newItems.firstIndex !== -1) {
+    items.firstIndex = newItems.firstIndex;
+    const childNode = node.children[items.firstIndex];
+
+    if (extractList.length > 1) {
+      const tabValue = getExtractTabValue(childNode.parentExtract, node.combinedExtract);
+
+      items.tabChange = [
+        {
+          key: node.key,
+          tabValue,
+          parentExtract: childNode.parentExtract,
+        },
+        ...newItems.tabChange,
+      ];
+    }
+    items.expandedKeys = [node.key, ...newItems.expandedKeys];
+  }
+  // console.log('object array end', items);
+
+  return items;
+};
+
+export const searchTree = (mappings, key, filterFunc) => {
+  const items = {
+    firstIndex: -1,
+    expandedKeys: [],
+    selectedFields: [],
+    tabChange: [],
+  };
+
+  mappings.forEach((node, index) => {
+    if (node.isTabNode) return;
+    let found = false;
+    let newItems;
+
+    if (filterFunc(node, key)) {
+      found = true;
+      items.selectedFields.push(node.key);
+    }
+
+    if (node.dataType === 'object') {
+      newItems = objectSearch(node, key, filterFunc);
+    } else if (node.dataType === 'objectarray') {
+      newItems = objectArraySearch(node, key, filterFunc);
+    }
+
+    if (newItems) {
+      if (newItems?.firstIndex !== -1 && !found) items.firstIndex = index;
+      items.expandedKeys = [...items.expandedKeys, ...newItems.expandedKeys];
+      items.selectedFields = [...items.selectedFields, ...newItems.selectedFields];
+      items.tabChange = [...items.tabChange, ...newItems.tabChange];
+    }
+
+    if (items.firstIndex === -1 && found) {
+      items.firstIndex = index;
+    }
+  });
+
+  return items;
+};
+
 export const TYPEOF_TO_DATA_TYPE = {
   '[object String]': MAPPING_DATA_TYPES.STRING,
   '[object Number]': MAPPING_DATA_TYPES.NUMBER,

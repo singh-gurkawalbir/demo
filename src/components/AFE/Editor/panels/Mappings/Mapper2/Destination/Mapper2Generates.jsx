@@ -1,4 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, Tooltip } from '@material-ui/core';
 import clsx from 'clsx';
@@ -8,6 +9,8 @@ import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import { TooltipTitle } from '../Source/Mapper2ExtractsTypeableSelect';
 import DestinationDataType from './DestinationDataType';
 import LockIcon from '../../../../../../icons/LockIcon';
+import { selectors } from '../../../../../../../reducers';
+import useScrollIntoView from '../../../../../../../hooks/useScrollIntoView';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -53,6 +56,9 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.text.hint,
     },
   },
+  selectedField: {
+    border: '1px solid red',
+  },
 }));
 
 export default function Mapper2Generates(props) {
@@ -65,6 +71,7 @@ export default function Mapper2Generates(props) {
     nodeKey,
     isRequired,
   } = props;
+  const highlightedKey = useSelector(state => selectors.highlightedKey(state));
   const classes = useStyles();
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState(propValue);
@@ -72,6 +79,17 @@ export default function Mapper2Generates(props) {
   const [anchorEl, setAnchorEl] = useState(null);
   const containerRef = useRef();
   const inputFieldRef = useRef();
+  const [isHighlighted, setIsHighlighted] = useState(false);
+
+  useEffect(() => {
+    if (nodeKey === highlightedKey) {
+      setIsHighlighted(true);
+    } else {
+      setIsHighlighted(false);
+    }
+  }, [nodeKey, highlightedKey]);
+
+  useScrollIntoView(containerRef, isHighlighted);
 
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
@@ -104,6 +122,7 @@ export default function Mapper2Generates(props) {
 
   return (
     <FormControl
+      className={{[classes.selectedField]: isHighlighted}}
       data-test={id}
       key={id}
       ref={containerRef} >
