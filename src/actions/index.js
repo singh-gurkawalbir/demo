@@ -1554,6 +1554,9 @@ const mapping = {
     deleteAll: isCSVOrXLSX => action(actionTypes.MAPPING.V2.DELETE_ALL, { isCSVOrXLSX }),
     autoCreateStructure: (uploadedData, isCSVOrXLSX) => action(actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE, { uploadedData, isCSVOrXLSX }),
     toggleAutoCreateFlag: () => action(actionTypes.MAPPING.V2.TOGGLE_AUTO_CREATE_FLAG, {}),
+    updateHighlightedIndex: index => action(actionTypes.MAPPING.V2.UPDATE_HIGHLIGHTED_INDEX, {index}),
+    searchTree: (searchKey, showKey) => action(actionTypes.MAPPING.V2.SEARCH_TREE, { searchKey, showKey }),
+    toggleSearch: () => action(actionTypes.MAPPING.V2.TOGGLE_SEARCH, {}),
   },
 };
 
