@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import React, { useState, useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
@@ -16,6 +16,7 @@ import ErrorControls from './ErrorControls';
 import actions from '../../../../actions';
 import { useSelectorMemo } from '../../../../hooks';
 import AddToBatch from '../../ErrorDetails/ErrorDetailActions/AddToBatch';
+import EmptyErrorDetails from './EmptyErrorDetails';
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
@@ -111,10 +112,6 @@ export default function ErrorDetails({
   const [mode, setMode] = useState('editRetry');
   const dispatch = useDispatch();
 
-  const errorFilter = useSelector(
-    state => selectors.filter(state, 'openErrors'), shallowEqual
-  );
-
   const errorConfig = useMemo(() => ({
     flowId,
     resourceId,
@@ -124,18 +121,10 @@ export default function ErrorDetails({
   const errorsInPage = useSelectorMemo(selectors.mkResourceFilteredErrorsInCurrPageSelector, errorConfig);
 
   const activeErrorId = useSelector(state => {
-    const defaultError = errorsInPage?.[0]?.errorId;
     const e = selectors.filter(state, 'openErrors');
 
-    return e.activeErrorId || defaultError;
+    return e.activeErrorId;
   });
-
-  useEffect(() => {
-    if (errorsInPage?.length) {
-      dispatch(actions.patchFilter('openErrors', {activeErrorId: errorsInPage?.[0]?.errorId}));
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errorFilter?.keyword, errorFilter?.paging?.currPage]);
 
   const isFlowDisabled = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?.disabled
@@ -183,7 +172,10 @@ export default function ErrorDetails({
     setMode(newValue);
   }, []);
 
-  // className={classes.wrapper}
+  if (!activeErrorId || activeErrorId === '') {
+    return <EmptyErrorDetails classes={classes} />;
+  }
+
   return (
     <div>
       <DrawerHeader title="Error details" showCloseButton={false} className={classes.draweHeader}>

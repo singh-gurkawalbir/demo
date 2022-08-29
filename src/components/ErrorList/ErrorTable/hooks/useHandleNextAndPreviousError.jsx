@@ -44,8 +44,8 @@ export const useHandleNextAndPreviousError = ({
 
   const handlePreviousError = useCallback(() => {
     const onCancelFunction = () => {
-      if (indexOfCurrentError <= 0 && currPage === 0) return;
-      let newIndex = indexOfCurrentError - 1;
+      if (indexOfCurrentErrorInAllErrors <= 0 && currPage === 0) return;
+      let newIndex = indexOfCurrentErrorInAllErrors - 1;
 
       if (indexOfCurrentError === 0) {
         handlePrevPage();
@@ -54,7 +54,7 @@ export const useHandleNextAndPreviousError = ({
       } else if (indexOfCurrentError === currPage * rowsPerPage) {
         handlePrevPage();
       }
-      const newErrorId = errorsInPage?.[newIndex]?.errorId;
+      const newErrorId = allErrors?.[newIndex]?.errorId;
 
       dispatch(actions.patchFilter('openErrors', {
         activeErrorId: newErrorId,
@@ -64,7 +64,7 @@ export const useHandleNextAndPreviousError = ({
     };
 
     showRetryDataChangedConfirmDialog(onCancelFunction);
-  }, [showRetryDataChangedConfirmDialog, indexOfCurrentError, currPage, rowsPerPage, errorsInPage, dispatch, handlePrev, handlePrevPage, indexOfCurrentErrorInAllErrors]);
+  }, [showRetryDataChangedConfirmDialog, indexOfCurrentErrorInAllErrors, currPage, indexOfCurrentError, rowsPerPage, allErrors, dispatch, handlePrev, handlePrevPage]);
 
   const handleNextError = useCallback(() => {
     const onCancelFunction = () => {

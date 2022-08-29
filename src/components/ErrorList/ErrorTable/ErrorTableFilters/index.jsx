@@ -93,6 +93,7 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
       dispatch(actions.patchFilter(filterKey, {
         view: event.target.value,
         activeErrorId: '',
+        currentNavItem: '',
       }));
       dispatch(
         actions.analytics.gainsight.trackEvent('OPEN_ERRORS_VIEW_CHANGED')

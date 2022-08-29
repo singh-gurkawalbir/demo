@@ -254,7 +254,7 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
   useEffect(() => {
     const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.activeErrorId);
 
-    if (currIndex < 0 && isSplitView) {
+    if (errorFilter?.activeErrorId !== '' && currIndex < 0 && isSplitView) {
       dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
         activeErrorId: errorsInCurrPage[0]?.errorId,
         currentNavItem: errorsInCurrPage[0]?.errorId,
